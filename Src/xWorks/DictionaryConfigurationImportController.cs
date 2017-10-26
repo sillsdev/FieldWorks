@@ -182,21 +182,20 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ImportStyles(string importStylesLocation)
 		{
+			var stylesToRemove = _cache.LangProject.StylesOC.Where(style => !UnsupportedStyles.Contains(style.Name));
+
+			// For LT-18267, record basedon and next properties of styles not
+			// being exported, so they can be reconnected to the imported
+			// styles of the same name.
+			var preimportStyleLinks = _cache.LangProject.StylesOC.Where(style => UnsupportedStyles.Contains(style.Name)).ToDictionary(
+				style => style.Name,
+				style => new
+				{
+					BasedOn = style.BasedOnRA == null ? null : style.BasedOnRA.Name,
+					Next = style.NextRA == null ? null : style.NextRA.Name
+				});
 			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
 			{
-				var stylesToRemove = _cache.LangProject.StylesOC.Where(style => !UnsupportedStyles.Contains(style.Name));
-
-				// For LT-18267, record basedon and next properties of styles not
-				// being exported, so they can be reconnected to the imported
-				// styles of the same name.
-				var preimportStyleLinks = _cache.LangProject.StylesOC.Where(style => UnsupportedStyles.Contains(style.Name)).ToDictionary(
-					style => style.Name,
-					style => new
-					{
-						BasedOn = style.BasedOnRA == null ? null : style.BasedOnRA.Name,
-						Next = style.NextRA == null ? null : style.NextRA.Name
-					});
-
 				// Before importing styles, remove all the current styles, except
 				// for styles that we don't support and so we don't expect will
 				// be imported.
@@ -204,8 +203,14 @@ namespace SIL.FieldWorks.XWorks
 				{
 					_cache.LangProject.StylesOC.Remove(style);
 				}
-
-				// Import styles
+			});
+			// Be sure that the Remove action is committed and saved to disk before we re-import styles with the same guid.
+			// If we don't then the changes won't be noticed as the Styles will be marked as transient and won't be saved.
+			_cache.ActionHandlerAccessor.Commit();
+			// Import styles
+			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
+			{
+				// ReSharper disable once UnusedVariable -- The FlexStylesXmlAccessor constructor does the work of importing.
 				var stylesAccessor = new FlexStylesXmlAccessor(_cache.LangProject.LexDbOA, true, importStylesLocation);
 
 				var postimportStylesToReconnect = _cache.LangProject.StylesOC.Where(style => UnsupportedStyles.Contains(style.Name));
