@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2017 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.LCModel.Core.Text;
@@ -26,7 +27,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// ----------------------------------------------------------------------------------------
 	/// <summary> XML Browse View for Rapid Data Entry (Collect Words) </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class XmlBrowseRDEView : XmlBrowseViewBase
+	public class XmlBrowseRDEView : XmlBrowseViewBase, IUndoRedoHandler
 	{
 		#region Data members
 
@@ -616,26 +617,59 @@ namespace LanguageExplorer.Controls.XMLViews
 			this.ScrollSelectionIntoView(m_rootb.Selection, VwScrollSelOpts.kssoDefault);
 		}
 
-#if RANDYTODO
-		/// ------------------------------------------------------------------------------------
+		#region Implementation of IUndoRedoHandler
+
 		/// <summary>
-		/// Disables/enables the Edit/Undo menu item
+		/// Get the text for the Undo menu.
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns><c>true</c></returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnDisplayUndo(object commandObject, ref UIItemDisplayProperties display)
+		public string UndoText => HasNonEmptyNewRow ? XMLViewsStrings.ksUndoNewRowData : LanguageExplorerResources.Undo;
+
+		/// <summary>
+		/// Get the enabled condition for the Undo menu.
+		/// </summary>
+		public bool UndoEnabled(bool callerEnableOpinion)
 		{
-			if (HasNonEmptyNewRow)
-			{
-				display.Enabled = true;
-				display.Text = XMLViewsStrings.ksUndoNewRowData;
-				return true;
-			}
-			return false; // we don't want to handle the command.
+			return HasNonEmptyNewRow || callerEnableOpinion;
 		}
-#endif
+
+		/// <summary>
+		/// Handle Undo event
+		/// </summary>
+		/// <returns>'true' if the event was handled, ortherwise 'false' which has caller deal with it.</returns>
+		public bool HandleUndo(object sender, EventArgs e)
+		{
+			if (!HasNonEmptyNewRow)
+			{
+				return false;
+			}
+			// simply reset the current row.
+			ClearColumnStringsFromNewRow();
+			return true;
+		}
+
+		/// <summary>
+		/// Get the text for the Redo menu.
+		/// </summary>
+		public string RedoText => LanguageExplorerResources.Redo;
+
+		/// <summary>
+		/// Get the enabled condition for the Undo menu.
+		/// </summary>
+		public bool RedoEnabled(bool callerEnableOpinion)
+		{
+			return callerEnableOpinion; // We are apathetic.
+		}
+
+		/// <summary>
+		/// Handle Redo event
+		/// </summary>
+		/// <returns>'true' if the event was handled, ortherwise 'false' which has caller deal with it.</returns>
+		public bool HandleRedo(object sender, EventArgs e)
+		{
+			return false;
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Return true if we have setup a new row that has data which has not yet been
@@ -645,33 +679,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				ITsString[] rgtss = GetColumnStringsFromNewRow();
-				foreach (ITsString tss in rgtss)
-				{
-					if (tss != null && tss.Length > 0)
-						return true;
-				}
-				return false;
+				return GetColumnStringsFromNewRow().Any(tss => tss != null && tss.Length > 0);
 			}
 		}
 
-		/// <summary>
-		/// We need to override Undo so that we can clear data in the new row
-		/// since it has not been committed to the database. otherwise, Undo
-		/// will get rid of the current row, and the previously committed row.
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		internal bool OnUndo(object args)
-		{
-			if (HasNonEmptyNewRow)
-			{
-				// simply reset the current row.
-				ClearColumnStringsFromNewRow();
-				return true;
-			}
-			return false;
-		}
 
 		/// <summary>
 		/// Create an undo/redo action for updating the display after the user commits changes in a new row.
@@ -944,38 +955,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				base.OnKeyPress(e);
 		}
 
-		// JohnT: Someone found a better way to catch things changing; see callers of
-		//		CleanupPendingEdits. We must not split this up, however; we had a problem when
-		//		CleanupPendingEdits handled simulating typing Enter, but OnLostFocus did the DoMerges.
-		// It's important for DoMerges to come after the simulated Enter.
-		//		protected override void OnGotFocus(EventArgs e)
-		//		{
-		//			base.OnGotFocus(e);
-		////-			if (m_hmark == 0)
-		////-			{
-		////-				IActionHandler ah = m_cache.ActionHandlerAccessor;
-		////-				if (ah != null)
-		////-					m_hmark = ah.Mark();
-		////-			}
-		//		}
-
-
-		//		protected override void OnLostFocus(EventArgs e)
-		//		{
-		//			this.DoMerges();
-		////-			IActionHandler ah = m_cache.ActionHandlerAccessor;
-		////-			if (ah != null && m_hmark != 0)
-		////-			{
-		////-				if (ah.get_TasksSinceMark(true))
-		////-					ah.CollapseToMark(m_hmark, "Undo Entry", "Redo Entry");
-		////-				else
-		////-					ah.DiscardToMark(m_hmark);
-		////-				m_hmark = 0;
-		////-			}
-		//			base.OnLostFocus(e);
-		//		}
-
-
 #if RANDYTODO
 		/// <summary>
 		///	see if it makes sense to provide the "delete record" command now
@@ -1073,53 +1052,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				// 1. Remove the domain from the sense shown in the second column.
 				// 2. Delete the sense iff it is now empty except for the definition shown.
 				// 3. Delete the entry iff the entry now has no senses.
-#if false // JohnT: don't understand the following code at all. In particular it makes no sense
-				// to use ihvoRoot to index rgvsli; ihvoRoot is always zero in this view, it has only one root.
-				// Possibly this was an unsuccessful attempt to adapt some generic code I wrote to this
-				// particular application involving senses and entries?
-				// I'm leaving it in existence for now in case the original author turns up and
-				// can explain what he was getting at.
-				int cLevels = vwsel.get_BoxDepth(true);
-				int iLevel;
-				int cBoxes = -1;
-				int iBox = -1;
-				VwBoxType[] rgvbt = new VwBoxType[cLevels];
-				VwBoxType vbt = VwBoxType.kvbtUnknown;
-				for (iLevel = 0; iLevel < cLevels; ++iLevel)
-				{
-					vbt = vwsel.get_BoxType(false, iLevel);
-					if (vbt == VwBoxType.kvbtTableCell)
-					{
-						cBoxes = vwsel.get_BoxCount(true, iLevel);
-						iBox = vwsel.get_BoxIndex(true, iLevel);
-						break;
-					}
-				}
-				Debug.Assert(cBoxes == 2);
-				Debug.Assert(iBox != -1);
-				int hvoEntry;
-				int hvoSense;
-				if (iBox == 0)
-				{
-					hvoEntry = rgvsli[ihvoRoot].hvo;
-					IVwSelection vwsel2 = m_rootb.MakeSelInBox(vwsel, false, iLevel, 1,
-						true, false, false);
-					SelLevInfo[] rgvsli2 = SelLevInfo.AllTextSelInfo(vwsel, vwsel2.CLevels(false) - 1,
-						out ihvoRoot, out tag, out cpropPrevious, out ichAnchor, out ichEnd,
-						out ws, out fAssocPrev, out ihvoEnd, out ttp);
-					hvoSense = rgvsli2[ihvoRoot].hvo;
-				}
-				else
-				{
-					hvoSense = rgvsli[ihvoRoot].hvo;
-					IVwSelection vwsel2 = m_rootb.MakeSelInBox(vwsel, false, iLevel, 0,
-						true, false, false);
-					SelLevInfo[] rgvsli2 = SelLevInfo.AllTextSelInfo(vwsel, vwsel2.CLevels(false) - 1,
-						out ihvoRoot, out tag, out cpropPrevious, out ichAnchor, out ichEnd,
-						out ws, out fAssocPrev, out ihvoEnd, out ttp);
-					hvoEntry = rgvsli2[ihvoRoot].hvo;
-				}
-#else
 				int cvsli = tsi.Levels(false) - 1;
 				int tag = tsi.ContainingObjectTag(cvsli - 1);
 				Debug.Assert(cvsli >= 1); // there should be at least one level (each row is a sense)
@@ -1128,7 +1060,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				// want to process.
 				int hvoSense = tsi.ContainingObject(cvsli - 1);
 				int hvoEntry = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoSense).Owner.Hvo;
-#endif
 				// If this was an editable object, it no longer is, because it's about to no longer exist.
 				RDEVc.EditableObjectsRemove(hvoSense);
 

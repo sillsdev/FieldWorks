@@ -67,6 +67,7 @@ namespace LanguageExplorer.Impls
 		private ISubscriber _subscriber;
 		[Import]
 		private IFlexApp _flexApp;
+		static bool _inUndoRedo; // true while executing an Undo/Redo command.
 		// Used to count the number of times we've been asked to suspend Idle processing.
 		private int _countSuspendIdleProcessing;
 		/// <summary>
@@ -618,7 +619,22 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Gets the focused control of the window
 		/// </summary>
-		public Control FocusedControl => FromHandle(Win32.GetFocus());
+		public Control FocusedControl
+		{
+			get
+			{
+				Control focusControl = null;
+				if (PropertyTable.PropertyExists("FirstControlToHandleMessages"))
+				{
+					focusControl = PropertyTable.GetValue<Control>("FirstControlToHandleMessages");
+				}
+				if (focusControl == null || focusControl.IsDisposed)
+				{
+					focusControl = FromHandle(Win32.GetFocus());
+				}
+				return focusControl;
+			}
+		}
 
 		/// <summary>
 		/// Gets the data object cache.
@@ -716,6 +732,8 @@ namespace LanguageExplorer.Impls
 			{
 				File.Delete(CrashOnStartupDetectorPathName);
 			}
+
+			Application.Idle += Application_Idle;
 		}
 
 		/// <summary>
@@ -929,6 +947,8 @@ namespace LanguageExplorer.Impls
 
 			if (disposing)
 			{
+				Application.Idle -= Application_Idle;
+
 				// Quit responding to messages early on.
 				Subscriber.Unsubscribe("MigrateOldConfigurations", MigrateOldConfigurations);
 
@@ -1509,25 +1529,44 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		private void EditMenu_Opening(object sender, EventArgs e)
+		private void SetupEditUndoAndRedoMenus()
 		{
-			var hasActiveView = _viewHelper.ActiveView != null;
-			selectAllToolStripMenuItem.Enabled = hasActiveView;
-			cutToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper.CanCut());
-			copyToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper.CanCopy());
-			pasteToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper.CanPaste());
-			pasteHyperlinkToolStripMenuItem.Enabled = (hasActiveView
-				&& _viewHelper.ActiveView.EditingHelper is RootSiteEditingHelper
-				&& ((RootSiteEditingHelper)_viewHelper.ActiveView.EditingHelper).CanPasteUrl());
-#if RANDYTODO
-			// TODO: Handle enabling/disabling other Edit menu/toolbar items, such as Undo & Redo.
-#else
-			// TODO: In the meantime, just go with disabled.
-			undoToolStripMenuItem.Enabled = false;
-			redoToolStripMenuItem.Enabled = false;
-			undoToolStripButton.Enabled = false;
-			redoToolStripButton.Enabled = false;
-#endif
+			// Set basic values on the pessimistic side.
+			var ah = Cache.DomainDataByFlid.GetActionHandler();
+			string rawUndoText;
+			var undoEnabled = ah.UndoableSequenceCount > 0;
+			var redoEnabled = ah.RedoableSequenceCount > 0;
+			string rawRedoText;
+			// Q: Is the focused control an instance of IUndoRedoHandler
+			var asIUndoRedoHandler = FocusedControl as IUndoRedoHandler;
+			if (asIUndoRedoHandler != null)
+			{
+				// A1: Yes: Let it set up the text and enabled state for both menus.
+				// The handler may opt to not fret about, or or the other,
+				// so this method may need to deal with in the end, after all.
+				rawUndoText = asIUndoRedoHandler.UndoText;
+				undoEnabled = asIUndoRedoHandler.UndoEnabled(undoEnabled);
+				rawRedoText = asIUndoRedoHandler.RedoText;
+				redoEnabled = asIUndoRedoHandler.RedoEnabled(redoEnabled);
+			}
+			else
+			{
+				// A2: No: Deal with it here.
+				// Normal undo processing.
+				var baseUndo = undoEnabled ? ah.GetUndoText() : LanguageExplorerResources.Undo;
+				rawUndoText = string.IsNullOrEmpty(baseUndo) ? LanguageExplorerResources.Undo : baseUndo;
+
+				// Normal Redo processing.
+				var baseRedo = redoEnabled ? ah.GetRedoText() : LanguageExplorerResources.Redo;
+				rawRedoText = string.IsNullOrEmpty(baseRedo) ? LanguageExplorerResources.Redo : baseRedo;
+			}
+			undoToolStripMenuItem.Text = FwUtils.ReplaceUnderlineWithAmpersand(rawUndoText);
+			undoToolStripMenuItem.Enabled = undoEnabled;
+			redoToolStripMenuItem.Text = FwUtils.ReplaceUnderlineWithAmpersand(rawRedoText);
+			redoToolStripMenuItem.Enabled = redoEnabled;
+			// Standard toolstrip buttons.
+			undoToolStripButton.Enabled = undoEnabled;
+			redoToolStripButton.Enabled = redoEnabled;
 		}
 
 		private void Edit_Paste_Hyperlink(object sender, EventArgs e)
@@ -1648,6 +1687,84 @@ very simple minor adjustments. ;)"
 			{
 				AreaServices.HandleDlg(optionsDlg, Cache, _flexApp, this, PropertyTable, Publisher);
 			}
+		}
+
+		private void Edit_Undo_Click(object sender, EventArgs e)
+		{
+			var focusedControl = FocusedControl;
+			var asIUndoRedoHandler = focusedControl as IUndoRedoHandler;
+			if (asIUndoRedoHandler != null)
+			{
+				if (asIUndoRedoHandler.HandleUndo(sender, e))
+				{
+					return;
+				}
+				// For all the bother, the IUndoRedoHandler impl couldn't be bothered, so do it here.
+			}
+
+			var ah = Cache.DomainDataByFlid.GetActionHandler();
+			using (new WaitCursor(this))
+			{
+				try
+				{
+					_inUndoRedo = true;
+					ah.Undo();
+				}
+				finally
+				{
+					_inUndoRedo = false;
+				}
+			}
+			// Trigger a selection changed, to force updating of controls like the writing system combo
+			// that might be affected, if relevant.
+			var focusRootSite = focusedControl as SimpleRootSite;
+			if (focusRootSite != null && !focusRootSite.IsDisposed && focusRootSite.RootBox?.Selection != null)
+			{
+				focusRootSite.SelectionChanged(focusRootSite.RootBox, focusRootSite.RootBox.Selection);
+			}
+		}
+
+		private void Edit_Redo_Click(object sender, EventArgs e)
+		{
+			var focusedControl = FocusedControl;
+			var asIUndoRedoHandler = focusedControl as IUndoRedoHandler;
+			if (asIUndoRedoHandler != null)
+			{
+				if (asIUndoRedoHandler.HandleRedo(sender, e))
+				{
+					return;
+				}
+				// For all the bother, the IUndoRedoHandler impl couldn't be bothered, so do it here.
+			}
+
+			var ah = Cache.DomainDataByFlid.GetActionHandler();
+			using (new WaitCursor(this))
+			{
+				try
+				{
+					_inUndoRedo = true;
+					ah.Redo();
+				}
+				finally
+				{
+					_inUndoRedo = false;
+				}
+			}
+		}
+
+		private void Application_Idle(object sender, EventArgs e)
+		{
+			_dataNavigationManager.SetEnabledStateForWidgets();
+
+			var hasActiveView = _viewHelper.ActiveView != null;
+			selectAllToolStripMenuItem.Enabled = hasActiveView;
+			cutToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper.CanCut());
+			copyToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper.CanCopy());
+			pasteToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper.CanPaste());
+			pasteHyperlinkToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)_viewHelper.ActiveView.EditingHelper).CanPasteUrl());
+
+			// Enable/disable toolbar buttons.
+			SetupEditUndoAndRedoMenus();
 		}
 	}
 }

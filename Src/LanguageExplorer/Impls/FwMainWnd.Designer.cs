@@ -130,12 +130,12 @@ namespace LanguageExplorer.Impls
 			this.mainContainer = new LanguageExplorer.Controls.CollapsingSplitContainer();
 			this._sidePane = new LanguageExplorer.Controls.SilSidePane.SidePane();
 			this._rightPanel = new System.Windows.Forms.Panel();
-			this.toolStripView = new System.Windows.Forms.ToolStrip();
-			this.toolStripButtonChangeFilterClearAll = new System.Windows.Forms.ToolStripButton();
 			this.toolStripInsert = new System.Windows.Forms.ToolStrip();
 			this.toolStripFormat = new System.Windows.Forms.ToolStrip();
 			this.toolStripComboBoxWritingSystem = new System.Windows.Forms.ToolStripComboBox();
 			this.toolStripComboBoxStyles = new System.Windows.Forms.ToolStripComboBox();
+			this.toolStripView = new System.Windows.Forms.ToolStrip();
+			this.toolStripButtonChangeFilterClearAll = new System.Windows.Forms.ToolStripButton();
 			this._statusbar = new System.Windows.Forms.StatusBar();
 			this.statusBarPanelMessage = new System.Windows.Forms.StatusBarPanel();
 			this.statusBarPanelProgress = new System.Windows.Forms.StatusBarPanel();
@@ -150,8 +150,8 @@ namespace LanguageExplorer.Impls
 			this.mainContainer.Panel1.SuspendLayout();
 			this.mainContainer.Panel2.SuspendLayout();
 			this.mainContainer.SuspendLayout();
-			this.toolStripView.SuspendLayout();
 			this.toolStripFormat.SuspendLayout();
+			this.toolStripView.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelMessage)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelProgress)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelArea)).BeginInit();
@@ -205,7 +205,7 @@ namespace LanguageExplorer.Impls
 			this.newFieldWorksProjectToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("newFieldWorksProjectToolStripMenuItem.Image")));
 			this.newFieldWorksProjectToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.newFieldWorksProjectToolStripMenuItem.Name = "newFieldWorksProjectToolStripMenuItem";
-			this.newFieldWorksProjectToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
+			this.newFieldWorksProjectToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
 			this.newFieldWorksProjectToolStripMenuItem.Text = "&New FieldWorks Project...";
 			this.newFieldWorksProjectToolStripMenuItem.ToolTipText = "Create a new FieldWorks project.";
 			this.newFieldWorksProjectToolStripMenuItem.Click += new System.EventHandler(this.File_New_FieldWorks_Project);
@@ -216,7 +216,7 @@ namespace LanguageExplorer.Impls
 			this.openToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.openToolStripMenuItem.Name = "openToolStripMenuItem";
 			this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-			this.openToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
+			this.openToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
 			this.openToolStripMenuItem.Text = "&Open...";
 			this.openToolStripMenuItem.ToolTipText = "Open an existing FieldWorks project.";
 			this.openToolStripMenuItem.Click += new System.EventHandler(this.File_Open);
@@ -224,7 +224,7 @@ namespace LanguageExplorer.Impls
 			// toolStripMenuItem1
 			// 
 			this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-			this.toolStripMenuItem1.Size = new System.Drawing.Size(212, 6);
+			this.toolStripMenuItem1.Size = new System.Drawing.Size(208, 6);
 			// 
 			// projectManagementToolStripMenuItem
 			// 
@@ -237,7 +237,7 @@ namespace LanguageExplorer.Impls
             this.deleteProjectToolStripMenuItem,
             this.createShortcutOnDesktopToolStripMenuItem});
 			this.projectManagementToolStripMenuItem.Name = "projectManagementToolStripMenuItem";
-			this.projectManagementToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
+			this.projectManagementToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
 			this.projectManagementToolStripMenuItem.Text = "Project &Management";
 			this.projectManagementToolStripMenuItem.Click += new System.EventHandler(this.File_Create_Shortcut_on_Desktop);
 			// 
@@ -299,13 +299,13 @@ namespace LanguageExplorer.Impls
 			// toolStripMenuItem8
 			// 
 			this.toolStripMenuItem8.Name = "toolStripMenuItem8";
-			this.toolStripMenuItem8.Size = new System.Drawing.Size(212, 6);
+			this.toolStripMenuItem8.Size = new System.Drawing.Size(208, 6);
 			// 
 			// archiveWithRAMPSILToolStripMenuItem
 			// 
 			this.archiveWithRAMPSILToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("archiveWithRAMPSILToolStripMenuItem.Image")));
 			this.archiveWithRAMPSILToolStripMenuItem.Name = "archiveWithRAMPSILToolStripMenuItem";
-			this.archiveWithRAMPSILToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
+			this.archiveWithRAMPSILToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
 			this.archiveWithRAMPSILToolStripMenuItem.Text = "&Archive with RAMP (SIL)...";
 			this.archiveWithRAMPSILToolStripMenuItem.ToolTipText = "Starts RAMP (if it is installed) and prepares an archive package for uploading.";
 			this.archiveWithRAMPSILToolStripMenuItem.Click += new System.EventHandler(this.File_Archive_With_RAMP);
@@ -313,28 +313,28 @@ namespace LanguageExplorer.Impls
 			// uploadToWebonaryToolStripMenuItem
 			// 
 			this.uploadToWebonaryToolStripMenuItem.Name = "uploadToWebonaryToolStripMenuItem";
-			this.uploadToWebonaryToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
+			this.uploadToWebonaryToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
 			this.uploadToWebonaryToolStripMenuItem.Text = "Upload to &Webonary...";
 			this.uploadToWebonaryToolStripMenuItem.Click += new System.EventHandler(this.UploadToWebonary_Click);
 			// 
 			// toolStripMenuItem9
 			// 
 			this.toolStripMenuItem9.Name = "toolStripMenuItem9";
-			this.toolStripMenuItem9.Size = new System.Drawing.Size(212, 6);
+			this.toolStripMenuItem9.Size = new System.Drawing.Size(208, 6);
 			// 
 			// printToolStripMenuItem
 			// 
 			this.printToolStripMenuItem.Enabled = false;
 			this.printToolStripMenuItem.Name = "printToolStripMenuItem";
 			this.printToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-			this.printToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
+			this.printToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
 			this.printToolStripMenuItem.Text = "&Print...";
 			this.printToolStripMenuItem.ToolTipText = "Print";
 			// 
 			// toolStripMenuItem10
 			// 
 			this.toolStripMenuItem10.Name = "toolStripMenuItem10";
-			this.toolStripMenuItem10.Size = new System.Drawing.Size(212, 6);
+			this.toolStripMenuItem10.Size = new System.Drawing.Size(208, 6);
 			// 
 			// importToolStripMenuItem
 			// 
@@ -342,7 +342,7 @@ namespace LanguageExplorer.Impls
             this.standardFormatLexiconToolStripMenuItem,
             this.translatedListContentToolStripMenuItem1});
 			this.importToolStripMenuItem.Name = "importToolStripMenuItem";
-			this.importToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
+			this.importToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
 			this.importToolStripMenuItem.Text = "&Import";
 			// 
 			// standardFormatLexiconToolStripMenuItem
@@ -363,19 +363,19 @@ namespace LanguageExplorer.Impls
 			// 
 			this.exportToolStripMenuItem.Enabled = false;
 			this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-			this.exportToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
+			this.exportToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
 			this.exportToolStripMenuItem.Text = "&Export...";
 			this.exportToolStripMenuItem.ToolTipText = "Export this FieldWorks project to a file.";
 			// 
 			// toolStripMenuItem3
 			// 
 			this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-			this.toolStripMenuItem3.Size = new System.Drawing.Size(212, 6);
+			this.toolStripMenuItem3.Size = new System.Drawing.Size(208, 6);
 			// 
 			// closeToolStripMenuItem
 			// 
 			this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-			this.closeToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
+			this.closeToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
 			this.closeToolStripMenuItem.Text = "&Close";
 			this.closeToolStripMenuItem.ToolTipText = "Close this project.";
 			this.closeToolStripMenuItem.Click += new System.EventHandler(this.File_CloseWindow);
@@ -405,7 +405,6 @@ namespace LanguageExplorer.Impls
 			this._editToolStripMenuItem.Name = "_editToolStripMenuItem";
 			this._editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
 			this._editToolStripMenuItem.Text = "&Edit";
-			this._editToolStripMenuItem.DropDownOpening += new System.EventHandler(this.EditMenu_Opening);
 			// 
 			// undoToolStripMenuItem
 			// 
@@ -416,6 +415,7 @@ namespace LanguageExplorer.Impls
 			this.undoToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
 			this.undoToolStripMenuItem.Text = "&Undo";
 			this.undoToolStripMenuItem.ToolTipText = "Undo previous actions.";
+			this.undoToolStripMenuItem.Click += new System.EventHandler(this.Edit_Undo_Click);
 			// 
 			// redoToolStripMenuItem
 			// 
@@ -426,6 +426,7 @@ namespace LanguageExplorer.Impls
 			this.redoToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
 			this.redoToolStripMenuItem.Text = "&Redo";
 			this.redoToolStripMenuItem.ToolTipText = "Redo previous actions.";
+			this.redoToolStripMenuItem.Click += new System.EventHandler(this.Edit_Redo_Click);
 			// 
 			// toolStripMenuItem11
 			// 
@@ -1005,6 +1006,7 @@ namespace LanguageExplorer.Impls
 			this.undoToolStripButton.Size = new System.Drawing.Size(24, 24);
 			this.undoToolStripButton.Text = "Undo";
 			this.undoToolStripButton.ToolTipText = "Undo previous actions.";
+			this.undoToolStripButton.Click += new System.EventHandler(this.Edit_Undo_Click);
 			// 
 			// redoToolStripButton
 			// 
@@ -1015,6 +1017,7 @@ namespace LanguageExplorer.Impls
 			this.redoToolStripButton.Size = new System.Drawing.Size(24, 24);
 			this.redoToolStripButton.Text = "Redo";
 			this.redoToolStripButton.ToolTipText = "Redo previous actions.";
+			this.redoToolStripButton.Click += new System.EventHandler(this.Edit_Redo_Click);
 			// 
 			// toolStripButton_Refresh
 			// 
@@ -1150,31 +1153,10 @@ namespace LanguageExplorer.Impls
 			this._rightPanel.Size = new System.Drawing.Size(647, 381);
 			this._rightPanel.TabIndex = 1;
 			// 
-			// toolStripView
-			// 
-			this.toolStripView.Dock = System.Windows.Forms.DockStyle.None;
-			this.toolStripView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButtonChangeFilterClearAll});
-			this.toolStripView.Location = new System.Drawing.Point(299, 0);
-			this.toolStripView.Name = "toolStripView";
-			this.toolStripView.Size = new System.Drawing.Size(35, 25);
-			this.toolStripView.TabIndex = 5;
-			// 
-			// toolStripButtonChangeFilterClearAll
-			// 
-			this.toolStripButtonChangeFilterClearAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButtonChangeFilterClearAll.Enabled = false;
-			this.toolStripButtonChangeFilterClearAll.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonChangeFilterClearAll.Image")));
-			this.toolStripButtonChangeFilterClearAll.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButtonChangeFilterClearAll.Name = "toolStripButtonChangeFilterClearAll";
-			this.toolStripButtonChangeFilterClearAll.Size = new System.Drawing.Size(23, 22);
-			this.toolStripButtonChangeFilterClearAll.Text = "toolStripButtonChangeFilterClearAll";
-			this.toolStripButtonChangeFilterClearAll.ToolTipText = "Turn off all filters";
-			// 
 			// toolStripInsert
 			// 
 			this.toolStripInsert.Dock = System.Windows.Forms.DockStyle.None;
-			this.toolStripInsert.Location = new System.Drawing.Point(339, 0);
+			this.toolStripInsert.Location = new System.Drawing.Point(338, 0);
 			this.toolStripInsert.Name = "toolStripInsert";
 			this.toolStripInsert.Size = new System.Drawing.Size(111, 25);
 			this.toolStripInsert.TabIndex = 4;
@@ -1185,7 +1167,7 @@ namespace LanguageExplorer.Impls
 			this.toolStripFormat.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripComboBoxWritingSystem,
             this.toolStripComboBoxStyles});
-			this.toolStripFormat.Location = new System.Drawing.Point(456, 0);
+			this.toolStripFormat.Location = new System.Drawing.Point(452, 0);
 			this.toolStripFormat.Name = "toolStripFormat";
 			this.toolStripFormat.Size = new System.Drawing.Size(258, 25);
 			this.toolStripFormat.TabIndex = 3;
@@ -1205,6 +1187,27 @@ namespace LanguageExplorer.Impls
 			this.toolStripComboBoxStyles.Name = "toolStripComboBoxStyles";
 			this.toolStripComboBoxStyles.Size = new System.Drawing.Size(121, 25);
 			this.toolStripComboBoxStyles.ToolTipText = "Styles";
+			// 
+			// toolStripView
+			// 
+			this.toolStripView.Dock = System.Windows.Forms.DockStyle.None;
+			this.toolStripView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButtonChangeFilterClearAll});
+			this.toolStripView.Location = new System.Drawing.Point(300, 0);
+			this.toolStripView.Name = "toolStripView";
+			this.toolStripView.Size = new System.Drawing.Size(35, 25);
+			this.toolStripView.TabIndex = 5;
+			// 
+			// toolStripButtonChangeFilterClearAll
+			// 
+			this.toolStripButtonChangeFilterClearAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.toolStripButtonChangeFilterClearAll.Enabled = false;
+			this.toolStripButtonChangeFilterClearAll.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonChangeFilterClearAll.Image")));
+			this.toolStripButtonChangeFilterClearAll.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButtonChangeFilterClearAll.Name = "toolStripButtonChangeFilterClearAll";
+			this.toolStripButtonChangeFilterClearAll.Size = new System.Drawing.Size(23, 22);
+			this.toolStripButtonChangeFilterClearAll.Text = "toolStripButtonChangeFilterClearAll";
+			this.toolStripButtonChangeFilterClearAll.ToolTipText = "Turn off all filters";
 			// 
 			// _statusbar
 			// 
@@ -1276,10 +1279,10 @@ namespace LanguageExplorer.Impls
 			this.mainContainer.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.mainContainer)).EndInit();
 			this.mainContainer.ResumeLayout(false);
-			this.toolStripView.ResumeLayout(false);
-			this.toolStripView.PerformLayout();
 			this.toolStripFormat.ResumeLayout(false);
 			this.toolStripFormat.PerformLayout();
+			this.toolStripView.ResumeLayout(false);
+			this.toolStripView.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelMessage)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelProgress)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelArea)).EndInit();

@@ -39,8 +39,6 @@
 		<command id="CmdShowCharMap" label="Special _character..." message="ShowCharMap" icon="SpecialCharacter"/>
 		<command id="CmdFormatStyle" label="_Styles..." message="FormatStyle"/>
 		<command id="CmdFormatApplyStyle" label="_Apply Style..." message="FormatApplyStyle"/>
-		<command id="CmdUndo" label="_Undo" message="Undo" icon="Undo" shortcut="Ctrl+Z" a10status="STUB_ONLY" />
-		<command id="CmdRedo" label="_Redo" message="Redo" icon="Redo" shortcut="Ctrl+Y" a10status="STUB_ONLY" />
 		<command id="CmdCopy" label="_Copy" message="EditCopy" icon="Copy" shortcut="Ctrl+C" a10status="PARTIALLY_DONE" />
 		<command id="CmdCut" label="Cu_t" message="EditCut" icon="Cut" shortcut="Ctrl+X" a10status="PARTIALLY_DONE" />
 		<command id="CmdPaste" label="_Paste" message="EditPaste" icon="Paste" shortcut="Ctrl+V" a10status="PARTIALLY_DONE" />
@@ -341,8 +339,6 @@
 	-->
 	<menubar>
 		<menu id="Edit" label="_Edit" b4InsertMenu="true" a10status="PARTIALLY_DONE" >
-			<item command="CmdUndo" a10status="STUB_ONLY" />
-			<item command="CmdRedo" a10status="STUB_ONLY" />
 			<item label="-" translate="do not translate" a10status="DONE" />
 			<item command="CmdCut" a10status="DONE" />
 			<item command="CmdCopy" a10status="DONE" />

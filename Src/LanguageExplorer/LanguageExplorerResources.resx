@@ -1203,4 +1203,10 @@ you expect.</value>
   <data name="ProblemRestoringSettings" xml:space="preserve">
     <value>There was a problem while trying to restore the settings.  Your settings will be restored to their default values.</value>
   </data>
+  <data name="Redo" xml:space="preserve">
+    <value>_Redo</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>_Undo</value>
+  </data>
 </root>

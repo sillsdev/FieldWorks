@@ -101,7 +101,7 @@ namespace LanguageExplorer
 			SetEnabledStateForWidgets();
 		}
 
-		private void SetEnabledStateForWidgets()
+		internal void SetEnabledStateForWidgets()
 		{
 			if (_clerk == null || _clerk.ListSize == 0)
 			{

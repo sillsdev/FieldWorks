@@ -106,9 +106,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		private void Init(PrintPageEventArgs e)
 		{
-#if false
-			long x1 = System.DateTime.Now.Ticks;
-#endif
 			// Set these now because the Graphics object will be locked below.
 			m_rcDst = m_rcSrc = new Rect(0, 0, (int)e.Graphics.DpiX, (int)e.Graphics.DpiY);
 
@@ -164,10 +161,6 @@ namespace SIL.FieldWorks.Common.RootSites
 					e.Graphics.ReleaseHdc(hdc);
 				}
 			}
-#if false
-			long x2 = System.DateTime.Now.Ticks;
-			Debug.WriteLine("PrintRootSite.Init() took " + DeltaTime(x1,x2) + " seconds.");
-#endif
 		}
 		#endregion
 

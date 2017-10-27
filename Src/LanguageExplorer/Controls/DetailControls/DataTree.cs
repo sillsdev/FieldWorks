@@ -513,19 +513,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			CheckDisposed();
-
-#if false
-			// This will be for real time updates, which is kind of expensive these days.
-			if (tag == (int)FDO.Ling.LexEntry.LexEntryTags.kflidCitationForm
-				|| tag == (int)FDO.Ling.MoForm.MoFormTags.kflidForm)
-			{
-				if (m_rch != null)
-				{
-					// We need to refresh the record list if homograph numbers change.
-					m_rch.Fixup(true);
-				}
-			}
-#endif
 			// No, since it can only be null, if 'this' has been disposed.
 			// That probably means the corresponding RemoveNotication was not done.
 			// The current Dispose method has done this Remove call for quite a while now,

@@ -200,7 +200,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		void IAnalysisControlInternal.Undo()
 		{
-			OnUndo(null);
+			HandleUndo(null, null);
 		}
 
 		#endregion

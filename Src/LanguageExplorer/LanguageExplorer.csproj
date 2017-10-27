@@ -302,6 +302,7 @@
     <Compile Include="Impls\PropertyTable.cs" />
     <Compile Include="Impls\Publisher.cs" />
     <Compile Include="Impls\Subscriber.cs" />
+    <Compile Include="IUndoRedoHandler.cs" />
     <Compile Include="LanguageExplorerCompositionServices.cs" />
     <Compile Include="Controls\DetailControls\SliceContextMenuFactory.cs" />
     <Compile Include="Controls\ToolStripButtonFactory.cs" />

@@ -1,4 +1,7 @@
 //#define TraceMouseCalls		// uncomment this line to trace mouse messages
+// Copyright (c) ????-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
@@ -25,7 +28,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	#region SandboxBase class
 
-	public partial class SandboxBase : RootSite
+	public partial class SandboxBase : RootSite, IUndoRedoHandler
 	{
 		#region Model
 
@@ -670,50 +673,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-#if RANDYTODO
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Disables/enables the Edit/Undo menu item
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns><c>true</c></returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnDisplayUndo(object commandObject, ref UIItemDisplayProperties display)
-		{
-			if (m_caches.DataAccess.IsDirty())
-			{
-				display.Enabled = true;
-				display.Text = ITextStrings.ksUndoAllChangesHere;
-				return true;
-			}
-			else
-			{
-				return false; // we don't want to handle the command.
-			}
-		}
-#endif
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// This function will undo the last changes done to the project.
-		/// This function is executed when the user clicks the undo menu item.
-		/// </summary>
-		/// <param name="args">Unused</param>
-		/// <returns><c>true</c> if handled, otherwise <c>false</c></returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnUndo(object args)
-		{
-			if (m_caches.DataAccess.IsDirty())
-			{
-				ResyncSandboxToDatabase();
-				m_fHaveUndone = true;
-				return true;
-			}
-			// We didn't handle it; some other colleague may be able to undo something we don't know about.
-			return false;
-		}
-
 		/// <summary>
 		/// Triggered to tell clients that the Sandbox has changed (e.g. been edited from
 		/// its initial state) to help determine whether we should allow trying to save or
@@ -729,17 +688,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				MultipleAnalysisColor = NoGuessColor;
 			if (SandboxChangedEvent != null)
 				SandboxChangedEvent(this, new SandboxChangedEventArgs(fIsEdited));
-		}
-
-		/// <summary>
-		/// Resync the sandbox and reconstruct the rootbox to match the current state
-		/// of the database.
-		/// </summary>
-		internal void ResyncSandboxToDatabase()
-		{
-			CheckDisposed();
-			// hvoAnnotation should be a constant
-			ReconstructForWordBundleAnalysis(m_hvoInitialWag);
 		}
 
 		protected void ReconstructForWordBundleAnalysis(int hvoWag)
@@ -765,51 +713,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				CurrentAnalysisTree.Analysis.Hvo : 0;
 			m_caches.DataAccess.ClearDirty(); // indicate we've loaded or saved.
 			OnUpdateEdited();	// tell client we've updated the state of the sandbox.
-		}
-
-#if RANDYTODO
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Disables/enables the Edit/Undo menu item
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns><c>true</c></returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnDisplayRedo(object commandObject, ref UIItemDisplayProperties display)
-		{
-			// if the cache isn't dirty and we've done an Undo inside the annotation, we want
-			// a special message saying we can't redo. If the cache IS dirty, the user has been
-			// doing something since the Undo, so shouldn't expect Redo;
-			if (m_caches.DataAccess.IsDirty() || m_fHaveUndone)
-			{
-				display.Enabled = false;
-				if (m_fHaveUndone)
-					display.Text = ITextStrings.ksCannotRedoChangesHere;
-				// Otherwise just leave it a disabled 'Redo'; the user isn't expecting to be
-				// able to redo anything since he's 'done' something most recently.
-				return true;
-			}
-			else
-				return false; // we don't want to handle the command.
-		}
-#endif
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Consistent with OnDisplayRedo.
-		/// </summary>
-		/// <param name="args">Unused</param>
-		/// <returns><c>true</c> if handled, otherwise <c>false</c></returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnRedo(object args)
-		{
-			if (m_caches.DataAccess.IsDirty() || m_fHaveUndone)
-			{
-				return true; // We (didn't) do it.
-			}
-			// We didn't handle it; some other colleague may be able to undo something we don't know about.
-			return false;
 		}
 
 		/// <summary>
@@ -2343,25 +2246,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// Simulate a mouse down on the arrow.
 				ShowComboForSelection(selArrow, true);
 			}
-
-			// another approach that didn't work out because the boxes we want to navigate through
-			// are INSIDE the paragraph that is the lowest level we can get at.
-			//			int level = selOrig.get_BoxDepth(false);
-			//			int index = selOrig.get_BoxIndex(false, level - 1);
-			//			if (index == 0)
-			//			{
-			//				return true; // can't do anything, no pull-down arrow associated.
-			//				// Enhance JohnT: when we eliminate the extra arrows in the Morph line,
-			//				// this will get more complicated.
-			//			}
-			//			IVwSelection selArrow = RootBox.MakeSelInBox(selOrig, false, level - 1, 0, true, false, false);
-			//			if (selArrow == null)
-			//				return true; // again nothing we can do.
-			//			if (selArrow.SelType != VwSelType.kstPicture)
-			//				return true; // no arrow, nothing to do.
-			//
-			//			// Simulate a mouse down on the arrow.
-			//			ShowComboForSelection(selArrow, true);
 		}
 
 		/// <summary>
@@ -3641,6 +3525,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private int m_multipleAnalysisColor = NoGuessColor;
 
+		private string _undoText;
+		private bool _undoEnabled;
+		private string _redoText;
+		private bool _redoEnabled;
+
 		protected override void Select(bool directed, bool forward)
 		{
 			MakeDefaultSelection();
@@ -4742,6 +4631,67 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 #endif
 
 		#endregion Overrides of RootSite
+
+		#region Implementation of IUndoRedoHandler
+
+		/// <summary>
+		/// Get the text for the Undo menu.
+		/// </summary>
+		string IUndoRedoHandler.UndoText => ITextStrings.ksUndoAllChangesHere;
+
+		/// <summary>
+		/// Get the enabled condition for the Undo menu.
+		/// </summary>
+		bool IUndoRedoHandler.UndoEnabled(bool callerEnableOpinion)
+		{
+			return m_caches.DataAccess.IsDirty() || callerEnableOpinion;
+		}
+
+		/// <summary>
+		/// Handle Undo event
+		/// </summary>
+		public bool HandleUndo(object sender, EventArgs e)
+		{
+			if (m_caches.DataAccess.IsDirty())
+			{
+				ReconstructForWordBundleAnalysis(m_hvoInitialWag);
+				m_fHaveUndone = true;
+				return true;
+			}
+			// We didn't handle it. Caller may be able to undo something we don't know about.
+			return false;
+		}
+
+		/// <summary>
+		/// Get the text for the Redo menu.
+		/// </summary>
+		string IUndoRedoHandler.RedoText => (m_caches.DataAccess.IsDirty() || m_fHaveUndone) && m_fHaveUndone ? ITextStrings.ksCannotRedoChangesHere : LanguageExplorerResources.Redo;
+
+		/// <summary>
+		/// Get the enabled condition for the Undo menu.
+		/// </summary>
+		bool IUndoRedoHandler.RedoEnabled(bool callerEnableOpinion)
+		{
+			// if the cache isn't dirty and we've done an Undo inside the annotation, we want
+			// a special message saying we can't redo. If the cache IS dirty, the user has been
+			// doing something since the Undo, so shouldn't expect Redo;
+			return !m_caches.DataAccess.IsDirty() && !m_fHaveUndone && callerEnableOpinion;
+		}
+
+		/// <summary>
+		/// Handle Redo event
+		/// </summary>
+		bool IUndoRedoHandler.HandleRedo(object sender, EventArgs e)
+		{
+			if (m_caches.DataAccess.IsDirty() || m_fHaveUndone)
+			{
+				return true; // We (didn't) do it.
+			}
+			// We didn't handle it. Caller may be able to undo something we don't know about.
+			return false;
+		}
+
+		#endregion
 	}
 
 	#endregion SandboxBase class

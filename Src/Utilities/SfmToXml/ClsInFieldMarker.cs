@@ -439,21 +439,5 @@ namespace Sfm2Xml
 			}
 			return true;
 		}
-
-#if false
-		public static void SplitString(string xyz, ref ArrayList list)
-		{
-			if (xyz == null || xyz.Length == 0)
-				return;
-			char[] delim = new char[] { ' ' } ;	// , ';', ',', '\t' };
-			string[] values = xyz.Split(delim);
-			foreach (string item in values)
-			{
-				// Make sure we're not dealing with adjacent delimiters or repeated substrings:
-				if (item.Length > 0 && !list.Contains(item))
-					list.Add(item);
-			}
-		}
-#endif
 	}
 }

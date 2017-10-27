@@ -585,23 +585,6 @@ namespace Sfm2Xml
 					string ErrMsg = String.Format(Sfm2XmlStrings.UnhandledException0, e.Message);
 					Log.AddError(ErrMsg);
 				}
-#if false
-				if (m_autoFieldsUsed.Count > 0)
-				{
-					xmlOutput.WriteComment(" This is where the autofield info goes after the data has been processed. ");
-					xmlOutput.WriteStartElement("autofields");
-					foreach(DictionaryEntry autoEntry in m_autoFieldsUsed)
-					{
-						AutoFieldInfo afi = autoEntry.Value as AutoFieldInfo;
-						xmlOutput.WriteStartElement("field");
-						xmlOutput.WriteAttributeString("class", afi.className);
-						xmlOutput.WriteAttributeString("sfm", afi.sfmName);
-						xmlOutput.WriteAttributeString("fwid", afi.fwDest);
-						xmlOutput.WriteEndElement();
-					}
-					xmlOutput.WriteEndElement();
-				}
-#endif
 				// put out the field descriptions with the autofield info integrated in: for xslt processing...
 				comments = nl;
 				comments += " ================================================================" + nl;
@@ -663,15 +646,6 @@ namespace Sfm2Xml
 				xmlOutput.WriteComment(comments);
 
 				OutputInFieldMarkers(xmlOutput);
-
-#if false
-
-				<!-- This is where the autofield information goes.  Needed to make sense
-					-- of the field and Records elements that use autofields -->
-				<autofields>
-					<field class="Entry" sfm="dan" fwid="eires"/>
-				</autofields>
-#endif
 
 				// put out the warnings and errors
 				Log.FlushTo(xmlOutput);
@@ -1905,9 +1879,6 @@ namespace Sfm2Xml
 
 		private bool AddUniqueMarker(ref SortedList foundMarkers, ref byte[] rawData, string markerData, ClsInFieldMarker inFieldMarker, int foundPos, bool isBeginMarker)
 		{
-#if false
-			System.Diagnostics.Debug.WriteLine(" ** Found <" + markerData + "> at position="+foundPos.ToString()+", isBegin="+isBeginMarker.ToString());
-#endif
 			// If the found index already exists in the collection, then we have a possible error condition.
 			if (foundMarkers.Contains(foundPos))
 			{
@@ -2943,27 +2914,6 @@ namespace Sfm2Xml
 				// then walk the 'foundnode.leaf' methods and add until it's null,
 				// then add the pending sfm info
 				return false;
-#if false
-
-
-
-
-
-
-				// find all the currently open parent objects for this new entry
-				ArrayList possibleParents = new ArrayList();
-				SearchHierarcyForParentsOf(m_root, newHierarchy.Name, ref possibleParents);
-				ImportObject bestParent = GetBestOpenParent(possibleParents);
-				if (bestParent != null)
-				{
-					// create the new 'entry'
-					AddNewObject(new ImportObject(newHierarchy.Name, bestParent));
-					return true;
-				}
-				return false;
-//				eded = m_sfmToHierarchy[currentSfm] as ClsHierarchyEntry;
-//				if (mgr.AddNewEntry(needed))
-#endif
 			}
 
 
@@ -3146,65 +3096,6 @@ namespace Sfm2Xml
 #endif
 					return true;
 				}
-				else	// no possible open parent, have to add atleast one entry
-				{
-				}
-//				if (possibleParents.Count == 0)
-//				{
-//					ArrayList neededParents = new ArrayList();
-//					//neededParents.Add(
-//					// this is a case where one or more parents are needed first
-//					// ex: found the begin marker for a 'picture' but there isn't
-//					//     currently a 'sense' open.
-//				}
-#if false
-
-				// First lets take the currentPath items and put them into a hash and add the depth
-				// as the value item.
-				Hashtable currentPathDepths = new Hashtable();
-				int currentPathDepth = 0;
-
-				// walk the tree building the hashtable, just from current up to root
-				ImportObject node = this.Current;
-				while (node != null)
-				{
-					currentPathDepths.Add(node.Name, currentPathDepth++);
-					node = node.Parent;
-				}
-
-					// see if the destination is in the currentPath
-					if (currentPathDepths.ContainsKey(name))
-					{
-						downPath.Push( new ClsPathObject(destination.KEY));
-					}
-					else
-					{
-						// check each ancestor of the destination item
-						string currentBestAncestor = null;
-						int currentBestDepth = Int32.MaxValue;
-						foreach(string name in destination.Ancestors)
-						{
-							if (currentPathDepths.ContainsKey(name))
-							{
-								int depth = (int)(currentPathDepths[name]);
-								if (depth < currentBestDepth)
-								{
-									currentBestAncestor = name;
-									currentBestDepth = depth;
-								}
-							}
-						}
-
-						// see if we've found a common ancestor
-						if (currentBestAncestor != null)
-						{
-							downPath.Push(new ClsPathObject(destination.KEY));
-							downPath.Push(new ClsPathObject(currentBestAncestor));
-						}
-					}
-
-					return downPath;
-#endif
 				return false;
 			}
 
@@ -3215,23 +3106,6 @@ namespace Sfm2Xml
 					return true;
 
 				bool retVal = false;	// not added
-
-
-				// search the tree of open objects and get a list of valid objects to recieve this 'sfm'
-				// once it is correct - it can be optimized, but first get it working...
-				//				if (m_current.CanAddSFM(sfm, m_converter))
-				//				{
-				//					// add the sfm and data to the ImportObject here
-				//					// m_current.a
-				//					return false;
-				//				}
-				//				if (m_current.CanAddSFMasAutoField(sfm, m_converter))
-				//				{
-				//					// add the sfm and data to the ImportObject here
-				//					// m_current.a
-				//					return false;
-				//				}
-
 				// can't add to current, so starting from the root - check the open items
 				ImportObject start = m_root;
 				ArrayList possibleObjects = new ArrayList();

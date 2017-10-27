@@ -49,82 +49,9 @@ namespace LanguageExplorer.Controls.LexText
 
 		#endregion Data members
 
-		#region Properties
-
-#if false
-		private string Gloss
-		{
-			get { return m_txtGloss.Text.Trim(); }
-			set { m_txtGloss.Text = value.Trim(); }
-		}
-
-		public MsaType MsaType
-		{
-			get
-			{
-				CheckDisposed();
-				/* MSAOVERHAUL
-				if (m_msaSelector != null)
-					return m_msaSelector.MSAType;
-				else
-					return MsaType.kStem;
-					*/
-				return MsaType.kStem;
-			}
-			set
-			{
-				CheckDisposed();
-				/* MSAOVERHAUL
-				if (m_msaSelector != null)
-					m_msaSelector.MSAType = value;
-					*/
-
-			}
-		}
-		public FDO.Ling.MoInflAffixSlot Slot
-		{
-			get
-			{
-				CheckDisposed();
-				/* MSAOVERHAUL
-				if (m_msaSelector != null)
-					return m_msaSelector.Slot;
-				else
-					return null;
-					*/
-				return null;
-			}
-			set
-			{
-				CheckDisposed();
-				/* MSAOVERHAUL
-				if (m_msaSelector != null)
-					m_msaSelector.Slot = value;
-					*/
-			}
-		}
-#endif
-
-		#endregion Properties
-
 		private AddNewSenseDlg()
 		{
 			BasicInit();
-
-			// Figure out where to locate the dlg.
-			/*
-			object obj = SettingsKey.GetValue("InsertX");
-			if (obj != null)
-			{
-				int x = (int)obj;
-				int y = (int)SettingsKey.GetValue("InsertY");
-				int width = (int)SettingsKey.GetValue("InsertWidth", Width);
-				int height = (int)SettingsKey.GetValue("InsertHeight", Height);
-				Rectangle rect = new Rectangle(x, y, width, height);
-				ScreenHelper.EnsureVisibleRect(ref rect);
-				DesktopBounds = rect;
-				StartPosition = FormStartPosition.Manual;
-			}*/
 		}
 
 		private void BasicInit()
