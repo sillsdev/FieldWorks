@@ -29,11 +29,13 @@ using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.IO;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
@@ -86,6 +88,7 @@ namespace LanguageExplorer.Impls
 		private DataNavigationManager _dataNavigationManager;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private SendReceiveMenuManager _sendReceiveMenuManager;
+		private WritingSystemListHandler _writingSystemListHandler;
 
 		/// <summary>
 		/// Create new instance of window.
@@ -614,7 +617,7 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Gets the active view of the window
 		/// </summary>
-		public IRootSite ActiveView { get; private set; }
+		public IRootSite ActiveView => _viewHelper.ActiveView;
 
 		/// <summary>
 		/// Gets the focused control of the window
@@ -694,6 +697,9 @@ namespace LanguageExplorer.Impls
 
 			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			_recordClerkRepositoryForTools = new RecordClerkRepository(Cache, flexComponentParameters);
+
+			_writingSystemListHandler = new WritingSystemListHandler(this, Cache, toolStripComboBoxWritingSystem, writingSystemToolStripMenuItem);
+			_writingSystemListHandler.InitializeFlexComponent(flexComponentParameters);
 
 			SetupParserMenuItems();
 
@@ -905,7 +911,7 @@ namespace LanguageExplorer.Impls
 		public ListView ListStyleRecordList => RecordBarControl?.ListView;
 		#endregion
 
-#region Implementation of IPublisherProvider
+		#region Implementation of IPublisherProvider
 
 		/// <summary>
 		/// Get the IPublisher.
@@ -958,6 +964,7 @@ namespace LanguageExplorer.Impls
 				_parserMenuManager?.Dispose();
 				_dataNavigationManager?.Dispose();
 				IdleQueue?.Dispose();
+				_writingSystemListHandler?.Dispose();
 
 				components?.Dispose();
 
@@ -985,6 +992,7 @@ namespace LanguageExplorer.Impls
 			_areaRepository = null;
 			IdleQueue = null;
 			_majorFlexComponentParameters = null;
+			_writingSystemListHandler = null;
 
 			base.Dispose(disposing);
 
@@ -994,12 +1002,12 @@ namespace LanguageExplorer.Impls
 				_recordClerkRepositoryForTools = null;
 			}
 
-			if (disposing && PropertyTable != null)
+			// Leave the PropertyTable for last, since the above stuff may still want to access it, while shutting down.
+			if (disposing)
 			{
-				// Leave the PropertyTable for last, since the above stuff may still want to access it, while shutting down.
-				PropertyTable.Dispose();
-				/*PropertyTable = null;*/
+				PropertyTable?.Dispose();
 			}
+			_propertyTable = null;
 		}
 
 		/// <summary>
@@ -1030,8 +1038,40 @@ namespace LanguageExplorer.Impls
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
-#endregion
+		#endregion
 
+		/// <summary>
+		/// Layout toolstrips by size. (Assume all toolstrips are same height.)
+		///
+		/// The Designer has a hard time keeping the toolbars in the right place, so this puts them where they belong.
+		/// </summary>
+		private void LayoutToolStrips()
+		{
+			SuspendLayout();
+
+			var containerPosition = new Point(0, 0);
+			var containerHeight = 0;
+			// Row[0] is the menu bar.
+			// Row[1] is the toolbar.
+			foreach (var row in toolStripContainer.TopToolStripPanel.Rows)
+			{
+				// Start each row at top and left.
+				if (row.Controls[0].Name == "_menuStrip")
+				{
+					continue;
+				}
+				var currentPosition = new Point(0, 0);
+				for (var idx = 0; idx < row.Controls.Length; idx++)
+				{
+					var currentToolbar = row.Controls[idx];
+					var previousToolbar = idx == 0 ? null : row.Controls[idx - 1];
+					currentPosition = idx == 0 ? currentToolbar.Location : new Point(previousToolbar.Location.Y, currentToolbar.Width);
+					currentToolbar.Location = currentPosition;
+				}
+			}
+			toolStripContainer.Height = toolStripContainer.TopToolStripPanel.Height + containerPosition.Y + containerHeight;
+			ResumeLayout();
+		}
 
 		private void File_CloseWindow(object sender, EventArgs e)
 		{
@@ -1647,6 +1687,8 @@ very simple minor adjustments. ;)"
 
 			base.OnLoad(e);
 
+			LayoutToolStrips();
+
 			var currentArea = _areaRepository.GetPersistedOrDefaultArea();
 			var currentTool = currentArea.PersistedOrDefaultToolForArea;
 			_sidePane.TabClicked += Area_Clicked;
@@ -1765,6 +1807,127 @@ very simple minor adjustments. ;)"
 
 			// Enable/disable toolbar buttons.
 			SetupEditUndoAndRedoMenus();
+		}
+
+		private void Format_Styles_Click(object sender, EventArgs e)
+		{
+			if (ShowStylesDialog(null, null))
+			{
+				RefreshAllViews();
+			}
+		}
+		private bool ShowStylesDialog(string paraStyleName, string charStyleName)
+		{
+			var stylesXmlAccessor = new FlexStylesXmlAccessor(Cache.LanguageProject.LexDbOA);
+			StVc vc = null;
+			IVwRootSite activeViewSite = null;
+			if (ActiveView != null)
+			{
+				if (ActiveView.EditingHelper == null) // If the calling location doesn't provide this just bring up the dialog with normal selected
+				{
+					paraStyleName = "Normal";
+				}
+				vc = ActiveView.EditingHelper.ViewConstructor as StVc;
+				activeViewSite = ActiveView.CastAsIVwRootSite();
+			}
+			if (paraStyleName == null && charStyleName == null && ActiveView.EditingHelper.CurrentSelection != null && ActiveView.EditingHelper.CurrentSelection.Selection != null)
+			{
+				// If the caller didn't know the default style, try to figure it out from // the selection.
+				GetStyleNames((SimpleRootSite)ActiveView, ActiveView.EditingHelper.CurrentSelection.Selection, ref paraStyleName, ref charStyleName);
+			}
+			using (var stylesDlg = new FwStylesDlg(activeViewSite,
+				Cache, _stylesheet, vc?.RightToLeft ?? false,
+				Cache.ServiceLocator.WritingSystems.AllWritingSystems.Any(ws => ws.RightToLeftScript),
+				_stylesheet.GetDefaultBasedOnStyleName(),
+				int.MaxValue, _flexApp.MeasurementSystem, paraStyleName, charStyleName,
+				Cache.LanguageProject.LexDbOA.Hvo, _flexApp, _flexApp))
+			{
+				stylesDlg.SetPropsToFactorySettings = stylesXmlAccessor.SetPropsToFactorySettings;
+				stylesDlg.StylesRenamedOrDeleted += OnStylesRenamedOrDeleted;
+				stylesDlg.AllowSelectStyleTypes = true;
+				stylesDlg.ShowTEStyleTypes = false;
+				stylesDlg.CanSelectParagraphBackgroundColor = true;
+				return (stylesDlg.ShowDialog(this) == DialogResult.OK &&
+				        ((stylesDlg.ChangeType & StyleChangeType.DefChanged) > 0 ||
+				         (stylesDlg.ChangeType & StyleChangeType.Added) > 0));
+			}
+
+		}
+
+		private void GetStyleNames(SimpleRootSite rootsite, IVwSelection sel, ref string paraStyleName, ref string charStyleName)
+		{
+			ITsTextProps[] vttp;
+			IVwPropertyStore[] vvps;
+			int cttp;
+			SelectionHelper.GetSelectionProps(sel, out vttp, out vvps, out cttp);
+			var fSingleStyle = true;
+			string sStyle = null;
+			for (var ittp = 0; ittp < cttp; ++ittp)
+			{
+				var style = vttp[ittp].Style();
+				if (ittp == 0)
+				{
+					sStyle = style;
+				}
+				else if (sStyle != style)
+				{
+					fSingleStyle = false;
+				}
+			}
+			if (fSingleStyle && !string.IsNullOrEmpty(sStyle))
+			{
+				if (_stylesheet.GetType(sStyle) == (int)StyleType.kstCharacter)
+				{
+					if (sel.CanFormatChar)
+					{
+						charStyleName = sStyle;
+					}
+				}
+				else
+				{
+					if (sel.CanFormatPara)
+					{
+						paraStyleName = sStyle;
+					}
+				}
+			}
+			if (paraStyleName != null)
+			{
+				return;
+			}
+			// Look at the paragraph (if there is one) to get the paragraph style.
+			var helper = SelectionHelper.GetSelectionInfo(sel, rootsite);
+			var info = helper.GetLevelInfo(SelectionHelper.SelLimitType.End);
+			if (info.Length == 0)
+			{
+				return;
+			}
+			var hvo = info[0].hvo;
+			if (hvo == 0)
+			{
+				return;
+			}
+			var cmObjectRepository = Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			if (!cmObjectRepository.IsValidObjectId(hvo))
+			{
+				return;
+			}
+			var cmo = cmObjectRepository.GetObject(hvo);
+			if (cmo is IStPara)
+			{
+				paraStyleName = (cmo as IStPara).StyleName;
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Called when styles are renamed or deleted.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void OnStylesRenamedOrDeleted()
+		{
+			PrepareToRefresh();
+			Refresh();
 		}
 	}
 }

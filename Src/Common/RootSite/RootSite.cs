@@ -392,7 +392,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					EditingHelper == null)
 				{
 					// In these cases, don't try to update the "BestStyleName" property.
-					return String.Empty;
+					return string.Empty;
 				}
 
 				string bestStyle = null;
@@ -407,7 +407,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					IVwSelection sel = EditingHelper.CurrentSelection.Selection;
 					if (sel != null && !sel.IsEditable)
 					{
-						bestStyle = String.Empty;
+						bestStyle = string.Empty;
 					}
 					else
 					{
@@ -415,7 +415,7 @@ namespace SIL.FieldWorks.Common.RootSites
 							SelectionHelper.SelLimitType.Anchor);
 						if (flidAnchor == 0) // can happen for e.g. icons
 						{
-							bestStyle = String.Empty;
+							bestStyle = string.Empty;
 						}
 						else
 						{
@@ -423,7 +423,7 @@ namespace SIL.FieldWorks.Common.RootSites
 								SelectionHelper.SelLimitType.End);
 							if (flidEnd != flidAnchor)
 							{
-								bestStyle = String.Empty;
+								bestStyle = string.Empty;
 							}
 							else
 							{
@@ -431,27 +431,26 @@ namespace SIL.FieldWorks.Common.RootSites
 								if (mdc is IFwMetaDataCacheManaged &&
 									!((IFwMetaDataCacheManaged)mdc).FieldExists(flidAnchor))
 								{
-									bestStyle = String.Empty;
+									bestStyle = string.Empty;
 								}
 								else
 								{
-									CellarPropertyType type = (CellarPropertyType)
-										m_rootb.DataAccess.MetaDataCache.GetFieldType((int)flidAnchor);
+									CellarPropertyType type = (CellarPropertyType)m_rootb.DataAccess.MetaDataCache.GetFieldType((int)flidAnchor);
 									if (type != CellarPropertyType.String &&
 										type != CellarPropertyType.MultiString)
 									{
-										bestStyle = String.Empty;
+										bestStyle = string.Empty;
 									}
 									else
 									{
 										string paraStyleName = EditingHelper.GetParaStyleNameFromSelection();
 										string charStyleName = EditingHelper.GetCharStyleNameFromSelection();
-										if (String.IsNullOrEmpty(charStyleName) && flidAnchor == (int)StTxtParaTags.kflidContents)
+										if (string.IsNullOrEmpty(charStyleName) && flidAnchor == (int)StTxtParaTags.kflidContents)
 											bestStyle = paraStyleName;
 										else if (charStyleName == string.Empty)
 											bestStyle = StyleUtils.DefaultParaCharsStyleName;
 										else if (charStyleName == null)
-											bestStyle = String.Empty;
+											bestStyle = string.Empty;
 										else
 											bestStyle = charStyleName;
 									}
@@ -463,48 +462,50 @@ namespace SIL.FieldWorks.Common.RootSites
 				// Handles the case where m_propertyTable is null because the parent slice is null
 				if (PropertyTable != null)
 				{
-				string oldBest = PropertyTable.GetValue<string>("BestStyleName");
-				if (oldBest != bestStyle)
-				{
-					EditingHelper.SuppressNextBestStyleNameChanged = true;
-					PropertyTable.SetProperty("BestStyleName", bestStyle, false, true);
-				}
+					string oldBest = PropertyTable.GetValue<string>("BestStyleName");
+					if (oldBest != bestStyle)
+					{
+						EditingHelper.SuppressNextBestStyleNameChanged = true;
+						PropertyTable.SetProperty("BestStyleName", bestStyle, false, true);
+					}
 				}
 				return bestStyle;
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Show paragraph styles?
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		protected override bool IsSelectionInParagraph
 		{
 			get
 			{
 				if (DesignMode || m_rootb == null)
-					return false;
-
-				if (EditingHelper == null ||
-					EditingHelper.CurrentSelection == null ||
-					EditingHelper.Editable == false)
 				{
 					return false;
 				}
-				IVwSelection sel = EditingHelper.CurrentSelection.Selection;
-				if (sel != null && !sel.IsEditable)
-					return false;
 
-				int flidAnchor = EditingHelper.CurrentSelection.GetTextPropId(
-					SelectionHelper.SelLimitType.Anchor);
+				if (EditingHelper == null || EditingHelper.CurrentSelection == null || EditingHelper.Editable == false)
+				{
+					return false;
+				}
+				var sel = EditingHelper.CurrentSelection.Selection;
+				if (sel != null && !sel.IsEditable)
+				{
+					return false;
+				}
+
+				var flidAnchor = EditingHelper.CurrentSelection.GetTextPropId(SelectionHelper.SelLimitType.Anchor);
 				if (flidAnchor == 0) // can happen for e.g. icons
+				{
 					return false;
-				int flidEnd = EditingHelper.CurrentSelection.GetTextPropId(
-					SelectionHelper.SelLimitType.End);
+				}
+				var flidEnd = EditingHelper.CurrentSelection.GetTextPropId(SelectionHelper.SelLimitType.End);
 				if (flidEnd != flidAnchor)
+				{
 					return false;
-				return flidAnchor == (int)StTxtParaTags.kflidContents;
+				}
+				return flidAnchor == StTxtParaTags.kflidContents;
 			}
 		}
 

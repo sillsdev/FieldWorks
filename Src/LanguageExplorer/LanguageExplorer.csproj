@@ -1139,7 +1139,7 @@
     <Compile Include="Works\SemanticDomainRdeTreeBarHandler.cs" />
     <Compile Include="Works\SubitemRecordClerk.cs" />
     <Compile Include="Works\TemporaryRecordClerk.cs" />
-    <Compile Include="Works\TextListeners.cs" />
+    <Compile Include="Works\CombinedStylesListHandler.cs" />
     <Compile Include="Works\UnicodeCharacterEditingHelper.cs" />
     <Compile Include="Works\UploadToWebonaryController.cs" />
     <Compile Include="Works\UploadToWebonaryDlg.cs">
@@ -1154,6 +1154,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Works\WordsUsedOnlyElsewhereFilter.cs" />
+    <Compile Include="Works\WritingSystemListHandler.cs" />
     <Compile Include="Works\XhtmlDocView.cs">
       <SubType>UserControl</SubType>
     </Compile>

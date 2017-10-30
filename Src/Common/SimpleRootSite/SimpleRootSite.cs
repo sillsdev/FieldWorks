@@ -1854,11 +1854,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		#endregion
 
 		#region Implementation of IRootSite
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Refreshes the Display :)
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual bool RefreshDisplay()
 		{
 			CheckDisposed();
@@ -1894,36 +1892,28 @@ namespace SIL.FieldWorks.Common.RootSites
 			return false;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates a new selection restorer.
 		/// </summary>
 		/// <remarks>Overriding this method to return null will keep the selection from being
 		/// restored</remarks>
-		/// ------------------------------------------------------------------------------------
 		protected virtual SelectionRestorer CreateSelectionRestorer()
 		{
 			return new SelectionRestorer(this);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Allows the IRootSite to be cast as an IVwRootSite
 		/// </summary>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public virtual IVwRootSite CastAsIVwRootSite()
 		{
 			CheckDisposed();
 			return this;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Return the internal rootbox as a list, or an empty list.
 		/// </summary>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public virtual List<IVwRootBox> AllRootBoxes()
 		{
 			CheckDisposed();
@@ -1934,12 +1924,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			return result;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// <c>false</c> to prevent OnPaint from happening, <c>true</c> to perform
 		/// OnPaint. This is used to prevent redraws from happening while we do a RefreshDisplay.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public bool AllowPainting
@@ -1994,55 +1982,55 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Controls display of the Styles menu, e.g. whether
 		/// it should be enabled
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected virtual void DisplayWritingSystemHvo(object newValue)
 		{
 			if (!Focused)
+			{
 				return;
+			}
+
 			var ctrl = (Control)newValue;
 			ctrl.Enabled = IsSelectionFormattable;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Controls display of the Styles menu, e.g. whether
 		/// it should be enabled
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected virtual void DisplayBestStyleName(object newValue)
 		{
 			if (!Focused)
+			{
 				return;
-			var ctrl = (Control)newValue;
-			ctrl.Enabled = CanApplyStyle;
-			ctrl.Text = BestSelectionStyle;
+			}
+
+			var comboBox = (ComboBox)newValue;
+			comboBox.Enabled = CanApplyStyle;
+			comboBox.Text = BestSelectionStyle;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Display something that relies on the list with the id "CombinedStylesList"
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void DisplayCombinedStylesList(object newValue)
 		{
 			if (!Focused || m_rootb == null)
 				return;
-			IVwStylesheet stylesheet = m_rootb.Stylesheet;
+			var stylesheet = m_rootb.Stylesheet;
 			if (stylesheet == null)
+			{
 				return;
+			}
 			FillInStylesComboList((ComboBox)newValue, stylesheet);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Fill in the list of style names.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected virtual void FillInStylesComboList(ComboBox comboBox, IVwStylesheet stylesheet)
 		{
 		}
@@ -6199,7 +6187,18 @@ namespace SIL.FieldWorks.Common.RootSites
 			IsFollowLinkMsgPending = true;
 		}
 
+		/// <summary>
+		/// Handle "WritingSystemHvo" message.
+		/// </summary>
 		private void WritingSystemHvo_Changed(object newValue)
+		{
+			ReallyHandleWritingSystemHvo_Changed(newValue);
+		}
+
+		/// <summary>
+		/// Really handle it in a way subclasses can get involved.
+		/// </summary>
+		protected virtual void ReallyHandleWritingSystemHvo_Changed(object newValue)
 		{
 			EditingHelper.WritingSystemHvoChanged();
 		}

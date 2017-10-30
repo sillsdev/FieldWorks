@@ -27,7 +27,6 @@ using LanguageExplorer;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.SendReceive;
 using SIL.Code;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
@@ -415,15 +414,11 @@ namespace SIL.FieldWorks
 		/// </remarks>
 		private static void UglyHackForXkbIndicator()
 		{
-			foreach (CoreWritingSystemDefinition ws in Cache.ServiceLocator.WritingSystems.AllWritingSystems)
-				SetKeyboardForWs(ws.Handle);
+			foreach (var ws in Cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			{
+				ws.LocalKeyboard?.Activate();
+			}
 			Keyboard.Controller.ActivateDefaultKeyboard();
-		}
-		private static void SetKeyboardForWs(int ws)
-		{
-			CoreWritingSystemDefinition wsObj = Cache.ServiceLocator.WritingSystemManager.Get(ws);
-			if (wsObj != null && wsObj.LocalKeyboard != null)
-				wsObj.LocalKeyboard.Activate();
 		}
 
 		/// <summary>

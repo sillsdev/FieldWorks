@@ -422,7 +422,6 @@ InterlinMaster user:
 		<menu id="Format" label="F_ormat" a10status="PARTIALLY_DONE" >
 			<item command="CmdFormatStyle"/>
 			<item command="CmdFormatApplyStyle"/>
-			<menu id="WritingSystemMenu" label="_Writing System" list="WritingSystemList" behavior="singlePropertyAtomicValue" property="WritingSystemHvo"/>
 		</menu>
 		<!-- Reworked Tools menu [LT-9852] June '09	-->
 		<menu id="Tools" label="_Tools" a10status="DONE" >
@@ -669,7 +668,6 @@ InterlinMaster user:
 	<!--This sections defines the various toolbars and the commands in them.-->
 	<toolbars>
 		<toolbar id="Format" a10status="PARTIALLY_DONE" >
-			<menu id="WritingSystemCombo" label="Writing System" list="WritingSystemList" behavior="singlePropertyAtomicValue" property="WritingSystemHvo" width="150"  a10status="PARTIALLY_DONE" />
 			<menu id="CombinedStylesCombo" label="Styles" list="CombinedStylesList" behavior="singlePropertyAtomicValue" property="BestStyleName" width="250"  a10status="PARTIALLY_DONE" />
 		</toolbar>
 		<toolbar id="Insert" a10status="PARTIALLY_DONE" >

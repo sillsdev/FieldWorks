@@ -317,36 +317,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void OnPropertyChanged(string name)
 		{
-			var wsBefore = 0;
-			// We want to know below whether a base class changed the ws or not.
-			if (name == "WritingSystemHvo")
-			{
-				if (RootObject != null && m_rootb != null && m_rootb.Selection.IsValid)
-					wsBefore = SelectionHelper.GetWsOfEntireSelection(m_rootb.Selection);
-			}
-
 			bool newVal; // used in two cases below
 			switch (name)
 			{
-				case "WritingSystemHvo":
-					if (RootObject != null && m_rootb != null && m_rootb.Selection.IsValid)
-					{
-						int hvo, tag, ws, ichMin, ichLim;
-						ws = SelectionHelper.GetWsOfEntireSelection(m_rootb.Selection);
-						if (ws != wsBefore) // writing system changed!
-						{
-							if (GetSelectedWordPos(m_rootb.Selection, out hvo, out tag, out ws, out ichMin, out ichLim))
-							{
-								if (tag != StTxtParaTags.kflidContents)
-									return;
-
-								var para = m_cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
-								// force this paragraph to recognize it might need reparsing.
-								SetParaToReparse(para);
-							}
-						}
-					}
-					break;
 				case "ShowInvisibleSpaces":
 					newVal = ShowInvisibleSpaces;
 					if (newVal != m_showSpaceDa.ShowSpaces)
@@ -372,12 +345,49 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		private void SetParaToReparse(IStTxtPara para)
+		/// <summary>
+		/// Handle "WritingSystemHvo" message.
+		/// </summary>
+		protected override void ReallyHandleWritingSystemHvo_Changed(object newValue)
 		{
+			var wsBefore = 0;
+			if (RootObject != null && m_rootb != null && m_rootb.Selection.IsValid)
+			{
+				// We want to know below whether a base class changed the ws or not.
+				wsBefore = SelectionHelper.GetWsOfEntireSelection(m_rootb.Selection);
+			}
+
+			base.ReallyHandleWritingSystemHvo_Changed(newValue);
+
+			if (RootObject == null || m_rootb == null || !m_rootb.Selection.IsValid)
+			{
+				return;
+			}
+			var ws = SelectionHelper.GetWsOfEntireSelection(m_rootb.Selection);
+			if (ws == wsBefore)
+			{
+				// No change, so bail out.
+				return;
+			}
+			int hvo;
+			int tag;
+			int ichMin;
+			int ichLim;
+			if (!GetSelectedWordPos(m_rootb.Selection, out hvo, out tag, out ws, out ichMin, out ichLim) || tag != StTxtParaTags.kflidContents)
+			{
+				return;
+			}
+
+			// Force this paragraph to recognize it might need reparsing.
+			var para = m_cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
 			if (Cache.ActionHandlerAccessor.CurrentDepth > 0)
+			{
 				para.ParseIsCurrent = false;
+			}
 			else
+			{
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => para.ParseIsCurrent = false);
+			}
 		}
 
 		private void TurnOnShowInvisibleSpaces()

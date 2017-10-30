@@ -2790,46 +2790,36 @@ namespace SIL.FieldWorks.Common.RootSites
 			SetKeyboardForSelection(vwselNew);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="rootbox"></param>
-		/// <param name="selection"></param>
-		/// ------------------------------------------------------------------------------------
-		private void SetWritingSystemPropertyFromSelection(IVwRootBox rootbox,
-			IVwSelection selection)
+		/// <summary />
+		private void SetWritingSystemPropertyFromSelection(IVwRootBox rootbox, IVwSelection selection)
 		{
 			// For now, we are only handling SimpleRootSite cases, e.g. for the Data Tree.
 			// If we need this in print layout, consider adding the mediator to the Callbacks
 			// interface.
-			SimpleRootSite rs = rootbox.Site as SimpleRootSite;
-			if (rs != null && rs.PropertyTable != null && selection != null)
+			var rs = rootbox.Site as SimpleRootSite;
+			if (rs?.PropertyTable == null || selection == null)
 			{
-				// int ws = SelectionHelper.GetFirstWsOfSelection(rootbox.Selection);
-				// Review: Or should it be this? But it returns 0 if there are multiple ws's...
-				// which may be good if the combo can handle it; i.e. there is no *one* ws so
-				// we shouldn't show one in the combo
-				int ws = SelectionHelper.GetWsOfEntireSelection(rootbox.Selection);
-				string s = rs.PropertyTable.GetValue("WritingSystemHvo", "-1");
-				int oldWritingSystemHvo = int.Parse(s);
-				if (oldWritingSystemHvo != ws)
-				{
-#if RANDYTODO
-					// The only (as of 21JUL17) registered subscriber of the "WritingSystemHvo" message
-					// was/is SimpleRootSite. That handler then called "EditingHelper.WritingSystemHvoChanged()",
-					// which just happens to be this class. So, I (RBR) changed the last parm to 'false'
-					// to not do the broadcast, but to simply call WritingSystemHvoChanged directly from here.
-					// I note, in passing, that having the property table do the broadcast ran into that new
-					// prohibition on reentrant calls to the publisher. Calling WritingSystemHvoChanged directly will avoid that,
-					// plus I can't see any good reason to do the publish.
-					// We'll see how that goes.
-#endif
-					rs.PropertyTable.SetProperty("WritingSystemHvo", ws.ToString(), false, false);
-					WritingSystemHvoChanged();
-					m_fSuppressNextWritingSystemHvoChanged = true;
-				}
+				return;
 			}
+			// Review: Or should it be this? But it returns 0 if there are multiple ws's...
+			// which may be good if the combo can handle it; i.e. there is no *one* ws so
+			// we shouldn't show one in the combo
+			var ws = SelectionHelper.GetWsOfEntireSelection(rootbox.Selection);
+			var s = rs.PropertyTable.GetValue("WritingSystemHvo", "-1");
+			var oldWritingSystemHvo = int.Parse(s);
+			if (oldWritingSystemHvo == ws)
+			{
+				// The ws didn't change, so don't bother setting and broadcasting.
+				return;
+			}
+			WritingSystemHvoChanged();
+			// As of 1NOV2017, there are three known subscribers for "WritingSystemHvo":
+			//	SimpleRootSite (which calls the method "WritingSystemHvoChanged", below,
+			//	and RawTextPane a subclass of SimpleRootSite, which has SimpleRootSite
+			//	do its thing, and then may do more. So, broadcast the change.
+			//	The third one is WritingSystemListHandler, which updates the toolbar combobox to the newly selected WS.
+			rs.PropertyTable.SetProperty("WritingSystemHvo", ws.ToString(), false, true);
+			m_fSuppressNextWritingSystemHvoChanged = true;
 		}
 		internal void WritingSystemHvoChanged()
 		{
@@ -2841,23 +2831,22 @@ namespace SIL.FieldWorks.Common.RootSites
 			// For now, we are only handling SimpleRootSite cases, e.g. for the Data Tree.
 			// If we need this in print layout, consider adding the mediator to the Callbacks
 			// interface.
-			SimpleRootSite rs = m_callbacks as SimpleRootSite;
+			var simpleRootSite = m_callbacks as SimpleRootSite;
 			// This property can be changed by selecting an item in the writing system combo.
 			// When the user does this we try to update the writing system of the selection.
 			// It also gets updated (in order to control the current item in the combo) when
 			// the selection changes. We have to be careful this does not trigger an attempt to
 			// modify the data.
-			if (rs != null && !rs.WasFocused())
+			if ((simpleRootSite != null && !simpleRootSite.WasFocused()) || simpleRootSite?.RootBox?.Selection == null)
+			{
 				return; //e.g, the dictionary preview pane isn't focussed and shouldn't respond.
-			if (rs == null || rs.RootBox == null || rs.RootBox.Selection == null)
-				return;
-			string s = rs.PropertyTable == null ? "-1" : rs.PropertyTable.GetValue("WritingSystemHvo", "-1");
-			rs.Focus();
-			int writingSystemHvo = int.Parse(s);
+			}
+			simpleRootSite.Focus();
+			var s = simpleRootSite.PropertyTable == null ? "-1" : simpleRootSite.PropertyTable.GetValue("WritingSystemHvo", "-1");
+			var writingSystemHvo = int.Parse(s);
 			// will get zero when the selection contains multiple ws's and the ws is
 			// in fact different from the current one
-			if (writingSystemHvo > 0 &&
-				writingSystemHvo != SelectionHelper.GetWsOfEntireSelection(rs.RootBox.Selection))
+			if (writingSystemHvo > 0 && writingSystemHvo != SelectionHelper.GetWsOfEntireSelection(simpleRootSite.RootBox.Selection))
 			{
 				ApplyWritingSystem(writingSystemHvo);
 			}
@@ -2868,7 +2857,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Set the keyboard to match the writing system.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		protected void SetKeyboardForWs(CoreWritingSystemDefinition ws)
+		public void SetKeyboardForWs(CoreWritingSystemDefinition ws)
 		{
 			if (Callbacks == null || ws == null)
 			{
@@ -2896,23 +2885,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				m_fSettingKeyboards = false;
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Sets the keyboard for a writing system.
-		/// </summary>
-		/// <param name="newWs">The new ws.</param>
-		/// ------------------------------------------------------------------------------------
-		public void SetKeyboardForWs(int newWs)
-		{
-			CheckDisposed();
-
-			if (Callbacks == null || !Callbacks.GotCacheOrWs || WritingSystemFactory == null)
-				return; // Can't do anything useful, so let's not do anything at all.
-
-			CoreWritingSystemDefinition ws = ((WritingSystemManager) WritingSystemFactory).Get(newWs);
-			SetKeyboardForWs(ws);
 		}
 
 		/// -----------------------------------------------------------------------------------

@@ -233,16 +233,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		///  Pass through to the VC.
 		/// </summary>
-		protected virtual bool IsMorphemeFormEditable
-		{
-			get { return true; }
-		}
+		protected virtual bool IsMorphemeFormEditable => true;
 
 		public void UpdateLineChoices(InterlinLineChoices choices)
 		{
 			m_choices = choices;
-			if (m_vc != null)
-				m_vc.UpdateLineChoices(choices);
+			m_vc?.UpdateLineChoices(choices);
 			m_rootb.Reconstruct();
 		}
 
@@ -250,16 +246,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// When sandbox is visible, it should be the same as the InterlinDocForAnalysis m_hvoAnnotation.
 		/// However, when the Sandbox is not visible the parent is setting/sizing things up for a new annotation.
 		/// </summary>
-		public virtual int HvoAnnotation
-		{
-			get { return m_occurrenceSelected.Analysis.Hvo; }
-		}
+		public virtual int HvoAnnotation => m_occurrenceSelected.Analysis.Hvo;
 
 		/// <summary>
 		/// The writing system of the wordform in this analysis.
 		/// </summary>
 		int m_wsRawWordform = 0;
-		internal protected virtual int RawWordformWs
+		protected internal virtual int RawWordformWs
 		{
 			get
 			{
@@ -278,7 +271,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		internal protected InterlinLineChoices InterlinLineChoices
+		protected internal InterlinLineChoices InterlinLineChoices
 		{
 			get { return m_choices; }
 		}
@@ -301,29 +294,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return new CaseFunctions(locale);
 		}
 
-		protected bool ComboOnMouseHover
-		{
-			get
-			{
-				return false;
-			}
-		}
+		protected bool ComboOnMouseHover => false;
 
-		protected bool IconsForAnalysisChoices
-		{
-			get
-			{
-				return true;
-			}
-		}
+		protected bool IconsForAnalysisChoices => true;
 
-		protected bool IsIconSelected
-		{
-			get
-			{
-				return new TextSelInfo(RootBox).IsPicture;
-			}
-		}
+		protected bool IsIconSelected => new TextSelInfo(RootBox).IsPicture;
 
 		/// <summary>
 		/// the given word is a phrase if it has any word breaking space characters
@@ -332,7 +307,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns></returns>
 		static internal bool IsPhrase(string word)
 		{
-			return !String.IsNullOrEmpty(word) && word.IndexOfAny(Unicode.SpaceChars) != -1;
+			return !string.IsNullOrEmpty(word) && word.IndexOfAny(Unicode.SpaceChars) != -1;
 		}
 
 		/// <summary>
@@ -4605,30 +4580,31 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return false;
 		}
 
-#if RANDYTODO
-		// We never want to change writing systems within the Sandbox.
-		public override bool OnDisplayWritingSystemHvo(object commandObject, ref UIItemDisplayProperties display)
+		/// <summary>
+		/// Controls display of the Styles menu, e.g. whether
+		/// it should be enabled
+		/// </summary>
+		protected override void DisplayWritingSystemHvo(object newValue)
 		{
-			CheckDisposed();
 			if (!Focused)
-				return false;
-			display.Enabled = false;
-			return true;//we handled this, no need to ask anyone else.
+				return;
+			// We never want to change writing systems within the Sandbox.
+			var ctrl = (Control)newValue;
+			ctrl.Enabled = false;
 		}
 
 		/// <summary>
 		/// Never show the style combo box in the toolbar while focused in the Sandbox.
 		/// </summary>
-		public override bool OnDisplayBestStyleName(object commandObject, ref UIItemDisplayProperties display)
+		protected override void DisplayBestStyleName(object newValue)
 		{
 			CheckDisposed();
 			if (!Focused)
-				return false;
-			display.Enabled = false;
-			display.Text = StyleUtils.DefaultParaCharsStyleName;
-			return true;//we handled this, no need to ask anyone else.
+				return;
+			var asControl = (Control)newValue;
+			asControl.Enabled = false;
+			asControl.Text = StyleUtils.DefaultParaCharsStyleName;
 		}
-#endif
 
 		#endregion Overrides of RootSite
 
