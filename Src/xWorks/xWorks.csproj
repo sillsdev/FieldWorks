@@ -226,10 +226,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="NetSparkle.Net40, Version=1.0.22.0, Culture=neutral, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DistFiles\NetSparkle.Net40.dll</HintPath>
-    </Reference>
     <Reference Include="Reporting, Version=1.0.3685.30341, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\Reporting.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>

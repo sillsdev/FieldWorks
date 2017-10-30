@@ -362,7 +362,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				if (!String.IsNullOrEmpty(m_srcdir))
+				if (!string.IsNullOrEmpty(m_srcdir))
 					return m_srcdir;
 				if (MiscUtils.IsUnix)
 				{
@@ -393,7 +393,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					{
 						throw new ApplicationException(
 							string.Format(@"You need to have the registry key {0}\RootCodeDir pointing at your DistFiles dir.",
-							FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.Name));
+							FwRegistryHelper.FieldWorksRegistryKeyLocalMachine?.Name));
 					}
 					string fw = Directory.GetParent(rootDir).FullName;
 					string src = Path.Combine(fw, "Src");
