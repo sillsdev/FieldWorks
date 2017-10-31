@@ -1895,22 +1895,24 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 			internal OneColumnXmlBrowseView(BrowseViewer bv, int icolLvHeaderToAdd)
-				: this(bv.m_nodeSpec, bv.RootObjectHvo, bv.MainTag, bv.Cache, bv.Mediator, bv.PropTable, bv.StyleSheet, bv)
+				: this(bv.m_nodeSpec, bv.RootObjectHvo, bv.MainTag, bv.Cache, bv.Mediator, bv.PropTable, bv.StyleSheet, bv, icolLvHeaderToAdd)
 			{
-				// add only the specified column to this browseview.
-				(Vc as OneColumnXmlBrowseViewVc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
+
 			}
 
 			private OneColumnXmlBrowseView(XmlNode nodeSpec, int hvoRoot, int mainTag, LcmCache cache, Mediator mediator, PropertyTable propertyTable,
-				IVwStylesheet styleSheet, BrowseViewer bv)
+				IVwStylesheet styleSheet, BrowseViewer bv, int icolLvHeaderToAdd)
 			{
 				base.Init(mediator, propertyTable, nodeSpec);
 				base.Init(nodeSpec, hvoRoot, mainTag, cache, mediator, bv);
+				m_styleSheet = styleSheet;
+
+				// add only the specified column to this browseview.
+				(Vc as OneColumnXmlBrowseViewVc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
+
+				MakeRoot();
 				// note: bv was used to initialize SortItemProvider. But we don't need it after init so null it out.
 				m_bv = null;
-
-				m_styleSheet = styleSheet;
-				MakeRoot();
 			}
 
 			public override void MakeRoot()
@@ -1924,6 +1926,16 @@ namespace SIL.FieldWorks.Common.Controls
 				m_rootb.SetRootObject(m_hvoRoot, Vc, (int)XmlBrowseViewVc.kfragRoot, m_styleSheet);
 				m_rootb.DataAccess = m_cache.MainCacheAccessor;
 				m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
+			}
+
+			public override Point ScrollPosition
+			{
+				get
+				{
+					CheckDisposed();
+					return base.ScrollPosition;
+				}
+				set { }
 			}
 
 			/// <summary>
