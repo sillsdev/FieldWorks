@@ -252,7 +252,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 							var languageCode = customSuffixIndex > 0
 								? layout.Substring(languageSuffixIndex, customSuffixIndex - languageSuffixIndex)
 								: layout.Substring(languageSuffixIndex);
-							reversalIndex = Cache.ServiceLocator.WritingSystemManager.Get(languageCode).DisplayLabel;
+							reversalIndex = Cache.ServiceLocator.WritingSystemManager.Get(languageCode).Id;
 						}
 						else
 						{
