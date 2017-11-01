@@ -109,6 +109,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					return;
 				using (ReferenceBaseUi ui = GetCmObjectUiForRightClickMenu(hvoTarget))
 				{
+					ui.Mediator = m_mediator;
+					ui.PropTable = m_propertyTable;
 					ui.HandleCtrlClick(this);
 				}
 			}
