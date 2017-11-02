@@ -226,7 +226,8 @@ namespace SIL.FieldWorks.XWorks
 			// First deal with whether the active Publication excludes it.
 			var m_currentPublication = m_propertyTable.GetValue<string>("SelectedPublication", null);
 			var publications = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p).Where(p => p.NameHierarchyString == m_currentPublication.ToString()).FirstOrDefault();
-			if (publications.NameHierarchyString != xWorksStrings.AllEntriesPublication)
+			//if the publications is null in case of Dictionary view selected as $$All Entries$$.
+			if (publications != null && publications.NameHierarchyString != xWorksStrings.AllEntriesPublication)
 			{
 				var currentPubPoss = publications;
 				if (!entry.PublishIn.Contains(currentPubPoss))
