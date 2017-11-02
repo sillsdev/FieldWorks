@@ -277,8 +277,8 @@
 
 		<!-- Chorus_Win32masterContinuous is the master branch build of Chorus for Windows development. Update when appropriate. -->
 		<ChorusBuildType Condition="'$(OS)'=='Windows_NT'">Chorus_Win32masterContinuous</ChorusBuildType>
-		<!-- bt323 is the master branch (strong name) build of Chorus for Linux development. Update when appropriate. -->
-		<ChorusBuildType Condition="'$(OS)'=='Unix'">bt323</ChorusBuildType>
+		<!-- Chorus_Linux64masterContinuous is the master branch build of Chorus for Linux development. Update when appropriate. -->
+		<ChorusBuildType Condition="'$(OS)'=='Unix'">Chorus_Linux64masterContinuous</ChorusBuildType>
 		<!-- Libpalaso_PalasoWinmasterContinuous is the master branch build of Palaso for Windows development. Update when appropriate. -->
 		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Libpalaso_PalasoWin32masterContinuous</PalasoBuildType>
 		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Libpalaso_PalasoWinmasterContinuous</PalasoBuildType>
