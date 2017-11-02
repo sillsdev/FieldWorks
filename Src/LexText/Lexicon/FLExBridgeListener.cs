@@ -279,6 +279,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
 		public bool OnFLExBridge(object commandObject)
 		{
+			//Make sure any last changes are saved. (Process focus lost for controls)
+			Application.DoEvents();
 			if (!LinkedFilesLocationIsDefault())
 			{
 				using (var dlg = new FwCoreDlgs.WarningNotUsingDefaultLinkedFilesLocation(_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
