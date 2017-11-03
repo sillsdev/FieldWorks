@@ -89,6 +89,7 @@ namespace LanguageExplorer.Impls
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private SendReceiveMenuManager _sendReceiveMenuManager;
 		private WritingSystemListHandler _writingSystemListHandler;
+		private CombinedStylesListHandler _combinedStylesListHandler;
 
 		/// <summary>
 		/// Create new instance of window.
@@ -697,9 +698,8 @@ namespace LanguageExplorer.Impls
 
 			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			_recordClerkRepositoryForTools = new RecordClerkRepository(Cache, flexComponentParameters);
-
-			_writingSystemListHandler = new WritingSystemListHandler(this, Cache, toolStripComboBoxWritingSystem, writingSystemToolStripMenuItem);
-			_writingSystemListHandler.InitializeFlexComponent(flexComponentParameters);
+			_writingSystemListHandler = new WritingSystemListHandler(this, Cache, Subscriber, toolStripComboBoxWritingSystem, writingSystemToolStripMenuItem);
+			_combinedStylesListHandler = new CombinedStylesListHandler(this, Subscriber, _stylesheet, toolStripComboBoxStyles);
 
 			SetupParserMenuItems();
 
@@ -965,6 +965,7 @@ namespace LanguageExplorer.Impls
 				_dataNavigationManager?.Dispose();
 				IdleQueue?.Dispose();
 				_writingSystemListHandler?.Dispose();
+				_combinedStylesListHandler?.Dispose();
 
 				components?.Dispose();
 
@@ -993,6 +994,7 @@ namespace LanguageExplorer.Impls
 			IdleQueue = null;
 			_majorFlexComponentParameters = null;
 			_writingSystemListHandler = null;
+			_combinedStylesListHandler = null;
 
 			base.Dispose(disposing);
 

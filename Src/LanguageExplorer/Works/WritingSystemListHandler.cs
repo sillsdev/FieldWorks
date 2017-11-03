@@ -18,79 +18,38 @@ namespace LanguageExplorer.Works
 	/// <summary>
 	/// Populate the writing systems combo box (Format toolbar) and the Format-Writing System menu with writing systems from the given set.
 	/// </summary>
-	internal class WritingSystemListHandler : IFlexComponent, IDisposable
+	internal sealed class WritingSystemListHandler : IDisposable
 	{
 		private IFwMainWnd _mainWnd;
 		private LcmCache _cache;
+		private ISubscriber _subscriber;
 		private ToolStripComboBox _formatToolStripComboBox;
 		private ToolStripMenuItem _writingSystemToolStripMenuItem;
 		private List<CoreWritingSystemDefinition> _allWritingSystemDefinitions;
 
-		internal WritingSystemListHandler(IFwMainWnd mainWnd, LcmCache cache, ToolStripComboBox formatToolStripComboBox, ToolStripMenuItem writingSystemToolStripMenuItem)
+
+		internal WritingSystemListHandler(IFwMainWnd mainWnd, LcmCache cache, ISubscriber subscriber, ToolStripComboBox formatToolStripComboBox, ToolStripMenuItem writingSystemToolStripMenuItem)
 		{
 			Guard.AgainstNull(mainWnd, nameof(mainWnd));
 			Guard.AgainstNull(cache, nameof(cache));
+			Guard.AgainstNull(subscriber, nameof(subscriber));
 			Guard.AgainstNull(formatToolStripComboBox, nameof(formatToolStripComboBox));
 			Guard.AgainstNull(writingSystemToolStripMenuItem, nameof(writingSystemToolStripMenuItem));
 
 			_mainWnd = mainWnd;
 			_cache = cache;
+			_subscriber = subscriber;
 
 			_allWritingSystemDefinitions = _cache.ServiceLocator.WritingSystems.AllWritingSystems.ToList();
 
 			_formatToolStripComboBox = formatToolStripComboBox;
 			_writingSystemToolStripMenuItem = writingSystemToolStripMenuItem;
+			_subscriber.Subscribe("WritingSystemHvo", UpdateComboboxSelectedItem);
 
 			SetupControlsForWritingSystems();
 
 			Application.Idle += ApplicationOnIdle;
 		}
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		#endregion
-
-		#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-
-			Subscriber.Subscribe("WritingSystemHvo", UpdateComboboxSelectedItem);
-		}
-
-		#endregion
 
 		#region IDisposable & Co. implementation
 		/// <summary>
@@ -107,16 +66,16 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// True, if the object has been disposed.
 		/// </summary>
-		private bool m_isDisposed;
+		private bool _isDisposed;
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed => m_isDisposed;
+		public bool IsDisposed => _isDisposed;
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
-		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
+		/// Force Dispose(false) if not already called (i.e. _isDisposed is true)
 		/// </summary>
 		/// <remarks>
 		/// In case some clients forget to dispose it directly.
@@ -163,34 +122,36 @@ namespace LanguageExplorer.Works
 		///
 		/// If subclasses override this method, they should call the base implementation.
 		/// </remarks>
-		protected virtual void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
-			if (m_isDisposed)
+			if (_isDisposed)
+			{
+				// No need to run it more than once.
 				return;
+			}
 
 			if (disposing)
 			{
 				// Dispose any combobox items or menu items that remain.
-				Subscriber.Unsubscribe("WritingSystemHvo", UpdateComboboxSelectedItem);
+				_subscriber.Unsubscribe("WritingSystemHvo", UpdateComboboxSelectedItem);
 				_formatToolStripComboBox.SelectedIndexChanged -= FormatToolStripComboBoxOnSelectedIndexChanged;
 				foreach (ToolStripMenuItem submenu in _writingSystemToolStripMenuItem.DropDownItems)
 				{
 					submenu.Click -= WritingSystemToolStripMenuItemOnClick;
 				}
+				_allWritingSystemDefinitions.Clear();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			PropertyTable = null;
-			Publisher = null;
-			Subscriber = null;
+			_subscriber = null;
 			_mainWnd = null;
 			_cache = null;
 			_formatToolStripComboBox = null;
 			_writingSystemToolStripMenuItem = null;
+			_allWritingSystemDefinitions = null;
 
-			m_isDisposed = true;
+			_isDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation

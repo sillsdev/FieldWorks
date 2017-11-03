@@ -4580,32 +4580,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return false;
 		}
 
-		/// <summary>
-		/// Controls display of the Styles menu, e.g. whether
-		/// it should be enabled
-		/// </summary>
-		protected override void DisplayWritingSystemHvo(object newValue)
-		{
-			if (!Focused)
-				return;
-			// We never want to change writing systems within the Sandbox.
-			var ctrl = (Control)newValue;
-			ctrl.Enabled = false;
-		}
-
-		/// <summary>
-		/// Never show the style combo box in the toolbar while focused in the Sandbox.
-		/// </summary>
-		protected override void DisplayBestStyleName(object newValue)
-		{
-			CheckDisposed();
-			if (!Focused)
-				return;
-			var asControl = (Control)newValue;
-			asControl.Enabled = false;
-			asControl.Text = StyleUtils.DefaultParaCharsStyleName;
-		}
-
 		#endregion Overrides of RootSite
 
 		#region Implementation of IUndoRedoHandler

@@ -31,6 +31,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
 using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 
 // How to debug COM reference counts:
@@ -355,72 +356,59 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-#if RANDYTODO
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Called (by xcore) to control display params of the Styles menu, e.g. whether
-		/// it should be enabled
-		/// </summary>j
-		/// <remarks>This override exists only to access ResourceHelper.</remarks>
-		/// ------------------------------------------------------------------------------------
-		public override bool OnDisplayBestStyleName(object commandObject,
-			ref UIItemDisplayProperties display)
+		/// Get the best style name that suits the selection and put it into the proepty table.
+		/// </summary>
+		public override string Style_Changed(BaseStyleInfo newValue)
 		{
-			CheckDisposed();
-			if (!Focused)
-				return false;
-			display.Enabled = CanApplyStyle;
-			var style = BestSelectionStyle;
-			if (String.IsNullOrEmpty(style))
-				style = StyleUtils.DefaultParaCharsStyleName;
-			display.Text = style;
-			return true;		// we handled this, no need to ask anyone else.
+			if (DesignMode || m_rootb == null || EditingHelper == null)
+			{
+				// In these cases, don't try to update the "BestStyleName" property.
+				return string.Empty;
+			}
+
+			var bestStyle = BestSelectionStyle;
+			if (newValue.Name == bestStyle)
+			{
+				return newValue.Name;
+			}
+			EditingHelper.SuppressNextBestStyleNameChanged = true;
+			return bestStyle; // Changed the style, so caller will know of the change.
 		}
-#endif
+
+		#region Overrides of SimpleRootSite
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the best style name that suits the selection.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		protected override string BestSelectionStyle
+		public override string BestSelectionStyle
 		{
 			get
 			{
-				if (DesignMode ||
-					m_rootb == null ||
-					EditingHelper == null)
-				{
-					// In these cases, don't try to update the "BestStyleName" property.
-					return string.Empty;
-				}
-
-				string bestStyle = null;
-				int hvoBestStyle = -1;
-
+				string bestStyle;
 				if (EditingHelper.CurrentSelection == null || EditingHelper.Editable == false)
 				{
-					bestStyle = String.Empty;
+					bestStyle = string.Empty;
 				}
 				else
 				{
-					IVwSelection sel = EditingHelper.CurrentSelection.Selection;
+					var sel = EditingHelper.CurrentSelection.Selection;
 					if (sel != null && !sel.IsEditable)
 					{
 						bestStyle = string.Empty;
 					}
 					else
 					{
-						int flidAnchor = EditingHelper.CurrentSelection.GetTextPropId(
-							SelectionHelper.SelLimitType.Anchor);
+						var flidAnchor = EditingHelper.CurrentSelection.GetTextPropId(SelectionHelper.SelLimitType.Anchor);
 						if (flidAnchor == 0) // can happen for e.g. icons
 						{
 							bestStyle = string.Empty;
 						}
 						else
 						{
-							int flidEnd = EditingHelper.CurrentSelection.GetTextPropId(
-								SelectionHelper.SelLimitType.End);
+							var flidEnd = EditingHelper.CurrentSelection.GetTextPropId(SelectionHelper.SelLimitType.End);
 							if (flidEnd != flidAnchor)
 							{
 								bestStyle = string.Empty;
@@ -428,55 +416,53 @@ namespace SIL.FieldWorks.Common.RootSites
 							else
 							{
 								var mdc = m_rootb.DataAccess.MetaDataCache;
-								if (mdc is IFwMetaDataCacheManaged &&
-									!((IFwMetaDataCacheManaged)mdc).FieldExists(flidAnchor))
+								if (mdc is IFwMetaDataCacheManaged && !((IFwMetaDataCacheManaged)mdc).FieldExists(flidAnchor))
 								{
 									bestStyle = string.Empty;
 								}
 								else
 								{
-									CellarPropertyType type = (CellarPropertyType)m_rootb.DataAccess.MetaDataCache.GetFieldType((int)flidAnchor);
-									if (type != CellarPropertyType.String &&
-										type != CellarPropertyType.MultiString)
+									var type = (CellarPropertyType)m_rootb.DataAccess.MetaDataCache.GetFieldType((int)flidAnchor);
+									if (type != CellarPropertyType.String && type != CellarPropertyType.MultiString)
 									{
 										bestStyle = string.Empty;
 									}
 									else
 									{
-										string paraStyleName = EditingHelper.GetParaStyleNameFromSelection();
-										string charStyleName = EditingHelper.GetCharStyleNameFromSelection();
+										var paraStyleName = EditingHelper.GetParaStyleNameFromSelection();
+										var charStyleName = EditingHelper.GetCharStyleNameFromSelection();
 										if (string.IsNullOrEmpty(charStyleName) && flidAnchor == (int)StTxtParaTags.kflidContents)
+										{
 											bestStyle = paraStyleName;
+										}
 										else if (charStyleName == string.Empty)
+										{
 											bestStyle = StyleUtils.DefaultParaCharsStyleName;
+										}
 										else if (charStyleName == null)
+										{
 											bestStyle = string.Empty;
+										}
 										else
+										{
 											bestStyle = charStyleName;
+										}
 									}
 								}
 							}
 						}
 					}
 				}
-				// Handles the case where m_propertyTable is null because the parent slice is null
-				if (PropertyTable != null)
-				{
-					string oldBest = PropertyTable.GetValue<string>("BestStyleName");
-					if (oldBest != bestStyle)
-					{
-						EditingHelper.SuppressNextBestStyleNameChanged = true;
-						PropertyTable.SetProperty("BestStyleName", bestStyle, false, true);
-					}
-				}
 				return bestStyle;
 			}
 		}
 
+		#endregion
+
 		/// <summary>
 		/// Show paragraph styles?
 		/// </summary>
-		protected override bool IsSelectionInParagraph
+		public override bool IsSelectionInParagraph
 		{
 			get
 			{
@@ -485,7 +471,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					return false;
 				}
 
-				if (EditingHelper == null || EditingHelper.CurrentSelection == null || EditingHelper.Editable == false)
+				if (EditingHelper?.CurrentSelection == null || EditingHelper.Editable == false)
 				{
 					return false;
 				}
@@ -509,30 +495,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Fill in the list of style names.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected override void FillInStylesComboList(ComboBox comboBox, IVwStylesheet stylesheet)
-		{
-			comboBox.Items.Clear();
-			var charImage = "CharStyle";
-			var paraImage = "ParaStyle";
-			var sortedItems = new SortedSet<object>();
-			for (var i = 0; i < stylesheet.CStyles; ++i)
-			{
-				var name = stylesheet.get_NthStyleName(i);
-				var type = stylesheet.GetType(name);
-				if (type == (int)StyleType.kstCharacter || IsSelectionInParagraph)
-				{
-					sortedItems.Add(name);
-				}
-			}
-			var nameDefault = StyleUtils.DefaultParaCharsStyleName;
-			sortedItems.Add(nameDefault);
-			comboBox.Items.AddRange(sortedItems.ToArray());
-		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the status of all the slaves in the group whether they are ready to layout.

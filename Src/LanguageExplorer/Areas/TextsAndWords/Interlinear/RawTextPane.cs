@@ -126,18 +126,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// We can't set the style for Scripture...that has to follow some very specific rules implemented in TE.
 		/// </summary>
-		public override bool CanApplyStyle
-		{
-			get { return base.CanApplyStyle && !ScriptureServices.ScriptureIsResponsibleFor(m_rootObj); }
-		}
+		public override bool CanApplyStyle => base.CanApplyStyle && !ScriptureServices.ScriptureIsResponsibleFor(m_rootObj);
 
 
 		private void SetStyleSheet(int hvo)
 		{
 			var text = hvo == 0 ? null : (IStText)Cache.ServiceLocator.GetObject(hvo);
 
-			IVwStylesheet wantedStylesheet = m_styleSheet;
-			if (text != null && ScriptureServices.ScriptureIsResponsibleFor(text))
+			var wantedStylesheet = m_styleSheet;
+			if (ScriptureServices.ScriptureIsResponsibleFor(text))
 			{
 				// Use the Scripture stylesheet
 				if (m_teStylesheet == null)
@@ -156,7 +153,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (wantedStylesheet != m_styleSheet)
 			{
 				m_styleSheet = wantedStylesheet;
-				// Todo: set up the comobo; set the main window one.
+				if (m_styleSheet == m_flexStylesheet)
+				{
+					// Only do it for Flex styles, since Scripture text styles cannot be used in Flex (cf. "CanApplyStyle" property, above).
+					// This will allow for character & paragraph styles to be in the combobox.
+					Publisher.Publish("ResetStyleSheet", m_styleSheet);
+				}
 			}
 		}
 
@@ -392,29 +394,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void TurnOnShowInvisibleSpaces()
 		{
-			if (PropertyTable != null)
-			{
-				PropertyTable.SetProperty("ShowInvisibleSpaces", true, true, true);
-			}
+			PropertyTable?.SetProperty("ShowInvisibleSpaces", true, true, true);
 		}
 
 		private void TurnOffClickInvisibleSpace()
 		{
-			if (PropertyTable != null)
-			{
-				PropertyTable.SetProperty("ClickInvisibleSpace", false, true, true);
-			}
+			PropertyTable?.SetProperty("ClickInvisibleSpace", false, true, true);
 		}
 
-		private bool ShowInvisibleSpaces
-		{
-			get { return PropertyTable.GetValue<bool>("ShowInvisibleSpaces"); }
-		}
+		private bool ShowInvisibleSpaces => PropertyTable.GetValue<bool>("ShowInvisibleSpaces");
 
-		private bool ClickInvisibleSpace
-		{
-			get { return PropertyTable.GetValue<bool>("ClickInvisibleSpace"); }
-		}
+		private bool ClickInvisibleSpace => PropertyTable.GetValue<bool>("ClickInvisibleSpace");
 
 		#region Overrides of RootSite
 		/// ------------------------------------------------------------------------------------

@@ -20,6 +20,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Application;
 using SIL.Keyboarding;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using SIL.Windows.Forms.Keyboarding;
 using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
@@ -416,10 +417,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (Subscriber != null)
 				{
 					Subscriber.Unsubscribe("AboutToFollowLink", AboutToFollowLink);
-					Subscriber.Unsubscribe("DisplayWritingSystemHvo", DisplayWritingSystemHvo);
 					Subscriber.Unsubscribe("WritingSystemHvo", WritingSystemHvo_Changed);
-					Subscriber.Unsubscribe("BestStyleName", BestStyleName_Changed);
-					Subscriber.Unsubscribe("DisplayBestStyleName", DisplayBestStyleName);
 				}
 
 				if (m_printMenu != null)
@@ -1981,59 +1979,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 		#endregion
-
-		/// <summary>
-		/// Controls display of the Styles menu, e.g. whether
-		/// it should be enabled
-		/// </summary>
-		protected virtual void DisplayWritingSystemHvo(object newValue)
-		{
-			if (!Focused)
-			{
-				return;
-			}
-
-			var ctrl = (Control)newValue;
-			ctrl.Enabled = IsSelectionFormattable;
-		}
-
-		/// <summary>
-		/// Controls display of the Styles menu, e.g. whether
-		/// it should be enabled
-		/// </summary>
-		protected virtual void DisplayBestStyleName(object newValue)
-		{
-			if (!Focused)
-			{
-				return;
-			}
-
-			var comboBox = (ComboBox)newValue;
-			comboBox.Enabled = CanApplyStyle;
-			comboBox.Text = BestSelectionStyle;
-		}
-
-		/// <summary>
-		/// Display something that relies on the list with the id "CombinedStylesList"
-		/// </summary>
-		private void DisplayCombinedStylesList(object newValue)
-		{
-			if (!Focused || m_rootb == null)
-				return;
-			var stylesheet = m_rootb.Stylesheet;
-			if (stylesheet == null)
-			{
-				return;
-			}
-			FillInStylesComboList((ComboBox)newValue, stylesheet);
-		}
-
-		/// <summary>
-		/// Fill in the list of style names.
-		/// </summary>
-		protected virtual void FillInStylesComboList(ComboBox comboBox, IVwStylesheet stylesheet)
-		{
-		}
 
 		#region Print-related methods
 
@@ -4480,11 +4425,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			return null;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Show the writing system choices?
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public virtual bool IsSelectionFormattable
 		{
 			get { return true; }
@@ -4493,30 +4436,18 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Answer true if the Apply Styles menu option should be enabled.
 		/// </summary>
-		public virtual bool CanApplyStyle
-		{
-			get { return IsSelectionFormattable; }
-		}
+		public virtual bool CanApplyStyle => IsSelectionFormattable;
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the best style name that suits the selection.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		protected virtual string BestSelectionStyle
-		{
-			get { return String.Empty; }
-		}
+		public virtual string BestSelectionStyle => string.Empty;
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Show paragraph styles?
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		protected virtual bool IsSelectionInParagraph
-		{
-			get { return false; }
-		}
+		public virtual bool IsSelectionInParagraph => false;
+
 		#region Methods that delegate events to the rootbox
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -6155,11 +6086,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Subscriber = flexComponentParameters.Subscriber;
 
 			Subscriber.Subscribe("AboutToFollowLink", AboutToFollowLink);
-			Subscriber.Subscribe("DisplayWritingSystemHvo", DisplayWritingSystemHvo);
 			Subscriber.Subscribe("WritingSystemHvo", WritingSystemHvo_Changed);
-			Subscriber.Subscribe("DisplayBestStyleName", DisplayBestStyleName);
-			Subscriber.Subscribe("BestStyleName", BestStyleName_Changed);
-			Subscriber.Subscribe("DisplayCombinedStylesList", DisplayCombinedStylesList);
 
 			if (!SuppressPrintHandling)
 			{
@@ -6200,12 +6127,15 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected virtual void ReallyHandleWritingSystemHvo_Changed(object newValue)
 		{
-			EditingHelper.WritingSystemHvoChanged();
+			EditingHelper.WritingSystemHvoChanged(int.Parse((string)newValue));
 		}
 
-		private void BestStyleName_Changed(object newValue)
+		/// <summary>
+		/// Really handle it in a way subclasses can get involved.
+		/// </summary>
+		public virtual string Style_Changed(BaseStyleInfo newValue)
 		{
-			EditingHelper.BestStyleNameChanged();
+			return EditingHelper.BestStyleNameChanged(newValue);
 		}
 	}
 	#endregion

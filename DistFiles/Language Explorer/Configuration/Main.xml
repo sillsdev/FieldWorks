@@ -667,9 +667,6 @@ InterlinMaster user:
 	<!-- ********************************************************** -->
 	<!--This sections defines the various toolbars and the commands in them.-->
 	<toolbars>
-		<toolbar id="Format" a10status="PARTIALLY_DONE" >
-			<menu id="CombinedStylesCombo" label="Styles" list="CombinedStylesList" behavior="singlePropertyAtomicValue" property="BestStyleName" width="250"  a10status="PARTIALLY_DONE" />
-		</toolbar>
 		<toolbar id="Insert" a10status="PARTIALLY_DONE" >
 <!-- START include: "Lexicon/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item" -->
 			<include path="Lexicon/areaConfiguration.xml" query="root/toolbarsAddOn/toolbar[@id='Insert']/item"/>

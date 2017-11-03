@@ -3,56 +3,58 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
+using System.Linq;
 
 namespace LanguageExplorer.Works
 {
 	/// <summary>
 	/// Dummy handler to disable displaying the combined styles combobox by default.
 	/// </summary>
-	public class CombinedStylesListHandler : IFlexComponent, IDisposable
+	public sealed class CombinedStylesListHandler : IDisposable
 	{
-		public enum StylesSet { All, CharacterOnly };
+		private IFwMainWnd _mainWnd;
+		private ISubscriber _subscriber;
+		private LcmStyleSheet _stylesheet;
+		private ToolStripComboBox _formatToolStripComboBox;
+		private Dictionary<string, BaseStyleInfo> _characterStyleInformation;
+		private SortedSet<string> _sortedCharacterStyleInformation;
+		private Dictionary<string, BaseStyleInfo> _allStyleInformation;
+		private SortedSet<string> _sortedAllStyleInformation;
+		private bool _lastSetupIncludedParagraphStyles;
+		private bool _skipProcessingClickEvent;
 
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		internal CombinedStylesListHandler(IFwMainWnd mainWnd, ISubscriber subscriber, LcmStyleSheet stylesheet, ToolStripComboBox formatToolStripComboBox)
 		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			Guard.AgainstNull(mainWnd, nameof(mainWnd));
+			Guard.AgainstNull(subscriber, nameof(subscriber));
+			Guard.AgainstNull(stylesheet, nameof(stylesheet));
+			Guard.AgainstNull(formatToolStripComboBox, nameof(formatToolStripComboBox));
 
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
+			_characterStyleInformation = new Dictionary<string, BaseStyleInfo>();
+			_sortedCharacterStyleInformation = new SortedSet<string>();
+			_allStyleInformation = new Dictionary<string, BaseStyleInfo>();
+			_sortedAllStyleInformation = new SortedSet<string>();
+
+			_mainWnd = mainWnd;
+			_subscriber = subscriber;
+			_stylesheet = stylesheet;
+			_formatToolStripComboBox = formatToolStripComboBox;
+			_formatToolStripComboBox.ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+			_formatToolStripComboBox.Enabled = false;
+
+			CollectStyleInformation();
+
+			Application.Idle += ApplicationOnIdle;
 		}
-
-		#endregion
 
 		#region IDisposable Members
 
@@ -64,18 +66,20 @@ namespace LanguageExplorer.Works
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
 		/// True, if the object has been disposed.
 		/// </summary>
-		private bool m_isDisposed;
+		private bool _isDisposed;
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed => m_isDisposed;
+		public bool IsDisposed => _isDisposed;
 
 		~CombinedStylesListHandler()
 		{
@@ -118,52 +122,188 @@ namespace LanguageExplorer.Works
 		///
 		/// If subclasses override this method, they should call the base implementation.
 		/// </remarks>
-		protected virtual void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
-			if (m_isDisposed)
+			if (_isDisposed)
+			{
+				// No need to run it more than once.
 				return;
+			}
 
 			if (disposing)
 			{
 				// Dispose managed resources here.
+				_subscriber.Unsubscribe("ResetStyleSheet", ResetStyleSheet);
+				_characterStyleInformation.Clear();
+				_sortedCharacterStyleInformation.Clear();
+				_allStyleInformation.Clear();
+				_sortedAllStyleInformation.Clear();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			PropertyTable = null;
-			Publisher = null;
-			Subscriber = null;
+			_mainWnd = null;
+			_stylesheet = null;
+			_formatToolStripComboBox = null;
+			_characterStyleInformation = null;
+			_sortedCharacterStyleInformation = null;
+			_allStyleInformation = null;
+			_sortedAllStyleInformation = null;
+			_subscriber = null;
 
-			m_isDisposed = true;
+			_isDisposed = true;
 		}
 
 		#endregion
 
-#if RANDYTODO
 		/// <summary>
-		/// Called (by xcore) to control display params of the Styles menu, e.g. whether it should be enabled
+		/// Update enabled status for the combobox on the toolbar and for the main menu on the Format menu.
 		/// </summary>
-		public virtual bool OnDisplayBestStyleName(object commandObject, ref UIItemDisplayProperties display)
+		private void ApplicationOnIdle(object sender, EventArgs eventArgs)
 		{
-			CheckDisposed();
+			var activeView = _mainWnd.ActiveView as SimpleRootSite;
+			if (activeView == null)
+			{
+				return;
+			}
+			if (!activeView.Focused)
+			{
+				return;
+			}
 
-			display.Enabled = false;
-			display.Text = StyleUtils.DefaultParaCharsStyleName;
+			_skipProcessingClickEvent = true;
 
-			return false;		// we get called before the rootsite, so let them have a say.
+			var enabled = false;
+			var newText = string.Empty;
+			try
+			{
+				var originalEnabledState = _formatToolStripComboBox.Enabled;
+				if (activeView is SandboxBase)
+				{
+					newText = StyleUtils.DefaultParaCharsStyleName;
+				}
+				else
+				{
+					enabled = activeView.CanApplyStyle;
+					newText = activeView.BestSelectionStyle;
+				}
+				if (originalEnabledState == enabled)
+				{
+					return; // No change.
+				}
+
+				SortedSet<string> newSet = null;
+				if (enabled)
+				{
+					var canHandleParagraphStyles = activeView.IsSelectionInParagraph;
+					if (_lastSetupIncludedParagraphStyles)
+					{
+						if (canHandleParagraphStyles)
+						{
+							// Normally do nothing, unless the combobox is empty.
+							if (_formatToolStripComboBox.Items.Count == 0)
+							{
+								newSet = _sortedAllStyleInformation;
+								_lastSetupIncludedParagraphStyles = true;
+							}
+						}
+						else
+						{
+							// Swap out para styles for only character styles.
+							newSet = _sortedCharacterStyleInformation;
+							_lastSetupIncludedParagraphStyles = false;
+						}
+					}
+					else
+					{
+						if (canHandleParagraphStyles)
+						{
+							// Swap out character styles for paragraph styles.
+							newSet = _sortedAllStyleInformation;
+							_lastSetupIncludedParagraphStyles = true;
+						}
+						else
+						{
+							newSet = _sortedCharacterStyleInformation;
+							_lastSetupIncludedParagraphStyles = false;
+						}
+					}
+				}
+				if (newSet != null)
+				{
+					_formatToolStripComboBox.Items.Clear();
+					_formatToolStripComboBox.Items.AddRange(newSet.ToArray());
+				}
+			}
+			finally
+			{
+				_formatToolStripComboBox.Enabled = enabled;
+				_formatToolStripComboBox.SelectedItem = enabled ? newText : string.Empty;
+				_skipProcessingClickEvent = false;
+			}
 		}
 
-		/// <summary>
-		/// Called when XCore wants to display something that relies on the list with the id
-		/// "CombinedStylesList".
-		/// </summary>
-		public bool OnDisplayCombinedStylesList(object parameter, ref UIListDisplayProperties display)
+		private void CollectStyleInformation()
 		{
-			CheckDisposed();
+			_characterStyleInformation.Clear();
+			_sortedCharacterStyleInformation.Clear();
 
-			return false;
+			_allStyleInformation.Clear();
+			_sortedAllStyleInformation.Clear();
+
+			_formatToolStripComboBox.Items.Clear();
+
+			foreach (var styleInfo in _stylesheet.Styles)
+			{
+				if (styleInfo.RealStyle.Type == StyleType.kstCharacter)
+				{
+					_characterStyleInformation.Add(styleInfo.Name, styleInfo);
+					_sortedCharacterStyleInformation.Add(styleInfo.Name);
+				}
+				_allStyleInformation.Add(styleInfo.Name, styleInfo);
+				_sortedAllStyleInformation.Add(styleInfo.Name);
+			}
+			_sortedCharacterStyleInformation.Add(StyleUtils.DefaultParaCharsStyleName);
 		}
-#endif
+
+		private void FormatToolStripComboBoxOnSelectedIndexChanged(object sender, EventArgs eventArgs)
+		{
+			if (_skipProcessingClickEvent)
+			{
+				return;
+			}
+			var selectedStyleName = (string)_formatToolStripComboBox.SelectedItem;
+			BaseStyleInfo newlySelectedStyle;
+			if (_lastSetupIncludedParagraphStyles)
+			{
+				_allStyleInformation.TryGetValue(selectedStyleName, out newlySelectedStyle);
+			}
+			else
+			{
+				_characterStyleInformation.TryGetValue(selectedStyleName, out newlySelectedStyle);
+			}
+			var actualStyleName = ((SimpleRootSite)_mainWnd.ActiveView).Style_Changed(newlySelectedStyle);
+			if (string.IsNullOrWhiteSpace(actualStyleName))
+			{
+				// Code was confused, so leave what was selected.
+				return;
+			}
+
+			// Someone wasn't happy with what the user selected and changed it
+			// Unwire event handler, and reset selected style to returned value, and rewire event handler.
+			_skipProcessingClickEvent = true;
+			_formatToolStripComboBox.SelectedItem = actualStyleName;
+			_skipProcessingClickEvent = false;
+		}
+
+		private void ResetStyleSheet(object newValue)
+		{
+			// It can be the same as the old one, but it may still alter the styles that are listed,
+			// since in some cases only character stules are listed, but in other cases, all styles are listed.
+			_stylesheet = (LcmStyleSheet)newValue;
+			_formatToolStripComboBox.SelectedIndexChanged -= FormatToolStripComboBoxOnSelectedIndexChanged;
+			_formatToolStripComboBox.Items.Clear();
+			CollectStyleInformation();
+		}
 	}
 }

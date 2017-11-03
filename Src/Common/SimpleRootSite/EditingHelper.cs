@@ -19,6 +19,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites.Properties;
 using SIL.Keyboarding;
+using SIL.LCModel.DomainServices;
 using SIL.PlatformUtilities;
 using SIL.Reporting;
 
@@ -2812,7 +2813,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				// The ws didn't change, so don't bother setting and broadcasting.
 				return;
 			}
-			WritingSystemHvoChanged();
+			WritingSystemHvoChanged(ws);
 			// As of 1NOV2017, there are three known subscribers for "WritingSystemHvo":
 			//	SimpleRootSite (which calls the method "WritingSystemHvoChanged", below,
 			//	and RawTextPane a subclass of SimpleRootSite, which has SimpleRootSite
@@ -2821,7 +2822,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			rs.PropertyTable.SetProperty("WritingSystemHvo", ws.ToString(), false, true);
 			m_fSuppressNextWritingSystemHvoChanged = true;
 		}
-		internal void WritingSystemHvoChanged()
+		internal void WritingSystemHvoChanged(int writingSystemHvo)
 		{
 			if (m_fSuppressNextWritingSystemHvoChanged)
 			{
@@ -2842,8 +2843,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				return; //e.g, the dictionary preview pane isn't focussed and shouldn't respond.
 			}
 			simpleRootSite.Focus();
-			var s = simpleRootSite.PropertyTable == null ? "-1" : simpleRootSite.PropertyTable.GetValue("WritingSystemHvo", "-1");
-			var writingSystemHvo = int.Parse(s);
 			// will get zero when the selection contains multiple ws's and the ws is
 			// in fact different from the current one
 			if (writingSystemHvo > 0 && writingSystemHvo != SelectionHelper.GetWsOfEntireSelection(simpleRootSite.RootBox.Selection))
@@ -2908,7 +2907,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			var writingSystemManager = WritingSystemFactory as WritingSystemManager;
 			if (writingSystemManager != null) // this sometimes happened in our tests when the window got/lost focus
+			{
 				ws = writingSystemManager.Get(nWs);
+			}
 
 			SetKeyboardForWs(ws);
 
@@ -2935,37 +2936,44 @@ namespace SIL.FieldWorks.Common.RootSites
 			get { return m_fSuppressNextBestStyleNameChanged; }
 			set { m_fSuppressNextBestStyleNameChanged = value; }
 		}
-		internal void BestStyleNameChanged()
+
+		internal string BestStyleNameChanged(BaseStyleInfo newValue)
 		{
 			if (m_fSuppressNextBestStyleNameChanged)
 			{
 				m_fSuppressNextBestStyleNameChanged = false;
-				return;
+				return string.Empty;
 			}
 			// For now, we are only handling SimpleRootSite cases, e.g. for the Data Tree.
 			// If we need this in print layout, consider adding the mediator to the Callbacks
 			// interface.
-			SimpleRootSite rs = m_callbacks as SimpleRootSite;
+			var simpleRootSite = m_callbacks as SimpleRootSite;
 			// This property can be changed by selecting an item in the combined styles combo.
 			// When the user does this we try to update the style of the selection.
 			// It also gets updated (in order to control the current item in the combo) when
 			// the selection changes. We have to be careful this does not trigger an attempt to
 			// modify the data.
-			if (rs != null && !rs.WasFocused())
-				return; //e.g, the dictionary preview pane isn't focussed and shouldn't respond.
-			if (rs == null || rs.RootBox == null || rs.RootBox.Selection == null)
-				return;
-			string styleName = rs.PropertyTable == null ? null : rs.PropertyTable.GetValue<string>("BestStyleName", null);
+			if (simpleRootSite != null && !simpleRootSite.WasFocused())
+			{
+				return string.Empty; //e.g, the dictionary preview pane isn't focussed and shouldn't respond.
+			}
+			if (simpleRootSite?.RootBox?.Selection == null)
+			{
+				return string.Empty;
+			}
+			var styleName = newValue?.Name;
 			if (styleName == null)
-				return;
-			rs.Focus();
-			string paraStyleName = GetParaStyleNameFromSelection();
-			string charStyleName = GetCharStyleNameFromSelection();
-			if ((styleName == String.Empty && charStyleName != String.Empty) ||
-				(paraStyleName != styleName && charStyleName != styleName))
+			{
+				return string.Empty;
+			}
+			simpleRootSite.Focus();
+			var paraStyleName = GetParaStyleNameFromSelection();
+			var charStyleName = GetCharStyleNameFromSelection();
+			if ((styleName == string.Empty && charStyleName != string.Empty) || (paraStyleName != styleName && charStyleName != styleName))
 			{
 				ApplyStyle(styleName);
 			}
+			return styleName; // Maybe changed the style, so let caller know.
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2979,12 +2987,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void LostFocus(Control newFocusedControl, bool fIsChildWindow)
 		{
 			CheckDisposed();
-
-			//Debug.WriteLine(string.Format("EditingHelper.LostFocus:\n\t\t\tlost: {3} ({4}), Name={5}\n\t\t\tnew: {0} ({1}), Name={2}",
-			//    newFocusedControl != null ? newFocusedControl.ToString() : "<null>",
-			//    newFocusedControl != null ? newFocusedControl.Handle.ToInt32() : -1,
-			//    newFocusedControl != null ? newFocusedControl.Name : "<empty>",
-			//    m_control, m_control.Handle, m_control.Name));
 
 			// Switch back to the UI keyboard so edit boxes in dialogs, toolbar controls, etc.
 			// won't be using the UI of the current run in this view. But only if the current
