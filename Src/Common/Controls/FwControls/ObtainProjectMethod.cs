@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
@@ -33,7 +34,7 @@ namespace SIL.FieldWorks.Common.Controls
 			bool dummy;
 			string fwdataFileFullPathname;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(FwDirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null,
-				LcmCache.ModelVersion, "0.13", null, null, out dummy, out fwdataFileFullPathname);
+				LcmCache.ModelVersion, "0.13_ldml3", null, null, out dummy, out fwdataFileFullPathname);
 			if (!success)
 			{
 				ReportDuplicateBridge();
@@ -174,6 +175,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private static void RetrieveDefaultWritingSystemsFromLift(string liftPath, out CoreWritingSystemDefinition wsVern,
 			out CoreWritingSystemDefinition wsAnalysis)
 		{
+			PerformLdmlMigrationInClonedLiftRepo(liftPath);
 			using (var liftReader = new StreamReader(liftPath, Encoding.UTF8))
 			{
 				string vernWsId, analysisWsId;
@@ -241,6 +243,16 @@ namespace SIL.FieldWorks.Common.Controls
 				vernWs = "fr"; // Arbitrary default (consistent with default creation of new project) if we don't find an entry
 			if (string.IsNullOrWhiteSpace(analysisWs))
 				analysisWs = "en"; // Arbitrary default if we don't find a sense
+		}
+
+		/// <summary>
+		/// Migrate LDML files to the latest version directly in the cloned lift repository
+		/// </summary>
+		private static void PerformLdmlMigrationInClonedLiftRepo(string liftPath)
+		{
+			string ldmlFolder = Path.Combine(Path.GetDirectoryName(liftPath), "WritingSystems");
+			var ldmlMigrator = new WritingSystems.Migration.LdmlInFolderWritingSystemRepositoryMigrator(ldmlFolder, null);
+			ldmlMigrator.Migrate();
 		}
 
 		/// <summary>

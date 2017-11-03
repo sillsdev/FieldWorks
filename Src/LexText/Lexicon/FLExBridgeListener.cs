@@ -220,6 +220,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true; // We dealt with it.
 		}
 
+		// For send/receive involving LIFT projects, use the lift version "0.13_ldml3" so the version 3 ldml files will exist on a different chorus branch
+		private const string ldml3LiftVersion = "0.13_ldml3";
+
 		/// <summary>
 		/// Handles the "Get and _Merge Lexicon with this Project" menu item.
 		/// </summary>
@@ -234,7 +237,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			StopParser();
 			bool dummy;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null,
-				LcmCache.ModelVersion, "0.13", null,
+				LcmCache.ModelVersion, ldml3LiftVersion, null,
 				null, out dummy, out _liftPathname);
 
 			if (!success || string.IsNullOrEmpty(_liftPathname))
@@ -684,7 +687,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.LiftConflictViewer,
-				null, LcmCache.ModelVersion, "0.13", null, BroadcastMasterRefresh,
+				null, LcmCache.ModelVersion, ldml3LiftVersion, null, BroadcastMasterRefresh,
 				out dummy1, out dummy2);
 			if (!success)
 			{
@@ -782,7 +785,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.MoveLift,
-				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), LcmCache.ModelVersion, "0.13", null, null,
+				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), LcmCache.ModelVersion, ldml3LiftVersion, null, null,
 				out dummyDataChanged, out _liftPathname); // _liftPathname will be null, if no repo was moved.
 			if (!success)
 			{
@@ -895,7 +898,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				fullProjectFileName,
 				SendReceiveUser,
 				FLExBridgeHelper.SendReceiveLift, // May create a new lift repo in the process of doing the S/R. Or, it may just use the extant lift repo.
-				null, LcmCache.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
+				null, LcmCache.ModelVersion, ldml3LiftVersion, Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
 				out dataChanged, out dummy);
 			if (!success)
 			{
@@ -1338,7 +1341,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// Have FLEx Bridge do its 'undo'
 			// flexbridge -p <project folder name> #-u username -v undo_export_lift)
 			FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, SendReceiveUser,
-				FLExBridgeHelper.UndoExportLift, null, LcmCache.ModelVersion, "0.13", null, null,
+				FLExBridgeHelper.UndoExportLift, null, LcmCache.ModelVersion, ldml3LiftVersion, null, null,
 				out dataChanged, out dummy);
 		}
 
