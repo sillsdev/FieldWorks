@@ -417,7 +417,7 @@ namespace LanguageExplorer.Impls
 			if (PropertyTable.TryGetValue("currentContentControl", out oldStringValue))
 			{
 				PropertyTable.RemoveProperty("currentContentControl");
-				PropertyTable.SetProperty("toolChoice", oldStringValue, true, false);
+				PropertyTable.SetProperty("toolChoice", oldStringValue, SettingsGroup.LocalSettings, true, false);
 			}
 			PropertyTable.SetProperty("PropertyTableVersion", currentPropertyTableVersion, SettingsGroup.GlobalSettings, true, false);
 		}
@@ -443,7 +443,6 @@ namespace LanguageExplorer.Impls
 			PropertyTable.SetDefault("CurrentToolbarVersion", 1, SettingsGroup.GlobalSettings, true, false);
 			PropertyTable.SetDefault("SuspendLoadListUntilOnChangeFilter", string.Empty, SettingsGroup.LocalSettings, false, false);
 			PropertyTable.SetDefault("SuspendLoadingRecordUntilOnJumpToRecord", string.Empty, SettingsGroup.LocalSettings, false, false);
-			PropertyTable.SetDefault("SelectedWritingSystemHvosForCurrentContextMenu", string.Empty, SettingsGroup.LocalSettings, false, false);
 			// This property can be used to set the settingsGroup for context dependent properties. No need to persist it.
 			PropertyTable.SetDefault("SliceSplitterBaseDistance", -1, SettingsGroup.LocalSettings, false, false);
 			// Common to several tools in various areas, so set them here.
@@ -478,6 +477,7 @@ namespace LanguageExplorer.Impls
 			PropertyTable.RemoveProperty("ShowBalloonHelp");
 			PropertyTable.RemoveProperty("ShowMorphBundles");
 			PropertyTable.RemoveProperty("ActiveClerk");
+			PropertyTable.RemoveProperty("SelectedWritingSystemHvosForCurrentContextMenu");
 
 			ConvertOldPropertiesToNewIfPresent();
 		}
@@ -489,7 +489,7 @@ namespace LanguageExplorer.Impls
 			PropertyTable.SetProperty("App", _flexApp, SettingsGroup.BestSettings, false, false);
 			PropertyTable.SetProperty("cache", Cache, SettingsGroup.BestSettings, false, false);
 			PropertyTable.SetProperty("HelpTopicProvider", _flexApp, false, false);
-			PropertyTable.SetProperty("LcmStyleSheet", _stylesheet, false, false);
+			PropertyTable.SetProperty("FlexStyleSheet", _stylesheet, false, false);
 		}
 
 		private void RegisterSubscriptions()

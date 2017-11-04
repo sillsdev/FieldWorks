@@ -799,7 +799,7 @@ namespace LanguageExplorer.Works
 			m_currentObject = clerk.CurrentObject;
 			m_currentIndex = currentIndex;
 			//add our current state to the history system
-			string toolChoice = PropertyTable.GetValue("toolChoice", "");
+			string toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
 			Guid guid = Guid.Empty;
 			if (clerk.CurrentObject != null)
 				guid = clerk.CurrentObject.Guid;
@@ -823,7 +823,7 @@ namespace LanguageExplorer.Works
 		public bool OnCheckJump(object argument)
 		{
 			var hvoTarget = (int)argument;
-			var toolChoice = PropertyTable.GetValue("toolChoice", "");
+			var toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
 			// Currently this (LT-11447) only applies to Dictionary view
 			if (hvoTarget > 0 && toolChoice == ksLexDictionary)
 			{

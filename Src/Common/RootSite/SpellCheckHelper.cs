@@ -1,9 +1,6 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SpellCheckHelper.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections.Generic;
@@ -51,12 +48,37 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public bool ShowContextMenu(Point pt, SimpleRootSite rootsite)
 		{
-			ContextMenuStrip menu = new ContextMenuStrip();
-			MakeSpellCheckMenuOptions(pt, rootsite, menu);
-			if (menu.Items.Count == 0)
-				return false;
-			menu.Show(rootsite, pt);
+			using (var menu = new ContextMenuStrip())
+			{
+				try
+				{
+					MakeSpellCheckMenuOptions(pt, rootsite, menu);
+					if (menu.Items.Count == 0)
+					{
+						return false;
+					}
+					menu.Show(rootsite, pt);
+				}
+				finally
+				{
+					UnwireEventHandlers(menu);
+				}
+			}
 			return true;
+		}
+
+		/// <summary>
+		/// Unwire event handlers added to submenus
+		/// </summary>
+		public void UnwireEventHandlers(ContextMenuStrip menu)
+		{
+			foreach (var submenu in menu.Items)
+			{
+				if (submenu is AddToDictMenuItem || submenu is SpellCorrectMenuItem)
+				{
+					((ToolStripMenuItem)submenu).Click -= spellingMenuItemClick;
+				}
+			}
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -70,15 +92,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="menu">to add items to.</param>
 		/// <returns>the number of menu items added (not counting a possible separator line)</returns>
 		/// -----------------------------------------------------------------------------------
-		public virtual int MakeSpellCheckMenuOptions(Point pt, SimpleRootSite rootsite,
-			ContextMenuStrip menu)
+		public virtual int MakeSpellCheckMenuOptions(Point pt, SimpleRootSite rootsite, ContextMenuStrip menu)
 		{
 			int hvoObj, tag, wsAlt, wsText;
 			string word;
 			ISpellEngine dict;
 			bool nonSpellingError;
-			ICollection<SpellCorrectMenuItem> suggestions = GetSuggestions(pt, rootsite,
-				out hvoObj, out tag, out wsAlt, out wsText, out word, out dict, out nonSpellingError);
+			ICollection<SpellCorrectMenuItem> suggestions = GetSuggestions(pt, rootsite, out hvoObj, out tag, out wsAlt, out wsText, out word, out dict, out nonSpellingError);
 			if (suggestions == null)
 				return 0;
 			// no detectable spelling problem.

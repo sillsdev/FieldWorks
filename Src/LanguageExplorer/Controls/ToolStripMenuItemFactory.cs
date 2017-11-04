@@ -121,6 +121,18 @@ namespace LanguageExplorer.Controls
 			return toolStripMenuItem;
 		}
 
+		/// <summary>
+		/// Call this when the new menu is expected to hold more menus, and has no event handler, image, or tooltip.
+		/// </summary>
+		internal static ToolStripMenuItem CreateBaseMenuForToolStripMenuItem(ContextMenuStrip mainMenuStrip, string menuText, int insertIndex = int.MaxValue)
+		{
+			var toolStripMenuItem = new ToolStripMenuItem(MungeTheMenuText(menuText));
+
+			InsertToolStripMenuItem(mainMenuStrip.Items, toolStripMenuItem, insertIndex);
+
+			return toolStripMenuItem;
+		}
+
 		internal static ToolStripSeparator CreateToolStripSeparatorForToolStripMenuItem(ToolStripMenuItem mainMenuStrip, int insertIndex = int.MaxValue)
 		{
 			var newToolStripSeparator = new ToolStripSeparator();

@@ -214,6 +214,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					break;
 				}
 			}
+			PrepareToShowContextMenu();
 		}
 
 		protected virtual void PrepareToShowContextMenu()
@@ -2748,37 +2749,40 @@ only be sent to the subscribers one at a time and considered done as soon as som
 				attrValueNew,
 				LayoutCache.LayoutVersionNumber, out newPartref);
 			Inventory.GetInventory("layouts", m_cache.ProjectId.Name).PersistOverrideElement(newLayout);
-			DataTree dt = ContainingDataTree;
+			var dataTree = ContainingDataTree;
 			var rootKey = Key[0] as XElement;
 			// The first item in the key is always the root XML node for the whole display. This has now changed,
 			// so if we don't do something, subsequent visibility commands for other slices will use the old
 			// version as a basis and lose the change we just made (unless we Refresh, which we don't want to do
 			// when showing everything). Also, if we do refresh, we'll discard and remake everything.
-			foreach (Slice slice in dt.Slices)
+			foreach (var slice in dataTree.Slices.Where(slice => slice.Key != null && slice.Key.Length >= 0 && slice.Key[0] == rootKey && rootKey != newLayout))
 			{
-				if (slice.Key != null && slice.Key.Length >= 0 && slice.Key[0] == rootKey && rootKey != newLayout)
-					slice.Key[0] = newLayout;
+				slice.Key[0] = newLayout;
 			}
 
 			int lastPartRef;
 			var oldPartRef = PartRef(out lastPartRef);
-			if (oldPartRef != null)
+			if (oldPartRef == null)
 			{
-				oldPartRef = (XElement)Key[lastPartRef];
-				Key[lastPartRef] = newPartref;
+				return;
+			}
 
-				foreach (Slice slice in dt.Slices)
+			oldPartRef = (XElement)Key[lastPartRef];
+			Key[lastPartRef] = newPartref;
+			// Loop skips dummy slices, which have a null 'Key' (LT-5817).
+			foreach (var slice in dataTree.Slices.Where(slice => slice.Key != null))
+			{
+				for (var i = 0; i < slice.Key.Length; i++)
 				{
-					if (slice.Key == null)
-						continue;		// this can happen for dummy slices.  (LT-5817)
-					for (int i = 0; i < slice.Key.Length; i++)
+					var node = slice.Key[i] as XElement;
+					if (node == null)
 					{
-						var node = slice.Key[i] as XElement;
-						if (node == null)
-							continue;
+						continue;
+					}
 
-						if (XmlUtils.NodesMatch(oldPartRef, node))
-							slice.Key[i] = newPartref;
+					if (XmlUtils.NodesMatch(oldPartRef, node))
+					{
+						slice.Key[i] = newPartref;
 					}
 				}
 			}

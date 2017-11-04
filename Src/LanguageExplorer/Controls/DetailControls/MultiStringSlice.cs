@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,18 +26,21 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// </summary>
 	public class MultiStringSlice : ViewPropertySlice
 	{
+		private ToolStripMenuItem _writingSystemsMenu;
+		private List<ToolStripMenuItem> _writingSystemMenuItems;
+
 		public MultiStringSlice(ICmObject obj, int flid, int ws, int wsOptional, bool forceIncludeEnglish, bool editable, bool spellCheck)
 		{
 			Control = new LabeledMultiStringView(obj.Hvo, flid, ws, wsOptional, forceIncludeEnglish, editable, spellCheck);
-			var view = View;
 #if _DEBUG
 			Control.CheckForIllegalCrossThreadCalls = true;
 #endif
 			InternalInitialize();
 			Reuse(obj, flid);
-			view.InnerView.Display += view_Display;
+			var view = View;
+			view.InnerView.Display += View_Display;
 			view.InnerView.RightMouseClickedEvent += HandleRightMouseClickedEvent;
-			view.InnerView.LostFocus += view_LostFocus;
+			view.InnerView.LostFocus += View_LostFocus;
 		}
 
 		#region Overrides of Slice
@@ -46,6 +49,16 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.PrepareToShowContextMenu();
 
 			// Calulate the WS that need to be showed.
+			var currentlyAvailableForChecking = new List<string>(WritingSystemOptionsForDisplay.Select(writingSystemDefinition => writingSystemDefinition.DisplayLabel));
+			var currentlyCheckedWritingSystems = new List<string>(WritingSystemsSelectedForDisplay.Select(writingSystemDefinition => writingSystemDefinition.DisplayLabel));
+			foreach (var wsMenu in _writingSystemMenuItems)
+			{
+				var tagAsWsDefn = (string)wsMenu.Tag;
+				var makeAvailableAndEnabled = currentlyAvailableForChecking.Contains(tagAsWsDefn);
+				wsMenu.Available = makeAvailableAndEnabled;
+				wsMenu.Enabled = makeAvailableAndEnabled;
+				wsMenu.Checked = currentlyCheckedWritingSystems.Contains(tagAsWsDefn);
+			}
 		}
 
 		protected override void AddSpecialContextMenus(ContextMenuStrip topLevelContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems)
@@ -53,23 +66,44 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.AddSpecialContextMenus(topLevelContextMenuStrip, menuItems);
 
 			// Add "Writing Systems" context menu and its sub-menu items.
-			var writingSystemsMenu = new ToolStripMenuItem(LanguageExplorerResources.WritingSystems);
-			topLevelContextMenuStrip.Items.Add(writingSystemsMenu);
+			_writingSystemsMenu = ToolStripMenuItemFactory.CreateBaseMenuForToolStripMenuItem(topLevelContextMenuStrip, LanguageExplorerResources.WritingSystems);
 
-			var submenu = new ToolStripMenuItem(LanguageExplorerResources.ShowAllRightNow, null, ShowAllWritingSystemsNow_Click);
-			writingSystemsMenu.DropDownItems.Add(submenu);
-			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(submenu, ShowAllWritingSystemsNow_Click));
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, _writingSystemsMenu, ShowAllWritingSystemsNow_Click, LanguageExplorerResources.ShowAllRightNow);
 
-			submenu = new ToolStripMenuItem("PH: current WSes", null, CurrentWSes_Clicked);
-			submenu.Enabled = false;
-			writingSystemsMenu.DropDownItems.Add(submenu);
-			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(submenu, CurrentWSes_Clicked));
+			// Note: We add all possible individual WS submenus here, and they will be disabled and not visible.
+			// The 'PrepareToShowContextMenu' method is called as the main context menu is being shown, and it sort out which menus
+			// are relevant for the given context and make them visible and enabled.
+			var allWritingSystems = Cache.ServiceLocator.WritingSystems.AllWritingSystems.ToList();
+			var sortedWritingSystemDefinitions = new SortedDictionary<string, CoreWritingSystemDefinition>();
+			foreach (var ws in allWritingSystems)
+			{
+				sortedWritingSystemDefinitions.Add(ws.DisplayLabel, ws);
+			}
+			_writingSystemMenuItems = new List<ToolStripMenuItem>();
+			foreach (var wsKvp in sortedWritingSystemDefinitions)
+			{
+				var wsMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, _writingSystemsMenu, IndividualWritingSystemMenu_Clicked, wsKvp.Key);
+				_writingSystemMenuItems.Add(wsMenu);
+				wsMenu.Available = false;
+				wsMenu.Enabled = false;
+				wsMenu.CheckOnClick = true;
+				wsMenu.Tag = wsKvp.Value.DisplayLabel;
+			}
 
-			submenu = new ToolStripMenuItem(LanguageExplorerResources.Configure, null, ConfigureWritingSystems_Clicked);
-			writingSystemsMenu.DropDownItems.Add(submenu);
-			menuItems.Add(new Tuple<ToolStripMenuItem, EventHandler>(submenu, ConfigureWritingSystems_Clicked));
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, _writingSystemsMenu, ConfigureWritingSystems_Clicked, LanguageExplorerResources.Configure);
 		}
+
 		#endregion
+
+		private void IndividualWritingSystemMenu_Clicked(object sender, EventArgs e)
+		{
+			var currentlyCheckedCoreWritingSystemDefinitions = new List<CoreWritingSystemDefinition>();
+			foreach (var toolStripMenuItem in _writingSystemMenuItems.Where(wsMenu => wsMenu.Checked))
+			{
+				currentlyCheckedCoreWritingSystemDefinitions.AddRange(Cache.ServiceLocator.WritingSystems.AllWritingSystems.Where(wsDefn => wsDefn.DisplayLabel == (string)toolStripMenuItem.Tag));
+			}
+			PersistAndRedisplayWssToDisplayForPart(currentlyCheckedCoreWritingSystemDefinitions);
+		}
 
 		private void ConfigureWritingSystems_Clicked(object sender, EventArgs eventArgs)
 		{
@@ -84,9 +118,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		private void CurrentWSes_Clicked(object sender, EventArgs eventArgs)
-		{}
-
 		private LabeledMultiStringView View => (LabeledMultiStringView)Control;
 
 		/// <summary>
@@ -94,14 +125,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// assume that the control is a rootsite, because some classes override and insert
 		/// another layer of control, with the root site being a child.
 		/// </summary>
-		public override RootSite RootSite
-		{
-			get
-			{
-				CheckDisposed();
-				return View.InnerView;
-			}
-		}
+		public override RootSite RootSite => View.InnerView;
 
 		/// <summary>
 		/// Reset the slice to the state as if it had been constructed with these arguments. (It is going to be
@@ -119,29 +143,33 @@ namespace LanguageExplorer.Controls.DetailControls
 			View.FinishInit(ConfigurationNode);
 		}
 
-		void view_LostFocus(object sender, EventArgs e)
+		private void View_LostFocus(object sender, EventArgs e)
 		{
 			DoSideEffects();
 		}
 
 		private void DoSideEffects()
 		{
-			string sideEffectMethod = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "sideEffectMethod");
+			var sideEffectMethod = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "sideEffectMethod");
 			if (string.IsNullOrEmpty(sideEffectMethod))
+			{
 				return;
+			}
 			ReflectionHelper.CallMethod(Object, sideEffectMethod, null);
 		}
 
-		private void view_Display(object sender, VwEnvEventArgs e)
+		private void View_Display(object sender, VwEnvEventArgs e)
 		{
 			XmlVc.ProcessProperties(ConfigurationNode, e.Environment);
 		}
 
-		void HandleRightMouseClickedEvent(SimpleRootSite sender, FwRightMouseClickEventArgs e)
+		private void HandleRightMouseClickedEvent(SimpleRootSite sender, FwRightMouseClickEventArgs e)
 		{
-			string sMenu = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "contextMenu");
+			var sMenu = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "contextMenu");
 			if (string.IsNullOrEmpty(sMenu))
+			{
 				return;
+			}
 			e.EventHandled = true;
 			e.Selection.Install();
 			var fwMainWnd = PropertyTable.GetValue<IFwMainWnd>("window");
@@ -154,29 +182,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Gets a list of the visible writing systems stored in our layout part ref override.
 		/// </summary>
 		/// <returns></returns>
-		private IEnumerable<CoreWritingSystemDefinition> GetVisibleWritingSystems()
-		{
-			var singlePropertySequenceValue = GetVisibleWSSPropertyValue();
-			return GetVisibleWritingSystems(singlePropertySequenceValue);
-		}
-
-		/// <summary>
-		/// Get the visible writing systems list in terms of a singlePropertySequenceValue string.
-		/// if it hasn't been defined yet, we'll use the WritingSystemOptions for default.
-		/// </summary>
-		/// <returns></returns>
-		public string GetVisibleWSSPropertyValue()
-		{
-			var partRef = PartRef();
-			var singlePropertySequenceValue = XmlUtils.GetOptionalAttributeValue(partRef, "visibleWritingSystems", null);
-			if (singlePropertySequenceValue == null)
-			{
-				// Encode a sinqlePropertySequenceValue property value using only current WritingSystemOptions.
-				var wssOptions = View.GetWritingSystemOptions(false).ToArray();
-				singlePropertySequenceValue = EncodeWssToDisplayPropertyValue(wssOptions);
-			}
-			return singlePropertySequenceValue;
-		}
+		private IReadOnlyList<CoreWritingSystemDefinition> VisibleWritingSystems => GetAllVisibleWritingSystems(XmlUtils.GetOptionalAttributeValue(PartRef(), "visibleWritingSystems", null) ?? EncodeWssToDisplayPropertyValue(View.GetWritingSystemOptions(false).ToArray()));
 
 		/// <summary>
 		/// convert the given writing systems into a property containing comma-delimited icuLocales.
@@ -186,24 +192,17 @@ namespace LanguageExplorer.Controls.DetailControls
 		private static string EncodeWssToDisplayPropertyValue(IEnumerable<CoreWritingSystemDefinition> wss)
 		{
 			var wsIds = wss.Select(ws => ws.Id).ToArray();
-			return wsIds.Length == 0 ? "" : string.Join(",", wsIds);
+			return wsIds.Length == 0 ? string.Empty : string.Join(",", wsIds);
 		}
 
 		/// <summary>
 		/// Get the writing systems we should actually display right now. That is, from the ones
 		/// that are currently possible, select any we've previously configured to show.
 		/// </summary>
-		private IEnumerable<CoreWritingSystemDefinition> GetVisibleWritingSystems(string singlePropertySequenceValue)
+		private IReadOnlyList<CoreWritingSystemDefinition> GetAllVisibleWritingSystems(string singlePropertySequenceValue)
 		{
-#if RANDYTODO
-			string[] wsIds = ChoiceGroup.DecodeSinglePropertySequenceValue(singlePropertySequenceValue);
-			var wsIdSet = new HashSet<string>(wsIds);
-			return from ws in WritingSystemOptionsForDisplay
-				   where wsIdSet.Contains(ws.Id)
-				   select ws;
-#else
-			return new List<CoreWritingSystemDefinition>();
-#endif
+			var wsIdSet = new HashSet<string>(singlePropertySequenceValue.Split(','));
+			return WritingSystemOptionsForDisplay.Where(ws => wsIdSet.Contains(ws.Id)).ToList();
 		}
 
 		public override void Install(DataTree parentDataTree)
@@ -211,15 +210,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.Install(parentDataTree);
 			// setup the visible writing systems for our control
 			// (We should have called MakeRoot on our control by now)
-			SetupWssToDisplay();
-		}
-
-		/// <summary>
-		/// Setup our view's Wss to display from our persisted layout/part ref override
-		/// </summary>
-		private void SetupWssToDisplay()
-		{
-			WritingSystemsSelectedForDisplay = GetVisibleWritingSystems();
+			WritingSystemsSelectedForDisplay = VisibleWritingSystems;
 		}
 
 		/// <summary>
@@ -237,29 +228,31 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Get the writing systems that are available for displaying on our slice.
 		/// </summary>
-		public IEnumerable<CoreWritingSystemDefinition> WritingSystemOptionsForDisplay => ((LabeledMultiStringView) Control).WritingSystemOptions;
+		private IReadOnlyList<CoreWritingSystemDefinition> WritingSystemOptionsForDisplay => ((LabeledMultiStringView)Control).WritingSystemOptions;
 
 		/// <summary>
 		/// Get/Set the writing systems selected to be displayed for this kind of slice.
 		/// </summary>
-		public IEnumerable<CoreWritingSystemDefinition> WritingSystemsSelectedForDisplay
+		internal IEnumerable<CoreWritingSystemDefinition> WritingSystemsSelectedForDisplay
 		{
 			get
 			{
 				// If we're not initialized enough to know what ones are being displayed,
 				// get the default we expect to be initialized to.
 				if (Control == null)
-					return GetVisibleWritingSystems();
-				var result = ((LabeledMultiStringView) Control).WritingSystemsToDisplay;
-				if (result.Count == 0)
-					return GetVisibleWritingSystems();
-				return result;
+				{
+					return VisibleWritingSystems;
+				}
+				var result = ((LabeledMultiStringView)Control).WritingSystemsToDisplay;
+				return result.Count == 0 ? VisibleWritingSystems : result;
 			}
 			set
 			{
-				var labeledMultiStringView = (LabeledMultiStringView) Control;
+				var labeledMultiStringView = (LabeledMultiStringView)Control;
 				if (labeledMultiStringView.WritingSystemsToDisplay?.SequenceEqual(value) ?? false)
+				{
 					return; // no change.
+				}
 				labeledMultiStringView.WritingSystemsToDisplay = value.ToList();
 				labeledMultiStringView.RefreshDisplay();
 			}
@@ -299,68 +292,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			if (WritingSystemsSelectedForDisplay == null)
 			{
-				SetWssToDisplayForPart(GetVisibleWritingSystems());
+				SetWssToDisplayForPart(VisibleWritingSystems);
 			}
 		}
 
-#if RANDYTODO
-		/// <summary>
-		/// Populate the writing system options for the slice.
-		/// </summary>
-		/// <param name="parameter">The parameter.</param>
-		/// <param name="display">The display.</param>
-		/// <returns></returns>
-		public bool OnDisplayWritingSystemOptionsForSlice(object parameter, ref UIListDisplayProperties display)
-		{
-			CheckDisposed();
-			display.List.Clear();
-			PropertyTable.SetProperty(display.PropertyName, GetVisibleWSSPropertyValue(), true, false);
-			AddWritingSystemListWithIcuLocales(display, WritingSystemOptionsForDisplay);
-			return true;//we handled this, no need to ask anyone else.
-		}
-
-		/// <summary>
-		/// stores the list values in terms of icu locale
-		/// </summary>
-		/// <param name="display"></param>
-		/// <param name="list"></param>
-		private void AddWritingSystemListWithIcuLocales(UIListDisplayProperties display, IEnumerable<CoreWritingSystemDefinition> list)
-		{
-			string[] active = GetVisibleWSSPropertyValue().Split(',');
-			foreach (var ws in list)
-			{
-				// generally enable all items, but if only one is checked that one is disabled;
-				// it can't be turned off.
-				bool enabled = (active.Length != 1 || ws.Id != active[0]);
-				display.List.Add(ws.DisplayLabel, ws.Id, null, null, enabled);
-			}
-		}
-#endif
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called when property changed.
-		/// </summary>
-		/// <param name="name">The name.</param>
-		/// ------------------------------------------------------------------------------------
-		public virtual void OnPropertyChanged(string name)
-		{
-			CheckDisposed();
-
-			switch (name)
-			{
-				case "SelectedWritingSystemHvosForCurrentContextMenu":
-					string singlePropertySequenceValue = PropertyTable.GetValue<string>("SelectedWritingSystemHvosForCurrentContextMenu");
-					PersistAndRedisplayWssToDisplayForPart(singlePropertySequenceValue);
-					break;
-				default:
-					break;
-			}
-		}
-
-		#region Overrides of Slice
-
-		#region Overrides of ViewSlice
+		#region Overrides of Slice and/or ViewSlice
 
 		/// <summary>
 		/// Executes in two distinct scenarios.
@@ -387,48 +323,52 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			if (disposing)
 			{
-				Subscriber.Unsubscribe("SelectedWritingSystemHvosForCurrentContextMenu", SelectedWritingSystemHvosForCurrentContextMenu);
+				var view = View;
+				view.InnerView.Display -= View_Display;
+				view.InnerView.RightMouseClickedEvent -= HandleRightMouseClickedEvent;
+				view.InnerView.LostFocus -= View_LostFocus;
+				foreach (var wsMenu in _writingSystemMenuItems)
+				{
+					if (wsMenu.Text == LanguageExplorerResources.ShowAllRightNow)
+					{
+						wsMenu.Click -= ShowAllWritingSystemsNow_Click;
+					}
+					else if (wsMenu.Text == LanguageExplorerResources.Configure)
+					{
+						wsMenu.Click -= ConfigureWritingSystems_Clicked;
+					}
+					else
+					{
+						wsMenu.Click -= IndividualWritingSystemMenu_Clicked;
+						wsMenu.Tag = null;
+					}
+					wsMenu.Dispose();
+				}
+				_writingSystemMenuItems.Clear();
+				_writingSystemsMenu.Dispose();
 			}
+			_writingSystemsMenu = null;
+			_writingSystemMenuItems = null;
 
 			base.Dispose(disposing);
 		}
 
 		#endregion
 
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		private void PersistAndRedisplayWssToDisplayForPart(IEnumerable<CoreWritingSystemDefinition> wssToDisplayNewValue)
 		{
-			base.InitializeFlexComponent(flexComponentParameters);
-
-			Subscriber.Subscribe("SelectedWritingSystemHvosForCurrentContextMenu", SelectedWritingSystemHvosForCurrentContextMenu);
-		}
-
-		private void SelectedWritingSystemHvosForCurrentContextMenu(object newValue)
-		{
-			PersistAndRedisplayWssToDisplayForPart((string)newValue);
-		}
-
-		#endregion
-
-		private void PersistAndRedisplayWssToDisplayForPart(IEnumerable<CoreWritingSystemDefinition> wssToDisplay)
-		{
-			PersistAndRedisplayWssToDisplayForPart(EncodeWssToDisplayPropertyValue(wssToDisplay));
-		}
-
-		private void PersistAndRedisplayWssToDisplayForPart(string singlePropertySequenceValue)
-		{
+			var singlePropertySequenceValue = EncodeWssToDisplayPropertyValue(wssToDisplayNewValue);
 			ReplacePartWithNewAttribute("visibleWritingSystems", singlePropertySequenceValue);
-			var wssToDisplay = GetVisibleWritingSystems(singlePropertySequenceValue);
+			var wssToDisplay = GetAllVisibleWritingSystems(singlePropertySequenceValue).ToList();
 			if (Key.Length > 0)
 			{
 				var lastKey = Key[Key.Length - 1] as XElement;
 				// This is a horrible kludge to implement LT-9620 and catch the fact that we are changing the list
 				// of current pronunciation writing systems, and update the database.
 				if (lastKey != null && XmlUtils.GetOptionalAttributeValue(lastKey, "menu") == "mnuDataTree-Pronunciation")
+				{
 					UpdatePronunciationWritingSystems(wssToDisplay);
+				}
 			}
 			SetWssToDisplayForPart(wssToDisplay);
 		}
@@ -436,34 +376,35 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Get the language project's list of pronunciation writing systems into sync with the supplied list.
 		/// </summary>
-		private void UpdatePronunciationWritingSystems(IEnumerable<CoreWritingSystemDefinition> newValues)
+		private void UpdatePronunciationWritingSystems(IReadOnlyList<CoreWritingSystemDefinition> wssToDisplay)
 		{
-			if (newValues.Count() != m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Count
-				|| !m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.SequenceEqual(newValues))
+			if (wssToDisplay.Count != m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Count
+				|| !m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.SequenceEqual(wssToDisplay))
 			{
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
 					m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Clear();
-					foreach (CoreWritingSystemDefinition ws in newValues)
+					foreach (var ws in wssToDisplay)
+					{
 						m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Add(ws);
+					}
 				});
 			}
 		}
 
 		/// <summary>
-		/// go through all the data tree slices, finding the slices that refer to the same part as this slice
-		/// setting them to the same writing systems to display
-		/// and redisplaying their views.
+		/// Go through all the data tree slices, finding the slices that refer to the same part as this slice
+		/// setting them to the same writing systems to display and redisplaying their views.
 		/// </summary>
-		/// <param name="wssToDisplay"></param>
-		private void SetWssToDisplayForPart(IEnumerable<CoreWritingSystemDefinition> wssToDisplay)
+		private void SetWssToDisplayForPart(IReadOnlyList<CoreWritingSystemDefinition> wssToDisplay)
 		{
 			var ourPart = PartRef();
 			var writingSystemsToDisplay = wssToDisplay?.ToList();
 			foreach (var slice in ContainingDataTree.Slices.Where(slice => slice.PartRef() == ourPart))
 			{
-				((LabeledMultiStringView)slice.Control).WritingSystemsToDisplay = writingSystemsToDisplay;
-				((LabeledMultiStringView)slice.Control).RefreshDisplay();
+				var msView = (LabeledMultiStringView)slice.Control;
+				msView.WritingSystemsToDisplay = writingSystemsToDisplay;
+				msView.RefreshDisplay();
 			}
 		}
 	}

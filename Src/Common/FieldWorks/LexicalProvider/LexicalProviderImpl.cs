@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.LexicalProvider
 				IPublisher publisher = new MyDoNothingPublisher();
 				ISubscriber subscriber = new MyDoNothingSubscriber();
 				IPropertyTable propertyTable = new MyDoAlmostNothingPropertyTable();
-				var styleSheet = propertyTable.GetValue<LcmStyleSheet>("LcmStyleSheet");
+				var styleSheet = propertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet");
 				styleSheet.Init(FieldWorks.Cache, FieldWorks.Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
 				LexEntryUi.DisplayEntries(FieldWorks.Cache, null, propertyTable, publisher, subscriber, new FlexHelpTopicProvider(), "UserHelpFile", tss, null);
 			});
@@ -670,7 +670,7 @@ namespace SIL.FieldWorks.LexicalProvider
 			/// <returns></returns>
 			bool IPropertyRetriever.PropertyExists(string name)
 			{
-				return name == "LcmStyleSheet";
+				return name == "FlexStyleSheet";
 			}
 
 			/// <summary>
@@ -694,7 +694,7 @@ namespace SIL.FieldWorks.LexicalProvider
 			/// <exception cref="ArgumentException">Thrown if the stored property is not type "T".</exception>
 			bool IPropertyRetriever.TryGetValue<T>(string name, out T propertyValue)
 			{
-				if (name == "LcmStyleSheet" && _lcmStyleSheet is T)
+				if (name == "FlexStyleSheet" && _lcmStyleSheet is T)
 				{
 					propertyValue = (T)_lcmStyleSheet;
 					return true;
@@ -729,7 +729,7 @@ namespace SIL.FieldWorks.LexicalProvider
 			T IPropertyRetriever.GetValue<T>(string name)
 			{
 				var result = default(T);
-				if (name == "LcmStyleSheet" && _lcmStyleSheet is T)
+				if (name == "FlexStyleSheet" && _lcmStyleSheet is T)
 				{
 					result = (T)_lcmStyleSheet;
 				}

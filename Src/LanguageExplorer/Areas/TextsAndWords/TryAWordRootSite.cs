@@ -77,7 +77,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			if (disposing)
 			{
-				//RightMouseClickedEvent -= new FwRightMouseClickEventHandler(InterlinDocChild_RightMouseClickedEvent);
 				if (m_tryAWordSandbox != null)
 				{
 					if (!Controls.Contains(m_tryAWordSandbox))

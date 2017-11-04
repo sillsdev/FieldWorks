@@ -292,7 +292,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public static LcmStyleSheet StyleSheetFromPropertyTable(IPropertyRetriever propertyTable)
 		{
-			return propertyTable.GetValue<LcmStyleSheet>("LcmStyleSheet");
+			return propertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet");
 		}
 
 		/// ------------------------------------------------------------------------------------

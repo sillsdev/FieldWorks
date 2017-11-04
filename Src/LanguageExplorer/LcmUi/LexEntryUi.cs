@@ -332,7 +332,7 @@ namespace LanguageExplorer.LcmUi
 			// Get a style sheet for the Language Explorer, and store it in the property table.
 			LcmStyleSheet styleSheet = new LcmStyleSheet();
 			styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-			propertyTable.SetProperty("LcmStyleSheet", styleSheet, false, false);
+			propertyTable.SetProperty("FlexStyleSheet", styleSheet, false, false);
 			return styleSheet;
 		}
 

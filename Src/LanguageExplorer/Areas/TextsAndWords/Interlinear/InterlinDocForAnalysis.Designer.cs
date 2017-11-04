@@ -21,6 +21,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (disposing)
 			{
 				Subscriber.Unsubscribe("ksPropertyAddWordsToLexicon", PropertyAddWordsToLexicon_Changed);
+				RightMouseClickedEvent -= InterlinDocForAnalysis_RightMouseClickedEvent;
 				if (ExistingFocusBox != null)
 				{
 					ExistingFocusBox.Visible = false; // Ensures that the program does not attempt to lay this box out.

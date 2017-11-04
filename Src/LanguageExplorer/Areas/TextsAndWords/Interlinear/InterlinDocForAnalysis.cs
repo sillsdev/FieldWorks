@@ -81,36 +81,54 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		void InterlinDocForAnalysis_RightMouseClickedEvent(SimpleRootSite sender, FwRightMouseClickEventArgs e)
 		{
 			e.EventHandled = true;
+			var helper = new SpellCheckHelper(Cache);
 			// for the moment we always claim to have handled it.
-			ContextMenuStrip menu = new ContextMenuStrip();
-
-			// Add spelling items if any (i.e., if we clicked a squiggle word).
-			int hvoObj, tagAnchor;
-			if (GetTagAndObjForOnePropSelection(e.Selection, out hvoObj, out tagAnchor) &&
-				(tagAnchor == SegmentTags.kflidFreeTranslation || tagAnchor == SegmentTags.kflidLiteralTranslation ||
-				tagAnchor == NoteTags.kflidContent))
+			using (var menu = new ContextMenuStrip())
 			{
-				var helper = new SpellCheckHelper(Cache);
-				helper.MakeSpellCheckMenuOptions(e.MouseLocation, this, menu);
-			}
-
-			int hvoNote;
-			if (CanDeleteNote(e.Selection, out hvoNote))
-			{
-				if (menu.Items.Count > 0)
+				try
 				{
-					menu.Items.Add(new ToolStripSeparator());
+					// Add spelling items if any (i.e., if we clicked a squiggle word).
+					int hvoObj, tagAnchor;
+					if (GetTagAndObjForOnePropSelection(e.Selection, out hvoObj, out tagAnchor) &&
+					    (tagAnchor == SegmentTags.kflidFreeTranslation || tagAnchor == SegmentTags.kflidLiteralTranslation ||
+					     tagAnchor == NoteTags.kflidContent))
+					{
+						helper.MakeSpellCheckMenuOptions(e.MouseLocation, this, menu);
+					}
+
+					int hvoNote;
+					if (CanDeleteNote(e.Selection, out hvoNote))
+					{
+						if (menu.Items.Count > 0)
+						{
+							menu.Items.Add(new ToolStripSeparator());
+						}
+						// Add the delete item.
+						string sMenuText = ITextStrings.ksDeleteNote;
+						ToolStripMenuItem item = new ToolStripMenuItem(sMenuText);
+						item.Click += OnDeleteNote;
+						menu.Items.Add(item);
+					}
+					if (menu.Items.Count > 0)
+					{
+						e.Selection.Install();
+						menu.Show(this, e.MouseLocation);
+					}
 				}
-				// Add the delete item.
-				string sMenuText = ITextStrings.ksDeleteNote;
-				ToolStripMenuItem item = new ToolStripMenuItem(sMenuText);
-				item.Click += OnDeleteNote;
-				menu.Items.Add(item);
-			}
-			if (menu.Items.Count > 0)
-			{
-				e.Selection.Install();
-				menu.Show(this, e.MouseLocation);
+				finally
+				{
+					helper.UnwireEventHandlers(menu);
+					foreach (var item in menu.Items)
+					{
+						var asToolStripMenuItem = item as ToolStripMenuItem;
+						if (asToolStripMenuItem == null || asToolStripMenuItem.Text != ITextStrings.ksDeleteNote)
+						{
+							continue;
+						}
+						asToolStripMenuItem.Click -= OnDeleteNote;
+						break;
+					}
+				}
 			}
 		}
 

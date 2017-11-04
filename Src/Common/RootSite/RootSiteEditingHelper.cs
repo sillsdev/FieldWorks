@@ -126,27 +126,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Gets (creating if necessary) the SpellCheckHelper
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private SpellCheckHelper SpellCheckHelper
-		{
-			get
-			{
-				if (m_spellCheckHelper == null)
-					m_spellCheckHelper = CreateSpellCheckHelper();
-				return m_spellCheckHelper;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Creates a spell-check helper object. Virtual to allow sub-classes to create custom
-		/// helpers that extend basic functionality.
-		/// </summary>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		protected virtual SpellCheckHelper CreateSpellCheckHelper()
-		{
-			return new SpellCheckHelper(Cache);
-		}
+		private SpellCheckHelper SpellCheckHelper => m_spellCheckHelper ?? (m_spellCheckHelper = new SpellCheckHelper(Cache));
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -157,10 +137,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// need to handle the update messages for those spelling options.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public SpellCheckStatus SpellCheckingStatus
-		{
-			get { return m_spellCheckStatus; }
-		}
+		public SpellCheckStatus SpellCheckingStatus => m_spellCheckStatus;
 
 #if RANDYTODO
 		/// ------------------------------------------------------------------------------------

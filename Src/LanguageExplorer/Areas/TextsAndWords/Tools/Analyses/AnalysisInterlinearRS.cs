@@ -66,7 +66,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			m_configurationNode = configurationNode;
 			m_wfiAnalysis = analysis;
 			m_wordform = m_wfiAnalysis.Wordform;
-			//			RightMouseClickedEvent += new FwRightMouseClickEventHandler(InterlinDocChild_RightMouseClickedEvent);
 		}
 
 		#endregion Construction

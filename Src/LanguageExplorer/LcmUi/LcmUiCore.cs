@@ -639,8 +639,7 @@ namespace LanguageExplorer.LcmUi
 			return obj;
 		}
 
-#if RANDYTODO
-		protected virtual bool ShouldDisplayMenuForClass(int specifiedClsid, UIItemDisplayProperties display)
+		protected virtual bool ShouldDisplayMenuForClass(int specifiedClsid)
 		{
 			if (specifiedClsid == 0)
 				return false; // a special magic class id, only enabled explicitly.
@@ -650,8 +649,7 @@ namespace LanguageExplorer.LcmUi
 				if (baseClsid == specifiedClsid) //handle one level of subclassing
 					return true;
 					return false;
-				}
-#endif
+		}
 
 		/// <summary>
 		/// Get the id of the XCore Context menu that should be shown for our object
@@ -1011,27 +1009,25 @@ namespace LanguageExplorer.LcmUi
 			if (propertyTable != null && propertyTable.TryGetValue("App", out app))
 			{
 					app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);
-				}
-				string fileToDelete = file.AbsoluteInternalPath;
+			}
+			string fileToDelete = file.AbsoluteInternalPath;
 
-#if RANDYTODO
-				// I'm not sure why, but if we try to delete it right away, we typically get a failure,
-				// with an exception indicating that something is using the file, despite the code above that
-				// tries to make our picture cache let go of it.
-				// However, waiting until idle seems to solve the problem.
-				mediator.IdleQueue.Add(IdleQueuePriority.Low, obj =>
+			// I'm not sure why, but if we try to delete it right away, we typically get a failure,
+			// with an exception indicating that something is using the file, despite the code above that
+			// tries to make our picture cache let go of it.
+			// However, waiting until idle seems to solve the problem.
+			propertyTable.GetValue<IFwMainWnd>("window").IdleQueue.Add(IdleQueuePriority.Low, obj =>
+			{
+				try
 				{
-					try
-					{
-						File.Delete(fileToDelete);
-					}
-					catch (IOException)
-					{
-						// If we can't actually delete the file for some reason, don't bother the user complaining.
-					}
-					return true; // task is complete, don't try again.
-				});
-#else
+					File.Delete(fileToDelete);
+				}
+				catch (IOException)
+				{
+					// If we can't actually delete the file for some reason, don't bother the user complaining.
+				}
+				return true; // task is complete, don't try again.
+			});
 			try
 			{
 				File.Delete(fileToDelete);
@@ -1040,8 +1036,7 @@ namespace LanguageExplorer.LcmUi
 			{
 				// If we can't actually delete the file for some reason, don't bother the user complaining.
 			}
-#endif
-				file.Delete();
+			file.Delete();
 		}
 
 		protected virtual void ReallyDeleteUnderlyingObject()
@@ -1153,7 +1148,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		/// <param name="c"></param>
 		/// <returns></returns>
-		static public uint RGB(Color c)
+		public static uint RGB(Color c)
 		{
 			return RGB(c.R, c.G, c.B);
 		}
@@ -1165,49 +1160,48 @@ namespace LanguageExplorer.LcmUi
 		/// <param name="g"></param>
 		/// <param name="b"></param>
 		/// <returns></returns>
-		static public uint RGB(int r, int g, int b)
+		public static uint RGB(int r, int g, int b)
 		{
 			return ((uint)(((byte)(r) | ((byte)(g) << 8)) | ((byte)(b) << 16)));
 
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		/// <param name="singlePropertySequenceValue"></param>
 		/// <param name="cacheForCheckingValidity">null, if you don't care about checking the validity of the items in singlePropertySequenceValue,
 		/// otherwise, pass in a cache to check validity.</param>
 		/// <param name="expectedClassId">if you pass a cache, you can also use this too make sure the object matches an expected class,
 		/// otherwise it just checks that the object exists in the database (or is a valid virtual object)</param>
 		/// <returns></returns>
-		static public List<int> ParseSinglePropertySequenceValueIntoHvos(string singlePropertySequenceValue,
-			LcmCache cacheForCheckingValidity, int expectedClassId)
+		public static List<int> ParseSinglePropertySequenceValueIntoHvos(string singlePropertySequenceValue, LcmCache cacheForCheckingValidity, int expectedClassId)
 		{
 			var hvos = new List<int>();
-			if (String.IsNullOrEmpty(singlePropertySequenceValue))
+			if (string.IsNullOrEmpty(singlePropertySequenceValue))
+			{
 				return hvos;
-			LcmCache cache = cacheForCheckingValidity;
-#if RANDYTODO
-			foreach (string sHvo in ChoiceGroup.DecodeSinglePropertySequenceValue(singlePropertySequenceValue))
+			}
+			var cache = cacheForCheckingValidity;
+			foreach (var sHvo in singlePropertySequenceValue.Split(','))
 			{
 				int hvo;
-				if (Int32.TryParse(sHvo, out hvo))
+				if (!int.TryParse(sHvo, out hvo))
 				{
-					if (cache != null)
-					{
-						try
-						{
-							var obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-						}
-						catch
-						{
-							continue;
-						}
-					}
+					continue;
+				}
+				if (cache == null)
+				{
+					continue;
+				}
+				ICmObject obj;
+				if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(hvo, out obj))
+				{
+					continue;
+				}
+				if (obj.IsValidObject)
+				{
 					hvos.Add(hvo);
 				}
 			}
-#endif
 			return hvos;
 		}
 
@@ -1767,13 +1761,10 @@ namespace LanguageExplorer.LcmUi
 		{
 		}
 
-#if RANDYTODO
-		protected override bool ShouldDisplayMenuForClass(int specifiedClsid, UIItemDisplayProperties display)
+		protected override bool ShouldDisplayMenuForClass(int specifiedClsid)
 		{
-			return (PartOfSpeechTags.kClassId == specifiedClsid) &&
-				(GuidForJumping(null) != Guid.Empty);
+			return (PartOfSpeechTags.kClassId == specifiedClsid) && (GuidForJumping(null) != Guid.Empty);
 		}
-#endif
 
 		/// <summary>
 		/// Gets a special VC that knows to display the name or abbr of the PartOfSpeech.
@@ -1995,13 +1986,12 @@ namespace LanguageExplorer.LcmUi
 			display.Text = String.Format(display.Text, DisplayNameOfClass);
 			return true;
 		}
+#endif
 
-		protected override bool ShouldDisplayMenuForClass(int specifiedClsid, UIItemDisplayProperties display)
+		protected override bool ShouldDisplayMenuForClass(int specifiedClsid)
 		{
-			//			Debug.WriteLine("LexSenseUi:"+display.Text+": "+ (LexEntry.kclsidLexEntry == specifiedClsid));
 			return LexEntryTags.kClassId == specifiedClsid || LexSenseTags.kClassId == specifiedClsid;
 		}
-#endif
 
 		protected override DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out string guiControl, out string helpTopic)
 		{
@@ -2671,12 +2661,10 @@ namespace LanguageExplorer.LcmUi
 		internal WfiAnalysisUi()
 		{ }
 
-#if RANDYTODO
-		protected override bool ShouldDisplayMenuForClass(int specifiedClsid, UIItemDisplayProperties display)
+		protected override bool ShouldDisplayMenuForClass(int specifiedClsid)
 		{
 			return WfiAnalysisTags.kClassId == specifiedClsid;
 		}
-#endif
 
 		protected override void ReallyDeleteUnderlyingObject()
 		{
@@ -2727,12 +2715,10 @@ namespace LanguageExplorer.LcmUi
 		internal WfiGlossUi()
 		{ }
 
-#if RANDYTODO
-		protected override bool ShouldDisplayMenuForClass(int specifiedClsid, UIItemDisplayProperties display)
+		protected override bool ShouldDisplayMenuForClass(int specifiedClsid)
 		{
 			return WfiGlossTags.kClassId == specifiedClsid;
 		}
-#endif
 
 		protected override DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out string guiControl, out string helpTopic)
 		{
