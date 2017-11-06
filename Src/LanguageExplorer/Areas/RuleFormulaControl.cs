@@ -680,8 +680,7 @@ namespace LanguageExplorer.Areas
 				chooser.Cache = m_cache;
 				chooser.TextParamHvo = m_cache.LangProject.PhonologicalDataOA.Hvo;
 				Guid guidTextParam = m_cache.LangProject.PhonologicalDataOA.Guid;
-				chooser.AddLink(linkText, ReallySimpleListChooser.LinkType.kGotoLink,
-					new FwLinkArgs(toolName, guidTextParam));
+				chooser.AddLink(linkText, ReallySimpleListChooser.LinkType.kGotoLink, new FwLinkArgs(toolName, guidTextParam));
 				chooser.ReplaceTreeView(PropertyTable, guiControl);
 				chooser.SetHelpTopic(FeatureChooserHelpTopic);
 

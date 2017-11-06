@@ -1359,13 +1359,9 @@ private void ReloadPaneBar(IPaneBar paneBar)
 				}
 				// Not sure what will happen with guid == Guid.Empty on the link...
 				FwLinkArgs link = new FwLinkArgs(toolChoice, guid, InterlinearTab.ToString());
-				link.PropertyTableEntries.Add(new Property("InterlinearTab",
-					InterlinearTab.ToString()));
+				link.LinkProperties.Add(new LinkProperty("InterlinearTab", InterlinearTab.ToString()));
 				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
-#if RANDYTODO
-				var linkListener = PropertyTable.GetValue<LinkListener>("LinkListener");
-				linkListener.OnAddContextToHistory(link);
-#endif
+				PropertyTable.GetValue<LinkHandler>("LinkHandler").OnAddContextToHistory(link);
 			}
 		}
 

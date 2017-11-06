@@ -19,7 +19,6 @@ using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.LexText;
-using SIL.Code;
 using LanguageExplorer.Controls.SilSidePane;
 using LanguageExplorer.SendReceive;
 using LanguageExplorer.UtilityTools;
@@ -70,6 +69,8 @@ namespace LanguageExplorer.Impls
 		[Import]
 		private IFlexApp _flexApp;
 		static bool _inUndoRedo; // true while executing an Undo/Redo command.
+		private bool _windowIsCopy;
+		private FwLinkArgs _startupLink;
 		// Used to count the number of times we've been asked to suspend Idle processing.
 		private int _countSuspendIdleProcessing;
 		/// <summary>
@@ -666,10 +667,10 @@ namespace LanguageExplorer.Impls
 		/// <remarks>
 		/// This allows for creating all sorts of things used by the implementation.
 		/// </remarks>
-		public void Initialize(IFwMainWnd windowToCopyFrom = null, FwLinkArgs linkArgs = null)
+		public void Initialize(bool windowIsCopy = false, FwLinkArgs linkArgs = null)
 		{
-			Guard.AssertThat(windowToCopyFrom == null, "Support for the 'windowToCopyFrom' is not yet implemented.");
-			Guard.AssertThat(linkArgs == null, "Support for the 'linkArgs' is not yet implemented.");
+			_windowIsCopy = windowIsCopy;
+			_startupLink = linkArgs; // May be null.
 
 			var wasCrashDuringPreviousStartup = SetupCrashDetectorFile();
 
@@ -779,23 +780,23 @@ namespace LanguageExplorer.Impls
 		{
 			CheckDisposed();
 
-#if RANDYTODO
-			if (m_startupLink != null)
+			if (_startupLink == null)
 			{
-				var commands = new List<string>
-						{
-							"AboutToFollowLink",
-							"FollowLink"
-						};
-				var parms = new List<object>
-						{
-							null,
-							m_startupLink
-						};
-				Publisher.Publish(commands, parms);
+				return true;
 			}
-			UpdateControls();
-#endif
+			var commands = new List<string>
+			{
+				"AboutToFollowLink",
+				"FollowLink" // LinkHandler is only thing that cares about this message, and it (or its replacement) isn't listening yet.
+			};
+			var parms = new List<object>
+			{
+				null,
+				_startupLink
+			};
+			_startupLink = null;
+			Publisher.Publish(commands, parms);
+
 			return true;
 		}
 
@@ -1522,7 +1523,7 @@ namespace LanguageExplorer.Impls
 		private void NewWindow_Clicked(object sender, EventArgs e)
 		{
 			SaveSettings();
-			_flexApp.FwManager.OpenNewWindowForApp();
+			_flexApp.FwManager.OpenNewWindowForApp(this);
 		}
 
 		private void Help_Training_Writing_Systems(object sender, EventArgs e)
@@ -1806,20 +1807,37 @@ very simple minor adjustments. ;)"
 			copyToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper.CanCopy());
 			pasteToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper.CanPaste());
 			pasteHyperlinkToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)_viewHelper.ActiveView.EditingHelper).CanPasteUrl());
+			applyStyleToolStripMenuItem.Enabled = hasActiveView && CanApplyStyle;
 
 			// Enable/disable toolbar buttons.
 			SetupEditUndoAndRedoMenus();
 		}
 
-		private void Format_Styles_Click(object sender, EventArgs e)
+		private bool CanApplyStyle
 		{
-			if (ShowStylesDialog(null, null))
+			get
 			{
-				RefreshAllViews();
+				var selectionHelper = _viewHelper.ActiveView?.EditingHelper.CurrentSelection;
+				if (selectionHelper == null)
+				{
+					return false;
+				}
+				var rootSite = selectionHelper.RootSite as RootSite;
+				if (rootSite != null)
+				{
+					return rootSite.CanApplyStyle;
+				}
+
+				var selection = selectionHelper.Selection;
+				return selection != null && selection.IsEditable && (selection.CanFormatChar || selection.CanFormatPara);
 			}
 		}
-		private bool ShowStylesDialog(string paraStyleName, string charStyleName)
+
+		private void Format_Styles_Click(object sender, EventArgs e)
 		{
+			string paraStyleName = null;
+			string charStyleName = null;
+			bool refreshAllViews;
 			var stylesXmlAccessor = new FlexStylesXmlAccessor(Cache.LanguageProject.LexDbOA);
 			StVc vc = null;
 			IVwRootSite activeViewSite = null;
@@ -1831,11 +1849,11 @@ very simple minor adjustments. ;)"
 				}
 				vc = ActiveView.EditingHelper.ViewConstructor as StVc;
 				activeViewSite = ActiveView.CastAsIVwRootSite();
-			}
-			if (paraStyleName == null && charStyleName == null && ActiveView.EditingHelper.CurrentSelection != null && ActiveView.EditingHelper.CurrentSelection.Selection != null)
-			{
-				// If the caller didn't know the default style, try to figure it out from // the selection.
-				GetStyleNames((SimpleRootSite)ActiveView, ActiveView.EditingHelper.CurrentSelection.Selection, ref paraStyleName, ref charStyleName);
+				if (paraStyleName == null && ActiveView.EditingHelper.CurrentSelection?.Selection != null)
+				{
+					// If the caller didn't know the default style, try to figure it out from // the selection.
+					GetStyleNames((SimpleRootSite)ActiveView, ActiveView.EditingHelper.CurrentSelection.Selection, ref paraStyleName, ref charStyleName);
+				}
 			}
 			using (var stylesDlg = new FwStylesDlg(activeViewSite,
 				Cache, _stylesheet, vc?.RightToLeft ?? false,
@@ -1849,14 +1867,18 @@ very simple minor adjustments. ;)"
 				stylesDlg.AllowSelectStyleTypes = true;
 				stylesDlg.ShowTEStyleTypes = false;
 				stylesDlg.CanSelectParagraphBackgroundColor = true;
-				return (stylesDlg.ShowDialog(this) == DialogResult.OK &&
+				refreshAllViews = (stylesDlg.ShowDialog(this) == DialogResult.OK &&
 				        ((stylesDlg.ChangeType & StyleChangeType.DefChanged) > 0 ||
 				         (stylesDlg.ChangeType & StyleChangeType.Added) > 0));
 			}
 
+			if (refreshAllViews)
+			{
+				RefreshAllViews();
+			}
 		}
 
-		private void GetStyleNames(SimpleRootSite rootsite, IVwSelection sel, ref string paraStyleName, ref string charStyleName)
+		private void GetStyleNames(IVwRootSite rootsite, IVwSelection sel, ref string paraStyleName, ref string charStyleName)
 		{
 			ITsTextProps[] vttp;
 			IVwPropertyStore[] vvps;
@@ -1921,15 +1943,83 @@ very simple minor adjustments. ;)"
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when styles are renamed or deleted.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void OnStylesRenamedOrDeleted()
 		{
 			PrepareToRefresh();
 			Refresh();
+		}
+
+		private void applyStyleToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			// Disabled if there is no ActiveView and it cannot appy the styles.
+			SimpleRootSite rootsite = null;
+			try
+			{
+				string paraStyleName = null;
+				string charStyleName = null;
+				rootsite = ActiveView as SimpleRootSite;
+				if (rootsite != null)
+				{
+					rootsite.ShowRangeSelAfterLostFocus = true;
+				}
+
+				var sel = _viewHelper.ActiveView.EditingHelper.CurrentSelection.Selection;
+				if (paraStyleName == null && charStyleName == null)
+				{
+					// Try to get the style names from the selection.
+					GetStyleNames(rootsite, sel, ref paraStyleName, ref charStyleName);
+				}
+				int hvoRoot, frag;
+				IVwViewConstructor vc;
+				IVwStylesheet ss;
+				ActiveView.CastAsIVwRootSite().RootBox.GetRootObject(out hvoRoot, out vc, out frag, out ss);
+				using (var applyStyleDlg = new FwApplyStyleDlg(Cache, _stylesheet, paraStyleName, charStyleName, _flexApp))
+				{
+					applyStyleDlg.ApplicableStyleContexts = new List<ContextValues>(new[] { ContextValues.General });
+					applyStyleDlg.CanApplyCharacterStyle = sel.CanFormatChar;
+					applyStyleDlg.CanApplyParagraphStyle = sel.CanFormatPara;
+
+					if (applyStyleDlg.ShowDialog(this) != DialogResult.OK)
+					{
+						return;
+					}
+					string sUndo, sRedo;
+					ResourceHelper.MakeUndoRedoLabels("kstidUndoApplyStyle", out sUndo, out sRedo);
+					using (var helper = new UndoTaskHelper(Cache.ActionHandlerAccessor, ActiveView.CastAsIVwRootSite(), sUndo, sRedo))
+					{
+						_viewHelper.ActiveView.EditingHelper.ApplyStyle(applyStyleDlg.StyleChosen);
+						helper.RollBack = false;
+					}
+				}
+			}
+			finally
+			{
+				if (rootsite != null)
+					rootsite.ShowRangeSelAfterLostFocus = false;
+			}
+		}
+
+		/// <summary>
+		/// When a new FwMainWnd is a copy of another FwMainWnd and the new FwMainWnd's Show()
+		/// method is called, the .net framework will mysteriously add the height of the menu
+		/// bar (and border) to the preset window height.
+		/// Aaarghhh! So we intercept the CreateParams in order to set it back to the desired
+		/// height.
+		/// </summary>
+		protected override CreateParams CreateParams
+		{
+			get
+			{
+				var cp = base.CreateParams;
+				if (_windowIsCopy)
+				{
+					cp.Height = Height;
+				}
+				return cp;
+			}
 		}
 	}
 }

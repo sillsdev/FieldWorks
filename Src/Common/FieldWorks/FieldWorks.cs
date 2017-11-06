@@ -1338,7 +1338,7 @@ namespace SIL.FieldWorks
 			{
 				// We're trying to open this same project. Just open a new window for the
 				// specified application
-				return CreateAndInitNewMainWindow(false, false);
+				return CreateAndInitNewMainWindow(s_activeMainWnd, false);
 			}
 
 			if (TryFindExistingProcess(projectId, new FwAppArgs(projectId.Handle, null, Guid.Empty)))
@@ -2590,14 +2590,15 @@ namespace SIL.FieldWorks
 #endregion
 
 #region Window Handling Methods
+
 		/// <summary>
 		/// Creates a new main window and initializes it. The specified App is responsible for
 		/// creating the proper main window type.
 		/// </summary>
+		/// <param name="currentWindow"></param>
 		/// <param name="fNewCache"><c>true</c> if we didn't reuse an existing cache</param>
-		/// <param name="fOpeningNewProject"><c>true</c> if opening a new project</param>
 		/// <returns>True if the main window was create and initialized successfully</returns>
-		internal static bool CreateAndInitNewMainWindow(bool fNewCache, bool fOpeningNewProject)
+		internal static bool CreateAndInitNewMainWindow(IFwMainWnd currentWindow, bool fNewCache)
 		{
 			WriteSplashScreen(s_flexApp.GetResourceString("kstidInitWindow"));
 
@@ -2606,7 +2607,6 @@ namespace SIL.FieldWorks
 			try
 			{
 				// Construct the new window, of the proper derived type
-				var currentWindow = s_flexApp.ActiveMainWindow;
 				fwMainWindowAsForm = s_flexApp.NewMainAppWnd(s_splashScreen, fNewCache, currentWindow);
 				fwMainWindowAsIFwMainWnd = (IFwMainWnd)fwMainWindowAsForm;
 				// It seems to get activated before we connect the Activate event. But it IS active by now;
@@ -2857,7 +2857,7 @@ namespace SIL.FieldWorks
 				}
 			}
 
-			return CreateAndInitNewMainWindow(true, false);
+			return CreateAndInitNewMainWindow(s_activeMainWnd, true);
 		}
 
 		/// <summary>

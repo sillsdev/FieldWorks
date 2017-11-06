@@ -4382,7 +4382,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					LcmCache cache = m_caches.MainCache;
 					ICmObject co = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 					var fwLink = new FwLinkArgs(tool, co.Guid);
-					List<Property> additionalProps = fwLink.PropertyTableEntries;
+					List<Property> additionalProps = fwLink.LinkProperties;
 					if (!String.IsNullOrEmpty(concordOn))
 					{
 						additionalProps.Add(new Property("ConcordOn", concordOn));

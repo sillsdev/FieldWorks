@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -3710,10 +3710,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			var hvo = obj.Hvo;
 
 			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle, toolToJumpTo, Guid.Empty);
-			List<Property> additionalProps = link.PropertyTableEntries;
-			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
-			additionalProps.Add(new Property("LinkSetupInfo", linkSetupInfo));
-			additionalProps.Add(new Property("HvoOfAnthroItem", hvo.ToString(CultureInfo.InvariantCulture)));
+			var additionalProps = link.LinkProperties;
+			additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
+			additionalProps.Add(new LinkProperty("LinkSetupInfo", linkSetupInfo));
+			additionalProps.Add(new LinkProperty("HvoOfAnthroItem", hvo.ToString(CultureInfo.InvariantCulture)));
 			var commands = new List<string>
 										{
 											"AboutToFollowLink",

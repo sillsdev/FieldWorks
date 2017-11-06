@@ -4,26 +4,7 @@
 	<!-- ************************ commands ******************** -->
 	<!-- ********************************************************** -->
 	<commands>
-		<!-- Parser commands -->
-		<command id="CmdEditParserParameters" label="_Edit Parser Parameters..." message="EditParserParameters">
-			<params className="MoMorphData"/>
-		</command>
-		<command id="CmdParseAllWords" label="Pa_rse all words" message="ParseAllWords"/>
-		<command id="CmdStopParser" label="_Stop Parser" message="StopParser"/>
-		<command id="CmdReparseAllWords" label="_Reparse all words" message="ReparseAllWords"/>
-		<command id="CmdTryAWord" label="_Try a Word..." icon="tryAWord" message="TryAWord"/>
-		<command id="CmdParseCurrentWord" label="Parse _Current Word" message="ParseCurrentWord"/>
-		<command id="CmdParseWordsInCurrentText" label="Parse Words in Te_xt" message="ParseWordsInCurrentText"/>
-		<command id="CmdClearSelectedWordParserAnalyses" label="Clear Current Parser _Analyses" message="ClearSelectedWordParserAnalyses"/>
-		<command id="CmdReInitializeParser" label="Re_load Grammar / Lexicon" message="ReInitParser" tooltip="Reloads data from the Grammar and Lexicon, so the parser uses your latest changes."/>
 		<command id="CmdImportWordSet" label="_Import Word Set..." message="ImportWordSet" a10status="DONE" />
-		<command id="CmdChooseXAmpleParser" label="Default Parser (XAmple)" message="ChooseParser">
-			<parameters parser="XAmple"/>
-		</command>
-		<command id="CmdChooseHCParser" label="Phonological Rule-based Parser (HermitCrab.NET)" message="ChooseParser">
-			<parameters parser="HC"/>
-		</command>
-
 		<!-- Texts Area commands-->
 		<command id="CmdInsertText" label="New _Text" message="InsertInterlinText" shortcut="Ctrl+T" icon="addNewText">
 			<parameters className="StText"/>
@@ -243,29 +224,6 @@
 			</clerks>
 		</parameters>
 	</controls>
-	<!-- ********************************************************** -->
-	<!-- ************************ menus *********************** -->
-	<!-- ********************************************************** -->
-	<menubar>
-		<!-- The 'Parser' menu goes between the global 'Tools' & 'Help' main menus. -->
-		<menu id="Parser" label="Pa_rser">
-			<item command="CmdParseAllWords"/>
-			<item command="CmdReparseAllWords"/>
-			<item command="CmdReInitializeParser"/>
-			<item command="CmdStopParser"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdTryAWord"/>
-			<item command="CmdParseWordsInCurrentText"/>
-			<item command="CmdParseCurrentWord"/>
-			<item command="CmdClearSelectedWordParserAnalyses" defaultVisible="false"/>
-			<item label="-" translate="do not translate"/>
-			<menu id="ChooseParserMenu" label="Choose Parser">
-				<item command="CmdChooseXAmpleParser"/>
-				<item command="CmdChooseHCParser"/>
-			</menu>
-			<item command="CmdEditParserParameters"/>
-		</menu>
-	</menubar>
 	<!-- ********************************************************** -->
 	<!-- ************************ menuAddOn *********************** -->
 	<!-- ********************************************************** -->

@@ -1101,7 +1101,7 @@
     <Compile Include="Works\LiftExportMessageDlg.Designer.cs">
       <DependentUpon>LiftExportMessageDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Works\LinkListener.cs" />
+    <Compile Include="Works\LinkHandler.cs" />
     <Compile Include="Works\ListChangedEventArgs.cs" />
     <Compile Include="Works\ListChangedEventHandler.cs" />
     <Compile Include="Works\MacroListener.cs" />
@@ -3161,6 +3161,7 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\areaConfiguration.xml">
       <Link>XML\Word\areaConfiguration.xml</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Words\BulkEdit\toolConfiguration.xml">
       <Link>XML\Word\BulkEdit\toolConfiguration.xml</Link>

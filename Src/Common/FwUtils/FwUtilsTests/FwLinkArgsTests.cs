@@ -257,7 +257,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(string.Empty, args.DatabaseType);
 			Assert.AreEqual(string.Empty, args.Locale);
 			Assert.IsFalse(args.ShowHelp);
-			Assert.AreEqual(0, args.PropertyTableEntries.Count);
+			Assert.AreEqual(0, args.LinkProperties.Count);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -280,7 +280,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(string.Empty, args.DatabaseType);
 			Assert.AreEqual(string.Empty, args.Locale);
 			Assert.IsFalse(args.ShowHelp);
-			Assert.AreEqual(0, args.PropertyTableEntries.Count);
+			Assert.AreEqual(0, args.LinkProperties.Count);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -310,7 +310,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(string.Empty, args.DatabaseType);
 			Assert.AreEqual(string.Empty, args.Locale);
 			Assert.IsFalse(args.ShowHelp);
-			Assert.AreEqual(0, args.PropertyTableEntries.Count);
+			Assert.AreEqual(0, args.LinkProperties.Count);
 			Assert.AreEqual(string.Empty, args.Tag);
 			Assert.AreEqual(Guid.Empty, args.TargetGuid);
 			Assert.AreEqual(string.Empty, args.ToolName);
@@ -327,9 +327,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void CreateFwAppArgs_UnknownSwitch()
 		{
 			FwAppArgs args = new FwAppArgs("-init", "DN");
-			Assert.AreEqual(1, args.PropertyTableEntries.Count);
-			Assert.AreEqual("init", args.PropertyTableEntries[0].name);
-			Assert.AreEqual("DN", args.PropertyTableEntries[0].value);
+			Assert.AreEqual(1, args.LinkProperties.Count);
+			Assert.AreEqual("init", args.LinkProperties[0].Name);
+			Assert.AreEqual("DN", args.LinkProperties[0].Value);
 			Assert.AreEqual(string.Empty, args.Database);
 			Assert.AreEqual(string.Empty, args.ConfigFile);
 			Assert.AreEqual(string.Empty, args.DatabaseType);
@@ -366,7 +366,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(string.Empty, args.ConfigFile);
 			Assert.AreEqual(string.Empty, args.Locale);
 			Assert.IsFalse(args.ShowHelp);
-			Assert.AreEqual(1, args.PropertyTableEntries.Count);
+			Assert.AreEqual(1, args.LinkProperties.Count);
 			Assert.AreEqual(string.Empty, args.Tag);
 			Assert.AreEqual(Guid.Empty, args.TargetGuid);
 			Assert.AreEqual(string.Empty, args.ToolName);
@@ -387,7 +387,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(string.Empty, args.DatabaseType, "Showing help should ignore all other parameters");
 			Assert.AreEqual(string.Empty, args.ConfigFile);
 			Assert.AreEqual(string.Empty, args.Locale);
-			Assert.AreEqual(0, args.PropertyTableEntries.Count);
+			Assert.AreEqual(0, args.LinkProperties.Count);
 			Assert.AreEqual(string.Empty, args.Tag);
 			Assert.AreEqual(Guid.Empty, args.TargetGuid);
 			Assert.AreEqual(string.Empty, args.ToolName);
@@ -399,7 +399,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(string.Empty, args.DatabaseType);
 			Assert.AreEqual(string.Empty, args.ConfigFile);
 			Assert.AreEqual(string.Empty, args.Locale);
-			Assert.AreEqual(0, args.PropertyTableEntries.Count);
+			Assert.AreEqual(0, args.LinkProperties.Count);
 			Assert.AreEqual(string.Empty, args.Tag);
 			Assert.AreEqual(Guid.Empty, args.TargetGuid);
 			Assert.AreEqual(string.Empty, args.ToolName);
@@ -411,7 +411,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(string.Empty, args.DatabaseType);
 			Assert.AreEqual(string.Empty, args.ConfigFile);
 			Assert.AreEqual(string.Empty, args.Locale);
-			Assert.AreEqual(0, args.PropertyTableEntries.Count);
+			Assert.AreEqual(0, args.LinkProperties.Count);
 			Assert.AreEqual(string.Empty, args.Tag);
 			Assert.AreEqual(Guid.Empty, args.TargetGuid);
 			Assert.AreEqual(string.Empty, args.ToolName);
@@ -433,7 +433,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(string.Empty, args.ConfigFile);
 			Assert.AreEqual(string.Empty, args.Locale);
 			Assert.IsFalse(args.ShowHelp);
-			Assert.AreEqual(0, args.PropertyTableEntries.Count);
+			Assert.AreEqual(0, args.LinkProperties.Count);
 			Assert.AreEqual(string.Empty, args.Tag);
 			Assert.AreEqual(Guid.Empty, args.TargetGuid);
 			Assert.AreEqual(string.Empty, args.ToolName);
@@ -455,7 +455,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(string.Empty, args.DatabaseType);
 			Assert.AreEqual(string.Empty, args.Locale);
 			Assert.IsFalse(args.ShowHelp);
-			Assert.AreEqual(0, args.PropertyTableEntries.Count);
+			Assert.AreEqual(0, args.LinkProperties.Count);
 			Assert.AreEqual(string.Empty, args.Tag);
 			Assert.AreEqual(Guid.Empty, args.TargetGuid);
 			Assert.AreEqual(string.Empty, args.ToolName);

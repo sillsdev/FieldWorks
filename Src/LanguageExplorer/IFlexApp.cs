@@ -37,7 +37,7 @@ namespace LanguageExplorer
 		/// <param name="wndCopyFrom"> Must be null for creating the original app window.
 		/// Otherwise, a reference to the main window whose settings we are copying.</param>
 		/// <returns>New instance of main window if successful; otherwise <c>null</c></returns>
-		Form NewMainAppWnd(IProgress progressDlg, bool fNewCache, Form wndCopyFrom);
+		Form NewMainAppWnd(IProgress progressDlg, bool fNewCache, IFwMainWnd wndCopyFrom);
 
 		/// <summary>
 		/// Closes and re-opens the argument window, in the same place, as a drastic way of applying new settings.

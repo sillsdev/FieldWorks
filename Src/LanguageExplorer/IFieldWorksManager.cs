@@ -40,59 +40,47 @@ namespace LanguageExplorer
 		/// <param name="param1">The first parameter of the action.</param>
 		void ExecuteAsync<T>(Action<T> action, T param1);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Opens a new main window for the specified application.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		void OpenNewWindowForApp();
+		void OpenNewWindowForApp(IFwMainWnd currentWindow);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Lets the user chooses a language project and opens it. If the project is already
 		/// open in a FieldWorks process, then the request is sent to the running FieldWorks
 		/// process and a new window is opened for that project. Otherwise a new FieldWorks
 		/// process is started to handle the project request.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		void ChooseLangProject();
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Lets the user create a new language project and opens it. If the project is already
 		/// open in a FieldWorks process, then the request is sent to the running FieldWorks
 		/// process and a new window is opened for that project. Otherwise a new FieldWorks
 		/// process is started to handle the new project.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		void CreateNewProject();
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Lets the user delete any FW databases that are not currently open
 		/// </summary>
 		/// <param name="helpTopicProvider">The application's help provider.</param>
 		/// <param name="dialogOwner">The owner of the dialog</param>
-		/// ------------------------------------------------------------------------------------
 		void DeleteProject(IHelpTopicProvider helpTopicProvider, Form dialogOwner);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Lets the user backup any FW databases that are not currently open
 		/// </summary>
 		/// <param name="dialogOwner">The owner of the dialog</param>
 		/// <returns>The path to the backup file, or <c>null</c> if the user cancels the
 		/// backup</returns>
-		/// ------------------------------------------------------------------------------------
 		string BackupProject(Form dialogOwner);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Restore a project.
 		/// </summary>
 		/// <param name="helpTopicProvider">The FieldWorks application's help topic provider.</param>
 		/// <param name="dialogOwner">The dialog owner.</param>
-		/// ------------------------------------------------------------------------------------
 		void RestoreProject(IHelpTopicProvider helpTopicProvider, Form dialogOwner);
 
 		/// <summary>
@@ -103,32 +91,24 @@ namespace LanguageExplorer
 		/// <param name="app"></param>
 		IFlexApp ReopenProject(string project, FwAppArgs app);
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		/// <param name="app">The FieldWorks application.</param>
 		/// <param name="dialogOwner">The dialog owner.</param>
-		/// ------------------------------------------------------------------------------------
 		void FileProjectLocation(IApp app, Form dialogOwner);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Rename the project used by this FieldWorks to the specified new name.
 		/// </summary>
 		/// <param name="newName">The new name</param>
 		/// <returns>True if the rename was successful, false otherwise</returns>
-		/// ------------------------------------------------------------------------------------
 		bool RenameProject(string newName);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles a link request. This is expected to handle determining the correct
 		/// application to start up on the correct project and passing the link to any newly
 		/// started application.
 		/// </summary>
 		/// <param name="link">The link.</param>
-		/// ------------------------------------------------------------------------------------
 		void HandleLinkRequest(FwAppArgs link);
 	}
 }

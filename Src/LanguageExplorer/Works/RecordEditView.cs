@@ -340,7 +340,8 @@ namespace LanguageExplorer.Works
 			}
 #if DEBUG
 			int msEnd = Environment.TickCount;
-			Debug.WriteLineIf(RuntimeSwitches.RecordTimingSwitch.TraceInfo, "ShowRecord took " + (msEnd - msStart) + " ms", RuntimeSwitches.RecordTimingSwitch.DisplayName);
+			var traceSwitch = new TraceSwitch("Works_Timing", "Used for diagnostic timing output", "Off");
+			Debug.WriteLineIf(traceSwitch.TraceInfo, "ShowRecord took " + (msEnd - msStart) + " ms", traceSwitch.DisplayName);
 #endif
 		}
 

@@ -366,11 +366,10 @@ namespace LanguageExplorer.Dumpster
 			// Without checking both the SpellingStatus and (virtual) FullConcordanceCount
 			// fields for the ActiveWordform() result, it's too likely that the user
 			// will get a puzzling "Target not found" message popping up.  See LT-8717.
-			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle,
-				"bulkEditWordforms", Guid.Empty);
-			List<Property> additionalProps = link.PropertyTableEntries;
-			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
-			additionalProps.Add(new Property("LinkSetupInfo", "TeReviewUndecidedSpelling"));
+			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle, "bulkEditWordforms", Guid.Empty);
+			var additionalProps = link.LinkProperties;
+			additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
+			additionalProps.Add(new LinkProperty("LinkSetupInfo", "ReviewUndecidedSpelling"));
 			var commands = new List<string>
 										{
 											"AboutToFollowLink",
@@ -396,11 +395,10 @@ namespace LanguageExplorer.Dumpster
 
 		public bool OnViewIncorrectWords(object argument)
 		{
-			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle,
-				"Analyses", ActiveWordform(m_wordformRepos, PropertyTable));
-			List<Property> additionalProps = link.PropertyTableEntries;
-			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
-			additionalProps.Add(new Property("LinkSetupInfo", "TeCorrectSpelling"));
+			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle, "Analyses", ActiveWordform(m_wordformRepos, PropertyTable));
+			var additionalProps = link.LinkProperties;
+			additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
+			additionalProps.Add(new LinkProperty("LinkSetupInfo", "CorrectSpelling"));
 			var commands = new List<string>
 										{
 											"AboutToFollowLink",
@@ -454,7 +452,9 @@ namespace LanguageExplorer.Dumpster
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				dlg.SetDlgInfo(Cache, null);
 				if (dlg.ShowDialog() == DialogResult.OK)
+				{
 					Publisher.Publish("JumpToRecord", dlg.SelectedObject.Hvo);
+				}
 			}
 			return true;
 		}

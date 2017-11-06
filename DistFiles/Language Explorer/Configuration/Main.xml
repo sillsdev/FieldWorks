@@ -37,8 +37,6 @@
 		<command id="CmdUseVernSpellingDictionary" label="Show Vernacular Spelling _Errors" message="UseVernSpellingDictionary"/>
 		<command id="CmdRestoreDefaults" label="Restore Defaults..." message="RestoreDefaultLayouts"/>
 		<command id="CmdShowCharMap" label="Special _character..." message="ShowCharMap" icon="SpecialCharacter"/>
-		<command id="CmdFormatStyle" label="_Styles..." message="FormatStyle"/>
-		<command id="CmdFormatApplyStyle" label="_Apply Style..." message="FormatApplyStyle"/>
 		<command id="CmdCopy" label="_Copy" message="EditCopy" icon="Copy" shortcut="Ctrl+C" a10status="PARTIALLY_DONE" />
 		<command id="CmdCut" label="Cu_t" message="EditCut" icon="Cut" shortcut="Ctrl+X" a10status="PARTIALLY_DONE" />
 		<command id="CmdPaste" label="_Paste" message="EditPaste" icon="Paste" shortcut="Ctrl+V" a10status="PARTIALLY_DONE" />
@@ -419,12 +417,8 @@ InterlinMaster user:
 			<item command="CmdShowCharMap"/>
 			<item command="CmdInsertLinkToFile"/>
 		</menu>
-		<menu id="Format" label="F_ormat" a10status="PARTIALLY_DONE" >
-			<item command="CmdFormatStyle"/>
-			<item command="CmdFormatApplyStyle"/>
-		</menu>
-		<!-- Reworked Tools menu [LT-9852] June '09	-->
 		<menu id="Tools" label="_Tools" a10status="DONE" >
+		<!-- Reworked Tools menu [LT-9852] June '09	-->
 			<menu label="Configure" a10status="DONE" >
 				<!-- This is the insertion point for Area-specific Configure menu items.	-->
 <!-- START include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
@@ -473,10 +467,6 @@ InterlinMaster user:
 			<item command="CmdMacroF11" defaultVisible="false"/>
 			<item command="CmdMacroF12" defaultVisible="false"/>
 		</menu>
-
-<!-- START include: "Words/areaConfiguration.xml" query="root/menubar/*" -->
-		<include path="Words/areaConfiguration.xml" query="root/menubar/*"/>
-<!-- END include: "Words/areaConfiguration.xml" query="root/menubar/*" -->
 		<menu id="Help" label="_Help" a10status="PARTIALLY_DONE" >
 			<menu id="Resources" label="_Resources" a10status="PARTIALLY_DONE" >
 				<item command="CmdHelpLexicographyIntro"/>
@@ -741,7 +731,7 @@ InterlinMaster user:
 		<!-- take care of the writing system combo box -->
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.WritingSystemListHandler"/>
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.CombinedStylesListHandler"/>
-		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.LinkListener"/>
+		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.LinkHandler"/>
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.MacroListener"/>
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.DictionaryConfigurationListener"/>
 	</listeners>

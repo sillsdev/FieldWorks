@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -1481,6 +1482,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			if( disposing )
 			{
+				Subscriber.Unsubscribe("LinkFollowed", LinkFollowed_Handler);
 				if (m_configParamsElement != null && m_specialCache != null && m_xbv != null && RootObjectHvo != 0)
 					s_selectedCache[new Tuple<XElement, int>(m_configParamsElement, RootObjectHvo)] =
 						new Tuple<Dictionary<int, int>, bool>(m_specialCache.SelectedCache, m_specialCache.DefaultSelected);
@@ -2733,10 +2735,9 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		/// <summary>
 		/// This method is used to set the filters for
-		/// Edit Spelling Status   "TeReviewUndecidedSpelling"
+		/// Edit Spelling Status   "ReviewUndecidedSpelling"
 		/// and
-		/// View Incorrect Words in use  "TeCorrectSpelling"
-		///
+		/// View Incorrect Words in use  "CorrectSpelling"
 		/// and
 		/// Filter for Lexical Entries with this category  "LexiconEditFilterAnthroItems"
 		/// and
@@ -2746,46 +2747,63 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// an FwLink which brought us here. If this is the case, generate a corresponding filter and
 		/// return it; otherwise, return null.
 		/// </summary>
-		public RecordFilter FilterFromLink()
+		internal RecordFilter FilterFromLink(FwLinkArgs linkArgs)
 		{
-			string linkSetupInfo = PropertyTable.GetValue<string>("LinkSetupInfo");
-			if (linkSetupInfo == null)
+			if (linkArgs == null)
+			{
 				return null;
-			PropertyTable.RemoveProperty("LinkSetupInfo");
-			if (linkSetupInfo != "TeReviewUndecidedSpelling" && linkSetupInfo != "TeCorrectSpelling" &&
-				linkSetupInfo != "FilterAnthroItems")
-				return null; // Only setting we know as yet.
+			}
+			var linkProperties = linkArgs.LinkProperties;
+			var linkSetupInfoProperty = linkProperties.FirstOrDefault(prop => prop.Name == "LinkSetupInfo");
+			var linkSetupInfoValue = linkSetupInfoProperty?.Value as string;
+			if (string.IsNullOrWhiteSpace(linkSetupInfoValue))
+			{
+				return null;
+			}
+			if (linkSetupInfoValue != "ReviewUndecidedSpelling" && linkSetupInfoValue != "CorrectSpelling" && linkSetupInfoValue != "FilterAnthroItems")
+			{
+				return null; // Only settings we know as yet.
+			}
 
-			List<XElement> possibleColumns = m_xbv.Vc.ComputePossibleColumns();
+			var possibleColumns = m_xbv.Vc.ComputePossibleColumns();
 
 			var spellFilter = new FilterBarCellFilter();
-			if (linkSetupInfo == "TeReviewUndecidedSpelling" || linkSetupInfo == "TeCorrectSpelling")
+			if (linkSetupInfoValue == "ReviewUndecidedSpelling" || linkSetupInfoValue == "CorrectSpelling")
 			{
 				var colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", "Spelling Status");
 				if (colSpec == null)
+				{
 					return null;
+				}
 				int desiredItem;
-				if (linkSetupInfo == "TeCorrectSpelling")
-					desiredItem = (int) SpellingStatusStates.correct;
-				else //linkSetupInfo == "TeReviewSpelling"
-					desiredItem = (int) SpellingStatusStates.undecided;
+				if (linkSetupInfoValue == "CorrectSpelling")
+				{
+					desiredItem = (int)SpellingStatusStates.correct;
+				}
+				else //linkSetupInfo == "ReviewUndecidedSpelling"
+				{
+					desiredItem = (int)SpellingStatusStates.undecided;
+				}
 
-				string[] labels = BrowseView.GetStringList(colSpec);
+				var labels = BrowseView.GetStringList(colSpec);
 				if (labels == null || labels.Length < desiredItem)
+				{
 					return null;
-				string correctLabel = labels[desiredItem];
+				}
+				var correctLabel = labels[desiredItem];
 
-				if (linkSetupInfo == "TeCorrectSpelling") //"Exclude Correct" TE-8200
+				if (linkSetupInfoValue == "CorrectSpelling") //"Exclude Correct" TE-8200
+				{
 					// Use this one for NOT Correct ("Exclude Correct"), that is, undecided OR incorrect,
 					// all things that have squiggles. (could also be "Exclude Incorrect" or "Exclude Undecided")
-					spellFilter = MakeFilter(possibleColumns, "Spelling Status",
-											 new InvertMatcher(new ExactMatcher(m_filterBar.MatchExactPattern(correctLabel))));
-				else // linkSetupInfo == "TeReviewUndecidedSpelling"   --> "Undecided"
-					spellFilter = MakeFilter(possibleColumns, "Spelling Status",
-											 new ExactMatcher(m_filterBar.MatchExactPattern(correctLabel)));
+					spellFilter = MakeFilter(possibleColumns, "Spelling Status", new InvertMatcher(new ExactMatcher(m_filterBar.MatchExactPattern(correctLabel))));
+				}
+				else // linkSetupInfo == "ReviewUndecidedSpelling"   --> "Undecided"
+				{
+					spellFilter = MakeFilter(possibleColumns, "Spelling Status", new ExactMatcher(m_filterBar.MatchExactPattern(correctLabel)));
+				}
 
-				FilterBarCellFilter occurrenceFilter = MakeFilter(possibleColumns, "Number in Corpus",
-																  new RangeIntMatcher(1, Int32.MaxValue));
+				FilterBarCellFilter occurrenceFilter = MakeFilter(possibleColumns, "Number in Corpus", new RangeIntMatcher(1, Int32.MaxValue));
 				AndFilter andFilter = new AndFilter();
 				andFilter.Add(spellFilter);
 				andFilter.Add(occurrenceFilter);
@@ -2793,19 +2811,22 @@ namespace LanguageExplorer.Controls.XMLViews
 				// because of the change filter, and suppress the next load.
 				return andFilter;
 			}
-			else if (linkSetupInfo == "FilterAnthroItems")
+			if (linkSetupInfoValue == "FilterAnthroItems")
 			{
-				var itemHvos = PropertyTable.GetValue<string>("HvoOfAnthroItem");
-				if (itemHvos == null)
+				var hvoOfAnthroItemProperty = linkProperties.FirstOrDefault(prop => prop.Name == "HvoOfAnthroItem");
+				var itemHvo = hvoOfAnthroItemProperty?.Value as string;
+				if (string.IsNullOrWhiteSpace(linkSetupInfoValue))
+				{
 					return null;
-				PropertyTable.RemoveProperty("HvoOfAnthroItem");
+				}
 
 				var colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", "Anthropology Categories");
 				if (colSpec == null)
+				{
 					return null;
+				}
 
-				var chosenHvos = ParseCommaDelimitedHvoString(itemHvos);
-
+				var chosenHvos = ParseCommaDelimitedHvoString(itemHvo);
 				ListChoiceFilter filterListChoice = new ColumnSpecFilter(m_cache, ListMatchOptions.Any, chosenHvos, colSpec);
 				filterListChoice.MakeUserVisible(true);
 				return filterListChoice;
@@ -2815,10 +2836,12 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private static int[] ParseCommaDelimitedHvoString(string itemHvos)
 		{
-			var shvoArray = itemHvos.Split(new string[] {","}, StringSplitOptions.RemoveEmptyEntries);
+			var shvoArray = itemHvos.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries);
 			var chosenHvos = new int[shvoArray.Length];
 			for (var i = 0; i < shvoArray.Length; i++)
+			{
 				chosenHvos[i] = Convert.ToInt32(shvoArray[i]);
+			}
 			return chosenHvos;
 		}
 
@@ -2826,19 +2849,17 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// This is called after a link is followed. It allows us to set up the desired filter
 		/// etc. even if the desired tool was already active.
 		/// </summary>
-		public bool FollowLink(object args)
+		private void LinkFollowed_Handler(object newValue)
 		{
-			RecordFilter filter = FilterFromLink();
+			var filter = FilterFromLink((FwLinkArgs)newValue);
 			if (filter == null)
-				return false;
+				return;
 			if (filter == m_currentFilter)
-				return true;
-			if (FilterChanged != null)
-				FilterChanged(this, new FilterChangeEventArgs(filter, m_currentFilter));
+				return;
+			FilterChanged?.Invoke(this, new FilterChangeEventArgs(filter, m_currentFilter));
 			m_fFilterInitializationComplete = false; // allows UpdateFilterBar to add columns
 			UpdateFilterBar(filter);
 			m_scrollContainer.PerformLayout(); // cause scroll bar to appear or disappear, etc.
-			return true;
 		}
 
 		/// <summary>
@@ -3764,6 +3785,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			m_xbv.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			m_xbv.AccessibleName = "BrowseViewer";
+
+			Subscriber.Subscribe("LinkFollowed", LinkFollowed_Handler);
 		}
 
 		#endregion

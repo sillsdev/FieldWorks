@@ -52,9 +52,9 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Opens a new main window for the specified application.
 		/// </summary>
-		public void OpenNewWindowForApp()
+		public void OpenNewWindowForApp(IFwMainWnd currentWindow)
 		{
-			if (!FieldWorks.CreateAndInitNewMainWindow(false, false))
+			if (!FieldWorks.CreateAndInitNewMainWindow(currentWindow, false))
 			{
 				Debug.Fail("New main window was not created correctly!");
 			}

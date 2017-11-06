@@ -303,10 +303,7 @@ namespace LanguageExplorer.SendReceive
 				return;
 			}
 
-			var newAppWindow = CommonBridgeServices.RefreshCacheWindowAndAll(manager, fullProjectFileName);
-			// Send a message for the reopened instance to display the message viewer (used to be conflict report),
-			// we have been disposed by now
-			newAppWindow.Publisher.Publish("ViewLiftMessages", null);
+			CommonBridgeServices.RefreshCacheWindowAndAll(manager, fullProjectFileName, "ViewLiftMessages", true);
 		}
 
 		private void SendLiftBridgeFirstTime_Click(object sender, EventArgs e)

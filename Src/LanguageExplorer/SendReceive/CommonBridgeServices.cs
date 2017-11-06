@@ -103,7 +103,7 @@ namespace LanguageExplorer.SendReceive
 			return false; // no conflicts added.
 		}
 
-		internal static IFwMainWnd RefreshCacheWindowAndAll(IFieldWorksManager manager, string fullProjectFileName)
+		internal static void RefreshCacheWindowAndAll(IFieldWorksManager manager, string fullProjectFileName, string publisherMessage, bool conflictOccurred)
 		{
 			var appArgs = new FwAppArgs(fullProjectFileName);
 			var newAppWindow = (IFwMainWnd)manager.ReopenProject(manager.Cache.ProjectId.Name, appArgs).ActiveMainWindow;
@@ -116,7 +116,12 @@ namespace LanguageExplorer.SendReceive
 				newAppWindow.ClearInvalidatedStoredData();
 				newAppWindow.RefreshDisplay();
 #endif
-			return newAppWindow;
+			if (conflictOccurred)
+			{
+				// Send a message for the reopened instance to display the message viewer (used to be conflict report).
+				// Caller has been disposed by now.
+				newAppWindow.Publisher.Publish(publisherMessage, null);
+			}
 		}
 
 		internal static bool IsConfiguredForSR(string projectFolder)

@@ -636,6 +636,7 @@ namespace LanguageExplorer.Impls
 			this.stylesToolStripMenuItem.Name = "stylesToolStripMenuItem";
 			this.stylesToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
 			this.stylesToolStripMenuItem.Text = "&Styles...";
+			this.stylesToolStripMenuItem.ToolTipText = "Add, delete, or change styles.";
 			this.stylesToolStripMenuItem.Click += new System.EventHandler(this.Format_Styles_Click);
 			// 
 			// applyStyleToolStripMenuItem
@@ -643,6 +644,7 @@ namespace LanguageExplorer.Impls
 			this.applyStyleToolStripMenuItem.Name = "applyStyleToolStripMenuItem";
 			this.applyStyleToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
 			this.applyStyleToolStripMenuItem.Text = "&Apply Style...";
+			this.applyStyleToolStripMenuItem.Click += new System.EventHandler(this.applyStyleToolStripMenuItem_Click);
 			// 
 			// writingSystemToolStripMenuItem
 			// 
@@ -1250,7 +1252,7 @@ namespace LanguageExplorer.Impls
 			// toolStripInsert
 			// 
 			this.toolStripInsert.Dock = System.Windows.Forms.DockStyle.None;
-			this.toolStripInsert.Location = new System.Drawing.Point(338, 24);
+			this.toolStripInsert.Location = new System.Drawing.Point(337, 24);
 			this.toolStripInsert.Name = "toolStripInsert";
 			this.toolStripInsert.Size = new System.Drawing.Size(111, 25);
 			this.toolStripInsert.TabIndex = 4;
@@ -1261,7 +1263,7 @@ namespace LanguageExplorer.Impls
 			this.toolStripFormat.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripComboBoxWritingSystem,
             this.toolStripComboBoxStyles});
-			this.toolStripFormat.Location = new System.Drawing.Point(451, 24);
+			this.toolStripFormat.Location = new System.Drawing.Point(452, 24);
 			this.toolStripFormat.Name = "toolStripFormat";
 			this.toolStripFormat.Size = new System.Drawing.Size(289, 25);
 			this.toolStripFormat.TabIndex = 3;

@@ -36,12 +36,12 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Initialize the window, before being shown.
 		/// </summary>
-		/// <param name="windowToCopyFrom">Optional window to use to figure out where to open the new window.</param>
+		/// <param name="windowIsCopy">Window is being copied.</param>
 		/// <param name="linkArgs">Optional arguments used to set up the new instance.</param>
 		/// <remarks>
 		/// This allows for creating all sorts of things used by the implementation.
 		/// </remarks>
-		void Initialize(IFwMainWnd windowToCopyFrom = null, FwLinkArgs linkArgs = null);
+		void Initialize(bool windowIsCopy = false, FwLinkArgs linkArgs = null);
 
 		/// <summary>
 		/// Gets a Rectangle representing the position and size of the window in its

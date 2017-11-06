@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -374,12 +374,15 @@ namespace LanguageExplorer.Works
 			m_browseViewer.SuspendLayout();
 			SetStyleSheet();
 			m_browseViewer.Dock = DockStyle.Fill;
-			RecordFilter linkFilter = m_browseViewer.FilterFromLink();
-			SetupLinkScripture();
+			var linkFilter = m_browseViewer.FilterFromLink(PropertyTable.GetValue<FwLinkArgs>("FwLinkArgs")); // It will mostly be null.
 			if (linkFilter != null)
+			{
 				Clerk.OnChangeFilter(new FilterChangeEventArgs(linkFilter, Clerk.Filter));
+			}
 			if (Clerk.Filter != null && !Clerk.Filter.IsValid)
+			{
 				Clerk.ResetFilterToDefault();
+			}
 			m_browseViewer.UpdateFilterBar(Clerk.Filter);
 			bool fSortChanged = m_browseViewer.InitSorter(Clerk.Sorter); // true if we had to change sorter
 			// Do this AFTER we init the sorter and filter, so if any changes are made to the
@@ -400,45 +403,6 @@ namespace LanguageExplorer.Works
 			Controls.Add(m_browseViewer);
 			m_browseViewer.BringToFront();
 			m_browseViewer.ResumeLayout();
-		}
-
-		/// <summary>
-		/// Set up the current 'interesting texts' to include the part of Scripture (currently only 'all' is
-		/// supported) specified byt the mediator property "LinkScriptureBooksWanted". Then remeove that property.
-		/// </summary>
-		void SetupLinkScripture()
-		{
-			string booksWanted = PropertyTable.GetValue<string>("LinkScriptureBooksWanted");
-			if (booksWanted == null)
-				return;
-			PropertyTable.RemoveProperty("LinkScriptureBooksWanted");
-			if (booksWanted != "all")
-				return; // Enhance JohnT: accept a list of books in some form or other.
-			var books = Cache.LanguageProject.TranslatedScriptureOA.ScriptureBooksOS;
-			List<IStText> texts = new List<IStText>(0);
-			foreach (var book in books)
-			{
-				foreach (var section in book.SectionsOS)
-				{
-					texts.Add(section.ContentOA);
-					texts.Add(section.HeadingOA);
-				}
-			}
-
-			var interestingTexts = InterestingTextsDecorator.GetInterestingTextList(PropertyTable, Cache.ServiceLocator);
-			interestingTexts.SetInterestingTexts(texts);
-		}
-
-		/// <summary>
-		/// This is broadcast after a link is followed. It allows us to set up the desired filter
-		/// etc. even if the desired tool was already active.
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		public bool OnLinkFollowed(object args)
-		{
-			SetupLinkScripture();
-			return m_browseViewer.FollowLink(args);
 		}
 
 

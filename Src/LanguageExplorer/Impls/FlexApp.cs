@@ -908,7 +908,7 @@ namespace LanguageExplorer.Impls
 		/// <param name="progressDlg">The progress DLG.</param>
 		/// <param name="isNewCache">if set to <c>true</c> [is new cache].</param>
 		/// <param name="wndCopyFrom">The WND copy from.</param>
-		public Form NewMainAppWnd(IProgress progressDlg, bool isNewCache, Form wndCopyFrom = null)
+		public Form NewMainAppWnd(IProgress progressDlg, bool isNewCache, IFwMainWnd wndCopyFrom = null)
 		{
 			if (progressDlg != null)
 			{
@@ -927,42 +927,42 @@ namespace LanguageExplorer.Impls
 				InitializePartInventories(progressDlg, true);
 			}
 			// Let the application do its initialization of the new window
-			using (new DataUpdateMonitor((Control)factoryMadeIFwMainWnd, "Creating new main window"))
+			var factoryMadeIFwMainWndAsForm = (Form)factoryMadeIFwMainWnd;
+			using (new DataUpdateMonitor(factoryMadeIFwMainWndAsForm, "Creating new main window"))
 			{
-				var fwMainWndAsForm = (Form)factoryMadeIFwMainWnd;
-				factoryMadeIFwMainWnd.Initialize(wndCopyFrom as IFwMainWnd, FwAppArgs.HasLinkInformation ? FwAppArgs.CopyLinkArgs() : null);
-				fwMainWndAsForm.Closing += OnClosingWindow;
-				fwMainWndAsForm.Closed += OnWindowClosed;
-				fwMainWndAsForm.Activated += fwMainWindow_Activated;
+				factoryMadeIFwMainWnd.Initialize(wndCopyFrom != null, FwAppArgs.HasLinkInformation ? FwAppArgs.CopyLinkArgs() : null);
+				factoryMadeIFwMainWndAsForm.Closing += OnClosingWindow;
+				factoryMadeIFwMainWndAsForm.Closed += OnWindowClosed;
+				factoryMadeIFwMainWndAsForm.Activated += fwMainWindow_Activated;
 				if (factoryMadeIFwMainWnd == Form.ActiveForm)
 				{
-					m_activeMainWindow = fwMainWndAsForm;
+					m_activeMainWindow = factoryMadeIFwMainWndAsForm;
 				}
-				fwMainWndAsForm.HandleDestroyed += fwMainWindow_HandleDestroyed;
-				fwMainWndAsForm.FormClosing += FwMainWindowOnFormClosing;
-				fwMainWndAsForm.Show(); // Show method loads persisted settings for window & controls
-				fwMainWndAsForm.Activate(); // This makes main window come to front after splash screen closes
+				factoryMadeIFwMainWndAsForm.HandleDestroyed += fwMainWindow_HandleDestroyed;
+				factoryMadeIFwMainWndAsForm.FormClosing += FwMainWindowOnFormClosing;
+				factoryMadeIFwMainWndAsForm.Show(); // Show method loads persisted settings for window & controls
+				factoryMadeIFwMainWndAsForm.Activate(); // This makes main window come to front after splash screen closes
 
 				// adjust position if this is an additional window
 				if (wndCopyFrom != null)
 				{
-					AdjustNewWindowPosition(fwMainWndAsForm, wndCopyFrom);
+					AdjustNewWindowPosition(factoryMadeIFwMainWndAsForm, (Form)wndCopyFrom);
 				}
-				else if (fwMainWndAsForm.WindowState != FormWindowState.Maximized)
+				else if (factoryMadeIFwMainWndAsForm.WindowState != FormWindowState.Maximized)
 				{
 					// Fix the stored position in case it is off the screen.  This can happen if the
 					// user has removed a second monitor, or changed the screen resolution downward,
 					// since the last time he ran the program.  (See LT-1083.)
-					var rcNewWnd = fwMainWndAsForm.DesktopBounds;
+					var rcNewWnd = factoryMadeIFwMainWndAsForm.DesktopBounds;
 					ScreenHelper.EnsureVisibleRect(ref rcNewWnd);
-					fwMainWndAsForm.DesktopBounds = rcNewWnd;
-					fwMainWndAsForm.StartPosition = FormStartPosition.Manual;
+					factoryMadeIFwMainWndAsForm.DesktopBounds = rcNewWnd;
+					factoryMadeIFwMainWndAsForm.StartPosition = FormStartPosition.Manual;
 				}
 
 				m_fInitialized = true;
 			}
 
-			return (Form)factoryMadeIFwMainWnd;
+			return factoryMadeIFwMainWndAsForm;
 		}
 
 		private void FwMainWindowOnFormClosing(object sender, FormClosingEventArgs formClosingEventArgs)
@@ -979,7 +979,7 @@ namespace LanguageExplorer.Impls
 		public void ReplaceMainWindow(IFwMainWnd wndActive)
 		{
 			wndActive.SaveSettings();
-			FwManager.OpenNewWindowForApp();
+			FwManager.OpenNewWindowForApp(wndActive);
 			m_windowToCloseOnIdle = wndActive;
 			Application.Idle += CloseOldWindow;
 		}

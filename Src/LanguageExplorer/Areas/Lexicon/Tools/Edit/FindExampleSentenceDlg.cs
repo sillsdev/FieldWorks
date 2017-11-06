@@ -297,7 +297,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 							FwLinkArgs fwl = new FwLinkArgs("interlinearEdit", seg.Owner.Owner.Guid);
 							// It's not clear how to focus in on something smaller than the text when following
 							// a link.
-							//fwl.PropertyTableEntries.Add(new Property("LinkSegmentGuid", seg.Guid.ToString()));
+							//fwl.LinkProperties.Add(new LinkProperty("LinkSegmentGuid", seg.Guid.ToString()));
 							tsb.SetStrPropValue(0, tsb.Length, (int)FwTextPropType.ktptObjData,
 								(char)FwObjDataTypes.kodtExternalPathName + fwl.ToString());
 							tsb.SetStrPropValue(0, tsb.Length, (int)FwTextPropType.ktptNamedStyle,

@@ -1,10 +1,9 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -16,21 +15,10 @@ using SIL.LCModel;
 namespace LanguageExplorer.Works
 {
 	/// <summary>
-	/// Just a shell class for containing runtime Switches for controling the diagnostic output.
-	/// This could go in any file in the XWorks namespace, It's just here as a starting point.
-	/// </summary>
-	public class RuntimeSwitches
-	{
-		/// Tracing variable - used to control when and what is output to the debug and trace listeners
-		public static TraceSwitch RecordTimingSwitch = new TraceSwitch("XWorks_Timing", "Used for diagnostic timing output", "Off");
-		public static TraceSwitch linkListenerSwitch = new TraceSwitch("XWorks_LinkListener", "Used for diagnostic output", "Off");
-	}
-
-	/// <summary>
-	/// LinkListenerListener handles Hyper linking and history
+	/// LinkHandler handles Hyper linking and history
 	/// See the class comment on FwLinkArgs for details on how all the parts of hyperlinking work.
 	/// </summary>
-	public class LinkListener : IFlexComponent, IDisposable
+	public class LinkHandler : IFlexComponent, IDisposable
 	{
 		const int kmaxDepth = 50;		// Limit the stacks to 50 elements (LT-729).
 		protected LinkedList<FwLinkArgs> m_backStack;
@@ -44,10 +32,10 @@ namespace LanguageExplorer.Works
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="LinkListener"/> class.
+		/// Initializes a new instance of the <see cref="LinkHandler"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public LinkListener()
+		public LinkHandler()
 		{
 			m_backStack = new LinkedList<FwLinkArgs>();
 			m_forwardStack = new LinkedList<FwLinkArgs>();
@@ -88,7 +76,7 @@ namespace LanguageExplorer.Works
 		/// <remarks>
 		/// In case some clients forget to dispose it directly.
 		/// </remarks>
-		~LinkListener()
+		~LinkHandler()
 		{
 			Dispose(false);
 			// The base class finalizer is called automatically.
@@ -142,7 +130,7 @@ namespace LanguageExplorer.Works
 				// Dispose managed resources here.
 				if (PropertyTable != null)
 				{
-					PropertyTable.SetProperty("LinkListener", null, false, false);
+					PropertyTable.SetProperty("LinkHandler", null, false, false);
 				}
 				if (m_backStack != null)
 					m_backStack.Clear();
@@ -190,11 +178,11 @@ namespace LanguageExplorer.Works
 				return true; // we can't handle it, but no other colleague can either. Needs to launch whatever can (see VwBaseVc.DoHotLinkAction).
 			try
 			{
-				var fwargs = new FwAppArgs(new[] {url});
-				LcmCache cache = PropertyTable.GetValue<LcmCache>("cache");
+				var fwargs = new FwAppArgs(url);
+				var cache = PropertyTable.GetValue<LcmCache>("cache");
 				if (SameDatabase(fwargs, cache))
 				{
-					OnFollowLink(fwargs);
+					FollowLink_Handler(fwargs);
 					args.LinkHandledLocally = true;
 				}
 			}
@@ -208,21 +196,21 @@ namespace LanguageExplorer.Works
 		private bool SameDatabase(FwAppArgs fwargs, LcmCache cache)
 		{
 			return fwargs.Database == "this$" ||
-				fwargs.Database.ToLowerInvariant() == cache.ProjectId.Name.ToLowerInvariant()
-				|| fwargs.Database.ToLowerInvariant() == cache.ProjectId.Path.ToLowerInvariant()
-				|| Path.GetFileName(fwargs.Database).ToLowerInvariant() == cache.ProjectId.Name.ToLowerInvariant();
+				string.Equals(fwargs.Database, cache.ProjectId.Name, StringComparison.InvariantCultureIgnoreCase)
+				|| string.Equals(fwargs.Database, cache.ProjectId.Path, StringComparison.InvariantCultureIgnoreCase)
+				|| string.Equals(Path.GetFileName(fwargs.Database), cache.ProjectId.Name, StringComparison.InvariantCultureIgnoreCase);
 		}
 
 		/// <summary>
 		///
 		/// </summary>
 		/// <returns></returns>
-		public bool OnAddContextToHistory(object _link)
+		public bool OnAddContextToHistory(object link)
 		{
 			CheckDisposed();
 
 			//Debug.WriteLineIf(RuntimeSwitches.linkListenerSwitch.TraceInfo, "OnAddContextToHistory(" + m_currentContext + ")", RuntimeSwitches.linkListenerSwitch.DisplayName);
-			FwLinkArgs lnk = (FwLinkArgs)_link;
+			var lnk = (FwLinkArgs)link;
 			if (lnk.EssentiallyEquals(m_currentContext))
 			{
 				//Debug.WriteLineIf(RuntimeSwitches.linkListenerSwitch.TraceInfo, "   Link equals current context.", RuntimeSwitches.linkListenerSwitch.DisplayName);
@@ -241,7 +229,7 @@ namespace LanguageExplorer.Works
 			// levels of handling.
 			if (m_fFollowingLink && lnk.EssentiallyEquals(m_lnkActive))
 			{
-				int howManyAdded = m_backStack.Count - m_cBackStackOrig;
+				var howManyAdded = m_backStack.Count - m_cBackStackOrig;
 				for( ; howManyAdded > 1; --howManyAdded)
 				{
 					m_backStack.RemoveLast();
@@ -270,16 +258,16 @@ namespace LanguageExplorer.Works
 			return true;
 		}
 
-		private void Push(LinkedList<FwLinkArgs> stack, FwLinkArgs context)
+		private static void Push(LinkedList<FwLinkArgs> stack, FwLinkArgs context)
 		{
 			stack.AddLast(context);
 			while (stack.Count > kmaxDepth)
 				stack.RemoveFirst();
 		}
 
-		private FwLinkArgs Pop(LinkedList<FwLinkArgs> stack)
+		private static FwLinkArgs Pop(LinkedList<FwLinkArgs> stack)
 		{
-			FwLinkArgs lnk = stack.Last.Value;
+			var lnk = stack.Last.Value;
 			stack.RemoveLast();
 			return lnk;
 		}
@@ -291,13 +279,13 @@ namespace LanguageExplorer.Works
 		public bool OnCopyLocationAsHyperlink(object unused)
 		{
 			CheckDisposed();
-			if (m_currentContext != null)
+			if (m_currentContext == null)
 			{
-				LcmCache cache = PropertyTable.GetValue<LcmCache>("cache");
-				var args = new FwAppArgs(cache.ProjectId.Handle,
-					m_currentContext.ToolName, m_currentContext.TargetGuid);
-				ClipboardUtils.SetDataObject(args.ToString(), true);
+				return true;
 			}
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
+			var args = new FwAppArgs(cache.ProjectId.Handle, m_currentContext.ToolName, m_currentContext.TargetGuid);
+			ClipboardUtils.SetDataObject(args.ToString(), true);
 			return true;
 		}
 
@@ -309,16 +297,17 @@ namespace LanguageExplorer.Works
 		{
 			CheckDisposed();
 
-			if (m_backStack.Count > 0)
+			if (!m_backStack.Any())
 			{
-				if (m_currentContext!= null)
-				{
-					Push(m_forwardStack, m_currentContext);
-				}
-				m_fUsingHistory = true;
-				m_lnkActive = Pop(m_backStack);
-				FollowActiveLink();
+				return true;
 			}
+			if (m_currentContext!= null)
+			{
+				Push(m_forwardStack, m_currentContext);
+			}
+			m_fUsingHistory = true;
+			m_lnkActive = Pop(m_backStack);
+			FollowActiveLink();
 
 			return true;
 		}
@@ -393,18 +382,16 @@ namespace LanguageExplorer.Works
 		/// databases or applications, pass a FwAppArgs to the IFieldWorksManager.HandleLinkRequest method.
 		/// </summary>
 		/// <returns></returns>
-		public bool OnFollowLink(object lnk)
+		private void FollowLink_Handler(object lnk)
 		{
-			CheckDisposed();
-
 			m_fFollowingLink = true;
 			m_cBackStackOrig = m_backStack.Count;
-			m_lnkActive = lnk as FwLinkArgs;
+			m_lnkActive = (FwLinkArgs)lnk;
 
-			return FollowActiveLink();
+			FollowActiveLink();
 		}
 
-		private bool FollowActiveLink()
+		private void FollowActiveLink()
 		{
 			try
 			{
@@ -417,7 +404,7 @@ namespace LanguageExplorer.Works
 					var cache = PropertyTable.GetValue<LcmCache>("cache");
 					ICmObject target;
 					if (!cache.ServiceLocator.ObjectRepository.TryGetObject(m_lnkActive.TargetGuid, out target))
-						return false; // or message?
+						return; // or message?
 					var realTarget = GetObjectToShowInTool(target);
 					string realTool;
 					var majorObject = realTarget.Owner ?? realTarget;
@@ -434,7 +421,7 @@ namespace LanguageExplorer.Works
 							break;
 						case ScriptureTags.kClassId:
 							ShowCantJumpMessage(xWorksStrings.ksCantJumpToScripture);
-							return false; // Todo: don't know how to handle this yet.
+							return; // Todo: don't know how to handle this yet.
 							//app = FwUtils.ksTeAbbrev;
 							//realTool = "reversalEditComplete";
 							//break;
@@ -460,12 +447,12 @@ namespace LanguageExplorer.Works
 						case LexDbTags.kClassId: // other things owned by this??
 						case LangProjectTags.kClassId:
 							ShowCantJumpMessage(xWorksStrings.ksCantJumpToLangProj);
-							return false;
+							return;
 						default:
 							var msg = string.Format(xWorksStrings.ksCantJumpToObject,
 								cache.MetaDataCacheAccessor.GetClassName(majorObject.ClassID));
 							ShowCantJumpMessage(msg);
-							return false; // can't jump to it.
+							return; // can't jump to it.
 					}
 					m_lnkActive = new FwLinkArgs(realTool, realTarget.Guid);
 					// Todo JohnT: need to do something special here if we c
@@ -508,27 +495,13 @@ namespace LanguageExplorer.Works
 					// use the wrong RecordList.  (LT-3260)
 					Publisher.Publish("JumpToRecord", obj.Hvo);
 				}
-
-				foreach (Property property in m_lnkActive.PropertyTableEntries)
-				{
-					PropertyTable.SetProperty(property.name, property.value, true, true);
-					//TODO: I can't think at the moment of what to do about setting
-					//the persistence or ownership of the property...at the moment the only values we're putting
-					//in there are strings or bools
-				}
 				Publisher.Publish("LinkFollowed", m_lnkActive);
 			}
 			catch(Exception err)
 			{
-				string s;
-				if (err.InnerException != null && !string.IsNullOrEmpty(err.InnerException.Message))
-					s = String.Format(xWorksStrings.UnableToFollowLink0, err.InnerException.Message);
-				else
-					s = xWorksStrings.UnableToFollowLink;
-				MessageBox.Show(s, xWorksStrings.FailedJump, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				return false;
+				var message = !string.IsNullOrEmpty(err.InnerException?.Message) ? string.Format(xWorksStrings.UnableToFollowLink0, err.InnerException.Message) : xWorksStrings.UnableToFollowLink;
+				MessageBox.Show(message, xWorksStrings.FailedJump, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
-			return true;	//we handled this.
 		}
 
 		private void ShowCantJumpMessage(string msg)
@@ -587,6 +560,10 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
+		#endregion
+
+		#region Implementation of IFlexComponent
+
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -599,7 +576,8 @@ namespace LanguageExplorer.Works
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			PropertyTable.SetProperty("LinkListener", this, false, false);
+			PropertyTable.SetProperty("LinkHandler", this, false, false);
+			Subscriber.Subscribe("FollowLink", FollowLink_Handler);
 		}
 
 		#endregion

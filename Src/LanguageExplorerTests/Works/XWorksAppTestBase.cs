@@ -77,7 +77,7 @@ namespace LanguageExplorerTests.Works
 		/// Opens a new main window for the specified application.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void OpenNewWindowForApp()
+		public void OpenNewWindowForApp(IFwMainWnd currentWindow)
 		{
 			throw new NotImplementedException();
 		}

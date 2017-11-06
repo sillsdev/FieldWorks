@@ -123,11 +123,6 @@
 	<item id="CmdInsertSubrecord">Create a Subrecord in your Notebook.</item>
 	<item id="ClickInvisibleSpace">Turn on mode in which a click inserts an invisible, zero-width space.</item>
 	<item id="CmdGuessWordBreaks">Have Language Explorer insert invisible, zero-width spaces as word breaks according to the word list and lexical entries.</item>
-
-	<!--
-		 Format menu
-		 -->
-	<item id="CmdFormatStyle">Add, delete, or change styles.</item>
 	<!--
 		 Tools menu
 		 -->

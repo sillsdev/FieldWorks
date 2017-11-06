@@ -1,14 +1,8 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwEditingHelper.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
+
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -32,11 +26,6 @@ namespace SIL.FieldWorks.Common.Framework
 	{
 		#region Data members
 		private static bool s_fIgnoreSelectionChanges;
-		/// <summary>
-		/// Styles that should be allowed to be applied in the Apply Styles dialog
-		/// </summary>
-		private List<ContextValues> m_applicableStylesContexts =
-			new List<ContextValues>(new[] { ContextValues.General });
 		/// <summary>Represents a style context that can be applied anywhere in the view that
 		/// this EditingHelper belongs to</summary>
 		private ContextValues m_internalContext = ContextValues.General;
@@ -331,27 +320,6 @@ namespace SIL.FieldWorks.Common.Framework
 			{
 				CheckDisposed();
 				m_internalContext = value;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets/sets the applicable style contexts which get passed to the styles dialog.
-		/// </summary>
-		/// <remarks>Returning <c>null</c> means that the applicable contexts won't be set,
-		///  i.e. all styles allowed.</remarks>
-		/// ------------------------------------------------------------------------------------
-		public virtual List<ContextValues> ApplicableStyleContexts
-		{
-			get
-			{
-				CheckDisposed();
-				return m_applicableStylesContexts;
-			}
-			set
-			{
-				CheckDisposed();
-				m_applicableStylesContexts = value;
 			}
 		}
 

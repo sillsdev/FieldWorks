@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,7 +14,6 @@ using SIL.Reporting;
 namespace SIL.FieldWorks.Common.FwUtils
 {
 	#region FwLinkArgs class
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// provides a message object specifically for asking a FieldWorks application
 	/// to do various navigation activities.
@@ -62,7 +61,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// a window and calling app.HandleIncomingLink() passing the FwAppArgs. This method,
 	/// currently only implemented in FwXApp, activates the right tool and object.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[Serializable]
 	public class FwLinkArgs
 	{
@@ -88,49 +86,30 @@ namespace SIL.FieldWorks.Common.FwUtils
 		protected string m_toolName = string.Empty;
 		/// <summary></summary>
 		protected string m_tag = string.Empty;
-		private readonly List<Property> m_propertyTableEntries = new List<Property>();
+		private readonly List<LinkProperty> m_linkProperties = new List<LinkProperty>();
 		#endregion
 
 		#region Properties
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The name/path of the tool or view within the specific application. Will never be null.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string ToolName
-		{
-			get
-			{
-				if (m_toolName == null)
-					return "";
-				return m_toolName;
-			}
-		}
+		public string ToolName => m_toolName ?? string.Empty;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The GUID of the object which is the target of this link.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public Guid TargetGuid { get; protected set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Additional information to be included in the property table. Will never be null.
+		/// Properties used by the link
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public List<Property> PropertyTableEntries
-		{
-			get { return m_propertyTableEntries; }
-		}
+		public List<LinkProperty> LinkProperties => m_linkProperties;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// An additional tag to differentiate between other FwLinkArgs entries between the
 		/// same core ApplicationName, Database, Guid values. Will never be null.
 		/// (cf. LT-7847)
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public string Tag
 		{
 			get
@@ -142,34 +121,28 @@ namespace SIL.FieldWorks.Common.FwUtils
 		#endregion  Properties
 
 		#region Construction and Initialization
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:FwLinkArgs"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected FwLinkArgs()
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:FwLinkArgs"/> class.
 		/// </summary>
 		/// <param name="toolName">Name/path of the tool or view within the specific application.</param>
 		/// <param name="targetGuid">The GUID of the object which is the target of this link.</param>
-		/// ------------------------------------------------------------------------------------
 		public FwLinkArgs(string toolName, Guid targetGuid) : this(toolName, targetGuid, null)
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:FwLinkArgs"/> class.
 		/// </summary>
 		/// <param name="toolName">Name/path of the tool or view within the specific application.</param>
 		/// <param name="targetGuid">The GUID of the object which is the target of this link.</param>
 		/// <param name="tag">The tag.</param>
-		/// ------------------------------------------------------------------------------------
 		public FwLinkArgs(string toolName, Guid targetGuid, string tag) : this()
 		{
 			m_toolName = toolName;
@@ -177,23 +150,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_tag = tag ?? string.Empty;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:FwLinkArgs"/> class.
 		/// </summary>
 		/// <param name="url">a URL string like that produced by ToString().</param>
-		/// ------------------------------------------------------------------------------------
 		public FwLinkArgs(string url)
 		{
 			if (!url.StartsWith(kFwUrlPrefix))
-				throw new ArgumentException(String.Format("unrecognized FwLinkArgs URL string: {0}", url));
-			string query = HttpUtility.UrlDecode(url.Substring(23));
-			string[] rgsProps = query.Split('&');
-			foreach (string prop in rgsProps)
+				throw new ArgumentException($"unrecognized FwLinkArgs URL string: {url}");
+			var query = HttpUtility.UrlDecode(url.Substring(23));
+			var rgsProps = query.Split('&');
+			foreach (var prop in rgsProps)
 			{
-				string[] propPair = prop.Split('=');
+				var propPair = prop.Split('=');
 				if (propPair.Length != 2)
-					throw new ArgumentException(String.Format("invalid FwLinkArgs URL string: {0}", url));
+					throw new ArgumentException($"invalid FwLinkArgs URL string: {url}");
 				switch (propPair[0])
 				{
 					case kTool:
@@ -206,47 +177,41 @@ namespace SIL.FieldWorks.Common.FwUtils
 						m_tag = propPair[1];
 						break;
 					default:
-						PropertyTableEntries.Add(new Property(propPair[0], propPair[1]));
+						LinkProperties.Add(new LinkProperty(propPair[0], propPair[1]));
 						break;
 				}
 			}
-			if (String.IsNullOrEmpty(m_toolName) || TargetGuid == Guid.Empty || m_tag == null)
-				throw new ArgumentException(String.Format("invalid FwLinkArgs URL string: {0}", url));
+			if (string.IsNullOrEmpty(m_toolName) || TargetGuid == Guid.Empty || m_tag == null)
+				throw new ArgumentException($"invalid FwLinkArgs URL string: {url}");
 
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Copy the link-related information to a new FwLinkArgs. Currently this does NOT
 		/// yield an FwAppArgs even if the recipient is one.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public FwLinkArgs CopyLinkArgs()
 		{
-			FwLinkArgs result = new FwLinkArgs(m_toolName, TargetGuid, m_tag);
-			result.m_propertyTableEntries.AddRange(m_propertyTableEntries);
+			var result = new FwLinkArgs(m_toolName, TargetGuid, m_tag);
+			result.m_linkProperties.AddRange(m_linkProperties);
 			return result;
 		}
 		#endregion
 
 		#region overridden methods and helpers
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns a hash code for this instance.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public override int GetHashCode()
 		{
 			return ToString().GetHashCode();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Some comparisons don't care about the content of the property table, so we provide a
 		/// method similar to Equals but not quite as demanding.
 		/// </summary>
 		/// <param name="lnk">The link to compare.</param>
-		/// ------------------------------------------------------------------------------------
 		public virtual bool EssentiallyEquals(FwLinkArgs lnk)
 		{
 			if (lnk == null)
@@ -264,7 +229,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return lnk.Tag.Length == 0 || Tag.Length == 0 || lnk.Tag == Tag;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether the specified <see cref="T:System.Object"/> is equal to this instance.
 		/// </summary>
@@ -275,10 +239,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <exception cref="T:System.NullReferenceException">
 		/// The <paramref name="obj"/> parameter is null.
 		/// </exception>
-		/// ------------------------------------------------------------------------------------
 		public override bool Equals(object obj)
 		{
-			FwLinkArgs link = obj as FwLinkArgs;
+			var link = obj as FwLinkArgs;
 			if (link == null)
 				return false;
 			if (link == this)
@@ -287,23 +250,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return (ToString() == link.ToString());
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get a URL corresponding to this link
 		/// </summary>
 		/// <returns>
 		/// A <see cref="T:System.String"/> that represents this instance.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		public override string ToString()
 		{
-			UriBuilder uriBuilder = new UriBuilder(kSilScheme, kLocalHost);
-			uriBuilder.Path = kLink;
-			StringBuilder query = new StringBuilder();
+			var uriBuilder = new UriBuilder(kSilScheme, kLocalHost)
+			{
+				Path = kLink
+			};
+			var query = new StringBuilder();
 			AddProperties(query);
 
-			foreach (Property property in PropertyTableEntries)
-				query.AppendFormat("&{0}={1}", property.name, Encode(property.value));
+			foreach (var property in LinkProperties)
+				query.AppendFormat("&{0}={1}", property.Name, Encode(property.Value));
 
 			//make it safe to represent as a url string (e.g., convert spaces)
 			uriBuilder.Query = HttpUtility.UrlEncode(query.ToString());
@@ -311,12 +274,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return uriBuilder.Uri.AbsoluteUri;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Adds the properties as named arguments in a format that can be used to produce a
 		/// URI query.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected virtual void AddProperties(StringBuilder bldr)
 		{
 			bldr.AppendFormat("{0}={1}&{2}={3}&{4}={5}", kTool, ToolName, kGuid,
@@ -325,12 +286,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		#endregion
 
 		#region Serialization
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Add type info to the parameter if it's not a string
 		/// </summary>
 		/// <param name="o">The o.</param>
-		/// ------------------------------------------------------------------------------------
 		protected string Encode(object o)
 		{
 			switch(o.GetType().ToString())
@@ -339,16 +298,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 				case "System.Boolean":
 					return "bool:" + o;
 				case "System.String":
-					return (String)o;
+					return (string)o;
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Use the explicit type tag to parse parameters into the right type
 		/// </summary>
 		/// <param name="value">The value.</param>
-		/// ------------------------------------------------------------------------------------
 		protected object Decode(string value)
 		{
 			if(value.IndexOf("bool:") > -1)
@@ -362,14 +319,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		#region Static utility methods
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// If  the database= and server= sections of the url string match up against the
 		/// current project and server, set the server to empty (if it isn't already), and set
 		/// the project to "this$".  This allows the project to be renamed without invalidating
 		/// any internal crossreferences in the form of hyperlinks.  (See FWR-3437.)
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public static string FixSilfwUrlForCurrentProject(string url, string project)
 		{
 			if (!url.StartsWith(kFwUrlPrefix))
@@ -923,7 +878,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 						TargetGuid = new Guid(value);
 					break;
 				default:
-					PropertyTableEntries.Add(new Property(name, Decode(value)));
+					LinkProperties.Add(new LinkProperty(name, Decode(value)));
 					break;
 			}
 		}

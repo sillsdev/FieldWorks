@@ -135,7 +135,7 @@ namespace LanguageExplorer.Dumpster
 		private IPropertyTable PropertyTable { get; set; }
 
 		/// <summary>
-		/// This method is called BY REFLECTION through the mediator from LinkListener.FollowActiveLink, because the assembly dependencies
+		/// This method is called BY REFLECTION through the mediator from LinkHandler.FollowActiveLink, because the assembly dependencies
 		/// are in the wrong direction. It finds the name of the tool we need to invoke to edit a given list.
 		/// </summary>
 		/// <param name="parameters"></param>
