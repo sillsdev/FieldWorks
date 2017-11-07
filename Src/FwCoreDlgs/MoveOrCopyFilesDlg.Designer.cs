@@ -100,6 +100,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.ControlBox = false;
 			this.Controls.Add(this.m_msgNewDir);
 			this.Controls.Add(this.m_btnHelp);
 			this.Controls.Add(this.m_msgOldDir);
