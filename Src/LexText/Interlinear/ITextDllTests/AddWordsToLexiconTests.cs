@@ -8,6 +8,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using NUnit.Framework;
+using Rhino.Mocks;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
@@ -90,12 +91,14 @@ namespace SIL.FieldWorks.IText
 
 		internal class SandboxForTests : Sandbox
 		{
+			private InterlinDocForAnalysis m_mockInterlinDoc;
+
 			internal SandboxForTests(FdoCache cache, InterlinLineChoices lineChoices)
 				: base(cache, null, null, lineChoices)
 			{
 			}
 
-			ISilDataAccess SandboxCacheDa
+			internal ISilDataAccess SandboxCacheDa
 			{
 				get { return m_caches.DataAccess; }
 			}
@@ -272,9 +275,18 @@ namespace SIL.FieldWorks.IText
 				}
 				return 0;
 			}
+
+			internal void SetInterlinDocForTest(InterlinDocForAnalysis mockDoc)
+			{
+				m_mockInterlinDoc = mockDoc;
+			}
+
+			internal override InterlinDocForAnalysis InterlinDoc {
+				get { return m_mockInterlinDoc; }
+			}
 		}
 
-		void CompareTss(ITsString tssExpected, ITsString tssActual)
+		internal static void CompareTss(ITsString tssExpected, ITsString tssActual)
 		{
 			if (tssExpected != null && tssActual != null)
 			{
@@ -287,9 +299,9 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		private AnalysisOccurrence GetCba(int iPara, int iSeg, int iSegForm)
+		internal static AnalysisOccurrence GetNewAnalysisOccurence(FDO.IText text, int iPara, int iSeg, int iSegForm)
 		{
-			IStTxtPara para = m_text1.ContentsOA.ParagraphsOS[iPara] as IStTxtPara;
+			IStTxtPara para = text.ContentsOA.ParagraphsOS[iPara] as IStTxtPara;
 			var seg = para.SegmentsOS[iSeg];
 			return new AnalysisOccurrence(seg, iSegForm);
 		}
@@ -372,7 +384,7 @@ namespace SIL.FieldWorks.IText
 		public void NewGlossNewLexEntryNewLexSense()
 		{
 			// load sandbox for first 'xxxa'
-			var cba0_0 = GetCba(0, 0, 0);
+			var cba0_0 = GetNewAnalysisOccurence(m_text1, 0, 0, 0);
 			m_sandbox.SwitchWord(cba0_0);
 
 			// verify that the word gloss is empty
@@ -451,7 +463,7 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void NewGlossExistingLexEntryNewLexSense()
 		{
-			var cba0_0 = GetCba(0, 0, 0);
+			var cba0_0 = GetNewAnalysisOccurence(m_text1, 0, 0, 0);
 			m_sandbox.SwitchWord(cba0_0);
 			ILexEntry lexEntry1_Entry;
 			ILexSense lexEntry1_Sense1;
@@ -492,7 +504,7 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void NewGlossExistingLexEntryAllomorphNewLexSense()
 		{
-			var cba0_0 = GetCba(0, 0, 0);
+			var cba0_0 = GetNewAnalysisOccurence(m_text1, 0, 0, 0);
 			m_sandbox.SwitchWord(cba0_0);
 			string formLexEntry = "xxxab";
 			ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, Cache.DefaultVernWs);
@@ -549,7 +561,7 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void PickLexGlossCreatingNewAnalysis()
 		{
-			var cba0_0 = GetCba(0, 0, 0);
+			var cba0_0 = GetNewAnalysisOccurence(m_text1, 0, 0, 0);
 			m_sandbox.SwitchWord(cba0_0);
 			ILexEntry lexEntry1_Entry;
 			ILexSense lexEntry1_Sense1;
@@ -588,44 +600,44 @@ namespace SIL.FieldWorks.IText
 			Assert.AreEqual(1, wfiAnalysis.MeaningsOC.Count);
 		}
 
-
-		/// <summary>
-		/// </summary>
-		/// <param name="formLexEntry"></param>
-		/// <param name="senseGloss"></param>
-		/// <param name="lexEntry1_Entry"></param>
-		/// <param name="lexEntry1_Sense1"></param>
-		private void SetupLexEntryAndSense(string formLexEntry, string senseGloss, out ILexEntry lexEntry1_Entry, out ILexSense lexEntry1_Sense1)
+		private void SetupLexEntryAndSense(string formLexEntry, string senseGloss, out ILexEntry lexEntry, out ILexSense lexSense)
 		{
-			SetupLexEntryAndSense(formLexEntry, senseGloss, "adjunct", out lexEntry1_Entry, out lexEntry1_Sense1);
+			SetupLexEntryAndSense(formLexEntry, senseGloss, Cache, m_sandbox, out lexEntry, out lexSense);
 		}
 
-		/// <summary>
-		/// </summary>
-		/// <param name="formLexEntry"></param>
-		/// <param name="senseGloss"></param>
-		/// <param name="partOfSpeech"></param>
-		/// <param name="lexEntry1_Entry"></param>
-		/// <param name="lexEntry1_Sense1"></param>
-		private void SetupLexEntryAndSense(string formLexEntry, string senseGloss, string partOfSpeech, out ILexEntry lexEntry1_Entry, out ILexSense lexEntry1_Sense1)
+		/// <summary/>
+		internal static void SetupLexEntryAndSense(string formLexEntry, string senseGloss, FdoCache cache, SandboxForTests testSandBox, out ILexEntry lexEntry, out ILexSense lexSense)
 		{
-			ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, Cache.DefaultVernWs);
+			SetupLexEntryAndSense(formLexEntry, senseGloss, "adjunct", cache, testSandBox, out lexEntry, out lexSense);
+		}
+
+		private void SetupLexEntryAndSense(string formLexEntry, string senseGloss, string partOfSpeech,
+			out ILexEntry lexEntry, out ILexSense lexSense)
+		{
+			SetupLexEntryAndSense(formLexEntry, senseGloss, partOfSpeech, Cache, m_sandbox, out lexEntry, out lexSense);
+		}
+
+		/// <summary/>
+		internal static void SetupLexEntryAndSense(string formLexEntry, string senseGloss, string partOfSpeech, FdoCache cache,
+			SandboxForTests testSandBox, out ILexEntry lexEntry, out ILexSense lexSense)
+		{
+			ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, cache.DefaultVernWs);
 			// create a sense with a matching gloss
-			var entryComponents = MorphServices.BuildEntryComponents(Cache, tssLexEntryForm);
-			int hvoSenseMsaPos = m_sandbox.GetComboItemHvo(InterlinLineChoices.kflidWordPos, 0, partOfSpeech);
+			var entryComponents = MorphServices.BuildEntryComponents(cache, tssLexEntryForm);
+			int hvoSenseMsaPos = testSandBox.GetComboItemHvo(InterlinLineChoices.kflidWordPos, 0, partOfSpeech);
 			if (hvoSenseMsaPos != 0)
-				entryComponents.MSA.MainPOS = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoSenseMsaPos);
-			entryComponents.GlossAlternatives.Add(TsStringUtils.MakeTss(senseGloss, Cache.DefaultAnalWs));
-			ILexEntry newEntry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(entryComponents);
-			lexEntry1_Entry = newEntry;
-			lexEntry1_Sense1 = newEntry.SensesOS[0];
+				entryComponents.MSA.MainPOS = cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoSenseMsaPos);
+			entryComponents.GlossAlternatives.Add(TsStringUtils.MakeTss(senseGloss, cache.DefaultAnalWs));
+			ILexEntry newEntry = cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(entryComponents);
+			lexEntry = newEntry;
+			lexSense = newEntry.SensesOS[0];
 		}
 
 		[Test]
 		[Ignore("Not sure what we're supposed to do with glossing on a polymorphemic guess. Need analyst input")]
 		public void NewGlossForFocusBoxWithPolymorphemicGuess()
 		{
-			var cba0_0 = GetCba(0, 0, 0);
+			var cba0_0 = GetNewAnalysisOccurence(m_text1, 0, 0, 0);
 			m_sandbox.SwitchWord(cba0_0);
 			// build polymorphemic guess
 			ILexEntry lexEntry1_Entry;
@@ -676,7 +688,7 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void PickLexGlossUsingExistingAnalysis()
 		{
-			var cba0_0 = GetCba(0, 0, 0);
+			var cba0_0 = GetNewAnalysisOccurence(m_text1, 0, 0, 0);
 			m_sandbox.SwitchWord(cba0_0);
 			ILexEntry lexEntry1_Entry;
 			ILexSense lexEntry1_Sense1;
