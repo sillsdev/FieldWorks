@@ -968,7 +968,7 @@ namespace LanguageExplorer.LcmUi
 		/// Do any cleanup that involves interacting with the user, after the user has confirmed that our object should be
 		/// deleted.
 		/// </summary>
-		protected virtual void DoRelatedCleanupForDeleteObject()
+		protected virtual bool DoRelatedCleanupForDeleteObject()
 		{
 			// For media and pictures: should we delete the file also?
 			// arguably this should be on a subclass, but it's easier to share behavior for both here.
@@ -984,25 +984,25 @@ namespace LanguageExplorer.LcmUi
 				if (media != null)
 					file = media.MediaFileRA;
 			}
-			ConsiderDeletingRelatedFile(file, PropertyTable);
+			return ConsiderDeletingRelatedFile(file, PropertyTable);
 		}
 
-		public static void ConsiderDeletingRelatedFile(ICmFile file, IPropertyTable propertyTable)
+		public static bool ConsiderDeletingRelatedFile(ICmFile file, IPropertyTable propertyTable)
 		{
 			if (file == null)
-				return;
+				return false;
 			var refs = file.ReferringObjects;
 			if (refs.Count > 1)
-				return; // exactly one if only this CmPicture uses it.
+				return false; // exactly one if only this CmPicture uses it.
 			var path = file.InternalPath;
 			if (Path.IsPathRooted(path))
-				return; // don't delete external file
+				return false; // don't delete external file
 			string msg = String.Format(LcmUiStrings.ksDeleteFileAlso, path);
 			if (MessageBox.Show(Form.ActiveForm, msg, LcmUiStrings.ksDeleteFileCaption, MessageBoxButtons.YesNo,
 				MessageBoxIcon.Question)
 				!= DialogResult.Yes)
 			{
-				return;
+				return false;
 			}
 
 			IFlexApp app;
@@ -1010,16 +1010,16 @@ namespace LanguageExplorer.LcmUi
 			{
 					app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);
 			}
-			string fileToDelete = file.AbsoluteInternalPath;
+			var fileToDelete = file.AbsoluteInternalPath;
 
-			// I'm not sure why, but if we try to delete it right away, we typically get a failure,
-			// with an exception indicating that something is using the file, despite the code above that
-			// tries to make our picture cache let go of it.
-			// However, waiting until idle seems to solve the problem.
 			propertyTable.GetValue<IFwMainWnd>("window").IdleQueue.Add(IdleQueuePriority.Low, obj =>
 			{
 				try
 				{
+					// I'm not sure why, but if we try to delete it right away, we typically get a failure,
+					// with an exception indicating that something is using the file, despite the code above that
+					// tries to make our picture cache let go of it.
+					// However, waiting until idle seems to solve the problem.
 					File.Delete(fileToDelete);
 				}
 				catch (IOException)
@@ -1028,15 +1028,7 @@ namespace LanguageExplorer.LcmUi
 				}
 				return true; // task is complete, don't try again.
 			});
-			try
-			{
-				File.Delete(fileToDelete);
-			}
-			catch (IOException)
-			{
-				// If we can't actually delete the file for some reason, don't bother the user complaining.
-			}
-			file.Delete();
+			return false;
 		}
 
 		protected virtual void ReallyDeleteUnderlyingObject()
@@ -1044,8 +1036,10 @@ namespace LanguageExplorer.LcmUi
 			Logger.WriteEvent("Deleting '" + Object.ShortName + "'...");
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(LcmUiStrings.ksUndoDelete, LcmUiStrings.ksRedoDelete, m_cache.ActionHandlerAccessor, () =>
 			{
-				DoRelatedCleanupForDeleteObject();
-				Object.Cache.DomainDataByFlid.DeleteObj(Object.Hvo);
+				if (DoRelatedCleanupForDeleteObject())
+				{
+					Object.Cache.DomainDataByFlid.DeleteObj(Object.Hvo);
+				}
 			});
 			Logger.WriteEvent("Done Deleting.");
 			m_obj = null;

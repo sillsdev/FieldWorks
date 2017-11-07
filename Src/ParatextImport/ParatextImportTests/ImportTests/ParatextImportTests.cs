@@ -1370,7 +1370,6 @@ namespace ParatextImport.ImportTests
 			}
 		}
 
-#if RANDYTODO // Fails too many times.
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test of the <see cref="ParatextSfmImporter.EnsurePictureFilePathIsRooted"/> method when the file
@@ -1385,14 +1384,20 @@ namespace ParatextImport.ImportTests
 			DummyScrObjWrapper sow = (DummyScrObjWrapper)ReflectionHelper.GetProperty(m_importer, "SOWrapper");
 			sow.m_fIncludeMyPicturesFolderInExternalFolders = true;
 
-			using (DummyFileMaker filemaker = new DummyFileMaker(Path.Combine(Path.GetPathRoot(Environment.CurrentDirectory), "j~u~n~k.jpg"), false))
+			try
 			{
-				String str1 = "P0|" + filemaker.Filename + "|P2|P3|P4";
-				String str2 = ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted", @"P0|\j~u~n~k.jpg|P2|P3|P4");
-				Assert.AreEqual(str1.ToLowerInvariant(), str2.ToLowerInvariant());
+				using (DummyFileMaker filemaker = new DummyFileMaker(Path.Combine(Path.GetPathRoot(Environment.CurrentDirectory), "j~u~n~k.jpg"), false))
+				{
+					String str1 = "P0|" + filemaker.Filename + "|P2|P3|P4";
+					String str2 = ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted", @"P0|\j~u~n~k.jpg|P2|P3|P4");
+					Assert.AreEqual(str1.ToLowerInvariant(), str2.ToLowerInvariant());
+				}
+			}
+			catch(System.UnauthorizedAccessException)
+			{
+				Assert.Ignore("This test needs write access to the root of the drive where the source code lives.");
 			}
 		}
-#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

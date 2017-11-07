@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.LcmUi;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -100,6 +101,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					return;
 				using (ReferenceBaseUi ui = GetCmObjectUiForRightClickMenu(hvoTarget))
 				{
+					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 					ui.HandleCtrlClick(this);
 				}
 			}

@@ -286,7 +286,8 @@ namespace LanguageExplorer.Works
 			// First deal with whether the active Publication excludes it.
 			var m_currentPublication = PropertyTable.GetValue<string>("SelectedPublication", null);
 			var publications = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p).Where(p => p.NameHierarchyString == m_currentPublication.ToString()).FirstOrDefault();
-			if (publications.NameHierarchyString != xWorksStrings.AllEntriesPublication)
+			//if the publications is null in case of Dictionary view selected as $$All Entries$$.
+			if (publications != null && publications.NameHierarchyString != xWorksStrings.AllEntriesPublication)
 			{
 				var currentPubPoss = publications;
 				if (!entry.PublishIn.Contains(currentPubPoss))
@@ -683,7 +684,10 @@ namespace LanguageExplorer.Works
 			// In some cases (e.g where a user reset their local settings) the stored configuration may no longer
 			// exist on disk.
 			var validConfiguration = SetCurrentDictionaryPublicationLayout();
-			UpdateContent(PublicationDecorator, validConfiguration);
+			if (string.IsNullOrEmpty(PropertyTable.GetValue<string>("SuspendLoadingRecordUntilOnJumpToRecord", null)))
+			{
+				UpdateContent(PublicationDecorator, validConfiguration);
+			}
 		}
 
 		private string SetCurrentDictionaryPublicationLayout()

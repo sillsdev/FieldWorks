@@ -673,8 +673,8 @@ namespace LanguageExplorer.Works
 			if (!string.IsNullOrWhiteSpace(configuration.WritingSystem) && IetfLanguageTag.IsValid(configuration.WritingSystem))
 			{
 				var writingSystem = (CoreWritingSystemDefinition)cache.WritingSystemFactory.get_Engine(configuration.WritingSystem);
-				// The reversals start out with the filename matching the ws DisplayLabel, copies will have a different file name
-				return writingSystem.DisplayLabel == Path.GetFileNameWithoutExtension(configuration.FilePath);
+				// The reversals start out with the filename matching the ws Id, copies will have a different file name
+				return writingSystem.Id == Path.GetFileNameWithoutExtension(configuration.FilePath);
 			}
 			return false;
 		}

@@ -220,7 +220,7 @@
 		<SetEnvVar Variable="ANAL_TYPE" Value="$(Original-ANAL_TYPE)" />
 	</Target>
 
-	<Target Name="remakefw-internal" DependsOnTargets="CleanAll;Initialize;setRegistryValues;CopyDlls;ensureTLBsUpToDate;GeneratePartsAndLayoutFiles;mkall"/>
+	<Target Name="remakefw-internal" DependsOnTargets="CleanAll;Initialize;CopyDlls;setRegistryValues;ensureTLBsUpToDate;GeneratePartsAndLayoutFiles;mkall"/>
 
 	<Target Name="remakefw" DependsOnTargets="remakefw-internal">
 		<!-- If tests were run on a developer machine, fail to alert the developer of any failures -->
@@ -277,8 +277,8 @@
 
 		<!-- Chorus_Win32masterContinuous is the master branch build of Chorus for Windows development. Update when appropriate. -->
 		<ChorusBuildType Condition="'$(OS)'=='Windows_NT'">Chorus_Win32masterContinuous</ChorusBuildType>
-		<!-- bt323 is the master branch (strong name) build of Chorus for Linux development. Update when appropriate. -->
-		<ChorusBuildType Condition="'$(OS)'=='Unix'">bt323</ChorusBuildType>
+		<!-- Chorus_Linux64masterContinuous is the master branch build of Chorus for Linux development. Update when appropriate. -->
+		<ChorusBuildType Condition="'$(OS)'=='Unix'">Chorus_Linux64masterContinuous</ChorusBuildType>
 		<!-- Libpalaso_PalasoWinmasterContinuous is the master branch build of Palaso for Windows development. Update when appropriate. -->
 		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Libpalaso_PalasoWin32masterContinuous</PalasoBuildType>
 		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Libpalaso_PalasoWinmasterContinuous</PalasoBuildType>
@@ -534,6 +534,13 @@
 		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 
+		<!-- Encoding Converters Files -->
+
+		<Copy SourceFiles="@(ECWindowsFiles -> '$(fwrt)/packages/Encoding-Converters-Core.$(ECNugetVersion)/lib/net40/$(ECArch)/%(Identity)')"
+			DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="@(ECPlugins -> '$(fwrt)/packages/Encoding-Converters-Core.$(ECNugetVersion)/Plugins/%(Identity)')"
+			DestinationFolder="$(dir-outputBase)/EC/Plugins" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+
 		<!-- NuGet packages. Property- and ItemGroups are inside the target so $(arch) and *'s are read properly -->
 		<PropertyGroup>
 			<!-- Yes, the Windows version is missing the the OS and the 32-bit architecture. -->
@@ -560,13 +567,13 @@
 	<Target Name="setRegistryValues" DependsOnTargets="initLinux;initWindows;setKeysInHKLM;setKeysInHKCU"/>
 
 	<!-- This target only has an effect on Windows machines, and should be removed once encoding converters are updated to look in HKCU by default -->
-	<Target Name="setKeysInHKLM" Condition="'$(UserIsAdmin)'=='True'">
+	<Target Name="setKeysInHKLM" DependsOnTargets="RegisterEncConvertersDlls" Condition="'$(UserIsAdmin)'=='True'">
 		<WriteRegistry Hive="LocalMachine"
 						 Key="SOFTWARE\SIL\SilEncConverters40\RootDir"
-						 Value="$(fwrt)\DistFiles\Windows\EC Common"/>
+						 Value="$(dir-outputBase)"/>
 		<WriteRegistry Hive="LocalMachine"
 						 Key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
-						 Value="$(fwrt)\DistFiles\Windows\EC\EC\Plugins"/>
+						 Value="$(dir-outputBase)\EC\Plugins"/>
 	</Target>
 
 	<Target Name="setKeysInHKCU" Condition="'$(packaging)' != 'yes'">
@@ -585,11 +592,11 @@
 			Value="$(dir-icuData)"/>
 		<WriteRegistry Hive="CurrentUser"
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\RootDir"
-			Value="$(fwrt)\DistFiles\Windows\EC Common"
+			Value="$(dir-outputBase)"
 			Condition="'$(OS)'=='Windows_NT'"/>
 		<WriteRegistry Hive="CurrentUser"
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
-			Value="$(fwrt)\DistFiles\Windows\EC\EC\Plugins"
+			Value="$(dir-outputBase)\EC\Plugins"
 			Condition="'$(OS)'=='Windows_NT'"/>
 		<WriteRegistry Hive="CurrentUser"
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\RootDir"

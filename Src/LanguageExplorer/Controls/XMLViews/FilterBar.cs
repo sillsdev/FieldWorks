@@ -2041,7 +2041,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected string m_bestWS = null;
 
 		/// <summary>
-		/// This is copied from C:\fw\Src\xWorks\RecordBarTreeHandler.cs
 		/// There should be some refactoring done on how we access the xml attributes 'includeAbbr' and 'ws'
 		/// </summary>
 		protected string GetDisplayPropertyName

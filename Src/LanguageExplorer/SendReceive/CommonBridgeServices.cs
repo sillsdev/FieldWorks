@@ -31,7 +31,8 @@ namespace LanguageExplorer.SendReceive
 
 		internal const string LastBridgeUsed = "LastBridgeUsed";
 
-		internal const string LiftModelVersion = "0.13";
+		// For send/receive involving LIFT projects, use the lift version "0.13_ldml3" so the version 3 ldml files will exist on a different chorus branch
+		internal const string LiftModelVersion = "0.13_ldml3";
 
 		internal static bool ShowMessageBeforeFirstSendReceive_IsUserReady(IHelpTopicProvider helpTopicProvider)
 		{
@@ -48,6 +49,8 @@ namespace LanguageExplorer.SendReceive
 
 		internal static void PrepareForSR(IPropertyTable propertyTable, IPublisher publisher, LcmCache cache, IBridge lastBridgeUsed)
 		{
+			//Make sure any last changes are saved. (Process focus lost for controls)
+			Application.DoEvents();
 			StopParser(publisher);
 
 			//Give all forms the opportunity to save any uncommitted data

@@ -408,7 +408,7 @@ namespace LanguageExplorerTests.Works
 			Assert.Throws<ArgumentNullException>(() => _controller.DeleteConfiguration(null), "Failed to throw");
 		}
 
-#region Insufficiently Mocked Tests - When DeleteConfiguration resets a config it loads the default config from the real filesystem
+	#region Insufficiently Mocked Tests - When DeleteConfiguration resets a config it loads the default config from the real filesystem
 		[Test]
 		public void DeleteConfigurationResetsForShippedDefaultRatherThanDelete()
 		{
@@ -445,7 +445,7 @@ namespace LanguageExplorerTests.Works
 			FileUtils.WriteStringtoFile(shippedRootDefaultConfigurationPath, "bogus data that is unread, the file is read from the real defaults", Encoding.UTF8);
 
 			var configurationToDelete = _configurations[0];
-			configurationToDelete.FilePath = Path.Combine("whateverdir", "English" + DictionaryConfigurationModel.FileExtension);
+			configurationToDelete.FilePath = Path.Combine("whateverdir", "en" + DictionaryConfigurationModel.FileExtension);
 			configurationToDelete.Label = "English";
 			configurationToDelete.WritingSystem = "en";
 
@@ -459,13 +459,14 @@ namespace LanguageExplorerTests.Works
 
 			Assert.That(FileUtils.FileExists(pathToConfiguration), "The English reversal file should have been reset to defaults, not deleted.");
 			Assert.That(configurationToDelete.Label, Is.EqualTo("English"), "The label should still be English after a reset.");
+			Assert.That(configurationToDelete.WritingSystem, Is.EqualTo("en"), "The writingsystem should still be en after a reset.");
 			Assert.That(configurationToDelete.IsReversal, Is.True, "The reset configuration files should still be a reversal file.");
 			Assert.Contains(configurationToDelete, _configurations, "The configuration should still be present in the list after being reset.");
 			Assert.That(_controller.IsDirty, "Resetting is a change that is saved later; should be dirty");
 
 			// Not asserting that the configurationToDelete.FilePath file contents are reset because that will happen later when it is saved.
 		}
-#endregion
+	#endregion
 
 		[Test]
 		public void KnowsWhenNotAShippedDefault()
@@ -535,7 +536,7 @@ namespace LanguageExplorerTests.Works
 			{
 				Label = "English",
 				WritingSystem = "en",
-				FilePath = Path.Combine("whateverdir", "English" + DictionaryConfigurationModel.FileExtension)
+				FilePath = Path.Combine("whateverdir", "en" + DictionaryConfigurationModel.FileExtension)
 			};
 
 			// SUT
@@ -551,7 +552,7 @@ namespace LanguageExplorerTests.Works
 			{
 				Label = "Manglish",
 				WritingSystem = "en",
-				FilePath = Path.Combine("whateverdir", "English" + DictionaryConfigurationModel.FileExtension)
+				FilePath = Path.Combine("whateverdir", "en" + DictionaryConfigurationModel.FileExtension)
 			};
 
 			// SUT
@@ -583,7 +584,7 @@ namespace LanguageExplorerTests.Works
 			{
 				Label = "German (Algeria)",
 				WritingSystem = "de-DZ",
-				FilePath = Path.Combine("whateverdir", "German (Algeria)" + DictionaryConfigurationModel.FileExtension)
+				FilePath = Path.Combine("whateverdir", "de-DZ" + DictionaryConfigurationModel.FileExtension)
 			};
 
 			// SUT

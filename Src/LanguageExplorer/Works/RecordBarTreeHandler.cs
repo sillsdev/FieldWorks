@@ -512,8 +512,6 @@ namespace LanguageExplorer.Works
 					// an internal node.  (See LT-4508.)
 					UpdateSelection(list.CurrentObject);
 					tree.EndUpdate();
-
-					EnsureSelectedNodeVisible(tree);
 				}
 			}
 		}

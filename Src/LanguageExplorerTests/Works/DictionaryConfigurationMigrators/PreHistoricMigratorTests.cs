@@ -2058,8 +2058,8 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 		[Test]
 		[TestCase("publishReversal", "All Reversal Indexes (original)", "AllReversalIndexes")]
 		[TestCase("publishReversal#All RU93", "Copy of All Reversal Indexes", "Copy of All Reversal Indexes-AllReversalIndexes-#All RU93")]
-		[TestCase("publishReversal-en", "English (original)", "English")]
-		[TestCase("publishReversal-en#Engli704", "Copy of English", "Copy of English-English-#Engli704")]
+		[TestCase("publishReversal-en", "English (original)", "en")]
+		[TestCase("publishReversal-en#Engli704", "Copy of English", "Copy of English-en-#Engli704")]
 		public void CopyDefaultsIntoConvertedModel_PicksSensibleNameForReversalIndexes(string oldLayout, string oldLabel, string newFileName)
 		{
 			var node = new ConfigurableDictionaryNode { Label = "Reversal Entry" };

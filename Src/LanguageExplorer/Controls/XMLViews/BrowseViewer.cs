@@ -1880,24 +1880,28 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 
 			internal OneColumnXmlBrowseView(BrowseViewer bv, int icolLvHeaderToAdd)
-				: this(bv.m_configParamsElement, bv.RootObjectHvo, bv.MainTag, bv.Cache, bv.PropertyTable, bv.StyleSheet, bv)
+				: this(bv.m_configParamsElement, bv.RootObjectHvo, bv.MainTag, bv.Cache, bv.PropertyTable, bv.StyleSheet, bv, icolLvHeaderToAdd)
 			{
 				// add only the specified column to this browseview.
 				(Vc as OneColumnXmlBrowseViewVc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
 			}
 
 			private OneColumnXmlBrowseView(XElement nodeSpec, int hvoRoot, int mainTag, LcmCache cache, IPropertyTable propertyTable,
-				IVwStylesheet styleSheet, BrowseViewer bv)
+				IVwStylesheet styleSheet, BrowseViewer bv, int icolLvHeaderToAdd)
 			{
 #if RANDYTODO
 				base.Init(mediator, propertyTable, nodeSpec);
 				base.Init(nodeSpec, hvoRoot, mainTag, cache, mediator, bv);
 #endif
-				// note: bv was used to initialize SortItemProvider. But we don't need it after init so null it out.
-				m_bv = null;
 
 				m_styleSheet = styleSheet;
+
+				// add only the specified column to this browseview.
+				(Vc as OneColumnXmlBrowseViewVc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
+
 				MakeRoot();
+				// note: bv was used to initialize SortItemProvider. But we don't need it after init so null it out.
+				m_bv = null;
 			}
 
 			public override void MakeRoot()
@@ -1911,6 +1915,16 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_rootb.SetRootObject(m_hvoRoot, Vc, XmlBrowseViewVc.kfragRoot, m_styleSheet);
 				m_rootb.DataAccess = m_cache.MainCacheAccessor;
 				m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
+			}
+
+			public override Point ScrollPosition
+			{
+				get
+				{
+					CheckDisposed();
+					return base.ScrollPosition;
+				}
+				set { }
 			}
 
 			/// <summary>
