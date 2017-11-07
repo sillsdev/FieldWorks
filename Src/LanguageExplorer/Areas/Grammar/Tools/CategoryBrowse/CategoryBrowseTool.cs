@@ -21,7 +21,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 	/// ITool implementation for the "categoryBrowse" tool in the "grammar" area.
 	/// </summary>
 	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class CategoryBrowseTool : ITool
 	{
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;

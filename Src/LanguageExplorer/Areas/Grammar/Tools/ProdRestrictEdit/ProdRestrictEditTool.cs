@@ -24,7 +24,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 	/// ITool implementation for the "ProdRestrictEdit" tool in the "grammar" area.
 	/// </summary>
 	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class ProdRestrictEditTool : ITool
 	{
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;

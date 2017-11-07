@@ -24,7 +24,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	/// ITool implementation for the "notebookEdit" tool in the "notebook" area.
 	/// </summary>
 	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class NotebookEditTool : ITool
 	{
 		private const string panelMenuId = "left";

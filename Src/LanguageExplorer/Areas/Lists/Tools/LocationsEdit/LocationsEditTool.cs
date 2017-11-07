@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 	/// ITool implementation for the "locationsEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class LocationsEditTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;

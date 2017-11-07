@@ -17,12 +17,7 @@ namespace LanguageExplorer
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		ITool PersistedOrDefaultToolForArea { get; }
-
-		/// <summary>
-		/// Get the machine name of the area's default tool.
-		/// </summary>
-		string DefaultToolMachineName { get; }
+		ITool PersistedOrDefaultTool { get; }
 
 		/// <summary>
 		/// Get all installed tools for the area.

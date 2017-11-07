@@ -24,7 +24,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 	/// ITool implementation for the "rapidDataEntry" tool in the "lexicon" area.
 	/// </summary>
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class RapidDataEntryTool : ITool
 	{
 		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;

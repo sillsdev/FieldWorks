@@ -23,7 +23,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 	/// ITool implementation for the "charttempEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class CharttempEditTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;

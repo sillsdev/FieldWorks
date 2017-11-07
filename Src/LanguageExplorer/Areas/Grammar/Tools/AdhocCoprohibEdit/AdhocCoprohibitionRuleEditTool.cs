@@ -46,7 +46,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 	/// it is (still) needed. However, the need for such an attr is probably more general than this class; see my email of 18 Jan 2000.
 	/// </remarks>
 	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class AdhocCoprohibitionRuleEditTool : ITool
 	{
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;

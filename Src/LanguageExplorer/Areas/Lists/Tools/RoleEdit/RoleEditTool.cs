@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.RoleEdit
 	/// ITool implementation for the "roleEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class RoleEditTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;

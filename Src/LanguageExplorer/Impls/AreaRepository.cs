@@ -22,20 +22,14 @@ namespace LanguageExplorer.Impls
 		[Import]
 		private IPropertyTable _propertyTable;
 
-#region Implementation of IAreaRepository
+		#region Implementation of IAreaRepository
 
 		/// <summary>
 		/// Get the most recently persisted area, or the default area if
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted area or the default area.</returns>
-		public IArea GetPersistedOrDefaultArea()
-		{
-			// The persisted area could be obsolete or simply not present,
-			// so we'll use "lexicon", if the stored one cannot be found.
-			// The "lexicon" area must be available, even if there are no other areas.
-			return GetArea(_propertyTable.GetValue(AreaServices.InitialArea, SettingsGroup.LocalSettings, DefaultAreaMachineName));
-		}
+		public IArea PersistedOrDefaultArea => GetArea(_propertyTable.GetValue(AreaServices.InitialArea, SettingsGroup.LocalSettings, DefaultAreaMachineName));
 
 		/// <summary>
 		/// Get the IArea that has the machine friendly "Name" for <paramref name="machineName"/>.
@@ -56,23 +50,26 @@ namespace LanguageExplorer.Impls
 		/// Lists
 		/// User defined areas (unspecified order, but after the fully supported areas)
 		/// </summary>
-		/// <returns></returns>
-		public IList<IArea> AllAreasInOrder()
+		/// <returns>The areas in correct order for display in sidbar.</returns>
+		public IList<IArea> AllAreasInOrder
 		{
-			var knownAreas = new List<string>
+			get
 			{
-				AreaServices.LexiconAreaMachineName,
-				AreaServices.TextAndWordsAreaMachineName,
-				AreaServices.GrammarAreaMachineName,
-				AreaServices.NotebookAreaMachineName,
-				AreaServices.ListsAreaMachineName
-			};
-			var retval = new List<IArea>(knownAreas.Select(knownAreaName => GetArea(knownAreaName)));
+				var knownAreas = new List<string>
+				{
+					AreaServices.LexiconAreaMachineName,
+					AreaServices.TextAndWordsAreaMachineName,
+					AreaServices.GrammarAreaMachineName,
+					AreaServices.NotebookAreaMachineName,
+					AreaServices.ListsAreaMachineName
+				};
+				var retval = new List<IArea>(knownAreas.Select(knownAreaName => GetArea(knownAreaName)));
 
-			// Add user-defined areas in unspecified order, but after the fully supported areas.
-			retval.AddRange(m_areas.Where(userDefinedArea => !knownAreas.Contains(userDefinedArea.MachineName)));
+				// Add user-defined areas in unspecified order, but after the fully supported areas.
+				retval.AddRange(m_areas.Where(userDefinedArea => !knownAreas.Contains(userDefinedArea.MachineName)));
 
-			return retval;
+				return retval;
+			}
 		}
 
 		#endregion

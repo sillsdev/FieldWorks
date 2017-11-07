@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.GenresEdit
 	/// ITool implementation for the "genresEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class GenresEditTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;

@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 	/// ITool implementation for the "lexiconProblems" tool in the "grammar" area.
 	/// </summary>
 	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class LexiconProblemsTool : ITool
 	{
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;

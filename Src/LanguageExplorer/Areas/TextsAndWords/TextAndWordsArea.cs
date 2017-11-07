@@ -54,7 +54,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_propertyTable.SetDefault(PropertyNameForToolName, DefaultToolMachineName, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.TextAndWordsAreaDefaultToolMachineName, SettingsGroup.LocalSettings, true, false);
 			if (!_hasBeenActivated)
 			{
 				// Respeller dlg uses these.
@@ -79,7 +79,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			PersistedOrDefaultToolForArea.PrepareToRefresh();
+			PersistedOrDefaultTool.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -87,7 +87,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public void FinishRefresh()
 		{
-			PersistedOrDefaultToolForArea.FinishRefresh();
+			PersistedOrDefaultTool.FinishRefresh();
 		}
 
 		/// <summary>
@@ -98,7 +98,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, SettingsGroup.LocalSettings, true, false);
 
-			PersistedOrDefaultToolForArea.EnsurePropertiesAreCurrent();
+			PersistedOrDefaultTool.EnsurePropertiesAreCurrent();
 		}
 
 		#endregion
@@ -124,12 +124,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		public ITool PersistedOrDefaultToolForArea => _myTools.First(tool => tool.MachineName == _propertyTable.GetValue<string>(PropertyNameForToolName));
-
-		/// <summary>
-		/// Get the machine name of the area's default tool.
-		/// </summary>
-		public string DefaultToolMachineName => AreaServices.TextAndWordsAreaDefaultToolMachineName;
+		public ITool PersistedOrDefaultTool => _myTools.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, AreaServices.TextAndWordsAreaDefaultToolMachineName));
 
 		/// <summary>
 		/// Get all installed tools for the area.

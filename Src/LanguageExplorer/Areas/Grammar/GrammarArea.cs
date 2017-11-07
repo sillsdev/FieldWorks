@@ -51,7 +51,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_propertyTable.SetDefault(PropertyNameForToolName, DefaultToolMachineName, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.GrammarAreaDefaultToolMachineName, SettingsGroup.LocalSettings, true, false);
 		}
 
 		/// <summary>
@@ -59,7 +59,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			PersistedOrDefaultToolForArea.PrepareToRefresh();
+			PersistedOrDefaultTool.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -67,7 +67,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// </summary>
 		public void FinishRefresh()
 		{
-			PersistedOrDefaultToolForArea.FinishRefresh();
+			PersistedOrDefaultTool.FinishRefresh();
 		}
 
 		/// <summary>
@@ -78,7 +78,7 @@ namespace LanguageExplorer.Areas.Grammar
 		{
 			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, SettingsGroup.LocalSettings, true, false);
 
-			PersistedOrDefaultToolForArea.EnsurePropertiesAreCurrent();
+			PersistedOrDefaultTool.EnsurePropertiesAreCurrent();
 		}
 
 		#endregion
@@ -105,12 +105,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		public ITool PersistedOrDefaultToolForArea => _myTools.First(tool => tool.MachineName == _propertyTable.GetValue<string>(PropertyNameForToolName));
-
-		/// <summary>
-		/// Get the machine name of the area's default tool.
-		/// </summary>
-		public string DefaultToolMachineName => AreaServices.GrammarAreaDefaultToolMachineName;
+		public ITool PersistedOrDefaultTool => _myTools.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, AreaServices.GrammarAreaDefaultToolMachineName));
 
 		/// <summary>
 		/// Get all installed tools for the area.

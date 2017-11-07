@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// ITool implementation for the "lexiconEdit" tool in the "lexicon" area.
 	/// </summary>
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class LexiconEditTool : ITool
 	{
 		private LexiconEditToolMenuHelper _lexiconEditToolMenuHelper;

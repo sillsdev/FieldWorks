@@ -16,7 +16,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 	/// ITool implementation for the "notebookDocument" tool in the "notebook" area.
 	/// </summary>
 	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class NotebookDocumentTool : ITool
 	{
 		private PaneBarContainer _paneBarContainer;

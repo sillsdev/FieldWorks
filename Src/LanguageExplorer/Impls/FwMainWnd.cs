@@ -300,7 +300,7 @@ namespace LanguageExplorer.Impls
 				SetSplitContainerDistance(mainContainer, sd);
 			}
 			// Add areas and tools to "_sidePane";
-			foreach (var area in _areaRepository.AllAreasInOrder())
+			foreach (var area in _areaRepository.AllAreasInOrder)
 			{
 				var tab = new Tab(StringTable.Table.LocalizeLiteralValue(area.UiName))
 				{
@@ -1692,8 +1692,8 @@ very simple minor adjustments. ;)"
 
 			LayoutToolStrips();
 
-			var currentArea = _areaRepository.GetPersistedOrDefaultArea();
-			var currentTool = currentArea.PersistedOrDefaultToolForArea;
+			var currentArea = _areaRepository.PersistedOrDefaultArea;
+			var currentTool = currentArea.PersistedOrDefaultTool;
 			_sidePane.TabClicked += Area_Clicked;
 			_sidePane.ItemClicked += Tool_Clicked;
 			// This call fires Area_Clicked and then Tool_Clicked to make sure the provided tab and item are both selected in the end.

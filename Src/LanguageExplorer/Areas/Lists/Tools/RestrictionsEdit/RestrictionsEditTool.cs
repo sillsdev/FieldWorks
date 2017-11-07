@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.RestrictionsEdit
 	/// ITool implementation for the "restrictionsEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class RestrictionsEditTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;

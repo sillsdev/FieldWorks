@@ -24,7 +24,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 	/// ITool implementation for the "PhonologicalRuleEdit" tool in the "grammar" area.
 	/// </summary>
 	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class PhonologicalRuleEditTool : ITool
 	{
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;

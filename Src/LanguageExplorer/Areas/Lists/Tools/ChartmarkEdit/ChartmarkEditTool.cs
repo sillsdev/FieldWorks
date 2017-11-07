@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartmarkEdit
 	/// ITool implementation for the "chartmarkEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class ChartmarkEditTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;

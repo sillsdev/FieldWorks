@@ -17,7 +17,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 	/// ITool implementation for the "bulkEditWordforms" tool in the "textsWords" area.
 	/// </summary>
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class BulkEditWordformsTool : ITool
 	{
 		private AreaWideMenuHelper _areaWideMenuHelper;

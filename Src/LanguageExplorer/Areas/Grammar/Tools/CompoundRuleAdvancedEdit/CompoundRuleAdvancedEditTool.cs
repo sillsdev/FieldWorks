@@ -24,7 +24,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 	/// ITool implementation for the "compoundRuleAdvancedEdit" tool in the "grammar" area.
 	/// </summary>
 	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class CompoundRuleAdvancedEditTool : ITool
 	{
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;

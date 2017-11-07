@@ -25,7 +25,7 @@ namespace LanguageExplorerTests.Repository
 		{
 			base.FixtureSetup();
 
-			_allAreas = _areaRepository.AllAreasInOrder();
+			_allAreas = _areaRepository.AllAreasInOrder;
 		}
 
 		/// <summary>

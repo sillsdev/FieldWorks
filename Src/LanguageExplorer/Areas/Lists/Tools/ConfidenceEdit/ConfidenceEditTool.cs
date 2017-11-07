@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ConfidenceEdit
 	/// ITool implementation for the "confidenceEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class ConfidenceEditTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;

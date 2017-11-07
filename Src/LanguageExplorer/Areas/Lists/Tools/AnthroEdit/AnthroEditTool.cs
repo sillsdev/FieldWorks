@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 	/// ITool implementation for the "anthroEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class AnthroEditTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;

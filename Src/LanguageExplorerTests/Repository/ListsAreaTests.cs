@@ -31,16 +31,16 @@ namespace LanguageExplorerTests.Repository
 		}
 
 		/// <summary>
-		/// Make sure the Notebook area has the expected number of tools.
+		/// Make sure the Lists area has the expected number of tools.
 		/// </summary>
 		[Test]
-		public void NotebookAreaHasAllExpectedTools()
+		public void ListsAreaHasAllExpectedTools()
 		{
 			Assert.AreEqual(27, _myOrderedTools.Count);
 		}
 
 		/// <summary>
-		/// Make sure the Notebook area has tools in the right order.
+		/// Make sure the Lists area has tools in the right order.
 		/// </summary>
 		[TestCase(0, AreaServices.DomainTypeEditMachineName)]
 		[TestCase(1, AreaServices.AnthroEditMachineName)]
@@ -69,7 +69,7 @@ namespace LanguageExplorerTests.Repository
 		[TestCase(24, AreaServices.RecTypeEditMachineName)]
 		[TestCase(25, AreaServices.TimeOfDayEditMachineName)]
 		[TestCase(26, AreaServices.ReversalToolReversalIndexPOSMachineName)]
-		public void AreaRepositoryHasAllNotebookToolsInCorrectOrder(int idx, string expectedMachineName)
+		public void AreaRepositoryHasAllListsToolsInCorrectOrder(int idx, string expectedMachineName)
 		{
 			DoTests(idx, expectedMachineName);
 		}

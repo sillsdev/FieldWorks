@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.PositionsEdit
 	/// ITool implementation for the "positionsEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class PositionsEditTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;

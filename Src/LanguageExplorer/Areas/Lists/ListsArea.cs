@@ -41,7 +41,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_propertyTable.SetDefault(PropertyNameForToolName, DefaultToolMachineName, SettingsGroup.LocalSettings, true, false);
+			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.ListsAreaDefaultToolMachineName, SettingsGroup.LocalSettings, true, false);
 		}
 
 		/// <summary>
@@ -49,7 +49,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			PersistedOrDefaultToolForArea.PrepareToRefresh();
+			PersistedOrDefaultTool.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -57,7 +57,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		public void FinishRefresh()
 		{
-			PersistedOrDefaultToolForArea.FinishRefresh();
+			PersistedOrDefaultTool.FinishRefresh();
 		}
 
 		/// <summary>
@@ -68,7 +68,7 @@ namespace LanguageExplorer.Areas.Lists
 		{
 			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, SettingsGroup.LocalSettings, true, false);
 
-			PersistedOrDefaultToolForArea.EnsurePropertiesAreCurrent();
+			PersistedOrDefaultTool.EnsurePropertiesAreCurrent();
 		}
 
 		#endregion
@@ -94,12 +94,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		public ITool PersistedOrDefaultToolForArea => _myTools.First(tool => tool.MachineName == _propertyTable.GetValue<string>(PropertyNameForToolName));
-
-		/// <summary>
-		/// Get the machine name of the area's default tool.
-		/// </summary>
-		public string DefaultToolMachineName => AreaServices.ListsAreaDefaultToolMachineName;
+		public ITool PersistedOrDefaultTool => _myTools.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, AreaServices.ListsAreaDefaultToolMachineName));
 
 		/// <summary>
 		/// Get all installed tools for the area.

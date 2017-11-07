@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 	/// ITool implementation for the "textMarkupTagsEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class TextMarkupTagsEditTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;

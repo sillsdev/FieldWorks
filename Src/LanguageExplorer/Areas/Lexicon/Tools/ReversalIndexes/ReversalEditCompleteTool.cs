@@ -26,7 +26,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 	/// ITool implementation for the "reversalEditComplete" tool in the "lexicon" area.
 	/// </summary>
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class ReversalEditCompleteTool : ITool
 	{
 		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;

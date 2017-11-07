@@ -12,7 +12,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 	/// ITool implementation for the "corpusStatistics" tool in the "textsWords" area.
 	/// </summary>
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class CorpusStatisticsTool : ITool
 	{
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;

@@ -24,7 +24,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.FeaturesAdvancedEdit
 	/// ITool implementation for the "featuresAdvancedEdit" tool in the "grammar" area.
 	/// </summary>
 	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class FeaturesAdvancedEditTool : ITool
 	{
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;

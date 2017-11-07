@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit
 	/// ITool implementation for the "complexEntryTypeEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class ComplexEntryTypeEditTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;

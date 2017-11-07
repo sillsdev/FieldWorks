@@ -24,7 +24,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 	/// ITool implementation for the "naturalClassEdit" tool in the "grammar" area.
 	/// </summary>
 	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class NaturalClassEditTool : ITool
 	{
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;

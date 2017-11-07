@@ -21,7 +21,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 	/// ITool implementation for the "interlinearEdit" tool in the "textsWords" area.
 	/// </summary>
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class InterlinearEditTool : ITool
 	{
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;

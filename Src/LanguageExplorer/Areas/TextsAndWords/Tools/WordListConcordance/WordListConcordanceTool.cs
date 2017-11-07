@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 	/// ITool implementation for the "wordListConcordance" tool in the "textsWords" area.
 	/// </summary>
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class WordListConcordanceTool : ITool
 	{
 		private AreaWideMenuHelper _areaWideMenuHelper;

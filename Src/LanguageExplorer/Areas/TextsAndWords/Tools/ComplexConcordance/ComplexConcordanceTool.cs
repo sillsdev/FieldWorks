@@ -21,7 +21,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 	/// ITool implementation for the "complexConcordance" tool in the "textsWords" area.
 	/// </summary>
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class ComplexConcordanceTool : ITool
 	{
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;

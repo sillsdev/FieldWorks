@@ -21,7 +21,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 	/// ITool implementation for the "concordance" tool in the "textsWords" area.
 	/// </summary>
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class ConcordanceTool : ITool
 	{
 		private const string OccurrencesOfSelectedUnit = "OccurrencesOfSelectedUnit";

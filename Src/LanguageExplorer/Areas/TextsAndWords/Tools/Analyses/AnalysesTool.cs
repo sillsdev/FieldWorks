@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 	/// ITool implementation for the "Analyses" tool in the "textsWords" area.
 	/// </summary>
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class AnalysesTool : ITool
 	{
 		private AreaWideMenuHelper _areaWideMenuHelper;

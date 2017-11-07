@@ -18,7 +18,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 	/// ITool implementation for the "bulkEditPhonemes" tool in the "grammar" area.
 	/// </summary>
 	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class BulkEditPhonemesTool : ITool
 	{
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;

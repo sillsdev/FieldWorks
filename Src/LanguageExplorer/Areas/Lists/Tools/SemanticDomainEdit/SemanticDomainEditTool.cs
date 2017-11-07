@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 	/// ITool implementation for the "semanticDomainEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class SemanticDomainEditTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;

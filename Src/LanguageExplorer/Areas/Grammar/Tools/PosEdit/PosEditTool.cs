@@ -23,7 +23,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 	/// ITool implementation for the "posEdit" tool in the "grammar" area.
 	/// </summary>
 	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class PosEditTool : ITool
 	{
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;

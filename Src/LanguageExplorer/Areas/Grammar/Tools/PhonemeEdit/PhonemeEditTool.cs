@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 	/// ITool implementation for the "phonemeEdit" tool in the "grammar" area.
 	/// </summary>
 	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class PhonemeEditTool : ITool
 	{
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;

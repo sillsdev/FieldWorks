@@ -93,7 +93,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			PersistedOrDefaultToolForArea.PrepareToRefresh();
+			PersistedOrDefaultTool.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -101,7 +101,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void FinishRefresh()
 		{
-			PersistedOrDefaultToolForArea.FinishRefresh();
+			PersistedOrDefaultTool.FinishRefresh();
 		}
 
 		/// <summary>
@@ -116,7 +116,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			var hc = serviceLocator.GetInstance<HomographConfiguration>();
 			_propertyTable.SetProperty(khomographconfiguration, hc.PersistData, true, false);
 
-			PersistedOrDefaultToolForArea.EnsurePropertiesAreCurrent();
+			PersistedOrDefaultTool.EnsurePropertiesAreCurrent();
 		}
 
 		#endregion
@@ -128,12 +128,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		public ITool PersistedOrDefaultToolForArea => _myTools.First(tool => tool.MachineName == _propertyTable.GetValue<string>(PropertyNameForToolName));
-
-		/// <summary>
-		/// Get the machine name of the area's default tool.
-		/// </summary>
-		public string DefaultToolMachineName => AreaServices.LexiconAreaDefaultToolMachineName;
+		public ITool PersistedOrDefaultTool => _myTools.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, AreaServices.LexiconAreaDefaultToolMachineName));
 
 		/// <summary>
 		/// Get all installed tools for the area.

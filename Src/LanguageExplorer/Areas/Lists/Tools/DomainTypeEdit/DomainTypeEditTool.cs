@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 	/// ITool implementation for the "domainTypeEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class DomainTypeEditTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;

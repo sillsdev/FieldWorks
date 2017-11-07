@@ -13,7 +13,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 	/// ITool implementation for the "grammarSketch" tool in the "grammar" area.
 	/// </summary>
 	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class GrammarSketchTool : ITool
 	{
 		private GrammarSketchHtmlViewer _grammarSketchHtmlViewer;

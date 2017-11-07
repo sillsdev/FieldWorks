@@ -25,7 +25,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 	/// ITool implementation for the "reversalBulkEditReversalEntries" tool in the "lexicon" area.
 	/// </summary>
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class ReversalBulkEditReversalEntriesTool : ITool
 	{
 		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;

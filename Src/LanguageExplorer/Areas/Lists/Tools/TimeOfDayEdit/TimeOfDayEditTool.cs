@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.TimeOfDayEdit
 	/// ITool implementation for the "timeOfDayEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class TimeOfDayEditTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;

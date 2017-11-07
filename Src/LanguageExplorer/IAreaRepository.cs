@@ -21,7 +21,7 @@ namespace LanguageExplorer
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted area or the default area.</returns>
-		IArea GetPersistedOrDefaultArea();
+		IArea PersistedOrDefaultArea { get; }
 
 		/// <summary>
 		/// Get the IArea that has the machine friendly "Name" for <paramref name="machineName"/>.
@@ -37,7 +37,7 @@ namespace LanguageExplorer
 		/// Notebook
 		/// Lists
 		/// </summary>
-		/// <returns></returns>
-		IList<IArea> AllAreasInOrder();
+		/// <returns>The areas in correct order for display in sidbar.</returns>
+		IList<IArea> AllAreasInOrder { get; }
 	}
 }

@@ -24,7 +24,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 	/// ITool implementation for the "EnvironmentEdit" tool in the "grammar" area.
 	/// </summary>
 	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class EnvironmentEditTool : ITool
 	{
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;

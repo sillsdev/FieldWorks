@@ -25,7 +25,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 	/// ITool implementation for the "lexiconDictionary" tool in the "lexicon" area.
 	/// </summary>
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class LexiconDictionaryTool : ITool
 	{
 		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;

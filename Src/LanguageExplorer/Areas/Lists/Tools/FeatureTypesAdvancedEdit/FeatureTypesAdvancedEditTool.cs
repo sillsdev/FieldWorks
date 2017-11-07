@@ -24,7 +24,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 	/// ITool implementation for the "featureTypesAdvancedEdit" tool in the "lists" area.
 	/// </summary>
 	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class FeatureTypesAdvancedEditTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;

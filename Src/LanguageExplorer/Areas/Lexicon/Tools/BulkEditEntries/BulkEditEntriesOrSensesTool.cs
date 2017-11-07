@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 	/// ITool implementation for the "bulkEditEntriesOrSenses" tool in the "lexicon" area.
 	/// </summary>
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
-	[Export(typeof(ITool))]
 	internal sealed class BulkEditEntriesOrSensesTool : ITool
 	{
 		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
