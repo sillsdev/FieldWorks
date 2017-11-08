@@ -1351,17 +1351,16 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			if (Clerk.IsControllingTheRecordTreeBar)
 			{
 				//add our current state to the history system
-				string toolChoice = PropertyTable.GetValue("toolChoice", "");
-				Guid guid = Guid.Empty;
+				var guid = Guid.Empty;
 				if (Clerk.CurrentObject != null)
 				{
 					guid = Clerk.CurrentObject.Guid;
 				}
 				// Not sure what will happen with guid == Guid.Empty on the link...
-				FwLinkArgs link = new FwLinkArgs(toolChoice, guid, InterlinearTab.ToString());
+				var link = new FwLinkArgs(PropertyTable.GetValue("toolChoice", string.Empty), guid, InterlinearTab.ToString());
 				link.LinkProperties.Add(new LinkProperty("InterlinearTab", InterlinearTab.ToString()));
 				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
-				PropertyTable.GetValue<LinkHandler>("LinkHandler").OnAddContextToHistory(link);
+				PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(link);
 			}
 		}
 

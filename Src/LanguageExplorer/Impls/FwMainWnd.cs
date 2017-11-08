@@ -91,6 +91,7 @@ namespace LanguageExplorer.Impls
 		private SendReceiveMenuManager _sendReceiveMenuManager;
 		private WritingSystemListHandler _writingSystemListHandler;
 		private CombinedStylesListHandler _combinedStylesListHandler;
+		private LinkHandler _linkHandler;
 
 		/// <summary>
 		/// Create new instance of window.
@@ -489,8 +490,9 @@ namespace LanguageExplorer.Impls
 			PropertyTable.SetProperty("window", this, SettingsGroup.BestSettings, false, false);
 			PropertyTable.SetProperty("App", _flexApp, SettingsGroup.BestSettings, false, false);
 			PropertyTable.SetProperty("cache", Cache, SettingsGroup.BestSettings, false, false);
-			PropertyTable.SetProperty("HelpTopicProvider", _flexApp, false, false);
-			PropertyTable.SetProperty("FlexStyleSheet", _stylesheet, false, false);
+			PropertyTable.SetProperty("HelpTopicProvider", _flexApp, SettingsGroup.BestSettings, false, false);
+			PropertyTable.SetProperty("FlexStyleSheet", _stylesheet, SettingsGroup.BestSettings, false, false);
+			PropertyTable.SetProperty("LinkHandler", _linkHandler, SettingsGroup.BestSettings, false, false);
 		}
 
 		private void RegisterSubscriptions()
@@ -674,12 +676,15 @@ namespace LanguageExplorer.Impls
 
 			var wasCrashDuringPreviousStartup = SetupCrashDetectorFile();
 
+			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			SetupCustomStatusBarPanels();
 
 			projectLocationsToolStripMenuItem.Enabled = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
 			archiveWithRAMPSILToolStripMenuItem.Enabled = ReapRamp.Installed;
 
 			_viewHelper = new ActiveViewHelper(this);
+			_linkHandler = new LinkHandler(this, Cache, toolStripButtonHistoryBack, toolStripButtonHistoryForward, copyLocationAsHyperlinkToolStripMenuItem);
+			_linkHandler.InitializeFlexComponent(flexComponentParameters);
 
 			SetupStylesheet();
 			SetupPropertyTable();
@@ -697,7 +702,6 @@ namespace LanguageExplorer.Impls
 			RestoreWindowSettings(wasCrashDuringPreviousStartup);
 			var restoreSize = Size;
 
-			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			_recordClerkRepositoryForTools = new RecordClerkRepository(Cache, flexComponentParameters);
 			_writingSystemListHandler = new WritingSystemListHandler(this, Cache, Subscriber, toolStripComboBoxWritingSystem, writingSystemToolStripMenuItem);
 			_combinedStylesListHandler = new CombinedStylesListHandler(this, Subscriber, _stylesheet, toolStripComboBoxStyles);
@@ -967,6 +971,7 @@ namespace LanguageExplorer.Impls
 				IdleQueue?.Dispose();
 				_writingSystemListHandler?.Dispose();
 				_combinedStylesListHandler?.Dispose();
+				_linkHandler?.Dispose();
 
 				components?.Dispose();
 
@@ -996,6 +1001,7 @@ namespace LanguageExplorer.Impls
 			_majorFlexComponentParameters = null;
 			_writingSystemListHandler = null;
 			_combinedStylesListHandler = null;
+			_linkHandler = null;
 
 			base.Dispose(disposing);
 
@@ -1614,19 +1620,6 @@ namespace LanguageExplorer.Impls
 
 		private void Edit_Paste_Hyperlink(object sender, EventArgs e)
 		{
-			if (_stylesheet == null)
-			{
-				_stylesheet = new LcmStyleSheet();
-				_stylesheet.Init(Cache, Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-#if RANDYTODO
-				// TODO: I (RandyR) don't think there is a reason to do this now,
-				// unless there is some style UI widget on the toolbar (menu?) that needs to be updated.
-				if (m_rebarAdapter is IUIAdapterForceRegenerate)
-				{
-					((IUIAdapterForceRegenerate)m_rebarAdapter).ForceFullRegenerate();
-				}
-#endif
-			}
 			((RootSiteEditingHelper)_viewHelper.ActiveView.EditingHelper).PasteUrl(_stylesheet);
 		}
 
@@ -1655,10 +1648,6 @@ very simple minor adjustments. ;)"
 #endif
 			using (new WaitCursor(this))
 			{
-				if (DataUpdateMonitor.IsUpdateInProgress())
-				{
-					return;
-				}
 				_viewHelper.ActiveView.EditingHelper.SelectAll();
 			}
 		}
@@ -1808,6 +1797,8 @@ very simple minor adjustments. ;)"
 			pasteToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper.CanPaste());
 			pasteHyperlinkToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)_viewHelper.ActiveView.EditingHelper).CanPasteUrl());
 			applyStyleToolStripMenuItem.Enabled = hasActiveView && CanApplyStyle;
+			pasteHyperlinkToolStripMenuItem.Enabled = hasActiveView && ((RootSiteEditingHelper)_viewHelper.ActiveView.EditingHelper).CanPasteUrl();
+			selectAllToolStripMenuItem.Enabled = hasActiveView && !DataUpdateMonitor.IsUpdateInProgress();
 
 			// Enable/disable toolbar buttons.
 			SetupEditUndoAndRedoMenus();

@@ -861,10 +861,12 @@ namespace LanguageExplorer.Works
 		{
 			get
 			{
-				string jumpToInfo = PropertyTable.GetValue("SuspendLoadingRecordUntilOnJumpToRecord", SettingsGroup.LocalSettings, string.Empty);
-				if (String.IsNullOrEmpty(jumpToInfo))
+				var jumpToInfo = PropertyTable.GetValue("SuspendLoadingRecordUntilOnJumpToRecord", SettingsGroup.LocalSettings, string.Empty);
+				if (string.IsNullOrEmpty(jumpToInfo))
+				{
 					return false;
-				string[] jumpToParams = jumpToInfo.Split(new[] { ',' });
+				}
+				var jumpToParams = jumpToInfo.Split(',');
 				return jumpToParams.Length > 0 && IsActiveClerk && InDesiredTool(jumpToParams[0]);
 			}
 			set
@@ -873,7 +875,8 @@ namespace LanguageExplorer.Works
 				if (value == false && SuspendLoadingRecordUntilOnJumpToRecord)
 				{
 					// reset this property.
-					PropertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord", string.Empty, SettingsGroup.LocalSettings, false, true);
+					// Nobody is watching this property change in develop. so don't bother publishing it.
+					PropertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord", string.Empty, SettingsGroup.LocalSettings, false, false);
 				}
 
 			}

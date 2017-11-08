@@ -1,11 +1,10 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Xml;
-using LanguageExplorer.Areas;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
@@ -424,11 +423,9 @@ namespace LanguageExplorer.Dumpster
 
 		private static string GetCustomListLabel(ICmPossibilityList curList, bool ftrim)
 		{
-			if (!ftrim)
-				return curList.Name.BestAnalysisAlternative.Text;
-
 			// if ftrim is 'true' we want to take out all whitespace in the list name
-			return curList.Name.BestAnalysisAlternative.Text.Replace(" ", string.Empty);
+			var bestAnalysisAlternativeText = curList.Name.BestAnalysisAlternative.Text;
+			return ftrim ? bestAnalysisAlternativeText.Replace(" ", string.Empty) : bestAnalysisAlternativeText;
 		}
 
 		private static string GetCustomListToolName(ICmPossibilityList curList)
@@ -533,82 +530,6 @@ namespace LanguageExplorer.Dumpster
 			if (node == null)
 				node = FindToolNode(windowConfiguration, areaName, toolName);
 			return node != null;
-		}
-
-		private string GetCurrentAreaName()
-		{
-			return PropertyTable.GetValue<string>("areaChoice");
-		}
-
-		/// <summary>
-		/// used by the link listener
-		/// </summary>
-		/// <returns></returns>
-		public bool OnSetToolFromName(object toolName)
-		{
-			CheckDisposed();
-
-			XmlNode node;
-			if (!TryGetToolNode(null, (string)toolName, out node))
-				throw new ApplicationException (String.Format(LanguageExplorerResources.CannotFindToolNamed0, toolName));
-
-			var windowConfiguration = PropertyTable.GetValue<XmlNode>("WindowConfiguration");
-			// We might not be in the right area, so adjust that if needed (LT-4511).
-			string area = GetCurrentAreaName();
-			if (!IsToolInArea(toolName as string, area, windowConfiguration))
-			{
-				area = GetAreaNeededForTool(toolName as string, windowConfiguration);
-				if (area != null)
-				{
-					// Before switching areas, we need to fix the tool recorded for that area,
-					// otherwise ActivateToolForArea will override our tool choice with the last
-					// tool active in the area (LT-4696).
-					PropertyTable.SetProperty($"{AreaServices.ToolForAreaNamed_}{area}", toolName, true, true);
-					PropertyTable.SetProperty("areaChoice", area, true, true);
-				}
-			}
-			else
-			{
-				// JohnT: when following a link, it seems to be important to set this, not just
-				// the currentContentControl (is that partly obsolete?).
-				if (area != null)
-				{
-					PropertyTable.SetProperty($"{AreaServices.ToolForAreaNamed_}{area}", toolName, true, true);
-				}
-			}
-			PropertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), true, true);
-			PropertyTable.SetProperty("toolChoice", toolName, true, true);
-			return true;
-		}
-
-		private static bool IsToolInArea(string toolName, string area, XmlNode windowConfiguration)
-		{
-			XmlNodeList nodes = windowConfiguration.SelectNodes(GetToolXPath(area));
-			if (nodes != null)
-			{
-				foreach (XmlNode node in nodes)
-				{
-					string value = XmlUtils.GetOptionalAttributeValue(node, "value", "???");
-					if (value == toolName)
-						return true;
-				}
-			}
-			return false;
-		}
-
-		private static string GetAreaNeededForTool(string toolName, XmlNode windowConfiguration)
-		{
-			if (IsToolInArea(toolName, AreaServices.InitialAreaMachineName, windowConfiguration))
-				return AreaServices.InitialAreaMachineName;
-			if (IsToolInArea(toolName, "grammar", windowConfiguration))
-				return "grammar";
-			if (IsToolInArea(toolName, "textsWords", windowConfiguration))
-				return "textsWords";
-			if (IsToolInArea(toolName, "lists", windowConfiguration))
-				return "lists";
-			if (IsToolInArea(toolName, "notebook", windowConfiguration))
-				return "notebook";
-			return null;
 		}
 	}
 }

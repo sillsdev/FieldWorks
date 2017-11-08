@@ -133,17 +133,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <param name="toolName">Name/path of the tool or view within the specific application.</param>
 		/// <param name="targetGuid">The GUID of the object which is the target of this link.</param>
-		public FwLinkArgs(string toolName, Guid targetGuid) : this(toolName, targetGuid, null)
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwLinkArgs"/> class.
-		/// </summary>
-		/// <param name="toolName">Name/path of the tool or view within the specific application.</param>
-		/// <param name="targetGuid">The GUID of the object which is the target of this link.</param>
 		/// <param name="tag">The tag.</param>
-		public FwLinkArgs(string toolName, Guid targetGuid, string tag) : this()
+		public FwLinkArgs(string toolName, Guid targetGuid, string tag = null) : this()
 		{
 			m_toolName = toolName;
 			TargetGuid = targetGuid;

@@ -799,11 +799,7 @@ namespace LanguageExplorer.Works
 			m_currentObject = clerk.CurrentObject;
 			m_currentIndex = currentIndex;
 			//add our current state to the history system
-			string toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
-			Guid guid = Guid.Empty;
-			if (clerk.CurrentObject != null)
-				guid = clerk.CurrentObject.Guid;
-			Publisher.Publish("AddContextToHistory", new FwLinkArgs(toolChoice, guid));
+			PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue("toolChoice", string.Empty), clerk.CurrentObject?.Guid ?? Guid.Empty));
 
 			SelectAndScrollToCurrentRecord();
 			base.ShowRecord();

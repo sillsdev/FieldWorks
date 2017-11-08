@@ -107,7 +107,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			_interlinearTextsRecordClerk.ActivateUI(true);
 			RebuildStatisticsTable();
 			//add our current state to the history system
-			Publisher.Publish("AddContextToHistory", new FwLinkArgs(PropertyTable.GetValue("toolChoice", ""), Guid.Empty));
+			PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue("toolChoice", ""), Guid.Empty));
 		}
 
 		#endregion

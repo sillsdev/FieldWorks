@@ -40,9 +40,7 @@
 		<command id="CmdCopy" label="_Copy" message="EditCopy" icon="Copy" shortcut="Ctrl+C" a10status="PARTIALLY_DONE" />
 		<command id="CmdCut" label="Cu_t" message="EditCut" icon="Cut" shortcut="Ctrl+X" a10status="PARTIALLY_DONE" />
 		<command id="CmdPaste" label="_Paste" message="EditPaste" icon="Paste" shortcut="Ctrl+V" a10status="PARTIALLY_DONE" />
-		<command id="CmdPasteHyperlink" label="Paste _Hyperlink" message="PasteUrl" a10status="PARTIALLY_DONE" />
 		<command id="CmdInsertLinkToFile" label="L_ink to File..." message="InsertLinkToFile" icon="ExternalLink"/>
-		<command id="CmdSelectAll" label="Select _All" message="EditSelectAll" shortcut="Ctrl+A" a10status="PARTIALLY_DONE" />
 		<command id="CmdFindAndReplaceText" label="Find..." message="FindAndReplaceText" shortcut="Ctrl+Shift+F" icon="findReplaceText"/>
 		<command id="CmdReplaceText" label="Replace..." message="ReplaceText" shortcut="Ctrl+H"/>
 		<command id="CmdHelpMorphologyInto" label="Introduction to _Parsing..." message="HelpMorphologyIntro"/>
@@ -53,10 +51,6 @@
 		<command id="CmdHelpNotesLinguaLinksDatabaseImport" label="Technical Notes on Lin_guaLinks Import..." message="HelpNotesLinguaLinksDatabaseImport" a10status="LEXICONAREAONLY" />
 		<!-- Help/Resources/Technical Notes on LinguaLinks Import... -->
 		<command id="CmdHelpNotesInterlinearImport" label="Technical Notes on _Interlinear Import..." message="HelpNotesInterlinearImport"/>
-		<command id="CmdTestFollowLink" label="Test Follow Link" message="TestFollowLink" shortcut="F12"/>
-		<command id="CmdHistoryBack" label="Go Back" message="HistoryBack" icon="historyBack" shortcut="Alt+Left"/>
-		<command id="CmdHistoryForward" label="Go Forward" message="HistoryForward" icon="historyForward" shortcut="Alt+Right"/>
-		<command id="CmdCopyLocationAsHyperlink" label="Copy _Location as Hyperlink" message="CopyLocationAsHyperlink"/>
 		<command id="CmdStartLogging" label="Start Logging" message="StartLogging"/>
 		<command id="CmdRequestDebugInfo" label="Request Debug Info" message="RequestDebugInfo" shortcut="Ctrl+Shift+I"/>
 		<command id="CmdExportText" label="Export Text of browse view" message="ExportText" shortcut="Ctrl+Shift+E"/>
@@ -338,13 +332,6 @@
 	<menubar>
 		<menu id="Edit" label="_Edit" b4InsertMenu="true" a10status="PARTIALLY_DONE" >
 			<item label="-" translate="do not translate" a10status="DONE" />
-			<item command="CmdCut" a10status="DONE" />
-			<item command="CmdCopy" a10status="DONE" />
-			<item command="CmdPaste" a10status="DONE" />
-			<item label="-" translate="do not translate" a10status="DONE" />
-			<item command="CmdPasteHyperlink" a10status="PARTIALLY_DONE" />
-			<item command="CmdCopyLocationAsHyperlink" a10status="PARTIALLY_DONE" />
-			<item label="-" translate="do not translate" a10status="DONE" />
 			<item command="CmdGoToRecord" a10status="Defined in Notebook Area file" />
 <!-- These are the places that handle "CmdFindAndReplaceText" & "CmdReplaceText":
 XmlDocView users:
@@ -363,7 +350,6 @@ InterlinMaster user:
 			<item command="CmdFindAndReplaceText" defaultVisible="true" a10status="NOT_GLOBAL" />
 			<item command="CmdReplaceText" defaultVisible="true" a10status="NOT_GLOBAL" />
 			<item label="-" translate="do not translate" a10status="DONE" />
-			<item command="CmdSelectAll" a10status="PARTIALLY_DONE" />
 			<item command="CmdDeleteRecord"/>
 			<item label="-" translate="do not translate"/>
 <!-- START include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->

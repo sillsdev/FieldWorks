@@ -1263,9 +1263,9 @@ namespace LanguageExplorer.Impls
 			this.toolStripFormat.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripComboBoxWritingSystem,
             this.toolStripComboBoxStyles});
-			this.toolStripFormat.Location = new System.Drawing.Point(452, 24);
+			this.toolStripFormat.Location = new System.Drawing.Point(450, 24);
 			this.toolStripFormat.Name = "toolStripFormat";
-			this.toolStripFormat.Size = new System.Drawing.Size(289, 25);
+			this.toolStripFormat.Size = new System.Drawing.Size(258, 25);
 			this.toolStripFormat.TabIndex = 3;
 			// 
 			// toolStripComboBoxWritingSystem

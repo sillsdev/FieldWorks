@@ -199,13 +199,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			if (!File.Exists(m_sHtmlFileName))
 			{
 				m_sHtmlFileName = Path.Combine(FwDirectoryFinder.CodeDirectory, InitialDocument);
-				//DisableButtons();
 			}
 
 			ShowSketch();
 
 			//add our current state to the history system
-			Publisher.Publish("AddContextToHistory", new FwLinkArgs(PropertyTable.GetValue("toolChoice", string.Empty), Guid.Empty));
+			PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue("toolChoice", string.Empty), Guid.Empty));
 		}
 
 		#endregion

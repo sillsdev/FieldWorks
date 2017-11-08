@@ -1101,7 +1101,7 @@
     <Compile Include="Works\LiftExportMessageDlg.Designer.cs">
       <DependentUpon>LiftExportMessageDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Works\LinkHandler.cs" />
+    <Compile Include="LinkHandler.cs" />
     <Compile Include="Works\ListChangedEventArgs.cs" />
     <Compile Include="Works\ListChangedEventHandler.cs" />
     <Compile Include="Works\MacroListener.cs" />

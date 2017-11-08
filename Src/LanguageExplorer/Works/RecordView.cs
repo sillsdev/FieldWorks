@@ -152,19 +152,17 @@ namespace LanguageExplorer.Works
 			//are we the dominant pane? The thinking here is that if our clerk is controlling the record tree bar, then we are.
 			// The second condition prevents recording the intermediate record in the history when following a link
 			// causes us to change areas and then change records.
-			if (Clerk.IsControllingTheRecordTreeBar
-				&& string.IsNullOrEmpty(PropertyTable.GetValue<string>("SuspendLoadingRecordUntilOnJumpToRecord")))
+			if (Clerk.IsControllingTheRecordTreeBar && string.IsNullOrEmpty(PropertyTable.GetValue<string>("SuspendLoadingRecordUntilOnJumpToRecord")))
 			{
 				//add our current state to the history system
-				string toolChoice = PropertyTable.GetValue("toolChoice", "");
-				Guid guid = Guid.Empty;
+				var toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
+				var guid = Guid.Empty;
 				if (Clerk.CurrentObject != null)
+				{
 					guid = Clerk.CurrentObject.Guid;
+				}
 				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
-#if RANDYTODO
-				// TODO: Not supported yet, plus it is reentrant into Publisher, since "RecordNavigation" was called by RecordClerk.
-				Publisher.Publish("AddContextToHistory", new FwLinkArgs(toolChoice, guid));
-#endif
+				PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(toolChoice, guid));
 			}
 		}
 
