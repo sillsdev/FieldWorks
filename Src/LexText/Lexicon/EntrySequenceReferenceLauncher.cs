@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 								}
 								catch (ArgumentException)
 								{
-									MessageBoxes.ReportLexEntryCircularReference((ILexEntry) dlg.SelectedObject, m_obj, false);
+									MessageBoxes.ReportLexEntryCircularReference(dlg.SelectedObject, m_obj, false);
 								}
 							}
 						}
@@ -322,7 +322,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 				catch (ArgumentException)
 				{
-					MessageBoxes.ReportLexEntryCircularReference((ILexEntry)m_obj.Owner, obj, true);
+					MessageBoxes.ReportLexEntryCircularReference(m_obj.Owner, obj, true);
 				}
 			}
 		}
@@ -387,7 +387,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 								}
 								catch (ArgumentException)
 								{
-									MessageBoxes.ReportLexEntryCircularReference((ILexEntry) m_lexEntryRef.Owner, obj, true);
+									MessageBoxes.ReportLexEntryCircularReference(m_lexEntryRef.Owner, obj, true);
 								}
 							}
 						}
@@ -455,7 +455,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						}
 						catch (ArgumentException)
 						{
-							MessageBoxes.ReportLexEntryCircularReference((ILexEntry)dlg.SelectedObject, m_lexEntry, false);
+							MessageBoxes.ReportLexEntryCircularReference(dlg.SelectedObject, m_lexEntry, false);
 						}
 					}
 				}

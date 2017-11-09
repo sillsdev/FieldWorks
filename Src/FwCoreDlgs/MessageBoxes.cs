@@ -16,11 +16,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// at parent, and tried to make target a component. Otherwise, the user is looking at target, and
 		/// tried to make parent a complex form.
 		/// </summary>
-		public static void ReportLexEntryCircularReference(ILexEntry parent, ICmObject target, bool startedFromComplex)
+		public static void ReportLexEntryCircularReference(ICmObject parent, ICmObject target, bool startedFromComplex)
 		{
 			var itemString = target is ILexEntry ? FwCoreDlgs.ksEntry : FwCoreDlgs.ksSense;
 			var msgTemplate = startedFromComplex ? FwCoreDlgs.ksComponentIsComponent : FwCoreDlgs.ksComplexFormIsComponent;
-			var startedFrom = startedFromComplex ? parent.HeadWord.Text : target.ShortName;
+			var startedFrom = startedFromComplex ? ((ILexEntry) parent).HeadWord.Text : target.ShortName;
 			var msg = String.Format(msgTemplate, itemString, startedFrom);
 			MessageBox.Show(Form.ActiveForm, msg, FwCoreDlgs.ksWhichIsComponent, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}

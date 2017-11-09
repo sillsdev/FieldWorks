@@ -137,7 +137,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			catch (ArgumentException)
 			{
-				MessageBoxes.ReportLexEntryCircularReference((ILexEntry)m_obj, newObj, true);
+				MessageBoxes.ReportLexEntryCircularReference(m_obj, newObj, true);
 			}
 		}
 

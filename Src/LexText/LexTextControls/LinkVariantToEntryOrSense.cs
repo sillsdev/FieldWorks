@@ -247,7 +247,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			catch (ArgumentException)
 			{
-				MessageBoxes.ReportLexEntryCircularReference((ILexEntry)componentLexeme, variant, false);
+				MessageBoxes.ReportLexEntryCircularReference(componentLexeme, variant, false);
 			}
 		}
 
