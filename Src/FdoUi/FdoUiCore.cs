@@ -1048,11 +1048,16 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				file = pict.PictureFileRA;
 			}
-			else
+			else if(m_obj is ICmMedia)
 			{
 				var media = m_obj as ICmMedia;
 				if (media != null)
 					file = media.MediaFileRA;
+			}
+			else if (m_obj != null)
+			{
+				// No cleanup needed
+				return true;
 			}
 			return ConsiderDeletingRelatedFile(file, m_mediator, m_propertyTable);
 		}
