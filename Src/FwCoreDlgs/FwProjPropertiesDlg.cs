@@ -23,6 +23,7 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.Lexicon;
+using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -1093,6 +1094,25 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				WritingSystemServices.DeleteWritingSystem(m_cache, ws);
 				m_fWsChanged = true;
 			}
+			if (m_fWsChanged)
+			{
+				var mediator = GetMediator();
+				if (mediator != null)
+					mediator.SendMessage("WritingSystemDeleted", m_deletedWritingSystems.Select(x => x.Id).ToArray());
+			}
+		}
+
+		private Mediator GetMediator()
+		{
+			if (m_app == null)
+				return null;
+			Form wndActive = m_app.ActiveMainWindow;
+			if (wndActive == null)
+				return null;
+			var mediator = ((IMediatorProvider)m_app.ActiveMainWindow).Mediator;
+			if (mediator == null)
+				return null;
+			return mediator;
 		}
 
 		private void MergeWritingSystems()

@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
@@ -15,6 +16,7 @@ using SIL.LCModel;
 using SIL.LCModel.DomainImpl;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.XWorks.LexText;
+using SIL.LCModel.Core.WritingSystems;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -356,6 +358,21 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationController.UpdateWritingSystemInModel(configuration, cache);
 			configuration.Save();
 
+			return true;
+		}
+
+		public bool OnWritingSystemDeleted(object param)
+		{
+			var currentConfig = GetCurrentConfiguration(m_propertyTable, true, null);
+			var cache = m_propertyTable.GetValue<LcmCache>("cache");
+			var configuration = new DictionaryConfigurationModel(currentConfig, cache);
+			if (((string[])param).Any(x => x.ToString() == configuration.HomographConfiguration.HomographWritingSystem))
+			{
+				configuration.HomographConfiguration.HomographWritingSystem = string.Empty;
+				configuration.HomographConfiguration.CustomHomographNumbers = string.Empty;
+				configuration.Save();
+				m_mediator.SendMessage("MasterRefresh", null);
+			}
 			return true;
 		}
 
