@@ -28,5 +28,10 @@ namespace LanguageExplorer
 		/// Get the image for the area.
 		/// </summary>
 		Image Icon { get; }
+
+		/// <summary>
+		/// Get/Set the active tool for the area, or null, if no tool is active.
+		/// </summary>
+		ITool ActiveTool { get; set; }
 	}
 }

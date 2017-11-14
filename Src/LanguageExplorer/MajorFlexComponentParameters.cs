@@ -4,6 +4,7 @@
 
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords;
+using LanguageExplorer.Controls.SilSidePane;
 using SIL.FieldWorks.Common.FwUtils;
 using LanguageExplorer.Works;
 using SIL.LCModel;
@@ -37,11 +38,13 @@ namespace LanguageExplorer
 		internal IFlexApp FlexApp { get; private set; }
 		/// <summary />
 		internal IFwMainWnd MainWindow { get; private set; }
+		/// <summary />
+		internal SidePane SidePane { get; private set; }
 
 		internal MajorFlexComponentParameters(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar,
 			ParserMenuManager parserMenuManager, DataNavigationManager dataNavigationManager,
 			IRecordClerkRepositoryForTools recordClerkRepositoryForTools,
-			FlexComponentParameters flexComponentParameters, LcmCache lcmCache, IFlexApp flexApp, IFwMainWnd mainWindow)
+			FlexComponentParameters flexComponentParameters, LcmCache lcmCache, IFlexApp flexApp, IFwMainWnd mainWindow, SidePane sidePane)
 		{
 			MainCollapsingSplitContainer = mainCollapsingSplitContainer;
 			MenuStrip = menuStrip;
@@ -54,6 +57,7 @@ namespace LanguageExplorer
 			LcmCache = lcmCache;
 			FlexApp = flexApp;
 			MainWindow = mainWindow;
+			SidePane = sidePane;
 		}
 	}
 }

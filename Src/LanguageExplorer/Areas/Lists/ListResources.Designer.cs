@@ -61,6 +61,24 @@ namespace LanguageExplorer.Areas.Lists {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Custom _List....
+        /// </summary>
+        internal static string AddCustomList {
+            get {
+                return ResourceManager.GetString("AddCustomList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add a custom list..
+        /// </summary>
+        internal static string AddCustomListTooltip {
+            get {
+                return ResourceManager.GetString("AddCustomListTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-AnthroItems&quot; /&gt;.
         /// </summary>
@@ -107,6 +125,33 @@ namespace LanguageExplorer.Areas.Lists {
         internal static string ConfidenceEditParameters {
             get {
                 return ResourceManager.GetString("ConfidenceEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List....
+        /// </summary>
+        internal static string ConfigureList {
+            get {
+                return ResourceManager.GetString("ConfigureList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configure properties of a list..
+        /// </summary>
+        internal static string ConfigureListTooltip {
+            get {
+                return ResourceManager.GetString("ConfigureListTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Custom _List.
+        /// </summary>
+        internal static string DeleteCustomList {
+            get {
+                return ResourceManager.GetString("DeleteCustomList", resourceCulture);
             }
         }
         

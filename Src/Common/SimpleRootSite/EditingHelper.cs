@@ -2945,8 +2945,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				return string.Empty;
 			}
 			// For now, we are only handling SimpleRootSite cases, e.g. for the Data Tree.
-			// If we need this in print layout, consider adding the mediator to the Callbacks
-			// interface.
+			// If we need this in print layout, figure out what to do.
+			// The develop branch suggests: "consider adding the mediator to the Callbacks interface."
 			var simpleRootSite = m_callbacks as SimpleRootSite;
 			// This property can be changed by selecting an item in the combined styles combo.
 			// When the user does this we try to update the style of the selection.

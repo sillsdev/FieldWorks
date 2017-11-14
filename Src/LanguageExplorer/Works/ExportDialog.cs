@@ -17,6 +17,7 @@ using System.Xml.Xsl;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Dumpster;
 using LanguageExplorer.LcmUi;
 using Microsoft.Win32;
 using SIL.LCModel.Core.Text;
@@ -422,16 +423,14 @@ namespace LanguageExplorer.Works
 						return null; // nothing to do.
 				}
 			}
-			var collector = new XElement[1];
-			var parameter = new Tuple<string, string, XElement[]>(area, tool, collector);
-			Publisher.Publish("GetContentControlParameters", parameter);
-			var controlNode = collector[0];
-			Debug.Assert(controlNode != null);
-			var dynLoaderNode = controlNode.Element("dynamicloaderinfo");
+			AreaListener.GetContentControlParameters(null, area, tool);
+			var controlElement = AreaListener.GetContentControlParameters(null, area, tool);
+			Debug.Assert(controlElement != null, "Prepare to be disappointed, since it will be null.");
+			var dynLoaderNode = controlElement.Element("dynamicloaderinfo");
 			var contentAssemblyPath = XmlUtils.GetOptionalAttributeValue(dynLoaderNode, "assemblyPath");
 			var contentClass = XmlUtils.GetOptionalAttributeValue(dynLoaderNode, "class");
 			Control mainControl = (Control)DynamicLoader.CreateObject(contentAssemblyPath, contentClass);
-			var parameters = controlNode.Element("parameters");
+			var parameters = controlElement.Element("parameters");
 			((IFlexComponent)mainControl).InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			InitFromMainControl(mainControl);
 			return mainControl;

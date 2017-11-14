@@ -103,7 +103,6 @@
 	<item id="CmdInsertLinkToFile">Insert a link to an external file.</item>
 	<item id="CmdAddNote">Insert a note.</item>
 	<item id="CmdChooseTexts" a10status="DONE" >Choose texts to display and use.</item>
-	<item id="CmdAddCustomList">Add a custom list.</item>
 	<item id="CmdInsertStemAllomorph">Add an allomorph of a stem.</item>
 	<item id="CmdInsertAffixAllomorph">Add an allomorph of an affix.</item>
 	<item id="CmdDataTree-Insert-Pronunciation">Add a pronunciation field to this entry.</item>
@@ -128,7 +127,6 @@
 		 -->
 	<item id="Entries">Show the entries and edit them.</item>
 	<item id="Problems">See a list of entries with problems.</item>
-	<item id="CmdConfigureList">Configure properties of a list.</item>
 	<item id="CmdAddCustomField">Add or edit custom fields.</item>
 	<item id="CmdConfigureColumns">Configure current browse pane.</item>
 	<item id="CmdLexiconLookup">Show dictionary entry for root/stem of current word, or open a search dialog box.</item>

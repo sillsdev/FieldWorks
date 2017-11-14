@@ -4,9 +4,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using LanguageExplorer.Areas;
+using LanguageExplorer.Dumpster;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
@@ -162,10 +166,9 @@ namespace LanguageExplorer.Works
 				var isDictionary = exportType == DictionaryType;
 				const string area = AreaServices.InitialAreaMachineName;
 				var tool = isDictionary ? "lexiconDictionary" : "reversalToolEditComplete";
-				var collector = new XmlNode[1];
-				var parameter = new Tuple<string, string, XmlNode[]>(area, tool, collector);
-				publisher.Publish("GetContentControlParameters", parameter);
-				var parameters = collector[0].SelectSingleNode(".//parameters[@clerk]");
+				var controlElement = AreaListener.GetContentControlParameters(null, area, tool);
+				Debug.Assert(controlElement != null, "Prepare to be disappointed, since it will be null.");
+				var parameters = controlElement.XPathSelectElement(".//parameters[@clerk]");
 				var currentClerk = RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk;
 				if (DoesClerkMatchParams(currentClerk, parameters))
 					return null; // No need to juggle clerks if the one we want is already active
@@ -190,15 +193,12 @@ namespace LanguageExplorer.Works
 				return new ClerkActivator(currentClerk); // ensure the current active clerk is reactivated after we use the temporary clerk.
 			}
 
-			private static bool DoesClerkMatchParams(RecordClerk clerk, XmlNode parameters)
+			private static bool DoesClerkMatchParams(RecordClerk clerk, XElement parameters)
 			{
-				if (clerk == null)
+				if (clerk == null || parameters == null)
 					return false;
-				var atts = parameters.Attributes;
-				if (atts == null)
-					return false;
-				var id = atts["clerk"].Value;
-				return id == clerk.Id;
+				var clerkAttr = parameters.Attribute("clerk");
+				return clerkAttr != null && clerkAttr.Value == clerk.Id;
 			}
 		}
 		private sealed class ReversalIndexActivator : IDisposable

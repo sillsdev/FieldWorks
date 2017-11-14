@@ -50,6 +50,7 @@ namespace LanguageExplorer.Works
 			_formatToolStripComboBox = formatToolStripComboBox;
 			_formatToolStripComboBox.ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
 			_formatToolStripComboBox.Enabled = false;
+			_subscriber.Subscribe("ResetStyleSheet", ResetStyleSheet);
 
 			CollectStyleInformation();
 

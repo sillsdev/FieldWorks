@@ -358,9 +358,6 @@ InterlinMaster user:
 <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>
 <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
-<!-- START include: "Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
-			<include path="Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>
-<!-- END include: "Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
 		</menu>
 		<menu id="View" label="_View" b4InsertMenu="true" a10status="PARTIALLY_DONE" >
 			<menu label="_Lexicon" list="LexicalToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
@@ -416,9 +413,6 @@ InterlinMaster user:
 <!-- START include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
 				<include path="Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*"/>
 <!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
-<!-- START include: "Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
-				<include path="Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*"/>
-<!-- END include: "Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
 				<item command="CmdConfigureColumns" defaultVisible="false"/>
 				<item command="CmdRestoreDefaults"/>
 				<item label="-" translate="do not translate" a10status="DONE" />

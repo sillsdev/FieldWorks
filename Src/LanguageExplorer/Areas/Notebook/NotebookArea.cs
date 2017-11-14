@@ -140,6 +140,11 @@ namespace LanguageExplorer.Areas.Notebook
 		/// </summary>
 		public Image Icon => LanguageExplorerResources.Notebook.ToBitmap();
 
+		/// <summary>
+		/// Set the active tool for the area, or null, if no tool is active.
+		/// </summary>
+		public ITool ActiveTool { get; set; }
+
 		#endregion
 
 		internal static RecordClerk NotebookFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)

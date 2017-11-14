@@ -48,10 +48,7 @@ namespace LanguageExplorerTests.Works
 		/// ------------------------------------------------------------------------------------
 		public override void TestTearDown()
 		{
-			if (m_propertyTable != null)
-			{
-				m_propertyTable.Dispose();
-			}
+			m_propertyTable?.Dispose();
 			m_propertyTable = null;
 			m_publisher = null;
 			m_subscriber = null;
@@ -80,9 +77,8 @@ namespace LanguageExplorerTests.Works
 		public void SetGetListName()
 		{
 			// Setup
-			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher))
+			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher, Cache))
 			{
-				dlg.SetTestCache(Cache);
 				var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 				Assert.True(wsFr > 0, "Test failed because French ws is not installed.");
 				dlg.InitializeMultiString();
@@ -105,9 +101,8 @@ namespace LanguageExplorerTests.Works
 		public void SetGetListDescription()
 		{
 			// Setup
-			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher))
+			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher, Cache))
 			{
-				dlg.SetTestCache(Cache);
 				var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 				Assert.True(wsFr > 0, "Test failed because French ws is not installed.");
 				var wsSp = Cache.WritingSystemFactory.GetWsFromStr("es");
@@ -137,9 +132,8 @@ namespace LanguageExplorerTests.Works
 		public void IsListNameDuplicated_French_Yes()
 		{
 			// Setup
-			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher))
+			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher, Cache))
 			{
-				dlg.SetTestCache(Cache);
 				SetUserWs("fr"); // user ws needs to be French for this test
 				var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 				Assert.True(wsFr > 0, "Test failed because French ws is not installed.");
@@ -168,9 +162,8 @@ namespace LanguageExplorerTests.Works
 		public void IsListNameDuplicated_French_No()
 		{
 			// Setup
-			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher))
+			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher, Cache))
 			{
-				dlg.SetTestCache(Cache);
 				SetUserWs("fr"); // user ws needs to be French for this test
 				var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 				Assert.True(wsFr > 0, "Test failed because French ws is not installed.");
@@ -197,7 +190,7 @@ namespace LanguageExplorerTests.Works
 		public void SetDialogTitle_Add()
 		{
 			// AddList subclass of CustomListDlg
-			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher))
+			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher, Cache))
 			{
 				// Dialog Title should default to "New List"
 				Assert.AreEqual("New List", dlg.Text,
@@ -214,7 +207,7 @@ namespace LanguageExplorerTests.Works
 		public void SetDialogTitle_Configure()
 		{
 			// Configure subclass of CustomListDlg
-			using (var dlg = new ConfigureListDlg(null, null, Cache.LangProject.LocationsOA))
+			using (var dlg = new ConfigureListDlg(m_propertyTable, m_publisher, Cache, Cache.LangProject.LocationsOA))
 			{
 				// Dialog Title should default to "Configure List"
 				Assert.AreEqual("Configure List", dlg.Text,
@@ -230,7 +223,7 @@ namespace LanguageExplorerTests.Works
 		[Test]
 		public void GetCheckBoxes_defaults()
 		{
-			using (var dlg = new AddListDlg(m_propertyTable, m_publisher))
+			using (var dlg = new AddCustomListDlg(m_propertyTable, m_publisher, Cache))
 			{
 				// SUT; Get default checkbox values
 				var hier = dlg.SupportsHierarchy;
@@ -252,7 +245,7 @@ namespace LanguageExplorerTests.Works
 		[Test]
 		public void SetCheckBoxesToOtherValues()
 		{
-			using (var dlg = new ConfigureListDlg(m_propertyTable, m_publisher, Cache.LangProject.LocationsOA))
+			using (var dlg = new ConfigureListDlg(m_propertyTable, m_publisher, Cache, Cache.LangProject.LocationsOA))
 			{
 				// SUT; Set non-default checkbox values
 				dlg.SupportsHierarchy = true;
@@ -275,7 +268,7 @@ namespace LanguageExplorerTests.Works
 		public void GetDefaultWsComboEntries()
 		{
 			// SUT
-			using (var dlg = new AddListDlg(m_propertyTable, m_publisher))
+			using (var dlg = new AddCustomListDlg(m_propertyTable, m_publisher, Cache))
 			{
 				// Verify
 				Assert.AreEqual(WritingSystemServices.kwsAnals, dlg.SelectedWs,
@@ -292,7 +285,7 @@ namespace LanguageExplorerTests.Works
 		public void SetWsComboSelectedItem()
 		{
 			// SUT
-			using (var dlg = new ConfigureListDlg(m_propertyTable, m_publisher, Cache.LangProject.LocationsOA))
+			using (var dlg = new ConfigureListDlg(m_propertyTable, m_publisher, Cache, Cache.LangProject.LocationsOA))
 			{
 				dlg.SelectedWs = WritingSystemServices.kwsVerns;
 
@@ -311,9 +304,8 @@ namespace LanguageExplorerTests.Works
 		public void TestGetUiWssAndInstall()
 		{
 			var testStrings = new List<string> { "en", "es", "fr" };
-			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher))
+			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher, Cache))
 			{
-				dlg.SetTestCache(Cache);
 				// must set the test cache because this method needs one
 				SetUserWs("es");
 
@@ -341,9 +333,8 @@ namespace LanguageExplorerTests.Works
 		public void TestGetUiWssAndInstall_dialect()
 		{
 			var testStrings = new List<string> { "en", "es-MX", "fr" };
-			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher))
+			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher, Cache))
 			{
-				dlg.SetTestCache(Cache);
 				// must set the test cache because this method needs one
 				SetUserWs("es-MX");
 
@@ -353,10 +344,10 @@ namespace LanguageExplorerTests.Works
 				// Verify
 				Assert.AreEqual(2, wss.Count,
 					"Wrong number of wss found.");
-				var fenglish = wss.Where(ws => ws.IcuLocale == "en").Any();
+				var fenglish = wss.Any(ws => ws.IcuLocale == "en");
 				// Interesting! We input the string "es-MX" and get out the string "es_MX"!
-				var fspanish = wss.Where(ws => ws.IcuLocale == "es_MX").Any();
-				var ffrench = wss.Where(ws => ws.IcuLocale == "fr").Any();
+				var fspanish = wss.Any(ws => ws.IcuLocale == "es_MX");
+				var ffrench = wss.Any(ws => ws.IcuLocale == "fr");
 				Assert.IsTrue(fenglish, "English not found.");
 				Assert.IsTrue(fspanish, "Spanish(Mexican) not found.");
 				Assert.IsFalse(ffrench, "French should not be found.");
@@ -372,9 +363,8 @@ namespace LanguageExplorerTests.Works
 		public void TestGetUiWssAndInstall_OnlyEnglish()
 		{
 			var testStrings = new List<string> { "en", "es", "fr" };
-			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher))
+			using (var dlg = new TestCustomListDlg(m_propertyTable, m_publisher, Cache))
 			{
-				dlg.SetTestCache(Cache);
 				// must set the test cache because this method needs one
 				SetUserWs("en");
 
@@ -399,8 +389,8 @@ namespace LanguageExplorerTests.Works
 	/// </summary>
 	public class TestCustomListDlg : CustomListDlg
 	{
-		public TestCustomListDlg(IPropertyTable propertyTable, IPublisher publisher)
-			: base(propertyTable, publisher)
+		public TestCustomListDlg(IPropertyTable propertyTable, IPublisher publisher, LcmCache cache)
+			: base(propertyTable, publisher, cache)
 		{
 		}
 
@@ -409,11 +399,6 @@ namespace LanguageExplorerTests.Works
 		internal List<CoreWritingSystemDefinition> GetUiWssAndInstall(IEnumerable<string> uiLanguages)
 		{
 			return GetUiWritingSystemAndEnglish();
-		}
-
-		internal void SetTestCache(LcmCache cache)
-		{
-			Cache = cache;
 		}
 
 		internal void SetListNameForWs(ITsString name, int ws)

@@ -6,20 +6,27 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
+using LanguageExplorer.Areas.Lists.Tools.CustomListEdit;
+using LanguageExplorer.Controls.SilSidePane;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lists
 {
 	[Export(AreaServices.ListsAreaMachineName, typeof(IArea))]
 	[Export(typeof(IArea))]
-	internal sealed class ListsArea : IArea
+	internal sealed class ListsArea : IListArea
 	{
 		[ImportMany(AreaServices.ListsAreaMachineName)]
-		private IEnumerable<ITool> _myTools;
+		private IEnumerable<ITool> _myBuiltinTools;
 		private const string MyUiName = "Lists";
 		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
 		[Import]
 		private IPropertyTable _propertyTable;
+		private SortedList<string, ITool> _sortedListOfCustomTools = new SortedList<string, ITool>();
+		private SidePane _sidePane;
+		private HashSet<ITool> _allTools;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -31,6 +38,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_sidePane = null;
 		}
 
 		/// <summary>
@@ -42,6 +50,7 @@ namespace LanguageExplorer.Areas.Lists
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.ListsAreaDefaultToolMachineName, SettingsGroup.LocalSettings, true, false);
+			_sidePane = majorFlexComponentParameters.SidePane;
 		}
 
 		/// <summary>
@@ -94,7 +103,14 @@ namespace LanguageExplorer.Areas.Lists
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		public ITool PersistedOrDefaultTool => _myTools.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, AreaServices.ListsAreaDefaultToolMachineName));
+		public ITool PersistedOrDefaultTool
+		{
+			get
+			{
+				var persistedToolName = _propertyTable.GetValue(PropertyNameForToolName, AreaServices.ListsAreaDefaultToolMachineName);
+				return _allTools.First(tool => tool.MachineName == persistedToolName);
+			}
+		}
 
 		/// <summary>
 		/// Get all installed tools for the area.
@@ -134,12 +150,21 @@ namespace LanguageExplorer.Areas.Lists
 					AreaServices.ReversalToolReversalIndexPOSMachineName
 				};
 
-#if RANDYTODO
-				// TODO: Add user-defined tools in some kind of generic list area that can work with user-defined lists.
-				// TODO: That generic list tools will *not* be located by reflection in a plugin assembly like all other tools,
-				// TODO: but it/they will be created by this area, as/if needed for each user-defined tool.
-#endif
-				return myToolsInOrder.Select(toolName => _myTools.First(tool => tool.MachineName == toolName)).ToList();
+				var retval = myToolsInOrder.Select(toolName => _myBuiltinTools.First(tool => tool.MachineName == toolName)).ToList();
+
+				_allTools = new HashSet<ITool>(_myBuiltinTools);
+
+				// Load tools for custom lists.
+				var cache = _propertyTable.GetValue<LcmCache>("cache");
+				var customLists = cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().AllInstances().Where(list => list.Owner == null).ToList();
+				foreach (var customList in customLists)
+				{
+					var customTool = new CustomListEditTool(this, customList);
+					_sortedListOfCustomTools.Add(customTool.MachineName, customTool);
+				}
+				_allTools.UnionWith(_sortedListOfCustomTools.Values);
+				retval.AddRange(_sortedListOfCustomTools.Values);
+				return retval;
 			}
 		}
 
@@ -147,6 +172,77 @@ namespace LanguageExplorer.Areas.Lists
 		/// Get the image for the area.
 		/// </summary>
 		public Image Icon => LanguageExplorerResources.Lists.ToBitmap();
+
+		/// <summary>
+		/// Set the active tool for the area, or null, if no tool is active.
+		/// </summary>
+		public ITool ActiveTool { get; set; }
+
+		#endregion
+
+		#region Implementation of IListArea
+
+		/// <summary>
+		/// Set the list area sidebar tab, so it can be updated as custom lists gets added/removed, or get names changed.
+		/// </summary>
+		public Tab ListAreaTab { get; set; }
+
+		/// <summary>
+		/// Add a new custom list to the area, and to the Tab.
+		/// </summary>
+		public void AddCustomList(ICmPossibilityList newList)
+		{
+			Guard.AgainstNull(newList, nameof(newList));
+
+			// Theory has it that the client ensures the name is unique, so we don't have to worry about that here.
+			// Create new tool and add it to sorted list.
+			var customTool = new CustomListEditTool(this, newList);
+			_sortedListOfCustomTools.Add(customTool.MachineName, customTool);
+			_allTools.Add(customTool);
+			// Add it to the sidebar.
+			var item = new Item(StringTable.Table.LocalizeLiteralValue(customTool.UiName))
+			{
+				Icon = customTool.Icon,
+				Tag = customTool,
+				Name = customTool.MachineName
+			};
+			_sidePane.SuspendLayout();
+			_sidePane.AddItem(ListAreaTab, item);
+			_sidePane.ResumeLayout();
+		}
+
+		/// <summary>
+		/// Remove a custom list's tool from the area and from the Tab
+		/// </summary>
+		/// <param name="gonerTool"></param>
+		public void RemoveCustomListTool(ITool gonerTool)
+		{
+			_sortedListOfCustomTools.Remove(gonerTool.MachineName);
+			_allTools.Remove(gonerTool);
+			_sidePane.SuspendLayout();
+			_sidePane.RemoveItem(ListAreaTab, gonerTool);
+			_sidePane.ResumeLayout();
+		}
+
+		/// <summary>
+		/// Change the display name of the custom list in the Tab.
+		/// </summary>
+		public void ModifiedCustomList(ITool tool)
+		{
+			_sidePane.SuspendLayout();
+			foreach (var kvp in _sortedListOfCustomTools)
+			{
+				if (tool != kvp.Value)
+				{
+					continue;
+				}
+				_sortedListOfCustomTools.Remove(kvp.Key);
+				break;
+			}
+			_sortedListOfCustomTools.Add(tool.MachineName, tool);
+			_sidePane.RenameItem(ListAreaTab, tool, tool.UiName);
+			_sidePane.ResumeLayout();
+		}
 
 		#endregion
 	}

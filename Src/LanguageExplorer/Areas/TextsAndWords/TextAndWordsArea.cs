@@ -151,6 +151,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// Get the image for the area.
 		/// </summary>
 		public Image Icon => LanguageExplorerResources.Text_And_Words.ToBitmap();
+
+		/// <summary>
+		/// Set the active tool for the area, or null, if no tool is active.
+		/// </summary>
+		public ITool ActiveTool { get; set; }
+
 		#endregion
 
 		internal static RecordClerk ConcordanceWordsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)

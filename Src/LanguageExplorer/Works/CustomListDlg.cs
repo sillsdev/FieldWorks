@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,17 +12,16 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel;
 using System.Collections.Generic;
+using SIL.Code;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Works
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Dialog for adding TopicListEditor-like custom lists to a Fieldworks project.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public partial class CustomListDlg : Form
 	{
 		protected string s_helpTopic = "khtpCustomLists";
@@ -36,18 +35,21 @@ namespace LanguageExplorer.Works
 		private IVwStylesheet m_stylesheet;
 		protected List<CoreWritingSystemDefinition> m_uiWss;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:CustomListDlg"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public CustomListDlg(IPropertyTable propertyTable, IPublisher publisher)
+		public CustomListDlg(IPropertyTable propertyTable, IPublisher publisher, LcmCache cache)
 		{
+			Guard.AgainstNull(propertyTable, nameof(propertyTable));
+			Guard.AgainstNull(publisher, nameof(publisher));
+			Guard.AgainstNull(cache, nameof(cache));
+
 			m_finSetup = true;
 			InitializeComponent();
 			StartPosition = FormStartPosition.CenterParent;
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
+			m_cache = cache;
 			m_btnOK.Enabled = false;
 
 			InitializeWSCombo();
@@ -125,8 +127,7 @@ namespace LanguageExplorer.Works
 			return result;
 		}
 
-		private LabeledMultiStringControl ReplaceTextBoxWithMultiStringBox(TextBox tb,
-			IVwStylesheet stylesheet)
+		private LabeledMultiStringControl ReplaceTextBoxWithMultiStringBox(TextBox tb, IVwStylesheet stylesheet)
 		{
 			Debug.Assert(Cache != null, "Need a cache to setup a MultiStringBox.");
 			tb.Hide();
@@ -146,8 +147,7 @@ namespace LanguageExplorer.Works
 			return ms;
 		}
 
-		protected static void LoadAllMultiAlternatives(IMultiAccessorBase multiField,
-			LabeledMultiStringControl destination)
+		protected static void LoadAllMultiAlternatives(IMultiAccessorBase multiField, LabeledMultiStringControl destination)
 		{
 			var cws = destination.NumberOfWritingSystems;
 			for (var i = 0; i < cws; i++)
@@ -163,8 +163,7 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		protected static void SetAllMultiAlternatives(IMultiAccessorBase multiField,
-			LabeledMultiStringControl source)
+		protected static void SetAllMultiAlternatives(IMultiAccessorBase multiField, LabeledMultiStringControl source)
 		{
 			var cws = source.NumberOfWritingSystems;
 			for (var i = 0; i < cws; i++)
@@ -179,16 +178,12 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		private void InitializeWSCombo()
 		{
-			m_wsCombo.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnals,
-				xWorksStrings.AllAnalysisWs));
-			m_wsCombo.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVerns,
-				xWorksStrings.AllVernacularWs));
-			m_wsCombo.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnalVerns,
-				xWorksStrings.AllAnalysisVernacularWs));
-			m_wsCombo.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVernAnals,
-				xWorksStrings.AllVernacularAnalysisWs));
+			m_wsCombo.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnals, xWorksStrings.AllAnalysisWs));
+			m_wsCombo.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVerns, xWorksStrings.AllVernacularWs));
+			m_wsCombo.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnalVerns, xWorksStrings.AllAnalysisVernacularWs));
+			m_wsCombo.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVernAnals, xWorksStrings.AllVernacularAnalysisWs));
 			m_wsCombo.SelectedIndex = 0;
-			m_wsCombo.LostFocus += new EventHandler(m_wsCombo_LostFocus);
+			m_wsCombo.LostFocus += m_wsCombo_LostFocus;
 		}
 
 		void m_wsCombo_LostFocus(object sender, EventArgs e)
@@ -271,16 +266,14 @@ namespace LanguageExplorer.Works
 			get
 			{
 				var repo = Cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
-				var wsf = Cache.WritingSystemFactory;
 				var cws = m_lmscListName.NumberOfWritingSystems;
 				for (var i = 0; i < cws; i++)
 				{
 					var curWs = m_lmscListName.Ws(i);
 					var emptyStr = TsStringUtils.EmptyString(curWs).Text;
 					var lmscName = m_lmscListName.Value(curWs).Text;
-					if (repo.AllInstances().Where(
-						list => list.Name.get_String(curWs).Text != emptyStr
-							&& list.Name.get_String(curWs).Text == lmscName).Any())
+					if (repo.AllInstances().Any(list => list.Name.get_String(curWs).Text != emptyStr
+							&& list.Name.get_String(curWs).Text == lmscName))
 						return true;
 				}
 				return false;
@@ -308,32 +301,12 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		protected virtual void DoOKAction()
 		{
-			ReloadListsArea();
-		}
-
-		private void ReloadListsArea()
-		{
-			m_publisher.Publish("ReloadAreaTools", "lists");
 		}
 
 		/// <summary>
-		/// FDO cache. Use setter ONLY in tests
+		/// FDO cache.
 		/// </summary>
-		protected LcmCache Cache
-		{
-			get
-			{
-				if (m_propertyTable == null)
-					return null;
-				if (m_cache == null)
-					m_cache = m_propertyTable.GetValue<LcmCache>("cache");
-				return m_cache;
-			}
-			set
-			{
-				m_cache = value;
-			}
-		}
+		protected LcmCache Cache => m_cache;
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
@@ -369,10 +342,8 @@ namespace LanguageExplorer.Works
 
 			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
-				if (m_helpProvider != null)
-					m_helpProvider.Dispose();
+				components?.Dispose();
+				m_helpProvider?.Dispose();
 			}
 			m_helpProvider = null;
 			base.Dispose(disposing);
@@ -382,52 +353,42 @@ namespace LanguageExplorer.Works
 
 		#region Public Properties
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the text in the "Name of List" text box for a particular ws.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected void SetListName(ITsString listName, int ws)
 		{
 			m_lmscListName.SetValue(ws, listName);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the text in the "Name of List" text box for a particular ws.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected ITsString GetListName(int ws)
 		{
 			return m_lmscListName.Value(ws);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the text in the "Description" text box for a particular ws.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected void SetDescription(ITsString description, int ws)
 		{
 			m_lmscDescription.SetValue(ws, description);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the text in the "Description" text box for a particular ws.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected ITsString GetDescription(int ws)
 		{
 			return m_lmscDescription.Value(ws);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the selected WritingSystemServices Id from the writing system combo box.
 		/// Can also set the currently selected item when editing properties of an existing list.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public int SelectedWs
 		{
 			get { return ((IdAndString<int>)m_wsCombo.SelectedItem).Id; }
@@ -443,48 +404,40 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the selected PossNameType from the "Display items in the list by" combo box.
 		/// Can also set the currently selected item when editing properties of an existing list.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public PossNameType DisplayBy
 		{
 			get { return ((IdAndString<PossNameType>)m_displayByCombo.SelectedItem).Id; }
 			set { m_displayByCombo.SelectedIndex = (int)value; }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets whether the "Support hierarchy" checkbox is checked or not.
 		/// Can also set an existing value when editing properties of an existing list.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public bool SupportsHierarchy
 		{
 			get { return m_chkBoxHierarchy.Checked; }
 			set { m_chkBoxHierarchy.Checked = value; }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets whether the "Sort items by name" checkbox is checked or not.
 		/// Can also set an existing value when editing properties of an existing list.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public bool SortByName
 		{
 			get { return m_chkBoxSortBy.Checked; }
 			set { m_chkBoxSortBy.Checked = value; }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets whether the "Allow duplicate item names and abbrev." checkbox is checked or not.
 		/// Can also set an existing value when editing properties of an existing list.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public bool AllowDuplicate
 		{
 			get { return m_chkBoxDuplicate.Checked; }
@@ -533,31 +486,34 @@ namespace LanguageExplorer.Works
 		#endregion
 	}
 
-	public class AddListDlg : CustomListDlg
+	public class AddCustomListDlg : CustomListDlg
 	{
-		/// ------------------------------------------------------------------------------------
+		private ICmPossibilityList _newList;
+
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:AddListDlg"/> class.
+		/// Initializes a new instance of the <see cref="T:AddCustomListDlg"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public AddListDlg(IPropertyTable propertyTable, IPublisher publisher)
-			: base(propertyTable, publisher)
+		public AddCustomListDlg(IPropertyTable propertyTable, IPublisher publisher, LcmCache cache)
+			: base(propertyTable, publisher, cache)
 		{
 			s_helpTopic = "khtpNewCustomList";
+			_newList = null;
 		}
+
+		/// <summary>
+		/// Get the new list, if it was created, or null.
+		/// </summary>
+		public ICmPossibilityList NewList => _newList;
 
 		protected override void DoOKAction()
 		{
 			if (IsListNameEmpty)
 			{
-				MessageBox.Show(xWorksStrings.ksProvideValidListName, xWorksStrings.ksNoListName,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(xWorksStrings.ksProvideValidListName, xWorksStrings.ksNoListName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				_newList = null;
 				return;
 			}
-			var fCreated = CreateList();
-			if (!fCreated)
-				return;
-			base.DoOKAction(); // refresh Lists area (to include new list)
+			CreateList();
 		}
 
 		protected override void InitializeDialogFields()
@@ -571,14 +527,17 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Creates the new Custom list.
 		/// </summary>
-		/// <returns>true if a list was created.</returns>
-		private bool CreateList()
+		private void CreateList()
 		{
 			if (m_publisher == null || Cache == null)
+			{
 				throw new ArgumentException("Don't call this without a publisher and a cache.");
+			}
 			if (IsListNameEmpty)
+			{
 				// shouldn't ever get here because OK btn isn't enabled until name has a non-empty value
 				throw new ArgumentException("Please provide a valid list name.");
+			}
 
 			// This checks that we aren't creating a list with the same name as another list
 			// but it doesn't always look like it because the name in the list and on FLEx (in Lists area)
@@ -586,35 +545,26 @@ namespace LanguageExplorer.Works
 			// This will likely get taken care of by a data migration to change internal list names.
 			if (IsListNameDuplicated)
 			{
-				MessageBox.Show(xWorksStrings.ksChooseAnotherListName, xWorksStrings.ksDuplicateName,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return false;
+				MessageBox.Show(xWorksStrings.ksChooseAnotherListName, xWorksStrings.ksDuplicateName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
 			}
-			UndoableUnitOfWorkHelper.Do(xWorksStrings.ksUndoCreateList, xWorksStrings.ksRedoCreateList,
-				Cache.ActionHandlerAccessor, () =>
+			UndoableUnitOfWorkHelper.Do(xWorksStrings.ksUndoCreateList, xWorksStrings.ksRedoCreateList, Cache.ActionHandlerAccessor, () =>
 				{
 					var ws = Cache.DefaultUserWs; // get default ws
 					var listName = m_lmscListName.Value(ws);
-					var newList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned(
-						listName.Text, ws);
-					SetAllMultiAlternatives(newList.Name, m_lmscListName);
+					_newList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned(listName.Text, ws);
+					SetAllMultiAlternatives(_newList.Name, m_lmscListName);
 
 					// Set various properties of CmPossibilityList
-					newList.DisplayOption = (int)DisplayBy;
-					newList.PreventDuplicates = !AllowDuplicate;
-					newList.IsSorted = SortByName;
+					_newList.DisplayOption = (int)DisplayBy;
+					_newList.PreventDuplicates = !AllowDuplicate;
+					_newList.IsSorted = SortByName;
 					var wss = SelectedWs;
-					newList.WsSelector = wss;
-					if (wss == WritingSystemServices.kwsVerns || wss == WritingSystemServices.kwsVernAnals)
-						newList.IsVernacular = true;
-					else
-						newList.IsVernacular = false;
-					newList.Depth = 1;
-					if (SupportsHierarchy)
-						newList.Depth = 127;
-					SetAllMultiAlternatives(newList.Description, m_lmscDescription);
+					_newList.WsSelector = wss;
+					_newList.IsVernacular = wss == WritingSystemServices.kwsVerns || wss == WritingSystemServices.kwsVernAnals;
+					_newList.Depth = SupportsHierarchy ? 127 : 1;
+					SetAllMultiAlternatives(_newList.Description, m_lmscDescription);
 				});
-			return true;
 		}
 	}
 
@@ -633,7 +583,6 @@ namespace LanguageExplorer.Works
 		/// 'false' if no changes have been made.
 		/// </summary>
 		private bool m_fchangesMade;
-
 		private bool m_fnameChanged;
 		private bool m_fhierarchyChanged;
 		private bool m_fsortChanged;
@@ -644,13 +593,11 @@ namespace LanguageExplorer.Works
 
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:ConfigureListDlg"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ConfigureListDlg(IPropertyTable propertyTable, IPublisher publisher, ICmPossibilityList possList) :
-			base(propertyTable, publisher)
+		public ConfigureListDlg(IPropertyTable propertyTable, IPublisher publisher, LcmCache cache, ICmPossibilityList possList)
+			: base(propertyTable, publisher, cache)
 		{
 			m_curList = possList;
 			m_fchangesMade = false;
@@ -762,23 +709,20 @@ namespace LanguageExplorer.Works
 			m_fdescriptionChanged = HasDescriptionChanged(m_curList);
 			CheckFlags();
 			if (!m_fchangesMade)
+			{
 				return; // Nothing to do!
+			}
 			if (m_fnameChanged && IsListNameDuplicated)
 			{
-				MessageBox.Show(xWorksStrings.ksChooseAnotherListName, xWorksStrings.ksDuplicateName,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(xWorksStrings.ksChooseAnotherListName, xWorksStrings.ksDuplicateName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
 
 			UndoableUnitOfWorkHelper.Do(xWorksStrings.ksUndoConfigureList, xWorksStrings.ksRedoConfigureList,
 				Cache.ActionHandlerAccessor, () =>
 				{
-					var wsToUse = Cache.DefaultAnalWs;
 					m_curList.WsSelector = SelectedWs;
-					if (SelectedWs == WritingSystemServices.kwsVerns || SelectedWs == WritingSystemServices.kwsVernAnals)
-						m_curList.IsVernacular = true;
-					else
-						m_curList.IsVernacular = false;
+					m_curList.IsVernacular = SelectedWs == WritingSystemServices.kwsVerns || SelectedWs == WritingSystemServices.kwsVernAnals;
 					SetAllMultiAlternatives(m_curList.Name, m_lmscListName);
 					SetAllMultiAlternatives(m_curList.Description, m_lmscDescription);
 					m_curList.DisplayOption = (int)DisplayBy;
@@ -786,8 +730,7 @@ namespace LanguageExplorer.Works
 					m_curList.PreventDuplicates = !AllowDuplicate;
 					m_curList.Depth = SupportsHierarchy ? 127 : 1;
 				});
-				ResetAllFlags();
-			base.DoOKAction(); // resets Lists area (to incorporate changes just made)
+			ResetAllFlags();
 		}
 
 		/// <summary>
@@ -799,17 +742,15 @@ namespace LanguageExplorer.Works
 			get
 			{
 				var repo = Cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
-				var wsf = Cache.WritingSystemFactory;
 				var cws = m_lmscListName.NumberOfWritingSystems;
 				for (var i = 0; i < cws; i++)
 				{
 					var curWs = m_lmscListName.Ws(i);
 					var emptyStr = TsStringUtils.EmptyString(curWs).Text;
 					var lmscName = m_lmscListName.Value(curWs).Text;
-					if (repo.AllInstances().Where(
-						list => list != m_curList
+					if (repo.AllInstances().Any(list => list != m_curList
 							&& list.Name.get_String(curWs).Text != emptyStr
-							&& list.Name.get_String(curWs).Text == lmscName).Any())
+							&& list.Name.get_String(curWs).Text == lmscName))
 						return true;
 				}
 				return false;
@@ -818,14 +759,12 @@ namespace LanguageExplorer.Works
 
 		private bool HasDescriptionChanged(ICmMajorObject list)
 		{
-			var oldstrings = list.Description;
-			return HasMsContentChanged(oldstrings, m_lmscDescription);
+			return HasMsContentChanged(list.Description, m_lmscDescription);
 		}
 
 		private bool HasListNameChanged(ICmMajorObject list)
 		{
-			var oldstrings = list.Name;
-			return HasMsContentChanged(oldstrings, m_lmscListName);
+			return HasMsContentChanged(list.Name, m_lmscListName);
 		}
 
 		private static bool HasMsContentChanged(IMultiAccessorBase oldStrings, LabeledMultiStringControl msControl)

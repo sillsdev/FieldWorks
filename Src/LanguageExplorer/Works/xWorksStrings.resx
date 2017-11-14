@@ -604,11 +604,11 @@ Are you SURE you want to delete the field {2}?</value>
   </data>
   <data name="ksChooseAnotherListName" xml:space="preserve">
     <value>That name is already in use by another list.</value>
-    <comment>used by AddListDlg</comment>
+    <comment>used by AddCustomListDlg</comment>
   </data>
   <data name="ksDuplicateName" xml:space="preserve">
     <value>Duplicate List Name</value>
-    <comment>used by AddListDlg</comment>
+    <comment>used by AddCustomListDlg</comment>
   </data>
   <data name="ksUndoInsertMedia" xml:space="preserve">
     <value>Undo Insert Media</value>
@@ -632,11 +632,11 @@ Are you SURE you want to delete the field {2}?</value>
   </data>
   <data name="ksNoListName" xml:space="preserve">
     <value>No List Name</value>
-    <comment>used by AddListDlg</comment>
+    <comment>used by AddCustomListDlg</comment>
   </data>
   <data name="ksProvideValidListName" xml:space="preserve">
     <value>Please provide a valid list name.</value>
-    <comment>used by AddListDlg</comment>
+    <comment>used by AddCustomListDlg</comment>
   </data>
   <data name="ksReferencedPossibility" xml:space="preserve">
     <value>At least one item in this list is referenced elsewhere in the project.

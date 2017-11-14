@@ -242,4 +242,19 @@
     <value>..\..\Resources\ReversalToolReversalIndexPOSRecordEditViewParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
+  <data name="AddCustomList" xml:space="preserve">
+    <value>Custom _List...</value>
+  </data>
+  <data name="AddCustomListTooltip" xml:space="preserve">
+    <value>Add a custom list.</value>
+  </data>
+  <data name="ConfigureList" xml:space="preserve">
+    <value>List...</value>
+  </data>
+  <data name="ConfigureListTooltip" xml:space="preserve">
+    <value>Configure properties of a list.</value>
+  </data>
+  <data name="DeleteCustomList" xml:space="preserve">
+    <value>Delete Custom _List</value>
+  </data>
 </root>

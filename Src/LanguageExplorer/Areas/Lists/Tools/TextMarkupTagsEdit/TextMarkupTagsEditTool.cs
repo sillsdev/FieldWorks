@@ -63,7 +63,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 				_recordClerk =
 					majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(TextMarkupTagsList, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
-			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, _recordClerk);
+			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, (IListArea)_area, _recordClerk);
 
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.

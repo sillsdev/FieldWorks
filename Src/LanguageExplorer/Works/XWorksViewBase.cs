@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,7 +15,6 @@ using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 using SIL.Xml;
 
 namespace LanguageExplorer.Works
@@ -36,10 +35,6 @@ namespace LanguageExplorer.Works
 		public enum TreebarAvailability {Required, NotAllowed, NotMyBusiness};
 
 		#endregion Enumerations
-
-		#region Event declaration
-
-		#endregion Event declaration
 
 		#region Data members
 		/// <summary>
@@ -499,17 +494,6 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		private void ReloadListsArea()
-		{
-			Publisher.Publish("ReloadAreaTools", "lists");
-		}
-
-		private void DoDeleteCustomListCmd(ICmPossibilityList curList)
-		{
-			UndoableUnitOfWorkHelper.Do(xWorksStrings.ksUndoDeleteCustomList, xWorksStrings.ksRedoDeleteCustomList,
-										Cache.ActionHandlerAccessor, () => new DeleteCustomList(Cache).Run(curList));
-		}
-
 		#endregion Event handlers
 
 #if RANDYTODO
@@ -566,29 +550,15 @@ namespace LanguageExplorer.Works
 		{
 			CheckDisposed();
 
-			// No, as it can be using a config node that is correctly set to false, and we really wanted some other node,
-			// in order to see the menu in the main Lexicon Edit tool.
-			// bool fEditable = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParametersElement, "editable", true);
-
-			// In order for this menu to be visible and enabled it has to be in the correct area (lexicon)
-			// and the right tool(s).
-			// Tools that allow this menu, as far as I (RandyR) can tell, as of 24 May 2007:
-			// "lexiconEdit", "bulkEditEntries", "lexiconBrowse", and "bulkEditSenses"
-			// I searched through JIRA to see if there was an offical list, and couldn't find such a list.
-			// The old code tried to fish out some 'editable' attr from the xml file,
-			// but in some contexts in switching tools in the Lexicon area, the config file was for the dictionary preview
-			// control, which was set to 'false'. That makes sense, since the view itself isn't editable.
-			// No: if (areaChoice == AreaServices.InitialAreaMachineName && fEditable && (m_vectorName == "entries" || m_vectorName == "AllSenses"))
 			string toolChoice = m_propertyTable.GetValue("toolChoice", string.Empty);
 			string areaChoice = m_propertyTable.GetValue("areaChoice", string.Empty);
 			bool inFriendlyTerritory = false;
 			switch (areaChoice)
 			{
-				case AreaServices.InitialAreaMachineName:
-					inFriendlyTerritory = toolChoice == "lexiconEdit" || toolChoice == "bulkEditEntriesOrSenses" ||
-										  toolChoice == "lexiconBrowse";
+				case AreaServices.LexiconAreaMachineName:
+					inFriendlyTerritory = toolChoice == "lexiconEdit" || toolChoice == "bulkEditEntriesOrSenses" || toolChoice == "lexiconBrowse";
 					break;
-				case "notebook":
+				case AreaServices.NotebookAreaMachineName:
 					inFriendlyTerritory = toolChoice == "notebookEdit" || toolChoice == "notebookBrowse";
 					break;
 			}
@@ -613,10 +583,10 @@ namespace LanguageExplorer.Works
 			string areaChoice = PropertyTable.GetValue("areaChoice", string.Empty);
 			switch (areaChoice)
 			{
-				case AreaServices.InitialAreaMachineName:
+				case AreaServices.LexiconAreaMachineName:
 					locationType = AddCustomFieldDlg.LocationType.Lexicon;
 					break;
-				case "notebook":
+				case AreaServices.NotebookAreaMachineName:
 					locationType = AddCustomFieldDlg.LocationType.Notebook;
 					break;
 			}
@@ -625,106 +595,6 @@ namespace LanguageExplorer.Works
 				if (dlg.ShowCustomFieldWarning(this))
 					dlg.ShowDialog(this);
 			}
-
-			return true;	// handled
-		}
-
-#if RANDYTODO
-		public bool OnDisplayConfigureList(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			// In order for this menu to be visible and enabled it has to be in the correct area (lists)
-			var areaChoice = m_propertyTable.GetValue("areaChoice", string.Empty);
-			var inFriendlyTerritory = false;
-			switch (areaChoice)
-			{
-				case "lists":
-					inFriendlyTerritory = true;
-					break;
-			}
-
-			display.Enabled = display.Visible = inFriendlyTerritory;
-			return true;
-		}
-#endif
-
-		public bool OnConfigureList(object argument)
-		{
-			CheckDisposed();
-
-			if (Clerk != null && Clerk.OwningObject != null && (Clerk.OwningObject is ICmPossibilityList))
-				using (var dlg = new ConfigureListDlg(PropertyTable, Publisher, (ICmPossibilityList) Clerk.OwningObject))
-					dlg.ShowDialog(this);
-
-			return true;	// handled
-		}
-
-#if RANDYTODO
-		public bool OnDisplayAddCustomList(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			// In order for this menu to be visible and enabled it has to be in the correct area (lists)
-			var areaChoice = m_propertyTable.GetValue("areaChoice", string.Empty);
-			var inFriendlyTerritory = false;
-			switch (areaChoice)
-			{
-				case "lists":
-					inFriendlyTerritory = true;
-					break;
-			}
-
-			display.Enabled = display.Visible = inFriendlyTerritory;
-			return true;
-		}
-#endif
-
-		public bool OnAddCustomList(object argument)
-		{
-			CheckDisposed();
-
-			using (var dlg = new AddListDlg(PropertyTable, Publisher))
-				dlg.ShowDialog(this);
-
-			return true;	// handled
-		}
-
-#if RANDYTODO
-		public bool OnDisplayDeleteCustomList(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			// In order for this menu to be visible and enabled it has to be in the correct area (lists)
-			var areaChoice = m_propertyTable.GetValue("areaChoice", string.Empty);
-			var inFriendlyTerritory = false;
-			switch (areaChoice)
-			{
-				case "lists":
-					// Is currently selected list a Custom list?
-					if (Clerk == null || Clerk.OwningObject == null || !(Clerk.OwningObject is ICmPossibilityList))
-						break; // handled, but not a valid selection
-					var possList = Clerk.OwningObject as ICmPossibilityList;
-					if (possList.Owner == null)
-						inFriendlyTerritory = true; // a Custom list
-					break;
-			}
-
-			display.Enabled = display.Visible = inFriendlyTerritory;
-			return true;
-		}
-#endif
-
-		public bool OnDeleteCustomList(object argument)
-		{
-			CheckDisposed();
-
-			// Get currently selected list
-			if (Clerk == null || Clerk.OwningObject == null || !(Clerk.OwningObject is ICmPossibilityList))
-				return true; // handled, but not a valid selection
-			var listToDelete = Clerk.OwningObject as ICmPossibilityList;
-			DoDeleteCustomListCmd(listToDelete);
-			ReloadListsArea(); // Redisplay lists without this one
 
 			return true;	// handled
 		}

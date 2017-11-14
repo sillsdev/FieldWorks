@@ -287,9 +287,6 @@ namespace LanguageExplorer.Impls
 		private void SetupOutlookBar()
 		{
 			mainContainer.SuspendLayout();
-			_sidePane.TabStop = true;
-			_sidePane.TabIndex = 0;
-			_sidePane.ItemAreaStyle = SidePaneItemAreaStyle.List;
 
 			mainContainer.Tag = "SidebarWidthGlobal";
 			mainContainer.Panel1MinSize = CollapsingSplitContainer.kCollapsedSize;
@@ -300,32 +297,8 @@ namespace LanguageExplorer.Impls
 			{
 				SetSplitContainerDistance(mainContainer, sd);
 			}
-			// Add areas and tools to "_sidePane";
-			foreach (var area in _areaRepository.AllAreasInOrder)
-			{
-				var tab = new Tab(StringTable.Table.LocalizeLiteralValue(area.UiName))
-				{
-					Icon = area.Icon,
-					Tag = area,
-					Name = area.MachineName
-				};
+			_sidePane.Initalize(_areaRepository);
 
-				_sidePane.AddTab(tab);
-
-				// Add tools for area.
-				foreach (var tool in area.AllToolsInOrder)
-				{
-					var item = new Item(StringTable.Table.LocalizeLiteralValue(tool.UiName))
-					{
-						Icon = tool.Icon,
-						Tag = tool,
-						Name = tool.MachineName
-					};
-					_sidePane.AddItem(tab, item);
-				}
-			}
-
-			// TODO: If no tool has been persisted, or persisted tool is not in persisted area, pick the default for persisted area.
 			mainContainer.ResumeLayout(false);
 		}
 
@@ -334,13 +307,15 @@ namespace LanguageExplorer.Impls
 			var clickedTool = (ITool)itemClicked.Tag;
 			if (_currentTool == clickedTool)
 			{
-				return;  // Nothing to do.
+				_currentArea.ActiveTool = clickedTool;
+				return;  // Not much else to do.
 			}
 
 			ClearDuringTransition();
-
+			_currentArea.ActiveTool = null;
 			_currentTool?.Deactivate(_majorFlexComponentParameters);
 			_currentTool = clickedTool;
+			_currentArea.ActiveTool = clickedTool;
 			var areaName = _currentArea.MachineName;
 			var toolName = _currentTool.MachineName;
 			PropertyTable.SetProperty($"{AreaServices.ToolForAreaNamed_}{areaName}", toolName, SettingsGroup.LocalSettings, true, false);
@@ -369,12 +344,17 @@ namespace LanguageExplorer.Impls
 			var clickedArea = (IArea)tabClicked.Tag;
 			if (_currentArea == clickedArea)
 			{
-				return; // Nothing to do.
+				_currentArea.ActiveTool = null;
+				return; // Not much else to do.
 			}
 
 			ClearDuringTransition();
 
-			_currentArea?.Deactivate(_majorFlexComponentParameters);
+			if (_currentArea != null)
+			{
+				_currentArea.Deactivate(_majorFlexComponentParameters);
+				_currentArea.ActiveTool = null;
+			}
 			_currentArea = clickedArea;
 			PropertyTable.SetProperty("areaChoice", _currentArea.MachineName, SettingsGroup.LocalSettings, true, false);
 			_currentArea.Activate(_majorFlexComponentParameters);
@@ -719,7 +699,8 @@ namespace LanguageExplorer.Impls
 				flexComponentParameters,
 				Cache,
 				_flexApp,
-				this);
+				this,
+				_sidePane);
 
 			// Most tools show it, but let them deal with it and its event handler.
 			var fileExportMenu = MenuServices.GetFileExportMenu(_majorFlexComponentParameters.MenuStrip);

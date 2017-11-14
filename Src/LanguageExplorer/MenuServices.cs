@@ -103,6 +103,11 @@ namespace LanguageExplorer
 			return GetMenu(menustrip, LanguageExplorerConstants.ToolsToolStripMenuItem);
 		}
 
+		internal static ToolStripMenuItem GetToolsConfigureMenu(MenuStrip menustrip)
+		{
+			return GetMenu(GetMenu(menustrip, LanguageExplorerConstants.ToolsToolStripMenuItem).DropDownItems, "configureToolStripMenuItem");
+		}
+
 		#endregion Tools menu
 
 		#region Help menu
