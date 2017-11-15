@@ -132,7 +132,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => "ProdRestrictEdit";
+		public string MachineName => AreaServices.ProdRestrictEditMachineName;
 
 		/// <summary>
 		/// User-visible localizable component name.

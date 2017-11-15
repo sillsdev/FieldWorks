@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -438,7 +439,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			if (hvo == 0)
 				return;
 			ICmObject cmo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-			FwAppArgs link = new FwAppArgs(m_cache.ProjectId.Handle, "lexiconEdit", cmo.Guid);
+			FwAppArgs link = new FwAppArgs(m_cache.ProjectId.Handle, AreaServices.LexiconEditMachineName, cmo.Guid);
 			IApp app = m_propertyTable.GetValue<IApp>("App");
 			app.HandleOutgoingLink(link);
 		}

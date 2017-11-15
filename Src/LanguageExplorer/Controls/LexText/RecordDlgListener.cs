@@ -157,7 +157,7 @@ namespace LanguageExplorer.Controls.LexText
 			get
 			{
 				string areaChoice = PropertyTable.GetValue<string>("areaChoice");
-				var areas = new[] { "notebook" };
+				var areas = new[] { AreaServices.NotebookAreaMachineName };
 				foreach (string area in areas)
 				{
 					if (area == areaChoice)

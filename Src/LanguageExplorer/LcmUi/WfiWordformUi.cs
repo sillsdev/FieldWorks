@@ -4,6 +4,7 @@
 
 using System.Diagnostics;
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using SIL.LCModel;
 
 namespace LanguageExplorer.LcmUi
@@ -68,7 +69,7 @@ namespace LanguageExplorer.LcmUi
 
 		protected override bool IsAcceptableContextToJump(string toolCurrent, string toolTarget)
 		{
-			if (toolCurrent == "wordListConcordance" && toolTarget == "concordance")
+			if (toolCurrent == AreaServices.WordListConcordanceMachineName && toolTarget == AreaServices.ConcordanceMachineName)
 				return false;
 			return base.IsAcceptableContextToJump(toolCurrent, toolTarget);
 		}

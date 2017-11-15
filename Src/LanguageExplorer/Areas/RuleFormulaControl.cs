@@ -567,7 +567,7 @@ namespace LanguageExplorer.Areas
 				case RuleInsertType.Phoneme:
 					IEnumerable<IPhPhoneme> phonemes = m_cache.LangProject.PhonologicalDataOA.PhonemeSetsOS[0].PhonemesOC.OrderBy(ph => ph.ShortName);
 					ICmObject phonemeObj = DisplayChooser(AreaResources.ksRulePhonemeOpt, AreaResources.ksRulePhonemeChooserLink,
-						"phonemeEdit", "RulePhonemeFlatList", phonemes);
+						AreaServices.PhonemeEditMachineName, "RulePhonemeFlatList", phonemes);
 					var phoneme = phonemeObj as IPhPhoneme;
 					if (phoneme == null)
 						return;
@@ -580,7 +580,7 @@ namespace LanguageExplorer.Areas
 				case RuleInsertType.NaturalClass:
 					IEnumerable<IPhNaturalClass> natClasses = m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.OrderBy(natc => natc.ShortName);
 					ICmObject ncObj = DisplayChooser(AreaResources.ksRuleNCOpt, AreaResources.ksRuleNCChooserLink,
-						"naturalClassEdit", "RuleNaturalClassFlatList", natClasses);
+						AreaServices.NaturalClassEditMachineName, "RuleNaturalClassFlatList", natClasses);
 					var nc = ncObj as IPhNaturalClass;
 					if (nc == null)
 						return;

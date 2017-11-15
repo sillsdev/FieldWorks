@@ -1163,9 +1163,8 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		{
 			CheckDisposed();
 
-			string toolChoice = m_propertyTable.GetValue("toolChoice", "");
-			bool fVisible = m_rtPane != null && (m_tabCtrl.SelectedIndex == (int)TabPageSelection.RawText) && InFriendlyArea
-				&& toolChoice != "wordListConcordance";
+			string toolChoice = m_propertyTable.GetValue("toolChoice", string.Empty);
+			bool fVisible = m_rtPane != null && (m_tabCtrl.SelectedIndex == (int)TabPageSelection.RawText) && InFriendlyArea && toolChoice != AreaServices.WordListConcordanceMachineName;
 			display.Visible = fVisible;
 
 			if (fVisible && m_rtPane.RootBox != null)
@@ -1368,17 +1367,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// determine if this is the correct place [it's the only one that handles the message, and
 		/// it defaults to false, so it should be]
 		/// </summary>
-		protected bool InFriendlyArea
-		{
-			get
-			{
-				string desiredArea = "textsWords";
-
-				// see if it's the right area
-				string areaChoice = PropertyTable.GetValue<string>("areaChoice");
-				return areaChoice != null && areaChoice == desiredArea;
-			}
-		}
+		protected bool InFriendlyArea => PropertyTable.GetValue("areaChoice", string.Empty) == AreaServices.TextAndWordsAreaMachineName;
 
 		/// <summary>
 		/// determine if we're in the (given) tool
@@ -1387,8 +1376,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// <returns></returns>
 		protected bool InFriendlyTool(string desiredTool)
 		{
-			var toolChoice = PropertyTable.GetValue<string>($"{AreaServices.ToolForAreaNamed_}textsWords");
-			return toolChoice != null && toolChoice == desiredTool;
+			return PropertyTable.GetValue($"{AreaServices.ToolForAreaNamed_}{AreaServices.TextAndWordsAreaMachineName}", string.Empty) == desiredTool;
 		}
 
 #if RANDYTODO
@@ -1439,7 +1427,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		{
 			CheckDisposed();
 
-			display.Enabled = display.Visible = InFriendlyArea && InFriendlyTool("interlinearEdit");
+			display.Enabled = display.Visible = InFriendlyArea && InFriendlyTool(AreaServices.InterlinearEditMachineName);
 			return true; //we've handled this
 		}
 #endif

@@ -331,21 +331,16 @@
 	-->
 	<menubar>
 		<menu id="Edit" label="_Edit" b4InsertMenu="true" a10status="PARTIALLY_DONE" >
-			<item label="-" translate="do not translate" a10status="DONE" />
-			<item command="CmdGoToRecord" a10status="Defined in Notebook Area file" />
+		  <!-- START include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
+		  <include path="Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>
+		  <!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
 <!-- These are the places that handle "CmdFindAndReplaceText" & "CmdReplaceText":
-XmlDocView users:
-  C:\Dev\fwrepo\fw\DistFiles\Language Explorer\Configuration\Lexicon\Dictionary\toolConfiguration.xml(28):
-  		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.XmlDocView"/>
-  C:\Dev\fwrepo\fw\DistFiles\Language Explorer\Configuration\Lexicon\RDE\toolConfiguration.xml(283):
-  		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.XmlDocView"/>
-  C:\Dev\fwrepo\fw\DistFiles\Language Explorer\Configuration\Lexicon\ReversalIndices\toolConfiguration.xml(13):
-  		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.XmlDocView"/>
-  C:\Dev\fwrepo\fw\DistFiles\Language Explorer\Configuration\Notebook\Document\toolConfiguration.xml(10):
-  		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.XmlDocView"/>
-InterlinMaster user:
-  C:\Dev\fwrepo\fw\DistFiles\Language Explorer\Configuration\Words\Texts\toolConfiguration.xml(16):
-  		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinMaster"/> -->
+XmlDocView users: (Lexicon: Dictionary/RDE/ReversalIndices) & (Notebook: Document)
+XhtmlDocView user (only CmdFindAndReplaceText): (Lexicon: Dictionary/ReversalEdit)
+These two only show if the "Baseline" tab is selected (tools: Interlinear Texts/Concordance/ComplexConcordance) AND is only enabled in 'Interlinear Texts'
+InterlinMaster user: (T&W: interlinearEdit/complexConcordance(subclass))
+InterlinMasterNoTitleBar user: (T&W: complexConcordance/concordance/wordListConcordance)
+-->
 			<!-- for Notebook currently-->
 			<item command="CmdFindAndReplaceText" defaultVisible="true" a10status="NOT_GLOBAL" />
 			<item command="CmdReplaceText" defaultVisible="true" a10status="NOT_GLOBAL" />

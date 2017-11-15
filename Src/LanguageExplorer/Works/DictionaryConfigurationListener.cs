@@ -118,12 +118,12 @@ namespace LanguageExplorer.Works
 			var toolChoice = propertyTable.GetValue<string>("toolChoice");
 			switch (toolChoice)
 			{
-				case "reversalToolBulkEditReversalEntries":
-				case "reversalToolEditComplete":
+				case AreaServices.ReversalBulkEditReversalEntriesMachineName:
+				case AreaServices.ReversalEditCompleteMachineName:
 					return xWorksStrings.ReversalIndex;
-				case "lexiconBrowse":
-				case "lexiconDictionary":
-				case "lexiconEdit":
+				case AreaServices.LexiconBrowseMachineName:
+				case AreaServices.LexiconDictionaryMachineName:
+				case AreaServices.LexiconEditMachineName:
 					return "Dictionary";
 				default:
 					return null;
@@ -191,12 +191,12 @@ namespace LanguageExplorer.Works
 		{
 			switch(propertyTable.GetValue<string>("toolChoice"))
 			{
-				case "reversalBulkEditReversalEntries":
-				case "reversalEditComplete":
+				case AreaServices.ReversalBulkEditReversalEntriesMachineName:
+				case AreaServices.ReversalEditCompleteMachineName:
 					return ReversalIndexConfigurationDirectoryName;
-				case "lexiconBrowse":
-				case "lexiconDictionary":
-				case "lexiconEdit":
+				case AreaServices.LexiconBrowseMachineName:
+				case AreaServices.LexiconDictionaryMachineName:
+				case AreaServices.LexiconEditMachineName:
 					return DictionaryConfigurationDirectoryName;
 				default:
 					return null;

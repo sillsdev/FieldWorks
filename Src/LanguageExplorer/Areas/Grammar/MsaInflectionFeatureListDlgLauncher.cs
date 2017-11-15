@@ -132,7 +132,7 @@ namespace LanguageExplorer.Areas.Grammar
 						var parms = new List<object>
 						{
 							null,
-							new FwLinkArgs("posEdit", dlg.HighestPOS.Guid)
+							new FwLinkArgs(AreaServices.PosEditMachineName, dlg.HighestPOS.Guid)
 						};
 						Publisher.Publish(commands, parms);
 					}

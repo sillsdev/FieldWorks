@@ -213,7 +213,7 @@ namespace LanguageExplorer.Dumpster
 		{
 			get
 			{
-				return (PropertyTable.GetValue<string>("areaChoice") == "textsWords");
+				return (PropertyTable.GetValue<string>("areaChoice") == AreaServices.TextAndWordsAreaMachineName);
 			}
 		}
 
@@ -225,7 +225,7 @@ namespace LanguageExplorer.Dumpster
 		{
 			get
 			{
-				return InFriendlyArea && PropertyTable.GetValue<string>($"{AreaServices.ToolForAreaNamed_}textsWords") == "Analyses";
+				return InFriendlyArea && PropertyTable.GetValue<string>($"{AreaServices.ToolForAreaNamed_}{AreaServices.TextAndWordsAreaMachineName}") == AreaServices.AnalysesMachineName;
 			}
 		}
 	}

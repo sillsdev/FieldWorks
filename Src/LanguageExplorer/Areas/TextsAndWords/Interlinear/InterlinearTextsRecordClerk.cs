@@ -200,7 +200,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			CheckDisposed();
 
-			display.Visible = IsActiveClerk && InDesiredArea("textsWords");
+			display.Visible = IsActiveClerk && InDesiredArea(AreaServices.TextAndWordsAreaMachineName);
 			if (!display.Visible)
 			{
 				display.Enabled = false;
@@ -227,7 +227,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns></returns>
 		public bool OnInsertInterlinText(object argument)
 		{
-			if (!IsActiveClerk || !InDesiredArea("textsWords"))
+			if (!IsActiveClerk || !InDesiredArea(AreaServices.TextAndWordsAreaMachineName))
 				return false;
 			return AddNewText(argument as Command);
 		}
@@ -287,7 +287,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			if (CurrentObject == null || CurrentObject.Hvo == 0)
 				return false;
-			if (!InDesiredTool("interlinearEdit"))
+			if (!InDesiredTool(AreaServices.InterlinearEditMachineName))
 			{
 				var commands = new List<string>
 						{
@@ -297,7 +297,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var parms = new List<object>
 						{
 							null,
-							new FwLinkArgs("interlinearEdit", CurrentObject.Guid)
+							new FwLinkArgs(AreaServices.InterlinearEditMachineName, CurrentObject.Guid)
 						};
 				Publisher.Publish(commands, parms);
 			}

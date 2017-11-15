@@ -165,7 +165,7 @@ namespace LanguageExplorer.Works
 			{
 				var isDictionary = exportType == DictionaryType;
 				const string area = AreaServices.InitialAreaMachineName;
-				var tool = isDictionary ? "lexiconDictionary" : "reversalToolEditComplete";
+				var tool = isDictionary ? AreaServices.LexiconDictionaryMachineName : AreaServices.ReversalEditCompleteMachineName;
 				var controlElement = AreaListener.GetContentControlParameters(null, area, tool);
 				Debug.Assert(controlElement != null, "Prepare to be disappointed, since it will be null.");
 				var parameters = controlElement.XPathSelectElement(".//parameters[@clerk]");

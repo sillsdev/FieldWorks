@@ -1592,7 +1592,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			string concordOn = PropertyTable.GetValue<string>("ConcordOn");
 			PropertyTable.RemoveProperty("ConcordOn");
 			Debug.Assert(!String.IsNullOrEmpty(toolChoice) && !String.IsNullOrEmpty(areaChoice));
-			if (areaChoice != "textsWords" || toolChoice != "concordance")
+			if (areaChoice != AreaServices.TextAndWordsAreaMachineName || toolChoice != AreaServices.ConcordanceMachineName)
 				return false;
 			int hvoTarget = (int)argument;
 			if (!m_cache.ServiceLocator.IsValidObjectId(hvoTarget))

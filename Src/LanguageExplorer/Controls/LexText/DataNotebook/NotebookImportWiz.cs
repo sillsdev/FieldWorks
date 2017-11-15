@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.RootSites;
@@ -2663,15 +2664,15 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					sw.Write(LexTextControls.ksRecordsDeletedAndCreated, m_cRecordsDeleted, m_cRecordsRead);
 				sw.WriteLine("</h3>");
 				WriteMessageLines(sw);
-				ListNewPossibilities(sw, LexTextControls.ksNewAnthropologyListItems, m_rgNewAnthroItem, "anthroEdit");
-				ListNewPossibilities(sw, LexTextControls.ksNewConfidenceListItems, m_rgNewConfidence, "confidenceEdit");
-				ListNewPossibilities(sw, LexTextControls.ksNewLocationListItems, m_rgNewLocation, "locationsEdit");
-				ListNewPossibilities(sw, LexTextControls.ksNewPeopleListItems, m_rgNewPeople, "peopleEdit");
-				ListNewPossibilities(sw, LexTextControls.ksNewPhraseTagListItems, m_rgNewPhraseTag, "");
-				ListNewPossibilities(sw, LexTextControls.ksNewRecordTypeListItems, m_rgNewRecType, "recTypeEdit");
-				ListNewPossibilities(sw, LexTextControls.ksNewRestrictionListItems, m_rgNewRestriction, "restrictionsEdit");
-				ListNewPossibilities(sw, LexTextControls.ksNewStatusListItems, m_rgNewStatus, "statusEdit");
-				ListNewPossibilities(sw, LexTextControls.ksNewTimeOfDayListItems, m_rgNewTimeOfDay, "");
+				ListNewPossibilities(sw, LexTextControls.ksNewAnthropologyListItems, m_rgNewAnthroItem, AreaServices.AnthroEditMachineName);
+				ListNewPossibilities(sw, LexTextControls.ksNewConfidenceListItems, m_rgNewConfidence, AreaServices.ConfidenceEditMachineName);
+				ListNewPossibilities(sw, LexTextControls.ksNewLocationListItems, m_rgNewLocation, AreaServices.LocationsEditMachineName);
+				ListNewPossibilities(sw, LexTextControls.ksNewPeopleListItems, m_rgNewPeople, AreaServices.PeopleEditMachineName);
+				ListNewPossibilities(sw, LexTextControls.ksNewPhraseTagListItems, m_rgNewPhraseTag, string.Empty);
+				ListNewPossibilities(sw, LexTextControls.ksNewRecordTypeListItems, m_rgNewRecType, AreaServices.RecTypeEditMachineName);
+				ListNewPossibilities(sw, LexTextControls.ksNewRestrictionListItems, m_rgNewRestriction, AreaServices.RestrictionsEditMachineName);
+				ListNewPossibilities(sw, LexTextControls.ksNewStatusListItems, m_rgNewStatus, AreaServices.StatusEditMachineName);
+				ListNewPossibilities(sw, LexTextControls.ksNewTimeOfDayListItems, m_rgNewTimeOfDay, string.Empty);
 				// now for custom lists...
 				foreach (Guid key in m_mapNewPossibilities.Keys)
 				{

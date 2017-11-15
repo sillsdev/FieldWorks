@@ -532,11 +532,11 @@ namespace LanguageExplorer.Works
 			string toolId;
 			switch (area)
 			{
-				case "notebook":
-					toolId = "notebookDocument";
+				case AreaServices.NotebookAreaMachineName:
+					toolId = AreaServices.NotebookDocumentToolMachineName;
 					break;
-				case AreaServices.InitialAreaMachineName:
-					toolId = "lexiconDictionary";
+				case AreaServices.LexiconAreaMachineName:
+					toolId = AreaServices.LexiconDictionaryMachineName;
 					break;
 				default:
 					return;

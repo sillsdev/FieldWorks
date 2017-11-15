@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -117,7 +118,7 @@ namespace LanguageExplorer.Controls.LexText
 											var parms = new List<object>
 									{
 										null,
-										new FwLinkArgs("posEdit", dlg.HighestPOS.Guid)
+										new FwLinkArgs(AreaServices.PosEditMachineName, dlg.HighestPOS.Guid)
 									};
 								m_publisher.Publish(commands, parms);
 								if (ParentForm != null && ParentForm.Modal)

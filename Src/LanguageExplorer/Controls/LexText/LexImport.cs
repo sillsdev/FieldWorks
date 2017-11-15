@@ -12,6 +12,7 @@ using System.Xml;
 using System.Xml.Xsl;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
@@ -461,7 +462,7 @@ namespace LanguageExplorer.Controls.LexText
 			if (!repo.IsValidObjectId(hvo))
 				return null;
 			Guid guid = repo.GetObject(hvo).Guid;
-			FwLinkArgs link = new FwLinkArgs("lexiconEdit", guid);
+			FwLinkArgs link = new FwLinkArgs(AreaServices.LexiconEditMachineName, guid);
 			return link.ToString();
 		}
 

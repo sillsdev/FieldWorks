@@ -181,7 +181,7 @@ namespace LanguageExplorer.Areas
 			var parms = new List<object>
 											{
 												null,
-												new FwLinkArgs("naturalClassEdit", ctxt.FeatureStructureRA.Guid)
+												new FwLinkArgs(AreaServices.NaturalClassEditMachineName, ctxt.FeatureStructureRA.Guid)
 											};
 			Publisher.Publish(commands, parms);
 			return true;
@@ -210,7 +210,7 @@ namespace LanguageExplorer.Areas
 			var parms = new List<object>
 											{
 												null,
-												new FwLinkArgs("phonemeEdit", ctxt.FeatureStructureRA.Guid)
+												new FwLinkArgs(AreaServices.PhonemeEditMachineName, ctxt.FeatureStructureRA.Guid)
 											};
 			Publisher.Publish(commands, parms);
 			return true;

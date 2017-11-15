@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Areas;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -917,7 +918,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var parms = new List<object>
 											{
 												null,
-												new FwLinkArgs("lexiconEdit", target.Guid)
+												new FwLinkArgs(AreaServices.LexiconEditMachineName, target.Guid)
 											};
 			Publisher.Publish(commands, parms);
 		}

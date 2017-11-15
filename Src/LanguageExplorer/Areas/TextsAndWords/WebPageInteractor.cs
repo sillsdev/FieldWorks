@@ -108,29 +108,29 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				case MoStemMsaTags.kClassId:				// fall through
 				case MoMorphSynAnalysisTags.kClassId:		// fall through
 				case MoAffixProcessTags.kClassId:
-					sTool = "lexiconEdit";
+					sTool = AreaServices.LexiconEditMachineName;
 					parentClassId = LexEntryTags.kClassId;
 					break;
 				case MoInflAffixSlotTags.kClassId:		// fall through
 				case MoInflAffixTemplateTags.kClassId:	// fall through
 				case PartOfSpeechTags.kClassId:
-					sTool = "posEdit";
+					sTool = AreaServices.PosEditMachineName;
 					parentClassId = PartOfSpeechTags.kClassId;
 					break;
 				// still need to test compound rule ones
 				case MoCoordinateCompoundTags.kClassId:	// fall through
 				case MoEndoCompoundTags.kClassId:		// fall through
 				case MoExoCompoundTags.kClassId:
-					sTool = "compoundRuleAdvancedEdit";
+					sTool = AreaServices.CompoundRuleAdvancedEditMachineName;
 					parentClassId = cmo.ClassID;
 					break;
 				case PhRegularRuleTags.kClassId:		// fall through
 				case PhMetathesisRuleTags.kClassId:
-					sTool = "PhonologicalRuleEdit";
+					sTool = AreaServices.PhonologicalRuleEditMachineName;
 					parentClassId = cmo.ClassID;
 					break;
 				case PhPhonemeTags.kClassId:
-					sTool = "phonemeEdit";
+					sTool = AreaServices.PhonemeEditMachineName;
 					parentClassId = cmo.ClassID;
 					break;
 			}

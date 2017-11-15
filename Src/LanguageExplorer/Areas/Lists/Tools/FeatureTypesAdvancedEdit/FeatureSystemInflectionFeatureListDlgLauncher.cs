@@ -65,7 +65,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 					var parms = new List<object>
 					{
 						null,
-						new FwLinkArgs("featuresAdvancedEdit", m_cache.LanguageProject.MsFeatureSystemOA.Guid)
+						new FwLinkArgs(AreaServices.FeaturesAdvancedEditMachineName, m_cache.LanguageProject.MsFeatureSystemOA.Guid)
 					};
 					Publisher.Publish(commands, parms);
 				}

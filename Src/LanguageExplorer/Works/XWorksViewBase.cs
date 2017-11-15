@@ -509,35 +509,27 @@ namespace LanguageExplorer.Works
 			ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
-			// In order for this menu to be visible and enabled it has to be in the correct area (lexicon)
-			// and the right tool(s).
-			// Tools that allow this menu, as far as I (RickM) can tell, as of 10 Aug 2007:
-			// (areaChoice == AreaServices.InitialAreaMachineName or "words" or "grammar" or "lists"
 
 			RecordClerk clerk = Clerk;
 			string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
-			//uncomment the following line if we need to turn on or off the Export menu item
-			//for specific tools in the various areas of the application.
-			//string toolChoice = m_mediator.PropertyTable.GetStringProperty($"{AreaServices.ToolForAreaNamed_}lexicon", null);
-			//string toolChoice = m_mediator.PropertyTable.GetStringProperty("grammarSketch_grammar", null);
 			bool inFriendlyTerritory = (areaChoice == AreaServices.InitialAreaMachineName
 #if RANDYTODO
 			// TODO: The "notebook" area uses its own dlg. See: RecordClerk's method: OnExport
 #endif
-				|| areaChoice == "notebook"
+				|| areaChoice == AreaServices.NotebookAreaMachineName
 #if RANDYTODO
 			// TODO: These "textsWords" tools use the "concordanceWords" Clerk, so can handle the File_Export menu:
 			// TODO: Analyses, bulkEditWordforms, and wordListConcordance.
 			// TODO: These tools in the "textsWords" do not support the File_Export menu, so it is not visible for them:
 			// TODO: complexConcordance, concordance, corpusStatistics, interlinearEdit
 #endif
-				|| (areaChoice == "textsWords" && clerk.Id == "concordanceWords")
+				|| (areaChoice == AreaServices.TextAndWordsAreaMachineName && clerk.Id == "concordanceWords")
 #if RANDYTODO
 			// TODO: The "grammarSketch" tool in the "grammar" area uses its own dlg. See: GrammarSketchHtmlViewer's method: OnExport
 			// TODO: All other "grammar" area tools use the basic dlg and worry about some custom lexicon properties.
 #endif
-				|| areaChoice == "grammar"
-				|| areaChoice == "lists");
+				|| areaChoice == AreaServices.GrammarAreaMachineName
+				|| areaChoice == AreaServices.ListsAreaMachineName);
 			if (inFriendlyTerritory)
 				display.Enabled = display.Visible = true;
 			else
@@ -556,10 +548,10 @@ namespace LanguageExplorer.Works
 			switch (areaChoice)
 			{
 				case AreaServices.LexiconAreaMachineName:
-					inFriendlyTerritory = toolChoice == "lexiconEdit" || toolChoice == "bulkEditEntriesOrSenses" || toolChoice == "lexiconBrowse";
+					inFriendlyTerritory = toolChoice == AreaServices.LexiconEditMachineName || toolChoice == AreaServices.BulkEditEntriesOrSensesMachineName || toolChoice == AreaServices.LexiconBrowseMachineName;
 					break;
 				case AreaServices.NotebookAreaMachineName:
-					inFriendlyTerritory = toolChoice == "notebookEdit" || toolChoice == "notebookBrowse";
+					inFriendlyTerritory = toolChoice == AreaServices.NotebookEditToolMachineName || toolChoice == AreaServices.NotebookBrowseToolMachineName;
 					break;
 			}
 

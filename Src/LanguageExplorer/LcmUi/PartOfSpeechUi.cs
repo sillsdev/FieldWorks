@@ -69,7 +69,7 @@ namespace LanguageExplorer.LcmUi
 			string tool = Utils.XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 			string toolChoice = PropTable.GetValue<string>("toolChoice");
 
-			if (tool == "posEdit" && toolChoice == "reversalToolReversalIndexPOS")
+			if (tool == AreaServices.PosEditMachineName && toolChoice == AreaServices.ReversalToolReversalIndexPOSMachineName)
 			{
 				display.Visible = display.Enabled = false; // we're already there!
 				return true;

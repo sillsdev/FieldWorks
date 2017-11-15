@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
@@ -844,7 +845,7 @@ namespace LanguageExplorer.Controls.LexText
 		private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			Guid guid = m_cache.LangProject.PhFeatureSystemOA.Guid;
-			m_link = new FwLinkArgs("phonologicalFeaturesAdvancedEdit", guid);
+			m_link = new FwLinkArgs(AreaServices.PhonologicalFeaturesAdvancedEditMachineName, guid);
 			m_btnCancel.PerformClick();
 			DialogResult = DialogResult.Ignore;
 		}

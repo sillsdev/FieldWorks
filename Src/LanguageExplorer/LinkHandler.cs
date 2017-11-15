@@ -461,7 +461,7 @@ namespace LanguageExplorer
 				if (_linkActive.TargetGuid != Guid.Empty)
 				{
 					var cmObject = _cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(_linkActive.TargetGuid);
-					if (cmObject is IReversalIndexEntry && _linkActive.ToolName == "reversalEditComplete")
+					if (cmObject is IReversalIndexEntry && _linkActive.ToolName == AreaServices.ReversalEditCompleteMachineName)
 					{
 						// For the reversal index tool, just getting the tool right isn't enough.  We
 						// also need to be showing the proper index.  (See FWR-1105.)

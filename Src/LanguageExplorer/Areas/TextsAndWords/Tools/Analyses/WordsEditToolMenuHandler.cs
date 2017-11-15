@@ -115,7 +115,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		{
 			get
 			{
-				return (PropertyTable.GetValue<string>("areaChoice") == "textsWords");
+				return (PropertyTable.GetValue<string>("areaChoice") == AreaServices.TextAndWordsAreaMachineName);
 			}
 		}
 

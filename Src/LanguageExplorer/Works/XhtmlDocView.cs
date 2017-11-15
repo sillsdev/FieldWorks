@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using Gecko;
 using Gecko.DOM;
+using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
@@ -204,14 +205,6 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-
-
-		/// <summary>
-		/// Used to verify current content control so that Find Lexical Entry behaves differently
-		/// in Dictionary View.
-		/// </summary>
-		private const string ksLexDictionary = "lexiconDictionary";
-
 		/// <summary>
 		/// Check to see if the user needs to be alerted that JumpToRecord is not possible.
 		/// </summary>
@@ -221,7 +214,7 @@ namespace LanguageExplorer.Works
 		{
 			var hvoTarget = (int)argument;
 			var toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
-			if (hvoTarget > 0 && toolChoice == ksLexDictionary)
+			if (hvoTarget > 0 && toolChoice == AreaServices.LexiconDictionaryMachineName)
 			{
 				DictionaryConfigurationController.ExclusionReasonCode xrc;
 				// Make sure we explain to the user in case hvoTarget is not visible due to
@@ -813,7 +806,7 @@ namespace LanguageExplorer.Works
 			if(coreCommand != null)
 			{
 				var tool = XmlUtils.GetMandatoryAttributeValue(coreCommand.Parameters[0], "tool");
-				if(tool != "publicationsEdit")
+				if(tool != AreaServices.PublicationsEditMachineName)
 					return false;
 
 				var commands = new List<string>
@@ -1095,14 +1088,8 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		public bool OnFindAndReplaceText(object argument)
 		{
-			if (m_mainView != null)
-			{
-				var geckoBrowser = m_mainView.NativeBrowser as GeckoWebBrowser;
-				if (geckoBrowser != null)
-				{
-					geckoBrowser.Window.Find(string.Empty, false, false, true, false, true, true);
-				}
-			}
+			var geckoBrowser = m_mainView?.NativeBrowser as GeckoWebBrowser;
+			geckoBrowser?.Window.Find(string.Empty, false, false, true, false, true, true);
 			return true;
 		}
 
@@ -1144,7 +1131,7 @@ namespace LanguageExplorer.Works
 						{
 						if (progressDlg.IsCanceling)
 						{
-							Publisher.Publish("SetToolFromName", "lexiconEdit");
+							Publisher.Publish("SetToolFromName", AreaServices.LexiconEditMachineName);
 						}
 						else
 						{

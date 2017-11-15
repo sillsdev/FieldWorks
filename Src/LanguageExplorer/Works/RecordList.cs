@@ -2512,7 +2512,7 @@ namespace LanguageExplorer.Works
 					}
 
 				//dependent properties
-				case "Analyses":
+				case AreaServices.AnalysesMachineName:
 					{
 						//TODO: HACK! making it show the first one.
 						var wfRepository = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>();

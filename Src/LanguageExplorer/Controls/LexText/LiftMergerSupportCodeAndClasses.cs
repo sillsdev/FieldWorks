@@ -12,6 +12,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
+using LanguageExplorer.Areas;
 using SIL.Lift.Parsing;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
@@ -4419,7 +4420,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		internal static string LinkRef(ILexEntry le)
 		{
-			FwLinkArgs link = new FwLinkArgs("lexiconEdit", le.Guid);
+			FwLinkArgs link = new FwLinkArgs(AreaServices.LexiconEditMachineName, le.Guid);
 			return XmlUtils.MakeSafeXmlAttribute(link.ToString());
 		}
 

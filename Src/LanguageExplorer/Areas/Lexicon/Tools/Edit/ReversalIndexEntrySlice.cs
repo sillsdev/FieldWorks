@@ -310,7 +310,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var parms = new List<object>
 						{
 							null,
-							new SIL.FieldWorks.Common.FwUtils.FwLinkArgs("reversalEditComplete", rie.MainEntry.Guid)
+							new FwLinkArgs(AreaServices.ReversalEditCompleteMachineName, rie.MainEntry.Guid)
 						};
 				Publisher.Publish(commands, parms);
 			}

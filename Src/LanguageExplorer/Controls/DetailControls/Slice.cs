@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Areas;
 using SIL.LCModel.Core.Cellar;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.LexText;
@@ -1419,8 +1420,10 @@ namespace LanguageExplorer.Controls.DetailControls
 					if (!helpTopicIsValid(generatedHelpTopicID))
 					{
 						if (helpTopicPrefix.Equals("khtpChoose"))
+						{
 							generatedHelpTopicID = "khtpChoose-CmPossibility";
-						else if (areaChoice == "lists")
+						}
+						else if (areaChoice == AreaServices.ListsAreaMachineName)
 						{
 							generatedHelpTopicID = "khtp-CustomListField"; // If the list isn't defined, use the generic list help topic
 

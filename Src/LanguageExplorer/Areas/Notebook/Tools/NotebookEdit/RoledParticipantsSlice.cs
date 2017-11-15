@@ -297,7 +297,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		{
 			CheckDisposed();
 			string areaName = PropertyTable.GetValue<string>("areaChoice");
-			if (areaName == "textsWords")
+			if (areaName == AreaServices.TextAndWordsAreaMachineName)
 			{
 				ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 					"khtpField-notebookEdit-InterlinearEdit-RnGenericRec-Participants");

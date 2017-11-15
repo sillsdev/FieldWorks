@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Linq;
 using System.Xml.Linq;
+using LanguageExplorer.Areas;
 using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
 using SIL.LCModel.DomainServices;
@@ -1459,26 +1460,28 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		void m_helpButton_Click(object sender, EventArgs e)
 		{
-			string helpTopic = "";
+			var helpTopic = string.Empty;
 
 			switch (m_propertyTable.GetValue<string>("toolChoice"))
 			{
-				case "bulkEditEntriesOrSenses":
+				case AreaServices.BulkEditEntriesOrSensesMachineName:
 					helpTopic = "khtpBulkEditBarEntriesOrSenses";
 					break;
-				case "reversalBulkEditReversalEntries":
+				case AreaServices.ReversalBulkEditReversalEntriesMachineName:
 					helpTopic = "khtpBulkEditBarReversalEntries";
 					break;
-				case "bulkEditWordforms":
+				case AreaServices.BulkEditWordformsMachineName:
 					helpTopic = "khtpBulkEditBarWordforms";
 					break;
-				case "bulkEditPhonemes":
+				case AreaServices.BulkEditPhonemesMachineName:
 					helpTopic = "khtpBulkEditBarPhonemes";
 					break;
 			}
 
-			if(helpTopic != "")
+			if (helpTopic != string.Empty)
+			{
 				ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), helpTopic);
+			}
 		}
 
 		/// <summary>

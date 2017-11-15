@@ -780,7 +780,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var parms = new List<object>
 			{
 				null,
-				new FwLinkArgs("lexRefEdit", newKid.Guid)
+				new FwLinkArgs(AreaServices.LexRefEditMachineName, newKid.Guid)
 			};
 			ContainingDataTree.Publisher.Publish(commands, parms);
 		}

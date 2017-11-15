@@ -14,6 +14,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.WritingSystems;
@@ -3688,7 +3689,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual bool OnJumpToLexiconEditFilterAnthroItems(object commandObject)
 		{
-			OnJumpToToolAndFilterAnthroItem("FilterAnthroItems", "lexiconEdit");
+			OnJumpToToolAndFilterAnthroItem("FilterAnthroItems", AreaServices.LexiconEditMachineName);
 			return true;
 		}
 
@@ -3698,7 +3699,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual bool OnJumpToNotebookEditFilterAnthroItems(object commandObject)
 		{
-			OnJumpToToolAndFilterAnthroItem("FilterAnthroItems", "notebookEdit");
+			OnJumpToToolAndFilterAnthroItem("FilterAnthroItems", AreaServices.NotebookEditToolMachineName);
 			return true;
 		}
 
@@ -3754,7 +3755,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (targetObject != null)
 			{
 				var owner = targetObject.Owner;
-				if (tool == "concordance")
+				if (tool == AreaServices.ConcordanceMachineName)
 				{
 					int flidSlice = 0;
 					if (CurrentSlice != null && !CurrentSlice.IsHeaderNode)
@@ -3799,14 +3800,14 @@ namespace LanguageExplorer.Controls.DetailControls
 							break;
 					}
 				}
-				else if (tool == "lexiconEdit")
+				else if (tool == AreaServices.LexiconEditMachineName)
 				{
 					if (owner != null && owner != m_root && owner.ClassID == LexEntryTags.kClassId)
 					{
 						return owner.Guid;
 					}
 				}
-				else if (tool == "notebookEdit")
+				else if (tool == AreaServices.NotebookEditToolMachineName)
 				{
 					if (owner != null &&
 						owner.ClassID == RnGenericRecTags.kClassId)
@@ -3829,7 +3830,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 					// Try TargetId by default
 				}
-				else if (tool == "interlinearEdit")
+				else if (tool == AreaServices.InterlinearEditMachineName)
 				{
 					if (targetObject.ClassID == TextTags.kClassId)
 					{

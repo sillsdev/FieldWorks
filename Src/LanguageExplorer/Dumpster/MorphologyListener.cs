@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.TextsAndWords;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -366,7 +367,7 @@ namespace LanguageExplorer.Dumpster
 			// Without checking both the SpellingStatus and (virtual) FullConcordanceCount
 			// fields for the ActiveWordform() result, it's too likely that the user
 			// will get a puzzling "Target not found" message popping up.  See LT-8717.
-			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle, "bulkEditWordforms", Guid.Empty);
+			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle, AreaServices.BulkEditWordformsMachineName, Guid.Empty);
 			var additionalProps = link.LinkProperties;
 			additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new LinkProperty("LinkSetupInfo", "ReviewUndecidedSpelling"));
@@ -395,7 +396,7 @@ namespace LanguageExplorer.Dumpster
 
 		public bool OnViewIncorrectWords(object argument)
 		{
-			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle, "Analyses", ActiveWordform(m_wordformRepos, PropertyTable));
+			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle, AreaServices.AnalysesMachineName, ActiveWordform(m_wordformRepos, PropertyTable));
 			var additionalProps = link.LinkProperties;
 			additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new LinkProperty("LinkSetupInfo", "CorrectSpelling"));
@@ -471,7 +472,7 @@ namespace LanguageExplorer.Dumpster
 		{
 			get
 			{
-				return (PropertyTable.GetValue<string>("areaChoice") == "textsWords");
+				return (PropertyTable.GetValue<string>("areaChoice") == AreaServices.TextAndWordsAreaMachineName);
 			}
 		}
 

@@ -87,7 +87,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var parms = new List<object>
 										{
 											null,
-											new FwLinkArgs("naturalClassEdit", mapping.ModificationRA.Guid)
+											new FwLinkArgs(AreaServices.NaturalClassEditMachineName, mapping.ModificationRA.Guid)
 										};
 			Publisher.Publish(commands, parms);
 			return true;
@@ -116,7 +116,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var parms = new List<object>
 										{
 											null,
-											new FwLinkArgs("phonemeEdit", mapping.ContentRS[0].Guid)
+											new FwLinkArgs(AreaServices.PhonemeEditMachineName, mapping.ContentRS[0].Guid)
 										};
 			Publisher.Publish(commands, parms);
 			return true;

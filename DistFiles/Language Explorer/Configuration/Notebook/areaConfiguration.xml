@@ -66,6 +66,9 @@
 	<!-- ************************ menuAddOn *********************** -->
 	<!-- ********************************************************** -->
 		<menuAddOn>
+		  <menu id="Edit">
+		    <item command="CmdGoToRecord" />
+		  </menu>
 			<menu id="Insert">
 			<item command="CmdInsertRecord" defaultVisible="false"/>
 			<item command="CmdInsertSubrecord" defaultVisible="false"/>

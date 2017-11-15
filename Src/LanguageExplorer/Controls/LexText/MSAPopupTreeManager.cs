@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -495,7 +496,7 @@ namespace LanguageExplorer.Controls.LexText
 						var parms = new List<object>
 									{
 										null,
-										new FwLinkArgs("posEdit", dlg.SelectedPOS.Guid)
+										new FwLinkArgs(AreaServices.PosEditMachineName, dlg.SelectedPOS.Guid)
 									};
 						m_publisher.Publish(commands, parms);
 						if (m_parentOfPopupMgr != null && m_parentOfPopupMgr.Modal)

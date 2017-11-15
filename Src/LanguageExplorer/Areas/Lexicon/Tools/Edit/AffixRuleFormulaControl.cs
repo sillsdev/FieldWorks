@@ -830,7 +830,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					natClasses.Add(nc);
 			}
 			var selectedNc = DisplayChooser(AreaResources.ksRuleNCOpt, AreaResources.ksRuleNCChooserLink,
-				"naturalClassEdit", "RuleNaturalClassFlatList", natClasses) as IPhNCFeatures;
+				AreaServices.NaturalClassEditMachineName, "RuleNaturalClassFlatList", natClasses) as IPhNCFeatures;
 			m_view.Select();
 			if (selectedNc != null)
 			{

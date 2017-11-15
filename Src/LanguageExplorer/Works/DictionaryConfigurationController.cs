@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.WritingSystems;
@@ -1537,7 +1538,7 @@ namespace LanguageExplorer.Works
 						MasterRefreshRequired = false; // We're reloading the whole app, that's refresh enough
 						View.Close();
 
-						Publisher.Publish("ReloadAreaTools", "lists");
+						Publisher.Publish("ReloadAreaTools", AreaServices.ListsAreaMachineName);
 					};
 					SetManagerTypeInfo(dialog);
 					dialog.ShowDialog(View as Form);

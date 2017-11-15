@@ -15,6 +15,7 @@ using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using LanguageExplorer.Areas;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -2589,12 +2590,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				string sTitle = null;
 				string sDescription = null;
 				string sJumpLabel = null;
-				sTitle = StringTable.Table.GetString("kstidChooseNaturalClass",
-					"Linguistics/Morphology/NaturalClassChooser");
-				sDescription = StringTable.Table.GetString("kstidNaturalClassListing",
-					"Linguistics/Morphology/NaturalClassChooser");
-				sJumpLabel = StringTable.Table.GetString("kstidGotoNaturalClassList",
-					"Linguistics/Morphology/NaturalClassChooser");
+				sTitle = StringTable.Table.GetString("kstidChooseNaturalClass", "Linguistics/Morphology/NaturalClassChooser");
+				sDescription = StringTable.Table.GetString("kstidNaturalClassListing", "Linguistics/Morphology/NaturalClassChooser");
+				sJumpLabel = StringTable.Table.GetString("kstidGotoNaturalClassList", "Linguistics/Morphology/NaturalClassChooser");
 				if (string.IsNullOrEmpty(sTitle) || sTitle == "kstidChooseNaturalClass")
 					sTitle = XMLViewsStrings.ksChooseNaturalClass;
 				if (string.IsNullOrEmpty(sDescription) || sDescription == "kstidNaturalClassListing")
@@ -2604,8 +2602,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				chooser.Cache = cache;
 				chooser.SetObjectAndFlid(0, 0);
 				chooser.SetHelpTopic("khtpChooseNaturalClass");
-				chooser.InitializeRaw(propertyTable, publisher, sTitle, sDescription, sJumpLabel,
-					"naturalClassEdit", "analysis vernacular");
+				chooser.InitializeRaw(propertyTable, publisher, sTitle, sDescription, sJumpLabel, AreaServices.NaturalClassEditMachineName, "analysis vernacular");
 
 				DialogResult res = chooser.ShowDialog();
 				if (DialogResult.Cancel == res)
@@ -2617,7 +2614,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					var pnc = (IPhNaturalClass) chooser.ChosenOne.Object;
 					ITsString tss = pnc.Abbreviation.BestAnalysisVernacularAlternative;
 					string sName = tss.Text;
-					string sIns = String.Format("[{0}]", sName);
+					string sIns = $"[{sName}]";
 					int wsPending = cache.DefaultVernWs;
 					IVwRootSite site = rootb.Site;
 					IVwGraphics vg = null;

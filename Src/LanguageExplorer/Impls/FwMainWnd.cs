@@ -1714,9 +1714,9 @@ very simple minor adjustments. ;)"
 				{
 					return;
 				}
-				// For all the bother, the IUndoRedoHandler impl couldn't be bothered, so do it here.
 			}
 
+			// For all the bother, the IUndoRedoHandler impl couldn't be bothered, so do it here.
 			var ah = Cache.DomainDataByFlid.GetActionHandler();
 			using (new WaitCursor(this))
 			{
@@ -1749,9 +1749,9 @@ very simple minor adjustments. ;)"
 				{
 					return;
 				}
-				// For all the bother, the IUndoRedoHandler impl couldn't be bothered, so do it here.
 			}
 
+			// For all the bother, the IUndoRedoHandler impl couldn't be bothered, so do it here.
 			var ah = Cache.DomainDataByFlid.GetActionHandler();
 			using (new WaitCursor(this))
 			{

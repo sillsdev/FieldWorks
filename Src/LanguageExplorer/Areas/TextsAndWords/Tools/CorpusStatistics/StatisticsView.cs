@@ -392,7 +392,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// <summary>
 		/// The Area name that uses this control.
 		/// </summary>
-		public string AreaName => "textsWords";
+		public string AreaName => AreaServices.TextAndWordsAreaMachineName;
 
 		#endregion
 

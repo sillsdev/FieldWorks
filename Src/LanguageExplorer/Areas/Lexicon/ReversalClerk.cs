@@ -219,7 +219,7 @@ namespace LanguageExplorer.Areas.Lexicon
 				case "ReversalIndexGuid":
 					ChangeOwningObjectIfPossible();
 					break;
-				case AreaServices.ToolForAreaNamed_ + AreaServices.InitialAreaMachineName:
+				case AreaServices.ToolForAreaNamed_ + AreaServices.LexiconAreaMachineName:
 					var rootIndex = GetRootIndex(m_list.CurrentIndex);
 					JumpToIndex(rootIndex);
 					base.OnPropertyChanged(name);

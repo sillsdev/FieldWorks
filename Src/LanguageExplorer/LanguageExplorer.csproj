@@ -3027,6 +3027,10 @@
       <Link>XML\CombinedConfig_Develop.xml</Link>
       <SubType>Designer</SubType>
     </None>
+    <None Include="..\..\..\..\Users\Randy Regnier\Desktop\DevWork\NewDevWork\05_Remove use of main xml config files\Configuration\CombinedConfig_Master.xml">
+      <Link>XML\CombinedConfig_Master.xml</Link>
+      <SubType>Designer</SubType>
+    </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Grammar\Edit\DataEntryFilters\basicFilter.xml">
       <Link>XML\Grammar\Edit\DataEntryFilters\basicFilter.xml</Link>
     </None>

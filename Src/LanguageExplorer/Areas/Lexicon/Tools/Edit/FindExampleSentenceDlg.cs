@@ -294,14 +294,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 							ITsString tssRef = seg.Paragraph.Reference(seg, seg.BeginOffset);
 							// convert the plain reference string into a link.
 							ITsStrBldr tsb = tssRef.GetBldr();
-							FwLinkArgs fwl = new FwLinkArgs("interlinearEdit", seg.Owner.Owner.Guid);
+							FwLinkArgs fwl = new FwLinkArgs(AreaServices.InterlinearEditMachineName, seg.Owner.Owner.Guid);
 							// It's not clear how to focus in on something smaller than the text when following
 							// a link.
 							//fwl.LinkProperties.Add(new LinkProperty("LinkSegmentGuid", seg.Guid.ToString()));
 							tsb.SetStrPropValue(0, tsb.Length, (int)FwTextPropType.ktptObjData,
 								(char)FwObjDataTypes.kodtExternalPathName + fwl.ToString());
-							tsb.SetStrPropValue(0, tsb.Length, (int)FwTextPropType.ktptNamedStyle,
-								"Hyperlink");
+							tsb.SetStrPropValue(0, tsb.Length, (int)FwTextPropType.ktptNamedStyle, "Hyperlink");
 							newLexExample.Reference = tsb.GetString();
 						}
 					});

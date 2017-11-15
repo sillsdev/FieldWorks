@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.XMLViews;
@@ -91,7 +92,7 @@ namespace LanguageExplorer.Works
 		}
 
 		// Semantic Domains should be editable only in the Lists area.
-		protected bool Editable { get { return "lists".Equals(m_propertyTable.GetValue<string>("areaChoice")); } }
+		protected bool Editable => AreaServices.ListsAreaMachineName.Equals(m_propertyTable.GetValue<string>("areaChoice"));
 
 		private FwTextBox CreateSearchBox()
 		{

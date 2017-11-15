@@ -19,6 +19,7 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Drawing.Printing;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.FwCoreDlgControls;
@@ -806,12 +807,6 @@ namespace LanguageExplorer.Works
 		}
 
 		/// <summary>
-		/// Used to verify current content control so that Find Lexical Entry behaves differently
-		/// in Dictionary View.
-		/// </summary>
-		private const string ksLexDictionary = "lexiconDictionary";
-
-		/// <summary>
 		/// Check to see if the user needs to be alerted that JumpToRecord is not possible.
 		/// </summary>
 		/// <param name="argument">the hvo of the record</param>
@@ -821,7 +816,7 @@ namespace LanguageExplorer.Works
 			var hvoTarget = (int)argument;
 			var toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
 			// Currently this (LT-11447) only applies to Dictionary view
-			if (hvoTarget > 0 && toolChoice == ksLexDictionary)
+			if (hvoTarget > 0 && toolChoice == AreaServices.LexiconDictionaryMachineName)
 			{
 				DictionaryConfigurationController.ExclusionReasonCode xrc;
 				// Make sure we explain to the user in case hvoTarget is not visible due to

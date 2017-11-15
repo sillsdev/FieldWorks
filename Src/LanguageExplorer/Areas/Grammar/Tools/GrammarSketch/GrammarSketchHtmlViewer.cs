@@ -628,7 +628,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			{
 				CheckDisposed();
 
-				return "grammar";
+				return AreaServices.GrammarAreaMachineName;
 			}
 		}
 

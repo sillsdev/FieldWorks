@@ -58,7 +58,7 @@ namespace LanguageExplorer.Controls.LexText
 				if (areaChoice == null) return false; // happens at start up
 				if (AreaServices.InitialAreaMachineName == areaChoice)
 				{
-					return PropertyTable.GetValue<string>("toolChoice") == "lexiconEdit";
+					return PropertyTable.GetValue<string>("toolChoice") == AreaServices.LexiconEditMachineName;
 				}
 				return false; //we are not in an area that wants to see the merge command
 			}

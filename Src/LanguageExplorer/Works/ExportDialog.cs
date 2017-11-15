@@ -397,12 +397,12 @@ namespace LanguageExplorer.Works
 			if (m_rgFxtTypes.Count == 0)
 				return null; // only non-Fxt exports available (like Discourse chart?)
 			var ft = m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft;
-			if (m_areaOrig == "notebook")
+			if (m_areaOrig == AreaServices.NotebookAreaMachineName)
 			{
 				if (ft != FxtTypes.kftConfigured) // Different from Configured Dictionary; Notebook uses a subclass of ExportDialog
 					return null; // nothing to do.
 				area = m_areaOrig;
-				tool = "notebookDocument";
+				tool = AreaServices.NotebookDocumentToolMachineName;
 			}
 			else
 			{
@@ -413,11 +413,11 @@ namespace LanguageExplorer.Works
 						// Should match the tool in DistFiles/Language Explorer/Configuration/RDE/toolConfiguration.xml, the value attribute in
 						// <tool label="Classified Dictionary" value="lexiconClassifiedDictionary" icon="DocumentView">.
 						// We use this to create that tool and base this export on its objects and saved configuration.
-						tool = "lexiconClassifiedDictionary";
+						tool = AreaServices.LexiconClassifiedDictionaryMachineName;
 						break;
 					case FxtTypes.kftGrammarSketch:
-						area = "grammar";
-						tool = "grammarSketch";
+						area = AreaServices.GrammarAreaMachineName;
+						tool = AreaServices.GrammarSketchMachineName;
 						break;
 					default:
 						return null; // nothing to do.
@@ -929,7 +929,7 @@ namespace LanguageExplorer.Works
 				Debug.WriteLine(s);
 #endif
 				m_ce = new ConfiguredExport(null, m_xvc.DataAccess, m_hvoRootObj);
-				string sBodyClass = (m_areaOrig == "notebook") ? "notebookBody" : "dicBody";
+				string sBodyClass = (m_areaOrig == AreaServices.NotebookAreaMachineName) ? "notebookBody" : "dicBody";
 				m_ce.Initialize(m_cache, PropertyTable, w, ft.m_sDataType, ft.m_sFormat, outPath, sBodyClass);
 				m_ce.UpdateProgress += ce_UpdateProgress;
 				m_xvc.Display(m_ce, m_hvoRootObj, m_seqView.RootFrag);
@@ -1155,7 +1155,7 @@ namespace LanguageExplorer.Works
 				case "LIFT":
 					ft.m_ft = FxtTypes.kftLift;
 					break;
-				case "grammarSketch":
+				case AreaServices.GrammarSketchMachineName:
 					ft.m_ft = FxtTypes.kftGrammarSketch;
 					break;
 				case "semanticDomains":

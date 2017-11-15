@@ -4219,7 +4219,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// enable it (GetHvoForJumpToToolClass will return zero for class "PartOfSpeech" if there's no
 			// morpheme), when clicking ON the POS for the word, the PartOfSpeechUi object will enable it.
 			// So in this special case we have to claim to have handled the task but should NOT enable it.
-			if (tool == "posEdit" && className == "PartOfSpeech" && m_hvoRightClickMorph == 0)
+			if (tool == AreaServices.PosEditMachineName && className == "PartOfSpeech" && m_hvoRightClickMorph == 0)
 			{
 				display.Visible = display.Enabled = false;
 				return true;

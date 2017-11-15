@@ -204,7 +204,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// the problem on how to control we are CommandSet are handled by listeners are
 		/// visible.
 		/// </remarks>
-		private bool InFriendlyArea => (PropertyTable.GetValue<string>("areaChoice") == AreaServices.InitialAreaMachineName && PropertyTable.GetValue<string>($"{AreaServices.ToolForAreaNamed_}_lexicon") == "reversalEditComplete");
+		private bool InFriendlyArea => (PropertyTable.GetValue<string>("areaChoice") == AreaServices.LexiconAreaMachineName && PropertyTable.GetValue<string>($"{AreaServices.ToolForAreaNamed_}_{AreaServices.LexiconAreaMachineName}") == AreaServices.ReversalEditCompleteMachineName);
 	}
 #endif
 }

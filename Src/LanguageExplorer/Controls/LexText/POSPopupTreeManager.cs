@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -33,16 +34,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Tries to find the tool to jump to, based on the owner of the POS list.
 		/// </summary>
-		private string JumpToToolNamed
-		{
-			get
-			{
-				if (List.OwningFlid == LangProjectTags.kflidPartsOfSpeech)
-					return "posEdit";
-				else
-					return "reversalToolReversalIndexPOS";
-			}
-		}
+		private string JumpToToolNamed => List.OwningFlid == LangProjectTags.kflidPartsOfSpeech ? AreaServices.PosEditMachineName : AreaServices.ReversalToolReversalIndexPOSMachineName;
 
 		/// <summary>
 		/// Constructor.
