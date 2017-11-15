@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.Lists
 		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
 		[Import]
 		private IPropertyTable _propertyTable;
-		private SortedList<string, ITool> _sortedListOfCustomTools = new SortedList<string, ITool>();
+		private readonly SortedList<string, ITool> _sortedListOfCustomTools = new SortedList<string, ITool>();
 		private SidePane _sidePane;
 		private HashSet<ITool> _allTools;
 

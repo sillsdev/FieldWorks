@@ -170,7 +170,7 @@ namespace LanguageExplorer.Works
 		{
 			if (!FLExBridgeHelper.DoesProjectHaveFlexRepo(m_cache.ProjectId))
 				return true;
-			return MessageBox.Show(owner, xWorksStrings.kstCustomFieldSendReceive, xWorksStrings.ksWarning,
+			return MessageBox.Show(owner, xWorksStrings.kstCustomFieldSendReceive, LanguageExplorerResources.ksWarning,
 				MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK;
 		}
 

@@ -17,11 +17,14 @@ namespace LanguageExplorerTests.Repository
 		/// <summary>
 		/// Set up test fixture.
 		/// </summary>
-		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
 
+			if (string.IsNullOrWhiteSpace(_areaMachineName))
+			{
+				return;
+			}
 			_myArea = _areaRepository.GetArea(_areaMachineName);
 			_myOrderedTools = _myArea.AllToolsInOrder;
 		}
@@ -29,7 +32,6 @@ namespace LanguageExplorerTests.Repository
 		/// <summary>
 		/// Tear down the test fixture.
 		/// </summary>
-		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
 			_myOrderedTools = null;

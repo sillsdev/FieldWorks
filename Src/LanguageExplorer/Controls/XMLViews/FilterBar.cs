@@ -989,10 +989,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				case "YesNo":
 					// For columns which have only the values of "yes" or "no" we offer the user these preset
 					// filters to choose.
-					combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksYes),
-						new ExactMatcher(MatchExactPattern(XMLViewsStrings.ksYes)), item));
-					combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksNo),
-						new ExactMatcher(MatchExactPattern(XMLViewsStrings.ksNo)), item));
+					combo.Items.Add(new FilterComboItem(MakeLabel(LanguageExplorerResources.ksYes.ToLowerInvariant()),
+						new ExactMatcher(MatchExactPattern(LanguageExplorerResources.ksYes.ToLowerInvariant())), item));
+					combo.Items.Add(new FilterComboItem(MakeLabel(LanguageExplorerResources.ksNo.ToLowerInvariant()),
+						new ExactMatcher(MatchExactPattern(LanguageExplorerResources.ksNo.ToLowerInvariant())), item));
 					break;
 				case "stringList":
 					string[] labels = m_bv.BrowseView.GetStringList(item.Spec);

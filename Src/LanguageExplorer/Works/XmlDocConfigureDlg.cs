@@ -721,7 +721,7 @@ namespace LanguageExplorer.Works
 			if (Regex.IsMatch(tb.Text, illegalChars))
 			{
 				tb.Text = Regex.Replace(tb.Text, illegalChars, string.Empty);
-				MessageBox.Show(xWorksStrings.ksIllegalXmlChars, xWorksStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(xWorksStrings.ksIllegalXmlChars, LanguageExplorerResources.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
 

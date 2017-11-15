@@ -261,7 +261,7 @@ These all go on the "Insert" menu, but they are tool-specific. Start at 0.
 
 		private void DeleteCustomList_Click(object sender, EventArgs e)
 		{
-			UndoableUnitOfWorkHelper.Do(xWorksStrings.ksUndoDeleteCustomList, xWorksStrings.ksRedoDeleteCustomList, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () => new DeleteCustomList(_majorFlexComponentParameters.LcmCache).Run((ICmPossibilityList)_recordClerk.OwningObject));
+			UndoableUnitOfWorkHelper.Do(ListResources.ksUndoDeleteCustomList, ListResources.ksRedoDeleteCustomList, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () => new DeleteCustomList(_majorFlexComponentParameters.LcmCache).Run((ICmPossibilityList)_recordClerk.OwningObject));
 			_listArea.RemoveCustomListTool(_listArea.ActiveTool);
 		}
 

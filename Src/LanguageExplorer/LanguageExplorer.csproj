@@ -952,16 +952,16 @@
     <Compile Include="Works\ConfigurableDictionaryNode.cs" />
     <Compile Include="Works\ConfiguredXHTMLGenerator.cs" />
     <Compile Include="Works\CssGenerator.cs" />
-    <Compile Include="Works\CustomListDlg.cs">
+    <Compile Include="Areas\Lists\CustomListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Works\CustomListDlg.Designer.cs">
+    <Compile Include="Areas\Lists\CustomListDlg.Designer.cs">
       <DependentUpon>CustomListDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Works\DataTreeImages.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Works\DeleteCustomList.cs" />
+    <Compile Include="Areas\Lists\DeleteCustomList.cs" />
     <Compile Include="Works\DictionaryConfigManager.cs" />
     <Compile Include="Works\DictionaryConfigMgrDlg.cs">
       <SubType>Form</SubType>
@@ -1576,7 +1576,7 @@
       <DependentUpon>AddCustomFieldDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Works\CustomListDlg.resx">
+    <EmbeddedResource Include="Areas\Lists\CustomListDlg.resx">
       <DependentUpon>CustomListDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

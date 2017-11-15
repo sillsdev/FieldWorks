@@ -651,24 +651,6 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Abbreviation.
-        /// </summary>
-        internal static string ksAbbreviation {
-            get {
-                return ResourceManager.GetString("ksAbbreviation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Abbreviation - Name.
-        /// </summary>
-        internal static string ksAbbrevName {
-            get {
-                return ResourceManager.GetString("ksAbbrevName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to all analysis.
         /// </summary>
         internal static string ksAllAnalysis {
@@ -867,15 +849,6 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to That name is already in use by another list..
-        /// </summary>
-        internal static string ksChooseAnotherListName {
-            get {
-                return ResourceManager.GetString("ksChooseAnotherListName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to That name is already in use by another view..
         /// </summary>
         internal static string ksChooseAnotherViewName {
@@ -935,15 +908,6 @@ namespace LanguageExplorer.Works {
         internal static string ksConfigureIn {
             get {
                 return ResourceManager.GetString("ksConfigureIn", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Configure List.
-        /// </summary>
-        internal static string ksConfigureList {
-            get {
-                return ResourceManager.GetString("ksConfigureList", resourceCulture);
             }
         }
         
@@ -1074,15 +1038,6 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete Custom List.
-        /// </summary>
-        internal static string ksDeleteListMenuItem {
-            get {
-                return ResourceManager.GetString("ksDeleteListMenuItem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Copy of {0}.
         /// </summary>
         internal static string ksDictConfigCopyOf {
@@ -1160,15 +1115,6 @@ namespace LanguageExplorer.Works {
         internal static string ksDisplaySubentriesInParagraphs {
             get {
                 return ResourceManager.GetString("ksDisplaySubentriesInParagraphs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Duplicate List Name.
-        /// </summary>
-        internal static string ksDuplicateName {
-            get {
-                return ResourceManager.GetString("ksDuplicateName", resourceCulture);
             }
         }
         
@@ -1426,15 +1372,6 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Name.
-        /// </summary>
-        internal static string ksName {
-            get {
-                return ResourceManager.GetString("ksName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Name Already In Use.
         /// </summary>
         internal static string ksNameInUseTitle {
@@ -1444,38 +1381,11 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &quot;Name of List&quot; is a required field..
-        /// </summary>
-        internal static string ksNameReqd {
-            get {
-                return ResourceManager.GetString("ksNameReqd", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to New Custom Field.
         /// </summary>
         internal static string ksNewCustomField {
             get {
                 return ResourceManager.GetString("ksNewCustomField", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to New List.
-        /// </summary>
-        internal static string ksNewCustomList {
-            get {
-                return ResourceManager.GetString("ksNewCustomList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No.
-        /// </summary>
-        internal static string ksNo {
-            get {
-                return ResourceManager.GetString("ksNo", resourceCulture);
             }
         }
         
@@ -1503,15 +1413,6 @@ namespace LanguageExplorer.Works {
         internal static string ksNoExtendedNoteType {
             get {
                 return ResourceManager.GetString("ksNoExtendedNoteType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No List Name.
-        /// </summary>
-        internal static string ksNoListName {
-            get {
-                return ResourceManager.GetString("ksNoListName", resourceCulture);
             }
         }
         
@@ -1660,15 +1561,6 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please provide a valid list name..
-        /// </summary>
-        internal static string ksProvideValidListName {
-            get {
-                return ResourceManager.GetString("ksProvideValidListName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to {0} {1}.
         /// </summary>
         internal static string ksPublicationEntries {
@@ -1683,33 +1575,6 @@ namespace LanguageExplorer.Works {
         internal static string ksRecord {
             get {
                 return ResourceManager.GetString("ksRecord", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo List Property Changes.
-        /// </summary>
-        internal static string ksRedoConfigureList {
-            get {
-                return ResourceManager.GetString("ksRedoConfigureList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo Create Custom List.
-        /// </summary>
-        internal static string ksRedoCreateList {
-            get {
-                return ResourceManager.GetString("ksRedoCreateList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo Delete Custom List.
-        /// </summary>
-        internal static string ksRedoDeleteCustomList {
-            get {
-                return ResourceManager.GetString("ksRedoDeleteCustomList", resourceCulture);
             }
         }
         
@@ -1782,17 +1647,6 @@ namespace LanguageExplorer.Works {
         internal static string ksReferencedComplexForm {
             get {
                 return ResourceManager.GetString("ksReferencedComplexForm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to At least one item in this list is referenced elsewhere in the project.
-        ///An example would be {0}.
-        ///Are you sure you want to delete this list?.
-        /// </summary>
-        internal static string ksReferencedPossibility {
-            get {
-                return ResourceManager.GetString("ksReferencedPossibility", resourceCulture);
             }
         }
         
@@ -2037,33 +1891,6 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Undo List Property Changes.
-        /// </summary>
-        internal static string ksUndoConfigureList {
-            get {
-                return ResourceManager.GetString("ksUndoConfigureList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Create Custom List.
-        /// </summary>
-        internal static string ksUndoCreateList {
-            get {
-                return ResourceManager.GetString("ksUndoCreateList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Delete Custom List.
-        /// </summary>
-        internal static string ksUndoDeleteCustomList {
-            get {
-                return ResourceManager.GetString("ksUndoDeleteCustomList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Undo Delete Media Link.
         /// </summary>
         internal static string ksUndoDeleteMediaLink {
@@ -2191,15 +2018,6 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Warning.
-        /// </summary>
-        internal static string ksWarning {
-            get {
-                return ResourceManager.GetString("ksWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Writing systems:.
         /// </summary>
         internal static string ksWritingSystems {
@@ -2214,15 +2032,6 @@ namespace LanguageExplorer.Works {
         internal static string ksXReversalIndex {
             get {
                 return ResourceManager.GetString("ksXReversalIndex", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Yes.
-        /// </summary>
-        internal static string ksYes {
-            get {
-                return ResourceManager.GetString("ksYes", resourceCulture);
             }
         }
         

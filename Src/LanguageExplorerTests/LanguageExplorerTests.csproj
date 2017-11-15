@@ -328,8 +328,8 @@
     <Compile Include="Works\ConfiguredXHTMLGeneratorTestHelpers.cs" />
     <Compile Include="Works\ConfiguredXHTMLGeneratorTests.cs" />
     <Compile Include="Works\CssGeneratorTests.cs" />
-    <Compile Include="Works\CustomListDlgTests.cs" />
-    <Compile Include="Works\DeleteCustomListTests.cs" />
+    <Compile Include="Areas\Lists\CustomListDlgTests.cs" />
+    <Compile Include="Areas\Lists\DeleteCustomListTests.cs" />
     <Compile Include="Works\DictionaryConfigManagerTests.cs" />
     <Compile Include="Works\DictionaryConfigurationControllerTests.cs" />
     <Compile Include="Works\DictionaryConfigurationImportControllerTests.cs" />

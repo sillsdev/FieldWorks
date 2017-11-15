@@ -210,6 +210,143 @@ namespace LanguageExplorer.Areas.Lists {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Abbreviation.
+        /// </summary>
+        internal static string ksAbbreviation {
+            get {
+                return ResourceManager.GetString("ksAbbreviation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Abbreviation - Name.
+        /// </summary>
+        internal static string ksAbbrevName {
+            get {
+                return ResourceManager.GetString("ksAbbrevName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to That name is already in use by another list..
+        /// </summary>
+        internal static string ksChooseAnotherListName {
+            get {
+                return ResourceManager.GetString("ksChooseAnotherListName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configure List.
+        /// </summary>
+        internal static string ksConfigureList {
+            get {
+                return ResourceManager.GetString("ksConfigureList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate List Name.
+        /// </summary>
+        internal static string ksDuplicateName {
+            get {
+                return ResourceManager.GetString("ksDuplicateName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        internal static string ksName {
+            get {
+                return ResourceManager.GetString("ksName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No List Name.
+        /// </summary>
+        internal static string ksNoListName {
+            get {
+                return ResourceManager.GetString("ksNoListName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please provide a valid list name..
+        /// </summary>
+        internal static string ksProvideValidListName {
+            get {
+                return ResourceManager.GetString("ksProvideValidListName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redo List Property Changes.
+        /// </summary>
+        internal static string ksRedoConfigureList {
+            get {
+                return ResourceManager.GetString("ksRedoConfigureList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Create Custom List.
+        /// </summary>
+        internal static string ksRedoCreateList {
+            get {
+                return ResourceManager.GetString("ksRedoCreateList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Delete Custom List.
+        /// </summary>
+        internal static string ksRedoDeleteCustomList {
+            get {
+                return ResourceManager.GetString("ksRedoDeleteCustomList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to At least one item in this list is referenced elsewhere in the project.
+        ///An example would be {0}.
+        ///Are you sure you want to delete this list?.
+        /// </summary>
+        internal static string ksReferencedPossibility {
+            get {
+                return ResourceManager.GetString("ksReferencedPossibility", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo List Property Changes.
+        /// </summary>
+        internal static string ksUndoConfigureList {
+            get {
+                return ResourceManager.GetString("ksUndoConfigureList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Create Custom List.
+        /// </summary>
+        internal static string ksUndoCreateList {
+            get {
+                return ResourceManager.GetString("ksUndoCreateList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Delete Custom List.
+        /// </summary>
+        internal static string ksUndoDeleteCustomList {
+            get {
+                return ResourceManager.GetString("ksUndoDeleteCustomList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-LexicalRelations&quot; /&gt;.
         /// </summary>

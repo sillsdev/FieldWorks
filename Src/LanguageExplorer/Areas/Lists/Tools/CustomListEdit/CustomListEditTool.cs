@@ -20,8 +20,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 	internal sealed class CustomListEditTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;
-		private IListArea _area;
-		private ICmPossibilityList _customList;
+		private readonly IListArea _area;
+		private readonly ICmPossibilityList _customList;
 
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.

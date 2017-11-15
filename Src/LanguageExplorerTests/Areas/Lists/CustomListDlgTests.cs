@@ -1,10 +1,10 @@
-﻿// Copyright (c) 2010-2013 SIL International
+﻿// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Linq;
-using LanguageExplorer.Works;
+using LanguageExplorer.Areas.Lists;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -13,7 +13,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace LanguageExplorerTests.Works
+namespace LanguageExplorerTests.Areas.Lists
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

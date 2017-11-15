@@ -15,8 +15,8 @@ namespace LanguageExplorer.Works
 			m_tbMessage.Text = sMsg;
 			if (btns == MessageBoxButtons.YesNo)
 			{
-				m_btnOK.Text = xWorksStrings.ksYes;
-				m_btnCancel.Text = xWorksStrings.ksNo;
+				m_btnOK.Text = LanguageExplorerResources.ksYes;
+				m_btnCancel.Text = LanguageExplorerResources.ksNo;
 			}
 		}
 

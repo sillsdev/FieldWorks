@@ -1503,6 +1503,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        internal static string ksNo {
+            get {
+                return ResourceManager.GetString("ksNo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to no analysis.
         /// </summary>
         internal static string ksNoAnalysis {
@@ -2955,6 +2964,15 @@ namespace LanguageExplorer {
         internal static string ksWriteAllObjectsUndo {
             get {
                 return ResourceManager.GetString("ksWriteAllObjectsUndo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        internal static string ksYes {
+            get {
+                return ResourceManager.GetString("ksYes", resourceCulture);
             }
         }
         

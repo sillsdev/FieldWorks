@@ -1,24 +1,19 @@
-// Copyright (c) 2010-2016 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DeleteCustomListTests.cs
-// Responsibility: GordonM
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Windows.Forms;
+using LanguageExplorer.Areas.Lists;
 using LanguageExplorer.Works;
 using NUnit.Framework;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 
-namespace LanguageExplorerTests.Works
+namespace LanguageExplorerTests.Areas.Lists
 {
 	/// <summary>
 	/// Some methods and fields refactored out so they can be shared with other unit tests.

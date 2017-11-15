@@ -1,21 +1,15 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DeleteCustomList.cs
-// Responsibility: GordonM
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using SIL.LCModel;
 using SIL.LCModel.Application;
-using System.Windows.Forms;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer.Areas.Lists
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -124,8 +118,8 @@ namespace LanguageExplorer.Works
 		/// <returns></returns>
 		protected virtual DialogResult CheckWithUser(string name)
 		{
-			return MessageBox.Show(String.Format(xWorksStrings.ksReferencedPossibility, name),
-								   xWorksStrings.ksWarning,
+			return MessageBox.Show(string.Format(ListResources.ksReferencedPossibility, name),
+								   LanguageExplorerResources.ksWarning,
 								   MessageBoxButtons.YesNo,
 								   MessageBoxIcon.Warning,
 								   MessageBoxDefaultButton.Button2);

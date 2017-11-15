@@ -1209,4 +1209,10 @@ you expect.</value>
   <data name="Undo" xml:space="preserve">
     <value>_Undo</value>
   </data>
+  <data name="ksNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="ksYes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
 </root>

@@ -473,12 +473,6 @@ Are you SURE you want to delete the field {2}?</value>
     <value>{0}:
   {1}</value>
   </data>
-  <data name="ksYes" xml:space="preserve">
-    <value>Yes</value>
-  </data>
-  <data name="ksNo" xml:space="preserve">
-    <value>No</value>
-  </data>
   <data name="ksChooseLIFTFolderTitle" xml:space="preserve">
     <value>Choose where to save the files that constitute a LIFT export</value>
   </data>
@@ -567,49 +561,6 @@ Are you SURE you want to delete the field {2}?</value>
   <data name="ksRedoVisibleComplexForm" xml:space="preserve">
     <value>Redo Referenced Complex Forms</value>
   </data>
-  <data name="ksConfigureList" xml:space="preserve">
-    <value>Configure List</value>
-    <comment>used for ConfigureListDlg title</comment>
-  </data>
-  <data name="ksNewCustomList" xml:space="preserve">
-    <value>New List</value>
-    <comment>used for CustomListDlg title</comment>
-  </data>
-  <data name="ksAbbreviation" xml:space="preserve">
-    <value>Abbreviation</value>
-    <comment>Used in CustomListDlg - Display items by combobox</comment>
-  </data>
-  <data name="ksAbbrevName" xml:space="preserve">
-    <value>Abbreviation - Name</value>
-    <comment>Used in CustomListDlg - Display items by combobox</comment>
-  </data>
-  <data name="ksName" xml:space="preserve">
-    <value>Name</value>
-    <comment>Used in CustomListDlg - Display items by combobox</comment>
-  </data>
-  <data name="ksRedoCreateList" xml:space="preserve">
-    <value>Redo Create Custom List</value>
-  </data>
-  <data name="ksUndoCreateList" xml:space="preserve">
-    <value>Undo Create Custom List</value>
-  </data>
-  <data name="ksRedoConfigureList" xml:space="preserve">
-    <value>Redo List Property Changes</value>
-  </data>
-  <data name="ksUndoConfigureList" xml:space="preserve">
-    <value>Undo List Property Changes</value>
-  </data>
-  <data name="ksNameReqd" xml:space="preserve">
-    <value>"Name of List" is a required field.</value>
-  </data>
-  <data name="ksChooseAnotherListName" xml:space="preserve">
-    <value>That name is already in use by another list.</value>
-    <comment>used by AddCustomListDlg</comment>
-  </data>
-  <data name="ksDuplicateName" xml:space="preserve">
-    <value>Duplicate List Name</value>
-    <comment>used by AddCustomListDlg</comment>
-  </data>
   <data name="ksUndoInsertMedia" xml:space="preserve">
     <value>Undo Insert Media</value>
   </data>
@@ -629,34 +580,6 @@ Are you SURE you want to delete the field {2}?</value>
   <data name="ksSorting" xml:space="preserve">
     <value>Sorting</value>
     <comment>Label used in progress bar</comment>
-  </data>
-  <data name="ksNoListName" xml:space="preserve">
-    <value>No List Name</value>
-    <comment>used by AddCustomListDlg</comment>
-  </data>
-  <data name="ksProvideValidListName" xml:space="preserve">
-    <value>Please provide a valid list name.</value>
-    <comment>used by AddCustomListDlg</comment>
-  </data>
-  <data name="ksReferencedPossibility" xml:space="preserve">
-    <value>At least one item in this list is referenced elsewhere in the project.
-An example would be {0}.
-Are you sure you want to delete this list?</value>
-    <comment>used by DeleteCustomList</comment>
-  </data>
-  <data name="ksWarning" xml:space="preserve">
-    <value>Warning</value>
-    <comment>used by DeleteCustomList</comment>
-  </data>
-  <data name="ksDeleteListMenuItem" xml:space="preserve">
-    <value>Delete Custom List</value>
-    <comment>Used in List area context menu</comment>
-  </data>
-  <data name="ksRedoDeleteCustomList" xml:space="preserve">
-    <value>Redo Delete Custom List</value>
-  </data>
-  <data name="ksUndoDeleteCustomList" xml:space="preserve">
-    <value>Undo Delete Custom List</value>
   </data>
   <data name="ksCustomFieldsCanNotBeAddedDueToRemoteClientsCaption" xml:space="preserve">
     <value>Custom Fields cannot be added.</value>

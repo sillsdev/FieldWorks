@@ -3,21 +3,22 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.Works;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 using SIL.LCModel;
-using System.Collections.Generic;
-using SIL.Code;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer.Areas.Lists
 {
 	/// <summary>
 	/// Dialog for adding TopicListEditor-like custom lists to a Fieldworks project.
@@ -133,11 +134,13 @@ namespace LanguageExplorer.Works
 			tb.Hide();
 			if (m_uiWss.Count == 0)
 				return null;
-			var ms = new LabeledMultiStringControl(Cache, m_uiWss, stylesheet);
-			ms.Location = tb.Location;
-			ms.Width = tb.Width;
-			ms.Anchor = tb.Anchor;
-			ms.AccessibleName = tb.AccessibleName;
+			var ms = new LabeledMultiStringControl(Cache, m_uiWss, stylesheet)
+			{
+				Location = tb.Location,
+				Width = tb.Width,
+				Anchor = tb.Anchor,
+				AccessibleName = tb.AccessibleName
+			};
 
 			// Grow the dialog and move all lower controls down to make room.
 			Controls.Remove(tb);
@@ -201,11 +204,11 @@ namespace LanguageExplorer.Works
 		private void InitializeDisplayByCombo()
 		{
 			m_displayByCombo.Items.Add(new IdAndString<PossNameType>(PossNameType.kpntName,
-				xWorksStrings.ksName));
+				ListResources.ksName));
 			m_displayByCombo.Items.Add(new IdAndString<PossNameType>(PossNameType.kpntNameAndAbbrev,
-				xWorksStrings.ksAbbrevName));
+				ListResources.ksAbbrevName));
 			m_displayByCombo.Items.Add(new IdAndString<PossNameType>(PossNameType.kpntAbbreviation,
-				xWorksStrings.ksAbbreviation));
+				ListResources.ksAbbreviation));
 			m_displayByCombo.SelectedIndex = 0;
 			m_displayByCombo.LostFocus += new EventHandler(m_displayByCombo_LostFocus);
 		}
@@ -286,8 +289,7 @@ namespace LanguageExplorer.Works
 				return; // to save any changes requires a mediator and cache
 			if (IsListNameEmpty)
 			{
-				MessageBox.Show(xWorksStrings.ksProvideValidListName, xWorksStrings.ksNoListName,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(ListResources.ksProvideValidListName, ListResources.ksNoListName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
 			// Fixes FWR-2564 Crash typing in combo boxes.
@@ -327,7 +329,7 @@ namespace LanguageExplorer.Works
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// <summary>
@@ -396,8 +398,10 @@ namespace LanguageExplorer.Works
 			{
 				for (var i = 0; i < m_wsCombo.Items.Count; i++)
 				{
-					if (((IdAndString<int>)m_wsCombo.Items[i]).Id != value)
+					if (((IdAndString<int>) m_wsCombo.Items[i]).Id != value)
+					{
 						continue;
+					}
 					m_wsCombo.SelectedIndex = i;
 					break;
 				}
@@ -509,7 +513,7 @@ namespace LanguageExplorer.Works
 		{
 			if (IsListNameEmpty)
 			{
-				MessageBox.Show(xWorksStrings.ksProvideValidListName, xWorksStrings.ksNoListName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(ListResources.ksProvideValidListName, ListResources.ksNoListName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				_newList = null;
 				return;
 			}
@@ -545,10 +549,10 @@ namespace LanguageExplorer.Works
 			// This will likely get taken care of by a data migration to change internal list names.
 			if (IsListNameDuplicated)
 			{
-				MessageBox.Show(xWorksStrings.ksChooseAnotherListName, xWorksStrings.ksDuplicateName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(ListResources.ksChooseAnotherListName, ListResources.ksDuplicateName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
-			UndoableUnitOfWorkHelper.Do(xWorksStrings.ksUndoCreateList, xWorksStrings.ksRedoCreateList, Cache.ActionHandlerAccessor, () =>
+			UndoableUnitOfWorkHelper.Do(ListResources.ksUndoCreateList, ListResources.ksRedoCreateList, Cache.ActionHandlerAccessor, () =>
 				{
 					var ws = Cache.DefaultUserWs; // get default ws
 					var listName = m_lmscListName.Value(ws);
@@ -601,7 +605,7 @@ namespace LanguageExplorer.Works
 		{
 			m_curList = possList;
 			m_fchangesMade = false;
-			Text = xWorksStrings.ksConfigureList;
+			Text = ListResources.ksConfigureList;
 			s_helpTopic = "khtpConfigureList";
 		}
 
@@ -714,11 +718,11 @@ namespace LanguageExplorer.Works
 			}
 			if (m_fnameChanged && IsListNameDuplicated)
 			{
-				MessageBox.Show(xWorksStrings.ksChooseAnotherListName, xWorksStrings.ksDuplicateName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(ListResources.ksChooseAnotherListName, ListResources.ksDuplicateName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
 
-			UndoableUnitOfWorkHelper.Do(xWorksStrings.ksUndoConfigureList, xWorksStrings.ksRedoConfigureList,
+			UndoableUnitOfWorkHelper.Do(ListResources.ksUndoConfigureList, ListResources.ksRedoConfigureList,
 				Cache.ActionHandlerAccessor, () =>
 				{
 					m_curList.WsSelector = SelectedWs;
