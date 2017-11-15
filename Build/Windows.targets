@@ -57,13 +57,7 @@
 		<ECPlugins Include="SIEC 4.0.0.0 Plugin Details.xml" />
 	</ItemGroup>
 
-	<Target Name="CheckAdminPrivilege" Condition="'$(OS)'=='Windows_NT'">
-		<CheckAdminPrivilege>
-			<Output TaskParameter="UserIsAdmin" PropertyName="UserIsAdmin"/>
-		</CheckAdminPrivilege>
-	</Target>
-
-	<Target Name="RegisterEncConvertersDlls" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="CheckAdminPrivilege">
+	<Target Name="RegisterEncConvertersDlls" Condition="'$(OS)'=='Windows_NT'">
 		<ItemGroup>
 			<ConverterDlls Include="$(fwrt)/packages/Encoding-Converters-Core.$(ECNugetVersion)/lib/net40/$(ECArch)/EcInterfaces.dll"/>
 			<ConverterDlls Include="$(fwrt)/packages/Encoding-Converters-Core.$(ECNugetVersion)/lib/net40/$(ECArch)/SilEncConverters40.dll"/>
@@ -72,12 +66,6 @@
 			  DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
 			  Condition="'$(action)'!='clean'"/>
-
-		<Exec Command="regasm.exe /codebase /silent $(dir-outputBase)\SilEncConverters40.dll" IgnoreExitCode="true"
-			  Condition="'$(action)'!='clean' AND '$(UserIsAdmin)'=='True'" />
-		<Exec Command="regasm.exe /unregister /silent $(dir-outputBase)\SilEncConverters40.dll" IgnoreExitCode="true"
-			  Condition="'$(action)'=='clean' AND '$(UserIsAdmin)'=='True'" />
-		<Message Text="You must (un)register $(dir-outputBase)\SilEncConverters40.dll manually." Condition="'$(UserIsAdmin)'!='True'"/>
 	</Target>
 
 	<!-- Only Windows has the xsltc tool for compiling XSLs -->
