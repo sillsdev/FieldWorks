@@ -281,7 +281,7 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				using (var sdform = new SummaryDialogForm(new List<int>(entries.Select(le => le.Hvo)), tssWf,
 														helpProvider, helpFileKey,
-														stylesheet, cache, mediator))
+														stylesheet, cache, mediator, propertyTable))
 				{
 					SetCurrentModalForm(sdform);
 					if (owner == null)

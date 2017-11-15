@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <param name="mediator">The mediator.</param>
 		/// ------------------------------------------------------------------------------------
 		internal SummaryDialogForm(List<int> rghvo, ITsString tssForm, IHelpTopicProvider helpProvider,
-			string helpFileKey, IVwStylesheet styleSheet, LcmCache cache, Mediator mediator)
+			string helpFileKey, IVwStylesheet styleSheet, LcmCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
 			InitializeComponent();
 			AccessibleName = GetType().Name;
@@ -107,6 +107,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			m_rghvo = rghvo;
 			m_cache = cache;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			Initialize(tssForm, helpProvider, helpFileKey, styleSheet);
 		}
 
