@@ -12,6 +12,7 @@ using SIL.Linq;
 using SIL.LCModel.Utils;
 using XCore;
 using DCM = SIL.FieldWorks.XWorks.DictionaryConfigurationMigrator;
+using System.Xml.Linq;
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {
@@ -47,6 +48,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				File.Move(stemPath, lexemePath);
 			}
+			RenameReversalConfigFiles(configSettingsDir);
 			foreach (var config in DCM.GetConfigsNeedingMigration(Cache, DCM.VersionCurrent))
 			{
 				m_logger.WriteLine(foundOne);
@@ -280,6 +282,55 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				if (node.FieldDescription == "MorphoSyntaxAnalyses")
 					node.Children.RemoveAll(child => child.FieldDescription != "MLPartOfSpeech");
 			});
+		}
+
+		/// <summary>
+		/// Renames the .fwdictconfig files in the ReversalIndex Folder
+		/// For ex. english.fwdictconfig to en.fwdictconfig
+		/// </summary>
+		/// <param name="configSettingsDir"></param>
+		private static void RenameReversalConfigFiles(string configSettingsDir)
+		{
+			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			var dictConfigFiles = new List<string>(DCM.ConfigFilesInDir(reversalIndexConfigLoc));
+			string newFName = string.Empty;
+			foreach (string fName in dictConfigFiles)
+			{
+				newFName = GetWritingSystemName(fName);
+				if(!string.IsNullOrEmpty(newFName))
+				{
+					newFName = Path.Combine(Path.GetDirectoryName(fName), newFName + DictionaryConfigurationModel.FileExtension);
+					File.Move(fName, newFName);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Reads the .fwdictconfig config file and gets the writing system name
+		/// </summary>
+		/// <param name="fileName"></param>
+		/// <returns></returns>
+		private static string GetWritingSystemName(string fileName)
+		{
+			string wsName = string.Empty;
+			try
+			{
+				XDocument xDoc = XDocument.Load(fileName);
+				XElement rootElement = xDoc.Root;
+				if (rootElement != null)
+				{
+					XAttribute writingSystemAttribute = rootElement.Attribute("writingSystem");
+					if (writingSystemAttribute != null)
+					{
+						wsName = writingSystemAttribute.Value.ToString();
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				wsName = string.Empty;
+			}
+			return wsName;
 		}
 
 		/// <summary>
