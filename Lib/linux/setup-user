@@ -37,9 +37,8 @@ CopyRegistryKey()
 (
 	if [ ! -d "${FW_CONFIG}/Icu54/" ]; then
 		echo "# Copying ICU data"
-		mkdir -p "${FW_CONFIG}/Icu54/"
-		cp -a "${FW_SHARE}/Icu54/icudt54l" "${FW_CONFIG}/Icu54/"
-		cp -a "${FW_SHARE}/Icu54/data" "${FW_CONFIG}/Icu54/"
+		mkdir -p "${FW_CONFIG}"
+		cp -a "${FW_SHARE}/Icu54" "${FW_CONFIG}/"
 	fi
 
 	if [ ! -d "${FW_CONFIG}/SIL/" ]; then
