@@ -510,6 +510,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void UpdateTabsForStyle(StyleInfo styleInfo)
 		{
 			m_fontTab.UpdateForStyle(styleInfo, -1);
+			m_bulletsTab.UpdateForStyle(styleInfo);
 
 			// Only update the rest of the tabs if the style is a paragraph style
 			if (styleInfo.IsParagraphStyle)
@@ -1150,6 +1151,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// save the changes from the other tabs
 			m_generalTab.SaveToInfo(styleInfo);
 			m_fontTab.SaveToInfo(styleInfo);
+			m_bulletsTab.SaveToInfo(styleInfo);
 			if (styleInfo.IsParagraphStyle)
 			{
 				m_paragraphTab.SaveToInfo(styleInfo);

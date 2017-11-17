@@ -34,6 +34,14 @@ namespace SIL.FieldWorks.XWorks.LexText
 		private FlexStylesXmlAccessor() {}
 
 		private string m_sourceDocumentPath;
+		private static readonly Dictionary<string, string> BulletPropertyMap = new Dictionary<string, string>
+		{
+			{"numberscheme", "bulNumScheme"},
+			{"startat", "bulNumStartAt"},
+			{"textafter", "bulNumTxtAft"},
+			{"textbefore", "bulNumTxtBef"},
+			{"bulletcustom", "bulCusTxt"}
+		};
 
 		/// <summary/>
 		public FlexStylesXmlAccessor(ILexDb lexicon, bool loadDocument = false, string sourceDocument = null)
@@ -313,6 +321,31 @@ namespace SIL.FieldWorks.XWorks.LexText
 				{
 					writer.WriteAttributeString(prop.Item1, prop.Item2);
 				}
+
+				//Bullet/Number FontInfo
+				try
+				{
+					IEnumerable<Tuple<string, string>> bulNumParaProperty = CollectBulletProps(style.BulletInfo);
+					foreach (var prop in bulNumParaProperty)
+					{
+						string propName = prop.Item1;
+						if (BulletPropertyMap.ContainsKey(propName.ToLower()))
+							propName = BulletPropertyMap[propName.ToLower()];
+						writer.WriteAttributeString(propName, prop.Item2);
+					}
+					// Generate the font info (the font element is required by the DTD even if it has no attributes)
+					writer.WriteStartElement("BulNumFontInfo");
+					IEnumerable<Tuple<string, string>> bulletFontInfoProperties = CollectFontProps(style.BulletInfo.FontInfo);
+					if (bulletFontInfoProperties.Any())
+					{
+						foreach (var prop in bulletFontInfoProperties)
+						{
+							writer.WriteAttributeString(prop.Item1, prop.Item2);
+						}
+					}
+					writer.WriteEndElement(); // bullet
+				}
+				catch{}
 				writer.WriteEndElement(); // paragraph
 			}
 		}
@@ -336,6 +369,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			{
 				fontProperties.Add(new Tuple<string, string>("italic", styleRules.Italic.Value.ToString().ToLowerInvariant()));
 			}
+			GetColorValueAttribute("backcolor", styleRules.BackColor, fontProperties);
 			GetColorValueAttribute("color", styleRules.FontColor, fontProperties);
 			GetColorValueAttribute("underlineColor", styleRules.UnderlineColor, fontProperties);
 			if (styleRules.Underline.ValueIsSet)
@@ -446,6 +480,66 @@ namespace SIL.FieldWorks.XWorks.LexText
 			}
 
 			return paragraphProps;
+		}
+
+		/// <summary>
+		/// Collects the bullet info for the style in tuples of attribute name, attribute value
+		/// </summary>
+		private IEnumerable<Tuple<string, string>> CollectBulletProps(BulletInfo styleRules)
+		{
+			var bulletProperties = new List<Tuple<string, string>>();
+			if (styleRules.m_numberScheme.ToString().Length > 0)
+			{
+				string bulletNumberScheme;
+				switch (styleRules.m_numberScheme)
+				{
+					case VwBulNum.kvbnNone:
+						bulletNumberScheme = "None";
+						break;
+					case VwBulNum.kvbnArabic:
+						bulletNumberScheme = "Arabic";
+						break;
+					case VwBulNum.kvbnRomanUpper:
+						bulletNumberScheme = "RomanUpper";
+						break;
+					case VwBulNum.kvbnRomanLower:
+						bulletNumberScheme = "RomanLower";
+						break;
+					case VwBulNum.kvbnLetterUpper:
+						bulletNumberScheme = "LetterUpper";
+						break;
+					case VwBulNum.kvbnLetterLower:
+						bulletNumberScheme = "LetterLower";
+						break;
+					case VwBulNum.kvbnArabic01:
+						bulletNumberScheme = "Arabic01";
+						break;
+					case VwBulNum.kvbnBullet:
+						bulletNumberScheme = "Custom";
+						break;
+					default:
+						bulletNumberScheme = styleRules.m_numberScheme.ToString();
+						break;
+				}
+				bulletProperties.Add(new Tuple<string, string>("numberScheme", bulletNumberScheme));
+			}
+			if (!string.IsNullOrEmpty(styleRules.m_bulletCustom))
+			{
+				bulletProperties.Add(new Tuple<string, string>("bulletCustom", styleRules.m_bulletCustom.ToLowerInvariant()));
+			}
+			if (styleRules.m_start.ToString().Length > 0)
+			{
+				bulletProperties.Add(new Tuple<string, string>("startAt", styleRules.m_start.ToString().ToLowerInvariant()));
+			}
+			if (!string.IsNullOrEmpty(styleRules.m_textBefore))
+			{
+				bulletProperties.Add(new Tuple<string, string>("textBefore", styleRules.m_textBefore.ToLowerInvariant()));
+			}
+			if (!string.IsNullOrEmpty(styleRules.m_textAfter))
+			{
+				bulletProperties.Add(new Tuple<string, string>("textAfter", styleRules.m_textAfter.ToLowerInvariant()));
+			}
+			return bulletProperties;
 		}
 
 		/// <summary>
