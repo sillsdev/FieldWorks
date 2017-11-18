@@ -1917,6 +1917,15 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 			}
 
+			/// <summary>
+			/// No resources need to be cleaned up specific to the OneColumnBrowseView and we need to override
+			/// so we don't try to dispose content owned by the BrowseViewer that we are constructed with.
+			/// </summary>
+			protected override void Dispose(bool disposing)
+			{
+
+			}
+
 			public override Point ScrollPosition
 			{
 				get
@@ -2050,7 +2059,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal void AdjustColumnWidthToMatchContents(int icolLvHeaderToAdjust)
 		{
-			if (m_xbv.Vc.HasSelectColumn && icolLvHeaderToAdjust == 0)
+			if (m_xbv.RowCount == 0 || m_xbv.Vc.HasSelectColumn && icolLvHeaderToAdjust == 0)
 				return; // don't auto-size a select column.
 
 			// by default '0' will not change the size of the column.

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -1092,6 +1092,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				WritingSystemServices.DeleteWritingSystem(m_cache, ws);
 				m_fWsChanged = true;
+			}
+			if (m_fWsChanged)
+			{
+				((IPublisherProvider)m_app?.ActiveMainWindow)?.Publisher?.Publish("WritingSystemDeleted", m_deletedWritingSystems.Select(x => x.Id).ToArray());
 			}
 		}
 

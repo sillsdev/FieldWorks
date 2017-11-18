@@ -243,7 +243,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			catch (ArgumentException)
 			{
-				MessageBoxes.ReportLexEntryCircularReference((ILexEntry)componentLexeme, variant, false);
+				MessageBoxes.ReportLexEntryCircularReference(componentLexeme, variant, false);
 			}
 		}
 

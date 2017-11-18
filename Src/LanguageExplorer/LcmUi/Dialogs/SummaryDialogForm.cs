@@ -39,13 +39,11 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		#region Member variables
 		private List<int> m_rghvo;
 		private int m_hvoSelected;		// object selected in the view.
-		private ITsString m_tssWf;
 		private XmlView m_xv;
 		private LcmCache m_cache;
 		private IPropertyTable m_propertyTable;
 		private IHelpTopicProvider m_helpProvider;
 		private string m_helpFileKey;
-//		private IVwStylesheet m_vss;
 		private System.Windows.Forms.Button btnOther;
 		private System.Windows.Forms.Button btnLexicon;
 		private System.Windows.Forms.Button btnClose;
@@ -65,35 +63,26 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// Constructor for a single LexEntry object.
 		/// </summary>
 		/// <param name="leui">The lex entry ui.</param>
-		/// <param name="tssForm">The TSS form.</param>
 		/// <param name="helpProvider">The help provider.</param>
 		/// <param name="helpFileKey">string key to get the help file name</param>
 		/// <param name="styleSheet">The stylesheet.</param>
 		/// ------------------------------------------------------------------------------------
-		internal SummaryDialogForm(LexEntryUi leui, ITsString tssForm, IHelpTopicProvider helpProvider,
-			string helpFileKey, IVwStylesheet styleSheet)
+		internal SummaryDialogForm(LexEntryUi leui, IHelpTopicProvider helpProvider, string helpFileKey, IVwStylesheet styleSheet)
+			: this(new List<int>(leui.Object.Hvo), helpProvider, helpFileKey, styleSheet, leui.Object.Cache, leui.PropertyTable)
 		{
-			InitializeComponent();
-			AccessibleName = GetType().Name;
-
-			m_rghvo = new List<int>(1);
-			m_rghvo.Add(leui.Object.Hvo);
-			m_cache = leui.Object.Cache;
-			m_propertyTable = leui.PropertyTable;
-			Initialize(tssForm, helpProvider, helpFileKey, styleSheet);
 		}
 
 		/// <summary>
 		/// Constructor for multiple matching LexEntry objects.
 		/// </summary>
 		/// <param name="rghvo">The rghvo.</param>
-		/// <param name="tssForm">The TSS form.</param>
 		/// <param name="helpProvider">The help provider.</param>
 		/// <param name="helpFileKey">The help file key.</param>
 		/// <param name="styleSheet">The stylesheet.</param>
 		/// <param name="cache">The cache.</param>
-		internal SummaryDialogForm(List<int> rghvo, ITsString tssForm, IHelpTopicProvider helpProvider,
-			string helpFileKey, IVwStylesheet styleSheet, LcmCache cache)
+		/// <param name="propertyTable"></param>
+		internal SummaryDialogForm(List<int> rghvo, IHelpTopicProvider helpProvider,
+			string helpFileKey, IVwStylesheet styleSheet, LcmCache cache, IPropertyTable propertyTable)
 		{
 			InitializeComponent();
 			AccessibleName = GetType().Name;
@@ -101,24 +90,21 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			Debug.Assert(rghvo != null && rghvo.Count > 0);
 			m_rghvo = rghvo;
 			m_cache = cache;
-			Initialize(tssForm, helpProvider, helpFileKey, styleSheet);
+			m_propertyTable = propertyTable;
+			Initialize(helpProvider, helpFileKey, styleSheet);
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Common initialization shared by the constructors.
 		/// </summary>
-		/// <param name="tssForm">The TSS form.</param>
 		/// <param name="helpProvider">The help provider.</param>
 		/// <param name="helpFileKey">The help file key.</param>
 		/// <param name="styleSheet">The stylesheet.</param>
 		/// ------------------------------------------------------------------------------------
-		private void Initialize(ITsString tssForm, IHelpTopicProvider helpProvider, string helpFileKey,
-			IVwStylesheet styleSheet)
+		private void Initialize(IHelpTopicProvider helpProvider, string helpFileKey, IVwStylesheet styleSheet)
 		{
-			m_tssWf = tssForm;
 			m_helpProvider = helpProvider;
-//			m_vss = styleSheet;
 			if (m_helpProvider == null)
 			{
 				btnHelp.Enabled = false;
@@ -126,8 +112,10 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			else
 			{
 				m_helpFileKey = helpFileKey;
-				this.helpProvider = new HelpProvider();
-				this.helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpProvider.GetHelpString("UserHelpFile");
+				this.helpProvider = new HelpProvider
+				{
+					HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpProvider.GetHelpString("UserHelpFile")
+				};
 				this.helpProvider.SetHelpKeyword(this, m_helpProvider.GetHelpString(s_helpTopicKey));
 				this.helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
@@ -171,11 +159,16 @@ namespace LanguageExplorer.LcmUi.Dialogs
 
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
+				m_rghvo?.Clear();
+				m_xv?.Dispose();
 			}
+			m_rghvo = null;
+			m_xv = null;
+			m_cache = null;
+			m_propertyTable = null;
+			m_helpProvider = null;
+
 			base.Dispose( disposing );
 		}
 		#endregion

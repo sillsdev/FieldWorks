@@ -160,7 +160,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 								}
 								catch (ArgumentException)
 								{
-									MessageBoxes.ReportLexEntryCircularReference((ILexEntry) dlg.SelectedObject, m_obj, false);
+									MessageBoxes.ReportLexEntryCircularReference(dlg.SelectedObject, m_obj, false);
 								}
 							}
 						}
@@ -327,7 +327,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				}
 				catch (ArgumentException)
 				{
-					MessageBoxes.ReportLexEntryCircularReference((ILexEntry)m_obj.Owner, obj, true);
+					MessageBoxes.ReportLexEntryCircularReference(m_obj.Owner, obj, true);
 				}
 			}
 		}

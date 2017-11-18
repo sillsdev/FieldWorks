@@ -292,7 +292,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return;
 
 			if (!ApplyNewFontSizeIfValid(m_tbFontSize.Text))
+			{
+				if(m_lbFontSizes.SelectedIndex == -1)
+					m_lbFontSizes.SelectedIndex = m_lbFontSizes.FindStringExact(m_tbFontSize.Text);
 				return;
+			}
 			SelectFontSizeInList(FontSize.ToString());
 			UpdatePreview();
 		}

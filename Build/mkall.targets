@@ -564,17 +564,7 @@
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 	</Target>
 
-	<Target Name="setRegistryValues" DependsOnTargets="initLinux;initWindows;setKeysInHKLM;setKeysInHKCU"/>
-
-	<!-- This target only has an effect on Windows machines, and should be removed once encoding converters are updated to look in HKCU by default -->
-	<Target Name="setKeysInHKLM" DependsOnTargets="RegisterEncConvertersDlls" Condition="'$(UserIsAdmin)'=='True'">
-		<WriteRegistry Hive="LocalMachine"
-						 Key="SOFTWARE\SIL\SilEncConverters40\RootDir"
-						 Value="$(dir-outputBase)"/>
-		<WriteRegistry Hive="LocalMachine"
-						 Key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
-						 Value="$(dir-outputBase)\EC\Plugins"/>
-	</Target>
+	<Target Name="setRegistryValues" DependsOnTargets="initLinux;initWindows;setKeysInHKCU"/>
 
 	<Target Name="setKeysInHKCU" Condition="'$(packaging)' != 'yes'">
 		<Message Text="Setting registry values for $(fwrt)."/>

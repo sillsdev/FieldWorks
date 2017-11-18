@@ -73,7 +73,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						}
 						catch (ArgumentException)
 						{
-							MessageBoxes.ReportLexEntryCircularReference((ILexEntry)dlg.SelectedObject, m_lexEntry, false);
+							MessageBoxes.ReportLexEntryCircularReference(dlg.SelectedObject, m_lexEntry, false);
 						}
 					}
 				}

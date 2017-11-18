@@ -978,11 +978,15 @@ namespace LanguageExplorer.LcmUi
 			{
 				file = pict.PictureFileRA;
 			}
-			else
+			else if (m_obj is ICmMedia)
 			{
-				var media = m_obj as ICmMedia;
-				if (media != null)
-					file = media.MediaFileRA;
+				var media = (ICmMedia)m_obj;
+				file = media.MediaFileRA;
+			}
+			else if (m_obj != null)
+			{
+				// No cleanup needed
+				return true;
 			}
 			return ConsiderDeletingRelatedFile(file, PropertyTable);
 		}

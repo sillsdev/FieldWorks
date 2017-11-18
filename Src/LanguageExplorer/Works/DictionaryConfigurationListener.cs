@@ -363,6 +363,21 @@ namespace LanguageExplorer.Works
 			return true;
 		}
 
+		public bool OnWritingSystemDeleted(object param)
+		{
+			var currentConfig = GetCurrentConfiguration(PropertyTable, true, null);
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
+			var configuration = new DictionaryConfigurationModel(currentConfig, cache);
+			if (((string[])param).Any(x => x.ToString() == configuration.HomographConfiguration.HomographWritingSystem))
+			{
+				configuration.HomographConfiguration.HomographWritingSystem = string.Empty;
+				configuration.HomographConfiguration.CustomHomographNumbers = string.Empty;
+				configuration.Save();
+				Publisher.Publish("MasterRefresh", null);
+			}
+			return true;
+		}
+
 		private static string GetInnerConfigDir(string configFilePath)
 		{
 			return Path.GetFileName(Path.GetDirectoryName(configFilePath));

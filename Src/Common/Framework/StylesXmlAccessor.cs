@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
+using System.Text;
 using System.Xml;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -259,6 +260,13 @@ namespace SIL.FieldWorks.Common.Framework
 								if (!styleInfo.SetExplicitParaIntProp(tpt, iVar, iVal))
 									throw new InvalidEnumArgumentException("tpt", tpt, typeof(FwTextPropType));
 							},
+							(tpt, sVal) =>
+							{
+								if (tpt == (int)FwTextPropType.ktptWsStyle)
+									styleInfo.ProcessWsSpecificOverrides(sVal);
+								else
+									throw new InvalidEnumArgumentException("tpt", tpt, typeof(FwTextPropType));
+							},
 							OverwriteOptions.All);
 					}
 				});
@@ -466,8 +474,8 @@ namespace SIL.FieldWorks.Common.Framework
 				if (style.Type == StyleType.kstParagraph)
 					SetParagraphProperties(styleName, styleTag,
 					((tpt, nVar, nVal) => m_progressDlg.SynchronizeInvoke.Invoke(() => propsBldr.SetIntPropValues(tpt, nVar, nVal))),
+					((tpt, sVal) => m_progressDlg.SynchronizeInvoke.Invoke(() => propsBldr.SetStrPropValue(tpt, sVal))),
 					option);
-
 				style.Rules = propsBldr.GetTextProps();
 			}
 		}
@@ -1284,10 +1292,11 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </param>
 		/// <param name="styleTag">XML node that has the paragraph properties</param>
 		/// <param name="setIntProp">the delegate to set each int property</param>
+		/// <param name="setStrProp">the delegate to set each string property</param>
 		/// <param name="options">Indicates which properties to overwrite.</param>
 		/// ------------------------------------------------------------------------------------
 		private void SetParagraphProperties(string styleName, XmlNode styleTag,
-			Action<int, int, int> setIntProp, OverwriteOptions options)
+			Action<int, int, int> setIntProp, Action<int, string> setStrProp, OverwriteOptions options)
 		{
 			XmlNode node = styleTag.SelectSingleNode("paragraph");
 			if (node == null)
@@ -1295,6 +1304,8 @@ namespace SIL.FieldWorks.Common.Framework
 				ReportInvalidInstallation(String.Format(
 					FrameworkStrings.ksMissingParagraphNode, styleName, ResourceFileName));
 			}
+			XmlNode bulletFontInfoNode = node.SelectSingleNode("BulNumFontInfo");
+
 			XmlAttributeCollection paraAttributes = node.Attributes;
 
 			node = paraAttributes.GetNamedItem("keepWithNext");
@@ -1530,6 +1541,143 @@ namespace SIL.FieldWorks.Common.Framework
 				setIntProp((int)FwTextPropType.ktptBulNumStartAt,
 					(int)FwTextPropVar.ktpvDefault, nVal);
 			}
+
+			node = paraAttributes.GetNamedItem("bulNumTxtAft");
+			if (node?.Value.Length > 0)
+			{
+				setStrProp((int) FwTextPropType.ktptBulNumTxtAft, node.Value);
+			}
+
+			node = paraAttributes.GetNamedItem("bulNumTxtBef");
+			if (node?.Value.Length > 0)
+			{
+				setStrProp((int) FwTextPropType.ktptBulNumTxtBef, node.Value);
+			}
+
+			node = paraAttributes.GetNamedItem("bulCusTxt");
+			if (node?.Value.Length > 0)
+			{
+				setStrProp((int) FwTextPropType.ktptCustomBullet, node.Value);
+			}
+
+			//Bullet Font Info
+			if (bulletFontInfoNode?.ChildNodes == null)
+				return;
+			SetBulNumFontInfoProperties(styleName, setStrProp, bulletFontInfoNode);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Read the BulNumFontInfo properties from the XML node and set the properties in the given
+		/// props builder.
+		/// </summary>
+		/// <param name="styleName">Name of style being created/updated (for error reporting) </param>
+		/// <param name="setStrProp">the delegate to set each string property</param>
+		/// <param name="bulletFontInfoNode">BulNumFontInfo Node from Xml document</param>
+		/// ------------------------------------------------------------------------------------
+		private void SetBulNumFontInfoProperties(string styleName, Action<int, string> setStrProp, XmlNode bulletFontInfoNode)
+		{
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
+			int type, var;
+
+			XmlAttributeCollection bulNumFontAttributes = bulletFontInfoNode.Attributes;
+			if (bulNumFontAttributes == null) return;
+
+			XmlNode attr = bulNumFontAttributes.GetNamedItem("italic");
+			if (attr != null)
+			{
+				propsBldr.SetIntPropValues((int) FwTextPropType.ktptItalic, (int) FwTextPropVar.ktpvEnum,
+					GetBoolAttribute(bulNumFontAttributes, "italic", styleName, ResourceFileName)
+						? (int) FwTextToggleVal.kttvForceOn
+						: (int) FwTextToggleVal.kttvOff);
+			}
+
+			attr = bulNumFontAttributes.GetNamedItem("bold");
+			if (attr != null)
+			{
+				propsBldr.SetIntPropValues((int) FwTextPropType.ktptBold, (int) FwTextPropVar.ktpvEnum,
+					GetBoolAttribute(bulNumFontAttributes, "bold", styleName, ResourceFileName)
+						? (int) FwTextToggleVal.kttvForceOn
+						: (int) FwTextToggleVal.kttvOff);
+			}
+
+			attr = bulNumFontAttributes.GetNamedItem("size");
+			if (attr != null)
+			{
+				int nSize = InterpretMeasurementAttribute(attr.Value, "size", styleName, ResourceFileName);
+				propsBldr.SetIntPropValues((int) FwTextPropType.ktptFontSize, (int) FwTextPropVar.ktpvMilliPoint, nSize);
+			}
+
+			attr = bulNumFontAttributes.GetNamedItem("color");
+			string sbColor = (attr == null ? "default" : attr.Value);
+			if (sbColor != "default")
+			{
+				propsBldr.SetIntPropValues((int) FwTextPropType.ktptForeColor, (int) FwTextPropVar.ktpvDefault,
+					ColorVal(sbColor, styleName));
+			}
+
+			attr = bulNumFontAttributes.GetNamedItem("underlineColor");
+			sbColor = (attr == null ? "default" : attr.Value);
+			if (sbColor != "default")
+			{
+				propsBldr.SetIntPropValues((int) FwTextPropType.ktptUnderColor, (int) FwTextPropVar.ktpvDefault,
+					ColorVal(sbColor, styleName));
+			}
+
+			attr = bulNumFontAttributes.GetNamedItem("underline");
+			string sUnderline = (attr == null) ? null : attr.Value;
+			if (sUnderline != null)
+			{
+				int unt = InterpretUnderlineType(sUnderline);
+				propsBldr.SetIntPropValues((int) FwTextPropType.ktptUnderline, (int) FwTextPropVar.ktpvEnum, unt);
+			}
+
+			attr = bulNumFontAttributes.GetNamedItem("family");
+			string sfamily = (attr == null) ? null : attr.Value;
+			if (sfamily != null)
+			{
+				propsBldr.SetStrPropValue((int) FwTextPropType.ktptFontFamily, sfamily);
+			}
+
+			attr = bulNumFontAttributes.GetNamedItem("forecolor");
+			sbColor = (attr == null ? "default" : attr.Value);
+			if (sbColor != "default")
+			{
+				propsBldr.SetIntPropValues((int) FwTextPropType.ktptForeColor, (int) FwTextPropVar.ktpvDefault,
+					ColorVal(sbColor, styleName));
+			}
+
+			attr = bulNumFontAttributes.GetNamedItem("backcolor");
+			sbColor = (attr == null ? "default" : attr.Value);
+			if (sbColor != "default")
+			{
+				propsBldr.SetIntPropValues((int) FwTextPropType.ktptBackColor, (int) FwTextPropVar.ktpvDefault,
+					ColorVal(sbColor, styleName));
+			}
+
+			// Add the integer properties to the bullet props string
+			StringBuilder bulletProps = new StringBuilder(propsBldr.IntPropCount * 3 + propsBldr.StrPropCount * 3);
+			for (int i = 0; i < propsBldr.IntPropCount; i++)
+			{
+				var intValue = propsBldr.GetIntProp(i, out type, out var);
+				bulletProps.Append((char) type);
+				bulletProps.Append((char) (intValue & 0xFFFF));
+				bulletProps.Append((char) ((intValue >> 16) & 0xFFFF));
+			}
+
+			// Add the string properties to the bullet props string
+			for (int i = 0; i < propsBldr.StrPropCount; i++)
+			{
+				var strValue = propsBldr.GetStrProp(i, out type);
+				bulletProps.Append((char) type);
+				bulletProps.Append(strValue);
+				bulletProps.Append('\u0000');
+			}
+
+			if (!string.IsNullOrEmpty(bulletProps.ToString()))
+			{
+				setStrProp((int) FwTextPropType.ktptBulNumFontInfo, bulletProps.ToString());
+			}
 		}
 
 		/// -------------------------------------------------------------------------------------
@@ -1757,16 +1905,22 @@ namespace SIL.FieldWorks.Common.Framework
 				case "LetterLower":	return (int)VwBulNum.kvbnLetterLower;
 				case "RomanUpper":	return (int)VwBulNum.kvbnRomanUpper;
 				case "RomanLower":	return (int)VwBulNum.kvbnRomanLower;
+				case "Custom":      return (int)VwBulNum.kvbnBullet;
 			}
+			int nVal;
 			if (sScheme.StartsWith("Bullet:"))
 			{
-				int nVal;
 				if (Int32.TryParse(sScheme.Substring(7), out nVal))
 				{
 					nVal += (int)VwBulNum.kvbnBulletBase;
 					if (nVal >= (int)VwBulNum.kvbnBulletBase && nVal <= (int)VwBulNum.kvbnBulletMax)
 						return nVal;
 				}
+			}
+			else if (Int32.TryParse(sScheme, out nVal))
+			{
+				if (nVal >= (int)VwBulNum.kvbnBulletBase && nVal <= (int)VwBulNum.kvbnBulletMax)
+					return nVal;
 			}
 			ReportInvalidInstallation(String.Format(FrameworkStrings.ksUnknownBulNumSchemeValue,
 				styleName, fileName));

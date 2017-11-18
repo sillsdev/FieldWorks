@@ -251,9 +251,9 @@ namespace LanguageExplorer.LcmUi
 			bool otherButtonClicked = false;
 			do
 			{
-				using (var sdform = new SummaryDialogForm(new List<int>(entries.Select(le => le.Hvo)), tssWf,
+				using (var sdform = new SummaryDialogForm(new List<int>(entries.Select(le => le.Hvo)),
 														helpProvider, helpFileKey,
-														stylesheet, cache))
+														stylesheet, cache, propertyTable))
 				{
 					SetCurrentModalForm(sdform);
 					if (owner == null)
@@ -499,7 +499,7 @@ namespace LanguageExplorer.LcmUi
 
 			bool otherButtonClicked = false;
 			using (SummaryDialogForm form =
-				new SummaryDialogForm(this, tssWf, helpProvider, helpFileKey, styleSheet))
+				new SummaryDialogForm(this, helpProvider, helpFileKey, styleSheet))
 			{
 				form.ShowDialog(owner);
 				if (form.ShouldLink)

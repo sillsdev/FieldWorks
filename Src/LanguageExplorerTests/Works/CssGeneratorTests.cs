@@ -3006,7 +3006,7 @@ namespace LanguageExplorerTests.Works
 			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_readonlyPropertyTable);
-			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
+			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*font-family:Arial;.*font-weight:bold;.*font-style:italic;.*background-color:Brown;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Bulleted style not generated.");
 		}
 
@@ -3036,7 +3036,7 @@ namespace LanguageExplorerTests.Works
 			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_readonlyPropertyTable);
-			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent\s.\s.sensecontent:not\(:first-child\):before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
+			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent\s.\s.sensecontent:not\(:first-child\):before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*font-family:Arial;.*font-weight:bold;.*font-style:italic;.*background-color:Brown;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Bulleted style not generated.");
 		}
 
@@ -3240,7 +3240,7 @@ namespace LanguageExplorerTests.Works
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_readonlyPropertyTable);
-			const string regExPected = @".lexentry>\s.senses\s*>\s*.sensecontent\s*>\s*.sense>\s.senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
+			const string regExPected = @".lexentry>\s.senses\s*>\s*.sensecontent\s*>\s*.sense>\s.senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*font-family:Arial;.*font-weight:bold;.*font-style:italic;.*background-color:Brown;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Bulleted style for SubSenses not generated.");
 		}
 
@@ -3754,6 +3754,11 @@ namespace LanguageExplorerTests.Works
 			var fontInfo = new FontInfo();
 			fontInfo.m_fontColor.ExplicitValue = Color.Green;
 			fontInfo.m_fontSize.ExplicitValue = 14000;
+			fontInfo.m_fontName.ExplicitValue = "Arial";
+			fontInfo.m_bold.ExplicitValue = true;
+			fontInfo.m_italic.ExplicitValue = true;
+			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntNone;
+			fontInfo.m_backColor.ExplicitValue = Color.Blue;
 			var bulletinfo = new BulletInfo
 			{
 				m_numberScheme = (VwBulNum)105,
@@ -3765,6 +3770,11 @@ namespace LanguageExplorerTests.Works
 			var fontInfo1 = new FontInfo();
 			fontInfo1.m_fontColor.ExplicitValue = Color.Red;
 			fontInfo1.m_fontSize.ExplicitValue = 12000;
+			fontInfo1.m_fontName.ExplicitValue = "Arial";
+			fontInfo1.m_bold.ExplicitValue = false;
+			fontInfo1.m_italic.ExplicitValue = false;
+			fontInfo1.m_underline.ExplicitValue = FwUnderlineType.kuntNone;
+			fontInfo.m_backColor.ExplicitValue = Color.Brown;
 			style.SetDefaultFontInfo(fontInfo1);
 
 			SafelyAddStyleToSheetAndTable(name, style);
@@ -3775,6 +3785,11 @@ namespace LanguageExplorerTests.Works
 			var fontInfo = new FontInfo();
 			fontInfo.m_fontColor.ExplicitValue = Color.Green;
 			fontInfo.m_fontSize.ExplicitValue = 14000;
+			fontInfo.m_fontName.ExplicitValue = "Arial";
+			fontInfo.m_bold.ExplicitValue = true;
+			fontInfo.m_italic.ExplicitValue = true;
+			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntNone;
+			fontInfo.m_backColor.ExplicitValue = Color.Blue;
 			var bulletinfo = new BulletInfo
 			{
 				m_numberScheme = (VwBulNum)100,
@@ -3787,6 +3802,11 @@ namespace LanguageExplorerTests.Works
 			var fontInfo1 = new FontInfo();
 			fontInfo1.m_fontColor.ExplicitValue = Color.Red;
 			fontInfo1.m_fontSize.ExplicitValue = 12000;
+			fontInfo1.m_fontName.ExplicitValue = "Arial";
+			fontInfo1.m_bold.ExplicitValue = false;
+			fontInfo1.m_italic.ExplicitValue = false;
+			fontInfo1.m_underline.ExplicitValue = FwUnderlineType.kuntNone;
+			fontInfo.m_backColor.ExplicitValue = Color.Brown;
 			style.SetDefaultFontInfo(fontInfo1);
 
 			SafelyAddStyleToSheetAndTable(name, style);
@@ -3797,6 +3817,11 @@ namespace LanguageExplorerTests.Works
 			var fontInfo = new FontInfo();
 			fontInfo.m_fontColor.ExplicitValue = Color.Green;
 			fontInfo.m_fontSize.ExplicitValue = 14000;
+			fontInfo.m_fontName.ExplicitValue = "Arial";
+			fontInfo.m_bold.ExplicitValue = true;
+			fontInfo.m_italic.ExplicitValue = true;
+			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntNone;
+			fontInfo.m_backColor.ExplicitValue = Color.Blue;
 			var bulletinfo = new BulletInfo
 			{
 				m_numberScheme = schemeType,
@@ -3808,6 +3833,11 @@ namespace LanguageExplorerTests.Works
 			var fontInfo1 = new FontInfo();
 			fontInfo1.m_fontColor.ExplicitValue = Color.Red;
 			fontInfo1.m_fontSize.ExplicitValue = 12000;
+			fontInfo1.m_fontName.ExplicitValue = "Arial";
+			fontInfo1.m_bold.ExplicitValue = false;
+			fontInfo1.m_italic.ExplicitValue = false;
+			fontInfo1.m_underline.ExplicitValue = FwUnderlineType.kuntNone;
+			fontInfo.m_backColor.ExplicitValue = Color.Brown;
 			style.SetDefaultFontInfo(fontInfo1);
 
 			SafelyAddStyleToSheetAndTable(name, style);

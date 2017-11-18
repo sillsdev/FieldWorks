@@ -105,7 +105,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			catch (ArgumentException)
 			{
-				MessageBoxes.ReportLexEntryCircularReference((ILexEntry)m_obj, newObj, true);
+				MessageBoxes.ReportLexEntryCircularReference(m_obj, newObj, true);
 			}
 		}
 

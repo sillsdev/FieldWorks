@@ -35,6 +35,15 @@ namespace LanguageExplorer.Works
 		internal const string WritingSystemStyleName = "Writing System Abbreviation";
 		private static readonly Dictionary<string, string> BulletSymbolsCollection = new Dictionary<string, string>();
 		private static readonly Dictionary<string, string> NumberingStylesCollection = new Dictionary<string, string>();
+		private static readonly Dictionary<string, string> UnderlineStyleMap = new Dictionary<string, string>
+		{
+			{"kuntSingle", "single"},
+			{"kuntDouble", "double"},
+			{"kuntDotted", "dotted"},
+			{"kuntDashed", "dashed"},
+			{"kuntStrikethrough", "strikethrough"},
+			{"kuntSquiggle", "squiggle"}
+		};
 
 		/// <summary>
 		/// Generate all the css rules necessary to represent every enabled portion of the given configuration
@@ -396,6 +405,16 @@ namespace LanguageExplorer.Works
 					var wsFontInfo = exportStyleInfo.BulletInfo.FontInfo;
 					bulletRule.Declarations.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(wsFontInfo.FontSize.Value)) });
 					bulletRule.Declarations.Add(new Property("color") { Term = new PrimitiveTerm(UnitType.RGB, wsFontInfo.FontColor.Value.Name) });
+					bulletRule.Declarations.Add(new Property("font-family") { Term = new PrimitiveTerm(UnitType.Ident, wsFontInfo.FontName.Value) });
+					bulletRule.Declarations.Add(new Property("font-weight") { Term = new PrimitiveTerm(UnitType.Ident, wsFontInfo.Bold.Value ? "bold" : "normal") });
+					bulletRule.Declarations.Add(new Property("font-style") { Term = new PrimitiveTerm(UnitType.Ident, wsFontInfo.Italic.Value ? "italic" : "normal") });
+					bulletRule.Declarations.Add(new Property("background-color") { Term = new PrimitiveTerm(UnitType.RGB, wsFontInfo.BackColor.Value.Name) });
+					if (wsFontInfo.Underline.Value.ToString().ToLower() != "kuntnone")
+					{
+						bulletRule.Declarations.Add(new Property("text-decoration") { Term = new PrimitiveTerm(UnitType.Ident, "underline") });
+						bulletRule.Declarations.Add(new Property("text-decoration-style") { Term = new PrimitiveTerm(UnitType.Ident, UnderlineStyleMap[wsFontInfo.Underline.Value.ToString()]) });
+						bulletRule.Declarations.Add(new Property("text-decoration-color") { Term = new PrimitiveTerm(UnitType.RGB, wsFontInfo.UnderlineColor.Value.Name) });
+					}
 				}
 				if (!IsEmptyRule(bulletRule))
 				{

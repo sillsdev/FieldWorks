@@ -65,7 +65,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 								}
 								catch (ArgumentException)
 								{
-									MessageBoxes.ReportLexEntryCircularReference((ILexEntry) m_lexEntryRef.Owner, obj, true);
+									MessageBoxes.ReportLexEntryCircularReference(m_lexEntryRef.Owner, obj, true);
 								}
 							}
 						}
