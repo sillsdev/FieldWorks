@@ -644,8 +644,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				// bookmark this confirmed selection - required before PopupTree.Hide()
 				// (cf. comments in LT-2522)
-				if (pt != null)
-					m_lastConfirmedNode = (HvoTreeNode)pt.SelectedNode;
+				if (pt != null && pt.SelectedNode != null)
+				{
+					m_lastConfirmedNode = (HvoTreeNode) pt.SelectedNode;
+				}
 			}
 
 			// Pass on the event to owners/clients and close the PopupTree, only if it has been confirmed
@@ -657,7 +659,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				// If we are managing a treeCombo, then go ahead and set its Text in case the owner
 				// does not want to do so in the AfterSelect below.
-				if (m_treeCombo != null)
+				if (m_treeCombo != null && m_lastConfirmedNode != null)
 				{
 					if (m_treeCombo.Text != m_lastConfirmedNode.Text)
 						m_treeCombo.Tss = m_lastConfirmedNode.Tss;
