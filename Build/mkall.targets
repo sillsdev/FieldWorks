@@ -544,8 +544,8 @@
 		<!-- NuGet packages. Property- and ItemGroups are inside the target so $(arch) and *'s are read properly -->
 		<PropertyGroup>
 			<!-- Yes, the Windows version is missing the the OS and the 32-bit architecture. -->
-			<GeckoDir Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">$(fwrt)/packages/Geckofx45.45.0.32</GeckoDir>
-			<GeckoDir Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">$(fwrt)/packages/Geckofx45.64.45.0.32</GeckoDir>
+			<GeckoDir Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">$(fwrt)/packages/Geckofx45.45.0.33</GeckoDir>
+			<GeckoDir Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">$(fwrt)/packages/Geckofx45.64.45.0.33</GeckoDir>
 			<GeckoDir Condition="'$(OS)'!='Windows_NT' AND '$(arch)'!='x86_64'">$(fwrt)/packages/Geckofx45.32.Linux.45.0.21.0</GeckoDir>
 			<GeckoDir Condition="'$(OS)'!='Windows_NT' AND '$(arch)'=='x86_64'">$(fwrt)/packages/Geckofx45.64.Linux.45.0.21.0</GeckoDir>
 		</PropertyGroup>
