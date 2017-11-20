@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private AssignFeaturesToPhonemes _assignFeaturesToPhonemesView;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		[Import(AreaServices.GrammarAreaMachineName)]
 		private IArea _area;
 

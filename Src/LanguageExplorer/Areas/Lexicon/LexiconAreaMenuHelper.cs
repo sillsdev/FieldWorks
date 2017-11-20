@@ -25,7 +25,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		private ToolStripMenuItem _fileImportMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newFileMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 
-		internal LexiconAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, RecordClerk recordClerk)
+		internal LexiconAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordClerk recordClerk)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 

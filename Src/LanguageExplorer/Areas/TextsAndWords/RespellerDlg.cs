@@ -39,8 +39,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private XMLViewsDataCache m_specialSda;
 		private IWfiWordform m_srcwfiWordform;
 		private int m_vernWs;
-		private RecordClerk m_srcClerk;
-		private RecordClerk m_dstClerk;
+		private IRecordClerk m_srcClerk;
+		private IRecordClerk m_dstClerk;
 		private const string s_helpTopic = "khtpRespellerDlg";
 		private string m_sMoreButtonText; // original text of More button
 		private Size m_moreMinSize; // minimum size when 'more' options shown (=original size, minus a bit on height)
@@ -62,7 +62,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		// Typically the clerk of the calling Words/Analysis view that manages a list of wordforms.
 		// May be null when called from TE change spelling dialog.
-		RecordClerk m_wfClerk;
+		IRecordClerk m_wfClerk;
 		int m_hvoNewWordform; // if we made a new wordform and changed all instances, this gets set.
 
 		ISegmentRepository m_repoSeg;
@@ -163,7 +163,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		internal bool SetDlgInfo(XElement configurationParameters)
 		{
-			m_wfClerk = PropertyTable.GetValue<RecordClerk>("RecordClerk-concordanceWords");
+			m_wfClerk = PropertyTable.GetValue<IRecordClerk>("RecordClerk-concordanceWords");
 			m_wfClerk.SuppressSaveOnChangeRecord = true; // various things trigger change record and would prevent Undo
 
 			//We need to re-parse the interesting texts so that the rows in the dialog show all the occurrences (make sure it is up to date)

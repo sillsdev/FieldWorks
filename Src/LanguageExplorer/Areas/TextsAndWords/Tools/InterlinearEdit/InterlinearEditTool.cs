@@ -27,7 +27,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		private const string InterlinearTexts = "interlinearTexts";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		private InterlinMaster _interlinMaster;
 		[Import(AreaServices.TextAndWordsAreaMachineName)]
 		private IArea _area;
@@ -150,7 +150,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 
 		#endregion
 
-		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
 			Require.That(clerkId == InterlinearTexts, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{InterlinearTexts}'.");
 

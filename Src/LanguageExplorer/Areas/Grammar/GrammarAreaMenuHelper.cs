@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas.Grammar
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private AreaWideMenuHelper _areaWideMenuHelper;
 
-		internal GrammarAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, RecordClerk recordClerk, EventHandler fileExportEventHandler = null)
+		internal GrammarAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordClerk recordClerk, EventHandler fileExportEventHandler = null)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 

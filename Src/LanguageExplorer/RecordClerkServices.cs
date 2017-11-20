@@ -11,7 +11,7 @@ namespace LanguageExplorer
 	/// </summary>
 	internal static class RecordClerkServices
 	{
-		internal static void SetClerk(MajorFlexComponentParameters majorFlexComponentParameters, RecordClerk clerk)
+		internal static void SetClerk(MajorFlexComponentParameters majorFlexComponentParameters, IRecordClerk clerk)
 		{
 			majorFlexComponentParameters.DataNavigationManager.Clerk = clerk;
 			majorFlexComponentParameters.ParserMenuManager.Clerk = clerk;

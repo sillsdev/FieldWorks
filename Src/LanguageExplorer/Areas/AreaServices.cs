@@ -16,6 +16,10 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	internal static class AreaServices
 	{
+		/// <summary>
+		/// Display for required default sorter.
+		/// </summary>
+		internal const string Default = "Default";
 		internal const string ToolForAreaNamed_ = "ToolForAreaNamed_";
 		internal const string InitialArea = "InitialArea";
 		internal const string InitialAreaMachineName = LexiconAreaMachineName;

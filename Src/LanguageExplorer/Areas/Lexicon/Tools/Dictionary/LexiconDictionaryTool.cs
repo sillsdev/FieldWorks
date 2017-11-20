@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		private IFwMainWnd _fwMainWnd;
 		private LcmCache _cache;
 		private PaneBarContainer _paneBarContainer;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		private XhtmlDocView _xhtmlDocView;
 		private SliceContextMenuFactory _sliceContextMenuFactory;
 		private const string leftPanelMenuId = "left";

@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Lists
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private AreaWideMenuHelper _areaWideMenuHelper;
 		private IListArea _listArea;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		private ToolStripMenuItem _editMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newEditMenusAndHandlers;
 		private ToolStripMenuItem _deleteCustomListToolMenu;
@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Lists
 		private ToolStripMenuItem _toolConfigureMenu;
 		private ToolStripMenuItem _configureListMenu;
 
-		internal ListsAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IListArea listArea, RecordClerk recordClerk)
+		internal ListsAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IListArea listArea, IRecordClerk recordClerk)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(listArea, nameof(listArea));

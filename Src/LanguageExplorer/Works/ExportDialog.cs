@@ -116,7 +116,7 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// The clerk is needed if we're doing a filtered FXT export.  (See FWR-1223.)
 		/// </summary>
-		RecordClerk m_clerk = null;
+		IRecordClerk m_clerk = null;
 
 		private const string ksLiftExportPicturesPropertyName = "LIFT-ExportPictures";
 		/// <summary>

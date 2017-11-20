@@ -22,12 +22,12 @@ namespace LanguageExplorer.Works
 		private readonly IPropertyTable m_propertyTable;
 		private readonly IPublisher m_publisher;
 		private LcmCache Cache { get; }
-		private RecordClerk Clerk { get; }
+		private IRecordClerk Clerk { get; }
 
 		private const string DictionaryType = "Dictionary";
 		private const string ReversalType = "Reversal Index";
 
-		public DictionaryExportService(LcmCache cache, RecordClerk activeClerk, IPropertyTable propertyTable, IPublisher publisher)
+		public DictionaryExportService(LcmCache cache, IRecordClerk activeClerk, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			Cache = cache;
 			Clerk = activeClerk;
@@ -113,12 +113,12 @@ namespace LanguageExplorer.Works
 
 		private sealed class ClerkActivator : IDisposable
 		{
-			private static RecordClerk s_dictionaryClerk;
-			private static RecordClerk s_reversalIndexClerk;
+			private static IRecordClerk s_dictionaryClerk;
+			private static IRecordClerk s_reversalIndexClerk;
 
-			private readonly RecordClerk m_currentClerk;
+			private readonly IRecordClerk m_currentClerk;
 
-			private ClerkActivator(RecordClerk currentClerk)
+			private ClerkActivator(IRecordClerk currentClerk)
 			{
 				m_currentClerk = currentClerk;
 			}
@@ -148,7 +148,7 @@ namespace LanguageExplorer.Works
 			}
 			#endregion disposal
 
-			private static void CacheClerk(string clerkType, RecordClerk clerk)
+			private static void CacheClerk(string clerkType, IRecordClerk clerk)
 			{
 				switch (clerkType)
 				{
@@ -193,7 +193,7 @@ namespace LanguageExplorer.Works
 				return new ClerkActivator(currentClerk); // ensure the current active clerk is reactivated after we use the temporary clerk.
 			}
 
-			private static bool DoesClerkMatchParams(RecordClerk clerk, XElement parameters)
+			private static bool DoesClerkMatchParams(IRecordClerk clerk, XElement parameters)
 			{
 				if (clerk == null || parameters == null)
 					return false;
@@ -205,9 +205,9 @@ namespace LanguageExplorer.Works
 		{
 			private readonly string m_sCurrentRevIdxGuid;
 			private readonly IPropertyTable m_propertyTable;
-			private readonly RecordClerk m_clerk;
+			private readonly IRecordClerk m_clerk;
 
-			private ReversalIndexActivator(string currentRevIdxGuid, IPropertyTable propertyTable, RecordClerk clerk)
+			private ReversalIndexActivator(string currentRevIdxGuid, IPropertyTable propertyTable, IRecordClerk clerk)
 			{
 				m_sCurrentRevIdxGuid = currentRevIdxGuid;
 				m_propertyTable = propertyTable;
@@ -235,7 +235,7 @@ namespace LanguageExplorer.Works
 			}
 #endregion disposal
 
-			public static ReversalIndexActivator ActivateReversalIndex(string reversalWs, IPropertyTable propertyTable, LcmCache cache, RecordClerk activeRecordClerk)
+			public static ReversalIndexActivator ActivateReversalIndex(string reversalWs, IPropertyTable propertyTable, LcmCache cache, IRecordClerk activeRecordClerk)
 			{
 				if (reversalWs == null)
 					return null;
@@ -244,7 +244,7 @@ namespace LanguageExplorer.Works
 				return ActivateReversalIndex(reversalGuid, propertyTable, activeRecordClerk);
 			}
 
-			public static ReversalIndexActivator ActivateReversalIndex(Guid reversalGuid, IPropertyTable propertyTable, RecordClerk activeRecordClerk)
+			public static ReversalIndexActivator ActivateReversalIndex(Guid reversalGuid, IPropertyTable propertyTable, IRecordClerk activeRecordClerk)
 			{
 				string originalReversalIndexGuid;
 				return ActivateReversalIndexIfNeeded(reversalGuid.ToString(), propertyTable, activeRecordClerk, out originalReversalIndexGuid)
@@ -253,7 +253,7 @@ namespace LanguageExplorer.Works
 			}
 
 			/// <returns>true iff activation was needed (the requested Reversal Index was not already active)</returns>
-			private static bool ActivateReversalIndexIfNeeded(string newReversalGuid, IPropertyTable propertyTable, RecordClerk clerk, out string oldReversalGuid)
+			private static bool ActivateReversalIndexIfNeeded(string newReversalGuid, IPropertyTable propertyTable, IRecordClerk clerk, out string oldReversalGuid)
 			{
 				oldReversalGuid = propertyTable.GetValue<string>("ReversalIndexGuid", null);
 				if (newReversalGuid == null || newReversalGuid == oldReversalGuid)

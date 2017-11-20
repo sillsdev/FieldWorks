@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
 		private const string CategoriesWithoutTreeBarHandler = "categories_withoutTreeBarHandler";
 		private PaneBarContainer _paneBarContainer;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		[Import(AreaServices.GrammarAreaMachineName)]
 		private IArea _area;
 
@@ -121,7 +121,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 
 		#endregion
 
-		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
 			Require.That(clerkId == CategoriesWithoutTreeBarHandler, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{CategoriesWithoutTreeBarHandler}'.");
 

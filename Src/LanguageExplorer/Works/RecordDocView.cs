@@ -46,7 +46,7 @@ namespace LanguageExplorer.Works
 
 		#region Construction and Removal
 
-		public RecordDocView(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk, StatusBarProgressPanel progressPanel)
+		public RecordDocView(XElement configurationParametersElement, LcmCache cache, IRecordClerk recordClerk, StatusBarProgressPanel progressPanel)
 			: base(configurationParametersElement, cache, recordClerk)
 		{
 			m_statusBarProgressPanel = progressPanel;
@@ -384,7 +384,7 @@ namespace LanguageExplorer.Works
 		XElement m_jtSpecs; // node required by XmlView.
 		protected string m_configObjectName; // name to display in Configure dialog.
 
-		public RecordDocXmlView(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk, StatusBarProgressPanel progressPanel)
+		public RecordDocXmlView(XElement configurationParametersElement, LcmCache cache, IRecordClerk recordClerk, StatusBarProgressPanel progressPanel)
 			: base(configurationParametersElement, cache, recordClerk, progressPanel)
 		{
 		}

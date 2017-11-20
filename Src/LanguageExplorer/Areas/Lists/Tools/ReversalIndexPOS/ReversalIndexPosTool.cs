@@ -35,7 +35,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		private const string ReversalEntriesPOS = "ReversalEntriesPOS";
 		private LcmCache _cache;
 		private MultiPane _multiPane;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		private RecordBrowseView _recordBrowseView;
 		private IReversalIndexRepository _reversalIndexRepository;
 		private IReversalIndex _currentReversalIndex;
@@ -229,7 +229,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			reversalToolStripMenuItem.Checked = (currentTag.Guid.ToString() == _propertyTable.GetValue<string>("ReversalIndexGuid"));
 		}
 
-		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
 			Require.That(clerkId == ReversalEntriesPOS, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{ReversalEntriesPOS}'.");
 

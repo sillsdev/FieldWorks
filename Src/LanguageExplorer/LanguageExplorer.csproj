@@ -1092,8 +1092,10 @@
     </Compile>
     <Compile Include="Works\InterestingTextList.cs" />
     <Compile Include="Works\InterestingTextsDecorator.cs" />
+    <Compile Include="Works\IRecordClerk.cs" />
     <Compile Include="Works\IRecordClerkRepository.cs" />
     <Compile Include="Works\IRecordClerkRepositoryForTools.cs" />
+    <Compile Include="Works\IRecordList.cs" />
     <Compile Include="Works\ISetRootHvo.cs" />
     <Compile Include="Works\IWebonaryClient.cs" />
     <Compile Include="Works\LegacyConfigurationUtils.cs" />

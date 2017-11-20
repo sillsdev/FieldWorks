@@ -65,7 +65,7 @@ namespace LanguageExplorer.Works
 
 		#region Construction and Removal
 
-		internal RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, LcmCache cache, RecordClerk recordClerk, DataTree dataTree, ToolStripMenuItem printMenu)
+		internal RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, LcmCache cache, IRecordClerk recordClerk, DataTree dataTree, ToolStripMenuItem printMenu)
 			: base(configurationParametersElement, cache, recordClerk)
 		{
 			m_sliceFilterDocument = sliceFilterDocument;

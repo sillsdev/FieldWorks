@@ -25,7 +25,7 @@ namespace LanguageExplorer.Works
 		/// <param name="defaultFilter">The default filter to use.</param>
 		/// <param name="allowDeletions"></param>
 		/// <param name="shouldHandleDeletion"></param>
-		internal ConcRecordClerk(string id, StatusBar statusBar, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
+		internal ConcRecordClerk(string id, StatusBar statusBar, IRecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
 			: base(id, statusBar, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
 		{
 		}

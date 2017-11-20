@@ -20,7 +20,7 @@ namespace LanguageExplorer.Areas
 	internal sealed class AreaWideMenuHelper : IFlexComponent, IDisposable
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		private ToolStripItem _fileExportMenu;
 		private EventHandler _foreignFileExportHandler;
 		private bool _usingLocalFileExportEventHandler;
@@ -34,7 +34,7 @@ namespace LanguageExplorer.Areas
 			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 		}
 
-		internal AreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, RecordClerk recordClerk)
+		internal AreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordClerk recordClerk)
 			: this(majorFlexComponentParameters)
 		{
 			Guard.AgainstNull(recordClerk, nameof(recordClerk));

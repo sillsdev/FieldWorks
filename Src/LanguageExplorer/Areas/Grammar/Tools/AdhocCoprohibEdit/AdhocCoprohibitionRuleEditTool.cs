@@ -52,7 +52,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		private const string AdhocCoprohibitions = "adhocCoprohibitions";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		[Import(AreaServices.GrammarAreaMachineName)]
 		private IArea _area;
 
@@ -177,7 +177,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 
 		#endregion
 
-		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
 			Require.That(clerkId == AdhocCoprohibitions, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{AdhocCoprohibitions}'.");
 

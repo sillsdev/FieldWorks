@@ -39,7 +39,7 @@ namespace LanguageExplorer.Controls
 			ICollapsingSplitContainer mainCollapsingSplitContainer, bool verticalSplitter, XElement configurationParametersElement, XDocument sliceFilterDocument,
 			string toolMachineName,
 			LcmCache cache,
-			RecordClerk recordClerk,
+			IRecordClerk recordClerk,
 			DataTree dataTree,
 			ToolStripMenuItem printMenu)
 		{

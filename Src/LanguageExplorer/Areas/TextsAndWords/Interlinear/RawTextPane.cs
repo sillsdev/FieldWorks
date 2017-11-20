@@ -168,7 +168,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// this is the clerk, if any, that determines the text for our control.
 		/// </summary>
-		internal RecordClerk Clerk { get; set; }
+		internal IRecordClerk Clerk { get; set; }
 
 		IStText m_rootObj;
 		public IStText RootObject
@@ -605,7 +605,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		internal RecordClerk ActiveClerk => RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk;
+		internal IRecordClerk ActiveClerk => RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk;
 
 		/// <summary>
 		/// Currently detects whether we've inserted a paragraph break (with the Enter key)

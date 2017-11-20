@@ -27,7 +27,7 @@ namespace LanguageExplorer.Works
 		/// <param name="defaultFilter">The default filter to use.</param>
 		/// <param name="allowDeletions"></param>
 		/// <param name="shouldHandleDeletion"></param>
-		internal TemporaryRecordClerk(string id, StatusBar statusBar, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
+		internal TemporaryRecordClerk(string id, StatusBar statusBar, IRecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
 			: base(id, statusBar, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
 		{
 		}
@@ -67,8 +67,8 @@ namespace LanguageExplorer.Works
 			base.InitializeFlexComponent(flexComponentParameters);
 
 			// If we have a RecordList, it shouldn't generate PropChanged messages.
-			if (m_list != null)
-				m_list.EnableSendPropChanged = false;
+			if (RecordList != null)
+				RecordList.EnableSendPropChanged = false;
 		}
 
 		#endregion

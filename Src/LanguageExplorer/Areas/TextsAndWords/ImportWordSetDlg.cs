@@ -20,7 +20,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	{
 		private LcmCache Cache { get; set; }
 		private IHelpTopicProvider HelpTopicProvider { get; set; }
-		private RecordClerk RecordClerk { get; set; }
+		private IRecordClerk RecordClerk { get; set; }
 		private ParserMenuManager ParserMenuManager { get; set; }
 
 		#region Data members
@@ -53,7 +53,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			AccessibleName = GetType().Name;
 		}
 
-		public ImportWordSetDlg(LcmCache cache, IHelpTopicProvider helpTopicProvider, RecordClerk recordClerk, ParserMenuManager parserMenuManager)
+		public ImportWordSetDlg(LcmCache cache, IHelpTopicProvider helpTopicProvider, IRecordClerk recordClerk, ParserMenuManager parserMenuManager)
 			: this()
 		{
 			Cache = cache;

@@ -130,7 +130,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		}
 
 		/// <summary />
-		internal override string PropertyTableId(string sorterOrFilter)
+		public override string PropertyTableId(string sorterOrFilter)
 		{
 			var reversalPub = PropertyTable.GetValue<string>("ReversalIndexPublicationLayout");
 			if (reversalPub == null)

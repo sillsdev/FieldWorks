@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		[Import(AreaServices.LexiconAreaMachineName)]
 		private IArea _area;
 

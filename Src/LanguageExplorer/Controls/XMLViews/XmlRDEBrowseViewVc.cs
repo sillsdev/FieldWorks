@@ -81,8 +81,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							m_sEditRowModelClass = null;
 							m_sEditRowSaveMethod = null;
 							m_sEditRowAssembly = null;
-							Debug.WriteLine("editRowModelClass, editRowSaveMethod, and " +
-								"editRowAssembly are set, but editRowClass is not!?");
+							Debug.WriteLine("editRowModelClass, editRowSaveMethod, and " + "editRowAssembly are set, but editRowClass is not!?");
 						}
 					}
 					else
@@ -90,8 +89,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						// Should we complain to the user?  Die horribly? ...
 						m_sEditRowModelClass = null;
 						m_sEditRowSaveMethod = null;
-						Debug.WriteLine("editRowModelClass and editRowSaveMethod are set, " +
-							"but editRowAssembly is not!?");
+						Debug.WriteLine("editRowModelClass and editRowSaveMethod are set, " + "but editRowAssembly is not!?");
 					}
 				}
 				else

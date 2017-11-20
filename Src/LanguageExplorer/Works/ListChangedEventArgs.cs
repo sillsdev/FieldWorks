@@ -11,7 +11,7 @@ namespace LanguageExplorer.Works
 	/// </summary>
 	public class ListChangedEventArgs : EventArgs
 	{
-		protected RecordList m_list;
+		protected IRecordList m_list;
 		protected ListChangedActions m_actions;
 		protected int m_hvoItem;
 
@@ -36,38 +36,23 @@ namespace LanguageExplorer.Works
 		/// <param name="list"></param>
 		/// <param name="actions">Actions to take during the ListChanged event</param>
 		/// <param name="hvoItem">hvo of the affected item (may be 0)</param>
-		public ListChangedEventArgs(RecordList list, ListChangedActions actions, int hvoItem)
+		public ListChangedEventArgs(IRecordList list, ListChangedActions actions, int hvoItem)
 		{
 			m_list = list;
 			m_actions = actions;
 			m_hvoItem = hvoItem;
 		}
 
-		public RecordList List
-		{
-			get
-			{
-				return m_list;
-			}
-		}
+		public IRecordList List => m_list;
 
 		/// <summary>
 		/// if SkipRecordNavigation, RecordClerk can skip Broadcasting OnRecordNavigation.
 		/// </summary>
-		public ListChangedActions Actions
-		{
-			get
-			{
-				return m_actions;
-			}
-		}
+		public ListChangedActions Actions => m_actions;
 
 		/// <summary>
 		/// If nonzero, the hvo of the affected list item.
 		/// </summary>
-		public int ItemHvo
-		{
-			get { return m_hvoItem; }
-		}
+		public int ItemHvo => m_hvoItem;
 	}
 }

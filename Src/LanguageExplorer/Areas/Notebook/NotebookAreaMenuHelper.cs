@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.Notebook
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private AreaWideMenuHelper _areaWideMenuHelper;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		private ToolStripMenuItem _fileImportMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newFileMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 

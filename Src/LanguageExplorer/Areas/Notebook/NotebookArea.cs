@@ -30,7 +30,7 @@ namespace LanguageExplorer.Areas.Notebook
 		[Import]
 		private IPropertyTable _propertyTable;
 
-		internal RecordClerk RecordClerk { get; set; }
+		internal IRecordClerk RecordClerk { get; set; }
 
 		internal static XDocument LoadDocument(string resourceName)
 		{
@@ -147,7 +147,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 		#endregion
 
-		internal static RecordClerk NotebookFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		internal static IRecordClerk NotebookFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
 			Require.That(clerkId == Records, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Records}'.");
 

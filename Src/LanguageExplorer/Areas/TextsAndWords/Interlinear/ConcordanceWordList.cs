@@ -20,7 +20,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	///
 	/// The contents of this list are a result of parsing the texts and passing the results through a decorator.
 	/// </summary>
-	class ConcordanceWordList : RecordList
+	internal class ConcordanceWordList : RecordList
 	{
 		//the ReloadList() on the RecordList class will trigger if this is true
 		//set when the index in the list is changed
@@ -86,7 +86,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// This is used in situations like switching views. In such cases we should force a reload.
 		/// </summary>
 		/// <returns></returns>
-		internal protected override bool NeedToReloadList()
+		public override bool NeedToReloadList()
 		{
 			return base.NeedToReloadList() || reloadRequested;
 		}

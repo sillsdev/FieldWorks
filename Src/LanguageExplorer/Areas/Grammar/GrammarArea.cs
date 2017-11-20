@@ -147,7 +147,7 @@ namespace LanguageExplorer.Areas.Grammar
 
 		#endregion
 
-		internal static RecordClerk PhonemesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		internal static IRecordClerk PhonemesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
 			Require.That(clerkId == Phonemes, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Phonemes}'.");
 

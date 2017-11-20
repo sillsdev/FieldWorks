@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		[Import(AreaServices.TextAndWordsAreaMachineName)]
 		private IArea _area;
 

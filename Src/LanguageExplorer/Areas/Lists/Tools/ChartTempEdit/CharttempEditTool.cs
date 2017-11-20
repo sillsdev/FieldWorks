@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		/// The RecordBar has no top PaneBar for information, menus, etc.
 		/// </summary>
 		private CollapsingSplitContainer _collapsingSplitContainer;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		[Import(AreaServices.ListsAreaMachineName)]
 		private IArea _area;
 
@@ -142,7 +142,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 
 		#endregion
 
-		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
 			Require.That(clerkId == DiscChartTemplateList, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{DiscChartTemplateList}'.");
 

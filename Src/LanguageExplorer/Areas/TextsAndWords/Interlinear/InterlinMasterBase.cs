@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 		}
 
-		internal InterlinMasterBase(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk)
+		internal InterlinMasterBase(XElement configurationParametersElement, LcmCache cache, IRecordClerk recordClerk)
 			:base(configurationParametersElement, cache, recordClerk)
 		{
 		}

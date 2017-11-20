@@ -29,7 +29,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		private const string panelMenuId = "left";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		[Import(AreaServices.NotebookAreaMachineName)]
 		private IArea _area;
 

@@ -22,8 +22,8 @@ namespace LanguageExplorer.Works
 	{
 		private readonly FlexComponentParameters _flexComponentParameters;
 		private readonly LcmCache _cache;
-		private readonly Dictionary<string, RecordClerk> _clerks = new Dictionary<string, RecordClerk>();
-		private RecordClerk _activeRecordClerk;
+		private readonly Dictionary<string, IRecordClerk> _clerks = new Dictionary<string, IRecordClerk>();
+		private IRecordClerk _activeRecordClerk;
 		private IRecordClerkRepository AsRecordClerkRepository => this;
 
 		internal RecordClerkRepository(LcmCache cache, FlexComponentParameters flexComponentParameters)
@@ -43,7 +43,7 @@ namespace LanguageExplorer.Works
 		/// <exception cref="InvalidOperationException">
 		/// Thrown if <paramref name="recordClerk"/> is already in the rpository, via its Id.
 		/// </exception>
-		void IRecordClerkRepository.AddRecordClerk(RecordClerk recordClerk)
+		void IRecordClerkRepository.AddRecordClerk(IRecordClerk recordClerk)
 		{
 			if (recordClerk == null)
 			{
@@ -71,14 +71,14 @@ namespace LanguageExplorer.Works
 		/// Thrown if the clerk's Id is in the repository,
 		/// but the one to be removed is not the one in the repository.
 		/// </exception>
-		void IRecordClerkRepository.RemoveRecordClerk(RecordClerk recordClerk)
+		void IRecordClerkRepository.RemoveRecordClerk(IRecordClerk recordClerk)
 		{
 			if (recordClerk == null)
 			{
 				throw new ArgumentNullException(nameof(recordClerk));
 			}
 
-			RecordClerk goner;
+			IRecordClerk goner;
 			if (_clerks.TryGetValue(recordClerk.Id, out goner))
 			{
 				if (!ReferenceEquals(recordClerk, goner))
@@ -100,12 +100,12 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		/// <param name="clerkId">The Id of the clerk to return.</param>
 		/// <returns>The clerk with the given <paramref name="clerkId"/>, or null if not found.</returns>
-		RecordClerk IRecordClerkRepository.GetRecordClerk(string clerkId)
+		IRecordClerk IRecordClerkRepository.GetRecordClerk(string clerkId)
 		{
 			if (string.IsNullOrWhiteSpace(clerkId))
 				throw new ArgumentNullException(nameof(clerkId));
 
-			RecordClerk clerkToGet;
+			IRecordClerk clerkToGet;
 			_clerks.TryGetValue(clerkId, out clerkToGet);
 
 			return clerkToGet;
@@ -114,7 +114,7 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Get/Set the active clerk. Null is an acceptable value for both 'get' and 'set'.
 		/// </summary>
-		RecordClerk IRecordClerkRepository.ActiveRecordClerk
+		IRecordClerk IRecordClerkRepository.ActiveRecordClerk
 		{
 			set
 			{
@@ -140,9 +140,9 @@ namespace LanguageExplorer.Works
 		/// <param name="clerkFactoryMethod">The method called to create the clerk, if not found in the repository.</param>
 		/// <returns>A RecordClerk instance with the specified Id.</returns>
 		/// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="clerkFactoryMethod"/> doesn't know how to make a clerk with the given Id.</exception>
-		RecordClerk IRecordClerkRepositoryForTools.GetRecordClerk(string clerkId, StatusBar statusBar, Func<LcmCache, FlexComponentParameters, string, StatusBar, RecordClerk> clerkFactoryMethod)
+		IRecordClerk IRecordClerkRepositoryForTools.GetRecordClerk(string clerkId, StatusBar statusBar, Func<LcmCache, FlexComponentParameters, string, StatusBar, IRecordClerk> clerkFactoryMethod)
 		{
-			RecordClerk retVal;
+			IRecordClerk retVal;
 			if (_clerks.TryGetValue(clerkId, out retVal))
 			{
 				return retVal;
@@ -164,9 +164,9 @@ namespace LanguageExplorer.Works
 		/// <param name="clerkFactoryMethod">The method called to create the clerk, if not found in the repository.</param>
 		/// <returns>A RecordClerk instance with the specified Id.</returns>
 		/// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="clerkFactoryMethod"/> doesn't know how to make a clerk with the given Id.</exception>
-		RecordClerk IRecordClerkRepositoryForTools.GetRecordClerk(string clerkId, StatusBar statusBar, ICmPossibilityList customList, Func<ICmPossibilityList, LcmCache, FlexComponentParameters, string, StatusBar, RecordClerk> clerkFactoryMethod)
+		IRecordClerk IRecordClerkRepositoryForTools.GetRecordClerk(string clerkId, StatusBar statusBar, ICmPossibilityList customList, Func<ICmPossibilityList, LcmCache, FlexComponentParameters, string, StatusBar, IRecordClerk> clerkFactoryMethod)
 		{
-			RecordClerk retVal;
+			IRecordClerk retVal;
 			if (_clerks.TryGetValue(clerkId, out retVal))
 			{
 				return retVal;

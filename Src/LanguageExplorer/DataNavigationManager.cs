@@ -21,7 +21,7 @@ namespace LanguageExplorer
 	internal sealed class DataNavigationManager : DisposableBase
 	{
 		private readonly Dictionary<Navigation, Tuple<ToolStripMenuItem, ToolStripButton>> _menuItems;
-		private RecordClerk _clerk;
+		private IRecordClerk _clerk;
 
 		/// <summary />
 		internal DataNavigationManager(Dictionary<Navigation, Tuple<ToolStripMenuItem, ToolStripButton>>  menuItems)
@@ -70,7 +70,7 @@ namespace LanguageExplorer
 			MoveToIndex(Navigation.Last);
 		}
 
-		internal RecordClerk Clerk
+		internal IRecordClerk Clerk
 		{
 			set
 			{

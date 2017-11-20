@@ -131,7 +131,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 							newOwner.MoveIfNeeded(currentEntry);
 							newOwner.SubentriesOS.Add(currentEntry);
 						});
-					RecordClerk clerk = RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk;
+					var clerk = RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk;
 					clerk?.RemoveItemsFor(currentEntry.Hvo);
 					// Note: PropChanged should happen on the old owner and the new while completing the unit of work.
 					// Have to jump to a main entry, as RecordClerk doesn't know anything about subentries.

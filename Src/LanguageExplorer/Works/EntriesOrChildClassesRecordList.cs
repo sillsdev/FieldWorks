@@ -133,7 +133,7 @@ namespace LanguageExplorer.Works
 			m_reloadNeededForProperty[m_flid] = false;
 		}
 
-		protected internal override bool RequestedLoadWhileSuppressed
+		public override bool RequestedLoadWhileSuppressed
 		{
 			get
 			{
@@ -146,7 +146,7 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		protected internal override bool NeedToReloadList()
+		public override bool NeedToReloadList()
 		{
 			return RequestedLoadWhileSuppressed;
 		}
@@ -162,7 +162,7 @@ namespace LanguageExplorer.Works
 			base.ReloadList();
 		}
 
-		internal override bool RestoreFrom(string pathname)
+		public override bool RestoreFrom(string pathname)
 		{
 			// If we are restoring, presumably the 'previous flid' (which should be the flid from the last complete
 			// ReloadList) should match the flid that is current, which in turn should correspond to the saved list
@@ -176,7 +176,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		private int TargetFlid { get; set; }
 
-		protected internal override void ReloadList(int newListItemsClass, int newTargetFlid, bool force)
+		public override void ReloadList(int newListItemsClass, int newTargetFlid, bool force)
 		{
 			// reload list if it differs from current target class (or if forcing a reload anyway).
 			if (newListItemsClass != ListItemsClass || newTargetFlid != TargetFlid || force)
@@ -251,7 +251,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		/// <param name="sorterOrFilter"></param>
 		/// <returns></returns>
-		internal override string PropertyTableId(string sorterOrFilter)
+		public override string PropertyTableId(string sorterOrFilter)
 		{
 			return $"{@"LexDb"}.{@"Entries"}_{sorterOrFilter}";
 		}

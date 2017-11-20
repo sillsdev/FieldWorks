@@ -19,7 +19,7 @@ namespace LanguageExplorer.Works
 		/// <param name="suppressSaveOnChangeRecord"></param>
 		/// <param name="skipShowRecord"></param>
 		/// <param name="suppressFocusChange"></param>
-		public RecordNavigationInfo(RecordClerk clerk, bool suppressSaveOnChangeRecord, bool skipShowRecord, bool suppressFocusChange)
+		public RecordNavigationInfo(IRecordClerk clerk, bool suppressSaveOnChangeRecord, bool skipShowRecord, bool suppressFocusChange)
 		{
 			Clerk = clerk;
 			HvoOfCurrentObjAtTimeOfNavigation = Clerk != null && Clerk.CurrentObjectHvo != 0 ? Clerk.CurrentObjectHvo : 0;
@@ -31,7 +31,7 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		///  The clerk that broadcast the change.
 		/// </summary>
-		public RecordClerk Clerk
+		public IRecordClerk Clerk
 		{
 			get; private set;
 		}
@@ -78,12 +78,10 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		/// <param name="argument"></param>
 		/// <returns></returns>
-		public static RecordClerk GetSendingClerk(object argument)
+		public static IRecordClerk GetSendingClerk(object argument)
 		{
 			var info = argument as RecordNavigationInfo;
-			if (info == null)
-				return null;
-			return info.Clerk;
+			return info?.Clerk;
 		}
 
 		#region IComparable Members

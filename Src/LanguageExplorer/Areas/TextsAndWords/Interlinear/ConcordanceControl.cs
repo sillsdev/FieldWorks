@@ -1672,7 +1672,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			set
 			{
 				m_concordanceControl = value;
-				((MatchingConcordanceItems)m_list).OwningControl = value;
+				((MatchingConcordanceItems)RecordList).OwningControl = value;
 			}
 		}
 

@@ -51,7 +51,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		ConcOccurrenceBrowseView m_rbv;
 		XmlView m_previewPane;
 		string m_helpTopic = "khtpFindExampleSentence";
-		RecordClerk m_clerk;
+		IRecordClerk m_clerk;
 
 		/// <summary />
 		public FindExampleSentenceDlg()

@@ -44,7 +44,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private Dictionary<string, ToolStripMenuItem> _parserToolStripMenuItems;
 		private IStText _currentStText;
 		private IWfiWordform _currentWordform;
-		private RecordClerk _clerk;
+		private IRecordClerk _clerk;
 
 		/// <summary />
 		internal ParserMenuManager(StatusBarPanel statusPanelProgress, Dictionary<string, ToolStripMenuItem> parserMenuItems)
@@ -132,7 +132,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		#endregion
 
-		public RecordClerk Clerk
+		public IRecordClerk Clerk
 		{
 			set
 			{

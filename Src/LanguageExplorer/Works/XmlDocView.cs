@@ -72,7 +72,7 @@ namespace LanguageExplorer.Works
 			AccNameDefault = "XmlDocView";		// default accessibility name
 		}
 
-		public XmlDocView(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk)
+		public XmlDocView(XElement configurationParametersElement, LcmCache cache, IRecordClerk recordClerk)
 			: base(configurationParametersElement, cache, recordClerk)
 		{
 		}
@@ -777,7 +777,7 @@ namespace LanguageExplorer.Works
 
 		protected override void ShowRecord()
 		{
-			RecordClerk clerk = Clerk;
+			var clerk = Clerk;
 
 			var currentIndex = AdjustedClerkIndex();
 
@@ -948,7 +948,7 @@ namespace LanguageExplorer.Works
 			// Scroll the display to the given record.  (See LT-927 for explanation.)
 			try
 			{
-				RecordClerk clerk = Clerk;
+				var clerk = Clerk;
 				int levelFlid = 0;
 				var indexes = new List<int>();
 				if (Clerk is SubitemRecordClerk)
@@ -1042,7 +1042,7 @@ namespace LanguageExplorer.Works
 			using (new WaitCursor(this))
 			{
 				//m_flid = RecordClerk.GetFlidOfVectorFromName(m_vectorName, Cache, out m_owningObject);
-				RecordClerk clerk = Clerk;
+				var clerk = Clerk;
 				clerk.ActivateUI(false);
 				// Enhance JohnT: could use logic similar to RecordView.InitBase to load persisted list contents (filtered and sorted).
 				if (clerk.RequestedLoadWhileSuppressed)

@@ -30,8 +30,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		internal const string RDEwords = "RDEwords";
 		private CollapsingSplitContainer _collapsingSplitContainer;
 		private RecordBrowseView _recordBrowseView;
-		private RecordClerk _recordClerk;
-		private RecordClerk _nestedRecordClerk;
+		private IRecordClerk _recordClerk;
+		private IRecordClerk _nestedRecordClerk;
 		[Import(AreaServices.LexiconAreaMachineName)]
 		private IArea _area;
 		[Import]
@@ -213,7 +213,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 
 		#endregion
 
-		private static RecordClerk RDEwordsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordClerk RDEwordsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
 			Require.That(clerkId == RDEwords, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{RDEwords}'.");
 

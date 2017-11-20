@@ -48,7 +48,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private XmlNode _configurationNode;
 		private RecordBrowseView _currentBrowseView = null;
 		private readonly Dictionary<int, XmlNode> _configurationNodes = new Dictionary<int, XmlNode>(3);
-		private readonly Dictionary<int, RecordClerk> _recordClerks = new Dictionary<int, RecordClerk>(3);
+		private readonly Dictionary<int, IRecordClerk> _recordClerks = new Dictionary<int, IRecordClerk>(3);
 		private readonly Dictionary<string, bool> _originalClerkIgnoreStatusPanelValues = new Dictionary<string, bool>(3);
 		private XMLViewsDataCache _specialSda;
 		private int _currentSourceMadeUpFieldIdentifier;
@@ -279,7 +279,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				Subscriber.Unsubscribe("DialogFilterStatus", DialogFilterStatus_Handler);
 
-				foreach (RecordClerk clerk in _recordClerks.Values)
+				foreach (var clerk in _recordClerks.Values)
 				{
 					// Take it out of the property table and Dispose it.
 					PropertyTable.RemoveProperty("RecordClerk-" + clerk.Id);
@@ -609,7 +609,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				}
 
 				XmlNode configurationNode;
-				RecordClerk clerk;
+				IRecordClerk clerk;
 				var selObj = (IAnalysis)tvSource.SelectedNode.Tag;
 				switch (selObj.ClassID)
 				{

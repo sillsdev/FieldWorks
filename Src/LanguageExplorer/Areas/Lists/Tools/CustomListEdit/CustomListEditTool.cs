@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 		/// The RecordBar has no top PaneBar for information, menus, etc.
 		/// </summary>
 		private CollapsingSplitContainer _collapsingSplitContainer;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 
 		internal CustomListEditTool(IListArea area, ICmPossibilityList customList)
 		{
@@ -148,7 +148,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 			return customList.Name.BestAnalysisAlternative.Text;
 		}
 
-		private static RecordClerk FactoryMethod(ICmPossibilityList customList, LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordClerk FactoryMethod(ICmPossibilityList customList, LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
 			var customListClerkName = GetMachineName(customList);
 			Require.That(clerkId == customListClerkName, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{customListClerkName}'.");

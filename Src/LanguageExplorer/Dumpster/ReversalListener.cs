@@ -276,7 +276,7 @@ namespace LanguageExplorer.Dumpster
 				// TODO: It will be an instance of "ReversalEntryClerk" (see above for details)
 				string clerkId = XmlUtils.GetMandatoryAttributeValue(m_configurationParameters, "clerk");
 				string propertyName = RecordClerk.GetCorrespondingPropertyName(clerkId);
-				RecordClerk clerk = PropertyTable.GetValue<RecordClerk>(propertyName);
+				var clerk = PropertyTable.GetValue<IRecordClerk>(propertyName);
 				if (clerk != null)
 					rie = clerk.CurrentObject as IReversalIndexEntry;
 #endif

@@ -83,7 +83,7 @@ namespace LanguageExplorer.Works
 			Subitem = subitem;
 		}
 
-		internal override void ViewChangedSelectedRecord(FwObjectSelectionEventArgs e, IVwSelection sel)
+		public override void ViewChangedSelectedRecord(FwObjectSelectionEventArgs e, IVwSelection sel)
 		{
 			base.ViewChangedSelectedRecord(e, sel);
 			UsedToSyncRelatedClerk = false;

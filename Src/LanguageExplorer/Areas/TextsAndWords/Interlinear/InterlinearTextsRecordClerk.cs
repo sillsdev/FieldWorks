@@ -96,18 +96,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override void ReloadIfNeeded()
 		{
-			if (m_list as ConcordanceWordList != null)
+			if (RecordList as ConcordanceWordList != null)
 			{
-				((ConcordanceWordList)m_list).RequestRefresh();
+				((ConcordanceWordList)RecordList).RequestRefresh();
 			}
 			base.ReloadIfNeeded();
 		}
 
 		public override bool OnRefresh(object sender)
 		{
-			if(m_list as ConcordanceWordList != null)
+			if(RecordList as ConcordanceWordList != null)
 			{
-				((ConcordanceWordList)m_list).RequestRefresh();
+				((ConcordanceWordList)RecordList).RequestRefresh();
 			}
 			return base.OnRefresh(sender);
 		}
@@ -160,9 +160,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public void ParseInterstingTextsIfNeeded()
 		{
 			//Optimize(JT): The reload is overkill, all we want to do is reparse those texts who are not up to date.
-			if(m_list != null)
+			if(RecordList != null)
 			{
-				m_list.ForceReloadList();
+				RecordList.ForceReloadList();
 			}
 		}
 
@@ -207,7 +207,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return true; // or should we just say, we don't know? But this command definitely should only be possible when this IS active.
 			}
 
-			RecordClerk clrk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
+			var clrk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
 			if (clrk != null && clrk.Id == "interlinearTexts")
 			{
 				display.Enabled = true;

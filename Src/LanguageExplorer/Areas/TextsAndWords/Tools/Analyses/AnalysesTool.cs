@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		[Import(AreaServices.TextAndWordsAreaMachineName)]
 		private IArea _area;
 

@@ -27,7 +27,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		[Import(AreaServices.GrammarAreaMachineName)]
 		private IArea _area;
 

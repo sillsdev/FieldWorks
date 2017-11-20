@@ -40,7 +40,7 @@ namespace LanguageExplorer.Works
 		private ToolStripMenuItem m_printMenu;
 
 		/// <summary />
-		internal XhtmlDocView(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk, ToolStripMenuItem printMenu)
+		internal XhtmlDocView(XElement configurationParametersElement, LcmCache cache, IRecordClerk recordClerk, ToolStripMenuItem printMenu)
 			: base(configurationParametersElement, cache, recordClerk)
 		{
 			m_printMenu = printMenu;
@@ -353,7 +353,7 @@ namespace LanguageExplorer.Works
 		/// Handle the user left clicking on the document view by jumping to an entry, playing a media element, or adjusting the view
 		/// </summary>
 		/// <remarks>internal so that it can be re-used by the XhtmlRecordDocView</remarks>
-		internal static void HandleDomLeftClick(RecordClerk clerk, DomMouseEventArgs e, GeckoElement element)
+		internal static void HandleDomLeftClick(IRecordClerk clerk, DomMouseEventArgs e, GeckoElement element)
 		{
 			GeckoElement dummy;
 			var topLevelGuid = GetHrefFromGeckoDomElement(element);
@@ -489,7 +489,7 @@ namespace LanguageExplorer.Works
 			return (GeckoHtmlElement)element.OwnerDocument.Body.SelectFirst("//*[@class='pagebutton' and @id]");
 		}
 
-		private static bool HandleClickOnPageButton(RecordClerk clerk, GeckoElement element)
+		private static bool HandleClickOnPageButton(IRecordClerk clerk, GeckoElement element)
 		{
 			if (element.HasAttribute("class") && element.Attributes["class"].NodeValue.Equals("pagebutton"))
 			{
@@ -511,7 +511,7 @@ namespace LanguageExplorer.Works
 		/// </remarks>
 		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e,
 			GeckoElement element, FlexComponentParameters flexComponentParameters, string configObjectName,
-			LcmCache cache, RecordClerk activeClerk)
+			LcmCache cache, IRecordClerk activeClerk)
 		{
 			Guid topLevelGuid;
 			GeckoElement entryElement;

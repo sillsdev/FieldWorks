@@ -27,7 +27,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		private MultiPane _concordanceContainer;
 		private ConcordanceControl _concordanceControl;
 		private RecordBrowseView _recordBrowseView;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		private InterlinMasterNoTitleBar _interlinMasterNoTitleBar;
 		[Import(AreaServices.TextAndWordsAreaMachineName)]
 		private IArea _area;
@@ -160,7 +160,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 
 		#endregion
 
-		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
 			Require.That(clerkId == OccurrencesOfSelectedUnit, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{OccurrencesOfSelectedUnit}'.");
 

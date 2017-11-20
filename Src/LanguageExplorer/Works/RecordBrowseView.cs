@@ -51,7 +51,7 @@ namespace LanguageExplorer.Works
 			Init();
 		}
 
-		public RecordBrowseView(XElement browseViewDefinitions, LcmCache cache, RecordClerk recordClerk)
+		public RecordBrowseView(XElement browseViewDefinitions, LcmCache cache, IRecordClerk recordClerk)
 			: base(browseViewDefinitions, cache, recordClerk)
 		{
 			Init();
@@ -530,7 +530,7 @@ namespace LanguageExplorer.Works
 				return;
 			Debug.Assert(m_browseViewer != null, "RecordBrowseView.SetupDataContext() has to be called before RecordBrowseView.ShowRecord().");
 
-			RecordClerk clerk = Clerk;
+			var clerk = Clerk;
 
 			// This is a bizarre situation that occurs when the root object is changing and
 			// notifications get sent in non-optimal order. There will be another
@@ -608,7 +608,7 @@ namespace LanguageExplorer.Works
 				m_browseViewer.Enabled = false;
 			try
 			{
-				RecordClerk clerk = Clerk;
+				var clerk = Clerk;
 				// NOTE: If the clerk's current index is less than zero,
 				// or greater than the number of objects in the vector,
 				// SelectedIndex will assert in a debug build,

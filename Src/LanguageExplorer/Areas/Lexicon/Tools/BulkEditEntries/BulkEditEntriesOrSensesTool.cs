@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		private const string EntriesOrChildren = "entriesOrChildren";
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		[Import(AreaServices.LexiconAreaMachineName)]
 		private IArea _area;
 
@@ -133,7 +133,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 
 		#endregion
 
-		internal static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		internal static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
 			Guard.AssertThat(clerkId == EntriesOrChildren, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{EntriesOrChildren}'.");
 
@@ -142,7 +142,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 				new EntriesOrChildClassesRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, cache.LanguageProject.LexDbOA),
 				new Dictionary<string, PropertyRecordSorter>
 				{
-					{ RecordClerk.kDefault, new PropertyRecordSorter("ShortName") },
+					{ AreaServices.Default, new PropertyRecordSorter("ShortName") },
 					{ "PrimaryGloss", new PropertyRecordSorter("PrimaryGloss") }
 				},
 				null,

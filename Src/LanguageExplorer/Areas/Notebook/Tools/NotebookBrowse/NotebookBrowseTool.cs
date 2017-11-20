@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 	{
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		[Import(AreaServices.NotebookAreaMachineName)]
 		private IArea _area;
 

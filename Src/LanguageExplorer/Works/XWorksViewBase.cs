@@ -76,7 +76,7 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Caches the RecordClerk.
 		/// </summary>
-		private RecordClerk m_clerk;
+		private IRecordClerk m_clerk;
 
 		/// <summary>
 		/// Sometimes an active clerk (eg., in a view) is repurposed (eg., in a dialog for printing).
@@ -145,7 +145,7 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XWorksViewBase"/> class.
 		/// </summary>
-		protected XWorksViewBase(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk)
+		protected XWorksViewBase(XElement configurationParametersElement, LcmCache cache, IRecordClerk recordClerk)
 			: this()
 		{
 			m_configurationParametersElement = configurationParametersElement;
@@ -202,7 +202,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public RecordClerk Clerk
+		public IRecordClerk Clerk
 		{
 			get
 			{

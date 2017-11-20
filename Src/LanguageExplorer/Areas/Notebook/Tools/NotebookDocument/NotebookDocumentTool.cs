@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 	internal sealed class NotebookDocumentTool : ITool
 	{
 		private PaneBarContainer _paneBarContainer;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		[Import(AreaServices.NotebookAreaMachineName)]
 		private IArea _area;
 

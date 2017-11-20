@@ -81,7 +81,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			Subscriber = flexComponentParameters.Subscriber;
 
 			var cache = PropertyTable.GetValue<LcmCache>("cache");
-			RecordClerk clerk = RecordClerk.ActiveRecordClerkRepository.GetRecordClerk("interlinearTexts");
+			var clerk = RecordClerk.ActiveRecordClerkRepository.GetRecordClerk("interlinearTexts");
 			if (clerk != null)
 			{
 				if (clerk is TemporaryRecordClerk)

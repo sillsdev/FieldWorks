@@ -30,7 +30,7 @@ namespace LanguageExplorer.Works
 	/// <summary>
 	/// RecordList is a vector of objects
 	/// </summary>
-	public class RecordList : DisposableBase, IFlexComponent, IVwNotifyChange, ISortItemProvider
+	public class RecordList : DisposableBase, IRecordList
 	{
 		#region Events
 
@@ -61,7 +61,7 @@ namespace LanguageExplorer.Works
 		/// in the mananged section, as when disposing was done by the Finalizer.
 		/// </summary>
 		private ISilDataAccess m_sda;
-		protected RecordClerk m_clerk;
+		protected IRecordClerk m_clerk;
 		/// <summary>
 		/// A reference to a sorter.
 		/// </summary>
@@ -275,7 +275,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		public ISilDataAccessManaged VirtualListPublisher => m_objectListPublisher;
 
-		internal virtual string PropertyTableId(string sorterOrFilter)
+		public virtual string PropertyTableId(string sorterOrFilter)
 		{
 			// Dependent lists do not have owner/property set. Rather they have class/field.
 			var className = VirtualListPublisher.MetaDataCache.GetOwnClsName(m_flid);
@@ -468,7 +468,7 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Our owning record clerk.
 		/// </summary>
-		protected internal RecordClerk Clerk
+		public IRecordClerk Clerk
 		{
 			get { return m_clerk; }
 			set { m_clerk = value; }
@@ -591,7 +591,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		internal ICmObject RecordedFocusedObject;
 
-		internal bool IsCurrentObjectValid()
+		public bool IsCurrentObjectValid()
 		{
 			return m_cache.ServiceLocator.IsValidObjectId(CurrentObjectHvo);
 		}
@@ -644,7 +644,7 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// False if SendPropChangedOnListChange() should be a no-op.
 		/// </summary>
-		protected internal bool EnableSendPropChanged
+		public bool EnableSendPropChanged
 		{
 			get
 			{
@@ -735,7 +735,7 @@ namespace LanguageExplorer.Works
 		{
 			// see if the property is the VirtualFlid of the owning clerk. If so,
 			// the owning clerk has reloaded, so we should also reload.
-			RecordClerk clerkProvidingRootObject;
+			IRecordClerk clerkProvidingRootObject;
 			if (Clerk.TryClerkProvidingRootObject(out clerkProvidingRootObject) &&
 				clerkProvidingRootObject.VirtualFlid == tag &&
 				cvDel > 0)
@@ -806,7 +806,7 @@ namespace LanguageExplorer.Works
 				// This may be a change to content we depend upon.
 				// 1) see if the property is the VirtualFlid of the owning clerk. If so,
 				// the owning clerk has reloaded, so we should also reload.
-				RecordClerk clerkProvidingRootObject = null;
+				IRecordClerk clerkProvidingRootObject;
 				if (Clerk.TryClerkProvidingRootObject(out clerkProvidingRootObject) &&
 					clerkProvidingRootObject.VirtualFlid == tag &&
 					cvDel > 0)
@@ -864,7 +864,7 @@ namespace LanguageExplorer.Works
 			get { return m_fReloadLexEntries; }
 		}
 
-		internal protected virtual bool NeedToReloadList()
+		public virtual bool NeedToReloadList()
 		{
 			bool fReload = RequestedLoadWhileSuppressed;
 			if (Flid == m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries)
@@ -1191,7 +1191,7 @@ namespace LanguageExplorer.Works
 		/// <param name="ivMin"></param>
 		/// <param name="cvIns"></param>
 		/// <param name="cvDel"></param>
-		internal virtual void ReloadList(int ivMin, int cvIns, int cvDel)
+		public virtual void ReloadList(int ivMin, int cvIns, int cvDel)
 		{
 			CheckDisposed();
 
@@ -1258,7 +1258,7 @@ namespace LanguageExplorer.Works
 			return false;
 		}
 
-		protected internal virtual void ReloadList(int newListItemsClass, int newTargetFlid, bool force)
+		public virtual void ReloadList(int newListItemsClass, int newTargetFlid, bool force)
 		{
 			// let a bulk-edit record list handle this.
 		}
@@ -1291,7 +1291,7 @@ namespace LanguageExplorer.Works
 		/// This will remove the given hvosToRemove (if they exist in our sort items) and any items that refer to invalid objects.
 		/// Reload the view if there were any changes, and adjust the CurrentIndex
 		/// </summary>
-		protected internal void RemoveUnwantedSortItems(List<int> hvosToRemove)
+		public void RemoveUnwantedSortItems(List<int> hvosToRemove)
 		{
 			if (m_sortedObjects == null)
 				return;	// nothing to remove.
@@ -1341,7 +1341,7 @@ namespace LanguageExplorer.Works
 		/// replace any matching items in our sort list. and do normal navigation prop change.
 		/// </summary>
 		/// <param name="hvoReplaced"></param>
-		protected internal void ReplaceListItem(int hvoReplaced)
+		public void ReplaceListItem(int hvoReplaced)
 		{
 			ReplaceListItem(hvoReplaced, ListChangedEventArgs.ListChangedActions.Normal);
 		}
@@ -1554,7 +1554,7 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Indicates whether RecordList is being modified
 		/// </summary>
-		internal bool UpdatingList
+		public bool UpdatingList
 		{
 			get { return m_fUpdatingList;  }
 			set { m_fUpdatingList = value; }
@@ -1574,7 +1574,7 @@ namespace LanguageExplorer.Works
 		/// we could check IsValidObject on all the sortObject items in the list after ListLoadingSuppressed is set to false,
 		/// to detect the need to reload (and avoid Record.PropChanged checks).
 		/// </summary>
-		internal bool ListLoadingSuppressed
+		public bool ListLoadingSuppressed
 		{
 			get { return m_suppressingLoadList; }
 			set
@@ -1603,7 +1603,7 @@ namespace LanguageExplorer.Works
 		/// sets the value of m_suppressingLoadList without any side effects (e.g. ReloadList()).
 		/// </summary>
 		/// <param name="value"></param>
-		internal void SetSuppressingLoadList(bool value)
+		public void SetSuppressingLoadList(bool value)
 		{
 			m_suppressingLoadList = value;
 			if (!m_suppressingLoadList)
@@ -1613,7 +1613,7 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Indicates whether we tried to reload the list while we were suppressing the reload.
 		/// </summary>
-		protected internal virtual bool RequestedLoadWhileSuppressed
+		public virtual bool RequestedLoadWhileSuppressed
 		{
 			get { return m_requestedLoadWhileSuppressed; }
 			set { m_requestedLoadWhileSuppressed = value; }
@@ -1625,7 +1625,7 @@ namespace LanguageExplorer.Works
 		/// We could try to get an ICmObject and call IsValidObject, but currently that doesn't do
 		/// any more than this, and it fails (spuriously) when working with fake objects.
 		/// </summary>
-		internal bool CurrentObjectIsValid
+		public bool CurrentObjectIsValid
 		{
 			get
 			{
@@ -2075,7 +2075,7 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		internal bool IsVirtualPublisherCreated => m_objectListPublisher != null;
+		public bool IsVirtualPublisherCreated => m_objectListPublisher != null;
 
 		protected virtual IEnumerable<int> GetObjectSet()
 		{
@@ -2091,7 +2091,7 @@ namespace LanguageExplorer.Works
 			return (GetMatchingClass(className)!= null);
 		}
 
-		private ICmObject CreateNewObject(int hvoOwner, IList<ClassAndPropInfo> cpiPath)
+		public ICmObject CreateNewObject(int hvoOwner, IList<ClassAndPropInfo> cpiPath)
 		{
 			if (cpiPath.Count > 2)
 			{
@@ -2632,7 +2632,7 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		internal void PersistOn(string pathname)
+		public void PersistOn(string pathname)
 		{
 			// Ensure that all the items in the sorted list are valid ICmObject references before
 			// actually persisting anything.
@@ -2688,7 +2688,7 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Returns true if it successfully set m_sortedObjects to a restored list.
 		/// </summary>
-		internal virtual bool RestoreFrom(string pathname)
+		public virtual bool RestoreFrom(string pathname)
 		{
 			// If something has created instances of the class we display, the persisted list may be
 			// missing things. For example, if the program starts up in interlinear text view, and the user
@@ -2779,7 +2779,7 @@ namespace LanguageExplorer.Works
 
 		private class CpiPathBasedCreateAndInsert : ICreateAndInsert<ICmObject>
 		{
-			internal CpiPathBasedCreateAndInsert(int hvoOwner, IList<ClassAndPropInfo> cpiPath, RecordList list)
+			internal CpiPathBasedCreateAndInsert(int hvoOwner, IList<ClassAndPropInfo> cpiPath, IRecordList list)
 	{
 				HvoOwner = hvoOwner;
 				CpiPath = cpiPath;
@@ -2788,7 +2788,7 @@ namespace LanguageExplorer.Works
 
 			private readonly int HvoOwner;
 			private readonly IList<ClassAndPropInfo> CpiPath;
-			private readonly RecordList List;
+			private readonly IRecordList List;
 
 #region ICreateAndInsert<ICmObject> Members
 

@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		private const string panelMenuId = "left";
 		private LcmCache _cache;
 		private MultiPane _multiPane;
-		private RecordClerk _recordClerk;
+		private IRecordClerk _recordClerk;
 		private XhtmlDocView _xhtmlDocView;
 		private IReversalIndexRepository _reversalIndexRepository;
 		private IReversalIndex _currentReversalIndex;

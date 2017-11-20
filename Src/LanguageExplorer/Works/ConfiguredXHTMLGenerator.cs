@@ -204,7 +204,7 @@ namespace LanguageExplorer.Works
 		/// <returns>The path to the XHTML file</returns>
 		public static string SavePreviewHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, IPropertyTable propertyTable,
 			LcmCache cache,
-			RecordClerk activeClerk,
+			IRecordClerk activeClerk,
 			IThreadedProgress progress = null, int entriesPerPage = EntriesPerPage)
 		{
 			var preferredPath = GetPreferredPreviewPath(configuration, cache, entryHvos.Length == 1);
@@ -235,7 +235,7 @@ namespace LanguageExplorer.Works
 			return xhtmlPath;
 		}
 
-		private static bool IsClerkSortingByHeadword(RecordClerk clerk)
+		private static bool IsClerkSortingByHeadword(IRecordClerk clerk)
 		{
 			if (clerk.SortName == null) return false;
 			return clerk.SortName.StartsWith("Headword") || clerk.SortName.StartsWith("Lexeme Form") || clerk.SortName.StartsWith("Citation Form")
@@ -256,7 +256,7 @@ namespace LanguageExplorer.Works
 		public static void SavePublishedHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, int entriesPerPage,
 			DictionaryConfigurationModel configuration, IPropertyTable propertyTable,
 			LcmCache cache,
-			RecordClerk activeClerk,
+			IRecordClerk activeClerk,
 			string xhtmlPath, IThreadedProgress progress = null)
 		{
 			var entryCount = entryHvos.Length;
@@ -495,7 +495,7 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Get the page for the current entry, represented by the range of entries on the page containing the current entry
 		/// </summary>
-		private static Tuple<int, int> GetPageForCurrentEntry(GeneratorSettings settings, int[] entryHvos, int entriesPerPage, RecordClerk activeClerk)
+		private static Tuple<int, int> GetPageForCurrentEntry(GeneratorSettings settings, int[] entryHvos, int entriesPerPage, IRecordClerk activeClerk)
 		{
 			var currentEntryHvo = 0;
 			if (activeClerk != null)
@@ -3128,7 +3128,7 @@ namespace LanguageExplorer.Works
 			return wsOptions.Options[0].Id;
 		}
 
-		public static DictionaryPublicationDecorator GetPublicationDecoratorAndEntries(IPropertyTable propertyTable, out int[] entriesToSave, string dictionaryType, LcmCache cache, RecordClerk activeClerk)
+		public static DictionaryPublicationDecorator GetPublicationDecoratorAndEntries(IPropertyTable propertyTable, out int[] entriesToSave, string dictionaryType, LcmCache cache, IRecordClerk activeClerk)
 		{
 			if (cache == null)
 			{

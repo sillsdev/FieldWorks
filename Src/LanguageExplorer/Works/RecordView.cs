@@ -59,7 +59,7 @@ namespace LanguageExplorer.Works
 			Init();
 		}
 
-		protected RecordView(XElement configurationParametersElement, LcmCache cache, RecordClerk recordClerk)
+		protected RecordView(XElement configurationParametersElement, LcmCache cache, IRecordClerk recordClerk)
 			: base(configurationParametersElement, cache, recordClerk)
 		{
 			Init();

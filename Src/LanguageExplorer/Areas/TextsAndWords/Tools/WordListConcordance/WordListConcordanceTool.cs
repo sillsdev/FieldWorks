@@ -32,8 +32,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		private RecordBrowseView _mainRecordBrowseView;
 		private MultiPane _nestedMultiPane;
 		private RecordBrowseView _nestedRecordBrowseView;
-		private RecordClerk _recordClerkProvidingOwner;
-		private RecordClerk _mainRecordClerk;
+		private IRecordClerk _recordClerkProvidingOwner;
+		private IRecordClerk _mainRecordClerk;
 		private InterlinMasterNoTitleBar _interlinMasterNoTitleBar;
 		[Import(AreaServices.TextAndWordsAreaMachineName)]
 		private IArea _area;
@@ -184,7 +184,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 
 		#endregion
 
-		private static RecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
 			Require.That(clerkId == OccurrencesOfSelectedWordform, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{OccurrencesOfSelectedWordform}'.");
 

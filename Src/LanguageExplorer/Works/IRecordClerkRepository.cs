@@ -23,7 +23,7 @@ namespace LanguageExplorer.Works
 		/// Add the <paramref name="recordClerk"/> to the repository.
 		/// </summary>
 		/// <param name="recordClerk">The clerk to add to the repository.</param>
-		void AddRecordClerk(RecordClerk recordClerk);
+		void AddRecordClerk(IRecordClerk recordClerk);
 
 		/// <summary>
 		/// Remove the <paramref name="recordClerk"/> from the repository.
@@ -32,18 +32,18 @@ namespace LanguageExplorer.Works
 		/// <remarks>
 		/// A side effect of removing a clerk, is that <see cref="ActiveRecordClerk"/> is set to null,
 		/// if it is the clerk being removed. The clerk being removed is also disposed.</remarks>
-		void RemoveRecordClerk(RecordClerk recordClerk);
+		void RemoveRecordClerk(IRecordClerk recordClerk);
 
 		/// <summary>
 		/// Get the clerk with the given <paramref name="clerkId" />, or null if not found.
 		/// </summary>
 		/// <param name="clerkId">The Id of the clerk to return.</param>
 		/// <returns>The clerk with the given <paramref name="clerkId"/>, or null if not found.</returns>
-		RecordClerk GetRecordClerk(string clerkId);
+		IRecordClerk GetRecordClerk(string clerkId);
 
 		/// <summary>
 		/// Get/Set the active clerk. Null is an acceptable value for both 'get' and 'set'.
 		/// </summary>
-		RecordClerk ActiveRecordClerk { get; set; }
+		IRecordClerk ActiveRecordClerk { get; set; }
 	}
 }

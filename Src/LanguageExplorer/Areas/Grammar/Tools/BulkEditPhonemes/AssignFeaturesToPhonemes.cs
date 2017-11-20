@@ -29,7 +29,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 			InitializeComponent();
 		}
 
-		public AssignFeaturesToPhonemes(XElement browseViewDefinitions, LcmCache cache, RecordClerk recordClerk)
+		public AssignFeaturesToPhonemes(XElement browseViewDefinitions, LcmCache cache, IRecordClerk recordClerk)
 			: base(browseViewDefinitions, cache, recordClerk)
 		{
 			InitializeComponent();

@@ -43,11 +43,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private ToolStripButton _insertEntryToolStripButton;
 		private ToolStripButton _insertGoToEntryToolStripButton;
 		private DataTree DataTree { get; set; }
-		private RecordClerk RecordClerk { get; set; }
+		private IRecordClerk RecordClerk { get; set; }
 		internal MultiPane InnerMultiPane { get; set; }
 		internal SliceContextMenuFactory SliceContextMenuFactory { get; set; }
 
-		internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, DataTree dataTree, RecordClerk recordClerk)
+		internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, DataTree dataTree, IRecordClerk recordClerk)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(dataTree, nameof(dataTree));

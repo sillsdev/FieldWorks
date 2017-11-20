@@ -49,7 +49,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <param name="defaultFilter">The default filter to use.</param>
 		/// <param name="allowDeletions"></param>
 		/// <param name="shouldHandleDeletion"></param>
-		internal ReversalClerk(string id, StatusBar statusBar, RecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
+		internal ReversalClerk(string id, StatusBar statusBar, IRecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
 			: base(id, statusBar, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
 		{
 		}
@@ -190,7 +190,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			if(ri == null)
 				return false;
 			var writingSystem = (CoreWritingSystemDefinition)Cache.WritingSystemFactory.get_Engine(ri.WritingSystem);
-			m_list.Sorter = new GenRecordSorter(new StringFinderCompare(LayoutFinder.CreateFinder(Cache, BrowseViewFormCol, fakevc,
+			RecordList.Sorter = new GenRecordSorter(new StringFinderCompare(LayoutFinder.CreateFinder(Cache, BrowseViewFormCol, fakevc,
 				PropertyTable.GetValue<IApp>("App")),
 				new WritingSystemComparer(writingSystem)));
 			return true;
@@ -220,7 +220,7 @@ namespace LanguageExplorer.Areas.Lexicon
 					ChangeOwningObjectIfPossible();
 					break;
 				case AreaServices.ToolForAreaNamed_ + AreaServices.LexiconAreaMachineName:
-					var rootIndex = GetRootIndex(m_list.CurrentIndex);
+					var rootIndex = GetRootIndex(RecordList.CurrentIndex);
 					JumpToIndex(rootIndex);
 					base.OnPropertyChanged(name);
 					break;
@@ -234,10 +234,10 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <returns></returns>
 		private int GetRootIndex(int lastValidIndex)
 		{
-			var item = m_list.SortItemAt(lastValidIndex);
+			var item = RecordList.SortItemAt(lastValidIndex);
 			if (item == null)
 				return lastValidIndex;
-			var parentIndex = m_list.IndexOfParentOf(item.KeyObject);
+			var parentIndex = RecordList.IndexOfParentOf(item.KeyObject);
 
 			return parentIndex == -1 ? lastValidIndex : GetRootIndex(parentIndex);
 		}
@@ -360,8 +360,8 @@ namespace LanguageExplorer.Areas.Lexicon
 		{
 			try
 			{
-				Debug.Assert(ri.Hvo == m_list.OwningObject.Hvo);
-				m_list.ListModificationInProgress = true;	// can't reload deleted list! (LT-5353)
+				Debug.Assert(ri.Hvo == RecordList.OwningObject.Hvo);
+				RecordList.ListModificationInProgress = true;	// can't reload deleted list! (LT-5353)
 				// We're about to do a MasterRefresh which clobbers the Undo stack,
 				// so we might as well make this UOW not undoable
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
@@ -376,7 +376,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			}
 			finally
 			{
-				m_list.ListModificationInProgress = false;
+				RecordList.ListModificationInProgress = false;
 			}
 			// Without this, stale data can still display in the BulkEditSenses tool if you
 			// recreate the deleted reversal index.

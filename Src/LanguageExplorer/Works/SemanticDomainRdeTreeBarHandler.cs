@@ -86,7 +86,7 @@ namespace LanguageExplorer.Works
 			treeBarControl.ShowHeaderControl = true;
 		}
 
-		public override void PopulateRecordBar(RecordList list)
+		public override void PopulateRecordBar(IRecordList list)
 		{
 			PopulateRecordBar(list, Editable);
 		}

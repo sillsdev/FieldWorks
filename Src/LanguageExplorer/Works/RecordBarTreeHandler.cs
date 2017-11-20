@@ -140,7 +140,7 @@ namespace LanguageExplorer.Works
 		}
 
 		#endregion IDisposable & Co. implementation
-		public void PopulateRecordBarIfNeeded(RecordList list)
+		public void PopulateRecordBarIfNeeded(IRecordList list)
 		{
 			CheckDisposed();
 
@@ -149,7 +149,7 @@ namespace LanguageExplorer.Works
 				PopulateRecordBar(list);
 			}
 		}
-		public abstract void PopulateRecordBar(RecordList list);
+		public abstract void PopulateRecordBar(IRecordList list);
 		public abstract void UpdateSelection(ICmObject currentObject);
 		public abstract void ReloadItem(ICmObject currentObject);
 		public abstract void ReleaseRecordBar();
@@ -191,7 +191,7 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		public override void PopulateRecordBar(RecordList list)
+		public override void PopulateRecordBar(IRecordList list)
 		{
 			base.PopulateRecordBar(list);
 			UpdateHeaderVisibility();
@@ -385,7 +385,7 @@ namespace LanguageExplorer.Works
 
 		#endregion IDisposable override
 
-		private RecordList m_list;
+		private IRecordList m_list;
 
 		/// <summary>
 		/// Check whether the given hvo is represented by a TreeNode.
@@ -428,17 +428,17 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Makes the record list available to subclasses.
 		/// </summary>
-		protected RecordList RecordList
+		protected IRecordList RecordList
 		{
 			get { return m_list; }
 		}
 
-		public override void PopulateRecordBar(RecordList list)
+		public override void PopulateRecordBar(IRecordList list)
 		{
 			PopulateRecordBar(list, true);
 		}
 
-		protected virtual void PopulateRecordBar(RecordList list, bool editable)
+		protected virtual void PopulateRecordBar(IRecordList list, bool editable)
 		{
 			CheckDisposed();
 

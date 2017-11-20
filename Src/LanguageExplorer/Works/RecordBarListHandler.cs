@@ -37,7 +37,7 @@ namespace LanguageExplorer.Works
 			throw new Exception("RecordBarListHandler.ReloadItem() is not implemented.");
 		}
 
-		public override void PopulateRecordBar(RecordList recList)
+		public override void PopulateRecordBar(IRecordList recList)
 		{
 			CheckDisposed();
 
