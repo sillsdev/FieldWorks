@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -216,10 +216,7 @@ namespace LanguageExplorer.Works
 				var pubName = PropertyTable.GetValue<string>("SelectedPublication");
 				if (pubName == null)
 				{
-					if (Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Count > 0)
-						return Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];
-					else
-						return null;
+					return Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Count > 0 ? Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0] : null;
 				}
 				var pub = (from item in Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS
 					where IsDesiredPublication(item, pubName)
@@ -228,29 +225,25 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		private bool IsDesiredPublication(ICmPossibility item, string name)
+		private static bool IsDesiredPublication(ICmPossibility item, string name)
 		{
-			foreach (var ws in item.Name.AvailableWritingSystemIds)
-			{
-				if (item.Name.get_String(ws).Text == name)
-					return true;
-			}
-			return false;
+			return item.Name.AvailableWritingSystemIds.Any(ws => item.Name.get_String(ws).Text == name);
 		}
 
 		private string GetSelectedConfigView()
 		{
-			string sLayoutType = PropertyTable.GetValue("DictionaryPublicationLayout", String.Empty);
-			if (String.IsNullOrEmpty(sLayoutType))
+			var sLayoutType = PropertyTable.GetValue("DictionaryPublicationLayout", string.Empty);
+			if (string.IsNullOrEmpty(sLayoutType))
+			{
 				sLayoutType = "publishStem";
+			}
 			return sLayoutType;
 		}
 
 		private string GetSelectedPublication()
 		{
 			// Sometimes we just want the string value which might be '$$all_entries$$'
-			return PropertyTable.GetValue("SelectedPublication",
-				xWorksStrings.AllEntriesPublication);
+			return PropertyTable.GetValue("SelectedPublication", xWorksStrings.AllEntriesPublication);
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -305,7 +298,7 @@ namespace LanguageExplorer.Works
 				// Clerk.CurrentObject, then we either have to duplicate what the
 				// base.SetInfoBarText() does here, or get the string set by the base.
 				// for now, let's just return.
-				if (titleStr == null || titleStr == string.Empty)
+				if (titleStr == string.Empty)
 					return;
 			}
 			if (context == "Dict")
@@ -948,74 +941,62 @@ namespace LanguageExplorer.Works
 			// Scroll the display to the given record.  (See LT-927 for explanation.)
 			try
 			{
-				var clerk = Clerk;
-				int levelFlid = 0;
+				const int levelFlid = 0;
 				var indexes = new List<int>();
-				if (Clerk is SubitemRecordClerk)
-				{
-					var subitemClerk = Clerk as SubitemRecordClerk;
-					levelFlid = subitemClerk.SubitemFlid;
-					if (subitemClerk.Subitem != null)
-					{
-						// There's a subitem. See if we can select it.
-						var item = subitemClerk.Subitem;
-						while (item.OwningFlid == levelFlid)
-						{
-							indexes.Add(item.OwnOrd);
-							item = item.Owner;
-						}
-					}
-				}
 				var currentIndex = AdjustedClerkIndex();
 				indexes.Add(currentIndex);
 				// Suppose it is the fifth subrecord of the second subrecord of the ninth main record.
 				// At this point, indexes holds 4, 1, 8. That is, like information for MakeSelection,
 				// it holds the indexes we want to select from innermost to outermost.
-				IVwRootBox rootb = (m_mainView as IVwRootSite).RootBox;
-				if (rootb != null)
+				var rootb = (m_mainView as IVwRootSite).RootBox;
+				if (rootb == null)
 				{
-					int idx = currentIndex;
-					if (idx < 0)
-						return;
-					// Review JohnT: is there a better way to obtain the needed rgvsli[]?
-					IVwSelection sel = rootb.Selection;
-					if (sel != null)
+					return;
+				}
+				var idx = currentIndex;
+				if (idx < 0)
+				{
+					return;
+				}
+				// Review JohnT: is there a better way to obtain the needed rgvsli[]?
+				var sel = rootb.Selection;
+				if (sel != null)
+				{
+					// skip moving the selection if it's already in the right record.
+					var clevels = sel.CLevels(false);
+					if (clevels >= indexes.Count)
 					{
-						// skip moving the selection if it's already in the right record.
-						int clevels = sel.CLevels(false);
-						if (clevels >= indexes.Count)
+						for (var ilevel = indexes.Count - 1; ilevel >= 0; ilevel--)
 						{
-							for (int ilevel = indexes.Count - 1; ilevel >= 0; ilevel--)
+							int hvoObj, tag, ihvo, cpropPrevious;
+							IVwPropertyStore vps;
+							sel.PropInfo(false, clevels - indexes.Count + ilevel, out hvoObj, out tag, out ihvo, out cpropPrevious, out vps);
+							if (ihvo != indexes[ilevel] || tag != levelFlid)
 							{
-								int hvoObj, tag, ihvo, cpropPrevious;
-								IVwPropertyStore vps;
-								sel.PropInfo(false, clevels - indexes.Count + ilevel, out hvoObj, out tag, out ihvo,
-									out cpropPrevious, out vps);
-								if (ihvo != indexes[ilevel] || tag != levelFlid)
-									break;
-								if (ilevel == 0)
-								{
-									// selection is already in the right object, just make sure it's visible.
-									(m_mainView as IVwRootSite).ScrollSelectionIntoView(sel,
-										VwScrollSelOpts.kssoDefault);
-									return;
-								}
+								break;
 							}
+							if (ilevel != 0)
+							{
+								continue;
+							}
+							// selection is already in the right object, just make sure it's visible.
+							(m_mainView as IVwRootSite).ScrollSelectionIntoView(sel, VwScrollSelOpts.kssoDefault);
+							return;
 						}
 					}
-					var rgvsli = new SelLevInfo[indexes.Count];
-					for (int i = 0; i < indexes.Count; i++)
-					{
-						rgvsli[i].ihvo = indexes[i];
-						rgvsli[i].tag = levelFlid;
-					}
-					rgvsli[rgvsli.Length-1].tag = m_madeUpFieldIdentifier;
-					rootb.MakeTextSelInObj(0, rgvsli.Length, rgvsli, rgvsli.Length, rgvsli, false, false, false, true, true);
-					m_mainView.ScrollSelectionIntoView(rootb.Selection, VwScrollSelOpts.kssoBoth);
-
-					// It's a pity this next step is needed!
-					rootb.Activate(VwSelectionState.vssEnabled);
 				}
+				var rgvsli = new SelLevInfo[indexes.Count];
+				for (var i = 0; i < indexes.Count; i++)
+				{
+					rgvsli[i].ihvo = indexes[i];
+					rgvsli[i].tag = levelFlid;
+				}
+				rgvsli[rgvsli.Length-1].tag = m_madeUpFieldIdentifier;
+				rootb.MakeTextSelInObj(0, rgvsli.Length, rgvsli, rgvsli.Length, rgvsli, false, false, false, true, true);
+				m_mainView.ScrollSelectionIntoView(rootb.Selection, VwScrollSelOpts.kssoBoth);
+
+				// It's a pity this next step is needed!
+				rootb.Activate(VwSelectionState.vssEnabled);
 			}
 			catch
 			{
@@ -1053,25 +1034,6 @@ namespace LanguageExplorer.Works
 					m_hvoOwner = clerk.OwningObject.Hvo;
 				}
 
-				if (!clerk.SetCurrentFromRelatedClerk())
-				{
-					// retrieve persisted clerk index and set it.
-					int idx = PropertyTable.GetValue(clerk.PersistedIndexProperty, SettingsGroup.LocalSettings, -1);
-					if (idx >= 0 && !clerk.HasEmptyList)
-					{
-						int idxOld = clerk.CurrentIndex;
-						try
-						{
-							clerk.JumpToIndex(idx);
-						}
-						catch
-						{
-							clerk.JumpToIndex(idxOld >= 0 ? idxOld : 0);
-						}
-					}
-					clerk.SelectedRecordChanged(false);
-				}
-
 				clerk.IsDefaultSort = false;
 
 				// Create the main view
@@ -1083,8 +1045,7 @@ namespace LanguageExplorer.Works
 				m_mainView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				m_mainView.Dock = DockStyle.Fill;
 				m_mainView.Cache = Cache;
-				m_mainView.SelectionChangedEvent +=
-					new FwSelectionChangedEventHandler(OnSelectionChanged);
+				m_mainView.SelectionChangedEvent += OnSelectionChanged;
 				m_mainView.MouseClick += m_mainView_MouseClick;
 				m_mainView.MouseMove += m_mainView_MouseMove;
 				m_mainView.MouseLeave += m_mainView_MouseLeave;

@@ -95,7 +95,6 @@ namespace LanguageExplorer.Works
 		bool SuspendLoadListUntilOnChangeFilter { get; set; }
 		string PersistedIndexProperty { get; }
 		void UpdateList(bool fRefreshRecord, bool forceSort);
-		bool SetCurrentFromRelatedClerk();
 		void PersistListOn(string pathname);
 		bool RestoreListFrom(string pathname);
 		void OnChangeListItemsClass(int listItemsClass, int newTargetFlid, bool force);

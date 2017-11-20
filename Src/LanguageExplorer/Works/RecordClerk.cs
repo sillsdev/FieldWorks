@@ -83,7 +83,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		protected Dictionary<string, PropertyRecordSorter> m_allSorters;
 
-		protected static RecordClerk s_lastClerkToLoadTreeBar;
+		protected static IRecordClerk s_lastClerkToLoadTreeBar;
 
 		protected readonly string m_id;
 
@@ -104,27 +104,6 @@ namespace LanguageExplorer.Works
 		/// be displaying the analyses of.
 		/// </summary>
 		protected IRecordClerk m_clerkProvidingRootObject;
-
-		/// <summary>
-		/// When this is non-null, there may be another clerk which contains a similar list of objects,
-		/// for example, in Notebook most views use a record clerk that has AllRecords, but document
-		/// view has only the top-level records. When our selected record changes, we want to notify the
-		/// other Clerk, if it exists.
-		/// </summary>
-		private readonly IRecordClerk m_relatedClerk;
-
-		/// <summary>
-		/// When m_relatedClerk is not null, and this is also not null, it controls how we find the
-		/// related object which we should switch to when a view using this is activated.
-		/// owned: try to find one of our own objects which is or is owned by the object selected in the
-		/// related clerk (e.g., Base Records clerk should try to find an object that is or owns the record
-		/// selected in the records clerk).
-		/// ownee: if the other clerk's object is or owns the object already selected in this, don't change.
-		/// otherwise try to select the object owned in the other clerk. (e.g., Records Clerk should not
-		/// switch to a higher-level record if it is in one that corresponds to part of the selection in
-		/// the base record clerk).
-		/// </summary>
-		private readonly string m_relationToRelatedClerk;
 
 		/// <summary>
 		/// this is an object which gives us the list of filters which we should offer to the user from the UI.
@@ -301,33 +280,6 @@ namespace LanguageExplorer.Works
 
 			m_clerkProvidingRootObject = clerkProvidingRootObject;
 		}
-
-#if RANDYTODO
-		// TODO: I don't see any evidence in the xml config files that 'relatedClerk' is ever used.
-		// TODO: So, be ready remove this in the end, if never used.
-		// TODO: Remove blockage if I ever find that it is used.
-		/// <summary>
-		/// Contructor for related clerk.
-		/// </summary>
-		/// <param name="id">Clerk id/name.</param>
-		/// <param name="recordList">Record list for the clerk.</param>
-		/// <param name="defaultSorter">The default record sorter.</param>
-		/// <param name="defaultSortLabel"></param>
-		/// <param name="defaultFilter">The default filter to use.</param>
-		/// <param name="allowDeletions"></param>
-		/// <param name="shouldHandleDeletion"></param>
-		/// <param name="relatedClerk"></param>
-		/// <param name="relationToRelatedClerk"></param>
-		internal RecordClerk(string id, IRecordList recordList, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, RecordClerk relatedClerk, string relationToRelatedClerk)
-			: this(id, recordList, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
-		{
-			Guard.AgainstNull(relatedClerk, nameof(relatedClerk));
-			Guard.AgainstNullOrEmptyString(relationToRelatedClerk, nameof(relationToRelatedClerk));
-
-			m_relatedClerk = relatedClerk;
-			m_relationToRelatedClerk = relationToRelatedClerk;
-		}
-#endif
 
 		#endregion Constructors
 
@@ -1916,76 +1868,6 @@ namespace LanguageExplorer.Works
 
 			StatusBarPanelServices.SetStatusPanelRecordNumber(m_statusBar, message);
 			ResetStatusBarMessageForCurrentObject();
-		}
-
-		/// <summary>
-		/// Overridden in SubitemRecordClerk, this records the subitem.
-		/// </summary>
-		/// <param name="subitem"></param>
-		internal virtual void SetSubitem(ICmObject subitem)
-		{
-
-		}
-
-		public virtual bool SetCurrentFromRelatedClerk()
-		{
-			if (m_relatedClerk == null || !Cache.ServiceLocator.IsValidObjectId(m_relatedClerk.CurrentObjectHvo))
-			{
-				return false;
-			}
-
-			var target = m_relatedClerk.CurrentObject;
-			if (m_relationToRelatedClerk.StartsWith("root:"))
-			{
-				// The object to look for in our list is a 'root' of the one in the other list:
-				// that is, the object in the other list itself or one of its owners, the highest one in the
-				// hierarchy of a specified class. For example, the other list may contain subrecords,
-				// we want to select an owning top-level record.
-				var className = m_relationToRelatedClerk.Substring("root:".Length).Trim();
-				var mdc = Cache.MetaDataCacheAccessor;
-				var classId = mdc.GetClassId(className);
-				var targetObj = target;
-				for (; targetObj != null; targetObj = targetObj.Owner)
-				{
-					if (targetObj.ClassID == classId)
-					{
-						target = targetObj; // it ends up with the highest thing of that class in the owner list (possibly the original target)
-					}
-				}
-				if (target != m_relatedClerk.CurrentObject)
-				{
-					SetSubitem(m_relatedClerk.CurrentObject);
-				}
-				else
-				{
-					SetSubitem(null); // same object, no need for special subitem behavior.
-				}
-			}
-			else if (m_relationToRelatedClerk == "part")
-			{
-				if (m_relatedClerk is SubitemRecordClerk)
-				{
-					// It should keep track of precisely which object we want.
-					var subitemClerk = m_relatedClerk as SubitemRecordClerk;
-					if (subitemClerk.UsedToSyncRelatedClerk)
-					{
-						// We've synchronized this clerk from the related one ONCE. In case we initialize
-						// another view from this Clerk, we don't want to do it again...for example, if we
-						// switch from doc to Edit, then change records, then switch to Browse, we want
-						// to stay on the same record, not switch again to the document view one.
-						// Of course this would be a problem if more than one Clerk had the same
-						// related clerk, but that hasn't happened yet.
-						return false;
-					}
-					if (subitemClerk.Subitem != null)
-					{
-						target = subitemClerk.Subitem;
-						subitemClerk.UsedToSyncRelatedClerk = true;
-					}
-				}
-			}
-			JumpToRecord(target.Hvo);
-			return true;
 		}
 
 		private void ResetStatusBarMessageForCurrentObject()

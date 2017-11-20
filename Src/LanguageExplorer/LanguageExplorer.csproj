@@ -1141,7 +1141,6 @@
     <Compile Include="Works\ReversalIndexServices.cs" />
     <Compile Include="Works\SelectObjectEventArgs.cs" />
     <Compile Include="Works\SemanticDomainRdeTreeBarHandler.cs" />
-    <Compile Include="Works\SubitemRecordClerk.cs" />
     <Compile Include="Works\TemporaryRecordClerk.cs" />
     <Compile Include="Works\CombinedStylesListHandler.cs" />
     <Compile Include="Works\UnicodeCharacterEditingHelper.cs" />

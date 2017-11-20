@@ -217,8 +217,9 @@ namespace LanguageExplorer.Works
 			}
 			// In case it hasn't yet been loaded, load it!  See LT-10185.
 			if (!Clerk.ListLoadingSuppressed && Clerk.RequestedLoadWhileSuppressed)
+			{
 				Clerk.UpdateList(true, true); // sluggishness culprit for LT-12844 was in here
-			Clerk.SetCurrentFromRelatedClerk(); // See if some other clerk wants to influence our current object.
+			}
 		}
 
 		private string GetClerkPersistPathname()
