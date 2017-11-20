@@ -3,9 +3,12 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Linq;
 using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -56,15 +59,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			if (m_settings.CallUpgrade)
 			{
-				string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-				string configFilename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-					Application.CompanyName, Application.ProductName, version, "user.config");
-				if (File.Exists(configFilename))
+				// LT-18723 Upgrade m_settings to generate the user.config file for FLEx 9.0
+				m_settings.Upgrade();
+				m_settings.Save();
+
+				string baseConfigFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+					Application.CompanyName, Application.ProductName);
+
+				if (Directory.Exists(baseConfigFolder))
 				{
-					using (var stream = new FileStream(configFilename, FileMode.Open))
+					// For some reason the version returned from Assembly.GetExecutingAssembly.GetName().Version does not return the
+					// exact same version number that was written by m_settings.Upgrade() so we find it by looking for the lastest version
+					List<string> directoryList = new List<string>(Directory.EnumerateDirectories(baseConfigFolder));
+					directoryList.Sort();
+					string pathToPreviousSettingsFile = Path.Combine(directoryList[directoryList.Count - 1],"user.config");
+					using (var stream = new FileStream(pathToPreviousSettingsFile, FileMode.Open))
 					{
-						if (!MigrateIfNecessary(stream))
-							m_settings.Upgrade();
+						MigrateIfNecessary(stream);
 					}
 				}
 				m_settings.CallUpgrade = false;
