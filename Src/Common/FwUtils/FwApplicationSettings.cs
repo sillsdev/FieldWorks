@@ -60,9 +60,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (m_settings.CallUpgrade)
 			{
 				// LT-18723 Upgrade m_settings to generate the user.config file for FLEx 9.0
-				m_settings.Upgrade();
 				m_settings.Save();
-
+				m_settings.Upgrade();
 				string baseConfigFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
 					Application.CompanyName, Application.ProductName);
 
@@ -86,6 +85,45 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public override void Save()
 		{
 			m_settings.Save();
+		}
+
+		public void DeleteCorruptedSettingsFilesIfPresent()
+		{
+			string pathToConfigFiles = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+				Application.CompanyName, Application.ProductName);
+			List<string> localConfigFolders;
+			bool corruptFileFound = false;
+			if (Directory.Exists(pathToConfigFiles))
+			{
+				localConfigFolders = new List<string>(Directory.EnumerateDirectories(pathToConfigFiles));
+				localConfigFolders.Sort();
+				string highestVersionFolder = localConfigFolders.Count > 0 ? localConfigFolders[localConfigFolders.Count - 1] : "";
+
+				while (highestVersionFolder != "")
+				{
+					try
+					{
+						using (var stream = new FileStream(Path.Combine(highestVersionFolder, "user.config"), FileMode.Open))
+						{
+							// This will throw an exception if the file is corrupted (LT-18643 Null bytes written to user.config file)
+							XDocument.Load(stream);
+						}
+					}
+					catch (XmlException)
+					{
+						corruptFileFound = true;
+						Directory.Delete(highestVersionFolder, true);
+					}
+					localConfigFolders.Remove(highestVersionFolder);
+					highestVersionFolder = localConfigFolders.Count > 0 ? localConfigFolders[localConfigFolders.Count - 1] : "";
+				}
+				if (corruptFileFound)
+				{
+					string caption = FwUtilsStrings.ksCorruptSettingsFileCaption;
+					string text = FwUtilsStrings.ksDeleteAndReportCorruptSettingsFile;
+					MessageBox.Show(text, caption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				}
+			}
 		}
 	}
 }

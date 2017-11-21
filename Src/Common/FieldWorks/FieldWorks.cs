@@ -246,6 +246,7 @@ namespace SIL.FieldWorks
 				s_ui = new FwLcmUI(GetHelpTopicProvider(), s_threadHelper);
 
 				s_appSettings = new FwApplicationSettings();
+				s_appSettings.DeleteCorruptedSettingsFilesIfPresent();
 				s_appSettings.UpgradeIfNecessary();
 
 				ReportingSettings reportingSettings = s_appSettings.Reporting;
