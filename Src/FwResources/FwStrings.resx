@@ -1417,4 +1417,8 @@ FieldWorks ReadMe for help in this area.</value>
   <data name="kstidDataMigrationProhibitedText" xml:space="preserve">
     <value>This project cannot be migrated to a newer version. Please shut down all other applications that are currently using this project and try opening the project again.</value>
   </data>
+  <data name="kstidMissingDefaultCollation" xml:space="preserve">
+    <value>The writing systems {0} are missing the default collation. The standard icu collation will be used.</value>
+    <comment>{0} is a list of one or more writing systems</comment>
+  </data>
 </root>

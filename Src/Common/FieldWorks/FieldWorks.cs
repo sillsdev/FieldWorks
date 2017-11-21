@@ -823,8 +823,29 @@ namespace SIL.FieldWorks
 				cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
 
 				SetupErrorPropertiesNeedingCache(cache);
+				EnsureDefaultCollationsPresent(cache);
 				return cache;
 			}
+		}
+
+		private static void EnsureDefaultCollationsPresent(LcmCache cache)
+		{
+			StringBuilder nullCollationWs = new StringBuilder();
+			foreach (CoreWritingSystemDefinition ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			{
+				if (ws != null && ws.DefaultCollation == null)
+				{
+					ws.DefaultCollation = new IcuRulesCollationDefinition("standard");
+					nullCollationWs.Append(ws.DisplayLabel + ",");
+				}
+			}
+			if (nullCollationWs.Length > 0)
+			{
+				nullCollationWs = nullCollationWs.Remove(nullCollationWs.Length - 1, 1);
+				string message = string.Format(ResourceHelper.GetResourceString("kstidMissingDefaultCollation"), nullCollationWs);
+				MessageBox.Show(message);
+			}
+			cache.ServiceLocator.WritingSystemManager.Save();
 		}
 
 		/// <summary>
