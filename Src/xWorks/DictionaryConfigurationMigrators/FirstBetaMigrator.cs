@@ -13,6 +13,7 @@ using SIL.LCModel.Utils;
 using XCore;
 using DCM = SIL.FieldWorks.XWorks.DictionaryConfigurationMigrator;
 using System.Xml.Linq;
+using System.Text.RegularExpressions;
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {
@@ -294,13 +295,39 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
 			var dictConfigFiles = new List<string>(DCM.ConfigFilesInDir(reversalIndexConfigLoc));
 			string newFName = string.Empty;
+			string wsValue = string.Empty;
+
+			// Rename all the reversals based on the ws id (the user's  name for copies is still stored inside the file)
 			foreach (string fName in dictConfigFiles)
 			{
-				newFName = GetWritingSystemName(fName);
-				if(!string.IsNullOrEmpty(newFName))
+				wsValue = GetWritingSystemName(fName);
+				if(!string.IsNullOrEmpty(wsValue))
 				{
-					newFName = Path.Combine(Path.GetDirectoryName(fName), newFName + DictionaryConfigurationModel.FileExtension);
-					File.Move(fName, newFName);
+					newFName = Path.Combine(Path.GetDirectoryName(fName), wsValue + DictionaryConfigurationModel.FileExtension);
+					if (!File.Exists(newFName))
+					{
+						File.Move(fName, newFName);
+					}
+					else
+					{
+						string[] files = Directory.GetFiles(Path.GetDirectoryName(fName));
+						int count = 0;
+						for (int i = 0; i < files.Length; i++)
+						{
+							if (Path.GetFileNameWithoutExtension(files[i]).StartsWith(wsValue))
+							{
+								Match m = Regex.Match(Path.GetFileName(files[i]), wsValue + @"\d*\.");
+								if (m.Success)
+								{
+									count++;
+								}
+							}
+						}
+
+						newFName = String.Format("{0}{1}{2}", wsValue, count, DictionaryConfigurationModel.FileExtension);
+						newFName = Path.Combine(Path.GetDirectoryName(fName), newFName);
+						File.Move(fName, newFName);
+					}
 				}
 			}
 		}
