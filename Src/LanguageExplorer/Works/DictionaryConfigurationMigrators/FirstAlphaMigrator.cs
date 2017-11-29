@@ -1,4 +1,4 @@
-// Copyright (c) 2016 SIL International
+// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -37,13 +37,11 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 		{
 			m_logger = logger;
 			Cache = propertyTable.GetValue<LcmCache>("cache");
-			var foundOne = string.Format("{0}: Configuration was found in need of migration. - {1}",
-				appVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss"));
+			var foundOne = $"{appVersion}: Configuration was found in need of migration. - {DateTime.Now:yyyy MMM d h:mm:ss}";
 			foreach (var config in DCM.GetConfigsNeedingMigration(Cache, VersionAlpha3))
 			{
 				m_logger.WriteLine(foundOne);
-				m_logger.WriteLine(string.Format("Migrating {0} configuration '{1}' from version {2} to {3}.",
-					config.Type, config.Label, config.Version, VersionAlpha3));
+				m_logger.WriteLine($"Migrating {config.Type} configuration '{config.Label}' from version {config.Version} to {VersionAlpha3}.");
 				m_logger.IncreaseIndent();
 				MigrateFrom83Alpha(config);
 				config.Save();

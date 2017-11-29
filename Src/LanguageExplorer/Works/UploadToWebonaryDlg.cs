@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -168,7 +168,8 @@ namespace LanguageExplorer.Works
 		{
 			var selectedReversals = GetSelectedReversals();
 			var availableReversals = Model.Reversals.Where(prop => prop.Value.Publications.Contains(publication)
-				&& prop.Value.Label != DictionaryConfigurationModel.AllReversalIndexes).Select(prop => prop.Value.Label).ToList();
+				&& prop.Value.Label != DictionaryConfigurationModel.AllReversalIndexes
+				&& !string.IsNullOrEmpty(prop.Value.WritingSystem)).Select(prop => prop.Value.Label).ToList();
 			reversalsCheckedListBox.Items.Clear();
 			foreach (var reversal in availableReversals)
 				reversalsCheckedListBox.Items.Add(reversal);

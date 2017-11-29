@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 SIL International
+﻿// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.Linq;
@@ -35,8 +37,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 		{
 			m_logger = logger;
 			Cache = propertyTable.GetValue<LcmCache>("cache");
-			var foundOne = string.Format("{0}: Configuration was found in need of migration. - {1}",
-				appVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss"));
+			var foundOne = $"{appVersion}: Configuration was found in need of migration. - {DateTime.Now:yyyy MMM d h:mm:ss}";
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			var stemPath = Path.Combine(dictionaryConfigLoc, "Stem" + DictionaryConfigurationModel.FileExtension);
@@ -45,6 +46,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 			{
 				File.Move(stemPath, lexemePath);
 			}
+			RenameReversalConfigFiles(configSettingsDir);
 			foreach (var config in DCM.GetConfigsNeedingMigration(Cache, DCM.VersionCurrent))
 			{
 				m_logger.WriteLine(foundOne);
@@ -52,8 +54,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 				{
 					config.Label = config.Label.Replace("Stem-", "Lexeme-");
 				}
-				m_logger.WriteLine(string.Format("Migrating {0} configuration '{1}' from version {2} to {3}.",
-					config.Type, config.Label, config.Version, DCM.VersionCurrent));
+				m_logger.WriteLine($"Migrating {config.Type} configuration '{config.Label}' from version {config.Version} to {DCM.VersionCurrent}.");
 				m_logger.IncreaseIndent();
 				MigrateFrom83Alpha(logger, config, LoadBetaDefaultForAlphaConfig(config));
 				config.Save();
@@ -278,6 +279,79 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 				if (node.FieldDescription == "MorphoSyntaxAnalyses")
 					node.Children.RemoveAll(child => child.FieldDescription != "MLPartOfSpeech");
 			});
+		}
+
+		/// <summary>
+		/// Renames the .fwdictconfig files in the ReversalIndex Folder
+		/// For ex. english.fwdictconfig to en.fwdictconfig
+		/// </summary>
+		/// <param name="configSettingsDir"></param>
+		private static void RenameReversalConfigFiles(string configSettingsDir)
+		{
+			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			var dictConfigFiles = new List<string>(DCM.ConfigFilesInDir(reversalIndexConfigLoc));
+
+			// Rename all the reversals based on the ws id (the user's  name for copies is still stored inside the file)
+			foreach (var fName in dictConfigFiles)
+			{
+				var wsValue = GetWritingSystemName(fName);
+				if (!string.IsNullOrEmpty(wsValue))
+				{
+					var newFName = Path.Combine(Path.GetDirectoryName(fName), wsValue + DictionaryConfigurationModel.FileExtension);
+					if (!File.Exists(newFName))
+					{
+						File.Move(fName, newFName);
+					}
+					else
+					{
+						var files = Directory.GetFiles(Path.GetDirectoryName(fName));
+						var count = 0;
+						for (var i = 0; i < files.Length; i++)
+						{
+							if (Path.GetFileNameWithoutExtension(files[i]).StartsWith(wsValue))
+							{
+								var m = Regex.Match(Path.GetFileName(files[i]), wsValue + @"\d*\.");
+								if (m.Success)
+								{
+									count++;
+								}
+							}
+						}
+
+						newFName = $"{wsValue}{count}{DictionaryConfigurationModel.FileExtension}";
+						newFName = Path.Combine(Path.GetDirectoryName(fName), newFName);
+						File.Move(fName, newFName);
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Reads the .fwdictconfig config file and gets the writing system name
+		/// </summary>
+		/// <param name="fileName"></param>
+		/// <returns></returns>
+		private static string GetWritingSystemName(string fileName)
+		{
+			var wsName = string.Empty;
+			try
+			{
+				var xDoc = XDocument.Load(fileName);
+				var rootElement = xDoc.Root;
+				if (rootElement != null)
+				{
+					var writingSystemAttribute = rootElement.Attribute("writingSystem");
+					if (writingSystemAttribute != null)
+					{
+						wsName = writingSystemAttribute.Value;
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				wsName = string.Empty;
+			}
+			return wsName;
 		}
 
 		/// <summary>

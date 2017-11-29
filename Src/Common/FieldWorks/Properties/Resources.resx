@@ -304,4 +304,11 @@ We don't know why this happens. If you have any idea what recently changed on yo
     <value>Linked Files Folder</value>
     <comment>Caption for folder dialog, when setting a new LangProject.LinkedFilesRootDir value</comment>
   </data>
+  <data name="ksCorruptSettingsFileCaption" xml:space="preserve">
+    <value>Corrupt Settings File Detected</value>
+  </data>
+  <data name="ksDeleteAndReportCorruptSettingsFile" xml:space="preserve">
+    <value>FieldWorks has detected one or more corrupted settings files. These files will be safely deleted. If you have been using different keyboards to input text, these may be reset to default values. Please restore them yourself.</value>
+    <comment>Let users know that local user settings need to be manually restored</comment>
+  </data>
 </root>

@@ -3,9 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Reporting;
 
@@ -64,15 +66,20 @@ namespace SIL.FieldWorks
 		{
 			if (m_settings.CallUpgrade)
 			{
-				string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-				string configFilename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-					Application.CompanyName, Application.ProductName, version, "user.config");
-				if (File.Exists(configFilename))
+				// LT-18723 Upgrade m_settings to generate the user.config file for FLEx 9.0
+				m_settings.Save();
+				m_settings.Upgrade();
+				string baseConfigFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Application.CompanyName, Application.ProductName);
+				if (Directory.Exists(baseConfigFolder))
 				{
-					using (var stream = new FileStream(configFilename, FileMode.Open))
+					// For some reason the version returned from Assembly.GetExecutingAssembly.GetName().Version does not return the
+					// exact same version number that was written by m_settings.Upgrade() so we find it by looking for the lastest version
+					var directoryList = new List<string>(Directory.EnumerateDirectories(baseConfigFolder));
+					directoryList.Sort();
+					var pathToPreviousSettingsFile = Path.Combine(directoryList[directoryList.Count - 1], "user.config");
+					using (var stream = new FileStream(pathToPreviousSettingsFile, FileMode.Open))
 					{
-						if (!MigrateIfNecessary(stream))
-							m_settings.Upgrade();
+						MigrateIfNecessary(stream);
 					}
 				}
 				m_settings.CallUpgrade = false;
@@ -84,6 +91,47 @@ namespace SIL.FieldWorks
 		public override void Save()
 		{
 			m_settings.Save();
+		}
+
+		/// <summary />
+		public void DeleteCorruptedSettingsFilesIfPresent()
+		{
+			var pathToConfigFiles = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Application.CompanyName, Application.ProductName);
+			if (!Directory.Exists(pathToConfigFiles))
+			{
+				return;
+			}
+
+			var localConfigFolders = new List<string>(Directory.EnumerateDirectories(pathToConfigFiles));
+			localConfigFolders.Sort();
+			var highestVersionFolder = localConfigFolders.Count > 0 ? localConfigFolders[localConfigFolders.Count - 1] : string.Empty;
+			var corruptFileFound = false;
+
+			while (highestVersionFolder != string.Empty)
+			{
+				try
+				{
+					using (var stream = new FileStream(Path.Combine(highestVersionFolder, "user.config"), FileMode.Open))
+					{
+						// This will throw an exception if the file is corrupted (LT-18643 Null bytes written to user.config file)
+						XDocument.Load(stream);
+					}
+				}
+				catch (XmlException)
+				{
+					corruptFileFound = true;
+					Directory.Delete(highestVersionFolder, true);
+				}
+				localConfigFolders.Remove(highestVersionFolder);
+				highestVersionFolder = localConfigFolders.Count > 0 ? localConfigFolders[localConfigFolders.Count - 1] : string.Empty;
+			}
+			if (!corruptFileFound)
+			{
+				return;
+			}
+			var caption = Properties.Resources.ksCorruptSettingsFileCaption;
+			var text = Properties.Resources.ksDeleteAndReportCorruptSettingsFile;
+			MessageBox.Show(text, caption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 		}
 	}
 }

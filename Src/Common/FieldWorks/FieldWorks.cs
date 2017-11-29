@@ -44,6 +44,7 @@ using SIL.FieldWorks.LexicalProvider;
 using SIL.FieldWorks.PaObjects;
 using SIL.FieldWorks.Resources;
 using SIL.Keyboarding;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
 using SIL.Utils;
@@ -253,6 +254,7 @@ namespace SIL.FieldWorks
 				s_ui = new FwLcmUI(GetHelpTopicProvider(), ThreadHelper);
 
 				s_appSettings = new FwApplicationSettings();
+				s_appSettings.DeleteCorruptedSettingsFilesIfPresent();
 				s_appSettings.UpgradeIfNecessary();
 
 				var reportingSettings = s_appSettings.Reporting;
@@ -776,8 +778,30 @@ namespace SIL.FieldWorks
 				cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
 
 				SetupErrorPropertiesNeedingCache(cache);
+				EnsureDefaultCollationsPresent(cache);
 				return cache;
 			}
+		}
+
+		private static void EnsureDefaultCollationsPresent(LcmCache cache)
+		{
+			var nullCollationWs = new StringBuilder();
+			foreach (var ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			{
+				if (ws == null || ws.DefaultCollation != null)
+				{
+					continue;
+				}
+				ws.DefaultCollation = new IcuRulesCollationDefinition("standard");
+				nullCollationWs.Append(ws.DisplayLabel + ",");
+			}
+			if (nullCollationWs.Length > 0)
+			{
+				nullCollationWs = nullCollationWs.Remove(nullCollationWs.Length - 1, 1);
+				var message = string.Format(ResourceHelper.GetResourceString("kstidMissingDefaultCollation"), nullCollationWs);
+				MessageBox.Show(message);
+			}
+			cache.ServiceLocator.WritingSystemManager.Save();
 		}
 
 		/// <summary>

@@ -149,14 +149,21 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\NHunspell.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Windows.Forms, Version=3.1.0.0, Culture=neutral, processorArchitecture=x86">
+	<Reference Include="NAudio">
+      <HintPath>..\..\..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio.Lame">
+      <HintPath>..\..\..\packages\NAudio.Lame.1.0.4\lib\net20\NAudio.Lame.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core.Desktop">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\SIL.Core.Desktop.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.WritingSystems, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+    <Reference Include="SIL.WritingSystems">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SIL.WritingSystems.dll</HintPath>
     </Reference>
@@ -357,15 +364,11 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="BuildInclude.targets" />
-    <None Include="FwUtils.dll.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <DistFiles>../../../DistFiles</DistFiles>

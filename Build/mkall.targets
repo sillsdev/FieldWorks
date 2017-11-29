@@ -543,14 +543,15 @@
 
 		<!-- NuGet packages. Property- and ItemGroups are inside the target so $(arch) and *'s are read properly -->
 		<PropertyGroup>
-			<!-- Yes, the Windows version is missing the the OS and the 32-bit architecture. -->
-			<GeckoDir Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">$(fwrt)/packages/Geckofx45.45.0.32</GeckoDir>
-			<GeckoDir Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">$(fwrt)/packages/Geckofx45.64.45.0.32</GeckoDir>
+			<!-- Yes, the Windows version is missing the the OS and the 32-bit architecture. This package must be updated in encoding-converters-core also -->
+			<GeckoDir Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">$(fwrt)/packages/Geckofx45.45.0.33</GeckoDir>
+			<GeckoDir Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">$(fwrt)/packages/Geckofx45.64.45.0.33</GeckoDir>
 			<GeckoDir Condition="'$(OS)'!='Windows_NT' AND '$(arch)'!='x86_64'">$(fwrt)/packages/Geckofx45.32.Linux.45.0.21.0</GeckoDir>
 			<GeckoDir Condition="'$(OS)'!='Windows_NT' AND '$(arch)'=='x86_64'">$(fwrt)/packages/Geckofx45.64.Linux.45.0.21.0</GeckoDir>
 		</PropertyGroup>
 		<ItemGroup>
-			<NuGottenFiles Include="$(GeckoDir)/lib/net45/*.*" Condition="'$(OS)'=='Windows_NT'"/>
+			<!-- The geckofx .dll files are actually pulled from the encoding converters package -->
+			<NuGottenFiles Include="$(GeckoDir)/lib/net45/*.*" Exclude="Geckofx-Core.dll;Geckofx-Winforms.dll" Condition="'$(OS)'=='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/lib/net40/*.*" Condition="'$(OS)'!='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/build/Geckofx-Core.dll.config" Condition="'$(OS)'!='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/content/**/*.*"/>

@@ -137,6 +137,24 @@ namespace SIL.FieldWorks.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Corrupt Settings File Detected.
+        /// </summary>
+        internal static string ksCorruptSettingsFileCaption {
+            get {
+                return ResourceManager.GetString("ksCorruptSettingsFileCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FieldWorks has detected one or more corrupted settings files. These files will be safely deleted. If you have been using different keyboards to input text, these may be reset to default values. Please restore them yourself..
+        /// </summary>
+        internal static string ksDeleteAndReportCorruptSettingsFile {
+            get {
+                return ResourceManager.GetString("ksDeleteAndReportCorruptSettingsFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you want to migrate existing projects from an older version of FieldWorks?.
         /// </summary>
         internal static string ksDoYouWantToMigrate {

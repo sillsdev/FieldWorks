@@ -21,7 +21,7 @@
 	</Target>
 	<!-- Define Encoding Converters files needed for building and running tests -->
 	<PropertyGroup>
-		<ECNugetVersion>0.0.3</ECNugetVersion>
+		<ECNugetVersion>0.0.4</ECNugetVersion>
 		<ECArch Condition="'$(arch)'!='x64'">Win32</ECArch>
 		<ECArch Condition="'$(arch)'=='x64'">x64</ECArch>
 	</PropertyGroup>
