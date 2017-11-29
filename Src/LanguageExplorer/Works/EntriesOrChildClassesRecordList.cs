@@ -95,7 +95,7 @@ namespace LanguageExplorer.Works
 		{
 			CheckDisposed();
 
-			if (m_fUpdatingList || m_reloadingList)
+			if (UpdatingList || m_reloadingList)
 				return;	// we're already in the process of changing our list.
 
 			var fLoadSuppressed = m_requestedLoadWhileSuppressed;
@@ -107,7 +107,7 @@ namespace LanguageExplorer.Works
 
 				// even if RecordList is in m_fUpdatingList mode, we still want to make sure
 				// our alternate list figures out whether it needs to reload as well.
-				if (m_fUpdatingList)
+				if (UpdatingList)
 					TryHandleUpdateOrMarkPendingReload(hvo, tag, ivMin, cvIns, cvDel);
 
 				// If we edited the list of entries, all our properties are in doubt.
@@ -119,7 +119,7 @@ namespace LanguageExplorer.Works
 			}
 			// The ListUpdateHelper doesn't always reload the list when it needs it.  See the
 			// second bug listed in FWR-1081.
-			if (m_requestedLoadWhileSuppressed && !fLoadSuppressed && !m_fUpdatingList)
+			if (m_requestedLoadWhileSuppressed && !fLoadSuppressed && !UpdatingList)
 				ReloadList();
 		}
 

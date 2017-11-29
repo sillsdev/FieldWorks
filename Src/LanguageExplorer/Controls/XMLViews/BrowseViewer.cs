@@ -28,45 +28,31 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
-
 	/// <summary>
 	/// This class is the arguments for a CheckBoxChangedEventHandler.
 	/// </summary>
 	public class CheckBoxChangedEventArgs : EventArgs
 	{
 		/// <summary>
-		///
-		/// </summary>
-		protected int[] m_hvoChanged;
-
-		/// <summary>
 		/// Initializes a new instance of the <see><cref>T:CheckBoxChangedEventArgs</cref></see> class.
 		/// </summary>
 		/// <param name="hvosChanged">The hvos changed.</param>
 		public CheckBoxChangedEventArgs(int[] hvosChanged)
 		{
-			m_hvoChanged = hvosChanged;
+			HvosChanged = hvosChanged;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the hvos changed.
 		/// </summary>
 		/// <value>The hvos changed.</value>
-		/// ------------------------------------------------------------------------------------
-		public int[] HvosChanged
-		{
-			get { return m_hvoChanged; }
-		}
+		public int[] HvosChanged { get; }
 	}
 	/// <summary>
 	/// This class is the arguments for a ClickCopyEventHandler.
 	/// </summary>
 	public class CheckBoxActiveChangedEventArgs : CheckBoxChangedEventArgs
 	{
-		private string m_redoMessage;
-		private string m_undoMessage;
-
 		/// <summary>
 		/// Initializes a new instance of the <see><cref>T:CheckBoxChangedEventArgs</cref></see> class.
 		/// </summary>
@@ -76,36 +62,24 @@ namespace LanguageExplorer.Controls.XMLViews
 		public CheckBoxActiveChangedEventArgs(int[] hvosChanged, string undoMessage, string redoMessage)
 			: base(hvosChanged)
 		{
-			m_undoMessage = undoMessage;
-			m_redoMessage = redoMessage;
+			UndoMessage = undoMessage;
+			RedoMessage = redoMessage;
 		}
 
 
-		/// <summary>
-		///
-		/// </summary>
-		public string UndoMessage
-		{
-			get { return m_undoMessage; }
-		}
+		/// <summary />
+		public string UndoMessage { get; }
 
-		/// <summary>
-		///
-		/// </summary>
-		public string RedoMessage
-		{
-			get { return m_redoMessage; }
-		}
+		/// <summary />
+		public string RedoMessage { get; }
 	}
+
 	/// <summary>
 	/// This is used for a slice to ask the data tree to display a context menu.
 	/// </summary>
 	public delegate void CheckBoxChangedEventHandler(object sender, CheckBoxChangedEventArgs e);
-	/// <summary>
-	///
-	/// </summary>
-	/// <param name="sender"></param>
-	/// <param name="e"></param>
+
+	/// <summary />
 	public delegate void CheckBoxActiveChangedEventHandler(object sender, CheckBoxActiveChangedEventArgs e);
 
 	#region ISortItemProvider declaration
@@ -116,39 +90,26 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public interface ISortItemProvider
 	{
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sorts the item at.
 		/// </summary>
 		/// <param name="index">The index.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		IManyOnePathSortItem SortItemAt(int index);
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Appends the items for.
 		/// </summary>
 		/// <param name="hvo">The hvo.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		int AppendItemsFor(int hvo);
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Removes the items for.
 		/// </summary>
 		/// <param name="hvo">The hvo.</param>
-		/// ------------------------------------------------------------------------------------
 		void RemoveItemsFor(int hvo);
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the index of the given object, or -1 if it's not in the list.
 		/// </summary>
 		/// <param name="hvo"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		int IndexOf(int hvo);
-
 		/// <summary>
 		/// Class of objects being displayed in this list.
 		/// </summary>

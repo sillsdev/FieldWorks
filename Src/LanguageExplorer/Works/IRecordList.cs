@@ -15,7 +15,7 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Works
 {
-	public interface IRecordList : IFlexComponent, IVwNotifyChange, ISortItemProvider, IDisposable
+	public interface IRecordList : IFlexComponent, ISortItemProvider, IVwNotifyChange, IDisposable
 	{
 		event EventHandler AboutToReload;
 		event EventHandler DoneReload;
@@ -67,7 +67,7 @@ namespace LanguageExplorer.Works
 		void ReloadList(int ivMin, int cvIns, int cvDel);
 		void ReloadList(int newListItemsClass, int newTargetFlid, bool force);
 		void RemoveUnwantedSortItems(List<int> hvosToRemove = null);
-		void ReplaceListItem(int hvoReplaced);
+		void ReplaceListItem(int hvoReplaced, ListChangedEventArgs.ListChangedActions listChangeAction = ListChangedEventArgs.ListChangedActions.Normal);
 		bool RequestedLoadWhileSuppressed { get; set; }
 		bool RestoreFrom(string pathname);
 		ICmObject RootObjectAt(int index);
