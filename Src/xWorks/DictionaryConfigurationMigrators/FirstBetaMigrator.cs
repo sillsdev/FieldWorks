@@ -296,12 +296,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var dictConfigFiles = new List<string>(DCM.ConfigFilesInDir(reversalIndexConfigLoc));
 			string newFName = string.Empty;
 			string wsValue = string.Empty;
+			int version = 0;
 
 			// Rename all the reversals based on the ws id (the user's  name for copies is still stored inside the file)
 			foreach (string fName in dictConfigFiles)
 			{
-				wsValue = GetWritingSystemName(fName);
-				if(!string.IsNullOrEmpty(wsValue))
+				wsValue = GetWritingSystemNameAndVersion(fName, out version);
+				if(!string.IsNullOrEmpty(wsValue) && version < DCM.VersionCurrent)
 				{
 					newFName = Path.Combine(Path.GetDirectoryName(fName), wsValue + DictionaryConfigurationModel.FileExtension);
 					if (!File.Exists(newFName))
@@ -333,13 +334,15 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		/// <summary>
-		/// Reads the .fwdictconfig config file and gets the writing system name
+		/// Reads the .fwdictconfig config file and gets the writing system name and version
 		/// </summary>
 		/// <param name="fileName"></param>
+		/// <param name="version"></param>
 		/// <returns></returns>
-		private static string GetWritingSystemName(string fileName)
+		private static string GetWritingSystemNameAndVersion(string fileName, out int version)
 		{
 			string wsName = string.Empty;
+			version = 0;
 			try
 			{
 				XDocument xDoc = XDocument.Load(fileName);
@@ -350,6 +353,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					if (writingSystemAttribute != null)
 					{
 						wsName = writingSystemAttribute.Value.ToString();
+					}
+					XAttribute versionAttribute = rootElement.Attribute("version");
+					if (versionAttribute != null)
+					{
+						version = Convert.ToInt32(versionAttribute.Value);
 					}
 				}
 			}
