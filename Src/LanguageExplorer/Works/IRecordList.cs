@@ -66,7 +66,7 @@ namespace LanguageExplorer.Works
 		void ReloadList();
 		void ReloadList(int ivMin, int cvIns, int cvDel);
 		void ReloadList(int newListItemsClass, int newTargetFlid, bool force);
-		void RemoveUnwantedSortItems(List<int> hvosToRemove);
+		void RemoveUnwantedSortItems(List<int> hvosToRemove = null);
 		void ReplaceListItem(int hvoReplaced);
 		bool RequestedLoadWhileSuppressed { get; set; }
 		bool RestoreFrom(string pathname);

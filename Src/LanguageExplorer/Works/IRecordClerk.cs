@@ -27,7 +27,6 @@ namespace LanguageExplorer.Works
 		void BecomeInactive();
 		LcmCache Cache { get; }
 		bool CanMoveTo(Navigation navigateTo);
-		void CheckDisposed();
 		int CurrentIndex { get; }
 		ICmObject CurrentObject { get; }
 		int CurrentObjectHvo { get; }
@@ -89,7 +88,6 @@ namespace LanguageExplorer.Works
 		bool TryClerkProvidingRootObject(out IRecordClerk clerkProvidingRootObject);
 		bool UpdateFiltersAndSortersIfNeeded();
 		RecordClerk.ListUpdateHelper UpdateHelper { get; set; }
-		void UpdateList(bool fRefreshRecord, bool forceSort);
 		void UpdateOwningObjectIfNeeded();
 		void UpdateRecordTreeBarIfNeeded();
 		void UpdateStatusBarRecordNumber(string noRecordsText);

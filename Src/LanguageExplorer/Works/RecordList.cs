@@ -1291,7 +1291,7 @@ namespace LanguageExplorer.Works
 		/// This will remove the given hvosToRemove (if they exist in our sort items) and any items that refer to invalid objects.
 		/// Reload the view if there were any changes, and adjust the CurrentIndex
 		/// </summary>
-		public void RemoveUnwantedSortItems(List<int> hvosToRemove)
+		public void RemoveUnwantedSortItems(List<int> hvosToRemove = null)
 		{
 			if (m_sortedObjects == null)
 				return;	// nothing to remove.

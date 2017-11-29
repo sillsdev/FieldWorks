@@ -24,7 +24,7 @@ namespace LanguageExplorer
 		IRecordChangeHandler RecordChangeHandler { set; }
 		/// <summary>Update the list, possibly calling IRecordChangeHandler.Fixup() first.
 		/// </summary>
-		void UpdateList(bool fRefreshRecord);
+		void UpdateList(bool fRefreshRecord, bool forceSort = false);
 
 		/// <summary>
 		/// just update the current record
