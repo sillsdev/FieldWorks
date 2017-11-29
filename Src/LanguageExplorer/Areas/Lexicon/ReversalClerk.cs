@@ -285,13 +285,18 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		private Guid CreateNewReversalIndex()
 		{
-			if (Cache == null)
+			if (Cache?.LanguageProject?.LexDbOA == null)
+			{
 				return Guid.Empty;
-			if (Cache.LanguageProject == null)
-				return Guid.Empty;
-			if (Cache.LanguageProject.LexDbOA == null)
-				return Guid.Empty;
-			return Guid.Empty;
+			}
+
+			IReversalIndex newReversalIndex = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				newReversalIndex = Cache.ServiceLocator.GetInstance<IReversalIndexFactory>().Create();
+				Cache.LanguageProject.LexDbOA.ReversalIndexesOC.Add(newReversalIndex);
+			});
+			return newReversalIndex?.Guid ?? Guid.Empty;
 		}
 
 #if RANDYTODO

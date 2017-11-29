@@ -41,7 +41,6 @@ using LanguageExplorer.LcmUi.Dialogs;
 using SIL.Code;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
@@ -978,10 +977,6 @@ namespace LanguageExplorer.Works
 
 		#region XCORE Message Handlers
 
-		public virtual void ViewChangedSelectedRecord(FwObjectSelectionEventArgs e, IVwSelection sel)
-		{
-			ViewChangedSelectedRecord(e);
-		}
 		/// <summary>
 		/// Called by a view (e.g. browseView) when, internally, it changes the currently selected record.
 		/// </summary>
@@ -1776,17 +1771,9 @@ namespace LanguageExplorer.Works
 #endregion // XCORE Message Handlers
 
 		/// <summary>
-		/// update the status bar, selected node of the tree bar, etc. and broadcast record navigation
-		/// </summary>
-		public void SelectedRecordChanged(bool suppressFocusChange)
-		{
-			SelectedRecordChanged(false, suppressFocusChange);
-		}
-
-		/// <summary>
 		/// update the status bar, selected node of the tree bar, etc.
 		/// </summary>
-		public void SelectedRecordChanged(bool fSkipRecordNavigation, bool suppressFocusChange)
+		public void SelectedRecordChanged(bool suppressFocusChange, bool fSkipRecordNavigation = false)
 		{
 			CheckDisposed();
 
@@ -2138,7 +2125,7 @@ namespace LanguageExplorer.Works
 			if (arguments.Actions == ListChangedEventArgs.ListChangedActions.SkipRecordNavigation ||
 				arguments.Actions == ListChangedEventArgs.ListChangedActions.UpdateListItemName)
 			{
-				SelectedRecordChanged(true, false);
+				SelectedRecordChanged(false, true);
 			}
 			else if (arguments.Actions == ListChangedEventArgs.ListChangedActions.SuppressSaveOnChangeRecord)
 			{
@@ -2312,16 +2299,11 @@ namespace LanguageExplorer.Works
 			JumpToRecord(jumpToGuid, false);
 		}
 
-		public void JumpToRecord(Guid jumpToGuid, bool suppressFocusChange)
+		public void JumpToRecord(Guid jumpToGuid, bool suppressFocusChange = false)
 		{
 			ICmObject obj;
 			if (Cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(jumpToGuid, out obj))
 				JumpToRecord(obj.Hvo, suppressFocusChange);
-		}
-
-		public void JumpToRecord(int jumpToHvo)
-		{
-			JumpToRecord(jumpToHvo, false);
 		}
 
 		/// <summary>
@@ -2329,7 +2311,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		/// <param name="jumpToHvo">The jump to hvo.</param>
 		/// <param name="suppressFocusChange">if set to <c>true</c> focus changes will be suppressed.</param>
-		public void JumpToRecord(int jumpToHvo, bool suppressFocusChange)
+		public void JumpToRecord(int jumpToHvo, bool suppressFocusChange = false)
 		{
 			CheckDisposed();
 
@@ -2339,17 +2321,12 @@ namespace LanguageExplorer.Works
 			JumpToIndex(index, suppressFocusChange);
 		}
 
-		public void JumpToIndex(int index)
-		{
-			JumpToIndex(index, false);
-		}
-
 		/// <summary>
 		/// Jump to the specified index in the list.
 		/// </summary>
 		/// <param name="index">The index.</param>
 		/// <param name="suppressFocusChange">if set to <c>true</c> focus changes will be suppressed.</param>
-		public void JumpToIndex(int index, bool suppressFocusChange)
+		public void JumpToIndex(int index, bool suppressFocusChange = false)
 		{
 			CheckDisposed();
 			//if we aren't changing the index, just bail out. (Fixes, LT-11401)

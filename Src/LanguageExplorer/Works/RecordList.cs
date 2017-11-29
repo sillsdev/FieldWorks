@@ -2580,23 +2580,18 @@ namespace LanguageExplorer.Works
 		}
 
 		/// <summary>
-		/// Delete the object without reporting progress.
-		/// </summary>
-		public void DeleteCurrentObject()
-		{
-			CheckDisposed();
-
-			DeleteCurrentObject(new NullProgressState(), CurrentObject);
-		}
-
-		/// <summary>
-		/// Delete the current object, reporting progress as far as possible.
+		/// Delete the current object.
 		/// In some cases thingToDelete is not actually the current object, but it should always
 		/// be related to it.
 		/// </summary>
-		public virtual void DeleteCurrentObject(ProgressState state, ICmObject thingToDelete)
+		public virtual void DeleteCurrentObject(ICmObject thingToDelete = null)
 		{
 			CheckDisposed();
+
+			if (thingToDelete == null)
+			{
+				thingToDelete = CurrentObject;
+			}
 
 			try
 			{
@@ -2605,12 +2600,9 @@ namespace LanguageExplorer.Works
 				if (!IsCurrentObjectValid() || !thingToDelete.IsValidObject)
 					return;
 				m_deletingObject = true;
-				LcmCache cache = m_cache;
-				var currentObject = CurrentObject;
 				// This looks plausible; but for example IndexOf may reload the list, if a reload is pending;
 				// and the current object may no longer match the current filter, so it may be gone.
 				//Debug.Assert(currentIndex == IndexOf(currentObject.Hvo));
-				string className = currentObject.GetType().Name;
 				using (new RecordClerk.ListUpdateHelper(Clerk))
 				{
 					bool m_fUpdatingListOrig = m_fUpdatingList;

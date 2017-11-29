@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.Works;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -118,13 +117,13 @@ namespace LanguageExplorer.Areas.Lexicon
 		}
 
 		/// <summary>
-		/// Delete the current object, reporting progress as far as possible.
+		/// Delete the current object.
 		/// </summary>
-		public override void DeleteCurrentObject(ProgressState state, ICmObject thingToDelete)
+		public override void DeleteCurrentObject(ICmObject thingToDelete = null)
 		{
 			CheckDisposed();
 
-			base.DeleteCurrentObject(state, thingToDelete);
+			base.DeleteCurrentObject(thingToDelete);
 
 			ReloadList();
 		}

@@ -1109,7 +1109,7 @@ namespace LanguageExplorer.Works
 			Debug.Assert(e.Hvo != 0);
 			if (e.Hvo == 0)
 				return;
-			Clerk.ViewChangedSelectedRecord(e, m_mainView.RootBox.Selection);
+			Clerk.ViewChangedSelectedRecord(e);
 			// Change it if it's actually changed.
 			SetInfoBarText();
 		}
