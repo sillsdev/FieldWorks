@@ -14,7 +14,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -1778,7 +1777,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Get the template that should be used to display the specified object using the specified layout.
 		/// </summary>
-		private XmlNode GetTemplateForObjLayout(ICmObject obj, string layoutName,
+		public XmlNode GetTemplateForObjLayout(ICmObject obj, string layoutName,
 			string layoutChoiceField)
 		{
 			int classId = obj.ClassID;
@@ -1947,12 +1946,21 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			int insPos = insertPosition;
 			testResult = NodeTestResult.kntrNothing;
 			int cPossible = 0;
+			bool isCustomFieldExists = false;
+			List<XmlNode> duplicateNodes = new List<XmlNode>();
 			// This loop handles the multiple parts of a layout.
 			foreach (XmlNode partRef in template.ChildNodes)
 			{
 				if (partRef.GetType() == typeof(XmlComment))
 					continue;
 
+				XmlNode refAttr = partRef.Attributes["customFields"];
+				if (refAttr != null)
+				{
+					if (isCustomFieldExists)
+						duplicateNodes.Add(partRef);
+					isCustomFieldExists = true;
+				}
 				// This code looks for the a special part definition with an attribute called "customFields"
 				// It doesn't matter what this attribute is set to, as long as it exists.  If this attribute is
 				// found, the custom fields will not be generated.
@@ -1982,6 +1990,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						return insertPosition;
 					}
 				}
+			}
+			foreach (XmlNode partRef in duplicateNodes)
+			{
+				template.RemoveChild(partRef);
+				m_layoutInventory.PersistOverrideElement(template);
 			}
 
 			if (cPossible > 0)
@@ -2112,10 +2125,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Append to the part refs of template a suitable one for each custom field of
 		/// the class of obj.
 		/// </summary>
-		/// <param name="obj">The obj.</param>
-		/// <param name="template">The template.</param>
-		/// <param name="insertAfter">The insert after.</param>
-		private void EnsureCustomFields(ICmObject obj, XmlNode template, XmlNode insertAfter)
+		private void EnsureCustomFields(ICmObject obj, XmlNode parent, XmlNode insertAfter)
 		{
 			var interestingClasses = new Set<int>();
 			int clsid = obj.ClassID;
@@ -2131,6 +2141,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					bool exists = false;
 					string target = field.Name;
+
+					XmlNode refAttr = insertAfter.Attributes["ref"];
+					if (refAttr == null)
+					{
+						var persistableParent = FindPersistableParent(parent, parent.OuterXml);
+						AddAttribute(insertAfter, "ref", "_CustomFieldPlaceholder");
+						m_layoutInventory.PersistOverrideElement(persistableParent);
+					}
 					// We could do this search with an XPath but they are excruciatingly slow.
 					// Check all of the siblings, first going forward, then backward
 					for(XmlNode sibling = insertAfter.NextSibling; sibling != null && !exists;	sibling = sibling.NextSibling)
@@ -2147,12 +2165,26 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					if (exists)
 						continue;
 
-					XmlNode part = template.OwnerDocument.CreateElement("part");
+					XmlNode part = parent.OwnerDocument.CreateElement("part");
 					AddAttribute(part, "ref", "Custom");
 					AddAttribute(part, "param", target);
-					template.InsertAfter(part, insertAfter);
+					parent.InsertAfter(part, insertAfter);
 				}
 			}
+		}
+
+		private static XmlNode FindPersistableParent(XmlNode parent, string originalParentXml)
+		{
+			if(string.Equals("part", parent.Name) || string.Equals("layout", parent.Name))
+			{
+				return parent;
+			}
+			if (parent.ParentNode == null)
+			{
+				throw new ApplicationException(string.Format("Invalid configuration file. No parent with a ref attribute was found.{0}{1}",
+					Environment.NewLine, originalParentXml));
+			}
+			return FindPersistableParent(parent.ParentNode, originalParentXml);
 		}
 
 		private static bool CheckCustomFieldsSibling(XmlNode sibling, string target)

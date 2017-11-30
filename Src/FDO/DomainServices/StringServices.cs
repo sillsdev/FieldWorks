@@ -286,7 +286,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				InsertHomographNumber(tisb, nHomograph, hc, hv, cache);
 		}
 
-		private static void InsertHomographNumber(ITsIncStrBldr tisb, int nHomograph, HomographConfiguration hc,
+		/// <summary>
+		/// Method will use current homograph-number settings insert into the string
+		/// </summary>
+		public static void InsertHomographNumber(ITsIncStrBldr tisb, int nHomograph, HomographConfiguration hc,
 			HomographConfiguration.HeadwordVariant hv, FdoCache cache)
 		{
 			if (nHomograph > 0 && hc.ShowHomographNumber(hv))

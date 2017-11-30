@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			var foundOne = string.Format("{0}: Configuration was found in need of migration. - {1}",
 				appVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss"));
-			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
+			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			var stemPath = Path.Combine(dictionaryConfigLoc, "Stem" + DictionaryConfigurationModel.FileExtension);
 			var lexemePath = Path.Combine(dictionaryConfigLoc, "Lexeme" + DictionaryConfigurationModel.FileExtension);
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					config.Label = config.Label.Replace("Stem-", "Lexeme-");
 				}
 				m_logger.WriteLine(string.Format("Migrating {0} configuration '{1}' from version {2} to {3}.",
-					config.IsReversal ? "Reversal Index" : "Dictionary", config.Label, config.Version, DCM.VersionCurrent));
+					config.Type, config.Label, config.Version, DCM.VersionCurrent));
 				m_logger.IncreaseIndent();
 				MigrateFrom83Alpha(logger, config, LoadBetaDefaultForAlphaConfig(config));
 				config.Save();
@@ -99,7 +99,14 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var currentDefaultList = new List<ConfigurableDictionaryNode>(currentDefaultModel.PartsAndSharedItems);
 			foreach (var part in oldConfig.PartsAndSharedItems)
 			{
-				MigratePartFromOldVersionToCurrent(logger, oldConfig, part, FindMatchingChildNode(part.Label, currentDefaultList));
+				var defaultPart = FindMatchingChildNode(part.Label, currentDefaultList);
+				if (defaultPart == null)
+				{
+					throw new NullReferenceException(string.Format(
+						"{0} is corrupt. {1} has no corresponding part in the defaults (perhaps it missed a rename migration step).",
+						oldConfig.FilePath, part.Label));
+				}
+				MigratePartFromOldVersionToCurrent(logger, oldConfig, part, defaultPart);
 			}
 			oldConfig.Version = DCM.VersionCurrent;
 			logger.WriteLine("Migrated to version " + DCM.VersionCurrent);
@@ -178,6 +185,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					goto case VersionRC2;
 				case VersionRC2:
 					ChangeReferenceSenseHeadwordFieldName(oldConfigPart);
+					goto case 18;
+				case 18:
+					RemoveReferencedHeadwordSubField(oldConfigPart);
 					break;
 				default:
 					logger.WriteLine(string.Format(
@@ -247,6 +257,18 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 			// Etymology changed too much to be matched in the PreHistoricMigration and was marked as custom
 			DCM.PerformActionOnNodes(etymNodes, n => {n.IsCustomField = false;});
+		}
+
+		private static void RemoveReferencedHeadwordSubField(ConfigurableDictionaryNode part)
+		{
+			DCM.PerformActionOnNodes(part.Children, node =>
+			{
+				// AllReversalSubentries under Referenced Headword field is ReversalName
+				if (node.FieldDescription == "ReversalName" && node.SubField == "MLHeadWord")
+				{
+					node.SubField = null;
+				}
+			});
 		}
 
 		private static void RemoveMostOfGramInfoUnderRefdComplexForms(ConfigurableDictionaryNode part)

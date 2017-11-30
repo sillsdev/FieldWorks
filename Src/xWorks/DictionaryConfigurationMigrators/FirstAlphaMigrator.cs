@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				m_logger.WriteLine(foundOne);
 				m_logger.WriteLine(string.Format("Migrating {0} configuration '{1}' from version {2} to {3}.",
-					config.IsReversal ? "Reversal Index" : "Dictionary", config.Label, config.Version, DCM.VersionCurrent));
+					config.Type, config.Label, config.Version, VersionAlpha3));
 				m_logger.IncreaseIndent();
 				MigrateFrom83Alpha(config);
 				config.Save();

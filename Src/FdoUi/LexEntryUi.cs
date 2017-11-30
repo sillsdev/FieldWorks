@@ -27,6 +27,7 @@ using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using XCore;
+using SIL.FieldWorks.FDO.DomainImpl;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -891,7 +892,8 @@ namespace SIL.FieldWorks.FdoUi
 							(int)FwTextToggleVal.kttvForceOn);
 						tsBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 							(int)FwTextPropVar.ktpvDefault, defUserWs);
-						tsBldr.Append(nHomograph.ToString());
+						var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
+						StringServices.InsertHomographNumber(tsBldr, nHomograph, hc, HomographConfiguration.HeadwordVariant.Main, m_cache);
 						vwenv.AddString(tsBldr.GetString());
 					}
 		}

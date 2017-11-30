@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2013 SIL International
+// Copyright (c) 2008-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -14,12 +14,10 @@ using System.Windows.Forms;
 using ControlExtenders;
 using Paratext;
 using Paratext.ScriptureEditor;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using Microsoft.Win32;
 using Paratext.TextCollection;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 using ScrVers = Paratext.ScrVers;
@@ -52,9 +50,8 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		public DockableUsfmBrowser()
 		{
-			// need to force Paratext libraries to initialize before versification files
-			// are loaded
-			string dummy = ParatextHelper.ProjectsDirectory;
+			// need to initialize Paratext libraries before versification files are loaded
+			ScriptureProvider.Initialize();
 			InitializeComponent();
 			m_textCollection.Setup(new ScriptureViewSource(true));
 		}
@@ -432,10 +429,7 @@ namespace SIL.FieldWorks.TE
 				currentItem = m_textCollection.Items[m_textCollection.CurItem];
 
 			// Re-initialize, just in case.
-			// We pass the directory (rather than passing no arguments, and letting the paratext dll figure
-			// it out) because the figuring out goes wrong on Linux, where both programs are simulating
-			// the registry.
-			ScrTextCollection.Initialize(ParatextHelper.ProjectsDirectory, false);
+			ScriptureProvider.Initialize();
 			List<string> textNames = ScrTextCollection.ScrTextNames;
 
 			foreach (string nameVar in textNames)

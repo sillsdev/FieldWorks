@@ -30,7 +30,7 @@
 		<part ref="ResearchPlan" visibility="ifdata"/>
 		<part ref="PersonalNotes" visibility="ifdata"/>
 		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-		<part customFields="here" />
+		<part ref="_CustomFieldPlaceholder" customFields="here" />
 		<part label="Date Created" ref="DateCreated" visibility="never"/>
 		<part label="Date Modified" ref="DateModified" visibility="never"/>
 		<part ref="SubRecordSection" label="Subrecords"/>
@@ -64,7 +64,7 @@
 		<part ref="ResearchPlan" visibility="ifdata"/>
 		<part ref="PersonalNotes" visibility="ifdata"/>
 		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-		<part customFields="here" />
+		<part ref="_CustomFieldPlaceholder" customFields="here" />
 		<part label="Date Created" ref="DateCreated" visibility="never"/>
 		<part label="Date Modified" ref="DateModified" visibility="never"/>
 		<part ref="SubRecordSection" label="Subrecords"/>
@@ -98,7 +98,7 @@
 		<part ref="ResearchPlan" visibility="ifdata"/>
 		<part ref="PersonalNotes" visibility="ifdata"/>
 		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-		<part customFields="here" />
+		<part ref="_CustomFieldPlaceholder" customFields="here" />
 		<part label="Date Created" ref="DateCreated" visibility="never"/>
 		<part label="Date Modified" ref="DateModified" visibility="never"/>
 		<part ref="SubRecordSection" label="Subrecords"/>
@@ -132,7 +132,7 @@
 		<part ref="ResearchPlan" visibility="ifdata"/>
 		<part ref="PersonalNotes" visibility="ifdata"/>
 		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-		<part customFields="here" />
+		<part ref="_CustomFieldPlaceholder" customFields="here" />
 		<part label="Date Created" ref="DateCreated" visibility="never"/>
 		<part label="Date Modified" ref="DateModified" visibility="never"/>
 		<part ref="SubRecordSection" label="Subrecords"/>
@@ -166,7 +166,7 @@
 		<part ref="ResearchPlan" visibility="ifdata"/>
 		<part ref="PersonalNotes" visibility="ifdata"/>
 		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-		<part customFields="here" />
+		<part ref="_CustomFieldPlaceholder" customFields="here" />
 		<part label="Date Created" ref="DateCreated" visibility="never"/>
 		<part label="Date Modified" ref="DateModified" visibility="never"/>
 		<part ref="SubRecordSection" label="Subrecords"/>
@@ -200,7 +200,7 @@
 		<part ref="ResearchPlan" visibility="ifdata"/>
 		<part ref="PersonalNotes" visibility="ifdata"/>
 		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-		<part customFields="here" />
+		<part ref="_CustomFieldPlaceholder" customFields="here" />
 		<part label="Date Created" ref="DateCreated" visibility="never"/>
 		<part label="Date Modified" ref="DateModified" visibility="never"/>
 		<part ref="SubRecordSection" label="Subrecords"/>
@@ -234,7 +234,7 @@
 		<part ref="ResearchPlan" visibility="ifdata"/>
 		<part ref="PersonalNotes" visibility="ifdata"/>
 		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-		<part customFields="here" />
+		<part ref="_CustomFieldPlaceholder" customFields="here" />
 		<part label="Date Created" ref="DateCreated" visibility="never"/>
 		<part label="Date Modified" ref="DateModified" visibility="never"/>
 		<part ref="SubRecordSection" label="Subrecords"/>
@@ -268,7 +268,7 @@
 		<part ref="ResearchPlan" visibility="ifdata"/>
 		<part ref="PersonalNotes" visibility="ifdata"/>
 		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-		<part customFields="here" />
+		<part ref="_CustomFieldPlaceholder" customFields="here" />
 		<part label="Date Created" ref="DateCreated" visibility="never"/>
 		<part label="Date Modified" ref="DateModified" visibility="never"/>
 		<part ref="SubRecordSection" label="Subrecords"/>
@@ -302,7 +302,7 @@
 		<part ref="ResearchPlan" visibility="ifdata"/>
 		<part ref="PersonalNotes" visibility="ifdata"/>
 		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-		<part customFields="here" />
+		<part ref="_CustomFieldPlaceholder" customFields="here" />
 		<part label="Date Created" ref="DateCreated" visibility="never"/>
 		<part label="Date Modified" ref="DateModified" visibility="never"/>
 		<part ref="SubRecordSection" label="Subrecords"/>
@@ -336,7 +336,7 @@
 		<part ref="ResearchPlan" visibility="ifdata"/>
 		<part ref="PersonalNotes" visibility="ifdata"/>
 		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-		<part customFields="here" />
+		<part ref="_CustomFieldPlaceholder" customFields="here" />
 		<part label="Date Created" ref="DateCreated" visibility="never"/>
 		<part label="Date Modified" ref="DateModified" visibility="never"/>
 		<part ref="SubRecordSection" label="Subrecords"/>
@@ -370,7 +370,7 @@
 		<part ref="ResearchPlan" visibility="ifdata"/>
 		<part ref="PersonalNotes" visibility="ifdata"/>
 		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-		<part customFields="here" />
+		<part ref="_CustomFieldPlaceholder" customFields="here" />
 		<part label="Date Created" ref="DateCreated" visibility="never"/>
 		<part label="Date Modified" ref="DateModified" visibility="never"/>
 		<part ref="SubRecordSection" label="Subrecords"/>
@@ -404,7 +404,7 @@
 		<part ref="ResearchPlan" visibility="ifdata"/>
 		<part ref="PersonalNotes" visibility="ifdata"/>
 		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-		<part customFields="here" />
+		<part ref="_CustomFieldPlaceholder" customFields="here" />
 		<part label="Date Created" ref="DateCreated" visibility="never"/>
 		<part label="Date Modified" ref="DateModified" visibility="never"/>
 		<part ref="SubRecordSection" label="Subrecords"/>

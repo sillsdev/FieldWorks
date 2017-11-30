@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -10,11 +10,9 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -38,6 +36,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		private DummyParatextDialog m_dummyParaDlg;
 		private FilteredScrBooks m_bookFilter;
 		private IScrBook m_Genesis;
+		private ScriptureProvider.IScriptureProvider m_oldProvider;
 		#endregion
 
 		#region Initalization of tests
@@ -59,6 +58,8 @@ namespace SIL.FieldWorks.TE.ExportTests
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
+			m_oldProvider = ScriptureProvider._scriptureProvider;
+			ScriptureProvider._scriptureProvider = new MockScriptureProvider();
 			m_ptHelper = new MockParatextHelper();
 			ParatextHelper.Manager.SetParatextHelperAdapter(m_ptHelper);
 		}
@@ -74,6 +75,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 			m_ptHelper = null;
 			base.FixtureTeardown();
 			ParatextHelper.Manager.Reset();
+			ScriptureProvider._scriptureProvider = m_oldProvider;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -98,8 +100,8 @@ namespace SIL.FieldWorks.TE.ExportTests
 
 			// Initialize in-memory registry settings.
 			m_dummyParaDlg.Registry.SetIntValue("ParatextOneDomainExportWhat", 0);
-			m_dummyParaDlg.Registry.SetStringValue("ParatextOutputSpec", ParatextHelper.ProjectsDirectory);
-			m_dummyParaDlg.Registry.SetStringValue("ParatextBTOutputSpec", ParatextHelper.ProjectsDirectory);
+			m_dummyParaDlg.Registry.SetStringValue("ParatextOutputSpec", ScriptureProvider.SettingsDirectory);
+			m_dummyParaDlg.Registry.SetStringValue("ParatextBTOutputSpec", ScriptureProvider.SettingsDirectory);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -125,8 +127,8 @@ namespace SIL.FieldWorks.TE.ExportTests
 		{
 			m_dummyParaDlg.SimulateShowDialog();
 
-			Assert.AreEqual(ParatextHelper.ProjectsDirectory, m_dummyParaDlg.ScriptureOutputFolder);
-			Assert.AreEqual(Path.Combine(ParatextHelper.ProjectsDirectory,"xyz"), m_dummyParaDlg.DisplayedOutputFolder);
+			Assert.AreEqual(ScriptureProvider.SettingsDirectory, m_dummyParaDlg.ScriptureOutputFolder);
+			Assert.AreEqual(Path.Combine(ScriptureProvider.SettingsDirectory,"xyz"), m_dummyParaDlg.DisplayedOutputFolder);
 			Assert.AreEqual(string.Empty, m_dummyParaDlg.FileNameSchemeCtrl.Prefix);
 			Assert.AreEqual("41MAT", m_dummyParaDlg.FileNameSchemeCtrl.Scheme);
 			Assert.AreEqual("xyz", m_dummyParaDlg.FileNameSchemeCtrl.Suffix);
@@ -149,8 +151,8 @@ namespace SIL.FieldWorks.TE.ExportTests
 			// Now "click" on the BT domain radio button.
 			m_dummyParaDlg.SimulateCheckBackTrans();
 
-			Assert.AreEqual(ParatextHelper.ProjectsDirectory, m_dummyParaDlg.BackTransOutputFolder);
-			Assert.AreEqual(Path.Combine(ParatextHelper.ProjectsDirectory,"xyzBT"), m_dummyParaDlg.DisplayedOutputFolder);
+			Assert.AreEqual(ScriptureProvider.SettingsDirectory, m_dummyParaDlg.BackTransOutputFolder);
+			Assert.AreEqual(Path.Combine(ScriptureProvider.SettingsDirectory,"xyzBT"), m_dummyParaDlg.DisplayedOutputFolder);
 			Assert.AreEqual(string.Empty, m_dummyParaDlg.FileNameSchemeCtrl.Prefix);
 			Assert.AreEqual("41MAT", m_dummyParaDlg.FileNameSchemeCtrl.Scheme);
 			Assert.AreEqual("xyzBT", m_dummyParaDlg.FileNameSchemeCtrl.Suffix);
@@ -173,8 +175,8 @@ namespace SIL.FieldWorks.TE.ExportTests
 			// Now "click" on the Scripture domain radio button.
 			m_dummyParaDlg.SimulateCheckScripture();
 
-			Assert.AreEqual(ParatextHelper.ProjectsDirectory, m_dummyParaDlg.ScriptureOutputFolder);
-			Assert.AreEqual(Path.Combine(ParatextHelper.ProjectsDirectory,"xyz"), m_dummyParaDlg.DisplayedOutputFolder);
+			Assert.AreEqual(ScriptureProvider.SettingsDirectory, m_dummyParaDlg.ScriptureOutputFolder);
+			Assert.AreEqual(Path.Combine(ScriptureProvider.SettingsDirectory,"xyz"), m_dummyParaDlg.DisplayedOutputFolder);
 			Assert.AreEqual(string.Empty, m_dummyParaDlg.FileNameSchemeCtrl.Prefix);
 			Assert.AreEqual("41MAT", m_dummyParaDlg.FileNameSchemeCtrl.Scheme);
 			Assert.AreEqual("xyz", m_dummyParaDlg.FileNameSchemeCtrl.Suffix);
@@ -195,8 +197,8 @@ namespace SIL.FieldWorks.TE.ExportTests
 
 			m_dummyParaDlg.SimulateEditingShortName("xyza");
 
-			Assert.AreEqual(ParatextHelper.ProjectsDirectory, m_dummyParaDlg.ScriptureOutputFolder);
-			Assert.AreEqual(Path.Combine(ParatextHelper.ProjectsDirectory,"xyza"), m_dummyParaDlg.DisplayedOutputFolder);
+			Assert.AreEqual(ScriptureProvider.SettingsDirectory, m_dummyParaDlg.ScriptureOutputFolder);
+			Assert.AreEqual(Path.Combine(ScriptureProvider.SettingsDirectory,"xyza"), m_dummyParaDlg.DisplayedOutputFolder);
 			Assert.AreEqual(string.Empty, m_dummyParaDlg.FileNameSchemeCtrl.Prefix);
 			Assert.AreEqual("41MAT", m_dummyParaDlg.FileNameSchemeCtrl.Scheme);
 			Assert.AreEqual("xyza", m_dummyParaDlg.FileNameSchemeCtrl.Suffix);
@@ -216,10 +218,10 @@ namespace SIL.FieldWorks.TE.ExportTests
 		{
 			m_dummyParaDlg.SimulateShowDialog();
 
-			m_dummyParaDlg.SimulateBrowseFolder(ParatextHelper.ProjectsDirectory);
+			m_dummyParaDlg.SimulateBrowseFolder(ScriptureProvider.SettingsDirectory);
 
-			Assert.AreEqual(ParatextHelper.ProjectsDirectory, m_dummyParaDlg.ScriptureOutputFolder);
-			Assert.AreEqual(Path.Combine(ParatextHelper.ProjectsDirectory,"xyz"), m_dummyParaDlg.DisplayedOutputFolder);
+			Assert.AreEqual(ScriptureProvider.SettingsDirectory, m_dummyParaDlg.ScriptureOutputFolder);
+			Assert.AreEqual(Path.Combine(ScriptureProvider.SettingsDirectory,"xyz"), m_dummyParaDlg.DisplayedOutputFolder);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -234,7 +236,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		{
 			m_dummyParaDlg.SimulateShowDialog();
 
-			var otherFolder = Path.Combine(ParatextHelper.ProjectsDirectory, "SomeProject");
+			var otherFolder = Path.Combine(ScriptureProvider.SettingsDirectory, "SomeProject");
 			m_dummyParaDlg.SimulateBrowseFolder(otherFolder);
 
 			Assert.AreEqual(otherFolder, m_dummyParaDlg.ScriptureOutputFolder);
@@ -253,10 +255,10 @@ namespace SIL.FieldWorks.TE.ExportTests
 		{
 			m_dummyParaDlg.SimulateShowDialog();
 
-			var projectFolder = Path.Combine(ParatextHelper.ProjectsDirectory, "xyz");
+			var projectFolder = Path.Combine(ScriptureProvider.SettingsDirectory, "xyz");
 			m_dummyParaDlg.SimulateBrowseFolder(projectFolder);
 
-			var expected = ParatextHelper.ProjectsDirectory.TrimEnd(
+			var expected = ScriptureProvider.SettingsDirectory.TrimEnd(
 				Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 			Assert.AreEqual(expected, m_dummyParaDlg.ScriptureOutputFolder);
 			Assert.AreEqual(projectFolder, m_dummyParaDlg.DisplayedOutputFolder);
@@ -277,11 +279,11 @@ namespace SIL.FieldWorks.TE.ExportTests
 			// Now "click" on the BT domain radio button.
 			m_dummyParaDlg.SimulateCheckBackTrans();
 
-			var otherFolder = Path.Combine(ParatextHelper.ProjectsDirectory, "SomeProject");
+			var otherFolder = Path.Combine(ScriptureProvider.SettingsDirectory, "SomeProject");
 			m_dummyParaDlg.SimulateBrowseFolder(otherFolder);
 
 			Assert.AreEqual(otherFolder, m_dummyParaDlg.BackTransOutputFolder);
-			Assert.AreEqual(ParatextHelper.ProjectsDirectory, m_dummyParaDlg.ScriptureOutputFolder);
+			Assert.AreEqual(ScriptureProvider.SettingsDirectory, m_dummyParaDlg.ScriptureOutputFolder);
 			Assert.AreEqual(Path.Combine(otherFolder,"xyzBT"), m_dummyParaDlg.DisplayedOutputFolder);
 		}
 
@@ -296,15 +298,15 @@ namespace SIL.FieldWorks.TE.ExportTests
 		{
 			m_dummyParaDlg.SimulateShowDialog();
 
-			var projectFolder = Path.Combine(ParatextHelper.ProjectsDirectory, "SomeProject");
+			var projectFolder = Path.Combine(ScriptureProvider.SettingsDirectory, "SomeProject");
 			m_dummyParaDlg.SimulateBrowseFolder(projectFolder);
 
 			// Now "click" on the BT domain radio button.
 			m_dummyParaDlg.SimulateCheckBackTrans();
 
-			Assert.AreEqual(ParatextHelper.ProjectsDirectory, m_dummyParaDlg.BackTransOutputFolder);
+			Assert.AreEqual(ScriptureProvider.SettingsDirectory, m_dummyParaDlg.BackTransOutputFolder);
 			Assert.AreEqual(projectFolder, m_dummyParaDlg.ScriptureOutputFolder);
-			Assert.AreEqual(Path.Combine(ParatextHelper.ProjectsDirectory,"xyzBT"), m_dummyParaDlg.DisplayedOutputFolder);
+			Assert.AreEqual(Path.Combine(ScriptureProvider.SettingsDirectory,"xyzBT"), m_dummyParaDlg.DisplayedOutputFolder);
 			Assert.AreEqual(string.Empty, m_dummyParaDlg.FileNameSchemeCtrl.Prefix);
 			Assert.AreEqual("41MAT", m_dummyParaDlg.FileNameSchemeCtrl.Scheme);
 			Assert.AreEqual("xyzBT", m_dummyParaDlg.FileNameSchemeCtrl.Suffix);
@@ -324,8 +326,8 @@ namespace SIL.FieldWorks.TE.ExportTests
 
 			m_dummyParaDlg.SimulateEditingShortName("xy___");
 
-			Assert.AreEqual(ParatextHelper.ProjectsDirectory, m_dummyParaDlg.ScriptureOutputFolder);
-			Assert.AreEqual(Path.Combine(ParatextHelper.ProjectsDirectory,"xy_"), m_dummyParaDlg.DisplayedOutputFolder);
+			Assert.AreEqual(ScriptureProvider.SettingsDirectory, m_dummyParaDlg.ScriptureOutputFolder);
+			Assert.AreEqual(Path.Combine(ScriptureProvider.SettingsDirectory,"xy_"), m_dummyParaDlg.DisplayedOutputFolder);
 			Assert.AreEqual(string.Empty, m_dummyParaDlg.FileNameSchemeCtrl.Prefix);
 			Assert.AreEqual("41MAT", m_dummyParaDlg.FileNameSchemeCtrl.Scheme);
 			Assert.AreEqual("xy_", m_dummyParaDlg.FileNameSchemeCtrl.Suffix);

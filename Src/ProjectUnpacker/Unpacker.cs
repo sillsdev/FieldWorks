@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -11,7 +11,6 @@
 
 using System;
 using System.Resources;
-using System.Diagnostics;
 using System.IO;
 using Microsoft.Win32;
 using ICSharpCode.SharpZipLib.Zip;
@@ -31,22 +30,12 @@ namespace SIL.FieldWorks.Test.ProjectUnpacker
 	/// ----------------------------------------------------------------------------------------
 	public static class Unpacker
 	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary/>
 		public class ResourceUnpacker
 		{
-			private string m_folder;		// folder where the resource is unpacked
+			private string m_folder;        // folder where the resource is unpacked
 
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			///
-			/// </summary>
-			/// <param name="resource"></param>
-			/// <param name="folder"></param>
-			/// --------------------------------------------------------------------------------
+			/// <summary/>
 			public ResourceUnpacker(String resource, String folder)
 			{
 				m_folder = folder.Trim();
@@ -57,41 +46,21 @@ namespace SIL.FieldWorks.Test.ProjectUnpacker
 				UnpackFile(resource, m_folder);
 			}
 
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			///
-			/// </summary>
-			/// --------------------------------------------------------------------------------
+			/// <summary/>
 			public string UnpackedDestinationPath
 			{
 				get {return m_folder;}
 			}
 
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			///
-			/// </summary>
-			/// --------------------------------------------------------------------------------
+			/// <summary/>
 			public void CleanUp()
 			{
 				RemoveFiles(m_folder);
 			}
 		}
 
-		private static string BaseDirectory
-		{
-			get
-			{
-				// Unfortunately Paratext 6 doesn't like long paths like "C:\Documents and Settings\eberhard\Local Settings\Temp",
-				// so we have to use the root directory of the boot drive. It doesn' matter on
-				// Linux since we don't have Paratext there.
-				if (MiscUtils.IsUnix)
-					return Path.GetTempPath();
-				return DriveUtil.BootDrive;
-			}
-		}
-
 		private const string kPTSettingsRegKey = @"SOFTWARE\ScrChecks\1.0\Settings_Directory";
+		private const string kPT8SettingsRegKey = @"SOFTWARE\Paratext\8";
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -102,11 +71,14 @@ namespace SIL.FieldWorks.Test.ProjectUnpacker
 		{
 			get
 			{
+				using (RegistryKey pt8key = Registry.LocalMachine.OpenSubKey(kPT8SettingsRegKey, false))
 				using (RegistryKey key = Registry.LocalMachine.OpenSubKey(kPTSettingsRegKey, false))
 				{
-					if (key == null)
+					if (key == null && pt8key == null)
 						Assert.Ignore("This test requires Paratext to be properly installed.");
-					return key.GetValue(null) as string;
+					if(pt8key == null)
+						return key.GetValue(null) as string;
+					return pt8key.GetValue("Settings_Directory") as string;
 				}
 			}
 		}

@@ -76,6 +76,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>..\..\..\Output\Release\</OutputPath>
@@ -98,6 +99,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -119,6 +121,10 @@
     <Reference Include="FwUtils, Version=6.1.0.39181, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="Paratext.LexicalContracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9a5af29a0e638a7b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\Paratext.LexicalContracts.dll</HintPath>
     </Reference>
     <Reference Include="ParatextShared, Version=7.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -143,6 +149,7 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data">
       <Name>System.Data</Name>
@@ -165,7 +172,10 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Paratext7Provider.cs" />
     <Compile Include="ParatextHelper.cs" />
+    <Compile Include="PT7ScrTextWrapper.cs" />
+    <Compile Include="ScriptureProvider.cs" />
     <Compile Include="ScriptureReferenceComparer.cs" />
     <Compile Include="ScrReferencePositionComparer.cs" />
     <Compile Include="SCTextSegment.cs">

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.TE
 				return false;
 
 			// Paratext seems to want to have write access to do an import...
-			string filename = Path.Combine(ParatextHelper.ProjectsDirectory, importSettings.ParatextScrProj + ".ssf");
+			string filename = Path.Combine(ScriptureProvider.SettingsDirectory, importSettings.ParatextScrProj + ".ssf");
 			if (!FileUtils.IsFileReadableAndWritable(filename) ||
 				!ParatextHelper.GetProjectBooks(importSettings.ParatextScrProj).Any())
 			{
@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.TE
 
 			if (importSettings.ParatextBTProj != null)
 			{
-				filename = Path.Combine(ParatextHelper.ProjectsDirectory, importSettings.ParatextBTProj + ".ssf");
+				filename = Path.Combine(ScriptureProvider.SettingsDirectory, importSettings.ParatextBTProj + ".ssf");
 				if (!FileUtils.IsFileReadableAndWritable(filename) ||
 					!ParatextHelper.GetProjectBooks(importSettings.ParatextBTProj).Any())
 				{
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.TE
 
 			if (importSettings.ParatextNotesProj != null)
 			{
-				filename = Path.Combine(ParatextHelper.ProjectsDirectory, importSettings.ParatextNotesProj + ".ssf");
+				filename = Path.Combine(ScriptureProvider.SettingsDirectory, importSettings.ParatextNotesProj + ".ssf");
 				if (!FileUtils.IsFileReadableAndWritable(filename) ||
 					!ParatextHelper.GetProjectBooks(importSettings.ParatextNotesProj).Any())
 				{

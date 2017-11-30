@@ -120,7 +120,8 @@ namespace FwBuildTasks
 			if (project == "VwGraphicsReplayer" ||
 				project == "SilSidePaneTestApp" ||
 				project == "SfmStats" ||
-				project == "ConvertSFM")
+				project == "ConvertSFM" ||
+				project == "Paratext8Plugin") // Paratext8Plugin is a .net 4.6.1 project and needs special attention in the release/8.3 branch
 			{
 				return; // Skip these apps - they are are sample or support apps
 			}

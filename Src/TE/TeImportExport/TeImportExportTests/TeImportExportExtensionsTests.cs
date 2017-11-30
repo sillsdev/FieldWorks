@@ -69,13 +69,15 @@ namespace SIL.FieldWorks.TE
 
 			var fileOs = new MockFileOS();
 			MockParatextHelper ptHelper = null;
+			var saveScriptureProvider = ScriptureProvider._scriptureProvider;
+			ScriptureProvider._scriptureProvider = new MockScriptureProvider();
 			try
 			{
 				FileUtils.Manager.SetFileAdapter(fileOs);
 				ptHelper = new MockParatextHelper();
 				ParatextHelper.Manager.SetParatextHelperAdapter(ptHelper);
-				string paratextDir = ParatextHelper.ProjectsDirectory;
-
+				string paratextDir = ScriptureProvider.SettingsDirectory;
+				Assert.NotNull(paratextDir, "Setup problem - ProjectsDirectory should not be null.");
 				ptHelper.AddProject("TEV", null, null, true, false, "100001");
 
 				fileOs.AddExistingFile(Path.Combine(paratextDir, "TEV.ssf"));
@@ -98,6 +100,7 @@ namespace SIL.FieldWorks.TE
 				if (ptHelper != null)
 					ptHelper.Dispose();
 				FileUtils.Manager.Reset();
+				ScriptureProvider._scriptureProvider = saveScriptureProvider;
 			}
 		}
 

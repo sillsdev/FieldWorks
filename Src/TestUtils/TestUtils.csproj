@@ -141,6 +141,9 @@
     <Reference Include="SilUtils">
       <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
+    <Reference Include="icu.net">
+      <HintPath>..\..\Downloads\icu.net.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs">

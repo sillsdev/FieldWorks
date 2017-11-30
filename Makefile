@@ -755,10 +755,12 @@ Fw-build:
 
 Fw-build-package:
 	cd $(BUILD_ROOT)/Build \
+		&& xbuild /t:refreshTargets \
 		&& xbuild '/t:build4package;zipLocalizedLists;localize' /property:config=release /property:packaging=yes
 
 Fw-build-package-fdo:
 	cd $(BUILD_ROOT)/Build \
+		&& xbuild /t:refreshTargets \
 		&& xbuild '/t:build4package-fdo;pack-fdo' /property:config=release /property:packaging=yes
 
 TE-run: ComponentsMap-nodep

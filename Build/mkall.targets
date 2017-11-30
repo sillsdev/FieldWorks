@@ -10,7 +10,7 @@
 	<UsingTask TaskName="GenerateTestCoverageReport" AssemblyFile="FwBuildTasks.dll"/>
 
 	<!-- Make all of FieldWorks. -->
-	<Target Name="mkall" DependsOnTargets="CopyDlls;initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;ensureTLBsUpToDate">
+	<Target Name="mkall" DependsOnTargets="CopyDlls;initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;ensureTLBsUpToDate;Paratext8Plugin">
 		<Message Text="Finished mkall Target."/>
 		<CreateItem Condition="'$(action)'=='test'" Include="$(dir-outputBase)/*-nunit-output.xml">
 			<Output TaskParameter="Include" ItemName="NUnitReportFiles"/>
@@ -213,6 +213,34 @@
 					 Condition="'$(action)'!='clean'"/>
 	</Target>
 
+	<Choose>
+		<When Condition=" '$(config-capital)' == 'Debug' ">
+			<PropertyGroup>
+				<Paratext8PluginDefines>DEBUG TRACE CODE_ANALYSIS</Paratext8PluginDefines>
+			</PropertyGroup>
+		</When>
+		<When Condition=" '$(config-capital)' == 'Release' ">
+			<PropertyGroup>
+				<Paratext8PluginDefines>TRACE CODE_ANALYSIS</Paratext8PluginDefines>
+			</PropertyGroup>
+		</When>
+		<Otherwise>
+			<PropertyGroup>
+				<Paratext8PluginDefines>DEBUG TRACE CODE_ANALYSIS</Paratext8PluginDefines>
+			</PropertyGroup>
+		</Otherwise>
+	</Choose>
+
+	<Target Name="Paratext8Plugin" DependsOnTargets="Initialize;ScriptureUtils">
+		<MSBuild Projects="$(fwrt)\Src\Paratext8Plugin\Paratext8Plugin.csproj"
+			Targets="$(msbuild-target)"
+			Properties="$(msbuild-props);IntermediateOutputPath=$(dir-fwobj)\Paratext8Plugin\;DefineConstants=$(Paratext8PluginDefines);$(warningsAsErrors);WarningLevel=4"
+			ToolsVersion="4.0" Condition="'$(OS)'!='Unix'"/>
+		<!-- Paratext8Plugin must be built against a newer version of Mono that FLEx 8 does not support. -->
+		<Message Text="Finished building Paratext8Plugin." Condition="'$(OS)'!='Unix'"/>
+		<Message Text="Skipped building Paratext8Plugin." Condition="'$(OS)'=='Unix'"/>
+	</Target>
+
 	<Target Name="CopyCellarBaseConstants" Inputs="$(fwrt)/Src/Kernel/CellarBaseConstants.h" Outputs="$(fwrt)/Output/Common/CellarBaseConstants.h">
 		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'"/>
 		<Copy SourceFiles="$(fwrt)/Src/Kernel/CellarBaseConstants.h"
@@ -306,6 +334,8 @@
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1/</DownloadsSilOrgDownloadUrl>
 		<HermitCrabDownloadUrl>http://build.palaso.org/guestAuth/repository/download/bt410/fw-8.3.tcbuildtag</HermitCrabDownloadUrl>
 		<Icu4cDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/Libraries_Icu4cWin32FieldWorksContinuous/fw-8.2.tcbuildtag</Icu4cDownloadUrl>
+		<SILScriptureDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoLinux64masterContinuous/fw-8.3.9.tcbuildtag</SILScriptureDownloadUrl>
+		<SILScriptureDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/fw-8.3.9.tcbuildtag</SILScriptureDownloadUrl>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
@@ -373,7 +403,7 @@
 		<ForceDelete Files="$(fwrt)/Downloads/protobuf-net/Precompile/" />
 		<ForceDelete Files="$(fwrt)/Downloads/protobuf-net/*.txt" />
 
-		<Message Text="Downloading ParaTExt DLLs." />
+		<Message Text="Downloading Paratext DLLs." />
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Paratext.LexicalContracts.dll" LocalFilename="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
 		<!-- Windows downloads -->
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/FormattedEditor.dll" LocalFilename="$(fwrt)/Downloads/FormattedEditor.dll" Condition="'$(OS)'=='Windows_NT'"/>
@@ -405,6 +435,13 @@
 		<DownloadFile Address="$(Icu4cDownloadUrl)/icudt.lib" LocalFilename="$(fwrt)/Downloads/icudt.lib" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(Icu4cDownloadUrl)/icuin.lib" LocalFilename="$(fwrt)/Downloads/icuin.lib" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(Icu4cDownloadUrl)/icuuc.lib" LocalFilename="$(fwrt)/Downloads/icuuc.lib" Condition="'$(OS)'=='Windows_NT'"/>
+
+
+		<Message Text="Downloading pinned artifacts from Palaso for Paratext 8 support" />
+		<DownloadFile Address="$(SILScriptureDownloadUrl)/Newtonsoft.Json.dll" LocalFilename="$(fwrt)/Downloads/Newtonsoft.Json.dll"/>
+		<DownloadFile Address="$(SILScriptureDownloadUrl)/SIL.Core.dll" LocalFilename="$(fwrt)/Downloads/SIL.Core.dll"/>
+		<DownloadFile Address="$(SILScriptureDownloadUrl)/SIL.Scripture.dll" LocalFilename="$(fwrt)/Downloads/SIL.Scripture.dll"/>
+		<DownloadFile Address="$(SILScriptureDownloadUrl)/SIL.WritingSystems.dll" LocalFilename="$(fwrt)/Downloads/SIL.WritingSystems.dll"/>
 	</Target>
 
 	<!-- item group for downloads, to allow easy copying -->
@@ -440,8 +477,11 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoBrowserAdapter.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.$(DebugInfo)"/>
+		<!-- newer SIL (Palaso) libraries needed for Paratext 8 support -->
+		<DownloadedFiles Include="$(fwrt)/Downloads/Newtonsoft.Json.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Core.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/L10NSharp.dll"/>

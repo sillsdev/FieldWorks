@@ -840,6 +840,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#region ModelSynchronization
+
 		public static void MergeTypesIntoDictionaryModel(DictionaryConfigurationModel model, FdoCache cache)
 		{
 			var complexTypes = new Set<Guid>();
@@ -856,10 +857,15 @@ namespace SIL.FieldWorks.XWorks
 				foreach (var pos in cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS)
 					referenceTypes.Add(pos.Guid);
 			}
-			var noteTypes = new Set<Guid>(cache.LangProject.LexDbOA.ExtendedNoteTypesOA.ReallyReallyAllPossibilities.Select(pos => pos.Guid))
+			var noteTypes = new Set<Guid>();
+			if (cache.LangProject.LexDbOA.ExtendedNoteTypesOA != null)
 			{
-				XmlViewsUtils.GetGuidForUnspecifiedExtendedNoteType()
-			};
+				noteTypes =
+				new Set<Guid>(cache.LangProject.LexDbOA.ExtendedNoteTypesOA.ReallyReallyAllPossibilities.Select(pos => pos.Guid))
+				{
+					XmlViewsUtils.GetGuidForUnspecifiedExtendedNoteType()
+				};
+			}
 			foreach (var part in model.PartsAndSharedItems)
 			{
 				FixTypeListOnNode(part, complexTypes, variantTypes, referenceTypes, noteTypes, model.IsHybrid, cache);

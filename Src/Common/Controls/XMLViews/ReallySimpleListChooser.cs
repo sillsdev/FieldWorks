@@ -150,6 +150,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private CheckBox m_displayUsageCheckBox;
 
 		private ToolStripButton m_printButton;
+		private Dictionary<char, string> s_xmlCharacterSubstitutions;
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -1002,11 +1003,13 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			if (!String.IsNullOrEmpty(sTool))
 			{
+				sTool = XmlUtils.MakeSafeXml(sTool);
 				StringBuilder bldr = new StringBuilder();
 				bldr.AppendLine("<chooserInfo>");
 				string label = list.Name.UserDefaultWritingSystem.Text;
 				if (String.IsNullOrEmpty(label) || label == list.Name.NotFoundTss.Text)
 					label = list.Name.BestAnalysisVernacularAlternative.Text;
+				label = XmlUtils.MakeSafeXml(label);
 				bldr.AppendFormat("<chooserLink type=\"goto\" label=\"Edit the {0} list\" tool=\"{1}\"/>",
 					label, sTool);
 				bldr.AppendLine();

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,6 +14,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
@@ -79,7 +80,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Dictionary<string, string> m_chkParams = new Dictionary<string, string>();
 		private string m_currContextItem;
 		private ValidateList m_listValidator;
-		private OpenFileDialogAdapter m_openFileDialog;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -89,9 +89,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public CharContextCtrl()
 		{
 			InitializeComponent();
-			m_openFileDialog = new OpenFileDialogAdapter();
-			m_openFileDialog.DefaultExt = "lds";
-			m_openFileDialog.Title = FwCoreDlgs.kstidLanguageFileBrowser;
 
 			gridContext.AutoGenerateColumns = false;
 			colRef.MinimumWidth = 2;
@@ -180,18 +177,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get { return m_sListName; }
 			set { m_sListName = value; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets the initial directory to use if the user chooses to scan a file.
-		/// </summary>
-		/// <value>The initial directory for file scan.</value>
-		/// ------------------------------------------------------------------------------------
-		public string InitialDirectoryForFileScan
-		{
-			get { return m_openFileDialog.InitialDirectory; }
-			set { m_openFileDialog.InitialDirectory = value; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -583,19 +568,23 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			GetTokensSubStrings(null);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void cmnuScanFile_Click(object sender, EventArgs e)
 		{
-			// Use an open file dialog to let the user specify a file to scan.
-			m_openFileDialog.CheckFileExists = true;
-			m_openFileDialog.Filter = ResourceHelper.FileFilter(FileFilterType.AllFiles);
-
-			if (m_openFileDialog.ShowDialog() == DialogResult.OK)
-				GetTokensSubStrings(m_openFileDialog.FileName);
+			// Let the user specify a Paratext or Toolbox language file to scan.
+			var languageFiles = ResourceHelper.GetResourceString("kstidToolboxLanguageFiles");
+			var allFiles = ResourceHelper.GetResourceString("kstidAllFiles");
+			using (var openFileDialog = new OpenFileDialogAdapter
+			{
+				Title = FwCoreDlgs.kstidLanguageFileBrowser,
+				InitialDirectory = ScriptureProvider.SettingsDirectory,
+				CheckFileExists = true,
+				Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(
+					string.Format("{0} ({1})|{1}|{2} ({3})|{3}", languageFiles, "*.lds;*.lng", allFiles, "*.*"))
+			})
+			{
+				if (openFileDialog.ShowDialog() == DialogResult.OK)
+					GetTokensSubStrings(openFileDialog.FileName);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -619,9 +608,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				if (tokens == null || tokens.Count == 0)
 				{
-					string msg = (fileName == null) ?
-						String.Format(FwCoreDlgs.kstidNoTokensFoundInCurrentScriptureProj, m_sListName) :
-						String.Format(FwCoreDlgs.kstidNoTokensFoundInFile, m_sListName, m_openFileDialog.FileName);
+					string msg = fileName == null ?
+						string.Format(FwCoreDlgs.kstidNoTokensFoundInCurrentScriptureProj, m_sListName) :
+						string.Format(FwCoreDlgs.kstidNoTokensFoundInFile, m_sListName, fileName);
 					MessageBox.Show(msg, m_app.ApplicationName);
 					ResetContextLists();
 					lblScanMsg.Text = m_sInitialScanMsgLabel;

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -6,20 +6,16 @@
 // Responsibility: TE Team
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Win32;
 using System.Windows.Forms;
 using System.Diagnostics;
-using Paratext;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;
 
 namespace SIL.FieldWorks.TE
@@ -356,7 +352,7 @@ namespace SIL.FieldWorks.TE
 			// Get the output file or folder specification.
 			try
 			{
-				m_paratextProjFolder = ScrTextCollection.SettingsDirectory;
+				m_paratextProjFolder = ScriptureProvider.SettingsDirectory; // REVIEW (Hasso) 2017.06: this doesn't throw. Not that we care.
 			}
 			catch
 			{
@@ -378,17 +374,6 @@ namespace SIL.FieldWorks.TE
 				i = 1;
 				while (!ParatextHelper.IsProjectWritable(m_BTshortName) && i < 1000)
 					m_BTshortName = "BT" + i++;
-			}
-			else
-			{
-				// Paratext is not installed or Paratext directory does not exist.
-				// We default the output path to "C:\My Paratext Projects". However, this directory
-				// might not exist and/or we might have no permissions to write there. We attempt to
-				// create this folder now. If we fail, then we disable the Short Name control and
-				// won't bother writing the Paratext settings files.
-				// REVIEW: this comment seems to be out of date. We might crash if we have an
-				// invalid directory (see FWNX-828).
-				m_paratextProjFolder = ParatextHelper.ProjectsDirectory;
 			}
 
 			cboShortName.Text = ShortName;
@@ -568,31 +553,29 @@ namespace SIL.FieldWorks.TE
 			{
 				try
 				{
-					using (ScrText paraTextSO = new ScrText(ShortName))
-					{
-						string folder = paraTextSO.Directory;
-						m_fAppendShortNameToFolder = (folder.EndsWith(Path.DirectorySeparatorChar + ShortName));
-						BaseOutputFolder = folder;
-						m_fUserModifiedFolder = false;
-						CalculateDisplayOutputFolder();
+					var paraTextSO = ScriptureProvider.MakeScrText(ShortName);
+					string folder = paraTextSO.Directory;
+					m_fAppendShortNameToFolder = (folder.EndsWith(Path.DirectorySeparatorChar + ShortName));
+					BaseOutputFolder = folder;
+					m_fUserModifiedFolder = false;
+					CalculateDisplayOutputFolder();
 
-						FileNameFormat currentFileNameScheme = ExportScriptureDomain ? m_fileNameScheme :
-						m_BTfileNameScheme;
-						currentFileNameScheme.m_filePrefix = paraTextSO.FileNamePrePart;
-						currentFileNameScheme.m_schemeFormat =
-						FileNameFormat.GetSchemeFormatFromParatextForm(paraTextSO.FileNameForm);
-						m_fileNameScheme.m_fileSuffix = Path.GetFileNameWithoutExtension(paraTextSO.FileNamePostPart);
-						//if (ExportScriptureDomain)
-						//    m_BTfileNameScheme.m_fileSuffix = m_fileNameScheme.m_fileSuffix.Substring(0, 3) + "BT";
-						currentFileNameScheme.m_fileExtension = Path.GetExtension(paraTextSO.FileNamePostPart);
+					FileNameFormat currentFileNameScheme = ExportScriptureDomain ? m_fileNameScheme :
+					m_BTfileNameScheme;
+					currentFileNameScheme.m_filePrefix = paraTextSO.FileNamePrePart;
+					currentFileNameScheme.m_schemeFormat =
+					FileNameFormat.GetSchemeFormatFromParatextForm(paraTextSO.FileNameForm);
+					m_fileNameScheme.m_fileSuffix = Path.GetFileNameWithoutExtension(paraTextSO.FileNamePostPart);
+					//if (ExportScriptureDomain)
+					//    m_BTfileNameScheme.m_fileSuffix = m_fileNameScheme.m_fileSuffix.Substring(0, 3) + "BT";
+					currentFileNameScheme.m_fileExtension = Path.GetExtension(paraTextSO.FileNamePostPart);
 
-						// set file name scheme control with properties that check the export domain.
-						fileNameSchemeCtrl.ClearUserModifiedNameScheme();
-						fileNameSchemeCtrl.Prefix = FileNamePrefix;
-						fileNameSchemeCtrl.Scheme = FileNameScheme;
-						fileNameSchemeCtrl.Suffix = FileNameSuffix;
-						fileNameSchemeCtrl.Extension = FileNameExtension;
-					}
+					// set file name scheme control with properties that check the export domain.
+					fileNameSchemeCtrl.ClearUserModifiedNameScheme();
+					fileNameSchemeCtrl.Prefix = FileNamePrefix;
+					fileNameSchemeCtrl.Scheme = FileNameScheme;
+					fileNameSchemeCtrl.Suffix = FileNameSuffix;
+					fileNameSchemeCtrl.Extension = FileNameExtension;
 				}
 				catch
 				{

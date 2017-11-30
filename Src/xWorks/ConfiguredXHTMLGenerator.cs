@@ -893,7 +893,7 @@ namespace SIL.FieldWorks.XWorks
 
 				case PropertyType.CmFileType:
 					fileProperty = propertyValue as ICmFile;
-					if (fileProperty != null)
+					if (fileProperty != null && fileProperty.InternalPath != null)
 					{
 						var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fileProperty.InternalPath, "AudioVisual", settings);
 						if (IsVideo(fileProperty.InternalPath))
@@ -2216,30 +2216,7 @@ namespace SIL.FieldWorks.XWorks
 			// Now that we have things in the right order, try outputting one type at a time
 			foreach (var referenceList in organizedRefs)
 			{
-				var contentBldr = new StringBuilder();
-				var lexRefType = string.Empty;
-				foreach (var targetInfo in referenceList)
-				{
-					contentBldr.Append(GenerateCrossReferenceChildren(config, pubDecorator,
-						targetInfo, cmOwner, settings, ref lexRefType));
-				}
-				var xBldr = new StringBuilder();
-				using (var xw = XmlWriter.Create(xBldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
-				{
-					xw.WriteStartElement(GetElementNameForProperty(config));
-					WriteCollectionItemClassAttribute(config, xw);
-					xw.WriteRaw(lexRefType);
-					var targetsNode = config.ReferencedOrDirectChildren.FirstOrDefault(n => n.FieldDescription == "ConfigTargets" && n.IsEnabled);
-					if (contentBldr.Length > 0 && targetsNode != null)
-					{
-						xw.WriteStartElement(GetElementNameForProperty(targetsNode));
-						xw.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(targetsNode));
-						xw.WriteRaw(contentBldr.ToString());
-						xw.WriteEndElement(); // targets
-					}
-					xw.WriteEndElement(); // config
-					xw.Flush();
-				}
+				var xBldr = GenerateCrossReferenceChildren(config, pubDecorator, referenceList, cmOwner, settings);
 				bldr.Append(xBldr);
 			}
 		}
@@ -2302,7 +2279,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private static bool IsOwner(ISenseOrEntry target, ICmObject owner)
 		{
-			return target.EntryGuid.Equals(owner is ILexEntry ? ((ILexEntry)owner).Guid : ((ILexSense)owner).Entry.Guid);
+			return target.Item.Guid.Equals(owner.Guid);
 		}
 
 		private static int CompareLexRefTargets(Tuple<ISenseOrEntry, ILexReference> lhs,
@@ -2313,52 +2290,70 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <returns>Content for Targets and nodes, except Type, which is returned in ref string typeXHTML</returns>
 		private static string GenerateCrossReferenceChildren(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
-			Tuple<ISenseOrEntry, ILexReference> referenceInfo, object collectionOwner, GeneratorSettings settings, ref string typeXHTML)
+			List<Tuple<ISenseOrEntry, ILexReference>> referenceList, object collectionOwner, GeneratorSettings settings)
 		{
 			if (config.ReferencedOrDirectChildren == null)
 				return string.Empty;
-			var reference = referenceInfo.Item2;
-			if (LexRefTypeTags.IsUnidirectional((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType) &&
-				LexRefDirection(reference, collectionOwner) == ":r")
+			var xBldr = new StringBuilder();
+			using (var xw = XmlWriter.Create(xBldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 			{
-				return string.Empty;
-			}
-			var target = referenceInfo.Item1;
-
-			var bldr = new StringBuilder();
-			foreach(var child in config.ReferencedOrDirectChildren.Where(c => c.IsEnabled))
-			{
-				switch (child.FieldDescription)
+				xw.WriteStartElement(GetElementNameForProperty(config));
+				WriteCollectionItemClassAttribute(config, xw);
+				var targetInfo = referenceList.FirstOrDefault();
+				if(targetInfo == null)
+					return string.Empty;
+				var reference = targetInfo.Item2;
+				if (LexRefTypeTags.IsUnidirectional((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType) &&
+					LexRefDirection(reference, collectionOwner) == ":r")
 				{
-					case "ConfigTargets":
-						// LT-15764 New way of doing things here. We now come here once for each ConfigTarget
-						bldr.Append(GenerateCollectionItemContent(child, publicationDecorator, target, reference, settings));
-						break;
-					case "OwnerType":
-						// OwnerType is a LexRefType, some of which are asymmetric (e.g. Part/Whole). If this Type is symmetric or we are currently
-						// working in the forward direction, the generic code will work; however, if we are working on an asymmetric LexRefType
-						// in the reverse direction, we need to display the ReverseName or ReverseAbbreviation instead of the Name or Abbreviation.
-						if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType)
-							&& LexRefDirection(reference, collectionOwner) == ":r")
-						{
-							// Changing the SubField changes the default CSS Class name.
-							// If there is no override, override with the default before changing the SubField.
-							if (string.IsNullOrEmpty(child.CSSClassNameOverride))
-								child.CSSClassNameOverride = CssGenerator.GetClassAttributeForConfig(child);
-							// Flag to prepend "Reverse" to child.SubField when it is used.
-							typeXHTML = GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings, fUseReverseSubField: true);
-						}
-						else
-						{
-							typeXHTML = GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings);
-						}
-						break;
-					default:
-						throw new NotImplementedException("The field " + child.FieldDescription +
-							" is not supported on Cross References or Lexical Relations. Supported fields are OwnerType and ConfigTargets");
+					return string.Empty;
 				}
+				foreach (var child in config.ReferencedOrDirectChildren.Where(c => c.IsEnabled))
+				{
+					switch (child.FieldDescription)
+					{
+						case "ConfigTargets":
+							var contentBldr = new StringBuilder();
+							foreach (var referenceListItem in referenceList)
+							{
+								var referenceItem = referenceListItem.Item2;
+								var targetItem = referenceListItem.Item1;
+								contentBldr.Append(GenerateCollectionItemContent(child, publicationDecorator, targetItem, referenceItem, settings));
+							}
+							if (contentBldr.Length > 0)
+							{
+								xw.WriteStartElement(GetElementNameForProperty(child));
+								xw.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(child));
+								xw.WriteRaw(contentBldr.ToString());
+								xw.WriteEndElement(); // targets
+							}
+							break;
+						case "OwnerType":
+							// OwnerType is a LexRefType, some of which are asymmetric (e.g. Part/Whole). If this Type is symmetric or we are currently
+							// working in the forward direction, the generic code will work; however, if we are working on an asymmetric LexRefType
+							// in the reverse direction, we need to display the ReverseName or ReverseAbbreviation instead of the Name or Abbreviation.
+							if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType) && LexRefDirection(reference, collectionOwner) == ":r")
+							{
+								// Changing the SubField changes the default CSS Class name.
+								// If there is no override, override with the default before changing the SubField.
+								if (string.IsNullOrEmpty(child.CSSClassNameOverride))
+									child.CSSClassNameOverride = CssGenerator.GetClassAttributeForConfig(child);
+								// Flag to prepend "Reverse" to child.SubField when it is used.
+								xw.WriteRaw(GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings, fUseReverseSubField: true));
+							}
+							else
+							{
+								xw.WriteRaw(GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings));
+							}
+							break;
+						default:
+							throw new NotImplementedException("The field " + child.FieldDescription + " is not supported on Cross References or Lexical Relations. Supported fields are OwnerType and ConfigTargets");
+					}
+				}
+				xw.WriteEndElement(); // config
+				xw.Flush();
 			}
-			return bldr.ToString();
+			return xBldr.ToString();
 		}
 
 		private static string GenerateSubentryTypeChild(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,

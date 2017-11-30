@@ -84,9 +84,9 @@ Main template
 				</xsl:variable>
 				<xsl:if test="not(preceding-sibling::Restrictions)">
 					<xsl:element name="{$eleName}">
-						<xsl:call-template name="DoAUni"/>
+						<xsl:call-template name="DoAStr"/>
 						<xsl:for-each select="following-sibling::Restrictions">
-							<xsl:call-template name="DoAUni"/>
+							<xsl:call-template name="DoAStr"/>
 						</xsl:for-each>
 					</xsl:element>
 				</xsl:if>
