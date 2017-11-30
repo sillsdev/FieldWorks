@@ -86,7 +86,7 @@ namespace LanguageExplorer.Works
 			};
 			ReadParameters();
 			// Use update helper to help with optimizations and special cases for list loading
-			using (var luh = new RecordClerk.ListUpdateHelper(Clerk, Clerk.ListLoadingSuppressed))
+			using (var luh = new ListUpdateHelper(Clerk, Clerk.ListLoadingSuppressed))
 			{
 				Clerk.UpdateOwningObjectIfNeeded();
 			}

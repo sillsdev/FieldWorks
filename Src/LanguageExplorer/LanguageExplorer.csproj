@@ -1108,6 +1108,8 @@
     <Compile Include="LinkHandler.cs" />
     <Compile Include="Works\ListChangedEventArgs.cs" />
     <Compile Include="Works\ListChangedEventHandler.cs" />
+    <Compile Include="Works\ListUpdateHelper.cs" />
+    <Compile Include="Works\ListUpdateHelperOptions.cs" />
     <Compile Include="Works\MacroListener.cs" />
     <Compile Include="Works\MatchingItemsRecordClerk.cs" />
     <Compile Include="Works\MatchingItemsRecordList.cs" />

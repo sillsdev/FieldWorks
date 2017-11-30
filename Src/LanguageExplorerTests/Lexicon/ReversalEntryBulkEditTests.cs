@@ -51,12 +51,7 @@ namespace LanguageExplorerTests.Lexicon
 			using (var cache = CreateCache())
 			{
 				var reversalIndexRepository = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
-				var reversalIndex = reversalIndexRepository.AllInstances().FirstOrDefault();
-				if (reversalIndex == null)
-				{
-					// Create one.
-					reversalIndex = reversalIndexRepository.FindOrCreateIndexForWs(cache.DefaultAnalWs);
-				}
+				var reversalIndex = reversalIndexRepository.AllInstances().FirstOrDefault() ?? reversalIndexRepository.FindOrCreateIndexForWs(cache.DefaultAnalWs);
 				using (var recordList = new AllReversalEntriesRecordList(cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), reversalIndex))
 				{
 					propertyTable.SetProperty("cache", cache, SettingsGroup.LocalSettings, false, false);

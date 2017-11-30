@@ -18,7 +18,6 @@ using SIL.FieldWorks.FwCoreDlgControls;
 
 namespace LanguageExplorer.Works
 {
-
 	/// <summary>
 	/// Responsible for populating the tree bar with the records.
 	/// </summary>
@@ -746,7 +745,7 @@ namespace LanguageExplorer.Works
 				if (newSiblings[ihvoDest].Text.CompareTo(moveLabel) > 0) // Enhance JohnT: use ICU comparison...
 					break;
 			}
-			using (new RecordClerk.ListUpdateHelper(m_list, tree.TopLevelControl))
+			using (new ListUpdateHelper(m_list, tree.TopLevelControl))
 			{
 				UndoableUnitOfWorkHelper.Do(xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem,
 					cache.ActionHandlerAccessor, () =>

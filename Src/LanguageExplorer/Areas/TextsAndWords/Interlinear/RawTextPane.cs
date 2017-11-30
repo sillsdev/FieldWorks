@@ -611,7 +611,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Currently detects whether we've inserted a paragraph break (with the Enter key)
 		/// and move annotations into the new paragraph.
 		/// </summary>
-		internal class AnnotationMoveHelper : RecordClerk.ListUpdateHelper
+		internal class AnnotationMoveHelper : ListUpdateHelper
 		{
 			RawTextPane m_rootSite;
 

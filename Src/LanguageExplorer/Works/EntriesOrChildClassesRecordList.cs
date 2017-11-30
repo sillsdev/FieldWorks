@@ -99,7 +99,7 @@ namespace LanguageExplorer.Works
 				return;	// we're already in the process of changing our list.
 
 			var fLoadSuppressed = m_requestedLoadWhileSuppressed;
-			using (var luh = new RecordClerk.ListUpdateHelper(Clerk))
+			using (var luh = new ListUpdateHelper(Clerk))
 			{
 				// don't reload the entire list via propchanges.  just indicate we need to reload.
 				luh.TriggerPendingReloadOnDispose = false;

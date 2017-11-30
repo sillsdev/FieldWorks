@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			set { m_sdaSpecial = value; }
 		}
 
-		protected override IComparer getComparer()
+		protected internal override IComparer getComparer()
 		{
 			return new OccurrenceComparer(m_cache, m_sdaSpecial);
 		}

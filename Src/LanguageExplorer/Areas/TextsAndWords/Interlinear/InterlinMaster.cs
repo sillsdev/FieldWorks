@@ -982,10 +982,14 @@ private void ReloadPaneBar(IPaneBar paneBar)
 				{
 					// We don't want to force a Save here if we just deleted the last text;
 					// we want to be able to Undo deleting it!
-					var options = new RecordClerk.ListUpdateHelper.ListUpdateHelperOptions();
-					options.SuppressSaveOnChangeRecord = true;
-					using (new RecordClerk.ListUpdateHelper(Clerk, options))
+					var options = new ListUpdateHelperOptions
+					{
+						SuppressSaveOnChangeRecord = true
+					};
+					using (new ListUpdateHelper(Clerk, options))
+					{
 						((InterlinearTextsRecordClerk)Clerk).AddNewTextNonUndoable();
+					}
 				});
 			}
 			if (Clerk.CurrentObjectHvo == 0)

@@ -1,14 +1,7 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RecordView.cs
-// Responsibility: WordWorks
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
-// ------------------- -------------------------------------------------------------------------
+
 using System;
 using System.IO;
 using System.Diagnostics;
@@ -85,11 +78,11 @@ namespace LanguageExplorer.Works
 			if (!m_fullyInitialized)
 				return;
 
-			var options = new RecordClerk.ListUpdateHelper.ListUpdateHelperOptions
+			var options = new ListUpdateHelperOptions
 			{
 				SuppressSaveOnChangeRecord = e.RecordNavigationInfo.SuppressSaveOnChangeRecord
 			};
-			using (new RecordClerk.ListUpdateHelper(Clerk, options))
+			using (new ListUpdateHelper(Clerk, options))
 			{
 				ShowRecord(e.RecordNavigationInfo);
 			}
@@ -204,7 +197,7 @@ namespace LanguageExplorer.Works
 			// suspend any loading of the Clerk's list items until after a
 			// subclass (possibly) initializes sorters/filters
 			// in SetupDataContext()
-			using (var luh = new RecordClerk.ListUpdateHelper(Clerk, fClerkAlreadySuppressed))
+			using (var luh = new ListUpdateHelper(Clerk, fClerkAlreadySuppressed))
 			{
 				luh.ClearBrowseListUntilReload = true;
 				Clerk.UpdateOwningObjectIfNeeded();

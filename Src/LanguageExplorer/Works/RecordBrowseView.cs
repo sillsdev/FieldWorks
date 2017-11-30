@@ -251,7 +251,7 @@ namespace LanguageExplorer.Works
 				// use ListUpdateHelper to suspend reloading the list until we've changed the class
 				// and recomputed the columns. Otherwise, we'll try to reload the list and redraw the display
 				// with columns that may not have all their parts in place (e.g. for generated custom fields)
-				using (new RecordClerk.ListUpdateHelper(Clerk))
+				using (new ListUpdateHelper(Clerk))
 				{
 					// change the list items class, but don't do the reload && refresh display
 					// until after we've recomputed our columns to allow regenerating custom field parts

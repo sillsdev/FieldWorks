@@ -147,9 +147,9 @@ namespace LanguageExplorer.Works
 			}
 			else if (tag == CmPossibilityTags.kflidName || tag == CmPossibilityTags.kflidAbbreviation)
 			{
-				if (Clerk.BarHandler is TreeBarHandler)
+				if (BarHandler is TreeBarHandler)
 				{
-					if (((TreeBarHandler)Clerk.BarHandler).IsHvoATreeNode(hvo))
+					if (((TreeBarHandler)BarHandler).IsHvoATreeNode(hvo))
 					{
 						UpdateListItemName(hvo);
 					}

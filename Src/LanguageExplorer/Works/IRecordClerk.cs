@@ -92,7 +92,7 @@ namespace LanguageExplorer.Works
 		bool SuspendLoadListUntilOnChangeFilter { get; set; }
 		bool TryClerkProvidingRootObject(out IRecordClerk clerkProvidingRootObject);
 		bool UpdateFiltersAndSortersIfNeeded();
-		RecordClerk.ListUpdateHelper UpdateHelper { get; set; }
+		ListUpdateHelper UpdateHelper { get; set; }
 		void UpdateOwningObjectIfNeeded();
 		void UpdateRecordTreeBarIfNeeded();
 		void UpdateStatusBarRecordNumber(string noRecordsText);
