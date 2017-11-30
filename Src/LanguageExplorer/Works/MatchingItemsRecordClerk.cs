@@ -29,7 +29,7 @@ namespace LanguageExplorer.Works
 
 		public void UpdateList(IEnumerable<int> objs)
 		{
-			((MatchingItemsRecordList) RecordList).UpdateList(objs);
+			((MatchingItemsRecordList) MyRecordList).UpdateList(objs);
 		}
 
 		/// <summary>
@@ -42,7 +42,7 @@ namespace LanguageExplorer.Works
 
 			try
 			{
-				RecordList.CurrentIndex = index;
+				MyRecordList.CurrentIndex = index;
 			}
 			catch (IndexOutOfRangeException error)
 			{
@@ -55,7 +55,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		public void SetSorter(RecordSorter sorter)
 		{
-			RecordList.Sorter = sorter;
+			MyRecordList.Sorter = sorter;
 		}
 
 		protected override bool TryRestoreFilter()

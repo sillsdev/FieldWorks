@@ -127,6 +127,10 @@ namespace LanguageExplorer.Works
 		/// Set of objects that we own and have to dispose
 		/// </summary>
 		private readonly DisposableObjectsSet<IDisposable> m_ObjectsToDispose = new DisposableObjectsSet<IDisposable>();
+#if RANDYTODO
+		// TODO: Add new parm to constructors for m_statusBar.
+#endif
+		private StatusBar m_statusBar;
 
 		#endregion Data members
 
@@ -134,7 +138,7 @@ namespace LanguageExplorer.Works
 
 		private RecordList(ISilDataAccessManaged decorator, bool usingAnalysisWs)
 		{
-			if (decorator == null) throw new ArgumentNullException("decorator");
+			Guard.AgainstNull(decorator, nameof(decorator));
 
 			m_objectListPublisher = new ObjectListPublisher(decorator, RecordListFlid); ;
 			m_oldLength = 0;
@@ -181,6 +185,51 @@ namespace LanguageExplorer.Works
 
 		#region All interface implementations
 
+		#region Implementation of IRecordListUpdater nested in IRecordClerk
+
+		/// <summary>Set the IRecordChangeHandler object for this list.</summary>
+		public IRecordChangeHandler RecordChangeHandler { get; set; }
+
+		/// <summary>Update the list, possibly calling IRecordChangeHandler.Fixup() first.
+		/// </summary>
+		public void UpdateList(bool fRefreshRecord, bool forceSort = false)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// just update the current record
+		/// </summary>
+		public void RefreshCurrentRecord()
+		{
+			throw new NotImplementedException();
+		}
+
+		#endregion Implementation of IRecordListUpdater nested in IRecordClerk
+
+		#region Implementation of IAnalysisOccurrenceFromHvo nested in IRecordClerk
+
+		public IParaFragment OccurrenceFromHvo(int hvo)
+		{
+			throw new NotImplementedException();
+		}
+
+		#endregion Implementation of IAnalysisOccurrenceFromHvo nested in IRecordClerk
+
+		#region Implementation of IBulkPropChanged nested in IRecordClerk
+
+		public void BeginBroadcastingChanges(int count)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void EndBroadcastingChanges()
+		{
+			throw new NotImplementedException();
+		}
+
+		#endregion Implementation of IBulkPropChanged nested in IRecordClerk
+
 		#region Implementation of IRecordList
 
 		public event EventHandler AboutToReload;
@@ -189,6 +238,33 @@ namespace LanguageExplorer.Works
 		/// fired when the list changes
 		/// </summary>
 		public event ListChangedEventHandler ListChanged;
+
+		public event FilterChangeHandler FilterChangedByClerk;
+		public event RecordNavigationInfoEventHandler RecordChanged;
+		public event SelectObjectEventHandler SelectedObjectChanged;
+		public event EventHandler SorterChangedByClerk;
+
+		public void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool AreCustomFieldsAProblem(int[] clsids)
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool AreSortersCompatible(RecordSorter first, RecordSorter second)
+		{
+			throw new NotImplementedException();
+		}
+
+		public RecordBarHandler BarHandler { get; }
+
+		public void BecomeInactive()
+		{
+			throw new NotImplementedException();
+		}
 
 		public LcmCache Cache
 		{
@@ -351,6 +427,11 @@ namespace LanguageExplorer.Works
 			return hvoNew != 0 ? m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoNew) : null;
 		}
 
+		public bool CanMoveTo(Navigation navigateTo)
+		{
+			throw new NotImplementedException();
+		}
+
 		/// <summary>
 		/// will return -1 if the vector is empty.
 		/// </summary>
@@ -474,6 +555,8 @@ namespace LanguageExplorer.Works
 				return SortItemAt(m_currentIndex).RootObjectHvo;
 			}
 		}
+
+		public bool Editable { get; set; }
 
 		/// <summary>
 		/// Answer true if the current object is valid. Currently we just check for deleted objects.
@@ -611,6 +694,12 @@ namespace LanguageExplorer.Works
 				m_filter = value;
 			}
 		}
+
+		public bool HasEmptyList { get; }
+		public string Id { get; }
+		public bool IsActiveInGui { get; }
+		public bool IsControllingTheRecordTreeBar { get; set; }
+		public bool IsDefaultSort { get; set; }
 
 		/// <summary>
 		/// Return the index (in m_sortedObjects) of the first displayed object.
@@ -819,6 +908,8 @@ namespace LanguageExplorer.Works
 			}
 		}
 
+		public bool ListLoadingSuppressedNoSideEffects { get; set; }
+
 		/// <summary>
 		/// Used to suppress reloading the list until all modifications to the list have been performed.
 		/// If you know that you are making modifications to a list and it needs to be reloaded afterwards use this
@@ -844,6 +935,17 @@ namespace LanguageExplorer.Works
 					m_requestedLoadWhileSuppressed = true;
 				}
 			}
+		}
+
+		public int ListSize { get; }
+		public void MoveToIndex(Navigation navigateTo)
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool OnAdjustFilterSelection(object argument)
+		{
+			throw new NotImplementedException();
 		}
 
 		public virtual bool NeedToReloadList()
@@ -884,57 +986,126 @@ namespace LanguageExplorer.Works
 		{
 			CheckDisposed();
 
-			if (m_filter == null)
+			using (new WaitCursor(PropertyTable.GetValue<Form>("window")))
 			{
-				// Had no filter to begin with
-				Debug.Assert(args.Removed == null);
-				m_filter = args.Added is NullFilter ? null : args.Added;
-			}
-			else if (m_filter.SameFilter(args.Removed))
-			{
-				// Simplest case: we had just one filter, the one being removed.
-				// Change filter to whatever (if anything) replaces it.
-				m_filter = args.Added is NullFilter ? null : args.Added;
-			}
-			else if (m_filter is AndFilter)
-			{
-				var af = (AndFilter)m_filter;
-				if (args.Removed != null)
+				Logger.WriteEvent("Changing filter.");
+				// if our clerk is in the state of suspending loading the list, reset it now.
+				if (SuspendLoadListUntilOnChangeFilter)
+					SuspendLoadListUntilOnChangeFilter = false;
+
+				if (m_filter == null)
 				{
-					af.Remove(args.Removed);
+					// Had no filter to begin with
+					Debug.Assert(args.Removed == null);
+					m_filter = args.Added is NullFilter ? null : args.Added;
 				}
-				if (args.Added != null)
+				else if (m_filter.SameFilter(args.Removed))
 				{
-					//When the user chooses "all records/no filter", the RecordClerk will remove
-					//its previous filter and add a NullFilter. In that case, we don't really need to add
-					//	that filter. Instead, we can just add nothing.
-					if (!(args.Added is NullFilter))
+					// Simplest case: we had just one filter, the one being removed.
+					// Change filter to whatever (if anything) replaces it.
+					m_filter = args.Added is NullFilter ? null : args.Added;
+				}
+				else if (m_filter is AndFilter)
+				{
+					var af = (AndFilter) m_filter;
+					if (args.Removed != null)
 					{
-						af.Add(args.Added);
+						af.Remove(args.Removed);
+					}
+					if (args.Added != null)
+					{
+						//When the user chooses "all records/no filter", the RecordClerk will remove
+						//its previous filter and add a NullFilter. In that case, we don't really need to add
+						//	that filter. Instead, we can just add nothing.
+						if (!(args.Added is NullFilter))
+						{
+							af.Add(args.Added);
+						}
+					}
+					// Remove AndFilter if we get down to one.
+					// This is not just an optimization, it allows the last filter to be removed
+					// leaving empty, so the status bar can show that there is then no filter.
+					if (af.Filters.Count == 1)
+					{
+						m_filter = af.Filters[0] as RecordFilter;
 					}
 				}
-				// Remove AndFilter if we get down to one.
-				// This is not just an optimization, it allows the last filter to be removed
-				// leaving empty, so the status bar can show that there is then no filter.
-				if (af.Filters.Count == 1)
+				else
 				{
-					m_filter = af.Filters[0] as RecordFilter;
+					// m_filter is not an AndFilter, so can't contain the one we're removing, nor IS it the one
+					// we're removing...so we have no way to remove, and it's an error if we're trying to.
+					Debug.Assert(args.Removed == null || args.Removed is NullFilter);
+					if (args.Added != null && !(args.Added is NullFilter)) // presumably true or nothing changed, but for paranoia..
+					{
+						// We already checked for m_filter being null, so we now have two filters,
+						// and need to make an AndFilter.
+						m_filter = CreateNewAndFilter(m_filter, args.Added);
+					}
 				}
+				// Now we have a new filter, we have to recompute what to show.
+				ReloadList();
+
+				// Remember the active filter for this list.
+				var persistFilter = DynamicLoader.PersistObject(Filter, "filter");
+				PropertyTable.SetProperty(FilterPropertyTableId, persistFilter, SettingsGroup.LocalSettings, true, true);
+				// adjust menu bar items according to current state of Filter, where needed.
+				Publisher.Publish("AdjustFilterSelection", Filter);
+				UpdateFilterStatusBarPanel();
+				if (MyRecordList.Filter != null)
+				{
+					Logger.WriteEvent("Filter changed: " + MyRecordList.Filter);
+				}
+				else
+				{
+					Logger.WriteEvent("Filter changed: (no filter)");
+				}
+				// notify clients of this change.
+				FilterChangedByClerk?.Invoke(this, args);
 			}
-			else
+		}
+
+		public void OnChangeFilterClearAll(object commandObject)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void OnChangeListItemsClass(int listItemsClass, int newTargetFlid, bool force)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void OnChangeSorter()
+		{
+			using (new WaitCursor(PropertyTable.GetValue<Form>("window")))
 			{
-				// m_filter is not an AndFilter, so can't contain the one we're removing, nor IS it the one
-				// we're removing...so we have no way to remove, and it's an error if we're trying to.
-				Debug.Assert(args.Removed == null || args.Removed is NullFilter);
-				if (args.Added != null && !(args.Added is NullFilter)) // presumably true or nothing changed, but for paranoia..
-				{
-					// We already checked for m_filter being null, so we now have two filters,
-					// and need to make an AndFilter.
-					m_filter = CreateNewAndFilter(m_filter, args.Added);
-				}
+				Logger.WriteEvent($"Sorter changed: {Sorter?.ToString() ?? "(no sorter)"}");
+				SorterChangedByClerk?.Invoke(this, EventArgs.Empty);
 			}
-			// Now we have a new filter, we have to recompute what to show.
-			ReloadList();
+		}
+
+		public bool OnDeleteRecord(object commandObject)
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool OnExport(object argument)
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool OnInsertItemInVector(object argument)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void OnItemDataModified(object argument)
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool OnJumpToRecord(object argument)
+		{
+			throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -961,6 +1132,21 @@ namespace LanguageExplorer.Works
 			}
 		}
 
+		public void OnPropertyChanged(string name)
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool OnRefresh(object argument)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void OnSorterChanged(RecordSorter sorter, string sortName, bool isDefaultSort)
+		{
+			throw new NotImplementedException();
+		}
+
 		/// <summary>
 		/// the object which owns the elements which make up this list
 		/// </summary>
@@ -984,6 +1170,10 @@ namespace LanguageExplorer.Works
 				ReloadList();
 			}
 		}
+
+		public int OwningFlid { get; }
+		public IRecordClerk ParentClerk { get; }
+		public string PersistedIndexProperty { get; }
 
 		public void PersistOn(string pathname)
 		{
@@ -1047,6 +1237,11 @@ namespace LanguageExplorer.Works
 			}
 		}
 
+		public void PersistListOn(string pathname)
+		{
+			throw new NotImplementedException();
+		}
+
 		/// <summary>
 		/// Get/set a progress reporter (encapsulated in an IAdvInd4 interface).
 		/// </summary>
@@ -1062,6 +1257,22 @@ namespace LanguageExplorer.Works
 				CheckDisposed();
 				m_progAdvInd = value;
 			}
+		}
+
+		public IRecordList MyRecordList { get; }
+		public void ReloadFilterProvider()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void ReloadIfNeeded()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void RemoveInvalidItems()
+		{
+			throw new NotImplementedException();
 		}
 
 		public string PropertyName
@@ -1400,10 +1611,15 @@ namespace LanguageExplorer.Works
 			set { m_requestedLoadWhileSuppressed = value; }
 		}
 
+		public void ResetFilterToDefault()
+		{
+			throw new NotImplementedException();
+		}
+
 		/// <summary>
 		/// Returns true if it successfully set m_sortedObjects to a restored list.
 		/// </summary>
-		public virtual bool RestoreFrom(string pathname)
+		public virtual bool RestoreListFrom(string pathname)
 		{
 			// If something has created instances of the class we display, the persisted list may be
 			// missing things. For example, if the program starts up in interlinear text view, and the user
@@ -1423,6 +1639,16 @@ namespace LanguageExplorer.Works
 			// list the next time we start up.
 			FileUtils.Delete(pathname);
 			return false; // could not restore, bad file or deleted objects or...
+		}
+
+		public void SaveOnChangeRecord()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void SelectedRecordChanged(bool suppressFocusChange, bool fSkipRecordNavigation = false)
+		{
+			throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -1463,6 +1689,8 @@ namespace LanguageExplorer.Works
 			}
 		}
 
+		public bool SkipShowRecord { get; set; }
+
 		/// <summary>
 		/// This is now a list of ManyOnePathSortItems! (JohnT, 3 June 05)
 		/// </summary>
@@ -1496,6 +1724,42 @@ namespace LanguageExplorer.Works
 				m_sorter = value;
 				m_sorter.Cache = m_cache;
 			}
+		}
+
+		public ISortItemProvider SortItemProvider { get; }
+		public string SortName { get; }
+		public bool SuppressSaveOnChangeRecord { get; set; }
+		public bool SuspendLoadingRecordUntilOnJumpToRecord { get; set; }
+		public bool SuspendLoadListUntilOnChangeFilter { get; set; }
+		public bool TryClerkProvidingRootObject(out IRecordClerk clerkProvidingRootObject)
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool UpdateFiltersAndSortersIfNeeded()
+		{
+			throw new NotImplementedException();
+		}
+
+		public RecordClerk.ListUpdateHelper UpdateHelper { get; set; }
+		public void UpdateOwningObjectIfNeeded()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void UpdateRecordTreeBarIfNeeded()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void UpdateStatusBarRecordNumber(string noRecordsText)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void ViewChangedSelectedRecord(FwObjectSelectionEventArgs e)
+		{
+			throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -1671,6 +1935,21 @@ namespace LanguageExplorer.Works
 			return IndexOf(SortedObjects, hvo);
 		}
 
+		public void JumpToIndex(int index, bool suppressFocusChange = false)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void JumpToRecord(int jumpToHvo, bool suppressFocusChange = false)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void JumpToRecord(Guid jumpToGuid, bool suppressFocusChange = false)
+		{
+			throw new NotImplementedException();
+		}
+
 		/// <summary>
 		/// get the class of the items in this list.
 		/// </summary>
@@ -1753,6 +2032,8 @@ namespace LanguageExplorer.Works
 			m_insertableClasses = null;
 			m_sortedObjects = null;
 			m_owningObject = null;
+			m_objectListPublisher = null;
+			m_statusBar = null;
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
@@ -2052,6 +2333,10 @@ namespace LanguageExplorer.Works
 
 		#region Private stuff
 
+		private bool IgnoreStatusPanel { get; set; }
+
+		private string FilterPropertyTableId => PropertyTableId("filter");
+
 		/// <summary>
 		/// This keeps track of the object if any that we have noted in the CmObjectRepository as focused.
 		/// My intention is to reserve it for this purpose ONLY.
@@ -2337,6 +2622,40 @@ namespace LanguageExplorer.Works
 		#endregion Private stuff
 
 		#region Protected stuff
+
+		protected virtual void OnSelectedObjectChanged(SelectObjectEventArgs e)
+		{
+			SelectedObjectChanged?.Invoke(this, e);
+		}
+
+		protected virtual void OnRecordChanged(RecordNavigationEventArgs e)
+		{
+			RecordChanged?.Invoke(this, e);
+		}
+
+		/// <summary>
+		/// Figure out what should show in the filter status panel and make it so.
+		/// </summary>
+		protected void UpdateFilterStatusBarPanel()
+		{
+			if (!IsControllingTheRecordTreeBar)
+				return; // none of our business!
+
+			var msg = FilterStatusContents(MyRecordList.Filter != null && MyRecordList.Filter.IsUserVisible) ?? string.Empty;
+			if (IgnoreStatusPanel)
+			{
+				Publisher.Publish("DialogFilterStatus", msg);
+			}
+			else
+			{
+				StatusBarPanelServices.SetStatusBarPanelFilter(m_statusBar, msg);
+			}
+		}
+
+		protected virtual string FilterStatusContents(bool listIsFiltered)
+		{
+			return listIsFiltered ? xWorksStrings.Filtered : string.Empty;
+		}
 
 		/// <summary>
 		/// Get the font size from the Stylesheet

@@ -158,8 +158,8 @@ namespace LanguageExplorer.Works
 
 			m_id = id;
 			m_statusBar = statusBar;
-			RecordList = recordList;
-			RecordList.Clerk = this;
+			MyRecordList = recordList;
+			MyRecordList.Clerk = this;
 			m_defaultSorter = defaultSorter;
 			m_defaultSortLabel = defaultSortLabel;
 			m_defaultFilter = defaultFilter; // Null is fine.
@@ -185,8 +185,8 @@ namespace LanguageExplorer.Works
 
 			m_id = id;
 			m_statusBar = statusBar;
-			RecordList = recordList;
-			RecordList.Clerk = this;
+			MyRecordList = recordList;
+			MyRecordList.Clerk = this;
 			m_allSorters = sorters;
 			m_defaultSorter = sorters[AreaServices.Default];
 			m_defaultSortLabel = AreaServices.Default;
@@ -290,7 +290,7 @@ namespace LanguageExplorer.Works
 				if (useRecordTreeBar && s_lastClerkToLoadTreeBar != this)//optimization
 				{
 					s_lastClerkToLoadTreeBar = this;
-					m_recordBarHandler.PopulateRecordBar(RecordList);
+					m_recordBarHandler.PopulateRecordBar(MyRecordList);
 				}
 			}
 
@@ -355,14 +355,14 @@ namespace LanguageExplorer.Works
 			RemoveNotification();
 			// If list loading was suppressed by this view (e.g., bulk edit to prevent changed items
 			// disappearing from filter), stop that now, so it won't affect any future use of the list.
-			if (RecordList != null)
-				RecordList.ListLoadingSuppressed = false;
+			if (MyRecordList != null)
+				MyRecordList.ListLoadingSuppressed = false;
 		}
 
 		/// <summary>
 		/// our list's LcmCache
 		/// </summary>
-		public LcmCache Cache => RecordList.Cache;
+		public LcmCache Cache => MyRecordList.Cache;
 
 		public bool CanMoveTo(Navigation navigateTo)
 		{
@@ -370,16 +370,16 @@ namespace LanguageExplorer.Works
 			switch (navigateTo)
 			{
 				case Navigation.First:
-					canMoveTo = RecordList.FirstItemIndex != -1 && RecordList.FirstItemIndex != RecordList.CurrentIndex;
+					canMoveTo = MyRecordList.FirstItemIndex != -1 && MyRecordList.FirstItemIndex != MyRecordList.CurrentIndex;
 					break;
 				case Navigation.Next:
-					canMoveTo = RecordList.NextItemIndex != -1 && RecordList.NextItemIndex != RecordList.CurrentIndex;
+					canMoveTo = MyRecordList.NextItemIndex != -1 && MyRecordList.NextItemIndex != MyRecordList.CurrentIndex;
 					break;
 				case Navigation.Previous:
-					canMoveTo = RecordList.PrevItemIndex != -1 && RecordList.PrevItemIndex != RecordList.CurrentIndex;
+					canMoveTo = MyRecordList.PrevItemIndex != -1 && MyRecordList.PrevItemIndex != MyRecordList.CurrentIndex;
 					break;
 				case Navigation.Last:
-					canMoveTo = RecordList.LastItemIndex != -1 && RecordList.LastItemIndex != RecordList.CurrentIndex;
+					canMoveTo = MyRecordList.LastItemIndex != -1 && MyRecordList.LastItemIndex != MyRecordList.CurrentIndex;
 					break;
 				default:
 					throw new IndexOutOfRangeException($"I don't know if one can move to '{navigateTo}'.");
@@ -393,7 +393,11 @@ namespace LanguageExplorer.Works
 			{
 				CheckDisposed();
 
-				return RecordList.CurrentIndex;
+				return MyRecordList.CurrentIndex;
+			}
+			set
+			{
+				MyRecordList.CurrentIndex = value;
 			}
 		}
 
@@ -402,14 +406,14 @@ namespace LanguageExplorer.Works
 			get
 			{
 				CheckDisposed();
-				if (RecordList.IsCurrentObjectValid())
-					return RecordList.CurrentObject;
+				if (MyRecordList.IsCurrentObjectValid())
+					return MyRecordList.CurrentObject;
 				return null;
 			}
 		}
 
 		/// <remarks>virtual for tests</remarks>
-		public virtual int CurrentObjectHvo => RecordList.CurrentObjectHvo;
+		public virtual int CurrentObjectHvo => MyRecordList.CurrentObjectHvo;
 
 		/// <summary>
 		/// Prevents the user from adding or removing records (e.g. semantic domain list in the rapid data entry view)
@@ -433,7 +437,11 @@ namespace LanguageExplorer.Works
 			get
 			{
 				CheckDisposed();
-				return RecordList.Filter;
+				return MyRecordList.Filter;
+			}
+			set
+			{
+				MyRecordList.Filter = value;
 			}
 		}
 
@@ -443,7 +451,7 @@ namespace LanguageExplorer.Works
 			{
 				CheckDisposed();
 
-				return RecordList.SortedObjects.Count == 0;
+				return MyRecordList.SortedObjects.Count == 0;
 			}
 		}
 
@@ -557,7 +565,7 @@ namespace LanguageExplorer.Works
 		{
 			CheckDisposed();
 			// If we aren't changing the index, just bail out. (Fixes, LT-11401)
-			if (RecordList.CurrentIndex == index)
+			if (MyRecordList.CurrentIndex == index)
 			{
 				//Refactor: we would prefer to bail out without broadcasting anything but...
 				//There is a chain of messages and events that I don't yet understand which relies on
@@ -572,7 +580,7 @@ namespace LanguageExplorer.Works
 			}
 			try
 			{
-				RecordList.CurrentIndex = index;
+				MyRecordList.CurrentIndex = index;
 			}
 			catch (IndexOutOfRangeException error)
 			{
@@ -591,7 +599,7 @@ namespace LanguageExplorer.Works
 		{
 			CheckDisposed();
 
-			var index = RecordList.IndexOf(jumpToHvo);
+			var index = MyRecordList.IndexOf(jumpToHvo);
 			if (index < 0)
 				return; // not found (maybe suppressed by filter?)
 			JumpToIndex(index, suppressFocusChange);
@@ -609,7 +617,7 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// get the class of the items in this list.
 		/// </summary>
-		public int ListItemsClass => RecordList.ListItemsClass;
+		public int ListItemsClass => ((ISortItemProvider)MyRecordList).ListItemsClass;
 
 		/// <summary>
 		/// Used to suppress Reloading our list multiple times until we're finished with PropChanges.
@@ -618,14 +626,14 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		public bool ListLoadingSuppressed
 		{
-			get { return RecordList.ListLoadingSuppressed; }
-			set { RecordList.ListLoadingSuppressed = value; }
+			get { return MyRecordList.ListLoadingSuppressed; }
+			set { MyRecordList.ListLoadingSuppressed = value; }
 		}
 
 		public bool ListLoadingSuppressedNoSideEffects
 		{
-			get { return RecordList.ListLoadingSuppressed; }
-			set { RecordList.SetSuppressingLoadList(value); }
+			get { return MyRecordList.ListLoadingSuppressed; }
+			set { MyRecordList.SetSuppressingLoadList(value); }
 		}
 
 
@@ -638,12 +646,12 @@ namespace LanguageExplorer.Works
 			get
 			{
 				CheckDisposed();
-				return RecordList.ListModificationInProgress;
+				return MyRecordList.ListModificationInProgress;
 			}
 			set
 			{
 				CheckDisposed();
-				RecordList.ListModificationInProgress = value;
+				MyRecordList.ListModificationInProgress = value;
 			}
 		}
 
@@ -653,7 +661,7 @@ namespace LanguageExplorer.Works
 			{
 				CheckDisposed();
 
-				return RecordList.SortedObjects.Count;
+				return MyRecordList.SortedObjects.Count;
 			}
 		}
 
@@ -665,23 +673,23 @@ namespace LanguageExplorer.Works
 			switch (navigateTo)
 			{
 				case Navigation.First:
-					newIndex = RecordList.FirstItemIndex;
+					newIndex = MyRecordList.FirstItemIndex;
 					break;
 				case Navigation.Next:
 					// NB: This may be used in situations where there is no next record, as
 					// when the current record has been deleted but it was the last record.
-					newIndex = RecordList.NextItemIndex;
+					newIndex = MyRecordList.NextItemIndex;
 					break;
 				case Navigation.Previous:
-					newIndex = RecordList.PrevItemIndex;
+					newIndex = MyRecordList.PrevItemIndex;
 					break;
 				case Navigation.Last:
-					newIndex = RecordList.LastItemIndex;
+					newIndex = MyRecordList.LastItemIndex;
 					break;
 				default:
 					throw new IndexOutOfRangeException($"I don't know how to move to '{navigateTo}'.");
 			}
-			RecordList.CurrentIndex = newIndex;
+			MyRecordList.CurrentIndex = newIndex;
 			BroadcastChange(false);
 		}
 
@@ -725,16 +733,16 @@ namespace LanguageExplorer.Works
 				// if our clerk is in the state of suspending loading the list, reset it now.
 				if (SuspendLoadListUntilOnChangeFilter)
 					SuspendLoadListUntilOnChangeFilter = false;
-				RecordList.OnChangeFilter(args);
+				MyRecordList.OnChangeFilter(args);
 				// Remember the active filter for this list.
-				string persistFilter = DynamicLoader.PersistObject(Filter, "filter");
+				var persistFilter = DynamicLoader.PersistObject(Filter, "filter");
 				PropertyTable.SetProperty(FilterPropertyTableId, persistFilter, SettingsGroup.LocalSettings, true, true);
 				// adjust menu bar items according to current state of Filter, where needed.
 				Publisher.Publish("AdjustFilterSelection", Filter);
 				UpdateFilterStatusBarPanel();
-				if (RecordList.Filter != null)
+				if (MyRecordList.Filter != null)
 				{
-					Logger.WriteEvent("Filter changed: " + RecordList.Filter);
+					Logger.WriteEvent("Filter changed: " + MyRecordList.Filter);
 				}
 				else
 				{
@@ -785,7 +793,7 @@ namespace LanguageExplorer.Works
 				}
 				else if (count > 0)
 				{
-					var af2 = RecordList.CreateNewAndFilter(childrenToKeep.ToArray());
+					var af2 = MyRecordList.CreateNewAndFilter(childrenToKeep.ToArray());
 					OnChangeFilter(new FilterChangeEventArgs(af2, Filter));
 					return;
 				}
@@ -804,7 +812,7 @@ namespace LanguageExplorer.Works
 		public void OnChangeListItemsClass(int listItemsClass, int newTargetFlid, bool force)
 		{
 			CheckDisposed();
-			RecordList.ReloadList(listItemsClass, newTargetFlid, force);
+			MyRecordList.ReloadList(listItemsClass, newTargetFlid, force);
 		}
 
 		public void OnChangeSorter()
@@ -814,7 +822,7 @@ namespace LanguageExplorer.Works
 			var window = PropertyTable.GetValue<Form>("window");
 			using (new WaitCursor(window))
 			{
-				Logger.WriteEvent($"Sorter changed: {RecordList.Sorter?.ToString() ?? "(no sorter)"}");
+				Logger.WriteEvent($"Sorter changed: {MyRecordList.Sorter?.ToString() ?? "(no sorter)"}");
 				SorterChangedByClerk?.Invoke(this, EventArgs.Empty);
 			}
 		}
@@ -1073,7 +1081,7 @@ namespace LanguageExplorer.Works
 		/// <param name="argument"></param>
 		public void OnItemDataModified(object argument)
 		{
-			var da = RecordList.VirtualListPublisher;
+			var da = MyRecordList.VirtualListPublisher;
 			while (da != null)
 			{
 				if (da.GetType().GetMethod("OnItemDataModified") != null)
@@ -1098,33 +1106,31 @@ namespace LanguageExplorer.Works
 			{
 				var hvoTarget = (int)argument;
 
-				int index = IndexOfObjOrChildOrParent(hvoTarget);
+				var index = IndexOfObjOrChildOrParent(hvoTarget);
 				if (index == -1)
 				{
 					// See if this is a subclass that knows how to add items.
 					if (AddItemToList(hvoTarget))
 						index = IndexOfObjOrChildOrParent(hvoTarget);
 				}
-				if (RecordList.Filter != null && index == -1)
+				if (MyRecordList.Filter != null && index == -1)
 				{
 					// We can get here with an irrelevant target hvo, for example by inserting a new
 					// affix allomorph in an entry (see LT-4025).  So make sure we have a suitable
 					// target before complaining to the user about a filter being on.
-					var mdc = (IFwMetaDataCacheManaged)RecordList.VirtualListPublisher.MetaDataCache;
-					int clidList = mdc.FieldExists(RecordList.Flid) ? mdc.GetDstClsId(RecordList.Flid) : -1;
-					int clidObj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoTarget).ClassID;
+					var mdc = (IFwMetaDataCacheManaged)MyRecordList.VirtualListPublisher.MetaDataCache;
+					var clidList = mdc.FieldExists(MyRecordList.Flid) ? mdc.GetDstClsId(MyRecordList.Flid) : -1;
+					var clidObj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoTarget).ClassID;
 
 					// If (int) clidList is -1, that means it was for a decorator property and the IsSameOrSubclassOf
 					// test won't be valid.
 					// Enhance JohnT/CurtisH: It would be better to if decorator properties were recorded in the MDC, or
 					// if we could access the decorator MDC.
-					bool fSuitableTarget = clidList == -1 || DomainObjectServices.IsSameOrSubclassOf(mdc, clidObj, clidList);
+					var fSuitableTarget = clidList == -1 || DomainObjectServices.IsSameOrSubclassOf(mdc, clidObj, clidList);
 
 					if (fSuitableTarget)
 					{
-						DialogResult dr = MessageBox.Show(
-							xWorksStrings.LinkTargetNotAvailableDueToFilter,
-							xWorksStrings.TargetNotFound, MessageBoxButtons.YesNo);
+						var dr = MessageBox.Show(xWorksStrings.LinkTargetNotAvailableDueToFilter, xWorksStrings.TargetNotFound, MessageBoxButtons.YesNo);
 						if (dr == DialogResult.Yes)
 						{
 							// We had changed from OnChangeFilter to SendMessage("RemoveFilters") to solve a filterbar
@@ -1146,7 +1152,7 @@ namespace LanguageExplorer.Works
 				if (index == -1)
 				{
 					// May be the item was just created by another program or tool (e.g., LT-8827)
-					RecordList.ReloadList();
+					MyRecordList.ReloadList();
 					index = IndexOfObjOrChildOrParent(hvoTarget);
 					if (index == -1)
 					{
@@ -1176,7 +1182,7 @@ namespace LanguageExplorer.Works
 			get
 			{
 				CheckDisposed();
-				return RecordList.OnLast;
+				return MyRecordList.OnLast;
 			}
 		}
 
@@ -1211,7 +1217,7 @@ namespace LanguageExplorer.Works
 			using (new WaitCursor(PropertyTable.GetValue<Form>("window")))
 			{
 				m_rch?.Fixup(false);     // no need to recursively refresh!
-				RecordList.ReloadList();
+				MyRecordList.ReloadList();
 				return false;   //that other colleagues do a refresh, too.
 			}
 		}
@@ -1232,7 +1238,7 @@ namespace LanguageExplorer.Works
 			SortName = sortName;
 			PropertyTable.SetProperty(SortNamePropertyTableId, SortName, SettingsGroup.LocalSettings, true, true);
 
-			RecordList.ChangeSorter(sorter);
+			MyRecordList.ChangeSorter(sorter);
 			// Remember how we're sorted.
 			string persistSorter = DynamicLoader.PersistObject(Sorter, "sorter");
 			PropertyTable.SetProperty(SorterPropertyTableId, persistSorter, SettingsGroup.LocalSettings, true, true);
@@ -1248,12 +1254,12 @@ namespace LanguageExplorer.Works
 			set
 			{
 				CheckDisposed();
-				RecordList.OwningObject = value;
+				MyRecordList.OwningObject = value;
 			}
 			get
 			{
 				CheckDisposed();
-				return RecordList.OwningObject;
+				return MyRecordList.OwningObject;
 			}
 		}
 
@@ -1265,7 +1271,7 @@ namespace LanguageExplorer.Works
 			get
 			{
 				CheckDisposed();
-				return RecordList.Flid;
+				return MyRecordList.Flid;
 			}
 		}
 
@@ -1303,7 +1309,7 @@ namespace LanguageExplorer.Works
 		public void PersistListOn(string pathname)
 		{
 			if (IsPrimaryClerk)
-				RecordList.PersistOn(pathname);
+				MyRecordList.PersistOn(pathname);
 		}
 
 		/// <summary>
@@ -1315,19 +1321,19 @@ namespace LanguageExplorer.Works
 			get
 			{
 				CheckDisposed();
-				return RecordList?.ProgressReporter;
+				return MyRecordList?.ProgressReporter;
 			}
 			set
 			{
 				CheckDisposed();
-				if (RecordList != null)
+				if (MyRecordList != null)
 				{
-					RecordList.ProgressReporter = value;
+					MyRecordList.ProgressReporter = value;
 				}
 			}
 		}
 
-		public IRecordList RecordList { get; }
+		public IRecordList MyRecordList { get; }
 
 		public void ReloadFilterProvider()
 		{
@@ -1341,12 +1347,12 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		public virtual void ReloadIfNeeded()
 		{
-			if (OwningObject != null && RecordList.IsVirtualPublisherCreated)
+			if (OwningObject != null && MyRecordList.IsVirtualPublisherCreated)
 			{
 				// A full refresh wipes out all caches as of 26 October 2005,
 				// so we have to reload it. This fixes the sextuplets:
 				// LT-5393, LT-6102, LT-6154, LT-6084, LT-6059, LT-6062.
-				RecordList.ReloadList();
+				MyRecordList.ReloadList();
 			}
 		}
 
@@ -1355,7 +1361,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		public void RemoveInvalidItems()
 		{
-			RecordList.RemoveUnwantedSortItems();
+			MyRecordList.RemoveUnwantedSortItems();
 		}
 
 		/// <summary>
@@ -1364,10 +1370,14 @@ namespace LanguageExplorer.Works
 		/// <param name="hvoToRemove"></param>
 		public void RemoveItemsFor(int hvoToRemove)
 		{
-			RecordList.RemoveItemsFor(hvoToRemove);
+			((ISortItemProvider)MyRecordList).RemoveItemsFor(hvoToRemove);
 		}
 
-		public bool RequestedLoadWhileSuppressed => RecordList.RequestedLoadWhileSuppressed;
+		public bool RequestedLoadWhileSuppressed
+		{
+			get { return MyRecordList.RequestedLoadWhileSuppressed; }
+			set { MyRecordList.RequestedLoadWhileSuppressed = value; }
+		}
 
 		/// <summary>
 		/// If a filter becomes invalid, it has to be reset somehow.  This resets it to the default filter
@@ -1375,7 +1385,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		public void ResetFilterToDefault()
 		{
-			OnChangeFilter(new FilterChangeEventArgs(m_defaultFilter, RecordList.Filter));
+			OnChangeFilter(new FilterChangeEventArgs(m_defaultFilter, MyRecordList.Filter));
 		}
 
 		/// <summary>
@@ -1385,7 +1395,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		public bool RestoreListFrom(string pathname)
 		{
-			return IsPrimaryClerk && RecordList.RestoreFrom(pathname);
+			return IsPrimaryClerk && MyRecordList.RestoreListFrom(pathname);
 		}
 
 		/// <summary>
@@ -1423,9 +1433,9 @@ namespace LanguageExplorer.Works
 		{
 			CheckDisposed();
 
-			if (CurrentObjectHvo != 0 && !RecordList.CurrentObjectIsValid)
+			if (CurrentObjectHvo != 0 && !MyRecordList.CurrentObjectIsValid)
 			{
-				RecordList.ReloadList(); // clean everything up
+				MyRecordList.ReloadList(); // clean everything up
 			}
 			if (IgnoreStatusPanel)
 			{
@@ -1475,7 +1485,7 @@ namespace LanguageExplorer.Works
 			get
 			{
 				CheckDisposed();
-				return RecordList.ShouldNotModifyList;
+				return MyRecordList.ShouldNotModifyList;
 			}
 		}
 
@@ -1511,7 +1521,11 @@ namespace LanguageExplorer.Works
 			get
 			{
 				CheckDisposed();
-				return RecordList.Sorter;
+				return MyRecordList.Sorter;
+			}
+			set
+			{
+				MyRecordList.Sorter = value;
 			}
 		}
 
@@ -1525,7 +1539,7 @@ namespace LanguageExplorer.Works
 			get
 			{
 				CheckDisposed();
-				return RecordList;
+				return MyRecordList;
 			}
 		}
 		public string SortName { get; internal set; }
@@ -1653,7 +1667,7 @@ namespace LanguageExplorer.Works
 		{
 			CheckDisposed();
 
-			m_recordBarHandler?.PopulateRecordBarIfNeeded(RecordList);
+			m_recordBarHandler?.PopulateRecordBarIfNeeded(MyRecordList);
 		}
 
 		/// <summary />
@@ -1661,10 +1675,10 @@ namespace LanguageExplorer.Works
 		public void UpdateStatusBarRecordNumber(string noRecordsText)
 		{
 			string message;
-			var len = RecordList.SortedObjects.Count;
+			var len = MyRecordList.SortedObjects.Count;
 			if (len > 0)
 			{
-				message = (1 + RecordList.CurrentIndex) + @"/" + len;
+				message = (1 + MyRecordList.CurrentIndex) + @"/" + len;
 			}
 			else
 			{
@@ -1698,16 +1712,17 @@ namespace LanguageExplorer.Works
 			// jumps to the first instance of that object (LT-4691).
 			// Through deletion of Reversal Index entry it was possible to arrive here with
 			// no sorted objects. (LT-13391)
-			if (e.Index >= 0 && RecordList.SortedObjects.Count > 0)
+			if (e.Index >= 0 && MyRecordList.SortedObjects.Count > 0)
 			{
-				var ourHvo = RecordList.SortItemAt(e.Index).RootObjectHvo;
+				var ourHvo = MyRecordList.SortItemAt(e.Index).RootObjectHvo;
 				// if for some reason the index doesn't match the hvo, we'll jump to the Hvo.
 				// But we don't think that should happen, so Assert to help catch the problems.
 				// JohnT Nov 2010: Someone had marked this as not ported to 7.0 with the comment "assert fires".
 				// But I can't find any circumstances in which e.Index >= 0, much less a case where it fires.
 				// If you feel a need to take this Assert out again, which would presumably mean you know a
-				// very repetable scenario for making it fire, please let me know what it is.
-				Debug.Assert(e.Hvo == e.Hvo, "the index (" + e.Index + ") for selected object (" + e.Hvo + ") does not match the object (" + e.Hvo + " in our list at that index.)");
+				// very repeatable scenario for making it fire, please let me know what it is.
+				// Original do nothing version from the day it was added: Debug.Assert(e.Hvo == e.Hvo, "the index (" + e.Index + ") for selected object (" + e.Hvo + ") does not match the object (" + e.Hvo + " in our list at that index.)");
+				Debug.Assert(ourHvo == e.Hvo, "the index (" + e.Index + ") for selected object (" + ourHvo + ") does not match the object (" + e.Hvo + " in our list at that index.)");
 				if (ourHvo != e.Hvo)
 				{
 					JumpToRecord(e.Hvo);
@@ -1727,11 +1742,11 @@ namespace LanguageExplorer.Works
 			get
 			{
 				CheckDisposed();
-				return RecordList.VirtualFlid;
+				return MyRecordList.VirtualFlid;
 			}
 		}
 
-		public ISilDataAccessManaged VirtualListPublisher => RecordList.VirtualListPublisher;
+		public ISilDataAccessManaged VirtualListPublisher => MyRecordList.VirtualListPublisher;
 
 		#endregion Implementation of IRecordClerk
 
@@ -1749,13 +1764,13 @@ namespace LanguageExplorer.Works
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			RecordList.InitializeFlexComponent(flexComponentParameters);
+			MyRecordList.InitializeFlexComponent(flexComponentParameters);
 
 			TryRestoreSorter();
 			TryRestoreFilter();
-			RecordList.ListChanged += OnListChanged;
-			RecordList.AboutToReload += m_list_AboutToReload;
-			RecordList.DoneReload += m_list_DoneReload;
+			MyRecordList.ListChanged += OnListChanged;
+			MyRecordList.AboutToReload += m_list_AboutToReload;
+			MyRecordList.DoneReload += m_list_DoneReload;
 			var fSetFilterMenu = false;
 			if (m_filterProvider != null)
 			{
@@ -1763,7 +1778,7 @@ namespace LanguageExplorer.Works
 				// That provider is the class WfiRecordFilterListProvider.
 				// That clerk is used in these tools: AnalysesTool, BulkEditWordformsTool, & WordListConcordanceTool
 				// That WfiRecordFilterListProvider instance is (ok: "will be") provided in one of the RecordClerk contructor overloads.
-				if (RecordList.Filter != null)
+				if (MyRecordList.Filter != null)
 				{
 					// There is only one clerk (concordanceWords) that sets m_filterProvider to a provider.
 					// That clerk is used in these tools: AnalysesTool, BulkEditWordformsTool, & WordListConcordanceTool
@@ -1771,7 +1786,7 @@ namespace LanguageExplorer.Works
 					// NOTE: for now assume we can only set/persist one such menubar filter at a time.
 					foreach (RecordFilter menuBarFilterOption in m_filterProvider.Filters)
 					{
-						if (!RecordList.Filter.Contains(menuBarFilterOption))
+						if (!MyRecordList.Filter.Contains(menuBarFilterOption))
 						{
 							continue;
 						}
@@ -1870,7 +1885,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		public void RefreshCurrentRecord()
 		{
-			RecordList.ReplaceListItem(CurrentObjectHvo);
+			MyRecordList.ReplaceListItem(CurrentObjectHvo);
 		}
 
 		public void UpdateList(bool fRefreshRecord, bool forceSort = false)
@@ -1883,10 +1898,10 @@ namespace LanguageExplorer.Works
 				// No need to recursively update the list!
 				m_rch?.Fixup(false);
 			}
-			var fReload = forceSort || RecordList.NeedToReloadList();
+			var fReload = forceSort || MyRecordList.NeedToReloadList();
 			if (fReload)
 			{
-				RecordList.ForceReloadList();
+				MyRecordList.ForceReloadList();
 			}
 		}
 
@@ -2030,11 +2045,11 @@ namespace LanguageExplorer.Works
 			{
 				// Dispose managed resources here.
 				UnregisterMessageHandlers();
-				RecordList.ListChanged -= OnListChanged;
-				RecordList.AboutToReload -= m_list_AboutToReload;
-				RecordList.DoneReload -= m_list_DoneReload;
+				MyRecordList.ListChanged -= OnListChanged;
+				MyRecordList.AboutToReload -= m_list_AboutToReload;
+				MyRecordList.DoneReload -= m_list_DoneReload;
 				RemoveNotification(); // before disposing list, we need it to get to the Cache.
-				RecordList.Dispose();
+				MyRecordList.Dispose();
 				m_rch?.Dispose();
 				m_recordBarHandler?.Dispose();
 				if (IsControllingTheRecordTreeBar)
@@ -2200,15 +2215,15 @@ namespace LanguageExplorer.Works
 				JumpToRecord(hvo);
 		}
 
-		private string SortNamePropertyTableId => RecordList.PropertyTableId("sortName");
+		private string SortNamePropertyTableId => MyRecordList.PropertyTableId("sortName");
 
-		private string FilterPropertyTableId => RecordList.PropertyTableId("filter");
+		private string FilterPropertyTableId => MyRecordList.PropertyTableId("filter");
 
-		private string SorterPropertyTableId => RecordList.PropertyTableId("sorter");
+		private string SorterPropertyTableId => MyRecordList.PropertyTableId("sorter");
 
 		private void SetupDataContext(bool floadList)
 		{
-			RecordList.InitLoad(floadList);
+			MyRecordList.InitLoad(floadList);
 
 			//NB: we need to be careful
 			//not to broadcast any record changes until we are actually initialize enough
@@ -2231,18 +2246,18 @@ namespace LanguageExplorer.Works
 		/// <returns></returns>
 		private int IndexOfObjOrChildOrParent(int hvoTarget)
 		{
-			var index = RecordList.IndexOf(hvoTarget);
+			var index = MyRecordList.IndexOf(hvoTarget);
 			if (index == -1)
 			{
 				// In case we can't find the argument in the list, see if it is an owner of anything
 				// in the list. This is useful, for example, when asked to find a LexEntry in a list of senses.
-				index = RecordList.IndexOfChildOf(hvoTarget);
+				index = MyRecordList.IndexOfChildOf(hvoTarget);
 			}
 			if (index == -1)
 			{
 				// Still no luck. See if the argument's owner is in the list (e.g., may be a subrecord
 				// in DN, and only parent currently showing).
-				index = RecordList.IndexOfParentOf(hvoTarget);
+				index = MyRecordList.IndexOfParentOf(hvoTarget);
 			}
 			return index;
 		}
@@ -2312,7 +2327,7 @@ namespace LanguageExplorer.Works
 				return;
 			}
 
-			var old = RecordList.OwningObject;
+			var old = MyRecordList.OwningObject;
 			ICmObject newObj = null;
 			var rni = PropertyTable.GetValue<RecordNavigationInfo>(DependentPropertyName);
 			if (rni != null)
@@ -2331,7 +2346,7 @@ namespace LanguageExplorer.Works
 				}
 				if (!fUpdateOwningObjectOnlyIfChanged || !ReferenceEquals(old, newObj))
 				{
-					RecordList.OwningObject = newObj;
+					MyRecordList.OwningObject = newObj;
 				}
 			}
 			if (!ReferenceEquals(old, newObj))
@@ -2385,7 +2400,7 @@ namespace LanguageExplorer.Works
 		private void AddNotification()
 		{
 			// We need the list to get the cache.
-			if (RecordList == null || RecordList.IsDisposed || Cache == null || Cache.IsDisposed || Cache.DomainDataByFlid == null)
+			if (MyRecordList == null || MyRecordList.IsDisposed || Cache == null || Cache.IsDisposed || Cache.DomainDataByFlid == null)
 				return;
 			Cache.DomainDataByFlid.AddNotification(this);
 		}
@@ -2397,7 +2412,7 @@ namespace LanguageExplorer.Works
 		private void RemoveNotification()
 		{
 			// We need the list to get the cache.
-			if (RecordList == null || RecordList.IsDisposed || Cache == null || Cache.IsDisposed || Cache.DomainDataByFlid == null)
+			if (MyRecordList == null || MyRecordList.IsDisposed || Cache == null || Cache.IsDisposed || Cache.DomainDataByFlid == null)
 				return;
 			Cache.DomainDataByFlid.RemoveNotification(this);
 		}
@@ -2424,7 +2439,7 @@ namespace LanguageExplorer.Works
 		private void BroadcastChange(bool suppressFocusChange)
 		{
 			ClearInvalidSubitem();
-			if (CurrentObjectHvo != 0 && !RecordList.CurrentObjectIsValid)
+			if (CurrentObjectHvo != 0 && !MyRecordList.CurrentObjectIsValid)
 			{
 				MessageBox.Show(xWorksStrings.SelectedObjectHasBeenDeleted,
 					xWorksStrings.DeletedObjectDetected,
@@ -2432,15 +2447,15 @@ namespace LanguageExplorer.Works
 				m_fReloadingDueToMissingObject = true;
 				try
 				{
-					int idx = RecordList.CurrentIndex;
+					int idx = MyRecordList.CurrentIndex;
 					int cobj = ListSize;
 					if (cobj == 0)
 					{
-						RecordList.CurrentIndex = -1;
+						MyRecordList.CurrentIndex = -1;
 					}
 					else
 					{
-						RecordList.CurrentIndex = FindClosestValidIndex(idx, cobj);
+						MyRecordList.CurrentIndex = FindClosestValidIndex(idx, cobj);
 					}
 					Publisher.Publish("StopParser", null);  // stop parser if it's running.
 				}
@@ -2457,7 +2472,7 @@ namespace LanguageExplorer.Works
 		{
 			for (int i = idx + 1; i < cobj; ++i)
 			{
-				var item = (IManyOnePathSortItem)RecordList.SortedObjects[i];
+				var item = (IManyOnePathSortItem)MyRecordList.SortedObjects[i];
 				if (!Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(item.KeyObject).IsValidObject)
 					continue;
 				bool fOk = true;
@@ -2468,7 +2483,7 @@ namespace LanguageExplorer.Works
 			}
 			for (int i = idx - 1; i >= 0; --i)
 			{
-				var item = (IManyOnePathSortItem)RecordList.SortedObjects[i];
+				var item = (IManyOnePathSortItem)MyRecordList.SortedObjects[i];
 				if (!Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(item.KeyObject).IsValidObject)
 					continue;
 				bool fOk = true;
@@ -2493,7 +2508,7 @@ namespace LanguageExplorer.Works
 				return;
 			}
 
-			var newSortMessage = RecordList.Sorter == null || SortName == null || (m_isDefaultSort && m_defaultSorter != null) ? string.Empty : string.Format(xWorksStrings.SortedBy, SortName);
+			var newSortMessage = MyRecordList.Sorter == null || SortName == null || (m_isDefaultSort && m_defaultSorter != null) ? string.Empty : string.Format(xWorksStrings.SortedBy, SortName);
 			StatusBarPanelServices.SetStatusBarPanelSort(m_statusBar, newSortMessage);
 		}
 
@@ -2541,11 +2556,11 @@ namespace LanguageExplorer.Works
 		{
 			RecordFilter filter = null;
 			var persistFilter = PropertyTable.GetValue<string>(FilterPropertyTableId, SettingsGroup.LocalSettings);
-			if (RecordList.Filter != null)
+			if (MyRecordList.Filter != null)
 			{
 				// if the persisted object string of the existing filter matches the one in the property table
 				// do nothing.
-				var currentFilter = DynamicLoader.PersistObject(RecordList.Filter, "filter");
+				var currentFilter = DynamicLoader.PersistObject(MyRecordList.Filter, "filter");
 				if (currentFilter == persistFilter)
 					return false;
 			}
@@ -2569,9 +2584,9 @@ namespace LanguageExplorer.Works
 			{
 				filter = m_defaultFilter;
 			}
-			if (RecordList.Filter == filter)
+			if (MyRecordList.Filter == filter)
 				return false;
-			RecordList.Filter = filter;
+			MyRecordList.Filter = filter;
 			return true;
 		}
 
@@ -2585,11 +2600,11 @@ namespace LanguageExplorer.Works
 			SortName = PropertyTable.GetValue<string>(SortNamePropertyTableId, SettingsGroup.LocalSettings);
 
 			var persistSorter = PropertyTable.GetValue<string>(SorterPropertyTableId, SettingsGroup.LocalSettings, null);
-			if (RecordList.Sorter != null)
+			if (MyRecordList.Sorter != null)
 			{
 				// if the persisted object string of the existing sorter matches the one in the property table
 				// do nothing
-				var currentSorter = DynamicLoader.PersistObject(RecordList.Sorter, "sorter");
+				var currentSorter = DynamicLoader.PersistObject(MyRecordList.Sorter, "sorter");
 				if (currentSorter == persistSorter)
 					return false;
 			}
@@ -2633,11 +2648,11 @@ namespace LanguageExplorer.Works
 						return false;
 				}
 			}
-			if (RecordList.Sorter == sorter)
+			if (MyRecordList.Sorter == sorter)
 				return false;
 			// (LT-9515) restored sorters need to set some properties that could not be persisted.
-			RecordList.Sorter = sorter;
-			RecordList.TransferOwnership(sorter as IDisposable);
+			MyRecordList.Sorter = sorter;
+			MyRecordList.TransferOwnership(sorter as IDisposable);
 			return true;
 		}
 
@@ -2743,8 +2758,8 @@ namespace LanguageExplorer.Works
 					// In the meantime, this fixed the crash .. <sigh> but doesn't help at all
 					// for the other cases where this can happen.
 					// ******************************************************************************
-					if (m_recordBarHandler is TreeBarHandler && RecordList.CurrentObject != null &&
-						(RecordList.CurrentObject.Cache != null || RecordList.SortedObjects.Count != 1))
+					if (m_recordBarHandler is TreeBarHandler && MyRecordList.CurrentObject != null &&
+						(MyRecordList.CurrentObject.Cache != null || MyRecordList.SortedObjects.Count != 1))
 					{
 						// all we need to do is replace the currently selected item in the tree.
 						var hvoItem = arguments.ItemHvo;
@@ -2752,13 +2767,13 @@ namespace LanguageExplorer.Works
 						if (hvoItem != 0)
 							Cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(hvoItem, out obj);
 						if (obj == null)
-							obj = RecordList.CurrentObject;
+							obj = MyRecordList.CurrentObject;
 						m_recordBarHandler.ReloadItem(obj);
 					}
 				}
 				else if (m_recordBarHandler != null)
 				{
-					m_recordBarHandler.PopulateRecordBar(RecordList);
+					m_recordBarHandler.PopulateRecordBar(MyRecordList);
 				}
 			}
 
@@ -2825,7 +2840,7 @@ namespace LanguageExplorer.Works
 			if (!IsControllingTheRecordTreeBar)
 				return; // none of our business!
 
-			var msg = FilterStatusContents(RecordList.Filter != null && RecordList.Filter.IsUserVisible) ?? string.Empty;
+			var msg = FilterStatusContents(MyRecordList.Filter != null && MyRecordList.Filter.IsUserVisible) ?? string.Empty;
 			if (IgnoreStatusPanel)
 			{
 				Publisher.Publish("DialogFilterStatus", msg);
@@ -2921,7 +2936,7 @@ namespace LanguageExplorer.Works
 				m_clerk.SuppressSaveOnChangeRecord = options.SuppressSaveOnChangeRecord;
 				ClearBrowseListUntilReload = options.ClearBrowseListUntilReload;
 				TriggerPendingReloadOnDispose = !options.SuspendPendingReloadOnDispose;
-				m_clerk.RecordList.UpdatingList = options.SuspendPropChangedDuringModification;
+				m_clerk.MyRecordList.UpdatingList = options.SuspendPropChangedDuringModification;
 			}
 
 			/// <summary>
@@ -2946,13 +2961,13 @@ namespace LanguageExplorer.Works
 				m_clerk = clerk;
 				if (m_clerk != null)
 				{
-					m_fOriginalUpdatingList = m_clerk.RecordList.UpdatingList;
+					m_fOriginalUpdatingList = m_clerk.MyRecordList.UpdatingList;
 					m_fOriginalListLoadingSuppressedState = fWasAlreadySuppressed;
 					m_fOriginalSkipRecordNavigationState = m_clerk.SkipShowRecord;
 					m_fOriginalSuppressSaveOnChangeRecord = m_clerk.SuppressSaveOnChangeRecord;
 					m_fOriginalLoadRequestedWhileSuppressed = m_clerk.RequestedLoadWhileSuppressed;
 					// monitor whether ReloadList was requested during the life of this ListUpdateHelper
-					m_clerk.RecordList.RequestedLoadWhileSuppressed = false;
+					m_clerk.MyRecordList.RequestedLoadWhileSuppressed = false;
 
 					m_originalUpdateHelper = m_clerk.UpdateHelper;
 					// if we're already suppressing the list, we don't want to auto reload since
@@ -3029,11 +3044,11 @@ namespace LanguageExplorer.Works
 				if (m_clerk != null && !m_clerk.IsDisposed)
 				{
 					bool fHandledReload = false;
-					if (m_fTriggerPendingReloadOnDispose && m_clerk.RecordList.RequestedLoadWhileSuppressed)
+					if (m_fTriggerPendingReloadOnDispose && m_clerk.MyRecordList.RequestedLoadWhileSuppressed)
 					{
 						m_clerk.ListLoadingSuppressed = m_fOriginalListLoadingSuppressedState;
 						// if the requested while suppressed flag was reset, we handled it.
-						if (m_clerk.RecordList.RequestedLoadWhileSuppressed == false)
+						if (m_clerk.MyRecordList.RequestedLoadWhileSuppressed == false)
 							fHandledReload = true;
 					}
 					else
@@ -3042,9 +3057,9 @@ namespace LanguageExplorer.Works
 					}
 					// if we didn't handle a pending reload, someone else needs to handle it.
 					if (!fHandledReload)
-						m_clerk.RecordList.RequestedLoadWhileSuppressed |= m_fOriginalLoadRequestedWhileSuppressed;
+						m_clerk.MyRecordList.RequestedLoadWhileSuppressed |= m_fOriginalLoadRequestedWhileSuppressed;
 
-					m_clerk.RecordList.UpdatingList = m_fOriginalUpdatingList;
+					m_clerk.MyRecordList.UpdatingList = m_fOriginalUpdatingList;
 					// reset this after we possibly reload the list.
 					m_clerk.SkipShowRecord = m_fOriginalSkipRecordNavigationState;
 					m_clerk.SuppressSaveOnChangeRecord = m_fOriginalSuppressSaveOnChangeRecord;

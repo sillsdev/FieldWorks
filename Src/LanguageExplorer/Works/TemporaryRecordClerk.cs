@@ -67,8 +67,10 @@ namespace LanguageExplorer.Works
 			base.InitializeFlexComponent(flexComponentParameters);
 
 			// If we have a RecordList, it shouldn't generate PropChanged messages.
-			if (RecordList != null)
-				RecordList.EnableSendPropChanged = false;
+			if (MyRecordList != null)
+			{
+				MyRecordList.EnableSendPropChanged = false;
+			}
 		}
 
 		#endregion

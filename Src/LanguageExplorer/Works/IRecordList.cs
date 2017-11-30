@@ -2,26 +2,29 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+#if RANDYTODO
+	// TODO: Remove IRecordClerk and then re-enable the blocked usings and interfaces, which are currently shared with IRecordClerk.
+#endif
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.FieldWorks.Common.FwUtils;
+/*using SIL.FieldWorks.Common.FwUtils;*/
 using SIL.FieldWorks.Filters;
 using SIL.LCModel;
-using SIL.LCModel.Application;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Utils;
+/*using SIL.LCModel.Application;*/
+/*using SIL.LCModel.Core.KernelInterfaces;*/
+/*using SIL.LCModel.Utils;*/
 
 namespace LanguageExplorer.Works
 {
-	public interface IRecordList : IFlexComponent, ISortItemProvider, IVwNotifyChange, IDisposable
+	public interface IRecordList : IRecordClerk, /*IFlexComponent, */ISortItemProvider/*, IVwNotifyChange, IDisposable*/
 	{
 		event EventHandler AboutToReload;
 		event EventHandler DoneReload;
 		event ListChangedEventHandler ListChanged;
 
-		LcmCache Cache { get; }
+		//LcmCache Cache { get; }
 		bool CanInsertClass(string className);
 		void ChangeOwningObjectId(int hvo);
 		void ChangeSorter(RecordSorter sorter);
@@ -29,15 +32,15 @@ namespace LanguageExplorer.Works
 		bool CreateAndInsert(string className);
 		AndFilter CreateNewAndFilter(params RecordFilter[] filters);
 		ICmObject CreateNewObject(int hvoOwner, IList<ClassAndPropInfo> cpiPath);
-		int CurrentIndex { get; set; }
-		ICmObject CurrentObject { get; }
-		int CurrentObjectHvo { get; }
+		//int CurrentIndex { get; set; }
+		//ICmObject CurrentObject { get; }
+		//int CurrentObjectHvo { get; }
 		bool CurrentObjectIsValid { get; }
 		void DeleteCurrentObject(ICmObject thingToDelete);
 		bool DeletingObject { get; }
 		TObj DoCreateAndInsert<TObj>(ICreateAndInsert<TObj> createAndInsertMethodObj) where TObj : ICmObject;
 		bool EnableSendPropChanged { get; set; }
-		RecordFilter Filter { get; set; }
+		//RecordFilter Filter { get; set; }
 		int FirstItemIndex { get; }
 		int Flid { get; }
 		string FontName { get; }
@@ -46,21 +49,21 @@ namespace LanguageExplorer.Works
 		int IndexOfParentOf(int hvoTarget);
 		void InitLoad(bool loadList);
 		bool IsCurrentObjectValid();
-		bool IsDisposed { get; }
+		//bool IsDisposed { get; }
 		bool IsEmpty { get; }
 		bool IsVirtualPublisherCreated { get; }
 		int LastItemIndex { get; }
-		bool ListLoadingSuppressed { get; set; }
-		bool ListModificationInProgress { get; set; }
+		//bool ListLoadingSuppressed { get; set; }
+		//bool ListModificationInProgress { get; set; }
 		bool NeedToReloadList();
 		int NextItemIndex { get; }
-		void OnChangeFilter(FilterChangeEventArgs args);
+		//void OnChangeFilter(FilterChangeEventArgs args);
 		bool OnFirst { get; }
-		bool OnLast { get; }
-		ICmObject OwningObject { get; set; }
+		//bool OnLast { get; }
+		//ICmObject OwningObject { get; set; }
 		void PersistOn(string pathname);
 		int PrevItemIndex { get; }
-		IProgress ProgressReporter { get; set; }
+		//IProgress ProgressReporter { get; set; }
 		string PropertyName { get; }
 		string PropertyTableId(string sorterOrFilter);
 		void ReloadList();
@@ -68,17 +71,17 @@ namespace LanguageExplorer.Works
 		void ReloadList(int newListItemsClass, int newTargetFlid, bool force);
 		void RemoveUnwantedSortItems(List<int> hvosToRemove = null);
 		void ReplaceListItem(int hvoReplaced, ListChangedEventArgs.ListChangedActions listChangeAction = ListChangedEventArgs.ListChangedActions.Normal);
-		bool RequestedLoadWhileSuppressed { get; set; }
-		bool RestoreFrom(string pathname);
+		//bool RequestedLoadWhileSuppressed { get; set; }
+		//bool RestoreListFrom(string pathname);
 		ICmObject RootObjectAt(int index);
 		void SetSuppressingLoadList(bool value);
-		bool ShouldNotModifyList { get; }
+		//bool ShouldNotModifyList { get; }
 		ArrayList SortedObjects { get; set; }
-		RecordSorter Sorter { get; set; }
+		//RecordSorter Sorter { get; set; }
 		void TransferOwnership(IDisposable obj);
 		int TypeSize { get; }
 		bool UpdatingList { get; set; }
-		int VirtualFlid { get; }
-		ISilDataAccessManaged VirtualListPublisher { get; }
+		//int VirtualFlid { get; }
+		//ISilDataAccessManaged VirtualListPublisher { get; }
 	}
 }

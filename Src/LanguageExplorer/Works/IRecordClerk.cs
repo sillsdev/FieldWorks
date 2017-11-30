@@ -27,11 +27,13 @@ namespace LanguageExplorer.Works
 		void BecomeInactive();
 		LcmCache Cache { get; }
 		bool CanMoveTo(Navigation navigateTo);
-		int CurrentIndex { get; }
+		// int CurrentIndex { get; }
+		int CurrentIndex { get; set;  }
 		ICmObject CurrentObject { get; }
 		int CurrentObjectHvo { get; }
 		bool Editable { get; set; }
-		RecordFilter Filter { get; }
+		// RecordFilter Filter { get; }
+		RecordFilter Filter { get; set; }
 		bool HasEmptyList { get; }
 		string Id { get; }
 		bool IsActiveInGui { get; }
@@ -67,19 +69,22 @@ namespace LanguageExplorer.Works
 		string PersistedIndexProperty { get; }
 		void PersistListOn(string pathname);
 		IProgress ProgressReporter { get; set; }
-		IRecordList RecordList { get; }
+		// IRecordList RecordList { get; }
+		IRecordList MyRecordList { get; }
 		void ReloadFilterProvider();
 		void ReloadIfNeeded();
 		void RemoveInvalidItems();
 		void RemoveItemsFor(int hvoToRemove);
-		bool RequestedLoadWhileSuppressed { get; }
+		// bool RequestedLoadWhileSuppressed { get; }
+		bool RequestedLoadWhileSuppressed { get; set; }
 		void ResetFilterToDefault();
 		bool RestoreListFrom(string pathname);
 		void SaveOnChangeRecord();
 		void SelectedRecordChanged(bool suppressFocusChange, bool fSkipRecordNavigation = false);
 		bool ShouldNotModifyList { get; }
 		bool SkipShowRecord { get; set; }
-		RecordSorter Sorter { get; }
+		// RecordSorter Sorter { get; }
+		RecordSorter Sorter { get; set; }
 		ISortItemProvider SortItemProvider { get; }
 		string SortName { get; }
 		bool SuppressSaveOnChangeRecord { get; set; }

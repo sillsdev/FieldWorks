@@ -162,13 +162,13 @@ namespace LanguageExplorer.Works
 			base.ReloadList();
 		}
 
-		public override bool RestoreFrom(string pathname)
+		public override bool RestoreListFrom(string pathname)
 		{
 			// If we are restoring, presumably the 'previous flid' (which should be the flid from the last complete
 			// ReloadList) should match the flid that is current, which in turn should correspond to the saved list
 			// of sorted objects.
 			m_prevFlid = m_flid;
-			return base.RestoreFrom(pathname);
+			return base.RestoreListFrom(pathname);
 		}
 
 		/// <summary>

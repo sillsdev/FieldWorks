@@ -96,18 +96,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override void ReloadIfNeeded()
 		{
-			if (RecordList as ConcordanceWordList != null)
+			if (MyRecordList as ConcordanceWordList != null)
 			{
-				((ConcordanceWordList)RecordList).RequestRefresh();
+				((ConcordanceWordList)MyRecordList).RequestRefresh();
 			}
 			base.ReloadIfNeeded();
 		}
 
 		public override bool OnRefresh(object sender)
 		{
-			if(RecordList as ConcordanceWordList != null)
+			if(MyRecordList as ConcordanceWordList != null)
 			{
-				((ConcordanceWordList)RecordList).RequestRefresh();
+				((ConcordanceWordList)MyRecordList).RequestRefresh();
 			}
 			return base.OnRefresh(sender);
 		}
@@ -160,9 +160,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public void ParseInterstingTextsIfNeeded()
 		{
 			//Optimize(JT): The reload is overkill, all we want to do is reparse those texts who are not up to date.
-			if(RecordList != null)
+			if(MyRecordList != null)
 			{
-				RecordList.ForceReloadList();
+				MyRecordList.ForceReloadList();
 			}
 		}
 

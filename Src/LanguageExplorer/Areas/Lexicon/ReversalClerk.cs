@@ -190,7 +190,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			if(ri == null)
 				return false;
 			var writingSystem = (CoreWritingSystemDefinition)Cache.WritingSystemFactory.get_Engine(ri.WritingSystem);
-			RecordList.Sorter = new GenRecordSorter(new StringFinderCompare(LayoutFinder.CreateFinder(Cache, BrowseViewFormCol, fakevc,
+			MyRecordList.Sorter = new GenRecordSorter(new StringFinderCompare(LayoutFinder.CreateFinder(Cache, BrowseViewFormCol, fakevc,
 				PropertyTable.GetValue<IApp>("App")),
 				new WritingSystemComparer(writingSystem)));
 			return true;
@@ -220,7 +220,7 @@ namespace LanguageExplorer.Areas.Lexicon
 					ChangeOwningObjectIfPossible();
 					break;
 				case AreaServices.ToolForAreaNamed_ + AreaServices.LexiconAreaMachineName:
-					var rootIndex = GetRootIndex(RecordList.CurrentIndex);
+					var rootIndex = GetRootIndex(MyRecordList.CurrentIndex);
 					JumpToIndex(rootIndex);
 					base.OnPropertyChanged(name);
 					break;
@@ -234,10 +234,10 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <returns></returns>
 		private int GetRootIndex(int lastValidIndex)
 		{
-			var item = RecordList.SortItemAt(lastValidIndex);
+			var item = MyRecordList.SortItemAt(lastValidIndex);
 			if (item == null)
 				return lastValidIndex;
-			var parentIndex = RecordList.IndexOfParentOf(item.KeyObject);
+			var parentIndex = MyRecordList.IndexOfParentOf(item.KeyObject);
 
 			return parentIndex == -1 ? lastValidIndex : GetRootIndex(parentIndex);
 		}
@@ -365,8 +365,8 @@ namespace LanguageExplorer.Areas.Lexicon
 		{
 			try
 			{
-				Debug.Assert(ri.Hvo == RecordList.OwningObject.Hvo);
-				RecordList.ListModificationInProgress = true;	// can't reload deleted list! (LT-5353)
+				Debug.Assert(ri.Hvo == MyRecordList.OwningObject.Hvo);
+				MyRecordList.ListModificationInProgress = true;	// can't reload deleted list! (LT-5353)
 				// We're about to do a MasterRefresh which clobbers the Undo stack,
 				// so we might as well make this UOW not undoable
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
@@ -381,7 +381,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			}
 			finally
 			{
-				RecordList.ListModificationInProgress = false;
+				MyRecordList.ListModificationInProgress = false;
 			}
 			// Without this, stale data can still display in the BulkEditSenses tool if you
 			// recreate the deleted reversal index.
