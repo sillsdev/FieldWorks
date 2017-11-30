@@ -193,7 +193,7 @@
       <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
     </Reference>
     <Reference Include="icu.net">
-      <HintPath>..\..\..\Downloads\icu.net.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\icu.net.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -12,6 +12,7 @@ using Microsoft.Win32;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
