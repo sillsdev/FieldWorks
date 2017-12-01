@@ -291,7 +291,6 @@
     <Compile Include="Lexicon\LexEntryChangeHandlerTests.cs" />
     <Compile Include="Lexicon\LexReferenceTreeRootLauncherTests.cs" />
     <Compile Include="Lexicon\CircularRefBreakerTests.cs" />
-    <Compile Include="Lexicon\ReversalEntryBulkEditTests.cs" />
     <Compile Include="Lexicon\SortReversalSubEntriesTests.cs" />
     <Compile Include="Lexicon\TestUtils.cs" />
     <Compile Include="LexTextControls\LexImportTests.cs" />

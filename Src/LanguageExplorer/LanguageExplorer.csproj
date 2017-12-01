@@ -295,6 +295,7 @@
     <Compile Include="Areas\Grammar\GrammarAreaMenuHelper.cs" />
     <Compile Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchToolMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\LexiconAreaMenuHelper.cs" />
+    <Compile Include="Areas\ReversalListBase.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\ConcRecordList.cs" />
     <Compile Include="Areas\Lists\ListsAreaMenuHelper.cs" />
     <Compile Include="Areas\Lists\Tools\CustomListEdit\CustomListEditTool.cs" />
@@ -1820,7 +1821,6 @@
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\SortReversalSubEntries.cs" />
     <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\ReversalIndexEntryMenuHandler.cs" />
-    <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalEntryPOSClerk.cs" />
     <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalIndexPOSRecordList.cs" />
     <Compile Include="Areas\AffixRuleFormulaVc.cs" />
     <Compile Include="Areas\MetaRuleFormulaVc.cs" />
@@ -2143,8 +2143,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Dumpster\AreaListener.cs" />
-    <Compile Include="Areas\Lexicon\ReversalClerk.cs" />
-    <Compile Include="Areas\Lexicon\ReversalEntryClerk.cs" />
     <Compile Include="Dumpster\MasterDlgListener.cs" />
     <Compile Include="Dumpster\MorphologyListener.cs" />
     <Compile Include="Areas\TextsAndWords\OccurrenceComparer.cs" />

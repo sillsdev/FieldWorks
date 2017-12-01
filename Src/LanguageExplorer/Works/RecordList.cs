@@ -426,12 +426,12 @@ namespace LanguageExplorer.Works
 			return false; // no punctuation in custom fields.
 		}
 
-		public bool AreSortersCompatible(RecordSorter first, RecordSorter second)
+		public virtual bool AreSortersCompatible(RecordSorter first, RecordSorter second)
 		{
 			return first.CompatibleSorter(second);
 		}
 
-		public RecordBarHandler BarHandler { get; }
+		public RecordBarHandler BarHandler => _recordBarHandler;
 
 		public void BecomeInactive()
 		{

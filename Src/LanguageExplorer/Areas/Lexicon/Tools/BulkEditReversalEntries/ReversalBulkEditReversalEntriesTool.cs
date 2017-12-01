@@ -221,7 +221,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			var contextMenuItem = (ToolStripMenuItem)sender;
 			_currentReversalIndex = (IReversalIndex)contextMenuItem.Tag;
 			_propertyTable.SetProperty("ReversalIndexGuid", _currentReversalIndex.Guid.ToString(), SettingsGroup.LocalSettings, true, false);
-			((ReversalClerk)_recordClerk).ChangeOwningObjectIfPossible();
+			((ReversalListBase)_recordClerk).ChangeOwningObjectIfPossible();
 			SetCheckedState(contextMenuItem);
 		}
 

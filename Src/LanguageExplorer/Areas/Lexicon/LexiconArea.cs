@@ -206,7 +206,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			{
 				revIdx = (IReversalIndex)cache.ServiceLocator.GetObject(currentGuid);
 			}
-			return new ReversalEntryClerk(statusBar, cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), revIdx);
+			return new AllReversalEntriesRecordList(statusBar, cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), revIdx);
 		}
 	}
 }

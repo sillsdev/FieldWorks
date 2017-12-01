@@ -10,7 +10,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Areas.Lexicon;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
@@ -32,7 +31,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;
 		private const string panelMenuId = "left";
-		private const string ReversalEntriesPOS = "ReversalEntriesPOS";
 		private LcmCache _cache;
 		private MultiPane _multiPane;
 		private IRecordClerk _recordClerk;
@@ -79,7 +77,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 			if (_recordClerk == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(ReversalEntriesPOS, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(ReversalIndexPOSRecordList.ReversalEntriesPOS, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, (IListArea)_area, _recordClerk);
 
@@ -219,7 +217,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			var contextMenuItem = (ToolStripMenuItem)sender;
 			_currentReversalIndex = (IReversalIndex)contextMenuItem.Tag;
 			_propertyTable.SetProperty("ReversalIndexGuid", _currentReversalIndex.Guid.ToString(), SettingsGroup.LocalSettings, true, false);
-			((ReversalClerk)_recordClerk).ChangeOwningObjectIfPossible();
+			((ReversalListBase)_recordClerk).ChangeOwningObjectIfPossible();
 			SetCheckedState(contextMenuItem);
 		}
 
@@ -231,7 +229,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 		private static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
-			Require.That(clerkId == ReversalEntriesPOS, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{ReversalEntriesPOS}'.");
+			Require.That(clerkId == ReversalIndexPOSRecordList.ReversalEntriesPOS, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{ReversalIndexPOSRecordList.ReversalEntriesPOS}'.");
 
 			IReversalIndex currentReversalIndex = null;
 			var currentReversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(flexComponentParameters.PropertyTable, "ReversalIndexGuid");
@@ -240,7 +238,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				currentReversalIndex = (IReversalIndex)cache.ServiceLocator.GetObject(currentReversalIndexGuid);
 			}
 
-			return new ReversalEntryPOSClerk(statusBar, cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), currentReversalIndex);
+			return new ReversalIndexPOSRecordList(statusBar, cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), currentReversalIndex);
 		}
 	}
 }

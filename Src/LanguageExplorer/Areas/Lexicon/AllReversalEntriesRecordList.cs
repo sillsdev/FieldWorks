@@ -1,83 +1,42 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Windows.Forms;
 using LanguageExplorer.LcmUi;
-using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lexicon
 {
 #if RANDYTODO
-	// TODO: Only used in:
-/*
-<clerk id="AllReversalEntries">
-	<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.ReversalEntryClerk" />
-	<recordList owner="ReversalIndex" property="AllEntries">
-		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.AllReversalEntriesRecordList" />
-	</recordList>
-	<filters />
-	<sortMethods>
-		<sortMethod label="Form" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
-	</sortMethods>
-</clerk>
-"AllReversalEntries" used in:
-1. <tool label="Reversal Indexes" value="reversalEditComplete" icon="SideBySideView"> (x2)
-2. <tool label="Bulk Edit Reversal Entries" value="reversalBulkEditReversalEntries" icon="BrowseView">
-3. <listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.ReversalListener">
-	<parameters clerk="AllReversalEntries" />
-</listener>
-*/
+	// TODO: ReversalListener still claims to use it....
 #endif
 	/// <summary>
-	/// Summary description for AllReversalEntriesRecordList.
+	/// List used in tools: "Reversal Indexes" & "Bulk Edit Reversal Entries".
 	/// </summary>
-	/// <remarks>
-	/// Can't be sealed, since a test derives from the class.
-	/// </remarks>
-	internal class AllReversalEntriesRecordList : RecordList
+	internal sealed class AllReversalEntriesRecordList : ReversalListBase
 	{
+		internal const string AllReversalEntries = "AllReversalEntries";
+		private IReversalIndexEntry _newItem;
+
 		/// <summary />
-		internal AllReversalEntriesRecordList(ILcmServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
-			: base(decorator, true, ReversalIndexTags.kflidEntries, reversalIndex, "AllEntries")
+		internal AllReversalEntriesRecordList(StatusBar statusBar, ILcmServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
+			: base(AllReversalEntries, statusBar, new PropertyRecordSorter("ShortName"), "Default", null, true, true, decorator, true, ReversalIndexTags.kflidEntries, reversalIndex, "AllEntries")
 		{
-			m_flid = ReversalIndexTags.kflidEntries; //LT-12577 a record list needs a real flid.
 			m_fontName = serviceLocator.WritingSystemManager.Get(reversalIndex.WritingSystem).DefaultFontName;
 			m_oldLength = 0;
 		}
 
-		/// <summary />
-		public override bool CanInsertClass(string className)
-		{
-			if (base.CanInsertClass(className))
-				return true;
-			return className == "ReversalIndexEntry";
-		}
-
-		/// <summary />
-		public override bool CreateAndInsert(string className)
-		{
-			if (className != "ReversalIndexEntry")
-				return base.CreateAndInsert(className);
-			m_newItem = m_cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create();
-			var ri = (IReversalIndex)m_owningObject;
-			ri.EntriesOC.Add(m_newItem);
-			var extensions = m_cache.ActionHandlerAccessor as IActionHandlerExtensions;
-			if (extensions != null)
-				extensions.DoAtEndOfPropChanged(SelectNewItem);
-			return true;
-		}
-
-		private IReversalIndexEntry m_newItem;
-
 		void SelectNewItem()
 		{
-			OnJumpToRecord(m_newItem.Hvo);
+			OnJumpToRecord(_newItem.Hvo);
 		}
 
 		/// <summary>
@@ -89,40 +48,63 @@ namespace LanguageExplorer.Areas.Lexicon
 		{
 			var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
 
-			if (riGuid.Equals(Guid.Empty))
+			if (!riGuid.Equals(Guid.Empty))
 			{
-				try
-				{
-					riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
-				}
-				catch
-				{
-					return Guid.Empty;
-				}
+				return riGuid;
+			}
+			try
+			{
+				riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
+			}
+			catch
+			{
+				riGuid = Guid.Empty;
 			}
 			return riGuid;
+		}
+
+		#region Overrides of RecordList
+
+		/// <summary />
+		public override bool CanInsertClass(string className)
+		{
+			if (base.CanInsertClass(className))
+			{
+				return true;
+			}
+			return className == "ReversalIndexEntry";
+		}
+
+		/// <summary />
+		public override bool CreateAndInsert(string className)
+		{
+			if (className != "ReversalIndexEntry")
+			{
+				return base.CreateAndInsert(className);
+			}
+			_newItem = m_cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create();
+			var reversalIndex = (IReversalIndex)m_owningObject;
+			reversalIndex.EntriesOC.Add(_newItem);
+			var extensions = m_cache.ActionHandlerAccessor as IActionHandlerExtensions;
+			extensions?.DoAtEndOfPropChanged(SelectNewItem);
+			return true;
 		}
 
 		/// <summary />
 		protected override IEnumerable<int> GetObjectSet()
 		{
-			IReversalIndex ri = m_owningObject as IReversalIndex;
-			Debug.Assert(ri != null && ri.IsValidObject, "The owning IReversalIndex object is invalid!?");
-			// Review: is there a better to to convert from List<Subclass> to List<Class>???
-			List<IReversalIndexEntry> rgrie = ri.AllEntries;
-			var rgcmo = new List<int>(rgrie.Count);
-			foreach (IReversalIndexEntry rie in rgrie)
-				rgcmo.Add(rie.Hvo);
-			return rgcmo;
+			var reversalIndex = m_owningObject as IReversalIndex;
+			Debug.Assert(reversalIndex != null && reversalIndex.IsValidObject, "The owning IReversalIndex object is invalid!?");
+			return new List<int>(reversalIndex.AllEntries.Select(rie => rie.Hvo));
 		}
 
 		/// <summary>
 		/// Delete the current object.
+		/// In some cases thingToDelete is not actually the current object, but it should always
+		/// be related to it.
 		/// </summary>
 		public override void DeleteCurrentObject(ICmObject thingToDelete = null)
 		{
-			CheckDisposed();
-
 			base.DeleteCurrentObject(thingToDelete);
 
 			ReloadList();
@@ -147,5 +129,17 @@ namespace LanguageExplorer.Areas.Lexicon
 			}
 			return $"{className}.{PropertyName}-{reversalLang}_{sorterOrFilter}";
 		}
+
+		#endregion
+
+		#region Overrides of ReversalListBase
+
+		/// <summary />
+		protected override ICmObject NewOwningObject(IReversalIndex ri)
+		{
+			return ri;
+		}
+
+		#endregion
 	}
 }
