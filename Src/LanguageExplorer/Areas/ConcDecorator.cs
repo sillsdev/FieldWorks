@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -16,7 +17,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer.Areas
 {
 	/// <summary>
 	/// This class exists to decorate the main SDA for concordance views and browse views that show occurrence counts.

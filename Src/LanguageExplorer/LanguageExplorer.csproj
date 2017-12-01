@@ -295,10 +295,12 @@
     <Compile Include="Areas\Grammar\GrammarAreaMenuHelper.cs" />
     <Compile Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchToolMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\LexiconAreaMenuHelper.cs" />
+    <Compile Include="Areas\Lexicon\Tools\Edit\ConcRecordList.cs" />
     <Compile Include="Areas\Lists\ListsAreaMenuHelper.cs" />
     <Compile Include="Areas\Lists\Tools\CustomListEdit\CustomListEditTool.cs" />
     <Compile Include="Areas\Notebook\NotebookAreaMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolMenuHelper.cs" />
+    <Compile Include="Areas\TemporaryRecordList.cs" />
     <Compile Include="Areas\TextsAndWords\TextAndWordsAreaMenuHelper.cs" />
     <Compile Include="IListArea.cs" />
     <Compile Include="Impls\PropertyTable.cs" />
@@ -522,6 +524,7 @@
     <Compile Include="Controls\LexText\BaseGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ToolbarServices.cs" />
     <Compile Include="Works\ConfigureHomographDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -947,8 +950,7 @@
     <Compile Include="Works\AddCustomFieldDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Works\ConcDecorator.cs" />
-    <Compile Include="Works\ConcRecordClerk.cs" />
+    <Compile Include="Areas\ConcDecorator.cs" />
     <Compile Include="Works\ConfigurableDictionaryNode.cs" />
     <Compile Include="Works\ConfiguredXHTMLGenerator.cs" />
     <Compile Include="Works\CssGenerator.cs" />
@@ -1095,7 +1097,7 @@
     <Compile Include="Works\IRecordClerk.cs" />
     <Compile Include="Works\IRecordClerkRepository.cs" />
     <Compile Include="Works\IRecordClerkRepositoryForTools.cs" />
-    <Compile Include="Works\IRecordList.cs" />
+    <Compile Include="IRecordList.cs" />
     <Compile Include="Works\ISetRootHvo.cs" />
     <Compile Include="Works\IWebonaryClient.cs" />
     <Compile Include="Works\LegacyConfigurationUtils.cs" />
@@ -1111,7 +1113,6 @@
     <Compile Include="Works\ListUpdateHelper.cs" />
     <Compile Include="Works\ListUpdateHelperOptions.cs" />
     <Compile Include="Works\MacroListener.cs" />
-    <Compile Include="Works\MatchingItemsRecordClerk.cs" />
     <Compile Include="Works\MatchingItemsRecordList.cs" />
     <Compile Include="Works\Navigation.cs" />
     <Compile Include="Works\NotebookExportDialog.cs">
@@ -1143,7 +1144,6 @@
     <Compile Include="Works\ReversalIndexServices.cs" />
     <Compile Include="Works\SelectObjectEventArgs.cs" />
     <Compile Include="Works\SemanticDomainRdeTreeBarHandler.cs" />
-    <Compile Include="Works\TemporaryRecordClerk.cs" />
     <Compile Include="Works\CombinedStylesListHandler.cs" />
     <Compile Include="Works\UnicodeCharacterEditingHelper.cs" />
     <Compile Include="Works\UploadToWebonaryController.cs" />
@@ -2150,8 +2150,7 @@
     <Compile Include="Areas\TextsAndWords\OccurrenceComparer.cs" />
     <Compile Include="Areas\TextsAndWords\OccurrenceSorter.cs" />
     <Compile Include="Dumpster\RespellerDlgListener.cs" />
-    <Compile Include="Areas\TextsAndWords\RespellerTemporaryRecordClerk.cs" />
-    <Compile Include="Areas\TextsAndWords\RespellerRecordList.cs" />
+    <Compile Include="Areas\TextsAndWords\RespellerTemporaryRecordList.cs" />
     <Compile Include="Dumpster\ReversalListener.cs" />
     <Compile Include="Areas\TextsAndWords\WordformApplicationServices.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\Analyses\WordsEditToolMenuHandler.cs" />

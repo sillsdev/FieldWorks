@@ -1,29 +1,34 @@
-// Copyright (c) 2004-2015 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using SIL.FieldWorks.Filters;
+using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Works
 {
 	/// <summary>
-	/// This type of record list is used in conjunction with a MatchingItemsRecordClerk.
+	/// This is a temporary record clerk that can be used in a guicontrol where the parent control knows
+	/// when the list contents have changed, and to what.
 	///
 	/// The 'owner' is the now defunct class "WordformInventory" and the property is its old owning "Wordforms" collection.
 	///
-	/// This clerk is only used by the "WordformsBrowseView" guicontrol,
-	/// which is in turn only used by the "WordformGoDlg"
+	/// This list is only used by the "WordformsBrowseView" guicontrol, which is in turn only used by the "WordformGoDlg"
 	/// </summary>
-	public class MatchingItemsRecordList : RecordList
+	internal sealed class MatchingItemsRecordList : TemporaryRecordList
 	{
 		private IEnumerable<int> m_objs;
 
-		internal MatchingItemsRecordList(ISilDataAccessManaged decorator)
-			: base(decorator)
+		internal MatchingItemsRecordList(ISilDataAccessManaged decorator, StatusBar statusBar, ILangProject languageProject)
+			: base("matchingWords", statusBar, new PropertyRecordSorter(), "Default", null, false, false, decorator, false, decorator.MetaDataCache.GetFieldId2(languageProject.ClassID, "AllWordforms", false), languageProject, "AllWordforms")
 		{
 		}
+
+		#region Overrides of IRecordList
 
 		public override void InitLoad(bool loadList)
 		{
@@ -48,14 +53,29 @@ namespace LanguageExplorer.Works
 			}
 			set
 			{
-				return;
 			}
 		}
+
+		#endregion Overrides of IRecordList
+
+		#region Overrides of RecordList
 
 		protected override IEnumerable<int> GetObjectSet()
 		{
 			return m_objs ?? new int[0];
 		}
+
+		protected override bool TryRestoreFilter()
+		{
+			return false;
+		}
+
+		protected override bool TryRestoreSorter()
+		{
+			return false;
+		}
+
+		#endregion Overrides of RecordList
 
 		/// <summary>
 		/// This reloads the list using the supplied set of hvos.

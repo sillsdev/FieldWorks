@@ -38,7 +38,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// which variation is named "interlinearTexts"
 		/// </summary>
 		internal InterlinearTextsRecordClerk(StatusBar statusBar, ILangProject languageProject, InterestingTextsDecorator decorator)
-			: base("interlinearTexts", statusBar, new RecordList(decorator, false, InterestingTextsDecorator.kflidInterestingTexts, languageProject, "InterestingTexts"), new PropertyRecordSorter("Title"), "Default", null, false, false)
+			: base(TextAndWordsArea.InterlinearTexts, statusBar, new RecordList(decorator, false, InterestingTextsDecorator.kflidInterestingTexts, languageProject, "InterestingTexts"), new PropertyRecordSorter("Title"), "Default", null, false, false)
 		{
 		}
 
@@ -47,7 +47,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// which variation is named "concordanceWords"
 		/// </summary>
 		internal InterlinearTextsRecordClerk(StatusBar statusBar, ILangProject languageProject, ConcDecorator decorator)
-			: base("concordanceWords", statusBar, new ConcordanceWordList(decorator, languageProject), new PropertyRecordSorter("ShortName"), "Default", new WordsUsedOnlyElsewhereFilter(languageProject.Cache), false, false, new WfiRecordFilterListProvider())
+			: base(TextAndWordsArea.ConcordanceWords, statusBar, new ConcordanceWordList(decorator, languageProject), new PropertyRecordSorter("ShortName"), "Default", new WordsUsedOnlyElsewhereFilter(languageProject.Cache), false, false, new WfiRecordFilterListProvider())
 		{
 		}
 

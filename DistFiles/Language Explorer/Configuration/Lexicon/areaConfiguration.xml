@@ -136,9 +136,9 @@
 			</guicontrol>
 			<clerks>
 				<clerk id="OccurrencesOfSense" shouldHandleDeletion="false">
-					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ConcRecordClerk" a10status="Fork: LanguageExplorer.Works.ConcDecorator" />
+					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.ConcRecordList" />
 					<recordList class="LexSense" field="Occurrences">
-						<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ConcDecorator" a10status="Fork: LanguageExplorer.Works.ConcDecorator" />
+						<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ConcDecorator" />
 					</recordList>
 					<filters/>
 					<sortMethods/>

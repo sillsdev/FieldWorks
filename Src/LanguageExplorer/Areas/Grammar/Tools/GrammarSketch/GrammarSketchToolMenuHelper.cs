@@ -38,7 +38,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			_refreshMenu = MenuServices.GetViewRefreshMenu(_majorFlexComponentParameters.MenuStrip);
 			_refreshOriginalValue = _refreshMenu.Enabled;
 			_refreshMenu.Enabled = false;
-			_refreshToolBarBtn = MenuServices.GetStandardToolStripRefreshButton(_majorFlexComponentParameters.ToolStripContainer);
+			_refreshToolBarBtn = ToolbarServices.GetStandardToolStripRefreshButton(_majorFlexComponentParameters.ToolStripContainer);
 			_refreshToolBarBtn.Enabled = false;
 		}
 

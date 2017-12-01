@@ -181,7 +181,7 @@
 			</guicontrol>
 			<clerks>
 				<!-- this clerk is explicitly known to InterlinearSfmImportWizard.OnFinishButton-->
-				<clerk id="interlinearTexts" shouldHandleDeletion="false">
+				<clerk id="interlinearTextsForTemporaryRecordClerk" shouldHandleDeletion="false">
 					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.TemporaryRecordClerk"/>
 					<recordList owner="LangProject" property="InterestingTexts">
 						<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.InterestingTextsDecorator"/>
@@ -439,9 +439,9 @@
 			<parameters>
 				<clerks>
 					<clerk id="SrcWfiWordformConc" shouldHandleDeletion="false">
-						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.RespellerTemporaryRecordClerk"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.RespellerTemporaryRecordClerk" a10status="Use: LanguageExplorer.Areas.TextsAndWords.RespellerTemporaryRecordList" />
 						<recordList class="WfiWordform" field="Occurrences">
-							<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.RespellerRecordList"/>
+							<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.RespellerTemporaryRecordList"/>
 							<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.RespellingSda"/>
 						</recordList>
 						<filters/>

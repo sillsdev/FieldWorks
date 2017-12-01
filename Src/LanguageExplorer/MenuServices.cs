@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Linq;
 using System.Windows.Forms;
 
 namespace LanguageExplorer
@@ -118,24 +117,5 @@ namespace LanguageExplorer
 		}
 
 		#endregion Help menu
-
-		#region Standard toolbar
-
-		private static ToolStripPanel GetStandardToolStripPanel(ToolStripContainer toolStripContainer)
-		{
-			return toolStripContainer.TopToolStripPanel;
-		}
-
-		private static ToolStrip GetStandardToolStrip(ToolStripContainer toolStripContainer)
-		{
-			return GetStandardToolStripPanel(toolStripContainer).Controls.Cast<Control>().Where(control => control.Name == "toolStripStandard").Cast<ToolStrip>().First();
-		}
-
-		internal static ToolStripItem GetStandardToolStripRefreshButton(ToolStripContainer toolStripContainer)
-		{
-			return GetStandardToolStrip(toolStripContainer).Items["toolStripButton_Refresh"];
-		}
-
-		#endregion Standard toolbar
 	}
 }

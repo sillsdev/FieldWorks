@@ -8,11 +8,9 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls.PaneBar;
-using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using LanguageExplorer.Works;
-using SIL.LCModel;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
@@ -24,7 +22,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 	internal sealed class InterlinearEditTool : ITool
 	{
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
-		private const string InterlinearTexts = "interlinearTexts";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordClerk _recordClerk;
@@ -62,7 +59,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
 			if (_recordClerk == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(InterlinearTexts, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.Statusbar, TextAndWordsArea.InterlinearTextsFactoryMethod);
 			}
 			var multiPaneParameters = new MultiPaneParameters
 			{
@@ -149,12 +146,5 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		public Image Icon => Images.EditView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
-
-		private static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
-		{
-			Require.That(clerkId == InterlinearTexts, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{InterlinearTexts}'.");
-
-			return new InterlinearTextsRecordClerk(statusBar, cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator, flexComponentParameters.PropertyTable));
-		}
 	}
 }

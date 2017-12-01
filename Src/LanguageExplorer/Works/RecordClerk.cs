@@ -474,6 +474,8 @@ namespace LanguageExplorer.Works
 		// TODO: Odds are high that this won't need to be refactored, as suggested, but simply removed.
 		// TODO: My plan is to not have the clerk fret about whether it should, or should not,
 		// TODO: mess with the record tree bar, since the ITool implementation will know if one was used, or not.
+		// TODO: Odds are high that with the current work on LT-18799 that IsControllingTheRecordTreeBar (and m_recordBarHandler) will go away.
+		// TODO: If classes have to ask what they are, it indicates a need for subclassing.
 #endif
 		/// <summary>
 		/// Tells whether this RecordClerk object should be updating the record tree bar when its list changes
@@ -2389,6 +2391,10 @@ namespace LanguageExplorer.Works
 			StatusBarPanelServices.SetStatusPanelMessage(m_statusBar, msg);
 		}
 
+#if RANDYTODO
+		// TODO: Odds are high that with the current work on LT-18799 that IsPrimaryClerk will go away.
+		// TODO: If classes have to ask what they are, it indicates a need for subclassing.
+#endif
 		/// <summary>
 		/// Generally only one clerk should respond to record navigation in the user interface.
 		/// The "primary" clerk is the one that should respond to record navigation.
@@ -2537,9 +2543,9 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		#endregion Private stuff
+#endregion Private stuff
 
-		#region Protected stuff
+#region Protected stuff
 
 		/// <summary>
 		/// Override this (initially only in InterlinTextsRecordClerk) if the clerk knows how to add an
@@ -2857,7 +2863,7 @@ namespace LanguageExplorer.Works
 			return listIsFiltered ? xWorksStrings.Filtered : string.Empty;
 		}
 
-		#endregion Protected stuff
-		#endregion Non-interface code
+#endregion Protected stuff
+#endregion Non-interface code
 	}
 }

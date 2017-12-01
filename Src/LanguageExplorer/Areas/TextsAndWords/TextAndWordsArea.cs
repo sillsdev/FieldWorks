@@ -26,6 +26,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private IEnumerable<ITool> _myTools;
 		private const string MyUiName = "Texts & Words";
 		internal const string ConcordanceWords = "concordanceWords";
+		internal const string InterlinearTexts = "interlinearTexts";
 		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
 		private bool _hasBeenActivated;
@@ -164,6 +165,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			Require.That(clerkId == ConcordanceWords, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{ConcordanceWords}'.");
 
 			return new InterlinearTextsRecordClerk(statusBar, cache.LanguageProject, new ConcDecorator(cache.ServiceLocator));
+		}
+
+		internal static IRecordClerk InterlinearTextsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		{
+			Require.That(clerkId == InterlinearTexts, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{InterlinearTexts}'.");
+
+			return new InterlinearTextsRecordClerk(statusBar, cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator, flexComponentParameters.PropertyTable));
 		}
 	}
 }

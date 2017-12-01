@@ -9,6 +9,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Works;
 /*using SIL.FieldWorks.Common.FwUtils;*/
 using SIL.FieldWorks.Filters;
 using SIL.LCModel;
@@ -16,7 +17,7 @@ using SIL.LCModel;
 /*using SIL.LCModel.Core.KernelInterfaces;*/
 /*using SIL.LCModel.Utils;*/
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer
 {
 	public interface IRecordList : IRecordClerk, /*IFlexComponent, */ISortItemProvider/*, IVwNotifyChange, IDisposable*/
 	{

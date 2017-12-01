@@ -10,6 +10,7 @@ using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using LanguageExplorer.Works;
+using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 
@@ -18,29 +19,60 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 	/// <summary>
 	/// The main view for the "corpusStatistics" tool in the "textsWords" area.
 	/// </summary>
-	internal sealed partial class StatisticsView : UserControl, IMajorFlexComponent, IFlexComponent, IMainContentControl
+	internal sealed partial class StatisticsView : UserControl, IMainContentControl
 	{
-		private StatusBar _statusBar;
-		private InterlinearTextsRecordClerk _interlinearTextsRecordClerk;
+		private IRecordClerk _recordClerk;
 		private ToolStrip _toolStripView;
-		private bool _toolStripViewCreatedLocally;
 		private ToolStripButton _chooseTextsToolStripButton;
 		private ToolStripMenuItem _viewToolStripMenuItem;
 		private ToolStripMenuItem _chooseTextsToolStripMenuItem;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		public StatisticsView(StatusBar statusBar)
+		/// <summary />
+		public StatisticsView()
 		{
 			InitializeComponent();
+		}
 
-			_statusBar = statusBar;
+		/// <summary />
+		public StatisticsView(MajorFlexComponentParameters majorFlexComponentParameters) : this()
+		{
+			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+
 			var cm = new ContextMenu();
 			var mi = new MenuItem("Copy");
 			mi.Click += Copy_Menu_Item_Click;
 			cm.MenuItems.Add(mi);
 			statisticsBox.ContextMenu = cm;
+
+			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = this;
+			InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
+			_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.Statusbar, TextAndWordsArea.InterlinearTextsFactoryMethod);
+
+			// Add toolbar button.
+			_toolStripView = ToolbarServices.GetViewToolStrip(majorFlexComponentParameters.ToolStripContainer);
+			_chooseTextsToolStripButton = new ToolStripButton(LanguageExplorerResources.AddScripture.ToBitmap())
+			{
+				DisplayStyle = ToolStripItemDisplayStyle.Image,
+				ToolTipText = LanguageExplorerResources.chooseTextsToDisplayAndUse,
+				ImageTransparentColor = Color.Magenta,
+				Size = new Size(24, 24),
+				Text = LanguageExplorerResources.chooseTexts
+			};
+			_toolStripView.Items.Add(_chooseTextsToolStripButton);
+
+			// Add menu item to View menu.
+			_chooseTextsToolStripMenuItem = new ToolStripMenuItem(LanguageExplorerResources.chooseTexts, LanguageExplorerResources.AddScripture.ToBitmap())
+			{
+				ImageTransparentColor = Color.Magenta,
+				ToolTipText = LanguageExplorerResources.chooseTexts
+			};
+			// TODO-Linux: boolean 'searchAllChildren' parameter is marked with "MonoTODO".
+			_viewToolStripMenuItem = (ToolStripMenuItem)majorFlexComponentParameters.MenuStrip.Items.Find("_viewToolStripMenuItem", true)[0];
+			_viewToolStripMenuItem.DropDownItems.Add(_chooseTextsToolStripMenuItem);
+
+			_chooseTextsToolStripButton.Click += AddTexts_Clicked;
+			_chooseTextsToolStripMenuItem.Click += AddTexts_Clicked;
+			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -68,6 +100,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
+		#endregion
+
+		#region Implementation of IFlexComponent
+
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -80,143 +116,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			var cache = PropertyTable.GetValue<LcmCache>("cache");
-			var clerk = RecordClerk.ActiveRecordClerkRepository.GetRecordClerk("interlinearTexts");
-			if (clerk != null)
-			{
-				if (clerk is TemporaryRecordClerk)
-				{
-					_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(_statusBar, cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator, PropertyTable));
-					RecordClerk.ActiveRecordClerkRepository.AddRecordClerk(_interlinearTextsRecordClerk);
-					_interlinearTextsRecordClerk.InitializeFlexComponent(flexComponentParameters);
-				}
-				else
-				{
-					_interlinearTextsRecordClerk = (InterlinearTextsRecordClerk)clerk;
-				}
-			}
-			else
-			{
-				_interlinearTextsRecordClerk = new InterlinearTextsRecordClerk(_statusBar, cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator, PropertyTable));
-				RecordClerk.ActiveRecordClerkRepository.AddRecordClerk(_interlinearTextsRecordClerk);
-				_interlinearTextsRecordClerk.InitializeFlexComponent(flexComponentParameters);
-			}
-			// There's no record bar for it to control, but it should control the status bar (e.g., it should update if we change
-			// the set of selected texts).
-			RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk = _interlinearTextsRecordClerk;
-			_interlinearTextsRecordClerk.ActivateUI(true);
 			RebuildStatisticsTable();
 			//add our current state to the history system
-			PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue("toolChoice", ""), Guid.Empty));
-		}
-
-		#endregion
-
-		#region Implementation of IMajorFlexComponent
-
-		/// <summary>
-		/// Deactivate the component.
-		/// </summary>
-		/// <remarks>
-		/// This is called on the outgoing component, when the user switches to a component.
-		/// </remarks>
-		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
-		{
-			_chooseTextsToolStripButton.Click -= AddTexts_Clicked;
-			_chooseTextsToolStripMenuItem.Click -= AddTexts_Clicked;
-
-			// Remove menu item.
-			_viewToolStripMenuItem.DropDownItems.Remove(_chooseTextsToolStripMenuItem);
-			_chooseTextsToolStripMenuItem.Dispose();
-			_chooseTextsToolStripMenuItem = null;
-
-			// Remove toolbar button.
-			_toolStripView.Items.Remove(_chooseTextsToolStripButton);
-			_chooseTextsToolStripButton.Dispose();
-			_chooseTextsToolStripButton = null;
-
-			// If we also created the toolbar, then get rid of it.
-			if (_toolStripViewCreatedLocally)
-			{
-				// Get rid of entire toolbar, since we added it.
-				majorFlexComponentParameters.ToolStripContainer.TopToolStripPanel.Controls.Remove(_toolStripView);
-				_toolStripView.Dispose();
-				_toolStripView = null;
-				_toolStripViewCreatedLocally = false;
-			}
-		}
-
-		/// <summary>
-		/// Activate the component.
-		/// </summary>
-		/// <remarks>
-		/// This is called on the component that is becoming active.
-		/// </remarks>
-		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
-		{
-			// Add toolbar button (and maybe the entire toolbar).
-			// TODO-Linux: boolean 'searchAllChildren' parameter is marked with "MonoTODO".
-			var toolbars = majorFlexComponentParameters.ToolStripContainer.TopToolStripPanel.Controls.Find("toolStripView", false);
-			if (toolbars.Length == 0)
-			{
-				// Need to create the tool strip ourselves.
-				_toolStripViewCreatedLocally = true;
-				_toolStripView = new ToolStrip
-				{
-					Name = "toolStripView"
-				};
-				majorFlexComponentParameters.ToolStripContainer.TopToolStripPanel.Controls.Add(_toolStripView);
-				majorFlexComponentParameters.ToolStripContainer.TopToolStripPanel.Controls.SetChildIndex(_toolStripView, 0);
-			}
-			else
-			{
-				_toolStripViewCreatedLocally = false;
-				_toolStripView = (ToolStrip)toolbars[0];
-			}
-			_chooseTextsToolStripButton = new ToolStripButton(LanguageExplorerResources.AddScripture.ToBitmap())
-			{
-				DisplayStyle = ToolStripItemDisplayStyle.Image,
-				ToolTipText = LanguageExplorerResources.chooseTextsToDisplayAndUse,
-				ImageTransparentColor = Color.Magenta,
-				Size = new Size(24, 24),
-				Text = LanguageExplorerResources.chooseTexts
-			};
-			_toolStripView.Items.Add(_chooseTextsToolStripButton);
-
-			// Add menu item to View menu.
-			_chooseTextsToolStripMenuItem = new ToolStripMenuItem(LanguageExplorerResources.chooseTexts, LanguageExplorerResources.AddScripture.ToBitmap())
-			{
-				ImageTransparentColor = Color.Magenta,
-				ToolTipText = LanguageExplorerResources.chooseTexts
-			};
-			// TODO-Linux: boolean 'searchAllChildren' parameter is marked with "MonoTODO".
-			_viewToolStripMenuItem = (ToolStripMenuItem)majorFlexComponentParameters.MenuStrip.Items.Find("_viewToolStripMenuItem", true)[0];
-			_viewToolStripMenuItem.DropDownItems.Add(_chooseTextsToolStripMenuItem);
-
-			_chooseTextsToolStripButton.Click += AddTexts_Clicked;
-			_chooseTextsToolStripMenuItem.Click += AddTexts_Clicked;
-		}
-
-		/// <summary>
-		/// Do whatever might be needed to get ready for a refresh.
-		/// </summary>
-		public void PrepareToRefresh()
-		{
-		}
-
-		/// <summary>
-		/// Finish the refresh.
-		/// </summary>
-		public void FinishRefresh()
-		{
-		}
-
-		/// <summary>
-		/// The properties are about to be saved, so make sure they are all current.
-		/// Add new ones, as needed.
-		/// </summary>
-		public void EnsurePropertiesAreCurrent()
-		{
+			PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue("toolChoice", string.Empty), Guid.Empty));
 		}
 
 		#endregion
@@ -255,7 +157,63 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		}
 
 		#endregion
-		
+
+		#region Implementation of IMainContentControl
+
+		/// <summary>
+		/// The control is about to go away, so do something first.
+		/// </summary>
+		public bool PrepareToGoAway()
+		{
+			return true;
+		}
+
+		/// <summary>
+		/// The Area name that uses this control.
+		/// </summary>
+		public string AreaName => AreaServices.TextAndWordsAreaMachineName;
+
+		#endregion
+
+		#region Implementation of IDisposable
+
+		/// <summary>Disposes of the resources (other than memory) used by the <see cref="T:System.Windows.Forms.Form" />.</summary>
+		/// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+
+			if (IsDisposed)
+			{
+				return; // Only need to run it on once.
+			}
+
+			if (disposing)
+			{
+				components?.Dispose();
+
+				_chooseTextsToolStripButton.Click -= AddTexts_Clicked;
+				_chooseTextsToolStripMenuItem.Click -= AddTexts_Clicked;
+
+				// Remove menu item.
+				_viewToolStripMenuItem.DropDownItems.Remove(_chooseTextsToolStripMenuItem);
+				_chooseTextsToolStripMenuItem.Dispose();
+				_chooseTextsToolStripMenuItem = null;
+
+				// Remove toolbar button.
+				_toolStripView.Items.Remove(_chooseTextsToolStripButton);
+				_chooseTextsToolStripButton.Dispose();
+			}
+			_recordClerk = null;
+			_toolStripView = null;
+			_chooseTextsToolStripButton = null;
+			_viewToolStripMenuItem = null;
+			_chooseTextsToolStripMenuItem = null;
+
+			base.Dispose(disposing);
+		}
+		#endregion
+
 		private void RebuildStatisticsTable()
 		{
 			statisticsBox.Clear();
@@ -347,7 +305,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			foreach (var keyValuePair in languageCount)
 			{
 				var ws = cache.WritingSystemFactory.get_EngineOrNull(keyValuePair.Key);
-				var labText = (ws != null ? ws.ToString() : "#unknown#") + @":";
+				var labText = (ws?.ToString() ?? "#unknown#") + @":";
 				statisticsBox.Text += Environment.NewLine + Environment.NewLine + "\t" + labText + "\t"; // Todo: find the right System.?.NewLine constant
 				statisticsBox.Text += "" + keyValuePair.Value;
 			}
@@ -369,53 +327,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			statisticsBox.Select(0, 0);
 		}
 
-		void AddTexts_Clicked(object sender, EventArgs e)
+		private void AddTexts_Clicked(object sender, EventArgs e)
 		{
-			if (_interlinearTextsRecordClerk.AddTexts())
+			if (((InterlinearTextsRecordClerk)_recordClerk).AddTexts())
 			{
 				RebuildStatisticsTable();
 			}
 		}
 
-		#region Implementation of IMainContentControl
-
-		/// <summary>
-		/// The control is about to go away, so do something first.
-		/// </summary>
-		public bool PrepareToGoAway()
-		{
-			CheckDisposed();
-
-			return true;
-		}
-
-		/// <summary>
-		/// The Area name that uses this control.
-		/// </summary>
-		public string AreaName => AreaServices.TextAndWordsAreaMachineName;
-
-		#endregion
-
-		#region Implementation of IDisposable
-
-		/// <summary>
-		/// This method throws an ObjectDisposedException if IsDisposed returns
-		/// true.  This is the case where a method or property in an object is being
-		/// used but the object itself is no longer valid.
-		///
-		/// This method should be added to all public properties and methods of this
-		/// object and all other objects derived from it (extensive).
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException("StatisticsView has been disposed.");
-		}
-
-		#endregion
-
 		// Code to add right click
-		void Copy_Menu_Item_Click(object sender, EventArgs e)
+		private void Copy_Menu_Item_Click(object sender, EventArgs e)
 		{
 			statisticsBox.Copy();
 		}

@@ -183,6 +183,7 @@ namespace LanguageExplorer.Works
 		private RecordFilter _defaultFilter;
 		private string _defaultSortLabel;
 		private bool _suppressSaveOnChangeRecord; // true during delete and insert and ShowRecord calls caused by them.
+		private bool _allowDeletions = true;   // false if nothing is to be deleted for this record clerk.
 
 
 		#endregion Data members
@@ -191,11 +192,7 @@ namespace LanguageExplorer.Works
 
 		private RecordList(ISilDataAccessManaged decorator, bool usingAnalysisWs)
 		{
-			Guard.AgainstNull(decorator, nameof(decorator));
-
-			m_objectListPublisher = new ObjectListPublisher(decorator, RecordListFlid); ;
-			m_oldLength = 0;
-			m_usingAnalysisWs = usingAnalysisWs;
+			ConstructorSurrogate(decorator, usingAnalysisWs);
 		}
 
 		/// <summary>
@@ -212,12 +209,14 @@ namespace LanguageExplorer.Works
 		internal RecordList(ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, ICmObject owner, string propertyName)
 			: this(decorator, usingAnalysisWs)
 		{
+			Guard.AgainstNull(decorator, nameof(decorator));
 			Guard.AgainstNull(owner, nameof(owner));
 			Guard.AgainstNullOrEmptyString(propertyName, nameof(propertyName));
 
 			m_owningObject = owner;
 			m_propertyName = propertyName;
 			m_flid = flid;
+			ConstructorSurrogate(decorator, usingAnalysisWs, flid, owner, propertyName);
 		}
 
 		/// <summary>
@@ -233,6 +232,59 @@ namespace LanguageExplorer.Works
 			// Review JohnH(JohnT): This is only useful for dependent clerks, but I don't know how to check this is one.
 			m_owningObject = null;
 		}
+
+		#region New constructors
+
+		internal RecordList(string id, StatusBar statusBar, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
+		{
+			ConstructorSurrogate(id, statusBar, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion);
+		}
+
+		internal RecordList(string id, StatusBar statusBar, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, ICmObject owner, string propertyName)
+			: this(decorator, usingAnalysisWs, flid, owner, propertyName)
+		{
+			ConstructorSurrogate(id, statusBar, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion);
+		}
+
+		private void ConstructorSurrogate(ISilDataAccessManaged decorator, bool usingAnalysisWs)
+		{
+			Guard.AgainstNull(decorator, nameof(decorator));
+
+			m_objectListPublisher = new ObjectListPublisher(decorator, RecordListFlid); ;
+			m_oldLength = 0;
+			m_usingAnalysisWs = usingAnalysisWs;
+		}
+
+		private void ConstructorSurrogate(ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, ICmObject owner, string propertyName)
+		{
+			Guard.AgainstNull(owner, nameof(owner));
+			Guard.AgainstNullOrEmptyString(propertyName, nameof(propertyName));
+
+			ConstructorSurrogate(decorator, usingAnalysisWs);
+
+			m_owningObject = owner;
+			m_propertyName = propertyName;
+			m_flid = flid;
+		}
+
+		private void ConstructorSurrogate(string id, StatusBar statusBar, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
+		{
+			Guard.AgainstNullOrEmptyString(id, nameof(id));
+			Guard.AgainstNull(statusBar, nameof(statusBar));
+			Guard.AgainstNull(defaultSorter, nameof(defaultSorter));
+			Guard.AgainstNullOrEmptyString(defaultSortLabel, nameof(defaultSortLabel));
+			Guard.AgainstNull(defaultFilter, nameof(defaultFilter));
+
+			Id = id;
+			_statusBar = statusBar;
+			_defaultSorter = defaultSorter;
+			_defaultSortLabel = defaultSortLabel;
+			_defaultFilter = defaultFilter;
+			_allowDeletions = allowDeletions;
+			_shouldHandleDeletion = shouldHandleDeletion;
+		}
+
+		#endregion New constructors
 
 		#endregion Construction
 
@@ -318,7 +370,7 @@ namespace LanguageExplorer.Works
 		public event SelectObjectEventHandler SelectedObjectChanged;
 		public event EventHandler SorterChangedByClerk;
 
-		public void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
+		public virtual void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
 		{
 			if (_isActiveInGui)
 			{
@@ -840,9 +892,9 @@ namespace LanguageExplorer.Works
 		}
 
 		public bool HasEmptyList { get; }
-		public string Id { get; }
+		public string Id { get; private set; }
 		public bool IsActiveInGui { get; }
-		public bool IsControllingTheRecordTreeBar { get; set; }
+		public virtual bool IsControllingTheRecordTreeBar { get; set; }
 		public bool IsDefaultSort { get; set; }
 
 		/// <summary>
@@ -1580,7 +1632,7 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		public void OnPropertyChanged(string name)
+		public virtual void OnPropertyChanged(string name)
 		{
 			// This happens when the user chooses a MenuItem or sidebar item that selects a filter
 			if (name == CurrentFilterPropertyTableId)
@@ -1846,6 +1898,9 @@ namespace LanguageExplorer.Works
 					return; // Cannot complete the reload until PropChangeds complete.
 				}
 				var newCurrentIndex = CurrentIndex;
+#if RANDYTODO
+				// TODO: Replace use of ArrayList with List<IManyOnePathSortItem>.
+#endif
 				ArrayList newSortedObjects;
 				ListChangedEventArgs.ListChangedActions actions;
 
@@ -2258,12 +2313,10 @@ namespace LanguageExplorer.Works
 		{
 			get
 			{
-				CheckDisposed();
 				return m_sorter;
 			}
 			set
 			{
-				CheckDisposed();
 				m_sorter = value;
 				m_sorter.Cache = m_cache;
 			}
@@ -2745,6 +2798,7 @@ namespace LanguageExplorer.Works
 			_bulkEditListUpdateHelper = null;
 			_recordBarHandler = null;
 			_defaultSorter = null;
+			_defaultFilter = null;
 
 			PropertyTable = null;
 			Publisher = null;

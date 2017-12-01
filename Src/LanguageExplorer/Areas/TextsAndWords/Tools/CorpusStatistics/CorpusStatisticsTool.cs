@@ -30,9 +30,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_textAndWordsAreaMenuHelper.Dispose();
-			_statisticsView.Deactivate(majorFlexComponentParameters);
 
 			// Remove StatisticsView (right panel of 'mainCollapsingSplitContainer').
+			// Setting "SecondControl" to null will dispose "_statisticsView", so no need to do it here.
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = null;
 			_statisticsView = null;
 			_textAndWordsAreaMenuHelper = null;
@@ -50,10 +50,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
 
 			// Get the StatisticsView into right panel of 'mainCollapsingSplitContainer'.
-			_statisticsView = new StatisticsView(majorFlexComponentParameters.Statusbar);
-			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = _statisticsView;
-			_statisticsView.InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-			_statisticsView.Activate(majorFlexComponentParameters);
+			_statisticsView = new StatisticsView(majorFlexComponentParameters);
 		}
 
 		/// <summary>
