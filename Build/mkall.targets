@@ -445,7 +445,7 @@
 		<DownloadFile Address="$(NUnitDownloadUrl)" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading artifacts for LCM." />
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(LcmBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="LCM.zip" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalLiblcm)'!='Y'"/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(LcmBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="LCM.zip" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalLiblcm)'!='Y'" Tag=".lastSuccessful"/>
 	</Target>
 
 	<!-- Setup source variables (to enable local development in libpalaso, chorus, and liblcm) -->
