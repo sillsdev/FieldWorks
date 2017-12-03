@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.Works;
 using SIL.LCModel;
@@ -20,7 +21,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	///
 	/// The contents of this list are a result of parsing the texts and passing the results through a decorator.
 	/// </summary>
-	internal class ConcordanceWordList : RecordList
+	internal class ConcordanceWordList : InterlinearTextsRecordList
 	{
 		//the ReloadList() on the RecordList class will trigger if this is true
 		//set when the index in the list is changed
@@ -28,14 +29,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		//This indicates that a reload has been requested,
 		private bool reloadRequested;
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="decorator"></param>
-		/// <param name="languageProject"></param>
-		internal ConcordanceWordList(ConcDecorator decorator, ILangProject languageProject)
-			: base(decorator, false, ObjectListPublisher.OwningFlid, languageProject, "Wordforms")
+		/// <summary />
+		internal ConcordanceWordList(StatusBar statusBar, ILangProject languageProject, ConcDecorator decorator)
+			: base(TextAndWordsArea.ConcordanceWords, statusBar, new PropertyRecordSorter("ShortName"), "Default", new WordsUsedOnlyElsewhereFilter(languageProject.Cache), false, false, decorator, false, ObjectListPublisher.OwningFlid, languageProject, "Wordforms")
 		{
+			_filterProvider = new WfiRecordFilterListProvider();
 		}
 
 		public override void OnChangeFilter(FilterChangeEventArgs args)

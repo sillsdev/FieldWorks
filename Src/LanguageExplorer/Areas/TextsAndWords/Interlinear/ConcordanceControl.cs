@@ -12,7 +12,6 @@ using System.Text;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -28,7 +27,7 @@ using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	public partial class ConcordanceControl : ConcordanceControlBase
+	internal partial class ConcordanceControl : ConcordanceControlBase
 	{
 		private RegexHelperMenu m_regexContextMenu;
 		private IVwPattern m_vwPattern;
@@ -42,7 +41,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			ConstructorSurrogate();
 		}
 
-		internal ConcordanceControl(OccurrencesOfSelectedUnit clerk)
+		internal ConcordanceControl(MatchingConcordanceItems clerk)
 			:base(clerk)
 		{
 			ConstructorSurrogate();
@@ -122,13 +121,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
+				components?.Dispose();
 				if (m_clerk != null)
+				{
 					m_clerk.ConcordanceControl = null;
-				if (m_pOSPopupTreeManager != null)
-					m_pOSPopupTreeManager.Dispose();
-
+				}
+				m_pOSPopupTreeManager?.Dispose();
 				// Don't dispose of the clerk, since it can monitor relevant PropChanges
 				// that affect the NeedToReloadVirtualProperty.
 			}
@@ -1656,68 +1654,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		#endregion
 	}
 
-	public class OccurrencesOfSelectedUnit : InterlinearTextsRecordClerk
-	{
-		ConcordanceControlBase m_concordanceControl = null;
-
-		/// <summary />
-		internal OccurrencesOfSelectedUnit(string id, StatusBar statusBar, ConcDecorator decorator)
-			: base(id, statusBar, decorator)
-		{
-		}
-
-		internal ConcordanceControlBase ConcordanceControl
-		{
-			get { return m_concordanceControl; }
-			set
-			{
-				m_concordanceControl = value;
-				((MatchingConcordanceItems)MyRecordList).OwningControl = value;
-			}
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			if (disposing)
-			{
-				m_concordanceControl = null;
-			}
-			base.Dispose(disposing);
-		}
-
-		protected override void RefreshAfterInvalidObject()
-		{
-			ConcordanceControl.LoadMatches(true);
-		}
-
-		/// <summary>
-		/// Overridden to prevent trying to get a name for the "current object" which we can't do because
-		/// it is not a true CmObject.
-		/// </summary>
-		protected override string GetStatusBarMsgForCurrentObject()
-		{
-			return string.Empty;
-		}
-	}
-
 	/// <summary>
 	/// This class is used for the record list of the concordance view.
 	/// We fudge the owning object, since the decorator doesn't care what class it is, but
 	/// the base class does care that it is some kind of real object.
 	/// </summary>
-	public class MatchingConcordanceItems : RecordList
+	internal class MatchingConcordanceItems : InterlinearTextsRecordList
 	{
+		ConcordanceControlBase _concordanceControl;
+
 		/// <summary>
 		/// Create bare-bones RecordList for made up owner and a property on it.
 		/// </summary>
-		public MatchingConcordanceItems(ConcDecorator decorator)
-			: base(decorator)
+		public MatchingConcordanceItems(string id, StatusBar statusBar, ConcDecorator decorator)
+			: base(id, statusBar, new PropertyRecordSorter("ShortName"), "Default", null, false, false, decorator, false, decorator.MetaDataCache.GetFieldId2(LangProjectTags.kClassId, "ConcOccurrences", false), decorator.PropertyTable.GetValue<LcmCache>("cache").LanguageProject, "ConcOccurrences")
 		{
-			m_flid = decorator.MetaDataCache.GetFieldId2(LangProjectTags.kClassId, "ConcOccurrences", false);
 		}
-
-		internal ConcordanceControlBase OwningControl { get; set; }
 
 		#region Overrides of RecordList
 
@@ -1731,8 +1683,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			m_owningObject = m_cache.LangProject;
 		}
-
-		#endregion
 
 		/// <summary>
 		/// Override to force recomputing the list. This is tricky because LoadMatches calls a Clerk routine which
@@ -1757,17 +1707,56 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			else
 			{
 				// It's in a disposed state...make it empty for now.
-				((ObjectListPublisher) VirtualListPublisher).SetOwningPropValue(new int[0]);
-				ConcDecorator concSda = GetConcDecorator();
-				if (concSda != null)
-					concSda.UpdateOccurrences(new int[0]);
+				((ObjectListPublisher)VirtualListPublisher).SetOwningPropValue(new int[0]);
+				GetConcDecorator()?.UpdateOccurrences(new int[0]);
 			}
 			base.ReloadList();
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
+
+			if (disposing)
+			{
+			}
+
+			_concordanceControl = null;
+
+			base.Dispose(disposing);
+		}
+
+		protected override void RefreshAfterInvalidObject()
+		{
+			ConcordanceControl.LoadMatches(true);
+		}
+
+		/// <summary>
+		/// Overridden to prevent trying to get a name for the "current object" which we can't do because
+		/// it is not a true CmObject.
+		/// </summary>
+		protected override string GetStatusBarMsgForCurrentObject()
+		{
+			return string.Empty;
+		}
+
+		#endregion
+
+		internal ConcordanceControlBase OwningControl { get; set; }
+
 		private ConcDecorator GetConcDecorator()
 		{
-			return ((ObjectListPublisher) VirtualListPublisher).BaseSda as ConcDecorator;
+			return ((ObjectListPublisher)VirtualListPublisher).BaseSda as ConcDecorator;
+		}
+
+		internal ConcordanceControlBase ConcordanceControl
+		{
+			get { return _concordanceControl; }
+			set
+			{
+				_concordanceControl = value;
+				OwningControl = value;
+			}
 		}
 	}
 

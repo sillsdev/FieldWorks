@@ -963,7 +963,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			// record doesn't pass the filter and we get into an infinite loop. Also, if the user
 			// is filtering, he probably just wants to see that there are no matching texts, not
 			// make a new one.
-			if (Clerk is InterlinearTextsRecordClerk &&
+			if (Clerk is InterlinearTextsRecordList &&
 				Clerk.CurrentObjectHvo == 0 && !m_fSuppressAutoCreate && !Clerk.ShouldNotModifyList
 				&& Clerk.Filter == null)
 			{
@@ -988,7 +988,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 					};
 					using (new ListUpdateHelper(Clerk, options))
 					{
-						((InterlinearTextsRecordClerk)Clerk).AddNewTextNonUndoable();
+						((InterlinearTextsRecordList)Clerk).AddNewTextNonUndoable();
 					}
 				});
 			}
@@ -1011,7 +1011,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 				if (stText.ParagraphsOS.Count == 0)
 				{
 					NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-						((InterlinearTextsRecordClerk)Clerk).CreateFirstParagraph(stText, Cache.DefaultVernWs));
+						((InterlinearTextsRecordList)Clerk).CreateFirstParagraph(stText, Cache.DefaultVernWs));
 				}
 				if (stText.ParagraphsOS.Count == 1 && ((IStTxtPara)stText.ParagraphsOS[0]).Contents.Length == 0)
 				{

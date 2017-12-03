@@ -167,12 +167,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_wfClerk.SuppressSaveOnChangeRecord = true; // various things trigger change record and would prevent Undo
 
 			//We need to re-parse the interesting texts so that the rows in the dialog show all the occurrences (make sure it is up to date)
-			if(m_wfClerk is InterlinearTextsRecordClerk)
+			if(m_wfClerk is InterlinearTextsRecordList)
 			{
 				//Unsuppress to allow for the list to be reloaded during ParseInterstingTextsIfNeeded()
 				//(this clerk and its list are not visible in this dialog, so there will be no future reload)
 				m_wfClerk.ListLoadingSuppressed = false;
-				(m_wfClerk as InterlinearTextsRecordClerk).ParseInterstingTextsIfNeeded(); //Trigger the parsing
+				(m_wfClerk as InterlinearTextsRecordList).ParseInterstingTextsIfNeeded(); //Trigger the parsing
 			}
 			m_srcwfiWordform = (IWfiWordform)m_wfClerk.CurrentObject;
 			return SetDlgInfoPrivate(configurationParameters);

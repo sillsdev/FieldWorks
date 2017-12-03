@@ -134,18 +134,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// the list of Scripture texts that have been selected for interlinearization.
 			var parent = Parent;
 			while (parent != null && !(parent is InterlinMaster))
+			{
 				parent = parent.Parent;
+			}
 			var master = parent as InterlinMaster;
 			if (master != null)
 			{
-				var clerk = master.Clerk as InterlinearTextsRecordClerk;
-				if (clerk != null)
-				{
-					clerk.GetScriptureIds(); // initialize the InterestingTextList to include Scripture (prevent a crash trying later)
-				}
+				var clerk = master.Clerk as InterlinearTextsRecordList;
+				clerk?.GetScriptureIds(); // initialize the InterestingTextList to include Scripture (prevent a crash trying later)
 			}
-			bool fFocusBox = TryHideFocusBoxAndUninstall();
-			ICmObject objRoot = m_objRepo.GetObject(m_hvoRoot);
+			var fFocusBox = TryHideFocusBoxAndUninstall();
+			var objRoot = m_objRepo.GetObject(m_hvoRoot);
 			using (var dlg = new InterlinearExportDialog(objRoot, m_vc))
 			{
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));

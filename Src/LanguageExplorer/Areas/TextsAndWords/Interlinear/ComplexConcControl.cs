@@ -17,7 +17,7 @@ using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	public partial class ComplexConcControl : ConcordanceControlBase, IFocusablePanePortion, IPatternControl
+	internal partial class ComplexConcControl : ConcordanceControlBase, IFocusablePanePortion, IPatternControl
 	{
 		private enum ComplexConcordanceInsertType
 		{
@@ -78,7 +78,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 		}
 
-		internal ComplexConcControl(OccurrencesOfSelectedUnit clerk)
+		internal ComplexConcControl(MatchingConcordanceItems clerk)
 			:base(clerk)
 		{
 			InitializeComponent();

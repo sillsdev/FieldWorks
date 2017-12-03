@@ -130,8 +130,7 @@ namespace LanguageExplorer.Works
 			// base.PropChanged (hvo, tag, ivMin, cvIns, cvDel);
 			// We'll call the base code, only if we don't deal with the change here.
 
-			if (tag == CmPossibilityTags.kflidSubPossibilities || tag == CmPossibilityListTags.kflidPossibilities
-				&& (cvIns > 0 || cvDel > 0))
+			if (tag == CmPossibilityTags.kflidSubPossibilities || tag == CmPossibilityListTags.kflidPossibilities && (cvIns > 0 || cvDel > 0))
 			{
 				// Reload the whole list, since a deleted/added node may have owned sub-possibilities.
 				// Those subpossibilities would remain in the full sorted set of objects,
@@ -158,7 +157,9 @@ namespace LanguageExplorer.Works
 				{
 					var hvoTargets = new List<int>(new[] {hvo});
 					if (IndexOfFirstSortItem(hvoTargets) != -1)
+					{
 						UpdateListItemName(hvo);
+					}
 				}
 			}
 			else

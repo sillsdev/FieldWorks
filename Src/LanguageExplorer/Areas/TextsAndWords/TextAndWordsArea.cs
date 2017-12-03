@@ -11,6 +11,7 @@ using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Works;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords
@@ -164,14 +165,14 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			Require.That(clerkId == ConcordanceWords, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{ConcordanceWords}'.");
 
-			return new InterlinearTextsRecordClerk(statusBar, cache.LanguageProject, new ConcDecorator(cache.ServiceLocator));
+			return new ConcordanceWordList(statusBar, cache.LanguageProject, new ConcDecorator(cache.ServiceLocator));
 		}
 
 		internal static IRecordClerk InterlinearTextsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
 			Require.That(clerkId == InterlinearTexts, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{InterlinearTexts}'.");
 
-			return new InterlinearTextsRecordClerk(statusBar, cache.LanguageProject, new InterestingTextsDecorator(cache.ServiceLocator, flexComponentParameters.PropertyTable));
+			return new InterlinearTextsRecordList(InterlinearTexts, statusBar, new PropertyRecordSorter("Title"), "Default", null, false, false, new InterestingTextsDecorator(cache.ServiceLocator, flexComponentParameters.PropertyTable), false, InterestingTextsDecorator.kflidInterestingTexts, cache.LanguageProject, "InterestingTexts");
 		}
 	}
 }

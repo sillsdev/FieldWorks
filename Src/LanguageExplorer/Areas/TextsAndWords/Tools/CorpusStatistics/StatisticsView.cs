@@ -329,7 +329,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 
 		private void AddTexts_Clicked(object sender, EventArgs e)
 		{
-			if (((InterlinearTextsRecordClerk)_recordClerk).AddTexts())
+			if (((InterlinearTextsRecordList)_recordClerk).AddTexts())
 			{
 				RebuildStatisticsTable();
 			}

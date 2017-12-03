@@ -2351,11 +2351,29 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo insert text.
+        /// </summary>
+        internal static string RedoInsertText {
+            get {
+                return ResourceManager.GetString("RedoInsertText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The selected object has been deleted (possibly by another user on a networked computer). Refreshing..
         /// </summary>
         internal static string SelectedObjectHasBeenDeleted {
             get {
                 return ResourceManager.GetString("SelectedObjectHasBeenDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo insert text.
+        /// </summary>
+        internal static string UndoInsertText {
+            get {
+                return ResourceManager.GetString("UndoInsertText", resourceCulture);
             }
         }
     }

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -15,17 +14,17 @@ using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	public class ConcordanceControlBase : UserControl, IMainContentControl
+	internal class ConcordanceControlBase : UserControl, IMainContentControl
 	{
 		protected XmlNode m_configurationParameters;
 		protected LcmCache m_cache;
-		protected OccurrencesOfSelectedUnit m_clerk;
+		protected MatchingConcordanceItems m_clerk;
 		protected IHelpTopicProvider m_helpTopicProvider;
 
 		public ConcordanceControlBase()
 		{}
 
-		internal ConcordanceControlBase(OccurrencesOfSelectedUnit clerk)
+		internal ConcordanceControlBase(MatchingConcordanceItems clerk)
 		{
 			m_clerk = clerk;
 		}

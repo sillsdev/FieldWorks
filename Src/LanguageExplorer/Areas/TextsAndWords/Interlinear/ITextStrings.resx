@@ -963,4 +963,10 @@ Click "Cancel" to abort this import.</value>
   <data name="Export_Discourse_Chart" xml:space="preserve">
     <value>Export Discourse Chart...</value>
   </data>
+  <data name="RedoInsertText" xml:space="preserve">
+    <value>Redo insert text</value>
+  </data>
+  <data name="UndoInsertText" xml:space="preserve">
+    <value>Undo insert text</value>
+  </data>
 </root>

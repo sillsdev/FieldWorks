@@ -97,7 +97,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				FirstControlParameters = new SplitterChildControlParameters(), // Control (PaneBarContainer+ConcordanceControl) added below. Leave Label null.
 				SecondControlParameters = new SplitterChildControlParameters() // Control (PaneBarContainer+RecordBrowseView) added below. Leave Label null.
 			};
-			_complexConcControl = new ComplexConcControl((OccurrencesOfSelectedUnit) _recordClerk)
+			_complexConcControl = new ComplexConcControl((MatchingConcordanceItems)_recordClerk)
 			{
 				Dock = DockStyle.Fill
 			};
@@ -171,7 +171,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		{
 			Require.That(clerkId == ComplexConcOccurrencesOfSelectedUnit, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{ComplexConcOccurrencesOfSelectedUnit}'.");
 
-			return new OccurrencesOfSelectedUnit(clerkId, statusBar, new ConcDecorator(cache.ServiceLocator));
+			return new MatchingConcordanceItems(clerkId, statusBar, new ConcDecorator(cache.ServiceLocator));
 		}
 	}
 }

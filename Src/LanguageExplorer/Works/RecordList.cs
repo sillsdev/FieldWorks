@@ -1651,7 +1651,7 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		public bool OnRefresh(object argument)
+		public virtual bool OnRefresh(object argument)
 		{
 			using (new WaitCursor(PropertyTable.GetValue<Form>("window")))
 			{
@@ -1797,7 +1797,7 @@ namespace LanguageExplorer.Works
 			_filterProvider?.ReLoad();
 		}
 
-		public void ReloadIfNeeded()
+		public virtual void ReloadIfNeeded()
 		{
 			if (OwningObject != null && IsVirtualPublisherCreated)
 			{
@@ -1861,15 +1861,12 @@ namespace LanguageExplorer.Works
 				}
 				m_requestedLoadWhileSuppressed = true;
 				// it's possible that we'll want to reload once we become the main active window (cf. LT-9251)
-				if (PropertyTable != null)
+				var window = PropertyTable.GetValue<Form>("window");
+				var app = PropertyTable.GetValue<IApp>("App");
+				if (window != null && app != null && window != app.ActiveMainWindow)
 				{
-					var window = PropertyTable.GetValue<Form>("window");
-					var app = PropertyTable.GetValue<IApp>("App");
-					if (window != null && app != null && window != app.ActiveMainWindow)
-					{
-						// make sure we don't install more than one.
-						RequestReloadOnActivation(window);
-					}
+					// make sure we don't install more than one.
+					RequestReloadOnActivation(window);
 				}
 				return;
 			}
@@ -2827,6 +2824,11 @@ namespace LanguageExplorer.Works
 		internal static string ClerkSelectedObjectPropertyId(string clerkId)
 		{
 			return clerkId + "-selected";
+		}
+
+		internal static string GetCorrespondingPropertyName(string vectorName)
+		{
+			return "RecordList-" + vectorName;
 		}
 
 #if RANDYTODO
@@ -3979,6 +3981,16 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		protected virtual void ClearInvalidSubitem()
 		{
+		}
+
+		/// <summary>
+		/// Handles refreshing the record list after an object was deleted.
+		/// </summary>
+		/// <remarks>This should be overriden to perform more efficient refreshing of the record list display</remarks>
+		protected virtual void RefreshAfterInvalidObject()
+		{
+			// to be safe we just do a full refresh.
+			PropertyTable.GetValue<IApp>("App").RefreshAllViews();
 		}
 
 		protected virtual void OnSelectedObjectChanged(SelectObjectEventArgs e)

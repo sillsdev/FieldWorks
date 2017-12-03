@@ -302,6 +302,10 @@
     <Compile Include="Areas\Notebook\NotebookAreaMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolMenuHelper.cs" />
     <Compile Include="Areas\TemporaryRecordList.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\CreateAndInsertStText.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearTextsRecordList.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\NonUndoableCreateAndInsertStText.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\UndoableCreateAndInsertStText.cs" />
     <Compile Include="Areas\TextsAndWords\TextAndWordsAreaMenuHelper.cs" />
     <Compile Include="IListArea.cs" />
     <Compile Include="Impls\PropertyTable.cs" />
@@ -1079,7 +1083,7 @@
       <DependentUpon>HeadWordNumbersDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Works\IAnalysisOccurrenceFromHvo.cs" />
-    <Compile Include="Works\ICreateAndInsert.cs" />
+    <Compile Include="ICreateAndInsert.cs" />
     <Compile Include="Works\IDictConfigPresenter.cs" />
     <Compile Include="Works\IDictConfigViewer.cs" />
     <Compile Include="Works\IDictionaryConfigurationView.cs" />
@@ -1979,7 +1983,6 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearSfmImportWizard.Designer.cs">
       <DependentUpon>InterlinearSfmImportWizard.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearTextsRecordClerk.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinLineChoices.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinMaster.cs">
       <SubType>UserControl</SubType>

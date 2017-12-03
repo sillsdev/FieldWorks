@@ -92,7 +92,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 				FirstControlParameters = new SplitterChildControlParameters(), // Control (PaneBarContainer+ConcordanceControl) added below. Leave Label null.
 				SecondControlParameters = new SplitterChildControlParameters() // Control (PaneBarContainer+RecordBrowseView) added below. Leave Label null.
 			};
-			_concordanceControl = new ConcordanceControl((OccurrencesOfSelectedUnit)_recordClerk);
+			_concordanceControl = new ConcordanceControl((MatchingConcordanceItems)_recordClerk);
 			nestedMultiPaneParameters.FirstControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _concordanceControl);
 			_recordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceList").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk);
 			nestedMultiPaneParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _recordBrowseView);
@@ -164,7 +164,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		{
 			Require.That(clerkId == OccurrencesOfSelectedUnit, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{OccurrencesOfSelectedUnit}'.");
 
-			return new OccurrencesOfSelectedUnit(clerkId, statusBar, new ConcDecorator(cache.ServiceLocator));
+			return new MatchingConcordanceItems(clerkId, statusBar, new ConcDecorator(cache.ServiceLocator));
 		}
 	}
 }
