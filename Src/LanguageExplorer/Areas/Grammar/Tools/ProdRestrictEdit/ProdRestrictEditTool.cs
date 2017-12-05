@@ -159,14 +159,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 		{
 			Require.That(clerkId == ProdRestrict, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{ProdRestrict}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.MorphologicalDataOA.ProdRestrictOA),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				false,
-				false);
+			return new PossibilityRecordList(clerkId, statusBar, null, false, false, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.MorphologicalDataOA.ProdRestrictOA);
 		}
 	}
 }

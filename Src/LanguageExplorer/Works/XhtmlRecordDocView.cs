@@ -25,7 +25,7 @@ namespace LanguageExplorer.Works
 		internal string m_configObjectName;
 		private ToolStripMenuItem m_printMenu;
 
-		public XhtmlRecordDocView(XElement configurationParameters, LcmCache cache, RecordClerk recordClerk, ToolStripMenuItem printMenu)
+		public XhtmlRecordDocView(XElement configurationParameters, LcmCache cache, IRecordClerk recordClerk, ToolStripMenuItem printMenu)
 			: base(configurationParameters, cache, recordClerk)
 		{
 			m_printMenu = printMenu;

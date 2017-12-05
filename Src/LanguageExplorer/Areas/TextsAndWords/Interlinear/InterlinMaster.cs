@@ -1336,9 +1336,10 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			get
 			{
 				if (PropertyTable == null)
+				{
 					return false; // apparently not quite setup to determine true or false.
-				return InterlinearTab == TabPageSelection.Interlinearizer ||
-					InterlinearTab == TabPageSelection.Gloss;
+				}
+				return InterlinearTab == TabPageSelection.Interlinearizer || InterlinearTab == TabPageSelection.Gloss;
 			}
 		}
 

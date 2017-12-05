@@ -5,9 +5,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainImpl;
@@ -39,16 +42,19 @@ namespace LanguageExplorer.Works
 		bool m_suspendReloadUntilOnChangeListItemsClass = true;
 		private readonly XElement m_partOwnershipTreeSpec = XElement.Parse(xWorksStrings.EntriesOrChildrenClerkPartOwnershipTree);
 
-		/// <summary>
-		/// Create RecordList for SDA-made up property on the given owner.
-		/// </summary>
-		/// <param name="decorator"></param>
-		/// <param name="usingAnalysisWs"></param>
-		/// <param name="owner"></param>
-		internal EntriesOrChildClassesRecordList(ISilDataAccessManaged decorator, bool usingAnalysisWs, ILexDb owner)
-			: base(decorator, usingAnalysisWs, decorator.MetaDataCache.GetFieldId("LexDb", "Entries", false), owner, "Entries")
+		/// <summary />
+		internal EntriesOrChildClassesRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, ILexDb owner)
+			:base(id, statusBar, new Dictionary<string, PropertyRecordSorter>
+				{
+				{ AreaServices.Default, new PropertyRecordSorter("ShortName") },
+				{ "PrimaryGloss", new PropertyRecordSorter("PrimaryGloss") }
+				},
+				null, false, false,
+				decorator, false, decorator.MetaDataCache.GetFieldId("LexDb", "Entries", false), owner, "Entries")
 		{
 		}
+
+		#region Overrides of RecordList
 
 		/// <summary>
 		/// If m_flid is one of the special classes where we need to modify the expected destination class, do so.
@@ -58,13 +64,9 @@ namespace LanguageExplorer.Works
 			get
 			{
 				var result = base.ListItemsClass;
-				if (result == 0)
-					return GhostParentHelper.GetBulkEditDestinationClass(m_cache, m_flid);
-				return result;
+				return result == 0 ? GhostParentHelper.GetBulkEditDestinationClass(m_cache, m_flid) : result;
 			}
 		}
-
-		#region Overrides of RecordList
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
@@ -82,13 +84,19 @@ namespace LanguageExplorer.Works
 			m_pot = PartOwnershipTree.Create(m_cache, this, true);
 		}
 
-		#endregion
-
 		protected override void DisposeManagedResources()
 		{
 			if (m_pot != null && !m_pot.IsDisposed)
+			{
 				m_pot.Dispose();
+			}
 			base.DisposeManagedResources();
+		}
+
+		protected override void DisposeUnmanagedResources()
+		{
+			m_pot = null;
+			base.DisposeUnmanagedResources();
 		}
 
 		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
@@ -96,7 +104,9 @@ namespace LanguageExplorer.Works
 			CheckDisposed();
 
 			if (UpdatingList || m_reloadingList)
+			{
 				return;	// we're already in the process of changing our list.
+			}
 
 			var fLoadSuppressed = m_requestedLoadWhileSuppressed;
 			using (var luh = new ListUpdateHelper(Clerk))
@@ -108,19 +118,25 @@ namespace LanguageExplorer.Works
 				// even if RecordList is in m_fUpdatingList mode, we still want to make sure
 				// our alternate list figures out whether it needs to reload as well.
 				if (UpdatingList)
+				{
 					TryHandleUpdateOrMarkPendingReload(hvo, tag, ivMin, cvIns, cvDel);
+				}
 
 				// If we edited the list of entries, all our properties are in doubt.
 				if (tag == m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries)
 				{
 					foreach (var key in m_reloadNeededForProperty.Keys.ToArray())
+					{
 						m_reloadNeededForProperty[key] = true;
+					}
 				}
 			}
 			// The ListUpdateHelper doesn't always reload the list when it needs it.  See the
 			// second bug listed in FWR-1081.
 			if (m_requestedLoadWhileSuppressed && !fLoadSuppressed && !UpdatingList)
+			{
 				ReloadList();
+			}
 		}
 
 		protected override void MarkEntriesForReload()
@@ -171,11 +187,6 @@ namespace LanguageExplorer.Works
 			return base.RestoreListFrom(pathname);
 		}
 
-		/// <summary>
-		/// Stores the target flid (that is, typically the field we want to bulk edit) most recently passed to ReloadList.
-		/// </summary>
-		private int TargetFlid { get; set; }
-
 		public override void ReloadList(int newListItemsClass, int newTargetFlid, bool force)
 		{
 			// reload list if it differs from current target class (or if forcing a reload anyway).
@@ -187,9 +198,13 @@ namespace LanguageExplorer.Works
 				// are virtual properties of the LexDb.
 				m_flid = newTargetFlid;
 				if (!m_reloadNeededForProperty.ContainsKey(m_flid))
+				{
 					m_reloadNeededForProperty.Add(m_flid, false);
+				}
 				if (m_flidEntries == 0 && newListItemsClass == LexEntryTags.kClassId)
+				{
 					m_flidEntries = m_flid;
+				}
 				CheckExpectedListItemsClassInSync(newListItemsClass, ListItemsClass);
 				ReloadList();
 			}
@@ -206,15 +221,21 @@ namespace LanguageExplorer.Works
 		protected override int GetNewCurrentIndex(ArrayList newSortedObjects, int hvoCurrentBeforeGetObjectSet)
 		{
 			if (hvoCurrentBeforeGetObjectSet == 0)
+			{
 				return -1;
+			}
 			var repo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			if (!repo.IsValidObjectId(hvoCurrentBeforeGetObjectSet))
+			{
 				return -1;
+			}
 
 			// first lookup the old object in the new list, just in case it's there.
 			var newIndex = base.GetNewCurrentIndex(newSortedObjects, hvoCurrentBeforeGetObjectSet);
 			if (newIndex != -1)
+			{
 				return newIndex;
+			}
 			var newListItemsClass = ListItemsClass;
 			// NOTE: the class of hvoBeforeListChange could be different then prevListItemsClass, if the item is a ghost (owner).
 			var classOfObsoleteCurrentObj = repo.GetObject(hvoCurrentBeforeGetObjectSet).ClassID;
@@ -226,10 +247,7 @@ namespace LanguageExplorer.Works
 			}
 			// we've changed list items class, so find the corresponding new object.
 			ISet<int> commonAncestors;
-			var relatives = m_pot.FindCorrespondingItemsInCurrentList(m_prevFlid,
-				new HashSet<int>(new[] { hvoCurrentBeforeGetObjectSet }),
-				m_flid,
-				out commonAncestors);
+			var relatives = m_pot.FindCorrespondingItemsInCurrentList(m_prevFlid, new HashSet<int>(new[] { hvoCurrentBeforeGetObjectSet }), m_flid, out commonAncestors);
 			var newHvoRoot = relatives.Count > 0 ? relatives.ToArray()[0] : 0;
 			var hvoCommonAncestor = commonAncestors.Count > 0 ? commonAncestors.ToArray()[0] : 0;
 			if (newHvoRoot == 0 && hvoCommonAncestor != 0)
@@ -256,23 +274,24 @@ namespace LanguageExplorer.Works
 			return $"{@"LexDb"}.{@"Entries"}_{sorterOrFilter}";
 		}
 
+		#endregion
+
+		/// <summary>
+		/// Stores the target flid (that is, typically the field we want to bulk edit) most recently passed to ReloadList.
+		/// </summary>
+		private int TargetFlid { get; set; }
+
 		#region IMultiListSortItemProvider Members
 
 		/// <summary>
 		/// See documentation for IMultiListSortItemProvider
 		/// </summary>
-		public object ListSourceToken
-		{
-			get { return m_flid; }
-		}
+		public object ListSourceToken => m_flid;
 
 		/// <summary>
 		/// See documentation for IMultiListSortItemProvider
 		/// </summary>
-		public XElement PartOwnershipTreeSpec
-		{
-			get { return m_partOwnershipTreeSpec; }
-		}
+		public XElement PartOwnershipTreeSpec => m_partOwnershipTreeSpec;
 
 		/// <summary>
 		/// See documentation for IMultiListSortItemProvider
@@ -288,9 +307,14 @@ namespace LanguageExplorer.Works
 			{
 				foreach (var oldItem in oldItems)
 				{
-					IDictionary<int, object> dictOneOldItem = new Dictionary<int, object>();
-					dictOneOldItem.Add(oldItem);
-					HashSet<int> relatives = FindCorrespondingItemsInCurrentList(dictOneOldItem, pot);
+					var dictOneOldItem = new Dictionary<int, object>
+					{
+						{
+							oldItem.Key,
+							oldItem.Value
+						}
+					};
+					var relatives = FindCorrespondingItemsInCurrentList(dictOneOldItem, pot);
 
 					// remove the old item if we found relatives we could convert over to.
 					if (relatives.Count > 0)
@@ -302,29 +326,33 @@ namespace LanguageExplorer.Works
 			}
 
 			foreach (int itemToRemove in oldItemsToRemove)
+			{
 				oldItems.Remove(itemToRemove);
+			}
 
 			// complete any conversions by adding its relatives.
-			object sourceTag = ListSourceToken;
-			foreach (int relativeToAdd in itemsToAdd)
+			var sourceTag = ListSourceToken;
+			foreach (var relativeToAdd in itemsToAdd)
 			{
 				if (!oldItems.ContainsKey(relativeToAdd))
+				{
 					oldItems.Add(relativeToAdd, sourceTag);
+				}
 			}
 		}
+
+		#endregion
 
 		private HashSet<int> FindCorrespondingItemsInCurrentList(IDictionary<int, object> itemAndListSourceTokenPairs, PartOwnershipTree pot)
 		{
 			// create a reverse index of classes to a list of items
-			IDictionary<int, HashSet<int>> sourceFlidsToItems = MapSourceFlidsToItems(itemAndListSourceTokenPairs);
+			var sourceFlidsToItems = MapSourceFlidsToItems(itemAndListSourceTokenPairs);
 
-			HashSet<int> relativesInCurrentList = new HashSet<int>();
-			foreach (KeyValuePair<int, HashSet<int>> sourceFlidToItems in sourceFlidsToItems)
+			var relativesInCurrentList = new HashSet<int>();
+			foreach (var sourceFlidToItems in sourceFlidsToItems)
 			{
 				ISet<int> commonAncestors;
-				relativesInCurrentList.UnionWith(pot.FindCorrespondingItemsInCurrentList(sourceFlidToItems.Key,
-					sourceFlidToItems.Value, m_flid,
-					out commonAncestors));
+				relativesInCurrentList.UnionWith(pot.FindCorrespondingItemsInCurrentList(sourceFlidToItems.Key, sourceFlidToItems.Value, m_flid, out commonAncestors));
 			}
 			return relativesInCurrentList;
 		}
@@ -351,7 +379,5 @@ namespace LanguageExplorer.Works
 			}
 			return sourceFlidsToItems;
 		}
-
-		#endregion
 	}
 }

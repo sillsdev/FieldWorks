@@ -771,10 +771,10 @@ namespace LanguageExplorer.Works
 			switch (m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft)
 			{
 				case FxtTypes.kftConfigured:
-					new DictionaryExportService(m_cache, RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk, PropertyTable, Publisher).ExportDictionaryContent(xhtmlPath, progress: progress);
+					new DictionaryExportService(m_cache, RecordList.ActiveRecordClerkRepository.ActiveRecordClerk, PropertyTable, Publisher).ExportDictionaryContent(xhtmlPath, progress: progress);
 					break;
 				case FxtTypes.kftReversal:
-					new DictionaryExportService(m_cache, RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk, PropertyTable, Publisher).ExportReversalContent(xhtmlPath, progress: progress);
+					new DictionaryExportService(m_cache, RecordList.ActiveRecordClerkRepository.ActiveRecordClerk, PropertyTable, Publisher).ExportReversalContent(xhtmlPath, progress: progress);
 					break;
 			}
 			return null;
@@ -1914,7 +1914,7 @@ namespace LanguageExplorer.Works
 			// root object.
 
 			InitFromMainControl(PropertyTable.GetValue<object>("currentContentControlObject", null));
-			m_clerk = RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk;
+			m_clerk = RecordList.ActiveRecordClerkRepository.ActiveRecordClerk;
 
 			m_chkExportPictures.Checked = false;
 			m_chkExportPictures.Visible = false;

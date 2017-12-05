@@ -142,14 +142,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		{
 			Require.That(clerkId == Categories_withTreeBarHandler, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Categories_withTreeBarHandler}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.PartsOfSpeechOA),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				false,
-				false,
+			return new TreeBarHandlerAwarePossibilityRecordList(clerkId, statusBar,
+				null, false, false,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
+				cache.LanguageProject.PartsOfSpeechOA,
 				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, true, true, false, "best analorvern"));
 		}
 	}

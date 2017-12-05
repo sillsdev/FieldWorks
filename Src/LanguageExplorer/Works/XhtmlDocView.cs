@@ -622,7 +622,7 @@ namespace LanguageExplorer.Works
 			var guid = (Guid)tagObjects[3];
 			// 4 is used further down
 			var cache = (LcmCache)tagObjects[5];
-			var activeClerk = (RecordClerk)tagObjects[6];
+			var activeClerk = (RecordList)tagObjects[6];
 			bool refreshNeeded;
 			var mainWindow = propertyTable.GetValue<IFwMainWnd>("window");
 			using (var dlg = new DictionaryConfigurationDlg(propertyTable))
@@ -667,7 +667,7 @@ namespace LanguageExplorer.Works
 		public void PostLayoutInit()
 		{
 			// Tell the Clerk it is active so it will update the list of entries. Pass false as we have no toolbar to update.
-			Clerk.ActivateUI(false);
+			Clerk.ActivateUI();
 			// Update the entry list if necessary
 			if(!Clerk.ListLoadingSuppressed && Clerk.RequestedLoadWhileSuppressed)
 			{

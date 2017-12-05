@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.LcmUi.Dialogs;
@@ -38,7 +39,7 @@ namespace LanguageExplorer.Works
 	/// </summary>
 	public class RecordList : DisposableBase, IRecordList
 	{
-		private const int RecordListFlid = 89999956;
+		protected const int RecordListFlid = 89999956;
 
 		#region Data members
 
@@ -65,7 +66,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		protected RecordFilter m_filter;
 		protected RecordFilter m_filterPrev;
-		protected string m_propertyName = string.Empty;
+		protected string m_propertyName = String.Empty;
 		protected string m_fontName;
 		protected int m_typeSize = 10;
 		protected bool m_reloadingList;
@@ -125,16 +126,13 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// This becomes the SilDataAccess for any views which want to see the filtered, sorted record list.
 		/// </summary>
-		private ObjectListPublisher m_objectListPublisher;
+		protected ObjectListPublisher m_objectListPublisher;
 		private IProgress m_progAdvInd;
 		/// <summary>
 		/// Set of objects that we own and have to dispose
 		/// </summary>
 		private readonly DisposableObjectsSet<IDisposable> m_ObjectsToDispose = new DisposableObjectsSet<IDisposable>();
-#if RANDYTODO
-		// TODO: Add new parm to constructors for _statusBar.
-#endif
-		private StatusBar _statusBar;
+		protected StatusBar _statusBar;
 		/// <summary />
 		protected IRecordChangeHandler _recordChangeHandler;
 		private ListUpdateHelper _bulkEditListUpdateHelper;
@@ -143,11 +141,11 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		protected bool _isActiveInGui;
 		private const string SelectedListBarNodeErrorMessage = "An item stored in the Property Table under SelectedListBarNode (typically from the ListView of an xWindow's record bar) should have an Hvo stored in its Tag property.";
-		/// <summary>
-		/// this will be null if this clerk is dependent on another one. Only the top-level clerk
-		/// gets to be represented by and interact with the tree bar.
-		/// </summary>
-		protected RecordBarHandler _recordBarHandler;
+		///// <summary>
+		///// this will be null if this clerk is dependent on another one. Only the top-level clerk
+		///// gets to be represented by and interact with the tree bar.
+		///// </summary>
+		//protected RecordBarHandler _recordBarHandler;
 		/// <summary>
 		/// The display name of what is currently being sorted. This variable is persisted as a user
 		/// setting. When the sort name is null it indicates that the items in the clerk are not
@@ -156,7 +154,6 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		private bool _isDefaultSort;
 		private RecordSorter _defaultSorter;
-		protected static IRecordClerk s_lastClerkToLoadTreeBar;
 		private bool _reloadingDueToMissingObject;
 		/// <summary>
 		/// We need to store what filter we are responsible for setting, locally, so
@@ -166,14 +163,6 @@ namespace LanguageExplorer.Works
 		/// the FilterBar.
 		/// </summary>
 		protected RecordFilter _activeMenuBarFilter;
-		/// <summary>
-		/// when this is not null, that means there is another clerk managing a list,
-		/// and the selected item of that list provides the object that this
-		/// RecordClerk gets items out of. For example, the WfiAnalysis clerk
-		/// is dependent on the WfiWordform clerk to tell it which wordform it is supposed to
-		/// be displaying the analyses of.
-		/// </summary>
-		protected IRecordClerk _clerkProvidingRootObject;
 		private bool _shouldHandleDeletion = true; // false, if the dependent clerk is to handle deletion, as for reversals.
 		/// <summary>
 		/// this is an object which gives us the list of filters which we should offer to the user from the UI.
@@ -184,11 +173,21 @@ namespace LanguageExplorer.Works
 		private string _defaultSortLabel;
 		private bool _suppressSaveOnChangeRecord; // true during delete and insert and ShowRecord calls caused by them.
 		private bool _allowDeletions = true;   // false if nothing is to be deleted for this record clerk.
+		/// <summary>
+		/// All of the sorters for the clerk.
+		/// </summary>
+		protected Dictionary<string, PropertyRecordSorter> _allSorters;
 
 
 		#endregion Data members
 
 		#region Construction
+
+		/// <summary>
+		/// Default constructor that allows subclasses to not call any of the others (cf: SubservientRecordList).
+		/// </summary>
+		protected RecordList()
+		{}
 
 		private RecordList(ISilDataAccessManaged decorator, bool usingAnalysisWs)
 		{
@@ -222,10 +221,15 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Create RecordList for ordinary (or virtual) property.
 		/// </summary>
-		internal RecordList(ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid)
+		internal RecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid)
 			: this(decorator, usingAnalysisWs)
 		{
-			m_propertyName = string.Empty;
+			Guard.AgainstNullOrEmptyString(id, nameof(id));
+			Guard.AgainstNull(statusBar, nameof(statusBar));
+
+			Id = id;
+			_statusBar = statusBar;
+			m_propertyName = String.Empty;
 			m_fontName = MiscUtils.StandardSansSerif;
 			// Only other current option is to specify an ordinary property (or a virtual one).
 			m_flid = flid;
@@ -250,9 +254,19 @@ namespace LanguageExplorer.Works
 		{
 			Guard.AgainstNull(decorator, nameof(decorator));
 
-			m_objectListPublisher = new ObjectListPublisher(decorator, RecordListFlid); ;
+			m_objectListPublisher = new ObjectListPublisher(decorator, RecordListFlid);
 			m_oldLength = 0;
 			m_usingAnalysisWs = usingAnalysisWs;
+		}
+
+		internal RecordList(string id, StatusBar statusBar, Dictionary<string, PropertyRecordSorter> sorters, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, ICmObject owner, string propertyName)
+			: this(decorator, usingAnalysisWs, flid, owner, propertyName)
+		{
+			Guard.AgainstNull(sorters, nameof(sorters));
+
+			ConstructorSurrogate(id, statusBar, sorters[AreaServices.Default], AreaServices.Default, defaultFilter, allowDeletions, shouldHandleDeletion);
+
+			_allSorters = sorters;
 		}
 
 		private void ConstructorSurrogate(ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, ICmObject owner, string propertyName)
@@ -273,7 +287,7 @@ namespace LanguageExplorer.Works
 			Guard.AgainstNull(statusBar, nameof(statusBar));
 			Guard.AgainstNull(defaultSorter, nameof(defaultSorter));
 			Guard.AgainstNullOrEmptyString(defaultSortLabel, nameof(defaultSortLabel));
-			Guard.AgainstNull(defaultFilter, nameof(defaultFilter));
+			// 'defaultFilter' can be null.
 
 			Id = id;
 			_statusBar = statusBar;
@@ -370,7 +384,7 @@ namespace LanguageExplorer.Works
 		public event SelectObjectEventHandler SelectedObjectChanged;
 		public event EventHandler SorterChangedByClerk;
 
-		public virtual void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
+		public virtual void ActivateUI(bool updateStatusBar = true)
 		{
 			if (_isActiveInGui)
 			{
@@ -381,15 +395,7 @@ namespace LanguageExplorer.Works
 			RegisterMessageHandlers();
 			AddNotification();
 
-			if (_recordBarHandler != null)
-			{
-				IsControllingTheRecordTreeBar = true;
-				if (useRecordTreeBar && s_lastClerkToLoadTreeBar != this)
-				{
-					s_lastClerkToLoadTreeBar = this;
-					_recordBarHandler.PopulateRecordBar(this);
-				}
-			}
+			ActivateRecordBar();
 
 			if (!updateStatusBar)
 			{
@@ -417,7 +423,7 @@ namespace LanguageExplorer.Works
 					{
 						continue;
 					}
-					var msg = string.Format(xWorksStrings.PunctInFieldNameWarning, name);
+					var msg = String.Format(xWorksStrings.PunctInFieldNameWarning, name);
 					// The way this is worded, 'Yes' means go on with the export. We won't bother them reporting
 					// other messed-up fields. A 'no' answer means don't continue, which means it's a problem.
 					return (MessageBox.Show(Form.ActiveForm, msg, xWorksStrings.PunctInfieldNameCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes);
@@ -431,13 +437,12 @@ namespace LanguageExplorer.Works
 			return first.CompatibleSorter(second);
 		}
 
-		public RecordBarHandler BarHandler => _recordBarHandler;
+		public virtual RecordBarHandler BarHandler => null;
 
-		public void BecomeInactive()
+		public virtual void BecomeInactive()
 		{
 			UnregisterMessageHandlers(); // No sense handling messages, when dormant.
 			_isActiveInGui = false;
-			_recordBarHandler?.ReleaseRecordBar();
 			RemoveNotification();
 			// If list loading was suppressed by this view (e.g., bulk edit to prevent changed items
 			// disappearing from filter), stop that now, so it won't affect any future use of the list.
@@ -892,7 +897,7 @@ namespace LanguageExplorer.Works
 		}
 
 		public bool HasEmptyList { get; }
-		public string Id { get; private set; }
+		public string Id { get; protected set; }
 		public bool IsActiveInGui { get; }
 		public virtual bool IsControllingTheRecordTreeBar { get; set; }
 		public bool IsDefaultSort { get; set; }
@@ -1438,7 +1443,7 @@ namespace LanguageExplorer.Works
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				dlg.ShowDialog(PropertyTable.GetValue<Form>("window"));
 			}
-			ActivateUI(true);
+			ActivateUI();
 
 			return true;    // handled
 		}
@@ -1635,20 +1640,11 @@ namespace LanguageExplorer.Works
 		public virtual void OnPropertyChanged(string name)
 		{
 			// This happens when the user chooses a MenuItem or sidebar item that selects a filter
-			if (name == CurrentFilterPropertyTableId)
+			if (name != CurrentFilterPropertyTableId)
 			{
-				OnChangeFilterToCheckedListPropertyChoice();
 				return;
 			}
-
-			//if we are  "dependent" on another clerk to provide the owning object of our list:
-			if (_clerkProvidingRootObject != null)
-			{
-				if (name == DependentPropertyName)
-				{
-					UpdateOwningObjectIfNeeded();
-				}
-			}
+			OnChangeFilterToCheckedListPropertyChoice();
 		}
 
 		public virtual bool OnRefresh(object argument)
@@ -1828,7 +1824,7 @@ namespace LanguageExplorer.Works
 			// Dependent lists do not have owner/property set. Rather they have class/field.
 			var className = VirtualListPublisher.MetaDataCache.GetOwnClsName(m_flid);
 			var fieldName = VirtualListPublisher.MetaDataCache.GetFieldName(m_flid);
-			if (string.IsNullOrEmpty(PropertyName) || PropertyName == fieldName)
+			if (String.IsNullOrEmpty(PropertyName) || PropertyName == fieldName)
 			{
 				return $"{className}.{fieldName}_{sorterOrFilter}";
 			}
@@ -2212,14 +2208,7 @@ namespace LanguageExplorer.Works
 			{
 				return;
 			}
-			if (IsControllingTheRecordTreeBar)
-			{
-				// JohnT: if we're not controlling the record list, we probably have no business trying to
-				// control the status bar. But we may need a separate control over this.
-				// Note that it can be definitely wrong to update it; this Clerk may not have anything
-				// to do with the current window contents.
-				UpdateStatusBarRecordNumber(StringTable.Table.GetString("No Records", "Misc"));
-			}
+			UpdateStatusBarForRecordBar();
 
 #if RANDYTODO
 // Work up non-static test that can use IFwMainWnd
@@ -2230,11 +2219,7 @@ namespace LanguageExplorer.Works
 			// As of 21JUL17 nobody cares about that 'propName' changing, so skip the broadcast.
 			PropertyTable.SetProperty(PersistedIndexProperty, CurrentIndex, SettingsGroup.LocalSettings, true, false);
 
-			if (IsControllingTheRecordTreeBar)
-			{
-				_recordBarHandler?.UpdateSelection(CurrentObject);
-				OnSelectedObjectChanged(new SelectObjectEventArgs(CurrentObject));
-			}
+			UpdateSelectionForRecordBar();
 
 			// We want an auto-save when we process the change record UNLESS we are deleting or inserting an object,
 			// or performing an Undo/Redo.
@@ -2324,15 +2309,10 @@ namespace LanguageExplorer.Works
 		public bool SuppressSaveOnChangeRecord { get; set; }
 		public bool SuspendLoadingRecordUntilOnJumpToRecord { get; set; }
 		public bool SuspendLoadListUntilOnChangeFilter { get; set; }
-		public bool TryClerkProvidingRootObject(out IRecordClerk clerkProvidingRootObject)
+		public virtual bool TryClerkProvidingRootObject(out IRecordClerk clerkProvidingRootObject)
 		{
 			clerkProvidingRootObject = null;
-			if (IsPrimaryClerk)
-			{
-				return false;
-			}
-			clerkProvidingRootObject = _clerkProvidingRootObject;
-			return clerkProvidingRootObject != null;
+			return false;
 		}
 
 		public bool UpdateFiltersAndSortersIfNeeded()
@@ -2350,9 +2330,9 @@ namespace LanguageExplorer.Works
 			UpdateOwningObject(true);
 		}
 
-		public void UpdateRecordTreeBarIfNeeded()
+		public virtual void UpdateRecordTreeBarIfNeeded()
 		{
-			_recordBarHandler?.PopulateRecordBarIfNeeded(MyRecordList);
+			// Subclasses that actually know about a record bar (e.g.; TreeBarHandlerAwarePossibilityRecordList) should override this method.
 		}
 
 		public void UpdateStatusBarRecordNumber(string noRecordsText)
@@ -2768,7 +2748,6 @@ namespace LanguageExplorer.Works
 			m_sortedObjects?.Clear();
 			m_ObjectsToDispose.Dispose();
 			_recordChangeHandler?.Dispose();
-			_recordBarHandler?.Dispose();
 			_bulkEditListUpdateHelper?.Dispose();
 			if (IsControllingTheRecordTreeBar)
 			{
@@ -2793,7 +2772,6 @@ namespace LanguageExplorer.Works
 			_statusBar = null;
 			_recordChangeHandler = null;
 			_bulkEditListUpdateHelper = null;
-			_recordBarHandler = null;
 			_defaultSorter = null;
 			_defaultFilter = null;
 
@@ -2802,11 +2780,28 @@ namespace LanguageExplorer.Works
 			Subscriber = null;
 		}
 
-#endregion DisposableBase
+		#endregion DisposableBase
 
-#endregion All interface implementations
+		#endregion All interface implementations
 
-#region Non-interface code
+		#region Non-interface codeRecordList
+
+#if RANDYTODO
+		// TODO: Think about not using the static, but also not adding IRecordClerkRepository to the property table.
+		// TODO: A new intance is included in MajorFlexComponentParameters,
+		// TODO: which is then passed to the Activate/Deactivate of IMajorFlexComponent implementations.
+		// TODO: Perhaps some other interface can be created that would allow IRecordClerkRepository to be passed
+		// TODO: further down the chain to clients who try to fetch a record clerk from the property table.
+		// TODO: They would then get it from the repository, and not the property table.
+		// TODO: At that point this static can be removed.
+		// TODO: The risk of using the static is that there can be multiple windows,
+		// TODO: each of which has its own repository, property table, etc.
+		// TODO: That means each window has to reset the static, when it becomes active (which now happens).
+#endif
+		/// <summary>
+		/// Holder of the repository (for now, at least).
+		/// </summary>
+		internal static IRecordClerkRepository ActiveRecordClerkRepository { get; set; }
 
 		/// <summary>
 		/// verifies that the two classes match, if not, throws message.
@@ -3119,7 +3114,7 @@ namespace LanguageExplorer.Works
 				return;
 			}
 
-			var newSortMessage = Sorter == null || SortName == null || (_isDefaultSort && _defaultSorter != null) ? string.Empty : string.Format(xWorksStrings.SortedBy, SortName);
+			var newSortMessage = Sorter == null || SortName == null || (_isDefaultSort && _defaultSorter != null) ? String.Empty : String.Format(xWorksStrings.SortedBy, SortName);
 			StatusBarPanelServices.SetStatusBarPanelSort(_statusBar, newSortMessage);
 		}
 
@@ -3477,13 +3472,13 @@ namespace LanguageExplorer.Works
 
 		private string SorterPropertyTableId => PropertyTableId("sorter");
 
-		private string CurrentFilterPropertyTableId => "currentFilterForRecordClerk_" + Id;
+		protected string CurrentFilterPropertyTableId => "currentFilterForRecordClerk_" + Id;
 
 		private bool ShouldNotHandleDeletionMessage => Id != "reversalEntries" && (!Editable || !IsPrimaryClerk || !_shouldHandleDeletion);
 
 		private void ResetStatusBarMessageForCurrentObject()
 		{
-			var msg = string.Empty;
+			var msg = String.Empty;
 			if (CurrentObjectHvo != 0)
 			{
 				// deleted objects don't have a cache (and other properties) so it was crashing.  LT-3160, LT-3121,...
@@ -3497,7 +3492,7 @@ namespace LanguageExplorer.Works
 		/// The "primary" clerk is the one that should respond to record navigation.
 		/// </summary>
 		/// <returns>true iff this clerk should respond to record navigation</returns>
-		private bool IsPrimaryClerk => (_clerkProvidingRootObject == null);
+		protected virtual bool IsPrimaryClerk => true;
 
 		private int FindClosestValidIndex(int idx, int cobj)
 		{
@@ -3593,7 +3588,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		private void OnChangeFilterToCheckedListPropertyChoice()
 		{
-			var filterName = PropertyTable.GetValue(CurrentFilterPropertyTableId, SettingsGroup.LocalSettings, string.Empty);
+			var filterName = PropertyTable.GetValue(CurrentFilterPropertyTableId, SettingsGroup.LocalSettings, String.Empty);
 			RecordFilter addf = null;
 			RecordFilter remf = null;
 			var nof = new NoFilters();
@@ -3628,62 +3623,11 @@ namespace LanguageExplorer.Works
 			OnChangeFilter(new FilterChangeEventArgs(addf, remf));
 		}
 
-		private string DependentPropertyName
-		{
-			get
-			{
-				if (_clerkProvidingRootObject != null)
-				{
-					return ClerkSelectedObjectPropertyId(_clerkProvidingRootObject.Id);
-				}
-				//don't do this, because then you die when the debugger tries to show the RecordClerk.
-				//Debug.Fail("Why is this property being called when the clerk is not dependent on another clerk?");
-				return null;
-
-			}
-		}
-
 		private void SetupDataContext(bool floadList)
 		{
 			InitLoad(floadList);
 
 			UpdateOwningObject();
-		}
-
-		private void UpdateOwningObject(bool fUpdateOwningObjectOnlyIfChanged = false)
-		{
-			if (_clerkProvidingRootObject == null)
-			{
-				//if we're not dependent on another clerk, then we don't ever change our owning object.
-				return;
-			}
-
-			var old = OwningObject;
-			ICmObject newObj = null;
-			var rni = PropertyTable.GetValue<RecordNavigationInfo>(DependentPropertyName);
-			if (rni != null)
-			{
-				newObj = rni.Clerk.CurrentObject;
-			}
-			using (var luh = new ListUpdateHelper(this))
-			{
-				// in general we want to actually reload the list if something as
-				// radical as changing the OwningObject occurs, since many subsequent
-				// events and messages depend upon this information.
-				luh.TriggerPendingReloadOnDispose = true;
-				if (rni != null)
-				{
-					luh.SkipShowRecord = rni.SkipShowRecord;
-				}
-				if (!fUpdateOwningObjectOnlyIfChanged || !ReferenceEquals(old, newObj))
-				{
-					OwningObject = newObj;
-				}
-			}
-			if (!ReferenceEquals(old, newObj))
-			{
-				Publisher.Publish("ClerkOwningObjChanged", this);
-			}
 		}
 
 		private void AboutToReload_Handler(object sender, EventArgs e)
@@ -3736,6 +3680,11 @@ namespace LanguageExplorer.Works
 		#endregion Private stuff
 
 		#region Protected stuff
+
+		protected virtual void UpdateOwningObject(bool fUpdateOwningObjectOnlyIfChanged = false)
+		{
+			// Subclasses that actually know about a record bar (e.g.; TreeBarHandlerAwarePossibilityRecordList) should override this method.
+		}
 
 		protected virtual string GetStatusBarMsgForCurrentObject()
 		{
@@ -3874,47 +3823,8 @@ namespace LanguageExplorer.Works
 		/// update the contents of the tree bar and anything else that should change when,
 		/// for example, the filter or sort order changes.
 		/// </summary>
-		protected void OnListChanged(object src, ListChangedEventArgs arguments)
+		protected virtual void OnListChanged(object src, ListChangedEventArgs arguments)
 		{
-			if (IsControllingTheRecordTreeBar) // _treeBarHandler!= null)
-			{
-				if (arguments.Actions == ListChangedEventArgs.ListChangedActions.UpdateListItemName)
-				{
-					// ******************************************************************************
-					// In the case where there are no other items and the Current object isn't valid,
-					// then just don't do anything.  LT-5849.
-					// A more robust solution would be to have in our design a way to produce
-					// a 'defered' prop changed so that the current actions can finish before
-					// others are notified of the change (which is often incomplete at that time).
-					// The stack for this issue showed the RecordList and RecordClerk being
-					// re-entered while they were deleting an object in a previous stack frame.
-					// This is not the only case where this has been noted, but a solution has
-					// not yet been thought of.
-					// In the meantime, this fixed the crash .. <sigh> but doesn't help at all
-					// for the other cases where this can happen.
-					// ******************************************************************************
-					if (_recordBarHandler is TreeBarHandler && CurrentObject != null && (CurrentObject.Cache != null || SortedObjects.Count != 1))
-					{
-						// all we need to do is replace the currently selected item in the tree.
-						var hvoItem = arguments.ItemHvo;
-						ICmObject obj = null;
-						if (hvoItem != 0)
-						{
-							Cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(hvoItem, out obj);
-						}
-						if (obj == null)
-						{
-							obj = CurrentObject;
-						}
-						_recordBarHandler.ReloadItem(obj);
-					}
-				}
-				else
-				{
-					_recordBarHandler?.PopulateRecordBar(this);
-				}
-			}
-
 			if (arguments.Actions == ListChangedEventArgs.ListChangedActions.SkipRecordNavigation || arguments.Actions == ListChangedEventArgs.ListChangedActions.UpdateListItemName)
 			{
 				SelectedRecordChanged(false, true);
@@ -4011,7 +3921,7 @@ namespace LanguageExplorer.Works
 			if (!IsControllingTheRecordTreeBar)
 				return; // none of our business!
 
-			var msg = FilterStatusContents(Filter != null && Filter.IsUserVisible) ?? string.Empty;
+			var msg = FilterStatusContents(Filter != null && Filter.IsUserVisible);
 			if (IgnoreStatusPanel)
 			{
 				Publisher.Publish("DialogFilterStatus", msg);
@@ -4024,7 +3934,7 @@ namespace LanguageExplorer.Works
 
 		protected virtual string FilterStatusContents(bool listIsFiltered)
 		{
-			return listIsFiltered ? xWorksStrings.Filtered : string.Empty;
+			return listIsFiltered ? xWorksStrings.Filtered : String.Empty;
 		}
 
 		/// <summary>
@@ -4515,8 +4425,23 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-#endregion Protected stuff
+		protected virtual void ActivateRecordBar()
+		{
+			// Subclasses that actually know about a record bar (e.g.; TreeBarHandlerAwarePossibilityRecordList) should override this method.
+		}
 
-#endregion Non-interface code
+		protected virtual void UpdateStatusBarForRecordBar()
+		{
+			// Subclasses that actually know about a record bar (e.g.; TreeBarHandlerAwarePossibilityRecordList) should override this method.
+		}
+
+		protected virtual void UpdateSelectionForRecordBar()
+		{
+			// Subclasses that actually know about a record bar (e.g.; TreeBarHandlerAwarePossibilityRecordList) should override this method.
+		}
+
+		#endregion Protected stuff
+
+		#endregion Non-interface code
 	}
 }

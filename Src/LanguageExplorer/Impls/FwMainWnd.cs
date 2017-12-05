@@ -1650,9 +1650,9 @@ very simple minor adjustments. ;)"
 		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data. </param>
 		protected override void OnLoad(EventArgs e)
 		{
-			if (_recordClerkRepositoryForTools != RecordClerk.ActiveRecordClerkRepository)
+			if (_recordClerkRepositoryForTools != RecordList.ActiveRecordClerkRepository)
 			{
-				RecordClerk.ActiveRecordClerkRepository = _recordClerkRepositoryForTools;
+				RecordList.ActiveRecordClerkRepository = _recordClerkRepositoryForTools;
 			}
 
 			// Insert toolbar is not visible at the start. Tools make it visible as needed.
@@ -1678,9 +1678,9 @@ very simple minor adjustments. ;)"
 		/// </summary>
 		private void FwMainWnd_Activated(object sender, EventArgs e)
 		{
-			if (_recordClerkRepositoryForTools != RecordClerk.ActiveRecordClerkRepository)
+			if (_recordClerkRepositoryForTools != RecordList.ActiveRecordClerkRepository)
 			{
-				RecordClerk.ActiveRecordClerkRepository = _recordClerkRepositoryForTools;
+				RecordList.ActiveRecordClerkRepository = _recordClerkRepositoryForTools;
 		}
 		}
 

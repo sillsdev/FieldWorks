@@ -1667,7 +1667,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Create bare-bones RecordList for made up owner and a property on it.
 		/// </summary>
 		public MatchingConcordanceItems(string id, StatusBar statusBar, ConcDecorator decorator)
-			: base(id, statusBar, new PropertyRecordSorter("ShortName"), "Default", null, false, false, decorator, false, decorator.MetaDataCache.GetFieldId2(LangProjectTags.kClassId, "ConcOccurrences", false), decorator.PropertyTable.GetValue<LcmCache>("cache").LanguageProject, "ConcOccurrences")
+			: base(id, statusBar, new PropertyRecordSorter("ShortName"), AreaServices.Default, null, false, false, decorator, false, decorator.MetaDataCache.GetFieldId2(LangProjectTags.kClassId, "ConcOccurrences", false), decorator.PropertyTable.GetValue<LcmCache>("cache").LanguageProject, "ConcOccurrences")
 		{
 		}
 

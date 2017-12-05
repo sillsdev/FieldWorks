@@ -158,14 +158,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 		{
 			Require.That(clerkId == Environments, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Environments}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, PhPhonDataTags.kflidEnvironments, cache.LanguageProject.PhonologicalDataOA, "Environments"),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				false,
-				false);
+			return new RecordList(clerkId, statusBar,
+				new PropertyRecordSorter("ShortName"), AreaServices.Default,
+				null, false, false,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
+				PhPhonDataTags.kflidEnvironments, cache.LanguageProject.PhonologicalDataOA, "Environments");
 		}
 	}
 }

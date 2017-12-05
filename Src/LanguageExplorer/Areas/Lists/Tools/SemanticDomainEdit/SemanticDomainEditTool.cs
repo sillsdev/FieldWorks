@@ -145,14 +145,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 		{
 			Require.That(clerkId == SemanticDomainList_ListArea, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{SemanticDomainList_ListArea}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.SemanticDomainListOA),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				true,
-				true,
+			return new TreeBarHandlerAwarePossibilityRecordList(clerkId, statusBar,
+				null, true, true,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
+				cache.LanguageProject.TextMarkupTagsOA,
 				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, true, "best analysis"));
 		}
 	}

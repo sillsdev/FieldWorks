@@ -1355,7 +1355,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					if (!String.IsNullOrEmpty(rsf.m_tlo.m_sEmptyDefault))
 					{
 						xw.WriteWhitespace(Environment.NewLine);
-						xw.WriteStartElement("Default");
+						xw.WriteStartElement(AreaServices.Default);
 						xw.WriteAttributeString("value", rsf.m_tlo.m_sEmptyDefault);
 						xw.WriteEndElement();
 					}
@@ -2224,7 +2224,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						sfm.m_tlo.m_fHaveSub = true;
 						sfm.m_tlo.m_sDelimSub = XmlUtils.GetMandatoryAttributeValue(xn, "sep");
 						break;
-					case "Default":
+					case AreaServices.Default:
 						sfm.m_tlo.m_sEmptyDefault = XmlUtils.GetMandatoryAttributeValue(xn, "value");
 						sfm.m_tlo.m_default = null;
 						break;

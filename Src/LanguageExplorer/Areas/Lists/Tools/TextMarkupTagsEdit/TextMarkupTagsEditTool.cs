@@ -147,16 +147,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 		{
 			Require.That(clerkId == TextMarkupTagsList, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{TextMarkupTagsList}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.TextMarkupTagsOA),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				true,
-				true,
+			return new TreeBarHandlerAwarePossibilityRecordList(clerkId, statusBar,
+				null, true, true,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
+				cache.LanguageProject.TextMarkupTagsOA,
 				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"));
-
 		}
 	}
 }

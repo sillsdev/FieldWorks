@@ -188,15 +188,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		{
 			Require.That(clerkId == OccurrencesOfSelectedWordform, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{OccurrencesOfSelectedWordform}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new RecordList(new ConcDecorator(cache.ServiceLocator), false, ConcDecorator.kflidWfOccurrences),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				true,
-				true,
-				((IRecordClerkRepositoryForTools)RecordClerk.ActiveRecordClerkRepository).GetRecordClerk(TextAndWordsArea.ConcordanceWords, statusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod));
+			return new SubservientRecordList(clerkId, statusBar,
+				new ConcDecorator(cache.ServiceLocator), false,
+				ConcDecorator.kflidWfOccurrences,
+				((IRecordClerkRepositoryForTools)RecordList.ActiveRecordClerkRepository).GetRecordClerk(TextAndWordsArea.ConcordanceWords, statusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod));
 		}
 	}
 }

@@ -20,7 +20,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 		/// <summary />
 		internal ReversalIndexPOSRecordList(StatusBar statusBar, ILcmServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
-			: base(ReversalEntriesPOS, statusBar, new PropertyRecordSorter("ShortName"), "Default", null, true, true, decorator, true, CmPossibilityListTags.kflidPossibilities, reversalIndex.PartsOfSpeechOA, "Possibilities")
+			: base(ReversalEntriesPOS, statusBar, new PropertyRecordSorter("ShortName"), AreaServices.Default, null, true, true, decorator, true, CmPossibilityListTags.kflidPossibilities, reversalIndex.PartsOfSpeechOA, "Possibilities")
 		{
 			m_fontName = serviceLocator.WritingSystemManager.Get(reversalIndex.WritingSystem).DefaultFontName;
 			m_oldLength = 0;

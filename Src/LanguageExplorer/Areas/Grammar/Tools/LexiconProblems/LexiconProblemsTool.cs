@@ -143,14 +143,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 
 			var probAnnFilter = new ProblemAnnotationFilter();
 			probAnnFilter.Init(cache, XDocument.Parse(GrammarResources.LexiconProblemsParameters).Root.Element("filterElement"));
-			return new RecordClerk(clerkId,
-				statusBar,
-				new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, LangProjectTags.kflidAnnotations, cache.LanguageProject, "Annotations"),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				probAnnFilter,
-				true,
-				true,
+			return new TreeBarHandlerAwareRecordList(clerkId, statusBar,
+				new PropertyRecordSorter("ShortName"), AreaServices.Default,
+				probAnnFilter, true, true,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
+				LangProjectTags.kflidAnnotations, cache.LanguageProject, "Annotations",
 				new RecordBarListHandler(flexComponentParameters.PropertyTable, true, true, false, "best analorvern"));
 		}
 	}

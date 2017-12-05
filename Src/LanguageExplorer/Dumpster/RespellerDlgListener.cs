@@ -127,7 +127,7 @@ namespace LanguageExplorer.Dumpster
 				return true;
 			}
 			var clerk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
-			using (var luh = new RecordClerk.ListUpdateHelper(clerk))
+			using (var luh = new ListUpdateHelper(clerk))
 			{
 				var changesWereMade = false;
 				// Launch the Respeller Dlg.
@@ -177,7 +177,7 @@ namespace LanguageExplorer.Dumpster
 
 			var cache = PropertyTable.GetValue<FdoCache>("cache");
 			var wordform = WordformApplicationServices.GetWordformForForm(cache, tss);
-			using (var luh = new RecordClerk.ListUpdateHelper(RecordClerk.RecordClerkRepository.ActiveRecordClerk))
+			using (var luh = new ListUpdateHelper(RecordClerk.RecordClerkRepository.ActiveRecordClerk))
 			{
 				// Launch the Respeller Dlg.
 				using (var dlg = new RespellerDlg())

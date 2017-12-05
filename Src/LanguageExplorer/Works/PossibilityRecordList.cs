@@ -1,10 +1,12 @@
-// Copyright (c) 2004-2015 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
 using SIL.LCModel;
@@ -15,13 +17,13 @@ namespace LanguageExplorer.Works
 	/// <summary>
 	/// This is a specialty subclass for grabbing all of the items from a possibility list.
 	/// </summary>
-	public class PossibilityRecordList : RecordList
+	internal class PossibilityRecordList : RecordList
 	{
 		/// <summary>
 		/// Constructor for a list that is owned or not.
 		/// </summary>
-		internal PossibilityRecordList(ISilDataAccessManaged decorator, ICmPossibilityList ownedPossibilityList)
-			: base(decorator, true, 0, ownedPossibilityList, "PossibilitiesOS")
+		internal PossibilityRecordList(string id, StatusBar statusBar, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, ISilDataAccessManaged decorator, ICmPossibilityList ownedPossibilityList)
+			: base(id, statusBar, new PropertyRecordSorter("ShortName"), AreaServices.Default, defaultFilter, allowDeletions, shouldHandleDeletion, decorator, true, CmPossibilityListTags.kflidPossibilities, ownedPossibilityList, "PossibilitiesOS")
 		{
 			ConstructorCommon();
 		}
@@ -30,8 +32,6 @@ namespace LanguageExplorer.Works
 		{
 			m_usingAnalysisWs = true;
 			m_oldLength = 0;
-			m_flid = CmPossibilityListTags.kflidPossibilities;
-			m_sorter = new PropertyRecordSorter("ShortName");
 		}
 
 		#region Overrides of RecordList
@@ -48,20 +48,7 @@ namespace LanguageExplorer.Works
 			m_typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, true);
 		}
 
-		#endregion
-
-		private ICmPossibilityList OwningList
-		{
-			get { return (ICmPossibilityList)m_owningObject; }
-		}
-
-		protected override bool ListAlreadySorted
-		{
-			get
-			{
-				return !OwningList.IsSorted;
-			}
-		}
+		protected override bool ListAlreadySorted => !OwningList.IsSorted;
 
 		protected override IEnumerable<int> GetObjectSet()
 		{
@@ -167,18 +154,6 @@ namespace LanguageExplorer.Works
 				base.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
 			}
 		}
-		#region navigation
-
-		/// <summary>
-		/// Return the root object at the specified index as a CmPossibility. (Will be null
-		/// if it is not a CmPossibility.)
-		/// </summary>
-		/// <param name="index"></param>
-		/// <returns></returns>
-		ICmPossibility PossibilityAt(int index)
-		{
-			return RootObjectAt(index) as ICmPossibility;
-		}
 
 		/// <summary>
 		/// Return the index (in m_sortedObjects) of the first displayed object.
@@ -191,12 +166,16 @@ namespace LanguageExplorer.Works
 				CheckDisposed();
 
 				if (m_sortedObjects == null || m_sortedObjects.Count == 0)
+				{
 					return -1;
+				}
 				for (var i = 0; i < m_sortedObjects.Count; i++)
 				{
 					var poss = PossibilityAt(i);
 					if (poss.OwningFlid != CmPossibilityTags.kflidSubPossibilities)
+					{
 						return i;
+					}
 				}
 				return -1; // Bizarre..maybe filtering would do this??
 			}
@@ -213,7 +192,9 @@ namespace LanguageExplorer.Works
 				CheckDisposed();
 
 				if (m_sortedObjects == null || m_sortedObjects.Count == 0)
+				{
 					return -1;
+				}
 				var lastTopIndex = -1;
 				for (var i = m_sortedObjects.Count; --i >= 0 ;)
 				{
@@ -225,36 +206,11 @@ namespace LanguageExplorer.Works
 					}
 				}
 				if (lastTopIndex == -1)
+				{
 					return -1; // Bizarre..maybe filtering would do this??
+				}
 				return LastChild(PossibilityAt(lastTopIndex).Hvo, lastTopIndex);
 			}
-		}
-
-		/// <summary>
-		/// If hvoPoss has children, return the index of the last of them
-		/// that occurs in m_sortedObjects
-		/// (and recursively, the last of its children).
-		/// If not, return the index of hvoPoss itself (the index passed).
-		/// </summary>
-		/// <param name="hvoPoss"></param>
-		/// <param name="index"></param>
-		/// <returns></returns>
-		int LastChild(int hvoPoss, int index)
-		{
-			var pss = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(hvoPoss);
-			var count = pss.SubPossibilitiesOS.Count;
-			if (count == 0)
-				return index; // no children
-
-			// Find the last child that occurs in the list.
-			for (var ichild = count; --ichild >= 0; )
-			{
-				var hvoChild = pss.SubPossibilitiesOS[ichild].Hvo;
-				var index1 = IndexOf(hvoChild);
-				if (index1 >= 0)
-					return LastChild(hvoChild, index1);
-			}
-			return index; // we didn't find it, treat as having no children.
 		}
 
 		/// <summary>
@@ -274,7 +230,9 @@ namespace LanguageExplorer.Works
 				CheckDisposed();
 
 				if (m_sortedObjects == null || m_sortedObjects.Count == 0 || CurrentIndex == -1)
+				{
 					return -1;
+				}
 				var hvoCurrent = PossibilityAt(CurrentIndex).Hvo;
 				var curr = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(hvoCurrent);
 				var count = curr.SubPossibilitiesOS.Count;
@@ -283,10 +241,12 @@ namespace LanguageExplorer.Works
 
 					var index = IndexOf(curr.SubPossibilitiesOS[ichild].Hvo);
 					if (index >= 0)
+					{
 						return index;
+					}
 				}
 
-				for ( ; ; )
+				for (;;)
 				{
 					// look for a sibling of hvoCurrentBeforeGetObjectSet coming after the starting point.
 					var currentObj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoCurrent);
@@ -302,17 +262,23 @@ namespace LanguageExplorer.Works
 							continue;
 						}
 						if (!fGotCurrent)
+						{
 							continue; // skip items before current one.
+						}
 						var index = IndexOf(hvoChild);
 						if (index >= 0)
+						{
 							return index;
+						}
 					}
 					// No subsequent sibling of this.
 					// Look for a sibling of the owner.
 					// But, if the owning property is not sub-possibilities, we've reached the root
 					// and can search no further.
 					if (flidOwner != CmPossibilityTags.kflidSubPossibilities)
+					{
 						return CurrentIndex;
+					}
 					hvoCurrent = hvoOwner;
 				}
 			}
@@ -334,7 +300,9 @@ namespace LanguageExplorer.Works
 				CheckDisposed();
 
 				if (m_sortedObjects == null || m_sortedObjects.Count == 0 || CurrentIndex == -1)
+				{
 					return -1;
+				}
 				var pss = PossibilityAt(CurrentIndex);
 				var hvoCurrent = pss.Hvo;
 				var hvoOwner = pss.Owner.Hvo;
@@ -342,11 +310,13 @@ namespace LanguageExplorer.Works
 
 				var flidOwner = pss.OwningFlid;
 				if (flidOwner == 0)
+				{
 					return CurrentIndex;
+				}
 				var contents = VirtualListPublisher.VecProp(hvoOwner, flidOwner);
 				var count = contents.Length;
 				var fGotCurrent = false;
-				for (var ichild = count; --ichild >= 0; )
+				for (var ichild = count; --ichild >= 0;)
 				{
 					var hvoChild = contents[ichild];
 					if (hvoChild == hvoCurrent)
@@ -355,10 +325,14 @@ namespace LanguageExplorer.Works
 						continue;
 					}
 					if (!fGotCurrent)
+					{
 						continue; // skip items after current one.
+					}
 					var index = IndexOf(hvoChild);
 					if (index >= 0)
+					{
 						return LastChild(hvoChild, index);
+					}
 				}
 
 				// OK, no sibling. Return owner if it's in the list.
@@ -366,6 +340,46 @@ namespace LanguageExplorer.Works
 				return (index1 >= 0) ? index1 : CurrentIndex;
 			}
 		}
+
 		#endregion
+
+		private ICmPossibilityList OwningList => (ICmPossibilityList)m_owningObject;
+
+		/// <summary>
+		/// Return the root object at the specified index as a CmPossibility. (Will be null
+		/// if it is not a CmPossibility.)
+		/// </summary>
+		private ICmPossibility PossibilityAt(int index)
+		{
+			return RootObjectAt(index) as ICmPossibility;
+		}
+
+		/// <summary>
+		/// If hvoPoss has children, return the index of the last of them
+		/// that occurs in m_sortedObjects
+		/// (and recursively, the last of its children).
+		/// If not, return the index of hvoPoss itself (the index passed).
+		/// </summary>
+		private int LastChild(int hvoPoss, int index)
+		{
+			var pss = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(hvoPoss);
+			var count = pss.SubPossibilitiesOS.Count;
+			if (count == 0)
+			{
+				return index; // no children
+			}
+
+			// Find the last child that occurs in the list.
+			for (var ichild = count; --ichild >= 0; )
+			{
+				var hvoChild = pss.SubPossibilitiesOS[ichild].Hvo;
+				var index1 = IndexOf(hvoChild);
+				if (index1 >= 0)
+				{
+					return LastChild(hvoChild, index1);
+				}
+			}
+			return index; // we didn't find it, treat as having no children.
+		}
 	}
 }

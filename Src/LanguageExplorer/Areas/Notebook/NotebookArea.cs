@@ -151,14 +151,11 @@ namespace LanguageExplorer.Areas.Notebook
 		{
 			Require.That(clerkId == Records, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Records}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, cache.MetaDataCacheAccessor.GetFieldId2(cache.LanguageProject.ResearchNotebookOA.ClassID, "AllRecords", false), cache.LanguageProject.ResearchNotebookOA, "AllRecords"),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				false,
-				false);
+			return new RecordList(clerkId, statusBar,
+				new PropertyRecordSorter("ShortName"), AreaServices.Default,
+				null, false, false,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false,
+				cache.MetaDataCacheAccessor.GetFieldId2(cache.LanguageProject.ResearchNotebookOA.ClassID, "AllRecords", false), cache.LanguageProject.ResearchNotebookOA, "AllRecords");
 		}
 	}
 }

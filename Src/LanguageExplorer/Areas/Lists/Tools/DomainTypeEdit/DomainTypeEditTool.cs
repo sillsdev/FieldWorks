@@ -146,14 +146,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 		{
 			Require.That(clerkId == DomainTypeList, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{DomainTypeList}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.LexDbOA.DomainTypesOA),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				true,
-				true,
+			return new TreeBarHandlerAwarePossibilityRecordList(clerkId, statusBar,
+				null, true, true,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
+				cache.LanguageProject.LexDbOA.DomainTypesOA,
 				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"));
 		}
 	}

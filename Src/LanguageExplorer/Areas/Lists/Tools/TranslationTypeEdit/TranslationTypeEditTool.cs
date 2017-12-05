@@ -145,14 +145,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.TranslationTypeEdit
 		{
 			Require.That(clerkId == TranslationTypeList, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{TranslationTypeList}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.TranslationTagsOA),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				true,
-				true,
+			return new TreeBarHandlerAwarePossibilityRecordList(clerkId, statusBar,
+				null, true, true,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
+				cache.LanguageProject.TranslationTagsOA,
 				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, true, true, false, "best analysis"));
 		}
 	}

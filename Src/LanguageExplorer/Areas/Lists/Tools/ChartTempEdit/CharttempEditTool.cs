@@ -152,14 +152,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 				NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () => cache.LanguageProject.GetDefaultChartTemplate());
 				template = cache.LanguageProject.DiscourseDataOA.ConstChartTemplOA;
 			}
-			return new RecordClerk(clerkId,
-				statusBar,
-				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), template),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				true,
-				true,
+
+			return new TreeBarHandlerAwarePossibilityRecordList(clerkId, statusBar,
+				null, true, true,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
+				template,
 				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, true, true, false, "best analysis"));
 		}
 	}

@@ -157,14 +157,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.FeaturesAdvancedEdit
 		{
 			Require.That(clerkId == Features, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Features}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, FsFeatureSystemTags.kflidFeatures, cache.LanguageProject.MsFeatureSystemOA, "Features"),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				false,
-				false);
+			return new RecordList(clerkId, statusBar,
+				new PropertyRecordSorter("ShortName"), AreaServices.Default,
+				null, false, false,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
+				FsFeatureSystemTags.kflidFeatures, cache.LanguageProject.MsFeatureSystemOA, "Features");
 		}
 	}
 }

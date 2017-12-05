@@ -36,7 +36,7 @@ namespace LanguageExplorer.Works
 		{
 			m_cache = cache;
 			m_propertyTable = propertyTable;
-			m_exportService = new DictionaryExportService(cache, RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk, propertyTable, publisher);
+			m_exportService = new DictionaryExportService(cache, RecordList.ActiveRecordClerkRepository.ActiveRecordClerk, propertyTable, publisher);
 			m_publicationActivator = new DictionaryExportService.PublicationActivator(propertyTable);
 		}
 

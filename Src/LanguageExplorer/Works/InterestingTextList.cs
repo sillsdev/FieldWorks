@@ -293,7 +293,7 @@ namespace LanguageExplorer.Works
 				return;
 
 			// We won't keep track of the clerk between calls since it could change from time to time.
-			var clerk = RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk;
+			var clerk = RecordList.ActiveRecordClerkRepository.ActiveRecordClerk;
 			if (clerk == null)
 				return;
 

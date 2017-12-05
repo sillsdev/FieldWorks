@@ -169,7 +169,9 @@ namespace LanguageExplorer.Works
 			TriggerMessageBoxIfAppropriate();
 
 			if(m_treebarAvailability!=TreebarAvailability.NotMyBusiness)
-				Clerk.ActivateUI(m_treebarAvailability == TreebarAvailability.Required);//nb optional would be a bug here
+			{
+				Clerk.ActivateUI();//nb optional would be a bug here
+			}
 
 			m_madeUpFieldIdentifier = Clerk.VirtualFlid;
 		}

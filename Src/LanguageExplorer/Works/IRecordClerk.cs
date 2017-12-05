@@ -20,7 +20,7 @@ namespace LanguageExplorer.Works
 		event SelectObjectEventHandler SelectedObjectChanged;
 		event EventHandler SorterChangedByClerk;
 
-		void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true);
+		void ActivateUI(bool updateStatusBar = true);
 		bool AreCustomFieldsAProblem(int[] clsids);
 		bool AreSortersCompatible(RecordSorter first, RecordSorter second);
 		RecordBarHandler BarHandler { get; }

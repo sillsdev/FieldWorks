@@ -1024,7 +1024,7 @@ namespace LanguageExplorer.Works
 			{
 				//m_flid = RecordClerk.GetFlidOfVectorFromName(m_vectorName, Cache, out m_owningObject);
 				var clerk = Clerk;
-				clerk.ActivateUI(false);
+				clerk.ActivateUI();
 				// Enhance JohnT: could use logic similar to RecordView.InitBase to load persisted list contents (filtered and sorted).
 				if (clerk.RequestedLoadWhileSuppressed)
 					clerk.UpdateList(false);

@@ -145,14 +145,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.TimeOfDayEdit
 		{
 			Require.That(clerkId == TimeOfDayList, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{TimeOfDayList}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.TimeOfDayOA),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				true,
-				true,
+			return new TreeBarHandlerAwarePossibilityRecordList(clerkId, statusBar,
+				null, true, true,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
+				cache.LanguageProject.TimeOfDayOA,
 				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, true, true, false, "best analysis"));
 		}
 	}

@@ -31,7 +31,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		/// <summary />
 		internal ConcordanceWordList(StatusBar statusBar, ILangProject languageProject, ConcDecorator decorator)
-			: base(TextAndWordsArea.ConcordanceWords, statusBar, new PropertyRecordSorter("ShortName"), "Default", new WordsUsedOnlyElsewhereFilter(languageProject.Cache), false, false, decorator, false, ObjectListPublisher.OwningFlid, languageProject, "Wordforms")
+			: base(TextAndWordsArea.ConcordanceWords, statusBar, new PropertyRecordSorter("ShortName"), AreaServices.Default, new WordsUsedOnlyElsewhereFilter(languageProject.Cache), false, false, decorator, false, ObjectListPublisher.OwningFlid, languageProject, "Wordforms")
 		{
 			_filterProvider = new WfiRecordFilterListProvider();
 		}

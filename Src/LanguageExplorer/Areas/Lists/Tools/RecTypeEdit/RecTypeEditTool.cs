@@ -145,15 +145,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.RecTypeEdit
 		{
 			Require.That(clerkId == RecTypeList, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{RecTypeList}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.ResearchNotebookOA.RecTypesOA),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				true,
-				true,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, true, true, false, "best analysis"));
+			return new TreeBarHandlerAwarePossibilityRecordList(clerkId, statusBar,
+				null, true, true,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
+				cache.LanguageProject.ResearchNotebookOA.RecTypesOA,
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"));
 		}
 	}
 }

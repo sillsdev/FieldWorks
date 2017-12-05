@@ -605,7 +605,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		internal IRecordClerk ActiveClerk => RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk;
+		internal IRecordClerk ActiveClerk => RecordList.ActiveRecordClerkRepository.ActiveRecordClerk;
 
 		/// <summary>
 		/// Currently detects whether we've inserted a paragraph break (with the Enter key)

@@ -606,7 +606,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (m_firstNewText != null)
 			{
 				// try to select it.
-				var clerk = RecordClerk.ActiveRecordClerkRepository.GetRecordClerk("interlinearTexts");
+				var clerk = RecordList.ActiveRecordClerkRepository.GetRecordClerk("interlinearTexts");
 				clerk?.JumpToRecord(m_firstNewText.ContentsOA.Hvo);
 			}
 		}

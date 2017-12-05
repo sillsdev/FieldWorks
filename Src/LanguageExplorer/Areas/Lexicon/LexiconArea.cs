@@ -168,31 +168,24 @@ namespace LanguageExplorer.Areas.Lexicon
 		{
 			Require.That(clerkId == Entries, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Entries}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, cache.MetaDataCacheAccessor.GetFieldId2(cache.LanguageProject.LexDbOA.ClassID, "Entries", false), cache.LanguageProject.LexDbOA, "Entries"),
+			return new RecordList(clerkId, statusBar,
 				new Dictionary<string, PropertyRecordSorter>
 				{
 					{ AreaServices.Default, new PropertyRecordSorter("ShortName") },
 					{ "PrimaryGloss", new PropertyRecordSorter("PrimaryGloss") }
 				},
-				null,
-				false,
-				false);
+				null, false, false,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false,
+				cache.MetaDataCacheAccessor.GetFieldId2(cache.LanguageProject.LexDbOA.ClassID, "Entries", false), cache.LanguageProject.LexDbOA, "Entries");
 		}
 
 		internal static IRecordClerk SemanticDomainList_LexiconAreaFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
 			Require.That(clerkId == SemanticDomainList_LexiconArea, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{SemanticDomainList_LexiconArea}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new PossibilityRecordList(new DictionaryPublicationDecorator(cache, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), CmPossibilityListTags.kflidPossibilities), cache.LanguageProject.SemanticDomainListOA),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				false,
-				false,
+			return new TreeBarHandlerAwarePossibilityRecordList(clerkId, statusBar,
+				null, false, false,
+				new DictionaryPublicationDecorator(cache, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), CmPossibilityListTags.kflidPossibilities), cache.LanguageProject.SemanticDomainListOA,
 				new SemanticDomainRdeTreeBarHandler(flexComponentParameters.PropertyTable, XDocument.Parse(LexiconResources.RapidDataEntryToolParameters).Root.Element("treeBarHandler")));
 		}
 

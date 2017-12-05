@@ -145,14 +145,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.StatusEdit
 		{
 			Require.That(clerkId == StatusList, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{StatusList}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.StatusOA),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				true,
-				true,
+			return new TreeBarHandlerAwarePossibilityRecordList(clerkId, statusBar,
+				null, true, true,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
+				cache.LanguageProject.StatusOA,
 				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best analysis"));
 		}
 	}

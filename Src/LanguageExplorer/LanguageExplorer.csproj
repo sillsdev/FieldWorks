@@ -301,12 +301,14 @@
     <Compile Include="Areas\Lists\Tools\CustomListEdit\CustomListEditTool.cs" />
     <Compile Include="Areas\Notebook\NotebookAreaMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolMenuHelper.cs" />
+    <Compile Include="Areas\SubservientRecordList.cs" />
     <Compile Include="Areas\TemporaryRecordList.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\CreateAndInsertStText.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearTextsRecordList.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\NonUndoableCreateAndInsertStText.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\UndoableCreateAndInsertStText.cs" />
     <Compile Include="Areas\TextsAndWords\TextAndWordsAreaMenuHelper.cs" />
+    <Compile Include="Areas\TreeBarHandlerAwareRecordList.cs" />
     <Compile Include="IListArea.cs" />
     <Compile Include="Impls\PropertyTable.cs" />
     <Compile Include="Impls\Publisher.cs" />
@@ -1129,7 +1131,6 @@
     <Compile Include="Works\RecordBrowseView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Works\RecordClerk.cs" />
     <Compile Include="Works\RecordClerkImages.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1150,6 +1151,7 @@
     <Compile Include="Works\SelectObjectEventArgs.cs" />
     <Compile Include="Works\SemanticDomainRdeTreeBarHandler.cs" />
     <Compile Include="Works\CombinedStylesListHandler.cs" />
+    <Compile Include="Areas\TreeBarHandlerAwarePossibilityRecordList.cs" />
     <Compile Include="Works\UnicodeCharacterEditingHelper.cs" />
     <Compile Include="Works\UploadToWebonaryController.cs" />
     <Compile Include="Works\UploadToWebonaryDlg.cs">

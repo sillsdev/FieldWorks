@@ -158,14 +158,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 		{
 			Require.That(clerkId == Phonologicalrules, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Phonologicalrules}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, PhPhonDataTags.kflidPhonRules, cache.LanguageProject.PhonologicalDataOA, "PhonologicalRules"),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				false,
-				false);
+			return new RecordList(clerkId, statusBar,
+				new PropertyRecordSorter("ShortName"), AreaServices.Default,
+				null, false, false,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
+				PhPhonDataTags.kflidPhonRules, cache.LanguageProject.PhonologicalDataOA, "PhonologicalRules");
 		}
 	}
 }

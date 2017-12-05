@@ -172,7 +172,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			Require.That(clerkId == InterlinearTexts, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{InterlinearTexts}'.");
 
-			return new InterlinearTextsRecordList(InterlinearTexts, statusBar, new PropertyRecordSorter("Title"), "Default", null, false, false, new InterestingTextsDecorator(cache.ServiceLocator, flexComponentParameters.PropertyTable), false, InterestingTextsDecorator.kflidInterestingTexts, cache.LanguageProject, "InterestingTexts");
+			return new InterlinearTextsRecordList(InterlinearTexts, statusBar, new PropertyRecordSorter("Title"), AreaServices.Default, null, false, false, new InterestingTextsDecorator(cache.ServiceLocator, flexComponentParameters.PropertyTable), false, InterestingTextsDecorator.kflidInterestingTexts, cache.LanguageProject, "InterestingTexts");
 		}
 	}
 }

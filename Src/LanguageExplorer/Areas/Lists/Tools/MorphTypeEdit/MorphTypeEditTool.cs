@@ -145,14 +145,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 		{
 			Require.That(clerkId == MorphTypeList, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{MorphTypeList}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.LexDbOA.MorphTypesOA),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				true,
-				true,
+			return new TreeBarHandlerAwarePossibilityRecordList(clerkId, statusBar,
+				null, true, true,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
+				cache.LanguageProject.LexDbOA.MorphTypesOA,
 				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, false, false, "best analysis"));
 		}
 	}

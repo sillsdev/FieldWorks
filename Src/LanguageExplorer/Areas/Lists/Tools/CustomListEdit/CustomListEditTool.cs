@@ -153,14 +153,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 			var customListClerkName = GetMachineName(customList);
 			Require.That(clerkId == customListClerkName, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{customListClerkName}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), customList),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				true,
-				true,
+			return new TreeBarHandlerAwarePossibilityRecordList(clerkId, statusBar,
+				null, true, true,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
+				customList,
 				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, customList.Depth > 1, customList.DisplayOption == (int)PossNameType.kpntName, customList.GetWsString()));
 		}
 	}

@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas
 
 		#region Overrides of RecordList
 
-		public override void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
+		public override void ActivateUI(bool updateStatusBar = true)
 		{
 			// by default, we won't publish that we're the "RecordClerk.RecordClerkRepository.ActiveRecordClerk" or other usual effects.
 			// but we do want to say that we're being actively used in a gui.

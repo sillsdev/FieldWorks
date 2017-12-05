@@ -5,6 +5,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Windows.Forms;
 
@@ -33,7 +34,7 @@ namespace LanguageExplorer
 		/// <returns></returns>
 		public static IPersistenceProvider CreatePersistenceProvider(IPropertyTable propertyTable)
 		{
-			return CreatePersistenceProvider(propertyTable, "Default");
+			return CreatePersistenceProvider(propertyTable, AreaServices.Default);
 		}
 
 		/// <summary>

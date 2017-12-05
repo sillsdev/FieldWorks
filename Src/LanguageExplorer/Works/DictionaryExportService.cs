@@ -138,7 +138,7 @@ namespace LanguageExplorer.Works
 				{
 					s_dictionaryClerk?.BecomeInactive();
 					s_reversalIndexClerk?.BecomeInactive();
-					m_currentClerk?.ActivateUI(true);
+					m_currentClerk?.ActivateUI();
 				}
 			}
 
@@ -169,7 +169,7 @@ namespace LanguageExplorer.Works
 				var controlElement = AreaListener.GetContentControlParameters(null, area, tool);
 				Debug.Assert(controlElement != null, "Prepare to be disappointed, since it will be null.");
 				var parameters = controlElement.XPathSelectElement(".//parameters[@clerk]");
-				var currentClerk = RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk;
+				var currentClerk = RecordList.ActiveRecordClerkRepository.ActiveRecordClerk;
 				if (DoesClerkMatchParams(currentClerk, parameters))
 					return null; // No need to juggle clerks if the one we want is already active
 
@@ -180,7 +180,7 @@ namespace LanguageExplorer.Works
 					// TODO: "GetRecordClerk" will only work if one or both clerks are now in the repository.
 					// TODO: When xWorks is assimilated into Language Explorer, then this call can use the factory method overload of the method.
 #endif
-					tempClerk = RecordClerk.ActiveRecordClerkRepository.GetRecordClerk(isDictionary ? "entries" : "AllReversalEntries");
+					tempClerk = RecordList.ActiveRecordClerkRepository.GetRecordClerk(isDictionary ? "entries" : "AllReversalEntries");
 					CacheClerk(exportType, tempClerk);
 				}
 #if RANDYTODO
@@ -188,7 +188,7 @@ namespace LanguageExplorer.Works
 				// TODO: Making this temp clerk active, means it and 'currentClerk' are both active at the same time.
 				// TODO: It also seems like tempClerk is never deactivated. A: I set the Dispose call on ClerkActivator to deactivate both of those static clerks, if present.
 #endif
-				tempClerk.ActivateUI(true, false);
+				tempClerk.ActivateUI(false);
 				tempClerk.UpdateList(true, true);
 				return new ClerkActivator(currentClerk); // ensure the current active clerk is reactivated after we use the temporary clerk.
 			}

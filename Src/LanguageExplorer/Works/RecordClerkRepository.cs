@@ -124,7 +124,7 @@ namespace LanguageExplorer.Works
 				// TODO: Remove those parameters, when a clerk isn't really in charge of what the two do.
 				// TODO: For now, we will pretend the clerk doesn't deal with it as of now.
 #endif
-				_activeRecordClerk?.ActivateUI(false, false);
+				_activeRecordClerk?.ActivateUI(false);
 			}
 			get
 			{

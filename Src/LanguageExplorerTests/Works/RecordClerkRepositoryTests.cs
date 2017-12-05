@@ -36,21 +36,20 @@ namespace LanguageExplorerTests.Works
 				Assert.IsNull(recordClerkRepository.ActiveRecordClerk);
 
 				// Test 3. New clerk is added.
-				var recordList = new RecordList(Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, Cache.MetaDataCacheAccessor.GetFieldId2(Cache.LanguageProject.ResearchNotebookOA.ClassID, "AllRecords", false), Cache.LanguageProject.ResearchNotebookOA, "AllRecords");
-				var clerk = new RecordClerk("records", statusbar, recordList, new PropertyRecordSorter("ShortName"), "Default", null, false, false);
-				clerk.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
+				var recordList = new RecordList("records", statusbar, new PropertyRecordSorter("ShortName"), "Default", null, false, false, Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, Cache.MetaDataCacheAccessor.GetFieldId2(Cache.LanguageProject.ResearchNotebookOA.ClassID, "AllRecords", false), Cache.LanguageProject.ResearchNotebookOA, "AllRecords");
+				recordList.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
 
-				recordClerkRepository.AddRecordClerk(clerk);
-				Assert.AreSame(clerk, recordClerkRepository.GetRecordClerk("records"));
+				recordClerkRepository.AddRecordClerk(recordList);
+				Assert.AreSame(recordList, recordClerkRepository.GetRecordClerk("records"));
 				Assert.IsNull(recordClerkRepository.ActiveRecordClerk);
 
 				// Test 4. Check out active clerk
 				Assert.IsNull(recordClerkRepository.ActiveRecordClerk);
-				recordClerkRepository.ActiveRecordClerk = clerk;
-				Assert.AreSame(clerk, recordClerkRepository.ActiveRecordClerk);
+				recordClerkRepository.ActiveRecordClerk = recordList;
+				Assert.AreSame(recordList, recordClerkRepository.ActiveRecordClerk);
 
 				// Test 5. Remove clerk.
-				recordClerkRepository.RemoveRecordClerk(clerk);
+				recordClerkRepository.RemoveRecordClerk(recordList);
 				Assert.IsNull(recordClerkRepository.ActiveRecordClerk);
 			}
 		}

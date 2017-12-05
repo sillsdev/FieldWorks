@@ -125,14 +125,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		{
 			Require.That(clerkId == CategoriesWithoutTreeBarHandler, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{CategoriesWithoutTreeBarHandler}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new PossibilityRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.PartsOfSpeechOA),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				false,
-				false);
+			return new PossibilityRecordList(clerkId, statusBar, null, false, false, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.PartsOfSpeechOA);
 		}
 	}
 }

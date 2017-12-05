@@ -12,7 +12,6 @@ using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using LanguageExplorer.Works;
 using SIL.LCModel;
@@ -66,8 +65,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 					So, I suspect those properties will eventually go away permanently, but I'm not there yet."
 			*/
 #endif
-			_propertyTable.RemoveProperty(RecordClerk.ClerkSelectedObjectPropertyId(_nestedRecordClerk.Id));
-			_propertyTable.RemoveProperty(RecordClerk.ClerkSelectedObjectPropertyId(_recordClerk.Id));
+			_propertyTable.RemoveProperty(RecordList.ClerkSelectedObjectPropertyId(_nestedRecordClerk.Id));
+			_propertyTable.RemoveProperty(RecordList.ClerkSelectedObjectPropertyId(_recordClerk.Id));
 
 			_propertyTable.RemoveProperty("ActiveClerkOwningObject");
 			_propertyTable.RemoveProperty("ActiveClerkSelectedObject");
@@ -217,15 +216,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		{
 			Require.That(clerkId == RDEwords, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{RDEwords}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new RecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true, cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses", false), cache.LanguageProject.SemanticDomainListOA, "ReferringSenses"),
-				new PropertyRecordSorter("ShortName"),
-				"Default",
-				null,
-				false,
-				false,
-				((IRecordClerkRepositoryForTools)RecordClerk.ActiveRecordClerkRepository).GetRecordClerk(LexiconArea.SemanticDomainList_LexiconArea, statusBar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod));
+			return new SubservientRecordList(clerkId, statusBar,
+				null, false, false,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
+				cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses", false), cache.LanguageProject.SemanticDomainListOA, "ReferringSenses",
+				((IRecordClerkRepositoryForTools)RecordList.ActiveRecordClerkRepository).GetRecordClerk(LexiconArea.SemanticDomainList_LexiconArea, statusBar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod));
 		}
 	}
 }

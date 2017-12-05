@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Windows.Forms;
@@ -10,7 +9,6 @@ using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using LanguageExplorer.Works;
 using SIL.LCModel;
@@ -137,17 +135,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		{
 			Guard.AssertThat(clerkId == EntriesOrChildren, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{EntriesOrChildren}'.");
 
-			return new RecordClerk(clerkId,
-				statusBar,
-				new EntriesOrChildClassesRecordList(cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, cache.LanguageProject.LexDbOA),
-				new Dictionary<string, PropertyRecordSorter>
-				{
-					{ AreaServices.Default, new PropertyRecordSorter("ShortName") },
-					{ "PrimaryGloss", new PropertyRecordSorter("PrimaryGloss") }
-				},
-				null,
-				false,
-				false);
+			return new EntriesOrChildClassesRecordList(clerkId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.LexDbOA);
 		}
 	}
 }
