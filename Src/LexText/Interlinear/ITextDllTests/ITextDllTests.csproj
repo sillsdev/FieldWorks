@@ -261,15 +261,14 @@
     <Compile Include="ImportInterlinearAnalysesTests.cs" />
     <Compile Include="InterlinearExporterTests.cs" />
     <Compile Include="BIRDFormatImportTests.cs" />
-    <Compile Include="InterlinDocForAnalysisTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="InterlinDocForAnalysisTests.cs" />
     <Compile Include="InterlinLineChoicesTests.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="InterlinMasterTests.cs" />
     <Compile Include="InterlinSfmImportTests.cs" />
     <Compile Include="InterlinTaggingTests.cs" />
+    <Compile Include="GlossToolLoadsGuessContentsTests.cs" />
     <Compile Include="MorphemeBreakerTests.cs" />
     <Compile Include="SandboxBaseTests.cs" />
     <Compile Include="ShowSpaceDecoratorTests.cs" />

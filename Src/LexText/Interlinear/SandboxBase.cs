@@ -1194,12 +1194,14 @@ namespace SIL.FieldWorks.IText
 			m_case = cf.StringCase(RawWordform.Text);
 			// empty it in case we're redoing after choose from combo.
 			cda.CacheVecProp(hvoSbWord, ktagSbWordMorphs, new int[0], 0);
-			if (gloss == null || analysis == null) // If gloss is null, analysis will be, too, but it doesn't hurt to check.
+			if (gloss == null || analysis == null)
 			{
 				if (fLookForDefaults)
 				{
-					if (InterlinDoc != null) // can be null in Wordform Analyses tool and unit tests, and we don't want to clear an existing analysis.
-						GetDefaults(CurrentAnalysisTree.Wordform, out analysis, out gloss, fAdjustCase);
+					if (InterlinDoc != null) // can be null in Wordform Analyses tool and some unit tests, and we don't want to clear an existing analysis.
+					{
+						GetDefaults(CurrentAnalysisTree.Wordform, ref analysis, out gloss);
+					}
 					m_hvoWordGloss = gloss != null ? gloss.Hvo : 0;
 					// Make sure the wordform ID is consistent with the analysis we located.
 					if (analysis != null)
@@ -1622,22 +1624,12 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		private ITsString GetBestVernWordform(IWfiWordform wf)
-		{
-			// first we'll try getting vernacular ws directly, since it'll be true in most cases.
-			ITsString tssForm = wf.Form.get_String(this.RawWordformWs);
-			if (tssForm == null || tssForm.Length == 0)
-				tssForm = wf.Form.BestVernacularAlternative;
-			return tssForm;
-		}
-
 		/// <summary>
 		/// Obtain the HVO of the most desirable default annotation to use for a particular
 		/// wordform.
 		/// </summary>
-		private void GetDefaults(IWfiWordform wordform, out IWfiAnalysis analysis, out IWfiGloss gloss, bool fAdjustCase)
+		private void GetDefaults(IWfiWordform wordform, ref IWfiAnalysis analysis, out IWfiGloss gloss)
 		{
-			analysis = null; // default
 			gloss = null;
 			if (wordform == null || !wordform.IsValidObject)
 				return;
@@ -1651,7 +1643,11 @@ namespace SIL.FieldWorks.IText
 			// try to get one. Otherwise, if we've already cached a default, use it...it's surprising for the
 			// user if we move the focus box to something and the default changes. (LT-4643 etc.)
 			int hvoDefault = 0;
-			if (m_occurrenceSelected != null && m_occurrenceSelected.Analysis.Wordform == wordform)
+			if (analysis != null)
+			{
+				hvoDefault = analysis.Hvo;
+			}
+			else if (m_occurrenceSelected != null && m_occurrenceSelected.Analysis == wordform)
 			{
 				// Try to establish a default based on the current occurrence.
 				if (m_fSetWordformInProgress ||
@@ -3478,11 +3474,11 @@ namespace SIL.FieldWorks.IText
 		internal IWfiAnalysis GetWfiAnalysisInUse()
 		{
 			CheckDisposed();
-			var wa = this.GetWfiAnalysisOfAnalysis();
+			var wa = GetWfiAnalysisOfAnalysis();
 			if (wa == null)
 			{
-				IWfiGloss temp_hvoWordGloss;
-				this.GetDefaults(this.GetWordformOfAnalysis(), out wa, out temp_hvoWordGloss, false);
+				IWfiGloss tempHvoWordGloss;
+				GetDefaults(GetWordformOfAnalysis(), ref wa, out tempHvoWordGloss);
 			}
 			return wa;
 		}
@@ -3593,10 +3589,9 @@ namespace SIL.FieldWorks.IText
 				// displayed.)
 				CurrentAnalysisTree.Analysis = m_wordformOriginal;
 			}
-			else if (CurrentAnalysisTree.Analysis == CurrentAnalysisTree.Wordform)
+			else
 			{
-				// 'New analysis'
-				// We want to force no default to be filled in.
+				// If the user chose an analysis we do not want to fill content in with defaults, use what they picked
 				fLookForDefaults = false;
 			}
 
