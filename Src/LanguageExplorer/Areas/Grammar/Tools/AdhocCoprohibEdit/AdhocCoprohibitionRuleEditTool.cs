@@ -52,7 +52,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		private const string AdhocCoprohibitions = "adhocCoprohibitions";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordClerk;
 		[Import(AreaServices.GrammarAreaMachineName)]
 		private IArea _area;
 
@@ -82,7 +82,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		{
 			if (_recordClerk == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(AdhocCoprohibitions, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordClerk = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(AdhocCoprohibitions, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordClerk); // Use generic export event handler.
 
@@ -118,7 +118,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 			panelButton.DatTree = recordEditView.DatTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordClerk);
 		}
 
 		/// <summary>
@@ -177,7 +177,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 
 		#endregion
 
-		private static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
 			Require.That(clerkId == AdhocCoprohibitions, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{AdhocCoprohibitions}'.");
 

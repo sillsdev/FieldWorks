@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 	{
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		[Import(AreaServices.NotebookAreaMachineName)]
 		private IArea _area;
 
@@ -45,17 +45,17 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
 				// Try getting it from the notebook area.
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
 			}
-			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookBrowseParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk);
+			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookBrowseParameters).Root, majorFlexComponentParameters.LcmCache, _recordList);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>
@@ -71,8 +71,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_recordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>

@@ -28,7 +28,6 @@ using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Filters;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
-using SIL.ObjectModel;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
 
@@ -37,7 +36,7 @@ namespace LanguageExplorer.Works
 	/// <summary>
 	/// RecordList is a vector of objects
 	/// </summary>
-	public class RecordList : DisposableBase, IRecordList
+	public class RecordList : IRecordList
 	{
 		protected const int RecordListFlid = 89999956;
 
@@ -127,7 +126,7 @@ namespace LanguageExplorer.Works
 		/// This becomes the SilDataAccess for any views which want to see the filtered, sorted record list.
 		/// </summary>
 		protected ObjectListPublisher m_objectListPublisher;
-		private IProgress m_progAdvInd;
+
 		/// <summary>
 		/// Set of objects that we own and have to dispose
 		/// </summary>
@@ -137,21 +136,15 @@ namespace LanguageExplorer.Works
 		protected IRecordChangeHandler _recordChangeHandler;
 		private ListUpdateHelper _bulkEditListUpdateHelper;
 		/// <summary>
-		/// True if the Clerk is being used in a Gui.
+		/// True if the record list is being used in a Gui.
 		/// </summary>
-		protected bool _isActiveInGui;
+		protected bool _isActiveInGui = false;
 		private const string SelectedListBarNodeErrorMessage = "An item stored in the Property Table under SelectedListBarNode (typically from the ListView of an xWindow's record bar) should have an Hvo stored in its Tag property.";
 		///// <summary>
 		///// this will be null if this clerk is dependent on another one. Only the top-level clerk
 		///// gets to be represented by and interact with the tree bar.
 		///// </summary>
 		//protected RecordBarHandler _recordBarHandler;
-		/// <summary>
-		/// The display name of what is currently being sorted. This variable is persisted as a user
-		/// setting. When the sort name is null it indicates that the items in the clerk are not
-		/// being sorted or that the current sorting should not be displayed (i.e. the default column
-		/// is being sorted).
-		/// </summary>
 		private bool _isDefaultSort;
 		private RecordSorter _defaultSorter;
 		private bool _reloadingDueToMissingObject;
@@ -304,7 +297,227 @@ namespace LanguageExplorer.Works
 
 		#region All interface implementations
 
-		#region Implementation of IRecordListUpdater nested in IRecordClerk
+		#region Implementation of IAnalysisOccurrenceFromHvo nested in IRecordList
+
+		public IParaFragment OccurrenceFromHvo(int hvo)
+		{
+			return (((DomainDataByFlidDecoratorBase)VirtualListPublisher).BaseSda as IAnalysisOccurrenceFromHvo)?.OccurrenceFromHvo(hvo);
+		}
+
+		#endregion Implementation of IAnalysisOccurrenceFromHvo nested in IRecordList
+
+		#region Implementation of IBulkPropChanged nested in IRecordList
+
+		public void BeginBroadcastingChanges(int count)
+		{
+			// If we're starting a multi-property change, suppress list sorting until all the notifications have been received.
+			// The null check is just for sanity, it should always be null when starting an operation.
+			if (count > 1 && _bulkEditListUpdateHelper == null)
+			{
+				_bulkEditListUpdateHelper = new ListUpdateHelper(this);
+			}
+		}
+
+		public void EndBroadcastingChanges()
+		{
+			// If we're ending a bulk edit, end the sorting suppression (if any).
+			if (_bulkEditListUpdateHelper == null)
+			{
+				return;
+			}
+			_bulkEditListUpdateHelper.Dispose();
+			_bulkEditListUpdateHelper = null;
+		}
+
+		#endregion Implementation of IBulkPropChanged nested in IRecordList
+
+		#region Implementation of IDisposable nested in IRecordList
+
+		~RecordList()
+		{
+			Dispose(false);
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		private bool IsDisposed { get; set; }
+
+		protected virtual void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****************** " + GetType().Name + " 'disposing' is false. ******************");
+
+			if (IsDisposed)
+			{
+				return;
+			}
+			if (disposing)
+			{
+				UnregisterMessageHandlers();
+				ListChanged -= OnListChanged;
+				AboutToReload -= AboutToReload_Handler;
+				DoneReload -= DoneReload_Handler;
+				RemoveNotification(); // before disposing list, we need it to get to the Cache.
+				if (m_cache != null && RecordedFocusedObject != null)
+				{
+					m_cache.ServiceLocator.ObjectRepository.RemoveFocusedObject(RecordedFocusedObject);
+				}
+				RecordedFocusedObject = null;
+				// make sure we uninstall any remaining event handler,
+				// irrespective of whether we're active or not.
+				if (m_windowPendingOnActivated != null && !m_windowPendingOnActivated.IsDisposed)
+				{
+					UninstallWindowActivated();
+				}
+				m_sda?.RemoveNotification(this);
+				m_insertableClasses?.Clear();
+				m_sortedObjects?.Clear();
+				m_ObjectsToDispose.Dispose();
+				_recordChangeHandler?.Dispose();
+				_bulkEditListUpdateHelper?.Dispose();
+				if (IsControllingTheRecordTreeBar)
+				{
+					PropertyTable.RemoveProperty("ActiveClerkSelectedObject");
+				}
+				PropertyTable.RemoveProperty(ClerkSelectedObjectPropertyId(Id));
+			}
+
+			m_sda = null;
+			m_cache = null;
+			m_sorter = null;
+			m_filter = null;
+			m_owningObject = null;
+			m_propertyName = null;
+			m_fontName = null;
+			m_insertableClasses = null;
+			m_sortedObjects = null;
+			m_owningObject = null;
+			m_objectListPublisher = null;
+			_statusBar = null;
+			_recordChangeHandler = null;
+			_bulkEditListUpdateHelper = null;
+			_defaultSorter = null;
+			_defaultFilter = null;
+
+			PropertyTable = null;
+			Publisher = null;
+			Subscriber = null;
+
+			IsDisposed = true;
+		}
+
+		#endregion Implementation of IDisposable nested in IRecordList
+
+		#region Implementation of IFlexComponent
+
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public virtual void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		{
+			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+
+			PropertyTable = flexComponentParameters.PropertyTable;
+			Publisher = flexComponentParameters.Publisher;
+			Subscriber = flexComponentParameters.Subscriber;
+
+			m_cache = PropertyTable.GetValue<LcmCache>("cache");
+			CurrentIndex = -1;
+			m_hvoCurrent = 0;
+			m_oldLength = 0;
+			var wsContainer = m_cache.ServiceLocator.WritingSystems;
+			m_fontName = m_usingAnalysisWs ? wsContainer.DefaultAnalysisWritingSystem.DefaultFontName : wsContainer.DefaultVernacularWritingSystem.DefaultFontName;
+			m_typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, m_usingAnalysisWs);
+
+			if (m_owningObject != null)
+			{
+				UpdatePrivateList();
+			}
+			TryRestoreSorter();
+			TryRestoreFilter();
+			ListChanged += OnListChanged;
+			AboutToReload += AboutToReload_Handler;
+			DoneReload += DoneReload_Handler;
+			var setFilterMenu = false;
+			if (_filterProvider != null)
+			{
+				// There is only one clerk (concordanceWords) that sets m_filterProvider to a provider.
+				// That provider is the class WfiRecordFilterListProvider.
+				// That clerk is used in these tools: AnalysesTool, BulkEditWordformsTool, & WordListConcordanceTool
+				// That WfiRecordFilterListProvider instance is (ok: "will be") provided in one of the RecordClerk contructor overloads.
+				if (Filter != null)
+				{
+					// There is only one clerk (concordanceWords) that sets m_filterProvider to a provider.
+					// That clerk is used in these tools: AnalysesTool, BulkEditWordformsTool, & WordListConcordanceTool
+					// find any matching persisted menubar filter
+					// NOTE: for now assume we can only set/persist one such menubar filter at a time.
+					foreach (RecordFilter menuBarFilterOption in _filterProvider.Filters)
+					{
+						if (!Filter.Contains(menuBarFilterOption))
+						{
+							continue;
+						}
+						_activeMenuBarFilter = menuBarFilterOption;
+						_filterProvider.OnAdjustFilterSelection(_activeMenuBarFilter);
+						PropertyTable.SetDefault(CurrentFilterPropertyTableId, _activeMenuBarFilter.id, SettingsGroup.LocalSettings, false, false);
+						setFilterMenu = true;
+						break;
+					}
+				}
+			}
+
+			if (!setFilterMenu)
+			{
+				OnAdjustFilterSelection(null);
+			}
+
+#if RANDYTODO
+			//we handled the tree bar only if we are the root clerk
+			if (m_clerkProvidingRootObject == null)
+			{
+				m_recordBarHandler = RecordBarHandler.Create(PropertyTable, m_clerkConfiguration);//,m_flid);
+			}
+			else
+			{
+				IRecordList recordListProvidingRootObject;
+				Debug.Assert(TryListProvidingRootObject(out recordListProvidingRootObject),
+					"We expected to find clerkProvidingOwner '" + m_clerkProvidingRootObject + "'. Possibly misspelled.");
+			}
+#endif
+
+#if RANDYTODO
+			// TODO: In original, optimized, version, we don't load the data until the clerk is used in a newly activated window.
+			SetupDataContext(false);
+#else
+			SetupDataContext(true);
+#endif
+		}
+
+		#endregion Implementation of IFlexComponent
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion Implementation of IPropertyTableProvider
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion Implementation of IPublisherProvider
+
+		#region Implementation of IRecordListUpdater nested in IRecordList
 
 		/// <summary>Set the IRecordChangeHandler object for this list.</summary>
 		public IRecordChangeHandler RecordChangeHandler { get; set; }
@@ -334,55 +547,128 @@ namespace LanguageExplorer.Works
 			ReplaceListItem(CurrentObjectHvo);
 		}
 
-		#endregion Implementation of IRecordListUpdater nested in IRecordClerk
+		#endregion Implementation of IRecordListUpdater nested in IRecordList
 
-		#region Implementation of IAnalysisOccurrenceFromHvo nested in IRecordClerk
+		#region Implementation of ISortItemProvider
 
-		public IParaFragment OccurrenceFromHvo(int hvo)
+		/// <summary>
+		/// Get the nth item in the main list.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <returns></returns>
+		public IManyOnePathSortItem SortItemAt(int index)
 		{
-			return (((DomainDataByFlidDecoratorBase)VirtualListPublisher).BaseSda as IAnalysisOccurrenceFromHvo)?.OccurrenceFromHvo(hvo);
+			return SortedObjects.Count == 0 ? null : SortedObjects[index] as IManyOnePathSortItem;
 		}
 
-		#endregion Implementation of IAnalysisOccurrenceFromHvo nested in IRecordClerk
-
-		#region Implementation of IBulkPropChanged nested in IRecordClerk
-
-		public void BeginBroadcastingChanges(int count)
+		/// <summary>
+		/// An item is being added to your master list. Add the corresponding sort items to
+		/// your fake list.
+		/// </summary>
+		/// <param name="hvo"></param>
+		/// <returns>the number of items added.</returns>
+		public int AppendItemsFor(int hvo)
 		{
-			// If we're starting a multi-property change, suppress list sorting until all the notifications have been received.
-			// The null check is just for sanity, it should always be null when starting an operation.
-			if (count > 1 && _bulkEditListUpdateHelper == null)
+			var start = SortedObjects.Count;
+			var result = MakeItemsFor(SortedObjects, hvo);
+			if (result != 0)
 			{
-				_bulkEditListUpdateHelper = new ListUpdateHelper(this);
+				var newItems = new int[result];
+				for (var i = 0; i < result; i++)
+					newItems[i] = (SortedObjects[i + start] as IManyOnePathSortItem).RootObjectHvo;
+				(VirtualListPublisher as ObjectListPublisher).Replace(m_owningObject.Hvo, start, newItems, 0);
 			}
+			return result;
 		}
 
-		public void EndBroadcastingChanges()
+		/// <summary>
+		/// Remove the corresponding list items. And issue propchanged.
+		/// </summary>
+		/// <param name="hvoToRemove"></param>
+		public void RemoveItemsFor(int hvoToRemove)
 		{
-			// If we're ending a bulk edit, end the sorting suppression (if any).
-			if (_bulkEditListUpdateHelper == null)
+			ReplaceListItem(null, hvoToRemove, false);
+			SendPropChangedOnListChange(CurrentIndex, SortedObjects, ListChangedEventArgs.ListChangedActions.Normal);
+		}
+
+		/// <summary>
+		/// get the index of the given hvo, where it occurs as the root object
+		/// (of a IManyOnePathSortItem) in m_sortedObjects.
+		/// </summary>
+		/// <param name="hvo"></param>
+		/// <returns>-1 if the object is not in the list</returns>
+		public int IndexOf(int hvo)
+		{
+			// Creating a list item and then jumping to the tool can leave the list stale, putting us
+			// in a bogus state where the edit pane never gets painted.  (See LT-7580.)
+			if (RequestedLoadWhileSuppressed)
+			{
+				ReloadList();
+			}
+			return IndexOf(SortedObjects, hvo);
+		}
+
+		/// <summary>
+		/// get the class of the items in this list.
+		/// </summary>
+		public virtual int ListItemsClass => VirtualListPublisher.MetaDataCache.GetDstClsId(m_flid);
+
+		#endregion Implementation of ISortItemProvider
+
+		#region Implementation of IVwNotifyChange
+
+		public virtual void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+		{
+			if (UpdatingList || m_reloadingList)
+			{
+				return; // we're already in the process of changing our list.
+			}
+
+			// If this list contains WfiWordforms, and the tag indicates a change to the
+			// virtual property of all wordforms, then assume this list also is affected
+			// and pretend that this PropChanged is really for us.  See FWR-3617 for
+			// justification of this assumption.
+			if (m_owningObject != null && hvo == m_owningObject.Hvo && tag != m_flid && cvIns > 0)
+			{
+				if (ListItemsClass == WfiWordformTags.kClassId && hvo == m_cache.LangProject.Hvo && tag == m_cache.ServiceLocator.GetInstance<Virtuals>().LangProjectAllWordforms)
+				{
+					tag = m_flid;
+				}
+			}
+			if (TryHandleUpdateOrMarkPendingReload(hvo, tag, ivMin, cvIns, cvDel))
 			{
 				return;
 			}
-			_bulkEditListUpdateHelper.Dispose();
-			_bulkEditListUpdateHelper = null;
+
+			// Try to catch things that don't obviously affect us, but will cause problems.
+			TryReloadForInvalidPathObjectsOnCurrentObject(tag, cvDel);
+
+			(VirtualListPublisher as IVwNotifyChange)?.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
 		}
 
-		#endregion Implementation of IBulkPropChanged nested in IRecordClerk
+		#endregion Implementation of IVwNotifyChange
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
+
+		#endregion Implementation of ISubscriberProvider
 
 		#region Implementation of IRecordList
 
 		public event EventHandler AboutToReload;
 		public event EventHandler DoneReload;
+		public event FilterChangeHandler FilterChangedByList;
 		/// <summary>
 		/// fired when the list changes
 		/// </summary>
 		public event ListChangedEventHandler ListChanged;
-
-		public event FilterChangeHandler FilterChangedByClerk;
 		public event RecordNavigationInfoEventHandler RecordChanged;
 		public event SelectObjectEventHandler SelectedObjectChanged;
-		public event EventHandler SorterChangedByClerk;
+		public event EventHandler SorterChangedByList;
 
 		public virtual void ActivateUI(bool updateStatusBar = true)
 		{
@@ -390,7 +676,8 @@ namespace LanguageExplorer.Works
 			{
 				return; // Only do it once.
 			}
-			_isActiveInGui = true;
+			IsActiveInGui = true;
+			ReloadIfNeeded();
 
 			RegisterMessageHandlers();
 			AddNotification();
@@ -423,7 +710,7 @@ namespace LanguageExplorer.Works
 					{
 						continue;
 					}
-					var msg = String.Format(xWorksStrings.PunctInFieldNameWarning, name);
+					var msg = string.Format(xWorksStrings.PunctInFieldNameWarning, name);
 					// The way this is worded, 'Yes' means go on with the export. We won't bother them reporting
 					// other messed-up fields. A 'no' answer means don't continue, which means it's a problem.
 					return (MessageBox.Show(Form.ActiveForm, msg, xWorksStrings.PunctInfieldNameCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes);
@@ -432,43 +719,50 @@ namespace LanguageExplorer.Works
 			return false; // no punctuation in custom fields.
 		}
 
-		public virtual bool AreSortersCompatible(RecordSorter first, RecordSorter second)
-		{
-			return first.CompatibleSorter(second);
-		}
-
 		public virtual RecordBarHandler BarHandler => null;
 
 		public virtual void BecomeInactive()
 		{
 			UnregisterMessageHandlers(); // No sense handling messages, when dormant.
-			_isActiveInGui = false;
+			IsActiveInGui = false;
 			RemoveNotification();
 			// If list loading was suppressed by this view (e.g., bulk edit to prevent changed items
 			// disappearing from filter), stop that now, so it won't affect any future use of the list.
 			ListLoadingSuppressed = false;
 		}
 
-		public LcmCache Cache
-		{
-			get
-			{
-				CheckDisposed();
-				return m_cache;
-			}
-		}
+		public LcmCache Cache => m_cache;
 
 		public virtual bool CanInsertClass(string className)
 		{
-			CheckDisposed();
-
 			return (GetMatchingClass(className) != null);
+		}
+
+		public bool CanMoveTo(Navigation navigateTo)
+		{
+			bool canMoveTo;
+			switch (navigateTo)
+			{
+				case Navigation.First:
+					canMoveTo = FirstItemIndex != -1 && FirstItemIndex != CurrentIndex;
+					break;
+				case Navigation.Next:
+					canMoveTo = NextItemIndex != -1 && NextItemIndex != CurrentIndex;
+					break;
+				case Navigation.Previous:
+					canMoveTo = PrevItemIndex != -1 && PrevItemIndex != CurrentIndex;
+					break;
+				case Navigation.Last:
+					canMoveTo = LastItemIndex != -1 && LastItemIndex != CurrentIndex;
+					break;
+				default:
+					throw new IndexOutOfRangeException($"I don't know if one can move to '{navigateTo}'.");
+			}
+			return canMoveTo;
 		}
 
 		public void ChangeOwningObjectId(int hvo)
 		{
-			CheckDisposed();
-
 			OwningObject = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 		}
 
@@ -478,8 +772,6 @@ namespace LanguageExplorer.Works
 		/// <param name="sorter"></param>
 		public virtual void ChangeSorter(RecordSorter sorter)
 		{
-			CheckDisposed();
-
 			Sorter = sorter;
 
 			// JohnT: a different sorter may create a quite different set of IManyOnePathSortItems.
@@ -492,23 +784,12 @@ namespace LanguageExplorer.Works
 		}
 
 		/// <summary>
-		/// Our owning record clerk.
-		/// </summary>
-		public IRecordClerk Clerk
-		{
-			get { return this; }
-			set { ; }
-		}
-
-		/// <summary>
 		/// Create an object of the specified class.
 		/// </summary>
 		/// <param name="className"></param>
 		/// <returns>true if successful (the class is known)</returns>
 		public virtual bool CreateAndInsert(string className)
 		{
-			CheckDisposed();
-
 			var cpi = GetMatchingClass(className);
 			Debug.Assert(cpi != null, "This object should not have been asked to insert an object of the class " + className + ".");
 			if (cpi != null)
@@ -610,29 +891,6 @@ namespace LanguageExplorer.Works
 			return hvoNew != 0 ? m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoNew) : null;
 		}
 
-		public bool CanMoveTo(Navigation navigateTo)
-		{
-			bool canMoveTo;
-			switch (navigateTo)
-			{
-				case Navigation.First:
-					canMoveTo = FirstItemIndex != -1 && FirstItemIndex != CurrentIndex;
-					break;
-				case Navigation.Next:
-					canMoveTo = NextItemIndex != -1 && NextItemIndex != CurrentIndex;
-					break;
-				case Navigation.Previous:
-					canMoveTo = PrevItemIndex != -1 && PrevItemIndex != CurrentIndex;
-					break;
-				case Navigation.Last:
-					canMoveTo = LastItemIndex != -1 && LastItemIndex != CurrentIndex;
-					break;
-				default:
-					throw new IndexOutOfRangeException($"I don't know if one can move to '{navigateTo}'.");
-			}
-			return canMoveTo;
-		}
-
 		/// <summary>
 		/// will return -1 if the vector is empty.
 		/// </summary>
@@ -640,8 +898,6 @@ namespace LanguageExplorer.Works
 		{
 			get
 			{
-				CheckDisposed();
-
 				// This makes it self-correcting. Somehow it can get thrown off, when switching views VERY fast.
 				if (m_sortedObjects == null || m_sortedObjects.Count == 0)
 				{
@@ -663,10 +919,10 @@ namespace LanguageExplorer.Works
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (value < -1 || value >= (m_sortedObjects?.Count ?? 0))
+				{
 					throw new IndexOutOfRangeException();
+				}
 
 				// We don't want multiple log entries for the same record, and it seems this frequently
 				// gets called repeatedly for the same one. We check both the index and the object,
@@ -726,8 +982,6 @@ namespace LanguageExplorer.Works
 		{
 			get
 			{
-				CheckDisposed();
-
 				var hvo = CurrentObjectHvo;
 				if (hvo <= 0)
 				{
@@ -757,8 +1011,6 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		public bool Editable { get; set; }
-
 		/// <summary>
 		/// Answer true if the current object is valid. Currently we just check for deleted objects.
 		/// We could try to get an ICmObject and call IsValidObject, but currently that doesn't do
@@ -780,8 +1032,6 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		public virtual void DeleteCurrentObject(ICmObject thingToDelete = null)
 		{
-			CheckDisposed();
-
 			if (thingToDelete == null)
 			{
 				thingToDelete = CurrentObject;
@@ -799,9 +1049,9 @@ namespace LanguageExplorer.Works
 				// This looks plausible; but for example IndexOf may reload the list, if a reload is pending;
 				// and the current object may no longer match the current filter, so it may be gone.
 				//Debug.Assert(currentIndex == IndexOf(currentObject.Hvo));
-				using (new ListUpdateHelper(Clerk))
+				using (new ListUpdateHelper(this))
 				{
-					var m_fUpdatingListOrig = UpdatingList;
+					var updatingListOrig = UpdatingList;
 					UpdatingList = true;
 					try
 					{
@@ -810,7 +1060,7 @@ namespace LanguageExplorer.Works
 					}
 					finally
 					{
-						UpdatingList = m_fUpdatingListOrig;
+						UpdatingList = updatingListOrig;
 					}
 				}
 			}
@@ -823,14 +1073,7 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// True if we are in the middle of deleting an object.
 		/// </summary>
-		public bool DeletingObject
-		{
-			get
-			{
-				CheckDisposed();
-				return m_deletingObject;
-			}
-		}
+		public bool DeletingObject => m_deletingObject;
 
 		/// <summary>
 		/// Create and Insert an item in a list. If this is a hierarchical list, then insert it at the same level
@@ -850,7 +1093,7 @@ namespace LanguageExplorer.Works
 			{
 				SuspendPropChangedDuringModification = true
 			};
-			using (new ListUpdateHelper(Clerk, options))
+			using (new ListUpdateHelper(this, options))
 			{
 				newObj = createAndInsertMethodObj.Create();
 				hvoNew = newObj != null ? newObj.Hvo : 0;
@@ -863,6 +1106,8 @@ namespace LanguageExplorer.Works
 			return newObj;
 		}
 
+		public bool Editable { get; set; }
+
 		/// <summary>
 		/// False if SendPropChangedOnListChange() should be a no-op.
 		/// </summary>
@@ -870,12 +1115,10 @@ namespace LanguageExplorer.Works
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fEnableSendPropChanged;
 			}
 			set
 			{
-				CheckDisposed();
 				m_fEnableSendPropChanged = value;
 			}
 		}
@@ -884,23 +1127,13 @@ namespace LanguageExplorer.Works
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_filter;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_filter = value;
 			}
 		}
-
-		public bool HasEmptyList { get; }
-		public string Id { get; protected set; }
-		public bool IsActiveInGui { get; }
-		public virtual bool IsControllingTheRecordTreeBar { get; set; }
-		public bool IsDefaultSort { get; set; }
 
 		/// <summary>
 		/// Return the index (in m_sortedObjects) of the first displayed object.
@@ -911,8 +1144,6 @@ namespace LanguageExplorer.Works
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_sortedObjects == null || m_sortedObjects.Count == 0)
 				{
 					return -1;
@@ -922,23 +1153,9 @@ namespace LanguageExplorer.Works
 		}
 
 		/// <summary />
-		public int Flid
-		{
-			get
-			{
-				CheckDisposed();
-				return m_flid;
-			}
-		}
+		public int Flid => m_flid;
 
-		public string FontName
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fontName;
-			}
-		}
+		public string FontName => m_fontName;
 
 		/// <summary>
 		/// Used on occasions like changing views, this should suppress any optimization that prevents real reloads.
@@ -948,6 +1165,10 @@ namespace LanguageExplorer.Works
 			ReloadList();  // By default nothing special is needed.
 		}
 
+		public bool HasEmptyList { get; }
+
+		public string Id { get; protected set; }
+
 		/// <summary>
 		/// get the index of an item in the list that has a root object that is owned by hvo
 		/// </summary>
@@ -955,8 +1176,6 @@ namespace LanguageExplorer.Works
 		/// <returns>-1 if the object is not in the list</returns>
 		public int IndexOfChildOf(int hvoTarget)
 		{
-			CheckDisposed();
-
 			// If the list is made up of fake objects, we can't find one of them owned by our target,
 			// and trying to will crash, so give up.
 			if (SortedObjects.Count == 0 || !m_cache.ServiceLocator.ObjectRepository.IsValidObjectId(((IManyOnePathSortItem)SortedObjects[0]).RootObjectHvo))
@@ -991,8 +1210,6 @@ namespace LanguageExplorer.Works
 		/// <returns>-1 if the object is not in the list</returns>
 		public int IndexOfParentOf(int hvoTarget)
 		{
-			CheckDisposed();
-
 			// If the list is made up of fake objects, we can't find one of them that our target owns,
 			// and trying to will crash, so give up.
 			if (SortedObjects.Count == 0 || !m_cache.ServiceLocator.ObjectRepository.IsValidObjectId(((IManyOnePathSortItem)SortedObjects[0]).RootObjectHvo))
@@ -1021,8 +1238,6 @@ namespace LanguageExplorer.Works
 
 		public virtual void InitLoad(bool loadList)
 		{
-			CheckDisposed();
-
 			m_sda = VirtualListPublisher; // needed before ComputeInsertableClasses().
 			m_sda.AddNotification(this);
 
@@ -1032,7 +1247,10 @@ namespace LanguageExplorer.Works
 
 			if (loadList)
 			{
+				var originalValue = IsActiveInGui;
+				IsActiveInGui = true; // Need to fake it.
 				ReloadList();
+				IsActiveInGui = originalValue;
 			}
 			else
 			{
@@ -1041,37 +1259,78 @@ namespace LanguageExplorer.Works
 			}
 		}
 
+		public bool IsActiveInGui
+		{
+			get { return _isActiveInGui; }
+			protected set { _isActiveInGui = value; }
+		}
+
+		public virtual bool IsControllingTheRecordTreeBar { get; set; }
+
 		public bool IsCurrentObjectValid()
 		{
 			return m_cache.ServiceLocator.IsValidObjectId(CurrentObjectHvo);
 		}
 
-		public bool IsEmpty
-		{
-			get
-			{
-				CheckDisposed();
+		public bool IsDefaultSort { get; set; }
 
-				return SortedObjects.Count == 0;
-			}
-		}
+		public bool IsEmpty => SortedObjects.Count == 0;
 
 		public bool IsVirtualPublisherCreated => m_objectListPublisher != null;
+
+		public void JumpToIndex(int index, bool suppressFocusChange = false)
+		{
+			// If we aren't changing the index, just bail out. (Fixes, LT-11401)
+			if (CurrentIndex == index)
+			{
+				//Refactor: we would prefer to bail out without broadcasting anything but...
+				//There is a chain of messages and events that I don't yet understand which relies on
+				//the RecordNavigation event being sent when we jump to the record we are already on.
+				//The back button navigation in particular has major problems if we don't do this.
+				//I suspect that something is suppressing the event handling initially, and I have found evidence in
+				//RecordBrowseView line 483 and elsewhere that we rely on the re-broadcasting.
+				//in order to maintain the LT-11401 fix we directly use the mediator here and pass true in the
+				//second parameter so that we don't save the record and lose the undo history. -naylor 2011-11-03
+				OnRecordChanged(new RecordNavigationEventArgs(new RecordNavigationInfo(this, true, SkipShowRecord, suppressFocusChange)));
+				return;
+			}
+			try
+			{
+				CurrentIndex = index;
+			}
+			catch (IndexOutOfRangeException error)
+			{
+				throw new IndexOutOfRangeException("The RecordClerk tried to jump to a record which is not in the current active set of records.", error);
+			}
+			// This broadcast will often cause a save of the record, which clears the undo stack.
+			BroadcastChange(suppressFocusChange);
+		}
+
+		public void JumpToRecord(int jumpToHvo, bool suppressFocusChange = false)
+		{
+			var index = IndexOf(jumpToHvo);
+			if (index < 0)
+			{
+				return; // not found (maybe suppressed by filter?)
+			}
+			JumpToIndex(index, suppressFocusChange);
+		}
+
+		public void JumpToRecord(Guid jumpToGuid, bool suppressFocusChange = false)
+		{
+			ICmObject obj;
+			if (Cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(jumpToGuid, out obj))
+			{
+				JumpToRecord(obj.Hvo, suppressFocusChange);
+			}
+		}
 
 		/// <summary>
 		/// Return the index (in m_sortedObjects) of the last displayed object.
 		/// (In hierarchical lists, this is not necessarily the last item.)
 		/// If the list is empty return -1.
 		/// </summary>
-		public virtual int LastItemIndex
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_sortedObjects == null || m_sortedObjects.Count == 0 ? -1 : m_sortedObjects.Count - 1;
-			}
-		}
+		public virtual int LastItemIndex => m_sortedObjects == null || m_sortedObjects.Count == 0 ? -1 : m_sortedObjects.Count - 1;
 
 		/// <summary>
 		/// This may be set to suppress automatic reloading of the list. When set false again, if the list
@@ -1122,13 +1381,10 @@ namespace LanguageExplorer.Works
 		{
 			get
 			{
-				CheckDisposed();
 				return UpdatingList;
 			}
 			set
 			{
-				CheckDisposed();
-
 				UpdatingList = value;
 				ListLoadingSuppressed = value;
 				if (ListLoadingSuppressed)
@@ -1138,7 +1394,8 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		public int ListSize { get; }
+		public int ListSize => SortedObjects.Count;
+
 		public void MoveToIndex(Navigation navigateTo)
 		{
 			int newIndex;
@@ -1165,28 +1422,6 @@ namespace LanguageExplorer.Works
 			BroadcastChange(false);
 		}
 
-		public bool OnAdjustFilterSelection(object argument)
-		{
-			// NOTE: ListPropertyChoice compares its Value to its parent (ChoiceGroup).SinglePropertyValue
-			// to determine whether or not it is the Checked item in the list.
-			// Is there any way we could do this in a less kludgy/backdoor sort of way?
-
-			//If we have a filter selected, make sure "No Filter" is not still selected in the menu or toolbar.
-			if (_activeMenuBarFilter == null && Filter != null)
-			{
-				// Resetting the table property value to a bogus value will effectively uncheck this item.
-				PropertyTable.SetProperty(CurrentFilterPropertyTableId, FiltersStrings.ksUncheckAll, SettingsGroup.LocalSettings, true, false);
-			}
-			// if no filter is set, then we always want the "No Filter" item selected.
-			else if (Filter == null)
-			{
-				// Resetting the table property value to NoFilters checks this item.
-				PropertyTable.SetProperty(CurrentFilterPropertyTableId, FiltersStrings.ksNoFilter, SettingsGroup.LocalSettings, true, false);
-			}
-			// allow others to process this.
-			return false;
-		}
-
 		public virtual bool NeedToReloadList()
 		{
 			var fReload = RequestedLoadWhileSuppressed;
@@ -1205,16 +1440,28 @@ namespace LanguageExplorer.Works
 		/// If the current object is the last return m_currentIndex.
 		/// If m_currentIndex is -1 return -1.
 		/// </summary>
-		public virtual int NextItemIndex
-		{
-			get
-			{
-				CheckDisposed();
+		public virtual int NextItemIndex => m_sortedObjects == null || m_sortedObjects.Count == 0 || m_currentIndex == -1 ? -1 : Math.Min(m_currentIndex + 1, m_sortedObjects.Count - 1);
 
-				return m_sortedObjects == null || m_sortedObjects.Count == 0 || m_currentIndex == -1
-					? -1
-					: Math.Min(m_currentIndex + 1, m_sortedObjects.Count - 1);
+		public bool OnAdjustFilterSelection(object argument)
+		{
+			// NOTE: ListPropertyChoice compares its Value to its parent (ChoiceGroup).SinglePropertyValue
+			// to determine whether or not it is the Checked item in the list.
+			// Is there any way we could do this in a less kludgy/backdoor sort of way?
+
+			//If we have a filter selected, make sure "No Filter" is not still selected in the menu or toolbar.
+			if (_activeMenuBarFilter == null && Filter != null)
+			{
+				// Resetting the table property value to "Uncheck all" will effectively uncheck this item.
+				PropertyTable.SetProperty(CurrentFilterPropertyTableId, FiltersStrings.ksUncheckAll, SettingsGroup.LocalSettings, true, false);
 			}
+			// if no filter is set, then we always want the "No Filter" item selected.
+			else if (Filter == null)
+			{
+				// Resetting the table property value to "No Filter" checks this item.
+				PropertyTable.SetProperty(CurrentFilterPropertyTableId, FiltersStrings.ksNoFilter, SettingsGroup.LocalSettings, true, false);
+			}
+			// allow others to process this.
+			return false;
 		}
 
 		/// <summary>
@@ -1223,8 +1470,6 @@ namespace LanguageExplorer.Works
 		/// <param name="args"></param>
 		public virtual void OnChangeFilter(FilterChangeEventArgs args)
 		{
-			CheckDisposed();
-
 			using (new WaitCursor(PropertyTable.GetValue<Form>("window")))
 			{
 				Logger.WriteEvent("Changing filter.");
@@ -1246,7 +1491,7 @@ namespace LanguageExplorer.Works
 				}
 				else if (m_filter is AndFilter)
 				{
-					var af = (AndFilter) m_filter;
+					var af = (AndFilter)m_filter;
 					if (args.Removed != null)
 					{
 						af.Remove(args.Removed);
@@ -1299,7 +1544,7 @@ namespace LanguageExplorer.Works
 					Logger.WriteEvent("Filter changed: (no filter)");
 				}
 				// notify clients of this change.
-				FilterChangedByClerk?.Invoke(this, args);
+				FilterChangedByList?.Invoke(this, args);
 			}
 		}
 
@@ -1340,7 +1585,7 @@ namespace LanguageExplorer.Works
 			using (new WaitCursor(PropertyTable.GetValue<Form>("window")))
 			{
 				Logger.WriteEvent($"Sorter changed: {Sorter?.ToString() ?? "(no sorter)"}");
-				SorterChangedByClerk?.Invoke(this, EventArgs.Empty);
+				SorterChangedByList?.Invoke(this, EventArgs.Empty);
 			}
 		}
 
@@ -1438,7 +1683,7 @@ namespace LanguageExplorer.Works
 			{
 				return true;
 			}
-			using (var dlg = new ExportDialog())
+			using (var dlg = new ExportDialog(_statusBar))
 			{
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				dlg.ShowDialog(PropertyTable.GetValue<Form>("window"));
@@ -1447,6 +1692,11 @@ namespace LanguageExplorer.Works
 
 			return true;    // handled
 		}
+
+		/// <summary>
+		/// true if the list is non empty on we are on the first record
+		/// </summary>
+		public bool OnFirst => (SortedObjects.Count > 0) && m_currentIndex == 0;
 
 		public bool OnInsertItemInVector(object argument)
 		{
@@ -1614,28 +1864,9 @@ namespace LanguageExplorer.Works
 		}
 
 		/// <summary>
-		/// true if the list is non empty on we are on the first record
-		/// </summary>
-		public bool OnFirst
-		{
-			get
-			{
-				CheckDisposed();
-				return (SortedObjects.Count > 0) && m_currentIndex == 0;
-			}
-		}
-
-		/// <summary>
 		/// true if the list is non empty and we are on the last record.
 		/// </summary>
-		public bool OnLast
-		{
-			get
-			{
-				CheckDisposed();
-				return (SortedObjects.Count > 0) && (m_currentIndex == (SortedObjects.Count - 1));
-			}
-		}
+		public bool OnLast => (SortedObjects.Count > 0) && (m_currentIndex == (SortedObjects.Count - 1));
 
 		public virtual void OnPropertyChanged(string name)
 		{
@@ -1679,13 +1910,11 @@ namespace LanguageExplorer.Works
 		{
 			get
 			{
-				CheckDisposed();
 				return m_owningObject;
 			}
 			set
 			{
-				CheckDisposed();
-				if (m_owningObject == value)
+				if (ReferenceEquals(m_owningObject, value))
 				{
 					return; // no need to reload.
 				}
@@ -1697,8 +1926,18 @@ namespace LanguageExplorer.Works
 		}
 
 		public int OwningFlid { get; }
-		public IRecordClerk ParentClerk { get; }
+
+		public IRecordList ParentList { get; }
+
 		public string PersistedIndexProperty { get; }
+
+		public void PersistListOn(string pathname)
+		{
+			if (IsPrimaryRecordList)
+			{
+				PersistOn(pathname);
+			}
+		}
 
 		public void PersistOn(string pathname)
 		{
@@ -1750,44 +1989,28 @@ namespace LanguageExplorer.Works
 		/// If the current object is the first return m_currentIndex.
 		/// If m_currentIndex is -1 return -1.
 		/// </summary>
-		public virtual int PrevItemIndex
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_sortedObjects == null || m_sortedObjects.Count == 0 || m_currentIndex == -1
-					? -1
-					: Math.Max(m_currentIndex - 1, 0);
-			}
-		}
-
-		public void PersistListOn(string pathname)
-		{
-			if (IsPrimaryClerk)
-			{
-				PersistOn(pathname);
-			}
-		}
+		public virtual int PrevItemIndex => m_sortedObjects == null || m_sortedObjects.Count == 0 || m_currentIndex == -1 ? -1 : Math.Max(m_currentIndex - 1, 0);
 
 		/// <summary>
 		/// Get/set a progress reporter (encapsulated in an IAdvInd4 interface).
 		/// </summary>
-		public IProgress ProgressReporter
+		public IProgress ProgressReporter { get; set; }
+
+		public string PropertyName => m_propertyName;
+
+		public virtual string PropertyTableId(string sorterOrFilter)
 		{
-			get
+			// Dependent lists do not have owner/property set. Rather they have class/field.
+			var className = VirtualListPublisher.MetaDataCache.GetOwnClsName(m_flid);
+			var fieldName = VirtualListPublisher.MetaDataCache.GetFieldName(m_flid);
+			if (string.IsNullOrEmpty(PropertyName) || PropertyName == fieldName)
 			{
-				CheckDisposed();
-				return m_progAdvInd;
+				return $"{className}.{fieldName}_{sorterOrFilter}";
 			}
-			set
-			{
-				CheckDisposed();
-				m_progAdvInd = value;
-			}
+
+			return $"{className}.{PropertyName}_{sorterOrFilter}";
 		}
 
-		public IRecordList MyRecordList { get; }
 		public void ReloadFilterProvider()
 		{
 			_filterProvider?.ReLoad();
@@ -1804,41 +2027,11 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		public void RemoveInvalidItems()
-		{
-			RemoveUnwantedSortItems();
-		}
-
-		public string PropertyName
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_propertyName;
-			}
-		}
-
-		public virtual string PropertyTableId(string sorterOrFilter)
-		{
-			// Dependent lists do not have owner/property set. Rather they have class/field.
-			var className = VirtualListPublisher.MetaDataCache.GetOwnClsName(m_flid);
-			var fieldName = VirtualListPublisher.MetaDataCache.GetFieldName(m_flid);
-			if (String.IsNullOrEmpty(PropertyName) || PropertyName == fieldName)
-			{
-				return $"{className}.{fieldName}_{sorterOrFilter}";
-			}
-
-			return $"{className}.{PropertyName}_{sorterOrFilter}";
-		}
-
 		/// <summary>
 		/// Sort and filter the underlying property to create the current list of objects.
 		/// </summary>
 		public virtual void ReloadList()
 		{
-			CheckDisposed();
-
 			// Skip multiple reloads and reloading when our clerk is not active.
 			if (m_reloadingList)
 			{
@@ -1996,8 +2189,6 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		public virtual void ReloadList(int ivMin, int cvIns, int cvDel)
 		{
-			CheckDisposed();
-
 			if (RequestedLoadWhileSuppressed)
 			{
 				// if a previous reload was requested, but suppressed, try to reload the entire list now
@@ -2039,6 +2230,11 @@ namespace LanguageExplorer.Works
 		public virtual void ReloadList(int newListItemsClass, int newTargetFlid, bool force)
 		{
 			// Let a bulk-edit record list handle this.
+		}
+
+		public void RemoveInvalidItems()
+		{
+			RemoveUnwantedSortItems();
 		}
 
 		/// <summary>
@@ -2118,7 +2314,7 @@ namespace LanguageExplorer.Works
 				{
 					// in general, when adding new items, we want to try to maintain the previous selected *object*,
 					// which may have changed index.  so try to find its new index location.
-					int indexOfCurrentObj = CurrentIndex;
+					var indexOfCurrentObj = CurrentIndex;
 					if (hvoOldCurrentObj != 0 && CurrentObjectHvo != hvoOldCurrentObj)
 					{
 						var indexOfOldCurrentObj = IndexOf(hvoOldCurrentObj);
@@ -2173,6 +2369,15 @@ namespace LanguageExplorer.Works
 			// list the next time we start up.
 			FileUtils.Delete(pathname);
 			return false; // could not restore, bad file or deleted objects or...
+		}
+
+		/// <summary>
+		/// Return the 'root' object (the one from the original list, which goes in the fake flid)
+		/// at the specified index.
+		/// </summary>
+		public ICmObject RootObjectAt(int index)
+		{
+			return SortItemAt(index).RootObjectUsing(m_cache);
 		}
 
 		public void SaveOnChangeRecord()
@@ -2232,17 +2437,6 @@ namespace LanguageExplorer.Works
 		}
 
 		/// <summary>
-		/// Return the 'root' object (the one from the original list, which goes in the fake flid)
-		/// at the specified index.
-		/// </summary>
-		public ICmObject RootObjectAt(int index)
-		{
-			CheckDisposed();
-
-			return SortItemAt(index).RootObjectUsing(m_cache);
-		}
-
-		/// <summary>
 		/// sets the value of m_suppressingLoadList without any side effects (e.g. ReloadList()).
 		/// </summary>
 		/// <param name="value"></param>
@@ -2260,14 +2454,7 @@ namespace LanguageExplorer.Works
 		/// from the list. For example, IText should not insert an object because the list is empty
 		/// WHILE we are processing the delete object.
 		/// </summary>
-		public bool ShouldNotModifyList
-		{
-			get
-			{
-				CheckDisposed();
-				return m_reloadingList || m_deletingObject;
-			}
-		}
+		public bool ShouldNotModifyList => m_reloadingList || m_deletingObject;
 
 		public bool SkipShowRecord { get; set; }
 
@@ -2278,12 +2465,10 @@ namespace LanguageExplorer.Works
 		{
 			get
 			{
-				CheckDisposed();
 				return m_sortedObjects ?? (m_sortedObjects = new ArrayList());
 			}
 			set
 			{
-				CheckDisposed();
 				m_sortedObjects = value;
 			}
 		}
@@ -2304,16 +2489,40 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		public ISortItemProvider SortItemProvider { get; }
+		/// <summary>
+		/// The display name of what is currently being sorted. This variable is persisted as a user
+		/// setting. When the sort name is null it indicates that the items in the clerk are not
+		/// being sorted or that the current sorting should not be displayed (i.e. the default column
+		/// is being sorted).
+		/// </summary>
 		public string SortName { get; private set; }
+
 		public bool SuppressSaveOnChangeRecord { get; set; }
+
 		public bool SuspendLoadingRecordUntilOnJumpToRecord { get; set; }
+
 		public bool SuspendLoadListUntilOnChangeFilter { get; set; }
-		public virtual bool TryClerkProvidingRootObject(out IRecordClerk clerkProvidingRootObject)
+
+		/// <summary>
+		/// Transfers ownership of obj to RecordList. RecordList is now responsible for
+		/// calling Dispose on the object.
+		/// </summary>
+		public void TransferOwnership(IDisposable obj)
 		{
-			clerkProvidingRootObject = null;
+			if (obj == null)
+			{
+				return;
+			}
+			m_ObjectsToDispose.Add(obj);
+		}
+
+		public virtual bool TryListProvidingRootObject(out IRecordList recordListProvidingRootObject)
+		{
+			recordListProvidingRootObject = null;
 			return false;
 		}
+
+		public int TypeSize => m_typeSize;
 
 		public bool UpdateFiltersAndSortersIfNeeded()
 		{
@@ -2325,6 +2534,12 @@ namespace LanguageExplorer.Works
 		}
 
 		public ListUpdateHelper UpdateHelper { get; set; }
+
+		/// <summary>
+		/// Indicates whether RecordList is being modified
+		/// </summary>
+		public bool UpdatingList { get; set; }
+
 		public void UpdateOwningObjectIfNeeded()
 		{
 			UpdateOwningObject(true);
@@ -2397,43 +2612,9 @@ namespace LanguageExplorer.Works
 		}
 
 		/// <summary>
-		/// Transfers ownership of obj to RecordList. RecordList is now responsible for
-		/// calling Dispose on the object.
-		/// </summary>
-		public void TransferOwnership(IDisposable obj)
-		{
-			if (obj == null)
-			{
-				return;
-			}
-			m_ObjectsToDispose.Add(obj);
-		}
-
-		public int TypeSize
-		{
-			get
-			{
-				CheckDisposed();
-				return m_typeSize;
-			}
-		}
-
-		/// <summary>
-		/// Indicates whether RecordList is being modified
-		/// </summary>
-		public bool UpdatingList { get; set; }
-
-		/// <summary>
 		/// the made-up flid that we address the sequence of hvos in the cache.
 		/// </summary>
-		public int VirtualFlid
-		{
-			get
-			{
-				CheckDisposed();
-				return RecordListFlid;
-			}
-		}
+		public int VirtualFlid => RecordListFlid;
 
 		/// <summary>
 		/// This property provides a decorator for the ISilDataAccess in the cache, which provides
@@ -2445,342 +2626,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		public ISilDataAccessManaged VirtualListPublisher => m_objectListPublisher;
 
-#endregion Implementation of IRecordList
-
-#region Implementation of IFlexComponent
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public virtual void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-
-			m_cache = PropertyTable.GetValue<LcmCache>("cache");
-			CurrentIndex = -1;
-			m_hvoCurrent = 0;
-			m_oldLength = 0;
-			var wsContainer = m_cache.ServiceLocator.WritingSystems;
-			m_fontName = m_usingAnalysisWs ? wsContainer.DefaultAnalysisWritingSystem.DefaultFontName : wsContainer.DefaultVernacularWritingSystem.DefaultFontName;
-			m_typeSize = GetFontHeightFromStylesheet(m_cache, PropertyTable, m_usingAnalysisWs);
-
-			if (m_owningObject != null)
-			{
-				UpdatePrivateList();
-			}
-			TryRestoreSorter();
-			TryRestoreFilter();
-			ListChanged += OnListChanged;
-			AboutToReload += AboutToReload_Handler;
-			DoneReload += DoneReload_Handler;
-			var setFilterMenu = false;
-			if (_filterProvider != null)
-			{
-				// There is only one clerk (concordanceWords) that sets m_filterProvider to a provider.
-				// That provider is the class WfiRecordFilterListProvider.
-				// That clerk is used in these tools: AnalysesTool, BulkEditWordformsTool, & WordListConcordanceTool
-				// That WfiRecordFilterListProvider instance is (ok: "will be") provided in one of the RecordClerk contructor overloads.
-				if (Filter != null)
-				{
-					// There is only one clerk (concordanceWords) that sets m_filterProvider to a provider.
-					// That clerk is used in these tools: AnalysesTool, BulkEditWordformsTool, & WordListConcordanceTool
-					// find any matching persisted menubar filter
-					// NOTE: for now assume we can only set/persist one such menubar filter at a time.
-					foreach (RecordFilter menuBarFilterOption in _filterProvider.Filters)
-					{
-						if (!Filter.Contains(menuBarFilterOption))
-						{
-							continue;
-						}
-						_activeMenuBarFilter = menuBarFilterOption;
-						_filterProvider.OnAdjustFilterSelection(_activeMenuBarFilter);
-						PropertyTable.SetDefault(CurrentFilterPropertyTableId, _activeMenuBarFilter.id, SettingsGroup.LocalSettings, false, false);
-						setFilterMenu = true;
-						break;
-					}
-				}
-			}
-
-			if (!setFilterMenu)
-			{
-				OnAdjustFilterSelection(null);
-			}
-
-#if RANDYTODO
-			//we handled the tree bar only if we are the root clerk
-			if (m_clerkProvidingRootObject == null)
-			{
-				m_recordBarHandler = RecordBarHandler.Create(PropertyTable, m_clerkConfiguration);//,m_flid);
-			}
-			else
-			{
-				IRecordClerk clerkProvidingRootObject;
-				Debug.Assert(TryClerkProvidingRootObject(out clerkProvidingRootObject),
-					"We expected to find clerkProvidingOwner '" + m_clerkProvidingRootObject + "'. Possibly misspelled.");
-			}
-#endif
-
-#if RANDYTODO
-			// TODO: In original, optimized, version, we don't load the data until the clerk is used in a newly activated window.
-			SetupDataContext(false);
-#else
-			SetupDataContext(true);
-#endif
-		}
-
-		#endregion Implementation of IFlexComponent
-
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-#endregion Implementation of IPropertyTableProvider
-
-#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-#endregion Implementation of IPublisherProvider
-
-#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-#endregion Implementation of ISubscriberProvider
-
-#region Implementation of ISortItemProvider
-
-		/// <summary>
-		/// Get the nth item in the main list.
-		/// </summary>
-		/// <param name="index"></param>
-		/// <returns></returns>
-		public IManyOnePathSortItem SortItemAt(int index)
-		{
-			CheckDisposed();
-
-			return SortedObjects.Count == 0 ? null : SortedObjects[index] as IManyOnePathSortItem;
-		}
-
-		/// <summary>
-		/// An item is being added to your master list. Add the corresponding sort items to
-		/// your fake list.
-		/// </summary>
-		/// <param name="hvo"></param>
-		/// <returns>the number of items added.</returns>
-		public int AppendItemsFor(int hvo)
-		{
-			CheckDisposed();
-
-			var start = SortedObjects.Count;
-			var result = MakeItemsFor(SortedObjects, hvo);
-			if (result != 0)
-			{
-				var newItems = new int[result];
-				for (var i = 0; i < result; i++)
-					newItems[i] = (SortedObjects[i + start] as IManyOnePathSortItem).RootObjectHvo;
-				(VirtualListPublisher as ObjectListPublisher).Replace(m_owningObject.Hvo, start, newItems, 0);
-			}
-			return result;
-		}
-
-		/// <summary>
-		/// Remove the corresponding list items. And issue propchanged.
-		/// </summary>
-		/// <param name="hvoToRemove"></param>
-		public void RemoveItemsFor(int hvoToRemove)
-		{
-			ReplaceListItem(null, hvoToRemove, false);
-			SendPropChangedOnListChange(CurrentIndex, SortedObjects, ListChangedEventArgs.ListChangedActions.Normal);
-		}
-
-		/// <summary>
-		/// get the index of the given hvo, where it occurs as the root object
-		/// (of a IManyOnePathSortItem) in m_sortedObjects.
-		/// </summary>
-		/// <param name="hvo"></param>
-		/// <returns>-1 if the object is not in the list</returns>
-		public int IndexOf(int hvo)
-		{
-			CheckDisposed();
-
-			// Creating a list item and then jumping to the tool can leave the list stale, putting us
-			// in a bogus state where the edit pane never gets painted.  (See LT-7580.)
-			if (RequestedLoadWhileSuppressed)
-			{
-				ReloadList();
-			}
-			return IndexOf(SortedObjects, hvo);
-		}
-
-		public void JumpToIndex(int index, bool suppressFocusChange = false)
-		{
-			// If we aren't changing the index, just bail out. (Fixes, LT-11401)
-			if (CurrentIndex == index)
-			{
-				//Refactor: we would prefer to bail out without broadcasting anything but...
-				//There is a chain of messages and events that I don't yet understand which relies on
-				//the RecordNavigation event being sent when we jump to the record we are already on.
-				//The back button navigation in particular has major problems if we don't do this.
-				//I suspect that something is suppressing the event handling initially, and I have found evidence in
-				//RecordBrowseView line 483 and elsewhere that we rely on the re-broadcasting.
-				//in order to maintain the LT-11401 fix we directly use the mediator here and pass true in the
-				//second parameter so that we don't save the record and lose the undo history. -naylor 2011-11-03
-				OnRecordChanged(new RecordNavigationEventArgs(new RecordNavigationInfo(this, true, SkipShowRecord, suppressFocusChange)));
-				return;
-			}
-			try
-			{
-				CurrentIndex = index;
-			}
-			catch (IndexOutOfRangeException error)
-			{
-				throw new IndexOutOfRangeException("The RecordClerk tried to jump to a record which is not in the current active set of records.", error);
-			}
-			// This broadcast will often cause a save of the record, which clears the undo stack.
-			BroadcastChange(suppressFocusChange);
-		}
-
-		public void JumpToRecord(int jumpToHvo, bool suppressFocusChange = false)
-		{
-			var index = IndexOf(jumpToHvo);
-			if (index < 0)
-			{
-				return; // not found (maybe suppressed by filter?)
-			}
-			JumpToIndex(index, suppressFocusChange);
-		}
-
-		public void JumpToRecord(Guid jumpToGuid, bool suppressFocusChange = false)
-		{
-			ICmObject obj;
-			if (Cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(jumpToGuid, out obj))
-			{
-				JumpToRecord(obj.Hvo, suppressFocusChange);
-			}
-		}
-
-		/// <summary>
-		/// get the class of the items in this list.
-		/// </summary>
-		public virtual int ListItemsClass
-		{
-			get
-			{
-				CheckDisposed();
-				return VirtualListPublisher.MetaDataCache.GetDstClsId(m_flid);
-			}
-		}
-
-#endregion Implementation of ISortItemProvider
-
-#region Implementation of IVwNotifyChange
-
-		public virtual void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
-		{
-			CheckDisposed();
-
-			if (UpdatingList || m_reloadingList)
-			{
-				return; // we're already in the process of changing our list.
-			}
-
-			// If this list contains WfiWordforms, and the tag indicates a change to the
-			// virtual property of all wordforms, then assume this list also is affected
-			// and pretend that this PropChanged is really for us.  See FWR-3617 for
-			// justification of this assumption.
-			if (m_owningObject != null && hvo == m_owningObject.Hvo && tag != m_flid && cvIns > 0)
-			{
-				if (ListItemsClass == WfiWordformTags.kClassId && hvo == m_cache.LangProject.Hvo && tag == m_cache.ServiceLocator.GetInstance<Virtuals>().LangProjectAllWordforms)
-				{
-					tag = m_flid;
-				}
-			}
-			if (TryHandleUpdateOrMarkPendingReload(hvo, tag, ivMin, cvIns, cvDel))
-			{
-				return;
-			}
-
-			// Try to catch things that don't obviously affect us, but will cause problems.
-			TryReloadForInvalidPathObjectsOnCurrentObject(tag, cvDel);
-
-			(VirtualListPublisher as IVwNotifyChange)?.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
-		}
-
-#endregion Implementation of IVwNotifyChange
-
-#region DisposableBase
-
-		protected override void DisposeManagedResources()
-		{
-			UnregisterMessageHandlers();
-			ListChanged -= OnListChanged;
-			AboutToReload -= AboutToReload_Handler;
-			DoneReload -= DoneReload_Handler;
-			RemoveNotification(); // before disposing list, we need it to get to the Cache.
-			if (m_cache != null && RecordedFocusedObject != null)
-			{
-				m_cache.ServiceLocator.ObjectRepository.RemoveFocusedObject(RecordedFocusedObject);
-			}
-			RecordedFocusedObject = null;
-			// make sure we uninstall any remaining event handler,
-			// irrespective of whether we're active or not.
-			if (m_windowPendingOnActivated != null && !m_windowPendingOnActivated.IsDisposed)
-			{
-				UninstallWindowActivated();
-			}
-			m_sda?.RemoveNotification(this);
-			m_insertableClasses?.Clear();
-			m_sortedObjects?.Clear();
-			m_ObjectsToDispose.Dispose();
-			_recordChangeHandler?.Dispose();
-			_bulkEditListUpdateHelper?.Dispose();
-			if (IsControllingTheRecordTreeBar)
-			{
-				PropertyTable.RemoveProperty("ActiveClerkSelectedObject");
-			}
-			PropertyTable.RemoveProperty(ClerkSelectedObjectPropertyId(Id));
-		}
-
-		protected override void DisposeUnmanagedResources()
-		{
-			m_sda = null;
-			m_cache = null;
-			m_sorter = null;
-			m_filter = null;
-			m_owningObject = null;
-			m_propertyName = null;
-			m_fontName = null;
-			m_insertableClasses = null;
-			m_sortedObjects = null;
-			m_owningObject = null;
-			m_objectListPublisher = null;
-			_statusBar = null;
-			_recordChangeHandler = null;
-			_bulkEditListUpdateHelper = null;
-			_defaultSorter = null;
-			_defaultFilter = null;
-
-			PropertyTable = null;
-			Publisher = null;
-			Subscriber = null;
-		}
-
-		#endregion DisposableBase
+		#endregion Implementation of IRecordList
 
 		#endregion All interface implementations
 
@@ -2801,7 +2647,7 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Holder of the repository (for now, at least).
 		/// </summary>
-		internal static IRecordClerkRepository ActiveRecordClerkRepository { get; set; }
+		internal static IRecordListRepository ActiveRecordListRepository { get; set; }
 
 		/// <summary>
 		/// verifies that the two classes match, if not, throws message.
@@ -3130,8 +2976,8 @@ namespace LanguageExplorer.Works
 		{
 			// see if the property is the VirtualFlid of the owning clerk. If so,
 			// the owning clerk has reloaded, so we should also reload.
-			IRecordClerk clerkProvidingRootObject;
-			if (TryClerkProvidingRootObject(out clerkProvidingRootObject) && clerkProvidingRootObject.VirtualFlid == tag && cvDel > 0)
+			IRecordList listProvidingRootObject;
+			if (TryListProvidingRootObject(out listProvidingRootObject) && listProvidingRootObject.VirtualFlid == tag && cvDel > 0)
 			{
 				// we're deleting or replacing items, so assume need to reload.
 				// we want to wait until after everything is finished reloading, however.
@@ -3474,11 +3320,11 @@ namespace LanguageExplorer.Works
 
 		protected string CurrentFilterPropertyTableId => "currentFilterForRecordClerk_" + Id;
 
-		private bool ShouldNotHandleDeletionMessage => Id != "reversalEntries" && (!Editable || !IsPrimaryClerk || !_shouldHandleDeletion);
+		private bool ShouldNotHandleDeletionMessage => Id != "reversalEntries" && (!Editable || !IsPrimaryRecordList || !_shouldHandleDeletion);
 
 		private void ResetStatusBarMessageForCurrentObject()
 		{
-			var msg = String.Empty;
+			var msg = string.Empty;
 			if (CurrentObjectHvo != 0)
 			{
 				// deleted objects don't have a cache (and other properties) so it was crashing.  LT-3160, LT-3121,...
@@ -3488,11 +3334,11 @@ namespace LanguageExplorer.Works
 		}
 
 		/// <summary>
-		/// Generally only one clerk should respond to record navigation in the user interface.
-		/// The "primary" clerk is the one that should respond to record navigation.
+		/// Generally only one record list should respond to record navigation in the user interface.
+		/// The "primary" record list is the one that should respond to record navigation.
 		/// </summary>
-		/// <returns>true iff this clerk should respond to record navigation</returns>
-		protected virtual bool IsPrimaryClerk => true;
+		/// <returns>true iff this record list should respond to record navigation</returns>
+		protected virtual bool IsPrimaryRecordList => true;
 
 		private int FindClosestValidIndex(int idx, int cobj)
 		{
@@ -3972,14 +3818,7 @@ namespace LanguageExplorer.Works
 		/// does not need to be sorted further.
 		/// </summary>
 		/// <value>true if the list was loaded in order and doesn't need further sorting.</value>
-		protected virtual bool ListAlreadySorted
-		{
-			get
-			{
-				CheckDisposed();
-				return false;
-			}
-		}
+		protected virtual bool ListAlreadySorted => false;
 
 		protected virtual bool TryHandleUpdateOrMarkPendingReload(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
@@ -4012,8 +3851,8 @@ namespace LanguageExplorer.Works
 			// This may be a change to content we depend upon.
 			// 1) see if the property is the VirtualFlid of the owning clerk. If so,
 			// the owning clerk has reloaded, so we should also reload.
-			IRecordClerk clerkProvidingRootObject;
-			if (TryClerkProvidingRootObject(out clerkProvidingRootObject) && clerkProvidingRootObject.VirtualFlid == tag && cvDel > 0)
+			IRecordList listProvidingRootObject;
+			if (TryListProvidingRootObject(out listProvidingRootObject) && listProvidingRootObject.VirtualFlid == tag && cvDel > 0)
 			{
 				// we're deleting or replacing items, so assume need to reload.
 				// we want to wait until after everything is finished reloading, however.

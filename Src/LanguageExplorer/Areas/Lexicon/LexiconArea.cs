@@ -164,11 +164,11 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		#endregion
 
-		internal static IRecordClerk EntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		internal static IRecordList EntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(clerkId == Entries, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Entries}'.");
+			Require.That(recordListId == Entries, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{Entries}'.");
 
-			return new RecordList(clerkId, statusBar,
+			return new RecordList(recordListId, statusBar,
 				new Dictionary<string, PropertyRecordSorter>
 				{
 					{ AreaServices.Default, new PropertyRecordSorter("ShortName") },
@@ -179,19 +179,19 @@ namespace LanguageExplorer.Areas.Lexicon
 				cache.MetaDataCacheAccessor.GetFieldId2(cache.LanguageProject.LexDbOA.ClassID, "Entries", false), cache.LanguageProject.LexDbOA, "Entries");
 		}
 
-		internal static IRecordClerk SemanticDomainList_LexiconAreaFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		internal static IRecordList SemanticDomainList_LexiconAreaFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(clerkId == SemanticDomainList_LexiconArea, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{SemanticDomainList_LexiconArea}'.");
+			Require.That(recordListId == SemanticDomainList_LexiconArea, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{SemanticDomainList_LexiconArea}'.");
 
-			return new TreeBarHandlerAwarePossibilityRecordList(clerkId, statusBar,
+			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				null, false, false,
 				new DictionaryPublicationDecorator(cache, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), CmPossibilityListTags.kflidPossibilities), cache.LanguageProject.SemanticDomainListOA,
 				new SemanticDomainRdeTreeBarHandler(flexComponentParameters.PropertyTable, XDocument.Parse(LexiconResources.RapidDataEntryToolParameters).Root.Element("treeBarHandler")));
 		}
 
-		internal static IRecordClerk AllReversalEntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		internal static IRecordList AllReversalEntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(clerkId == AllReversalEntries, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{AllReversalEntries}'.");
+			Require.That(recordListId == AllReversalEntries, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{AllReversalEntries}'.");
 
 			var currentGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(flexComponentParameters.PropertyTable, "ReversalIndexGuid");
 			IReversalIndex revIdx = null;

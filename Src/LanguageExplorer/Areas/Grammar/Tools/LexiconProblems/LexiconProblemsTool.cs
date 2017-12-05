@@ -31,7 +31,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		/// The RecordBar on the left has no top PaneBar for information, menus, etc.
 		/// </summary>
 		private CollapsingSplitContainer _collapsingSplitContainer;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		[Import(AreaServices.GrammarAreaMachineName)]
 		private IArea _area;
 
@@ -59,11 +59,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			var root = XDocument.Parse(GrammarResources.LexiconProblemsParameters).Root;
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexProblems, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LexProblems, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
-			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordClerk); // Use generic export event handler.
+			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordList); // Use generic export event handler.
 
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
@@ -76,10 +76,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 				null,
 				MachineName,
 				majorFlexComponentParameters.LcmCache,
-				_recordClerk,
+				_recordList,
 				dataTree,
 				MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>
@@ -94,8 +94,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_recordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>
@@ -137,7 +137,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 
 		#endregion
 
-		private static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
 			Require.That(clerkId == LexProblems, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{LexProblems}'.");
 

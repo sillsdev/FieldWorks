@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		[Import(AreaServices.TextAndWordsAreaMachineName)]
 		private IArea _area;
 
@@ -58,11 +58,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.Statusbar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.Statusbar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
 			}
-			_areaWideMenuHelper = new AreaWideMenuHelper(majorFlexComponentParameters, _recordClerk);
+			_areaWideMenuHelper = new AreaWideMenuHelper(majorFlexComponentParameters, _recordList);
 			_areaWideMenuHelper.SetupFileExportMenu();
 			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
 			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
@@ -78,12 +78,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			overriddenColumnElement.Attribute("visibility").Value = "always";
 			overriddenColumnElement.Add(new XAttribute("width", "15%"));
 			root.Add(columnsElement);
-			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordClerk);
+			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordList);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
 			var dataTree = new DataTree();
-			var recordEditView = new RecordEditView(XElement.Parse(TextAndWordsResources.AnalysesRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordClerk, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			var recordEditView = new RecordEditView(XElement.Parse(TextAndWordsResources.AnalysesRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
@@ -105,7 +105,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>
@@ -121,8 +121,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_recordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>

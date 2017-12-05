@@ -51,8 +51,8 @@ namespace LanguageExplorer.Works
 			Init();
 		}
 
-		public RecordBrowseView(XElement browseViewDefinitions, LcmCache cache, IRecordClerk recordClerk)
-			: base(browseViewDefinitions, cache, recordClerk)
+		public RecordBrowseView(XElement browseViewDefinitions, LcmCache cache, IRecordList recordList)
+			: base(browseViewDefinitions, cache, recordList)
 		{
 			Init();
 		}
@@ -90,8 +90,8 @@ namespace LanguageExplorer.Works
 			m_browseViewer.BrowseView.RightMouseClickedEvent += OnFwRightMouseClick;
 			m_browseViewer.SelectionDrawingFailure += OnBrowseSelectionDrawingFailed;
 			m_browseViewer.CheckBoxChanged += OnCheckBoxChanged;
-			Clerk.FilterChangedByClerk += Clerk_FilterChangedByClerk;
-			Clerk.SorterChangedByClerk += Clerk_SorterChangedByClerk;
+			MyRecordList.FilterChangedByList += RecordList_FilterChangedByList;
+			MyRecordList.SorterChangedByList += RecordList_SorterChangedByList;
 			if (m_browseViewer.BulkEditBar != null)
 			{
 				// We have a browse viewer that is using a bulk edit bar, so make sure our RecordClerk
@@ -107,8 +107,10 @@ namespace LanguageExplorer.Works
 					// now that we're finished setting up the bulk edit bar, we need to make
 					// sure our clerk loads its defaults, since bulk edit didn't provide information
 					// for which list items class to load objects for.
-					if (Clerk.ListSize == 0)
-						Clerk.OnChangeListItemsClass(Clerk.SortItemProvider.ListItemsClass, 0, false);
+					if (MyRecordList.ListSize == 0)
+					{
+						MyRecordList.OnChangeListItemsClass(MyRecordList.ListItemsClass, 0, false);
+					}
 				}
 			}
 
@@ -158,8 +160,8 @@ namespace LanguageExplorer.Works
 				Subscriber.Unsubscribe("ClerkOwningObjChanged", ClerkOwningObjChanged_Message_Handler);
 				// Next 3 calls assume Clerk is not null. I (RBR) wonder if the assumption is good?
 				PersistSortSequence();
-				Clerk.FilterChangedByClerk -= Clerk_FilterChangedByClerk;
-				Clerk.SorterChangedByClerk -= Clerk_SorterChangedByClerk;
+				MyRecordList.FilterChangedByList -= RecordList_FilterChangedByList;
+				MyRecordList.SorterChangedByList -= RecordList_SorterChangedByList;
 
 				if (m_browseViewer != null)
 				{
@@ -173,7 +175,7 @@ namespace LanguageExplorer.Works
 					m_browseViewer.ListModificationInProgressChanged -= m_browseViewer_ListModificationInProgressChanged;
 					m_browseViewer.SelectionDrawingFailure -= OnBrowseSelectionDrawingFailed;
 					m_browseViewer.CheckBoxChanged -= OnCheckBoxChanged;
-					m_browseViewer.SortersCompatible -= Clerk.AreSortersCompatible;
+					m_browseViewer.SortersCompatible -= AreSortersCompatible;
 				}
 				components?.Dispose();
 			}
@@ -187,6 +189,11 @@ namespace LanguageExplorer.Works
 
 		#region Message Handlers
 
+		private bool AreSortersCompatible(RecordSorter first, RecordSorter second)
+		{
+			return first.CompatibleSorter(second);
+		}
+
 		/// <summary>
 		/// Signal the clerk to change its filter to the user selected value.
 		/// </summary>
@@ -198,7 +205,7 @@ namespace LanguageExplorer.Works
 			// the filter, we don't need to tell the clerk to change the filter (again)!
 			if (m_fHandlingFilterChangedByClerk)
 				return;
-			Clerk.OnChangeFilter(args);
+			MyRecordList.OnChangeFilter(args);
 		}
 
 		/// <summary>
@@ -206,17 +213,17 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void Clerk_FilterChangedByClerk(object sender, FilterChangeEventArgs e)
+		private void RecordList_FilterChangedByList(object sender, FilterChangeEventArgs e)
 		{
 			m_fHandlingFilterChangedByClerk = true;
 			// Let the client(s) know about the change.
-			m_browseViewer.UpdateFilterBar(Clerk.Filter);
+			m_browseViewer.UpdateFilterBar(MyRecordList.Filter);
 			m_fHandlingFilterChangedByClerk = false;
 		}
 
-		private void Clerk_SorterChangedByClerk(object sender, EventArgs e)
+		private void RecordList_SorterChangedByList(object sender, EventArgs e)
 		{
-			m_browseViewer.InitSorter(Clerk.Sorter, true);
+			m_browseViewer.InitSorter(MyRecordList.Sorter, true);
 		}
 
 		private void SortChangedHandler(object sender, EventArgs args)
@@ -238,7 +245,7 @@ namespace LanguageExplorer.Works
 				colName = m_browseViewer.GetColumnName(sortedCols[0]);
 				isDefaultSort = sortedCols[0] == m_browseViewer.DefaultSortColumn;
 			}
-			Clerk.OnSorterChanged(m_browseViewer.Sorter, colName, isDefaultSort);
+			MyRecordList.OnSorterChanged(m_browseViewer.Sorter, colName, isDefaultSort);
 		}
 
 		private void TargetColumnChanged(object sender, TargetColumnChangedEventArgs e)
@@ -251,12 +258,12 @@ namespace LanguageExplorer.Works
 				// use ListUpdateHelper to suspend reloading the list until we've changed the class
 				// and recomputed the columns. Otherwise, we'll try to reload the list and redraw the display
 				// with columns that may not have all their parts in place (e.g. for generated custom fields)
-				using (new ListUpdateHelper(Clerk))
+				using (new ListUpdateHelper(MyRecordList))
 				{
 					// change the list items class, but don't do the reload && refresh display
 					// until after we've recomputed our columns to allow regenerating custom field parts
 					// for that new class.
-					Clerk.OnChangeListItemsClass(e.ExpectedListItemsClass, e.TargetFlid, e.ForceReload);
+					MyRecordList.OnChangeListItemsClass(e.ExpectedListItemsClass, e.TargetFlid, e.ForceReload);
 					CheckExpectedListItemsClassInSync();
 					// Recompute the possible columns, so the layout/parts system
 					// can generate parts for custom fields based upon a new root object class.
@@ -272,7 +279,7 @@ namespace LanguageExplorer.Works
 			if (m_browseViewer == null)
 				return;
 
-			if (Clerk.OwningObject == null)
+			if (MyRecordList.OwningObject == null)
 			{
 				//this happens, for example, when they user sets a filter on the
 				//list we are dependent on, but no records are selected by the filter.
@@ -282,7 +289,7 @@ namespace LanguageExplorer.Works
 			}
 			else
 			{
-				m_browseViewer.RootObjectHvo = Clerk.OwningObject.Hvo;
+				m_browseViewer.RootObjectHvo = MyRecordList.OwningObject.Hvo;
 				SetInfoBarText();
 			}
 		}
@@ -296,7 +303,7 @@ namespace LanguageExplorer.Works
 		{
 			CheckDisposed();
 
-			Clerk.OnRefresh(null);
+			MyRecordList.OnRefresh(null);
 		}
 
 		public void OnFwRightMouseClick(SimpleRootSite sender, FwRightMouseClickEventArgs e)
@@ -343,7 +350,7 @@ namespace LanguageExplorer.Works
 			base.SetupDataContext();
 			// Make sure our persisted sorter/filters are up to date so browse viewer
 			// has the latest set for configuring/activating the filterBar
-			bool fNeedReload = Clerk.UpdateFiltersAndSortersIfNeeded();
+			bool fNeedReload = MyRecordList.UpdateFiltersAndSortersIfNeeded();
 			// This is mainly to handle the possibility that one of our objects in a virtual
 			// property has been deleted, either by some other tool, or by another client altogether.
 			// Enhance: it would be very nice not to do this any time we can be sure it isn't needed.
@@ -353,23 +360,23 @@ namespace LanguageExplorer.Works
 			// will happen later in the sequence of Init when InitSorter is called
 
 			int hvo = 0;
-			if (Clerk.OwningObject != null)
-				hvo = Clerk.OwningObject.Hvo;
+			if (MyRecordList.OwningObject != null)
+				hvo = MyRecordList.OwningObject.Hvo;
 			// We must update the list if needed BEFORE we create the actual view, otherwise, if it is trying
 			// to display an out-of-date list containing deleted objects, all kinds of things may go wrong.
 			if (XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParametersElement, "forceReloadListOnInitOrChangeRoot", false))
 			{
-				PropertyTable.SetProperty(Clerk.Id + "_AlwaysRecomputeVirtualOnReloadList", true, true, true);
+				PropertyTable.SetProperty(MyRecordList.Id + "_AlwaysRecomputeVirtualOnReloadList", true, true, true);
 				// (EricP) when called by RecordView.InitBase() in the context of ListUpdateHelper.ClearBrowseListUntilReload
 				// the list does not get reloaded until ListUpdateHelper is disposed, but the views property
 				// will get cleared to prevent these views from accessing invalid objects.
-				Clerk.UpdateList(false, true);
+				MyRecordList.UpdateList(false, true);
 			}
 
-			m_browseViewer = CreateBrowseViewer(m_configurationParametersElement, hvo, Cache, Clerk.SortItemProvider, Clerk.VirtualListPublisher);
+			m_browseViewer = CreateBrowseViewer(m_configurationParametersElement, hvo, Cache, MyRecordList, MyRecordList.VirtualListPublisher);
 			m_browseViewer.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			m_browseViewer.FinishInitialization(hvo, m_madeUpFieldIdentifier);
-			m_browseViewer.SortersCompatible += Clerk.AreSortersCompatible;
+			m_browseViewer.SortersCompatible += AreSortersCompatible;
 			// If possible make it use the style sheet appropriate for its main window.
 			m_browseViewer.SuspendLayout();
 			SetStyleSheet();
@@ -377,14 +384,14 @@ namespace LanguageExplorer.Works
 			var linkFilter = m_browseViewer.FilterFromLink(PropertyTable.GetValue<FwLinkArgs>("FwLinkArgs")); // It will mostly be null.
 			if (linkFilter != null)
 			{
-				Clerk.OnChangeFilter(new FilterChangeEventArgs(linkFilter, Clerk.Filter));
+				MyRecordList.OnChangeFilter(new FilterChangeEventArgs(linkFilter, MyRecordList.Filter));
 			}
-			if (Clerk.Filter != null && !Clerk.Filter.IsValid)
+			if (MyRecordList.Filter != null && !MyRecordList.Filter.IsValid)
 			{
-				Clerk.ResetFilterToDefault();
+				MyRecordList.ResetFilterToDefault();
 			}
-			m_browseViewer.UpdateFilterBar(Clerk.Filter);
-			bool fSortChanged = m_browseViewer.InitSorter(Clerk.Sorter); // true if we had to change sorter
+			m_browseViewer.UpdateFilterBar(MyRecordList.Filter);
+			bool fSortChanged = m_browseViewer.InitSorter(MyRecordList.Sorter); // true if we had to change sorter
 			// Do this AFTER we init the sorter and filter, so if any changes are made to the
 			// sorter or filter as we install, we still get the right load.
 			if (fSortChanged)
@@ -394,10 +401,10 @@ namespace LanguageExplorer.Works
 			}
 			else
 			{
-				List<int> sortedCols = m_browseViewer.SortedColumns;
-				Clerk.IsDefaultSort = sortedCols.Count > 0 && sortedCols[0] == m_browseViewer.DefaultSortColumn;
+				var sortedCols = m_browseViewer.SortedColumns;
+				MyRecordList.IsDefaultSort = sortedCols.Count > 0 && sortedCols[0] == m_browseViewer.DefaultSortColumn;
 				// This won't actually load if in the context of UpdateListHelper()
-				Clerk.UpdateList(true, fNeedReload);
+				MyRecordList.UpdateList(true, fNeedReload);
 			}
 			// Do this very late, it can't display properly until its record list has been built and sorted.
 			Controls.Add(m_browseViewer);
@@ -468,27 +475,26 @@ namespace LanguageExplorer.Works
 				XmlViewsUtils.TryFindString("AlternativeTitles", titleId, out titleStr);
 				// if they specified an altTitleId, but it wasn't found, they need to do something,
 				// so just return *titleId*
-				if (Clerk.OwningObject != null && titleId.StartsWith("Reversal") &&
+				if (MyRecordList.OwningObject != null && titleId.StartsWith("Reversal") &&
 					XmlUtils.GetBooleanAttributeValue(m_configurationParametersElement, "ShowOwnerShortname"))
 				{
 					// Originally this option was added to enable Bulk Edit Reversal Entries title bar to show
 					// which reversal index was being shown. If the 'titleId.StartsWith("Reversal")' in the 'if'
 					// above is removed then the Word List Concordance shows the word being concorded in the
 					// right pane title bar.
-					titleStr = string.Format(xWorksStrings.ksXReversalIndex, Clerk.OwningObject.ShortName, titleStr);
+					titleStr = string.Format(xWorksStrings.ksXReversalIndex, MyRecordList.OwningObject.ShortName, titleStr);
 				}
 			}
-			else if (Clerk.OwningObject != null)
+			else if (MyRecordList.OwningObject != null)
 			{
 				if (XmlUtils.GetBooleanAttributeValue(m_configurationParametersElement, "ShowOwnerShortname"))
 				{
-					titleStr = Clerk.OwningObject.ShortName;
+					titleStr = MyRecordList.OwningObject.ShortName;
 				}
 			}
 			if (String.IsNullOrEmpty(titleStr))
 			{
-				XmlViewsUtils.TryFindPluralFormFromFlid(Clerk.VirtualListPublisher.MetaDataCache,
-					Clerk.OwningFlid, out titleStr);
+				XmlViewsUtils.TryFindPluralFormFromFlid(MyRecordList.VirtualListPublisher.MetaDataCache, MyRecordList.OwningFlid, out titleStr);
 			}
 
 			bool fBaseCalled = false;
@@ -530,28 +536,26 @@ namespace LanguageExplorer.Works
 				return;
 			Debug.Assert(m_browseViewer != null, "RecordBrowseView.SetupDataContext() has to be called before RecordBrowseView.ShowRecord().");
 
-			var clerk = Clerk;
-
 			// This is a bizarre situation that occurs when the root object is changing and
 			// notifications get sent in non-optimal order. There will be another
 			// ShowRecord call after the two get synchronized.
-			if (clerk.OwningObject != null && clerk.OwningObject.Hvo != m_browseViewer.RootObjectHvo)
+			if (MyRecordList.OwningObject != null && MyRecordList.OwningObject.Hvo != m_browseViewer.RootObjectHvo)
 				return;
-			int currentIndex = clerk.CurrentIndex;
+			int currentIndex = MyRecordList.CurrentIndex;
 
-			int storedIndex = PropertyTable.GetValue(Clerk.PersistedIndexProperty, SettingsGroup.LocalSettings, currentIndex);
-			if (storedIndex != currentIndex && storedIndex >= 0 && !clerk.HasEmptyList)
+			int storedIndex = PropertyTable.GetValue(MyRecordList.PersistedIndexProperty, SettingsGroup.LocalSettings, currentIndex);
+			if (storedIndex != currentIndex && storedIndex >= 0 && !MyRecordList.HasEmptyList)
 			{
 				try
 				{
-					clerk.JumpToIndex(storedIndex);
-					currentIndex = clerk.CurrentIndex;
+					MyRecordList.JumpToIndex(storedIndex);
+					currentIndex = MyRecordList.CurrentIndex;
 					Debug.Assert(currentIndex == storedIndex);
 				}
 				catch
 				{
 					if (currentIndex >= 0)
-						clerk.JumpToIndex(currentIndex);
+						MyRecordList.JumpToIndex(currentIndex);
 				}
 			}
 			// all that the base method currently does is put the class name of the selected object
@@ -608,14 +612,13 @@ namespace LanguageExplorer.Works
 				m_browseViewer.Enabled = false;
 			try
 			{
-				var clerk = Clerk;
 				// NOTE: If the clerk's current index is less than zero,
 				// or greater than the number of objects in the vector,
 				// SelectedIndex will assert in a debug build,
 				// and throw an exception in a release build.
-				if (clerk != null && clerk.IsActiveInGui)
+				if (MyRecordList != null && MyRecordList.IsActiveInGui)
 				{
-					m_browseViewer.SelectedIndex = clerk.CurrentIndex;
+					m_browseViewer.SelectedIndex = MyRecordList.CurrentIndex;
 					// go ahead and SetInfoBarText even if we didn't change indices
 					// we may have changed objects or root object classes (from Entries to Senses)
 					SetInfoBarText();
@@ -635,7 +638,7 @@ namespace LanguageExplorer.Works
 		private void CheckExpectedListItemsClassInSync()
 		{
 			int beExpectedListItemsClass = m_browseViewer.BulkEditBar.ExpectedListItemsClassId;
-			int clerkExpectedListItemsClass = Clerk.SortItemProvider.ListItemsClass;
+			int clerkExpectedListItemsClass = MyRecordList.ListItemsClass;
 			RecordList.CheckExpectedListItemsClassInSync(beExpectedListItemsClass, clerkExpectedListItemsClass);
 		}
 
@@ -703,7 +706,7 @@ namespace LanguageExplorer.Works
 
 			if (!m_suppressRecordNavigation || ! m_suppressShowRecord)
 			{
-				Clerk.ViewChangedSelectedRecord(e);
+				MyRecordList.ViewChangedSelectedRecord(e);
 				SetInfoBarText();
 			}
 		}
@@ -722,8 +725,8 @@ namespace LanguageExplorer.Works
 
 		private void m_browseViewer_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			string propName = Clerk.PersistedIndexProperty;
-			PropertyTable.SetProperty(propName, Clerk.CurrentIndex, SettingsGroup.LocalSettings, true, true);
+			string propName = MyRecordList.PersistedIndexProperty;
+			PropertyTable.SetProperty(propName, MyRecordList.CurrentIndex, SettingsGroup.LocalSettings, true, true);
 		}
 
 		/// <summary>
@@ -747,14 +750,11 @@ namespace LanguageExplorer.Works
 			return m_browseViewer.SnapSplitPosition(ref width);
 		}
 
-		public List<int> CheckedItems
-		{
-			get { return m_browseViewer.CheckedItems; }
-		}
+		public List<int> CheckedItems => m_browseViewer.CheckedItems;
 
 		private void m_browseViewer_ListModificationInProgressChanged(object sender, EventArgs e)
 		{
-			Clerk.ListModificationInProgress = m_browseViewer.ListModificationInProgress;
+			MyRecordList.ListModificationInProgress = m_browseViewer.ListModificationInProgress;
 		}
 
 		/// <summary>

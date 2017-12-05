@@ -72,8 +72,8 @@ namespace LanguageExplorer.Works
 			AccNameDefault = "XmlDocView";		// default accessibility name
 		}
 
-		public XmlDocView(XElement configurationParametersElement, LcmCache cache, IRecordClerk recordClerk)
-			: base(configurationParametersElement, cache, recordClerk)
+		public XmlDocView(XElement configurationParametersElement, LcmCache cache, IRecordList recordList)
+			: base(configurationParametersElement, cache, recordList)
 		{
 		}
 
@@ -483,17 +483,17 @@ namespace LanguageExplorer.Works
 			CheckDisposed();
 
 			if (!m_fullyInitialized
-				|| RecordNavigationInfo.GetSendingClerk(argument) != Clerk) // Don't pretend to have handled it if it isn't our clerk.
+				|| RecordNavigationInfo.GetSendingList(argument) != MyRecordList) // Don't pretend to have handled it if it isn't our clerk.
 				return false;
 
 			// persist Clerk's CurrentIndex in a db specific way
 #if RANDYTODO
 // As of 21JUL17 nobody cares about that 'propName' changing, so skip the broadcast.
 #endif
-			string propName = Clerk.PersistedIndexProperty;
-			PropertyTable.SetProperty(propName, Clerk.CurrentIndex, SettingsGroup.LocalSettings, true, false);
+			string propName = MyRecordList.PersistedIndexProperty;
+			PropertyTable.SetProperty(propName, MyRecordList.CurrentIndex, SettingsGroup.LocalSettings, true, false);
 
-			Clerk.SuppressSaveOnChangeRecord = (argument as RecordNavigationInfo).SuppressSaveOnChangeRecord;
+			MyRecordList.SuppressSaveOnChangeRecord = (argument as RecordNavigationInfo).SuppressSaveOnChangeRecord;
 			using (WaitCursor wc = new WaitCursor(this))
 			{
 				//DateTime dt0 = DateTime.Now;
@@ -503,7 +503,7 @@ namespace LanguageExplorer.Works
 				}
 				finally
 				{
-					Clerk.SuppressSaveOnChangeRecord = false;
+					MyRecordList.SuppressSaveOnChangeRecord = false;
 				}
 				//DateTime dt1 = DateTime.Now;
 				//TimeSpan ts = TimeSpan.FromTicks(dt1.Ticks - dt0.Ticks);
@@ -589,9 +589,11 @@ namespace LanguageExplorer.Works
 
 		private void TryToJumpToSelection(Point where)
 		{
-			var obj = SubitemClicked(where, Clerk.ListItemsClass);
-			if (obj != null && obj.Hvo != Clerk.CurrentObjectHvo)
-			Clerk.JumpToRecord(obj.Hvo);
+			var obj = SubitemClicked(where, MyRecordList.ListItemsClass);
+			if (obj != null && obj.Hvo != MyRecordList.CurrentObjectHvo)
+			{
+				MyRecordList.JumpToRecord(obj.Hvo);
+			}
 		}
 
 		/// <summary>
@@ -604,7 +606,7 @@ namespace LanguageExplorer.Works
 			var adjuster = (m_currentConfigView != null && m_currentConfigView.StartsWith("publishRoot")) ?
 				(IPreferedTargetAdjuster)new MainEntryFromSubEntryTargetAdjuster() :
 				new NullTargetAdjuster();
-			return SubitemClicked(where, clsid, m_mainView, Cache, Clerk.SortItemProvider, adjuster);
+			return SubitemClicked(where, clsid, m_mainView, Cache, MyRecordList, adjuster);
 		}
 
 		private ToolTip m_tooltip;
@@ -615,10 +617,10 @@ namespace LanguageExplorer.Works
 			base.OnMouseMove(e);
 			// don't try to update the tooltip by getting a selection while painting the view; leads to recursive expansion of lazy boxes.
 			// also don't try and update the tooltip if we don't have a Clerk yet
-			if (m_mainView.MouseMoveSuppressed || Clerk == null)
+			if (m_mainView.MouseMoveSuppressed || MyRecordList == null)
 				return;
-			var item = SubitemClicked(e.Location, Clerk.ListItemsClass);
-			if (item == null || item.Hvo == Clerk.CurrentObjectHvo)
+			var item = SubitemClicked(e.Location, MyRecordList.ListItemsClass);
+			if (item == null || item.Hvo == MyRecordList.CurrentObjectHvo)
 			{
 				if (m_tooltip != null)
 					m_tooltip.Active = false;
@@ -727,7 +729,7 @@ namespace LanguageExplorer.Works
 			if (m_mainView == null)
 				return;
 
-			if (Clerk.OwningObject == null)
+			if (MyRecordList.OwningObject == null)
 			{
 				//this happens, for example, when they user sets a filter on the
 				//list we are dependent on, but no records are selected by the filter.
@@ -737,7 +739,7 @@ namespace LanguageExplorer.Works
 			}
 			else
 			{
-				m_hvoOwner = Clerk.OwningObject.Hvo;
+				m_hvoOwner = MyRecordList.OwningObject.Hvo;
 				m_mainView.ResetRoot(m_hvoOwner);
 				SetInfoBarText();
 			}
@@ -750,17 +752,17 @@ namespace LanguageExplorer.Works
 		int AdjustedClerkIndex()
 		{
 			var sda = m_mainView.DataAccess as ISilDataAccessManaged;
-			if (sda == null || sda == Clerk.VirtualListPublisher)
-				return Clerk.CurrentIndex; // no tricks.
-			if (Clerk.CurrentObjectHvo == 0)
+			if (sda == null || sda == MyRecordList.VirtualListPublisher)
+				return MyRecordList.CurrentIndex; // no tricks.
+			if (MyRecordList.CurrentObjectHvo == 0)
 				return -1;
 			var items = sda.VecProp(m_hvoOwner, m_madeUpFieldIdentifier);
 			// Search for the indicated item, working back from the place we expect it to be.
 			// This is efficient, because usually only a few items are filtered and it will be close.
 			// Also, currently the decorator only removes items, so we won't find it at a larger index.
 			// Finally, if there are duplicates, we will find the one closest to the expected position.
-			int target = Clerk.CurrentObjectHvo;
-			int index = Math.Min(Clerk.CurrentIndex, items.Length - 1);
+			int target = MyRecordList.CurrentObjectHvo;
+			int index = Math.Min(MyRecordList.CurrentIndex, items.Length - 1);
 			while (index >= 0 && items[index] != target)
 				index--;
 			if (index < 0 && sda.get_VecSize(m_hvoOwner, m_madeUpFieldIdentifier) > 0)
@@ -770,30 +772,28 @@ namespace LanguageExplorer.Works
 
 		protected override void ShowRecord()
 		{
-			var clerk = Clerk;
-
 			var currentIndex = AdjustedClerkIndex();
 
 			// See if it is showing the same record, as before.
-			if (m_currentObject != null && clerk.CurrentObject != null
+			if (m_currentObject != null && MyRecordList.CurrentObject != null
 				&& m_currentIndex == currentIndex
-				&& m_currentObject.Hvo == clerk.CurrentObject.Hvo)
+				&& m_currentObject.Hvo == MyRecordList.CurrentObject.Hvo)
 			{
 				SetInfoBarText();
 				return;
 			}
 
 			// See if the main owning object has changed.
-			if (clerk.OwningObject != null && clerk.OwningObject.Hvo != m_hvoOwner)
+			if (MyRecordList.OwningObject != null && MyRecordList.OwningObject.Hvo != m_hvoOwner)
 			{
-				m_hvoOwner = clerk.OwningObject.Hvo;
+				m_hvoOwner = MyRecordList.OwningObject.Hvo;
 				m_mainView.ResetRoot(m_hvoOwner);
 			}
 
-			m_currentObject = clerk.CurrentObject;
+			m_currentObject = MyRecordList.CurrentObject;
 			m_currentIndex = currentIndex;
 			//add our current state to the history system
-			PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue("toolChoice", string.Empty), clerk.CurrentObject?.Guid ?? Guid.Empty));
+			PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue("toolChoice", string.Empty), MyRecordList.CurrentObject?.Guid ?? Guid.Empty));
 
 			SelectAndScrollToCurrentRecord();
 			base.ShowRecord();
@@ -1023,24 +1023,23 @@ namespace LanguageExplorer.Works
 			using (new WaitCursor(this))
 			{
 				//m_flid = RecordClerk.GetFlidOfVectorFromName(m_vectorName, Cache, out m_owningObject);
-				var clerk = Clerk;
-				clerk.ActivateUI();
+				MyRecordList.ActivateUI();
 				// Enhance JohnT: could use logic similar to RecordView.InitBase to load persisted list contents (filtered and sorted).
-				if (clerk.RequestedLoadWhileSuppressed)
-					clerk.UpdateList(false);
-				m_madeUpFieldIdentifier = clerk.VirtualFlid;
-				if (clerk.OwningObject != null)
+				if (MyRecordList.RequestedLoadWhileSuppressed)
+					MyRecordList.UpdateList(false);
+				m_madeUpFieldIdentifier = MyRecordList.VirtualFlid;
+				if (MyRecordList.OwningObject != null)
 				{
-					m_hvoOwner = clerk.OwningObject.Hvo;
+					m_hvoOwner = MyRecordList.OwningObject.Hvo;
 				}
 
-				clerk.IsDefaultSort = false;
+				MyRecordList.IsDefaultSort = false;
 
 				// Create the main view
 
 				// Review JohnT: should it be m_configurationParametersElement or .FirstChild?
 				var app = PropertyTable.GetValue<IFlexApp>("App");
-				m_mainView = new XmlSeqView(Cache, m_hvoOwner, m_madeUpFieldIdentifier, m_configurationParametersElement, Clerk.VirtualListPublisher, app,
+				m_mainView = new XmlSeqView(Cache, m_hvoOwner, m_madeUpFieldIdentifier, m_configurationParametersElement, MyRecordList.VirtualListPublisher, app,
 					Publication);
 				m_mainView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				m_mainView.Dock = DockStyle.Fill;
@@ -1109,7 +1108,7 @@ namespace LanguageExplorer.Works
 			Debug.Assert(e.Hvo != 0);
 			if (e.Hvo == 0)
 				return;
-			Clerk.ViewChangedSelectedRecord(e);
+			MyRecordList.ViewChangedSelectedRecord(e);
 			// Change it if it's actually changed.
 			SetInfoBarText();
 		}
@@ -1317,7 +1316,7 @@ namespace LanguageExplorer.Works
 		{
 			CheckDisposed();
 
-			if (Clerk.Id == "reversalEntries")
+			if (MyRecordList.Id == "reversalEntries")
 			{
 				return false; // Let the clerk do it.
 			}

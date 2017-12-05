@@ -14,7 +14,7 @@ namespace LanguageExplorer.Areas
 {
 	internal sealed class TreeBarHandlerAwarePossibilityRecordList : PossibilityRecordList
 	{
-		private static IRecordClerk s_lastClerkToLoadTreeBar;
+		private static IRecordList s_lastRecordListToLoadTreeBar;
 
 		private RecordBarHandler _recordBarHandler;
 		/// <summary>
@@ -52,26 +52,23 @@ namespace LanguageExplorer.Areas
 
 		protected override void ActivateRecordBar()
 		{
-			if (s_lastClerkToLoadTreeBar == this)
+			if (s_lastRecordListToLoadTreeBar == this)
 			{
 				return;
 			}
-			s_lastClerkToLoadTreeBar = this;
+			s_lastRecordListToLoadTreeBar = this;
 			_recordBarHandler.PopulateRecordBar(this);
 		}
 
-		protected override void DisposeManagedResources()
+		protected override void Dispose(bool disposing)
 		{
-			_recordBarHandler.Dispose();
-
-			base.DisposeManagedResources();
-		}
-
-		protected override void DisposeUnmanagedResources()
-		{
+			if (disposing)
+			{
+				_recordBarHandler.Dispose();
+			}
 			_recordBarHandler = null;
 
-			base.DisposeUnmanagedResources();
+			base.Dispose(disposing);
 		}
 
 		protected override void UpdateStatusBarForRecordBar()

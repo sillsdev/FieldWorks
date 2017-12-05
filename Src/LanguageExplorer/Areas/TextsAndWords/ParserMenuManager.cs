@@ -44,7 +44,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private Dictionary<string, ToolStripMenuItem> _parserToolStripMenuItems;
 		private IStText _currentStText;
 		private IWfiWordform _currentWordform;
-		private IRecordClerk _clerk;
+		private IRecordList _recordList;
 
 		/// <summary />
 		internal ParserMenuManager(StatusBarPanel statusPanelProgress, Dictionary<string, ToolStripMenuItem> parserMenuItems)
@@ -132,20 +132,20 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		#endregion
 
-		public IRecordClerk Clerk
+		public IRecordList RecordList
 		{
 			set
 			{
-				if (_clerk != null)
+				if (_recordList != null)
 				{
 					// Unwire from older clerk
-					_clerk.SelectedObjectChanged -= Clerk_SelectedObjectChanged;
+					_recordList.SelectedObjectChanged -= RecordListSelectedObjectChanged;
 				}
-				_clerk = value;
-				if (_clerk != null)
+				_recordList = value;
+				if (_recordList != null)
 				{
 					// Wire up to new clerk.
-					_clerk.SelectedObjectChanged += Clerk_SelectedObjectChanged;
+					_recordList.SelectedObjectChanged += RecordListSelectedObjectChanged;
 				}
 			}
 		}
@@ -161,7 +161,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			DisconnectFromParser();
 		}
 
-		private void Clerk_SelectedObjectChanged(object sender, SelectObjectEventArgs recordNavigationEventArgs)
+		private void RecordListSelectedObjectChanged(object sender, SelectObjectEventArgs recordNavigationEventArgs)
 		{
 			var currentObject = recordNavigationEventArgs.CurrentObject;
 			if (currentObject is IStText)
@@ -456,7 +456,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			if (disposing)
 			{
-				_clerk.SelectedObjectChanged -= Clerk_SelectedObjectChanged;
+				_recordList.SelectedObjectChanged -= RecordListSelectedObjectChanged;
 				_parserToolStripMenuItems["parser"].DropDownOpening -= ParserMenuManager_DropDownOpening;
 				_parserToolStripMenuItems["parseAllWords"].Click -= ParseAllWords_Click;
 				_parserToolStripMenuItems["reparseAllWords"].Click -= ReparseAllWords_Click;
@@ -498,7 +498,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
-			_clerk = null;
+			_recordList = null;
 
 			m_isDisposed = true;
 		}

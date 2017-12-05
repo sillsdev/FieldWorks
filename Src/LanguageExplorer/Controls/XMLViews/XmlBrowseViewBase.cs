@@ -1013,7 +1013,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						// Deleting everything in one view doesn't seem to fix the RecordList in
 						// related views.  See LT-9711.
-						IRecordListUpdater recordListUpdater = RecordList.ActiveRecordClerkRepository.ActiveRecordClerk;
+						IRecordListUpdater recordListUpdater = RecordList.ActiveRecordListRepository.ActiveRecordList;
 						if (recordListUpdater != null)
 						{
 							using (new WaitCursor(this))

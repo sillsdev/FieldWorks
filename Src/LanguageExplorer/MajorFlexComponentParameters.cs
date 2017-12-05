@@ -31,7 +31,7 @@ namespace LanguageExplorer
 		/// <summary />
 		internal FlexComponentParameters FlexComponentParameters { get; private set; }
 		/// <summary />
-		internal IRecordClerkRepositoryForTools RecordClerkRepositoryForTools { get; private set; }
+		internal IRecordListRepositoryForTools RecordListRepositoryForTools { get; private set; }
 		/// <summary />
 		internal LcmCache LcmCache { get; private set; }
 		/// <summary />
@@ -43,7 +43,7 @@ namespace LanguageExplorer
 
 		internal MajorFlexComponentParameters(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar,
 			ParserMenuManager parserMenuManager, DataNavigationManager dataNavigationManager,
-			IRecordClerkRepositoryForTools recordClerkRepositoryForTools,
+			IRecordListRepositoryForTools recordListRepositoryForTools,
 			FlexComponentParameters flexComponentParameters, LcmCache lcmCache, IFlexApp flexApp, IFwMainWnd mainWindow, SidePane sidePane)
 		{
 			MainCollapsingSplitContainer = mainCollapsingSplitContainer;
@@ -52,7 +52,7 @@ namespace LanguageExplorer
 			Statusbar = statusbar;
 			ParserMenuManager = parserMenuManager;
 			DataNavigationManager = dataNavigationManager;
-			RecordClerkRepositoryForTools = recordClerkRepositoryForTools;
+			RecordListRepositoryForTools = recordListRepositoryForTools;
 			FlexComponentParameters = flexComponentParameters;
 			LcmCache = lcmCache;
 			FlexApp = flexApp;

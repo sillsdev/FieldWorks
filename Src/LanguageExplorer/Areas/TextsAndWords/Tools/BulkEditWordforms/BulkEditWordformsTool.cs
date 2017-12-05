@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		[Import(AreaServices.TextAndWordsAreaMachineName)]
 		private IArea _area;
 
@@ -53,11 +53,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.Statusbar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.Statusbar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
 			}
-			_areaWideMenuHelper = new AreaWideMenuHelper(majorFlexComponentParameters, _recordClerk);
+			_areaWideMenuHelper = new AreaWideMenuHelper(majorFlexComponentParameters, _recordList);
 			_areaWideMenuHelper.SetupFileExportMenu();
 			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
 			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
@@ -76,13 +76,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 			currentColumn.Attribute("width").Value = "80000";
 			currentColumn = columns.Elements("column").First(col => col.Attribute("label").Value == "Spelling Status");
 			currentColumn.Add(new XAttribute("width", "65000"));
-			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordClerk);
+			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordList);
 
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>
@@ -98,8 +98,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_recordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>

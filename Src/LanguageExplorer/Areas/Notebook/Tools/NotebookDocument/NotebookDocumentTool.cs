@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 	internal sealed class NotebookDocumentTool : ITool
 	{
 		private PaneBarContainer _paneBarContainer;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		[Import(AreaServices.NotebookAreaMachineName)]
 		private IArea _area;
 
@@ -44,15 +44,15 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
 			}
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				new XmlDocView(XDocument.Parse(NotebookResources.NotebookDocumentParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk));
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+				new XmlDocView(XDocument.Parse(NotebookResources.NotebookDocumentParameters).Root, majorFlexComponentParameters.LcmCache, _recordList));
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>
@@ -67,8 +67,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_recordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>

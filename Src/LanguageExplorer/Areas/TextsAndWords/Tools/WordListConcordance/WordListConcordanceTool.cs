@@ -11,7 +11,6 @@ using LanguageExplorer.Controls.PaneBar;
 using LanguageExplorer.Works;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -27,13 +26,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		private AreaWideMenuHelper _areaWideMenuHelper;
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
 		private const string OccurrencesOfSelectedWordform = "OccurrencesOfSelectedWordform";
-		private IRecordClerkRepositoryForTools _clerkRepositoryForTools;
 		private MultiPane _outerMultiPane;
 		private RecordBrowseView _mainRecordBrowseView;
 		private MultiPane _nestedMultiPane;
 		private RecordBrowseView _nestedRecordBrowseView;
-		private IRecordClerk _recordClerkProvidingOwner;
-		private IRecordClerk _mainRecordClerk;
+		private IRecordList _recordListProvidingOwner;
+		private IRecordList _subservientRecordList;
 		private InterlinMasterNoTitleBar _interlinMasterNoTitleBar;
 		[Import(AreaServices.TextAndWordsAreaMachineName)]
 		private IArea _area;
@@ -67,19 +65,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_clerkRepositoryForTools = majorFlexComponentParameters.RecordClerkRepositoryForTools;
-			if (_recordClerkProvidingOwner == null)
+			if (_recordListProvidingOwner == null)
 			{
-				_recordClerkProvidingOwner = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.Statusbar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
+				_recordListProvidingOwner = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.Statusbar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
 			}
-			_areaWideMenuHelper = new AreaWideMenuHelper(majorFlexComponentParameters, _recordClerkProvidingOwner);
+			_areaWideMenuHelper = new AreaWideMenuHelper(majorFlexComponentParameters, _recordListProvidingOwner);
 			_areaWideMenuHelper.SetupFileExportMenu();
 			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
 			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
 
-			if (_mainRecordClerk == null)
+			if (_subservientRecordList == null)
 			{
-				_mainRecordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(OccurrencesOfSelectedWordform, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_subservientRecordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(OccurrencesOfSelectedWordform, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 
 			var nestedMultiPaneParameters = new MultiPaneParameters
@@ -95,12 +92,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			var root = XDocument.Parse(TextAndWordsResources.WordListConcordanceToolParameters).Root;
 			root.Element("wordList").Element("parameters").Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.WordListColumns));
 			root.Element("wordOccurrenceListUpper").Element("parameters").Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.ConcordanceColumns).Element("columns"));
-			_nestedRecordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceListUpper").Element("parameters"), majorFlexComponentParameters.LcmCache, _mainRecordClerk);
+			_nestedRecordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceListUpper").Element("parameters"), majorFlexComponentParameters.LcmCache, _subservientRecordList);
 			nestedMultiPaneParameters.FirstControlParameters.Control = _nestedRecordBrowseView;
-			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("wordOccurrenceListLower").Element("parameters"), majorFlexComponentParameters.LcmCache, _mainRecordClerk, MenuServices.GetFileMenu(majorFlexComponentParameters.MenuStrip), MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("wordOccurrenceListLower").Element("parameters"), majorFlexComponentParameters.LcmCache, _subservientRecordList, MenuServices.GetFileMenu(majorFlexComponentParameters.MenuStrip), MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			nestedMultiPaneParameters.SecondControlParameters.Control = _interlinMasterNoTitleBar;
 			_nestedMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters);
-			_mainRecordBrowseView = new RecordBrowseView(root.Element("wordList").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerkProvidingOwner);
+			_mainRecordBrowseView = new RecordBrowseView(root.Element("wordList").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordListProvidingOwner);
 
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
@@ -120,8 +117,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 				_nestedMultiPane, "Tabs", new PaneBar());
 
 			_interlinMasterNoTitleBar.FinishInitialization();
-			majorFlexComponentParameters.DataNavigationManager.Clerk = _recordClerkProvidingOwner;
-			majorFlexComponentParameters.RecordClerkRepositoryForTools.ActiveRecordClerk = _mainRecordClerk;
+			majorFlexComponentParameters.DataNavigationManager.RecordList = _recordListProvidingOwner;
+			majorFlexComponentParameters.RecordListRepositoryForTools.ActiveRecordList = _subservientRecordList;
 		}
 
 		/// <summary>
@@ -139,10 +136,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_mainRecordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_mainRecordClerk.VirtualListPublisher).Refresh();
-			_recordClerkProvidingOwner.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerkProvidingOwner.VirtualListPublisher).Refresh();
+			_subservientRecordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_subservientRecordList.VirtualListPublisher).Refresh();
+			_recordListProvidingOwner.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordListProvidingOwner.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>
@@ -184,14 +181,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 
 		#endregion
 
-		private static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(clerkId == OccurrencesOfSelectedWordform, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{OccurrencesOfSelectedWordform}'.");
+			Require.That(recordListId == OccurrencesOfSelectedWordform, $"I don't know how to create a clerk with an ID of '{recordListId}', as I can only create on with an id of '{OccurrencesOfSelectedWordform}'.");
 
-			return new SubservientRecordList(clerkId, statusBar,
+			return new SubservientRecordList(recordListId, statusBar,
 				new ConcDecorator(cache.ServiceLocator), false,
 				ConcDecorator.kflidWfOccurrences,
-				((IRecordClerkRepositoryForTools)RecordList.ActiveRecordClerkRepository).GetRecordClerk(TextAndWordsArea.ConcordanceWords, statusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod));
+				((IRecordListRepositoryForTools)RecordList.ActiveRecordListRepository).GetRecordList(TextAndWordsArea.ConcordanceWords, statusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod));
 		}
 	}
 }

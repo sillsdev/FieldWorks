@@ -85,7 +85,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			Clerk = null;
+			MyRecordList = null;
 			m_vc = null;
 			m_configurationParameters = null;
 		}
@@ -166,9 +166,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 
 		/// <summary>
-		/// this is the clerk, if any, that determines the text for our control.
+		/// This is the record list, if any, that determines the text for our control.
 		/// </summary>
-		internal IRecordClerk Clerk { get; set; }
+		internal IRecordList MyRecordList { get; set; }
 
 		IStText m_rootObj;
 		public IStText RootObject
@@ -605,7 +605,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		internal IRecordClerk ActiveClerk => RecordList.ActiveRecordClerkRepository.ActiveRecordClerk;
+		internal IRecordList ActiveRecordList => RecordList.ActiveRecordListRepository.ActiveRecordList;
 
 		/// <summary>
 		/// Currently detects whether we've inserted a paragraph break (with the Enter key)
@@ -616,7 +616,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			RawTextPane m_rootSite;
 
 			internal AnnotationMoveHelper(RawTextPane site, KeyPressEventArgs e)
-				: base(site.Clerk)
+				: base(site.MyRecordList)
 			{
 				m_rootSite = site;
 				if (!CanEdit())

@@ -10,7 +10,6 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using LanguageExplorer.Works;
 using SIL.LCModel;
@@ -31,7 +30,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TranslationTypeEdit
 		/// The RecordBar has no top PaneBar for information, menus, etc.
 		/// </summary>
 		private CollapsingSplitContainer _collapsingSplitContainer;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		[Import(AreaServices.ListsAreaMachineName)]
 		private IArea _area;
 
@@ -58,11 +57,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.TranslationTypeEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(TranslationTypeList, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(TranslationTypeList, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
-			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, (IListArea)_area, _recordClerk);
+			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, (IListArea)_area, _recordList);
 
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
@@ -75,10 +74,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.TranslationTypeEdit
 				XDocument.Parse(ListResources.TranslationTypeEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
 				majorFlexComponentParameters.LcmCache,
-				_recordClerk,
+				_recordList,
 				dataTree,
 				MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>
@@ -99,8 +98,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.TranslationTypeEdit
 		/// </remarks>
 		public void FinishRefresh()
 		{
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_recordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>
@@ -141,11 +140,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.TranslationTypeEdit
 
 		#endregion
 
-		private static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(clerkId == TranslationTypeList, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{TranslationTypeList}'.");
+			Require.That(recordListId == TranslationTypeList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{TranslationTypeList}'.");
 
-			return new TreeBarHandlerAwarePossibilityRecordList(clerkId, statusBar,
+			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				null, true, true,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.TranslationTagsOA,

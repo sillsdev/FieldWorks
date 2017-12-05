@@ -26,10 +26,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				if(components != null)
 					components.Dispose();
 
-				if (m_clerk != null && PropertyTable != null)
+				if (m_recordList != null && PropertyTable != null)
 				{
-					PropertyTable.RemoveProperty("RecordClerk-" + m_clerk.Id);
-					m_clerk.Dispose();
+					PropertyTable.RemoveProperty("RecordClerk-" + m_recordList.Id);
+					m_recordList.Dispose();
 				}
 			}
 			m_cache = null;
@@ -39,7 +39,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			m_rbv = null;
 			m_previewPane = null;
 			m_helpTopic = null;
-			m_clerk = null;
+			m_recordList = null;
 
 			PropertyTable = null;
 			Publisher = null;

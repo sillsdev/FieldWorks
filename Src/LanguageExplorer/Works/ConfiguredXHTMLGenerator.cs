@@ -204,14 +204,14 @@ namespace LanguageExplorer.Works
 		/// <returns>The path to the XHTML file</returns>
 		public static string SavePreviewHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, IPropertyTable propertyTable,
 			LcmCache cache,
-			IRecordClerk activeClerk,
+			IRecordList activeRecordList,
 			IThreadedProgress progress = null, int entriesPerPage = EntriesPerPage)
 		{
 			var preferredPath = GetPreferredPreviewPath(configuration, cache, entryHvos.Length == 1);
 			var xhtmlPath = Path.ChangeExtension(preferredPath, "xhtml");
 			try
 			{
-				SavePublishedHtmlWithStyles(entryHvos, publicationDecorator, entriesPerPage, configuration, propertyTable, cache, activeClerk, xhtmlPath, progress);
+				SavePublishedHtmlWithStyles(entryHvos, publicationDecorator, entriesPerPage, configuration, propertyTable, cache, activeRecordList, xhtmlPath, progress);
 			}
 			catch (IOException ioEx)
 			{
@@ -223,7 +223,7 @@ namespace LanguageExplorer.Works
 					xhtmlPath = Path.ChangeExtension(preferredPath + i, "xhtml");
 					try
 					{
-						SavePublishedHtmlWithStyles(entryHvos, publicationDecorator, entriesPerPage, configuration, propertyTable, cache, activeClerk, xhtmlPath, progress);
+						SavePublishedHtmlWithStyles(entryHvos, publicationDecorator, entriesPerPage, configuration, propertyTable, cache, activeRecordList, xhtmlPath, progress);
 					}
 					catch (IOException e)
 					{
@@ -235,11 +235,11 @@ namespace LanguageExplorer.Works
 			return xhtmlPath;
 		}
 
-		private static bool IsClerkSortingByHeadword(IRecordClerk clerk)
+		private static bool IsRecordListSortingByHeadword(IRecordList recordList)
 		{
-			if (clerk.SortName == null) return false;
-			return clerk.SortName.StartsWith("Headword") || clerk.SortName.StartsWith("Lexeme Form") || clerk.SortName.StartsWith("Citation Form")
-				|| clerk.SortName.StartsWith("Form") || clerk.SortName.StartsWith("Reversal Form");
+			if (recordList.SortName == null) return false;
+			return recordList.SortName.StartsWith("Headword") || recordList.SortName.StartsWith("Lexeme Form") || recordList.SortName.StartsWith("Citation Form")
+				|| recordList.SortName.StartsWith("Form") || recordList.SortName.StartsWith("Reversal Form");
 		}
 
 		private static bool IsNormalRtl(IReadonlyPropertyTable readOnlyPropertyTable)
@@ -256,14 +256,14 @@ namespace LanguageExplorer.Works
 		public static void SavePublishedHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, int entriesPerPage,
 			DictionaryConfigurationModel configuration, IPropertyTable propertyTable,
 			LcmCache cache,
-			IRecordClerk activeClerk,
+			IRecordList activeRecordList,
 			string xhtmlPath, IThreadedProgress progress = null)
 		{
 			var entryCount = entryHvos.Length;
 			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
 			var configDir = Path.GetDirectoryName(configuration.FilePath);
 			// Don't display letter headers if we're showing a preview in the Edit tool or we're not sorting by headword
-			var wantLetterHeaders = (entryCount > 1 || !IsLexEditPreviewOnly(publicationDecorator)) && (IsClerkSortingByHeadword(activeClerk));
+			var wantLetterHeaders = (entryCount > 1 || !IsLexEditPreviewOnly(publicationDecorator)) && (IsRecordListSortingByHeadword(activeRecordList));
 			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
@@ -277,7 +277,7 @@ namespace LanguageExplorer.Works
 				}
 				var settings = new GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(xhtmlPath), IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css");
 				GenerateOpeningHtml(cssPath, custCssPath, settings, xhtmlWriter);
-				Tuple<int, int> currentPageBounds = GetPageForCurrentEntry(settings, entryHvos, entriesPerPage, activeClerk);
+				Tuple<int, int> currentPageBounds = GetPageForCurrentEntry(settings, entryHvos, entriesPerPage, activeRecordList);
 				GenerateTopOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter, cssWriter);
 				string lastHeader = null;
 				var itemsOnPage = currentPageBounds.Item2 - currentPageBounds.Item1;
@@ -495,12 +495,12 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Get the page for the current entry, represented by the range of entries on the page containing the current entry
 		/// </summary>
-		private static Tuple<int, int> GetPageForCurrentEntry(GeneratorSettings settings, int[] entryHvos, int entriesPerPage, IRecordClerk activeClerk)
+		private static Tuple<int, int> GetPageForCurrentEntry(GeneratorSettings settings, int[] entryHvos, int entriesPerPage, IRecordList activeRecordList)
 		{
 			var currentEntryHvo = 0;
-			if (activeClerk != null)
+			if (activeRecordList != null)
 			{
-				currentEntryHvo = activeClerk.CurrentObjectHvo;
+				currentEntryHvo = activeRecordList.CurrentObjectHvo;
 			}
 			var pages = GetPageRanges(entryHvos, entriesPerPage);
 			if (currentEntryHvo != 0)
@@ -3128,15 +3128,15 @@ namespace LanguageExplorer.Works
 			return wsOptions.Options[0].Id;
 		}
 
-		public static DictionaryPublicationDecorator GetPublicationDecoratorAndEntries(IPropertyTable propertyTable, out int[] entriesToSave, string dictionaryType, LcmCache cache, IRecordClerk activeClerk)
+		public static DictionaryPublicationDecorator GetPublicationDecoratorAndEntries(IPropertyTable propertyTable, out int[] entriesToSave, string dictionaryType, LcmCache cache, IRecordList activeRecordList)
 		{
 			if (cache == null)
 			{
 				throw new ArgumentException(@"No cache", nameof(cache));
 			}
-			if (activeClerk == null)
+			if (activeRecordList == null)
 			{
-				throw new ArgumentException(@"No clerk", nameof(activeClerk));
+				throw new ArgumentException(@"No clerk", nameof(activeRecordList));
 			}
 
 			ICmPossibility currentPublication;
@@ -3152,8 +3152,8 @@ namespace LanguageExplorer.Works
 					 where item.Name.UserDefaultWritingSystem.Text == currentPublicationString
 					 select item).FirstOrDefault();
 			}
-			var decorator = new DictionaryPublicationDecorator(cache, activeClerk.VirtualListPublisher, activeClerk.VirtualFlid, currentPublication);
-			entriesToSave = decorator.GetEntriesToPublish(propertyTable, activeClerk.VirtualFlid, dictionaryType);
+			var decorator = new DictionaryPublicationDecorator(cache, activeRecordList.VirtualListPublisher, activeRecordList.VirtualFlid, currentPublication);
+			entriesToSave = decorator.GetEntriesToPublish(propertyTable, activeRecordList.VirtualFlid, dictionaryType);
 			return decorator;
 		}
 

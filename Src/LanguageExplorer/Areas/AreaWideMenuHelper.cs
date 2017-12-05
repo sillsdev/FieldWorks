@@ -20,7 +20,7 @@ namespace LanguageExplorer.Areas
 	internal sealed class AreaWideMenuHelper : IFlexComponent, IDisposable
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		private ToolStripItem _fileExportMenu;
 		private EventHandler _foreignFileExportHandler;
 		private bool _usingLocalFileExportEventHandler;
@@ -34,12 +34,12 @@ namespace LanguageExplorer.Areas
 			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 		}
 
-		internal AreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordClerk recordClerk)
+		internal AreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 			: this(majorFlexComponentParameters)
 		{
-			Guard.AgainstNull(recordClerk, nameof(recordClerk));
+			Guard.AgainstNull(recordList, nameof(recordList));
 
-			_recordClerk = recordClerk;
+			_recordList = recordList;
 		}
 
 		/// <summary>
@@ -66,11 +66,11 @@ namespace LanguageExplorer.Areas
 			// B. textsWords area: Analyses, bulkEditWordforms, wordListConcordance
 			// C. grammar area: all tools, except grammarSketch, which goes its own way
 			// D. lists area: all 27 tools
-			if (_recordClerk.AreCustomFieldsAProblem(new[] { LexEntryTags.kClassId, LexSenseTags.kClassId, LexExampleSentenceTags.kClassId, MoFormTags.kClassId }))
+			if (_recordList.AreCustomFieldsAProblem(new[] { LexEntryTags.kClassId, LexSenseTags.kClassId, LexExampleSentenceTags.kClassId, MoFormTags.kClassId }))
 			{
 				return;
 			}
-			using (var dlg = new ExportDialog())
+			using (var dlg = new ExportDialog(_majorFlexComponentParameters.Statusbar))
 			{
 				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 				dlg.ShowDialog(PropertyTable.GetValue<Form>("window"));
@@ -164,7 +164,7 @@ namespace LanguageExplorer.Areas
 				_fileExportMenu.Enabled = false;
 			}
 			_majorFlexComponentParameters = null;
-			_recordClerk = null;
+			_recordList = null;
 			_fileExportMenu = null;
 			_foreignFileExportHandler = null;
 

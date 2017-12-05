@@ -14,7 +14,6 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.LcmUi;
-using LanguageExplorer.Works;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -43,21 +42,21 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private ToolStripButton _insertEntryToolStripButton;
 		private ToolStripButton _insertGoToEntryToolStripButton;
 		private DataTree DataTree { get; set; }
-		private IRecordClerk RecordClerk { get; set; }
+		private IRecordList MyRecordList { get; set; }
 		internal MultiPane InnerMultiPane { get; set; }
 		internal SliceContextMenuFactory SliceContextMenuFactory { get; set; }
 
-		internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, DataTree dataTree, IRecordClerk recordClerk)
+		internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, DataTree dataTree, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(dataTree, nameof(dataTree));
-			Guard.AgainstNull(recordClerk, nameof(recordClerk));
+			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			DataTree = dataTree;
-			RecordClerk = recordClerk;
+			MyRecordList = recordList;
 			SliceContextMenuFactory = DataTree.SliceContextMenuFactory;
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(_majorFlexComponentParameters, RecordClerk);
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(_majorFlexComponentParameters, MyRecordList);
 
 			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 		}
@@ -188,7 +187,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_newInsertMenusAndHandlers = null;
 			SliceContextMenuFactory = null;
 			DataTree = null;
-			RecordClerk = null;
+			MyRecordList = null;
 			InnerMultiPane = null;
 
 			_isDisposed = true;
@@ -261,7 +260,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			UndoableUnitOfWorkHelper.Do(LexiconResources.Undo_Insert_Etymology, LexiconResources.Redo_Insert_Etymology, _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 			{
-				((ILexEntry)RecordClerk.CurrentObject).EtymologyOS.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create());
+				((ILexEntry)MyRecordList.CurrentObject).EtymologyOS.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create());
 			});
 		}
 
@@ -433,7 +432,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			else
 			{
-				var owningEntry = (ILexEntry)RecordClerk.CurrentObject;
+				var owningEntry = (ILexEntry)MyRecordList.CurrentObject;
 				LexSenseUi.CreateNewLexSense(_majorFlexComponentParameters.LcmCache, owningEntry, owningEntry.SensesOS.IndexOf(currentSense) + 1);
 			}
 		}
@@ -457,7 +456,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Merge_With_Entry_Clicked(object sender, EventArgs e)
 		{
-			var currentObject = RecordClerk.CurrentObject;
+			var currentObject = MyRecordList.CurrentObject;
 			if (currentObject == null)
 				return; // should never happen, but nothing we can do if it does!
 
@@ -535,7 +534,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Insert_Sense_Clicked(object sender, EventArgs e)
 		{
-			LexSenseUi.CreateNewLexSense(_majorFlexComponentParameters.LcmCache, (ILexEntry)RecordClerk.CurrentObject);
+			LexSenseUi.CreateNewLexSense(_majorFlexComponentParameters.LcmCache, (ILexEntry)MyRecordList.CurrentObject);
 		}
 
 		private void Insert_Entry_Clicked(object sender, EventArgs e)
@@ -552,7 +551,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					dlg.GetDialogInfo(out entry, out newby);
 					// No need for a PropChanged here because InsertEntryDlg takes care of that. (LT-3608)
 					mainWindow.RefreshAllViews();
-					RecordClerk.JumpToRecord(entry.Hvo);
+					MyRecordList.JumpToRecord(entry.Hvo);
 				}
 			}
 		}
@@ -572,7 +571,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				dlg.SetHelpTopic("khtpFindLexicalEntry");
 				if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
 				{
-					RecordClerk.JumpToRecord(dlg.SelectedObject.Hvo);
+					MyRecordList.JumpToRecord(dlg.SelectedObject.Hvo);
 				}
 			}
 		}

@@ -790,7 +790,7 @@ namespace LanguageExplorer.LcmUi
 				// See e.g. LT-5156, 6534, 7160.
 				// Indeed, since CmBaseAnnotation presents itself as a 'Problem Report', we don't want
 				// to do it for any kind of annotation that couldn't be one!
-				var sClerkType = RecordList.ActiveRecordClerkRepository.ActiveRecordClerk?.GetType().Name ?? string.Empty;
+				var sClerkType = RecordList.ActiveRecordListRepository.ActiveRecordList?.GetType().Name ?? string.Empty;
 				if (sClerkType == "OccurrencesOfSelectedUnit")
 					return true;		// We don't want this either.  See LT-6101.
 			}

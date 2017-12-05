@@ -30,7 +30,7 @@ namespace LanguageExplorer.Areas.Notebook
 		[Import]
 		private IPropertyTable _propertyTable;
 
-		internal IRecordClerk RecordClerk { get; set; }
+		internal IRecordList MyRecordList { get; set; }
 
 		internal static XDocument LoadDocument(string resourceName)
 		{
@@ -147,11 +147,11 @@ namespace LanguageExplorer.Areas.Notebook
 
 		#endregion
 
-		internal static IRecordClerk NotebookFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		internal static IRecordList NotebookFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(clerkId == Records, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Records}'.");
+			Require.That(recordListId == Records, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{Records}'.");
 
-			return new RecordList(clerkId, statusBar,
+			return new RecordList(recordListId, statusBar,
 				new PropertyRecordSorter("ShortName"), AreaServices.Default,
 				null, false, false,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false,

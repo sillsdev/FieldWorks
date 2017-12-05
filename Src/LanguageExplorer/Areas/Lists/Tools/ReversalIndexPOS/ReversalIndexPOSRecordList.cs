@@ -48,8 +48,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// <summary />
 		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			CheckDisposed();
-
 			if (m_owningObject != null && m_owningObject.Hvo != hvo)
 			{
 				return;		// This PropChanged doesn't really apply to us.

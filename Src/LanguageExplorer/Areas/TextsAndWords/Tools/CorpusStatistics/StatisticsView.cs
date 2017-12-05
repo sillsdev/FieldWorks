@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 	/// </summary>
 	internal sealed partial class StatisticsView : UserControl, IMainContentControl
 	{
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		private ToolStrip _toolStripView;
 		private ToolStripButton _chooseTextsToolStripButton;
 		private ToolStripMenuItem _viewToolStripMenuItem;
@@ -46,7 +46,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = this;
 			InitializeFlexComponent(majorFlexComponentParameters.FlexComponentParameters);
-			_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.Statusbar, TextAndWordsArea.InterlinearTextsFactoryMethod);
+			_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.Statusbar, TextAndWordsArea.InterlinearTextsFactoryMethod);
 
 			// Add toolbar button.
 			_toolStripView = ToolbarServices.GetViewToolStrip(majorFlexComponentParameters.ToolStripContainer);
@@ -72,7 +72,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 
 			_chooseTextsToolStripButton.Click += AddTexts_Clicked;
 			_chooseTextsToolStripMenuItem.Click += AddTexts_Clicked;
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -204,7 +204,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 				_toolStripView.Items.Remove(_chooseTextsToolStripButton);
 				_chooseTextsToolStripButton.Dispose();
 			}
-			_recordClerk = null;
+			_recordList = null;
 			_toolStripView = null;
 			_chooseTextsToolStripButton = null;
 			_viewToolStripMenuItem = null;
@@ -329,7 +329,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 
 		private void AddTexts_Clicked(object sender, EventArgs e)
 		{
-			if (((InterlinearTextsRecordList)_recordClerk).AddTexts())
+			if (((InterlinearTextsRecordList)_recordList).AddTexts())
 			{
 				RebuildStatisticsTable();
 			}

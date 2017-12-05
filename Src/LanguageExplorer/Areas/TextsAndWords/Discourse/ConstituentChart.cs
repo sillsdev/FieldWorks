@@ -899,7 +899,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				return null;
 			if (myParent is InterlinMaster)
 			{
-				string tool = (myParent as InterlinMaster).Clerk.Id;
+				string tool = (myParent as InterlinMaster).MyRecordList.Id;
 				return InterlinMaster.m_bookmarks[new Tuple<string, Guid>(tool, basedOnRa.Guid)];
 			}
 			return GetAncestorBookmark(myParent as Control, basedOnRa);

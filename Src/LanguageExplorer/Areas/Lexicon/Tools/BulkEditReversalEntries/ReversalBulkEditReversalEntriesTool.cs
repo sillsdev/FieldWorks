@@ -30,7 +30,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		private IReversalIndexRepository _reversalIndexRepository;
 		private IReversalIndex _currentReversalIndex;
 		private SliceContextMenuFactory _sliceContextMenuFactory;
@@ -81,14 +81,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			{
 				_currentReversalIndex = (IReversalIndex)majorFlexComponentParameters.LcmCache.ServiceLocator.GetObject(currentGuid);
 			}
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.AllReversalEntries, majorFlexComponentParameters.Statusbar, LexiconArea.AllReversalEntriesFactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LexiconArea.AllReversalEntries, majorFlexComponentParameters.Statusbar, LexiconArea.AllReversalEntriesFactoryMethod);
 			}
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordClerk);
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
 
 			_sliceContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreatePanelContextMenuStrip);
-			_recordBrowseView = new RecordBrowseView(XDocument.Parse(LexiconResources.ReversalBulkEditReversalEntriesToolParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk);
+			_recordBrowseView = new RecordBrowseView(XDocument.Parse(LexiconResources.ReversalBulkEditReversalEntriesToolParameters).Root, majorFlexComponentParameters.LcmCache, _recordList);
 			var browseViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
@@ -105,7 +105,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				browseViewPaneBar,
 				_recordBrowseView);
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 			_lexiconAreaMenuHelper.Initialize();
 		}
 
@@ -122,8 +122,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_recordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>
@@ -203,7 +203,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			var mainWindow = _propertyTable.GetValue<IFwMainWnd>("window");
 			using (var dlg = new DictionaryConfigurationDlg(_propertyTable))
 			{
-				var controller = new DictionaryConfigurationController(dlg, _recordClerk?.CurrentObject);
+				var controller = new DictionaryConfigurationController(dlg, _recordList?.CurrentObject);
 				controller.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
 				dlg.Text = string.Format(xWorksStrings.ConfigureTitle, xWorksStrings.Dictionary);
 				dlg.HelpTopic = "khtpConfigureDictionary";
@@ -221,7 +221,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			var contextMenuItem = (ToolStripMenuItem)sender;
 			_currentReversalIndex = (IReversalIndex)contextMenuItem.Tag;
 			_propertyTable.SetProperty("ReversalIndexGuid", _currentReversalIndex.Guid.ToString(), SettingsGroup.LocalSettings, true, false);
-			((ReversalListBase)_recordClerk).ChangeOwningObjectIfPossible();
+			((ReversalListBase)_recordList).ChangeOwningObjectIfPossible();
 			SetCheckedState(contextMenuItem);
 		}
 

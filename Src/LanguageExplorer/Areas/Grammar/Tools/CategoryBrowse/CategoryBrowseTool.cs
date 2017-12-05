@@ -9,7 +9,6 @@ using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using LanguageExplorer.Works;
 using SIL.LCModel;
@@ -26,7 +25,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
 		private const string CategoriesWithoutTreeBarHandler = "categories_withoutTreeBarHandler";
 		private PaneBarContainer _paneBarContainer;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		[Import(AreaServices.GrammarAreaMachineName)]
 		private IArea _area;
 
@@ -53,17 +52,17 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(CategoriesWithoutTreeBarHandler, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(CategoriesWithoutTreeBarHandler, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
-			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordClerk); // Use generic export event handler.
+			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordList); // Use generic export event handler.
 
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
-				new RecordBrowseView(XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk));
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+				new RecordBrowseView(XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters).Root, majorFlexComponentParameters.LcmCache, _recordList));
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>
@@ -78,8 +77,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_recordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>
@@ -121,7 +120,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 
 		#endregion
 
-		private static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
 			Require.That(clerkId == CategoriesWithoutTreeBarHandler, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{CategoriesWithoutTreeBarHandler}'.");
 

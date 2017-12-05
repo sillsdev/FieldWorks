@@ -15,23 +15,23 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Make one.
 		/// </summary>
-		/// <param name="clerk">The clerk.</param>
+		/// <param name="myRecordList">The list.</param>
 		/// <param name="suppressSaveOnChangeRecord"></param>
 		/// <param name="skipShowRecord"></param>
 		/// <param name="suppressFocusChange"></param>
-		public RecordNavigationInfo(IRecordClerk clerk, bool suppressSaveOnChangeRecord, bool skipShowRecord, bool suppressFocusChange)
+		public RecordNavigationInfo(IRecordList myRecordList, bool suppressSaveOnChangeRecord, bool skipShowRecord, bool suppressFocusChange)
 		{
-			Clerk = clerk;
-			HvoOfCurrentObjAtTimeOfNavigation = Clerk != null && Clerk.CurrentObjectHvo != 0 ? Clerk.CurrentObjectHvo : 0;
+			MyRecordList = myRecordList;
+			HvoOfCurrentObjAtTimeOfNavigation = MyRecordList != null && MyRecordList.CurrentObjectHvo != 0 ? MyRecordList.CurrentObjectHvo : 0;
 			SuppressSaveOnChangeRecord = suppressSaveOnChangeRecord;
 			SkipShowRecord = skipShowRecord;
 			SuppressFocusChange = suppressFocusChange;
 		}
 
 		/// <summary>
-		///  The clerk that broadcast the change.
+		///  The list that broadcast the change.
 		/// </summary>
-		public IRecordClerk Clerk
+		public IRecordList MyRecordList
 		{
 			get; private set;
 		}
@@ -78,10 +78,10 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		/// <param name="argument"></param>
 		/// <returns></returns>
-		public static IRecordClerk GetSendingClerk(object argument)
+		public static IRecordList GetSendingList(object argument)
 		{
 			var info = argument as RecordNavigationInfo;
-			return info?.Clerk;
+			return info?.MyRecordList;
 		}
 
 		#region IComparable Members
@@ -99,7 +99,7 @@ namespace LanguageExplorer.Works
 
 		public override int GetHashCode()
 		{
-			return Clerk.VirtualFlid & HvoOfCurrentObjAtTimeOfNavigation;
+			return MyRecordList.VirtualFlid & HvoOfCurrentObjAtTimeOfNavigation;
 		}
 
 		public int CompareTo(object obj)

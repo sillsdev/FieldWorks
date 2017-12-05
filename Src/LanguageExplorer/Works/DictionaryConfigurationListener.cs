@@ -213,7 +213,7 @@ namespace LanguageExplorer.Works
 			bool refreshNeeded;
 			using (var dlg = new DictionaryConfigurationDlg(PropertyTable))
 			{
-				var clerk = RecordList.ActiveRecordClerkRepository.ActiveRecordClerk;
+				var clerk = RecordList.ActiveRecordListRepository.ActiveRecordList;
 				var controller = new DictionaryConfigurationController(dlg, clerk != null ? clerk.CurrentObject : null);
 				controller.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, GetDictionaryConfigurationType(PropertyTable));

@@ -2,8 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Works;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -26,36 +25,31 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
+				components?.Dispose();
 
 				if (m_cbNewSpelling != null)
-					m_cbNewSpelling.TextChanged -= new EventHandler(m_dstWordform_TextChanged);
-				if (m_sourceSentences != null)
-					m_sourceSentences.CheckBoxChanged -= new CheckBoxChangedEventHandler(sentences_CheckBoxChanged);
-
-				if (m_srcClerk != null)
 				{
-					if (PropertyTable != null)
-					{
-						PropertyTable.RemoveProperty("RecordClerk-" + m_srcClerk.Id);
-					}
-					m_srcClerk.Dispose();
+					m_cbNewSpelling.TextChanged -= m_dstWordform_TextChanged;
+				}
+				if (m_sourceSentences != null)
+				{
+					m_sourceSentences.CheckBoxChanged -= sentences_CheckBoxChanged;
 				}
 
-				if (m_dstClerk != null)
+				if (m_srcRecordList != null)
 				{
-					if (PropertyTable != null)
-					{
-						PropertyTable.RemoveProperty("RecordClerk-" + m_dstClerk.Id);
-					}
-					m_dstClerk.Dispose();
+					RecordList.ActiveRecordListRepository.RemoveRecordList(m_srcRecordList);
+				}
+
+				if (m_dstRecordList != null)
+				{
+					RecordList.ActiveRecordListRepository.RemoveRecordList(m_dstRecordList);
 				}
 			}
 			m_cache = null;
 			m_srcwfiWordform = null;
-			m_srcClerk = null;
-			m_dstClerk = null;
+			m_srcRecordList = null;
+			m_dstRecordList = null;
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;

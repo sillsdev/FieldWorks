@@ -4,7 +4,6 @@
 
 using System;
 using System.Diagnostics;
-using LanguageExplorer.Works;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -18,12 +17,12 @@ namespace LanguageExplorer.Areas.Grammar
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private AreaWideMenuHelper _areaWideMenuHelper;
 
-		internal GrammarAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordClerk recordClerk, EventHandler fileExportEventHandler = null)
+		internal GrammarAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList, EventHandler fileExportEventHandler = null)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_areaWideMenuHelper = recordClerk == null ? new AreaWideMenuHelper(_majorFlexComponentParameters) : new AreaWideMenuHelper(_majorFlexComponentParameters, recordClerk);
+			_areaWideMenuHelper = recordList == null ? new AreaWideMenuHelper(_majorFlexComponentParameters) : new AreaWideMenuHelper(_majorFlexComponentParameters, recordList);
 			// Set up File->Export menu, which is visible and enabled in all grammar area tools,
 			// using the default event handler for all tools except grammar sketch, which provides its own handler.
 			_areaWideMenuHelper.SetupFileExportMenu(fileExportEventHandler);

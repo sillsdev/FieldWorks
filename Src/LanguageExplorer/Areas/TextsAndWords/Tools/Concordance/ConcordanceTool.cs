@@ -27,7 +27,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		private MultiPane _concordanceContainer;
 		private ConcordanceControl _concordanceControl;
 		private RecordBrowseView _recordBrowseView;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		private InterlinMasterNoTitleBar _interlinMasterNoTitleBar;
 		[Import(AreaServices.TextAndWordsAreaMachineName)]
 		private IArea _area;
@@ -57,9 +57,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(OccurrencesOfSelectedUnit, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(OccurrencesOfSelectedUnit, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			var mainConcordanceContainerParameters = new MultiPaneParameters
 			{
@@ -76,7 +76,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 			var root = XDocument.Parse(TextAndWordsResources.ConcordanceToolParameters).Root;
 			var columns = XElement.Parse(TextAndWordsResources.ConcordanceColumns).Element("columns");
 			root.Element("wordOccurrenceList").Element("parameters").Element("includeCordanceColumns").ReplaceWith(columns);
-			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("ITextControl").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk, MenuServices.GetFileMenu(majorFlexComponentParameters.MenuStrip), MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("ITextControl").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFileMenu(majorFlexComponentParameters.MenuStrip), MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			mainConcordanceContainerParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _interlinMasterNoTitleBar);
 
 			// This will be the nested MultiPane that goes into mainConcordanceContainerParameters.FirstControlParameters.Control
@@ -92,15 +92,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 				FirstControlParameters = new SplitterChildControlParameters(), // Control (PaneBarContainer+ConcordanceControl) added below. Leave Label null.
 				SecondControlParameters = new SplitterChildControlParameters() // Control (PaneBarContainer+RecordBrowseView) added below. Leave Label null.
 			};
-			_concordanceControl = new ConcordanceControl((MatchingConcordanceItems)_recordClerk);
+			_concordanceControl = new ConcordanceControl((MatchingConcordanceItems)_recordList);
 			nestedMultiPaneParameters.FirstControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _concordanceControl);
-			_recordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceList").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk);
+			_recordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceList").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList);
 			nestedMultiPaneParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _recordBrowseView);
 			// Nested MP is created by call to MultiPaneFactory.CreateConcordanceContainer
 			_concordanceContainer = MultiPaneFactory.CreateConcordanceContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, mainConcordanceContainerParameters, nestedMultiPaneParameters);
 
 			_interlinMasterNoTitleBar.FinishInitialization();
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>
@@ -117,8 +117,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_recordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>
@@ -160,11 +160,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 
 		#endregion
 
-		private static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(clerkId == OccurrencesOfSelectedUnit, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{OccurrencesOfSelectedUnit}'.");
+			Require.That(recordListId == OccurrencesOfSelectedUnit, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{OccurrencesOfSelectedUnit}'.");
 
-			return new MatchingConcordanceItems(clerkId, statusBar, new ConcDecorator(cache.ServiceLocator));
+			return new MatchingConcordanceItems(recordListId, statusBar, new ConcDecorator(cache.ServiceLocator));
 		}
 	}
 }

@@ -12,11 +12,7 @@ using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public partial class AssignFeaturesToPhonemes : RecordBrowseView
 	{
 		/// ------------------------------------------------------------------------------------
@@ -29,8 +25,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 			InitializeComponent();
 		}
 
-		public AssignFeaturesToPhonemes(XElement browseViewDefinitions, LcmCache cache, IRecordClerk recordClerk)
-			: base(browseViewDefinitions, cache, recordClerk)
+		public AssignFeaturesToPhonemes(XElement browseViewDefinitions, LcmCache cache, IRecordList recordList)
+			: base(browseViewDefinitions, cache, recordList)
 		{
 			InitializeComponent();
 		}

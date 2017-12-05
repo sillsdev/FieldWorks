@@ -161,16 +161,17 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		#endregion
 
-		internal static IRecordClerk ConcordanceWordsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		internal static IRecordList ConcordanceWordsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(clerkId == ConcordanceWords, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{ConcordanceWords}'.");
+			Require.That(recordListId == ConcordanceWords, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{ConcordanceWords}'.");
 
+			// NB: The constructor supplies the id, so no need to pass it on.
 			return new ConcordanceWordList(statusBar, cache.LanguageProject, new ConcDecorator(cache.ServiceLocator));
 		}
 
-		internal static IRecordClerk InterlinearTextsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		internal static IRecordList InterlinearTextsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(clerkId == InterlinearTexts, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{InterlinearTexts}'.");
+			Require.That(recordListId == InterlinearTexts, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{InterlinearTexts}'.");
 
 			return new InterlinearTextsRecordList(InterlinearTexts, statusBar, new PropertyRecordSorter("Title"), AreaServices.Default, null, false, false, new InterestingTextsDecorator(cache.ServiceLocator, flexComponentParameters.PropertyTable), false, InterestingTextsDecorator.kflidInterestingTexts, cache.LanguageProject, "InterestingTexts");
 		}

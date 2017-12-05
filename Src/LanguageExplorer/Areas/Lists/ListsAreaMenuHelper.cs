@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Works;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -23,7 +22,7 @@ namespace LanguageExplorer.Areas.Lists
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private AreaWideMenuHelper _areaWideMenuHelper;
 		private IListArea _listArea;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		private ToolStripMenuItem _editMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newEditMenusAndHandlers;
 		private ToolStripMenuItem _deleteCustomListToolMenu;
@@ -32,18 +31,18 @@ namespace LanguageExplorer.Areas.Lists
 		private ToolStripMenuItem _toolConfigureMenu;
 		private ToolStripMenuItem _configureListMenu;
 
-		internal ListsAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IListArea listArea, IRecordClerk recordClerk)
+		internal ListsAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IListArea listArea, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(listArea, nameof(listArea));
-			Guard.AgainstNull(recordClerk, nameof(recordClerk));
+			Guard.AgainstNull(recordList, nameof(recordList));
 
 			_newEditMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 			_newInsertMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 			_majorFlexComponentParameters = majorFlexComponentParameters;
 			_listArea = listArea;
-			_recordClerk = recordClerk;
-			_areaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, recordClerk);
+			_recordList = recordList;
+			_areaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, recordList);
 			// Set up File->Export menu, which is visible and enabled in all list area tools, using the default event handler.
 			_areaWideMenuHelper.SetupFileExportMenu();
 
@@ -188,7 +187,7 @@ namespace LanguageExplorer.Areas.Lists
 			_majorFlexComponentParameters = null;
 			_areaWideMenuHelper = null;
 			_listArea = null;
-			_recordClerk = null;
+			_recordList = null;
 			_editMenu = null;
 			_newEditMenusAndHandlers = null;
 			_deleteCustomListToolMenu = null;
@@ -261,14 +260,14 @@ These all go on the "Insert" menu, but they are tool-specific. Start at 0.
 
 		private void DeleteCustomList_Click(object sender, EventArgs e)
 		{
-			UndoableUnitOfWorkHelper.Do(ListResources.ksUndoDeleteCustomList, ListResources.ksRedoDeleteCustomList, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () => new DeleteCustomList(_majorFlexComponentParameters.LcmCache).Run((ICmPossibilityList)_recordClerk.OwningObject));
+			UndoableUnitOfWorkHelper.Do(ListResources.ksUndoDeleteCustomList, ListResources.ksRedoDeleteCustomList, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () => new DeleteCustomList(_majorFlexComponentParameters.LcmCache).Run((ICmPossibilityList)_recordList.OwningObject));
 			_listArea.RemoveCustomListTool(_listArea.ActiveTool);
 		}
 
 		private void Application_Idle(object sender, EventArgs e)
 		{
 			var inDeletingTerritory = false;
-			var clerkOwningObject = _recordClerk.OwningObject as ICmPossibilityList;
+			var clerkOwningObject = _recordList.OwningObject as ICmPossibilityList;
 			if (clerkOwningObject != null && clerkOwningObject.Owner == null)
 			{
 				inDeletingTerritory = true;
@@ -279,7 +278,7 @@ These all go on the "Insert" menu, but they are tool-specific. Start at 0.
 
 		private void ConfigureList_Click(object sender, EventArgs e)
 		{
-			var list = (ICmPossibilityList)_recordClerk.OwningObject;
+			var list = (ICmPossibilityList)_recordList.OwningObject;
 			var originalUiName = list.Name.BestAnalysisAlternative.Text;
 			using (var dlg = new ConfigureListDlg(PropertyTable, Publisher, _majorFlexComponentParameters.LcmCache, list))
 			{

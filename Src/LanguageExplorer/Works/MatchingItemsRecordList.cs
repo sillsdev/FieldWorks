@@ -32,7 +32,6 @@ namespace LanguageExplorer.Works
 
 		public override void InitLoad(bool loadList)
 		{
-			CheckDisposed();
 			ComputeInsertableClasses();
 			CurrentIndex = -1;
 			m_hvoCurrent = 0;

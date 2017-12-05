@@ -5,7 +5,6 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Works;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -23,8 +22,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 		}
 
-		internal InterlinMasterNoTitleBar(XElement configurationParametersElement, LcmCache cache, IRecordClerk recordClerk, ToolStripMenuItem fileMenu, ToolStripMenuItem printMenu)
-			:base(configurationParametersElement, cache, recordClerk, fileMenu, printMenu, false)
+		internal InterlinMasterNoTitleBar(XElement configurationParametersElement, LcmCache cache, IRecordList recordList, ToolStripMenuItem fileMenu, ToolStripMenuItem printMenu)
+			:base(configurationParametersElement, cache, recordList, fileMenu, printMenu, false)
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -43,10 +42,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			if( disposing )
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}

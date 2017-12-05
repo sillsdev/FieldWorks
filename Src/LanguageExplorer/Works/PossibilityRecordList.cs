@@ -110,8 +110,6 @@ namespace LanguageExplorer.Works
 		// other possibility list while ours is active.
 		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			CheckDisposed();
-
 			// Singularly a bad idea to call the base code, which will do a reload,
 			// and then do another reload here, if the tags are matching, below.
 			// base.PropChanged (hvo, tag, ivMin, cvIns, cvDel);
@@ -163,8 +161,6 @@ namespace LanguageExplorer.Works
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_sortedObjects == null || m_sortedObjects.Count == 0)
 				{
 					return -1;
@@ -189,8 +185,6 @@ namespace LanguageExplorer.Works
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_sortedObjects == null || m_sortedObjects.Count == 0)
 				{
 					return -1;
@@ -227,8 +221,6 @@ namespace LanguageExplorer.Works
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_sortedObjects == null || m_sortedObjects.Count == 0 || CurrentIndex == -1)
 				{
 					return -1;
@@ -297,8 +289,6 @@ namespace LanguageExplorer.Works
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_sortedObjects == null || m_sortedObjects.Count == 0 || CurrentIndex == -1)
 				{
 					return -1;

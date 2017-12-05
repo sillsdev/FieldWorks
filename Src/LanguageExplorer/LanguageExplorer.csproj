@@ -932,7 +932,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="PersistenceProviderFactory.cs" />
-    <Compile Include="RecordClerkServices.cs" />
+    <Compile Include="RecordListServices.cs" />
     <Compile Include="SendReceive\BridgeMenuInstallRound.cs" />
     <Compile Include="SendReceive\CommonBridgeServices.cs" />
     <Compile Include="SendReceive\FlexBridge.cs" />
@@ -1101,9 +1101,8 @@
     </Compile>
     <Compile Include="Works\InterestingTextList.cs" />
     <Compile Include="Works\InterestingTextsDecorator.cs" />
-    <Compile Include="Works\IRecordClerk.cs" />
-    <Compile Include="Works\IRecordClerkRepository.cs" />
-    <Compile Include="Works\IRecordClerkRepositoryForTools.cs" />
+    <Compile Include="Works\IRecordListRepository.cs" />
+    <Compile Include="Works\IRecordListRepositoryForTools.cs" />
     <Compile Include="IRecordList.cs" />
     <Compile Include="Works\ISetRootHvo.cs" />
     <Compile Include="Works\IWebonaryClient.cs" />
@@ -1134,7 +1133,7 @@
     <Compile Include="Works\RecordClerkImages.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Works\RecordClerkRepository.cs" />
+    <Compile Include="Works\RecordListRepository.cs" />
     <Compile Include="Works\RecordDocView.cs">
       <SubType>UserControl</SubType>
     </Compile>

@@ -44,7 +44,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 		void FileExportMenu_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new ExportDialog())
+			using (var dlg = new ExportDialog(_majorFlexComponentParameters.Statusbar))
 			{
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				dlg.ShowDialog(PropertyTable.GetValue<Form>("window"));

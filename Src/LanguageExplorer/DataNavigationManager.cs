@@ -21,7 +21,7 @@ namespace LanguageExplorer
 	internal sealed class DataNavigationManager : DisposableBase
 	{
 		private readonly Dictionary<Navigation, Tuple<ToolStripMenuItem, ToolStripButton>> _menuItems;
-		private IRecordClerk _clerk;
+		private IRecordList _recordList;
 
 		/// <summary />
 		internal DataNavigationManager(Dictionary<Navigation, Tuple<ToolStripMenuItem, ToolStripButton>>  menuItems)
@@ -70,40 +70,40 @@ namespace LanguageExplorer
 			MoveToIndex(Navigation.Last);
 		}
 
-		internal IRecordClerk Clerk
+		internal IRecordList RecordList
 		{
 			set
 			{
-				if (_clerk != null)
+				if (_recordList != null)
 				{
 					// Unwire from older clerk
-					_clerk.RecordChanged -= Clerk_RecordChanged;
+					_recordList.RecordChanged -= RecordListRecordChanged;
 				}
-				_clerk = value;
-				if (_clerk != null)
+				_recordList = value;
+				if (_recordList != null)
 				{
 					// Wire up to new clerk.
-					_clerk.RecordChanged += Clerk_RecordChanged;
+					_recordList.RecordChanged += RecordListRecordChanged;
 				}
 
 				SetEnabledStateForWidgets();
 			}
 		}
 
-		private void Clerk_RecordChanged(object sender, RecordNavigationEventArgs recordNavigationEventArgs)
+		private void RecordListRecordChanged(object sender, RecordNavigationEventArgs recordNavigationEventArgs)
 		{
 			SetEnabledStateForWidgets();
 		}
 
 		private void MoveToIndex(Navigation navigateTo)
 		{
-			_clerk.MoveToIndex(navigateTo);
+			_recordList.MoveToIndex(navigateTo);
 			SetEnabledStateForWidgets();
 		}
 
 		internal void SetEnabledStateForWidgets()
 		{
-			if (_clerk == null || _clerk.ListSize == 0)
+			if (_recordList == null || _recordList.ListSize == 0)
 			{
 				// Disable menu items.
 				foreach (var tuple in _menuItems.Values)
@@ -115,13 +115,13 @@ namespace LanguageExplorer
 			else
 			{
 				var currentTuple = _menuItems[Navigation.First];
-				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _clerk.CanMoveTo(Navigation.First);
+				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _recordList.CanMoveTo(Navigation.First);
 				currentTuple = _menuItems[Navigation.Previous];
-				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _clerk.CanMoveTo(Navigation.Previous);
+				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _recordList.CanMoveTo(Navigation.Previous);
 				currentTuple = _menuItems[Navigation.Next];
-				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _clerk.CanMoveTo(Navigation.Next);
+				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _recordList.CanMoveTo(Navigation.Next);
 				currentTuple = _menuItems[Navigation.Last];
-				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _clerk.CanMoveTo(Navigation.Last);
+				currentTuple.Item1.Enabled = currentTuple.Item2.Enabled = _recordList.CanMoveTo(Navigation.Last);
 			}
 		}
 
@@ -134,9 +134,9 @@ namespace LanguageExplorer
 
 			if (disposing)
 			{
-				if (_clerk != null)
+				if (_recordList != null)
 				{
-					_clerk.RecordChanged -= Clerk_RecordChanged;
+					_recordList.RecordChanged -= RecordListRecordChanged;
 				}
 				var currentTuple = _menuItems[Navigation.First];
 				currentTuple.Item1.Click -= First_Click;

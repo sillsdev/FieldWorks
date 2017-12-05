@@ -77,7 +77,7 @@ namespace LanguageExplorer.Impls
 		///  Web browser to use in Linux
 		/// </summary>
 		private string _webBrowserProgramLinux = "firefox";
-		private IRecordClerkRepositoryForTools _recordClerkRepositoryForTools;
+		private IRecordListRepositoryForTools _recordListRepositoryForTools;
 		private ActiveViewHelper _viewHelper;
 		private IArea _currentArea;
 		private ITool _currentTool;
@@ -363,7 +363,7 @@ namespace LanguageExplorer.Impls
 		private void ClearDuringTransition()
 		{
 			// NB: If you are ever tempted to not set the Clerk to null, then be prepared to have each area/tool clear it.
-			RecordClerkServices.ClearClerk(_majorFlexComponentParameters);
+			RecordListServices.ClearRecordList(_majorFlexComponentParameters);
 			StatusBarPanelServices.ClearBasicStatusBars(_statusbar);
 		}
 
@@ -682,7 +682,7 @@ namespace LanguageExplorer.Impls
 			RestoreWindowSettings(wasCrashDuringPreviousStartup);
 			var restoreSize = Size;
 
-			_recordClerkRepositoryForTools = new RecordClerkRepository(Cache, flexComponentParameters);
+			_recordListRepositoryForTools = new RecordListRepository(Cache, flexComponentParameters);
 			_writingSystemListHandler = new WritingSystemListHandler(this, Cache, Subscriber, toolStripComboBoxWritingSystem, writingSystemToolStripMenuItem);
 			_combinedStylesListHandler = new CombinedStylesListHandler(this, Subscriber, _stylesheet, toolStripComboBoxStyles);
 
@@ -695,7 +695,7 @@ namespace LanguageExplorer.Impls
 				_statusbar,
 				_parserMenuManager,
 				_dataNavigationManager,
-				_recordClerkRepositoryForTools,
+				_recordListRepositoryForTools,
 				flexComponentParameters,
 				Cache,
 				_flexApp,
@@ -986,10 +986,10 @@ namespace LanguageExplorer.Impls
 
 			base.Dispose(disposing);
 
-			if (disposing && _recordClerkRepositoryForTools != null)
+			if (disposing && _recordListRepositoryForTools != null)
 			{
-				_recordClerkRepositoryForTools.Dispose();
-				_recordClerkRepositoryForTools = null;
+				_recordListRepositoryForTools.Dispose();
+				_recordListRepositoryForTools = null;
 			}
 
 			// Leave the PropertyTable for last, since the above stuff may still want to access it, while shutting down.
@@ -1463,7 +1463,7 @@ namespace LanguageExplorer.Impls
 				Configurations = configurations,
 				Publications = publications
 			};
-			using (var controller = new UploadToWebonaryController(Cache, PropertyTable, Publisher))
+			using (var controller = new UploadToWebonaryController(Cache, PropertyTable, Publisher, _majorFlexComponentParameters.Statusbar))
 			using (var dialog = new UploadToWebonaryDlg(controller, model, PropertyTable))
 			{
 				dialog.ShowDialog();
@@ -1650,9 +1650,9 @@ very simple minor adjustments. ;)"
 		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data. </param>
 		protected override void OnLoad(EventArgs e)
 		{
-			if (_recordClerkRepositoryForTools != RecordList.ActiveRecordClerkRepository)
+			if (_recordListRepositoryForTools != RecordList.ActiveRecordListRepository)
 			{
-				RecordList.ActiveRecordClerkRepository = _recordClerkRepositoryForTools;
+				RecordList.ActiveRecordListRepository = _recordListRepositoryForTools;
 			}
 
 			// Insert toolbar is not visible at the start. Tools make it visible as needed.
@@ -1678,9 +1678,9 @@ very simple minor adjustments. ;)"
 		/// </summary>
 		private void FwMainWnd_Activated(object sender, EventArgs e)
 		{
-			if (_recordClerkRepositoryForTools != RecordList.ActiveRecordClerkRepository)
+			if (_recordListRepositoryForTools != RecordList.ActiveRecordListRepository)
 			{
-				RecordList.ActiveRecordClerkRepository = _recordClerkRepositoryForTools;
+				RecordList.ActiveRecordListRepository = _recordListRepositoryForTools;
 		}
 		}
 

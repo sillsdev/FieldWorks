@@ -31,7 +31,7 @@ namespace LanguageExplorer.Controls
 		/// <param name="sliceFilterDocument">Document that has Slice filtering information.</param>
 		/// <param name="toolMachineName">Name of the tool being set up.</param>
 		/// <param name="cache">The LCM cache.</param>
-		/// <param name="recordClerk">RecordClerk to use with the container.</param>
+		/// <param name="recordList">RecordClerk to use with the container.</param>
 		/// <param name="dataTree">DataTree</param>
 		/// <param name="printMenu"></param>
 		/// <returns>A new instance of CollapsingSplitContainer, which has been placed into "SecondControl/Panel2" of <paramref name="mainCollapsingSplitContainer"/>.</returns>
@@ -39,7 +39,7 @@ namespace LanguageExplorer.Controls
 			ICollapsingSplitContainer mainCollapsingSplitContainer, bool verticalSplitter, XElement configurationParametersElement, XDocument sliceFilterDocument,
 			string toolMachineName,
 			LcmCache cache,
-			IRecordClerk recordClerk,
+			IRecordList recordList,
 			DataTree dataTree,
 			ToolStripMenuItem printMenu)
 		{
@@ -60,7 +60,7 @@ namespace LanguageExplorer.Controls
 			{
 				IsFlatList = false
 			};
-			var recordEditView = new RecordEditView(configurationParametersElement, sliceFilterDocument, cache, recordClerk, dataTree, printMenu);
+			var recordEditView = new RecordEditView(configurationParametersElement, sliceFilterDocument, cache, recordList, dataTree, printMenu);
 			recordEditView.InitializeFlexComponent(flexComponentParameters);
 			var paneBar = new PaneBar.PaneBar();
 			paneBar.AddControls(new List<Control> { panelButton });

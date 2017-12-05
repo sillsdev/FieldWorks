@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.Notebook
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private AreaWideMenuHelper _areaWideMenuHelper;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		private ToolStripMenuItem _fileImportMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newFileMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 
@@ -31,8 +31,8 @@ namespace LanguageExplorer.Areas.Notebook
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
-			_areaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, _recordClerk);
+			_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
+			_areaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, _recordList);
 
 			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 		}
@@ -51,7 +51,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 		void FileExportMenu_Click(object sender, EventArgs e)
 		{
-				if (_recordClerk.AreCustomFieldsAProblem(new int[] { RnGenericRecTags.kClassId}))
+				if (_recordList.AreCustomFieldsAProblem(new[] { RnGenericRecTags.kClassId}))
 				{
 					return;
 				}
@@ -157,7 +157,7 @@ namespace LanguageExplorer.Areas.Notebook
 			}
 			_majorFlexComponentParameters = null;
 			_areaWideMenuHelper = null;
-			_recordClerk = null;
+			_recordList = null;
 			_fileImportMenu = null;
 			_newFileMenusAndHandlers = null;
 

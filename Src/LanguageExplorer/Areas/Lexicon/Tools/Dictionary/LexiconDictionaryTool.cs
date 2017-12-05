@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		private IFwMainWnd _fwMainWnd;
 		private LcmCache _cache;
 		private PaneBarContainer _paneBarContainer;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordClerk;
 		private XhtmlDocView _xhtmlDocView;
 		private SliceContextMenuFactory _sliceContextMenuFactory;
 		private const string leftPanelMenuId = "left";
@@ -80,7 +80,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			_fwMainWnd = majorFlexComponentParameters.MainWindow;
 			if (_recordClerk == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.Entries, majorFlexComponentParameters.Statusbar, LexiconArea.EntriesFactoryMethod);
+				_recordClerk = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.Statusbar, LexiconArea.EntriesFactoryMethod);
 			}
 			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordClerk);
 
@@ -126,7 +126,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			_xhtmlDocView.FinishInitialization();
 			_xhtmlDocView.OnPropertyChanged("DictionaryPublicationLayout");
 			_paneBarContainer.PostLayoutInit();
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordClerk);
 		}
 
 		/// <summary>
@@ -156,7 +156,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 
 #endregion
 
-#region Implementation of IMajorFlexUiComponent
+		#region Implementation of IMajorFlexUiComponent
 
 		/// <summary>
 		/// Get the internal name of the component.
@@ -172,6 +172,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// User-visible localizable component name.
 		/// </summary>
 		public string UiName => "BUGGY: Dictionary";
+
 		#endregion
 
 		#region Implementation of ITool

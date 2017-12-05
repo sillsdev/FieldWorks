@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 	{
 		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
 		private PaneBarContainer _paneBarContainer;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		[Import(AreaServices.LexiconAreaMachineName)]
 		private IArea _area;
 
@@ -50,13 +50,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.SemanticDomainList_LexiconArea, majorFlexComponentParameters.Statusbar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, majorFlexComponentParameters.Statusbar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod);
 			}
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordClerk);
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
 
-			var semanticDomainRdeTreeBarHandler = (SemanticDomainRdeTreeBarHandler)_recordClerk.BarHandler;
+			var semanticDomainRdeTreeBarHandler = (SemanticDomainRdeTreeBarHandler)_recordList.BarHandler;
 
 			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters.PropertyTable, null, "ShowFailingItems-lexiconClassifiedDictionary", LexiconResources.Show_Unused_Items, LexiconResources.Show_Unused_Items)
 			{
@@ -68,11 +68,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				xmlDocViewPaneBar,
-				new XmlDocView(XDocument.Parse(LexiconResources.LexiconClassifiedDictionaryParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk));
+				new XmlDocView(XDocument.Parse(LexiconResources.LexiconClassifiedDictionaryParameters).Root, majorFlexComponentParameters.LcmCache, _recordList));
 
 			// Too early before now.
 			semanticDomainRdeTreeBarHandler.FinishInitialization(xmlDocViewPaneBar);
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 			_lexiconAreaMenuHelper.Initialize();
 		}
 
@@ -88,8 +88,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_recordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>

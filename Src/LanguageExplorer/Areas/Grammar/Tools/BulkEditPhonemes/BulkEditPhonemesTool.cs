@@ -7,7 +7,6 @@ using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Resources;
-using LanguageExplorer.Works;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
@@ -23,7 +22,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private AssignFeaturesToPhonemes _assignFeaturesToPhonemesView;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		[Import(AreaServices.GrammarAreaMachineName)]
 		private IArea _area;
 
@@ -59,19 +58,19 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 					majorFlexComponentParameters.LcmCache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Add(majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IPhPhonemeSetFactory>().Create());
 				});
 			}
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(GrammarArea.Phonemes, majorFlexComponentParameters.Statusbar, GrammarArea.PhonemesFactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(GrammarArea.Phonemes, majorFlexComponentParameters.Statusbar, GrammarArea.PhonemesFactoryMethod);
 			}
-			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordClerk); // Use generic export event handler.
+			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordList); // Use generic export event handler.
 
-			_assignFeaturesToPhonemesView = new AssignFeaturesToPhonemes(XDocument.Parse(GrammarResources.BulkEditPhonemesToolParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk);
+			_assignFeaturesToPhonemesView = new AssignFeaturesToPhonemes(XDocument.Parse(GrammarResources.BulkEditPhonemesToolParameters).Root, majorFlexComponentParameters.LcmCache, _recordList);
 
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_assignFeaturesToPhonemesView);
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>
@@ -87,8 +86,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_recordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>

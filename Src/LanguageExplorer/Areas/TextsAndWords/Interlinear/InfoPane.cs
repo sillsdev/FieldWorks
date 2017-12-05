@@ -80,7 +80,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Initialize the pane with a record clerk. (It already has the cache.)
 		/// </summary>
-		internal void Initialize(IRecordClerk clerk, ToolStripMenuItem printMenu)
+		internal void Initialize(IRecordList recordList, ToolStripMenuItem printMenu)
 		{
 			if (m_xrev != null)
 			{
@@ -91,7 +91,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
 			var dataTree = new InterlinearTextsRecordEditView.StTextDataTree(m_cache);
-			m_xrev = new InterlinearTextsRecordEditView(this, new XElement("parameters", new XAttribute("layout", "FullInformation")), m_cache, clerk, dataTree, printMenu);
+			m_xrev = new InterlinearTextsRecordEditView(this, new XElement("parameters", new XAttribute("layout", "FullInformation")), m_cache, recordList, dataTree, printMenu);
 			m_xrev.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			m_xrev.Dock = DockStyle.Fill;
 			Controls.Add(m_xrev);
@@ -167,8 +167,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal sealed class InterlinearTextsRecordEditView : RecordEditView
 		{
-			public InterlinearTextsRecordEditView(InfoPane infoPane, XElement configurationParametersElement, LcmCache cache, IRecordClerk clerk, DataTree dataTree, ToolStripMenuItem printMenu)
-				: base(configurationParametersElement, XDocument.Parse(AreaResources.VisibilityFilter_All), cache, clerk, dataTree, printMenu)
+			public InterlinearTextsRecordEditView(InfoPane infoPane, XElement configurationParametersElement, LcmCache cache, IRecordList recordList, DataTree dataTree, ToolStripMenuItem printMenu)
+				: base(configurationParametersElement, XDocument.Parse(AreaResources.VisibilityFilter_All), cache, recordList, dataTree, printMenu)
 			{
 				(m_dataTree as StTextDataTree).InfoPane = infoPane;
 			}
@@ -278,8 +278,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// and it no longer applies, please remove it. I added the test that the Clerk is not aleady looking
 				// at this object to suppress switching back to the raw text pane when clicking on the Info pane of an empty text.
 				// (FWR-3180)
-				if (repo.TryGetObject(m_currentRoot, out root) && root is IStText && m_xrev.Clerk.CurrentObjectHvo != m_currentRoot)
-					m_xrev.Clerk.JumpToRecord(m_currentRoot);
+				if (repo.TryGetObject(m_currentRoot, out root) && root is IStText && m_xrev.MyRecordList.CurrentObjectHvo != m_currentRoot)
+					m_xrev.MyRecordList.JumpToRecord(m_currentRoot);
 			}
 			else if (m_currentRoot == 0)
 			{

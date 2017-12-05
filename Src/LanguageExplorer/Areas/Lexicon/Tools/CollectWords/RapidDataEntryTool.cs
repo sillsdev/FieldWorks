@@ -29,8 +29,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		internal const string RDEwords = "RDEwords";
 		private CollapsingSplitContainer _collapsingSplitContainer;
 		private RecordBrowseView _recordBrowseView;
-		private IRecordClerk _recordClerk;
-		private IRecordClerk _nestedRecordClerk;
+		private IRecordList _recordList;
+		private IRecordList _nestedRecordList;
 		[Import(AreaServices.LexiconAreaMachineName)]
 		private IArea _area;
 		[Import]
@@ -65,8 +65,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 					So, I suspect those properties will eventually go away permanently, but I'm not there yet."
 			*/
 #endif
-			_propertyTable.RemoveProperty(RecordList.ClerkSelectedObjectPropertyId(_nestedRecordClerk.Id));
-			_propertyTable.RemoveProperty(RecordList.ClerkSelectedObjectPropertyId(_recordClerk.Id));
+			_propertyTable.RemoveProperty(RecordList.ClerkSelectedObjectPropertyId(_nestedRecordList.Id));
+			_propertyTable.RemoveProperty(RecordList.ClerkSelectedObjectPropertyId(_recordList.Id));
 
 			_propertyTable.RemoveProperty("ActiveClerkOwningObject");
 			_propertyTable.RemoveProperty("ActiveClerkSelectedObject");
@@ -74,7 +74,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
 
 			_recordBrowseView = null;
-			_nestedRecordClerk = null;
+			_nestedRecordList = null;
 			_lexiconAreaMenuHelper = null;
 		}
 
@@ -90,13 +90,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			mainCollapsingSplitContainerAsControl.SuspendLayout();
 
 			var root = XDocument.Parse(LexiconResources.RapidDataEntryToolParameters).Root;
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.SemanticDomainList_LexiconArea, majorFlexComponentParameters.Statusbar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, majorFlexComponentParameters.Statusbar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod);
 			}
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordClerk);
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
 
-			var semanticDomainRdeTreeBarHandler = (SemanticDomainRdeTreeBarHandler)_recordClerk.BarHandler;
+			var semanticDomainRdeTreeBarHandler = (SemanticDomainRdeTreeBarHandler)_recordList.BarHandler;
 			var recordBar = new RecordBar(_propertyTable)
 			{
 				IsFlatList = false,
@@ -122,12 +122,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
-			var recordEditView = new RecordEditView(root.Element("recordeditview").Element("parameters"), XDocument.Parse(LexiconResources.HideAdvancedFeatureFields), majorFlexComponentParameters.LcmCache, _recordClerk, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
-			if (_nestedRecordClerk == null)
+			var recordEditView = new RecordEditView(root.Element("recordeditview").Element("parameters"), XDocument.Parse(LexiconResources.HideAdvancedFeatureFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			if (_nestedRecordList == null)
 			{
-				_nestedRecordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(RDEwords, majorFlexComponentParameters.Statusbar, RDEwordsFactoryMethod);
+				_nestedRecordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(RDEwords, majorFlexComponentParameters.Statusbar, RDEwordsFactoryMethod);
 			}
-			_recordBrowseView = new RecordBrowseView(root.Element("recordbrowseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _nestedRecordClerk);
+			_recordBrowseView = new RecordBrowseView(root.Element("recordbrowseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _nestedRecordList);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,
@@ -152,7 +152,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			// Too early before now.
 			semanticDomainRdeTreeBarHandler.FinishInitialization(new PaneBar());
 			recordEditView.FinishInitialization();
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 			_lexiconAreaMenuHelper.Initialize();
 		}
 
@@ -169,8 +169,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_recordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>
@@ -184,7 +184,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 
 #endregion
 
-#region Implementation of IMajorFlexUiComponent
+		#region Implementation of IMajorFlexUiComponent
 
 		/// <summary>
 		/// Get the internal name of the component.
@@ -196,6 +196,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		/// User-visible localizable component name.
 		/// </summary>
 		public string UiName => "MEMORY ISSUES: Collect Words";
+
 		#endregion
 
 		#region Implementation of ITool
@@ -212,15 +213,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 
 		#endregion
 
-		private static IRecordClerk RDEwordsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordList RDEwordsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(clerkId == RDEwords, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{RDEwords}'.");
+			Require.That(recordListId == RDEwords, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{RDEwords}'.");
 
-			return new SubservientRecordList(clerkId, statusBar,
+			return new SubservientRecordList(recordListId, statusBar,
 				null, false, false,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
 				cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses", false), cache.LanguageProject.SemanticDomainListOA, "ReferringSenses",
-				((IRecordClerkRepositoryForTools)RecordList.ActiveRecordClerkRepository).GetRecordClerk(LexiconArea.SemanticDomainList_LexiconArea, statusBar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod));
+				((IRecordListRepositoryForTools)RecordList.ActiveRecordListRepository).GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, statusBar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod));
 		}
 	}
 }

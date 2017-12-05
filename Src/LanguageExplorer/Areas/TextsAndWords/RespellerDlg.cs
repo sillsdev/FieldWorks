@@ -39,8 +39,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private XMLViewsDataCache m_specialSda;
 		private IWfiWordform m_srcwfiWordform;
 		private int m_vernWs;
-		private IRecordClerk m_srcClerk;
-		private IRecordClerk m_dstClerk;
+		private IRecordList m_srcRecordList;
+		private IRecordList m_dstRecordList;
 		private const string s_helpTopic = "khtpRespellerDlg";
 		private string m_sMoreButtonText; // original text of More button
 		private Size m_moreMinSize; // minimum size when 'more' options shown (=original size, minus a bit on height)
@@ -60,9 +60,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		string m_lblExplainText; // original text of m_lblExplainDisabled
 
-		// Typically the clerk of the calling Words/Analysis view that manages a list of wordforms.
+		// Typically the record list of the calling Words/Analysis view that manages a list of wordforms.
 		// May be null when called from TE change spelling dialog.
-		IRecordClerk m_wfClerk;
+		IRecordList m_wordformRecordList;
 		int m_hvoNewWordform; // if we made a new wordform and changed all instances, this gets set.
 
 		ISegmentRepository m_repoSeg;
@@ -163,18 +163,18 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		internal bool SetDlgInfo(XElement configurationParameters)
 		{
-			m_wfClerk = PropertyTable.GetValue<IRecordClerk>("RecordClerk-concordanceWords");
-			m_wfClerk.SuppressSaveOnChangeRecord = true; // various things trigger change record and would prevent Undo
+			m_wordformRecordList = RecordList.ActiveRecordListRepository.GetRecordList(TextAndWordsArea.ConcordanceWords);
+			m_wordformRecordList.SuppressSaveOnChangeRecord = true; // various things trigger change record and would prevent Undo
 
 			//We need to re-parse the interesting texts so that the rows in the dialog show all the occurrences (make sure it is up to date)
-			if(m_wfClerk is InterlinearTextsRecordList)
+			if(m_wordformRecordList is InterlinearTextsRecordList)
 			{
 				//Unsuppress to allow for the list to be reloaded during ParseInterstingTextsIfNeeded()
 				//(this clerk and its list are not visible in this dialog, so there will be no future reload)
-				m_wfClerk.ListLoadingSuppressed = false;
-				(m_wfClerk as InterlinearTextsRecordList).ParseInterstingTextsIfNeeded(); //Trigger the parsing
+				m_wordformRecordList.ListLoadingSuppressed = false;
+				(m_wordformRecordList as InterlinearTextsRecordList).ParseInterstingTextsIfNeeded(); //Trigger the parsing
 			}
-			m_srcwfiWordform = (IWfiWordform)m_wfClerk.CurrentObject;
+			m_srcwfiWordform = (IWfiWordform)m_wordformRecordList.CurrentObject;
 			return SetDlgInfoPrivate(configurationParameters);
 		}
 
@@ -274,7 +274,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 				m_lblExplainText = m_lblExplainDisabled.Text;
 				// We only reload the list when refresh is pressed.
-				m_srcClerk.ListLoadingSuppressed = true;
+				m_srcRecordList.ListLoadingSuppressed = true;
 				CheckForOtherOccurrences();
 				SetEnabledState();
 			}
@@ -534,13 +534,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		protected override void OnClosed(EventArgs e)
 		{
 			// Any way we get closed we want to be sure this gets restored.
-			if (m_wfClerk != null)
+			if (m_wordformRecordList != null)
 			{
-				m_wfClerk.SuppressSaveOnChangeRecord = false;
+				m_wordformRecordList.SuppressSaveOnChangeRecord = false;
 				if (m_hvoNewWordform != 0)
 				{
 					// Move the clerk to the new word if possible.
-					m_wfClerk.JumpToRecord(m_hvoNewWordform);
+					m_wordformRecordList.JumpToRecord(m_hvoNewWordform);
 				}
 			}
 			base.OnClosed(e);
@@ -693,9 +693,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			foreach (int hvoFake in m_enabledItems)
 				m_specialSda.SetInt(hvoFake, XMLViewsDataCache.ktagItemSelected, 1);
 			// Reconstruct the main list of objects we are showing.
-			m_srcClerk.ListLoadingSuppressed = false;
-			m_srcClerk.OnRefresh(null);
-			m_srcClerk.ListLoadingSuppressed = true;
+			m_srcRecordList.ListLoadingSuppressed = false;
+			m_srcRecordList.OnRefresh(null);
+			m_srcRecordList.ListLoadingSuppressed = true;
 		}
 
 		private void EnsurePreviewOff()

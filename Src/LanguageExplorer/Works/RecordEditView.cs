@@ -65,8 +65,8 @@ namespace LanguageExplorer.Works
 
 		#region Construction and Removal
 
-		internal RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, LcmCache cache, IRecordClerk recordClerk, DataTree dataTree, ToolStripMenuItem printMenu)
-			: base(configurationParametersElement, cache, recordClerk)
+		internal RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, LcmCache cache, IRecordList recordList, DataTree dataTree, ToolStripMenuItem printMenu)
+			: base(configurationParametersElement, cache, recordList)
 		{
 			m_sliceFilterDocument = sliceFilterDocument;
 			// This must be called before InitializeComponent()
@@ -107,19 +107,19 @@ namespace LanguageExplorer.Works
 			m_showDescendantInRoot = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParametersElement, "showDescendantInRoot", false);
 
 			// retrieve persisted clerk index and set it.
-			int idx = PropertyTable.GetValue(Clerk.PersistedIndexProperty, SettingsGroup.LocalSettings, -1);
-			int lim = Clerk.ListSize;
+			int idx = PropertyTable.GetValue(MyRecordList.PersistedIndexProperty, SettingsGroup.LocalSettings, -1);
+			int lim = MyRecordList.ListSize;
 			if (idx >= 0 && idx < lim)
 			{
-				int idxOld = Clerk.CurrentIndex;
+				int idxOld = MyRecordList.CurrentIndex;
 				try
 				{
-					Clerk.JumpToIndex(idx);
+					MyRecordList.JumpToIndex(idx);
 				}
 				catch
 				{
 					if (lim > idxOld && lim > 0)
-						Clerk.JumpToIndex(idxOld >= 0 ? idxOld : 0);
+						MyRecordList.JumpToIndex(idxOld >= 0 ? idxOld : 0);
 				}
 			}
 
@@ -180,8 +180,8 @@ namespace LanguageExplorer.Works
 // As of 21JUL17 nobody cares about that 'propName' changing, so skip the broadcast.
 #endif
 			// persist Clerk's CurrentIndex in a db specific way
-			string propName = Clerk.PersistedIndexProperty;
-			PropertyTable.SetProperty(propName, Clerk.CurrentIndex, SettingsGroup.LocalSettings, true, false);
+			string propName = MyRecordList.PersistedIndexProperty;
+			PropertyTable.SetProperty(propName, MyRecordList.CurrentIndex, SettingsGroup.LocalSettings, true, false);
 			var window = PropertyTable.GetValue<IFwMainWnd>("window");
 
 			try
@@ -221,11 +221,11 @@ namespace LanguageExplorer.Works
 			if (!m_showDescendantInRoot)
 				return;
 
-			if (m_dataTree.Descendant != null && Clerk.CurrentObject != m_dataTree.Descendant)
+			if (m_dataTree.Descendant != null && MyRecordList.CurrentObject != m_dataTree.Descendant)
 				// if the user has clicked on a different descendant's slice, update the currently
 				// selected record (we want to keep the browse view in sync), but do not change the
 				// focus
-				Clerk.JumpToRecord(m_dataTree.Descendant.Hvo, true);
+				MyRecordList.JumpToRecord(m_dataTree.Descendant.Hvo, true);
 		}
 
 		#endregion // Message Handlers
@@ -245,7 +245,7 @@ namespace LanguageExplorer.Works
 			}
 			else if (!string.IsNullOrEmpty(m_titleField))
 			{
-				ICmObject curObj = Clerk.CurrentObject;
+				ICmObject curObj = MyRecordList.CurrentObject;
 				if (curObj != null)
 				{
 					int flid = Cache.MetaDataCacheAccessor.GetFieldId2(curObj.ClassID, m_titleField, true);
@@ -285,7 +285,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		protected override void ShowRecord()
 		{
-			ShowRecord(new RecordNavigationInfo(Clerk, Clerk.SuppressSaveOnChangeRecord, false, false));
+			ShowRecord(new RecordNavigationInfo(MyRecordList, MyRecordList.SuppressSaveOnChangeRecord, false, false));
 		}
 
 		/// <summary>
@@ -302,12 +302,12 @@ namespace LanguageExplorer.Works
 			Debug.Assert(m_dataTree != null);
 #endif
 
-			bool oldSuppressSaveOnChangeRecord = Clerk.SuppressSaveOnChangeRecord;
-			Clerk.SuppressSaveOnChangeRecord = rni.SuppressSaveOnChangeRecord;
+			bool oldSuppressSaveOnChangeRecord = MyRecordList.SuppressSaveOnChangeRecord;
+			MyRecordList.SuppressSaveOnChangeRecord = rni.SuppressSaveOnChangeRecord;
 			PrepCacheForNewRecord();
-			Clerk.SuppressSaveOnChangeRecord = oldSuppressSaveOnChangeRecord;
+			MyRecordList.SuppressSaveOnChangeRecord = oldSuppressSaveOnChangeRecord;
 
-			if (Clerk.CurrentObject == null || Clerk.SuspendLoadingRecordUntilOnJumpToRecord)
+			if (MyRecordList.CurrentObject == null || MyRecordList.SuspendLoadingRecordUntilOnJumpToRecord)
 			{
 				m_dataTree.Hide();
 				m_dataTree.Reset();	// in case user deleted the object it was based upon.
@@ -319,16 +319,16 @@ namespace LanguageExplorer.Works
 				using (new WaitCursor(this))
 				{
 				// Enhance: Maybe do something here to allow changing the templates without the starting the application.
-				ICmObject obj = Clerk.CurrentObject;
+				ICmObject obj = MyRecordList.CurrentObject;
 
 				if (m_showDescendantInRoot)
 				{
 					// find the root object of the current object
-					while (obj.Owner != Clerk.OwningObject)
+					while (obj.Owner != MyRecordList.OwningObject)
 						obj = obj.Owner;
 				}
 
-				m_dataTree.ShowObject(obj, m_layoutName, m_layoutChoiceField, Clerk.CurrentObject, ShouldSuppressFocusChange(rni));
+				m_dataTree.ShowObject(obj, m_layoutName, m_layoutChoiceField, MyRecordList.CurrentObject, ShouldSuppressFocusChange(rni));
 			}
 			}
 			catch (Exception error)
@@ -363,7 +363,7 @@ namespace LanguageExplorer.Works
 		/// ------------------------------------------------------------------------------------
 		protected virtual void PrepCacheForNewRecord()
 		{
-			Clerk.SaveOnChangeRecord();
+			MyRecordList.SaveOnChangeRecord();
 		}
 
 		/// <summary>
@@ -392,7 +392,7 @@ namespace LanguageExplorer.Works
 
 			m_dataTree.PersistenceProvder = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
 
-			Clerk.UpdateRecordTreeBarIfNeeded();
+			MyRecordList.UpdateRecordTreeBarIfNeeded();
 			m_dataTree.SliceFilter = m_sliceFilterDocument != null ? new SliceFilter(m_sliceFilterDocument) : new SliceFilter();
 			// Already done: m_dataEntryForm.Dock = DockStyle.Fill;
 #if RANDYTODO
@@ -511,7 +511,7 @@ namespace LanguageExplorer.Works
 			// if the title field property changed, update the pane bar text
 			if (!string.IsNullOrEmpty(m_titleField))
 			{
-				ICmObject curObj = Clerk.CurrentObject;
+				ICmObject curObj = MyRecordList.CurrentObject;
 				if (curObj != null)
 				{
 					int flid = Cache.MetaDataCacheAccessor.GetFieldId2(curObj.ClassID, m_titleField, true);
@@ -525,7 +525,7 @@ namespace LanguageExplorer.Works
 
 		private void PrintMenu_Click(object sender, EventArgs e)
 		{
-			if (m_printLayout == null || Clerk.CurrentObject == null)
+			if (m_printLayout == null || MyRecordList.CurrentObject == null)
 				return; // Don't bother; this edit view does not specify a print layout, or there's nothing to print.
 
 			var area = PropertyTable.GetValue<string>("areaChoice");
@@ -567,7 +567,7 @@ namespace LanguageExplorer.Works
 						// so for now, we do not support non-collated printing.  Forcing the setting
 						// seems to work fine.
 						dlg.Document.PrinterSettings.Collate = true;
-						docView.PrintFromDetail(pd, Clerk.CurrentObject.Hvo);
+						docView.PrintFromDetail(pd, MyRecordList.CurrentObject.Hvo);
 					}
 				}
 			}

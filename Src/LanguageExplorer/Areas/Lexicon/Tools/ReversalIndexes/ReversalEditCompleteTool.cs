@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		private const string panelMenuId = "left";
 		private LcmCache _cache;
 		private MultiPane _multiPane;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		private XhtmlDocView _xhtmlDocView;
 		private IReversalIndexRepository _reversalIndexRepository;
 		private IReversalIndex _currentReversalIndex;
@@ -78,20 +78,20 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			{
 				_currentReversalIndex = (IReversalIndex)majorFlexComponentParameters.LcmCache.ServiceLocator.GetObject(currentGuid);
 			}
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.AllReversalEntries, majorFlexComponentParameters.Statusbar, LexiconArea.AllReversalEntriesFactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LexiconArea.AllReversalEntries, majorFlexComponentParameters.Statusbar, LexiconArea.AllReversalEntriesFactoryMethod);
 			}
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordClerk);
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
 
 			var root = XDocument.Parse(LexiconResources.ReversalEditCompleteToolParameters).Root;
-			_xhtmlDocView = new XhtmlDocView(root.Element("docview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			_xhtmlDocView = new XhtmlDocView(root.Element("docview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
 			var dataTree = new DataTree();
 			dataTree.SliceContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreateMainPanelContextMenuStrip);
-			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordClerk, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -129,7 +129,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			recordEditView.FinishInitialization();
 			_xhtmlDocView.OnPropertyChanged("ReversalIndexPublicationLayout");
 			((IPostLayoutInit)_multiPane).PostLayoutInit();
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>
@@ -145,8 +145,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		public void FinishRefresh()
 		{
 			_xhtmlDocView.PublicationDecorator.Refresh();
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_recordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>
@@ -218,7 +218,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			var contextMenuItem = (ToolStripMenuItem)sender;
 			_currentReversalIndex = (IReversalIndex)contextMenuItem.Tag;
 			_propertyTable.SetProperty("ReversalIndexGuid", _currentReversalIndex.Guid.ToString(), SettingsGroup.LocalSettings, true, false);
-			((ReversalListBase)_recordClerk).ChangeOwningObjectIfPossible();
+			((ReversalListBase)_recordList).ChangeOwningObjectIfPossible();
 			SetCheckedState(contextMenuItem);
 		}
 

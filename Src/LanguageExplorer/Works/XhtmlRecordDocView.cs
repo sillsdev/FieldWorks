@@ -25,8 +25,8 @@ namespace LanguageExplorer.Works
 		internal string m_configObjectName;
 		private ToolStripMenuItem m_printMenu;
 
-		public XhtmlRecordDocView(XElement configurationParameters, LcmCache cache, IRecordClerk recordClerk, ToolStripMenuItem printMenu)
-			: base(configurationParameters, cache, recordClerk)
+		public XhtmlRecordDocView(XElement configurationParameters, LcmCache cache, IRecordList recordList, ToolStripMenuItem printMenu)
+			: base(configurationParameters, cache, recordList)
 		{
 			m_printMenu = printMenu;
 			m_printMenu.Click += PrintMenu_Click;
@@ -75,7 +75,7 @@ namespace LanguageExplorer.Works
 				browser.DomClick += OnDomClick;
 			m_fullyInitialized = true;
 			// Add ourselves as a listener for changes to the item we are displaying
-			Clerk.VirtualListPublisher.AddNotification(this);
+			MyRecordList.VirtualListPublisher.AddNotification(this);
 		}
 
 		/// <summary>
@@ -104,11 +104,11 @@ namespace LanguageExplorer.Works
 				return;
 			if (e.Button == GeckoMouseButton.Left)
 			{
-				XhtmlDocView.HandleDomLeftClick(Clerk, e, element);
+				XhtmlDocView.HandleDomLeftClick(MyRecordList, e, element);
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
-				XhtmlDocView.HandleDomRightClick(browser, e, element, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_configObjectName, Cache, Clerk);
+				XhtmlDocView.HandleDomRightClick(browser, e, element, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_configObjectName, Cache, MyRecordList);
 			}
 		}
 
@@ -136,21 +136,20 @@ namespace LanguageExplorer.Works
 			if (!m_fullyInitialized)
 				return;
 			base.ShowRecord();
-			var cmo = Clerk.CurrentObject;
+			var cmo = MyRecordList.CurrentObject;
 			// Don't steal focus
 			Enabled = false;
 			m_mainView.DocumentCompleted += EnableRecordDocView;
 			if (cmo != null && cmo.Hvo > 0)
 			{
 				var configurationFile = DictionaryConfigurationListener.GetCurrentConfiguration(PropertyTable);
-				if (String.IsNullOrEmpty(configurationFile))
+				if (string.IsNullOrEmpty(configurationFile))
 				{
-					m_mainView.DocumentText = String.Format("<html><body><p>{0}</p></body></html>",
-						xWorksStrings.ksNoConfiguration);
+					m_mainView.DocumentText = $"<html><body><p>{xWorksStrings.ksNoConfiguration}</p></body></html>";
 					return;
 				}
 				var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
-				var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new [] { cmo.Hvo }, null, configuration, PropertyTable, Cache, Clerk);
+				var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new [] { cmo.Hvo }, null, configuration, PropertyTable, Cache, MyRecordList);
 				m_mainView.Url = new Uri(xhtmlPath);
 				m_mainView.Refresh(WebBrowserRefreshOption.Completely);
 			}

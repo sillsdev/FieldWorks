@@ -11,7 +11,6 @@ using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.FieldWorks.Resources;
-using LanguageExplorer.Works;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -20,7 +19,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	{
 		private LcmCache Cache { get; set; }
 		private IHelpTopicProvider HelpTopicProvider { get; set; }
-		private IRecordClerk RecordClerk { get; set; }
+		private IRecordList MyRecordList { get; set; }
 		private ParserMenuManager ParserMenuManager { get; set; }
 
 		#region Data members
@@ -53,12 +52,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			AccessibleName = GetType().Name;
 		}
 
-		public ImportWordSetDlg(LcmCache cache, IHelpTopicProvider helpTopicProvider, IRecordClerk recordClerk, ParserMenuManager parserMenuManager)
+		public ImportWordSetDlg(LcmCache cache, IHelpTopicProvider helpTopicProvider, IRecordList recordList, ParserMenuManager parserMenuManager)
 			: this()
 		{
 			Cache = cache;
 			HelpTopicProvider = helpTopicProvider;
-			RecordClerk = recordClerk;
+			MyRecordList = recordList;
 			ParserMenuManager = parserMenuManager;
 			helpProvider = new HelpProvider
 			{
@@ -95,7 +94,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 			Cache = null;
 			HelpTopicProvider = null;
-			RecordClerk = null;
+			MyRecordList = null;
 			ParserMenuManager = null;
 
 			base.Dispose(disposing);
@@ -197,7 +196,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			CreateWordsetFromFiles(_paths);
 
-			RecordClerk.ReloadFilterProvider();
+			MyRecordList.ReloadFilterProvider();
 			DialogResult = DialogResult.OK;
 		}
 

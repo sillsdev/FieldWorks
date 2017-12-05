@@ -71,7 +71,7 @@ DONE:					<item command="CmdImportWordSet" defaultVisible="false"/>
 
 		private void ImportWordSetToolStripMenuItemOnClick(object sender, EventArgs eventArgs)
 		{
-			using (var dlg = new ImportWordSetDlg(_majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.FlexApp, RecordList.ActiveRecordClerkRepository.ActiveRecordClerk, _majorFlexComponentParameters.ParserMenuManager))
+			using (var dlg = new ImportWordSetDlg(_majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.FlexApp, RecordList.ActiveRecordListRepository.ActiveRecordList, _majorFlexComponentParameters.ParserMenuManager))
 			{
 				dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow);
 			}

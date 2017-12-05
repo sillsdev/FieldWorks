@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		private InterlinMaster _interlinMaster;
 		[Import(AreaServices.TextAndWordsAreaMachineName)]
 		private IArea _area;
@@ -57,9 +57,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{_area.MachineName}", MachineName, SettingsGroup.LocalSettings, true, false);
 			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
 			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.Statusbar, TextAndWordsArea.InterlinearTextsFactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.Statusbar, TextAndWordsArea.InterlinearTextsFactoryMethod);
 			}
 			var multiPaneParameters = new MultiPaneParameters
 			{
@@ -72,8 +72,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 				DefaultFocusControl = "InterlinMaster"
 			};
 			var root = XDocument.Parse(TextAndWordsResources.InterlinearEditToolParameters).Root;
-			_recordBrowseView = new RecordBrowseView(root.Element("recordbrowseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk);
-			_interlinMaster = new InterlinMaster(root.Element("interlinearmaster").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordClerk, MenuServices.GetFileMenu(majorFlexComponentParameters.MenuStrip), MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			_recordBrowseView = new RecordBrowseView(root.Element("recordbrowseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList);
+			_interlinMaster = new InterlinMaster(root.Element("interlinearmaster").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFileMenu(majorFlexComponentParameters.MenuStrip), MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
@@ -86,7 +86,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			// Too early before now.
 			_interlinMaster.FinishInitialization();
 			_interlinMaster.BringToFront();
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>
@@ -104,8 +104,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_recordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>

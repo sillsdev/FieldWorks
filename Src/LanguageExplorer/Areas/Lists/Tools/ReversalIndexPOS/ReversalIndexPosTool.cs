@@ -33,7 +33,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		private const string panelMenuId = "left";
 		private LcmCache _cache;
 		private MultiPane _multiPane;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		private RecordBrowseView _recordBrowseView;
 		private IReversalIndexRepository _reversalIndexRepository;
 		private IReversalIndex _currentReversalIndex;
@@ -75,19 +75,19 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				_currentReversalIndex = (IReversalIndex)majorFlexComponentParameters.LcmCache.ServiceLocator.GetObject(currentGuid);
 			}
 
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(ReversalIndexPOSRecordList.ReversalEntriesPOS, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(ReversalIndexPOSRecordList.ReversalEntriesPOS, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
-			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, (IListArea)_area, _recordClerk);
+			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, (IListArea)_area, _recordList);
 
-			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk);
+			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordList);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
 			var dataTree = new DataTree();
 			dataTree.SliceContextMenuFactory.RegisterPanelMenuCreatorMethod(panelMenuId, CreateMainPanelContextMenuStrip);
-			var recordEditView = new RecordEditView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSRecordEditViewParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordClerk, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			var recordEditView = new RecordEditView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSRecordEditViewParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			panelButton.DatTree = recordEditView.DatTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>
@@ -145,8 +145,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// </remarks>
 		public void FinishRefresh()
 		{
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_recordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>
@@ -217,7 +217,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			var contextMenuItem = (ToolStripMenuItem)sender;
 			_currentReversalIndex = (IReversalIndex)contextMenuItem.Tag;
 			_propertyTable.SetProperty("ReversalIndexGuid", _currentReversalIndex.Guid.ToString(), SettingsGroup.LocalSettings, true, false);
-			((ReversalListBase)_recordClerk).ChangeOwningObjectIfPossible();
+			((ReversalListBase)_recordList).ChangeOwningObjectIfPossible();
 			SetCheckedState(contextMenuItem);
 		}
 
@@ -227,9 +227,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			reversalToolStripMenuItem.Checked = (currentTag.Guid.ToString() == _propertyTable.GetValue<string>("ReversalIndexGuid"));
 		}
 
-		private static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(clerkId == ReversalIndexPOSRecordList.ReversalEntriesPOS, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{ReversalIndexPOSRecordList.ReversalEntriesPOS}'.");
+			Require.That(recordListId == ReversalIndexPOSRecordList.ReversalEntriesPOS, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{ReversalIndexPOSRecordList.ReversalEntriesPOS}'.");
 
 			IReversalIndex currentReversalIndex = null;
 			var currentReversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(flexComponentParameters.PropertyTable, "ReversalIndexGuid");
@@ -238,6 +238,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				currentReversalIndex = (IReversalIndex)cache.ServiceLocator.GetObject(currentReversalIndexGuid);
 			}
 
+			// NB: No need to pass 'recordListId' to the constructor, since it supplies ReversalIndexPOSRecordList.ReversalEntriesPOS for the id.
 			return new ReversalIndexPOSRecordList(statusBar, cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), currentReversalIndex);
 		}
 	}

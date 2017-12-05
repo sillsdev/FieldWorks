@@ -25,32 +25,32 @@ namespace LanguageExplorerTests.Works
 			using (var propertyTable = TestSetupServices.SetupTestPropertyTable(publisher))
 			using (var dummyWindow = new DummyFwMainWnd())
 			using (var statusbar = new StatusBar())
-			using (IRecordClerkRepository recordClerkRepository = new RecordClerkRepository(Cache, new FlexComponentParameters(propertyTable, publisher, subscriber)))
+			using (IRecordListRepository recordListRepository = new RecordListRepository(Cache, new FlexComponentParameters(propertyTable, publisher, subscriber)))
 			{
 				propertyTable.SetProperty("cache", Cache, SettingsGroup.BestSettings, false, false);
 				propertyTable.SetProperty("window", dummyWindow, SettingsGroup.BestSettings, false, false);
 
 				// Test 1. Make sure a bogus clerk isn't in the repository.
-				Assert.IsNull(recordClerkRepository.GetRecordClerk("bogusClerkId"));
+				Assert.IsNull(recordListRepository.GetRecordList("bogusClerkId"));
 				// Test 2. Make sure there is no active clerk.
-				Assert.IsNull(recordClerkRepository.ActiveRecordClerk);
+				Assert.IsNull(recordListRepository.ActiveRecordList);
 
 				// Test 3. New clerk is added.
 				var recordList = new RecordList("records", statusbar, new PropertyRecordSorter("ShortName"), "Default", null, false, false, Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, Cache.MetaDataCacheAccessor.GetFieldId2(Cache.LanguageProject.ResearchNotebookOA.ClassID, "AllRecords", false), Cache.LanguageProject.ResearchNotebookOA, "AllRecords");
 				recordList.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
 
-				recordClerkRepository.AddRecordClerk(recordList);
-				Assert.AreSame(recordList, recordClerkRepository.GetRecordClerk("records"));
-				Assert.IsNull(recordClerkRepository.ActiveRecordClerk);
+				recordListRepository.AddRecordList(recordList);
+				Assert.AreSame(recordList, recordListRepository.GetRecordList("records"));
+				Assert.IsNull(recordListRepository.ActiveRecordList);
 
 				// Test 4. Check out active clerk
-				Assert.IsNull(recordClerkRepository.ActiveRecordClerk);
-				recordClerkRepository.ActiveRecordClerk = recordList;
-				Assert.AreSame(recordList, recordClerkRepository.ActiveRecordClerk);
+				Assert.IsNull(recordListRepository.ActiveRecordList);
+				recordListRepository.ActiveRecordList = recordList;
+				Assert.AreSame(recordList, recordListRepository.ActiveRecordList);
 
 				// Test 5. Remove clerk.
-				recordClerkRepository.RemoveRecordClerk(recordList);
-				Assert.IsNull(recordClerkRepository.ActiveRecordClerk);
+				recordListRepository.RemoveRecordList(recordList);
+				Assert.IsNull(recordListRepository.ActiveRecordList);
 			}
 		}
 	}

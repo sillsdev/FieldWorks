@@ -45,11 +45,6 @@ namespace LanguageExplorer.Areas
 			ChangeOwningObjectIfPossible();
 		}
 
-		public override bool AreSortersCompatible(RecordSorter first, RecordSorter second)
-		{
-			return first.CompatibleSorter(second);
-		}
-
 		/// <summary>
 		///
 		/// </summary>
@@ -98,8 +93,6 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public override void OnPropertyChanged(string name)
 		{
-			CheckDisposed();
-
 			var window = PropertyTable.GetValue<IFwMainWnd>("window");
 			if (window != null)
 			{
@@ -155,8 +148,6 @@ namespace LanguageExplorer.Areas
 		/// <summary />
 		public virtual void OnInsertReversalIndex(object argument)
 		{
-			CheckDisposed();
-
 			var newGuid = CreateNewReversalIndex();
 			if (newGuid == Guid.Empty)
 			{
@@ -245,8 +236,6 @@ namespace LanguageExplorer.Areas
 		/// <summary />
 		public virtual void OnDeleteReversalIndex(object argument)
 		{
-			CheckDisposed();
-
 			var oldGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 			if (oldGuid.Equals(Guid.Empty))
 			{
@@ -263,8 +252,6 @@ namespace LanguageExplorer.Areas
 		/// <summary />
 		public void DeleteReversalIndex(IReversalIndex ri)
 		{
-			CheckDisposed();
-
 			var mainWindow = PropertyTable.GetValue<Form>("window");
 			using (new WaitCursor(mainWindow))
 			{

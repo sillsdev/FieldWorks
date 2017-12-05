@@ -30,7 +30,7 @@ namespace LanguageExplorer.Areas
 		{
 			// by default, we won't publish that we're the "RecordClerk.RecordClerkRepository.ActiveRecordClerk" or other usual effects.
 			// but we do want to say that we're being actively used in a gui.
-			_isActiveInGui = true;
+			IsActiveInGui = true;
 		}
 
 		public override bool IsControllingTheRecordTreeBar

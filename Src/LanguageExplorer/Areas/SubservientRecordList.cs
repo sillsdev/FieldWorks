@@ -22,19 +22,19 @@ namespace LanguageExplorer.Areas
 		/// is dependent on the WfiWordform clerk to tell it which wordform it is supposed to
 		/// be displaying the analyses of.
 		/// </summary>
-		private IRecordClerk _clerkProvidingRootObject;
+		private IRecordList _recordListProvidingRootObject;
 
-		internal SubservientRecordList(string id, StatusBar statusBar, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, ICmObject owner, string propertyName, IRecordClerk clerkProvidingRootObject)
+		internal SubservientRecordList(string id, StatusBar statusBar, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, ICmObject owner, string propertyName, IRecordList recordListProvidingRootObject)
 			: base(id, statusBar, new PropertyRecordSorter("ShortName"), AreaServices.Default, defaultFilter, allowDeletions, shouldHandleDeletion, decorator, usingAnalysisWs, flid, owner, propertyName)
 		{
-			Guard.AgainstNull(clerkProvidingRootObject, nameof(clerkProvidingRootObject));
+			Guard.AgainstNull(recordListProvidingRootObject, nameof(recordListProvidingRootObject));
 
-			_clerkProvidingRootObject = clerkProvidingRootObject;
+			_recordListProvidingRootObject = recordListProvidingRootObject;
 		}
 
-		internal SubservientRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, IRecordClerk clerkProvidingRootObject)
+		internal SubservientRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, IRecordList recordListProvidingRootObject)
 		{
-			Guard.AgainstNull(clerkProvidingRootObject, nameof(clerkProvidingRootObject));
+			Guard.AgainstNull(recordListProvidingRootObject, nameof(recordListProvidingRootObject));
 			Guard.AgainstNullOrEmptyString(id, nameof(id));
 			Guard.AgainstNull(statusBar, nameof(statusBar));
 			Guard.AgainstNull(decorator, nameof(decorator));
@@ -49,15 +49,15 @@ namespace LanguageExplorer.Areas
 			m_flid = flid;
 			// Review JohnH(JohnT): This is only useful for dependent clerks, but I don't know how to check this is one.
 			m_owningObject = null;
-			_clerkProvidingRootObject = clerkProvidingRootObject;
+			_recordListProvidingRootObject = recordListProvidingRootObject;
 		}
 
-		private string DependentPropertyName => ClerkSelectedObjectPropertyId(_clerkProvidingRootObject.Id);
+		private string DependentPropertyName => ClerkSelectedObjectPropertyId(_recordListProvidingRootObject.Id);
 
 		#region Overrides of RecordList
-		public override bool TryClerkProvidingRootObject(out IRecordClerk clerkProvidingRootObject)
+		public override bool TryListProvidingRootObject(out IRecordList recordListProvidingRootObject)
 		{
-			clerkProvidingRootObject = _clerkProvidingRootObject;
+			recordListProvidingRootObject = _recordListProvidingRootObject;
 			return true;
 		}
 
@@ -68,7 +68,7 @@ namespace LanguageExplorer.Areas
 			var rni = PropertyTable.GetValue<RecordNavigationInfo>(DependentPropertyName);
 			if (rni != null)
 			{
-				newObj = rni.Clerk.CurrentObject;
+				newObj = rni.MyRecordList.CurrentObject;
 			}
 			using (var luh = new ListUpdateHelper(this))
 			{
@@ -104,13 +104,17 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		protected override void DisposeUnmanagedResources()
+		protected override void Dispose(bool disposing)
 		{
-			_clerkProvidingRootObject = null;
+			if (disposing)
+			{
+			}
+			_recordListProvidingRootObject = null;
 
-			base.DisposeUnmanagedResources();
+			base.Dispose(disposing);
 		}
-		protected override bool IsPrimaryClerk => false;
+
+		protected override bool IsPrimaryRecordList => false;
 
 		#endregion
 	}

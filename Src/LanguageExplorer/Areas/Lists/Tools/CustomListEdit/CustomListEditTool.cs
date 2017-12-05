@@ -10,7 +10,6 @@ using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Works;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -28,7 +27,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 		/// The RecordBar has no top PaneBar for information, menus, etc.
 		/// </summary>
 		private CollapsingSplitContainer _collapsingSplitContainer;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 
 		internal CustomListEditTool(IListArea area, ICmPossibilityList customList)
 		{
@@ -62,11 +61,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(MachineName, majorFlexComponentParameters.Statusbar, _customList, FactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(MachineName, majorFlexComponentParameters.Statusbar, _customList, FactoryMethod);
 			}
-			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, _area, _recordClerk);
+			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, _area, _recordList);
 
 #if RANDYTODO
 // TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
@@ -79,10 +78,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 				XDocument.Parse(ListResources.PositionsEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
 				majorFlexComponentParameters.LcmCache,
-				_recordClerk,
+				_recordList,
 				dataTree,
 				MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>
@@ -148,12 +147,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 			return customList.Name.BestAnalysisAlternative.Text;
 		}
 
-		private static IRecordClerk FactoryMethod(ICmPossibilityList customList, LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordList FactoryMethod(ICmPossibilityList customList, LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			var customListClerkName = GetMachineName(customList);
-			Require.That(clerkId == customListClerkName, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{customListClerkName}'.");
+			Require.That(recordListId == customListClerkName, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{customListClerkName}'.");
 
-			return new TreeBarHandlerAwarePossibilityRecordList(clerkId, statusBar,
+			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				null, true, true,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				customList,

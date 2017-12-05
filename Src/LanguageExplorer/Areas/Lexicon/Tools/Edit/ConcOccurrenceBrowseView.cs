@@ -35,9 +35,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			if (!m_fullyInitialized || m_suppressShowRecord)
 				return;
-			if (Clerk == null || Clerk.CurrentObjectHvo == 0)
+			if (MyRecordList == null || MyRecordList.CurrentObjectHvo == 0)
 				return;
-			PreviewCurrentSelection(Clerk.CurrentObjectHvo);
+			PreviewCurrentSelection(MyRecordList.CurrentObjectHvo);
 			base.ShowRecord();
 		}
 

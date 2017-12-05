@@ -52,8 +52,8 @@ namespace LanguageExplorer.Works
 			Init();
 		}
 
-		protected RecordView(XElement configurationParametersElement, LcmCache cache, IRecordClerk recordClerk)
-			: base(configurationParametersElement, cache, recordClerk)
+		protected RecordView(XElement configurationParametersElement, LcmCache cache, IRecordList recordList)
+			: base(configurationParametersElement, cache, recordList)
 		{
 			Init();
 		}
@@ -70,7 +70,7 @@ namespace LanguageExplorer.Works
 
 			AccNameDefault = "RecordView"; // default accessibility name
 
-			Clerk.RecordChanged += Clerk_RecordChanged;
+			MyRecordList.RecordChanged += Clerk_RecordChanged;
 		}
 
 		protected virtual void Clerk_RecordChanged(object sender, RecordNavigationEventArgs e)
@@ -82,7 +82,7 @@ namespace LanguageExplorer.Works
 			{
 				SuppressSaveOnChangeRecord = e.RecordNavigationInfo.SuppressSaveOnChangeRecord
 			};
-			using (new ListUpdateHelper(Clerk, options))
+			using (new ListUpdateHelper(MyRecordList, options))
 			{
 				ShowRecord(e.RecordNavigationInfo);
 			}
@@ -103,7 +103,7 @@ namespace LanguageExplorer.Works
 
 			if( disposing )
 			{
-				Clerk.RecordChanged -= Clerk_RecordChanged;
+				MyRecordList.RecordChanged -= Clerk_RecordChanged;
 				components?.Dispose();
 			}
 
@@ -145,16 +145,16 @@ namespace LanguageExplorer.Works
 			//are we the dominant pane? The thinking here is that if our clerk is controlling the record tree bar, then we are.
 			// The second condition prevents recording the intermediate record in the history when following a link
 			// causes us to change areas and then change records.
-			if (Clerk.IsControllingTheRecordTreeBar && string.IsNullOrEmpty(PropertyTable.GetValue<string>("SuspendLoadingRecordUntilOnJumpToRecord")))
+			if (MyRecordList.IsControllingTheRecordTreeBar && string.IsNullOrEmpty(PropertyTable.GetValue<string>("SuspendLoadingRecordUntilOnJumpToRecord")))
 			{
 				//add our current state to the history system
 				var toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
 				var guid = Guid.Empty;
-				if (Clerk.CurrentObject != null)
+				if (MyRecordList.CurrentObject != null)
 				{
-					guid = Clerk.CurrentObject.Guid;
+					guid = MyRecordList.CurrentObject.Guid;
 				}
-				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
+				MyRecordList.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
 				PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(toolChoice, guid));
 			}
 		}
@@ -170,10 +170,10 @@ namespace LanguageExplorer.Works
 
 			if(m_treebarAvailability!=TreebarAvailability.NotMyBusiness)
 			{
-				Clerk.ActivateUI();//nb optional would be a bug here
+				MyRecordList.ActivateUI();//nb optional would be a bug here
 			}
 
-			m_madeUpFieldIdentifier = Clerk.VirtualFlid;
+			m_madeUpFieldIdentifier = MyRecordList.VirtualFlid;
 		}
 
 		/// <summary>
@@ -189,20 +189,20 @@ namespace LanguageExplorer.Works
 
 			ReadParameters();
 
-			if (Clerk == null)
+			if (MyRecordList == null)
 			{
-				Debug.Assert(Clerk != null);
+				Debug.Assert(MyRecordList != null);
 			}
 			bool fClerkAlreadySuppressed = false;
 			bool fClerkWasCreated = false;
-			fClerkAlreadySuppressed = Clerk.ListLoadingSuppressed; // If we didn't create the clerk, someone else might have suppressed it.
+			fClerkAlreadySuppressed = MyRecordList.ListLoadingSuppressed; // If we didn't create the clerk, someone else might have suppressed it.
 			// suspend any loading of the Clerk's list items until after a
 			// subclass (possibly) initializes sorters/filters
 			// in SetupDataContext()
-			using (var luh = new ListUpdateHelper(Clerk, fClerkAlreadySuppressed))
+			using (var luh = new ListUpdateHelper(MyRecordList, fClerkAlreadySuppressed))
 			{
 				luh.ClearBrowseListUntilReload = true;
-				Clerk.UpdateOwningObjectIfNeeded();
+				MyRecordList.UpdateOwningObjectIfNeeded();
 				SetTreebarAvailability();
 				AddPaneBar();
 
@@ -211,15 +211,15 @@ namespace LanguageExplorer.Works
 				SetupDataContext();
 			}
 			// In case it hasn't yet been loaded, load it!  See LT-10185.
-			if (!Clerk.ListLoadingSuppressed && Clerk.RequestedLoadWhileSuppressed)
+			if (!MyRecordList.ListLoadingSuppressed && MyRecordList.RequestedLoadWhileSuppressed)
 			{
-				Clerk.UpdateList(true, true); // sluggishness culprit for LT-12844 was in here
+				MyRecordList.UpdateList(true, true); // sluggishness culprit for LT-12844 was in here
 			}
 		}
 
 		private string GetClerkPersistPathname()
 		{
-			return GetSortFilePersistPathname(Cache, Clerk.Id);
+			return GetSortFilePersistPathname(Cache, MyRecordList.Id);
 		}
 
 		internal static string GetSortFilePersistPathname(LcmCache cache, string clerkId)
@@ -236,17 +236,22 @@ namespace LanguageExplorer.Works
 
 		protected virtual void PersistSortSequence()
 		{
-			if (Clerk == null || Clerk.IsDisposed)
+			if (MyRecordList == null)
+			{
 				return; // temporary clerk, such as a concordance in find example dialog.
+			}
+
 			// If we're being disposed because the application is crashing, we do NOT want to save the sort
 			// sequence. It might contain bad objects, or represent a filtered state that is NOT going to
 			// be persisted because of the crash. LT-11446.
 			if (FwUtils.InCrashedState)
+			{
 				return;
+			}
 			var pathname = GetClerkPersistPathname();
 			var watch = new Stopwatch();
 			watch.Start();
-			Clerk.PersistListOn(pathname);
+			MyRecordList.PersistListOn(pathname);
 			watch.Stop();
 			Debug.WriteLine("Saving clerk " + pathname + " took " + watch.ElapsedMilliseconds + " ms.");
 		}
@@ -259,7 +264,7 @@ namespace LanguageExplorer.Works
 				return false;
 			var watch = new Stopwatch();
 			watch.Start();
-			var result = Clerk.RestoreListFrom(pathname);
+			var result = MyRecordList.RestoreListFrom(pathname);
 			watch.Stop();
 			Debug.WriteLine("Restoring clerk " + pathname + " took " + watch.ElapsedMilliseconds + " ms.");
 			return result;

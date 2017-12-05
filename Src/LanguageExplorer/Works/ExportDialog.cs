@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2017 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,7 +11,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using System.Xml.Linq;
 using System.Xml;
 using System.Xml.Xsl;
 using LanguageExplorer.Areas;
@@ -96,27 +95,27 @@ namespace LanguageExplorer.Works
 		}
 		protected List<FxtType> m_rgFxtTypes = new List<FxtType>(8);
 
-		protected ConfiguredExport m_ce = null;
-		protected XmlSeqView m_seqView = null;
-		private XmlVc m_xvc = null;
-		private int m_hvoRootObj = 0;
-		private int m_clidRootObj = 0;
+		protected ConfiguredExport m_ce;
+		protected XmlSeqView m_seqView;
+		private XmlVc m_xvc;
+		private int m_hvoRootObj;
+		private int m_clidRootObj;
 		private CheckBox m_chkExportPictures;
 		/// <summary>Flag whether to include picture and media files in the export.</summary>
-		private bool m_fExportPicturesAndMedia = false;
+		private bool m_fExportPicturesAndMedia;
 		/// <summary>
 		/// This is set true whenever the check value for m_chkExportPictures is retrieved
 		/// for a LIFT export.
 		/// </summary>
-		private bool m_fLiftExportPicturesSet = false;
+		private bool m_fLiftExportPicturesSet;
 		/// <summary>
 		/// The data access is needed if we're doing a filtered FXT export.  (See FWR-1223.)
 		/// </summary>
-		ISilDataAccess m_sda = null;
+		ISilDataAccess m_sda;
 		/// <summary>
-		/// The clerk is needed if we're doing a filtered FXT export.  (See FWR-1223.)
+		/// The record list is needed if we're doing a filtered FXT export.  (See FWR-1223.)
 		/// </summary>
-		IRecordClerk m_clerk = null;
+		IRecordList m_recordList;
 
 		private const string ksLiftExportPicturesPropertyName = "LIFT-ExportPictures";
 		/// <summary>
@@ -124,6 +123,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		string m_areaOrig;
 		private CheckBox m_chkShowInFolder;
+		private StatusBar _mainWindowStatusBar;
 
 		/// <summary>
 		/// Required designer variable.
@@ -139,6 +139,12 @@ namespace LanguageExplorer.Works
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
+		}
+
+		/// <summary />
+		public ExportDialog(StatusBar statusBar) : this()
+		{
+			_mainWindowStatusBar = statusBar;
 		}
 
 		private void InitFromMainControl(object objCurrentControl)
@@ -242,7 +248,7 @@ namespace LanguageExplorer.Works
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// <summary>
@@ -257,10 +263,7 @@ namespace LanguageExplorer.Works
 
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 
 			PropertyTable = null;
@@ -594,24 +597,23 @@ namespace LanguageExplorer.Works
 				// if it exists, xdg-open uses the user's preference for opening directories
 				if (File.Exists("/usr/bin/xdg-open"))
 				{
-					processInfo = new ProcessStartInfo("/usr/bin/xdg-open", String.Format("\"{0}\"", sDirectory));
+					processInfo = new ProcessStartInfo("/usr/bin/xdg-open", $"\"{sDirectory}\"");
 				}
 				else if (File.Exists("/usr/bin/nautilus"))
 				{
-					processInfo = new ProcessStartInfo("/usr/bin/nautilus", String.Format("\"{0}\"", sDirectory));
+					processInfo = new ProcessStartInfo("/usr/bin/nautilus", $"\"{sDirectory}\"");
 				}
 				else if (File.Exists("/usr/bin/krusader"))
 				{
-					processInfo = new ProcessStartInfo("/usr/bin/krusader", String.Format("\"{0}\"", sDirectory));
+					processInfo = new ProcessStartInfo("/usr/bin/krusader", $"\"{sDirectory}\"");
 				}
 				else if (File.Exists("/usr/bin/pcmanfm"))
 				{
-					processInfo = new ProcessStartInfo("/usr/bin/pcmanfm", String.Format("\"{0}\"", sDirectory));
+					processInfo = new ProcessStartInfo("/usr/bin/pcmanfm", $"\"{sDirectory}\"");
 				}
 				else if (File.Exists("/usr/bin/gnome-commander"))
 				{
-					processInfo = new ProcessStartInfo("/usr/bin/gnome-commander",
-						String.Format("-l \"{0}\" -r \"{1}\"", Path.GetDirectoryName(sDirectory), sDirectory));
+					processInfo = new ProcessStartInfo("/usr/bin/gnome-commander", $"-l \"{Path.GetDirectoryName(sDirectory)}\" -r \"{sDirectory}\"");
 				}
 				// If the user doesn't have one of these programs installed, I give up!
 			}
@@ -620,15 +622,10 @@ namespace LanguageExplorer.Works
 				// REVIEW: What happens if directory or filename contain spaces?
 				var program = Environment.ExpandEnvironmentVariables(@"%WINDIR%\explorer.exe");
 				if (program == @"\explorer.exe")
+				{
 					program = @"C:\windows\explorer.exe";
-				if (String.IsNullOrEmpty(sFileName))
-				{
-					processInfo = new ProcessStartInfo(program, String.Format(" /select,{0}", sDirectory));
 				}
-				else
-				{
-					processInfo = new ProcessStartInfo(program, String.Format(" /select,{0}", sFileName));
-				}
+				processInfo = string.IsNullOrEmpty(sFileName) ? new ProcessStartInfo(program, $" /select,{sDirectory}") : new ProcessStartInfo(program, $" /select,{sFileName}");
 			}
 			if (processInfo != null)
 			{
@@ -771,10 +768,10 @@ namespace LanguageExplorer.Works
 			switch (m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft)
 			{
 				case FxtTypes.kftConfigured:
-					new DictionaryExportService(m_cache, RecordList.ActiveRecordClerkRepository.ActiveRecordClerk, PropertyTable, Publisher).ExportDictionaryContent(xhtmlPath, progress: progress);
+					new DictionaryExportService(m_cache, RecordList.ActiveRecordListRepository.ActiveRecordList, PropertyTable, Publisher, _mainWindowStatusBar).ExportDictionaryContent(xhtmlPath, progress: progress);
 					break;
 				case FxtTypes.kftReversal:
-					new DictionaryExportService(m_cache, RecordList.ActiveRecordClerkRepository.ActiveRecordClerk, PropertyTable, Publisher).ExportReversalContent(xhtmlPath, progress: progress);
+					new DictionaryExportService(m_cache, RecordList.ActiveRecordListRepository.ActiveRecordList, PropertyTable, Publisher, _mainWindowStatusBar).ExportReversalContent(xhtmlPath, progress: progress);
 					break;
 			}
 			return null;
@@ -817,7 +814,7 @@ namespace LanguageExplorer.Works
 			{
 				if (filtered)
 				{
-					exporter.ExportLift(w, Path.GetDirectoryName(outPath), m_clerk.VirtualListPublisher, m_clerk.VirtualFlid);
+					exporter.ExportLift(w, Path.GetDirectoryName(outPath), m_recordList.VirtualListPublisher, m_recordList.VirtualFlid);
 				}
 				else
 				{
@@ -873,10 +870,10 @@ namespace LanguageExplorer.Works
 			using (TextWriter w = new StreamWriter(outPath))
 			{
 				m_dumper.ExportPicturesAndMedia = m_fExportPicturesAndMedia;
-				if (m_sda != null && m_clerk != null)
+				if (m_sda != null && m_recordList != null)
 				{
 					m_dumper.VirtualDataAccess = m_sda;
-					m_dumper.VirtualFlid = m_clerk.VirtualFlid;
+					m_dumper.VirtualFlid = m_recordList.VirtualFlid;
 				}
 				m_dumper.Go(m_cache.LangProject, fxtPath, w);
 			}
@@ -1241,11 +1238,7 @@ namespace LanguageExplorer.Works
 
 		private bool DetermineIfFilterIsAvailable()
 		{
-			if (m_clerk == null)
-			{
-				return false;
-			}
-			return (m_clerk.VirtualListPublisher.get_VecSize(m_cache.LangProject.LexDbOA.Hvo, m_clerk.VirtualFlid) < 1);
+			return m_recordList?.VirtualListPublisher.get_VecSize(m_cache.LangProject.LexDbOA.Hvo, m_recordList.VirtualFlid) < 1;
 		}
 		private void OnDumperUpdateProgress(object sender)
 		{
@@ -1914,7 +1907,7 @@ namespace LanguageExplorer.Works
 			// root object.
 
 			InitFromMainControl(PropertyTable.GetValue<object>("currentContentControlObject", null));
-			m_clerk = RecordList.ActiveRecordClerkRepository.ActiveRecordClerk;
+			m_recordList = RecordList.ActiveRecordListRepository.ActiveRecordList;
 
 			m_chkExportPictures.Checked = false;
 			m_chkExportPictures.Visible = false;

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -46,8 +46,8 @@ namespace LanguageExplorer.Works
 
 		#region Construction and Removal
 
-		public RecordDocView(XElement configurationParametersElement, LcmCache cache, IRecordClerk recordClerk, StatusBarProgressPanel progressPanel)
-			: base(configurationParametersElement, cache, recordClerk)
+		public RecordDocView(XElement configurationParametersElement, LcmCache cache, IRecordList recordList, StatusBarProgressPanel progressPanel)
+			: base(configurationParametersElement, cache, recordList)
 		{
 			m_statusBarProgressPanel = progressPanel;
 		}
@@ -86,8 +86,7 @@ namespace LanguageExplorer.Works
 
 			if (disposing)
 			{
-				if (m_rootSite != null)
-					m_rootSite.Dispose();
+				m_rootSite?.Dispose();
 			}
 			m_rootSite = null;
 			m_statusBarProgressPanel = null;
@@ -141,7 +140,7 @@ namespace LanguageExplorer.Works
 #else
 			// TODO: I run release builds, so the above assert doesn't do anything.
 			// TODO: Remove this approach, when I'm satisfied all callers are well-behaved.
-			if (Clerk.CurrentObject == null)
+			if (MyRecordList.CurrentObject == null)
 				throw new InvalidOperationException("'ShowRecord' called too early.");
 			if (m_rootSite == null)
 				throw new InvalidOperationException("'ShowRecord' called too early.");
@@ -151,14 +150,14 @@ namespace LanguageExplorer.Works
 			//todo: fast machine, this doesn't really seem to do any good. I think maybe the parts that
 			//are taking a long time are not getting Breath().
 			//todo: test on a machine that is slow enough to see if this is helpful or not!
-			using (var progress = ProgressState.CreatePredictiveProgressState(m_statusBarProgressPanel, ((RecordList)Clerk.SortItemProvider).PropertyName))
+			using (var progress = ProgressState.CreatePredictiveProgressState(m_statusBarProgressPanel, MyRecordList.PropertyName))
 			{
 
 				progress.Breath();
 
 				base.ShowRecord();
 
-				Clerk.SaveOnChangeRecord();
+				MyRecordList.SaveOnChangeRecord();
 
 				progress.Breath();
 
@@ -175,8 +174,8 @@ namespace LanguageExplorer.Works
 					using (new WaitCursor(this))
 					{
 						IChangeRootObject root = m_rootSite as IChangeRootObject;
-						if (root != null && !Clerk.SuspendLoadingRecordUntilOnJumpToRecord)
-							root.SetRoot(Clerk.CurrentObject.Hvo);
+						if (root != null && !MyRecordList.SuspendLoadingRecordUntilOnJumpToRecord)
+							root.SetRoot(MyRecordList.CurrentObject.Hvo);
 					}
 				}
 				catch (Exception error)
@@ -384,8 +383,8 @@ namespace LanguageExplorer.Works
 		XElement m_jtSpecs; // node required by XmlView.
 		protected string m_configObjectName; // name to display in Configure dialog.
 
-		public RecordDocXmlView(XElement configurationParametersElement, LcmCache cache, IRecordClerk recordClerk, StatusBarProgressPanel progressPanel)
-			: base(configurationParametersElement, cache, recordClerk, progressPanel)
+		public RecordDocXmlView(XElement configurationParametersElement, LcmCache cache, IRecordList recordList, StatusBarProgressPanel progressPanel)
+			: base(configurationParametersElement, cache, recordList, progressPanel)
 		{
 		}
 

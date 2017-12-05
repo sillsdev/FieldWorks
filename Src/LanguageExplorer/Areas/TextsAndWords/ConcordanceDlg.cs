@@ -48,7 +48,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private XmlNode _configurationNode;
 		private RecordBrowseView _currentBrowseView = null;
 		private readonly Dictionary<int, XmlNode> _configurationNodes = new Dictionary<int, XmlNode>(3);
-		private readonly Dictionary<int, IRecordClerk> _recordClerks = new Dictionary<int, IRecordClerk>(3);
+		private readonly Dictionary<int, IRecordList> _recordLists = new Dictionary<int, IRecordList>(3);
 		private readonly Dictionary<string, bool> _originalClerkIgnoreStatusPanelValues = new Dictionary<string, bool>(3);
 		private XMLViewsDataCache _specialSda;
 		private int _currentSourceMadeUpFieldIdentifier;
@@ -279,7 +279,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				Subscriber.Unsubscribe("DialogFilterStatus", DialogFilterStatus_Handler);
 
-				foreach (var clerk in _recordClerks.Values)
+				foreach (var clerk in _recordLists.Values)
 				{
 					// Take it out of the property table and Dispose it.
 					PropertyTable.RemoveProperty("RecordClerk-" + clerk.Id);
@@ -293,7 +293,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					components.Dispose();
 				}
-				_recordClerks.Clear();
+				_recordLists.Clear();
 				_configurationNodes.Clear();
 			}
 			base.Dispose(disposing);
@@ -609,7 +609,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				}
 
 				XmlNode configurationNode;
-				IRecordClerk clerk;
+				IRecordList recordList;
 				var selObj = (IAnalysis)tvSource.SelectedNode.Tag;
 				switch (selObj.ClassID)
 				{
@@ -617,23 +617,23 @@ namespace LanguageExplorer.Areas.TextsAndWords
 						throw new InvalidOperationException("Class not recognized.");
 					case WfiWordformTags.kClassId:
 						configurationNode = _configurationNodes[WfiWordformTags.kClassId];
-						clerk = _recordClerks[WfiWordformTags.kClassId];
+						recordList = _recordLists[WfiWordformTags.kClassId];
 						break;
 					case WfiAnalysisTags.kClassId:
 						configurationNode = _configurationNodes[WfiAnalysisTags.kClassId];
-						clerk = _recordClerks[WfiAnalysisTags.kClassId];
+						recordList = _recordLists[WfiAnalysisTags.kClassId];
 						break;
 					case WfiGlossTags.kClassId:
 						configurationNode = _configurationNodes[WfiGlossTags.kClassId];
-						clerk = _recordClerks[WfiGlossTags.kClassId];
+						recordList = _recordLists[WfiGlossTags.kClassId];
 						break;
 				}
-				clerk.OwningObject = selObj;
+				recordList.OwningObject = selObj;
 
 				_currentBrowseView = new RecordBrowseView();
 				_currentBrowseView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				// Ensure that the list gets updated whenever it's reloaded.  See LT-8661.
-				var sPropName = clerk.Id + "_AlwaysRecomputeVirtualOnReloadList";
+				var sPropName = recordList.Id + "_AlwaysRecomputeVirtualOnReloadList";
 				PropertyTable.SetProperty(sPropName, true, false, false);
 				_currentBrowseView.Dock = DockStyle.Fill;
 				_pnlConcBrowseHolder.Controls.Add(_currentBrowseView);
@@ -699,7 +699,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void SetRecordStatus()
 		{
-			var cobj = _currentBrowseView.Clerk.ListSize;
+			var cobj = _currentBrowseView.MyRecordList.ListSize;
 			var idx = _currentBrowseView.BrowseViewer.SelectedIndex;
 			var sMsg = cobj == 0 ? LanguageExplorerResources.ksNoRecords : String.Format("{0}/{1}", idx + 1, cobj);
 			_toolStripRecordStatusLabel.Text = sMsg;
@@ -743,7 +743,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					// Make sure the correct updated occurrences will be computed when needed in Refresh of the
 					// occurrences pane and anywhere else.
 					concSda.UpdateExactAnalysisOccurrences(src);
-					var clerk = _recordClerks[newTarget.ClassID];
+					var clerk = _recordLists[newTarget.ClassID];
 					var clerkSda = (ConcDecorator)((DomainDataByFlidDecoratorBase) clerk.VirtualListPublisher).BaseSda;
 					clerkSda.UpdateExactAnalysisOccurrences(newTarget);
 				});

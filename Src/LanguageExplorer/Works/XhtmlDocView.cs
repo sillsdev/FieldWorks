@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2017 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -40,8 +40,8 @@ namespace LanguageExplorer.Works
 		private ToolStripMenuItem m_printMenu;
 
 		/// <summary />
-		internal XhtmlDocView(XElement configurationParametersElement, LcmCache cache, IRecordClerk recordClerk, ToolStripMenuItem printMenu)
-			: base(configurationParametersElement, cache, recordClerk)
+		internal XhtmlDocView(XElement configurationParametersElement, LcmCache cache, IRecordList recordList, ToolStripMenuItem printMenu)
+			: base(configurationParametersElement, cache, recordList)
 		{
 			m_printMenu = printMenu;
 			m_printMenu.Click += PrintMenu_Click;
@@ -86,9 +86,9 @@ namespace LanguageExplorer.Works
 			};
 			ReadParameters();
 			// Use update helper to help with optimizations and special cases for list loading
-			using (var luh = new ListUpdateHelper(Clerk, Clerk.ListLoadingSuppressed))
+			using (var luh = new ListUpdateHelper(MyRecordList, MyRecordList.ListLoadingSuppressed))
 			{
-				Clerk.UpdateOwningObjectIfNeeded();
+				MyRecordList.UpdateOwningObjectIfNeeded();
 			}
 			Controls.Add(m_mainView);
 
@@ -112,19 +112,19 @@ namespace LanguageExplorer.Works
 		public void FinishInitialization()
 		{
 			// retrieve persisted clerk index and set it.
-			int idx = PropertyTable.GetValue(Clerk.PersistedIndexProperty, SettingsGroup.LocalSettings, -1);
-			int lim = Clerk.ListSize;
+			int idx = PropertyTable.GetValue(MyRecordList.PersistedIndexProperty, SettingsGroup.LocalSettings, -1);
+			int lim = MyRecordList.ListSize;
 			if (idx >= 0 && idx < lim)
 			{
-				int idxOld = Clerk.CurrentIndex;
+				int idxOld = MyRecordList.CurrentIndex;
 				try
 				{
-					Clerk.JumpToIndex(idx);
+					MyRecordList.JumpToIndex(idx);
 				}
 				catch
 				{
 					if (lim > idxOld && lim > 0)
-						Clerk.JumpToIndex(idxOld >= 0 ? idxOld : 0);
+						MyRecordList.JumpToIndex(idxOld >= 0 ? idxOld : 0);
 				}
 			}
 
@@ -182,7 +182,7 @@ namespace LanguageExplorer.Works
 						if (currentPage.PreviousSibling != null)
 						{
 							var itemIndex = int.Parse(((GeckoHtmlElement)currentPage.PreviousSibling).Attributes["endIndex"].NodeValue);
-							Clerk.JumpToRecord(PublicationDecorator.GetEntriesToPublish(PropertyTable, Clerk.VirtualFlid)[itemIndex]);
+							MyRecordList.JumpToRecord(PublicationDecorator.GetEntriesToPublish(PropertyTable, MyRecordList.VirtualFlid)[itemIndex]);
 						}
 					}
 					break;
@@ -195,7 +195,7 @@ namespace LanguageExplorer.Works
 						if (currentPage.NextSibling != null)
 						{
 							var itemIndex = int.Parse(((GeckoHtmlElement)currentPage.NextSibling).Attributes["startIndex"].NodeValue);
-							Clerk.JumpToRecord(PublicationDecorator.GetEntriesToPublish(PropertyTable, Clerk.VirtualFlid)[itemIndex]);
+							MyRecordList.JumpToRecord(PublicationDecorator.GetEntriesToPublish(PropertyTable, MyRecordList.VirtualFlid)[itemIndex]);
 						}
 					}
 					break;
@@ -321,16 +321,16 @@ namespace LanguageExplorer.Works
 				return;
 			if (e.Button == GeckoMouseButton.Left)
 			{
-				if (HandleClickOnPageButton(Clerk, element))
+				if (HandleClickOnPageButton(MyRecordList, element))
 				{
 					return;
 				}
 				// Handle button clicks or select the entry represented by the current element.
-				HandleDomLeftClick(Clerk, e, element);
+				HandleDomLeftClick(MyRecordList, e, element);
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
-				HandleDomRightClick(browser, e, element, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_configObjectName, Cache, Clerk);
+				HandleDomRightClick(browser, e, element, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_configObjectName, Cache, MyRecordList);
 			}
 		}
 
@@ -345,7 +345,7 @@ namespace LanguageExplorer.Works
 				CloseContextMenuIfOpen();
 				SetActiveSelectedEntryOnView(browser);
 				// Without this we show the entry count in the status bar the first time we open the Dictionary or Rev. Index.
-				Clerk.SelectedRecordChanged(true, true);
+				MyRecordList.SelectedRecordChanged(true, true);
 			}
 		}
 
@@ -353,7 +353,7 @@ namespace LanguageExplorer.Works
 		/// Handle the user left clicking on the document view by jumping to an entry, playing a media element, or adjusting the view
 		/// </summary>
 		/// <remarks>internal so that it can be re-used by the XhtmlRecordDocView</remarks>
-		internal static void HandleDomLeftClick(IRecordClerk clerk, DomMouseEventArgs e, GeckoElement element)
+		internal static void HandleDomLeftClick(IRecordList recordList, DomMouseEventArgs e, GeckoElement element)
 		{
 			GeckoElement dummy;
 			var topLevelGuid = GetHrefFromGeckoDomElement(element);
@@ -361,7 +361,7 @@ namespace LanguageExplorer.Works
 				GetClassListFromGeckoElement(element, out topLevelGuid, out dummy);
 			if (topLevelGuid != Guid.Empty)
 			{
-				var currentObj = clerk.CurrentObject;
+				var currentObj = recordList.CurrentObject;
 				if (currentObj != null && currentObj.Guid == topLevelGuid)
 				{
 					// don't need to jump, we're already here...
@@ -371,7 +371,7 @@ namespace LanguageExplorer.Works
 				}
 				else
 				{
-					clerk.JumpToRecord(topLevelGuid);
+					recordList.JumpToRecord(topLevelGuid);
 				}
 			}
 			e.Handled = true;
@@ -380,7 +380,7 @@ namespace LanguageExplorer.Works
 		private void AddMoreEntriesToPage(bool goingUp, GeckoWebBrowser browser)
 		{
 			var browserElement = browser.Document.Body;
-			var entriesToPublish = PublicationDecorator.GetEntriesToPublish(PropertyTable, Clerk.VirtualFlid);
+			var entriesToPublish = PublicationDecorator.GetEntriesToPublish(PropertyTable, MyRecordList.VirtualFlid);
 			// Right-to-Left for the overall layout is determined by Dictionary-Normal
 			var dictionaryNormalStyle = new ExportStyleInfo(FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable).Styles["Dictionary-Normal"]);
 			var isNormalRightToLeft = dictionaryNormalStyle.DirectionIsRightToLeft == TriStateBool.triTrue; // default is LTR
@@ -489,14 +489,14 @@ namespace LanguageExplorer.Works
 			return (GeckoHtmlElement)element.OwnerDocument.Body.SelectFirst("//*[@class='pagebutton' and @id]");
 		}
 
-		private static bool HandleClickOnPageButton(IRecordClerk clerk, GeckoElement element)
+		private static bool HandleClickOnPageButton(IRecordList recordList, GeckoElement element)
 		{
 			if (element.HasAttribute("class") && element.Attributes["class"].NodeValue.Equals("pagebutton"))
 			{
 				if(!element.HasAttribute("firstEntryGuid"))
 					throw new ArgumentException(@"The element passed to this method should have a firstEntryGuid.", "element");
 				var firstEntryOnPage = element.Attributes["firstEntryGuid"].NodeValue;
-				clerk.JumpToRecord(new Guid(firstEntryOnPage));
+				recordList.JumpToRecord(new Guid(firstEntryOnPage));
 				return true;
 			}
 			return false;
@@ -511,7 +511,7 @@ namespace LanguageExplorer.Works
 		/// </remarks>
 		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e,
 			GeckoElement element, FlexComponentParameters flexComponentParameters, string configObjectName,
-			LcmCache cache, IRecordClerk activeClerk)
+			LcmCache cache, IRecordList activeRecordList)
 		{
 			Guid topLevelGuid;
 			GeckoElement entryElement;
@@ -522,7 +522,7 @@ namespace LanguageExplorer.Works
 			var item = new DisposableToolStripMenuItem(label);
 			s_contextMenu.Items.Add(item);
 			item.Click += RunConfigureDialogAt;
-			item.Tag = new object[] { flexComponentParameters.PropertyTable, flexComponentParameters.Publisher, classList, topLevelGuid, flexComponentParameters.Subscriber, cache, activeClerk };
+			item.Tag = new object[] { flexComponentParameters.PropertyTable, flexComponentParameters.Publisher, classList, topLevelGuid, flexComponentParameters.Subscriber, cache, activeRecordList };
 			if (e.CtrlKey) // show hidden menu item for tech support
 			{
 				item = new DisposableToolStripMenuItem(xWorksStrings.ksInspect);
@@ -667,11 +667,11 @@ namespace LanguageExplorer.Works
 		public void PostLayoutInit()
 		{
 			// Tell the Clerk it is active so it will update the list of entries. Pass false as we have no toolbar to update.
-			Clerk.ActivateUI();
+			MyRecordList.ActivateUI();
 			// Update the entry list if necessary
-			if(!Clerk.ListLoadingSuppressed && Clerk.RequestedLoadWhileSuppressed)
+			if(!MyRecordList.ListLoadingSuppressed && MyRecordList.RequestedLoadWhileSuppressed)
 			{
-				Clerk.UpdateList(true, true);
+				MyRecordList.UpdateList(true, true);
 			}
 			// Grab the selected publication and make sure that we grab a valid configuration for it.
 			// In some cases (e.g where a user reset their local settings) the stored configuration may no longer
@@ -940,7 +940,7 @@ namespace LanguageExplorer.Works
 					{
 						RemoveStyleFromPreviousSelectedEntryOnView(browser);
 						LoadPageIfNecessary(browser);
-						Clerk.SelectedRecordChanged(true);
+						MyRecordList.SelectedRecordChanged(true);
 						SetActiveSelectedEntryOnView(browser);
 					}
 					break;
@@ -952,8 +952,8 @@ namespace LanguageExplorer.Works
 
 		private void LoadPageIfNecessary(GeckoWebBrowser browser)
 		{
-			var currentObjectHvo = Clerk.CurrentObjectHvo;
-			var currentObjectIndex = Array.IndexOf(PublicationDecorator.GetEntriesToPublish(PropertyTable, Clerk.VirtualFlid), currentObjectHvo);
+			var currentObjectHvo = MyRecordList.CurrentObjectHvo;
+			var currentObjectIndex = Array.IndexOf(PublicationDecorator.GetEntriesToPublish(PropertyTable, MyRecordList.VirtualFlid), currentObjectHvo);
 			if (currentObjectIndex < 0 || browser == null || browser.Document == null) // If the current item is not to be displayed (invalid, not in this publication) just quit
 				return;
 			var currentPage = GetTopCurrentPageButton(browser.Document.Body);
@@ -987,12 +987,12 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		private void SetActiveSelectedEntryOnView(GeckoWebBrowser browser)
 		{
-			if (Clerk.CurrentObject == null)
+			if (MyRecordList.CurrentObject == null)
 				return;
 
-			if (Clerk.Id == "AllReversalEntries")
+			if (MyRecordList.Id == "AllReversalEntries")
 			{
-				var reversalentry = Clerk.CurrentObject as IReversalIndexEntry;
+				var reversalentry = MyRecordList.CurrentObject as IReversalIndexEntry;
 				if (reversalentry == null)
 					return;
 				var writingSystem = Cache.ServiceLocator.WritingSystemManager.Get(reversalentry.ReversalIndex.WritingSystem);
@@ -1007,7 +1007,7 @@ namespace LanguageExplorer.Works
 					PropertyTable.SetProperty("ReversalIndexPublicationLayout", File.Exists(newConfig) ? newConfig : null, true, true);
 				}
 			}
-			var currentObjectGuid = Clerk.CurrentObject.Guid.ToString();
+			var currentObjectGuid = MyRecordList.CurrentObject.Guid.ToString();
 			var currSelectedByGuid = browser.Document.GetHtmlElementById("g" + currentObjectGuid);
 			if (currSelectedByGuid == null)
 				return;
@@ -1155,7 +1155,7 @@ namespace LanguageExplorer.Works
 				progress.Message = xWorksStrings.ksObtainingEntriesToDisplay;
 			var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
 			publicationDecorator.Refresh();
-			var entriesToPublish = publicationDecorator.GetEntriesToPublish(PropertyTable, Clerk.VirtualFlid);
+			var entriesToPublish = publicationDecorator.GetEntriesToPublish(PropertyTable, MyRecordList.VirtualFlid);
 #if DEBUG
 			var start = DateTime.Now;
 #endif
@@ -1166,7 +1166,7 @@ namespace LanguageExplorer.Works
 				progress.Maximum = entryCount + 1 + entryCount / 100;
 				progress.Position++;
 			}
-			var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, PropertyTable, Cache, Clerk, progress);
+			var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, PropertyTable, Cache, MyRecordList, progress);
 #if DEBUG
 			var end = DateTime.Now;
 			System.Diagnostics.Debug.WriteLine($"saving xhtml/css took {end - start}");
@@ -1208,7 +1208,7 @@ namespace LanguageExplorer.Works
 			{
 				if(m_pubDecorator == null)
 				{
-					m_pubDecorator = new DictionaryPublicationDecorator(Cache, Clerk.VirtualListPublisher, Clerk.VirtualFlid);
+					m_pubDecorator = new DictionaryPublicationDecorator(Cache, MyRecordList.VirtualListPublisher, MyRecordList.VirtualFlid);
 				}
 				var pubName = GetCurrentPublication();
 				if(xWorksStrings.AllEntriesPublication == pubName)

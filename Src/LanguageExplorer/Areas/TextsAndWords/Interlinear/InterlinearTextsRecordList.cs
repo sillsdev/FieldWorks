@@ -122,7 +122,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal bool AddTexts()
 		{
-			CheckDisposed();
 			// get saved scripture choices
 			var interestingTextsList = GetInterestingTextList();
 			var interestingTexts = interestingTextsList.InterestingTexts.ToArray();

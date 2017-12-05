@@ -30,7 +30,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		private const string FeatureTypes = "featureTypes";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordClerk;
 		[Import(AreaServices.ListsAreaMachineName)]
 		private IArea _area;
 
@@ -61,7 +61,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		{
 			if (_recordClerk == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(FeatureTypes, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordClerk = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(FeatureTypes, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, (IListArea)_area, _recordClerk);
 			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.FeatureTypesAdvancedEditBrowseViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk);
@@ -97,7 +97,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 			panelButton.DatTree = recordEditView.DatTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordClerk);
 		}
 
 		/// <summary>
@@ -161,11 +161,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 
 		#endregion
 
-		private static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(clerkId == FeatureTypes, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{FeatureTypes}'.");
+			Require.That(recordListId == FeatureTypes, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{FeatureTypes}'.");
 
-			return new RecordList(clerkId, statusBar,
+			return new RecordList(recordListId, statusBar,
 				new PropertyRecordSorter("ShortName"), AreaServices.Default,
 				null, false, false,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,

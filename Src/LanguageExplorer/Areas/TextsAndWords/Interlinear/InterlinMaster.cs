@@ -85,14 +85,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 		}
 
-		internal InterlinMaster(XElement configurationParametersElement, LcmCache cache, IRecordClerk recordClerk, ToolStripMenuItem fileMenu, ToolStripMenuItem printMenu, bool showTitlePane = true)
-			:base(configurationParametersElement, cache, recordClerk)
+		internal InterlinMaster(XElement configurationParametersElement, LcmCache cache, IRecordList recordList, ToolStripMenuItem fileMenu, ToolStripMenuItem printMenu, bool showTitlePane = true)
+			:base(configurationParametersElement, cache, recordList)
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 			Dock = DockStyle.Top;
 			m_tcPane.Visible = showTitlePane;
-			m_rtPane.Clerk = recordClerk;
+			m_rtPane.MyRecordList = recordList;
 			m_printMenu = printMenu;
 			m_taggingPane.FileMenu = fileMenu;
 			m_printViewPane.FileMenu = fileMenu;
@@ -100,7 +100,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_idcAnalyze.FileMenu = fileMenu;
 		}
 
-		internal string BookmarkId => Clerk.Id ?? string.Empty;
+		internal string BookmarkId => MyRecordList.Id ?? string.Empty;
 
 		/// <summary>
 		/// Something sometimes insists on giving the tab control focus when switching tabs.
@@ -339,16 +339,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (!fSaved)
 			{
 				InterAreaBookmark mark;
-				if(m_bookmarks.TryGetValue(new Tuple<string, Guid>(Clerk.Id, RootStText.Guid), out mark))
+				if(m_bookmarks.TryGetValue(new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid), out mark))
 				{
 					//We only want to persist the save if we are in the interlinear edit, not the concordance view
-					mark.Save(curAnalysis, Clerk.Id.Equals("interlinearTexts"), IndexOfTextRecord);
+					mark.Save(curAnalysis, MyRecordList.Id.Equals("interlinearTexts"), IndexOfTextRecord);
 				}
 				else
 				{
 					mark = new InterAreaBookmark(this, Cache, PropertyTable);
 					mark.Restore(IndexOfTextRecord);
-					m_bookmarks.Add(new Tuple<string, Guid>(Clerk.Id, RootStText.Guid), mark);
+					m_bookmarks.Add(new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid), mark);
 				}
 			}
 		}
@@ -432,7 +432,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				//if there is a bookmark for this text with this tool, then save it, if not some logic error brought us here,
 				//but simply not saving a bookmark which doesn't exist seems better than crashing. naylor 3/2012
-				var key = new Tuple<string, Guid>(Clerk.Id, RootStText.Guid);
+				var key = new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid);
 				if (m_bookmarks.ContainsKey(key))
 				{
 					m_bookmarks[key].Save(IndexOfTextRecord, iPara, Math.Min(ichAnchor, ichEnd), Math.Max(ichAnchor, ichEnd), true);
@@ -527,7 +527,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			get
 			{
 				CheckDisposed();
-				return Clerk.VirtualFlid;
+				return MyRecordList.VirtualFlid;
 			}
 		}
 
@@ -536,7 +536,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			get
 			{
 				CheckDisposed();
-				return Clerk.CurrentIndex;
+				return MyRecordList.CurrentIndex;
 			}
 		}
 
@@ -601,7 +601,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					case ktpsInfo:
 						// It may already be initialized, but this is not very expensive and sometimes
 						// the infoPane was initialized with no data and should be re-initialized here
-						m_infoPane.Initialize(Clerk, m_printMenu);
+						m_infoPane.Initialize(MyRecordList, m_printMenu);
 						m_infoPane.Dock = DockStyle.Fill;
 
 						m_infoPane.Enabled = m_infoPane.CurrentRootHvo != 0;
@@ -884,10 +884,10 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			{
 				CheckDisposed();
 
-				if (Clerk.CurrentObjectHvo != 0 && Cache.ServiceLocator.IsValidObjectId(Clerk.CurrentObjectHvo))
+				if (MyRecordList.CurrentObjectHvo != 0 && Cache.ServiceLocator.IsValidObjectId(MyRecordList.CurrentObjectHvo))
 				{
-					if (Clerk.CurrentObject.ClassID == StTextTags.kClassId)
-						return Clerk.CurrentIndex;
+					if (MyRecordList.CurrentObject.ClassID == StTextTags.kClassId)
+						return MyRecordList.CurrentIndex;
 				}
 
 				return -1;
@@ -900,9 +900,9 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			{
 				CheckDisposed();
 
-				if (Clerk.CurrentObject != null)
+				if (MyRecordList.CurrentObject != null)
 				{
-					var rootObj = Clerk.CurrentObject;
+					var rootObj = MyRecordList.CurrentObject;
 					if (rootObj.ClassID == TextTags.kClassId)
 					{
 						var text = rootObj as IText;
@@ -951,7 +951,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		{
 			SaveWorkInProgress();
 			base.ShowRecord();
-			if (Clerk.SuspendLoadingRecordUntilOnJumpToRecord)
+			if (MyRecordList.SuspendLoadingRecordUntilOnJumpToRecord)
 				return;
 			//This is our very first time trying to show a text, if possible we would like to show the stored text.
 			if (m_bookmarks == null)
@@ -963,13 +963,13 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			// record doesn't pass the filter and we get into an infinite loop. Also, if the user
 			// is filtering, he probably just wants to see that there are no matching texts, not
 			// make a new one.
-			if (Clerk is InterlinearTextsRecordList &&
-				Clerk.CurrentObjectHvo == 0 && !m_fSuppressAutoCreate && !Clerk.ShouldNotModifyList
-				&& Clerk.Filter == null)
+			if (MyRecordList is InterlinearTextsRecordList &&
+			    MyRecordList.CurrentObjectHvo == 0 && !m_fSuppressAutoCreate && !MyRecordList.ShouldNotModifyList
+				&& MyRecordList.Filter == null)
 			{
 				// This is needed in SwitchText(0) to avoid LT-12411 when in Info tab.
 				// We'll get a chance to do it later.
-				Clerk.SuppressSaveOnChangeRecord = true;
+				MyRecordList.SuppressSaveOnChangeRecord = true;
 				// first clear the views of their knowledge of the previous text.
 				// otherwise they could crash trying to access information that is no longer valid. (LT-10024)
 				SwitchText(0);
@@ -986,19 +986,19 @@ private void ReloadPaneBar(IPaneBar paneBar)
 					{
 						SuppressSaveOnChangeRecord = true
 					};
-					using (new ListUpdateHelper(Clerk, options))
+					using (new ListUpdateHelper(MyRecordList, options))
 					{
-						((InterlinearTextsRecordList)Clerk).AddNewTextNonUndoable();
+						((InterlinearTextsRecordList)MyRecordList).AddNewTextNonUndoable();
 					}
 				});
 			}
-			if (Clerk.CurrentObjectHvo == 0)
+			if (MyRecordList.CurrentObjectHvo == 0)
 			{
 				SwitchText(0);		// We no longer have a text.
 				return;				// We get another call when there is one.
 			}
-			var hvoRoot = Clerk.CurrentObjectHvo;
-			if (Clerk.CurrentObjectHvo != 0 && !Cache.ServiceLocator.IsValidObjectId(Clerk.CurrentObjectHvo))	// RecordClerk is tracking an analysis
+			var hvoRoot = MyRecordList.CurrentObjectHvo;
+			if (MyRecordList.CurrentObjectHvo != 0 && !Cache.ServiceLocator.IsValidObjectId(MyRecordList.CurrentObjectHvo))	// RecordClerk is tracking an analysis
 			{
 				// This pane, as well as knowing how to work with a record list of Texts, knows
 				// how to work with one of fake objects in a concordance, that is, a list of occurrences of
@@ -1011,7 +1011,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 				if (stText.ParagraphsOS.Count == 0)
 				{
 					NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-						((InterlinearTextsRecordList)Clerk).CreateFirstParagraph(stText, Cache.DefaultVernWs));
+						((InterlinearTextsRecordList)MyRecordList).CreateFirstParagraph(stText, Cache.DefaultVernWs));
 				}
 				if (stText.ParagraphsOS.Count == 1 && ((IStTxtPara)stText.ParagraphsOS[0]).Contents.Length == 0)
 				{
@@ -1065,10 +1065,10 @@ private void ReloadPaneBar(IPaneBar paneBar)
 
 		private int SetConcordanceBookmarkAndReturnRoot(int hvoRoot)
 		{
-			if (!Clerk.Id.Equals("interlinearTexts"))
+			if (!MyRecordList.Id.Equals("interlinearTexts"))
 			{
-				var occurrenceFromHvo = (Clerk as IAnalysisOccurrenceFromHvo).OccurrenceFromHvo(Clerk.CurrentObjectHvo);
-				var point = occurrenceFromHvo != null ? occurrenceFromHvo.BestOccurrence : null;
+				var occurrenceFromHvo = (MyRecordList).OccurrenceFromHvo(MyRecordList.CurrentObjectHvo);
+				var point = occurrenceFromHvo?.BestOccurrence;
 				if (point != null && point.IsValid)
 				{
 					var para = point.Segment.Paragraph;
@@ -1079,10 +1079,10 @@ private void ReloadPaneBar(IPaneBar paneBar)
 				if (!m_fRefreshOccurred && m_bookmarks != null && text != null)
 				{
 					InterAreaBookmark mark;
-					if (!m_bookmarks.TryGetValue(new Tuple<string, Guid>(Clerk.Id, text.Guid), out mark))
+					if (!m_bookmarks.TryGetValue(new Tuple<string, Guid>(MyRecordList.Id, text.Guid), out mark))
 					{
 						mark = new InterAreaBookmark(this, Cache, PropertyTable);
-						m_bookmarks.Add(new Tuple<string, Guid>(Clerk.Id, text.Guid), mark);
+						m_bookmarks.Add(new Tuple<string, Guid>(MyRecordList.Id, text.Guid), mark);
 					}
 
 					mark.Save(point, false, IndexOfTextRecord);
@@ -1100,13 +1100,13 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			if (stText != null)
 			{
 				InterAreaBookmark mark;
-				if (m_bookmarks.TryGetValue(new Tuple<string, Guid>(Clerk.Id, stText.Guid), out mark))
+				if (m_bookmarks.TryGetValue(new Tuple<string, Guid>(MyRecordList.Id, stText.Guid), out mark))
 				{
 					mark.Restore(IndexOfTextRecord);
 				}
 				else
 				{
-					m_bookmarks.Add(new Tuple<string, Guid>(Clerk.Id, stText.Guid), new InterAreaBookmark(this, Cache, PropertyTable));
+					m_bookmarks.Add(new Tuple<string, Guid>(MyRecordList.Id, stText.Guid), new InterAreaBookmark(this, Cache, PropertyTable));
 				}
 			}
 		}
@@ -1116,12 +1116,9 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			// We've switched text, so clear the Undo stack redisplay it.
 			// This method will clear the Undo stack UNLESS we're changing record
 			// because we inserted or deleted one, which ought to be undoable.
-			Clerk.SaveOnChangeRecord();
+			MyRecordList.SaveOnChangeRecord();
 			SaveBookMark();
-			if (hvoRoot != 0)
-				RootStText = Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(hvoRoot);
-			else
-				RootStText = null;
+			RootStText = hvoRoot != 0 ? Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(hvoRoot) : null;
 			// one way or another it's the Text by now.
 			ShowTabView();
 			// I (JohnT) no longer know why we need to update the TC pane (but not any of the others?) even if it
@@ -1137,13 +1134,13 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		// is active. Or, if we have a bookmark, restore it.
 		private void SelectAnnotation()
 		{
-			if (Clerk.CurrentObjectHvo == 0 || Clerk.SuspendLoadingRecordUntilOnJumpToRecord)
+			if (MyRecordList.CurrentObjectHvo == 0 || MyRecordList.SuspendLoadingRecordUntilOnJumpToRecord)
 				return;
 			// Use a bookmark, if we've set one.
-			if (RootStText != null && m_bookmarks.ContainsKey(new Tuple<string, Guid>(Clerk.Id, RootStText.Guid)) &&
-				m_bookmarks[new Tuple<string, Guid>(Clerk.Id, RootStText.Guid)].IndexOfParagraph >= 0 && CurrentInterlinearTabControl is IHandleBookmark)
+			if (RootStText != null && m_bookmarks.ContainsKey(new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid)) &&
+			    m_bookmarks[new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid)].IndexOfParagraph >= 0)
 			{
-				(CurrentInterlinearTabControl as IHandleBookmark).SelectBookmark(m_bookmarks[new Tuple<string, Guid>(Clerk.Id, RootStText.Guid)]);
+				(CurrentInterlinearTabControl as IHandleBookmark)?.SelectBookmark(m_bookmarks[new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid)]);
 			}
 		}
 
@@ -1352,18 +1349,18 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		{
 			// are we the dominant pane? The thinking here is that if our clerk is controlling
 			// the record tree bar, then we are.
-			if (Clerk.IsControllingTheRecordTreeBar)
+			if (MyRecordList.IsControllingTheRecordTreeBar)
 			{
 				//add our current state to the history system
 				var guid = Guid.Empty;
-				if (Clerk.CurrentObject != null)
+				if (MyRecordList.CurrentObject != null)
 				{
-					guid = Clerk.CurrentObject.Guid;
+					guid = MyRecordList.CurrentObject.Guid;
 				}
 				// Not sure what will happen with guid == Guid.Empty on the link...
 				var link = new FwLinkArgs(PropertyTable.GetValue("toolChoice", string.Empty), guid, InterlinearTab.ToString());
 				link.LinkProperties.Add(new LinkProperty("InterlinearTab", InterlinearTab.ToString()));
-				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
+				MyRecordList.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
 				PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(link);
 			}
 		}
@@ -1470,8 +1467,10 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			// but play safe, because the call to get the Clerk will crash if we don't have configuration
 			// params.
 			if (m_configurationParametersElement != null /* && !Cache.DatabaseAccessor.IsTransactionOpen() */)
-				Clerk.SaveOnChangeRecord();
-			bool fParsedTextDuringSave = false;
+			{
+				MyRecordList.SaveOnChangeRecord();
+			}
+			var fParsedTextDuringSave = false;
 			// Pane-individual updates; None did anything, I removed them; GJM
 			// Is this where we need to hook in reparsing of segments/paras, etc. if RawTextPane is deselected?
 			// No. See DomainImpl.AnalysisAdjuster.
@@ -1480,7 +1479,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			{
 				//At this point m_tabCtrl.SelectedIndex is set to the value of the tabPage
 				//we are leaving.
-				if (RootStText != null && m_bookmarks.ContainsKey(new Tuple<string, Guid>(Clerk.Id, RootStText.Guid)))
+				if (RootStText != null && m_bookmarks.ContainsKey(new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid)))
 					SaveBookMark();
 			}
 		}

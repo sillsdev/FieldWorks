@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private MultiPane _innerMultiPane;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		[Import(AreaServices.LexiconAreaMachineName)]
 		private IArea _area;
 		[Import]
@@ -61,9 +61,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_propertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{_area.MachineName}", MachineName, SettingsGroup.LocalSettings, true, false);
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(LexiconArea.Entries, majorFlexComponentParameters.Statusbar, LexiconArea.EntriesFactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.Statusbar, LexiconArea.EntriesFactoryMethod);
 			}
 
 			var root = XDocument.Parse(LexiconResources.LexiconBrowseParameters).Root;
@@ -78,12 +78,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			OverrideServices.OverrideVisibiltyAttributes(columnsElement, overrides);
 			root.Add(columnsElement);
 
-			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordClerk);
+			_recordBrowseView = new RecordBrowseView(root, majorFlexComponentParameters.LcmCache, _recordList);
 
 			 var dataTree = new DataTree();
-			_lexiconEditToolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, dataTree, _recordClerk);
+			_lexiconEditToolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, dataTree, _recordList);
 
-			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordClerk, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, dataTree, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var nestedMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,
@@ -93,7 +93,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				ToolMachineName = MachineName,
 				FirstControlParameters = new SplitterChildControlParameters
 				{
-					Control = new RecordDocXmlView(XDocument.Parse(LexiconResources.LexiconEditRecordDocViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordClerk, (StatusBarProgressPanel)majorFlexComponentParameters.Statusbar.Panels[LanguageExplorerConstants.StatusBarPanelProgressBar]), Label = "Dictionary"
+					Control = new RecordDocXmlView(XDocument.Parse(LexiconResources.LexiconEditRecordDocViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, (StatusBarProgressPanel)majorFlexComponentParameters.Statusbar.Panels[LanguageExplorerConstants.StatusBarPanelProgressBar]), Label = "Dictionary"
 				},
 				SecondControlParameters = new SplitterChildControlParameters
 				{
@@ -133,10 +133,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			panelButton.DatTree = recordEditView.DatTree;
 
 			// Too early before now.
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 			_lexiconEditToolMenuHelper.Initialize();
 			recordEditView.FinishInitialization();
 			((RecordDocXmlView)nestedMultiPaneParameters.FirstControlParameters.Control).ReallyShowRecordNow();
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
 		}
 
 		/// <summary>
@@ -152,8 +152,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_recordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>
@@ -166,7 +166,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 #endregion
 
-#region Implementation of IMajorFlexUiComponent
+		#region Implementation of IMajorFlexUiComponent
 
 		/// <summary>
 		/// Get the internal name of the component.
@@ -178,6 +178,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// User-visible localizable component name.
 		/// </summary>
 		public string UiName => "Lexicon Edit";
+
 		#endregion
 
 		#region Implementation of ITool

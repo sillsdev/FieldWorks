@@ -11,6 +11,7 @@ using SIL.LCModel;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 
@@ -32,11 +33,11 @@ namespace LanguageExplorer.Works
 
 		public IPropertyTable PropertyTable { private get; set; }
 
-		public UploadToWebonaryController(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
+		public UploadToWebonaryController(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, StatusBar statusBar)
 		{
 			m_cache = cache;
 			m_propertyTable = propertyTable;
-			m_exportService = new DictionaryExportService(cache, RecordList.ActiveRecordClerkRepository.ActiveRecordClerk, propertyTable, publisher);
+			m_exportService = new DictionaryExportService(cache, RecordList.ActiveRecordListRepository.ActiveRecordList, propertyTable, publisher, statusBar);
 			m_publicationActivator = new DictionaryExportService.PublicationActivator(propertyTable);
 		}
 

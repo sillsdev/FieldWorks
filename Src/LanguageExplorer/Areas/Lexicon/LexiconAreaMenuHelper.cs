@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.LexText;
-using LanguageExplorer.Works;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -25,12 +24,12 @@ namespace LanguageExplorer.Areas.Lexicon
 		private ToolStripMenuItem _fileImportMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newFileMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 
-		internal LexiconAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordClerk recordClerk)
+		internal LexiconAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
-			_areaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, recordClerk);
+			_areaWideMenuHelper = new AreaWideMenuHelper(_majorFlexComponentParameters, recordList);
 
 			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 		}

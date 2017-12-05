@@ -11,7 +11,6 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using LanguageExplorer.Works;
 using SIL.LCModel;
@@ -32,7 +31,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// The RecordBar has no top PaneBar for information, menus, etc.
 		/// </summary>
 		private CollapsingSplitContainer _collapsingSplitContainer;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		[Import(AreaServices.GrammarAreaMachineName)]
 		private IArea _area;
 
@@ -63,11 +62,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault("PartsOfSpeech.posEdit.DataTree-Splitter", 200, SettingsGroup.LocalSettings, true, false);
 			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault("PartsOfSpeech.posAdvancedEdit.DataTree-Splitter", 200, SettingsGroup.LocalSettings, true, false);
 
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(Categories_withTreeBarHandler, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(Categories_withTreeBarHandler, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
-			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordClerk); // Use generic export event handler.
+			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordList); // Use generic export event handler.
 
 			var dataTree = new DataTree();
 #if RANDYTODO
@@ -77,10 +76,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				XDocument.Parse(ListResources.PosEditParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields),
 				MachineName,
 				majorFlexComponentParameters.LcmCache,
-				_recordClerk,
+				_recordList,
 				dataTree,
 				MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>
@@ -95,8 +94,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_recordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>
@@ -138,7 +137,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		#endregion
 
-		private static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
 		{
 			Require.That(clerkId == Categories_withTreeBarHandler, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Categories_withTreeBarHandler}'.");
 

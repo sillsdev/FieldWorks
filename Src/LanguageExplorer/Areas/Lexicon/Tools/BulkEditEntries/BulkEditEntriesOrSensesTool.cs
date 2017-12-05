@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		private const string EntriesOrChildren = "entriesOrChildren";
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
-		private IRecordClerk _recordClerk;
+		private IRecordList _recordList;
 		[Import(AreaServices.LexiconAreaMachineName)]
 		private IArea _area;
 
@@ -56,23 +56,23 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 			// Crashes in RecordList "CheckExpectedListItemsClassInSync" with: for some reason BulkEditBar.ExpectedListItemsClassId({0}) does not match SortItemProvider.ListItemsClass({1}).
 			// BulkEditBar expected 5002, but
 			// SortItemProvider was: 5035
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordClerkRepositoryForTools.GetRecordClerk(EntriesOrChildren, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(EntriesOrChildren, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordClerk);
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
 
 			var root = XDocument.Parse(LexiconResources.BulkEditEntriesOrSensesToolParameters).Root;
 			var parametersElement = root.Element("parameters");
 			parametersElement.Element("includeColumns").ReplaceWith(XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions));
 			OverrideServices.OverrideVisibiltyAttributes(parametersElement.Element("columns"), root.Element("overrides"));
-			_recordBrowseView = new RecordBrowseView(parametersElement, majorFlexComponentParameters.LcmCache, _recordClerk);
+			_recordBrowseView = new RecordBrowseView(parametersElement, majorFlexComponentParameters.LcmCache, _recordList);
 
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
-			RecordClerkServices.SetClerk(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 			_lexiconAreaMenuHelper.Initialize();
 		}
 
@@ -89,8 +89,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		/// </summary>
 		public void FinishRefresh()
 		{
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_recordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>
@@ -131,11 +131,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 
 		#endregion
 
-		internal static IRecordClerk FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		internal static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Guard.AssertThat(clerkId == EntriesOrChildren, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{EntriesOrChildren}'.");
+			Guard.AssertThat(recordListId == EntriesOrChildren, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{EntriesOrChildren}'.");
 
-			return new EntriesOrChildClassesRecordList(clerkId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.LexDbOA);
+			return new EntriesOrChildClassesRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.LexDbOA);
 		}
 	}
 }

@@ -10,7 +10,6 @@ using System.Xml;
 using LanguageExplorer.Controls.PaneBar;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
-using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -51,7 +50,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		ConcOccurrenceBrowseView m_rbv;
 		XmlView m_previewPane;
 		string m_helpTopic = "khtpFindExampleSentence";
-		IRecordClerk m_clerk;
+		IRecordList m_recordList;
 
 		/// <summary />
 		public FindExampleSentenceDlg()
@@ -204,7 +203,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			m_rbv = DynamicLoader.CreateObject(xnBrowseViewControlParameters.ParentNode.SelectSingleNode("dynamicloaderinfo")) as ConcOccurrenceBrowseView;
 			m_rbv.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			m_rbv.Init(m_previewPane, m_clerk.VirtualListPublisher);
+			m_rbv.Init(m_previewPane, m_recordList.VirtualListPublisher);
 			m_rbv.CheckBoxChanged += m_rbv_CheckBoxChanged;
 			// add it to our controls.
 			BasicPaneBarContainer pbc1 = new BasicPaneBarContainer();
@@ -237,7 +236,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			List<int> uniqueSegments =
 				(from fake in occurrences
-				 select m_clerk.VirtualListPublisher.get_ObjectProp(fake, ConcDecorator.kflidSegment)).Distinct().ToList
+				 select m_recordList.VirtualListPublisher.get_ObjectProp(fake, ConcDecorator.kflidSegment)).Distinct().ToList
 					();
 			int insertIndex = m_owningSense.ExamplesOS.Count; // by default, insert at the end.
 			if (m_les != null)

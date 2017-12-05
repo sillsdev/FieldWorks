@@ -84,32 +84,26 @@ namespace LanguageExplorer.Works
 			m_pot = PartOwnershipTree.Create(m_cache, this, true);
 		}
 
-		protected override void DisposeManagedResources()
+		protected override void Dispose(bool disposing)
 		{
-			if (m_pot != null && !m_pot.IsDisposed)
+			if (disposing)
 			{
-				m_pot.Dispose();
+				m_pot?.Dispose();
 			}
-			base.DisposeManagedResources();
-		}
-
-		protected override void DisposeUnmanagedResources()
-		{
 			m_pot = null;
-			base.DisposeUnmanagedResources();
+
+			base.Dispose(disposing);
 		}
 
 		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			CheckDisposed();
-
 			if (UpdatingList || m_reloadingList)
 			{
 				return;	// we're already in the process of changing our list.
 			}
 
 			var fLoadSuppressed = m_requestedLoadWhileSuppressed;
-			using (var luh = new ListUpdateHelper(Clerk))
+			using (var luh = new ListUpdateHelper(this))
 			{
 				// don't reload the entire list via propchanges.  just indicate we need to reload.
 				luh.TriggerPendingReloadOnDispose = false;

@@ -74,16 +74,16 @@ namespace LanguageExplorer.Works
 		private System.ComponentModel.Container components = null;
 
 		/// <summary>
-		/// Caches the RecordClerk.
+		/// Caches the RecordList.
 		/// </summary>
-		private IRecordClerk m_clerk;
+		private IRecordList m_recordList;
 
 		/// <summary>
 		/// Sometimes an active clerk (eg., in a view) is repurposed (eg., in a dialog for printing).
 		/// When finished, clerk.BecomeInactive() is called, but that causes records not to be shown
 		/// in the active view. This gaurd prevents that.
 		/// </summary>
-		private bool m_haveActiveClerk = false;
+		private bool m_haveActiveRecordList;
 
 		#endregion Data members
 
@@ -145,12 +145,12 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XWorksViewBase"/> class.
 		/// </summary>
-		protected XWorksViewBase(XElement configurationParametersElement, LcmCache cache, IRecordClerk recordClerk)
+		protected XWorksViewBase(XElement configurationParametersElement, LcmCache cache, IRecordList recordList)
 			: this()
 		{
 			m_configurationParametersElement = configurationParametersElement;
 			Cache = cache;
-			Clerk = recordClerk;
+			MyRecordList = recordList;
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -171,9 +171,9 @@ namespace LanguageExplorer.Works
 			if( disposing )
 			{
 				components?.Dispose();
-				if (m_clerk != null && !m_haveActiveClerk)
+				if (m_recordList != null && !m_haveActiveRecordList)
 				{
-					m_haveActiveClerk = false;
+					m_haveActiveRecordList = false;
 				}
 #if RANDYTODO
 				// Block for now.
@@ -183,7 +183,7 @@ namespace LanguageExplorer.Works
 			}
 			m_informationBar = null; // Should be disposed automatically, since it is in the Controls collection.
 			m_mpParent = null;
-			m_clerk = null;
+			m_recordList = null;
 
 			base.Dispose( disposing );
 		}
@@ -202,16 +202,16 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public IRecordClerk Clerk
+		public IRecordList MyRecordList
 		{
 			get
 			{
-				return m_clerk;
+				return m_recordList;
 			}
 			set
 			{
 				// allow parent controls to pass in the Clerk we want this control to use.
-				m_clerk = value;
+				m_recordList = value;
 			}
 		}
 
@@ -361,20 +361,20 @@ namespace LanguageExplorer.Works
 			if(titleId != null)
 			{
 				titleStr = StringTable.Table.GetString(titleId, "AlternativeTitles");
-				if(Clerk.OwningObject != null &&
+				if(MyRecordList.OwningObject != null &&
 					XmlUtils.GetBooleanAttributeValue(m_configurationParametersElement, "ShowOwnerShortname"))
 				{
 					// Originally this option was added to enable the Reversal Index title bar to show
 					// which reversal index was being shown.
-					titleStr = string.Format(xWorksStrings.ksXReversalIndex, Clerk.OwningObject.ShortName,
+					titleStr = string.Format(xWorksStrings.ksXReversalIndex, MyRecordList.OwningObject.ShortName,
 													 titleStr);
 				}
 			}
-			else if(Clerk.OwningObject != null)
+			else if(MyRecordList.OwningObject != null)
 			{
 				if (XmlUtils.GetBooleanAttributeValue(m_configurationParametersElement,
 																 "ShowOwnerShortname"))
-					titleStr = Clerk.OwningObject.ShortName;
+					titleStr = MyRecordList.OwningObject.ShortName;
 			}
 			return titleStr;
 		}
@@ -434,12 +434,12 @@ namespace LanguageExplorer.Works
 			if (m_informationBar == null)
 				return;
 			string className = StringTable.Table.GetString("No Record", "Misc");
-			if (Clerk.CurrentObject != null)
+			if (MyRecordList.CurrentObject != null)
 			{
-				string typeName = Clerk.CurrentObject.GetType().Name;
-				if (Clerk.CurrentObject is ICmPossibility)
+				string typeName = MyRecordList.CurrentObject.GetType().Name;
+				if (MyRecordList.CurrentObject is ICmPossibility)
 				{
-					var possibility = Clerk.CurrentObject as ICmPossibility;
+					var possibility = MyRecordList.CurrentObject as ICmPossibility;
 					className = possibility.ItemTypeName();
 			}
 			else
@@ -460,7 +460,7 @@ namespace LanguageExplorer.Works
 					XmlViewsUtils.TryFindString("EmptyTitles", emptyTitleId, out titleStr);
 					if (titleStr != "*" + emptyTitleId + "*")
 						className = titleStr;
-					Clerk.UpdateStatusBarRecordNumber(titleStr);
+					MyRecordList.UpdateStatusBarRecordNumber(titleStr);
 				}
 			}
 			// This code:  ((IPaneBar)m_informationBar).Text = className;
