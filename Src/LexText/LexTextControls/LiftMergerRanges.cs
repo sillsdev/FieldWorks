@@ -1170,12 +1170,16 @@ namespace SIL.FieldWorks.LexText.Controls
 					break;
 				case "paradigm": // I think we can ignore these.
 					break;
-					//============================================================================
-					//============================================================================
-					//============================================================================
-					//============================================================================
-					//============================================================================
-					//New
+				case "Publications":
+					ProcessPossibilityPublications(id, guidAttr, parent, newDesc, newLabel, newAbbrev, m_dictPublicationTypes,
+													m_rgnewPublicationType, m_cache.LangProject.LexDbOA.PublicationTypesOA);
+					break;
+				//============================================================================
+				//============================================================================
+				//============================================================================
+				//============================================================================
+				//============================================================================
+				//New
 				case RangeNames.sAffixCategoriesOA:
 					ProcessPossibility(id, guidAttr, parent, newDesc, newLabel, newAbbrev,
 									   m_dictAffixCategories, m_rgAffixCategories, m_cache.LangProject.AffixCategoriesOA);

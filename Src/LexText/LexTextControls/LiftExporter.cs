@@ -1684,6 +1684,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			WriteAffixSlotRanges(w);
 			WriteInflectionClassRanges(w);
 			WriteStemNameRanges(w);
+			WritePublicationsRange(w);
 			WriteAnyOtherRangesReferencedByFields(w);
 			w.WriteLine("</lift-ranges>");
 			w.Flush();
@@ -2293,6 +2294,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		private void WritePublicationsRange(TextWriter w)
+		{
+			WritePossibilityListAsRange(w, "Publications", m_cache.LangProject.LexDbOA.PublicationTypesOA,
+				m_cache.LangProject.LexDbOA.PublicationTypesOA.Guid.ToString());
+		}
+
 		/// <summary>
 		/// Find all the lists referenced by custom fields and all the custom possibility lists
 		/// </summary>
@@ -2762,6 +2769,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				case "etymology":
 				case "note-type":
 				case "paradigm":
+				case "Publications":
 					return false;
 				default:
 					if (range.EndsWith("-slot") || range.EndsWith("-Slots") ||

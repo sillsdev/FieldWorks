@@ -1169,7 +1169,7 @@ namespace LexTextControlsTests
 
 			var ranges = xdoc.SelectNodes("//range");
 			Assert.IsNotNull(ranges);
-			Assert.AreEqual(13, ranges.Count);
+			Assert.AreEqual(14, ranges.Count);
 			XmlNode referencedCustomFieldList = null;
 			XmlNode unreferencedCustomFieldList = null;
 			foreach (XmlNode range in ranges)

@@ -1866,6 +1866,42 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
+		/// To Process Publications
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="guidAttr"></param>
+		/// <param name="parent"></param>
+		/// <param name="description">safe-XML</param>
+		/// <param name="label">safe-XML</param>
+		/// <param name="abbrev">safe-XML</param>
+		/// <param name="dict"></param>
+		/// <param name="rgNew"></param>
+		/// <param name="list"></param>
+		/// <param name="isCustom"></param>
+		private void ProcessPossibilityPublications(string id, string guidAttr, string parent,
+			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev,
+			Dictionary<string, ICmPossibility> dict, List<ICmPossibility> rgNew, ICmPossibilityList list, bool isCustom = false)
+		{
+			ICmPossibility poss = FindExistingPossibility(id, guidAttr, label, abbrev, dict, list);
+			if (poss == null)
+			{
+				ICmObject possParent = null;
+				if (!String.IsNullOrEmpty(parent) && dict.ContainsKey(parent))
+					possParent = dict[parent];
+				else
+					possParent = list;
+				poss = isCustom ? CreateNewCustomPossibility(guidAttr, possParent) : CreateNewCmPossibility(guidAttr, possParent);
+				SetNewPossibilityAttributes(id, description, label, abbrev, poss);
+				dict[id] = poss;
+				rgNew.Add(poss);
+			}
+			else
+			{
+				SetNewPossibilityAttributes(id, description, label, abbrev, poss);
+			}
+		}
+
+		/// <summary>
 		///
 		/// </summary>
 		/// <param name="id"></param>
