@@ -366,7 +366,7 @@ namespace SIL.FieldWorks.XWorks
 			var currentConfig = GetCurrentConfiguration(m_propertyTable, true, null);
 			var cache = m_propertyTable.GetValue<LcmCache>("cache");
 			var configuration = new DictionaryConfigurationModel(currentConfig, cache);
-			if (((string[])param).Any(x => x.ToString() == configuration.HomographConfiguration.HomographWritingSystem))
+			if (configuration.HomographConfiguration != null && ((string[])param).Any(x => x.ToString() == configuration.HomographConfiguration.HomographWritingSystem))
 			{
 				configuration.HomographConfiguration.HomographWritingSystem = string.Empty;
 				configuration.HomographConfiguration.CustomHomographNumbers = string.Empty;
