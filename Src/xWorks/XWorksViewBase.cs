@@ -618,6 +618,9 @@ namespace SIL.FieldWorks.XWorks
 				case "notebook":
 					inFriendlyTerritory = toolChoice == "notebookEdit" || toolChoice == "notebookBrowse";
 					break;
+				case "textsWords":
+					inFriendlyTerritory = toolChoice == "interlinearEdit" || toolChoice == "gloss";
+					break;
 			}
 
 			display.Enabled = display.Visible = inFriendlyTerritory;
@@ -644,6 +647,9 @@ namespace SIL.FieldWorks.XWorks
 					break;
 				case "notebook":
 					locationType = AddCustomFieldDlg.LocationType.Notebook;
+					break;
+				case "textsWords":
+					locationType = AddCustomFieldDlg.LocationType.Interlinear;
 					break;
 			}
 			using (var dlg = new AddCustomFieldDlg(m_mediator, m_propertyTable, locationType))

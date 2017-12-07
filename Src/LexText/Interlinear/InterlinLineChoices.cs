@@ -12,12 +12,14 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Utils;
 using System.Drawing;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.IText
 {
@@ -50,9 +52,9 @@ namespace SIL.FieldWorks.IText
 
 		public InterlinLineChoices(LcmCache cache, int defaultVernacularWs, int defaultAnalysisWs, InterlinMode mode)
 		{
+			m_cache = cache;
 			this.Mode = mode;
 			InitFieldNames(mode);
-			m_cache = cache;
 			m_wsDefVern = defaultVernacularWs;
 			if (defaultAnalysisWs == WritingSystemServices.kwsAnal)
 				m_wsDefAnal = m_cache.DefaultAnalWs;
@@ -365,6 +367,7 @@ namespace SIL.FieldWorks.IText
 
 		private LineOption[] LineOptions(InterlinMode mode)
 		{
+			var customLineOptions = GetCustomLineOptions(mode);
 			return new LineOption[] {
 				 new LineOption(kflidWord, ITextStrings.ksWord),
 				 new LineOption(kflidMorphemes, ITextStrings.ksMorphemes),
@@ -378,7 +381,31 @@ namespace SIL.FieldWorks.IText
 				 new LineOption(kflidFreeTrans, ITextStrings.ksFreeTranslation),
 				 new LineOption(kflidLitTrans, ITextStrings.ksLiteralTranslation),
 				 new LineOption(kflidNote, ITextStrings.ksNote)
-			};
+			}.Union(customLineOptions).ToArray();
+		}
+
+		private List<LineOption> GetCustomLineOptions(InterlinMode mode)
+		{
+			var customLineOptions = new List<LineOption>();
+			switch (mode)
+			{
+				case InterlinMode.Analyze:
+				case InterlinMode.Gloss:
+					if (m_cache != null)
+					{
+						var classId = m_cache.MetaDataCacheAccessor.GetClassId("Segment");
+						var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+						foreach (int flid in mdc.GetFields(classId, false, (int)CellarPropertyTypeFilter.All))
+						{
+							if (!mdc.IsCustom(flid))
+								continue;
+							customLineOptions.Add(new LineOption(flid, mdc.GetFieldLabel(flid)));
+						}
+					}
+					break;
+			}
+
+			return customLineOptions;
 		}
 
 		/// <summary>
@@ -576,7 +603,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="index"></param>
 		/// <returns></returns>
-		public int[] AdjacentWssAtIndex(int index)
+		public int[] AdjacentWssAtIndex(int index, int hvo)
 		{
 			int first = index;
 			int lim = index + 1;
@@ -584,7 +611,15 @@ namespace SIL.FieldWorks.IText
 				lim++;
 			int[] result = new int[lim - first];
 			for (int i = first; i < lim; i++)
-				result[i - first] = this[i].WritingSystem;
+			{
+				var wsId = this[i].WritingSystem;
+				var magicWsName = WritingSystemServices.GetMagicWsNameFromId(wsId);
+				if (!string.IsNullOrEmpty(magicWsName))
+				{
+					wsId = WritingSystemServices.ActualWs(m_cache, magicWsName, hvo, this[i].Flid);
+				}
+				result[i - first] = wsId;
+			}
 			return result;
 		}
 		/// <summary>
@@ -720,7 +755,15 @@ namespace SIL.FieldWorks.IText
 					fWordLevel = false;
 					break;
 				default:
-					throw new Exception("Adding unknown field to interlinear");
+					var mdc = (IFwMetaDataCacheManaged) m_cache.MetaDataCacheAccessor;
+					if (!mdc.IsCustom(flid))
+					{
+						throw new Exception("Adding unknown field to interlinear");
+					}
+					ws = mdc.GetFieldWs(flid);
+					fWordLevel = false;
+					comboContent = ColumnConfigureDialog.WsComboContent.kwccAnalAndVern;
+					break;
 			}
 			InterlinLineSpec spec = new InterlinLineSpec();
 			spec.ComboContent = comboContent;

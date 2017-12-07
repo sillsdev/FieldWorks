@@ -26,7 +26,8 @@ namespace SIL.FieldWorks.XWorks
 		public enum LocationType
 		{
 			Lexicon,
-			Notebook
+			Notebook,
+			Interlinear
 		}
 
 		private enum CustomFieldType
@@ -126,6 +127,9 @@ namespace SIL.FieldWorks.XWorks
 					m_locationComboBox.Items.Add(new IdAndString<int>(MoFormTags.kClassId, xWorksStrings.Allomorph));
 					break;
 
+				case LocationType.Interlinear:
+					m_locationComboBox.Items.Add(new IdAndString<int>(SegmentTags.kClassId, "Segment"));
+					break;
 				case LocationType.Notebook:
 					// If you add classes here which have subclasses,  a change is also needed in BasicCustomPropertyFixer (FixFwDataDll).
 					m_locationComboBox.Items.Add(new IdAndString<int>(RnGenericRecTags.kClassId, xWorksStrings.ksRecord));

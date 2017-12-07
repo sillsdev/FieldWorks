@@ -12,6 +12,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.IText
 {
@@ -120,6 +121,11 @@ namespace SIL.FieldWorks.IText
 				// <item type="punct">
 				WriteItem(tag, "punct", 0);
 			}
+			else if (((IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor).IsCustom(tag))
+			{
+				// custom fields are not multi-strings, so pass 0 for the ws
+				WriteItem(tag, m_cache.MetaDataCacheAccessor.GetFieldName(tag), 0);
+			}
 		}
 
 		public override void NoteDependency(int[] _rghvo, int[] rgtag, int chvo)
@@ -198,8 +204,7 @@ namespace SIL.FieldWorks.IText
 			}
 			else
 			{
-				Debug.WriteLine(
-					String.Format("Export.AddStringAltMember(hvo={0}, tag={1}, ws={2})", m_hvoCurr, tag, ws));
+				Debug.WriteLine("Export.AddStringAltMember(hvo={0}, tag={1}, ws={2})", m_hvoCurr, tag, ws);
 			}
 		}
 

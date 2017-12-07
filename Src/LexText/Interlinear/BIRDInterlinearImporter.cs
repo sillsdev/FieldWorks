@@ -16,6 +16,8 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.IText.FlexInterlinModel;
 using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.IText
@@ -380,6 +382,22 @@ namespace SIL.FieldWorks.IText
 							phraseText = TsStringUtils.MakeString(item.Value, GetWsEngine(wsFactory, item.lang).Handle);
 							textInFile = true;
 							break;
+						default:
+							var classId = cache.MetaDataCacheAccessor.GetClassId("Segment");
+							var mdc = (IFwMetaDataCacheManaged) cache.MetaDataCacheAccessor;
+							foreach (int flid in mdc.GetFields(classId, false, (int) CellarPropertyTypeFilter.All))
+							{
+								if (!mdc.IsCustom(flid))
+									continue;
+								var customId = mdc.GetFieldId2(classId, item.type, true);
+								if (customId != 0)
+								{
+									var customWs = GetWsEngine(wsFactory, item.lang).Handle;
+									var customTierText = TsStringUtils.MakeString(item.Value, customWs);
+									cache.MainCacheAccessor.SetString(newSegment.Hvo, customId, customTierText);
+								}
+							}
+							break;
 					}
 				}
 			}
@@ -389,7 +407,7 @@ namespace SIL.FieldWorks.IText
 		{
 			if (!String.IsNullOrEmpty(phrase.mediaFile))
 			{
-				if(!String.IsNullOrEmpty(phrase.speaker))
+				if (!String.IsNullOrEmpty(phrase.speaker))
 				{
 					newSegment.SpeakerRA = FindOrCreateSpeaker(phrase.speaker, cache);
 				}

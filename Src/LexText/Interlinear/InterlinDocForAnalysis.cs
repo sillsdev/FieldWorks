@@ -1624,9 +1624,9 @@ namespace SIL.FieldWorks.IText
 							// Adjacent WSS of the same annotation count as only ONE object in the display.
 							// So we advance i over as many items in m_choices as there are adjacent Wss
 							// of the same flid.
-							i += choices.AdjacentWssAtIndex(i).Length;
+							i += choices.AdjacentWssAtIndex(i, hvoSeg).Length;
 						}
-						int[] rgws = choices.AdjacentWssAtIndex(idx);
+						int[] rgws = choices.AdjacentWssAtIndex(idx, hvoSeg);
 						for (int i = 0; i < rgws.Length; ++i)
 						{
 							if (rgws[i] == wsField)

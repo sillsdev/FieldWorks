@@ -319,10 +319,15 @@ namespace SIL.FieldWorks.IText
 				// the actual analysis ws name.
 				foreach (WsComboItem item in WsComboItems(ls.ComboContent))
 				{
-					if (getWsFromId(item.Id) == ls.WritingSystem)
+					var ws = ls.IsMagicWritingSystem ? m_cache.LangProject.DefaultWsForMagicWs(ls.WritingSystem) : ls.WritingSystem;
+					if (getWsFromId(item.Id) == ws)
 					{
 						wsName = item.ToString();
 						break;
+					}
+					else
+					{
+						Debug.WriteLine(item.Id);
 					}
 				}
 				// Last ditch effort
