@@ -155,11 +155,15 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 
 		#endregion
 
-		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(clerkId == Phonologicalfeatures, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Phonologicalfeatures}'.");
-
-			return new RecordList(clerkId, statusBar,
+			Require.That(recordListId == Phonologicalfeatures, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{Phonologicalfeatures}'.");
+			/*
+            <clerk id="phonologicalfeatures">
+              <recordList owner="PhFeatureSystem" property="PhonologicalFeatures" />
+            </clerk>
+			*/
+			return new RecordList(recordListId, statusBar,
 				new PropertyRecordSorter("ShortName"), AreaServices.Default,
 				null, false, false,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,

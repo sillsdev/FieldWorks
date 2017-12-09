@@ -12,14 +12,14 @@ namespace LanguageExplorer
 		internal static void SetRecordList(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 		{
 			majorFlexComponentParameters.DataNavigationManager.RecordList = recordList;
-			majorFlexComponentParameters.ParserMenuManager.RecordList = recordList;
+			majorFlexComponentParameters.ParserMenuManager.MyRecordList = recordList;
 			majorFlexComponentParameters.RecordListRepositoryForTools.ActiveRecordList = recordList;
 		}
 
 		internal static void ClearRecordList(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			majorFlexComponentParameters.DataNavigationManager.RecordList = null;
-			majorFlexComponentParameters.ParserMenuManager.RecordList = null;
+			majorFlexComponentParameters.ParserMenuManager.MyRecordList = null;
 			majorFlexComponentParameters.RecordListRepositoryForTools.ActiveRecordList = null;
 		}
 	}

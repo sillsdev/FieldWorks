@@ -23,7 +23,7 @@ namespace LanguageExplorer.Works
 		/// <param name="recordListId">The record list Id to return.</param>
 		/// <param name="statusBar"></param>
 		/// <param name="recordListFactoryMethod">The method called to create the record list, if not found in the repository.</param>
-		/// <returns>A RecordClerk instance with the specified Id.</returns>
+		/// <returns>The record list instance with the specified Id.</returns>
 		/// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="recordListFactoryMethod"/> doesn't know how to make a record list with the given Id.</exception>
 		IRecordList GetRecordList(string recordListId, StatusBar statusBar, Func<LcmCache, FlexComponentParameters, string, StatusBar, IRecordList> recordListFactoryMethod);
 
@@ -34,7 +34,7 @@ namespace LanguageExplorer.Works
 		/// <param name="statusBar"></param>
 		/// <param name="customList">The user created possibility list.</param>
 		/// <param name="recordListFactoryMethod">The method called to create the record list, if not found in the repository.</param>
-		/// <returns>A RecordClerk instance with the specified Id.</returns>
+		/// <returns>The record list instance with the specified Id.</returns>
 		/// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="recordListFactoryMethod"/> doesn't know how to make a record list with the given Id.</exception>
 		IRecordList GetRecordList(string recordListId, StatusBar statusBar, ICmPossibilityList customList, Func<ICmPossibilityList, LcmCache, FlexComponentParameters, string, StatusBar, IRecordList> recordListFactoryMethod);
 	}

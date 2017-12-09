@@ -132,19 +132,19 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		#endregion
 
-		public IRecordList RecordList
+		public IRecordList MyRecordList
 		{
 			set
 			{
 				if (_recordList != null)
 				{
-					// Unwire from older clerk
+					// Unwire from older record list
 					_recordList.SelectedObjectChanged -= RecordListSelectedObjectChanged;
 				}
 				_recordList = value;
 				if (_recordList != null)
 				{
-					// Wire up to new clerk.
+					// Wire up to new record list.
 					_recordList.SelectedObjectChanged += RecordListSelectedObjectChanged;
 				}
 			}
@@ -591,13 +591,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 		}
 
-		private bool InTextsWordsArea => PropertyTable.GetValue("areaChoice", string.Empty) == AreaServices.TextAndWordsAreaMachineName;
+		private bool InTextsWordsArea => PropertyTable.GetValue<string>(AreaServices.AreaChoice) == AreaServices.TextAndWordsAreaMachineName;
 
 		private bool InWordAnalyses
 		{
 			get
 			{
-				var toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
+				var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 				return InTextsWordsArea && (toolChoice == AreaServices.AnalysesMachineName || toolChoice == AreaServices.WordListConcordanceMachineName || toolChoice == AreaServices.BulkEditWordformsMachineName);
 			}
 		}
@@ -606,7 +606,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			get
 			{
-				var toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
+				var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 				var tabName = PropertyTable.GetValue("InterlinearTab", string.Empty);
 				return InTextsWordsArea && toolChoice == AreaServices.InterlinearEditMachineName && (tabName == "RawText" || tabName == "Interlinearizer" || tabName == "Gloss");
 			}

@@ -606,8 +606,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (m_firstNewText != null)
 			{
 				// try to select it.
-				var clerk = RecordList.ActiveRecordListRepository.GetRecordList("interlinearTexts");
-				clerk?.JumpToRecord(m_firstNewText.ContentsOA.Hvo);
+				var recordList = RecordList.ActiveRecordListRepository.GetRecordList(TextAndWordsArea.InterlinearTexts);
+				recordList?.JumpToRecord(m_firstNewText.ContentsOA.Hvo);
 			}
 		}
 		IText m_firstNewText;

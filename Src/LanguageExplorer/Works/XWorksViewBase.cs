@@ -21,9 +21,9 @@ namespace LanguageExplorer.Works
 {
 	/// <summary>
 	/// XmlDocView is a view that shows a complete list as a single view.
-	/// A RecordClerk class does most of the work of managing the list and current object.
+	/// A RecordList class does most of the work of managing the list and current object.
 	///	list management and navigation is entirely(?) handled by the
-	/// RecordClerk.
+	/// RecordList.
 	///
 	/// The actual view of each object is specified by a child <jtview></jtview> node
 	/// of the view node. This specifies how to display an individual list item.
@@ -79,9 +79,9 @@ namespace LanguageExplorer.Works
 		private IRecordList m_recordList;
 
 		/// <summary>
-		/// Sometimes an active clerk (eg., in a view) is repurposed (eg., in a dialog for printing).
-		/// When finished, clerk.BecomeInactive() is called, but that causes records not to be shown
-		/// in the active view. This gaurd prevents that.
+		/// Sometimes an active record list (eg., in a view) is repurposed (eg., in a dialog for printing).
+		/// When finished, recordList.BecomeInactive() is called, but that causes records not to be shown
+		/// in the active view. This guard prevents that.
 		/// </summary>
 		private bool m_haveActiveRecordList;
 
@@ -259,7 +259,7 @@ namespace LanguageExplorer.Works
 			{
 				CheckDisposed();
 
-				return PropertyTable.GetValue<string>("areaChoice");
+				return PropertyTable.GetValue<string>(AreaServices.AreaChoice);
 			}
 		}
 
@@ -510,20 +510,19 @@ namespace LanguageExplorer.Works
 		{
 			CheckDisposed();
 
-			RecordClerk clerk = Clerk;
-			string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
+			string areaChoice = m_propertyTable.GetValue<string>(AreaServices.AreaChoice);
 			bool inFriendlyTerritory = (areaChoice == AreaServices.InitialAreaMachineName
 #if RANDYTODO
-			// TODO: The "notebook" area uses its own dlg. See: RecordClerk's method: OnExport
+			// TODO: The "notebook" area uses its own dlg. See: RecordList's method: OnExport
 #endif
 				|| areaChoice == AreaServices.NotebookAreaMachineName
 #if RANDYTODO
-			// TODO: These "textsWords" tools use the "concordanceWords" Clerk, so can handle the File_Export menu:
+			// TODO: These "textsWords" tools use the "concordanceWords" record list, so can handle the File_Export menu:
 			// TODO: Analyses, bulkEditWordforms, and wordListConcordance.
 			// TODO: These tools in the "textsWords" do not support the File_Export menu, so it is not visible for them:
 			// TODO: complexConcordance, concordance, corpusStatistics, interlinearEdit
 #endif
-				|| (areaChoice == AreaServices.TextAndWordsAreaMachineName && clerk.Id == "concordanceWords")
+				|| (areaChoice == AreaServices.TextAndWordsAreaMachineName && MyRecordList.Id == "concordanceWords")
 #if RANDYTODO
 			// TODO: The "grammarSketch" tool in the "grammar" area uses its own dlg. See: GrammarSketchHtmlViewer's method: OnExport
 			// TODO: All other "grammar" area tools use the basic dlg and worry about some custom lexicon properties.
@@ -542,8 +541,8 @@ namespace LanguageExplorer.Works
 		{
 			CheckDisposed();
 
-			string toolChoice = m_propertyTable.GetValue("toolChoice", string.Empty);
-			string areaChoice = m_propertyTable.GetValue("areaChoice", string.Empty);
+			string toolChoice = m_propertyTable.GetValue<string>(AreaServices.ToolChoice);
+			string areaChoice = m_propertyTable.GetValue<string>(AreaServices.AreaChoice);
 			bool inFriendlyTerritory = false;
 			switch (areaChoice)
 			{
@@ -572,7 +571,7 @@ namespace LanguageExplorer.Works
 			}
 
 			AddCustomFieldDlg.LocationType locationType = AddCustomFieldDlg.LocationType.Lexicon;
-			string areaChoice = PropertyTable.GetValue("areaChoice", string.Empty);
+			string areaChoice = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
 			switch (areaChoice)
 			{
 				case AreaServices.LexiconAreaMachineName:

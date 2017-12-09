@@ -141,7 +141,7 @@ namespace LanguageExplorer.Works
 		protected bool _isActiveInGui = false;
 		private const string SelectedListBarNodeErrorMessage = "An item stored in the Property Table under SelectedListBarNode (typically from the ListView of an xWindow's record bar) should have an Hvo stored in its Tag property.";
 		///// <summary>
-		///// this will be null if this clerk is dependent on another one. Only the top-level clerk
+		///// this will be null if this record list is dependent on another one. Only the top-level record list
 		///// gets to be represented by and interact with the tree bar.
 		///// </summary>
 		//protected RecordBarHandler _recordBarHandler;
@@ -156,19 +156,19 @@ namespace LanguageExplorer.Works
 		/// the FilterBar.
 		/// </summary>
 		protected RecordFilter _activeMenuBarFilter;
-		private bool _shouldHandleDeletion = true; // false, if the dependent clerk is to handle deletion, as for reversals.
-		/// <summary>
-		/// this is an object which gives us the list of filters which we should offer to the user from the UI.
-		/// this does not include the filters they can get that by using the FilterBar.
-		/// </summary>
+		private bool _shouldHandleDeletion = true; // false, if the dependent record list is to handle deletion, as for reversals.
+												   /// <summary>
+												   /// this is an object which gives us the list of filters which we should offer to the user from the UI.
+												   /// this does not include the filters they can get that by using the FilterBar.
+												   /// </summary>
 		protected RecordFilterListProvider _filterProvider;
 		private RecordFilter _defaultFilter;
 		private string _defaultSortLabel;
 		private bool _suppressSaveOnChangeRecord; // true during delete and insert and ShowRecord calls caused by them.
-		private bool _allowDeletions = true;   // false if nothing is to be deleted for this record clerk.
-		/// <summary>
-		/// All of the sorters for the clerk.
-		/// </summary>
+		private bool _allowDeletions = true;   // false if nothing is to be deleted for this record list.
+											   /// <summary>
+											   /// All of the sorters for the record list.
+											   /// </summary>
 		protected Dictionary<string, PropertyRecordSorter> _allSorters;
 
 
@@ -226,7 +226,7 @@ namespace LanguageExplorer.Works
 			m_fontName = MiscUtils.StandardSansSerif;
 			// Only other current option is to specify an ordinary property (or a virtual one).
 			m_flid = flid;
-			// Review JohnH(JohnT): This is only useful for dependent clerks, but I don't know how to check this is one.
+			// Review JohnH(JohnT): This is only useful for dependent record lists, but I don't know how to check this is one.
 			m_owningObject = null;
 		}
 
@@ -380,9 +380,9 @@ namespace LanguageExplorer.Works
 				_bulkEditListUpdateHelper?.Dispose();
 				if (IsControllingTheRecordTreeBar)
 				{
-					PropertyTable.RemoveProperty("ActiveClerkSelectedObject");
+					PropertyTable.RemoveProperty("ActiveListSelectedObject");
 				}
-				PropertyTable.RemoveProperty(ClerkSelectedObjectPropertyId(Id));
+				PropertyTable.RemoveProperty(RecordListSelectedObjectPropertyId(Id));
 			}
 
 			m_sda = null;
@@ -445,14 +445,14 @@ namespace LanguageExplorer.Works
 			var setFilterMenu = false;
 			if (_filterProvider != null)
 			{
-				// There is only one clerk (concordanceWords) that sets m_filterProvider to a provider.
+				// There is only one record list (concordanceWords) that sets m_filterProvider to a provider.
 				// That provider is the class WfiRecordFilterListProvider.
-				// That clerk is used in these tools: AnalysesTool, BulkEditWordformsTool, & WordListConcordanceTool
-				// That WfiRecordFilterListProvider instance is (ok: "will be") provided in one of the RecordClerk contructor overloads.
+				// That record list is used in these tools: AnalysesTool, BulkEditWordformsTool, & WordListConcordanceTool
+				// That WfiRecordFilterListProvider instance is (ok: "will be") provided in one of the RecordList contructor overloads.
 				if (Filter != null)
 				{
-					// There is only one clerk (concordanceWords) that sets m_filterProvider to a provider.
-					// That clerk is used in these tools: AnalysesTool, BulkEditWordformsTool, & WordListConcordanceTool
+					// There is only one record list (concordanceWords) that sets m_filterProvider to a provider.
+					// That record list is used in these tools: AnalysesTool, BulkEditWordformsTool, & WordListConcordanceTool
 					// find any matching persisted menubar filter
 					// NOTE: for now assume we can only set/persist one such menubar filter at a time.
 					foreach (RecordFilter menuBarFilterOption in _filterProvider.Filters)
@@ -476,8 +476,8 @@ namespace LanguageExplorer.Works
 			}
 
 #if RANDYTODO
-			//we handled the tree bar only if we are the root clerk
-			if (m_clerkProvidingRootObject == null)
+			//we handled the tree bar only if we are the root record list
+			if (m_recordListProvidingRootObject == null)
 			{
 				m_recordBarHandler = RecordBarHandler.Create(PropertyTable, m_clerkConfiguration);//,m_flid);
 			}
@@ -485,12 +485,12 @@ namespace LanguageExplorer.Works
 			{
 				IRecordList recordListProvidingRootObject;
 				Debug.Assert(TryListProvidingRootObject(out recordListProvidingRootObject),
-					"We expected to find clerkProvidingOwner '" + m_clerkProvidingRootObject + "'. Possibly misspelled.");
+					"We expected to find recordListProvidingOwner '" + m_recordListProvidingRootObject + "'. Possibly misspelled.");
 			}
 #endif
 
 #if RANDYTODO
-			// TODO: In original, optimized, version, we don't load the data until the clerk is used in a newly activated window.
+			// TODO: In original, optimized, version, we don't load the data until the record list is used in a newly activated window.
 			SetupDataContext(false);
 #else
 			SetupDataContext(true);
@@ -798,7 +798,7 @@ namespace LanguageExplorer.Works
 #if NEEDED // If we need to be able to use this code path to insert into virtual properties, we will need to make them
 // Support writing, or do something similar to the old code which figured out a path of places to insert
 // the real object. As far as I (JohnT) can tell, though, we don't currently have any virtual properties
-// at the top level of a clerk into which we try to insert newly created objects in this way.
+// at the top level of a record list into which we try to insert newly created objects in this way.
 // check to see if we're wanting to insert into an owning relationship via a virtual property.
 				BaseFDOPropertyVirtualHandler vh = Cache.VwCacheDaAccessor.GetVirtualHandlerId(m_flid) as BaseFDOPropertyVirtualHandler;
 				if (vh != null)
@@ -1300,7 +1300,7 @@ namespace LanguageExplorer.Works
 			}
 			catch (IndexOutOfRangeException error)
 			{
-				throw new IndexOutOfRangeException("The RecordClerk tried to jump to a record which is not in the current active set of records.", error);
+				throw new IndexOutOfRangeException("The record list tried to jump to a record which is not in the current active set of records.", error);
 			}
 			// This broadcast will often cause a save of the record, which clears the undo stack.
 			BroadcastChange(suppressFocusChange);
@@ -1473,7 +1473,7 @@ namespace LanguageExplorer.Works
 			using (new WaitCursor(PropertyTable.GetValue<Form>("window")))
 			{
 				Logger.WriteEvent("Changing filter.");
-				// if our clerk is in the state of suspending loading the list, reset it now.
+				// if our record list is in the state of suspending loading the list, reset it now.
 				if (SuspendLoadListUntilOnChangeFilter)
 					SuspendLoadListUntilOnChangeFilter = false;
 
@@ -1498,9 +1498,9 @@ namespace LanguageExplorer.Works
 					}
 					if (args.Added != null)
 					{
-						//When the user chooses "all records/no filter", the RecordClerk will remove
-						//its previous filter and add a NullFilter. In that case, we don't really need to add
-						//	that filter. Instead, we can just add nothing.
+						// When the user chooses "all records/no filter", the RecordList will remove
+						// its previous filter and add a NullFilter. In that case, we don't really need to add
+						// that filter. Instead, we can just add nothing.
 						if (!(args.Added is NullFilter))
 						{
 							af.Add(args.Added);
@@ -1591,13 +1591,13 @@ namespace LanguageExplorer.Works
 
 		public bool OnDeleteRecord(object commandObject)
 		{
-			// Don't handle this message if you're not the primary clerk.  This allows, for
+			// Don't handle this message if you're not the primary record list.  This allows, for
 			// example, XmlBrowseRDEView.cs to handle the message instead.
 
 #if RANDYTODO
 			// Note from RandyR: One of these days we should probably subclass this object, and perhaps the record list more.
-			// The "reversalEntries" clerk wants to handle the message, even though it isn't the primary clerk.
-			// The m_shouldHandleDeletion member was also added, so the "reversalEntries" clerk's primary clerk
+			// The "reversalEntries" record list wants to handle the message, even though it isn't the primary record list.
+			// The m_shouldHandleDeletion member was also added, so the "reversalEntries" record list's primary record list
 			// would not handle the message, and delete an entire reversal index.
 #endif
 			if (ShouldNotHandleDeletionMessage)
@@ -1845,7 +1845,7 @@ namespace LanguageExplorer.Works
 					index = IndexOfObjOrChildOrParent(hvoTarget);
 					if (index == -1)
 					{
-						// It may be the wrong clerk, so just bail out.
+						// It may be the wrong record list, so just bail out.
 						//MessageBox.Show("The list target is no longer available. It may have been deleted.",
 						//	"Target not found", MessageBoxButtons.OK);
 						return false;
@@ -2032,7 +2032,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		public virtual void ReloadList()
 		{
-			// Skip multiple reloads and reloading when our clerk is not active.
+			// Skip multiple reloads and reloading when our record list is not active.
 			if (m_reloadingList)
 			{
 				return;
@@ -2491,7 +2491,7 @@ namespace LanguageExplorer.Works
 
 		/// <summary>
 		/// The display name of what is currently being sorted. This variable is persisted as a user
-		/// setting. When the sort name is null it indicates that the items in the clerk are not
+		/// setting. When the sort name is null it indicates that the items in the record list are not
 		/// being sorted or that the current sorting should not be displayed (i.e. the default column
 		/// is being sorted).
 		/// </summary>
@@ -2633,11 +2633,11 @@ namespace LanguageExplorer.Works
 		#region Non-interface codeRecordList
 
 #if RANDYTODO
-		// TODO: Think about not using the static, but also not adding IRecordClerkRepository to the property table.
+		// TODO: Think about not using the static, but also not adding IRecordListRepository to the property table.
 		// TODO: A new intance is included in MajorFlexComponentParameters,
 		// TODO: which is then passed to the Activate/Deactivate of IMajorFlexComponent implementations.
-		// TODO: Perhaps some other interface can be created that would allow IRecordClerkRepository to be passed
-		// TODO: further down the chain to clients who try to fetch a record clerk from the property table.
+		// TODO: Perhaps some other interface can be created that would allow IRecordListRepository to be passed
+		// TODO: further down the chain to clients who try to fetch a record list from the property table.
 		// TODO: They would then get it from the repository, and not the property table.
 		// TODO: At that point this static can be removed.
 		// TODO: The risk of using the static is that there can be multiple windows,
@@ -2662,9 +2662,9 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		internal static string ClerkSelectedObjectPropertyId(string clerkId)
+		internal static string RecordListSelectedObjectPropertyId(string recordListId)
 		{
-			return clerkId + "-selected";
+			return recordListId + "-selected";
 		}
 
 		internal static string GetCorrespondingPropertyName(string vectorName)
@@ -2974,8 +2974,8 @@ namespace LanguageExplorer.Works
 
 		private void TryReloadForInvalidPathObjectsOnCurrentObject(int tag, int cvDel)
 		{
-			// see if the property is the VirtualFlid of the owning clerk. If so,
-			// the owning clerk has reloaded, so we should also reload.
+			// see if the property is the VirtualFlid of the owning record list. If so,
+			// the owning record list has reloaded, so we should also reload.
 			IRecordList listProvidingRootObject;
 			if (TryListProvidingRootObject(out listProvidingRootObject) && listProvidingRootObject.VirtualFlid == tag && cvDel > 0)
 			{
@@ -3318,7 +3318,7 @@ namespace LanguageExplorer.Works
 
 		private string SorterPropertyTableId => PropertyTableId("sorter");
 
-		protected string CurrentFilterPropertyTableId => "currentFilterForRecordClerk_" + Id;
+		protected string CurrentFilterPropertyTableId => "currentFilterForRecordList_" + Id;
 
 		private bool ShouldNotHandleDeletionMessage => Id != "reversalEntries" && (!Editable || !IsPrimaryRecordList || !_shouldHandleDeletion);
 
@@ -3342,7 +3342,6 @@ namespace LanguageExplorer.Works
 
 		private int FindClosestValidIndex(int idx, int cobj)
 		{
-			var fOk = true;
 			for (var i = idx + 1; i < cobj; ++i)
 			{
 				var item = (IManyOnePathSortItem)SortedObjects[i];
@@ -3350,6 +3349,7 @@ namespace LanguageExplorer.Works
 				{
 					continue;
 				}
+				var fOk = true;
 				for (var j = 0; fOk && j < item.PathLength; j++)
 				{
 					fOk = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(item.PathObject(j)).IsValidObject;
@@ -3366,7 +3366,7 @@ namespace LanguageExplorer.Works
 				{
 					continue;
 				}
-				fOk = true;
+				var fOk = true;
 				for (var j = 0; fOk && j < item.PathLength; j++)
 				{
 					fOk = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(item.PathObject(j)).IsValidObject;
@@ -3430,7 +3430,7 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Change the list filter to the currently selected (checked) FilterList item.
 		/// This selection is stored in the property table based on the name of the filter
-		/// associated with the current clerk.
+		/// associated with the current record list.
 		/// </summary>
 		private void OnChangeFilterToCheckedListPropertyChoice()
 		{
@@ -3699,7 +3699,7 @@ namespace LanguageExplorer.Works
 		}
 
 		/// <summary>
-		/// Override this (initially only in InterlinTextsRecordClerk) if the clerk knows how to add an
+		/// Override this (initially only in InterlinTextsRecordList) if the record list knows how to add an
 		/// item to the current list/filter on request.
 		/// </summary>
 		protected virtual bool AddItemToList(int hvoItem)
@@ -3849,8 +3849,8 @@ namespace LanguageExplorer.Works
 			}
 
 			// This may be a change to content we depend upon.
-			// 1) see if the property is the VirtualFlid of the owning clerk. If so,
-			// the owning clerk has reloaded, so we should also reload.
+			// 1) see if the property is the VirtualFlid of the owning record list. If so,
+			// the owning record list has reloaded, so we should also reload.
 			IRecordList listProvidingRootObject;
 			if (TryListProvidingRootObject(out listProvidingRootObject) && listProvidingRootObject.VirtualFlid == tag && cvDel > 0)
 			{

@@ -47,9 +47,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private LcmCache _cache;
 		private XmlNode _configurationNode;
 		private RecordBrowseView _currentBrowseView = null;
-		private readonly Dictionary<int, XmlNode> _configurationNodes = new Dictionary<int, XmlNode>(3);
-		private readonly Dictionary<int, IRecordList> _recordLists = new Dictionary<int, IRecordList>(3);
-		private readonly Dictionary<string, bool> _originalClerkIgnoreStatusPanelValues = new Dictionary<string, bool>(3);
+		private Dictionary<int, XmlNode> _configurationNodes = new Dictionary<int, XmlNode>(3);
+		private Dictionary<int, IRecordList> _recordLists = new Dictionary<int, IRecordList>(3);
+		private Dictionary<string, bool> _originalRecordListIgnoreStatusPanelValues = new Dictionary<string, bool>(3);
 		private XMLViewsDataCache _specialSda;
 		private int _currentSourceMadeUpFieldIdentifier;
 
@@ -167,30 +167,54 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			const string xpathBase = "/window/controls/parameters[@id='guicontrols']/guicontrol[@id='{0}']/parameters[@id='{1}']";
 			var xpath = String.Format(xpathBase, "WordformConcordanceBrowseView", "WordformInSegmentsOccurrenceList");
 			var configNode = m_configurationNode.SelectSingleNode(xpath);
-			// And create the RecordClerks.
-			var clerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
-			clerk.ProgressReporter = m_progAdvInd;
-			m_originalClerkIgnoreStatusPanelValues[clerk.Id] = clerk.IgnoreStatusPanel;
-			clerk.IgnoreStatusPanel = true;
-			m_recordClerks[WfiWordformTags.kClassId] = clerk;
+			// And create the RecordLists.
+<clerk id="segmentOccurrencesOfWfiWordform" shouldHandleDeletion="false">
+    <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk" />
+    <recordList class="WfiWordform" field="ExactOccurrences">
+    <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
+    </recordList>
+    <filters />
+    <sortMethods />
+</clerk>
+			var recordList = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
+			recordList.ProgressReporter = m_progAdvInd;
+			_originalRecordListIgnoreStatusPanelValues[recordList.Id] = recordList.IgnoreStatusPanel;
+			recordList.IgnoreStatusPanel = true;
+			_recordLists[WfiWordformTags.kClassId] = recordList;
 			m_configurationNodes[WfiWordformTags.kClassId] = configNode;
 
 			xpath = String.Format(xpathBase, "AnalysisConcordanceBrowseView", "AnalysisInSegmentsOccurrenceList");
 			configNode = m_configurationNode.SelectSingleNode(xpath);
-			clerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
-			clerk.ProgressReporter = m_progAdvInd;
-			m_originalClerkIgnoreStatusPanelValues[clerk.Id] = clerk.IgnoreStatusPanel;
-			clerk.IgnoreStatusPanel = true;
-			m_recordClerks[WfiAnalysisTags.kClassId] = clerk;
+<clerk id="segmentOccurrencesOfWfiAnalysis" shouldHandleDeletion="false">
+    <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk" />
+    <recordList class="WfiAnalysis" field="ExactOccurrences">
+    <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
+    </recordList>
+    <filters />
+    <sortMethods />
+</clerk>
+			recordList = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
+			recordList.ProgressReporter = m_progAdvInd;
+			_originalRecordListIgnoreStatusPanelValues[recordList.Id] = recordList.IgnoreStatusPanel;
+			recordList.IgnoreStatusPanel = true;
+			_recordLists[WfiAnalysisTags.kClassId] = recordList;
 			m_configurationNodes[WfiAnalysisTags.kClassId] = configNode;
 
 			xpath = String.Format(xpathBase, "GlossConcordanceBrowseView", "GlossInSegmentsOccurrenceList");
 			configNode = m_configurationNode.SelectSingleNode(xpath);
-			clerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
-			clerk.ProgressReporter = m_progAdvInd;
-			m_originalClerkIgnoreStatusPanelValues[clerk.Id] = clerk.IgnoreStatusPanel;
-			clerk.IgnoreStatusPanel = true;
-			m_recordClerks[WfiGlossTags.kClassId] = clerk;
+<clerk id="segmentOccurrencesOfWfiGloss" shouldHandleDeletion="false">
+    <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk" />
+    <recordList class="WfiGloss" field="ExactOccurrences">
+    <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
+    </recordList>
+    <filters />
+    <sortMethods />
+</clerk>
+			recordList = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
+			recordList.ProgressReporter = m_progAdvInd;
+			_originalRecordListIgnoreStatusPanelValues[recordList.Id] = recordList.IgnoreStatusPanel;
+			recordList.IgnoreStatusPanel = true;
+			_recordLists[WfiGlossTags.kClassId] = recordList;
 			m_configurationNodes[WfiGlossTags.kClassId] = configNode;
 #endif
 
@@ -277,27 +301,20 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			if( disposing )
 			{
+				components?.Dispose();
+
 				Subscriber.Unsubscribe("DialogFilterStatus", DialogFilterStatus_Handler);
 
-				foreach (var clerk in _recordLists.Values)
+				foreach (var recordList in _recordLists.Values)
 				{
-					// Take it out of the property table and Dispose it.
-					PropertyTable.RemoveProperty("RecordClerk-" + clerk.Id);
-#if RANDYTODO
-					// TODO: Why reset it, since it is being disposed?
-					clerk.IgnoreStatusPanel = m_originalClerkIgnoreStatusPanelValues[clerk.Id];
-#endif
-					clerk.Dispose();
-				}
-				if(components != null)
-				{
-					components.Dispose();
+					recordList.Dispose();
 				}
 				_recordLists.Clear();
 				_configurationNodes.Clear();
 			}
 			base.Dispose(disposing);
 
+			_recordLists = null;
 			_wordform = null;
 			_cache = null;
 			_configurationNode = null;
@@ -743,9 +760,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					// Make sure the correct updated occurrences will be computed when needed in Refresh of the
 					// occurrences pane and anywhere else.
 					concSda.UpdateExactAnalysisOccurrences(src);
-					var clerk = _recordLists[newTarget.ClassID];
-					var clerkSda = (ConcDecorator)((DomainDataByFlidDecoratorBase) clerk.VirtualListPublisher).BaseSda;
-					clerkSda.UpdateExactAnalysisOccurrences(newTarget);
+					var recordList = _recordLists[newTarget.ClassID];
+					var recordListSda = (ConcDecorator)((DomainDataByFlidDecoratorBase)recordList.VirtualListPublisher).BaseSda;
+					recordListSda.UpdateExactAnalysisOccurrences(newTarget);
 				});
 
 				CheckAssignBtnEnabling();

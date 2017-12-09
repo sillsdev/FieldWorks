@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Diagnostics;
 using System.Xml.Linq;
+using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.Xml;
@@ -14,11 +15,11 @@ namespace LanguageExplorer.Works
 {
 	/// <summary>
 	/// RecordView is an abstract class for data views that show one object from a list.
-	/// A RecordClerk class does most of the work of managing the list and current object.
+	/// A RecordList class does most of the work of managing the list and current object.
 	///	list management and navigation is entirely handled by the
-	/// RecordClerk.
+	/// RecordList.
 	///
-	/// RecordClerk has no knowledge of how to display an individual object. A concrete subclass must handle
+	/// RecordList has no knowledge of how to display an individual object. A concrete subclass must handle
 	/// this task.
 	///
 	/// Concrete subclasses must:
@@ -33,7 +34,7 @@ namespace LanguageExplorer.Works
 	///		representation of the XML <parameters></parameters> node from the <control></control>
 	///		node used to invoke the window.)
 	///		- Override GetMessageAdditionalTargets to provide message handlers in addition to the
-	///		record clerk and this.
+	///		record list and this.
 	/// </summary>
 	public abstract class RecordView : XWorksViewBase
 	{
@@ -142,26 +143,25 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		protected virtual void UpdateContextHistory()
 		{
-			//are we the dominant pane? The thinking here is that if our clerk is controlling the record tree bar, then we are.
+			//are we the dominant pane? The thinking here is that if our record list is controlling the record tree bar, then we are.
 			// The second condition prevents recording the intermediate record in the history when following a link
 			// causes us to change areas and then change records.
 			if (MyRecordList.IsControllingTheRecordTreeBar && string.IsNullOrEmpty(PropertyTable.GetValue<string>("SuspendLoadingRecordUntilOnJumpToRecord")))
 			{
 				//add our current state to the history system
-				var toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
 				var guid = Guid.Empty;
 				if (MyRecordList.CurrentObject != null)
 				{
 					guid = MyRecordList.CurrentObject.Guid;
 				}
 				MyRecordList.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
-				PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(toolChoice, guid));
+				PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), guid));
 			}
 		}
 
 		/// <summary>
-		/// Note: currently called in the context of ListUpdateHelper, which suspends the clerk from reloading its list
-		/// until it is disposed. So, don't do anything here (eg. Clerk.SelectedRecordChanged())
+		/// Note: currently called in the context of ListUpdateHelper, which suspends the record list from reloading its list
+		/// until it is disposed. So, don't do anything here (eg. MyRecordList.SelectedRecordChanged())
 		/// that depends upon a list being loaded yet.
 		/// </summary>
 		protected override void SetupDataContext()
@@ -193,13 +193,11 @@ namespace LanguageExplorer.Works
 			{
 				Debug.Assert(MyRecordList != null);
 			}
-			bool fClerkAlreadySuppressed = false;
-			bool fClerkWasCreated = false;
-			fClerkAlreadySuppressed = MyRecordList.ListLoadingSuppressed; // If we didn't create the clerk, someone else might have suppressed it.
-			// suspend any loading of the Clerk's list items until after a
-			// subclass (possibly) initializes sorters/filters
-			// in SetupDataContext()
-			using (var luh = new ListUpdateHelper(MyRecordList, fClerkAlreadySuppressed))
+			var fRecordListAlreadySuppressed = MyRecordList.ListLoadingSuppressed; // If we didn't create the record list, someone else might have suppressed it.
+																		  // suspend any loading of the record list's list items until after a
+																		  // subclass (possibly) initializes sorters/filters
+																		  // in SetupDataContext()
+			using (var luh = new ListUpdateHelper(MyRecordList, fRecordListAlreadySuppressed))
 			{
 				luh.ClearBrowseListUntilReload = true;
 				MyRecordList.UpdateOwningObjectIfNeeded();
@@ -207,7 +205,7 @@ namespace LanguageExplorer.Works
 				AddPaneBar();
 
 				//Historical comments here indicated that the Clerk should be processed by the mediator before the
-				//view. This is handled by Priority now, RecordView is by default just after RecordClerk in the processing.
+				//view. This is handled by Priority now, RecordView is by default just after RecordList in the processing.
 				SetupDataContext();
 			}
 			// In case it hasn't yet been loaded, load it!  See LT-10185.
@@ -222,9 +220,9 @@ namespace LanguageExplorer.Works
 			return GetSortFilePersistPathname(Cache, MyRecordList.Id);
 		}
 
-		internal static string GetSortFilePersistPathname(LcmCache cache, string clerkId)
+		internal static string GetSortFilePersistPathname(LcmCache cache, string recordListId)
 		{
-			var filename = clerkId + "_SortSeq";
+			var filename = recordListId + "_SortSeq";
 			//(This extension is also known to ProjectRestoreService.RestoreFrom7_0AndNewerBackup.)
 			// Also to IFwMainWnd.DiscardProperties().
 			var filenameWithExt = Path.ChangeExtension(filename, "fwss");
@@ -238,7 +236,7 @@ namespace LanguageExplorer.Works
 		{
 			if (MyRecordList == null)
 			{
-				return; // temporary clerk, such as a concordance in find example dialog.
+				return; // temporary record list, such as a concordance in find example dialog.
 			}
 
 			// If we're being disposed because the application is crashing, we do NOT want to save the sort
@@ -253,7 +251,7 @@ namespace LanguageExplorer.Works
 			watch.Start();
 			MyRecordList.PersistListOn(pathname);
 			watch.Stop();
-			Debug.WriteLine("Saving clerk " + pathname + " took " + watch.ElapsedMilliseconds + " ms.");
+			Debug.WriteLine("Saving record list " + pathname + " took " + watch.ElapsedMilliseconds + " ms.");
 		}
 
 		// Enhance JohnT: need to verify that sort sequence is current.
@@ -266,7 +264,7 @@ namespace LanguageExplorer.Works
 			watch.Start();
 			var result = MyRecordList.RestoreListFrom(pathname);
 			watch.Stop();
-			Debug.WriteLine("Restoring clerk " + pathname + " took " + watch.ElapsedMilliseconds + " ms.");
+			Debug.WriteLine("Restoring record list " + pathname + " took " + watch.ElapsedMilliseconds + " ms.");
 			return result;
 		}
 

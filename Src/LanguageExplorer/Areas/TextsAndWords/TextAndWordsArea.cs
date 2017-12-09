@@ -17,7 +17,7 @@ using SIL.LCModel;
 namespace LanguageExplorer.Areas.TextsAndWords
 {
 	/// <summary>
-	/// IArea implementation for the area: "textAndWords".
+	/// IArea implementation for the area: "textsWords".
 	/// </summary>
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(IArea))]
 	[Export(typeof(IArea))]
@@ -164,7 +164,22 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		internal static IRecordList ConcordanceWordsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == ConcordanceWords, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{ConcordanceWords}'.");
-
+			/*
+            <clerk id="concordanceWords">
+              <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearTextsRecordClerk" />
+              <recordList owner="LangProject" property="Wordforms">
+                <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ConcordanceWordList" />
+                <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
+              </recordList>
+              <filters>
+                <filter label="Default" assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.WordsUsedOnlyElsewhereFilter" />
+              </filters>
+              <sortMethods>
+                <sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
+              </sortMethods>
+              <recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider" />
+            </clerk>
+			*/
 			// NB: The constructor supplies the id, so no need to pass it on.
 			return new ConcordanceWordList(statusBar, cache.LanguageProject, new ConcDecorator(cache.ServiceLocator));
 		}
@@ -172,7 +187,17 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		internal static IRecordList InterlinearTextsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == InterlinearTexts, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{InterlinearTexts}'.");
-
+			/*
+            <clerk id="interlinearTexts">
+              <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearTextsRecordClerk" />
+              <recordList owner="LangProject" property="InterestingTexts">
+                <!-- We use a decorator here so it can override certain virtual properties and limit occurrences to interesting texts. -->
+                <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.InterestingTextsDecorator" />
+              </recordList>
+              <filterMethods />
+              <sortMethods />
+            </clerk>
+			*/
 			return new InterlinearTextsRecordList(InterlinearTexts, statusBar, new PropertyRecordSorter("Title"), AreaServices.Default, null, false, false, new InterestingTextsDecorator(cache.ServiceLocator, flexComponentParameters.PropertyTable), false, InterestingTextsDecorator.kflidInterestingTexts, cache.LanguageProject, "InterestingTexts");
 		}
 	}

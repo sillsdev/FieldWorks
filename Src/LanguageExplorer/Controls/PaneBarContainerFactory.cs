@@ -120,7 +120,7 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary>
-		/// Remove <paramref name="paneBarContainer"/> from parent control and dispose it and set clerk to null.
+		/// Remove <paramref name="paneBarContainer"/> from parent control and dispose it and set record list to null.
 		/// </summary>
 		internal static void RemoveFromParentAndDispose(ICollapsingSplitContainer mainCollapsingSplitContainer, ref PaneBarContainer paneBarContainer)
 		{

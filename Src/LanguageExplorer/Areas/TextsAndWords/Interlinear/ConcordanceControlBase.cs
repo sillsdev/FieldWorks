@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Controls.XMLViews;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -18,15 +19,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	{
 		protected XmlNode m_configurationParameters;
 		protected LcmCache m_cache;
-		protected MatchingConcordanceItems m_clerk;
+		protected MatchingConcordanceItems m_recordList;
 		protected IHelpTopicProvider m_helpTopicProvider;
 
 		public ConcordanceControlBase()
 		{}
 
-		internal ConcordanceControlBase(MatchingConcordanceItems clerk)
+		internal ConcordanceControlBase(MatchingConcordanceItems recordList)
 		{
-			m_clerk = clerk;
+			m_recordList = recordList;
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -67,15 +68,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Subscriber = flexComponentParameters.Subscriber;
 
 			m_helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
-#if RANDYTODO
-			m_configurationParameters = configurationParameters;
-#endif
 			m_cache = PropertyTable.GetValue<LcmCache>("cache");
-#if RANDYTODO
-			var name = RecordClerk.GetCorrespondingPropertyName(XmlUtils.GetAttributeValue(configurationParameters, "clerk"));
-			m_clerk = PropertyTable.GetValue<OccurrencesOfSelectedUnit>(name) ?? (OccurrencesOfSelectedUnit)RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
-			m_clerk.ConcordanceControl = this;
-#endif
 		}
 
 		#endregion
@@ -96,9 +89,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
+			Guard.AgainstNull(targetCandidates, nameof(targetCandidates));
+
 			CheckDisposed();
-			if (targetCandidates == null)
-				throw new ArgumentNullException("targetCandidates");
+
 			targetCandidates.Add(this);
 			return ContainsFocus ? this : null;
 		}
@@ -123,18 +117,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			get
 			{
 				CheckDisposed();
-#if RANDYTODO
-				// TODO: Do something to make the area name(s) be constants, here and for other cases.
-				// TODO: Do the same for tool names.
-#endif
-				return "textAndWords";
+				return AreaServices.TextAndWordsAreaMachineName;
 			}
 		}
 
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// <summary>
@@ -146,13 +136,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
 			if (disposing)
 			{
-				if (m_clerk != null)
-					m_clerk.ConcordanceControl = null;
+				if (m_recordList != null)
+				{
+					m_recordList.ConcordanceControl = null;
+				}
 
-				// Don't dispose of the clerk, since it can monitor relevant PropChanges
+				// Don't dispose of the record list, since it can monitor relevant PropChanges
 				// that affect the NeedToReloadVirtualProperty.
 			}
-			m_clerk = null;
+			m_recordList = null;
 			m_cache = null;
 
 			base.Dispose(disposing);
@@ -171,15 +163,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal protected void LoadMatches(bool fLoadVirtualProperty)
 		{
 			var occurrences = SearchForMatches();
-			var decorator = (ConcDecorator) ((DomainDataByFlidDecoratorBase) m_clerk.VirtualListPublisher).BaseSda;
+			var decorator = (ConcDecorator) ((DomainDataByFlidDecoratorBase) m_recordList.VirtualListPublisher).BaseSda;
 			// Set this BEFORE we start loading, otherwise, calls to ReloadList triggered here just make it empty.
 			HasLoadedMatches = true;
 			IsLoadingMatches = true;
 			try
 			{
-				m_clerk.OwningObject = m_cache.LangProject;
+				m_recordList.OwningObject = m_cache.LangProject;
 				decorator.SetOccurrences(m_cache.LangProject.Hvo, occurrences);
-				m_clerk.UpdateList(true);
+				m_recordList.UpdateList(true);
 			}
 			finally
 			{
@@ -189,7 +181,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected ConcDecorator ConcDecorator
 		{
-			get { return ((ObjectListPublisher) m_clerk.VirtualListPublisher).BaseSda as ConcDecorator; }
+			get { return ((ObjectListPublisher) m_recordList.VirtualListPublisher).BaseSda as ConcDecorator; }
 		}
 
 		protected virtual List<IParaFragment> SearchForMatches()

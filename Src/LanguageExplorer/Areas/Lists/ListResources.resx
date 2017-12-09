@@ -313,4 +313,13 @@ Are you sure you want to delete this list?</value>
   <data name="ksUndoDeleteCustomList" xml:space="preserve">
     <value>Undo Delete Custom List</value>
   </data>
+  <data name="DialectsListEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\DialectsListEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="ExtNoteTypeEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\ExtNoteTypeEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="LanguagesListEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\LanguagesListEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -106,15 +107,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		#region Construction and initialization
 
-		internal string ColListId
-		{
-			get
-			{
-				string toolChoice = m_xbv.m_bv.PropertyTable.GetValue("toolChoice", "");
-				string Id2 = m_xbv.GetCorrespondingPropertyName("ColumnList");
-				return String.Format("{0}_{1}", toolChoice, Id2);
-			}
-		}
+		internal string ColListId => $"{m_xbv.m_bv.PropertyTable.GetValue<string>(AreaServices.ToolChoice)}_{m_xbv.GetCorrespondingPropertyName("ColumnList")}";
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

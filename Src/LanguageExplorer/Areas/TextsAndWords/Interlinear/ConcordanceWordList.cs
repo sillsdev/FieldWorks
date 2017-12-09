@@ -43,8 +43,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary>
-		/// provide a means by which the clerk can indicate that we should really refresh our contents.
-		/// (used for handling events that the clerk processes, like the refresh.
+		/// Provide a means by which the record list can indicate that we should really refresh our contents.
+		/// (used for handling events that the record list processes, like the refresh.
 		/// </summary>
 		public void RequestRefresh()
 		{

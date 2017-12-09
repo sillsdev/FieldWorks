@@ -157,6 +157,16 @@ namespace LanguageExplorer.Areas.Lists {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-DialectItems&quot; /&gt;.
+        /// </summary>
+        internal static string DialectsListEditParameters {
+            get {
+                return ResourceManager.GetString("DialectsListEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-AnthroItems&quot; /&gt;.
         /// </summary>
         internal static string DomainTypeEditParameters {
@@ -172,6 +182,16 @@ namespace LanguageExplorer.Areas.Lists {
         internal static string EducationEditParameters {
             get {
                 return ResourceManager.GetString("EducationEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-ExtNotes&quot; /&gt;.
+        /// </summary>
+        internal static string ExtNoteTypeEditParameters {
+            get {
+                return ResourceManager.GetString("ExtNoteTypeEditParameters", resourceCulture);
             }
         }
         
@@ -343,6 +363,16 @@ namespace LanguageExplorer.Areas.Lists {
         internal static string ksUndoDeleteCustomList {
             get {
                 return ResourceManager.GetString("ksUndoDeleteCustomList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-Languages&quot; /&gt;.
+        /// </summary>
+        internal static string LanguagesListEditParameters {
+            get {
+                return ResourceManager.GetString("LanguagesListEditParameters", resourceCulture);
             }
         }
         

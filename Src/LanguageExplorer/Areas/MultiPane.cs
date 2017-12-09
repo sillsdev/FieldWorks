@@ -283,16 +283,7 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		private string SplitterDistancePropertyName
-		{
-			get
-			{
-				return string.Format("MultiPaneSplitterDistance_{0}_{1}_{2}",
-					m_areaMachineName,
-					PropertyTable.GetValue("toolChoice", string.Empty),
-					m_id);
-			}
-		}
+		private string SplitterDistancePropertyName => $"MultiPaneSplitterDistance_{m_areaMachineName}_{PropertyTable.GetValue<string>(AreaServices.ToolChoice)}_{m_id}";
 
 		/// <summary />
 		protected override void OnSplitterMoved(object sender, SplitterEventArgs e)

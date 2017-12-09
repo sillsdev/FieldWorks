@@ -6,6 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using LanguageExplorer.Areas.TextsAndWords;
+using LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance;
+using LanguageExplorer.Areas.TextsAndWords.Tools.Concordance;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
@@ -39,11 +42,11 @@ namespace LanguageExplorer.Works
 		// TODO: Pay attention to the comment and behavior of 'RelatedClerkIds'.
 #endif
 		/// <summary>
-		/// These two RecordClerks both need to respond to InterestingTextList changes EVEN when not loaded.
+		/// These two record lists both need to respond to InterestingTextList changes EVEN when not loaded.
 		/// (LT-13217)
 		/// So if one changes this list of texts, the other's sort sequence file will be deleted.
 		/// </summary>
-		private static string[] RelatedClerkIds = { "interlinearTexts", "concordanceWords", "OccurrencesOfSelectedUnit", "complexConcOccurrencesOfSelectedUnit"};
+		private static string[] RelatedRecordListsIds = { TextAndWordsArea.InterlinearTexts, TextAndWordsArea.ConcordanceWords, ConcordanceTool.OccurrencesOfSelectedUnit, ComplexConcordanceTool.ComplexConcOccurrencesOfSelectedUnit };
 
 		/// <summary>
 		/// Used by InvalidateRelatedSortSequences()
@@ -292,20 +295,20 @@ namespace LanguageExplorer.Works
 			if (Cache == null)
 				return;
 
-			// We won't keep track of the clerk between calls since it could change from time to time.
-			var clerk = RecordList.ActiveRecordListRepository.ActiveRecordList;
-			if (clerk == null)
+			// We won't keep track of the record list between calls since it could change from time to time.
+			var recordList = RecordList.ActiveRecordListRepository.ActiveRecordList;
+			if (recordList == null)
 				return;
 
-			if (!RelatedClerkIds.Contains(clerk.Id))
+			if (!RelatedRecordListsIds.Contains(recordList.Id))
 			{
 				Debug.Fail("We may need to add a new RelatedClerkId.");
-				return; // somehow we got in here with the wrong clerk?!
+				return; // somehow we got in here with the wrong record list?!
 			}
-			var otherRelatedClerkIds = GetRelatedClerkIds(clerk.Id);
-			foreach (var clerkId in otherRelatedClerkIds)
+			var otherRelatedRecordListId = GetRelatedRecordListIds(recordList.Id);
+			foreach (var recordListId in otherRelatedRecordListId)
 			{
-				RemoveSortSequenceFile(RecordView.GetSortFilePersistPathname(Cache, clerkId));
+				RemoveSortSequenceFile(RecordView.GetSortFilePersistPathname(Cache, recordListId));
 			}
 		}
 
@@ -314,9 +317,9 @@ namespace LanguageExplorer.Works
 			FileUtils.Delete(filename);
 		}
 
-		private static IEnumerable<string> GetRelatedClerkIds(string id)
+		private static IEnumerable<string> GetRelatedRecordListIds(string id)
 		{
-			return RelatedClerkIds.Where(clerkId => clerkId != id);
+			return RelatedRecordListsIds.Where(recordListId => recordListId != id);
 		}
 
 		//Remove invalid objects from the list. Return true if any were removed.

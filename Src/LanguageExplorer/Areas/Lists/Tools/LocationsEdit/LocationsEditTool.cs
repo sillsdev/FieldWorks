@@ -143,7 +143,18 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == LocationList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{LocationList}'.");
-
+			/*
+            <clerk id="LocationList">
+              <recordList owner="LangProject" property="Locations">
+                <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList" />
+              </recordList>
+              <treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best vernoranal" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler" />
+              <filters />
+              <sortMethods>
+                <sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
+              </sortMethods>
+            </clerk>
+			*/
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				null, true, true,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),

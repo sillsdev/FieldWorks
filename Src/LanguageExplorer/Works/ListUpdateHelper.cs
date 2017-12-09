@@ -46,16 +46,16 @@ namespace LanguageExplorer.Works
 		}
 
 		/// <summary />
-		/// <param name="recordList">clerk we want to suspend reloading for. if null, we don't do anything.</param>
+		/// <param name="recordList">record list we want to suspend reloading for. if null, we don't do anything.</param>
 		internal ListUpdateHelper(IRecordList recordList)
 			: this(recordList, recordList != null && recordList.ListLoadingSuppressed)
 		{
 		}
 
 		/// <summary />
-		/// <param name="recordList">clerk we want to suspend reloading for. if null, we don't do anything.</param>
-		/// <param name="fWasAlreadySuppressed">Usually, clerk.ListLoadingSuppressed. When we know we just
-		/// created the clerk, already in a suppressed state, and want to treat it as if this
+		/// <param name="recordList">record list we want to suspend reloading for. if null, we don't do anything.</param>
+		/// <param name="fWasAlreadySuppressed">Usually, recordList.ListLoadingSuppressed. When we know we just
+		/// created the record list, already in a suppressed state, and want to treat it as if this
 		/// list update helper did the suppressing, pass false, even though the list may in fact be already suppressed.</param>
 		internal ListUpdateHelper(IRecordList recordList, bool fWasAlreadySuppressed)
 		{
@@ -73,7 +73,7 @@ namespace LanguageExplorer.Works
 				m_originalUpdateHelper = m_recordList.UpdateHelper;
 				// if we're already suppressing the list, we don't want to auto reload since
 				// the one who is suppressing the list expects to be able to handle that later.
-				// or if the parent clerk is suppressing, we should wait until the parent reloads.
+				// or if the parent record list is suppressing, we should wait until the parent reloads.
 				var parentList = recordList.ParentList;
 				if (m_fOriginalListLoadingSuppressedState ||
 				    parentList != null && parentList.ListLoadingSuppressed)

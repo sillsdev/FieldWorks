@@ -22,7 +22,7 @@ namespace LanguageExplorer.Works
 {
 	/// <summary>
 	/// This class is instantiated by reflection, based on the setting of the treeBarHandler in the
-	/// SemanticDomainList clerk in the RDE toolConfiguration.xml, but is also used to display the Semantic Domain List in the List Edit tool.
+	/// SemanticDomainList record list in the RDE toolConfiguration.xml, but is also used to display the Semantic Domain List in the List Edit tool.
 	/// </summary>
 	class SemanticDomainRdeTreeBarHandler : PossibilityTreeBarHandler
 	{
@@ -92,7 +92,7 @@ namespace LanguageExplorer.Works
 		}
 
 		// Semantic Domains should be editable only in the Lists area.
-		protected bool Editable => AreaServices.ListsAreaMachineName.Equals(m_propertyTable.GetValue<string>("areaChoice"));
+		protected bool Editable => AreaServices.ListsAreaMachineName.Equals(m_propertyTable.GetValue<string>(AreaServices.AreaChoice));
 
 		private FwTextBox CreateSearchBox()
 		{

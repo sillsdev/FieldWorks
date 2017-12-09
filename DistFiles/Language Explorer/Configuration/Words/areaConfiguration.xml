@@ -179,49 +179,6 @@
 					</columns>
 				</parameters>
 			</guicontrol>
-			<clerks>
-				<!-- this clerk is explicitly known to InterlinearSfmImportWizard.OnFinishButton-->
-				<clerk id="interlinearTextsForTemporaryRecordClerk" shouldHandleDeletion="false">
-					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.TemporaryRecordClerk"/>
-					<recordList owner="LangProject" property="InterestingTexts">
-						<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.InterestingTextsDecorator"/>
-					</recordList>
-					<filters/>
-					<sortMethods/>
-				</clerk>
-				<clerk id="segmentOccurrencesOfWfiWordform" shouldHandleDeletion="false">
-					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.TemporaryRecordClerk"/>
-					<recordList class="WfiWordform" field="ExactOccurrences">
-						<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ConcDecorator"/>
-					</recordList>
-					<filters/>
-					<sortMethods/>
-				</clerk>
-				<clerk id="segmentOccurrencesOfWfiAnalysis" shouldHandleDeletion="false">
-					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.TemporaryRecordClerk"/>
-					<recordList class="WfiAnalysis" field="ExactOccurrences">
-						<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ConcDecorator"/>
-					</recordList>
-					<filters/>
-					<sortMethods/>
-				</clerk>
-				<clerk id="segmentOccurrencesOfWfiGloss" shouldHandleDeletion="false">
-					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.TemporaryRecordClerk"/>
-					<recordList class="WfiGloss" field="ExactOccurrences">
-						<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ConcDecorator"/>
-					</recordList>
-					<filters/>
-					<sortMethods/>
-				</clerk>
-				<clerk id="matchingWords" shouldHandleDeletion="false">
-					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.MatchingItemsRecordClerk"/>
-					<recordList owner="WordformInventory" property="Wordforms">
-						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.MatchingItemsRecordList"/>
-					</recordList>
-					<filters/>
-					<sortMethods/>
-				</clerk>
-			</clerks>
 		</parameters>
 	</controls>
 	<!-- ********************************************************** -->
@@ -437,17 +394,6 @@
 		</listener>
 		<listener assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Dumpster.RespellerDlgListener">
 			<parameters>
-				<clerks>
-					<clerk id="SrcWfiWordformConc" shouldHandleDeletion="false">
-						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.RespellerTemporaryRecordClerk" a10status="Use: LanguageExplorer.Areas.TextsAndWords.RespellerTemporaryRecordList" />
-						<recordList class="WfiWordform" field="Occurrences">
-							<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.RespellerTemporaryRecordList"/>
-							<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.RespellingSda"/>
-						</recordList>
-						<filters/>
-						<sortMethods/>
-					</clerk>
-				</clerks>
 				<controls>
 					<control id="srcSentences">
 						<parameters id="srcSentencesList" selectColumn="true" defaultChecked="true"
@@ -466,35 +412,6 @@
 	<!-- ********************************************************** -->
 	<item label="Texts &amp; Words" value="textsWords" icon="folder-words">
 		<parameters id="textsWords">
-			<clerks>
-				<!-- Only put clerks here if they are shared by various tools. Put clerks for specific tool usage in the tool definition file. -->
-				<clerk id="interlinearTexts">
-					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearTextsRecordClerk"/>
-					<recordList owner="LangProject" property="InterestingTexts">
-						<!-- We use a decorator here so it can override certain virtual properties and limit occurrences to interesting texts. -->
-						<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.InterestingTextsDecorator"/>
-					</recordList>
-					<filterMethods/>
-					<sortMethods/>
-				</clerk>
-				<clerk id="concordanceWords">
-					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinearTextsRecordClerk"/>
-					<recordList owner="LangProject" property="Wordforms">
-						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.TextsAndWords.Interlinear.ConcordanceWordList"/>
-						<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ConcDecorator"/>
-					</recordList>
-					<filters>
-						<filter label="Default" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.WordsUsedOnlyElsewhereFilter"/>
-					</filters>
-					<sortMethods>
-						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
-					</sortMethods>
-					<recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider"/>
-				</clerk>
-<!-- START include (Words_Area): "Concordance/toolConfiguration.xml" query="root/clerks/*" -->
-				<include path="Concordance/toolConfiguration.xml" query="root/clerks/*"/>
-<!-- END include (Words_Area): "Concordance/toolConfiguration.xml" query="root/clerks/*" -->
-			</clerks>
 			<tools>
 			  <!-- START include (Words_Area): "Texts/toolConfiguration.xml" query="root/tools/*" -->
 				<include path="Texts/toolConfiguration.xml" query="root/tools/*"/>

@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
-using SIL.FieldWorks.Filters;
+using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -18,8 +18,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal sealed class ConcRecordList : TemporaryRecordList
 	{
 		/// <summary />
-		internal ConcRecordList(string id, StatusBar statusBar, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
-			: base(id, statusBar, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
+		internal ConcRecordList(StatusBar statusBar, LcmCache cache, ILexSense owningSense)
+			: base("OccurrencesOfSense", statusBar, null, AreaServices.Default, null, false, false, new ConcDecorator(cache.ServiceLocator), true, cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "Occurrences", false), owningSense, "Occurrences")
 		{
 		}
 
@@ -33,7 +33,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			set
 			{
-				// Do not do anything here, unless you want to manage the "RecordClerk.RecordClerkRepository.ActiveRecordClerk" property.
+				// Do not do anything here, unless you want to manage the "RecordList.RecordListRepository.ActiveRecordList" property.
 			}
 		}
 

@@ -46,7 +46,7 @@ namespace LanguageExplorer.Works
 		public IRecordList List => m_list;
 
 		/// <summary>
-		/// if SkipRecordNavigation, RecordClerk can skip Broadcasting OnRecordNavigation.
+		/// if SkipRecordNavigation, RecordList can skip Broadcasting OnRecordNavigation.
 		/// </summary>
 		public ListChangedActions Actions => m_actions;
 

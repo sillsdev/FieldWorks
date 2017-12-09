@@ -9,6 +9,7 @@ using System.Drawing.Printing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Areas;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
@@ -309,7 +310,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			base.MakeRoot();
 
 			bool fEditable = XmlUtils.GetOptionalBooleanAttributeValue(m_specElement, "editable", true);
-			string toolChoice = PropertyTable.GetValue<string>("toolChoice");
+			string toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 			m_fShowFailingItems = PropertyTable.GetValue("ShowFailingItems-" + toolChoice, false);
 			//m_xmlVc = new XmlVc(m_xnSpec, Table); // possibly reinstate for old approach?
 			// Note: we want to keep this logic similar to RecordDocView.GetLayoutName(), except that here
@@ -353,7 +354,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// Receives the broadcast message "JumpToRecord" before RecordClerk
+		/// Receives the broadcast message "JumpToRecord" before RecordList
 		/// (because this is the active Control?), so we can see if we
 		/// need to display a failure message.
 		/// </summary>
@@ -372,7 +373,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			m_currentSubscriptionString = "ShowFailingItems-" + PropertyTable.GetValue<string>("toolChoice");
+			m_currentSubscriptionString = "ShowFailingItems-" + PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 			Subscriber.Subscribe(m_currentSubscriptionString, ShowFailingItemsForTool_Changed);
 		}
 

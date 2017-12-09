@@ -13,6 +13,7 @@ using System.Xml.Linq;
 using Gecko;
 using Gecko.DOM;
 using LanguageExplorer.Areas;
+using LanguageExplorer.Areas.Lexicon;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
@@ -95,8 +96,8 @@ namespace LanguageExplorer.Works
 			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
 			if (browser != null)
 			{
-				var clerk = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "clerk");
-				if (clerk == "entries" || clerk == "AllReversalEntries")
+				var recordListId = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "clerk");
+				if (recordListId == LexiconArea.Entries || recordListId == LexiconArea.AllReversalEntries)
 				{
 					browser.DomClick += OnDomClick;
 					browser.DomKeyPress += OnDomKeyPress;
@@ -111,7 +112,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		public void FinishInitialization()
 		{
-			// retrieve persisted clerk index and set it.
+			// retrieve persisted record list index and set it.
 			int idx = PropertyTable.GetValue(MyRecordList.PersistedIndexProperty, SettingsGroup.LocalSettings, -1);
 			int lim = MyRecordList.ListSize;
 			if (idx >= 0 && idx < lim)
@@ -213,8 +214,7 @@ namespace LanguageExplorer.Works
 		public bool OnJumpToRecord(object argument)
 		{
 			var hvoTarget = (int)argument;
-			var toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
-			if (hvoTarget > 0 && toolChoice == AreaServices.LexiconDictionaryMachineName)
+			if (hvoTarget > 0 && PropertyTable.GetValue<string>(AreaServices.ToolChoice) == AreaServices.LexiconDictionaryMachineName)
 			{
 				DictionaryConfigurationController.ExclusionReasonCode xrc;
 				// Make sure we explain to the user in case hvoTarget is not visible due to
@@ -622,7 +622,7 @@ namespace LanguageExplorer.Works
 			var guid = (Guid)tagObjects[3];
 			// 4 is used further down
 			var cache = (LcmCache)tagObjects[5];
-			var activeClerk = (RecordList)tagObjects[6];
+			var activeRecordList = (RecordList)tagObjects[6];
 			bool refreshNeeded;
 			var mainWindow = propertyTable.GetValue<IFwMainWnd>("window");
 			using (var dlg = new DictionaryConfigurationDlg(propertyTable))
@@ -630,8 +630,8 @@ namespace LanguageExplorer.Works
 				ICmObject current = null;
 				if (guid != Guid.Empty && cache != null && cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
 					current = cache.ServiceLocator.GetObject(guid);
-				else if (activeClerk != null)
-					current = activeClerk.CurrentObject;
+				else if (activeRecordList != null)
+					current = activeRecordList.CurrentObject;
 				var controller = new DictionaryConfigurationController(dlg, current);
 				controller.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, (ISubscriber)tagObjects[4]));
 				controller.SetStartingNode(classList);
@@ -788,7 +788,7 @@ namespace LanguageExplorer.Works
 		}
 
 		/// <summary>
-		/// We aren't using the record clerk for this view so we override this method to do nothing.
+		/// We aren't using the record list for this view so we override this method to do nothing.
 		/// </summary>
 		protected override void SetupDataContext()
 		{
@@ -934,7 +934,7 @@ namespace LanguageExplorer.Works
 					}
 					UpdateContent(PublicationDecorator, currentConfig);
 					break;
-				case "ActiveClerkSelectedObject":
+				case "ActiveListSelectedObject":
 					var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
 					if (browser != null)
 					{

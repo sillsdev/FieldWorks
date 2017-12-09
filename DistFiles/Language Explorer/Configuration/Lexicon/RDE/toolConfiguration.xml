@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
 <root>
-	<clerks>
-		<clerk id="SemanticDomainList">
-			<recordList owner="LangProject" property="SemanticDomainList">
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
-			</recordList>
-			<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="true" includeAbbr="true" ws="best analorvern" class="LanguageExplorer.Works.SemanticDomainRdeTreeBarHandler" altTitleId="SemanticDomain-Plural"/>
-			<filters/>
-			<sortMethods>
-				<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
-			</sortMethods>
-		</clerk>
-		<clerk id="RDEwords" clerkProvidingOwner="SemanticDomainList">
-			<recordList class="CmSemanticDomain" field="ReferringSenses"/>
-			<sortMethods/>
-		</clerk>
-	</clerks>
 	<tools>
 		<tool label="Collect Words" value="rapidDataEntry" icon="BrowseView">
 			<control>

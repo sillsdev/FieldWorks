@@ -121,7 +121,7 @@ namespace LanguageExplorer.Areas
 
 #if RANDYTODO
 /// <summary>
-/// This is enabled whenever the ReversalClerk is active.
+/// This is enabled whenever the ReversalList is active.
 /// </summary>
 /// <param name="commandObject"></param>
 /// <param name="display"></param>
@@ -210,7 +210,7 @@ namespace LanguageExplorer.Areas
 
 #if RANDYTODO
 	/// <summary>
-	/// This is enabled whenever the ReversalClerk is active.
+	/// This is enabled whenever the ReversalList is active.
 	/// </summary>
 	/// <param name="commandObject"></param>
 	/// <param name="display"></param>
@@ -369,8 +369,8 @@ namespace LanguageExplorer.Areas
 			UpdateFiltersAndSortersIfNeeded(); // Load the index-specific sorter
 			OnChangeSorter(); // Update the column headers with sort arrows
 			OwningObject = newOwningObj; // This automatically reloads (and sorts) the list
-			PropertyTable.SetProperty("ActiveClerkOwningObject", newOwningObj, false, true);
-			Publisher.Publish("ClerkOwningObjChanged", this);
+			PropertyTable.SetProperty("ActiveListOwningObject", newOwningObj, false, true);
+			Publisher.Publish("RecordListOwningObjChanged", this);
 		}
 
 		/// <summary />

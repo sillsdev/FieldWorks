@@ -12,6 +12,65 @@ using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
+#if RANDYTODO
+	// Tools not shown now:
+        <clerk id="AffixCategoryList">
+            <recordList owner="LangProject" property="AffixCategories">
+            <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList" />
+            </recordList>
+            <treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler" />
+            <filters />
+            <sortMethods>
+            <sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
+            </sortMethods>
+        </clerk>
+		<tool label="Affix Categories" value="affixCategoryEdit" icon="EditView">
+			<control>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
+				<parameters collapse="144000">
+					<control>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
+						<parameters area="lists" clerk="AffixCategoryList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" a10status="DONE" />
+					</control>
+				</parameters>
+			</control>
+		</tool>
+
+        <clerk id="AnnotationDefList">
+            <recordList owner="LangProject" property="AnnotationDefs">
+            <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList" />
+            </recordList>
+            <treeBarHandler assemblyPath="xWorks.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler" />
+            <filters />
+            <sortMethods>
+            <sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
+            </sortMethods>
+        </clerk>
+		<tool label="Annotation Definitions" value="annotationDefEdit" icon="EditView">
+			<control>
+				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
+				<parameters collapse="144000">
+					<control>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
+						<parameters area="lists" clerk="AnnotationDefList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" a10status="DONE" />
+					</control>
+				</parameters>
+			</control>
+		</tool>
+
+		// Not used in any tool?
+		<clerk id="ScrNoteTypesList">
+			<recordList owner="Scripture" property="NoteCategories">
+			<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList" />
+			</recordList>
+			<treeBarHandler assemblyPath="xWorks.dll" expand="true" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler" />
+			<filters />
+			<sortMethods>
+			<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
+			</sortMethods>
+		</clerk>
+-->
+#endif
 namespace LanguageExplorer.Areas.Lists
 {
 	[Export(AreaServices.ListsAreaMachineName, typeof(IArea))]
@@ -28,7 +87,7 @@ namespace LanguageExplorer.Areas.Lists
 		private SidePane _sidePane;
 		private HashSet<ITool> _allTools;
 
-		#region Implementation of IMajorFlexComponent
+#region Implementation of IMajorFlexComponent
 
 		/// <summary>
 		/// Deactivate the component.
@@ -80,9 +139,9 @@ namespace LanguageExplorer.Areas.Lists
 			PersistedOrDefaultTool.EnsurePropertiesAreCurrent();
 		}
 
-		#endregion
+#endregion
 
-		#region Implementation of IMajorFlexUiComponent
+#region Implementation of IMajorFlexUiComponent
 
 		/// <summary>
 		/// Get the internal name of the component.
@@ -94,9 +153,9 @@ namespace LanguageExplorer.Areas.Lists
 		/// User-visible localizable component name.
 		/// </summary>
 		public string UiName => MyUiName;
-		#endregion
+#endregion
 
-		#region Implementation of IArea
+#region Implementation of IArea
 
 		/// <summary>
 		/// Get the most recently persisted tool, or the default tool if
@@ -125,12 +184,15 @@ namespace LanguageExplorer.Areas.Lists
 					AreaServices.AnthroEditMachineName,
 					AreaServices.ComplexEntryTypeEditMachineName,
 					AreaServices.ConfidenceEditMachineName,
+					AreaServices.DialectsListEditMachineName,
 					AreaServices.ChartmarkEditMachineName,
 					AreaServices.CharttempEditMachineName,
 					AreaServices.EducationEditMachineName,
 					AreaServices.RoleEditMachineName,
+					AreaServices.ExtNoteTypeEditMachineName,
 					AreaServices.FeatureTypesAdvancedEditMachineName,
 					AreaServices.GenresEditMachineName,
+					AreaServices.LanguagesListEditMachineName,
 					AreaServices.LexRefEditMachineName,
 					AreaServices.LocationsEditMachineName,
 					AreaServices.PublicationsEditMachineName,
@@ -178,9 +240,9 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		public ITool ActiveTool { get; set; }
 
-		#endregion
+#endregion
 
-		#region Implementation of IListArea
+#region Implementation of IListArea
 
 		/// <summary>
 		/// Set the list area sidebar tab, so it can be updated as custom lists gets added/removed, or get names changed.
@@ -244,6 +306,6 @@ namespace LanguageExplorer.Areas.Lists
 			_sidePane.ResumeLayout();
 		}
 
-		#endregion
+#endregion
 	}
 }

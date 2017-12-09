@@ -76,13 +76,13 @@ namespace LanguageExplorer
 			{
 				if (_recordList != null)
 				{
-					// Unwire from older clerk
+					// Unwire from older record list
 					_recordList.RecordChanged -= RecordListRecordChanged;
 				}
 				_recordList = value;
 				if (_recordList != null)
 				{
-					// Wire up to new clerk.
+					// Wire up to new record list.
 					_recordList.RecordChanged += RecordListRecordChanged;
 				}
 

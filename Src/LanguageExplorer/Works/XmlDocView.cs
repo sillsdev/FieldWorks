@@ -29,9 +29,9 @@ namespace LanguageExplorer.Works
 {
 	/// <summary>
 	/// XmlDocView is a view that shows a complete list as a single view.
-	/// A RecordClerk class does most of the work of managing the list and current object.
+	/// A RecordList class does most of the work of managing the list and current object.
 	///	list management and navigation is entirely(?) handled by the
-	/// RecordClerk.
+	/// RecordList.
 	///
 	/// The actual view of each object is specified by a child <jtview></jtview> node
 	/// of the view node. This specifies how to display an individual list item.
@@ -262,7 +262,7 @@ namespace LanguageExplorer.Works
 
 			if (disposing)
 			{
-				Subscriber.Unsubscribe("ClerkOwningObjChanged", ClerkOwningObjChanged_Message_Handler);
+				Subscriber.Unsubscribe("RecordListOwningObjChanged", RecordListOwningObjChanged_Message_Handler);
 				DisposeTooltip();
 				components?.Dispose();
 			}
@@ -483,7 +483,7 @@ namespace LanguageExplorer.Works
 			CheckDisposed();
 
 			if (!m_fullyInitialized
-				|| RecordNavigationInfo.GetSendingList(argument) != MyRecordList) // Don't pretend to have handled it if it isn't our clerk.
+				|| RecordNavigationInfo.GetSendingList(argument) != MyRecordList) // Don't pretend to have handled it if it isn't our record list.
 				return false;
 
 			// persist Clerk's CurrentIndex in a db specific way
@@ -724,7 +724,7 @@ namespace LanguageExplorer.Works
 			return null;
 		}
 
-		private void ClerkOwningObjChanged_Message_Handler(object newValue)
+		private void RecordListOwningObjChanged_Message_Handler(object newValue)
 		{
 			if (m_mainView == null)
 				return;
@@ -793,7 +793,7 @@ namespace LanguageExplorer.Works
 			m_currentObject = MyRecordList.CurrentObject;
 			m_currentIndex = currentIndex;
 			//add our current state to the history system
-			PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue("toolChoice", string.Empty), MyRecordList.CurrentObject?.Guid ?? Guid.Empty));
+			PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), MyRecordList.CurrentObject?.Guid ?? Guid.Empty));
 
 			SelectAndScrollToCurrentRecord();
 			base.ShowRecord();
@@ -807,7 +807,7 @@ namespace LanguageExplorer.Works
 		public bool OnCheckJump(object argument)
 		{
 			var hvoTarget = (int)argument;
-			var toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
+			var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 			// Currently this (LT-11447) only applies to Dictionary view
 			if (hvoTarget > 0 && toolChoice == AreaServices.LexiconDictionaryMachineName)
 			{
@@ -1022,7 +1022,7 @@ namespace LanguageExplorer.Works
 			TriggerMessageBoxIfAppropriate();
 			using (new WaitCursor(this))
 			{
-				//m_flid = RecordClerk.GetFlidOfVectorFromName(m_vectorName, Cache, out m_owningObject);
+				//m_flid = RecordList.GetFlidOfVectorFromName(m_vectorName, Cache, out m_owningObject);
 				MyRecordList.ActivateUI();
 				// Enhance JohnT: could use logic similar to RecordView.InitBase to load persisted list contents (filtered and sorted).
 				if (MyRecordList.RequestedLoadWhileSuppressed)
@@ -1218,7 +1218,7 @@ namespace LanguageExplorer.Works
 
 			InitBase();
 
-			Subscriber.Subscribe("ClerkOwningObjChanged", ClerkOwningObjChanged_Message_Handler);
+			Subscriber.Subscribe("RecordListOwningObjChanged", RecordListOwningObjChanged_Message_Handler);
 		}
 
 		#endregion
@@ -1249,11 +1249,11 @@ namespace LanguageExplorer.Works
 		///	Currently we don't support this in document view, except for reversal entries.
 		///	If we decide to support it, we will need to do additional work
 		///	(cf LT-1222) to ensure that
-		///		(a) The clerk's idea of the current entry corresponds to where the selection is
-		///		(b) After deleting it, the clerk's list gets updated.
+		///		(a) The record list's idea of the current entry corresponds to where the selection is
+		///		(b) After deleting it, the record list's list gets updated.
 		///	The former is not happening because we haven't written a SelectionChange method
-		///	to notice the selection in the view and change the clerk to match.
-		///	Not sure why the clerk's list isn't being updated...it may be only a problem
+		///	to notice the selection in the view and change the record list to match.
+		///	Not sure why the record list's list isn't being updated...it may be only a problem
 		///	for homographs.
 		/// </summary>
 		/// <param name="commandObject"></param>
@@ -1265,8 +1265,8 @@ namespace LanguageExplorer.Works
 			CheckDisposed();
 
 			display.Enabled = false;
-			// Don't claim to have handled it if the clerk is holding reversal entries.
-			return Clerk.Id != "reversalEntries";
+			// Don't claim to have handled it if the record list is holding reversal entries.
+			return MyRecordList.Id != "reversalEntries";
 		}
 #endif
 
@@ -1308,7 +1308,7 @@ namespace LanguageExplorer.Works
 
 		/// <summary>
 		/// If this gets called (which it never should), just say we did it, unless we are in the context of reversal entries.
-		/// In the case of reversal entries, we say we did not do it, so the record clerk deals with it.
+		/// In the case of reversal entries, we say we did not do it, so the record list deals with it.
 		/// </summary>
 		/// <param name="commandObject"></param>
 		/// <returns></returns>
@@ -1318,7 +1318,7 @@ namespace LanguageExplorer.Works
 
 			if (MyRecordList.Id == "reversalEntries")
 			{
-				return false; // Let the clerk do it.
+				return false; // Let the record list do it.
 			}
 			else
 			{

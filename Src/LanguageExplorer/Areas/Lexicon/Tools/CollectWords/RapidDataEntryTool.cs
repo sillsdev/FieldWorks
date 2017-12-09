@@ -55,7 +55,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			Q: Jason: "This won't result in us loosing track of current entries when switching between tools will it?
 					I can't remember what this property is used for at the moment."
 			A: Randy: "One of the changes (not integration stuff like all of these ones) I plan is to get all record
-					clerk instances to come out of a repository like class, which creates them all and returns them, when requested.
+					record list instances to come out of a repository like class, which creates them all and returns them, when requested.
 					A tool will then activate them, when the tool is activated, and the tool will deactivate them, when the tool changes.
 					That is something like what is done in 'develop' with the PropertyTable (sans creation).
 					But, I'd like to see use of PropertyTable reduced to actual properties that are persisted,
@@ -65,11 +65,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 					So, I suspect those properties will eventually go away permanently, but I'm not there yet."
 			*/
 #endif
-			_propertyTable.RemoveProperty(RecordList.ClerkSelectedObjectPropertyId(_nestedRecordList.Id));
-			_propertyTable.RemoveProperty(RecordList.ClerkSelectedObjectPropertyId(_recordList.Id));
+			_propertyTable.RemoveProperty(RecordList.RecordListSelectedObjectPropertyId(_nestedRecordList.Id));
+			_propertyTable.RemoveProperty(RecordList.RecordListSelectedObjectPropertyId(_recordList.Id));
 
-			_propertyTable.RemoveProperty("ActiveClerkOwningObject");
-			_propertyTable.RemoveProperty("ActiveClerkSelectedObject");
+			_propertyTable.RemoveProperty("ActiveListOwningObject");
+			_propertyTable.RemoveProperty("ActiveListSelectedObject");
 
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
 
@@ -216,7 +216,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		private static IRecordList RDEwordsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == RDEwords, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{RDEwords}'.");
-
+			/*
+            <clerk id="RDEwords" clerkProvidingOwner="SemanticDomainList">
+              <recordList class="CmSemanticDomain" field="ReferringSenses" />
+              <sortMethods />
+            </clerk>
+			*/
 			return new SubservientRecordList(recordListId, statusBar,
 				null, false, false,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,

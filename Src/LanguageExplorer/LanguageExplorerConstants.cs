@@ -11,7 +11,7 @@ namespace LanguageExplorer
 	{
 		/// <summary />
 		/// <remarks>
-		/// Only used by RecordClerk's ResetStatusBarMessageForCurrentObject method
+		/// Only used by RecordList's ResetStatusBarMessageForCurrentObject method
 		/// </remarks>
 		internal const string StatusBarPanelMessage = "statusBarPanelMessage"; // Reset on area/tool change. string.Empty
 		/// <summary />
@@ -26,17 +26,17 @@ namespace LanguageExplorer
 		internal const string StatusBarPanelProgressBar = "statusBarPanelProgressBar";
 		/// <summary />
 		/// <remarks>
-		/// Only used by RecordClerk's UpdateSortStatusBarPanel method
+		/// Only used by RecordList's UpdateSortStatusBarPanel method
 		/// </remarks>
 		internal const string StatusBarPanelSort = "statusBarPanelSort"; // Reset on area/tool change. string.Empty
 		/// <summary />
 		/// <remarks>
-		/// Only used by RecordClerk's UpdateFilterStatusBarPanel method
+		/// Only used by RecordList's UpdateFilterStatusBarPanel method
 		/// </remarks>
 		internal const string StatusBarPanelFilter = "statusBarPanelFilter"; // Reset on area/tool change. string.Empty
 		/// <summary />
 		/// <remarks>
-		/// Only used by RecordClerk's UpdateStatusBarRecordNumber method
+		/// Only used by RecordList's UpdateStatusBarRecordNumber method
 		/// </remarks>
 		internal const string StatusPanelRecordNumber = "statusBarPanelRecordNumber"; // Reset on area/tool change. StringTable.Table.GetString("No Records", "Misc");
 		/// <summary>

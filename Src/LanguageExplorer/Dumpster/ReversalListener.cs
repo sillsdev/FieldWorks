@@ -272,8 +272,8 @@ namespace LanguageExplorer.Dumpster
 			{
 				IReversalIndexEntry rie = null;
 #if RANDYTODO
-				// TODO: Use another mechanism to get the clerk in whatever replaces this listener.
-				// TODO: It will be an instance of "ReversalEntryClerk" (see above for details)
+				// TODO: Use another mechanism to get the record list in whatever replaces this listener.
+				// TODO: It will be an instance of "ReversalEntryRecordList" (see above for details)
 				string recordListId = XmlUtils.GetMandatoryAttributeValue(m_configurationParameters, "clerk");
 				string propertyName = RecordList.GetCorrespondingPropertyName(recordListId);
 				var recordList = PropertyTable.GetValue<IRecordList>(propertyName);
@@ -368,8 +368,8 @@ namespace LanguageExplorer.Dumpster
 		{
 			get
 			{
-				string areaChoice = PropertyTable.GetValue<string>("areaChoice");
-				string toolFor = PropertyTable.GetValue<string>($"{AreaServices.ToolForAreaNamed_}lexicon");
+				var areaChoice = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
+				var toolFor = PropertyTable.GetValue<string>($"{AreaServices.ToolForAreaNamed_}{AreaServices.LexiconAreaMachineName}");
 
 				return areaChoice == AreaServices.InitialAreaMachineName && toolFor.StartsWith("reversalTool");
 			}

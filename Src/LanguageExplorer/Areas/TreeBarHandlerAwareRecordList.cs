@@ -96,7 +96,7 @@ namespace LanguageExplorer.Areas
 				// A more robust solution would be to have in our design a way to produce
 				// a 'defered' prop changed so that the current actions can finish before
 				// others are notified of the change (which is often incomplete at that time).
-				// The stack for this issue showed the RecordList and RecordClerk being
+				// The stack for this issue showed the RecordList being
 				// re-entered while they were deleting an object in a previous stack frame.
 				// This is not the only case where this has been noted, but a solution has
 				// not yet been thought of.

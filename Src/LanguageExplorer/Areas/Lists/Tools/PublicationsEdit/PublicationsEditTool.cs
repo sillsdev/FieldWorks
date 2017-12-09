@@ -24,6 +24,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 	internal sealed class PublicationsEditTool : ITool
 	{
 		private ListsAreaMenuHelper _listsAreaMenuHelper;
+		private const string PublicationList = "PublicationList";
 		private const string PublicationsEditParameters = "PublicationsEditParameters";
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
@@ -59,7 +60,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(PublicationsEditParameters, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(PublicationList, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_listsAreaMenuHelper = new ListsAreaMenuHelper(majorFlexComponentParameters, (IListArea)_area, _recordList);
 
@@ -142,8 +143,19 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == PublicationsEditParameters, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{PublicationsEditParameters}'.");
-
+			Require.That(recordListId == PublicationList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{PublicationList}'.");
+			/*
+            <clerk id="PublicationList">
+              <recordList owner="LexDb" property="PublicationTypes">
+                <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList" />
+              </recordList>
+              <treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="false" includeAbbr="false" ws="best vernoranal" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler" />
+              <filters />
+              <sortMethods>
+                <sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
+              </sortMethods>
+            </clerk>
+			*/
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				null, true, true,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),

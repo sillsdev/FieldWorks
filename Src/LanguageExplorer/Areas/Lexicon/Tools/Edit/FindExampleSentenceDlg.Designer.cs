@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,14 +23,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
-				if(components != null)
-					components.Dispose();
-
-				if (m_recordList != null && PropertyTable != null)
-				{
-					PropertyTable.RemoveProperty("RecordClerk-" + m_recordList.Id);
-					m_recordList.Dispose();
-				}
+				components?.Dispose();
+				m_recordList?.Dispose();
 			}
 			m_cache = null;
 			m_configurationNode = null;
@@ -40,6 +34,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			m_previewPane = null;
 			m_helpTopic = null;
 			m_recordList = null;
+			_statusBar = null;
 
 			PropertyTable = null;
 			Publisher = null;

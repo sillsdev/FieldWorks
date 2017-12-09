@@ -180,14 +180,17 @@
 	<string id="No-RnGenericRecs" txt="No Records"/>
 <!-- Lists -->
 	<string id="No-AnthroItems" txt="No Anthropology Categories"/>
+  <string id="No-DialectItems" txt="No Dialect Items"/>
 	<string id="No-AcademicDomains" txt="No Academic Domains"/>
 	<string id="No-ConfidenceLevels" txt="No Confidence Levels"/>
 	<string id="No-ListItems" txt="No List items"/>
 	<string id="No-EducationLevels" txt="No Education Levels"/>
 	<string id="No-Roles" txt="No Roles"/>
+  <string id="No-ExtNotes" txt="No Extended Notes"/>
 	<string id="No-Languages" txt="No Languages"/>
 	<string id="No-FsFeatStrucTypes" txt="No Feature Types"/>
 	<string id="No-Genres" txt="No Genres"/>
+  <string id="No-Languages" txt="No Languages"/>
 	<string id="No-LexicalRelations" txt="No Lexical Relations"/>
 	<string id="No-Locations" txt="No Locations"/>
 	<string id="No-PublicationTypes" txt="No Publications"/>

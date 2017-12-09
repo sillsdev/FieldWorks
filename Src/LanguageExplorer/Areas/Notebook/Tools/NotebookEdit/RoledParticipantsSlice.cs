@@ -296,7 +296,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		private void ShowHelpTopic(object sender, EventArgs e)
 		{
 			CheckDisposed();
-			string areaName = PropertyTable.GetValue<string>("areaChoice");
+			string areaName = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
 			if (areaName == AreaServices.TextAndWordsAreaMachineName)
 			{
 				ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),

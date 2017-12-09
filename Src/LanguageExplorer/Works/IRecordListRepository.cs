@@ -12,7 +12,7 @@ namespace LanguageExplorer.Works
 	/// <remarks>
 	/// 1. For now, the implementation will live in a static property of the RecordList class.
 	///		Eventually, it may be added to the IFlexComponent InitializeFlexComponent method.
-	/// 2. When the implementation is disposed, then so are all of its remaining clerks.
+	/// 2. When the implementation is disposed, then so are all of its remaining record lists.
 	///
 	/// NB: Tools should never use the <see cref="GetRecordList"/> method of this interface,
 	/// but they should use the similar one from the <see cref="IRecordListRepositoryForTools"/>.

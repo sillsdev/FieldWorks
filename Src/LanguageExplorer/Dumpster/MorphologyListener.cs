@@ -422,8 +422,8 @@ namespace LanguageExplorer.Dumpster
 
 			if (InFriendlyArea && m_mediator != null)
 			{
-				var clrk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
-				if (clrk != null && !clrk.IsDisposed && clrk.Id == "concordanceWords")
+				var recordList = RecordList.RecordListRepository.ActiveRecordList;
+				if (recordList != null && !recordList.IsDisposed && recordList.Id == "concordanceWords")
 				{
 					display.Visible = true;
 
@@ -472,7 +472,7 @@ namespace LanguageExplorer.Dumpster
 		{
 			get
 			{
-				return (PropertyTable.GetValue<string>("areaChoice") == AreaServices.TextAndWordsAreaMachineName);
+				return (PropertyTable.GetValue<string>(AreaServices.AreaChoice) == AreaServices.TextAndWordsAreaMachineName);
 			}
 		}
 

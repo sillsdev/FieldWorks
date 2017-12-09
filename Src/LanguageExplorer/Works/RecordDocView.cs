@@ -198,9 +198,8 @@ namespace LanguageExplorer.Works
 			base.SetupDataContext();
 			m_rootSite = ConstructRoot();
 			m_rootSite.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber)); // Init it as Flex component.
-			//m_rootSite.PersistenceProvder = new XCore.PersistenceProvider(m_mediator.PropertyTable);
 
-			m_rootSite.Dock = System.Windows.Forms.DockStyle.Fill;
+			m_rootSite.Dock = DockStyle.Fill;
 			m_rootSite.Cache = Cache;
 
 			Controls.Add(m_rootSite);
@@ -211,13 +210,7 @@ namespace LanguageExplorer.Works
 		/// if the XML configuration does not specify the availability of the treebar
 		/// (e.g. treeBarAvailibility="Required"), then use this.
 		/// </summary>
-		protected override TreebarAvailability DefaultTreeBarAvailability
-		{
-			get
-			{
-				return TreebarAvailability.NotAllowed;
-			}
-		}
+		protected override TreebarAvailability DefaultTreeBarAvailability => TreebarAvailability.NotAllowed;
 
 		#endregion // Other methods
 	}
@@ -295,10 +288,7 @@ namespace LanguageExplorer.Works
 			if (m_configObjectName == null)
 				m_configObjectName = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(m_xnSpec, "configureObjectName", null));
 			string label;
-			if (string.IsNullOrEmpty(nodePath))
-				label = String.Format(xWorksStrings.ksConfigure, m_configObjectName);
-			else
-				label = String.Format(xWorksStrings.ksConfigureIn, nodePath.Split(':')[3], m_configObjectName);
+			label = string.IsNullOrEmpty(nodePath) ? string.Format(xWorksStrings.ksConfigure, m_configObjectName) : string.Format(xWorksStrings.ksConfigureIn, nodePath.Split(':')[3], m_configObjectName);
 			m_contextMenu = new ContextMenuStrip();
 			var item = new ToolStripMenuItem(label);
 			m_contextMenu.Items.Add(item);

@@ -295,6 +295,9 @@
     <Compile Include="Areas\Grammar\GrammarAreaMenuHelper.cs" />
     <Compile Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchToolMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\LexiconAreaMenuHelper.cs" />
+    <Compile Include="Areas\Lists\Tools\DialectsListEdit\DialectsListEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\ExtNoteTypeEdit\ExtNoteTypeEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\LanguagesListEdit\LanguagesListEditTool.cs" />
     <Compile Include="Areas\ReversalListBase.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\ConcRecordList.cs" />
     <Compile Include="Areas\Lists\ListsAreaMenuHelper.cs" />
@@ -1130,7 +1133,7 @@
     <Compile Include="Works\RecordBrowseView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Works\RecordClerkImages.cs">
+    <Compile Include="Works\RecordListImages.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Works\RecordListRepository.cs" />
@@ -1195,6 +1198,9 @@
     <Compile Include="Works\XWorksViewBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Content Include="Resources\DialectsListEditParameters.xml" />
+    <Content Include="Resources\ExtNoteTypeEditParameters.xml" />
+    <Content Include="Resources\LanguagesListEditParameters.xml" />
     <EmbeddedResource Include="Controls\HtmlControl.resx">
       <DependentUpon>HtmlControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -1659,8 +1665,8 @@
       <DependentUpon>RecordBrowseView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Works\RecordClerkImages.resx">
-      <DependentUpon>RecordClerkImages.cs</DependentUpon>
+    <EmbeddedResource Include="Works\RecordListImages.resx">
+      <DependentUpon>RecordListImages.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Works\RecordEditView.resx">

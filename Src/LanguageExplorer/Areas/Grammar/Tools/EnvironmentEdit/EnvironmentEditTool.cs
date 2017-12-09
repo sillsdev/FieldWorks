@@ -154,11 +154,15 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 
 		#endregion
 
-		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(clerkId == Environments, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Environments}'.");
-
-			return new RecordList(clerkId, statusBar,
+			Require.That(recordListId == Environments, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{Environments}'.");
+			/*
+            <clerk id="environments">
+              <recordList owner="MorphologicalData" property="Environments" />
+            </clerk>
+			*/
+			return new RecordList(recordListId, statusBar,
 				new PropertyRecordSorter("ShortName"), AreaServices.Default,
 				null, false, false,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,

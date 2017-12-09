@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Areas;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -235,7 +236,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public event EventHandler SorterChanged;
 
 		/// <summary> Target Column can be selected by the BulkEdit bar which may need to reorient the
-		/// RecordClerk to build a list based upon another RootObject class.</summary>
+		/// RecordList to build a list based upon another RootObject class.</summary>
 		public event TargetColumnChangedHandler TargetColumnChanged;
 
 		/// <summary>
@@ -254,7 +255,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public event EventHandler RefreshCompleted;
 
 		/// <summary>
-		/// Handler to use when checking if two sorters are compatible, should be implemented in the Clerk
+		/// Handler to use when checking if two sorters are compatible, should be implemented in the record list
 		/// </summary>
 		public event SortCompatibleHandler SortersCompatible;
 
@@ -393,88 +394,40 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the inner XmlBrowseViewBase class.
 		/// </summary>
-		public XmlBrowseViewBase BrowseView
-		{
-			get
-			{
-				CheckDisposed();
-				return m_xbv;
-			}
-		}
+		public XmlBrowseViewBase BrowseView => m_xbv;
 
 		/// <summary>
 		/// bulk edit bar, if one is installed. <c>null</c> if not.
 		/// </summary>
-		public BulkEditBar BulkEditBar
-		{
-			get
-			{
-				CheckDisposed();
-				return m_bulkEditBar;
-			}
-		}
+		public BulkEditBar BulkEditBar => m_bulkEditBar;
 
-		internal LcmCache Cache
-		{
-			get
-			{
-				CheckDisposed();
-				return m_cache;
-			}
-		}
+		internal LcmCache Cache => m_cache;
 
 		/// <summary>
 		/// Get the special 'Decorator' ISilDataAccess cache.
 		/// </summary>
-		public XMLViewsDataCache SpecialCache
-		{
-			get { return m_specialCache; }
-		}
+		public XMLViewsDataCache SpecialCache => m_specialCache;
 
-		internal FilterBar FilterBar
-		{
-			get
-			{
-				CheckDisposed();
-				return m_filterBar;
-			}
-		}
+		internal FilterBar FilterBar => m_filterBar;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the sort item provider.
 		/// </summary>
 		/// <value>The sort item provider.</value>
-		/// ------------------------------------------------------------------------------------
-		public ISortItemProvider SortItemProvider
-		{
-			get
-			{
-				CheckDisposed();
-				return m_sortItemProvider;
-			}
-		}
+		public ISortItemProvider SortItemProvider => m_sortItemProvider;
 
-		internal int ListItemsClass
-		{
-			get { return m_xbv.Vc.ListItemsClass; }
-		}
+		internal int ListItemsClass => m_xbv.Vc.ListItemsClass;
 
 		/// <summary>
-		/// flags if the BrowseViewer has already sync'd its filters to the record clerk.
+		/// flags if the BrowseViewer has already sync'd its filters to the record list.
 		/// </summary>
-		private bool FilterInitializationComplete
-		{
-			get { return m_fFilterInitializationComplete; }
-		}
+		private bool FilterInitializationComplete => m_fFilterInitializationComplete;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// If the view has or might have a filter bar, call this after initialization to
-		/// ensure that it is synchronized with the current filter in the Clerk.
+		/// ensure that it is synchronized with the current filter in the record list.
 		/// </summary>
 		/// <param name="currentFilter">The current filter.</param>
-		/// ------------------------------------------------------------------------------------
 		public void UpdateFilterBar(RecordFilter currentFilter)
 		{
 			CheckDisposed();
@@ -559,14 +512,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Gets the column count. This count does not include the check box column.
 		/// </summary>
 		/// <value>The column count.</value>
-		public int ColumnCount
-		{
-			get
-			{
-				CheckDisposed();
-				return ColumnSpecs.Count;
-			}
-		}
+		public int ColumnCount => ColumnSpecs.Count;
 
 		/// <summary>
 		/// Gets the name of the specified column. The specified index is zero-based, it should
@@ -687,14 +633,16 @@ namespace LanguageExplorer.Controls.XMLViews
 				sorters = ((AndSorter)sorter).Sorters;
 			else
 			{
-				sorters = new ArrayList();
-				sorters.Add(sorter);
+				sorters = new ArrayList
+				{
+					sorter
+				};
 			}
 
-			for (int i = 0; i < sorters.Count; i++)
+			for (var i = 0; i < sorters.Count; i++)
 			{
 				// set our current column to the one we are sorting.
-				int ifsi = ColumnInfoIndexOfCompatibleSorter((RecordSorter)sorters[i]);
+				var ifsi = ColumnInfoIndexOfCompatibleSorter((RecordSorter)sorters[i]);
 
 				// set our header column arrow
 				SortOrder order = SortOrder.Ascending;
@@ -705,7 +653,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					if (sfc != null)
 						order = sfc.Order;
 				}
-				int iHeaderColumn = ColumnHeaderIndex(ifsi);
+				var iHeaderColumn = ColumnHeaderIndex(ifsi);
 
 				if (i == 0)
 					SetSortArrowColumn(iHeaderColumn, order, DhListView.ArrowSize.Large);
@@ -714,8 +662,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				else
 					SetSortArrowColumn(iHeaderColumn, order, DhListView.ArrowSize.Small);
 
-				Logger.WriteEvent(String.Format("Sort on {0} {1} ({2})",
-						m_lvHeader.ColumnsInDisplayOrder[iHeaderColumn].Text, order, i));
+				Logger.WriteEvent($"Sort on {m_lvHeader.ColumnsInDisplayOrder[iHeaderColumn].Text} {order} ({i})");
 			}
 			m_lvHeader.Refresh();
 		}
@@ -733,8 +680,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		// Resets all column sort arrows
 		private void ResetSortArrowColumn()
 		{
-			for (int i = 0; i < m_lvHeader.Columns.Count; i++)
+			for (var i = 0; i < m_lvHeader.Columns.Count; i++)
+			{
 				m_lvHeader.ShowHeaderIcon(i, SortOrder.None, DhListView.ArrowSize.Large);
+			}
 		}
 
 		/// <summary>
@@ -773,24 +722,15 @@ namespace LanguageExplorer.Controls.XMLViews
 				CheckDisposed();
 
 				m_xbv.StyleSheet = value;
-				if (m_filterBar != null)
-					m_filterBar.SetStyleSheet(value);
-				if (m_bulkEditBar != null)
-					m_bulkEditBar.SetStyleSheet(value);
+				m_filterBar?.SetStyleSheet(value);
+				m_bulkEditBar?.SetStyleSheet(value);
 			}
 		}
 
 		/// <summary>
 		/// The top-level property of RootObjectHvo that we are displaying.
 		/// </summary>
-		public int MainTag
-		{
-			get
-			{
-				CheckDisposed();
-				return m_xbv.MainTag;
-			}
-		}
+		public int MainTag => m_xbv.MainTag;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1121,7 +1061,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// Initialize the sorter (typically starting with the Clerk's sorter, but if the columns are reordered
+		/// Initialize the sorter (typically starting with the record list's sorter, but if the columns are reordered
 		/// this should re-sync things).
 		/// 1) If we are not given a GenRecordSorter we will raise to resort to our first sortable column.
 		/// 2) If we are given a GenRecordSorter but we can't find a corresponding column in our browseview,
@@ -2116,10 +2056,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private string FormatColumnWidthPropertyName(int iCol)
 		{
-			string toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
-			string Id2 = BrowseView.GetCorrespondingPropertyName("Column");
-			string PropName = toolChoice + "_" + Id2 + "_" + iCol + "_Width";
-			return PropName;
+			return PropertyTable.GetValue<string>(AreaServices.ToolChoice) + "_" + BrowseView.GetCorrespondingPropertyName("Column") + "_" + iCol + "_Width";
 		}
 
 		/// <summary>
@@ -3601,7 +3538,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				CheckDisposed();
 
-				return PropertyTable.GetValue<string>("areaChoice");
+				return PropertyTable.GetValue<string>(AreaServices.AreaChoice);
 			}
 		}
 
@@ -3612,8 +3549,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public bool PrepareToGoAway()
 		{
 			CheckDisposed();
-			if (m_bulkEditBar != null)
-				m_bulkEditBar.SaveSettings();
+			m_bulkEditBar?.SaveSettings();
 			return true;
 		}
 

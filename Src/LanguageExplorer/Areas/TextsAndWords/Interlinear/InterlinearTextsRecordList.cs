@@ -154,7 +154,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		/// <summary>
 		/// We use a unique method name for inserting a text, which could otherwise be handled simply
-		/// by letting the Clerk handle InsertItemInVector, because after it is inserted we may
+		/// by letting the record list handle InsertItemInVector, because after it is inserted we may
 		/// want to switch tools.
 		/// The argument should be the XmlNode for <parameters className="Text"/>.
 		/// </summary>

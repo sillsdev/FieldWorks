@@ -27,7 +27,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 	internal sealed class PhonologicalRuleEditTool : ITool
 	{
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
-		private const string Phonologicalrules = "phonologicalrules";
+		private const string PhonologicalRules = "phonologicalRules";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
@@ -60,7 +60,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(Phonologicalrules, majorFlexComponentParameters.Statusbar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(PhonologicalRules, majorFlexComponentParameters.Statusbar, FactoryMethod);
 			}
 			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordList); // Use generic export event handler.
 
@@ -154,11 +154,15 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 
 		#endregion
 
-		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(clerkId == Phonologicalrules, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Phonologicalrules}'.");
-
-			return new RecordList(clerkId, statusBar,
+			Require.That(recordListId == PhonologicalRules, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{PhonologicalRules}'.");
+			/*
+            <clerk id="phonologicalRules">
+              <recordList owner="MorphologicalData" property="PhonologicalRules" />
+            </clerk>
+			*/
+			return new RecordList(recordListId, statusBar,
 				new PropertyRecordSorter("ShortName"), AreaServices.Default,
 				null, false, false,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,

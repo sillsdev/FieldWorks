@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class ConcordanceTool : ITool
 	{
-		private const string OccurrencesOfSelectedUnit = "OccurrencesOfSelectedUnit";
+		internal const string OccurrencesOfSelectedUnit = "OccurrencesOfSelectedUnit";
 		private MultiPane _concordanceContainer;
 		private ConcordanceControl _concordanceControl;
 		private RecordBrowseView _recordBrowseView;
@@ -163,7 +163,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == OccurrencesOfSelectedUnit, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{OccurrencesOfSelectedUnit}'.");
-
+			/*
+            <clerk id="OccurrencesOfSelectedUnit" allowDeletions="false">
+              <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.OccurrencesOfSelectedUnit" />
+              <recordList class="LangProject" field="ConcOccurrences">
+                <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.MatchingConcordanceItems" />
+                <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
+              </recordList>
+              <sortMethods />
+            </clerk>
+			*/
 			return new MatchingConcordanceItems(recordListId, statusBar, new ConcDecorator(cache.ServiceLocator));
 		}
 	}

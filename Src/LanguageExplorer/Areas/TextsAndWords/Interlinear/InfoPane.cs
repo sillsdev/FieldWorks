@@ -78,7 +78,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		#endregion
 
 		/// <summary>
-		/// Initialize the pane with a record clerk. (It already has the cache.)
+		/// Initialize the pane with a record list. (It already has the cache.)
 		/// </summary>
 		internal void Initialize(IRecordList recordList, ToolStripMenuItem printMenu)
 		{
@@ -221,7 +221,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					//Debug.Assert(m_info.CurrentRootHvo == root.Hvo);
 					ICmObject showObj = root;
 					ICmObject stText;
-					if (root.ClassID == CmBaseAnnotationTags.kClassId)  // RecordClerk is tracking the annotation
+					if (root.ClassID == CmBaseAnnotationTags.kClassId)  // RecordList is tracking the annotation
 					{
 						// This pane, as well as knowing how to work with a record list of Texts, knows
 						// how to work with one of CmBaseAnnotations, that is, a list of occurrences of
@@ -271,15 +271,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (m_currentRoot > 0)
 			{
 				m_xrev.DatTree.Visible = true;
-				ICmObjectRepository repo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+				var repo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 				ICmObject root;
 				// JohnT: I don't know why this is done at all. Therefore I made a minimal change rather than removing it
 				// altogether. If someone knows why it sometimes needs doing, please comment. Or if you know why it once did
-				// and it no longer applies, please remove it. I added the test that the Clerk is not aleady looking
+				// and it no longer applies, please remove it. I added the test that the record list is not aleady looking
 				// at this object to suppress switching back to the raw text pane when clicking on the Info pane of an empty text.
 				// (FWR-3180)
-				if (repo.TryGetObject(m_currentRoot, out root) && root is IStText && m_xrev.MyRecordList.CurrentObjectHvo != m_currentRoot)
+				if (repo.TryGetObject(m_currentRoot, out root) && root is IStText &&
+				    m_xrev.MyRecordList.CurrentObjectHvo != m_currentRoot)
+				{
 					m_xrev.MyRecordList.JumpToRecord(m_currentRoot);
+				}
 			}
 			else if (m_currentRoot == 0)
 			{

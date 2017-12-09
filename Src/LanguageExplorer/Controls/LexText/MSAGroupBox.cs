@@ -740,7 +740,7 @@ namespace LanguageExplorer.Controls.LexText
 			if (m_morphType == null)
 			{
 				// Not called by InsertEntryDlg; need to figure out the morphtype(s)
-				var lex = m_propertyTable.GetValue<ILexEntry>("ActiveClerkSelectedObject");
+				var lex = m_propertyTable.GetValue<ILexEntry>("ActiveListSelectedObject");
 				if (lex != null)
 				{
 					return DomainObjectServices.GetSlots(m_cache, lex, m_selectedMainPOS);

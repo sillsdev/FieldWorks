@@ -137,18 +137,25 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 
 		#endregion
 
-		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(clerkId == LexProblems, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{LexProblems}'.");
-
+			Require.That(recordListId == LexProblems, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{LexProblems}'.");
+			/*
+            <clerk id="lexProblems">
+              <recordList owner="LangProject" property="Problems" />
+              <filters>
+                <filter label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.ProblemAnnotationFilter" targetClasses="LexEntry, LexSense, PhEnvironment" />
+              </filters>
+              <sortMethods />
+            </clerk>
+			*/
 			var probAnnFilter = new ProblemAnnotationFilter();
 			probAnnFilter.Init(cache, XDocument.Parse(GrammarResources.LexiconProblemsParameters).Root.Element("filterElement"));
-			return new TreeBarHandlerAwareRecordList(clerkId, statusBar,
+			return new RecordList(recordListId, statusBar,
 				new PropertyRecordSorter("ShortName"), AreaServices.Default,
 				probAnnFilter, true, true,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
-				LangProjectTags.kflidAnnotations, cache.LanguageProject, "Annotations",
-				new RecordBarListHandler(flexComponentParameters.PropertyTable, true, true, false, "best analorvern"));
+				LangProjectTags.kflidAnnotations, cache.LanguageProject, "Problems");
 		}
 	}
 }

@@ -40,16 +40,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					RecordList.ActiveRecordListRepository.RemoveRecordList(m_srcRecordList);
 				}
-
-				if (m_dstRecordList != null)
-				{
-					RecordList.ActiveRecordListRepository.RemoveRecordList(m_dstRecordList);
-				}
 			}
 			m_cache = null;
 			m_srcwfiWordform = null;
 			m_srcRecordList = null;
-			m_dstRecordList = null;
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;

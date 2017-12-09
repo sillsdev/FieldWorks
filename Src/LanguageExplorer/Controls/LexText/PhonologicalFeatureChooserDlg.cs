@@ -852,7 +852,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void m_bnHelp_Click(object sender, EventArgs e)
 		{
-			if (m_propertyTable.GetValue<string>("toolChoice").Substring(0, 7) == "natural")
+			if (m_propertyTable.GetValue<string>(AreaServices.ToolChoice).Substring(0, 7) == "natural")
 				m_helpTopic = "khtpChoose-Phonemes";
 			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
 		}

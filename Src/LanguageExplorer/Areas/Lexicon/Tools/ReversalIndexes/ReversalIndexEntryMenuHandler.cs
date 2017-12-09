@@ -131,10 +131,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 							newOwner.MoveIfNeeded(currentEntry);
 							newOwner.SubentriesOS.Add(currentEntry);
 						});
-					var clerk = RecordClerk.ActiveRecordClerkRepository.ActiveRecordClerk;
-					clerk?.RemoveItemsFor(currentEntry.Hvo);
+					var recordList = RecordList.ActiveRecordListRepository.ActiveRecordList;
+					recordList?.RemoveItemsFor(currentEntry.Hvo);
 					// Note: PropChanged should happen on the old owner and the new while completing the unit of work.
-					// Have to jump to a main entry, as RecordClerk doesn't know anything about subentries.
+					// Have to jump to a main entry, as RecordList doesn't know anything about subentries.
 					Publisher.Publish("JumpToRecord", newOwner.MainEntry.Hvo);
 				}
 			}
@@ -204,7 +204,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// the problem on how to control we are CommandSet are handled by listeners are
 		/// visible.
 		/// </remarks>
-		private bool InFriendlyArea => (PropertyTable.GetValue<string>("areaChoice") == AreaServices.LexiconAreaMachineName && PropertyTable.GetValue<string>($"{AreaServices.ToolForAreaNamed_}_{AreaServices.LexiconAreaMachineName}") == AreaServices.ReversalEditCompleteMachineName);
+		private bool InFriendlyArea => (PropertyTable.GetValue<string>(AreaServices.AreaChoice) == AreaServices.LexiconAreaMachineName && PropertyTable.GetValue<string>($"{AreaServices.ToolForAreaNamed_}_{AreaServices.LexiconAreaMachineName}") == AreaServices.ReversalEditCompleteMachineName);
 	}
 #endif
 }

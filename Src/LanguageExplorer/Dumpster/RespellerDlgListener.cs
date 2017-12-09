@@ -55,13 +55,13 @@ namespace LanguageExplorer.Dumpster
 		{
 			if (InFriendliestTool)
 			{
-				// we should be able to get our info from the current record clerk.
+				// we should be able to get our info from the current record list.
 				// but return null if we can't get the info, otherwise we allow the user to
 				// bring up the change spelling dialog and crash because no wordform can be found (LT-8766).
-				var clerk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
-				if (clerk == null || clerk.CurrentObject == null)
+				var recordList = RecordList.RecordListRepository.ActiveRecordList;
+				if (recordList == null || recordList.CurrentObject == null)
 					return null;
-				var wfiWordform = clerk.CurrentObject as IWfiWordform;
+				var wfiWordform = recordList.CurrentObject as IWfiWordform;
 				if (wfiWordform == null)
 					return null;
 				var tssVern = wfiWordform.Form.BestVernacularAlternative;
@@ -126,8 +126,8 @@ namespace LanguageExplorer.Dumpster
 				LaunchRespellerDlgOnWord(ActiveWord());
 				return true;
 			}
-			var clerk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
-			using (var luh = new ListUpdateHelper(clerk))
+			var recordList = RecordList.RecordListRepository.ActiveRecordList;
+			using (var luh = new ListUpdateHelper(recordList))
 			{
 				var changesWereMade = false;
 				// Launch the Respeller Dlg.
@@ -153,7 +153,7 @@ namespace LanguageExplorer.Dumpster
 				if (changesWereMade)
 				{
 					// further try to refresh occurrence counts.
-					var sda = clerk.VirtualListPublisher;
+					var sda = recordList.VirtualListPublisher;
 					while (sda != null)
 					{
 						if (sda is ConcDecorator)
@@ -177,7 +177,7 @@ namespace LanguageExplorer.Dumpster
 
 			var cache = PropertyTable.GetValue<FdoCache>("cache");
 			var wordform = WordformApplicationServices.GetWordformForForm(cache, tss);
-			using (var luh = new ListUpdateHelper(RecordClerk.RecordClerkRepository.ActiveRecordClerk))
+			using (var luh = new ListUpdateHelper(RecordList.RecordListRepository.ActiveRecordList))
 			{
 				// Launch the Respeller Dlg.
 				using (var dlg = new RespellerDlg())
@@ -209,7 +209,7 @@ namespace LanguageExplorer.Dumpster
 		{
 			get
 			{
-				return (PropertyTable.GetValue<string>("areaChoice") == AreaServices.TextAndWordsAreaMachineName);
+				return (PropertyTable.GetValue<string>(AreaServices.AreaChoice) == AreaServices.TextAndWordsAreaMachineName);
 			}
 		}
 

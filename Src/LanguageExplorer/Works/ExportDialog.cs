@@ -157,7 +157,7 @@ namespace LanguageExplorer.Works
 				m_xvc = m_seqView.Vc;
 				m_sda = m_seqView.RootBox.DataAccess;
 			}
-			var cmo = PropertyTable.GetValue<ICmObject>("ActiveClerkSelectedObject", null);
+			var cmo = PropertyTable.GetValue<ICmObject>("ActiveListSelectedObject", null);
 			if (cmo != null)
 			{
 				int clidRoot;
@@ -396,7 +396,7 @@ namespace LanguageExplorer.Works
 		private Control EnsureViewInfo()
 		{
 			string area, tool;
-			m_areaOrig = PropertyTable.GetValue<string>("areaChoice");
+			m_areaOrig = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
 			if (m_rgFxtTypes.Count == 0)
 				return null; // only non-Fxt exports available (like Discourse chart?)
 			var ft = m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft;

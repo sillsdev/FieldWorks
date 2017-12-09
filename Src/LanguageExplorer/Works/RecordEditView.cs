@@ -106,7 +106,7 @@ namespace LanguageExplorer.Works
 
 			m_showDescendantInRoot = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParametersElement, "showDescendantInRoot", false);
 
-			// retrieve persisted clerk index and set it.
+			// retrieve persisted record list index and set it.
 			int idx = PropertyTable.GetValue(MyRecordList.PersistedIndexProperty, SettingsGroup.LocalSettings, -1);
 			int lim = MyRecordList.ListSize;
 			if (idx >= 0 && idx < lim)
@@ -528,7 +528,7 @@ namespace LanguageExplorer.Works
 			if (m_printLayout == null || MyRecordList.CurrentObject == null)
 				return; // Don't bother; this edit view does not specify a print layout, or there's nothing to print.
 
-			var area = PropertyTable.GetValue<string>("areaChoice");
+			var area = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
 			string toolId;
 			switch (area)
 			{

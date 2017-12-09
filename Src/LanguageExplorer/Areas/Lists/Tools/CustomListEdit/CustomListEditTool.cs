@@ -149,8 +149,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 
 		private static IRecordList FactoryMethod(ICmPossibilityList customList, LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			var customListClerkName = GetMachineName(customList);
-			Require.That(recordListId == customListClerkName, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{customListClerkName}'.");
+			var customListRecordListName = GetMachineName(customList);
+			Require.That(recordListId == customListRecordListName, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{customListRecordListName}'.");
 
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				null, true, true,

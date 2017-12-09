@@ -11,12 +11,12 @@ using SIL.LCModel;
 namespace LanguageExplorer.Works
 {
 	/// <summary>
-	/// Implementation of the IRecordClerkRepository.
+	/// Implementation of the IRecordListRepository.
 	/// </summary>
 	/// <remarks>
-	/// 1. For now, the implementation will live in a static property of the RecordClerk class.
+	/// 1. For now, the implementation will live in a static property of the RecordList class.
 	///		Eventually, it may be added to the IFlexComponent InitializeFlexComponent method.
-	/// 2. When the implementation is disposed, then so are all of its remaining clerks.
+	/// 2. When the implementation is disposed, then so are all of its remaining record lists.
 	/// </remarks>
 	internal sealed class RecordListRepository : IRecordListRepositoryForTools
 	{
@@ -51,7 +51,7 @@ namespace LanguageExplorer.Works
 			}
 			if (_recordLists.ContainsKey(recordList.Id))
 			{
-				throw new InvalidOperationException($"The clerk with an '{recordList.Id}' is already in the repository.");
+				throw new InvalidOperationException($"The record list with an '{recordList.Id}' is already in the repository.");
 			}
 			_recordLists.Add(recordList.Id, recordList);
 		}
@@ -84,7 +84,7 @@ namespace LanguageExplorer.Works
 				if (!ReferenceEquals(recordList, goner))
 				{
 					// Hmm. An imposter in our midst.
-					throw new InvalidOperationException($"The two clerks have the same Id '{recordList.Id}', but they are not the same identical clerk.");
+					throw new InvalidOperationException($"The two record lists have the same Id '{recordList.Id}', but they are not the same identical record list.");
 				}
 				if (AsRecordListRepository.ActiveRecordList == recordList)
 				{
@@ -120,11 +120,7 @@ namespace LanguageExplorer.Works
 			{
 				_activeRecordList?.BecomeInactive();
 				_activeRecordList = value;
-#if RANDYTODO
-				// TODO: Remove those parameters, when a clerk isn't really in charge of what the two do.
-				// TODO: For now, we will pretend the clerk doesn't deal with it as of now.
-#endif
-				_activeRecordList?.ActivateUI(false);
+				_activeRecordList?.ActivateUI();
 			}
 			get
 			{
@@ -138,7 +134,7 @@ namespace LanguageExplorer.Works
 		/// <param name="recordListId">The record list Id to return.</param>
 		/// <param name="statusBar"></param>
 		/// <param name="recordListFactoryMethod">The method called to create the record list, if not found in the repository.</param>
-		/// <returns>A RecordClerk instance with the specified Id.</returns>
+		/// <returns>The record list instance with the specified Id.</returns>
 		/// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="recordListFactoryMethod"/> doesn't know how to make a record list with the given Id.</exception>
 		IRecordList IRecordListRepositoryForTools.GetRecordList(string recordListId, StatusBar statusBar, Func<LcmCache, FlexComponentParameters, string, StatusBar, IRecordList> recordListFactoryMethod)
 		{
@@ -162,7 +158,7 @@ namespace LanguageExplorer.Works
 		/// <param name="statusBar"></param>
 		/// <param name="customList">The user created possibility list.</param>
 		/// <param name="recordListFactoryMethod">The method called to create the record list, if not found in the repository.</param>
-		/// <returns>A RecordClerk instance with the specified Id.</returns>
+		/// <returns>The record list instance with the specified Id.</returns>
 		/// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="recordListFactoryMethod"/> doesn't know how to make a record list with the given Id.</exception>
 		IRecordList IRecordListRepositoryForTools.GetRecordList(string recordListId, StatusBar statusBar, ICmPossibilityList customList, Func<ICmPossibilityList, LcmCache, FlexComponentParameters, string, StatusBar, IRecordList> recordListFactoryMethod)
 		{
@@ -222,9 +218,9 @@ namespace LanguageExplorer.Works
 
 			if (disposing)
 			{
-				foreach (var clerk in _recordLists.Values)
+				foreach (var recordList in _recordLists.Values)
 				{
-					clerk.Dispose();
+					recordList.Dispose();
 				}
 				_recordLists.Clear();
 			}

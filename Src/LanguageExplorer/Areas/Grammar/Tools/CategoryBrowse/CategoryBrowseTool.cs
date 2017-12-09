@@ -120,11 +120,21 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 
 		#endregion
 
-		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(clerkId == CategoriesWithoutTreeBarHandler, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{CategoriesWithoutTreeBarHandler}'.");
-
-			return new PossibilityRecordList(clerkId, statusBar, null, false, false, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.PartsOfSpeechOA);
+			Require.That(recordListId == CategoriesWithoutTreeBarHandler, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{CategoriesWithoutTreeBarHandler}'.");
+			/*
+            <clerk id="categories">
+              <recordList owner="LangProject" property="PartsOfSpeech">
+                <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList" />
+              </recordList>
+              <filters />
+              <sortMethods>
+                <sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
+              </sortMethods>
+            </clerk>
+			*/
+			return new PossibilityRecordList(recordListId, statusBar, null, false, false, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.PartsOfSpeechOA);
 		}
 	}
 }

@@ -77,7 +77,7 @@ namespace LanguageExplorer.Works
 			InitBase();
 			m_fullyInitialized = true;
 			// These have to be done here, rather than in SetupDataContext(),
-			// or the record clerk resets its current object,
+			// or the record list resets its current object,
 			// when the root object gets set in the browse view's MakeRoot,
 			// which, in  turn, resets its current index to zero,
 			// which fires events. By connecting them here,
@@ -94,7 +94,7 @@ namespace LanguageExplorer.Works
 			MyRecordList.SorterChangedByList += RecordList_SorterChangedByList;
 			if (m_browseViewer.BulkEditBar != null)
 			{
-				// We have a browse viewer that is using a bulk edit bar, so make sure our RecordClerk
+				// We have a browse viewer that is using a bulk edit bar, so make sure our RecordList
 				// is properly setup/sync'd with its saved settings.
 				m_browseViewer.BulkEditBar.TargetComboSelectedIndexChanged += TargetColumnChanged;
 				if (m_browseViewer.BulkEditBar.ExpectedListItemsClassId != 0)
@@ -105,7 +105,7 @@ namespace LanguageExplorer.Works
 				else
 				{
 					// now that we're finished setting up the bulk edit bar, we need to make
-					// sure our clerk loads its defaults, since bulk edit didn't provide information
+					// sure our record list loads its defaults, since bulk edit didn't provide information
 					// for which list items class to load objects for.
 					if (MyRecordList.ListSize == 0)
 					{
@@ -139,7 +139,7 @@ namespace LanguageExplorer.Works
 				m_browseViewer.BrowseView.RootBox.DestroySelection();
 			}
 
-			Subscriber.Subscribe("ClerkOwningObjChanged", ClerkOwningObjChanged_Message_Handler);
+			Subscriber.Subscribe("RecordListOwningObjChanged", RecordListOwningObjChanged_Message_Handler);
 
 			ShowRecord();
 		}
@@ -157,8 +157,8 @@ namespace LanguageExplorer.Works
 
 			if (disposing)
 			{
-				Subscriber.Unsubscribe("ClerkOwningObjChanged", ClerkOwningObjChanged_Message_Handler);
-				// Next 3 calls assume Clerk is not null. I (RBR) wonder if the assumption is good?
+				Subscriber.Unsubscribe("RecordListOwningObjChanged", RecordListOwningObjChanged_Message_Handler);
+				// Next 3 calls assume MyRecordList is not null. I (RBR) wonder if the assumption is good?
 				PersistSortSequence();
 				MyRecordList.FilterChangedByList -= RecordList_FilterChangedByList;
 				MyRecordList.SorterChangedByList -= RecordList_SorterChangedByList;
@@ -195,21 +195,21 @@ namespace LanguageExplorer.Works
 		}
 
 		/// <summary>
-		/// Signal the clerk to change its filter to the user selected value.
+		/// Signal the record list to change its filter to the user selected value.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
 		private void FilterChangedHandler(object sender, FilterChangeEventArgs args)
 		{
-			// If we're in the process of notifying clients that the clerk has changed
-			// the filter, we don't need to tell the clerk to change the filter (again)!
+			// If we're in the process of notifying clients that the record list has changed
+			// the filter, we don't need to tell the record list to change the filter (again)!
 			if (m_fHandlingFilterChangedByClerk)
 				return;
 			MyRecordList.OnChangeFilter(args);
 		}
 
 		/// <summary>
-		/// Notify clients that the clerk has changed the filter.
+		/// Notify clients that the record list has changed the filter.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
@@ -239,7 +239,7 @@ namespace LanguageExplorer.Works
 			bool isDefaultSort = false;
 			string colName = null;
 			List<int> sortedCols = m_browseViewer.SortedColumns;
-			// if the default column is NOT being sorted, we tell the clerk to display what the items are being sorted by
+			// if the default column is NOT being sorted, we tell the record list to display what the items are being sorted by
 			if (sortedCols.Count > 0)
 			{
 				colName = m_browseViewer.GetColumnName(sortedCols[0]);
@@ -251,7 +251,7 @@ namespace LanguageExplorer.Works
 		private void TargetColumnChanged(object sender, TargetColumnChangedEventArgs e)
 		{
 			if (e.ExpectedListItemsClass == 0)
-				return;	// no target column selected, so it shouldn't matter what the class of the clerk's list items are.
+				return; // no target column selected, so it shouldn't matter what the class of the record list's list items are.
 			using (new WaitCursor(this))
 			{
 				// we're changing the class of our list items.
@@ -274,7 +274,7 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		private void ClerkOwningObjChanged_Message_Handler(object newValue)
+		private void RecordListOwningObjChanged_Message_Handler(object newValue)
 		{
 			if (m_browseViewer == null)
 				return;
@@ -568,7 +568,7 @@ namespace LanguageExplorer.Works
 			base.ShowRecord();
 			try
 			{
-				// NOTE: If the clerk's current index is less than zero,
+				// NOTE: If the record list's current index is less than zero,
 				// or greater than the number of objects in the vector,
 				// SelectedIndex will assert in a debug build,
 				// and throw an exception in a release build.
@@ -612,7 +612,7 @@ namespace LanguageExplorer.Works
 				m_browseViewer.Enabled = false;
 			try
 			{
-				// NOTE: If the clerk's current index is less than zero,
+				// NOTE: If the record list's current index is less than zero,
 				// or greater than the number of objects in the vector,
 				// SelectedIndex will assert in a debug build,
 				// and throw an exception in a release build.

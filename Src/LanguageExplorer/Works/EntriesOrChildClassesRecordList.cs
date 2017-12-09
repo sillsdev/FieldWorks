@@ -38,7 +38,7 @@ namespace LanguageExplorer.Works
 		readonly IDictionary<int, bool> m_reloadNeededForProperty = new Dictionary<int, bool>();
 		PartOwnershipTree m_pot;
 		// suspend loading the property until given a class by RecordBrowseView via
-		// RecordClerk.OnChangeListItemsClass();
+		// RecordList.OnChangeListItemsClass();
 		bool m_suspendReloadUntilOnChangeListItemsClass = true;
 		private readonly XElement m_partOwnershipTreeSpec = XElement.Parse(xWorksStrings.EntriesOrChildrenClerkPartOwnershipTree);
 
@@ -77,7 +77,7 @@ namespace LanguageExplorer.Works
 			base.InitializeFlexComponent(flexComponentParameters);
 
 			// suspend loading the property until given a class by RecordBrowseView via
-			// RecordClerk.OnChangeListItemsClass();
+			// RecordList.OnChangeListItemsClass();
 			m_suspendReloadUntilOnChangeListItemsClass = true;
 
 			// Used for finding first relative of corresponding current object
@@ -259,7 +259,7 @@ namespace LanguageExplorer.Works
 
 		/// <summary>
 		/// these bulk edit column filters/sorters can be considered Entries based, so that they can possibly
-		/// be reusable in other Entries clerks (e.g. the one used by Lexicon Edit, Browse, Dictionary).
+		/// be reusable in other Entries record lists (e.g. the one used by Lexicon Edit, Browse, Dictionary).
 		/// </summary>
 		/// <param name="sorterOrFilter"></param>
 		/// <returns></returns>

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,6 +10,7 @@ using System.Xml;
 using LanguageExplorer.Controls.PaneBar;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -51,11 +52,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		XmlView m_previewPane;
 		string m_helpTopic = "khtpFindExampleSentence";
 		IRecordList m_recordList;
+		private StatusBar _statusBar;
 
 		/// <summary />
 		public FindExampleSentenceDlg()
 		{
 			InitializeComponent();
+		}
+
+		internal FindExampleSentenceDlg(StatusBar statusBar) : this()
+		{
+			Guard.AgainstNull(statusBar, nameof(statusBar));
+
+			_statusBar = statusBar;
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -98,26 +107,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		#endregion
 
-		/// <summary />
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
 		#region IFwGuiControl Members
 
 		/// <summary />
 		public void Init(XmlNode configurationNode, ICmObject sourceObject)
 		{
-			CheckDisposed();
-
 			m_cache = sourceObject.Cache;
 
 			// Find the sense we want examples for, which depends on the kind of source object.
 			if (sourceObject is ILexExampleSentence)
 			{
-				m_les = sourceObject as ILexExampleSentence;
+				m_les = (ILexExampleSentence)sourceObject;
 				if (m_les.Owner is ILexSense)
 				{
 					m_owningSense = (ILexSense)m_les.Owner;
@@ -129,11 +129,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			else if (sourceObject is ILexSense)
 			{
-				m_owningSense = sourceObject as ILexSense;
+				m_owningSense = (ILexSense)sourceObject;
 			}
 			else if (sourceObject is ILexExtendedNote)
 			{
-				m_owningSense = sourceObject.Owner as ILexSense;
+				m_owningSense = (ILexSense)sourceObject.Owner;
 			}
 			else
 			{
@@ -158,25 +158,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		public void Launch()
 		{
-			CheckDisposed();
 			ShowDialog(PropertyTable.GetValue<Form>("window"));
 		}
 
 		#endregion
 
-		XmlNode BrowseViewControlParameters
-		{
-			get
-			{
-				return m_configurationNode.SelectSingleNode(
-					String.Format("control/parameters[@id='{0}']", "ConcOccurrenceList"));
-			}
-		}
+		XmlNode BrowseViewControlParameters => m_configurationNode.SelectSingleNode("control/parameters[@id='ConcOccurrenceList']");
 
 		private void AddConfigurableControls()
 		{
 			// Load the controls.
-
 			// 1. Initialize the preview pane (lower pane)
 			m_previewPane = new XmlView(0, "publicationNew", false)
 			{
@@ -184,29 +175,39 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable)
 			};
 
-			BasicPaneBarContainer pbc = new BasicPaneBarContainer();
+			var pbc = new BasicPaneBarContainer();
 			pbc.Init(PropertyTable, m_previewPane, new PaneBar());
 			pbc.Dock = DockStyle.Fill;
 			pbc.PaneBar.Text = LanguageExplorerResources.ksFindExampleSentenceDlgPreviewPaneTitle;
 			panel2.Controls.Add(pbc);
 			if (m_previewPane.RootBox == null)
+			{
 				m_previewPane.MakeRoot();
+			}
 
 			// 2. load the browse view. (upper pane)
-			XmlNode xnBrowseViewControlParameters = this.BrowseViewControlParameters;
+			var xnBrowseViewControlParameters = BrowseViewControlParameters;
 
-#if RANDYTODO
-			// First create our Clerk, since we can't set it's OwningObject via the configuration/mediator/PropertyTable info.
-			m_clerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
-			m_clerk.OwningObject = m_owningSense;
-#endif
+			/*
+			<clerk id="OccurrencesOfSense" shouldHandleDeletion="false">
+			  <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcRecordClerk" />
+			  <recordList class="LexSense" field="Occurrences">
+				<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
+			  </recordList>
+			  <filters />
+			  <sortMethods />
+			</clerk>
+			*/
+			// First create our record list, since we can't set it's OwningObject via the configuration/mediator/PropertyTable info.
+			// This record list is a "TemporaryRecordList" suclass, so dispose it when the dlg goes away.
+			m_recordList = new ConcRecordList(_statusBar, m_cache, m_owningSense);
 
 			m_rbv = DynamicLoader.CreateObject(xnBrowseViewControlParameters.ParentNode.SelectSingleNode("dynamicloaderinfo")) as ConcOccurrenceBrowseView;
 			m_rbv.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			m_rbv.Init(m_previewPane, m_recordList.VirtualListPublisher);
 			m_rbv.CheckBoxChanged += m_rbv_CheckBoxChanged;
 			// add it to our controls.
-			BasicPaneBarContainer pbc1 = new BasicPaneBarContainer();
+			var pbc1 = new BasicPaneBarContainer();
 			pbc1.Init(PropertyTable, m_rbv, new PaneBar());
 			pbc1.BorderStyle = BorderStyle.FixedSingle;
 			pbc1.Dock = DockStyle.Fill;

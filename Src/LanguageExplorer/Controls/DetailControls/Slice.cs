@@ -1383,8 +1383,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			string generatedHelpTopicID;
 			var tempfieldName = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "field");
 			var templabelName = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label");
-			var areaChoice = PropertyTable.GetValue<string>("areaChoice");
-			var toolChoice = PropertyTable.GetValue<string>("toolChoice");
+			var areaChoice = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
+			var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 			var parentHvo = Convert.ToInt32(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "hvoDisplayParent"));
 
 			if (tempfieldName == "Targets" && parentHvo != 0)
@@ -1447,7 +1447,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			className = (fieldName == "Example" && ownerClassName == "LexExtendedNote") ? "LexExtendedNote" : className;
 			// Distinguish the Translation (sense) field and the expanded example (LexExtendedNote) field
 			className = fieldName.StartsWith("Translation")&& (ownerClassName == "LexExtendedNote" || (Object.Owner != null && Object.Owner.ClassName == "LexExtendedNote")) ? "LexExtendedNote" : className;
-			var toolChoice = PropertyTable.GetValue<string>("toolChoice");
+			var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 
 			string generatedHelpTopicID;
 

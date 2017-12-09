@@ -10,17 +10,17 @@ namespace LanguageExplorer.Works
 	/// <summary>
 	/// Summary description for ImageHolder.
 	/// </summary>
-	public class RecordClerkImages : UserControl
+	public class RecordListImages : UserControl
 	{
 		public System.Windows.Forms.ImageList buttonImages;
 		private System.ComponentModel.IContainer components;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="RecordClerkImages"/> class.
+		/// Initializes a new instance of the <see cref="RecordListImages"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public RecordClerkImages()
+		public RecordListImages()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -75,7 +75,7 @@ namespace LanguageExplorer.Works
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RecordClerkImages));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RecordListImages));
 			this.buttonImages = new System.Windows.Forms.ImageList(this.components);
 			this.SuspendLayout();
 			//
@@ -92,9 +92,9 @@ namespace LanguageExplorer.Works
 			this.buttonImages.Images.SetKeyName(6, "chorus16.png");
 			this.buttonImages.Images.SetKeyName(7, "sendReceiveFirst16x16.png");
 			//
-			// RecordClerkImages
+			// RecordListImages
 			//
-			this.Name = "RecordClerkImages";
+			this.Name = "RecordListImages";
 			this.ResumeLayout(false);
 
 		}

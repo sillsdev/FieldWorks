@@ -143,7 +143,18 @@ namespace LanguageExplorer.Areas.Lists.Tools.RoleEdit
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == RoleList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{RoleList}'.");
-
+			/*
+            <clerk id="RoleList">
+              <recordList owner="LangProject" property="Roles">
+                <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList" />
+              </recordList>
+              <treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler" />
+              <filters />
+              <sortMethods>
+                <sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
+              </sortMethods>
+            </clerk>
+			*/
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				null, true, true,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),

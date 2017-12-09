@@ -20,6 +20,8 @@ namespace LanguageExplorer.Areas
 		/// Display for required default sorter.
 		/// </summary>
 		internal const string Default = "Default";
+		internal const string AreaChoice = "areaChoice";
+		internal const string ToolChoice = "toolChoice";
 		internal const string ToolForAreaNamed_ = "ToolForAreaNamed_";
 		internal const string InitialArea = "InitialArea";
 		internal const string InitialAreaMachineName = LexiconAreaMachineName;
@@ -83,12 +85,15 @@ namespace LanguageExplorer.Areas
 			internal const string AnthroEditMachineName = "anthroEdit";
 			internal const string ComplexEntryTypeEditMachineName = "complexEntryTypeEdit";
 			internal const string ConfidenceEditMachineName = "confidenceEdit";
+			internal const string DialectsListEditMachineName = "dialectsListEdit";
 			internal const string ChartmarkEditMachineName = "chartmarkEdit";
 			internal const string CharttempEditMachineName = "charttempEdit";
 			internal const string EducationEditMachineName = "educationEdit";
 			internal const string RoleEditMachineName = "roleEdit";
+			internal const string ExtNoteTypeEditMachineName = "extNoteTypeEdit";
 			internal const string FeatureTypesAdvancedEditMachineName = "featureTypesAdvancedEdit";
 			internal const string GenresEditMachineName = "genresEdit";
+			internal const string LanguagesListEditMachineName = "languagesListEdit";
 			internal const string LexRefEditMachineName = "lexRefEdit";
 			internal const string LocationsEditMachineName = "locationsEdit";
 			internal const string PublicationsEditMachineName = "publicationsEdit";

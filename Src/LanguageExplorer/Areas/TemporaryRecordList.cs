@@ -14,11 +14,6 @@ namespace LanguageExplorer.Areas
 	internal class TemporaryRecordList : RecordList
 	{
 		/// <summary />
-		internal TemporaryRecordList(string id, StatusBar statusBar, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
-			: base(id, statusBar, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion)
-		{
-		}
-		/// <summary />
 		internal TemporaryRecordList(string id, StatusBar statusBar, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, ICmObject owner, string propertyName)
 			: base(id, statusBar, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion, decorator, usingAnalysisWs, flid, owner, propertyName)
 		{
@@ -28,7 +23,7 @@ namespace LanguageExplorer.Areas
 
 		public override void ActivateUI(bool updateStatusBar = true)
 		{
-			// by default, we won't publish that we're the "RecordClerk.RecordClerkRepository.ActiveRecordClerk" or other usual effects.
+			// by default, we won't publish that we're the "RecordList.RecordListRepository.ActiveRecordList" or other usual effects.
 			// but we do want to say that we're being actively used in a gui.
 			IsActiveInGui = true;
 		}
@@ -41,7 +36,7 @@ namespace LanguageExplorer.Areas
 			}
 			set
 			{
-				// Do not do anything here, unless you want to manage the "RecordClerk.RecordClerkRepository.ActiveRecordClerk" property.
+				// Do not do anything here, unless you want to manage the "RecordList.RecordListRepository.ActiveRecordList" property.
 			}
 		}
 

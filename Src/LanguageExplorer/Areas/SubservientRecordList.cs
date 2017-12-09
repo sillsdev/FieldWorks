@@ -16,10 +16,10 @@ namespace LanguageExplorer.Areas
 	internal sealed class SubservientRecordList : RecordList
 	{
 		/// <summary>
-		/// when this is not null, that means there is another clerk managing a list,
+		/// When this is not null, that means there is another record list managing a list,
 		/// and the selected item of that list provides the object that this
-		/// RecordClerk gets items out of. For example, the WfiAnalysis clerk
-		/// is dependent on the WfiWordform clerk to tell it which wordform it is supposed to
+		/// record list gets items out of. For example, the WfiAnalysis record list
+		/// is dependent on the WfiWordform record list to tell it which wordform it is supposed to
 		/// be displaying the analyses of.
 		/// </summary>
 		private IRecordList _recordListProvidingRootObject;
@@ -47,12 +47,12 @@ namespace LanguageExplorer.Areas
 			m_fontName = MiscUtils.StandardSansSerif;
 			// Only other current option is to specify an ordinary property (or a virtual one).
 			m_flid = flid;
-			// Review JohnH(JohnT): This is only useful for dependent clerks, but I don't know how to check this is one.
+			// Review JohnH(JohnT): This is only useful for dependent record lists, but I don't know how to check this is one.
 			m_owningObject = null;
 			_recordListProvidingRootObject = recordListProvidingRootObject;
 		}
 
-		private string DependentPropertyName => ClerkSelectedObjectPropertyId(_recordListProvidingRootObject.Id);
+		private string DependentPropertyName => RecordListSelectedObjectPropertyId(_recordListProvidingRootObject.Id);
 
 		#region Overrides of RecordList
 		public override bool TryListProvidingRootObject(out IRecordList recordListProvidingRootObject)
@@ -87,7 +87,7 @@ namespace LanguageExplorer.Areas
 			}
 			if (!ReferenceEquals(old, newObj))
 			{
-				Publisher.Publish("ClerkOwningObjChanged", this);
+				Publisher.Publish("RecordListOwningObjChanged", this);
 			}
 		}
 

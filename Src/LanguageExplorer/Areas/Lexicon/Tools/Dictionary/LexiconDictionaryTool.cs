@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		private IFwMainWnd _fwMainWnd;
 		private LcmCache _cache;
 		private PaneBarContainer _paneBarContainer;
-		private IRecordList _recordClerk;
+		private IRecordList _recordList;
 		private XhtmlDocView _xhtmlDocView;
 		private SliceContextMenuFactory _sliceContextMenuFactory;
 		private const string leftPanelMenuId = "left";
@@ -78,15 +78,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			_sliceContextMenuFactory = new SliceContextMenuFactory(); // Make our own, since the tool has no data tree.
 			RegisterContextMenuMethods();
 			_fwMainWnd = majorFlexComponentParameters.MainWindow;
-			if (_recordClerk == null)
+			if (_recordList == null)
 			{
-				_recordClerk = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.Statusbar, LexiconArea.EntriesFactoryMethod);
+				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.Statusbar, LexiconArea.EntriesFactoryMethod);
 			}
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordClerk);
+			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
 
 			var root = XDocument.Parse(LexiconResources.LexiconDictionaryToolParameters).Root;
 			_configureObjectName = root.Attribute("configureObjectName").Value;
-			_xhtmlDocView = new XhtmlDocView(root, majorFlexComponentParameters.LcmCache, _recordClerk, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			_xhtmlDocView = new XhtmlDocView(root, majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			var docViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
@@ -126,7 +126,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			_xhtmlDocView.FinishInitialization();
 			_xhtmlDocView.OnPropertyChanged("DictionaryPublicationLayout");
 			_paneBarContainer.PostLayoutInit();
-			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordClerk);
+			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>
@@ -142,8 +142,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		public void FinishRefresh()
 		{
 			_xhtmlDocView.PublicationDecorator.Refresh();
-			_recordClerk.ReloadIfNeeded();
-			((DomainDataByFlidDecoratorBase)_recordClerk.VirtualListPublisher).Refresh();
+			_recordList.ReloadIfNeeded();
+			((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>
@@ -265,7 +265,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			bool refreshNeeded;
 			using (var dlg = new DictionaryConfigurationDlg(_propertyTable))
 			{
-				var controller = new DictionaryConfigurationController(dlg, _recordClerk?.CurrentObject);
+				var controller = new DictionaryConfigurationController(dlg, _recordList?.CurrentObject);
 				controller.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
 				dlg.Text = string.Format(xWorksStrings.ConfigureTitle, xWorksStrings.Dictionary);
 				dlg.HelpTopic = "khtpConfigureDictionary";

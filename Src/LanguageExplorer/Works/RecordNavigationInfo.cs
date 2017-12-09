@@ -74,7 +74,7 @@ namespace LanguageExplorer.Works
 
 		/// <summary>
 		/// Given an argument from OnRecordNavigation, expected to be a RecordNavigationInfo,
-		/// if it really is return it's clerk. Otherwise return null.
+		/// if it really is return it's record list. Otherwise return null.
 		/// </summary>
 		/// <param name="argument"></param>
 		/// <returns></returns>

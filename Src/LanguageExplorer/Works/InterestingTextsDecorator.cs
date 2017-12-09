@@ -49,7 +49,7 @@ namespace LanguageExplorer.Works
 				// Also we need to make sure the InterestingTextsList doesn't do propchanges for us anymore
 				// N.B. This avoids LT-12437, but we are assuming that this only gets triggered during Refresh or
 				// shutting down the main window, when all the Clerks are being disposed.
-				// If a clerk were to be disposed some other time when another clerk was still using the ITL,
+				// If a record list were to be disposed some other time when another record list was still using the ITL,
 				// this would be a bad thing to do.
 				base.RemoveNotification(m_interestingTexts);
 			}

@@ -344,8 +344,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		// Todo:
 		// Add to FilterBar event for changing (add and/or remove) filter.
 		// Add same to BrowseViewer (connect so forwards to from FilterBar if any)
-		// Add to RecordClerk ability to add/remove filters and refresh list.
-		// Configure RecordBrowseView to handle filter changes by updating record clerk.
+		// Add to RecordList ability to add/remove filters and refresh list.
+		// Configure RecordBrowseView to handle filter changes by updating record list.
 	}
 
 	/// <summary>
@@ -584,7 +584,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// Given the current record filter of the clerk, determine whether any of the active
+		/// Given the current record filter of the record list, determine whether any of the active
 		/// filters could have been created by any of your filter sort items, and if so,
 		/// update the filter bar to show they are active.
 		/// </summary>
@@ -635,8 +635,8 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		/// <summary>
 		/// Given a filter bar cell filter which is (part of) the active filter for your
-		/// clerk, if one of your cells understands it install it as the active filter
-		/// for that cell. Otherwise, remove it from the clerk filter.
+		/// record list, if one of your cells understands it install it as the active filter
+		/// for that cell. Otherwise, remove it from the record list filter.
 		/// (Except: if it's not a user-visible filter, we don't expect to show it, so
 		/// skip it.)
 		/// </summary>
@@ -650,7 +650,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					return;
 			}
 			// we couldn't find a match in the active columns.
-			// if we've already fully initialized the filters, then remove it from the clerk filter.
+			// if we've already fully initialized the filters, then remove it from the record list filter.
 			if (FilterChanged != null)
 				FilterChanged(this, new FilterChangeEventArgs(null, filter));
 			return;

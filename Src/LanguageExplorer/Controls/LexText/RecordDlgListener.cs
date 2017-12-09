@@ -42,7 +42,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		/// <summary>
 		/// Handles the xWorks message to insert a new Data Notebook record.
-		/// Invoked by the RecordClerk
+		/// Invoked by the RecordList
 		/// </summary>
 		/// <param name="argument">The xCore Command object.</param>
 		/// <returns>true, if we handled the message, otherwise false, if there was an unsupported 'classname' parameter</returns>
@@ -63,8 +63,8 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				var cache = PropertyTable.GetValue<LcmCache>("cache");
 				ICmObject obj = null;
-				ICmObject objSelected = PropertyTable.GetValue<ICmObject>("ActiveClerkSelectedObject");
-				ICmObject objOwning = PropertyTable.GetValue<ICmObject>("ActiveClerkOwningObject");
+				ICmObject objSelected = PropertyTable.GetValue<ICmObject>("ActiveListSelectedObject");
+				ICmObject objOwning = PropertyTable.GetValue<ICmObject>("ActiveListOwningObject");
 				if (subsubrecord)
 				{
 					obj = objSelected;
@@ -156,7 +156,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				string areaChoice = PropertyTable.GetValue<string>("areaChoice");
+				string areaChoice = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
 				var areas = new[] { AreaServices.NotebookAreaMachineName };
 				foreach (string area in areas)
 				{
@@ -164,8 +164,8 @@ namespace LanguageExplorer.Controls.LexText
 					{
 						// We want to show goto dialog for dictionary views, but not lists, etc.
 						// that may be in the Lexicon area.
-						// Note, getting a clerk directly here causes a dependency loop in compilation.
-						var obj = PropertyTable.GetValue<ICmObject>("ActiveClerkOwningObject");
+						// Note, getting a record list directly here causes a dependency loop in compilation.
+						var obj = PropertyTable.GetValue<ICmObject>("ActiveListOwningObject");
 						return (obj != null) && (obj.ClassID == RnResearchNbkTags.kClassId);
 					}
 				}

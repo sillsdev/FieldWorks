@@ -173,7 +173,7 @@ namespace LanguageExplorer.Works
 				var parameters = controlElement.XPathSelectElement(".//parameters[@clerk]");
 				var activeRecordList = RecordList.ActiveRecordListRepository.ActiveRecordList;
 				if (DoesRecordListMatchParams(activeRecordList, parameters))
-					return null; // No need to juggle clerks if the one we want is already active
+					return null; // No need to juggle record lists if the one we want is already active
 
 				var tempRecordList = isDictionary ? s_dictionaryRecordList : s_reversalIndexRecordList;
 				if (tempRecordList == null)
@@ -242,11 +242,11 @@ namespace LanguageExplorer.Works
 				return ActivateReversalIndex(reversalGuid, propertyTable, activeRecordList);
 			}
 
-			public static ReversalIndexActivator ActivateReversalIndex(Guid reversalGuid, IPropertyTable propertyTable, IRecordList activeRecordClerk)
+			public static ReversalIndexActivator ActivateReversalIndex(Guid reversalGuid, IPropertyTable propertyTable, IRecordList activeRecordList)
 			{
 				string originalReversalIndexGuid;
-				return ActivateReversalIndexIfNeeded(reversalGuid.ToString(), propertyTable, activeRecordClerk, out originalReversalIndexGuid)
-					? new ReversalIndexActivator(originalReversalIndexGuid, propertyTable, activeRecordClerk)
+				return ActivateReversalIndexIfNeeded(reversalGuid.ToString(), propertyTable, activeRecordList, out originalReversalIndexGuid)
+					? new ReversalIndexActivator(originalReversalIndexGuid, propertyTable, activeRecordList)
 					: null;
 			}
 
@@ -262,7 +262,7 @@ namespace LanguageExplorer.Works
 				// RBR comment: Needing to do both is an indication of a pathological state. Setting the property calls OnPropertyChanged to all Mediator clients (now Pub/Sub subscibers).
 				// If 'recordList is not getting that, as a result, that shows it is not a current player. The questions then become:
 				//		1. why is it not getting that broadcast? and
-				//		2. What needs to change, so 'clerk' is able to get the message?
+				//		2. What needs to change, so 'recordList' is able to get the message?
 				// In short, this code is programming to some other bug.
 				propertyTable.SetProperty("ReversalIndexGuid", newReversalGuid, true, true);
 				recordList?.OnPropertyChanged("ReversalIndexGuid");

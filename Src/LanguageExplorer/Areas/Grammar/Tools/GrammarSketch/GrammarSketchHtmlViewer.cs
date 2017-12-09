@@ -204,7 +204,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			ShowSketch();
 
 			//add our current state to the history system
-			PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue("toolChoice", string.Empty), Guid.Empty));
+			PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), Guid.Empty));
 		}
 
 		#endregion

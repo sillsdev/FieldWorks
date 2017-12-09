@@ -115,7 +115,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		internal static string GetDictionaryConfigurationBaseType(IPropertyRetriever propertyTable)
 		{
-			var toolChoice = propertyTable.GetValue<string>("toolChoice");
+			var toolChoice = propertyTable.GetValue<string>(AreaServices.ToolChoice);
 			switch (toolChoice)
 			{
 				case AreaServices.ReversalBulkEditReversalEntriesMachineName:
@@ -189,7 +189,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		private static string GetInnermostConfigurationDirectory(IPropertyRetriever propertyTable)
 		{
-			switch(propertyTable.GetValue<string>("toolChoice"))
+			switch(propertyTable.GetValue<string>(AreaServices.ToolChoice))
 			{
 				case AreaServices.ReversalBulkEditReversalEntriesMachineName:
 				case AreaServices.ReversalEditCompleteMachineName:
@@ -213,8 +213,8 @@ namespace LanguageExplorer.Works
 			bool refreshNeeded;
 			using (var dlg = new DictionaryConfigurationDlg(PropertyTable))
 			{
-				var clerk = RecordList.ActiveRecordListRepository.ActiveRecordList;
-				var controller = new DictionaryConfigurationController(dlg, clerk != null ? clerk.CurrentObject : null);
+				var recordList = RecordList.ActiveRecordListRepository.ActiveRecordList;
+				var controller = new DictionaryConfigurationController(dlg, recordList != null ? recordList.CurrentObject : null);
 				controller.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, GetDictionaryConfigurationType(PropertyTable));
 				dlg.HelpTopic = GetConfigDialogHelpTopic(PropertyTable);
@@ -238,7 +238,7 @@ namespace LanguageExplorer.Works
 		{
 			get
 			{
-				return PropertyTable.GetValue<string>("areaChoice") == AreaServices.InitialAreaMachineName;
+				return PropertyTable.GetValue<string>(AreaServices.AreaChoice) == AreaServices.InitialAreaMachineName;
 			}
 		}
 

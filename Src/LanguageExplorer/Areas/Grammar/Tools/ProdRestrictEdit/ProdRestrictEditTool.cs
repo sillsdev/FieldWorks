@@ -154,11 +154,26 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 
 		#endregion
 
-		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(clerkId == ProdRestrict, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{ProdRestrict}'.");
-
-			return new PossibilityRecordList(clerkId, statusBar, null, false, false, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.MorphologicalDataOA.ProdRestrictOA);
+			Require.That(recordListId == ProdRestrict, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{ProdRestrict}'.");
+			/*
+            <clerk id="ProdRestrict">
+              <recordList owner="MorphologicalData" property="ProdRestrict">
+                <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList" />
+              </recordList>
+              <treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="false" includeAbbr="false" ws="best analorvern" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler" />
+              <filters />
+              <sortMethods>
+                <sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
+              </sortMethods>
+            </clerk>
+			*/
+			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
+				null, false, false,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
+				cache.LanguageProject.MorphologicalDataOA.ProdRestrictOA,
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, false, false, "best analorvern"));
 		}
 	}
 }

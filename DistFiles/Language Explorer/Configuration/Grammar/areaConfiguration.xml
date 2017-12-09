@@ -238,8 +238,6 @@
 					</columns>
 				</parameters>
 			</guicontrol>
-			<clerks>
-			</clerks>
 		</parameters>
 	</controls>
 	<!-- ********************************************************** -->
@@ -368,60 +366,6 @@
 	<!--  **********************************************************   -->
 	<item label="Grammar" value="grammar" icon="folder-grammar">
 		<parameters id="grammar">
-			<clerks>
-				<!-- Only put clerks here if they are shared by various tools. Put clerks for specific tool usage in the tool definition file. -->
-				<clerk id="categories" a10status="DONE_FORK" >
-					<recordList owner="LangProject" property="PartsOfSpeech">
-						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
-					</recordList>
-					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="true" hierarchical="true" ws="best analorvern" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
-					<filters/>
-					<sortMethods>
-						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
-					</sortMethods>
-				</clerk>
-				<clerk id="compoundRules" a10status="DONE_FORK" >
-					<recordList owner="MorphologicalData" property="CompoundRules"/>
-				</clerk>
-				<clerk id="phonemes" a10status="DONE_FORK" >
-					<recordList owner="MorphologicalData" property="Phonemes"/>
-				</clerk>
-				<clerk id="naturalClasses" a10status="DONE_FORK" >
-					<recordList owner="MorphologicalData" property="NaturalClasses"/>
-				</clerk>
-				<clerk id="environments" a10status="DONE_FORK" >
-					<recordList owner="MorphologicalData" property="Environments"/>
-				</clerk>
-				<clerk id="phonologicalfeatures" a10status="DONE_FORK" >
-					<recordList owner="PhFeatureSystem" property="PhonologicalFeatures"/>
-				</clerk>
-				<clerk id="phonologicalRules" a10status="DONE_FORK" >
-					<recordList owner="MorphologicalData" property="PhonologicalRules"/>
-				</clerk>
-				<clerk id="adhocCoprohibitions" a10status="DONE_FORK" >
-					<recordList owner="MorphologicalData" property="AdhocCoprohibitions"/>
-				</clerk>
-				<clerk id="features">
-					<recordList owner="MsFeatureSystem" property="Features"/>
-				</clerk>
-				<clerk id="ProdRestrict" a10status="DONE_FORK" >
-					<recordList owner="MorphologicalData" property="ProdRestrict">
-						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.PossibilityRecordList"/>
-					</recordList>
-					<treeBarHandler assemblyPath="LanguageExplorer.dll" expand="false" hierarchical="false" includeAbbr="false" ws="best analorvern" class="LanguageExplorer.Works.PossibilityTreeBarHandler"/>
-					<filters/>
-					<sortMethods>
-						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
-					</sortMethods>
-				</clerk>
-				<clerk id="lexProblems" a10status="DONE_FORK" >
-					<recordList owner="LangProject" property="Problems"/>
-					<filters>
-						<filter label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.ProblemAnnotationFilter" targetClasses="LexEntry, LexSense, PhEnvironment"/>
-					</filters>
-					<sortMethods/>
-				</clerk>
-			</clerks>
 			<tools>
 <!-- START include Grammar Area: "Edit/toolConfiguration.xml" query="root/tools/*" -->
 				<include path="Edit/toolConfiguration.xml" query="root/tools/*"/>

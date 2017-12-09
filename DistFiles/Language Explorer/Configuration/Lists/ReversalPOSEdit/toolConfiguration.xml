@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
 	<!-- ********************************************************** -->
-	<!-- ************************ clerks *********************** -->
-	<!-- ********************************************************** -->
-	<clerks>
-		<clerk id="ReversalEntriesPOS">
-			<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS.ReversalEntryPOSClerk"/>
-			<recordList owner="ReversalIndex" property="PartsOfSpeech">
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS.ReversalIndexPOSRecordList"/>
-			</recordList>
-			<filters/>
-			<sortMethods>
-				<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
-			</sortMethods>
-			<!--<recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider"/>-->
-		</clerk>
-	</clerks>
-	<!-- ********************************************************** -->
 	<!-- ************************ tools *********************** -->
 	<!-- ********************************************************** -->
 	<tools>

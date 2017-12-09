@@ -183,8 +183,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == OccurrencesOfSelectedWordform, $"I don't know how to create a clerk with an ID of '{recordListId}', as I can only create on with an id of '{OccurrencesOfSelectedWordform}'.");
-
+			Require.That(recordListId == OccurrencesOfSelectedWordform, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{OccurrencesOfSelectedWordform}'.");
+			/*
+            <clerk id="OccurrencesOfSelectedWordform" clerkProvidingOwner="concordanceWords">
+              <recordList class="WfiWordform" field="Occurrences">
+                <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" key="WordformOccurrences" />
+              </recordList>
+              <sortMethods />
+            </clerk>
+          </clerks>
+			*/
 			return new SubservientRecordList(recordListId, statusBar,
 				new ConcDecorator(cache.ServiceLocator), false,
 				ConcDecorator.kflidWfOccurrences,

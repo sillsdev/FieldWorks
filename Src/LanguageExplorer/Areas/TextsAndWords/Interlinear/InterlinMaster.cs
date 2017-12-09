@@ -53,7 +53,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private bool m_fRefreshOccurred;
 
 		// true (typically used as concordance 3rd pane) to suppress autocreating a text if the
-		// clerk has no current object.
+		// record list has no current object.
 		protected bool m_fSuppressAutoCreate;
 
 		/// <summary>
@@ -342,7 +342,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if(m_bookmarks.TryGetValue(new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid), out mark))
 				{
 					//We only want to persist the save if we are in the interlinear edit, not the concordance view
-					mark.Save(curAnalysis, MyRecordList.Id.Equals("interlinearTexts"), IndexOfTextRecord);
+					mark.Save(curAnalysis, MyRecordList.Id.Equals(TextAndWordsArea.InterlinearTexts), IndexOfTextRecord);
 				}
 				else
 				{
@@ -807,7 +807,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// </summary>
 		private void SetInitialTabPage()
 		{
-			// If the Record Clerk has remembered we're IsPersistedForAnInterlinearTabPage,
+			// If the record list has remembered we're IsPersistedForAnInterlinearTabPage,
 			// and we haven't already switched to that tab page, do so now.
 			if (Visible && m_tabCtrl.SelectedIndex != (int)InterlinearTab)
 			{
@@ -998,7 +998,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 				return;				// We get another call when there is one.
 			}
 			var hvoRoot = MyRecordList.CurrentObjectHvo;
-			if (MyRecordList.CurrentObjectHvo != 0 && !Cache.ServiceLocator.IsValidObjectId(MyRecordList.CurrentObjectHvo))	// RecordClerk is tracking an analysis
+			if (MyRecordList.CurrentObjectHvo != 0 && !Cache.ServiceLocator.IsValidObjectId(MyRecordList.CurrentObjectHvo)) // RecordList is tracking an analysis
 			{
 				// This pane, as well as knowing how to work with a record list of Texts, knows
 				// how to work with one of fake objects in a concordance, that is, a list of occurrences of
@@ -1065,7 +1065,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 
 		private int SetConcordanceBookmarkAndReturnRoot(int hvoRoot)
 		{
-			if (!MyRecordList.Id.Equals("interlinearTexts"))
+			if (!MyRecordList.Id.Equals(TextAndWordsArea.InterlinearTexts))
 			{
 				var occurrenceFromHvo = (MyRecordList).OccurrenceFromHvo(MyRecordList.CurrentObjectHvo);
 				var point = occurrenceFromHvo?.BestOccurrence;
@@ -1130,7 +1130,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 				SetupInterlinearTabControlForStText(m_tcPane);
 		}
 
-		// If the Clerk's object is an annotation, select the corresponding thing in whatever pane
+		// If the record list's object is an annotation, select the corresponding thing in whatever pane
 		// is active. Or, if we have a bookmark, restore it.
 		private void SelectAnnotation()
 		{
@@ -1164,7 +1164,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		{
 			CheckDisposed();
 
-			string toolChoice = m_propertyTable.GetValue("toolChoice", string.Empty);
+			string toolChoice = m_propertyTable.GetValue<string>(AreaServices.ToolChoice);
 			bool fVisible = m_rtPane != null && (m_tabCtrl.SelectedIndex == (int)TabPageSelection.RawText) && InFriendlyArea && toolChoice != AreaServices.WordListConcordanceMachineName;
 			display.Visible = fVisible;
 
@@ -1347,7 +1347,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// <remarks> We need an override in order to store the state of the "mode".</remarks>
 		protected override void UpdateContextHistory()
 		{
-			// are we the dominant pane? The thinking here is that if our clerk is controlling
+			// are we the dominant pane? The thinking here is that if our record list is controlling
 			// the record tree bar, then we are.
 			if (MyRecordList.IsControllingTheRecordTreeBar)
 			{
@@ -1358,7 +1358,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 					guid = MyRecordList.CurrentObject.Guid;
 				}
 				// Not sure what will happen with guid == Guid.Empty on the link...
-				var link = new FwLinkArgs(PropertyTable.GetValue("toolChoice", string.Empty), guid, InterlinearTab.ToString());
+				var link = new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), guid, InterlinearTab.ToString());
 				link.LinkProperties.Add(new LinkProperty("InterlinearTab", InterlinearTab.ToString()));
 				MyRecordList.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
 				PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(link);
@@ -1369,7 +1369,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// determine if this is the correct place [it's the only one that handles the message, and
 		/// it defaults to false, so it should be]
 		/// </summary>
-		protected bool InFriendlyArea => PropertyTable.GetValue("areaChoice", string.Empty) == AreaServices.TextAndWordsAreaMachineName;
+		protected bool InFriendlyArea => PropertyTable.GetValue<string>(AreaServices.AreaChoice) == AreaServices.TextAndWordsAreaMachineName;
 
 		/// <summary>
 		/// determine if we're in the (given) tool
@@ -1464,7 +1464,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			// object is empty, we're inside the ShowRecord where it is suppressed.
 			// If the tool is just starting up (in Init, before InitBase is called), we may not
 			// have configuration parameters. Usually, then, there won't be a transaction open,
-			// but play safe, because the call to get the Clerk will crash if we don't have configuration
+			// but play safe, because the call to get the record list will crash if we don't have configuration
 			// params.
 			if (m_configurationParametersElement != null /* && !Cache.DatabaseAccessor.IsTransactionOpen() */)
 			{
@@ -1480,7 +1480,9 @@ private void ReloadPaneBar(IPaneBar paneBar)
 				//At this point m_tabCtrl.SelectedIndex is set to the value of the tabPage
 				//we are leaving.
 				if (RootStText != null && m_bookmarks.ContainsKey(new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid)))
+				{
 					SaveBookMark();
+				}
 			}
 		}
 

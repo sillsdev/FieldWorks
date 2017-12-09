@@ -48,6 +48,17 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		protected override void InitializeMatchingObjects()
 		{
+			/*
+			 * The "WordformsBrowseView" control uses the following 'matchingWords' record list.
+        <clerk id="matchingWords" shouldHandleDeletion="false">
+          <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.MatchingItemsRecordClerk" />
+          <recordList owner="WordformInventory" property="Wordforms">
+            <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.MatchingItemsRecordList" />
+          </recordList>
+          <filters />
+          <sortMethods />
+        </clerk>
+			*/
 			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"WordformsBrowseView\"]/parameters");
 

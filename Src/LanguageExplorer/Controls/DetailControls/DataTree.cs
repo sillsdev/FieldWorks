@@ -880,7 +880,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (m_root == root && layoutName == m_rootLayoutName && layoutChoiceField == m_layoutChoiceField && m_descendant == descendant)
 				return;
 
-			string toolChoice = PropertyTable.GetValue<string>("toolChoice");
+			string toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 			// Initialize our internal state with the state of the PropertyTable
 			m_fShowAllFields = PropertyTable.GetValue("ShowHiddenFields-" + toolChoice, SettingsGroup.LocalSettings, false);
 			PropertyTable.SetDefault("ShowHiddenFields", m_fShowAllFields, SettingsGroup.LocalSettings, true, false);
@@ -1005,8 +1005,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			if (string.IsNullOrEmpty(m_sPartNameProperty) || string.IsNullOrEmpty(m_sObjGuidProperty))
 			{
-				var toolChoice = PropertyTable.GetValue("toolChoice", string.Empty);
-				var areaChoice = PropertyTable.GetValue("areaChoice", string.Empty);
+				var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
+				var areaChoice = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
 				m_sPartNameProperty = $"{areaChoice}${toolChoice}$CurrentSlicePartName";
 				m_sObjGuidProperty = $"{areaChoice}${toolChoice}$CurrentSliceObjectGuid";
 			}
@@ -3552,9 +3552,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			return false;
 		}
 
-#endregion automated tree navigation
+		#endregion automated tree navigation
 
-#region IxCoreColleague message handlers
+		#region IxCoreColleague message handlers
 
 #if RANDYTODO
 		/// <summary>
@@ -3573,7 +3573,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				// The boolProperty of this menu item isn't the real one, so we control the checked status
 				// from here.  See the OnPropertyChanged method for how changes are handled.
-				string toolChoice = PropertyTable.GetValue<string>("toolChoice");
+				string toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 				display.Checked = PropertyTable.GetValue("ShowHiddenFields-" + toolChoice, SettingsGroup.LocalSettings, false);
 			}
 
@@ -3878,7 +3878,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// The only place this occurs is when the status is changed from the "View" menu.
 				// We'll have to translate this to the real property based on the current tool.
 
-				string toolChoice = PropertyTable.GetValue<string>("toolChoice");
+				string toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 				name = "ShowHiddenFields-" + toolChoice;
 
 				// Invert the status of the real property
@@ -4131,7 +4131,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			return false;
 		}
 
-#endregion IxCoreColleague message handlers
+		#endregion IxCoreColleague message handlers
 
 #if RANDYTODO
 		/// <summary>
@@ -4150,7 +4150,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (className != m_root.ClassName)
 				return display.Enabled = false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue("toolChoice", string.Empty))
+			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue<string>(AreaServices.ToolChoice))
 				return display.Enabled = false;
 			return display.Enabled = true;
 		}
@@ -4168,7 +4168,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (className != m_root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue("toolChoice", string.Empty))
+			if (restrictToTool != null && restrictToTool != m_propertyTable.GetValue<string>(AreaServices.ToolChoice))
 				return false;
 			string fieldName = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "fieldName");
 			if (String.IsNullOrEmpty(fieldName))

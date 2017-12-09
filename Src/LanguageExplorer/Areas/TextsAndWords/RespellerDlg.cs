@@ -40,7 +40,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private IWfiWordform m_srcwfiWordform;
 		private int m_vernWs;
 		private IRecordList m_srcRecordList;
-		private IRecordList m_dstRecordList;
 		private const string s_helpTopic = "khtpRespellerDlg";
 		private string m_sMoreButtonText; // original text of More button
 		private Size m_moreMinSize; // minimum size when 'more' options shown (=original size, minus a bit on height)
@@ -170,7 +169,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			if(m_wordformRecordList is InterlinearTextsRecordList)
 			{
 				//Unsuppress to allow for the list to be reloaded during ParseInterstingTextsIfNeeded()
-				//(this clerk and its list are not visible in this dialog, so there will be no future reload)
+				//(this record list and its list are not visible in this dialog, so there will be no future reload)
 				m_wordformRecordList.ListLoadingSuppressed = false;
 				(m_wordformRecordList as InterlinearTextsRecordList).ParseInterstingTextsIfNeeded(); //Trigger the parsing
 			}
@@ -234,10 +233,21 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_cbNewSpelling.TextChanged += m_dstWordform_TextChanged;
 
 #if RANDYTODO
+				/*
+          <clerk id="SrcWfiWordformConc" shouldHandleDeletion="false">
+            <dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RespellerTemporaryRecordClerk" />
+            <recordList class="WfiWordform" field="Occurrences">
+              <dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RespellerRecordList" />
+              <decoratorClass assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RespellingSda" />
+            </recordList>
+            <filters />
+            <sortMethods />
+          </clerk>
+				*/
 				// Setup source browse view.
 				var toolNode = configurationParameters.SelectSingleNode("controls/control[@id='srcSentences']/parameters");
-				m_srcClerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
-				m_srcClerk.OwningObject = m_srcwfiWordform;
+				m_srcRecordList = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, true);
+				m_srcRecordList.OwningObject = m_srcwfiWordform;
 #endif
 				m_sourceSentences.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				m_sourceSentences.CheckBoxChanged += sentences_CheckBoxChanged;
@@ -539,7 +549,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_wordformRecordList.SuppressSaveOnChangeRecord = false;
 				if (m_hvoNewWordform != 0)
 				{
-					// Move the clerk to the new word if possible.
+					// Move the record list to the new word if possible.
 					m_wordformRecordList.JumpToRecord(m_hvoNewWordform);
 				}
 			}
@@ -1519,7 +1529,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				// OTOH, we can't figure out the new item data for the wordforms until the work above updates the occurrences!
 				// The right solution is to wait until we have updated the instances, then send ItemDataModified
 				// to update the ConcDecorator state, then close the UOW which triggers other PropChanged effects.
-				// We have to use SendMessage so the ConcDecorator gets that updated before the Clerk using it
+				// We have to use SendMessage so the ConcDecorator gets that updated before the record list using it
 				// tries to re-read the list.
 				if (wfOld.CanDelete)
 				{
@@ -2316,7 +2326,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		}
 
 		/// <summary>
-		/// The clerk currently ignores properties with signature 0, so doesn't do more with them.
+		/// The record list currently ignores properties with signature 0, so doesn't do more with them.
 		/// </summary>
 		public override int GetDstClsId(int flid)
 		{

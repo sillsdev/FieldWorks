@@ -140,8 +140,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var master = parent as InterlinMaster;
 			if (master != null)
 			{
-				var clerk = master.MyRecordList as InterlinearTextsRecordList;
-				clerk?.GetScriptureIds(); // initialize the InterestingTextList to include Scripture (prevent a crash trying later)
+				var recordList = master.MyRecordList as InterlinearTextsRecordList;
+				recordList?.GetScriptureIds(); // initialize the InterestingTextList to include Scripture (prevent a crash trying later)
 			}
 			var fFocusBox = TryHideFocusBoxAndUninstall();
 			var objRoot = m_objRepo.GetObject(m_hvoRoot);

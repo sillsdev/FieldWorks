@@ -205,7 +205,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_bv.RefreshCompleted += BrowseViewSorterChanged;
 			m_cache = cache;
 			m_configurationNode = spec;
-			// (EricP) we should probably try find someway to get these classes from the RecordClerk/List
+			// (EricP) we should probably try find someway to get these classes from the RecordList/List
 			string bulkEditListItemsClassesValue = XmlUtils.GetMandatoryAttributeValue(spec, "bulkEditListItemsClasses");
 			string[] bulkEditListItemsClasses = bulkEditListItemsClassesValue.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 			foreach (string className in bulkEditListItemsClasses)
@@ -1462,7 +1462,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var helpTopic = string.Empty;
 
-			switch (m_propertyTable.GetValue<string>("toolChoice"))
+			switch (m_propertyTable.GetValue<string>(AreaServices.ToolChoice))
 			{
 				case AreaServices.BulkEditEntriesOrSensesMachineName:
 					helpTopic = "khtpBulkEditBarEntriesOrSenses";
@@ -4063,7 +4063,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		int m_expectedListItemsClassId = 0;
 		/// <summary>
-		/// the expected record clerk's list items class id according to the
+		/// the expected record list's list items class id according to the
 		/// selected target combo field. <c>0</c> if one hasn't been determined (yet).
 		/// </summary>
 		public int ExpectedListItemsClassId

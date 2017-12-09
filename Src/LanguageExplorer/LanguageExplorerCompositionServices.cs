@@ -34,10 +34,13 @@ using LanguageExplorer.Areas.Lists.Tools.ChartmarkEdit;
 using LanguageExplorer.Areas.Lists.Tools.ChartTempEdit;
 using LanguageExplorer.Areas.Lists.Tools.ComplexEntryTypeEdit;
 using LanguageExplorer.Areas.Lists.Tools.ConfidenceEdit;
+using LanguageExplorer.Areas.Lists.Tools.DialectsListEdit;
 using LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit;
 using LanguageExplorer.Areas.Lists.Tools.EducationEdit;
+using LanguageExplorer.Areas.Lists.Tools.ExtNoteTypeEdit;
 using LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit;
 using LanguageExplorer.Areas.Lists.Tools.GenresEdit;
+using LanguageExplorer.Areas.Lists.Tools.LanguagesListEdit;
 using LanguageExplorer.Areas.Lists.Tools.LexRefEdit;
 using LanguageExplorer.Areas.Lists.Tools.LocationsEdit;
 using LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit;
@@ -144,12 +147,15 @@ namespace LanguageExplorer
 					typeof(AnthroEditTool),
 					typeof(ComplexEntryTypeEditTool),
 					typeof(ConfidenceEditTool),
+					typeof(DialectsListEditTool),
 					typeof(ChartmarkEditTool),
 					typeof(CharttempEditTool),
 					typeof(EducationEditTool),
 					typeof(RoleEditTool),
+					typeof(ExtNoteTypeEditTool),
 					typeof(FeatureTypesAdvancedEditTool),
 					typeof(GenresEditTool),
+					typeof(LanguagesListEditTool),
 					typeof(LexRefEditTool),
 					typeof(LocationsEditTool),
 					typeof(PublicationsEditTool),

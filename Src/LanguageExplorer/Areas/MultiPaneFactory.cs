@@ -200,11 +200,6 @@ namespace LanguageExplorer.Areas
 				((IFlexComponent)firstControl).InitializeFlexComponent(flexComponentParameters);
 			}
 			var secondControl = concordanceContainerParameters.SecondControlParameters.Control;
-			// Already done in call to PaneBarContainerFactory.Create in calling client tool.
-			//if (secondControl is IFlexComponent)
-			//{
-			//	((IFlexComponent)secondControl).InitializeFlexComponent(flexComponentParameters);
-			//}
 			firstControl.BringToFront();
 			secondControl.BringToFront();
 
@@ -215,7 +210,7 @@ namespace LanguageExplorer.Areas
 		}
 
 		/// <summary>
-		/// Remove <paramref name="multiPane"/> from parent control and dispose it and set clerk to null.
+		/// Remove <paramref name="multiPane"/> from parent control and dispose it and set <paramref name="multiPane"/> to null.
 		/// </summary>
 		internal static void RemoveFromParentAndDispose(ICollapsingSplitContainer mainCollapsingSplitContainer, ref MultiPane multiPane)
 		{

@@ -982,9 +982,9 @@ namespace LanguageExplorer.Controls.XMLViews
 						}
 					}
 				}
-				// Couldn't find anything in the commands, try the clerks and tools.
+				// Couldn't find anything in the commands, try the record lists and tools.
 				if (String.IsNullOrEmpty(sTool))
-					sTool = ScanToolsAndClerks(windowConfig, listOwnerClass, listField);
+					sTool = ScanToolsAndLists(windowConfig, listOwnerClass, listField);
 			}
 			if (!String.IsNullOrEmpty(sTool))
 			{
@@ -1005,14 +1005,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			return chooserNode;
 		}
 
-		private string ScanToolsAndClerks(XElement windowConfig, string listOwnerClass, string listField)
+		private string ScanToolsAndLists(XElement windowConfig, string listOwnerClass, string listField)
 		{
 			foreach (var xnItem in windowConfig.Elements("/window/lists/list/item"))
 			{
 				foreach (var xnClerk in xnItem.Elements("parameters/clerks/clerk"))
 				{
-					string sClerkId = XmlUtils.GetOptionalAttributeValue(xnClerk, "id");
-					if (String.IsNullOrEmpty(sClerkId))
+					var recordListId = XmlUtils.GetOptionalAttributeValue(xnClerk, "id");
+					if (string.IsNullOrEmpty(recordListId))
 						continue;
 					var xnList = xnClerk.Element("recordList");
 					if (xnList == null)
@@ -1022,14 +1022,14 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						foreach (var xnTool in xnItem.Elements("parameters/tools/tool"))
 						{
-							string sTool = XmlUtils.GetOptionalAttributeValue(xnTool, "value");
-							if (String.IsNullOrEmpty(sTool))
+							var sTool = XmlUtils.GetOptionalAttributeValue(xnTool, "value");
+							if (string.IsNullOrEmpty(sTool))
 								continue;
 							var xnParam = xnTool.Element("control/parameters/control/parameters");
 							if (xnParam == null)
 								continue;
-							string sClerk = XmlUtils.GetOptionalAttributeValue(xnParam, "clerk");
-							if (sClerk == sClerkId)
+							string recordList = XmlUtils.GetOptionalAttributeValue(xnParam, "clerk");
+							if (recordList == recordListId)
 								return sTool;
 						}
 					}

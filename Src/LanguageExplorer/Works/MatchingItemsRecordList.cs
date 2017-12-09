@@ -12,7 +12,7 @@ using SIL.LCModel.Application;
 namespace LanguageExplorer.Works
 {
 	/// <summary>
-	/// This is a temporary record clerk that can be used in a guicontrol where the parent control knows
+	/// This is a temporary record list that can be used in a guicontrol where the parent control knows
 	/// when the list contents have changed, and to what.
 	///
 	/// The 'owner' is the now defunct class "WordformInventory" and the property is its old owning "Wordforms" collection.

@@ -150,7 +150,17 @@ namespace LanguageExplorer.Areas.Notebook
 		internal static IRecordList NotebookFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == Records, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{Records}'.");
-
+			/*
+            <clerk id="records">
+              <recordList owner="RnResearchNbk" property="AllRecords">
+                <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordList" />
+              </recordList>
+              <filters />
+              <sortMethods>
+                <sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
+              </sortMethods>
+            </clerk>
+			*/
 			return new RecordList(recordListId, statusBar,
 				new PropertyRecordSorter("ShortName"), AreaServices.Default,
 				null, false, false,

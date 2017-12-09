@@ -184,7 +184,7 @@ namespace LanguageExplorer.Dumpster
 
 		/// <summary>
 		/// Handles the xWorks message to insert a new class.
-		/// Invoked by the RecordClerk via a main menu.
+		/// Invoked by the RecordList via a main menu.
 		/// </summary>
 		/// <param name="argument">The xCore Command object.</param>
 		/// <returns>true, if we handled the message, otherwise false, if there was an unsupported 'classname' parameter</returns>

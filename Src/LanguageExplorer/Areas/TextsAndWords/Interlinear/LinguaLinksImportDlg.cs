@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Works;
@@ -190,13 +191,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_publisher = publisher;
 			m_sRootDir = FwDirectoryFinder.CodeDirectory;
 			if (!m_sRootDir.EndsWith("\\"))
+			{
 				m_sRootDir += "\\";
+			}
 			m_sRootDir += "Language Explorer\\Import\\";
 
 			m_sTempDir = Path.Combine(Path.GetTempPath(), "LanguageExplorer\\");
 			if (!Directory.Exists(m_sTempDir))
+			{
 				Directory.CreateDirectory(m_sTempDir);
-			m_sLastXmlFileName = "";
+			}
+			m_sLastXmlFileName = string.Empty;
 
 			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			if (helpTopicProvider != null)
@@ -218,7 +223,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException(string.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
 		/// <summary>
@@ -227,13 +232,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-
-			if (disposing && !IsDisposed)
+			if (IsDisposed)
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				// No need to do it more than once.
+				return;
+			}
+
+			if (disposing)
+			{
+				components?.Dispose();
 				openFileDialog.Dispose();
 			}
 			base.Dispose(disposing);
@@ -526,7 +533,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void ShowFinishLabel()
 		{
-			if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift)
+			if ((ModifierKeys & Keys.Shift) == Keys.Shift)
 			{
 				lblFinishWOImport.Visible = true;
 				btnImport.Text = ITextStrings.ksProcess;
@@ -538,14 +545,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			if (m_startPhase > 1)
 			{
-				btnImport.Text = String.Format(ITextStrings.ksPhaseButton,
-					m_startPhase, btnImport.Text);
+				btnImport.Text = string.Format(ITextStrings.ksPhaseButton, m_startPhase, btnImport.Text);
 			}
 		}
 
 		private void LinguaLinksImportDlg_Load(object sender, System.EventArgs e)
 		{
-
 		}
 
 		private void linkLabel2_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
@@ -555,238 +560,221 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private string BaseName(string fullName)
 		{
-			string result;
-			string temp;
-
-			result = "";
-			temp = fullName.ToUpperInvariant();
-			for (int ic = 0; ic < temp.Length; ic++)
-			{
-				if ((temp[ic] >= 'A') && (temp[ic] <= 'Z'))
-				{
-					result = result + temp[ic];
-				}
-			}
-			return result;
+			var result = string.Empty;
+			var temp = fullName.ToUpperInvariant();
+			return temp.Where(t => (t >= 'A') && (t <= 'Z')).Aggregate(result, (current, t) => current + t);
 		}
 
 		private void UpdateLanguageCodes()
 		{
-			if (m_sLastXmlFileName != m_LinguaLinksXmlFileName.Text)
+			if (m_sLastXmlFileName == m_LinguaLinksXmlFileName.Text)
 			{
-				m_sLastXmlFileName = m_LinguaLinksXmlFileName.Text;
-				listViewMapping.Items.Clear();
-				btnImport.Enabled = false;
-				// default to not enabled now that there are no items
-				m_nextInput = m_LinguaLinksXmlFileName.Text;
-				if (!File.Exists(m_nextInput))
+				return;
+			}
+			m_sLastXmlFileName = m_LinguaLinksXmlFileName.Text;
+			listViewMapping.Items.Clear();
+			btnImport.Enabled = false;
+			// default to not enabled now that there are no items
+			m_nextInput = m_LinguaLinksXmlFileName.Text;
+			if (!File.Exists(m_nextInput))
+			{
+				MessageBox.Show(
+					string.Format(ITextStrings.ksLLFileNotFound, m_nextInput),
+					ITextStrings.ksLLImport,
+					MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+				return;
+			}
+
+			m_startPhase = 1;
+			if (m_nextInput.Length > 19)
+			{
+				var nameTest = m_nextInput.Substring(m_nextInput.Length - 19, 19);
+				if (nameTest == "\\LLPhase1Output.xml")
 				{
-					MessageBox.Show(
-						String.Format(ITextStrings.ksLLFileNotFound, m_nextInput),
-						ITextStrings.ksLLImport,
-						MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-					return;
+					m_startPhase = 2;
 				}
-
-				m_startPhase = 1;
-				string nameTest;
-				if (m_nextInput.Length > 19)
+				else if (nameTest == "\\LLPhase2Output.xml")
 				{
-					nameTest = m_nextInput.Substring(m_nextInput.Length - 19, 19);
-					if (nameTest == "\\LLPhase1Output.xml")
-					{
-						m_startPhase = 2;
-					}
-					else if (nameTest == "\\LLPhase2Output.xml")
-					{
-						m_startPhase = 3;
-					}
-					else if (nameTest == "\\LLPhase3Output.xml")
-					{
-						m_startPhase = 4;
-					}
-					else if (nameTest == "\\LLPhase4Output.xml")
-					{
-						m_startPhase = 5;
-					}
-					else if (nameTest == "\\LLPhase5Output.xml")
-					{
-						m_startPhase = 6;
-					}
+					m_startPhase = 3;
 				}
-
-				if (m_startPhase == 1)
+				else if (nameTest == "\\LLPhase3Output.xml")
 				{
-					using (StreamReader streamReader = File.OpenText(m_nextInput))
+					m_startPhase = 4;
+				}
+				else if (nameTest == "\\LLPhase4Output.xml")
+				{
+					m_startPhase = 5;
+				}
+				else if (nameTest == "\\LLPhase5Output.xml")
+				{
+					m_startPhase = 6;
+				}
+			}
+
+			if (m_startPhase == 1)
+			{
+				using (var streamReader = File.OpenText(m_nextInput))
+				{
+					string input;
+					var inWritingSystem = false;
+					var inIcuLocale24 = false;
+					var inName24 = false;
+					var formatOkay = false;
+					var wsLLCode = string.Empty;
+					var wsName = string.Empty;
+					//getting name for a writing system given the ICU code.
+					var wsInfo = m_cache.ServiceLocator.WritingSystemManager.WritingSystems.Select(ws => new WsInfo(ws.DisplayLabel, ws.Id, string.IsNullOrEmpty(ws.LegacyMapping) ? "Windows1252<>Unicode" : ws.LegacyMapping)).ToDictionary(wsi => wsi.KEY);
+
+					while ((input = streamReader.ReadLine()) != null)
 					{
-						String input;
-
-						bool inWritingSystem = false;
-						bool inIcuLocale24 = false;
-						bool inName24 = false;
-						bool lineDone = false;
-						bool formatOkay = false;
-						int pos, pos1, pos2, pos3;
-						string wsLLCode = "";
-						string wsName = "";
-						var wsInfo = new Dictionary<string, WsInfo>();
-
-						//getting name for a writing system given the ICU code.
-						foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystemManager.WritingSystems)
+						var lineDone = false;
+						while (!lineDone)
 						{
-							var wsi = new WsInfo(ws.DisplayLabel, ws.Id, string.IsNullOrEmpty(ws.LegacyMapping) ? "Windows1252<>Unicode" : ws.LegacyMapping);
-							wsInfo.Add(wsi.KEY, wsi);
-						}
-
-						while ((input = streamReader.ReadLine()) != null)
-						{
-							lineDone = false;
-							while (!lineDone)
+							int pos;
+							if (!inWritingSystem)
 							{
-								if (!inWritingSystem)
+								pos = input.IndexOf("<LgWritingSystem");
+								if (pos >= 0)
 								{
-									pos = input.IndexOf("<LgWritingSystem");
-									if (pos >= 0)
-									{
-										inWritingSystem = true;
-										wsLLCode = "";
-										wsName = "";
-										if (input.Length >= pos + 21)
-											input = input.Substring(pos + 21, input.Length - pos - 21);
-										else
-											input = input.Substring(pos + 16);
-									}
+									inWritingSystem = true;
+									wsLLCode = "";
+									wsName = "";
+									input = input.Length >= pos + 21 ? input.Substring(pos + 21, input.Length - pos - 21) : input.Substring(pos + 16);
+								}
 
 								else
-									{
-										lineDone = true;
-									}
-								}
-								if (inWritingSystem && !inIcuLocale24 && !inName24)
 								{
-									pos1 = input.IndexOf("</LgWritingSystem>");
-									pos2 = input.IndexOf("<ICULocale24>");
-									pos3 = input.IndexOf("<Name24>");
-									if (pos1 < 0 && pos2 < 0 && pos3 < 0)
+									lineDone = true;
+								}
+							}
+							if (inWritingSystem && !inIcuLocale24 && !inName24)
+							{
+								var pos1 = input.IndexOf("</LgWritingSystem>");
+								var pos2 = input.IndexOf("<ICULocale24>");
+								var pos3 = input.IndexOf("<Name24>");
+								if (pos1 < 0 && pos2 < 0 && pos3 < 0)
+								{
+									lineDone = true;
+								}
+								else if (pos1 >= 0 && (pos2 < 0 || pos2 > pos1) && (pos3 < 0 || pos3 > pos1))
+								{
+									input = input.Substring(pos1 + 18, input.Length - pos1 - 18);
+									if (wsLLCode != string.Empty)
 									{
-										lineDone = true;
-									}
-									else if (pos1 >= 0 && (pos2 < 0 || pos2 > pos1) && (pos3 < 0 || pos3 > pos1))
-									{
-										input = input.Substring(pos1 + 18, input.Length - pos1 - 18);
-										if (wsLLCode != "")
+										if (wsName == string.Empty)
 										{
-											if (wsName == "")
-											{
-												wsName = "<" + wsLLCode + ">";
-											}
-											string wsFWName = "";
-											string wsEC = "";
-											string wsFWCode = "";
-
-											foreach (KeyValuePair<string, WsInfo> kvp in wsInfo)
-											{
-												WsInfo wsi = kvp.Value;
-												if (wsName == wsi.Name)
-												{
-													wsFWName = TsStringUtils.NormalizeToNFC(wsi.Name);
-													wsEC = TsStringUtils.NormalizeToNFC(wsi.Map);
-													wsFWCode = TsStringUtils.NormalizeToNFC(wsi.Id);
-												}
-											}
-
-											if (wsFWName == "")
-											{
-												foreach (KeyValuePair<string, WsInfo> kvp in wsInfo)
-												{
-													WsInfo wsi = kvp.Value;
-													if (BaseName(wsName) == BaseName(wsi.Name))
-													{
-														wsFWName = TsStringUtils.NormalizeToNFC(wsi.Name);
-														wsEC = TsStringUtils.NormalizeToNFC(wsi.Map);
-														wsFWCode = TsStringUtils.NormalizeToNFC(wsi.Id);
-													}
-												}
-											}
-
-											var lvItem = new ListViewItem(new[] { TsStringUtils.NormalizeToNFC(wsName), wsFWName, wsEC, TsStringUtils.NormalizeToNFC(wsLLCode), wsFWCode });
-											lvItem.Tag = wsName;
-											listViewMapping.Items.Add(lvItem);
-											formatOkay = true;
+											wsName = "<" + wsLLCode + ">";
 										}
-										inWritingSystem = false;
+										var wsFWName = string.Empty;
+										var wsEC = string.Empty;
+										var wsFWCode = string.Empty;
+
+										foreach (var kvp in wsInfo)
+										{
+											var wsi = kvp.Value;
+											if (wsName != wsi.Name)
+											{
+												continue;
+											}
+											wsFWName = TsStringUtils.NormalizeToNFC(wsi.Name);
+											wsEC = TsStringUtils.NormalizeToNFC(wsi.Map);
+											wsFWCode = TsStringUtils.NormalizeToNFC(wsi.Id);
+										}
+
+										if (wsFWName == "")
+										{
+											foreach (var kvp in wsInfo)
+											{
+												var wsi = kvp.Value;
+												if (BaseName(wsName) != BaseName(wsi.Name))
+												{
+													continue;
+												}
+												wsFWName = TsStringUtils.NormalizeToNFC(wsi.Name);
+												wsEC = TsStringUtils.NormalizeToNFC(wsi.Map);
+												wsFWCode = TsStringUtils.NormalizeToNFC(wsi.Id);
+											}
+										}
+
+										var lvItem = new ListViewItem(new[] {TsStringUtils.NormalizeToNFC(wsName), wsFWName, wsEC, TsStringUtils.NormalizeToNFC(wsLLCode), wsFWCode})
+										{
+											Tag = wsName
+										};
+										listViewMapping.Items.Add(lvItem);
+										formatOkay = true;
 									}
-									else if (pos2 >= 0 && (pos3 < 0 || pos3 > pos2))
-									{
-										input = input.Substring(pos2 + 13, input.Length - pos2 - 13);
-										inIcuLocale24 = true;
-									}
-									else
-									{
-										input = input.Substring(pos3 + 8, input.Length - pos3 - 8);
-										inName24 = true;
-									}
+									inWritingSystem = false;
 								}
-								if (inIcuLocale24)
+								else if (pos2 >= 0 && (pos3 < 0 || pos3 > pos2))
 								{
-									pos = input.IndexOf(">");
-									if (pos < 0)
-									{
-										lineDone = true;
-									}
-									else
-									{
-										input = input.Substring(pos + 1, input.Length - pos - 1);
-										pos = input.IndexOf("<");
-										wsLLCode = input.Substring(0, pos);
-										input = input.Substring(pos, input.Length - pos);
-										inIcuLocale24 = false;
-									}
+									input = input.Substring(pos2 + 13, input.Length - pos2 - 13);
+									inIcuLocale24 = true;
 								}
-								if (inName24)
+								else
 								{
-									pos = input.IndexOf(">");
-									if (pos < 0)
-									{
-										lineDone = true;
-									}
-									else
-									{
-										input = input.Substring(pos + 1, input.Length - pos - 1);
-										pos = input.IndexOf("<");
-										wsName = input.Substring(0, pos);
-										input = input.Substring(pos, input.Length - pos);
-										inName24 = false;
-									}
+									input = input.Substring(pos3 + 8, input.Length - pos3 - 8);
+									inName24 = true;
+								}
+							}
+							if (inIcuLocale24)
+							{
+								pos = input.IndexOf(">");
+								if (pos < 0)
+								{
+									lineDone = true;
+								}
+								else
+								{
+									input = input.Substring(pos + 1, input.Length - pos - 1);
+									pos = input.IndexOf("<");
+									wsLLCode = input.Substring(0, pos);
+									input = input.Substring(pos, input.Length - pos);
+									inIcuLocale24 = false;
+								}
+							}
+							if (inName24)
+							{
+								pos = input.IndexOf(">");
+								if (pos < 0)
+								{
+									lineDone = true;
+								}
+								else
+								{
+									input = input.Substring(pos + 1, input.Length - pos - 1);
+									pos = input.IndexOf("<");
+									wsName = input.Substring(0, pos);
+									input = input.Substring(pos, input.Length - pos);
+									inName24 = false;
 								}
 							}
 						}
-						streamReader.Close();
-						listViewMapping_SelectedIndexChanged();
-						CheckImportEnabled();
-						if (!formatOkay)
-						{
-							ShowFinishLabel();
-							// update the button before showing the msg box just in case...
-							MessageBox.Show(
-							String.Format(ITextStrings.ksInvalidLLFile, m_nextInput),
+					}
+					streamReader.Close();
+					listViewMapping_SelectedIndexChanged();
+					CheckImportEnabled();
+					if (!formatOkay)
+					{
+						ShowFinishLabel();
+						// update the button before showing the msg box just in case...
+						MessageBox.Show(
+							string.Format(ITextStrings.ksInvalidLLFile, m_nextInput),
 							ITextStrings.ksLLImport,
 							MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-							return;
-						}
+						return;
 					}
 				}
-				else
-				{
-					btnImport.Enabled = true;
-				}
-				ShowFinishLabel();
 			}
+			else
+			{
+				btnImport.Enabled = true;
+			}
+			ShowFinishLabel();
 		}
 
 		private void btn_LinguaLinksXmlBrowse_Click(object sender, System.EventArgs e)
 		{
-			string currentFile = m_LinguaLinksXmlFileName.Text;
+			var currentFile = m_LinguaLinksXmlFileName.Text;
 
 			openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.XML, FileFilterType.AllFiles);
 			openFileDialog.FilterIndex = 1;
@@ -806,17 +794,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				UpdateLanguageCodes();
 			}
 		}
-
-		///// <summary>
-		///// (IFwExtension)Shows the dialog as a modal dialog
-		///// </summary>
-		///// <returns>A DialogResult value</returns>
-		//public System.Windows.Forms.DialogResult ShowDialog(IWin32Window owner)
-		//{
-		//		CheckDisposed();
-		//
-		//   return base.ShowDialog(owner);
-		//}
 
 		private void listViewMapping_SelectedIndexChanged()
 		{
@@ -844,41 +821,40 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void btnModifyMapping_Click(object sender, System.EventArgs e)
 		{
-			string llName, fwName, ec, fwCode, llCode;
-			ListViewItem lvItem;
-
-			ListView.SelectedIndexCollection selIndexes = listViewMapping.SelectedIndices;
+			var selIndexes = listViewMapping.SelectedIndices;
 			if (selIndexes.Count < 1 || selIndexes.Count > 1)
-				return;
-			// only handle single selection at this time
-
-			int selIndex = selIndexes[0];
-			// only support 1
-			lvItem = listViewMapping.Items[selIndex];
-			IApp app = m_propertyTable.GetValue<IApp>("App");
-			using (LexImportWizardLanguage dlg = new LexImportWizardLanguage(m_cache,
-				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app))
 			{
-				llName = lvItem.Text;
-				fwName = lvItem.SubItems[1].Text;
-				ec = lvItem.SubItems[2].Text;
-				llCode = lvItem.SubItems[3].Text;
+				return;
+			}
+			// only handle single selection at this time
+			var selIndex = selIndexes[0];
+			// only support 1
+			var lvItem = listViewMapping.Items[selIndex];
+			var app = m_propertyTable.GetValue<IApp>("App");
+			using (LexImportWizardLanguage dlg = new LexImportWizardLanguage(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app))
+			{
+				var llName = lvItem.Text;
+				var fwName = lvItem.SubItems[1].Text;
+				var ec = lvItem.SubItems[2].Text;
+				var llCode = lvItem.SubItems[3].Text;
 				dlg.LangToModify(llName, fwName, ec);
 
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					// retrieve the new WS information from the dlg
+					string fwCode;
 					dlg.GetCurrentLangInfo(out llName, out fwName, out ec, out fwCode);
 
 					// remove the one that was modified
 					listViewMapping.Items.Remove(lvItem);
 
 					// now add the modified one
-					lvItem = new ListViewItem(new string[] { llName, fwName, ec, llCode, fwCode });
-					lvItem.Tag = llName;
+					lvItem = new ListViewItem(new string[] {llName, fwName, ec, llCode, fwCode})
+					{
+						Tag = llName
+					};
 					listViewMapping.Items.Add(lvItem);
-					int ii = listViewMapping.Items.IndexOf(lvItem);
-					listViewMapping.Items[ii].Selected = true;
+					listViewMapping.Items[listViewMapping.Items.IndexOf(lvItem)].Selected = true;
 				}
 
 				CheckImportEnabled();
@@ -887,7 +863,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void CheckImportEnabled()
 		{
-			bool allSpecified = true;
+			var allSpecified = true;
 
 			foreach(ListViewItem lvItem2 in listViewMapping.Items)
 			{
@@ -932,24 +908,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					Debug.Assert(m_nextInput == m_LinguaLinksXmlFileName.Text);
 					// Ensure the idle time processing for change record doesn't cause problems
 					// because the import creates a record to change to.  See FWR-3700.
-					var clerk = RecordList.ActiveRecordListRepository.ActiveRecordList;
+					var recordList = RecordList.ActiveRecordListRepository.ActiveRecordList;
 					var fSuppressedSave = false;
 					try
 					{
-						if (clerk != null)
+						if (recordList != null)
 						{
-							fSuppressedSave = clerk.SuppressSaveOnChangeRecord;
-							clerk.SuppressSaveOnChangeRecord = true;
+							fSuppressedSave = recordList.SuppressSaveOnChangeRecord;
+							recordList.SuppressSaveOnChangeRecord = true;
 						}
-						bool fSuccess = (bool)dlg.RunTask(true, import.Import,
-							runToCompletion, languageMappings, m_startPhase);
+						var fSuccess = (bool)dlg.RunTask(true, import.Import, runToCompletion, languageMappings, m_startPhase);
 
 						if (fSuccess)
 						{
 							MessageBox.Show(this,
-								String.Format(ITextStrings.ksSuccessLoadingLL,
-									Path.GetFileName(m_LinguaLinksXmlFileName.Text),
-									m_cache.ProjectId.Name, Environment.NewLine, import.LogFile),
+								string.Format(ITextStrings.ksSuccessLoadingLL, Path.GetFileName(m_LinguaLinksXmlFileName.Text), m_cache.ProjectId.Name, Environment.NewLine, import.LogFile),
 								ITextStrings.ksLLImportSucceeded,
 								MessageBoxButtons.OK, MessageBoxIcon.Information);
 							DialogResult = DialogResult.OK;	// only 'OK' if not exception
@@ -974,7 +947,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						{
 							Debug.WriteLine("Error: " + ex.InnerException.Message);
 
-							MessageBox.Show(String.Format(import.ErrorMessage, ex.InnerException.Message),
+							MessageBox.Show(string.Format(import.ErrorMessage, ex.InnerException.Message),
 								ITextStrings.ksUnhandledError,
 								MessageBoxButtons.OK, MessageBoxIcon.Error);
 							DialogResult = DialogResult.Cancel;	// only 'OK' if not exception
@@ -983,27 +956,28 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					finally
 					{
-						if (clerk != null)
-							clerk.SuppressSaveOnChangeRecord = fSuppressedSave;
+						if (recordList != null)
+						{
+							recordList.SuppressSaveOnChangeRecord = fSuppressedSave;
+						}
 					}
 				}
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when an import error occurs.
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="caption">The caption.</param>
-		/// ------------------------------------------------------------------------------------
 		private void OnImportError(object sender, string message, string caption)
 		{
 			if (InvokeRequired)
+			{
 				Invoke(new LinguaLinksImport.ErrorHandler(OnImportError), sender, message, caption);
+			}
 			else
+			{
 				MessageBox.Show(this, message, caption, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+			}
 		}
 
 		private void LinguaLinksImportDlg_KeyDown(object sender, KeyEventArgs e)

@@ -54,11 +54,11 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				string areaChoice = PropertyTable.GetValue<string>("areaChoice");
+				string areaChoice = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
 				if (areaChoice == null) return false; // happens at start up
 				if (AreaServices.InitialAreaMachineName == areaChoice)
 				{
-					return PropertyTable.GetValue<string>("toolChoice") == AreaServices.LexiconEditMachineName;
+					return PropertyTable.GetValue<string>(AreaServices.ToolChoice) == AreaServices.LexiconEditMachineName;
 				}
 				return false; //we are not in an area that wants to see the merge command
 			}

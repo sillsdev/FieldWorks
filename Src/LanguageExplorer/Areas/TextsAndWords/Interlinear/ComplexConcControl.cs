@@ -78,8 +78,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 		}
 
-		internal ComplexConcControl(MatchingConcordanceItems clerk)
-			:base(clerk)
+		internal ComplexConcControl(MatchingConcordanceItems recordList)
+			:base(recordList)
 		{
 			InitializeComponent();
 		}

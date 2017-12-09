@@ -167,7 +167,16 @@ namespace LanguageExplorer.Areas.Lexicon
 		internal static IRecordList EntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == Entries, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{Entries}'.");
-
+			/*
+			<clerk id="entries">
+				<recordList owner="LexDb" property="Entries" />
+				<filters />
+				<sortMethods>
+				<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
+				<sortMethod label="Primary Gloss" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="PrimaryGloss" />
+				</sortMethods>
+			</clerk>
+			*/
 			return new RecordList(recordListId, statusBar,
 				new Dictionary<string, PropertyRecordSorter>
 				{
@@ -182,7 +191,18 @@ namespace LanguageExplorer.Areas.Lexicon
 		internal static IRecordList SemanticDomainList_LexiconAreaFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == SemanticDomainList_LexiconArea, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{SemanticDomainList_LexiconArea}'.");
-
+			/*
+            <clerk id="SemanticDomainList">
+              <recordList owner="LangProject" property="SemanticDomainList">
+                <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList" />
+              </recordList>
+              <treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="true" ws="best analorvern" class="SIL.FieldWorks.XWorks.SemanticDomainRdeTreeBarHandler" altTitleId="SemanticDomain-Plural" />
+              <filters />
+              <sortMethods>
+                <sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
+              </sortMethods>
+            </clerk>
+			*/
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				null, false, false,
 				new DictionaryPublicationDecorator(cache, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), CmPossibilityListTags.kflidPossibilities), cache.LanguageProject.SemanticDomainListOA,
@@ -192,7 +212,19 @@ namespace LanguageExplorer.Areas.Lexicon
 		internal static IRecordList AllReversalEntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == AllReversalEntries, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{AllReversalEntries}'.");
-
+			/*
+			<clerk id="AllReversalEntries">
+				<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ReversalEntryClerk" />
+				<recordList owner="ReversalIndex" property="AllEntries">
+				<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.AllReversalEntriesRecordList" />
+				</recordList>
+				<filters />
+				<sortMethods>
+				<sortMethod label="Form" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
+				</sortMethods>
+				<!--<recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider"/>-->
+			</clerk>
+			*/
 			var currentGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(flexComponentParameters.PropertyTable, "ReversalIndexGuid");
 			IReversalIndex revIdx = null;
 			if (currentGuid != Guid.Empty)

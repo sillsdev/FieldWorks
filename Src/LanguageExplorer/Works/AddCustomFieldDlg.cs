@@ -212,15 +212,15 @@ namespace LanguageExplorer.Works
 				var clerkNode = elt.XPathSelectElement("control/parameters//control/parameters[@clerk]");
 				if (clerkNode == null)
 					continue;
-				var clerkId = clerkNode.Attribute("clerk").Value;
-				XElement clerk;
-				if (!clerks.TryGetValue(clerkId, out clerk))
+				var recordListId = clerkNode.Attribute("clerk").Value;
+				XElement recordList;
+				if (!clerks.TryGetValue(recordListId, out recordList))
 					continue;
-				var recordList = clerk.Element("recordList");
-				if (recordList == null)
+				var recordListElement = recordList.Element("recordList");
+				if (recordListElement == null)
 					continue;
-				var owner = recordList.Attribute("owner").Value;
-				var property = recordList.Attribute("property").Value;
+				var owner = recordListElement.Attribute("owner").Value;
+				var property = recordListElement.Attribute("property").Value;
 #if RANDYTODO
 				// TODO: Need another way to get the list, since that static is present now.
 				var list = PossibilityRecordList.GetListFromOwnerAndProperty(cache, owner, property);

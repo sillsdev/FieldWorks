@@ -87,7 +87,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (own != null && OnlyGenresChecked(checkedList))
 			{
 				message = ITextStrings.kOkbtnGenreSelection;
-				own.PropTable.SetProperty("RecordClerk-DelayedGenreAssignment", checkedList, true, true);
+				own.PropTable.SetProperty("RecordList-DelayedGenreAssignment", checkedList, true, true);
 				showWarning = true;
 			}
 #endif

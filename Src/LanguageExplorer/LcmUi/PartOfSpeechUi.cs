@@ -67,7 +67,7 @@ namespace LanguageExplorer.LcmUi
 
 			Command command = (Command)commandObject;
 			string tool = Utils.XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
-			string toolChoice = PropTable.GetValue<string>("toolChoice");
+			string toolChoice = PropTable.GetValue<string>(AreaServices.ToolChoice);
 
 			if (tool == AreaServices.PosEditMachineName && toolChoice == AreaServices.ReversalToolReversalIndexPOSMachineName)
 			{

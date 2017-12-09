@@ -98,7 +98,7 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary>
-		/// Remove <paramref name="collapsingSplitContainer"/> from parent control and dispose it and set clerk to null.
+		/// Remove <paramref name="collapsingSplitContainer"/> from parent control and dispose it and set <paramref name="collapsingSplitContainer"/> to null.
 		/// </summary>
 		internal static void RemoveFromParentAndDispose(ICollapsingSplitContainer mainCollapsingSplitContainer, ref CollapsingSplitContainer collapsingSplitContainer)
 		{

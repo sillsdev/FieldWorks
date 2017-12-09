@@ -319,7 +319,7 @@ namespace LanguageExplorer.Impls
 			var areaName = _currentArea.MachineName;
 			var toolName = _currentTool.MachineName;
 			PropertyTable.SetProperty($"{AreaServices.ToolForAreaNamed_}{areaName}", toolName, SettingsGroup.LocalSettings, true, false);
-			PropertyTable.SetProperty("toolChoice", _currentTool.MachineName, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetProperty(AreaServices.ToolChoice, _currentTool.MachineName, SettingsGroup.LocalSettings, true, false);
 
 			// Do some logging.
 			Logger.WriteEvent("Switched to " + _currentTool.MachineName);
@@ -356,7 +356,7 @@ namespace LanguageExplorer.Impls
 				_currentArea.ActiveTool = null;
 			}
 			_currentArea = clickedArea;
-			PropertyTable.SetProperty("areaChoice", _currentArea.MachineName, SettingsGroup.LocalSettings, true, false);
+			PropertyTable.SetProperty(AreaServices.AreaChoice, _currentArea.MachineName, SettingsGroup.LocalSettings, true, false);
 			_currentArea.Activate(_majorFlexComponentParameters);
 		}
 
@@ -399,7 +399,7 @@ namespace LanguageExplorer.Impls
 			if (PropertyTable.TryGetValue("currentContentControl", out oldStringValue))
 			{
 				PropertyTable.RemoveProperty("currentContentControl");
-				PropertyTable.SetProperty("toolChoice", oldStringValue, SettingsGroup.LocalSettings, true, false);
+				PropertyTable.SetProperty(AreaServices.ToolChoice, oldStringValue, SettingsGroup.LocalSettings, true, false);
 			}
 			PropertyTable.SetProperty("PropertyTableVersion", currentPropertyTableVersion, SettingsGroup.GlobalSettings, true, false);
 		}
@@ -1672,7 +1672,7 @@ very simple minor adjustments. ;)"
 
 		#endregion
 
-		#region Handle clerk repository and last known active clerk
+		#region Handle record list repository and last known active record list
 		/// <summary>
 		/// This window is being activated, so (re)-set static stuff to what we want.
 		/// </summary>

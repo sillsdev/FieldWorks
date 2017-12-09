@@ -147,11 +147,15 @@ namespace LanguageExplorer.Areas.Grammar
 
 		#endregion
 
-		internal static IRecordList PhonemesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string clerkId, StatusBar statusBar)
+		internal static IRecordList PhonemesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(clerkId == Phonemes, $"I don't know how to create a clerk with an ID of '{clerkId}', as I can only create on with an id of '{Phonemes}'.");
-
-			return new RecordList(clerkId, statusBar,
+			Require.That(recordListId == Phonemes, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{Phonemes}'.");
+			/*
+            <clerk id="phonemes">
+              <recordList owner="MorphologicalData" property="Phonemes" />
+            </clerk>
+			*/
+			return new RecordList(recordListId, statusBar,
 				new PropertyRecordSorter("ShortName"), AreaServices.Default,
 				null, false, false,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,

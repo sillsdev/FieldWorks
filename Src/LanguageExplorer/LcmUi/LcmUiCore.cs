@@ -574,10 +574,9 @@ namespace LanguageExplorer.LcmUi
 
 			var command = (Command) commandObject;
 			string tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
-			//string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
-			//string areaChoice = m_propertyTable.GetValue<string>("areaChoice");
+			//string areaChoice = m_propertyTable.GetValue<string>(AreaServices.AreaChoice);
 			//string toolChoice = m_propertyTable.GetValue<string>($"{AreaServices.ToolForAreaNamed_}{areaChoice}");
-			string toolChoice = m_propertyTable.GetValue<string>("toolChoice");
+			string toolChoice = m_propertyTable.GetValue<string>(AreaServices.ToolChoice);
 			if (!IsAcceptableContextToJump(toolChoice, tool))
 			{
 				display.Visible = display.Enabled = false;
@@ -623,7 +622,7 @@ namespace LanguageExplorer.LcmUi
 				// right-clicks on a record that isn't (yet) the current record.
 				// In that case RecordBrowseView establishes the new index before
 				// calling HandleRightClick to create the context menu, but
-				// presently, "ActiveClerkSelectedObject" only gets established on Idle()
+				// presently, "ActiveListSelectedObject" only gets established on Idle()
 				// AFTER the context menu is created. (A side effect of LT-9192, LT-8874,
 				// XmlBrowseViewBase.FireSelectionChanged)
 				// To get around this, we must use the CurrentObject
@@ -634,7 +633,7 @@ namespace LanguageExplorer.LcmUi
 			}
 			else
 			{
-				obj = PropertyTable.GetValue<ICmObject>("ActiveClerkSelectedObject", null);
+				obj = PropertyTable.GetValue<ICmObject>("ActiveListSelectedObject", null);
 			}
 			return obj;
 		}

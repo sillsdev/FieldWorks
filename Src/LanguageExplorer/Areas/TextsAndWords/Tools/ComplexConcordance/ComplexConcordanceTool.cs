@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 	internal sealed class ComplexConcordanceTool : ITool
 	{
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
-		private const string ComplexConcOccurrencesOfSelectedUnit = "complexConcOccurrencesOfSelectedUnit";
+		internal const string ComplexConcOccurrencesOfSelectedUnit = "complexConcOccurrencesOfSelectedUnit";
 		private MultiPane _concordanceContainer;
 		private ComplexConcControl _complexConcControl;
 		private RecordBrowseView _recordBrowseView;
@@ -170,7 +170,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
 			Require.That(recordListId == ComplexConcOccurrencesOfSelectedUnit, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{ComplexConcOccurrencesOfSelectedUnit}'.");
-
+			/*
+            <clerk id="complexConcOccurrencesOfSelectedUnit" allowDeletions="false">
+              <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.OccurrencesOfSelectedUnit" />
+              <recordList class="LangProject" field="ConcOccurrences">
+                <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.MatchingConcordanceItems" />
+                <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator" />
+              </recordList>
+              <sortMethods />
+            </clerk>
+			*/
 			return new MatchingConcordanceItems(recordListId, statusBar, new ConcDecorator(cache.ServiceLocator));
 		}
 	}

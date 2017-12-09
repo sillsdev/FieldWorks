@@ -41,8 +41,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			ConstructorSurrogate();
 		}
 
-		internal ConcordanceControl(MatchingConcordanceItems clerk)
-			:base(clerk)
+		internal ConcordanceControl(MatchingConcordanceItems recordList)
+			:base(recordList)
 		{
 			ConstructorSurrogate();
 		}
@@ -102,7 +102,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			m_cbSearchText.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 
-			if (m_clerk.SuspendLoadingRecordUntilOnJumpToRecord)
+			if (m_recordList.SuspendLoadingRecordUntilOnJumpToRecord)
 			{
 				return;	// we're bound to process OnJumpToRecord, so skip any further initialization.
 			}
@@ -122,15 +122,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (disposing)
 			{
 				components?.Dispose();
-				if (m_clerk != null)
+				if (m_recordList != null)
 				{
-					m_clerk.ConcordanceControl = null;
+					m_recordList.ConcordanceControl = null;
 				}
 				m_pOSPopupTreeManager?.Dispose();
-				// Don't dispose of the clerk, since it can monitor relevant PropChanges
+				// Don't dispose of the record list, since it can monitor relevant PropChanges
 				// that affect the NeedToReloadVirtualProperty.
 			}
-			m_clerk = null;
+			m_recordList = null;
 			m_pOSPopupTreeManager = null;
 			base.Dispose(disposing);
 		}
@@ -812,9 +812,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (m_fObjectConcorded)
 			{
 				ICmObject cmCurrent = null;
-				if (m_clerk.CurrentObjectHvo != 0)
+				if (m_recordList.CurrentObjectHvo != 0)
 				{
-					int hvoCurrent = m_clerk.VirtualListPublisher.get_ObjectProp(m_clerk.CurrentObjectHvo,
+					int hvoCurrent = m_recordList.VirtualListPublisher.get_ObjectProp(m_recordList.CurrentObjectHvo,
 						ConcDecorator.kflidAnalysis);
 					if (hvoCurrent != 0)
 						cmCurrent = m_cache.ServiceLocator.GetObject(hvoCurrent);
@@ -1585,9 +1585,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			CheckDisposed();
 			// Check if we're the right tool, and that we have a valid object id.
-			string toolChoice = PropertyTable.GetValue<string>("toolChoice");
-			string areaChoice = PropertyTable.GetValue<string>("areaChoice");
-			string concordOn = PropertyTable.GetValue<string>("ConcordOn");
+			var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
+			var areaChoice = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
+			var concordOn = PropertyTable.GetValue<string>("ConcordOn");
 			PropertyTable.RemoveProperty("ConcordOn");
 			Debug.Assert(!String.IsNullOrEmpty(toolChoice) && !String.IsNullOrEmpty(areaChoice));
 			if (areaChoice != AreaServices.TextAndWordsAreaMachineName || toolChoice != AreaServices.ConcordanceMachineName)
@@ -1646,7 +1646,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			finally
 			{
 				// indicate that OnJumpToRecord has been handled.
-				m_clerk.SuspendLoadingRecordUntilOnJumpToRecord = false;
+				m_recordList.SuspendLoadingRecordUntilOnJumpToRecord = false;
 			}
 			return true;
 		}
@@ -1685,7 +1685,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary>
-		/// Override to force recomputing the list. This is tricky because LoadMatches calls a Clerk routine which
+		/// Override to force recomputing the list. This is tricky because LoadMatches calls a record list routine which
 		/// recursively calls ReloadList. Therefore if we call LoadMatches, we don't need to call the base routine.
 		/// If we're in the middle of loading a list, though, we want to only do the base thing.
 		/// Finally, if the OwningControl has never been loaded (user hasn't yet selected option), just load the (typically empty) list.
