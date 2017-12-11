@@ -22,6 +22,7 @@ namespace FwBuildTasks
 
 		public override bool Execute()
 		{
+			Log.LogMessage("Unzipping {0}.", ZipFilename);
 			using (ZipArchive archive = ZipFile.OpenRead(ZipFilename))
 			{
 				foreach (ZipArchiveEntry entry in archive.Entries)
@@ -31,6 +32,7 @@ namespace FwBuildTasks
 					if (dirPath != null && !Directory.Exists(dirPath))
 						Directory.CreateDirectory(dirPath);
 					entry.ExtractToFile(filePath, true);
+					Log.LogMessage(MessageImportance.Low, "extracting file: {0}", filePath);
 				}
 			}
 			return true;
