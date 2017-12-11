@@ -305,6 +305,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				if(!string.IsNullOrEmpty(wsValue) && version < DCM.VersionCurrent)
 				{
 					newFName = Path.Combine(Path.GetDirectoryName(fName), wsValue + DictionaryConfigurationModel.FileExtension);
+
+					if (wsValue == Path.GetFileNameWithoutExtension(fName))
+						continue;
+
 					if (!File.Exists(newFName))
 					{
 						File.Move(fName, newFName);
