@@ -198,7 +198,7 @@ namespace LanguageExplorer.Works
 		protected LcmCache Cache { get; }
 
 		/// <summary>
-		/// Get/Set the Clerk used by the view.
+		/// Get/Set the record list used by the view.
 		/// </summary>
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]

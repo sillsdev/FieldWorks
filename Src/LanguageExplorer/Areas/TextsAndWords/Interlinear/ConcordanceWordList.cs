@@ -84,18 +84,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// This is used in situations like switching views. In such cases we should force a reload.
 		/// </summary>
 		/// <returns></returns>
-		public override bool NeedToReloadList()
+		protected override bool NeedToReloadList()
 		{
 			return base.NeedToReloadList() || reloadRequested;
 		}
 
-		public override void ChangeSorter(RecordSorter sorter)
+		protected override void ChangeSorter(RecordSorter sorter)
 		{
 			RequestRefresh();
 			base.ChangeSorter(sorter);
 		}
 
-		public override void ForceReloadList()
+		protected override void ForceReloadList()
 		{
 			RequestRefresh();
 			base.ForceReloadList();
@@ -104,7 +104,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// overridden to prevent reloading the list unless it is specifically desired.
 		/// </summary>
-		public override void ReloadList()
+		protected override void ReloadList()
 		{
 			if (selectionChanged || CurrentIndex == -1)
 			{
@@ -125,7 +125,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return false; // we are not involved in the reload process.
 
 			if (((IActionHandlerExtensions)m_cache.ActionHandlerAccessor).CanStartUow)
+			{
 				ParseAndUpdate(); // do it now
+			}
 			else // do it as soon as possible. (we might be processing PropChanged.)
 			{
 				// REVIEW (FWR-1906): Do we need to do this reload only the first time, or also (as here) when the prop change is from undo or redo?

@@ -6,7 +6,6 @@ using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Controls.SilSidePane;
 using SIL.FieldWorks.Common.FwUtils;
-using LanguageExplorer.Works;
 using SIL.LCModel;
 
 namespace LanguageExplorer

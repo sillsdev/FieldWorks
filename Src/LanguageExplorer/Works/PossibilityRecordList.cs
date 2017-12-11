@@ -157,7 +157,7 @@ namespace LanguageExplorer.Works
 		/// Return the index (in m_sortedObjects) of the first displayed object.
 		/// For possibility lists, the first item that isn't owned by another item.
 		/// </summary>
-		public override int FirstItemIndex
+		protected override int FirstItemIndex
 		{
 			get
 			{
@@ -181,7 +181,7 @@ namespace LanguageExplorer.Works
 		/// Return the index (in m_sortedObjects) of the last displayed object.
 		/// For possibility lists, this is quite tricky to find.
 		/// </summary>
-		public override int LastItemIndex
+		protected override int LastItemIndex
 		{
 			get
 			{
@@ -217,7 +217,7 @@ namespace LanguageExplorer.Works
 		/// If the current object is the last return m_currentIndex.
 		/// If m_currentIndex is -1 return -1.
 		/// </summary>
-		public override int NextItemIndex
+		protected override int NextItemIndex
 		{
 			get
 			{
@@ -285,7 +285,7 @@ namespace LanguageExplorer.Works
 		/// If the current object is the first return m_currentIndex.
 		/// If m_currentIndex is -1 return -1.
 		/// </summary>
-		public override int PrevItemIndex
+		protected override int PrevItemIndex
 		{
 			get
 			{
@@ -341,7 +341,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		private ICmPossibility PossibilityAt(int index)
 		{
-			return RootObjectAt(index) as ICmPossibility;
+			return SortItemAt(index).RootObjectUsing(m_cache) as ICmPossibility;
 		}
 
 		/// <summary>

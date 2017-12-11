@@ -99,7 +99,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 
 			IStText stText;
-			if (!Cache.ServiceLocator.GetInstance<IStTextRepository>().TryGetObject(hvoItem, out stText))
+			if (!m_cache.ServiceLocator.GetInstance<IStTextRepository>().TryGetObject(hvoItem, out stText))
 			{
 				// Not an StText; we have no idea how to add it (possibly a WfiWordform?).
 				return base.AddItemToList(hvoItem);
@@ -126,7 +126,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var interestingTextsList = GetInterestingTextList();
 			var interestingTexts = interestingTextsList.InterestingTexts.ToArray();
 
-			using (var dlg = new FilterTextsDialog(PropertyTable.GetValue<IApp>("App"), Cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var dlg = new FilterTextsDialog(PropertyTable.GetValue<IApp>("App"), m_cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
 				{
@@ -149,7 +149,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private InterestingTextList GetInterestingTextList()
 		{
-			return InterestingTextsDecorator.GetInterestingTextList(PropertyTable, Cache.ServiceLocator);
+			return InterestingTextsDecorator.GetInterestingTextList(PropertyTable, m_cache.ServiceLocator);
 		}
 
 		/// <summary>
@@ -166,7 +166,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return false;
 			}
-			return AddNewText(new UndoableCreateAndInsertStText(Cache, this, ITextStrings.UndoInsertText, ITextStrings.RedoInsertText));
+			return AddNewText(new UndoableCreateAndInsertStText(m_cache, this, ITextStrings.UndoInsertText, ITextStrings.RedoInsertText));
 		}
 
 		/// <summary>
@@ -175,16 +175,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns></returns>
 		internal bool AddNewTextNonUndoable()
 		{
-			return AddNewText(new NonUndoableCreateAndInsertStText(Cache, this));
+			return AddNewText(new NonUndoableCreateAndInsertStText(m_cache, this));
 		}
 
 		private bool AddNewText(ICreateAndInsert<IStText> createAndInsertMethodObj)
 		{
 			// Get the default writing system for the new text.  See LT-6692.
-			PrevTextWs = Cache.DefaultVernWs;
-			if (CurrentObject != null && Cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Count > 1)
+			PrevTextWs = m_cache.DefaultVernWs;
+			if (CurrentObject != null && m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Count > 1)
 			{
-				PrevTextWs = WritingSystemServices.ActualWs(Cache, WritingSystemServices.kwsVernInParagraph, CurrentObject.Hvo, StTextTags.kflidParagraphs);
+				PrevTextWs = WritingSystemServices.ActualWs(m_cache, WritingSystemServices.kwsVernInParagraph, CurrentObject.Hvo, StTextTags.kflidParagraphs);
 			}
 			if (Filter != null)
 			{
@@ -249,15 +249,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var wsText = PrevTextWs;
 			if (wsText != 0)
 			{
-				if (Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Count == 1)
+				if (m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Count == 1)
 				{
-					wsText = Cache.DefaultVernWs;
+					wsText = m_cache.DefaultVernWs;
 				}
 				else
 				{
 					using (var dlg = new ChooseTextWritingSystemDlg())
 					{
-						dlg.Initialize(Cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), wsText);
+						dlg.Initialize(m_cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), wsText);
 						dlg.ShowDialog(Form.ActiveForm);
 						wsText = dlg.TextWs;
 					}
@@ -266,7 +266,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			else
 			{
-				wsText = Cache.DefaultVernWs;
+				wsText = m_cache.DefaultVernWs;
 			}
 			return wsText;
 		}

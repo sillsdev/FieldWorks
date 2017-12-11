@@ -55,7 +55,7 @@ namespace LanguageExplorer.Areas
 		private string DependentPropertyName => RecordListSelectedObjectPropertyId(_recordListProvidingRootObject.Id);
 
 		#region Overrides of RecordList
-		public override bool TryListProvidingRootObject(out IRecordList recordListProvidingRootObject)
+		protected override bool TryListProvidingRootObject(out IRecordList recordListProvidingRootObject)
 		{
 			recordListProvidingRootObject = _recordListProvidingRootObject;
 			return true;

@@ -1104,8 +1104,8 @@
     </Compile>
     <Compile Include="Works\InterestingTextList.cs" />
     <Compile Include="Works\InterestingTextsDecorator.cs" />
-    <Compile Include="Works\IRecordListRepository.cs" />
-    <Compile Include="Works\IRecordListRepositoryForTools.cs" />
+    <Compile Include="IRecordListRepository.cs" />
+    <Compile Include="IRecordListRepositoryForTools.cs" />
     <Compile Include="IRecordList.cs" />
     <Compile Include="Works\ISetRootHvo.cs" />
     <Compile Include="Works\IWebonaryClient.cs" />
@@ -1117,8 +1117,7 @@
       <DependentUpon>LiftExportMessageDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="LinkHandler.cs" />
-    <Compile Include="Works\ListChangedEventArgs.cs" />
-    <Compile Include="Works\ListChangedEventHandler.cs" />
+    <Compile Include="Works\ListChangedActions.cs" />
     <Compile Include="Works\ListUpdateHelper.cs" />
     <Compile Include="Works\ListUpdateHelperOptions.cs" />
     <Compile Include="Works\MacroListener.cs" />
@@ -1136,14 +1135,14 @@
     <Compile Include="Works\RecordListImages.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Works\RecordListRepository.cs" />
+    <Compile Include="Impls\RecordListRepository.cs" />
     <Compile Include="Works\RecordDocView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Works\RecordEditView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Works\RecordList.cs" />
+    <Compile Include="RecordList.cs" />
     <Compile Include="Works\RecordNavigationEventArgs.cs" />
     <Compile Include="Works\RecordNavigationInfo.cs" />
     <Compile Include="Works\RecordView.cs">

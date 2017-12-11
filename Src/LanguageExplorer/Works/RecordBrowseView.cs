@@ -592,7 +592,7 @@ namespace LanguageExplorer.Works
 		/// another pane may show a more detailed view of the selected record. Therefore, RecordBrowseView
 		/// never claims to have 'handled' this event.
 		/// </summary>
-		protected override void Clerk_RecordChanged(object sender, RecordNavigationEventArgs e)
+		protected override void RecordList_RecordChanged_Handler(object sender, RecordNavigationEventArgs e)
 		{
 			// Don't call base, since we don't want that behavior.
 			// Can't do anything if it isn't fully initialized,

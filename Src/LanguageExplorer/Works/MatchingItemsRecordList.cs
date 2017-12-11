@@ -30,7 +30,7 @@ namespace LanguageExplorer.Works
 
 		#region Overrides of IRecordList
 
-		public override void InitLoad(bool loadList)
+		protected override void InitLoad(bool loadList)
 		{
 			ComputeInsertableClasses();
 			CurrentIndex = -1;

@@ -14,24 +14,25 @@ using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.LcmUi.Dialogs;
+using LanguageExplorer.Works;
 using SIL.Code;
-using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.Filters;
-using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
-using SIL.Reporting;
 using SIL.LCModel.Utils;
+using SIL.Reporting;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// RecordList is a vector of objects
@@ -65,7 +66,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		protected RecordFilter m_filter;
 		protected RecordFilter m_filterPrev;
-		protected string m_propertyName = String.Empty;
+		protected string m_propertyName = string.Empty;
 		protected string m_fontName;
 		protected int m_typeSize = 10;
 		protected bool m_reloadingList;
@@ -126,11 +127,6 @@ namespace LanguageExplorer.Works
 		/// This becomes the SilDataAccess for any views which want to see the filtered, sorted record list.
 		/// </summary>
 		protected ObjectListPublisher m_objectListPublisher;
-
-		/// <summary>
-		/// Set of objects that we own and have to dispose
-		/// </summary>
-		private readonly DisposableObjectsSet<IDisposable> m_ObjectsToDispose = new DisposableObjectsSet<IDisposable>();
 		protected StatusBar _statusBar;
 		/// <summary />
 		protected IRecordChangeHandler _recordChangeHandler;
@@ -157,18 +153,18 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		protected RecordFilter _activeMenuBarFilter;
 		private bool _shouldHandleDeletion = true; // false, if the dependent record list is to handle deletion, as for reversals.
-												   /// <summary>
-												   /// this is an object which gives us the list of filters which we should offer to the user from the UI.
-												   /// this does not include the filters they can get that by using the FilterBar.
-												   /// </summary>
+		/// <summary>
+		/// this is an object which gives us the list of filters which we should offer to the user from the UI.
+		/// this does not include the filters they can get that by using the FilterBar.
+		/// </summary>
 		protected RecordFilterListProvider _filterProvider;
 		private RecordFilter _defaultFilter;
 		private string _defaultSortLabel;
 		private bool _suppressSaveOnChangeRecord; // true during delete and insert and ShowRecord calls caused by them.
 		private bool _allowDeletions = true;   // false if nothing is to be deleted for this record list.
-											   /// <summary>
-											   /// All of the sorters for the record list.
-											   /// </summary>
+		/// <summary>
+		/// All of the sorters for the record list.
+		/// </summary>
 		protected Dictionary<string, PropertyRecordSorter> _allSorters;
 
 
@@ -357,9 +353,6 @@ namespace LanguageExplorer.Works
 			if (disposing)
 			{
 				UnregisterMessageHandlers();
-				ListChanged -= OnListChanged;
-				AboutToReload -= AboutToReload_Handler;
-				DoneReload -= DoneReload_Handler;
 				RemoveNotification(); // before disposing list, we need it to get to the Cache.
 				if (m_cache != null && RecordedFocusedObject != null)
 				{
@@ -375,7 +368,6 @@ namespace LanguageExplorer.Works
 				m_sda?.RemoveNotification(this);
 				m_insertableClasses?.Clear();
 				m_sortedObjects?.Clear();
-				m_ObjectsToDispose.Dispose();
 				_recordChangeHandler?.Dispose();
 				_bulkEditListUpdateHelper?.Dispose();
 				if (IsControllingTheRecordTreeBar)
@@ -439,9 +431,6 @@ namespace LanguageExplorer.Works
 			}
 			TryRestoreSorter();
 			TryRestoreFilter();
-			ListChanged += OnListChanged;
-			AboutToReload += AboutToReload_Handler;
-			DoneReload += DoneReload_Handler;
 			var setFilterMenu = false;
 			if (_filterProvider != null)
 			{
@@ -472,7 +461,7 @@ namespace LanguageExplorer.Works
 
 			if (!setFilterMenu)
 			{
-				OnAdjustFilterSelection(null);
+				OnAdjustFilterSelection();
 			}
 
 #if RANDYTODO
@@ -484,8 +473,7 @@ namespace LanguageExplorer.Works
 			else
 			{
 				IRecordList recordListProvidingRootObject;
-				Debug.Assert(TryListProvidingRootObject(out recordListProvidingRootObject),
-					"We expected to find recordListProvidingOwner '" + m_recordListProvidingRootObject + "'. Possibly misspelled.");
+				Debug.Assert(TryListProvidingRootObject(out recordListProvidingRootObject), "We expected to find recordListProvidingOwner '" + m_recordListProvidingRootObject + "'. Possibly misspelled.");
 			}
 #endif
 
@@ -588,7 +576,7 @@ namespace LanguageExplorer.Works
 		public void RemoveItemsFor(int hvoToRemove)
 		{
 			ReplaceListItem(null, hvoToRemove, false);
-			SendPropChangedOnListChange(CurrentIndex, SortedObjects, ListChangedEventArgs.ListChangedActions.Normal);
+			SendPropChangedOnListChange(CurrentIndex, SortedObjects, ListChangedActions.Normal);
 		}
 
 		/// <summary>
@@ -659,13 +647,7 @@ namespace LanguageExplorer.Works
 
 		#region Implementation of IRecordList
 
-		public event EventHandler AboutToReload;
-		public event EventHandler DoneReload;
 		public event FilterChangeHandler FilterChangedByList;
-		/// <summary>
-		/// fired when the list changes
-		/// </summary>
-		public event ListChangedEventHandler ListChanged;
 		public event RecordNavigationInfoEventHandler RecordChanged;
 		public event SelectObjectEventHandler SelectedObjectChanged;
 		public event EventHandler SorterChangedByList;
@@ -694,7 +676,7 @@ namespace LanguageExplorer.Works
 
 		public bool AreCustomFieldsAProblem(int[] clsids)
 		{
-			var mdc = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
+			var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
 			var rePunct = new Regex(@"\p{P}");
 			foreach (var clsid in clsids)
 			{
@@ -731,13 +713,6 @@ namespace LanguageExplorer.Works
 			ListLoadingSuppressed = false;
 		}
 
-		public LcmCache Cache => m_cache;
-
-		public virtual bool CanInsertClass(string className)
-		{
-			return (GetMatchingClass(className) != null);
-		}
-
 		public bool CanMoveTo(Navigation navigateTo)
 		{
 			bool canMoveTo;
@@ -759,136 +734,6 @@ namespace LanguageExplorer.Works
 					throw new IndexOutOfRangeException($"I don't know if one can move to '{navigateTo}'.");
 			}
 			return canMoveTo;
-		}
-
-		public void ChangeOwningObjectId(int hvo)
-		{
-			OwningObject = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-		}
-
-		/// <summary>
-		/// Change the sorter...and resort if the list already exists.
-		/// </summary>
-		/// <param name="sorter"></param>
-		public virtual void ChangeSorter(RecordSorter sorter)
-		{
-			Sorter = sorter;
-
-			// JohnT: a different sorter may create a quite different set of IManyOnePathSortItems.
-			// Optimize: it may be possible to find some cases in which we don't need to reload fully,
-			// for example, when reversing the order on the same column.
-			if (m_sortedObjects != null)
-			{
-				ReloadList();
-			}
-		}
-
-		/// <summary>
-		/// Create an object of the specified class.
-		/// </summary>
-		/// <param name="className"></param>
-		/// <returns>true if successful (the class is known)</returns>
-		public virtual bool CreateAndInsert(string className)
-		{
-			var cpi = GetMatchingClass(className);
-			Debug.Assert(cpi != null, "This object should not have been asked to insert an object of the class " + className + ".");
-			if (cpi != null)
-			{
-				List<ClassAndPropInfo> cpiPath;
-#if NEEDED // If we need to be able to use this code path to insert into virtual properties, we will need to make them
-// Support writing, or do something similar to the old code which figured out a path of places to insert
-// the real object. As far as I (JohnT) can tell, though, we don't currently have any virtual properties
-// at the top level of a record list into which we try to insert newly created objects in this way.
-// check to see if we're wanting to insert into an owning relationship via a virtual property.
-				BaseFDOPropertyVirtualHandler vh = Cache.VwCacheDaAccessor.GetVirtualHandlerId(m_flid) as BaseFDOPropertyVirtualHandler;
-				if (vh != null)
-				{
-					cpi.hvoOwner = m_owningObject.Hvo;
-					cpiPath = vh.GetRealOwningPath();
-					if (cpiPath.Count == 0)
-						return false;
-				}
-				else
-				{
-					cpiPath = new List<ClassAndPropInfo>(new ClassAndPropInfo[] { cpi });
-				}
-#else
-				cpiPath = new List<ClassAndPropInfo>(new[] { cpi });
-#endif
-				var createAndInsertMethodObj = new CpiPathBasedCreateAndInsert(m_owningObject.Hvo, cpiPath, this);
-				var newObj = DoCreateAndInsert(createAndInsertMethodObj);
-				var hvoNew = newObj?.Hvo ?? 0;
-				return hvoNew != 0; // If we get zero, we couldn't do it for some reason.
-			}
-			return false;
-		}
-
-		/// <summary>
-		/// Creates a new AndFilter and registers it for later disposal.
-		/// </summary>
-		public AndFilter CreateNewAndFilter(params RecordFilter[] filters)
-		{
-			Debug.Assert(filters.Length > 1, "Need at least two filters to construct an AndFilter");
-			var af = new AndFilter();
-			foreach (var filter in filters)
-			{
-				af.Add(filter);
-			}
-			return af;
-		}
-
-		public ICmObject CreateNewObject(int hvoOwner, IList<ClassAndPropInfo> cpiPath)
-		{
-			if (cpiPath.Count > 2)
-			{
-				throw new ArgumentException("We currently only support up to 2 levels for creating a new object.");
-			}
-			if (cpiPath.Count == 2)
-			{
-				if (cpiPath[1].isVector)
-					throw new ArgumentException("We expect the second level to be an atomic property.");
-			}
-			if (!cpiPath[0].isVector)
-			{
-				throw new ArgumentException("We expect the first level to be a vector property.");
-			}
-
-			ISilDataAccess sda = VirtualListPublisher;
-			// assume we need to insert a new object in the vector field following hvoOwner
-			var cpi = cpiPath[0];
-			var flid = cpi.flid;
-			var insertPosition = 0;
-			switch ((CellarPropertyType)sda.MetaDataCache.GetFieldType(flid))
-			{
-				case CellarPropertyType.OwningCollection:
-					insertPosition = -1;
-					break;
-				case CellarPropertyType.OwningSequence:
-					if (CurrentObjectHvo != 0 && cpiPath.Count == 1)
-					{
-						hvoOwner = CurrentObject.Owner.Hvo;
-						flid = CurrentObject.OwningFlid;
-						var oldIndex = sda.GetObjIndex(hvoOwner, flid, CurrentObjectHvo);
-						insertPosition = oldIndex + 1;
-					}
-					break;
-				default:
-					// Just possible it's some kind of virtual we can't insert a new object into.
-					return null;
-			}
-
-			var hvoNew = sda.MakeNewObject(cpi.signatureClsid, hvoOwner, flid, insertPosition);
-
-			// we may need to insert another new class.
-			if (cpiPath.Count > 1)
-			{
-				// assume this is an atomic property.
-				var cpiLevel2 = cpiPath[1];
-				hvoOwner = hvoNew;
-				flid = cpiLevel2.flid;
-				hvoNew = sda.MakeNewObject(cpiLevel2.signatureClsid, hvoOwner, flid, -2);
-			}
-			return hvoNew != 0 ? m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoNew) : null;
 		}
 
 		/// <summary>
@@ -1011,117 +856,7 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		/// <summary>
-		/// Answer true if the current object is valid. Currently we just check for deleted objects.
-		/// We could try to get an ICmObject and call IsValidObject, but currently that doesn't do
-		/// any more than this, and it fails (spuriously) when working with fake objects.
-		/// </summary>
-		public bool CurrentObjectIsValid
-		{
-			get
-			{
-				var hvo = CurrentObjectHvo;
-				return hvo != 0 && hvo != (int)SpecialHVOValues.kHvoObjectDeleted;
-			}
-		}
-
-		/// <summary>
-		/// Delete the current object.
-		/// In some cases thingToDelete is not actually the current object, but it should always
-		/// be related to it.
-		/// </summary>
-		public virtual void DeleteCurrentObject(ICmObject thingToDelete = null)
-		{
-			if (thingToDelete == null)
-			{
-				thingToDelete = CurrentObject;
-			}
-
-			try
-			{
-				// This can happen in some bizarre cases, such as reconciling with another client
-				// just before delete, if the other client also deleted the same object.
-				if (!IsCurrentObjectValid() || !thingToDelete.IsValidObject)
-				{
-					return;
-				}
-				m_deletingObject = true;
-				// This looks plausible; but for example IndexOf may reload the list, if a reload is pending;
-				// and the current object may no longer match the current filter, so it may be gone.
-				//Debug.Assert(currentIndex == IndexOf(currentObject.Hvo));
-				using (new ListUpdateHelper(this))
-				{
-					var updatingListOrig = UpdatingList;
-					UpdatingList = true;
-					try
-					{
-						RemoveItemsFor(CurrentObject.Hvo);
-						VirtualListPublisher.DeleteObj(thingToDelete.Hvo);
-					}
-					finally
-					{
-						UpdatingList = updatingListOrig;
-					}
-				}
-			}
-			finally
-			{
-				m_deletingObject = false;
-			}
-		}
-
-		/// <summary>
-		/// True if we are in the middle of deleting an object.
-		/// </summary>
-		public bool DeletingObject => m_deletingObject;
-
-		/// <summary>
-		/// Create and Insert an item in a list. If this is a hierarchical list, then insert it at the same level
-		/// as the current object.
-		/// SuppressSaveOnChangeRecord will be true, to allow the user to Undo this action.
-		/// NOTE: the caller may want to call SaveOnChangeRecord() before calling this.
-		/// </summary>
-		/// <typeparam name="TObj"></typeparam>
-		/// <param name="createAndInsertMethodObj"></param>
-		/// <returns></returns>
-		public TObj DoCreateAndInsert<TObj>(ICreateAndInsert<TObj> createAndInsertMethodObj)
-			where TObj : ICmObject
-		{
-			TObj newObj;
-			int hvoNew;
-			var options = new ListUpdateHelperOptions
-			{
-				SuspendPropChangedDuringModification = true
-			};
-			using (new ListUpdateHelper(this, options))
-			{
-				newObj = createAndInsertMethodObj.Create();
-				hvoNew = newObj != null ? newObj.Hvo : 0;
-				if (hvoNew != 0)
-				{
-					ReplaceListItem(hvoNew, ListChangedEventArgs.ListChangedActions.SuppressSaveOnChangeRecord);
-				}
-			}
-			CurrentIndex = IndexOf(hvoNew);
-			return newObj;
-		}
-
 		public bool Editable { get; set; }
-
-		/// <summary>
-		/// False if SendPropChangedOnListChange() should be a no-op.
-		/// </summary>
-		public bool EnableSendPropChanged
-		{
-			get
-			{
-				return m_fEnableSendPropChanged;
-			}
-			set
-			{
-				m_fEnableSendPropChanged = value;
-			}
-		}
 
 		public virtual RecordFilter Filter
 		{
@@ -1135,129 +870,11 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		/// <summary>
-		/// Return the index (in m_sortedObjects) of the first displayed object.
-		/// (In hierarchical lists, this is not necessarily the first item.)
-		/// If the list is empty return -1.
-		/// </summary>
-		public virtual int FirstItemIndex
-		{
-			get
-			{
-				if (m_sortedObjects == null || m_sortedObjects.Count == 0)
-				{
-					return -1;
-				}
-				return 0;
-			}
-		}
-
-		/// <summary />
-		public int Flid => m_flid;
-
 		public string FontName => m_fontName;
 
-		/// <summary>
-		/// Used on occasions like changing views, this should suppress any optimization that prevents real reloads.
-		/// </summary>
-		public virtual void ForceReloadList()
-		{
-			ReloadList();  // By default nothing special is needed.
-		}
-
-		public bool HasEmptyList { get; }
+		public bool HasEmptyList => SortedObjects.Count == 0;
 
 		public string Id { get; protected set; }
-
-		/// <summary>
-		/// get the index of an item in the list that has a root object that is owned by hvo
-		/// </summary>
-		/// <param name="hvoTarget"></param>
-		/// <returns>-1 if the object is not in the list</returns>
-		public int IndexOfChildOf(int hvoTarget)
-		{
-			// If the list is made up of fake objects, we can't find one of them owned by our target,
-			// and trying to will crash, so give up.
-			if (SortedObjects.Count == 0 || !m_cache.ServiceLocator.ObjectRepository.IsValidObjectId(((IManyOnePathSortItem)SortedObjects[0]).RootObjectHvo))
-			{
-				return -1;
-			}
-
-			var i = 0;
-			foreach (IManyOnePathSortItem item in SortedObjects)
-			{
-				var rootObject = item.RootObjectUsing(m_cache);
-				if (rootObject == null)
-				{
-					continue;  // may be something that has been deleted?
-				}
-				for (var owner = rootObject.Owner; owner != null; owner = owner.Owner)
-				{
-					if (owner.Hvo == hvoTarget)
-					{
-						return i;
-					}
-				}
-				++i;
-			}
-			return -1;
-		}
-
-		/// <summary>
-		/// get the index of an item in the list that has a root object that (directly or indirectly) owns hvo
-		/// </summary>
-		/// <param name="hvoTarget"></param>
-		/// <returns>-1 if the object is not in the list</returns>
-		public int IndexOfParentOf(int hvoTarget)
-		{
-			// If the list is made up of fake objects, we can't find one of them that our target owns,
-			// and trying to will crash, so give up.
-			if (SortedObjects.Count == 0 || !m_cache.ServiceLocator.ObjectRepository.IsValidObjectId(((IManyOnePathSortItem)SortedObjects[0]).RootObjectHvo))
-			{
-				return -1;
-			}
-
-			var target = m_cache.ServiceLocator.ObjectRepository.GetObject(hvoTarget);
-			var owners = new HashSet<int>();
-			for (var owner = target.Owner; owner != null; owner = owner.Owner)
-			{
-				owners.Add(owner.Hvo);
-			}
-
-			var i = 0;
-			foreach (IManyOnePathSortItem item in SortedObjects)
-			{
-				if (owners.Contains(item.RootObjectHvo))
-				{
-					return i;
-				}
-				++i;
-			}
-			return -1;
-		}
-
-		public virtual void InitLoad(bool loadList)
-		{
-			m_sda = VirtualListPublisher; // needed before ComputeInsertableClasses().
-			m_sda.AddNotification(this);
-
-			ComputeInsertableClasses();
-			CurrentIndex = -1;
-			m_hvoCurrent = 0;
-
-			if (loadList)
-			{
-				var originalValue = IsActiveInGui;
-				IsActiveInGui = true; // Need to fake it.
-				ReloadList();
-				IsActiveInGui = originalValue;
-			}
-			else
-			{
-				ListLoadingSuppressed = true;
-				RequestedLoadWhileSuppressed = true;
-			}
-		}
 
 		public bool IsActiveInGui
 		{
@@ -1267,16 +884,7 @@ namespace LanguageExplorer.Works
 
 		public virtual bool IsControllingTheRecordTreeBar { get; set; }
 
-		public bool IsCurrentObjectValid()
-		{
-			return m_cache.ServiceLocator.IsValidObjectId(CurrentObjectHvo);
-		}
-
 		public bool IsDefaultSort { get; set; }
-
-		public bool IsEmpty => SortedObjects.Count == 0;
-
-		public bool IsVirtualPublisherCreated => m_objectListPublisher != null;
 
 		public void JumpToIndex(int index, bool suppressFocusChange = false)
 		{
@@ -1316,22 +924,6 @@ namespace LanguageExplorer.Works
 			JumpToIndex(index, suppressFocusChange);
 		}
 
-		public void JumpToRecord(Guid jumpToGuid, bool suppressFocusChange = false)
-		{
-			ICmObject obj;
-			if (Cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(jumpToGuid, out obj))
-			{
-				JumpToRecord(obj.Hvo, suppressFocusChange);
-			}
-		}
-
-		/// <summary>
-		/// Return the index (in m_sortedObjects) of the last displayed object.
-		/// (In hierarchical lists, this is not necessarily the last item.)
-		/// If the list is empty return -1.
-		/// </summary>
-		public virtual int LastItemIndex => m_sortedObjects == null || m_sortedObjects.Count == 0 ? -1 : m_sortedObjects.Count - 1;
-
 		/// <summary>
 		/// This may be set to suppress automatic reloading of the list. When set false again, if the list
 		/// would have been reloaded at least once, it will be at that point. Use ListModificationInProgress instead
@@ -1350,7 +942,11 @@ namespace LanguageExplorer.Works
 				{
 					return;
 				}
-				SetSuppressingLoadList(value);
+				m_suppressingLoadList = value;
+				if (!m_suppressingLoadList)
+				{
+					UninstallWindowActivated();
+				}
 				if (m_suppressingLoadList)
 				{
 					// We were previously NOT suppressing it; init the flag
@@ -1422,48 +1018,6 @@ namespace LanguageExplorer.Works
 			BroadcastChange(false);
 		}
 
-		public virtual bool NeedToReloadList()
-		{
-			var fReload = RequestedLoadWhileSuppressed;
-			if (Flid == m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries)
-			{
-				fReload |= ReloadLexEntries;
-			}
-			return fReload;
-		}
-
-		/// <summary>
-		/// Return the index (in m_sortedObjects) of the object that follows the one
-		/// at m_currentIndex.
-		/// (In hierarchical lists, this is not necessarily the item at index + 1.)
-		/// If the list is empty return -1.
-		/// If the current object is the last return m_currentIndex.
-		/// If m_currentIndex is -1 return -1.
-		/// </summary>
-		public virtual int NextItemIndex => m_sortedObjects == null || m_sortedObjects.Count == 0 || m_currentIndex == -1 ? -1 : Math.Min(m_currentIndex + 1, m_sortedObjects.Count - 1);
-
-		public bool OnAdjustFilterSelection(object argument)
-		{
-			// NOTE: ListPropertyChoice compares its Value to its parent (ChoiceGroup).SinglePropertyValue
-			// to determine whether or not it is the Checked item in the list.
-			// Is there any way we could do this in a less kludgy/backdoor sort of way?
-
-			//If we have a filter selected, make sure "No Filter" is not still selected in the menu or toolbar.
-			if (_activeMenuBarFilter == null && Filter != null)
-			{
-				// Resetting the table property value to "Uncheck all" will effectively uncheck this item.
-				PropertyTable.SetProperty(CurrentFilterPropertyTableId, FiltersStrings.ksUncheckAll, SettingsGroup.LocalSettings, true, false);
-			}
-			// if no filter is set, then we always want the "No Filter" item selected.
-			else if (Filter == null)
-			{
-				// Resetting the table property value to "No Filter" checks this item.
-				PropertyTable.SetProperty(CurrentFilterPropertyTableId, FiltersStrings.ksNoFilter, SettingsGroup.LocalSettings, true, false);
-			}
-			// allow others to process this.
-			return false;
-		}
-
 		/// <summary>
 		/// Handle adding and/or removing a filter.
 		/// </summary>
@@ -1475,7 +1029,9 @@ namespace LanguageExplorer.Works
 				Logger.WriteEvent("Changing filter.");
 				// if our record list is in the state of suspending loading the list, reset it now.
 				if (SuspendLoadListUntilOnChangeFilter)
-					SuspendLoadListUntilOnChangeFilter = false;
+				{
+					PropertyTable.SetProperty("SuspendLoadListUntilOnChangeFilter", string.Empty, SettingsGroup.LocalSettings, false, false);
+				}
 
 				if (m_filter == null)
 				{
@@ -1548,45 +1104,9 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		public void OnChangeFilterClearAll(object commandObject)
-		{
-			_activeMenuBarFilter = null; // there won't be a menu bar filter after this.
-			if (Filter is AndFilter)
-			{
-				// If some parts are not user visible we should not remove them.
-				var af = (AndFilter)Filter;
-				var children = af.Filters;
-				var childrenToKeep = from RecordFilter filter in children where !filter.IsUserVisible select filter;
-				var count = childrenToKeep.Count();
-				if (count == 1)
-				{
-					OnChangeFilter(new FilterChangeEventArgs(childrenToKeep.First(), af));
-					return;
-				}
-				if (count > 0)
-				{
-					var af2 = CreateNewAndFilter(childrenToKeep.ToArray());
-					OnChangeFilter(new FilterChangeEventArgs(af2, Filter));
-					return;
-				}
-				// Otherwise none of the children need to be kept, get rid of the whole filter.
-			}
-
-			OnChangeFilter(new FilterChangeEventArgs(null, Filter));
-		}
-
 		public void OnChangeListItemsClass(int listItemsClass, int newTargetFlid, bool force)
 		{
 			ReloadList(listItemsClass, newTargetFlid, force);
-		}
-
-		public void OnChangeSorter()
-		{
-			using (new WaitCursor(PropertyTable.GetValue<Form>("window")))
-			{
-				Logger.WriteEvent($"Sorter changed: {Sorter?.ToString() ?? "(no sorter)"}");
-				SorterChangedByList?.Invoke(this, EventArgs.Empty);
-			}
 		}
 
 		public bool OnDeleteRecord(object commandObject)
@@ -1632,11 +1152,11 @@ namespace LanguageExplorer.Works
 					string cannotDeleteMsg;
 					if (uiObj.CanDelete(out cannotDeleteMsg))
 					{
-						dlg.SetDlgInfo(uiObj, Cache, PropertyTable);
+						dlg.SetDlgInfo(uiObj, m_cache, PropertyTable);
 					}
 					else
 					{
-						dlg.SetDlgInfo(uiObj, Cache, PropertyTable, TsStringUtils.MakeString(cannotDeleteMsg, Cache.DefaultUserWs));
+						dlg.SetDlgInfo(uiObj, m_cache, PropertyTable, TsStringUtils.MakeString(cannotDeleteMsg, m_cache.DefaultUserWs));
 					}
 				}
 				var window = PropertyTable.GetValue<Form>("window");
@@ -1659,7 +1179,7 @@ namespace LanguageExplorer.Works
 							{
 								var cmd = (Command) commandObject;
 								UndoableUnitOfWorkHelper.Do(cmd.UndoText, cmd.RedoText, Cache.ActionHandlerAccessor,
-															() => m_list.DeleteCurrentObject(state, thingToDelete));
+															() => DeleteCurrentObject(thingToDelete));
 							}
 							finally
 							{
@@ -1808,8 +1328,8 @@ namespace LanguageExplorer.Works
 					// affix allomorph in an entry (see LT-4025).  So make sure we have a suitable
 					// target before complaining to the user about a filter being on.
 					var mdc = (IFwMetaDataCacheManaged)VirtualListPublisher.MetaDataCache;
-					var clidList = mdc.FieldExists(Flid) ? mdc.GetDstClsId(Flid) : -1;
-					var clidObj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoTarget).ClassID;
+					var clidList = mdc.FieldExists(m_flid) ? mdc.GetDstClsId(m_flid) : -1;
+					var clidObj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoTarget).ClassID;
 
 					// If (int) clidList is -1, that means it was for a decorator property and the IsSameOrSubclassOf
 					// test won't be valid.
@@ -1826,7 +1346,7 @@ namespace LanguageExplorer.Works
 							// update issue reported in (LT-2448). However, that message only works in the context of a
 							// BrowseViewer, not a document view (e.g. Dictionary) (see LT-7298). So, I've
 							// tested OnChangeFilterClearAll, and it seems to solve both problems now.
-							OnChangeFilterClearAll(null);
+							OnChangeFilterClearAll();
 							_activeMenuBarFilter = null;
 							index = IndexOfObjOrChildOrParent(hvoTarget);
 						}
@@ -1935,81 +1455,48 @@ namespace LanguageExplorer.Works
 		{
 			if (IsPrimaryRecordList)
 			{
-				PersistOn(pathname);
-			}
-		}
-
-		public void PersistOn(string pathname)
-		{
-			// Ensure that all the items in the sorted list are valid ICmObject references before
-			// actually persisting anything.
-			if (m_sortedObjects == null || m_sortedObjects.Count == 0)
-			{
-				return;
-			}
-			var repo = m_cache.ServiceLocator.ObjectRepository;
-			foreach (var obj in m_sortedObjects)
-			{
-				var item = obj as ManyOnePathSortItem;
-				if (item == null)
+				// Ensure that all the items in the sorted list are valid ICmObject references before
+				// actually persisting anything.
+				if (m_sortedObjects == null || m_sortedObjects.Count == 0)
 				{
 					return;
 				}
-				// The object might have been deleted.  See LT-11169.
-				if (item.KeyObject <= 0 || item.RootObjectHvo <= 0 || !repo.IsValidObjectId(item.KeyObject) || !repo.IsValidObjectId(item.RootObjectHvo))
+				var repo = m_cache.ServiceLocator.ObjectRepository;
+				foreach (var obj in m_sortedObjects)
 				{
-					return;
+					var item = obj as ManyOnePathSortItem;
+					if (item == null)
+					{
+						return;
+					}
+					// The object might have been deleted.  See LT-11169.
+					if (item.KeyObject <= 0 || item.RootObjectHvo <= 0 || !repo.IsValidObjectId(item.KeyObject) || !repo.IsValidObjectId(item.RootObjectHvo))
+					{
+						return;
+					}
 				}
-			}
-			try
-			{
-				using (var stream = new StreamWriter(pathname))
+				try
 				{
-					ManyOnePathSortItem.WriteItems(m_sortedObjects, stream, repo);
-					stream.Close();
+					using (var stream = new StreamWriter(pathname))
+					{
+						ManyOnePathSortItem.WriteItems(m_sortedObjects, stream, repo);
+						stream.Close();
+					}
 				}
-			}
-			// LT-11395 and others: somehow the current list contains a deleted object.
-			// Writing out this file is just an optimization, so if we can't do it, just skip it.
-			catch (KeyNotFoundException)
-			{
-				TryToDelete(pathname);
-			}
-			catch (IOException)
-			{
-				TryToDelete(pathname);
+				// LT-11395 and others: somehow the current list contains a deleted object.
+				// Writing out this file is just an optimization, so if we can't do it, just skip it.
+				catch (KeyNotFoundException)
+				{
+					TryToDelete(pathname);
+				}
+				catch (IOException)
+				{
+					TryToDelete(pathname);
+				}
 			}
 		}
-
-		/// <summary>
-		/// Return the index (in m_sortedObjects) of the object that precedes the one
-		/// at m_currentIndex.
-		/// (In hierarchical lists, this is not necessarily the item at index - 1.)
-		/// If the list is empty return -1.
-		/// If the current object is the first return m_currentIndex.
-		/// If m_currentIndex is -1 return -1.
-		/// </summary>
-		public virtual int PrevItemIndex => m_sortedObjects == null || m_sortedObjects.Count == 0 || m_currentIndex == -1 ? -1 : Math.Max(m_currentIndex - 1, 0);
-
-		/// <summary>
-		/// Get/set a progress reporter (encapsulated in an IAdvInd4 interface).
-		/// </summary>
-		public IProgress ProgressReporter { get; set; }
 
 		public string PropertyName => m_propertyName;
-
-		public virtual string PropertyTableId(string sorterOrFilter)
-		{
-			// Dependent lists do not have owner/property set. Rather they have class/field.
-			var className = VirtualListPublisher.MetaDataCache.GetOwnClsName(m_flid);
-			var fieldName = VirtualListPublisher.MetaDataCache.GetFieldName(m_flid);
-			if (string.IsNullOrEmpty(PropertyName) || PropertyName == fieldName)
-			{
-				return $"{className}.{fieldName}_{sorterOrFilter}";
-			}
-
-			return $"{className}.{PropertyName}_{sorterOrFilter}";
-		}
 
 		public void ReloadFilterProvider()
 		{
@@ -2018,317 +1505,12 @@ namespace LanguageExplorer.Works
 
 		public virtual void ReloadIfNeeded()
 		{
-			if (OwningObject != null && IsVirtualPublisherCreated)
+			if (OwningObject != null && m_objectListPublisher != null)
 			{
 				// A full refresh wipes out all caches as of 26 October 2005,
 				// so we have to reload it. This fixes the sextuplets:
 				// LT-5393, LT-6102, LT-6154, LT-6084, LT-6059, LT-6062.
 				ReloadList();
-			}
-		}
-
-		/// <summary>
-		/// Sort and filter the underlying property to create the current list of objects.
-		/// </summary>
-		public virtual void ReloadList()
-		{
-			// Skip multiple reloads and reloading when our record list is not active.
-			if (m_reloadingList)
-			{
-				return;
-			}
-			if (m_suppressingLoadList || !IsActiveInGui || SuspendLoadListUntilOnChangeFilter)
-			{
-				// if we need to reload the list
-				// clear the views property until we are no longer suppressed, so dependent views don't try to access objects
-				// that have possibly been deleted.
-				if (m_owningObject != null && SortedObjects.Count > 0 && ((UpdateHelper != null && UpdateHelper.ClearBrowseListUntilReload) || !IsActiveInGui))
-				{
-					m_indexToRestoreDuringReload = CurrentIndex;    // try to restore this index during reload.
-																	// clear everything for now, including the current index, but don't issue a RecordNavigation.
-					SendPropChangedOnListChange(-1, new ArrayList(), ListChangedEventArgs.ListChangedActions.SkipRecordNavigation);
-				}
-				m_requestedLoadWhileSuppressed = true;
-				// it's possible that we'll want to reload once we become the main active window (cf. LT-9251)
-				var window = PropertyTable.GetValue<Form>("window");
-				var app = PropertyTable.GetValue<IApp>("App");
-				if (window != null && app != null && window != app.ActiveMainWindow)
-				{
-					// make sure we don't install more than one.
-					RequestReloadOnActivation(window);
-				}
-				return;
-			}
-			try
-			{
-				m_requestedLoadWhileSuppressed = false;
-				if (UpdateHelper != null && UpdateHelper.ClearBrowseListUntilReload)
-				{
-					if (m_indexToRestoreDuringReload != -1)
-					{
-						// restoring m_currentIndex directly isn't effective until SortedObjects
-						// is greater than 0.
-						// so, try to force to restore the current index to what we persist.
-						CurrentIndex = -1;
-#if RANDYTODO
-// As of 21JUL17 nobody cares about that 'PersistedIndexProperty' changing, so skip the broadcast.
-#endif
-						PropertyTable.SetProperty(PersistedIndexProperty, m_indexToRestoreDuringReload, SettingsGroup.LocalSettings, true, false);
-						m_indexToRestoreDuringReload = -1;
-					}
-					UpdateHelper.ClearBrowseListUntilReload = false;
-				}
-				m_reloadingList = true;
-				if (UpdatePrivateList())
-				{
-					return; // Cannot complete the reload until PropChangeds complete.
-				}
-				var newCurrentIndex = CurrentIndex;
-#if RANDYTODO
-				// TODO: Replace use of ArrayList with List<IManyOnePathSortItem>.
-#endif
-				ArrayList newSortedObjects;
-				ListChangedEventArgs.ListChangedActions actions;
-
-				// Get the HVO of the current object (but only if it hasn't been deleted).
-				// If it has, don't modify m_currentIndex, as the old position is less likely to
-				// move the list than going to the top.
-				// (We want to keep the current OBJECT, not index, if it's still a real object,
-				// because the change that produced the regenerate might be a change of filter or sort
-				// that moves it a lot. But if the change is an object deletion, we want to not change
-				// the position if we can help it.)
-				var hvoCurrent = 0;
-				if (m_sortedObjects != null && m_currentIndex != -1 && m_sortedObjects.Count > m_currentIndex && CurrentObjectIsValid)
-				{
-					hvoCurrent = CurrentObjectHvo;
-				}
-
-				//this happens when the set is dependent on another one, but no item is selected in the
-				//primary list. For example, if there are no word forms, then the list which holds the analyses
-				//of a selected wordform will not have been owning object from which to pull analyses.
-				//or in the case of FWR-3171 the owning object has been deleted.
-				//But the following doesn't work because CurrentObjectIsValid also checks for hvo=0.
-				//if (m_owningObject == null || !CurrentObjectIsValid)
-				if (m_owningObject == null || m_owningObject.Hvo == (int)SpecialHVOValues.kHvoObjectDeleted)
-				{
-					SortedObjects = new ArrayList(0);
-					// We should not do SendPropChangedOnListChange, because that caches a property
-					// on m_owningObject, and issues various notifications based on its existence.
-					// Nothing should be displaying the list if there is no root object.
-					// However, as a safety precaution in case we previously had one, let's fix the
-					// current object information.
-					CurrentIndex = -1;
-					m_hvoCurrent = 0;
-					// we still need to broadcast the list changed to update dependent views. (LT-5987)
-					ListChanged?.Invoke(this, new ListChangedEventArgs(this, ListChangedEventArgs.ListChangedActions.Normal, 0));
-					return;
-				}
-
-				try
-				{
-					newSortedObjects = GetFilteredSortedList();
-				}
-				catch (LcmInvalidFieldException)
-				{
-					newSortedObjects = HandleInvalidFilterSortField();
-				}
-				catch (FwConfigurationException ce)
-				{
-					if (ce.InnerException is LcmInvalidFieldException)
-					{
-						newSortedObjects = HandleInvalidFilterSortField();
-					}
-					else
-					{
-						throw;
-					}
-				}
-
-				// Try to stay on the same object if possible.
-				if (hvoCurrent != 0 && newSortedObjects.Count > 0)
-				{
-					newCurrentIndex = GetNewCurrentIndex(newSortedObjects, hvoCurrent);
-					if (newCurrentIndex < 0 && newSortedObjects.Count > 0)
-					{
-						newCurrentIndex = 0; // expected but not found: move to top, but only if there are items in the list.
-						actions = ListChangedEventArgs.ListChangedActions.Normal; // This is a full-blown record change
-					}
-					else
-					{
-						// The index changed, so we need to broadcast RecordNavigate, but since we didn't actually change objects,
-						// we shouldn't do a save
-						actions = ListChangedEventArgs.ListChangedActions.SuppressSaveOnChangeRecord;
-					}
-				}
-				else
-				{
-					// We didn't even expect to find it, probably it's been deleted or sorted list has become empty.
-					// Keep the current position as far as possible.
-					newCurrentIndex = newCurrentIndex >= newSortedObjects.Count
-						? newSortedObjects.Count - 1
-						: GetPersistedCurrentIndex(newSortedObjects.Count);
-
-					actions = ListChangedEventArgs.ListChangedActions.Normal; // We definitely changed records
-				}
-
-				SendPropChangedOnListChange(newCurrentIndex, newSortedObjects, actions);
-				//YiSpeed 6.5 secs (mostly filling tree bar)
-				FinishedReloadList();
-			}
-			finally
-			{
-				m_reloadingList = false;
-			}
-		}
-
-		/// <summary>
-		/// This version of ReloadList assumes that there is a correct current list except that
-		/// property m_flid of object m_owningObject has been modified by inserting cvIns objects
-		/// and/or deleting cvDel objects at ivMin. May call the regular ReloadList, or
-		/// optimize for special cases.
-		/// </summary>
-		public virtual void ReloadList(int ivMin, int cvIns, int cvDel)
-		{
-			if (RequestedLoadWhileSuppressed)
-			{
-				// if a previous reload was requested, but suppressed, try to reload the entire list now
-				ReloadList();
-			}
-			// If m_currentIndex is negative the list is empty so we may as well load it fully.
-			// This saves worrying about various special cases in the code below.
-			else if (cvIns == 1 && (cvDel == 1 || cvDel == 0) && m_owningObject != null && m_hvoCurrent != 0 && m_currentIndex >= 0)
-			{
-				var cList = VirtualListPublisher.get_VecSize(m_owningObject.Hvo, m_flid);
-				if (cList == 1)
-				{
-					// we only have one item in our list, so let's just do a full reload.
-					// We don't want to insert completely new items in an obsolete list (Cf. LT-6741,6845).
-					ReloadList();
-					return;
-				}
-				if (cvDel > 0)
-				{
-					// Before we try to insert a new one, need to delete any items for deleted stuff,
-					// otherwise it may crash as it tries to compare the new item with an invalid one.
-					ClearOutInvalidItems();
-				}
-				if (ivMin < cList)
-				{
-					ReplaceListItem(VirtualListPublisher.get_VecItem(m_owningObject.Hvo, m_flid, ivMin));
-				}
-			}
-			else if (cvIns == 0 && cvDel == 0 && m_owningObject != null && m_hvoCurrent != 0)
-			{
-				UpdateListItemName(m_hvoCurrent);
-			}
-			else
-			{
-				ReloadList();
-			}
-		}
-
-		public virtual void ReloadList(int newListItemsClass, int newTargetFlid, bool force)
-		{
-			// Let a bulk-edit record list handle this.
-		}
-
-		public void RemoveInvalidItems()
-		{
-			RemoveUnwantedSortItems();
-		}
-
-		/// <summary>
-		/// This will remove the given hvosToRemove (if they exist in our sort items) and any items that refer to invalid objects.
-		/// Reload the view if there were any changes, and adjust the CurrentIndex
-		/// </summary>
-		public void RemoveUnwantedSortItems(List<int> hvosToRemove = null)
-		{
-			if (m_sortedObjects == null)
-			{
-				return; // nothing to remove.
-			}
-			var fUpdatingListOrig = UpdatingList;
-			UpdatingList = true;
-			try
-			{
-				var currentIndex = CurrentIndex;
-				var cOrigSortObjects = m_sortedObjects.Count;
-				// Note: We start with a Set, since it can't have duplicates.
-				// First remove the given hvos from our sort items.
-				var unwantedIndices = new HashSet<int>(IndicesOfSortItems(hvosToRemove));
-				// then remove any remaining items that point to invalid objects.
-				unwantedIndices.UnionWith(IndicesOfInvalidSortItems());
-				// Put the now unique indices into a list,
-				// so we can make sure they are processed in reverse order.
-				var sortedIndices = new List<int>(unwantedIndices.ToArray());
-				sortedIndices.Sort();
-				sortedIndices.Reverse();
-				foreach (var indexOfSortItem in sortedIndices)
-				{
-					if (indexOfSortItem < 0)
-					{
-						continue;
-					}
-					m_sortedObjects.RemoveAt(indexOfSortItem);
-					if (indexOfSortItem < currentIndex || SortedObjects.Count <= currentIndex)
-					{
-						currentIndex--;
-					}
-				}
-				if (m_sortedObjects.Count == 0)
-				{
-					currentIndex = -1;
-				}
-				else if (currentIndex >= m_sortedObjects.Count)
-				{
-					currentIndex = m_sortedObjects.Count - 1;
-				}
-				CurrentIndex = currentIndex;
-				if (m_sortedObjects.Count != cOrigSortObjects)
-				{
-					SendPropChangedOnListChange(CurrentIndex, SortedObjects, ListChangedEventArgs.ListChangedActions.Normal);
-				}
-			}
-			finally
-			{
-				UpdatingList = fUpdatingListOrig;
-			}
-		}
-
-		/// <summary>
-		/// replace any matching items in our sort list.
-		/// </summary>
-		/// <param name="hvoReplaced"></param>
-		/// <param name="listChangeAction"></param>
-		public void ReplaceListItem(int hvoReplaced, ListChangedEventArgs.ListChangedActions listChangeAction = ListChangedEventArgs.ListChangedActions.Normal)
-		{
-			var fUpdatingListOrig = UpdatingList;
-			UpdatingList = true;
-			try
-			{
-				var hvoOldCurrentObj = CurrentObjectHvo != 0 ? CurrentObjectHvo : 0;
-				var newSortItems = new ArrayList();
-				var objReplaced = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoReplaced);
-				newSortItems.AddRange(ReplaceListItem(objReplaced, hvoReplaced, true));
-				if (newSortItems.Count > 0)
-				{
-					// in general, when adding new items, we want to try to maintain the previous selected *object*,
-					// which may have changed index.  so try to find its new index location.
-					var indexOfCurrentObj = CurrentIndex;
-					if (hvoOldCurrentObj != 0 && CurrentObjectHvo != hvoOldCurrentObj)
-					{
-						var indexOfOldCurrentObj = IndexOf(hvoOldCurrentObj);
-						if (indexOfOldCurrentObj >= 0)
-						{
-							indexOfCurrentObj = indexOfOldCurrentObj;
-						}
-					}
-					SendPropChangedOnListChange(indexOfCurrentObj, SortedObjects, listChangeAction);
-				}
-			}
-			finally
-			{
-				UpdatingList = fUpdatingListOrig;
 			}
 		}
 
@@ -2371,21 +1553,12 @@ namespace LanguageExplorer.Works
 			return false; // could not restore, bad file or deleted objects or...
 		}
 
-		/// <summary>
-		/// Return the 'root' object (the one from the original list, which goes in the fake flid)
-		/// at the specified index.
-		/// </summary>
-		public ICmObject RootObjectAt(int index)
-		{
-			return SortItemAt(index).RootObjectUsing(m_cache);
-		}
-
 		public void SaveOnChangeRecord()
 		{
 #if RANDYTODO
 // Work up non static test that can use IFwMainWnd
 #endif
-			if (_suppressSaveOnChangeRecord || Cache == null /* || FwXWindow.InUndoRedo*/)
+			if (_suppressSaveOnChangeRecord || m_cache == null /* || FwXWindow.InUndoRedo*/)
 			{
 				return;
 			}
@@ -2393,7 +1566,7 @@ namespace LanguageExplorer.Works
 			{
 				// Commit() was too drastic here, resulting in Undo/Redo stack being cleared.
 				// (See LT-13397)
-				var actionHandler = Cache.ActionHandlerAccessor;
+				var actionHandler = m_cache.ActionHandlerAccessor;
 				if (actionHandler.CurrentDepth > 0)
 				{
 					// EndOuterUndoTask() is not implemented, so we better call EndUndoTask().
@@ -2433,19 +1606,6 @@ namespace LanguageExplorer.Works
 			if (!fSkipRecordNavigation)
 			{
 				OnRecordChanged(new RecordNavigationEventArgs(rni));
-			}
-		}
-
-		/// <summary>
-		/// sets the value of m_suppressingLoadList without any side effects (e.g. ReloadList()).
-		/// </summary>
-		/// <param name="value"></param>
-		public void SetSuppressingLoadList(bool value)
-		{
-			m_suppressingLoadList = value;
-			if (!m_suppressingLoadList)
-			{
-				UninstallWindowActivated();
 			}
 		}
 
@@ -2500,27 +1660,6 @@ namespace LanguageExplorer.Works
 		public bool SuppressSaveOnChangeRecord { get; set; }
 
 		public bool SuspendLoadingRecordUntilOnJumpToRecord { get; set; }
-
-		public bool SuspendLoadListUntilOnChangeFilter { get; set; }
-
-		/// <summary>
-		/// Transfers ownership of obj to RecordList. RecordList is now responsible for
-		/// calling Dispose on the object.
-		/// </summary>
-		public void TransferOwnership(IDisposable obj)
-		{
-			if (obj == null)
-			{
-				return;
-			}
-			m_ObjectsToDispose.Add(obj);
-		}
-
-		public virtual bool TryListProvidingRootObject(out IRecordList recordListProvidingRootObject)
-		{
-			recordListProvidingRootObject = null;
-			return false;
-		}
 
 		public int TypeSize => m_typeSize;
 
@@ -2947,6 +2086,52 @@ namespace LanguageExplorer.Works
 
 		#region Private stuff
 
+		/// <summary>
+		/// This version of ReloadList assumes that there is a correct current list except that
+		/// property m_flid of object m_owningObject has been modified by inserting cvIns objects
+		/// and/or deleting cvDel objects at ivMin. May call the regular ReloadList, or
+		/// optimize for special cases.
+		/// </summary>
+		private void ReloadList(int ivMin, int cvIns, int cvDel)
+		{
+			if (RequestedLoadWhileSuppressed)
+			{
+				// if a previous reload was requested, but suppressed, try to reload the entire list now
+				ReloadList();
+			}
+			// If m_currentIndex is negative the list is empty so we may as well load it fully.
+			// This saves worrying about various special cases in the code below.
+			else if (cvIns == 1 && (cvDel == 1 || cvDel == 0) && m_owningObject != null && m_hvoCurrent != 0 && m_currentIndex >= 0)
+			{
+				var cList = VirtualListPublisher.get_VecSize(m_owningObject.Hvo, m_flid);
+				if (cList == 1)
+				{
+					// we only have one item in our list, so let's just do a full reload.
+					// We don't want to insert completely new items in an obsolete list (Cf. LT-6741,6845).
+					ReloadList();
+					return;
+				}
+				if (cvDel > 0)
+				{
+					// Before we try to insert a new one, need to delete any items for deleted stuff,
+					// otherwise it may crash as it tries to compare the new item with an invalid one.
+					ClearOutInvalidItems();
+				}
+				if (ivMin < cList)
+				{
+					ReplaceListItem(VirtualListPublisher.get_VecItem(m_owningObject.Hvo, m_flid, ivMin));
+				}
+			}
+			else if (cvIns == 0 && cvDel == 0 && m_owningObject != null && m_hvoCurrent != 0)
+			{
+				UpdateListItemName(m_hvoCurrent);
+			}
+			else
+			{
+				ReloadList();
+			}
+		}
+
 		private bool IgnoreStatusPanel { get; set; }
 
 		private void UpdateSortStatusBarPanel()
@@ -3345,14 +2530,14 @@ namespace LanguageExplorer.Works
 			for (var i = idx + 1; i < cobj; ++i)
 			{
 				var item = (IManyOnePathSortItem)SortedObjects[i];
-				if (!Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(item.KeyObject).IsValidObject)
+				if (!m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(item.KeyObject).IsValidObject)
 				{
 					continue;
 				}
 				var fOk = true;
 				for (var j = 0; fOk && j < item.PathLength; j++)
 				{
-					fOk = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(item.PathObject(j)).IsValidObject;
+					fOk = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(item.PathObject(j)).IsValidObject;
 				}
 				if (fOk)
 				{
@@ -3362,14 +2547,14 @@ namespace LanguageExplorer.Works
 			for (var i = idx - 1; i >= 0; --i)
 			{
 				var item = (IManyOnePathSortItem)SortedObjects[i];
-				if (!Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(item.KeyObject).IsValidObject)
+				if (!m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(item.KeyObject).IsValidObject)
 				{
 					continue;
 				}
 				var fOk = true;
 				for (var j = 0; fOk && j < item.PathLength; j++)
 				{
-					fOk = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(item.PathObject(j)).IsValidObject;
+					fOk = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(item.PathObject(j)).IsValidObject;
 				}
 				if (fOk)
 				{
@@ -3384,11 +2569,11 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		private void AddNotification()
 		{
-			if (IsDisposed || Cache == null || Cache.IsDisposed || Cache.DomainDataByFlid == null)
+			if (IsDisposed || m_cache == null || m_cache.IsDisposed || m_cache.DomainDataByFlid == null)
 			{
 				return;
 			}
-			Cache.DomainDataByFlid.AddNotification(this);
+			m_cache.DomainDataByFlid.AddNotification(this);
 		}
 
 		/// <summary>
@@ -3397,11 +2582,11 @@ namespace LanguageExplorer.Works
 		private void RemoveNotification()
 		{
 			// We need the list to get the cache.
-			if (IsDisposed || Cache == null || Cache.IsDisposed || Cache.DomainDataByFlid == null)
+			if (IsDisposed || m_cache == null || m_cache.IsDisposed || m_cache.DomainDataByFlid == null)
 			{
 				return;
 			}
-			Cache.DomainDataByFlid.RemoveNotification(this);
+			m_cache.DomainDataByFlid.RemoveNotification(this);
 		}
 
 		/// <summary>
@@ -3448,7 +2633,7 @@ namespace LanguageExplorer.Works
 
 			if (filterName == nof.Name)
 			{
-				OnChangeFilterClearAll(null); // get rid of all the ones we're allowed to.
+				OnChangeFilterClearAll(); // get rid of all the ones we're allowed to.
 				return;
 			}
 
@@ -3459,7 +2644,7 @@ namespace LanguageExplorer.Works
 				{
 					// If we have no filter defined for this name, it is effectively another way to turn
 					// filters off. Turn off all we can.
-					OnChangeFilterClearAll(null); // get rid of all the ones we're allowed to.
+					OnChangeFilterClearAll(); // get rid of all the ones we're allowed to.
 					return;
 				}
 				// If we have a menu-type filter active, remove it. Otherwise don't remove anything.
@@ -3476,7 +2661,7 @@ namespace LanguageExplorer.Works
 			UpdateOwningObject();
 		}
 
-		private void AboutToReload_Handler(object sender, EventArgs e)
+		private void AboutToReload()
 		{
 			// This used to be a BroadcastMessage, but now broadcast is deferred.
 			// To keep the same logic it's now using the SendMessageToAllNow.  This
@@ -3489,7 +2674,7 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		private void DoneReload_Handler(object sender, EventArgs e)
+		private void DoneReload()
 		{
 			// This used to be a BroadcastMessage, but now broadcast is deferred.
 			// To keep the same logic it's now using the SendMessageToAllNow.  This
@@ -3502,7 +2687,7 @@ namespace LanguageExplorer.Works
 
 		private sealed class CpiPathBasedCreateAndInsert : ICreateAndInsert<ICmObject>
 		{
-			internal CpiPathBasedCreateAndInsert(int hvoOwner, IList<ClassAndPropInfo> cpiPath, IRecordList list)
+			internal CpiPathBasedCreateAndInsert(int hvoOwner, IList<ClassAndPropInfo> cpiPath, RecordList list)
 			{
 				HvoOwner = hvoOwner;
 				CpiPath = cpiPath;
@@ -3511,7 +2696,7 @@ namespace LanguageExplorer.Works
 
 			private readonly int HvoOwner;
 			private readonly IList<ClassAndPropInfo> CpiPath;
-			private readonly IRecordList List;
+			private readonly RecordList List;
 
 #region ICreateAndInsert<ICmObject> Members
 
@@ -3520,7 +2705,221 @@ namespace LanguageExplorer.Works
 				return List.CreateNewObject(HvoOwner, CpiPath);
 			}
 
-#endregion
+			#endregion
+		}
+
+		/// <summary>
+		/// Creates a new AndFilter and registers it for later disposal.
+		/// </summary>
+		private static AndFilter CreateNewAndFilter(params RecordFilter[] filters)
+		{
+			Debug.Assert(filters.Length > 1, "Need at least two filters to construct an AndFilter");
+			var af = new AndFilter();
+			foreach (var filter in filters)
+			{
+				af.Add(filter);
+			}
+			return af;
+		}
+
+		private ICmObject CreateNewObject(int hvoOwner, IList<ClassAndPropInfo> cpiPath)
+		{
+			if (cpiPath.Count > 2)
+			{
+				throw new ArgumentException("We currently only support up to 2 levels for creating a new object.");
+			}
+			if (cpiPath.Count == 2)
+			{
+				if (cpiPath[1].isVector)
+					throw new ArgumentException("We expect the second level to be an atomic property.");
+			}
+			if (!cpiPath[0].isVector)
+			{
+				throw new ArgumentException("We expect the first level to be a vector property.");
+			}
+
+			ISilDataAccess sda = VirtualListPublisher;
+			// assume we need to insert a new object in the vector field following hvoOwner
+			var cpi = cpiPath[0];
+			var flid = cpi.flid;
+			var insertPosition = 0;
+			switch ((CellarPropertyType)sda.MetaDataCache.GetFieldType(flid))
+			{
+				case CellarPropertyType.OwningCollection:
+					insertPosition = -1;
+					break;
+				case CellarPropertyType.OwningSequence:
+					if (CurrentObjectHvo != 0 && cpiPath.Count == 1)
+					{
+						hvoOwner = CurrentObject.Owner.Hvo;
+						flid = CurrentObject.OwningFlid;
+						var oldIndex = sda.GetObjIndex(hvoOwner, flid, CurrentObjectHvo);
+						insertPosition = oldIndex + 1;
+					}
+					break;
+				default:
+					// Just possible it's some kind of virtual we can't insert a new object into.
+					return null;
+			}
+
+			var hvoNew = sda.MakeNewObject(cpi.signatureClsid, hvoOwner, flid, insertPosition);
+
+			// we may need to insert another new class.
+			if (cpiPath.Count > 1)
+			{
+				// assume this is an atomic property.
+				var cpiLevel2 = cpiPath[1];
+				hvoOwner = hvoNew;
+				flid = cpiLevel2.flid;
+				hvoNew = sda.MakeNewObject(cpiLevel2.signatureClsid, hvoOwner, flid, -2);
+			}
+			return hvoNew != 0 ? m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoNew) : null;
+		}
+
+		/// <summary>
+		/// Answer true if the current object is valid. Currently we just check for deleted objects.
+		/// We could try to get an ICmObject and call IsValidObject, but currently that doesn't do
+		/// any more than this, and it fails (spuriously) when working with fake objects.
+		/// </summary>
+		private bool CurrentObjectIsValid
+		{
+			get
+			{
+				var hvo = CurrentObjectHvo;
+				return hvo != 0 && hvo != (int)SpecialHVOValues.kHvoObjectDeleted;
+			}
+		}
+
+		/// <summary>
+		/// get the index of an item in the list that has a root object that is owned by hvo
+		/// </summary>
+		/// <param name="hvoTarget"></param>
+		/// <returns>-1 if the object is not in the list</returns>
+		private int IndexOfChildOf(int hvoTarget)
+		{
+			// If the list is made up of fake objects, we can't find one of them owned by our target,
+			// and trying to will crash, so give up.
+			if (SortedObjects.Count == 0 || !m_cache.ServiceLocator.ObjectRepository.IsValidObjectId(((IManyOnePathSortItem)SortedObjects[0]).RootObjectHvo))
+			{
+				return -1;
+			}
+
+			var i = 0;
+			foreach (IManyOnePathSortItem item in SortedObjects)
+			{
+				var rootObject = item.RootObjectUsing(m_cache);
+				if (rootObject == null)
+				{
+					continue;  // may be something that has been deleted?
+				}
+				for (var owner = rootObject.Owner; owner != null; owner = owner.Owner)
+				{
+					if (owner.Hvo == hvoTarget)
+					{
+						return i;
+					}
+				}
+				++i;
+			}
+			return -1;
+		}
+
+		private bool IsCurrentObjectValid()
+		{
+			return m_cache.ServiceLocator.IsValidObjectId(CurrentObjectHvo);
+		}
+
+		private void OnAdjustFilterSelection()
+		{
+			// NOTE: ListPropertyChoice compares its Value to its parent (ChoiceGroup).SinglePropertyValue
+			// to determine whether or not it is the Checked item in the list.
+			// Is there any way we could do this in a less kludgy/backdoor sort of way?
+
+			//If we have a filter selected, make sure "No Filter" is not still selected in the menu or toolbar.
+			if (_activeMenuBarFilter == null && Filter != null)
+			{
+				// Resetting the table property value to "Uncheck all" will effectively uncheck this item.
+				PropertyTable.SetProperty(CurrentFilterPropertyTableId, FiltersStrings.ksUncheckAll, SettingsGroup.LocalSettings, true, false);
+			}
+			// if no filter is set, then we always want the "No Filter" item selected.
+			else if (Filter == null)
+			{
+				// Resetting the table property value to "No Filter" checks this item.
+				PropertyTable.SetProperty(CurrentFilterPropertyTableId, FiltersStrings.ksNoFilter, SettingsGroup.LocalSettings, true, false);
+			}
+		}
+
+		private void OnChangeFilterClearAll()
+		{
+			_activeMenuBarFilter = null; // there won't be a menu bar filter after this.
+			if (Filter is AndFilter)
+			{
+				// If some parts are not user visible we should not remove them.
+				var af = (AndFilter)Filter;
+				var children = af.Filters;
+				var childrenToKeep = from RecordFilter filter in children where !filter.IsUserVisible select filter;
+				var count = childrenToKeep.Count();
+				if (count == 1)
+				{
+					OnChangeFilter(new FilterChangeEventArgs(childrenToKeep.First(), af));
+					return;
+				}
+				if (count > 0)
+				{
+					var af2 = CreateNewAndFilter(childrenToKeep.ToArray());
+					OnChangeFilter(new FilterChangeEventArgs(af2, Filter));
+					return;
+				}
+				// Otherwise none of the children need to be kept, get rid of the whole filter.
+			}
+
+			OnChangeFilter(new FilterChangeEventArgs(null, Filter));
+		}
+
+		/// <summary>
+		/// replace any matching items in our sort list.
+		/// </summary>
+		/// <param name="hvoReplaced"></param>
+		/// <param name="listChangeAction"></param>
+		private void ReplaceListItem(int hvoReplaced, ListChangedActions listChangeAction = ListChangedActions.Normal)
+		{
+			var fUpdatingListOrig = UpdatingList;
+			UpdatingList = true;
+			try
+			{
+				var hvoOldCurrentObj = CurrentObjectHvo != 0 ? CurrentObjectHvo : 0;
+				var newSortItems = new ArrayList();
+				var objReplaced = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoReplaced);
+				newSortItems.AddRange(ReplaceListItem(objReplaced, hvoReplaced, true));
+				if (newSortItems.Count > 0)
+				{
+					// in general, when adding new items, we want to try to maintain the previous selected *object*,
+					// which may have changed index.  so try to find its new index location.
+					var indexOfCurrentObj = CurrentIndex;
+					if (hvoOldCurrentObj != 0 && CurrentObjectHvo != hvoOldCurrentObj)
+					{
+						var indexOfOldCurrentObj = IndexOf(hvoOldCurrentObj);
+						if (indexOfOldCurrentObj >= 0)
+						{
+							indexOfCurrentObj = indexOfOldCurrentObj;
+						}
+					}
+					SendPropChangedOnListChange(indexOfCurrentObj, SortedObjects, listChangeAction);
+				}
+			}
+			finally
+			{
+				UpdatingList = fUpdatingListOrig;
+			}
+		}
+
+		private bool SuspendLoadListUntilOnChangeFilter
+		{
+			get
+			{
+				var toolNameThatExpectsTheSuspend = PropertyTable.GetValue("SuspendLoadListUntilOnChangeFilter", SettingsGroup.LocalSettings, string.Empty);
+				return !string.IsNullOrEmpty(toolNameThatExpectsTheSuspend) && toolNameThatExpectsTheSuspend == PropertyTable.GetValue<string>(AreaServices.ToolChoice);
+			}
 		}
 
 		#endregion Private stuff
@@ -3535,7 +2934,7 @@ namespace LanguageExplorer.Works
 		protected virtual string GetStatusBarMsgForCurrentObject()
 		{
 			string msg;
-			if (!Cache.ServiceLocator.IsValidObjectId(CurrentObjectHvo))
+			if (!m_cache.ServiceLocator.IsValidObjectId(CurrentObjectHvo))
 			{
 				msg = xWorksStrings.ADeletedObject;
 			}
@@ -3563,7 +2962,9 @@ namespace LanguageExplorer.Works
 				// do nothing.
 				var currentFilter = DynamicLoader.PersistObject(Filter, "filter");
 				if (currentFilter == persistFilter)
+				{
 					return false;
+				}
 			}
 			if (persistFilter != null)
 			{
@@ -3573,7 +2974,7 @@ namespace LanguageExplorer.Works
 					if (filter != null)
 					{
 						// (LT-9515) restored filters need these set, because they can't be persisted.
-						filter.Cache = Cache;
+						filter.Cache = m_cache;
 					}
 				}
 				catch
@@ -3609,7 +3010,9 @@ namespace LanguageExplorer.Works
 				// do nothing
 				var currentSorter = DynamicLoader.PersistObject(Sorter, "sorter");
 				if (currentSorter == persistSorter)
+				{
 					return false;
+				}
 			}
 			RecordSorter sorter = null;
 			if (persistSorter != null)
@@ -3661,7 +3064,6 @@ namespace LanguageExplorer.Works
 			}
 			// (LT-9515) restored sorters need to set some properties that could not be persisted.
 			Sorter = sorter;
-			TransferOwnership(sorter as IDisposable);
 			return true;
 		}
 
@@ -3669,13 +3071,13 @@ namespace LanguageExplorer.Works
 		/// update the contents of the tree bar and anything else that should change when,
 		/// for example, the filter or sort order changes.
 		/// </summary>
-		protected virtual void OnListChanged(object src, ListChangedEventArgs arguments)
+		protected virtual void OnListChanged(int hvo = 0, ListChangedActions actions = ListChangedActions.Normal)
 		{
-			if (arguments.Actions == ListChangedEventArgs.ListChangedActions.SkipRecordNavigation || arguments.Actions == ListChangedEventArgs.ListChangedActions.UpdateListItemName)
+			if (actions == ListChangedActions.SkipRecordNavigation || actions == ListChangedActions.UpdateListItemName)
 			{
 				SelectedRecordChanged(false, true);
 			}
-			else if (arguments.Actions == ListChangedEventArgs.ListChangedActions.SuppressSaveOnChangeRecord)
+			else if (actions == ListChangedActions.SuppressSaveOnChangeRecord)
 			{
 				var oldSuppressSaveChangeOnRecord = SuppressSaveOnChangeRecord;
 				SuppressSaveOnChangeRecord = true;
@@ -3688,7 +3090,7 @@ namespace LanguageExplorer.Works
 					SuppressSaveOnChangeRecord = oldSuppressSaveChangeOnRecord;
 				}
 			}
-			else if (arguments.Actions == ListChangedEventArgs.ListChangedActions.Normal)
+			else if (actions == ListChangedActions.Normal)
 			{
 				BroadcastChange(false);
 			}
@@ -3929,7 +3331,7 @@ namespace LanguageExplorer.Works
 			var cList = VirtualListPublisher.get_VecSize(m_owningObject.Hvo, m_flid);
 			if (cList != 0)
 			{
-				ListChanged?.Invoke(this, new ListChangedEventArgs(this, ListChangedEventArgs.ListChangedActions.UpdateListItemName, hvo));
+				OnListChanged(hvo, ListChangedActions.UpdateListItemName);
 			}
 			else
 			{
@@ -4154,7 +3556,7 @@ namespace LanguageExplorer.Works
 			return sortedObjects.Count - start;
 		}
 
-		protected void SendPropChangedOnListChange(int newCurrentIndex, ArrayList newSortedObjects, ListChangedEventArgs.ListChangedActions actions)
+		protected void SendPropChangedOnListChange(int newCurrentIndex, ArrayList newSortedObjects, ListChangedActions actions)
 		{
 			//Populate the virtual cache property which will hold this set of hvos, in this order.
 			var hvos = new int[newSortedObjects.Count];
@@ -4168,7 +3570,7 @@ namespace LanguageExplorer.Works
 			// the extra ones won't get deleted. But we must check whether the property is already cached...
 			// if it isn't and we try to read it, the code will try to load this fake property from the database,
 			// with unfortunate results. (It's not exactly a reference sequence, but any sequence type will do here.)
-			AboutToReload?.Invoke(this, new EventArgs());
+			AboutToReload();
 			// Must not actually change anything before we do AboutToReload! Then do it all at once
 			// before we make any notifications...we want the cache value to always be consistent
 			// with m_sortedObjects, and m_currentIndex always in range
@@ -4212,12 +3614,12 @@ namespace LanguageExplorer.Works
 			{
 				CurrentIndex = (hvos.Length > 0) ? 0 : -1;
 			}
-			DoneReload?.Invoke(this, new EventArgs());
+			DoneReload();
 
 			// Notify any delegates that the selection of the main object in the vector has changed.
-			if (ListChanged != null && m_fEnableSendPropChanged)
+			if (m_fEnableSendPropChanged)
 			{
-				ListChanged(this, new ListChangedEventArgs(this, actions, 0));
+				OnListChanged(0, actions);
 			}
 		}
 
@@ -4277,6 +3679,449 @@ namespace LanguageExplorer.Works
 		protected virtual void UpdateSelectionForRecordBar()
 		{
 			// Subclasses that actually know about a record bar (e.g.; TreeBarHandlerAwarePossibilityRecordList) should override this method.
+		}
+
+		/// <summary>
+		/// Sort and filter the underlying property to create the current list of objects.
+		/// </summary>
+		protected virtual void ReloadList()
+		{
+			// Skip multiple reloads and reloading when our record list is not active.
+			if (m_reloadingList)
+			{
+				return;
+			}
+			if (m_suppressingLoadList || !IsActiveInGui || SuspendLoadListUntilOnChangeFilter)
+			{
+				// if we need to reload the list
+				// clear the views property until we are no longer suppressed, so dependent views don't try to access objects
+				// that have possibly been deleted.
+				if (m_owningObject != null && SortedObjects.Count > 0 && ((UpdateHelper != null && UpdateHelper.ClearBrowseListUntilReload) || !IsActiveInGui))
+				{
+					m_indexToRestoreDuringReload = CurrentIndex;    // try to restore this index during reload.
+																	// clear everything for now, including the current index, but don't issue a RecordNavigation.
+					SendPropChangedOnListChange(-1, new ArrayList(), ListChangedActions.SkipRecordNavigation);
+				}
+				m_requestedLoadWhileSuppressed = true;
+				// it's possible that we'll want to reload once we become the main active window (cf. LT-9251)
+				var window = PropertyTable.GetValue<Form>("window");
+				var app = PropertyTable.GetValue<IApp>("App");
+				if (window != null && app != null && window != app.ActiveMainWindow)
+				{
+					// make sure we don't install more than one.
+					RequestReloadOnActivation(window);
+				}
+				return;
+			}
+			try
+			{
+				m_requestedLoadWhileSuppressed = false;
+				if (UpdateHelper != null && UpdateHelper.ClearBrowseListUntilReload)
+				{
+					if (m_indexToRestoreDuringReload != -1)
+					{
+						// restoring m_currentIndex directly isn't effective until SortedObjects
+						// is greater than 0.
+						// so, try to force to restore the current index to what we persist.
+						CurrentIndex = -1;
+#if RANDYTODO
+// As of 21JUL17 nobody cares about that 'PersistedIndexProperty' changing, so skip the broadcast.
+#endif
+						PropertyTable.SetProperty(PersistedIndexProperty, m_indexToRestoreDuringReload, SettingsGroup.LocalSettings, true, false);
+						m_indexToRestoreDuringReload = -1;
+					}
+					UpdateHelper.ClearBrowseListUntilReload = false;
+				}
+				m_reloadingList = true;
+				if (UpdatePrivateList())
+				{
+					return; // Cannot complete the reload until PropChangeds complete.
+				}
+				var newCurrentIndex = CurrentIndex;
+#if RANDYTODO
+				// TODO: Replace use of ArrayList with List<IManyOnePathSortItem>.
+#endif
+				ArrayList newSortedObjects;
+				ListChangedActions actions;
+
+				// Get the HVO of the current object (but only if it hasn't been deleted).
+				// If it has, don't modify m_currentIndex, as the old position is less likely to
+				// move the list than going to the top.
+				// (We want to keep the current OBJECT, not index, if it's still a real object,
+				// because the change that produced the regenerate might be a change of filter or sort
+				// that moves it a lot. But if the change is an object deletion, we want to not change
+				// the position if we can help it.)
+				var hvoCurrent = 0;
+				if (m_sortedObjects != null && m_currentIndex != -1 && m_sortedObjects.Count > m_currentIndex && CurrentObjectIsValid)
+				{
+					hvoCurrent = CurrentObjectHvo;
+				}
+
+				//this happens when the set is dependent on another one, but no item is selected in the
+				//primary list. For example, if there are no word forms, then the list which holds the analyses
+				//of a selected wordform will not have been owning object from which to pull analyses.
+				//or in the case of FWR-3171 the owning object has been deleted.
+				//But the following doesn't work because CurrentObjectIsValid also checks for hvo=0.
+				//if (m_owningObject == null || !CurrentObjectIsValid)
+				if (m_owningObject == null || m_owningObject.Hvo == (int)SpecialHVOValues.kHvoObjectDeleted)
+				{
+					SortedObjects = new ArrayList(0);
+					// We should not do SendPropChangedOnListChange, because that caches a property
+					// on m_owningObject, and issues various notifications based on its existence.
+					// Nothing should be displaying the list if there is no root object.
+					// However, as a safety precaution in case we previously had one, let's fix the
+					// current object information.
+					CurrentIndex = -1;
+					m_hvoCurrent = 0;
+					// we still need to broadcast the list changed to update dependent views. (LT-5987)
+					OnListChanged();
+					return;
+				}
+
+				try
+				{
+					newSortedObjects = GetFilteredSortedList();
+				}
+				catch (LcmInvalidFieldException)
+				{
+					newSortedObjects = HandleInvalidFilterSortField();
+				}
+				catch (FwConfigurationException ce)
+				{
+					if (ce.InnerException is LcmInvalidFieldException)
+					{
+						newSortedObjects = HandleInvalidFilterSortField();
+					}
+					else
+					{
+						throw;
+					}
+				}
+
+				// Try to stay on the same object if possible.
+				if (hvoCurrent != 0 && newSortedObjects.Count > 0)
+				{
+					newCurrentIndex = GetNewCurrentIndex(newSortedObjects, hvoCurrent);
+					if (newCurrentIndex < 0 && newSortedObjects.Count > 0)
+					{
+						newCurrentIndex = 0; // expected but not found: move to top, but only if there are items in the list.
+						actions = ListChangedActions.Normal; // This is a full-blown record change
+					}
+					else
+					{
+						// The index changed, so we need to broadcast RecordNavigate, but since we didn't actually change objects,
+						// we shouldn't do a save
+						actions = ListChangedActions.SuppressSaveOnChangeRecord;
+					}
+				}
+				else
+				{
+					// We didn't even expect to find it, probably it's been deleted or sorted list has become empty.
+					// Keep the current position as far as possible.
+					newCurrentIndex = newCurrentIndex >= newSortedObjects.Count
+						? newSortedObjects.Count - 1
+						: GetPersistedCurrentIndex(newSortedObjects.Count);
+
+					actions = ListChangedActions.Normal; // We definitely changed records
+				}
+
+				SendPropChangedOnListChange(newCurrentIndex, newSortedObjects, actions);
+				//YiSpeed 6.5 secs (mostly filling tree bar)
+				FinishedReloadList();
+			}
+			finally
+			{
+				m_reloadingList = false;
+			}
+		}
+
+		protected virtual void ReloadList(int newListItemsClass, int newTargetFlid, bool force)
+		{
+			// Let a bulk-edit record list handle this.
+		}
+
+		protected virtual bool CanInsertClass(string className)
+		{
+			return (GetMatchingClass(className) != null);
+		}
+
+		/// <summary>
+		/// Change the sorter...and resort if the list already exists.
+		/// </summary>
+		/// <param name="sorter"></param>
+		protected virtual void ChangeSorter(RecordSorter sorter)
+		{
+			Sorter = sorter;
+
+			// JohnT: a different sorter may create a quite different set of IManyOnePathSortItems.
+			// Optimize: it may be possible to find some cases in which we don't need to reload fully,
+			// for example, when reversing the order on the same column.
+			if (m_sortedObjects != null)
+			{
+				ReloadList();
+			}
+		}
+
+		/// <summary>
+		/// Create an object of the specified class.
+		/// </summary>
+		/// <param name="className"></param>
+		/// <returns>true if successful (the class is known)</returns>
+		protected virtual bool CreateAndInsert(string className)
+		{
+			var cpi = GetMatchingClass(className);
+			Debug.Assert(cpi != null, "This object should not have been asked to insert an object of the class " + className + ".");
+			if (cpi != null)
+			{
+				List<ClassAndPropInfo> cpiPath;
+#if NEEDED // If we need to be able to use this code path to insert into virtual properties, we will need to make them
+// Support writing, or do something similar to the old code which figured out a path of places to insert
+// the real object. As far as I (JohnT) can tell, though, we don't currently have any virtual properties
+// at the top level of a record list into which we try to insert newly created objects in this way.
+// check to see if we're wanting to insert into an owning relationship via a virtual property.
+				BaseFDOPropertyVirtualHandler vh = Cache.VwCacheDaAccessor.GetVirtualHandlerId(m_flid) as BaseFDOPropertyVirtualHandler;
+				if (vh != null)
+				{
+					cpi.hvoOwner = m_owningObject.Hvo;
+					cpiPath = vh.GetRealOwningPath();
+					if (cpiPath.Count == 0)
+						return false;
+				}
+				else
+				{
+					cpiPath = new List<ClassAndPropInfo>(new ClassAndPropInfo[] { cpi });
+				}
+#else
+				cpiPath = new List<ClassAndPropInfo>(new[] { cpi });
+#endif
+				var createAndInsertMethodObj = new CpiPathBasedCreateAndInsert(m_owningObject.Hvo, cpiPath, this);
+				var newObj = DoCreateAndInsert(createAndInsertMethodObj);
+				var hvoNew = newObj?.Hvo ?? 0;
+				return hvoNew != 0; // If we get zero, we couldn't do it for some reason.
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Delete the current object.
+		/// In some cases thingToDelete is not actually the current object, but it should always
+		/// be related to it.
+		/// </summary>
+		protected virtual void DeleteCurrentObject(ICmObject thingToDelete = null)
+		{
+			if (thingToDelete == null)
+			{
+				thingToDelete = CurrentObject;
+			}
+
+			try
+			{
+				// This can happen in some bizarre cases, such as reconciling with another client
+				// just before delete, if the other client also deleted the same object.
+				if (!IsCurrentObjectValid() || !thingToDelete.IsValidObject)
+				{
+					return;
+				}
+				m_deletingObject = true;
+				// This looks plausible; but for example IndexOf may reload the list, if a reload is pending;
+				// and the current object may no longer match the current filter, so it may be gone.
+				//Debug.Assert(currentIndex == IndexOf(currentObject.Hvo));
+				using (new ListUpdateHelper(this))
+				{
+					var updatingListOrig = UpdatingList;
+					UpdatingList = true;
+					try
+					{
+						RemoveItemsFor(CurrentObject.Hvo);
+						VirtualListPublisher.DeleteObj(thingToDelete.Hvo);
+					}
+					finally
+					{
+						UpdatingList = updatingListOrig;
+					}
+				}
+			}
+			finally
+			{
+				m_deletingObject = false;
+			}
+		}
+
+		/// <summary>
+		/// Create and Insert an item in a list. If this is a hierarchical list, then insert it at the same level
+		/// as the current object.
+		/// SuppressSaveOnChangeRecord will be true, to allow the user to Undo this action.
+		/// NOTE: the caller may want to call SaveOnChangeRecord() before calling this.
+		/// </summary>
+		/// <typeparam name="TObj"></typeparam>
+		/// <param name="createAndInsertMethodObj"></param>
+		/// <returns></returns>
+		protected TObj DoCreateAndInsert<TObj>(ICreateAndInsert<TObj> createAndInsertMethodObj)
+			where TObj : ICmObject
+		{
+			TObj newObj;
+			int hvoNew;
+			var options = new ListUpdateHelperOptions
+			{
+				SuspendPropChangedDuringModification = true
+			};
+			using (new ListUpdateHelper(this, options))
+			{
+				newObj = createAndInsertMethodObj.Create();
+				hvoNew = newObj != null ? newObj.Hvo : 0;
+				if (hvoNew != 0)
+				{
+					ReplaceListItem(hvoNew, ListChangedActions.SuppressSaveOnChangeRecord);
+				}
+			}
+			CurrentIndex = IndexOf(hvoNew);
+			return newObj;
+		}
+
+		/// <summary>
+		/// Return the index (in m_sortedObjects) of the first displayed object.
+		/// (In hierarchical lists, this is not necessarily the first item.)
+		/// If the list is empty return -1.
+		/// </summary>
+		protected virtual int FirstItemIndex
+		{
+			get
+			{
+				if (m_sortedObjects == null || m_sortedObjects.Count == 0)
+				{
+					return -1;
+				}
+				return 0;
+			}
+		}
+
+		/// <summary>
+		/// Used on occasions like changing views, this should suppress any optimization that prevents real reloads.
+		/// </summary>
+		protected virtual void ForceReloadList()
+		{
+			ReloadList();  // By default nothing special is needed.
+		}
+
+		/// <summary>
+		/// get the index of an item in the list that has a root object that (directly or indirectly) owns hvo
+		/// </summary>
+		/// <param name="hvoTarget"></param>
+		/// <returns>-1 if the object is not in the list</returns>
+		protected int IndexOfParentOf(int hvoTarget)
+		{
+			// If the list is made up of fake objects, we can't find one of them that our target owns,
+			// and trying to will crash, so give up.
+			if (SortedObjects.Count == 0 || !m_cache.ServiceLocator.ObjectRepository.IsValidObjectId(((IManyOnePathSortItem)SortedObjects[0]).RootObjectHvo))
+			{
+				return -1;
+			}
+
+			var target = m_cache.ServiceLocator.ObjectRepository.GetObject(hvoTarget);
+			var owners = new HashSet<int>();
+			for (var owner = target.Owner; owner != null; owner = owner.Owner)
+			{
+				owners.Add(owner.Hvo);
+			}
+
+			var i = 0;
+			foreach (IManyOnePathSortItem item in SortedObjects)
+			{
+				if (owners.Contains(item.RootObjectHvo))
+				{
+					return i;
+				}
+				++i;
+			}
+			return -1;
+		}
+
+		protected virtual void InitLoad(bool loadList)
+		{
+			m_sda = VirtualListPublisher; // needed before ComputeInsertableClasses().
+			m_sda.AddNotification(this);
+
+			ComputeInsertableClasses();
+			CurrentIndex = -1;
+			m_hvoCurrent = 0;
+
+			if (loadList)
+			{
+				var originalValue = IsActiveInGui;
+				IsActiveInGui = true; // Need to fake it.
+				ReloadList();
+				IsActiveInGui = originalValue;
+			}
+			else
+			{
+				ListLoadingSuppressed = true;
+				RequestedLoadWhileSuppressed = true;
+			}
+		}
+
+		/// <summary>
+		/// Return the index (in m_sortedObjects) of the last displayed object.
+		/// (In hierarchical lists, this is not necessarily the last item.)
+		/// If the list is empty return -1.
+		/// </summary>
+		protected virtual int LastItemIndex => m_sortedObjects == null || m_sortedObjects.Count == 0 ? -1 : m_sortedObjects.Count - 1;
+
+		protected virtual bool NeedToReloadList()
+		{
+			var fReload = RequestedLoadWhileSuppressed;
+			if (m_flid == m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries)
+			{
+				fReload |= ReloadLexEntries;
+			}
+			return fReload;
+		}
+
+		/// <summary>
+		/// Return the index (in m_sortedObjects) of the object that follows the one
+		/// at m_currentIndex.
+		/// (In hierarchical lists, this is not necessarily the item at index + 1.)
+		/// If the list is empty return -1.
+		/// If the current object is the last return m_currentIndex.
+		/// If m_currentIndex is -1 return -1.
+		/// </summary>
+		protected virtual int NextItemIndex => m_sortedObjects == null || m_sortedObjects.Count == 0 || m_currentIndex == -1 ? -1 : Math.Min(m_currentIndex + 1, m_sortedObjects.Count - 1);
+
+		protected void OnChangeSorter()
+		{
+			using (new WaitCursor(PropertyTable.GetValue<Form>("window")))
+			{
+				Logger.WriteEvent($"Sorter changed: {Sorter?.ToString() ?? "(no sorter)"}");
+				SorterChangedByList?.Invoke(this, EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
+		/// Return the index (in m_sortedObjects) of the object that precedes the one
+		/// at m_currentIndex.
+		/// (In hierarchical lists, this is not necessarily the item at index - 1.)
+		/// If the list is empty return -1.
+		/// If the current object is the first return m_currentIndex.
+		/// If m_currentIndex is -1 return -1.
+		/// </summary>
+		protected virtual int PrevItemIndex => m_sortedObjects == null || m_sortedObjects.Count == 0 || m_currentIndex == -1 ? -1 : Math.Max(m_currentIndex - 1, 0);
+
+		protected virtual string PropertyTableId(string sorterOrFilter)
+		{
+			// Dependent lists do not have owner/property set. Rather they have class/field.
+			var className = VirtualListPublisher.MetaDataCache.GetOwnClsName(m_flid);
+			var fieldName = VirtualListPublisher.MetaDataCache.GetFieldName(m_flid);
+			if (string.IsNullOrEmpty(PropertyName) || PropertyName == fieldName)
+			{
+				return $"{className}.{fieldName}_{sorterOrFilter}";
+			}
+
+			return $"{className}.{PropertyName}_{sorterOrFilter}";
+		}
+
+		protected virtual bool TryListProvidingRootObject(out IRecordList recordListProvidingRootObject)
+		{
+			recordListProvidingRootObject = null;
+			return false;
 		}
 
 		#endregion Protected stuff

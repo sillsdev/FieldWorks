@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer.Impls
 {
 	/// <summary>
 	/// Implementation of the IRecordListRepository.
@@ -170,7 +170,6 @@ namespace LanguageExplorer.Works
 
 			retVal = recordListFactoryMethod(customList, _cache, _flexComponentParameters, recordListId, statusBar);
 			retVal.InitializeFlexComponent(_flexComponentParameters);
-			retVal.InitLoad(true);
 			AsRecordListRepository.AddRecordList(retVal);
 
 			return retVal;

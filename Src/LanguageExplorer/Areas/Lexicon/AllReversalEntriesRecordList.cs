@@ -66,7 +66,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		#region Overrides of RecordList
 
 		/// <summary />
-		public override bool CanInsertClass(string className)
+		protected override bool CanInsertClass(string className)
 		{
 			if (base.CanInsertClass(className))
 			{
@@ -76,7 +76,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		}
 
 		/// <summary />
-		public override bool CreateAndInsert(string className)
+		protected override bool CreateAndInsert(string className)
 		{
 			if (className != "ReversalIndexEntry")
 			{
@@ -103,7 +103,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// In some cases thingToDelete is not actually the current object, but it should always
 		/// be related to it.
 		/// </summary>
-		public override void DeleteCurrentObject(ICmObject thingToDelete = null)
+		protected override void DeleteCurrentObject(ICmObject thingToDelete = null)
 		{
 			base.DeleteCurrentObject(thingToDelete);
 
@@ -111,7 +111,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		}
 
 		/// <summary />
-		public override string PropertyTableId(string sorterOrFilter)
+		protected override string PropertyTableId(string sorterOrFilter)
 		{
 			var reversalPub = PropertyTable.GetValue<string>("ReversalIndexPublicationLayout");
 			if (reversalPub == null)

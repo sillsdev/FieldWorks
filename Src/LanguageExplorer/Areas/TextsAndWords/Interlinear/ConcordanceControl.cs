@@ -1690,7 +1690,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// If we're in the middle of loading a list, though, we want to only do the base thing.
 		/// Finally, if the OwningControl has never been loaded (user hasn't yet selected option), just load the (typically empty) list.
 		/// </summary>
-		public override void ReloadList()
+		protected override void ReloadList()
 		{
 			if (OwningControl != null && OwningControl.HasLoadedMatches)
 			{

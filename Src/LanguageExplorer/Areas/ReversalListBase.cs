@@ -55,7 +55,6 @@ namespace LanguageExplorer.Areas
 			var fakevc = new XmlBrowseViewBaseVc
 			{
 				SuppressPictures = true, // SuppressPictures to make sure that we don't leak anything as this will not be disposed.
-				Cache = Cache
 			};
 			if (base.TryRestoreSorter() && Sorter is GenRecordSorter)
 			{
@@ -64,7 +63,7 @@ namespace LanguageExplorer.Areas
 				if (stringFinderComparer != null)
 				{
 					var colSpec = ReflectionHelper.GetField(stringFinderComparer.Finder, "m_colSpec") as XElement ?? BrowseViewFormCol;
-					sorter.Comparer = new StringFinderCompare(LayoutFinder.CreateFinder(Cache, colSpec, fakevc, PropertyTable.GetValue<IApp>("App")), stringFinderComparer.SubComparer);
+					sorter.Comparer = new StringFinderCompare(LayoutFinder.CreateFinder(m_cache, colSpec, fakevc, PropertyTable.GetValue<IApp>("App")), stringFinderComparer.SubComparer);
 				}
 				return true;
 			}
@@ -78,13 +77,13 @@ namespace LanguageExplorer.Areas
 			{
 				return false;
 			}
-			var ri = Cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
+			var ri = m_cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
 			if (ri == null)
 			{
 				return false;
 			}
-			var writingSystem = (CoreWritingSystemDefinition)Cache.WritingSystemFactory.get_Engine(ri.WritingSystem);
-			Sorter = new GenRecordSorter(new StringFinderCompare(LayoutFinder.CreateFinder(Cache, BrowseViewFormCol, fakevc, PropertyTable.GetValue<IApp>("App")), new WritingSystemComparer(writingSystem)));
+			var writingSystem = (CoreWritingSystemDefinition)m_cache.WritingSystemFactory.get_Engine(ri.WritingSystem);
+			Sorter = new GenRecordSorter(new StringFinderCompare(LayoutFinder.CreateFinder(m_cache, BrowseViewFormCol, fakevc, PropertyTable.GetValue<IApp>("App")), new WritingSystemComparer(writingSystem)));
 			return true;
 		}
 
@@ -163,16 +162,16 @@ namespace LanguageExplorer.Areas
 
 		private Guid CreateNewReversalIndex()
 		{
-			if (Cache?.LanguageProject?.LexDbOA == null)
+			if (m_cache?.LanguageProject?.LexDbOA == null)
 			{
 				return Guid.Empty;
 			}
 
 			IReversalIndex newReversalIndex = null;
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
-				newReversalIndex = Cache.ServiceLocator.GetInstance<IReversalIndexFactory>().Create();
-				Cache.LanguageProject.LexDbOA.ReversalIndexesOC.Add(newReversalIndex);
+				newReversalIndex = m_cache.ServiceLocator.GetInstance<IReversalIndexFactory>().Create();
+				m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.Add(newReversalIndex);
 			});
 			return newReversalIndex?.Guid ?? Guid.Empty;
 		}
@@ -202,7 +201,7 @@ namespace LanguageExplorer.Areas
 
 		private void SetReversalIndexGuid(Guid reversalIndexGuid)
 		{
-			if (Cache.ServiceLocator.GetObject(reversalIndexGuid) is IReversalIndex)
+			if (m_cache.ServiceLocator.GetObject(reversalIndexGuid) is IReversalIndex)
 			{
 				PropertyTable.SetProperty("ReversalIndexGuid", reversalIndexGuid.ToString(), SettingsGroup.LocalSettings, true, false);
 			}
@@ -242,11 +241,11 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 
-			if (Cache == null)
+			if (m_cache == null)
 			{
 				return;
 			}
-			DeleteReversalIndex((IReversalIndex)Cache.ServiceLocator.GetObject(oldGuid));
+			DeleteReversalIndex((IReversalIndex)m_cache.ServiceLocator.GetObject(oldGuid));
 		}
 
 		/// <summary />
@@ -259,7 +258,7 @@ namespace LanguageExplorer.Areas
 				{
 					var ui = new CmObjectUi(ri);
 					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-					dlg.SetDlgInfo(ui, Cache, PropertyTable);
+					dlg.SetDlgInfo(ui, m_cache, PropertyTable);
 					dlg.TopMessage = LanguageExplorerResources.ksDeletingThisRevIndex;
 					dlg.BottomQuestion = LanguageExplorerResources.ksReallyWantToDeleteRevIndex;
 					if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
@@ -279,11 +278,11 @@ namespace LanguageExplorer.Areas
 				ListModificationInProgress = true; // can't reload deleted list! (LT-5353)
 																// We're about to do a MasterRefresh which clobbers the Undo stack,
 																// so we might as well make this UOW not undoable
-				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 					{
-						Cache.DomainDataByFlid.DeleteObj(ri.Hvo);
+						m_cache.DomainDataByFlid.DeleteObj(ri.Hvo);
 						int cobjNew;
-						var idxNew = ReversalIndexAfterDeletion(Cache, out cobjNew);
+						var idxNew = ReversalIndexAfterDeletion(m_cache, out cobjNew);
 						SetReversalIndexGuid(idxNew.Guid);
 					});
 				ChangeOwningObjectIfPossible();
@@ -343,22 +342,22 @@ namespace LanguageExplorer.Areas
 			if (newGuid.Equals(Guid.Empty))
 			{
 				// We need to find another reversal index. Any will do.
-				newGuid = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().First().Guid;
+				newGuid = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().First().Guid;
 				PropertyTable.SetProperty("ReversalIndexGuid", newGuid.ToString(), true, true);
 			}
 
-			var ri = Cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
+			var ri = m_cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
 			if (ri == null)
 			{
 				return;
 			}
 
 			// This looks like our best chance to update a global "Current Reversal Index Writing System" value.
-			WritingSystemServices.CurrentReversalWsId = Cache.WritingSystemFactory.GetWsFromStr(ri.WritingSystem);
+			WritingSystemServices.CurrentReversalWsId = m_cache.WritingSystemFactory.GetWsFromStr(ri.WritingSystem);
 
 			// Generate and store the expected path to a configuration file specific to this reversal index.  If it doesn't
 			// exist, code elsewhere will make up for it.
-			var layoutName = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "ReversalIndex", ri.ShortName + DictionaryConfigurationModel.FileExtension);
+			var layoutName = Path.Combine(LcmFileHelper.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder), "ReversalIndex", ri.ShortName + DictionaryConfigurationModel.FileExtension);
 			PropertyTable.SetProperty("ReversalIndexPublicationLayout", layoutName, true, true);
 
 			var newOwningObj = NewOwningObject(ri);

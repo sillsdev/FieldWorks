@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
-using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
 using SIL.LCModel;
@@ -11,7 +10,7 @@ using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas
 {
-	internal class TemporaryRecordList : RecordList
+	internal abstract class TemporaryRecordList : RecordList
 	{
 		/// <summary />
 		internal TemporaryRecordList(string id, StatusBar statusBar, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, ICmObject owner, string propertyName)
@@ -53,7 +52,7 @@ namespace LanguageExplorer.Areas
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			EnableSendPropChanged = false;
+			m_fEnableSendPropChanged = false;
 		}
 
 		#endregion Overrides of RecordList

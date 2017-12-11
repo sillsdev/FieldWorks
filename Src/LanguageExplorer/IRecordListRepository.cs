@@ -4,7 +4,7 @@
 
 using System;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// Interface for a RecordList repository that aims to replace all use of IPropertyTable to store RecordList instances.

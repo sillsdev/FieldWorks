@@ -86,9 +86,9 @@ namespace LanguageExplorer.Areas
 		/// Update the contents of the tree bar and anything else that should change when,
 		/// for example, the filter or sort order changes.
 		/// </summary>
-		protected override void OnListChanged(object src, ListChangedEventArgs arguments)
+		protected override void OnListChanged(int hvo = 0, ListChangedActions actions = ListChangedActions.Normal)
 		{
-			if (arguments.Actions == ListChangedEventArgs.ListChangedActions.UpdateListItemName)
+			if (actions == ListChangedActions.UpdateListItemName)
 			{
 				// ******************************************************************************
 				// In the case where there are no other items and the Current object isn't valid,
@@ -106,11 +106,10 @@ namespace LanguageExplorer.Areas
 				if (_recordBarHandler is TreeBarHandler && CurrentObject != null && (CurrentObject.Cache != null || SortedObjects.Count != 1))
 				{
 					// all we need to do is replace the currently selected item in the tree.
-					var hvoItem = arguments.ItemHvo;
 					ICmObject obj = null;
-					if (hvoItem != 0)
+					if (hvo != 0)
 					{
-						Cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(hvoItem, out obj);
+						m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(hvo, out obj);
 					}
 					if (obj == null)
 					{
@@ -124,7 +123,7 @@ namespace LanguageExplorer.Areas
 				_recordBarHandler.PopulateRecordBar(this);
 			}
 
-			base.OnListChanged(src, arguments);
+			base.OnListChanged(hvo, actions);
 		}
 
 		#endregion

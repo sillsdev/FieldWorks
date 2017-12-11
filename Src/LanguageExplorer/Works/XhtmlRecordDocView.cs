@@ -104,7 +104,7 @@ namespace LanguageExplorer.Works
 				return;
 			if (e.Button == GeckoMouseButton.Left)
 			{
-				XhtmlDocView.HandleDomLeftClick(MyRecordList, e, element);
+				XhtmlDocView.HandleDomLeftClick(MyRecordList, Cache.ServiceLocator.ObjectRepository , e, element);
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{

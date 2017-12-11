@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// Interface that language Explorer tools use to create record lists when they are not in the main record list repository.

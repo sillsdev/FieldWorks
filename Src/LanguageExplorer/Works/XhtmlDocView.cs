@@ -321,12 +321,12 @@ namespace LanguageExplorer.Works
 				return;
 			if (e.Button == GeckoMouseButton.Left)
 			{
-				if (HandleClickOnPageButton(MyRecordList, element))
+				if (HandleClickOnPageButton(MyRecordList, Cache.ServiceLocator.ObjectRepository, element))
 				{
 					return;
 				}
 				// Handle button clicks or select the entry represented by the current element.
-				HandleDomLeftClick(MyRecordList, e, element);
+				HandleDomLeftClick(MyRecordList, Cache.ServiceLocator.ObjectRepository, e, element);
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
@@ -353,12 +353,14 @@ namespace LanguageExplorer.Works
 		/// Handle the user left clicking on the document view by jumping to an entry, playing a media element, or adjusting the view
 		/// </summary>
 		/// <remarks>internal so that it can be re-used by the XhtmlRecordDocView</remarks>
-		internal static void HandleDomLeftClick(IRecordList recordList, DomMouseEventArgs e, GeckoElement element)
+		internal static void HandleDomLeftClick(IRecordList recordList, ICmObjectRepository objectRepository, DomMouseEventArgs e, GeckoElement element)
 		{
 			GeckoElement dummy;
 			var topLevelGuid = GetHrefFromGeckoDomElement(element);
 			if (topLevelGuid == Guid.Empty)
+			{
 				GetClassListFromGeckoElement(element, out topLevelGuid, out dummy);
+			}
 			if (topLevelGuid != Guid.Empty)
 			{
 				var currentObj = recordList.CurrentObject;
@@ -371,7 +373,8 @@ namespace LanguageExplorer.Works
 				}
 				else
 				{
-					recordList.JumpToRecord(topLevelGuid);
+					var obj = objectRepository.GetObject(topLevelGuid);
+					recordList.JumpToRecord(obj.Hvo);
 				}
 			}
 			e.Handled = true;
@@ -489,14 +492,15 @@ namespace LanguageExplorer.Works
 			return (GeckoHtmlElement)element.OwnerDocument.Body.SelectFirst("//*[@class='pagebutton' and @id]");
 		}
 
-		private static bool HandleClickOnPageButton(IRecordList recordList, GeckoElement element)
+		private static bool HandleClickOnPageButton(IRecordList recordList, ICmObjectRepository objectRepository, GeckoElement element)
 		{
 			if (element.HasAttribute("class") && element.Attributes["class"].NodeValue.Equals("pagebutton"))
 			{
 				if(!element.HasAttribute("firstEntryGuid"))
 					throw new ArgumentException(@"The element passed to this method should have a firstEntryGuid.", "element");
 				var firstEntryOnPage = element.Attributes["firstEntryGuid"].NodeValue;
-				recordList.JumpToRecord(new Guid(firstEntryOnPage));
+				var obj = objectRepository.GetObject(new Guid(firstEntryOnPage));
+				recordList.JumpToRecord(obj.Hvo);
 				return true;
 			}
 			return false;

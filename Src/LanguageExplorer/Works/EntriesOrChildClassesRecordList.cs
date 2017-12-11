@@ -156,20 +156,9 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		public override bool NeedToReloadList()
+		protected override bool NeedToReloadList()
 		{
 			return RequestedLoadWhileSuppressed;
-		}
-
-
-		public override void ReloadList()
-		{
-			if (m_suspendReloadUntilOnChangeListItemsClass)
-			{
-				m_requestedLoadWhileSuppressed = true;
-				return;
-			}
-			base.ReloadList();
 		}
 
 		public override bool RestoreListFrom(string pathname)
@@ -181,7 +170,7 @@ namespace LanguageExplorer.Works
 			return base.RestoreListFrom(pathname);
 		}
 
-		public override void ReloadList(int newListItemsClass, int newTargetFlid, bool force)
+		protected override void ReloadList(int newListItemsClass, int newTargetFlid, bool force)
 		{
 			// reload list if it differs from current target class (or if forcing a reload anyway).
 			if (newListItemsClass != ListItemsClass || newTargetFlid != TargetFlid || force)
@@ -210,6 +199,17 @@ namespace LanguageExplorer.Works
 				ReloadList();
 			}
 			// otherwise, we'll assume there isn't anything to load.
+		}
+
+
+		protected override void ReloadList()
+		{
+			if (m_suspendReloadUntilOnChangeListItemsClass)
+			{
+				m_requestedLoadWhileSuppressed = true;
+				return;
+			}
+			base.ReloadList();
 		}
 
 		protected override int GetNewCurrentIndex(ArrayList newSortedObjects, int hvoCurrentBeforeGetObjectSet)
@@ -263,7 +263,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		/// <param name="sorterOrFilter"></param>
 		/// <returns></returns>
-		public override string PropertyTableId(string sorterOrFilter)
+		protected override string PropertyTableId(string sorterOrFilter)
 		{
 			return $"{@"LexDb"}.{@"Entries"}_{sorterOrFilter}";
 		}

@@ -170,7 +170,7 @@ namespace LanguageExplorer.Works
 		#endregion // Construction and Removal
 
 		#region Message Handlers
-		protected override void Clerk_RecordChanged(object sender, RecordNavigationEventArgs e)
+		protected override void RecordList_RecordChanged_Handler(object sender, RecordNavigationEventArgs e)
 		{
 			// Don't call base, since we don't want that behavior.
 			if (!m_fullyInitialized)

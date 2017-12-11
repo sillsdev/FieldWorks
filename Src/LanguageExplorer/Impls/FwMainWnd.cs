@@ -423,7 +423,6 @@ namespace LanguageExplorer.Impls
 			PropertyTable.SetDefault("SortedFromEnd", false, SettingsGroup.LocalSettings, true, false);
 			PropertyTable.SetDefault("SortedByLength", false, SettingsGroup.LocalSettings, true, false);
 			PropertyTable.SetDefault("CurrentToolbarVersion", 1, SettingsGroup.GlobalSettings, true, false);
-			PropertyTable.SetDefault("SuspendLoadListUntilOnChangeFilter", string.Empty, SettingsGroup.LocalSettings, false, false);
 			PropertyTable.SetDefault("SuspendLoadingRecordUntilOnJumpToRecord", string.Empty, SettingsGroup.LocalSettings, false, false);
 			// This property can be used to set the settingsGroup for context dependent properties. No need to persist it.
 			PropertyTable.SetDefault("SliceSplitterBaseDistance", -1, SettingsGroup.LocalSettings, false, false);

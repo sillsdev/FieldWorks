@@ -42,7 +42,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			};
 		}
 
-		public override void ReloadList()
+		protected override void ReloadList()
 		{
 			base.ReloadList();
 

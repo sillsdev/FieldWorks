@@ -71,10 +71,10 @@ namespace LanguageExplorer.Works
 
 			AccNameDefault = "RecordView"; // default accessibility name
 
-			MyRecordList.RecordChanged += Clerk_RecordChanged;
+			MyRecordList.RecordChanged += RecordList_RecordChanged_Handler;
 		}
 
-		protected virtual void Clerk_RecordChanged(object sender, RecordNavigationEventArgs e)
+		protected virtual void RecordList_RecordChanged_Handler(object sender, RecordNavigationEventArgs e)
 		{
 			if (!m_fullyInitialized)
 				return;
@@ -104,7 +104,7 @@ namespace LanguageExplorer.Works
 
 			if( disposing )
 			{
-				MyRecordList.RecordChanged -= Clerk_RecordChanged;
+				MyRecordList.RecordChanged -= RecordList_RecordChanged_Handler;
 				components?.Dispose();
 			}
 
