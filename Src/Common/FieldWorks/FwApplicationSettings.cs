@@ -111,10 +111,14 @@ namespace SIL.FieldWorks
 			{
 				try
 				{
-					using (var stream = new FileStream(Path.Combine(highestVersionFolder, "user.config"), FileMode.Open))
+					var highestVersionConfigPath = Path.Combine(highestVersionFolder, "user.config");
+					if (File.Exists(highestVersionConfigPath))
 					{
-						// This will throw an exception if the file is corrupted (LT-18643 Null bytes written to user.config file)
-						XDocument.Load(stream);
+						using (var stream = new FileStream(highestVersionConfigPath, FileMode.Open))
+						{
+							// This will throw an exception if the file is corrupted (LT-18643 Null bytes written to user.config file)
+							XDocument.Load(stream);
+						}
 					}
 				}
 				catch (XmlException)

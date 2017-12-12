@@ -1038,7 +1038,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <param name="description">non-safe-XML (read from XmlNode without re-escaping)</param>
 		/// <param name="label">non-safe-XML</param>
 		/// <param name="abbrev">non-safe-XML</param>
-		/// <param name="traits"></param>
 		/// <returns></returns>
 		private string GetRangeElementDetails(XmlNode xnElem, out string guidAttr, out string parent, out LiftMultiText description, out LiftMultiText label, out LiftMultiText abbrev)
 		{
@@ -1170,12 +1169,15 @@ namespace LanguageExplorer.Controls.LexText
 					break;
 				case "paradigm": // I think we can ignore these.
 					break;
-					//============================================================================
-					//============================================================================
-					//============================================================================
-					//============================================================================
-					//============================================================================
-					//New
+				case "Publications":
+					ProcessPossibilityPublications(id, guidAttr, parent, newDesc, newLabel, newAbbrev, m_dictPublicationTypes, m_rgnewPublicationType, m_cache.LangProject.LexDbOA.PublicationTypesOA);
+					break;
+				//============================================================================
+				//============================================================================
+				//============================================================================
+				//============================================================================
+				//============================================================================
+				//New
 				case RangeNames.sAffixCategoriesOA:
 					ProcessPossibility(id, guidAttr, parent, newDesc, newLabel, newAbbrev,
 									   m_dictAffixCategories, m_rgAffixCategories, m_cache.LangProject.AffixCategoriesOA);

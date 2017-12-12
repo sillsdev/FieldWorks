@@ -290,14 +290,19 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 		{
 			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
 			var dictConfigFiles = new List<string>(DCM.ConfigFilesInDir(reversalIndexConfigLoc));
+			var version = 0;
 
 			// Rename all the reversals based on the ws id (the user's  name for copies is still stored inside the file)
 			foreach (var fName in dictConfigFiles)
 			{
-				var wsValue = GetWritingSystemName(fName);
-				if (!string.IsNullOrEmpty(wsValue))
+				var wsValue = GetWritingSystemNameAndVersion(fName, out version);
+				if (!string.IsNullOrEmpty(wsValue) && version < DCM.VersionCurrent)
 				{
 					var newFName = Path.Combine(Path.GetDirectoryName(fName), wsValue + DictionaryConfigurationModel.FileExtension);
+					if (wsValue == Path.GetFileNameWithoutExtension(fName))
+					{
+						continue;
+					}
 					if (!File.Exists(newFName))
 					{
 						File.Move(fName, newFName);
@@ -327,13 +332,15 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 		}
 
 		/// <summary>
-		/// Reads the .fwdictconfig config file and gets the writing system name
+		/// Reads the .fwdictconfig config file and gets the writing system name and version
 		/// </summary>
 		/// <param name="fileName"></param>
+		/// <param name="version"></param>
 		/// <returns></returns>
-		private static string GetWritingSystemName(string fileName)
+		private static string GetWritingSystemNameAndVersion(string fileName, out int version)
 		{
 			var wsName = string.Empty;
+			version = 0;
 			try
 			{
 				var xDoc = XDocument.Load(fileName);
@@ -344,6 +351,11 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 					if (writingSystemAttribute != null)
 					{
 						wsName = writingSystemAttribute.Value;
+					}
+					var versionAttribute = rootElement.Attribute("version");
+					if (versionAttribute != null)
+					{
+						version = Convert.ToInt32(versionAttribute.Value);
 					}
 				}
 			}

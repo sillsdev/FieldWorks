@@ -57,12 +57,23 @@ namespace LanguageExplorerTests.Works
 					<clerk id='entries'>
 						<recordList owner='LexDb' property='Entries'/>
 					</clerk>
+					<clerk id='AllReversalEntries'>
+						<recordList owner = 'ReversalIndex' property='AllEntries'>
+						<dynamicloaderinfo assemblyPath = 'LexEdDll.dll' class='SIL.FieldWorks.XWorks.LexEd.AllReversalEntriesRecordList'/>
+						</recordList>
+					</clerk>
 				</clerks>
 				<tools>
 					<tool label='Dictionary' value='lexiconDictionary' icon='DocumentView'>
 						<control>
 							<dynamicloaderinfo assemblyPath='xWorks.dll' class='LanguageExplorer.Works.XhtmlDocView'/>
 							<parameters area='lexicon' clerk='entries' layout='Bartholomew' layoutProperty='DictionaryPublicationLayout' editable='false' configureObjectName='Dictionary'/>
+						</control>
+					</tool>
+					<tool label='ReversalIndex' value='lexiconReversalIndex' icon='DocumentView'>
+						<control>
+							<dynamicloaderinfo assemblyPath='xWorks.dll' class='SIL.FieldWorks.XWorks.RecordEditView'/>
+							<parameters area = 'lexicon' clerk = 'AllReversalEntries' layout = 'Normal' treeBarAvailability = 'NotAllowed' emptyTitleId = 'No-ReversalIndexEntries' />
 						</control>
 					</tool>
 				</tools>
@@ -72,10 +83,18 @@ namespace LanguageExplorerTests.Works
 			XmlNode clerkNode = doc.SelectSingleNode("//tools/tool[@label='Dictionary']//parameters[@area='lexicon']");
 			m_Clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false);
 			RecordClerk.RecordClerkRepository.ActiveRecordClerk = m_Clerk;
+
+			clerkNode = doc.SelectSingleNode("//tools/tool[@label='ReversalIndex']//parameters[@area='lexicon']");
+			m_Clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false);
+			RecordClerk.RecordClerkRepository.ActiveRecordClerk = m_Clerk;
+
 			m_propertyTable.SetProperty("ToolForAreaNamed_lexicon", "lexiconDictionary", false);
 			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
 			// setup style sheet and style to allow the css to generate during the UploadToWebonaryController driven export
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+
+			Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(Cache.DefaultAnalWs);
+
 			m_owningTable = new StyleInfoTable("AbbySomebody", Cache.ServiceLocator.WritingSystemManager);
 			var fontInfo = new FontInfo();
 			var letHeadStyle = new TestStyle(fontInfo, Cache) { Name = CssGenerator.LetterHeadingStyleName, IsParagraphStyle = false };
@@ -145,7 +164,9 @@ namespace LanguageExplorerTests.Works
 			{
 				var mockView = SetUpView();
 				var testConfig = new Dictionary<string, DictionaryConfigurationModel>();
+				var reversalConfig = new Dictionary<string, DictionaryConfigurationModel>();
 				mockView.Model.Configurations = testConfig;
+				mockView.Model.Reversals = reversalConfig;
 				// Build model sufficient to generate xhtml and css
 				ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
 				var mainHeadwordNode = new ConfigurableDictionaryNode
@@ -163,6 +184,36 @@ namespace LanguageExplorerTests.Works
 				var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 				CssGeneratorTests.PopulateFieldsForTesting(model);
 				testConfig["Test Config"] = model;
+
+				var reversalFormNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "ReversalForm",
+					//DictionaryNodeOptions = CXGTests.GetWsOptionsForLanguages(new[] { "en" }),
+					DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+					{
+						WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+						{
+							new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en"}
+						},
+						DisplayWritingSystemAbbreviations = false
+					},
+					Label = "Reversal Form"
+				};
+				var reversalEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { reversalFormNode },
+					FieldDescription = "ReversalIndexEntry"
+				};
+				model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode } };
+				CssGeneratorTests.PopulateFieldsForTesting(model);
+				reversalConfig["English"] = model;
+				model.Label = "English";
+				model.WritingSystem = "en";
+				List<string> reversalLanguage = new List<string>();
+				reversalLanguage.Add("English");
+				mockView.Model.SelectedReversals = reversalLanguage;
+
 				// create entry sufficient to generate xhtml and css
 				var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 				var entry = factory.Create();
@@ -174,6 +225,8 @@ namespace LanguageExplorerTests.Works
 				// The names of the files being sent to webonary are listed while logging the zip
 				Assert.That(mockView.StatusStrings.Any(s => s.Contains("configured.xhtml")), "xhtml not logged as compressed");
 				Assert.That(mockView.StatusStrings.Any(s => s.Contains("configured.css")), "css not logged as compressed");
+				Assert.That(mockView.StatusStrings.Any(s => s.Contains("reversal_en.xhtml")), "reversal_enxhtml not logged as compressed");
+				Assert.That(mockView.StatusStrings.Any(s => s.Contains("Exporting entries for English reversal")), "English reversal not exported");
 			}
 		}
 

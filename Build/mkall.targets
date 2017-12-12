@@ -245,16 +245,20 @@
 		<GeneratedFiles Include="$(fwrt)/DistFiles/Parts/Generated.fwlayout"/>
 	</ItemGroup>
 
+	<Target Name="CleanDownloads">
+		<ForceDelete Files="$(fwrt)/Downloads/" />
+	</Target>
+
 	<Target Name="Clean" DependsOnTargets="CleanAll">
 		<ForceDelete Files="$(fwrt)/Build/FieldWorks.targets"/>
 	</Target>
 
 	<Target Name="CleanAll" DependsOnTargets="cleanWindows;cleanLinux">
 		<!-- remove the Obj and Output directories -->
-		<ForceDelete Files="$(dir-fwobj);$(dir-fwoutput)"/>
-		<ForceDelete Files="$(fwrt)/Output" Condition="'$(OS)'=='Unix'"/>
+		<ForceDelete Files="$(dir-fwobj);$(dir-fwoutput)" />
+		<ForceDelete Files="$(fwrt)/Output" Condition="'$(OS)'=='Unix'" />
 		<!-- remove other directories and files created during the build process -->
-		<ForceDelete Files="@(GeneratedFiles)"/>
+		<ForceDelete Files="@(GeneratedFiles)" />
 		<!-- remove LCM files -->
 		<ItemGroup>
 			<LcmFilesToDelete Include="$(fwrt)/Src/Kernel/*.idh" />
@@ -268,7 +272,7 @@
 		</ItemGroup>
 		<ForceDelete Files="@(LcmFilesToDelete)" />
 		<ForceDelete Files="$(fwrt)/DistFiles/Icu$(IcuVersion)" />
-		<Message Text="Finished deleting the output directories!"/>
+		<Message Text="Finished deleting the output directories!" />
 	</Target>
 
 	<PropertyGroup>
@@ -445,7 +449,7 @@
 		<DownloadFile Address="$(NUnitDownloadUrl)" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading artifacts for LCM." />
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(LcmBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="LCM.zip" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalLiblcm)'!='Y'"/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(LcmBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="LCM.zip" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalLiblcm)'!='Y'" Tag=".lastSuccessful"/>
 	</Target>
 
 	<!-- Setup source variables (to enable local development in libpalaso, chorus, and liblcm) -->

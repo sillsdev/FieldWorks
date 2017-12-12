@@ -144,8 +144,7 @@ namespace LanguageExplorer.Works
 					throw new ApplicationException(string.Format("Could not locate reversal writing system for {0}", reversal));
 				}
 				var xhtmlPath = Path.Combine(tempDirectoryToCompress, string.Format("reversal_{0}.xhtml", reversalWs.IcuLocale));
-				var configurationFile = Path.Combine(m_propertyTable.UserSettingDirectory, "ReversalIndex", reversal + DictionaryConfigurationModel.FileExtension);
-				var configuration = new DictionaryConfigurationModel(configurationFile, m_cache);
+				var configuration = model.Reversals[reversal];
 				m_exportService.ExportReversalContent(xhtmlPath, revWsRFC5646, configuration);
 				webonaryView.UpdateStatus(xWorksStrings.ExportingReversalsToWebonaryCompleted);
 			}
