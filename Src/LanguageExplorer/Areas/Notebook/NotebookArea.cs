@@ -10,8 +10,6 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
-using LanguageExplorer.Works;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
@@ -162,10 +160,8 @@ namespace LanguageExplorer.Areas.Notebook
             </clerk>
 			*/
 			return new RecordList(recordListId, statusBar,
-				new PropertyRecordSorter("ShortName"), AreaServices.Default,
-				null, false, false,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false,
-				cache.MetaDataCacheAccessor.GetFieldId2(cache.LanguageProject.ResearchNotebookOA.ClassID, "AllRecords", false), cache.LanguageProject.ResearchNotebookOA, "AllRecords");
+				new VectorPropertyParameterObject(cache.LanguageProject.ResearchNotebookOA, "AllRecords", cache.MetaDataCacheAccessor.GetFieldId2(cache.LanguageProject.ResearchNotebookOA.ClassID, "AllRecords", false)));
 		}
 	}
 }

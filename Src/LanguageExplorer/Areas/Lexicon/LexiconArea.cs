@@ -178,14 +178,13 @@ namespace LanguageExplorer.Areas.Lexicon
 			</clerk>
 			*/
 			return new RecordList(recordListId, statusBar,
+				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false,
+				new VectorPropertyParameterObject(cache.LanguageProject.LexDbOA, "Entries", cache.MetaDataCacheAccessor.GetFieldId2(cache.LanguageProject.LexDbOA.ClassID, "Entries", false)),
 				new Dictionary<string, PropertyRecordSorter>
 				{
-					{ AreaServices.Default, new PropertyRecordSorter("ShortName") },
+					{ AreaServices.Default, new PropertyRecordSorter(AreaServices.ShortName) },
 					{ "PrimaryGloss", new PropertyRecordSorter("PrimaryGloss") }
-				},
-				null, false, false,
-				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false,
-				cache.MetaDataCacheAccessor.GetFieldId2(cache.LanguageProject.LexDbOA.ClassID, "Entries", false), cache.LanguageProject.LexDbOA, "Entries");
+				});
 		}
 
 		internal static IRecordList SemanticDomainList_LexiconAreaFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
@@ -204,9 +203,8 @@ namespace LanguageExplorer.Areas.Lexicon
             </clerk>
 			*/
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
-				null, false, false,
 				new DictionaryPublicationDecorator(cache, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), CmPossibilityListTags.kflidPossibilities), cache.LanguageProject.SemanticDomainListOA,
-				new SemanticDomainRdeTreeBarHandler(flexComponentParameters.PropertyTable, XDocument.Parse(LexiconResources.RapidDataEntryToolParameters).Root.Element("treeBarHandler")));
+				new SemanticDomainRdeTreeBarHandler(flexComponentParameters.PropertyTable, XDocument.Parse(LexiconResources.RapidDataEntryToolParameters).Root.Element("treeBarHandler")), new RecordFilterParameterObject(false));
 		}
 
 		internal static IRecordList AllReversalEntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)

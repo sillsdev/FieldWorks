@@ -156,10 +156,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.TranslationTypeEdit
             </clerk>
 			*/
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
-				null, true, true,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.TranslationTagsOA,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, true, true, false, "best analysis"));
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, true, true, false, "best analysis"), new RecordFilterParameterObject(null, true, true));
 		}
 	}
 }

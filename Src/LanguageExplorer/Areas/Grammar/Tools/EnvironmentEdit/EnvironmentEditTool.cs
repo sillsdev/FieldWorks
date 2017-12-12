@@ -12,7 +12,6 @@ using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using LanguageExplorer.Works;
 using SIL.LCModel;
@@ -163,10 +162,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
             </clerk>
 			*/
 			return new RecordList(recordListId, statusBar,
-				new PropertyRecordSorter("ShortName"), AreaServices.Default,
-				null, false, false,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
-				PhPhonDataTags.kflidEnvironments, cache.LanguageProject.PhonologicalDataOA, "Environments");
+				new VectorPropertyParameterObject(cache.LanguageProject.PhonologicalDataOA, "Environments", PhPhonDataTags.kflidEnvironments));
 		}
 	}
 }

@@ -12,7 +12,6 @@ using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using LanguageExplorer.Works;
 using SIL.LCModel;
@@ -164,10 +163,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
             </clerk>
 			*/
 			return new RecordList(recordListId, statusBar,
-				new PropertyRecordSorter("ShortName"), AreaServices.Default,
-				null, false, false,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
-				FsFeatureSystemTags.kflidFeatures, cache.LanguageProject.PhFeatureSystemOA, "PhonologicalFeatures");
+				new VectorPropertyParameterObject(cache.LanguageProject.PhFeatureSystemOA, "PhonologicalFeatures", FsFeatureSystemTags.kflidFeatures));
 		}
 	}
 }

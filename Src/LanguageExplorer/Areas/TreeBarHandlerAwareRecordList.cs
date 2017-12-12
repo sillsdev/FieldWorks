@@ -20,8 +20,8 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Constructor for a list that is owned or not.
 		/// </summary>
-		internal TreeBarHandlerAwareRecordList(string id, StatusBar statusBar, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, ICmObject owner, string propertyName, RecordBarHandler recordBarHandler)
-			: base(id, statusBar, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion, decorator, usingAnalysisWs, flid, owner, propertyName)
+		internal TreeBarHandlerAwareRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, RecordBarHandler recordBarHandler, VectorPropertyParameterObject vectorPropertyParameterObject, RecordFilterParameterObject recordFilterParameterObject = null, RecordSorter defaultSorter = null)
+			: base(id, statusBar, decorator, usingAnalysisWs, vectorPropertyParameterObject, recordFilterParameterObject, defaultSorter)
 		{
 			Guard.AgainstNull(recordBarHandler, nameof(recordBarHandler));
 

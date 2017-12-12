@@ -156,10 +156,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
             </clerk>
 			*/
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
-				null, true, true,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.LocationsOA,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best vernoranal"));
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, false, "best vernoranal"), new RecordFilterParameterObject(null, true, true));
 		}
 	}
 }

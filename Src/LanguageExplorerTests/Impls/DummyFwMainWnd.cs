@@ -10,7 +10,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 
-namespace LanguageExplorerTests.Works
+namespace LanguageExplorerTests.Impls
 {
 	/// <summary>
 	/// A barebones implementation of IFwMainWnd.

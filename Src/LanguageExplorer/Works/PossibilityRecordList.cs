@@ -6,9 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
@@ -22,8 +20,8 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Constructor for a list that is owned or not.
 		/// </summary>
-		internal PossibilityRecordList(string id, StatusBar statusBar, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, ISilDataAccessManaged decorator, ICmPossibilityList ownedPossibilityList)
-			: base(id, statusBar, new PropertyRecordSorter("ShortName"), AreaServices.Default, defaultFilter, allowDeletions, shouldHandleDeletion, decorator, true, CmPossibilityListTags.kflidPossibilities, ownedPossibilityList, "PossibilitiesOS")
+		internal PossibilityRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, ICmPossibilityList ownedPossibilityList, RecordFilterParameterObject recordFilterParameterObject = null)
+			: base(id, statusBar, decorator, true, new VectorPropertyParameterObject(ownedPossibilityList, "PossibilitiesOS", CmPossibilityListTags.kflidPossibilities), recordFilterParameterObject)
 		{
 			ConstructorCommon();
 		}

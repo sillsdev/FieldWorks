@@ -6,7 +6,6 @@ using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.Works;
 using SIL.Code;
-using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Utils;
@@ -24,14 +23,18 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private IRecordList _recordListProvidingRootObject;
 
-		internal SubservientRecordList(string id, StatusBar statusBar, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, ICmObject owner, string propertyName, IRecordList recordListProvidingRootObject)
-			: base(id, statusBar, new PropertyRecordSorter("ShortName"), AreaServices.Default, defaultFilter, allowDeletions, shouldHandleDeletion, decorator, usingAnalysisWs, flid, owner, propertyName)
+		internal SubservientRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, VectorPropertyParameterObject vectorPropertyParameterObject, IRecordList recordListProvidingRootObject, RecordFilterParameterObject recordFilterParameterObject = null)
+			: base(id, statusBar, decorator, usingAnalysisWs, vectorPropertyParameterObject, recordFilterParameterObject)
 		{
 			Guard.AgainstNull(recordListProvidingRootObject, nameof(recordListProvidingRootObject));
 
 			_recordListProvidingRootObject = recordListProvidingRootObject;
 		}
 
+		/// <summary />
+		/// <remarks>
+		/// This constructor uses the default (parameterless) constructor of RecordList.
+		/// </remarks>
 		internal SubservientRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, IRecordList recordListProvidingRootObject)
 		{
 			Guard.AgainstNull(recordListProvidingRootObject, nameof(recordListProvidingRootObject));

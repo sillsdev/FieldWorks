@@ -7,7 +7,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Diagnostics;
-using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Application;
 using SIL.FieldWorks.Common.ViewsInterfaces;

@@ -20,6 +20,7 @@ namespace LanguageExplorer.Areas
 		/// Display for required default sorter.
 		/// </summary>
 		internal const string Default = "Default";
+		internal const string ShortName = "ShortName";
 		internal const string AreaChoice = "areaChoice";
 		internal const string ToolChoice = "toolChoice";
 		internal const string ToolForAreaNamed_ = "ToolForAreaNamed_";

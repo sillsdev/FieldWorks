@@ -534,7 +534,9 @@
     <Compile Include="Controls\LexText\BaseGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="RecordFilterParameterObject.cs" />
     <Compile Include="ToolbarServices.cs" />
+    <Compile Include="VectorPropertyParameterObject.cs" />
     <Compile Include="Works\ConfigureHomographDlg.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -153,10 +153,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 			Require.That(recordListId == customListRecordListName, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{customListRecordListName}'.");
 
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
-				null, true, true,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				customList,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, customList.Depth > 1, customList.DisplayOption == (int)PossNameType.kpntName, customList.GetWsString()));
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, customList.Depth > 1, customList.DisplayOption == (int)PossNameType.kpntName, customList.GetWsString()), new RecordFilterParameterObject(true, true));
 		}
 	}
 }

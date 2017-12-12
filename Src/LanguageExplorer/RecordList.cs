@@ -170,7 +170,7 @@ namespace LanguageExplorer
 
 		#endregion Data members
 
-		#region Construction
+		#region Constructors
 
 		/// <summary>
 		/// Default constructor that allows subclasses to not call any of the others (cf: SubservientRecordList).
@@ -178,116 +178,35 @@ namespace LanguageExplorer
 		protected RecordList()
 		{}
 
-		private RecordList(ISilDataAccessManaged decorator, bool usingAnalysisWs)
-		{
-			ConstructorSurrogate(decorator, usingAnalysisWs);
-		}
-
-		/// <summary>
-		/// Create bare-bones RecordList for made up owner and a property on it.
-		/// </summary>
-		internal RecordList(ISilDataAccessManaged decorator)
-			: this(decorator, false)
-		{
-		}
-
-		/// <summary>
-		/// Create RecordList for SDA-made up property on the given owner.
-		/// </summary>
-		internal RecordList(ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, ICmObject owner, string propertyName)
-			: this(decorator, usingAnalysisWs)
-		{
-			Guard.AgainstNull(decorator, nameof(decorator));
-			Guard.AgainstNull(owner, nameof(owner));
-			Guard.AgainstNullOrEmptyString(propertyName, nameof(propertyName));
-
-			m_owningObject = owner;
-			m_propertyName = propertyName;
-			m_flid = flid;
-			ConstructorSurrogate(decorator, usingAnalysisWs, flid, owner, propertyName);
-		}
-
-		/// <summary>
-		/// Create RecordList for ordinary (or virtual) property.
-		/// </summary>
-		internal RecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid)
-			: this(decorator, usingAnalysisWs)
+		internal RecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, VectorPropertyParameterObject vectorPropertyParameterObject, RecordFilterParameterObject recordFilterParameterObject = null, RecordSorter defaultSorter = null)
 		{
 			Guard.AgainstNullOrEmptyString(id, nameof(id));
 			Guard.AgainstNull(statusBar, nameof(statusBar));
+			Guard.AgainstNull(decorator, nameof(decorator));
+			Guard.AgainstNull(vectorPropertyParameterObject, nameof(vectorPropertyParameterObject));
 
 			Id = id;
 			_statusBar = statusBar;
-			m_propertyName = String.Empty;
-			m_fontName = MiscUtils.StandardSansSerif;
-			// Only other current option is to specify an ordinary property (or a virtual one).
-			m_flid = flid;
-			// Review JohnH(JohnT): This is only useful for dependent record lists, but I don't know how to check this is one.
-			m_owningObject = null;
-		}
-
-		#region New constructors
-
-		internal RecordList(string id, StatusBar statusBar, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
-		{
-			ConstructorSurrogate(id, statusBar, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion);
-		}
-
-		internal RecordList(string id, StatusBar statusBar, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, ICmObject owner, string propertyName)
-			: this(decorator, usingAnalysisWs, flid, owner, propertyName)
-		{
-			ConstructorSurrogate(id, statusBar, defaultSorter, defaultSortLabel, defaultFilter, allowDeletions, shouldHandleDeletion);
-		}
-
-		private void ConstructorSurrogate(ISilDataAccessManaged decorator, bool usingAnalysisWs)
-		{
-			Guard.AgainstNull(decorator, nameof(decorator));
-
+			_defaultSorter = defaultSorter ?? new PropertyRecordSorter(AreaServices.ShortName);
+			_defaultSortLabel = AreaServices.Default;
+			_defaultFilter = recordFilterParameterObject?.DefaultFilter;
+			_allowDeletions = recordFilterParameterObject?.AllowDeletions ?? false;
+			_shouldHandleDeletion = recordFilterParameterObject?.ShouldHandleDeletion ?? false;
+			m_owningObject = vectorPropertyParameterObject.Owner;
+			m_propertyName = vectorPropertyParameterObject.PropertyName;
+			m_flid = vectorPropertyParameterObject.Flid;
+			m_usingAnalysisWs = usingAnalysisWs;
 			m_objectListPublisher = new ObjectListPublisher(decorator, RecordListFlid);
 			m_oldLength = 0;
-			m_usingAnalysisWs = usingAnalysisWs;
 		}
 
-		internal RecordList(string id, StatusBar statusBar, Dictionary<string, PropertyRecordSorter> sorters, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, ICmObject owner, string propertyName)
-			: this(decorator, usingAnalysisWs, flid, owner, propertyName)
+		internal RecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, VectorPropertyParameterObject vectorPropertyParameterObject, Dictionary<string, PropertyRecordSorter> sorters, RecordFilterParameterObject recordFilterParameterObject = null)
+			: this(id, statusBar, decorator, usingAnalysisWs, vectorPropertyParameterObject, recordFilterParameterObject, sorters[AreaServices.Default])
 		{
 			Guard.AgainstNull(sorters, nameof(sorters));
 
-			ConstructorSurrogate(id, statusBar, sorters[AreaServices.Default], AreaServices.Default, defaultFilter, allowDeletions, shouldHandleDeletion);
-
 			_allSorters = sorters;
 		}
-
-		private void ConstructorSurrogate(ISilDataAccessManaged decorator, bool usingAnalysisWs, int flid, ICmObject owner, string propertyName)
-		{
-			Guard.AgainstNull(owner, nameof(owner));
-			Guard.AgainstNullOrEmptyString(propertyName, nameof(propertyName));
-
-			ConstructorSurrogate(decorator, usingAnalysisWs);
-
-			m_owningObject = owner;
-			m_propertyName = propertyName;
-			m_flid = flid;
-		}
-
-		private void ConstructorSurrogate(string id, StatusBar statusBar, RecordSorter defaultSorter, string defaultSortLabel, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion)
-		{
-			Guard.AgainstNullOrEmptyString(id, nameof(id));
-			Guard.AgainstNull(statusBar, nameof(statusBar));
-			Guard.AgainstNull(defaultSorter, nameof(defaultSorter));
-			Guard.AgainstNullOrEmptyString(defaultSortLabel, nameof(defaultSortLabel));
-			// 'defaultFilter' can be null.
-
-			Id = id;
-			_statusBar = statusBar;
-			_defaultSorter = defaultSorter;
-			_defaultSortLabel = defaultSortLabel;
-			_defaultFilter = defaultFilter;
-			_allowDeletions = allowDeletions;
-			_shouldHandleDeletion = shouldHandleDeletion;
-		}
-
-		#endregion New constructors
 
 		#endregion Construction
 

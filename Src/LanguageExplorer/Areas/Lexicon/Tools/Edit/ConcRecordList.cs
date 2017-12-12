@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	{
 		/// <summary />
 		internal ConcRecordList(StatusBar statusBar, LcmCache cache, ILexSense owningSense)
-			: base("OccurrencesOfSense", statusBar, null, AreaServices.Default, null, false, false, new ConcDecorator(cache.ServiceLocator), true, cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "Occurrences", false), owningSense, "Occurrences")
+			: base("OccurrencesOfSense", statusBar, new ConcDecorator(cache.ServiceLocator), true, new VectorPropertyParameterObject(owningSense, "Occurrences", cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "Occurrences", false)))
 		{
 		}
 

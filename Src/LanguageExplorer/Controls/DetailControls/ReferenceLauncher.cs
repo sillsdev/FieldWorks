@@ -142,7 +142,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// might want to do the sorting here.
 
 			//SIL.FieldWorks.Filters.RecordSorter sorter =
-			//	new SIL.FieldWorks.Filters.PropertyRecordSorter("ShortName");
+			//	new PropertyRecordSorter(AreaServices.ShortName);
 			//sorter.Sort ((ArrayList) labels);
 
 			using (SimpleListChooser chooser = GetChooser(labels))

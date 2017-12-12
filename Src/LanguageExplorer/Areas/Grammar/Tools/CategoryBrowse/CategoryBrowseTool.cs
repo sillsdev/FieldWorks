@@ -134,7 +134,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
               </sortMethods>
             </clerk>
 			*/
-			return new PossibilityRecordList(recordListId, statusBar, null, false, false, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.PartsOfSpeechOA);
+			return new PossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.PartsOfSpeechOA);
 		}
 	}
 }

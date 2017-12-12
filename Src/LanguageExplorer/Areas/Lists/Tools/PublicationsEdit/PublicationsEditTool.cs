@@ -157,10 +157,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
             </clerk>
 			*/
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
-				null, true, true,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.LexDbOA.PublicationTypesOA,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, false, false, "best vernoranal"));
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, false, false, "best vernoranal"), new RecordFilterParameterObject(null, true, true));
 		}
 	}
 }

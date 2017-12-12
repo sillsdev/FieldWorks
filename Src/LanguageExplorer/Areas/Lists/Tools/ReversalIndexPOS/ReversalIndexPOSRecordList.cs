@@ -5,7 +5,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
@@ -20,7 +19,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 		/// <summary />
 		internal ReversalIndexPOSRecordList(StatusBar statusBar, ILcmServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
-			: base(ReversalEntriesPOS, statusBar, new PropertyRecordSorter("ShortName"), AreaServices.Default, null, true, true, decorator, true, CmPossibilityListTags.kflidPossibilities, reversalIndex.PartsOfSpeechOA, "Possibilities")
+			: base(ReversalEntriesPOS, statusBar, decorator, true, new VectorPropertyParameterObject(reversalIndex.PartsOfSpeechOA, "Possibilities", CmPossibilityListTags.kflidPossibilities), new RecordFilterParameterObject(null, true, true))
 		{
 			m_fontName = serviceLocator.WritingSystemManager.Get(reversalIndex.WritingSystem).DefaultFontName;
 			m_oldLength = 0;

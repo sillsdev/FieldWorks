@@ -12,7 +12,6 @@ using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
-using LanguageExplorer.Works;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
@@ -152,10 +151,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 			var probAnnFilter = new ProblemAnnotationFilter();
 			probAnnFilter.Init(cache, XDocument.Parse(GrammarResources.LexiconProblemsParameters).Root.Element("filterElement"));
 			return new RecordList(recordListId, statusBar,
-				new PropertyRecordSorter("ShortName"), AreaServices.Default,
-				probAnnFilter, true, true,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
-				LangProjectTags.kflidAnnotations, cache.LanguageProject, "Problems");
+				new VectorPropertyParameterObject(cache.LanguageProject, "Problems", LangProjectTags.kflidAnnotations),
+				new RecordFilterParameterObject(probAnnFilter, true, true));
 		}
 	}
 }

@@ -9,8 +9,6 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
-using LanguageExplorer.Works;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
@@ -156,10 +154,8 @@ namespace LanguageExplorer.Areas.Grammar
             </clerk>
 			*/
 			return new RecordList(recordListId, statusBar,
-				new PropertyRecordSorter("ShortName"), AreaServices.Default,
-				null, false, false,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
-				PhPhonemeSetTags.kflidPhonemes, cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0], "Phonemes");
+				new VectorPropertyParameterObject(cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0], "Phonemes", PhPhonemeSetTags.kflidPhonemes));
 		}
 	}
 }

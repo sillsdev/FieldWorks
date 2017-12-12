@@ -341,7 +341,7 @@
     <Compile Include="Works\DictionaryExportServiceTests.cs" />
     <Compile Include="Works\DictionaryNodeOptionsTests.cs" />
     <Compile Include="Works\DictionaryPublicationDecoratorTests.cs" />
-    <Compile Include="Works\DummyFwMainWnd.cs">
+    <Compile Include="Impls\DummyFwMainWnd.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Works\ExportDialogTests.cs" />
@@ -349,7 +349,7 @@
     <Compile Include="Works\InterestingTextsTests.cs" />
     <Compile Include="Works\ItemClickedTests.cs" />
     <Compile Include="Works\MacroListenerTests.cs" />
-    <Compile Include="Works\RecordClerkRepositoryTests.cs" />
+    <Compile Include="Impls\RecordClerkRepositoryTests.cs" />
     <Compile Include="Works\ReveralIndexServicesTests.cs" />
     <Compile Include="Works\UnicodeCharacterEditingHelperTests.cs" />
     <Compile Include="Works\UploadToWebonaryControllerTests.cs" />

@@ -44,13 +44,12 @@ namespace LanguageExplorer.Works
 
 		/// <summary />
 		internal EntriesOrChildClassesRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, ILexDb owner)
-			:base(id, statusBar, new Dictionary<string, PropertyRecordSorter>
+			:base(id, statusBar,
+				decorator, false, new VectorPropertyParameterObject(owner, "Entries", decorator.MetaDataCache.GetFieldId("LexDb", "Entries", false)), new Dictionary<string, PropertyRecordSorter>
 				{
-				{ AreaServices.Default, new PropertyRecordSorter("ShortName") },
-				{ "PrimaryGloss", new PropertyRecordSorter("PrimaryGloss") }
-				},
-				null, false, false,
-				decorator, false, decorator.MetaDataCache.GetFieldId("LexDb", "Entries", false), owner, "Entries")
+					{ AreaServices.Default, new PropertyRecordSorter(AreaServices.ShortName) },
+					{ "PrimaryGloss", new PropertyRecordSorter("PrimaryGloss") }
+				})
 		{
 		}
 

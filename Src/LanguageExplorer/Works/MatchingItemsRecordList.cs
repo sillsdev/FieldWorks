@@ -24,7 +24,7 @@ namespace LanguageExplorer.Works
 		private IEnumerable<int> m_objs;
 
 		internal MatchingItemsRecordList(ISilDataAccessManaged decorator, StatusBar statusBar, ILangProject languageProject)
-			: base("matchingWords", statusBar, new PropertyRecordSorter(), AreaServices.Default, null, false, false, decorator, false, decorator.MetaDataCache.GetFieldId2(languageProject.ClassID, "AllWordforms", false), languageProject, "AllWordforms")
+			: base("matchingWords", statusBar, decorator, false, new VectorPropertyParameterObject(languageProject, "AllWordforms", decorator.MetaDataCache.GetFieldId2(languageProject.ClassID, "AllWordforms", false)))
 		{
 		}
 

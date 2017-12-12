@@ -223,9 +223,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
             </clerk>
 			*/
 			return new SubservientRecordList(recordListId, statusBar,
-				null, false, false,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
-				cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses", false), cache.LanguageProject.SemanticDomainListOA, "ReferringSenses",
+				new VectorPropertyParameterObject(cache.LanguageProject.SemanticDomainListOA, "ReferringSenses", cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses", false)),
 				((IRecordListRepositoryForTools)RecordList.ActiveRecordListRepository).GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, statusBar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod));
 		}
 	}

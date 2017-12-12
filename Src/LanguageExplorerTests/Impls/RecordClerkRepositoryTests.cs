@@ -7,11 +7,10 @@ using LanguageExplorer;
 using LanguageExplorer.Impls;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
-namespace LanguageExplorerTests.Works
+namespace LanguageExplorerTests.Impls
 {
 	[TestFixture]
 	public class RecordClerkRepositoryTests : MemoryOnlyBackendProviderTestBase
@@ -37,7 +36,7 @@ namespace LanguageExplorerTests.Works
 				Assert.IsNull(recordListRepository.ActiveRecordList);
 
 				// Test 3. New clerk is added.
-				var recordList = new RecordList("records", statusbar, new PropertyRecordSorter("ShortName"), "Default", null, false, false, Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, Cache.MetaDataCacheAccessor.GetFieldId2(Cache.LanguageProject.ResearchNotebookOA.ClassID, "AllRecords", false), Cache.LanguageProject.ResearchNotebookOA, "AllRecords");
+				var recordList = new RecordList("records", statusbar, Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, new VectorPropertyParameterObject(Cache.LanguageProject.ResearchNotebookOA, "AllRecords", Cache.MetaDataCacheAccessor.GetFieldId2(RnResearchNbkTags.kClassId, "AllRecords", false)));
 				recordList.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
 
 				recordListRepository.AddRecordList(recordList);

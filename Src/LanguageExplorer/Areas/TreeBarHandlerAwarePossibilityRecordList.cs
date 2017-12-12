@@ -6,7 +6,6 @@ using System.Windows.Forms;
 using LanguageExplorer.Works;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
@@ -20,8 +19,8 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Constructor for a list that is owned or not.
 		/// </summary>
-		internal TreeBarHandlerAwarePossibilityRecordList(string id, StatusBar statusBar, RecordFilter defaultFilter, bool allowDeletions, bool shouldHandleDeletion, ISilDataAccessManaged decorator, ICmPossibilityList ownedPossibilityList, RecordBarHandler recordBarHandler)
-			: base(id, statusBar, defaultFilter, allowDeletions, shouldHandleDeletion, decorator, ownedPossibilityList)
+		internal TreeBarHandlerAwarePossibilityRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, ICmPossibilityList ownedPossibilityList, RecordBarHandler recordBarHandler, RecordFilterParameterObject recordFilterParameterObject = null)
+			: base(id, statusBar, decorator, ownedPossibilityList, recordFilterParameterObject)
 		{
 			Guard.AgainstNull(recordBarHandler, nameof(recordBarHandler));
 

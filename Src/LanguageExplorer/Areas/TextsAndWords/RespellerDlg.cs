@@ -11,7 +11,6 @@ using System.Diagnostics;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.Works;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.SpellChecking;
 using SIL.LCModel.Core.Text;

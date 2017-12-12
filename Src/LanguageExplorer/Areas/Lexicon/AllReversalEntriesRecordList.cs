@@ -9,7 +9,6 @@ using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
@@ -28,7 +27,7 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		/// <summary />
 		internal AllReversalEntriesRecordList(StatusBar statusBar, ILcmServiceLocator serviceLocator, ISilDataAccessManaged decorator, IReversalIndex reversalIndex)
-			: base(AllReversalEntries, statusBar, new PropertyRecordSorter("ShortName"), AreaServices.Default, null, true, true, decorator, true, ReversalIndexTags.kflidEntries, reversalIndex, "AllEntries")
+			: base(AllReversalEntries, statusBar, decorator, true, new VectorPropertyParameterObject(reversalIndex, "AllEntries", ReversalIndexTags.kflidEntries), new RecordFilterParameterObject(true, true))
 		{
 			m_fontName = serviceLocator.WritingSystemManager.Get(reversalIndex.WritingSystem).DefaultFontName;
 			m_oldLength = 0;

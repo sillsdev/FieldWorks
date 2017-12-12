@@ -12,7 +12,6 @@ using System.Windows.Forms;
 using LanguageExplorer.LcmUi.Dialogs;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.Works;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;

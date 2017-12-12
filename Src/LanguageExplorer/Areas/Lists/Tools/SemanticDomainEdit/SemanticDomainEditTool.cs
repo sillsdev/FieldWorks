@@ -145,10 +145,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 			Require.That(recordListId == SemanticDomainList_ListArea, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create on with an id of '{SemanticDomainList_ListArea}'.");
 
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
-				null, true, true,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				cache.LanguageProject.TextMarkupTagsOA,
-				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, true, "best analysis"));
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, true, true, "best analysis"), new RecordFilterParameterObject(null, true, true));
 		}
 	}
 }

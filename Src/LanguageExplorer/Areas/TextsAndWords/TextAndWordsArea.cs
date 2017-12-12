@@ -198,7 +198,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
               <sortMethods />
             </clerk>
 			*/
-			return new InterlinearTextsRecordList(InterlinearTexts, statusBar, new PropertyRecordSorter("Title"), AreaServices.Default, null, false, false, new InterestingTextsDecorator(cache.ServiceLocator, flexComponentParameters.PropertyTable), false, InterestingTextsDecorator.kflidInterestingTexts, cache.LanguageProject, "InterestingTexts");
+			return new InterlinearTextsRecordList(InterlinearTexts, statusBar, new InterestingTextsDecorator(cache.ServiceLocator, flexComponentParameters.PropertyTable), false, new VectorPropertyParameterObject(cache.LanguageProject, "InterestingTexts", InterestingTextsDecorator.kflidInterestingTexts), null, new PropertyRecordSorter("Title"));
 		}
 	}
 }
