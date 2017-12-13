@@ -96,6 +96,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			foreach (ListItem reversalIndexConfiguration in display.List)
 			{
+				if (reversalIndexConfiguration is SeparatorItem)
+					continue;
 				if (reversalIndexConfiguration.value.EndsWith(DictionaryConfigurationModel.AllReversalIndexesFilenameBase + DictionaryConfigurationModel.FileExtension))
 				{
 					display.List.Remove(reversalIndexConfiguration);
