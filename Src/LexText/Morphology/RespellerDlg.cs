@@ -519,6 +519,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private void m_btnClose_Click(object sender, EventArgs e)
 		{
+			if (ChangesWereMade)
+				m_mediator.SendMessage("MasterRefresh", null);
 			Close();
 		}
 
@@ -1500,6 +1502,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				{
 					mediator.SendMessage("ItemDataModified", wfOld);
 				}
+
 				mediator.SendMessage("ItemDataModified", wfNew);
 
 				uuow.RollBack = false;
