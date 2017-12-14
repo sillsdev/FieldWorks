@@ -17,7 +17,7 @@ namespace LanguageExplorer.Dumpster
 	// TODO: Other classes in this file may need to live on.
 	//
 	// TODO: There is no DlgListenerBase base class now (not moved), since there will be no listeners.
-	// TODO: Spin off: RespellerTemporaryRecordClerk, OccurrenceComparer, OccurrenceSorter, RespellerTemporaryRecordList, etc
+	// TODO: Spin off: OccurrenceComparer, OccurrenceSorter, RespellerTemporaryRecordList, etc
 	//
 	/// <summary>
 	/// XCore listener for the Respeller dlg.

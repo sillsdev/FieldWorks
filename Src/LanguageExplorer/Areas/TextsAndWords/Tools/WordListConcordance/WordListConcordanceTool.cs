@@ -193,8 +193,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
             </clerk>
           </clerks>
 			*/
+			var concDecorator = new ConcDecorator(cache.ServiceLocator);
+			concDecorator.InitializeFlexComponent(flexComponentParameters);
 			return new SubservientRecordList(recordListId, statusBar,
-				new ConcDecorator(cache.ServiceLocator), false,
+				concDecorator, false,
 				ConcDecorator.kflidWfOccurrences,
 				((IRecordListRepositoryForTools)RecordList.ActiveRecordListRepository).GetRecordList(TextAndWordsArea.ConcordanceWords, statusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod));
 		}

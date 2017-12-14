@@ -401,7 +401,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal void SetReversalWritingSystemFromRootObject(object obj)
 		{
 			if (obj is IReversalIndex)
+			{
 				m_wsReversal = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr((obj as IReversalIndex).WritingSystem);
+			}
 		}
 
 		internal bool CanGetMainCallerDisplayCommand(int fragId, out MainCallerDisplayCommand cmd)

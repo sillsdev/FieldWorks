@@ -23,6 +23,7 @@ using LanguageExplorer.Controls.SilSidePane;
 using LanguageExplorer.SendReceive;
 using LanguageExplorer.UtilityTools;
 using LanguageExplorer.Works;
+using SIL.Collections;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
@@ -362,7 +363,7 @@ namespace LanguageExplorer.Impls
 
 		private void ClearDuringTransition()
 		{
-			// NB: If you are ever tempted to not set the Clerk to null, then be prepared to have each area/tool clear it.
+			// NB: If you are ever tempted to not set the record list to null, then be prepared to have each area/tool clear it.
 			RecordListServices.ClearRecordList(_majorFlexComponentParameters);
 			StatusBarPanelServices.ClearBasicStatusBars(_statusbar);
 		}
@@ -465,6 +466,7 @@ namespace LanguageExplorer.Impls
 
 		private void SetTemporaryProperties()
 		{
+			_temporaryPropertyNames.Clear();
 			// Not persisted, but needed at runtime.
 			PropertyTable.SetProperty("window", this, SettingsGroup.BestSettings, false, false);
 			PropertyTable.SetProperty("App", _flexApp, SettingsGroup.BestSettings, false, false);
@@ -472,6 +474,17 @@ namespace LanguageExplorer.Impls
 			PropertyTable.SetProperty("HelpTopicProvider", _flexApp, SettingsGroup.BestSettings, false, false);
 			PropertyTable.SetProperty("FlexStyleSheet", _stylesheet, SettingsGroup.BestSettings, false, false);
 			PropertyTable.SetProperty("LinkHandler", _linkHandler, SettingsGroup.BestSettings, false, false);
+			_temporaryPropertyNames.AddRange(new[] { "window", "App", "cache", "HelpTopicProvider", "FlexStyleSheet", "LinkHandler" });
+		}
+		private readonly HashSet<string> _temporaryPropertyNames = new HashSet<string>();
+
+		private void RemoveTemporaryProperties()
+		{
+			foreach (var temporaryPropertyName in _temporaryPropertyNames)
+			{
+				PropertyTable.RemoveProperty(temporaryPropertyName);
+			}
+			_temporaryPropertyNames.Clear();
 		}
 
 		private void RegisterSubscriptions()
@@ -953,6 +966,9 @@ namespace LanguageExplorer.Impls
 				_combinedStylesListHandler?.Dispose();
 				_linkHandler?.Dispose();
 
+				// Get rid of known, temporary, properties
+				RemoveTemporaryProperties();
+
 				components?.Dispose();
 
 				// TODO: Is this comment still relevant?
@@ -1311,7 +1327,7 @@ namespace LanguageExplorer.Impls
 
 		/// <summary>
 		/// This is the one (and should be only) handler for the user Refresh command.
-		/// Refresh wants to first clean up the cache, then give things like Clerks a
+		/// Refresh wants to first clean up the cache, then give things like record lists a
 		/// chance to reload stuff (calling the old OnRefresh methods), then give
 		/// windows a chance to redisplay themselves.
 		/// </summary>
@@ -1777,7 +1793,7 @@ very simple minor adjustments. ;)"
 			pasteToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper.CanPaste());
 			pasteHyperlinkToolStripMenuItem.Enabled = (hasActiveView && _viewHelper.ActiveView.EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)_viewHelper.ActiveView.EditingHelper).CanPasteUrl());
 			applyStyleToolStripMenuItem.Enabled = hasActiveView && CanApplyStyle;
-			pasteHyperlinkToolStripMenuItem.Enabled = hasActiveView && ((RootSiteEditingHelper)_viewHelper.ActiveView.EditingHelper).CanPasteUrl();
+			pasteHyperlinkToolStripMenuItem.Enabled = hasActiveView && _viewHelper.ActiveView.EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)_viewHelper.ActiveView.EditingHelper).CanPasteUrl();
 			selectAllToolStripMenuItem.Enabled = hasActiveView && !DataUpdateMonitor.IsUpdateInProgress();
 
 			// Enable/disable toolbar buttons.

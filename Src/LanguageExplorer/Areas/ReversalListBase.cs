@@ -55,6 +55,8 @@ namespace LanguageExplorer.Areas
 			var fakevc = new XmlBrowseViewBaseVc
 			{
 				SuppressPictures = true, // SuppressPictures to make sure that we don't leak anything as this will not be disposed.
+				DataAccess = VirtualListPublisher,
+				Cache = m_cache
 			};
 			if (base.TryRestoreSorter() && Sorter is GenRecordSorter)
 			{

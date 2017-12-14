@@ -39,7 +39,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		private HashSet<IStText> m_interestingTests;
 #if RANDYTODO
-		// TODO: Pay attention to the comment and behavior of 'RelatedClerkIds'.
+		// TODO: Pay attention to the comment and behavior of 'RelatedRecordListsIds'.
 #endif
 		/// <summary>
 		/// These two record lists both need to respond to InterestingTextList changes EVEN when not loaded.
@@ -302,7 +302,7 @@ namespace LanguageExplorer.Works
 
 			if (!RelatedRecordListsIds.Contains(recordList.Id))
 			{
-				Debug.Fail("We may need to add a new RelatedClerkId.");
+				Debug.Fail("We may need to add a new RelatedRecordListId.");
 				return; // somehow we got in here with the wrong record list?!
 			}
 			var otherRelatedRecordListId = GetRelatedRecordListIds(recordList.Id);

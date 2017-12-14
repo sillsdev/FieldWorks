@@ -18,8 +18,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal sealed class ConcRecordList : TemporaryRecordList
 	{
 		/// <summary />
-		internal ConcRecordList(StatusBar statusBar, LcmCache cache, ILexSense owningSense)
-			: base("OccurrencesOfSense", statusBar, new ConcDecorator(cache.ServiceLocator), true, new VectorPropertyParameterObject(owningSense, "Occurrences", cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "Occurrences", false)))
+		internal ConcRecordList(StatusBar statusBar, LcmCache cache, ConcDecorator concDecorator, ILexSense owningSense)
+			: base("OccurrencesOfSense", statusBar, concDecorator, true, new VectorPropertyParameterObject(owningSense, "Occurrences", cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "Occurrences", false)))
 		{
 		}
 

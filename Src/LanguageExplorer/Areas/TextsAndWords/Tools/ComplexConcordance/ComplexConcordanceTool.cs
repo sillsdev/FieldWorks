@@ -180,7 +180,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
               <sortMethods />
             </clerk>
 			*/
-			return new MatchingConcordanceItems(recordListId, statusBar, new ConcDecorator(cache.ServiceLocator));
+			var concDecorator = new ConcDecorator(cache.ServiceLocator);
+			concDecorator.InitializeFlexComponent(flexComponentParameters);
+			return new MatchingConcordanceItems(recordListId, statusBar, concDecorator);
 		}
 	}
 }

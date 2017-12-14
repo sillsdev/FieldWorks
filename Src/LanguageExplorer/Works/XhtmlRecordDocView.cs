@@ -104,7 +104,7 @@ namespace LanguageExplorer.Works
 				return;
 			if (e.Button == GeckoMouseButton.Left)
 			{
-				XhtmlDocView.HandleDomLeftClick(MyRecordList, Cache.ServiceLocator.ObjectRepository , e, element);
+				XhtmlDocView.HandleDomLeftClick(MyRecordList, Cache.ServiceLocator.ObjectRepository, e, element);
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
@@ -171,7 +171,7 @@ namespace LanguageExplorer.Works
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 #if RANDYTODO
-			if (Clerk == null || m_mainView == null || m_mediator == null || hvo != Clerk.CurrentObjectHvo)
+			if (MyRecordList == null || m_mainView == null || m_mediator == null || hvo != MyRecordList.CurrentObjectHvo)
 				return;
 
 			var gb = m_mainView.NativeBrowser as GeckoWebBrowser;

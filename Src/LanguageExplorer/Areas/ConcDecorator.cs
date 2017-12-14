@@ -116,7 +116,6 @@ namespace LanguageExplorer.Areas
 			Subscriber = flexComponentParameters.Subscriber;
 
 			m_interestingTexts = InterestingTextsDecorator.GetInterestingTextList(PropertyTable, m_services);
-			m_interestingTexts.InterestingTextsChanged += m_interestingTexts_InterestingTextsChanged;
 		}
 
 		#endregion
@@ -145,6 +144,7 @@ namespace LanguageExplorer.Areas
 		/// <param name="nchng"></param>
 		public override void AddNotification(IVwNotifyChange nchng)
 		{
+			m_interestingTexts.InterestingTextsChanged += m_interestingTexts_InterestingTextsChanged;
 			base.AddNotification(nchng);
 			m_notifieeCount++;
 		}

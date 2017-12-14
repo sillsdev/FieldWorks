@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
@@ -73,10 +74,7 @@ namespace LanguageExplorer.Impls
 		/// </exception>
 		void IRecordListRepository.RemoveRecordList(IRecordList recordList)
 		{
-			if (recordList == null)
-			{
-				throw new ArgumentNullException(nameof(recordList));
-			}
+			Guard.AgainstNull(recordList, nameof(recordList));
 
 			IRecordList goner;
 			if (_recordLists.TryGetValue(recordList.Id, out goner))
@@ -88,6 +86,7 @@ namespace LanguageExplorer.Impls
 				}
 				if (AsRecordListRepository.ActiveRecordList == recordList)
 				{
+					// This will call its BecomeInactive() method.
 					AsRecordListRepository.ActiveRecordList = null;
 				}
 				_recordLists.Remove(recordList.Id);
@@ -105,10 +104,10 @@ namespace LanguageExplorer.Impls
 			if (string.IsNullOrWhiteSpace(recordListId))
 				throw new ArgumentNullException(nameof(recordListId));
 
-			IRecordList clerkToGet;
-			_recordLists.TryGetValue(recordListId, out clerkToGet);
+			IRecordList recordListToGet;
+			_recordLists.TryGetValue(recordListId, out recordListToGet);
 
-			return clerkToGet;
+			return recordListToGet;
 		}
 
 		/// <summary>

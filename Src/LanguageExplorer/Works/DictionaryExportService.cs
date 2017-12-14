@@ -99,8 +99,7 @@ namespace LanguageExplorer.Works
 			using (RecordListActivator.ActivateRecordListMatchingExportType(ReversalType, _statusBar))
 			using (ReversalIndexActivator.ActivateReversalIndex(reversalWs, m_propertyTable, Cache, MyRecordList))
 			{
-				configuration = configuration ?? new DictionaryConfigurationModel(
-					DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "ReversalIndex"), Cache);
+				configuration = configuration ?? new DictionaryConfigurationModel(DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "ReversalIndex"), Cache);
 				ExportConfiguredXhtml(xhtmlPath, configuration, ReversalType, progress);
 			}
 		}
@@ -118,10 +117,11 @@ namespace LanguageExplorer.Works
 		{
 			private static IRecordList s_dictionaryRecordList;
 			private static IRecordList s_reversalIndexRecordList;
-			private readonly IRecordList m_currentRecordList;
+			private IRecordList m_currentRecordList;
 
 			private RecordListActivator(IRecordList currentRecordList)
 			{
+				RecordList.ActiveRecordListRepository.ActiveRecordList = null;
 				m_currentRecordList = currentRecordList;
 			}
 
@@ -140,8 +140,9 @@ namespace LanguageExplorer.Works
 				{
 					s_dictionaryRecordList?.BecomeInactive();
 					s_reversalIndexRecordList?.BecomeInactive();
-					m_currentRecordList?.ActivateUI();
+					RecordList.ActiveRecordListRepository.ActiveRecordList = m_currentRecordList;
 				}
+				m_currentRecordList = null;
 			}
 
 			~RecordListActivator()
@@ -181,14 +182,11 @@ namespace LanguageExplorer.Works
 					tempRecordList = isDictionary ? ((IRecordListRepositoryForTools)RecordList.ActiveRecordListRepository).GetRecordList(LexiconArea.Entries, statusBar, LexiconArea.EntriesFactoryMethod) : ((IRecordListRepositoryForTools)RecordList.ActiveRecordListRepository).GetRecordList(LexiconArea.AllReversalEntries, statusBar, LexiconArea.AllReversalEntriesFactoryMethod);
 					CacheRecordList(exportType, tempRecordList);
 				}
-#if RANDYTODO
-				// TODO: Jason, Does Flex support having multiple main record lists be active at the same time?
-				// TODO: Making this temp record list active, means it and 'currentRecordList' are both active at the same time.
-				// TODO: It also seems like tempRecordList is never deactivated. A: I set the Dispose call on RecordListActivator to deactivate both of those static record lists, if present.
-#endif
+
+				var retval = new RecordListActivator(activeRecordList);
 				tempRecordList.ActivateUI(false);
 				tempRecordList.UpdateList(true, true);
-				return new RecordListActivator(activeRecordList); // ensure the current active clerk is reactivated after we use the temporary clerk.
+				return retval; // ensure the current active record list is reactivated after we use another record list temporarily.
 			}
 
 			private static bool DoesRecordListMatchParams(IRecordList recordList, XElement parameters)
@@ -237,8 +235,7 @@ namespace LanguageExplorer.Works
 			{
 				if (reversalWs == null)
 					return null;
-				var reversalGuid = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
-					.First(revIdx => revIdx.WritingSystem == reversalWs).Guid;
+				var reversalGuid = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().First(revIdx => revIdx.WritingSystem == reversalWs).Guid;
 				return ActivateReversalIndex(reversalGuid, propertyTable, activeRecordList);
 			}
 
@@ -257,7 +254,7 @@ namespace LanguageExplorer.Works
 				if (newReversalGuid == null || newReversalGuid == oldReversalGuid)
 					return false;
 				// Set the reversal index guid property so that the right guid is found down in DictionaryPublicationDecorater.GetEntriesToPublish,
-				// and manually call OnPropertyChanged to cause LexEdDll ReversalClerk.ChangeOwningObject(guid) to be called. This causes the
+				// and manually call OnPropertyChanged to cause LexEdDll ReversalListBase.ChangeOwningObject(guid) to be called. This causes the
 				// right reversal content to be exported, fixing LT-17011.
 				// RBR comment: Needing to do both is an indication of a pathological state. Setting the property calls OnPropertyChanged to all Mediator clients (now Pub/Sub subscibers).
 				// If 'recordList is not getting that, as a result, that shows it is not a current player. The questions then become:

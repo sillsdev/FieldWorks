@@ -13,10 +13,10 @@ using SIL.LCModel.Application;
 namespace LanguageExplorerTests.Impls
 {
 	[TestFixture]
-	public class RecordClerkRepositoryTests : MemoryOnlyBackendProviderTestBase
+	public class RecordListRepositoryTests : MemoryOnlyBackendProviderTestBase
 	{
 		[Test]
-		public void ClerkRepository_CompleteWorkout_IsHappyAsAClamInTheMud()
+		public void RecordListRepository_CompleteWorkout_IsHappyAsAClamInTheMud()
 		{
 			// Setup
 			IPublisher publisher;
@@ -30,12 +30,12 @@ namespace LanguageExplorerTests.Impls
 				propertyTable.SetProperty("cache", Cache, SettingsGroup.BestSettings, false, false);
 				propertyTable.SetProperty("window", dummyWindow, SettingsGroup.BestSettings, false, false);
 
-				// Test 1. Make sure a bogus clerk isn't in the repository.
-				Assert.IsNull(recordListRepository.GetRecordList("bogusClerkId"));
+				// Test 1. Make sure a bogus record list isn't in the repository.
+				Assert.IsNull(recordListRepository.GetRecordList("bogusRecordListId"));
 				// Test 2. Make sure there is no active clerk.
 				Assert.IsNull(recordListRepository.ActiveRecordList);
 
-				// Test 3. New clerk is added.
+				// Test 3. New record list is added.
 				var recordList = new RecordList("records", statusbar, Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false, new VectorPropertyParameterObject(Cache.LanguageProject.ResearchNotebookOA, "AllRecords", Cache.MetaDataCacheAccessor.GetFieldId2(RnResearchNbkTags.kClassId, "AllRecords", false)));
 				recordList.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));
 
@@ -43,12 +43,12 @@ namespace LanguageExplorerTests.Impls
 				Assert.AreSame(recordList, recordListRepository.GetRecordList("records"));
 				Assert.IsNull(recordListRepository.ActiveRecordList);
 
-				// Test 4. Check out active clerk
+				// Test 4. Check out active record list
 				Assert.IsNull(recordListRepository.ActiveRecordList);
 				recordListRepository.ActiveRecordList = recordList;
 				Assert.AreSame(recordList, recordListRepository.ActiveRecordList);
 
-				// Test 5. Remove clerk.
+				// Test 5. Remove record list.
 				recordListRepository.RemoveRecordList(recordList);
 				Assert.IsNull(recordListRepository.ActiveRecordList);
 			}

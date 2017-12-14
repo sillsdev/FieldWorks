@@ -66,7 +66,6 @@ namespace LanguageExplorer
 		/// </summary>
 		protected RecordFilter m_filter;
 		protected RecordFilter m_filterPrev;
-		protected string m_propertyName = string.Empty;
 		protected string m_fontName;
 		protected int m_typeSize = 10;
 		protected bool m_reloadingList;
@@ -131,16 +130,8 @@ namespace LanguageExplorer
 		/// <summary />
 		protected IRecordChangeHandler _recordChangeHandler;
 		private ListUpdateHelper _bulkEditListUpdateHelper;
-		/// <summary>
-		/// True if the record list is being used in a Gui.
-		/// </summary>
-		protected bool _isActiveInGui = false;
+
 		private const string SelectedListBarNodeErrorMessage = "An item stored in the Property Table under SelectedListBarNode (typically from the ListView of an xWindow's record bar) should have an Hvo stored in its Tag property.";
-		///// <summary>
-		///// this will be null if this record list is dependent on another one. Only the top-level record list
-		///// gets to be represented by and interact with the tree bar.
-		///// </summary>
-		//protected RecordBarHandler _recordBarHandler;
 		private bool _isDefaultSort;
 		private RecordSorter _defaultSorter;
 		private bool _reloadingDueToMissingObject;
@@ -167,7 +158,6 @@ namespace LanguageExplorer
 		/// </summary>
 		protected Dictionary<string, PropertyRecordSorter> _allSorters;
 
-
 		#endregion Data members
 
 		#region Constructors
@@ -193,7 +183,7 @@ namespace LanguageExplorer
 			_allowDeletions = recordFilterParameterObject?.AllowDeletions ?? false;
 			_shouldHandleDeletion = recordFilterParameterObject?.ShouldHandleDeletion ?? false;
 			m_owningObject = vectorPropertyParameterObject.Owner;
-			m_propertyName = vectorPropertyParameterObject.PropertyName;
+			PropertyName = vectorPropertyParameterObject.PropertyName;
 			m_flid = vectorPropertyParameterObject.Flid;
 			m_usingAnalysisWs = usingAnalysisWs;
 			m_objectListPublisher = new ObjectListPublisher(decorator, RecordListFlid);
@@ -301,7 +291,7 @@ namespace LanguageExplorer
 			m_sorter = null;
 			m_filter = null;
 			m_owningObject = null;
-			m_propertyName = null;
+			PropertyName = null;
 			m_fontName = null;
 			m_insertableClasses = null;
 			m_sortedObjects = null;
@@ -573,7 +563,7 @@ namespace LanguageExplorer
 
 		public virtual void ActivateUI(bool updateStatusBar = true)
 		{
-			if (_isActiveInGui)
+			if (IsActiveInGui)
 			{
 				return; // Only do it once.
 			}
@@ -591,6 +581,9 @@ namespace LanguageExplorer
 			}
 			UpdateFilterStatusBarPanel();
 			UpdateSortStatusBarPanel();
+			// Enable in next commit:
+			// 1. RecordList needs MajorFlexComponentParameters to feed to next method, or perhaps some new param object with the three required bits.
+			//RecordListServices.SetRecordList();
 		}
 
 		public bool AreCustomFieldsAProblem(int[] clsids)
@@ -795,11 +788,7 @@ namespace LanguageExplorer
 
 		public string Id { get; protected set; }
 
-		public bool IsActiveInGui
-		{
-			get { return _isActiveInGui; }
-			protected set { _isActiveInGui = value; }
-		}
+		public bool IsActiveInGui { get; protected set; }
 
 		public virtual bool IsControllingTheRecordTreeBar { get; set; }
 
@@ -1415,7 +1404,7 @@ namespace LanguageExplorer
 			}
 		}
 
-		public string PropertyName => m_propertyName;
+		public string PropertyName { get; protected set; } = string.Empty;
 
 		public void ReloadFilterProvider()
 		{
@@ -1711,12 +1700,12 @@ namespace LanguageExplorer
 		/// verifies that the two classes match, if not, throws message.
 		/// </summary>
 		/// <param name="beExpectedListItemsClass"></param>
-		/// <param name="clerkExpectedListItemsClass"></param>
-		internal static void CheckExpectedListItemsClassInSync(int beExpectedListItemsClass, int clerkExpectedListItemsClass)
+		/// <param name="recordListExpectedListItemsClass"></param>
+		internal static void CheckExpectedListItemsClassInSync(int beExpectedListItemsClass, int recordListExpectedListItemsClass)
 		{
-			if (beExpectedListItemsClass != 0 && clerkExpectedListItemsClass != 0 && beExpectedListItemsClass != clerkExpectedListItemsClass)
+			if (beExpectedListItemsClass != 0 && recordListExpectedListItemsClass != 0 && beExpectedListItemsClass != recordListExpectedListItemsClass)
 			{
-				throw new ApplicationException($"for some reason BulkEditBar.ExpectedListItemsClassId({beExpectedListItemsClass}) does not match SortItemProvider.ListItemsClass({clerkExpectedListItemsClass}).");
+				throw new ApplicationException($"for some reason BulkEditBar.ExpectedListItemsClassId({beExpectedListItemsClass}) does not match SortItemProvider.ListItemsClass({recordListExpectedListItemsClass}).");
 			}
 		}
 
@@ -2385,7 +2374,9 @@ namespace LanguageExplorer
 			}
 			var hvo = (int)node.Tag;
 			if (CurrentObjectHvo == 0 || hvo != CurrentObjectHvo)
+			{
 				JumpToRecord(hvo);
+			}
 		}
 
 		private void BroadcastChange(bool suppressFocusChange)
@@ -3966,10 +3957,7 @@ namespace LanguageExplorer
 
 			if (loadList)
 			{
-				var originalValue = IsActiveInGui;
-				IsActiveInGui = true; // Need to fake it.
 				ReloadList();
-				IsActiveInGui = originalValue;
 			}
 			else
 			{

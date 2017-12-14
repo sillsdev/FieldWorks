@@ -267,8 +267,8 @@ These all go on the "Insert" menu, but they are tool-specific. Start at 0.
 		private void Application_Idle(object sender, EventArgs e)
 		{
 			var inDeletingTerritory = false;
-			var clerkOwningObject = _recordList.OwningObject as ICmPossibilityList;
-			if (clerkOwningObject != null && clerkOwningObject.Owner == null)
+			var recordListOwningObject = _recordList.OwningObject as ICmPossibilityList;
+			if (recordListOwningObject != null && recordListOwningObject.Owner == null)
 			{
 				inDeletingTerritory = true;
 			}

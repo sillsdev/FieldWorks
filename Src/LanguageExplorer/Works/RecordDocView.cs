@@ -135,7 +135,7 @@ namespace LanguageExplorer.Works
 		protected override void ShowRecord()
 		{
 #if RANDYTODO
-			Debug.Assert(Clerk.CurrentObject != null);
+			Debug.Assert(MyRecordList.CurrentObject != null);
 			Debug.Assert(m_rootSite != null);
 #else
 			// TODO: I run release builds, so the above assert doesn't do anything.

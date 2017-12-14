@@ -4111,8 +4111,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (disposing)
 			{
 				SpecialCache.RemoveNotification(this);
-				base.Dispose(disposing);
 			}
+
+			base.Dispose(disposing);
 		}
 
 		#region Overrides of BrowseViewer

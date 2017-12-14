@@ -181,7 +181,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
             </clerk>
 			*/
 			// NB: The constructor supplies the id, so no need to pass it on.
-			return new ConcordanceWordList(statusBar, cache.LanguageProject, new ConcDecorator(cache.ServiceLocator));
+			var concDecorator = new ConcDecorator(cache.ServiceLocator);
+			concDecorator.InitializeFlexComponent(flexComponentParameters);
+			return new ConcordanceWordList(statusBar, cache.LanguageProject, concDecorator);
 		}
 
 		internal static IRecordList InterlinearTextsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)

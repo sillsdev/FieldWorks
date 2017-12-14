@@ -36,7 +36,7 @@ namespace LanguageExplorer.Works
 		protected BrowseViewer m_browseViewer;
 		private bool m_suppressRecordNavigation;
 		protected bool m_suppressShowRecord;
-		private bool m_fHandlingFilterChangedByClerk;
+		private bool m_fHandlingFilterChangedByRecordList;
 
 		/// <summary>
 		/// Required designer variable.
@@ -203,7 +203,7 @@ namespace LanguageExplorer.Works
 		{
 			// If we're in the process of notifying clients that the record list has changed
 			// the filter, we don't need to tell the record list to change the filter (again)!
-			if (m_fHandlingFilterChangedByClerk)
+			if (m_fHandlingFilterChangedByRecordList)
 				return;
 			MyRecordList.OnChangeFilter(args);
 		}
@@ -215,10 +215,10 @@ namespace LanguageExplorer.Works
 		/// <param name="e"></param>
 		private void RecordList_FilterChangedByList(object sender, FilterChangeEventArgs e)
 		{
-			m_fHandlingFilterChangedByClerk = true;
+			m_fHandlingFilterChangedByRecordList = true;
 			// Let the client(s) know about the change.
 			m_browseViewer.UpdateFilterBar(MyRecordList.Filter);
-			m_fHandlingFilterChangedByClerk = false;
+			m_fHandlingFilterChangedByRecordList = false;
 		}
 
 		private void RecordList_SorterChangedByList(object sender, EventArgs e)
@@ -505,7 +505,7 @@ namespace LanguageExplorer.Works
 //				titleStr = ((IPaneBar)m_informationBar).Text;	// can't get to work.
 				// (EricP) For some reason I can't provide an IPaneBar get-accessor to return
 				// the new Text value. If it's desirable to allow TitleFormat to apply to
-				// Clerk.CurrentObject, then we either have to duplicate what the
+				// RecordList.CurrentObject, then we either have to duplicate what the
 				// base.SetInfoBarText() does here, or get the string set by the base.
 				// for now, let's just return.
 				if (string.IsNullOrEmpty(titleStr))
@@ -588,7 +588,7 @@ namespace LanguageExplorer.Works
 
 		/// <summary>
 		/// Record browse view implements ShowRecord by scrolling to show the current record. However,
-		/// that may well not be all the response to selecting that record in the Clerk: for example,
+		/// that may well not be all the response to selecting that record in the record list: for example,
 		/// another pane may show a more detailed view of the selected record. Therefore, RecordBrowseView
 		/// never claims to have 'handled' this event.
 		/// </summary>
@@ -637,9 +637,9 @@ namespace LanguageExplorer.Works
 
 		private void CheckExpectedListItemsClassInSync()
 		{
-			int beExpectedListItemsClass = m_browseViewer.BulkEditBar.ExpectedListItemsClassId;
-			int clerkExpectedListItemsClass = MyRecordList.ListItemsClass;
-			RecordList.CheckExpectedListItemsClassInSync(beExpectedListItemsClass, clerkExpectedListItemsClass);
+			var beExpectedListItemsClass = m_browseViewer.BulkEditBar.ExpectedListItemsClassId;
+			var recordListExpectedListItemsClass = MyRecordList.ListItemsClass;
+			RecordList.CheckExpectedListItemsClassInSync(beExpectedListItemsClass, recordListExpectedListItemsClass);
 		}
 
 		public bool OnConsideringClosing(object argument, System.ComponentModel.CancelEventArgs args)

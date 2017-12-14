@@ -28,7 +28,7 @@ namespace LanguageExplorer.Works
 	///		2. Implement the pane that shows the current object. Typically, set its Dock property to
 	///			DockStyle.Fill and add it to this.Controls. This is typically done in an override
 	///			of SetupDataContext.
-	///		3. Implement ShowRecord to update the view of the object to a display of Clerk.CurrentObject.
+	///		3. Implement ShowRecord to update the view of the object to a display of MyRecordList.CurrentObject.
 	///	Subclasses may:
 	///		- Override ReadParameters to extract info from the configuration node. (This is the
 	///		representation of the XML <parameters></parameters> node from the <control></control>
@@ -168,9 +168,9 @@ namespace LanguageExplorer.Works
 		{
 			TriggerMessageBoxIfAppropriate();
 
-			if(m_treebarAvailability!=TreebarAvailability.NotMyBusiness)
+			if (m_treebarAvailability != TreebarAvailability.NotMyBusiness)
 			{
-				MyRecordList.ActivateUI();//nb optional would be a bug here
+				MyRecordList.ActivateUI(); // NB: optional would be a bug here
 			}
 
 			m_madeUpFieldIdentifier = MyRecordList.VirtualFlid;
@@ -204,7 +204,7 @@ namespace LanguageExplorer.Works
 				SetTreebarAvailability();
 				AddPaneBar();
 
-				//Historical comments here indicated that the Clerk should be processed by the mediator before the
+				//Historical comments here indicated that MyRecordList should be processed by the mediator before the
 				//view. This is handled by Priority now, RecordView is by default just after RecordList in the processing.
 				SetupDataContext();
 			}
@@ -215,7 +215,7 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		private string GetClerkPersistPathname()
+		private string GetRecordListPersistPathname()
 		{
 			return GetSortFilePersistPathname(Cache, MyRecordList.Id);
 		}
@@ -246,7 +246,7 @@ namespace LanguageExplorer.Works
 			{
 				return;
 			}
-			var pathname = GetClerkPersistPathname();
+			var pathname = GetRecordListPersistPathname();
 			var watch = new Stopwatch();
 			watch.Start();
 			MyRecordList.PersistListOn(pathname);
@@ -257,7 +257,7 @@ namespace LanguageExplorer.Works
 		// Enhance JohnT: need to verify that sort sequence is current.
 		private bool RestoreSortSequence()
 		{
-			var pathname = GetClerkPersistPathname();
+			var pathname = GetRecordListPersistPathname();
 			if (!File.Exists(pathname))
 				return false;
 			var watch = new Stopwatch();

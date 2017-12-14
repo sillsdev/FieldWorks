@@ -272,7 +272,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				// then switch to another Category, the new item shows up there! That is because a call-back
 				// to the record list happens during adding the item, but the record list has already changed its
 				// current HVO.
-				// The solution is to pass false here, but set a property <Clerkid>_AlwaysReloadVirtualProperty
+				// The solution is to pass false here, but set a property <RecordListid>_AlwaysReloadVirtualProperty
 				// on the tool so we always reload when switching.
 				CreateObjectFromEntryRow(rgtss, false);
 			}

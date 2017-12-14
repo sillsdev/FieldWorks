@@ -34,10 +34,10 @@ namespace LanguageExplorer.Areas
 
 			m_propertyTable = propertyTable;
 
-			TreeView.HideSelection = false;
+			m_treeView.HideSelection = false;
 			m_listView.HideSelection = false;
 
-			TreeView.Dock = DockStyle.Fill;
+			m_treeView.Dock = DockStyle.Fill;
 			m_listView.Dock = DockStyle.Fill;
 
 			IsFlatList = true;
@@ -53,34 +53,18 @@ namespace LanguageExplorer.Areas
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// <summary>
 		/// Get the TreeView control, or null, if using a ListView.
 		/// </summary>
-		public TreeView TreeView
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_treeView;
-			}
-		}
+		public TreeView TreeView => m_treeView.Visible ? m_treeView : null;
 
 		/// <summary>
 		/// Get the ListView control, or null, if using a TreeView.
 		/// </summary>
-		public ListView ListView
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_listView;
-			}
-		}
+		public ListView ListView => m_listView.Visible ? m_listView : null;
 
 		/// <summary>
 		/// Use 'true' to show as a ListView, otherwise 'false' for a TreeView.
@@ -93,12 +77,12 @@ namespace LanguageExplorer.Areas
 
 				if (value)
 				{
-					TreeView.Visible = false;
+					m_treeView.Visible = false;
 					m_listView.Visible = true;
 				}
 				else
 				{
-					TreeView.Visible = true;
+					m_treeView.Visible = true;
 					m_listView.Visible = false;
 				}
 			}
@@ -107,7 +91,7 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// 'true' if the control has the optional header control, otherwise 'false'.
 		/// </summary>
-		public bool HasHeaderControl { get { return m_optionalHeaderControl != null; } }
+		public bool HasHeaderControl => m_optionalHeaderControl != null;
 
 		/// <summary>
 		/// Add an optional header control
@@ -118,7 +102,9 @@ namespace LanguageExplorer.Areas
 			CheckDisposed();
 
 			if (c == null || HasHeaderControl)
+			{
 				return;
+			}
 
 			m_optionalHeaderControl = c;
 			Controls.Add(c);
@@ -132,9 +118,7 @@ namespace LanguageExplorer.Areas
 		{
 			set
 			{
-				CheckDisposed();
-
-				TreeView.SelectedNode = value;
+				m_treeView.SelectedNode = value;
 			}
 		}
 
@@ -145,12 +129,13 @@ namespace LanguageExplorer.Areas
 		{
 			CheckDisposed();
 
-			TreeView.AfterSelect -= OnTreeBarAfterSelect;
-			ListView.SelectedIndexChanged -= OnListBarSelect;
-			TreeView.Nodes.Clear();
-			ListView.Items.Clear();
-			ListView.SelectedIndexChanged += OnListBarSelect;
-			TreeView.AfterSelect += OnTreeBarAfterSelect;
+			m_treeView.AfterSelect -= OnTreeBarAfterSelect;
+			m_treeView.Nodes.Clear();
+			m_treeView.AfterSelect += OnTreeBarAfterSelect;
+
+			m_listView.SelectedIndexChanged -= OnListBarSelect;
+			m_listView.Items.Clear();
+			m_listView.SelectedIndexChanged += OnListBarSelect;
 		}
 
 		private void OnListBarSelect(object sender, EventArgs e)
@@ -173,14 +158,11 @@ namespace LanguageExplorer.Areas
 			if (IsDisposed)
 				return;
 
-			if( disposing )
+			if (disposing)
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Component Designer generated code

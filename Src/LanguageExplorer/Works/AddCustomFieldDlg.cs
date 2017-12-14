@@ -200,21 +200,21 @@ namespace LanguageExplorer.Works
 		public static List<IdAndString<Guid>> GetListsComboItems(LcmCache cache, XElement windowConfiguration)
 		{
 			var result = new List<IdAndString<Guid>>();
-			var clerks = new Dictionary<string, XElement>();
+			var clerkElements = new Dictionary<string, XElement>();
 			foreach (var elt in windowConfiguration.XPathSelectElements("//item[@value='lists' or @value='grammar']/parameters/clerks/clerk"))
 			{
-				clerks[elt.Attribute("id").Value] = elt;
+				clerkElements[elt.Attribute("id").Value] = elt;
 			}
 			// Key is a list we found, value is an index in result.
 			var resultsByList = new Dictionary<ICmObject, int>();
 			foreach (var elt in windowConfiguration.XPathSelectElements("//item[@value='lists' or @value='grammar']/parameters/tools/tool"))
 			{
-				var clerkNode = elt.XPathSelectElement("control/parameters//control/parameters[@clerk]");
-				if (clerkNode == null)
+				var clerkElement = elt.XPathSelectElement("control/parameters//control/parameters[@clerk]");
+				if (clerkElement == null)
 					continue;
-				var recordListId = clerkNode.Attribute("clerk").Value;
+				var recordListId = clerkElement.Attribute("clerk").Value;
 				XElement recordList;
-				if (!clerks.TryGetValue(recordListId, out recordList))
+				if (!clerkElements.TryGetValue(recordListId, out recordList))
 					continue;
 				var recordListElement = recordList.Element("recordList");
 				if (recordListElement == null)

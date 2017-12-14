@@ -508,20 +508,23 @@ namespace LanguageExplorer.Impls
 				var property = m_properties[key];
 				// May update the persistance, as in when a default was created which persists, but now we want to not persist it.
 				property.doPersist = persistProperty;
-				object oldValue = property.value;
-				bool bothNull = (oldValue == null && newValue == null);
-				bool oldExists = (oldValue != null);
+				var oldValue = property.value;
+				var bothNull = (oldValue == null && newValue == null);
+				var oldExists = (oldValue != null);
 				didChange = !( bothNull
 								|| (oldExists
 									&&
-									(	(oldValue == newValue) // Identity is the same
-										|| oldValue.Equals(newValue)) // Close enough for government work.
+									(	ReferenceEquals(oldValue, newValue) // Referencing the very same object?
+										|| oldValue.Equals(newValue)) // Same content (e.g.: The color Red is Red, no matter if it is the same instance)?
+										|| oldValue?.ToString() == newValue?.ToString() // Close enough for government work.
 									)
 								);
 				if (didChange)
 				{
 					if (property.value != null && property.doDispose)
+					{
 						(property.value as IDisposable).Dispose(); // Get rid of the old value.
+					}
 					property.value = newValue;
 				}
 			}

@@ -210,7 +210,7 @@ namespace LanguageExplorer.Works
 			}
 			set
 			{
-				// allow parent controls to pass in the Clerk we want this control to use.
+				// allow parent controls to pass in the record list we want this control to use.
 				m_recordList = value;
 			}
 		}

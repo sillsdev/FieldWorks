@@ -389,7 +389,8 @@ namespace LanguageExplorer.Controls.SilSidePane
 		internal bool SelectItem(Tab tab, string itemName)
 		{
 			Guard.AgainstNull(tab, nameof(tab));
-			Guard.AgainstNull(itemName, nameof(itemName));
+			Guard.AgainstNullOrEmptyString(itemName, nameof(itemName));
+
 			if (!ContainsTab(tab))
 			{
 				throw new ArgumentOutOfRangeException(nameof(tab), tab, @"sidepane does not contain tab");

@@ -23,11 +23,6 @@ namespace LanguageExplorer.Works
 		internal PossibilityRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, ICmPossibilityList ownedPossibilityList, RecordFilterParameterObject recordFilterParameterObject = null)
 			: base(id, statusBar, decorator, true, new VectorPropertyParameterObject(ownedPossibilityList, "PossibilitiesOS", CmPossibilityListTags.kflidPossibilities), recordFilterParameterObject)
 		{
-			ConstructorCommon();
-		}
-
-		private void ConstructorCommon()
-		{
 			m_usingAnalysisWs = true;
 			m_oldLength = 0;
 		}

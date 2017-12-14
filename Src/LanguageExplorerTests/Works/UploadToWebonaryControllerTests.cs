@@ -31,7 +31,7 @@ namespace LanguageExplorerTests.Works
 		private PropertyTable m_propertyTable;
 		private LcmStyleSheet m_styleSheet;
 		private StyleInfoTable m_owningTable;
-		private RecordClerk m_Clerk;
+		private RecordList m_recordList;
 
 	#region Environment
 		[TestFixtureSetUp]
@@ -81,12 +81,12 @@ namespace LanguageExplorerTests.Works
 			var doc = new XmlDocument();
 			doc.LoadXml(reversalIndexClerk);
 			XmlNode clerkNode = doc.SelectSingleNode("//tools/tool[@label='Dictionary']//parameters[@area='lexicon']");
-			m_Clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false);
-			RecordClerk.RecordClerkRepository.ActiveRecordClerk = m_Clerk;
+			m_recordList = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false);
+			RecordList.RecordListRepository.ActiveRecordClerk = m_recordList;
 
 			clerkNode = doc.SelectSingleNode("//tools/tool[@label='ReversalIndex']//parameters[@area='lexicon']");
-			m_Clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false);
-			RecordClerk.RecordClerkRepository.ActiveRecordClerk = m_Clerk;
+			m_recordList = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false);
+			RecordList.RecordListRepository.ActiveRecordClerk = m_recordList;
 
 			m_propertyTable.SetProperty("ToolForAreaNamed_lexicon", "lexiconDictionary", false);
 			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
@@ -119,7 +119,7 @@ namespace LanguageExplorerTests.Works
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (disposing)
 			{
-				m_Clerk?.Dispose();
+				m_recordList?.Dispose();
 				m_application?.Dispose();
 				m_window?.Dispose();
 				m_mediator?.Dispose();

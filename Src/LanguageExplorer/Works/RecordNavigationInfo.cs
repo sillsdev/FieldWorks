@@ -55,7 +55,7 @@ namespace LanguageExplorer.Works
 		}
 
 		/// <summary>
-		/// HvoOfClerkAtTimeOfNavigation is needed in Equals() for determining whether or not
+		/// HvoOfCurrentObjAtTimeOfNavigation is needed in Equals() for determining whether or not
 		/// RecordNavigationInfo has changed in the property table.
 		/// </summary>
 		public int HvoOfCurrentObjAtTimeOfNavigation

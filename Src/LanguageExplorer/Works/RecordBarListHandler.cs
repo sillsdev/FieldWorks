@@ -17,9 +17,6 @@ namespace LanguageExplorer.Works
 {
 	/// <summary>
 	/// Summary description for RecordBarListHandler.
-	///
-	/// RecordBarHandler's static Create method create's one of these, if the older xml config system didn't specify some other one.
-	/// Most list-type stuff does specify another one.
 	/// </summary>
 	public class RecordBarListHandler : RecordBarHandler
 	{
@@ -67,14 +64,13 @@ namespace LanguageExplorer.Works
 				return;
 			}
 
-			IFwMainWnd window = m_propertyTable.GetValue<IFwMainWnd>("window");
+			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
 			using (new WaitCursor((Form)window))
 			{
 				var list = window.ListStyleRecordList;
 				list.BeginUpdate();
-#if RANDYTODO
-				window.ClearRecordBarList();	//don't want to directly clear the nodes, because that causes an event to be fired as every single node is removed!
-#endif
+				var recordBarControl = window.RecordBarControl;
+				recordBarControl?.Clear();
 				m_hvoToListViewItemTable.Clear();
 
 				AddListViewItems(recList.SortedObjects, list);
@@ -84,17 +80,18 @@ namespace LanguageExplorer.Works
 				}
 				catch(Exception error)
 				{
-					IApp app = m_propertyTable.GetValue<IApp>("App");
-					ErrorReporter.ReportException(error, app.SettingsKey,
-						app.SupportEmailAddress, null, false);
+					var app = m_propertyTable.GetValue<IApp>("App");
+					ErrorReporter.ReportException(error, app.SettingsKey, app.SupportEmailAddress, null, false);
 				}
 
 
 				UpdateSelection(recList.CurrentObject);
 				list.EndUpdate();
 
-				if (list.SelectedItems.Count >0)
-				{}//list.s .EnsureVisible();
+				//if (list.SelectedItems.Count > 0)
+				//{
+				//	//list.s .EnsureVisible();
+				//}
 			}
 		}
 
@@ -103,8 +100,6 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		public override void ReleaseRecordBar()
 		{
-			CheckDisposed();
-
 		}
 
 		protected virtual void AddListViewItems(ArrayList sortedObjects, ListView list)
@@ -117,9 +112,11 @@ namespace LanguageExplorer.Works
 				if (obj.Hvo == (int)SpecialHVOValues.kHvoObjectDeleted)
 					continue;
 
-				ListViewItem node =	AddListViewItem(obj, list);
+				var node =	AddListViewItem(obj, list);
 				if (!m_hvoToListViewItemTable.ContainsKey(obj.Hvo))
+				{
 					m_hvoToListViewItemTable.Add(obj.Hvo, node);
+				}
 			}
 		}
 

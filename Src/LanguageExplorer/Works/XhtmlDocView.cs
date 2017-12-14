@@ -670,7 +670,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		public void PostLayoutInit()
 		{
-			// Tell the Clerk it is active so it will update the list of entries. Pass false as we have no toolbar to update.
+			// Tell the record list it is active so it will update the list of entries. Pass false as we have no toolbar to update.
 			MyRecordList.ActivateUI();
 			// Update the entry list if necessary
 			if(!MyRecordList.ListLoadingSuppressed && MyRecordList.RequestedLoadWhileSuppressed)

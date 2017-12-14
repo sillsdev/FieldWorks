@@ -40,7 +40,7 @@ namespace LanguageExplorer.Works
 		// suspend loading the property until given a class by RecordBrowseView via
 		// RecordList.OnChangeListItemsClass();
 		bool m_suspendReloadUntilOnChangeListItemsClass = true;
-		private readonly XElement m_partOwnershipTreeSpec = XElement.Parse(xWorksStrings.EntriesOrChildrenClerkPartOwnershipTree);
+		private readonly XElement m_partOwnershipTreeSpec = XElement.Parse(xWorksStrings.EntriesOrChildrenRecordListPartOwnershipTree);
 
 		/// <summary />
 		internal EntriesOrChildClassesRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, ILexDb owner)

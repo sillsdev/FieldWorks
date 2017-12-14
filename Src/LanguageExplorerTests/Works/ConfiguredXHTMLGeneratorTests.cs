@@ -125,7 +125,7 @@ namespace LanguageExplorerTests.Works
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (disposing)
 			{
-				m_Clerk?.Dispose();
+				m_recordList?.Dispose();
 				m_application?.Dispose();
 				m_window?.Dispose();
 				m_propertyTable?.Dispose();
@@ -256,8 +256,8 @@ namespace LanguageExplorerTests.Works
 			const string letterHeadingXPath = "//div[@class='letHead']";
 			try
 			{
-				var clerk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
-				clerk.SortName = "Headword (fr)";
+				var recordList = RecordList.RecordListRepository.ActiveRecordList;
+				recordList.SortName = "Headword (fr)";
 				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo }, pubEverything, model, m_propertyTable);
 				AssertThatXmlIn.File(xhtmlPath).HasSpecifiedNumberOfMatchesForXpath(letterHeadingXPath, 1);
 			}
@@ -8050,8 +8050,8 @@ namespace LanguageExplorerTests.Works
 			const string letterHeaderXPath = "//div[@class='letHead']";
 			try
 			{
-				var clerk = RecordClerk.RecordClerkRepository.ActiveRecordClerk;
-				clerk.SortName = "Glosses";
+				var recordList = RecordList.RecordListRepository.ActiveRecordList;
+				recordList.SortName = "Glosses";
 				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo }, pubEverything, model, m_propertyTable);
 				var xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(letterHeaderXPath, 0);

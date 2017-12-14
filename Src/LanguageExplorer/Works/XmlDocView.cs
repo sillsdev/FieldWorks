@@ -295,7 +295,7 @@ namespace LanguageExplorer.Works
 				//				titleStr = ((IPaneBar)m_informationBar).Text;	// can't get to work.
 				// (EricP) For some reason I can't provide an IPaneBar get-accessor to return
 				// the new Text value. If it's desirable to allow TitleFormat to apply to
-				// Clerk.CurrentObject, then we either have to duplicate what the
+				// MyrecordList.CurrentObject, then we either have to duplicate what the
 				// base.SetInfoBarText() does here, or get the string set by the base.
 				// for now, let's just return.
 				if (titleStr == string.Empty)
@@ -486,7 +486,7 @@ namespace LanguageExplorer.Works
 				|| RecordNavigationInfo.GetSendingList(argument) != MyRecordList) // Don't pretend to have handled it if it isn't our record list.
 				return false;
 
-			// persist Clerk's CurrentIndex in a db specific way
+			// persist record list's CurrentIndex in a db specific way
 #if RANDYTODO
 // As of 21JUL17 nobody cares about that 'propName' changing, so skip the broadcast.
 #endif
@@ -616,7 +616,7 @@ namespace LanguageExplorer.Works
 		{
 			base.OnMouseMove(e);
 			// don't try to update the tooltip by getting a selection while painting the view; leads to recursive expansion of lazy boxes.
-			// also don't try and update the tooltip if we don't have a Clerk yet
+			// also don't try and update the tooltip if we don't have a record list yet
 			if (m_mainView.MouseMoveSuppressed || MyRecordList == null)
 				return;
 			var item = SubitemClicked(e.Location, MyRecordList.ListItemsClass);
@@ -746,10 +746,10 @@ namespace LanguageExplorer.Works
 		}
 
 		/// <summary>
-		/// By default this returns Clerk.CurrentIndex. However, when we are using a decorator
+		/// By default this returns RecordList.CurrentIndex. However, when we are using a decorator
 		/// for the view, we may need to adjust the index.
 		/// </summary>
-		int AdjustedClerkIndex()
+		int AdjustedRecordListIndex()
 		{
 			var sda = m_mainView.DataAccess as ISilDataAccessManaged;
 			if (sda == null || sda == MyRecordList.VirtualListPublisher)
@@ -772,7 +772,7 @@ namespace LanguageExplorer.Works
 
 		protected override void ShowRecord()
 		{
-			var currentIndex = AdjustedClerkIndex();
+			var currentIndex = AdjustedRecordListIndex();
 
 			// See if it is showing the same record, as before.
 			if (m_currentObject != null && MyRecordList.CurrentObject != null
@@ -943,7 +943,7 @@ namespace LanguageExplorer.Works
 			{
 				const int levelFlid = 0;
 				var indexes = new List<int>();
-				var currentIndex = AdjustedClerkIndex();
+				var currentIndex = AdjustedRecordListIndex();
 				indexes.Add(currentIndex);
 				// Suppose it is the fifth subrecord of the second subrecord of the ninth main record.
 				// At this point, indexes holds 4, 1, 8. That is, like information for MakeSelection,
@@ -1022,11 +1022,12 @@ namespace LanguageExplorer.Works
 			TriggerMessageBoxIfAppropriate();
 			using (new WaitCursor(this))
 			{
-				//m_flid = RecordList.GetFlidOfVectorFromName(m_vectorName, Cache, out m_owningObject);
 				MyRecordList.ActivateUI();
 				// Enhance JohnT: could use logic similar to RecordView.InitBase to load persisted list contents (filtered and sorted).
 				if (MyRecordList.RequestedLoadWhileSuppressed)
+				{
 					MyRecordList.UpdateList(false);
+				}
 				m_madeUpFieldIdentifier = MyRecordList.VirtualFlid;
 				if (MyRecordList.OwningObject != null)
 				{
@@ -1039,8 +1040,7 @@ namespace LanguageExplorer.Works
 
 				// Review JohnT: should it be m_configurationParametersElement or .FirstChild?
 				var app = PropertyTable.GetValue<IFlexApp>("App");
-				m_mainView = new XmlSeqView(Cache, m_hvoOwner, m_madeUpFieldIdentifier, m_configurationParametersElement, MyRecordList.VirtualListPublisher, app,
-					Publication);
+				m_mainView = new XmlSeqView(Cache, m_hvoOwner, m_madeUpFieldIdentifier, m_configurationParametersElement, MyRecordList.VirtualListPublisher, app, Publication);
 				m_mainView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				m_mainView.Dock = DockStyle.Fill;
 				m_mainView.Cache = Cache;

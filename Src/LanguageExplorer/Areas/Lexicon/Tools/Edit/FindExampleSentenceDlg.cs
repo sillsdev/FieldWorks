@@ -200,10 +200,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			*/
 			// First create our record list, since we can't set it's OwningObject via the configuration/mediator/PropertyTable info.
 			// This record list is a "TemporaryRecordList" suclass, so dispose it when the dlg goes away.
-			m_recordList = new ConcRecordList(_statusBar, m_cache, m_owningSense);
+			var flexParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
+			var concDecorator = new ConcDecorator(m_cache.ServiceLocator);
+			concDecorator.InitializeFlexComponent(flexParameters);
+			m_recordList = new ConcRecordList(_statusBar, m_cache, concDecorator, m_owningSense);
 
 			m_rbv = DynamicLoader.CreateObject(xnBrowseViewControlParameters.ParentNode.SelectSingleNode("dynamicloaderinfo")) as ConcOccurrenceBrowseView;
-			m_rbv.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			m_rbv.InitializeFlexComponent(flexParameters);
 			m_rbv.Init(m_previewPane, m_recordList.VirtualListPublisher);
 			m_rbv.CheckBoxChanged += m_rbv_CheckBoxChanged;
 			// add it to our controls.

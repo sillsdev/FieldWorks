@@ -176,11 +176,10 @@ namespace LanguageExplorer
 
 			if (disposing)
 			{
+				Application.Idle -= Application_Idle;
 				_toolStripButtonHistoryBack.Click -= HistoryBack_Clicked;
 				_toolStripButtonHistoryForward.Click -= HistoryForward_Clicked;
 				_copyLocationAsHyperlinkToolStripMenuItem.Click -= CopyLocationAsHyperlink_Clicked;
-				Application.Idle -= Application_Idle;
-				PropertyTable?.SetProperty("LinkHandler", null, false, false);
 				_backStack?.Clear();
 				_forwardStack?.Clear();
 			}

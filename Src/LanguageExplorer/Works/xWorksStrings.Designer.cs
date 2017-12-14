@@ -392,9 +392,9 @@ namespace LanguageExplorer.Works {
         ///		&lt;LexEntry sourceField=&quot;Entries&quot;&gt;
         ///			&lt;LexEntryRef sourceField=&quot;AllEntryRefs&quot; altSourceField=&quot;ComplexEntryTypes:AllComplexEntryRefPropertyTargets;VariantEntryTypes: [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string EntriesOrChildrenClerkPartOwnershipTree {
+        internal static string EntriesOrChildrenRecordListPartOwnershipTree {
             get {
-                return ResourceManager.GetString("EntriesOrChildrenClerkPartOwnershipTree", resourceCulture);
+                return ResourceManager.GetString("EntriesOrChildrenRecordListPartOwnershipTree", resourceCulture);
             }
         }
         

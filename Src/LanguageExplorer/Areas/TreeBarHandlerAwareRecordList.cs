@@ -12,6 +12,12 @@ using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas
 {
+	/// <summary>
+	/// Class that knows how to manage an instance of RecordBarHandler that is not a possibility list.
+	/// </summary>
+	/// <remarks>
+	/// Right now, there are no users of this class, but I suspect one of the currently unused lists will use it.
+	/// </remarks>
 	internal sealed class TreeBarHandlerAwareRecordList : RecordList
 	{
 		private static IRecordList s_lastRecordListToLoadTreeBar;

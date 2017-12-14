@@ -203,8 +203,10 @@ namespace LanguageExplorer.Works
 		protected virtual void UpdateHeaderVisibility()
 		{
 			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
-			if (window == null)
+			if (window == null || window.RecordBarControl == null)
+			{
 				return;
+			}
 
 			window.RecordBarControl.ShowHeaderControl = false;
 		}
@@ -427,10 +429,7 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Makes the record list available to subclasses.
 		/// </summary>
-		protected IRecordList RecordList
-		{
-			get { return m_list; }
-		}
+		protected IRecordList RecordList => m_list;
 
 		public override void PopulateRecordBar(IRecordList list)
 		{
@@ -487,9 +486,7 @@ namespace LanguageExplorer.Works
 					}
 					tree.AllowDrop = editable;
 					tree.BeginUpdate();
-#if RANDYTODO
-					window.ClearRecordBarList();	//don't want to directly clear the nodes, because that causes an event to be fired as every single note is removed!
-#endif
+					recordBarControl.Clear();
 					m_hvoToTreeNodeTable.Clear();
 
 					// type size must be set before AddTreeNodes is called
@@ -1045,18 +1042,23 @@ namespace LanguageExplorer.Works
 			var tree = window.TreeStyleRecordList;
 			if (currentObject == null)
 			{
-				tree.SelectedNode = null;
+				if (tree != null)
+				{
+					tree.SelectedNode = null;
+				}
 				m_clickNode = null; // otherwise we can try to promote a deleted one etc.
 				return;
 			}
 
 			TreeNode node = null;
 			if (m_hvoToTreeNodeTable.ContainsKey(currentObject.Hvo))
+			{
 				node = m_hvoToTreeNodeTable[currentObject.Hvo];
+			}
 			//Debug.Assert(node != null);
 			// node.EnsureVisible() throws an exception if tree != node.TreeView, and this can
 			// happen somehow.  (see LT-986)
-			if (node != null && node.TreeView == tree && (tree.SelectedNode != node))
+			if (node != null && tree != null && node.TreeView == tree && (tree.SelectedNode != node))
 			{
 				tree.SelectedNode = node;
 				EnsureSelectedNodeVisible(tree);

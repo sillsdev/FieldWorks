@@ -31,7 +31,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				if (PropertyTable != null)
 				{
-					PropertyTable.SetProperty("FirstControlToHandleMessages", null, SettingsGroup.LocalSettings, false, false);
+					PropertyTable.RemoveProperty("FirstControlToHandleMessages", SettingsGroup.LocalSettings);
 				}
 			}
 

@@ -71,7 +71,7 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		private void DeleteUnusedEntriesAndSenses(LcmCache cache, ProgressBar progressBar)
 		{
-			ConcDecorator cd = new ConcDecorator(cache.ServiceLocator);
+			var cd = new ConcDecorator(cache.ServiceLocator);
 			cd.InitializeFlexComponent(new FlexComponentParameters(m_dlg.PropertyTable, m_dlg.Publisher, m_dlg.Subscriber));
 			var entries = cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().ToArray();
 			progressBar.Minimum = 0;

@@ -3136,7 +3136,7 @@ namespace LanguageExplorer.Works
 			}
 			if (activeRecordList == null)
 			{
-				throw new ArgumentException(@"No clerk", nameof(activeRecordList));
+				throw new ArgumentException(@"No record list", nameof(activeRecordList));
 			}
 
 			ICmPossibility currentPublication;

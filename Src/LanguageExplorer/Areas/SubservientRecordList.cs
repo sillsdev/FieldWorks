@@ -46,7 +46,7 @@ namespace LanguageExplorer.Areas
 			_statusBar = statusBar;
 			m_objectListPublisher = new ObjectListPublisher(decorator, RecordListFlid);
 			m_usingAnalysisWs = usingAnalysisWs;
-			m_propertyName = string.Empty;
+			PropertyName = string.Empty;
 			m_fontName = MiscUtils.StandardSansSerif;
 			// Only other current option is to specify an ordinary property (or a virtual one).
 			m_flid = flid;

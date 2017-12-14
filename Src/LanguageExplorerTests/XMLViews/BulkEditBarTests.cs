@@ -3,6 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 /*
- * More complex BulkEditBar tests, including RecordBrowseView/RecordClerk interactions
+ * More complex BulkEditBar tests, including RecordBrowseView/RecordList interactions
  * are in xWorks\xWorksTests\BulkEditBarTests.cs
  */

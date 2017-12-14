@@ -63,6 +63,8 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
+		private string _lastMessage;
+		private object _lastNewValue;
 		/// <summary>
 		/// Publish the message using the new value.
 		/// </summary>
@@ -72,26 +74,43 @@ namespace LanguageExplorer.Impls
 		{
 			Guard.AgainstNullOrEmptyString(message, nameof(message));
 
-			Console.WriteLine($"About to publish: '{message}'.");
-			using (Detect.Reentry(this, "Publish").AndThrow())
+			try
 			{
-				HashSet<Action<object>> subscribers;
-				if (!_subscriber.Subscriptions.TryGetValue(message, out subscribers))
+				if (_lastMessage == message && _lastNewValue.ToString() == newValue.ToString())
 				{
-					Console.WriteLine($"Nobody likes me ({message}), everybody hates me, guess I'll go eat some worms....");
-					return;
+					Console.WriteLine($@"Why, pray tell, do we need to redo the very same message ({message}) with the very same new value?");
 				}
+				else
+				{
+					Console.WriteLine($@"About to publish: '{message}'.");
+				}
+				using (Detect.Reentry(this, "Publish").AndThrow())
+				{
+					_lastMessage = message;
+					_lastNewValue = newValue;
+					HashSet<Action<object>> subscribers;
+					if (!_subscriber.Subscriptions.TryGetValue(message, out subscribers))
+					{
+						Console.WriteLine($@"Nobody likes me ({message}), everybody hates me, guess I'll go eat some worms....");
+						return;
+					}
 
-				foreach (var subscriberAction in subscribers)
-				{
-					// NB: It is possible that the action's object is disposed,
-					// but we'll not fret about making sure it isn't disposed,
-					// but we will expect the subscribers to be well-behaved and unsubscribe,
-					// when they get disposed.
-					subscriberAction(newValue);
+					foreach (var subscriberAction in subscribers)
+					{
+						// NB: It is possible that the action's object is disposed,
+						// but we'll not fret about making sure it isn't disposed,
+						// but we will expect the subscribers to be well-behaved and unsubscribe,
+						// when they get disposed.
+						subscriberAction(newValue);
+					}
 				}
+				Console.WriteLine($@"Finished publishing: '{message}'.");
 			}
-			Console.WriteLine($"Finished publishing: '{message}'.");
+			finally
+			{
+				_lastMessage = null;
+				_lastNewValue = null;
+			}
 		}
 
 		#endregion

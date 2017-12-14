@@ -9,7 +9,7 @@ using SIL.LCModel;
 namespace LanguageExplorerTests.Works
 {
 #if RANDYTODO
-	// Remarks: Due to the painfully extensive setup needed, we do not bother to test any methods that `using` a `ClerkActivator`
+	// Remarks: Due to the painfully extensive setup needed, we do not bother to test any methods that `using` a `RecordListActivator`
 	[TestFixture]
 	public class DictionaryExportServiceTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{

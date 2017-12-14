@@ -179,7 +179,7 @@ namespace LanguageExplorer.Works
 #if RANDYTODO
 // As of 21JUL17 nobody cares about that 'propName' changing, so skip the broadcast.
 #endif
-			// persist Clerk's CurrentIndex in a db specific way
+			// persist record lists's CurrentIndex in a db specific way
 			string propName = MyRecordList.PersistedIndexProperty;
 			PropertyTable.SetProperty(propName, MyRecordList.CurrentIndex, SettingsGroup.LocalSettings, true, false);
 			var window = PropertyTable.GetValue<IFwMainWnd>("window");

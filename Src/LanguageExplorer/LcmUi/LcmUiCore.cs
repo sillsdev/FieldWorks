@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.LcmUi.Dialogs;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
@@ -788,9 +789,12 @@ namespace LanguageExplorer.LcmUi
 				// See e.g. LT-5156, 6534, 7160.
 				// Indeed, since CmBaseAnnotation presents itself as a 'Problem Report', we don't want
 				// to do it for any kind of annotation that couldn't be one!
-				var sClerkType = RecordList.ActiveRecordListRepository.ActiveRecordList?.GetType().Name ?? string.Empty;
-				if (sClerkType == "OccurrencesOfSelectedUnit")
-					return true;		// We don't want this either.  See LT-6101.
+				var activeRecordList = RecordList.ActiveRecordListRepository.ActiveRecordList;
+				if (activeRecordList is MatchingConcordanceItems)
+				{
+					// We don't want this either.  See LT-6101.
+					return true;
+				}
 			}
 
 			// TODO: The context menu needs to be filtered to remove inappropriate menu items.
