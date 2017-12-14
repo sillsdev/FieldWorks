@@ -308,6 +308,7 @@
     <Compile Include="InterlinMasterTests.cs" />
     <Compile Include="InterlinSfmImportTests.cs" />
     <Compile Include="InterlinTaggingTests.cs" />
+    <Compile Include="GlossToolLoadsGuessContentsTests.cs" />
     <Compile Include="MorphemeBreakerTests.cs" />
     <Compile Include="SandboxBaseTests.cs" />
     <Compile Include="ShowSpaceDecoratorTests.cs" />

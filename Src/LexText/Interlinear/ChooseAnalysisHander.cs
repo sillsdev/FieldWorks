@@ -606,7 +606,7 @@ namespace SIL.FieldWorks.IText
 			if (m_fInitializing)
 				return;
 			int x = ((HvoTssComboItem)m_combo.SelectedItem).Hvo;
-			if(x>=0)//could be a separator
+			if(x >= 0) //could be a separator
 				m_hvoAnalysis = x;
 			Hide();	// Moved here from the end as the 'AnalysisChosen' method can
 					// cause the current object to be disposed of.  Not very nice...
@@ -616,9 +616,6 @@ namespace SIL.FieldWorks.IText
 					// be disposed.  This I don't know...
 			if (AnalysisChosen != null)
 				AnalysisChosen(this, new EventArgs());
-			// Old behavior appropriate for main window.
-			//m_cache.SetObjProperty(m_hvoSrc, m_tagSrc, ((CaComboItem)m_combo.SelectedItem).Analysis);
-
 		}
 
 		/// <summary>

@@ -894,7 +894,9 @@ namespace SIL.FieldWorks.XWorks
 
 				case PropertyType.CmFileType:
 					fileProperty = propertyValue as ICmFile;
-					var internalPath = fileProperty.InternalPath;
+					string internalPath = null;
+					if (fileProperty != null && fileProperty.InternalPath != null)
+						internalPath = fileProperty.InternalPath;
 					// fileProperty.InternalPath can have a backward slash so that gets replaced with a forward slash in Linux
 #if __MonoCS__
 					if(!string.IsNullOrEmpty(internalPath))
