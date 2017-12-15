@@ -1635,9 +1635,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						int hvoSeg = rgsli[itagSegments].hvo;
 						var annType = freeAnn.AnnotationTypeRA;
-						int idx = 0;
+						var idx = 0;
 						var choices = m_vc.LineChoices;
-						for (int i = choices.FirstFreeformIndex; i < choices.Count; )
+						for (var i = choices.FirstFreeformIndex; i < choices.Count; )
 						{
 							var ffAannType = m_vc.SegDefnFromFfFlid(choices[i].Flid);
 							if (ffAannType == annType)
@@ -1648,10 +1648,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							// Adjacent WSS of the same annotation count as only ONE object in the display.
 							// So we advance i over as many items in m_choices as there are adjacent Wss
 							// of the same flid.
-							i += choices.AdjacentWssAtIndex(i).Length;
+							i += choices.AdjacentWssAtIndex(i, hvoSeg).Length;
 						}
-						int[] rgws = choices.AdjacentWssAtIndex(idx);
-						for (int i = 0; i < rgws.Length; ++i)
+						int[] rgws = choices.AdjacentWssAtIndex(idx, hvoSeg);
+						for (var i = 0; i < rgws.Length; ++i)
 						{
 							if (rgws[i] == wsField)
 							{

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -595,20 +595,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void m_combo_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (m_fInitializing)
+			{
 				return;
-			int x = ((HvoTssComboItem)m_combo.SelectedItem).Hvo;
-			if(x>=0)//could be a separator
+			}
+			var x = ((HvoTssComboItem)m_combo.SelectedItem).Hvo;
+			if (x >= 0) // could be a separator
+			{
 				m_hvoAnalysis = x;
+			}
 			Hide();	// Moved here from the end as the 'AnalysisChosen' method can
 					// cause the current object to be disposed of.  Not very nice...
 					// if there are other calls yet to be invoked on the object.
 					// LT-5775: this is no real fix, as a real fix would understand
 					// why the RootBox.MakeTextSelection would cause this object to
 					// be disposed.  This I don't know...
-			if (AnalysisChosen != null)
-				AnalysisChosen(this, new EventArgs());
-			// Old behavior appropriate for main window.
-			//m_cache.SetObjProperty(m_hvoSrc, m_tagSrc, ((CaComboItem)m_combo.SelectedItem).Analysis);
+			AnalysisChosen?.Invoke(this, new EventArgs());
 
 		}
 

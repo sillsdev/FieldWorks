@@ -1,3 +1,7 @@
+// Copyright (c) ????-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 // NOTE: whenever this class is updated to include the tagging line(s), InterlinClipboardHelper
 // (in InterlinDocView.cs) has to be fixed.  It currently hacks up a solution for a single
 // tagging line when it thinks it needs to do so.
@@ -8,6 +12,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
@@ -18,6 +23,7 @@ using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -50,14 +56,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public InterlinLineChoices(LcmCache cache, int defaultVernacularWs, int defaultAnalysisWs, InterlinMode mode)
 		{
-			this.Mode = mode;
-			InitFieldNames(mode);
 			m_cache = cache;
+			Mode = mode;
+			InitFieldNames(mode);
 			m_wsDefVern = defaultVernacularWs;
-			if (defaultAnalysisWs == WritingSystemServices.kwsAnal)
-				m_wsDefAnal = m_cache.DefaultAnalWs;
-			else
-				m_wsDefAnal = defaultAnalysisWs;
+			m_wsDefAnal = defaultAnalysisWs == WritingSystemServices.kwsAnal ? m_cache.DefaultAnalWs : defaultAnalysisWs;
 		}
 
 		public InterlinLineChoices(ILangProject proj, int defaultVernacularWs, int defaultAnalysisWs, InterlinMode mode)
@@ -363,6 +366,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private LineOption[] LineOptions(InterlinMode mode)
 		{
+			var customLineOptions = GetCustomLineOptions(mode);
 			return new LineOption[] {
 				 new LineOption(kflidWord, ITextStrings.ksWord),
 				 new LineOption(kflidMorphemes, ITextStrings.ksMorphemes),
@@ -376,7 +380,31 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				 new LineOption(kflidFreeTrans, ITextStrings.ksFreeTranslation),
 				 new LineOption(kflidLitTrans, ITextStrings.ksLiteralTranslation),
 				 new LineOption(kflidNote, ITextStrings.ksNote)
-			};
+			}.Union(customLineOptions).ToArray();
+		}
+
+		private List<LineOption> GetCustomLineOptions(InterlinMode mode)
+		{
+			var customLineOptions = new List<LineOption>();
+			switch (mode)
+			{
+				case InterlinMode.Analyze:
+				case InterlinMode.Gloss:
+					if (m_cache != null)
+					{
+						var classId = m_cache.MetaDataCacheAccessor.GetClassId("Segment");
+						var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+						foreach (int flid in mdc.GetFields(classId, false, (int)CellarPropertyTypeFilter.All))
+						{
+							if (!mdc.IsCustom(flid))
+								continue;
+							customLineOptions.Add(new LineOption(flid, mdc.GetFieldLabel(flid)));
+						}
+					}
+					break;
+			}
+
+			return customLineOptions;
 		}
 
 		/// <summary>
@@ -570,9 +598,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Answer an array of the writing systems to display for the field at index,
 		/// and any subsequent fields with the same flid.
 		/// </summary>
-		/// <param name="index"></param>
 		/// <returns></returns>
-		public int[] AdjacentWssAtIndex(int index)
+		public int[] AdjacentWssAtIndex(int index, int hvo)
 		{
 			int first = index;
 			int lim = index + 1;
@@ -580,7 +607,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				lim++;
 			int[] result = new int[lim - first];
 			for (int i = first; i < lim; i++)
-				result[i - first] = this[i].WritingSystem;
+			{
+				var wsId = this[i].WritingSystem;
+				var magicWsName = WritingSystemServices.GetMagicWsNameFromId(wsId);
+				if (!string.IsNullOrEmpty(magicWsName))
+				{
+					wsId = WritingSystemServices.ActualWs(m_cache, magicWsName, hvo, this[i].Flid);
+				}
+				result[i - first] = wsId;
+			}
 			return result;
 		}
 		/// <summary>
@@ -716,7 +751,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					fWordLevel = false;
 					break;
 				default:
-					throw new Exception("Adding unknown field to interlinear");
+					var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+					if (!mdc.IsCustom(flid))
+					{
+						throw new Exception("Adding unknown field to interlinear");
+					}
+					ws = mdc.GetFieldWs(flid);
+					fWordLevel = false;
+					comboContent = ColumnConfigureDialog.WsComboContent.kwccAnalAndVern;
+					break;
 			}
 			InterlinLineSpec spec = new InterlinLineSpec();
 			spec.ComboContent = comboContent;

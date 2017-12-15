@@ -1835,7 +1835,7 @@ namespace LanguageExplorer.Works
 			if (!File.Exists(xml))
 				throw new FileNotFoundException();
 			XmlDocument xDoc = new XmlDocument();
-			xDoc.XmlResolver = FileStreamXmlResolver.GetNullResolver();
+			xDoc.XmlResolver = new FileStreamXmlResolver();
 			xDoc.Load(xml);
 		}
 

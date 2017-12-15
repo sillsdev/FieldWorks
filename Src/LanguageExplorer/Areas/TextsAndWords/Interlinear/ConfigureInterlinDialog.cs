@@ -309,28 +309,35 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			currentList.Items.Clear();
 			foreach (InterlinLineSpec ls in m_choices)
 			{
-				string[] cols = new string[2];
+				var cols = new string[2];
 
 				cols[0] = TsStringUtils.NormalizeToNFC(m_choices.LabelFor(ls.Flid));
 
-				string wsName = "";
+				var wsName = string.Empty;
 				// This tries to find a matching ws from the combo box that would be displayed for this item
 				// The reason we use the combo box is because that will give us names like "Default Analysis" instead of
 				// the actual analysis ws name.
 				foreach (WsComboItem item in WsComboItems(ls.ComboContent))
 				{
-					if (getWsFromId(item.Id) == ls.WritingSystem)
+					var ws = ls.IsMagicWritingSystem ? m_cache.LangProject.DefaultWsForMagicWs(ls.WritingSystem) : ls.WritingSystem;
+					if (getWsFromId(item.Id) == ws)
 					{
 						wsName = item.ToString();
 						break;
 					}
+					else
+					{
+						Debug.WriteLine(item.Id);
+					}
 				}
 				// Last ditch effort
-				if (wsName == "")
+				if (wsName == string.Empty)
 				{
-					CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ls.WritingSystem);
+					var wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ls.WritingSystem);
 					if (wsObj != null)
+					{
 						wsName = wsObj.DisplayLabel;
+					}
 				}
 				cols[1] = TsStringUtils.NormalizeToNFC(wsName);
 				cols[1] = cols[1].Substring(0, Math.Min(cols[1].Length, 42));

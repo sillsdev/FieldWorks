@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2017 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -893,13 +893,17 @@ namespace LanguageExplorer.Works
 
 				case PropertyType.CmFileType:
 					fileProperty = propertyValue as ICmFile;
-					var internalPath = fileProperty.InternalPath;
+					string internalPath = null;
+					if (fileProperty?.InternalPath != null)
+					{
+						internalPath = fileProperty.InternalPath;
+					}
 					// fileProperty.InternalPath can have a backward slash so that gets replaced with a forward slash in Linux
 #if __MonoCS__
 					if(!string.IsNullOrEmpty(internalPath))
 						internalPath = fileProperty.InternalPath.Replace('\\', '/');
 #endif
-					if (fileProperty != null && !string.IsNullOrEmpty(internalPath))
+						if (fileProperty != null && !string.IsNullOrEmpty(internalPath))
 					{
 						var srcAttr = GenerateSrcAttributeForMediaFromFilePath(internalPath, "AudioVisual", settings);
 						if (IsVideo(fileProperty.InternalPath))

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,6 +15,8 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -379,6 +381,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							phraseText = TsStringUtils.MakeString(item.Value, GetWsEngine(wsFactory, item.lang).Handle);
 							textInFile = true;
 							break;
+						default:
+							var classId = cache.MetaDataCacheAccessor.GetClassId("Segment");
+							var mdc = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
+							foreach (int flid in mdc.GetFields(classId, false, (int)CellarPropertyTypeFilter.All))
+							{
+								if (!mdc.IsCustom(flid))
+									continue;
+								var customId = mdc.GetFieldId2(classId, item.type, true);
+								if (customId != 0)
+								{
+									var customWs = GetWsEngine(wsFactory, item.lang).Handle;
+									var customTierText = TsStringUtils.MakeString(item.Value, customWs);
+									cache.MainCacheAccessor.SetString(newSegment.Hvo, customId, customTierText);
+								}
+							}
+							break;
 					}
 				}
 			}
@@ -386,9 +404,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private static void AddELANInfoToSegment(LcmCache cache, Phrase phrase, ISegment newSegment)
 		{
-			if (!String.IsNullOrEmpty(phrase.mediaFile))
+			if (!string.IsNullOrEmpty(phrase.mediaFile))
 			{
-				if(!String.IsNullOrEmpty(phrase.speaker))
+				if (!string.IsNullOrEmpty(phrase.speaker))
 				{
 					newSegment.SpeakerRA = FindOrCreateSpeaker(phrase.speaker, cache);
 				}

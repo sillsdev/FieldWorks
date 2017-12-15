@@ -34,7 +34,7 @@ namespace LanguageExplorerTests.Interlinear
 		private IStText m_stText0;
 		private IStTxtPara m_para0_0;
 		private TestableFocusBox m_focusBox;
-		private MockInterlinDocForAnalyis m_interlinDoc;
+		private MockInterlinDocForAnalysis m_interlinDoc;
 		private IList<AnalysisTree> m_analysis_para0_0 = new List<AnalysisTree>();
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
@@ -83,7 +83,7 @@ namespace LanguageExplorerTests.Interlinear
 
 			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
 			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
-			m_interlinDoc = new MockInterlinDocForAnalyis(m_stText0);
+			m_interlinDoc = new MockInterlinDocForAnalysis(m_stText0);
 			m_interlinDoc.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_focusBox = m_interlinDoc.FocusBox as TestableFocusBox;
 		}
@@ -300,10 +300,10 @@ namespace LanguageExplorerTests.Interlinear
 		#endregion
 	}
 
-	class MockInterlinDocForAnalyis : InterlinDocForAnalysis
+	class MockInterlinDocForAnalysis : InterlinDocForAnalysis
 	{
 		private IStText m_testText;
-		internal MockInterlinDocForAnalyis(IStText testText)
+		internal MockInterlinDocForAnalysis(IStText testText)
 		{
 			Cache = testText.Cache;
 			m_hvoRoot = testText.Hvo;

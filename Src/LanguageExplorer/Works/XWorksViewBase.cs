@@ -552,6 +552,9 @@ namespace LanguageExplorer.Works
 				case AreaServices.NotebookAreaMachineName:
 					inFriendlyTerritory = toolChoice == AreaServices.NotebookEditToolMachineName || toolChoice == AreaServices.NotebookBrowseToolMachineName;
 					break;
+				case AreaServices.TextAndWordsAreaMachineName:
+					inFriendlyTerritory = toolChoice == AreaServices.InterlinearEditMachineName || toolChoice == "gloss"; // Review: What tool is named "gloss"?
+					break;
 			}
 
 			display.Enabled = display.Visible = inFriendlyTerritory;
@@ -579,6 +582,9 @@ namespace LanguageExplorer.Works
 					break;
 				case AreaServices.NotebookAreaMachineName:
 					locationType = AddCustomFieldDlg.LocationType.Notebook;
+					break;
+				case AreaServices.TextAndWordsAreaMachineName:
+					locationType = AddCustomFieldDlg.LocationType.Interlinear;
 					break;
 			}
 			using (var dlg = new AddCustomFieldDlg(PropertyTable, Publisher, locationType))

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,7 +26,8 @@ namespace LanguageExplorer.Works
 		public enum LocationType
 		{
 			Lexicon,
-			Notebook
+			Notebook,
+			Interlinear
 		}
 
 		private enum CustomFieldType
@@ -111,6 +112,10 @@ namespace LanguageExplorer.Works
 					m_locationComboBox.Items.Add(new IdAndString<int>(LexSenseTags.kClassId, xWorksStrings.Sense));
 					m_locationComboBox.Items.Add(new IdAndString<int>(LexExampleSentenceTags.kClassId, xWorksStrings.ExampleSentence));
 					m_locationComboBox.Items.Add(new IdAndString<int>(MoFormTags.kClassId, xWorksStrings.Allomorph));
+					break;
+
+				case LocationType.Interlinear:
+					m_locationComboBox.Items.Add(new IdAndString<int>(SegmentTags.kClassId, "Segment"));
 					break;
 
 				case LocationType.Notebook:

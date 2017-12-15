@@ -235,6 +235,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ArchivingTests.cs" />
+    <Compile Include="Interlinear\GlossToolLoadsGuessContentsTests.cs" />
     <Compile Include="Repository\AreaRepositoryTests.cs" />
     <Compile Include="Repository\AreaTestBase.cs" />
     <Compile Include="DetailControls\AtomicReferenceLauncherTests.cs" />

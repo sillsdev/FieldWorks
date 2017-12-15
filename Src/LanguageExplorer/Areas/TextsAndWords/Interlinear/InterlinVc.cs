@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,6 +17,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -930,7 +931,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected virtual void AddFreeformComment(IVwEnv vwenv, int hvoSeg, int lineChoiceIndex)
 		{
-			int[] wssAnalysis = m_lineChoices.AdjacentWssAtIndex(lineChoiceIndex);
+			var wssAnalysis = m_lineChoices.AdjacentWssAtIndex(lineChoiceIndex, hvoSeg);
 			if (wssAnalysis.Length == 0)
 				return;
 			vwenv.OpenDiv();
@@ -2059,7 +2060,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// different writing systems.
 			for (int ispec = m_lineChoices.FirstFreeformIndex;
 				 ispec < m_lineChoices.Count;
-				 ispec += m_lineChoices.AdjacentWssAtIndex(ispec).Length)
+				ispec += m_lineChoices.AdjacentWssAtIndex(ispec, hvoSeg).Length)
 			{
 				int flid = m_lineChoices[ispec].Flid;
 				switch(flid)
@@ -2075,10 +2076,93 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						vwenv.AddObjVecItems(SegmentTags.kflidNotes, this, kfragSegFfChoices + ispec);
 						break;
 					default:
+						if (((IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor).IsCustom(flid))
+							AddCustomFreeFormComment(vwenv, hvoSeg, ispec);
 						break; // unknown type, ignore it.
 
 				}
 			}
+		}
+
+		protected virtual void AddCustomFreeFormComment(IVwEnv vwenv, int hvoSeg, int lineChoiceIndex)
+		{
+			int[] wssAnalysis = m_lineChoices.AdjacentWssAtIndex(lineChoiceIndex, hvoSeg);
+			if (wssAnalysis.Length == 0)
+				return;
+
+			InterlinearExporter exporter = vwenv as InterlinearExporter;
+			if (exporter != null)
+				exporter.FreeAnnotationType = "custom";
+			vwenv.OpenDiv();
+			SetParaDirectionAndAlignment(vwenv, wssAnalysis[0]);
+			vwenv.OpenMappedPara();
+			string label;
+			int flid;
+			int customCommentFlid = m_lineChoices[lineChoiceIndex].Flid;
+			label = m_cache.MetaDataCacheAccessor.GetFieldLabel(customCommentFlid) + " ";
+			flid = customCommentFlid;
+			SetNoteLabelProps(vwenv);
+			// REVIEW: Should we set the label to a special color as well?
+			ITsString tssLabel = MakeUiElementString(label, m_cache.DefaultUserWs,
+				propsBldr => propsBldr.SetIntPropValues((int)FwTextPropType.ktptBold,
+				(int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn));
+			ITsStrBldr labelBldr = tssLabel.GetBldr();
+			AddLineIndexProperty(labelBldr, lineChoiceIndex);
+			tssLabel = labelBldr.GetString();
+			int labelWidth = 0;
+			int labelHeight; // unused
+			if (wssAnalysis.Length > 1)
+				vwenv.get_StringWidth(tssLabel, null, out labelWidth, out labelHeight);
+			if (IsWsRtl(wssAnalysis[0]) != m_fRtl)
+			{
+				ITsStrBldr bldr = tssLabel.GetBldr();
+				bldr.Replace(bldr.Length - 1, bldr.Length, null, null);
+				ITsString tssLabelNoSpace = bldr.GetString();
+				// (First) analysis language is upstream; insert label at end.
+				AddTssDirForWs(vwenv, wssAnalysis[0]);
+				vwenv.AddStringProp(customCommentFlid, this);
+				AddTssDirForWs(vwenv, wssAnalysis[0]);
+				if (wssAnalysis.Length != 1)
+				{
+					// Insert WS label for first line
+					AddTssDirForVernWs(vwenv);
+					vwenv.AddString(m_tssSpace);
+					AddTssDirForVernWs(vwenv);
+					SetNoteLabelProps(vwenv);
+					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[0]));
+				}
+				AddTssDirForVernWs(vwenv);
+				vwenv.AddString(m_tssSpace);
+				AddTssDirForVernWs(vwenv);
+				vwenv.AddString(tssLabelNoSpace);
+				AddTssDirForVernWs(vwenv);
+			}
+			else
+			{
+				AddTssDirForVernWs(vwenv);
+				vwenv.AddString(tssLabel);
+				AddTssDirForVernWs(vwenv);
+				if (wssAnalysis.Length == 1)
+				{
+					AddTssDirForWs(vwenv, wssAnalysis[0]);
+					vwenv.AddStringProp(customCommentFlid, this);
+				}
+				else
+				{
+					SetNoteLabelProps(vwenv);
+					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[0]));
+					AddTssDirForVernWs(vwenv);
+					vwenv.AddString(m_tssSpace);
+					// label width unfortunately does not include trailing space.
+					AddTssDirForVernWs(vwenv);
+					AddTssDirForWs(vwenv, wssAnalysis[0]);
+					//AddFreeformComment(vwenv, hvoSeg, wssAnalysis[0], flid);
+					vwenv.AddStringProp(customCommentFlid, this);
+				}
+			}
+
+			vwenv.CloseParagraph();
+			vwenv.CloseDiv();
 		}
 
 		internal ICmAnnotationDefn SegDefnFromFfFlid(int flid)
