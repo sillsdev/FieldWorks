@@ -154,11 +154,8 @@
     <Reference Include="SilUtils">
       <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
-    <Reference Include="protobuf-net" Condition="'$(OS)'=='Unix'">
-      <HintPath>..\..\Downloads\protobuf-net\Full\mono\protobuf-net.dll</HintPath>
-    </Reference>
-    <Reference Include="protobuf-net" Condition="'$(OS)'!='Unix'">
-      <HintPath>..\..\Downloads\protobuf-net\Full\net30\protobuf-net.dll</HintPath>
+    <Reference Include="protobuf-net">
+      <HintPath>..\..\Downloads\protobuf-net\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
