@@ -77,7 +77,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.LanguagesListEdit
 				_recordList,
 				dataTree,
 				MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
-			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>

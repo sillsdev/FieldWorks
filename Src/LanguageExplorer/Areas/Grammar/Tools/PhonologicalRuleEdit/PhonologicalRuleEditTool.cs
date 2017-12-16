@@ -95,7 +95,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 			panelButton.DatTree = recordEditView.DatTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>

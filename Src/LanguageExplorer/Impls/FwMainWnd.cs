@@ -364,7 +364,7 @@ namespace LanguageExplorer.Impls
 		private void ClearDuringTransition()
 		{
 			// NB: If you are ever tempted to not set the record list to null, then be prepared to have each area/tool clear it.
-			RecordListServices.ClearRecordList(_majorFlexComponentParameters);
+			RecordListServices.SetRecordList(null);
 			StatusBarPanelServices.ClearBasicStatusBars(_statusbar);
 		}
 
@@ -714,6 +714,8 @@ namespace LanguageExplorer.Impls
 				this,
 				_sidePane);
 
+			RecordListServices.Setup(_majorFlexComponentParameters);
+
 			// Most tools show it, but let them deal with it and its event handler.
 			var fileExportMenu = MenuServices.GetFileExportMenu(_majorFlexComponentParameters.MenuStrip);
 			fileExportMenu.Visible = false;
@@ -955,7 +957,7 @@ namespace LanguageExplorer.Impls
 
 				// Quit responding to messages early on.
 				Subscriber.Unsubscribe("MigrateOldConfigurations", MigrateOldConfigurations);
-
+				RecordListServices.TearDown(_majorFlexComponentParameters);
 				_currentArea?.Deactivate(_majorFlexComponentParameters);
 				_currentTool?.Deactivate(_majorFlexComponentParameters);
 				_sendReceiveMenuManager?.Dispose();

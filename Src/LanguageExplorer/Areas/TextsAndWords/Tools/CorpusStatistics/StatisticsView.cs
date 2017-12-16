@@ -72,7 +72,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 
 			_chooseTextsToolStripButton.Click += AddTexts_Clicked;
 			_chooseTextsToolStripMenuItem.Click += AddTexts_Clicked;
-			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		#region Implementation of IPropertyTableProvider

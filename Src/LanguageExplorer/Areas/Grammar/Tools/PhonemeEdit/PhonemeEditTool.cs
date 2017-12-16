@@ -101,7 +101,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			panelButton.DatTree = recordEditView.DatTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>

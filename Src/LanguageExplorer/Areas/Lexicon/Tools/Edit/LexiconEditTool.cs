@@ -133,7 +133,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			panelButton.DatTree = recordEditView.DatTree;
 
 			// Too early before now.
-			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 			_lexiconEditToolMenuHelper.Initialize();
 			recordEditView.FinishInitialization();
 			((RecordDocXmlView)nestedMultiPaneParameters.FirstControlParameters.Control).ReallyShowRecordNow();

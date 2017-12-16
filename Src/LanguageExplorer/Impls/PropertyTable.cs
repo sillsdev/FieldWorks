@@ -516,7 +516,9 @@ namespace LanguageExplorer.Impls
 									&&
 									(	ReferenceEquals(oldValue, newValue) // Referencing the very same object?
 										|| oldValue.Equals(newValue)) // Same content (e.g.: The color Red is Red, no matter if it is the same instance)?
+#if RANDYTODO
 										|| oldValue?.ToString() == newValue?.ToString() // Close enough for government work.
+#endif
 									)
 								);
 				if (didChange)

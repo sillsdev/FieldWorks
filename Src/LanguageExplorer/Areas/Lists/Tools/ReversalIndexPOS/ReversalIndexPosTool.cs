@@ -123,7 +123,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			panelButton.DatTree = recordEditView.DatTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
-			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>

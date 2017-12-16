@@ -563,6 +563,10 @@ namespace LanguageExplorer
 
 		public virtual void ActivateUI(bool updateStatusBar = true)
 		{
+			if (ActiveRecordListRepository.ActiveRecordList != this)
+			{
+				RecordListServices.SetRecordList(this);
+			}
 			if (IsActiveInGui)
 			{
 				return; // Only do it once.

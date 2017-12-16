@@ -27,6 +27,7 @@ namespace LanguageExplorerTests.Impls
 			using (var statusbar = new StatusBar())
 			using (IRecordListRepository recordListRepository = new RecordListRepository(Cache, new FlexComponentParameters(propertyTable, publisher, subscriber)))
 			{
+				RecordList.ActiveRecordListRepository = recordListRepository;
 				propertyTable.SetProperty("cache", Cache, SettingsGroup.BestSettings, false, false);
 				propertyTable.SetProperty("window", dummyWindow, SettingsGroup.BestSettings, false, false);
 
@@ -52,6 +53,7 @@ namespace LanguageExplorerTests.Impls
 				recordListRepository.RemoveRecordList(recordList);
 				Assert.IsNull(recordListRepository.ActiveRecordList);
 			}
+			RecordList.ActiveRecordListRepository = null;
 		}
 	}
 }

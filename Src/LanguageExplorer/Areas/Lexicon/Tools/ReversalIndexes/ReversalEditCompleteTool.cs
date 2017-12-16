@@ -129,7 +129,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			recordEditView.FinishInitialization();
 			_xhtmlDocView.OnPropertyChanged("ReversalIndexPublicationLayout");
 			((IPostLayoutInit)_multiPane).PostLayoutInit();
-			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>

@@ -72,7 +72,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 
 			// Too early before now.
 			semanticDomainRdeTreeBarHandler.FinishInitialization(xmlDocViewPaneBar);
-			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 			_lexiconAreaMenuHelper.Initialize();
 		}
 

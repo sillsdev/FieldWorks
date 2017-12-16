@@ -82,7 +82,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
-			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>

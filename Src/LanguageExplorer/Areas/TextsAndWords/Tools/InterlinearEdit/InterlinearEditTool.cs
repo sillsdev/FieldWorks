@@ -86,7 +86,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			// Too early before now.
 			_interlinMaster.FinishInitialization();
 			_interlinMaster.BringToFront();
-			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 		}
 
 		/// <summary>

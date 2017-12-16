@@ -2,6 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using LanguageExplorer.Areas.TextsAndWords;
+using SIL.Code;
+
 namespace LanguageExplorer
 {
 	/// <summary>
@@ -9,18 +12,33 @@ namespace LanguageExplorer
 	/// </summary>
 	internal static class RecordListServices
 	{
-		internal static void SetRecordList(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
+		private static DataNavigationManager _dataNavigationManager;
+		private static ParserMenuManager _parserMenuManager;
+		private static IRecordListRepositoryForTools _recordListRepositoryForTools;
+
+		internal static void Setup(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			majorFlexComponentParameters.DataNavigationManager.RecordList = recordList;
-			majorFlexComponentParameters.ParserMenuManager.MyRecordList = recordList;
-			majorFlexComponentParameters.RecordListRepositoryForTools.ActiveRecordList = recordList;
+			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+
+			_dataNavigationManager = majorFlexComponentParameters.DataNavigationManager;
+			_parserMenuManager = majorFlexComponentParameters.ParserMenuManager;
+			_recordListRepositoryForTools = majorFlexComponentParameters.RecordListRepositoryForTools;
 		}
 
-		internal static void ClearRecordList(MajorFlexComponentParameters majorFlexComponentParameters)
+		internal static void TearDown(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			majorFlexComponentParameters.DataNavigationManager.RecordList = null;
-			majorFlexComponentParameters.ParserMenuManager.MyRecordList = null;
-			majorFlexComponentParameters.RecordListRepositoryForTools.ActiveRecordList = null;
+			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
+
+			_dataNavigationManager = null;
+			_parserMenuManager = null;
+			_recordListRepositoryForTools = null;
+		}
+
+		internal static void SetRecordList(IRecordList recordList)
+		{
+			_dataNavigationManager.RecordList = recordList;
+			_parserMenuManager.MyRecordList = recordList;
+			_recordListRepositoryForTools.ActiveRecordList = recordList;
 		}
 	}
 }

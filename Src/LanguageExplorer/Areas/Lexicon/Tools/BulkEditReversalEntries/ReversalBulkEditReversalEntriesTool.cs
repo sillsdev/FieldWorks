@@ -105,7 +105,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				browseViewPaneBar,
 				_recordBrowseView);
-			RecordListServices.SetRecordList(majorFlexComponentParameters, _recordList);
 			_lexiconAreaMenuHelper.Initialize();
 		}
 

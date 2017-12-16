@@ -63,6 +63,9 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
+#if RANDYTODO
+		// TODO: remove '_lastMessage' & '_lastNewValue' in the end. They are useful for debugging some kinds of re-entrant issues, but not really needed, otherwise.
+#endif
 		private string _lastMessage;
 		private object _lastNewValue;
 		/// <summary>
