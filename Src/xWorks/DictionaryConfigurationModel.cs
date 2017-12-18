@@ -192,8 +192,13 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var wsTtype = DictionaryNodeWritingSystemOptions.WritingSystemType.Both;
 				var availableWSs = DictionaryConfigurationController.GetCurrentWritingSystems(wsTtype, cache);
-				if (availableWSs.Any(x => x.Id ==  HomographConfiguration.HomographWritingSystem))
+				if (availableWSs.Any(x => x.Id == HomographConfiguration.HomographWritingSystem))
 					HomographConfiguration.ExportToHomographConfiguration(cache.ServiceLocator.GetInstance<HomographConfiguration>());
+				else
+				{
+					HomographConfiguration.HomographWritingSystem = string.Empty;
+					HomographConfiguration.CustomHomographNumbers = string.Empty;
+				}
 			}
 			// Handle any changes to the custom field definitions.  (See https://jira.sil.org/browse/LT-16430.)
 			// The "Merge" method handles both additions and deletions.
