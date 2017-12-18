@@ -367,6 +367,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					}
 				}
 				// Reset the sense's ref. property to all the ids in the currentEntries array.
+				currentEntries.Reverse();
 				int[] ids = currentEntries.ToArray();
 				if (!m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().IsValidObjectId(m_sense.Hvo))
 					return 0; // our object has been deleted while we weren't looking!
