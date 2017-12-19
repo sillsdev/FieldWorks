@@ -392,16 +392,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Clear the ListView and add createObjectLabels to it. 'displayUsage' determines if the items are checked/unchecked.
 		/// </summary>
-		/// <param name="createObjectLabels"></param>
-		/// <param name="stylesheet"></param>
-		/// <param name="domainList"></param>
-		/// <param name="displayUsage"></param>
 		public static void UpdateDomainListLabels(IEnumerable<ObjectLabel> createObjectLabels, IVwStylesheet stylesheet, ListView domainList, bool displayUsage)
 		{
 			domainList.BeginUpdate();	// Mono is extremely bad about redundant redrawing.  See FWNX-973 and FWNX-1043.
 			domainList.Items.Clear();
 			if (createObjectLabels.Any())
+			{
 				domainList.Font = GetFontForFormFromObjectLabels(createObjectLabels, stylesheet);
+			}
 
 			foreach (var selectedItem in createObjectLabels)
 			{

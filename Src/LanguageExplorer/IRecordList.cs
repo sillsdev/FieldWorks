@@ -23,7 +23,6 @@ namespace LanguageExplorer
 
 		void ActivateUI(bool updateStatusBar = true);
 		bool AreCustomFieldsAProblem(int[] clsids);
-		RecordBarHandler BarHandler { get; }
 		void BecomeInactive();
 		bool CanMoveTo(Navigation navigateTo);
 		int CurrentIndex { get; set; }
@@ -44,6 +43,7 @@ namespace LanguageExplorer
 		bool ListModificationInProgress { get; set; }
 		int ListSize { get; }
 		void MoveToIndex(Navigation navigateTo);
+		ITreeBarHandler MyTreeBarHandler { get; }
 		void OnChangeFilter(FilterChangeEventArgs args);
 		void OnChangeListItemsClass(int listItemsClass, int newTargetFlid, bool force);
 		bool OnDeleteRecord(object commandObject);

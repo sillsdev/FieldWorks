@@ -249,10 +249,7 @@ namespace LanguageExplorerTests.Impls
 		/// <summary>
 		/// Get the RecordBar (as a Control), or null if not present.
 		/// </summary>
-		IRecordBar IFwMainWnd.RecordBarControl
-		{
-			get { throw new NotImplementedException(); }
-		}
+		IRecordBar IFwMainWnd.RecordBarControl => null;
 
 		/// <summary>
 		/// Get the TreeView of RecordBarControl, or null if not present, or it is not showng a tree.

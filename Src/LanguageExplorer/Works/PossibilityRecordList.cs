@@ -124,20 +124,9 @@ namespace LanguageExplorer.Works
 			}
 			else if (tag == CmPossibilityTags.kflidName || tag == CmPossibilityTags.kflidAbbreviation)
 			{
-				if (BarHandler is TreeBarHandler)
+				if (MyTreeBarHandler.IsItemInTree(hvo))
 				{
-					if (((TreeBarHandler)BarHandler).IsHvoATreeNode(hvo))
-					{
-						UpdateListItemName(hvo);
-					}
-				}
-				else
-				{
-					var hvoTargets = new List<int>(new[] {hvo});
-					if (IndexOfFirstSortItem(hvoTargets) != -1)
-					{
-						UpdateListItemName(hvo);
-					}
+					UpdateListItemName(hvo);
 				}
 			}
 			else

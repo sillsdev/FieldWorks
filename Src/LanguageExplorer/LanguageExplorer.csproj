@@ -1109,6 +1109,7 @@
     <Compile Include="IRecordListRepository.cs" />
     <Compile Include="IRecordListRepositoryForTools.cs" />
     <Compile Include="IRecordList.cs" />
+    <Compile Include="ITreeBarHandler.cs" />
     <Compile Include="Works\ISetRootHvo.cs" />
     <Compile Include="Works\IWebonaryClient.cs" />
     <Compile Include="Works\LegacyConfigurationUtils.cs" />
@@ -1122,6 +1123,7 @@
     <Compile Include="Works\ListChangedActions.cs" />
     <Compile Include="Works\ListUpdateHelper.cs" />
     <Compile Include="Works\ListUpdateHelperOptions.cs" />
+    <Compile Include="Works\LocalDragItem.cs" />
     <Compile Include="Works\MacroListener.cs" />
     <Compile Include="Works\MatchingItemsRecordList.cs" />
     <Compile Include="Works\Navigation.cs" />
@@ -1129,8 +1131,8 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Works\PossibilityRecordList.cs" />
-    <Compile Include="Works\RecordBarListHandler.cs" />
-    <Compile Include="Works\RecordBarTreeHandler.cs" />
+    <Compile Include="Areas\PossibilityTreeBarHandler.cs" />
+    <Compile Include="Works\TreeBarHandler.cs" />
     <Compile Include="Works\RecordBrowseView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1152,7 +1154,7 @@
     </Compile>
     <Compile Include="Works\ReversalIndexServices.cs" />
     <Compile Include="Works\SelectObjectEventArgs.cs" />
-    <Compile Include="Works\SemanticDomainRdeTreeBarHandler.cs" />
+    <Compile Include="Areas\Lexicon\SemanticDomainRdeTreeBarHandler.cs" />
     <Compile Include="Works\CombinedStylesListHandler.cs" />
     <Compile Include="Areas\TreeBarHandlerAwarePossibilityRecordList.cs" />
     <Compile Include="Works\UnicodeCharacterEditingHelper.cs" />

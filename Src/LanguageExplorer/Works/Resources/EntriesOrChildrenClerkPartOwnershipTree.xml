@@ -3,90 +3,123 @@
 	<!-- the ClassOwnershipTree describes the relative relationship between the target classes in the possible source properties
 								 loaded by this list. This especially helps in maintaining the CurrentIndex when switching from one property to the next. -->
 	<ClassOwnershipTree>
-		<LexEntry sourceField="Entries">
-			<LexEntryRef sourceField="AllEntryRefs" altSourceField="ComplexEntryTypes:AllComplexEntryRefPropertyTargets;VariantEntryTypes:AllVariantEntryRefPropertyTargets"/>
-			<LexPronunciation sourceField="AllPossiblePronunciations"/>
-			<MoForm sourceField="AllPossibleAllomorphs"/>
-			<LexSense sourceField="AllSenses">
-				<LexExampleSentence sourceField="AllExampleSentenceTargets">
-					<CmTranslation sourceField="AllExampleTranslationTargets"/>
-				</LexExampleSentence>
-			</LexSense>
-		</LexEntry>
+	  <LexEntry sourceField="Entries">
+	    <LexEntryRef sourceField="AllEntryRefs" altSourceField="ComplexEntryTypes:AllComplexEntryRefPropertyTargets;VariantEntryTypes:AllVariantEntryRefPropertyTargets" />
+	    <LexPronunciation sourceField="AllPossiblePronunciations" />
+	    <LexEtymology sourceField="AllPossibleEtymologies" />
+	    <MoForm sourceField="AllPossibleAllomorphs" />
+	    <LexSense sourceField="AllSenses">
+	      <LexExampleSentence sourceField="AllExampleSentenceTargets">
+	        <CmTranslation sourceField="AllExampleTranslationTargets" />
+	      </LexExampleSentence>
+	      <LexExtendedNote sourceField="AllExtendedNoteTargets" />
+	      <CmPicture sourceField="AllPossiblePictures" />
+	    </LexSense>
+	  </LexEntry>
 	</ClassOwnershipTree>
 	<ParentClassPathsToChildren>
-		<!-- ClassOwnershipPaths describes how to get from the parent ListItemsClass to the destinationClass objects
+    <!-- ClassOwnershipPaths describes how to get from the parent ListItemsClass to the destinationClass objects
 									 of the list properties -->
-		<part id="LexEntry-Jt-AllPossiblePronunciations" type="jtview">
-			<seq class="LexEntry" field="Pronunciations" firstOnly="true" layout="empty">
-				<int class="LexPronunciation" field="Self"/>
-			</seq>
-			<!-- NOTE: AllPossiblePronunciations can also have LexEntry items, since it is a ghost field -->
-		</part>
-		<part id="LexEntry-Jt-AllComplexEntryRefPropertyTargets" type="jtview">
-			<seq class="LexEntry" field="EntryRefs" firstOnly="true" layout="empty">
-				<int class="LexEntryRef" field="Self"/>
-			</seq>
-			<!-- NOTE: AllComplexEntryRefPropertyTargets can also have LexEntry items, since it is a ghost field -->
-		</part>
-		<part id="LexEntry-Jt-AllVariantEntryRefPropertyTargets" type="jtview">
-			<seq class="LexEntry" field="EntryRefs" firstOnly="true" layout="empty">
-				<int class="LexEntryRef" field="Self"/>
-			</seq>
-			<!-- NOTE: AllVariantEntryRefPropertyTargets can also have LexEntry items, since it is a ghost field -->
-		</part>
-		<part id="LexEntry-Jt-AllPossibleAllomorphs" type="jtview">
-			<seq class="LexEntry" field="AlternateForms" firstOnly="true" layout="empty">
-				<int class="MoForm" field="Self"/>
-			</seq>
-			<!-- NOTE: AllPossibleAllomorphs can also have LexEntry items, since it is a ghost field -->
-		</part>
-		<part id="LexEntry-Jt-AllEntryRefs" type="jtview">
-			<seq class="LexEntry" field="EntryRefs" firstOnly="true" layout="empty">
-				<int class="LexEntryRef" field="Self"/>
-			</seq>
-		</part>
-		<part id="LexEntry-Jt-AllSenses" type="jtview">
-			<seq class="LexEntry" field="AllSenses" firstOnly="true" layout="empty">
-				<int class="LexSense" field="Self"/>
-			</seq>
-		</part>
-		<!-- the next item is needed to prevent a crash -->
-		<part id="LexSense-Jt-AllSenses" type="jtview">
-			<obj class="LexSense" field="Self" firstOnly="true" layout="empty"/>
-		</part>
-		<part id="LexEntry-Jt-AllExampleSentenceTargets" type="jtview">
-			<seq class="LexEntry" field="AllSenses" firstOnly="true" layout="empty">
-				<seq class="LexSense" field="Examples" firstOnly="true" layout="empty">
-					<int class="LexExampleSentence" field="Self"/>
-				</seq>
-			</seq>
-		</part>
-		<part id="LexSense-Jt-AllExampleSentenceTargets" type="jtview">
-			<seq class="LexSense" field="Examples" firstOnly="true" layout="empty">
-				<int class="LexExampleSentence" field="Self"/>
-			</seq>
-		</part>
-		<part id="LexEntry-Jt-AllExampleTranslationTargets" type="jtview">
-			<seq class="LexEntry" field="AllSenses" firstOnly="true" layout="empty">
-				<seq class="LexSense" field="Examples" firstOnly="true" layout="empty">
-					<seq class="LexExampleSentence" field="Translations" firstOnly="true" layout="empty">
-						<int class="CmTranslation" field="Self"/>
-					</seq>
-				</seq>
-			</seq>
-		</part>
-		<part id="LexSense-Jt-AllExampleTranslationTargets" type="jtview">
-			<seq class="LexSense" field="Examples" firstOnly="true" layout="empty">
-				<seq class="LexExampleSentence" field="Translations" firstOnly="true" layout="empty">
-					<int class="CmTranslation" field="Self"/>
-				</seq>
-			</seq>
-		</part>
-		<part id="LexExampleSentence-Jt-AllExampleTranslationTargets" type="jtview">
-			<seq class="LexExampleSentence" field="Translations" firstOnly="true" layout="empty">
-				<int class="CmTranslation" field="Self"/>
-			</seq>
-		</part>
+    <part id="LexEntry-Jt-AllPossiblePronunciations" type="jtview">
+      <seq class="LexEntry" field="Pronunciations" firstOnly="true" layout="empty">
+        <int class="LexPronunciation" field="Self" />
+      </seq>
+      <!-- NOTE: AllPossiblePronunciations can also have LexEntry items, since it is a ghost field -->
+    </part>
+    <part id="LexEntry-Jt-AllPossibleEtymologies" type="jtview">
+      <seq class="LexEntry" field="Etymology" firstOnly="true" layout="empty">
+        <int class="LexEtymology" field="Self" />
+      </seq>
+      <!-- NOTE: AllPossibleEtymologies can also have LexEntry items, since it is a ghost field -->
+    </part>
+    <part id="LexEntry-Jt-AllComplexEntryRefPropertyTargets" type="jtview">
+      <seq class="LexEntry" field="EntryRefs" firstOnly="true" layout="empty">
+        <int class="LexEntryRef" field="Self" />
+      </seq>
+      <!-- NOTE: AllComplexEntryRefPropertyTargets can also have LexEntry items, since it is a ghost field -->
+    </part>
+    <part id="LexEntry-Jt-AllVariantEntryRefPropertyTargets" type="jtview">
+      <seq class="LexEntry" field="EntryRefs" firstOnly="true" layout="empty">
+        <int class="LexEntryRef" field="Self" />
+      </seq>
+      <!-- NOTE: AllVariantEntryRefPropertyTargets can also have LexEntry items, since it is a ghost field -->
+    </part>
+    <part id="LexEntry-Jt-AllPossibleAllomorphs" type="jtview">
+      <seq class="LexEntry" field="AlternateForms" firstOnly="true" layout="empty">
+        <int class="MoForm" field="Self" />
+      </seq>
+      <!-- NOTE: AllPossibleAllomorphs can also have LexEntry items, since it is a ghost field -->
+    </part>
+    <part id="LexEntry-Jt-AllEntryRefs" type="jtview">
+      <seq class="LexEntry" field="EntryRefs" firstOnly="true" layout="empty">
+        <int class="LexEntryRef" field="Self" />
+      </seq>
+    </part>
+    <part id="LexEntry-Jt-AllSenses" type="jtview">
+      <seq class="LexEntry" field="AllSenses" firstOnly="true" layout="empty">
+        <int class="LexSense" field="Self" />
+      </seq>
+    </part>
+    <!-- the next item is needed to prevent a crash -->
+    <part id="LexSense-Jt-AllSenses" type="jtview">
+      <obj class="LexSense" field="Self" firstOnly="true" layout="empty" />
+    </part>
+    <part id="LexEntry-Jt-AllExampleSentenceTargets" type="jtview">
+      <seq class="LexEntry" field="AllSenses" firstOnly="true" layout="empty">
+        <seq class="LexSense" field="Examples" firstOnly="true" layout="empty">
+          <int class="LexExampleSentence" field="Self" />
+        </seq>
+      </seq>
+    </part>
+    <part id="LexSense-Jt-AllExampleSentenceTargets" type="jtview">
+      <seq class="LexSense" field="Examples" firstOnly="true" layout="empty">
+        <int class="LexExampleSentence" field="Self" />
+      </seq>
+    </part>
+    <part id="LexEntry-Jt-AllPossiblePictures" type="jtview">
+      <seq class="LexEntry" field="AllSenses" firstOnly="true" layout="empty">
+        <seq class="LexSense" field="Pictures" firstOnly="true" layout="empty">
+          <int class="CmPicture" field="Self" />
+        </seq>
+      </seq>
+    </part>
+    <part id="LexSense-Jt-AllPossiblePictures" type="jtview">
+      <seq class="LexSense" field="Pictures" firstOnly="true" layout="empty">
+        <int class="CmPicture" field="Self" />
+      </seq>
+    </part>
+    <part id="LexEntry-Jt-AllExampleTranslationTargets" type="jtview">
+      <seq class="LexEntry" field="AllSenses" firstOnly="true" layout="empty">
+        <seq class="LexSense" field="Examples" firstOnly="true" layout="empty">
+          <seq class="LexExampleSentence" field="Translations" firstOnly="true" layout="empty">
+            <int class="CmTranslation" field="Self" />
+          </seq>
+        </seq>
+      </seq>
+    </part>
+    <part id="LexSense-Jt-AllExampleTranslationTargets" type="jtview">
+      <seq class="LexSense" field="Examples" firstOnly="true" layout="empty">
+        <seq class="LexExampleSentence" field="Translations" firstOnly="true" layout="empty">
+          <int class="CmTranslation" field="Self" />
+        </seq>
+      </seq>
+    </part>
+    <part id="LexExampleSentence-Jt-AllExampleTranslationTargets" type="jtview">
+      <seq class="LexExampleSentence" field="Translations" firstOnly="true" layout="empty">
+        <int class="CmTranslation" field="Self" />
+      </seq>
+    </part>
+    <part id="LexEntry-Jt-AllExtendedNoteTargets" type="jtview">
+      <seq class="LexEntry" field="AllSenses" firstOnly="true" layout="empty">
+        <seq class="LexSense" field="ExtendedNote" firstOnly="true" layout="empty">
+          <int class="LexExtendedNote" field="Self" />
+        </seq>
+      </seq>
+    </part>
+    <part id="LexSense-Jt-AllExtendedNoteTargets" type="jtview">
+      <seq class="LexSense" field="ExtendedNote" firstOnly="true" layout="empty">
+        <int class="LexExtendedNote" field="Self" />
+      </seq>
+    </part>
 	</ParentClassPathsToChildren>
 </PartOwnershipTree>

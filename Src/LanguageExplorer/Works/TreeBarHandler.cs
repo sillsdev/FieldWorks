@@ -1,14 +1,16 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
+using SIL.Code;
 using SIL.LCModel;
 using SIL.FieldWorks.Filters;
 using SIL.LCModel.Core.Text;
@@ -18,10 +20,7 @@ using SIL.FieldWorks.FwCoreDlgControls;
 
 namespace LanguageExplorer.Works
 {
-	/// <summary>
-	/// Responsible for populating the tree bar with the records.
-	/// </summary>
-	public abstract class RecordBarHandler : IDisposable
+	public abstract class TreeBarHandler : ITreeBarHandler
 	{
 		protected IPropertyTable m_propertyTable;
 		protected LcmCache m_cache;
@@ -31,11 +30,23 @@ namespace LanguageExplorer.Works
 		protected string m_bestWS;
 		// This gets set when we skipped populating the tree bar because it wasn't visible.
 		protected bool m_fOutOfDate;
+		protected Dictionary<int, TreeNode> m_hvoToTreeNodeTable = new Dictionary<int, TreeNode>();
+
+		private TreeNode m_dragHiliteNode; // node that currently has background set to show drag destination
+		private TreeNode m_clickNode; // node the user mouse-downed on
+
+		protected ICmObjectRepository m_objRepo;
+		protected ICmPossibilityRepository m_possRepo;
+
+		TreeView m_tree;
+		int m_typeSize;		// font size for the tree's fonts.
+		// map from writing system to font.
+		readonly Dictionary<int, Font> m_wsToFontTable = new Dictionary<int, Font>();
 
 		/// <summary />
-		protected RecordBarHandler(IPropertyTable propertyTable, bool expand, bool hierarchical, bool includeAbbr, string bestWS)
+		protected TreeBarHandler(IPropertyTable propertyTable, bool expand, bool hierarchical, bool includeAbbr, string bestWS)
 		{
-			if (propertyTable == null) throw new ArgumentNullException(nameof(propertyTable));
+			Guard.AgainstNull(propertyTable, nameof(propertyTable));
 
 			m_propertyTable = propertyTable;
 			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
@@ -43,33 +54,114 @@ namespace LanguageExplorer.Works
 			m_hierarchical = hierarchical;
 			m_includeAbbr = includeAbbr;
 			m_bestWS = bestWS;
+			m_objRepo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			m_possRepo = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>();
 		}
 
-		#region IDisposable & Co. implementation
-
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
+		/// Get the HVO of the item the user clicked on (or zero if nothing has been clicked).
 		/// </summary>
-		public void CheckDisposed()
+		protected int ClickObject
 		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			get
+			{
+				if (m_clickNode == null)
+					return 0;
+				return (int)m_clickNode.Tag;
+			}
 		}
 
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed;
+		#region IRecordBarHandler implementation
 
 		/// <summary>
-		/// See if the object has been disposed.
+		/// Check whether the given hvo is represented by a TreeNode.
 		/// </summary>
-		public bool IsDisposed
+		public bool IsItemInTree(int hvo)
 		{
-			get { return m_isDisposed; }
+			return m_hvoToTreeNodeTable.ContainsKey(hvo);
 		}
+
+		public void PopulateRecordBarIfNeeded(IRecordList list)
+		{
+			if (m_fOutOfDate)
+			{
+				PopulateRecordBar(list);
+			}
+		}
+
+		public virtual void PopulateRecordBar(IRecordList list)
+		{
+			PopulateRecordBar(list, true);
+		}
+
+		public virtual void UpdateSelection(ICmObject currentObject)
+		{
+			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
+			var tree = window.TreeStyleRecordList;
+			if (currentObject == null)
+			{
+				if (tree != null)
+				{
+					tree.SelectedNode = null;
+				}
+				m_clickNode = null; // otherwise we can try to promote a deleted one etc.
+				return;
+			}
+
+			TreeNode node = null;
+			if (m_hvoToTreeNodeTable.ContainsKey(currentObject.Hvo))
+			{
+				node = m_hvoToTreeNodeTable[currentObject.Hvo];
+			}
+			//Debug.Assert(node != null);
+			// node.EnsureVisible() throws an exception if tree != node.TreeView, and this can
+			// happen somehow.  (see LT-986)
+			if (node != null && tree != null && node.TreeView == tree && (tree.SelectedNode != node))
+			{
+				tree.SelectedNode = node;
+				EnsureSelectedNodeVisible(tree);
+			}
+		}
+
+		public virtual void ReloadItem(ICmObject currentObject)
+		{
+			if (currentObject == null || m_hvoToTreeNodeTable.Count == 0)
+			{
+				return;
+			}
+			m_fOutOfDate = false;
+
+			TreeNode node = m_hvoToTreeNodeTable[currentObject.Hvo];
+			if (node == null)
+				return;
+			Font font;
+			var text = GetTreeNodeLabel(currentObject, out font);
+			// ReSharper disable RedundantCheckBeforeAssignment
+			if (text != node.Text)
+				node.Text = text;
+			if (font != node.NodeFont)
+				node.NodeFont = font;
+			// ReSharper restore RedundantCheckBeforeAssignment
+		}
+
+		public virtual void ReleaseRecordBar()
+		{
+			if (m_tree != null)
+			{
+				m_tree.NodeMouseClick -= tree_NodeMouseClick;
+				m_tree.MouseDown -= tree_MouseDown;
+				m_tree.MouseMove -= tree_MouseMove;
+				m_tree.DragDrop -= tree_DragDrop;
+				m_tree.DragOver -= tree_DragOver;
+				m_tree.GiveFeedback -= tree_GiveFeedback;
+			}
+		}
+
+		#endregion IRecordBarHandler implementation
+
+		#region IDisposable implementation
+
+		protected bool _isDisposed;
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -78,15 +170,13 @@ namespace LanguageExplorer.Works
 		/// <remarks>
 		/// In case some clients forget to dispose it directly.
 		/// </remarks>
-		~RecordBarHandler()
+		~TreeBarHandler()
 		{
 			Dispose(false);
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		/// <remarks>Must not be virtual.</remarks>
 		public void Dispose()
 		{
@@ -122,335 +212,43 @@ namespace LanguageExplorer.Works
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
-			if (m_isDisposed)
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+
+			// No need to run it more than once.
+			if (_isDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
 				// Dispose managed resources here.
-			}
-
-			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_cache = null;
-
-			m_isDisposed = true;
-		}
-
-		#endregion IDisposable & Co. implementation
-		public void PopulateRecordBarIfNeeded(IRecordList list)
-		{
-			CheckDisposed();
-
-			if (m_fOutOfDate)
-			{
-				PopulateRecordBar(list);
-			}
-		}
-		public abstract void PopulateRecordBar(IRecordList list);
-		public abstract void UpdateSelection(ICmObject currentObject);
-		public abstract void ReloadItem(ICmObject currentObject);
-		public abstract void ReleaseRecordBar();
-
-		protected bool IsShowing
-		{
-			get
-			{
-				return true;
-			}
-		}
-
-		protected virtual bool ShouldAddNode(ICmObject obj)
-		{
-			return true;
-		}
-	}
-
-	/// <summary>
-	/// Makes a hierarchical tree of possibility items, *even if the record list is flattened*
-	/// </summary>
-	public class PossibilityTreeBarHandler : TreeBarHandler
-	{
-		/// <summary />
-		public PossibilityTreeBarHandler(IPropertyTable propertyTable, bool expand, bool hierarchical, bool includeAbbr, string bestWS)
-			: base(propertyTable, expand, hierarchical, includeAbbr, bestWS)
-		{
-		}
-
-		protected override string GetDisplayPropertyName
-		{
-			get
-			{
-				// NOTE: For labels with abbreviations using "LongName" rather than "AbbrAndNameTSS"
-				// seems to load quicker for Semantic Domains and AnthroCodes.
-				if (m_includeAbbr)
-					return "LongName";
-				return base.GetDisplayPropertyName;
-			}
-		}
-
-		public override void PopulateRecordBar(IRecordList list)
-		{
-			base.PopulateRecordBar(list);
-			UpdateHeaderVisibility();
-		}
-
-		/// <summary>
-		/// It's possible that another tree bar handler recently turned over control of the RecordBar
-		/// to us, if so, we want to make sure they didn't leave the optional info bar visible.
-		/// </summary>
-		protected virtual void UpdateHeaderVisibility()
-		{
-			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
-			if (window == null || window.RecordBarControl == null)
-			{
-				return;
-			}
-
-			window.RecordBarControl.ShowHeaderControl = false;
-		}
-
-		/// <summary>
-		/// add any subitems to the tree. Note! This assumes that the list has been preloaded
-		/// (e.g., using PreLoadList), so it bypasses normal load operations for speed purposes.
-		/// Without preloading, it took almost 19,000 queries to start FW showing semantic domain
-		/// list. With preloading it reduced the number to 200 queries.
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <param name="parentsCollection"></param>
-		protected override void AddSubNodes(ICmObject obj, TreeNodeCollection parentsCollection)
-		{
-			var pss = (ICmPossibility) obj;
-			foreach (var subPss in pss.SubPossibilitiesOS)
-			{
-				AddTreeNode(subPss, parentsCollection);
-			}
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks> this is overridden because we actually need to avoid adding items from the top-level if
-		/// they are not top-level possibilities. They will show up under their respective parents.in other words,
-		/// if the list we are given has been flattened, we need to un-flatten it.</remarks>
-		protected override bool ShouldAddNode(ICmObject obj)
-		{
-			var possibility = (ICmPossibility)obj;
-			//don't show it if it is a child of another possibility.
-			return possibility.OwningFlid != CmPossibilityTags.kflidSubPossibilities;
-		}
-
-		protected override ContextMenuStrip CreateTreebarContextMenuStrip()
-		{
-			ContextMenuStrip menu = base.CreateTreebarContextMenuStrip();
-			if (RecordList.OwningObject is ICmPossibilityList
-				&& !(RecordList.OwningObject as ICmPossibilityList).IsSorted)
-			{
-				// Move up and move down items make sense
-				menu.Items.Add(new DisposableToolStripMenuItem(xWorksStrings.MoveUp));
-				menu.Items.Add(new DisposableToolStripMenuItem(xWorksStrings.MoveDown));
-			}
-			return menu;
-		}
-
-		protected override void tree_moveUp()
-		{
-			MoveItem(-1);
-		}
-		protected override void tree_moveDown()
-		{
-			MoveItem(1);
-		}
-
-		/// <summary>
-		/// Move the clicked item the specified distance (currently +/- 1) in its owning list.
-		/// </summary>
-		/// <param name="distance"></param>
-		void MoveItem(int distance)
-		{
-			int hvoMove = ClickObject;
-
-			if (hvoMove == 0)
-			{
-				return;
-			}
-
-			ICmPossibility column = m_possRepo.GetObject(hvoMove);
-			using (var columnUI = new CmPossibilityUi(column))
-			{
-				if (columnUI.CheckAndReportProtectedChartColumn())
-					return;
-			}
-			var owner = column.Owner;
-			if (owner == null) // probably not possible
-				return;
-			int hvoOwner = owner.Hvo;
-			int ownFlid = column.OwningFlid;
-			int oldIndex = m_cache.DomainDataByFlid.GetObjIndex(hvoOwner, ownFlid, column.Hvo);
-			int newIndex = oldIndex + distance;
-			if (newIndex < 0)
-				return;
-			int cobj = m_cache.DomainDataByFlid.get_VecSize(hvoOwner, ownFlid);
-			if (newIndex >= cobj)
-				return;
-			// Without this, we insert it before the next object, which is the one it's already before,
-			// so it doesn't move.
-			if (distance > 0)
-				newIndex++;
-			UndoableUnitOfWorkHelper.Do(xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem,
-				m_cache.ActionHandlerAccessor,
-				() => m_cache.DomainDataByFlid.MoveOwnSeq(
-					hvoOwner, ownFlid, oldIndex, oldIndex, hvoOwner, ownFlid, newIndex));
-		}
-	}
-
-	public class TreeBarHandler : RecordBarHandler
-	{
-		protected Dictionary<int, TreeNode> m_hvoToTreeNodeTable = new Dictionary<int, TreeNode>();
-
-		private TreeNode m_dragHiliteNode; // node that currently has background set to show drag destination
-		private TreeNode m_clickNode; // node the user mouse-downed on
-
-		protected ICmObjectRepository m_objRepo;
-		protected ICmPossibilityRepository m_possRepo;
-
-		TreeView m_tree;
-		int m_typeSize;		// font size for the tree's fonts.
-		// map from writing system to font.
-		readonly Dictionary<int, Font> m_dictFonts = new Dictionary<int, Font>();
-
-		/// <summary />
-		public TreeBarHandler(IPropertyTable propertyTable, bool expand, bool hierarchical, bool includeAbbr, string bestWS)
-			: base(propertyTable, expand, hierarchical, includeAbbr, bestWS)
-		{
-			m_objRepo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
-			m_possRepo = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>();
-		}
-
-		/// <summary>
-		/// Get the HVO of the item the user clicked on (or zero if nothing has been clicked).
-		/// </summary>
-		protected int ClickObject
-		{
-			get
-			{
-				if (m_clickNode == null)
-					return 0;
-				return (int)m_clickNode.Tag;
-			}
-		}
-
-		#region IDisposable override
-
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
-		protected override void Dispose(bool disposing)
-		{
-			//Debug.WriteLineIf(!disposing, "****************** " + GetType().Name + " 'disposing' is false. ******************");
-			// Must not be run more than once.
-			if (IsDisposed)
-				return;
-
-			if (disposing)
-			{
-				// Dispose managed resources here.
-				if (m_hvoToTreeNodeTable != null)
-					m_hvoToTreeNodeTable.Clear();
+				m_hvoToTreeNodeTable?.Clear();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_hvoToTreeNodeTable = null;
+			m_cache = null;
 
-			base.Dispose(disposing);
+			_isDisposed = true;
 		}
 
-		#endregion IDisposable override
-
-		private IRecordList m_list;
-
-		/// <summary>
-		/// Check whether the given hvo is represented by a TreeNode.
-		/// </summary>
-		internal bool IsHvoATreeNode(int hvo)
-		{
-			TreeNode node;
-			return m_hvoToTreeNodeTable.TryGetValue(hvo, out node);
-		}
-
-		public override void ReloadItem(ICmObject currentObject)
-		{
-			CheckDisposed();
-
-			if (currentObject == null || m_hvoToTreeNodeTable.Count == 0)
-				return;
-			if (IsShowing)
-			{
-				m_fOutOfDate = false;
-			}
-			else
-			{
-				m_fOutOfDate = true;
-				return;
-			}
-
-			TreeNode node = m_hvoToTreeNodeTable[currentObject.Hvo];
-			if (node == null)
-				return;
-			Font font;
-			var text = GetTreeNodeLabel(currentObject, out font);
-// ReSharper disable RedundantCheckBeforeAssignment
-			if (text != node.Text)
-				node.Text = text;
-			if (font != node.NodeFont)
-				node.NodeFont = font;
-// ReSharper restore RedundantCheckBeforeAssignment
-		}
+		#endregion IDisposable implementation
 
 		/// <summary>
 		/// Makes the record list available to subclasses.
 		/// </summary>
-		protected IRecordList RecordList => m_list;
+		protected IRecordList MyRecordList { get; private set; }
 
-		public override void PopulateRecordBar(IRecordList list)
+		protected virtual void PopulateRecordBar(IRecordList recordList, bool editable)
 		{
-			PopulateRecordBar(list, true);
-		}
-
-		protected virtual void PopulateRecordBar(IRecordList list, bool editable)
-		{
-			CheckDisposed();
-
-			if (IsShowing)
+			if (MyRecordList == recordList)
 			{
-				m_fOutOfDate = false;
+				return; // Been here. Done that.
 			}
-			else
-			{
-				m_fOutOfDate = true;
-				return;
-			}
+			m_fOutOfDate = false;
 
-			m_list = list;
+			MyRecordList = recordList;
 
 			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
 			var recordBarControl = window.RecordBarControl;
@@ -461,7 +259,9 @@ namespace LanguageExplorer.Works
 					var tree = window.TreeStyleRecordList;
 					var expandedItems = new HashSet<int>();
 					if (m_tree != null && !m_expand)
+					{
 						GetExpandedItems(m_tree.Nodes, expandedItems);
+					}
 					m_tree = tree;
 
 					// Removing the handlers first seems to be necessary because multiple tree handlers are
@@ -490,10 +290,10 @@ namespace LanguageExplorer.Works
 					m_hvoToTreeNodeTable.Clear();
 
 					// type size must be set before AddTreeNodes is called
-					m_typeSize = list.TypeSize;
-					AddTreeNodes(list.SortedObjects, tree);
+					m_typeSize = recordList.TypeSize;
+					AddTreeNodes(recordList.SortedObjects, tree);
 
-					tree.Font = new Font(list.FontName, m_typeSize);
+					tree.Font = new Font(recordList.FontName, m_typeSize);
 					tree.ShowRootLines = m_hierarchical;
 
 					if (m_expand)
@@ -506,7 +306,7 @@ namespace LanguageExplorer.Works
 					// Set the selection after expanding/collapsing the tree.  This allows the true
 					// selection to be visible even when the tree is collapsed but the selection is
 					// an internal node.  (See LT-4508.)
-					UpdateSelection(list.CurrentObject);
+					UpdateSelection(recordList.CurrentObject);
 					tree.EndUpdate();
 				}
 			}
@@ -554,21 +354,6 @@ namespace LanguageExplorer.Works
 			var contStrip = new ContextMenuStrip();
 			contStrip.Items.Add(promoteMenuItem);
 			return contStrip;
-		}
-
-		public override void ReleaseRecordBar()
-		{
-			CheckDisposed();
-
-			if (m_tree != null)
-			{
-				m_tree.NodeMouseClick -= tree_NodeMouseClick;
-				m_tree.MouseDown -= tree_MouseDown;
-				m_tree.MouseMove -= tree_MouseMove;
-				m_tree.DragDrop -= tree_DragDrop;
-				m_tree.DragOver -= tree_DragOver;
-				m_tree.GiveFeedback -= tree_GiveFeedback;
-			}
 		}
 
 		void tree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -643,7 +428,7 @@ namespace LanguageExplorer.Works
 			// An inactive handler is unfortunately also being notified. Don't express any
 			// opinion at all about drag effects.
 			var item = (LocalDragItem)e.Data.GetData(typeof(LocalDragItem));
-			if (item.Handler != this)
+			if (item.TreeBarHandler != this)
 				return;
 
 			TreeNode destNode;
@@ -689,7 +474,7 @@ namespace LanguageExplorer.Works
 				return;
 			// Notification also gets sent to inactive handlers, which should ignore it.
 			var item = (LocalDragItem)e.Data.GetData(typeof(LocalDragItem));
-			if (item.Handler != this)
+			if (item.TreeBarHandler != this)
 				return;
 			if (e.Effect != DragDropEffects.Move)
 				return;
@@ -742,7 +527,7 @@ namespace LanguageExplorer.Works
 				if (newSiblings[ihvoDest].Text.CompareTo(moveLabel) > 0) // Enhance JohnT: use ICU comparison...
 					break;
 			}
-			using (new ListUpdateHelper(m_list, tree.TopLevelControl))
+			using (new ListUpdateHelper(MyRecordList, tree.TopLevelControl))
 			{
 				UndoableUnitOfWorkHelper.Do(xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem,
 					cache.ActionHandlerAccessor, () =>
@@ -893,7 +678,7 @@ namespace LanguageExplorer.Works
 		{
 			destNode = null;
 			// Don't allow drop in non-hierarchical lists.
-			if (m_list.OwningObject is ICmPossibilityList && (m_list.OwningObject as ICmPossibilityList).Depth < 2)
+			if (MyRecordList.OwningObject is ICmPossibilityList && (MyRecordList.OwningObject as ICmPossibilityList).Depth < 2)
 				return false;
 			var tree = sender as TreeView;
 			if (tree == null)
@@ -945,8 +730,6 @@ namespace LanguageExplorer.Works
 		/// <param name="tree"></param>
 		public void EnsureSelectedNodeVisible(TreeView tree)
 		{
-			CheckDisposed();
-
 			if (tree.SelectedNode == null)
 				return;
 			TreeNode node = tree.SelectedNode;
@@ -979,6 +762,11 @@ namespace LanguageExplorer.Works
 			}
 		}
 
+		protected virtual bool ShouldAddNode(ICmObject obj)
+		{
+			return true;
+		}
+
 		protected void AddToTreeNodeTable(int keyHvo, TreeNode node)
 		{
 			// Don't add it to the Dictionary again.
@@ -1005,11 +793,11 @@ namespace LanguageExplorer.Works
 			// localized, these lists are likely not to have localized the abbreviation.
 			var tss = label.AsTss;
 			int ws = tss.get_WritingSystem(tss.RunCount - 1);
-			if (!m_dictFonts.TryGetValue(ws, out font))
+			if (!m_wsToFontTable.TryGetValue(ws, out font))
 			{
 				string sFont = m_cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName;
 				font = new Font(sFont, m_typeSize);
-				m_dictFonts.Add(ws, font);
+				m_wsToFontTable.Add(ws, font);
 			}
 			return TsStringUtils.NormalizeToNFC(label.DisplayName);
 		}
@@ -1032,62 +820,6 @@ namespace LanguageExplorer.Works
 		protected virtual void AddSubNodes(ICmObject obj, TreeNodeCollection parentsCollection)
 		{
 
-		}
-
-		public override void UpdateSelection(ICmObject currentObject)
-		{
-			CheckDisposed();
-
-			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
-			var tree = window.TreeStyleRecordList;
-			if (currentObject == null)
-			{
-				if (tree != null)
-				{
-					tree.SelectedNode = null;
-				}
-				m_clickNode = null; // otherwise we can try to promote a deleted one etc.
-				return;
-			}
-
-			TreeNode node = null;
-			if (m_hvoToTreeNodeTable.ContainsKey(currentObject.Hvo))
-			{
-				node = m_hvoToTreeNodeTable[currentObject.Hvo];
-			}
-			//Debug.Assert(node != null);
-			// node.EnsureVisible() throws an exception if tree != node.TreeView, and this can
-			// happen somehow.  (see LT-986)
-			if (node != null && tree != null && node.TreeView == tree && (tree.SelectedNode != node))
-			{
-				tree.SelectedNode = node;
-				EnsureSelectedNodeVisible(tree);
-			}
-		}
-	}
-
-	/// <summary>
-	/// Used to represent a drag from one place in the tree view to another. This is the only kind of drag
-	/// currently supported.
-	/// </summary>
-	class LocalDragItem
-	{
-		readonly TreeBarHandler m_handler; // handler dragging from
-		readonly TreeNode m_sourceTreeNode; // tree node being dragged
-
-		public LocalDragItem(TreeBarHandler handler, TreeNode sourceTreeNode)
-		{
-			m_handler = handler;
-			m_sourceTreeNode = sourceTreeNode;
-		}
-		public TreeBarHandler Handler
-		{
-			get {return m_handler; }
-		}
-
-		public TreeNode SourceNode
-		{
-			get { return m_sourceTreeNode; }
 		}
 	}
 }

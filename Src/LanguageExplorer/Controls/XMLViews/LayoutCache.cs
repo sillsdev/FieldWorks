@@ -294,7 +294,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="sortItemProvider"></param>
 		/// <param name="fReturnFirstDecendentOnly"></param>
 		/// <returns></returns>
-		static public PartOwnershipTree Create(LcmCache cache, IMultiListSortItemProvider sortItemProvider, bool fReturnFirstDecendentOnly)
+		public static PartOwnershipTree Create(LcmCache cache, IMultiListSortItemProvider sortItemProvider, bool fReturnFirstDecendentOnly)
 		{
 			return new PartOwnershipTree(cache, sortItemProvider, fReturnFirstDecendentOnly);
 		}

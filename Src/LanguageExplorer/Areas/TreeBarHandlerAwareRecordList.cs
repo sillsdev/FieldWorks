@@ -22,16 +22,16 @@ namespace LanguageExplorer.Areas
 	{
 		private static IRecordList s_lastRecordListToLoadTreeBar;
 
-		private RecordBarHandler _recordBarHandler;
+		private ITreeBarHandler _treeBarHandler;
 		/// <summary>
 		/// Constructor for a list that is owned or not.
 		/// </summary>
-		internal TreeBarHandlerAwareRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, RecordBarHandler recordBarHandler, VectorPropertyParameterObject vectorPropertyParameterObject, RecordFilterParameterObject recordFilterParameterObject = null, RecordSorter defaultSorter = null)
+		internal TreeBarHandlerAwareRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, ITreeBarHandler treeBarHandler, VectorPropertyParameterObject vectorPropertyParameterObject, RecordFilterParameterObject recordFilterParameterObject = null, RecordSorter defaultSorter = null)
 			: base(id, statusBar, decorator, usingAnalysisWs, vectorPropertyParameterObject, recordFilterParameterObject, defaultSorter)
 		{
-			Guard.AgainstNull(recordBarHandler, nameof(recordBarHandler));
+			Guard.AgainstNull(treeBarHandler, nameof(treeBarHandler));
 
-			_recordBarHandler = recordBarHandler;
+			_treeBarHandler = treeBarHandler;
 			IsControllingTheRecordTreeBar = true;
 		}
 
@@ -43,17 +43,17 @@ namespace LanguageExplorer.Areas
 			set { base.IsControllingTheRecordTreeBar = true; }
 		}
 
-		public override RecordBarHandler BarHandler => _recordBarHandler;
+		public override ITreeBarHandler MyTreeBarHandler => _treeBarHandler;
 
 		public override void BecomeInactive()
 		{
-			_recordBarHandler.ReleaseRecordBar();
+			_treeBarHandler.ReleaseRecordBar();
 			base.BecomeInactive();
 		}
 
 		public override void UpdateRecordTreeBarIfNeeded()
 		{
-			_recordBarHandler.PopulateRecordBarIfNeeded(this);
+			_treeBarHandler.PopulateRecordBarIfNeeded(this);
 		}
 
 		protected override void ActivateRecordBar()
@@ -63,16 +63,16 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			s_lastRecordListToLoadTreeBar = this;
-			_recordBarHandler.PopulateRecordBar(this);
+			_treeBarHandler.PopulateRecordBar(this);
 		}
 
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
-				_recordBarHandler.Dispose();
+				_treeBarHandler.Dispose();
 			}
-			_recordBarHandler = null;
+			_treeBarHandler = null;
 
 			base.Dispose(disposing);
 		}
@@ -84,7 +84,7 @@ namespace LanguageExplorer.Areas
 
 		protected override void UpdateSelectionForRecordBar()
 		{
-			_recordBarHandler.UpdateSelection(CurrentObject);
+			_treeBarHandler.UpdateSelection(CurrentObject);
 			OnSelectedObjectChanged(new SelectObjectEventArgs(CurrentObject));
 		}
 
@@ -109,7 +109,7 @@ namespace LanguageExplorer.Areas
 				// In the meantime, this fixed the crash .. <sigh> but doesn't help at all
 				// for the other cases where this can happen.
 				// ******************************************************************************
-				if (_recordBarHandler is TreeBarHandler && CurrentObject != null && (CurrentObject.Cache != null || SortedObjects.Count != 1))
+				if (_treeBarHandler is TreeBarHandler && CurrentObject != null && (CurrentObject.Cache != null || SortedObjects.Count != 1))
 				{
 					// all we need to do is replace the currently selected item in the tree.
 					ICmObject obj = null;
@@ -121,12 +121,12 @@ namespace LanguageExplorer.Areas
 					{
 						obj = CurrentObject;
 					}
-					_recordBarHandler.ReloadItem(obj);
+					_treeBarHandler.ReloadItem(obj);
 				}
 			}
 			else
 			{
-				_recordBarHandler.PopulateRecordBar(this);
+				_treeBarHandler.PopulateRecordBar(this);
 			}
 
 			base.OnListChanged(hvo, actions);

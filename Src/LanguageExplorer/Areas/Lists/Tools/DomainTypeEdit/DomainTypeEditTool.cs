@@ -12,7 +12,6 @@ using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Application;
 using SIL.FieldWorks.Resources;
-using LanguageExplorer.Works;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit

@@ -903,12 +903,45 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Get the TreeView of RecordBarControl, or null if not present, or it is not showng a tree.
 		/// </summary>
-		public TreeView TreeStyleRecordList => RecordBarControl?.TreeView;
+		public TreeView TreeStyleRecordList
+		{
+			get
+			{
+				var recordBarControl = RecordBarControl;
+				if (recordBarControl == null)
+				{
+					return null;
+				}
+				var retVal = recordBarControl.TreeView;
+				if (!retVal.Visible)
+				{
+					retVal = null;
+				}
+				return retVal;
+			}
+		}
 
 		/// <summary>
 		/// Get the ListView of RecordBarControl, or null if not present, or it is not showing a list.
 		/// </summary>
-		public ListView ListStyleRecordList => RecordBarControl?.ListView;
+		public ListView ListStyleRecordList
+		{
+			get
+			{
+				var recordBarControl = RecordBarControl;
+				if (recordBarControl == null)
+				{
+					return null;
+				}
+				var retVal = recordBarControl.ListView;
+				if (!retVal.Visible)
+				{
+					retVal = null;
+				}
+				return retVal;
+			}
+		}
+
 		#endregion
 
 		#region Implementation of IPublisherProvider

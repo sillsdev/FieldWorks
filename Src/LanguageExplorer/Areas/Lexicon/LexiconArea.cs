@@ -8,7 +8,6 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml.Linq;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.Works;
 using SIL.Code;
@@ -204,7 +203,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			*/
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar,
 				new DictionaryPublicationDecorator(cache, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), CmPossibilityListTags.kflidPossibilities), cache.LanguageProject.SemanticDomainListOA,
-				new SemanticDomainRdeTreeBarHandler(flexComponentParameters.PropertyTable, XDocument.Parse(LexiconResources.RapidDataEntryToolParameters).Root.Element("treeBarHandler")), new RecordFilterParameterObject(false));
+				new SemanticDomainRdeTreeBarHandler(flexComponentParameters.PropertyTable), new RecordFilterParameterObject(false));
 		}
 
 		internal static IRecordList AllReversalEntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)

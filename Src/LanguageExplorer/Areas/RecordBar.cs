@@ -53,18 +53,20 @@ namespace LanguageExplorer.Areas
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
-		/// Get the TreeView control, or null, if using a ListView.
+		/// Get the TreeView control.
 		/// </summary>
-		public TreeView TreeView => m_treeView.Visible ? m_treeView : null;
+		public TreeView TreeView => m_treeView;
 
 		/// <summary>
-		/// Get the ListView control, or null, if using a TreeView.
+		/// Get the ListView control.
 		/// </summary>
-		public ListView ListView => m_listView.Visible ? m_listView : null;
+		public ListView ListView => m_listView;
 
 		/// <summary>
 		/// Use 'true' to show as a ListView, otherwise 'false' for a TreeView.
@@ -140,7 +142,7 @@ namespace LanguageExplorer.Areas
 
 		private void OnListBarSelect(object sender, EventArgs e)
 		{
-			m_propertyTable.SetProperty("SelectedTreeBarNode", ListView.SelectedItems.Count == 0 ? null : ListView.SelectedItems[0], false, true);
+			m_propertyTable.SetProperty("SelectedListBarNode", ListView.SelectedItems.Count == 0 ? null : ListView.SelectedItems[0], false, true);
 		}
 
 		private void OnTreeBarAfterSelect(object sender, TreeViewEventArgs e)

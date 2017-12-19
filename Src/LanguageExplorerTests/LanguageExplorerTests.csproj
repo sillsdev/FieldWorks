@@ -364,7 +364,6 @@
     <Compile Include="Works\DictionaryConfigurationMigrators\FirstBetaMigratorTests.cs" />
     <Compile Include="Works\DictionaryConfigurationMigrators\PreHistoricMigratorTests.cs" />
     <Compile Include="Works\DictionaryConfigurationMigrators\StubContentControlProvider.cs" />
-    <Compile Include="XMLViews\BulkEditBarTests.cs" />
     <Compile Include="XMLViews\ConfiguredExportTests.cs" />
     <Compile Include="XMLViews\DhListViewTests.cs" />
     <Compile Include="XMLViews\LayoutMergerTests.cs" />

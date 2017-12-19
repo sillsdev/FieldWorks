@@ -39,7 +39,7 @@ namespace LanguageExplorer.Areas
 			set { base.IsControllingTheRecordTreeBar = true; }
 		}
 
-		public override RecordBarHandler BarHandler => _possibilityTreeBarHandler;
+		public override ITreeBarHandler MyTreeBarHandler => _possibilityTreeBarHandler;
 
 		public override void BecomeInactive()
 		{

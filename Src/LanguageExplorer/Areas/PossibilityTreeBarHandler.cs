@@ -1,0 +1,142 @@
+// Copyright (c) 2003-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System.Windows.Forms;
+using LanguageExplorer.LcmUi;
+using LanguageExplorer.Works;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+
+namespace LanguageExplorer.Areas
+{
+	/// <summary>
+	/// Makes a hierarchical tree of possibility items, *even if the record list is flattened*
+	/// </summary>
+	public class PossibilityTreeBarHandler : TreeBarHandler
+	{
+		/// <summary />
+		public PossibilityTreeBarHandler(IPropertyTable propertyTable, bool expand, bool hierarchical, bool includeAbbr, string bestWS)
+			: base(propertyTable, expand, hierarchical, includeAbbr, bestWS)
+		{
+		}
+
+		protected override string GetDisplayPropertyName => m_includeAbbr ? "LongName" : base.GetDisplayPropertyName;
+
+		public override void PopulateRecordBar(IRecordList list)
+		{
+			base.PopulateRecordBar(list);
+			UpdateHeaderVisibility();
+		}
+
+		/// <summary>
+		/// It's possible that another tree bar handler recently turned over control of the RecordBar
+		/// to us, if so, we want to make sure they didn't leave the optional info bar visible.
+		/// </summary>
+		protected virtual void UpdateHeaderVisibility()
+		{
+			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
+			if (window?.RecordBarControl == null)
+			{
+				return;
+			}
+
+			window.RecordBarControl.ShowHeaderControl = false;
+		}
+
+		/// <summary>
+		/// add any subitems to the tree. Note! This assumes that the list has been preloaded
+		/// (e.g., using PreLoadList), so it bypasses normal load operations for speed purposes.
+		/// Without preloading, it took almost 19,000 queries to start FW showing semantic domain
+		/// list. With preloading it reduced the number to 200 queries.
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <param name="parentsCollection"></param>
+		protected override void AddSubNodes(ICmObject obj, TreeNodeCollection parentsCollection)
+		{
+			var pss = (ICmPossibility) obj;
+			foreach (var subPss in pss.SubPossibilitiesOS)
+			{
+				AddTreeNode(subPss, parentsCollection);
+			}
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <remarks> this is overridden because we actually need to avoid adding items from the top-level if
+		/// they are not top-level possibilities. They will show up under their respective parents.in other words,
+		/// if the list we are given has been flattened, we need to un-flatten it.</remarks>
+		protected override bool ShouldAddNode(ICmObject obj)
+		{
+			var possibility = (ICmPossibility)obj;
+			//don't show it if it is a child of another possibility.
+			return possibility.OwningFlid != CmPossibilityTags.kflidSubPossibilities;
+		}
+
+		protected override ContextMenuStrip CreateTreebarContextMenuStrip()
+		{
+			ContextMenuStrip menu = base.CreateTreebarContextMenuStrip();
+			if (MyRecordList.OwningObject is ICmPossibilityList
+			    && !(MyRecordList.OwningObject as ICmPossibilityList).IsSorted)
+			{
+				// Move up and move down items make sense
+				menu.Items.Add(new DisposableToolStripMenuItem(xWorksStrings.MoveUp));
+				menu.Items.Add(new DisposableToolStripMenuItem(xWorksStrings.MoveDown));
+			}
+			return menu;
+		}
+
+		protected override void tree_moveUp()
+		{
+			MoveItem(-1);
+		}
+		protected override void tree_moveDown()
+		{
+			MoveItem(1);
+		}
+
+		/// <summary>
+		/// Move the clicked item the specified distance (currently +/- 1) in its owning list.
+		/// </summary>
+		/// <param name="distance"></param>
+		void MoveItem(int distance)
+		{
+			int hvoMove = ClickObject;
+
+			if (hvoMove == 0)
+			{
+				return;
+			}
+
+			ICmPossibility column = m_possRepo.GetObject(hvoMove);
+			using (var columnUI = new CmPossibilityUi(column))
+			{
+				if (columnUI.CheckAndReportProtectedChartColumn())
+					return;
+			}
+			var owner = column.Owner;
+			if (owner == null) // probably not possible
+				return;
+			int hvoOwner = owner.Hvo;
+			int ownFlid = column.OwningFlid;
+			int oldIndex = m_cache.DomainDataByFlid.GetObjIndex(hvoOwner, ownFlid, column.Hvo);
+			int newIndex = oldIndex + distance;
+			if (newIndex < 0)
+				return;
+			int cobj = m_cache.DomainDataByFlid.get_VecSize(hvoOwner, ownFlid);
+			if (newIndex >= cobj)
+				return;
+			// Without this, we insert it before the next object, which is the one it's already before,
+			// so it doesn't move.
+			if (distance > 0)
+				newIndex++;
+			UndoableUnitOfWorkHelper.Do(xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem,
+				m_cache.ActionHandlerAccessor,
+				() => m_cache.DomainDataByFlid.MoveOwnSeq(
+					hvoOwner, ownFlid, oldIndex, oldIndex, hvoOwner, ownFlid, newIndex));
+		}
+	}
+}

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Xml.Linq;
-using LanguageExplorer.Areas;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.XMLViews;
@@ -16,33 +14,28 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.Xml;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer.Areas.Lexicon
 {
 	/// <summary>
 	/// This class is instantiated by reflection, based on the setting of the treeBarHandler in the
 	/// SemanticDomainList record list in the RDE toolConfiguration.xml, but is also used to display the Semantic Domain List in the List Edit tool.
 	/// </summary>
-	class SemanticDomainRdeTreeBarHandler : PossibilityTreeBarHandler
+	internal sealed class SemanticDomainRdeTreeBarHandler : PossibilityTreeBarHandler
 	{
 		private IPaneBar m_titleBar;
 		private Panel m_headerPanel;
 		private FwTextBox m_textSearch;
 		private FwCancelSearchButton m_btnCancelSearch;
 		private SearchTimer m_searchTimer;
-		private TreeView m_treeView;
-		private ListView m_listView;
+		private IRecordBar _recordBar;
 		private IVwStylesheet m_stylesheet;
 		private ICmSemanticDomainRepository m_semDomRepo;
-		private XElement m_configurationParametersElement;
 
 		/// <summary />
-		public SemanticDomainRdeTreeBarHandler(IPropertyTable propertyTable, XElement configurationParametersElement)
-			: base(propertyTable, bool.Parse(configurationParametersElement.Attribute("expand").Value), bool.Parse(configurationParametersElement.Attribute("hierarchical").Value), bool.Parse(configurationParametersElement.Attribute("includeAbbr").Value), configurationParametersElement.Attribute("ws").Value)
+		public SemanticDomainRdeTreeBarHandler(IPropertyTable propertyTable)
+			: base(propertyTable, false, true, true, "best analorvern")
 		{
-			m_configurationParametersElement = configurationParametersElement;
-
 			m_semDomRepo = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 		}
@@ -50,21 +43,20 @@ namespace LanguageExplorer.Works
 		internal void FinishInitialization(IPaneBar paneBar)
 		{
 			m_titleBar = paneBar;
-			var treeBarControl = GetTreeBarControl();
-			if (treeBarControl == null)
+			_recordBar = RecordBarControl;
+			if (_recordBar == null)
+			{
 				return;
-			SetupAndShowHeaderPanel(treeBarControl);
-			m_searchTimer = new SearchTimer((Control)treeBarControl, 500, HandleChangeInSearchText,
-				new List<Control> { treeBarControl.TreeView, treeBarControl.ListView });
+			}
+			SetupAndShowHeaderPanel();
+			m_searchTimer = new SearchTimer((Control)_recordBar, 500, HandleChangeInSearchText, new List<Control> { _recordBar.TreeView, _recordBar.ListView });
 			m_textSearch.TextChanged += m_searchTimer.OnSearchTextChanged;
-			m_treeView = treeBarControl.TreeView;
-			m_listView = treeBarControl.ListView;
-			m_listView.HeaderStyle = ColumnHeaderStyle.None; // We don't want a secondary "Records" title bar
+			_recordBar.ListView.HeaderStyle = ColumnHeaderStyle.None; // We don't want a secondary "Records" title bar
 		}
 
-		private void SetupAndShowHeaderPanel(IRecordBar treeBarControl)
+		private void SetupAndShowHeaderPanel()
 		{
-			if (!treeBarControl.HasHeaderControl)
+			if (!_recordBar.HasHeaderControl)
 			{
 				var headerPanel = new Panel { Visible = false };
 				headerPanel.Controls.Add((Control)m_titleBar);
@@ -77,22 +69,22 @@ namespace LanguageExplorer.Works
 				headerPanel.Controls.Add(m_textSearch);
 				m_textSearch.AdjustForStyleSheet(m_stylesheet);
 				headerPanel.Height = SetHeaderPanelHeight();
-				treeBarControl.AddHeaderControl(headerPanel);
+				_recordBar.AddHeaderControl(headerPanel);
 				// Keep the text box from covering the cancel search button
 				m_textSearch.Width = headerPanel.Width - m_btnCancelSearch.Width;
 				m_btnCancelSearch.Location = new Point(headerPanel.Width - m_btnCancelSearch.Width, m_textSearch.Location.Y);
 				SetInfoBarText();
 			}
-			treeBarControl.ShowHeaderControl = true;
+			_recordBar.ShowHeaderControl = true;
 		}
 
-		public override void PopulateRecordBar(IRecordList list)
+		public override void PopulateRecordBar(IRecordList recordList)
 		{
-			PopulateRecordBar(list, Editable);
+			PopulateRecordBar(recordList, Editable);
 		}
 
 		// Semantic Domains should be editable only in the Lists area.
-		protected bool Editable => AreaServices.ListsAreaMachineName.Equals(m_propertyTable.GetValue<string>(AreaServices.AreaChoice));
+		private bool Editable => AreaServices.ListsAreaMachineName.Equals(m_propertyTable.GetValue<string>(AreaServices.AreaChoice));
 
 		private FwTextBox CreateSearchBox()
 		{
@@ -114,7 +106,7 @@ namespace LanguageExplorer.Works
 
 		private void m_btnCancelSearch_Click(object sender, EventArgs e)
 		{
-			m_textSearch.Text = "";
+			m_textSearch.Text = string.Empty;
 		}
 
 		private void HandleChangeInSearchText()
@@ -149,25 +141,22 @@ namespace LanguageExplorer.Works
 			{
 				try
 				{
-					m_listView.ItemChecked -= OnDomainListChecked;
+					_recordBar.IsFlatList = true;
+					_recordBar.ListView.ItemChecked -= OnDomainListChecked;
 					var semDomainsToShow = m_semDomRepo.FindDomainsThatMatch(searchString);
 					SemanticDomainSelectionUtility.UpdateDomainListLabels(
-						ObjectLabel.CreateObjectLabels(m_cache, semDomainsToShow, string.Empty,
-							m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs)),
-						m_stylesheet, m_listView, true);
-					m_treeView.Visible = false;
-					m_listView.Visible = true;
+						ObjectLabel.CreateObjectLabels(m_cache, semDomainsToShow, string.Empty, m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs)),
+						m_stylesheet, _recordBar.ListView, true);
 					m_btnCancelSearch.SearchIsActive = true;
 				}
 				finally
 				{
-					m_listView.ItemChecked += OnDomainListChecked;
+					_recordBar.ListView.ItemChecked += OnDomainListChecked;
 				}
 			}
 			else
 			{
-				m_treeView.Visible = true;
-				m_listView.Visible = false;
+				_recordBar.IsFlatList = false;
 				m_btnCancelSearch.SearchIsActive = false;
 			}
 		}
@@ -175,7 +164,7 @@ namespace LanguageExplorer.Works
 		private void OnDomainListChecked(object sender, ItemCheckedEventArgs e)
 		{
 			var domain = m_semDomRepo.GetObject((int) e.Item.Tag);
-			SemanticDomainSelectionUtility.AdjustSelectedDomainList(domain, m_stylesheet, e.Item.Checked, m_listView);
+			SemanticDomainSelectionUtility.AdjustSelectedDomainList(domain, m_stylesheet, e.Item.Checked, _recordBar.ListView);
 		}
 
 		private void m_textSearch_GotFocus(object sender, EventArgs e)
@@ -188,25 +177,24 @@ namespace LanguageExplorer.Works
 			return m_textSearch.Height + ((Control)m_titleBar).Height;
 		}
 
-		private IRecordBar GetTreeBarControl()
+		private IRecordBar RecordBarControl
 		{
-			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
-			return window.RecordBarControl;
+			get
+			{
+				var window = m_propertyTable.GetValue<IFwMainWnd>("window");
+				return window.RecordBarControl;
+			}
 		}
 
 		private void SetInfoBarText()
 		{
 			var titleStr = string.Empty;
-			// See if we have an AlternativeTitle string table id for an alternate title.
-			var titleId = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "altTitleId");
-			if (titleId != null)
-			{
-				XmlViewsUtils.TryFindString("AlternativeTitles", titleId, out titleStr);
-				// if they specified an altTitleId, but it wasn't found, they need to do something,
-				// so just return *titleId*
-				if (titleStr == null)
-					titleStr = titleId;
-			}
+			var titleId = "SemanticDomain-Plural";
+			XmlViewsUtils.TryFindString("AlternativeTitles", titleId, out titleStr);
+			// if they specified an altTitleId, but it wasn't found, they need to do something,
+			// so just return *titleId*
+			if (titleStr == null)
+				titleStr = titleId;
 			m_titleBar.Text = titleStr;
 		}
 
@@ -217,31 +205,31 @@ namespace LanguageExplorer.Works
 		{
 			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
 			if (window == null)
-				return;
-
-			if (IsShowing)
 			{
-				window.RecordBarControl.ShowHeaderControl = true;
-				HandleChangeInSearchText(); // in case we already have a search active when we enter
+				return;
 			}
+
+			window.RecordBarControl.ShowHeaderControl = true;
+			HandleChangeInSearchText(); // in case we already have a search active when we enter
 		}
 
 		/// <summary>
 		/// A trivial override to use a special method to get the names of items.
 		/// For semantic domain in this tool we want to display a sense count (if non-zero).
 		/// </summary>
-		/// <param name="obj"></param>
-		/// <param name="font"></param>
-		/// <returns></returns>
 		protected override string GetTreeNodeLabel(ICmObject obj, out Font font)
 		{
 			var baseName = base.GetTreeNodeLabel(obj, out font);
 			var sd = obj as ICmSemanticDomain;
 			if (sd == null)
+			{
 				return baseName; // pathological defensive programming
-			int senseCount = SemanticDomainSelectionUtility.SenseReferenceCount(sd);
+			}
+			var senseCount = SemanticDomainSelectionUtility.SenseReferenceCount(sd);
 			if (senseCount == 0)
+			{
 				return baseName;
+			}
 			return baseName + " (" + senseCount + ")";
 		}
 	}

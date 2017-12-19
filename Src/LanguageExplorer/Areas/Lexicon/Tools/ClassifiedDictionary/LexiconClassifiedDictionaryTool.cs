@@ -56,8 +56,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			}
 			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
 
-			var semanticDomainRdeTreeBarHandler = (SemanticDomainRdeTreeBarHandler)_recordList.BarHandler;
-
 			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters.PropertyTable, null, "ShowFailingItems-lexiconClassifiedDictionary", LexiconResources.Show_Unused_Items, LexiconResources.Show_Unused_Items)
 			{
 				Dock = DockStyle.Right
@@ -71,7 +69,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 				new XmlDocView(XDocument.Parse(LexiconResources.LexiconClassifiedDictionaryParameters).Root, majorFlexComponentParameters.LcmCache, _recordList));
 
 			// Too early before now.
-			semanticDomainRdeTreeBarHandler.FinishInitialization(xmlDocViewPaneBar);
+			((SemanticDomainRdeTreeBarHandler)_recordList.MyTreeBarHandler).FinishInitialization(xmlDocViewPaneBar);
 			_lexiconAreaMenuHelper.Initialize();
 		}
 

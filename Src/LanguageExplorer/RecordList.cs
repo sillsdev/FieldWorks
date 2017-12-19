@@ -617,8 +617,6 @@ namespace LanguageExplorer
 			return false; // no punctuation in custom fields.
 		}
 
-		public virtual RecordBarHandler BarHandler => null;
-
 		public virtual void BecomeInactive()
 		{
 			UnregisterMessageHandlers(); // No sense handling messages, when dormant.
@@ -929,6 +927,8 @@ namespace LanguageExplorer
 			CurrentIndex = newIndex;
 			BroadcastChange(false);
 		}
+
+		public virtual ITreeBarHandler MyTreeBarHandler => null;
 
 		/// <summary>
 		/// Handle adding and/or removing a filter.
@@ -2323,20 +2323,24 @@ namespace LanguageExplorer
 		private void RegisterMessageHandlers()
 		{
 			var window = PropertyTable.GetValue<IFwMainWnd>("window");
-			if (window.TreeStyleRecordList != null)
+			var recordBarControl = window.RecordBarControl;
+			if (recordBarControl != null)
 			{
+				UnregisterMessageHandlers(); // Unwire them, in case (more likely 'since') this is re-entrant.
 				Subscriber.Subscribe("SelectedTreeBarNode", SelectedTreeBarNode_Message_Handler);
-			}
-			if (window.ListStyleRecordList != null)
-			{
 				Subscriber.Subscribe("SelectedListBarNode", SelectedListBarNode_Message_Handler);
 			}
 		}
 
 		private void UnregisterMessageHandlers()
 		{
-			Subscriber.Unsubscribe("SelectedTreeBarNode", SelectedTreeBarNode_Message_Handler);
-			Subscriber.Unsubscribe("SelectedListBarNode", SelectedListBarNode_Message_Handler);
+			var window = PropertyTable.GetValue<IFwMainWnd>("window");
+			var recordBarControl = window.RecordBarControl;
+			if (recordBarControl != null)
+			{
+				Subscriber.Unsubscribe("SelectedTreeBarNode", SelectedTreeBarNode_Message_Handler);
+				Subscriber.Unsubscribe("SelectedListBarNode", SelectedListBarNode_Message_Handler);
+			}
 		}
 
 		private void SelectedListBarNode_Message_Handler(object obj)

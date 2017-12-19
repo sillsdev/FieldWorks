@@ -25,8 +25,17 @@ namespace LanguageExplorer.Works
 	/// <code>
 	///		<ClassOwnershipTree>
 	///			<LexEntry sourceField="Entries">
-	///				<LexPronunciation sourceField="AllPronunciations"/>
-	///				<LexSense sourceField="AllSenses"/>
+	///				<LexEntryRef sourceField="AllEntryRefs" altSourceField="ComplexEntryTypes:AllComplexEntryRefPropertyTargets;VariantEntryTypes:AllVariantEntryRefPropertyTargets" />
+	///				<LexPronunciation sourceField="AllPossiblePronunciations"/>
+	///				<LexEtymology sourceField="AllPossibleEtymologies" />
+	///				<MoForm sourceField="AllPossibleAllomorphs" />
+	///				<LexSense sourceField = "AllSenses" >
+	///					<LexExampleSentence sourceField="AllExampleSentenceTargets">
+	///						<CmTranslation sourceField = "AllExampleTranslationTargets" />
+	///					</LexExampleSentence>
+	///					<LexExtendedNote sourceField="AllExtendedNoteTargets" />
+	///					<CmPicture sourceField = "AllPossiblePictures" />
+	///				</LexSense>
 	///			</LexEntry>
 	///		</ClassOwnershipTree>
 	/// </code>
@@ -40,7 +49,7 @@ namespace LanguageExplorer.Works
 		// suspend loading the property until given a class by RecordBrowseView via
 		// RecordList.OnChangeListItemsClass();
 		bool m_suspendReloadUntilOnChangeListItemsClass = true;
-		private readonly XElement m_partOwnershipTreeSpec = XElement.Parse(xWorksStrings.EntriesOrChildrenRecordListPartOwnershipTree);
+		private readonly XElement m_partOwnershipTreeSpec = XDocument.Parse(xWorksStrings.EntriesOrChildrenRecordListPartOwnershipTree).Root;
 
 		/// <summary />
 		internal EntriesOrChildClassesRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, ILexDb owner)

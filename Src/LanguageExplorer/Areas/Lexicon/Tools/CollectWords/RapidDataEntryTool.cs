@@ -96,7 +96,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			}
 			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
 
-			var semanticDomainRdeTreeBarHandler = (SemanticDomainRdeTreeBarHandler)_recordList.BarHandler;
 			var recordBar = new RecordBar(_propertyTable)
 			{
 				IsFlatList = false,
@@ -150,7 +149,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			panelButton.DatTree = recordEditView.DatTree;
 
 			// Too early before now.
-			semanticDomainRdeTreeBarHandler.FinishInitialization(new PaneBar());
+			((SemanticDomainRdeTreeBarHandler)_recordList.MyTreeBarHandler).FinishInitialization(new PaneBar());
 			recordEditView.FinishInitialization();
 			_lexiconAreaMenuHelper.Initialize();
 		}
@@ -194,7 +193,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "MEMORY ISSUES: Collect Words";
+		public string UiName => "Collect Words";
 
 		#endregion
 
