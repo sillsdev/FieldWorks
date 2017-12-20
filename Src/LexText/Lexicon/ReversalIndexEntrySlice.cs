@@ -799,6 +799,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				ITsString tssEmpty = TsStringUtils.EmptyString(ws);
 				m_sdaRev.CacheStringAlt(m_dummyId, ReversalIndexEntryTags.kflidReversalForm,
 					ws, tssEmpty);
+				int createdRevHvo = ConvertDummiesToReal(hvoObj);
+				m_sdaRev.SetMultiStringAlt(createdRevHvo, ReversalIndexEntryTags.kflidReversalForm, ws, tss);
 				// Refresh
 				RootBox.PropChanged(hvoIndex, kFlidEntries, count, 1, 0);
 
@@ -1278,11 +1280,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				{
 					HvoWs key = new HvoWs(hvo, ws);
 					m_mapHvoWsRevForm[key] = _tss;
+					// anything negative is just a dummy hvo. Make the base class ignore it for now
+					if (hvo < 0)
+						return;
 				}
-				else
-				{
-					base.SetMultiStringAlt(hvo, tag, ws, _tss);
-				}
+				base.SetMultiStringAlt(hvo, tag, ws, _tss);
 			}
 
 			public override ITsString get_StringProp(int hvo, int tag)
