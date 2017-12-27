@@ -36,7 +36,7 @@ namespace LanguageExplorer.Works
 	/// The actual view of each object is specified by a child <jtview></jtview> node
 	/// of the view node. This specifies how to display an individual list item.
 	/// </summary>
-	public class XmlDocView : XWorksViewBase, IFindAndReplaceContext, IPostLayoutInit
+	internal class XmlDocView : XWorksViewBase, IFindAndReplaceContext, IPostLayoutInit
 	{
 		protected int m_hvoOwner; // the root HVO.
 		/// <summary>

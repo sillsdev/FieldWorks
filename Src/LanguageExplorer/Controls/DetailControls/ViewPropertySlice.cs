@@ -8,7 +8,7 @@ using SIL.FieldWorks.Common.RootSites;
 namespace LanguageExplorer.Controls.DetailControls
 {
 	/// <summary></summary>
-	public class ViewPropertySlice : ViewSlice
+	internal class ViewPropertySlice : ViewSlice
 	{
 		protected int m_flid; // The field identifier for the attribute we are displaying.
 

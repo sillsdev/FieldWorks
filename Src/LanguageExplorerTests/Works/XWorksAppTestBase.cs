@@ -28,7 +28,7 @@ namespace LanguageExplorerTests.Works
 		public string m_newAssembly;
 		public string m_newControlClass;
 	}
-	public class MockFwManager : IFieldWorksManager
+	internal class MockFwManager : IFieldWorksManager
 	{
 
 		/// ------------------------------------------------------------------------------------

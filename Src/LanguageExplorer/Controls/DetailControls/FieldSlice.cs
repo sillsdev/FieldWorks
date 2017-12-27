@@ -21,7 +21,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// It knows how to retrieve the name of that field from the "field" attribute of the configuration,
 	/// and supports an overrideable method UpdateDisplayFromDatabase which is called when the value
 	/// of the field changes.</summary>
-	public abstract class FieldSlice : Slice
+	internal abstract class FieldSlice : Slice
 	{
 		/// <summary>
 		/// The field identifier for the attribute we are displaying.

@@ -26,12 +26,12 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// No fragment should be marked as a root.
 	/// Fragment 100000 is the root.
 	/// </summary>
-	public class XmlBrowseViewVc : XmlBrowseViewBaseVc
+	internal class XmlBrowseViewVc : XmlBrowseViewBaseVc
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public XmlBrowseViewVc(XElement xnSpec, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
+		internal XmlBrowseViewVc(XElement xnSpec, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
 			: base(xnSpec, madeUpFieldIdentifier, xbv)
 		{
 		}

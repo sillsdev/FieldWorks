@@ -20,16 +20,16 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Summary description for ViewPropertyItem.
 	/// </summary>
-	public class StringSlice : ViewPropertySlice
+	internal class StringSlice : ViewPropertySlice
 	{
 		protected int m_ws = -1;
 
-		public StringSlice(ICmObject obj, int flid)
+		internal StringSlice(ICmObject obj, int flid)
 			: base(new StringSliceView(obj.Hvo, flid, -1), obj, flid)
 		{
 		}
 
-		public StringSlice(ICmObject obj, int flid, int ws)
+		internal StringSlice(ICmObject obj, int flid, int ws)
 			: base(new StringSliceView(obj.Hvo, flid, ws), obj, flid)
 		{
 			m_ws = ws;
@@ -40,7 +40,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Such subclasses must set the ContextObject, the FieldId, and if relevant the Ws, and then call
 		/// CreateView(), typically from an override of FinishInit().
 		/// </summary>
-		public StringSlice()
+		internal StringSlice()
 		{
 		}
 

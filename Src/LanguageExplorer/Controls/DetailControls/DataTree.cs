@@ -52,7 +52,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// System.Windows.Forms.Panel
 	/// System.Windows.Forms.ContainerControl
 	/// System.Windows.Forms.UserControl
-	public class DataTree : UserControl, IVwNotifyChange, IFlexComponent, IRefreshableRoot
+	internal class DataTree : UserControl, IVwNotifyChange, IFlexComponent, IRefreshableRoot
 	{
 		internal SliceContextMenuFactory SliceContextMenuFactory { get; private set; }
 

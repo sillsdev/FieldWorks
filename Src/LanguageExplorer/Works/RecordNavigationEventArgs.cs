@@ -6,15 +6,15 @@ using System;
 
 namespace LanguageExplorer.Works
 {
-	public delegate void RecordNavigationInfoEventHandler(object sender, RecordNavigationEventArgs e);
+	internal delegate void RecordNavigationInfoEventHandler(object sender, RecordNavigationEventArgs e);
 
 	/// <summary>
 	/// Event args class for handling RecordNavigation events.
 	/// </summary>
-	public class RecordNavigationEventArgs : EventArgs
+	internal class RecordNavigationEventArgs : EventArgs
 	{
 		/// <summary />
-		public RecordNavigationEventArgs(RecordNavigationInfo rni)
+		internal RecordNavigationEventArgs(RecordNavigationInfo rni)
 		{
 			RecordNavigationInfo = rni;
 		}
@@ -22,6 +22,6 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Get the record navigation information related to the event.
 		/// </summary>
-		public RecordNavigationInfo RecordNavigationInfo { get; }
+		internal RecordNavigationInfo RecordNavigationInfo { get; }
 	}
 }

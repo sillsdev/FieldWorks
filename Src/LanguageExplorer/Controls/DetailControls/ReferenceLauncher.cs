@@ -16,7 +16,7 @@ using SIL.Xml;
 namespace LanguageExplorer.Controls.DetailControls
 {
 	/// <summary></summary>
-	public class ReferenceLauncher : ButtonLauncher
+	internal class ReferenceLauncher : ButtonLauncher
 	{
 		#region event handler declarations
 
@@ -69,7 +69,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Initializes a new instance of the <see cref="ReferenceLauncher"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public ReferenceLauncher()
+		internal ReferenceLauncher()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			//InitializeComponent();

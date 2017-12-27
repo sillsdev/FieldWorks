@@ -51,25 +51,25 @@ namespace LanguageExplorer.Controls.DetailControls
 				// ReSharper restore HeuristicUnreachableCode
 			}
 			var linkCommandNode = m_configurationNode.XPathSelectElement("descendant::chooserLink");
-			var chooser = new SemanticDomainsChooser
-				{
-					Cache = m_cache,
-					DisplayWs = displayWs,
-					Sense = sense,
-					LinkNode = linkCommandNode,
-					HelpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")
-			};
-
-			var labels = ObjectLabel.CreateObjectLabels(m_cache, m_obj.ReferenceTargetCandidates(m_flid),
-				m_displayNameProperty, displayWs);
-			chooser.Initialize(labels, sense.SemanticDomainsRC, PropertyTable, Publisher);
-			var result = chooser.ShowDialog();
-			if(result == DialogResult.OK)
+			using (var chooser = new SemanticDomainsChooser
 			{
-				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Resources.DetailControlsStrings.ksUndoSet,
-																Resources.DetailControlsStrings.ksRedoSet,
-																m_cache.ActionHandlerAccessor,
-																() => sense.SemanticDomainsRC.Replace(sense.SemanticDomainsRC, chooser.SemanticDomains));
+				Cache = m_cache,
+				DisplayWs = displayWs,
+				Sense = sense,
+				LinkNode = linkCommandNode,
+				HelpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")
+			})
+			{
+				var labels = ObjectLabel.CreateObjectLabels(m_cache, m_obj.ReferenceTargetCandidates(m_flid), m_displayNameProperty, displayWs);
+				chooser.Initialize(labels, sense.SemanticDomainsRC, PropertyTable, Publisher);
+				var result = chooser.ShowDialog();
+				if (result == DialogResult.OK)
+				{
+					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Resources.DetailControlsStrings.ksUndoSet,
+						Resources.DetailControlsStrings.ksRedoSet,
+						m_cache.ActionHandlerAccessor,
+						() => sense.SemanticDomainsRC.Replace(sense.SemanticDomainsRC, chooser.SemanticDomains));
+				}
 			}
 		}
 	}

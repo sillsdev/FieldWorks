@@ -64,7 +64,7 @@ namespace LanguageExplorer.Controls.DetailControls
 #if SLICE_IS_SPLITCONTAINER
 	public class Slice : SplitContainer, IFlexComponent
 #else
-	public class Slice : UserControl, IFlexComponent
+	internal class Slice : UserControl, IFlexComponent
 #endif
 	{
 #region Constants

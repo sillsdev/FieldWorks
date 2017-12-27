@@ -24,7 +24,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// Also a base class for more specialized editors.
 	/// Control should be a (subclass of) VectorReferenceLauncher.
 	/// </summary>
-	public class ReferenceVectorSlice : ReferenceSlice
+	internal class ReferenceVectorSlice : ReferenceSlice
 	{
 		int m_dxLastWidth; // remember width when OnSizeChanged called.
 
@@ -291,7 +291,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// This class should be extended by any custom reference vector slices.
 	/// </summary>
-	public abstract class CustomReferenceVectorSlice : ReferenceVectorSlice
+	internal abstract class CustomReferenceVectorSlice : ReferenceVectorSlice
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CustomReferenceVectorSlice"/> class.
@@ -310,7 +310,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.FinishInit();
 		}
 	}
-	public class ReferenceVectorDisabledSlice : ReferenceVectorSlice
+	internal class ReferenceVectorDisabledSlice : ReferenceVectorSlice
 	{
 		public ReferenceVectorDisabledSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(cache, obj, flid)

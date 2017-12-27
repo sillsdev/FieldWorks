@@ -14,7 +14,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// This class is used to manage handling of the PartOfSpeech property of a MoInflAffMsa.
 	/// Depending on the value of that property, the Slot property needs to be kept valid.
 	/// </summary>
-	public class InflMSAReferenceSlice : AtomicReferenceSlice
+	internal class InflMSAReferenceSlice : AtomicReferenceSlice
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="InflMSAReferenceSlice"/> class.
@@ -22,7 +22,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <param name="cache">The cache.</param>
 		/// <param name="obj">The obj.</param>
 		/// <param name="flid">The flid.</param>
-		public InflMSAReferenceSlice(LcmCache cache, ICmObject obj, int flid)
+		internal InflMSAReferenceSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(cache, obj, flid)
 		{
 		}

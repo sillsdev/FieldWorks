@@ -1048,8 +1048,4 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Reset this view</value>
     <comment>Used in Dictionary Config Mgr dialog</comment>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="EntriesOrChildrenRecordListPartOwnershipTree" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\EntriesOrChildrenClerkPartOwnershipTree.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
 </root>

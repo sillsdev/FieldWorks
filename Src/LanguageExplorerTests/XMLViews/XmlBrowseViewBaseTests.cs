@@ -16,7 +16,7 @@ using SIL.LCModel.Utils;
 namespace LanguageExplorerTests.XMLViews
 {
 	/// <summary/>
-	public class FakeBrowseViewer : BrowseViewer
+	internal class FakeBrowseViewer : BrowseViewer
 	{
 		/// <summary/>
 		public FakeBrowseViewer()
@@ -36,7 +36,7 @@ namespace LanguageExplorerTests.XMLViews
 	}
 
 	/// <summary/>
-	public class FakeXmlBrowseViewBase : XmlBrowseViewBase
+	internal class FakeXmlBrowseViewBase : XmlBrowseViewBase
 	{
 		/// <summary/>
 		public int m_rowCount = 3;
@@ -51,7 +51,7 @@ namespace LanguageExplorerTests.XMLViews
 		}
 
 		/// <summary/>
-		public FakeXmlBrowseViewBase(BrowseViewer bv)
+		internal FakeXmlBrowseViewBase(BrowseViewer bv)
 		{
 			m_bv = bv;
 			m_rootb = new FakeRootBox();
@@ -71,10 +71,10 @@ namespace LanguageExplorerTests.XMLViews
 		}
 
 		/// <summary/>
-		public class FakeRootBox : IVwRootBox
+		internal class FakeRootBox : IVwRootBox
 		{
 			/// <summary/>
-			public XmlBrowseViewBase m_xmlBrowseViewBase;
+			internal XmlBrowseViewBase m_xmlBrowseViewBase;
 
 			/// <summary>
 			/// null unless manually set

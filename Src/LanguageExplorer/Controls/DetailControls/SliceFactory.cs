@@ -18,7 +18,7 @@ using SIL.Xml;
 namespace LanguageExplorer.Controls.DetailControls
 {
 	/// <summary></summary>
-	public static class SliceFactory
+	internal static class SliceFactory
 	{
 		/// <summary>
 		/// Look for a simple writing system spec as part of a node...currently either 'analysis' or 'vernacular'.
@@ -75,7 +75,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary></summary>
-		public static Slice Create(LcmCache cache, string editor, int flid, XElement node, ICmObject obj,
+		internal static Slice Create(LcmCache cache, string editor, int flid, XElement node, ICmObject obj,
 			IPersistenceProvider persistenceProvider, FlexComponentParameters flexComponentParameters, XElement caller, ObjSeqHashMap reuseMap)
 		{
 			var sliceWasRecyled = false;

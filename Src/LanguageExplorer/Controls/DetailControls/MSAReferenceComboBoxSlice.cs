@@ -24,7 +24,7 @@ using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	public class MSAReferenceComboBoxSlice : FieldSlice, IVwNotifyChange
+	internal class MSAReferenceComboBoxSlice : FieldSlice, IVwNotifyChange
 	{
 		private const int kAdd = -3;
 

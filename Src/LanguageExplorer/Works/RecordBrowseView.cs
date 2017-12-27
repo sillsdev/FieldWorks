@@ -25,7 +25,7 @@ namespace LanguageExplorer.Works
 	/// <summary>
 	/// RecordBrowseView is a table oriented view of the collection
 	/// </summary>
-	public class RecordBrowseView : RecordView, ISnapSplitPosition, IPostLayoutInit, IFocusablePanePortion
+	internal class RecordBrowseView : RecordView, ISnapSplitPosition, IPostLayoutInit, IFocusablePanePortion
 	{
 		public event CheckBoxChangedEventHandler CheckBoxChanged;
 
@@ -258,7 +258,7 @@ namespace LanguageExplorer.Works
 				// use ListUpdateHelper to suspend reloading the list until we've changed the class
 				// and recomputed the columns. Otherwise, we'll try to reload the list and redraw the display
 				// with columns that may not have all their parts in place (e.g. for generated custom fields)
-				using (new ListUpdateHelper(MyRecordList))
+				using (new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = MyRecordList }))
 				{
 					// change the list items class, but don't do the reload && refresh display
 					// until after we've recomputed our columns to allow regenerating custom field parts
@@ -719,8 +719,7 @@ namespace LanguageExplorer.Works
 		public virtual void OnCheckBoxChanged(object sender, CheckBoxChangedEventArgs e)
 		{
 			CheckDisposed();
-			if (CheckBoxChanged != null)
-				CheckBoxChanged(sender, e);
+			CheckBoxChanged?.Invoke(sender, e);
 		}
 
 		private void m_browseViewer_SelectedIndexChanged(object sender, EventArgs e)
@@ -781,7 +780,7 @@ namespace LanguageExplorer.Works
 	///   compound rules, ad hoc rules, and inflectional affix templates).  We
 	///  only use this view with phonological rules and compound rules.
 	/// </summary>
-	public class RecordBrowseActiveView : RecordBrowseView
+	internal class RecordBrowseActiveView : RecordBrowseView
 	{
 
 		protected override BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, LcmCache cache,

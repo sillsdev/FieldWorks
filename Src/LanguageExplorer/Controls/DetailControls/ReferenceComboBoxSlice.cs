@@ -15,7 +15,7 @@ using SIL.FieldWorks.Common.Widgets;
 namespace LanguageExplorer.Controls.DetailControls
 {
 	/// <summary></summary>
-	public class ReferenceComboBoxSlice : FieldSlice
+	internal class ReferenceComboBoxSlice : FieldSlice
 	{
 		protected bool m_processSelectionEvent = true;
 		protected int m_currentSelectedIndex;

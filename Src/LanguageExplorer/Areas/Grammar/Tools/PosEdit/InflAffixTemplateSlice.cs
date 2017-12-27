@@ -12,7 +12,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 	/// <summary>
 	/// Summary description for InflAffixTemplateSlice.
 	/// </summary>
-	public class InflAffixTemplateSlice : ViewSlice
+	internal class InflAffixTemplateSlice : ViewSlice
 	{
 		/// <summary>
 		/// handles creating the context menus for the inflectional affix template and funneling commands to the control.

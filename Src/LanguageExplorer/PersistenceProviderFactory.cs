@@ -14,7 +14,7 @@ namespace LanguageExplorer
 	/// <summary>
 	/// Factory that creates an instance of IPersistenceProvider
 	/// </summary>
-	public static class PersistenceProviderFactory
+	internal static class PersistenceProviderFactory
 	{
 		/// <summary>
 		/// Create an instance of IPersistenceProvider
@@ -22,7 +22,7 @@ namespace LanguageExplorer
 		/// <param name="propertyTable">The property table to use for persistence.</param>
 		/// <param name="context">The persistence context</param>
 		/// <returns></returns>
-		public static IPersistenceProvider CreatePersistenceProvider(IPropertyTable propertyTable, string context)
+		internal static IPersistenceProvider CreatePersistenceProvider(IPropertyTable propertyTable, string context)
 		{
 			return new PersistenceProvider(propertyTable, context);
 		}
@@ -32,7 +32,7 @@ namespace LanguageExplorer
 		/// </summary>
 		/// <param name="propertyTable">The property table to use for persistence.</param>
 		/// <returns></returns>
-		public static IPersistenceProvider CreatePersistenceProvider(IPropertyTable propertyTable)
+		internal static IPersistenceProvider CreatePersistenceProvider(IPropertyTable propertyTable)
 		{
 			return CreatePersistenceProvider(propertyTable, AreaServices.Default);
 		}

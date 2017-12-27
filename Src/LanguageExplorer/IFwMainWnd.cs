@@ -16,7 +16,7 @@ namespace LanguageExplorer
 	/// and to allow different apps to implement their main windows totally differently.
 	/// </summary>
 	/// <remarks>In normal operations, an IFwMainWnd implementation expects to be cast to Form.</remarks>
-	public interface IFwMainWnd : IDisposable, IPropertyTableProvider, IPublisherProvider, ISubscriberProvider, IRecordListOwner, IIdleQueueProvider
+	internal interface IFwMainWnd : IDisposable, IPropertyTableProvider, IPublisherProvider, ISubscriberProvider, IRecordListOwner, IIdleQueueProvider
 	{
 		/// <summary>
 		/// Gets the active view of the window

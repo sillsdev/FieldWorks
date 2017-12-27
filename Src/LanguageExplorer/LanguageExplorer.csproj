@@ -294,6 +294,7 @@
     <Compile Include="Areas\AreaWideMenuHelper.cs" />
     <Compile Include="Areas\Grammar\GrammarAreaMenuHelper.cs" />
     <Compile Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchToolMenuHelper.cs" />
+    <Compile Include="Areas\Lexicon\ISemanticDomainTreeBarHandler.cs" />
     <Compile Include="Areas\Lexicon\LexiconAreaMenuHelper.cs" />
     <Compile Include="Areas\Lists\Tools\DialectsListEdit\DialectsListEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\ExtNoteTypeEdit\ExtNoteTypeEditTool.cs" />
@@ -316,6 +317,10 @@
     <Compile Include="Impls\PropertyTable.cs" />
     <Compile Include="Impls\Publisher.cs" />
     <Compile Include="Impls\Subscriber.cs" />
+    <Compile Include="IOldVersionMerger.cs" />
+    <Compile Include="IRecordChangeHandler.cs" />
+    <Compile Include="IRecordListOwner.cs" />
+    <Compile Include="ISimpleLogger.cs" />
     <Compile Include="IUndoRedoHandler.cs" />
     <Compile Include="LanguageExplorerCompositionServices.cs" />
     <Compile Include="Controls\DetailControls\SliceContextMenuFactory.cs" />
@@ -1065,7 +1070,7 @@
     <Compile Include="Works\DictionaryExportService.cs" />
     <Compile Include="Works\DictionaryNodeOptions.cs" />
     <Compile Include="Works\DictionaryPublicationDecorator.cs" />
-    <Compile Include="Works\EntriesOrChildClassesRecordList.cs" />
+    <Compile Include="Areas\Lexicon\Tools\BulkEditEntries\EntriesOrChildClassesRecordList.cs" />
     <Compile Include="Works\ExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1122,7 +1127,7 @@
     <Compile Include="LinkHandler.cs" />
     <Compile Include="Works\ListChangedActions.cs" />
     <Compile Include="Works\ListUpdateHelper.cs" />
-    <Compile Include="Works\ListUpdateHelperOptions.cs" />
+    <Compile Include="Works\ListUpdateHelperParameterObject.cs" />
     <Compile Include="Works\LocalDragItem.cs" />
     <Compile Include="Works\MacroListener.cs" />
     <Compile Include="Works\MatchingItemsRecordList.cs" />
@@ -2958,7 +2963,7 @@
     <None Include="LcmUi\Resources\question.ico" />
     <None Include="Works\Resources\ArrowDown.png" />
     <None Include="Works\Resources\ArrowUp.png" />
-    <None Include="Works\Resources\EntriesOrChildrenClerkPartOwnershipTree.xml" />
+    <None Include="Resources\EntriesOrChildrenClerkPartOwnershipTree.xml" />
     <None Include="Resources\LexiconProblemsParameters.xml" />
     <None Include="Resources\NaturalClassEditToolParameters.xml" />
     <None Include="Resources\NotebookEditBrowseParameters.xml" />

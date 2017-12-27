@@ -10,7 +10,7 @@ namespace LanguageExplorer.Works
 	/// <summary>
 	/// The argument used when we broadcast OnRecordNavigation.
 	/// </summary>
-	public class RecordNavigationInfo : IComparable
+	internal class RecordNavigationInfo : IComparable
 	{
 		/// <summary>
 		/// Make one.

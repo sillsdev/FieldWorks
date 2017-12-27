@@ -7,7 +7,7 @@ using SIL.FieldWorks.Common.RootSites;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	public partial class InterlinMaster
+	internal partial class InterlinMaster
 	{
 		/// <summary>
 		/// Required designer variable.

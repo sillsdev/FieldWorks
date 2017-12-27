@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Lexicon
 	/// This class is instantiated by reflection, based on the setting of the treeBarHandler in the
 	/// SemanticDomainList record list in the RDE toolConfiguration.xml, but is also used to display the Semantic Domain List in the List Edit tool.
 	/// </summary>
-	internal sealed class SemanticDomainRdeTreeBarHandler : PossibilityTreeBarHandler
+	internal sealed class SemanticDomainRdeTreeBarHandler : PossibilityTreeBarHandler, ISemanticDomainTreeBarHandler
 	{
 		private IPaneBar m_titleBar;
 		private Panel m_headerPanel;
@@ -40,22 +40,17 @@ namespace LanguageExplorer.Areas.Lexicon
 			m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 		}
 
-		internal void FinishInitialization(IPaneBar paneBar)
+		#region ISemanticDomainTreeBarHandler implementation
+
+		void ISemanticDomainTreeBarHandler.FinishInitialization(IPaneBar paneBar)
 		{
 			m_titleBar = paneBar;
-			_recordBar = RecordBarControl;
+			_recordBar = m_propertyTable.GetValue<IFwMainWnd>("window").RecordBarControl;
 			if (_recordBar == null)
 			{
 				return;
 			}
-			SetupAndShowHeaderPanel();
-			m_searchTimer = new SearchTimer((Control)_recordBar, 500, HandleChangeInSearchText, new List<Control> { _recordBar.TreeView, _recordBar.ListView });
-			m_textSearch.TextChanged += m_searchTimer.OnSearchTextChanged;
-			_recordBar.ListView.HeaderStyle = ColumnHeaderStyle.None; // We don't want a secondary "Records" title bar
-		}
 
-		private void SetupAndShowHeaderPanel()
-		{
 			if (!_recordBar.HasHeaderControl)
 			{
 				var headerPanel = new Panel { Visible = false };
@@ -76,12 +71,21 @@ namespace LanguageExplorer.Areas.Lexicon
 				SetInfoBarText();
 			}
 			_recordBar.ShowHeaderControl = true;
+			m_searchTimer = new SearchTimer((Control)_recordBar, 500, HandleChangeInSearchText, new List<Control> { _recordBar.TreeView, _recordBar.ListView });
+			m_textSearch.TextChanged += m_searchTimer.OnSearchTextChanged;
+			_recordBar.ListView.HeaderStyle = ColumnHeaderStyle.None; // We don't want a secondary "Records" title bar
 		}
+
+		#region Overrides of TreeBarHandler
 
 		public override void PopulateRecordBar(IRecordList recordList)
 		{
 			PopulateRecordBar(recordList, Editable);
 		}
+
+		#endregion
+
+		#endregion ISemanticDomainTreeBarHandler implementation
 
 		// Semantic Domains should be editable only in the Lists area.
 		private bool Editable => AreaServices.ListsAreaMachineName.Equals(m_propertyTable.GetValue<string>(AreaServices.AreaChoice));
@@ -111,25 +115,28 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		private void HandleChangeInSearchText()
 		{
-			var searchString = TrimSearchTextHandleEnterSpecialCase();
-			SearchSemanticDomains(searchString);
+			SearchSemanticDomains(TrimSearchTextHandleEnterSpecialCase);
 		}
 
-		private string TrimSearchTextHandleEnterSpecialCase()
+		private string TrimSearchTextHandleEnterSpecialCase
 		{
-			var searchString = m_textSearch.Tss.Text ?? string.Empty;
-			// if string is only whitespace (especially <Enter>), reset to avoid spurious searches with no results.
-			if (!string.IsNullOrEmpty(searchString) && string.IsNullOrWhiteSpace(searchString))
+			get
 			{
-				searchString = string.Empty;
+				var searchString = m_textSearch.Tss.Text ?? string.Empty;
+				// if string is only whitespace (especially <Enter>), reset to avoid spurious searches with no results.
+				if (string.IsNullOrEmpty(searchString) || !string.IsNullOrWhiteSpace(searchString))
+				{
+					return searchString.Trim();
+				}
+
 				// We must be careful about setting the textbox string, because each time you set it
 				// triggers a new search timer iteration. We want to avoid a "continual" reset.
 				// We could just ignore whitespace, but if <Enter> gets in there, somehow it makes the
 				// rest of the string invisible on the screen. So this special case is handled by resetting
 				// the search string to empty if it only contains whitespace.
 				m_textSearch.Tss = TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
+				return string.Empty;
 			}
-			return searchString.Trim();
 		}
 
 		private void SearchSemanticDomains(string searchString)
@@ -175,15 +182,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		private int SetHeaderPanelHeight()
 		{
 			return m_textSearch.Height + ((Control)m_titleBar).Height;
-		}
-
-		private IRecordBar RecordBarControl
-		{
-			get
-			{
-				var window = m_propertyTable.GetValue<IFwMainWnd>("window");
-				return window.RecordBarControl;
-			}
 		}
 
 		private void SetInfoBarText()

@@ -8,14 +8,14 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	public class PossibilityReferenceVectorSlice : ReferenceVectorSlice
+	internal class PossibilityReferenceVectorSlice : ReferenceVectorSlice
 	{
 		protected PossibilityReferenceVectorSlice(Control control, LcmCache cache, ICmObject obj, int flid)
 			: base(control, cache, obj, flid)
 		{
 		}
 
-		public PossibilityReferenceVectorSlice(LcmCache cache, ICmObject obj, int flid)
+		internal PossibilityReferenceVectorSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(new PossibilityVectorReferenceLauncher(), cache, obj, flid)
 		{
 		}

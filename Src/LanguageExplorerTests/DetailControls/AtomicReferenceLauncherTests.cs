@@ -28,7 +28,7 @@ namespace LanguageExplorerTests.DetailControls
 		private int m_wsVern;
 		private IPartOfSpeech m_noun;
 		private IMoMorphType m_stem;
-		public MockAtomicReferenceLauncher MockLauncher { get; set; }
+		internal MockAtomicReferenceLauncher MockLauncher { get; set; }
 
 		#endregion
 
@@ -122,7 +122,7 @@ namespace LanguageExplorerTests.DetailControls
 		}
 	}
 
-	public class MockAtomicReferenceLauncher : AtomicReferenceLauncher
+	internal class MockAtomicReferenceLauncher : AtomicReferenceLauncher
 	{
 		#region overrides
 

@@ -15,17 +15,17 @@ using DCM = LanguageExplorer.Works.DictionaryConfigurationMigrator;
 
 namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 {
-	public class FirstBetaMigrator : IDictionaryConfigurationMigrator
+	internal class FirstBetaMigrator : IDictionaryConfigurationMigrator
 	{
 		private ISimpleLogger m_logger;
 		internal const int VersionBeta5 = 14;
 		internal const int VersionRC2 = 17; // 8.3.7
 
-		public FirstBetaMigrator() : this(null, null)
+		internal FirstBetaMigrator() : this(null, null)
 		{
 		}
 
-		public FirstBetaMigrator(LcmCache cache, SimpleLogger logger)
+		internal FirstBetaMigrator(LcmCache cache, ISimpleLogger logger)
 		{
 			Cache = cache;
 			m_logger = logger;
@@ -33,7 +33,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 
 		public LcmCache Cache { get; set; }
 
-		public void MigrateIfNeeded(SimpleLogger logger, IPropertyTable propertyTable, string appVersion)
+		public void MigrateIfNeeded(ISimpleLogger logger, IPropertyTable propertyTable, string appVersion)
 		{
 			m_logger = logger;
 			Cache = propertyTable.GetValue<LcmCache>("cache");

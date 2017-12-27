@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
 using SIL.LCModel;
@@ -16,7 +16,7 @@ using SIL.LCModel.Application;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 {
 	/// <summary>
 	/// Record list that can be used to bulk edit Entries or its child classes (e.g. Senses or Pronunciations).
@@ -40,7 +40,7 @@ namespace LanguageExplorer.Works
 	///		</ClassOwnershipTree>
 	/// </code>
 	/// </summary>
-	public class EntriesOrChildClassesRecordList : RecordList, IMultiListSortItemProvider
+	internal sealed class EntriesOrChildClassesRecordList : RecordList, IMultiListSortItemProvider
 	{
 		int m_flidEntries;
 		int m_prevFlid;
@@ -49,7 +49,7 @@ namespace LanguageExplorer.Works
 		// suspend loading the property until given a class by RecordBrowseView via
 		// RecordList.OnChangeListItemsClass();
 		bool m_suspendReloadUntilOnChangeListItemsClass = true;
-		private readonly XElement m_partOwnershipTreeSpec = XDocument.Parse(xWorksStrings.EntriesOrChildrenRecordListPartOwnershipTree).Root;
+		private readonly XElement m_partOwnershipTreeSpec = XDocument.Parse(LexiconResources.EntriesOrChildrenClerkPartOwnershipTree).Root;
 
 		/// <summary />
 		internal EntriesOrChildClassesRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, ILexDb owner)
@@ -111,7 +111,7 @@ namespace LanguageExplorer.Works
 			}
 
 			var fLoadSuppressed = m_requestedLoadWhileSuppressed;
-			using (var luh = new ListUpdateHelper(this))
+			using (var luh = new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = this }))
 			{
 				// don't reload the entire list via propchanges.  just indicate we need to reload.
 				luh.TriggerPendingReloadOnDispose = false;

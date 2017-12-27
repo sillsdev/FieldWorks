@@ -31,7 +31,7 @@ namespace LanguageExplorer.Works
 	/// section of Language Explorer.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class NotebookExportDialog : ExportDialog
+	internal class NotebookExportDialog : ExportDialog
 	{
 		List<int> m_customFlids = new List<int>();
 		IFwMetaDataCacheManaged m_mdc;

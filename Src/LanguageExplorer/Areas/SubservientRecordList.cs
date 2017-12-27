@@ -73,7 +73,7 @@ namespace LanguageExplorer.Areas
 			{
 				newObj = rni.MyRecordList.CurrentObject;
 			}
-			using (var luh = new ListUpdateHelper(this))
+			using (var luh = new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = this }))
 			{
 				// in general we want to actually reload the list if something as
 				// radical as changing the OwningObject occurs, since many subsequent

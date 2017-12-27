@@ -15,7 +15,7 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 {
-	public class BasicIPASymbolSlice : StringSlice
+	internal class BasicIPASymbolSlice : StringSlice
 	{
 		private static readonly XDocument s_ipaInfoDocument;
 

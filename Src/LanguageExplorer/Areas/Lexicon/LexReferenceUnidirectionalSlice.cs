@@ -10,12 +10,12 @@ namespace LanguageExplorer.Areas.Lexicon
 {
 	/// <summary>
 	/// </summary>
-	public class LexReferenceUnidirectionalSlice : CustomReferenceVectorSlice, ILexReferenceSlice
+	internal class LexReferenceUnidirectionalSlice : CustomReferenceVectorSlice, ILexReferenceSlice
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LexReferenceUnidirectionalSlice"/> class.
 		/// </summary>
-		public LexReferenceUnidirectionalSlice()
+		internal LexReferenceUnidirectionalSlice()
 			: base(new LexReferenceUnidirectionalLauncher())
 		{
 		}

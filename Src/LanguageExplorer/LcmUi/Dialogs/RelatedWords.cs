@@ -182,7 +182,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// <summary>
 		/// Create a view with a single LexEntry object.
 		/// </summary>
-		public static XmlView MakeSummaryView(int hvoEntry, LcmCache cache, IVwStylesheet styleSheet)
+		internal static XmlView MakeSummaryView(int hvoEntry, LcmCache cache, IVwStylesheet styleSheet)
 		{
 			XmlView xv = new XmlView(hvoEntry, "publishStem", false);
 			xv.Cache = cache;

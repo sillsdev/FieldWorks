@@ -32,7 +32,7 @@ namespace LanguageExplorer.Works
 	/// <summary>
 	/// This class groups the static methods used for generating XHTML, according to specified configurations, from Fieldworks model objects
 	/// </summary>
-	public static class ConfiguredXHTMLGenerator
+	internal static class ConfiguredXHTMLGenerator
 	{
 		/// <summary>
 		/// Click-to-play icon for media files
@@ -202,7 +202,7 @@ namespace LanguageExplorer.Works
 		/// Saves the generated content in the Temp directory, to a unique but discoverable and somewhat stable location.
 		/// </summary>
 		/// <returns>The path to the XHTML file</returns>
-		public static string SavePreviewHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, IPropertyTable propertyTable,
+		internal static string SavePreviewHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, IPropertyTable propertyTable,
 			LcmCache cache,
 			IRecordList activeRecordList,
 			IThreadedProgress progress = null, int entriesPerPage = EntriesPerPage)
@@ -253,7 +253,7 @@ namespace LanguageExplorer.Works
 		/// Saves the generated content into the given xhtml and css file paths for all the entries in
 		/// the given collection.
 		/// </summary>
-		public static void SavePublishedHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, int entriesPerPage,
+		internal static void SavePublishedHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, int entriesPerPage,
 			DictionaryConfigurationModel configuration, IPropertyTable propertyTable,
 			LcmCache cache,
 			IRecordList activeRecordList,
@@ -3132,7 +3132,7 @@ namespace LanguageExplorer.Works
 			return wsOptions.Options[0].Id;
 		}
 
-		public static DictionaryPublicationDecorator GetPublicationDecoratorAndEntries(IPropertyTable propertyTable, out int[] entriesToSave, string dictionaryType, LcmCache cache, IRecordList activeRecordList)
+		internal static DictionaryPublicationDecorator GetPublicationDecoratorAndEntries(IPropertyTable propertyTable, out int[] entriesToSave, string dictionaryType, LcmCache cache, IRecordList activeRecordList)
 		{
 			if (cache == null)
 			{

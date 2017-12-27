@@ -14,7 +14,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// Base class for slices that edit object reference properties by launching a chooser.
 	/// Control is expected to be a subclass of ReferenceLauncher.
 	/// </summary>
-	public abstract class ReferenceSlice : FieldSlice
+	internal abstract class ReferenceSlice : FieldSlice
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ReferenceSlice"/> class.

@@ -11,7 +11,7 @@ namespace LanguageExplorer.Works
 	/// <summary>
 	/// This interface is used in the conversion of xml configuration from layout and parts files into another form. i.e. TreeNodes
 	/// </summary>
-	public interface ILayoutConverter
+	internal interface ILayoutConverter
 	{
 		/// <summary>
 		/// This method is called when the entire layout has been converted a tree of LayoutTreeNodes

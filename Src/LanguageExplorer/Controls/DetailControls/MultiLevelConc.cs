@@ -35,7 +35,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// displayed. Some default implementations are provided in this component.
 	///
 	/// </summary>
-	public class MultiLevelConc : DataTree
+	internal class MultiLevelConc : DataTree
 	{
 		public interface IConcSliceInfo
 		{

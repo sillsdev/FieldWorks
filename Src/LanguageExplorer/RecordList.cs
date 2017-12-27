@@ -37,7 +37,7 @@ namespace LanguageExplorer
 	/// <summary>
 	/// RecordList is a vector of objects
 	/// </summary>
-	public class RecordList : IRecordList
+	internal class RecordList : IRecordList
 	{
 		protected const int RecordListFlid = 89999956;
 
@@ -219,7 +219,7 @@ namespace LanguageExplorer
 			// The null check is just for sanity, it should always be null when starting an operation.
 			if (count > 1 && _bulkEditListUpdateHelper == null)
 			{
-				_bulkEditListUpdateHelper = new ListUpdateHelper(this);
+				_bulkEditListUpdateHelper = new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = this });
 			}
 		}
 
@@ -253,7 +253,7 @@ namespace LanguageExplorer
 
 		protected virtual void Dispose(bool disposing)
 		{
-			Debug.WriteLineIf(!disposing, "****************** " + GetType().Name + " 'disposing' is false. ******************");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 
 			if (IsDisposed)
 			{
@@ -1584,8 +1584,6 @@ namespace LanguageExplorer
 			return fRestoredSorter || fRestoredFilter;
 		}
 
-		public ListUpdateHelper UpdateHelper { get; set; }
-
 		/// <summary>
 		/// Indicates whether RecordList is being modified
 		/// </summary>
@@ -2616,7 +2614,7 @@ namespace LanguageExplorer
 			private readonly IList<ClassAndPropInfo> CpiPath;
 			private readonly RecordList List;
 
-#region ICreateAndInsert<ICmObject> Members
+			#region ICreateAndInsert<ICmObject> Members
 
 			public ICmObject Create()
 			{
@@ -3844,7 +3842,7 @@ namespace LanguageExplorer
 				// This looks plausible; but for example IndexOf may reload the list, if a reload is pending;
 				// and the current object may no longer match the current filter, so it may be gone.
 				//Debug.Assert(currentIndex == IndexOf(currentObject.Hvo));
-				using (new ListUpdateHelper(this))
+				using (new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = this }))
 				{
 					var updatingListOrig = UpdatingList;
 					UpdatingList = true;
@@ -3879,11 +3877,12 @@ namespace LanguageExplorer
 		{
 			TObj newObj;
 			int hvoNew;
-			var options = new ListUpdateHelperOptions
+			var options = new ListUpdateHelperParameterObject
 			{
+				MyRecordList = this,
 				SuspendPropChangedDuringModification = true
 			};
-			using (new ListUpdateHelper(this, options))
+			using (new ListUpdateHelper(options))
 			{
 				newObj = createAndInsertMethodObj.Create();
 				hvoNew = newObj != null ? newObj.Hvo : 0;
@@ -4038,6 +4037,8 @@ namespace LanguageExplorer
 			recordListProvidingRootObject = null;
 			return false;
 		}
+
+		internal ListUpdateHelper UpdateHelper { get; set; }
 
 		#endregion Protected stuff
 

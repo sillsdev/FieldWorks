@@ -35,7 +35,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// is supplied in the form of a INodeInfo object. A default implementation of
 	/// INodeInfo, SimpleNodeInfo, is provided in this package.
 	/// </summary>
-	public class TwoLevelConc : DataTree
+	internal class TwoLevelConc : DataTree
 	{
 		public interface INodeInfo
 		{

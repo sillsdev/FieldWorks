@@ -19,7 +19,7 @@ namespace LanguageExplorer.Works
 	/// XhtmlRecordDocView implements a RecordView (view showing one object at a time from a sequence)
 	/// in which the single object is displayed using generated XHTML in a (Gecko) browser.
 	/// </summary>
-	public class XhtmlRecordDocView : RecordView, IVwNotifyChange
+	internal class XhtmlRecordDocView : RecordView, IVwNotifyChange
 	{
 		private XWebBrowser m_mainView;
 		internal string m_configObjectName;

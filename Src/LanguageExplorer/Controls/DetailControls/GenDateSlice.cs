@@ -11,9 +11,9 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// This is a generic date slice.
 	/// </summary>
-	public class GenDateSlice : FieldSlice
+	internal class GenDateSlice : FieldSlice
 	{
-		public GenDateSlice(LcmCache cache, ICmObject obj, int flid)
+		internal GenDateSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(new GenDateLauncher(), cache, obj, flid)
 		{
 		}

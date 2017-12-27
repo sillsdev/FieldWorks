@@ -103,7 +103,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	//	</frag>
 	// </XmlView>
 
-	public class XmlSeqView : RootSite
+	internal class XmlSeqView : RootSite
 	{
 		/// <summary></summary>
 		protected string m_sXmlSpec;
@@ -212,7 +212,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		/// <value>The vc.</value>
 		/// ------------------------------------------------------------------------------------
-		public XmlVc Vc
+		internal XmlVc Vc
 		{
 			get
 			{
@@ -557,7 +557,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 	}
 
-	class XmlSeqSelectionRestorer: SelectionRestorer
+	internal class XmlSeqSelectionRestorer: SelectionRestorer
 	{
 		private LcmCache Cache { get; set; }
 		public XmlSeqSelectionRestorer(SimpleRootSite rootSite, LcmCache cache) : base(rootSite)

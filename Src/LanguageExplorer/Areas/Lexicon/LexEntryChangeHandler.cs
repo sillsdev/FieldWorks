@@ -11,7 +11,7 @@ using SIL.LCModel.Infrastructure;
 namespace LanguageExplorer.Areas.Lexicon
 {
 	/// <summary/>
-	public class LexEntryChangeHandler : IRecordChangeHandler
+	internal class LexEntryChangeHandler : IRecordChangeHandler
 	{
 		#region Data members
 

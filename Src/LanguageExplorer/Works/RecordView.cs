@@ -36,7 +36,7 @@ namespace LanguageExplorer.Works
 	///		- Override GetMessageAdditionalTargets to provide message handlers in addition to the
 	///		record list and this.
 	/// </summary>
-	public abstract class RecordView : XWorksViewBase
+	internal abstract class RecordView : XWorksViewBase
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -79,11 +79,12 @@ namespace LanguageExplorer.Works
 			if (!m_fullyInitialized)
 				return;
 
-			var options = new ListUpdateHelperOptions
+			var options = new ListUpdateHelperParameterObject
 			{
+				MyRecordList = MyRecordList,
 				SuppressSaveOnChangeRecord = e.RecordNavigationInfo.SuppressSaveOnChangeRecord
 			};
-			using (new ListUpdateHelper(MyRecordList, options))
+			using (new ListUpdateHelper(options))
 			{
 				ShowRecord(e.RecordNavigationInfo);
 			}
@@ -193,13 +194,12 @@ namespace LanguageExplorer.Works
 			{
 				Debug.Assert(MyRecordList != null);
 			}
-			var fRecordListAlreadySuppressed = MyRecordList.ListLoadingSuppressed; // If we didn't create the record list, someone else might have suppressed it.
-																		  // suspend any loading of the record list's list items until after a
-																		  // subclass (possibly) initializes sorters/filters
-																		  // in SetupDataContext()
-			using (var luh = new ListUpdateHelper(MyRecordList, fRecordListAlreadySuppressed))
+			// If we didn't create the record list, someone else might have suppressed it.
+			// suspend any loading of the record list's list items until after a
+			// subclass (possibly) initializes sorters/filters
+			// in SetupDataContext()
+			using (new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = MyRecordList, ClearBrowseListUntilReload =  true}))
 			{
-				luh.ClearBrowseListUntilReload = true;
 				MyRecordList.UpdateOwningObjectIfNeeded();
 				SetTreebarAvailability();
 				AddPaneBar();

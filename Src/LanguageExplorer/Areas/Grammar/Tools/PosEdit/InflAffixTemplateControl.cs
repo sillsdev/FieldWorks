@@ -25,7 +25,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 	/// <summary>
 	/// Summary description for InflAffixTemplateControl.
 	/// </summary>
-	public class InflAffixTemplateControl : XmlView
+	internal class InflAffixTemplateControl : XmlView
 	{
 		ICmObject m_obj;		// item clicked
 		IMoInflAffixSlot m_slot;		// slot to which chosen MSA belongs

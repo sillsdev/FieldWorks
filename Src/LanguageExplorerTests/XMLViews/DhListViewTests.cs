@@ -27,7 +27,7 @@ namespace LanguageExplorerTests.XMLViews
 		}
 
 		/// <summary/>
-		public class FakeDhListView : DhListView
+		internal class FakeDhListView : DhListView
 		{
 			/// <summary/>
 			public bool m_hasCheckBoxColumn = true;
@@ -42,7 +42,7 @@ namespace LanguageExplorerTests.XMLViews
 			}
 
 			/// <summary/>
-			public FakeDhListView(BrowseViewer bv) : base(bv)
+			internal FakeDhListView(BrowseViewer bv) : base(bv)
 			{
 			}
 		}

@@ -600,8 +600,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			finally
 			{
-				if (ui != null)
-					ui.Dispose();
+				ui?.Dispose();
 			}
 		}
 
@@ -616,7 +615,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			RawTextPane m_rootSite;
 
 			internal AnnotationMoveHelper(RawTextPane site, KeyPressEventArgs e)
-				: base(site.MyRecordList)
+				: base(new ListUpdateHelperParameterObject { MyRecordList = site.MyRecordList })
 			{
 				m_rootSite = site;
 				if (!CanEdit())

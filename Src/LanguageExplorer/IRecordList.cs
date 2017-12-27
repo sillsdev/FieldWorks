@@ -14,7 +14,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer
 {
-	public interface IRecordList : IAnalysisOccurrenceFromHvo, IBulkPropChanged, IDisposable, IFlexComponent, IRecordListUpdater, ISortItemProvider, IVwNotifyChange
+	internal interface IRecordList : IAnalysisOccurrenceFromHvo, IBulkPropChanged, IDisposable, IFlexComponent, IRecordListUpdater, ISortItemProvider, IVwNotifyChange
 	{
 		event FilterChangeHandler FilterChangedByList;
 		event RecordNavigationInfoEventHandler RecordChanged;
@@ -78,7 +78,6 @@ namespace LanguageExplorer
 		bool SuspendLoadingRecordUntilOnJumpToRecord { get; set; }
 		int TypeSize { get; }
 		bool UpdateFiltersAndSortersIfNeeded();
-		ListUpdateHelper UpdateHelper { get; set; }
 		bool UpdatingList { get; set; }
 		void UpdateOwningObjectIfNeeded();
 		void UpdateRecordTreeBarIfNeeded();

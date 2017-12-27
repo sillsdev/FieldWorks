@@ -15,7 +15,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Summary description for AtomicReferenceSlice.
 	/// </summary>
-	public class AtomicReferenceSlice : ReferenceSlice, IVwNotifyChange
+	internal class AtomicReferenceSlice : ReferenceSlice, IVwNotifyChange
 	{
 		int m_dxLastWidth; // remember width when OnSizeChanged called.
 		/// <summary>
@@ -241,7 +241,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// This class should be extended by any custom atomic reference slices.
 	/// </summary>
-	public abstract class CustomAtomicReferenceSlice : AtomicReferenceSlice
+	internal abstract class CustomAtomicReferenceSlice : AtomicReferenceSlice
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CustomAtomicReferenceSlice"/> class.
@@ -259,7 +259,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.FinishInit();
 		}
 	}
-	public class AtomicReferenceDisabledSlice: AtomicReferenceSlice
+	internal class AtomicReferenceDisabledSlice: AtomicReferenceSlice
 	{
 		public AtomicReferenceDisabledSlice(LcmCache cache, ICmObject obj, int flid)
 			:base(cache, obj, flid)

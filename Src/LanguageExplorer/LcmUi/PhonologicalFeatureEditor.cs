@@ -633,7 +633,7 @@ namespace LanguageExplorer.LcmUi
 	/// <summary>
 	/// Bulk edit bar used for assigning phonological features to phonemes
 	/// </summary>
-	public class BulkEditBarPhonologicalFeatures : BulkEditBar
+	internal class BulkEditBarPhonologicalFeatures : BulkEditBar
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -758,7 +758,7 @@ namespace LanguageExplorer.LcmUi
 	/// <summary>
 	/// Browse viewer used for assigning phonolgical features to phonemes
 	/// </summary>
-	public class BrowseViewerPhonologicalFeatures : BrowseViewer
+	internal class BrowseViewerPhonologicalFeatures : BrowseViewer
 	{
 
 		/// ------------------------------------------------------------------------------------

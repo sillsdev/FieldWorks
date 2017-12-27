@@ -13,7 +13,7 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	public class ButtonLauncher : UserControl, IFlexComponent, INotifyControlInCurrentSlice
+	internal class ButtonLauncher : UserControl, IFlexComponent, INotifyControlInCurrentSlice
 	{
 		#region event handler declarations
 

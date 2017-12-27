@@ -14,7 +14,7 @@ using SIL.FieldWorks.FwCoreDlgs;
 
 namespace LanguageExplorer.Works
 {
-	public partial class ConfigureHomographDlg : Form
+	internal partial class ConfigureHomographDlg : Form
 	{
 		public ConfigureHomographDlg()
 		{

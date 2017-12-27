@@ -83,7 +83,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	//	</frag>
 	// </XmlView>
 
-	public class XmlView : RootSiteControl
+	internal class XmlView : RootSiteControl
 	{
 		/// <summary>
 		/// Required designer variable.

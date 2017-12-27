@@ -18,7 +18,7 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Works
 {
-	public class DictionaryExportService
+	internal class DictionaryExportService
 	{
 		private readonly IPropertyTable m_propertyTable;
 		private readonly IPublisher m_publisher;

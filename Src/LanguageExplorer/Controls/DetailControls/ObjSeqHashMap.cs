@@ -16,7 +16,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// holding the one object. Two objects are typically stored as an array, three or more as an ArrayList.
 	/// (This means lists of lists don't work.)
 	/// </summary>
-	public class ObjSeqHashMap
+	internal class ObjSeqHashMap
 	{
 		Hashtable m_table;
 		// These are slices looked up by type name. The same ones as m_table. This supports reuse for different objects.

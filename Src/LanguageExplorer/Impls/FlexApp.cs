@@ -1916,9 +1916,9 @@ namespace LanguageExplorer.Impls
 			});
 			return true;
 		}
-#endif
+		#endif
 
-#region SuppressedCacheInfo class
+		#region SuppressedCacheInfo class
 
 		/// <summary>
 		/// Helper class that contains queued SyncMsgs and a reference count for
@@ -1932,6 +1932,17 @@ namespace LanguageExplorer.Impls
 			public readonly Queue<SyncMsg> Queue = new Queue<SyncMsg>();
 		}
 
-#endregion
+		#endregion
+
+		/// <summary>
+		/// The different window tiling options
+		/// </summary>
+		private enum WindowTiling
+		{
+			/// <summary>Top to bottom (horizontal)</summary>
+			Stacked,
+			/// <summary>Side by side (vertical)</summary>
+			SideBySide,
+		}
 	}
 }

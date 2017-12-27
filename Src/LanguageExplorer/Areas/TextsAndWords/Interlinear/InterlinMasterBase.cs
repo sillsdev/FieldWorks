@@ -12,7 +12,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// This is so that we can use InterlinMaster in VS Designer.
 	/// Designer won't work with classes that have abstract base classes.
 	/// </summary>
-	public class InterlinMasterBase : RecordView
+	internal class InterlinMasterBase : RecordView
 	{
 		internal InterlinMasterBase()
 		{

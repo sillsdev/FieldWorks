@@ -22,7 +22,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// Control to show rows of data
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class XmlBrowseViewBase : RootSite, IVwNotifyChange, IPostLayoutInit, IClearValues
+	internal class XmlBrowseViewBase : RootSite, IVwNotifyChange, IPostLayoutInit, IClearValues
 	{
 		#region Events
 
@@ -150,7 +150,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		/// <value>The vc.</value>
 		/// ------------------------------------------------------------------------------------
-		public virtual XmlBrowseViewBaseVc Vc
+		internal virtual XmlBrowseViewBaseVc Vc
 		{
 			get
 			{
@@ -1047,16 +1047,16 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-#endregion Properties
+		#endregion Properties
 
-#region Construction, Initialization and disposal
+		#region Construction, Initialization and disposal
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:XmlBrowseViewBase"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public XmlBrowseViewBase() : base(null)
+		internal XmlBrowseViewBase() : base(null)
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();

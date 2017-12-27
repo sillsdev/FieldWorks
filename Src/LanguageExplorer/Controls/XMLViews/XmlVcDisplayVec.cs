@@ -26,7 +26,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// object whose primary purpose is to allow refactoring of this huge method.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class XmlVcDisplayVec
+	internal class XmlVcDisplayVec
 	{
 		#region Member Variables
 
@@ -55,7 +55,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="hvo">A handle on the root object</param>
 		/// <param name="flid">The field ID</param>
 		/// <param name="frag">A code identifying the current part of the display</param>
-		public XmlVcDisplayVec(XmlVc vc, IVwEnv vwenv, int hvo, int flid, int frag)
+		internal XmlVcDisplayVec(XmlVc vc, IVwEnv vwenv, int hvo, int flid, int frag)
 		{
 			m_viewConstructor = vc;
 			m_vwEnv = vwenv;

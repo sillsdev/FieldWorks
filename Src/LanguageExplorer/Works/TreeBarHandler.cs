@@ -20,7 +20,7 @@ using SIL.FieldWorks.FwCoreDlgControls;
 
 namespace LanguageExplorer.Works
 {
-	public abstract class TreeBarHandler : ITreeBarHandler
+	internal abstract class TreeBarHandler : ITreeBarHandler
 	{
 		protected IPropertyTable m_propertyTable;
 		protected LcmCache m_cache;
@@ -527,7 +527,8 @@ namespace LanguageExplorer.Works
 				if (newSiblings[ihvoDest].Text.CompareTo(moveLabel) > 0) // Enhance JohnT: use ICU comparison...
 					break;
 			}
-			using (new ListUpdateHelper(MyRecordList, tree.TopLevelControl))
+			using (new WaitCursor(tree.TopLevelControl))
+			using (new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = MyRecordList }))
 			{
 				UndoableUnitOfWorkHelper.Do(xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem,
 					cache.ActionHandlerAccessor, () =>

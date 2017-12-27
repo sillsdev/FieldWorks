@@ -990,7 +990,7 @@ namespace LanguageExplorer.Impls
 
 				// Quit responding to messages early on.
 				Subscriber.Unsubscribe("MigrateOldConfigurations", MigrateOldConfigurations);
-				RecordListServices.TearDown(_majorFlexComponentParameters);
+				RecordListServices.TearDown();
 				_currentArea?.Deactivate(_majorFlexComponentParameters);
 				_currentTool?.Deactivate(_majorFlexComponentParameters);
 				_sendReceiveMenuManager?.Dispose();
@@ -1728,10 +1728,16 @@ very simple minor adjustments. ;)"
 		/// </summary>
 		private void FwMainWnd_Activated(object sender, EventArgs e)
 		{
+			RecordListServices.Setup(_majorFlexComponentParameters);
 			if (_recordListRepositoryForTools != RecordList.ActiveRecordListRepository)
 			{
 				RecordList.ActiveRecordListRepository = _recordListRepositoryForTools;
+			}
 		}
+
+		private void FwMainWnd_Deactivate(object sender, EventArgs e)
+		{
+			RecordListServices.TearDown();
 		}
 
 		#endregion

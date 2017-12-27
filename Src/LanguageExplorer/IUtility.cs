@@ -7,7 +7,7 @@ namespace LanguageExplorer
 	/// <summary>
 	/// Interface for utilities.
 	/// </summary>
-	public interface IUtility
+	internal interface IUtility
 	{
 		/// <summary>
 		/// Get the main label describing the utility.

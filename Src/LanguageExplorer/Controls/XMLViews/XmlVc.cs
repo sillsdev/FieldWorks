@@ -34,7 +34,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// described in XmlView.
 	/// Note: the current version won't handle field IDs that are zero.
 	/// </summary>
-	public class XmlVc : FwBaseVc
+	internal class XmlVc : FwBaseVc
 	{
 		// The specification node that contains fragments (in the old approach). Null in new.
 		/// <summary></summary>

@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	/// or move common code down to ExportDialog. This has been postponed in the interests
 	/// of being able to release FW 5.2.1 without requiring changes to DLLs other than Discourse.
 	/// </summary>
-	public class DiscourseExportDialog : ExportDialog
+	internal class DiscourseExportDialog : ExportDialog
 	{
 		private readonly List<XmlNode> m_ddNodes = new List<XmlNode>(8); // Saves XML nodes used to configure items.
 		readonly int m_hvoRoot;

@@ -24,7 +24,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// SummarySlice is like ViewSlice, except that the context menu icon appears on the right,
 	/// along with additional hot links derived from the context menu if there is room.
 	/// </summary>
-	public class SummarySlice : ViewSlice
+	internal class SummarySlice : ViewSlice
 	{
 		private ExpandCollapseButton m_button;
 		private RootSite m_view;

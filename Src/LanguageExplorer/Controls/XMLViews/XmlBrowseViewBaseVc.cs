@@ -32,7 +32,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// Summary description for XmlBrowseViewBaseVc.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class XmlBrowseViewBaseVc : XmlVc
+	internal class XmlBrowseViewBaseVc : XmlVc
 	{
 		#region Constants
 
@@ -144,7 +144,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// This contructor is used by SortMethodFinder to make a braindead VC.
 		/// </summary>
-		public XmlBrowseViewBaseVc() : base() // We don't have a string table.
+		internal XmlBrowseViewBaseVc() : base() // We don't have a string table.
 		{
 			m_madeUpFieldIdentifier = 0;
 		}
@@ -152,7 +152,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// This contructor is used by SortMethodFinder to make a partly braindead VC.
 		/// </summary>
-		public XmlBrowseViewBaseVc(XmlBrowseViewBase xbv)
+		internal XmlBrowseViewBaseVc(XmlBrowseViewBase xbv)
 		{
 			TheApp = xbv.m_bv.PropertyTable.GetValue<IApp>("App");
 			XmlBrowseViewBaseVcInit(xbv.Cache, xbv.DataAccess);
@@ -164,7 +164,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// It will fail if asked to interpret decorator properties, since it doesn't have the decorator SDA.
 		/// Avoid using this constructor if possible.
 		/// </summary>
-		public XmlBrowseViewBaseVc(LcmCache cache)
+		internal XmlBrowseViewBaseVc(LcmCache cache)
 			: base()
 		{
 			XmlBrowseViewBaseVcInit(cache, null);
@@ -172,7 +172,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// This contructor is used by FilterBar and LayoutCache to make a partly braindead VC.
 		/// </summary>
-		public XmlBrowseViewBaseVc(LcmCache cache, ISilDataAccess sda)
+		internal XmlBrowseViewBaseVc(LcmCache cache, ISilDataAccess sda)
 			: base()
 		{
 			XmlBrowseViewBaseVcInit(cache, sda);
@@ -186,7 +186,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="madeUpFieldIdentifier">The fake flid.</param>
 		/// <param name="xbv">The XBV.</param>
 		/// ------------------------------------------------------------------------------------
-		public XmlBrowseViewBaseVc(XElement xnSpec, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
+		internal XmlBrowseViewBaseVc(XElement xnSpec, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
 			: this(xbv)
 		{
 			Debug.Assert(xnSpec != null);

@@ -7,9 +7,9 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	public class PossibilityAtomicReferenceSlice : AtomicReferenceSlice
+	internal class PossibilityAtomicReferenceSlice : AtomicReferenceSlice
 	{
-		public PossibilityAtomicReferenceSlice(LcmCache cache, ICmObject obj, int flid)
+		internal PossibilityAtomicReferenceSlice(LcmCache cache, ICmObject obj, int flid)
 			: this(new PossibilityAtomicReferenceLauncher(), cache, obj, flid)
 		{
 		}

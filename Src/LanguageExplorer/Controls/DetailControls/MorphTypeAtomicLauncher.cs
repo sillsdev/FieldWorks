@@ -15,7 +15,7 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	public class MorphTypeAtomicLauncher : PossibilityAtomicReferenceLauncher
+	internal class MorphTypeAtomicLauncher : PossibilityAtomicReferenceLauncher
 	{
 		private const string m_ksPath = "/group[@id='DialogStrings']/";
 

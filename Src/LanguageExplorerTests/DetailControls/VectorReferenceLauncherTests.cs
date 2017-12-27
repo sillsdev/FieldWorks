@@ -35,7 +35,7 @@ namespace LanguageExplorerTests.DetailControls
 		private int m_wsVern;
 		private IPartOfSpeech m_noun;
 		private IMoMorphType m_stem;
-		public MockVectorReferenceLauncher MockLauncher { get; set; }
+		internal MockVectorReferenceLauncher MockLauncher { get; set; }
 
 		#endregion
 
@@ -528,7 +528,7 @@ namespace LanguageExplorerTests.DetailControls
 		}
 	}
 
-	public class MockVectorReferenceLauncher : VectorReferenceLauncher
+	internal class MockVectorReferenceLauncher : VectorReferenceLauncher
 	{
 		#region overrides
 

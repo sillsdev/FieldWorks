@@ -15,7 +15,7 @@ namespace LanguageExplorer.Areas.Lexicon
 	/// <summary>
 	/// Summary description for LexReferenceUnidirectionalLauncher.
 	/// </summary>
-	public class LexReferenceUnidirectionalLauncher : VectorReferenceLauncher
+	internal class LexReferenceUnidirectionalLauncher : VectorReferenceLauncher
 	{
 		public LexReferenceUnidirectionalLauncher()
 		{

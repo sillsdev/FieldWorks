@@ -15,7 +15,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// This is a button launcher that launches a generic date chooser.
 	/// </summary>
-	public class GenDateLauncher : ButtonLauncher
+	internal class GenDateLauncher : ButtonLauncher
 	{
 		private System.Windows.Forms.TextBox m_genDateTextBox;
 

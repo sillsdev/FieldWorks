@@ -13,7 +13,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// A tree control item where the embedded form is a View (specifically
 	/// SIL.FieldWorks.Common.Framework.RootSite).
 	/// </summary>
-	public class ViewSlice: Slice
+	internal class ViewSlice: Slice
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

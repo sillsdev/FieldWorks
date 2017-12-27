@@ -11,7 +11,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Summary description for ImageSlice.
 	/// </summary>
-	public class ImageSlice : Slice
+	internal class ImageSlice : Slice
 	{
 		/// <summary>
 		/// Constructor.

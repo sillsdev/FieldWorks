@@ -2,19 +2,14 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Windows.Forms;
-
 namespace LanguageExplorer.Works
 {
 	/// <summary>
 	/// Parameter object used by ListUpdateHelper in its construction.
 	/// </summary>
-	internal sealed class ListUpdateHelperOptions
+	internal sealed class ListUpdateHelperParameterObject
 	{
-		/// <summary>
-		/// Set/reset WaitCursor during operation
-		/// </summary>
-		internal Control ParentForWaitCursor { get; set; }
+		internal IRecordList MyRecordList { get; set; }
 		/// <summary>
 		/// Indicate that we want to clear browse items while we are
 		/// waiting for a pending reload, so that the display will not

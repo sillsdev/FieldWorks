@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 	/// When the user (or test code) issues commands, this class also invokes the corresponding methods on the
 	/// Inflectional Affix Template control.
 	/// </summary>
-	public class InflAffixTemplateMenuHandler : IFlexComponent, IDisposable
+	internal class InflAffixTemplateMenuHandler : IFlexComponent, IDisposable
 	{
 		/// <summary>
 		/// Inflectiona Affix Template Control.
@@ -185,7 +185,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <param name="inflAffixTemplateCtrl"></param>
 		/// <param name="configuration"></param>
 		/// <returns></returns>
-		public static InflAffixTemplateMenuHandler Create(InflAffixTemplateControl inflAffixTemplateCtrl, XElement configuration)
+		internal static InflAffixTemplateMenuHandler Create(InflAffixTemplateControl inflAffixTemplateCtrl, XElement configuration)
 		{
 			InflAffixTemplateMenuHandler h = null;
 			if(configuration != null)

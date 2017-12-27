@@ -41,7 +41,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// <summary>
 	/// Summary description for BulkEditBar.
 	/// </summary>
-	public class BulkEditBar : UserControl
+	internal class BulkEditBar : UserControl
 	{
 
 		private Label m_operationLabel;

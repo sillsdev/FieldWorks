@@ -20,9 +20,9 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// except that the object that has the property does not yet exist. In fact, we do not want to create the object
 	/// until the user runs the chooser and clicks OK.
 	/// </summary>
-	public class GhostReferenceVectorSlice : FieldSlice
+	internal class GhostReferenceVectorSlice : FieldSlice
 	{
-		public GhostReferenceVectorSlice(LcmCache cache, ICmObject obj, XElement configNode)
+		internal GhostReferenceVectorSlice(LcmCache cache, ICmObject obj, XElement configNode)
 			: base(new GhostReferenceVectorLauncher(), cache, obj, GetFieldId(cache, configNode))
 		{
 		}

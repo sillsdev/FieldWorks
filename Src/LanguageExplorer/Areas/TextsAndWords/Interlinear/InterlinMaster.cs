@@ -33,13 +33,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// InterlinDocChild. Eventually it may also show a SandBox, and perhaps a
 	/// segment of a lexicon! This comment is way out-of-date!
 	/// </summary>
-	public partial class InterlinMaster : InterlinMasterBase, IFocusablePanePortion
+	internal partial class InterlinMaster : InterlinMasterBase, IFocusablePanePortion
 	{
 		// Controls
 		protected IVwStylesheet m_styleSheet;
 		protected InfoPane m_infoPane; // Parent is m_tpInfo.
 
-		static public Dictionary<Tuple<string, Guid>, InterAreaBookmark> m_bookmarks;
+		internal static Dictionary<Tuple<string, Guid>, InterAreaBookmark> m_bookmarks;
 		private bool m_fParsedTextDuringSave;
 		private ToolStripMenuItem m_printMenu;
 
@@ -982,11 +982,12 @@ private void ReloadPaneBar(IPaneBar paneBar)
 				{
 					// We don't want to force a Save here if we just deleted the last text;
 					// we want to be able to Undo deleting it!
-					var options = new ListUpdateHelperOptions
+					var options = new ListUpdateHelperParameterObject
 					{
+						MyRecordList = MyRecordList,
 						SuppressSaveOnChangeRecord = true
 					};
-					using (new ListUpdateHelper(MyRecordList, options))
+					using (new ListUpdateHelper(options))
 					{
 						((InterlinearTextsRecordList)MyRecordList).AddNewTextNonUndoable();
 					}

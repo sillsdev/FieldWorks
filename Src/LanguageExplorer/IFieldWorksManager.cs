@@ -17,7 +17,7 @@ namespace LanguageExplorer
 	/// - Creating/managing the LcmCache
 	/// - Handling FieldWorks-level synchronization messages
 	/// </summary>
-	public interface IFieldWorksManager
+	internal interface IFieldWorksManager
 	{
 		/// <summary>
 		/// Gets the cache.

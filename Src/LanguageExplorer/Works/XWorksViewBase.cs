@@ -28,7 +28,7 @@ namespace LanguageExplorer.Works
 	/// The actual view of each object is specified by a child <jtview></jtview> node
 	/// of the view node. This specifies how to display an individual list item.
 	/// </summary>
-	public abstract class XWorksViewBase : MainUserControl, IMainContentControl, IPaneBarUser
+	internal abstract class XWorksViewBase : MainUserControl, IMainContentControl, IPaneBarUser
 	{
 		#region Enumerations
 

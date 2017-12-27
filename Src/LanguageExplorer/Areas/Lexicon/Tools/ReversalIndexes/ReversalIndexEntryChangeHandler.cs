@@ -9,7 +9,7 @@ using SIL.LCModel;
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 {
 	/// <summary/>
-	public class ReversalIndexEntryChangeHandler : IRecordChangeHandler
+	internal class ReversalIndexEntryChangeHandler : IRecordChangeHandler
 	{
 		#region Data members
 

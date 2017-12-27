@@ -1,5 +1,4 @@
-//#define RANDYTEMP
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -541,20 +540,6 @@ namespace LanguageExplorer
 			else
 				sKey = key;
 			s_inventories[sKey] = val;
-#if RANDTTODO
-			// TODO: Remove RANDYTEMP code and defn.
-#endif
-#if RANDYTEMP
-			// Write out all three files: m_mainDoc, m_baseDoc, m_alterationsDoc
-			var basePath = Path.Combine("C:\\", "Dev", "Inventories");
-			if (!Directory.Exists(basePath))
-			{
-				Directory.CreateDirectory(basePath);
-			}
-			val.m_mainDoc.Save(Path.Combine(basePath, $"Main_{key}_{sDatabase}.{key}"));
-			val.m_baseDoc.Save(Path.Combine(basePath, $"Base_{key}_{sDatabase}.{key}"));
-			val.m_alterationsDoc.Save(Path.Combine(basePath, $"Alterations_{key}_{sDatabase}.{key}"));
-#endif
 		}
 
 		/// <summary>
@@ -1471,7 +1456,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Key used in Dictionary to optimize GetElementFromDoc.
 		/// </summary>
-		internal class GetElementKey
+		private sealed class GetElementKey
 		{
 			readonly string m_elementName;
 			readonly string[] m_attrvals;
@@ -1660,21 +1645,5 @@ namespace LanguageExplorer
 
 			return result;
 		}
-	}
-
-	/// <summary>
-	/// This interface (the only current implementation is XmlViews.LayoutMerger) is used when we find an old version
-	/// of an inventory element while loading user overrides. It is used only when there is a current element with
-	/// the same key. It is passed the current element, the one 'wanted' (the old version), and the destination
-	/// document in which a merged element should be created and returned.
-	/// Enhance JohnT: We could pass null for current if there is no current node with that key. We could allow
-	/// returning null if no merge is possible.
-	/// </summary>
-	public interface IOldVersionMerger
-	{
-		/// <summary>
-		/// Do the merge.
-		/// </summary>
-		XElement Merge(XElement newMaster, XElement oldConfigured, XDocument dest, string oldLayoutLevelSuffix);
 	}
 }

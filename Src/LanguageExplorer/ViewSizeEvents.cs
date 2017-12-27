@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2017 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,14 +10,14 @@ namespace LanguageExplorer
 	/// Type declaration for FwViewSizeChangedEventHandler, which is used to handle changes in
 	/// the size used by a view.
 	/// </summary>
-	public delegate void FwViewSizeChangedEventHandler (object sender, FwViewSizeEventArgs e);
+	internal delegate void FwViewSizeChangedEventHandler (object sender, FwViewSizeEventArgs e);
 
 	#region FwViewSizeEventArgs
 	/// <remarks>
 	/// This event argument class is used for events relating to a view changing its underlying
 	/// size.
 	/// </remarks>
-	public class FwViewSizeEventArgs : EventArgs
+	internal class FwViewSizeEventArgs : EventArgs
 	{
 		private int m_height;
 		private int m_width;
@@ -27,7 +27,7 @@ namespace LanguageExplorer
 		/// </summary>
 		/// <param name="height">new height of the view</param>
 		/// <param name="width">new width of the view</param>
-		public FwViewSizeEventArgs(int height, int width)
+		internal FwViewSizeEventArgs(int height, int width)
 		{
 			m_height= height;
 			m_width = width;

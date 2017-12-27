@@ -362,7 +362,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// <summary>
 	/// A FilterBar contains a sequence of combos or grey areas, one for each column of a browse view.
 	/// </summary>
-	public class FilterBar : UserControl
+	internal class FilterBar : UserControl
 	{
 		BrowseViewer m_bv;
 		List<XElement> m_columns;
@@ -2603,7 +2603,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FindComboItem : FilterComboItem
+	internal class FindComboItem : FilterComboItem
 	{
 		int m_ws;
 		FwComboBox m_combo;

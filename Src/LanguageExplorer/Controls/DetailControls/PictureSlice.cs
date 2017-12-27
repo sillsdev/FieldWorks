@@ -21,7 +21,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// A slice that displays a picture (CmPicture).
 	/// </summary>
-	public class PictureSlice: Slice
+	internal class PictureSlice: Slice
 	{
 		ICmPicture m_picture;
 		Size m_lastSize = new Size(0, 0);

@@ -25,7 +25,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// <summary>
 	/// Summary description for InterlinearExportDialog.
 	/// </summary>
-	public class InterlinearExportDialog : ExportDialog
+	internal class InterlinearExportDialog : ExportDialog
 	{
 		private List<XmlNode> m_ddNodes = new List<XmlNode>(8); // Saves XML nodes used to configure items.
 		ICmObject m_objRoot;

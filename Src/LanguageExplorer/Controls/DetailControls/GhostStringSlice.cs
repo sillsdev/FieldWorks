@@ -30,7 +30,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// Optionally it may also have ghostClass="className". If this is absent it will create an instance of the
 	/// base signature class, which had better not be abstract.
 	/// </summary>
-	public class GhostStringSlice : ViewPropertySlice
+	internal class GhostStringSlice : ViewPropertySlice
 	{
 		internal const int kflidFake = -2001;
 		internal const int khvoFake = -2002;
@@ -41,7 +41,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <param name="flid">the empty object flid, which this slice is displaying.</param>
 		/// <param name="nodeObjProp">the 'obj' or 'seq' element that requested the ghost</param>
 		/// <param name="cache">The cache.</param>
-		public GhostStringSlice(ICmObject obj, int flid, XElement nodeObjProp, LcmCache cache)
+		internal GhostStringSlice(ICmObject obj, int flid, XElement nodeObjProp, LcmCache cache)
 			: base(new GhostStringSliceView(obj.Hvo, flid, nodeObjProp, cache), obj, flid)
 		{
 			AccessibleName = "GhostStringSlice";

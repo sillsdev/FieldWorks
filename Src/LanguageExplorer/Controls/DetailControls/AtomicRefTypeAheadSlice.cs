@@ -15,9 +15,9 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// This class displays an atomic reference property. Currently it must be for a property for which
 	/// where ReferenceTargetCandidates returns a useful list of results.
 	/// </summary>
-	public class AtomicRefTypeAheadSlice : ViewPropertySlice
+	internal class AtomicRefTypeAheadSlice : ViewPropertySlice
 	{
-		public AtomicRefTypeAheadSlice(ICmObject obj, int flid) : base(new AtomicRefTypeAheadView(obj.Hvo, flid), obj, flid)
+		internal AtomicRefTypeAheadSlice(ICmObject obj, int flid) : base(new AtomicRefTypeAheadView(obj.Hvo, flid), obj, flid)
 		{
 		}
 

@@ -69,7 +69,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 				new XmlDocView(XDocument.Parse(LexiconResources.LexiconClassifiedDictionaryParameters).Root, majorFlexComponentParameters.LcmCache, _recordList));
 
 			// Too early before now.
-			((SemanticDomainRdeTreeBarHandler)_recordList.MyTreeBarHandler).FinishInitialization(xmlDocViewPaneBar);
+			((ISemanticDomainTreeBarHandler)_recordList.MyTreeBarHandler).FinishInitialization(xmlDocViewPaneBar);
 			_lexiconAreaMenuHelper.Initialize();
 		}
 

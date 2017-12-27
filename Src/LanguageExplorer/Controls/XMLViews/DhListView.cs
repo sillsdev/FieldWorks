@@ -17,7 +17,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// when resizing the columns.
 	/// This class holds the headers that show above columns of data that BrowseViewer knows about.
 	/// </summary>
-	public class DhListView : ListView
+	internal class DhListView : ListView
 	{
 		private BrowseViewer m_bv;
 		private ImageList m_imgList;

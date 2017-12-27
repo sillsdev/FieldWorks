@@ -40,7 +40,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LinkHandler"/> class.
 		/// </summary>
-		public LinkHandler(IFwMainWnd mainWindow, LcmCache cache, ToolStripButton toolStripButtonHistoryBack, ToolStripButton toolStripButtonHistoryForward, ToolStripMenuItem copyLocationAsHyperlinkToolStripMenuItem)
+		internal LinkHandler(IFwMainWnd mainWindow, LcmCache cache, ToolStripButton toolStripButtonHistoryBack, ToolStripButton toolStripButtonHistoryForward, ToolStripMenuItem copyLocationAsHyperlinkToolStripMenuItem)
 		{
 			Guard.AgainstNull(mainWindow, nameof(mainWindow));
 			Guard.AgainstNull(cache, nameof(cache));

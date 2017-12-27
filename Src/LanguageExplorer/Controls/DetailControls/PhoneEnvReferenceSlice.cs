@@ -16,7 +16,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Summary description for PhoneEnvReferenceSlice.
 	/// </summary>
-	public class PhoneEnvReferenceSlice : ReferenceSlice
+	internal class PhoneEnvReferenceSlice : ReferenceSlice
 	{
 		private int m_dxLastWidth; // width last time OnSizeChanged was called.
 

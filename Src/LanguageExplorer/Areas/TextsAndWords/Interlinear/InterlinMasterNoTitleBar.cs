@@ -12,11 +12,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// <summary>
 	/// This class is like its superclass, except it removes the superclass' top control and pane bar.
 	/// </summary>
-	public class InterlinMasterNoTitleBar : InterlinMaster
+	internal class InterlinMasterNoTitleBar : InterlinMaster
 	{
 		private System.ComponentModel.IContainer components = null;
 
-		public InterlinMasterNoTitleBar()
+		internal InterlinMasterNoTitleBar()
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();

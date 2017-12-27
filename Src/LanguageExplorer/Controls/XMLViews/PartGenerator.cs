@@ -23,7 +23,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// and generates a sequence of clones of the first non-comment child of the
 	/// generate element, one for each field indicated by the parameters.
 	/// </summary>
-	public class PartGenerator
+	internal class PartGenerator
 	{
 		XmlVc m_vc;
 		readonly LcmCache m_cache;
@@ -55,7 +55,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="input"></param>
 		/// <param name="vc">for parts/layouts</param>
 		/// <param name="rootClassId">class of root object from which column layouts can be computed</param>
-		public PartGenerator(LcmCache cache, XElement input, XmlVc vc, int rootClassId)
+		internal PartGenerator(LcmCache cache, XElement input, XmlVc vc, int rootClassId)
 		{
 			m_cache = cache;
 			m_mdc = cache.MetaDataCacheAccessor;

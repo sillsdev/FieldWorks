@@ -7,7 +7,7 @@ namespace LanguageExplorer
 	/// <summary>
 	/// A control implements this if it wants to snap the split position to particular points.
 	/// </summary>
-	public interface ISnapSplitPosition
+	internal interface ISnapSplitPosition
 	{
 		/// <summary>
 		/// An implementor answers true if it wants to take control of the split position.

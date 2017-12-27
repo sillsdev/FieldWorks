@@ -12,7 +12,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// to the correct location.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class XmlBrowseViewSelectionRestorer : SelectionRestorer
+	internal class XmlBrowseViewSelectionRestorer : SelectionRestorer
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

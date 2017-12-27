@@ -16,7 +16,7 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	public class AtomicReferenceLauncher : ReferenceLauncher
+	internal class AtomicReferenceLauncher : ReferenceLauncher
 	{
 		protected AtomicReferenceView m_atomicRefView;
 

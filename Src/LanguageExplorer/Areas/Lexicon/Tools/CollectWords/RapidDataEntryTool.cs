@@ -149,7 +149,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			panelButton.DatTree = recordEditView.DatTree;
 
 			// Too early before now.
-			((SemanticDomainRdeTreeBarHandler)_recordList.MyTreeBarHandler).FinishInitialization(new PaneBar());
+			((ISemanticDomainTreeBarHandler)_recordList.MyTreeBarHandler).FinishInitialization(new PaneBar());
 			recordEditView.FinishInitialization();
 			_lexiconAreaMenuHelper.Initialize();
 		}

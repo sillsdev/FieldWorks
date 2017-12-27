@@ -19,7 +19,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Summary description for AtomicReferencePOSSlice.
 	/// </summary>
-	public class AtomicReferencePOSSlice : FieldSlice, IVwNotifyChange
+	internal class AtomicReferencePOSSlice : FieldSlice, IVwNotifyChange
 	{
 		/// <summary>
 		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
@@ -280,7 +280,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// This class shows the POS slice as being disabled.
 	/// </summary>
-	public class AutomicReferencePOSDisabledSlice : AtomicReferencePOSSlice
+	internal class AutomicReferencePOSDisabledSlice : AtomicReferencePOSSlice
 	{
 		/// <summary>
 		/// Constructor.

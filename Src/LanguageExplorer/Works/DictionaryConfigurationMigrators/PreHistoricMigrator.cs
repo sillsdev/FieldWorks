@@ -31,13 +31,13 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 	/// the process involves comparing converted nodes to the static 8.3Alpha configuration files
 	/// stored in {DistFiles}/Language Explorer/AlphaConfigs.
 	/// </summary>
-	public class PreHistoricMigrator : IDictionaryConfigurationMigrator, ILayoutConverter
+	internal class PreHistoricMigrator : IDictionaryConfigurationMigrator, ILayoutConverter
 	{
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
 		private Inventory m_layoutInventory;
 		private Inventory m_partInventory;
-		private SimpleLogger m_logger;
+		private ISimpleLogger m_logger;
 
 		/// <summary>
 		/// Dictionary of custom fields for each parent field type: Key is parent field type (Type; e.g. ILexEntry)
@@ -75,7 +75,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 		/// </summary>
 		private const string AlphaConfigFolder = "AlphaConfigs";
 
-		public void MigrateIfNeeded(SimpleLogger logger, IPropertyTable propertyTable, string appVersion)
+		public void MigrateIfNeeded(ISimpleLogger logger, IPropertyTable propertyTable, string appVersion)
 		{
 			m_logger = logger;
 			m_propertyTable = propertyTable;

@@ -24,7 +24,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Summary description for ViewPropertyItem.
 	/// </summary>
-	public class MultiStringSlice : ViewPropertySlice
+	internal class MultiStringSlice : ViewPropertySlice
 	{
 		private ToolStripMenuItem _writingSystemsMenu;
 		private List<ToolStripMenuItem> _writingSystemMenuItems;

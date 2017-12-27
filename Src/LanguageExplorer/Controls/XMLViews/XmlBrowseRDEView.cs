@@ -28,7 +28,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// ----------------------------------------------------------------------------------------
 	/// <summary> XML Browse View for Rapid Data Entry (Collect Words) </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class XmlBrowseRDEView : XmlBrowseViewBase, IUndoRedoHandler
+	internal class XmlBrowseRDEView : XmlBrowseViewBase, IUndoRedoHandler
 	{
 		#region Data members
 
@@ -118,7 +118,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		/// <value>The vc.</value>
 		/// ------------------------------------------------------------------------------------
-		public override XmlBrowseViewBaseVc Vc
+		internal override XmlBrowseViewBaseVc Vc
 		{
 			get
 			{

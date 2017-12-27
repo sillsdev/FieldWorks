@@ -9,7 +9,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Summary description for LiteralMessageSlice.
 	/// </summary>
-	public class LiteralMessageSlice : Slice
+	internal class LiteralMessageSlice : Slice
 	{
 		/// <summary> Constructor.</summary>
 		public LiteralMessageSlice(string message) : base(new Label())

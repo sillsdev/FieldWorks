@@ -13,7 +13,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// Class that shows a button (or hyperlink someday) that
 	/// runs some arbitrary XCore command, based on its ID.
 	/// </summary>
-	public class CommandSlice : Slice
+	internal class CommandSlice : Slice
 	{
 		/// <summary>
 		/// Store the Command object that knows what to do.
@@ -24,7 +24,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Constructor.
 		/// </summary>
 		/// <param name="node">The "deParams" node in some XDE file.</param>
-		public CommandSlice(XElement node)
+		internal CommandSlice(XElement node)
 		{
 			Debug.Assert(node != null);
 			var cmdNode = node.Element("command");

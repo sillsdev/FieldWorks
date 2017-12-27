@@ -31,7 +31,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// A slice that displays a media file (CmMedia).
 	/// </summary>
-	public class AudioVisualSlice : ViewSlice
+	internal class AudioVisualSlice : ViewSlice
 	{
 		private System.ComponentModel.IContainer components = null;
 
@@ -206,13 +206,13 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// The button for launching the media player along with the view showing the filename
 	/// </summary>
-	public class AudioVisualLauncher : ButtonLauncher
+	internal class AudioVisualLauncher : ButtonLauncher
 	{
 		private LanguageExplorer.Controls.DetailControls.AudioVisualView m_view;
 		private System.ComponentModel.IContainer components = null;
 		private System.Media.SoundPlayer m_player = null;
 
-		public AudioVisualLauncher()
+		internal AudioVisualLauncher()
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();

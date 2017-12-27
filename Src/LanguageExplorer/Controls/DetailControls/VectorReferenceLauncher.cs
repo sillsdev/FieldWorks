@@ -16,7 +16,7 @@ using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	public class VectorReferenceLauncher : ReferenceLauncher
+	internal class VectorReferenceLauncher : ReferenceLauncher
 	{
 		#region Data Members
 

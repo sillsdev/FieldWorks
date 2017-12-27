@@ -10,7 +10,7 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	public class PossibilityAtomicReferenceLauncher : AtomicReferenceLauncher, IVwNotifyChange
+	internal class PossibilityAtomicReferenceLauncher : AtomicReferenceLauncher, IVwNotifyChange
 	{
 		private PossibilityAutoComplete m_autoComplete;
 

@@ -7,7 +7,7 @@ using SIL.LCModel;
 
 namespace LanguageExplorer
 {
-	public interface ITreeBarHandler : IDisposable
+	internal interface ITreeBarHandler : IDisposable
 	{
 		bool IsItemInTree(int hvo);
 		void PopulateRecordBarIfNeeded(IRecordList list);

@@ -18,7 +18,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// <summary>
 	/// Summary description for XmlRDEBrowseViewVc.
 	/// </summary>
-	public class XmlRDEBrowseViewVc : XmlBrowseViewBaseVc
+	internal class XmlRDEBrowseViewVc : XmlBrowseViewBaseVc
 	{
 		#region Constants
 
@@ -49,7 +49,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public XmlRDEBrowseViewVc(XElement xnSpec, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
+		internal XmlRDEBrowseViewVc(XElement xnSpec, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
 			: base(xnSpec, madeUpFieldIdentifier, xbv)
 		{
 			// set the border color

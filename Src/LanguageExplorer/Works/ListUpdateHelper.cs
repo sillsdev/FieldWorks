@@ -2,8 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
+using System.Windows.Forms.VisualStyles;
+using SIL.Code;
 using SIL.ObjectModel;
 
 namespace LanguageExplorer.Works
@@ -16,73 +16,45 @@ namespace LanguageExplorer.Works
 	public class ListUpdateHelper : DisposableBase
 	{
 		IRecordList m_recordList;
-		private WaitCursor m_waitCursor = null;
-		readonly bool m_fOriginalUpdatingList = false;
-		readonly bool m_fOriginalListLoadingSuppressedState = false;
-		readonly bool m_fOriginalSkipRecordNavigationState = false;
-		private bool m_fOriginalLoadRequestedWhileSuppressed = false;
+		readonly bool m_fOriginalUpdatingList;
+		readonly bool m_fOriginalListLoadingSuppressedState;
+		readonly bool m_fOriginalSkipRecordNavigationState;
+		private bool m_fOriginalLoadRequestedWhileSuppressed;
 		readonly bool m_fOriginalSuppressSaveOnChangeRecord;
-		readonly ListUpdateHelper m_originalUpdateHelper = null;
+		readonly ListUpdateHelper m_originalUpdateHelper;
 
-		/// <summary />
-		internal ListUpdateHelper(IRecordList recordList, Control parentForWaitCursor)
-			: this(recordList)
+		internal ListUpdateHelper(ListUpdateHelperParameterObject parameterObject)
 		{
-			if (parentForWaitCursor != null)
+			Guard.AgainstNull(parameterObject, nameof(parameterObject));
+			Guard.AgainstNull(parameterObject.MyRecordList, nameof(parameterObject.MyRecordList));
+
+			m_recordList = parameterObject.MyRecordList;
+			m_fOriginalUpdatingList = m_recordList.UpdatingList;
+			m_fOriginalListLoadingSuppressedState = m_recordList.ListLoadingSuppressed;
+			m_fOriginalSkipRecordNavigationState = m_recordList.SkipShowRecord;
+			m_fOriginalSuppressSaveOnChangeRecord = m_recordList.SuppressSaveOnChangeRecord;
+			m_fOriginalLoadRequestedWhileSuppressed = m_recordList.RequestedLoadWhileSuppressed;
+			// monitor whether ReloadList was requested during the life of this ListUpdateHelper
+			m_recordList.RequestedLoadWhileSuppressed = false;
+
+			var asRecordList = (RecordList)m_recordList;
+			m_originalUpdateHelper = asRecordList.UpdateHelper;
+			// if we're already suppressing the list, we don't want to auto reload since
+			// the one who is suppressing the list expects to be able to handle that later.
+			// or if the parent record list is suppressing, we should wait until the parent reloads.
+			var parentList = m_recordList.ParentList;
+			if (m_fOriginalListLoadingSuppressedState || parentList != null && parentList.ListLoadingSuppressed)
 			{
-				m_waitCursor = new WaitCursor(parentForWaitCursor);
+				m_fTriggerPendingReloadOnDispose = false;
 			}
-		}
+			m_recordList.ListLoadingSuppressedNoSideEffects = true;
+			asRecordList.UpdateHelper = this;
 
-		/// <summary />
-		internal ListUpdateHelper(IRecordList recordList, ListUpdateHelperOptions options)
-			: this(recordList, options.ParentForWaitCursor)
-		{
-			SkipShowRecord = options.SkipShowRecord;
-			m_recordList.SuppressSaveOnChangeRecord = options.SuppressSaveOnChangeRecord;
-			ClearBrowseListUntilReload = options.ClearBrowseListUntilReload;
-			TriggerPendingReloadOnDispose = !options.SuspendPendingReloadOnDispose;
-			m_recordList.UpdatingList = options.SuspendPropChangedDuringModification;
-		}
-
-		/// <summary />
-		/// <param name="recordList">record list we want to suspend reloading for. if null, we don't do anything.</param>
-		internal ListUpdateHelper(IRecordList recordList)
-			: this(recordList, recordList != null && recordList.ListLoadingSuppressed)
-		{
-		}
-
-		/// <summary />
-		/// <param name="recordList">record list we want to suspend reloading for. if null, we don't do anything.</param>
-		/// <param name="fWasAlreadySuppressed">Usually, recordList.ListLoadingSuppressed. When we know we just
-		/// created the record list, already in a suppressed state, and want to treat it as if this
-		/// list update helper did the suppressing, pass false, even though the list may in fact be already suppressed.</param>
-		internal ListUpdateHelper(IRecordList recordList, bool fWasAlreadySuppressed)
-		{
-			m_recordList = recordList;
-			if (m_recordList != null)
-			{
-				m_fOriginalUpdatingList = m_recordList.UpdatingList;
-				m_fOriginalListLoadingSuppressedState = fWasAlreadySuppressed;
-				m_fOriginalSkipRecordNavigationState = m_recordList.SkipShowRecord;
-				m_fOriginalSuppressSaveOnChangeRecord = m_recordList.SuppressSaveOnChangeRecord;
-				m_fOriginalLoadRequestedWhileSuppressed = m_recordList.RequestedLoadWhileSuppressed;
-				// monitor whether ReloadList was requested during the life of this ListUpdateHelper
-				m_recordList.RequestedLoadWhileSuppressed = false;
-
-				m_originalUpdateHelper = m_recordList.UpdateHelper;
-				// if we're already suppressing the list, we don't want to auto reload since
-				// the one who is suppressing the list expects to be able to handle that later.
-				// or if the parent record list is suppressing, we should wait until the parent reloads.
-				var parentList = recordList.ParentList;
-				if (m_fOriginalListLoadingSuppressedState ||
-				    parentList != null && parentList.ListLoadingSuppressed)
-				{
-					m_fTriggerPendingReloadOnDispose = false;
-				}
-				m_recordList.ListLoadingSuppressedNoSideEffects = true;
-				m_recordList.UpdateHelper = this;
-			}
+			SkipShowRecord = parameterObject.SkipShowRecord;
+			m_recordList.SuppressSaveOnChangeRecord = parameterObject.SuppressSaveOnChangeRecord;
+			ClearBrowseListUntilReload = parameterObject.ClearBrowseListUntilReload;
+			TriggerPendingReloadOnDispose = !parameterObject.SuspendPendingReloadOnDispose;
+			m_recordList.UpdatingList = parameterObject.SuspendPropChangedDuringModification;
 		}
 
 		/// <summary>
@@ -140,7 +112,6 @@ namespace LanguageExplorer.Works
 
 		protected override void DisposeManagedResources()
 		{
-			m_waitCursor?.Dispose();
 			if (m_recordList != null)
 			{
 				var fHandledReload = false;
@@ -167,14 +138,13 @@ namespace LanguageExplorer.Works
 				// reset this after we possibly reload the list.
 				m_recordList.SkipShowRecord = m_fOriginalSkipRecordNavigationState;
 				m_recordList.SuppressSaveOnChangeRecord = m_fOriginalSuppressSaveOnChangeRecord;
-				m_recordList.UpdateHelper = m_originalUpdateHelper;
+				((RecordList)m_recordList).UpdateHelper = m_originalUpdateHelper;
 			}
 		}
 
 		protected override void DisposeUnmanagedResources()
 		{
 			m_recordList = null;
-			m_waitCursor = null;
 		}
 
 		#endregion DisposableBase

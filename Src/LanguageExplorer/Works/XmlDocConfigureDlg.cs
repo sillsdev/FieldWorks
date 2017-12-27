@@ -51,7 +51,7 @@ namespace LanguageExplorer.Works
 	/// hideConfig="true" attributes added to a couple of part refs just to make the node tree look
 	/// nicer to the users.
 	/// </summary>
-	public partial class XmlDocConfigureDlg : Form, ILayoutConverter
+	internal partial class XmlDocConfigureDlg : Form, ILayoutConverter
 	{
 		XElement m_configurationParameters;
 		string m_defaultRootLayoutName;

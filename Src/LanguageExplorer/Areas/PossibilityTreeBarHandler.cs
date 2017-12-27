@@ -15,7 +15,7 @@ namespace LanguageExplorer.Areas
 	/// <summary>
 	/// Makes a hierarchical tree of possibility items, *even if the record list is flattened*
 	/// </summary>
-	public class PossibilityTreeBarHandler : TreeBarHandler
+	internal class PossibilityTreeBarHandler : TreeBarHandler
 	{
 		/// <summary />
 		public PossibilityTreeBarHandler(IPropertyTable propertyTable, bool expand, bool hierarchical, bool includeAbbr, string bestWS)

@@ -32,7 +32,7 @@ namespace LanguageExplorer.Works
 	/// This version uses the DetailControls version of DataTree, and will eventually replace the
 	/// original.
 	/// </summary>
-	public class RecordEditView : RecordView, IVwNotifyChange, IFocusablePanePortion
+	internal class RecordEditView : RecordView, IVwNotifyChange, IFocusablePanePortion
 	{
 		#region Data members
 

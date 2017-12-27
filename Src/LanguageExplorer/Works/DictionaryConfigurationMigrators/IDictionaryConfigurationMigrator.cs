@@ -6,8 +6,8 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 {
-	public interface IDictionaryConfigurationMigrator
+	internal interface IDictionaryConfigurationMigrator
 	{
-		void MigrateIfNeeded(SimpleLogger logger, IPropertyTable propertyTable, string applicationVersion);
+		void MigrateIfNeeded(ISimpleLogger logger, IPropertyTable propertyTable, string applicationVersion);
 	}
 }

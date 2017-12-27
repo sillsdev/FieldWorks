@@ -317,4 +317,7 @@
   <data name="ImportLinguaLinksData" xml:space="preserve">
     <value>_LinguaLinks Data...</value>
   </data>
+  <data name="EntriesOrChildrenClerkPartOwnershipTree" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\EntriesOrChildrenClerkPartOwnershipTree.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

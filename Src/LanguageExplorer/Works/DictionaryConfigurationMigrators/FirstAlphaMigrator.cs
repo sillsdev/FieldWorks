@@ -15,9 +15,9 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 	/// <summary>
 	/// This file will migrate all the configurations produced during the first 8.3 alpha
 	/// </summary>
-	public class FirstAlphaMigrator : IDictionaryConfigurationMigrator
+	internal class FirstAlphaMigrator : IDictionaryConfigurationMigrator
 	{
-		private SimpleLogger m_logger;
+		private ISimpleLogger m_logger;
 		internal const int VersionAlpha2 = 5;
 		internal const int VersionAlpha3 = 8;
 
@@ -25,7 +25,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 		{
 		}
 
-		public FirstAlphaMigrator(LcmCache cache, SimpleLogger logger)
+		public FirstAlphaMigrator(LcmCache cache, ISimpleLogger logger)
 		{
 			Cache = cache;
 			m_logger = logger;
@@ -33,7 +33,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 
 		private LcmCache Cache { get; set; }
 
-		public void MigrateIfNeeded(SimpleLogger logger, IPropertyTable propertyTable, string appVersion)
+		public void MigrateIfNeeded(ISimpleLogger logger, IPropertyTable propertyTable, string appVersion)
 		{
 			m_logger = logger;
 			Cache = propertyTable.GetValue<LcmCache>("cache");

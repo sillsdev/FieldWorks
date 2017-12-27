@@ -21,7 +21,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Displays a combobox of labels, but underlyingly based on integers.
 	/// </summary>
-	public class EnumComboSlice : FieldSlice, IVwNotifyChange
+	internal class EnumComboSlice : FieldSlice, IVwNotifyChange
 	{
 		protected ComboBox m_combo;
 		int m_comboWidth;		// computed width of m_combo

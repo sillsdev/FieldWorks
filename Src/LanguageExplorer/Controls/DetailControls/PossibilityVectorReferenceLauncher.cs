@@ -17,7 +17,7 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	public class PossibilityVectorReferenceLauncher : VectorReferenceLauncher, IVwNotifyChange
+	internal class PossibilityVectorReferenceLauncher : VectorReferenceLauncher, IVwNotifyChange
 	{
 		#region Data Members
 

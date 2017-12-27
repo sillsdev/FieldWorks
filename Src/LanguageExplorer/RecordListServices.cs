@@ -10,6 +10,11 @@ namespace LanguageExplorer
 	/// <summary>
 	/// Helper class for setting values in various panels in the main status bar on the main window.
 	/// </summary>
+	/// <remarks>
+	/// Since this is a static class and has static data members, the current window calls "Setup" when activated,
+	/// and "TearDown", when it is disposed and when it goes inactive. That should allow the currently active
+	/// FLEx window to make use of the static data members and the "SetRecordList" method (along with the current RecordList).
+	/// </remarks>
 	internal static class RecordListServices
 	{
 		private static DataNavigationManager _dataNavigationManager;
@@ -25,10 +30,8 @@ namespace LanguageExplorer
 			_recordListRepositoryForTools = majorFlexComponentParameters.RecordListRepositoryForTools;
 		}
 
-		internal static void TearDown(MajorFlexComponentParameters majorFlexComponentParameters)
+		internal static void TearDown()
 		{
-			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
-
 			_dataNavigationManager = null;
 			_parserMenuManager = null;
 			_recordListRepositoryForTools = null;

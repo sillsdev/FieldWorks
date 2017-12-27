@@ -26,8 +26,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// LayoutFinder is an implementation of IStringFinder that finds a string based
 	/// on looking up a layout for a particular HVO.
 	/// </summary>
-	public class LayoutFinder : IStringFinder, IPersistAsXml,
-		IStoresLcmCache, IStoresDataAccess
+	internal class LayoutFinder : IStringFinder, IPersistAsXml, IStoresLcmCache, IStoresDataAccess
 	{
 		#region Data members
 		internal ISilDataAccess m_sda;
@@ -52,7 +51,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="colSpec">The col spec.</param>
 		/// <param name="app">The application.</param>
 		/// ------------------------------------------------------------------------------------
-		public LayoutFinder(LcmCache cache, string layoutName, XElement colSpec,
+		internal LayoutFinder(LcmCache cache, string layoutName, XElement colSpec,
 			IApp app): this()
 		{
 			m_layoutName = layoutName;
@@ -78,8 +77,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="app">The application.</param>
 		/// <returns>finder for colSpec</returns>
 		/// ------------------------------------------------------------------------------------
-		static public IStringFinder CreateFinder(LcmCache cache, XElement colSpec,
-			XmlBrowseViewBaseVc vc, IApp app)
+		internal static IStringFinder CreateFinder(LcmCache cache, XElement colSpec, XmlBrowseViewBaseVc vc, IApp app)
 		{
 			string layoutName = XmlUtils.GetOptionalAttributeValue(colSpec, "layout");
 			string sSortMethod = XmlUtils.GetOptionalAttributeValue(colSpec, "sortmethod");
@@ -465,7 +463,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// does not exist, fall back to the string derived from the layout.
 	/// The string derived from the layout is still used for filtering.
 	/// </summary>
-	public class SortMethodFinder : LayoutFinder
+	internal class SortMethodFinder : LayoutFinder
 	{
 		private string m_sMethodName;
 		private string m_wsName;
@@ -788,7 +786,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// IntCompareFinder is an implementation of StringFinder that modifies the sort
 	/// string by adding leading zeros to pad it to ten digits.
 	/// </summary>
-	public class IntCompareFinder : LayoutFinder
+	internal class IntCompareFinder : LayoutFinder
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

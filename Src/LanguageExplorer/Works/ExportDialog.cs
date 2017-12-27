@@ -50,7 +50,7 @@ namespace LanguageExplorer.Works
 	/// You will typically also need to override the actual Export process, unless it is
 	/// a standard FXT export.
 	/// </summary>
-	public class ExportDialog : Form, IFlexComponent
+	internal class ExportDialog : Form, IFlexComponent
 	{
 		protected LcmCache m_cache;
 		private Label label1;

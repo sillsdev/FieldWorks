@@ -67,7 +67,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// This allows the view to communicate size changes to the embedding slice.
 		/// </summary>
-		public event FwViewSizeChangedEventHandler ViewSizeChanged;
+		internal event FwViewSizeChangedEventHandler ViewSizeChanged;
 		private int m_heightView = 0;
 
 		#endregion // Constants and data members

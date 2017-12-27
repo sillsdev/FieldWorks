@@ -13,7 +13,7 @@ using SIL.LCModel.Application;
 namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 {
 	/// <summary />
-	public partial class AssignFeaturesToPhonemes : RecordBrowseView
+	internal partial class AssignFeaturesToPhonemes : RecordBrowseView
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

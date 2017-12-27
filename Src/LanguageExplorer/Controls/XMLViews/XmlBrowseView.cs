@@ -22,14 +22,14 @@ namespace LanguageExplorer.Controls.XMLViews
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class XmlBrowseView : XmlBrowseViewBase
+	internal class XmlBrowseView : XmlBrowseViewBase
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:XmlBrowseView"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public XmlBrowseView()
+		internal XmlBrowseView()
 		{
 			AccessibleName = "XmlBrowseView";
 
@@ -50,7 +50,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		/// <value>The vc.</value>
 		/// ------------------------------------------------------------------------------------
-		public override XmlBrowseViewBaseVc Vc
+		internal override XmlBrowseViewBaseVc Vc
 		{
 			get
 			{

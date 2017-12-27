@@ -24,11 +24,11 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// The resulting view allows the editing of the text, including creating and destroying (and splitting
 	/// and merging) of the paragraphs using the usual keyboard actions.
 	/// </summary>
-	public class StTextSlice : ViewPropertySlice
+	internal class StTextSlice : ViewPropertySlice
 	{
 		private readonly int m_ws;
 
-		public StTextSlice(ICmObject obj, int flid, int ws)
+		internal StTextSlice(ICmObject obj, int flid, int ws)
 			: base(new StTextView(), obj, flid)
 		{
 			m_ws = ws;

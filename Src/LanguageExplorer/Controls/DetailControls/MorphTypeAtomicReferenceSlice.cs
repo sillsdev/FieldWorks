@@ -9,7 +9,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Summary description for MorphTypeAtomicReferenceSlice.
 	/// </summary>
-	public class MorphTypeAtomicReferenceSlice : PossibilityAtomicReferenceSlice
+	internal class MorphTypeAtomicReferenceSlice : PossibilityAtomicReferenceSlice
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MorphTypeAtomicReferenceSlice"/> class.

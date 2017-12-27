@@ -23,7 +23,7 @@ using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	public class PhoneEnvReferenceLauncher : ReferenceLauncher
+	internal class PhoneEnvReferenceLauncher : ReferenceLauncher
 	{
 		#region Data Members
 

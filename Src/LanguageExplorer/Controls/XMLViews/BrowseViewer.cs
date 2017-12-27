@@ -126,7 +126,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// actual browse view. It may also have a FilterBar, and eventually other controls, e.g.,
 	/// for filling in columns of data.
 	/// </summary>
-	public class BrowseViewer : MainUserControl, ISnapSplitPosition, IMainContentControl, IPostLayoutInit, IRefreshableRoot
+	internal class BrowseViewer : MainUserControl, ISnapSplitPosition, IMainContentControl, IPostLayoutInit, IRefreshableRoot
 	{
 		/// <summary>
 		/// Check state for items (check and uncheck only).
@@ -1840,7 +1840,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// <summary>
 			/// override with our own simple constructor
 			/// </summary>
-			public override XmlBrowseViewBaseVc Vc
+			internal override XmlBrowseViewBaseVc Vc
 			{
 				get
 				{
@@ -3723,7 +3723,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// <summary>
 	/// This class manages the parts of the BrowseViewer that scroll horizontally in sync.
 	/// </summary>
-	public class BrowseViewScroller : UserControl
+	internal class BrowseViewScroller : UserControl
 	{
 		BrowseViewer m_bv;
 
@@ -3982,7 +3982,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	///   compound rules, ad hoc rules, and inflectional affix templates).  We
 	///  only use this viewer with phonological rules and compound rules.
 	/// </summary>
-	public class BrowseActiveViewer : BrowseViewer, IVwNotifyChange
+	internal class BrowseActiveViewer : BrowseViewer, IVwNotifyChange
 	{
 		/// <summary>
 		/// Invoked when check box status alters. Typically there is only one item changed

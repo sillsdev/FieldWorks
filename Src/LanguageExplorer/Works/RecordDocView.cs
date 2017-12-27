@@ -32,7 +32,7 @@ namespace LanguageExplorer.Works
 	///		(This class will take care of docking the root site and making it visible and setting
 	///		its FdoCache, which will result in its MakeRoot being called.)
 	/// </summary>
-	public class RecordDocView : RecordView
+	internal class RecordDocView : RecordView
 	{
 		#region Data members
 
@@ -219,7 +219,7 @@ namespace LanguageExplorer.Works
 	/// This is a class that can be used as the rootsite of a RecordDocView, to make it a
 	/// RecordDocXmlView.
 	/// </summary>
-	public class XmlDocItemView : XmlView, IChangeRootObject
+	internal class XmlDocItemView : XmlView, IChangeRootObject
 	{
 		private string m_configObjectName;
 
@@ -238,7 +238,7 @@ namespace LanguageExplorer.Works
 		}
 		#endregion
 
-		public XmlDocItemView(int hvoRoot, XElement xnSpec, string sLayout) :
+		internal XmlDocItemView(int hvoRoot, XElement xnSpec, string sLayout) :
 			base(hvoRoot, sLayout, XmlUtils.GetOptionalBooleanAttributeValue(xnSpec, "editable", true))
 		{
 			if (m_xnSpec == null)
@@ -368,7 +368,7 @@ namespace LanguageExplorer.Works
 	/// This is a RecordDocView in which the view of each object is specified by a jtview XML element that is the
 	/// first child of the parameters node.
 	/// </summary>
-	public class RecordDocXmlView : RecordDocView
+	internal class RecordDocXmlView : RecordDocView
 	{
 		XElement m_jtSpecs; // node required by XmlView.
 		protected string m_configObjectName; // name to display in Configure dialog.

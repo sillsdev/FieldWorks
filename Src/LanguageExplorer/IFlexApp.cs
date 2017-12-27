@@ -14,7 +14,7 @@ namespace LanguageExplorer
 	/// <summary>
 	/// Interface for a Flex Application, which builds on IApp
 	/// </summary>
-	public interface IFlexApp : IApp
+	internal interface IFlexApp : IApp
 	{
 		/// <summary>
 		/// Get the main windows.

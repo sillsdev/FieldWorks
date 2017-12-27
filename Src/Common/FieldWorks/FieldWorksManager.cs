@@ -19,7 +19,7 @@ namespace SIL.FieldWorks
 	/// there is only one FieldWorks object in each process.
 	/// </summary>
 	[Export(typeof(IFieldWorksManager))]
-	public class FieldWorksManager : IFieldWorksManager
+	internal class FieldWorksManager : IFieldWorksManager
 	{
 		#region IFieldWorksManager Members
 		/// <summary>

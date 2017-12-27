@@ -19,14 +19,14 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Summary description for DerivMSAReferenceSlice.
 	/// </summary>
-	public class DerivMSAReferenceSlice : AtomicReferenceSlice
+	internal class DerivMSAReferenceSlice : AtomicReferenceSlice
 	{
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AtomicReferenceSlice"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public DerivMSAReferenceSlice(LcmCache cache, ICmObject obj, int flid)
+		internal DerivMSAReferenceSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(cache, obj, flid)
 		{
 		}

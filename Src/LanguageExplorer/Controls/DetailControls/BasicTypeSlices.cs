@@ -26,7 +26,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Summary description for Checkbox.
 	/// </summary>
-	public class CheckboxSlice : FieldSlice, IVwNotifyChange
+	internal class CheckboxSlice : FieldSlice, IVwNotifyChange
 	{
 		/// <summary>
 		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
@@ -258,7 +258,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Summary description for Checkbox.
 	/// </summary>
-	public class CheckboxRefreshSlice : CheckboxSlice
+	internal class CheckboxRefreshSlice : CheckboxSlice
 	{
 
 
@@ -299,7 +299,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Summary description for DateSlice.
 	/// </summary>
-	public class DateSlice : FieldSlice, IVwNotifyChange
+	internal class DateSlice : FieldSlice, IVwNotifyChange
 	{
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -405,7 +405,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// Summary description for IntegerSlice.
 	/// </summary>
-	public class IntegerSlice : FieldSlice
+	internal class IntegerSlice : FieldSlice
 	{
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
