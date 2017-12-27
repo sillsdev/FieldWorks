@@ -1593,9 +1593,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				case CellarPropertyType.Image:
 				case CellarPropertyType.GenDate:
 				case CellarPropertyType.Binary:
+				case CellarPropertyType.String:
 					clidDst = -1;
 					break;
-				case CellarPropertyType.String:
 				case CellarPropertyType.Unicode:
 				case CellarPropertyType.MultiString:
 				case CellarPropertyType.MultiUnicode:
