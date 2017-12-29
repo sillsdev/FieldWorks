@@ -1,22 +1,49 @@
-﻿// Copyright (c) 2016 SIL International
+﻿// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Linq;
+using LanguageExplorer.Areas;
+using LanguageExplorer.Works;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorerTests.Works
 {
-#if RANDYTODO
-	// Remarks: Due to the painfully extensive setup needed, we do not bother to test any methods that `using` a `RecordListActivator`
+	/// <summary />
+	/// <remarks>
+	/// Due to the painfully extensive setup needed, we do not bother to test any methods that `using` a `RecordListActivator`
+	/// </remarks>
 	[TestFixture]
 	public class DictionaryExportServiceTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		private FlexComponentParameters _flexComponentParameters;
+
+		#region Overrides of LcmTestBase
+
+		public override void FixtureSetup()
+		{
+			base.FixtureSetup();
+			;
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, false);
+			_flexComponentParameters.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName, false, false);
+		}
+
+		public override void FixtureTeardown()
+		{
+			_flexComponentParameters.PropertyTable.Dispose();
+			_flexComponentParameters = null;
+
+			base.FixtureTeardown();
+		}
+
+		#endregion
+
 		[Test]
 		public void CountDictionaryEntries_RootBasedConfigDoesNotCountHiddenMinorEntries()
 		{
-			var configModel = ConfiguredXHTMLGeneratorTests.CreateInterestingConfigurationModel(Cache);
+			var configModel = ConfiguredXHTMLGeneratorTests.CreateInterestingConfigurationModel(Cache, _flexComponentParameters.PropertyTable);
 			configModel.IsRootBased = true;
 			var mainEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			var complexEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
@@ -42,7 +69,7 @@ namespace LanguageExplorerTests.Works
 		public void CountDictionaryEntries_StemBasedConfigCountsHiddenMinorEntries(
 			[Values(DictionaryConfigurationModel.ConfigType.Hybrid, DictionaryConfigurationModel.ConfigType.Lexeme)] DictionaryConfigurationModel.ConfigType configType)
 		{
-			var configModel = ConfiguredXHTMLGeneratorTests.CreateInterestingConfigurationModel(Cache, null, configType);
+			var configModel = ConfiguredXHTMLGeneratorTests.CreateInterestingConfigurationModel(Cache, _flexComponentParameters.PropertyTable, configType);
 			var mainEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			var complexEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			var variantEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
@@ -76,11 +103,10 @@ namespace LanguageExplorerTests.Works
 			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, mainEntry, variComplexEntry, false);
 			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, variComplexEntry);
 			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(variComplexEntry, true);
-			var configModel = ConfiguredXHTMLGeneratorTests.CreateInterestingConfigurationModel(Cache);
+			var configModel = ConfiguredXHTMLGeneratorTests.CreateInterestingConfigurationModel(Cache, _flexComponentParameters.PropertyTable);
 
 			// SUT
 			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, variComplexEntry.Hvo), "Should be generated once");
 		}
 	}
-#endif
 }

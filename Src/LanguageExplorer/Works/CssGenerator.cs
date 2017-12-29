@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,12 +10,11 @@ using System.Text.RegularExpressions;
 using ExCSS;
 using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using LanguageExplorer.Works.DictionaryDetailsView;
 using SIL.LCModel.Core.Text;
+using SIL.LCModel.Infrastructure;
 using Property = ExCSS.Property;
 
 namespace LanguageExplorer.Works
@@ -48,48 +47,44 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Generate all the css rules necessary to represent every enabled portion of the given configuration
 		/// </summary>
-		/// <param name="model"></param>
-		/// <param name="readOnlyPropertyTable">Necessary to access the styles as configured in FLEx</param>
-		/// <param name="cache"></param>
 		/// <returns></returns>
-		public static string GenerateCssFromConfiguration(DictionaryConfigurationModel model, IReadonlyPropertyTable readOnlyPropertyTable, LcmCache cache)
+		public static string GenerateCssFromConfiguration(DictionaryConfigurationModel model, LcmCache cache, LcmStyleSheet fwStyleSheet)
 		{
 			if(model == null)
-				throw new ArgumentNullException("model");
+				throw new ArgumentNullException(nameof(model));
 			var styleSheet = new StyleSheet();
-			var propStyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(readOnlyPropertyTable);
 			LoadBulletUnicodes();
 			LoadNumberingStyles();
-			GenerateLetterHeaderCss(readOnlyPropertyTable, styleSheet);
-			GenerateCssForDefaultStyles(readOnlyPropertyTable, propStyleSheet, styleSheet, model);
+			GenerateLetterHeaderCss(styleSheet, fwStyleSheet);
+			GenerateCssForDefaultStyles(cache, fwStyleSheet, styleSheet, model);
 			MakeLinksLookLikePlainText(styleSheet);
 			GenerateBidirectionalCssShim(styleSheet);
 			GenerateCssForAudioWs(styleSheet, cache);
 			foreach(var configNode in model.Parts.Where(x => x.IsEnabled).Concat(model.SharedItems.Where(x => x.Parent != null)))
 			{
-				GenerateCssFromConfigurationNode(configNode, styleSheet, null, readOnlyPropertyTable, cache);
+				GenerateCssFromConfigurationNode(configNode, styleSheet, null, cache, fwStyleSheet);
 			}
 			// Pretty-print the stylesheet
 			return Icu.Normalize(styleSheet.ToString(true, 1), Icu.UNormalizationMode.UNORM_NFC);
 		}
 
-		private static void GenerateCssForDefaultStyles(IReadonlyPropertyTable readOnlyPropertyTable, LcmStyleSheet propertyTableStyleSheet, StyleSheet styleSheet, DictionaryConfigurationModel model)
+		private static void GenerateCssForDefaultStyles(LcmCache cache, LcmStyleSheet fwStyleSheet, StyleSheet styleSheet, DictionaryConfigurationModel model)
 		{
-			if (propertyTableStyleSheet == null)
+			if (fwStyleSheet == null)
 				return;
 
-			if (propertyTableStyleSheet.Styles.Contains("Normal"))
-				GenerateCssForWsSpanWithNormalStyle(styleSheet, readOnlyPropertyTable);
+			if (fwStyleSheet.Styles.Contains("Normal"))
+				GenerateCssForWsSpanWithNormalStyle(styleSheet, cache, fwStyleSheet);
 
-			if (propertyTableStyleSheet.Styles.Contains(DictionaryNormal))
-				GenerateDictionaryNormalParagraphCss(styleSheet, readOnlyPropertyTable);
+			if (fwStyleSheet.Styles.Contains(DictionaryNormal))
+				GenerateDictionaryNormalParagraphCss(styleSheet, cache, fwStyleSheet);
 
-			if (propertyTableStyleSheet.Styles.Contains(LetterHeadingStyleName))
+			if (fwStyleSheet.Styles.Contains(LetterHeadingStyleName))
 			{
-				GenerateCssForWritingSystems(".letter", LetterHeadingStyleName, styleSheet, readOnlyPropertyTable);
+				GenerateCssForWritingSystems(".letter", LetterHeadingStyleName, styleSheet, cache, fwStyleSheet);
 			}
 
-			GenerateDictionaryMinorParagraphCss(styleSheet, readOnlyPropertyTable, model);
+			GenerateDictionaryMinorParagraphCss(styleSheet, cache, fwStyleSheet, model);
 		}
 
 		private static void MakeLinksLookLikePlainText(StyleSheet styleSheet)
@@ -118,11 +113,11 @@ namespace LanguageExplorer.Works
 			styleSheet.Rules.Add(rule);
 		}
 
-		private static void GenerateCssForWsSpanWithNormalStyle(StyleSheet styleSheet, IReadonlyPropertyTable readOnlyPropertyTable)
+		private static void GenerateCssForWsSpanWithNormalStyle(StyleSheet styleSheet, LcmCache cache, LcmStyleSheet fwStyleSheet)
 		{
 			// Generate the rules for the programmatic default style info (
-			var defaultStyleProps = GetOnlyCharacterStyle(GenerateCssStyleFromLcmStyleSheet("Normal", DefaultStyle, readOnlyPropertyTable));
-			if (!defaultStyleProps.Any(p => p.Name == "font-size"))
+			var defaultStyleProps = GetOnlyCharacterStyle(GenerateCssStyleFromLcmStyleSheet("Normal", DefaultStyle, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(DefaultStyle)));
+			if (defaultStyleProps.All(p => p.Name != "font-size"))
 			{
 				defaultStyleProps.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, FontInfo.kDefaultFontSize) });
 			}
@@ -130,20 +125,20 @@ namespace LanguageExplorer.Works
 			defaultRule.Declarations.Properties.AddRange(defaultStyleProps);
 			styleSheet.Rules.Add(defaultRule);
 			// Then generate the rules for all the writing system overrides
-			GenerateCssForWritingSystems("span", "Normal", styleSheet, readOnlyPropertyTable);
+			GenerateCssForWritingSystems("span", "Normal", styleSheet, cache, fwStyleSheet);
 		}
 
-		private static void GenerateDictionaryNormalParagraphCss(StyleSheet styleSheet, IReadonlyPropertyTable readOnlyPropertyTable)
+		private static void GenerateDictionaryNormalParagraphCss(StyleSheet styleSheet, LcmCache cache, LcmStyleSheet fwStyleSheet)
 		{
 			var dictNormalRule = new StyleRule { Value = "div.entry" };
-			var dictNormalStyle = GenerateCssStyleFromLcmStyleSheet(DictionaryNormal, 0, readOnlyPropertyTable);
+			var dictNormalStyle = GenerateCssStyleFromLcmStyleSheet(DictionaryNormal, 0, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(0));
 			dictNormalRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictNormalStyle));
 			styleSheet.Rules.Add(dictNormalRule);
 			// Then generate the rules for all the writing system overrides
-			GenerateCssForWritingSystems("div.entry span", DictionaryNormal, styleSheet, readOnlyPropertyTable);
+			GenerateCssForWritingSystems("div.entry span", DictionaryNormal, styleSheet, cache, fwStyleSheet);
 		}
 
-		private static void GenerateDictionaryMinorParagraphCss(StyleSheet styleSheet, IReadonlyPropertyTable readOnlyPropertyTable, DictionaryConfigurationModel model)
+		private static void GenerateDictionaryMinorParagraphCss(StyleSheet styleSheet, LcmCache cache, LcmStyleSheet fwStyleSheet, DictionaryConfigurationModel model)
 		{
 			// Use the style set in all the parts following main entry, if no style is specified assume Dictionary-Minor
 			for (var i = 1; i < model.Parts.Count; ++i)
@@ -153,27 +148,28 @@ namespace LanguageExplorer.Works
 				{
 					var styleName = minorEntryNode.Style;
 					if (string.IsNullOrEmpty(styleName))
+					{
 						styleName = DictionaryMinor;
-					var dictionaryMinorStyle = GenerateCssStyleFromLcmStyleSheet(styleName, 0, readOnlyPropertyTable);
-					var minorRule = new StyleRule { Value = string.Format("div.{0}", GetClassAttributeForConfig(minorEntryNode)) };
+					}
+					var dictionaryMinorStyle = GenerateCssStyleFromLcmStyleSheet(styleName, 0, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(0));
+					var minorRule = new StyleRule { Value = $"div.{GetClassAttributeForConfig(minorEntryNode)}"};
 					minorRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictionaryMinorStyle));
 					styleSheet.Rules.Add(minorRule);
 					// Then generate the rules for all the writing system overrides
-					GenerateCssForWritingSystems(string.Format("div.{0} span", GetClassAttributeForConfig(minorEntryNode)), styleName, styleSheet, readOnlyPropertyTable);
+					GenerateCssForWritingSystems($"div.{GetClassAttributeForConfig(minorEntryNode)} span", styleName, styleSheet, cache, fwStyleSheet);
 				}
 			}
 		}
 
-		private static void GenerateCssForWritingSystems(string selector, string styleName, StyleSheet styleSheet, IReadonlyPropertyTable readOnlyPropertyTable)
+		private static void GenerateCssForWritingSystems(string selector, string styleName, StyleSheet styleSheet, LcmCache cache, LcmStyleSheet fwStyleSheet)
 		{
-			var cache = readOnlyPropertyTable.GetValue<LcmCache>("cache");
 			// Generate the rules for all the writing system overrides
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				// We want only the character type settings from the styleName style since we're applying them
 				// to a span.
-				var wsRule = new StyleRule { Value = selector + String.Format("[lang|=\"{0}\"]", aws.LanguageTag) };
-				var styleDecls = GenerateCssStyleFromLcmStyleSheet(styleName, aws.Handle, readOnlyPropertyTable);
+				var wsRule = new StyleRule { Value = selector + $"[lang|=\"{aws.LanguageTag}\"]"};
+				var styleDecls = GenerateCssStyleFromLcmStyleSheet(styleName, aws.Handle, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(aws.Handle));
 				wsRule.Declarations.Properties.AddRange(GetOnlyCharacterStyle(styleDecls));
 				styleSheet.Rules.Add(wsRule);
 			}
@@ -185,13 +181,13 @@ namespace LanguageExplorer.Works
 			{
 				if (aws.LanguageTag.Contains("audio"))
 				{
-					var wsaudioRule = new StyleRule {Value = String.Format("a.{0}:after", aws.LanguageTag)};
+					var wsaudioRule = new StyleRule {Value = $"a.{aws.LanguageTag}:after"};
 					wsaudioRule.Declarations.Properties.Add(new Property("content")
 					{
 						Term = new PrimitiveTerm(UnitType.String, ConfiguredXHTMLGenerator.LoudSpeaker)
 					});
 					styleSheet.Rules.Add(wsaudioRule);
-					wsaudioRule = new StyleRule {Value = String.Format("a.{0}", aws.LanguageTag)};
+					wsaudioRule = new StyleRule {Value = $"a.{aws.LanguageTag}"};
 					wsaudioRule.Declarations.Properties.Add(new Property("text-decoration")
 					{
 						Term = new PrimitiveTerm(UnitType.Attribute, "none")
@@ -205,7 +201,7 @@ namespace LanguageExplorer.Works
 		/// Generates css rules for a configuration node and adds them to the given stylesheet (recursive).
 		/// </summary>
 		private static void GenerateCssFromConfigurationNode(ConfigurableDictionaryNode configNode, StyleSheet styleSheet,
-			string baseSelection, IReadonlyPropertyTable readOnlyPropertyTable, LcmCache cache)
+			string baseSelection, LcmCache cache, LcmStyleSheet fwStyleSheet)
 		{
 			var rule = new StyleRule();
 			var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
@@ -215,11 +211,11 @@ namespace LanguageExplorer.Works
 				// Try to generate the css for the sense number before the baseSelection is updated because
 				// the sense number is a sibling of the sense element and we are normally applying styles to the
 				// children of collections. Also set display:block on span
-				GenerateCssForSenses(configNode, senseOptions, styleSheet, ref baseSelection, readOnlyPropertyTable, cache);
+				GenerateCssForSenses(configNode, senseOptions, styleSheet, ref baseSelection, cache, fwStyleSheet);
 			}
 			else if (listAndParaOpts != null)
 			{
-				GenerateCssFromListAndParaOptions(configNode, listAndParaOpts, styleSheet, ref baseSelection, cache, readOnlyPropertyTable);
+				GenerateCssFromListAndParaOptions(configNode, listAndParaOpts, styleSheet, ref baseSelection, cache, fwStyleSheet);
 				var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 				if (wsOptions != null && wsOptions.DisplayWritingSystemAbbreviations)
 				{
@@ -227,7 +223,7 @@ namespace LanguageExplorer.Works
 					{
 						baseSelection = baseSelection + "> span";
 					}
-					GenerateCssForWritingSystemPrefix(configNode, styleSheet, baseSelection, readOnlyPropertyTable);
+					GenerateCssForWritingSystemPrefix(configNode, styleSheet, baseSelection, cache, fwStyleSheet);
 				}
 			}
 			else
@@ -236,16 +232,15 @@ namespace LanguageExplorer.Works
 				{
 					GenerateCssFromPictureOptions(configNode, (DictionaryNodePictureOptions)configNode.DictionaryNodeOptions, styleSheet, baseSelection);
 				}
-				var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection,
-					cache, readOnlyPropertyTable);
+				var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, cache, fwStyleSheet);
 
 				var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 				if (wsOptions != null)
 				{
-					GenerateCssFromWsOptions(configNode, wsOptions, styleSheet, baseSelection, readOnlyPropertyTable);
+					GenerateCssFromWsOptions(configNode, wsOptions, styleSheet, baseSelection, cache, fwStyleSheet);
 					if (wsOptions.DisplayWritingSystemAbbreviations)
 					{
-						GenerateCssForWritingSystemPrefix(configNode, styleSheet, baseSelection, readOnlyPropertyTable);
+						GenerateCssForWritingSystemPrefix(configNode, styleSheet, baseSelection, cache, fwStyleSheet);
 					}
 				}
 				rule.Value = baseSelection;
@@ -254,9 +249,8 @@ namespace LanguageExplorer.Works
 				if (!string.IsNullOrEmpty(configNode.Style))
 				{
 					//Generate the rules for the default font info
-					rule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(configNode.Style, DefaultStyle, configNode,
-						readOnlyPropertyTable));
-					GenerateCssForWritingSystems(baseSelection + " span", configNode.Style, styleSheet, readOnlyPropertyTable);
+					rule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(configNode.Style, DefaultStyle, configNode, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(DefaultStyle)));
+					GenerateCssForWritingSystems(baseSelection + " span", configNode.Style, styleSheet, cache, fwStyleSheet);
 				}
 				styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(selectors));
 				if (!IsEmptyRule(rule))
@@ -267,7 +261,7 @@ namespace LanguageExplorer.Works
 			//Recurse into each child
 			foreach(var child in configNode.Children.Where(x => x.IsEnabled))
 			{
-				GenerateCssFromConfigurationNode(child, styleSheet, baseSelection, readOnlyPropertyTable, cache);
+				GenerateCssFromConfigurationNode(child, styleSheet, baseSelection, cache, fwStyleSheet);
 			}
 		}
 
@@ -292,29 +286,30 @@ namespace LanguageExplorer.Works
 			return rules.Where(rule => !IsBeforeOrAfter(rule));
 		}
 
-		private static void GenerateCssForSenses(ConfigurableDictionaryNode configNode, DictionaryNodeSenseOptions senseOptions,
-														StyleSheet styleSheet, ref string baseSelection, IReadonlyPropertyTable readOnlyPropertyTable, LcmCache cache)
+		private static void GenerateCssForSenses(ConfigurableDictionaryNode configNode, DictionaryNodeSenseOptions senseOptions, StyleSheet styleSheet, ref string baseSelection, LcmCache cache, LcmStyleSheet fwStyleSheet)
 		{
-			var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, cache, readOnlyPropertyTable);
+			var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, cache, fwStyleSheet);
 			// Insert '> .sensecontent' between '.*senses' and '.*sense' (where * could be 'referring', 'sub', or similar)
-			var senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf('.')));
+			var senseContentSelector = $"{baseSelection.Substring(0, baseSelection.LastIndexOf('.'))}> .sensecontent";
 			var senseItemName = baseSelection.Substring(baseSelection.LastIndexOf('.'));
 			if (senseOptions.DisplayEachSenseInAParagraph)
+			{
 				selectors = RemoveBeforeAfterSelectorRules(selectors);
+			}
 			styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(selectors));
 			var senseNumberRule = new StyleRule();
 			// Not using SelectClassName here; sense and sensenumber are siblings and the configNode is for the Senses collection.
 			// Select the base plus the node's unmodified class attribute and append the sensenumber matcher.
-			var senseNumberSelector = string.Format("{0} .sensenumber", senseContentSelector);
+			var senseNumberSelector = $"{senseContentSelector} .sensenumber";
 
 			senseNumberRule.Value = senseNumberSelector;
-			if(!String.IsNullOrEmpty(senseOptions.NumberStyle))
+			if(!string.IsNullOrEmpty(senseOptions.NumberStyle))
 			{
-				senseNumberRule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(senseOptions.NumberStyle, DefaultStyle, readOnlyPropertyTable));
+				senseNumberRule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(senseOptions.NumberStyle, DefaultStyle, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(DefaultStyle)));
 			}
 			if (!IsEmptyRule(senseNumberRule))
 			styleSheet.Rules.Add(senseNumberRule);
-			if(!String.IsNullOrEmpty(senseOptions.BeforeNumber))
+			if(!string.IsNullOrEmpty(senseOptions.BeforeNumber))
 			{
 				var beforeDeclaration = new StyleDeclaration
 				{
@@ -322,7 +317,7 @@ namespace LanguageExplorer.Works
 				};
 				styleSheet.Rules.Add(new StyleRule(beforeDeclaration) { Value = senseNumberSelector + ":before" });
 			}
-			if(!String.IsNullOrEmpty(senseOptions.AfterNumber))
+			if(!string.IsNullOrEmpty(senseOptions.AfterNumber))
 			{
 				var afterDeclaration = new StyleDeclaration();
 				afterDeclaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, senseOptions.AfterNumber) });
@@ -330,8 +325,9 @@ namespace LanguageExplorer.Works
 				styleSheet.Rules.Add(afterRule);
 			}
 			// set the base selection to the sense level under the sense content
-			baseSelection = string.Format("{0} > {1}", senseContentSelector, senseItemName);
-			var styleDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromLcmStyleSheet(configNode.Style, 0, configNode, readOnlyPropertyTable);
+			baseSelection = $"{senseContentSelector} > {senseItemName}";
+			const int wsId = 0;
+			var styleDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromLcmStyleSheet(configNode.Style, wsId, configNode, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId));
 			if (senseOptions.DisplayEachSenseInAParagraph)
 			{
 				var sensCharDeclaration = GetOnlyCharacterStyle(styleDeclaration);
@@ -355,7 +351,7 @@ namespace LanguageExplorer.Works
 				};
 
 				styleSheet.Rules.Add(senseParaRule);
-				GenerateCssforBulletedList(configNode, styleSheet, senseParaRule.Value, readOnlyPropertyTable, styleDeclaration);
+				GenerateCssforBulletedList(configNode, styleSheet, senseParaRule.Value, styleDeclaration, cache, fwStyleSheet);
 			}
 			else
 			{
@@ -373,7 +369,7 @@ namespace LanguageExplorer.Works
 				var collectionSelector = senseContentSelector.Substring(0, senseContentSelector.LastIndexOf(" .", StringComparison.Ordinal));
 				foreach (var gramInfoNode in configNode.Children.Where(node => node.FieldDescription == "MorphoSyntaxAnalysisRA" && node.IsEnabled))
 				{
-					GenerateCssFromConfigurationNode(gramInfoNode, styleSheet, collectionSelector + " .sharedgrammaticalinfo", readOnlyPropertyTable, cache);
+					GenerateCssFromConfigurationNode(gramInfoNode, styleSheet, collectionSelector + " .sharedgrammaticalinfo", cache, fwStyleSheet);
 				}
 			}
 		}
@@ -384,21 +380,23 @@ namespace LanguageExplorer.Works
 		/// <param name="configNode">Dictionary Node</param>
 		/// <param name="styleSheet">Stylesheet to add the new rule</param>
 		/// <param name="bulletSelector">Style name for the bullet property</param>
-		/// <param name="readOnlyPropertyTable">readOnlyPropertyTable to get the styles</param>
 		/// <param name="styleDeclaration">Style properties collection</param>
-		private static void GenerateCssforBulletedList(ConfigurableDictionaryNode configNode, StyleSheet styleSheet, string bulletSelector, IReadonlyPropertyTable readOnlyPropertyTable, StyleDeclaration styleDeclaration)
+		/// <param name="cache"></param>
+		/// <param name="fwStyleSheet"></param>
+		private static void GenerateCssforBulletedList(ConfigurableDictionaryNode configNode, StyleSheet styleSheet, string bulletSelector, StyleDeclaration styleDeclaration, LcmCache cache, LcmStyleSheet fwStyleSheet)
 		{
 			if (configNode.Style != null)
 			{
 				if (styleDeclaration.Properties.Count == 0)
-					styleDeclaration = GenerateCssStyleFromLcmStyleSheet(configNode.Style, DefaultStyle, readOnlyPropertyTable);
+				{
+					styleDeclaration = GenerateCssStyleFromLcmStyleSheet(configNode.Style, DefaultStyle, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(DefaultStyle));
+				}
 				GenerateCssForCounterReset(styleSheet, bulletSelector, styleDeclaration, false);
 				var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
 				var senseSufixRule = senseOptions != null && senseOptions.DisplayFirstSenseInline ? ":not(:first-child):before" : ":before";
 				var bulletRule = new StyleRule { Value = bulletSelector + senseSufixRule };
 				bulletRule.Declarations.Properties.AddRange(GetOnlyBulletContent(styleDeclaration));
-				var projectStyles = FontHeightAdjuster.StyleSheetFromPropertyTable(readOnlyPropertyTable);
-				BaseStyleInfo projectStyle = projectStyles.Styles[configNode.Style];
+				BaseStyleInfo projectStyle = fwStyleSheet.Styles[configNode.Style];
 				var exportStyleInfo = new ExportStyleInfo(projectStyle);
 				if (exportStyleInfo.NumberScheme != 0)
 				{
@@ -424,16 +422,19 @@ namespace LanguageExplorer.Works
 		}
 
 		private static void GenerateCssFromListAndParaOptions(ConfigurableDictionaryNode configNode,
-			IParaOption listAndParaOpts, StyleSheet styleSheet, ref string baseSelection, LcmCache cache, IReadonlyPropertyTable readOnlyPropertyTable)
+			IParaOption listAndParaOpts, StyleSheet styleSheet, ref string baseSelection, LcmCache cache, LcmStyleSheet fwStyleSheet)
 		{
-			var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, cache, readOnlyPropertyTable);
+			var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, cache, fwStyleSheet);
 			List<StyleDeclaration> blockDeclarations;
 			if (string.IsNullOrEmpty(configNode.Style))
+			{
 				blockDeclarations = new List<StyleDeclaration> {new StyleDeclaration()};
+			}
 			else
 			{
-				blockDeclarations = GenerateCssStyleFromLcmStyleSheet(configNode.Style, 0, configNode, readOnlyPropertyTable, true);
-				GenerateCssForWritingSystems(baseSelection + " span", configNode.Style, styleSheet, readOnlyPropertyTable);
+				var wsId = 0;
+				blockDeclarations = GenerateCssStyleFromLcmStyleSheet(configNode.Style, wsId, configNode, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId), true);
+				GenerateCssForWritingSystems(baseSelection + " span", configNode.Style, styleSheet, cache, fwStyleSheet);
 			}
 			var styleRules = selectors as StyleRule[] ?? selectors.ToArray();
 			if (listAndParaOpts.DisplayEachInAParagraph)
@@ -447,7 +448,7 @@ namespace LanguageExplorer.Works
 					};
 					styleSheet.Rules.Add(blockRule);
 					GenerateCssForCounterReset(styleSheet, baseSelection, declaration, true);
-					var bulletRule = AdjustRuleIfParagraphNumberScheme(blockRule, configNode, readOnlyPropertyTable);
+					var bulletRule = AdjustRuleIfParagraphNumberScheme(blockRule, configNode, fwStyleSheet);
 					// REVIEW (Hasso) 2016.10: could these two lines be moved outside the loop?
 					// REVIEW (Hasso) 2016.10: both of these following lines add all rules but BeforeAfter (so if the condition in the first line
 					// REVIEW (cont) is true, both excluded rule categories will nonetheless be added)
@@ -511,12 +512,11 @@ namespace LanguageExplorer.Works
 		/// <remarks>
 		/// See https://jira.sil.org/browse/LT-11625 for justification.
 		/// </remarks>
-		private static StyleRule AdjustRuleIfParagraphNumberScheme(StyleRule rule, ConfigurableDictionaryNode configNode, IReadonlyPropertyTable readOnlyPropertyTable)
+		private static StyleRule AdjustRuleIfParagraphNumberScheme(StyleRule rule, ConfigurableDictionaryNode configNode, LcmStyleSheet fwStyleSheet)
 		{
 			if (!string.IsNullOrEmpty(configNode.Style))
 			{
-				var projectStyles = FontHeightAdjuster.StyleSheetFromPropertyTable(readOnlyPropertyTable);
-				BaseStyleInfo projectStyle = projectStyles.Styles[configNode.Style];
+				var projectStyle = fwStyleSheet.Styles[configNode.Style];
 				var exportStyleInfo = new ExportStyleInfo(projectStyle);
 				if (exportStyleInfo.NumberScheme != 0)
 				{
@@ -540,36 +540,36 @@ namespace LanguageExplorer.Works
 			return rule;
 		}
 
-		private static void GenerateCssFromWsOptions(ConfigurableDictionaryNode configNode, DictionaryNodeWritingSystemOptions wsOptions,
-																	StyleSheet styleSheet, string baseSelection, IReadonlyPropertyTable readOnlyPropertyTable)
+		private static void GenerateCssFromWsOptions(ConfigurableDictionaryNode configNode, DictionaryNodeWritingSystemOptions wsOptions, StyleSheet styleSheet, string baseSelection, LcmCache cache, LcmStyleSheet fwStyleSheet)
 		{
-			var cache = readOnlyPropertyTable.GetValue<LcmCache>("cache");
-			foreach(var ws in wsOptions.Options.Where(opt => opt.IsEnabled))
+			foreach (var ws in wsOptions.Options.Where(opt => opt.IsEnabled))
 			{
 				var possiblyMagic = WritingSystemServices.GetMagicWsIdFromName(ws.Id);
 				// if the writing system isn't a magic name just use it otherwise find the right one from the magic list
 				var wsIdString = possiblyMagic == 0 ? ws.Id : WritingSystemServices.GetWritingSystemList(cache, possiblyMagic, true).First().Id;
 				var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(wsIdString);
-				var wsRule = new StyleRule {Value = baseSelection + String.Format("[lang|=\"{0}\"]", wsIdString)};
-				if (!String.IsNullOrEmpty(configNode.Style))
-					wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(configNode.Style, wsId, readOnlyPropertyTable));
+				var wsRule = new StyleRule {Value = baseSelection + $"[lang|=\"{wsIdString}\"]"};
+				if (!string.IsNullOrEmpty(configNode.Style))
+				{
+					wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(configNode.Style, wsId, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId)));
+				}
 				if (!IsEmptyRule(wsRule))
 				styleSheet.Rules.Add(wsRule);
 			}
 		}
 
-		private static void GenerateCssForWritingSystemPrefix(ConfigurableDictionaryNode configNode, StyleSheet styleSheet, string baseSelection, IReadonlyPropertyTable readOnlyPropertyTable)
+		private static void GenerateCssForWritingSystemPrefix(ConfigurableDictionaryNode configNode, StyleSheet styleSheet, string baseSelection, LcmCache cache, LcmStyleSheet fwStyleSheet)
 		{
-			var wsRule1 = new StyleRule { Value = string.Format("{0}.{1}", baseSelection, WritingSystemPrefix)};
-			wsRule1.Declarations.Properties.AddRange(GetOnlyCharacterStyle(GenerateCssStyleFromLcmStyleSheet(WritingSystemStyleName, 0, configNode, readOnlyPropertyTable)));
+			var wsRule1 = new StyleRule { Value = $"{baseSelection}.{WritingSystemPrefix}"};
+			const int wsId = 0;
+			wsRule1.Declarations.Properties.AddRange(GetOnlyCharacterStyle(GenerateCssStyleFromLcmStyleSheet(WritingSystemStyleName, wsId, configNode, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId))));
 			styleSheet.Rules.Add(wsRule1);
-			var wsRule2 = new StyleRule { Value = string.Format("{0}.{1}:after", baseSelection, WritingSystemPrefix) };
+			var wsRule2 = new StyleRule { Value = $"{baseSelection}.{WritingSystemPrefix}:after"};
 			wsRule2.Declarations.Properties.Add(new Property("content"){Term = new PrimitiveTerm(UnitType.String, " ")});
 			styleSheet.Rules.Add(wsRule2);
 		}
 
-		private static void GenerateCssFromPictureOptions(ConfigurableDictionaryNode configNode, DictionaryNodePictureOptions pictureOptions,
-																		  StyleSheet styleSheet, string baseSelection)
+		private static void GenerateCssFromPictureOptions(ConfigurableDictionaryNode configNode, DictionaryNodePictureOptions pictureOptions, StyleSheet styleSheet, string baseSelection)
 		{
 			var pictureAndCaptionRule = new StyleRule();
 			pictureAndCaptionRule.Value = baseSelection + " " + SelectClassName(configNode);
@@ -628,38 +628,44 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		private static IEnumerable<StyleRule> GenerateSelectorsFromNode(
 			string parentSelector, ConfigurableDictionaryNode configNode,
-			out string baseSelection, LcmCache cache, IReadonlyPropertyTable readOnlyPropertyTable)
+			out string baseSelection, LcmCache cache, LcmStyleSheet fwStyleSheet)
 			// REVIEW (Hasso) 2016.10: parentSelector and baseSelector could be combined into a single `ref` parameter
 		{
 			// TODO: REFACTOR this method to handle certain nodes more specifically. The options type should be used to branch into node specific code.
+			var analWsId = cache.DefaultAnalWs;
+			var wsEngine = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(analWsId);
+			var metaDataCacheAccessor = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
 			parentSelector = GetParentForFactoredReference(parentSelector, configNode);
 			var rules = new List<StyleRule>();
-			var fwStyles = FontHeightAdjuster.StyleSheetFromPropertyTable(readOnlyPropertyTable);
 			// simpleSelector is used for nodes that use before and after.  Collection type nodes produce wrong
 			// results if we use baseSelection in handling before and after content.  See LT-17048.
 			string simpleSelector;
-			string pictCaptionContent = ".captionContent ";
+			const string pictCaptionContent = ".captionContent ";
 			if (parentSelector == null)
 			{
 				baseSelection = SelectClassName(configNode);
-				simpleSelector = SelectBareClassName(configNode);
+				simpleSelector = SelectBareClassName(configNode, metaDataCacheAccessor);
 				GenerateFlowResetForBaseNode(baseSelection, rules);
 			}
 			else
 			{
-				if(!String.IsNullOrEmpty(configNode.Between))
+				if (!string.IsNullOrEmpty(configNode.Between))
 				{
 					// content is generated before each item which follows an item of the same name
 					// eg. .complexformrefs>.complexformref + .complexformref:before { content: "," }
 					var dec = new StyleDeclaration();
 					dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, SpecialCharacterHandling.MakeSafeCss(configNode.Between)) });
-					if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
-						dec.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, readOnlyPropertyTable));
+					if (fwStyleSheet != null && fwStyleSheet.Styles.Contains(BeforeAfterBetweenStyleName))
+					{
+						dec.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, analWsId, fwStyleSheet, wsEngine));
+					}
 					var collectionSelector = "." + GetClassAttributeForConfig(configNode);
 					if (configNode.Parent.DictionaryNodeOptions is DictionaryNodePictureOptions)
+					{
 						collectionSelector = pictCaptionContent + "." + GetClassAttributeForConfig(configNode);
+					}
 					var itemSelector = " ." + GetClassAttributeForCollectionItem(configNode);
-					var betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, itemSelector);
+					var betweenSelector = $"{parentSelector}> {collectionSelector}>{itemSelector}+{itemSelector}:before";
 					ConfigurableDictionaryNode dummy;
 					// use default (class-named) between selector for factored references, because "span+span" erroneously matches Type spans
 					if (configNode.DictionaryNodeOptions != null && !ConfiguredXHTMLGenerator.IsFactoredReference(configNode, out dummy))
@@ -671,8 +677,7 @@ namespace LanguageExplorer.Works
 						{
 							if (wsOptions.DisplayWritingSystemAbbreviations)
 							{
-								betweenSelector = String.Format("{0}> {1}> span.{2} ~ span.{2}:before", parentSelector, collectionSelector,
-									WritingSystemPrefix);
+								betweenSelector = $"{parentSelector}> {collectionSelector}> span.{WritingSystemPrefix} ~ span.{WritingSystemPrefix}:before";
 							}
 							else
 							{
@@ -681,25 +686,29 @@ namespace LanguageExplorer.Works
 								//First Ws is skipped as between rules no longer needed before first WS span
 								for (var i = enabledWsOptions.Count() - 1; i > 0; i--)
 								{
-									betweenSelector = (i == enabledWsOptions.Count() - 1 ? string.Empty : (betweenSelector + ",")) +
-									String.Format("{0}> {1}> span+span[lang|='{2}']:before", parentSelector, collectionSelector,
-									enabledWsOptions[i].Id);
+									betweenSelector = (i == enabledWsOptions.Count() - 1 ? string.Empty : betweenSelector + ",") +
+									                  $"{parentSelector}> {collectionSelector}> span+span[lang|='{enabledWsOptions[i].Id}']:before";
 								}
 							}
 						}
 						else if (senseOptions != null && senseOptions.ShowSharedGrammarInfoFirst)
-							betweenSelector = String.Format("{0}> {1}>{2}.sensecontent+{2}:before", parentSelector, collectionSelector, " span");
+						{
+							betweenSelector = $"{parentSelector}> {collectionSelector}> span.sensecontent+ span:before";
+						}
 						else if (configNode.FieldDescription == "PicturesOfSenses")
-							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " div");
+						{
+							betweenSelector = $"{parentSelector}> {collectionSelector}> div+ div:before";
+						}
 						else
-							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " span");
+						{
+							betweenSelector = $"{parentSelector}> {collectionSelector}> span+ span:before";
+						}
 					}
 					else if (IsFactoredReferenceType(configNode))
 					{
 						// Between factored Type goes between a reference (last in the list for its Type)
 						// and its immediately-following Type "list" (label on the following list of references)
-						betweenSelector = string.Format("{0}> .{1}+{2}:before",
-							parentSelector, GetClassAttributeForCollectionItem(configNode.Parent), collectionSelector);
+						betweenSelector = $"{parentSelector}> .{GetClassAttributeForCollectionItem(configNode.Parent)}+{collectionSelector}:before";
 					}
 					var betweenRule = new StyleRule(dec) { Value = betweenSelector };
 					rules.Add(betweenRule);
@@ -708,35 +717,39 @@ namespace LanguageExplorer.Works
 				if (configNode.Parent.DictionaryNodeOptions is DictionaryNodePictureOptions)
 				{
 					baseSelection = parentSelector + "> " + pictCaptionContent + SelectClassName(configNode, cache);
-					simpleSelector = parentSelector + "> " + pictCaptionContent + SelectBareClassName(configNode, cache);
+					simpleSelector = parentSelector + "> " + pictCaptionContent + SelectBareClassName(configNode, metaDataCacheAccessor);
 				}
 				else
 				{
 					baseSelection = parentSelector + "> " + SelectClassName(configNode, cache);
-					simpleSelector = parentSelector + "> " + SelectBareClassName(configNode, cache);
+					simpleSelector = parentSelector + "> " + SelectBareClassName(configNode, metaDataCacheAccessor);
 				}
 			}
 			if(!String.IsNullOrEmpty(configNode.Before))
 			{
 				var dec = new StyleDeclaration();
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, SpecialCharacterHandling.MakeSafeCss(configNode.Before)) });
-				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
-					dec.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, readOnlyPropertyTable));
+				if (fwStyleSheet != null && fwStyleSheet.Styles.Contains(BeforeAfterBetweenStyleName))
+					dec.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, analWsId, fwStyleSheet, wsEngine));
 				var selectorBase = simpleSelector;
 				if (configNode.FieldDescription == "PicturesOfSenses")
 					selectorBase += "> div:first-child";
 				var beforeRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(selectorBase, ":before") };
 				rules.Add(beforeRule);
 			}
-			if(!String.IsNullOrEmpty(configNode.After))
+			if (!string.IsNullOrEmpty(configNode.After))
 			{
 				var dec = new StyleDeclaration();
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, SpecialCharacterHandling.MakeSafeCss(configNode.After)) });
-				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
-					dec.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, readOnlyPropertyTable));
+				if (fwStyleSheet != null && fwStyleSheet.Styles.Contains(BeforeAfterBetweenStyleName))
+				{
+					dec.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, analWsId, fwStyleSheet, wsEngine));
+				}
 				var selectorBase = simpleSelector;
 				if (configNode.FieldDescription == "PicturesOfSenses")
+				{
 					selectorBase += "> div:last-child";
+				}
 				var afterRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(selectorBase, ":after") };
 				rules.Add(afterRule);
 			}
@@ -797,7 +810,7 @@ namespace LanguageExplorer.Works
 		/// <returns></returns>
 		private static string SelectClassName(ConfigurableDictionaryNode configNode, LcmCache cache = null)
 		{
-			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, cache);
+			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, (IFwMetaDataCacheManaged)cache?.MetaDataCacheAccessor);
 			return SelectClassName(configNode, type);
 		}
 
@@ -862,11 +875,13 @@ namespace LanguageExplorer.Works
 		/// output of this method for :before and :after rules in the css is sufficient to fix the bug reported in
 		/// LT-17048.  A better name might be nice, but this one is fairly descriptive.
 		/// </remarks>
-		private static string SelectBareClassName(ConfigurableDictionaryNode configNode, LcmCache cache = null)
+		private static string SelectBareClassName(ConfigurableDictionaryNode configNode, IFwMetaDataCacheManaged metaDataCacheAccessor = null)
 		{
-			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, cache);
+			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, metaDataCacheAccessor);
 			if (type == ConfiguredXHTMLGenerator.PropertyType.CollectionType)
+			{
 				return "." + GetClassAttributeForConfig(configNode);
+			}
 			return SelectClassName(configNode, type);
 		}
 
@@ -942,7 +957,7 @@ namespace LanguageExplorer.Works
 		internal static string GetOnlyCounterResetContent(StyleDeclaration fullStyleDeclaration)
 		{
 			var counterProp = fullStyleDeclaration.FirstOrDefault(prop => prop.Name.Contains("counter-increment"));
-			return counterProp != null ? counterProp.Term.ToString() : string.Empty;
+			return counterProp?.Term.ToString() ?? string.Empty;
 		}
 
 		/// <summary>
@@ -951,11 +966,12 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		/// <param name="styleName"></param>
 		/// <param name="wsId">writing system id</param>
-		/// <param name="readOnlyPropertyTable"></param>
+		/// <param name="styleSheet"></param>
+		/// <param name="lgWritingSysytem"></param>
 		/// <returns></returns>
-		internal static StyleDeclaration GenerateCssStyleFromLcmStyleSheet(string styleName, int wsId, IReadonlyPropertyTable readOnlyPropertyTable)
+		internal static StyleDeclaration GenerateCssStyleFromLcmStyleSheet(string styleName, int wsId, LcmStyleSheet styleSheet, ILgWritingSystem lgWritingSysytem)
 		{
-			return GenerateCssStyleFromLcmStyleSheet(styleName, wsId, null, readOnlyPropertyTable);
+			return GenerateCssStyleFromLcmStyleSheet(styleName, wsId, null, styleSheet, lgWritingSysytem);
 		}
 
 		/// <summary>
@@ -965,18 +981,17 @@ namespace LanguageExplorer.Works
 		/// <param name="styleName"></param>
 		/// <param name="wsId">writing system id</param>
 		/// <param name="node">The configuration node to use for generating paragraph margin in context</param>
-		/// <param name="readOnlyPropertyTable">To retrieve styles</param>
+		/// <param name="styleSheet"></param>
+		/// <param name="lgWritingSysytem"></param>
 		/// <returns></returns>
-		internal static StyleDeclaration GenerateCssStyleFromLcmStyleSheet(string styleName, int wsId,
-			ConfigurableDictionaryNode node, IReadonlyPropertyTable readOnlyPropertyTable)
+		internal static StyleDeclaration GenerateCssStyleFromLcmStyleSheet(string styleName, int wsId, ConfigurableDictionaryNode node, LcmStyleSheet styleSheet, ILgWritingSystem lgWritingSysytem)
 		{
-			return GenerateCssStyleFromLcmStyleSheet(styleName, wsId, node, readOnlyPropertyTable, false)[0];
+			return GenerateCssStyleFromLcmStyleSheet(styleName, wsId, node, styleSheet, lgWritingSysytem, false)[0];
 		}
 
-		internal static List<StyleDeclaration> GenerateCssStyleFromLcmStyleSheet(string styleName, int wsId, ConfigurableDictionaryNode node, IReadonlyPropertyTable readOnlyPropertyTable, bool calculateFirstSenseStyle)
+		internal static List<StyleDeclaration> GenerateCssStyleFromLcmStyleSheet(string styleName, int wsId, ConfigurableDictionaryNode node, LcmStyleSheet styleSheet, ILgWritingSystem lgWritingSysytem, bool calculateFirstSenseStyle)
 		{
 			var declaration = new StyleDeclaration();
-			var styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(readOnlyPropertyTable);
 			if(styleSheet == null || !styleSheet.Styles.Contains(styleName))
 			{
 				return new List<StyleDeclaration> {declaration};
@@ -987,8 +1002,10 @@ namespace LanguageExplorer.Works
 
 			// Tuple ancestorIndents used for ancestor components leadingIndent and hangingIndent.
 			var ancestorIndents = new AncestorIndents(0.0f, 0.0f);
-			if(exportStyleInfo.IsParagraphStyle && node != null)
+			if (exportStyleInfo.IsParagraphStyle && node != null)
+			{
 				ancestorIndents = CalculateParagraphIndentsFromAncestors(node, styleSheet, ancestorIndents);
+			}
 
 			if(exportStyleInfo.HasAlignment)
 			{
@@ -1080,7 +1097,7 @@ namespace LanguageExplorer.Works
 				declaration.Add(new Property(paddingDirection) { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.TrailingIndent)) });
 			}
 
-			AddFontInfoCss(projectStyle, declaration, wsId, readOnlyPropertyTable.GetValue<LcmCache>("cache"));
+			AddFontInfoCss(projectStyle, projectStyle.FontInfoForWs(wsId), declaration, lgWritingSysytem);
 
 			if (exportStyleInfo.NumberScheme != 0)
 			{
@@ -1251,24 +1268,23 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Builds the css rules for font info properties using the writing system overrides
 		/// </summary>
-		private static void AddFontInfoCss(BaseStyleInfo projectStyle, StyleDeclaration declaration, int wsId, LcmCache cache)
+		private static void AddFontInfoCss(BaseStyleInfo projectStyle, FontInfo wsFontInfo, StyleDeclaration declaration, ILgWritingSystem lgWritingSysytem)
 		{
-			var wsFontInfo = projectStyle.FontInfoForWs(wsId);
 			var defaultFontInfo = projectStyle.DefaultCharacterStyleInfo;
 
 			// set fontName to the wsFontInfo publicly accessible InheritableStyleProp value if set, otherwise the
 			// defaultFontInfo if set, or null.
-			var fontName = wsFontInfo.m_fontName.ValueIsSet ? wsFontInfo.m_fontName.Value
-				: defaultFontInfo.FontName.ValueIsSet ? defaultFontInfo.FontName.Value : null;
+			var fontName = wsFontInfo.m_fontName.ValueIsSet ? wsFontInfo.m_fontName.Value : defaultFontInfo.FontName.ValueIsSet ? defaultFontInfo.FontName.Value : null;
 
 			// fontName still null means not set in Normal Style, then get default fonts from WritingSystems configuration.
 			// Comparison, projectStyle.Name == "Normal", required to limit the font-family definition to the
 			// empty span (ie span[lang|="en"]{}. If not included, font-family will be added to many more spans.
 			if (fontName == null && projectStyle.Name == "Normal")
 			{
-				var lgWritingSysytem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId);
-				if(lgWritingSysytem != null)
+				if (lgWritingSysytem != null)
+				{
 					fontName = lgWritingSysytem.DefaultFontName;
+				}
 			}
 
 			if (fontName != null)
@@ -1497,7 +1513,7 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		public static void GenerateLetterHeaderCss(IReadonlyPropertyTable readOnlyPropertyTable, StyleSheet styleSheet)
+		public static void GenerateLetterHeaderCss(StyleSheet styleSheet, LcmStyleSheet lcmStyleSheet)
 		{
 			var letHeadRule = new StyleRule { Value = ".letHead" };
 			letHeadRule.Declarations.Properties.Add(new Property("-moz-column-count") { Term = new PrimitiveTerm(UnitType.Number, 1) });
@@ -1505,7 +1521,7 @@ namespace LanguageExplorer.Works
 			letHeadRule.Declarations.Properties.Add(new Property("column-count") { Term = new PrimitiveTerm(UnitType.Number, 1) });
 			letHeadRule.Declarations.Properties.Add(new Property("clear") { Term = new PrimitiveTerm(UnitType.Ident, "both") });
 			letHeadRule.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Percentage, 100) });
-			letHeadRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(GenerateCssStyleFromLcmStyleSheet(LetterHeadingStyleName, 0, readOnlyPropertyTable)));
+			letHeadRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(GenerateCssStyleFromLcmStyleSheet(LetterHeadingStyleName, 0, lcmStyleSheet, null)));
 
 			styleSheet.Rules.Add(letHeadRule);
 		}

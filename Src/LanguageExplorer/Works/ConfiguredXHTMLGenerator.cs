@@ -85,11 +85,11 @@ namespace LanguageExplorer.Works
 		{
 			if (entry == null)
 			{
-				throw new ArgumentNullException("entry");
+				throw new ArgumentNullException(nameof(entry));
 			}
 			if (pubDecorator == null)
 			{
-				throw new ArgumentException("pubDecorator");
+				throw new ArgumentException(nameof(pubDecorator));
 			}
 			var configDir = Path.GetDirectoryName(configuration.FilePath);
 			var projectPath = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable);
@@ -101,14 +101,14 @@ namespace LanguageExplorer.Works
 			using (var writer = XmlWriter.Create(stringBuilder))
 			using (var cssWriter = new StreamWriter(previewCssPath, false, Encoding.UTF8))
 			{
-				IReadonlyPropertyTable readOnlyPropTable = new ReadOnlyPropertyTable(propertyTable);
-				var exportSettings = new GeneratorSettings(cache, readOnlyPropTable, false, false, null, IsNormalRtl(readOnlyPropTable));
+				IReadonlyPropertyTable readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
+				var exportSettings = new GeneratorSettings(cache, readOnlyPropertyTable, false, false, null, IsNormalRtl(readOnlyPropertyTable));
 				GenerateOpeningHtml(previewCssPath, custCssPath, exportSettings, writer);
 				var content = GenerateXHTMLForEntry(entry, configuration, pubDecorator, exportSettings);
 				writer.WriteRaw(content);
 				GenerateClosingHtml(writer);
 				writer.Flush();
-				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, readOnlyPropTable, cache));
+				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, cache, FontHeightAdjuster.StyleSheetFromPropertyTable(readOnlyPropertyTable)));
 				cssWriter.Flush();
 			}
 
@@ -268,6 +268,7 @@ namespace LanguageExplorer.Works
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
 				IReadonlyPropertyTable readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
+				var fwStyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(readOnlyPropertyTable);
 				var custCssPath = string.Empty;
 				var projType = string.IsNullOrEmpty(configDir) ? null : new DirectoryInfo(configDir).Name;
 				if (!string.IsNullOrEmpty(projType))
@@ -277,7 +278,7 @@ namespace LanguageExplorer.Works
 				}
 				var settings = new GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(xhtmlPath), IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css");
 				GenerateOpeningHtml(cssPath, custCssPath, settings, xhtmlWriter);
-				Tuple<int, int> currentPageBounds = GetPageForCurrentEntry(settings, entryHvos, entriesPerPage, activeRecordList);
+				var currentPageBounds = GetPageForCurrentEntry(settings, entryHvos, entriesPerPage, activeRecordList);
 				GenerateTopOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter, cssWriter);
 				string lastHeader = null;
 				var itemsOnPage = currentPageBounds.Item2 - currentPageBounds.Item1;
@@ -296,22 +297,30 @@ namespace LanguageExplorer.Works
 						var entryContent = GenerateXHTMLForEntry(entry, configuration, publicationDecorator, settings);
 						entryStringBuilder.Append(entryContent);
 						if (progress != null)
+						{
 							progress.Position++;
+						}
 					});
 
 					entryActions.Add(generateEntryAction);
 				}
 				if (progress != null)
+				{
 					progress.Message = xWorksStrings.ksGeneratingDisplayFragments;
+				}
 				// Generate all the document fragments (in parallel)
 				SpawnEntryGenerationThreadsAndWait(entryActions, progress);
 				// Generate the letter headers and insert the document fragments into the full xhtml file
 				if (progress != null)
+				{
 					progress.Message = xWorksStrings.ksArrangingDisplayFragments;
+				}
 				foreach (var entryAndXhtml in entryContents)
 				{
 					if (wantLetterHeaders && !string.IsNullOrEmpty(entryAndXhtml.Item2.ToString()))
+					{
 						GenerateLetterHeaderIfNeeded(entryAndXhtml.Item1, ref lastHeader, xhtmlWriter, settings);
+					}
 					xhtmlWriter.WriteRaw(entryAndXhtml.Item2.ToString());
 				}
 				GenerateBottomOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter);
@@ -319,13 +328,15 @@ namespace LanguageExplorer.Works
 				xhtmlWriter.Flush();
 
 				if (progress != null)
+				{
 					progress.Message = xWorksStrings.ksGeneratingStyleInfo;
+				}
 				if (!IsLexEditPreviewOnly(publicationDecorator) && !IsExport(settings))
 				{
 					cssWriter.Write(CssGenerator.GenerateCssForSelectedEntry(settings.RightToLeft));
 					CopyFileSafely(settings, Path.Combine(FwDirectoryFinder.FlexFolder, ImagesFolder, CurrentEntryMarker), CurrentEntryMarker);
 				}
-				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, readOnlyPropertyTable, cache));
+				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, cache, fwStyleSheet));
 				cssWriter.Flush();
 			}
 		}
@@ -809,7 +820,7 @@ namespace LanguageExplorer.Works
 			}
 			else if (config.IsCustomField && config.SubField == null)
 			{
-				var customFieldOwnerClassName = GetClassNameForCustomFieldParent(config, settings.Cache);
+				var customFieldOwnerClassName = GetClassNameForCustomFieldParent(config, (IFwMetaDataCacheManaged)settings.Cache.MetaDataCacheAccessor);
 				if (!GetPropValueForCustomField(field, config, cache, customFieldOwnerClassName, config.FieldDescription, ref propertyValue))
 					return string.Empty;
 			}
@@ -867,7 +878,7 @@ namespace LanguageExplorer.Works
 			ICmObject fileOwner;
 			var typeForNode = config.IsCustomField
 										? GetPropertyTypeFromReflectedTypes(propertyValue.GetType(), null)
-										: GetPropertyTypeForConfigurationNode(config, propertyValue.GetType(), cache);
+										: GetPropertyTypeForConfigurationNode(config, propertyValue.GetType(), (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor);
 			switch (typeForNode)
 			{
 				case PropertyType.CollectionType:
@@ -965,7 +976,7 @@ namespace LanguageExplorer.Works
 		private static bool GetPropValueForCustomField(object fieldOwner, ConfigurableDictionaryNode config,
 			LcmCache cache, string customFieldOwnerClassName, string customFieldName, ref object propertyValue)
 		{
-			int customFieldFlid = GetCustomFieldFlid(config, cache, customFieldOwnerClassName, customFieldName);
+			int customFieldFlid = GetCustomFieldFlid(config, (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor, customFieldOwnerClassName, customFieldName);
 			if (customFieldFlid != 0)
 			{
 				var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
@@ -1144,21 +1155,25 @@ namespace LanguageExplorer.Works
 		/// <summary/>
 		/// <returns>Returns the flid of the custom field identified by the configuration nodes FieldDescription
 		/// in the class identified by <code>customFieldOwnerClassName</code></returns>
-		private static int GetCustomFieldFlid(ConfigurableDictionaryNode config, LcmCache cache,
-														  string customFieldOwnerClassName, string customFieldName = null)
+		private static int GetCustomFieldFlid(ConfigurableDictionaryNode config, IFwMetaDataCacheManaged metaDataCacheAccessor, string customFieldOwnerClassName, string customFieldName = null)
 		{
 			var fieldName = customFieldName ?? config.FieldDescription;
 			var customFieldFlid = 0;
-			var mdc = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
-			if (mdc.FieldExists(customFieldOwnerClassName, fieldName, false))
-				customFieldFlid = cache.MetaDataCacheAccessor.GetFieldId(customFieldOwnerClassName, fieldName, false);
+			if (metaDataCacheAccessor.FieldExists(customFieldOwnerClassName, fieldName, false))
+			{
+				customFieldFlid = metaDataCacheAccessor.GetFieldId(customFieldOwnerClassName, fieldName, false);
+			}
 			else if (customFieldOwnerClassName == "SenseOrEntry")
 			{
 				// ENHANCE (Hasso) 2016.06: take pity on the poor user who has defined identically-named Custom Fields on both Sense and Entry
-				if (mdc.FieldExists("LexSense", config.FieldDescription, false))
-					customFieldFlid = mdc.GetFieldId("LexSense", fieldName, false);
-				else if (mdc.FieldExists("LexEntry", config.FieldDescription, false))
-					customFieldFlid = mdc.GetFieldId("LexEntry", fieldName, false);
+				if (metaDataCacheAccessor.FieldExists("LexSense", config.FieldDescription, false))
+				{
+					customFieldFlid = metaDataCacheAccessor.GetFieldId("LexSense", fieldName, false);
+				}
+				else if (metaDataCacheAccessor.FieldExists("LexEntry", config.FieldDescription, false))
+				{
+					customFieldFlid = metaDataCacheAccessor.GetFieldId("LexEntry", fieldName, false);
+				}
 			}
 			return customFieldFlid;
 		}
@@ -1167,12 +1182,12 @@ namespace LanguageExplorer.Works
 		/// This method will return the string representing the class name for the parent
 		/// node of a configuration item representing a custom field.
 		/// </summary>
-		private static string GetClassNameForCustomFieldParent(ConfigurableDictionaryNode customFieldNode, LcmCache cache)
+		private static string GetClassNameForCustomFieldParent(ConfigurableDictionaryNode customFieldNode, IFwMetaDataCacheManaged metaDataCacheAccessor)
 		{
 			Type unneeded;
 			// If the parent node of the custom field represents a collection, calling GetTypeForConfigurationNode
 			// with the parent node returns the collection type. We want the type of the elements in the collection.
-			var parentNodeType = GetTypeForConfigurationNode(customFieldNode.Parent, cache, out unneeded);
+			var parentNodeType = GetTypeForConfigurationNode(customFieldNode.Parent, metaDataCacheAccessor, out unneeded);
 			if (parentNodeType == null)
 			{
 				Debug.Assert(parentNodeType != null, "Unable to find type for configuration node");
@@ -1304,10 +1319,14 @@ namespace LanguageExplorer.Works
 				{
 					// converts audio files to correct format during Webonary export
 					if (isWavExport)
+					{
 						WavConverter.WavToMp3(source, destination);
+					}
 					else
+					{
 						FileUtils.Copy(source, destination);
 					}
+				}
 				else if (!AreFilesIdentical(source, destination, isWavExport))
 				{
 					var fileWithoutExtension = Path.GetFileNameWithoutExtension(relativeDestination);
@@ -1383,9 +1402,9 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Get the property type for a configuration node, using a cache to help out if necessary.
 		/// </summary>
-		internal static PropertyType GetPropertyTypeForConfigurationNode(ConfigurableDictionaryNode config, LcmCache cache)
+		internal static PropertyType GetPropertyTypeForConfigurationNode(ConfigurableDictionaryNode config, IFwMetaDataCacheManaged metaDataCacheAccessor)
 		{
-			return GetPropertyTypeForConfigurationNode(config, null, cache);
+			return GetPropertyTypeForConfigurationNode(config, null, metaDataCacheAccessor);
 		}
 
 		/// <summary>
@@ -1393,12 +1412,10 @@ namespace LanguageExplorer.Works
 		/// described by the ancestry and FieldDescription and SubField properties of each node in it.
 		/// </summary>
 		/// <returns></returns>
-		internal static PropertyType GetPropertyTypeForConfigurationNode(ConfigurableDictionaryNode config, Type fieldTypeFromData, LcmCache cache = null)
+		internal static PropertyType GetPropertyTypeForConfigurationNode(ConfigurableDictionaryNode config, Type fieldTypeFromData, IFwMetaDataCacheManaged metaDataCacheAccessor)
 		{
 			Type parentType;
-			var fieldType = GetTypeForConfigurationNode(config, cache, out parentType);
-			if (fieldType == null)
-				fieldType = fieldTypeFromData;
+			var fieldType = GetTypeForConfigurationNode(config, metaDataCacheAccessor, out parentType) ?? fieldTypeFromData;
 			return GetPropertyTypeFromReflectedTypes(fieldType, parentType);
 		}
 
@@ -1443,14 +1460,14 @@ namespace LanguageExplorer.Works
 		/// This method will return the Type that represents the data in the given configuration node.
 		/// </summary>
 		/// <param name="config">This node and it's lineage will be used to find the type</param>
-		/// <param name="cache">Used when dealing with custom field nodes</param>
+		/// <param name="metaDataCacheAccessor">Used when dealing with custom field nodes</param>
 		/// <param name="parentType">This will be set to the type of the parent of config which is sometimes useful to the callers</param>
 		/// <returns></returns>
-		internal static Type GetTypeForConfigurationNode(ConfigurableDictionaryNode config, LcmCache cache, out Type parentType)
+		internal static Type GetTypeForConfigurationNode(ConfigurableDictionaryNode config, IFwMetaDataCacheManaged metaDataCacheAccessor, out Type parentType)
 		{
 			if (config == null)
 			{
-				throw new ArgumentNullException("config", "The configuration node must not be null.");
+				throw new ArgumentNullException(nameof(config), @"The configuration node must not be null.");
 			}
 
 			parentType = null;
@@ -1475,7 +1492,7 @@ namespace LanguageExplorer.Works
 			}
 			if (lookupType == null)
 			{
-				throw new ArgumentException(String.Format(xWorksStrings.InvalidRootConfigurationNode, rootNode.FieldDescription));
+				throw new ArgumentException(string.Format(xWorksStrings.InvalidRootConfigurationNode, rootNode.FieldDescription));
 			}
 			var fieldType = lookupType;
 
@@ -1484,7 +1501,7 @@ namespace LanguageExplorer.Works
 			{
 				if (node.IsCustomField)
 				{
-					fieldType = GetCustomFieldType(lookupType, node, cache);
+					fieldType = GetCustomFieldType(lookupType, node, metaDataCacheAccessor);
 				}
 				else
 				{
@@ -1514,14 +1531,14 @@ namespace LanguageExplorer.Works
 			return fieldType;
 		}
 
-		private static Type GetCustomFieldType(Type lookupType, ConfigurableDictionaryNode config, LcmCache cache)
+		private static Type GetCustomFieldType(Type lookupType, ConfigurableDictionaryNode config, IFwMetaDataCacheManaged metaDataCacheAccessor)
 		{
 			// FDO doesn't work with interfaces, just concrete classes so chop the I off any interface types
 			var customFieldOwnerClassName = lookupType.Name.TrimStart('I');
-			var customFieldFlid = GetCustomFieldFlid(config, cache, customFieldOwnerClassName);
+			var customFieldFlid = GetCustomFieldFlid(config, metaDataCacheAccessor, customFieldOwnerClassName);
 			if (customFieldFlid != 0)
 			{
-				var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
+				var customFieldType = metaDataCacheAccessor.GetFieldType(customFieldFlid);
 				switch (customFieldType)
 				{
 					case (int)CellarPropertyType.ReferenceSequence:
@@ -1533,7 +1550,7 @@ namespace LanguageExplorer.Works
 					case (int)CellarPropertyType.ReferenceAtomic:
 					case (int)CellarPropertyType.OwningAtomic:
 					{
-						var destClassId = cache.MetaDataCacheAccessor.GetDstClsId(customFieldFlid);
+						var destClassId = metaDataCacheAccessor.GetDstClsId(customFieldFlid);
 						if (destClassId == StTextTags.kClassId)
 						{
 								return typeof(IStText);
@@ -2512,9 +2529,9 @@ namespace LanguageExplorer.Works
 			return entryType.GetGenericArguments().Length > 0 || typeof(ILcmVector).IsAssignableFrom(entryType);
 		}
 
-		internal static bool IsCollectionNode(ConfigurableDictionaryNode configNode, LcmCache cache)
+		internal static bool IsCollectionNode(ConfigurableDictionaryNode configNode, IFwMetaDataCacheManaged metaDataCacheAccessor)
 		{
-			return GetPropertyTypeForConfigurationNode(configNode, cache) == PropertyType.CollectionType;
+			return GetPropertyTypeForConfigurationNode(configNode, metaDataCacheAccessor) == PropertyType.CollectionType;
 		}
 
 		/// <summary>
@@ -3002,19 +3019,22 @@ namespace LanguageExplorer.Works
 				writer.WriteStartElement("span"); // set direction on a nested span to preserve Context's position and direction
 				writer.WriteAttributeString("dir", wsRtl ? "rtl" : "ltr");
 			}
-			if (!String.IsNullOrEmpty(style))
+			if (!string.IsNullOrEmpty(style))
 			{
-				var cssStyle = CssGenerator.GenerateCssStyleFromLcmStyleSheet(style, settings.Cache.WritingSystemFactory.GetWsFromStr(writingSystem), settings.ReadOnlyPropertyTable);
+				var wsId = settings.Cache.WritingSystemFactory.GetWsFromStr(writingSystem);
+				var cssStyle = CssGenerator.GenerateCssStyleFromLcmStyleSheet(style, wsId, settings.ReadOnlyPropertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet"), settings.Cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId));
 				var css = cssStyle.ToString();
-				if (!String.IsNullOrEmpty(css))
+				if (!string.IsNullOrEmpty(css))
+				{
 					writer.WriteAttributeString("style", css);
+				}
 			}
 			if (linkDestination != Guid.Empty)
 			{
 				writer.WriteStartElement("a");
 				writer.WriteAttributeString("href", "#g" + linkDestination);
 			}
-			const char txtlineSplit = (Char)8232; //Line-Seperator Decimal Code
+			const char txtlineSplit = (char)8232; //Line-Seperator Decimal Code
 			if (text.Contains(txtlineSplit))
 			{
 				var txtContents = text.Split(txtlineSplit);

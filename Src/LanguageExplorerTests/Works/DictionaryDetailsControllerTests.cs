@@ -1,95 +1,55 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Works;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using LanguageExplorer.Works.DictionaryDetailsView;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorerTests.Works
 {
-#if RANDYTODO // Some of this can be salvaged, but not the part where it loads the main xml config files.
 	[TestFixture]
-	public class DictionaryDetailsControllerTests : XWorksAppTestBase, IDisposable
+	public class DictionaryDetailsControllerTests : XWorksAppTestBase
 	{
-		private IPropertyTable m_propertyTable;
-		private Mediator m_mediator;
-		private LcmStyleSheet m_styleSheet;
+		private FlexComponentParameters _flexComponentParameters;
 		private DictionaryDetailsController m_staticDDController; // for testing methods that would be static if not for m_propertyTable
 
-		#region IDisposable
-		~DictionaryDetailsControllerTests()
+		#region Overrides of LcmTestBase
+
+		protected override void FixtureInit()
 		{
-			Dispose(false);
-		}
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-		protected virtual void Dispose(bool disposing)
-		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing && !IsDisposed)
-			{
-				if(m_mediator != null && !m_mediator.IsDisposed)
-				{
-					m_mediator.RemoveColleague(m_window);
-					m_mediator.Dispose();
-				}
-
-				if (m_window != null && !m_window.IsDisposed)
-					m_window.Dispose();
-				m_window = null;
-
-				if (m_propertyTable != null && !m_propertyTable.IsDisposed)
-					m_propertyTable.Dispose();
-				m_propertyTable = null;
-
-				if (m_staticDDController != null && m_staticDDController.View != null && !m_staticDDController.View.IsDisposed)
-					m_staticDDController.View.Dispose();
-				m_staticDDController = null;
-			}
-			IsDisposed = true;
-		}
-
-		/// <summary>
-		/// See if the object has been disposed.
-		/// </summary>
-		protected bool IsDisposed
-		{
-			get;
-			private set;
-		}
-
-		#endregion IDisposable
-
-		#region Setup and Teardown
-		protected override void Init()
-		{
-			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
-			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
-			m_window = new MockFwXWindow(m_application, m_configFilePath);
-			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
-			m_propertyTable = m_window.PropTable;
-			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
-
-			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			GenerateStyles();
 
-			m_staticDDController = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			m_staticDDController = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			m_staticDDController.LoadNode(null, new ConfigurableDictionaryNode());
 		}
+
+		public override void FixtureTeardown()
+		{
+			_flexComponentParameters.PropertyTable.Dispose();
+			if (m_staticDDController?.View != null && !m_staticDDController.View.IsDisposed)
+			{
+				m_staticDDController.View.Dispose();
+			}
+			_flexComponentParameters = null;
+			m_staticDDController = null;
+
+			base.FixtureTeardown();
+		}
+
+		#endregion
+
 		internal class TestDictionaryDetailsView : IDictionaryDetailsView
 		{
 			private List<StyleComboItem> m_styles;
@@ -189,14 +149,13 @@ namespace LanguageExplorerTests.Works
 
 		protected void GenerateStyles()
 		{
-			for (int i = 0; i < 5; i++)
+			var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(_flexComponentParameters.PropertyTable);
+			for (var i = 0; i < 5; i++)
 			{
-				m_styleSheet.Styles.Add(new BaseStyleInfo { Name = string.Format("ParaStyle{0}", i), IsParagraphStyle = true });
-				m_styleSheet.Styles.Add(new BaseStyleInfo { Name = string.Format("CharStyle{0}", i), IsParagraphStyle = false });
+				stylesheet.Styles.Add(new BaseStyleInfo { Name = $"ParaStyle{i}", IsParagraphStyle = true });
+				stylesheet.Styles.Add(new BaseStyleInfo { Name = $"CharStyle{i}", IsParagraphStyle = false });
 			}
 		}
-
-		#endregion Setup and Teardown
 
 		#region Helpers
 		public static List<DictionaryNodeListOptions.DictionaryNodeOption> ListOfEnabledDNOsFromStrings(IEnumerable<String> idList)
@@ -261,7 +220,7 @@ namespace LanguageExplorerTests.Works
 				DictionaryNodeOptions =
 					new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true }
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, testNode);
 			using (var view = controller.View)
 			{
@@ -278,7 +237,7 @@ namespace LanguageExplorerTests.Works
 				DictionaryNodeOptions =
 					new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = false }
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, testNode);
 			using (var view = controller.View)
 			{
@@ -296,7 +255,7 @@ namespace LanguageExplorerTests.Works
 			{
 				wsOptions.DisplayEachInAParagraph = true;
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
@@ -323,7 +282,7 @@ namespace LanguageExplorerTests.Works
 				DictionaryNodeOptions =
 					new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true }
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, testNode);
 			using (var view = controller.View)
 			{
@@ -340,7 +299,7 @@ namespace LanguageExplorerTests.Works
 				DictionaryNodeOptions =
 					new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = false }
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, testNode);
 			using (var view = controller.View)
 			{
@@ -352,7 +311,7 @@ namespace LanguageExplorerTests.Works
 		[Test]
 		public void NonSenseLoadsCharacterStyles()
 		{
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			using(var view = controller.View)
 			{
 				controller.LoadNode(null, new ConfigurableDictionaryNode {Parent = new ConfigurableDictionaryNode()});
@@ -373,7 +332,7 @@ namespace LanguageExplorerTests.Works
 					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
 				}
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
 			controller.LoadNode(null, node);
 			AssertShowingCharacterStyles(controller.View);
@@ -418,7 +377,7 @@ namespace LanguageExplorerTests.Works
 					DisplayEachInAParagraph = true
 				}
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			// SUT
 			controller.LoadNode(null, node);
 			AssertShowingParagraphStyles(controller.View);
@@ -446,7 +405,7 @@ namespace LanguageExplorerTests.Works
 					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis
 				}
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			Assert.DoesNotThrow(() =>
 			{
 				// SUT
@@ -471,7 +430,7 @@ namespace LanguageExplorerTests.Works
 			};
 			parentSenseNode.Children = new List<ConfigurableDictionaryNode> { childGramarNode };
 
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, childGramarNode);
 			using(var view = controller.View)
 			{
@@ -498,7 +457,7 @@ namespace LanguageExplorerTests.Works
 			parentComplexFormsNode.Children = new List<ConfigurableDictionaryNode> { childGramarNode };
 
 			// SUT is LoadNode.  `using ... .View` to ensure disposal
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			Assert.DoesNotThrow(() => { using(controller.View) { controller.LoadNode(null, childGramarNode); } });
 		}
 		#endregion Sense tests
@@ -552,7 +511,7 @@ namespace LanguageExplorerTests.Works
 				ListId = DictionaryNodeListOptions.ListIds.Variant
 			};
 			var node = new ConfigurableDictionaryNode { DictionaryNodeOptions = listOptions };
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			using (var view = controller.View)
 			{
 				// SUT
@@ -583,7 +542,7 @@ namespace LanguageExplorerTests.Works
 			{
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true }
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, testNode);
 			Assert.False(controller.View.SurroundingCharsVisible, "Context should start hidden");
 			testNode = new ConfigurableDictionaryNode
@@ -604,7 +563,7 @@ namespace LanguageExplorerTests.Works
 			{
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = false }
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, testNode);
 			Assert.True(controller.View.SurroundingCharsVisible, "Context should start visible");
 			testNode = new ConfigurableDictionaryNode
@@ -626,7 +585,7 @@ namespace LanguageExplorerTests.Works
 				ListId = DictionaryNodeListOptions.ListIds.Variant
 			};
 			var node = new ConfigurableDictionaryNode { DictionaryNodeOptions = listOptions };
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, node);
 			Assert.NotNull(((TestDictionaryDetailsView)controller.View).OptionsView, "Test setup failed, OptionsView shoud not be null");
 			var optionlessNode = new ConfigurableDictionaryNode();
@@ -668,7 +627,7 @@ namespace LanguageExplorerTests.Works
 
 		private void VerifyCannotUncheckOnlyCheckedItemInList(DictionaryNodeOptions options)
 		{
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = options });
 			using (var view = controller.View)
 			{
@@ -705,7 +664,7 @@ namespace LanguageExplorerTests.Works
 
 		private void VerifyCannotMoveTopItemUp(DictionaryNodeOptions options)
 		{
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = options });
 			using (var view = controller.View)
 			{
@@ -743,7 +702,7 @@ namespace LanguageExplorerTests.Works
 
 		private void VerifyCannotMoveBottomItemDown(DictionaryNodeOptions options)
 		{
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = options });
 			using (var view = controller.View)
 			{
@@ -774,7 +733,7 @@ namespace LanguageExplorerTests.Works
 				Options = ListOfEnabledDNOsFromStrings(new List<string> { "en", "fr" }),
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
@@ -808,7 +767,7 @@ namespace LanguageExplorerTests.Works
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both,
 				DisplayWritingSystemAbbreviations = true
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
@@ -870,7 +829,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(entryConfig);
 
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, senseConfig);
 			using (var view = controller.View)
 			{
@@ -887,7 +846,7 @@ namespace LanguageExplorerTests.Works
 				ValidateSenseControls(optionsView, false);
 			}
 
-			var controller2 = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller2 = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller2.LoadNode(null, subSenseConfig);
 			using (var view = controller2.View)
 			{
@@ -1004,7 +963,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(entryConfig);
 
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			using (var view = controller.View)
 			{
 				controller.LoadNode(null, senseConfig);
@@ -1049,7 +1008,7 @@ namespace LanguageExplorerTests.Works
 		{
 			var wsOptions = (DictionaryNodeWritingSystemOptions)ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "vernacular" },
 				DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
@@ -1081,7 +1040,7 @@ namespace LanguageExplorerTests.Works
 				Options = ListOfEnabledDNOsFromStrings(new List<string> { "en" }),
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
@@ -1114,7 +1073,7 @@ namespace LanguageExplorerTests.Works
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
@@ -1146,7 +1105,7 @@ namespace LanguageExplorerTests.Works
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
@@ -1206,7 +1165,7 @@ namespace LanguageExplorerTests.Works
 
 			using (var view = new TestDictionaryDetailsView())
 			{
-				var controller = new DictionaryDetailsController(view, m_propertyTable);
+				var controller = new DictionaryDetailsController(view, _flexComponentParameters.PropertyTable);
 				// SUT (actually, ensures that messages will show after the user selects a different Config in the ConfigDlg)
 				controller.LoadNode(new DictionaryConfigurationModel(), mainEntry);
 				Assert.IsNullOrEmpty(view.GetTooltipFromOverPanel(), "Unshared nodes require no explanation");
@@ -1257,7 +1216,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(entryConfig);
 
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, groupConfig);
 			using (var view = controller.View)
 			{
@@ -1268,5 +1227,4 @@ namespace LanguageExplorerTests.Works
 		}
 		#endregion
 	}
-#endif
 }

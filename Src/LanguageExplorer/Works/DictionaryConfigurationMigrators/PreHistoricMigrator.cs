@@ -9,8 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using LanguageExplorer.Areas;
+using LanguageExplorer.Areas.Lexicon;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.Dumpster;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
@@ -113,8 +113,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 			var tool = m_configDirSuffixBeingMigrated == DCL.DictionaryConfigurationDirectoryName
 				? AreaServices.LexiconDictionaryMachineName
 				: AreaServices.ReversalEditCompleteMachineName;
-			var configureLayouts = GetConfigureLayoutsNodeForTool(tool);
-			LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
+			LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(GetConfigureLayoutsNodeForTool(tool), this);
 		}
 
 		/// <summary>
@@ -122,11 +121,14 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 		/// </summary>
 		private XElement GetConfigureLayoutsNodeForTool(string tool)
 		{
-			var controlElement = AreaListener.GetContentControlParameters(null, AreaServices.InitialAreaMachineName, tool);
-			Debug.Assert(controlElement != null, "Prepare to be disappointed, since it will be null.");
-			var parameters = controlElement.Elements("parameters").First();
-			var configureLayouts = XmlUtils.FindElement(parameters, "configureLayouts");
-			return configureLayouts;
+			switch (tool)
+			{
+				case AreaServices.LexiconDictionaryMachineName:
+					return XDocument.Parse(LexiconResources.LexiconDictionaryConfigureLayouts).Root;
+				case AreaServices.ReversalEditCompleteMachineName:
+					return XDocument.Parse(LexiconResources.ReversalEditCompleteToolParameters).Root.Element("docview").Element("parameters").Element("configureLayouts");
+			}
+			return null;
 		}
 
 		/// <summary>
@@ -592,8 +594,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 				// "Minor Entries (Complex Forms)" and "Minor Entries (Variants)".
 				if (!currentDefaultNode.Label.StartsWith(convertedNode.Label + " "))
 				{
-					throw new ArgumentException(string.Format("Cannot merge two nodes that do not match. [{0}, {1}]",
-						convertedNode.Label, currentDefaultNode.Label));
+					throw new ArgumentException($"Cannot merge two nodes that do not match. [{convertedNode.Label}, {currentDefaultNode.Label}]");
 				}
 			}
 			convertedNode.FieldDescription = currentDefaultNode.FieldDescription;

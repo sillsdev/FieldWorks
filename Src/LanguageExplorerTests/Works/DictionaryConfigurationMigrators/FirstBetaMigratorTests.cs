@@ -1,76 +1,53 @@
-﻿// Copyright (c) 2016-2017 SIL International
+﻿// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using LanguageExplorer;
+using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Works;
+using LanguageExplorer.Works.DictionaryConfigurationMigrators;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.IO;
 using SIL.TestUtilities;
 
-// ReSharper disable InconsistentNaming
 namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 {
 	public class FirstBetaMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-#if RANDYTODO
+		private FlexComponentParameters _flexComponentParameters;
 		private const string KidField = "kiddo";
 		private const string LexEntry = "LexEntry";
 		private const string ReferencedComplexForms = "VisibleComplexFormBackRefs";
 		private const string OtherRefdComplexForms = "ComplexFormsNotSubentries";
 		private FirstBetaMigrator m_migrator;
-		private SimpleLogger m_logger;
+		private ISimpleLogger m_logger;
 
-		private MockFwXApp m_application;
-		private string m_configFilePath;
-		private MockFwXWindow m_window;
-		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
-
-		[TestFixtureSetUp]
-		public override void FixtureSetup()
+		public override void TestSetup()
 		{
-			base.FixtureSetup();
-			Cache.ProjectId.Path = Path.Combine(Path.GetTempPath(), Cache.ProjectId.Name, Cache.ProjectId.Name + ".junk");
-			FwRegistrySettings.Init();
-			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
-			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
-			m_window = new MockFwXWindow(m_application, m_configFilePath);
-			m_window.Init(Cache); // initializes Mediator values
-			m_mediator = m_window.Mediator;
-			m_mediator.AddColleague(new StubContentControlProvider());
-			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
-			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application, Cache.ProjectId.Path);
-			m_propertyTable = m_window.PropTable;
-		}
+			base.TestSetup();
 
-		[TestFixtureTearDown]
-		public override void FixtureTeardown()
-		{
-			DirectoryUtilities.DeleteDirectoryRobust(Cache.ProjectId.Path);
-			base.FixtureTeardown();
-			m_application.Dispose();
-			m_window.Dispose();
-			m_mediator.Dispose();
-			FwRegistrySettings.Release();
-		}
-
-		[SetUp]
-		public void SetUp()
-		{
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
+			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, FwUtils.ksFlexAppName, Cache.ProjectId.Path);
 			m_logger = new SimpleLogger();
 			m_migrator = new FirstBetaMigrator(Cache, m_logger);
 		}
 
 		[TearDown]
-		public void TearDown()
+		public override void TestTearDown()
 		{
+			_flexComponentParameters.PropertyTable.Dispose();
+			DirectoryUtilities.DeleteDirectoryRobust(Cache.ProjectId.Path);
 			m_logger.Dispose();
+			_flexComponentParameters = null;
+			m_logger = null;
+			m_migrator = null;
+
+			base.TestTearDown();
 		}
 
 		[Test]
@@ -102,7 +79,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				var actualFilePath = Path.Combine(configLocations, "Stem" + DictionaryConfigurationModel.FileExtension);
 				var convertedFilePath = Path.Combine(configLocations, "Lexeme" + DictionaryConfigurationModel.FileExtension);
 				File.WriteAllText(actualFilePath, content);
-				m_migrator.MigrateIfNeeded(m_logger, m_propertyTable, "Test App Version"); // SUT
+				m_migrator.MigrateIfNeeded(m_logger, _flexComponentParameters.PropertyTable, "Test App Version"); // SUT
 				Assert.IsTrue(File.Exists(convertedFilePath));
 			}
 		}
@@ -1400,6 +1377,5 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				}
 			});
 		}
-#endif
 	}
 }

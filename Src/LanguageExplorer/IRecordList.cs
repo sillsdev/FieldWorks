@@ -73,7 +73,7 @@ namespace LanguageExplorer
 		bool SkipShowRecord { get; set; }
 		ArrayList SortedObjects { get; set; }
 		RecordSorter Sorter { get; }
-		string SortName { get; }
+		string SortName { get; set; }
 		bool SuppressSaveOnChangeRecord { get; set; }
 		bool SuspendLoadingRecordUntilOnJumpToRecord { get; set; }
 		int TypeSize { get; }

@@ -1,17 +1,17 @@
-﻿// Copyright (c) 2015-2017 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using LanguageExplorer.Areas;
+using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.LCModel.Core.Text;
 using SIL.TestUtilities;
-using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -19,86 +19,43 @@ using CXGTests = LanguageExplorerTests.Works.ConfiguredXHTMLGeneratorTests;
 
 namespace LanguageExplorerTests.Works
 {
-#if RANDYTODO // Some of this can be salvaged, but not the part where it loads the main xml config files.
-	// ReSharper disable InconsistentNaming
 	[TestFixture]
-	public class ConfiguredXHTMLGeneratorReversalTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
+	public class ConfiguredXHTMLGeneratorReversalTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		private FlexComponentParameters _flexComponentParameters;
 		private int m_wsEn, m_wsFr;
 		private static readonly StringComparison strComp = StringComparison.InvariantCulture;
 
-		private FwXApp m_application;
-		private IFwMainWnd m_window;
-		private IPropertyTable m_propertyTable;
-
 		private StringBuilder XHTMLStringBuilder { get; set; }
 
-		private ConfiguredXHTMLGenerator.GeneratorSettings DefaultSettings
-		{
-			get { return new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null); }
-		}
+		private ConfiguredXHTMLGenerator.GeneratorSettings DefaultSettings => new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null);
 
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
 
-			FwRegistrySettings.Init();
-			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
-			var m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory,
-				m_application.DefaultConfigurationPathname);
-			m_window = new MockFwXWindow(m_application, m_configFilePath);
-			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
-			m_propertyTable = m_window.PropTable;
-			// Set up the mediator to look as if we are working in the Reversal Index area
-			m_propertyTable.SetProperty("ToolForAreaNamed_lexicon", "reversalEditComplete", true);
-			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory,
-				"xWorks/xWorksTests/TestData/");
 			m_wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			m_wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 		}
 
-		[TestFixtureTearDown]
-		public override void FixtureTeardown()
+		public override void TestSetup()
 		{
-			base.FixtureTeardown();
-			Dispose();
-		}
+			base.TestSetup();
 
-		[SetUp]
-		public void SetupExportVariables()
-		{
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
+			_flexComponentParameters.PropertyTable.SetProperty($"{AreaServices.ToolForAreaNamed_}{AreaServices.LexiconAreaMachineName}", AreaServices.ReversalEditCompleteMachineName, false, false);
 			XHTMLStringBuilder = new StringBuilder();
 		}
 
-	#region disposal
-		protected virtual void Dispose(bool disposing)
+		public override void TestTearDown()
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing)
-			{
-				m_application?.Dispose();
-				m_window?.Dispose();
-				m_propertyTable?.Dispose();
-			}
-		}
+			_flexComponentParameters.PropertyTable.Dispose();
+			_flexComponentParameters = null;
+			XHTMLStringBuilder = null;
 
-		~ConfiguredXHTMLGeneratorReversalTests()
-		{
-			Dispose(false);
+			base.TestTearDown();
 		}
-
-		public void Dispose()
-		{
-			Dispose(true);
-			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
-			// take this object off the finalization queue
-			// and prevent finalization code for this object
-			// from executing a second time.
-			GC.SuppressFinalize(this);
-		}
-	#endregion disposal
 
 		[Test]
 		public void GenerateXHTMLForEntry_LexemeFormConfigurationGeneratesCorrectResult()
@@ -831,5 +788,4 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 		}
 	}
-#endif
 }

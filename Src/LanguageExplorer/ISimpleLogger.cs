@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+
 namespace LanguageExplorer
 {
 	/// <summary>
@@ -9,7 +11,7 @@ namespace LanguageExplorer
 	/// The implementation wraps a TextWriter so more of that interface can readily be added as needed.
 	/// It also manages an indentation.
 	/// </summary>
-	internal interface ISimpleLogger
+	internal interface ISimpleLogger : IDisposable
 	{
 		/// <summary>
 		/// For logging nested structures, increments the current indent level.

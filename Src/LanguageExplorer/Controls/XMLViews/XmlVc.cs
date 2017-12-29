@@ -343,8 +343,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_idToDisplayCommand.Clear();
 			m_idToDisplayCommand[kRootFragId] = rootCommand;
 			m_displayCommandToId.Clear();
-			m_layouts = new LayoutCache(m_mdc, m_cache.ProjectId.Name, TheApp,
-				m_cache.ProjectId.ProjectFolder);
+			m_layouts = new LayoutCache(m_mdc, m_cache.ProjectId.Name, TheApp?.ApplicationName ?? FwUtils.ksFlexAppName, m_cache.ProjectId.ProjectFolder);
 			// We could reset the next id, but that's arbitrary, so why bother?
 		}
 
@@ -3915,12 +3914,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			return VwFramePosition.kvfpVoid; // or Assert or throw exception?
 		}
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Gets or sets the cache.
 		/// </summary>
 		/// <value>The cache.</value>
-		/// ------------------------------------------------------------------------------------
 		public override LcmCache Cache
 		{
 			set
@@ -3931,8 +3929,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				base.Cache = value;
 
 				DataAccess = m_cache.DomainDataByFlid;
-				m_layouts = new LayoutCache(m_mdc, m_cache.ProjectId.Name, TheApp,
-					m_cache.ProjectId.ProjectFolder);
+				m_layouts = new LayoutCache(m_mdc, m_cache.ProjectId.Name, TheApp?.ApplicationName ?? FwUtils.ksFlexAppName, m_cache.ProjectId.ProjectFolder);
 			}
 		}
 

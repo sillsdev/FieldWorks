@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,30 +6,27 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
+using LanguageExplorer;
+using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Works;
+using LanguageExplorer.Works.DictionaryConfigurationMigrators;
 using NUnit.Framework;
 using SIL.IO;
 using SIL.Linq;
 using SIL.TestUtilities;
 using SIL.LCModel.Core.Cellar;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using SIL.LCModel.Utils;
 
 namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 {
-#if RANDYTODO // Some of this can be salvaged, but not the part where it loads the main xml config files.
 	public class PreHistoricMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		private FlexComponentParameters _flexComponentParameters;
+		private LcmStyleSheet _lcmStyleSheet;
 		private PreHistoricMigrator m_migrator;
-		private IPropertyTable m_propertyTable;
-		private FwXApp m_application;
-		private string m_configFilePath;
-		private MockFwXWindow m_window;
-		private LcmStyleSheet m_styleSheet;
 
 		// Set up Custom Fields at the Fixture level, since disposing one in one test disposes them all in all tests
 		private const string CustomFieldChangedLabel = "Custom Label";
@@ -48,51 +45,44 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 		private const string MinorEntryComplexXpath = "//ConfigurationItem[@name='" + MinorEntryComplexLabel + "']";
 		private const string MinorEntryVariantXpath = "//ConfigurationItem[@name='" + MinorEntryVariantLabel + "']";
 
-		[TestFixtureSetUp]
-		protected void Init()
+		#region Overrides of LcmTestBase
+
+		public override void TestSetup()
 		{
-			FwRegistrySettings.Init();
-			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
-			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
-			m_window = new MockFwXWindow(m_application, m_configFilePath);
-			m_window.Init(Cache); // initializes Mediator values
-			m_propertyTable = m_window.PropTable;
-			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
+			base.TestSetup();
 
-			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			m_cf1 = new CustomFieldForTest(Cache, CustomFieldChangedLabel, CustomFieldOriginalName, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), CellarPropertyType.ReferenceCollection, Guid.Empty);
+			m_cf2 = new CustomFieldForTest(Cache, CustomFieldUnchangedNameAndLabel, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), -1, CellarPropertyType.ReferenceCollection, Guid.Empty);
+			m_cf3 = new CustomFieldForTest(Cache, CustomFieldGenDate, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0, CellarPropertyType.GenDate, Guid.Empty);
+			m_cf4 = new CustomFieldForTest(Cache, CustomFieldLocation, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), -1, CellarPropertyType.ReferenceAtomic, Cache.LanguageProject.LocationsOA.Guid);
 
-			m_cf1 = new CustomFieldForTest(Cache, CustomFieldChangedLabel, CustomFieldOriginalName, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"),
-				CellarPropertyType.ReferenceCollection, Guid.Empty);
-			m_cf2 = new CustomFieldForTest(Cache, CustomFieldUnchangedNameAndLabel, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), -1,
-					CellarPropertyType.ReferenceCollection, Guid.Empty);
-			m_cf3 = new CustomFieldForTest(Cache, CustomFieldGenDate, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
-				CellarPropertyType.GenDate,  Guid.Empty);
-			m_cf4 = new CustomFieldForTest(Cache, CustomFieldLocation, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), -1,
-				CellarPropertyType.ReferenceAtomic, Cache.LanguageProject.LocationsOA.Guid);
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
+			_lcmStyleSheet = _flexComponentParameters.PropertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet");
+			m_migrator = new PreHistoricMigrator(Cache, _flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher);
 		}
-
-		[TestFixtureTearDown]
-		protected void TearDown()
+		public override void TestTearDown()
 		{
-			if (m_migrator != null)
-				m_migrator.SetTestLogger = null;
 			m_cf1.Dispose();
 			m_cf2.Dispose();
 			m_cf3.Dispose();
 			m_cf4.Dispose();
-			m_window.Dispose();
-			m_application.Dispose();
-			m_propertyTable.Dispose();
-			if(m_mediator != null)
-				m_mediator.Dispose();
-			FwRegistrySettings.Release();
+			if (m_migrator != null)
+			{
+				m_migrator.SetTestLogger = null;
+			}
+			_flexComponentParameters.PropertyTable.Dispose();
+
+			m_cf1 = null;
+			m_cf2 = null;
+			m_cf3 = null;
+			m_cf4 = null;
+			m_migrator = null;
+			_flexComponentParameters = null;
+
+			base.TestTearDown();
 		}
 
-		[SetUp]
-		public void SetUp()
-		{
-			m_migrator = new PreHistoricMigrator(Cache, m_mediator, m_propertyTable);
-		}
+		#endregion
 
 		///<summary/>
 		[Test]
@@ -136,9 +126,9 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			var oldSubsensesNode = new ConfigurableDictionaryNode
 			{
 				Label = "Subsenses",
-				FieldDescription = "SensesOS"
+				FieldDescription = "SensesOS",
+				Parent = oldSensesNode
 			};
-			oldSubsensesNode.Parent = oldSensesNode;
 
 			var exampleSentenceNode = new ConfigurableDictionaryNode
 			{
@@ -895,14 +885,14 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			};
 			ConfigurableDictionaryNode configNode = null;
 			const string styleName = "Dictionary-SenseNumber";
-			var senseStyle = m_styleSheet.FindStyle(styleName);
+			var senseStyle = _lcmStyleSheet.FindStyle(styleName);
 			Assert.IsNull(senseStyle, "Sense number should not exist before conversion for a valid test.");
 
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
-			senseStyle = m_styleSheet.FindStyle(styleName);
+			senseStyle = _lcmStyleSheet.FindStyle(styleName);
 			Assert.IsNotNull(senseStyle, "Sense number should have been created by the migrator.");
-			var usefulStyle = m_styleSheet.Styles[styleName];
+			var usefulStyle = _lcmStyleSheet.Styles[styleName];
 			Assert.IsTrue(usefulStyle.DefaultCharacterStyleInfo.Bold.Value, "bold was not turned on in the created style.");
 			Assert.IsFalse(usefulStyle.DefaultCharacterStyleInfo.Italic.Value, "italic was not turned off in the created style.");
 			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "arial", "arial font not used");
@@ -930,8 +920,8 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			ConfigurableDictionaryNode configNode = null;
 			const string styleName = "Dictionary-SenseNumber";
 			const string styleName2 = "Dictionary-SenseNumber-2";
-			var senseStyle = m_styleSheet.FindStyle(styleName);
-			var senseStyle2 = m_styleSheet.FindStyle(styleName2);
+			var senseStyle = _lcmStyleSheet.FindStyle(styleName);
+			var senseStyle2 = _lcmStyleSheet.FindStyle(styleName2);
 			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
 			Assert.IsNull(senseStyle2, "Second sense number style should not exist before conversion for a valid test.");
 
@@ -939,15 +929,15 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode2));
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName2);
-			senseStyle = m_styleSheet.FindStyle(styleName);
-			senseStyle2 = m_styleSheet.FindStyle(styleName2);
+			senseStyle = _lcmStyleSheet.FindStyle(styleName);
+			senseStyle2 = _lcmStyleSheet.FindStyle(styleName2);
 			Assert.IsNotNull(senseStyle, "Sense number should have been created by the migrator.");
 			Assert.IsNotNull(senseStyle2, "Sense number should have been created by the migrator.");
-			var usefulStyle = m_styleSheet.Styles[styleName];
+			var usefulStyle = _lcmStyleSheet.Styles[styleName];
 			Assert.IsTrue(usefulStyle.DefaultCharacterStyleInfo.Bold.Value, "bold was not turned on in the created style.");
 			Assert.IsFalse(usefulStyle.DefaultCharacterStyleInfo.Italic.Value, "italic was not turned off in the created style.");
 			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "arial", "arial font not used");
-			usefulStyle = m_styleSheet.Styles[styleName2];
+			usefulStyle = _lcmStyleSheet.Styles[styleName2];
 			Assert.IsTrue(usefulStyle.DefaultCharacterStyleInfo.Bold.Value, "bold was not turned on in the created style.");
 			Assert.IsFalse(usefulStyle.DefaultCharacterStyleInfo.Italic.ValueIsSet, "italic should not have been set in the created style.");
 			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "arial", "arial font not used");
@@ -968,9 +958,9 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			};
 			ConfigurableDictionaryNode configNode = null;
 			const string styleName = "Dictionary-SenseNumber";
-			var lastStyleName = String.Format("Dictionary-SenseNumber-{0}", 1 + senseNumberOptions.Length);
-			var senseStyle = m_styleSheet.FindStyle(styleName);
-			var senseStyle2 = m_styleSheet.FindStyle(lastStyleName);
+			var lastStyleName = $"Dictionary-SenseNumber-{1 + senseNumberOptions.Length}";
+			var senseStyle = _lcmStyleSheet.FindStyle(styleName);
+			var senseStyle2 = _lcmStyleSheet.FindStyle(lastStyleName);
 			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
 			Assert.IsNull(senseStyle2, "Second sense number style should not exist before conversion for a valid test.");
 
@@ -983,8 +973,10 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			}
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, lastStyleName);
 			DeleteStyleSheet(styleName);
-			for(var i = 2; i < 2 + senseNumberOptions.Length; i++) // Delete all the created dictionary styles
-				DeleteStyleSheet(String.Format("Dictionary-SenseNumber-{0}", i));
+			for (var i = 2; i < 2 + senseNumberOptions.Length; i++) // Delete all the created dictionary styles
+			{
+				DeleteStyleSheet($"Dictionary-SenseNumber-{i}");
+			}
 		}
 
 		///<summary/>
@@ -999,9 +991,9 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				ShowSenseConfig = true
 			};
 			const string styleName = "Dictionary-SenseNumber";
-			var senseStyle = m_styleSheet.FindStyle(styleName);
+			var senseStyle = _lcmStyleSheet.FindStyle(styleName);
 			const string styleName2 = "Dictionary-SenseNumber-2";
-			var senseStyle2 = m_styleSheet.FindStyle(styleName2);
+			var senseStyle2 = _lcmStyleSheet.FindStyle(styleName2);
 			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
 			Assert.IsNull(senseStyle2, "A second sense number style should not exist before conversion for a valid test.");
 
@@ -1010,7 +1002,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				senseNumberNode.NumStyle = option;
 				Assert.DoesNotThrow(() => m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
 				Assert.DoesNotThrow(() => m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
-				senseStyle2 = m_styleSheet.FindStyle(styleName2);
+				senseStyle2 = _lcmStyleSheet.FindStyle(styleName2);
 				DeleteStyleSheet(styleName);
 				Assert.IsNull(senseStyle2, "A duplicate sense number style should not have been created converting the same node twice.");
 			}
@@ -1035,8 +1027,8 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			ConfigurableDictionaryNode configNode = null;
 			const string styleName = "Dictionary-SenseNumber";
 			const string styleName2 = "Dictionary-SenseNumber-2";
-			var senseStyle = m_styleSheet.FindStyle(styleName);
-			var senseStyle2 = m_styleSheet.FindStyle(styleName2);
+			var senseStyle = _lcmStyleSheet.FindStyle(styleName);
+			var senseStyle2 = _lcmStyleSheet.FindStyle(styleName2);
 			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
 			Assert.IsNull(senseStyle2, "Second sense number style should not exist before conversion for a valid test.");
 
@@ -1044,13 +1036,13 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode2));
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName2);
-			senseStyle = m_styleSheet.FindStyle(styleName);
-			senseStyle2 = m_styleSheet.FindStyle(styleName2);
+			senseStyle = _lcmStyleSheet.FindStyle(styleName);
+			senseStyle2 = _lcmStyleSheet.FindStyle(styleName2);
 			Assert.IsNotNull(senseStyle, "Sense number should have been created by the migrator.");
 			Assert.IsNotNull(senseStyle2, "Sense number should have been created by the migrator.");
-			var usefulStyle = m_styleSheet.Styles[styleName];
+			var usefulStyle = _lcmStyleSheet.Styles[styleName];
 			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "arial", "arial font not used");
-			usefulStyle = m_styleSheet.Styles[styleName2];
+			usefulStyle = _lcmStyleSheet.Styles[styleName2];
 			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "notarial", "notarial font not used in second style");
 			DeleteStyleSheet(styleName);
 			DeleteStyleSheet(styleName2);
@@ -1695,7 +1687,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 
 				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
 				string cssResults = null;
-				Assert.DoesNotThrow(()=>cssResults = CssGenerator.GenerateCssFromConfiguration(convertedMinorEntry, new ReadOnlyPropertyTable(m_propertyTable)));
+				Assert.DoesNotThrow(()=>cssResults = CssGenerator.GenerateCssFromConfiguration(convertedMinorEntry, Cache, _lcmStyleSheet));
 				Assert.That(cssResults, Is.StringContaining(HwBefore));
 				Assert.That(cssResults, Is.StringContaining(HwBetween));
 				Assert.That(cssResults, Is.StringContaining(HwAfter));
@@ -2564,16 +2556,14 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 		[Test]
 		public void TestMigrateCustomFieldNode()
 		{
-			var xdoc0 = new System.Xml.XmlDocument();
-			xdoc0.LoadXml("<part ref=\"ScientificName\" label=\"Scientific Name\" before=\" \" after=\"\" visibility=\"ifdata\" css=\"scientific-name\"/>");
-			var oldTypeNode0 = new XmlDocConfigureDlg.LayoutTreeNode(xdoc0.DocumentElement, m_migrator, "LexSense");
+			var xdoc0 = XDocument.Parse("<part ref=\"ScientificName\" label=\"Scientific Name\" before=\" \" after=\"\" visibility=\"ifdata\" css=\"scientific-name\"/>");
+			var oldTypeNode0 = new XmlDocConfigureDlg.LayoutTreeNode(xdoc0.Root, m_migrator, "LexSense");
 			var newTypeNode0 = m_migrator.ConvertLayoutTreeNodeToConfigNode(oldTypeNode0);
 			Assert.IsFalse(newTypeNode0.IsCustomField, "A normal field should not be marked as custom after conversion");
 			Assert.IsTrue(newTypeNode0.IsEnabled, "A normal field should be enabled properly.");
 			Assert.AreEqual("Scientific Name", newTypeNode0.Label, "A normal field copies its label properly during conversion");
-			var xdoc1 = new System.Xml.XmlDocument();
-			xdoc1.LoadXml("<part ref=\"$child\" label=\"Single Sense\" before=\" Custom Field:( \" after=\" )\" visibility=\"ifdata\" originalLabel=\"Single Sense\"><string field=\"Single Sense\" class=\"LexSense\"/></part>");
-			var oldTypeNode1 = new XmlDocConfigureDlg.LayoutTreeNode(xdoc1.DocumentElement, m_migrator, "LexSense");
+			var xdoc1 = XDocument.Parse("<part ref=\"$child\" label=\"Single Sense\" before=\" Custom Field:( \" after=\" )\" visibility=\"ifdata\" originalLabel=\"Single Sense\"><string field=\"Single Sense\" class=\"LexSense\"/></part>");
+			var oldTypeNode1 = new XmlDocConfigureDlg.LayoutTreeNode(xdoc1.Root, m_migrator, "LexSense");
 			var newTypeNode1 = m_migrator.ConvertLayoutTreeNodeToConfigNode(oldTypeNode1);
 			Assert.IsTrue(newTypeNode1.IsCustomField, "A custom field should be marked as such after conversion");
 			Assert.IsTrue(newTypeNode1.IsEnabled, "A custom field should be enabled properly.");
@@ -2583,14 +2573,14 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 	#region Helper
 		private void DeleteStyleSheet(string styleName)
 		{
-			var style = m_styleSheet.FindStyle(styleName);
+			var style = _lcmStyleSheet.FindStyle(styleName);
 			if (style != null)
 			{
-				m_styleSheet.Delete(style.Hvo);
+				_lcmStyleSheet.Delete(style.Hvo);
 			}
 		}
 
-		public class MockLayoutTreeNode : XmlDocConfigureDlg.LayoutTreeNode
+		internal class MockLayoutTreeNode : XmlDocConfigureDlg.LayoutTreeNode
 		{
 			public string m_partName;
 
@@ -2601,5 +2591,4 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 		}
 	#endregion Helper
 	}
-#endif
 }

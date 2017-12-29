@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2017 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,6 +8,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.LcmUi.Dialogs;
 using SIL.LCModel;
@@ -15,6 +16,7 @@ using SIL.LCModel.Utils;
 using SIL.Linq;
 using SIL.WritingSystems;
 using Ionic.Zip;
+using SIL.Code;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -69,18 +71,16 @@ namespace LanguageExplorer.Works
 		/// <summary>Get list of publications using a dictionary configuration.</summary>
 		internal List<string> GetPublications(DictionaryConfigurationModel dictionaryConfiguration)
 		{
-			if (dictionaryConfiguration == null)
-				throw new ArgumentNullException();
+			Guard.AgainstNull(dictionaryConfiguration, nameof(dictionaryConfiguration));
+
 			return dictionaryConfiguration.Publications;
 		}
 
 		/// <summary>Associate a publication with a dictionary configuration.</summary>
 		internal void AssociatePublication(string publication, DictionaryConfigurationModel configuration)
 		{
-			if (configuration == null)
-				throw new ArgumentNullException();
-			if (publication == null)
-				throw new ArgumentNullException();
+			Guard.AgainstNull(publication, nameof(publication));
+			Guard.AgainstNull(configuration, nameof(configuration));
 			if (!_publications.Contains(publication))
 				throw new ArgumentOutOfRangeException();
 
@@ -91,10 +91,8 @@ namespace LanguageExplorer.Works
 		/// <summary>Disassociate a publication from a dictionary configuration.</summary>
 		internal void DisassociatePublication(string publication, DictionaryConfigurationModel configuration)
 		{
-			if (publication == null)
-				throw new ArgumentNullException();
-			if (configuration == null)
-				throw new ArgumentNullException();
+			Guard.AgainstNull(publication, nameof(publication));
+			Guard.AgainstNull(configuration, nameof(configuration));
 			if (!_publications.Contains(publication))
 				throw new ArgumentOutOfRangeException();
 
@@ -543,13 +541,11 @@ namespace LanguageExplorer.Works
 		internal static void ExportConfiguration(DictionaryConfigurationModel configurationToExport, string destinationZipPath, LcmCache cache)
 		{
 			if (configurationToExport == null)
-				throw new ArgumentNullException("configurationToExport");
-			if (destinationZipPath == null)
-				throw new ArgumentNullException("destinationZipPath");
+				throw new ArgumentNullException(nameof(configurationToExport));
+			if (string.IsNullOrWhiteSpace(destinationZipPath))
+				throw new ArgumentNullException(nameof(destinationZipPath));
 			if (cache == null)
-				throw new ArgumentNullException("cache");
-			if (destinationZipPath == string.Empty)
-				throw new ArgumentException("destinationDirectory");
+				throw new ArgumentNullException(nameof(cache));
 
 			using (var zip = new ZipFile())
 			{
@@ -589,7 +585,6 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		internal static string PrepareStylesheetExport(LcmCache cache)
 		{
-#if RANDYTODO
 			var projectStyles = new FlexStylesXmlAccessor(cache.LangProject.LexDbOA, true);
 			var serializer = new XmlSerializer(typeof(FlexStylesXmlAccessor));
 
@@ -600,9 +595,6 @@ namespace LanguageExplorer.Works
 				serializer.Serialize(textWriter, projectStyles);
 			}
 			return tempFile;
-#else
-			return string.Empty;
-#endif
 		}
 
 		/// <summary>
@@ -713,11 +705,14 @@ namespace LanguageExplorer.Works
 
 			_cache = PropertyTable.GetValue<LcmCache>("cache");
 
-			// Populate lists of configurations and publications
-			ReLoadConfigurations();
-			ReLoadPublications();
+			if (!PropertyTable.GetValue("SkipSomeTestInitialization", false))
+			{
+				// Populate lists of configurations and publications
+				ReLoadConfigurations();
+				ReLoadPublications();
 
-			_view.Shown += OnShowDialog;
+				_view.Shown += OnShowDialog;
+			}
 		}
 		#endregion
 	}

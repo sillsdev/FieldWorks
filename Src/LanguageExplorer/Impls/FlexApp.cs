@@ -1210,7 +1210,7 @@ namespace LanguageExplorer.Impls
 			{
 				progressDlg.Message = LanguageExplorerResources.ksInitializingLayouts_;
 			}
-			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, this, fLoadUserOverrides, Cache.ProjectId.ProjectFolder);
+			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, ApplicationName, fLoadUserOverrides, Cache.ProjectId.ProjectFolder);
 
 			var currentReversalIndices = Cache.LanguageProject.LexDbOA.CurrentReversalIndices;
 			if (currentReversalIndices.Count == 0)

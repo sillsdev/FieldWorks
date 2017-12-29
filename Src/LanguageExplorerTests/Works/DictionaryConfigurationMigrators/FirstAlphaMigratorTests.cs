@@ -1,4 +1,4 @@
-// Copyright (c) 2016 SIL International
+// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,8 +14,6 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.IO;
 using SIL.LCModel;
-
-// ReSharper disable InconsistentNaming
 
 namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 {
@@ -430,7 +428,6 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			Assert.Null(model.Parts[0].Children[0].Children[0].Children, "Subsenses children were left in non-shared node");
 		}
 
-#if RANDYTODO
 		[Test]
 		public void MigrateFrom83Alpha_SubSenseSettingsMigratedToSharedNodes()
 		{
@@ -514,7 +511,6 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			Assert.Null(model.Parts[0].Children[1].Children, "Subentries children were left in non-shared node");
 			Assert.NotNull(model.Parts[0].Children[1].DictionaryNodeOptions, "Subentries complex form options not added in migration");
 		}
-#endif
 
 		[Test]
 		public void MigrateFrom83Alpha_ReversalSubentriesMigratedToSharedNodes()
@@ -992,7 +988,6 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			Assert.AreEqual("AlternateFormsOS", AllomorphNode.SubField, "Should have changed to a sequence.");
 		}
 
-#if RANDYTODO
 		[Test]
 		public void MigrateFromConfigV6toV7_ReversalPronunciationBefAft()
 		{
@@ -1042,7 +1037,6 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			Assert.AreEqual(" ", formNode.After, "Should have set After to one space.");
 			Assert.AreEqual("", formNode.Between, "Should have set Between to empty string.");
 		}
-#endif
 
 		/// <summary>
 		/// Part of LT-12572.

@@ -1,4 +1,4 @@
-// Copyright (c) 2014-15 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -24,8 +24,11 @@ namespace LanguageExplorer
 	/// <summary>
 	/// Specialization of StylesXmlAccessor for loading the Flex factory styles or serializing to xml
 	/// </summary>
+	/// <remarks>
+	/// The class has to be public in order for the serialization to work.
+	/// </remarks>
 	[XmlRoot(ElementName = "Styles")]
-	internal class FlexStylesXmlAccessor : StylesXmlAccessor, IXmlSerializable
+	public class FlexStylesXmlAccessor : StylesXmlAccessor, IXmlSerializable
 	{
 		private readonly ILexDb m_lexicon;
 
@@ -54,7 +57,7 @@ namespace LanguageExplorer
 			{
 				m_sourceStyles = LoadDoc(sourceDocument);
 				if (!string.IsNullOrEmpty(sourceDocument))
-					CreateStyles(new ConsoleProgress(), new object[] { m_cache.LangProject.StylesOC, m_sourceStyles, false});
+					CreateStyles(new ConsoleProgress(), m_cache.LangProject.StylesOC, m_sourceStyles, false);
 			}
 		}
 
@@ -199,7 +202,7 @@ namespace LanguageExplorer
 
 		public XmlSchema GetSchema()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -208,7 +211,7 @@ namespace LanguageExplorer
 		/// <param name="reader"></param>
 		public void ReadXml(XmlReader reader)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void WriteXml(XmlWriter writer)

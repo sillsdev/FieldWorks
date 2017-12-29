@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2017 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -89,7 +89,7 @@ namespace LanguageExplorerTests.Works
 			RecordList.RecordListRepository.ActiveRecordClerk = m_recordList;
 
 			m_propertyTable.SetProperty("ToolForAreaNamed_lexicon", "lexiconDictionary", false);
-			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
+			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Works", "TestData");
 			// setup style sheet and style to allow the css to generate during the UploadToWebonaryController driven export
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 
@@ -335,7 +335,7 @@ namespace LanguageExplorerTests.Works
 					}
 				};
 				// Contains a filename in the zip that isn't correct, so no data will be found by webonary.
-				controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new-bad.zip", view.Model, view);
+				controller.UploadToWebonary("../../Src/LanguageExplorerTests/Works/lubwisi-d-new-bad.zip", view.Model, view);
 				//view.StatusStrings.ForEach(Console.WriteLine); // Debugging output
 				Assert.That(view.StatusStrings.Any(s => s.IndexOf("Error", StringComparison.OrdinalIgnoreCase) >= 0), "Should be an error reported");
 			}
@@ -354,7 +354,7 @@ namespace LanguageExplorerTests.Works
 			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator))
 			{
 				var view = new MockWebonaryDlg();
-				var filepath = "../../Src/xWorks/xWorksTests/lubwisi-d-new.zip";
+				var filepath = "../../Src/LanguageExplorerTests/Works/lubwisi-d-new.zip";
 
 				controller.UploadURI = "http://nameresolutionfailure.local/import.php";
 				Assert.DoesNotThrow(() => controller.UploadToWebonary(filepath, view.Model, view));
@@ -374,7 +374,7 @@ namespace LanguageExplorerTests.Works
 		static string ConnectAndUpload(WebClient client)
 		{
 			var targetURI = "http://192.168.33.10/test/wp-json/webonary/import";
-			var inputFile = "../../Src/xWorks/xWorksTests/lubwisi-d-new.zip";
+			var inputFile = "../../Src/LanguageExplorerTests/Works/lubwisi-d-new.zip";
 			var response = client.UploadFile(targetURI, inputFile);
 			var responseText = Encoding.ASCII.GetString(response);
 			return responseText;
@@ -470,7 +470,7 @@ namespace LanguageExplorerTests.Works
 						Password = "4APItesting"
 					}
 				};
-				controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view.Model, view);
+				controller.UploadToWebonary("../../Src/LanguageExplorerTests/Works/lubwisi-d-new.zip", view.Model, view);
 				Assert.That(view.StatusStrings.Any(s => s.Contains("Unable to connect to Webonary.  Please check your username and password and your Internet connection.")));
 			}
 		}
@@ -489,7 +489,7 @@ namespace LanguageExplorerTests.Works
 						Password = "webonary"
 					}
 				};
-				controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view.Model, view);
+				controller.UploadToWebonary("../../Src/LanguageExplorerTests/Works/lubwisi-d-new.zip", view.Model, view);
 				//view.StatusStrings.ForEach(Console.WriteLine); // Debugging output
 				Assert.That(view.StatusStrings.Any(s => s.Contains("Upload successful")));
 			}
@@ -695,13 +695,13 @@ namespace LanguageExplorerTests.Works
 		/// </summary>
 		public UploadToWebonaryModel SetUpModel()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredXHTMLGenerator.AssemblyFile = "LanguageExplorerTests";
 
 			var testConfig = new Dictionary<string, DictionaryConfigurationModel>();
 			testConfig["Test Config"] = new DictionaryConfigurationModel
 			{
 				Parts = new List<ConfigurableDictionaryNode> {
-					new ConfigurableDictionaryNode { FieldDescription = "LanguageExplorer.Works.TestRootClass"}
+					new ConfigurableDictionaryNode { FieldDescription = "LanguageExplorerTests.Works.TestRootClass"}
 				}
 			};
 

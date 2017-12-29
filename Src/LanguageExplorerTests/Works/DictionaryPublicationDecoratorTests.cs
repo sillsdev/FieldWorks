@@ -1,27 +1,29 @@
-﻿// Copyright (c) 2015-2016 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.IO;
 using System.Linq;
+using LanguageExplorer.Areas;
+using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.LCModel.Core.Text;
-using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 
 namespace LanguageExplorerTests.Works
 {
-#if RANDYTODO
 	/// <summary>
 	/// Tests of the decorator for dictionary views.
 	/// </summary>
 	[TestFixture]
 	public class DictionaryPublicationDecoratorTests : XWorksAppTestBase
 	{
+		private FlexComponentParameters _flexComponentParameters;
 		ILexEntryFactory m_entryFactory;
 		ILexSenseFactory m_senseFactory;
 		private ILexExampleSentenceFactory m_exampleFactory;
@@ -31,9 +33,7 @@ namespace LanguageExplorerTests.Works
 		private ICmPossibilityListFactory m_possListFactory;
 		private IReversalIndexFactory m_revIndexFactory;
 		private IReversalIndexEntryFactory m_revIndexEntryFactory;
-
 		private ICmPossibility m_mainDict; // the publication we test on.
-
 		private ILexEntry m_blank; // rude entry excluded altogether.
 		private ILexEntry m_blank2; // homograph 2
 		private ILexEntry m_blank3; // homograph 3
@@ -53,7 +53,6 @@ namespace LanguageExplorerTests.Works
 		private ILexEntry m_torso;
 		private ILexEntry m_hotBlank; // for some reason this is a complex form that is not excluded though both its components are.
 		private ILexEntry m_blueSky;
-
 		private ILexSense m_hotTemp; // default sense of hot.
 		private ILexSense m_trouble; // bad sense of hot, as in hot water or stolen goods
 		private ILexSense m_desirable; // second OK sense of hot
@@ -62,7 +61,6 @@ namespace LanguageExplorerTests.Works
 		private ILexSense m_blipOuch; // subsense
 		private ILexSense m_bluer;
 		private ILexSense m_skyReal;
-
 		private ILexEntry m_blueColor;
 		private ILexEntry m_blueCold;
 		private ILexEntry m_blueSad;
@@ -71,50 +69,48 @@ namespace LanguageExplorerTests.Works
 		private ILexEntryRef m_hotArmComponents;
 		private ILexEntry m_nolanryan;
 		private ILexEntryRef m_nolanryanComponents;
-
 		private ILexEntry m_sky;
-
 		private ILexExampleSentence m_goodHot;
 		private ILexExampleSentence m_badHot;
-
 		private ILexEntryRef m_hotWaterComponents;
 		private ILexEntryRef m_blueSkyComponents;
-
 		private ILexRefType m_synonym;
 		private ILexRefType m_partWhole;
 		private ILexReference m_blankSynonyms;
 		private ILexReference m_problemSynonyms;
 		private ILexReference m_bodyParts;
 		private ILexReference m_torsoParts;
-
 		private ICmSemanticDomain m_domainBadWords;
 		private ICmSemanticDomain m_domainTemperature;
-
 		private ILexEntry m_ringBell;
 		private ILexEntry m_ringCircle; // don't make a headword for this.
 		private ILexEntry m_ringGold;
-
 		private ILexEntry m_blackVerb; // no headword
 		private ILexEntry m_blackColor; // real HN 2, but published as 0.
-
 		private ILexEntry m_edName;
 		private ILexEntry m_edSuffix;
-
-		private MockPublisher m_publisher;
-		private MockPublisher m_revPublisher;
+		private MockObjectListPublisher m_mockObjectListPublisher;
+		private MockObjectListPublisher m_revMockObjectListPublisher;
 		private DictionaryPublicationDecorator m_decorator;
 		private DictionaryPublicationDecorator m_revDecorator;
-
 		private IReversalIndex m_revIndex;
-
-		const int kmainFlid = 89999956;
-
 		private int m_flidReferringSenses;
+		private const int kmainFlid = 89999956;
+		private IPropertyTable PropertyTable => _flexComponentParameters.PropertyTable;
 
-		PropertyTable PropertyTable { get { return m_window.PropTable; } }
+		#region Overrides of LcmTestBase
 
-		protected override void Init()
+		public override void FixtureTeardown()
 		{
+			_flexComponentParameters.PropertyTable.Dispose();
+			_flexComponentParameters = null;
+
+			base.FixtureTeardown();
+		}
+
+		protected override void FixtureInit()
+		{
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			m_entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			m_senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			m_exampleFactory = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();
@@ -124,13 +120,7 @@ namespace LanguageExplorerTests.Works
 			m_possListFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>();
 			m_revIndexFactory = Cache.ServiceLocator.GetInstance<IReversalIndexFactory>();
 			m_revIndexEntryFactory = Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>();
-
-			m_flidReferringSenses = Cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses",
-				false);
-			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
-			var configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
-			m_window = new MockFwXWindow(m_application, configFilePath);
-			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
+			m_flidReferringSenses = Cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses", false);
 
 			UndoableUnitOfWorkHelper.Do("do", "undo", Cache.ActionHandlerAccessor,
 				() =>
@@ -157,16 +147,13 @@ namespace LanguageExplorerTests.Works
 						m_water = MakeEntry("water", "H2O", false);
 						m_waterH2O = m_water.SensesOS[0];
 						m_hotWater = MakeEntry("hot water", "trouble", false);
-						m_hotWaterComponents = MakeEntryRef(m_hotWater, new ICmObject[] { m_trouble, m_waterH2O },
-							new ICmObject[] { m_trouble, m_waterH2O },
-							LexEntryRefTags.krtComplexForm);
+						m_hotWaterComponents = MakeEntryRef(m_hotWater, new ICmObject[] { m_trouble, m_waterH2O }, new ICmObject[] { m_trouble, m_waterH2O }, LexEntryRefTags.krtComplexForm);
 
 						m_blank2 = MakeEntry("blank", "vacant", false);
 						m_blank3 = MakeEntry("blank", "erase", false);
 						m_water2 = MakeEntry("water", "urinate", true);
 						m_waterPrefix = MakeEntry("water", "aquatic", false);
-						m_waterPrefix.LexemeFormOA.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>()
-							.GetObject(MoMorphTypeTags.kguidMorphPrefix);
+						m_waterPrefix.LexemeFormOA.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphPrefix);
 
 						m_synonym = MakeRefType("synonym", null, (int)LexRefTypeTags.MappingTypes.kmtSenseCollection);
 						m_blip = MakeEntry("blip", "rude word", true);
@@ -188,9 +175,7 @@ namespace LanguageExplorerTests.Works
 						m_torsoParts = MakeLexRef(m_partWhole, new ICmObject[] {m_torso, m_arm, m_belly});
 
 						m_hotBlank = MakeEntry("hotBlank", "problem rude word", false);
-						MakeEntryRef(m_hotBlank, new ICmObject[] { m_trouble, m_water2 },
-							new ICmObject[] { m_trouble, m_water2 },
-							LexEntryRefTags.krtComplexForm);
+						MakeEntryRef(m_hotBlank, new ICmObject[] { m_trouble, m_water2 }, new ICmObject[] { m_trouble, m_water2 }, LexEntryRefTags.krtComplexForm);
 
 						m_blueColor = MakeEntry("blue", "color blue", false);
 						m_blueCold = MakeEntry("blue", "cold", false);
@@ -204,9 +189,7 @@ namespace LanguageExplorerTests.Works
 						m_sky = MakeEntry("sky", "interface between atmosphere and space", false, true); // true excludes as headword
 						m_skyReal = m_sky.SensesOS[0];
 						m_blueSky = MakeEntry("blue sky", "clear, huge potential", false);
-						m_blueSkyComponents = MakeEntryRef(m_blueSky, new ICmObject[] { m_blueColor, m_skyReal },
-							new ICmObject[] { m_bluer, m_skyReal },
-							LexEntryRefTags.krtComplexForm);
+						m_blueSkyComponents = MakeEntryRef(m_blueSky, new ICmObject[] { m_blueColor, m_skyReal }, new ICmObject[] { m_bluer, m_skyReal }, LexEntryRefTags.krtComplexForm);
 
 						m_ringBell = MakeEntry("ring", "bell", false);
 						m_ringCircle = MakeEntry("ring", "circle", false, true);
@@ -216,18 +199,13 @@ namespace LanguageExplorerTests.Works
 						m_blackColor = MakeEntry("black", "dark", false);
 
 						m_hotArm = MakeEntry("hotarm", "pitcher", false);
-						m_hotArmComponents = MakeEntryRef(m_hotArm, new ICmObject[] { m_hot, m_arm },
-												new ICmObject[] { m_hot, m_arm },
-												LexEntryRefTags.krtComplexForm);
+						m_hotArmComponents = MakeEntryRef(m_hotArm, new ICmObject[] { m_hot, m_arm }, new ICmObject[] { m_hot, m_arm }, LexEntryRefTags.krtComplexForm);
 						m_hotArm.DoNotPublishInRC.Add(m_mainDict);
 						m_hotArmComponents.ShowComplexFormsInRS.Add(m_hot);
 
 						m_nolanryan = MakeEntry("Nolan_Ryan", "pitcher", false);
-						m_nolanryanComponents = MakeEntryRef(m_nolanryan, new ICmObject[] { m_hot },
-												new ICmObject[] { m_hot },
-												LexEntryRefTags.krtVariant);
-						m_nolanryanComponents.VariantEntryTypesRS.Add(
-							(ILexEntryType)Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0]);
+						m_nolanryanComponents = MakeEntryRef(m_nolanryan, new ICmObject[] { m_hot }, new ICmObject[] { m_hot }, LexEntryRefTags.krtVariant);
+						m_nolanryanComponents.VariantEntryTypesRS.Add((ILexEntryType)Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0]);
 						m_nolanryan.DoNotPublishInRC.Add(m_mainDict);
 
 						m_edName = MakeEntry("ed", "someone called ed", false);
@@ -235,13 +213,13 @@ namespace LanguageExplorerTests.Works
 
 						m_revIndex = CreateInterestingReversalEntries();
 
-						m_publisher = new MockPublisher((ISilDataAccessManaged)Cache.DomainDataByFlid, kmainFlid);
-						m_publisher.SetOwningPropValue(Cache.LangProject.LexDbOA.Entries.Select(le => le.Hvo).ToArray());
-						m_decorator = new DictionaryPublicationDecorator(Cache, m_publisher, ObjectListPublisher.OwningFlid);
+						m_mockObjectListPublisher = new MockObjectListPublisher((ISilDataAccessManaged)Cache.DomainDataByFlid, kmainFlid);
+						m_mockObjectListPublisher.SetOwningPropValue(Cache.LangProject.LexDbOA.Entries.Select(le => le.Hvo).ToArray());
+						m_decorator = new DictionaryPublicationDecorator(Cache, m_mockObjectListPublisher, ObjectListPublisher.OwningFlid);
 
-						m_revPublisher = new MockPublisher((ISilDataAccessManaged)Cache.DomainDataByFlid, kmainFlid);
-						m_revPublisher.SetOwningPropValue(m_revIndex.AllEntries.Select(rie => rie.Hvo).ToArray());
-						m_revDecorator = new DictionaryPublicationDecorator(Cache, m_revPublisher, ObjectListPublisher.OwningFlid);
+						m_revMockObjectListPublisher = new MockObjectListPublisher((ISilDataAccessManaged)Cache.DomainDataByFlid, kmainFlid);
+						m_revMockObjectListPublisher.SetOwningPropValue(m_revIndex.AllEntries.Select(rie => rie.Hvo).ToArray());
+						m_revDecorator = new DictionaryPublicationDecorator(Cache, m_revMockObjectListPublisher, ObjectListPublisher.OwningFlid);
 					});
 		}
 
@@ -282,9 +260,13 @@ namespace LanguageExplorerTests.Works
 			var result = m_lexRefFactory.Create();
 			owner.MembersOC.Add(result);
 			foreach (var obj in targets)
+			{
 				result.TargetsRS.Add(obj);
+			}
 			return result;
 		}
+
+		#endregion
 
 		/// <summary>
 		/// DictionaryConfigurationListener was sending a localized configuration type to a switch
@@ -294,7 +276,7 @@ namespace LanguageExplorerTests.Works
 		[Test]
 		public void GetEntriesToPublish_WorksWithFrenchUI()
 		{
-			PropertyTable.SetProperty("toolChoice", "lexiconEdit", true);
+			PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconEditMachineName, false, false);
 
 			var englishEntries = m_decorator.GetEntriesToPublish(PropertyTable, ObjectListPublisher.OwningFlid);
 			Assert.That(englishEntries.Length, Is.GreaterThan(0));
@@ -312,11 +294,10 @@ namespace LanguageExplorerTests.Works
 		public void GetSortedAndFilteredReversalEntries_ExcludesSubentriesAndUnpublishable()
 		{
 			// This test relies on the objects set up during the test FixtureSetup
-			PropertyTable.SetProperty("toolChoice", "reversalToolEditComplete", true);
-			PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString(), true);
+			PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalEditCompleteMachineName, false, false);
+			PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString(), false, false);
 
-			Assert.AreEqual(6, m_revDecorator.VecProp(m_revIndex.Hvo, ObjectListPublisher.OwningFlid).Length,
-				"there should be 6 Reversal Entries and Sub[sub]entries");
+			Assert.AreEqual(6, m_revDecorator.VecProp(m_revIndex.Hvo, ObjectListPublisher.OwningFlid).Length, "there should be 6 Reversal Entries and Sub[sub]entries");
 			var entries = m_revDecorator.GetEntriesToPublish(PropertyTable, ObjectListPublisher.OwningFlid, "Reversal Index");
 			// "Reversal Form" is linked to m_nolanryan which is excluded from publication
 			Assert.AreEqual(2, entries.Length, "there should be only 2 main Reversal Entry that can be published");
@@ -337,11 +318,10 @@ namespace LanguageExplorerTests.Works
 		public void GetSortedAndFilteredReversalEntries_IncludesSenselessReversalEntries()
 		{
 			// This test relies on the objects set up during the test FixtureSetup
-			PropertyTable.SetProperty("toolChoice", "reversalToolEditComplete", false);
-			PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString(), false);
+			PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalEditCompleteMachineName, false, false);
+			PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString(), false, false);
 
-			Assert.AreEqual(6, m_revDecorator.VecProp(m_revIndex.Hvo, ObjectListPublisher.OwningFlid).Length,
-				"there should be 6 Reversal Entries and Sub[sub]entries");
+			Assert.AreEqual(6, m_revDecorator.VecProp(m_revIndex.Hvo, ObjectListPublisher.OwningFlid).Length, "there should be 6 Reversal Entries and Sub[sub]entries");
 			var entries = m_revDecorator.GetEntriesToPublish(PropertyTable, ObjectListPublisher.OwningFlid, "Reversal Index");
 			// "Reversal Form" is linked to m_nolanryan which is excluded from publication
 			Assert.AreEqual(2, entries.Length, "there should be only 2 main Reversal Entry that can be published");
@@ -395,10 +375,7 @@ namespace LanguageExplorerTests.Works
 
 			// They should be filtered from the top-level list of entries managed by the wrapped decorator
 			var mainEntryList = m_decorator.VecProp(Cache.LangProject.LexDbOA.Hvo, ObjectListPublisher.OwningFlid);
-			Assert.That(mainEntryList.Length,
-				Is.EqualTo(Cache.LangProject.LexDbOA.Entries.Count(
-					le => le.DoNotPublishInRC.Count == 0 &&
-					le.DoNotShowMainEntryInRC.Count == 0)));
+			Assert.That(mainEntryList.Length, Is.EqualTo(Cache.LangProject.LexDbOA.Entries.Count(le => le.DoNotPublishInRC.Count == 0 && le.DoNotShowMainEntryInRC.Count == 0)));
 		}
 
 		[Test]
@@ -498,12 +475,9 @@ namespace LanguageExplorerTests.Works
 		[Test]
 		public void VisibleComplexFormNotPublished()
 		{
-			Assert.That(m_hotArm.ComplexFormEntryRefs.Count(), Is.EqualTo(1),
-				"Wrong number of Complex Form Entry Refs.");
-			var complexRefsFlid = Cache.MetaDataCacheAccessor.GetFieldId2(
-				LexEntryTags.kClassId, "VisibleComplexFormBackRefs", false);
-			Assert.That(m_decorator.get_VecSize(m_hot.Hvo, complexRefsFlid),
-				Is.EqualTo(0), "Decorator should have removed back reference to this Complex Form.");
+			Assert.That(m_hotArm.ComplexFormEntryRefs.Count(), Is.EqualTo(1), "Wrong number of Complex Form Entry Refs.");
+			var complexRefsFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "VisibleComplexFormBackRefs", false);
+			Assert.That(m_decorator.get_VecSize(m_hot.Hvo, complexRefsFlid), Is.EqualTo(0), "Decorator should have removed back reference to this Complex Form.");
 		}
 
 		/// <summary>
@@ -512,12 +486,9 @@ namespace LanguageExplorerTests.Works
 		[Test]
 		public void VariantNotPublished()
 		{
-			Assert.That(m_nolanryan.VariantEntryRefs.Count(), Is.EqualTo(1),
-				"Wrong number of Variant Entry Refs.");
-			var variantRefsFlid = Cache.MetaDataCacheAccessor.GetFieldId2(
-				LexEntryTags.kClassId, "VariantFormEntryBackRefs", false);
-			Assert.That(m_decorator.get_VecSize(m_hot.Hvo, variantRefsFlid), Is.EqualTo(0),
-				"Decorator should have removed back reference to this Variant.");
+			Assert.That(m_nolanryan.VariantEntryRefs.Count(), Is.EqualTo(1), "Wrong number of Variant Entry Refs.");
+			var variantRefsFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "VariantFormEntryBackRefs", false);
+			Assert.That(m_decorator.get_VecSize(m_hot.Hvo, variantRefsFlid), Is.EqualTo(0), "Decorator should have removed back reference to this Variant.");
 		}
 
 		/// <summary>
@@ -539,19 +510,19 @@ namespace LanguageExplorerTests.Works
 			// it is not currently used in the Dictionary view.
 
 			// Don't show pictures of unpublished senses.
-			int picsOfSensesFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "PicturesOfSenses", false);
+			var picsOfSensesFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "PicturesOfSenses", false);
 			Assert.That(Cache.DomainDataByFlid.get_VecSize(m_hot.Hvo,picsOfSensesFlid), Is.EqualTo(1));
 			Assert.That(m_decorator.get_VecSize(m_hot.Hvo, picsOfSensesFlid), Is.EqualTo(0));
 
 			// Sense.LexSenseOutline: sense 2 of hot is not published.
-			int senseOutlineFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "LexSenseOutline", false);
+			var senseOutlineFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "LexSenseOutline", false);
 			Assert.That(Cache.DomainDataByFlid.get_StringProp(m_desirable.Hvo, senseOutlineFlid).Text, Is.EqualTo("3"));
 			Assert.That(m_decorator.get_StringProp(m_desirable.Hvo, senseOutlineFlid).Text, Is.EqualTo("2"));
 			Assert.That(Cache.DomainDataByFlid.get_StringProp(m_fastCar.Hvo, senseOutlineFlid).Text, Is.EqualTo("3.1"));
 			Assert.That(m_decorator.get_StringProp(m_fastCar.Hvo, senseOutlineFlid).Text, Is.EqualTo("2.1"));
 
 			// Sense.MLOwnerOutlineName
-			int mlOwnerOutlineFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "MLOwnerOutlineName", false);
+			var mlOwnerOutlineFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "MLOwnerOutlineName", false);
 			Assert.That(Cache.DomainDataByFlid.get_MultiStringAlt(m_desirable.Hvo, mlOwnerOutlineFlid, Cache.DefaultVernWs).Text, Is.EqualTo("hot 3"));
 			Assert.That(m_decorator.get_MultiStringAlt(m_desirable.Hvo, mlOwnerOutlineFlid, Cache.DefaultVernWs).Text, Is.EqualTo("hot 2"));
 			Assert.That(Cache.DomainDataByFlid.get_MultiStringAlt(m_fastCar.Hvo, mlOwnerOutlineFlid, Cache.DefaultVernWs).Text, Is.EqualTo("hot 3.1"));
@@ -562,7 +533,7 @@ namespace LanguageExplorerTests.Works
 				Is.EqualTo("blank1"));
 
 			// Entry.PublishAsMinorEntry
-			int publishAsMinorEntryFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "PublishAsMinorEntry", false);
+			var publishAsMinorEntryFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "PublishAsMinorEntry", false);
 			Assert.That(Cache.DomainDataByFlid.get_BooleanProp(m_hotBlank.Hvo, publishAsMinorEntryFlid), Is.True);
 			Assert.That(m_decorator.get_BooleanProp(m_hotBlank.Hvo, publishAsMinorEntryFlid), Is.False);
 			Assert.That(m_decorator.get_BooleanProp(m_hotWater.Hvo, publishAsMinorEntryFlid), Is.True);
@@ -571,7 +542,7 @@ namespace LanguageExplorerTests.Works
 		[Test]
 		public void ShowAsHeadWord()
 		{
-			int headwordFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "HeadWord", false);
+			var headwordFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "HeadWord", false);
 			// Sky should be excluded from the main entry list
 			Assert.That(m_decorator.get_StringProp(m_sky.Hvo, headwordFlid).Text, Is.EqualTo("sky"), "sky not to be shown as main entry");
 
@@ -588,7 +559,7 @@ namespace LanguageExplorerTests.Works
 			var mockRoot = new MockNotifyChange();
 			// When the root box asks the decorator to notify it, the decorator adds itself to the wrapped decorator instead.
 			m_decorator.AddNotification(mockRoot);
-			Assert.That(m_publisher.AddedNotification, Is.EqualTo(m_decorator));
+			Assert.That(m_mockObjectListPublisher.AddedNotification, Is.EqualTo(m_decorator));
 
 			// Unknown flid PropChanged calls go right through.
 			m_decorator.PropChanged(27, LexEntryTags.kflidLexemeForm, 10, 11, 12);
@@ -599,17 +570,17 @@ namespace LanguageExplorerTests.Works
 			m_decorator.PropChanged(m_hot.Hvo, LexEntryTags.kflidSenses, 2, 1, 1);
 			VerifyPropChanged(mockRoot.LastPropChanged, m_hot.Hvo, LexEntryTags.kflidSenses, 0, 2, 0);
 
-			int lexEntryRefsFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "LexEntryReferences", false);
+			var lexEntryRefsFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "LexEntryReferences", false);
 			m_decorator.PropChanged(m_arm.Hvo, lexEntryRefsFlid, 2, 1, 0);
 			VerifyPropChanged(mockRoot.LastPropChanged, m_arm.Hvo, lexEntryRefsFlid, 0, 1, 0);
 
-			int complexRefsFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "ComplexFormEntryRefs", false);
+			var complexRefsFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "ComplexFormEntryRefs", false);
 			m_decorator.PropChanged(m_hotBlank.Hvo, complexRefsFlid, 0, 0, 3);
 			VerifyPropChanged(mockRoot.LastPropChanged, m_hotBlank.Hvo, complexRefsFlid, 0, 0, 0);
 
 			// and when it asks to be removed, it removes itself.
 			m_decorator.RemoveNotification(mockRoot);
-			Assert.That(m_publisher.RemovedNotification, Is.EqualTo(m_decorator));
+			Assert.That(m_mockObjectListPublisher.RemovedNotification, Is.EqualTo(m_decorator));
 		}
 
 		/// <summary>
@@ -633,7 +604,7 @@ namespace LanguageExplorerTests.Works
 			m_decorator.Refresh();
 		}
 
-		private void VerifyPropChanged(PropChangeInfo propChangeInfo, int hvo, int tag, int ivMin, int cvIns, int cvDel)
+		private static void VerifyPropChanged(PropChangeInfo propChangeInfo, int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			Assert.That(propChangeInfo.hvo, Is.EqualTo(hvo));
 			Assert.That(propChangeInfo.tag, Is.EqualTo(tag));
@@ -655,29 +626,19 @@ namespace LanguageExplorerTests.Works
 		ILexRefType MakeRefType(string name, string reverseName, int mapType)
 		{
 			if (Cache.LangProject.LexDbOA.ReferencesOA == null)
+			{
 				Cache.LangProject.LexDbOA.ReferencesOA = m_possListFactory.Create();
+			}
 			var result = m_lexRefTypeFactory.Create();
 			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(result);
 			result.Name.AnalysisDefaultWritingSystem = AnalysisTss(name);
 			if (reverseName != null)
+			{
 				result.ReverseName.AnalysisDefaultWritingSystem = AnalysisTss(reverseName);
+			}
 			result.MappingType = mapType;
 			return result;
 		}
-
-		//IPartOfSpeech MakePos(string name)
-		//{
-		//    if (Cache.LangProject.LexDbOA.ReferencesOA == null)
-		//        Cache.LangProject.LexDbOA.ReferencesOA = m_possListFactory.Create();
-		//    var result = m_lexRefTypeFactory.Create();
-		//    Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(result);
-		//    result.Name.AnalysisDefaultWritingSystem = AnalysisTss(name);
-		//    if (reverseName != null)
-		//        result.ReverseName.AnalysisDefaultWritingSystem = AnalysisTss(reverseName);
-		//    result.MappingType = mapType;
-		//    return result;
-		//}
-
 
 		private ILexEntryRef MakeEntryRef(ILexEntry owner, ICmObject[] components, ICmObject[] primaryComponents, int type)
 		{
@@ -685,9 +646,13 @@ namespace LanguageExplorerTests.Works
 			owner.EntryRefsOS.Add(result);
 			result.RefType = type;
 			foreach (var obj in components)
+			{
 				result.ComponentLexemesRS.Add(obj);
+			}
 			foreach (var obj in primaryComponents)
+			{
 				result.PrimaryLexemesRS.Add(obj);
+			}
 			return result;
 		}
 
@@ -698,9 +663,13 @@ namespace LanguageExplorerTests.Works
 			lexform.Form.VernacularDefaultWritingSystem = VernacularTss(form);
 			MakeSense(entry, gloss);
 			if (fExclude)
+			{
 				entry.DoNotPublishInRC.Add(m_mainDict);
+			}
 			if (hwExclude)
+			{
 				entry.DoNotShowMainEntryInRC.Add(m_mainDict);
+			}
 			return entry;
 		}
 
@@ -710,7 +679,9 @@ namespace LanguageExplorerTests.Works
 			sense.ExamplesOS.Add(result);
 			result.Example.VernacularDefaultWritingSystem = VernacularTss(text);
 			if (fExclude)
+			{
 				result.DoNotPublishInRC.Add(m_mainDict);
+			}
 			return result;
 		}
 
@@ -729,8 +700,7 @@ namespace LanguageExplorerTests.Works
 		{
 			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
-			entry.LexemeFormOA.MorphTypeRA =
-				Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
+			entry.LexemeFormOA.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
 			return form;
 		}
 
@@ -738,8 +708,7 @@ namespace LanguageExplorerTests.Works
 		{
 			var form = Cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
-			entry.LexemeFormOA.MorphTypeRA =
-				Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphSuffix);
+			entry.LexemeFormOA.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphSuffix);
 			return form;
 		}
 
@@ -765,9 +734,9 @@ namespace LanguageExplorerTests.Works
 		}
 	}
 
-	class MockPublisher : ObjectListPublisher
+	class MockObjectListPublisher : ObjectListPublisher
 	{
-		public MockPublisher(ISilDataAccessManaged domainDataByFlid, int flid) : base(domainDataByFlid, flid)
+		public MockObjectListPublisher(ISilDataAccessManaged domainDataByFlid, int flid) : base(domainDataByFlid, flid)
 		{
 		}
 
@@ -790,7 +759,7 @@ namespace LanguageExplorerTests.Works
 			SendPropChanged(hvo, tag, ivMin, cvIns, cvDel);
 		}
 	}
-	public struct PropChangeInfo
+	internal struct PropChangeInfo
 	{
 		public int hvo;
 		public int tag;
@@ -798,5 +767,4 @@ namespace LanguageExplorerTests.Works
 		public int cvIns;
 		public int cvDel;
 	}
-#endif
 }

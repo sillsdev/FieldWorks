@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2017 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -36,7 +36,8 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		internal ICmObject _previewEntry;
 
-		private LcmCache Cache { get { return PropertyTable.GetValue<LcmCache>("cache"); } }
+		private LcmCache Cache => PropertyTable.GetValue<LcmCache>("cache");
+
 		/// <summary>
 		/// The view to display the model in
 		/// </summary>
@@ -217,7 +218,7 @@ namespace LanguageExplorer.Works
 				MasterRefreshRequired = true;
 			View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _allEntriesPublicationDecorator, PropertyTable, Cache);
 			if(_isHighlighted)
-				View.HighlightContent(View.TreeControl.Tree.SelectedNode.Tag as ConfigurableDictionaryNode, Cache);
+				View.HighlightContent(View.TreeControl.Tree.SelectedNode.Tag as ConfigurableDictionaryNode, (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
 		}
 
 		/// <summary>
@@ -330,11 +331,8 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Sets Parameters for Numbering styles.
 		/// </summary>
-		/// <param name="model"></param>
-		/// <param name="cache"></param>
-		public static void SetConfigureHomographParameters(DictionaryConfigurationModel model, LcmCache cache)
+		public static void SetConfigureHomographParameters(DictionaryConfigurationModel model, HomographConfiguration cacheHc)
 		{
-			var cacheHc = cache.ServiceLocator.GetInstance<HomographConfiguration>();
 			if (model.HomographConfiguration == null)
 			{
 				model.HomographConfiguration = new DictionaryHomographConfiguration(new HomographConfiguration());
@@ -405,7 +403,7 @@ namespace LanguageExplorer.Works
 				}
 				default:
 				{
-					throw new NotImplementedException(String.Format("Default entry for {0} type not implemented.", configurationType));
+					throw new NotImplementedException($"Default entry for {configurationType} type not implemented.");
 				}
 			}
 		}
@@ -1117,11 +1115,10 @@ namespace LanguageExplorer.Works
 		{
 			Type unneeded;
 			// The class that contains the type information for the field we are inspecting
-			var lookupClass = ConfiguredXHTMLGenerator.GetTypeForConfigurationNode(parent, cache, out unneeded);
+			var lookupClass = ConfiguredXHTMLGenerator.GetTypeForConfigurationNode(parent, (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor, out unneeded);
 			// If the node describes a collection we may want to add the custom field node if the collection is of
 			// the type that the field is added to. (e.g. Senses, ExampleSentences)
-			if(ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(parent, cache) ==
-				ConfiguredXHTMLGenerator.PropertyType.CollectionType)
+			if(ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(parent, (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor) == ConfiguredXHTMLGenerator.PropertyType.CollectionType)
 			{
 				if(lookupClass.IsGenericType)
 				{
@@ -1513,8 +1510,7 @@ namespace LanguageExplorer.Works
 			{
 				_previewEntry = GetDefaultEntryForType(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(PropertyTable), cache);
 			}
-			_allEntriesPublicationDecorator = new DictionaryPublicationDecorator(cache,
-				(ISilDataAccessManaged)cache.MainCacheAccessor, cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			_allEntriesPublicationDecorator = new DictionaryPublicationDecorator(cache, (ISilDataAccessManaged)cache.MainCacheAccessor, cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 
 			_projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(PropertyTable);
 			_defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(PropertyTable);
@@ -1528,8 +1524,7 @@ namespace LanguageExplorer.Works
 				// show the Configuration Manager dialog
 				using (var dialog = new DictionaryConfigurationManagerDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				{
-					var configurationManagerController = new DictionaryConfigurationManagerController(dialog,
-						_dictionaryConfigurations, GetAllPublications(cache), _projectConfigDir, _defaultConfigDir, _model);
+					var configurationManagerController = new DictionaryConfigurationManagerController(dialog, _dictionaryConfigurations, GetAllPublications(cache), _projectConfigDir, _defaultConfigDir, _model);
 					configurationManagerController.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 					configurationManagerController.Finished += SelectModelFromManager;
 					configurationManagerController.ConfigurationViewImported += () =>
@@ -1556,9 +1551,11 @@ namespace LanguageExplorer.Works
 			View.SwitchConfiguration += (sender, args) =>
 			{
 				if (_model == args.ConfigurationPicked)
+				{
 					return;
+				}
 				_model = args.ConfigurationPicked;
-				SetConfigureHomographParameters(_model, cache);
+				SetConfigureHomographParameters(_model, cache.ServiceLocator.GetInstance<HomographConfiguration>());
 				RefreshView(); // isChangeInDictionaryModel: true, because we update the current config in the PropertyTable when we save the model.
 			};
 
@@ -1603,19 +1600,19 @@ namespace LanguageExplorer.Works
 					dictionaryNode.UnlinkFromParent();
 				RefreshView();
 			};
-
+			var metaDataCacheAccessor = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
 			View.TreeControl.Highlight += (node, button, tooltip) =>
 			{
 				_isHighlighted = !_isHighlighted;
 				if (_isHighlighted)
 				{
-					View.HighlightContent(node.Tag as ConfigurableDictionaryNode, cache);
+					View.HighlightContent(node.Tag as ConfigurableDictionaryNode, metaDataCacheAccessor);
 					button.BackColor = Color.White;
 					tooltip.SetToolTip(button, xWorksStrings.RemoveHighlighting);
 				}
 				else
 				{
-					View.HighlightContent(null, cache); // turns off current highlighting.
+					View.HighlightContent(null, metaDataCacheAccessor); // turns off current highlighting.
 					button.BackColor = Color.Yellow;
 					tooltip.SetToolTip(button, xWorksStrings.HighlightAffectedContent);
 				}
@@ -1647,7 +1644,7 @@ namespace LanguageExplorer.Works
 				if (_isHighlighted)
 				{
 					// Highlighting is turned on, change what is highlighted.
-					View.HighlightContent(node, cache);
+					View.HighlightContent(node, metaDataCacheAccessor);
 				}
 			};
 			View.TreeControl.CheckAll += treeNode =>

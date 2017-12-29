@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -95,14 +95,13 @@ namespace LanguageExplorer.Works
 					{
 						migrator.MigrateIfNeeded(m_logger, PropertyTable, versionProvider.ApplicationVersion);
 					}
-					CreateProjectCustomCssIfNeeded(PropertyTable);
+					CreateProjectCustomCssIfNeeded(PropertyTable.GetValue<LcmCache>("cache"));
 				}
 				finally
 				{
 					if (m_logger.HasContent)
 					{
-					var configurationDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(PropertyTable,
-							DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+						var configurationDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(PropertyTable.GetValue<LcmCache>("cache"), DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 						Directory.CreateDirectory(configurationDir);
 						File.AppendAllText(Path.Combine(configurationDir, "ConfigMigrationLog.txt"), m_logger.Content);
 					}
@@ -112,16 +111,18 @@ namespace LanguageExplorer.Works
 		}
 
 		/// <summary>Create custom CSS file in the project's folder</summary>
-		private static void CreateProjectCustomCssIfNeeded(IPropertyTable propertyTable)
+		private static void CreateProjectCustomCssIfNeeded(LcmCache cache)
 		{
 			var innerDirectories = new [] { "Dictionary", "ReversalIndex" };
 			foreach (var innerDir in innerDirectories)
 			{
-				var configDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable, innerDir);
+				var configDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(cache, innerDir);
 				Directory.CreateDirectory(configDir);
-				var customCssPath = Path.Combine(configDir, string.Format("Project{0}Overrides.css", innerDir == "ReversalIndex" ? "Reversal" : innerDir));
+				var customCssPath = Path.Combine(configDir, $"Project{(innerDir == "ReversalIndex" ? "Reversal" : innerDir)}Overrides.css");
 				if (!File.Exists(customCssPath))
-					File.WriteAllText(customCssPath, "/* This file can be used to add custom css rules that will be applied to the xhtml export */");
+				{
+					File.WriteAllText(customCssPath, @"/* This file can be used to add custom css rules that will be applied to the xhtml export */");
+				}
 			}
 		}
 

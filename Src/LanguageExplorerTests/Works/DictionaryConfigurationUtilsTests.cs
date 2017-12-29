@@ -14,14 +14,16 @@ using SIL.LCModel;
 namespace LanguageExplorerTests.Works
 {
 	[TestFixture]
-	class DictionaryConfigurationUtilsTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public class DictionaryConfigurationUtilsTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		[TestFixtureSetUp]
 		public new void FixtureSetup()
 		{
 			var testProjPath = Path.Combine(Path.GetTempPath(), "DictionaryConfigurationUtilsTestsProj");
-			if(Directory.Exists(testProjPath))
+			if (Directory.Exists(testProjPath))
+			{
 				Directory.Delete(testProjPath, true);
+			}
 			Directory.CreateDirectory(testProjPath);
 			Cache.ProjectId.Path = testProjPath;
 		}

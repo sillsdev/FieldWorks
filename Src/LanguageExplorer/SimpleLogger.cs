@@ -14,7 +14,7 @@ namespace LanguageExplorer
 	/// The actual class is disposable and should normally be created in a Using clause.
 	/// The logger can also track an indent.
 	/// </summary>
-	internal sealed class SimpleLogger : ISimpleLogger, IDisposable
+	internal sealed class SimpleLogger : ISimpleLogger
 	{
 		/// <summary>
 		/// Make one (on a memory stream the logger is responsible for).

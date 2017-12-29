@@ -1498,11 +1498,11 @@ namespace LanguageExplorer.Impls
 		private void UploadToWebonary_Click(object sender, EventArgs e)
 		{
 			var publications = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
-			var projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(PropertyTable, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+			var projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(Cache, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			var defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			var configurations = DictionaryConfigurationController.GetDictionaryConfigurationLabels(Cache, defaultConfigDir, projectConfigDir);
 			// Now collect all the reversal configurations into the reversals variable
-			projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(PropertyTable, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(Cache, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
 			defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
 			var reversals = DictionaryConfigurationController.GetDictionaryConfigurationLabels(Cache, defaultConfigDir, projectConfigDir);
 

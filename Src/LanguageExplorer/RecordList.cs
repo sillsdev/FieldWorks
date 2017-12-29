@@ -1567,7 +1567,7 @@ namespace LanguageExplorer
 		/// being sorted or that the current sorting should not be displayed (i.e. the default column
 		/// is being sorted).
 		/// </summary>
-		public string SortName { get; private set; }
+		public string SortName { get; set; }
 
 		public bool SuppressSaveOnChangeRecord { get; set; }
 
@@ -2321,7 +2321,7 @@ namespace LanguageExplorer
 		private void RegisterMessageHandlers()
 		{
 			var window = PropertyTable.GetValue<IFwMainWnd>("window");
-			var recordBarControl = window.RecordBarControl;
+			var recordBarControl = window?.RecordBarControl; // Tests may not have a window.
 			if (recordBarControl != null)
 			{
 				UnregisterMessageHandlers(); // Unwire them, in case (more likely 'since') this is re-entrant.
@@ -2333,7 +2333,8 @@ namespace LanguageExplorer
 		private void UnregisterMessageHandlers()
 		{
 			var window = PropertyTable.GetValue<IFwMainWnd>("window");
-			var recordBarControl = window.RecordBarControl;
+			// Some tests don't have a window or RecordBarControl.
+			var recordBarControl = window?.RecordBarControl;
 			if (recordBarControl != null)
 			{
 				Subscriber.Unsubscribe("SelectedTreeBarNode", SelectedTreeBarNode_Message_Handler);

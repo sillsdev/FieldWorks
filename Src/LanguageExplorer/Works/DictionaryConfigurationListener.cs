@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
 
 namespace LanguageExplorer.Works
 {
@@ -153,15 +154,14 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		internal static string GetProjectConfigurationDirectory(IPropertyTable propertyTable)
 		{
-			var lastDirectoryPart = GetInnermostConfigurationDirectory(propertyTable);
-			return GetProjectConfigurationDirectory(propertyTable, lastDirectoryPart);
+			var lastDirectoryPart = GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(AreaServices.ToolChoice));
+			return GetProjectConfigurationDirectory(propertyTable.GetValue<LcmCache>("cache"), lastDirectoryPart);
 		}
 
 		/// <remarks>Useful for querying about an area of FLEx that the user is not in.</remarks>
-		internal static string GetProjectConfigurationDirectory(IPropertyTable propertyTable, string area)
+		internal static string GetProjectConfigurationDirectory(LcmCache cache, string area)
 		{
-			var cache = propertyTable.GetValue<LcmCache>("cache");
-			return area == null ? null : Path.Combine(LcmFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), area);
+			return string.IsNullOrWhiteSpace(area) ? null : Path.Combine(LcmFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), area);
 		}
 
 		/// <summary>
@@ -170,7 +170,7 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		internal static string GetDefaultConfigurationDirectory(IPropertyTable propertyTable)
 		{
-			var lastDirectoryPart = GetInnermostConfigurationDirectory(propertyTable);
+			var lastDirectoryPart = GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(AreaServices.ToolChoice));
 			return GetDefaultConfigurationDirectory(lastDirectoryPart);
 		}
 
@@ -187,9 +187,9 @@ namespace LanguageExplorer.Works
 		/// Get the name of the innermost directory name for configurations for the part of FLEx the user is
 		/// working in, such as Dictionary or Reversal Index.
 		/// </summary>
-		private static string GetInnermostConfigurationDirectory(IPropertyRetriever propertyTable)
+		private static string GetInnermostConfigurationDirectory(string toolChoice)
 		{
-			switch(propertyTable.GetValue<string>(AreaServices.ToolChoice))
+			switch(toolChoice)
 			{
 				case AreaServices.ReversalBulkEditReversalEntriesMachineName:
 				case AreaServices.ReversalEditCompleteMachineName:
@@ -254,7 +254,7 @@ namespace LanguageExplorer.Works
 		private static void SetConfigureHomographParameters(string currentConfig, LcmCache cache)
 		{
 			var model = new DictionaryConfigurationModel(currentConfig, cache);
-			DictionaryConfigurationController.SetConfigureHomographParameters(model, cache);
+			DictionaryConfigurationController.SetConfigureHomographParameters(model, cache.ServiceLocator.GetInstance<HomographConfiguration>());
 		}
 
 		/// <summary>
@@ -269,7 +269,7 @@ namespace LanguageExplorer.Works
 				return null;
 			if (innerConfigDir == null)
 			{
-				innerConfigDir = GetInnermostConfigurationDirectory(propertyTable);
+				innerConfigDir = GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(AreaServices.ToolChoice));
 			}
 			var isDictionary = innerConfigDir == DictionaryConfigurationDirectoryName;
 			var pubLayoutPropName = isDictionary ? "DictionaryPublicationLayout" : "ReversalIndexPublicationLayout";
@@ -282,7 +282,7 @@ namespace LanguageExplorer.Works
 			}
 			var defaultPublication = isDictionary ? "Root" : "AllReversalIndexes";
 			var defaultConfigDir = GetDefaultConfigurationDirectory(innerConfigDir);
-			var projectConfigDir = GetProjectConfigurationDirectory(propertyTable, innerConfigDir);
+			var projectConfigDir = GetProjectConfigurationDirectory(cache, innerConfigDir);
 			// If no configuration has yet been selected or the previous selection is invalid,
 			// and the value is "publishSomething", try to use the new "Something" config
 			if (currentConfig != null && currentConfig.StartsWith("publish", StringComparison.Ordinal))

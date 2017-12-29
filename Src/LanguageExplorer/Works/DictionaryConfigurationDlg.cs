@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,8 +9,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using Gecko;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
 using LanguageExplorer.Works.DictionaryDetailsView;
+using SIL.LCModel.Infrastructure;
 using SIL.Windows.Forms;
 
 namespace LanguageExplorer.Works
@@ -25,7 +25,6 @@ namespace LanguageExplorer.Works
 
 		public event SwitchConfigurationEvent SwitchConfiguration;
 		IPropertyTable m_propertyTable;
-
 		private string m_helpTopic;
 		private readonly HelpProvider m_helpProvider;
 		private IHelpTopicProvider m_helpTopicProvider;
@@ -170,10 +169,12 @@ namespace LanguageExplorer.Works
 		private List<GeckoElement> _highlightedElements;
 		private const string HighlightStyle = "background-color:Yellow ";	// LightYellow isn't really bold enough marking to my eyes for this feature.
 
-		public void HighlightContent(ConfigurableDictionaryNode configNode, LcmCache cache)
+		public void HighlightContent(ConfigurableDictionaryNode configNode, IFwMetaDataCacheManaged metaDataCacheAccessor)
 		{
 			if (m_preview.IsDisposed)
+			{
 				return;
+			}
 			if (_highlightedElements != null)
 			{
 				foreach (var element in _highlightedElements)
@@ -189,7 +190,7 @@ namespace LanguageExplorer.Works
 				return;
 			var browser = (GeckoWebBrowser)m_preview.NativeBrowser;
 			// Surprisingly, xpath does not work for xml documents in geckofx, so we need to search manually for the node we want.
-			_highlightedElements = FindConfiguredItem(configNode, browser, cache);
+			_highlightedElements = FindConfiguredItem(configNode, browser, metaDataCacheAccessor);
 			foreach (var element in _highlightedElements)
 			{
 				// add background-color to the style, preserving any existing style.  (See LT-17222.)
@@ -202,7 +203,7 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		private static List<GeckoElement> FindConfiguredItem(ConfigurableDictionaryNode selectedConfigNode, GeckoWebBrowser browser, LcmCache cache)
+		private static List<GeckoElement> FindConfiguredItem(ConfigurableDictionaryNode selectedConfigNode, GeckoWebBrowser browser, IFwMetaDataCacheManaged metaDataCacheAccessor)
 		{
 			var elements = new List<GeckoElement>();
 			var body = browser.Document.Body;
@@ -214,7 +215,9 @@ namespace LanguageExplorer.Works
 			foreach (var div in body.GetElementsByTagName("div"))
 			{
 				if (Equals(div.ParentElement, body) && div.GetAttribute("class") == topLevelClass)
-					elements.AddRange(FindMatchingSpans(selectedConfigNode, div, topLevelConfigNode, cache));
+				{
+					elements.AddRange(FindMatchingSpans(selectedConfigNode, div, topLevelConfigNode, metaDataCacheAccessor));
+				}
 			}
 			return elements;
 		}
@@ -240,12 +243,11 @@ namespace LanguageExplorer.Works
 			return Equals(nodeToMatch, configNode);
 		}
 
-		private static IEnumerable<GeckoElement> FindMatchingSpans(ConfigurableDictionaryNode selectedNode, GeckoElement parent,
-			ConfigurableDictionaryNode topLevelNode, LcmCache cache)
+		private static IEnumerable<GeckoElement> FindMatchingSpans(ConfigurableDictionaryNode selectedNode, GeckoElement parent, ConfigurableDictionaryNode topLevelNode, IFwMetaDataCacheManaged metaDataCacheAccessor)
 		{
 			var elements = new List<GeckoElement>();
 			var desiredClass = CssGenerator.GetClassAttributeForConfig(selectedNode);
-			if (ConfiguredXHTMLGenerator.IsCollectionNode(selectedNode, cache))
+			if (ConfiguredXHTMLGenerator.IsCollectionNode(selectedNode, metaDataCacheAccessor))
 				desiredClass = CssGenerator.GetClassAttributeForCollectionItem(selectedNode);
 			foreach (var span in parent.GetElementsByTagName("span"))
 			{

@@ -152,16 +152,19 @@ namespace LanguageExplorer.Areas
 
 			if (disposing)
 			{
-				if (_usingLocalFileExportEventHandler)
+				if (_fileExportMenu != null)
 				{
-					_fileExportMenu.Click -= CommonFileExportMenu_Click;
+					if (_usingLocalFileExportEventHandler)
+					{
+						_fileExportMenu.Click -= CommonFileExportMenu_Click;
+					}
+					else
+					{
+						_fileExportMenu.Click -= _foreignFileExportHandler;
+					}
+					_fileExportMenu.Visible = false;
+					_fileExportMenu.Enabled = false;
 				}
-				else
-				{
-					_fileExportMenu.Click -= _foreignFileExportHandler;
-				}
-				_fileExportMenu.Visible = false;
-				_fileExportMenu.Enabled = false;
 			}
 			_majorFlexComponentParameters = null;
 			_recordList = null;

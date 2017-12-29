@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 SIL International
+﻿// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,19 +8,17 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
-// ReSharper disable InconsistentNaming
 
 namespace LanguageExplorerTests.Works
 {
-#if RANDYTODO
 	/// <summary>
 	/// Tests for DictionaryConfigurationImportController.
 	/// LT-17397.
@@ -32,20 +30,17 @@ namespace LanguageExplorerTests.Works
 		private DictionaryConfigurationImportController _reversalController;
 		private string _projectConfigPath;
 		private string _reversalProjectConfigPath;
-		private readonly string _defaultConfigPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
 		private const string configLabel = "importexportConfiguration";
 		private const string reversalConfigLabel = "importexportReversalConfiguration";
 		private const string configFilename = "importexportConfigurationFile.fwdictconfig";
 		private const string reversalConfigFilename = "importexportReversalConfigurationFile.fwdictconfig";
 		private const int CustomRedBGR = 0x0000FE;
 		private readonly int NamedRedBGR = (int)ColorUtil.ConvertColorToBGR(Color.Red);
-
 		/// <summary>
 		/// Zip file to import during testing.
 		/// </summary>
 		private string _zipFile;
 		private string _reversalZipFile;
-
 		/// <summary>
 		/// Path to a dictionary configuration file that will be deleted after every test.
 		/// </summary>
@@ -708,5 +703,4 @@ namespace LanguageExplorerTests.Works
 			Assert.NotNull(importedSenseStyle, "Dictionary-Sense style was not imported.");
 		}
 	}
-#endif
 }

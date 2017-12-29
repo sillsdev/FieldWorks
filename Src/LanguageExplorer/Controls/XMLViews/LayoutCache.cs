@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,13 +9,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using SIL.Code;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.ObjectModel;
 using SIL.Xml;
 
@@ -45,23 +45,21 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_partInventory = parts;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LayoutCache"/> class.
 		/// </summary>
 		/// <param name="mdc">The MDC.</param>
 		/// <param name="sDatabase">The database name.</param>
-		/// <param name="app">The application.</param>
+		/// <param name="applicationName">The application's name.</param>
 		/// <param name="projectPath">The project folder.</param>
-		/// ------------------------------------------------------------------------------------
-		public LayoutCache(IFwMetaDataCache mdc, string sDatabase, IApp app, String projectPath)
+		public LayoutCache(IFwMetaDataCache mdc, string sDatabase, string applicationName, string projectPath)
 		{
 			m_mdc = mdc;
 			m_layoutInventory = Inventory.GetInventory("layouts", sDatabase);
 			m_partInventory = Inventory.GetInventory("parts", sDatabase);
 			if (m_layoutInventory == null || m_partInventory == null)
 			{
-				InitializePartInventories(sDatabase, app, projectPath);
+				InitializePartInventories(sDatabase, applicationName, projectPath);
 				m_layoutInventory = Inventory.GetInventory("layouts", sDatabase);
 				m_partInventory = Inventory.GetInventory("parts", sDatabase);
 			}
@@ -73,44 +71,39 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <remarks>Note: often we also want to update BrowseViewer.kBrowseViewVersion.</remarks>
 		public static readonly int LayoutVersionNumber = 25;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes the part inventories.
 		/// </summary>
 		/// <param name="sDatabase">The name of the database.</param>
-		/// <param name="app">The application.</param>
+		/// <param name="applicationName">The application's name.</param>
 		/// <param name="projectPath">The path to the project folder.</param>
-		/// ------------------------------------------------------------------------------------
-		public static void InitializePartInventories(string sDatabase, IApp app, String projectPath)
+		public static void InitializePartInventories(string sDatabase, string applicationName, string projectPath)
 		{
-			InitializePartInventories(sDatabase, app, true, projectPath);
+			InitializePartInventories(sDatabase, applicationName, true, projectPath);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initialize the part inventories.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static void InitializePartInventories(string sDatabase,
-			IApp app, bool fLoadUserOverrides, String projectPath)
+		public static void InitializePartInventories(string sDatabase, string applicationName, bool fLoadUserOverrides, string projectPath)
 		{
-			Debug.Assert(app != null, "app cannot be null");
+			Guard.AgainstNullOrEmptyString(applicationName, nameof(applicationName));
 
-			string partDirectory = Path.Combine(FwDirectoryFinder.FlexFolder,
-				Path.Combine("Configuration", "Parts"));
-			var keyAttrs = new Dictionary<string, string[]>();
-			keyAttrs["layout"] = new[] {"class", "type", "name", "choiceGuid" };
-			keyAttrs["group"] = new[] {"label"};
-			keyAttrs["part"] = new[] {"ref"};
+			var partDirectory = Path.Combine(FwDirectoryFinder.FlexFolder, Path.Combine("Configuration", "Parts"));
+			var keyAttrs = new Dictionary<string, string[]>
+			{
+				["layout"] = new[] {"class", "type", "name", "choiceGuid"},
+				["group"] = new[] {"label"},
+				["part"] = new[] {"ref"}
+			};
 
-			var layoutInventory = new Inventory(new[] {partDirectory},
-				"*.fwlayout", "/LayoutInventory/*", keyAttrs, app.ApplicationName, projectPath);
-
-			layoutInventory.Merger = new LayoutMerger();
+			var layoutInventory = new Inventory(new[] {partDirectory}, "*.fwlayout", "/LayoutInventory/*", keyAttrs, applicationName, projectPath)
+			{
+				Merger = new LayoutMerger()
+			};
 			// Holding shift key means don't use extant preference file, no matter what.
 			// This includes user overrides of layouts.
-			if (fLoadUserOverrides &&
-				System.Windows.Forms.Control.ModifierKeys != System.Windows.Forms.Keys.Shift)
+			if (fLoadUserOverrides && System.Windows.Forms.Control.ModifierKeys != System.Windows.Forms.Keys.Shift)
 			{
 				layoutInventory.LoadUserOverrides(LayoutVersionNumber, sDatabase);
 			}
@@ -122,11 +115,12 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			Inventory.SetInventory("layouts", sDatabase, layoutInventory);
 
-			keyAttrs = new Dictionary<string, string[]>();
-			keyAttrs["part"] = new[] {"id"};
+			keyAttrs = new Dictionary<string, string[]>
+			{
+				["part"] = new[] {"id"}
+			};
 
-			Inventory.SetInventory("parts", sDatabase, new Inventory(new[] {partDirectory},
-				"*Parts.xml", "/PartInventory/bin/*", keyAttrs, app.ApplicationName, projectPath));
+			Inventory.SetInventory("parts", sDatabase, new Inventory(new[] {partDirectory}, "*Parts.xml", "/PartInventory/bin/*", keyAttrs, applicationName, projectPath));
 		}
 
 		/// <summary>
@@ -137,22 +131,18 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="sDatabase"></param>
 		public static void InitializeLayoutsForWsTag(string sWsTag, string sDatabase)
 		{
-			Inventory layouts = Inventory.GetInventory("layouts", sDatabase);
-			if (layouts != null)
-				layouts.ExpandWsTaggedNodes(sWsTag);
+			var layouts = Inventory.GetInventory("layouts", sDatabase);
+			layouts?.ExpandWsTaggedNodes(sWsTag);
 		}
 
-		static char[] ktagMarkers = new[] { '-', LayoutKeyUtils.kcMarkLayoutCopy, LayoutKeyUtils.kcMarkNodeCopy };
+		static readonly char[] ktagMarkers = { '-', LayoutKeyUtils.kcMarkLayoutCopy, LayoutKeyUtils.kcMarkNodeCopy };
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the node.
 		/// </summary>
 		/// <param name="clsid">The CLSID.</param>
 		/// <param name="layoutName">Name of the layout.</param>
 		/// <param name="fIncludeLayouts">if set to <c>true</c> [f include layouts].</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public XElement GetNode(int clsid, string layoutName, bool fIncludeLayouts)
 		{
 			Tuple<int, string, bool> key = Tuple.Create(clsid, layoutName, fIncludeLayouts);
@@ -214,19 +204,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			return node;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the layout inventory.
 		/// </summary>
 		/// <value>The layout inventory.</value>
-		/// ------------------------------------------------------------------------------------
-		public Inventory LayoutInventory
-		{
-			get
-			{
-				return m_layoutInventory;
-			}
-		}
+		public Inventory LayoutInventory => m_layoutInventory;
 	}
 
 	/// <summary>

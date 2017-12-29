@@ -1,10 +1,10 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Works
 {
@@ -66,7 +66,7 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Highlight the element(s) corresponding to the configuration node in the preview pane.
 		/// </summary>
-		void HighlightContent(ConfigurableDictionaryNode configNode, LcmCache cache);
+		void HighlightContent(ConfigurableDictionaryNode configNode, IFwMetaDataCacheManaged metaDataCacheAccessor);
 
 		/// <summary>
 		/// Close the view dialog (needed so the controller can do so after a configuration view has been imported.

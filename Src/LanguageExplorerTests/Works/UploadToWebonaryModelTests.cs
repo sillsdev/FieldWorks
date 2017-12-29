@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace LanguageExplorerTests.Works
 {
 	[TestFixture]
-	class UploadToWebonaryModelTests
+	public class UploadToWebonaryModelTests
 	{
 		[Test]
 		public void EncryptPassword_NullAndEmptyDoNotCrash()

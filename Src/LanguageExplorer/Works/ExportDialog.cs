@@ -426,7 +426,6 @@ namespace LanguageExplorer.Works
 						return null; // nothing to do.
 				}
 			}
-			AreaListener.GetContentControlParameters(null, area, tool);
 			var controlElement = AreaListener.GetContentControlParameters(null, area, tool);
 			Debug.Assert(controlElement != null, "Prepare to be disappointed, since it will be null.");
 			var dynLoaderNode = controlElement.Element("dynamicloaderinfo");

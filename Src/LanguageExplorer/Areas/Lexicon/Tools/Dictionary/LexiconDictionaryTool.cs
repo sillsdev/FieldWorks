@@ -163,14 +163,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
 		public string MachineName => AreaServices.LexiconDictionaryMachineName;
 
-#if RANDYTODO
-		// TODO: It displays fine the first time it is selected, but the second time PropertyTable is upset in a multi-thread context.
-		// TODO: Feed all expected stuff from the PropertyTable into the threaded context, but not the table itself.
-#endif
 		/// <summary>
 		/// User-visible localizable component name.
 		/// </summary>
-		public string UiName => "BUGGY: Dictionary";
+		public string UiName => "Dictionary";
 
 		#endregion
 

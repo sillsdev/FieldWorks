@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,6 +13,7 @@ using NUnit.Framework;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
@@ -25,9 +26,6 @@ namespace LanguageExplorerTests.Works
 	// to figure out what needs to be mocked or set up so they can work.
 	public class BulkEditBarTestsBase : XWorksAppTestBase
 	{
-		/// <summary>
-		/// m_window is needed for processing xcore messages when simulating user events.
-		/// </summary>
 		protected IPropertyTable m_propertyTable;
 		protected BulkEditBarForTests m_bulkEditBar;
 		protected BrowseViewerForTests m_bv;
@@ -38,9 +36,8 @@ namespace LanguageExplorerTests.Works
 		/// <summary>
 		/// Run by FixtureInit() in XWorksAppTestBase
 		/// </summary>
-		protected override void Init()
+		protected override void FixtureInit()
 		{
-			m_application = new MockFwXApp(new MockFwManager { Cache = this.Cache }, null, null);
 			m_createdObjectList = new ObservableCollection<ICmObject>();
 			m_createdObjectList.CollectionChanged += m_createdObjectList_CollectionChanged;
 		}
@@ -58,7 +55,7 @@ namespace LanguageExplorerTests.Works
 		/// <summary>
 		/// Run by FixtureCleanup() in XWorksAppTestBase
 		/// </summary>
-		protected override void TearDown()
+		public override void TearDown()
 		{
 			m_createdObjectList.CollectionChanged -= m_createdObjectList_CollectionChanged;
 			m_createdObjectList = null;

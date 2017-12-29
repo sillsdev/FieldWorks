@@ -1,74 +1,65 @@
-﻿// Copyright (c) 2014-2017 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.IO;
+using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.IO;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Utils;
 
 namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 {
 	public class DictionaryConfigurationMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-#if RANDYTODO
-		private MockFwXApp m_application;
-		private string m_configFilePath;
-		private MockFwXWindow m_window;
-		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
+		private FlexComponentParameters _flexComponentParameters;
 
-		[TestFixtureSetUp]
-		public override void FixtureSetup()
+		#region Overrides of MemoryOnlyBackendProviderRestoredForEachTestTestBase
+
+		public override void TestSetup()
 		{
-			base.FixtureSetup();
-			Cache.ProjectId.Path = Path.Combine(Path.GetTempPath(), Cache.ProjectId.Name, Cache.ProjectId.Name + @".junk");
-			FwRegistrySettings.Init();
-			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
-			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
-			m_window = new MockFwXWindow(m_application, m_configFilePath);
-			m_window.Init(Cache); // initializes Mediator values
-			m_propertyTable = m_window.PropTable;
-			m_mediator = m_window.Mediator;
-			m_mediator.AddColleague(new StubContentControlProvider());
-			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
-			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application, Cache.ProjectId.Path);
+			base.TestSetup();
+
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
+
+			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, FwUtils.ksFlexAppName, Cache.ProjectId.Path);
 		}
 
-		[TestFixtureTearDown]
-		public override void FixtureTeardown()
+		public override void TestTearDown()
 		{
-			DirectoryUtilities.DeleteDirectoryRobust(Cache.ProjectId.Path);
-			base.FixtureTeardown();
-			m_application.Dispose();
-			m_window.Dispose();
-			m_mediator.Dispose();
-			FwRegistrySettings.Release();
+			DirectoryUtilities.DeleteDirectoryRobust(Cache.ProjectId.ProjectFolder);
+			_flexComponentParameters.PropertyTable.Dispose();
+			_flexComponentParameters = null;
+
+			base.TestTearDown();
 		}
+
+		#endregion
 
 		[Test]
 		public void MigrateOldConfigurationsIfNeeded_BringsPreHistoricFileToCurrentVersion()
 		{
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
-			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName,
-				"Lexeme" + DictionaryConfigurationModel.FileExtension);
+			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName, "Lexeme" + DictionaryConfigurationModel.FileExtension);
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
 				@"<layoutType label='Lexeme-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
 				@"<configure class='LexEntry' label='Minor Entry' layout='publishStemMinorEntry' hideConfig='true' /></layoutType>'"});
-			var migrator = new DictionaryConfigurationMigrator(m_propertyTable, m_mediator);
+
+			var migrator = new DictionaryConfigurationMigrator();
+			migrator.InitializeFlexComponent(_flexComponentParameters);
 			migrator.MigrateOldConfigurationsIfNeeded(); // SUT
 			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
 			Assert.AreEqual(DictionaryConfigurationMigrator.VersionCurrent, updatedConfigModel.Version);
 			DirectoryUtilities.DeleteDirectoryRobust(configSettingsDir);
 		}
 
+#if RANDYTODO
+		// TODO: This one fails for some reason.
 		[Test]
 		public void MigrateOldConfigurationsIfNeeded_MatchesLabelsWhenUIIsLocalized()
 		{
@@ -79,20 +70,21 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			pathsToL10NStrings["group[@id = 'LocalizedAttributes']/"] = localizedPartLabels;
 
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
-			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName,
-				"Lexeme" + DictionaryConfigurationModel.FileExtension);
+			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName, "Lexeme" + DictionaryConfigurationModel.FileExtension);
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
 				@"<layoutType label='Lexeme-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
 				@"<configure class='LexEntry' label='Minor Entry' layout='publishStemMinorEntry' hideConfig='true' /></layoutType>'"});
-			var migrator = new DictionaryConfigurationMigrator(m_propertyTable, m_mediator);
+			var migrator = new DictionaryConfigurationMigrator();
+			migrator.InitializeFlexComponent(_flexComponentParameters);
 			Assert.DoesNotThrow(() => migrator.MigrateOldConfigurationsIfNeeded(), "ArgumentException indicates localized labels."); // SUT
 			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
 			Assert.AreEqual(2, updatedConfigModel.Parts.Count, "Should have 2 top-level nodes");
 			Assert.AreEqual("Main Entry", updatedConfigModel.Parts[0].Label);
 			DirectoryUtilities.DeleteDirectoryRobust(configSettingsDir);
 		}
+#endif
 
 		[Test]
 		public void MigrateOldConfigurationsIfNeeded_PreservesOrderOfBibliographies()
@@ -105,7 +97,8 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
 				@"<layoutType label='All Reversal Indexes' layout='publishReversal'>",
 				@"<configure class='ReversalIndexEntry' label='Reversal Entry' layout='publishReversalEntry' /></layoutType>'"});
-			var migrator = new DictionaryConfigurationMigrator(m_propertyTable, m_mediator);
+			var migrator = new DictionaryConfigurationMigrator();
+			migrator.InitializeFlexComponent(_flexComponentParameters);
 			migrator.MigrateOldConfigurationsIfNeeded(); // SUT
 			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
 			var refdSenseChildren = updatedConfigModel.Parts[0].Children.Find(n => n.Label == "Referenced Senses").Children;
@@ -194,6 +187,5 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			Assert.AreEqual("Stylish", oldModel.Parts[0].Children[0].Style, "Style not copied from new defaults");
 			Assert.False(oldModel.Parts[0].Children[0].IsEnabled, "IsEnabled value not copied from new defaults");
 		}
-#endif
 	}
 }

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Ionic.Zip;
+using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
@@ -20,20 +21,19 @@ using SIL.LCModel.Infrastructure;
 using SIL.TestUtilities;
 using SIL.LCModel.Utils;
 using FileUtils = SIL.LCModel.Utils.FileUtils;
-// ReSharper disable InconsistentNaming
 
 namespace LanguageExplorerTests.Works
 {
-#if RANDYTODO
 	[TestFixture]
 	public class DictionaryConfigurationManagerControllerTests : MemoryOnlyBackendProviderTestBase
 	{
+		private FlexComponentParameters _flexComponentParameters;
 		private DictionaryConfigurationManagerController _controller;
 		private List<DictionaryConfigurationModel> _configurations;
 
 		private readonly string _projectConfigPath = Path.GetTempPath();
 		private readonly string _defaultConfigPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
-		private IFileOS _mockFilesystem = new MockFileOS();
+		private IFileOS _mockFilesystem;
 		private IStStyle _characterTestStyle;
 		private IStStyle _paraTestStyle;
 		private IStStyle _paraChildTestStyle;
@@ -41,10 +41,14 @@ namespace LanguageExplorerTests.Works
 		private IStStyle _numberedTestStyle;
 		private IStStyle _homographTestStyle;
 
+		#region Overrides of LcmTestBase
+
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
+
+			_mockFilesystem = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(_mockFilesystem);
 
 			FileUtils.EnsureDirectoryExists(_defaultConfigPath);
@@ -95,12 +99,16 @@ namespace LanguageExplorerTests.Works
 		public override void FixtureTeardown()
 		{
 			FileUtils.Manager.Reset();
+			_mockFilesystem = null;
+
 			base.FixtureTeardown();
 		}
 
-		[SetUp]
-		public void Setup()
+		public override void TestSetup()
 		{
+			base.TestSetup();
+
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			_configurations = new List<DictionaryConfigurationModel>
 			{
 				new DictionaryConfigurationModel { Label = "configuration0", Publications = new List<string>() },
@@ -113,13 +121,23 @@ namespace LanguageExplorerTests.Works
 				"publicationB"
 			};
 
-			_controller = new DictionaryConfigurationManagerController(Cache, null, _configurations, publications, _projectConfigPath, _defaultConfigPath);
+			_controller = new DictionaryConfigurationManagerController(_configurations, publications, _projectConfigPath, _defaultConfigPath);
+			_flexComponentParameters.PropertyTable.SetProperty("SkipSomeTestInitialization", true, false, false);
+			_controller.InitializeFlexComponent(_flexComponentParameters);
 		}
 
-		[TearDown]
-		public void TearDown()
+		public override void TestTearDown()
 		{
+			_configurations.Clear();
+			_flexComponentParameters.PropertyTable.Dispose();
+			_flexComponentParameters = null;
+			_controller = null;
+			_configurations = null;
+
+			base.TestTearDown();
 		}
+
+		#endregion
 
 		[Test]
 		public void GetPublication_UsesAssociations()
@@ -439,7 +457,8 @@ namespace LanguageExplorerTests.Works
 		{
 			var defaultReversalPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "ReversalIndex");
 			// construct a controller to work in the default reversal directory
-			_controller = new DictionaryConfigurationManagerController(Cache, null, _configurations, new List<string>(), _projectConfigPath, defaultReversalPath);
+			_controller = new DictionaryConfigurationManagerController(_configurations, new List<string>(), _projectConfigPath, defaultReversalPath);
+			_controller.InitializeFlexComponent(_flexComponentParameters);
 			var allRevFileName = DictionaryConfigurationModel.AllReversalIndexesFilenameBase + DictionaryConfigurationModel.FileExtension;
 			var shippedRootDefaultConfigurationPath = Path.Combine(defaultReversalPath, allRevFileName);
 			FileUtils.WriteStringtoFile(shippedRootDefaultConfigurationPath, "bogus data that is unread, the file is read from the real defaults", Encoding.UTF8);
@@ -614,10 +633,11 @@ namespace LanguageExplorerTests.Works
 		{
 			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(null, "a", Cache));
 			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(_configurations[0], null, Cache));
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(_configurations[0], string.Empty, Cache));
 			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(_configurations[0], "a", null));
 			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(null, null, null));
-			// Empty string
-			Assert.Throws<ArgumentException>(() => DictionaryConfigurationManagerController.ExportConfiguration(_configurations[0], "", Cache));
+			// configurationToExport.FilePath is null
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(_configurations[0], string.Empty, Cache));
 
 		}
 
@@ -719,5 +739,4 @@ namespace LanguageExplorerTests.Works
 			}
 		}
 	}
-#endif
 }

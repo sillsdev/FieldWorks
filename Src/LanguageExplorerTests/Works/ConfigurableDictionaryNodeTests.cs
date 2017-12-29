@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,6 +9,7 @@ using NUnit.Framework;
 
 namespace LanguageExplorerTests.Works
 {
+	[TestFixture]
 	public class ConfigurableDictionaryNodeTests
 	{
 		[Test]
@@ -156,7 +157,6 @@ namespace LanguageExplorerTests.Works
 		[Test]
 		public void DuplicatesGroupingNodeChildrenAffectSuffixes()
 		{
-#if RANDYTODO
 			var nodeToDuplicateLabel = "node";
 			var nodeToDuplicate = new ConfigurableDictionaryNode { Label = nodeToDuplicateLabel, LabelSuffix = null };
 			var dupUnderGroup = new ConfigurableDictionaryNode { Label = nodeToDuplicateLabel, LabelSuffix = "1" };
@@ -175,13 +175,11 @@ namespace LanguageExplorerTests.Works
 			Assert.That(nodeToDuplicate.LabelSuffix, Is.Null, "should not have changed original node label suffix");
 			Assert.IsTrue(duplicate.LabelSuffix.EndsWith("2"), "(1) was used in the group, so the suffix should be 2 but is: " + duplicate.LabelSuffix);
 			Assert.IsTrue(inGroupDup.LabelSuffix.EndsWith("3"), "(2) was used in the group parent, so the suffix should be 3 but is: " + inGroupDup.LabelSuffix);
-#endif
 		}
 
 		[Test]
 		public void DuplicatesSharedGroupingNodeChildrenAffectSuffixes()
 		{
-#if RANDYTODO
 			var nodeToDuplicateLabel = "node";
 			var nodeToDuplicate = new ConfigurableDictionaryNode { FieldDescription = nodeToDuplicateLabel };
 			var dupUnderShardGroup = new ConfigurableDictionaryNode { FieldDescription = nodeToDuplicateLabel, LabelSuffix = "1" };
@@ -202,7 +200,6 @@ namespace LanguageExplorerTests.Works
 			Assert.That(nodeToDuplicate.LabelSuffix, Is.Null, "should not have changed original node label suffix");
 			Assert.IsTrue(duplicate.LabelSuffix.EndsWith("2"), "(1) was used in the group, so the suffix should be 2 but is: " + duplicate.LabelSuffix);
 			Assert.IsTrue(inGroupDup.LabelSuffix.EndsWith("3"), "(2) was used in the group parent, so the suffix should be 3 but is: " + inGroupDup.LabelSuffix);
-#endif
 		}
 
 		[Test]
@@ -670,7 +667,6 @@ namespace LanguageExplorerTests.Works
 		[Test]
 		public void TryGetMasterParent()
 		{
-#if RANDYTODO
 			var child = new ConfigurableDictionaryNode();
 			var sharedNode = new ConfigurableDictionaryNode { Label = "Shared", Children = new List<ConfigurableDictionaryNode> { child } };
 			var masterParent = new ConfigurableDictionaryNode { ReferenceItem = "Shared" };
@@ -684,7 +680,6 @@ namespace LanguageExplorerTests.Works
 			Assert.IsNull(returnedMasterParent, "Master Parent");
 			Assert.False(root.TryGetMasterParent(out returnedMasterParent), "The root node *certainly* doesn't have a master parent"); // SUT
 			Assert.IsNull(returnedMasterParent, "Root Node");
-#endif
 		}
 	}
 }
