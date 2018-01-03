@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -347,26 +347,25 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// should have lost focus and saved before doing anything that would cause a regenerate.
 				// But let's not crash.
 				var extensions = m_cache.ActionHandlerAccessor as IActionHandlerExtensions;
-				if ((extensions != null && !extensions.CanStartUow) ||
-					!m_sense.IsValidObject) //users might quickly realize a mistake and delete the sense before we have converted our dummy.
+				if ((extensions != null && !extensions.CanStartUow) || !m_sense.IsValidObject) //users might quickly realize a mistake and delete the sense before we have converted our dummy.
 				{
 					return 0;
 				}
 
-				List<int> currentEntries = new List<int>();
-				int countIndices = m_sdaRev.get_VecSize(m_sense.Hvo, kFlidIndices);
-				int hvoReal = 0;
+				var currentEntries = new List<int>();
+				var countIndices = m_sdaRev.get_VecSize(m_sense.Hvo, kFlidIndices);
+				var hvoReal = 0;
 				var writingSystemsModified = new HashSet<int>();
-				for (int i = 0; i < countIndices; ++i)
+				for (var i = 0; i < countIndices; ++i)
 				{
-					int hvoIndex = m_sdaRev.get_VecItem(m_sense.Hvo, kFlidIndices, i);
-					IReversalIndex revIndex = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(hvoIndex);
+					var hvoIndex = m_sdaRev.get_VecItem(m_sense.Hvo, kFlidIndices, i);
+					var revIndex = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(hvoIndex);
 					writingSystemsModified.Add(m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(revIndex.WritingSystem));
-					int countRealEntries = m_sdaRev.get_VecSize(hvoIndex, kFlidEntries) - 1; // Skip the dummy entry at the end.
+					var countRealEntries = m_sdaRev.get_VecSize(hvoIndex, kFlidEntries) - 1; // Skip the dummy entry at the end.
 					// Go through it from the far end, since we may be deleting empty items.
-					for (int j = countRealEntries - 1; j >= 0; --j)
+					for (var j = countRealEntries - 1; j >= 0; --j)
 					{
-						int hvoEntry = m_sdaRev.get_VecItem(hvoIndex, kFlidEntries, j);
+						var hvoEntry = m_sdaRev.get_VecItem(hvoIndex, kFlidEntries, j);
 						// If hvoEntry is greater than 0, then it started as a real entry.
 						// If hvoEntry is less than 0, it is clearly a new one.
 						// The text may have changed for a real one, so check to see if is the same.
@@ -375,33 +374,37 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						// see if it already exists in the index.
 						// If it exists, then add it to the currentEntries array.
 						// If it does not exist, we have to create it, and add it to the currentEntries array.
-						List<string> rgsFromDummy = new List<string>();
-						if (GetReversalFormsAndCheckExisting(currentEntries, hvoIndex,
-							m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(revIndex.WritingSystem), j, hvoEntry, rgsFromDummy))
+						var rgsFromDummy = new List<string>();
+						if (GetReversalFormsAndCheckExisting(currentEntries, hvoIndex, m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(revIndex.WritingSystem), j, hvoEntry, rgsFromDummy))
 						{
 							continue;
 						}
 						// At this point, we need to find or create one or more entries.
-						int hvo = FindOrCreateReversalEntry(revIndex, rgsFromDummy, m_cache);
+						var hvo = FindOrCreateReversalEntry(revIndex, rgsFromDummy, m_cache);
 						currentEntries.Add(hvo);
 						if (hvoEntry == hvoDummy)
+						{
 							hvoReal = hvo;
+						}
 					}
 				}
 				// Reset the sense's ref. property to all the ids in the currentEntries array.
-				int[] ids = currentEntries.ToArray();
+				currentEntries.Reverse();
+				var ids = currentEntries.ToArray();
 				if (!m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().IsValidObjectId(m_sense.Hvo))
+				{
 					return 0; // our object has been deleted while we weren't looking!
-				int countEntries = m_cache.DomainDataByFlid.get_VecSize(m_sense.Hvo, LexSenseTags.kflidReversalEntries);
+				}
+				var countEntries = m_cache.DomainDataByFlid.get_VecSize(m_sense.Hvo, LexSenseTags.kflidReversalEntries);
 				// Check the current state and don't save (or create an Undo stack item) if
 				// nothing has changed.
-				bool fChanged = true;
+				var fChanged = true;
 				if (countEntries == ids.Length)
 				{
 					fChanged = false;
-					for (int i = 0; i < countEntries; ++i)
+					for (var i = 0; i < countEntries; ++i)
 					{
-						int id = m_cache.DomainDataByFlid.get_VecItem(m_sense.Hvo, LexSenseTags.kflidReversalEntries, i);
+						var id = m_cache.DomainDataByFlid.get_VecItem(m_sense.Hvo, LexSenseTags.kflidReversalEntries, i);
 						if (id != ids[i])
 						{
 							fChanged = true;
@@ -411,8 +414,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				}
 				if (fChanged)
 				{
-					m_cache.DomainDataByFlid.BeginUndoTask(LanguageExplorerResources.ksUndoSetRevEntries,
-						LanguageExplorerResources.ksRedoSetRevEntries);
+					m_cache.DomainDataByFlid.BeginUndoTask(LanguageExplorerResources.ksUndoSetRevEntries, LanguageExplorerResources.ksRedoSetRevEntries);
 					m_sdaRev.Replace(m_sense.Hvo, LexSenseTags.kflidReversalEntries, 0, countEntries, ids, ids.Length);
 					m_cache.DomainDataByFlid.EndUndoTask();
 				}
@@ -743,7 +745,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				CheckDisposed();
 
 				if (vwselNew == null)
+				{
 					return;
+				}
 
 				base.HandleSelectionChange(rootb, vwselNew);
 
@@ -772,22 +776,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				int hvoSense, tagIndex, ihvoIndex;
 				vwselNew.PropInfo(false, 2, out hvoSense, out tagIndex, out ihvoIndex, out cpropPrevious, out vps);
 
-				int count = m_sdaRev.get_VecSize(hvoIndex, kFlidEntries);
-				int lastEntryHvo = m_sdaRev.get_VecItem(hvoIndex, kFlidEntries, count - 1);
-
+				var count = m_sdaRev.get_VecSize(hvoIndex, kFlidEntries);
+				var lastEntryHvo = m_sdaRev.get_VecItem(hvoIndex, kFlidEntries, count - 1);
 				string oldForm = null;
 				var wsString = m_sdaRev.get_UnicodeProp(hvoIndex, ReversalIndexTags.kflidWritingSystem);
-				int wsIndex = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr(wsString);
-				ITsString tssEntry = m_sdaRev.get_MultiStringAlt(m_hvoOldSelection,
-					ReversalIndexEntryTags.kflidReversalForm, wsIndex);
+				var wsIndex = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr(wsString);
+				var tssEntry = m_sdaRev.get_MultiStringAlt(m_hvoOldSelection, ReversalIndexEntryTags.kflidReversalForm, wsIndex);
 				if (tssEntry != null)
 					oldForm = tssEntry.Text;
-				if (m_hvoOldSelection != 0
-					&& hvoObj != m_hvoOldSelection
-					&& (oldForm == null || oldForm.Length  == 0))
+				if (m_hvoOldSelection != 0 && hvoObj != m_hvoOldSelection && string.IsNullOrEmpty(oldForm))
 				{
 					// Remove the old string from the dummy cache, since its length is 0.
-					for (int i = 0; i < count; ++i)
+					for (var i = 0; i < count; ++i)
 					{
 						if (m_hvoOldSelection == m_sdaRev.get_VecItem(hvoIndex, kFlidEntries, i))
 						{
@@ -814,14 +814,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// Assign a new dummy ID.
 				m_dummyId--;
 				// Insert it at the end of the list.
-				m_sdaRev.CacheReplace(hvoIndex, kFlidEntries, count, count, new int[] {m_dummyId}, 1);
+				m_sdaRev.CacheReplace(hvoIndex, kFlidEntries, count, count, new[] {m_dummyId}, 1);
 				// Set its 'form' to be an empty string in the appropriate writing system.
-				ITsTextProps props = tss.get_PropertiesAt(0);
+				var props = tss.get_PropertiesAt(0);
 				int nVar;
 				ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
-				ITsString tssEmpty = TsStringUtils.EmptyString(ws);
-				m_sdaRev.CacheStringAlt(m_dummyId, ReversalIndexEntryTags.kflidReversalForm,
-					ws, tssEmpty);
+				var tssEmpty = TsStringUtils.EmptyString(ws);
+				m_sdaRev.CacheStringAlt(m_dummyId, ReversalIndexEntryTags.kflidReversalForm, ws, tssEmpty);
+				var createdRevHvo = ConvertDummiesToReal(hvoObj);
+				m_sdaRev.SetMultiStringAlt(createdRevHvo, ReversalIndexEntryTags.kflidReversalForm, ws, tss);
 				// Refresh
 				RootBox.PropChanged(hvoIndex, kFlidEntries, count, 1, 0);
 
@@ -1306,13 +1307,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				if (tag == ReversalIndexEntryTags.kflidReversalForm)
 				{
-					HvoWs key = new HvoWs(hvo, ws);
+					var key = new HvoWs(hvo, ws);
 					m_mapHvoWsRevForm[key] = _tss;
+					// anything negative is just a dummy hvo. Make the base class ignore it for now
+					if (hvo < 0)
+					{
+						return;
+					}
 				}
-				else
-				{
-					base.SetMultiStringAlt(hvo, tag, ws, _tss);
-				}
+				base.SetMultiStringAlt(hvo, tag, ws, _tss);
 			}
 
 			/// <summary />
@@ -1322,14 +1325,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					ITsString tss;
 					if (m_mapWsAbbr.TryGetValue(hvo, out tss))
+					{
 						return tss;
-					else
-						return null;
+					}
+					return null;
 				}
-				else
-				{
-					return base.get_StringProp(hvo, tag);
-				}
+				return base.get_StringProp(hvo, tag);
 			}
 
 			/// <summary />

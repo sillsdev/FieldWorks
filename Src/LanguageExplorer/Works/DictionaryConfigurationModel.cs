@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -195,6 +195,11 @@ namespace LanguageExplorer.Works
 				if (availableWSs.Any(x => x.Id == HomographConfiguration.HomographWritingSystem))
 				{
 					HomographConfiguration.ExportToHomographConfiguration(cache.ServiceLocator.GetInstance<HomographConfiguration>());
+				}
+				else
+				{
+					HomographConfiguration.HomographWritingSystem = string.Empty;
+					HomographConfiguration.CustomHomographNumbers = string.Empty;
 				}
 			}
 			// Handle any changes to the custom field definitions.  (See https://jira.sil.org/browse/LT-16430.)

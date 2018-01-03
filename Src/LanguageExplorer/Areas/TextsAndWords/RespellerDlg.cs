@@ -557,6 +557,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void m_btnClose_Click(object sender, EventArgs e)
 		{
+			if (ChangesWereMade)
+			{
+				PropertyTable.GetValue<IFwMainWnd>("window").RefreshAllViews();
+			}
 			Close();
 		}
 
@@ -1538,6 +1542,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					publisher.Publish("ItemDataModified", wfOld);
 				}
+
 				publisher.Publish("ItemDataModified", wfNew);
 
 				uuow.RollBack = false;
