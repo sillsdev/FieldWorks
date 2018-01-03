@@ -320,7 +320,7 @@
     <Compile Include="Repository\TextAndWordsAreaTests.cs" />
     <Compile Include="TextsAndWords\RespellingTests.cs" />
     <Compile Include="TextsAndWords\WordGrammarDebuggingTests.cs" />
-    <Compile Include="Works\AddCustomFieldDialogTests.cs" />
+    <Compile Include="Areas\AddCustomFieldDialogTests.cs" />
     <Compile Include="Works\AllReversalEntriesRecordListTests.cs" />
     <Compile Include="Works\BulkEditBarTests.cs" />
     <Compile Include="Works\ConfigurableDictionaryNodeTests.cs" />

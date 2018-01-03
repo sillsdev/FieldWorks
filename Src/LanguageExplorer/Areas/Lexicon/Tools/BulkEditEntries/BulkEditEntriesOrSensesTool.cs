@@ -73,6 +73,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
 			_lexiconAreaMenuHelper.Initialize();
+			_lexiconAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
 		}
 
 		/// <summary>

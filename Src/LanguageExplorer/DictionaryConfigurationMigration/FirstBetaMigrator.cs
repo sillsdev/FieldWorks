@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using LanguageExplorer.Dumpster;
 using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -394,15 +393,15 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 
 		private static void EnsureCssOverrideAndStylesAreUpdated(ConfigurableDictionaryNode destinationNode, ConfigurableDictionaryNode sourceNode)
 		{
-			if (sourceNode.StyleType != ConfigurableDictionaryNode.StyleTypes.Default && destinationNode.StyleType == ConfigurableDictionaryNode.StyleTypes.Default)
+			if (sourceNode.StyleType != StyleTypes.Default && destinationNode.StyleType == StyleTypes.Default)
 			{
 				var nodeStyleType = sourceNode.StyleType;
 				var nodeParaOpts = destinationNode.DictionaryNodeOptions as IParaOption;
 				if (nodeParaOpts != null)
 				{
 					nodeStyleType = nodeParaOpts.DisplayEachInAParagraph
-						? ConfigurableDictionaryNode.StyleTypes.Paragraph
-						: ConfigurableDictionaryNode.StyleTypes.Character;
+						? StyleTypes.Paragraph
+						: StyleTypes.Character;
 				}
 				destinationNode.StyleType = nodeStyleType;
 			}

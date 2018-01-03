@@ -64,6 +64,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		internal void Initialize()
 		{
 			_lexiconAreaMenuHelper.Initialize();
+			_lexiconAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
 
 			AddEditMenuItems();
 			AddInsertMenuItems();

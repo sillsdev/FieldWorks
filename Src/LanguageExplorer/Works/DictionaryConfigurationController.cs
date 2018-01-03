@@ -1004,13 +1004,13 @@ namespace LanguageExplorer.Works
 				}
 				if (paraOptions.DisplayEachInAParagraph)
 				{
-					node.StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph;
+					node.StyleType = StyleTypes.Paragraph;
 					if (!IsParagraphStyle(nodeStyle, styles))
 						node.Style = null;
 				}
 				else
 				{
-					node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
+					node.StyleType = StyleTypes.Character;
 					if (IsParagraphStyle(nodeStyle, styles))
 						node.Style = null;
 				}
@@ -1085,7 +1085,7 @@ namespace LanguageExplorer.Works
 			var lookupClass = ConfiguredXHTMLGenerator.GetTypeForConfigurationNode(parent, (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor, out unneeded);
 			// If the node describes a collection we may want to add the custom field node if the collection is of
 			// the type that the field is added to. (e.g. Senses, ExampleSentences)
-			if(ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(parent, (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor) == ConfiguredXHTMLGenerator.PropertyType.CollectionType)
+			if(ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(parent, (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor) == PropertyType.CollectionType)
 			{
 				if(lookupClass.IsGenericType)
 				{

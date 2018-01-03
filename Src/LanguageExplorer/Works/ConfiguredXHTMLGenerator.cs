@@ -794,8 +794,15 @@ namespace LanguageExplorer.Works
 		{
 			var classAtt = CssGenerator.GetClassAttributeForConfig(configNode);
 			if (configNode.ReferencedNode != null)
-				classAtt = string.Format("{0} {1}", classAtt, CssGenerator.GetClassAttributeForConfig(configNode.ReferencedNode));
+			{
+				classAtt = $"{classAtt} {CssGenerator.GetClassAttributeForConfig(configNode.ReferencedNode)}";
+			}
 			writer.WriteAttributeString("class", classAtt);
+		}
+
+		internal static string GenerateXHTMLForFieldByReflection(object field, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
+		{
+			return ReallyGenerateXHTMLForFieldByReflection(field, config, publicationDecorator, settings);
 		}
 
 		/// <summary>
@@ -803,9 +810,7 @@ namespace LanguageExplorer.Works
 		/// write out appropriate XHTML.
 		/// </summary>
 		/// <remarks>We use a significant amount of boilerplate code for fields and subfields. Make sure you update both.</remarks>
-		internal static string GenerateXHTMLForFieldByReflection(object field, ConfigurableDictionaryNode config,
-			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, SenseInfo info = new SenseInfo(),
-			bool fUseReverseSubField = false)
+		private static string ReallyGenerateXHTMLForFieldByReflection(object field, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, SenseInfo info = new SenseInfo(), bool fUseReverseSubField = false)
 		{
 			if (!config.IsEnabled)
 			{
@@ -818,11 +823,13 @@ namespace LanguageExplorer.Works
 			{
 				return GenerateXHTMLForGroupingNode(field, config, publicationDecorator, settings);
 			}
-			else if (config.IsCustomField && config.SubField == null)
+			if (config.IsCustomField && config.SubField == null)
 			{
 				var customFieldOwnerClassName = GetClassNameForCustomFieldParent(config, (IFwMetaDataCacheManaged)settings.Cache.MetaDataCacheAccessor);
 				if (!GetPropValueForCustomField(field, config, cache, customFieldOwnerClassName, config.FieldDescription, ref propertyValue))
+				{
 					return string.Empty;
+				}
 			}
 			else
 			{
@@ -830,7 +837,7 @@ namespace LanguageExplorer.Works
 				if (property == null)
 				{
 #if DEBUG
-					var msg = string.Format("Issue with finding {0} for {1}", config.FieldDescription, entryType);
+					var msg = $"Issue with finding {config.FieldDescription} for {entryType}";
 					ShowConfigDebugInfo(msg, config);
 #endif
 					return string.Empty;
@@ -862,7 +869,7 @@ namespace LanguageExplorer.Works
 					if (subProp == null)
 					{
 #if DEBUG
-						var msg = String.Format("Issue with finding (subField) {0} for (subType) {1}", subField, subType);
+						var msg = $"Issue with finding (subField) {subField} for (subType) {subType}";
 						ShowConfigDebugInfo(msg, config);
 #endif
 						return string.Empty;
@@ -1375,18 +1382,6 @@ namespace LanguageExplorer.Works
 				return "__INVALID_FILE_NAME__";
 			}
 			return filePath;
-		}
-
-		internal enum PropertyType
-		{
-			CollectionType,
-			MoFormType,
-			CmObjectType,
-			CmPictureType,
-			CmFileType,
-			CmPossibility,
-			PrimitiveType,
-			InvalidProperty
 		}
 
 		private static Dictionary<ConfigurableDictionaryNode, PropertyType> _configNodeToTypeMap = new Dictionary<ConfigurableDictionaryNode, PropertyType>();
@@ -2140,7 +2135,7 @@ namespace LanguageExplorer.Works
 				{
 					if (child.FieldDescription != "MorphoSyntaxAnalysisRA" || !isSameGrammaticalInfo)
 					{
-						bldr.Append(GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings, info));
+						bldr.Append(ReallyGenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings, info));
 					}
 				}
 			}
@@ -2383,7 +2378,7 @@ namespace LanguageExplorer.Works
 								if (string.IsNullOrEmpty(child.CSSClassNameOverride))
 									child.CSSClassNameOverride = CssGenerator.GetClassAttributeForConfig(child);
 								// Flag to prepend "Reverse" to child.SubField when it is used.
-								xw.WriteRaw(GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings, fUseReverseSubField: true));
+								xw.WriteRaw(ReallyGenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings, fUseReverseSubField: true));
 							}
 							else
 							{
@@ -3181,44 +3176,14 @@ namespace LanguageExplorer.Works
 			return decorator;
 		}
 
-		public class GeneratorSettings
-		{
-			public LcmCache Cache { get; private set; }
-			public IReadonlyPropertyTable ReadOnlyPropertyTable { get; private set; }
-			public bool UseRelativePaths { get; private set; }
-			public bool CopyFiles { get; private set; }
-			public string ExportPath { get; private set; }
-			public bool RightToLeft { get; private set; }
-			public bool IsWebExport { get; private set; }
-
-			public GeneratorSettings(LcmCache cache, IPropertyTable propertyTable, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false)
-						: this(cache, propertyTable == null ? null : new ReadOnlyPropertyTable(propertyTable), relativePaths, copyFiles, exportPath, rightToLeft, isWebExport)
-			{
-			}
-			public GeneratorSettings(LcmCache cache, IReadonlyPropertyTable readOnlyPropertyTable, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false)
-			{
-				if (cache == null || readOnlyPropertyTable == null)
-				{
-					throw new ArgumentNullException();
-				}
-				Cache = cache;
-				ReadOnlyPropertyTable = readOnlyPropertyTable;
-				UseRelativePaths = relativePaths;
-				CopyFiles = copyFiles;
-				ExportPath = exportPath;
-				RightToLeft = rightToLeft;
-				IsWebExport = isWebExport;
-			}
-		}
-
 		/// <remarks>
 		/// Presently, this handles only Sense Info, but if other info needs to be handed down the call stack in the future, we could rename this
 		/// </remarks>
-		internal struct SenseInfo
+		private struct SenseInfo
 		{
-			public int SenseCounter { get; set; }
-			public string SenseOutlineNumber { get; set; }
-			public string ParentSenseNumberingStyle { get; set; }
+			internal int SenseCounter { get; set; }
+			internal string SenseOutlineNumber { get; set; }
+			internal string ParentSenseNumberingStyle { get; set; }
 		}
 	}
 }

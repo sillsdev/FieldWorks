@@ -297,4 +297,135 @@
   <data name="HideAdvancedListItemFields" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\HideAdvancedListItemFields.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="CustomFields" xml:space="preserve">
+    <value>Custom _Fields...</value>
+  </data>
+  <data name="CustomFieldsTooltip" xml:space="preserve">
+    <value>Add or edit custom fields.</value>
+  </data>
+  <data name="AllAnalysisVernacularWs" xml:space="preserve">
+    <value>All Analysis then all Vernacular Writing Systems</value>
+  </data>
+  <data name="AllAnalysisWs" xml:space="preserve">
+    <value>All Analysis Writing Systems</value>
+  </data>
+  <data name="Allomorph" xml:space="preserve">
+    <value>Allomorph</value>
+    <comment>Label for possible class to add custom fields to</comment>
+  </data>
+  <data name="AllVernacularAnalysisWs" xml:space="preserve">
+    <value>All Vernacular then all Analysis Writing Systems</value>
+  </data>
+  <data name="AllVernacularWs" xml:space="preserve">
+    <value>All Vernacular Writing Systems</value>
+  </data>
+  <data name="AlreadyFieldWithThisLabel" xml:space="preserve">
+    <value>There are duplicate {0} fields named "{1}". Please choose a different name.</value>
+  </data>
+  <data name="DeletingFieldCannotBeUndone" xml:space="preserve">
+    <value>Warning: deleting a field cannot be undone.
+Are you SURE you want to delete the field {0}?</value>
+    <comment>{0} is a user name</comment>
+  </data>
+  <data name="DeletingFieldCannotBeUndone0Items" xml:space="preserve">
+    <value>Warning: deleting a field cannot be undone.
+Note: {0} items in your database have data in this field!
+Are you SURE you want to delete the field {1}?</value>
+    <comment>{0} is a count, {1} is a user name</comment>
+  </data>
+  <data name="DeletingFieldCannotBeUndone0Items1Views" xml:space="preserve">
+    <value>Warning: deleting a field cannot be undone.
+Note: {0} items in your database have data in this field,
+and {1} views have been configured to display this field!
+Are you SURE you want to delete the field {2}?</value>
+  </data>
+  <data name="DeletingFieldCannotBeUndone0Views" xml:space="preserve">
+    <value>Warning: deleting a field cannot be undone.
+Note: {0} views have been configured to display this field!
+Are you SURE you want to delete the field {1}?</value>
+  </data>
+  <data name="EmptyFieldName" xml:space="preserve">
+    <value>Empty Field Name</value>
+  </data>
+  <data name="Entry" xml:space="preserve">
+    <value>Entry</value>
+  </data>
+  <data name="ExampleSentence" xml:space="preserve">
+    <value>Example</value>
+    <comment>Label for possible class to add custom fields to</comment>
+  </data>
+  <data name="FieldNameShouldNotBeEmpty" xml:space="preserve">
+    <value>Field Names should not be empty. Please choose a different name.</value>
+  </data>
+  <data name="FirstAnalysisWs" xml:space="preserve">
+    <value>First Analysis Writing System</value>
+  </data>
+  <data name="FirstSelectItemToDelete" xml:space="preserve">
+    <value>You must first select a Custom field to delete from the list.</value>
+  </data>
+  <data name="FirstVernacularWs" xml:space="preserve">
+    <value>First Vernacular Writing System</value>
+  </data>
+  <data name="kMultiparagraphText" xml:space="preserve">
+    <value>Multiparagraph Text</value>
+  </data>
+  <data name="ksCustomFieldMatchesNonCustomField" xml:space="preserve">
+    <value>There is already a field named {1} in each {0}, please choose a different name for your Custom field.</value>
+    <comment>used by AddCustomFieldDlg. Variables are a field name and one of: Entry, Sense, Example, Allomorph</comment>
+  </data>
+  <data name="ksDate" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="ksListRefAtomic" xml:space="preserve">
+    <value>List Reference (single item)</value>
+  </data>
+  <data name="ksListRefCollection" xml:space="preserve">
+    <value>List Reference (multiple items)</value>
+  </data>
+  <data name="ksNewCustomField" xml:space="preserve">
+    <value>New Custom Field</value>
+  </data>
+  <data name="ksNumber" xml:space="preserve">
+    <value>Number</value>
+  </data>
+  <data name="ksRecord" xml:space="preserve">
+    <value>Record</value>
+  </data>
+  <data name="ksSingleLineText" xml:space="preserve">
+    <value>Single-line Text</value>
+  </data>
+  <data name="kstCustomFieldSendReceive" xml:space="preserve">
+    <value>This project is set up for Send/Receive Project (with other FLEx users). If there are already other users in your team, it is VERY important to coordinate custom field changes. FLEx currently has only limited ability to Send/Receive custom field changes. It is possible to get into a situation where some team members cannot merge their changes and must Get the project again.
+
+Recommended procedure:
+
+1. All team members do Send/Receive and STOP WORK until they have done step 3.
+
+2. One team member does a final Send/Receive, makes the custom field changes, and does another Send/Receive.
+
+3. All other team members do another Send/Receive to get the new field.
+
+If you are going to CHANGE THE TYPE of a field (e.g., delete or rename a text field and add a list-reference field with the same name), we recommend that steps 2 and 3 be repeated, once to delete or rename the old field, and once to add the new one.
+
+Adding custom fields can safely be done with less trouble. The important thing is to avoid two people adding custom fields with the same name. We recommend that teams agree on one person who will make all custom field changes.
+
+If you are not the one designated user who adds fields, or you are making some other kind of change and have not yet had your team do step 1, PLEASE do not continue!
+
+(There is one other special case. If you are adding a temporary custom field for a special purpose and will delete it before you next Send/Receive, you may proceed safely.)</value>
+  </data>
+  <data name="LabelAlreadyExists" xml:space="preserve">
+    <value>Duplicate Custom Field Names</value>
+  </data>
+  <data name="PunctInFieldNameError" xml:space="preserve">
+    <value>Please remove the punctuation from the custom field name ("{0}") to allow export and some other functions to work.</value>
+  </data>
+  <data name="ReallyDeleteField" xml:space="preserve">
+    <value>Really delete field and contents?</value>
+  </data>
+  <data name="SelectCustomField" xml:space="preserve">
+    <value>Select Custom Field</value>
+  </data>
+  <data name="Sense" xml:space="preserve">
+    <value>Sense</value>
+  </data>
 </root>

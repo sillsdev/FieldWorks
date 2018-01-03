@@ -139,7 +139,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 				Children = new List<ConfigurableDictionaryNode> { configExamplesNode } };
 			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
 			_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual(ConfigurableDictionaryNode.StyleTypes.Character, configExamplesNode.StyleType);
+			Assert.AreEqual(StyleTypes.Character, configExamplesNode.StyleType);
 			Assert.IsTrue(configExamplesNode.DictionaryNodeOptions is DictionaryNodeListAndParaOptions, "wrong type");
 			var options = (DictionaryNodeListAndParaOptions)configExamplesNode.DictionaryNodeOptions;
 			Assert.IsFalse(options.DisplayEachInAParagraph, "Default is *not* in paragraph");

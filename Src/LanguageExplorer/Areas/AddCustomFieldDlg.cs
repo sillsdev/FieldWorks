@@ -16,30 +16,13 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.Xml;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer.Areas
 {
 	/// <summary>
 	/// Summary description for AddCustomFieldDlg.
 	/// </summary>
-	public class AddCustomFieldDlg : Form
+	internal class AddCustomFieldDlg : Form
 	{
-		public enum LocationType
-		{
-			Lexicon,
-			Notebook,
-			Interlinear
-		}
-
-		private enum CustomFieldType
-		{
-			SingleLineText,
-			MultiparagraphText,
-			Number,
-			Date,
-			ListRefAtomic,
-			ListRefCollection
-		}
-
 		private Label m_locationLabel;
 		private ComboBox m_locationComboBox;
 		private Label m_fieldsLabel;
@@ -81,7 +64,7 @@ namespace LanguageExplorer.Works
 		private ComboBox m_listComboBox;
 		private Label m_listLabel;
 
-		public AddCustomFieldDlg(IPropertyTable propertyTable, IPublisher publisher, LocationType locationType)
+		internal AddCustomFieldDlg(IPropertyTable propertyTable, IPublisher publisher, CustomFieldLocationType customFieldLocationType)
 		{
 			// create member variables
 			m_propertyTable = propertyTable;
@@ -104,23 +87,23 @@ namespace LanguageExplorer.Works
 			m_helpProvider.SetShowHelp(this, true);
 
 			// initialize the 'Create in' combo box with the names and class id's
-			switch (locationType)
+			switch (customFieldLocationType)
 			{
-				case LocationType.Lexicon:
+				case CustomFieldLocationType.Lexicon:
 					// If you add classes here which have subclasses,  a change is also needed in BasicCustomPropertyFixer (FixFwDataDll).
-					m_locationComboBox.Items.Add(new IdAndString<int>(LexEntryTags.kClassId, xWorksStrings.Entry));
-					m_locationComboBox.Items.Add(new IdAndString<int>(LexSenseTags.kClassId, xWorksStrings.Sense));
-					m_locationComboBox.Items.Add(new IdAndString<int>(LexExampleSentenceTags.kClassId, xWorksStrings.ExampleSentence));
-					m_locationComboBox.Items.Add(new IdAndString<int>(MoFormTags.kClassId, xWorksStrings.Allomorph));
+					m_locationComboBox.Items.Add(new IdAndString<int>(LexEntryTags.kClassId, AreaResources.Entry));
+					m_locationComboBox.Items.Add(new IdAndString<int>(LexSenseTags.kClassId, AreaResources.Sense));
+					m_locationComboBox.Items.Add(new IdAndString<int>(LexExampleSentenceTags.kClassId, AreaResources.ExampleSentence));
+					m_locationComboBox.Items.Add(new IdAndString<int>(MoFormTags.kClassId, AreaResources.Allomorph));
 					break;
 
-				case LocationType.Interlinear:
+				case CustomFieldLocationType.Interlinear:
 					m_locationComboBox.Items.Add(new IdAndString<int>(SegmentTags.kClassId, "Segment"));
 					break;
 
-				case LocationType.Notebook:
+				case CustomFieldLocationType.Notebook:
 					// If you add classes here which have subclasses,  a change is also needed in BasicCustomPropertyFixer (FixFwDataDll).
-					m_locationComboBox.Items.Add(new IdAndString<int>(RnGenericRecTags.kClassId, xWorksStrings.ksRecord));
+					m_locationComboBox.Items.Add(new IdAndString<int>(RnGenericRecTags.kClassId, AreaResources.ksRecord));
 					break;
 			}
 			m_locationComboBox.SelectedIndex = 0;
@@ -133,16 +116,16 @@ namespace LanguageExplorer.Works
 
 			PopulateWritingSystemsList();
 
-			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.SingleLineText, xWorksStrings.ksSingleLineText));
-			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.MultiparagraphText, xWorksStrings.kMultiparagraphText));
-			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.ListRefCollection, xWorksStrings.ksListRefCollection));
-			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.ListRefAtomic, xWorksStrings.ksListRefAtomic));
+			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.SingleLineText, AreaResources.ksSingleLineText));
+			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.MultiparagraphText, AreaResources.kMultiparagraphText));
+			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.ListRefCollection, AreaResources.ksListRefCollection));
+			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.ListRefAtomic, AreaResources.ksListRefAtomic));
 			// If you add additional value types here, a change is also needed in BasicCustomPropertyFixer (FixFwDataDll).
-			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.Date, xWorksStrings.ksDate));
-			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.Number, xWorksStrings.ksNumber));
+			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.Date, AreaResources.ksDate));
+			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.Number, AreaResources.ksNumber));
 			m_typeComboBox.SelectedIndex = 0;
 
-			m_listComboBox.Items.AddRange(GetListsComboItems(m_cache, m_propertyTable.GetValue<XElement>("WindowConfiguration")).ToArray());
+			m_listComboBox.Items.AddRange(GetListsComboItems(m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>()));
 
 			m_listComboBox.SelectedIndex = 0;
 
@@ -175,8 +158,7 @@ namespace LanguageExplorer.Works
 		{
 			if (!FLExBridgeHelper.DoesProjectHaveFlexRepo(m_cache.ProjectId))
 				return true;
-			return MessageBox.Show(owner, xWorksStrings.kstCustomFieldSendReceive, LanguageExplorerResources.ksWarning,
-				MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK;
+			return MessageBox.Show(owner, AreaResources.kstCustomFieldSendReceive, LanguageExplorerResources.ksWarning, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK;
 		}
 
 		/// <summary>
@@ -187,65 +169,28 @@ namespace LanguageExplorer.Works
 			// Initialize the Writing Systems combo box.  This must be initialized before setting the
 			// selected item in cbCreateIn.
 			m_wsComboBox.Items.Clear();
-			m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnal, xWorksStrings.FirstAnalysisWs));
-			m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVern, xWorksStrings.FirstVernacularWs));
+			m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnal, AreaResources.FirstAnalysisWs));
+			m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVern, AreaResources.FirstVernacularWs));
 			if (m_typeComboBox.SelectedItem != null
 				&& ((IdAndString<CustomFieldType>)m_typeComboBox.SelectedItem).Id == CustomFieldType.SingleLineText)
 			{
-				m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnals, xWorksStrings.AllAnalysisWs));
-				m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVerns, xWorksStrings.AllVernacularWs));
-				m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnalVerns,
-															xWorksStrings.AllAnalysisVernacularWs));
-				m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVernAnals,
-															xWorksStrings.AllVernacularAnalysisWs));
+				m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnals, AreaResources.AllAnalysisWs));
+				m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVerns, AreaResources.AllVernacularWs));
+				m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnalVerns, AreaResources.AllAnalysisVernacularWs));
+				m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVernAnals, AreaResources.AllVernacularAnalysisWs));
 			}
 			m_wsComboBox.SelectedIndex = 0;
 		}
 
-		public static List<IdAndString<Guid>> GetListsComboItems(LcmCache cache, XElement windowConfiguration)
+		internal static IdAndString<Guid>[] GetListsComboItems(ICmPossibilityListRepository possibilityListRepository)
 		{
-			var result = new List<IdAndString<Guid>>();
-			var clerkElements = new Dictionary<string, XElement>();
-			foreach (var elt in windowConfiguration.XPathSelectElements("//item[@value='lists' or @value='grammar']/parameters/clerks/clerk"))
+			var result = new SortedList<string, IdAndString<Guid>>();
+			foreach (var possibilityList in possibilityListRepository.AllInstances())
 			{
-				clerkElements[elt.Attribute("id").Value] = elt;
+				var newValue = new IdAndString<Guid>(possibilityList.Guid, possibilityList.ChooserNameTS.Text);
+				result.Add(newValue.Name, newValue);
 			}
-			// Key is a list we found, value is an index in result.
-			var resultsByList = new Dictionary<ICmObject, int>();
-			foreach (var elt in windowConfiguration.XPathSelectElements("//item[@value='lists' or @value='grammar']/parameters/tools/tool"))
-			{
-				var clerkElement = elt.XPathSelectElement("control/parameters//control/parameters[@clerk]");
-				if (clerkElement == null)
-					continue;
-				var recordListId = clerkElement.Attribute("clerk").Value;
-				XElement recordList;
-				if (!clerkElements.TryGetValue(recordListId, out recordList))
-					continue;
-				var recordListElement = recordList.Element("recordList");
-				if (recordListElement == null)
-					continue;
-				var owner = recordListElement.Attribute("owner").Value;
-				var property = recordListElement.Attribute("property").Value;
-#if RANDYTODO
-				// TODO: Need another way to get the list, since that static is present now.
-				var list = PossibilityRecordList.GetListFromOwnerAndProperty(cache, owner, property);
-				if (!(list is ICmPossibilityList))
-					continue; // some tools in the lists area are not actually lists.
-				int oldIndex;
-				if (resultsByList.TryGetValue(list, out oldIndex))
-				{
-					result[oldIndex] = new IdAndString<Guid>(list.Guid, list.ChooserNameTS.Text);
-				}
-				else
-				{
-					resultsByList[list] = result.Count;
-					var label = elt.Attributes["label"].Value;
-					result.Add(new IdAndString<Guid>(list.Guid, label));
-				}
-#endif
-			}
-			result.Sort((x, y) => x.Name.CompareTo(y.Name));
-			return result;
+			return result.Values.ToArray();
 		}
 
 		/// <summary>
@@ -256,7 +201,7 @@ namespace LanguageExplorer.Works
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// <summary>
@@ -265,9 +210,11 @@ namespace LanguageExplorer.Works
 		protected override void Dispose( bool disposing )
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			// No need to run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
@@ -383,10 +330,8 @@ namespace LanguageExplorer.Works
 			{
 				case CustomFieldType.SingleLineText:
 					//if there is no selected item (for whatever reason) rather than crash just pick the first one in the combo.
-					int ws = m_wsComboBox.SelectedItem != null ? ((IdAndString<int>)m_wsComboBox.SelectedItem).Id
-															   : ((IdAndString<int>)m_wsComboBox.Items[0]).Id;
-					fd.Type = ws == WritingSystemServices.kwsAnal || ws == WritingSystemServices.kwsVern ?
-						CellarPropertyType.String : CellarPropertyType.MultiUnicode;
+					var ws = ((IdAndString<int>) m_wsComboBox.SelectedItem)?.Id ?? ((IdAndString<int>)m_wsComboBox.Items[0]).Id;
+					fd.Type = ws == WritingSystemServices.kwsAnal || ws == WritingSystemServices.kwsVern ? CellarPropertyType.String : CellarPropertyType.MultiUnicode;
 					fd.WsSelector = ws;
 					break;
 
@@ -429,7 +374,7 @@ namespace LanguageExplorer.Works
 			// create new custom field
 			var fd = new FieldDescription(m_cache)
 						{
-							Userlabel = xWorksStrings.ksNewCustomField,
+							Userlabel = AreaResources.ksNewCustomField,
 							HelpString = string.Empty,
 							Class = location.Id
 						};
@@ -447,7 +392,7 @@ namespace LanguageExplorer.Works
 			m_fieldsListView.Items.Add(lvi);
 			m_fieldsListView.EndUpdate();
 
-			m_nameTextBox.Text = xWorksStrings.ksNewCustomField;
+			m_nameTextBox.Text = AreaResources.ksNewCustomField;
 			m_descTextBox.Text = string.Empty;
 
 			//now this is the current field
@@ -501,80 +446,9 @@ namespace LanguageExplorer.Works
 			foreach (var fd in deletedFieldList)
 			{
 				didUpdate = UpdateLayouts(fd);
-				didUpdate |= UpdateCachedObjects(m_cache, fd);
+				didUpdate |= AreaServices.UpdateCachedObjects(m_cache, fd);
 			}
 			return didUpdate;
-		}
-
-		public static bool UpdateCachedObjects(LcmCache cache, FieldDescription fd)
-		{
-			// We need to find every instance of a reference from this flid to that custom list and delete it!
-			// I can't figure out any other way of ensuring that EnsureCompleteIncomingRefs doesn't try to refer
-			// to a non-existent flid at some point.
-			var owningListGuid = fd.ListRootId;
-			if (owningListGuid == Guid.Empty)
-				return false;
-
-			// This is only a problem for fields referencing a custom list
-			if (!IsCustomList(cache, owningListGuid))
-				return false;
-			bool fchanged;
-			var type = fd.Type;
-			var objRepo = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
-			var objClass = fd.Class;
-			var flid = fd.Id;
-			var ddbf = cache.DomainDataByFlid;
-
-			switch (type)
-			{
-				case CellarPropertyType.ReferenceSequence: // drop through
-				case CellarPropertyType.ReferenceCollection:
-					// Handle multiple reference fields
-					// Is there a way to do this in LINQ without repeating the get_VecSize call?
-					var tupleList = new List<Tuple<int, int>>();
-					tupleList.AddRange(
-						from obj in objRepo.AllInstances(objClass)
-							where ddbf.get_VecSize(obj.Hvo, flid) > 0
-							select new Tuple<int, int> (obj.Hvo, ddbf.get_VecSize(obj.Hvo, flid)));
-
-					NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
-					{
-						foreach (var partResult in tupleList)
-							ddbf.Replace(partResult.Item1, flid, 0, partResult.Item2, null, 0);
-					});
-
-					fchanged = tupleList.Any();
-					break;
-				case CellarPropertyType.ReferenceAtomic:
-					// Handle atomic reference fields
-					// If there's a value for (Hvo, flid), nullify it!
-					var objsWithDataThisFlid = new List<int>();
-					objsWithDataThisFlid.AddRange(
-						from obj in objRepo.AllInstances(objClass)
-							where ddbf.get_ObjectProp(obj.Hvo, flid) > 0
-							select obj.Hvo);
-
-					// Delete these references
-					NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
-					{
-						foreach (var hvo in objsWithDataThisFlid)
-							ddbf.SetObjProp(hvo, flid, LcmCache.kNullHvo);
-					});
-
-					fchanged = objsWithDataThisFlid.Any();
-					break;
-				default:
-					fchanged = false;
-					break;
-			}
-			return fchanged;
-		}
-
-		private static bool IsCustomList(LcmCache cache, Guid owningListGuid)
-		{
-			// Custom lists are unowned.
-			var list = cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().GetObject(owningListGuid);
-			return list.Owner == null;
 		}
 
 		private bool UpdateLayouts(FieldDescription fd)
@@ -634,15 +508,14 @@ namespace LanguageExplorer.Works
 			string fieldName = fdwToCheck.Fd.Userlabel.TrimEnd();
 			if (fieldName.Length == 0)
 			{
-				MessageBox.Show(xWorksStrings.FieldNameShouldNotBeEmpty,
-						xWorksStrings.EmptyFieldName, MessageBoxButtons.OK);
+				MessageBox.Show(AreaResources.FieldNameShouldNotBeEmpty, AreaResources.EmptyFieldName, MessageBoxButtons.OK);
 				return true;
 			}
 
 			if (new Regex(@"\p{P}").IsMatch(fieldName))
 			{
-				string msg = string.Format(xWorksStrings.PunctInFieldNameError, fieldName);
-				MessageBox.Show(this, msg, xWorksStrings.PunctInfieldNameCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				string msg = string.Format(AreaResources.PunctInFieldNameError, fieldName);
+				MessageBox.Show(this, msg, LanguageExplorerResources.PunctInfieldNameCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return true;
 			}
 
@@ -651,17 +524,16 @@ namespace LanguageExplorer.Works
 				if (!fdw.Fd.MarkForDeletion && CheckForRegularFieldDuplicateName(fdw))
 				{
 					var sClassName = GetItem(m_locationComboBox, fdw.Fd.Class).Name;
-					var str1 = string.Format(xWorksStrings.ksCustomFieldMatchesNonCustomField,
-						sClassName, fdw.Fd.Userlabel);
-					MessageBox.Show(str1, xWorksStrings.LabelAlreadyExists, MessageBoxButtons.OK);
+					var str1 = string.Format(AreaResources.ksCustomFieldMatchesNonCustomField, sClassName, fdw.Fd.Userlabel);
+					MessageBox.Show(str1, AreaResources.LabelAlreadyExists, MessageBoxButtons.OK);
 					m_nameTextBox.Select();  // we want focus on the new CustomFieldName.Text
 					return true;
 				}
 				if (fdwToCheck != fdw && fdw.Fd.Userlabel == fieldName && fdwToCheck.Fd.Class == fdw.Fd.Class)
 				{
 					string sClassName = GetItem(m_locationComboBox, fdw.Fd.Class).Name;
-					string str1 = string.Format(xWorksStrings.AlreadyFieldWithThisLabel, sClassName, fieldName);
-					MessageBox.Show(str1, xWorksStrings.LabelAlreadyExists, MessageBoxButtons.OK);
+					string str1 = string.Format(AreaResources.AlreadyFieldWithThisLabel, sClassName, fieldName);
+					MessageBox.Show(str1, AreaResources.LabelAlreadyExists, MessageBoxButtons.OK);
 					m_nameTextBox.Text = FindUniqueName(m_customFields, fdwToCheck);
 					m_nameTextBox.Select();  // we want focus on the new CustomFieldName.Text
 					return true;
@@ -694,7 +566,7 @@ namespace LanguageExplorer.Works
 			FDWrapper currentFdw)
 		{
 			// Handles case where user didn't change another default userlabel.
-			var result = xWorksStrings.ksNewCustomField;
+			var result = AreaResources.ksNewCustomField;
 			var defaultLabel = result;
 			var extraId = 0;
 			while (!FieldNameIsUnique(result, allCustomFields, currentFdw))
@@ -880,8 +752,7 @@ namespace LanguageExplorer.Works
 			//Probably we should put up a dialog box telling the user to select one.
 			if (m_fieldsListView.SelectedItems.Count == 0)
 			{
-				MessageBox.Show(this, xWorksStrings.FirstSelectItemToDelete,
-					xWorksStrings.SelectCustomField, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(this, AreaResources.FirstSelectItemToDelete, AreaResources.SelectCustomField, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
 
@@ -905,26 +776,21 @@ namespace LanguageExplorer.Works
 				string message;
 				if (count != 0 && xnlLayouts.Count != 0)
 				{
-					message = string.Format(xWorksStrings.DeletingFieldCannotBeUndone0Items1Views,
-						count, xnlLayouts.Count, userName);
+					message = string.Format(AreaResources.DeletingFieldCannotBeUndone0Items1Views, count, xnlLayouts.Count, userName);
 				}
 				else if (xnlLayouts.Count != 0)
 				{
-					message = string.Format(xWorksStrings.DeletingFieldCannotBeUndone0Views,
-						xnlLayouts.Count, userName);
+					message = string.Format(AreaResources.DeletingFieldCannotBeUndone0Views, xnlLayouts.Count, userName);
 				}
 				else if (count != 0)
 				{
-					message = string.Format(xWorksStrings.DeletingFieldCannotBeUndone0Items,
-						count, userName);
+					message = string.Format(AreaResources.DeletingFieldCannotBeUndone0Items, count, userName);
 				}
 				else
 				{
-					message = string.Format(xWorksStrings.DeletingFieldCannotBeUndone,
-						userName);
+					message = string.Format(AreaResources.DeletingFieldCannotBeUndone, userName);
 				}
-				if (MessageBox.Show(this, message, xWorksStrings.ReallyDeleteField, MessageBoxButtons.OKCancel,
-					MessageBoxIcon.Warning) != DialogResult.OK)
+				if (MessageBox.Show(this, message, AreaResources.ReallyDeleteField, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
 				{
 					return;
 				}
@@ -1007,8 +873,7 @@ namespace LanguageExplorer.Works
 
 		private void m_listComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (m_fdwCurrentField != null && m_fdwCurrentField.IsNew &&
-				m_listComboBox.SelectedItem != null)
+			if (m_fdwCurrentField != null && m_fdwCurrentField.IsNew && m_listComboBox.SelectedItem != null)
 			{
 				var rootId = ((IdAndString<Guid>)m_listComboBox.SelectedItem).Id;
 				ICmPossibilityList list;
@@ -1277,12 +1142,23 @@ namespace LanguageExplorer.Works
 		#endregion
 
 		#region Helper classes
+
+		private enum CustomFieldType
+		{
+			SingleLineText,
+			MultiparagraphText,
+			Number,
+			Date,
+			ListRefAtomic,
+			ListRefCollection
+		}
+
 		/// <summary>
 		/// This class is a wrapper class for containing the FieldDescription
 		/// and the source of it : mem or DB.  This class is added to the LB
 		/// of custom fields.
 		/// </summary>
-		private class FDWrapper
+		private sealed class FDWrapper
 		{
 			public FDWrapper(FieldDescription fd, bool isNew)
 			{
@@ -1302,7 +1178,7 @@ namespace LanguageExplorer.Works
 		/// This class saves a relationship between old and new UserLabel values for a custom
 		/// field.
 		/// </summary>
-		private class ModifiedLabel
+		private sealed class ModifiedLabel
 		{
 			public ModifiedLabel(FieldDescription fd, string sNewLabel, LcmCache cache)
 			{
@@ -1313,7 +1189,7 @@ namespace LanguageExplorer.Works
 			/// <summary>
 			/// Get the class for the custom field.
 			/// </summary>
-			public string ClassName { get; private set; }
+			public string ClassName { get; }
 
 			/// <summary>
 			/// Get the old label for the custom field.
@@ -1326,21 +1202,5 @@ namespace LanguageExplorer.Works
 			public string NewLabel { get; set; }
 		}
 		#endregion
-	}
-
-	/// <summary>
-	/// Helper class for storing an Int value and String value together
-	/// </summary>
-	public class IdAndString<T>
-	{
-		public IdAndString(T id, string name)
-		{
-			Id = id;
-			Name = name;
-		}
-		public override string ToString() { return Name; }
-		// read only properties
-		public T Id { get; private set; }
-		public string Name { get; private set; }
 	}
 }

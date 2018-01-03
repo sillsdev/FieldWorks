@@ -2,12 +2,17 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.LexText.DataNotebook;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas
 {
@@ -138,6 +143,81 @@ namespace LanguageExplorer.Areas
 				// Make everything we've imported visible.
 				mainWindow.RefreshAllViews();
 			}
+		}
+
+		public static bool UpdateCachedObjects(LcmCache cache, FieldDescription fd)
+		{
+			// We need to find every instance of a reference from this flid to that custom list and delete it!
+			// I can't figure out any other way of ensuring that EnsureCompleteIncomingRefs doesn't try to refer
+			// to a non-existent flid at some point.
+			var owningListGuid = fd.ListRootId;
+			if (owningListGuid == Guid.Empty)
+				return false;
+
+			var list = cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().GetObject(owningListGuid);
+			// This is only a problem for fields referencing a custom list
+			if (list.Owner != null)
+			{
+				// Not a custom list.
+				return false;
+			}
+			bool fchanged;
+			var type = fd.Type;
+			var objRepo = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			var objClass = fd.Class;
+			var flid = fd.Id;
+			var ddbf = cache.DomainDataByFlid;
+
+			switch (type)
+			{
+				case CellarPropertyType.ReferenceSequence: // drop through
+				case CellarPropertyType.ReferenceCollection:
+					// Handle multiple reference fields
+					// Is there a way to do this in LINQ without repeating the get_VecSize call?
+					var tupleList = new List<Tuple<int, int>>();
+					tupleList.AddRange(
+						from obj in objRepo.AllInstances(objClass)
+						where ddbf.get_VecSize(obj.Hvo, flid) > 0
+						select new Tuple<int, int> (obj.Hvo, ddbf.get_VecSize(obj.Hvo, flid)));
+
+					NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
+					{
+						foreach (var partResult in tupleList)
+							ddbf.Replace(partResult.Item1, flid, 0, partResult.Item2, null, 0);
+					});
+
+					fchanged = tupleList.Any();
+					break;
+				case CellarPropertyType.ReferenceAtomic:
+					// Handle atomic reference fields
+					// If there's a value for (Hvo, flid), nullify it!
+					var objsWithDataThisFlid = new List<int>();
+					objsWithDataThisFlid.AddRange(
+						from obj in objRepo.AllInstances(objClass)
+						where ddbf.get_ObjectProp(obj.Hvo, flid) > 0
+						select obj.Hvo);
+
+					// Delete these references
+					NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
+					{
+						foreach (var hvo in objsWithDataThisFlid)
+							ddbf.SetObjProp(hvo, flid, LcmCache.kNullHvo);
+					});
+
+					fchanged = objsWithDataThisFlid.Any();
+					break;
+				default:
+					fchanged = false;
+					break;
+			}
+			return fchanged;
+		}
+
+		private static bool IsCustomList(LcmCache cache, Guid owningListGuid)
+		{
+			// Custom lists are unowned.
+			var list = cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().GetObject(owningListGuid);
+			return list.Owner == null;
 		}
 	}
 }

@@ -5,10 +5,12 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Works;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas
 {
@@ -21,9 +23,12 @@ namespace LanguageExplorer.Areas
 	{
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private IRecordList _recordList;
-		private ToolStripItem _fileExportMenu;
+		private ToolStripMenuItem _fileExportMenu;
 		private EventHandler _foreignFileExportHandler;
 		private bool _usingLocalFileExportEventHandler;
+		private ToolStripMenuItem _toolsConfigureMenu;
+		private ToolStripSeparator _toolsCustomFieldsSeparatorMenu;
+		private ToolStripMenuItem _toolsCustomFieldsMenu;
 
 		internal AreaWideMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
@@ -74,6 +79,49 @@ namespace LanguageExplorer.Areas
 			{
 				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 				dlg.ShowDialog(PropertyTable.GetValue<Form>("window"));
+			}
+		}
+
+		/// <summary>
+		/// Setup the File->Export menu.
+		/// </summary>
+		internal void SetupToolsCustomFieldsMenu()
+		{
+			// Tools->CustomFields menu is visible and enabled in this tool.
+			_toolsConfigureMenu = MenuServices.GetToolsConfigureMenu(_majorFlexComponentParameters.MenuStrip);
+			_toolsCustomFieldsSeparatorMenu = ToolStripMenuItemFactory.CreateToolStripSeparatorForToolStripMenuItem(_toolsConfigureMenu);
+			_toolsCustomFieldsMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_toolsConfigureMenu, AddCustomField_Click, AreaResources.CustomFields, AreaResources.CustomFieldsTooltip);
+		}
+
+		private void AddCustomField_Click(object sender, EventArgs e)
+		{
+			var activeForm = PropertyTable.GetValue<Form>("window");
+			if (SharedBackendServices.AreMultipleApplicationsConnected(PropertyTable.GetValue<LcmCache>("cache")))
+			{
+				MessageBoxUtils.Show(activeForm, xWorksStrings.ksCustomFieldsCanNotBeAddedDueToOtherAppsText, xWorksStrings.ksCustomFieldsCanNotBeAddedDueToOtherAppsCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
+			}
+
+			var locationType = CustomFieldLocationType.Lexicon;
+			var areaChoice = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
+			switch (areaChoice)
+			{
+				case AreaServices.LexiconAreaMachineName:
+					locationType = CustomFieldLocationType.Lexicon;
+					break;
+				case AreaServices.NotebookAreaMachineName:
+					locationType = CustomFieldLocationType.Notebook;
+					break;
+				case AreaServices.TextAndWordsAreaMachineName:
+					locationType = CustomFieldLocationType.Interlinear;
+					break;
+			}
+			using (var dlg = new AddCustomFieldDlg(PropertyTable, Publisher, locationType))
+			{
+				if (dlg.ShowCustomFieldWarning(activeForm))
+				{
+					dlg.ShowDialog(activeForm);
+				}
 			}
 		}
 
@@ -165,11 +213,22 @@ namespace LanguageExplorer.Areas
 					_fileExportMenu.Visible = false;
 					_fileExportMenu.Enabled = false;
 				}
+				if (_toolsConfigureMenu != null)
+				{
+					_toolsCustomFieldsMenu.Click -= AddCustomField_Click;
+					_toolsConfigureMenu.DropDownItems.Remove(_toolsCustomFieldsMenu);
+					_toolsConfigureMenu.DropDownItems.Remove(_toolsCustomFieldsSeparatorMenu);
+					_toolsCustomFieldsMenu.Dispose();
+					_toolsCustomFieldsSeparatorMenu.Dispose();
+				}
 			}
 			_majorFlexComponentParameters = null;
 			_recordList = null;
 			_fileExportMenu = null;
 			_foreignFileExportHandler = null;
+			_toolsConfigureMenu = null;
+			_toolsCustomFieldsSeparatorMenu = null;
+			_toolsCustomFieldsMenu = null;
 
 			_isDisposed = true;
 		}

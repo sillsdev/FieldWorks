@@ -29,7 +29,6 @@
 		<command id="CmdDeleteRecord" label="_Delete {0}..." message="DeleteRecord" icon="Delete" shortcut="Ctrl+Del"/>
 		<command id="CmdListColleagues" label="List _Colleagues" message="ListColleagues"/>
 		<command id="CmdSynch" label="S_ynchronize with LiftShare..." message="Synchronize" translate="This command tries to update from an external source of lexical data."/>
-		<command id="CmdAddCustomField" label="Custom _Fields..." message="AddCustomField"/>
 		<command id="CmdConfigureColumns" label="_Columns..." icon="columnChooser" message="ConfigureColumns"/>
 		<command id="CmdEditSpellingStatus" label="Edit Spelling Status" message="EditSpellingStatus" a10status="Used in Words area" />
 		<command id="CmdViewIncorrectWords" label="View Incorrect Words in Use" message="ViewIncorrectWords"/>
@@ -410,8 +409,6 @@ InterlinMasterNoTitleBar user: (T&W: complexConcordance/concordance/wordListConc
 <!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
 				<item command="CmdConfigureColumns" defaultVisible="false"/>
 				<item command="CmdRestoreDefaults"/>
-				<item label="-" translate="do not translate" a10status="DONE" />
-				<item command="CmdAddCustomField" defaultVisible="false"/>
 			</menu>
 			<!-- Area-specific Tools (other than Configure menu) go here. -->
 			<item label="-" translate="do not translate"/>

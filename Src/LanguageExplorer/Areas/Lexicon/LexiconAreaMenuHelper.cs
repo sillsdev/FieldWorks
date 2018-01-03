@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
@@ -23,6 +24,8 @@ namespace LanguageExplorer.Areas.Lexicon
 		private AreaWideMenuHelper _areaWideMenuHelper;
 		private ToolStripMenuItem _fileImportMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newFileMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
+
+		internal AreaWideMenuHelper MyAreaWideMenuHelper => _areaWideMenuHelper;
 
 		internal LexiconAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, IRecordList recordList)
 		{

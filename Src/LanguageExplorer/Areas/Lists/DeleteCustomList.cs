@@ -11,12 +11,10 @@ using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lists
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Method Object used to delete Custom Lists.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public class DeleteCustomList
+	internal class DeleteCustomList
 	{
 		#region Member Variables
 

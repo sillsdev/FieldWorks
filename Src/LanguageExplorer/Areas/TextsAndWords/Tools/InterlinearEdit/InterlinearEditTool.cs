@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class InterlinearEditTool : ITool
 	{
-		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
+		private InterlinearEditToolMenuHelper _interlinearEditToolMenuHelper;
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
@@ -39,11 +39,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_textAndWordsAreaMenuHelper.Dispose();
+			_interlinearEditToolMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 			_recordBrowseView = null;
 			_interlinMaster = null;
-			_textAndWordsAreaMenuHelper = null;
+			_interlinearEditToolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -55,8 +55,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{_area.MachineName}", MachineName, SettingsGroup.LocalSettings, true, false);
-			_textAndWordsAreaMenuHelper = new TextAndWordsAreaMenuHelper(majorFlexComponentParameters);
-			_textAndWordsAreaMenuHelper.AddMenusForAllButConcordanceTool();
+			_interlinearEditToolMenuHelper = new InterlinearEditToolMenuHelper(majorFlexComponentParameters);
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.Statusbar, TextAndWordsArea.InterlinearTextsFactoryMethod);
@@ -84,6 +83,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			_multiPane.FixedPanel = FixedPanel.Panel1;
 
 			// Too early before now.
+			_interlinearEditToolMenuHelper.Initialize();
 			_interlinMaster.FinishInitialization();
 			_interlinMaster.BringToFront();
 		}

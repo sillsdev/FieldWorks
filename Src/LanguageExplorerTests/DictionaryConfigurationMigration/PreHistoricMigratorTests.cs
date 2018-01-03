@@ -1140,9 +1140,9 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 				Parts = new List<ConfigurableDictionaryNode> { convertedParentNode },
 				Version = PreHistoricMigrator.VersionPre83
 			};
-			const ConfigurableDictionaryNode.StyleTypes parentOverride = ConfigurableDictionaryNode.StyleTypes.Paragraph;
-			const ConfigurableDictionaryNode.StyleTypes child1Override = ConfigurableDictionaryNode.StyleTypes.Character;
-			const ConfigurableDictionaryNode.StyleTypes defaultStyleType = ConfigurableDictionaryNode.StyleTypes.Default;
+			const StyleTypes parentOverride = StyleTypes.Paragraph;
+			const StyleTypes child1Override = StyleTypes.Character;
+			const StyleTypes defaultStyleType = StyleTypes.Default;
 			const string baseStyle = "80's";
 			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", StyleType = parentOverride };
 			var baseChildNode1 = new ConfigurableDictionaryNode { Label = "Little Thing 1", StyleType = child1Override, Style = baseStyle };
@@ -1165,8 +1165,8 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_StyleInfoIsMigratedWhenStyleIsSet()
 		{
-			const ConfigurableDictionaryNode.StyleTypes parentStyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph;
-			const ConfigurableDictionaryNode.StyleTypes childStyleType = ConfigurableDictionaryNode.StyleTypes.Character;
+			const StyleTypes parentStyleType = StyleTypes.Paragraph;
+			const StyleTypes childStyleType = StyleTypes.Character;
 			const string parentStyle = "bold";
 			var convertedParentNode = new ConfigurableDictionaryNode
 			{ Label = "Parent",
@@ -1186,8 +1186,8 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 				Parts = new List<ConfigurableDictionaryNode> { convertedParentNode },
 				Version = PreHistoricMigrator.VersionPre83
 			};
-			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", StyleType = ConfigurableDictionaryNode.StyleTypes.Character, Style = "unused"};
-			var baseChildNode1 = new ConfigurableDictionaryNode { Label = "Little Thing 1", StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph, Style = "unused2" };
+			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", StyleType = StyleTypes.Character, Style = "unused"};
+			var baseChildNode1 = new ConfigurableDictionaryNode { Label = "Little Thing 1", StyleType = StyleTypes.Paragraph, Style = "unused2" };
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode1 };
 			var baseModel = new DictionaryConfigurationModel
 			{
@@ -2532,7 +2532,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 				FieldDescription = "ReversalIndexEntry",
 				Children = new List<ConfigurableDictionaryNode> { newRefSensesNode },
 				IsEnabled = true,
-				StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph,
+				StyleType = StyleTypes.Paragraph,
 				Style = "Reversal-Normal",
 				CSSClassNameOverride = "reversalindexentry"
 			};
@@ -2546,7 +2546,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
 			Assert.AreEqual("ReversalIndexEntry", convertedTopNode.FieldDescription, "Converted top node should have FieldDescription=ReversalIndexEntry");
 			Assert.AreEqual("reversalindexentry", convertedTopNode.CSSClassNameOverride, "Converted top node should have CSSClassNameOverride=reversalindexentry");
-			Assert.AreEqual(ConfigurableDictionaryNode.StyleTypes.Paragraph, convertedTopNode.StyleType, "Converted top node should have StyleType=Paragraph");
+			Assert.AreEqual(StyleTypes.Paragraph, convertedTopNode.StyleType, "Converted top node should have StyleType=Paragraph");
 			Assert.AreEqual("Reversal-Normal", convertedTopNode.Style, "Converted top node should have Style=Reversal-Normal");
 			// Prior to fixing https://jira.sil.org/browse/LT-16896, convertedTypeNode.FieldDescription was set to "Type".
 			Assert.AreEqual("OwningEntry", convertedTypeNode.FieldDescription, "Converted type node should have FieldDescription=OwningEntry");

@@ -333,7 +333,7 @@ namespace LanguageExplorerTests.Works
 				}
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
-			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
+			node.StyleType = StyleTypes.Character;
 			controller.LoadNode(null, node);
 			AssertShowingCharacterStyles(controller.View);
 
@@ -352,7 +352,7 @@ namespace LanguageExplorerTests.Works
 			{
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
 			};
-			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
+			node.StyleType = StyleTypes.Character;
 			controller.LoadNode(null, node); // SUT
 			AssertShowingCharacterStyles(controller.View);
 
@@ -388,7 +388,7 @@ namespace LanguageExplorerTests.Works
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
 			};
 			// SUT
-			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
+			node.StyleType = StyleTypes.Character;
 			controller.LoadNode(null, node);
 			AssertShowingCharacterStyles(controller.View);
 			controller.View.Dispose();

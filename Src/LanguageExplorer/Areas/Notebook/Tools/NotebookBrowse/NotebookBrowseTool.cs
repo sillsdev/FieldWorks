@@ -55,6 +55,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
+			((NotebookArea)_area).MyNotebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
 		}
 
 		/// <summary>

@@ -17,7 +17,7 @@ namespace LanguageExplorer.Works
 	[XmlType (AnonymousType = false, TypeName = @"ConfigurationItem")]
 	public class ConfigurableDictionaryNode
 	{
-		public override String ToString()
+		public override string ToString()
 		{
 			return DisplayLabel ?? FieldDescription + (SubField == null ? "" : "_" + SubField);
 		}
@@ -52,16 +52,15 @@ namespace LanguageExplorer.Works
 				string localizedLabel;
 				if (StringTable == null)
 				{
-					localizedLabel = LabelSuffix == null ? Label : string.Format("{0} ({1})", Label, LabelSuffix);
+					localizedLabel = LabelSuffix == null ? Label : $"{Label} ({LabelSuffix})";
 				}
 				else
 				{
-					localizedLabel = LabelSuffix == null ? StringTable.LocalizeAttributeValue(Label) : string.Format("{0} ({1})",
-						StringTable.LocalizeAttributeValue(Label), StringTable.LocalizeAttributeValue(LabelSuffix));
+					localizedLabel = LabelSuffix == null ? StringTable.LocalizeAttributeValue(Label) : $"{StringTable.LocalizeAttributeValue(Label)} ({StringTable.LocalizeAttributeValue(LabelSuffix)})";
 				}
 				if (DictionaryNodeOptions is DictionaryNodeGroupingOptions)
 				{
-					return string.Format("[{0}]", localizedLabel);
+					return $"[{localizedLabel}]";
 				}
 				return localizedLabel;
 			}
@@ -105,16 +104,6 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		[XmlAttribute(AttributeName = "style")]
 		public string Style { get; set; }
-
-		public enum StyleTypes
-		{
-			[XmlEnum("default")]
-			Default = 0,
-			[XmlEnum("character")]
-			Character,
-			[XmlEnum("paragraph")]
-			Paragraph
-		}
 
 		/// <summary>
 		/// Whether the node's style selection should use character or paragraph styles. Allows specifying special cases like Minor Entry - Components (LT-15834).
@@ -209,13 +198,10 @@ namespace LanguageExplorer.Works
 		/// Children of this node, if any; otherwise, children of the ReferenceItem, if any
 		/// </summary>
 		[XmlIgnore]
-		public List<ConfigurableDictionaryNode> ReferencedOrDirectChildren
-		{
-			get { return ReferencedNode == null ? Children : ReferencedNode.Children; } // REVIEW (Hasso) 2016.03: optimize by caching
-		}
+		public List<ConfigurableDictionaryNode> ReferencedOrDirectChildren => ReferencedNode == null ? Children : ReferencedNode.Children;
 
 		/// <summary>If node is a HeadWord node.</summary>
-		internal bool IsHeadWord { get { return CSSClassNameOverride == "headword" || CSSClassNameOverride == "mainheadword"; } }
+		internal bool IsHeadWord => CSSClassNameOverride == "headword" || CSSClassNameOverride == "mainheadword";
 
 		/// <summary>If node is a Main Entry node.</summary>
 		internal bool IsMainEntry
@@ -237,17 +223,17 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Whether this node is the master parent of a SharedItem
 		/// </summary>
-		internal bool IsMasterParent { get { return ReferencedNode != null && ReferenceEquals(this, ReferencedNode.Parent); } }
+		internal bool IsMasterParent => ReferencedNode != null && ReferenceEquals(this, ReferencedNode.Parent);
 
 		/// <summary>
 		/// True when this node is a parent of a SharedItem, but not the Master Parent
 		/// </summary>
-		internal bool IsSubordinateParent { get { return ReferencedNode != null && !ReferenceEquals(this, ReferencedNode.Parent); } }
+		internal bool IsSubordinateParent => ReferencedNode != null && !ReferenceEquals(this, ReferencedNode.Parent);
 
 		/// <summary>
 		/// Whether this is a SharedItem.
 		/// </summary>
-		internal bool IsSharedItem { get { return Parent != null && Parent.ReferencedNode != null; } }
+		internal bool IsSharedItem => Parent != null && Parent.ReferencedNode != null;
 
 		/// <summary>
 		/// Whether this has a SharedItem anywhere in its ancestry
@@ -261,8 +247,12 @@ namespace LanguageExplorer.Works
 		internal bool TryGetMasterParent(out ConfigurableDictionaryNode masterParent)
 		{
 			for (masterParent = Parent; masterParent != null; masterParent = masterParent.Parent)
+			{
 				if (masterParent.ReferencedNode != null)
+				{
 					return true;
+				}
+			}
 			return false;
 		}
 
@@ -295,7 +285,9 @@ namespace LanguageExplorer.Works
 			{
 				// Skip Parent and read-only properties (eg DisplayLabel)
 				if (!property.CanWrite || property.Name == "Parent")
+				{
 					continue;
+				}
 				var originalValue = property.GetValue(this, null);
 				property.SetValue(clone, originalValue, null);
 			}
@@ -340,8 +332,11 @@ namespace LanguageExplorer.Works
 		public override bool Equals(object other)
 		{
 			var otherNode = other as ConfigurableDictionaryNode;
-			if (otherNode == null || Label != otherNode.Label || LabelSuffix != otherNode.LabelSuffix || FieldDescription != otherNode.FieldDescription)
+			if (otherNode == null || Label != otherNode.Label || LabelSuffix != otherNode.LabelSuffix ||
+			    FieldDescription != otherNode.FieldDescription)
+			{
 				return false;
+			}
 			// The rules for our tree prevent two same-named nodes under a parent
 			return CheckParents(this, otherNode);
 		}
@@ -379,8 +374,8 @@ namespace LanguageExplorer.Works
 			duplicate.IsDuplicate = true;
 
 			// Provide a suffix to distinguish among similar dictionary items.
-			int suffix = 1;
-			string labelSuffix = string.IsNullOrEmpty(duplicate.LabelSuffix) ? "" : duplicate.LabelSuffix;
+			var suffix = 1;
+			var labelSuffix = string.IsNullOrEmpty(duplicate.LabelSuffix) ? "" : duplicate.LabelSuffix;
 			var copy = Regex.Match(labelSuffix, @"\d+$");
 			if (copy.Success)
 			{
@@ -408,7 +403,9 @@ namespace LanguageExplorer.Works
 		public void UnlinkFromParent()
 		{
 			if (Parent == null)
+			{
 				return;
+			}
 
 			Parent.Children.Remove(this);
 			Parent = null;
@@ -425,7 +422,9 @@ namespace LanguageExplorer.Works
 		public bool ChangeSuffix(string newSuffix, List<ConfigurableDictionaryNode> siblings)
 		{
 			if (NodeWithSameDisplayLabelExists(newSuffix, siblings))
+			{
 				return false;
+			}
 
 			LabelSuffix = newSuffix;
 			return true;
@@ -433,28 +432,26 @@ namespace LanguageExplorer.Works
 
 		private bool NodeWithSameDisplayLabelExists(string newSuffix, List<ConfigurableDictionaryNode> siblings)
 		{
-			return GatherReallyReallyAllSiblings(siblings)
-				.Exists(node => !ReferenceEquals(node, this) && node.Label == Label && node.LabelSuffix == newSuffix);
+			return GatherReallyReallyAllSiblings(siblings).Exists(node => !ReferenceEquals(node, this) && node.Label == Label && node.LabelSuffix == newSuffix);
 		}
 
 		/// <summary>sibling nodes and all related children of grouping nodes together for comparison (null for top-level nodes)</summary>
 		[XmlIgnore]
-		public List<ConfigurableDictionaryNode> ReallyReallyAllSiblings
-		{
-			get { return Parent == null ? null : GatherReallyReallyAllSiblings(Parent.Children); }
-		}
+		public List<ConfigurableDictionaryNode> ReallyReallyAllSiblings => Parent == null ? null : GatherReallyReallyAllSiblings(Parent.Children);
 
 		private List<ConfigurableDictionaryNode> GatherReallyReallyAllSiblings(List<ConfigurableDictionaryNode> siblings)
 		{
-			if (Parent != null && Parent.DictionaryNodeOptions is DictionaryNodeGroupingOptions)
+			if (Parent?.DictionaryNodeOptions is DictionaryNodeGroupingOptions)
 			{
 				siblings = Parent.IsSharedItem ? Parent.Parent.Parent.ReferencedOrDirectChildren : Parent.Parent.ReferencedOrDirectChildren;
 			}
 			var reallyReallyAllSiblings = new List<ConfigurableDictionaryNode>(siblings);
 			foreach (var sibling in siblings.Where(sibling => sibling.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
 			{
-				if(sibling.ReferencedOrDirectChildren != null)
+				if (sibling.ReferencedOrDirectChildren != null)
+				{
 					reallyReallyAllSiblings.AddRange(sibling.ReferencedOrDirectChildren);
+				}
 			}
 			return reallyReallyAllSiblings;
 		}

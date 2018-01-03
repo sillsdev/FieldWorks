@@ -28,7 +28,7 @@ namespace LanguageExplorerTests.Works
 
 		private StringBuilder XHTMLStringBuilder { get; set; }
 
-		private ConfiguredXHTMLGenerator.GeneratorSettings DefaultSettings => new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null);
+		private GeneratorSettings DefaultSettings => new GeneratorSettings(Cache, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null);
 
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
@@ -584,7 +584,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "ReversalName",
 				Between = " ",
 				After = " ",
-				StyleType = ConfigurableDictionaryNode.StyleTypes.Character,
+				StyleType = StyleTypes.Character,
 				Style = "Reversal-Vernacular",
 				CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions

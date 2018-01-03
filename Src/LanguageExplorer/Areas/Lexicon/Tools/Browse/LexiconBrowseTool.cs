@@ -65,6 +65,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				_recordBrowseView);
 			_lexiconAreaMenuHelper.Initialize();
+			_lexiconAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
 		}
 
 		/// <summary>

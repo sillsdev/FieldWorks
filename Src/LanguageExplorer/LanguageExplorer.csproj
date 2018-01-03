@@ -292,8 +292,10 @@
     <Compile Include="AccessibleNameCreator.cs" />
     <Compile Include="Areas\AreaServices.cs" />
     <Compile Include="Areas\AreaWideMenuHelper.cs" />
+    <Compile Include="Areas\CustomFieldLocationType.cs" />
     <Compile Include="Areas\Grammar\GrammarAreaMenuHelper.cs" />
     <Compile Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchToolMenuHelper.cs" />
+    <Compile Include="Areas\IdAndString.cs" />
     <Compile Include="Areas\Lexicon\ISemanticDomainTreeBarHandler.cs" />
     <Compile Include="Areas\Lexicon\LexiconAreaMenuHelper.cs" />
     <Compile Include="Areas\Lists\Tools\DialectsListEdit\DialectsListEditTool.cs" />
@@ -312,6 +314,7 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\NonUndoableCreateAndInsertStText.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\UndoableCreateAndInsertStText.cs" />
     <Compile Include="Areas\TextsAndWords\TextAndWordsAreaMenuHelper.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\InterlinearEdit\InterlinearEditToolMenuHelper.cs" />
     <Compile Include="Areas\TreeBarHandlerAwareRecordList.cs" />
     <Compile Include="DictionaryConfigurationServices.cs" />
     <Compile Include="IListArea.cs" />
@@ -965,7 +968,7 @@
     </Compile>
     <Compile Include="UtilityTools\WriteAllObjectsUtility.cs" />
     <Compile Include="ViewSizeEvents.cs" />
-    <Compile Include="Works\AddCustomFieldDlg.cs">
+    <Compile Include="Areas\AddCustomFieldDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Areas\ConcDecorator.cs" />
@@ -1086,6 +1089,7 @@
       <DependentUpon>ExportTranslatedListsDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Works\FileStreamXmlResolver.cs" />
+    <Compile Include="Works\GeneratorSettings.cs" />
     <Compile Include="Works\HeadWordNumbersController.cs" />
     <Compile Include="Works\HeadWordNumbersDlg.cs">
       <SubType>Form</SubType>
@@ -1136,6 +1140,8 @@
     </Compile>
     <Compile Include="Works\PossibilityRecordList.cs" />
     <Compile Include="Areas\PossibilityTreeBarHandler.cs" />
+    <Compile Include="Works\PropertyType.cs" />
+    <Compile Include="Works\StyleTypes.cs" />
     <Compile Include="Works\TreeBarHandler.cs" />
     <Compile Include="Works\RecordBrowseView.cs">
       <SubType>UserControl</SubType>
@@ -1159,7 +1165,7 @@
     <Compile Include="Works\ReversalIndexServices.cs" />
     <Compile Include="Works\SelectObjectEventArgs.cs" />
     <Compile Include="Areas\Lexicon\SemanticDomainRdeTreeBarHandler.cs" />
-    <Compile Include="Works\CombinedStylesListHandler.cs" />
+    <Compile Include="Impls\CombinedStylesListHandler.cs" />
     <Compile Include="Areas\TreeBarHandlerAwarePossibilityRecordList.cs" />
     <Compile Include="Works\UnicodeCharacterEditingHelper.cs" />
     <Compile Include="Works\UploadToWebonaryController.cs" />
@@ -1594,7 +1600,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SendReceiveResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Works\AddCustomFieldDlg.resx">
+    <EmbeddedResource Include="Areas\AddCustomFieldDlg.resx">
       <DependentUpon>AddCustomFieldDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

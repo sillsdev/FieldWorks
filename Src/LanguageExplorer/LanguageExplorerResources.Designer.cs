@@ -3044,6 +3044,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Punctuation in custom field name.
+        /// </summary>
+        internal static string PunctInfieldNameCaption {
+            get {
+                return ResourceManager.GetString("PunctInfieldNameCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Redo.
         /// </summary>
         internal static string Redo {

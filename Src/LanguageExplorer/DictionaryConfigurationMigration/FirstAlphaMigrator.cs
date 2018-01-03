@@ -263,7 +263,7 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 								break;
 							case "ExamplesOS":
 								n.CSSClassNameOverride = "examplescontents";
-								n.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
+								n.StyleType = StyleTypes.Character;
 								n.DictionaryNodeOptions = new DictionaryNodeListAndParaOptions(); // allow to be shown in paragraph
 								break;
 						}

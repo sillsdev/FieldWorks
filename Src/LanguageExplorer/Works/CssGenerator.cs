@@ -814,21 +814,21 @@ namespace LanguageExplorer.Works
 			return SelectClassName(configNode, type);
 		}
 
-		private static string SelectClassName(ConfigurableDictionaryNode configNode, ConfiguredXHTMLGenerator.PropertyType type)
+		private static string SelectClassName(ConfigurableDictionaryNode configNode, PropertyType type)
 		{
 			switch(type)
 			{
-				case ConfiguredXHTMLGenerator.PropertyType.CollectionType:
+				case PropertyType.CollectionType:
 				{
 					// for collections we generate a css selector to match each item e.g '.senses .sense'
 					return string.Format(".{0} .{1}", GetClassAttributeForConfig(configNode), GetClassAttributeForCollectionItem(configNode));
 				}
-				case ConfiguredXHTMLGenerator.PropertyType.CmPictureType:
+				case PropertyType.CmPictureType:
 				{
 					return " img"; // Pictures are written out as img tags
 				}
-				case ConfiguredXHTMLGenerator.PropertyType.PrimitiveType:
-				case ConfiguredXHTMLGenerator.PropertyType.MoFormType:
+				case PropertyType.PrimitiveType:
+				case PropertyType.MoFormType:
 				{
 					// for multi-lingual strings each language's string will have the contents generated in a span
 					if(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
@@ -878,7 +878,7 @@ namespace LanguageExplorer.Works
 		private static string SelectBareClassName(ConfigurableDictionaryNode configNode, IFwMetaDataCacheManaged metaDataCacheAccessor = null)
 		{
 			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, metaDataCacheAccessor);
-			if (type == ConfiguredXHTMLGenerator.PropertyType.CollectionType)
+			if (type == PropertyType.CollectionType)
 			{
 				return "." + GetClassAttributeForConfig(configNode);
 			}
@@ -1198,7 +1198,7 @@ namespace LanguageExplorer.Works
 
 		private static bool IsParagraphStyle(ConfigurableDictionaryNode node, LcmStyleSheet styleSheet)
 		{
-			if (node.StyleType == ConfigurableDictionaryNode.StyleTypes.Character)
+			if (node.StyleType == StyleTypes.Character)
 				return false;
 			var style = node.Style;
 			return !string.IsNullOrEmpty(style) && styleSheet.Styles.Contains(style) && styleSheet.Styles[style].IsParagraphStyle;
@@ -1615,22 +1615,22 @@ namespace LanguageExplorer.Works
 			return termList;
 		}
 
-		private class AncestorIndents
+		private sealed class AncestorIndents
 		{
-			public AncestorIndents(float margin, float textIndent): this(null, margin, textIndent)
+			internal AncestorIndents(float margin, float textIndent): this(null, margin, textIndent)
 			{
 			}
 
-			public AncestorIndents(ConfigurableDictionaryNode ancestor, float margin, float textIndent)
+			internal AncestorIndents(ConfigurableDictionaryNode ancestor, float margin, float textIndent)
 			{
 				Ancestor = ancestor;
 				Margin = margin;
 				TextIndent = textIndent;
 			}
 
-			public float Margin { get; private set; }
-			public float TextIndent { get; private set; }
-			public ConfigurableDictionaryNode Ancestor { get; private set; }
+			internal float Margin { get; private set; }
+			internal float TextIndent { get; private set; }
+			internal ConfigurableDictionaryNode Ancestor { get; private set; }
 		}
 	}
 }

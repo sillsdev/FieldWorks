@@ -70,24 +70,6 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All Analysis then all Vernacular Writing Systems.
-        /// </summary>
-        internal static string AllAnalysisVernacularWs {
-            get {
-                return ResourceManager.GetString("AllAnalysisVernacularWs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to All Analysis Writing Systems.
-        /// </summary>
-        internal static string AllAnalysisWs {
-            get {
-                return ResourceManager.GetString("AllAnalysisWs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to $$all_entries$$.
         /// </summary>
         internal static string AllEntriesPublication {
@@ -97,47 +79,11 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Allomorph.
-        /// </summary>
-        internal static string Allomorph {
-            get {
-                return ResourceManager.GetString("Allomorph", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to All publications.
         /// </summary>
         internal static string Allpublications {
             get {
                 return ResourceManager.GetString("Allpublications", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to All Vernacular then all Analysis Writing Systems.
-        /// </summary>
-        internal static string AllVernacularAnalysisWs {
-            get {
-                return ResourceManager.GetString("AllVernacularAnalysisWs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to All Vernacular Writing Systems.
-        /// </summary>
-        internal static string AllVernacularWs {
-            get {
-                return ResourceManager.GetString("AllVernacularWs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to There are duplicate {0} fields named &quot;{1}&quot;. Please choose a different name..
-        /// </summary>
-        internal static string AlreadyFieldWithThisLabel {
-            get {
-                return ResourceManager.GetString("AlreadyFieldWithThisLabel", resourceCulture);
             }
         }
         
@@ -250,50 +196,6 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Warning: deleting a field cannot be undone.
-        ///Are you SURE you want to delete the field {0}?.
-        /// </summary>
-        internal static string DeletingFieldCannotBeUndone {
-            get {
-                return ResourceManager.GetString("DeletingFieldCannotBeUndone", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Warning: deleting a field cannot be undone.
-        ///Note: {0} items in your database have data in this field!
-        ///Are you SURE you want to delete the field {1}?.
-        /// </summary>
-        internal static string DeletingFieldCannotBeUndone0Items {
-            get {
-                return ResourceManager.GetString("DeletingFieldCannotBeUndone0Items", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Warning: deleting a field cannot be undone.
-        ///Note: {0} items in your database have data in this field,
-        ///and {1} views have been configured to display this field!
-        ///Are you SURE you want to delete the field {2}?.
-        /// </summary>
-        internal static string DeletingFieldCannotBeUndone0Items1Views {
-            get {
-                return ResourceManager.GetString("DeletingFieldCannotBeUndone0Items1Views", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Warning: deleting a field cannot be undone.
-        ///Note: {0} views have been configured to display this field!
-        ///Are you SURE you want to delete the field {1}?.
-        /// </summary>
-        internal static string DeletingFieldCannotBeUndone0Views {
-            get {
-                return ResourceManager.GetString("DeletingFieldCannotBeUndone0Views", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Deleting the object.
         /// </summary>
         internal static string DeletingTheObject {
@@ -375,38 +277,11 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Empty Field Name.
-        /// </summary>
-        internal static string EmptyFieldName {
-            get {
-                return ResourceManager.GetString("EmptyFieldName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Entry.
-        /// </summary>
-        internal static string Entry {
-            get {
-                return ResourceManager.GetString("Entry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An error occurred while exporting your data. This could be the result of an error in an FXT file, an output file that is locked, or a bug in the FieldWorks code..
         /// </summary>
         internal static string ErrorExporting_ProbablyBug {
             get {
                 return ResourceManager.GetString("ErrorExporting_ProbablyBug", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Example.
-        /// </summary>
-        internal static string ExampleSentence {
-            get {
-                return ResourceManager.GetString("ExampleSentence", resourceCulture);
             }
         }
         
@@ -501,15 +376,6 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Field Names should not be empty. Please choose a different name..
-        /// </summary>
-        internal static string FieldNameShouldNotBeEmpty {
-            get {
-                return ResourceManager.GetString("FieldNameShouldNotBeEmpty", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Filtered.
         /// </summary>
         internal static string Filtered {
@@ -524,33 +390,6 @@ namespace LanguageExplorer.Works {
         internal static string FinishedCompressingDataForWebonary {
             get {
                 return ResourceManager.GetString("FinishedCompressingDataForWebonary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to First Analysis Writing System.
-        /// </summary>
-        internal static string FirstAnalysisWs {
-            get {
-                return ResourceManager.GetString("FirstAnalysisWs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You must first select a Custom field to delete from the list..
-        /// </summary>
-        internal static string FirstSelectItemToDelete {
-            get {
-                return ResourceManager.GetString("FirstSelectItemToDelete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to First Vernacular Writing System.
-        /// </summary>
-        internal static string FirstVernacularWs {
-            get {
-                return ResourceManager.GetString("FirstVernacularWs", resourceCulture);
             }
         }
         
@@ -623,15 +462,6 @@ namespace LanguageExplorer.Works {
         internal static string ItemLayout {
             get {
                 return ResourceManager.GetString("ItemLayout", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Multiparagraph Text.
-        /// </summary>
-        internal static string kMultiparagraphText {
-            get {
-                return ResourceManager.GetString("kMultiparagraphText", resourceCulture);
             }
         }
         
@@ -942,15 +772,6 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There is already a field named {1} in each {0}, please choose a different name for your Custom field..
-        /// </summary>
-        internal static string ksCustomFieldMatchesNonCustomField {
-            get {
-                return ResourceManager.GetString("ksCustomFieldMatchesNonCustomField", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Cannot Add Custom Fields.
         /// </summary>
         internal static string ksCustomFieldsCanNotBeAddedDueToOtherAppsCaption {
@@ -983,15 +804,6 @@ namespace LanguageExplorer.Works {
         internal static string ksCustomFieldsCanNotBeAddedDueToRemoteClientsText {
             get {
                 return ResourceManager.GetString("ksCustomFieldsCanNotBeAddedDueToRemoteClientsText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Date.
-        /// </summary>
-        internal static string ksDate {
-            get {
-                return ResourceManager.GetString("ksDate", resourceCulture);
             }
         }
         
@@ -1294,24 +1106,6 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to List Reference (single item).
-        /// </summary>
-        internal static string ksListRefAtomic {
-            get {
-                return ResourceManager.GetString("ksListRefAtomic", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to List Reference (multiple items).
-        /// </summary>
-        internal static string ksListRefCollection {
-            get {
-                return ResourceManager.GetString("ksListRefCollection", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Main entry not shown.
         /// </summary>
         internal static string ksMainNotShown {
@@ -1366,15 +1160,6 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New Custom Field.
-        /// </summary>
-        internal static string ksNewCustomField {
-            get {
-                return ResourceManager.GetString("ksNewCustomField", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No Complex Form Type.
         /// </summary>
         internal static string ksNoComplexFormType {
@@ -1425,15 +1210,6 @@ namespace LanguageExplorer.Works {
         internal static string ksNoVariantType {
             get {
                 return ResourceManager.GetString("ksNoVariantType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Number.
-        /// </summary>
-        internal static string ksNumber {
-            get {
-                return ResourceManager.GetString("ksNumber", resourceCulture);
             }
         }
         
@@ -1555,15 +1331,6 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Record.
-        /// </summary>
-        internal static string ksRecord {
-            get {
-                return ResourceManager.GetString("ksRecord", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Delete Media Link.
         /// </summary>
         internal static string ksRedoDeleteMediaLink {
@@ -1663,15 +1430,6 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single-line Text.
-        /// </summary>
-        internal static string ksSingleLineText {
-            get {
-                return ResourceManager.GetString("ksSingleLineText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Sorting.
         /// </summary>
         internal static string ksSorting {
@@ -1704,21 +1462,6 @@ namespace LanguageExplorer.Works {
         internal static string ksTagListTooDeep {
             get {
                 return ResourceManager.GetString("ksTagListTooDeep", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This project is set up for Send/Receive Project (with other FLEx users). If there are already other users in your team, it is VERY important to coordinate custom field changes. FLEx currently has only limited ability to Send/Receive custom field changes. It is possible to get into a situation where some team members cannot merge their changes and must Get the project again.
-        ///
-        ///Recommended procedure:
-        ///
-        ///1. All team members do Send/Receive and STOP WORK until they have done step 3.
-        ///
-        ///2. One team member does  [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string kstCustomFieldSendReceive {
-            get {
-                return ResourceManager.GetString("kstCustomFieldSendReceive", resourceCulture);
             }
         }
         
@@ -2021,15 +1764,6 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Duplicate Custom Field Names.
-        /// </summary>
-        internal static string LabelAlreadyExists {
-            get {
-                return ResourceManager.GetString("LabelAlreadyExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to What would normally be shown is being blocked, probably because a filter hides it.  Do you want to turn off the filter?.
         /// </summary>
         internal static string LinkTargetNotAvailableDueToFilter {
@@ -2129,39 +1863,12 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Punctuation in custom field name.
-        /// </summary>
-        internal static string PunctInfieldNameCaption {
-            get {
-                return ResourceManager.GetString("PunctInfieldNameCaption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Please remove the punctuation from the custom field name (&quot;{0}&quot;) to allow export and some other functions to work..
-        /// </summary>
-        internal static string PunctInFieldNameError {
-            get {
-                return ResourceManager.GetString("PunctInFieldNameError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The custom field name &quot;{0}&quot; includes punctuation characters. This may cause export to fail or make the exported file difficult for other programs to use. We recommend that you rename your custom field and then do the export again.
         ///Do you want to continue with the export?.
         /// </summary>
         internal static string PunctInFieldNameWarning {
             get {
                 return ResourceManager.GetString("PunctInFieldNameWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Really delete field and contents?.
-        /// </summary>
-        internal static string ReallyDeleteField {
-            get {
-                return ResourceManager.GetString("ReallyDeleteField", resourceCulture);
             }
         }
         
@@ -2292,29 +1999,11 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select Custom Field.
-        /// </summary>
-        internal static string SelectCustomField {
-            get {
-                return ResourceManager.GetString("SelectCustomField", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The selected object has been deleted (possibly by another user on a networked computer). Refreshing..
         /// </summary>
         internal static string SelectedObjectHasBeenDeleted {
             get {
                 return ResourceManager.GetString("SelectedObjectHasBeenDeleted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sense.
-        /// </summary>
-        internal static string Sense {
-            get {
-                return ResourceManager.GetString("Sense", resourceCulture);
             }
         }
         

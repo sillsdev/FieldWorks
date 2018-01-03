@@ -61,6 +61,209 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All Analysis then all Vernacular Writing Systems.
+        /// </summary>
+        internal static string AllAnalysisVernacularWs {
+            get {
+                return ResourceManager.GetString("AllAnalysisVernacularWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All Analysis Writing Systems.
+        /// </summary>
+        internal static string AllAnalysisWs {
+            get {
+                return ResourceManager.GetString("AllAnalysisWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allomorph.
+        /// </summary>
+        internal static string Allomorph {
+            get {
+                return ResourceManager.GetString("Allomorph", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All Vernacular then all Analysis Writing Systems.
+        /// </summary>
+        internal static string AllVernacularAnalysisWs {
+            get {
+                return ResourceManager.GetString("AllVernacularAnalysisWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All Vernacular Writing Systems.
+        /// </summary>
+        internal static string AllVernacularWs {
+            get {
+                return ResourceManager.GetString("AllVernacularWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are duplicate {0} fields named &quot;{1}&quot;. Please choose a different name..
+        /// </summary>
+        internal static string AlreadyFieldWithThisLabel {
+            get {
+                return ResourceManager.GetString("AlreadyFieldWithThisLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom _Fields....
+        /// </summary>
+        internal static string CustomFields {
+            get {
+                return ResourceManager.GetString("CustomFields", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add or edit custom fields..
+        /// </summary>
+        internal static string CustomFieldsTooltip {
+            get {
+                return ResourceManager.GetString("CustomFieldsTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning: deleting a field cannot be undone.
+        ///Are you SURE you want to delete the field {0}?.
+        /// </summary>
+        internal static string DeletingFieldCannotBeUndone {
+            get {
+                return ResourceManager.GetString("DeletingFieldCannotBeUndone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning: deleting a field cannot be undone.
+        ///Note: {0} items in your database have data in this field!
+        ///Are you SURE you want to delete the field {1}?.
+        /// </summary>
+        internal static string DeletingFieldCannotBeUndone0Items {
+            get {
+                return ResourceManager.GetString("DeletingFieldCannotBeUndone0Items", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning: deleting a field cannot be undone.
+        ///Note: {0} items in your database have data in this field,
+        ///and {1} views have been configured to display this field!
+        ///Are you SURE you want to delete the field {2}?.
+        /// </summary>
+        internal static string DeletingFieldCannotBeUndone0Items1Views {
+            get {
+                return ResourceManager.GetString("DeletingFieldCannotBeUndone0Items1Views", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning: deleting a field cannot be undone.
+        ///Note: {0} views have been configured to display this field!
+        ///Are you SURE you want to delete the field {1}?.
+        /// </summary>
+        internal static string DeletingFieldCannotBeUndone0Views {
+            get {
+                return ResourceManager.GetString("DeletingFieldCannotBeUndone0Views", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Empty Field Name.
+        /// </summary>
+        internal static string EmptyFieldName {
+            get {
+                return ResourceManager.GetString("EmptyFieldName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Entry.
+        /// </summary>
+        internal static string Entry {
+            get {
+                return ResourceManager.GetString("Entry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Example.
+        /// </summary>
+        internal static string ExampleSentence {
+            get {
+                return ResourceManager.GetString("ExampleSentence", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Field Names should not be empty. Please choose a different name..
+        /// </summary>
+        internal static string FieldNameShouldNotBeEmpty {
+            get {
+                return ResourceManager.GetString("FieldNameShouldNotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to First Analysis Writing System.
+        /// </summary>
+        internal static string FirstAnalysisWs {
+            get {
+                return ResourceManager.GetString("FirstAnalysisWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must first select a Custom field to delete from the list..
+        /// </summary>
+        internal static string FirstSelectItemToDelete {
+            get {
+                return ResourceManager.GetString("FirstSelectItemToDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to First Vernacular Writing System.
+        /// </summary>
+        internal static string FirstVernacularWs {
+            get {
+                return ResourceManager.GetString("FirstVernacularWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+        ///&lt;!-- this file lists special instructions for XDE nodes. Currently, all that you are allowed to say is
+        ///that a node is not visible. You do that by listing the node here. The id of the node must match the XDE
+        ///node that would otherwise produce a slice which you want to hide. Note that most XDE nodes
+        ///do not otherwise have an ID; you usually have to add 1 before you can reference it in this kind of document.--&gt;
+        ///&lt;SliceFilter&gt;
+        ///  &lt;node id=&quot;PartOfSpeechBearableFeatures&quot;/&gt; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string HideAdvancedListItemFields {
+            get {
+                return ResourceManager.GetString("HideAdvancedListItemFields", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multiparagraph Text.
+        /// </summary>
+        internal static string kMultiparagraphText {
+            get {
+                return ResourceManager.GetString("kMultiparagraphText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Index.
         /// </summary>
         internal static string ksAffixRuleIndex {
@@ -133,6 +336,24 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There is already a field named {1} in each {0}, please choose a different name for your Custom field..
+        /// </summary>
+        internal static string ksCustomFieldMatchesNonCustomField {
+            get {
+                return ResourceManager.GetString("ksCustomFieldMatchesNonCustomField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date.
+        /// </summary>
+        internal static string ksDate {
+            get {
+                return ResourceManager.GetString("ksDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error in Environment.
         /// </summary>
         internal static string ksErrorInEnvironment {
@@ -183,6 +404,24 @@ namespace LanguageExplorer.Areas {
         internal static string ksInsertWordBoundary {
             get {
                 return ResourceManager.GetString("ksInsertWordBoundary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List Reference (single item).
+        /// </summary>
+        internal static string ksListRefAtomic {
+            get {
+                return ResourceManager.GetString("ksListRefAtomic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List Reference (multiple items).
+        /// </summary>
+        internal static string ksListRefCollection {
+            get {
+                return ResourceManager.GetString("ksListRefCollection", resourceCulture);
             }
         }
         
@@ -250,11 +489,38 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to New Custom Field.
+        /// </summary>
+        internal static string ksNewCustomField {
+            get {
+                return ResourceManager.GetString("ksNewCustomField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Number.
+        /// </summary>
+        internal static string ksNumber {
+            get {
+                return ResourceManager.GetString("ksNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ???.
         /// </summary>
         internal static string ksQuestions {
             get {
                 return ResourceManager.GetString("ksQuestions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Record.
+        /// </summary>
+        internal static string ksRecord {
+            get {
+                return ResourceManager.GetString("ksRecord", resourceCulture);
             }
         }
         
@@ -520,6 +786,30 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Single-line Text.
+        /// </summary>
+        internal static string ksSingleLineText {
+            get {
+                return ResourceManager.GetString("ksSingleLineText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This project is set up for Send/Receive Project (with other FLEx users). If there are already other users in your team, it is VERY important to coordinate custom field changes. FLEx currently has only limited ability to Send/Receive custom field changes. It is possible to get into a situation where some team members cannot merge their changes and must Get the project again.
+        ///
+        ///Recommended procedure:
+        ///
+        ///1. All team members do Send/Receive and STOP WORK until they have done step 3.
+        ///
+        ///2. One team member does  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string kstCustomFieldSendReceive {
+            get {
+                return ResourceManager.GetString("kstCustomFieldSendReceive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Undo Adding Affixes.
         /// </summary>
         internal static string ksUndoAddAffixes {
@@ -574,6 +864,51 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Duplicate Custom Field Names.
+        /// </summary>
+        internal static string LabelAlreadyExists {
+            get {
+                return ResourceManager.GetString("LabelAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please remove the punctuation from the custom field name (&quot;{0}&quot;) to allow export and some other functions to work..
+        /// </summary>
+        internal static string PunctInFieldNameError {
+            get {
+                return ResourceManager.GetString("PunctInFieldNameError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Really delete field and contents?.
+        /// </summary>
+        internal static string ReallyDeleteField {
+            get {
+                return ResourceManager.GetString("ReallyDeleteField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Custom Field.
+        /// </summary>
+        internal static string SelectCustomField {
+            get {
+                return ResourceManager.GetString("SelectCustomField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sense.
+        /// </summary>
+        internal static string Sense {
+            get {
+                return ResourceManager.GetString("Sense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
         ///&lt;!-- this file this special instructions for XDE nodes. Currently, all that you are allowed to say is
         ///that a node is not visible. You do that by listing the node here. the id of the node must match the XDE
@@ -586,21 +921,6 @@ namespace LanguageExplorer.Areas {
         internal static string VisibilityFilter_All {
             get {
                 return ResourceManager.GetString("VisibilityFilter_All", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-        ///&lt;!-- this file lists special instructions for XDE nodes. Currently, all that you are allowed to say is
-        ///that a node is not visible. You do that by listing the node here. The id of the node must match the XDE
-        ///node that would otherwise produce a slice which you want to hide. Note that most XDE nodes
-        ///do not otherwise have an ID; you usually have to add 1 before you can reference it in this kind of document.--&gt;
-        ///&lt;SliceFilter&gt;
-        ///  &lt;node id=&quot;PartOfSpeechBearableFeatures&quot;/&gt; [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string HideAdvancedListItemFields {
-            get {
-                return ResourceManager.GetString("HideAdvancedListItemFields", resourceCulture);
             }
         }
     }

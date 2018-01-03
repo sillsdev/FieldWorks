@@ -611,7 +611,7 @@ namespace LanguageExplorer
 					var msg = string.Format(xWorksStrings.PunctInFieldNameWarning, name);
 					// The way this is worded, 'Yes' means go on with the export. We won't bother them reporting
 					// other messed-up fields. A 'no' answer means don't continue, which means it's a problem.
-					return (MessageBox.Show(Form.ActiveForm, msg, xWorksStrings.PunctInfieldNameCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes);
+					return (MessageBox.Show(Form.ActiveForm, msg, LanguageExplorerResources.PunctInfieldNameCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes);
 				}
 			}
 			return false; // no punctuation in custom fields.

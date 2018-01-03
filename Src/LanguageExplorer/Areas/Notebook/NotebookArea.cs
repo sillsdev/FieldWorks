@@ -29,6 +29,7 @@ namespace LanguageExplorer.Areas.Notebook
 		private IPropertyTable _propertyTable;
 
 		internal IRecordList MyRecordList { get; set; }
+		internal NotebookAreaMenuHelper MyNotebookAreaMenuHelper => _notebookAreaMenuHelper;
 
 		internal static XDocument LoadDocument(string resourceName)
 		{

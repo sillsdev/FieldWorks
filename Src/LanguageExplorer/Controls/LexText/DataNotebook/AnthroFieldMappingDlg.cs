@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Works;
+using LanguageExplorer.Areas;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -274,7 +274,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void m_btnAddCustom_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new AddCustomFieldDlg(m_propertyTable, m_publisher, AddCustomFieldDlg.LocationType.Notebook))
+			using (var dlg = new AddCustomFieldDlg(m_propertyTable, m_publisher, CustomFieldLocationType.Notebook))
 			{
 				if (dlg.ShowCustomFieldWarning(m_propertyTable.GetValue<Form>("window")))
 				{

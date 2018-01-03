@@ -86,7 +86,7 @@ namespace LanguageExplorerTests.Works
 			}
 		}
 
-		private ConfiguredXHTMLGenerator.GeneratorSettings DefaultSettings => new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null);
+		private GeneratorSettings DefaultSettings => new GeneratorSettings(Cache, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null);
 
 		[Test]
 		public void GenerateCssForConfiguration_NullModelThrowsNullArgument()
@@ -2953,7 +2953,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "LexEntry",
 				CSSClassNameOverride = "minorentryvariant",
 				Style = "Dictionary-Secondary",
-				StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph
+				StyleType = StyleTypes.Paragraph
 			};
 			// mainEntry node is just a placeholder
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -3596,7 +3596,7 @@ namespace LanguageExplorerTests.Works
 				CSSClassNameOverride = "extendednotecontents",
 				Children = new List<ConfigurableDictionaryNode> { discussionNode },
 				Style = "Dictionary-Sense",
-				StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph,
+				StyleType = StyleTypes.Paragraph,
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Note)
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode

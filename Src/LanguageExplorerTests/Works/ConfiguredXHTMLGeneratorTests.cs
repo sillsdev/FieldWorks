@@ -51,9 +51,9 @@ namespace LanguageExplorerTests.Works
 		private const string DictionaryNormal = "Dictionary-Normal";
 		private BaseStyleInfo DictionaryNormalStyle { get { return FontHeightAdjuster.StyleSheetFromPropertyTable(_flexComponentParameters.PropertyTable).Styles[DictionaryNormal]; } }
 
-		private ConfiguredXHTMLGenerator.GeneratorSettings DefaultSettings
+		private GeneratorSettings DefaultSettings
 		{
-			get { return new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null); }
+			get { return new GeneratorSettings(Cache, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null); }
 		}
 
 		private DictionaryPublicationDecorator DefaultDecorator
@@ -141,8 +141,8 @@ namespace LanguageExplorerTests.Works
 		{
 			// ReSharper disable AccessToDisposedClosure // Justification: Assert calls lambdas immediately, so XHTMLWriter is not used after being disposed
 			// ReSharper disable ObjectCreationAsStatement // Justification: We expect the constructor to throw, so there's no created object to assign anywhere :)
-			Assert.Throws(typeof(ArgumentNullException), () => new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, (IPropertyTable)null, false, false, null));
-			Assert.Throws(typeof(ArgumentNullException), () => new ConfiguredXHTMLGenerator.GeneratorSettings(null, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null));
+			Assert.Throws(typeof(ArgumentNullException), () => new GeneratorSettings(Cache, (IPropertyTable)null, false, false, null));
+			Assert.Throws(typeof(ArgumentNullException), () => new GeneratorSettings(null, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null));
 			// ReSharper restore ObjectCreationAsStatement
 			// ReSharper restore AccessToDisposedClosure
 		}
@@ -153,7 +153,7 @@ namespace LanguageExplorerTests.Works
 			var mainEntryNode = new ConfigurableDictionaryNode();
 			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = factory.Create();
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache,new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null);
+			var settings = new GeneratorSettings(Cache,new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null);
 			//SUT
 			Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(null, mainEntryNode, null, settings));
 			Assert.Throws(typeof(ArgumentNullException), () => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, (ConfigurableDictionaryNode)null, null, settings));
@@ -165,7 +165,7 @@ namespace LanguageExplorerTests.Works
 		{
 			var mainEntryNode = new ConfigurableDictionaryNode();
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null);
+			var settings = new GeneratorSettings(Cache, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null);
 			//SUT
 			//Test a blank main node description
 			Assert.That(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings),
@@ -193,7 +193,7 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(entry, "HeadWordTest", _wsFr);
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null);
+			var settings = new GeneratorSettings(Cache, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			const string frenchHeadwordOfHeadwordTest = "/div[@class='lexentry']/span[@class='headword']/span[@lang='fr']/a[text()='HeadWordTest']";
@@ -258,7 +258,7 @@ namespace LanguageExplorerTests.Works
 			var morph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = morph;
 			morph.Form.set_String(wsFr, TsStringUtils.MakeString("LexemeFormTest", wsFr));
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null);
+			var settings = new GeneratorSettings(Cache, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			const string frenchLexForm = "/div[@class='lexentry']/span[@class='lexemeformoa']/span[@lang='fr']/a[text()='LexemeFormTest']";
@@ -303,7 +303,7 @@ namespace LanguageExplorerTests.Works
 			possList1.PossibilitiesOS.Add(location);
 			location.Name.set_String(wsFr, TsStringUtils.MakeString("Here!", wsFr));
 			pronunciation.LocationRA = location;
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			const string hereLocation = "/div[@class='lexentry']/span[@class='pronunciations']/span[@class='pronunciation']/span[@class='location']/span[@class='name']/span[@lang='fr' and text()='Here!']";
@@ -370,7 +370,7 @@ namespace LanguageExplorerTests.Works
 			var fileName2 = "test2.mp4";
 			CreateTestMediaFile(Cache, fileName2, folder, pron2);
 			var videoFileUrl2 = expectedMediaFolder + fileName2;
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 
 			const string movieCameraChar = "\U0001f3a5";
 			const string movieCamSearch = "/a/text()['" + movieCameraChar + "']";
@@ -435,7 +435,7 @@ namespace LanguageExplorerTests.Works
 			};
 			var entryOne = CreateInterestingLexEntry(Cache);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 			Assert.IsEmpty(result, "Should not have generated anything for a disabled node");
@@ -454,7 +454,7 @@ namespace LanguageExplorerTests.Works
 			var entryOne = CreateInterestingLexEntry(Cache);
 			var entryTwo = CreateInterestingLexEntry(Cache);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			XHTMLStringBuilder.AppendLine("<TESTWRAPPER>"); //keep the xml valid (single root element)
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
@@ -509,7 +509,7 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 			const string oneSenseWithGlossOfGloss = xpathThruSense + "//span[@lang='en' and text()='gloss']";
@@ -556,7 +556,7 @@ namespace LanguageExplorerTests.Works
 			var entryOneId = entryOne.Guid;
 			var entryTwoId = entryTwo.Guid;
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			XHTMLStringBuilder.AppendLine("<TESTWRAPPER>"); //keep the xml valid (single root element)
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
@@ -580,7 +580,7 @@ namespace LanguageExplorerTests.Works
 				Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary", "Root"), DictionaryConfigurationModel.FileExtension);
 			var entry = CreateInterestingLexEntry(Cache);
 			var dictionaryModel = new DictionaryConfigurationModel(defaultRoot, Cache);
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, dictionaryModel.Parts[0], DefaultDecorator, settings);
 			var entryExists = "/div[@class='entry' and @id='g" + entry.Guid + "']";
@@ -617,7 +617,7 @@ namespace LanguageExplorerTests.Works
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var entryOne = CreateInterestingLexEntry(Cache);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 			const string sensesThatShouldNotBe = "/div[@class='entry']/span[@class='senses']";
@@ -648,7 +648,7 @@ namespace LanguageExplorerTests.Works
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var entryOne = CreateInterestingLexEntry(Cache);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 			Assert.IsEmpty(result, "With only one subnode that is disabled, there should be nothing generated!");
@@ -706,7 +706,7 @@ namespace LanguageExplorerTests.Works
 			secondSense.MorphoSyntaxAnalysisRA = secondMsa;
 			secondMsa.PartOfSpeechRA = pos;
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			// SUT
 			var xhtmlString = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			const string sharedGramInfoPath = "//div[@class='lexentry']/span[@class='senses']/span[@class='sharedgrammaticalinfo']";
@@ -790,7 +790,7 @@ namespace LanguageExplorerTests.Works
 			// create decorator
 			var mainDictionaryDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 				Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries, mainDict);
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			// SUT
 			var xhtmlString = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, mainDictionaryDecorator, settings);
 			const string sharedGramInfoPath = "//div[@class='lexentry']/span[@class='senses']/span[@class='sharedgrammaticalinfo']";
@@ -855,7 +855,7 @@ namespace LanguageExplorerTests.Works
 			secondMsa.PartOfSpeechRA = pos2;
 			secondMsa.PartOfSpeechRA.Abbreviation.set_String(_wsEn, "NotBlah");
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			// SUT
 			var xhtmlString = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			const string sharedGramInfoPath = "//div[@class='lexentry']/span[@class='sensesos']/span[@class='sharedgrammaticalinfo']";
@@ -904,7 +904,7 @@ namespace LanguageExplorerTests.Works
 			var entry = CreateInterestingLexEntry(Cache);
 			AddSenseToEntry(entry, "sense 2", _wsEn, Cache);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			// SUT
 			var xhtmlString = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			const string sharedGramInfoPath = "//div[@class='lexentry']/span[@class='sensesos']/span[@class='sharedgrammaticalinfo']";
@@ -964,7 +964,7 @@ namespace LanguageExplorerTests.Works
 			entry.MorphoSyntaxAnalysesOC.Add(msa);
 			sense.MorphoSyntaxAnalysisRA = msa;
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			// SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			const string morphTypePath = "//span[@class='morphosyntaxanalysis']/span[@class='morphtypes']/span[@class='morphtype']/span[@class='abbreviation']/span[@lang='en' and text()='sfx']";
@@ -1004,7 +1004,7 @@ namespace LanguageExplorerTests.Works
 			entry.MorphoSyntaxAnalysesOC.Add(msa);
 			sense.MorphoSyntaxAnalysisRA = msa;
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			// SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			const string gramInfoPath = xpathThruSense + "/span[@class='morphosyntaxanalysis']";
@@ -1055,7 +1055,7 @@ namespace LanguageExplorerTests.Works
 			entry.MorphoSyntaxAnalysesOC.Add(msa);
 			sense.MorphoSyntaxAnalysisRA = msa;
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			// SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			const string gramInfoPath = xpathThruSense + "/span[@class='morphosyntaxanalysis']";
@@ -1089,7 +1089,7 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			// SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			const string gramInfoPath = xpathThruSense + "/span[@class='morphosyntaxanalysis']";
@@ -1123,7 +1123,7 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			// SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			const string scientificCatPath = xpathThruSense + "/span[@class='scientificname']";
@@ -1179,7 +1179,7 @@ namespace LanguageExplorerTests.Works
 			msa.PartOfSpeechRA = pos;
 			msa.PartOfSpeechRA.Abbreviation.set_String(wsFr, "Blah");
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			// SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 
@@ -1213,7 +1213,7 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entryOne = CreateInterestingLexEntry(Cache);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 			const string senseWithdefinitionOrGloss = "//span[@class='sense']/span[@class='definitionorgloss']/span[text()='gloss']";
@@ -1243,7 +1243,7 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entryOne = CreateInterestingLexEntry(Cache);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 			const string senseWithdefinitionOrGloss =
@@ -1298,7 +1298,7 @@ namespace LanguageExplorerTests.Works
 			var complexRefAbbr = complexformentryref.ComplexEntryTypesRS[0].Abbreviation.BestAnalysisAlternative.Text;
 			var complexRefRevAbbr = complexformentryref.ComplexEntryTypesRS[0].ReverseAbbr.BestAnalysisAlternative.Text;
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			var fwdNameXpath = string.Format(
@@ -1335,7 +1335,7 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entryOne = CreateInterestingLexEntry(Cache);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 			const string senseWithHyphenSuffix = "//span[@class='senses_test-one']/span[@class='sense_test-one']";
@@ -1366,7 +1366,7 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entryOne = CreateInterestingLexEntry(Cache);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 			const string senseWithHyphenSuffix = "//span[@class='senses_-test']/span[@class='sense_-test']";
@@ -1397,7 +1397,7 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entryOne = CreateInterestingLexEntry(Cache);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 			const string senseWithHyphenSuffix = "//span[@class='senses_-test-']/span[@class='sense_-test-']";
@@ -1456,7 +1456,7 @@ namespace LanguageExplorerTests.Works
 			complexEntryRef.ShowComplexFormsInRS.Add(entryThree);
 			complexEntryRef.ShowComplexFormsInRS.Add(entryOne.SensesOS[0]);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			// SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 			var headwordMatch = string.Format("//span[@class='{0}']//span[@class='{1}']/span[text()='{2}']",
@@ -1510,7 +1510,7 @@ namespace LanguageExplorerTests.Works
 			etym.LanguageNotes.SetAnalysisDefaultWritingSystem("Georgian");
 			etym.LanguageRS.Add(language);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 			const string etymologyWithArabicSrcLanguage = "//span[@class='etymologies']/span[@class='etymology']/span[@class='languages']/span[@class='language']/span[@class='abbreviation']/span[@lang='en' and text()='ar']";
@@ -1537,10 +1537,10 @@ namespace LanguageExplorerTests.Works
 				Children = new List<ConfigurableDictionaryNode> { stringNode }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
-			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
+			var result = PropertyType.InvalidProperty;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(stringNode));
-			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.PrimitiveType));
+			Assert.That(result, Is.EqualTo(PropertyType.PrimitiveType));
 		}
 
 		[Test]
@@ -1559,10 +1559,10 @@ namespace LanguageExplorerTests.Works
 				Children = new List<ConfigurableDictionaryNode> { memberNode }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
-			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
+			var result = PropertyType.InvalidProperty;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
-			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.PrimitiveType));
+			Assert.That(result, Is.EqualTo(PropertyType.PrimitiveType));
 		}
 
 		[Test]
@@ -1581,10 +1581,10 @@ namespace LanguageExplorerTests.Works
 				Children = new List<ConfigurableDictionaryNode> { memberNode }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
-			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
+			var result = PropertyType.InvalidProperty;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
-			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.MoFormType));
+			Assert.That(result, Is.EqualTo(PropertyType.MoFormType));
 		}
 
 		[Test]
@@ -1603,10 +1603,10 @@ namespace LanguageExplorerTests.Works
 				Children = new List<ConfigurableDictionaryNode> { memberNode }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
-			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
+			var result = PropertyType.InvalidProperty;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
-			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.CmObjectType));
+			Assert.That(result, Is.EqualTo(PropertyType.CmObjectType));
 		}
 
 		[Test]
@@ -1625,10 +1625,10 @@ namespace LanguageExplorerTests.Works
 				Children = new List<ConfigurableDictionaryNode> { memberNode }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
-			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
+			var result = PropertyType.InvalidProperty;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
-			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.CollectionType));
+			Assert.That(result, Is.EqualTo(PropertyType.CollectionType));
 		}
 
 		[Test]
@@ -1647,10 +1647,10 @@ namespace LanguageExplorerTests.Works
 				Children = new List<ConfigurableDictionaryNode> { memberNode }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
-			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
+			var result = PropertyType.InvalidProperty;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(stringNodeInClass));
-			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.PrimitiveType));
+			Assert.That(result, Is.EqualTo(PropertyType.PrimitiveType));
 		}
 
 		[Test]
@@ -1670,10 +1670,10 @@ namespace LanguageExplorerTests.Works
 				Children = new List<ConfigurableDictionaryNode> { memberNode }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
-			var result = ConfiguredXHTMLGenerator.PropertyType.PrimitiveType;
+			var result = PropertyType.PrimitiveType;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
-			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.InvalidProperty));
+			Assert.That(result, Is.EqualTo(PropertyType.InvalidProperty));
 		}
 
 		[Test]
@@ -1691,10 +1691,10 @@ namespace LanguageExplorerTests.Works
 				Children = new List<ConfigurableDictionaryNode> { memberNode }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
-			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
+			var result = PropertyType.InvalidProperty;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(memberNode, (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor));
-			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.PrimitiveType));
+			Assert.That(result, Is.EqualTo(PropertyType.PrimitiveType));
 		}
 
 		[Test]
@@ -1712,10 +1712,10 @@ namespace LanguageExplorerTests.Works
 				Children = new List<ConfigurableDictionaryNode> { memberNode }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
-			var result = ConfiguredXHTMLGenerator.PropertyType.PrimitiveType;
+			var result = PropertyType.PrimitiveType;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(memberNode));
-			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.InvalidProperty));
+			Assert.That(result, Is.EqualTo(PropertyType.InvalidProperty));
 		}
 
 		[Test]
@@ -1748,10 +1748,10 @@ namespace LanguageExplorerTests.Works
 				Children = new List<ConfigurableDictionaryNode> { memberNode }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
-			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
+			var result = PropertyType.InvalidProperty;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(pictureFileNode));
-			Assert.That(result, Is.EqualTo(ConfiguredXHTMLGenerator.PropertyType.CmPictureType));
+			Assert.That(result, Is.EqualTo(PropertyType.CmPictureType));
 		}
 
 		[Test]
@@ -1783,7 +1783,7 @@ namespace LanguageExplorerTests.Works
 				paragraph.Contents = TsStringUtils.MakeString(customData, _wsFr);
 				//SUT
 				var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(customFieldNode, (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
-				Assert.AreEqual(ConfiguredXHTMLGenerator.PropertyType.PrimitiveType, type);
+				Assert.AreEqual(PropertyType.PrimitiveType, type);
 			}
 		}
 
@@ -1969,7 +1969,7 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSenseToEntry(testEntry, "second gloss", _wsEn, Cache);
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
@@ -2128,7 +2128,7 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(1), "Test set up incorrectly. There should just be one sense.");
 			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(1), "Test not set up correctly. There should be no subsenses.");
 			// SUT
@@ -2196,7 +2196,7 @@ namespace LanguageExplorerTests.Works
 			AddSubSenseToSense("ss1", testEntry.AllSenses.First());
 			AddSubSenseToSense("ss2", testEntry.AllSenses.First());
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(3), "Test set up incorrectly.");
 			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(3), "Test not set up correctly.");
 			// SUT
@@ -2263,7 +2263,7 @@ namespace LanguageExplorerTests.Works
 			AddSubSenseToSense("ss1", testEntry.AllSenses.First());
 			AddSubSenseToSense("ss2", testEntry.AllSenses.First());
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(3), "Test set up incorrectly.");
 			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(3), "Test not set up correctly.");
 			// SUT
@@ -2330,7 +2330,7 @@ namespace LanguageExplorerTests.Works
 			AddSubSenseToSense("ss1", testEntry.AllSenses.First());
 			AddSubSenseToSense("ss2", testEntry.AllSenses.First());
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(3), "Test set up incorrectly.");
 			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(3), "Test not set up correctly.");
 			// SUT
@@ -2382,7 +2382,7 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSingleSubSenseToSense("gloss", testEntry.SensesOS.First());
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string SenseOneSubSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]/span[@class='senses']/span[@class='sensecontent']//span[@lang='en' and text()='gloss1.1']";
@@ -2439,7 +2439,7 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='A']]//span[@lang='en' and text()='gloss']";
@@ -2504,7 +2504,7 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='A']]//span[@lang='en' and text()='gloss']";
@@ -2556,7 +2556,7 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSenseToEntry(testEntry, "gloss", _wsEn, Cache);
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberXpath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sensenumber']";
@@ -2616,7 +2616,7 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string subSensesNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='second gloss2.1']";
@@ -2658,7 +2658,7 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
@@ -2713,7 +2713,7 @@ namespace LanguageExplorerTests.Works
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[1].SensesOS[0], "matte");
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumber =    "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]";
@@ -2767,7 +2767,7 @@ namespace LanguageExplorerTests.Works
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[1].SensesOS[0], "matte");
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]";
@@ -2821,7 +2821,7 @@ namespace LanguageExplorerTests.Works
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[1].SensesOS[0], "matte");
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]";
@@ -2862,7 +2862,7 @@ namespace LanguageExplorerTests.Works
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[1].SensesOS[0], "matte");
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseContent = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']";
@@ -3004,7 +3004,7 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[0], "subGloss");
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseContent = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']";
@@ -3057,7 +3057,7 @@ namespace LanguageExplorerTests.Works
 			var testEntry = CreateInterestingLexEntry(Cache);
 			var subEntry = CreateInterestingLexEntry(Cache, "Subcitation", "subgloss");
 			CreateComplexForm(Cache, testEntry.SensesOS[0], subEntry, true);
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseContent = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']";
@@ -3231,7 +3231,7 @@ namespace LanguageExplorerTests.Works
 			CreateComplexForm(Cache, mainEntry, minorEntry, false);
 			AddExampleToSense(minorEntry.SensesOS[0], example, translation);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			const string xpathThruExampleSentence = "/div[@class='lexentry']/span[@class='complexformsnotsubentries']/span[@class='complexformsnotsubentry']/span[@class='examplesentences']/span[@class='examplesentence']";
@@ -3285,7 +3285,7 @@ namespace LanguageExplorerTests.Works
 			CreateComplexForm(Cache, mainEntry, minorEntry, false);
 			AddExampleToSense(minorEntry.SensesOS[0], example, translation);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			const string xpathThruExampleSentence = "/div[@class='lexentry']/span[@class='complexformsnotsubentries']/span[@class='complexformsnotsubentry']/span[@class='examplesentences']/span[@class='examplesentence']";
@@ -3360,7 +3360,7 @@ namespace LanguageExplorerTests.Works
 
 			AddExampleToExtendedNote(testEntry.SensesOS[0], noteType, discussion, example, translation);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 
@@ -3442,7 +3442,7 @@ namespace LanguageExplorerTests.Works
 
 			AddExampleToExtendedNote(testEntry.SensesOS[0], noteType, discussion, example, translation);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 
@@ -3518,7 +3518,7 @@ namespace LanguageExplorerTests.Works
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			AddAllomorphToEntry(mainEntry);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			const string xPathThruAllomorph = "/div[@class='lexentry']/span[@class='alternateformsos']/span[@class='alternateformso']";
@@ -3555,7 +3555,7 @@ namespace LanguageExplorerTests.Works
 			CreateComplexForm(Cache, mainEntry, subentry, true);
 			CreateComplexForm(Cache, mainEntry, otherReferencedComplexForm, false);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
@@ -3606,7 +3606,7 @@ namespace LanguageExplorerTests.Works
 			CreateVariantForm(Cache, variantForm, mainEntry);
 			CreateComplexForm(Cache, mainEntry, subentry, true);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
@@ -3705,7 +3705,7 @@ namespace LanguageExplorerTests.Works
 
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(otherMainEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
@@ -3752,7 +3752,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
@@ -3799,7 +3799,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(mainEntryNode, refdCrossRefsNode));
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
@@ -3855,7 +3855,7 @@ namespace LanguageExplorerTests.Works
 			};
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT-
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(
@@ -3895,7 +3895,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(referencedEntry, mainEntryNode, null, settings);
 			var fwdNameXpath = string.Format(
@@ -3940,7 +3940,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			var fwdNameXpath = string.Format(
@@ -3985,7 +3985,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(referencedEntry, mainEntryNode, null, settings);
 			var fwdNameXpath = string.Format(
@@ -4035,7 +4035,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			var fwdNameXpath = string.Format(
@@ -4086,7 +4086,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			var fwdNameXpath = string.Format(
@@ -4133,7 +4133,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(referencedEntry, mainEntryNode, null, settings);
 			var fwdNameXpath = string.Format(
@@ -4188,7 +4188,7 @@ namespace LanguageExplorerTests.Works
 				Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			const string NameXpath = "//span[@class='minimallexreferences']/span[@class='minimallexreference' and position()='{0}']/span[@class='ownertype_name']/span[@lang='en' and text()='{1}']";
@@ -4267,7 +4267,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var output = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(armEntry, mainEntryNode, null, settings);
 			var fwdNameXpath = string.Format(
@@ -4345,7 +4345,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var output = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(firstEntry, mainEntryNode, null, settings);
 			var goodTarget = string.Format(
@@ -4414,7 +4414,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(firstEntry, mainEntryNode, DefaultDecorator, settings);
 
@@ -4847,7 +4847,7 @@ namespace LanguageExplorerTests.Works
 			};
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
@@ -4898,7 +4898,7 @@ namespace LanguageExplorerTests.Works
 			};
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
@@ -4955,7 +4955,7 @@ namespace LanguageExplorerTests.Works
 			};
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
@@ -4996,7 +4996,7 @@ namespace LanguageExplorerTests.Works
 			CreateComplexForm(Cache, mainEntry.SensesOS[0], subentry, true);
 			CreateComplexForm(Cache, mainEntry.SensesOS[0], otherReferencedComplexForm, false);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
@@ -5111,7 +5111,7 @@ namespace LanguageExplorerTests.Works
 			pic.InternalPath = "picture";
 			sensePic.PictureFileRA = pic;
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 			const string oneSenseWithPicture = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/img[@class='photo' and @id]";
@@ -5143,7 +5143,7 @@ namespace LanguageExplorerTests.Works
 			sensePic.PictureFileRA = pic;
 
 			// generates a src attribute with an absolute file path
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 			var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[contains(@src, '" + composedPath + "')]";
@@ -5169,7 +5169,7 @@ namespace LanguageExplorerTests.Works
 			sensePic.PictureFileRA = pic;
 
 			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, tempFolder.FullName);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, tempFolder.FullName);
 			try
 			{
 				//SUT
@@ -5206,7 +5206,7 @@ namespace LanguageExplorerTests.Works
 			sensePic.PictureFileRA = pic;
 
 			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, tempFolder.FullName);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, tempFolder.FullName);
 			try
 			{
 				//SUT
@@ -5263,7 +5263,7 @@ namespace LanguageExplorerTests.Works
 			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
 			try
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, tempFolder.FullName);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, tempFolder.FullName);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(fileName));
@@ -5318,7 +5318,7 @@ namespace LanguageExplorerTests.Works
 			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
 			try
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, tempFolder.FullName);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, tempFolder.FullName);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(fileName));
@@ -5357,7 +5357,7 @@ namespace LanguageExplorerTests.Works
 			sensePic.PictureFileRA = pic;
 
 			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, tempFolder.FullName);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, tempFolder.FullName);
 			//SUT
 			Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 		}
@@ -5378,7 +5378,7 @@ namespace LanguageExplorerTests.Works
 			sensePic.PictureFileRA = pic;
 
 			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, tempFolder.FullName);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, tempFolder.FullName);
 			//SUT
 			Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 		}
@@ -5427,7 +5427,7 @@ namespace LanguageExplorerTests.Works
 			Cache.LangProject.MediaOC.Add(folder);
 			folder.FilesOC.Add(pic);
 			sensePic.PictureFileRA = pic;
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 
 			//SUT
 			Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
@@ -5459,7 +5459,7 @@ namespace LanguageExplorerTests.Works
 			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
 			try
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, tempFolder.FullName);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, tempFolder.FullName);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(fileName));
@@ -5501,7 +5501,7 @@ namespace LanguageExplorerTests.Works
 
 				// Set custom field data
 				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var customDataPath = string.Format("/div[@class='lexentry']/span[@class='customstring']/span[text()='{0}']", customData);
@@ -5533,7 +5533,7 @@ namespace LanguageExplorerTests.Works
 				// Set custom field data
 				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
 				//SUT
-				Assert.AreEqual(ConfiguredXHTMLGenerator.PropertyType.PrimitiveType, ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(customFieldNode, (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor));
+				Assert.AreEqual(PropertyType.PrimitiveType, ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(customFieldNode, (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor));
 			}
 		}
 
@@ -5568,7 +5568,7 @@ namespace LanguageExplorerTests.Works
 
 				// Set custom field data
 				Cache.MainCacheAccessor.SetString(testSence.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var customDataPath = string.Format("/div[@class='l']/span[@class='es']/span[@class='e']/span[@class='customstring']/span[text()='{0}']", customData);
@@ -5614,7 +5614,7 @@ namespace LanguageExplorerTests.Works
 
 				// Set custom field data
 				Cache.MainCacheAccessor.SetString(exampleSentence.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var customDataPath = string.Format(
@@ -5653,7 +5653,7 @@ namespace LanguageExplorerTests.Works
 
 				// Set custom field data
 				Cache.MainCacheAccessor.SetString(allomorph.Hvo, customField.Flid, TsStringUtils.MakeString(customData, _wsEn));
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var customDataPath = string.Format(
@@ -5685,7 +5685,7 @@ namespace LanguageExplorerTests.Works
 
 				// Set custom field data
 				Cache.MainCacheAccessor.SetMultiStringAlt(testEntry.Hvo, customField.Flid, _wsEn, TsStringUtils.MakeString(customData, _wsEn));
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var customDataPath = string.Format("/div[@class='lexentry']/span[@class='customstring']/span[text()='{0}']", customData);
@@ -5740,7 +5740,7 @@ namespace LanguageExplorerTests.Works
 					TsStringUtils.MakeString(entryCustomData, _wsEn));
 				Cache.MainCacheAccessor.SetMultiStringAlt(refdEntry.SensesOS[0].Hvo, senseCustomField.Flid, _wsEn,
 					TsStringUtils.MakeString(senseCustomData, _wsEn));
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var entryDataPath = string.Format("/div[@class='lexentry']/span[@class='mlrs']/span[@class='mlr']/span[@class='configtargets']/span[@class='configtarget']/span[@class='entrycstring']/span[text()='{0}']", entryCustomData);
@@ -5796,7 +5796,7 @@ namespace LanguageExplorerTests.Works
 					TsStringUtils.MakeString(entryCustomData, _wsEn));
 				Cache.MainCacheAccessor.SetMultiStringAlt(refdEntry.SensesOS[0].Hvo, senseCustomField.Flid, _wsEn,
 					TsStringUtils.MakeString(senseCustomData, _wsEn));
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var entryDataPath = string.Format("/div[@class='lexentry']/span[@class='mlrs']/span[@class='mlr']/span[@class='configtargets']/span[@class='configtarget']/span[@class='entrycstring']/span[text()='{0}']", entryCustomData);
@@ -5832,7 +5832,7 @@ namespace LanguageExplorerTests.Works
 				CreateVariantForm(Cache, testEntry, refdEntry);
 				const string customData = "My custom string";
 				Cache.MainCacheAccessor.SetMultiStringAlt(refdEntry.Hvo, customField.Flid, _wsEn, TsStringUtils.MakeString(customData, _wsEn));
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var customDataPath = string.Format("/div[@class='lexentry']/span[@class='vars']/span[@class='var']/span[@class='owningentry_customstring']/span[text()='{0}']", customData);
@@ -5868,7 +5868,7 @@ namespace LanguageExplorerTests.Works
 			var defn = MakeMulitlingualTss(multirunContent);
 			testEntry.SensesOS[0].Definition.set_String(_wsEn, defn);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 			var definitionXpath = "//div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='definition']/span[@lang='en']";
@@ -5916,7 +5916,7 @@ namespace LanguageExplorerTests.Works
 
 				// Set custom field data
 				Cache.MainCacheAccessor.SetObjProp(testEntry.Hvo, customField.Flid, possibilityItem.Hvo);
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				const string customDataPath = "/div[@class='lexentry']/span[@class='customlistitem']/span[@class='name']/span[text()='Djbuti']";
@@ -5957,7 +5957,7 @@ namespace LanguageExplorerTests.Works
 
 				// Set custom field data
 				Cache.MainCacheAccessor.Replace(testEntry.Hvo, customField.Flid, 0, 0, new[] { possibilityItem1.Hvo, possibilityItem2.Hvo }, 2);
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				const string customDataPath1 = "/div[@class='lexentry']/span[@class='customlistitems']/span[@class='customlistitem']/span[@class='name']/span[text()='Dallas']";
@@ -5989,7 +5989,7 @@ namespace LanguageExplorerTests.Works
 
 				// Set custom field data
 				SilTime.SetTimeProperty(Cache.MainCacheAccessor, testEntry.Hvo, customField.Flid, customData);
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var customDataPath = string.Format("/div[@class='lexentry']/span[@class='customdate' and text()='{0}']", customData.ToLongDateString());
@@ -6019,7 +6019,7 @@ namespace LanguageExplorerTests.Works
 
 				// Set custom field data
 				Cache.MainCacheAccessor.SetInt(testEntry.Hvo, customField.Flid, customData);
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var customDataPath = string.Format("/div[@class='lexentry']/span[@class='custominteger' and text()='{0}']", customData);
@@ -6050,7 +6050,7 @@ namespace LanguageExplorerTests.Works
 				var text = CreateMultiParaText("Custom string", Cache);
 				// SUT
 				Cache.MainCacheAccessor.SetObjProp(testEntry.Hvo, customField.Flid, text.Hvo);
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, rootNode, null, settings);
 				const string customDataPath =
@@ -6088,7 +6088,7 @@ namespace LanguageExplorerTests.Works
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var variantForm = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, variantForm, mainEntry);
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			const string referencedEntries =
@@ -6119,7 +6119,7 @@ namespace LanguageExplorerTests.Works
 			entryOne.LexemeFormOA = senseaudio;
 			const string audioFileName = "Test Audi'o.wav";
 			senseaudio.Form.set_String(wsEnAudio.Handle, TsStringUtils.MakeString(audioFileName, wsEnAudio.Handle));
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 
@@ -6196,7 +6196,7 @@ namespace LanguageExplorerTests.Works
 			using (var expectedMediaFolder = new TemporaryFolder(Path.GetRandomFileName()))
 			{
 				string expectedMediaFolderPath = expectedMediaFolder.Path;
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, expectedMediaFolderPath, false, isWebExport);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, expectedMediaFolderPath, false, isWebExport);
 				settings.Cache.LangProject.LinkedFilesRootDir = expectedMediaFolderPath;
 
 				// create a temp directory and copy a .wav file into it
@@ -6283,7 +6283,7 @@ namespace LanguageExplorerTests.Works
 			using (var expectedMediaFolder = new TemporaryFolder(Path.GetRandomFileName()))
 			{
 				string expectedMediaFolderPath = expectedMediaFolder.Path;
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, expectedMediaFolderPath, false, isWebExport);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, expectedMediaFolderPath, false, isWebExport);
 				settings.Cache.LangProject.LinkedFilesRootDir = expectedMediaFolderPath;
 				string destination = Path.Combine(expectedMediaFolderPath, "AudioVisual");
 
@@ -6375,7 +6375,7 @@ namespace LanguageExplorerTests.Works
 			using (var expectedMediaFolder = new TemporaryFolder(Path.GetRandomFileName()))
 			{
 				string expectedMediaFolderPath = expectedMediaFolder.Path;
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, expectedMediaFolderPath, false, isWebExport);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, expectedMediaFolderPath, false, isWebExport);
 				settings.Cache.LangProject.LinkedFilesRootDir = expectedMediaFolderPath;
 				string destination = Path.Combine(expectedMediaFolderPath, "AudioVisual");
 
@@ -6427,7 +6427,7 @@ namespace LanguageExplorerTests.Works
 			entryOne.LexemeFormOA = senseaudio;
 			const string audioFileName = "Test Audi'o.wav";
 			senseaudio.Form.set_String(wsEnAudio.Handle, TsStringUtils.MakeString(audioFileName, wsEnAudio.Handle));
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, "//audio/source/@src");
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, "//audio/source/@src");
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 
@@ -6509,7 +6509,7 @@ namespace LanguageExplorerTests.Works
 				var senseaudio = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 				entryOne.LexemeFormOA = senseaudio;
 				senseaudio.Form.set_String(wsEnAudio.Handle, TsStringUtils.MakeString("TestAudio.wav", wsEnAudio.Handle));
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, "//audio/source/@src");
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, "//audio/source/@src");
 
 				// SUT
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings), "Having an audio ws first should not cause crash.");
@@ -6562,7 +6562,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 			var fwdNameXpath = string.Format(
@@ -6610,7 +6610,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 			var fwdNameXpath = string.Format(
@@ -6679,7 +6679,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(mainEntryNode, sharedSubentryNode));
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 			const string fwdNameXpath =
@@ -6738,7 +6738,7 @@ namespace LanguageExplorerTests.Works
 			};
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 			const string refTypeXpath = "//span[@class='subentries']/span[@class='subentry']/span[@class='complexformtypes']";
@@ -6786,7 +6786,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings), "Having an empty complexentrytype list after the click event should not cause crash.");
 		}
@@ -6825,7 +6825,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 			const string refTypeXpath = "//span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='complexformtypes']/span[@class='complexformtype']";
@@ -6867,7 +6867,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 			const string refTypeXpath = "//span[@class='subentries']/span[@class='subentry']/span[@class='complexformtypes']/span[@class='complexformtype']";
@@ -6915,7 +6915,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings), "Having an empty variantentrytype list after the click event should not cause crash.");
 		}
@@ -6962,7 +6962,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 			const string refTypeXpath = "//span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='variantentrytypesrs']/span[@class='variantentrytypesr']";
@@ -7000,7 +7000,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(model);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(variantEntry, model, null, settings);
 			Assert.IsNullOrEmpty(result);
@@ -7051,7 +7051,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(mainEntryNode, sharedSubentryNode));
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 			const string headwordXpath = "//span[@class='reffingsubs sharedsubentries']/span[@class='reffingsub sharedsubentry']/span[@class='headword']";
@@ -7085,7 +7085,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForMainEntry(idiom, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("/div[@class='lexentry']/span[@class='headword']", 1);
@@ -7154,7 +7154,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(model);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(minorEntry, model, null, settings);
 
@@ -7392,7 +7392,7 @@ namespace LanguageExplorerTests.Works
 				"//span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='examples']/span[@class='example']/span[@class='translations']/span[@class='translation']/span[@class='translatedsentence']/span[@lang='en']";
 			const string matchFrenchPictureCaption = "//span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='caption']/span[@lang='fr']";
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var output = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, pubEverything, settings);
 			Assert.IsNotNullOrEmpty(output);
@@ -7570,7 +7570,7 @@ namespace LanguageExplorerTests.Works
 			using (CreateVariantForm(Cache, entryEntry, ve3, new Guid("00000000-0000-0000-0000-000000000003"), "Free Variant")) // repeat Type; consolidated
 			using (CreateVariantForm(Cache, entryEntry, ve4, new Guid("00000000-0000-0000-0000-000000000004"), null)) // no Type; none generated
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 				var output = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, null, settings);
 				const string matchVariantRef = "//span[@class='variantentrytypes']/span[@class='variantentrytype']/span[@class='name']/span[@lang='en']";
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchVariantRef, 2);
@@ -7633,7 +7633,7 @@ namespace LanguageExplorerTests.Works
 
 			CreateVariantForm(Cache, entryEntry, ve1, "Free Variant"); // unique Type;
 			CreateVariantForm(Cache, entryEntry, ve2, "Spelling Variant"); // unique Type; UnChecked
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			var output = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, null, settings);
 			const string matchFreeVariantRef = "//span[@class='variantentrytypes']/span[@class='variantentrytype']/span[@class='name']/span[@lang='en' and text()='Free Variant']";
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFreeVariantRef, 1);
@@ -7870,7 +7870,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(minorEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(subentry1, minorEntryNode, null, settings);
 			const string complexFormEntryRefXpath = "div[@class='minorentrycomplex']/span[@class='complexformentryrefs']/span[@class='complexformentryref']";
@@ -7913,7 +7913,7 @@ namespace LanguageExplorerTests.Works
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 			const string senseXpath = "div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='gloss']/span[@lang='en' and text()='gloss']";
@@ -8529,7 +8529,7 @@ namespace LanguageExplorerTests.Works
 			var entry = CreateInterestingLexEntry(Cache);
 			var multiRunString = MakeBidirectionalTss(new[] { "ירמיהו", " was a bullfrog." });
 			entry.Bibliography.set_String(_wsHe, multiRunString);
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null, true); // Right-to-Left
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null, true); // Right-to-Left
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			const string nestedEn = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@lang='en']/span[@dir='ltr']";
@@ -8937,7 +8937,7 @@ namespace LanguageExplorerTests.Works
 
 				DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
@@ -9009,7 +9009,7 @@ namespace LanguageExplorerTests.Works
 
 				DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
@@ -9210,7 +9210,7 @@ namespace LanguageExplorerTests.Works
 			var pron2 = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
 			variant.PronunciationsOS.Add(pron2);
 			CreateTestMediaFile(Cache, null, folder, pron2);
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 
 			//SUT
 			Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings), "Invalid filename in CmFile should not lead to crash");
@@ -9231,7 +9231,7 @@ namespace LanguageExplorerTests.Works
 			var adjacentPage = new Tuple<int, int>(2, 2);
 			Tuple<int, int> current;
 			Tuple<int, int> adjacent;
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, "");
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, "");
 			// SUT
 			ConfiguredXHTMLGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo }, settings, currentPage, adjacentPage, 2,
 				out current, out adjacent);
@@ -9255,7 +9255,7 @@ namespace LanguageExplorerTests.Works
 			var adjPage = new Tuple<int, int>(0, 1);
 			Tuple<int, int> current;
 			Tuple<int, int> adjacent;
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, "");
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, "");
 			// SUT
 			ConfiguredXHTMLGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo }, settings, currentPage, adjPage, 2,
 				out current, out adjacent);
@@ -9283,7 +9283,7 @@ namespace LanguageExplorerTests.Works
 			var adjPage = new Tuple<int, int>(3, 4);
 			Tuple<int, int> current;
 			Tuple<int, int> adjacent;
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, string.Empty);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, string.Empty);
 			// SUT
 			ConfiguredXHTMLGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, settings, currentPage, adjPage, 1,
 				out current, out adjacent);
@@ -9312,7 +9312,7 @@ namespace LanguageExplorerTests.Works
 			var currentPage = new Tuple<int, int>(3, 4);
 			Tuple<int, int> current;
 			Tuple<int, int> adjacent;
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, string.Empty);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, string.Empty);
 			// SUT
 			ConfiguredXHTMLGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, settings, currentPage, adjPage, 1,
 				out current, out adjacent);
@@ -9363,7 +9363,7 @@ namespace LanguageExplorerTests.Works
 				var currentPage = new Tuple<int, int>(3, 3);
 				Tuple<int, int> current;
 				Tuple<int, int> adjacent;
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, string.Empty);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, string.Empty);
 
 				// SUT
 				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(pubEverything, new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, configPath,
@@ -9418,7 +9418,7 @@ namespace LanguageExplorerTests.Works
 				var currentPage = new Tuple<int, int>(0, 1);
 				Tuple<int, int> current;
 				Tuple<int, int> adjacent;
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, string.Empty);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, string.Empty);
 
 				// SUT
 				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(pubEverything, new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, configPath,

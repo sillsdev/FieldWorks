@@ -1224,7 +1224,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			var betaModel = userModel.DeepClone();
 			var topNode = betaModel.Parts[0];
 			topNode.CSSClassNameOverride = reversalCss;
-			topNode.StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph;
+			topNode.StyleType = StyleTypes.Paragraph;
 			topNode.Style = reversalStyle;
 
 			_migrator.MigrateFrom83Alpha(_logger, userModel, betaModel); // SUT

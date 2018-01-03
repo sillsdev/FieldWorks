@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Works;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
@@ -181,10 +180,10 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		private void InitializeWSCombo()
 		{
-			m_wsCombo.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnals, xWorksStrings.AllAnalysisWs));
-			m_wsCombo.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVerns, xWorksStrings.AllVernacularWs));
-			m_wsCombo.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnalVerns, xWorksStrings.AllAnalysisVernacularWs));
-			m_wsCombo.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVernAnals, xWorksStrings.AllVernacularAnalysisWs));
+			m_wsCombo.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnals, AreaResources.AllAnalysisWs));
+			m_wsCombo.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVerns, AreaResources.AllVernacularWs));
+			m_wsCombo.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnalVerns, AreaResources.AllAnalysisVernacularWs));
+			m_wsCombo.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVernAnals, AreaResources.AllVernacularAnalysisWs));
 			m_wsCombo.SelectedIndex = 0;
 			m_wsCombo.LostFocus += m_wsCombo_LostFocus;
 		}

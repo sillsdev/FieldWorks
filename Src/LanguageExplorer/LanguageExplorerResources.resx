@@ -1215,4 +1215,7 @@ you expect.</value>
   <data name="ksYes" xml:space="preserve">
     <value>Yes</value>
   </data>
+  <data name="PunctInfieldNameCaption" xml:space="preserve">
+    <value>Punctuation in custom field name</value>
+  </data>
 </root>

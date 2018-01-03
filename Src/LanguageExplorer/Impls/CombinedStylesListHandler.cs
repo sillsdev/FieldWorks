@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.Code;
@@ -12,14 +13,13 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
-using System.Linq;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer.Impls
 {
 	/// <summary>
-	/// Dummy handler to disable displaying the combined styles combobox by default.
+	/// Handler to enable/disable displaying the combined styles combobox by default.
 	/// </summary>
-	public sealed class CombinedStylesListHandler : IDisposable
+	internal sealed class CombinedStylesListHandler : IDisposable
 	{
 		private IFwMainWnd _mainWnd;
 		private ISubscriber _subscriber;

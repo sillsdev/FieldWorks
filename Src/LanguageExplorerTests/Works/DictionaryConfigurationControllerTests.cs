@@ -1819,7 +1819,7 @@ namespace LanguageExplorerTests.Works
 					NumberEvenASingleSense = false,
 					ShowSharedGrammarInfoFirst = true
 				},
-				StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph,
+				StyleType = StyleTypes.Paragraph,
 				Style = "Orange-Sense-Paragraph"
 			};
 			var entryNode = new ConfigurableDictionaryNode

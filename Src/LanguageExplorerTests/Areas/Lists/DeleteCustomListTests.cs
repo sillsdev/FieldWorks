@@ -4,8 +4,8 @@
 
 using System;
 using System.Windows.Forms;
+using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.Lists;
-using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
@@ -25,7 +25,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		protected ICmPossibilityListRepository m_listRepo;
 		protected ICmPossibilityFactory m_possFact;
 		protected ICmPossibilityList m_testList;
-		protected DeleteListHelper m_helper;
+		internal DeleteListHelper m_helper;
 		protected int m_userWs;
 
 		#endregion
@@ -139,7 +139,7 @@ namespace LanguageExplorerTests.Areas.Lists
 			if (fd.IsCustomField && fd.IsInstalled)
 			{
 				fd.MarkForDeletion = true;
-				AddCustomFieldDlg.UpdateCachedObjects(Cache, fd);
+				AreaServices.UpdateCachedObjects(Cache, fd);
 
 				Cache.ActionHandlerAccessor.BeginUndoTask("UndoUpdateCustomField", "RedoUpdateCustomField");
 				fd.UpdateCustomField();
@@ -478,7 +478,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		}
 	}
 
-	public class DeleteListHelper : DeleteCustomList
+	internal class DeleteListHelper : DeleteCustomList
 	{
 		internal string PossNameInDlg { get; set; }
 

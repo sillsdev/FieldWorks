@@ -14,7 +14,6 @@ using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.Xml;
 
 namespace LanguageExplorer.Works
@@ -536,64 +535,6 @@ namespace LanguageExplorer.Works
 
 			return true;
 		}
-
-		public bool OnDisplayAddCustomField(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			string toolChoice = m_propertyTable.GetValue<string>(AreaServices.ToolChoice);
-			string areaChoice = m_propertyTable.GetValue<string>(AreaServices.AreaChoice);
-			bool inFriendlyTerritory = false;
-			switch (areaChoice)
-			{
-				case AreaServices.LexiconAreaMachineName:
-					inFriendlyTerritory = toolChoice == AreaServices.LexiconEditMachineName || toolChoice == AreaServices.BulkEditEntriesOrSensesMachineName || toolChoice == AreaServices.LexiconBrowseMachineName;
-					break;
-				case AreaServices.NotebookAreaMachineName:
-					inFriendlyTerritory = toolChoice == AreaServices.NotebookEditToolMachineName || toolChoice == AreaServices.NotebookBrowseToolMachineName;
-					break;
-				case AreaServices.TextAndWordsAreaMachineName:
-					inFriendlyTerritory = toolChoice == AreaServices.InterlinearEditMachineName;
-					break;
-			}
-
-			display.Enabled = display.Visible = inFriendlyTerritory;
-			return true;
-		}
 #endif
-
-		public bool OnAddCustomField(object argument)
-		{
-			CheckDisposed();
-
-			if (SharedBackendServices.AreMultipleApplicationsConnected(Cache))
-			{
-				MessageBoxUtils.Show(ParentForm, xWorksStrings.ksCustomFieldsCanNotBeAddedDueToOtherAppsText,
-					xWorksStrings.ksCustomFieldsCanNotBeAddedDueToOtherAppsCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return true;
-			}
-
-			AddCustomFieldDlg.LocationType locationType = AddCustomFieldDlg.LocationType.Lexicon;
-			string areaChoice = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
-			switch (areaChoice)
-			{
-				case AreaServices.LexiconAreaMachineName:
-					locationType = AddCustomFieldDlg.LocationType.Lexicon;
-					break;
-				case AreaServices.NotebookAreaMachineName:
-					locationType = AddCustomFieldDlg.LocationType.Notebook;
-					break;
-				case AreaServices.TextAndWordsAreaMachineName:
-					locationType = AddCustomFieldDlg.LocationType.Interlinear;
-					break;
-			}
-			using (var dlg = new AddCustomFieldDlg(PropertyTable, Publisher, locationType))
-			{
-				if (dlg.ShowCustomFieldWarning(this))
-					dlg.ShowDialog(this);
-			}
-
-			return true;	// handled
-		}
 	}
 }

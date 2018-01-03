@@ -107,6 +107,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			panelButton.DatTree = recordEditView.DatTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
+			((NotebookArea)_area).MyNotebookAreaMenuHelper.MyAreaWideMenuHelper.SetupToolsCustomFieldsMenu();
 		}
 
 		/// <summary>

@@ -26,6 +26,8 @@ namespace LanguageExplorer.Areas.Notebook
 		private ToolStripMenuItem _fileImportMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newFileMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 
+		internal AreaWideMenuHelper MyAreaWideMenuHelper => _areaWideMenuHelper;
+
 		internal NotebookAreaMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));

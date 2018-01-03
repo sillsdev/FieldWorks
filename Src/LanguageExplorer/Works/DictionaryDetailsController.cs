@@ -77,7 +77,7 @@ namespace LanguageExplorer.Works
 			ResetView(View, node);
 
 			// Populate Styles dropdown
-			var isPara = m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph || m_node.Parent == null;
+			var isPara = m_node.StyleType == StyleTypes.Paragraph || m_node.Parent == null;
 			View.SetStyles(isPara ? m_paraStyles : m_charStyles, m_node.Style, isPara);
 
 			// Test for Options type
@@ -636,7 +636,7 @@ namespace LanguageExplorer.Works
 				if (!repopulate)
 					return;
 			LoadStylesLists();
-				var isPara = m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph;
+				var isPara = m_node.StyleType == StyleTypes.Paragraph;
 				View.SetStyles(isPara ? m_paraStyles : m_charStyles, m_node.Style, isPara);
 			};
 		}
@@ -1041,12 +1041,12 @@ namespace LanguageExplorer.Works
 			if (showInPara)
 			{
 				View.SetStyles(m_paraStyles, m_node.Style, true);
-				m_node.StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph;
+				m_node.StyleType = StyleTypes.Paragraph;
 			}
 			else
 			{
 				View.SetStyles(m_charStyles, m_node.Style, false);
-				m_node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
+				m_node.StyleType = StyleTypes.Character;
 			}
 		}
 		#endregion HandleChanges
