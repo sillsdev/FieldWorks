@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -124,14 +124,14 @@ namespace LanguageExplorer.Works
 			// Notify users of shared nodes
 			if (node.ReferencedNode != null) //REVIEW: make sure ReferencedNodes always have no options
 			{
-				var nodePath = DictionaryConfigurationMigrator.BuildPathStringFromNode(node, false);
+				var nodePath = DictionaryConfigurationServices.BuildPathStringFromNode(node, false);
 				if (node.IsMasterParent) // node is the Master Parent
 				{
 					var sharingParents = FindNodes(model.Parts, n => ReferenceEquals(node.ReferencedNode, n.ReferencedNode));
 					var sharingParentsStringBuilder = new StringBuilder();
 					foreach (var sharingParent in sharingParents.Where(s => !ReferenceEquals(node, s)))
 						sharingParentsStringBuilder.Append(Environment.NewLine)
-							.Append(DictionaryConfigurationMigrator.BuildPathStringFromNode(sharingParent, false));
+							.Append(DictionaryConfigurationServices.BuildPathStringFromNode(sharingParent, false));
 					if (sharingParentsStringBuilder.Length > 0)
 					{
 						optionsView = new LabelOverPanel
@@ -145,7 +145,7 @@ namespace LanguageExplorer.Works
 				else // node is a Subordinate Parent
 				{
 					var masterParent = node.ReferencedNode.Parent;
-					var masterParentPath = DictionaryConfigurationMigrator.BuildPathStringFromNode(masterParent, false);
+					var masterParentPath = DictionaryConfigurationServices.BuildPathStringFromNode(masterParent, false);
 					var goToView = new ButtonOverPanel
 					{
 						PanelContents = optionsView,
@@ -175,7 +175,7 @@ namespace LanguageExplorer.Works
 						PanelContents = optionsView,
 						LabelText = xWorksStrings.ThisConfigurationIsShared,
 						LabelToolTip = string.Format(xWorksStrings.SeeAffectedNodesUnder,
-							DictionaryConfigurationMigrator.BuildPathStringFromNode(masterParent, false))
+							DictionaryConfigurationServices.BuildPathStringFromNode(masterParent, false))
 					};
 				}
 			}

@@ -2,14 +2,12 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
 using System.Windows.Forms;
+using LanguageExplorer.Works;
 using LanguageExplorer.Works.DictionaryDetailsView;
 using SIL.Windows.Forms.HtmlBrowser;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 {
 	partial class DictionaryConfigurationDlg
 	{

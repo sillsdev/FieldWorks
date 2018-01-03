@@ -31,7 +31,7 @@ namespace LanguageExplorer
 		}
 
 		/// <summary>
-		/// Let users know it is beiong dispsoed
+		/// Let users know it is being disposed
 		/// </summary>
 		event EventHandler Disposed;
 	}

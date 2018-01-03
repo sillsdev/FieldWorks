@@ -494,9 +494,7 @@ namespace LanguageExplorer.Impls
 
 		private void MigrateOldConfigurations(object newValue)
 		{
-			var configMigrator = new DictionaryConfigurationMigrator();
-			configMigrator.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-			configMigrator.MigrateOldConfigurationsIfNeeded();
+			DictionaryConfigurationServices.MigrateOldConfigurationsIfNeeded(Cache, PropertyTable);
 		}
 
 		private void SetupCustomStatusBarPanels()
@@ -1498,12 +1496,12 @@ namespace LanguageExplorer.Impls
 		private void UploadToWebonary_Click(object sender, EventArgs e)
 		{
 			var publications = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
-			var projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(Cache, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
-			var defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+			var projectConfigDir = DictionaryConfigurationServices.GetProjectConfigurationDirectory(Cache, DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
+			var defaultConfigDir = DictionaryConfigurationServices.GetDefaultConfigurationDirectory(DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
 			var configurations = DictionaryConfigurationController.GetDictionaryConfigurationLabels(Cache, defaultConfigDir, projectConfigDir);
 			// Now collect all the reversal configurations into the reversals variable
-			projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(Cache, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
-			defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			projectConfigDir = DictionaryConfigurationServices.GetProjectConfigurationDirectory(Cache, DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName);
+			defaultConfigDir = DictionaryConfigurationServices.GetDefaultConfigurationDirectory(DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName);
 			var reversals = DictionaryConfigurationController.GetDictionaryConfigurationLabels(Cache, defaultConfigDir, projectConfigDir);
 
 			// show dialog

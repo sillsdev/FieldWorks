@@ -328,45 +328,13 @@ namespace LanguageExplorer.Works
 			View = view;
 		}
 
-		/// <summary>
-		/// Sets Parameters for Numbering styles.
-		/// </summary>
-		public static void SetConfigureHomographParameters(DictionaryConfigurationModel model, HomographConfiguration cacheHc)
-		{
-			if (model.HomographConfiguration == null)
-			{
-				model.HomographConfiguration = new DictionaryHomographConfiguration(new HomographConfiguration());
-			}
-			model.HomographConfiguration.ExportToHomographConfiguration(cacheHc);
-			if (model.Parts.Count == 0) return;
-			var mainEntryNode = model.Parts[0];
-			//Sense Node
-			string senseType = (mainEntryNode.DisplayLabel == "Reversal Entry") ? "Referenced Senses" : "Senses";
-			var senseNode = mainEntryNode.Children.Where(prop => prop.Label == senseType).FirstOrDefault();
-			if (senseNode == null) return;
-			var senseOptions = (DictionaryNodeSenseOptions)senseNode.DictionaryNodeOptions;
-			cacheHc.ksSenseNumberStyle = senseOptions.NumberingStyle;
-			//SubSense Node
-			var subSenseNode = senseNode.Children.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
-			if (subSenseNode == null) return;
-			var subSenseOptions = (DictionaryNodeSenseOptions)subSenseNode.DictionaryNodeOptions;
-			cacheHc.ksSubSenseNumberStyle = subSenseOptions.NumberingStyle;
-			cacheHc.ksParentSenseNumberStyle = subSenseOptions.ParentSenseNumberingStyle;
-			//SubSubSense Node
-			var subSubSenseNode = subSenseNode.ReferencedOrDirectChildren.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
-			if (subSubSenseNode == null) return;
-			var subSubSenseOptions = (DictionaryNodeSenseOptions)subSubSenseNode.DictionaryNodeOptions;
-			cacheHc.ksSubSubSenseNumberStyle = subSubSenseOptions.NumberingStyle;
-			cacheHc.ksParentSubSenseNumberStyle = subSubSenseOptions.ParentSenseNumberingStyle;
-		}
-
 		private void SetManagerTypeInfo(DictionaryConfigurationManagerDlg dialog)
 		{
-			dialog.HelpTopic = DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(PropertyTable) == xWorksStrings.Dictionary
+			dialog.HelpTopic = DictionaryConfigurationServices.GetDictionaryConfigurationBaseType(PropertyTable) == xWorksStrings.Dictionary
 						? "khtpDictConfigManager"
 						: "khtpRevIndexConfigManager";
 
-			if (DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(PropertyTable) == xWorksStrings.ReversalIndex)
+			if (DictionaryConfigurationServices.GetDictionaryConfigurationBaseType(PropertyTable) == xWorksStrings.ReversalIndex)
 			{
 				dialog.Text = xWorksStrings.ReversalIndexConfigurationDlgTitle;
 				dialog.ConfigurationGroupText = xWorksStrings.DictionaryConfigurationMangager_ReversalConfigurations_GroupLabel;
@@ -410,7 +378,7 @@ namespace LanguageExplorer.Works
 
 		private void LoadLastDictionaryConfiguration()
 		{
-			var lastUsedConfiguration = DictionaryConfigurationListener.GetCurrentConfiguration(PropertyTable);
+			var lastUsedConfiguration = DictionaryConfigurationServices.GetCurrentConfiguration(PropertyTable);
 			_model = _dictionaryConfigurations.FirstOrDefault(config => config.FilePath == lastUsedConfiguration)
 				?? _dictionaryConfigurations.First();
 		}
@@ -429,7 +397,7 @@ namespace LanguageExplorer.Works
 				config.Save();
 			}
 			// This property must be set *after* saving, because the initial save changes the FilePath
-			DictionaryConfigurationListener.SetCurrentConfiguration(PropertyTable, _model.FilePath, false);
+			DictionaryConfigurationServices.SetCurrentConfiguration(PropertyTable, _model.FilePath, false);
 			MasterRefreshRequired = true;
 			m_isDirty = false;
 		}
@@ -640,28 +608,27 @@ namespace LanguageExplorer.Works
 		public static void ShareNodeAsReference(List<ConfigurableDictionaryNode> sharedItems, ConfigurableDictionaryNode node, string cssClass = null)
 		{
 			if (node.ReferencedNode != null)
-				throw new InvalidOperationException(String.Format("Node {0} is already shared as {1}",
-					DictionaryConfigurationMigrator.BuildPathStringFromNode(node), node.ReferenceItem ?? node.ReferencedNode.Label));
+				throw new InvalidOperationException($"Node {DictionaryConfigurationServices.BuildPathStringFromNode(node)} is already shared as {node.ReferenceItem ?? node.ReferencedNode.Label}");
 			if (node.Children == null || !node.Children.Any())
 				return; // no point sharing Children there aren't any
 			var dupItem = sharedItems.FirstOrDefault(item => item.FieldDescription == node.FieldDescription && item.SubField == node.SubField);
 			if (dupItem != null)
 			{
-				var fullField = String.IsNullOrEmpty(node.SubField)
+				var fullField = string.IsNullOrEmpty(node.SubField)
 					? node.FieldDescription
-					: String.Format("{0}.{1}", node.FieldDescription, node.SubField);
+					: $"{node.FieldDescription}.{node.SubField}";
 				MessageBoxUtils.Show(String.Format(xWorksStrings.InadvisableToShare,
-					node.DisplayLabel, fullField, DictionaryConfigurationMigrator.BuildPathStringFromNode(dupItem.Parent)));
+					node.DisplayLabel, fullField, DictionaryConfigurationServices.BuildPathStringFromNode(dupItem.Parent)));
 				return;
 			}
 
 			// ENHANCE (Hasso) 2016.03: enforce that the specified node is part of *this* model (incl shared items)
-			var key = String.IsNullOrEmpty(node.ReferenceItem) ? String.Format("Shared{0}", node.Label) : node.ReferenceItem;
-			cssClass = String.IsNullOrEmpty(cssClass) ? String.Format("shared{0}", CssGenerator.GetClassAttributeForConfig(node)) : cssClass.ToLowerInvariant();
+			var key = String.IsNullOrEmpty(node.ReferenceItem) ? $"Shared{node.Label}" : node.ReferenceItem;
+			cssClass = String.IsNullOrEmpty(cssClass) ? $"shared{CssGenerator.GetClassAttributeForConfig(node)}" : cssClass.ToLowerInvariant();
 			// Ensure the shared node's Label and CSSClassNameOverride are both unique within this Configuration
 			if (sharedItems.Any(item => item.Label == key || item.CSSClassNameOverride == cssClass))
 			{
-				throw new ArgumentException(String.Format("A SharedItem already exists with the Label '{0}' or the class '{1}'", key, cssClass));
+				throw new ArgumentException($"A SharedItem already exists with the Label '{key}' or the class '{cssClass}'");
 			}
 			var sharedItem = new ConfigurableDictionaryNode
 			{
@@ -830,7 +797,7 @@ namespace LanguageExplorer.Works
 
 		public static void EnsureValidNumberingStylesInModel(IEnumerable<ConfigurableDictionaryNode> nodes)
 		{
-			DictionaryConfigurationMigrator.PerformActionOnNodes(nodes, n =>
+			DictionaryConfigurationServices.PerformActionOnNodes(nodes, n =>
 			{
 				var options = n.DictionaryNodeOptions as DictionaryNodeSenseOptions;
 				if (options != null && options.NumberingStyle == "%O")
@@ -1508,12 +1475,12 @@ namespace LanguageExplorer.Works
 			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			if (_previewEntry == null)
 			{
-				_previewEntry = GetDefaultEntryForType(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(PropertyTable), cache);
+				_previewEntry = GetDefaultEntryForType(DictionaryConfigurationServices.GetDictionaryConfigurationBaseType(PropertyTable), cache);
 			}
 			_allEntriesPublicationDecorator = new DictionaryPublicationDecorator(cache, (ISilDataAccessManaged)cache.MainCacheAccessor, cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 
-			_projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(PropertyTable);
-			_defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(PropertyTable);
+			_projectConfigDir = DictionaryConfigurationServices.GetProjectConfigurationDirectory(PropertyTable);
+			_defaultConfigDir = DictionaryConfigurationServices.GetDefaultConfigurationDirectory(PropertyTable);
 			LoadDictionaryConfigurations();
 			LoadLastDictionaryConfiguration();
 			PopulateTreeView();
@@ -1555,7 +1522,7 @@ namespace LanguageExplorer.Works
 					return;
 				}
 				_model = args.ConfigurationPicked;
-				SetConfigureHomographParameters(_model, cache.ServiceLocator.GetInstance<HomographConfiguration>());
+				DictionaryConfigurationServices.SetConfigureHomographParameters(_model, cache.ServiceLocator.GetInstance<HomographConfiguration>());
 				RefreshView(); // isChangeInDictionaryModel: true, because we update the current config in the PropertyTable when we save the model.
 			};
 

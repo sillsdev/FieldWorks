@@ -119,7 +119,7 @@ namespace LanguageExplorer.Works
 				if (string.IsNullOrEmpty(FilePath))
 					return false; // easiest way to avoid a crash; assume something that may not be true!
 				var directory = Path.GetFileName(Path.GetDirectoryName(FilePath));
-				return DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName.Equals(directory);
+				return DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName.Equals(directory);
 			}
 		}
 

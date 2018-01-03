@@ -4,14 +4,17 @@
 
 using System.Collections.Generic;
 using System.IO;
+using LanguageExplorer;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.DictionaryConfigurationMigration;
 using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.IO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using LanguageExplorerTests.Works;
 
-namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
+namespace LanguageExplorerTests.DictionaryConfigurationMigration
 {
 	public class DictionaryConfigurationMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
@@ -43,18 +46,16 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 		public void MigrateOldConfigurationsIfNeeded_BringsPreHistoricFileToCurrentVersion()
 		{
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
-			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName, "Lexeme" + DictionaryConfigurationModel.FileExtension);
+			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationServices.DictionaryConfigurationDirectoryName, "Lexeme" + DictionaryConfigurationModel.FileExtension);
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
 				@"<layoutType label='Lexeme-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
 				@"<configure class='LexEntry' label='Minor Entry' layout='publishStemMinorEntry' hideConfig='true' /></layoutType>'"});
 
-			var migrator = new DictionaryConfigurationMigrator();
-			migrator.InitializeFlexComponent(_flexComponentParameters);
-			migrator.MigrateOldConfigurationsIfNeeded(); // SUT
+			DictionaryConfigurationServices.MigrateOldConfigurationsIfNeeded(Cache, _flexComponentParameters.PropertyTable); // SUT
 			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
-			Assert.AreEqual(DictionaryConfigurationMigrator.VersionCurrent, updatedConfigModel.Version);
+			Assert.AreEqual(DictionaryConfigurationServices.VersionCurrent, updatedConfigModel.Version);
 			DirectoryUtilities.DeleteDirectoryRobust(configSettingsDir);
 		}
 
@@ -90,16 +91,14 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 		public void MigrateOldConfigurationsIfNeeded_PreservesOrderOfBibliographies()
 		{
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
-			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName,
+			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName,
 				"AllReversalIndexes" + DictionaryConfigurationModel.FileExtension);
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
 				@"<layoutType label='All Reversal Indexes' layout='publishReversal'>",
 				@"<configure class='ReversalIndexEntry' label='Reversal Entry' layout='publishReversalEntry' /></layoutType>'"});
-			var migrator = new DictionaryConfigurationMigrator();
-			migrator.InitializeFlexComponent(_flexComponentParameters);
-			migrator.MigrateOldConfigurationsIfNeeded(); // SUT
+			DictionaryConfigurationServices.MigrateOldConfigurationsIfNeeded(Cache, _flexComponentParameters.PropertyTable); // SUT
 			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
 			var refdSenseChildren = updatedConfigModel.Parts[0].Children.Find(n => n.Label == "Referenced Senses").Children;
 			var bibCount = 0;
@@ -135,9 +134,9 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(mainEntry, sharedSenses);
 			CssGeneratorTests.PopulateFieldsForTesting(model); // PopulateFieldsForTesting populates each node's Label with its FieldDescription
 
-			Assert.AreEqual("LexEntry > Senses > SharedSenses > Subsenses", DictionaryConfigurationMigrator.BuildPathStringFromNode(subsenses));
-			Assert.AreEqual("LexEntry > Senses > Subsenses", DictionaryConfigurationMigrator.BuildPathStringFromNode(subsenses, false));
-			Assert.AreEqual("LexEntry", DictionaryConfigurationMigrator.BuildPathStringFromNode(mainEntry));
+			Assert.AreEqual("LexEntry > Senses > SharedSenses > Subsenses", DictionaryConfigurationServices.BuildPathStringFromNode(subsenses));
+			Assert.AreEqual("LexEntry > Senses > Subsenses", DictionaryConfigurationServices.BuildPathStringFromNode(subsenses, false));
+			Assert.AreEqual("LexEntry", DictionaryConfigurationServices.BuildPathStringFromNode(mainEntry));
 		}
 
 		[Test]
@@ -179,7 +178,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			Assert.AreNotEqual("Stylish", oldModel.Parts[0].Children[0].Style, "Invalid preconditions");
 			Assert.True(oldModel.Parts[0].Children[0].IsEnabled, "Invalid preconditions");
 
-			DictionaryConfigurationMigrator.LoadConfigWithCurrentDefaults(oldModel, newModel); // SUT
+			PreHistoricMigrator.LoadConfigWithCurrentDefaults(oldModel, newModel); // SUT
 			Assert.AreEqual(2, oldModel.Parts[0].Children[0].Children.Count, "Old non-matching part was not retained");
 			Assert.AreEqual("{", oldModel.Parts[0].Children[0].Before, "Before not copied from new defaults");
 			Assert.AreEqual("}", oldModel.Parts[0].Children[0].After, "After not copied from new defaults");

@@ -6,39 +6,34 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using SIL.FieldWorks.Common.FwUtils;
+using LanguageExplorer.Works;
 using SIL.LCModel;
-using DCM = LanguageExplorer.Works.DictionaryConfigurationMigrator;
 
-namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
+namespace LanguageExplorer.DictionaryConfigurationMigration
 {
 	/// <summary>
 	/// This file will migrate all the configurations produced during the first 8.3 alpha
 	/// </summary>
-	internal class FirstAlphaMigrator : IDictionaryConfigurationMigrator
+	internal class FirstAlphaMigrator
 	{
 		private ISimpleLogger m_logger;
 		internal const int VersionAlpha2 = 5;
 		internal const int VersionAlpha3 = 8;
 
-		public FirstAlphaMigrator() : this(null, null)
+		public FirstAlphaMigrator(string appVersion, LcmCache cache, ISimpleLogger logger)
 		{
-		}
-
-		public FirstAlphaMigrator(LcmCache cache, ISimpleLogger logger)
-		{
+			AppVersion = appVersion;
 			Cache = cache;
 			m_logger = logger;
 		}
 
-		private LcmCache Cache { get; set; }
+		public string AppVersion { get; }
+		private LcmCache Cache { get; }
 
-		public void MigrateIfNeeded(ISimpleLogger logger, IPropertyTable propertyTable, string appVersion)
+		public void MigrateIfNeeded()
 		{
-			m_logger = logger;
-			Cache = propertyTable.GetValue<LcmCache>("cache");
-			var foundOne = $"{appVersion}: Configuration was found in need of migration. - {DateTime.Now:yyyy MMM d h:mm:ss}";
-			foreach (var config in DCM.GetConfigsNeedingMigration(Cache, VersionAlpha3))
+			var foundOne = $"{AppVersion}: Configuration was found in need of migration. - {DateTime.Now:yyyy MMM d h:mm:ss}";
+			foreach (var config in DictionaryConfigurationServices.GetConfigsNeedingMigration(Cache, VersionAlpha3))
 			{
 				m_logger.WriteLine(foundOne);
 				m_logger.WriteLine($"Migrating {config.Type} configuration '{config.Label}' from version {config.Version} to {VersionAlpha3}.");
@@ -65,7 +60,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 					goto case 3;
 				case 3:
 					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, m_logger, 3, alphaModel.IsReversal);
-					DCM.SetWritingSystemForReversalModel(alphaModel, Cache);
+					DictionaryConfigurationServices.SetWritingSystemForReversalModel(alphaModel, Cache);
 					AddSharedNodesToAlphaConfigurations(alphaModel);
 					goto case 4;
 				case 4:
@@ -80,11 +75,10 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 				case 7:
 					var fileName = Path.GetFileNameWithoutExtension(alphaModel.FilePath);
 					if (!alphaModel.IsRootBased)
-						alphaModel.IsRootBased = fileName == DCM.RootFileName;
+						alphaModel.IsRootBased = fileName == DictionaryConfigurationServices.RootFileName;
 					break;
 				default:
-					m_logger.WriteLine(string.Format(
-						"Unable to migrate {0}: no migration instructions for version {1}", alphaModel.Label, alphaModel.Version));
+					m_logger.WriteLine($"Unable to migrate {alphaModel.Label}: no migration instructions for version {alphaModel.Version}");
 					break;
 			}
 			alphaModel.Version = VersionAlpha3;
@@ -92,7 +86,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 
 		private static void RemoveNonLoadableData(IEnumerable<ConfigurableDictionaryNode> nodes)
 		{
-			DCM.PerformActionOnNodes(nodes, node =>
+			DictionaryConfigurationServices.PerformActionOnNodes(nodes, node =>
 			{
 				node.ReferenceItem = null;
 				var rsOptions = node.DictionaryNodeOptions as DictionaryNodeReferringSenseOptions;
@@ -107,11 +101,11 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 			{
 				m_logger.WriteLine("Not adding shared nodes because some already exist:");
 				m_logger.IncreaseIndent();
-				model.SharedItems.ForEach(si => m_logger.WriteLine(DCM.BuildPathStringFromNode(si)));
+				model.SharedItems.ForEach(si => m_logger.WriteLine(DictionaryConfigurationServices.BuildPathStringFromNode(si)));
 				m_logger.DecreaseIndent();
 				return;
 			}
-			DCM.PerformActionOnNodes(model.Parts, SetReferenceItem);
+			DictionaryConfigurationServices.PerformActionOnNodes(model.Parts, SetReferenceItem);
 			if (model.IsReversal)
 			{
 				var reversalSubEntries = FindMainEntryDescendant(model, "SubentriesOS");
@@ -128,7 +122,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 				DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, mainEntrySubEntries, "mainentrysubentries");
 			}
 			// Remove direct children from nodes with referenced children
-			DCM.PerformActionOnNodes(model.PartsAndSharedItems, n => { if (!string.IsNullOrEmpty(n.ReferenceItem)) n.Children = null; });
+			DictionaryConfigurationServices.PerformActionOnNodes(model.PartsAndSharedItems, n => { if (!string.IsNullOrEmpty(n.ReferenceItem)) n.Children = null; });
 		}
 
 		private static void AddSubsubEntriesOptionsIfNeeded(ConfigurableDictionaryNode mainEntrySubEntries)
@@ -189,13 +183,13 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 			{
 				if (nextNode == null)
 					break;
-				failureMessage += DCM.NodePathSeparator + ancestor;
+				failureMessage += DictionaryConfigurationServices.NodePathSeparator + ancestor;
 				nextNode = nextNode.Children.Find(n => n.FieldDescription == ancestor && string.IsNullOrEmpty(n.LabelSuffix));
 			}
 			if (nextNode != null)
 				return nextNode;
 			// If we couldn't find the node, this is probably a test that didn't have a full model
-			m_logger.WriteLine(string.Format("Unable to find '{0}'", string.Join(DCM.NodePathSeparator, new[] { "Main Entry" }.Concat(ancestors))));
+			m_logger.WriteLine(string.Format("Unable to find '{0}'", string.Join(DictionaryConfigurationServices.NodePathSeparator, new[] { "Main Entry" }.Concat(ancestors))));
 			m_logger.WriteLine(failureMessage + "'");
 			return new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>() };
 		}
@@ -235,14 +229,14 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 			switch (version)
 			{
 				case 2:
-					DCM.PerformActionOnNodes(nodes, n =>
+					DictionaryConfigurationServices.PerformActionOnNodes(nodes, n =>
 					{
 						if (n.FieldDescription == "OwningEntry" && n.SubField == "MLHeadWord")
 							n.SubField = newHeadword;
 					});
 					break;
 				case 3:
-					DCM.PerformActionOnNodes(nodes, n =>
+					DictionaryConfigurationServices.PerformActionOnNodes(nodes, n =>
 					{
 						if (n.Label == "Gloss (or Summary Definition)")
 							n.FieldDescription = "GlossOrSummary";
@@ -260,7 +254,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 					});
 					break;
 				case 4:
-					DCM.PerformActionOnNodes(nodes, n =>
+					DictionaryConfigurationServices.PerformActionOnNodes(nodes, n =>
 					{
 						switch (n.FieldDescription)
 						{
@@ -276,11 +270,11 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 					});
 					break;
 				case VersionAlpha2:
-					DCM.PerformActionOnNodes(nodes, n =>
+					DictionaryConfigurationServices.PerformActionOnNodes(nodes, n =>
 					{
 						if (n.FieldDescription == null)
 						{
-							logger.WriteLine(string.Format("Warning: '{0}' reached the Alpha2 migration with a null FieldDescription.", DCM.BuildPathStringFromNode(n)));
+							logger.WriteLine(string.Format("Warning: '{0}' reached the Alpha2 migration with a null FieldDescription.", DictionaryConfigurationServices.BuildPathStringFromNode(n)));
 							return;
 						}
 						if (n.FieldDescription == "VisibleVariantEntryRefs" && n.Label == "Variant Of")
@@ -348,7 +342,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 					});
 					break;
 				case 6:
-					DCM.PerformActionOnNodes(nodes, n =>
+					DictionaryConfigurationServices.PerformActionOnNodes(nodes, n =>
 					{
 						if (isReversal && n.Label == "Pronunciation" && n.Parent.Label == "Pronunciations")
 						{

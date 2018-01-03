@@ -8439,7 +8439,7 @@ namespace LanguageExplorerTests.Works
 			var model = new DictionaryConfigurationModel
 			{
 				Parts = new List<ConfigurableDictionaryNode>(),
-				FilePath = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(_flexComponentParameters.PropertyTable), "filename" + DictionaryConfigurationModel.FileExtension)
+				FilePath = Path.Combine(DictionaryConfigurationServices.GetProjectConfigurationDirectory(_flexComponentParameters.PropertyTable), "filename" + DictionaryConfigurationModel.FileExtension)
 			};
 			var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entries, null, model, _flexComponentParameters.PropertyTable, Cache, _recordList);
 			try
@@ -9549,7 +9549,7 @@ namespace LanguageExplorerTests.Works
 			minorSecondNode.DictionaryNodeOptions = GetFullyEnabledListOptions(cache, DictionaryNodeListOptions.ListIds.Variant);
 
 			// Needs "TestData" inserted in path name
-			var worksBaseDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable);
+			var worksBaseDir = DictionaryConfigurationServices.GetProjectConfigurationDirectory(propertyTable);
 			var pathParts = worksBaseDir.Split(new[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries).ToList();
 			int idx;
 			for (idx = 0; idx < pathParts.Count; ++idx)
@@ -10074,44 +10074,6 @@ namespace LanguageExplorerTests.Works
 			entry.MorphoSyntaxAnalysesOC.Add(msa);
 			msa.PartOfSpeechRA = pos;
 			return msa;
-		}
-
-		internal sealed class TempGuidOn<T> : IDisposable where T : ICmObject
-		{
-			public T Item { get; private set; }
-			private readonly Guid m_OriginalGuid;
-
-			public TempGuidOn(T item, Guid tempGuid)
-			{
-				Item = item;
-				m_OriginalGuid = item.Guid;
-				SetGuidOn(item, tempGuid);
-			}
-
-			~TempGuidOn()
-			{
-				Dispose(false);
-			}
-
-			public void Dispose()
-			{
-				Dispose(true);
-				GC.SuppressFinalize(this);
-			}
-
-			private void Dispose(bool disposing)
-			{
-				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
-
-				if (disposing)
-					SetGuidOn(Item, m_OriginalGuid);
-			}
-
-			private static void SetGuidOn(ICmObject item, Guid newGuid)
-			{
-				var refGuidField = ReflectionHelper.GetField(item, "m_guid");
-				ReflectionHelper.SetField(refGuidField, "m_guid", newGuid);
-			}
 		}
 	}
 }

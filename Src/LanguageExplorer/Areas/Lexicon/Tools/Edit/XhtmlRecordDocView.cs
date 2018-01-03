@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 SIL International
+// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,13 +7,15 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using Gecko;
+using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
+using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Windows.Forms.HtmlBrowser;
 using SIL.Xml;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
 	/// <summary>
 	/// XhtmlRecordDocView implements a RecordView (view showing one object at a time from a sequence)
@@ -33,7 +35,7 @@ namespace LanguageExplorer.Works
 			m_printMenu.Enabled = true;
 		}
 
-		#region Overrides of RecordView
+#region Overrides of RecordView
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
@@ -52,7 +54,7 @@ namespace LanguageExplorer.Works
 
 			m_printMenu = null;
 		}
-		#endregion
+#endregion
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
@@ -76,6 +78,11 @@ namespace LanguageExplorer.Works
 			m_fullyInitialized = true;
 			// Add ourselves as a listener for changes to the item we are displaying
 			MyRecordList.VirtualListPublisher.AddNotification(this);
+		}
+
+		internal void ReallyShowRecordNow()
+		{
+			ShowRecord();
 		}
 
 		/// <summary>
@@ -142,7 +149,7 @@ namespace LanguageExplorer.Works
 			m_mainView.DocumentCompleted += EnableRecordDocView;
 			if (cmo != null && cmo.Hvo > 0)
 			{
-				var configurationFile = DictionaryConfigurationListener.GetCurrentConfiguration(PropertyTable);
+				var configurationFile = DictionaryConfigurationServices.GetCurrentConfiguration(PropertyTable);
 				if (string.IsNullOrEmpty(configurationFile))
 				{
 					m_mainView.DocumentText = $"<html><body><p>{xWorksStrings.ksNoConfiguration}</p></body></html>";

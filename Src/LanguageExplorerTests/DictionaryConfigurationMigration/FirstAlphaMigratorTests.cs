@@ -7,39 +7,40 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using LanguageExplorer;
+using LanguageExplorer.DictionaryConfigurationMigration;
 using LanguageExplorer.Works;
-using LanguageExplorer.Works.DictionaryConfigurationMigrators;
 using NUnit.Framework;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.IO;
 using SIL.LCModel;
+using LanguageExplorerTests.Works;
 
-namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
+namespace LanguageExplorerTests.DictionaryConfigurationMigration
 {
 	public class FirstAlphaMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private FirstAlphaMigrator m_migrator;
-		private SimpleLogger m_logger;
+		private FirstAlphaMigrator _migrator;
+		private SimpleLogger _logger;
 
 		[SetUp]
 		public void SetUp()
 		{
-			m_logger = new SimpleLogger();
-			m_migrator = new FirstAlphaMigrator(Cache, m_logger);
+			_logger = new SimpleLogger();
+			_migrator = new FirstAlphaMigrator(string.Empty, Cache, _logger);
 		}
 
 		[TearDown]
 		public void TearDown()
 		{
-			m_logger.Dispose();
+			_logger.Dispose();
 		}
 
 		[Test]
 		public void MigrateFrom83Alpha_UpdatesVersion()
 		{
 			var alphaModel = new DictionaryConfigurationModel { Version = PreHistoricMigrator.VersionAlpha1, Parts = new List<ConfigurableDictionaryNode>() };
-			m_migrator.MigrateFrom83Alpha(alphaModel); // SUT
+			_migrator.MigrateFrom83Alpha(alphaModel); // SUT
 			Assert.AreEqual(FirstAlphaMigrator.VersionAlpha3, alphaModel.Version);
 		}
 
@@ -53,7 +54,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				Version = PreHistoricMigrator.VersionPre83, // the original migration code neglected to update the version on completion
 				Parts = new List<ConfigurableDictionaryNode> { configParent }
 			};
-			m_migrator.MigrateFrom83Alpha(configModel);
+			_migrator.MigrateFrom83Alpha(configModel);
 			Assert.Null(configChild.ReferenceItem, "Unused ReferenceItem should have been removed");
 		}
 
@@ -88,7 +89,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				Version = 3,
 				Parts = new List<ConfigurableDictionaryNode> { main }
 			};
-			m_migrator.MigrateFrom83Alpha(configModel);
+			_migrator.MigrateFrom83Alpha(configModel);
 			Assert.AreEqual("GlossOrSummary", configGlossOrSummDefn.FieldDescription,
 				"'Gloss (or Summary Definition)' Field Description should have been updated");
 			Assert.AreEqual("DefinitionOrGloss", configDefnOrGloss.FieldDescription,
@@ -101,7 +102,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			var configChild = new ConfigurableDictionaryNode { FieldDescription = "TestChild", ReferenceItem = "LexEntry" };
 			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent", Children = new List<ConfigurableDictionaryNode> { configChild } };
 			var configModel = new DictionaryConfigurationModel { Version = 1, Parts = new List<ConfigurableDictionaryNode> { configParent } };
-			m_migrator.MigrateFrom83Alpha(configModel);
+			_migrator.MigrateFrom83Alpha(configModel);
 			Assert.Null(configChild.ReferenceItem, "Unused ReferenceItem should have been removed");
 		}
 
@@ -112,7 +113,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			var configExampleParent = new ConfigurableDictionaryNode { Label = "Examples", FieldDescription = "ExamplesOS", Children = new List<ConfigurableDictionaryNode> { configExampleChild } };
 			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent", Children = new List<ConfigurableDictionaryNode> { configExampleParent } };
 			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
-			m_migrator.MigrateFrom83Alpha(configModel);
+			_migrator.MigrateFrom83Alpha(configModel);
 			Assert.AreEqual("Example Sentence", configExampleChild.Label);
 		}
 
@@ -124,7 +125,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			var senses = new ConfigurableDictionaryNode { Label = "Senses", FieldDescription = "SensesOS", Children = new List<ConfigurableDictionaryNode> { subsenses } };
 			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent", Children = new List<ConfigurableDictionaryNode> { senses } };
 			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
-			m_migrator.MigrateFrom83Alpha(configModel); // SUT
+			_migrator.MigrateFrom83Alpha(configModel); // SUT
 			for (var node = examplesOS; !configModel.SharedItems.Contains(node); node = node.Parent)
 				Assert.NotNull(node, "ExamplesOS should be freshly-shared (under subsenses)");
 			Assert.That(examplesOS.DictionaryNodeOptions, Is.TypeOf(typeof(DictionaryNodeListAndParaOptions)), "Freshly-shared nodes should be included");
@@ -137,7 +138,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent",
 				Children = new List<ConfigurableDictionaryNode> { configExamplesNode } };
 			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
-			m_migrator.MigrateFrom83Alpha(configModel);
+			_migrator.MigrateFrom83Alpha(configModel);
 			Assert.AreEqual(ConfigurableDictionaryNode.StyleTypes.Character, configExamplesNode.StyleType);
 			Assert.IsTrue(configExamplesNode.DictionaryNodeOptions is DictionaryNodeListAndParaOptions, "wrong type");
 			var options = (DictionaryNodeListAndParaOptions)configExamplesNode.DictionaryNodeOptions;
@@ -153,7 +154,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent",
 				Children = new List<ConfigurableDictionaryNode> { configBiblioParent } };
 			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
-			m_migrator.MigrateFrom83Alpha(configModel);
+			_migrator.MigrateFrom83Alpha(configModel);
 			Assert.AreEqual("Bibliography (Entry)", configBiblioEntryNode.Label);
 			Assert.AreEqual("Bibliography (Sense)", configBiblioSenseNode.Label);
 		}
@@ -166,7 +167,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent",
 				Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild } };
 			var configModel = new DictionaryConfigurationModel { Version = 2, Parts = new List<ConfigurableDictionaryNode> { configParent } };
-			m_migrator.MigrateFrom83Alpha(configModel);
+			_migrator.MigrateFrom83Alpha(configModel);
 			Assert.AreEqual("HeadWordRef", referenceHwChild.FieldDescription);
 			Assert.AreEqual("HeadWordRef", cpFormChild.SubField);
 		}
@@ -184,7 +185,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				Parts = new List<ConfigurableDictionaryNode> { configParent },
 				FilePath = Path.Combine("ReversalIndex", "English.fwdictconfig")
 			};
-			m_migrator.MigrateFrom83Alpha(configModel);
+			_migrator.MigrateFrom83Alpha(configModel);
 			Assert.AreEqual("ReversalName", referenceHwChild.FieldDescription);
 			Assert.AreEqual("ReversalName", cpFormChild.SubField);
 		}
@@ -202,8 +203,8 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			};
 			cpFormChild.Parent = configParent;
 			var configModel = new DictionaryConfigurationModel { Version = 2, Parts = new List<ConfigurableDictionaryNode> { configParent } };
-			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.That(m_logger.Content, Is.StringContaining("'Parent > Complex Form' reached the Alpha2 migration with a null FieldDescription."));
+			_migrator.MigrateFrom83Alpha(configModel);
+			Assert.That(_logger.Content, Is.StringContaining("'Parent > Complex Form' reached the Alpha2 migration with a null FieldDescription."));
 		}
 
 		[Test]
@@ -220,7 +221,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				FilePath = Path.Combine("ReversalIndex", "English.fwdictconfig"),
 				SharedItems = new List<ConfigurableDictionaryNode> { configParent }
 			};
-			m_migrator.MigrateFrom83Alpha(configModel);
+			_migrator.MigrateFrom83Alpha(configModel);
 			Assert.AreEqual("ReversalName", referenceHwChild.FieldDescription);
 			Assert.AreEqual("ReversalName", cpFormChild.SubField);
 		}
@@ -245,9 +246,9 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				Label = "Tamil (International Phonetic Alphabet)",
 				FilePath = Path.Combine("ReversalIndex", "Tamil.fwdictconfig")
 			};
-			m_migrator.MigrateFrom83Alpha(configModelEn);
+			_migrator.MigrateFrom83Alpha(configModelEn);
 			Assert.AreEqual("en", configModelEn.WritingSystem);
-			m_migrator.MigrateFrom83Alpha(configModelTamil);
+			_migrator.MigrateFrom83Alpha(configModelTamil);
 			Assert.AreEqual("ta__IPA", configModelTamil.WritingSystem);
 		}
 
@@ -262,7 +263,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				Label = "English",
 				FilePath = Path.Combine("NotReversalIndex", "English.fwdictconfig")
 			};
-			m_migrator.MigrateFrom83Alpha(configModelRoot);
+			_migrator.MigrateFrom83Alpha(configModelRoot);
 			Assert.Null(configModelRoot.WritingSystem, "The WritingSystem should not be filled in for configurations that aren't for reversal");
 		}
 
@@ -277,7 +278,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				Label = "My Copy",
 				FilePath = Path.Combine("ReversalIndex", "My Copy-English-#Engl464.fwdictconfig")
 			};
-			m_migrator.MigrateFrom83Alpha(configModelRoot);
+			_migrator.MigrateFrom83Alpha(configModelRoot);
 			Assert.AreEqual("en", configModelRoot.WritingSystem, "English should have been parsed out of the filename and used to set the WritingSystem");
 		}
 
@@ -301,7 +302,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			}
 
 			// SUT
-			m_migrator.MigrateFrom83Alpha(model);
+			_migrator.MigrateFrom83Alpha(model);
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
 			Assert.IsInstanceOf(typeof(DictionaryNodeWritingSystemOptions), testNodeOptions);
 			var wsOptions = (DictionaryNodeWritingSystemOptions)testNodeOptions;
@@ -345,7 +346,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				Parts = new List<ConfigurableDictionaryNode> { mainEntry }
 			};
 
-			m_migrator.MigrateFrom83Alpha(model);
+			_migrator.MigrateFrom83Alpha(model);
 			Assert.That(subsenses.ReferenceItem, Is.StringMatching("MainEntrySubsenses"));
 			Assert.That(subsubsenses.ReferenceItem, Is.StringMatching("MainEntrySubsenses"));
 			Assert.That(subentriesUnderSenses.ReferenceItem, Is.StringMatching("MainEntrySubentries"));
@@ -392,7 +393,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				Parts = new List<ConfigurableDictionaryNode> { mainEntry }
 			};
 
-			m_migrator.MigrateFrom83Alpha(model);
+			_migrator.MigrateFrom83Alpha(model);
 			var subSenseNode = (DictionaryNodeSenseOptions)subsenses.DictionaryNodeOptions;
 			Assert.That(subSenseNode.ParentSenseNumberingStyle, Is.StringMatching("%."));
 		}
@@ -420,7 +421,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			};
 			var model = new DictionaryConfigurationModel { Version = PreHistoricMigrator.VersionPre83, Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 
-			m_migrator.MigrateFrom83Alpha(model);
+			_migrator.MigrateFrom83Alpha(model);
 			var subSenses = model.SharedItems.Find(node => node.Label == "MainEntrySubsenses");
 			Assert.NotNull(subSenses);
 			Assert.AreEqual(2, subSenses.Children.Count, "Subsenses children were not moved to shared");
@@ -495,7 +496,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 
-			m_migrator.MigrateFrom83Alpha(model);
+			_migrator.MigrateFrom83Alpha(model);
 			var subSenseGloss =
 				model.SharedItems.Find(node => node.Label == "MainEntrySubsenses").Children.Find(child => child.Label == subGlossNode.Label);
 			var subGramInfo =
@@ -535,7 +536,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 
-			m_migrator.MigrateFrom83Alpha(model);
+			_migrator.MigrateFrom83Alpha(model);
 			var subEntries = model.SharedItems.Find(node => node.Label == "AllReversalSubentries");
 			Assert.NotNull(subEntries);
 			Assert.AreEqual(2, subEntries.Children.Count, "Subentries children were not moved to shared");
@@ -570,7 +571,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 
-			m_migrator.MigrateFrom83Alpha(model);
+			_migrator.MigrateFrom83Alpha(model);
 			var subEntries = model.SharedItems.Find(node => node.Label == "AllReversalSubentries");
 			Assert.NotNull(subEntries);
 			Assert.AreEqual(2, subEntries.Children.Count, "Subentries children were not moved to shared");
@@ -585,7 +586,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			var configExampleParent = new ConfigurableDictionaryNode { Label = "Examples", FieldDescription = "ExamplesOS", Children = new List<ConfigurableDictionaryNode> { configTranslationsChild } };
 			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent", Children = new List<ConfigurableDictionaryNode> { configExampleParent } };
 			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
-			m_migrator.MigrateFrom83Alpha(configModel);
+			_migrator.MigrateFrom83Alpha(configModel);
 			Assert.AreEqual("translationcontents", configTranslationsChild.CSSClassNameOverride);
 		}
 
@@ -646,7 +647,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 
-			m_migrator.MigrateFrom83Alpha(model);
+			_migrator.MigrateFrom83Alpha(model);
 			var varTypeNode = variantsNode.Children.First();
 			Assert.AreEqual(2, varTypeNode.Children.Count, "'Variant Forms' grandchildren should only be 'Abbreviation' and 'Name'");
 			Assert.IsNotNull(varTypeNode.Children.Find(node => node.Label == "Abbreviation"),
@@ -763,7 +764,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 
-			m_migrator.MigrateFrom83Alpha(model);
+			_migrator.MigrateFrom83Alpha(model);
 			var cfTypeNode = otherRefCFNode.Children.First();
 			Assert.AreEqual(2, cfTypeNode.Children.Count,
 				"'Other Referenced Complex Forms' grandchildren should only be 'Abbreviation' and 'Name'");
@@ -833,7 +834,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				FilePath = string.Empty,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
-			m_migrator.MigrateFrom83Alpha(model);
+			_migrator.MigrateFrom83Alpha(model);
 			Assert.AreEqual("Referenced Headword", headwordNode.Label);
 		}
 
@@ -869,7 +870,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				FilePath = string.Empty,
 				Parts = new List<ConfigurableDictionaryNode> { minorEntryNode }
 			};
-			m_migrator.MigrateFrom83Alpha(model);
+			_migrator.MigrateFrom83Alpha(model);
 			Assert.AreEqual("Referenced Headword", headwordNode.Label);
 		}
 
@@ -903,7 +904,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				WritingSystem = "en"
 			};
 
-			m_migrator.MigrateFrom83Alpha(model);
+			_migrator.MigrateFrom83Alpha(model);
 			var cfTypeNode = fakeNodeForMinTest.Children.First();
 			Assert.AreEqual(2, cfTypeNode.Children.Count, "Should only have two children, Abbreviation and Name");
 			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"),
@@ -932,7 +933,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
 				FilePath = "./Lexeme" + DictionaryConfigurationModel.FileExtension
 			};
-			m_migrator.MigrateFrom83Alpha(model);
+			_migrator.MigrateFrom83Alpha(model);
 			Assert.IsFalse(model.IsRootBased);
 		}
 
@@ -950,7 +951,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
 				FilePath = "./Root" + DictionaryConfigurationModel.FileExtension
 			};
-			m_migrator.MigrateFrom83Alpha(model);
+			_migrator.MigrateFrom83Alpha(model);
 			Assert.IsTrue(model.IsRootBased);
 		}
 
@@ -983,7 +984,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				FilePath = String.Empty,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
-			m_migrator.MigrateFrom83Alpha(model);
+			_migrator.MigrateFrom83Alpha(model);
 			Assert.AreEqual("Entry", AllomorphNode.FieldDescription, "Should have changed 'Owner' field for reversal to 'Entry'");
 			Assert.AreEqual("AlternateFormsOS", AllomorphNode.SubField, "Should have changed to a sequence.");
 		}
@@ -1029,7 +1030,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 				FilePath = string.Empty,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
-			m_migrator.MigrateFrom83Alpha(model);
+			_migrator.MigrateFrom83Alpha(model);
 			Assert.AreEqual("[", pronunciationsNode.Before, "Should have set Before to '['.");
 			Assert.AreEqual("] ", pronunciationsNode.After, "Should have set After to '] '.");
 			Assert.AreEqual(" ", pronunciationsNode.Between, "Should have set Between to one space.");
@@ -1077,7 +1078,7 @@ namespace LanguageExplorerTests.Works.DictionaryConfigurationMigrators
 			var model = new DictionaryConfigurationModel { Version = PreHistoricMigrator.VersionAlpha1, Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 
 			// SUT
-			m_migrator.MigrateFrom83Alpha(model);
+			_migrator.MigrateFrom83Alpha(model);
 
 			var migratedPicturesNode=model.Parts[0].Children[0];
 

@@ -458,7 +458,7 @@ namespace LanguageExplorer.Works
 			using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IFlexApp>("App")))
 			{
 				dlg.WindowTitle = xWorksStrings.Confirm + " " + xWorksStrings.Delete;
-				var kindOfConfiguration = DictionaryConfigurationListener.GetDictionaryConfigurationType(PropertyTable);
+				var kindOfConfiguration = DictionaryConfigurationServices.GetDictionaryConfigurationType(PropertyTable);
 				dlg.TopBodyText = String.Format("{0} {1}: {2}", kindOfConfiguration, xWorksStrings.View, configurationToDelete.Label);
 
 				if (IsConfigurationACustomizedOriginal(configurationToDelete))

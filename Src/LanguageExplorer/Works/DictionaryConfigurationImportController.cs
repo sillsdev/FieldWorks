@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 SIL International
+﻿// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -169,10 +169,10 @@ namespace LanguageExplorer.Works
 
 			// phone home (analytics)
 			var configType = NewConfigToImport.Type;
-			var configDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(
+			var configDir = DictionaryConfigurationServices.GetDefaultConfigurationDirectory(
 				configType == DictionaryConfigurationModel.ConfigType.Reversal
-					? DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName
-					: DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+					? DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName
+					: DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
 			var isCustomizedOriginal = DictionaryConfigurationManagerController.IsConfigurationACustomizedOriginal(NewConfigToImport, configDir, _cache);
 			UsageReporter.SendEvent("DictionaryConfigurationImport", "Import", "Import Config",
 				string.Format("Import of [{0}{1}]:{2}",
@@ -331,8 +331,8 @@ namespace LanguageExplorer.Works
 
 			//Validating the user is not trying to import a Dictionary into a Reversal area or a Reversal into a Dictionary area
 			var configDirectory = Path.GetFileName(_projectConfigDir);
-			if (DictionaryConfigurationListener.DictionaryConfigurationDirectoryName.Equals(configDirectory) && NewConfigToImport.IsReversal
-				|| !DictionaryConfigurationListener.DictionaryConfigurationDirectoryName.Equals(configDirectory) && !NewConfigToImport.IsReversal)
+			if (DictionaryConfigurationServices.DictionaryConfigurationDirectoryName.Equals(configDirectory) && NewConfigToImport.IsReversal
+				|| !DictionaryConfigurationServices.DictionaryConfigurationDirectoryName.Equals(configDirectory) && !NewConfigToImport.IsReversal)
 			{
 				_isInvalidConfigFile = true;
 				ClearValuesOnError();
@@ -438,7 +438,7 @@ namespace LanguageExplorer.Works
 				string invalidConfigFileMsg = string.Empty;
 				if (_isInvalidConfigFile)
 				{
-					var configType = Path.GetFileName(_projectConfigDir) == DictionaryConfigurationListener.DictionaryConfigurationDirectoryName
+					var configType = Path.GetFileName(_projectConfigDir) == DictionaryConfigurationServices.DictionaryConfigurationDirectoryName
 					? xWorksStrings.ReversalIndex : xWorksStrings.Dictionary;
 					invalidConfigFileMsg = string.Format(xWorksStrings.DictionaryConfigurationMismatch, configType)
 						+ Environment.NewLine;

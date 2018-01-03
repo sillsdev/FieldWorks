@@ -19,7 +19,7 @@ using Property = ExCSS.Property;
 
 namespace LanguageExplorer.Works
 {
-	public static class CssGenerator
+	internal static class CssGenerator
 	{
 		/// <summary>
 		/// id that triggers using the default selection on a character style instead of a writing system specific one
@@ -1573,7 +1573,7 @@ namespace LanguageExplorer.Works
 		internal static string GenerateCssForSelectedEntry(bool isRtl)
 		{
 			// Draw a blue gradient behind the entry to highlight it
-			var selectedEntryBefore = new StyleRule { Value = "." + XhtmlDocView.CurrentSelectedEntryClass + ":before" };
+			var selectedEntryBefore = new StyleRule { Value = "." + DictionaryConfigurationServices.CurrentSelectedEntryClass + ":before" };
 			var directionOfRule = !isRtl ? "right" : "left";
 			selectedEntryBefore.Declarations.Properties.Add(new Property("background")
 			{
@@ -1588,7 +1588,7 @@ namespace LanguageExplorer.Works
 			selectedEntryBefore.Declarations.Properties.Add(new Property("position") { Term = new PrimitiveTerm(UnitType.Ident, "absolute") });
 			selectedEntryBefore.Declarations.Properties.Add(new Property("z-index") { Term = new PrimitiveTerm(UnitType.Number, -10) });
 			selectedEntryBefore.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Percentage, 75) });
-			var selectedEntry = new StyleRule { Value = "." + XhtmlDocView.CurrentSelectedEntryClass };
+			var selectedEntry = new StyleRule { Value = "." + DictionaryConfigurationServices.CurrentSelectedEntryClass };
 			selectedEntry.Declarations.Properties.Add(new Property("background")
 			{
 				Term = new PrimitiveTerm(UnitType.Ident,

@@ -12,20 +12,19 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using Gecko;
 using Gecko.DOM;
-using LanguageExplorer.Areas;
-using LanguageExplorer.Areas.Lexicon;
+using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using SIL.Windows.Forms.HtmlBrowser;
 using SIL.Xml;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 {
 	/// <summary>
 	/// This class handles the display of configured xhtml for a particular publication in a dynamically loadable XWorksView.
@@ -36,7 +35,6 @@ namespace LanguageExplorer.Works
 		private DictionaryPublicationDecorator m_pubDecorator;
 		private string m_selectedObjectID = string.Empty;
 		internal string m_configObjectName;
-		internal const string CurrentSelectedEntryClass = "currentSelectedEntry";
 		private string m_currentConfigView; // used when this is a Dictionary view to store which view is active.
 		private ToolStripMenuItem m_printMenu;
 
@@ -356,10 +354,10 @@ namespace LanguageExplorer.Works
 		internal static void HandleDomLeftClick(IRecordList recordList, ICmObjectRepository objectRepository, DomMouseEventArgs e, GeckoElement element)
 		{
 			GeckoElement dummy;
-			var topLevelGuid = GetHrefFromGeckoDomElement(element);
+			var topLevelGuid = DictionaryConfigurationServices.GetHrefFromGeckoDomElement(element);
 			if (topLevelGuid == Guid.Empty)
 			{
-				GetClassListFromGeckoElement(element, out topLevelGuid, out dummy);
+				DictionaryConfigurationServices.GetClassListFromGeckoElement(element, out topLevelGuid, out dummy);
 			}
 			if (topLevelGuid != Guid.Empty)
 			{
@@ -519,8 +517,8 @@ namespace LanguageExplorer.Works
 		{
 			Guid topLevelGuid;
 			GeckoElement entryElement;
-			var classList = GetClassListFromGeckoElement(element, out topLevelGuid, out entryElement);
-			var localizedName = DictionaryConfigurationListener.GetDictionaryConfigurationType(flexComponentParameters.PropertyTable);
+			var classList = DictionaryConfigurationServices.GetClassListFromGeckoElement(element, out topLevelGuid, out entryElement);
+			var localizedName = DictionaryConfigurationServices.GetDictionaryConfigurationType(flexComponentParameters.PropertyTable);
 			var label = string.Format(xWorksStrings.ksConfigure, localizedName);
 			s_contextMenu = new ContextMenuStrip();
 			var item = new DisposableToolStripMenuItem(label);
@@ -537,52 +535,6 @@ namespace LanguageExplorer.Works
 			s_contextMenu.Show(browser, new Point(e.ClientX, e.ClientY));
 			s_contextMenu.Closed += m_contextMenu_Closed;
 			e.Handled = true;
-		}
-
-		/// <summary>
-		/// Returns the class hierarchy for a GeckoElement
-		/// </summary>
-		/// <remarks>LT-17213 Internal for use in DictionaryConfigurationDlg</remarks>
-		internal static List<string> GetClassListFromGeckoElement(GeckoElement element, out Guid topLevelGuid, out GeckoElement entryElement)
-		{
-			topLevelGuid = Guid.Empty;
-			entryElement = element;
-			var classList = new List<string>();
-			if (entryElement.TagName == "body" || entryElement.TagName == "html")
-				return classList;
-			for (; entryElement != null; entryElement = entryElement.ParentElement)
-			{
-				var className = entryElement.GetAttribute("class");
-				if (string.IsNullOrEmpty(className))
-					continue;
-				if (className == "letHead")
-					break;
-				classList.Insert(0, className);
-				if (entryElement.TagName == "div" && entryElement.ParentElement.TagName == "body")
-					{
-					topLevelGuid = GetGuidFromGeckoDomElement(entryElement);
-					break; // we have the element we want; continuing to loop will get its parent instead
-					}
-				}
-			return classList;
-			}
-
-		internal static Guid GetHrefFromGeckoDomElement(GeckoElement element)
-		{
-			if (!element.HasAttribute("href"))
-				return Guid.Empty;
-
-			var hrefVal = element.GetAttribute("href");
-			return !hrefVal.StartsWith("#g") ? Guid.Empty : new Guid(hrefVal.Substring(2));
-		}
-
-		private static Guid GetGuidFromGeckoDomElement(GeckoElement element)
-		{
-			if (!element.HasAttribute("id"))
-				return Guid.Empty;
-
-			var idVal = element.GetAttribute("id");
-			return !idVal.StartsWith("g") ? Guid.Empty : new Guid(idVal.Substring(1));
 		}
 
 		/// <summary>
@@ -633,14 +585,18 @@ namespace LanguageExplorer.Works
 			{
 				ICmObject current = null;
 				if (guid != Guid.Empty && cache != null && cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
+				{
 					current = cache.ServiceLocator.GetObject(guid);
+				}
 				else if (activeRecordList != null)
+				{
 					current = activeRecordList.CurrentObject;
+				}
 				var controller = new DictionaryConfigurationController(dlg, current);
 				controller.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, (ISubscriber)tagObjects[4]));
 				controller.SetStartingNode(classList);
-				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationListener.GetDictionaryConfigurationType(propertyTable));
-				dlg.HelpTopic = DictionaryConfigurationListener.GetConfigDialogHelpTopic(propertyTable);
+				dlg.Text = string.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationServices.GetDictionaryConfigurationType(propertyTable));
+				dlg.HelpTopic = DictionaryConfigurationServices.GetConfigDialogHelpTopic(propertyTable);
 				dlg.ShowDialog((IWin32Window)mainWindow);
 				refreshNeeded = controller.MasterRefreshRequired;
 			}
@@ -982,7 +938,7 @@ namespace LanguageExplorer.Works
 			var prevSelectedByGuid = browser.Document.GetHtmlElementById("g" + m_selectedObjectID);
 			if (prevSelectedByGuid != null)
 			{
-				RemoveClassFromHtmlElement(prevSelectedByGuid, CurrentSelectedEntryClass);
+				RemoveClassFromHtmlElement(prevSelectedByGuid, DictionaryConfigurationServices.CurrentSelectedEntryClass);
 			}
 		}
 
@@ -1007,7 +963,7 @@ namespace LanguageExplorer.Works
 				var configuration = File.Exists(currentConfig) ? new DictionaryConfigurationModel(currentConfig, Cache) : null;
 				if (configuration == null || configuration.WritingSystem != currReversalWs)
 				{
-					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(PropertyTable), writingSystem.Id + DictionaryConfigurationModel.FileExtension);
+					var newConfig = Path.Combine(DictionaryConfigurationServices.GetProjectConfigurationDirectory(PropertyTable), writingSystem.Id + DictionaryConfigurationModel.FileExtension);
 					PropertyTable.SetProperty("ReversalIndexPublicationLayout", File.Exists(newConfig) ? newConfig : null, true, true);
 				}
 			}
@@ -1026,7 +982,7 @@ namespace LanguageExplorer.Works
 			if (currElementTop < browser.Window.ScrollY || currElementBottom > (browser.Window.ScrollY + browser.Height))
 				browser.Window.ScrollTo(0, yPosition);
 
-			AddClassToHtmlElement(currSelectedByGuid, CurrentSelectedEntryClass);
+			AddClassToHtmlElement(currSelectedByGuid, DictionaryConfigurationServices.CurrentSelectedEntryClass);
 			m_selectedObjectID = currentObjectGuid;
 		}
 
@@ -1178,17 +1134,6 @@ namespace LanguageExplorer.Works
 			return xhtmlPath;
 		}
 
-		/// <summary>
-		/// Interpreting the xhtml, gecko doesn't load css files with a # character in it.  (probably because it carries meaning in a URL)
-		/// It's probably safe to assume that : and ? characters would also cause problems.
-		/// </summary>
-		public static string MakeFilenameSafeForHtml(string name)
-		{
-			if (name == null)
-				return String.Empty;
-			return name.Replace('#', '-').Replace('?', '-').Replace(':', '-');
-		}
-
 		public string GetCurrentPublication()
 		{
 			// Returns the current publication and use '$$all_entries$$' if none has yet been set
@@ -1198,12 +1143,12 @@ namespace LanguageExplorer.Works
 
 		internal string GetCurrentConfiguration(bool fUpdate)
 		{
-			return DictionaryConfigurationListener.GetCurrentConfiguration(PropertyTable, fUpdate);
+			return DictionaryConfigurationServices.GetCurrentConfiguration(PropertyTable, fUpdate);
 		}
 
 		private void SetCurrentConfiguration(string currentConfig, bool fUpdate)
 		{
-			DictionaryConfigurationListener.SetCurrentConfiguration(PropertyTable, currentConfig, fUpdate);
+			DictionaryConfigurationServices.SetCurrentConfiguration(PropertyTable, currentConfig, fUpdate);
 		}
 
 		public DictionaryPublicationDecorator PublicationDecorator
@@ -1253,7 +1198,7 @@ namespace LanguageExplorer.Works
 			}
 			// Limit length of View title to remaining available width
 			curViewName = TrimToMaxPixelWidth(Math.Max(2, maxViewWidth), curViewName);
-			var isReversalIndex = DictionaryConfigurationListener.GetDictionaryConfigurationType(PropertyTable) == xWorksStrings.ReversalIndex;
+			var isReversalIndex = DictionaryConfigurationServices.GetDictionaryConfigurationType(PropertyTable) == xWorksStrings.ReversalIndex;
 			if (!isReversalIndex)
 			{
 				ResetSpacer(maxViewWidth, curViewName);
@@ -1285,7 +1230,7 @@ namespace LanguageExplorer.Works
 				if (pubNameTitlePiece == xWorksStrings.AllEntriesPublication)
 					pubNameTitlePiece = xWorksStrings.ksAllEntries;
 				titleStr = pubNameTitlePiece + " " + titleStr;
-			var isReversalIndex = DictionaryConfigurationListener.GetDictionaryConfigurationType(PropertyTable) == xWorksStrings.ReversalIndex;
+			var isReversalIndex = DictionaryConfigurationServices.GetDictionaryConfigurationType(PropertyTable) == xWorksStrings.ReversalIndex;
 			if (isReversalIndex)
 			{
 				var maxViewWidth = Width / 2 - kSpaceForMenuButton;

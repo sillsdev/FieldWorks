@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012-2016 SIL International
+﻿// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -422,7 +422,7 @@ namespace LanguageExplorer.Works
 		{
 			if (dictionaryType == null)
 			{
-				dictionaryType = DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(propertyTable);
+				dictionaryType = DictionaryConfigurationServices.GetDictionaryConfigurationBaseType(propertyTable);
 			}
 			// LT-16426: Listener here needs to return a non-localized version or all non-English dictionaries will be empty!
 			switch (dictionaryType)

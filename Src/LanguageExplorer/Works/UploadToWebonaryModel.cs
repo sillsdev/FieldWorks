@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -48,8 +48,8 @@ namespace LanguageExplorer.Works
 			{
 				if (!string.IsNullOrEmpty(m_selectedConfiguration))
 					return m_selectedConfiguration;
-				var pathToCurrentConfiguration = DictionaryConfigurationListener.GetCurrentConfiguration(PropertyTable,
-					DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+				var pathToCurrentConfiguration = DictionaryConfigurationServices.GetCurrentConfiguration(PropertyTable,
+					DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
 				var curConfig =  Configurations.Values.FirstOrDefault(config => pathToCurrentConfiguration.Equals(config.FilePath));
 				return curConfig == null ? null : curConfig.Label;
 			}

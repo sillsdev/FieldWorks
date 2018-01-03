@@ -92,7 +92,7 @@ namespace LanguageExplorer.Works
 				throw new ArgumentException(nameof(pubDecorator));
 			}
 			var configDir = Path.GetDirectoryName(configuration.FilePath);
-			var projectPath = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable);
+			var projectPath = DictionaryConfigurationServices.GetProjectConfigurationDirectory(propertyTable);
 			var previewCssPath = Path.Combine(projectPath, "Preview.css");
 			var projType = new DirectoryInfo(configDir).Name;
 			var cssName = projType == "Dictionary" ? "ProjectDictionaryOverrides.css" : "ProjectReversalOverrides.css";
@@ -193,7 +193,7 @@ namespace LanguageExplorer.Works
 			var basePath = Path.Combine(Path.GetTempPath(), "DictionaryPreview", cache.ProjectId.Name);
 			FileUtils.EnsureDirectoryExists(basePath);
 
-			var confName = XhtmlDocView.MakeFilenameSafeForHtml(Path.GetFileNameWithoutExtension(config.FilePath));
+			var confName = DictionaryConfigurationServices.MakeFilenameSafeForHtml(Path.GetFileNameWithoutExtension(config.FilePath));
 			var fileName = isSingleEntryPreview ? confName + "-Preview" : confName;
 			return Path.Combine(basePath, fileName);
 		}
@@ -2699,7 +2699,7 @@ namespace LanguageExplorer.Works
 					guid = ((ILexSense)field).OwnerOfClass(LexEntryTags.kClassId).Guid;
 				else
 					Debug.WriteLine(String.Format("Need to find Entry Guid for {0}",
-						field == null ? DictionaryConfigurationMigrator.BuildPathStringFromNode(config) : field.GetType().Name));
+						field == null ? DictionaryConfigurationServices.BuildPathStringFromNode(config) : field.GetType().Name));
 			}
 
 			if (propertyValue is ITsString)
@@ -2764,7 +2764,7 @@ namespace LanguageExplorer.Works
 			{
 				if (propertyValue == null)
 				{
-					Debug.WriteLine(String.Format("Bad configuration node: {0}", DictionaryConfigurationMigrator.BuildPathStringFromNode(config)));
+					Debug.WriteLine(String.Format("Bad configuration node: {0}", DictionaryConfigurationServices.BuildPathStringFromNode(config)));
 				}
 				else
 				{

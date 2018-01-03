@@ -8,12 +8,13 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Gecko;
-using SIL.FieldWorks.Common.FwUtils;
+using LanguageExplorer.Works;
 using LanguageExplorer.Works.DictionaryDetailsView;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Infrastructure;
 using SIL.Windows.Forms;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 {
 	public partial class DictionaryConfigurationDlg : Form, IDictionaryConfigurationView
 	{
@@ -237,7 +238,7 @@ namespace LanguageExplorer.Works
 		{
 			Guid dummyGuid;
 			GeckoElement dummyElement;
-			var classListForGeckoElement = XhtmlDocView.GetClassListFromGeckoElement(element, out dummyGuid, out dummyElement);
+			var classListForGeckoElement = DictionaryConfigurationServices.GetClassListFromGeckoElement(element, out dummyGuid, out dummyElement);
 			classListForGeckoElement.RemoveAt(0); // don't need the top level class
 			var nodeToMatch = DictionaryConfigurationController.FindConfigNode(topLevelNode, classListForGeckoElement);
 			return Equals(nodeToMatch, configNode);

@@ -8,38 +8,35 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using LanguageExplorer.Dumpster;
+using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.Linq;
-using DCM = LanguageExplorer.Works.DictionaryConfigurationMigrator;
 
-namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
+namespace LanguageExplorer.DictionaryConfigurationMigration
 {
-	internal class FirstBetaMigrator : IDictionaryConfigurationMigrator
+	internal class FirstBetaMigrator
 	{
 		private ISimpleLogger m_logger;
 		internal const int VersionBeta5 = 14;
 		internal const int VersionRC2 = 17; // 8.3.7
 
-		internal FirstBetaMigrator() : this(null, null)
+		internal FirstBetaMigrator(string appVersion, LcmCache cache, ISimpleLogger logger)
 		{
-		}
-
-		internal FirstBetaMigrator(LcmCache cache, ISimpleLogger logger)
-		{
+			AppVersion = appVersion;
 			Cache = cache;
 			m_logger = logger;
 		}
 
+		public string AppVersion { get; }
 		public LcmCache Cache { get; set; }
 
-		public void MigrateIfNeeded(ISimpleLogger logger, IPropertyTable propertyTable, string appVersion)
+		public void MigrateIfNeeded()
 		{
-			m_logger = logger;
-			Cache = propertyTable.GetValue<LcmCache>("cache");
-			var foundOne = $"{appVersion}: Configuration was found in need of migration. - {DateTime.Now:yyyy MMM d h:mm:ss}";
+			var foundOne = $"{AppVersion}: Configuration was found in need of migration. - {DateTime.Now:yyyy MMM d h:mm:ss}";
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
-			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
 			var stemPath = Path.Combine(dictionaryConfigLoc, "Stem" + DictionaryConfigurationModel.FileExtension);
 			var lexemePath = Path.Combine(dictionaryConfigLoc, "Lexeme" + DictionaryConfigurationModel.FileExtension);
 			if (File.Exists(stemPath) && !File.Exists(lexemePath))
@@ -47,16 +44,16 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 				File.Move(stemPath, lexemePath);
 			}
 			RenameReversalConfigFiles(configSettingsDir);
-			foreach (var config in DCM.GetConfigsNeedingMigration(Cache, DCM.VersionCurrent))
+			foreach (var config in DictionaryConfigurationServices.GetConfigsNeedingMigration(Cache, DictionaryConfigurationServices.VersionCurrent))
 			{
 				m_logger.WriteLine(foundOne);
 				if (config.Label.StartsWith("Stem-"))
 				{
 					config.Label = config.Label.Replace("Stem-", "Lexeme-");
 				}
-				m_logger.WriteLine($"Migrating {config.Type} configuration '{config.Label}' from version {config.Version} to {DCM.VersionCurrent}.");
+				m_logger.WriteLine($"Migrating {config.Type} configuration '{config.Label}' from version {config.Version} to {DictionaryConfigurationServices.VersionCurrent}.");
 				m_logger.IncreaseIndent();
-				MigrateFrom83Alpha(logger, config, LoadBetaDefaultForAlphaConfig(config));
+				MigrateFrom83Alpha(m_logger, config, LoadBetaDefaultForAlphaConfig(config));
 				config.Save();
 				m_logger.DecreaseIndent();
 			}
@@ -64,8 +61,8 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 
 		internal DictionaryConfigurationModel LoadBetaDefaultForAlphaConfig(DictionaryConfigurationModel config)
 		{
-			var dictionaryFolder = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
-			var reversalFolder = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			var dictionaryFolder = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
+			var reversalFolder = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName);
 
 			string configPath;
 			// There is only one default config for reversals
@@ -75,15 +72,15 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 			}
 			else if (config.IsRootBased)
 			{
-				configPath = Path.Combine(dictionaryFolder, DCM.RootFileName + DictionaryConfigurationModel.FileExtension);
+				configPath = Path.Combine(dictionaryFolder, DictionaryConfigurationServices.RootFileName + DictionaryConfigurationModel.FileExtension);
 			}
 			else if (config.IsHybrid) // Hybrid configs have subentries
 			{
-				configPath = Path.Combine(dictionaryFolder, DCM.HybridFileName + DictionaryConfigurationModel.FileExtension);
+				configPath = Path.Combine(dictionaryFolder, DictionaryConfigurationServices.HybridFileName + DictionaryConfigurationModel.FileExtension);
 			}
 			else // Must be Lexeme
 			{
-				configPath = Path.Combine(dictionaryFolder, DCM.LexemeFileName + DictionaryConfigurationModel.FileExtension);
+				configPath = Path.Combine(dictionaryFolder, DictionaryConfigurationServices.LexemeFileName + DictionaryConfigurationModel.FileExtension);
 			}
 			return new DictionaryConfigurationModel(configPath, Cache);
 		}
@@ -107,8 +104,8 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 				}
 				MigratePartFromOldVersionToCurrent(logger, oldConfig, part, defaultPart);
 			}
-			oldConfig.Version = DCM.VersionCurrent;
-			logger.WriteLine("Migrated to version " + DCM.VersionCurrent);
+			oldConfig.Version = DictionaryConfigurationServices.VersionCurrent;
+			logger.WriteLine("Migrated to version " + DictionaryConfigurationServices.VersionCurrent);
 		}
 
 		/// <summary>
@@ -119,7 +116,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 		{
 			if (!migratingModel.IsHybrid)
 				return;
-			DCM.PerformActionOnNodes(migratingModel.Parts, parentNode =>
+			DictionaryConfigurationServices.PerformActionOnNodes(migratingModel.Parts, parentNode =>
 			{
 				if (parentNode.ReferencedOrDirectChildren != null && parentNode.ReferencedOrDirectChildren.Any(node => node.FieldDescription == "Subentries"))
 					parentNode.ReferencedOrDirectChildren.Where(sib => sib.FieldDescription == "VisibleComplexFormBackRefs").ForEach(sib =>
@@ -209,7 +206,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 				return; // safety net
 
 			var etymNodes = new List<ConfigurableDictionaryNode>();
-			DCM.PerformActionOnNodes(oldConfigPart.Children, node =>
+			DictionaryConfigurationServices.PerformActionOnNodes(oldConfigPart.Children, node =>
 			{
 				if (node.Label == "Etymology")
 					etymNodes.Add(node); // since we have to do some node deleting, just collect up the relevant nodes
@@ -255,12 +252,12 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 				node.Children.RemoveAll(n => nodesToRemove.Contains(n.Label));
 			}
 			// Etymology changed too much to be matched in the PreHistoricMigration and was marked as custom
-			DCM.PerformActionOnNodes(etymNodes, n => {n.IsCustomField = false;});
+			DictionaryConfigurationServices.PerformActionOnNodes(etymNodes, n => {n.IsCustomField = false;});
 		}
 
 		private static void RemoveReferencedHeadwordSubField(ConfigurableDictionaryNode part)
 		{
-			DCM.PerformActionOnNodes(part.Children, node =>
+			DictionaryConfigurationServices.PerformActionOnNodes(part.Children, node =>
 			{
 				// AllReversalSubentries under Referenced Headword field is ReversalName
 				if (node.FieldDescription == "ReversalName" && node.SubField == "MLHeadWord")
@@ -272,7 +269,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 
 		private static void RemoveMostOfGramInfoUnderRefdComplexForms(ConfigurableDictionaryNode part)
 		{
-			DCM.PerformActionOnNodes(part.Children, node =>
+			DictionaryConfigurationServices.PerformActionOnNodes(part.Children, node =>
 			{
 				// GramInfo under (Other) Ref'd Complex Forms is MorphoSystaxAnalyses
 				// GramInfo under Senses  is MorphoSyntaxAnalysisRA and should not lose any children
@@ -288,15 +285,15 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 		/// <param name="configSettingsDir"></param>
 		private static void RenameReversalConfigFiles(string configSettingsDir)
 		{
-			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
-			var dictConfigFiles = new List<string>(DCM.ConfigFilesInDir(reversalIndexConfigLoc));
+			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName);
+			var dictConfigFiles = new List<string>(DictionaryConfigurationServices.ConfigFilesInDir(reversalIndexConfigLoc));
 			var version = 0;
 
 			// Rename all the reversals based on the ws id (the user's  name for copies is still stored inside the file)
 			foreach (var fName in dictConfigFiles)
 			{
 				var wsValue = GetWritingSystemNameAndVersion(fName, out version);
-				if (!string.IsNullOrEmpty(wsValue) && version < DCM.VersionCurrent)
+				if (!string.IsNullOrEmpty(wsValue) && version < DictionaryConfigurationServices.VersionCurrent)
 				{
 					var newFName = Path.Combine(Path.GetDirectoryName(fName), wsValue + DictionaryConfigurationModel.FileExtension);
 					if (wsValue == Path.GetFileNameWithoutExtension(fName))
@@ -493,11 +490,11 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 		/// <summary>LT-18286: One Sharing Parent in Hybrid erroneously got direct children (from a migration step). Remove them.</summary>
 		private static void RemoveHiddenChildren(ConfigurableDictionaryNode parent, ISimpleLogger logger)
 		{
-			DCM.PerformActionOnNodes(parent.Children, p =>
+			DictionaryConfigurationServices.PerformActionOnNodes(parent.Children, p =>
 			{
 				if (p.ReferencedNode != null && p.Children != null && p.Children.Any())
 				{
-					logger.WriteLine(DCM.BuildPathStringFromNode(p) + " contains both Referenced And Direct Children. Removing Direct Children.");
+					logger.WriteLine(DictionaryConfigurationServices.BuildPathStringFromNode(p) + " contains both Referenced And Direct Children. Removing Direct Children.");
 					p.Children = new List<ConfigurableDictionaryNode>();
 				}
 			});
@@ -506,7 +503,7 @@ namespace LanguageExplorer.Works.DictionaryConfigurationMigrators
 		/// <summary>LT-18288: Change Headword to HeadwordRef for All "Referenced Sense Headword" to allow users to select WS</summary>
 		private static void ChangeReferenceSenseHeadwordFieldName(ConfigurableDictionaryNode oldConfigPart)
 		{
-			DCM.PerformActionOnNodes(oldConfigPart.Children, node =>
+			DictionaryConfigurationServices.PerformActionOnNodes(oldConfigPart.Children, node =>
 			{
 				if (node.Label == "Referenced Sense Headword")
 					node.FieldDescription = "HeadWordRef";

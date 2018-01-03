@@ -194,8 +194,8 @@ namespace LanguageExplorer.Works
 			{
 				Debug.Assert(MyRecordList != null);
 			}
-			// If we didn't create the record list, someone else might have suppressed it.
-			// suspend any loading of the record list's list items until after a
+			// Someone might have suppressed loading the list.
+			// If so, then pass the buck on to ListUpdateHelper and suspend any loading of the record list's list items until after a
 			// subclass (possibly) initializes sorters/filters
 			// in SetupDataContext()
 			using (new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = MyRecordList, ClearBrowseListUntilReload =  true}))

@@ -313,6 +313,7 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\UndoableCreateAndInsertStText.cs" />
     <Compile Include="Areas\TextsAndWords\TextAndWordsAreaMenuHelper.cs" />
     <Compile Include="Areas\TreeBarHandlerAwareRecordList.cs" />
+    <Compile Include="DictionaryConfigurationServices.cs" />
     <Compile Include="IListArea.cs" />
     <Compile Include="Impls\PropertyTable.cs" />
     <Compile Include="Impls\Publisher.cs" />
@@ -989,10 +990,10 @@
       <DependentUpon>DictionaryConfigMgrDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Works\DictionaryConfigurationController.cs" />
-    <Compile Include="Works\DictionaryConfigurationDlg.cs">
+    <Compile Include="Areas\Lexicon\DictionaryConfiguration\DictionaryConfigurationDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Works\DictionaryConfigurationDlg.Designer.cs">
+    <Compile Include="Areas\Lexicon\DictionaryConfiguration\DictionaryConfigurationDlg.Designer.cs">
       <DependentUpon>DictionaryConfigurationDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Works\DictionaryConfigurationImportController.cs" />
@@ -1002,7 +1003,7 @@
     <Compile Include="Works\DictionaryConfigurationImportDlg.Designer.cs">
       <DependentUpon>DictionaryConfigurationImportDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Works\DictionaryConfigurationListener.cs" />
+    <Compile Include="Dumpster\DictionaryConfigurationListener.cs" />
     <Compile Include="Works\DictionaryConfigurationManagerController.cs" />
     <Compile Include="Works\DictionaryConfigurationManagerDlg.cs">
       <SubType>Form</SubType>
@@ -1010,11 +1011,9 @@
     <Compile Include="Works\DictionaryConfigurationManagerDlg.Designer.cs">
       <DependentUpon>DictionaryConfigurationManagerDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Works\DictionaryConfigurationMigrator.cs" />
-    <Compile Include="Works\DictionaryConfigurationMigrators\FirstAlphaMigrator.cs" />
-    <Compile Include="Works\DictionaryConfigurationMigrators\FirstBetaMigrator.cs" />
-    <Compile Include="Works\DictionaryConfigurationMigrators\IDictionaryConfigurationMigrator.cs" />
-    <Compile Include="Works\DictionaryConfigurationMigrators\PreHistoricMigrator.cs" />
+    <Compile Include="DictionaryConfigurationMigration\FirstAlphaMigrator.cs" />
+    <Compile Include="DictionaryConfigurationMigration\FirstBetaMigrator.cs" />
+    <Compile Include="DictionaryConfigurationMigration\PreHistoricMigrator.cs" />
     <Compile Include="Works\DictionaryConfigurationModel.cs" />
     <Compile Include="Works\DictionaryConfigurationNodeRenameDlg.cs">
       <SubType>Form</SubType>
@@ -1177,10 +1176,10 @@
     </Compile>
     <Compile Include="Works\WordsUsedOnlyElsewhereFilter.cs" />
     <Compile Include="Works\WritingSystemListHandler.cs" />
-    <Compile Include="Works\XhtmlDocView.cs">
+    <Compile Include="Areas\Lexicon\DictionaryConfiguration\XhtmlDocView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Works\XhtmlRecordDocView.cs">
+    <Compile Include="Areas\Lexicon\Tools\Edit\XhtmlRecordDocView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Works\XmlDiagnosticsDlg.cs">
@@ -1611,7 +1610,7 @@
       <DependentUpon>DictionaryConfigMgrDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Works\DictionaryConfigurationDlg.resx">
+    <EmbeddedResource Include="Areas\Lexicon\DictionaryConfiguration\DictionaryConfigurationDlg.resx">
       <DependentUpon>DictionaryConfigurationDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

@@ -2,10 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.IO;
+using LanguageExplorer;
 using LanguageExplorer.Areas;
-using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -42,33 +41,33 @@ namespace LanguageExplorerTests.Works
 		{
 			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconEditMachineName, false, false);
 			var projectConfigDir = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Dictionary");
-			Assert.That(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable), Is.EqualTo(projectConfigDir), "did not return expected directory");
+			Assert.That(DictionaryConfigurationServices.GetProjectConfigurationDirectory(m_propertyTable), Is.EqualTo(projectConfigDir), "did not return expected directory");
 
 			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalEditCompleteMachineName, false, false);
 			projectConfigDir = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "ReversalIndex");
-			Assert.That(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable), Is.EqualTo(projectConfigDir), "did not return expected directory");
+			Assert.That(DictionaryConfigurationServices.GetProjectConfigurationDirectory(m_propertyTable), Is.EqualTo(projectConfigDir), "did not return expected directory");
 
 			m_propertyTable.SetProperty(AreaServices.ToolChoice, "somethingElse", false, false);
-			Assert.IsNull(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable), "Other areas should cause null return");
+			Assert.IsNull(DictionaryConfigurationServices.GetProjectConfigurationDirectory(m_propertyTable), "Other areas should cause null return");
 		}
 
 		[Test]
 		public void GetDictionaryConfigurationBaseType_ReportsCorrectlyForDictionaryAndReversal()
 		{
 			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconEditMachineName, false, false);
-			Assert.AreEqual("Dictionary", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
+			Assert.AreEqual("Dictionary", DictionaryConfigurationServices.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
 			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconBrowseMachineName, false, false);
-			Assert.AreEqual("Dictionary", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
+			Assert.AreEqual("Dictionary", DictionaryConfigurationServices.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
 			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName, false, false);
-			Assert.AreEqual("Dictionary", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
+			Assert.AreEqual("Dictionary", DictionaryConfigurationServices.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
 
 			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalEditCompleteMachineName, false, false);
-			Assert.AreEqual("Reversal Index", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
+			Assert.AreEqual("Reversal Index", DictionaryConfigurationServices.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
 			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalBulkEditReversalEntriesMachineName, false, false);
-			Assert.AreEqual("Reversal Index", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
+			Assert.AreEqual("Reversal Index", DictionaryConfigurationServices.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
 
 			m_propertyTable.SetProperty(AreaServices.ToolChoice, "somethingElse", false, false);
-			Assert.IsNull(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), "Other areas should return null");
+			Assert.IsNull(DictionaryConfigurationServices.GetDictionaryConfigurationBaseType(m_propertyTable), "Other areas should return null");
 		}
 
 		[Test]
@@ -76,14 +75,14 @@ namespace LanguageExplorerTests.Works
 		{
 			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconEditMachineName, false, false);
 			var configDir = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
-			Assert.That(DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_propertyTable), Is.EqualTo(configDir), "did not return expected directory");
+			Assert.That(DictionaryConfigurationServices.GetDefaultConfigurationDirectory(m_propertyTable), Is.EqualTo(configDir), "did not return expected directory");
 
 			m_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalEditCompleteMachineName, false, false);
 			configDir = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "ReversalIndex");
-			Assert.That(DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_propertyTable), Is.EqualTo(configDir), "did not return expected directory");
+			Assert.That(DictionaryConfigurationServices.GetDefaultConfigurationDirectory(m_propertyTable), Is.EqualTo(configDir), "did not return expected directory");
 
 			m_propertyTable.SetProperty(AreaServices.ToolChoice, "somethingElse", false, false);
-			Assert.IsNull(DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_propertyTable), "Other areas should cause null return");
+			Assert.IsNull(DictionaryConfigurationServices.GetDefaultConfigurationDirectory(m_propertyTable), "Other areas should cause null return");
 		}
 	}
 }

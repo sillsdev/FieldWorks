@@ -28,5 +28,7 @@ namespace LanguageExplorer
 		/// </summary>
 		/// <param name="value"></param>
 		void WriteLine(string value);
+
+		string Content { get; }
 	}
 }

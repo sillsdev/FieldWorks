@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.Works;
@@ -28,16 +29,16 @@ namespace LanguageExplorerTests.Works
 	{
 		private FlexComponentParameters _flexComponentParameters;
 		private IPropertyTable _propertyTable;
-		private const string m_field = "LexEntry";
+		private const string _field = "LexEntry";
+		private DictionaryConfigurationModel _model;
 		private const int AnalysisWsId = -5;
-		private DictionaryConfigurationModel m_model;
 
 		#region Setup and Teardown
 		public override void TestSetup()
 		{
 			base.TestSetup();
 
-			m_model = new DictionaryConfigurationModel();
+			_model = new DictionaryConfigurationModel();
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			_propertyTable = _flexComponentParameters.PropertyTable;
 			// Add styles to the stylesheet to prevent intermittent unit test failures setting the selected index in the Styles Combobox
@@ -52,7 +53,7 @@ namespace LanguageExplorerTests.Works
 			_propertyTable = null;
 			_flexComponentParameters.PropertyTable.Dispose();
 			_flexComponentParameters = null;
-			m_model = null;
+			_model = null;
 
 			base.TestTearDown();
 		}
@@ -67,9 +68,9 @@ namespace LanguageExplorerTests.Works
 		{
 			using (var testView = new TestConfigurableDictionaryView())
 			{
-				m_model.Parts = new List<ConfigurableDictionaryNode> { BuildTestPartTree(2, 5) };
+				_model.Parts = new List<ConfigurableDictionaryNode> { BuildTestPartTree(2, 5) };
 
-				var dcc = new DictionaryConfigurationController { View = testView, _model = m_model };
+				var dcc = new DictionaryConfigurationController { View = testView, _model = _model };
 
 				//SUT
 				dcc.PopulateTreeView();
@@ -433,12 +434,12 @@ namespace LanguageExplorerTests.Works
 		{
 			var testDefaultFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
 			var testUserFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
-			m_model.Label = "configurationALabel";
-			m_model.FilePath = string.Concat(Path.Combine(testDefaultFolder.FullName, "configurationA"), DictionaryConfigurationModel.FileExtension);
-			m_model.Save();
-			m_model.Label = "configurationBLabel";
-			m_model.FilePath = string.Concat(Path.Combine(testUserFolder.FullName, "configurationB"), DictionaryConfigurationModel.FileExtension);
-			m_model.Save();
+			_model.Label = "configurationALabel";
+			_model.FilePath = string.Concat(Path.Combine(testDefaultFolder.FullName, "configurationA"), DictionaryConfigurationModel.FileExtension);
+			_model.Save();
+			_model.Label = "configurationBLabel";
+			_model.FilePath = string.Concat(Path.Combine(testUserFolder.FullName, "configurationB"), DictionaryConfigurationModel.FileExtension);
+			_model.Save();
 
 			// SUT
 			var labels = DictionaryConfigurationController.GetDictionaryConfigurationLabels(Cache, testDefaultFolder.FullName, testUserFolder.FullName);
@@ -611,12 +612,12 @@ namespace LanguageExplorerTests.Works
 				: DictionaryConfigurationController.Direction.Down;
 			using (var view = new TestConfigurableDictionaryView())
 			{
-				var controller = new DictionaryConfigurationController { View = view, _model = m_model };
+				var controller = new DictionaryConfigurationController { View = view, _model = _model };
 				var rootNode = new ConfigurableDictionaryNode { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
 				AddChildrenToNode(rootNode, 2);
 				var movingChild = rootNode.Children[movingChildOriginalPos];
 				var otherChild = rootNode.Children[movingChildExpectedPos];
-				m_model.Parts = new List<ConfigurableDictionaryNode> { rootNode };
+				_model.Parts = new List<ConfigurableDictionaryNode> { rootNode };
 				// SUT
 				controller.Reorder(movingChild, directionToMove);
 				Assert.That(rootNode.Children[movingChildExpectedPos], Is.EqualTo(movingChild), "movingChild should have been moved");
@@ -639,12 +640,12 @@ namespace LanguageExplorerTests.Works
 				: DictionaryConfigurationController.Direction.Down;
 			using (var view = new TestConfigurableDictionaryView())
 			{
-				var controller = new DictionaryConfigurationController { View = view, _model = m_model };
+				var controller = new DictionaryConfigurationController { View = view, _model = _model };
 				var rootNode = new ConfigurableDictionaryNode { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
 				AddChildrenToNode(rootNode, 2);
 				var groupNode = AddGroupingNodeToNode(rootNode, 1, groupChildren);
 				var movingChild = rootNode.Children[movingChildOriginalPos];
-				m_model.Parts = new List<ConfigurableDictionaryNode> { rootNode };
+				_model.Parts = new List<ConfigurableDictionaryNode> { rootNode };
 				// SUT
 				controller.Reorder(movingChild, directionToMove);
 				Assert.AreEqual(1 + groupChildren, groupNode.Children.Count, "child not moved under the grouping node");
@@ -666,11 +667,11 @@ namespace LanguageExplorerTests.Works
 
 			using (var view = new TestConfigurableDictionaryView())
 			{
-				var controller = new DictionaryConfigurationController { View = view, _model = m_model };
+				var controller = new DictionaryConfigurationController { View = view, _model = _model };
 				var rootNode = new ConfigurableDictionaryNode { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
 				var groupNode = AddGroupingNodeToNode(rootNode, 0, 2); // add two children under the group
 				var movingChild = groupNode.Children[movingChildOriginalPos];
-				m_model.Parts = new List<ConfigurableDictionaryNode> { rootNode };
+				_model.Parts = new List<ConfigurableDictionaryNode> { rootNode };
 				// SUT
 				controller.Reorder(movingChild, directionToMove);
 				Assert.AreEqual(2, rootNode.Children.Count, "child not moved out of the grouping node");
@@ -689,12 +690,12 @@ namespace LanguageExplorerTests.Works
 				: DictionaryConfigurationController.Direction.Down;
 			using (var view = new TestConfigurableDictionaryView())
 			{
-				var controller = new DictionaryConfigurationController { View = view, _model = m_model };
+				var controller = new DictionaryConfigurationController { View = view, _model = _model };
 				var rootNode = new ConfigurableDictionaryNode { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
 				AddGroupingNodeToNode(rootNode, 0, 0);
 				var middleGroupNode = AddGroupingNodeToNode(rootNode, 1, 0);
 				AddGroupingNodeToNode(rootNode, 2, 0);
-				m_model.Parts = new List<ConfigurableDictionaryNode> { rootNode };
+				_model.Parts = new List<ConfigurableDictionaryNode> { rootNode };
 				// SUT
 				controller.Reorder(middleGroupNode, directionToMove);
 				Assert.AreEqual(3, rootNode.Children.Count, "Root has too few children, group must have moved into a group");
@@ -903,24 +904,24 @@ namespace LanguageExplorerTests.Works
 		[Test]
 		public void GetThePublicationsForTheCurrentConfiguration()
 		{
-			var controller = new DictionaryConfigurationController { _model = m_model };
+			var controller = new DictionaryConfigurationController { _model = _model };
 
 			//ensure this is handled gracefully when the publications have not been initialized.
 			Assert.AreEqual(controller.AffectedPublications, xWorksStrings.ksNone1);
 
-			m_model.Publications = new List<string> { "A" };
+			_model.Publications = new List<string> { "A" };
 			Assert.AreEqual(controller.AffectedPublications, "A");
 
-			m_model.Publications = new List<string> { "A", "B" };
+			_model.Publications = new List<string> { "A", "B" };
 			Assert.AreEqual(controller.AffectedPublications, "A, B");
 		}
 
 		[Test]
 		public void DisplaysAllPublicationsIfSet()
 		{
-			var controller = new DictionaryConfigurationController { _model = m_model };
-			m_model.Publications = new List<string> { "A", "B" };
-			m_model.AllPublications = true;
+			var controller = new DictionaryConfigurationController { _model = _model };
+			_model.Publications = new List<string> { "A", "B" };
+			_model.AllPublications = true;
 
 			Assert.That(controller.AffectedPublications, Is.EqualTo("All publications"), "Show that it's all-publications if so.");
 		}
@@ -1498,11 +1499,11 @@ namespace LanguageExplorerTests.Works
 			CssGeneratorTests.PopulateFieldsForTesting(reversalNode);
 			using (var testView = new TestConfigurableDictionaryView())
 			{
-				m_model.Parts = new List<ConfigurableDictionaryNode> { reversalNode };
+				_model.Parts = new List<ConfigurableDictionaryNode> { reversalNode };
 
 				var dcc = new DictionaryConfigurationController
 				{
-					View = testView, _model = m_model,
+					View = testView, _model = _model,
 					_previewEntry = DictionaryConfigurationController.GetDefaultEntryForType("Reversal Index", Cache)
 				};
 
@@ -1695,12 +1696,12 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "LexEntry", Label = "Main Entry", CSSClassNameOverride = "entry", IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { headwordNode, summaryNode, restrictionsNode, sensesNode },
 			};
-			m_model.Parts = new List<ConfigurableDictionaryNode> {entryNode};
-			CssGeneratorTests.PopulateFieldsForTesting(m_model);
+			_model.Parts = new List<ConfigurableDictionaryNode> {entryNode};
+			CssGeneratorTests.PopulateFieldsForTesting(_model);
 			using (var testView = new TestConfigurableDictionaryView())
 			{
-				var dcc = new DictionaryConfigurationController {View = testView, _model = m_model};
-				dcc.CreateTreeOfTreeNodes(null, m_model.Parts);
+				var dcc = new DictionaryConfigurationController {View = testView, _model = _model};
+				dcc.CreateTreeOfTreeNodes(null, _model.Parts);
 				//SUT
 				var treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNull(treeNode, "No TreeNode should be selected to start out with");
@@ -1731,7 +1732,7 @@ namespace LanguageExplorerTests.Works
 				Assert.AreEqual(headwordNode.Label, treeNode.Text, "The TreeNode for entry/mainheadword should have the right Text");
 
 				ClearSelectedNode(dcc);
-				dcc.SetStartingNode(new List<string> { "entry " + XhtmlDocView.CurrentSelectedEntryClass, "mainheadword" });
+				dcc.SetStartingNode(new List<string> { "entry " + DictionaryConfigurationServices.CurrentSelectedEntryClass, "mainheadword" });
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNotNull(treeNode, "entry/mainheadword should find a TreeNode, even if this is the selected entry");
 				Assert.AreSame(headwordNode, treeNode.Tag, "entry/mainheadword should find the right TreeNode");
@@ -1797,7 +1798,7 @@ namespace LanguageExplorerTests.Works
 				});
 			Assert.AreSame(subsubsensesNode, node,
 				"Sense Numbers are configured on the node itself, not its ReferencedOrDirectChildren.{0}Expected: {1}{0}But got:  {2}", Environment.NewLine,
-				DictionaryConfigurationMigrator.BuildPathStringFromNode(subsubsensesNode), DictionaryConfigurationMigrator.BuildPathStringFromNode(node));
+				DictionaryConfigurationServices.BuildPathStringFromNode(subsubsensesNode), DictionaryConfigurationServices.BuildPathStringFromNode(node));
 		}
 
 		[Test]
@@ -2063,7 +2064,7 @@ namespace LanguageExplorerTests.Works
 			var configNodeChild = new ConfigurableDictionaryNode { Label = "child", FieldDescription = "someField" };
 			var configNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = m_field,
+				FieldDescription = _field,
 				Label = "parent",
 				Children = new List<ConfigurableDictionaryNode> { configNodeChild }
 			};
@@ -2076,8 +2077,8 @@ namespace LanguageExplorerTests.Works
 			Assert.AreEqual(1, model.SharedItems.Count, "Should be 1 shared item");
 			Assert.AreSame(configNode, model.Parts[0]);
 			var sharedItem = model.SharedItems[0];
-			Assert.AreEqual(m_field, configNode.FieldDescription, "Part's field");
-			Assert.AreEqual(m_field, sharedItem.FieldDescription, "Shared Item's field");
+			Assert.AreEqual(_field, configNode.FieldDescription, "Part's field");
+			Assert.AreEqual(_field, sharedItem.FieldDescription, "Shared Item's field");
 			Assert.AreEqual("shared" + CssGenerator.GetClassAttributeForConfig(configNode), CssGenerator.GetClassAttributeForConfig(sharedItem));
 			Assert.That(sharedItem.IsEnabled, "shared items are always enabled (for configurability)");
 			Assert.AreSame(configNode, sharedItem.Parent, "The original owner should be the 'master parent'");
@@ -2094,7 +2095,7 @@ namespace LanguageExplorerTests.Works
 			var configNodeChild = new ConfigurableDictionaryNode { Label = "child", FieldDescription = "someField" };
 			var configNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = m_field,
+				FieldDescription = _field,
 				Label = "parent",
 				Children = new List<ConfigurableDictionaryNode> { configNodeChild }
 			};
@@ -2112,11 +2113,11 @@ namespace LanguageExplorerTests.Works
 			var configNodeChild = new ConfigurableDictionaryNode { Label = "child", FieldDescription = "someField" };
 			var configNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = m_field,
+				FieldDescription = _field,
 				Label = "parent",
 				Children = new List<ConfigurableDictionaryNode> { configNodeChild }
 			};
-			var preextantSharedNode = new ConfigurableDictionaryNode { CSSClassNameOverride = string.Format("shared{0}", m_field).ToLower() };
+			var preextantSharedNode = new ConfigurableDictionaryNode { CSSClassNameOverride = string.Format("shared{0}", _field).ToLower() };
 			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(configNode, preextantSharedNode);
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
 
@@ -2130,11 +2131,11 @@ namespace LanguageExplorerTests.Works
 			var configNodeChild = new ConfigurableDictionaryNode { Label = "child", FieldDescription = "someField" };
 			var configNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = m_field,
+				FieldDescription = _field,
 				Label = "parent",
 				Children = new List<ConfigurableDictionaryNode> { configNodeChild }
 			};
-			var preextantSharedNode = new ConfigurableDictionaryNode { FieldDescription = m_field, Parent = new ConfigurableDictionaryNode() };
+			var preextantSharedNode = new ConfigurableDictionaryNode { FieldDescription = _field, Parent = new ConfigurableDictionaryNode() };
 			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(configNode, preextantSharedNode);
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
 
@@ -2157,7 +2158,7 @@ namespace LanguageExplorerTests.Works
 		[Test]
 		public void ShareNodeAsReference_DoesntShareChildlessNode()
 		{
-			var configNode = new ConfigurableDictionaryNode { FieldDescription = m_field, Label = "parent" };
+			var configNode = new ConfigurableDictionaryNode { FieldDescription = _field, Label = "parent" };
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { configNode } };
 
 			// SUT
@@ -2267,17 +2268,17 @@ namespace LanguageExplorerTests.Works
 				CSSClassNameOverride = "entry",
 				Children = new List<ConfigurableDictionaryNode> { headwordNode, sensesNode },
 			};
-			m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
-			m_model.SharedItems = new List<ConfigurableDictionaryNode> { referencedConfigNode };
-			CssGeneratorTests.PopulateFieldsForTesting(m_model);
+			_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+			_model.SharedItems = new List<ConfigurableDictionaryNode> { referencedConfigNode };
+			CssGeneratorTests.PopulateFieldsForTesting(_model);
 			var subSenseGloss = subsenseClassListArray.ToList();
 			subSenseGloss.Add("gloss");
 			var subSenseUndefined = subsenseClassListArray.ToList();
 			subSenseUndefined.Add("undefined");
 			using (var testView = new TestConfigurableDictionaryView())
 			{
-				var dcc = new DictionaryConfigurationController { View = testView, _model = m_model };
-				dcc.CreateTreeOfTreeNodes(null, m_model.Parts);
+				var dcc = new DictionaryConfigurationController { View = testView, _model = _model };
+				dcc.CreateTreeOfTreeNodes(null, _model.Parts);
 
 				//Test normal case first
 				dcc.SetStartingNode(new List<string> { "entry", "senses", "sensecontent", "sense", "gloss" });
@@ -2335,9 +2336,9 @@ namespace LanguageExplorerTests.Works
 				CSSClassNameOverride = "entry",
 				Children = new List<ConfigurableDictionaryNode> { headwordNode, subentriesNode },
 			};
-			m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
-			m_model.SharedItems = new List<ConfigurableDictionaryNode> { referencedConfigNode };
-			CssGeneratorTests.PopulateFieldsForTesting(m_model);
+			_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+			_model.SharedItems = new List<ConfigurableDictionaryNode> { referencedConfigNode };
+			CssGeneratorTests.PopulateFieldsForTesting(_model);
 			var subentryGloss = subentryClassListArray.ToList();
 			subentryGloss.Add("gloss");
 			var subentryUndefined = subentryClassListArray.ToList();
@@ -2346,8 +2347,8 @@ namespace LanguageExplorerTests.Works
 			subentriesClassList.RemoveAt(subentriesClassList.Count - 1);
 			using (var testView = new TestConfigurableDictionaryView())
 			{
-				var dcc = new DictionaryConfigurationController { View = testView, _model = m_model };
-				dcc.CreateTreeOfTreeNodes(null, m_model.Parts);
+				var dcc = new DictionaryConfigurationController { View = testView, _model = _model };
+				dcc.CreateTreeOfTreeNodes(null, _model.Parts);
 
 				//SUT
 				dcc.SetStartingNode(subentryGloss);

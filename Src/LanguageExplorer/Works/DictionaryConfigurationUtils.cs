@@ -22,7 +22,6 @@ namespace LanguageExplorer.Works
 		/// Stores the configuration name as the key, and the file path as the value
 		/// User configuration files with the same name as a shipped configuration will trump the shipped
 		/// </summary>
-		/// <seealso cref="DictionaryConfigurationController.ListDictionaryConfigurationChoices()"/>
 		public static SortedDictionary<string, string> GatherBuiltInAndUserConfigurations(LcmCache cache, string configObjectName)
 		{
 			var configurations = new SortedDictionary<string, string>();

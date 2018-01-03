@@ -10,7 +10,6 @@ using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using LanguageExplorer.Works;
@@ -93,7 +92,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				ToolMachineName = MachineName,
 				FirstControlParameters = new SplitterChildControlParameters
 				{
-					Control = new RecordDocXmlView(XDocument.Parse(LexiconResources.LexiconEditRecordDocViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, (StatusBarProgressPanel)majorFlexComponentParameters.Statusbar.Panels[LanguageExplorerConstants.StatusBarPanelProgressBar]), Label = "Dictionary"
+					Control = new XhtmlRecordDocView(XDocument.Parse(LexiconResources.LexiconEditRecordDocViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip)), Label = "Dictionary"
 				},
 				SecondControlParameters = new SplitterChildControlParameters
 				{
@@ -135,7 +134,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// Too early before now.
 			_lexiconEditToolMenuHelper.Initialize();
 			recordEditView.FinishInitialization();
-			((RecordDocXmlView)nestedMultiPaneParameters.FirstControlParameters.Control).ReallyShowRecordNow();
 		}
 
 		/// <summary>

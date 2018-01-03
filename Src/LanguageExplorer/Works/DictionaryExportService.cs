@@ -88,7 +88,7 @@ namespace LanguageExplorer.Works
 			using (RecordListActivator.ActivateRecordListMatchingExportType(DictionaryType, _statusBar))
 			{
 				configuration = configuration ?? new DictionaryConfigurationModel(
-					DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "Dictionary"), Cache);
+					DictionaryConfigurationServices.GetCurrentConfiguration(m_propertyTable, "Dictionary"), Cache);
 				ExportConfiguredXhtml(xhtmlPath, configuration, DictionaryType, progress);
 			}
 		}
@@ -99,7 +99,7 @@ namespace LanguageExplorer.Works
 			using (RecordListActivator.ActivateRecordListMatchingExportType(ReversalType, _statusBar))
 			using (ReversalIndexActivator.ActivateReversalIndex(reversalWs, m_propertyTable, Cache, MyRecordList))
 			{
-				configuration = configuration ?? new DictionaryConfigurationModel(DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "ReversalIndex"), Cache);
+				configuration = configuration ?? new DictionaryConfigurationModel(DictionaryConfigurationServices.GetCurrentConfiguration(m_propertyTable, "ReversalIndex"), Cache);
 				ExportConfiguredXhtml(xhtmlPath, configuration, ReversalType, progress);
 			}
 		}

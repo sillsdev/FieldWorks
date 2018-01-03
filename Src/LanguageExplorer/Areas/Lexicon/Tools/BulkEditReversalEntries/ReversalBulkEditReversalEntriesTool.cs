@@ -9,6 +9,7 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
@@ -205,7 +206,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 				var controller = new DictionaryConfigurationController(dlg, _recordList?.CurrentObject);
 				controller.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
 				dlg.Text = string.Format(xWorksStrings.ConfigureTitle, xWorksStrings.Dictionary);
-				dlg.HelpTopic = "khtpConfigureDictionary";
+				dlg.HelpTopic = "khtpConfigureReversalIndex";
 				dlg.ShowDialog((IWin32Window)mainWindow);
 				refreshNeeded = controller.MasterRefreshRequired;
 			}
