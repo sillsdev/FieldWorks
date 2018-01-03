@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using LanguageExplorer;
 using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.LCModel;

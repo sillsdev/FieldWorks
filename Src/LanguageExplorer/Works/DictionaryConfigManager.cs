@@ -1,12 +1,6 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DictionaryConfigManager.cs
-// Responsibility: GordonM
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -19,12 +13,10 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Works
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Manages the stored dictionary configurations. In the Model-View-Presenter pattern, this
 	/// is the Presenter which acts on the dialog (or testing stub) and persists the data.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	internal class DictionaryConfigManager : IDictConfigPresenter, IDictConfigManager
 	{
 		private readonly IDictConfigViewer m_viewer;
@@ -391,75 +383,69 @@ namespace LanguageExplorer.Works
 		}
 
 		#endregion
-	}
-
-	/// <summary>
-	/// Item to be managed by the DictionaryConfigManager. Represents a user-configurable
-	/// Dictionary view layout.
-	/// </summary>
-	internal class DictConfigItem
-	{
-		private readonly string m_initialName;
-
-		#region Auto-Properties
-
-		public string DispName { get; set; }
-		public string UniqueCode { get; private set; }
-		public bool IsProtected { get; private set; }
-		public bool UserMarkedDelete { get; set; }
-		public string CopyOf { get; private set; }
-
-		#endregion
-
-		private const string ksUnnamed = "NoName";
 
 		/// <summary>
-		/// Constructor for config items being sent to dialog.
+		/// Item to be managed by the DictionaryConfigManager. Represents a user-configurable
+		/// Dictionary view layout.
 		/// </summary>
-		/// <param name="code"></param>
-		/// <param name="name"></param>
-		/// <param name="original">Original items to be protected.</param>
-		public DictConfigItem(string code, string name, bool original)
+		internal class DictConfigItem
 		{
-			UniqueCode = code;
-			m_initialName = name;
-			DispName = m_initialName;
-			IsProtected = original;
-			CopyOf = null;
-			UserMarkedDelete = false;
-		}
+			private readonly string m_initialName;
 
-		/// <summary>
-		/// Constructor for config items created by the Manager as copies of
-		/// an existing item.
-		/// </summary>
-		/// <param name="source"></param>
-		public DictConfigItem(DictConfigItem source)
-		{
-			UniqueCode = CreateUniqueIdCode(source.DispName);
-			IsProtected = false;
-			UserMarkedDelete = false;
-			CopyOf = source.UniqueCode;
-			DispName = String.Format(xWorksStrings.ksDictConfigCopyOf, source.DispName);
-			m_initialName = DispName;
-		}
+			#region Auto-Properties
 
-		private static string CreateUniqueIdCode(string oldName)
-		{
-			var nameSeed = oldName.PadRight(5);
-			var result = nameSeed + ksUnnamed; // make sure we don't have something too short!
-			var num = DateTime.UtcNow.Millisecond.ToString();
-			return result.Substring(0, 5) + num;
-		}
+			public string DispName { get; set; }
+			public string UniqueCode { get; }
+			public bool IsProtected { get; }
+			public bool UserMarkedDelete { get; set; }
+			public string CopyOf { get; }
 
-		public bool IsNew
-		{
-			get { return (!String.IsNullOrEmpty(CopyOf)); }
-		}
+			#endregion
 
-		public bool IsRenamed
-		{
-			get { return !IsNew && !UserMarkedDelete && m_initialName != DispName; }
+			private const string ksUnnamed = "NoName";
+
+			/// <summary>
+			/// Constructor for config items being sent to dialog.
+			/// </summary>
+			/// <param name="code"></param>
+			/// <param name="name"></param>
+			/// <param name="original">Original items to be protected.</param>
+			public DictConfigItem(string code, string name, bool original)
+			{
+				UniqueCode = code;
+				m_initialName = name;
+				DispName = m_initialName;
+				IsProtected = original;
+				CopyOf = null;
+				UserMarkedDelete = false;
+			}
+
+			/// <summary>
+			/// Constructor for config items created by the Manager as copies of
+			/// an existing item.
+			/// </summary>
+			/// <param name="source"></param>
+			public DictConfigItem(DictConfigItem source)
+			{
+				UniqueCode = CreateUniqueIdCode(source.DispName);
+				IsProtected = false;
+				UserMarkedDelete = false;
+				CopyOf = source.UniqueCode;
+				DispName = String.Format(xWorksStrings.ksDictConfigCopyOf, source.DispName);
+				m_initialName = DispName;
+			}
+
+			private static string CreateUniqueIdCode(string oldName)
+			{
+				var nameSeed = oldName.PadRight(5);
+				var result = nameSeed + ksUnnamed; // make sure we don't have something too short!
+				var num = DateTime.UtcNow.Millisecond.ToString();
+				return result.Substring(0, 5) + num;
+			}
+
+			public bool IsNew => (!string.IsNullOrEmpty(CopyOf));
+
+			public bool IsRenamed => !IsNew && !UserMarkedDelete && m_initialName != DispName;
 		}
 	}
 }

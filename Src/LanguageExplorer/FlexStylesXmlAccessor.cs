@@ -15,7 +15,6 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.LCModel.DomainServices;
-using LanguageExplorer.Works;
 using SIL.LCModel.Core.KernelInterfaces;
 using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
 
@@ -223,7 +222,7 @@ namespace LanguageExplorer
 			writer.WriteAttributeString("version", GetVersion(m_sourceStyles).ToString());
 			foreach (var style in StyleCollection)
 			{
-				if (DictionaryConfigurationImportController.UnsupportedStyles.Contains(style.Name))
+				if (DictionaryConfigurationServices.UnsupportedStyles.Contains(style.Name))
 					continue;
 				var exportStyle = new ExportStyleInfo(style, style.Rules);
 				WriteStyleXml(exportStyle, writer);

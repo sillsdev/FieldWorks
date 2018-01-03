@@ -577,7 +577,7 @@ namespace LanguageExplorerTests.Works
 		public void GenerateXHTMLForEntry_DefaultRootGeneratesResult()
 		{
 			var defaultRoot = string.Concat(
-				Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary", "Root"), DictionaryConfigurationModel.FileExtension);
+				Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary", "Root"), LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			var entry = CreateInterestingLexEntry(Cache);
 			var dictionaryModel = new DictionaryConfigurationModel(defaultRoot, Cache);
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
@@ -8439,7 +8439,7 @@ namespace LanguageExplorerTests.Works
 			var model = new DictionaryConfigurationModel
 			{
 				Parts = new List<ConfigurableDictionaryNode>(),
-				FilePath = Path.Combine(DictionaryConfigurationServices.GetProjectConfigurationDirectory(_flexComponentParameters.PropertyTable), "filename" + DictionaryConfigurationModel.FileExtension)
+				FilePath = Path.Combine(DictionaryConfigurationServices.GetProjectConfigurationDirectory(_flexComponentParameters.PropertyTable), "filename" + LanguageExplorerConstants.DictionaryConfigurationFileExtension)
 			};
 			var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entries, null, model, _flexComponentParameters.PropertyTable, Cache, _recordList);
 			try
@@ -9513,7 +9513,7 @@ namespace LanguageExplorerTests.Works
 		/// <summary>
 		/// Creates a DictionaryConfigurationModel with one Main and one of each neeeded Minor Entry nodes, all with enabled HeadWord children
 		/// </summary>
-		internal static DictionaryConfigurationModel CreateInterestingConfigurationModel(LcmCache cache, IPropertyTable propertyTable, DictionaryConfigurationModel.ConfigType configType = DictionaryConfigurationModel.ConfigType.Root)
+		internal static DictionaryConfigurationModel CreateInterestingConfigurationModel(LcmCache cache, IPropertyTable propertyTable, ConfigType configType = ConfigType.Root)
 		{
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
@@ -9532,9 +9532,9 @@ namespace LanguageExplorerTests.Works
 				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
 				FieldDescription = "LexEntry"
 			};
-			if (configType == DictionaryConfigurationModel.ConfigType.Hybrid || configType == DictionaryConfigurationModel.ConfigType.Root)
+			if (configType == ConfigType.Hybrid || configType == ConfigType.Root)
 				mainEntryNode.Children.Add(subEntryNode);
-			if (configType == DictionaryConfigurationModel.ConfigType.Hybrid || configType == DictionaryConfigurationModel.ConfigType.Lexeme)
+			if (configType == ConfigType.Hybrid || configType == ConfigType.Lexeme)
 				mainEntryNode.DictionaryNodeOptions = GetFullyEnabledListOptions(cache, DictionaryNodeListOptions.ListIds.Complex);
 
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
@@ -9561,16 +9561,16 @@ namespace LanguageExplorerTests.Works
 				}
 			}
 			pathParts.Insert(idx, "TestData");
-			pathParts.Add("filename" + DictionaryConfigurationModel.FileExtension);
+			pathParts.Add("filename" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			var model = new DictionaryConfigurationModel
 			{
 				AllPublications = true,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorEntryNode, minorSecondNode },
 				FilePath = propertyTable == null ? null : Path.Combine(pathParts.ToArray()),
-				IsRootBased = configType == DictionaryConfigurationModel.ConfigType.Root
+				IsRootBased = configType == ConfigType.Root
 			};
 
-			if (configType != DictionaryConfigurationModel.ConfigType.Root)
+			if (configType != ConfigType.Root)
 				model.Parts.Remove(minorEntryNode);
 
 			return model;

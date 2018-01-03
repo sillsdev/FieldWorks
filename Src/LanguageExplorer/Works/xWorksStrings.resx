@@ -920,4 +920,10 @@ Do you want to continue with the export?</value>
     <value>Reset this view</value>
     <comment>Used in Dictionary Config Mgr dialog</comment>
   </data>
+  <data name="ksRootSenseOnSubentriesGoneDlgLabel" xml:space="preserve">
+    <value>Sense Subentries will be hidden</value>
+  </data>
+  <data name="ksRootSenseOnSubentriesGoneDlgText" xml:space="preserve">
+    <value>Language Explorer does not yet have the capability to display subentries of senses when the senses are not themselves shown in separate paragraphs.</value>
+  </data>
 </root>

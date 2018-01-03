@@ -674,7 +674,7 @@ namespace LanguageExplorerTests.Works
 
 				// SUT
 				Assert.Throws<ArgumentOutOfRangeException>(() =>
-					controller.Reorder(listViewItems.First(), DictionaryConfigurationController.Direction.Up),
+					controller.Reorder(listViewItems.First(), Direction.Up),
 					"Should not be able to move the top item up");
 
 				Assert.AreEqual(originalListViewItems.Count, listViewItems.Count, "Number of items definitely should not have changed");
@@ -712,7 +712,7 @@ namespace LanguageExplorerTests.Works
 
 				// SUT
 				Assert.Throws<ArgumentOutOfRangeException>(() =>
-					controller.Reorder(listViewItems.Last(), DictionaryConfigurationController.Direction.Down),
+					controller.Reorder(listViewItems.Last(), Direction.Down),
 					"Should not be able to move the bottom item down");
 
 				Assert.AreEqual(originalListViewItems.Count, listViewItems.Count, "Number of items definitely should not have changed");
@@ -1083,10 +1083,10 @@ namespace LanguageExplorerTests.Works
 
 				// SUT
 				Assert.Throws<ArgumentOutOfRangeException>(() =>
-					controller.Reorder(listViewItems[0], DictionaryConfigurationController.Direction.Down),
+					controller.Reorder(listViewItems[0], Direction.Down),
 					"Should not be able to reorder default writing systems");
 				Assert.Throws<ArgumentOutOfRangeException>(() =>
-					controller.Reorder(listViewItems.Last(item => item.Tag is int), DictionaryConfigurationController.Direction.Up),
+					controller.Reorder(listViewItems.Last(item => item.Tag is int), Direction.Up),
 					"Should not be able to reorder default writing systems");
 
 				Assert.AreEqual(originalListViewItems.Count, listViewItems.Count, "Number of items definitely should not have changed");
@@ -1115,7 +1115,7 @@ namespace LanguageExplorerTests.Works
 
 				// SUT
 				Assert.Throws<ArgumentOutOfRangeException>(() => controller.Reorder(
-					listViewItems[listViewItems.Last(item => item.Tag is int).Index + 1], DictionaryConfigurationController.Direction.Up),
+					listViewItems[listViewItems.Last(item => item.Tag is int).Index + 1], Direction.Up),
 					"Should not be able to move a named writing system above a default writing systems");
 
 				Assert.AreEqual(originalListViewItems.Count, listViewItems.Count, "Number of items definitely should not have changed");

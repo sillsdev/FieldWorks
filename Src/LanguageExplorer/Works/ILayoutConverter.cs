@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,7 +16,7 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// This method is called when the entire layout has been converted a tree of LayoutTreeNodes
 		/// </summary>
-		void AddDictionaryTypeItem(XElement layoutNode, List<XmlDocConfigureDlg.LayoutTreeNode> oldNodes);
+		void AddDictionaryTypeItem(XElement layoutNode, List<LayoutTreeNode> oldNodes);
 
 		/// <summary>
 		/// Returns the configuration nodes for all layout types
@@ -36,7 +36,7 @@ namespace LanguageExplorer.Works
 		void ExpandWsTaggedNodes(string sWsTag);
 
 		/// <summary/>
-		void SetOriginalIndexForNode(XmlDocConfigureDlg.LayoutTreeNode mainLayoutNode);
+		void SetOriginalIndexForNode(LayoutTreeNode mainLayoutNode);
 
 		/// <summary/>
 		XElement GetLayoutElement(string className, string layoutName);
@@ -45,10 +45,10 @@ namespace LanguageExplorer.Works
 		XElement GetPartElement(string className, string sRef);
 
 		/// <summary/>
-		void BuildRelationTypeList(XmlDocConfigureDlg.LayoutTreeNode ltn);
+		void BuildRelationTypeList(LayoutTreeNode ltn);
 
 		/// <summary/>
-		void BuildEntryTypeList(XmlDocConfigureDlg.LayoutTreeNode ltn, string layoutName);
+		void BuildEntryTypeList(LayoutTreeNode ltn, string layoutName);
 
 		void LogConversionError(string errorLog);
 	}

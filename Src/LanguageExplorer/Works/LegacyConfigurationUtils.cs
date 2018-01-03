@@ -1,4 +1,4 @@
-// Copyright (c) 2014 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -105,9 +105,9 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Configure LayoutType via its child configure nodes
 		/// </summary>
-		internal static List<XmlDocConfigureDlg.LayoutTreeNode> BuildLayoutTree(XElement xnLayoutType, ILayoutConverter converter)
+		internal static List<LayoutTreeNode> BuildLayoutTree(XElement xnLayoutType, ILayoutConverter converter)
 		{
-			var treeNodeList = new List<XmlDocConfigureDlg.LayoutTreeNode>();
+			var treeNodeList = new List<LayoutTreeNode>();
 			foreach (var config in xnLayoutType.Elements())
 			{
 				// expects a configure element
@@ -117,7 +117,7 @@ namespace LanguageExplorer.Works
 				if (ltn != null)
 				{
 					if (XmlUtils.GetOptionalBooleanAttributeValue(config, "hideConfig", false))
-						treeNodeList.AddRange(Enumerable.Cast<XmlDocConfigureDlg.LayoutTreeNode>(ltn.Nodes));
+						treeNodeList.AddRange(Enumerable.Cast<LayoutTreeNode>(ltn.Nodes));
 					else
 						treeNodeList.Add(ltn);
 				}
@@ -128,9 +128,9 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Builds control tree nodes based on a configure element
 		/// </summary>
-		private static XmlDocConfigureDlg.LayoutTreeNode BuildMainLayout(XElement config, ILayoutConverter converter)
+		private static LayoutTreeNode BuildMainLayout(XElement config, ILayoutConverter converter)
 		{
-			var mainLayoutNode = new XmlDocConfigureDlg.LayoutTreeNode(config, converter, null);
+			var mainLayoutNode = new LayoutTreeNode(config, converter, null);
 			converter.SetOriginalIndexForNode(mainLayoutNode);
 			var className = mainLayoutNode.ClassName;
 			var layoutName = mainLayoutNode.LayoutName;
@@ -149,7 +149,7 @@ namespace LanguageExplorer.Works
 			return mainLayoutNode;
 		}
 
-		internal static void AddChildNodes(XElement layout, XmlDocConfigureDlg.LayoutTreeNode ltnParent, int iStart, ILayoutConverter converter)
+		internal static void AddChildNodes(XElement layout, LayoutTreeNode ltnParent, int iStart, ILayoutConverter converter)
 		{
 			bool fMerging = iStart < ltnParent.Nodes.Count;
 			string className = XmlUtils.GetMandatoryAttributeValue(layout, "class");
@@ -185,11 +185,11 @@ namespace LanguageExplorer.Works
 					if (part == null && sRef != "$child")
 						continue;
 					var fHide = XmlUtils.GetOptionalBooleanAttributeValue(node, "hideConfig", false);
-					XmlDocConfigureDlg.LayoutTreeNode ltn;
+					LayoutTreeNode ltn;
 					var cOrig = 0;
 					if (!fHide)
 					{
-						ltn = new XmlDocConfigureDlg.LayoutTreeNode(node, converter, className)
+						ltn = new LayoutTreeNode(node, converter, className)
 							{
 								OriginalIndex = ltnParent.Nodes.Count,
 								ParentLayout = layout,
@@ -230,7 +230,7 @@ namespace LanguageExplorer.Works
 							var cNew = ltn.Nodes.Count - cOrig;
 							if(cNew > 1)
 							{
-								var msg = String.Format("{0} nodes for a hidden PartRef ({1})!", cNew, node.GetOuterXml());
+								var msg = $"{cNew} nodes for a hidden PartRef ({node.GetOuterXml()})!";
 								converter.LogConversionError(msg);
 							}
 						}
@@ -247,7 +247,7 @@ namespace LanguageExplorer.Works
 		/// Walk the tree of child nodes, storing information for each &lt;obj&gt; or &lt;seq&gt;
 		/// node.
 		/// </summary>
-		private static void ProcessChildNodes(IEnumerable<XElement> xmlNodeList, string className, XmlDocConfigureDlg.LayoutTreeNode ltn, ILayoutConverter converter)
+		private static void ProcessChildNodes(IEnumerable<XElement> xmlNodeList, string className, LayoutTreeNode ltn, ILayoutConverter converter)
 		{
 			foreach (var xn in xmlNodeList)
 			{
@@ -262,7 +262,7 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		private static void StoreChildNodeInfo(XElement xn, string className, XmlDocConfigureDlg.LayoutTreeNode ltn, ILayoutConverter converter)
+		private static void StoreChildNodeInfo(XElement xn, string className, LayoutTreeNode ltn, ILayoutConverter converter)
 		{
 			var sField = XmlUtils.GetMandatoryAttributeValue(xn, "field");
 			var xnCaller = converter.LayoutLevels.PartRef;
@@ -382,16 +382,16 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		private static XmlDocConfigureDlg.LayoutTreeNode FindMatchingNode(XmlDocConfigureDlg.LayoutTreeNode ltn, XElement node)
+		private static LayoutTreeNode FindMatchingNode(LayoutTreeNode ltn, XElement node)
 		{
 			if (ltn == null || node == null)
 				return null;
-			foreach (XmlDocConfigureDlg.LayoutTreeNode ltnSub in ltn.Nodes)
+			foreach (LayoutTreeNode ltnSub in ltn.Nodes)
 			{
 				if (NodesMatch(ltnSub.Configuration, node))
 					return ltnSub;
 			}
-			return FindMatchingNode(ltn.Parent as XmlDocConfigureDlg.LayoutTreeNode, node);
+			return FindMatchingNode(ltn.Parent as LayoutTreeNode, node);
 		}
 
 		private static bool NodesMatch(XElement first, XElement second)

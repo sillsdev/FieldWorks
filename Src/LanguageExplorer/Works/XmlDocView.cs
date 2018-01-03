@@ -811,7 +811,7 @@ namespace LanguageExplorer.Works
 			// Currently this (LT-11447) only applies to Dictionary view
 			if (hvoTarget > 0 && toolChoice == AreaServices.LexiconDictionaryMachineName)
 			{
-				DictionaryConfigurationController.ExclusionReasonCode xrc;
+				ExclusionReasonCode xrc;
 				// Make sure we explain to the user in case hvoTarget is not visible due to
 				// the current Publication layout or Configuration view.
 				if (!IsObjectVisible(hvoTarget, out xrc))
@@ -823,7 +823,7 @@ namespace LanguageExplorer.Works
 			return true;
 		}
 
-		private void GiveSimpleWarning(DictionaryConfigurationController.ExclusionReasonCode xrc)
+		private void GiveSimpleWarning(ExclusionReasonCode xrc)
 		{
 			// Tell the user why we aren't jumping to his record
 			var msg = xWorksStrings.ksSelectedEntryNotInDict;
@@ -832,17 +832,17 @@ namespace LanguageExplorer.Works
 			string shlpTopic;
 			switch (xrc)
 			{
-				case DictionaryConfigurationController.ExclusionReasonCode.NotInPublication:
+				case ExclusionReasonCode.NotInPublication:
 					caption = xWorksStrings.ksEntryNotPublished;
 					reason = xWorksStrings.ksEntryNotPublishedReason;
 					shlpTopic = "User_Interface/Menus/Edit/Find_a_lexical_entry.htm";		//khtpEntryNotPublished
 					break;
-				case DictionaryConfigurationController.ExclusionReasonCode.ExcludedHeadword:
+				case ExclusionReasonCode.ExcludedHeadword:
 					caption = xWorksStrings.ksMainNotShown;
 					reason = xWorksStrings.ksMainNotShownReason;
 					shlpTopic = "khtpMainEntryNotShown";
 					break;
-				case DictionaryConfigurationController.ExclusionReasonCode.ExcludedMinorEntry:
+				case ExclusionReasonCode.ExcludedMinorEntry:
 					caption = xWorksStrings.ksMinorNotShown;
 					reason = xWorksStrings.ksMinorNotShownReason;
 					shlpTopic = "khtpMinorEntryNotShown";
@@ -850,7 +850,7 @@ namespace LanguageExplorer.Works
 				default:
 					throw new ArgumentException("Unknown ExclusionReasonCode");
 			}
-			msg = String.Format(msg, reason);
+			msg = string.Format(msg, reason);
 			// TODO-Linux: Help is not implemented on Mono
 			MessageBox.Show(FindForm(), msg, caption, MessageBoxButtons.OK,
 							MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0,
@@ -858,9 +858,9 @@ namespace LanguageExplorer.Works
 							HelpNavigator.Topic, shlpTopic);
 		}
 
-		private bool IsObjectVisible(int hvoTarget, out DictionaryConfigurationController.ExclusionReasonCode xrc)
+		private bool IsObjectVisible(int hvoTarget, out ExclusionReasonCode xrc)
 		{
-			xrc = DictionaryConfigurationController.ExclusionReasonCode.NotExcluded;
+			xrc = ExclusionReasonCode.NotExcluded;
 			var objRepo = Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			Debug.Assert(objRepo.IsValidObjectId(hvoTarget), "Invalid hvoTarget!");
 			if (!objRepo.IsValidObjectId(hvoTarget))
@@ -877,13 +877,13 @@ namespace LanguageExplorer.Works
 				var currentPubPoss = Publication;
 				if (!entry.PublishIn.Contains(currentPubPoss))
 				{
-					xrc = DictionaryConfigurationController.ExclusionReasonCode.NotInPublication;
+					xrc = ExclusionReasonCode.NotInPublication;
 					return false;
 				}
 				// Second deal with whether the entry shouldn't be shown as a headword
 				if (!entry.ShowMainEntryIn.Contains(currentPubPoss))
 				{
-					xrc = DictionaryConfigurationController.ExclusionReasonCode.ExcludedHeadword;
+					xrc = ExclusionReasonCode.ExcludedHeadword;
 					return false;
 				}
 			}
@@ -891,7 +891,7 @@ namespace LanguageExplorer.Works
 			// commented out until conditions are clarified (LT-11447)
 			if (entry.EntryRefsOS.Count > 0 && !entry.PublishAsMinorEntry && IsRootBasedView)
 			{
-				xrc = DictionaryConfigurationController.ExclusionReasonCode.ExcludedMinorEntry;
+				xrc = ExclusionReasonCode.ExcludedMinorEntry;
 				return false;
 			}
 			// If we get here, we should be able to display it.

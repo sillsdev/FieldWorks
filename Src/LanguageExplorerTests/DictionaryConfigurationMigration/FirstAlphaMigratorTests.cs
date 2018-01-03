@@ -931,7 +931,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			{
 				Version = FirstAlphaMigrator.VersionAlpha2,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
-				FilePath = "./Lexeme" + DictionaryConfigurationModel.FileExtension
+				FilePath = "./Lexeme" + LanguageExplorerConstants.DictionaryConfigurationFileExtension
 			};
 			_migrator.MigrateFrom83Alpha(model);
 			Assert.IsFalse(model.IsRootBased);
@@ -949,7 +949,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			{
 				Version = FirstAlphaMigrator.VersionAlpha2,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
-				FilePath = "./Root" + DictionaryConfigurationModel.FileExtension
+				FilePath = "./Root" + LanguageExplorerConstants.DictionaryConfigurationFileExtension
 			};
 			_migrator.MigrateFrom83Alpha(model);
 			Assert.IsTrue(model.IsRootBased);

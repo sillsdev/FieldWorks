@@ -71,5 +71,16 @@ namespace LanguageExplorer
 		/// Name of insert tool strip
 		/// </summary>
 		internal const string HelpToolStripMenuItem = "_helpToolStripMenuItem";
+		/// <summary>
+		/// File extension for dictionary configuration files.
+		/// </summary>
+		internal const string DictionaryConfigurationFileExtension = ".fwdictconfig";
+		/// <summary />
+		internal const string AllReversalIndexes = "All Reversal Indexes";
+		/// <summary>
+		/// Filename (without extension) of the reversal index configuration file
+		/// for "all reversal indexes".
+		/// </summary>
+		internal const string AllReversalIndexesFilenameBase = "AllReversalIndexes";
 	}
 }

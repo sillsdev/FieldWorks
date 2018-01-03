@@ -5,6 +5,7 @@
 using System.IO;
 using System.Linq;
 using System.Xml;
+using LanguageExplorer;
 using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.IO;
@@ -35,7 +36,7 @@ namespace LanguageExplorerTests.Works
 			// SUT
 			var fileListFromResults = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, configObjectName).Values;
 			var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"),
-				"*" + DictionaryConfigurationModel.FileExtension);
+				"*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			CollectionAssert.AreEquivalent(fileListFromResults, shippedFileList);
 		}
 
@@ -47,14 +48,14 @@ namespace LanguageExplorerTests.Works
 				Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
 					"Dictionary");
 			Directory.CreateDirectory(projectDictionaryConfigs);
-			using (var tempConfigFile = TempFile.WithFilename(Path.Combine(projectDictionaryConfigs, "NotAShippingConfig" + DictionaryConfigurationModel.FileExtension)))
+			using (var tempConfigFile = TempFile.WithFilename(Path.Combine(projectDictionaryConfigs, "NotAShippingConfig" + LanguageExplorerConstants.DictionaryConfigurationFileExtension)))
 			{
 				File.WriteAllText(tempConfigFile.Path,
 					"<?xml version='1.0' encoding='utf-8'?><DictionaryConfiguration name='New User Config'/>");
 				// SUT
 				var fileListFromResults = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, configObjectName).Values;
 				var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"),
-					"*" + DictionaryConfigurationModel.FileExtension);
+					"*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 				// all the shipped configs are in the return list
 				CollectionAssert.IsSubsetOf(shippedFileList, fileListFromResults);
 				// new user configuration is present in results
@@ -70,11 +71,11 @@ namespace LanguageExplorerTests.Works
 				Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
 					"Dictionary");
 			Directory.CreateDirectory(projectDictionaryConfigs);
-			using (var tempConfigFile = TempFile.WithFilename(Path.Combine(projectDictionaryConfigs, "Override" + DictionaryConfigurationModel.FileExtension)))
+			using (var tempConfigFile = TempFile.WithFilename(Path.Combine(projectDictionaryConfigs, "Override" + LanguageExplorerConstants.DictionaryConfigurationFileExtension)))
 			{
 				string firstShippedConfigName;
 				var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"),
-					"*" + DictionaryConfigurationModel.FileExtension);
+					"*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 				var fileList = shippedFileList.ToArray();
 				using (var stream = new FileStream(fileList.First(), FileMode.Open))
 				{

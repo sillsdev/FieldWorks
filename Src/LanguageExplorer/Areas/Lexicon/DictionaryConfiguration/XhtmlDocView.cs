@@ -214,7 +214,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			var hvoTarget = (int)argument;
 			if (hvoTarget > 0 && PropertyTable.GetValue<string>(AreaServices.ToolChoice) == AreaServices.LexiconDictionaryMachineName)
 			{
-				DictionaryConfigurationController.ExclusionReasonCode xrc;
+				ExclusionReasonCode xrc;
 				// Make sure we explain to the user in case hvoTarget is not visible due to
 				// the current Publication layout or Configuration view.
 				if (!IsObjectVisible(hvoTarget, out xrc))
@@ -226,7 +226,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			return false;
 		}
 
-		private void GiveSimpleWarning(DictionaryConfigurationController.ExclusionReasonCode xrc)
+		private void GiveSimpleWarning(ExclusionReasonCode xrc)
 		{
 			// Tell the user why we aren't jumping to his record
 			var msg = xWorksStrings.ksSelectedEntryNotInDict;
@@ -235,17 +235,17 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			string shlpTopic;
 			switch (xrc)
 			{
-				case DictionaryConfigurationController.ExclusionReasonCode.NotInPublication:
+				case ExclusionReasonCode.NotInPublication:
 					caption = xWorksStrings.ksEntryNotPublished;
 					reason = xWorksStrings.ksEntryNotPublishedReason;
 					shlpTopic = "User_Interface/Menus/Edit/Find_a_lexical_entry.htm";		//khtpEntryNotPublished
 					break;
-				case DictionaryConfigurationController.ExclusionReasonCode.ExcludedHeadword:
+				case ExclusionReasonCode.ExcludedHeadword:
 					caption = xWorksStrings.ksMainNotShown;
 					reason = xWorksStrings.ksMainNotShownReason;
 					shlpTopic = "khtpMainEntryNotShown";
 					break;
-				case DictionaryConfigurationController.ExclusionReasonCode.ExcludedMinorEntry:
+				case ExclusionReasonCode.ExcludedMinorEntry:
 					caption = xWorksStrings.ksMinorNotShown;
 					reason = xWorksStrings.ksMinorNotShownReason;
 					shlpTopic = "khtpMinorEntryNotShown";
@@ -261,9 +261,9 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 							HelpNavigator.Topic, shlpTopic);
 		}
 
-		private bool IsObjectVisible(int hvoTarget, out DictionaryConfigurationController.ExclusionReasonCode xrc)
+		private bool IsObjectVisible(int hvoTarget, out ExclusionReasonCode xrc)
 		{
-			xrc = DictionaryConfigurationController.ExclusionReasonCode.NotExcluded;
+			xrc = ExclusionReasonCode.NotExcluded;
 			var objRepo = Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			Debug.Assert(objRepo.IsValidObjectId(hvoTarget), "Invalid hvoTarget!");
 			if (!objRepo.IsValidObjectId(hvoTarget))
@@ -283,13 +283,13 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				var currentPubPoss = publications;
 				if (!entry.PublishIn.Contains(currentPubPoss))
 				{
-					xrc = DictionaryConfigurationController.ExclusionReasonCode.NotInPublication;
+					xrc = ExclusionReasonCode.NotInPublication;
 					return false;
 				}
 				// Second deal with whether the entry shouldn't be shown as a headword
 				if (!entry.ShowMainEntryIn.Contains(currentPubPoss))
 				{
-					xrc = DictionaryConfigurationController.ExclusionReasonCode.ExcludedHeadword;
+					xrc = ExclusionReasonCode.ExcludedHeadword;
 					return false;
 				}
 			}
@@ -298,7 +298,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			var configuration = new DictionaryConfigurationModel(GetCurrentConfiguration(false), Cache);
 			if (entry.EntryRefsOS.Count > 0 && !entry.PublishAsMinorEntry && configuration.IsRootBased)
 			{
-				xrc = DictionaryConfigurationController.ExclusionReasonCode.ExcludedMinorEntry;
+				xrc = ExclusionReasonCode.ExcludedMinorEntry;
 				return false;
 			}
 			// If we get here, we should be able to display it.
@@ -963,7 +963,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				var configuration = File.Exists(currentConfig) ? new DictionaryConfigurationModel(currentConfig, Cache) : null;
 				if (configuration == null || configuration.WritingSystem != currReversalWs)
 				{
-					var newConfig = Path.Combine(DictionaryConfigurationServices.GetProjectConfigurationDirectory(PropertyTable), writingSystem.Id + DictionaryConfigurationModel.FileExtension);
+					var newConfig = Path.Combine(DictionaryConfigurationServices.GetProjectConfigurationDirectory(PropertyTable), writingSystem.Id + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 					PropertyTable.SetProperty("ReversalIndexPublicationLayout", File.Exists(newConfig) ? newConfig : null, true, true);
 				}
 			}

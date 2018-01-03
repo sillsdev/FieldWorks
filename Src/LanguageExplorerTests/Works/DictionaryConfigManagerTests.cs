@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2014 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -40,7 +40,7 @@ namespace LanguageExplorerTests.Works
 
 		#region Utility methods
 
-		private DictConfigItem GetKeyFromValue(string dispName)
+		private DictionaryConfigManager.DictConfigItem GetKeyFromValue(string dispName)
 		{
 			return m_testPresenter.StubConfigDict.Where(
 				keyValPair => dispName == keyValPair.Value.DispName).Select(
@@ -128,7 +128,7 @@ namespace LanguageExplorerTests.Works
 
 			// Verify
 			Assert.IsTrue(result, "Mark for delete has wrong return value.");
-			DictConfigItem item;
+			DictionaryConfigManager.DictConfigItem item;
 			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
 			Assert.IsTrue(item.UserMarkedDelete, "Mark for delete failed.");
 			Assert.AreEqual("C1", m_testPresenter.StubCurView,
@@ -158,7 +158,7 @@ namespace LanguageExplorerTests.Works
 
 			// Verify
 			Assert.IsFalse(result, "Mark for delete has wrong return value.");
-			DictConfigItem item;
+			DictionaryConfigManager.DictConfigItem item;
 			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
 			Assert.IsFalse(item.UserMarkedDelete, "Mark for delete succeeded wrongly.");
 			Assert.AreEqual(stest1, m_testPresenter.StubCurView,
@@ -190,7 +190,7 @@ namespace LanguageExplorerTests.Works
 
 			// Verify
 			Assert.IsTrue(result, "Mark for delete has wrong return value.");
-			DictConfigItem item;
+			DictionaryConfigManager.DictConfigItem item;
 			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
 			Assert.IsTrue(item.UserMarkedDelete, "Mark for delete failed.");
 			Assert.AreEqual(stest1, m_testPresenter.StubCurView,
@@ -221,7 +221,7 @@ namespace LanguageExplorerTests.Works
 
 			// Verify
 			Assert.IsTrue(result, "Mark for delete has wrong return value.");
-			DictConfigItem item;
+			DictionaryConfigManager.DictConfigItem item;
 			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
 			Assert.IsTrue(item.UserMarkedDelete, "Mark for delete failed.");
 			Assert.AreEqual(stest2, m_testPresenter.StubOrigView,
@@ -254,7 +254,7 @@ namespace LanguageExplorerTests.Works
 
 			// Verify
 			Assert.IsTrue(result, "Mark for delete has wrong return value.");
-			DictConfigItem item;
+			DictionaryConfigManager.DictConfigItem item;
 			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
 			Assert.IsTrue(item.UserMarkedDelete, "Mark for delete failed.");
 			Assert.AreEqual(stest2, m_testPresenter.StubOrigView,
@@ -287,7 +287,7 @@ namespace LanguageExplorerTests.Works
 			// Verify
 			Assert.AreEqual(cnt + 1, m_testPresenter.StubConfigDict.Count,
 				"Should have added a new item.");
-			DictConfigItem item;
+			DictionaryConfigManager.DictConfigItem item;
 			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
 			Assert.IsFalse(item.IsNew, "Old item should not be marked as New.");
 			var configItem = GetKeyFromValue("Copy of " + stest1);
@@ -363,7 +363,7 @@ namespace LanguageExplorerTests.Works
 			// Verify1
 			Assert.AreEqual(cnt, m_testPresenter.StubConfigDict.Count,
 				"Should have the same number of items.");
-			DictConfigItem item;
+			DictionaryConfigManager.DictConfigItem item;
 			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
 			Assert.AreEqual(newName, item.DispName,
 				"Should have renamed config item.");
@@ -396,7 +396,7 @@ namespace LanguageExplorerTests.Works
 			// Verify1
 			Assert.AreEqual(cnt, m_testPresenter.StubConfigDict.Count,
 				"Should have the same number of items.");
-			DictConfigItem item;
+			DictionaryConfigManager.DictConfigItem item;
 			m_testPresenter.StubConfigDict.TryGetValue(sid2, out item);
 			Assert.AreEqual(sname2, item.DispName,
 				"Should not have renamed protected config item.");
@@ -429,7 +429,7 @@ namespace LanguageExplorerTests.Works
 			// Verify1
 			Assert.AreEqual(cnt, m_testPresenter.StubConfigDict.Count,
 				"Should have the same number of items.");
-			DictConfigItem item;
+			DictionaryConfigManager.DictConfigItem item;
 			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
 			Assert.AreNotEqual(newName, item.DispName,
 				"Should not have renamed config item.");
@@ -461,7 +461,7 @@ namespace LanguageExplorerTests.Works
 			// Verify1
 			Assert.AreEqual(cnt + 1, m_testPresenter.StubConfigDict.Count,
 				"Should have gained a copied item.");
-			DictConfigItem item;
+			DictionaryConfigManager.DictConfigItem item;
 			var configItem = GetKeyFromValue(newName);
 			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
 			Assert.IsTrue(configItem.IsNew, "New item should be marked as New.");
@@ -501,7 +501,7 @@ namespace LanguageExplorerTests.Works
 			// Verify1
 			Assert.AreEqual(cnt + 1, m_testPresenter.StubConfigDict.Count,
 				"Should have gained a copied item.");
-			DictConfigItem item;
+			DictionaryConfigManager.DictConfigItem item;
 			var configItem = GetKeyFromValue(newName);
 			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
 			Assert.IsTrue(configItem.IsNew, "New item should be marked as New.");

@@ -25,13 +25,13 @@ namespace LanguageExplorer.Works
 		public static SortedDictionary<string, string> GatherBuiltInAndUserConfigurations(LcmCache cache, string configObjectName)
 		{
 			var configurations = new SortedDictionary<string, string>();
-			var defaultConfigs = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, configObjectName), "*" + DictionaryConfigurationModel.FileExtension);
+			var defaultConfigs = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, configObjectName), "*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			// for every configuration file in the DefaultConfigurations folder add an entry
 			AddOrOverrideConfiguration(defaultConfigs, configurations);
 			var projectConfigPath = Path.Combine(LcmFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), configObjectName);
 			if (Directory.Exists(projectConfigPath))
 			{
-				var projectConfigs = Directory.EnumerateFiles(projectConfigPath, "*" + DictionaryConfigurationModel.FileExtension);
+				var projectConfigs = Directory.EnumerateFiles(projectConfigPath, "*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 				// for every configuration in the projects configurations folder either override a shipped configuration or add an entry
 				AddOrOverrideConfiguration(projectConfigs, configurations);
 			}

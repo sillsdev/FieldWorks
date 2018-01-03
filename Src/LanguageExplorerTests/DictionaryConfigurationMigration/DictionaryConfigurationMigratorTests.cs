@@ -46,7 +46,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		public void MigrateOldConfigurationsIfNeeded_BringsPreHistoricFileToCurrentVersion()
 		{
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
-			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationServices.DictionaryConfigurationDirectoryName, "Lexeme" + DictionaryConfigurationModel.FileExtension);
+			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationServices.DictionaryConfigurationDirectoryName, "Lexeme" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
@@ -92,7 +92,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		{
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName,
-				"AllReversalIndexes" + DictionaryConfigurationModel.FileExtension);
+				"AllReversalIndexes" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{

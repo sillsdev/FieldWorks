@@ -91,7 +91,7 @@ namespace LanguageExplorer
 
 		internal static IEnumerable<string> ConfigFilesInDir(string dir)
 		{
-			return Directory.Exists(dir) ? Directory.EnumerateFiles(dir, "*" + DictionaryConfigurationModel.FileExtension) : new string[0];
+			return Directory.Exists(dir) ? Directory.EnumerateFiles(dir, "*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension) : new string[0];
 		}
 
 		/// <summary>
@@ -265,10 +265,10 @@ namespace LanguageExplorer
 					selectedPublication = cache.ServiceLocator.WritingSystemManager.Get(languageCode).DisplayLabel;
 				}
 				// ENHANCE (Hasso) 2016.01: handle copied configs? Naww, the selected configs really should have been updated on migration
-				currentConfig = Path.Combine(projectConfigDir, selectedPublication + DictionaryConfigurationModel.FileExtension);
+				currentConfig = Path.Combine(projectConfigDir, selectedPublication + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 				if(!File.Exists(currentConfig))
 				{
-					currentConfig = Path.Combine(defaultConfigDir, selectedPublication + DictionaryConfigurationModel.FileExtension);
+					currentConfig = Path.Combine(defaultConfigDir, selectedPublication + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 				}
 			}
 			if (!File.Exists(currentConfig))
@@ -283,10 +283,10 @@ namespace LanguageExplorer
 					}
 				}
 				// select the project's Root configuration if available; otherwise, select the default Root configuration
-				currentConfig = Path.Combine(projectConfigDir, defaultPublication + DictionaryConfigurationModel.FileExtension);
+				currentConfig = Path.Combine(projectConfigDir, defaultPublication + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 				if (!File.Exists(currentConfig))
 				{
-					currentConfig = Path.Combine(defaultConfigDir, defaultPublication + DictionaryConfigurationModel.FileExtension);
+					currentConfig = Path.Combine(defaultConfigDir, defaultPublication + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 				}
 			}
 			if (File.Exists(currentConfig))
@@ -434,5 +434,14 @@ namespace LanguageExplorer
 			var idVal = element.GetAttribute("id");
 			return !idVal.StartsWith("g") ? Guid.Empty : new Guid(idVal.Substring(1));
 		}
+
+		/// <summary>
+		/// The following style names are known to have unsupported features. We will avoid wiping out default styles of these types when
+		/// importing a view.
+		/// </summary>
+		internal static readonly HashSet<string> UnsupportedStyles = new HashSet<string>
+		{
+			"Bulleted List", "Numbered List", "Homograph-Number"
+		};
 	}
 }

@@ -266,43 +266,5 @@ namespace LanguageExplorer.Works
 				return true;
 			}
 		}
-		internal sealed class PublicationActivator : IDisposable
-		{
-			private readonly string m_currentPublication;
-			private readonly IPropertyTable m_propertyTable;
-
-			public PublicationActivator(IPropertyTable propertyTable)
-			{
-				m_currentPublication = propertyTable.GetValue<string>("SelectedPublication", null);
-				m_propertyTable = propertyTable;
-			}
-
-#region disposal
-			public void Dispose()
-			{
-				Dispose(true);
-				GC.SuppressFinalize(this);
-			}
-
-			private void Dispose(bool disposing)
-			{
-				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
-				if (disposing && !string.IsNullOrEmpty(m_currentPublication))
-					m_propertyTable.SetProperty("SelectedPublication", m_currentPublication, false, true);
-			}
-
-			~PublicationActivator()
-			{
-				Dispose(false);
-			}
-#endregion disposal
-
-			public void ActivatePublication(string publication)
-			{
-				// Don't publish the property change: doing so may refresh the Dictionary (or Reversal) preview in the main window;
-				// we want to activate the Publication for export purposes only.
-				m_propertyTable.SetProperty("SelectedPublication", publication, false, true);
-			}
-		}
 	}
 }

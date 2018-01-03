@@ -338,7 +338,7 @@ namespace LanguageExplorer.Works
 		internal static string FormatFilePath(string projectConfigDir, string label)
 		{
 			return Path.Combine(projectConfigDir,
-				MiscUtils.FilterForFileName(label, MiscUtils.FilenameFilterStrength.kFilterBackup) + DictionaryConfigurationModel.FileExtension);
+				MiscUtils.FilterForFileName(label, MiscUtils.FilenameFilterStrength.kFilterBackup) + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 		}
 
 		private void OnCopyConfiguration(object sender, EventArgs e)
@@ -412,7 +412,7 @@ namespace LanguageExplorer.Works
 			var origReversalLabel = configurationToDelete.Label;
 			var origReversalWs = configurationToDelete.WritingSystem;
 
-			var allReversalsFileName = "AllReversalIndexes" + DictionaryConfigurationModel.FileExtension;
+			var allReversalsFileName = "AllReversalIndexes" + LanguageExplorerConstants.DictionaryConfigurationFileExtension;
 			var resettingReversal = IsConfigurationAnOriginalReversal(configurationToDelete, _cache);
 			// The reversals will be reset to what the user has configured under All Reversal Indexes. This makes it useful to actually change that.
 			// If the user resets "AllReversalIndexes" it will reset to the shipping version.

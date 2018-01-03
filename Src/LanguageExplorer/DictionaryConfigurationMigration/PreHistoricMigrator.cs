@@ -151,7 +151,7 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 		}
 
 		/// <summary>ILayoutConverter implementation</summary>
-		public void AddDictionaryTypeItem(XElement layoutNode, List<XmlDocConfigureDlg.LayoutTreeNode> oldNodes)
+		public void AddDictionaryTypeItem(XElement layoutNode, List<LayoutTreeNode> oldNodes)
 		{
 			// layoutNode is expected to look similar to:
 			//<layoutType label="Stem-based (complex forms as main entries)" layout="publishStem">
@@ -181,7 +181,7 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 			if (convertedModel.Version != VersionPre83)
 				return;
 			DictionaryConfigurationModel alpha83DefaultModel;
-			const string extension = DictionaryConfigurationModel.FileExtension;
+			const string extension = LanguageExplorerConstants.DictionaryConfigurationFileExtension;
 			var projectPath = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), m_configDirSuffixBeingMigrated);
 			var alphaConfigsPath = Path.Combine(FwDirectoryFinder.FlexFolder, AlphaConfigFolder);
 
@@ -288,13 +288,13 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 			}
 			else
 			{
-				if (alphaDefaultModel.Label == DictionaryConfigurationModel.AllReversalIndexes
-					&& convertedModel.Label != DictionaryConfigurationModel.AllReversalIndexes)
+				if (alphaDefaultModel.Label == LanguageExplorerConstants.AllReversalIndexes
+					&& convertedModel.Label != LanguageExplorerConstants.AllReversalIndexes)
 				{
 					// If this is a WS-specific Reversal Index, set its WS
 					DictionaryConfigurationServices.SetWritingSystemForReversalModel(convertedModel, Cache);
 				}
-				else if (convertedModel.Label == DictionaryConfigurationModel.AllReversalIndexes)
+				else if (convertedModel.Label == LanguageExplorerConstants.AllReversalIndexes)
 				{
 					convertedModel.WritingSystem = "";
 				}
@@ -392,7 +392,7 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 		}
 
 		/// <remarks>Internal only for tests, production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
-		internal ConfigurableDictionaryNode ConvertLayoutTreeNodeToConfigNode(XmlDocConfigureDlg.LayoutTreeNode node)
+		internal ConfigurableDictionaryNode ConvertLayoutTreeNodeToConfigNode(LayoutTreeNode node)
 		{
 			var convertedNode = new ConfigurableDictionaryNode
 			{
@@ -446,7 +446,7 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 			if (node.Nodes.Count > 0)
 			{
 				convertedNode.Children = new List<ConfigurableDictionaryNode>();
-				foreach (XmlDocConfigureDlg.LayoutTreeNode childNode in node.Nodes)
+				foreach (LayoutTreeNode childNode in node.Nodes)
 				{
 					convertedNode.Children.Add(ConvertLayoutTreeNodeToConfigNode(childNode));
 				}
@@ -454,21 +454,21 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 			return convertedNode;
 		}
 
-		private static string BuildPathStringFromNode(XmlDocConfigureDlg.LayoutTreeNode child)
+		private static string BuildPathStringFromNode(LayoutTreeNode child)
 		{
 			var path = String.Format("{0} ({1})", child.Label, child.DupString);
 			var node = child;
 			while (node.Parent != null // If 'Minor Entry' is duplicated, both copies get a new, common parent 'Minor Entry', which does not affect migration
 				// apart from making log entries about 'Minor Entry > Minor Entry (1) > and so on'
-				&& !(node.Parent.Parent == null || ((XmlDocConfigureDlg.LayoutTreeNode)node.Parent).Label.Equals(node.Label)))
+				&& !(node.Parent.Parent == null || ((LayoutTreeNode)node.Parent).Label.Equals(node.Label)))
 			{
-				node = (XmlDocConfigureDlg.LayoutTreeNode)node.Parent;
+				node = (LayoutTreeNode)node.Parent;
 				path = node.Label + DictionaryConfigurationServices.NodePathSeparator + path;
 			}
 			return path;
 		}
 
-		private DictionaryNodeOptions CreateOptionsFromLayoutTreeNode(XmlDocConfigureDlg.LayoutTreeNode node)
+		private DictionaryNodeOptions CreateOptionsFromLayoutTreeNode(LayoutTreeNode node)
 		{
 			DictionaryNodeOptions options = null;
 			if (!String.IsNullOrEmpty(node.WsType))
@@ -918,7 +918,7 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 			}));
 		}
 
-		private string GenerateNumberStyleFromLayoutTreeNode(XmlDocConfigureDlg.LayoutTreeNode node)
+		private string GenerateNumberStyleFromLayoutTreeNode(LayoutTreeNode node)
 		{
 			var styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			const string senseNumberStyleBase = "Dictionary-SenseNumber";
@@ -973,7 +973,7 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 			return senseNumberStyleName;
 		}
 
-		private bool LayoutOptionsMatchStyle(BaseStyleInfo style, XmlDocConfigureDlg.LayoutTreeNode node)
+		private bool LayoutOptionsMatchStyle(BaseStyleInfo style, LayoutTreeNode node)
 		{
 			// if the style isn't even a character style
 			if (!style.IsCharacterStyle)
@@ -1041,7 +1041,7 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 			m_layoutInventory.ExpandWsTaggedNodes(sWsTag);
 		}
 
-		public void SetOriginalIndexForNode(XmlDocConfigureDlg.LayoutTreeNode mainLayoutNode)
+		public void SetOriginalIndexForNode(LayoutTreeNode mainLayoutNode)
 		{
 			//Not important for migration
 		}
@@ -1056,12 +1056,12 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 			return LegacyConfigurationUtils.GetPartElement(m_partInventory, className, sRef);
 		}
 
-		public void BuildRelationTypeList(XmlDocConfigureDlg.LayoutTreeNode ltn)
+		public void BuildRelationTypeList(LayoutTreeNode ltn)
 		{
 			//Not important for migration - Handled separately by the new configuration dialog
 		}
 
-		public void BuildEntryTypeList(XmlDocConfigureDlg.LayoutTreeNode ltn, string layoutName)
+		public void BuildEntryTypeList(LayoutTreeNode ltn, string layoutName)
 		{
 			//Not important for migration - Handled separately by the new configuration dialog
 		}

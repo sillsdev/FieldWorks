@@ -77,8 +77,8 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 name='Stem-based (complex forms as main entries)' version='8' lastModified='2016-10-05' allPublications='true'>
   <ConfigurationItem name='Main Entry' isEnabled='true' style='Dictionary-Normal' styleType='paragraph' field='LexEntry' cssClassNameOverride='entry'/>
 </DictionaryConfiguration>";
-				var actualFilePath = Path.Combine(configLocations, "Stem" + DictionaryConfigurationModel.FileExtension);
-				var convertedFilePath = Path.Combine(configLocations, "Lexeme" + DictionaryConfigurationModel.FileExtension);
+				var actualFilePath = Path.Combine(configLocations, "Stem" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
+				var convertedFilePath = Path.Combine(configLocations, "Lexeme" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 				File.WriteAllText(actualFilePath, content);
 				_migrator.MigrateIfNeeded(); // SUT
 				Assert.IsTrue(File.Exists(convertedFilePath));

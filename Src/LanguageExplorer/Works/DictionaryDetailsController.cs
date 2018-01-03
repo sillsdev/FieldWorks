@@ -337,9 +337,9 @@ namespace LanguageExplorer.Works
 			return (o, args) =>
 			{
 				wsOptionsView.UpClicked += (sender, e) =>
-					Reorder(wsOptionsView.AvailableItems.First(item => item.Selected), DictionaryConfigurationController.Direction.Up);
+					Reorder(wsOptionsView.AvailableItems.First(item => item.Selected), Direction.Up);
 				wsOptionsView.DownClicked += (sender, e) =>
-					Reorder(wsOptionsView.AvailableItems.First(item => item.Selected), DictionaryConfigurationController.Direction.Down);
+					Reorder(wsOptionsView.AvailableItems.First(item => item.Selected), Direction.Down);
 				wsOptionsView.ListItemSelectionChanged += (sender, e) => ListViewSelectionChanged(wsOptionsView, e);
 				wsOptionsView.ListItemCheckBoxChanged += (sender, e) => ListItemCheckedChanged(wsOptionsView, wsOptions, e);
 				wsOptionsView.DisplayOptionCheckBoxChanged += (sender, e) =>
@@ -502,9 +502,9 @@ namespace LanguageExplorer.Works
 				if (listOptions.ListId != DictionaryNodeListOptions.ListIds.None)
 				{
 					listOptionsView.UpClicked += (sender, e) =>
-						Reorder(listOptionsView.AvailableItems.First(item => item.Selected), DictionaryConfigurationController.Direction.Up);
+						Reorder(listOptionsView.AvailableItems.First(item => item.Selected), Direction.Up);
 					listOptionsView.DownClicked += (sender, e) =>
-						Reorder(listOptionsView.AvailableItems.First(item => item.Selected), DictionaryConfigurationController.Direction.Down);
+						Reorder(listOptionsView.AvailableItems.First(item => item.Selected), Direction.Down);
 					listOptionsView.ListItemSelectionChanged += (sender, e) => ListViewSelectionChanged(listOptionsView, e);
 					listOptionsView.ListItemCheckBoxChanged += (sender, e) => ListItemCheckedChanged(listOptionsView, null, e);
 				}
@@ -957,8 +957,8 @@ namespace LanguageExplorer.Works
 		{
 			if (e.IsSelected)
 			{
-				loView.MoveUpEnabled = CanReorder(e.Item, DictionaryConfigurationController.Direction.Up);
-				loView.MoveDownEnabled = CanReorder(e.Item, DictionaryConfigurationController.Direction.Down);
+				loView.MoveUpEnabled = CanReorder(e.Item, Direction.Up);
+				loView.MoveDownEnabled = CanReorder(e.Item, Direction.Down);
 			}
 			else
 			{
@@ -966,9 +966,9 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		private static bool CanReorder(ListViewItem item, DictionaryConfigurationController.Direction direction)
+		private static bool CanReorder(ListViewItem item, Direction direction)
 		{
-			if (direction == DictionaryConfigurationController.Direction.Up)
+			if (direction == Direction.Up)
 			{
 				// Cannot move up a default WS, the first item, or the first item below a default WS
 				return !((item.Tag is int) || (item.Index == 0) || (item.ListView.Items[item.Index - 1].Tag is int));
@@ -977,13 +977,13 @@ namespace LanguageExplorer.Works
 			return !((item.Tag is int) || (item.Index >= item.ListView.Items.Count - 1));
 		}
 
-		internal void Reorder(ListViewItem item, DictionaryConfigurationController.Direction direction)
+		internal void Reorder(ListViewItem item, Direction direction)
 		{
 			if (!CanReorder(item, direction))
 				throw new ArgumentOutOfRangeException();
 
 			int newIdx;
-			if (direction == DictionaryConfigurationController.Direction.Up)
+			if (direction == Direction.Up)
 				newIdx = item.Index - 1;
 			else
 				newIdx = item.Index + 1;

@@ -1421,6 +1421,24 @@ namespace LanguageExplorer.Works {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sense Subentries will be hidden.
+        /// </summary>
+        internal static string ksRootSenseOnSubentriesGoneDlgLabel {
+            get {
+                return ResourceManager.GetString("ksRootSenseOnSubentriesGoneDlgLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language Explorer does not yet have the capability to display subentries of senses when the senses are not themselves shown in separate paragraphs..
+        /// </summary>
+        internal static string ksRootSenseOnSubentriesGoneDlgText {
+            get {
+                return ResourceManager.GetString("ksRootSenseOnSubentriesGoneDlgText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The entry you have selected is not shown in Dictionary view, {0}..
         /// </summary>
         internal static string ksSelectedEntryNotInDict {

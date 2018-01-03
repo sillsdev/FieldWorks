@@ -13,13 +13,11 @@ using System.Collections.Generic;
 
 namespace LanguageExplorer.Works
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Interface which the DictionaryConfigMgrDlg or (for test) the DictionaryConfigViewerStub
 	/// exposes to the DictionaryConfigManager.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public interface IDictConfigViewer
+	internal interface IDictConfigViewer
 	{
 		IDictConfigPresenter Presenter { get; }
 

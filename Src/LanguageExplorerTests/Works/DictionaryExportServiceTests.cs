@@ -66,8 +66,7 @@ namespace LanguageExplorerTests.Works
 		}
 
 		[Test]
-		public void CountDictionaryEntries_StemBasedConfigCountsHiddenMinorEntries(
-			[Values(DictionaryConfigurationModel.ConfigType.Hybrid, DictionaryConfigurationModel.ConfigType.Lexeme)] DictionaryConfigurationModel.ConfigType configType)
+		public void CountDictionaryEntries_StemBasedConfigCountsHiddenMinorEntries([Values(ConfigType.Hybrid, ConfigType.Lexeme)] ConfigType configType)
 		{
 			var configModel = ConfiguredXHTMLGeneratorTests.CreateInterestingConfigurationModel(Cache, _flexComponentParameters.PropertyTable, configType);
 			var mainEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);

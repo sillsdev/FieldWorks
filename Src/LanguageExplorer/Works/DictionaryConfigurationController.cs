@@ -83,14 +83,6 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		public bool MasterRefreshRequired { get; private set; }
 
-		public enum ExclusionReasonCode
-		{
-			NotExcluded,
-			NotInPublication,
-			ExcludedHeadword,
-			ExcludedMinorEntry
-		}
-
 		/// <summary>
 		/// Figure out what alternate dictionaries are available (eg root-, stem-, ...)
 		/// Populate _dictionaryConfigurations with available models.
@@ -110,7 +102,7 @@ namespace LanguageExplorer.Works
 		internal static List<string> ListDictionaryConfigurationChoices(string defaultPath, string projectPath)
 		{
 			var choices = new Dictionary<string, string>();
-			foreach(var file in Directory.EnumerateFiles(defaultPath, "*" + DictionaryConfigurationModel.FileExtension))
+			foreach(var file in Directory.EnumerateFiles(defaultPath, "*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension))
 			{
 				choices[Path.GetFileNameWithoutExtension(file)] = file;
 			}
@@ -120,7 +112,7 @@ namespace LanguageExplorer.Works
 			}
 			else
 			{
-				foreach(var choice in Directory.EnumerateFiles(projectPath, "*" + DictionaryConfigurationModel.FileExtension))
+				foreach(var choice in Directory.EnumerateFiles(projectPath, "*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension))
 				{
 					choices[Path.GetFileNameWithoutExtension(choice)] = choice;
 				}
@@ -503,15 +495,6 @@ namespace LanguageExplorer.Works
 			_model.HomographConfiguration.ExportToHomographConfiguration(Cache.ServiceLocator.GetInstance<HomographConfiguration>());
 			RefreshView(); // REVIEW pH 2016.02: this is called only in ctor and after ManageViews. do we even want to refresh and set isDirty?
 		}
-
-		/// <summary>
-		/// Represents the direction of moving a configuration node among its siblings. (Not up or down a hierarchy).
-		/// </summary>
-		internal enum Direction
-		{
-			Up,
-			Down
-		};
 
 		/// <summary>
 		/// Move a node among its siblings in the model, and cause the view to update accordingly.

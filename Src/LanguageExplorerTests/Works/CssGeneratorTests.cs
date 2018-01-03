@@ -12,6 +12,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using ExCSS;
+using LanguageExplorer;
 using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.LCModel.Core.Cellar;
@@ -1007,7 +1008,7 @@ namespace LanguageExplorerTests.Works
 		{
 			GenerateStyle("Dictionary-Headword");
 			string defaultRoot =
-				Path.Combine(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"), "Root" + DictionaryConfigurationModel.FileExtension);
+				Path.Combine(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"), "Root" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			var model = new DictionaryConfigurationModel(defaultRoot, Cache);
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, Cache, _lcmStyleSheet);
 			var parser = new Parser();

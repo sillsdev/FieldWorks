@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Ionic.Zip;
+using LanguageExplorer;
 using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.LCModel.Core.Cellar;
@@ -286,7 +287,7 @@ namespace LanguageExplorerTests.Works
 					Label =
 						"conflicting file 3-2--in another directory to prove we can't accidentally mask unchanged default configurations",
 					FilePath = Path.Combine(Path.Combine(_projectConfigPath, "subdir"),
-						"configuration3_2" + DictionaryConfigurationModel.FileExtension),
+						"configuration3_2" + LanguageExplorerConstants.DictionaryConfigurationFileExtension),
 					Publications = new List<string>()
 				}
 			};
@@ -306,7 +307,7 @@ namespace LanguageExplorerTests.Works
 
 			var newFilePath = configToRename.FilePath;
 			StringAssert.StartsWith(_projectConfigPath, newFilePath);
-			StringAssert.EndsWith(DictionaryConfigurationModel.FileExtension, newFilePath);
+			StringAssert.EndsWith(LanguageExplorerConstants.DictionaryConfigurationFileExtension, newFilePath);
 			Assert.AreEqual(DictionaryConfigurationManagerController.FormatFilePath(_controller._projectConfigDir, "configuration3_3"), configToRename.FilePath, "The file path should be based on the label");
 			foreach (var config in conflictingConfigs)
 			{
@@ -337,7 +338,7 @@ namespace LanguageExplorerTests.Works
 		{
 			var formattedFilePath = DictionaryConfigurationManagerController.FormatFilePath(_controller._projectConfigDir, "\nFile\\Name/With\"Chars<?>"); // SUT
 			StringAssert.StartsWith(_projectConfigPath, formattedFilePath);
-			StringAssert.EndsWith(DictionaryConfigurationModel.FileExtension, formattedFilePath);
+			StringAssert.EndsWith(LanguageExplorerConstants.DictionaryConfigurationFileExtension, formattedFilePath);
 			StringAssert.DoesNotContain("\n", formattedFilePath);
 			StringAssert.DoesNotContain("\\", Path.GetFileName(formattedFilePath));
 			StringAssert.DoesNotContain("/", Path.GetFileName(formattedFilePath));
@@ -430,11 +431,11 @@ namespace LanguageExplorerTests.Works
 		[Test]
 		public void DeleteConfigurationResetsForShippedDefaultRatherThanDelete()
 		{
-			var shippedRootDefaultConfigurationPath = Path.Combine(_defaultConfigPath, "Root" + DictionaryConfigurationModel.FileExtension);
+			var shippedRootDefaultConfigurationPath = Path.Combine(_defaultConfigPath, "Root" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			FileUtils.WriteStringtoFile(shippedRootDefaultConfigurationPath, "bogus data that is unread, the file is read from the real defaults", Encoding.UTF8);
 
 			var configurationToDelete = _configurations[0];
-			configurationToDelete.FilePath = Path.Combine("whateverdir", "Root" + DictionaryConfigurationModel.FileExtension);
+			configurationToDelete.FilePath = Path.Combine("whateverdir", "Root" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			configurationToDelete.Label = "customizedLabel";
 
 			var pathToConfiguration = configurationToDelete.FilePath;
@@ -459,12 +460,12 @@ namespace LanguageExplorerTests.Works
 			// construct a controller to work in the default reversal directory
 			_controller = new DictionaryConfigurationManagerController(_configurations, new List<string>(), _projectConfigPath, defaultReversalPath);
 			_controller.InitializeFlexComponent(_flexComponentParameters);
-			var allRevFileName = DictionaryConfigurationModel.AllReversalIndexesFilenameBase + DictionaryConfigurationModel.FileExtension;
+			var allRevFileName = LanguageExplorerConstants.AllReversalIndexesFilenameBase + LanguageExplorerConstants.DictionaryConfigurationFileExtension;
 			var shippedRootDefaultConfigurationPath = Path.Combine(defaultReversalPath, allRevFileName);
 			FileUtils.WriteStringtoFile(shippedRootDefaultConfigurationPath, "bogus data that is unread, the file is read from the real defaults", Encoding.UTF8);
 
 			var configurationToDelete = _configurations[0];
-			configurationToDelete.FilePath = Path.Combine("whateverdir", "en" + DictionaryConfigurationModel.FileExtension);
+			configurationToDelete.FilePath = Path.Combine("whateverdir", "en" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			configurationToDelete.Label = "English";
 			configurationToDelete.WritingSystem = "en";
 
@@ -493,7 +494,7 @@ namespace LanguageExplorerTests.Works
 			var configuration = new DictionaryConfigurationModel
 			{
 				Label = "configuration",
-				FilePath = Path.Combine("whateverdir", "somefile" + DictionaryConfigurationModel.FileExtension)
+				FilePath = Path.Combine("whateverdir", "somefile" + LanguageExplorerConstants.DictionaryConfigurationFileExtension)
 			};
 
 			// SUT
@@ -523,7 +524,7 @@ namespace LanguageExplorerTests.Works
 			var configuration = new DictionaryConfigurationModel
 			{
 				Label = "configuration",
-				FilePath = Path.Combine("whateverdir", "Root" + DictionaryConfigurationModel.FileExtension)
+				FilePath = Path.Combine("whateverdir", "Root" + LanguageExplorerConstants.DictionaryConfigurationFileExtension)
 			};
 
 			// SUT
@@ -539,7 +540,7 @@ namespace LanguageExplorerTests.Works
 			{
 				Label = "English Copy",
 				WritingSystem = "en",
-				FilePath = Path.Combine("whateverdir", "Copy of English" + DictionaryConfigurationModel.FileExtension)
+				FilePath = Path.Combine("whateverdir", "Copy of English" + LanguageExplorerConstants.DictionaryConfigurationFileExtension)
 			};
 
 			// SUT
@@ -555,7 +556,7 @@ namespace LanguageExplorerTests.Works
 			{
 				Label = "English",
 				WritingSystem = "en",
-				FilePath = Path.Combine("whateverdir", "en" + DictionaryConfigurationModel.FileExtension)
+				FilePath = Path.Combine("whateverdir", "en" + LanguageExplorerConstants.DictionaryConfigurationFileExtension)
 			};
 
 			// SUT
@@ -571,7 +572,7 @@ namespace LanguageExplorerTests.Works
 			{
 				Label = "Manglish",
 				WritingSystem = "en",
-				FilePath = Path.Combine("whateverdir", "en" + DictionaryConfigurationModel.FileExtension)
+				FilePath = Path.Combine("whateverdir", "en" + LanguageExplorerConstants.DictionaryConfigurationFileExtension)
 			};
 
 			// SUT
@@ -587,7 +588,7 @@ namespace LanguageExplorerTests.Works
 			{
 				Label = "English (copy)",
 				WritingSystem = "en",
-				FilePath = Path.Combine("whateverdir", "English-Copy" + DictionaryConfigurationModel.FileExtension)
+				FilePath = Path.Combine("whateverdir", "English-Copy" + LanguageExplorerConstants.DictionaryConfigurationFileExtension)
 			};
 
 			// SUT
@@ -603,7 +604,7 @@ namespace LanguageExplorerTests.Works
 			{
 				Label = "German (Algeria)",
 				WritingSystem = "de-DZ",
-				FilePath = Path.Combine("whateverdir", "de-DZ" + DictionaryConfigurationModel.FileExtension)
+				FilePath = Path.Combine("whateverdir", "de-DZ" + LanguageExplorerConstants.DictionaryConfigurationFileExtension)
 			};
 
 			// SUT
@@ -619,7 +620,7 @@ namespace LanguageExplorerTests.Works
 			{
 				Label = "English",
 				WritingSystem = "enz1a",
-				FilePath = Path.Combine("whateverdir", "enz1a" + DictionaryConfigurationModel.FileExtension)
+				FilePath = Path.Combine("whateverdir", "enz1a" + LanguageExplorerConstants.DictionaryConfigurationFileExtension)
 			};
 
 			// SUT
@@ -733,7 +734,7 @@ namespace LanguageExplorerTests.Works
 			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup/tag[" + attributeTests + "]", 1);
 
 			// Verify that each known unsupported style is excluded from the export
-			foreach (var unsupported in DictionaryConfigurationImportController.UnsupportedStyles)
+			foreach (var unsupported in DictionaryConfigurationServices.UnsupportedStyles)
 			{
 				AssertThatXmlIn.File(styleSheetFile).HasNoMatchForXpath("/Styles/markup/tag[@id='" + unsupported.Replace(' ', '_') + "']");
 			}

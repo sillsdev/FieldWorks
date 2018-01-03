@@ -1,12 +1,6 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DictionaryConfigViewerStub.cs
-// Responsibility: GordonM
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -17,12 +11,10 @@ using LanguageExplorer.Works;
 
 namespace LanguageExplorerTests.Works
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Test stub used to replace the DictionaryConfigMgrDlg in testing.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	internal class DictionaryConfigViewerStub : IDictConfigViewer
+	internal sealed class DictionaryConfigViewerStub : IDictConfigViewer
 	{
 		private readonly DictionaryConfigTestPresenter m_presenter;
 		private List<Tuple<string, string>> m_listItems;
@@ -33,19 +25,13 @@ namespace LanguageExplorerTests.Works
 			m_listItems = new List<Tuple<string, string>>();
 		}
 
-		public DictionaryConfigTestPresenter TestPresenter
-		{
-			get { return m_presenter; }
-		}
+		public DictionaryConfigTestPresenter TestPresenter => m_presenter;
 
 		public string SelectedItem { get; private set; }
 
 		#region Implementation of IDictConfigViewer
 
-		public IDictConfigPresenter Presenter
-		{
-			get { return m_presenter; }
-		}
+		public IDictConfigPresenter Presenter => m_presenter;
 
 		/// <summary>
 		/// Tuples of strings are (uniqueCode, dispName) pairs to be displayed.
@@ -61,19 +47,14 @@ namespace LanguageExplorerTests.Works
 			foreach (var listItem in listItems)
 				m_listItems.Add(listItem);
 
-			Debug.Assert(m_listItems.Where(
-				tpl => tpl.Item1 == selectedItem).FirstOrDefault() != null,
-				"Selected item does not exist in list.");
+			Debug.Assert(m_listItems.FirstOrDefault(tpl => tpl.Item1 == selectedItem) != null, "Selected item does not exist in list.");
 			SelectedItem = selectedItem;
 		}
 
 		/// <summary>
 		/// The unique code for the item currently selected in the dialog listView.
 		/// </summary>
-		public string CurrentSelectedCode
-		{
-			get { return SelectedItem; }
-		}
+		public string CurrentSelectedCode => SelectedItem;
 
 		#endregion
 	}
@@ -109,10 +90,7 @@ namespace LanguageExplorerTests.Works
 			return configs;
 		}
 
-		internal Dictionary<string, DictConfigItem> StubConfigDict
-		{
-			get { return m_configList; }
-		}
+		internal Dictionary<string, DictConfigItem> StubConfigDict => m_configList;
 
 		protected override void ShowAlreadyInUseMsg()
 		{

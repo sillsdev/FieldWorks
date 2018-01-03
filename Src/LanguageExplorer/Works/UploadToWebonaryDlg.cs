@@ -168,7 +168,7 @@ namespace LanguageExplorer.Works
 		{
 			var selectedReversals = GetSelectedReversals();
 			var availableReversals = Model.Reversals.Where(prop => prop.Value.Publications.Contains(publication)
-				&& prop.Value.Label != DictionaryConfigurationModel.AllReversalIndexes
+				&& prop.Value.Label != LanguageExplorerConstants.AllReversalIndexes
 				&& !string.IsNullOrEmpty(prop.Value.WritingSystem)).Select(prop => prop.Value.Label).ToList();
 			reversalsCheckedListBox.Items.Clear();
 			foreach (var reversal in availableReversals)

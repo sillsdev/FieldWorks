@@ -359,7 +359,7 @@ namespace LanguageExplorer.Areas
 
 			// Generate and store the expected path to a configuration file specific to this reversal index.  If it doesn't
 			// exist, code elsewhere will make up for it.
-			var layoutName = Path.Combine(LcmFileHelper.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder), "ReversalIndex", ri.ShortName + DictionaryConfigurationModel.FileExtension);
+			var layoutName = Path.Combine(LcmFileHelper.GetConfigSettingsDir(m_cache.ProjectId.ProjectFolder), "ReversalIndex", ri.ShortName + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			PropertyTable.SetProperty("ReversalIndexPublicationLayout", layoutName, true, true);
 
 			var newOwningObj = NewOwningObject(ri);

@@ -546,6 +546,7 @@
     <Compile Include="RecordFilterParameterObject.cs" />
     <Compile Include="ToolbarServices.cs" />
     <Compile Include="VectorPropertyParameterObject.cs" />
+    <Compile Include="Works\ConfigType.cs" />
     <Compile Include="Works\ConfigureHomographDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -981,9 +982,6 @@
     <Compile Include="Areas\Lists\CustomListDlg.Designer.cs">
       <DependentUpon>CustomListDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Works\DataTreeImages.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Areas\Lists\DeleteCustomList.cs" />
     <Compile Include="Works\DictionaryConfigManager.cs" />
     <Compile Include="Works\DictionaryConfigMgrDlg.cs">
@@ -1070,9 +1068,12 @@
     </Compile>
     <Compile Include="Works\DictionaryDetailsView\SpecialCharacterHandling.cs" />
     <Compile Include="Works\DictionaryExportService.cs" />
+    <Compile Include="DictionaryHomographConfiguration.cs" />
     <Compile Include="Works\DictionaryNodeOptions.cs" />
     <Compile Include="Works\DictionaryPublicationDecorator.cs" />
     <Compile Include="Areas\Lexicon\Tools\BulkEditEntries\EntriesOrChildClassesRecordList.cs" />
+    <Compile Include="Works\Direction.cs" />
+    <Compile Include="Works\ExclusionReasonCode.cs" />
     <Compile Include="Works\ExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1099,6 +1100,7 @@
     </Compile>
     <Compile Include="Works\IAnalysisOccurrenceFromHvo.cs" />
     <Compile Include="ICreateAndInsert.cs" />
+    <Compile Include="Works\IDictConfigManager.cs" />
     <Compile Include="Works\IDictConfigPresenter.cs" />
     <Compile Include="Works\IDictConfigViewer.cs" />
     <Compile Include="Works\IDictionaryConfigurationView.cs" />
@@ -1120,6 +1122,8 @@
     <Compile Include="ITreeBarHandler.cs" />
     <Compile Include="Works\ISetRootHvo.cs" />
     <Compile Include="Works\IWebonaryClient.cs" />
+    <Compile Include="Works\LayoutLevels.cs" />
+    <Compile Include="Works\LayoutTreeNode.cs" />
     <Compile Include="Works\LegacyConfigurationUtils.cs" />
     <Compile Include="Works\LiftExportMessageDlg.cs">
       <SubType>Form</SubType>
@@ -1606,10 +1610,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\Lists\CustomListDlg.resx">
       <DependentUpon>CustomListDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Works\DataTreeImages.resx">
-      <DependentUpon>DataTreeImages.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Works\DictionaryConfigMgrDlg.resx">

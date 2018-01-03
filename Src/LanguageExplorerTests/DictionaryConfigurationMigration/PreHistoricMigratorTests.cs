@@ -90,7 +90,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		public void ConvertLayoutTreeNodeToConfigNode_BeforeAfterAndBetweenWork()
 		{
 			ConfigurableDictionaryNode configNode = null;
-			var oldNode = new XmlDocConfigureDlg.LayoutTreeNode { After = "]", Between = ",", Before = "["};
+			var oldNode = new LayoutTreeNode { After = "]", Between = ",", Before = "["};
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(oldNode));
 			Assert.AreEqual(configNode.After, oldNode.After, "After not migrated");
 			Assert.AreEqual(configNode.Between, oldNode.Between, "Between not migrated");
@@ -266,7 +266,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		public void ConvertLayoutTreeNodeToConfigNode_StyleWorks()
 		{
 			ConfigurableDictionaryNode configNode = null;
-			var oldNode = new XmlDocConfigureDlg.LayoutTreeNode { StyleName = "Dictionary-Headword"};
+			var oldNode = new LayoutTreeNode { StyleName = "Dictionary-Headword"};
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(oldNode));
 			Assert.AreEqual(configNode.Style, oldNode.StyleName, "Style not migrated");
 		}
@@ -275,8 +275,8 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_MainEntryAndMinorEntryWork()
 		{
-			var oldMainNode = new XmlDocConfigureDlg.LayoutTreeNode { Label = "Main Entry", ClassName = "LexEntry"};
-			var oldMinorNode = new XmlDocConfigureDlg.LayoutTreeNode { Label = MinorEntryOldLabel, ClassName = "LexEntry" };
+			var oldMainNode = new LayoutTreeNode { Label = "Main Entry", ClassName = "LexEntry"};
+			var oldMinorNode = new LayoutTreeNode { Label = MinorEntryOldLabel, ClassName = "LexEntry" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(oldMainNode));
 			Assert.AreEqual(configNode.Label, oldMainNode.Label, "Label Main Entry root node was not migrated");
@@ -329,7 +329,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			CssGeneratorTests.PopulateFieldsForTesting(convertedModel);
 
 			var currentDefaultModel = BuildCurrentDefaultMinorEntryNodes();
-			currentDefaultModel.FilePath = "./" + DictionaryConfigurationServices.LexemeFileName + DictionaryConfigurationModel.FileExtension;
+			currentDefaultModel.FilePath = "./" + DictionaryConfigurationServices.LexemeFileName + LanguageExplorerConstants.DictionaryConfigurationFileExtension;
 			currentDefaultModel.Parts[1].Label = MainEntryComplexLabel;
 			var currentDefaultMainNode = new ConfigurableDictionaryNode
 			{
@@ -561,8 +561,8 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_IsEnabledWorks()
 		{
-			var tickedNode = new XmlDocConfigureDlg.LayoutTreeNode { Checked = true };
-			var untickedNode = new XmlDocConfigureDlg.LayoutTreeNode { Checked = false };
+			var tickedNode = new LayoutTreeNode { Checked = true };
+			var untickedNode = new LayoutTreeNode { Checked = false };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(tickedNode));
 			Assert.AreEqual(configNode.IsEnabled, tickedNode.Checked, "Checked node in old tree did not set IsEnabled correctly after migration");
@@ -574,7 +574,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_WritingSystemOptionsAnalysisTypeWorks()
 		{
-			var nodeWithWs = new XmlDocConfigureDlg.LayoutTreeNode { WsType = "analysis", WsLabel = "analysis"};
+			var nodeWithWs = new LayoutTreeNode { WsType = "analysis", WsLabel = "analysis"};
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
@@ -588,7 +588,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_WritingSystemOptionsVernacularTypeWorks()
 		{
-			var nodeWithWs = new XmlDocConfigureDlg.LayoutTreeNode { WsType = "vernacular", WsLabel = "vernacular" };
+			var nodeWithWs = new LayoutTreeNode { WsType = "vernacular", WsLabel = "vernacular" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
@@ -602,7 +602,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_WritingSystemOptionsVernacularAnalysisTypeWorks()
 		{
-			var nodeWithWs = new XmlDocConfigureDlg.LayoutTreeNode { WsType = "vernacular analysis", WsLabel = "vernacular" };
+			var nodeWithWs = new LayoutTreeNode { WsType = "vernacular analysis", WsLabel = "vernacular" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
@@ -617,7 +617,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_WritingSystemOptionsPronunciationTypeWorks()
 		{
-			var nodeWithWs = new XmlDocConfigureDlg.LayoutTreeNode { WsType = "pronunciation", WsLabel = "pronunciation" };
+			var nodeWithWs = new LayoutTreeNode { WsType = "pronunciation", WsLabel = "pronunciation" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
@@ -632,7 +632,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_WritingSystemOptionsAnalysisVernacularTypeWorks()
 		{
-			var nodeWithWs = new XmlDocConfigureDlg.LayoutTreeNode { WsType = "analysis vernacular", WsLabel = "analysis" };
+			var nodeWithWs = new LayoutTreeNode { WsType = "analysis vernacular", WsLabel = "analysis" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
@@ -647,7 +647,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_WritingSystemOptionsVernacularSingleLanguageWorks()
 		{
-			var nodeWithWs = new XmlDocConfigureDlg.LayoutTreeNode { WsType = "vernacular", WsLabel = "fr" };
+			var nodeWithWs = new LayoutTreeNode { WsType = "vernacular", WsLabel = "fr" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
@@ -662,7 +662,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_WritingSystemOptionsTwoLanguagesWork()
 		{
-			var nodeWithWs = new XmlDocConfigureDlg.LayoutTreeNode { WsType = "vernacular", WsLabel = "fr, hi" };
+			var nodeWithWs = new LayoutTreeNode { WsType = "vernacular", WsLabel = "fr, hi" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
@@ -678,7 +678,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_WritingSystemOptionsWsAbbreviationWorks()
 		{
-			var nodeWithWs = new XmlDocConfigureDlg.LayoutTreeNode { WsType = "vernacular", WsLabel = "fr", ShowWsLabels = true };
+			var nodeWithWs = new LayoutTreeNode { WsType = "vernacular", WsLabel = "fr", ShowWsLabels = true };
 			ConfigurableDictionaryNode configNode = null;
 
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
@@ -698,7 +698,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		public void ConvertLayoutTreeNodeToConfigNode_ListOptionsEnabledLexRelationWorks()
 		{
 			const string enabledGuid = "+a0000000-1000-b000-2000-c00000000000";
-			var nodeWithSequence = new XmlDocConfigureDlg.LayoutTreeNode { LexRelType = "entry", RelTypeList = LexReferenceInfo.CreateListFromStorageString(enabledGuid) };
+			var nodeWithSequence = new LayoutTreeNode { LexRelType = "entry", RelTypeList = LexReferenceInfo.CreateListFromStorageString(enabledGuid) };
 			ConfigurableDictionaryNode configNode = null;
 
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
@@ -715,7 +715,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		public void ConvertLayoutTreeNodeToConfigNode_ListOptionsDisabledLexRelationWorks()
 		{
 			const string disabledGuid = "-a0000000-1000-b000-2000-c00000000000";
-			var nodeWithSequence = new XmlDocConfigureDlg.LayoutTreeNode { LexRelType = "entry", RelTypeList = LexReferenceInfo.CreateListFromStorageString(disabledGuid) };
+			var nodeWithSequence = new LayoutTreeNode { LexRelType = "entry", RelTypeList = LexReferenceInfo.CreateListFromStorageString(disabledGuid) };
 			ConfigurableDictionaryNode configNode = null;
 
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
@@ -733,8 +733,8 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		{
 			const string enabledGuid = "b0000000-2000-b000-2000-c00000000000";
 			const string disabledGuid = "a0000000-1000-b000-2000-c00000000000";
-			var guidList = String.Format("+{0},-{1}", enabledGuid, disabledGuid);
-			var nodeWithSequence = new XmlDocConfigureDlg.LayoutTreeNode { LexRelType = "entry", RelTypeList = LexReferenceInfo.CreateListFromStorageString(guidList) };
+			var guidList = $"+{enabledGuid},-{disabledGuid}";
+			var nodeWithSequence = new LayoutTreeNode { LexRelType = "entry", RelTypeList = LexReferenceInfo.CreateListFromStorageString(guidList) };
 			ConfigurableDictionaryNode configNode = null;
 
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
@@ -773,7 +773,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		public void ConvertLayoutTreeNodeToConfigNode_ListOptionsEnabledLexEntryTypeWorks()
 		{
 			const string enabledGuid = "+a0000000-1000-b000-2000-c00000000000";
-			var nodeWithSequence = new XmlDocConfigureDlg.LayoutTreeNode { EntryType = "sense", EntryTypeList = ItemTypeInfo.CreateListFromStorageString(enabledGuid) };
+			var nodeWithSequence = new LayoutTreeNode { EntryType = "sense", EntryTypeList = ItemTypeInfo.CreateListFromStorageString(enabledGuid) };
 			ConfigurableDictionaryNode configNode = null;
 
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
@@ -790,7 +790,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		public void ConvertLayoutTreeNodeToConfigNode_ListOptionsDisabledLexEntryTypeWorks()
 		{
 			const string disabledGuid = "-a0000000-1000-b000-2000-c00000000000";
-			var nodeWithSequence = new XmlDocConfigureDlg.LayoutTreeNode { EntryType = "variant", EntryTypeList = ItemTypeInfo.CreateListFromStorageString(disabledGuid) };
+			var nodeWithSequence = new LayoutTreeNode { EntryType = "variant", EntryTypeList = ItemTypeInfo.CreateListFromStorageString(disabledGuid) };
 			ConfigurableDictionaryNode configNode = null;
 
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
@@ -808,17 +808,17 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_DupStringInfoIsConverted()
 		{
-			var duplicateNode = new XmlDocConfigureDlg.LayoutTreeNode { DupString = "1", IsDuplicate = true, Label = "A b c (1)" };
+			var duplicateNode = new LayoutTreeNode { DupString = "1", IsDuplicate = true, Label = "A b c (1)" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(duplicateNode));
 			Assert.IsTrue(configNode.IsDuplicate, "Duplicate node not marked as duplicate.");
 			Assert.AreEqual(duplicateNode.DupString, configNode.LabelSuffix, "number appended to old duplicates not migrated to label suffix");
 			Assert.That(configNode.Label, Is.EqualTo("A b c"), "should not have a suffix on ConfigurableDictionaryNode.Label");
 
-			var originalNode = new XmlDocConfigureDlg.LayoutTreeNode { IsDuplicate = false };
+			var originalNode = new LayoutTreeNode { IsDuplicate = false };
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(originalNode));
 			Assert.IsFalse(configNode.IsDuplicate, "node should not have been marked as a duplicate");
-			Assert.IsTrue(String.IsNullOrEmpty(configNode.LabelSuffix), "suffix should be empty.");
+			Assert.IsTrue(string.IsNullOrEmpty(configNode.LabelSuffix), "suffix should be empty.");
 		}
 
 		/// <summary>
@@ -828,7 +828,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_DupStringInfoIsConvertedForDuplicateOfDuplicate()
 		{
-			var duplicateNode = new XmlDocConfigureDlg.LayoutTreeNode { DupString = "1-2", IsDuplicate = true, Label = "A b c (2)" };
+			var duplicateNode = new LayoutTreeNode { DupString = "1-2", IsDuplicate = true, Label = "A b c (2)" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(duplicateNode));
 			Assert.IsTrue(configNode.IsDuplicate, "Duplicate node not marked as duplicate.");
@@ -845,7 +845,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_DupStringInfoIsDiscardedForFalseDuplicate()
 		{
-			var duplicateNode = new XmlDocConfigureDlg.LayoutTreeNode { DupString = "1.0", IsDuplicate = true, Label = "A b c D e f" };
+			var duplicateNode = new LayoutTreeNode { DupString = "1.0", IsDuplicate = true, Label = "A b c D e f" };
 			ConfigurableDictionaryNode configNode;
 			// SUT
 			using (_migrator.SetTestLogger = new SimpleLogger())
@@ -861,8 +861,8 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_ChildrenAreAdded()
 		{
-			var parentNode = new XmlDocConfigureDlg.LayoutTreeNode { Label = "Parent" };
-			var childNode = new XmlDocConfigureDlg.LayoutTreeNode { Label = "Child" };
+			var parentNode = new LayoutTreeNode { Label = "Parent" };
+			var childNode = new LayoutTreeNode { Label = "Child" };
 			parentNode.Nodes.Add(childNode);
 			ConfigurableDictionaryNode configNode = null;
 
@@ -877,7 +877,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_SenseNumberStyleIsAddedAndUsed()
 		{
-			var senseNumberNode = new XmlDocConfigureDlg.LayoutTreeNode
+			var senseNumberNode = new LayoutTreeNode
 			{
 				Label = "Parent",
 				NumFont = "arial",
@@ -904,14 +904,14 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_SenseConfigsWithDifferingStylesMakeTwoStyles()
 		{
-			var senseNumberNode = new XmlDocConfigureDlg.LayoutTreeNode
+			var senseNumberNode = new LayoutTreeNode
 			{
 				Label = "Parent",
 				NumFont = "arial",
 				NumStyle = "bold -italic",
 				ShowSenseConfig = true
 			};
-			var senseNumberNode2 = new XmlDocConfigureDlg.LayoutTreeNode
+			var senseNumberNode2 = new LayoutTreeNode
 			{
 				Label = "Parent",
 				NumFont = "arial",
@@ -951,7 +951,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		public void ConvertLayoutTreeNodeToConfigNode_AllDifferentNumStylesResultInNewStyleSheets()
 		{
 			var senseNumberOptions = new [] { "-bold -italic", "bold italic", "bold", "italic", "-bold italic", "bold -italic" };
-			var senseNumberNode = new XmlDocConfigureDlg.LayoutTreeNode
+			var senseNumberNode = new LayoutTreeNode
 			{
 				Label = "Parent",
 				NumFont = "arial",
@@ -985,7 +985,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		public void ConvertLayoutTreeNodeToConfigNode_AllDifferentNumStylesMatchThemselves()
 		{
 			var senseNumberOptions = new[] { "-bold -italic", "bold italic", "bold", "italic", "-bold italic", "bold -italic", "" };
-			var senseNumberNode = new XmlDocConfigureDlg.LayoutTreeNode
+			var senseNumberNode = new LayoutTreeNode
 			{
 				Label = "Parent",
 				NumFont = "arial",
@@ -1013,13 +1013,13 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_SenseConfigsWithDifferentFontsMakeTwoStyles()
 		{
-			var senseNumberNode = new XmlDocConfigureDlg.LayoutTreeNode
+			var senseNumberNode = new LayoutTreeNode
 			{
 				Label = "Parent",
 				NumFont = "arial",
 				ShowSenseConfig = true
 			};
-			var senseNumberNode2 = new XmlDocConfigureDlg.LayoutTreeNode
+			var senseNumberNode2 = new LayoutTreeNode
 			{
 				Label = "Parent",
 				NumFont = "notarial",
@@ -1053,7 +1053,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_SenseOptionsAreMigrated()
 		{
-			var senseNumberNode = new XmlDocConfigureDlg.LayoutTreeNode
+			var senseNumberNode = new LayoutTreeNode
 			{
 				Label = "Parent",
 				Number = "(%O)",
@@ -2324,7 +2324,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			var newRevIdxConfigLoc = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
 				DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName);
 			Directory.CreateDirectory(newRevIdxConfigLoc);
-			File.AppendAllText(Path.Combine(newRevIdxConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension), "Foo");
+			File.AppendAllText(Path.Combine(newRevIdxConfigLoc, "SomeConfig" + LanguageExplorerConstants.DictionaryConfigurationFileExtension), "Foo");
 			Assert.That(!_migrator.ConfigsNeedMigratingFromPre83(), "If current configs exist no migration should be needed."); // SUT
 			DirectoryUtilities.DeleteDirectoryRobust(newRevIdxConfigLoc);
 		}
@@ -2336,7 +2336,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			var newDictConfigLoc = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
 				DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
 			Directory.CreateDirectory(newDictConfigLoc);
-			File.AppendAllText(Path.Combine(newDictConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension), "Foo");
+			File.AppendAllText(Path.Combine(newDictConfigLoc, "SomeConfig" + LanguageExplorerConstants.DictionaryConfigurationFileExtension), "Foo");
 			Assert.That(!_migrator.ConfigsNeedMigratingFromPre83(), "If current configs exist no migration should be needed."); // SUT
 			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
 		}
@@ -2377,7 +2377,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		[Test]
 		public void ConfigsMigrateModifiedLabelOkay()
 		{
-			var oldTypeNode = new XmlDocConfigureDlg.LayoutTreeNode
+			var oldTypeNode = new LayoutTreeNode
 			{
 				After = "",
 				Before = " ",
@@ -2386,7 +2386,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 				ContentVisible = true,
 				Label = "Type"
 			};
-			var oldVariantFormNode = new XmlDocConfigureDlg.LayoutTreeNode
+			var oldVariantFormNode = new LayoutTreeNode
 			{
 				After = "",
 				Before = " ",
@@ -2395,7 +2395,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 				ContentVisible = true,
 				Label = "Variant Form"
 			};
-			var oldCommentNode = new XmlDocConfigureDlg.LayoutTreeNode
+			var oldCommentNode = new LayoutTreeNode
 			{
 				After = "",
 				Before = " ",
@@ -2406,7 +2406,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 				WsLabel = "analysis",
 				WsType = "analysis"
 			};
-			var oldVariantsNode = new XmlDocConfigureDlg.LayoutTreeNode
+			var oldVariantsNode = new LayoutTreeNode
 			{
 				After = ")",
 				Before = " (",
@@ -2418,7 +2418,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			oldVariantsNode.Nodes.Add(oldTypeNode);
 			oldVariantsNode.Nodes.Add(oldVariantFormNode);
 			oldVariantsNode.Nodes.Add(oldCommentNode);
-			var oldRefSensesNode = new XmlDocConfigureDlg.LayoutTreeNode
+			var oldRefSensesNode = new LayoutTreeNode
 			{
 				After = "",
 				Before = " ",
@@ -2428,7 +2428,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 				Label = "Referenced Senses",
 			};
 			oldRefSensesNode.Nodes.Add(oldVariantsNode);
-			var oldReversalEntryNode = new XmlDocConfigureDlg.LayoutTreeNode
+			var oldReversalEntryNode = new LayoutTreeNode
 			{
 				ClassName = "ReversalIndexEntry",
 				ContentVisible = false,
@@ -2557,13 +2557,13 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		public void TestMigrateCustomFieldNode()
 		{
 			var xdoc0 = XDocument.Parse("<part ref=\"ScientificName\" label=\"Scientific Name\" before=\" \" after=\"\" visibility=\"ifdata\" css=\"scientific-name\"/>");
-			var oldTypeNode0 = new XmlDocConfigureDlg.LayoutTreeNode(xdoc0.Root, _migrator, "LexSense");
+			var oldTypeNode0 = new LayoutTreeNode(xdoc0.Root, _migrator, "LexSense");
 			var newTypeNode0 = _migrator.ConvertLayoutTreeNodeToConfigNode(oldTypeNode0);
 			Assert.IsFalse(newTypeNode0.IsCustomField, "A normal field should not be marked as custom after conversion");
 			Assert.IsTrue(newTypeNode0.IsEnabled, "A normal field should be enabled properly.");
 			Assert.AreEqual("Scientific Name", newTypeNode0.Label, "A normal field copies its label properly during conversion");
 			var xdoc1 = XDocument.Parse("<part ref=\"$child\" label=\"Single Sense\" before=\" Custom Field:( \" after=\" )\" visibility=\"ifdata\" originalLabel=\"Single Sense\"><string field=\"Single Sense\" class=\"LexSense\"/></part>");
-			var oldTypeNode1 = new XmlDocConfigureDlg.LayoutTreeNode(xdoc1.Root, _migrator, "LexSense");
+			var oldTypeNode1 = new LayoutTreeNode(xdoc1.Root, _migrator, "LexSense");
 			var newTypeNode1 = _migrator.ConvertLayoutTreeNodeToConfigNode(oldTypeNode1);
 			Assert.IsTrue(newTypeNode1.IsCustomField, "A custom field should be marked as such after conversion");
 			Assert.IsTrue(newTypeNode1.IsEnabled, "A custom field should be enabled properly.");
@@ -2580,14 +2580,11 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			}
 		}
 
-		internal class MockLayoutTreeNode : XmlDocConfigureDlg.LayoutTreeNode
+		internal class MockLayoutTreeNode : LayoutTreeNode
 		{
 			public string m_partName;
 
-			public override string PartName
-			{
-				get { return m_partName; }
-			}
+			public override string PartName => m_partName;
 		}
 	#endregion Helper
 	}

@@ -90,15 +90,6 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		private bool _isInvalidConfigFile;
 
-		/// <summary>
-		/// The following style names are known to have unsupported features. We will avoid wiping out default styles of these types when
-		/// importing a view.
-		/// </summary>
-		public static readonly HashSet<string> UnsupportedStyles = new HashSet<string>
-		{
-			"Bulleted List", "Numbered List", "Homograph-Number"
-		};
-
 		/// <summary/>
 		public DictionaryConfigurationImportController(LcmCache cache, string projectConfigDir,
 			List<DictionaryConfigurationModel> configurations)
@@ -170,7 +161,7 @@ namespace LanguageExplorer.Works
 			// phone home (analytics)
 			var configType = NewConfigToImport.Type;
 			var configDir = DictionaryConfigurationServices.GetDefaultConfigurationDirectory(
-				configType == DictionaryConfigurationModel.ConfigType.Reversal
+				configType == ConfigType.Reversal
 					? DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName
 					: DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
 			var isCustomizedOriginal = DictionaryConfigurationManagerController.IsConfigurationACustomizedOriginal(NewConfigToImport, configDir, _cache);
@@ -181,12 +172,12 @@ namespace LanguageExplorer.Works
 
 		private void ImportStyles(string importStylesLocation)
 		{
-			var stylesToRemove = _cache.LangProject.StylesOC.Where(style => !UnsupportedStyles.Contains(style.Name));
+			var stylesToRemove = _cache.LangProject.StylesOC.Where(style => !DictionaryConfigurationServices.UnsupportedStyles.Contains(style.Name));
 
 			// For LT-18267, record based on and next properties of styles not
 			// being exported, so they can be reconnected to the imported
 			// styles of the same name.
-			var preimportStyleLinks = _cache.LangProject.StylesOC.Where(style => UnsupportedStyles.Contains(style.Name)).ToDictionary(
+			var preimportStyleLinks = _cache.LangProject.StylesOC.Where(style => DictionaryConfigurationServices.UnsupportedStyles.Contains(style.Name)).ToDictionary(
 					style => style.Name,
 					style => new
 					{
@@ -212,7 +203,7 @@ namespace LanguageExplorer.Works
 				// ReSharper disable once UnusedVariable -- The FlexStylesXmlAccessor constructor does the work of importing.
 				var stylesAccessor = new FlexStylesXmlAccessor(_cache.LangProject.LexDbOA, true, importStylesLocation);
 
-				var postimportStylesToReconnect = _cache.LangProject.StylesOC.Where(style => UnsupportedStyles.Contains(style.Name));
+				var postimportStylesToReconnect = _cache.LangProject.StylesOC.Where(style => DictionaryConfigurationServices.UnsupportedStyles.Contains(style.Name));
 
 				postimportStylesToReconnect.ForEach(postimportStyleToRewire =>
 				{
@@ -304,7 +295,7 @@ namespace LanguageExplorer.Works
 				using (var zip = new ZipFile(configurationZipPath))
 				{
 					var tmpPath = Path.GetTempPath();
-					var configInZip = zip.SelectEntries("*" + DictionaryConfigurationModel.FileExtension).First();
+					var configInZip = zip.SelectEntries("*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension).First();
 					configInZip.Extract(tmpPath, ExtractExistingFileAction.OverwriteSilently);
 					_temporaryImportConfigLocation = tmpPath + configInZip.FileName;
 					if(!FileUtils.IsFileReadableAndWritable(_temporaryImportConfigLocation))

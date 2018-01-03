@@ -25,7 +25,7 @@ namespace LanguageExplorer.Works
 		private readonly LcmCache m_cache;
 		private readonly IPropertyTable m_propertyTable;
 		private readonly DictionaryExportService m_exportService;
-		private DictionaryExportService.PublicationActivator m_publicationActivator;
+		private PublicationActivator m_publicationActivator;
 		/// <summary>
 		/// This action creates the WebClient for accessing webonary. Protected to enable a mock client for unit testing.
 		/// </summary>
@@ -38,7 +38,7 @@ namespace LanguageExplorer.Works
 			m_cache = cache;
 			m_propertyTable = propertyTable;
 			m_exportService = new DictionaryExportService(cache, RecordList.ActiveRecordListRepository.ActiveRecordList, propertyTable, publisher, statusBar);
-			m_publicationActivator = new DictionaryExportService.PublicationActivator(propertyTable);
+			m_publicationActivator = new PublicationActivator(propertyTable);
 		}
 
 		#region Disposal
@@ -334,6 +334,44 @@ namespace LanguageExplorer.Works
 				".jpg", ".jpeg", ".gif", ".png", ".mp3", ".mp4", ".3gp"
 			};
 			return supportedFileExtensions.Any(path.ToLowerInvariant().EndsWith);
+		}
+		private sealed class PublicationActivator : IDisposable
+		{
+			private readonly string m_currentPublication;
+			private readonly IPropertyTable m_propertyTable;
+
+			internal PublicationActivator(IPropertyTable propertyTable)
+			{
+				m_currentPublication = propertyTable.GetValue<string>("SelectedPublication", null);
+				m_propertyTable = propertyTable;
+			}
+
+			#region disposal
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if (disposing && !string.IsNullOrEmpty(m_currentPublication))
+					m_propertyTable.SetProperty("SelectedPublication", m_currentPublication, false, true);
+			}
+
+			~PublicationActivator()
+			{
+				Dispose(false);
+			}
+			#endregion disposal
+
+			internal void ActivatePublication(string publication)
+			{
+				// Don't publish the property change: doing so may refresh the Dictionary (or Reversal) preview in the main window;
+				// we want to activate the Publication for export purposes only.
+				m_propertyTable.SetProperty("SelectedPublication", publication, false, true);
+			}
 		}
 	}
 }

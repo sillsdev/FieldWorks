@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Xml;
 using System.Xml.Serialization;
 using SIL.FieldWorks.Common.FwUtils;
@@ -21,21 +20,6 @@ namespace LanguageExplorer.Works
 	[XmlRoot(ElementName = "DictionaryConfiguration")]
 	public class DictionaryConfigurationModel
 	{
-		/// <summary>
-		/// File extension for dictionary configuration files.
-		/// </summary>
-		public const string FileExtension = ".fwdictconfig";
-
-		public const string AllReversalIndexes = "All Reversal Indexes";
-
-		/// <summary>
-		/// Filename (without extension) of the reversal index configuration file
-		/// for "all reversal indexes".
-		/// </summary>
-		public const string AllReversalIndexesFilenameBase = "AllReversalIndexes";
-
-		public enum ConfigType { Hybrid, Lexeme, Root, Reversal }
-
 		/// <summary>
 		/// Trees of dictionary elements
 		/// </summary>
@@ -315,77 +299,5 @@ namespace LanguageExplorer.Works
 		{
 			return Label;
 		}
-	}
-
-	/// <summary>
-	/// Provides per configuration serialization of the HomographConfiguration data (which is a singleton for views purposes)
-	/// </summary>
-	public class DictionaryHomographConfiguration
-	{
-		public DictionaryHomographConfiguration() {}
-
-		public DictionaryHomographConfiguration(HomographConfiguration config)
-		{
-			HomographNumberBefore = config.HomographNumberBefore;
-			ShowSenseNumber = config.ShowSenseNumberRef;
-			ShowSenseNumberReversal = config.ShowSenseNumberReversal;
-			ShowHwNumber = config.ShowHomographNumber(HomographConfiguration.HeadwordVariant.Main);
-			ShowHwNumInCrossRef = config.ShowHomographNumber(HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
-			ShowHwNumInReversalCrossRef = config.ShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef);
-			HomographWritingSystem = config.WritingSystem;
-			CustomHomographNumberList = config.CustomHomographNumbers;
-		}
-
-		/// <summary>
-		/// Intended to be used to set the singleton HomographConfiguration in FLEx to the settings from this model
-		/// </summary>
-		public void ExportToHomographConfiguration(HomographConfiguration config)
-		{
-			config.HomographNumberBefore = HomographNumberBefore;
-			config.ShowSenseNumberRef = ShowSenseNumber;
-			config.ShowSenseNumberReversal = ShowSenseNumberReversal;
-			config.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.Main, ShowHwNumber);
-			config.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.DictionaryCrossRef, ShowHwNumInCrossRef);
-			config.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef, ShowHwNumInReversalCrossRef);
-			config.WritingSystem = HomographWritingSystem;
-			config.CustomHomographNumbers = CustomHomographNumberList;
-		}
-
-		[XmlIgnore]
-		public List<string> CustomHomographNumberList { get; internal set; }
-
-		[XmlAttribute("showHwNumInReversalCrossRef")]
-		public bool ShowHwNumInReversalCrossRef { get; set; }
-
-		[XmlAttribute("showHwNumInCrossRef")]
-		public bool ShowHwNumInCrossRef { get; set; }
-
-		[XmlAttribute("showHwNumber")]
-		public bool ShowHwNumber { get; set; }
-
-		[XmlAttribute("showSenseNumberReversal")]
-		public bool ShowSenseNumberReversal { get; set; }
-
-		[XmlAttribute("showSenseNumber")]
-		public bool ShowSenseNumber { get; set; }
-
-		[XmlAttribute("homographNumberBefore")]
-		public bool HomographNumberBefore { get; set; }
-
-		[XmlAttribute("customHomographNumbers")]
-		public string CustomHomographNumbers
-		{
-			get
-			{
-				return CustomHomographNumberList == null ? string.Empty : WebUtility.HtmlEncode(string.Join(",", CustomHomographNumberList));
-			}
-			set
-			{
-				CustomHomographNumberList = new List<string>(WebUtility.HtmlDecode(value).Split(new []{','}, StringSplitOptions.RemoveEmptyEntries));
-			}
-		}
-
-		[XmlAttribute("homographWritingSystem")]
-		public string HomographWritingSystem { get; set; }
 	}
 }

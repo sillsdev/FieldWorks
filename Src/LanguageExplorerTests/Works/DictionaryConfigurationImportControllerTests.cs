@@ -8,6 +8,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using LanguageExplorer;
 using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.LCModel.Core.Cellar;
@@ -509,7 +510,7 @@ namespace LanguageExplorerTests.Works
 			_controller.DoImport();
 
 			Assert.That(_controller.NewConfigToImport.FilePath,
-				Is.EqualTo(Path.Combine(_projectConfigPath, _controller.NewConfigToImport.Label + DictionaryConfigurationModel.FileExtension)),
+				Is.EqualTo(Path.Combine(_projectConfigPath, _controller.NewConfigToImport.Label + LanguageExplorerConstants.DictionaryConfigurationFileExtension)),
 				"Use a filename based on the non-colliding label.");
 		}
 

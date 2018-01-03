@@ -439,7 +439,7 @@ namespace LanguageExplorerTests.Works
 		public void ShippedFilesHaveNoRedundantChildrenOrOrphans([Values("Dictionary", "ReversalIndex")] string subFolder)
 		{
 			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", subFolder);
-			foreach(var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*"+DictionaryConfigurationModel.FileExtension))
+			foreach(var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*"+LanguageExplorerConstants.DictionaryConfigurationFileExtension))
 			{
 				var model = new DictionaryConfigurationModel(shippedFile, Cache);
 				VerifyNoRedundantChildren(model.Parts);
@@ -508,7 +508,7 @@ namespace LanguageExplorerTests.Works
 		public void ShippedFilesValidateAgainstSchema([Values("Dictionary", "ReversalIndex")] string subFolder)
 		{
 			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", subFolder);
-			foreach(var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*"+DictionaryConfigurationModel.FileExtension))
+			foreach(var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*"+LanguageExplorerConstants.DictionaryConfigurationFileExtension))
 			{
 				ValidateAgainstSchema(shippedFile);
 			}
@@ -518,7 +518,7 @@ namespace LanguageExplorerTests.Works
 		public void ShippedFilesHaveCurrentVersion([Values("Dictionary", "ReversalIndex")] string subFolder)
 		{
 			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", subFolder);
-			foreach(var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*"+DictionaryConfigurationModel.FileExtension))
+			foreach(var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*"+LanguageExplorerConstants.DictionaryConfigurationFileExtension))
 			{
 				Assert.AreEqual(DictionaryConfigurationServices.VersionCurrent, new DictionaryConfigurationModel(shippedFile, Cache).Version);
 			}
@@ -900,7 +900,7 @@ namespace LanguageExplorerTests.Works
 		{
 			var modelFile = Path.GetTempFileName();
 			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", "Dictionary");
-			var sampleShippedFile = Directory.EnumerateFiles(shippedConfigfolder, "*" + DictionaryConfigurationModel.FileExtension).First();
+			var sampleShippedFile = Directory.EnumerateFiles(shippedConfigfolder, "*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension).First();
 			var model = new DictionaryConfigurationModel(sampleShippedFile, Cache) { FilePath = modelFile };
 			model.Parts[1].DuplicateAmongSiblings(model.Parts);
 			// SUT

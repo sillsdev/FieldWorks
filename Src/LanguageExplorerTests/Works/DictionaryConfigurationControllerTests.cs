@@ -373,7 +373,7 @@ namespace LanguageExplorerTests.Works
 			var testDefaultFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
 			using (var writer = new StreamWriter(
-				string.Concat(Path.Combine(testDefaultFolder.FullName, "default"), DictionaryConfigurationModel.FileExtension)))
+				string.Concat(Path.Combine(testDefaultFolder.FullName, "default"), LanguageExplorerConstants.DictionaryConfigurationFileExtension)))
 			{
 				writer.Write("test");
 			}
@@ -390,14 +390,14 @@ namespace LanguageExplorerTests.Works
 			var testDefaultFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
 			using (var writer = new StreamWriter(
-				string.Concat(Path.Combine(testDefaultFolder.FullName, "default"), DictionaryConfigurationModel.FileExtension)))
+				string.Concat(Path.Combine(testDefaultFolder.FullName, "default"), LanguageExplorerConstants.DictionaryConfigurationFileExtension)))
 			{
 				writer.Write("test");
 			}
 			var testUserFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
 			using (var writer = new StreamWriter(
-				string.Concat(Path.Combine(testUserFolder.FullName, "user"), DictionaryConfigurationModel.FileExtension)))
+				string.Concat(Path.Combine(testUserFolder.FullName, "user"), LanguageExplorerConstants.DictionaryConfigurationFileExtension)))
 			{
 				writer.Write("usertest");
 			}
@@ -412,14 +412,14 @@ namespace LanguageExplorerTests.Works
 			var testDefaultFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
 			using (var writer = new StreamWriter(
-				string.Concat(Path.Combine(testDefaultFolder.FullName, "Root"), DictionaryConfigurationModel.FileExtension)))
+				string.Concat(Path.Combine(testDefaultFolder.FullName, "Root"), LanguageExplorerConstants.DictionaryConfigurationFileExtension)))
 			{
 				writer.Write("test");
 			}
 			var testUserFolder =
 				Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
 			using (var writer = new StreamWriter(
-				string.Concat(Path.Combine(testUserFolder.FullName, "Root"), DictionaryConfigurationModel.FileExtension)))
+				string.Concat(Path.Combine(testUserFolder.FullName, "Root"), LanguageExplorerConstants.DictionaryConfigurationFileExtension)))
 			{
 				writer.Write("usertest");
 			}
@@ -435,10 +435,10 @@ namespace LanguageExplorerTests.Works
 			var testDefaultFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
 			var testUserFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
 			_model.Label = "configurationALabel";
-			_model.FilePath = string.Concat(Path.Combine(testDefaultFolder.FullName, "configurationA"), DictionaryConfigurationModel.FileExtension);
+			_model.FilePath = string.Concat(Path.Combine(testDefaultFolder.FullName, "configurationA"), LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			_model.Save();
 			_model.Label = "configurationBLabel";
-			_model.FilePath = string.Concat(Path.Combine(testUserFolder.FullName, "configurationB"), DictionaryConfigurationModel.FileExtension);
+			_model.FilePath = string.Concat(Path.Combine(testUserFolder.FullName, "configurationB"), LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			_model.Save();
 
 			// SUT
@@ -447,9 +447,9 @@ namespace LanguageExplorerTests.Works
 			Assert.Contains("configurationBLabel", labels.Keys, "missing a label");
 			Assert.That(labels.Count, Is.EqualTo(2), "unexpected label count");
 			Assert.That(labels["configurationALabel"].FilePath,
-				Is.StringContaining(string.Concat("configurationA", DictionaryConfigurationModel.FileExtension)), "missing a file name");
+				Is.StringContaining(string.Concat("configurationA", LanguageExplorerConstants.DictionaryConfigurationFileExtension)), "missing a file name");
 			Assert.That(labels["configurationBLabel"].FilePath,
-				Is.StringContaining(string.Concat("configurationB", DictionaryConfigurationModel.FileExtension)), "missing a file name");
+				Is.StringContaining(string.Concat("configurationB", LanguageExplorerConstants.DictionaryConfigurationFileExtension)), "missing a file name");
 		}
 
 		/// <summary/>
@@ -517,7 +517,7 @@ namespace LanguageExplorerTests.Works
 		public void CanReorder_ThrowsOnNullArgument()
 		{
 			// SUT
-			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationController.CanReorder(null, DictionaryConfigurationController.Direction.Up));
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationController.CanReorder(null, Direction.Up));
 		}
 
 		/// <summary/>
@@ -528,7 +528,7 @@ namespace LanguageExplorerTests.Works
 			AddChildrenToNode(rootNode, 2);
 			var firstChild = rootNode.Children[0];
 			// SUT
-			Assert.That(DictionaryConfigurationController.CanReorder(firstChild, DictionaryConfigurationController.Direction.Up), Is.False, "Shouldn't be able to move up the first child");
+			Assert.That(DictionaryConfigurationController.CanReorder(firstChild, Direction.Up), Is.False, "Shouldn't be able to move up the first child");
 		}
 
 		/// <summary/>
@@ -539,7 +539,7 @@ namespace LanguageExplorerTests.Works
 			AddChildrenToNode(rootNode, 2);
 			var firstChild = rootNode.Children[0];
 			// SUT
-			Assert.That(DictionaryConfigurationController.CanReorder(firstChild, DictionaryConfigurationController.Direction.Down), Is.True, "Should be able to move down the first child");
+			Assert.That(DictionaryConfigurationController.CanReorder(firstChild, Direction.Down), Is.True, "Should be able to move down the first child");
 		}
 
 		/// <summary/>
@@ -550,7 +550,7 @@ namespace LanguageExplorerTests.Works
 			AddChildrenToNode(rootNode, 2);
 			var secondChild = rootNode.Children[1];
 			// SUT
-			Assert.That(DictionaryConfigurationController.CanReorder(secondChild, DictionaryConfigurationController.Direction.Up), Is.True, "Should be able to move up the second child");
+			Assert.That(DictionaryConfigurationController.CanReorder(secondChild, Direction.Up), Is.True, "Should be able to move up the second child");
 		}
 
 		/// <summary/>
@@ -561,7 +561,7 @@ namespace LanguageExplorerTests.Works
 			AddChildrenToNode(rootNode, 2);
 			var lastChild = rootNode.Children[1];
 			// SUT
-			Assert.That(DictionaryConfigurationController.CanReorder(lastChild, DictionaryConfigurationController.Direction.Down), Is.False, "Shouldn't be able to move down the last child");
+			Assert.That(DictionaryConfigurationController.CanReorder(lastChild, Direction.Down), Is.False, "Shouldn't be able to move down the last child");
 		}
 
 		/// <summary/>
@@ -571,8 +571,8 @@ namespace LanguageExplorerTests.Works
 			var rootNode = new ConfigurableDictionaryNode() { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
 
 			// SUT
-			Assert.That(DictionaryConfigurationController.CanReorder(rootNode, DictionaryConfigurationController.Direction.Up), Is.False, "Should not be able to reorder a root node");
-			Assert.That(DictionaryConfigurationController.CanReorder(rootNode, DictionaryConfigurationController.Direction.Down), Is.False, "Should not be able to reorder a root node");
+			Assert.That(DictionaryConfigurationController.CanReorder(rootNode, Direction.Up), Is.False, "Should not be able to reorder a root node");
+			Assert.That(DictionaryConfigurationController.CanReorder(rootNode, Direction.Down), Is.False, "Should not be able to reorder a root node");
 		}
 
 		/// <summary/>
@@ -581,7 +581,7 @@ namespace LanguageExplorerTests.Works
 		{
 			var controller = new DictionaryConfigurationController();
 			// SUT
-			Assert.Throws<ArgumentNullException>(() => controller.Reorder(null, DictionaryConfigurationController.Direction.Up));
+			Assert.Throws<ArgumentNullException>(() => controller.Reorder(null, Direction.Up));
 		}
 
 		/// <summary/>
@@ -596,9 +596,9 @@ namespace LanguageExplorerTests.Works
 			AddChildrenToNode(firstChild, 1);
 			var grandChild = firstChild.Children[0];
 			// SUT
-			Assert.Throws<ArgumentOutOfRangeException>(() => controller.Reorder(firstChild, DictionaryConfigurationController.Direction.Up));
-			Assert.Throws<ArgumentOutOfRangeException>(() => controller.Reorder(secondChild, DictionaryConfigurationController.Direction.Down));
-			Assert.Throws<ArgumentOutOfRangeException>(() => controller.Reorder(grandChild, DictionaryConfigurationController.Direction.Up), "Can't move a node with no siblings");
+			Assert.Throws<ArgumentOutOfRangeException>(() => controller.Reorder(firstChild, Direction.Up));
+			Assert.Throws<ArgumentOutOfRangeException>(() => controller.Reorder(secondChild, Direction.Down));
+			Assert.Throws<ArgumentOutOfRangeException>(() => controller.Reorder(grandChild, Direction.Up), "Can't move a node with no siblings");
 		}
 
 		/// <summary/>
@@ -608,8 +608,8 @@ namespace LanguageExplorerTests.Works
 		public void Reorder_ReordersSiblings(int movingChildOriginalPos, int movingChildExpectedPos, int direction)
 		{
 			var directionToMove = direction == 0
-				? DictionaryConfigurationController.Direction.Up
-				: DictionaryConfigurationController.Direction.Down;
+				? Direction.Up
+				: Direction.Down;
 			using (var view = new TestConfigurableDictionaryView())
 			{
 				var controller = new DictionaryConfigurationController { View = view, _model = _model };
@@ -636,8 +636,8 @@ namespace LanguageExplorerTests.Works
 		public void Reorder_ChildrenMoveIntoGroupingNodes(int movingChildOriginalPos, int expectedIndexUnderGroup, int groupChildren, int direction)
 		{
 			var directionToMove = direction == 0
-				? DictionaryConfigurationController.Direction.Up
-				: DictionaryConfigurationController.Direction.Down;
+				? Direction.Up
+				: Direction.Down;
 			using (var view = new TestConfigurableDictionaryView())
 			{
 				var controller = new DictionaryConfigurationController { View = view, _model = _model };
@@ -662,8 +662,8 @@ namespace LanguageExplorerTests.Works
 		public void Reorder_ChildrenMoveOutOfGroupingNodes(int movingChildOriginalPos, int expectedIndexUnderParent, int direction)
 		{
 			var directionToMove = direction == 0
-				? DictionaryConfigurationController.Direction.Up
-				: DictionaryConfigurationController.Direction.Down;
+				? Direction.Up
+				: Direction.Down;
 
 			using (var view = new TestConfigurableDictionaryView())
 			{
@@ -686,8 +686,8 @@ namespace LanguageExplorerTests.Works
 		public void Reorder_GroupWontMoveIntoGroupingNodes([Values(0, 1)]int direction)
 		{
 			var directionToMove = direction == 0
-				? DictionaryConfigurationController.Direction.Up
-				: DictionaryConfigurationController.Direction.Down;
+				? Direction.Up
+				: Direction.Down;
 			using (var view = new TestConfigurableDictionaryView())
 			{
 				var controller = new DictionaryConfigurationController { View = view, _model = _model };
@@ -1289,7 +1289,7 @@ namespace LanguageExplorerTests.Works
 														  CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
 				var model = new DictionaryConfigurationModel(string.Concat(Path.Combine(
-					FwDirectoryFinder.DefaultConfigurations, "Dictionary", "Root"), DictionaryConfigurationModel.FileExtension),
+					FwDirectoryFinder.DefaultConfigurations, "Dictionary", "Root"), LanguageExplorerConstants.DictionaryConfigurationFileExtension),
 					Cache);
 
 				//SUT

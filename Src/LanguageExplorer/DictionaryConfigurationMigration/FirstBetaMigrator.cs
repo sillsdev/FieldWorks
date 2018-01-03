@@ -36,8 +36,8 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 			var foundOne = $"{AppVersion}: Configuration was found in need of migration. - {DateTime.Now:yyyy MMM d h:mm:ss}";
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
-			var stemPath = Path.Combine(dictionaryConfigLoc, "Stem" + DictionaryConfigurationModel.FileExtension);
-			var lexemePath = Path.Combine(dictionaryConfigLoc, "Lexeme" + DictionaryConfigurationModel.FileExtension);
+			var stemPath = Path.Combine(dictionaryConfigLoc, "Stem" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
+			var lexemePath = Path.Combine(dictionaryConfigLoc, "Lexeme" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			if (File.Exists(stemPath) && !File.Exists(lexemePath))
 			{
 				File.Move(stemPath, lexemePath);
@@ -67,19 +67,19 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 			// There is only one default config for reversals
 			if (config.IsReversal)
 			{
-				configPath = Path.Combine(reversalFolder, DictionaryConfigurationModel.AllReversalIndexesFilenameBase + DictionaryConfigurationModel.FileExtension);
+				configPath = Path.Combine(reversalFolder, LanguageExplorerConstants.AllReversalIndexesFilenameBase + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			}
 			else if (config.IsRootBased)
 			{
-				configPath = Path.Combine(dictionaryFolder, DictionaryConfigurationServices.RootFileName + DictionaryConfigurationModel.FileExtension);
+				configPath = Path.Combine(dictionaryFolder, DictionaryConfigurationServices.RootFileName + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			}
 			else if (config.IsHybrid) // Hybrid configs have subentries
 			{
-				configPath = Path.Combine(dictionaryFolder, DictionaryConfigurationServices.HybridFileName + DictionaryConfigurationModel.FileExtension);
+				configPath = Path.Combine(dictionaryFolder, DictionaryConfigurationServices.HybridFileName + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			}
 			else // Must be Lexeme
 			{
-				configPath = Path.Combine(dictionaryFolder, DictionaryConfigurationServices.LexemeFileName + DictionaryConfigurationModel.FileExtension);
+				configPath = Path.Combine(dictionaryFolder, DictionaryConfigurationServices.LexemeFileName + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			}
 			return new DictionaryConfigurationModel(configPath, Cache);
 		}
@@ -294,7 +294,7 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 				var wsValue = GetWritingSystemNameAndVersion(fName, out version);
 				if (!string.IsNullOrEmpty(wsValue) && version < DictionaryConfigurationServices.VersionCurrent)
 				{
-					var newFName = Path.Combine(Path.GetDirectoryName(fName), wsValue + DictionaryConfigurationModel.FileExtension);
+					var newFName = Path.Combine(Path.GetDirectoryName(fName), wsValue + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 					if (wsValue == Path.GetFileNameWithoutExtension(fName))
 					{
 						continue;
@@ -319,7 +319,7 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 							}
 						}
 
-						newFName = $"{wsValue}{count}{DictionaryConfigurationModel.FileExtension}";
+						newFName = $"{wsValue}{count}{LanguageExplorerConstants.DictionaryConfigurationFileExtension}";
 						newFName = Path.Combine(Path.GetDirectoryName(fName), newFName);
 						File.Move(fName, newFName);
 					}
