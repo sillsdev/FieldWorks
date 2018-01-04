@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -158,9 +159,9 @@ namespace LanguageExplorerTests.Works
 		}
 
 		#region Helpers
-		public static List<DictionaryNodeListOptions.DictionaryNodeOption> ListOfEnabledDNOsFromStrings(IEnumerable<String> idList)
+		internal static List<DictionaryNodeOption> ListOfEnabledDNOsFromStrings(IEnumerable<string> idList)
 		{
-			return idList.Select(id => new DictionaryNodeListOptions.DictionaryNodeOption { Id = id, IsEnabled = true }).ToList();
+			return idList.Select(id => new DictionaryNodeOption { Id = id, IsEnabled = true }).ToList();
 		}
 
 		private static IList<StyleComboItem> GetAvailableStyles(IDictionaryDetailsView view)
@@ -328,8 +329,8 @@ namespace LanguageExplorerTests.Works
 				Parent = new ConfigurableDictionaryNode(), // top-level nodes are always in paragraph. Specify a Parent to allow character styles.
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Complex,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
+					ListId = ListIds.Complex,
+					Options = new List<DictionaryNodeOption>()
 				}
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
@@ -340,8 +341,8 @@ namespace LanguageExplorerTests.Works
 			// Load paragraph styles
 			node.DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 			{
-				ListId = DictionaryNodeListOptions.ListIds.Complex,
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
+				ListId = ListIds.Complex,
+				Options = new List<DictionaryNodeOption>(),
 				DisplayEachInAParagraph = true
 			};
 			controller.LoadNode(null, node); // SUT
@@ -350,7 +351,7 @@ namespace LanguageExplorerTests.Works
 			// Load character styles
 			node.DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
+				Options = new List<DictionaryNodeOption>()
 			};
 			node.StyleType = StyleTypes.Character;
 			controller.LoadNode(null, node); // SUT
@@ -373,7 +374,7 @@ namespace LanguageExplorerTests.Works
 				Parent = new ConfigurableDictionaryNode(),
 				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 				{
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
+					Options = new List<DictionaryNodeOption>(),
 					DisplayEachInAParagraph = true
 				}
 			};
@@ -385,7 +386,7 @@ namespace LanguageExplorerTests.Works
 			//Load character styles
 			node.DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
+				Options = new List<DictionaryNodeOption>()
 			};
 			// SUT
 			node.StyleType = StyleTypes.Character;
@@ -402,7 +403,7 @@ namespace LanguageExplorerTests.Works
 			{
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis
+					WsType = WritingSystemType.Analysis
 				}
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
@@ -469,15 +470,15 @@ namespace LanguageExplorerTests.Works
 			var complexCount = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities.Count;
 			var variantCount = Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.Count;
 
-			var listItems = VerifyGetListItems(DictionaryNodeListOptions.ListIds.Complex, complexCount + 1); // +1 for <None> element
+			var listItems = VerifyGetListItems(ListIds.Complex, complexCount + 1); // +1 for <None> element
 			StringAssert.Contains(xWorksStrings.ksNoComplexFormType, listItems[0].Text);
 			Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString(), listItems[0].Tag);
 
-			listItems = VerifyGetListItems(DictionaryNodeListOptions.ListIds.Variant, variantCount + 1); // +1 for <None> element
+			listItems = VerifyGetListItems(ListIds.Variant, variantCount + 1); // +1 for <None> element
 			StringAssert.Contains(xWorksStrings.ksNoVariantType, listItems[0].Text);
 			Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listItems[0].Tag);
 
-			listItems = VerifyGetListItems(DictionaryNodeListOptions.ListIds.Minor, complexCount + variantCount + 2); // Minor has 2 <None> elements
+			listItems = VerifyGetListItems(ListIds.Minor, complexCount + variantCount + 2); // Minor has 2 <None> elements
 			StringAssert.Contains(xWorksStrings.ksNoVariantType, listItems[0].Text);
 			Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listItems[0].Tag);
 			StringAssert.Contains(xWorksStrings.ksNoComplexFormType, listItems[variantCount + 1].Text,
@@ -486,7 +487,7 @@ namespace LanguageExplorerTests.Works
 				"<No Complex Form Type> should immediately follow the Variant Types");
 		}
 
-		private List<ListViewItem> VerifyGetListItems(DictionaryNodeListOptions.ListIds listId, int expectedCount)
+		private List<ListViewItem> VerifyGetListItems(ListIds listId, int expectedCount)
 		{
 			string label;
 			var result = m_staticDDController.GetListItemsAndLabel(listId, out label); // SUT
@@ -499,7 +500,7 @@ namespace LanguageExplorerTests.Works
 		public void GetListItems_ThrowsIfUnknown()
 		{
 			string label;
-			Assert.Throws<ArgumentException>(() => m_staticDDController.GetListItemsAndLabel(DictionaryNodeListOptions.ListIds.None, out label));
+			Assert.Throws<ArgumentException>(() => m_staticDDController.GetListItemsAndLabel(ListIds.None, out label));
 		}
 
 		[Test]
@@ -508,7 +509,7 @@ namespace LanguageExplorerTests.Works
 			var listOptions = new DictionaryNodeListOptions
 			{
 				Options = ListOfEnabledDNOsFromStrings(new List<string> { XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString() }),
-				ListId = DictionaryNodeListOptions.ListIds.Variant
+				ListId = ListIds.Variant
 			};
 			var node = new ConfigurableDictionaryNode { DictionaryNodeOptions = listOptions };
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
@@ -582,7 +583,7 @@ namespace LanguageExplorerTests.Works
 			var listOptions = new DictionaryNodeListOptions
 			{
 				Options = ListOfEnabledDNOsFromStrings(new List<string> { XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString() }),
-				ListId = DictionaryNodeListOptions.ListIds.Variant
+				ListId = ListIds.Variant
 			};
 			var node = new ConfigurableDictionaryNode { DictionaryNodeOptions = listOptions };
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
@@ -603,7 +604,7 @@ namespace LanguageExplorerTests.Works
 				{
 					WritingSystemServices.GetMagicWsNameFromId(WritingSystemServices.kwsVern)
 				}),
-				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular
+				WsType = WritingSystemType.Vernacular
 			};
 			VerifyCannotUncheckOnlyCheckedItemInList(wsOptions);
 			Assert.AreEqual(1, wsOptions.Options.Count(option => option.IsEnabled), "There should be exactly one enabled option in the model");
@@ -614,9 +615,9 @@ namespace LanguageExplorerTests.Works
 			var listOptions = new DictionaryNodeListOptions
 			{
 				// For non-WS lists, we must save any unchecked items explicitly.
-				Options = m_staticDDController.GetListItemsAndLabel(DictionaryNodeListOptions.ListIds.Variant, out label)
-					.Select(lvi => new DictionaryNodeListOptions.DictionaryNodeOption { Id = (string)lvi.Tag, IsEnabled = false }).ToList(),
-				ListId = DictionaryNodeListOptions.ListIds.Variant
+				Options = m_staticDDController.GetListItemsAndLabel(ListIds.Variant, out label)
+					.Select(lvi => new DictionaryNodeOption { Id = (string)lvi.Tag, IsEnabled = false }).ToList(),
+				ListId = ListIds.Variant
 			};
 			listOptions.Options.Last().IsEnabled = true;
 			var selectedId = listOptions.Options.Last().Id;
@@ -652,13 +653,13 @@ namespace LanguageExplorerTests.Works
 		{
 			VerifyCannotMoveTopItemUp(new DictionaryNodeWritingSystemOptions
 			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
-				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
+				Options = new List<DictionaryNodeOption>(),
+				WsType = WritingSystemType.Both
 			});
 			VerifyCannotMoveTopItemUp(new DictionaryNodeListOptions
 			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
-				ListId = DictionaryNodeListOptions.ListIds.Complex
+				Options = new List<DictionaryNodeOption>(),
+				ListId = ListIds.Complex
 			});
 		}
 
@@ -690,13 +691,13 @@ namespace LanguageExplorerTests.Works
 		{
 			VerifyCannotMoveBottomItemDown(new DictionaryNodeWritingSystemOptions
 			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
-				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
+				Options = new List<DictionaryNodeOption>(),
+				WsType = WritingSystemType.Both
 			});
 			VerifyCannotMoveBottomItemDown(new DictionaryNodeListOptions
 			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
-				ListId = DictionaryNodeListOptions.ListIds.Variant
+				Options = new List<DictionaryNodeOption>(),
+				ListId = ListIds.Variant
 			});
 		}
 
@@ -731,7 +732,7 @@ namespace LanguageExplorerTests.Works
 			var wsOptions = new DictionaryNodeWritingSystemOptions
 			{
 				Options = ListOfEnabledDNOsFromStrings(new List<string> { "en", "fr" }),
-				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
+				WsType = WritingSystemType.Both
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
@@ -764,7 +765,7 @@ namespace LanguageExplorerTests.Works
 			var wsOptions = new DictionaryNodeWritingSystemOptions
 			{
 				Options = ListOfEnabledDNOsFromStrings(new List<string> { "en", "fr" }),
-				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both,
+				WsType = WritingSystemType.Both,
 				DisplayWritingSystemAbbreviations = true
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
@@ -1007,7 +1008,7 @@ namespace LanguageExplorerTests.Works
 		public void CheckNamedWsUnchecksDefault()
 		{
 			var wsOptions = (DictionaryNodeWritingSystemOptions)ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "vernacular" },
-				DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
+				WritingSystemType.Vernacular);
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
@@ -1038,7 +1039,7 @@ namespace LanguageExplorerTests.Works
 			var wsOptions = new DictionaryNodeWritingSystemOptions
 			{
 				Options = ListOfEnabledDNOsFromStrings(new List<string> { "en" }),
-				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
+				WsType = WritingSystemType.Both
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
@@ -1070,8 +1071,8 @@ namespace LanguageExplorerTests.Works
 		{
 			var wsOptions = new DictionaryNodeWritingSystemOptions
 			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
-				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
+				Options = new List<DictionaryNodeOption>(),
+				WsType = WritingSystemType.Both
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
@@ -1102,8 +1103,8 @@ namespace LanguageExplorerTests.Works
 		{
 			var wsOptions = new DictionaryNodeWritingSystemOptions
 			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
-				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
+				Options = new List<DictionaryNodeOption>(),
+				WsType = WritingSystemType.Both
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });

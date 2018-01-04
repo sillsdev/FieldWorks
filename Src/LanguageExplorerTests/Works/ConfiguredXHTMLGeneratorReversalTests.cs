@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using LanguageExplorer.Areas;
+using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.LCModel.Core.Text;
@@ -15,7 +16,6 @@ using SIL.TestUtilities;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using CXGTests = LanguageExplorerTests.Works.ConfiguredXHTMLGeneratorTests;
 
 namespace LanguageExplorerTests.Works
 {
@@ -63,7 +63,7 @@ namespace LanguageExplorerTests.Works
 			var reversalFormNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalForm",
-				DictionaryNodeOptions = CXGTests.GetWsOptionsForLanguages(new [] {"en"}),
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new [] {"en"}),
 				Label = "Reversal Form"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -97,9 +97,9 @@ namespace LanguageExplorerTests.Works
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("spokesmanRevForm", "porte-parole", "spokesman:gloss");
 			var referringSense = reversalEntry.ReferringSenses.First();
-			var paroleEntry = CXGTests.CreateInterestingLexEntry(Cache, "parole", "speech");
+			var paroleEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "parole", "speech");
 			paroleEntry.SummaryDefinition.SetAnalysisDefaultWritingSystem("summDefn");
-			CXGTests.CreateComplexForm(Cache, paroleEntry, referringSense.Owner as ILexEntry, true);
+			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, paroleEntry, referringSense.Owner as ILexEntry, true);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, DefaultSettings);
 			const string headwordXpath = referringSenseXpath + "/span[@class='headword']/span[@lang='fr']//a[text()='porte-parole']";
@@ -117,8 +117,8 @@ namespace LanguageExplorerTests.Works
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("spokesmanRevForm", "porte-parole", "spokesman:gloss");
 			var referringSense = reversalEntry.ReferringSenses.First();
-			var paroleEntry = CXGTests.CreateInterestingLexEntry(Cache, "parole", "speech");
-			CXGTests.CreateComplexForm(Cache, paroleEntry.SensesOS[0], referringSense.Owner as ILexEntry, true);
+			var paroleEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "parole", "speech");
+			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, paroleEntry.SensesOS[0], referringSense.Owner as ILexEntry, true);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, DefaultSettings);
 			const string refTypeXpath = entryRefTypeXpath + "/span[@class='abbreviation']/span[@lang='en' and text()='comp. of']";
@@ -134,8 +134,8 @@ namespace LanguageExplorerTests.Works
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("speechRevForm", "parol", "speech:gloss");
 			var variantEntry = reversalEntry.ReferringSenses.First().Owner as ILexEntry;
-			var paroleEntry = CXGTests.CreateInterestingLexEntry(Cache, "parole", "speech");
-			CXGTests.CreateVariantForm(Cache, paroleEntry.SensesOS[0], variantEntry, "Spelling Variant");
+			var paroleEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "parole", "speech");
+			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, paroleEntry.SensesOS[0], variantEntry, "Spelling Variant");
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, DefaultSettings);
 			const string refTypeXpath = entryRefTypeXpath + "/span[@class='abbreviation']/span[@lang='en' and text()='sp. var. of']";
@@ -151,9 +151,9 @@ namespace LanguageExplorerTests.Works
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("speechRevForm", "parol", "speech:gloss");
 			var variantEntry = reversalEntry.ReferringSenses.First().Owner as ILexEntry;
-			var paroleEntry = CXGTests.CreateInterestingLexEntry(Cache, "parole", "speech");
+			var paroleEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "parole", "speech");
 			paroleEntry.SummaryDefinition.SetAnalysisDefaultWritingSystem("summDefn");
-			CXGTests.CreateVariantForm(Cache, paroleEntry, variantEntry, "Spelling Variant");
+			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, paroleEntry, variantEntry, "Spelling Variant");
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, DefaultSettings);
 			const string refTypeXpath = entryRefTypeXpath + "/span[@class='abbreviation']/span[@lang='en' and text()='sp. var. of']";
@@ -170,16 +170,16 @@ namespace LanguageExplorerTests.Works
 
 			var reversalEntry = CreateInterestingEnglishReversalEntry();
 			var primaryEntry = reversalEntry.ReferringSenses.First().Entry;
-			var refer1 = CXGTests.CreateInterestingLexEntry(Cache, "Component Entry", "CompEntry Sense");
-			var refer2 = CXGTests.CreateInterestingLexEntry(Cache, "Variant Entry");
-			var refer3 = CXGTests.CreateInterestingLexEntry(Cache, "CompSense Entry", "Component Sense").SensesOS.First();
-			var refer4 = CXGTests.CreateInterestingLexEntry(Cache, "Invariant Entry");
-			var refer5 = CXGTests.CreateInterestingLexEntry(Cache, "Variante Entrie");
-			using (CXGTests.CreateComplexForm(Cache, refer3, primaryEntry, new Guid("00000000-0000-0000-cccc-000000000000"), true)) // Compound
-			using (CXGTests.CreateVariantForm(Cache, refer2, primaryEntry, new Guid("00000000-0000-0000-bbbb-000000000000"), "Free Variant"))
-			using (CXGTests.CreateComplexForm(Cache, refer1, primaryEntry, new Guid("00000000-0000-0000-aaaa-000000000000"), true)) // Compound
-			using (CXGTests.CreateVariantForm(Cache, refer4, primaryEntry, new Guid("00000000-0000-0000-dddd-000000000000"), null)) // no Variant Type
-			using (CXGTests.CreateVariantForm(Cache, refer5, primaryEntry, new Guid("00000000-0000-0000-eeee-000000000000"), "Spelling Variant"))
+			var refer1 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "Component Entry", "CompEntry Sense");
+			var refer2 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "Variant Entry");
+			var refer3 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "CompSense Entry", "Component Sense").SensesOS.First();
+			var refer4 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "Invariant Entry");
+			var refer5 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "Variante Entrie");
+			using (ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, refer3, primaryEntry, new Guid("00000000-0000-0000-cccc-000000000000"), true)) // Compound
+			using (ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, refer2, primaryEntry, new Guid("00000000-0000-0000-bbbb-000000000000"), "Free Variant"))
+			using (ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, refer1, primaryEntry, new Guid("00000000-0000-0000-aaaa-000000000000"), true)) // Compound
+			using (ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, refer4, primaryEntry, new Guid("00000000-0000-0000-dddd-000000000000"), null)) // no Variant Type
+			using (ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, refer5, primaryEntry, new Guid("00000000-0000-0000-eeee-000000000000"), "Spelling Variant"))
 			{
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, DefaultSettings); // SUT
 				var assertIt = AssertThatXmlIn.String(result);
@@ -206,7 +206,7 @@ namespace LanguageExplorerTests.Works
 			var abbrNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Abbreviation",
-				DictionaryNodeOptions = CXGTests.GetWsOptionsForLanguages(new[] {"analysis"})
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] {"analysis"})
 			};
 			var typeNode = new ConfigurableDictionaryNode
 			{
@@ -217,13 +217,13 @@ namespace LanguageExplorerTests.Works
 			{
 				FieldDescription = "HeadWord",
 				CSSClassNameOverride = "headword",
-				DictionaryNodeOptions = CXGTests.GetWsOptionsForLanguages(new[] {"vernacular"}),
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] {"vernacular"}),
 				Label = "Referenced Headword"
 			};
 			var glossOrSummaryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "GlossOrSummary",
-				DictionaryNodeOptions = CXGTests.GetWsOptionsForLanguages(new[] {"analysis"}),
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] {"analysis"}),
 				Label = "Gloss (or Summary Definition)"
 			};
 			var primaryEntryNode = new ConfigurableDictionaryNode
@@ -244,7 +244,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "ReversalName",
 				CSSClassNameOverride = "headword",
 				Label = "Referenced Headword",
-				DictionaryNodeOptions = CXGTests.GetWsOptionsForLanguages(new[] {"vernacular"})
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] {"vernacular"})
 			};
 			var referencedSensesNode = new ConfigurableDictionaryNode
 			{
@@ -334,10 +334,10 @@ namespace LanguageExplorerTests.Works
 				Label = "Form",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					WsType = WritingSystemType.Reversal,
+					Options = new List<DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "fr"}
+						new DictionaryNodeOption { Id = "fr"}
 					},
 					DisplayWritingSystemAbbreviations = false
 				}
@@ -369,10 +369,10 @@ namespace LanguageExplorerTests.Works
 				CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					WsType = WritingSystemType.Vernacular,
+					Options = new List<DictionaryNodeOption>
 						{
-						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular"}
+						new DictionaryNodeOption {Id = "vernacular"}
 						}
 				}
 			};
@@ -381,10 +381,10 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "Gloss",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					WsType = WritingSystemType.Reversal,
+					Options = new List<DictionaryNodeOption>
 				{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "reversal" }
+						new DictionaryNodeOption { Id = "reversal" }
 					}
 				}
 			};
@@ -398,10 +398,10 @@ namespace LanguageExplorerTests.Works
 			{
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					WsType = WritingSystemType.Reversal,
+					Options = new List<DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en"}
+						new DictionaryNodeOption {Id = "en"}
 					},
 					DisplayWritingSystemAbbreviations = false
 				},
@@ -434,19 +434,19 @@ namespace LanguageExplorerTests.Works
 				CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					WsType = WritingSystemType.Vernacular,
+					Options = new List<DictionaryNodeOption>
 						{
-						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular"}
+						new DictionaryNodeOption {Id = "vernacular"}
 						}
 				}
 			};
 			var wsOpts = new DictionaryNodeWritingSystemOptions
 			{
-				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				WsType = WritingSystemType.Reversal,
+				Options = new List<DictionaryNodeOption>
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "reversal" }
+					new DictionaryNodeOption { Id = "reversal" }
 				}
 			};
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
@@ -460,10 +460,10 @@ namespace LanguageExplorerTests.Works
 			{
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					WsType = WritingSystemType.Reversal,
+					Options = new List<DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en"}
+						new DictionaryNodeOption {Id = "en"}
 					},
 					DisplayWritingSystemAbbreviations = false
 				},
@@ -490,19 +490,19 @@ namespace LanguageExplorerTests.Works
 				CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					WsType = WritingSystemType.Vernacular,
+					Options = new List<DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular"}
+						new DictionaryNodeOption {Id = "vernacular"}
 					}
 				}
 			};
 			var wsOpts = new DictionaryNodeWritingSystemOptions
 			{
-				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				WsType = WritingSystemType.Reversal,
+				Options = new List<DictionaryNodeOption>
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "reversal" }
+					new DictionaryNodeOption { Id = "reversal" }
 				}
 			};
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
@@ -523,10 +523,10 @@ namespace LanguageExplorerTests.Works
 			{
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					WsType = WritingSystemType.Reversal,
+					Options = new List<DictionaryNodeOption>
 			{
-						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en"}
+						new DictionaryNodeOption {Id = "en"}
 					},
 					DisplayWritingSystemAbbreviations = false
 				},
@@ -551,9 +551,9 @@ namespace LanguageExplorerTests.Works
 				After = " ",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+					WsType = WritingSystemType.Reversal,
 					DisplayWritingSystemAbbreviations = false,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { Id="reversal" } }
+					Options = new List<DictionaryNodeOption> { new DictionaryNodeOption { Id="reversal" } }
 				},
 				Children = new List<ConfigurableDictionaryNode>()
 			};
@@ -565,9 +565,9 @@ namespace LanguageExplorerTests.Works
 				After = " ",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+					WsType = WritingSystemType.Reversal,
 					DisplayWritingSystemAbbreviations = false,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { Id="reversal" } }
+					Options = new List<DictionaryNodeOption> { new DictionaryNodeOption { Id="reversal" } }
 				},
 				Children = new List<ConfigurableDictionaryNode>()
 			};
@@ -589,9 +589,9 @@ namespace LanguageExplorerTests.Works
 				CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+					WsType = WritingSystemType.Vernacular,
 					DisplayWritingSystemAbbreviations = false,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular" } }
+					Options = new List<DictionaryNodeOption> { new DictionaryNodeOption { Id = "vernacular" } }
 				},
 				Children = new List<ConfigurableDictionaryNode>()
 			};
@@ -616,9 +616,9 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "ReversalForm",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+					WsType = WritingSystemType.Reversal,
 					DisplayWritingSystemAbbreviations = false,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { Id = "reversal" } }
+					Options = new List<DictionaryNodeOption> { new DictionaryNodeOption { Id = "reversal" } }
 				},
 				Children = new List<ConfigurableDictionaryNode>()
 			};
@@ -634,7 +634,7 @@ namespace LanguageExplorerTests.Works
 			var verb = CreatePartOfSpeech("verb", "v");
 			var revIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(m_wsEn);
 
-			var entry1 = CXGTests.CreateInterestingLexEntry(Cache);
+			var entry1 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			entry1.CitationForm.set_String(m_wsFr, "premier");
 			entry1.SensesOS.First().Gloss.set_String(m_wsEn, "first");
 			var msa1 = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
@@ -642,7 +642,7 @@ namespace LanguageExplorerTests.Works
 			msa1.PartOfSpeechRA = noun;
 			entry1.SensesOS.First().MorphoSyntaxAnalysisRA = msa1;
 
-			var entry2 = CXGTests.CreateInterestingLexEntry(Cache);
+			var entry2 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			entry2.CitationForm.set_String(m_wsFr, "primary");
 			entry2.SensesOS.First().Gloss.set_String(m_wsEn, "first");
 			var msa2 = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
@@ -684,7 +684,7 @@ namespace LanguageExplorerTests.Works
 
 		private IReversalIndexEntry CreateInterestingFrenchReversalEntry()
 		{
-			var entry = CXGTests.CreateInterestingLexEntry(Cache);
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			var revIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(m_wsFr);
 			var riEntry = revIndex.FindOrCreateReversalEntry("intéressant");
 			entry.SensesOS.First().ReversalEntriesRC.Add(riEntry);
@@ -694,7 +694,7 @@ namespace LanguageExplorerTests.Works
 		private IReversalIndexEntry CreateInterestingEnglishReversalEntry(string reversalForm = "ReversalForm",
 			string vernacularHeadword = "Citation", string analysisGloss = "gloss")
 		{
-			var entry = CXGTests.CreateInterestingLexEntry(Cache, vernacularHeadword, analysisGloss);
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, vernacularHeadword, analysisGloss);
 			var revIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(m_wsEn);
 			var riEntry = revIndex.FindOrCreateReversalEntry(reversalForm);
 			entry.SensesOS.First().ReversalEntriesRC.Add(riEntry);
@@ -713,7 +713,7 @@ namespace LanguageExplorerTests.Works
 
 		private static void AddSenseToReversaEntry(IReversalIndexEntry riEntry, string gloss, int wsId, LcmCache cache)
 		{
-			var entry = CXGTests.CreateInterestingLexEntry(cache);
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(cache);
 			entry.SensesOS.First().ReversalEntriesRC.Add(riEntry);
 			entry.SensesOS[0].Gloss.set_String(wsId, gloss);
 		}
@@ -721,7 +721,7 @@ namespace LanguageExplorerTests.Works
 		private static void AddSingleSubSenseToSense(IReversalIndexEntry riEntry, string gloss, int wsId, LcmCache cache)
 		{
 			CreateSubsenseModel();
-			var entry = CXGTests.CreateInterestingLexEntry(cache);
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(cache);
 			var sense = entry.SensesOS.First();
 			sense.Gloss.set_String(wsId, TsStringUtils.MakeString(gloss, wsId));
 			var subSensesOne = sense.Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
@@ -736,9 +736,9 @@ namespace LanguageExplorerTests.Works
 		{
 			var wsOpts = new DictionaryNodeWritingSystemOptions
 			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				Options = new List<DictionaryNodeOption>
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en" }
+					new DictionaryNodeOption { Id = "en" }
 				}
 			};
 			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions

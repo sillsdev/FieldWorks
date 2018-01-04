@@ -31,6 +31,7 @@ using LanguageExplorer.Areas.Lexicon;
 using System.Windows.Forms;
 using SIL.IO;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Impls;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel.Infrastructure;
@@ -342,7 +343,7 @@ namespace LanguageExplorerTests.Works
 			var variantFormsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Variant),
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNode, variantPronunciationsNode }
 			};
@@ -1256,9 +1257,9 @@ namespace LanguageExplorerTests.Works
 		{
 			var complexformoptions = new DictionaryNodeListAndParaOptions
 			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				Options = new List<DictionaryNodeOption>
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "73266a3a-48e8-4bd7-8c84-91c730340b7d" }
+					new DictionaryNodeOption { Id = "73266a3a-48e8-4bd7-8c84-91c730340b7d" }
 			}
 			};
 
@@ -1851,11 +1852,11 @@ namespace LanguageExplorerTests.Works
 
 		[Test]
 		public void GenerateEntryHtmlWithStyles_MinorEntryUsesMinorEntryFormatting(
-			[Values(DictionaryNodeListOptions.ListIds.Complex, DictionaryNodeListOptions.ListIds.Variant)] DictionaryNodeListOptions.ListIds type)
+			[Values(ListIds.Complex, ListIds.Variant)] ListIds type)
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
-			if (type == DictionaryNodeListOptions.ListIds.Complex)
+			if (type == ListIds.Complex)
 				CreateComplexForm(Cache, mainEntry, minorEntry, false);
 			else
 				CreateVariantForm(Cache, mainEntry, minorEntry);
@@ -1876,7 +1877,7 @@ namespace LanguageExplorerTests.Works
 			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, minorEntry);
 			configModel.Parts[1].DictionaryNodeOptions = configModel.Parts[2].DictionaryNodeOptions =
-				GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Minor, new ICmPossibility[0]);
+				GetListOptionsForItems(ListIds.Minor, new ICmPossibility[0]);
 			SetPublishAsMinorEntry(minorEntry, true);
 			//SUT
 			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, DefaultDecorator, _flexComponentParameters.PropertyTable, Cache);
@@ -1934,7 +1935,7 @@ namespace LanguageExplorerTests.Works
 			var complexEntry = CreateInterestingLexEntry(Cache);
 			CreateComplexForm(Cache, componentEntry, complexEntry, false);
 			configModel.Parts[1].DictionaryNodeOptions = configModel.Parts[2].DictionaryNodeOptions =
-				GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Minor, new ICmPossibility[0]);
+				GetListOptionsForItems(ListIds.Minor, new ICmPossibility[0]);
 			SetPublishAsMinorEntry(complexEntry, false);
 			//SUT
 			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(complexEntry, configModel, DefaultDecorator, _flexComponentParameters.PropertyTable, Cache);
@@ -2906,7 +2907,7 @@ namespace LanguageExplorerTests.Works
 			{
 				FieldDescription = "MLPartOfSpeech",
 				DictionaryNodeOptions =
-					GetWsOptionsForLanguages(new[] { "analysis" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis),
+					GetWsOptionsForLanguages(new[] { "analysis" }, WritingSystemType.Analysis),
 				Children = new List<ConfigurableDictionaryNode>()
 			};
 			var gramInfoNode = new ConfigurableDictionaryNode
@@ -3692,7 +3693,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "MinimalLexReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					ListId = ListIds.Entry,
 					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { refType.Guid.ToString() })
 				},
 				Children = new List<ConfigurableDictionaryNode> { targetsNode }
@@ -3740,7 +3741,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "MinimalLexReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					ListId = ListIds.Entry,
 					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { refType.Guid.ToString() })
 				},
 				Children = new List<ConfigurableDictionaryNode> { targetsNode }
@@ -3789,7 +3790,7 @@ namespace LanguageExplorerTests.Works
 				ReferenceItem = "CrossRefRef",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					ListId = ListIds.Entry,
 					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new [] { refType.Guid.ToString() })
 				}
 			};
@@ -3835,7 +3836,7 @@ namespace LanguageExplorerTests.Works
 				IsEnabled = true,
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					ListId = ListIds.Entry,
 					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { refType.Guid.ToString() })
 				},
 				Children = new List<ConfigurableDictionaryNode> { targetsNode }
@@ -3883,7 +3884,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "MinimalLexReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					ListId = ListIds.Entry,
 					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { refType.Guid.ToString() })
 				},
 				Children = new List<ConfigurableDictionaryNode> { nameNode }
@@ -3928,7 +3929,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "MinimalLexReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					ListId = ListIds.Entry,
 					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { refType.Guid + ":f" })
 				},
 				Children = new List<ConfigurableDictionaryNode> { nameNode }
@@ -3973,7 +3974,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "MinimalLexReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					ListId = ListIds.Entry,
 					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { refType.Guid + ":r" })
 				},
 				Children = new List<ConfigurableDictionaryNode> { nameNode }
@@ -4018,7 +4019,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "LexSenseReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Sense,
+					ListId = ListIds.Sense,
 					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { refType.Guid + ":f" })
 				},
 				Children = new List<ConfigurableDictionaryNode> { nameNode }
@@ -4069,7 +4070,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "LexSenseReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Sense,
+					ListId = ListIds.Sense,
 					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { refType1.Guid + ":f"})
 				},
 				Children = new List<ConfigurableDictionaryNode> { nameNode }
@@ -4116,7 +4117,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "LexSenseReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Sense,
+					ListId = ListIds.Sense,
 					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { refType.Guid + ":r" })
 				},
 				Children = new List<ConfigurableDictionaryNode> { nameNode }
@@ -4176,7 +4177,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "MinimalLexReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					ListId = ListIds.Entry,
 					Options =
 						DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { etyRefType.Guid + ":f", comRefType.Guid + ":f" })
 				},
@@ -4198,7 +4199,7 @@ namespace LanguageExplorerTests.Works
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(fwdNameSecondXpath, 1);
 			crossReferencesNode.DictionaryNodeOptions = new DictionaryNodeListOptions
 			{
-				ListId = DictionaryNodeListOptions.ListIds.Entry,
+				ListId = ListIds.Entry,
 				Options =
 					DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { comRefType.Guid + ":f", etyRefType.Guid + ":f" })
 			};
@@ -4250,7 +4251,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "LexSenseReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Sense,
+					ListId = ListIds.Sense,
 					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { refType.Guid + ":r" })
 				},
 				Children = new List<ConfigurableDictionaryNode> { nameNode, refListNode }
@@ -4310,7 +4311,7 @@ namespace LanguageExplorerTests.Works
 			var glossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Gloss",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }, WritingSystemType.Analysis)
 			};
 			var refListNode = new ConfigurableDictionaryNode
 			{
@@ -4322,7 +4323,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "LexSenseReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Sense,
+					ListId = ListIds.Sense,
 					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { refType.Guid + ":r" })
 				},
 				Children = new List<ConfigurableDictionaryNode> { refListNode }
@@ -4376,7 +4377,7 @@ namespace LanguageExplorerTests.Works
 			var glossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Gloss",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }, WritingSystemType.Analysis)
 			};
 			var refListNode = new ConfigurableDictionaryNode
 			{
@@ -4389,14 +4390,14 @@ namespace LanguageExplorerTests.Works
 				SubField = "Name",
 				After = ": ",
 				DictionaryNodeOptions =
-					GetWsOptionsForLanguages(new[] { "analysis" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
+					GetWsOptionsForLanguages(new[] { "analysis" }, WritingSystemType.Analysis)
 			};
 			var referencesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexSenseReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Sense,
+					ListId = ListIds.Sense,
 					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { refType.Guid + ":r", refType.Guid + ":f" })
 				},
 				Children = new List<ConfigurableDictionaryNode> { nameNode, refListNode }
@@ -4439,7 +4440,7 @@ namespace LanguageExplorerTests.Works
 			var variantsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
-				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Variant, new[] { crazyVariantPoss })
+				DictionaryNodeOptions = GetListOptionsForItems(ListIds.Variant, new[] { crazyVariantPoss })
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -4469,7 +4470,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "LexEntry",
 				CSSClassNameOverride = "minorentryvariant",
 				IsEnabled = true,
-				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Variant, new[] { crazyVariantPoss })
+				DictionaryNodeOptions = GetListOptionsForItems(ListIds.Variant, new[] { crazyVariantPoss })
 			};
 
 			//SUT
@@ -4493,7 +4494,7 @@ namespace LanguageExplorerTests.Works
 			var rcfsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
-				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Variant, new[] { notCrazyVariant }),
+				DictionaryNodeOptions = GetListOptionsForItems(ListIds.Variant, new[] { notCrazyVariant }),
 				Children = new List<ConfigurableDictionaryNode> { formNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -4519,7 +4520,7 @@ namespace LanguageExplorerTests.Works
 			var variantsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VisibleComplexFormBackRefs",
-				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Complex, new[] { complexTypePoss })
+				DictionaryNodeOptions = GetListOptionsForItems(ListIds.Complex, new[] { complexTypePoss })
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -4544,7 +4545,7 @@ namespace LanguageExplorerTests.Works
 			var variantsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Subentries",
-				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Complex, new[] { complexTypePoss })
+				DictionaryNodeOptions = GetListOptionsForItems(ListIds.Complex, new[] { complexTypePoss })
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -4575,7 +4576,7 @@ namespace LanguageExplorerTests.Works
 			var rcfsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VisibleComplexFormBackRefs",
-				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Complex, new[] { notComplexTypePoss }),
+				DictionaryNodeOptions = GetListOptionsForItems(ListIds.Complex, new[] { notComplexTypePoss }),
 				Children = new List<ConfigurableDictionaryNode> { formNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -4607,7 +4608,7 @@ namespace LanguageExplorerTests.Works
 			var entryReferenceNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
-				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Entry, new[] { notComplexTypePoss }),
+				DictionaryNodeOptions = GetListOptionsForItems(ListIds.Entry, new[] { notComplexTypePoss }),
 				Children = new List<ConfigurableDictionaryNode> { formNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -4645,7 +4646,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "MinimalLexReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					ListId = ListIds.Entry,
 					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { notComplexTypePoss.Guid + ":r" })
 				},
 				Children = new List<ConfigurableDictionaryNode> { formNode }
@@ -4685,7 +4686,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "MinimalLexReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					ListId = ListIds.Entry,
 					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { notComplexTypePoss.Guid + ":f" })
 				},
 				Children = new List<ConfigurableDictionaryNode> { formNode }
@@ -4725,7 +4726,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "MinimalLexReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					ListId = ListIds.Entry,
 					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { notComplexTypePoss.Guid + ":f", notComplexTypePoss.Guid + ":r", })
 				},
 				Children = new List<ConfigurableDictionaryNode> { formNode }
@@ -4767,7 +4768,7 @@ namespace LanguageExplorerTests.Works
 			{
 				FieldDescription = "MinimalLexReferences",
 				IsEnabled = true,
-				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Entry, new[] { notComplexTypePoss }),
+				DictionaryNodeOptions = GetListOptionsForItems(ListIds.Entry, new[] { notComplexTypePoss }),
 				Children = new List<ConfigurableDictionaryNode> { formNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -4828,7 +4829,7 @@ namespace LanguageExplorerTests.Works
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
 				IsEnabled = true,
-				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Variant, new[] { notCrazyVariant }),
+				DictionaryNodeOptions = GetListOptionsForItems(ListIds.Variant, new[] { notCrazyVariant }),
 				Children = new List<ConfigurableDictionaryNode> { formNode }
 			};
 			var headword = new ConfigurableDictionaryNode
@@ -4887,7 +4888,7 @@ namespace LanguageExplorerTests.Works
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
 				IsEnabled = true,
-				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Variant, new [] { crazyVariant }),
+				DictionaryNodeOptions = GetListOptionsForItems(ListIds.Variant, new [] { crazyVariant }),
 				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNode, formNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -4944,7 +4945,7 @@ namespace LanguageExplorerTests.Works
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
 				IsEnabled = true,
-				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Variant, new[] { crazyVariant }),
+				DictionaryNodeOptions = GetListOptionsForItems(ListIds.Variant, new[] { crazyVariant }),
 				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNode, refNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -5731,7 +5732,7 @@ namespace LanguageExplorerTests.Works
 						r => r.Name.BestAnalysisAlternative.Text == refType);
 				crossRefs.DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					ListId = ListIds.Entry,
 					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { lexrefType.Guid.ToString()})
 				};
 				const string entryCustomData = "Another custom string";
@@ -5787,7 +5788,7 @@ namespace LanguageExplorerTests.Works
 						r => r.Name.BestAnalysisAlternative.Text == refType);
 				crossRefs.DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					ListId = ListIds.Entry,
 					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { lexrefType.Guid.ToString() })
 				};
 				const string entryCustomData = "Another custom string";
@@ -6170,7 +6171,7 @@ namespace LanguageExplorerTests.Works
 			var variantFormsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Variant),
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNode, variantPronunciationsNode }
 			};
@@ -6257,7 +6258,7 @@ namespace LanguageExplorerTests.Works
 			var variantFormsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Variant),
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNode, variantPronunciationsNode }
 			};
@@ -6349,7 +6350,7 @@ namespace LanguageExplorerTests.Works
 			var variantFormsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Variant),
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNode, variantPronunciationsNode }
 			};
@@ -6547,7 +6548,7 @@ namespace LanguageExplorerTests.Works
 			var subentryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Complex),
 				FieldDescription = "Subentries"
 			};
 			var sensesNode = new ConfigurableDictionaryNode
@@ -6600,7 +6601,7 @@ namespace LanguageExplorerTests.Works
 			var subentryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Complex),
 				FieldDescription = "Subentries"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -6643,7 +6644,7 @@ namespace LanguageExplorerTests.Works
 
 			var subsubentryNode = new ConfigurableDictionaryNode
 			{
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Complex),
 				FieldDescription = "Subentries", ReferenceItem = "Subentries"
 			};
 			var revAbbrevNode = new ConfigurableDictionaryNode
@@ -6664,7 +6665,7 @@ namespace LanguageExplorerTests.Works
 			};
 			var subentryNode = new ConfigurableDictionaryNode
 			{
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Complex),
 				ReferenceItem = "Subentries", FieldDescription = "Subentries"
 			};
 			var senseNode = new ConfigurableDictionaryNode
@@ -6772,7 +6773,7 @@ namespace LanguageExplorerTests.Works
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { complexTypeNameNode },
 			};
-			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex);
+			var complexOptions = GetFullyEnabledListOptions(ListIds.Complex);
 			var referencedCompFormNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { complexEntryTypeNode, formNode },
@@ -6811,7 +6812,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "ComplexEntryTypesRS",
 				CSSClassNameOverride = "complexformtypes",
 			};
-			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex);
+			var complexOptions = GetFullyEnabledListOptions(ListIds.Complex);
 			var referencedCompFormNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { complexEntryTypeNode, formNode },
@@ -6853,7 +6854,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType,
 				CSSClassNameOverride = "complexformtypes",
 			};
-			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex);
+			var complexOptions = GetFullyEnabledListOptions(ListIds.Complex);
 			var subentryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode, headwordNode },
@@ -6905,7 +6906,7 @@ namespace LanguageExplorerTests.Works
 			var variantFormNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { variantEntryTypeNode, formNode },
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Variant),
 				FieldDescription = "VariantFormEntryBackRefs"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -6951,7 +6952,7 @@ namespace LanguageExplorerTests.Works
 			var variantFormNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { variantEntryTypeNode, formNode },
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Variant),
 				IsEnabled = true,
 				FieldDescription = "VariantFormEntryBackRefs"
 			};
@@ -6989,7 +6990,7 @@ namespace LanguageExplorerTests.Works
 			var minorEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { headwordNode },
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Variant),
 				FieldDescription = "LexEntry",
 				Label = "Minor Entry (Variants)"
 			};
@@ -7040,7 +7041,7 @@ namespace LanguageExplorerTests.Works
 			var subentryNode = new ConfigurableDictionaryNode
 			{
 				ReferenceItem = "SharedSubentries",
-				//DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex, true),
+				//DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Complex, true),
 				FieldDescription = "Subentries",
 				CSSClassNameOverride = "reffingsubs"
 			};
@@ -7081,7 +7082,7 @@ namespace LanguageExplorerTests.Works
 				Children = new List<ConfigurableDictionaryNode> { headwordNode },
 				FieldDescription = "LexEntry",
 				Label = "Main Entry",
-				DictionaryNodeOptions = GetListOptionsForStrings(DictionaryNodeListOptions.ListIds.Complex, enabledComplexEntryTypes)
+				DictionaryNodeOptions = GetListOptionsForStrings(ListIds.Complex, enabledComplexEntryTypes)
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
@@ -7143,7 +7144,7 @@ namespace LanguageExplorerTests.Works
 			var minorEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { headwordNode },
-				DictionaryNodeOptions = GetListOptionsForStrings(DictionaryNodeListOptions.ListIds.Minor, enabledMinorEntryTypes),
+				DictionaryNodeOptions = GetListOptionsForStrings(ListIds.Minor, enabledMinorEntryTypes),
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
@@ -7299,7 +7300,7 @@ namespace LanguageExplorerTests.Works
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
 				Children = new List<ConfigurableDictionaryNode> { variantTypeNode, variantFormNode },
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant)
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Variant)
 			};
 			var subHeadwordNode = new ConfigurableDictionaryNode
 			{
@@ -7543,7 +7544,7 @@ namespace LanguageExplorerTests.Works
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
 				Children = new List<ConfigurableDictionaryNode> { variantTypeNode, variantNameNode },
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant)
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Variant)
 			};
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
@@ -7590,7 +7591,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "VariantEntryTypesRS",
 				CSSClassNameOverride = "variantentrytypes",
 				Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant)
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Variant)
 			};
 			var variantNameNode = new ConfigurableDictionaryNode
 			{
@@ -7603,7 +7604,7 @@ namespace LanguageExplorerTests.Works
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
 				Children = new List<ConfigurableDictionaryNode> { variantTypeNode, variantNameNode },
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant)
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Variant)
 			};
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
@@ -7682,7 +7683,7 @@ namespace LanguageExplorerTests.Works
 			{
 				FieldDescription = "VisibleComplexFormBackRefs",
 				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNode, complexFormNameNode },
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex)
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Complex)
 			};
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
@@ -7745,7 +7746,7 @@ namespace LanguageExplorerTests.Works
 			{
 				FieldDescription = "VisibleComplexFormBackRefs",
 				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNode, complexFormNameNode },
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex)
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Complex)
 			};
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
@@ -7793,7 +7794,7 @@ namespace LanguageExplorerTests.Works
 			var subentryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Complex),
 				FieldDescription = "Subentries"
 			};
 			((IParaOption)subentryNode.DictionaryNodeOptions).DisplayEachInAParagraph = true;
@@ -7859,7 +7860,7 @@ namespace LanguageExplorerTests.Works
 			{
 				FieldDescription = "ComplexFormEntryRefs",
 				Label = "Components",
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Complex),
 				Children = new List<ConfigurableDictionaryNode> { refentryNode }
 			};
 			var minorEntryNode = new ConfigurableDictionaryNode
@@ -8319,7 +8320,7 @@ namespace LanguageExplorerTests.Works
 			{
 				FieldDescription = "MLPartOfSpeech",
 				DictionaryNodeOptions =
-					GetWsOptionsForLanguages(new[] { "analysis" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis),
+					GetWsOptionsForLanguages(new[] { "analysis" }, WritingSystemType.Analysis),
 				Children = new List<ConfigurableDictionaryNode>()
 			};
 			var subGramInfoNode = new ConfigurableDictionaryNode
@@ -8348,7 +8349,7 @@ namespace LanguageExplorerTests.Works
 			{
 				FieldDescription = "MLPartOfSpeech",
 				DictionaryNodeOptions =
-					GetWsOptionsForLanguages(new[] { "analysis" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis),
+					GetWsOptionsForLanguages(new[] { "analysis" }, WritingSystemType.Analysis),
 				Children = new List<ConfigurableDictionaryNode>()
 			};
 			var gramInfoNode = new ConfigurableDictionaryNode
@@ -8681,7 +8682,7 @@ namespace LanguageExplorerTests.Works
 			{
 				FieldDescription = "HeadWordRef",
 				CSSClassNameOverride = "headword",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr", "en" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular)
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr", "en" }, WritingSystemType.Vernacular)
 			};
 			var targetsNode = new ConfigurableDictionaryNode
 			{
@@ -8699,7 +8700,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "MinimalLexReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					ListId = ListIds.Entry,
 					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(types)
 				},
 				Children = new List<ConfigurableDictionaryNode> { nameNode, targetsNode }
@@ -8752,7 +8753,7 @@ namespace LanguageExplorerTests.Works
 			{
 				FieldDescription = "HeadWord",
 				DictionaryNodeOptions =
-					GetWsOptionsForLanguages(new[] { "vernacular" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular)
+					GetWsOptionsForLanguages(new[] { "vernacular" }, WritingSystemType.Vernacular)
 			};
 			var targetsNode = new ConfigurableDictionaryNode
 			{
@@ -8766,7 +8767,7 @@ namespace LanguageExplorerTests.Works
 				SubField = "Name",
 				After = ": ",
 				DictionaryNodeOptions =
-					GetWsOptionsForLanguages(new[] { "analysis" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
+					GetWsOptionsForLanguages(new[] { "analysis" }, WritingSystemType.Analysis)
 			};
 			var relAbbrNode = new ConfigurableDictionaryNode
 			{
@@ -8774,14 +8775,14 @@ namespace LanguageExplorerTests.Works
 				SubField = "Abbreviation",
 				After = ": ",
 				DictionaryNodeOptions =
-					GetWsOptionsForLanguages(new[] { "analysis" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
+					GetWsOptionsForLanguages(new[] { "analysis" }, WritingSystemType.Analysis)
 			};
 			var relationsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
 				CSSClassNameOverride = "lexrefs",
 				Between = "; ",
-				DictionaryNodeOptions = GetListOptionsForStrings(DictionaryNodeListOptions.ListIds.Sense, new[]
+				DictionaryNodeOptions = GetListOptionsForStrings(ListIds.Sense, new[]
 					{
 						wholeparts.Guid + ":r",
 						antonyms.Guid.ToString(),
@@ -8925,7 +8926,7 @@ namespace LanguageExplorerTests.Works
 				};
 				var variantFormNode = new ConfigurableDictionaryNode
 				{
-					DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+					DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Variant),
 					FieldDescription = "VariantFormEntryBackRefs",
 					Children = new List<ConfigurableDictionaryNode> { formNode, variantTypeNode }
 				};
@@ -8996,7 +8997,7 @@ namespace LanguageExplorerTests.Works
 				};
 				var complexFormNode = new ConfigurableDictionaryNode
 				{
-					DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
+					DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Complex),
 					FieldDescription = useNotSubentries ? "ComplexFormsNotSubentries" : "VisibleComplexFormBackRefs",
 					Children = new List<ConfigurableDictionaryNode> { formNode, complexTypeNode }
 				};
@@ -9051,7 +9052,7 @@ namespace LanguageExplorerTests.Works
 			};
 			var variantFormNode = new ConfigurableDictionaryNode
 			{
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Variant),
 				FieldDescription = "VariantFormEntryBackRefs",
 				Children = new List<ConfigurableDictionaryNode> { formNode, variantTypeNode }
 			};
@@ -9116,7 +9117,7 @@ namespace LanguageExplorerTests.Works
 			};
 			var subentryNode = new ConfigurableDictionaryNode
 			{
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Complex),
 				FieldDescription = "Subentries",
 				Children = new List<ConfigurableDictionaryNode> { formNode, complexFormTypeNode }
 			};
@@ -9186,7 +9187,7 @@ namespace LanguageExplorerTests.Works
 			var variantFormsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(ListIds.Variant),
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNode, variantPronunciationsNode }
 			};
@@ -9535,18 +9536,18 @@ namespace LanguageExplorerTests.Works
 			if (configType == ConfigType.Hybrid || configType == ConfigType.Root)
 				mainEntryNode.Children.Add(subEntryNode);
 			if (configType == ConfigType.Hybrid || configType == ConfigType.Lexeme)
-				mainEntryNode.DictionaryNodeOptions = GetFullyEnabledListOptions(cache, DictionaryNodeListOptions.ListIds.Complex);
+				mainEntryNode.DictionaryNodeOptions = GetFullyEnabledListOptions(cache, ListIds.Complex);
 
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var minorEntryNode = mainEntryNode.DeepCloneUnderSameParent();
 			minorEntryNode.CSSClassNameOverride = "minorentry";
 			minorEntryNode.Before = "MinorEntry: ";
-			minorEntryNode.DictionaryNodeOptions = GetFullyEnabledListOptions(cache, DictionaryNodeListOptions.ListIds.Complex);
+			minorEntryNode.DictionaryNodeOptions = GetFullyEnabledListOptions(cache, ListIds.Complex);
 
 			var minorSecondNode = minorEntryNode.DeepCloneUnderSameParent();
 			minorSecondNode.Before = "HalfStep: ";
-			minorSecondNode.DictionaryNodeOptions = GetFullyEnabledListOptions(cache, DictionaryNodeListOptions.ListIds.Variant);
+			minorSecondNode.DictionaryNodeOptions = GetFullyEnabledListOptions(cache, ListIds.Variant);
 
 			// Needs "TestData" inserted in path name
 			var worksBaseDir = DictionaryConfigurationServices.GetProjectConfigurationDirectory(propertyTable);
@@ -9949,17 +9950,17 @@ namespace LanguageExplorerTests.Works
 				ler.HideMinorEntry = publish ? 0 : 1;
 		}
 
-		public static DictionaryNodeOptions GetSenseNodeOptions()
+		internal static DictionaryNodeOptions GetSenseNodeOptions()
 		{
 			return new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = false };
 		}
 
-		public static DictionaryNodeOptions GetWsOptionsForLanguages(string[] languages)
+		internal static DictionaryNodeOptions GetWsOptionsForLanguages(string[] languages)
 		{
 			return new DictionaryNodeWritingSystemOptions { Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages) };
 		}
 
-		public static DictionaryNodeOptions GetWsOptionsForLanguages(string[] languages, DictionaryNodeWritingSystemOptions.WritingSystemType type)
+		internal static DictionaryNodeOptions GetWsOptionsForLanguages(string[] languages, WritingSystemType type)
 		{
 			return new DictionaryNodeWritingSystemOptions
 			{
@@ -9968,8 +9969,7 @@ namespace LanguageExplorerTests.Works
 			};
 		}
 
-		public static DictionaryNodeOptions GetWsOptionsForLanguageswithDisplayWsAbbrev(string[] languages,
-			DictionaryNodeWritingSystemOptions.WritingSystemType type = 0)
+		internal static DictionaryNodeOptions GetWsOptionsForLanguageswithDisplayWsAbbrev(string[] languages, WritingSystemType type = 0)
 		{
 			return new DictionaryNodeWritingSystemOptions
 			{
@@ -9979,7 +9979,7 @@ namespace LanguageExplorerTests.Works
 			};
 		}
 
-		public static DictionaryNodeOptions GetListOptionsForItems(DictionaryNodeListOptions.ListIds listName, ICmPossibility[] checkedItems)
+		internal static DictionaryNodeOptions GetListOptionsForItems(ListIds listName, ICmPossibility[] checkedItems)
 		{
 			var listOptions = new DictionaryNodeListOptions
 			{
@@ -9989,7 +9989,7 @@ namespace LanguageExplorerTests.Works
 			return listOptions;
 		}
 
-		public static DictionaryNodeOptions GetListOptionsForStrings(DictionaryNodeListOptions.ListIds listName, IEnumerable<string> checkedItems)
+		internal static DictionaryNodeOptions GetListOptionsForStrings(ListIds listName, IEnumerable<string> checkedItems)
 		{
 			var listOptions = new DictionaryNodeListOptions
 			{
@@ -9999,36 +9999,36 @@ namespace LanguageExplorerTests.Works
 			return listOptions;
 		}
 
-		public DictionaryNodeOptions GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds listName)
+		internal DictionaryNodeOptions GetFullyEnabledListOptions(ListIds listName)
 		{
 			return GetFullyEnabledListOptions(Cache, listName);
 		}
 
-		public static DictionaryNodeOptions GetFullyEnabledListOptions(LcmCache cache, DictionaryNodeListOptions.ListIds listName)
+		internal static DictionaryNodeOptions GetFullyEnabledListOptions(LcmCache cache, ListIds listName)
 		{
-			List<DictionaryNodeListOptions.DictionaryNodeOption> dnoList;
+			List<DictionaryNodeOption> dnoList;
 			var useParaOptions = false;
 			switch (listName)
 			{
-				case DictionaryNodeListOptions.ListIds.Minor:
+				case ListIds.Minor:
 					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
 						new[] { XmlViewsUtils.GetGuidForUnspecifiedVariantType(), XmlViewsUtils.GetGuidForUnspecifiedComplexFormType() }
 							.Select(guid => guid.ToString())
 						.Union(cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS
 						.Union(cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS).Select(item => item.Guid.ToString())));
 					break;
-				case DictionaryNodeListOptions.ListIds.Variant:
+				case ListIds.Variant:
 					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
 						new[] { XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString() }
 						.Union(cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
 					break;
-				case DictionaryNodeListOptions.ListIds.Complex:
+				case ListIds.Complex:
 					useParaOptions = true;
 					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
 						new[] { XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString() }
 						.Union(cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
 					break;
-				case DictionaryNodeListOptions.ListIds.Note:
+				case ListIds.Note:
 					useParaOptions = true;
 					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
 						new[] { XmlViewsUtils.GetGuidForUnspecifiedExtendedNoteType().ToString() }

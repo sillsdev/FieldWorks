@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,103 +8,74 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using System.Xml;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
+using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.WritingSystems;
 using SIL.Xml;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer.Areas.Notebook
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Overrides various aspects of ExportDialog to support exporting from the Data Notebook
 	/// section of Language Explorer.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	internal class NotebookExportDialog : ExportDialog
 	{
 		List<int> m_customFlids = new List<int>();
 		IFwMetaDataCacheManaged m_mdc;
 		bool m_fRightToLeft = false;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public NotebookExportDialog()
 		{
 			m_helpTopic = "khtpExportNotebook";
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the relative path to the export configuration files.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected override string ConfigurationFilePath
-		{
-			get { return String.Format("Language Explorer{0}Export Templates{0}Notebook", Path.DirectorySeparatorChar); }
-		}
+		protected override string ConfigurationFilePath => string.Format("Language Explorer{0}Export Templates{0}Notebook", Path.DirectorySeparatorChar);
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Store any additional attributes of the configuration nodes.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected override void ConfigureItem(XmlDocument document, ListViewItem item, XmlNode ddNode)
-		{
-			base.ConfigureItem(document, item, ddNode);
-		}
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Check whether the given export should be disabled.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected override bool ItemDisabled(string tag)
 		{
 			return false;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Allow custom final preparation before asking for file.  See LT-8403.
 		/// </summary>
 		/// <returns>true iff export can proceed further</returns>
-		/// ------------------------------------------------------------------------------------
 		protected override bool PrepareForExport()
 		{
 			return true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Do the actual export.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected override void DoExport(string outPath)
 		{
-			string fxtPath = (string) m_exportList.SelectedItems[0].Tag;
-			FxtType ft = m_rgFxtTypes[FxtIndex(fxtPath)];
+			var fxtPath = (string)m_exportList.SelectedItems[0].Tag;
+			var ft = m_rgFxtTypes[FxtIndex(fxtPath)];
 			using (new WaitCursor(this))
 			{
 				using (var progressDlg = new ProgressDialogWithTask(this))
 				{
 					try
 					{
-						progressDlg.Title = String.Format(xWorksStrings.Exporting0,
-							m_exportList.SelectedItems[0].Text);
+						progressDlg.Title = String.Format(xWorksStrings.Exporting0, m_exportList.SelectedItems[0].Text);
 						progressDlg.Message = xWorksStrings.Exporting_;
 						switch (ft.m_ft)
 						{
@@ -116,9 +87,8 @@ namespace LanguageExplorer.Works
 								progressDlg.Maximum = m_seqView.ObjectCount;
 								progressDlg.AllowCancel = true;
 
-								IVwStylesheet vss = m_seqView.RootBox == null ? null : m_seqView.RootBox.Stylesheet;
-								progressDlg.RunTask(true, ExportConfiguredDocView,
-									outPath, fxtPath, ft, vss);
+								var vss = m_seqView.RootBox?.Stylesheet;
+								progressDlg.RunTask(true, ExportConfiguredDocView, outPath, fxtPath, ft, vss);
 								break;
 						}
 					}
@@ -131,7 +101,7 @@ namespace LanguageExplorer.Works
 						}
 						else
 						{
-							string msg = xWorksStrings.ErrorExporting_ProbablyBug + Environment.NewLine + e.InnerException.Message;
+							var msg = xWorksStrings.ErrorExporting_ProbablyBug + Environment.NewLine + e.InnerException.Message;
 							MessageBox.Show(this, msg);
 						}
 					}
@@ -144,18 +114,17 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		object ExportNotebook(IProgress progress, object[] args)
+		private object ExportNotebook(IProgress progress, object[] args)
 		{
-			string outPath = (string)args[0];
-			string fxtPath = (string)args[1];
-			FxtType ft = (FxtType)args[2];
+			var outPath = (string)args[0];
+			var fxtPath = (string)args[1];
+			var ft = (FxtType)args[2];
 			progress.Minimum = 0;
 			progress.Maximum = m_cache.LangProject.ResearchNotebookOA.RecordsOC.Count + 6;
 			using (var writer = new StreamWriter(outPath)) // defaults to UTF-8
 			{
 				writer.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-				writer.WriteLine("<Notebook exportVersion=\"2.0\" project=\"{0}\" dateExported=\"{1}\">",
-					m_cache.ProjectId.UiName, DateTime.Now.ToString("yyyy-MM-ddThh:mm:ss"));
+				writer.WriteLine("<Notebook exportVersion=\"2.0\" project=\"{0}\" dateExported=\"{1:yyyy-MM-ddThh:mm:ss}\">", m_cache.ProjectId.UiName, DateTime.Now);
 				progress.Message = "Exporting data records...";
 				ExportRecords(writer, progress);
 				progress.Message = "Exporting writing systems...";
@@ -166,20 +135,20 @@ namespace LanguageExplorer.Works
 				progress.Step(3);
 				writer.WriteLine("</Notebook>");
 			}
-			if (!String.IsNullOrEmpty(ft.m_sXsltFiles))
+			if (!string.IsNullOrEmpty(ft.m_sXsltFiles))
 			{
-				string[] rgsXslts = ft.m_sXsltFiles.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-				int cXslts = rgsXslts.Length;
+				var rgsXslts = ft.m_sXsltFiles.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+				var cXslts = rgsXslts.Length;
 				if (cXslts > 0)
 				{
 					progress.Position = 0;
 					progress.Minimum = 0;
 					progress.Maximum = cXslts;
 					progress.Message = xWorksStrings.ProcessingIntoFinalForm;
-					string basePath = Path.GetDirectoryName(fxtPath);
-					for (int ix = 0; ix < cXslts; ++ix)
+					var basePath = Path.GetDirectoryName(fxtPath);
+					for (var ix = 0; ix < cXslts; ++ix)
 					{
-						string sXsltPath = Path.Combine(basePath, rgsXslts[ix]);
+						var sXsltPath = Path.Combine(basePath, rgsXslts[ix]);
 						// Apply XSLT to the output file, first renaming it so that the user sees
 						// the expected final output file.
 						CollectorEnv.ProcessXsltForPass(sXsltPath, outPath, ix + 1);
@@ -190,48 +159,40 @@ namespace LanguageExplorer.Works
 			return null;
 		}
 
-
 		private void ExportLanguages(TextWriter writer)
 		{
-			string sAnal = AnalWsTag;
-			string sVern = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultVernWs);
-			writer.WriteLine("<Languages defaultAnal=\"{0}\" defaultVern=\"{1}\">",
-				sAnal, sVern);
-			WritingSystemManager manager = m_cache.ServiceLocator.WritingSystemManager;
-			foreach (CoreWritingSystemDefinition wsLocal in manager.WritingSystems)
+			var sAnal = AnalWsTag;
+			var sVern = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultVernWs);
+			writer.WriteLine("<Languages defaultAnal=\"{0}\" defaultVern=\"{1}\">", sAnal, sVern);
+			var manager = m_cache.ServiceLocator.WritingSystemManager;
+			foreach (var wsLocal in manager.WritingSystems)
 			{
-				string tag = wsLocal.Id;
+				var tag = wsLocal.Id;
 				ILgWritingSystem lgws = null;
-				int ws = m_cache.WritingSystemFactory.GetWsFromStr(tag);
+				var ws = m_cache.WritingSystemFactory.GetWsFromStr(tag);
 				if (ws <= 0)
+				{
 					continue;
-				string code = wsLocal.Language.Code;
-				string type = code.Length == 2 ? "ISO-639-1" : "ISO-639-3";
-				writer.WriteLine("<WritingSystem id=\"{0}\" language=\"{1}\" type=\"{2}\">",
-					tag, code, type);
-				writer.WriteLine("<Name><Uni>{0}</Uni></Name>",
-					XmlUtils.MakeSafeXml(wsLocal.LanguageName));
-				writer.WriteLine("<Abbreviation><Uni>{0}</Uni></Abbreviation>",
-					XmlUtils.MakeSafeXml(wsLocal.Abbreviation));
+				}
+				var code = wsLocal.Language.Code;
+				var type = code.Length == 2 ? "ISO-639-1" : "ISO-639-3";
+				writer.WriteLine("<WritingSystem id=\"{0}\" language=\"{1}\" type=\"{2}\">", tag, code, type);
+				writer.WriteLine("<Name><Uni>{0}</Uni></Name>", XmlUtils.MakeSafeXml(wsLocal.LanguageName));
+				writer.WriteLine("<Abbreviation><Uni>{0}</Uni></Abbreviation>", XmlUtils.MakeSafeXml(wsLocal.Abbreviation));
 				// We previously wrote out the LCID, but this is obsolete. It would be unreliable to output the WindowsLcid, which only
 				// old writing systems will have. If something needs this, we need to output something new in its place. But I'm pretty sure
 				// nothing does...Locale is not used in any of the notebook output transforms.
 				//writer.WriteLine("<Locale><Integer val=\"{0}\"/></Locale>", ((ILegacyWritingSystemDefinition)wsLocal).WindowsLcid);
-				writer.WriteLine("<RightToLeft><Boolean val=\"{0}\"/></RightToLeft>",
-					wsLocal.RightToLeftScript ? "true" : "false");
+				writer.WriteLine("<RightToLeft><Boolean val=\"{0}\"/></RightToLeft>", wsLocal.RightToLeftScript ? "true" : "false");
 				if (ws == m_cache.DefaultAnalWs)
+				{
 					m_fRightToLeft = wsLocal.RightToLeftScript;
-				writer.WriteLine("<DefaultFont><Uni>{0}</Uni></DefaultFont>",
-					XmlUtils.MakeSafeXml(wsLocal.DefaultFontName));
-				if (!String.IsNullOrEmpty(wsLocal.DefaultFontFeatures))
-					writer.WriteLine("<DefaultFontFeatures><Uni>{0}</Uni></DefaultFontFeatures>",
-						XmlUtils.MakeSafeXml(wsLocal.DefaultFontFeatures));
-				// The following commented out data are probably never needed.
-				//if (!String.IsNullOrEmpty(wsLocal.ValidChars))
-				//    writer.WriteLine("<ValidChars><Uni>{0}</Uni></ValidChars>",
-				//        XmlUtils.MakeSafeXml(wsLocal.ValidChars));
-				//writer.WriteLine("<ICULocale><Uni>{0}</Uni></ICULocale>",
-				//    XmlUtils.MakeSafeXml(wsLocal.IcuLocale));
+				}
+				writer.WriteLine("<DefaultFont><Uni>{0}</Uni></DefaultFont>", XmlUtils.MakeSafeXml(wsLocal.DefaultFontName));
+				if (!string.IsNullOrEmpty(wsLocal.DefaultFontFeatures))
+				{
+					writer.WriteLine("<DefaultFontFeatures><Uni>{0}</Uni></DefaultFontFeatures>", XmlUtils.MakeSafeXml(wsLocal.DefaultFontFeatures));
+				}
 				string sortUsing = string.Empty, sortRules = string.Empty;
 				var simpleCollation = wsLocal.DefaultCollation as SimpleRulesCollationDefinition;
 				if (simpleCollation != null)
@@ -266,10 +227,8 @@ namespace LanguageExplorer.Works
 				}
 				if (!string.IsNullOrEmpty(sortUsing))
 				{
-				writer.WriteLine("<SortUsing><Uni>{0}</Uni></SortUsing>",
-						XmlUtils.MakeSafeXml(sortUsing));
-				writer.WriteLine("<SortRules><Uni>{0}</Uni></SortRules>",
-						XmlUtils.MakeSafeXml(sortRules));
+					writer.WriteLine("<SortUsing><Uni>{0}</Uni></SortUsing>", XmlUtils.MakeSafeXml(sortUsing));
+					writer.WriteLine("<SortRules><Uni>{0}</Uni></SortRules>", XmlUtils.MakeSafeXml(sortRules));
 				}
 				writer.WriteLine("</WritingSystem>");
 			}
@@ -284,10 +243,8 @@ namespace LanguageExplorer.Works
 				writer.WriteLine("<StStyle>");
 				writer.WriteLine("<Name><Uni>{0}</Uni></Name>", XmlUtils.MakeSafeXml(style.Name));
 				writer.WriteLine("<Type><Integer val=\"{0}\"/></Type>", (int)style.Type);
-				writer.WriteLine("<BasedOn><Uni>{0}</Uni></BasedOn>",
-					style.BasedOnRA == null ? String.Empty : XmlUtils.MakeSafeXml(style.BasedOnRA.Name));
-				writer.WriteLine("<Next><Uni>{0}</Uni></Next>",
-					style.NextRA == null ? String.Empty : XmlUtils.MakeSafeXml(style.NextRA.Name));
+				writer.WriteLine("<BasedOn><Uni>{0}</Uni></BasedOn>", style.BasedOnRA == null ? String.Empty : XmlUtils.MakeSafeXml(style.BasedOnRA.Name));
+				writer.WriteLine("<Next><Uni>{0}</Uni></Next>", style.NextRA == null ? String.Empty : XmlUtils.MakeSafeXml(style.NextRA.Name));
 				writer.WriteLine("<Rules>");
 				writer.Write(TsStringUtils.GetXmlRep(style.Rules, m_cache.WritingSystemFactory));
 				writer.WriteLine("</Rules>");
@@ -299,16 +256,16 @@ namespace LanguageExplorer.Works
 		private void ExportRecords(TextWriter writer, IProgress progress)
 		{
 			m_mdc = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
-			foreach (int flid in m_mdc.GetFields(RnGenericRecTags.kClassId, true,
-				(int)CellarPropertyTypeFilter.All))
+			foreach (var flid in m_mdc.GetFields(RnGenericRecTags.kClassId, true, (int)CellarPropertyTypeFilter.All))
 			{
 				if (m_mdc.IsCustom(flid))
+				{
 					m_customFlids.Add(flid);
+				}
 			}
 
 
-			writer.WriteLine("<Entries docRightToLeft=\"{0}\">",
-				m_fRightToLeft ? "true" : "false");
+			writer.WriteLine("<Entries docRightToLeft=\"{0}\">", m_fRightToLeft ? "true" : "false");
 			foreach (var record in m_cache.LangProject.ResearchNotebookOA.RecordsOC)
 			{
 				ExportRecord(writer, record, 0);
@@ -318,67 +275,16 @@ namespace LanguageExplorer.Works
 		}
 
 		ITsString m_tssSpace = null;
-		ITsString TssSpace
-		{
-			get
-			{
-				if (m_tssSpace == null)
-				{
-					ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
-					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
-					tisb.Append(" ");
-					m_tssSpace = tisb.GetString();
-				}
-				return m_tssSpace;
-			}
-		}
-
 		ITsString m_tssCommaSpace = null;
-		ITsString TssCommaSpace
-		{
-			get
-			{
-				if (m_tssCommaSpace == null)
-				{
-					ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
-					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
-					tisb.Append(", ");
-					m_tssCommaSpace = tisb.GetString();
-				}
-				return m_tssCommaSpace;
-			}
-		}
-
 		string m_wsUserTag = null;
-		string UserWsTag
-		{
-			get
-			{
-				if (m_wsUserTag == null)
-					m_wsUserTag = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultUserWs);
-				return m_wsUserTag;
-			}
-		}
+		string UserWsTag => m_wsUserTag ?? (m_wsUserTag = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultUserWs));
 
 		string m_wsAnalTag = null;
-		string AnalWsTag
-		{
-			get
-			{
-				if (m_wsAnalTag == null)
-					m_wsAnalTag = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultAnalWs);
-				return m_wsAnalTag;
-			}
-		}
+		string AnalWsTag => m_wsAnalTag ?? (m_wsAnalTag = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultAnalWs));
 
 		private void ExportRecord(TextWriter writer, IRnGenericRec record, int level)
 		{
-			writer.WriteLine(
-				"<Entry level=\"{0}\" dateCreated=\"{1}\" dateModified=\"{2}\" guid=\"{3}\">",
-				level,
-				record.DateCreated.ToString("yyyy-MM-ddThh:mm:ss"),
-				record.DateModified.ToString("yyyy-MM-ddThh:mm:ss"),
-				record.Guid);
+			writer.WriteLine("<Entry level=\"{0}\" dateCreated=\"{1:yyyy-MM-ddThh:mm:ss}\" dateModified=\"{2:yyyy-MM-ddThh:mm:ss}\" guid=\"{3}\">", level, record.DateCreated, record.DateModified, record.Guid);
 
 			ExportString(writer, record.Title, "Title");
 
@@ -386,15 +292,13 @@ namespace LanguageExplorer.Works
 
 			List<ICmPossibility> collection = new List<ICmPossibility>();
 			collection.AddRange(record.RestrictionsRC);
-			ExportReferenceList(writer, collection, "Restrictions", "CmPossibility",
-				CellarPropertyType.ReferenceCollection);
+			ExportReferenceList(writer, collection, "Restrictions", "CmPossibility", CellarPropertyType.ReferenceCollection);
 			collection.Clear();
 
 			if (!record.DateOfEvent.IsEmpty)
 			{
 				writer.WriteLine("<Field name=\"DateOfEvent\" type=\"GenDate\" card=\"atomic\">");
-				writer.WriteLine("<Item ws=\"{0}\">{1}</Item>",
-					UserWsTag, XmlUtils.MakeSafeXml(record.DateOfEvent.ToXMLExportShortString()));
+				writer.WriteLine("<Item ws=\"{0}\">{1}</Item>", UserWsTag, XmlUtils.MakeSafeXml(record.DateOfEvent.ToXMLExportShortString()));
 				writer.WriteLine("</Field>");
 			}
 
@@ -404,13 +308,11 @@ namespace LanguageExplorer.Works
 			collection.Clear();
 
 			collection.AddRange(record.ResearchersRC.ToArray());
-			ExportReferenceList(writer, collection, "Researchers", "CmPerson",
-				CellarPropertyType.ReferenceCollection);
+			ExportReferenceList(writer, collection, "Researchers", "CmPerson", CellarPropertyType.ReferenceCollection);
 			collection.Clear();
 
 			collection.AddRange(record.SourcesRC.ToArray());
-			ExportReferenceList(writer, collection, "Sources", "CmPerson",
-				CellarPropertyType.ReferenceCollection);
+			ExportReferenceList(writer, collection, "Sources", "CmPerson", CellarPropertyType.ReferenceCollection);
 			collection.Clear();
 
 			ExportAtomicReference(writer, record.ConfidenceRA, "Confidence", "CmPossibility");
@@ -423,14 +325,12 @@ namespace LanguageExplorer.Works
 					if (part.RoleRA != null)
 					{
 						int wsRole;
-						ITsString tssRole = part.RoleRA.Name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out wsRole);
-						ExportReferenceList(writer, collection, tssRole.Text, "RnRoledPartic",
-							CellarPropertyType.ReferenceCollection);
+						var tssRole = part.RoleRA.Name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out wsRole);
+						ExportReferenceList(writer, collection, tssRole.Text, "RnRoledPartic", CellarPropertyType.ReferenceCollection);
 					}
 					else
 					{
-						ExportReferenceList(writer, collection, "Participants", "RnRoledPartic",
-							CellarPropertyType.ReferenceCollection);
+						ExportReferenceList(writer, collection, "Participants", "RnRoledPartic", CellarPropertyType.ReferenceCollection);
 					}
 					collection.Clear();
 				}
@@ -439,8 +339,7 @@ namespace LanguageExplorer.Works
 			if (record.LocationsRC != null && record.LocationsRC.Count > 0)
 			{
 				collection.AddRange(record.LocationsRC.ToArray());
-				ExportReferenceList(writer, collection, "Locations", "CmLocation",
-					CellarPropertyType.ReferenceCollection);
+				ExportReferenceList(writer, collection, "Locations", "CmLocation", CellarPropertyType.ReferenceCollection);
 				collection.Clear();
 			}
 
@@ -456,7 +355,9 @@ namespace LanguageExplorer.Works
 			{
 				writer.WriteLine("<Field name=\"AnthroCodes\" type=\"CmAnthroItem\" card=\"collection\">");
 				foreach (var item in record.AnthroCodesRC)
+				{
 					writer.WriteLine("<Item ws=\"{0}\">{1}</Item>", AnalWsTag, XmlUtils.MakeSafeXml(item.AbbrAndName));
+				}
 				writer.WriteLine("</Field>");
 			}
 
@@ -467,8 +368,7 @@ namespace LanguageExplorer.Works
 				writer.WriteLine("<Field name=\"SupportingEvidence\" type=\"RnGenericRec\" card=\"sequence\">");
 				foreach (var item in record.SupportingEvidenceRS)
 				{
-					writer.WriteLine("<Item guid=\"{0}\" ws=\"{1}\">{2}</Item>",
-						item.Guid, AnalWsTag, GetLinkLabelForRecord(item));
+					writer.WriteLine("<Item guid=\"{0}\" ws=\"{1}\">{2}</Item>", item.Guid, AnalWsTag, GetLinkLabelForRecord(item));
 				}
 				writer.WriteLine("</Field>");
 			}
@@ -477,8 +377,7 @@ namespace LanguageExplorer.Works
 				writer.WriteLine("<Field name=\"CounterEvidence\" type=\"RnGenericRec\" card=\"sequence\">");
 				foreach (var item in record.CounterEvidenceRS)
 				{
-					writer.WriteLine("<Item guid=\"{0}\" ws=\"{1}\">{2}</Item>",
-						item.Guid, AnalWsTag, GetLinkLabelForRecord(item));
+					writer.WriteLine("<Item guid=\"{0}\" ws=\"{1}\">{2}</Item>", item.Guid, AnalWsTag, GetLinkLabelForRecord(item));
 				}
 				writer.WriteLine("</Field>");
 			}
@@ -487,8 +386,7 @@ namespace LanguageExplorer.Works
 				writer.WriteLine("<Field name=\"SupersededBy\" type=\"RnGenericRec\" card=\"collection\">");
 				foreach (var item in record.SupersededByRC)
 				{
-					writer.WriteLine("<Item guid=\"{0}\" ws=\"{1}\">{2}</Item>",
-						item.Guid, AnalWsTag, GetLinkLabelForRecord(item));
+					writer.WriteLine("<Item guid=\"{0}\" ws=\"{1}\">{2}</Item>", item.Guid, AnalWsTag, GetLinkLabelForRecord(item));
 				}
 				writer.WriteLine("</Field>");
 			}
@@ -497,8 +395,7 @@ namespace LanguageExplorer.Works
 				writer.WriteLine("<Field name=\"SeeAlso\" type=\"RnGenericRec\" card=\"collection\">");
 				foreach (var item in record.SeeAlsoRC)
 				{
-					writer.WriteLine("<Item guid=\"{0}\" ws=\"{1}\">{2}</Item>",
-						item.Guid, AnalWsTag, GetLinkLabelForRecord(item));
+					writer.WriteLine("<Item guid=\"{0}\" ws=\"{1}\">{2}</Item>", item.Guid, AnalWsTag, GetLinkLabelForRecord(item));
 				}
 				writer.WriteLine("</Field>");
 			}
@@ -507,20 +404,15 @@ namespace LanguageExplorer.Works
 			ExportStText(writer, record.ResearchPlanOA, "ResearchPlan");
 			ExportStText(writer, record.PersonalNotesOA, "PersonalNotes");
 
-			// The following are in the model, but not used in practice.
-			//ExportStText(writer, record.VersionHistoryOA, "VersionHistory");
-			//if (record.RemindersRC != null && record.RemindersRC.Count > 0)
-			//    MessageBox.Show("Cannot export Reminders from RnGenericRec", "Not yet implemented");
-			//if (record.CrossReferencesRC != null && record.CrossReferencesRC.Count > 0)
-			//    MessageBox.Show("Cannot export CrossReferences from RnGenericRec", "Not yet implemented");
-
 			ExportCustomFields(writer, record);
 
 			if (record.SubRecordsOS != null && record.SubRecordsOS.Count > 0)
 			{
 				writer.WriteLine("<Field name=\"Subentries\" type=\"RnGenericRec\" card=\"sequence\">");
 				foreach (var subrec in record.SubRecordsOS)
+				{
 					ExportRecord(writer, subrec, level + 1);
+				}
 				writer.WriteLine("</Field>");
 			}
 			writer.WriteLine("</Entry>");
@@ -529,37 +421,21 @@ namespace LanguageExplorer.Works
 		ICmPossibilityRepository m_repoPoss = null;
 		IStTextRepository m_repoText = null;
 
-		ICmPossibilityRepository PossibilityRepository
-		{
-			get
-			{
-				if (m_repoPoss == null)
-					m_repoPoss = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>();
-				return m_repoPoss;
-			}
-		}
+		ICmPossibilityRepository PossibilityRepository => m_repoPoss ?? (m_repoPoss = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>());
 
-		IStTextRepository StTextRepository
-		{
-			get
-			{
-				if (m_repoText == null)
-					m_repoText = m_cache.ServiceLocator.GetInstance<IStTextRepository>();
-				return m_repoText;
-			}
-		}
+		IStTextRepository StTextRepository => m_repoText ?? (m_repoText = m_cache.ServiceLocator.GetInstance<IStTextRepository>());
 
 		private void ExportCustomFields(TextWriter writer, IRnGenericRec record)
 		{
-			ISilDataAccessManaged sda = m_cache.DomainDataByFlid as ISilDataAccessManaged;
+			var sda = m_cache.DomainDataByFlid as ISilDataAccessManaged;
 			Debug.Assert(sda != null);
-			foreach (int flid in m_customFlids)
+			foreach (var flid in m_customFlids)
 			{
-				string fieldName = m_mdc.GetFieldName(flid);
-				bool fHandled = false;
+				var fieldName = m_mdc.GetFieldName(flid);
+				var fHandled = false;
 				ITsString tss;
 				string s;
-				CellarPropertyType cpt = (CellarPropertyType)m_mdc.GetFieldType(flid);
+				var cpt = (CellarPropertyType)m_mdc.GetFieldType(flid);
 				switch (cpt)
 				{
 					case CellarPropertyType.Boolean:

@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Linq;
-using System.Xml.Linq;
 using LanguageExplorer.Areas;
 using NUnit.Framework;
 using SIL.LCModel;

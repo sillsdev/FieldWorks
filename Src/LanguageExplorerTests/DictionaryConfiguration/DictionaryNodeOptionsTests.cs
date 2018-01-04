@@ -1,15 +1,15 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using LanguageExplorer.Works;
+using LanguageExplorer.DictionaryConfiguration;
 using NUnit.Framework;
 
-namespace LanguageExplorerTests.Works
+namespace LanguageExplorerTests.DictionaryConfiguration
 {
 	[TestFixture]
-	class DictionaryNodeOptionsTests
+	public class DictionaryNodeOptionsTests
 	{
 		[Test]
 		public void CanDeepCloneSenseOptions()
@@ -47,12 +47,12 @@ namespace LanguageExplorerTests.Works
 		{
 			var orig = new DictionaryNodeListOptions
 			{
-				ListId = DictionaryNodeListOptions.ListIds.Sense,
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				ListId = ListIds.Sense,
+				Options = new List<DictionaryNodeOption>
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "Optn1", IsEnabled = true },
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "Optn2", IsEnabled = false },
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "Optn3", IsEnabled = true },
+					new DictionaryNodeOption { Id = "Optn1", IsEnabled = true },
+					new DictionaryNodeOption { Id = "Optn2", IsEnabled = false },
+					new DictionaryNodeOption { Id = "Optn3", IsEnabled = true },
 				}
 			};
 
@@ -72,12 +72,12 @@ namespace LanguageExplorerTests.Works
 		{
 			var orig = new DictionaryNodeListAndParaOptions
 			{
-				ListId = DictionaryNodeListOptions.ListIds.Minor,
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				ListId = ListIds.Minor,
+				Options = new List<DictionaryNodeOption>
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "Optn1", IsEnabled = true },
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "Optn2", IsEnabled = false },
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "Optn3", IsEnabled = true },
+					new DictionaryNodeOption { Id = "Optn1", IsEnabled = true },
+					new DictionaryNodeOption { Id = "Optn2", IsEnabled = false },
+					new DictionaryNodeOption { Id = "Optn3", IsEnabled = true },
 				},
 				DisplayEachInAParagraph = true
 			};
@@ -98,12 +98,12 @@ namespace LanguageExplorerTests.Works
 		{
 			var orig = new DictionaryNodeWritingSystemOptions
 			{
-				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				WsType = WritingSystemType.Vernacular,
+				Options = new List<DictionaryNodeOption>
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "ws1", IsEnabled = true },
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "ws2", IsEnabled = false },
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "ws3", IsEnabled = true },
+					new DictionaryNodeOption { Id = "ws1", IsEnabled = true },
+					new DictionaryNodeOption { Id = "ws2", IsEnabled = false },
+					new DictionaryNodeOption { Id = "ws3", IsEnabled = true },
 				},
 				DisplayWritingSystemAbbreviations = true
 			};
@@ -119,8 +119,8 @@ namespace LanguageExplorerTests.Works
 			AssertListWasDeepCloned(orig.Options, clone.Options);
 		}
 
-		internal static void AssertListWasDeepCloned(List<DictionaryNodeListOptions.DictionaryNodeOption> orig,
-			List<DictionaryNodeListOptions.DictionaryNodeOption> clone)
+		internal static void AssertListWasDeepCloned(List<DictionaryNodeOption> orig,
+			List<DictionaryNodeOption> clone)
 		{
 			Assert.AreNotSame(orig, clone, "Not deep cloned; shallow cloned");
 			Assert.AreEqual(orig.Count, clone.Count);

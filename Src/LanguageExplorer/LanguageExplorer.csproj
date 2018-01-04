@@ -317,6 +317,9 @@
     <Compile Include="Areas\TextsAndWords\Tools\InterlinearEdit\InterlinearEditToolMenuHelper.cs" />
     <Compile Include="Areas\TreeBarHandlerAwareRecordList.cs" />
     <Compile Include="DictionaryConfigurationServices.cs" />
+    <Compile Include="DictionaryConfiguration\AlignmentType.cs" />
+    <Compile Include="DictionaryConfiguration\ListIds.cs" />
+    <Compile Include="DictionaryConfiguration\WritingSystemType.cs" />
     <Compile Include="IListArea.cs" />
     <Compile Include="Impls\PropertyTable.cs" />
     <Compile Include="Impls\Publisher.cs" />
@@ -1012,9 +1015,9 @@
     <Compile Include="Works\DictionaryConfigurationManagerDlg.Designer.cs">
       <DependentUpon>DictionaryConfigurationManagerDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="DictionaryConfigurationMigration\FirstAlphaMigrator.cs" />
-    <Compile Include="DictionaryConfigurationMigration\FirstBetaMigrator.cs" />
-    <Compile Include="DictionaryConfigurationMigration\PreHistoricMigrator.cs" />
+    <Compile Include="DictionaryConfiguration\Migration\FirstAlphaMigrator.cs" />
+    <Compile Include="DictionaryConfiguration\Migration\FirstBetaMigrator.cs" />
+    <Compile Include="DictionaryConfiguration\Migration\PreHistoricMigrator.cs" />
     <Compile Include="Works\DictionaryConfigurationModel.cs" />
     <Compile Include="Works\DictionaryConfigurationNodeRenameDlg.cs">
       <SubType>Form</SubType>
@@ -1069,27 +1072,36 @@
     <Compile Include="Works\DictionaryDetailsView\SpecialCharacterHandling.cs" />
     <Compile Include="Works\DictionaryExportService.cs" />
     <Compile Include="DictionaryHomographConfiguration.cs" />
-    <Compile Include="Works\DictionaryNodeOptions.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryNodeGroupingOptions.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryNodeListAndParaOptions.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryNodeListOptions.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryNodeOption.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryNodeOptions.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryNodePictureOptions.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryNodeReferringSenseOptions.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryNodeSenseOptions.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryNodeWritingSystemAndParaOptions.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryNodeWritingSystemOptions.cs" />
     <Compile Include="Works\DictionaryPublicationDecorator.cs" />
     <Compile Include="Areas\Lexicon\Tools\BulkEditEntries\EntriesOrChildClassesRecordList.cs" />
     <Compile Include="Works\Direction.cs" />
     <Compile Include="Works\ExclusionReasonCode.cs" />
-    <Compile Include="Works\ExportDialog.cs">
+    <Compile Include="Areas\ExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Works\ExportSemanticDomainsDlg.cs">
+    <Compile Include="Areas\ExportSemanticDomainsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Works\ExportSemanticDomainsDlg.Designer.cs">
+    <Compile Include="Areas\ExportSemanticDomainsDlg.Designer.cs">
       <DependentUpon>ExportSemanticDomainsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Works\ExportTranslatedListsDlg.cs">
+    <Compile Include="Areas\ExportTranslatedListsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Works\ExportTranslatedListsDlg.Designer.cs">
+    <Compile Include="Areas\ExportTranslatedListsDlg.Designer.cs">
       <DependentUpon>ExportTranslatedListsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Works\FileStreamXmlResolver.cs" />
+    <Compile Include="Areas\FileStreamXmlResolver.cs" />
     <Compile Include="Works\GeneratorSettings.cs" />
     <Compile Include="Works\HeadWordNumbersController.cs" />
     <Compile Include="Works\HeadWordNumbersDlg.cs">
@@ -1120,6 +1132,7 @@
     <Compile Include="IRecordListRepositoryForTools.cs" />
     <Compile Include="IRecordList.cs" />
     <Compile Include="ITreeBarHandler.cs" />
+    <Compile Include="DictionaryConfiguration\IParaOption.cs" />
     <Compile Include="Works\ISetRootHvo.cs" />
     <Compile Include="Works\IWebonaryClient.cs" />
     <Compile Include="Works\LayoutLevels.cs" />
@@ -1139,13 +1152,14 @@
     <Compile Include="Works\MacroListener.cs" />
     <Compile Include="Works\MatchingItemsRecordList.cs" />
     <Compile Include="Works\Navigation.cs" />
-    <Compile Include="Works\NotebookExportDialog.cs">
+    <Compile Include="Areas\Notebook\NotebookExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Works\PossibilityRecordList.cs" />
     <Compile Include="Areas\PossibilityTreeBarHandler.cs" />
     <Compile Include="Works\PropertyType.cs" />
     <Compile Include="Works\StyleTypes.cs" />
+    <Compile Include="Areas\TranslatedListsExporter.cs" />
     <Compile Include="Works\TreeBarHandler.cs" />
     <Compile Include="Works\RecordBrowseView.cs">
       <SubType>UserControl</SubType>
@@ -1652,14 +1666,14 @@
     <EmbeddedResource Include="Works\DictionaryDetailsView\SenseOptionsView.resx">
       <DependentUpon>SenseOptionsView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Works\ExportDialog.resx">
+    <EmbeddedResource Include="Areas\ExportDialog.resx">
       <DependentUpon>ExportDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Works\ExportSemanticDomainsDlg.resx">
+    <EmbeddedResource Include="Areas\ExportSemanticDomainsDlg.resx">
       <DependentUpon>ExportSemanticDomainsDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Works\ExportTranslatedListsDlg.resx">
+    <EmbeddedResource Include="Areas\ExportTranslatedListsDlg.resx">
       <DependentUpon>ExportTranslatedListsDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

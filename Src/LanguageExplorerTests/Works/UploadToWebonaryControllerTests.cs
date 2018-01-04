@@ -191,10 +191,10 @@ namespace LanguageExplorerTests.Works
 					//DictionaryNodeOptions = CXGTests.GetWsOptionsForLanguages(new[] { "en" }),
 					DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 					{
-						WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
-						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+						WsType = WritingSystemType.Reversal,
+						Options = new List<DictionaryNodeOption>
 						{
-							new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en"}
+							new DictionaryNodeOption {Id = "en"}
 						},
 						DisplayWritingSystemAbbreviations = false
 					},

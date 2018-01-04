@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using LanguageExplorer;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.DictionaryConfigurationMigration;
+using LanguageExplorer.DictionaryConfiguration.Migration;
 using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.IO;
@@ -14,7 +14,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using LanguageExplorerTests.Works;
 
-namespace LanguageExplorerTests.DictionaryConfigurationMigration
+namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 {
 	public class DictionaryConfigurationMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
@@ -91,8 +91,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 		public void MigrateOldConfigurationsIfNeeded_PreservesOrderOfBibliographies()
 		{
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
-			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName,
-				"AllReversalIndexes" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
+			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName, "AllReversalIndexes" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{

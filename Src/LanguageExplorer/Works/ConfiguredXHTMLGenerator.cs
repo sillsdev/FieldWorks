@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.DictionaryConfiguration;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -1727,8 +1728,8 @@ namespace LanguageExplorer.Works
 		private static bool IsLexReferenceCollection(ConfigurableDictionaryNode config)
 		{
 			var opt = config.DictionaryNodeOptions as DictionaryNodeListOptions;
-			return opt != null && (opt.ListId == DictionaryNodeListOptions.ListIds.Entry ||
-				opt.ListId == DictionaryNodeListOptions.ListIds.Sense);
+			return opt != null && (opt.ListId == ListIds.Entry ||
+				opt.ListId == ListIds.Sense);
 		}
 
 		internal static bool IsFactoredReference(ConfigurableDictionaryNode node, out ConfigurableDictionaryNode typeChild)
@@ -1763,7 +1764,7 @@ namespace LanguageExplorer.Works
 		{
 			variantEntryTypeNode = null;
 			var variantOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
-			if (variantOptions != null && variantOptions.ListId == DictionaryNodeListOptions.ListIds.Variant)
+			if (variantOptions != null && variantOptions.ListId == ListIds.Variant)
 			{
 				variantEntryTypeNode = config.ReferencedOrDirectChildren.FirstOrDefault(x => x.FieldDescription == "VariantEntryTypesRS");
 				return variantEntryTypeNode != null;
@@ -2297,7 +2298,9 @@ namespace LanguageExplorer.Works
 			List<Tuple<ISenseOrEntry, ILexReference>> bucketList, List<List<Tuple<ISenseOrEntry, ILexReference>>> lexRefTargetList)
 		{
 			if (bucketList.Count == 0)
+			{
 				return;
+			}
 			if (!IsListItemSelectedForExport(config, bucketList.First().Item2, cmOwner))
 			{
 				bucketList.Clear();
@@ -2309,8 +2312,10 @@ namespace LanguageExplorer.Works
 			{
 				bucketList.RemoveAll(t => IsOwner(t.Item1, cmOwner));
 				// "Unidirectional" relations, like Sequences, are user-orderable (but only sequences include their owner)
-				if (!LexRefTypeTags.IsUnidirectional((LexRefTypeTags.MappingTypes)curType.MappingType))
+				if (!LexRefTypeTags.IsUnidirectional((LexRefTypeTags.MappingTypes) curType.MappingType))
+				{
 					bucketList.Sort(CompareLexRefTargets);
+				}
 			}
 			lexRefTargetList.Add(new List<Tuple<ISenseOrEntry, ILexReference>>(bucketList));
 			bucketList.Clear();
@@ -2332,7 +2337,9 @@ namespace LanguageExplorer.Works
 			List<Tuple<ISenseOrEntry, ILexReference>> referenceList, object collectionOwner, GeneratorSettings settings)
 		{
 			if (config.ReferencedOrDirectChildren == null)
+			{
 				return string.Empty;
+			}
 			var xBldr = new StringBuilder();
 			using (var xw = XmlWriter.Create(xBldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 			{
@@ -2340,10 +2347,11 @@ namespace LanguageExplorer.Works
 				WriteCollectionItemClassAttribute(config, xw);
 				var targetInfo = referenceList.FirstOrDefault();
 				if (targetInfo == null)
+				{
 					return string.Empty;
+				}
 				var reference = targetInfo.Item2;
-				if (LexRefTypeTags.IsUnidirectional((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType) &&
-					LexRefDirection(reference, collectionOwner) == ":r")
+				if (LexRefTypeTags.IsUnidirectional((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType) && LexRefDirection(reference, collectionOwner) == ":r")
 				{
 					return string.Empty;
 				}
@@ -2376,7 +2384,9 @@ namespace LanguageExplorer.Works
 								// Changing the SubField changes the default CSS Class name.
 								// If there is no override, override with the default before changing the SubField.
 								if (string.IsNullOrEmpty(child.CSSClassNameOverride))
+								{
 									child.CSSClassNameOverride = CssGenerator.GetClassAttributeForConfig(child);
+								}
 								// Flag to prepend "Reverse" to child.SubField when it is used.
 								xw.WriteRaw(ReallyGenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings, fUseReverseSubField: true));
 							}
@@ -2395,11 +2405,12 @@ namespace LanguageExplorer.Works
 			return xBldr.ToString();
 		}
 
-		private static string GenerateSubentryTypeChild(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
-			ILexEntry subEntry, object mainEntryOrSense, GeneratorSettings settings)
+		private static string GenerateSubentryTypeChild(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, ILexEntry subEntry, object mainEntryOrSense, GeneratorSettings settings)
 		{
 			if (!config.IsEnabled)
+			{
 				return string.Empty;
+			}
 
 			var complexEntryRef = EntryRefForSubentry(subEntry, mainEntryOrSense);
 			return complexEntryRef == null
@@ -2418,13 +2429,17 @@ namespace LanguageExplorer.Works
 		private static string GenerateSenseNumberSpanIfNeeded(ConfigurableDictionaryNode senseConfigNode, bool isThisSenseNumbered, ref SenseInfo info)
 		{
 			if (!isThisSenseNumbered)
+			{
 				return string.Empty;
+			}
 
 			var senseOptions = senseConfigNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
 
 			var formattedSenseNumber = GetSenseNumber(senseOptions.NumberingStyle, ref info);
 			if (string.IsNullOrEmpty(formattedSenseNumber))
+			{
 				return string.Empty;
+			}
 			var bldr = new StringBuilder();
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 			{
@@ -2433,8 +2448,8 @@ namespace LanguageExplorer.Works
 				xw.WriteString(formattedSenseNumber);
 				xw.WriteEndElement();
 				xw.Flush();
-				return bldr.ToString();
 			}
+			return bldr.ToString();
 		}
 
 		private static string GetSenseNumber(string numberingStyle, ref SenseInfo info)
@@ -2460,12 +2475,18 @@ namespace LanguageExplorer.Works
 
 		private static string GenerateSenseOutlineNumber(SenseInfo info, string nextNumber)
 		{
-			if (info.ParentSenseNumberingStyle == "%j")
-				info.SenseOutlineNumber = string.Format("{0}{1}", info.SenseOutlineNumber, nextNumber);
-			else if (info.ParentSenseNumberingStyle == "%.")
-				info.SenseOutlineNumber = string.Format("{0}.{1}", info.SenseOutlineNumber, nextNumber);
-			else
-				info.SenseOutlineNumber = nextNumber;
+			switch (info.ParentSenseNumberingStyle)
+			{
+				case "%j":
+					info.SenseOutlineNumber = $"{info.SenseOutlineNumber}{nextNumber}";
+					break;
+				case "%.":
+					info.SenseOutlineNumber = $"{info.SenseOutlineNumber}.{nextNumber}";
+					break;
+				default:
+					info.SenseOutlineNumber = nextNumber;
+					break;
+			}
 
 			return info.SenseOutlineNumber;
 		}
@@ -2474,18 +2495,21 @@ namespace LanguageExplorer.Works
 		{
 			var asciiBytes = 64; // char 'A'
 			asciiBytes = asciiBytes + senseNumber;
-			var nextNumber = ((char)(asciiBytes)).ToString();
+			var nextNumber = ((char)asciiBytes).ToString();
 			if (numberingStyle == "%a")
+			{
 				nextNumber = nextNumber.ToLower();
+			}
 			return nextNumber;
 		}
 
 		private static string GetRomanSenseCounter(string numberingStyle, int senseNumber)
 		{
-			string roman = string.Empty;
-			roman = RomanNumerals.IntToRoman(senseNumber);
+			var roman = RomanNumerals.IntToRoman(senseNumber);
 			if (numberingStyle == "%i")
+			{
 				roman = roman.ToLower();
+			}
 			return roman;
 		}
 
@@ -2493,16 +2517,16 @@ namespace LanguageExplorer.Works
 		{
 			// Don't export if there is no such data
 			if (propertyValue == null || config.ReferencedOrDirectChildren == null || !config.ReferencedOrDirectChildren.Any(node => node.IsEnabled))
+			{
 				return string.Empty;
+			}
 			var bldr = new StringBuilder();
 			foreach (var child in config.ReferencedOrDirectChildren)
 			{
 				var content = GenerateXHTMLForFieldByReflection(propertyValue, child, null, settings);
 				bldr.Append(content);
 			}
-			if (bldr.Length > 0)
-				return WriteRawElementContents("span", bldr.ToString(), config);
-			return String.Empty;
+			return bldr.Length > 0 ? WriteRawElementContents("span", bldr.ToString(), config) : string.Empty;
 		}
 
 		/// <summary>Write the class element in the span for an individual item in the collection</summary>
@@ -2510,7 +2534,9 @@ namespace LanguageExplorer.Works
 		{
 			var classAtt = CssGenerator.GetClassAttributeForCollectionItem(config);
 			if (config.ReferencedNode != null)
-				classAtt = string.Format("{0} {1}", classAtt, CssGenerator.GetClassAttributeForCollectionItem(config.ReferencedNode));
+			{
+				classAtt = $"{classAtt} {CssGenerator.GetClassAttributeForCollectionItem(config.ReferencedNode)}";
+			}
 			writer.WriteAttributeString("class", classAtt);
 		}
 
@@ -2537,7 +2563,9 @@ namespace LanguageExplorer.Works
 		{
 			var listOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
 			if (listOptions == null)
-				throw new ArgumentException(string.Format("This configuration node had no options and we were expecting them: {0} ({1})", config.DisplayLabel, config.FieldDescription), "config");
+			{
+				throw new ArgumentException($@"This configuration node had no options and we were expecting them: {config.DisplayLabel} ({config.FieldDescription})", nameof(config));
+			}
 
 			var selectedListOptions = new List<Guid>();
 			var forwardReverseOptions = new List<Tuple<Guid, string>>();
@@ -2556,20 +2584,22 @@ namespace LanguageExplorer.Works
 			}
 			switch (listOptions.ListId)
 			{
-				case DictionaryNodeListOptions.ListIds.Variant:
-				case DictionaryNodeListOptions.ListIds.Complex:
-				case DictionaryNodeListOptions.ListIds.Minor:
-				case DictionaryNodeListOptions.ListIds.Note:
+				case ListIds.Variant:
+				case ListIds.Complex:
+				case ListIds.Minor:
+				case ListIds.Note:
 					return IsListItemSelectedForExportInternal(listOptions.ListId, listItem, selectedListOptions);
-				case DictionaryNodeListOptions.ListIds.Entry:
-				case DictionaryNodeListOptions.ListIds.Sense:
+				case ListIds.Entry:
+				case ListIds.Sense:
 					var lexRef = (ILexReference)listItem;
 					var entryTypeGuid = lexRef.OwnerType.Guid;
 					if (selectedListOptions.Contains(entryTypeGuid))
+					{
 						return true;
+					}
 					var entryTypeGuidAndDirection = new Tuple<Guid, string>(entryTypeGuid, LexRefDirection(lexRef, parent));
 					return forwardReverseOptions.Contains(entryTypeGuidAndDirection);
-				case DictionaryNodeListOptions.ListIds.None:
+				case ListIds.None:
 					return true;
 				default:
 					Debug.WriteLine("Unhandled list ID encountered: " + listOptions.ListId);
@@ -2577,8 +2607,7 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		private static bool IsListItemSelectedForExportInternal(DictionaryNodeListOptions.ListIds listId,
-			object listItem, IEnumerable<Guid> selectedListOptions)
+		private static bool IsListItemSelectedForExportInternal(ListIds listId, object listItem, IEnumerable<Guid> selectedListOptions)
 		{
 			var entryTypeGuids = new HashSet<Guid>();
 			var entryRef = listItem as ILexEntryRef;
@@ -2587,19 +2616,31 @@ namespace LanguageExplorer.Works
 			var note = listItem as ILexExtendedNote;
 			if (entryRef != null)
 			{
-				if (listId == DictionaryNodeListOptions.ListIds.Variant || listId == DictionaryNodeListOptions.ListIds.Minor)
+				if (listId == ListIds.Variant || listId == ListIds.Minor)
+				{
 					GetVariantTypeGuidsForEntryRef(entryRef, entryTypeGuids);
-				if (listId == DictionaryNodeListOptions.ListIds.Complex || listId == DictionaryNodeListOptions.ListIds.Minor)
+				}
+				if (listId == ListIds.Complex || listId == ListIds.Minor)
+				{
 					GetComplexFormTypeGuidsForEntryRef(entryRef, entryTypeGuids);
+				}
 			}
 			else if (entry != null)
 			{
-				if (listId == DictionaryNodeListOptions.ListIds.Variant || listId == DictionaryNodeListOptions.ListIds.Minor)
+				if (listId == ListIds.Variant || listId == ListIds.Minor)
+				{
 					foreach (var variantEntryRef in entry.VariantEntryRefs)
+					{
 						GetVariantTypeGuidsForEntryRef(variantEntryRef, entryTypeGuids);
-				if (listId == DictionaryNodeListOptions.ListIds.Complex || listId == DictionaryNodeListOptions.ListIds.Minor)
+					}
+				}
+				if (listId == ListIds.Complex || listId == ListIds.Minor)
+				{
 					foreach (var complexFormEntryRef in entry.ComplexFormEntryRefs)
+					{
 						GetComplexFormTypeGuidsForEntryRef(complexFormEntryRef, entryTypeGuids);
+					}
+				}
 			}
 			else if (entryType != null)
 			{
@@ -2607,8 +2648,10 @@ namespace LanguageExplorer.Works
 			}
 			else if (note != null)
 			{
-				if (listId == DictionaryNodeListOptions.ListIds.Note)
+				if (listId == ListIds.Note)
+				{
 					GetExtendedNoteGuidsForEntryRef(note, entryTypeGuids);
+				}
 			}
 			return entryTypeGuids.Intersect(selectedListOptions).Any();
 		}
@@ -2616,25 +2659,30 @@ namespace LanguageExplorer.Works
 		private static void GetVariantTypeGuidsForEntryRef(ILexEntryRef entryRef, HashSet<Guid> entryTypeGuids)
 		{
 			if (entryRef.VariantEntryTypesRS.Any())
+			{
 				entryTypeGuids.UnionWith(entryRef.VariantEntryTypesRS.Select(guid => guid.Guid));
+			}
 			else
+			{
 				entryTypeGuids.Add(XmlViewsUtils.GetGuidForUnspecifiedVariantType());
+			}
 		}
 
 		private static void GetComplexFormTypeGuidsForEntryRef(ILexEntryRef entryRef, HashSet<Guid> entryTypeGuids)
 		{
 			if (entryRef.ComplexEntryTypesRS.Any())
+			{
 				entryTypeGuids.UnionWith(entryRef.ComplexEntryTypesRS.Select(guid => guid.Guid));
+			}
 			else
+			{
 				entryTypeGuids.Add(XmlViewsUtils.GetGuidForUnspecifiedComplexFormType());
+			}
 		}
 
 		private static void GetExtendedNoteGuidsForEntryRef(ILexExtendedNote entryRef, HashSet<Guid> entryTypeGuids)
 		{
-			if (entryRef.ExtendedNoteTypeRA != null)
-				entryTypeGuids.Add(entryRef.ExtendedNoteTypeRA.Guid);
-			else
-				entryTypeGuids.Add(XmlViewsUtils.GetGuidForUnspecifiedExtendedNoteType());
+			entryTypeGuids.Add(entryRef.ExtendedNoteTypeRA?.Guid ?? XmlViewsUtils.GetGuidForUnspecifiedExtendedNoteType());
 		}
 
 		/// <returns>
@@ -2657,7 +2705,7 @@ namespace LanguageExplorer.Works
 		{
 			if (collection == null)
 			{
-				throw new ArgumentNullException("collection");
+				throw new ArgumentNullException(nameof(collection));
 			}
 			if (collection is IEnumerable)
 			{
@@ -2667,7 +2715,7 @@ namespace LanguageExplorer.Works
 			{
 				return ((ILcmVector)collection).ToHvoArray().Length == 0;
 			}
-			throw new ArgumentException(@"Cannot test something that isn't a collection", "collection");
+			throw new ArgumentException(@"Cannot test something that isn't a collection", nameof(collection));
 		}
 
 		/// <summary>
@@ -2685,64 +2733,76 @@ namespace LanguageExplorer.Works
 			if (config.IsHeadWord)
 			{
 				if (field is ILexEntry)
+				{
 					guid = ((ILexEntry)field).Guid;
+				}
 				else if (field is ILexEntryRef)
+				{
 					guid = ((ILexEntryRef)field).OwningEntry.Guid;
+				}
 				else if (field is ISenseOrEntry)
+				{
 					guid = ((ISenseOrEntry)field).EntryGuid;
+				}
 				else if (field is ILexSense)
-					guid = ((ILexSense)field).OwnerOfClass(LexEntryTags.kClassId).Guid;
+				{
+					guid = ((ILexSense) field).OwnerOfClass(LexEntryTags.kClassId).Guid;
+				}
 				else
-					Debug.WriteLine(String.Format("Need to find Entry Guid for {0}",
-						field == null ? DictionaryConfigurationServices.BuildPathStringFromNode(config) : field.GetType().Name));
+				{
+					Debug.WriteLine($"Need to find Entry Guid for {field?.GetType().Name ?? DictionaryConfigurationServices.BuildPathStringFromNode(config)}");
+				}
 			}
 
 			if (propertyValue is ITsString)
 			{
-				if (!TsStringUtils.IsNullOrEmpty((ITsString)propertyValue))
+				if (TsStringUtils.IsNullOrEmpty((ITsString) propertyValue))
 				{
-					var content = GenerateXHTMLForString((ITsString)propertyValue, config, settings, guid);
-					if (!String.IsNullOrEmpty(content))
-						return WriteRawElementContents("span", content, config);
+					return string.Empty;
 				}
-				return String.Empty;
+				var content = GenerateXHTMLForString((ITsString)propertyValue, config, settings, guid);
+				return !string.IsNullOrEmpty(content) ? WriteRawElementContents("span", content, config) : string.Empty;
 			}
-			else if (propertyValue is IMultiStringAccessor)
+			if (propertyValue is IMultiStringAccessor)
 			{
 				return GenerateXHTMLForStrings((IMultiStringAccessor)propertyValue, config, settings, guid);
 			}
-			else if (propertyValue is int)
+			if (propertyValue is int)
 			{
 				return WriteElementContents(propertyValue, config);
 			}
-			else if (propertyValue is DateTime)
+			if (propertyValue is DateTime)
 			{
 				return WriteElementContents(((DateTime)propertyValue).ToLongDateString(), config);
 			}
-			else if (propertyValue is GenDate)
+			if (propertyValue is GenDate)
 			{
 				return WriteElementContents(((GenDate)propertyValue).ToLongString(), config);
 			}
-			else if (propertyValue is IMultiAccessorBase)
+			if (propertyValue is IMultiAccessorBase)
 			{
 				if (field is ISenseOrEntry)
+				{
 					return GenerateXHTMLForVirtualStrings(((ISenseOrEntry)field).Item, (IMultiAccessorBase)propertyValue, config, settings, guid);
+				}
 				return GenerateXHTMLForVirtualStrings((ICmObject)field, (IMultiAccessorBase)propertyValue, config, settings, guid);
 			}
-			else if (propertyValue is String)
+			if (propertyValue is string)
 			{
 				return WriteElementContents(propertyValue, config);
 			}
-			else if (propertyValue is IStText)
+			if (propertyValue is IStText)
 			{
 				var bldr = new StringBuilder();
 				foreach (var para in (propertyValue as IStText).ParagraphsOS)
 				{
-					IStTxtPara stp = para as IStTxtPara;
+					var stp = para as IStTxtPara;
 					if (stp == null)
+					{
 						continue;
+					}
 					var contentPara = GenerateXHTMLForString(stp.Contents, config, settings, guid);
-					if (!String.IsNullOrEmpty(contentPara))
+					if (!string.IsNullOrEmpty(contentPara))
 					{
 						bldr.Append(contentPara);
 						bldr.AppendLine();
@@ -2753,62 +2813,55 @@ namespace LanguageExplorer.Works
 					// Do we not have/want a class from the config node?
 					return WriteRawElementContents("div", bldr.ToString(), null);
 				}
-				return String.Empty;
+				return string.Empty;
 			}
-			else
-			{
-				if (propertyValue == null)
-				{
-					Debug.WriteLine(String.Format("Bad configuration node: {0}", DictionaryConfigurationServices.BuildPathStringFromNode(config)));
-				}
-				else
-				{
-					Debug.WriteLine(String.Format("What do I do with {0}?", propertyValue.GetType().Name));
-				}
-				return String.Empty;
-			}
+			Debug.WriteLine(propertyValue == null
+				? $"Bad configuration node: {DictionaryConfigurationServices.BuildPathStringFromNode(config)}"
+				: $"What do I do with {propertyValue.GetType().Name}?");
+			return string.Empty;
 		}
 
 		private static string WriteElementContents(object propertyValue, ConfigurableDictionaryNode config)
 		{
 			var content = propertyValue.ToString();
-			if (!String.IsNullOrEmpty(content))
+			if (string.IsNullOrEmpty(content))
 			{
-				var bldr = new StringBuilder();
-				using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
-				{
-					xw.WriteStartElement(GetElementNameForProperty(config));
-					WriteClassNameAttributeForConfig(xw, config);
-					xw.WriteString(content);
-					xw.WriteEndElement();
-					xw.Flush();
-					return bldr.ToString();
-				}
+				return string.Empty;
 			}
-			return String.Empty;
+			var bldr = new StringBuilder();
+			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
+			{
+				xw.WriteStartElement(GetElementNameForProperty(config));
+				WriteClassNameAttributeForConfig(xw, config);
+				xw.WriteString(content);
+				xw.WriteEndElement();
+				xw.Flush();
+			}
+			return bldr.ToString();
 		}
 
 		private static string WriteRawElementContents(string elementName, string xmlContent, ConfigurableDictionaryNode config)
 		{
-			if (!String.IsNullOrEmpty(xmlContent))
+			if (string.IsNullOrEmpty(xmlContent))
 			{
-				var bldr = new StringBuilder();
-				using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
-				{
-					xw.WriteStartElement(elementName);
-					if (config != null)
-						WriteClassNameAttributeForConfig(xw, config);
-					xw.WriteRaw(xmlContent);
-					xw.WriteEndElement();
-					xw.Flush();
-					return bldr.ToString();
-				}
+				return string.Empty;
 			}
-			return String.Empty;
+			var bldr = new StringBuilder();
+			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
+			{
+				xw.WriteStartElement(elementName);
+				if (config != null)
+				{
+					WriteClassNameAttributeForConfig(xw, config);
+				}
+				xw.WriteRaw(xmlContent);
+				xw.WriteEndElement();
+				xw.Flush();
+			}
+			return bldr.ToString();
 		}
 
-		private static string GenerateXHTMLForStrings(IMultiStringAccessor multiStringAccessor, ConfigurableDictionaryNode config,
-			GeneratorSettings settings)
+		private static string GenerateXHTMLForStrings(IMultiStringAccessor multiStringAccessor, ConfigurableDictionaryNode config, GeneratorSettings settings)
 		{
 			return GenerateXHTMLForStrings(multiStringAccessor, config, settings, Guid.Empty);
 		}
@@ -2817,18 +2870,19 @@ namespace LanguageExplorer.Works
 		/// This method will generate an XHTML span with a string for each selected writing system in the
 		/// DictionaryWritingSystemOptions of the configuration that also has data in the given IMultiStringAccessor
 		/// </summary>
-		private static string GenerateXHTMLForStrings(IMultiStringAccessor multiStringAccessor, ConfigurableDictionaryNode config,
-			GeneratorSettings settings, Guid guid)
+		private static string GenerateXHTMLForStrings(IMultiStringAccessor multiStringAccessor, ConfigurableDictionaryNode config, GeneratorSettings settings, Guid guid)
 		{
 			var wsOptions = config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			if (wsOptions == null)
 			{
-				throw new ArgumentException(@"Configuration nodes for MultiString fields should have WritingSystemOptions", "config");
+				throw new ArgumentException(@"Configuration nodes for MultiString fields should have WritingSystemOptions", nameof(config));
 			}
 			// TODO pH 2014.12: this can generate an empty span if no checked WS's contain data
 			// gjm 2015.12 but this will help some (LT-16846)
 			if (multiStringAccessor == null || multiStringAccessor.StringCount == 0)
-				return String.Empty;
+			{
+				return string.Empty;
+			}
 			var bldr = new StringBuilder();
 			foreach (var option in wsOptions.Options)
 			{
@@ -2858,27 +2912,28 @@ namespace LanguageExplorer.Works
 				}
 				var contentItem = GenerateWsPrefixAndString(config, settings, wsOptions, wsId, bestString, guid);
 
-				if (!String.IsNullOrEmpty(contentItem))
+				if (!string.IsNullOrEmpty(contentItem))
+				{
 					bldr.Append(contentItem);
+				}
 			}
 			if (bldr.Length > 0)
 			{
 				return WriteRawElementContents("span", bldr.ToString(), config);
 			}
-			return String.Empty;
+			return string.Empty;
 		}
 
 		/// <summary>
 		/// This method will generate an XHTML span with a string for each selected writing system in the
 		/// DictionaryWritingSystemOptions of the configuration that also has data in the given IMultiAccessorBase
 		/// </summary>
-		private static string GenerateXHTMLForVirtualStrings(ICmObject owningObject, IMultiAccessorBase multiStringAccessor,
-																			ConfigurableDictionaryNode config, GeneratorSettings settings, Guid guid)
+		private static string GenerateXHTMLForVirtualStrings(ICmObject owningObject, IMultiAccessorBase multiStringAccessor, ConfigurableDictionaryNode config, GeneratorSettings settings, Guid guid)
 		{
 			var wsOptions = config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			if (wsOptions == null)
 			{
-				throw new ArgumentException(@"Configuration nodes for MultiString fields should have WritingSystemOptions", "config");
+				throw new ArgumentException(@"Configuration nodes for MultiString fields should have WritingSystemOptions", nameof(config));
 			}
 			var bldr = new StringBuilder();
 			foreach (var option in wsOptions.Options)

@@ -4,6 +4,7 @@
 
 using System.Linq;
 using LanguageExplorer.Areas;
+using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;

@@ -11,7 +11,6 @@ using System.Xml.Linq;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.Lexicon;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.Dumpster;
 using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
@@ -23,7 +22,7 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.Xml;
 
-namespace LanguageExplorer.DictionaryConfigurationMigration
+namespace LanguageExplorer.DictionaryConfiguration.Migration
 {
 	/// <summary>
 	/// The PreHistoricMigrator is responsible for migrating a pre-8.3Alpha db with the old layout
@@ -282,8 +281,7 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 				convertedModel.Parts[1].Style = alphaDefaultModel.Parts[1].Style; // Main Entry had no style in the old model
 				for (var i = 2; i < convertedModel.Parts.Count; ++i)
 				{
-					CopyDefaultsIntoMinorEntryNode(convertedModel, convertedModel.Parts[i], alphaDefaultModel.Parts[2], // Minor Entry (Variants)
-						DictionaryNodeListOptions.ListIds.Variant);
+					CopyDefaultsIntoMinorEntryNode(convertedModel, convertedModel.Parts[i], alphaDefaultModel.Parts[2], /* Minor Entry (Variants)*/ ListIds.Variant);
 				}
 			}
 			else
@@ -320,20 +318,16 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 						var convertedComplexNode = convertedNode;
 						var convertedVariantNode = convertedNode.DeepCloneUnderSameParent();
 						convertedModel.Parts.Insert(++i, convertedVariantNode);
-						CopyDefaultsIntoMinorEntryNode(convertedModel, convertedComplexNode, currentDefaultComplexNode,
-							DictionaryNodeListOptions.ListIds.Complex);
-						CopyDefaultsIntoMinorEntryNode(convertedModel, convertedVariantNode, currentDefaultVariantNode,
-							DictionaryNodeListOptions.ListIds.Variant);
+						CopyDefaultsIntoMinorEntryNode(convertedModel, convertedComplexNode, currentDefaultComplexNode, ListIds.Complex);
+						CopyDefaultsIntoMinorEntryNode(convertedModel, convertedVariantNode, currentDefaultVariantNode, ListIds.Variant);
 					}
 					else if (shouldCreateComplexNode)
 					{
-						CopyDefaultsIntoMinorEntryNode(convertedModel, convertedNode, currentDefaultComplexNode,
-							DictionaryNodeListOptions.ListIds.Complex);
+						CopyDefaultsIntoMinorEntryNode(convertedModel, convertedNode, currentDefaultComplexNode, ListIds.Complex);
 					}
 					else // if (shouldCreateVariantNode)
 					{
-						CopyDefaultsIntoMinorEntryNode(convertedModel, convertedNode, currentDefaultVariantNode,
-							DictionaryNodeListOptions.ListIds.Variant);
+						CopyDefaultsIntoMinorEntryNode(convertedModel, convertedNode, currentDefaultVariantNode, ListIds.Variant);
 					}
 				}
 			}
@@ -527,14 +521,14 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 		}
 
 		/// <remarks>Internal only for tests; production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
-		internal void CopyDefaultsIntoMinorEntryNode(DictionaryConfigurationModel convertedModel, ConfigurableDictionaryNode convertedNode, ConfigurableDictionaryNode currentDefaultNode, DictionaryNodeListOptions.ListIds complexOrVariant)
+		internal void CopyDefaultsIntoMinorEntryNode(DictionaryConfigurationModel convertedModel, ConfigurableDictionaryNode convertedNode, ConfigurableDictionaryNode currentDefaultNode, ListIds complexOrVariant)
 		{
 			convertedNode.Label = currentDefaultNode.Label;
 			var nodeOptions = convertedNode.DictionaryNodeOptions as DictionaryNodeListOptions;
 			if (nodeOptions != null)
 			{
 				nodeOptions.ListId = complexOrVariant;
-				var availableOptions = complexOrVariant == DictionaryNodeListOptions.ListIds.Complex
+				var availableOptions = complexOrVariant == ListIds.Complex
 					? AvailableComplexFormTypes
 					: AvailableVariantTypes;
 				nodeOptions.Options = nodeOptions.Options.Where(option => availableOptions.Contains(option.Id)).ToList();
@@ -543,7 +537,7 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 		}
 
 		/// <remarks>Internal only for tests; production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
-		internal bool HasComplexFormTypesSelected(List<DictionaryNodeListOptions.DictionaryNodeOption> options)
+		internal bool HasComplexFormTypesSelected(List<DictionaryNodeOption> options)
 		{
 			return AvailableComplexFormTypes.Intersect(options.Where(option => option.IsEnabled).Select(option => option.Id)).Any();
 		}
@@ -559,7 +553,7 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 		}
 
 		/// <remarks>Internal only for tests, production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
-		internal bool HasVariantTypesSelected(List<DictionaryNodeListOptions.DictionaryNodeOption> options)
+		internal bool HasVariantTypesSelected(List<DictionaryNodeOption> options)
 		{
 			return AvailableVariantTypes.Intersect(options.Where(option => option.IsEnabled).Select(option => option.Id)).Any();
 		}
@@ -908,10 +902,10 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 		}
 		private void SetListOptionsProperties(string type, string sequence, DictionaryNodeListOptions options)
 		{
-			options.Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>();
-			options.ListId = (DictionaryNodeListOptions.ListIds)Enum.Parse(typeof(DictionaryNodeListOptions.ListIds), type, true);
+			options.Options = new List<DictionaryNodeOption>();
+			options.ListId = (ListIds)Enum.Parse(typeof(ListIds), type, true);
 			// Create a list of dictionary node options from a string of the format "+guid,-guid,+guid"
-			options.Options.AddRange(sequence.Split(',').Select(id => new DictionaryNodeListOptions.DictionaryNodeOption
+			options.Options.AddRange(sequence.Split(',').Select(id => new DictionaryNodeOption
 			{
 				IsEnabled = id.StartsWith("+"),
 				Id = id.Trim('+', '-', ' ')
@@ -1008,9 +1002,9 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 			}
 			return true;
 		}
-		private List<DictionaryNodeListOptions.DictionaryNodeOption> MigrateWsOptions(string wsLabel)
+		private List<DictionaryNodeOption> MigrateWsOptions(string wsLabel)
 		{
-			return wsLabel.Split(',').Select(item => new DictionaryNodeListOptions.DictionaryNodeOption { Id = item.Trim(), IsEnabled = true }).ToList();
+			return wsLabel.Split(',').Select(item => new DictionaryNodeOption { Id = item.Trim(), IsEnabled = true }).ToList();
 		}
 
 		private void MigratePublicationLayoutSelection(string oldLayout, string newPath)

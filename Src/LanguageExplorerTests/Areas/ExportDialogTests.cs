@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2017 SIL International
+﻿// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,11 +9,11 @@ using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
 using System.Collections.Generic;
-using LanguageExplorer.Works;
+using LanguageExplorer.Areas;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace LanguageExplorerTests.Works
+namespace LanguageExplorerTests.Areas
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -554,7 +554,7 @@ namespace LanguageExplorerTests.Works
 
 			List<ICmPossibilityList> lists = new List<ICmPossibilityList> { m_cache.LangProject.SemanticDomainListOA };
 			List<int> wses = new List<int> { wsFr };
-			ExportDialog.TranslatedListsExporter exporter = new ExportDialog.TranslatedListsExporter(lists, wses, null);
+			TranslatedListsExporter exporter = new TranslatedListsExporter(lists, wses, null);
 			using (StringWriter w = new StringWriter())
 			{
 				exporter.ExportTranslatedLists(w);
@@ -1072,8 +1072,7 @@ namespace LanguageExplorerTests.Works
 
 			List<ICmPossibilityList> lists = new List<ICmPossibilityList> { m_cache.LangProject.SemanticDomainListOA };
 			List<int> wses = new List<int> { wsFr };
-			ExportDialog.TranslatedListsExporter exporter = new ExportDialog.TranslatedListsExporter(
-				lists, wses, null);
+			TranslatedListsExporter exporter = new TranslatedListsExporter(lists, wses, null);
 
 			using (new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, "Undo test", "Redo test"))
 			{
@@ -1230,7 +1229,7 @@ namespace LanguageExplorerTests.Works
 				var lists = new List<ICmPossibilityList>{ m_cache.LangProject.LexDbOA.VariantEntryTypesOA };
 
 				var wses = new List<int> { wsFr };
-				var exporter = new ExportDialog.TranslatedListsExporter(lists, wses, null);
+				var exporter = new TranslatedListsExporter(lists, wses, null);
 				string exportedOutput;
 				using (var w = new StringWriter())
 				{

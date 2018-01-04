@@ -9,7 +9,8 @@ using System.Linq;
 using System.Reflection;
 using Gecko;
 using LanguageExplorer.Areas;
-using LanguageExplorer.DictionaryConfigurationMigration;
+using LanguageExplorer.DictionaryConfiguration;
+using LanguageExplorer.DictionaryConfiguration.Migration;
 using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -38,7 +39,7 @@ namespace LanguageExplorer
 			{
 				return node.DisplayLabel;
 			}
-			var path = String.Empty;
+			var path = string.Empty;
 			while (node.Parent != null)
 			{
 				if (includeSharedItems || node.Parent.ReferencedNode == null)

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Text.RegularExpressions;
+using LanguageExplorer.DictionaryConfiguration;
 
 namespace LanguageExplorer.Works
 {
@@ -161,14 +162,14 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Type specific configuration options for this configurable node;
 		/// </summary>
-		[XmlElement("WritingSystemOptions", typeof(DictionaryNodeWritingSystemOptions))]
-		[XmlElement("WritingSystemAndParaOptions", typeof(DictionaryNodeWritingSystemAndParaOptions))]
-		[XmlElement("ReferringSenseOptions", typeof(DictionaryNodeReferringSenseOptions))]
-		[XmlElement("ListTypeOptions", typeof(DictionaryNodeListOptions))]
-		[XmlElement("ComplexFormOptions", typeof(DictionaryNodeListAndParaOptions))]
 		[XmlElement("SenseOptions", typeof(DictionaryNodeSenseOptions))]
+		[XmlElement("ListTypeOptions", typeof(DictionaryNodeListOptions))]
+		[XmlElement("WritingSystemOptions", typeof(DictionaryNodeWritingSystemOptions))]
+		[XmlElement("ComplexFormOptions", typeof(DictionaryNodeListAndParaOptions))]
+		[XmlElement("WritingSystemAndParaOptions", typeof(DictionaryNodeWritingSystemAndParaOptions))]
 		[XmlElement("PictureOptions", typeof(DictionaryNodePictureOptions))]
 		[XmlElement("GroupingOptions", typeof(DictionaryNodeGroupingOptions))]
+		[XmlElement("ReferringSenseOptions", typeof(DictionaryNodeReferringSenseOptions))]
 		public DictionaryNodeOptions DictionaryNodeOptions { get; set; }
 
 		/// <summary>

@@ -13,7 +13,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.Linq;
 
-namespace LanguageExplorer.DictionaryConfigurationMigration
+namespace LanguageExplorer.DictionaryConfiguration.Migration
 {
 	internal class FirstBetaMigrator
 	{
@@ -97,9 +97,7 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 				var defaultPart = FindMatchingChildNode(part.Label, currentDefaultList);
 				if (defaultPart == null)
 				{
-					throw new NullReferenceException(string.Format(
-						"{0} is corrupt. {1} has no corresponding part in the defaults (perhaps it missed a rename migration step).",
-						oldConfig.FilePath, part.Label));
+					throw new NullReferenceException($"{oldConfig.FilePath} is corrupt. {part.Label} has no corresponding part in the defaults (perhaps it missed a rename migration step).");
 				}
 				MigratePartFromOldVersionToCurrent(logger, oldConfig, part, defaultPart);
 			}
@@ -147,7 +145,7 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 		private static bool IsComplexFormsNode(ConfigurableDictionaryNode node)
 		{
 			var options = node.DictionaryNodeOptions as DictionaryNodeListOptions;
-			return options != null && options.ListId == DictionaryNodeListOptions.ListIds.Complex;
+			return options != null && options.ListId == ListIds.Complex;
 		}
 
 		private static void MigratePartFromOldVersionToCurrent(ISimpleLogger logger, DictionaryConfigurationModel oldConfig,

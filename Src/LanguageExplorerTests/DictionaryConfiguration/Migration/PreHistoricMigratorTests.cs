@@ -9,7 +9,8 @@ using System.Linq;
 using System.Xml.Linq;
 using LanguageExplorer;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.DictionaryConfigurationMigration;
+using LanguageExplorer.DictionaryConfiguration;
+using LanguageExplorer.DictionaryConfiguration.Migration;
 using LanguageExplorer.Works;
 using LanguageExplorerTests.Works;
 using NUnit.Framework;
@@ -21,7 +22,7 @@ using SIL.LCModel.DomainServices;
 using SIL.Linq;
 using SIL.TestUtilities;
 
-namespace LanguageExplorerTests.DictionaryConfigurationMigration
+namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 {
 	public class PreHistoricMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
@@ -375,14 +376,14 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 				meNode.IsDuplicate = !isOriginal;
 				meNode.DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Minor,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					ListId = ListIds.Minor,
+					Options = new List<DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption
+						new DictionaryNodeOption
 						{
 							Id = XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString(), IsEnabled = isComplex
 						},
-						new DictionaryNodeListOptions.DictionaryNodeOption
+						new DictionaryNodeOption
 						{
 							Id = XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), IsEnabled = isVariant
 						}
@@ -422,9 +423,9 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			var convertedModel = BuildConvertedMinorEntryNodes();
 			var convertedMinorEntryNode = convertedModel.Parts[1];
 			_migrator.CopyDefaultsIntoMinorEntryNode(convertedModel, convertedMinorEntryNode, BuildCurrentDefaultMinorEntryNodes().Parts[1],
-				DictionaryNodeListOptions.ListIds.Complex);
+				ListIds.Complex);
 			Assert.AreEqual(MinorEntryComplexLabel, convertedMinorEntryNode.Label);
-			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Complex,
+			Assert.AreEqual(ListIds.Complex,
 				((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).ListId);
 		}
 
@@ -434,9 +435,9 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			var convertedModel = BuildConvertedMinorEntryNodes();
 			var convertedMinorEntryNode = convertedModel.Parts[1];
 			convertedMinorEntryNode.DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache,
-				DictionaryNodeListOptions.ListIds.Minor);
+				ListIds.Minor);
 			_migrator.CopyDefaultsIntoMinorEntryNode(convertedModel, convertedMinorEntryNode, BuildCurrentDefaultMinorEntryNodes().Parts[1],
-				DictionaryNodeListOptions.ListIds.Complex);
+				ListIds.Complex);
 			var options = ((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).Options;
 			var complexTypeGuids = _migrator.AvailableComplexFormTypes;
 			Assert.AreEqual(complexTypeGuids.Count(), options.Count, "All Complex Form Types should be present");
@@ -453,7 +454,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			var convertedModel = BuildConvertedMinorEntryNodes();
 			var convertedMinorEntryNode = convertedModel.Parts[1];
 			convertedMinorEntryNode.DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache,
-				DictionaryNodeListOptions.ListIds.Minor);
+				ListIds.Minor);
 			var options = ((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).Options;
 			// Disable some options
 			for (var i = 0; i < options.Count; i += 2)
@@ -462,11 +463,11 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			}
 			// Deep clone Complex Types; we'll be testing those
 			var expectedOptions = options.Where(option => _migrator.AvailableComplexFormTypes.Contains(option.Id))
-				.Select(option => new DictionaryNodeListOptions.DictionaryNodeOption{ Id = option.Id, IsEnabled = option.IsEnabled }).ToList();
+				.Select(option => new DictionaryNodeOption{ Id = option.Id, IsEnabled = option.IsEnabled }).ToList();
 
 			// SUT
 			_migrator.CopyDefaultsIntoMinorEntryNode(convertedModel, convertedMinorEntryNode, BuildCurrentDefaultMinorEntryNodes().Parts[1],
-				DictionaryNodeListOptions.ListIds.Complex);
+				ListIds.Complex);
 			var resultOptions = ((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).Options;
 
 			Assert.AreEqual(expectedOptions.Count, resultOptions.Count);
@@ -533,21 +534,21 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			[Values(true, false)] bool isUnspecifiedComplexSelected, [Values(true, false)] bool isSpecifiedComplexSelected,
 			[Values(true, false)] bool isUnspecifiedVariantSelected, [Values(true, false)] bool isSpecifiedVariantSelected)
 		{
-			var options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+			var options = new List<DictionaryNodeOption>
 			{
-				new DictionaryNodeListOptions.DictionaryNodeOption
+				new DictionaryNodeOption
 				{
 					Id = XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString(), IsEnabled = isUnspecifiedComplexSelected
 				},
-				new DictionaryNodeListOptions.DictionaryNodeOption
+				new DictionaryNodeOption
 				{
 					Id = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.Last().Guid.ToString(), IsEnabled = isSpecifiedComplexSelected
 				},
-				new DictionaryNodeListOptions.DictionaryNodeOption
+				new DictionaryNodeOption
 				{
 					Id = XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), IsEnabled = isUnspecifiedVariantSelected
 				},
-				new DictionaryNodeListOptions.DictionaryNodeOption
+				new DictionaryNodeOption
 				{
 					Id = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Last().Guid.ToString(), IsEnabled = isSpecifiedVariantSelected
 				}
@@ -580,7 +581,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
+			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Analysis);
 			Assert.IsNotNull(wsOpts.Options, "analysis choice did not result in any options being created.");
 		}
 
@@ -594,7 +595,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
+			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Vernacular);
 			Assert.IsNotNull(wsOpts.Options, "vernacular choice did not result in any options being created.");
 		}
 
@@ -608,7 +609,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Both);
+			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Both);
 			Assert.IsNotNull(wsOpts.Options, "vernacular analysis choice did not result in any options being created.");
 			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "vernacular"), "vernacular choice was not migrated.");
 		}
@@ -623,7 +624,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation);
+			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Pronunciation);
 			Assert.IsNotNull(wsOpts.Options, "pronunciation choice did not result in any options being created.");
 			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "pronunciation"), "pronunciation choice was not migrated.");
 		}
@@ -638,7 +639,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Both);
+			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Both);
 			Assert.IsNotNull(wsOpts.Options, "analysis vernacular choice did not result in any options being created.");
 			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "analysis"), "analysis choice was not migrated.");
 		}
@@ -653,7 +654,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
+			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Vernacular);
 			Assert.IsNotNull(wsOpts.Options, "French choice did not result in any options being created.");
 			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "fr"), "French choice was not migrated.");
 		}
@@ -668,7 +669,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
+			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Vernacular);
 			Assert.IsNotNull(wsOpts.Options, "two languages did not result in ws options being created");
 			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "fr"), "French choice was not migrated.");
 			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "hi"), "hi choice was not migrated.");
@@ -1215,18 +1216,18 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 				Version = PreHistoricMigrator.VersionPre83
 			};
 			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions() };
-			((DictionaryNodeWritingSystemOptions)baseParentNode.DictionaryNodeOptions).WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular;
+			((DictionaryNodeWritingSystemOptions)baseParentNode.DictionaryNodeOptions).WsType = WritingSystemType.Vernacular;
 			((DictionaryNodeWritingSystemOptions)baseParentNode.DictionaryNodeOptions).DisplayWritingSystemAbbreviations = false;
-			((DictionaryNodeWritingSystemOptions)baseParentNode.DictionaryNodeOptions).Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+			((DictionaryNodeWritingSystemOptions)baseParentNode.DictionaryNodeOptions).Options = new List<DictionaryNodeOption>
 			{
-				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
+				new DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
 			};
 			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child", DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions() };
-			((DictionaryNodeWritingSystemOptions)baseChildNode.DictionaryNodeOptions).WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis;
+			((DictionaryNodeWritingSystemOptions)baseChildNode.DictionaryNodeOptions).WsType = WritingSystemType.Analysis;
 			((DictionaryNodeWritingSystemOptions)baseChildNode.DictionaryNodeOptions).DisplayWritingSystemAbbreviations = false;
-			((DictionaryNodeWritingSystemOptions)baseChildNode.DictionaryNodeOptions).Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+			((DictionaryNodeWritingSystemOptions)baseChildNode.DictionaryNodeOptions).Options = new List<DictionaryNodeOption>
 			{
-				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "analysis", IsEnabled = true }
+				new DictionaryNodeOption { Id = "analysis", IsEnabled = true }
 			};
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
 			var baseModel = new DictionaryConfigurationModel
@@ -2474,11 +2475,11 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions(),
 				IsEnabled = true
 			};
-			((DictionaryNodeWritingSystemOptions)newFormNode.DictionaryNodeOptions).WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular;
+			((DictionaryNodeWritingSystemOptions)newFormNode.DictionaryNodeOptions).WsType = WritingSystemType.Vernacular;
 			((DictionaryNodeWritingSystemOptions)newFormNode.DictionaryNodeOptions).DisplayWritingSystemAbbreviations = false;
-			((DictionaryNodeWritingSystemOptions)newFormNode.DictionaryNodeOptions).Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+			((DictionaryNodeWritingSystemOptions)newFormNode.DictionaryNodeOptions).Options = new List<DictionaryNodeOption>
 			{
-				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
+				new DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
 			};
 			var newCommentNode = new ConfigurableDictionaryNode
 			{
@@ -2489,11 +2490,11 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions(),
 				IsEnabled = false
 			};
-			((DictionaryNodeWritingSystemOptions)newCommentNode.DictionaryNodeOptions).WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis;
+			((DictionaryNodeWritingSystemOptions)newCommentNode.DictionaryNodeOptions).WsType = WritingSystemType.Analysis;
 			((DictionaryNodeWritingSystemOptions)newCommentNode.DictionaryNodeOptions).DisplayWritingSystemAbbreviations = false;
-			((DictionaryNodeWritingSystemOptions)newCommentNode.DictionaryNodeOptions).Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+			((DictionaryNodeWritingSystemOptions)newCommentNode.DictionaryNodeOptions).Options = new List<DictionaryNodeOption>
 			{
-				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "analysis", IsEnabled = true }
+				new DictionaryNodeOption { Id = "analysis", IsEnabled = true }
 			};
 			var newVariantsNode = new ConfigurableDictionaryNode
 			{
@@ -2507,15 +2508,15 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 				Children = new List<ConfigurableDictionaryNode> { newTypeNode, newFormNode, newCommentNode },
 				IsEnabled = true
 			};
-			((DictionaryNodeListOptions)newVariantsNode.DictionaryNodeOptions).ListId = DictionaryNodeListOptions.ListIds.Variant;
-			((DictionaryNodeListOptions)newVariantsNode.DictionaryNodeOptions).Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> {
-				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "b0000000-c40e-433e-80b5-31da08771344", IsEnabled = true },
-				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "024b62c9-93b3-41a0-ab19-587a0030219a", IsEnabled = true },
-				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "4343b1ef-b54f-4fa4-9998-271319a6d74c", IsEnabled = true },
-				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c", IsEnabled = true },
-				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "837ebe72-8c1d-4864-95d9-fa313c499d78", IsEnabled = true },
-				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "a32f1d1c-4832-46a2-9732-c2276d6547e8", IsEnabled = true },
-				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "0c4663b3-4d9a-47af-b9a1-c8565d8112ed", IsEnabled = true }
+			((DictionaryNodeListOptions)newVariantsNode.DictionaryNodeOptions).ListId = ListIds.Variant;
+			((DictionaryNodeListOptions)newVariantsNode.DictionaryNodeOptions).Options = new List<DictionaryNodeOption> {
+				new DictionaryNodeOption { Id = "b0000000-c40e-433e-80b5-31da08771344", IsEnabled = true },
+				new DictionaryNodeOption { Id = "024b62c9-93b3-41a0-ab19-587a0030219a", IsEnabled = true },
+				new DictionaryNodeOption { Id = "4343b1ef-b54f-4fa4-9998-271319a6d74c", IsEnabled = true },
+				new DictionaryNodeOption { Id = "01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c", IsEnabled = true },
+				new DictionaryNodeOption { Id = "837ebe72-8c1d-4864-95d9-fa313c499d78", IsEnabled = true },
+				new DictionaryNodeOption { Id = "a32f1d1c-4832-46a2-9732-c2276d6547e8", IsEnabled = true },
+				new DictionaryNodeOption { Id = "0c4663b3-4d9a-47af-b9a1-c8565d8112ed", IsEnabled = true }
 			};
 			var newRefSensesNode = new ConfigurableDictionaryNode
 			{

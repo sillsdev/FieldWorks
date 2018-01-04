@@ -4,7 +4,9 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Works;
+using LanguageExplorerTests.DictionaryConfiguration;
 using NUnit.Framework;
 
 namespace LanguageExplorerTests.Works
@@ -26,8 +28,8 @@ namespace LanguageExplorerTests.Works
 		[Test]
 		public void CanDeepClone()
 		{
-			var option = new DictionaryNodeListOptions.DictionaryNodeOption { Id = "option id", IsEnabled = true };
-			var options = new DictionaryNodeListOptions { Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { option } };
+			var option = new DictionaryNodeOption { Id = "option id", IsEnabled = true };
+			var options = new DictionaryNodeListOptions { Options = new List<DictionaryNodeOption> { option } };
 			var parent = new ConfigurableDictionaryNode();
 			var child = new ConfigurableDictionaryNode { Before = "before", IsEnabled = true,  CSSClassNameOverride = "class", Parent = parent };
 			var grandchild = new ConfigurableDictionaryNode { Between = "childBetween", FieldDescription = "FieldDesc", Parent = child };

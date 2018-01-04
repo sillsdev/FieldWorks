@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using LanguageExplorer;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.LCModel.Core.Cellar;
@@ -951,7 +952,7 @@ namespace LanguageExplorerTests.Works
 				Assert.AreSame(model.Parts[0], cfNode.Parent, "improper Parent set");
 				var wsOptions = cfNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 				Assert.NotNull(wsOptions, "WritingSystemOptions not added");
-				Assert.AreEqual(wsOptions.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Both, "WritingSystemOptions is the wrong type");
+				Assert.AreEqual(wsOptions.WsType, WritingSystemType.Both, "WritingSystemOptions is the wrong type");
 				CollectionAssert.IsNotEmpty(wsOptions.Options.Where(o => o.IsEnabled), "WsOptions not populated with any choices");
 			}
 		}
@@ -971,9 +972,9 @@ namespace LanguageExplorerTests.Works
 					DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 					{
 						DisplayWritingSystemAbbreviations = true,
-						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+						Options = new List<DictionaryNodeOption>
 						{
-							new DictionaryNodeListOptions.DictionaryNodeOption() { Id = "en", IsEnabled = true }
+							new DictionaryNodeOption() { Id = "en", IsEnabled = true }
 						}
 					}
 				};
@@ -1010,7 +1011,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "CustomString",
 				IsCustomField = true,
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguageswithDisplayWsAbbrev(
-					new[] { "ch", "fr", "en" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Both)
+					new[] { "ch", "fr", "en" }, WritingSystemType.Both)
 			};
 			var entryNode = new ConfigurableDictionaryNode
 			{
@@ -1483,10 +1484,10 @@ namespace LanguageExplorerTests.Works
 				Label = "Form",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					WsType = WritingSystemType.Reversal,
+					Options = new List<DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true,}
+						new DictionaryNodeOption { Id = "en", IsEnabled = true,}
 					},
 					DisplayWritingSystemAbbreviations = false
 				}
@@ -1849,13 +1850,13 @@ namespace LanguageExplorerTests.Works
 				IsEnabled = true,
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Variant,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					ListId = ListIds.Variant,
+					Options = new List<DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="01234567-89ab-cdef-0123-456789abcdef", IsEnabled = true },
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="024b62c9-93b3-41a0-ab19-587a0030219a", IsEnabled = true },
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="4343b1ef-b54f-4fa4-9998-271319a6d74c", IsEnabled = true },
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c", IsEnabled = true },
+						new DictionaryNodeOption { Id="01234567-89ab-cdef-0123-456789abcdef", IsEnabled = true },
+						new DictionaryNodeOption { Id="024b62c9-93b3-41a0-ab19-587a0030219a", IsEnabled = true },
+						new DictionaryNodeOption { Id="4343b1ef-b54f-4fa4-9998-271319a6d74c", IsEnabled = true },
+						new DictionaryNodeOption { Id="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c", IsEnabled = true },
 					},
 				},
 			};
@@ -1866,13 +1867,13 @@ namespace LanguageExplorerTests.Works
 				IsEnabled = true,
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Variant,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					ListId = ListIds.Variant,
+					Options = new List<DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="01234567-89ab-cdef-0123-456789abcdef", IsEnabled = true },
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="024b62c9-93b3-41a0-ab19-587a0030219a", IsEnabled = true },
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="4343b1ef-b54f-4fa4-9998-271319a6d74c", IsEnabled = true },
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c", IsEnabled = true }
+						new DictionaryNodeOption { Id="01234567-89ab-cdef-0123-456789abcdef", IsEnabled = true },
+						new DictionaryNodeOption { Id="024b62c9-93b3-41a0-ab19-587a0030219a", IsEnabled = true },
+						new DictionaryNodeOption { Id="4343b1ef-b54f-4fa4-9998-271319a6d74c", IsEnabled = true },
+						new DictionaryNodeOption { Id="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c", IsEnabled = true }
 					}
 				}
 			};
@@ -1924,12 +1925,12 @@ namespace LanguageExplorerTests.Works
 				IsEnabled = true,
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Sense,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					ListId = ListIds.Sense,
+					Options = new List<DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="0b5b04c8-3900-4537-9eec-1346d10507d7", IsEnabled = true },
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="1ac9f08e-ed72-4775-a18e-3b1330da8618", IsEnabled = true },
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="854fc2a8-c0e0-4b72-8611-314a21467fe4", IsEnabled = true }
+						new DictionaryNodeOption { Id="0b5b04c8-3900-4537-9eec-1346d10507d7", IsEnabled = true },
+						new DictionaryNodeOption { Id="1ac9f08e-ed72-4775-a18e-3b1330da8618", IsEnabled = true },
+						new DictionaryNodeOption { Id="854fc2a8-c0e0-4b72-8611-314a21467fe4", IsEnabled = true }
 					},
 				},
 			};
@@ -1990,12 +1991,12 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "ExtendedNoteOS",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Note,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					ListId = ListIds.Note,
+					Options = new List<DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id = disabledButValid, IsEnabled = false },
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id = enabledAndValid, IsEnabled = true },
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id = doesNotExist, IsEnabled = true }
+						new DictionaryNodeOption { Id = disabledButValid, IsEnabled = false },
+						new DictionaryNodeOption { Id = enabledAndValid, IsEnabled = true },
+						new DictionaryNodeOption { Id = doesNotExist, IsEnabled = true }
 					},
 				},
 			};
@@ -2035,7 +2036,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "ExtendedNoteOS",
 								DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Note
+					ListId = ListIds.Note
 				}
 			};
 			var senseNode = new ConfigurableDictionaryNode
@@ -2379,7 +2380,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "LexEntry",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Variant
+					ListId = ListIds.Variant
 				}
 			};
 			var subentriesNode = new ConfigurableDictionaryNode { FieldDescription = "Subentries" };
@@ -2389,7 +2390,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "VariantFormEntryBackRefs",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Variant
+					ListId = ListIds.Variant
 				}
 			};
 
@@ -2401,7 +2402,7 @@ namespace LanguageExplorerTests.Works
 				IsDuplicate = true,
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Variant
+					ListId = ListIds.Variant
 				}
 			};
 			var entryNode = new ConfigurableDictionaryNode

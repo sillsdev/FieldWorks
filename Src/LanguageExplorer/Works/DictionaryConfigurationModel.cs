@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
+using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainImpl;
@@ -84,7 +85,7 @@ namespace LanguageExplorer.Works
 		/// Field Descriptions of configuration nodes for notes which should have paragraph styles
 		/// </summary>
 		[XmlIgnore]
-		internal static List<string> NoteInParaStyles = new List<string>() { "AnthroNote", "DiscourseNote", "PhonologyNote", "GrammarNote", "SemanticsNote", "SocioLinguisticsNote", "GeneralNote", "EncyclopedicInfo" };
+		public static List<string> NoteInParaStyles = new List<string>() { "AnthroNote", "DiscourseNote", "PhonologyNote", "GrammarNote", "SemanticsNote", "SocioLinguisticsNote", "GeneralNote", "EncyclopedicInfo" };
 
 		[XmlElement("HomographConfiguration")]
 		public DictionaryHomographConfiguration HomographConfiguration { get; set; }
@@ -133,7 +134,7 @@ namespace LanguageExplorer.Works
 		/// A concatenation of Parts and SharedItems; useful for migration and synchronization with the FDO model
 		/// </summary>
 		[XmlIgnore]
-		public IEnumerable<ConfigurableDictionaryNode> PartsAndSharedItems { get { return Parts.Concat(SharedItems); } }
+		public IEnumerable<ConfigurableDictionaryNode> PartsAndSharedItems => Parts.Concat(SharedItems);
 
 		/// <summary></summary>
 		public void Save()
@@ -158,7 +159,7 @@ namespace LanguageExplorer.Works
 			var serializer = new XmlSerializer(typeof(DictionaryConfigurationModel));
 			using (var reader = XmlReader.Create(FilePath))
 			{
-				var model = (DictionaryConfigurationModel) serializer.Deserialize(reader);
+				var model = (DictionaryConfigurationModel)serializer.Deserialize(reader);
 				model.FilePath = FilePath; // this doesn't get [de]serialized
 				foreach (var property in typeof(DictionaryConfigurationModel).GetProperties().Where(prop => prop.CanWrite))
 					property.SetValue(this, property.GetValue(model, null), null);
@@ -174,7 +175,7 @@ namespace LanguageExplorer.Works
 			// Update FDO's homograph configuration from the loaded dictionary configuration homograph settings
 			if (HomographConfiguration != null)
 			{
-				var wsTtype = DictionaryNodeWritingSystemOptions.WritingSystemType.Both;
+				var wsTtype = WritingSystemType.Both;
 				var availableWSs = DictionaryConfigurationController.GetCurrentWritingSystems(wsTtype, cache);
 				if (availableWSs.Any(x => x.Id == HomographConfiguration.HomographWritingSystem))
 				{

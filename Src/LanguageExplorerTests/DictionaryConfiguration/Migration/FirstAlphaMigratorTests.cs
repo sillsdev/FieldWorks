@@ -7,7 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using LanguageExplorer;
-using LanguageExplorer.DictionaryConfigurationMigration;
+using LanguageExplorer.DictionaryConfiguration;
+using LanguageExplorer.DictionaryConfiguration.Migration;
 using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.LCModel.Core.WritingSystems;
@@ -16,7 +17,7 @@ using SIL.IO;
 using SIL.LCModel;
 using LanguageExplorerTests.Works;
 
-namespace LanguageExplorerTests.DictionaryConfigurationMigration
+namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 {
 	public class FirstAlphaMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
@@ -307,7 +308,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			Assert.IsInstanceOf(typeof(DictionaryNodeWritingSystemOptions), testNodeOptions);
 			var wsOptions = (DictionaryNodeWritingSystemOptions)testNodeOptions;
 			Assert.IsTrue(wsOptions.DisplayWritingSystemAbbreviations);
-			Assert.AreEqual(DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular, wsOptions.WsType);
+			Assert.AreEqual(WritingSystemType.Vernacular, wsOptions.WsType);
 			Assert.AreEqual(1, wsOptions.Options.Count);
 			Assert.AreEqual("vernacular", wsOptions.Options[0].Id);
 			Assert.IsTrue(wsOptions.Options[0].IsEnabled);
@@ -436,7 +437,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 			{
 				FieldDescription = "MLPartOfSpeech",
 				DictionaryNodeOptions =
-					ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis),
+					ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" }, WritingSystemType.Analysis),
 				IsEnabled = false
 			};
 			var subGramInfoNode = new ConfigurableDictionaryNode
@@ -999,8 +1000,7 @@ namespace LanguageExplorerTests.DictionaryConfigurationMigration
 				After = "] ",
 				Label = "Pronunciation",
 				FieldDescription = "Form",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "pronunciation" },
-					DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation)
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "pronunciation" }, WritingSystemType.Pronunciation)
 			};
 			var pronunciationsNode = new ConfigurableDictionaryNode
 			{

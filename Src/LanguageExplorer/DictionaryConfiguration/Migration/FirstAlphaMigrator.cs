@@ -9,7 +9,7 @@ using System.Linq;
 using LanguageExplorer.Works;
 using SIL.LCModel;
 
-namespace LanguageExplorer.DictionaryConfigurationMigration
+namespace LanguageExplorer.DictionaryConfiguration.Migration
 {
 	/// <summary>
 	/// This file will migrate all the configurations produced during the first 8.3 alpha
@@ -91,7 +91,9 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 				node.ReferenceItem = null;
 				var rsOptions = node.DictionaryNodeOptions as DictionaryNodeReferringSenseOptions;
 				if (rsOptions != null)
+				{
 					node.DictionaryNodeOptions = rsOptions.WritingSystemOptions;
+				}
 			});
 		}
 
@@ -131,7 +133,7 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 			{
 				mainEntrySubEntries.DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Complex
+					ListId = ListIds.Complex
 				};
 			}
 		}
@@ -187,9 +189,11 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 				nextNode = nextNode.Children.Find(n => n.FieldDescription == ancestor && string.IsNullOrEmpty(n.LabelSuffix));
 			}
 			if (nextNode != null)
+			{
 				return nextNode;
+			}
 			// If we couldn't find the node, this is probably a test that didn't have a full model
-			m_logger.WriteLine(string.Format("Unable to find '{0}'", string.Join(DictionaryConfigurationServices.NodePathSeparator, new[] { "Main Entry" }.Concat(ancestors))));
+			m_logger.WriteLine($"Unable to find '{string.Join(DictionaryConfigurationServices.NodePathSeparator, new[] {"Main Entry"}.Concat(ancestors))}'");
 			m_logger.WriteLine(failureMessage + "'");
 			return new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>() };
 		}
@@ -204,7 +208,7 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 					{
 						configNode.DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 						{
-							ListId = DictionaryNodeListOptions.ListIds.Complex
+							ListId = ListIds.Complex
 						};
 					}
 					break;
@@ -232,24 +236,36 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 					DictionaryConfigurationServices.PerformActionOnNodes(nodes, n =>
 					{
 						if (n.FieldDescription == "OwningEntry" && n.SubField == "MLHeadWord")
+						{
 							n.SubField = newHeadword;
+						}
 					});
 					break;
 				case 3:
 					DictionaryConfigurationServices.PerformActionOnNodes(nodes, n =>
 					{
 						if (n.Label == "Gloss (or Summary Definition)")
+						{
 							n.FieldDescription = "GlossOrSummary";
+						}
 						if (n.Parent == null)
+						{
 							return;
+						}
 						if (n.Parent.FieldDescription == "ExamplesOS" && n.FieldDescription == "Example")
+						{
 							n.Label = "Example Sentence";
+						}
 						else if (n.Parent.FieldDescription == "ReferringSenses")
 						{
 							if (n.FieldDescription == "Owner" && n.SubField == "Bibliography")
+							{
 								n.Label = "Bibliography (Entry)";
+							}
 							else if (n.FieldDescription == "Bibliography")
+							{
 								n.Label = "Bibliography (Sense)";
+							}
 						}
 					});
 					break;
@@ -278,7 +294,9 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 							return;
 						}
 						if (n.FieldDescription == "VisibleVariantEntryRefs" && n.Label == "Variant Of")
+						{
 							n.Label = "Variant of";
+						}
 						else if (n.FieldDescription.Contains("EntryType"))
 						{
 							var parentFd = n.Parent.FieldDescription;
@@ -307,8 +325,7 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 								SetEntryTypeChildrenBackward(n);
 							}
 						}
-						else if ((n.Label == "Headword" && n.Parent.FieldDescription == "ReferringSenses") ||
-							(n.Label == "Form" && n.Parent.Label.StartsWith("Subentry Under")))
+						else if ((n.Label == "Headword" && n.Parent.FieldDescription == "ReferringSenses") || (n.Label == "Form" && n.Parent.Label.StartsWith("Subentry Under")))
 						{
 							n.Label = "Referenced Headword";
 						}
@@ -330,14 +347,16 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 						{
 							n.FieldDescription = newHeadword;
 							if (isReversal && n.DictionaryNodeOptions == null)
+							{
 								n.DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 								{
-									WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
-									Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+									WsType = WritingSystemType.Vernacular,
+									Options = new List<DictionaryNodeOption>
 									{
-										new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
+										new DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
 									}
 								};
+							}
 						}
 					});
 					break;
@@ -375,21 +394,21 @@ namespace LanguageExplorer.DictionaryConfigurationMigration
 
 			var analysisWsOptions = new DictionaryNodeWritingSystemOptions
 				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis,
+					WsType = WritingSystemType.Analysis,
 					DisplayWritingSystemAbbreviations = false,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					Options = new List<DictionaryNodeOption>
 						{
-							new DictionaryNodeListOptions.DictionaryNodeOption {Id = "analysis", IsEnabled = true}
+							new DictionaryNodeOption {Id = "analysis", IsEnabled = true}
 						}
 				};
 
 			var vernacularWsOptions = new DictionaryNodeWritingSystemOptions
 				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+					WsType = WritingSystemType.Vernacular,
 					DisplayWritingSystemAbbreviations = false,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					Options = new List<DictionaryNodeOption>
 						{
-							new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular", IsEnabled = true}
+							new DictionaryNodeOption {Id = "vernacular", IsEnabled = true}
 						}
 				};
 

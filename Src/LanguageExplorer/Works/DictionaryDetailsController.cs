@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
@@ -39,10 +40,10 @@ namespace LanguageExplorer.Works
 		private DictionaryConfigurationModel m_configModel;
 
 		/// <summary>Model for options specific to the element type, such as writing systems or relation types</summary>
-		private DictionaryNodeOptions Options { get { return m_node.DictionaryNodeOptions; } }
+		private DictionaryNodeOptions Options => m_node.DictionaryNodeOptions;
 
 		/// <summary>The DetailsView controlled by this controller</summary>
-		public IDictionaryDetailsView View { get; private set; }
+		public IDictionaryDetailsView View { get; }
 
 		/// <summary>Fired whenever the model is changed, so that the dictionary preview can be refreshed</summary>
 		public event EventHandler DetailsModelChanged;
@@ -448,7 +449,7 @@ namespace LanguageExplorer.Works
 
 		private void InternalLoadList(DictionaryNodeListOptions listOptions, IDictionaryListOptionsView listOptionsView)
 		{
-			if (listOptions.ListId == DictionaryNodeListOptions.ListIds.None)
+			if (listOptions.ListId == ListIds.None)
 			{
 				listOptionsView.ListViewVisible = false;
 			}
@@ -499,7 +500,7 @@ namespace LanguageExplorer.Works
 		{
 			return (o, args) =>
 			{
-				if (listOptions.ListId != DictionaryNodeListOptions.ListIds.None)
+				if (listOptions.ListId != ListIds.None)
 				{
 					listOptionsView.UpClicked += (sender, e) =>
 						Reorder(listOptionsView.AvailableItems.First(item => item.Selected), Direction.Up);
@@ -646,24 +647,24 @@ namespace LanguageExplorer.Works
 		/// Each item's Tag is a String representation of the item's GUID (with forward and reverse flags on applicable lex relations).
 		/// Items are checked by default.
 		/// </summary>
-		internal List<ListViewItem> GetListItemsAndLabel(DictionaryNodeListOptions.ListIds listId, out string listLabel)
+		internal List<ListViewItem> GetListItemsAndLabel(ListIds listId, out string listLabel)
 		{
 			switch (listId)
 			{
-				case DictionaryNodeListOptions.ListIds.Minor:
+				case ListIds.Minor:
 					listLabel = xWorksStrings.ksMinorEntryTypes;
 					return GetMinorEntryTypes();
-				case DictionaryNodeListOptions.ListIds.Complex:
+				case ListIds.Complex:
 					listLabel = xWorksStrings.ksComplexFormTypes;
 					return GetComplexFormTypes();
-				case DictionaryNodeListOptions.ListIds.Note:
+				case ListIds.Note:
 					listLabel = xWorksStrings.ksExtendedNoteTypes;
 					return GetNoteTypes();
-				case DictionaryNodeListOptions.ListIds.Variant:
+				case ListIds.Variant:
 					listLabel = xWorksStrings.ksVariantTypes;
 					return GetVariantTypes();
-				case DictionaryNodeListOptions.ListIds.Sense:
-				case DictionaryNodeListOptions.ListIds.Entry:
+				case ListIds.Sense:
+				case ListIds.Entry:
 					listLabel = xWorksStrings.ksLexicalRelationTypes;
 					return GetLexicalRelationTypes(listId);
 				default:
@@ -727,7 +728,7 @@ namespace LanguageExplorer.Works
 		// REVIEW (Hasso) 2014.05: This method is currently optimised for loading and caching both Sense and Entry lists at once.
 		// REVIEW (Hasso) 2017.04: Two years later, is the above comment still the case? Consider before moving to
 		// REVIEW (continued): DictionaryConfigurationController or DictionaryModelLoad(er|Controller)
-		private List<ListViewItem> GetLexicalRelationTypes(DictionaryNodeListOptions.ListIds listId)
+		private List<ListViewItem> GetLexicalRelationTypes(ListIds listId)
 		{
 			var lexRelTypesSubset = new List<ListViewItem>();
 
@@ -781,8 +782,10 @@ namespace LanguageExplorer.Works
 					case LexRefTypeTags.MappingTypes.kmtEntryCollection:
 					case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
 					case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
-						if (listId == DictionaryNodeListOptions.ListIds.Entry)
+						if (listId == ListIds.Entry)
+						{
 							lexRelTypesSubset.AddRange(listViewItemS);
+						}
 						break;
 					case LexRefTypeTags.MappingTypes.kmtSenseTree:
 					case LexRefTypeTags.MappingTypes.kmtSenseSequence:
@@ -790,8 +793,10 @@ namespace LanguageExplorer.Works
 					case LexRefTypeTags.MappingTypes.kmtSenseCollection:
 					case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
 					case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
-						if (listId == DictionaryNodeListOptions.ListIds.Sense)
+						if (listId == ListIds.Sense)
+						{
 							lexRelTypesSubset.AddRange(listViewItemS);
+						}
 						break;
 					default:
 						lexRelTypesSubset.AddRange(listViewItemS);
@@ -829,8 +834,7 @@ namespace LanguageExplorer.Works
 
 		private void RefreshStylesAndPreview()
 		{
-			if (StylesDialogMadeChanges != null)
-				StylesDialogMadeChanges(m_node, new EventArgs());
+			StylesDialogMadeChanges?.Invoke(m_node, new EventArgs());
 		}
 
 		private void HandleHeadwordNumbersButton()
@@ -937,7 +941,7 @@ namespace LanguageExplorer.Works
 		private void SerializeListOptionsAndRefreshPreview(ListView.ListViewItemCollection items)
 		{
 			// build a collection of DictionaryNodeOptions out of the collection from the ListView
-			var options = items.Cast<ListViewItem>().Select(item => new DictionaryNodeListOptions.DictionaryNodeOption
+			var options = items.Cast<ListViewItem>().Select(item => new DictionaryNodeOption
 			{
 				Id = item.Tag is int ? WritingSystemServices.GetMagicWsNameFromId((int)item.Tag) : (string)item.Tag,
 				IsEnabled = item.Checked

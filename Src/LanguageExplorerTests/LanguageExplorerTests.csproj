@@ -340,12 +340,12 @@
     <Compile Include="Works\DictionaryConfigViewerStub.cs" />
     <Compile Include="Works\DictionaryDetailsControllerTests.cs" />
     <Compile Include="Works\DictionaryExportServiceTests.cs" />
-    <Compile Include="Works\DictionaryNodeOptionsTests.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryNodeOptionsTests.cs" />
     <Compile Include="Works\DictionaryPublicationDecoratorTests.cs" />
     <Compile Include="Impls\DummyFwMainWnd.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Works\ExportDialogTests.cs" />
+    <Compile Include="Areas\ExportDialogTests.cs" />
     <Compile Include="Works\HeadwordNumbersControllerTests.cs" />
     <Compile Include="Works\InterestingTextsTests.cs" />
     <Compile Include="Works\ItemClickedTests.cs" />
@@ -360,10 +360,10 @@
     <Compile Include="Works\WordsUsedOnlyElsewhereFilterTests.cs" />
     <Compile Include="Works\XhtmlDocViewTests.cs" />
     <Compile Include="Works\XWorksAppTestBase.cs" />
-    <Compile Include="DictionaryConfigurationMigration\DictionaryConfigurationMigratorTests.cs" />
-    <Compile Include="DictionaryConfigurationMigration\FirstAlphaMigratorTests.cs" />
-    <Compile Include="DictionaryConfigurationMigration\FirstBetaMigratorTests.cs" />
-    <Compile Include="DictionaryConfigurationMigration\PreHistoricMigratorTests.cs" />
+    <Compile Include="DictionaryConfiguration\Migration\DictionaryConfigurationMigratorTests.cs" />
+    <Compile Include="DictionaryConfiguration\Migration\FirstAlphaMigratorTests.cs" />
+    <Compile Include="DictionaryConfiguration\Migration\FirstBetaMigratorTests.cs" />
+    <Compile Include="DictionaryConfiguration\Migration\PreHistoricMigratorTests.cs" />
     <Compile Include="Works\DictionaryConfigurationMigrators\StubContentControlProvider.cs" />
     <Compile Include="XMLViews\ConfiguredExportTests.cs" />
     <Compile Include="XMLViews\DhListViewTests.cs" />

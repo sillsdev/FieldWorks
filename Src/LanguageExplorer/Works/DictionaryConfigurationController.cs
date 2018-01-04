@@ -11,6 +11,7 @@ using System.Text;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.DictionaryConfiguration;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -672,26 +673,26 @@ namespace LanguageExplorer.Works
 			{
 				switch (listOptions.ListId)
 				{
-					case DictionaryNodeListOptions.ListIds.None:
+					case ListIds.None:
 						break;
-					case DictionaryNodeListOptions.ListIds.Complex:
+					case ListIds.Complex:
 						FixOptionsAccordingToCurrentTypes(listOptions.Options, complexTypes, node, false, cache);
 						break;
-					case DictionaryNodeListOptions.ListIds.Variant:
+					case ListIds.Variant:
 						FixOptionsAccordingToCurrentTypes(listOptions.Options, variantTypes, node,
 							IsFilteringInflectionalVariantTypes(node, isHybrid), cache);
 						break;
-					case DictionaryNodeListOptions.ListIds.Entry:
+					case ListIds.Entry:
 						FixOptionsAccordingToCurrentTypes(listOptions.Options, referenceTypes, node, false, cache);
 						break;
-					case DictionaryNodeListOptions.ListIds.Sense:
+					case ListIds.Sense:
 						FixOptionsAccordingToCurrentTypes(listOptions.Options, referenceTypes, node, false, cache);
 						break;
-					case DictionaryNodeListOptions.ListIds.Minor:
+					case ListIds.Minor:
 						Guid[] complexAndVariant = complexTypes.Union(variantTypes).ToArray();
 						FixOptionsAccordingToCurrentTypes(listOptions.Options, complexAndVariant, node, false, cache);
 						break;
-					case DictionaryNodeListOptions.ListIds.Note:
+					case ListIds.Note:
 						FixOptionsAccordingToCurrentTypes(listOptions.Options, noteTypes, node, false, cache);
 						break;
 					default:
@@ -720,7 +721,7 @@ namespace LanguageExplorer.Works
 			return siblings != null && siblings.Any(sib => sib.FieldDescription == node.FieldDescription);
 		}
 
-		private static void FixOptionsAccordingToCurrentTypes(List<DictionaryNodeListOptions.DictionaryNodeOption> options,
+		private static void FixOptionsAccordingToCurrentTypes(List<DictionaryNodeOption> options,
 			ICollection<Guid> possibilities, ConfigurableDictionaryNode node, bool filterInflectionalVariantTypes, LcmCache cache)
 		{
 			var isDuplicate = node.IsDuplicate;
@@ -742,7 +743,7 @@ namespace LanguageExplorer.Works
 						^ !isDuplicate;
 
 					// add new custom variant types disabled for the original and enabled for the inflectional variants copy
-					options.Add(new DictionaryNodeListOptions.DictionaryNodeOption
+					options.Add(new DictionaryNodeOption
 					{
 						Id = custVariantType.ToString(),
 						IsEnabled = showCustomVariant
@@ -753,7 +754,7 @@ namespace LanguageExplorer.Works
 			{
 				// add types that do not exist already
 				options.AddRange(possibilities.Where(type => !currentGuids.Contains(type))
-					.Select(type => new DictionaryNodeListOptions.DictionaryNodeOption { Id = type.ToString(), IsEnabled = !isDuplicate }));
+					.Select(type => new DictionaryNodeOption { Id = type.ToString(), IsEnabled = !isDuplicate }));
 			}
 
 			// remove options that no longer exist
@@ -871,7 +872,7 @@ namespace LanguageExplorer.Works
 			if (!atLeastOneWsChecked) // we have not checked at least one WS in availableWSs--yet
 			{
 				// Insert checked named WS's in their saved order, after the Default WS (2 Default WS's if Type is Both)
-				var insertionIdx = wsOptions.WsType == DictionaryNodeWritingSystemOptions.WritingSystemType.Both ? 2 : 1;
+				var insertionIdx = wsOptions.WsType == WritingSystemType.Both ? 2 : 1;
 				foreach (var ws in selectedWSs)
 				{
 					var selectedItem = availableWSs.FirstOrDefault(item => ws.Id.Equals(item.Tag));
@@ -891,7 +892,7 @@ namespace LanguageExplorer.Works
 		}
 
 		/// <summary>Check for added or removed Writing Systems. Doesn't touch Magic WS's, which never change.</summary>
-		public static List<DictionaryNodeListOptions.DictionaryNodeOption> UpdateWsOptions(DictionaryNodeWritingSystemOptions wsOptions, LcmCache cache)
+		public static List<DictionaryNodeOption> UpdateWsOptions(DictionaryNodeWritingSystemOptions wsOptions, LcmCache cache)
 		{
 			var availableWSs = GetCurrentWritingSystems(wsOptions.WsType, cache);
 			int magicId;
@@ -915,38 +916,38 @@ namespace LanguageExplorer.Works
 		/// <summary>
 		/// Return the current writing systems for a given writing system type as a list of DictionaryNodeOption objects
 		/// </summary>
-		public static List<DictionaryNodeListOptions.DictionaryNodeOption> GetCurrentWritingSystems(DictionaryNodeWritingSystemOptions.WritingSystemType wsType, LcmCache cache)
+		public static List<DictionaryNodeOption> GetCurrentWritingSystems(WritingSystemType wsType, LcmCache cache)
 		{
-			var wsList = new List<DictionaryNodeListOptions.DictionaryNodeOption>();
+			var wsList = new List<DictionaryNodeOption>();
 			switch (wsType)
 			{
-				case DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular:
-					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsVern.ToString() });
+				case WritingSystemType.Vernacular:
+					wsList.Add(new DictionaryNodeOption { Id = WritingSystemServices.kwsVern.ToString() });
 					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(
-							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+							ws => new DictionaryNodeOption { Id = ws.Id }));
 					break;
-				case DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis:
-					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsAnal.ToString() });
+				case WritingSystemType.Analysis:
+					wsList.Add(new DictionaryNodeOption { Id = WritingSystemServices.kwsAnal.ToString() });
 					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
-							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+							ws => new DictionaryNodeOption { Id = ws.Id }));
 					break;
-				case DictionaryNodeWritingSystemOptions.WritingSystemType.Both:
-					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsVern.ToString() });
-					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsAnal.ToString() });
+				case WritingSystemType.Both:
+					wsList.Add(new DictionaryNodeOption { Id = WritingSystemServices.kwsVern.ToString() });
+					wsList.Add(new DictionaryNodeOption { Id = WritingSystemServices.kwsAnal.ToString() });
 					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(
-							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+							ws => new DictionaryNodeOption { Id = ws.Id }));
 					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
-							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+							ws => new DictionaryNodeOption { Id = ws.Id }));
 					break;
-				case DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation:
-					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsPronunciation.ToString() });
+				case WritingSystemType.Pronunciation:
+					wsList.Add(new DictionaryNodeOption { Id = WritingSystemServices.kwsPronunciation.ToString() });
 					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Select(
-							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+							ws => new DictionaryNodeOption { Id = ws.Id }));
 					break;
-				case DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal:
-					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsReversalIndex.ToString() });
+				case WritingSystemType.Reversal:
+					wsList.Add(new DictionaryNodeOption { Id = WritingSystemServices.kwsReversalIndex.ToString() });
 					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
-							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+							ws => new DictionaryNodeOption { Id = ws.Id }));
 					break;
 			}
 			return wsList;
@@ -1261,7 +1262,7 @@ namespace LanguageExplorer.Works
 			var wsOptions = new DictionaryNodeWritingSystemOptions
 			{
 				WsType = GetWsTypeFromMagicWsName(wsTypeId),
-				Options = { new DictionaryNodeListOptions.DictionaryNodeOption { Id = wsTypeId, IsEnabled = true } },
+				Options = { new DictionaryNodeOption { Id = wsTypeId, IsEnabled = true } },
 			};
 			return wsOptions;
 		}
@@ -1401,25 +1402,25 @@ namespace LanguageExplorer.Works
 			return null;
 		}
 
-		public static DictionaryNodeWritingSystemOptions.WritingSystemType GetWsTypeFromMagicWsName(string wsType)
+		public static WritingSystemType GetWsTypeFromMagicWsName(string wsType)
 		{
 			switch (wsType)
 			{
 				case "best analysis":
 				case "all analysis":
 				case "analysis":
-				case "analysisform": return DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis;
+				case "analysisform": return WritingSystemType.Analysis;
 				case "best vernacular":
 				case "all vernacular":
-				case "vernacular": return DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular;
+				case "vernacular": return WritingSystemType.Vernacular;
 				case "vernacular analysis":
 				case "analysis vernacular":
 				case "best vernoranal":
 				case "best analorvern":
-				case "vernoranal": return DictionaryNodeWritingSystemOptions.WritingSystemType.Both;
-				case "pronunciation": return DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation;
-				case "reversal": return DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal;
-				default: throw new ArgumentException(String.Format("Unknown writing system type {0}", wsType), wsType);
+				case "vernoranal": return WritingSystemType.Both;
+				case "pronunciation": return WritingSystemType.Pronunciation;
+				case "reversal": return WritingSystemType.Reversal;
+				default: throw new ArgumentException($"Unknown writing system type {wsType}", wsType);
 			}
 		}
 

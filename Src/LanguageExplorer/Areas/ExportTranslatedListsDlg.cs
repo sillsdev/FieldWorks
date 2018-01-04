@@ -1,26 +1,23 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ExportTranslatedListsDlg.cs
-// Responsibility: mcconnel
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.LCModel.Core.WritingSystems;
+using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer.Areas
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// This dialog allows the user to select specific lists to export in specific writing
 	/// systems.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public partial class ExportTranslatedListsDlg : Form
 	{
 		private IPropertyTable m_propertyTable;
@@ -30,11 +27,9 @@ namespace LanguageExplorer.Works
 		string m_filter;
 		Dictionary<int, bool> m_excludedListFlids = new Dictionary<int, bool>();
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:ExportTranslatedListsDlg"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public ExportTranslatedListsDlg()
 		{
 			InitializeComponent();
@@ -51,13 +46,10 @@ namespace LanguageExplorer.Works
 			m_columnWs.Width = m_lvWritingSystems.Width - 25;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initialize the dialog with all needed information.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void Initialize(IPropertyTable propertyTable, LcmCache cache, string titleFrag,
-			string defaultExt, string filter)
+		public void Initialize(IPropertyTable propertyTable, LcmCache cache, string titleFrag, string defaultExt, string filter)
 		{
 			m_propertyTable = propertyTable;
 			m_cache = cache;
@@ -69,21 +61,14 @@ namespace LanguageExplorer.Works
 			FillInWritingSystems();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the selected output filename.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string FileName
-		{
-			get { return m_tbFilepath.Text; }
-		}
+		public string FileName => m_tbFilepath.Text;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the list of selected writing systems.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public List<int> SelectedWritingSystems
 		{
 			get
@@ -100,11 +85,9 @@ namespace LanguageExplorer.Works
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the list of selected lists.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public List<ICmPossibilityList> SelectedLists
 		{
 			get
@@ -113,7 +96,7 @@ namespace LanguageExplorer.Works
 				foreach (var item in m_lvLists.CheckedItems)
 				{
 					Debug.Assert(item is ListViewItem);
-					ListViewItem lvi = item as ListViewItem;
+					var lvi = item as ListViewItem;
 					Debug.Assert(lvi.Tag is ICmPossibilityList);
 					list.Add(lvi.Tag as ICmPossibilityList);
 				}
@@ -126,17 +109,21 @@ namespace LanguageExplorer.Works
 			var repo = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
 			foreach (var list in repo.AllInstances())
 			{
-				if (list.Owner != null &&
-					list.Owner != m_cache.LangProject.TranslatedScriptureOA &&
-					!m_excludedListFlids.ContainsKey(list.OwningFlid))
+				if (list.Owner == null || list.Owner == m_cache.LangProject.TranslatedScriptureOA ||
+				    m_excludedListFlids.ContainsKey(list.OwningFlid))
 				{
-					ListViewItem lvi = new ListViewItem();
-					lvi.Text = list.Name.UserDefaultWritingSystem.Text;
-					if (String.IsNullOrEmpty(lvi.Text) || lvi.Text == list.Name.NotFoundTss.Text)
-						lvi.Text = list.Name.BestAnalysisVernacularAlternative.Text;
-					lvi.Tag = list;
-					m_lvLists.Items.Add(lvi);
+					continue;
 				}
+				var lvi = new ListViewItem
+				{
+					Text = list.Name.UserDefaultWritingSystem.Text
+				};
+				if (string.IsNullOrEmpty(lvi.Text) || lvi.Text == list.Name.NotFoundTss.Text)
+				{
+					lvi.Text = list.Name.BestAnalysisVernacularAlternative.Text;
+				}
+				lvi.Tag = list;
+				m_lvLists.Items.Add(lvi);
 			}
 			m_lvLists.Sort();
 		}
@@ -146,12 +133,16 @@ namespace LanguageExplorer.Works
 			foreach (var xws in m_cache.LangProject.AnalysisWritingSystems)
 			{
 				if (xws.IcuLocale != "en")
+				{
 					m_lvWritingSystems.Items.Add(CreateListViewItemForWs(xws));
+				}
 			}
 			foreach (var xws in m_cache.LangProject.VernacularWritingSystems)
 			{
 				if (xws.IcuLocale != "en")
+				{
 					m_lvWritingSystems.Items.Add(CreateListViewItemForWs(xws));
+				}
 			}
 			m_lvWritingSystems.Sort();
 		}
@@ -165,10 +156,12 @@ namespace LanguageExplorer.Works
 
 		private ListViewItem CreateListViewItemForWs(CoreWritingSystemDefinition xws)
 		{
-			var lvi = new ListViewItem();
-			lvi.Text = xws.DisplayLabel;
-			lvi.Tag = xws;
-			lvi.Checked = xws.Handle == m_cache.DefaultAnalWs;
+			var lvi = new ListViewItem
+			{
+				Text = xws.DisplayLabel,
+				Tag = xws,
+				Checked = xws.Handle == m_cache.DefaultAnalWs
+			};
 			return lvi;
 		}
 
@@ -177,13 +170,15 @@ namespace LanguageExplorer.Works
 			using (var dlg = new SaveFileDialogAdapter())
 			{
 				dlg.AddExtension = true;
-				dlg.DefaultExt = String.IsNullOrEmpty(m_defaultExt) ? ".xml" : m_defaultExt;
-				dlg.Filter = String.IsNullOrEmpty(m_filter) ? "*.xml" : m_filter;
-				dlg.Title = String.Format(xWorksStrings.ExportTo0,
-					String.IsNullOrEmpty(m_titleFrag) ? "Translated List" : m_titleFrag);
+				dlg.DefaultExt = string.IsNullOrEmpty(m_defaultExt) ? ".xml" : m_defaultExt;
+				dlg.Filter = string.IsNullOrEmpty(m_filter) ? "*.xml" : m_filter;
+				dlg.Title = string.Format(xWorksStrings.ExportTo0,
+					string.IsNullOrEmpty(m_titleFrag) ? "Translated List" : m_titleFrag);
 				dlg.InitialDirectory = m_propertyTable.GetValue("ExportDir", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
 				if (dlg.ShowDialog(this) != DialogResult.OK)
+				{
 					return;
+				}
 				m_tbFilepath.Text = dlg.FileName;
 				EnableExportButton();
 			}
@@ -213,8 +208,7 @@ namespace LanguageExplorer.Works
 
 		private void EnableExportButton()
 		{
-			if (String.IsNullOrEmpty(m_tbFilepath.Text) ||
-				String.IsNullOrEmpty(m_tbFilepath.Text.Trim()))
+			if (string.IsNullOrEmpty(m_tbFilepath.Text) || string.IsNullOrEmpty(m_tbFilepath.Text.Trim()))
 			{
 				m_btnExport.Enabled = false;
 				return;
@@ -241,7 +235,7 @@ namespace LanguageExplorer.Works
 		{
 			foreach (var obj in m_lvLists.Items)
 			{
-				ListViewItem lvi = obj as ListViewItem;
+				var lvi = obj as ListViewItem;
 				lvi.Checked = true;
 			}
 		}
@@ -250,7 +244,7 @@ namespace LanguageExplorer.Works
 		{
 			foreach (var obj in m_lvLists.Items)
 			{
-				ListViewItem lvi = obj as ListViewItem;
+				var lvi = obj as ListViewItem;
 				lvi.Checked = false;
 			}
 		}

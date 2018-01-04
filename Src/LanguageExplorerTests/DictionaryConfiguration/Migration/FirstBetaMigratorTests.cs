@@ -7,7 +7,8 @@ using System.IO;
 using System.Linq;
 using LanguageExplorer;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.DictionaryConfigurationMigration;
+using LanguageExplorer.DictionaryConfiguration;
+using LanguageExplorer.DictionaryConfiguration.Migration;
 using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -16,7 +17,7 @@ using SIL.IO;
 using SIL.TestUtilities;
 using LanguageExplorerTests.Works;
 
-namespace LanguageExplorerTests.DictionaryConfigurationMigration
+namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 {
 	public class FirstBetaMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
@@ -348,7 +349,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			var complexMainEntryNode = new ConfigurableDictionaryNode
 			{
 				Label = "Complex Entries", FieldDescription = LexEntry,
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Complex),
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, ListIds.Complex),
 				Children = new List<ConfigurableDictionaryNode> { componentsNode, complexGroupingNode, extantChildUnderComplexNode, otherUniqueChildNode }
 			};
 			if (isHybrid)
@@ -359,7 +360,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			var variantEntryNode = new ConfigurableDictionaryNode
 			{
 				Label = "Variants", FieldDescription = LexEntry,
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Variant)
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, ListIds.Variant)
 			};
 			var alphaModel = new DictionaryConfigurationModel
 			{
@@ -411,14 +412,14 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				Label = "Complex Entries",
 				FieldDescription = LexEntry,
 				Children = new List<ConfigurableDictionaryNode>(),
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Complex)
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, ListIds.Complex)
 			};
 			var variantEntryNode = new ConfigurableDictionaryNode
 			{
 				Label = "Variants",
 				FieldDescription = LexEntry,
 				Children = new List<ConfigurableDictionaryNode>(),
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Variant)
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, ListIds.Variant)
 			};
 			var betaModel = new DictionaryConfigurationModel
 			{
@@ -626,7 +627,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			var variantFormsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Variant),
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, ListIds.Variant),
 				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNode },
 				IsEnabled = true
 			};
@@ -749,7 +750,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			{
 				Label = "Targets",
 				FieldDescription = "ConfigTargets",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Variant),
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, ListIds.Variant),
 				Children = new List<ConfigurableDictionaryNode> { RefSenseHeadwordTypeNode },
 				IsEnabled = true
 			};
@@ -787,22 +788,19 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			{
 				Label = "Etymological Form",
 				FieldDescription = "Form",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "best vernoranal" },
-					DictionaryNodeWritingSystemOptions.WritingSystemType.Both)
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "best vernoranal" }, WritingSystemType.Both)
 			};
 			var glossNode = new ConfigurableDictionaryNode
 			{
 				Label = "Gloss",
 				FieldDescription = "Gloss",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" },
-					DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" }, WritingSystemType.Analysis)
 			};
 			var commentNode = new ConfigurableDictionaryNode
 			{
 				Label = "Comment",
 				FieldDescription = "Comment",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" },
-					DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" }, WritingSystemType.Analysis)
 			};
 			var sourceNode = new ConfigurableDictionaryNode
 			{
@@ -842,7 +840,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			Assert.IsNotNull(configNode, "Should have added Preceding Annotation node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("PrecComment"));
 			Assert.That(configNode.IsEnabled, Is.True, "PrecComment node should be enabled");
-			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
+			TestForWritingSystemOptionsType(configNode, WritingSystemType.Analysis);
 			configNode = etymChildren.Find(node => node.Label == "Source Language");
 			Assert.IsNotNull(configNode, "Should have added Source Language node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("LanguageRS"));
@@ -858,36 +856,36 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			var abbrNode = childNodes.Find(n => n.Label == "Abbreviation");
 			Assert.IsNotNull(abbrNode, "Source Language should have an Abbrevation node");
 			Assert.True(abbrNode.IsEnabled, "Abbrevation node should be enabled by default");
-			TestForWritingSystemOptionsType(abbrNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
+			TestForWritingSystemOptionsType(abbrNode, WritingSystemType.Analysis);
 			var nameNode = childNodes.Find(n => n.Label == "Name");
 			Assert.IsNotNull(nameNode, "Source Language should have an Name node");
 			Assert.False(nameNode.IsEnabled, "Name node should not be enabled by default");
-			TestForWritingSystemOptionsType(nameNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
+			TestForWritingSystemOptionsType(nameNode, WritingSystemType.Analysis);
 			var langNotesNode = etymChildren.Find(node => node.FieldDescription == "LanguageNotes");
 			Assert.That(langNotesNode.IsEnabled, Is.True, "LanguageNotes node should be enabled by default");
-			TestForWritingSystemOptionsType(langNotesNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
+			TestForWritingSystemOptionsType(langNotesNode, WritingSystemType.Analysis);
 			configNode = etymChildren.Find(node => node.Label == "Source Form");
 			Assert.IsNotNull(configNode, "Should have changed the name of the old Etymological Form node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("Form"));
 			Assert.That(configNode.IsEnabled, Is.True, "Form node should be enabled");
-			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Both);
+			TestForWritingSystemOptionsType(configNode, WritingSystemType.Both);
 			configNode = etymChildren.Find(node => node.Label == "Gloss");
 			Assert.IsNotNull(configNode, "Should still have the Gloss node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("Gloss"));
 			Assert.That(configNode.IsEnabled, Is.True, "Gloss node should be enabled");
-			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
+			TestForWritingSystemOptionsType(configNode, WritingSystemType.Analysis);
 			configNode = etymChildren.Find(node => node.Label == "Following Comment");
 			Assert.IsNotNull(configNode, "Should have changed the name of the old Comment node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("Comment"));
 			Assert.That(configNode.IsEnabled, Is.False, "Comment node should NOT be enabled");
-			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
+			TestForWritingSystemOptionsType(configNode, WritingSystemType.Analysis);
 			configNode = etymChildren.Find(node => node.Label == "Note");
 			Assert.IsNull(configNode, "Should NOT add Note node to configurations");
 			configNode = etymChildren.Find(node => node.Label == "Bibliographic Source");
 			Assert.IsNotNull(configNode, "Should have added Bibliographic Source node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("Bibliography"));
 			Assert.That(configNode.IsEnabled, Is.False, "Bibliography node should not be enabled");
-			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
+			TestForWritingSystemOptionsType(configNode, WritingSystemType.Analysis);
 		}
 
 		[Test]
@@ -970,7 +968,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 		}
 
 		private static void TestForWritingSystemOptionsType(ConfigurableDictionaryNode configNode,
-			DictionaryNodeWritingSystemOptions.WritingSystemType expectedWsType)
+			WritingSystemType expectedWsType)
 		{
 			var options = configNode.DictionaryNodeOptions;
 			Assert.True(options is DictionaryNodeWritingSystemOptions, "Config node should have WritingSystemOptions");
@@ -985,21 +983,21 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				Label = "Etymological Form",
 				FieldDescription = "Form",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "best vernoranal" },
-					DictionaryNodeWritingSystemOptions.WritingSystemType.Both)
+					WritingSystemType.Both)
 			};
 			var glossNode = new ConfigurableDictionaryNode
 			{
 				Label = "Gloss",
 				FieldDescription = "Gloss",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" },
-					DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
+					WritingSystemType.Analysis)
 			};
 			var commentNode = new ConfigurableDictionaryNode
 			{
 				Label = "Comment",
 				FieldDescription = "Comment",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" },
-					DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
+					WritingSystemType.Analysis)
 			};
 			var sourceNode = new ConfigurableDictionaryNode
 			{
@@ -1191,12 +1189,12 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			};
 			// create a Beta model with Options set for the ReferencedComplexForms node
 			var betaModel = userModel.DeepClone();
-			betaModel.Parts[0].Children[0].DictionaryNodeOptions = new DictionaryNodeListOptions { ListId = DictionaryNodeListOptions.ListIds.Complex };
+			betaModel.Parts[0].Children[0].DictionaryNodeOptions = new DictionaryNodeListOptions { ListId = ListIds.Complex };
 
 			_migrator.MigrateFrom83Alpha(_logger, userModel, betaModel); // SUT
 			var migratedOptions = userModel.Parts[0].Children[0].DictionaryNodeOptions as DictionaryNodeListOptions;
 			Assert.NotNull(migratedOptions, "Referenced Complex Forms should have gotten List Options");
-			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Complex, migratedOptions.ListId);
+			Assert.AreEqual(ListIds.Complex, migratedOptions.ListId);
 		}
 
 		[Test]
@@ -1243,7 +1241,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				FieldDescription = "Subentries",
 				ReferenceItem = "MainEntrySubentries",
 				Children = new List<ConfigurableDictionaryNode>(), // If this is null it skips the code we're testing
-				DictionaryNodeOptions = new DictionaryNodeListOptions { ListId = DictionaryNodeListOptions.ListIds.Complex }
+				DictionaryNodeOptions = new DictionaryNodeListOptions { ListId = ListIds.Complex }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -1265,7 +1263,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 							new ConfigurableDictionaryNode
 							{
 								Label = "Subsubentries", FieldDescription = "Subentries",
-								DictionaryNodeOptions = new DictionaryNodeListAndParaOptions {ListId = DictionaryNodeListOptions.ListIds.Complex},
+								DictionaryNodeOptions = new DictionaryNodeListAndParaOptions {ListId = ListIds.Complex},
 								ReferenceItem = "MainEntrySubentries"
 							}
 						}
@@ -1277,7 +1275,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				Label = "Main Entry (Complex Forms)",
 				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { minorEntrySubentries },
-				DictionaryNodeOptions = new DictionaryNodeListOptions { ListId = DictionaryNodeListOptions.ListIds.Complex}
+				DictionaryNodeOptions = new DictionaryNodeListOptions { ListId = ListIds.Complex}
 			};
 			var sharedSubentries = new ConfigurableDictionaryNode
 			{

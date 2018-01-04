@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using ExCSS;
 using LanguageExplorer;
+using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.LCModel.Core.Cellar;
@@ -456,10 +457,10 @@ namespace LanguageExplorerTests.Works
 		{
 			var wsOpts = new DictionaryNodeWritingSystemOptions
 			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				Options = new List<DictionaryNodeOption>
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "fr"},
-					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en"}
+					new DictionaryNodeOption {Id = "fr"},
+					new DictionaryNodeOption {Id = "en"}
 				}
 			};
 			var definitionOrGloss = new ConfigurableDictionaryNode
@@ -519,10 +520,10 @@ namespace LanguageExplorerTests.Works
 		{
 			var wsOpts = new DictionaryNodeWritingSystemAndParaOptions
 			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				Options = new List<DictionaryNodeOption>
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en"},
-					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "fr"}
+					new DictionaryNodeOption {Id = "en"},
+					new DictionaryNodeOption {Id = "fr"}
 				},
 				DisplayWritingSystemAbbreviations = true,
 				DisplayEachInAParagraph = true
@@ -839,10 +840,10 @@ namespace LanguageExplorerTests.Works
 			var parentStyle = GenerateParagraphStyle("Dictionary-Paragraph-Padding-Hanging-Parent");
 			var wsOpts = new DictionaryNodeWritingSystemOptions
 			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				Options = new List<DictionaryNodeOption>
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en"},
-					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "fr"}
+					new DictionaryNodeOption {Id = "en"},
+					new DictionaryNodeOption {Id = "fr"}
 				},
 				DisplayWritingSystemAbbreviations = true
 			};
@@ -1598,7 +1599,7 @@ namespace LanguageExplorerTests.Works
 			var complexFormNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VisibleComplexFormBackRefs",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Complex),
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, ListIds.Complex),
 				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNode }
 			};
 			((IParaOption)complexFormNode.DictionaryNodeOptions).DisplayEachInAParagraph = true; // displaying in a paragraph should suppress factoring
@@ -1700,7 +1701,7 @@ namespace LanguageExplorerTests.Works
 				Label = "Variant Forms",
 				LabelSuffix = "Inflectional Variants",
 				FieldDescription = "VariantFormEntryBackRefs",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Variant),
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, ListIds.Variant),
 				IsDuplicate = true,
 				Before = "[",
 				Between = "; ",
@@ -2280,10 +2281,10 @@ namespace LanguageExplorerTests.Works
 		{
 			var wsOpts = new DictionaryNodeWritingSystemOptions
 			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				Options = new List<DictionaryNodeOption>
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en" },
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "fr" }
+					new DictionaryNodeOption { Id = "en" },
+					new DictionaryNodeOption { Id = "fr" }
 				},
 				DisplayWritingSystemAbbreviations = false
 			};
@@ -2313,10 +2314,10 @@ namespace LanguageExplorerTests.Works
 		{
 			var wsOpts = new DictionaryNodeWritingSystemOptions
 			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				Options = new List<DictionaryNodeOption>
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en" },
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "fr" }
+					new DictionaryNodeOption { Id = "en" },
+					new DictionaryNodeOption { Id = "fr" }
 				},
 				DisplayWritingSystemAbbreviations = true
 			};
@@ -2359,10 +2360,10 @@ namespace LanguageExplorerTests.Works
 		{
 			var wsOpts = new DictionaryNodeWritingSystemOptions
 			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				Options = new List<DictionaryNodeOption>
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en" },
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "fr" }
+					new DictionaryNodeOption { Id = "en" },
+					new DictionaryNodeOption { Id = "fr" }
 				},
 				DisplayWritingSystemAbbreviations = true
 			};
@@ -3074,10 +3075,10 @@ namespace LanguageExplorerTests.Works
 			var dictNodeOptions = new DictionaryNodeListAndParaOptions
 			{
 				DisplayEachInAParagraph = true,
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
+				Options = new List<DictionaryNodeOption>()
 			};
-			dictNodeOptions.Options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = "a0000000-dd15-4a03-9032-b40faaa9a754" });
-			dictNodeOptions.Options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c" });
+			dictNodeOptions.Options.Add(new DictionaryNodeOption { Id = "a0000000-dd15-4a03-9032-b40faaa9a754" });
+			dictNodeOptions.Options.Add(new DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c" });
 			var subentriesConfig = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Subentries",
@@ -3105,10 +3106,10 @@ namespace LanguageExplorerTests.Works
 			var dictNodeOptions = new DictionaryNodeListAndParaOptions
 			{
 				DisplayEachInAParagraph = true,
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
+				Options = new List<DictionaryNodeOption>()
 			};
-			dictNodeOptions.Options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = "a0000000-dd15-4a03-9032-b40faaa9a754" });
-			dictNodeOptions.Options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c" });
+			dictNodeOptions.Options.Add(new DictionaryNodeOption { Id = "a0000000-dd15-4a03-9032-b40faaa9a754" });
+			dictNodeOptions.Options.Add(new DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c" });
 			var examples = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ExamplesOS",
@@ -3248,10 +3249,10 @@ namespace LanguageExplorerTests.Works
 			GenerateBulletStyle("Bulleted List");
 			var dictNodeOptions = new DictionaryNodeListAndParaOptions
 			{
-				DisplayEachInAParagraph = true, Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
+				DisplayEachInAParagraph = true, Options = new List<DictionaryNodeOption>()
 			};
-			dictNodeOptions.Options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = "a0000000-dd15-4a03-9032-b40faaa9a754" } );
-			dictNodeOptions.Options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c" } );
+			dictNodeOptions.Options.Add(new DictionaryNodeOption { Id = "a0000000-dd15-4a03-9032-b40faaa9a754" } );
+			dictNodeOptions.Options.Add(new DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c" } );
 			var subentriesConfig = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Subentries",
@@ -3486,11 +3487,11 @@ namespace LanguageExplorerTests.Works
 				Label = "Pronunciation",
 				FieldDescription = "Form",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions {
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation,
+					WsType = WritingSystemType.Pronunciation,
 					DisplayWritingSystemAbbreviations = false,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					Options = new List<DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "pronunciation" }
+						new DictionaryNodeOption { Id = "pronunciation" }
 					}
 				}
 			};
@@ -3588,7 +3589,7 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "Discussion",
 				CSSClassNameOverride = "discussion",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" },
-										DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
+										WritingSystemType.Analysis)
 			};
 			var extNoteNode = new ConfigurableDictionaryNode
 			{
@@ -3598,7 +3599,7 @@ namespace LanguageExplorerTests.Works
 				Children = new List<ConfigurableDictionaryNode> { discussionNode },
 				Style = "Dictionary-Sense",
 				StyleType = StyleTypes.Paragraph,
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Note)
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, ListIds.Note)
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -3693,7 +3694,7 @@ namespace LanguageExplorerTests.Works
 
 		private static void EnableAllListOptions(DictionaryNodeOptions options)
 		{
-			List<DictionaryNodeListOptions.DictionaryNodeOption> checkList = null;
+			List<DictionaryNodeOption> checkList = null;
 			if (options is DictionaryNodeSenseOptions || options is DictionaryNodePictureOptions || options is DictionaryNodeGroupingOptions)
 			{
 				return;

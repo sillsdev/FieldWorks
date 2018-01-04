@@ -5,7 +5,7 @@
 using System;
 using System.Xml;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer.Areas
 {
 	/// <summary>
 	/// The latest mono code uses .net code for XmlReader and XmlResolver. This resolver only

@@ -10,6 +10,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using LanguageExplorer;
+using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.LCModel.Core.Text;
@@ -131,7 +132,7 @@ namespace LanguageExplorerTests.Works
 			Assert.IsInstanceOf(typeof(DictionaryNodeWritingSystemOptions), testNodeOptions);
 			var wsOptions = (DictionaryNodeWritingSystemOptions)testNodeOptions;
 			Assert.IsTrue(wsOptions.DisplayWritingSystemAbbreviations);
-			Assert.AreEqual(DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular, wsOptions.WsType);
+			Assert.AreEqual(WritingSystemType.Vernacular, wsOptions.WsType);
 			Assert.AreEqual(1, wsOptions.Options.Count);
 			Assert.AreEqual("fr", wsOptions.Options[0].Id);
 			Assert.IsTrue(wsOptions.Options[0].IsEnabled);
@@ -196,7 +197,7 @@ namespace LanguageExplorerTests.Works
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
 			Assert.IsInstanceOf(typeof(DictionaryNodeListOptions), testNodeOptions);
 			var listOptions = (DictionaryNodeListOptions)testNodeOptions;
-			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Variant, listOptions.ListId);
+			Assert.AreEqual(ListIds.Variant, listOptions.ListId);
 			// The first guid (b0000000-c40e-433e-80b5-31da08771344) is a special marker for
 			// "No Variant Type".  The second guid does not exist, so it gets removed from the list.
 			Assert.AreEqual(8, listOptions.Options.Count);
@@ -228,7 +229,7 @@ namespace LanguageExplorerTests.Works
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
 			Assert.IsInstanceOf(typeof(DictionaryNodeListAndParaOptions), testNodeOptions);
 			var lpOptions = (DictionaryNodeListAndParaOptions)testNodeOptions;
-			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Complex, lpOptions.ListId);
+			Assert.AreEqual(ListIds.Complex, lpOptions.ListId);
 			Assert.IsTrue(lpOptions.DisplayEachInAParagraph);
 			// There are seven complex form types by default in the language project.  (The second and third
 			// guids above are used by two of those default types.)  Ones that are missing in the configuration
@@ -259,7 +260,7 @@ namespace LanguageExplorerTests.Works
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
 			Assert.IsInstanceOf(typeof(DictionaryNodeListAndParaOptions), testNodeOptions);
 			var lpOptions = (DictionaryNodeListAndParaOptions)testNodeOptions;
-			Assert.AreEqual(DictionaryNodeListOptions.ListIds.None, lpOptions.ListId);
+			Assert.AreEqual(ListIds.None, lpOptions.ListId);
 			Assert.That(lpOptions.Options, Is.Null.Or.Empty);
 			Assert.IsFalse(lpOptions.DisplayEachInAParagraph);
 		}
@@ -664,9 +665,9 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "LexEntry",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 				{
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					Options = new List<DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = false }
+						new DictionaryNodeOption { Id = "en", IsEnabled = false }
 					}
 				}
 			};
@@ -703,7 +704,7 @@ namespace LanguageExplorerTests.Works
 				DictionaryNodeOptions = new DictionaryNodePictureOptions
 				{
 					StackMultiplePictures = true,
-					PictureLocation = DictionaryNodePictureOptions.AlignmentType.Left,
+					PictureLocation = AlignmentType.Left,
 					MaximumHeight = maxHeight,
 					MinimumHeight = minHeight,
 					MaximumWidth = maxWidth,
@@ -779,10 +780,10 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "LexEntry",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Entry,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					ListId = ListIds.Entry,
+					Options = new List<DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c", IsEnabled = false }
+						new DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c", IsEnabled = false }
 					}
 				}
 			};
@@ -814,9 +815,9 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "LexEntry",
 				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 				{
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					Options = new List<DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c", IsEnabled = false }
+						new DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c", IsEnabled = false }
 					}
 				}
 			};
@@ -918,9 +919,9 @@ namespace LanguageExplorerTests.Works
 				FieldDescription = "LexEntry",
 				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 				{
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					Options = new List<DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c" }
+						new DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c" }
 					}
 				}
 			};
