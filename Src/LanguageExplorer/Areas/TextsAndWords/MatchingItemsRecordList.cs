@@ -4,12 +4,11 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
-using LanguageExplorer.Areas;
 using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer.Areas.TextsAndWords
 {
 	/// <summary>
 	/// This is a temporary record list that can be used in a guicontrol where the parent control knows

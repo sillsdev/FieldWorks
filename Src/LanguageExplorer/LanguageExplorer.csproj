@@ -1110,7 +1110,7 @@
     <Compile Include="Works\HeadWordNumbersDlg.designer.cs">
       <DependentUpon>HeadWordNumbersDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Works\IAnalysisOccurrenceFromHvo.cs" />
+    <Compile Include="IAnalysisOccurrenceFromHvo.cs" />
     <Compile Include="ICreateAndInsert.cs" />
     <Compile Include="Works\IDictConfigManager.cs" />
     <Compile Include="Works\IDictConfigPresenter.cs" />
@@ -1126,40 +1126,43 @@
     <Compile Include="Works\ImageHolder.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Works\InterestingTextList.cs" />
-    <Compile Include="Works\InterestingTextsDecorator.cs" />
+    <Compile Include="Areas\InterestingTextList.cs" />
+    <Compile Include="Areas\InterestingTextsChangedArgs.cs" />
+    <Compile Include="Areas\InterestingTextsDecorator.cs" />
     <Compile Include="IRecordListRepository.cs" />
     <Compile Include="IRecordListRepositoryForTools.cs" />
     <Compile Include="IRecordList.cs" />
     <Compile Include="ITreeBarHandler.cs" />
     <Compile Include="DictionaryConfiguration\IParaOption.cs" />
-    <Compile Include="Works\ISetRootHvo.cs" />
+    <Compile Include="Areas\InterestingTextsMdc.cs" />
+    <Compile Include="Areas\ISetRootHvo.cs" />
     <Compile Include="Works\IWebonaryClient.cs" />
     <Compile Include="Works\LayoutLevels.cs" />
     <Compile Include="Works\LayoutTreeNode.cs" />
     <Compile Include="Works\LegacyConfigurationUtils.cs" />
-    <Compile Include="Works\LiftExportMessageDlg.cs">
+    <Compile Include="Areas\LiftExportMessageDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Works\LiftExportMessageDlg.Designer.cs">
+    <Compile Include="Areas\LiftExportMessageDlg.Designer.cs">
       <DependentUpon>LiftExportMessageDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="LinkHandler.cs" />
-    <Compile Include="Works\ListChangedActions.cs" />
+    <Compile Include="ListChangedActions.cs" />
     <Compile Include="Works\ListUpdateHelper.cs" />
     <Compile Include="Works\ListUpdateHelperParameterObject.cs" />
     <Compile Include="Works\LocalDragItem.cs" />
     <Compile Include="Works\MacroListener.cs" />
-    <Compile Include="Works\MatchingItemsRecordList.cs" />
-    <Compile Include="Works\Navigation.cs" />
+    <Compile Include="Areas\TextsAndWords\MatchingItemsRecordList.cs" />
+    <Compile Include="Navigation.cs" />
     <Compile Include="Areas\Notebook\NotebookExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Works\PossibilityRecordList.cs" />
+    <Compile Include="Areas\PossibilityRecordList.cs" />
     <Compile Include="Areas\PossibilityTreeBarHandler.cs" />
     <Compile Include="Works\PropertyType.cs" />
     <Compile Include="Works\StyleTypes.cs" />
     <Compile Include="Areas\TranslatedListsExporter.cs" />
+    <Compile Include="Works\SwitchConfigurationEventArgs.cs" />
     <Compile Include="Works\TreeBarHandler.cs" />
     <Compile Include="Works\RecordBrowseView.cs">
       <SubType>UserControl</SubType>
@@ -1684,7 +1687,7 @@
       <DependentUpon>ImageHolder.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Works\LiftExportMessageDlg.resx">
+    <EmbeddedResource Include="Areas\LiftExportMessageDlg.resx">
       <DependentUpon>LiftExportMessageDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

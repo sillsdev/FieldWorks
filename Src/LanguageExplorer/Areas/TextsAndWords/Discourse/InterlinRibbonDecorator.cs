@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2015 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,7 +7,6 @@ using System.Diagnostics;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
-using LanguageExplorer.Works;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {

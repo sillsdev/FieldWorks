@@ -73,14 +73,4 @@ namespace LanguageExplorer.Works
 		/// </summary>
 		void Close();
 	}
-
-	public delegate void SwitchConfigurationEvent(object sender, SwitchConfigurationEventArgs args);
-
-	/// <summary>
-	/// The arguments for a SwitchConfigurationEvent. Includes the configuration selected as a property.
-	/// </summary>
-	public class SwitchConfigurationEventArgs
-	{
-		public DictionaryConfigurationModel ConfigurationPicked { get; set; }
-	}
 }

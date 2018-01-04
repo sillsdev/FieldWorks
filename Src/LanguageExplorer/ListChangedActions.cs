@@ -2,12 +2,13 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// Actions to take on a ListChanged event.
 	/// </summary>
-	public enum ListChangedActions {
+	public enum ListChangedActions
+	{
 		/// <summary>
 		/// Skip broadcasting OnRecordNavigation.
 		/// </summary>

@@ -10,7 +10,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer.Areas
 {
 	/// <summary>
 	/// This is a specialty subclass for grabbing all of the items from a possibility list.

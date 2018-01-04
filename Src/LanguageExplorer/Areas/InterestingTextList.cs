@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,13 +9,14 @@ using System.Linq;
 using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance;
 using LanguageExplorer.Areas.TextsAndWords.Tools.Concordance;
+using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.Utils;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer.Areas
 {
 	/// <summary>
 	/// The interesting texts list is responsible for maintaining a list of the texts that should be displayed
@@ -558,18 +559,5 @@ namespace LanguageExplorer.Works
 		{
 			return book.IndexInOwner * 10000;
 		}
-	}
-
-	public class InterestingTextsChangedArgs : EventArgs
-	{
-		public InterestingTextsChangedArgs(int insertAt, int inserted, int deleted)
-		{
-			InsertedAt = insertAt;
-			NumberInserted = inserted;
-			NumberDeleted = deleted;
-		}
-		public int InsertedAt { get; private set; }
-		public int NumberInserted { get; private set; }
-		public int NumberDeleted { get; private set; }
 	}
 }

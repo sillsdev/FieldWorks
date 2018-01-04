@@ -1,11 +1,11 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Windows.Forms;
 
-namespace LanguageExplorer.Works
+namespace LanguageExplorer.Areas
 {
 	public partial class LiftExportMessageDlg : Form
 	{
@@ -29,7 +29,7 @@ namespace LanguageExplorer.Works
 
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
-			this.DialogResult = DialogResult.OK;
+			DialogResult = DialogResult.OK;
 			Close();
 		}
 	}
