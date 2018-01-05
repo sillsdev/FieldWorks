@@ -12,7 +12,6 @@ using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
-using LanguageExplorer.Works;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit

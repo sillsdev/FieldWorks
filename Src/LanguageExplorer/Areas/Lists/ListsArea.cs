@@ -29,7 +29,7 @@ using SIL.LCModel;
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.RecordEditView"/>
 						<parameters area="lists" clerk="AffixCategoryList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" a10status="DONE" />
 					</control>
 				</parameters>
@@ -51,7 +51,7 @@ using SIL.LCModel;
 				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 				<parameters collapse="144000">
 					<control>
-						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordEditView"/>
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.RecordEditView"/>
 						<parameters area="lists" clerk="AnnotationDefList" filterPath="Language Explorer\Configuration\Lists\Edit\DataEntryFilters\completeFilter.xml" persistContext="listsEdit" layout="default" a10status="DONE" />
 					</control>
 				</parameters>

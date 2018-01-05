@@ -9,7 +9,6 @@ using System.Linq;
 using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance;
 using LanguageExplorer.Areas.TextsAndWords.Tools.Concordance;
-using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;

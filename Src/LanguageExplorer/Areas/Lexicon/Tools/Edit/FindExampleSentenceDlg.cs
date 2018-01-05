@@ -34,7 +34,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			</parameters>
 		</control>
 		<control id="SegmentPreviewControl">
-			<dynamicloaderinfo assemblyPath="xWorks.dll" class="LanguageExplorer.Works.RecordDocXmlView"/>
+			<dynamicloaderinfo assemblyPath="xWorks.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.RecordDocXmlView"/>
 			<parameters id="SegmentPreviewControl" clerk="OccurrencesOfSense" treeBarAvailability="NotMyBusiness" layout="publicationNew" editable="false"/>
 		</control>
 	</parameters>

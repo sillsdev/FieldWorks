@@ -499,12 +499,6 @@
   <data name="ksNotice" xml:space="preserve">
     <value>Notice</value>
   </data>
-  <data name="DeletedObjectDetected" xml:space="preserve">
-    <value>Deleted object detected</value>
-  </data>
-  <data name="SelectedObjectHasBeenDeleted" xml:space="preserve">
-    <value>The selected object has been deleted (possibly by another user on a networked computer). Refreshing.</value>
-  </data>
   <data name="ksTurningOffFilter" xml:space="preserve">
     <value>The filter is being turned off so that you can see the new text.</value>
   </data>

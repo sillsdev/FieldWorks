@@ -1,0 +1,559 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ItemLayout" xml:space="preserve">
+    <value>Item layout</value>
+  </data>
+  <data name="DidNotSelectValidWsForDb" xml:space="preserve">
+    <value>You did not select a writing system that is valid for this database. Unless you have previously entered data in this database in this writing system, this field will never be shown.</value>
+  </data>
+  <data name="InvalidWritingSystem" xml:space="preserve">
+    <value>Invalid writing system</value>
+  </data>
+  <data name="ChooseSoundOrMovieFile" xml:space="preserve">
+    <value>Choose Sound or Movie File</value>
+  </data>
+  <data name="ThankYouForCheckingOutFlex" xml:space="preserve">
+    <value>Thank you for checking out this version of FieldWorks Language Explorer.</value>
+  </data>
+  <data name="HaveLaunchedFLEXTenTimes" xml:space="preserve">
+    <value>You have launched FLEX 10 times.</value>
+  </data>
+  <data name="HaveLaunchedFLEXFortyTimes" xml:space="preserve">
+    <value>You have launched FLEX 40 times.</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="Redo" xml:space="preserve">
+    <value>Redo</value>
+  </data>
+  <data name="UpdatingTheDisplay" xml:space="preserve">
+    <value>Updating the display</value>
+  </data>
+  <data name="ksRedoInsert" xml:space="preserve">
+    <value>Redo Insert {0}</value>
+  </data>
+  <data name="UndoDelete0" xml:space="preserve">
+    <value>Undo Delete {0}</value>
+  </data>
+  <data name="RedoDelete0" xml:space="preserve">
+    <value>Redo Delete {0}</value>
+  </data>
+  <data name="LowerCaseEntry" xml:space="preserve">
+    <value>entry</value>
+  </data>
+  <data name="SaveChangesToCurrentPart" xml:space="preserve">
+    <value>Save changes to the current part?</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Save changes?</value>
+  </data>
+  <data name="NotVisibleLabel" xml:space="preserve">
+    <value>no</value>
+  </data>
+  <data name="VisibleLabel" xml:space="preserve">
+    <value>yes</value>
+  </data>
+  <data name="ksBestAnalOrVern" xml:space="preserve">
+    <value>best analysis or vernacular</value>
+  </data>
+  <data name="ProblemStarting0" xml:space="preserve">
+    <value>Problem Starting {0}</value>
+  </data>
+  <data name="ksAnalysis" xml:space="preserve">
+    <value>analysis</value>
+  </data>
+  <data name="ksVernacular" xml:space="preserve">
+    <value>vernacular</value>
+  </data>
+  <data name="ksAllAnalysis" xml:space="preserve">
+    <value>all analysis</value>
+  </data>
+  <data name="ksAllVernacular" xml:space="preserve">
+    <value>all vernacular</value>
+  </data>
+  <data name="ksBestAnalysis" xml:space="preserve">
+    <value>best analysis</value>
+  </data>
+  <data name="ksBestVernacular" xml:space="preserve">
+    <value>best vernacular</value>
+  </data>
+  <data name="ksBestVernOrAnal" xml:space="preserve">
+    <value>best vernacular or analysis</value>
+  </data>
+  <data name="ksPronunciation" xml:space="preserve">
+    <value>pronunciation</value>
+  </data>
+  <data name="ksAnalOrVern" xml:space="preserve">
+    <value>analysis or vernacular</value>
+  </data>
+  <data name="ksVernOrAnal" xml:space="preserve">
+    <value>vernacular or analysis</value>
+  </data>
+  <data name="ksUserInterface" xml:space="preserve">
+    <value>user interface</value>
+  </data>
+  <data name="ksReversal" xml:space="preserve">
+    <value>reversal</value>
+  </data>
+  <data name="ksConfigureNow" xml:space="preserve">
+    <value>Configure now...</value>
+  </data>
+  <data name="ClickToJumpTo" xml:space="preserve">
+    <value>Click to jump to {0}.</value>
+  </data>
+  <data name="ThisIsConfiguredElsewhere" xml:space="preserve">
+    <value>This item is configured somewhere else. Hover for details.</value>
+  </data>
+  <data name="ThisConfigurationIsShared" xml:space="preserve">
+    <value>This configuration is shared. Hover for details.</value>
+  </data>
+  <data name="SharesWithTheseNodes" xml:space="preserve">
+    <value>Configuring the subfields of {0} also affects:{1}.</value>
+    <comment>{0} is the name of this node. {1} is a list of affected nodes.</comment>
+  </data>
+  <data name="SeeAffectedNodesUnder" xml:space="preserve">
+    <value>See {0} for a list of affected nodes.</value>
+    <comment>{0} is the node whose tooltip is SharesWithTheseNodes</comment>
+  </data>
+  <data name="ksNumberingBefore" xml:space="preserve">
+    <value>Numbering Before:</value>
+  </data>
+  <data name="ksNumberingCharacterStyle" xml:space="preserve">
+    <value>Numbering Character Style:</value>
+  </data>
+  <data name="ksNone" xml:space="preserve">
+    <value>(none)</value>
+  </data>
+  <data name="ksDisplayComplexFormsInParagraphs" xml:space="preserve">
+    <value>&amp;Display each Complex Form in a paragraph</value>
+  </data>
+  <data name="ksDisplayExtendedNoteInParagraphs" xml:space="preserve">
+    <value>&amp;Display each Extended Note in a paragraph</value>
+  </data>
+  <data name="Duplicate" xml:space="preserve">
+    <value>Duplicate</value>
+    <comment>action on a tree view item</comment>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+    <comment>action on a tree view item</comment>
+  </data>
+  <data name="EditLabel" xml:space="preserve">
+    <value>Edit Label</value>
+    <comment>action on a tree view item</comment>
+  </data>
+  <data name="HighlightAffectedContent" xml:space="preserve">
+    <value>Highlight affected content</value>
+  </data>
+  <data name="RemoveHighlighting" xml:space="preserve">
+    <value>Remove highlighting from affected content</value>
+  </data>
+  <data name="ConfigureReferencedHeadwordsTooltip" xml:space="preserve">
+    <value>Configure homograph numbers on all headwords and sense numbers on headwords in cross references</value>
+  </data>
+  <data name="kstidExportingLists" xml:space="preserve">
+    <value>Writing possibility list contents</value>
+  </data>
+  <data name="ksFwDummyWndMessage" xml:space="preserve">
+    <value>The program may quit after the restore has finished.  If it does, you can then restart the program on the (restored) project.</value>
+  </data>
+  <data name="ksFwDummyWndTitleRestoring" xml:space="preserve">
+    <value>Restoring...</value>
+  </data>
+  <data name="ksRedoInsertPicture" xml:space="preserve">
+    <value>Redo Insert Picture</value>
+  </data>
+  <data name="ksUndoInsertPicture" xml:space="preserve">
+    <value>Undo Insert Picture</value>
+  </data>
+  <data name="ksReversalIndexView" xml:space="preserve">
+    <value>Choose the reversal index to configure:</value>
+  </data>
+  <data name="ksNone1" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ksUndoShowSubentryForComponent" xml:space="preserve">
+    <value>Undo Show Subentry for this Component</value>
+  </data>
+  <data name="ksRedoShowSubentryForComponent" xml:space="preserve">
+    <value>Redo Show Subentry for this Component</value>
+  </data>
+  <data name="ksUndoVisibleComplexForm" xml:space="preserve">
+    <value>Undo Referenced Complex Forms</value>
+  </data>
+  <data name="ksRedoVisibleComplexForm" xml:space="preserve">
+    <value>Redo Referenced Complex Forms</value>
+  </data>
+  <data name="ksUndoInsertMedia" xml:space="preserve">
+    <value>Undo Insert Media</value>
+  </data>
+  <data name="ksRedoInsertMedia" xml:space="preserve">
+    <value>Redo Insert Media</value>
+  </data>
+  <data name="ksUndoDeleteMediaLink" xml:space="preserve">
+    <value>Undo Delete Media Link</value>
+  </data>
+  <data name="ksRedoDeleteMediaLink" xml:space="preserve">
+    <value>Redo Delete Media Link</value>
+  </data>
+  <data name="ksParsing" xml:space="preserve">
+    <value>Processing</value>
+    <comment>Label used in progress bar</comment>
+  </data>
+  <data name="ksCustomFieldsCanNotBeAddedDueToRemoteClientsCaption" xml:space="preserve">
+    <value>Custom Fields cannot be added.</value>
+  </data>
+  <data name="ksCustomFieldsCanNotBeAddedDueToRemoteClientsText" xml:space="preserve">
+    <value>Custom Fields cannot be added when there is more than one connected client.</value>
+  </data>
+  <data name="ksChooseAnthroCatStartingList" xml:space="preserve">
+    <value>In Language Explorer, you will use a list of anthropology categories to catalog your entries.  Choose a starting list of anthropology categories for this project.</value>
+  </data>
+  <data name="ksUnableToStartGnomeCharMap" xml:space="preserve">
+    <value>Unable to start program "{0}". Please install the Gnome Character Map to use this feature.</value>
+    <comment>Used if user choose Insert Special character in Linux and the Gnome Character Map software is not installed. Variable is the command to launch Gnome Character Map.</comment>
+  </data>
+  <data name="ksDictConfigCopyOf" xml:space="preserve">
+    <value>Copy of {0}</value>
+    <comment>{0} is the name of a stored dictionary configuration that is being copied.</comment>
+  </data>
+  <data name="ksConfirmDelete" xml:space="preserve">
+    <value>Are you sure you want to delete the {0} View {1}?</value>
+    <comment>First parameter is something like Dictionary or Reversal Index.  Second parameter is the name of a dictionary configuration/view.</comment>
+  </data>
+  <data name="ksConfirmDeleteTitle" xml:space="preserve">
+    <value>Delete {0} View</value>
+    <comment>Parameter is the name of a dictionary configuration/view</comment>
+  </data>
+  <data name="ksChooseAnotherViewName" xml:space="preserve">
+    <value>That name is already in use by another view.</value>
+    <comment>The name of a dictionary configuration/view</comment>
+  </data>
+  <data name="ksNameInUseTitle" xml:space="preserve">
+    <value>Name Already In Use</value>
+    <comment>The name of a dictionary configuration/view</comment>
+  </data>
+  <data name="ksExtendedNoteTypes" xml:space="preserve">
+    <value>Extended Note Types:</value>
+  </data>
+  <data name="ksExportingLift" xml:space="preserve">
+    <value>Exporting Lexicon Items to LIFT Format</value>
+  </data>
+  <data name="ksNoExtendedNoteType" xml:space="preserve">
+    <value>No Extended Note Type</value>
+  </data>
+  <data name="ksDictConfigMultiCopyOf" xml:space="preserve">
+    <value>Copy of {0} ({1})</value>
+    <comment>{1} is a number to distinguish an earlier copy.  {0} is the name of a stored dictionary configuration that is being copied.</comment>
+  </data>
+  <data name="ksRedoMacro" xml:space="preserve">
+    <value>Redo {0}</value>
+    <comment>{0} will be the name of a macro</comment>
+  </data>
+  <data name="ksUndoMacro" xml:space="preserve">
+    <value>Undo {0}</value>
+    <comment>{0} will be the name of a macro</comment>
+  </data>
+  <data name="FailedToRename" xml:space="preserve">
+    <value>Failed to rename. Use a name that is not already in use.</value>
+    <comment>String similar 'Failed to rename. Use a name that is not already in use'
+</comment>
+  </data>
+  <data name="Allpublications" xml:space="preserve">
+    <value>All publications</value>
+  </data>
+  <data name="InvalidRootConfigurationNode" xml:space="preserve">
+    <value>The root node in your configured view is invalid. The field attribute '{0}' must match a class name.</value>
+    <comment>low priority for localizing, helpful to developers of dictionary configuration files, hopefully users will never see this.</comment>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Reset</value>
+    <comment>Set some dictionary settings back to what they were before customization.</comment>
+  </data>
+  <data name="YouAreResetting" xml:space="preserve">
+    <value>You are resetting the following to factory defaults:</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>View</value>
+    <comment>A generic description of a Dictionary View or a Reversal Index View.</comment>
+  </data>
+  <data name="WantContinue" xml:space="preserve">
+    <value>Do you want to continue?</value>
+    <comment>whether to continue with the resetting of a configured view</comment>
+  </data>
+  <data name="UploadToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration" xml:space="preserve">
+    <value>Exporting entries for the {0} publication using the {1} view</value>
+    <comment>Displayed in the log when exporting to Webonary. Arguments are: name of publication, name of configured view</comment>
+  </data>
+  <data name="ConfigurationTreeControl_SelectAllChildren" xml:space="preserve">
+    <value>Select All Children</value>
+    <comment>Hidden context menu command (Ctrl+Right Click) for selecting a node and all its children in the Configuration Dialog</comment>
+  </data>
+  <data name="ConfigurationTreeControl_ClearAllChildren" xml:space="preserve">
+    <value>Clear All Children</value>
+    <comment>Hidden context menu command (Ctrl+Right Click) for clearing a node and all its children in the Configuration Dialog</comment>
+  </data>
+  <data name="ksDisplaySubentriesInParagraphs" xml:space="preserve">
+    <value>&amp;Display each Subentry in a paragraph</value>
+  </data>
+  <data name="ksGeneratingDisplayFragments" xml:space="preserve">
+    <value>Generating the display fragments for individual entries</value>
+    <comment>message displayed on progress report dialog</comment>
+  </data>
+  <data name="ksArrangingDisplayFragments" xml:space="preserve">
+    <value>Putting the display fragments together with the letter headings</value>
+    <comment>this message is displayed on a progress report dialog</comment>
+  </data>
+  <data name="ksGeneratingStyleInfo" xml:space="preserve">
+    <value>Generating the styles information</value>
+    <comment>this message is displayed on a progress report dialog</comment>
+  </data>
+  <data name="ksSubsenseNumberConfig" xml:space="preserve">
+    <value>Subsense Number Configuration</value>
+  </data>
+  <data name="ksNumberSingleSubsense" xml:space="preserve">
+    <value>Number even a single subsense</value>
+  </data>
+  <data name="ksHideGramInfoIfSameAsParent" xml:space="preserve">
+    <value>Hide subsense grammatical info if same as parent</value>
+  </data>
+  <data name="ReversalIndexConfigurationDlgTitle" xml:space="preserve">
+    <value>Manage Reversal Index Views</value>
+  </data>
+  <data name="YouAreResettingReversal" xml:space="preserve">
+    <value>You are resetting the following to the 'All Reversal Indexes' settings:</value>
+  </data>
+  <data name="DictionaryConfigurationMangager_ReversalConfigurations_GroupLabel" xml:space="preserve">
+    <value>Reversal Views</value>
+    <comment>Label for the group box which contains the reversal configured views</comment>
+  </data>
+  <data name="InadvisableToShare" xml:space="preserve">
+    <value>It is inadvisable to share '{0}' because a shared node with the same field ({1}) already exists ({2}). No changes have been made.</value>
+    <comment>{0} is the node the user has requested to share. {3} is the field these nodes control. {2} is an existing shared node.</comment>
+  </data>
+  <data name="ksDisplayExamplesInParagraphs" xml:space="preserve">
+    <value>&amp;Display each Example in a paragraph</value>
+  </data>
+  <data name="ksDisplayEachSubsenseInAParagraph" xml:space="preserve">
+    <value>&amp;Display each subsense in a paragraph</value>
+  </data>
+  <data name="ksDisplayNoteInParagraphs" xml:space="preserve">
+    <value>&amp;Display each Note in a separate paragraph</value>
+  </data>
+  <data name="ksStartingWithTheSecondSubsense" xml:space="preserve">
+    <value>starting with second subsense</value>
+    <comment>This directly follows ksDisplayEachSubsenseInAParagraph</comment>
+  </data>
+  <data name="ksParentSenseNumberingStyle" xml:space="preserve">
+    <value>Show parent sense number</value>
+  </data>
+  <data name="ConfigureHomograph_ConfigDescription" xml:space="preserve">
+    <value>These settings affect the current {0} view:{1}{2}</value>
+    <comment>The first parameter will be either "Reversal Index" or "Dictionary". Second parameter is a newline.  Third is the name of the configured view.</comment>
+  </data>
+  <data name="kstidImportingConfigNewName" xml:space="preserve">
+    <value>Importing view with new name '{0}'.</value>
+    <comment>Parameter is the name for a new copy of an existing dictionary configuration.</comment>
+  </data>
+  <data name="kstidImportingAndOverwritingConfiguration" xml:space="preserve">
+    <value>Importing and overwriting existing view named '{0}'.</value>
+    <comment>Parameter is the name of an existing dictionary configuration.</comment>
+  </data>
+  <data name="kstidOverwriteConfiguration" xml:space="preserve">
+    <value>Overwrite existing view named {0}</value>
+    <comment>Parameter is the name of an existing dictionary configuration</comment>
+  </data>
+  <data name="kstidUseNewConfigName" xml:space="preserve">
+    <value>Use new view name {0}</value>
+    <comment>Parameter is proposed new name for a copy of an existing dictionary configuration.</comment>
+  </data>
+  <data name="kstidCannotImport" xml:space="preserve">
+    <value>Cannot import. Choose another file.</value>
+    <comment>explanation text on import dialog</comment>
+  </data>
+  <data name="kstidImportingConfig" xml:space="preserve">
+    <value>Importing view named '{0}'.</value>
+    <comment>Parameter is the name of a dictionary configuration</comment>
+  </data>
+  <data name="kstidChooseFile" xml:space="preserve">
+    <value>Choose file for import</value>
+    <comment>title of open file dialog for choosing a configuration to import</comment>
+  </data>
+  <data name="kstidImportedSuffix" xml:space="preserve">
+    <value>{0}-Imported{1}</value>
+    <comment>First parameter is the name of a dictionary configuration. Second parameter is a digit. This string is used to generate a unique suffix, like "-Imported3", to append to a configuration name in instances in which a new and unique name needs to be suggested for a dictionary configuration being imported. It would be okay to have spaces in the string.</comment>
+  </data>
+  <data name="kstidZipFiles" xml:space="preserve">
+    <value>Zip files</value>
+    <comment>In configuration import file open dialog, this is the description of what kind of files are *.zip files that are being filtered for.</comment>
+  </data>
+  <data name="kstidConfigsChanged" xml:space="preserve">
+    <value>Your list of views was just changed. You must close and reopen this dialog to be able to export.</value>
+    <comment>Message on message box shown from Manage Views dialog.</comment>
+  </data>
+  <data name="kstidChooseExportFile" xml:space="preserve">
+    <value>Choose filename for export</value>
+    <comment>title of save dialog when exporting dictionary configuration</comment>
+  </data>
+  <data name="kstidConfigsChangedImport" xml:space="preserve">
+    <value>Your list of views was just changed. You must close and reopen this dialog to be able to import.</value>
+    <comment>Message on message box shown from Manage Views dialog</comment>
+  </data>
+  <data name="kstidPublicationsWillBeAdded" xml:space="preserve">
+    <value>The following publications will be added to the project: </value>
+    <comment>Label displayed before the list of any publications that will be added while importing a dictionary configuration view</comment>
+  </data>
+  <data name="kstidCustomFieldsWillBeAdded" xml:space="preserve">
+    <value>The following custom fields will be added to the project, if not already present:</value>
+    <comment>Label displayed before the list of any custom fields that will be added while importing a dictionary configuration view</comment>
+  </data>
+  <data name="DictionaryConfigurationDictionaryConfigurationUser_StyleOverwriteWarning" xml:space="preserve">
+    <value>Warning! The styles for this project will be overwritten by the import.</value>
+    <comment>Warning added to the end of the import information after a user selects a zip file.</comment>
+  </data>
+  <data name="DictionaryConfigurationMismatch" xml:space="preserve">
+    <value>Error! The file contains a {0} view.</value>
+    <comment>Error added to the first of the import information after a user selects a Reversal Index view when we're expecting a Dictionary view, or vice versa.</comment>
+  </data>
+  <data name="ExportSelected" xml:space="preserve">
+    <value>Export the highlighted view</value>
+    <comment>Tooltip on dictionary configuration manager dialog</comment>
+  </data>
+  <data name="ImportView" xml:space="preserve">
+    <value>Import a view</value>
+    <comment>Tooltip on dictionary configuration manager dialog</comment>
+  </data>
+  <data name="DeleteViewTooltip" xml:space="preserve">
+    <value>Delete this custom view</value>
+    <comment>Used in Dictionary Config Mgr dialog</comment>
+  </data>
+  <data name="DuplicateViewToolTip" xml:space="preserve">
+    <value>Duplicate the highlighted view</value>
+    <comment>Used in Dictionary Config Mgr dialog</comment>
+  </data>
+  <data name="ResetViewTooltip" xml:space="preserve">
+    <value>Reset this view</value>
+    <comment>Used in Dictionary Config Mgr dialog</comment>
+  </data>
+</root>

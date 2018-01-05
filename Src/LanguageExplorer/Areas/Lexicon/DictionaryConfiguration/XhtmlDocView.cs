@@ -12,7 +12,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using Gecko;
 using Gecko.DOM;
-using LanguageExplorer.Works;
+using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
@@ -29,7 +29,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 	/// <summary>
 	/// This class handles the display of configured xhtml for a particular publication in a dynamically loadable XWorksView.
 	/// </summary>
-	internal class XhtmlDocView : XWorksViewBase, IFindAndReplaceContext, IPostLayoutInit
+	internal class XhtmlDocView : ViewBase, IFindAndReplaceContext, IPostLayoutInit
 	{
 		private XWebBrowser m_mainView;
 		private DictionaryPublicationDecorator m_pubDecorator;
@@ -220,45 +220,10 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				if (!IsObjectVisible(hvoTarget, out xrc))
 				{
 					// Tell the user why we aren't jumping to his record
-					GiveSimpleWarning(xrc);
+					AreaServices.GiveSimpleWarning(PropertyTable.GetValue<Form>("window"), PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile, xrc);
 				}
 			}
 			return false;
-		}
-
-		private void GiveSimpleWarning(ExclusionReasonCode xrc)
-		{
-			// Tell the user why we aren't jumping to his record
-			var msg = xWorksStrings.ksSelectedEntryNotInDict;
-			string caption;
-			string reason;
-			string shlpTopic;
-			switch (xrc)
-			{
-				case ExclusionReasonCode.NotInPublication:
-					caption = xWorksStrings.ksEntryNotPublished;
-					reason = xWorksStrings.ksEntryNotPublishedReason;
-					shlpTopic = "User_Interface/Menus/Edit/Find_a_lexical_entry.htm";		//khtpEntryNotPublished
-					break;
-				case ExclusionReasonCode.ExcludedHeadword:
-					caption = xWorksStrings.ksMainNotShown;
-					reason = xWorksStrings.ksMainNotShownReason;
-					shlpTopic = "khtpMainEntryNotShown";
-					break;
-				case ExclusionReasonCode.ExcludedMinorEntry:
-					caption = xWorksStrings.ksMinorNotShown;
-					reason = xWorksStrings.ksMinorNotShownReason;
-					shlpTopic = "khtpMinorEntryNotShown";
-					break;
-				default:
-					throw new ArgumentException("Unknown ExclusionReasonCode");
-			}
-			msg = String.Format(msg, reason);
-			// TODO-Linux: Help is not implemented on Mono
-			MessageBox.Show(FindForm(), msg, caption, MessageBoxButtons.OK,
-							MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0,
-							PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile,
-							HelpNavigator.Topic, shlpTopic);
 		}
 
 		private bool IsObjectVisible(int hvoTarget, out ExclusionReasonCode xrc)
@@ -278,7 +243,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			var m_currentPublication = PropertyTable.GetValue<string>("SelectedPublication", null);
 			var publications = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p).Where(p => p.NameHierarchyString == m_currentPublication.ToString()).FirstOrDefault();
 			//if the publications is null in case of Dictionary view selected as $$All Entries$$.
-			if (publications != null && publications.NameHierarchyString != xWorksStrings.AllEntriesPublication)
+			if (publications != null && publications.NameHierarchyString != LanguageExplorerResources.AllEntriesPublication)
 			{
 				var currentPubPoss = publications;
 				if (!entry.PublishIn.Contains(currentPubPoss))
@@ -519,7 +484,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			GeckoElement entryElement;
 			var classList = DictionaryConfigurationServices.GetClassListFromGeckoElement(element, out topLevelGuid, out entryElement);
 			var localizedName = DictionaryConfigurationServices.GetDictionaryConfigurationType(flexComponentParameters.PropertyTable);
-			var label = string.Format(xWorksStrings.ksConfigure, localizedName);
+			var label = string.Format(AreaResources.ksConfigure, localizedName);
 			s_contextMenu = new ContextMenuStrip();
 			var item = new DisposableToolStripMenuItem(label);
 			s_contextMenu.Items.Add(item);
@@ -527,7 +492,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			item.Tag = new object[] { flexComponentParameters.PropertyTable, flexComponentParameters.Publisher, classList, topLevelGuid, flexComponentParameters.Subscriber, cache, activeRecordList };
 			if (e.CtrlKey) // show hidden menu item for tech support
 			{
-				item = new DisposableToolStripMenuItem(xWorksStrings.ksInspect);
+				item = new DisposableToolStripMenuItem(AreaResources.ksInspect);
 				s_contextMenu.Items.Add(item);
 				item.Click += RunDiagnosticsDialogAt;
 				item.Tag = new object[] { flexComponentParameters.PropertyTable, entryElement, topLevelGuid };
@@ -595,7 +560,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				var controller = new DictionaryConfigurationController(dlg, current);
 				controller.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, (ISubscriber)tagObjects[4]));
 				controller.SetStartingNode(classList);
-				dlg.Text = string.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationServices.GetDictionaryConfigurationType(propertyTable));
+				dlg.Text = string.Format(LexiconResources.ConfigureTitle, DictionaryConfigurationServices.GetDictionaryConfigurationType(propertyTable));
 				dlg.HelpTopic = DictionaryConfigurationServices.GetConfigDialogHelpTopic(propertyTable);
 				dlg.ShowDialog((IWin32Window)mainWindow);
 				refreshNeeded = controller.MasterRefreshRequired;
@@ -826,7 +791,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			foreach(var config in configurations)
 			{
 				var model = new DictionaryConfigurationModel(config.Value, Cache);
-				if(model.AllPublications || publication.Equals(xWorksStrings.AllEntriesPublication)
+				if(model.AllPublications || publication.Equals(LanguageExplorerResources.AllEntriesPublication)
 												 || model.Publications.Contains(publication))
 				{
 					hasPub[config.Key] = config.Value;
@@ -851,7 +816,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 
 		internal string GetValidConfigurationForPublication(string publication)
 		{
-			if(publication == xWorksStrings.AllEntriesPublication)
+			if(publication == LanguageExplorerResources.AllEntriesPublication)
 				return GetCurrentConfiguration(false);
 			var currentConfig = GetCurrentConfiguration(false);
 			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache,m_configObjectName);
@@ -887,7 +852,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 					if (name == "ReversalIndexPublicationLayout")
 						DictionaryConfigurationUtils.SetReversalIndexGuidBasedOnReversalIndexConfiguration(PropertyTable, Cache);
 					var currentPublication = GetCurrentPublication();
-					var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
+					var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? LanguageExplorerResources.AllEntriesPublication;
 					if (validPublication != currentPublication)
 					{
 						PropertyTable.SetProperty("SelectedPublication", validPublication, true, true);
@@ -1025,8 +990,8 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		{
 			var currentConfig = GetCurrentConfiguration(false);
 			var currentPublication = GetCurrentPublication();
-			var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
-			if (currentPublication != xWorksStrings.AllEntriesPublication && currentPublication != validPublication)
+			var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? LanguageExplorerResources.AllEntriesPublication;
+			if (currentPublication != LanguageExplorerResources.AllEntriesPublication && currentPublication != validPublication)
 			{
 				PropertyTable.SetProperty("SelectedPublication", validPublication, true, true);
 			}
@@ -1038,7 +1003,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		{
 			var pubName = GetCurrentPublication();
 			display.Enabled = true;
-			display.Checked = (xWorksStrings.AllEntriesPublication == pubName);
+			display.Checked = (LanguageExplorerResources.AllEntriesPublication == pubName);
 			return true;
 		}
 #endif
@@ -1066,17 +1031,17 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 
 		public bool OnShowAllEntries(object args)
 		{
-			PropertyTable.SetProperty("SelectedPublication", xWorksStrings.AllEntriesPublication, true, true);
+			PropertyTable.SetProperty("SelectedPublication", LanguageExplorerResources.AllEntriesPublication, true, true);
 			return true;
 		}
 
 		private void UpdateContent(DictionaryPublicationDecorator publicationDecorator, string configurationFile)
 		{
 			SetInfoBarText();
-			var htmlErrorMessage = xWorksStrings.ksErrorDisplayingPublication;
-			if (String.IsNullOrEmpty(configurationFile))
+			var htmlErrorMessage = LexiconResources.ksErrorDisplayingPublication;
+			if (string.IsNullOrEmpty(configurationFile))
 			{
-				htmlErrorMessage = xWorksStrings.NoConfigsMatchPub;
+				htmlErrorMessage = LexiconResources.NoConfigsMatchPub;
 			}
 			else
 			{
@@ -1084,11 +1049,11 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				using (var progressDlg = new SIL.FieldWorks.Common.Controls.ProgressDialogWithTask(ParentForm))
 				{
 					progressDlg.AllowCancel = true;
-					progressDlg.CancelLabelText = xWorksStrings.ksCancelingPublicationLabel;
-						progressDlg.Title = xWorksStrings.ksPreparingPublicationDisplay;
-						var xhtmlPath = progressDlg.RunTask(true, SaveConfiguredXhtmlAndDisplay, publicationDecorator, configurationFile) as string;
-						if (xhtmlPath != null)
-						{
+					progressDlg.CancelLabelText = LexiconResources.ksCancelingPublicationLabel;
+					progressDlg.Title = LexiconResources.ksPreparingPublicationDisplay;
+					var xhtmlPath = progressDlg.RunTask(true, SaveConfiguredXhtmlAndDisplay, publicationDecorator, configurationFile) as string;
+					if (xhtmlPath != null)
+					{
 						if (progressDlg.IsCanceling)
 						{
 							Publisher.Publish("SetToolFromName", AreaServices.LexiconEditMachineName);
@@ -1098,21 +1063,25 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 							m_mainView.Url = new Uri(xhtmlPath);
 							m_mainView.Refresh(WebBrowserRefreshOption.Completely);
 						}
-							return;
-						}
+						return;
 					}
 				}
+			}
 			m_mainView.DocumentText = $"<html><body>{htmlErrorMessage}</body></html>";
 		}
 
 		private object SaveConfiguredXhtmlAndDisplay(IThreadedProgress progress, object[] args)
 		{
 			if (args.Length != 2)
+			{
 				return null;
+			}
 			var publicationDecorator = (DictionaryPublicationDecorator)args[0];
 			var configurationFile = (string)args[1];
 			if (progress != null)
-				progress.Message = xWorksStrings.ksObtainingEntriesToDisplay;
+			{
+				progress.Message = LexiconResources.ksObtainingEntriesToDisplay;
+			}
 			var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
 			publicationDecorator.Refresh();
 			var entriesToPublish = publicationDecorator.GetEntriesToPublish(PropertyTable, MyRecordList.VirtualFlid);
@@ -1122,14 +1091,14 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			if (progress != null)
 			{
 				progress.Minimum = 0;
-				var entryCount = ConfiguredXHTMLGenerator.EntriesPerPage;
+				const int entryCount = ConfiguredXHTMLGenerator.EntriesPerPage;
 				progress.Maximum = entryCount + 1 + entryCount / 100;
 				progress.Position++;
 			}
 			var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, PropertyTable, Cache, MyRecordList, progress);
 #if DEBUG
 			var end = DateTime.Now;
-			System.Diagnostics.Debug.WriteLine($"saving xhtml/css took {end - start}");
+			Debug.WriteLine($"saving xhtml/css took {end - start}");
 #endif
 			return xhtmlPath;
 		}
@@ -1137,8 +1106,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		public string GetCurrentPublication()
 		{
 			// Returns the current publication and use '$$all_entries$$' if none has yet been set
-			return PropertyTable.GetValue("SelectedPublication",
-			 xWorksStrings.AllEntriesPublication);
+			return PropertyTable.GetValue("SelectedPublication", LanguageExplorerResources.AllEntriesPublication);
 		}
 
 		internal string GetCurrentConfiguration(bool fUpdate)
@@ -1160,7 +1128,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 					m_pubDecorator = new DictionaryPublicationDecorator(Cache, MyRecordList.VirtualListPublisher, MyRecordList.VirtualFlid);
 				}
 				var pubName = GetCurrentPublication();
-				if(xWorksStrings.AllEntriesPublication == pubName)
+				if(LanguageExplorerResources.AllEntriesPublication == pubName)
 				{
 					// A null publication means show everything
 					m_pubDecorator.Publication = null;
@@ -1198,7 +1166,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			}
 			// Limit length of View title to remaining available width
 			curViewName = TrimToMaxPixelWidth(Math.Max(2, maxViewWidth), curViewName);
-			var isReversalIndex = DictionaryConfigurationServices.GetDictionaryConfigurationType(PropertyTable) == xWorksStrings.ReversalIndex;
+			var isReversalIndex = DictionaryConfigurationServices.GetDictionaryConfigurationType(PropertyTable) == LanguageExplorerResources.ReversalIndex;
 			if (!isReversalIndex)
 			{
 				ResetSpacer(maxViewWidth, curViewName);
@@ -1215,22 +1183,26 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		/// </summary>
 		protected override void SetInfoBarText()
 		{
-			if(m_informationBar == null)
+			if (m_informationBar == null)
+			{
 				return;
+			}
 			var titleStr = GetBaseTitleStringFromConfig();
 			if (titleStr == string.Empty)
 			{
 				base.SetInfoBarText();
 				return;
 			}
-				// Set the configuration part of the title
-				SetConfigViewTitle();
-				//Set the publication part of the title
-				var pubNameTitlePiece = GetCurrentPublication();
-				if (pubNameTitlePiece == xWorksStrings.AllEntriesPublication)
-					pubNameTitlePiece = xWorksStrings.ksAllEntries;
-				titleStr = pubNameTitlePiece + " " + titleStr;
-			var isReversalIndex = DictionaryConfigurationServices.GetDictionaryConfigurationType(PropertyTable) == xWorksStrings.ReversalIndex;
+			// Set the configuration part of the title
+			SetConfigViewTitle();
+			//Set the publication part of the title
+			var pubNameTitlePiece = GetCurrentPublication();
+			if (pubNameTitlePiece == LanguageExplorerResources.AllEntriesPublication)
+			{
+				pubNameTitlePiece = AreaResources.ksAllEntries;
+			}
+			titleStr = pubNameTitlePiece + " " + titleStr;
+			var isReversalIndex = DictionaryConfigurationServices.GetDictionaryConfigurationType(PropertyTable) == LanguageExplorerResources.ReversalIndex;
 			if (isReversalIndex)
 			{
 				var maxViewWidth = Width / 2 - kSpaceForMenuButton;
@@ -1239,7 +1211,9 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				ResetSpacer(maxViewWidth, titleStr);
 			}
 			else
-				((IPaneBar) m_informationBar).Text = titleStr;
+			{
+				((IPaneBar)m_informationBar).Text = titleStr;
+			}
 		}
 
 		private const int kSpaceForMenuButton = 26;
@@ -1248,7 +1222,9 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			if (!m_fullyInitialized)
+			{
 				return;
+			}
 			base.OnSizeChanged(e);
 			SetInfoBarText();
 		}

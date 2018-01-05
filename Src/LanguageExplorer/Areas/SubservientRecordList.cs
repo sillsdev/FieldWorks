@@ -4,7 +4,6 @@
 
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.Works;
 using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.Application;

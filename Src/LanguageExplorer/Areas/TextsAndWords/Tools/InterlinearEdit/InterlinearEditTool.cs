@@ -10,7 +10,6 @@ using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
-using LanguageExplorer.Works;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit

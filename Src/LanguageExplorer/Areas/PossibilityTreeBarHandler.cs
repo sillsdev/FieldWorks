@@ -4,7 +4,6 @@
 
 using System.Windows.Forms;
 using LanguageExplorer.LcmUi;
-using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.LCModel;
@@ -83,8 +82,8 @@ namespace LanguageExplorer.Areas
 			    && !(MyRecordList.OwningObject as ICmPossibilityList).IsSorted)
 			{
 				// Move up and move down items make sense
-				menu.Items.Add(new DisposableToolStripMenuItem(xWorksStrings.MoveUp));
-				menu.Items.Add(new DisposableToolStripMenuItem(xWorksStrings.MoveDown));
+				menu.Items.Add(new DisposableToolStripMenuItem(LanguageExplorerResources.MoveUp));
+				menu.Items.Add(new DisposableToolStripMenuItem(LanguageExplorerResources.MoveDown));
 			}
 			return menu;
 		}
@@ -102,38 +101,48 @@ namespace LanguageExplorer.Areas
 		/// Move the clicked item the specified distance (currently +/- 1) in its owning list.
 		/// </summary>
 		/// <param name="distance"></param>
-		void MoveItem(int distance)
+		private void MoveItem(int distance)
 		{
-			int hvoMove = ClickObject;
+			var hvoMove = ClickObject;
 
 			if (hvoMove == 0)
 			{
 				return;
 			}
 
-			ICmPossibility column = m_possRepo.GetObject(hvoMove);
+			var column = m_possRepo.GetObject(hvoMove);
 			using (var columnUI = new CmPossibilityUi(column))
 			{
 				if (columnUI.CheckAndReportProtectedChartColumn())
+				{
 					return;
+				}
 			}
 			var owner = column.Owner;
 			if (owner == null) // probably not possible
+			{
 				return;
-			int hvoOwner = owner.Hvo;
-			int ownFlid = column.OwningFlid;
-			int oldIndex = m_cache.DomainDataByFlid.GetObjIndex(hvoOwner, ownFlid, column.Hvo);
-			int newIndex = oldIndex + distance;
+			}
+			var hvoOwner = owner.Hvo;
+			var ownFlid = column.OwningFlid;
+			var oldIndex = m_cache.DomainDataByFlid.GetObjIndex(hvoOwner, ownFlid, column.Hvo);
+			var newIndex = oldIndex + distance;
 			if (newIndex < 0)
+			{
 				return;
-			int cobj = m_cache.DomainDataByFlid.get_VecSize(hvoOwner, ownFlid);
+			}
+			var cobj = m_cache.DomainDataByFlid.get_VecSize(hvoOwner, ownFlid);
 			if (newIndex >= cobj)
+			{
 				return;
+			}
 			// Without this, we insert it before the next object, which is the one it's already before,
 			// so it doesn't move.
 			if (distance > 0)
+			{
 				newIndex++;
-			UndoableUnitOfWorkHelper.Do(xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem,
+			}
+			UndoableUnitOfWorkHelper.Do(AreaResources.UndoMoveItem, AreaResources.RedoMoveItem,
 				m_cache.ActionHandlerAccessor,
 				() => m_cache.DomainDataByFlid.MoveOwnSeq(
 					hvoOwner, ownFlid, oldIndex, oldIndex, hvoOwner, ownFlid, newIndex));

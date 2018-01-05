@@ -11,7 +11,6 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Resources;
-using LanguageExplorer.Works;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;

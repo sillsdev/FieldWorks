@@ -75,6 +75,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configure {0}.
+        /// </summary>
+        internal static string ConfigureTitle {
+            get {
+                return ResourceManager.GetString("ConfigureTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete this Sense and any Subsenses.
         /// </summary>
         internal static string DeleteSenseAndSubsenses {
@@ -367,11 +376,29 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Click Cancel to stop loading the Dictionary view and move to Lexicon Edit..
+        /// </summary>
+        internal static string ksCancelingPublicationLabel {
+            get {
+                return ResourceManager.GetString("ksCancelingPublicationLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The two entries have been merged..
         /// </summary>
         internal static string ksEntriesHaveBeenMerged {
             get {
                 return ResourceManager.GetString("ksEntriesHaveBeenMerged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot generate the display for the current publication.
+        /// </summary>
+        internal static string ksErrorDisplayingPublication {
+            get {
+                return ResourceManager.GetString("ksErrorDisplayingPublication", resourceCulture);
             }
         }
         
@@ -390,6 +417,33 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string ksMergeReport {
             get {
                 return ResourceManager.GetString("ksMergeReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The dictionary view has not been set..
+        /// </summary>
+        internal static string ksNoConfiguration {
+            get {
+                return ResourceManager.GetString("ksNoConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Obtaining the list of entries to display.
+        /// </summary>
+        internal static string ksObtainingEntriesToDisplay {
+            get {
+                return ResourceManager.GetString("ksObtainingEntriesToDisplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preparing to display the publication view.
+        /// </summary>
+        internal static string ksPreparingPublicationDisplay {
+            get {
+                return ResourceManager.GetString("ksPreparingPublicationDisplay", resourceCulture);
             }
         }
         
@@ -528,9 +582,9 @@ namespace LanguageExplorer.Areas.Lexicon {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters id=&quot;DictionaryPubPreview&quot; layout=&quot;publishStem&quot; layoutProperty=&quot;DictionaryPublicationLayout&quot; layoutSuffix=&quot;Preview&quot; editable=&quot;false&quot; configureObjectName=&quot;Dictionary&quot; viewTypeLabelKey=&quot;ksDictionaryView&quot; emptyTitleId=&quot;No-LexEntries&quot;&gt;
         ///	&lt;configureLayouts&gt;
-        ///		&lt;layoutType label=&quot;Stem-based (complex forms as main entries)&quot; layout=&quot;publishStem&quot;&gt;
-        ///			&lt;configure class=&quot;LexEntry&quot; label=&quot;Main Entry&quot; layout=&quot;publishStemEntry&quot;/&gt;
-        ///			&lt;configure class=&quot;LexEntry&quot; label=&quot;M [rest of string was truncated]&quot;;.
+        ///	  &lt;layoutType label=&quot;Lexeme-based (complex forms as main entries)&quot; layout=&quot;publishStem&quot;&gt;
+        ///	    &lt;configure class=&quot;LexEntry&quot; label=&quot;Main Entry&quot; layout=&quot;publishStemEntry&quot;/&gt;
+        ///	    &lt;configure class=&quot;LexEntry&quot; l [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string LexiconEditRecordDocViewParameters {
             get {
@@ -587,6 +641,15 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string Merge_With_Entry_Tooltip {
             get {
                 return ResourceManager.GetString("Merge_With_Entry_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No views match the current publication..
+        /// </summary>
+        internal static string NoConfigsMatchPub {
+            get {
+                return ResourceManager.GetString("NoConfigsMatchPub", resourceCulture);
             }
         }
         

@@ -8,7 +8,6 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
 using SIL.LCModel;

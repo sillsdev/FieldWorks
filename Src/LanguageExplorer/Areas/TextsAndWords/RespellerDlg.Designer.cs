@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -60,7 +60,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RespellerDlg));
 			this.m_cbUpdateLexicon = new System.Windows.Forms.CheckBox();
-			this.m_sourceSentences = new LanguageExplorer.Works.RecordBrowseView();
+			this.m_sourceSentences = new RecordBrowseView();
 			this.m_btnClose = new System.Windows.Forms.Button();
 			this.m_buttonImages = new System.Windows.Forms.ImageList(this.components);
 			this.label2 = new System.Windows.Forms.Label();
@@ -315,7 +315,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		#endregion
 
 		private System.Windows.Forms.CheckBox m_cbUpdateLexicon;
-		private LanguageExplorer.Works.RecordBrowseView m_sourceSentences;
+		private RecordBrowseView m_sourceSentences;
 		private System.Windows.Forms.Button m_btnClose;
 		private System.Windows.Forms.ImageList m_buttonImages;
 		private System.Windows.Forms.Label label2;

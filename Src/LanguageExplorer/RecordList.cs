@@ -14,7 +14,6 @@ using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.LcmUi.Dialogs;
-using LanguageExplorer.Works;
 using SIL.Code;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -608,7 +607,7 @@ namespace LanguageExplorer
 					{
 						continue;
 					}
-					var msg = string.Format(xWorksStrings.PunctInFieldNameWarning, name);
+					var msg = string.Format(LanguageExplorerResources.PunctInFieldNameWarning, name);
 					// The way this is worded, 'Yes' means go on with the export. We won't bother them reporting
 					// other messed-up fields. A 'no' answer means don't continue, which means it's a problem.
 					return (MessageBox.Show(Form.ActiveForm, msg, LanguageExplorerResources.PunctInfieldNameCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes);
@@ -1079,7 +1078,7 @@ namespace LanguageExplorer
 					{
 						using (ProgressState state = FwXWindow.CreatePredictiveProgressState(PropertyTable, "Delete record"))
 						{
-							state.SetMilestone(xWorksStrings.DeletingTheObject);
+							state.SetMilestone(LanguageExplorerResources.DeletingTheObject);
 							state.Breath();
 							// We will certainly switch records, but we're going to suppress the usual Save after we
 							// switch, so the user can at least Undo one level, the actual deletion. But Undoing
@@ -1180,8 +1179,8 @@ namespace LanguageExplorer
 			m_suppressSaveOnChangeRecord = true;
 			try
 			{
-				UndoableUnitOfWorkHelper.Do(string.Format(xWorksStrings.ksUndoInsert, command.UndoRedoTextInsert),
-					string.Format(xWorksStrings.ksRedoInsert, command.UndoRedoTextInsert), Cache.ActionHandlerAccessor, () =>
+				UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.ksUndoInsert0, command.UndoRedoTextInsert),
+					string.Format(LanguageExplorerResources.ksRedoInsert0, command.UndoRedoTextInsert), Cache.ActionHandlerAccessor, () =>
 				{
 					result = m_list.CreateAndInsert(className);
 				});
@@ -1251,7 +1250,7 @@ namespace LanguageExplorer
 
 					if (fSuitableTarget)
 					{
-						var dr = MessageBox.Show(xWorksStrings.LinkTargetNotAvailableDueToFilter, xWorksStrings.TargetNotFound, MessageBoxButtons.YesNo);
+						var dr = MessageBox.Show(LanguageExplorerResources.LinkTargetNotAvailableDueToFilter, LanguageExplorerResources.TargetNotFound, MessageBoxButtons.YesNo);
 						if (dr == DialogResult.Yes)
 						{
 							// We had changed from OnChangeFilter to SendMessage("RemoveFilters") to solve a filterbar
@@ -2055,7 +2054,7 @@ namespace LanguageExplorer
 				return;
 			}
 
-			var newSortMessage = Sorter == null || SortName == null || (_isDefaultSort && _defaultSorter != null) ? String.Empty : String.Format(xWorksStrings.SortedBy, SortName);
+			var newSortMessage = Sorter == null || SortName == null || (_isDefaultSort && _defaultSorter != null) ? string.Empty : string.Format(LanguageExplorerResources.SortedBy0, SortName);
 			StatusBarPanelServices.SetStatusBarPanelSort(_statusBar, newSortMessage);
 		}
 
@@ -2209,7 +2208,7 @@ namespace LanguageExplorer
 		{
 			m_filter = null;
 			m_sorter = null;
-			MessageBox.Show(Form.ActiveForm, xWorksStrings.ksInvalidFieldInFilterOrSorter, xWorksStrings.ksErrorCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			MessageBox.Show(Form.ActiveForm, LanguageExplorerResources.ksInvalidFieldInFilterOrSorter, LanguageExplorerResources.ksErrorCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			var newSortedObjects = GetFilteredSortedList();
 			return newSortedObjects;
 		}
@@ -2234,7 +2233,7 @@ namespace LanguageExplorer
 			var panel = PropertyTable.GetValue<StatusBarProgressPanel>("ProgressBar");
 			using (var progress = (panel == null) ? new NullProgressState() : new ProgressState(panel))
 			{
-				progress.SetMilestone(xWorksStrings.ksSorting);
+				progress.SetMilestone(LanguageExplorerResources.ksSorting);
 				// Allocate an arbitrary 20% for making the items.
 				var objectSet = GetObjectSet();
 				var count = objectSet.Count();
@@ -2391,7 +2390,7 @@ namespace LanguageExplorer
 			ClearInvalidSubitem();
 			if (CurrentObjectHvo != 0 && !CurrentObjectIsValid)
 			{
-				MessageBox.Show(xWorksStrings.SelectedObjectHasBeenDeleted, xWorksStrings.DeletedObjectDetected, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(LanguageExplorerResources.SelectedObjectHasBeenDeleted, LanguageExplorerResources.DeletedObjectDetected, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				_reloadingDueToMissingObject = true;
 				try
 				{
@@ -2853,7 +2852,7 @@ namespace LanguageExplorer
 			string msg;
 			if (!m_cache.ServiceLocator.IsValidObjectId(CurrentObjectHvo))
 			{
-				msg = xWorksStrings.ADeletedObject;
+				msg = LanguageExplorerResources.ADeletedObject;
 			}
 			else
 			{
@@ -3099,7 +3098,7 @@ namespace LanguageExplorer
 
 		protected virtual string FilterStatusContents(bool listIsFiltered)
 		{
-			return listIsFiltered ? xWorksStrings.Filtered : String.Empty;
+			return listIsFiltered ? LanguageExplorerResources.Filtered : string.Empty;
 		}
 
 		/// <summary>

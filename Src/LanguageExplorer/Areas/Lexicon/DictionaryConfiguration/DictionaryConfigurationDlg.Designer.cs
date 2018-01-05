@@ -1,10 +1,10 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
-using LanguageExplorer.Works;
-using LanguageExplorer.Works.DictionaryDetailsView;
+using LanguageExplorer.DictionaryConfiguration;
+using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
 using SIL.Windows.Forms.HtmlBrowser;
 
 namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
@@ -55,7 +55,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			this.applyButton = new System.Windows.Forms.Button();
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.okButton = new System.Windows.Forms.Button();
-			this.treeControl = new LanguageExplorer.Works.DictionaryConfigurationTreeControl();
+			this.treeControl = new LanguageExplorer.DictionaryConfiguration.DictionaryConfigurationTreeControl();
 			((System.ComponentModel.ISupportInitialize)(this.manageConfigs_treeDetailButton_split)).BeginInit();
 			this.manageConfigs_treeDetailButton_split.Panel1.SuspendLayout();
 			this.manageConfigs_treeDetailButton_split.Panel2.SuspendLayout();

@@ -44,7 +44,6 @@ using SIL.FieldWorks.LexicalProvider;
 using SIL.FieldWorks.PaObjects;
 using SIL.FieldWorks.Resources;
 using SIL.Keyboarding;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
 using SIL.Utils;

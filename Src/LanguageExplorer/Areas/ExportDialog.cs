@@ -17,7 +17,7 @@ using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.Dumpster;
 using LanguageExplorer.LcmUi;
-using LanguageExplorer.Works;
+using LanguageExplorer.DictionaryConfiguration;
 using Microsoft.Win32;
 using SIL.Reporting;
 using SIL.FieldWorks.Common.Controls;
@@ -460,8 +460,8 @@ namespace LanguageExplorer.Areas
 				{
 					using (var dlg = new FolderBrowserDialogAdapter())
 					{
-						dlg.Tag = xWorksStrings.ksChooseLIFTFolderTitle; // can't set title !!??
-						dlg.Description = String.Format(xWorksStrings.ksChooseLIFTExportFolder,
+						dlg.Tag = AreaResources.ksChooseLIFTFolderTitle; // can't set title !!??
+						dlg.Description = string.Format(AreaResources.ksChooseLIFTExportFolder,
 							m_exportItems[0].SubItems[1].Text);
 						dlg.ShowNewFolderButton = true;
 						dlg.RootFolder = Environment.SpecialFolder.Desktop;
@@ -476,7 +476,7 @@ namespace LanguageExplorer.Areas
 					MessageBoxButtons btns = MessageBoxButtons.OKCancel;
 					if (File.Exists(sFileName))
 					{
-						sMsg = xWorksStrings.ksLIFTAlreadyExists;
+						sMsg = AreaResources.ksLIFTAlreadyExists;
 						btns = MessageBoxButtons.OKCancel;
 					}
 					else
@@ -484,7 +484,7 @@ namespace LanguageExplorer.Areas
 						string[] rgfiles = Directory.GetFiles(sDirectory);
 						if (rgfiles.Length > 0)
 						{
-							sMsg = xWorksStrings.ksLIFTFolderNotEmpty;
+							sMsg = AreaResources.ksLIFTFolderNotEmpty;
 							btns = MessageBoxButtons.YesNo;
 						}
 					}
@@ -553,10 +553,12 @@ namespace LanguageExplorer.Areas
 								dlg.AddExtension = true;
 								dlg.DefaultExt = m_exportItems[0].SubItems[2].Text;
 								dlg.Filter = m_exportItems[0].SubItems[3].Text;
-								dlg.Title = String.Format(xWorksStrings.ExportTo0, m_exportItems[0].SubItems[1].Text);
+								dlg.Title = string.Format(AreaResources.ExportTo0, m_exportItems[0].SubItems[1].Text);
 								dlg.InitialDirectory = PropertyTable.GetValue("ExportDir", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
 								if (dlg.ShowDialog(this) != DialogResult.OK)
+								{
 									return;
+								}
 								sFileName = dlg.FileName;
 								sDirectory = Path.GetDirectoryName(sFileName);
 							}
@@ -738,12 +740,11 @@ namespace LanguageExplorer.Areas
 						// Show the pretty yellow semi-crash dialog box, with instructions for the
 						// user to report the bug.
 						var app = PropertyTable.GetValue<IApp>("App");
-						ErrorReporter.ReportException(new Exception(xWorksStrings.ksLiftExportBugReport, e.InnerException),
-								app.SettingsKey, app.SupportEmailAddress, this, false);
+						ErrorReporter.ReportException(new Exception(AreaResources.ksLiftExportBugReport, e.InnerException), app.SettingsKey, app.SupportEmailAddress, this, false);
 					}
 					else
 					{
-						string msg = xWorksStrings.ErrorExporting_ProbablyBug + Environment.NewLine + e.InnerException.Message;
+						var msg = AreaResources.ErrorExporting_ProbablyBug + Environment.NewLine + e.InnerException.Message;
 						MessageBox.Show(this, msg);
 					}
 				}
@@ -833,15 +834,13 @@ namespace LanguageExplorer.Areas
 #if DEBUG
 			var dtExport = DateTime.Now;
 #endif
-			progress.Message = String.Format(xWorksStrings.ksValidatingOutputFile,
-					Path.GetFileName(outPath));
+			progress.Message = string.Format(AreaResources.ksValidatingOutputFile, Path.GetFileName(outPath));
 			Validator.CheckLiftWithPossibleThrow(outPath);
 #if DEBUG
 			var dtValidate = DateTime.Now;
 			var exportDelta = new TimeSpan(dtExport.Ticks - dtStart.Ticks);
 			var validateDelta = new TimeSpan(dtValidate.Ticks - dtExport.Ticks);
-			Debug.WriteLine(String.Format("Export time = {0}, Validation time = {1}",
-				exportDelta, validateDelta));
+			Debug.WriteLine($"Export time = {exportDelta}, Validation time = {validateDelta}");
 #endif
 			return null;
 		}
@@ -880,14 +879,13 @@ namespace LanguageExplorer.Areas
 #endif
 			if (fLiftOutput)
 			{
-				progressDialog.Message = String.Format(xWorksStrings.ksValidatingOutputFile,
-					Path.GetFileName(outPath));
+				progressDialog.Message = string.Format(AreaResources.ksValidatingOutputFile, Path.GetFileName(outPath));
 				Validator.CheckLiftWithPossibleThrow(outPath);
 			}
 #if DEBUG
-			DateTime dtValidate = DateTime.Now;
-			TimeSpan exportDelta = new TimeSpan(dtExport.Ticks - dtStart.Ticks);
-			TimeSpan validateDelta = new TimeSpan(dtValidate.Ticks - dtExport.Ticks);
+			var dtValidate = DateTime.Now;
+			var exportDelta = new TimeSpan(dtExport.Ticks - dtStart.Ticks);
+			var validateDelta = new TimeSpan(dtValidate.Ticks - dtExport.Ticks);
 			Debug.WriteLine("Export time = {0}, Validation time = {1}", exportDelta, validateDelta);
 #endif
 			return null;
@@ -931,40 +929,45 @@ namespace LanguageExplorer.Areas
 				m_ce.Finish(ft.m_sDataType);
 				w.Close();
 #if DEBUG
-				s = string.Format("Finished Configured Export Dump at {0}",
-					DateTime.Now.ToLongTimeString());
+				s = $"Finished Configured Export Dump at {DateTime.Now.ToLongTimeString()}";
 				Debug.WriteLine(s);
 #endif
 				if (!string.IsNullOrEmpty(ft.m_sXsltFiles))
 				{
-					string[] rgsXslts = ft.m_sXsltFiles.Split(new[] { ';' });
-					int cXslts = rgsXslts.GetLength(0);
+					var rgsXslts = ft.m_sXsltFiles.Split(';');
+					var cXslts = rgsXslts.GetLength(0);
 					progressDlg.Position = 0;
 					progressDlg.Minimum = 0;
 					progressDlg.Maximum = cXslts;
-					progressDlg.Message = xWorksStrings.ProcessingIntoFinalForm;
-					int idx = fxtPath.LastIndexOfAny(new[] { '/', '\\' });
+					progressDlg.Message = AreaResources.ProcessingIntoFinalForm;
+					var idx = fxtPath.LastIndexOfAny(new[] { '/', '\\' });
 					if (idx < 0)
+					{
 						idx = 0;
+					}
 					else
+					{
 						++idx;
-					string basePath = fxtPath.Substring(0, idx);
-					for (int ix = 0; ix <= cXslts; ++ix)
+					}
+					var basePath = fxtPath.Substring(0, idx);
+					for (var ix = 0; ix <= cXslts; ++ix)
 					{
 #if DEBUG
 						File.Copy(outPath, Path.Combine(dirPath, "DebugOnlyExportStage" + copyCount + ".txt"), true);
 						copyCount++;
 						if (ix < cXslts)
-							s = String.Format("Starting Configured Export XSLT file {0} at {1}",
-								rgsXslts[ix], DateTime.Now.ToLongTimeString());
+						{
+							s = $"Starting Configured Export XSLT file {rgsXslts[ix]} at {DateTime.Now.ToLongTimeString()}";
+						}
 						else
-							s = String.Format("Starting final postprocess phase at {0}",
-								DateTime.Now.ToLongTimeString());
+						{
+							s = $"Starting final postprocess phase at {DateTime.Now.ToLongTimeString()}";
+						}
 						Debug.WriteLine(s);
 #endif
 						if (ix < cXslts)
 						{
-							string sXsltPath = basePath + rgsXslts[ix];
+							var sXsltPath = basePath + rgsXslts[ix];
 							m_ce.PostProcess(sXsltPath, outPath, ix + 1);
 						}
 						else
@@ -1087,10 +1090,14 @@ namespace LanguageExplorer.Areas
 				string sDefaultFilter = ResourceHelper.FileFilter(FileFilterType.AllFiles);
 				string filter = XmlUtils.GetOptionalAttributeValue(node,"filter", sDefaultFilter);
 				string description = node.InnerText;
-				if (description!=null)
+				if (description != null)
+				{
 					description = description.Trim();
+				}
 				if (string.IsNullOrEmpty(description))
-					description = xWorksStrings.NoDescriptionForItem;
+				{
+					description = AreaResources.NoDescriptionForItem;
+				}
 				var item = new ListViewItem(new[]{dataLabel, formatLabel, defaultExtension, filter, description});
 				item.Tag = path;
 				m_exportList.Items.Add(item);
@@ -1249,9 +1256,11 @@ namespace LanguageExplorer.Areas
 		private void OnDumperSetProgressMessage(object sender, ProgressMessageArgs e)
 		{
 			Debug.Assert(m_progressDlg != null);
-			string sMsg = xWorksStrings.ResourceManager.GetString(e.MessageId, xWorksStrings.Culture);
-			if (!String.IsNullOrEmpty(sMsg))
+			var sMsg = DictionaryConfigurationStrings.ResourceManager.GetString(e.MessageId, DictionaryConfigurationStrings.Culture);
+			if (!string.IsNullOrEmpty(sMsg))
+			{
 				m_progressDlg.Message = sMsg;
+			}
 			m_progressDlg.Position = 0;
 			m_progressDlg.Minimum = 0;
 			m_progressDlg.Maximum = e.Max;
@@ -1314,45 +1323,51 @@ namespace LanguageExplorer.Areas
 		/// <returns></returns>
 		internal object ExportSemanticDomains(IThreadedProgress progressDlg, object[] parameters)
 		{
-			string outPath = (string) parameters[0];
+			var outPath = (string) parameters[0];
 			var ft = (FxtType) parameters[1];
 			var fxtPath = (string) parameters[2];
-			bool allQuestions = (bool) parameters[3];
+			var allQuestions = (bool) parameters[3];
 			m_progressDlg = progressDlg;
 			var lists = new List<ICmPossibilityList>();
 			lists.Add(m_cache.LangProject.SemanticDomainListOA);
 			var exporter = new TranslatedListsExporter(lists, m_translationWritingSystems, progressDlg);
 			exporter.ExportLists(outPath);
-			FxtType ft1 = ft;
+			var ft1 = ft;
 #if DEBUG
-			string dirPath = Path.GetTempPath();
+			var dirPath = Path.GetTempPath();
 #endif
-			string xslt = ft1.m_sXsltFiles;
+			var xslt = ft1.m_sXsltFiles;
 			progressDlg.Position = 0;
 			progressDlg.Minimum = 0;
 			progressDlg.Maximum = 1;
-			progressDlg.Message = xWorksStrings.ProcessingIntoFinalForm;
-			int idx = fxtPath.LastIndexOfAny(new[] {'/', '\\'});
+			progressDlg.Message = AreaResources.ProcessingIntoFinalForm;
+			var idx = fxtPath.LastIndexOfAny(new[] {'/', '\\'});
 			if (idx < 0)
+			{
 				idx = 0;
+			}
 			else
+			{
 				++idx;
-			string basePath = fxtPath.Substring(0, idx);
-			string sXsltPath = basePath + xslt;
-			string sIntermediateFile = ConfiguredExport.RenameOutputToPassN(outPath, 0);
+			}
+			var basePath = fxtPath.Substring(0, idx);
+			var sXsltPath = basePath + xslt;
+			var sIntermediateFile = ConfiguredExport.RenameOutputToPassN(outPath, 0);
 
 			// The semantic domain xslt uses document('folderStart.xml') to retrieve the list of H1 topics.
 			// This is not allowed by default so we must use a settings object to enable it.
 			var settings = new XsltSettings(enableDocumentFunction: true, enableScript: false);
-			XslCompiledTransform xsl = new XslCompiledTransform();
+			var xsl = new XslCompiledTransform();
 			xsl.Load(sXsltPath, settings, new XmlUrlResolver());
 			var arguments = new XsltArgumentList();
 			// If we aren't outputting english we need to ignore it (except possibly for missing items)
-			bool ignoreEn = m_translationWritingSystems[0] != m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en");
+			var ignoreEn = m_translationWritingSystems[0] != m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en");
 			arguments.AddParam(@"ignoreLang", @"", (ignoreEn ? @"en" : @""));
 			arguments.AddParam(@"allQuestions", @"", (allQuestions ? @"1" : @"0"));
 			using (var writer = FileUtils.OpenFileForWrite(outPath, Encoding.UTF8))
+			{
 				xsl.Transform(sIntermediateFile, arguments, writer);
+			}
 			// Deleting them deals with LT-6345,
 			// which asked that they be put in the temp folder.
 			// But moving them to the temp directory is better for debugging errors.
@@ -1360,8 +1375,7 @@ namespace LanguageExplorer.Areas
 			progressDlg.Step(0);
 
 #if DEBUG
-			string s = string.Format("Totally Finished Export Semantic domains at {0}",
-				DateTime.Now.ToLongTimeString());
+			var s = $"Totally Finished Export Semantic domains at {DateTime.Now.ToLongTimeString()}";
 			Debug.WriteLine(s);
 #endif
 			return null; // method signature is required by ProgressDialog

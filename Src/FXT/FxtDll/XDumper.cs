@@ -316,32 +316,30 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoTemplateElement(TextWriter contentsStream, XmlNode node)
 		{
 			m_templateRootNode = node;
-			string sIcuNormalizationMode = XmlUtils.GetOptionalAttributeValue(m_templateRootNode, "normalization", "NFC");
-			if (sIcuNormalizationMode == "NFD")
-				m_eIcuNormalizationMode = Icu.UNormalizationMode.UNORM_NFD;
-			else
-				m_eIcuNormalizationMode = Icu.UNormalizationMode.UNORM_NFC;
-			string style = XmlUtils.GetOptionalAttributeValue(m_templateRootNode, "writingSystemAttributeStyle", WritingSystemAttrStyles.FieldWorks.ToString());
+			var sIcuNormalizationMode = XmlUtils.GetOptionalAttributeValue(m_templateRootNode, "normalization", "NFC");
+			m_eIcuNormalizationMode = sIcuNormalizationMode == "NFD" ? Icu.UNormalizationMode.UNORM_NFD : Icu.UNormalizationMode.UNORM_NFC;
+			var style = XmlUtils.GetOptionalAttributeValue(m_templateRootNode, "writingSystemAttributeStyle", WritingSystemAttrStyles.FieldWorks.ToString());
 			m_writingSystemAttrStyle = (WritingSystemAttrStyles) System.Enum.Parse(typeof(WritingSystemAttrStyles), style);
-			string sFormatOutput = XmlUtils.GetOptionalAttributeValue(m_templateRootNode, "stringFormatOutputStyle", StringFormatOutputStyle.None.ToString());
+			var sFormatOutput = XmlUtils.GetOptionalAttributeValue(m_templateRootNode, "stringFormatOutputStyle", StringFormatOutputStyle.None.ToString());
 			m_eStringFormatOutput = (StringFormatOutputStyle)System.Enum.Parse(typeof(StringFormatOutputStyle), sFormatOutput);
 			m_requireClassTemplatesForEverything = XmlUtils.GetBooleanAttributeValue(node,"requireClassTemplatesForEverything");
 			m_doUseBaseClassTemplatesIfNeeded = XmlUtils.GetBooleanAttributeValue(node, "doUseBaseClassTemplatesIfNeeded");
 
-			if (UpdateProgress != null)
-				UpdateProgress(this);
-			string sProgressMsgId = XmlUtils.GetOptionalAttributeValue(m_templateRootNode, "messageId");
-			if (!String.IsNullOrEmpty(sProgressMsgId) && SetProgressMessage != null)
+			UpdateProgress?.Invoke(this);
+			var sProgressMsgId = XmlUtils.GetOptionalAttributeValue(m_templateRootNode, "messageId");
+			if (!string.IsNullOrEmpty(sProgressMsgId) && SetProgressMessage != null)
 			{
 				var ma = new ProgressMessageArgs
-					{
-						MessageId = sProgressMsgId,
-						Max = XmlUtils.GetOptionalIntegerValue(m_templateRootNode, "progressMax", 20)
-					};
+				{
+					MessageId = sProgressMsgId,
+					Max = XmlUtils.GetOptionalIntegerValue(m_templateRootNode, "progressMax", 20)
+				};
 				SetProgressMessage.Invoke(this, ma);
 			}
-			if (String.IsNullOrEmpty(m_sAuxiliaryFxtFile))	// don't recurse in Go() more than once.
+			if (string.IsNullOrEmpty(m_sAuxiliaryFxtFile)) // don't recurse in Go() more than once.
+			{
 				ComputeAuxiliaryFilename(contentsStream, node);
+			}
 
 			DumpObject(contentsStream, m_rootObject, null);
 		}
@@ -349,14 +347,20 @@ namespace SIL.FieldWorks.Common.FXT
 		private void ComputeAuxiliaryFilename(TextWriter contentsStream, XmlNode node)
 		{
 			m_sAuxiliaryFxtFile = XmlUtils.GetOptionalAttributeValue(node, "auxiliaryFxt");
-			if (String.IsNullOrEmpty(m_sAuxiliaryFxtFile))
+			if (string.IsNullOrEmpty(m_sAuxiliaryFxtFile))
+			{
 				return;
+			}
 			m_sAuxiliaryExtension = XmlUtils.GetOptionalAttributeValue(node, "auxiliaryExtension");
-			if (String.IsNullOrEmpty(m_sAuxiliaryExtension))
+			if (string.IsNullOrEmpty(m_sAuxiliaryExtension))
+			{
 				m_sAuxiliaryExtension = "aux.xml";
-			string sBasename = m_sOutputFilePath;
-			if (String.IsNullOrEmpty(sBasename))
+			}
+			var sBasename = m_sOutputFilePath;
+			if (string.IsNullOrEmpty(sBasename))
+			{
 				sBasename = "DUMMYFILENAME.XML";
+			}
 			m_sAuxiliaryFilename = Path.ChangeExtension(sBasename, m_sAuxiliaryExtension);
 		}
 
@@ -374,16 +378,18 @@ namespace SIL.FieldWorks.Common.FXT
 			 * In addition, I'm going to make it try to find a class template for the super class.
 			 */
 
-			Type searchType = type;
+			var searchType = type;
 			string sSearchKey;
 			do
 			{
 				sSearchKey = searchType.Name;
-				if (!String.IsNullOrEmpty(sClassTag))
+				if (!string.IsNullOrEmpty(sClassTag))
+				{
 					sSearchKey = sSearchKey + "-" + sClassTag;
+				}
 				if (!m_classNameToclassNode.ContainsKey(sSearchKey))
 				{
-					XmlNode node = m_templateRootNode.SelectSingleNode("class[@name='" + sSearchKey + "']");
+					var node = m_templateRootNode.SelectSingleNode("class[@name='" + sSearchKey + "']");
 					if (node != null)
 					{
 						m_classNameToclassNode[sSearchKey] = node;
@@ -401,47 +407,40 @@ namespace SIL.FieldWorks.Common.FXT
 
 				if (m_requireClassTemplatesForEverything)
 				{
-					StringBuilder sbldr = new StringBuilder(
-						"Did not find a <class> element matching the type or any ancestor type of ");
+					var sbldr = new StringBuilder("Did not find a <class> element matching the type or any ancestor type of ");
 					sbldr.Append(type.Name);
-					if (!String.IsNullOrEmpty(sClassTag))
+					if (!string.IsNullOrEmpty(sClassTag))
+					{
 						sbldr.AppendFormat(" marked with the tag {0}", sClassTag);
+					}
 					sbldr.Append(".");
 					throw new RuntimeConfigurationException(sbldr.ToString());
 				}
-				else
-				{
-					return null;
-				}
+				return null;
 			}
-			XmlNode classNode = m_classNameToclassNode[sSearchKey];
-
-			return classNode;
+			return m_classNameToclassNode[sSearchKey];
 		}
 
 		protected XmlNode GetClassTemplateNode(string className)
 		{
 			if (!m_classNameToclassNode.ContainsKey(className))
 			{
-				XmlNode node = m_templateRootNode.SelectSingleNode("class[@name='" + className + "']");
+				var node = m_templateRootNode.SelectSingleNode("class[@name='" + className + "']");
 				if (node != null)
 				{
 					m_classNameToclassNode[className] = node;
 					return node;
 				}
-				else
-				{
-					return null;
-				}
+				return null;
 			}
 			return m_classNameToclassNode[className];
 		}
 
 		protected void DumpObject(TextWriter contentsStream, ICmObject currentObject, string sClassTag)
 		{
-			string className = currentObject.ClassName;
+			var className = currentObject.ClassName;
 			XmlNode classNode = null;
-			if (sClassTag != null && sClassTag.Length > 0)
+			if (!string.IsNullOrEmpty(sClassTag))
 			{
 				className = className + "-" + sClassTag;
 				classNode = GetClassTemplateNode(className);
@@ -456,7 +455,7 @@ namespace SIL.FieldWorks.Common.FXT
 			}
 			if (m_filters != null)
 			{
-				foreach (IFilterStrategy filter in m_filters)
+				foreach (var filter in m_filters)
 				{
 					string explanation;
 					if (!filter.DoInclude(currentObject, out explanation))
@@ -466,7 +465,7 @@ namespace SIL.FieldWorks.Common.FXT
 
 						using (var writer = XmlWriter.Create(contentsStream, new XmlWriterSettings { OmitXmlDeclaration = true, ConformanceLevel = ConformanceLevel.Fragment }))
 						{
-							writer.WriteComment(String.Format(" Object filtered out by filter {0}, reason: {1} ", filter.Label, explanation));
+							writer.WriteComment($" Object filtered out by filter {filter.Label}, reason: {explanation} ");
 
 							// would choke the parser later if there were reserved chars in there
 							//contentsStream.Write("<!-- Object filtered out by filter " + filter.Label + ", reason: "+ explanation + " ");
@@ -481,15 +480,15 @@ namespace SIL.FieldWorks.Common.FXT
 			DoChildren(/*null,*/ contentsStream, currentObject, classNode, null);
 		}
 
-		protected void CollectCallElementAttributes(List<string> rgsAttrs,
-			ICmObject currentObject, XmlNode node)
+		protected void CollectCallElementAttributes(List<string> rgsAttrs, ICmObject currentObject, XmlNode node)
 		{
-			string name = XmlUtils.GetMandatoryAttributeValue(node, "name").Trim();
-			XmlNode classNode = GetClassTemplateNode(name);
+			var name = XmlUtils.GetMandatoryAttributeValue(node, "name").Trim();
+			var classNode = GetClassTemplateNode(name);
 			if (classNode == null)
+			{
 				return;//	throw new RuntimeConfigurationException("Did not find a <class> element matching the root object type of "+className+".");
-
-			string flagsList = XmlUtils.GetOptionalAttributeValue(node, "flags");
+			}
+			var flagsList = XmlUtils.GetOptionalAttributeValue(node, "flags");
 			CollectAttributes(rgsAttrs, currentObject, classNode, flagsList);
 		}
 		/// <summary>

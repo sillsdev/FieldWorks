@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
@@ -75,8 +74,8 @@ namespace LanguageExplorer.Areas.Notebook
 				{
 					try
 					{
-						progressDlg.Title = String.Format(xWorksStrings.Exporting0, m_exportList.SelectedItems[0].Text);
-						progressDlg.Message = xWorksStrings.Exporting_;
+						progressDlg.Title = string.Format(NotebookResources.Exporting0, m_exportList.SelectedItems[0].Text);
+						progressDlg.Message = NotebookResources.Exporting_;
 						switch (ft.m_ft)
 						{
 							case FxtTypes.kftFxt:
@@ -101,7 +100,7 @@ namespace LanguageExplorer.Areas.Notebook
 						}
 						else
 						{
-							var msg = xWorksStrings.ErrorExporting_ProbablyBug + Environment.NewLine + e.InnerException.Message;
+							var msg = AreaResources.ErrorExporting_ProbablyBug + Environment.NewLine + e.InnerException.Message;
 							MessageBox.Show(this, msg);
 						}
 					}
@@ -144,7 +143,7 @@ namespace LanguageExplorer.Areas.Notebook
 					progress.Position = 0;
 					progress.Minimum = 0;
 					progress.Maximum = cXslts;
-					progress.Message = xWorksStrings.ProcessingIntoFinalForm;
+					progress.Message = AreaResources.ProcessingIntoFinalForm;
 					var basePath = Path.GetDirectoryName(fxtPath);
 					for (var ix = 0; ix < cXslts; ++ix)
 					{

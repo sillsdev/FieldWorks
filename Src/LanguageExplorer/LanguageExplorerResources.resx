@@ -1218,4 +1218,183 @@ you expect.</value>
   <data name="PunctInfieldNameCaption" xml:space="preserve">
     <value>Punctuation in custom field name</value>
   </data>
+  <data name="ADeletedObject" xml:space="preserve">
+    <value>A deleted object</value>
+  </data>
+  <data name="DeletedObjectDetected" xml:space="preserve">
+    <value>Deleted object detected</value>
+  </data>
+  <data name="DeletingTheObject" xml:space="preserve">
+    <value>Deleting the object</value>
+  </data>
+  <data name="Filtered" xml:space="preserve">
+    <value>Filtered</value>
+  </data>
+  <data name="ksErrorCaption" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ksInvalidFieldInFilterOrSorter" xml:space="preserve">
+    <value>FieldWorks has detected that an unknown field (possibly a custom field you have just deleted) is being used to filter or sort this view. Filtering and sorting will be disabled until you select a new filter or sort sequence.</value>
+  </data>
+  <data name="ksRedoInsert0" xml:space="preserve">
+    <value>Redo Insert {0}</value>
+  </data>
+  <data name="ksSorting" xml:space="preserve">
+    <value>Sorting</value>
+    <comment>Label used in progress bar</comment>
+  </data>
+  <data name="ksUndoInsert0" xml:space="preserve">
+    <value>Undo Insert {0}</value>
+  </data>
+  <data name="LinkTargetNotAvailableDueToFilter" xml:space="preserve">
+    <value>What would normally be shown is being blocked, probably because a filter hides it.  Do you want to turn off the filter?</value>
+  </data>
+  <data name="PunctInFieldNameWarning" xml:space="preserve">
+    <value>The custom field name "{0}" includes punctuation characters. This may cause export to fail or make the exported file difficult for other programs to use. We recommend that you rename your custom field and then do the export again.
+Do you want to continue with the export?</value>
+  </data>
+  <data name="SelectedObjectHasBeenDeleted" xml:space="preserve">
+    <value>The selected object has been deleted (possibly by another user on a networked computer). Refreshing.</value>
+  </data>
+  <data name="SortedBy0" xml:space="preserve">
+    <value>Sorted by {0}</value>
+  </data>
+  <data name="TargetNotFound" xml:space="preserve">
+    <value>Cannot show normally</value>
+  </data>
+  <data name="AllEntriesPublication" xml:space="preserve">
+    <value>$$all_entries$$</value>
+    <comment>Do Not Translate</comment>
+  </data>
+  <data name="BeginCompressingDataForWebonary" xml:space="preserve">
+    <value>Compressing data before sending to Webonary.</value>
+    <comment>Displayed in the log box of UploadToWebonaryDlg when data is being zipped up.</comment>
+  </data>
+  <data name="Dictionary" xml:space="preserve">
+    <value>Dictionary</value>
+  </data>
+  <data name="ExportingEntriesToWebonary" xml:space="preserve">
+    <value>Exporting entries for the {0} publication using the {1} view</value>
+    <comment>Displayed in the log box when exporting to Webonary.  Arguments are: name of publication, name of configured view</comment>
+  </data>
+  <data name="ExportingEntriesToWebonaryCompleted" xml:space="preserve">
+    <value>Export of lexicon completed.</value>
+    <comment>Displayed in the log box when exporting to Webonary after all entries are exported.</comment>
+  </data>
+  <data name="ExportingReversalsToWebonary" xml:space="preserve">
+    <value>Exporting entries for {0} reversal.</value>
+  </data>
+  <data name="ExportingReversalsToWebonaryCompleted" xml:space="preserve">
+    <value>Export of reversal completed.</value>
+  </data>
+  <data name="FailedJump" xml:space="preserve">
+    <value>Failed Jump</value>
+  </data>
+  <data name="FinishedCompressingDataForWebonary" xml:space="preserve">
+    <value>Compression complete.</value>
+    <comment>Displayed in the UploadToWebonaryDlg log box</comment>
+  </data>
+  <data name="ksCantJumpCaption" xml:space="preserve">
+    <value>Cannot follow link</value>
+    <comment>Caption for any of the ksCantJump message boxes</comment>
+  </data>
+  <data name="ksCantJumpToLangProj" xml:space="preserve">
+    <value>You are trying to follow a link to one of the root objects representing the whole project. Sorry, but FLEx does not know how to take you to a more specific place within it.</value>
+    <comment>Displayed when following a hot link, e.g., from a conflict report about a property of LangProject or LexDb (suc as one about conflicting changes to active writing systems).</comment>
+  </data>
+  <data name="ksCantJumpToObject" xml:space="preserve">
+    <value>Sorry, FLEx does not know how to jump to this kind of object (a {0}).</value>
+    <comment>Displayed when following a hot link (e.g., from a conflict report).</comment>
+  </data>
+  <data name="ksCantJumpToScripture" xml:space="preserve">
+    <value>Sorry, FLEx does not yet know how to jump to a particular location in Scripture.</value>
+    <comment>Displayed when following a hot link to somewhere in Scripture. Not sure this can actually happen.</comment>
+  </data>
+  <data name="ksCharacterStyleForContent" xml:space="preserve">
+    <value>Character Style for Content:</value>
+  </data>
+  <data name="ksComplexFormTypes" xml:space="preserve">
+    <value>Complex Form Types:</value>
+  </data>
+  <data name="ksCurrentReversal" xml:space="preserve">
+    <value>Current Reversal Index</value>
+  </data>
+  <data name="ksDefaultAnalysis" xml:space="preserve">
+    <value>Default Analysis</value>
+  </data>
+  <data name="ksDefaultPronunciation" xml:space="preserve">
+    <value>Default Pronunciation</value>
+  </data>
+  <data name="ksDefaultVernacular" xml:space="preserve">
+    <value>Default Vernacular</value>
+  </data>
+  <data name="ksErrorNoViewOnPublication" xml:space="preserve">
+    <value>No view was found.</value>
+    <comment>Message displayed in Upload to Webonary dialog to inform user about No view was found</comment>
+  </data>
+  <data name="ksLexicalRelationTypes" xml:space="preserve">
+    <value>Lexical Relation Types:</value>
+  </data>
+  <data name="ksMinorEntryTypes" xml:space="preserve">
+    <value>Minor Entry Types:</value>
+  </data>
+  <data name="ksNoComplexFormType" xml:space="preserve">
+    <value>No Complex Form Type</value>
+  </data>
+  <data name="ksNoVariantType" xml:space="preserve">
+    <value>No Variant Type</value>
+  </data>
+  <data name="ksParagraphStyleForContent" xml:space="preserve">
+    <value>Paragraph Style for Content:</value>
+  </data>
+  <data name="ksUsesTheSameConfigurationAs" xml:space="preserve">
+    <value>{0} uses the same configuration for subfields as
+{1}.</value>
+    <comment>{0} and {1} are both configuration nodes</comment>
+  </data>
+  <data name="ksVariantTypes" xml:space="preserve">
+    <value>Variant Types:</value>
+  </data>
+  <data name="MoveDown" xml:space="preserve">
+    <value>Move Down</value>
+    <comment>action on a tree view item</comment>
+  </data>
+  <data name="MoveUp" xml:space="preserve">
+    <value>Move Up</value>
+    <comment>action on a tree view item</comment>
+  </data>
+  <data name="PublicationEntriesLabel" xml:space="preserve">
+    <value>Clicking Submit will send {0} dictionary entries{1} to Webonary.</value>
+    <comment>Message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. 0 will be a number. 1 will be either blank or a combination of ReversalEntries, ReversalEntries_Last, and ReversalEntries_Only</comment>
+  </data>
+  <data name="ReversalEntries" xml:space="preserve">
+    <value>, {0} {1} reversal entries</value>
+    <comment>Part of message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration (view) name. This string will be used in cases where there are more than one reversal index configuration to report the count for, and this is not the last one.</comment>
+  </data>
+  <data name="ReversalEntries_Last" xml:space="preserve">
+    <value>, and {0} {1} reversal entries</value>
+    <comment>Part of message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration (view) name. This string will be used in cases where there are more than one reversal index configuration to report the count for, and this is the last one.</comment>
+  </data>
+  <data name="ReversalEntries_Only" xml:space="preserve">
+    <value>and {0} {1} reversal entries</value>
+    <comment>Part of message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration name. This string will be used in cases where there is just one reversal index configuration to report the count for.</comment>
+  </data>
+  <data name="ReversalIndex" xml:space="preserve">
+    <value>Reversal Index</value>
+  </data>
+  <data name="toApplyForWebonaryAccountExplanation" xml:space="preserve">
+    <value>To apply for an account at Webonary, please visit {0}.</value>
+    <comment>Text at the top of the Upload to Webonary dialog. 0 will be the URL in toApplyForWebonaryAccountLink</comment>
+  </data>
+  <data name="toApplyForWebonaryAccountLink" xml:space="preserve">
+    <value>http://www.webonary.org/</value>
+    <comment>URL in toApplyForWebonaryAccountExplanation.</comment>
+  </data>
+  <data name="UnableToFollowLink" xml:space="preserve">
+    <value>The application was not able to follow that link. This can happen if you have deleted the object that was pointed to by the link.</value>
+  </data>
+  <data name="UnableToFollowLink0" xml:space="preserve">
+    <value>The application was not able to follow that link. ({0})</value>
+    <comment>{0} is an error message</comment>
+  </data>
 </root>

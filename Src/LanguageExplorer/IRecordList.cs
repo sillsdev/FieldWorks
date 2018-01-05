@@ -5,7 +5,6 @@
 using System;
 using System.Collections;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
 using SIL.LCModel;

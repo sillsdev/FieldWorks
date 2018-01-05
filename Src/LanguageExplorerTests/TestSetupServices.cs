@@ -65,7 +65,7 @@ namespace LanguageExplorerTests
 					Directory.Delete(gonerDir, true);
 				}
 			}
-			DirectoryUtilities.CopyDirectoryContents(Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Works", "TestData"), baseDir);
+			DirectoryUtilities.CopyDirectoryContents(Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "DictionaryConfiguration", "TestData"), baseDir);
 		}
 	}
 }

@@ -22,7 +22,7 @@ using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.SilSidePane;
 using LanguageExplorer.SendReceive;
 using LanguageExplorer.UtilityTools;
-using LanguageExplorer.Works;
+using LanguageExplorer.DictionaryConfiguration;
 using SIL.Collections;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;

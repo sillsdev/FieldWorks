@@ -18,7 +18,6 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
-using LanguageExplorer.Works;
 using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.TextsAndWords

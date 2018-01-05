@@ -212,7 +212,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					sXml += " class=\"LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceCollectionSlice\"";
 					break;
 				case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
-					sXml += " class=\"LanguageExplorer.Works.LexEd.LexReferenceUnidirectionalSlice\"";
+					sXml += " class=\"LanguageExplorer.Areas.Lexicon.LexReferenceUnidirectionalSlice\"";
 					break;
 				case LexRefTypeTags.MappingTypes.kmtSensePair:
 				case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair: // Sense Pair with different Forward/Reverse names
@@ -246,7 +246,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					sMenu = "mnuDataTree-DeleteAddLexReference";
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
-					sXml += " class=\"LanguageExplorer.Works.LexEd.LexReferenceUnidirectionalSlice\"";
+					sXml += " class=\"LanguageExplorer.Areas.Lexicon.LexReferenceUnidirectionalSlice\"";
 					//sMenu = "mnuDataTree-DeleteFromLexEntryReference"; we used to have distinct strings in the menu
 					sMenu = "mnuDataTree-DeleteAddLexReference";
 					break;
@@ -271,7 +271,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						sMenu = "mnuDataTree-DeleteAddLexReference";
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
-					sXml += " class=\"LanguageExplorer.Works.LexEd.LexReferenceUnidirectionalSlice\"";
+					sXml += " class=\"LanguageExplorer.Areas.Lexicon.LexReferenceUnidirectionalSlice\"";
 					if (m_obj is ILexEntry)
 						//sMenu = "mnuDataTree-DeleteFromLexEntryReference"; we used to have distinct strings in the menu
 						sMenu = "mnuDataTree-DeleteAddLexReference";

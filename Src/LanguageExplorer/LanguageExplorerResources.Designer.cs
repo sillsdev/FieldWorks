@@ -81,6 +81,24 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A deleted object.
+        /// </summary>
+        internal static string ADeletedObject {
+            get {
+                return ResourceManager.GetString("ADeletedObject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to $$all_entries$$.
+        /// </summary>
+        internal static string AllEntriesPublication {
+            get {
+                return ResourceManager.GetString("AllEntriesPublication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon Arrow_Down {
@@ -97,6 +115,15 @@ namespace LanguageExplorer {
             get {
                 object obj = ResourceManager.GetObject("Arrow_Up", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Compressing data before sending to Webonary..
+        /// </summary>
+        internal static string BeginCompressingDataForWebonary {
+            get {
+                return ResourceManager.GetString("BeginCompressingDataForWebonary", resourceCulture);
             }
         }
         
@@ -157,11 +184,38 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Deleted object detected.
+        /// </summary>
+        internal static string DeletedObjectDetected {
+            get {
+                return ResourceManager.GetString("DeletedObjectDetected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Delete {0}....
         /// </summary>
         internal static string DeleteMenu {
             get {
                 return ResourceManager.GetString("DeleteMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleting the object.
+        /// </summary>
+        internal static string DeletingTheObject {
+            get {
+                return ResourceManager.GetString("DeletingTheObject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dictionary.
+        /// </summary>
+        internal static string Dictionary {
+            get {
+                return ResourceManager.GetString("Dictionary", resourceCulture);
             }
         }
         
@@ -191,6 +245,69 @@ namespace LanguageExplorer {
         internal static string ErrorReadingXMLFile0 {
             get {
                 return ResourceManager.GetString("ErrorReadingXMLFile0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} view.
+        /// </summary>
+        internal static string ExportingEntriesToWebonary {
+            get {
+                return ResourceManager.GetString("ExportingEntriesToWebonary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export of lexicon completed..
+        /// </summary>
+        internal static string ExportingEntriesToWebonaryCompleted {
+            get {
+                return ResourceManager.GetString("ExportingEntriesToWebonaryCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exporting entries for {0} reversal..
+        /// </summary>
+        internal static string ExportingReversalsToWebonary {
+            get {
+                return ResourceManager.GetString("ExportingReversalsToWebonary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export of reversal completed..
+        /// </summary>
+        internal static string ExportingReversalsToWebonaryCompleted {
+            get {
+                return ResourceManager.GetString("ExportingReversalsToWebonaryCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed Jump.
+        /// </summary>
+        internal static string FailedJump {
+            get {
+                return ResourceManager.GetString("FailedJump", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filtered.
+        /// </summary>
+        internal static string Filtered {
+            get {
+                return ResourceManager.GetString("Filtered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Compression complete..
+        /// </summary>
+        internal static string FinishedCompressingDataForWebonary {
+            get {
+                return ResourceManager.GetString("FinishedCompressingDataForWebonary", resourceCulture);
             }
         }
         
@@ -616,6 +733,42 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot follow link.
+        /// </summary>
+        internal static string ksCantJumpCaption {
+            get {
+                return ResourceManager.GetString("ksCantJumpCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are trying to follow a link to one of the root objects representing the whole project. Sorry, but FLEx does not know how to take you to a more specific place within it..
+        /// </summary>
+        internal static string ksCantJumpToLangProj {
+            get {
+                return ResourceManager.GetString("ksCantJumpToLangProj", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorry, FLEx does not know how to jump to this kind of object (a {0})..
+        /// </summary>
+        internal static string ksCantJumpToObject {
+            get {
+                return ResourceManager.GetString("ksCantJumpToObject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorry, FLEx does not yet know how to jump to a particular location in Scripture..
+        /// </summary>
+        internal static string ksCantJumpToScripture {
+            get {
+                return ResourceManager.GetString("ksCantJumpToScripture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Category to merge into.
         /// </summary>
         internal static string ksCategoryToMergeInto {
@@ -648,6 +801,15 @@ namespace LanguageExplorer {
         internal static string ksChangeTo {
             get {
                 return ResourceManager.GetString("ksChangeTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Character Style for Content:.
+        /// </summary>
+        internal static string ksCharacterStyleForContent {
+            get {
+                return ResourceManager.GetString("ksCharacterStyleForContent", resourceCulture);
             }
         }
         
@@ -720,6 +882,15 @@ namespace LanguageExplorer {
         internal static string ksClose {
             get {
                 return ResourceManager.GetString("ksClose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Complex Form Types:.
+        /// </summary>
+        internal static string ksComplexFormTypes {
+            get {
+                return ResourceManager.GetString("ksComplexFormTypes", resourceCulture);
             }
         }
         
@@ -868,6 +1039,42 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Current Reversal Index.
+        /// </summary>
+        internal static string ksCurrentReversal {
+            get {
+                return ResourceManager.GetString("ksCurrentReversal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default Analysis.
+        /// </summary>
+        internal static string ksDefaultAnalysis {
+            get {
+                return ResourceManager.GetString("ksDefaultAnalysis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default Pronunciation.
+        /// </summary>
+        internal static string ksDefaultPronunciation {
+            get {
+                return ResourceManager.GetString("ksDefaultPronunciation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default Vernacular.
+        /// </summary>
+        internal static string ksDefaultVernacular {
+            get {
+                return ResourceManager.GetString("ksDefaultVernacular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Entries and Senses that are not used in interlinear.
         /// </summary>
         internal static string ksDeleteEntriesSenses {
@@ -994,6 +1201,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        internal static string ksErrorCaption {
+            get {
+                return ResourceManager.GetString("ksErrorCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This utility attempts to fix various errors in a FieldWorks project file.  The project must not be open, and must be in the fwdata (XML) format..
         /// </summary>
         internal static string ksErrorFixerUtilityAttemptsTo {
@@ -1008,6 +1224,15 @@ namespace LanguageExplorer {
         internal static string ksErrorLoadingResourceStrings {
             get {
                 return ResourceManager.GetString("ksErrorLoadingResourceStrings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No view was found..
+        /// </summary>
+        internal static string ksErrorNoViewOnPublication {
+            get {
+                return ResourceManager.GetString("ksErrorNoViewOnPublication", resourceCulture);
             }
         }
         
@@ -1278,11 +1503,29 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FieldWorks has detected that an unknown field (possibly a custom field you have just deleted) is being used to filter or sort this view. Filtering and sorting will be disabled until you select a new filter or sort sequence..
+        /// </summary>
+        internal static string ksInvalidFieldInFilterOrSorter {
+            get {
+                return ResourceManager.GetString("ksInvalidFieldInFilterOrSorter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid Internal Constituent Chart Data.
         /// </summary>
         internal static string ksInvalidInternalConstituentChartData {
             get {
                 return ResourceManager.GetString("ksInvalidInternalConstituentChartData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lexical Relation Types:.
+        /// </summary>
+        internal static string ksLexicalRelationTypes {
+            get {
+                return ResourceManager.GetString("ksLexicalRelationTypes", resourceCulture);
             }
         }
         
@@ -1382,6 +1625,15 @@ namespace LanguageExplorer {
         internal static string ksMergeBeforeMenuItem {
             get {
                 return ResourceManager.GetString("ksMergeBeforeMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minor Entry Types:.
+        /// </summary>
+        internal static string ksMinorEntryTypes {
+            get {
+                return ResourceManager.GetString("ksMinorEntryTypes", resourceCulture);
             }
         }
         
@@ -1530,6 +1782,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No Complex Form Type.
+        /// </summary>
+        internal static string ksNoComplexFormType {
+            get {
+                return ResourceManager.GetString("ksNoComplexFormType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No Records.
         /// </summary>
         internal static string ksNoRecords {
@@ -1557,6 +1818,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No Variant Type.
+        /// </summary>
+        internal static string ksNoVariantType {
+            get {
+                return ResourceManager.GetString("ksNoVariantType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No wordforms are selected to move.
         /// </summary>
         internal static string ksNoWordformsMsg {
@@ -1580,6 +1850,15 @@ namespace LanguageExplorer {
         internal static string ksOtherMenuItem {
             get {
                 return ResourceManager.GetString("ksOtherMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paragraph Style for Content:.
+        /// </summary>
+        internal static string ksParagraphStyleForContent {
+            get {
+                return ResourceManager.GetString("ksParagraphStyleForContent", resourceCulture);
             }
         }
         
@@ -1859,6 +2138,15 @@ namespace LanguageExplorer {
         internal static string ksRedoHomographWs {
             get {
                 return ResourceManager.GetString("ksRedoHomographWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Insert {0}.
+        /// </summary>
+        internal static string ksRedoInsert0 {
+            get {
+                return ResourceManager.GetString("ksRedoInsert0", resourceCulture);
             }
         }
         
@@ -2201,6 +2489,15 @@ namespace LanguageExplorer {
         internal static string ksShowInReversalIndex {
             get {
                 return ResourceManager.GetString("ksShowInReversalIndex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorting.
+        /// </summary>
+        internal static string ksSorting {
+            get {
+                return ResourceManager.GetString("ksSorting", resourceCulture);
             }
         }
         
@@ -2554,6 +2851,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Undo Insert {0}.
+        /// </summary>
+        internal static string ksUndoInsert0 {
+            get {
+                return ResourceManager.GetString("ksUndoInsert0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Undo Insert Lexical Reference Type.
         /// </summary>
         internal static string ksUndoInsertLexRefType {
@@ -2797,11 +3103,30 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} uses the same configuration for subfields as
+        ///{1}..
+        /// </summary>
+        internal static string ksUsesTheSameConfigurationAs {
+            get {
+                return ResourceManager.GetString("ksUsesTheSameConfigurationAs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Utilities.
         /// </summary>
         internal static string ksUtilities {
             get {
                 return ResourceManager.GetString("ksUtilities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Variant Types:.
+        /// </summary>
+        internal static string ksVariantTypes {
+            get {
+                return ResourceManager.GetString("ksVariantTypes", resourceCulture);
             }
         }
         
@@ -3005,6 +3330,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to What would normally be shown is being blocked, probably because a filter hides it.  Do you want to turn off the filter?.
+        /// </summary>
+        internal static string LinkTargetNotAvailableDueToFilter {
+            get {
+                return ResourceManager.GetString("LinkTargetNotAvailableDueToFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon Lists {
@@ -3021,6 +3355,24 @@ namespace LanguageExplorer {
             get {
                 object obj = ResourceManager.GetObject("MenuWidget", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Down.
+        /// </summary>
+        internal static string MoveDown {
+            get {
+                return ResourceManager.GetString("MoveDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move Up.
+        /// </summary>
+        internal static string MoveUp {
+            get {
+                return ResourceManager.GetString("MoveUp", resourceCulture);
             }
         }
         
@@ -3044,6 +3396,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clicking Submit will send {0} dictionary entries{1} to Webonary..
+        /// </summary>
+        internal static string PublicationEntriesLabel {
+            get {
+                return ResourceManager.GetString("PublicationEntriesLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Punctuation in custom field name.
         /// </summary>
         internal static string PunctInfieldNameCaption {
@@ -3053,11 +3414,66 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The custom field name &quot;{0}&quot; includes punctuation characters. This may cause export to fail or make the exported file difficult for other programs to use. We recommend that you rename your custom field and then do the export again.
+        ///Do you want to continue with the export?.
+        /// </summary>
+        internal static string PunctInFieldNameWarning {
+            get {
+                return ResourceManager.GetString("PunctInFieldNameWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Redo.
         /// </summary>
         internal static string Redo {
             get {
                 return ResourceManager.GetString("Redo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to , {0} {1} reversal entries.
+        /// </summary>
+        internal static string ReversalEntries {
+            get {
+                return ResourceManager.GetString("ReversalEntries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to , and {0} {1} reversal entries.
+        /// </summary>
+        internal static string ReversalEntries_Last {
+            get {
+                return ResourceManager.GetString("ReversalEntries_Last", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to and {0} {1} reversal entries.
+        /// </summary>
+        internal static string ReversalEntries_Only {
+            get {
+                return ResourceManager.GetString("ReversalEntries_Only", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reversal Index.
+        /// </summary>
+        internal static string ReversalIndex {
+            get {
+                return ResourceManager.GetString("ReversalIndex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected object has been deleted (possibly by another user on a networked computer). Refreshing..
+        /// </summary>
+        internal static string SelectedObjectHasBeenDeleted {
+            get {
+                return ResourceManager.GetString("SelectedObjectHasBeenDeleted", resourceCulture);
             }
         }
         
@@ -3091,6 +3507,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sorted by {0}.
+        /// </summary>
+        internal static string SortedBy0 {
+            get {
+                return ResourceManager.GetString("SortedBy0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All reversal subentries are now sorted..
         /// </summary>
         internal static string SortReversalSubEntries_CompletedContent {
@@ -3118,12 +3543,57 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot show normally.
+        /// </summary>
+        internal static string TargetNotFound {
+            get {
+                return ResourceManager.GetString("TargetNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon Text_And_Words {
             get {
                 object obj = ResourceManager.GetObject("Text_And_Words", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To apply for an account at Webonary, please visit {0}..
+        /// </summary>
+        internal static string toApplyForWebonaryAccountExplanation {
+            get {
+                return ResourceManager.GetString("toApplyForWebonaryAccountExplanation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://www.webonary.org/.
+        /// </summary>
+        internal static string toApplyForWebonaryAccountLink {
+            get {
+                return ResourceManager.GetString("toApplyForWebonaryAccountLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The application was not able to follow that link. This can happen if you have deleted the object that was pointed to by the link..
+        /// </summary>
+        internal static string UnableToFollowLink {
+            get {
+                return ResourceManager.GetString("UnableToFollowLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The application was not able to follow that link. ({0}).
+        /// </summary>
+        internal static string UnableToFollowLink0 {
+            get {
+                return ResourceManager.GetString("UnableToFollowLink0", resourceCulture);
             }
         }
         

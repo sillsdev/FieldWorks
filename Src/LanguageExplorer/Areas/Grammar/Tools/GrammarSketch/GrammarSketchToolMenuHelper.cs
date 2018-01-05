@@ -5,7 +5,6 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using LanguageExplorer.Works;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 

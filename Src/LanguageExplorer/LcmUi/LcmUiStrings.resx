@@ -146,9 +146,6 @@
   <data name="ksEntries" xml:space="preserve">
     <value>Select the entry to merge the current entry into:</value>
   </data>
-  <data name="ksErrorCaption" xml:space="preserve">
-    <value>Error</value>
-  </data>
   <data name="ksFind_" xml:space="preserve">
     <value>Find...</value>
   </data>

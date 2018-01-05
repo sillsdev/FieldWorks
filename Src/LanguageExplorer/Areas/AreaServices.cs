@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.LexText.DataNotebook;
+using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
@@ -178,7 +179,7 @@ namespace LanguageExplorer.Areas
 					tupleList.AddRange(
 						from obj in objRepo.AllInstances(objClass)
 						where ddbf.get_VecSize(obj.Hvo, flid) > 0
-						select new Tuple<int, int> (obj.Hvo, ddbf.get_VecSize(obj.Hvo, flid)));
+						select new Tuple<int, int>(obj.Hvo, ddbf.get_VecSize(obj.Hvo, flid)));
 
 					NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 					{
@@ -218,6 +219,41 @@ namespace LanguageExplorer.Areas
 			// Custom lists are unowned.
 			var list = cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().GetObject(owningListGuid);
 			return list.Owner == null;
+		}
+
+		internal static void GiveSimpleWarning(Form form, string helpFile, ExclusionReasonCode xrc)
+		{
+			// Tell the user why we aren't jumping to his record
+			var msg = AreaResources.ksSelectedEntryNotInDict;
+			string caption;
+			string reason;
+			string shlpTopic;
+			switch (xrc)
+			{
+				case ExclusionReasonCode.NotInPublication:
+					caption = AreaResources.ksEntryNotPublished;
+					reason = AreaResources.ksEntryNotPublishedReason;
+					shlpTopic = "User_Interface/Menus/Edit/Find_a_lexical_entry.htm";
+					break;
+				case ExclusionReasonCode.ExcludedHeadword:
+					caption = AreaResources.ksMainNotShown;
+					reason = AreaResources.ksMainNotShownReason;
+					shlpTopic = "khtpMainEntryNotShown";
+					break;
+				case ExclusionReasonCode.ExcludedMinorEntry:
+					caption = AreaResources.ksMinorNotShown;
+					reason = AreaResources.ksMinorNotShownReason;
+					shlpTopic = "khtpMinorEntryNotShown";
+					break;
+				default:
+					throw new ArgumentException("Unknown ExclusionReasonCode");
+			}
+			msg = string.Format(msg, reason);
+			// TODO-Linux: Help is not implemented on Mono
+			MessageBox.Show(form, msg, caption, MessageBoxButtons.OK,
+				MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0,
+				helpFile,
+				HelpNavigator.Topic, shlpTopic);
 		}
 	}
 }

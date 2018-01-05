@@ -9,7 +9,6 @@ using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
-using LanguageExplorer.Works;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Controls

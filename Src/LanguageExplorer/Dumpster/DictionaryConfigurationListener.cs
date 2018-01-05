@@ -4,7 +4,7 @@
 
 using System.Linq;
 using LanguageExplorer.Areas;
-using LanguageExplorer.Works;
+using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 

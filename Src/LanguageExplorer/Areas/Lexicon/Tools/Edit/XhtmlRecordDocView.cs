@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using Gecko;
 using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
-using LanguageExplorer.Works;
+using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -152,7 +152,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var configurationFile = DictionaryConfigurationServices.GetCurrentConfiguration(PropertyTable);
 				if (string.IsNullOrEmpty(configurationFile))
 				{
-					m_mainView.DocumentText = $"<html><body><p>{xWorksStrings.ksNoConfiguration}</p></body></html>";
+					m_mainView.DocumentText = $"<html><body><p>{LexiconResources.ksNoConfiguration}</p></body></html>";
 					return;
 				}
 				var configuration = new DictionaryConfigurationModel(configurationFile, Cache);

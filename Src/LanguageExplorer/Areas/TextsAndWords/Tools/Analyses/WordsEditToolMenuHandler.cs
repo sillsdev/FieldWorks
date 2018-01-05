@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2015 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.FieldWorks.Common.FwUtils;
-using LanguageExplorer.Works;
+using LanguageExplorer.DictionaryConfiguration;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;

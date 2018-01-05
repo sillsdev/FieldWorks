@@ -258,6 +258,7 @@
     <Compile Include="PaObjects\PaWritingSystem.cs" />
     <Compile Include="LexicalProvider\ILexicalProvider.cs" />
     <Compile Include="FieldWorks.cs" />
+    <Compile Include="ReversalIndexServices.cs" />
     <Compile Include="WelcomeToFieldWorksDlg.Designer.cs">
       <DependentUpon>WelcomeToFieldWorksDlg.cs</DependentUpon>
     </Compile>

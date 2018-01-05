@@ -6,13 +6,12 @@ using System.Collections.Generic;
 using System.IO;
 using LanguageExplorer;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.DictionaryConfiguration.Migration;
-using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.IO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using LanguageExplorerTests.Works;
 
 namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 {

@@ -54,7 +54,7 @@
 						</parameters>
 					</control>
 					<control id="SegmentPreviewControl">
-						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordDocXmlView" a10status="Fork moved to: LanguageExplorer.Works.RecordDocXmlView" />
+						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.RecordDocXmlView" />
 						<parameters id="SegmentPreviewControl" clerk="OccurrencesOfSense" treeBarAvailability="NotMyBusiness" layout="publicationNew" editable="false"/>
 					</control>
 				</parameters>

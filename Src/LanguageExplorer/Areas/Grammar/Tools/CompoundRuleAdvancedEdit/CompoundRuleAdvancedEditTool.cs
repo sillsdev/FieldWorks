@@ -13,7 +13,6 @@ using LanguageExplorer.Controls.PaneBar;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
-using LanguageExplorer.Works;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
@@ -28,7 +27,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
 		private const string CompoundRules = "compoundRules";
 		private MultiPane _multiPane;
-		private RecordBrowseView _recordBrowseView;
+		private RecordBrowseActiveView _recordBrowseActiveView;
 		private IRecordList _recordList;
 		[Import(AreaServices.GrammarAreaMachineName)]
 		private IArea _area;
@@ -63,7 +62,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordList); // Use generic export event handler.
 
 			var root = XDocument.Parse(GrammarResources.CompoundRuleAdvancedEditToolParameters).Root;
-			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseActiveView = new RecordBrowseActiveView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
@@ -88,7 +87,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				mainMultiPaneParameters,
-				_recordBrowseView, "Browse", new PaneBar(),
+				_recordBrowseActiveView, "Browse", new PaneBar(),
 				recordEditView, "Details", recordEditViewPaneBar);
 
 			panelButton.DatTree = recordEditView.DatTree;
@@ -101,7 +100,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
+			_recordBrowseActiveView.BrowseViewer.BrowseView.PrepareToRefresh();
 		}
 
 		/// <summary>

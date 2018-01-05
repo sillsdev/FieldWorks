@@ -7,7 +7,6 @@ using System.Drawing;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Resources;
-using LanguageExplorer.Works;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Browse

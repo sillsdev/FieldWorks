@@ -9,7 +9,6 @@ using System.Xml.Linq;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using LanguageExplorer.Works;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {

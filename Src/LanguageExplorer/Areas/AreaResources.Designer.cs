@@ -195,11 +195,29 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error occurred while exporting your data. This could be the result of an error in an FXT file, an output file that is locked, or a bug in the FieldWorks code..
+        /// </summary>
+        internal static string ErrorExporting_ProbablyBug {
+            get {
+                return ResourceManager.GetString("ErrorExporting_ProbablyBug", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Example.
         /// </summary>
         internal static string ExampleSentence {
             get {
                 return ResourceManager.GetString("ExampleSentence", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export to {0}.
+        /// </summary>
+        internal static string ExportTo0 {
+            get {
+                return ResourceManager.GetString("ExportTo0", resourceCulture);
             }
         }
         
@@ -336,11 +354,137 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All.
+        /// </summary>
+        internal static string ksAllEntries {
+            get {
+                return ResourceManager.GetString("ksAllEntries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Before:.
+        /// </summary>
+        internal static string ksBefore {
+            get {
+                return ResourceManager.GetString("ksBefore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} can be configured in more detail..
+        /// </summary>
+        internal static string ksCanBeConfiguredInMoreDetail {
+            get {
+                return ResourceManager.GetString("ksCanBeConfiguredInMoreDetail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot demote a list of Text Markup Tags into another list..
+        /// </summary>
+        internal static string ksCantDemoteTagList {
+            get {
+                return ResourceManager.GetString("ksCantDemoteTagList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot promote part of one discourse chart template to a new template. In fact, currently we do not support having more than one template at all..
+        /// </summary>
+        internal static string ksCantPromoteGroupToTemplate {
+            get {
+                return ResourceManager.GetString("ksCantPromoteGroupToTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot promote a tag to be its own list. Add a new list instead and move tags to it..
+        /// </summary>
+        internal static string ksCantPromoteTag {
+            get {
+                return ResourceManager.GetString("ksCantPromoteTag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Character Style for Before string:.
+        /// </summary>
+        internal static string ksCharacterStyleForBefore {
+            get {
+                return ResourceManager.GetString("ksCharacterStyleForBefore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose or create a folder (with your project name) for FLEx to put all the files into for this LIFT export.  Any LIFT data in an existing folder will be overwritten..
+        /// </summary>
+        internal static string ksChooseLIFTExportFolder {
+            get {
+                return ResourceManager.GetString("ksChooseLIFTExportFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose where to save the files that constitute a LIFT export.
+        /// </summary>
+        internal static string ksChooseLIFTFolderTitle {
+            get {
+                return ResourceManager.GetString("ksChooseLIFTFolderTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configure {0} View....
+        /// </summary>
+        internal static string ksConfigure {
+            get {
+                return ResourceManager.GetString("ksConfigure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configure {0} in {1} View....
+        /// </summary>
+        internal static string ksConfigureIn {
+            get {
+                return ResourceManager.GetString("ksConfigureIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Click to jump.
+        /// </summary>
+        internal static string ksCtrlClickJumpTooltip {
+            get {
+                return ResourceManager.GetString("ksCtrlClickJumpTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There is already a field named {1} in each {0}, please choose a different name for your Custom field..
         /// </summary>
         internal static string ksCustomFieldMatchesNonCustomField {
             get {
                 return ResourceManager.GetString("ksCustomFieldMatchesNonCustomField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot Add Custom Fields.
+        /// </summary>
+        internal static string ksCustomFieldsCanNotBeAddedDueToOtherAppsCaption {
+            get {
+                return ResourceManager.GetString("ksCustomFieldsCanNotBeAddedDueToOtherAppsCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom Fields cannot be added when there is more than one application using this project..
+        /// </summary>
+        internal static string ksCustomFieldsCanNotBeAddedDueToOtherAppsText {
+            get {
+                return ResourceManager.GetString("ksCustomFieldsCanNotBeAddedDueToOtherAppsText", resourceCulture);
             }
         }
         
@@ -354,11 +498,66 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Choose dictionary view to configure:.
+        /// </summary>
+        internal static string ksDictionaryView {
+            get {
+                return ResourceManager.GetString("ksDictionaryView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Entry not published.
+        /// </summary>
+        internal static string ksEntryNotPublished {
+            get {
+                return ResourceManager.GetString("ksEntryNotPublished", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to because it is currently set not to be published at all in this publication.
+        /// </summary>
+        internal static string ksEntryNotPublishedReason {
+            get {
+                return ResourceManager.GetString("ksEntryNotPublishedReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error in Environment.
         /// </summary>
         internal static string ksErrorInEnvironment {
             get {
                 return ResourceManager.GetString("ksErrorInEnvironment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: {1}.
+        /// </summary>
+        internal static string ksHierarchyLabel {
+            get {
+                return ResourceManager.GetString("ksHierarchyLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}:
+        ///  {1}.
+        /// </summary>
+        internal static string ksHierarchyLabel2 {
+            get {
+                return ResourceManager.GetString("ksHierarchyLabel2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Characters with hexadecimal values 0x0 through 0x1f are illegal in XML documents and have been removed..
+        /// </summary>
+        internal static string ksIllegalXmlChars {
+            get {
+                return ResourceManager.GetString("ksIllegalXmlChars", resourceCulture);
             }
         }
         
@@ -408,6 +607,42 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Inspect entry.
+        /// </summary>
+        internal static string ksInspect {
+            get {
+                return ResourceManager.GetString("ksInspect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is already a project in that folder.  Click “OK” to overwrite the lexicon in that project, or “Cancel” to abort..
+        /// </summary>
+        internal static string ksLIFTAlreadyExists {
+            get {
+                return ResourceManager.GetString("ksLIFTAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language Explorer&apos;s LIFT export has a bug that will prevent interchange with WeSay.  Please report this to the developers, sending both the exported LIFT file and (if possible) a backup of the current project..
+        /// </summary>
+        internal static string ksLiftExportBugReport {
+            get {
+                return ResourceManager.GetString("ksLiftExportBugReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected folder is not empty, but does not contain a lexicon.  Do you want to continue?.
+        /// </summary>
+        internal static string ksLIFTFolderNotEmpty {
+            get {
+                return ResourceManager.GetString("ksLIFTFolderNotEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to List Reference (single item).
         /// </summary>
         internal static string ksListRefAtomic {
@@ -431,6 +666,24 @@ namespace LanguageExplorer.Areas {
         internal static string ksMainContentLabel {
             get {
                 return ResourceManager.GetString("ksMainContentLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Main entry not shown.
+        /// </summary>
+        internal static string ksMainNotShown {
+            get {
+                return ResourceManager.GetString("ksMainNotShown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to because it is currently set not to be shown with a main entry in this publication.
+        /// </summary>
+        internal static string ksMainNotShownReason {
+            get {
+                return ResourceManager.GetString("ksMainNotShownReason", resourceCulture);
             }
         }
         
@@ -489,6 +742,24 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Minor entry not shown.
+        /// </summary>
+        internal static string ksMinorNotShown {
+            get {
+                return ResourceManager.GetString("ksMinorNotShown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to because it is currently set not to be shown with a minor entry.
+        /// </summary>
+        internal static string ksMinorNotShownReason {
+            get {
+                return ResourceManager.GetString("ksMinorNotShownReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New Custom Field.
         /// </summary>
         internal static string ksNewCustomField {
@@ -503,6 +774,42 @@ namespace LanguageExplorer.Areas {
         internal static string ksNumber {
             get {
                 return ResourceManager.GetString("ksNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paragraph Style.
+        /// </summary>
+        internal static string ksParagraphStyle {
+            get {
+                return ResourceManager.GetString("ksParagraphStyle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paragraph Style for Before header:.
+        /// </summary>
+        internal static string ksParagraphStyleForBefore {
+            get {
+                return ResourceManager.GetString("ksParagraphStyleForBefore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prohibited Movement.
+        /// </summary>
+        internal static string ksProhibitedMovement {
+            get {
+                return ResourceManager.GetString("ksProhibitedMovement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} {1}.
+        /// </summary>
+        internal static string ksPublicationEntries {
+            get {
+                return ResourceManager.GetString("ksPublicationEntries", resourceCulture);
             }
         }
         
@@ -588,6 +895,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Referenced Complex Form.
+        /// </summary>
+        internal static string ksReferencedComplexForm {
+            get {
+                return ResourceManager.GetString("ksReferencedComplexForm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Redo Set occurrence.
         /// </summary>
         internal static string ksRegRuleRedoSetOccurrence {
@@ -602,6 +918,24 @@ namespace LanguageExplorer.Areas {
         internal static string ksRegRuleUndoSetOccurrence {
             get {
                 return ResourceManager.GetString("ksRegRuleUndoSetOccurrence", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sense Subentries will be hidden.
+        /// </summary>
+        internal static string ksRootSenseOnSubentriesGoneDlgLabel {
+            get {
+                return ResourceManager.GetString("ksRootSenseOnSubentriesGoneDlgLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language Explorer does not yet have the capability to display subentries of senses when the senses are not themselves shown in separate paragraphs..
+        /// </summary>
+        internal static string ksRootSenseOnSubentriesGoneDlgText {
+            get {
+                return ResourceManager.GetString("ksRootSenseOnSubentriesGoneDlgText", resourceCulture);
             }
         }
         
@@ -786,11 +1120,29 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The entry you have selected is not shown in Dictionary view, {0}..
+        /// </summary>
+        internal static string ksSelectedEntryNotInDict {
+            get {
+                return ResourceManager.GetString("ksSelectedEntryNotInDict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Single-line Text.
         /// </summary>
         internal static string ksSingleLineText {
             get {
                 return ResourceManager.GetString("ksSingleLineText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A Text Markup Tag List can only have two levels (list type and tags)..
+        /// </summary>
+        internal static string ksTagListTooDeep {
+            get {
+                return ResourceManager.GetString("ksTagListTooDeep", resourceCulture);
             }
         }
         
@@ -806,6 +1158,15 @@ namespace LanguageExplorer.Areas {
         internal static string kstCustomFieldSendReceive {
             get {
                 return ResourceManager.GetString("kstCustomFieldSendReceive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A discourse chart template can only have three levels (template, column group, and column)..
+        /// </summary>
+        internal static string ksTemplateTooDeep {
+            get {
+                return ResourceManager.GetString("ksTemplateTooDeep", resourceCulture);
             }
         }
         
@@ -864,11 +1225,74 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (unspecified).
+        /// </summary>
+        internal static string ksUnspecified {
+            get {
+                return ResourceManager.GetString("ksUnspecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Validating output file {0}.
+        /// </summary>
+        internal static string ksValidatingOutputFile {
+            get {
+                return ResourceManager.GetString("ksValidatingOutputFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Writing systems:.
+        /// </summary>
+        internal static string ksWritingSystems {
+            get {
+                return ResourceManager.GetString("ksWritingSystems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} {1}.
+        /// </summary>
+        internal static string ksXReversalIndex {
+            get {
+                return ResourceManager.GetString("ksXReversalIndex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Duplicate Custom Field Names.
         /// </summary>
         internal static string LabelAlreadyExists {
             get {
                 return ResourceManager.GetString("LabelAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is no description available for this item..
+        /// </summary>
+        internal static string NoDescriptionForItem {
+            get {
+                return ResourceManager.GetString("NoDescriptionForItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Processing exported data into final form.
+        /// </summary>
+        internal static string ProcessingIntoFinalForm {
+            get {
+                return ResourceManager.GetString("ProcessingIntoFinalForm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Promote.
+        /// </summary>
+        internal static string Promote {
+            get {
+                return ResourceManager.GetString("Promote", resourceCulture);
             }
         }
         
@@ -891,6 +1315,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo Move Item.
+        /// </summary>
+        internal static string RedoMoveItem {
+            get {
+                return ResourceManager.GetString("RedoMoveItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select Custom Field.
         /// </summary>
         internal static string SelectCustomField {
@@ -905,6 +1338,15 @@ namespace LanguageExplorer.Areas {
         internal static string Sense {
             get {
                 return ResourceManager.GetString("Sense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Move Item.
+        /// </summary>
+        internal static string UndoMoveItem {
+            get {
+                return ResourceManager.GetString("UndoMoveItem", resourceCulture);
             }
         }
         

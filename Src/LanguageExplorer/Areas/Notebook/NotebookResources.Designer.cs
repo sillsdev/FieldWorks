@@ -70,6 +70,24 @@ namespace LanguageExplorer.Areas.Notebook {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Exporting....
+        /// </summary>
+        internal static string Exporting_ {
+            get {
+                return ResourceManager.GetString("Exporting_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exporting {0}.
+        /// </summary>
+        internal static string Exporting0 {
+            get {
+                return ResourceManager.GetString("Exporting0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Standard Format _Notebook data....
         /// </summary>
         internal static string Import_Standard_Format_Notebook_data {

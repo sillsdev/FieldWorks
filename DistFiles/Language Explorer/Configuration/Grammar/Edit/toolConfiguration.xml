@@ -43,7 +43,7 @@
 						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters id="CompoundRuleList">
 							<control>
-								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordBrowseActiveView"/>
+								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.RecordBrowseActiveView"/>
 								<parameters id="CompoundRuleList" filterBar="true" editable="false" clerk="compoundRules" altTitleId="MoCompoundRule-Plural" selectColumn="true">
 									<columns>
 										<column label="Active" width="10%" layout="Active" editable="true" items="0:no;1:yes" blankPossible="false" sortType="YesNo"/>
@@ -263,7 +263,7 @@
 						<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.PaneBarContainer"/>
 						<parameters id="PhonologicalRuleList">
 							<control>
-								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordBrowseActiveView"/>
+								<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.RecordBrowseActiveView"/>
 								<parameters id="PhonologicalRuleList" filterBar="true" clerk="phonologicalRules" altTitleId="PhSegmentRule-Plural" selectColumn="true">
 									<columns>
 										<column label="Active" width="10%" layout="Active" editable="true" items="0:no;1:yes" blankPossible="false" sortType="YesNo"/>

@@ -10,7 +10,6 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
-using LanguageExplorer.Works;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;

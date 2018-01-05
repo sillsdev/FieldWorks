@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using LanguageExplorer.Works;
 using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;

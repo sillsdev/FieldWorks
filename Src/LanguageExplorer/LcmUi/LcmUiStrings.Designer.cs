@@ -241,15 +241,6 @@ namespace LanguageExplorer.LcmUi {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error.
-        /// </summary>
-        internal static string ksErrorCaption {
-            get {
-                return ResourceManager.GetString("ksErrorCaption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Find....
         /// </summary>
         internal static string ksFind_ {

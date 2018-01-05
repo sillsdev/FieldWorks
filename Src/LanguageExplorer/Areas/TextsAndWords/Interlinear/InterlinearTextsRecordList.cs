@@ -5,7 +5,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Filters;

@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
-using LanguageExplorer.Works;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;

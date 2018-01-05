@@ -6,7 +6,6 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Resources;
-using LanguageExplorer.Works;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse

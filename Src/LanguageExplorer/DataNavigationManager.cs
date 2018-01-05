@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-using LanguageExplorer.Works;
 using SIL.ObjectModel;
 
 namespace LanguageExplorer

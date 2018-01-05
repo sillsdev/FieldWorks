@@ -454,8 +454,6 @@ namespace LanguageExplorer.Impls
 			{
 				// No need to allocate a different ResourceManager than the one the generated code
 				// produces, and it should be more reliable (I hope).
-				//s_stringResources = new System.Resources.ResourceManager(
-				//    "LanguageExplorer.Works.LexText.LexTextStrings", Assembly.GetExecutingAssembly());
 				return (stid == null ? "NullStringID" : LanguageExplorerResources.ResourceManager.GetString(stid));
 			}
 			catch (Exception e)

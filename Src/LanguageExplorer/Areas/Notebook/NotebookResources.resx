@@ -120,6 +120,12 @@
   <data name="Demote_Record" xml:space="preserve">
     <value>Demote Record...</value>
   </data>
+  <data name="Exporting0" xml:space="preserve">
+    <value>Exporting {0}</value>
+  </data>
+  <data name="Exporting_" xml:space="preserve">
+    <value>Exporting...</value>
+  </data>
   <data name="Import_Standard_Format_Notebook_data" xml:space="preserve">
     <value>Standard Format _Notebook data...</value>
   </data>

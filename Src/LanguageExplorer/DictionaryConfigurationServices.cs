@@ -11,7 +11,6 @@ using Gecko;
 using LanguageExplorer.Areas;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.DictionaryConfiguration.Migration;
-using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainImpl;
@@ -161,11 +160,15 @@ namespace LanguageExplorer
 			{
 				case AreaServices.ReversalBulkEditReversalEntriesMachineName:
 				case AreaServices.ReversalEditCompleteMachineName:
-					return xWorksStrings.ReversalIndex;
+				{
+					return LanguageExplorerResources.ReversalIndex;
+				}
 				case AreaServices.LexiconBrowseMachineName:
 				case AreaServices.LexiconDictionaryMachineName:
 				case AreaServices.LexiconEditMachineName:
+				{
 					return "Dictionary";
+				}
 				default:
 					return null;
 			}
@@ -180,9 +183,9 @@ namespace LanguageExplorer
 			switch(nonLocalizedConfigurationType)
 			{
 				case "Reversal Index":
-					return xWorksStrings.ReversalIndex;
+					return LanguageExplorerResources.ReversalIndex;
 				case "Dictionary":
-					return xWorksStrings.Dictionary;
+					return LanguageExplorerResources.Dictionary;
 				default:
 					return null;
 			}

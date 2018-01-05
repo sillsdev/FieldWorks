@@ -778,7 +778,9 @@ namespace LanguageExplorer.SendReceive
 				return;
 			var message = ResourceHelper.GetResourceString(e.MessageId);
 			if (!string.IsNullOrEmpty(message))
+			{
 				_progressDlg.Message = message;
+			}
 			_progressDlg.Minimum = 0;
 			_progressDlg.Maximum = e.Max;
 		}

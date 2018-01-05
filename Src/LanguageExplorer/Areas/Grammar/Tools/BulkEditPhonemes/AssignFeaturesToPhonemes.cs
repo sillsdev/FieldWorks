@@ -5,7 +5,6 @@
 using System.Xml.Linq;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
-using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;

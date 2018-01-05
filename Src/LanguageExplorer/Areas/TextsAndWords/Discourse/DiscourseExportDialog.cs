@@ -8,7 +8,6 @@ using System.IO;
 using System.Xml;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Xml;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;

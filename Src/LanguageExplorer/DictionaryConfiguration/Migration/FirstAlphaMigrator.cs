@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using LanguageExplorer.Works;
 using SIL.LCModel;
 
 namespace LanguageExplorer.DictionaryConfiguration.Migration

@@ -321,50 +321,50 @@
     <Compile Include="TextsAndWords\RespellingTests.cs" />
     <Compile Include="TextsAndWords\WordGrammarDebuggingTests.cs" />
     <Compile Include="Areas\AddCustomFieldDialogTests.cs" />
-    <Compile Include="Works\AllReversalEntriesRecordListTests.cs" />
-    <Compile Include="Works\BulkEditBarTests.cs" />
-    <Compile Include="Works\ConfigurableDictionaryNodeTests.cs" />
-    <Compile Include="Works\ConfiguredXHTMLGeneratorReversalTests.cs" />
-    <Compile Include="Works\ConfiguredXHTMLGeneratorTestHelpers.cs" />
-    <Compile Include="Works\ConfiguredXHTMLGeneratorTests.cs" />
-    <Compile Include="Works\CssGeneratorTests.cs" />
+    <Compile Include="DictionaryConfiguration\AllReversalEntriesRecordListTests.cs" />
+    <Compile Include="DictionaryConfiguration\BulkEditBarTests.cs" />
+    <Compile Include="DictionaryConfiguration\ConfigurableDictionaryNodeTests.cs" />
+    <Compile Include="DictionaryConfiguration\ConfiguredXHTMLGeneratorReversalTests.cs" />
+    <Compile Include="DictionaryConfiguration\ConfiguredXHTMLGeneratorTestHelpers.cs" />
+    <Compile Include="DictionaryConfiguration\ConfiguredXHTMLGeneratorTests.cs" />
+    <Compile Include="DictionaryConfiguration\ControlAssemblyReplacement.cs" />
+    <Compile Include="DictionaryConfiguration\CssGeneratorTests.cs" />
     <Compile Include="Areas\Lists\CustomListDlgTests.cs" />
     <Compile Include="Areas\Lists\DeleteCustomListTests.cs" />
-    <Compile Include="Works\DictionaryConfigManagerTests.cs" />
-    <Compile Include="Works\DictionaryConfigurationControllerTests.cs" />
-    <Compile Include="Works\DictionaryConfigurationImportControllerTests.cs" />
-    <Compile Include="Works\DictionaryConfigurationListenerTests.cs" />
-    <Compile Include="Works\DictionaryConfigurationManagerControllerTests.cs" />
-    <Compile Include="Works\DictionaryConfigurationModelTests.cs" />
-    <Compile Include="Works\DictionaryConfigurationUtilsTests.cs" />
-    <Compile Include="Works\DictionaryConfigViewerStub.cs" />
-    <Compile Include="Works\DictionaryDetailsControllerTests.cs" />
-    <Compile Include="Works\DictionaryExportServiceTests.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryConfigManagerTests.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryConfigurationControllerTests.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryConfigurationImportControllerTests.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryConfigurationListenerTests.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryConfigurationManagerControllerTests.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryConfigurationModelTests.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryConfigurationUtilsTests.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryConfigViewerStub.cs" />
+    <Compile Include="DictionaryConfiguration\DictionaryDetailsControllerTests.cs" />
+    <Compile Include="DictionaryExportServiceTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryNodeOptionsTests.cs" />
-    <Compile Include="Works\DictionaryPublicationDecoratorTests.cs" />
+    <Compile Include="DictionaryPublicationDecoratorTests.cs" />
     <Compile Include="Impls\DummyFwMainWnd.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Areas\ExportDialogTests.cs" />
-    <Compile Include="Works\HeadwordNumbersControllerTests.cs" />
-    <Compile Include="Works\InterestingTextsTests.cs" />
-    <Compile Include="Works\ItemClickedTests.cs" />
-    <Compile Include="Works\MacroListenerTests.cs" />
+    <Compile Include="DictionaryConfiguration\HeadwordNumbersControllerTests.cs" />
+    <Compile Include="DictionaryConfiguration\InterestingTextsTests.cs" />
+    <Compile Include="DictionaryConfiguration\ItemClickedTests.cs" />
+    <Compile Include="DictionaryConfiguration\MacroListenerTests.cs" />
     <Compile Include="Impls\RecordListRepositoryTests.cs" />
-    <Compile Include="Works\ReveralIndexServicesTests.cs" />
-    <Compile Include="Works\TempGuidOn.cs" />
-    <Compile Include="Works\UnicodeCharacterEditingHelperTests.cs" />
-    <Compile Include="Works\UploadToWebonaryControllerTests.cs" />
-    <Compile Include="Works\UploadToWebonaryModelTests.cs" />
-    <Compile Include="Works\WavConverterTests.cs" />
-    <Compile Include="Works\WordsUsedOnlyElsewhereFilterTests.cs" />
-    <Compile Include="Works\XhtmlDocViewTests.cs" />
-    <Compile Include="Works\XWorksAppTestBase.cs" />
+    <Compile Include="DictionaryConfiguration\TempGuidOn.cs" />
+    <Compile Include="DictionaryConfiguration\UnicodeCharacterEditingHelperTests.cs" />
+    <Compile Include="Impls\UploadToWebonaryControllerTests.cs" />
+    <Compile Include="Impls\UploadToWebonaryModelTests.cs" />
+    <Compile Include="DictionaryConfiguration\WavConverterTests.cs" />
+    <Compile Include="DictionaryConfiguration\WordsUsedOnlyElsewhereFilterTests.cs" />
+    <Compile Include="DictionaryConfiguration\XhtmlDocViewTests.cs" />
+    <Compile Include="AppTestBase.cs" />
     <Compile Include="DictionaryConfiguration\Migration\DictionaryConfigurationMigratorTests.cs" />
     <Compile Include="DictionaryConfiguration\Migration\FirstAlphaMigratorTests.cs" />
     <Compile Include="DictionaryConfiguration\Migration\FirstBetaMigratorTests.cs" />
     <Compile Include="DictionaryConfiguration\Migration\PreHistoricMigratorTests.cs" />
-    <Compile Include="Works\DictionaryConfigurationMigrators\StubContentControlProvider.cs" />
+    <Compile Include="DictionaryConfiguration\Migration\StubContentControlProvider.cs" />
     <Compile Include="XMLViews\ConfiguredExportTests.cs" />
     <Compile Include="XMLViews\DhListViewTests.cs" />
     <Compile Include="XMLViews\LayoutMergerTests.cs" />
@@ -406,9 +406,9 @@
     <Content Include="LexTextControls\FeatureSystem3.xml" />
     <None Include="SettingsBackup\db_TestLocal_Settings.xml" />
     <None Include="SettingsBackup\Settings.xml" />
-    <Content Include="Works\strings-en.xml" />
-    <Content Include="Works\strings-es-MX.xml" />
-    <Content Include="Works\strings-fr.xml" />
+    <Content Include="DictionaryConfiguration\strings-en.xml" />
+    <Content Include="DictionaryConfiguration\strings-es-MX.xml" />
+    <Content Include="DictionaryConfiguration\strings-fr.xml" />
     <Content Include="XMLViews\LayoutMergerTestData\LexEntryParts.xml" />
     <Content Include="XMLViews\LayoutMergerTestData\LexSenseParts.xml" />
     <None Include="XMLViews\LayoutMergerTestData\LexSensePartsOutput.xml" />
@@ -419,9 +419,9 @@
     <Content Include="XMLViews\Resources\Layouts.xml" />
     <Content Include="XMLViews\Resources\Parts.xml" />
     <None Include="XMLViews\Resources\TextCacheModel.xml" />
-    <None Include="Works\TestData\AudioFiles\abu2.wav" />
-    <None Include="Works\TestData\ConfigurationSettings\Dictionary\ProjectDictionaryOverrides.css" />
-    <None Include="Works\TestData\ConfigurationSettings\ReversalIndex\ProjectReversalOverrides.css" />
+    <None Include="DictionaryConfiguration\TestData\AudioFiles\abu2.wav" />
+    <None Include="DictionaryConfiguration\TestData\ConfigurationSettings\Dictionary\ProjectDictionaryOverrides.css" />
+    <None Include="DictionaryConfiguration\TestData\ConfigurationSettings\ReversalIndex\ProjectReversalOverrides.css" />
     <None Include="Interlinear\ExportTestFiles\Phase1-KalabaTest.xml" />
     <None Include="Interlinear\ExportTestFiles\Phase1-KalabaTestPunctuation.xml" />
     <None Include="Interlinear\ExportTestFiles\Phase1-KalabaTestPunctuationWordAlignedXLingPap.xml" />
@@ -445,6 +445,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="BuildInclude.targets" />
 </Project>

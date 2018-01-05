@@ -9,13 +9,11 @@ using System.Linq;
 using LanguageExplorer;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.DictionaryConfiguration.Migration;
-using LanguageExplorer.Works;
 using NUnit.Framework;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.IO;
 using SIL.LCModel;
-using LanguageExplorerTests.Works;
 
 namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 {

@@ -428,4 +428,167 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="Sense" xml:space="preserve">
     <value>Sense</value>
   </data>
+  <data name="ErrorExporting_ProbablyBug" xml:space="preserve">
+    <value>An error occurred while exporting your data. This could be the result of an error in an FXT file, an output file that is locked, or a bug in the FieldWorks code.</value>
+  </data>
+  <data name="ExportTo0" xml:space="preserve">
+    <value>Export to {0}</value>
+  </data>
+  <data name="ksAllEntries" xml:space="preserve">
+    <value>All</value>
+    <comment>Used in Dictionary View pane when no Dictionary Publication is selected.</comment>
+  </data>
+  <data name="ksBefore" xml:space="preserve">
+    <value>Before:</value>
+  </data>
+  <data name="ksCanBeConfiguredInMoreDetail" xml:space="preserve">
+    <value>{0} can be configured in more detail.</value>
+  </data>
+  <data name="ksCantDemoteTagList" xml:space="preserve">
+    <value>You cannot demote a list of Text Markup Tags into another list.</value>
+  </data>
+  <data name="ksCantPromoteGroupToTemplate" xml:space="preserve">
+    <value>You cannot promote part of one discourse chart template to a new template. In fact, currently we do not support having more than one template at all.</value>
+  </data>
+  <data name="ksCantPromoteTag" xml:space="preserve">
+    <value>You cannot promote a tag to be its own list. Add a new list instead and move tags to it.</value>
+  </data>
+  <data name="ksCharacterStyleForBefore" xml:space="preserve">
+    <value>Character Style for Before string:</value>
+  </data>
+  <data name="ksChooseLIFTExportFolder" xml:space="preserve">
+    <value>Choose or create a folder (with your project name) for FLEx to put all the files into for this LIFT export.  Any LIFT data in an existing folder will be overwritten.</value>
+  </data>
+  <data name="ksChooseLIFTFolderTitle" xml:space="preserve">
+    <value>Choose where to save the files that constitute a LIFT export</value>
+  </data>
+  <data name="ksConfigure" xml:space="preserve">
+    <value>Configure {0} View...</value>
+    <comment>Parameter is either Dictionary or Reversal Index</comment>
+  </data>
+  <data name="ksConfigureIn" xml:space="preserve">
+    <value>Configure {0} in {1} View...</value>
+    <comment>{0} is a node in the dictionary configure dialog, {1} is the kind of document we are configuring (Dictionary, Reversal Index, Classified Dictionary, etc.).</comment>
+  </data>
+  <data name="ksCtrlClickJumpTooltip" xml:space="preserve">
+    <value>Ctrl+Click to jump</value>
+    <comment>Message shows in Dictionary view when mouse is over a link to another entry.</comment>
+  </data>
+  <data name="ksCustomFieldsCanNotBeAddedDueToOtherAppsCaption" xml:space="preserve">
+    <value>Cannot Add Custom Fields</value>
+  </data>
+  <data name="ksCustomFieldsCanNotBeAddedDueToOtherAppsText" xml:space="preserve">
+    <value>Custom Fields cannot be added when there is more than one application using this project.</value>
+  </data>
+  <data name="ksDictionaryView" xml:space="preserve">
+    <value>Choose dictionary view to configure:</value>
+  </data>
+  <data name="ksEntryNotPublished" xml:space="preserve">
+    <value>Entry not published</value>
+    <comment>Used in Dictionary view warning dialogs.</comment>
+  </data>
+  <data name="ksEntryNotPublishedReason" xml:space="preserve">
+    <value>because it is currently set not to be published at all in this publication</value>
+    <comment>Used in Dictionary view warning dialogs.</comment>
+  </data>
+  <data name="ksHierarchyLabel" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="ksHierarchyLabel2" xml:space="preserve">
+    <value>{0}:
+  {1}</value>
+  </data>
+  <data name="ksIllegalXmlChars" xml:space="preserve">
+    <value>Characters with hexadecimal values 0x0 through 0x1f are illegal in XML documents and have been removed.</value>
+  </data>
+  <data name="ksInspect" xml:space="preserve">
+    <value>Inspect entry</value>
+    <comment>Second item in ctrl-right-click menu in Dictionary view</comment>
+  </data>
+  <data name="ksLIFTAlreadyExists" xml:space="preserve">
+    <value>There is already a project in that folder.  Click “OK” to overwrite the lexicon in that project, or “Cancel” to abort.</value>
+  </data>
+  <data name="ksLiftExportBugReport" xml:space="preserve">
+    <value>Language Explorer's LIFT export has a bug that will prevent interchange with WeSay.  Please report this to the developers, sending both the exported LIFT file and (if possible) a backup of the current project.</value>
+  </data>
+  <data name="ksLIFTFolderNotEmpty" xml:space="preserve">
+    <value>The selected folder is not empty, but does not contain a lexicon.  Do you want to continue?</value>
+  </data>
+  <data name="ksMainNotShown" xml:space="preserve">
+    <value>Main entry not shown</value>
+    <comment>Used in Dictionary view warning dialogs.</comment>
+  </data>
+  <data name="ksMainNotShownReason" xml:space="preserve">
+    <value>because it is currently set not to be shown with a main entry in this publication</value>
+    <comment>Used in Dictionary view warning dialogs.</comment>
+  </data>
+  <data name="ksMinorNotShown" xml:space="preserve">
+    <value>Minor entry not shown</value>
+    <comment>Used in Dictionary view warning dialogs.</comment>
+  </data>
+  <data name="ksMinorNotShownReason" xml:space="preserve">
+    <value>because it is currently set not to be shown with a minor entry</value>
+    <comment>Used in Dictionary view warning dialogs.</comment>
+  </data>
+  <data name="ksParagraphStyle" xml:space="preserve">
+    <value>Paragraph Style</value>
+  </data>
+  <data name="ksParagraphStyleForBefore" xml:space="preserve">
+    <value>Paragraph Style for Before header:</value>
+  </data>
+  <data name="ksProhibitedMovement" xml:space="preserve">
+    <value>Prohibited Movement</value>
+    <comment>Used for Warning dialogs on prohibited list item movements.</comment>
+  </data>
+  <data name="ksPublicationEntries" xml:space="preserve">
+    <value>{0} {1}</value>
+    <comment>Used in Dictionary View pane, {0} is publication name, {1} is Entries (localized).</comment>
+  </data>
+  <data name="ksReferencedComplexForm" xml:space="preserve">
+    <value>Referenced Complex Form</value>
+  </data>
+  <data name="ksRootSenseOnSubentriesGoneDlgLabel" xml:space="preserve">
+    <value>Sense Subentries will be hidden</value>
+  </data>
+  <data name="ksRootSenseOnSubentriesGoneDlgText" xml:space="preserve">
+    <value>Language Explorer does not yet have the capability to display subentries of senses when the senses are not themselves shown in separate paragraphs.</value>
+  </data>
+  <data name="ksSelectedEntryNotInDict" xml:space="preserve">
+    <value>The entry you have selected is not shown in Dictionary view, {0}.</value>
+  </data>
+  <data name="ksTagListTooDeep" xml:space="preserve">
+    <value>A Text Markup Tag List can only have two levels (list type and tags).</value>
+  </data>
+  <data name="ksTemplateTooDeep" xml:space="preserve">
+    <value>A discourse chart template can only have three levels (template, column group, and column).</value>
+  </data>
+  <data name="ksUnspecified" xml:space="preserve">
+    <value>(unspecified)</value>
+  </data>
+  <data name="ksValidatingOutputFile" xml:space="preserve">
+    <value>Validating output file {0}</value>
+  </data>
+  <data name="ksWritingSystems" xml:space="preserve">
+    <value>Writing systems:</value>
+  </data>
+  <data name="ksXReversalIndex" xml:space="preserve">
+    <value>{0} {1}</value>
+    <comment>Used in Reversal Index. {0} is writing system name, {1} is Reversal Index.</comment>
+  </data>
+  <data name="NoDescriptionForItem" xml:space="preserve">
+    <value>There is no description available for this item.</value>
+  </data>
+  <data name="ProcessingIntoFinalForm" xml:space="preserve">
+    <value>Processing exported data into final form</value>
+    <comment>Parameter is the Lexeme Form of the entry.</comment>
+  </data>
+  <data name="Promote" xml:space="preserve">
+    <value>Promote</value>
+  </data>
+  <data name="RedoMoveItem" xml:space="preserve">
+    <value>Redo Move Item</value>
+  </data>
+  <data name="UndoMoveItem" xml:space="preserve">
+    <value>Undo Move Item</value>
+  </data>
 </root>

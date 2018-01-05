@@ -9,7 +9,6 @@ using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
 using LanguageExplorer.LcmUi;
-using LanguageExplorer.Works;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -412,14 +411,14 @@ namespace LanguageExplorer
 							// Enhance JohnT: do something to make it switch to Discourse tab
 							break;
 						case ScriptureTags.kClassId:
-							cantJumpMessage = xWorksStrings.ksCantJumpToScripture;
+							cantJumpMessage = LanguageExplorerResources.ksCantJumpToScripture;
 							break;
 						case LexDbTags.kClassId: // other things owned by this??
 						case LangProjectTags.kClassId:
-							cantJumpMessage = xWorksStrings.ksCantJumpToLangProj;
+							cantJumpMessage = LanguageExplorerResources.ksCantJumpToLangProj;
 							break;
 						default:
-							cantJumpMessage = string.Format(xWorksStrings.ksCantJumpToObject, _cache.MetaDataCacheAccessor.GetClassName(majorObject.ClassID));
+							cantJumpMessage = string.Format(LanguageExplorerResources.ksCantJumpToObject, _cache.MetaDataCacheAccessor.GetClassName(majorObject.ClassID));
 							break; // can't jump to it.
 					}
 					if (!string.IsNullOrWhiteSpace(cantJumpMessage))
@@ -482,14 +481,14 @@ namespace LanguageExplorer
 			}
 			catch(Exception err)
 			{
-				var message = !string.IsNullOrEmpty(err.InnerException?.Message) ? string.Format(xWorksStrings.UnableToFollowLink0, err.InnerException.Message) : xWorksStrings.UnableToFollowLink;
-				MessageBox.Show(message, xWorksStrings.FailedJump, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				var message = !string.IsNullOrEmpty(err.InnerException?.Message) ? string.Format(LanguageExplorerResources.UnableToFollowLink0, err.InnerException.Message) : LanguageExplorerResources.UnableToFollowLink;
+				MessageBox.Show(message, LanguageExplorerResources.FailedJump, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
 		}
 
 		private void ShowCantJumpMessage(string msg)
 		{
-			MessageBox.Show(PropertyTable.GetValue<Form>("window") ?? Form.ActiveForm, msg, xWorksStrings.ksCantJumpCaption);
+			MessageBox.Show(PropertyTable.GetValue<Form>("window") ?? Form.ActiveForm, msg, LanguageExplorerResources.ksCantJumpCaption);
 		}
 
 		/// <summary>

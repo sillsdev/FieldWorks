@@ -11,7 +11,6 @@ using System.Xml.Linq;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.Lexicon;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.Works;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;

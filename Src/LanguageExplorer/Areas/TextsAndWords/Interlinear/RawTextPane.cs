@@ -8,7 +8,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.LcmUi;
-using LanguageExplorer.Works;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;

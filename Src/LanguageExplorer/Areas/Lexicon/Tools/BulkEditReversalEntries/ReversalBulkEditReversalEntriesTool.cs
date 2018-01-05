@@ -14,7 +14,7 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using LanguageExplorer.LcmUi;
-using LanguageExplorer.Works;
+using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
@@ -205,7 +205,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			{
 				var controller = new DictionaryConfigurationController(dlg, _recordList?.CurrentObject);
 				controller.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
-				dlg.Text = string.Format(xWorksStrings.ConfigureTitle, xWorksStrings.Dictionary);
+				dlg.Text = string.Format(LexiconResources.ConfigureTitle, LanguageExplorerResources.Dictionary);
 				dlg.HelpTopic = "khtpConfigureReversalIndex";
 				dlg.ShowDialog((IWin32Window)mainWindow);
 				refreshNeeded = controller.MasterRefreshRequired;

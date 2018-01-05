@@ -320,4 +320,29 @@
   <data name="EntriesOrChildrenClerkPartOwnershipTree" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\EntriesOrChildrenClerkPartOwnershipTree.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="ConfigureTitle" xml:space="preserve">
+    <value>Configure {0}</value>
+    <comment>{0} is a type of configuration, like Dictionary or Reversal Index</comment>
+  </data>
+  <data name="ksCancelingPublicationLabel" xml:space="preserve">
+    <value>Click Cancel to stop loading the Dictionary view and move to Lexicon Edit.</value>
+  </data>
+  <data name="ksErrorDisplayingPublication" xml:space="preserve">
+    <value>Cannot generate the display for the current publication</value>
+  </data>
+  <data name="ksNoConfiguration" xml:space="preserve">
+    <value>The dictionary view has not been set.</value>
+  </data>
+  <data name="ksObtainingEntriesToDisplay" xml:space="preserve">
+    <value>Obtaining the list of entries to display</value>
+    <comment>this message is displayed in a progress report dialog</comment>
+  </data>
+  <data name="ksPreparingPublicationDisplay" xml:space="preserve">
+    <value>Preparing to display the publication view</value>
+    <comment>this is the title for a progress report dialog</comment>
+  </data>
+  <data name="NoConfigsMatchPub" xml:space="preserve">
+    <value>No views match the current publication.</value>
+    <comment>If a user selects a publication, but has deselected that publication from all their configured views, this will be the content of the dictionary preview pane.</comment>
+  </data>
 </root>

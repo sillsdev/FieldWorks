@@ -6,7 +6,6 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Works;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -98,7 +97,7 @@ namespace LanguageExplorer.Areas
 			var activeForm = PropertyTable.GetValue<Form>("window");
 			if (SharedBackendServices.AreMultipleApplicationsConnected(PropertyTable.GetValue<LcmCache>("cache")))
 			{
-				MessageBoxUtils.Show(activeForm, xWorksStrings.ksCustomFieldsCanNotBeAddedDueToOtherAppsText, xWorksStrings.ksCustomFieldsCanNotBeAddedDueToOtherAppsCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBoxUtils.Show(activeForm, AreaResources.ksCustomFieldsCanNotBeAddedDueToOtherAppsText, AreaResources.ksCustomFieldsCanNotBeAddedDueToOtherAppsCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
 

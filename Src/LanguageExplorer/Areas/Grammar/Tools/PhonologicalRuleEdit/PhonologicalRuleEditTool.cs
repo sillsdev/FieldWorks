@@ -13,7 +13,6 @@ using LanguageExplorer.Controls.PaneBar;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
-using LanguageExplorer.Works;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
@@ -28,7 +27,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 		private GrammarAreaMenuHelper _grammarAreaWideMenuHelper;
 		private const string PhonologicalRules = "phonologicalRules";
 		private MultiPane _multiPane;
-		private RecordBrowseView _recordBrowseView;
+		private RecordBrowseActiveView _recordBrowseActiveView;
 		private IRecordList _recordList;
 		[Import(AreaServices.GrammarAreaMachineName)]
 		private IArea _area;
@@ -45,7 +44,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 		{
 			_grammarAreaWideMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
-			_recordBrowseView = null;
+			_recordBrowseActiveView = null;
 			_grammarAreaWideMenuHelper = null;
 		}
 
@@ -64,7 +63,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 			_grammarAreaWideMenuHelper = new GrammarAreaMenuHelper(majorFlexComponentParameters, _recordList); // Use generic export event handler.
 
 			var root = XDocument.Parse(GrammarResources.PhonologicalRuleEditToolParameters).Root;
-			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList);
+			_recordBrowseActiveView = new RecordBrowseActiveView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
@@ -89,7 +88,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				mainMultiPaneParameters,
-				_recordBrowseView, "Browse", new PaneBar(),
+				_recordBrowseActiveView, "Browse", new PaneBar(),
 				recordEditView, "Details", recordEditViewPaneBar);
 
 			panelButton.DatTree = recordEditView.DatTree;
@@ -102,7 +101,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
+			_recordBrowseActiveView.BrowseViewer.BrowseView.PrepareToRefresh();
 		}
 
 		/// <summary>
