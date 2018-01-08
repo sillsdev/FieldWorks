@@ -257,14 +257,21 @@ namespace LanguageExplorer.SendReceive
 				{
 					Subscriber.Unsubscribe("ViewLiftMessages", ViewMessages);
 
-					_mainSendReceiveMenu.Click -= S_R_LiftBridge_Click;
-					_mainSendReceiveMenu.Dispose();
-
-					_viewMessagesMenu.Click -= ViewMessages_LiftBridge_Click;
-					_viewMessagesMenu.Dispose();
-
-					_obtainLiftBridgeProjectMenu.Click -= ObtainLiftBridgeProject_Click;
-					_obtainLiftBridgeProjectMenu.Dispose();
+					if (_mainSendReceiveMenu != null)
+					{
+						_mainSendReceiveMenu.Click -= S_R_LiftBridge_Click;
+						_mainSendReceiveMenu.Dispose();
+					}
+					if (_viewMessagesMenu != null)
+					{
+						_viewMessagesMenu.Click -= ViewMessages_LiftBridge_Click;
+						_viewMessagesMenu.Dispose();
+					}
+					if (_obtainLiftBridgeProjectMenu != null)
+					{
+						_obtainLiftBridgeProjectMenu.Click -= ObtainLiftBridgeProject_Click;
+						_obtainLiftBridgeProjectMenu.Dispose();
+					}
 
 					_oldLiftBridgeProjects.Clear();
 				}

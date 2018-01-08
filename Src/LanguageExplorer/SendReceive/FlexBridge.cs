@@ -194,17 +194,26 @@ namespace LanguageExplorer.SendReceive
 			{
 				Subscriber.Unsubscribe("ViewMessages", ViewMessages);
 
-				_mainSendReceiveMenu.Click -= S_R_FlexBridge_Click;
-				_mainSendReceiveMenu.Dispose();
-
-				_viewMessagesMenu.Click -= ViewMessages_FlexBridge_Click;
-				_viewMessagesMenu.Dispose();
-
-				_obtainAnyFlexBridgeProjectMenu.Click -= ObtainAnyFlexBridgeProject_Click;
-				_obtainAnyFlexBridgeProjectMenu.Dispose();
-
-				_sendFlexBridgeFirstTimeProjectMenu.Click -= SendFlexBridgeFirstTime_Click;
-				_sendFlexBridgeFirstTimeProjectMenu.Dispose();
+				if (_mainSendReceiveMenu != null)
+				{
+					_mainSendReceiveMenu.Click -= S_R_FlexBridge_Click;
+					_mainSendReceiveMenu.Dispose();
+				}
+				if (_viewMessagesMenu != null)
+				{
+					_viewMessagesMenu.Click -= ViewMessages_FlexBridge_Click;
+					_viewMessagesMenu.Dispose();
+				}
+				if (_obtainAnyFlexBridgeProjectMenu != null)
+				{
+					_obtainAnyFlexBridgeProjectMenu.Click -= ObtainAnyFlexBridgeProject_Click;
+					_obtainAnyFlexBridgeProjectMenu.Dispose();
+				}
+				if (_sendFlexBridgeFirstTimeProjectMenu != null)
+				{
+					_sendFlexBridgeFirstTimeProjectMenu.Click -= SendFlexBridgeFirstTime_Click;
+					_sendFlexBridgeFirstTimeProjectMenu.Dispose();
+				}
 			}
 			_mainSendReceiveMenu = null;
 			_viewMessagesMenu = null;

@@ -277,7 +277,7 @@ namespace LanguageExplorer.SendReceive
 		/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
 		public void Dispose()
 		{
-			Dispose(false);
+			Dispose(true);
 			// The base class finalizer is called automatically.
 			GC.SuppressFinalize(this);
 		}
@@ -292,15 +292,21 @@ namespace LanguageExplorer.SendReceive
 
 			if (disposing)
 			{
-				_helpChorusMenu.Click -= HelpChorus_Click;
-				_helpChorusMenu.Dispose();
+				if (_helpChorusMenu != null)
+				{
+					_helpChorusMenu.Click -= HelpChorus_Click;
+					_helpChorusMenu.Dispose();
+				}
 				if (_checkForFlexBridgeUpdatesMenu != null)
 				{
 					_checkForFlexBridgeUpdatesMenu.Click -= CheckForFlexBridgeUpdates_Click;
 					_checkForFlexBridgeUpdatesMenu.Dispose();
 				}
-				_helpAboutFLEXBridgeMenu.Click -= HelpAboutFLEXBridge_Click;
-				_helpAboutFLEXBridgeMenu.Dispose();
+				if (_helpAboutFLEXBridgeMenu != null)
+				{
+					_helpAboutFLEXBridgeMenu.Click -= HelpAboutFLEXBridge_Click;
+					_helpAboutFLEXBridgeMenu.Dispose();
+				}
 
 				foreach (var bridge in _bridges.Values)
 				{

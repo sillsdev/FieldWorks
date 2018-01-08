@@ -380,6 +380,7 @@ namespace LanguageExplorer.Impls
 				ResourceHelper.ShutdownHelper();
 
 				RegistrySettings?.Dispose();
+				MessageBoxExManager.DisposeAllMessageBoxes();
 
 				Application.EnterThreadModal -= Application_EnterThreadModal;
 				Application.LeaveThreadModal -= Application_LeaveThreadModal;
