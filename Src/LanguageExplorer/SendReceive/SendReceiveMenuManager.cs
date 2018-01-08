@@ -19,7 +19,7 @@ namespace LanguageExplorer.SendReceive
 	/// <summary>
 	/// Handle the menus on the global Send/Receive menu.
 	/// </summary>
-	internal sealed class SendReceiveMenuManager : IFlexComponent
+	internal sealed class SendReceiveMenuManager : IFlexComponent, IDisposable
 	{
 		private readonly Dictionary<string, IBridge> _bridges = new Dictionary<string, IBridge>(2);
 		private IdleQueue IdleQueue { get; set; }
@@ -234,7 +234,7 @@ namespace LanguageExplorer.SendReceive
 
 		private void Flex_Or_Lift_Bridge_Clicked(object sender, EventArgs e)
 		{
-			IBridge lastBridgeRun = GetLastBridge();
+			var lastBridgeRun = GetLastBridge();
 			// Process the event for the toolbar button that does S/R for the last repo that was done.
 			if (MiscUtils.IsMono)
 			{

@@ -77,39 +77,48 @@ namespace LanguageExplorer.Areas.Lexicon
 			progressBar.Minimum = 0;
 			progressBar.Maximum = entries.Length;
 			progressBar.Step = 1;
-			List<ILexEntry> entriesToDel = new List<ILexEntry>();
+			var entriesToDel = new List<ILexEntry>();
 			foreach (var entry in entries)
 			{
-				int count = 0;
+				var count = 0;
 				progressBar.PerformStep();
-				List<IMoForm> forms = new List<IMoForm>();
+				var forms = new List<IMoForm>();
 				if (entry.LexemeFormOA != null)
-					forms.Add(entry.LexemeFormOA);
-				forms.AddRange(entry.AlternateFormsOS);
-				foreach (IMoForm mfo in forms)
 				{
-					foreach (ICmObject cmo in mfo.ReferringObjects)
-						if (cmo is IWfiMorphBundle)
+					forms.Add(entry.LexemeFormOA);
+				}
+				forms.AddRange(entry.AlternateFormsOS);
+				foreach (var mfo in forms)
+				{
+					foreach (var cmo in mfo.ReferringObjects)
+					{
+						if (!(cmo is IWfiMorphBundle))
 						{
-							count += cd.get_VecSize(cmo.Owner.Hvo, ConcDecorator.kflidWaOccurrences);
-							if (count > 0)
-								break;
+							continue;
 						}
+						count += cd.get_VecSize(cmo.Owner.Hvo, ConcDecorator.kflidWaOccurrences);
+						if (count > 0)
+						{
+							break;
+						}
+					}
 					if (count > 0)
+					{
 						break;
+					}
 				}
 				if (count == 0)
+				{
 					entriesToDel.Add(entry);
+				}
 			}
 			// Warn if entries are to be deleted. We'll assume a specific warning for senses is not critical.
 			if (entriesToDel.Count > 0)
 			{
-				string dlgTxt = String.Format(LanguageExplorerResources.ksDeleteEntrySenseConfirmText, entriesToDel.Count);
-				DialogResult result = MessageBox.Show(dlgTxt, LanguageExplorerResources.ksDeleteEntrySenseConfirmTitle,
-					MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+				var dlgTxt = string.Format(LanguageExplorerResources.ksDeleteEntrySenseConfirmText, entriesToDel.Count);
+				if (MessageBox.Show(dlgTxt, LanguageExplorerResources.ksDeleteEntrySenseConfirmTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
 				{
-					if (result == DialogResult.No)
-						return;
+					return;
 				}
 			}
 
@@ -127,16 +136,21 @@ namespace LanguageExplorer.Areas.Lexicon
 			foreach (var sense in senses)
 			{
 				progressBar.PerformStep();
-				int count = 0;
-				foreach (ICmObject cmo in sense.ReferringObjects)
-					if (cmo is IWfiMorphBundle)
+				var count = 0;
+				foreach (var cmo in sense.ReferringObjects)
+				{
+					if (!(cmo is IWfiMorphBundle))
 					{
-						count += cd.get_VecSize(cmo.Owner.Hvo, ConcDecorator.kflidWaOccurrences);
-						if (count > 0)
-							break;
+						continue;
 					}
+					count += cd.get_VecSize(cmo.Owner.Hvo, ConcDecorator.kflidWaOccurrences);
+					if (count > 0)
+						break;
+				}
 				if (count == 0)
+				{
 					cache.DomainDataByFlid.DeleteObj(sense.Hvo);
+				}
 			}
 		}
 	}

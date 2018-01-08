@@ -66,9 +66,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		public void Process()
 		{
 			var cache = m_dlg.PropertyTable.GetValue<LcmCache>("cache");
-			IWfiAnalysis[] analyses = cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances().ToArray();
+			var analyses = cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances().ToArray();
 			if (analyses.Length == 0)
+			{
 				return;
+			}
 
 			// Set up progress bar.
 			m_dlg.ProgressBar.Minimum = 0;
@@ -80,18 +82,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 
 			NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 			{
-				foreach (IWfiAnalysis analysis in analyses)
+				foreach (var analysis in analyses)
 				{
-					ICmAgentEvaluation[] parserEvals = analysis.EvaluationsRC.Where(evaluation => !evaluation.Human).ToArray();
-					foreach (ICmAgentEvaluation parserEval in parserEvals)
+					var parserEvals = analysis.EvaluationsRC.Where(evaluation => !evaluation.Human).ToArray();
+					foreach (var parserEval in parserEvals)
+					{
 						analysis.EvaluationsRC.Remove(parserEval);
+					}
 
-					IWfiWordform wordform = analysis.Wordform;
+					var wordform = analysis.Wordform;
 					if (analysis.EvaluationsRC.Count == 0)
+					{
 						wordform.AnalysesOC.Remove(analysis);
+					}
 
 					if (parserEvals.Length > 0)
+					{
 						wordform.Checksum = 0;
+					}
 
 					m_dlg.ProgressBar.PerformStep();
 				}

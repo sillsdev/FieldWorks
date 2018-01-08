@@ -7,7 +7,7 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.UtilityTools
 {
-	internal class WriteAllObjectsUtility : IUtility
+	internal sealed class WriteAllObjectsUtility : IUtility
 	{
 		private UtilityDlg _utilityDlg;
 

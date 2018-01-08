@@ -25,7 +25,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	///		Spelling status will be set to Correct if any of the old wordforms is Correct, and to Incorrect if
 	///		any old form is Incorrect; otherwise it stays Undecided.
 	/// </summary>
-	public class DuplicateWordformFixer : IUtility
+	internal sealed class DuplicateWordformFixer : IUtility
 	{
 		private UtilityDlg m_dlg;
 
@@ -69,8 +69,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				() => failures = WfiWordformServices.FixDuplicates(cache, new ProgressBarWrapper(m_dlg.ProgressBar)));
 			if (!string.IsNullOrEmpty(failures))
 			{
-				MessageBox.Show(m_dlg, string.Format(ITextStrings.ksWordformMergeFailures, failures), ITextStrings.ksWarning,
-					MessageBoxButtons.OK);
+				MessageBox.Show(m_dlg, string.Format(ITextStrings.ksWordformMergeFailures, failures), ITextStrings.ksWarning, MessageBoxButtons.OK);
 			}
 		}
 	}

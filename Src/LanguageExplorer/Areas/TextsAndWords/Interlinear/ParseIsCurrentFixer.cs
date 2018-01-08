@@ -12,7 +12,7 @@ using SIL.LCModel.Infrastructure;
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	/// <summary />
-	internal class ParseIsCurrentFixer : IUtility
+	internal sealed class ParseIsCurrentFixer : IUtility
 	{
 		private UtilityDlg m_dlg;
 

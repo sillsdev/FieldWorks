@@ -1085,21 +1085,23 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private void btnModifyContentMapping_Click(object sender, EventArgs e)
 		{
 			if (m_lvContentMapping.SelectedItems.Count == 0)
-				return;
-			using (AnthroFieldMappingDlg dlg = new AnthroFieldMappingDlg())
 			{
-				ListViewItem lvi = m_lvContentMapping.SelectedItems[0];
-				RnSfMarker rsfm = lvi.Tag as RnSfMarker;
+				return;
+			}
+			using (var dlg = new AnthroFieldMappingDlg())
+			{
+				var lvi = m_lvContentMapping.SelectedItems[0];
+				var rsfm = lvi.Tag as RnSfMarker;
 				var app = m_propertyTable.GetValue<IApp>("App");
-				dlg.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, rsfm,
-					m_SfmFile, m_mapFlidName, m_stylesheet, m_propertyTable, m_publisher);
-				if (dlg.ShowDialog(this) == DialogResult.OK)
+				dlg.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, rsfm, m_SfmFile, m_mapFlidName, m_stylesheet, m_propertyTable, m_publisher);
+				if (dlg.ShowDialog(this) != DialogResult.OK)
 				{
-					rsfm = dlg.Results;
-					lvi.SubItems[3].Text = rsfm.m_sName;
-					lvi.Tag = rsfm;
-					m_fDirtySettings = true;
+					return;
 				}
+				rsfm = dlg.Results;
+				lvi.SubItems[3].Text = rsfm.m_sName;
+				lvi.Tag = rsfm;
+				m_fDirtySettings = true;
 			}
 		}
 

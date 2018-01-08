@@ -14,7 +14,7 @@ using SIL.FieldWorks.Language;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 {
-	internal class SortReversalSubEntries : IUtility
+	internal sealed class SortReversalSubEntries : IUtility
 	{
 		private UtilityDlg m_dlg;
 
@@ -70,15 +70,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 					{
 						var subEntryArray = reversalIndexEntry.SubentriesOS.ToArray();
 						Array.Sort(subEntryArray, comp);
-						for(var i = 0; i < subEntryArray.Length; ++i)
+						for (var i = 0; i < subEntryArray.Length; ++i)
+						{
 							reversalIndexEntry.SubentriesOS.Insert(i, subEntryArray[i]);
+						}
 					}
 				}
 			}
 		}
 
 		/// <summary />
-		internal class ReversalSubEntryIcuComparer : IComparer<IReversalIndexEntry>, IDisposable
+		private sealed class ReversalSubEntryIcuComparer : IComparer<IReversalIndexEntry>, IDisposable
 		{
 			private readonly int m_ws;
 			private readonly ManagedLgIcuCollator m_collator;
@@ -99,7 +101,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				return m_collator.Compare(xString.Text, yString.Text, LgCollatingOptions.fcoIgnoreCase);
 			}
 
-#region disposal
+			#region disposal
 			~ReversalSubEntryIcuComparer() { Dispose(false); }
 
 			/// <summary />
@@ -110,18 +112,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			}
 
 			/// <summary />
-			protected virtual void Dispose(bool disposing)
+			private void Dispose(bool disposing)
 			{
 				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 				if(disposing)
 				{
-					if(m_collator != null)
-					{
-						m_collator.Dispose();
-					}
+					m_collator?.Dispose();
 				}
 			}
-#endregion disposal
+			#endregion disposal
 		}
 	}
 }

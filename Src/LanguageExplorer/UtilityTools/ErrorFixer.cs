@@ -15,12 +15,10 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.UtilityTools
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Connect the error fixing code to the FieldWorks UtilityDlg facility.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public class ErrorFixer : IUtility
+	internal sealed class ErrorFixer : IUtility
 	{
 		private UtilityDlg m_dlg;
 
@@ -68,25 +66,26 @@ namespace LanguageExplorer.UtilityTools
 			{
 				try
 				{
-					if (dlg.ShowDialog(m_dlg) == DialogResult.OK)
+					if (dlg.ShowDialog(m_dlg) != DialogResult.OK)
 					{
-						string pathname = Path.Combine(
-							Path.Combine(FwDirectoryFinder.ProjectsDirectory, dlg.SelectedProject),
-							dlg.SelectedProject + LcmFileHelper.ksFwDataXmlFileExtension);
-						if (File.Exists(pathname))
+						return;
+					}
+					var pathname = Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, dlg.SelectedProject), dlg.SelectedProject + LcmFileHelper.ksFwDataXmlFileExtension);
+					if (!File.Exists(pathname))
+					{
+						return;
+					}
+					using (new WaitCursor(m_dlg))
+					{
+						using (var progressDlg = new ProgressDialogWithTask(m_dlg))
 						{
-							using (new WaitCursor(m_dlg))
+							var fixes = (string)progressDlg.RunTask(true, FixDataFile, pathname);
+							if (fixes.Length <= 0)
 							{
-								using (var progressDlg = new ProgressDialogWithTask(m_dlg))
-								{
-									string fixes = (string)progressDlg.RunTask(true, FixDataFile, pathname);
-									if (fixes.Length > 0)
-									{
-										MessageBox.Show(fixes, LanguageExplorerResources.ksErrorsFoundOrFixed);
-										File.WriteAllText(pathname.Replace(LcmFileHelper.ksFwDataXmlFileExtension, "fixes"), fixes);
-									}
-								}
+								return;
 							}
+							MessageBox.Show(fixes, LanguageExplorerResources.ksErrorsFoundOrFixed);
+							File.WriteAllText(pathname.Replace(LcmFileHelper.ksFwDataXmlFileExtension, "fixes"), fixes);
 						}
 					}
 				}
@@ -98,16 +97,17 @@ namespace LanguageExplorer.UtilityTools
 
 		private object FixDataFile(IProgress progressDlg, params object[] parameters)
 		{
-			string pathname = parameters[0] as string;
-			StringBuilder bldr = new StringBuilder();
-
-			FwDataFixer data = new FwDataFixer(pathname, progressDlg, LogErrors, ErrorCount);
+			var pathname = parameters[0] as string;
+			var bldr = new StringBuilder();
+			var data = new FwDataFixer(pathname, progressDlg, LogErrors, ErrorCount);
 			_errorsFixed = 0;
 			_errors.Clear();
 			data.FixErrorsAndSave();
 
 			foreach (var err in _errors)
+			{
 				bldr.AppendLine(err);
+			}
 			return bldr.ToString();
 		}
 
@@ -117,7 +117,9 @@ namespace LanguageExplorer.UtilityTools
 		{
 			_errors.Add(message);
 			if (errorFixed)
+			{
 				++_errorsFixed;
+			}
 		}
 
 		private int ErrorCount()

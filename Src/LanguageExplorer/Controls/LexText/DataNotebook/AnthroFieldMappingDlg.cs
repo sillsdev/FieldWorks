@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,9 +18,7 @@ using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Controls.LexText.DataNotebook
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary></summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public partial class AnthroFieldMappingDlg : Form
 	{
 		LcmCache m_cache;
@@ -45,47 +43,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		string m_sContentsGroupFmt;
 		string m_sContentsLabelFmt;
 
-		internal class DestinationField
-		{
-			private int m_flid;
-			private string m_name;
-
-			internal DestinationField(int flid, string name)
-			{
-				m_flid = flid;
-				m_name = name;
-			}
-
-			internal int Flid
-			{
-				get { return m_flid; }
-			}
-
-			internal string Name
-			{
-				get { return m_name; }
-			}
-
-			public override string ToString()
-			{
-				return m_name;
-			}
-
-			public override bool Equals(object obj)
-			{
-				DestinationField that = obj as DestinationField;
-				if (that == null)
-					return false;
-				else
-					return this.m_flid == that.m_flid && this.m_name == that.m_name;
-			}
-
-			public override int GetHashCode()
-			{
-				return this.m_flid.GetHashCode() + this.m_name.GetHashCode();
-			}
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary></summary>
 		/// ------------------------------------------------------------------------------------
@@ -100,7 +57,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			m_discardOpt = new DiscardOptions();
 			m_sContentsGroupFmt = m_groupContents.Text;
 			m_sContentsLabelFmt = m_lblContents.Text;
-			//m_sOptionsGroupFmt = m_groupOptions.Text;
 		}
 
 		public void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app,
@@ -425,6 +381,42 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				rsf.m_tlo.m_ws = m_rsfm.m_tlo.m_ws;
 
 				return rsf;
+			}
+		}
+
+		private class DestinationField
+		{
+			private int m_flid;
+			private string m_name;
+
+			internal DestinationField(int flid, string name)
+			{
+				m_flid = flid;
+				m_name = name;
+			}
+
+			internal int Flid => m_flid;
+
+			internal string Name => m_name;
+
+			public override string ToString()
+			{
+				return m_name;
+			}
+
+			public override bool Equals(object obj)
+			{
+				var that = obj as DestinationField;
+				if (that == null)
+				{
+					return false;
+				}
+				return m_flid == that.m_flid && m_name == that.m_name;
+			}
+
+			public override int GetHashCode()
+			{
+				return m_flid.GetHashCode() + m_name.GetHashCode();
 			}
 		}
 	}

@@ -5,13 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
-using LanguageExplorer.Areas.Grammar.Tools.PosEdit;
-using LanguageExplorer.Areas.Lexicon;
-using LanguageExplorer.Areas.Lexicon.Tools.Edit;
-using LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes;
-using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using LanguageExplorer.Areas.TextsAndWords.Tools.Analyses;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.UtilityTools
@@ -34,7 +30,6 @@ namespace LanguageExplorer.UtilityTools
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
-
 		private const string s_helpTopic = "khtpProjectUtilities";
 		private HelpProvider m_helpProvider;
 		private Button m_btnRunUtils;
@@ -99,6 +94,10 @@ namespace LanguageExplorer.UtilityTools
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
+		#endregion
+
+		#region Implementation of IFlexComponent
+
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -116,23 +115,33 @@ namespace LanguageExplorer.UtilityTools
 			m_clbUtilities.Items.Clear();
 			m_clbUtilities.Sorted = false;
 
-			m_clbUtilities.Items.Add(new HomographResetter(this));
-			m_clbUtilities.Items.Add(new ParserAnalysisRemover(this));
-			m_clbUtilities.Items.Add(new ErrorFixer(this));
-			m_clbUtilities.Items.Add(new WriteAllObjectsUtility(this));
-			m_clbUtilities.Items.Add(new DuplicateWordformFixer(this));
-			m_clbUtilities.Items.Add(new DuplicateAnalysisFixer(this));
-			m_clbUtilities.Items.Add(new ParseIsCurrentFixer(this));
-			m_clbUtilities.Items.Add(new DeleteEntriesSensesWithoutInterlinearization(this));
-			m_clbUtilities.Items.Add(new LexEntryInflTypeConverter(this));
-			m_clbUtilities.Items.Add(new LexEntryTypeConverter(this));
-			m_clbUtilities.Items.Add(new GoldEticGuidFixer(this));
-			m_clbUtilities.Items.Add(new SortReversalSubEntries(this));
-			m_clbUtilities.Items.Add(new CircularRefBreaker(this));
+			var utilities = new Dictionary<string, IUtility>(13);
+			var interfaceType = typeof(IUtility);
+			var leAssembly = Assembly.GetExecutingAssembly();
+			foreach (var type in leAssembly.GetTypes().Where(t => interfaceType.IsAssignableFrom(t) && t.IsClass))
+			{
+				utilities.Add(type.Name, (IUtility)leAssembly.CreateInstance(type.FullName, true, BindingFlags.Instance | BindingFlags.NonPublic, null, new object[] {this}, null, null));
+			}
+
+			m_clbUtilities.Items.Add(utilities["HomographResetter"]);
+			m_clbUtilities.Items.Add(utilities["ParserAnalysisRemover"]);
+			m_clbUtilities.Items.Add(utilities["ErrorFixer"]);
+			m_clbUtilities.Items.Add(utilities["WriteAllObjectsUtility"]);
+			m_clbUtilities.Items.Add(utilities["DuplicateWordformFixer"]);
+			m_clbUtilities.Items.Add(utilities["DuplicateAnalysisFixer"]);
+			m_clbUtilities.Items.Add(utilities["ParseIsCurrentFixer"]);
+			m_clbUtilities.Items.Add(utilities["DeleteEntriesSensesWithoutInterlinearization"]);
+			m_clbUtilities.Items.Add(utilities["LexEntryInflTypeConverter"]);
+			m_clbUtilities.Items.Add(utilities["LexEntryTypeConverter"]);
+			m_clbUtilities.Items.Add(utilities["GoldEticGuidFixer"]);
+			m_clbUtilities.Items.Add(utilities["SortReversalSubEntries"]);
+			m_clbUtilities.Items.Add(utilities["CircularRefBreaker"]);
 
 			ResumeLayout();
 			if (m_clbUtilities.Items.Count > 0)
+			{
 				m_clbUtilities.SelectedIndex = 0;
+			}
 		}
 
 		#endregion
@@ -140,26 +149,12 @@ namespace LanguageExplorer.UtilityTools
 		/// <summary>
 		/// Get the Utilites list box.
 		/// </summary>
-		public CheckedListBox Utilities
-		{
-			get
-			{
-				CheckDisposed();
-				return m_clbUtilities;
-			}
-		}
+		public CheckedListBox Utilities => m_clbUtilities;
 
 		/// <summary>
 		/// Get the progress bar.
 		/// </summary>
-		public ProgressBar ProgressBar
-		{
-			get
-			{
-				CheckDisposed();
-				return m_progressBar;
-			}
-		}
+		public ProgressBar ProgressBar => m_progressBar;
 
 		/// <summary>
 		/// Set the When Description substring.
@@ -168,8 +163,6 @@ namespace LanguageExplorer.UtilityTools
 		{
 			set
 			{
-				CheckDisposed();
-
 				m_whenDescription = value;
 			}
 		}
@@ -181,8 +174,6 @@ namespace LanguageExplorer.UtilityTools
 		{
 			set
 			{
-				CheckDisposed();
-
 				m_whatDescription = value;
 			}
 		}
@@ -194,21 +185,8 @@ namespace LanguageExplorer.UtilityTools
 		{
 			set
 			{
-				CheckDisposed();
-
 				m_redoDescription = value;
 			}
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// <summary>
@@ -217,9 +195,11 @@ namespace LanguageExplorer.UtilityTools
 		protected override void Dispose( bool disposing )
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
+			{
+				// No need to run more than once.
 				return;
+			}
 
 			if( disposing )
 			{

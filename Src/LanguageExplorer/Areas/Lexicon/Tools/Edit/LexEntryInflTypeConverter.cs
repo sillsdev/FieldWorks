@@ -15,7 +15,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// When: Run this utility when you need to convert one or more of your existing variant types to be irregularly inflected form variant types.
 	///		When a variant type is an irregularly inflected form variant type, it has extra fields such as 'Append to Gloss', 'Inflection Features', and 'Slots.'
 	/// </summary>
-	internal sealed class LexEntryInflTypeConverter : LexEntryTypeConverters
+	internal sealed class LexEntryInflTypeConverter : LexEntryTypeConverters, IUtility
 	{
 		/// <summary />
 		internal LexEntryInflTypeConverter(UtilityDlg utilityDlg)
@@ -28,13 +28,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary>
 		/// Get the main label describing the utility.
 		/// </summary>
-		public override string Label
-		{
-			get
-			{
-				return LanguageExplorerResources.ksConvertIrregularlyInflectedFormVariants;
-			}
-		}
+		public override string Label => LanguageExplorerResources.ksConvertIrregularlyInflectedFormVariants;
 
 		/// <summary>
 		/// Notify the utility is has been selected in the dlg.

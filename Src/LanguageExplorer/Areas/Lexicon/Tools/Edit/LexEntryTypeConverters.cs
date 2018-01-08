@@ -30,7 +30,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// When: Run this utility when you need to convert one or more of your existing variant types to be irregularly inflected form variant types.
 	///		When a variant type is an irregularly inflected form variant type, it has extra fields such as 'Append to Gloss', 'Inflection Features', and 'Slots.'
 	/// </summary>
-	internal abstract class LexEntryTypeConverters : IUtility
+	internal abstract class LexEntryTypeConverters
 	{
 		/// <summary />
 		protected UtilityDlg m_dlg;

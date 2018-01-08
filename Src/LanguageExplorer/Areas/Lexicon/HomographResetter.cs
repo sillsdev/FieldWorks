@@ -71,8 +71,11 @@ namespace LanguageExplorer.Areas.Lexicon
 			if (homographWsId != defaultVernacularWsId)
 			{
 				var caution = string.Format(LanguageExplorerResources.ksReassignHomographsCaution, homographWsLabel, defaultVernacularWs.DisplayLabel);
-				if (MessageBox.Show(caution, LanguageExplorerResources.ksReassignHomographs, MessageBoxButtons.YesNo) == DialogResult.Yes)
+				if (MessageBox.Show(caution, LanguageExplorerResources.ksReassignHomographs, MessageBoxButtons.YesNo) ==
+				    DialogResult.Yes)
+				{
 					changeWs = true;
+				}
 			}
 			if (changeWs)
 			{

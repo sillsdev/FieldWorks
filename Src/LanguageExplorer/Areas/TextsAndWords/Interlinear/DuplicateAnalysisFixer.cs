@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	///		of the same analysis of the same wordform. It is especially helpful when you have
 	///		many instances of this, for example, as a result of merging work done in multiple places.
 	/// </summary>
-	public class DuplicateAnalysisFixer : IUtility
+	internal sealed class DuplicateAnalysisFixer : IUtility
 	{
 		private UtilityDlg m_dlg;
 

@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.Lexicon
 	/// <remarks>
 	/// This fixes https://jira.sil.org/browse/LT-16362.
 	/// </remarks>
-	internal class CircularRefBreaker : IUtility
+	internal sealed class CircularRefBreaker : IUtility
 	{
 		private UtilityDlg m_dlg;
 		private int m_count;

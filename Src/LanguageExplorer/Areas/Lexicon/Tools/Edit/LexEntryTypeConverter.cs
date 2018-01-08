@@ -17,7 +17,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	///		variant types to be variant types.  When a variant type is an irregularly inflected form variant type,
 	///		it has extra fields such as 'Append to Gloss', 'Inflection Features', and 'Slots.'
 	/// </summary>
-	internal sealed class LexEntryTypeConverter : LexEntryTypeConverters
+	internal sealed class LexEntryTypeConverter : LexEntryTypeConverters, IUtility
 	{
 		/// <summary />
 		internal LexEntryTypeConverter(UtilityDlg utilityDlg)

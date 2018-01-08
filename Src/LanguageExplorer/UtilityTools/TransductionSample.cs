@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
@@ -17,7 +18,7 @@ namespace LanguageExplorer.UtilityTools
 	/// It was actually built for Dennis Walters, but could be useful for someone else.
 	/// </summary>
 	/// <remarks>NOT USED</remarks>
-	internal sealed class SampleCitationFormTransducer : IUtility
+	internal sealed class SampleCitationFormTransducer //: IUtility
 	{
 		private UtilityDlg m_dlg;
 
@@ -52,13 +53,7 @@ namespace LanguageExplorer.UtilityTools
 		/// <summary>
 		/// Get the main label describing the utility.
 		/// </summary>
-		public string Label
-		{
-			get
-			{
-				return TransductionSampleStrings.ksTransduceCitationForms;
-			}
-		}
+		public string Label => TransductionSampleStrings.ksTransduceCitationForms;
 
 		/// <summary>
 		/// Set the UtilityDlg.
@@ -99,35 +94,31 @@ namespace LanguageExplorer.UtilityTools
 		{
 			try
 			{
-				LcmCache cache = m_dlg.PropertyTable.GetValue<LcmCache>("cache");
+				var cache = m_dlg.PropertyTable.GetValue<LcmCache>("cache");
 				m_dlg.ProgressBar.Maximum = cache.LanguageProject.LexDbOA.Entries.Count();
 				m_dlg.ProgressBar.Step=1;
-				string locale = InvokePython("-icu"); //ask the python script for the icu local
+				var locale = InvokePython("-icu"); //ask the python script for the icu local
 				locale = locale.Trim();
 				int ws = cache.WritingSystemFactory.GetWsFromStr(locale);
 
 				if (ws == 0)
 				{
-					System.Windows.Forms.MessageBox.Show(
-						String.Format(TransductionSampleStrings.ksCannotLocateWsForX, locale));
+					MessageBox.Show(string.Format(TransductionSampleStrings.ksCannotLocateWsForX, locale));
 					return;
 				}
 
 				foreach (var e in cache.LanguageProject.LexDbOA.Entries)
 				{
 					var a = e.CitationForm;
-					string src = a.VernacularDefaultWritingSystem.Text;
-
-					string output = InvokePython("-i "+src).Trim();
-
+					var src = a.VernacularDefaultWritingSystem.Text;
+					var output = InvokePython("-i "+src).Trim();
 					a.set_String(ws, TsStringUtils.MakeString(output, ws));
 					m_dlg.ProgressBar.PerformStep();
 				}
 			}
 			catch(Exception e)
 			{
-				System.Windows.Forms.MessageBox.Show(
-					String.Format(TransductionSampleStrings.ksErrorMsgWithStackTrace, e.Message, e.StackTrace));
+				MessageBox.Show(string.Format(TransductionSampleStrings.ksErrorMsgWithStackTrace, e.Message, e.StackTrace));
 			}
 		}
 		#endregion IUtility implementation

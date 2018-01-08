@@ -60,8 +60,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			{
 				var fixedGuids = ReplacePOSGuidsWithGoldEticGuids(cache);
 				var caption = fixedGuids ? LanguageExplorerResources.GoldEticGuidFixer_Guids_changed_Title : LanguageExplorerResources.GoldEticGuidFixer_NoChangeTitle;
-				var content = fixedGuids ? LanguageExplorerResources.GoldEticGuidFixer_GuidsChangedContent
-												 : LanguageExplorerResources.GoldEticGuidFixer_NoChangeContent;
+				var content = fixedGuids ? LanguageExplorerResources.GoldEticGuidFixer_GuidsChangedContent : LanguageExplorerResources.GoldEticGuidFixer_NoChangeContent;
 				MessageBox.Show(m_dlg, content, caption, MessageBoxButtons.OK, MessageBoxIcon.Information);
 			});
 		}
@@ -89,8 +88,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			{
 				CheckPossibilityGuidAgainstGold(pos, goldDocument, itemsWithBadGuids);
 			}
-			if(!itemsWithBadGuids.Any())
+			if (!itemsWithBadGuids.Any())
+			{
 				return false;
+			}
 			foreach(var badItem in itemsWithBadGuids)
 			{
 				ReplacePosItemWithCloneWithNewGuid(cache, badItem);
@@ -127,11 +128,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				if(dom.SelectSingleNode($"//item[@id='{pos.CatalogSourceId}' and @guid='{pos.Guid}']") == null)
 				{
 					var selectNodeWithoutGuid = dom.SelectSingleNode($"//item[@id='{pos.CatalogSourceId}']");
-
 					itemsWithBadGuids[pos] = selectNodeWithoutGuid.Attributes["guid"].Value;
 				}
 			}
-			if(pos.SubPossibilitiesOS != null)
+			if (pos.SubPossibilitiesOS != null)
 			{
 				foreach(IPartOfSpeech subPos in pos.SubPossibilitiesOS)
 				{

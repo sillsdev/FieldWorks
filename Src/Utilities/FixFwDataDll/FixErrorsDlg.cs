@@ -1,16 +1,9 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FixLinksDlg.cs
-// Responsibility: mcconnel
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using System.IO;
