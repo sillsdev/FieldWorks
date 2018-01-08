@@ -201,7 +201,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// Setting a Local Machine registry value is problematic for Linux/Mono.  (FWNX-1180)
 			// Try an alternative way of finding FLExBridge first.
 			var dir = Environment.GetEnvironmentVariable("FLEXBRIDGEDIR");
-			if (!String.IsNullOrEmpty(dir) && Directory.Exists(dir))
+			if (!string.IsNullOrEmpty(dir) && Directory.Exists(dir))
 				return dir;
 			var key = FwRegistryHelper.FieldWorksBridgeRegistryKeyLocalMachine;
 			if (key != null)
