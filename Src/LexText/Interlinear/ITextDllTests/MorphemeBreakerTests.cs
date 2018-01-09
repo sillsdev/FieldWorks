@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.LCModel;
+using SIL.LCModel.Core.Text;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -100,6 +102,24 @@ namespace SIL.FieldWorks.IText
 							String.Format("Unexpected number of morphs in string '{0}' compared to baseWord '{1}'.", baseWord5_morphs2, baseWord5));
 			Assert.AreEqual("kick the bucket", morphs[0]);
 			Assert.AreEqual("-ed", morphs[1]);
+		}
+
+		[Test]
+		public void EstablishDefaultEntry_Empty_Basic()
+		{
+			using (var mediator = new Mediator())
+			{
+				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				var morph = Cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
+				entry.LexemeFormOA = morph;
+				morph.Form.set_String(Cache.DefaultVernWs, "here");
+				morph.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphSuffix);
+				var testSandbox = new AddWordsToLexiconTests.SandboxForTests(Cache, mediator, new PropertyTable(mediator),
+					InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs));
+				testSandbox.RawWordform = TsStringUtils.MakeString("here", Cache.DefaultVernWs);
+				Assert.DoesNotThrow(() => testSandbox.EstablishDefaultEntry(morph.Hvo, "here", morph.MorphTypeRA, false));
+				Assert.DoesNotThrow(() => testSandbox.EstablishDefaultEntry(morph.Hvo, "notHere", morph.MorphTypeRA, false));
+			}
 		}
 	}
 }

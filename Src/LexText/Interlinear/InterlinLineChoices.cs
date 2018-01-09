@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Utils;
 using System.Drawing;
 using System.Diagnostics;
