@@ -1,9 +1,6 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LiftExportTests.cs
-// Responsibility: mcconnel
 
 using System;
 using System.Collections.Generic;
@@ -13,14 +10,14 @@ using System.Linq;
 using System.Xml;
 using LanguageExplorer.Controls.LexText;
 using NUnit.Framework;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.Lift.Validation;
@@ -28,7 +25,7 @@ using SIL.TestUtilities;
 using SIL.WritingSystems;
 using SIL.Xml;
 
-namespace LanguageExplorerTests.LexTextControls
+namespace LanguageExplorerTests.Controls.LexText
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

@@ -1,20 +1,12 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MasterPhonologicalFeatureListDlg.cs
-// Responsibility:
-//
-// <remarks>
-// </remarks>
 
-using System;
 using System.Windows.Forms;
 using LanguageExplorer.MGA;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls.LexText
@@ -22,14 +14,14 @@ namespace LanguageExplorer.Controls.LexText
 	/// <summary>
 	/// Summary description for MasterInflectionFeatureListDlg.
 	/// </summary>
-	public class MasterInflectionFeatureListDlg : MasterListDlg
+	internal class MasterInflectionFeatureListDlg : MasterListDlg
 	{
 
-		public MasterInflectionFeatureListDlg()
+		internal MasterInflectionFeatureListDlg()
 		{
 		}
 
-		public MasterInflectionFeatureListDlg(string className) : base(className, new GlossListTreeView())
+		internal MasterInflectionFeatureListDlg(string className) : base(className, new GlossListTreeView())
 		{
 		}
 
@@ -45,33 +37,30 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void SetLinkLabel()
 		{
-			string sInflFeature = LexTextControls.ksInflectionFeature;
-			string sFeatureKind = sInflFeature;
+			var sInflFeature = LexTextControls.ksInflectionFeature;
+			var sFeatureKind = sInflFeature;
 			if (m_sClassName == "FsComplexFeature")
+			{
 				sFeatureKind = LexTextControls.ksComplexFeature;
-			linkLabel1.Text = String.Format(LexTextControls.ksLinkText, sInflFeature, sFeatureKind);
+			}
+			linkLabel1.Text = string.Format(LexTextControls.ksLinkText, sInflFeature, sFeatureKind);
 		}
 
 		protected override void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			using (var undoHelper = new UndoableUnitOfWorkHelper(
-				m_cache.ServiceLocator.GetInstance<IActionHandler>(),
-				LexTextControls.ksUndoInsertInflectionFeature,
-				LexTextControls.ksRedoInsertInflectionFeature))
+			using (var undoHelper = new UndoableUnitOfWorkHelper(m_cache.ServiceLocator.GetInstance<IActionHandler>(), LexTextControls.ksUndoInsertInflectionFeature, LexTextControls.ksRedoInsertInflectionFeature))
 			{
-				IFsFeatDefn fd;
-				if (m_sClassName == "FsComplexFeature")
-					fd = m_cache.ServiceLocator.GetInstance<IFsComplexFeatureFactory>().Create();
-				else
-					fd = m_cache.ServiceLocator.GetInstance<IFsClosedFeatureFactory>().Create();
+				var fd = m_sClassName == "FsComplexFeature"
+					? (IFsFeatDefn) m_cache.ServiceLocator.GetInstance<IFsComplexFeatureFactory>().Create()
+					: m_cache.ServiceLocator.GetInstance<IFsClosedFeatureFactory>().Create();
 				m_cache.LanguageProject.MsFeatureSystemOA.FeaturesOC.Add(fd);
-				IFsFeatStrucType type = m_cache.LanguageProject.MsFeatureSystemOA.GetFeatureType("Infl");
+				var type = m_cache.LanguageProject.MsFeatureSystemOA.GetFeatureType("Infl");
 				if (type == null)
 				{
 					type = m_cache.ServiceLocator.GetInstance<IFsFeatStrucTypeFactory>().Create();
 					m_cache.LanguageProject.MsFeatureSystemOA.TypesOC.Add(type);
 					type.CatalogSourceId = "Infl";
-					foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
+					foreach (var ws in m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
 					{
 						var tss = TsStringUtils.MakeString("Infl", ws.Handle);
 						type.Abbreviation.set_String(ws.Handle, tss);

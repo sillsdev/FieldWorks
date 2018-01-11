@@ -294,13 +294,12 @@
     <Compile Include="Lexicon\CircularRefBreakerTests.cs" />
     <Compile Include="Lexicon\SortReversalSubEntriesTests.cs" />
     <Compile Include="Lexicon\TestUtils.cs" />
-    <Compile Include="LexTextControls\LexImportTests.cs" />
-    <Compile Include="LexTextControls\LiftExportTests.cs" />
-    <Compile Include="LexTextControls\LiftMergerRelationTests.cs" />
-    <Compile Include="LexTextControls\LiftMergerTests.cs" />
-    <Compile Include="LexTextControls\MasterCategoryTests.cs" />
-    <Compile Include="LexTextControls\MsaInflectionFeatureListDlgTests.cs" />
-    <Compile Include="LexTextControls\WordsSfmImportTests.cs" />
+    <Compile Include="Controls\LexText\LexImportTests.cs" />
+    <Compile Include="Controls\LexText\LiftExportTests.cs" />
+    <Compile Include="Controls\LexText\LiftMergerTests.cs" />
+    <Compile Include="Controls\LexText\MasterCategoryTests.cs" />
+    <Compile Include="Controls\LexText\MsaInflectionFeatureListDlgTests.cs" />
+    <Compile Include="Controls\LexText\WordsSfmImportTests.cs" />
     <Compile Include="Repository\ListsAreaTests.cs" />
     <Compile Include="Repository\MefTestBase.cs" />
     <Compile Include="MGA\MGATests.cs" />
@@ -402,8 +401,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DetailControls\TestParts.xml" />
-    <Content Include="LexTextControls\FeatureSystem2.xml" />
-    <Content Include="LexTextControls\FeatureSystem3.xml" />
+    <Content Include="Controls\LexText\FeatureSystem2.xml" />
+    <Content Include="Controls\LexText\FeatureSystem3.xml" />
     <None Include="SettingsBackup\db_TestLocal_Settings.xml" />
     <None Include="SettingsBackup\Settings.xml" />
     <Content Include="DictionaryConfiguration\strings-en.xml" />

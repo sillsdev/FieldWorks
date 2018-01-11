@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,16 +21,19 @@ namespace LanguageExplorer.MGA
 			{
 				CheckDisposed();
 				if (m_MGAForm != null)
+				{
 					Detach();
+				}
 
 				m_MGAForm = value;
-				if (m_MGAForm != null)
+				if (m_MGAForm == null)
 				{
-					m_MGAForm.InsertMGAGlossListItem += new GlossListEventHandler(OnInsertItem);
-					m_MGAForm.RemoveMGAGlossListItem += new EventHandler(OnRemoveItem);
-					m_MGAForm.MoveDownMGAGlossListItem += new EventHandler(OnMoveDownItem);
-					m_MGAForm.MoveUpMGAGlossListItem += new EventHandler(OnMoveUpItem);
+					return;
 				}
+				m_MGAForm.InsertMGAGlossListItem += OnInsertItem;
+				m_MGAForm.RemoveMGAGlossListItem += OnRemoveItem;
+				m_MGAForm.MoveDownMGAGlossListItem += OnMoveDownItem;
+				m_MGAForm.MoveUpMGAGlossListItem += OnMoveUpItem;
 			}
 		}
 
@@ -42,7 +45,7 @@ namespace LanguageExplorer.MGA
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		protected override void Dispose(bool disposing)
@@ -62,14 +65,14 @@ namespace LanguageExplorer.MGA
 		}
 		private void OnMoveDownItem(object sender, EventArgs e)
 		{
-			Object tmp = Items[SelectedIndex];
+			var tmp = Items[SelectedIndex];
 			Items[SelectedIndex] = Items[SelectedIndex + 1];
 			Items[SelectedIndex + 1] = tmp;
 			SelectedIndex = SelectedIndex + 1;
 		}
 		private void OnMoveUpItem(object sender, EventArgs e)
 		{
-			Object tmp = Items[SelectedIndex];
+			var tmp = Items[SelectedIndex];
 			Items[SelectedIndex] = Items[SelectedIndex - 1];
 			Items[SelectedIndex - 1] = tmp;
 			SelectedIndex = SelectedIndex - 1;
@@ -79,16 +82,18 @@ namespace LanguageExplorer.MGA
 			CheckDisposed();
 
 			// Detach the events and delete the form
-			m_MGAForm.InsertMGAGlossListItem -= new GlossListEventHandler(OnInsertItem);
-			m_MGAForm.RemoveMGAGlossListItem -= new EventHandler(OnRemoveItem);
-			m_MGAForm.MoveDownMGAGlossListItem -= new EventHandler(OnMoveDownItem);
-			m_MGAForm.MoveUpMGAGlossListItem -= new EventHandler(OnMoveUpItem);
+			m_MGAForm.InsertMGAGlossListItem -= OnInsertItem;
+			m_MGAForm.RemoveMGAGlossListItem -= OnRemoveItem;
+			m_MGAForm.MoveDownMGAGlossListItem -= OnMoveDownItem;
+			m_MGAForm.MoveUpMGAGlossListItem -= OnMoveUpItem;
 			m_MGAForm = null;
 		}
+
 		/// <summary>
 		/// See if the selected item conflicts with any item already inserted into the gloss list box
 		/// </summary>
 		/// <param name="glbiNew">new item to be checked for</param>
+		/// <param name="glbiConflict"></param>
 		/// <returns>true if there is a conflict; false otherwise</returns>
 		/// <remarks>Is public for testing</remarks>
 		public bool NewItemConflictsWithExtantItem(GlossListBoxItem glbiNew, out GlossListBoxItem glbiConflict)
@@ -97,17 +102,22 @@ namespace LanguageExplorer.MGA
 
 			glbiConflict = null;
 			if (!glbiNew.IsValue)
+			{
 				return false; // only terminal nodes will conflict
+			}
 			foreach (GlossListBoxItem item in Items)
 			{
-				if (item.IsValue)
-				{ // when they are values and have the same parent, they conflict
-					if (item.XmlNode.ParentNode == glbiNew.XmlNode.ParentNode)
-					{
-						glbiConflict = item;
-						return true;
-					}
+				if (!item.IsValue)
+				{
+					continue;
 				}
+				// when they are values and have the same parent, they conflict
+				if (item.XmlNode.ParentNode != glbiNew.XmlNode.ParentNode)
+				{
+					continue;
+				}
+				glbiConflict = item;
+				return true;
 			}
 			return false;
 		}

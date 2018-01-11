@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2017 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,21 +16,20 @@ namespace LanguageExplorer.Controls.LexText
 	/// <summary>
 	/// Summary description for MasterListDlg.
 	/// </summary>
-	public class MasterListDlg : Form
+	internal class MasterListDlg : Form
 	{
 		protected ILcmOwningCollection<IFsFeatDefn> m_featureList;
-		protected bool m_launchedFromInsertMenu = false;
+		protected bool m_launchedFromInsertMenu;
 		protected IPropertyTable m_propertyTable;
 		protected LcmCache m_cache;
 		protected IHelpTopicProvider m_helpTopicProvider;
 		protected IFsFeatDefn m_selFeatDefn;
 		protected IFsFeatureSystem m_featureSystem;
-		protected bool m_skipEvents = false;
+		protected bool m_skipEvents;
 		protected string m_sClassName;
 		protected int iCheckedCount;
 		protected string m_sWindowKeyLocation;
 		protected string m_sWindowKeySize;
-
 		protected Label label1;
 		protected Label label2;
 		protected GlossListTreeView m_tvMasterList;
@@ -46,11 +45,11 @@ namespace LanguageExplorer.Controls.LexText
 		protected System.ComponentModel.IContainer components;
 
 		protected string s_helpTopic = "khtpInsertInflectionFeature";
-		protected System.Windows.Forms.HelpProvider helpProvider;
+		protected HelpProvider helpProvider;
 
 		public MasterListDlg()
 		{
-			GlossListTreeView treeView = new GlossListTreeView();
+			var treeView = new GlossListTreeView();
 			InitDlg("FsClosedFeature", treeView);
 		}
 
@@ -91,10 +90,12 @@ namespace LanguageExplorer.Controls.LexText
 		/// <param name="e"></param>
 		protected override void OnLoad(EventArgs e)
 		{
-			Size size = this.Size;
+			var size = Size;
 			base.OnLoad (e);
-			if (this.Size != size)
-				this.Size = size;
+			if (Size != size)
+			{
+				Size = size;
+			}
 		}
 
 		/// <summary>
@@ -105,7 +106,7 @@ namespace LanguageExplorer.Controls.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// <summary>
@@ -120,12 +121,8 @@ namespace LanguageExplorer.Controls.LexText
 
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-				if (m_tvMasterList != null)
-					m_tvMasterList.Dispose();
+				components?.Dispose();
+				m_tvMasterList?.Dispose();
 			}
 			m_cache = null;
 			m_selFeatDefn = null;
@@ -153,7 +150,7 @@ namespace LanguageExplorer.Controls.LexText
 		public void SetDlginfo(IFsFeatureSystem featSys, IPropertyTable propertyTable, bool launchedFromInsertMenu)
 		{
 			// default to inflection features
-			string sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory, string.Format("Language Explorer{0}MGA{0}GlossLists{0}EticGlossList.xml", Path.DirectorySeparatorChar));
+			var sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "MGA", "GlossLists", "EticGlossList.xml");
 			SetDlginfo(featSys, propertyTable, launchedFromInsertMenu, "masterInflFeatListDlg", sXmlFile);
 		}
 
@@ -181,8 +178,10 @@ namespace LanguageExplorer.Controls.LexText
 				ResetWindowLocationAndSize();
 
 				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
-				helpProvider = new HelpProvider();
-				helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
+				helpProvider = new HelpProvider
+				{
+					HelpNamespace = m_helpTopicProvider.HelpFile
+				};
 				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
@@ -196,14 +195,15 @@ namespace LanguageExplorer.Controls.LexText
 			// Get location to the stored values, if any.
 			Point dlgLocation;
 			Size dlgSize;
-			if (m_propertyTable.TryGetValue(m_sWindowKeyLocation, out dlgLocation) &&
-				m_propertyTable.TryGetValue(m_sWindowKeySize, out dlgSize))
+			if (!m_propertyTable.TryGetValue(m_sWindowKeyLocation, out dlgLocation) ||
+			    !m_propertyTable.TryGetValue(m_sWindowKeySize, out dlgSize))
 			{
-				Rectangle rect = new Rectangle(dlgLocation, dlgSize);
-				ScreenHelper.EnsureVisibleRect(ref rect);
-				DesktopBounds = rect;
-				StartPosition = FormStartPosition.Manual;
+				return;
 			}
+			var rect = new Rectangle(dlgLocation, dlgSize);
+			ScreenHelper.EnsureVisibleRect(ref rect);
+			DesktopBounds = rect;
+			StartPosition = FormStartPosition.Manual;
 		}
 
 		private void LoadMasterFeatures(string sXmlFile)
@@ -216,12 +216,14 @@ namespace LanguageExplorer.Controls.LexText
 		private void AdjustNodes(TreeNodeCollection treeNodes)
 		{
 			foreach (TreeNode node in treeNodes)
+			{
 				AdjustNode(node);
+			}
 		}
 
 		private void AdjustNode(TreeNode treeNode)
 		{
-			MasterItem mi = (MasterItem)treeNode.Tag;
+			var mi = (MasterItem)treeNode.Tag;
 			mi.DetermineInDatabase(m_cache);
 			treeNode.Text = mi.ToString();
 			if (mi.InDatabase && treeNode.Nodes.Count == 0)
@@ -230,7 +232,7 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					m_skipEvents = true;
 					treeNode.Checked = true;
-					treeNode.ImageIndex = (int)GlossListTreeView.ImageKind.checkedBox;
+					treeNode.ImageIndex = (int)ImageKind.checkedBox;
 					treeNode.SelectedImageIndex = treeNode.ImageIndex;
 					treeNode.ForeColor = Color.Gray;
 				}
@@ -239,15 +241,16 @@ namespace LanguageExplorer.Controls.LexText
 					m_skipEvents = false;
 				}
 			}
-			TreeNodeCollection list = treeNode.Nodes;
-			if (list.Count > 0)
+			var list = treeNode.Nodes;
+			if (list.Count < 1)
 			{
-				if (!mi.KindCanBeInDatabase() || mi.InDatabase)
-				{
-					AdjustNodes(treeNode.Nodes);
-				}
-				DoFinalAdjustment(treeNode);
+				return;
 			}
+			if (!mi.KindCanBeInDatabase() || mi.InDatabase)
+			{
+				AdjustNodes(treeNode.Nodes);
+			}
+			DoFinalAdjustment(treeNode);
 		}
 		protected virtual void DoFinalAdjustment(TreeNode treeNode)
 		{
@@ -389,7 +392,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected void m_tvMasterList_AfterSelect(object sender, TreeViewEventArgs e)
 		{
-			MasterItem mi = e.Node.Tag as MasterItem;
+			var mi = e.Node.Tag as MasterItem;
 			mi.ResetDescription(m_rtbDescription);
 			ResetOKBtnEnable();
 		}
@@ -401,23 +404,32 @@ namespace LanguageExplorer.Controls.LexText
 		protected void m_tvMasterList_BeforeCheck(object sender, System.Windows.Forms.TreeViewCancelEventArgs e)
 		{
 			if (m_skipEvents)
-				return;
-
-			MasterItem selMC = e.Node.Tag as MasterItem;
-			e.Cancel = selMC.InDatabase;
-			if (!selMC.InDatabase && selMC.KindCanBeInDatabase())
 			{
-				if (e.Node.Checked)
-					iCheckedCount--;
-				else
-					iCheckedCount++;
+				return;
+			}
+
+			var selMC = e.Node.Tag as MasterItem;
+			e.Cancel = selMC.InDatabase;
+			if (selMC.InDatabase || !selMC.KindCanBeInDatabase())
+			{
+				return;
+			}
+			if (e.Node.Checked)
+			{
+				iCheckedCount--;
+			}
+			else
+			{
+				iCheckedCount++;
 			}
 		}
 
 		protected void m_tvMasterList_AfterCheck(object sender, System.Windows.Forms.TreeViewEventArgs e)
 		{
 			if (m_skipEvents)
+			{
 				return;
+			}
 
 			ResetOKBtnEnable();
 		}
@@ -426,47 +438,23 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			if (m_tvMasterList.TerminalsUseCheckBoxes)
 			{
-				if (iCheckedCount == 0)
-					m_btnOK.Enabled = false;
-				else
-					m_btnOK.Enabled = true;
+				m_btnOK.Enabled = iCheckedCount != 0;
 			}
 			else
 			{
-				TreeNode selNode = m_tvMasterList.SelectedNode;
-				if (selNode != null)
-				{
-					if (HasChosenItemNotInDatabase(selNode))
-						m_btnOK.Enabled = true;
-					else
-						m_btnOK.Enabled = false;
-				}
-				else
-				{
-					m_btnOK.Enabled = false; //FoundChosenItemNotInDatabase(m_tvMasterList.Nodes);
-				}
+				var selNode = m_tvMasterList.SelectedNode;
+				m_btnOK.Enabled = selNode != null && HasChosenItemNotInDatabase(selNode);
 			}
 		}
 
-		private bool FoundChosenItemNotInDatabase(TreeNodeCollection nodes)
-		{
-			foreach (TreeNode node in nodes)
-			{
-				if (HasChosenItemNotInDatabase(node))
-					return true;
-				if (FoundChosenItemNotInDatabase(node.Nodes))
-					return true;
-			}
-			return false;
-		}
 		private bool HasChosenItemNotInDatabase(TreeNode node)
 		{
 			if (!node.Checked)
+			{
 				return false;
-			MasterItem mi = node.Tag as MasterItem;
-			if (mi != null && !mi.InDatabase)
-				return true;
-			return false;
+			}
+			var mi = node.Tag as MasterItem;
+			return mi != null && !mi.InDatabase;
 		}
 
 		/// <summary>
@@ -491,7 +479,7 @@ namespace LanguageExplorer.Controls.LexText
 						}
 						else
 						{
-							MasterItem mi = m_tvMasterList.SelectedNode.Tag as MasterItem;
+							var mi = m_tvMasterList.SelectedNode.Tag as MasterItem;
 							if (mi != null)
 							{
 								mi.AddToDatabase(m_cache);
@@ -520,19 +508,23 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			foreach (TreeNode node in nodes)
 			{
-				if (node.Nodes != null && node.Nodes.Count > 0)
+				if (node.Nodes.Count > 0)
+				{
 					UpdateAllCheckedItems(node.Nodes);
+				}
 				else
 				{
-					if (node.Checked)
+					if (!node.Checked)
 					{
-						MasterItem mi = node.Tag as MasterItem;
-						if (!mi.InDatabase)
-						{
-							mi.AddToDatabase(m_cache);
-							m_selFeatDefn = mi.FeatureDefn;
-						}
+						continue;
 					}
+					var mi = node.Tag as MasterItem;
+					if (mi.InDatabase)
+					{
+						continue;
+					}
+					mi.AddToDatabase(m_cache);
+					m_selFeatDefn = mi.FeatureDefn;
 				}
 			}
 		}

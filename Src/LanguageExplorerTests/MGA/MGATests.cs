@@ -1,12 +1,7 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// <remarks>
-// Unit tests for GlossListBox and GlossListTreeView
-// </remarks>
 
-using System;
 using System.IO;
 using System.Xml;
 using LanguageExplorer.MGA;
@@ -33,14 +28,15 @@ namespace LanguageExplorerTests.MGA
 		[SetUp]
 		public void Init()
 		{
-			string sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory,
-				@"Language Explorer/MGA/GlossLists/EticGlossList.xml");
+			var sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", "MGA", "GlossLists", "EticGlossList.xml");
 			m_doc = new XmlDocument();
 			m_doc.Load(sXmlFile);
-			m_LabelGlosses = new GlossListBox();
-			m_LabelGlosses.Sorted = false;
-			XmlNode node = m_doc.SelectSingleNode("//item[@id='vPositive']");
-			GlossListBoxItem glbi = new GlossListBoxItem(Cache, node, ".", "", false);
+			m_LabelGlosses = new GlossListBox
+			{
+				Sorted = false
+			};
+			var node = m_doc.SelectSingleNode("//item[@id='vPositive']");
+			var glbi = new GlossListBoxItem(Cache, node, ".", string.Empty, false);
 			m_LabelGlosses.Items.Add(glbi);
 		}
 
@@ -66,24 +62,17 @@ namespace LanguageExplorerTests.MGA
 		public void GlossListItemConflicts()
 		{
 			// check another terminal node, but with different parent, so no conflict
-			XmlNode node = m_doc.SelectSingleNode("//item[@id='cAdjAgr']/item[@target='tCommonAgr']/item[@target='fGender']/item[@target='vMasc']");
-			GlossListBoxItem glbiNew = new GlossListBoxItem(Cache, node, ".", "", false);
+			var node = m_doc.SelectSingleNode("//item[@id='cAdjAgr']/item[@target='tCommonAgr']/item[@target='fGender']/item[@target='vMasc']");
+			var glbiNew = new GlossListBoxItem(Cache, node, ".", "", false);
 			GlossListBoxItem glbiConflict;
-			bool fResult = m_LabelGlosses.NewItemConflictsWithExtantItem(glbiNew, out glbiConflict);
-			string sMsg;
-			if (glbiConflict != null)
-				sMsg = String.Format("Masculine gender should not conflict, but did with {0}.", glbiConflict.Abbrev);
-			else
-				sMsg = "Masculine gender should not conflict";
+			var fResult = m_LabelGlosses.NewItemConflictsWithExtantItem(glbiNew, out glbiConflict);
+			var sMsg = glbiConflict != null ? $"Masculine gender should not conflict, but did with {glbiConflict.Abbrev}." : "Masculine gender should not conflict";
 			Assert.IsFalse(fResult, sMsg);
 			// check a non-terminal node, so no conflict
 			node = m_doc.SelectSingleNode("//item[@id='fDeg']");
 			glbiNew = new GlossListBoxItem(Cache, node, ".", "", false);
 			fResult = m_LabelGlosses.NewItemConflictsWithExtantItem(glbiNew, out glbiConflict);
-			if (glbiConflict != null)
-			sMsg = String.Format("Feature degree should not conflict, but did with {0}", glbiConflict.Abbrev);
-			else
-				sMsg = "Feature degree should not conflict";
+			sMsg = glbiConflict != null ? $"Feature degree should not conflict, but did with {glbiConflict.Abbrev}" : "Feature degree should not conflict";
 			Assert.IsFalse(fResult, sMsg);
 			// check another terminal node with same parent, so there is conflict
 			node = m_doc.SelectSingleNode("//item[@id='vComp']");
@@ -99,8 +88,7 @@ namespace LanguageExplorerTests.MGA
 	public class GlossListTreeViewTest
 	{
 		private GlossListTreeView treeViewGlossList;
-		private string sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory,
-			@"Language Explorer/MGA/GlossLists/EticGlossList.xml");
+		private readonly string sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", "MGA", "GlossLists", "EticGlossList.xml");
 		private XmlDocument dom = new XmlDocument();
 		private string m_sTopOfList = "eticGlossList";
 
@@ -147,29 +135,27 @@ namespace LanguageExplorerTests.MGA
 		public void GetFirstItemAbbrevTest()
 		{
 
-			XmlNode xn = dom.SelectSingleNode(m_sTopOfList + "/item/abbrev");
-			string strCheckBoxes = xn.InnerText;
+			var xn = dom.SelectSingleNode(m_sTopOfList + "/item/abbrev");
+			var strCheckBoxes = xn.InnerText;
 			Assert.AreEqual("adj.r", strCheckBoxes);
 		}
 		[Test]
 		public void GetTreeNonExistantAttrTest()
 		{
 
-			XmlNode treeTop = dom.SelectSingleNode(m_sTopOfList);
+			var treeTop = dom.SelectSingleNode(m_sTopOfList);
 			Assert.IsNull(XmlUtils.GetOptionalAttributeValue(treeTop, "nonExistant"), "Expected null object");
 		}
 		[Test]
 		public void TreeNodeBitmapTest()
 		{
-			Assert.AreEqual(GlossListTreeView.ImageKind.userChoice,
-				(GlossListTreeView.ImageKind)treeViewGlossList.Nodes[0].Nodes[0].ImageIndex);
-			Assert.AreEqual(GlossListTreeView.ImageKind.userChoice,
-				(GlossListTreeView.ImageKind)treeViewGlossList.Nodes[1].Nodes[1].ImageIndex);
+			Assert.AreEqual(ImageKind.userChoice, (ImageKind)treeViewGlossList.Nodes[0].Nodes[0].ImageIndex);
+			Assert.AreEqual(ImageKind.userChoice, (ImageKind)treeViewGlossList.Nodes[1].Nodes[1].ImageIndex);
 		}
 		[Test]
 		public void WritingSystemDefaultsToEnglishTest()
 		{
-			using (GlossListTreeView myTVGL = new GlossListTreeView())
+			using (var myTVGL = new GlossListTreeView())
 			{
 				// sXmlFile doesn't have any "fr" items in it; so it should default to English
 				myTVGL.LoadGlossListTreeFromXml(sXmlFile, "fr");

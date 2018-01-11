@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,20 +18,8 @@ namespace LanguageExplorer.MGA
 	/// <summary>
 	/// Summary description for GlossListTreeView.
 	/// </summary>
-	public class GlossListTreeView : TreeView
+	internal class GlossListTreeView : TreeView
 	{
-		public enum ImageKind
-		{
-			closedFolder = 0,
-			openFolder,
-			complex,
-			featureStructureType,
-			userChoice,
-			checkBox,
-			checkedBox,
-			radio,
-			radioSelected
-		}
 		protected bool m_fTerminalsUseCheckBoxes;
 		protected string m_sTopOfList = "eticGlossList";
 		protected string m_sAfterSeparator;
@@ -51,7 +39,9 @@ namespace LanguageExplorer.MGA
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -62,12 +52,13 @@ namespace LanguageExplorer.MGA
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
-				if (ImageList != null)
-					ImageList.Dispose();
+				ImageList?.Dispose();
 			}
 			ImageList = null;
 			m_cache = null;
@@ -169,10 +160,10 @@ namespace LanguageExplorer.MGA
 			try
 			{
 				// SECTION 1. Create a DOM Document and load the XML data into it.
-				XmlDocument dom = CreateDomAndLoadXMLFile(sXmlFile);
+				var dom = CreateDomAndLoadXMLFile(sXmlFile);
 
 				// SECTION 2. Initialize the GlossListTreeView control.
-				XmlNode treeTop = InitializeGlossListTreeViewControl(dom, sDefaultAnalysisWritingSystem);
+				var treeTop = InitializeGlossListTreeViewControl(dom, sDefaultAnalysisWritingSystem);
 
 				// SECTION 3. Populate the TreeView with the DOM nodes.
 				PopulateTreeView(dom, treeTop);
@@ -198,7 +189,7 @@ namespace LanguageExplorer.MGA
 			// make sure we're starting fresh
 			Nodes.Clear();
 			// get top node
-			XmlNode treeTop = dom.SelectSingleNode(m_sTopOfList);
+			var treeTop = dom.SelectSingleNode(m_sTopOfList);
 			// set CheckBoxes value
 			//string sAttr = XmlUtils.GetAttributeValue(treeTop, "checkBoxes");
 			CheckBoxes = XmlUtils.GetBooleanAttributeValue(treeTop, "checkBoxes");
@@ -223,7 +214,7 @@ namespace LanguageExplorer.MGA
 		{
 			// assume the default is OK
 			m_sWritingSystemAbbrev = sDefaultAnalysisWritingSystem;
-			XmlNode xn = dom.SelectSingleNode("//item/term[@ws='" + m_sWritingSystemAbbrev + "']");
+			var xn = dom.SelectSingleNode("//item/term[@ws='" + m_sWritingSystemAbbrev + "']");
 			if (xn == null)
 			{	// default not found in the file; use English (and hope for the best)
 				m_sWritingSystemAbbrev = "en";
@@ -243,26 +234,30 @@ namespace LanguageExplorer.MGA
 
 		private void PopulateTreeView(XmlDocument dom, XmlNode treeTop)
 		{
-			XmlNodeList nodes = dom.SelectNodes(m_sTopOfList + "/item");
+			var nodes = dom.SelectNodes(m_sTopOfList + "/item");
 			foreach (XmlNode node in nodes)
 			{
 				AddNode(node, null, dom);
 			}
-			string sExpandAll = XmlUtils.GetOptionalAttributeValue(treeTop, "expandAll");
+			var sExpandAll = XmlUtils.GetOptionalAttributeValue(treeTop, "expandAll");
 			if (XmlUtils.GetBooleanAttributeValue(sExpandAll))
+			{
 				ExpandAll();
+			}
 			else
+			{
 				CollapseAll();
+			}
 		}
 
 		#endregion
 		#region private methods
 		private void CommonInit()
 		{
-			AfterCollapse += new TreeViewEventHandler(OnAfterCollapse);
-			AfterExpand += new TreeViewEventHandler(OnAfterExpand);
-			MouseUp += new MouseEventHandler(OnMouseUp);
-			KeyUp += new KeyEventHandler(OnKeyUp);
+			AfterCollapse += OnAfterCollapse;
+			AfterExpand += OnAfterExpand;
+			MouseUp += OnMouseUp;
+			KeyUp += OnKeyUp;
 
 #if Orig
 			Sorted = true;
@@ -280,50 +275,57 @@ namespace LanguageExplorer.MGA
 			ImageList.Images.Add(new Bitmap(GetType(), "Radio.bmp"));         // 7
 			ImageList.Images.Add(new Bitmap(GetType(), "RadioSelected.bmp")); // 8
 		}
-		void OnMouseUp(object obj, MouseEventArgs mea)
+
+		private void OnMouseUp(object obj, MouseEventArgs mea)
 		{
-			if (mea.Button == MouseButtons.Left)
+			if (mea.Button != MouseButtons.Left)
 			{
-				TreeView tv = (TreeView) obj;
-				TreeNode tn = tv.GetNodeAt(mea.X, mea.Y);
-				if (tn != null)
-				{
-					Rectangle rec = tn.Bounds;
-					rec.X += -18;       // include the image bitmap (16 pixels plus 2 pixels between the image and the text)
-					rec.Width += 18;
-					if (rec.Contains(mea.X, mea.Y))
-					{
-						HandleCheckBoxNodes(tv, tn);
-//						int i = tn.ImageIndex;
-					}
-				}
+				return;
+			}
+			var tv = (TreeView) obj;
+			var tn = tv.GetNodeAt(mea.X, mea.Y);
+			if (tn == null)
+			{
+				return;
+			}
+			var rec = tn.Bounds;
+			rec.X += -18;       // include the image bitmap (16 pixels plus 2 pixels between the image and the text)
+			rec.Width += 18;
+			if (rec.Contains(mea.X, mea.Y))
+			{
+				HandleCheckBoxNodes(tv, tn);
 			}
 		}
-		void OnKeyUp(object obj, KeyEventArgs kea)
+
+		private void OnKeyUp(object obj, KeyEventArgs kea)
 		{
-			TreeView tv = (TreeView) obj;
-			TreeNode tn = tv.SelectedNode;
+			var tv = (TreeView)obj;
+			var tn = tv.SelectedNode;
 			if (kea.KeyCode == Keys.Space)
 			{
 				HandleCheckBoxNodes(tv, tn);
 			}
 		}
-		bool IsTerminalNode(TreeNode tn)
+
+		private static bool IsTerminalNode(TreeNode tn)
 		{
 			return (tn.Nodes.Count == 0);
 		}
-		void UndoLastSelectedNode()
+
+		private void UndoLastSelectedNode()
 		{
-			if (m_lastSelectedTreeNode != null)
+			if (m_lastSelectedTreeNode == null || !IsTerminalNode(m_lastSelectedTreeNode))
 			{
-				if (IsTerminalNode(m_lastSelectedTreeNode))
-				{
-					m_lastSelectedTreeNode.Checked = false;
-					if (m_fTerminalsUseCheckBoxes)
-						m_lastSelectedTreeNode.ImageIndex = m_lastSelectedTreeNode.SelectedImageIndex = (int)ImageKind.checkBox;
-					else
-						m_lastSelectedTreeNode.ImageIndex = m_lastSelectedTreeNode.SelectedImageIndex = (int)ImageKind.radio;
-				}
+				return;
+			}
+			m_lastSelectedTreeNode.Checked = false;
+			if (m_fTerminalsUseCheckBoxes)
+			{
+				m_lastSelectedTreeNode.ImageIndex = m_lastSelectedTreeNode.SelectedImageIndex = (int) ImageKind.checkBox;
+			}
+			else
+			{
+				m_lastSelectedTreeNode.ImageIndex = m_lastSelectedTreeNode.SelectedImageIndex = (int)ImageKind.radio;
 			}
 		}
 		protected virtual void HandleCheckBoxNodes(TreeView tv, TreeNode tn)
@@ -331,51 +333,51 @@ namespace LanguageExplorer.MGA
 			UndoLastSelectedNode();
 			if (m_fTerminalsUseCheckBoxes)
 			{
-				if (IsTerminalNode(tn))
+				if (!IsTerminalNode(tn))
 				{
-					MasterInflectionFeature mif = tn.Tag as MasterInflectionFeature;
-					if (tn.Checked)
+					return;
+				}
+				var mif = tn.Tag as MasterInflectionFeature;
+				if (tn.Checked)
+				{
+					if (mif == null || !mif.InDatabase)
 					{
-						if (mif == null || !mif.InDatabase)
-						{
-							tn.Checked = false;
-							tn.ImageIndex = tn.SelectedImageIndex = (int) ImageKind.checkBox;
-						}
+						tn.Checked = false;
+						tn.ImageIndex = tn.SelectedImageIndex = (int) ImageKind.checkBox;
 					}
-					else
+				}
+				else
+				{
+					tn.Checked = true;
+					tn.ImageIndex = tn.SelectedImageIndex = (int)ImageKind.checkedBox;
+					if (mif != null)
 					{
-						tn.Checked = true;
-						tn.ImageIndex = tn.SelectedImageIndex = (int)ImageKind.checkedBox;
-						if (mif != null)
+						var sId = XmlUtils.GetOptionalAttributeValue(mif.Node, "id");
+						if (m_cache.LanguageProject.MsFeatureSystemOA.GetSymbolicValue(sId) != null)
 						{
-							string sId = XmlUtils.GetOptionalAttributeValue(mif.Node, "id");
-							if (m_cache.LanguageProject.MsFeatureSystemOA.GetSymbolicValue(sId) != null)
+							// we want to set all other sisters that are in the database
+							var sibling = tn.Parent.FirstNode;
+							while (sibling != null)
 							{
-								// we want to set all other sisters that are in the database
-								TreeNode sibling = tn.Parent.FirstNode;
-								while (sibling != null)
+								if (IsTerminalNode(sibling) && sibling != tn)
 								{
-									if (IsTerminalNode(sibling) && sibling != tn)
+									mif = sibling.Tag as MasterInflectionFeature;
+									if (mif != null)
 									{
-										mif = sibling.Tag as MasterInflectionFeature;
-										if (mif != null)
+										sId = XmlUtils.GetOptionalAttributeValue(mif.Node, "id");
+										if (m_cache.LanguageProject.MsFeatureSystemOA.GetSymbolicValue(sId) != null)
 										{
-											sId = XmlUtils.GetOptionalAttributeValue(mif.Node, "id");
-											if (m_cache.LanguageProject.MsFeatureSystemOA.GetSymbolicValue(sId) != null)
-											{
-												sibling.Checked = true;
-												sibling.ImageIndex =
-													sibling.SelectedImageIndex = (int) ImageKind.checkedBox;
-											}
+											sibling.Checked = true;
+											sibling.ImageIndex = sibling.SelectedImageIndex = (int) ImageKind.checkedBox;
 										}
 									}
-									sibling = sibling.NextNode;
 								}
+								sibling = sibling.NextNode;
 							}
 						}
 					}
-					tv.Invalidate();
 				}
+				tv.Invalidate();
 			}
 			else
 			{
@@ -385,7 +387,7 @@ namespace LanguageExplorer.MGA
 					tn.ImageIndex = tn.SelectedImageIndex = (int)ImageKind.radioSelected;
 					if (tn.Parent != null)
 					{
-						TreeNode sibling = tn.Parent.FirstNode;
+						var sibling = tn.Parent.FirstNode;
 						while (sibling != null)
 						{
 							if (IsTerminalNode(sibling) && sibling != tn)
@@ -402,40 +404,48 @@ namespace LanguageExplorer.MGA
 			}
 		}
 
-		void OnAfterCollapse(object obj, TreeViewEventArgs tvea)
+		private static void OnAfterCollapse(object obj, TreeViewEventArgs tvea)
 		{
-			TreeNode tn = tvea.Node;
-			if (tn.ImageIndex == (int)ImageKind.openFolder)
+			var tn = tvea.Node;
+			if (tn.ImageIndex == (int) ImageKind.openFolder)
+			{
 				tn.ImageIndex = tn.SelectedImageIndex = (int)ImageKind.closedFolder;
+			}
 		}
-		void OnAfterExpand(object obj, TreeViewEventArgs tvea)
+
+		private static void OnAfterExpand(object obj, TreeViewEventArgs tvea)
 		{
-			TreeNode tn = tvea.Node;
-			if (tn.ImageIndex == (int)ImageKind.closedFolder)
+			var tn = tvea.Node;
+			if (tn.ImageIndex == (int) ImageKind.closedFolder)
+			{
 				tn.ImageIndex = tn.SelectedImageIndex = (int)ImageKind.openFolder;
+			}
 		}
 
 		private void AddNode(XmlNode currentNode, TreeNode parentNode, XmlDocument dom)
 		{
-			string sStatus = XmlUtils.GetOptionalAttributeValue(currentNode, "status");
+			var sStatus = XmlUtils.GetOptionalAttributeValue(currentNode, "status");
 			if (sStatus == "hidden")
+			{
 				return;
+			}
 			if (sStatus == "proxy")
 			{
 				FleshOutProxy(currentNode, dom);
 			}
-			XmlNodeList nodes = currentNode.SelectNodes("item");
+			var nodes = currentNode.SelectNodes("item");
 			TreeNode newNode = null;
-			string sType = XmlUtils.GetOptionalAttributeValue(currentNode, "type");
+			var sType = XmlUtils.GetOptionalAttributeValue(currentNode, "type");
 			if (sType == "fsType")
-			{ // skip an fsType to get to its contents
+			{
+				// skip an fsType to get to its contents
 				newNode = parentNode;
 			}
 			else
 			{
-				string sTerm = GetTerm(currentNode);
-				string sAbbrev = GetAbbrev(currentNode);
-				StringBuilder sbNode = new StringBuilder();
+				var sTerm = GetTerm(currentNode);
+				var sAbbrev = GetAbbrev(currentNode);
+				var sbNode = new StringBuilder();
 				sbNode.Append(sTerm);
 				if (sType != "group")
 				{
@@ -448,9 +458,13 @@ namespace LanguageExplorer.MGA
 				}
 				newNode = CreateNewNode(currentNode, sType, sbNode, sTerm);
 				if (parentNode == null)
+				{
 					Nodes.Add(newNode);
+				}
 				else
+				{
 					parentNode.Nodes.Add(newNode);
+				}
 			}
 			foreach (XmlNode node in nodes)
 			{
@@ -460,100 +474,109 @@ namespace LanguageExplorer.MGA
 
 		protected virtual TreeNode CreateNewNode(XmlNode currentNode, string sType, StringBuilder sbNode, string sTerm)
 		{
-			TreeNode newNode;
-			GlossListTreeView.ImageKind ik = GetImageKind(sType);
-			newNode = new TreeNode(TsStringUtils.NormalizeToNFC(sbNode.ToString()), (int) ik, (int) ik);
-			MasterInflectionFeature mif = new MasterInflectionFeature(currentNode, ik, sTerm);
+			var imageKind = GetImageKind(sType);
+			var newNode = new TreeNode(TsStringUtils.NormalizeToNFC(sbNode.ToString()), (int) imageKind, (int) imageKind);
+			var mif = new MasterInflectionFeature(currentNode, imageKind, sTerm);
 			newNode.Tag = (MasterInflectionFeature) mif;
 			return newNode;
 		}
 
 		private void FleshOutProxy(XmlNode currentNode, XmlDocument dom)
 		{
-			string sTarget = XmlUtils.GetOptionalAttributeValue(currentNode, "target");
-			XmlNode xn = dom.SelectSingleNode("//item[@id='" + sTarget + "']");
-			if (xn != null)
+			var sTarget = XmlUtils.GetOptionalAttributeValue(currentNode, "target");
+			var xn = dom.SelectSingleNode("//item[@id='" + sTarget + "']");
+			if (xn == null)
 			{
-				XmlAttribute idAttr = dom.CreateAttribute("id");
-				idAttr.Value = sTarget;
-				idAttr.Value = sTarget;
-				currentNode.Attributes.Append(idAttr);
-				var guidAttr = (XmlAttribute) xn.SelectSingleNode("@guid");
-				Debug.Assert(guidAttr != null, "guid is a required attribute for items with ids");
-				currentNode.Attributes.Append((XmlAttribute)guidAttr.Clone());
-				XmlAttribute typeAttr = (XmlAttribute)xn.SelectSingleNode("@type");
-				if (typeAttr != null)
-					currentNode.Attributes.Append((XmlAttribute)typeAttr.Clone());
-				// replace any abbrev, term or def items from target and add any citations in target
-				string[] asNodes =  new string[3] {"abbrev", "term", "def"};
-				for (int i = 0; i<3; i++)
+				return;
+			}
+			var idAttr = dom.CreateAttribute("id");
+			idAttr.Value = sTarget;
+			idAttr.Value = sTarget;
+			currentNode.Attributes.Append(idAttr);
+			var guidAttr = (XmlAttribute) xn.SelectSingleNode("@guid");
+			Debug.Assert(guidAttr != null, "guid is a required attribute for items with ids");
+			currentNode.Attributes.Append((XmlAttribute)guidAttr.Clone());
+			var typeAttr = (XmlAttribute)xn.SelectSingleNode("@type");
+			if (typeAttr != null)
+			{
+				currentNode.Attributes.Append((XmlAttribute)typeAttr.Clone());
+			}
+			// replace any abbrev, term or def items from target and add any citations in target
+			var asNodes =  new string[3] {"abbrev", "term", "def"};
+			for (var i = 0; i<3; i++)
+			{
+				var newTempNode = xn.SelectSingleNode(asNodes[i]);
+				var oldNode = currentNode.SelectSingleNode(asNodes[i]);
+				if (newTempNode == null)
 				{
-					XmlNode newTempNode = xn.SelectSingleNode(asNodes[i]);
-					XmlNode oldNode = currentNode.SelectSingleNode(asNodes[i]);
-					if (newTempNode != null)
-					{
-						if (oldNode != null)
-							currentNode.ReplaceChild(newTempNode.Clone(), oldNode);
-						else
-							currentNode.AppendChild(newTempNode.Clone());
-					}
+					continue;
 				}
-				XmlNodeList citationNodes = xn.SelectNodes("citation");
-				foreach (XmlNode citation in citationNodes)
+				if (oldNode != null)
 				{
-					currentNode.AppendChild(citation.Clone());
+					currentNode.ReplaceChild(newTempNode.Clone(), oldNode);
 				}
+				else
+				{
+					currentNode.AppendChild(newTempNode.Clone());
+				}
+			}
+			var citationNodes = xn.SelectNodes("citation");
+			foreach (XmlNode citation in citationNodes)
+			{
+				currentNode.AppendChild(citation.Clone());
 			}
 		}
 
-		private string GetTypeOfCrossReference(XmlNode currentNode, XmlDocument dom)
+		private static string GetTypeOfCrossReference(XmlNode currentNode, XmlDocument dom)
 		{
-			string sType;
-			string sTarget = XmlUtils.GetOptionalAttributeValue(currentNode, "target");
-			XmlNode xn = dom.SelectSingleNode("//item[@id='" + sTarget + "']");
-			sType = XmlUtils.GetOptionalAttributeValue(xn, "type");
+			var sTarget = XmlUtils.GetOptionalAttributeValue(currentNode, "target");
+			var xn = dom.SelectSingleNode("//item[@id='" + sTarget + "']");
+			var sType = XmlUtils.GetOptionalAttributeValue(xn, "type");
 			return sType;
 		}
 
 		private string GetAbbrev(XmlNode currentNode)
 		{
-			XmlNode xn;
-			xn = currentNode.SelectSingleNode(m_sAbbrevNodeXPath);
-			string sAbbrev = "";
+			var xn = currentNode.SelectSingleNode(m_sAbbrevNodeXPath);
+			var sAbbrev = string.Empty;
 			if (xn != null)
+			{
 				sAbbrev = xn.InnerText;
+			}
 			return sAbbrev;
 		}
 
 		private string GetTerm(XmlNode currentNode)
 		{
-			XmlNode xn = currentNode.SelectSingleNode(m_sTermNodeXPath);
-			string sTerm = "";
+			var xn = currentNode.SelectSingleNode(m_sTermNodeXPath);
+			var sTerm = string.Empty;
 			if (xn != null)
+			{
 				sTerm = xn.InnerText;
+			}
 			return sTerm;
 		}
 
 		private ImageKind GetImageKind(string sType)
 		{
 			ImageKind ik;
-			if (sType == "value")
+			switch (sType)
 			{
-				if (TerminalsUseCheckBoxes)
-					ik = GlossListTreeView.ImageKind.checkBox;
-				else
-					ik = GlossListTreeView.ImageKind.radio;
-			}
-			else
-			{
-				if (sType == "feature")
-					ik = GlossListTreeView.ImageKind.userChoice;
-				else if (sType == "fsType")
-					ik = GlossListTreeView.ImageKind.featureStructureType;
-				else if (sType == "complex")
-					ik = GlossListTreeView.ImageKind.complex;
-				else
-					ik = GlossListTreeView.ImageKind.closedFolder;
+				case "value":
+					ik = TerminalsUseCheckBoxes ? ImageKind.checkBox : ImageKind.radio;
+					break;
+				case "feature":
+					ik = ImageKind.userChoice;
+					break;
+				case "fsType":
+					ik = ImageKind.featureStructureType;
+					break;
+				case "complex":
+					ik = ImageKind.complex;
+					break;
+				default:
+					ik = ImageKind.closedFolder;
+					break;
 			}
 			return ik;
 		}

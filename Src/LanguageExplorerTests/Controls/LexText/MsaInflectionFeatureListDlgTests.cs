@@ -1,16 +1,16 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Windows.Forms;
 using System.IO;
+using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Controls.LexText;
 using NUnit.Framework;
-using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 
-namespace LanguageExplorerTests.LexTextControls
+namespace LanguageExplorerTests.Controls.LexText
 {
 	/// <summary>
 	/// Summary description for MsaInflectionFeatureListDlgTests.
@@ -33,7 +33,7 @@ namespace LanguageExplorerTests.LexTextControls
 
 			// Set up the xml fs description
 			XmlDocument doc = new XmlDocument();
-			string sFile = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "LexTextControls", "FeatureSystem2.xml");
+			string sFile = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Controls", "LexText", "FeatureSystem2.xml");
 
 			doc.Load(sFile);
 			XmlNode itemNeut = doc.SelectSingleNode("//item[@id='vNeut']");
@@ -88,7 +88,7 @@ namespace LanguageExplorerTests.LexTextControls
 			IFsFeatStruc featStruct;
 			ILangProject lp = CreateFeatureSystem(out featStruct);
 
-			string dir = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "LexTextControls");
+			string dir = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Controls", "LexText");
 			// Set up the xml fs description
 			XmlDocument doc = new XmlDocument();
 			string sFile = Path.Combine(dir, "FeatureSystem2.xml");

@@ -553,6 +553,8 @@
     <Compile Include="Controls\LexText\BaseGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="MGA\ImageKind.cs" />
+    <Compile Include="MGA\MasterItemCitation.cs" />
     <Compile Include="RecordFilterParameterObject.cs" />
     <Compile Include="ToolbarServices.cs" />
     <Compile Include="VectorPropertyParameterObject.cs" />

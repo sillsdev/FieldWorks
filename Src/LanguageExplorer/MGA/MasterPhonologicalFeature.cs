@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,9 +9,9 @@ using SIL.Xml;
 
 namespace LanguageExplorer.MGA
 {
-	public class MasterPhonologicalFeature : MasterItem
+	internal class MasterPhonologicalFeature : MasterItem
 	{
-		public MasterPhonologicalFeature(XmlNode node, GlossListTreeView.ImageKind kind, string sTerm)
+		internal MasterPhonologicalFeature(XmlNode node, ImageKind kind, string sTerm)
 			: base(node, kind, sTerm)
 		{
 		}
@@ -23,10 +23,8 @@ namespace LanguageExplorer.MGA
 
 		private bool IsAGroup()
 		{
-			string sId = XmlUtils.GetMandatoryAttributeValue(m_node, "id");
-			if (sId.StartsWith("g"))
-				return true;
-			return false;
+			var sId = XmlUtils.GetMandatoryAttributeValue(m_node, "id");
+			return sId.StartsWith("g");
 		}
 
 		/// <summary>
@@ -35,19 +33,17 @@ namespace LanguageExplorer.MGA
 		/// <param name="cache">database cache</param>
 		public override void DetermineInDatabase(LcmCache cache)
 		{
-			//XmlNode item = m_node.SelectSingleNode(".");
-			string sId = XmlUtils.GetOptionalAttributeValue(m_node, "id");
-			if (IsAGroup())
-				m_fInDatabase = false;
-			else
-				m_fInDatabase = cache.LanguageProject.PhFeatureSystemOA.GetFeature(sId) != null;
+			var sId = XmlUtils.GetOptionalAttributeValue(m_node, "id");
+			m_fInDatabase = !IsAGroup() && cache.LanguageProject.PhFeatureSystemOA.GetFeature(sId) != null;
 		}
 		public override void AddToDatabase(LcmCache cache)
 		{
 			if (m_fInDatabase)
+			{
 				return; // It's already in the database, so nothing more can be done.
+			}
 
-			string sType = XmlUtils.GetMandatoryAttributeValue(m_node, "type");
+			var sType = XmlUtils.GetMandatoryAttributeValue(m_node, "type");
 			if (sType == "value")
 			{
 				UndoableUnitOfWorkHelper.Do(MGAStrings.ksUndoCreatePhonologicalFeature, MGAStrings.ksRedoCreatePhonologicalFeature,
@@ -57,6 +53,5 @@ namespace LanguageExplorer.MGA
 					});
 			}
 		}
-
 	}
 }

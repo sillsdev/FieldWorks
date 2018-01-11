@@ -198,7 +198,7 @@ namespace LanguageExplorer.Controls.LexText
 						{
 							string sAbbr = tssAbbr.Text;
 							string sName = tssName.Text;
-							string sKey = String.Format("{0} {1}", sAbbr, sName);
+							string sKey = $"{sAbbr} {sName}";
 							if (!dict.ContainsKey(sKey))
 								dict.Add(sKey, poss);
 							sKey = sKey.ToLowerInvariant();
@@ -256,8 +256,7 @@ namespace LanguageExplorer.Controls.LexText
 						string sAllo = form;
 						if (IsVoiceWritingSystem(wsHvo))
 						{
-							string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile),
-								String.Format("audio{0}{1}", Path.DirectorySeparatorChar, form));
+							string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile), "audio", form);
 							CopyFileToLinkedFiles(form, sPath, LcmFileHelper.ksMediaDir);
 						}
 						else
@@ -340,8 +339,7 @@ namespace LanguageExplorer.Controls.LexText
 						tsm.set_String(wsHvo, tss);
 						if (tss.RunCount == 1 && IsVoiceWritingSystem(wsHvo))
 						{
-							string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile),
-								String.Format("audio{0}{1}", Path.DirectorySeparatorChar, tss.Text));
+							string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile), "audio", tss.Text);
 							CopyFileToLinkedFiles(tss.Text, sPath, LcmFileHelper.ksMediaDir);
 						}
 					}

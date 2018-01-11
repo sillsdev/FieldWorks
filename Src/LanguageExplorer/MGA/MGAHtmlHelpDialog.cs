@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2003-2017 SIL International
+﻿// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,7 +19,7 @@ namespace LanguageExplorer.MGA
 		private GeckoWebBrowser m_browser;
 		private XslCompiledTransform m_xslShowInfoTransform;
 		private XmlDocument m_xmlShowInfoDoc;
-		private readonly string m_sHelpHtm = Path.Combine(FwDirectoryFinder.CodeDirectory, String.Format("Language Explorer{0}MGA{0}Help.htm", Path.DirectorySeparatorChar));
+		private readonly string m_sHelpHtm = Path.Combine(FwDirectoryFinder.CodeDirectory, string.Format("Language Explorer{0}MGA{0}Help.htm", Path.DirectorySeparatorChar));
 
 		/// <summary>
 		/// Constructor.
@@ -42,7 +42,7 @@ namespace LanguageExplorer.MGA
 		{
 			// init transform used in help panel
 			m_xslShowInfoTransform = new XslCompiledTransform();
-			string sXsltFile = Path.Combine(FwDirectoryFinder.CodeDirectory, String.Format("Language Explorer{0}MGA{0}MGAShowInfo.xsl", Path.DirectorySeparatorChar));
+			var sXsltFile = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "MGA", "MGAShowInfo.xsl");
 			m_xslShowInfoTransform.Load(sXsltFile);
 
 			// init XmlDoc, too
@@ -73,6 +73,5 @@ namespace LanguageExplorer.MGA
 			var uri = new Uri(tempfile);
 			m_browser.Navigate(uri.AbsoluteUri);
 		}
-
 	}
 }

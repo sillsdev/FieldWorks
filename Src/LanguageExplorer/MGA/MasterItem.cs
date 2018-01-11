@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,9 +12,9 @@ using SIL.Xml;
 
 namespace LanguageExplorer.MGA
 {
-	public class MasterItem
+	internal class MasterItem
 	{
-		protected GlossListTreeView.ImageKind m_eKind;
+		protected ImageKind m_eKind;
 		protected string m_abbrev;
 		protected string m_abbrevWs;
 		protected string m_term;
@@ -31,7 +31,7 @@ namespace LanguageExplorer.MGA
 			m_citations = new List<MasterItemCitation>();
 		}
 
-		public MasterItem(XmlNode node, GlossListTreeView.ImageKind kind, string sTerm)
+		internal MasterItem(XmlNode node, ImageKind kind, string sTerm)
 		{
 			m_node = node;
 			m_eKind = kind;
@@ -39,7 +39,7 @@ namespace LanguageExplorer.MGA
 
 			m_citations = new List<MasterItemCitation>();
 
-			XmlNode nd = node.SelectSingleNode("abbrev");
+			var nd = node.SelectSingleNode("abbrev");
 			m_abbrevWs = XmlUtils.GetMandatoryAttributeValue(nd, "ws");
 			m_abbrev = nd.InnerText;
 
@@ -56,9 +56,7 @@ namespace LanguageExplorer.MGA
 
 			foreach (XmlNode citNode in node.SelectNodes("citation"))
 			{
-				string sWs = XmlUtils.GetOptionalAttributeValue(citNode, "ws");
-				if (sWs == null)
-					sWs = "en";
+				var sWs = XmlUtils.GetOptionalAttributeValue(citNode, "ws") ?? "en";
 				m_citations.Add(new MasterItemCitation(sWs, citNode.InnerText));
 			}
 		}
@@ -72,115 +70,61 @@ namespace LanguageExplorer.MGA
 		}
 		public virtual bool KindCanBeInDatabase()
 		{
-			return (m_eKind == GlossListTreeView.ImageKind.radio ||
-				m_eKind == GlossListTreeView.ImageKind.radioSelected ||
-				m_eKind == GlossListTreeView.ImageKind.checkBox ||
-				m_eKind == GlossListTreeView.ImageKind.checkedBox ||
-				m_eKind == GlossListTreeView.ImageKind.userChoice ||
-				m_eKind == GlossListTreeView.ImageKind.complex);
+			return (m_eKind == ImageKind.radio ||
+				m_eKind == ImageKind.radioSelected ||
+				m_eKind == ImageKind.checkBox ||
+				m_eKind == ImageKind.checkedBox ||
+				m_eKind == ImageKind.userChoice ||
+				m_eKind == ImageKind.complex);
 		}
 
 		public virtual void AddToDatabase(LcmCache cache)
 		{
 		}
 
-		public IFsFeatDefn FeatureDefn
-		{
-			get
-			{
-				return m_featDefn;
-			}
-		}
+		public IFsFeatDefn FeatureDefn => m_featDefn;
 
-		public XmlNode Node
-		{
-			get
-			{
-				return m_node;
-			}
-		}
+		public XmlNode Node => m_node;
 
-		public bool InDatabase
-		{
-			get
-			{
-				return m_fInDatabase;
-			}
-		}
-		public bool IsChosen
-		{
-			get
-			{
-				return (m_eKind == GlossListTreeView.ImageKind.radioSelected ||
-					m_eKind == GlossListTreeView.ImageKind.checkedBox);
-			}
-		}
+		public bool InDatabase => m_fInDatabase;
+
+		public bool IsChosen => (m_eKind == ImageKind.radioSelected || m_eKind == ImageKind.checkedBox);
 
 		public override string ToString()
 		{
-		if (InDatabase)
-			return String.Format(MGAStrings.ksX_InFwProject, m_term);
-		else
-			return m_term;
+			return InDatabase ? string.Format(MGAStrings.ksX_InFwProject, m_term) : m_term;
 		}
 
 		public void ResetDescription(RichTextBox rtbDescription)
 		{
-		rtbDescription.Clear();
+			rtbDescription.Clear();
 
 			var doubleNewLine = Environment.NewLine + Environment.NewLine;
 
-			Font original = rtbDescription.SelectionFont;
-			Font fntBold = new Font(original.FontFamily, original.Size, FontStyle.Bold);
-			Font fntItalic = new Font(original.FontFamily, original.Size, FontStyle.Italic);
+			var original = rtbDescription.SelectionFont;
+			var fntBold = new Font(original.FontFamily, original.Size, FontStyle.Bold);
+			var fntItalic = new Font(original.FontFamily, original.Size, FontStyle.Italic);
 			rtbDescription.SelectionFont = fntBold;
 			rtbDescription.AppendText(m_term);
 			rtbDescription.AppendText(doubleNewLine);
 
-			rtbDescription.SelectionFont = (string.IsNullOrEmpty(m_def)) ?
-				fntItalic : original;
-			rtbDescription.AppendText((string.IsNullOrEmpty(m_def)) ?
-				MGAStrings.ksNoDefinitionForItem : m_def);
+			rtbDescription.SelectionFont = (string.IsNullOrEmpty(m_def)) ? fntItalic : original;
+			rtbDescription.AppendText((string.IsNullOrEmpty(m_def)) ? MGAStrings.ksNoDefinitionForItem : m_def);
 			rtbDescription.AppendText(doubleNewLine);
 
-			if (m_citations.Count > 0)
+			if (m_citations.Count <= 0)
 			{
-				rtbDescription.SelectionFont = fntItalic;
-				rtbDescription.AppendText(MGAStrings.ksReferences);
-				rtbDescription.AppendText(doubleNewLine);
-
-				rtbDescription.SelectionFont = original;
-				foreach (MasterItemCitation mifc in m_citations)
-					mifc.ResetDescription(rtbDescription);
+				return;
 			}
-		}
+			rtbDescription.SelectionFont = fntItalic;
+			rtbDescription.AppendText(MGAStrings.ksReferences);
+			rtbDescription.AppendText(doubleNewLine);
 
-	}
-	public class MasterItemCitation
-	{
-		private string m_ws;
-		private string m_citation;
-
-		public string WS
-		{
-			get { return m_ws; }
-		}
-
-		public string Citation
-		{
-			get { return m_citation; }
-		}
-
-		public MasterItemCitation(string ws, string citation)
-		{
-			m_ws = ws;
-			m_citation = citation;
-		}
-
-		public void ResetDescription(RichTextBox rtbDescription)
-		{
-			rtbDescription.AppendText(String.Format(MGAStrings.ksBullettedItem, m_citation,
-				System.Environment.NewLine));
+			rtbDescription.SelectionFont = original;
+			foreach (var mifc in m_citations)
+			{
+				mifc.ResetDescription(rtbDescription);
+			}
 		}
 	}
 }

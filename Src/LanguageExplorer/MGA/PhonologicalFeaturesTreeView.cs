@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2003-2017 SIL International
+﻿// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,15 +12,14 @@ namespace LanguageExplorer.MGA
 	/// <summary>
 	/// Summary description for PhonologicalFeaturesTreeView.
 	/// </summary>
-	public class PhonologicalFeaturesTreeView : GlossListTreeView
+	internal class PhonologicalFeaturesTreeView : GlossListTreeView
 	{
 		protected override TreeNode CreateNewNode(XmlNode currentNode, string sType, StringBuilder sbNode, string sTerm)
 		{
-			TreeNode newNode;
 			// we always use a check box
-			GlossListTreeView.ImageKind ik = ImageKind.checkBox;
-			newNode = new TreeNode(TsStringUtils.NormalizeToNFC(sbNode.ToString()), (int)ik, (int)ik);
-			MasterPhonologicalFeature mpf = new MasterPhonologicalFeature(currentNode, ik, sTerm);
+			const ImageKind imageKind = ImageKind.checkBox;
+			var newNode = new TreeNode(TsStringUtils.NormalizeToNFC(sbNode.ToString()), (int)imageKind, (int)imageKind);
+			var mpf = new MasterPhonologicalFeature(currentNode, imageKind, sTerm);
 			newNode.Tag = mpf;
 			return newNode;
 		}
@@ -35,9 +34,13 @@ namespace LanguageExplorer.MGA
 		private void ToggleCheckBoxImage(TreeNode tn)
 		{
 			if (tn.Checked)
+			{
 				tn.ImageIndex = tn.SelectedImageIndex = (int)ImageKind.checkedBox;
+			}
 			else
+			{
 				tn.ImageIndex = tn.SelectedImageIndex = (int)ImageKind.checkBox;
+			}
 		}
 
 		private void SetCheckedValueOfAllDaughterNodes(TreeNode tn)
@@ -46,13 +49,11 @@ namespace LanguageExplorer.MGA
 			{
 				if (node.Checked != tn.Checked)
 				{
-				node.Checked = tn.Checked;
-				ToggleCheckBoxImage(node);
+					node.Checked = tn.Checked;
+					ToggleCheckBoxImage(node);
 				}
 				SetCheckedValueOfAllDaughterNodes(node);
 			}
 		}
-
 	}
-
 }

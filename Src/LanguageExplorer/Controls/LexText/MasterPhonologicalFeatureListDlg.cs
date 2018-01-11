@@ -1,12 +1,6 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MasterPhonologicalFeatureListDlg.cs
-// Responsibility:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Windows.Forms;
@@ -19,7 +13,7 @@ namespace LanguageExplorer.Controls.LexText
 	/// <summary>
 	/// Summary description for MasterPhonologicalFeatureListDlg.
 	/// </summary>
-	public class MasterPhonologicalFeatureListDlg : MasterListDlg
+	internal class MasterPhonologicalFeatureListDlg : MasterListDlg
 	{
 		public MasterPhonologicalFeatureListDlg()
 		{
@@ -54,7 +48,7 @@ namespace LanguageExplorer.Controls.LexText
 			if (AllDaughtersAreChecked(node))
 			{
 				node.Checked = true;
-				node.ImageIndex = (int) GlossListTreeView.ImageKind.checkedBox;
+				node.ImageIndex = (int)ImageKind.checkedBox;
 			}
 
 		}

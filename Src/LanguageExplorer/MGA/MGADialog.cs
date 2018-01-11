@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -57,29 +57,25 @@ namespace LanguageExplorer.MGA
 		public event GlossListEventHandler InsertMGAGlossListItem;
 		protected virtual void OnInsertMGAGlossListItem(GlossListEventArgs glea)
 		{
-			if (InsertMGAGlossListItem != null)
-				InsertMGAGlossListItem(this, glea);
+			InsertMGAGlossListItem?.Invoke(this, glea);
 		}
 
 		public event EventHandler RemoveMGAGlossListItem;
 		protected virtual void OnRemoveMGAGlossListItem(EventArgs e)
 		{
-			if (RemoveMGAGlossListItem != null)
-				RemoveMGAGlossListItem(this, e);
+			RemoveMGAGlossListItem?.Invoke(this, e);
 		}
 
 		public event EventHandler MoveDownMGAGlossListItem;
 		protected virtual void OnMoveDownMGAGlossListItem(EventArgs e)
 		{
-			if (MoveDownMGAGlossListItem != null)
-				MoveDownMGAGlossListItem(this, e);
+			MoveDownMGAGlossListItem?.Invoke(this, e);
 		}
 
 		public event EventHandler MoveUpMGAGlossListItem;
 		protected virtual void OnMoveUpMGAGlossListItem(EventArgs e)
 		{
-			if (MoveUpMGAGlossListItem != null)
-				MoveUpMGAGlossListItem(this, e);
+			MoveUpMGAGlossListItem?.Invoke(this, e);
 		}
 		#endregion
 
@@ -98,8 +94,10 @@ namespace LanguageExplorer.MGA
 			InitForm();
 			labelAllomorph.Text = sMorphemeForm;
 
-			helpProvider = new HelpProvider();
-			helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
+			helpProvider = new HelpProvider
+			{
+				HelpNamespace = m_helpTopicProvider.HelpFile
+			};
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 		}
@@ -130,15 +128,12 @@ namespace LanguageExplorer.MGA
 			CancelButton = buttonCancel;
 			// add the Info button
 			buttonInfo.Text = MGAStrings.ksHideInfo;
-			string sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory,
-				String.Format("Language Explorer{0}MGA{0}GlossLists{0}EticGlossList.xml",
-				Path.DirectorySeparatorChar));
-			treeViewGlossListItem.LoadGlossListTreeFromXml(sXmlFile,
-				m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id);
+			var sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "MGA", "GlossLists", "EticGlossList.xml");
+			treeViewGlossListItem.LoadGlossListTreeFromXml(sXmlFile, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id);
 
 			using (var graphics = CreateGraphics())
 			{
-				float fRatio = graphics.DpiX / 96.0f; // try to adjust for screen resolution
+				var fRatio = graphics.DpiX / 96.0f; // try to adjust for screen resolution
 				// on start-up, ensure the selected gloss panel is wide enough for all the buttons
 				splitContainerVertical.SplitterDistance =
 					splitContainerVertical.Width - (buttonAcceptGloss.Width
@@ -158,7 +153,7 @@ namespace LanguageExplorer.MGA
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// <summary>
@@ -173,10 +168,7 @@ namespace LanguageExplorer.MGA
 
 			if (disposing)
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -202,8 +194,8 @@ namespace LanguageExplorer.MGA
 		protected void ShowInfoPane()
 		{
 			// Show the info pane
-			Size sz = new Size(ClientSize.Width, ClientSize.Height);
-			int splitterDistance = splitContainerHorizontal.Panel1.Height;
+			var sz = new Size(ClientSize.Width, ClientSize.Height);
+			var splitterDistance = splitContainerHorizontal.Panel1.Height;
 			splitContainerHorizontal.Panel2Collapsed = false;
 			sz.Height += m_panelBottomHeight;
 			ClientSize = sz;
@@ -217,8 +209,8 @@ namespace LanguageExplorer.MGA
 		protected void HideInfoPane()
 		{
 			// hide the info pane
-			Size sz = new Size(ClientSize.Width, ClientSize.Height);
-			int firstPanelHeight = splitContainerHorizontal.Panel1.Height;
+			var sz = new Size(ClientSize.Width, ClientSize.Height);
+			var firstPanelHeight = splitContainerHorizontal.Panel1.Height;
 			m_panelBottomHeight = splitContainerHorizontal.Panel2.Height;
 			splitContainerHorizontal.Panel2Collapsed = true;
 			sz.Height = splitContainerHorizontal.Location.Y + firstPanelHeight;
@@ -229,60 +221,70 @@ namespace LanguageExplorer.MGA
 		private void OnInfoButtonClick(object obj, EventArgs ea)
 		{
 			if (splitContainerHorizontal.Panel2Collapsed)
+			{
 				ShowInfoPane();
+			}
 			else
+			{
 				HideInfoPane();
+			}
 		}
 
 		public void OnInsertButtonClick(object obj, EventArgs ea)
 		{
 			CheckDisposed();
 
-			MasterInflectionFeature mif = (MasterInflectionFeature)treeViewGlossListItem.SelectedNode.Tag;
+			var mif = (MasterInflectionFeature)treeViewGlossListItem.SelectedNode.Tag;
 			if (mif == null)
+			{
 				return; // just to be safe
-			GlossListBoxItem glbiNew = new GlossListBoxItem(m_cache, mif.Node,
+			}
+			var glbiNew = new GlossListBoxItem(m_cache, mif.Node,
 				treeViewGlossListItem.AfterSeparator, treeViewGlossListItem.ComplexNameSeparator,
 				treeViewGlossListItem.ComplexNameFirst);
 			GlossListBoxItem glbiConflict;
 			if (glossListBoxGloss.NewItemConflictsWithExtantItem(glbiNew, out glbiConflict))
 			{
 				const string ksPath = "/group[@id='Linguistics']/group[@id='Morphology']/group[@id='MGA']/";
-				string sMsg1 = StringTable.Table.GetStringWithXPath("ItemConflictDlgMessage", ksPath);
-				string sMsg = String.Format(sMsg1, glbiConflict);
-				string sCaption = StringTable.Table.GetStringWithXPath("ItemConflictDlgCaption", ksPath);
+				var sMsg1 = StringTable.Table.GetStringWithXPath("ItemConflictDlgMessage", ksPath);
+				var sMsg = string.Format(sMsg1, glbiConflict);
+				var sCaption = StringTable.Table.GetStringWithXPath("ItemConflictDlgCaption", ksPath);
 				MessageBox.Show(sMsg, sCaption, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				return;
 			}
 			// raise event
-			GlossListEventArgs glea = new GlossListEventArgs(glbiNew);
+			var glea = new GlossListEventArgs(glbiNew);
 			OnInsertMGAGlossListItem(glea);
 			buttonAcceptGloss.Enabled = true;
 			EnableMoveUpDownButtons();
 			ShowGloss();
 		}
-		void OnModifyButtonClick(object obj, EventArgs ea)
+
+		private void OnModifyButtonClick(object obj, EventArgs ea)
 		{
 			MessageBox.Show(MGAStrings.ksNoModifyButtonYet);
 		}
-		void OnMoveDownButtonClick(object obj, EventArgs ea)
+
+		private void OnMoveDownButtonClick(object obj, EventArgs ea)
 		{
 			// raise event
 			OnMoveDownMGAGlossListItem(EventArgs.Empty);
 			ShowGloss();
 		}
-		void OnMoveUpButtonClick(object obj, EventArgs ea)
+
+		private void OnMoveUpButtonClick(object obj, EventArgs ea)
 		{
 			// raise event
 			OnMoveUpMGAGlossListItem(EventArgs.Empty);
 			ShowGloss();
 		}
-		void OnRemoveButtonClick(object obj, EventArgs ea)
+
+		private void OnRemoveButtonClick(object obj, EventArgs ea)
 		{
 			// raise event
 			OnRemoveMGAGlossListItem(EventArgs.Empty);
 			// determine which buttons to enable
-			int cCount = glossListBoxGloss.Items.Count;
+			var cCount = glossListBoxGloss.Items.Count;
 			if (cCount <= 0)
 			{
 				buttonRemove.Enabled = false;
@@ -291,23 +293,25 @@ namespace LanguageExplorer.MGA
 			}
 			else
 			{
-				int iIndex = glossListBoxGloss.SelectedIndex;
+				var iIndex = glossListBoxGloss.SelectedIndex;
 				iIndex = Math.Min(iIndex, cCount - 1);
 				glossListBoxGloss.SelectedIndex = iIndex;
 			}
 			EnableMoveUpDownButtons();
 			ShowGloss();
 		}
-		void OnGlossListTreeSelect(object obj, TreeViewEventArgs tvea)
+
+		private void OnGlossListTreeSelect(object obj, TreeViewEventArgs tvea)
 		{
 			buttonInsert.Enabled = true;
-			TreeNode tn = tvea.Node;
+			var tn = tvea.Node;
 			// do we need a try block here to catch a problem?
-			MasterInflectionFeature mif = (MasterInflectionFeature)tn.Tag;
-			XmlNode node = mif.Node;
+			var mif = (MasterInflectionFeature)tn.Tag;
+			var node = mif.Node;
 			DisplayHelpInfo(node);
 		}
-		void OnGlossListBoxSelectedIndexChanged(object obj, EventArgs ea)
+
+		private void OnGlossListBoxSelectedIndexChanged(object obj, EventArgs ea)
 		{
 			buttonRemove.Enabled = true;
 #if ModifyImplemented
@@ -315,10 +319,11 @@ namespace LanguageExplorer.MGA
 #endif
 			EnableMoveUpDownButtons();
 		}
-		void EnableMoveUpDownButtons()
+
+		private void EnableMoveUpDownButtons()
 		{
-			int iSelectedIndex = glossListBoxGloss.SelectedIndex;
-			int cCount = glossListBoxGloss.Items.Count;
+			var iSelectedIndex = glossListBoxGloss.SelectedIndex;
+			var cCount = glossListBoxGloss.Items.Count;
 			if (cCount < 2 || iSelectedIndex < 0)
 			{
 				buttonMoveDown.Enabled = false;
@@ -326,31 +331,23 @@ namespace LanguageExplorer.MGA
 			}
 			else
 			{
-				if (iSelectedIndex == (cCount - 1))
-					buttonMoveDown.Enabled = false;
-				else
-					buttonMoveDown.Enabled = true;
-				if (iSelectedIndex == 0)
-					buttonMoveUp.Enabled = false;
-				else
-					buttonMoveUp.Enabled = true;
+				buttonMoveDown.Enabled = iSelectedIndex != (cCount - 1);
+				buttonMoveUp.Enabled = iSelectedIndex != 0;
 			}
 		}
-		void ShowGloss()
+
+		private void ShowGloss()
 		{
-			StringBuilder sb = new StringBuilder();
-			int i = 0;
-			int iMax = glossListBoxGloss.Items.Count;
+			var sb = new StringBuilder();
+			var i = 0;
+			var iMax = glossListBoxGloss.Items.Count;
 			foreach (GlossListBoxItem xn in glossListBoxGloss.Items)
 			{
 				sb.Append(xn.Abbrev);
 				i++;
 				if (i != iMax)
 				{
-					if (xn.IsComplex)
-						sb.Append(xn.ComplexNameSeparator);
-					else
-						sb.Append(xn.AfterSeparator);
+					sb.Append(xn.IsComplex ? xn.ComplexNameSeparator : xn.AfterSeparator);
 				}
 			}
 			textBoxResult.Text = sb.ToString();
@@ -358,7 +355,6 @@ namespace LanguageExplorer.MGA
 
 		protected virtual void DisplayHelpInfo(XmlNode node)
 		{
-
 		}
 
 		#region Windows Form Designer generated code
