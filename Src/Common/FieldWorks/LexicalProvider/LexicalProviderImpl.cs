@@ -865,6 +865,14 @@ namespace SIL.FieldWorks.LexicalProvider
 			}
 
 			/// <summary>
+			/// Convert any old properties to latest version, if needed.
+			/// </summary>
+			public void ConvertOldPropertiesToNewIfPresent()
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
 			/// Declare if the property is to be disposed by the table.
 			/// </summary>
 			/// <param name="name">Property name.</param>

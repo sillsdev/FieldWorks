@@ -34,7 +34,6 @@
 		<command id="CmdViewIncorrectWords" label="View Incorrect Words in Use" message="ViewIncorrectWords"/>
 		<command id="CmdChangeSpelling" label="Change Spelling..." message="LaunchRespellerDlg"/>
 		<command id="CmdUseVernSpellingDictionary" label="Show Vernacular Spelling _Errors" message="UseVernSpellingDictionary"/>
-		<command id="CmdRestoreDefaults" label="Restore Defaults..." message="RestoreDefaultLayouts"/>
 		<command id="CmdShowCharMap" label="Special _character..." message="ShowCharMap" icon="SpecialCharacter"/>
 		<command id="CmdCopy" label="_Copy" message="EditCopy" icon="Copy" shortcut="Ctrl+C" a10status="PARTIALLY_DONE" />
 		<command id="CmdCut" label="Cu_t" message="EditCut" icon="Cut" shortcut="Ctrl+X" a10status="PARTIALLY_DONE" />
@@ -408,7 +407,6 @@ InterlinMasterNoTitleBar user: (T&W: complexConcordance/concordance/wordListConc
 				<include path="Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*"/>
 <!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*" -->
 				<item command="CmdConfigureColumns" defaultVisible="false"/>
-				<item command="CmdRestoreDefaults"/>
 			</menu>
 			<!-- Area-specific Tools (other than Configure menu) go here. -->
 			<item label="-" translate="do not translate"/>

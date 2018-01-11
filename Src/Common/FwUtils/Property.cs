@@ -33,6 +33,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// therefore, for now, the default will be true said that properties which are introduced
 		/// in the configuration file will still be persisted.
 		/// </summary>
+		[XmlIgnore]
 		public bool doPersist = true;
 
 		/// <summary>
@@ -40,6 +41,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// to the property table so that the objects would be disposed of at the
 		/// time the property table goes away.
 		/// </summary>
+		[XmlIgnore]
 		public bool doDispose = false;
 
 		/// <summary>

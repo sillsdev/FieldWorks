@@ -11,6 +11,10 @@ using System.Security;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Xml.Linq;
+using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Impls
@@ -32,6 +36,10 @@ namespace LanguageExplorer.Impls
 		private TraceSwitch m_traceSwitch = new TraceSwitch("PropertyTable", string.Empty);
 		private string m_localSettingsId;
 		private string m_userSettingDirectory = string.Empty;
+		/// <summary>
+		/// When this number changes, be sure to add more code to <see cref="ConvertOldPropertiesToNewIfPresent"/>.
+		/// </summary>
+		private const int CurrentPropertyTableVersion = 1;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PropertyTable"/> class.
@@ -547,10 +555,93 @@ namespace LanguageExplorer.Impls
 		}
 
 		/// <summary>
+		/// Convert any old properties to latest version, if needed.
+		/// </summary>
+		public void ConvertOldPropertiesToNewIfPresent()
+		{
+			const string propertyTableVersion = "PropertyTableVersion";
+			if (GetValueInternal(propertyTableVersion, 0) == CurrentPropertyTableVersion)
+			{
+				return;
+			}
+			// TODO: At some point in the future one should introduce a new interface, such as "IPropertyTableMigrator"
+			// TODO: and let each impl update stuff from 'n - 1' up to its 'n'.
+			string oldStringValue;
+			if (TryGetValue("currentContentControl", out oldStringValue))
+			{
+				RemoveProperty("currentContentControl");
+				SetProperty(AreaServices.ToolChoice, oldStringValue, SettingsGroup.LocalSettings, true, false);
+			}
+			var assimilatedAssemblies = new HashSet<string>
+			{
+				"xCore.dll",
+				"xCoreInterfaces.dll",
+				"SilSidePane.dll",
+				"FlexUIAdapter.dll",
+				"Discourse.dll",
+				"ITextDll.dll",
+				"LexEdDll.dll",
+				"LexTextControls.dll",
+				"LexTextDll.dll",
+				"MorphologyEditorDll.dll",
+				"ParserUI.dll",
+				"FdoUi.dll",
+				"DetailControls.dll",
+				"XMLViews.dll"
+			};
+			// Some old properties have stored old dlls that have been assimilated, as well as classes to construct that still have those old namespaces.
+			// We want to fix all of those to use the correct assembly (LanaugeExplorer) and new namespace.
+			var interestingTypeInfo = new Dictionary<string, string>();
+			foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
+			{
+				if (!type.IsClass || type.IsAbstract || type.Name == "ImageList" || type.Name.StartsWith("<") || interestingTypeInfo.ContainsKey(type.Name))
+				{
+					continue;
+				}
+				interestingTypeInfo.Add(type.Name, type.FullName);
+			}
+			foreach (var propertykvp in m_properties.ToList())
+			{
+				if (propertykvp.Value == null)
+				{
+					Property goner;
+					m_properties.TryRemove(propertykvp.Key, out goner);
+					continue;
+				}
+				var valueAsString = propertykvp.Value.value as string;
+				if (valueAsString == null || !valueAsString.StartsWith("<") || !valueAsString.EndsWith(">") || !valueAsString.Contains("assemblyPath"))
+				{
+					continue;
+				}
+				const string assemblyPath = "assemblyPath";
+				var element = XElement.Parse(valueAsString);
+				var elementsWithAssemblyPathAttr = element.Descendants().Where(child => child.Attribute(assemblyPath) != null);
+				foreach (var elementWithAssemblyPathAttr in elementsWithAssemblyPathAttr)
+				{
+					// This is where the action takes place of checking any old dlls/namespaces, and fixing them up.
+					var assemblyPathAttr = elementWithAssemblyPathAttr.Attribute(assemblyPath);
+					if (!assimilatedAssemblies.Contains(assemblyPathAttr.Value))
+					{
+						// Not assimilated into LanguageExplorer
+						continue;
+					}
+
+					var classAttr = elementWithAssemblyPathAttr.Attribute("class");
+					var newRelocatedClassFullName = interestingTypeInfo[classAttr.Value.Split('.').Last()];
+					assemblyPathAttr.SetValue("LanguageExplorer.dll");
+					classAttr.SetValue(newRelocatedClassFullName);
+				}
+				SetPropertyInternal(propertykvp.Value.name, element.ToString(), true, false);
+			}
+			SetPropertyInternal(propertyTableVersion, CurrentPropertyTableVersion, true, false);
+
+			SaveGlobalSettings();
+			SaveLocalSettings();
+		}
+
+		/// <summary>
 		/// Declare if the property is to be disposed by the table.
 		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="doDispose"></param>
 		public void SetPropertyDispose(string name, bool doDispose)
 		{
 			CheckDisposed();
@@ -560,9 +651,6 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Declare if the property is to be disposed by the table.
 		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="doDispose"></param>
-		/// <param name="settingsGroup"></param>
 		public void SetPropertyDispose(string name, bool doDispose, SettingsGroup settingsGroup)
 		{
 			CheckDisposed();
@@ -591,7 +679,7 @@ namespace LanguageExplorer.Impls
 			// The empty string '""' in the first parameter means the global settings.
 			// The array in the second parameter means to 'exclude me'.
 			// In this case, local settings won't be saved.
-			Save("", new[] { LocalSettingsId });
+			Save(string.Empty, new[] { LocalSettingsId });
 		}
 
 		/// <summary>
@@ -640,10 +728,7 @@ namespace LanguageExplorer.Impls
 
 		private string GetPathPrefixForSettingsId(string settingsId)
 		{
-			if (string.IsNullOrEmpty(settingsId))
-				return string.Empty;
-
-			return FormatPropertyNameForLocalSettings(string.Empty, settingsId);
+			return string.IsNullOrEmpty(settingsId) ? string.Empty : FormatPropertyNameForLocalSettings(string.Empty, settingsId);
 		}
 
 		/// <summary>
@@ -658,20 +743,9 @@ namespace LanguageExplorer.Impls
 			return Path.Combine(UserSettingDirectory, pathPrefix + "Settings.xml");
 		}
 
-		/// <summary>
-		/// Arg 0 is database "LocalSettingsId"
-		/// Arg 1 is PropertyName
-		/// </summary>
-		private string LocalSettingsPropertyFormat
+		private static string FormatPropertyNameForLocalSettings(string name, string settingsId)
 		{
-			// NOTE: The reason we are using 'db${0}' for local settings identifier is for FLEx historical
-			// reasons. FLEx was using this prefix to store its local settings.
-			get { return "db${0}${1}"; }
-		}
-
-		private string FormatPropertyNameForLocalSettings(string name, string settingsId)
-		{
-			return string.Format(LocalSettingsPropertyFormat, settingsId, name);
+			return $"db${settingsId}${name}";
 		}
 
 		private string FormatPropertyNameForLocalSettings(string name)
@@ -688,9 +762,7 @@ namespace LanguageExplorer.Impls
 			get
 			{
 				CheckDisposed();
-				if (m_localSettingsId == null)
-					return GlobalSettingsId;
-				return m_localSettingsId;
+				return m_localSettingsId ?? GlobalSettingsId;
 			}
 			set
 			{
@@ -707,7 +779,7 @@ namespace LanguageExplorer.Impls
 			get
 			{
 				CheckDisposed();
-				return "";
+				return string.Empty;
 			}
 		}
 
@@ -727,7 +799,9 @@ namespace LanguageExplorer.Impls
 				CheckDisposed();
 
 				if (string.IsNullOrEmpty(value))
+				{
 					throw new ArgumentNullException("value", @"Cannot set 'UserSettingDirectory' to null or empty string.");
+				}
 
 				m_userSettingDirectory = value;
 			}
@@ -745,7 +819,9 @@ namespace LanguageExplorer.Impls
 			var path = SettingsPath(settingsId);
 
 			if (!File.Exists(path))
+			{
 				return;
+			}
 
 			try
 			{
@@ -777,26 +853,24 @@ namespace LanguageExplorer.Impls
 
 		private void ReadPropertyArrayForDeserializing(Property[] list)
 		{
-			//TODO: make a property which contains the date and time that the configuration file we are using.
-			//then, when reading this back in, ignore the properties if they were saved under an old configuration file.
-
-			foreach(Property property in list)
+			foreach(var property in list)
 			{
 				//I know it is strange, but the serialization code will give us a
 				//	null property if there were no other properties.
-				if (property != null)
+				if (property == null)
 				{
-					// REVIEW JohnH(RandyR): I added the Remove call,
-					// because one of the properties was already there, and 'Add' throws an exception,
-					// if it is there.
-					// ANSWER (JH): But how could a duplicate get in there?
-					// This is only called once, and no code should ever putting duplicates when saving.
-					// RESPONSE (RR): Beats me how it happened, but I 'found it' via the exception
-					// that was thrown by it already being there.
-					Property goner;
-					m_properties.TryRemove(property.name, out goner); // In case it is there.
-					m_properties[property.name] = property;
+					continue;
 				}
+				// REVIEW JohnH(RandyR): I added the Remove call,
+				// because one of the properties was already there, and 'Add' throws an exception,
+				// if it is there.
+				// ANSWER (JH): But how could a duplicate get in there?
+				// This is only called once, and no code should ever putting duplicates when saving.
+				// RESPONSE (RR): Beats me how it happened, but I 'found it' via the exception
+				// that was thrown by it already being there.
+				Property goner;
+				m_properties.TryRemove(property.name, out goner); // In case it is there.
+				m_properties[property.name] = property;
 			}
 		}
 

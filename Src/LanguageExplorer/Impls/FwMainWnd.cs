@@ -374,6 +374,7 @@ namespace LanguageExplorer.Impls
 			SetDefaultProperties();
 			SetTemporaryProperties();
 			RemoveObsoleteProperties();
+			PropertyTable.ConvertOldPropertiesToNewIfPresent();
 		}
 
 		private void LoadPropertyTable()
@@ -387,22 +388,6 @@ namespace LanguageExplorer.Impls
 			}
 			PropertyTable.RestoreFromFile(PropertyTable.GlobalSettingsId);
 			PropertyTable.RestoreFromFile(PropertyTable.LocalSettingsId);
-		}
-
-		private void ConvertOldPropertiesToNewIfPresent()
-		{
-			const int currentPropertyTableVersion = 10;
-			if (PropertyTable.GetValue<int>("PropertyTableVersion") == currentPropertyTableVersion)
-			{
-				return;
-			}
-			string oldStringValue;
-			if (PropertyTable.TryGetValue("currentContentControl", out oldStringValue))
-			{
-				PropertyTable.RemoveProperty("currentContentControl");
-				PropertyTable.SetProperty(AreaServices.ToolChoice, oldStringValue, SettingsGroup.LocalSettings, true, false);
-			}
-			PropertyTable.SetProperty("PropertyTableVersion", currentPropertyTableVersion, SettingsGroup.GlobalSettings, true, false);
 		}
 
 		/// <summary>
@@ -460,8 +445,6 @@ namespace LanguageExplorer.Impls
 			PropertyTable.RemoveProperty("ShowMorphBundles");
 			PropertyTable.RemoveProperty("ActiveClerk");
 			PropertyTable.RemoveProperty("SelectedWritingSystemHvosForCurrentContextMenu");
-
-			ConvertOldPropertiesToNewIfPresent();
 		}
 
 		private void SetTemporaryProperties()
@@ -2046,6 +2029,19 @@ very simple minor adjustments. ;)"
 				}
 				return cp;
 			}
+		}
+
+		private void restoreDefaultsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			using (var dlg = new RestoreDefaultsDlg(_flexApp))
+			{
+				if (dlg.ShowDialog(this) != DialogResult.Yes)
+				{
+					return;
+				}
+			}
+			_flexApp.InitializePartInventories(null, false);
+			_flexApp.ReplaceMainWindow(this);
 		}
 	}
 }

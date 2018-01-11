@@ -117,7 +117,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			// Generate the rules for the programmatic default style info (
 			var defaultStyleProps = GetOnlyCharacterStyle(GenerateCssStyleFromLcmStyleSheet("Normal", DefaultStyle, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(DefaultStyle)));
-			if (defaultStyleProps.All(p => p.Name != "font-size"))
+			if (!defaultStyleProps.Any(p => p.Name == "font-size"))
 			{
 				defaultStyleProps.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, FontInfo.kDefaultFontSize) });
 			}

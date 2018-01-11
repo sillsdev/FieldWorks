@@ -505,9 +505,13 @@ namespace SIL.FieldWorks.Filters
 				if (!m_sortKeyCache.TryGetValue(item1, out cachedKey))
 				{
 					if (m_fUseKeys)
+					{
 						cachedKey = GetObjFromItem(item).SortKey;
+					}
 					else
-						cachedKey = (string) GetProperty(GetObjFromItem(item), m_propertyName);
+					{
+						cachedKey = (string)GetProperty(GetObjFromItem(item), m_propertyName);
+					}
 					m_sortKeyCache.Add(item1, cachedKey);
 				}
 				return cachedKey;

@@ -964,6 +964,29 @@ namespace LanguageExplorer.Impls
 			return factoryMadeIFwMainWndAsForm;
 		}
 
+		/// <summary>
+		/// Initialize the required inventories.
+		/// </summary>
+		public void InitializePartInventories(IProgress progressDlg, bool fLoadUserOverrides)
+		{
+			if (progressDlg != null)
+			{
+				progressDlg.Message = LanguageExplorerResources.ksInitializingLayouts_;
+			}
+			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, ApplicationName, fLoadUserOverrides, Cache.ProjectId.ProjectFolder);
+
+			var currentReversalIndices = Cache.LanguageProject.LexDbOA.CurrentReversalIndices;
+			if (currentReversalIndices.Count == 0)
+			{
+				currentReversalIndices = new List<IReversalIndex>(Cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToArray());
+			}
+
+			foreach (var reversalIndex in currentReversalIndices)
+			{
+				LayoutCache.InitializeLayoutsForWsTag(reversalIndex.WritingSystem, Cache.ProjectId.Name);
+			}
+		}
+
 		private void FwMainWindowOnFormClosing(object sender, FormClosingEventArgs formClosingEventArgs)
 		{
 			if (m_activeMainWindow == sender && sender is IFwMainWnd)
@@ -1197,29 +1220,6 @@ namespace LanguageExplorer.Impls
 			if (progressDlg != null)
 			{
 				progressDlg.Message = string.Empty;
-			}
-		}
-
-		/// <summary>
-		/// Initialize the required inventories.
-		/// </summary>
-		private void InitializePartInventories(IProgress progressDlg, bool fLoadUserOverrides)
-		{
-			if (progressDlg != null)
-			{
-				progressDlg.Message = LanguageExplorerResources.ksInitializingLayouts_;
-			}
-			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, ApplicationName, fLoadUserOverrides, Cache.ProjectId.ProjectFolder);
-
-			var currentReversalIndices = Cache.LanguageProject.LexDbOA.CurrentReversalIndices;
-			if (currentReversalIndices.Count == 0)
-			{
-				currentReversalIndices = new List<IReversalIndex>(Cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToArray());
-			}
-
-			foreach (var reversalIndex in currentReversalIndices)
-			{
-				LayoutCache.InitializeLayoutsForWsTag(reversalIndex.WritingSystem, Cache.ProjectId.Name);
 			}
 		}
 

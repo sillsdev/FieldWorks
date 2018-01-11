@@ -324,6 +324,12 @@
     <Compile Include="IListArea.cs" />
     <Compile Include="Impls\PropertyTable.cs" />
     <Compile Include="Impls\Publisher.cs" />
+    <Compile Include="Impls\RestoreDefaultsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Impls\RestoreDefaultsDlg.Designer.cs">
+      <DependentUpon>RestoreDefaultsDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="Impls\Subscriber.cs" />
     <Compile Include="IOldVersionMerger.cs" />
     <Compile Include="IRecordChangeHandler.cs" />
@@ -1310,6 +1316,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>XMLViewsStrings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Impls\RestoreDefaultsDlg.resx">
+      <DependentUpon>RestoreDefaultsDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MGA\CheckBox.bmp" />
     <EmbeddedResource Include="MGA\CheckedBox.bmp" />

@@ -27,7 +27,7 @@ namespace LanguageExplorerTests
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			;
+
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, false);
 			_flexComponentParameters.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName, false, false);
 		}

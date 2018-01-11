@@ -39,6 +39,9 @@ namespace LanguageExplorer
 		/// <returns>New instance of main window if successful; otherwise <c>null</c></returns>
 		Form NewMainAppWnd(IProgress progressDlg, bool fNewCache, IFwMainWnd wndCopyFrom);
 
+		/// <summary />
+		void InitializePartInventories(IProgress progressDlg, bool fLoadUserOverrides);
+
 		/// <summary>
 		/// Closes and re-opens the argument window, in the same place, as a drastic way of applying new settings.
 		/// </summary>

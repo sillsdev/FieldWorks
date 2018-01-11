@@ -144,6 +144,8 @@ namespace LanguageExplorer.Impls
 			this.toolStripFormat = new System.Windows.Forms.ToolStrip();
 			this.toolStripComboBoxWritingSystem = new System.Windows.Forms.ToolStripComboBox();
 			this.toolStripComboBoxStyles = new System.Windows.Forms.ToolStripComboBox();
+			this.toolStripMenuItem20 = new System.Windows.Forms.ToolStripSeparator();
+			this.restoreDefaultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._menuStrip.SuspendLayout();
 			this.toolStripStandard.SuspendLayout();
 			this.toolStripContainer.ContentPanel.SuspendLayout();
@@ -682,9 +684,11 @@ namespace LanguageExplorer.Impls
 			// configureToolStripMenuItem
 			// 
 			this.configureToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.restoreDefaultsToolStripMenuItem,
+            this.toolStripMenuItem20,
             this.setUpWritingSystemsToolStripMenuItem});
 			this.configureToolStripMenuItem.Name = "configureToolStripMenuItem";
-			this.configureToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+			this.configureToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.configureToolStripMenuItem.Text = "Configure";
 			// 
 			// setUpWritingSystemsToolStripMenuItem
@@ -1284,6 +1288,18 @@ namespace LanguageExplorer.Impls
 			this.toolStripComboBoxStyles.Size = new System.Drawing.Size(121, 25);
 			this.toolStripComboBoxStyles.ToolTipText = "Styles";
 			// 
+			// toolStripMenuItem20
+			// 
+			this.toolStripMenuItem20.Name = "toolStripMenuItem20";
+			this.toolStripMenuItem20.Size = new System.Drawing.Size(201, 6);
+			// 
+			// restoreDefaultsToolStripMenuItem
+			// 
+			this.restoreDefaultsToolStripMenuItem.Name = "restoreDefaultsToolStripMenuItem";
+			this.restoreDefaultsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+			this.restoreDefaultsToolStripMenuItem.Text = "Restore Defaults...";
+			this.restoreDefaultsToolStripMenuItem.Click += new System.EventHandler(this.restoreDefaultsToolStripMenuItem_Click);
+			// 
 			// FwMainWnd
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1449,5 +1465,7 @@ namespace LanguageExplorer.Impls
 		private ToolStripMenuItem stylesToolStripMenuItem;
 		private ToolStripMenuItem applyStyleToolStripMenuItem;
 		private ToolStripMenuItem writingSystemToolStripMenuItem;
+		private ToolStripSeparator toolStripMenuItem20;
+		private ToolStripMenuItem restoreDefaultsToolStripMenuItem;
 	}
 }

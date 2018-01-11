@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -81,6 +82,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		#endregion  Remove properties
 
 		#region Persistence
+
+		/// <summary>
+		/// Convert any old properties to latest version, if needed.
+		/// </summary>
+		void ConvertOldPropertiesToNewIfPresent();
 
 		/// <summary>
 		/// Declare if the property is to be disposed by the table.
