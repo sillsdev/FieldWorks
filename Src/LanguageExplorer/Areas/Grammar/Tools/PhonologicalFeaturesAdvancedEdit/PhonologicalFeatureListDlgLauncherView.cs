@@ -13,7 +13,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 	internal sealed class PhonologicalFeatureListDlgLauncherView : RootSiteControl, IVwNotifyChange
 	{
 		private IFsFeatStruc m_fs;
-		private CmObjectUi.CmAnalObjectVc m_vc;
+		private CmAnalObjectVc m_vc;
 
 		/// <summary />
 		public void Init(LcmCache cache, IFsFeatStruc fs)
@@ -75,7 +75,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 			base.MakeRoot();
 
 			m_rootb.DataAccess = m_cache.MainCacheAccessor;
-			m_vc = new CmObjectUi.CmAnalObjectVc(m_cache);
+			m_vc = new CmAnalObjectVc(m_cache);
 
 			if (m_fs != null)
 			{

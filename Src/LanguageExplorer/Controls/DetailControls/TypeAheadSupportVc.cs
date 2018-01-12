@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,14 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 
-namespace LanguageExplorer.LcmUi
+namespace LanguageExplorer.Controls.DetailControls
 {
 	/// <summary>
 	/// TypeAheadSupportVc is a view constructor used to display a (typically real) object reference property
@@ -332,9 +332,6 @@ namespace LanguageExplorer.LcmUi
 		/// If it is the active object we are editing, at the relevant position in the relevant owner,
 		/// we display the name using the special marker property.
 		/// </summary>
-		/// <param name="vwenv"></param>
-		/// <param name="hvo"></param>
-		/// <param name="frag"></param>
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
 			int hvoParent, tag, ihvo;
@@ -357,11 +354,6 @@ namespace LanguageExplorer.LcmUi
 		/// It returns true if it handled the key press, which it does if the current selection
 		/// is in a type-ahead name property.
 		/// </summary>
-		/// <param name="ehelp"></param>
-		/// <param name="e"></param>
-		/// <param name="modifiers"></param>
-		/// <param name="vwGraphics"></param>
-		/// <returns></returns>
 		public virtual bool OnKeyPress(EditingHelper ehelp, KeyPressEventArgs e, Keys modifiers, IVwGraphics vwGraphics)
 		{
 			IVwRootBox rootb = ehelp.Callbacks.EditedRootBox;

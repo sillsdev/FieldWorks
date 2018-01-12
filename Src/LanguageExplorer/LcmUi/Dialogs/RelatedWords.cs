@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -41,13 +41,11 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		IVwCacheDa m_cdaTemp;
 		XmlView m_detailView;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Shows the "not in dictionary" message.
 		/// </summary>
 		/// <param name="owner">The owner.</param>
-		/// ------------------------------------------------------------------------------------
-		static internal void ShowNotInDictMessage(IWin32Window owner)
+		internal static void ShowNotInDictMessage(IWin32Window owner)
 		{
 			MessageBox.Show(owner, LcmUiStrings.kstidFindRelWordsNotInDict,
 				LcmUiStrings.kstidFindRelWordsTitle);
@@ -65,7 +63,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// <param name="cdaTemp"></param>
 		/// <param name="owner"></param>
 		/// <returns></returns>
-		static internal bool LoadDomainAndRelationInfo(LcmCache cache, int hvoEntry, out int[] domainsOut,
+		internal static bool LoadDomainAndRelationInfo(LcmCache cache, int hvoEntry, out int[] domainsOut,
 			out int[] lexrelsOut, out IVwCacheDa cdaTemp, IWin32Window owner)
 		{
 			bool fHaveSemDomains = LoadDomainInfo(cache, hvoEntry, out domainsOut, out cdaTemp);
@@ -96,7 +94,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// <param name="hvoSemanticDomainsOut">A list of int IDs of the semantic domains of the lexical entry</param>
 		/// <param name="cdaTemp"></param>
 		/// <returns></returns>
-		static private bool LoadDomainInfo(LcmCache cache, int hvoEntry, out int[] hvoSemanticDomainsOut, out IVwCacheDa cdaTemp)
+		private static bool LoadDomainInfo(LcmCache cache, int hvoEntry, out int[] hvoSemanticDomainsOut, out IVwCacheDa cdaTemp)
 		{
 			// REVIEW (SteveMiller): The LINQ below runs slow the first time its run. We should try to
 			// optimize it if possible.
@@ -138,7 +136,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// <param name="relsOut">an array of IDs (HVOs) for related objects</param>
 		/// <param name="cdaTemp"></param>
 		/// <returns>false if the entry has no associated lexical relations, or none of them are linked to any other entries.</returns>
-		static private bool LoadLexicalRelationInfo(LcmCache cache, int hvoEntry, out int[] relsOut, IVwCacheDa cdaTemp)
+		private static bool LoadLexicalRelationInfo(LcmCache cache, int hvoEntry, out int[] relsOut, IVwCacheDa cdaTemp)
 		{
 			var relatedObjectIds = new List<int>();
 			var entryRepository = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -531,355 +529,320 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				}
 			}
 		}
-	}
-
-	/// <summary>
-	/// View showing related words. The provided data access should contain the needed data.
-	/// object hvoEntry has a sequence (ktagDomains) of domains.
-	/// each domain has a string ktagName and a sequence (ktagWords) of words.
-	/// each word has a ktagName.
-	/// </summary>
-	internal class RelatedWordsView : SimpleRootSite
-	{
-		int m_hvoRoot;
-		ISilDataAccess m_sda;
-		LcmCache m_cache;
-		int m_wsUser;
-		RelatedWordsVc m_vc;
-		bool m_fInSelChange = false;
-		private ITsString m_headword;
-
-		public event EventHandler SelChanged;
-
-		public RelatedWordsView(LcmCache cache, int hvoRoot, ITsString headword, ISilDataAccess sda, int wsUser)
-		{
-			m_cache = cache;
-			m_hvoRoot = hvoRoot;
-			m_headword = headword;
-			m_sda = sda;
-			m_wsUser = wsUser;
-			m_wsf = sda.WritingSystemFactory;
-		}
-
-		#region IDisposable override
 
 		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
+		/// View showing related words. The provided data access should contain the needed data.
+		/// object hvoEntry has a sequence (ktagDomains) of domains.
+		/// each domain has a string ktagName and a sequence (ktagWords) of words.
+		/// each word has a ktagName.
 		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
-		protected override void Dispose(bool disposing)
+		private sealed class RelatedWordsView : SimpleRootSite
 		{
-			// Must not be run more than once.
-			if (IsDisposed)
-				return;
+			int m_hvoRoot;
+			ISilDataAccess m_sda;
+			LcmCache m_cache;
+			int m_wsUser;
+			RelatedWordsVc m_vc;
+			bool m_fInSelChange = false;
+			private ITsString m_headword;
 
-			base.Dispose(disposing);
+			public event EventHandler SelChanged;
 
-			if (disposing)
+			public RelatedWordsView(LcmCache cache, int hvoRoot, ITsString headword, ISilDataAccess sda, int wsUser)
 			{
-				// Dispose managed resources here.
+				m_cache = cache;
+				m_hvoRoot = hvoRoot;
+				m_headword = headword;
+				m_sda = sda;
+				m_wsUser = wsUser;
+				m_wsf = sda.WritingSystemFactory;
 			}
 
-			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_vc = null;
-			m_sda = null;
-		}
+			#region IDisposable override
 
-		#endregion IDisposable override
-
-		/// <summary>
-		/// Make the root box and initialize it.
-		/// </summary>
-		public override void MakeRoot()
-		{
-			CheckDisposed();
-
-			base.MakeRoot();
-
-			m_vc = new RelatedWordsVc(m_wsUser, m_headword);
-
-			m_rootb.DataAccess = m_sda;
-
-			m_rootb.SetRootObject(m_hvoRoot, m_vc, RelatedWordsVc.kfragRoot, m_styleSheet);
-			m_fRootboxMade = true;
-		}
-		internal void SetEntry(int hvoEntry)
-		{
-			CheckDisposed();
-			var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoEntry);
-			m_headword = entry.HeadWord;
-			m_hvoRoot = hvoEntry;
-			m_vc = new RelatedWordsVc(m_wsUser, m_headword);
-			m_rootb.SetRootObject(m_hvoRoot, m_vc, RelatedWordsVc.kfragRoot, m_styleSheet);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called when the editing helper is created.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected override void OnEditingHelperCreated()
-		{
-			m_editingHelper.VwSelectionChanged += HandleSelectionChange;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handle a selection change by growing it to a word (unless the new selection IS
-		/// the one we're growing to a word).
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void HandleSelectionChange(object sender, VwSelectionArgs args)
-		{
-			CheckDisposed();
-
-			IVwRootBox rootb = args.RootBox;
-			IVwSelection vwselNew = args.Selection;
-			Debug.Assert(vwselNew != null);
-
-			if (!m_fInSelChange)
+			/// <summary>
+			/// Executes in two distinct scenarios.
+			///
+			/// 1. If disposing is true, the method has been called directly
+			/// or indirectly by a user's code via the Dispose method.
+			/// Both managed and unmanaged resources can be disposed.
+			///
+			/// 2. If disposing is false, the method has been called by the
+			/// runtime from inside the finalizer and you should not reference (access)
+			/// other managed objects, as they already have been garbage collected.
+			/// Only unmanaged resources can be disposed.
+			/// </summary>
+			/// <param name="disposing"></param>
+			/// <remarks>
+			/// If any exceptions are thrown, that is fine.
+			/// If the method is being done in a finalizer, it will be ignored.
+			/// If it is thrown by client code calling Dispose,
+			/// it needs to be handled by fixing the bug.
+			///
+			/// If subclasses override this method, they should call the base implementation.
+			/// </remarks>
+			protected override void Dispose(bool disposing)
 			{
-				m_fInSelChange = true;
-				try
+				// Must not be run more than once.
+				if (IsDisposed)
+					return;
+
+				base.Dispose(disposing);
+
+				if (disposing)
 				{
-					if (!vwselNew.IsRange)
+					// Dispose managed resources here.
+				}
+
+				// Dispose unmanaged resources here, whether disposing is true or false.
+				m_vc = null;
+				m_sda = null;
+			}
+
+			#endregion IDisposable override
+
+			/// <summary>
+			/// Make the root box and initialize it.
+			/// </summary>
+			public override void MakeRoot()
+			{
+				CheckDisposed();
+
+				base.MakeRoot();
+
+				m_vc = new RelatedWordsVc(m_wsUser, m_headword);
+
+				m_rootb.DataAccess = m_sda;
+
+				m_rootb.SetRootObject(m_hvoRoot, m_vc, RelatedWordsVc.kfragRoot, m_styleSheet);
+				m_fRootboxMade = true;
+			}
+			internal void SetEntry(int hvoEntry)
+			{
+				CheckDisposed();
+				var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoEntry);
+				m_headword = entry.HeadWord;
+				m_hvoRoot = hvoEntry;
+				m_vc = new RelatedWordsVc(m_wsUser, m_headword);
+				m_rootb.SetRootObject(m_hvoRoot, m_vc, RelatedWordsVc.kfragRoot, m_styleSheet);
+			}
+
+			/// <summary>
+			/// Called when the editing helper is created.
+			/// </summary>
+			protected override void OnEditingHelperCreated()
+			{
+				m_editingHelper.VwSelectionChanged += HandleSelectionChange;
+			}
+
+			/// <summary>
+			/// Handle a selection change by growing it to a word (unless the new selection IS
+			/// the one we're growing to a word).
+			/// </summary>
+			private void HandleSelectionChange(object sender, VwSelectionArgs args)
+			{
+				CheckDisposed();
+
+				IVwRootBox rootb = args.RootBox;
+				IVwSelection vwselNew = args.Selection;
+				Debug.Assert(vwselNew != null);
+
+				if (!m_fInSelChange)
+				{
+					m_fInSelChange = true;
+					try
 					{
-						vwselNew.GrowToWord().Install();
+						if (!vwselNew.IsRange)
+						{
+							vwselNew.GrowToWord().Install();
+						}
+					}
+					finally
+					{
+						m_fInSelChange = false;
 					}
 				}
-				finally
+				if (SelChanged != null)
+					SelChanged(this, new EventArgs());
+			}
+
+			internal bool GotRangeSelection
+			{
+				get
 				{
-					m_fInSelChange = false;
+					CheckDisposed();
+
+					IVwSelection sel = RootBox.Selection;
+					return sel != null && sel.IsRange;
 				}
 			}
-			if (SelChanged != null)
-				SelChanged(this, new EventArgs());
-		}
 
-		internal bool GotRangeSelection
-		{
-			get
+			public override Cursor Cursor
 			{
-				CheckDisposed();
+				get
+				{
+					CheckDisposed();
 
-				IVwSelection sel = RootBox.Selection;
-				return sel != null && sel.IsRange;
+					return base.Cursor;
+				}
+				set
+				{
+					CheckDisposed();
+
+					base.Cursor = value;
+				}
 			}
 		}
 
-		public override Cursor Cursor
+		/// <summary />
+		private sealed class RelatedWordsVc : FwBaseVc
 		{
-			get
-			{
-				CheckDisposed();
+			public const int ktagDomains = 45671;
+			public const int ktagName = 45672;
+			public const int ktagWords = 45673;
+			public const int ktagCf = 45674;
+			public const int ktagLexRels = 45675;
 
-				return base.Cursor;
+			public const int kfragRoot = 333331;
+			public const int kfragEntryList = 3333332;
+			public const int kfragWords = 3333333;
+			public const int kfragName = 3333334;
+
+			private ITsString m_tssColon;
+			private ITsString m_tssComma;
+			private ITsString m_tssSdRelation;
+			private ITsString m_tssLexRelation;
+
+			/// <summary>
+			/// Initializes a new instance of the RelatedWordsVc class.
+			/// </summary>
+			/// <param name="wsUser">The ws user.</param>
+			/// <param name="headword">Headword of the target lexical entry.</param>
+			public RelatedWordsVc(int wsUser, ITsString headword)
+			{
+				m_wsDefault = wsUser;
+				m_tssColon = TsStringUtils.MakeString(": ", wsUser);
+				m_tssComma = TsStringUtils.MakeString(", ", wsUser);
+				m_tssSdRelation = TsStringUtils.MakeString(LcmUiStrings.ksWordsRelatedBySemanticDomain, wsUser);
+				m_tssLexRelation = TsStringUtils.MakeString(LcmUiStrings.ksLexicallyRelatedWords, wsUser);
+
+				var semanticDomainStrBuilder = m_tssSdRelation.GetBldr();
+				var index = semanticDomainStrBuilder.Text.IndexOf("{0}");
+				if (index > 0)
+					semanticDomainStrBuilder.ReplaceTsString(index, index + "{0}".Length, headword);
+				m_tssSdRelation = semanticDomainStrBuilder.GetString();
+
+				var lexStrBuilder = m_tssLexRelation.GetBldr();
+				index = lexStrBuilder.Text.IndexOf("{0}");
+				if (index > 0)
+					lexStrBuilder.ReplaceTsString(index, index + "{0}".Length, headword);
+				m_tssLexRelation = lexStrBuilder.GetString();
 			}
-			set
+
+			/// <summary>
+			/// This is the main interesting method of displaying objects and fragments of them.
+			/// </summary>
+			public override void Display(IVwEnv vwenv, int hvo, int frag)
 			{
-				CheckDisposed();
-
-				base.Cursor = value;
-			}
-		}
-	}
-
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	internal class RelatedWordsVc : FwBaseVc
-	{
-		public const int ktagDomains = 45671;
-		public const int ktagName = 45672;
-		public const int ktagWords = 45673;
-		public const int ktagCf = 45674;
-		public const int ktagLexRels = 45675;
-
-		public const int kfragRoot = 333331;
-		public const int kfragEntryList = 3333332;
-		public const int kfragWords = 3333333;
-		public const int kfragName = 3333334;
-
-		private ITsString m_tssColon;
-		private ITsString m_tssComma;
-		private ITsString m_tssSdRelation;
-		private ITsString m_tssLexRelation;
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the RelatedWordsVc class.
-		/// </summary>
-		/// <param name="wsUser">The ws user.</param>
-		/// <param name="headword">Headword of the target lexical entry.</param>
-		/// ------------------------------------------------------------------------------------
-		public RelatedWordsVc(int wsUser, ITsString headword)
-		{
-			m_wsDefault = wsUser;
-			m_tssColon = TsStringUtils.MakeString(": ", wsUser);
-			m_tssComma = TsStringUtils.MakeString(", ", wsUser);
-			m_tssSdRelation = TsStringUtils.MakeString(LcmUiStrings.ksWordsRelatedBySemanticDomain, wsUser);
-			m_tssLexRelation = TsStringUtils.MakeString(LcmUiStrings.ksLexicallyRelatedWords, wsUser);
-
-			var semanticDomainStrBuilder = m_tssSdRelation.GetBldr();
-			var index = semanticDomainStrBuilder.Text.IndexOf("{0}");
-			if (index > 0)
-				semanticDomainStrBuilder.ReplaceTsString(index, index + "{0}".Length, headword);
-			m_tssSdRelation = semanticDomainStrBuilder.GetString();
-
-			var lexStrBuilder = m_tssLexRelation.GetBldr();
-			index = lexStrBuilder.Text.IndexOf("{0}");
-			if (index > 0)
-				lexStrBuilder.ReplaceTsString(index, index + "{0}".Length, headword);
-			m_tssLexRelation = lexStrBuilder.GetString();
-		}
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// This is the main interesting method of displaying objects and fragments of them.
-		/// </summary>
-		/// <param name="vwenv"></param>
-		/// <param name="hvo"></param>
-		/// <param name="frag"></param>
-		/// -----------------------------------------------------------------------------------
-		public override void Display(IVwEnv vwenv, int hvo, int frag)
-		{
-			switch(frag)
-			{
-				case kfragRoot:
-					ITsString tssWord = vwenv.DataAccess.get_StringProp(hvo, ktagCf);
-					ITsStrBldr tsbSdRelation = m_tssSdRelation.GetBldr();
-					ITsStrBldr tsbLexRel = m_tssLexRelation.GetBldr();
-					if (tssWord != null && tssWord.Length > 0)
-					{
-						int ich = tsbSdRelation.Text.IndexOf("{0}");
-						if (ich >= 0)
-							tsbSdRelation.ReplaceTsString(ich, ich + 3, tssWord);
-						ich = tsbLexRel.Text.IndexOf("{0}");
-						if (ich >= 0)
-							tsbLexRel.ReplaceTsString(ich, ich + 3, tssWord);
-					}
-					int cDomains = vwenv.DataAccess.get_VecSize(hvo, ktagDomains);
-					int cLexRels = vwenv.DataAccess.get_VecSize(hvo, ktagLexRels);
-					Debug.Assert(cDomains > 0 || cLexRels > 0);
-					if (cDomains > 0)
-					{
+				switch (frag)
+				{
+					case kfragRoot:
+						ITsString tssWord = vwenv.DataAccess.get_StringProp(hvo, ktagCf);
+						ITsStrBldr tsbSdRelation = m_tssSdRelation.GetBldr();
+						ITsStrBldr tsbLexRel = m_tssLexRelation.GetBldr();
+						if (tssWord != null && tssWord.Length > 0)
+						{
+							int ich = tsbSdRelation.Text.IndexOf("{0}");
+							if (ich >= 0)
+								tsbSdRelation.ReplaceTsString(ich, ich + 3, tssWord);
+							ich = tsbLexRel.Text.IndexOf("{0}");
+							if (ich >= 0)
+								tsbLexRel.ReplaceTsString(ich, ich + 3, tssWord);
+						}
+						int cDomains = vwenv.DataAccess.get_VecSize(hvo, ktagDomains);
+						int cLexRels = vwenv.DataAccess.get_VecSize(hvo, ktagLexRels);
+						Debug.Assert(cDomains > 0 || cLexRels > 0);
+						if (cDomains > 0)
+						{
+							vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
+								(int)FwTextPropVar.ktpvEnum,
+								(int)TptEditable.ktptNotEditable);
+							vwenv.set_IntProperty((int)FwTextPropType.ktptMarginBottom,
+								(int)FwTextPropVar.ktpvMilliPoint,
+								6000);
+							vwenv.OpenParagraph();
+							vwenv.AddString(tsbSdRelation.GetString());
+							vwenv.CloseParagraph();
+							vwenv.AddLazyVecItems(ktagDomains, this, kfragEntryList);
+						}
+						if (cLexRels > 0)
+						{
+							vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
+								(int)FwTextPropVar.ktpvEnum,
+								(int)TptEditable.ktptNotEditable);
+							vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTop,
+								(int)FwTextPropVar.ktpvMilliPoint, 6000);
+							vwenv.set_IntProperty((int)FwTextPropType.ktptMarginBottom,
+								(int)FwTextPropVar.ktpvMilliPoint, 6000);
+							vwenv.OpenParagraph();
+							vwenv.AddString(tsbLexRel.GetString());
+							vwenv.CloseParagraph();
+							vwenv.AddLazyVecItems(ktagLexRels, this, kfragEntryList);
+						}
+						break;
+					case kfragEntryList:
 						vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
 							(int)FwTextPropVar.ktpvEnum,
 							(int)TptEditable.ktptNotEditable);
-						vwenv.set_IntProperty((int)FwTextPropType.ktptMarginBottom,
-							(int)FwTextPropVar.ktpvMilliPoint,
-							6000);
 						vwenv.OpenParagraph();
-						vwenv.AddString(tsbSdRelation.GetString());
-						vwenv.CloseParagraph();
-						vwenv.AddLazyVecItems(ktagDomains, this, kfragEntryList);
-					}
-					if (cLexRels > 0)
-					{
-						vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
+						vwenv.set_IntProperty((int)FwTextPropType.ktptBold,
 							(int)FwTextPropVar.ktpvEnum,
-							(int)TptEditable.ktptNotEditable);
-						vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTop,
-							(int)FwTextPropVar.ktpvMilliPoint, 6000);
-						vwenv.set_IntProperty((int)FwTextPropType.ktptMarginBottom,
-							(int)FwTextPropVar.ktpvMilliPoint, 6000);
-						vwenv.OpenParagraph();
-						vwenv.AddString(tsbLexRel.GetString());
+							(int)FwTextToggleVal.kttvForceOn);
+						vwenv.AddStringProp(ktagName, this);
+						vwenv.AddString(m_tssColon);
+						vwenv.AddObjVec(ktagWords, this, kfragWords);
 						vwenv.CloseParagraph();
-						vwenv.AddLazyVecItems(ktagLexRels, this, kfragEntryList);
-					}
-					break;
-				case kfragEntryList:
-					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
-						(int)FwTextPropVar.ktpvEnum,
-						(int)TptEditable.ktptNotEditable);
-					vwenv.OpenParagraph();
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBold,
-						(int)FwTextPropVar.ktpvEnum,
-						(int)FwTextToggleVal.kttvForceOn);
-					vwenv.AddStringProp(ktagName, this);
-					vwenv.AddString (m_tssColon);
-					vwenv.AddObjVec(ktagWords, this, kfragWords);
-					vwenv.CloseParagraph();
-					break;
-				case kfragName:
-					vwenv.AddStringProp(ktagName, this);
-					break;
-				default:
-					throw new Exception("bad case in RelatedWordsVc.Display");
+						break;
+					case kfragName:
+						vwenv.AddStringProp(ktagName, this);
+						break;
+					default:
+						throw new Exception("bad case in RelatedWordsVc.Display");
+				}
 			}
-		}
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Handles displaying the vector of words with commas except after the last
-		/// </summary>
-		/// <param name="vwenv"></param>
-		/// <param name="hvo"></param>
-		/// <param name="tag"></param>
-		/// <param name="frag"></param>
-		/// -----------------------------------------------------------------------------------
-		public override void DisplayVec(IVwEnv vwenv, int hvo, int tag, int frag)
-		{
-			Debug.Assert(frag == kfragWords);
-			ISilDataAccess sda = vwenv.DataAccess;
-			int cwords = sda.get_VecSize(hvo, ktagWords);
-			for (int i = 0; i < cwords; i++)
+
+			/// <summary>
+			/// Handles displaying the vector of words with commas except after the last
+			/// </summary>
+			public override void DisplayVec(IVwEnv vwenv, int hvo, int tag, int frag)
 			{
-				vwenv.AddObj(sda.get_VecItem(hvo, ktagWords, i), this, kfragName);
-				if (i != cwords - 1)
-					vwenv.AddString(m_tssComma);
+				Debug.Assert(frag == kfragWords);
+				ISilDataAccess sda = vwenv.DataAccess;
+				int cwords = sda.get_VecSize(hvo, ktagWords);
+				for (int i = 0; i < cwords; i++)
+				{
+					vwenv.AddObj(sda.get_VecItem(hvo, ktagWords, i), this, kfragName);
+					if (i != cwords - 1)
+						vwenv.AddString(m_tssComma);
+				}
 			}
-		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Estimate the height in points of one domain.
-		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="frag"></param>
-		/// <param name="dxAvailWidth"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public override int EstimateHeight(int hvo, int frag, int dxAvailWidth)
-		{
-			return 20; // a domain typically isn't very high.
-		}
+			/// <summary>
+			/// Estimate the height in points of one domain.
+			/// </summary>
+			public override int EstimateHeight(int hvo, int frag, int dxAvailWidth)
+			{
+				return 20; // a domain typically isn't very high.
+			}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// pre-load any required data about a particular domain.
-		/// </summary>
-		/// <param name="vwenv"></param>
-		/// <param name="rghvo"></param>
-		/// <param name="chvo"></param>
-		/// <param name="hvoParent"></param>
-		/// <param name="tag"></param>
-		/// <param name="frag"></param>
-		/// <param name="ihvoMin"></param>
-		/// ------------------------------------------------------------------------------------
-		public override void LoadDataFor(IVwEnv vwenv, int[] rghvo, int chvo, int hvoParent,
-			int tag, int frag, int ihvoMin)
-		{
-			// Nothing to do, all data already loaded.
+			/// <summary>
+			/// pre-load any required data about a particular domain.
+			/// </summary>
+			public override void LoadDataFor(IVwEnv vwenv, int[] rghvo, int chvo, int hvoParent,
+				int tag, int frag, int ihvoMin)
+			{
+				// Nothing to do, all data already loaded.
+			}
 		}
 	}
 }

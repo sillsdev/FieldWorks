@@ -12,7 +12,7 @@ namespace LanguageExplorer.Areas.Grammar
 	internal class MsaInflectionFeatureListDlgLauncherView : RootSiteControl
 	{
 		private IFsFeatStruc m_fs;
-		private CmObjectUi.CmAnalObjectVc m_vc;
+		private CmAnalObjectVc m_vc;
 
 		private System.ComponentModel.IContainer components = null;
 
@@ -77,7 +77,7 @@ namespace LanguageExplorer.Areas.Grammar
 			base.MakeRoot();
 
 			m_rootb.DataAccess = m_cache.DomainDataByFlid;
-			m_vc = new CmObjectUi.CmAnalObjectVc(m_cache);
+			m_vc = new CmAnalObjectVc(m_cache);
 
 			if (m_fs != null)
 			{

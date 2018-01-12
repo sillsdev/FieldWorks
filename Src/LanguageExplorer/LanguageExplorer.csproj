@@ -296,6 +296,7 @@
     <Compile Include="Areas\Grammar\GrammarAreaMenuHelper.cs" />
     <Compile Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchToolMenuHelper.cs" />
     <Compile Include="Areas\IdAndString.cs" />
+    <Compile Include="Areas\IFwGuiControl.cs" />
     <Compile Include="Areas\Lexicon\ISemanticDomainTreeBarHandler.cs" />
     <Compile Include="Areas\Lexicon\LexiconAreaMenuHelper.cs" />
     <Compile Include="Areas\Lists\Tools\DialectsListEdit\DialectsListEditTool.cs" />
@@ -317,6 +318,7 @@
     <Compile Include="Areas\TextsAndWords\Tools\InterlinearEdit\InterlinearEditToolMenuHelper.cs" />
     <Compile Include="Areas\TreebarAvailability.cs" />
     <Compile Include="Areas\TreeBarHandlerAwareRecordList.cs" />
+    <Compile Include="Controls\DetailControls\TypeAheadSupportVc.cs" />
     <Compile Include="Controls\LexText\CFChanges.cs" />
     <Compile Include="Controls\LexText\ContentMapping.cs" />
     <Compile Include="Controls\LexText\DataNotebook\CharMapping.cs" />
@@ -601,6 +603,37 @@
     <Compile Include="Controls\LexText\BaseGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="LcmUi\BrowseViewerPhonologicalFeatures.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LcmUi\BulkPosEditorBase.cs" />
+    <Compile Include="LcmUi\CmAnalObjectVc.cs" />
+    <Compile Include="LcmUi\CmCustomItemUi.cs" />
+    <Compile Include="LcmUi\CmNameAbbrObjVc.cs" />
+    <Compile Include="LcmUi\CmNamedObjVc.cs" />
+    <Compile Include="LcmUi\CmObjectUi.cs" />
+    <Compile Include="LcmUi\CmObjectVc.cs" />
+    <Compile Include="LcmUi\CmPossibilityUi.cs" />
+    <Compile Include="LcmUi\CmPossRefVc.cs" />
+    <Compile Include="LcmUi\CmVernObjectVc.cs" />
+    <Compile Include="LcmUi\EntryPosFilter.cs" />
+    <Compile Include="LcmUi\LexEntryVc.cs" />
+    <Compile Include="LcmUi\LexSenseUi.cs" />
+    <Compile Include="LcmUi\MoDerivAffMsaUi.cs" />
+    <Compile Include="LcmUi\MoFormUi.cs" />
+    <Compile Include="LcmUi\MoInflAffMsaUi.cs" />
+    <Compile Include="LcmUi\MoMorphSynAnalysisUi.cs" />
+    <Compile Include="LcmUi\MoStemMsaUi.cs" />
+    <Compile Include="LcmUi\MsaVc.cs" />
+    <Compile Include="LcmUi\PosFilter.cs" />
+    <Compile Include="LcmUi\ReferenceBaseUi.cs" />
+    <Compile Include="LcmUi\ReferenceCollectionUi.cs" />
+    <Compile Include="LcmUi\ReferenceSequenceUi.cs" />
+    <Compile Include="LcmUi\TargetFeatureEventArgs.cs" />
+    <Compile Include="LcmUi\VcFrags.cs" />
+    <Compile Include="LcmUi\VectorReferenceUi.cs" />
+    <Compile Include="LcmUi\WfiAnalysisUi.cs" />
+    <Compile Include="LcmUi\WfiGlossUi.cs" />
     <Compile Include="MGA\MGAImageKind.cs" />
     <Compile Include="MGA\MasterItemCitation.cs" />
     <Compile Include="RecordFilterParameterObject.cs" />
@@ -956,7 +989,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="LcmUi\DummyCmObject.cs" />
-    <Compile Include="LcmUi\LcmUiCore.cs" />
     <Compile Include="LcmUi\LcmUiStrings.Designer.cs">
       <DependentUpon>LcmUiStrings.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -978,7 +1010,6 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="LcmUi\ReversalIndexEntryUi.cs" />
-    <Compile Include="LcmUi\TypeAheadSupportVc.cs" />
     <Compile Include="LcmUi\WfiWordformUi.cs" />
     <Compile Include="MenuServices.cs" />
     <Compile Include="MGA\GlossListBox.cs">

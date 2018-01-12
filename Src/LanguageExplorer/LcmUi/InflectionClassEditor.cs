@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -533,60 +533,61 @@ namespace LanguageExplorer.LcmUi
 		{
 			return typeof(InflectionClassFilter);
 		}
-	}
-	/// <summary>
-	/// A special filter, where items are LexSenses, and matches are ones where an MSA is an MoStemMsa that
-	/// has the correct POS.
-	/// </summary>
-	class InflectionClassFilter : ColumnSpecFilter
-	{
-		/// <summary>
-		/// Default constructor for persistence.
-		/// </summary>
-		public InflectionClassFilter() { }
-		public InflectionClassFilter(LcmCache cache, ListMatchOptions mode, int[] targets, XElement colSpec)
-			: base(cache, mode, targets, colSpec)
-		{
-		}
-
-		protected override string BeSpec
-		{
-			get { return "external"; }
-		}
-
-		public override bool CompatibleFilter(XElement colSpec)
-		{
-			if (!base.CompatibleFilter(colSpec))
-				return false;
-			return DynamicLoader.TypeForLoaderNode(colSpec) == typeof(InflectionClassEditor);
-		}
 
 		/// <summary>
-		/// Return the HVO of the list from which choices can be made.
-		/// Critical TODO JohnT: this isn't right; need to get the simple list chooser populated with the
-		/// items we put in the chooser; but how??
+		/// A special filter, where items are LexSenses, and matches are ones where an MSA is an MoStemMsa that
+		/// has the correct POS.
 		/// </summary>
-		static public int List(LcmCache cache)
+		private sealed class InflectionClassFilter : ColumnSpecFilter
 		{
-			return cache.LanguageProject.PartsOfSpeechOA.Hvo;
-		}
+			/// <summary>
+			/// Default constructor for persistence.
+			/// </summary>
+			public InflectionClassFilter() { }
+			public InflectionClassFilter(LcmCache cache, ListMatchOptions mode, int[] targets, XElement colSpec)
+				: base(cache, mode, targets, colSpec)
+			{
+			}
 
-		/// <summary>
-		/// This is a filter for an atomic property, and the "all" and "only" options should not be presented.
-		/// Review JOhnT: is this true?
-		/// </summary>
-		public static bool Atomic
-		{
-			get { return true; }
-		}
+			protected override string BeSpec
+			{
+				get { return "external"; }
+			}
 
-		/// <summary>
-		/// The items for this filter are the leaves of the tree formed by the possibilities in the list,
-		/// by following the InflectionClasses property of each PartOfSpeech.
-		/// </summary>
-		public static int LeafFlid
-		{
-			get { return PartOfSpeechTags.kflidInflectionClasses; }
+			public override bool CompatibleFilter(XElement colSpec)
+			{
+				if (!base.CompatibleFilter(colSpec))
+					return false;
+				return DynamicLoader.TypeForLoaderNode(colSpec) == typeof(InflectionClassEditor);
+			}
+
+			/// <summary>
+			/// Return the HVO of the list from which choices can be made.
+			/// Critical TODO JohnT: this isn't right; need to get the simple list chooser populated with the
+			/// items we put in the chooser; but how??
+			/// </summary>
+			static public int List(LcmCache cache)
+			{
+				return cache.LanguageProject.PartsOfSpeechOA.Hvo;
+			}
+
+			/// <summary>
+			/// This is a filter for an atomic property, and the "all" and "only" options should not be presented.
+			/// Review JOhnT: is this true?
+			/// </summary>
+			public static bool Atomic
+			{
+				get { return true; }
+			}
+
+			/// <summary>
+			/// The items for this filter are the leaves of the tree formed by the possibilities in the list,
+			/// by following the InflectionClasses property of each PartOfSpeech.
+			/// </summary>
+			public static int LeafFlid
+			{
+				get { return PartOfSpeechTags.kflidInflectionClasses; }
+			}
 		}
 	}
 }

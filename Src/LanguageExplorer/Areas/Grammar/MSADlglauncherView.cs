@@ -15,7 +15,7 @@ namespace LanguageExplorer.Areas.Grammar
 	internal sealed class MSADlglauncherView : RootSiteControl, IVwNotifyChange
 	{
 		private IMoMorphSynAnalysis m_msa;
-		private MoMorphSynAnalysisUi.MsaVc m_vc;
+		private MsaVc m_vc;
 
 		private System.ComponentModel.IContainer components = null;
 
@@ -49,7 +49,7 @@ namespace LanguageExplorer.Areas.Grammar
 			get
 			{
 				if (m_vc == null)
-					m_vc = new MoMorphSynAnalysisUi.MsaVc(m_cache);
+					m_vc = new MsaVc(m_cache);
 				return m_vc;
 			}
 		}

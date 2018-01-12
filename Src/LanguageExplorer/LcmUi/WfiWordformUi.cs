@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -52,14 +52,11 @@ namespace LanguageExplorer.LcmUi
 			// Nothing useful we can currently do here, anyway.
 
 		}
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// This method implements the FindInDictionary menu item. It is called using
 		/// reflection by xCore, not directly.
 		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		protected bool OnFindInDictionary(object args)
 		{
 			LexEntryUi.DisplayEntries(m_cache, Form.ActiveForm, PropertyTable, Publisher, Subscriber, null, null,

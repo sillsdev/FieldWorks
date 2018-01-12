@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Controls.PaneBar;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;

@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2017 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,7 +17,6 @@ using SIL.LCModel.Application;
 
 namespace LanguageExplorer.LcmUi.Dialogs
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// SummaryDialogForm is the dialog that TE launches from its Find In Lexicon command,
 	/// when there is a matching lexical entry. It displays a representation of the lex entry,
@@ -33,7 +32,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 	/// Clients should also test the OtherButtonClicked property to see if a "find entry" dialog
 	/// should pop up to find a different entry to display with a new SummaryDialogForm.
 	/// </remarks>
-	/// ----------------------------------------------------------------------------------------
 	internal class SummaryDialogForm : Form
 	{
 		#region Member variables
@@ -58,7 +56,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		#endregion
 
 		#region Constructor/destructor
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Constructor for a single LexEntry object.
 		/// </summary>
@@ -66,7 +63,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// <param name="helpProvider">The help provider.</param>
 		/// <param name="helpFileKey">string key to get the help file name</param>
 		/// <param name="styleSheet">The stylesheet.</param>
-		/// ------------------------------------------------------------------------------------
 		internal SummaryDialogForm(LexEntryUi leui, IHelpTopicProvider helpProvider, string helpFileKey, IVwStylesheet styleSheet)
 			: this(new List<int>(leui.Object.Hvo), helpProvider, helpFileKey, styleSheet, leui.Object.Cache, leui.PropertyTable)
 		{
@@ -94,14 +90,12 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			Initialize(helpProvider, helpFileKey, styleSheet);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Common initialization shared by the constructors.
 		/// </summary>
 		/// <param name="helpProvider">The help provider.</param>
 		/// <param name="helpFileKey">The help file key.</param>
 		/// <param name="styleSheet">The stylesheet.</param>
-		/// ------------------------------------------------------------------------------------
 		private void Initialize(IHelpTopicProvider helpProvider, string helpFileKey, IVwStylesheet styleSheet)
 		{
 			m_helpProvider = helpProvider;
@@ -142,14 +136,12 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
 		/// resources; <c>false</c> to release only unmanaged resources.
 		/// </param>
-		/// -----------------------------------------------------------------------------------
 		protected override void Dispose( bool disposing )
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -174,12 +166,10 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		#endregion
 
 		#region Windows Form Designer generated code
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SummaryDialogForm));
@@ -243,7 +233,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		#endregion
 
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Create a view with multiple LexEntry objects.
 		/// </summary>
@@ -251,7 +240,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// <param name="cache"></param>
 		/// <param name="styleSheet"></param>
 		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		private XmlView CreateSummaryView(List<int> rghvoEntries, LcmCache cache, IVwStylesheet styleSheet)
 		{
 			// Make a decorator to publish the list of entries as a fake property of the LexDb.
@@ -272,7 +260,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			return xv;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// True if client should call LinkToLexicon after dialog closes.
 		/// NOTE: after calling ShowDialog, clients should test the ShouldLink property, and if it
@@ -282,7 +269,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// TE will jump back in front of Flex even before Flex has finished jumping to the entry.
 		/// See LT-3461.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		internal bool ShouldLink
 		{
 			get
@@ -292,13 +278,11 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Adjust the height of the embedded XmlView to display as much as possible, up to a
 		/// maximum dialog height of 400px.  (See LT-8392.)
 		/// </summary>
 		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
@@ -369,7 +353,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 
 		#region Event handlers
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// NOTE: after calling ShowDialog, clients should test the OtherButtonClicked property,
 		/// and if it is true, invoke a "find entry" dialog and loop back to display another
@@ -377,7 +360,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		private void btnOther_Click(object sender, System.EventArgs e)
 		{
 			m_fOtherClicked = true;
@@ -399,7 +381,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// NOTE: after calling ShowDialog, clients should test the ShouldLink property, and if it
 		/// is true, call LinkToLexicon().
@@ -408,20 +389,15 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// TE will jump back in front of Flex even before Flex has finished jumping to the entry.
 		/// See LT-3461.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		private void btnLexicon_Click(object sender, System.EventArgs e)
 		{
 			m_fShouldLink = true;
 			Close();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Links to lexicon.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		internal void LinkToLexicon()
 		{
 			CheckDisposed();
@@ -437,13 +413,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			app.HandleOutgoingLink(link);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		private void btnHelp_Click(object sender, System.EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpProvider, m_helpFileKey, s_helpTopicKey);

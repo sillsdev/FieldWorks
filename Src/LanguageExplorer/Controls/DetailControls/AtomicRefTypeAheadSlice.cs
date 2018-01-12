@@ -4,7 +4,6 @@
 
 using System;
 using System.Windows.Forms;
-using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;

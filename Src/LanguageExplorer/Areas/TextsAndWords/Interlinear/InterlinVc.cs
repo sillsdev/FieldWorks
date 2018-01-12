@@ -143,7 +143,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		IDictionary<ILgWritingSystem, ITsString> m_mapWsDirTss = new Dictionary<ILgWritingSystem, ITsString>();
 		// AnnotationDefns we need
 		int m_hvoAnnDefNote;
-		MoMorphSynAnalysisUi.MsaVc m_msaVc;
+		MsaVc m_msaVc;
 		InterlinLineChoices m_lineChoices;
 		protected IVwStylesheet m_stylesheet;
 		IParaDataLoader m_loader;
@@ -189,7 +189,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_WsList = new WsListManager(m_cache);
 			m_tssEmptyPara = TsStringUtils.MakeString(ITextStrings.ksEmptyPara, m_wsAnalysis);
 			m_tssSpace = TsStringUtils.MakeString(" ", m_wsAnalysis);
-			m_msaVc = new MoMorphSynAnalysisUi.MsaVc(m_cache);
+			m_msaVc = new MsaVc(m_cache);
 			m_vernWss = WritingSystemServices.GetAllWritingSystems(m_cache, "all vernacular",
 				null, 0, 0);
 			// This usually gets overridden, but ensures default behavior if not.
