@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 SIL International
+﻿// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -857,7 +857,7 @@ namespace LanguageExplorer.Controls.LexText
 			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
 		}
 
-		class PhonologicalFeaturePublisher : ObjectListPublisher
+		private class PhonologicalFeaturePublisher : ObjectListPublisher
 		{
 			public const int ListFlid = 89999988;
 			public const int ValueFlid = 89999977;
@@ -944,7 +944,7 @@ namespace LanguageExplorer.Controls.LexText
 					base.SetUnicode(hvo, tag, _rgch, cch);
 			}
 
-			class PhonologicalFeatureMdc : LcmMetaDataCacheDecoratorBase
+			private class PhonologicalFeatureMdc : LcmMetaDataCacheDecoratorBase
 			{
 				public PhonologicalFeatureMdc(IFwMetaDataCacheManaged mdc)
 					: base(mdc)

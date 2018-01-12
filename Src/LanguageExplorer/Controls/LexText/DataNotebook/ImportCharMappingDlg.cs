@@ -1,12 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ImportCharMappingDlg.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Windows.Forms;
@@ -21,11 +15,7 @@ using SIL.FieldWorks.FwCoreDlgs;
 
 namespace LanguageExplorer.Controls.LexText.DataNotebook
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public partial class ImportCharMappingDlg : Form
 	{
 		LcmCache m_cache;
@@ -43,7 +33,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		}
 
 		public void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider,
-			IApp app, IVwStylesheet stylesheet, NotebookImportWiz.CharMapping charMapping)
+			IApp app, IVwStylesheet stylesheet, CharMapping charMapping)
 		{
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;

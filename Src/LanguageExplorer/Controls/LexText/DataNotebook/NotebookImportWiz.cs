@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2015 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,12 +32,10 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.LexText.DataNotebook
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// This wizard steps the user through setting up to import a standard format anthropology
 	/// database file (and then importing it).
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public partial class NotebookImportWiz : WizardDialog, IFwExtension
 	{
 		// Give names to the step numbers.
@@ -64,25 +62,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private bool m_fDirtySettings = false;
 		private OpenFileDialogAdapter openFileDialog;
 
-		/// <summary>
-		/// This class defines an encapsulation of factories for ICmPossibility and its
-		/// subclasses.  This allows some a sizable chunk of code to be written only once.
-		/// </summary>
-		public class CmPossibilityCreator
-		{
-			private ICmPossibilityFactory m_fact;
-			public CmPossibilityCreator()
-			{
-			}
-			public CmPossibilityCreator(ICmPossibilityFactory fact)
-			{
-				m_fact = fact;
-			}
-			public virtual ICmPossibility Create()
-			{
-				return m_fact.Create();
-			}
-		}
 		private CmPossibilityCreator m_factPossibility;
 		public CmPossibilityCreator PossibilityCreator
 		{
@@ -94,23 +73,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			}
 		}
 
-		/// <summary>
-		/// This class encapsulates an ICmAnthroItemFactory to look like it's creating
-		/// ICmPossibility objects.  This allows some a sizable chunk of code to be written
-		/// only once.
-		/// </summary>
-		public class CmAnthroItemCreator : CmPossibilityCreator
-		{
-			private ICmAnthroItemFactory m_fact;
-			public CmAnthroItemCreator(ICmAnthroItemFactory fact)
-			{
-				m_fact = fact;
-			}
-			public override ICmPossibility Create()
-			{
-				return m_fact.Create();
-			}
-		}
 		private CmAnthroItemCreator m_factAnthroItem;
 		public CmAnthroItemCreator AnthroItemCreator
 		{
@@ -122,23 +84,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			}
 		}
 
-		/// <summary>
-		/// This class encapsulates an ICmLocationFactory to look like it's creating
-		/// ICmPossibility objects.  This allows some a sizable chunk of code to be written
-		/// only once.
-		/// </summary>
-		public class CmLocationCreator : CmPossibilityCreator
-		{
-			private ICmLocationFactory m_fact;
-			public CmLocationCreator(ICmLocationFactory fact)
-			{
-				m_fact = fact;
-			}
-			public override ICmPossibility Create()
-			{
-				return m_fact.Create();
-			}
-		}
 		private CmLocationCreator m_factLocation;
 		public CmLocationCreator LocationCreator
 		{
@@ -150,23 +95,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			}
 		}
 
-		/// <summary>
-		/// This class encapsulates an ICmPersonFactory to look like it's creating
-		/// ICmPossibility objects.  This allows some a sizable chunk of code to be written
-		/// only once.
-		/// </summary>
-		public class CmPersonCreator : CmPossibilityCreator
-		{
-			private ICmPersonFactory m_fact;
-			public CmPersonCreator(ICmPersonFactory fact)
-			{
-				m_fact = fact;
-			}
-			public override ICmPossibility Create()
-			{
-				return m_fact.Create();
-			}
-		}
 		private CmPersonCreator m_factPerson;
 		public CmPersonCreator PersonCreator
 		{
@@ -178,21 +106,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			}
 		}
 
-		/// <summary>
-		/// Creator wrapping ICmCustomItemFactory
-		/// </summary>
-		public class CmCustomItemCreator : CmPossibilityCreator
-		{
-			private ICmCustomItemFactory m_fact;
-			public CmCustomItemCreator(ICmCustomItemFactory fact)
-			{
-				m_fact = fact;
-			}
-			public override ICmPossibility Create()
-			{
-				return m_fact.Create();
-			}
-		}
 		private CmCustomItemCreator m_factCustomItem;
 		public CmCustomItemCreator CustomItemCreator
 		{
@@ -204,21 +117,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			}
 		}
 
-		/// <summary>
-		/// Creator wrapping ICmSemanticDomainFactory
-		/// </summary>
-		public class CmSemanticDomainCreator : CmPossibilityCreator
-		{
-			private ICmSemanticDomainFactory m_fact;
-			public CmSemanticDomainCreator(ICmSemanticDomainFactory fact)
-			{
-				m_fact = fact;
-			}
-			public override ICmPossibility Create()
-			{
-				return m_fact.Create();
-			}
-		}
 		private CmSemanticDomainCreator m_factSemanticDomain;
 		public CmSemanticDomainCreator SemanticDomainCreator
 		{
@@ -227,22 +125,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				if (m_factSemanticDomain == null)
 					m_factSemanticDomain = new CmSemanticDomainCreator(m_cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>());
 				return m_factSemanticDomain;
-			}
-		}
-
-		/// <summary>
-		/// Creator wrapping IMoMorphTypeFactory
-		/// </summary>
-		public class MoMorphTypeCreator : CmPossibilityCreator
-		{
-			private IMoMorphTypeFactory m_fact;
-			public MoMorphTypeCreator(IMoMorphTypeFactory fact)
-			{
-				m_fact = fact;
-			}
-			public override ICmPossibility Create()
-			{
-				return m_fact.Create();
 			}
 		}
 		private MoMorphTypeCreator m_factMorphType;
@@ -255,22 +137,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				return m_factMorphType;
 			}
 		}
-
-		/// <summary>
-		/// Creator wrapping IPartOfSpeechFactory
-		/// </summary>
-		public class PartOfSpeechCreator : CmPossibilityCreator
-		{
-			private IPartOfSpeechFactory m_fact;
-			public PartOfSpeechCreator(IPartOfSpeechFactory fact)
-			{
-				m_fact = fact;
-			}
-			public override ICmPossibility Create()
-			{
-				return m_fact.Create();
-			}
-		}
 		private PartOfSpeechCreator m_factPartOfSpeech;
 		public PartOfSpeechCreator NewPartOfSpeechCreator
 		{
@@ -279,22 +145,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				if (m_factPartOfSpeech == null)
 					m_factPartOfSpeech = new PartOfSpeechCreator(m_cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>());
 				return m_factPartOfSpeech;
-			}
-		}
-
-		/// <summary>
-		/// Creator wrapping ILexEntryTypeFactory
-		/// </summary>
-		public class LexEntryTypeCreator : CmPossibilityCreator
-		{
-			private ILexEntryTypeFactory m_fact;
-			public LexEntryTypeCreator(ILexEntryTypeFactory fact)
-			{
-				m_fact = fact;
-			}
-			public override ICmPossibility Create()
-			{
-				return m_fact.Create();
 			}
 		}
 		private LexEntryTypeCreator m_factLexEntryType;
@@ -307,22 +157,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				return m_factLexEntryType;
 			}
 		}
-
-		/// <summary>
-		/// Creator wrapping ILexRefTypeFactory
-		/// </summary>
-		public class LexRefTypeCreator : CmPossibilityCreator
-		{
-			private ILexRefTypeFactory m_fact;
-			public LexRefTypeCreator(ILexRefTypeFactory fact)
-			{
-				m_fact = fact;
-			}
-			public override ICmPossibility Create()
-			{
-				return m_fact.Create();
-			}
-		}
 		private LexRefTypeCreator m_factLexRefType;
 		public LexRefTypeCreator NewLexRefTypeCreator
 		{
@@ -332,17 +166,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					m_factLexRefType = new LexRefTypeCreator(m_cache.ServiceLocator.GetInstance<ILexRefTypeFactory>());
 				return m_factLexRefType;
 			}
-		}
-
-		/// <summary>
-		/// Stores the information needed to make a link later, after all the records have
-		/// been created.
-		/// </summary>
-		class PendingLink
-		{
-			public RnSfMarker Marker { get; set; }
-			public Sfm2Xml.SfmField Field { get; set; }
-			public IRnGenericRec Record { get; set; }
 		}
 		readonly List<PendingLink> m_pendingLinks = new List<PendingLink>();
 
@@ -386,218 +209,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private string m_sSfmDataFile = null;
 		private string m_sProjectFile = null;
 
-		/// <summary>
-		/// This class encapsulates the information for a log message.
-		/// </summary>
-		public class ImportMessage : IComparable
-		{
-			private string m_sMsg;
-			private int m_lineNumber;
-
-			public ImportMessage(string sMsg, int lineNumber)
-			{
-				m_sMsg = sMsg;
-				m_lineNumber = lineNumber;
-			}
-
-			public string Message
-			{
-				get { return m_sMsg; }
-			}
-
-			public int LineNumber
-			{
-				get { return m_lineNumber; }
-			}
-
-			#region IComparable Members
-			public int CompareTo(object obj)
-			{
-				ImportMessage that = obj as ImportMessage;
-				if (that == null)
-					return 1;
-				if (this.Message == that.Message)
-					return this.LineNumber.CompareTo(that.LineNumber);
-				else
-					return this.Message.CompareTo(that.Message);
-			}
-			#endregion
-		}
 		private List<ImportMessage> m_rgMessages = new List<ImportMessage>();
 
-		public class EncConverterChoice
-		{
-			private string m_sConverter;
-			private readonly CoreWritingSystemDefinition m_ws;
-			private ECInterfaces.IEncConverter m_conv = null;
-
-			/// <summary>
-			/// Constructor using an XmlNode from the settings file.
-			/// </summary>
-			public EncConverterChoice(XmlNode xnConverter, WritingSystemManager wsManager)
-				: this(XmlUtils.GetMandatoryAttributeValue(xnConverter, "ws"),
-				XmlUtils.GetOptionalAttributeValue(xnConverter, "converter", null), wsManager)
-			{
-			}
-
-			/// <summary>
-			/// Constructor using the writing system identifier and Converter name explicitly.
-			/// </summary>
-			public EncConverterChoice(string sWs, string sConverter, WritingSystemManager wsManager)
-			{
-				m_sConverter = sConverter;
-				if (String.IsNullOrEmpty(m_sConverter))
-					m_sConverter = Sfm2Xml.STATICS.AlreadyInUnicode;
-				wsManager.GetOrSet(sWs, out m_ws);
-			}
-
-			/// <summary>
-			/// Get the identifier for the writing system.
-			/// </summary>
-			public CoreWritingSystemDefinition WritingSystem
-			{
-				get { return m_ws; }
-			}
-
-			/// <summary>
-			/// Get the encoding converter name for the writing system.
-			/// </summary>
-			public string ConverterName
-			{
-				get { return m_sConverter; }
-				set
-				{
-					m_sConverter = value;
-					if (String.IsNullOrEmpty(m_sConverter))
-						m_sConverter = Sfm2Xml.STATICS.AlreadyInUnicode;
-					m_conv = null;
-				}
-			}
-
-			/// <summary>
-			/// Get/set the actual encoding converter for the writing system (may be null).
-			/// </summary>
-			public ECInterfaces.IEncConverter Converter
-			{
-				get { return m_conv; }
-				set { m_conv = value; }
-			}
-
-			/// <summary>
-			/// Get the name of the writing system.
-			/// </summary>
-			public string Name
-			{
-				get { return m_ws.DisplayLabel; }
-			}
-		}
-
 		private readonly Dictionary<string, EncConverterChoice> m_mapWsEncConv = new Dictionary<string, EncConverterChoice>();
-
-		public enum SfFieldType
-		{
-			/// <summary>ignored</summary>
-			Discard,
-			/// <summary>Multi-paragraph text field</summary>
-			Text,
-			/// <summary>Simple string text field</summary>
-			String,
-			/// <summary>Date/Time type field</summary>
-			DateTime,
-			/// <summary>List item reference field</summary>
-			ListRef,
-			/// <summary>Link field</summary>
-			Link,
-			/// <summary>Invalid field -- not handled by program!</summary>
-			Invalid
-		};
-		/// <summary>
-		/// This struct stores the data associated with a single Standard Format Marker.
-		/// </summary>
-		public class RnSfMarker
-		{
-			//:> Data loaded from the settings file.
-			internal string m_sMkr;			// The field marker (without the leading \).
-			internal int m_flid;			// Field identifier for destination in FieldWorks database.
-											// If zero, then this field is discarded on import.
-			internal string m_sName;		// field name for display (read from resources)
-			internal string m_sMkrOverThis;	// Field marker of parent field, if any.
-
-			// If record specifier, level of the record in the hierarchy (1 = root, 0 = not a record
-			// specifier).
-			internal int m_nLevel;
-
-			/// <summary>
-			/// This struct stores the options data associated with a structured text destination.
-			/// </summary>
-			internal class TextOptions
-			{
-				internal string m_sStyle;
-				internal bool m_fStartParaNewLine;
-				internal bool m_fStartParaBlankLine;
-				internal bool m_fStartParaIndented;
-				internal bool m_fStartParaShortLine;
-				internal int m_cchShortLim;
-				internal string m_wsId;
-				internal CoreWritingSystemDefinition m_ws;
-			};
-			internal TextOptions m_txo = new TextOptions();
-
-			/// <summary>
-			/// This struct stores the options data associated with a topics list destination.
-			/// </summary>
-			internal class TopicsListOptions
-			{
-				internal string m_wsId;
-				internal CoreWritingSystemDefinition m_ws;
-				internal bool m_fHaveMulti;
-				internal string m_sDelimMulti;
-				internal bool m_fHaveSub;
-				internal string m_sDelimSub;
-				internal bool m_fHaveBetween;
-				internal string m_sMarkStart;
-				internal string m_sMarkEnd;
-				internal bool m_fHaveBefore;
-				internal string m_sBefore;
-				internal bool m_fIgnoreNewStuff;
-				internal List<string> m_rgsMatch = new List<string>();
-				internal List<string> m_rgsReplace = new List<string>();
-				internal string m_sEmptyDefault;
-				internal PossNameType m_pnt;
-				// value looked up for m_sEmptyDefault.
-				internal ICmPossibility m_default;
-				// Parsed versions of the strings above, split into possibly multiple delimiters.
-				internal string[] m_rgsDelimMulti;
-				internal string[] m_rgsDelimSub;
-				internal string[] m_rgsMarkStart;
-				internal string[] m_rgsMarkEnd;
-				internal string[] m_rgsBefore;
-			};
-			internal TopicsListOptions m_tlo = new TopicsListOptions();
-
-			/// <summary>
-			/// This struct stores the options data associated with a date destination.
-			/// </summary>
-			internal class DateOptions
-			{
-				internal List<string> m_rgsFmt = new List<string>();
-			};
-			internal DateOptions m_dto = new DateOptions();
-
-			/// <summary>
-			/// This struct stores the options data associated with a string destination.
-			/// </summary>
-			internal class StringOptions
-			{
-				internal string m_wsId;
-				internal CoreWritingSystemDefinition m_ws;
-			};
-			internal StringOptions m_sto = new StringOptions();
-
-			// not sure how/whether to use these (from the C++ code)
-			//internal string m_sLng;		// Language of the field data.
-			//internal int m_wsDefault;		// Default writing system for the field.
-		}
 		/// <summary>
 		/// Dictionary of std format marker mapping objects loaded from the map file.
 		/// </summary>
@@ -607,73 +221,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// These may be copied from m_rgsfmFromMapFile or created with default settings.
 		/// </summary>
 		Dictionary<string, RnSfMarker> m_mapMkrRsf = new Dictionary<string, RnSfMarker>();
-
-		public class CharMapping
-		{
-			private string m_sBeginMkr;
-			private string m_sEndMkr;
-			private bool m_fEndWithWord;
-			private string m_sDestWsId;
-			private CoreWritingSystemDefinition m_ws;
-			private string m_sDestStyle;
-			private bool m_fIgnoreMarker;
-
-			public CharMapping()
-			{
-			}
-
-			public CharMapping(XmlNode xn)
-			{
-				m_sBeginMkr = XmlUtils.GetMandatoryAttributeValue(xn, "begin");
-				m_sEndMkr = XmlUtils.GetMandatoryAttributeValue(xn, "end");
-				m_fEndWithWord = XmlUtils.GetOptionalBooleanAttributeValue(xn, "endWithWord", false);
-				m_fIgnoreMarker = XmlUtils.GetOptionalBooleanAttributeValue(xn, "ignore", false);
-				m_sDestStyle = XmlUtils.GetOptionalAttributeValue(xn, "style", null);
-				m_sDestWsId = XmlUtils.GetOptionalAttributeValue(xn, "ws", null);
-			}
-
-			public string BeginMarker
-			{
-				get { return m_sBeginMkr; }
-				set { m_sBeginMkr = value; }
-			}
-
-			public string EndMarker
-			{
-				get { return m_sEndMkr; }
-				set { m_sEndMkr = value; }
-			}
-
-			public bool EndWithWord
-			{
-				get { return m_fEndWithWord; }
-				set { m_fEndWithWord = value; }
-			}
-
-			public string DestinationWritingSystemId
-			{
-				get { return m_sDestWsId; }
-				set { m_sDestWsId = value; }
-			}
-
-			public CoreWritingSystemDefinition DestinationWritingSystem
-			{
-				get { return m_ws; }
-				set { m_ws = value; }
-			}
-
-			public string DestinationStyle
-			{
-				get { return m_sDestStyle; }
-				set { m_sDestStyle = value; }
-			}
-
-			public bool IgnoreMarkerOnImport
-			{
-				get { return m_fIgnoreMarker; }
-				set { m_fIgnoreMarker = value; }
-			}
-		}
 
 		List<CharMapping> m_rgcm = new List<CharMapping>();
 
@@ -915,8 +462,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			using (var dlg = new BackupProjectDlg(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				dlg.ShowDialog(this);
 		}
-
-		enum OFType { Database, Project, Settings, SaveAs };	// openfile type
 
 		private void btnDatabaseBrowse_Click(object sender, EventArgs e)
 		{
@@ -3353,16 +2898,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			}
 		}
 
-		struct GenDateInfo
-		{
-			public int mday;
-			public int wday;
-			public int ymon;
-			public int year;
-			public GenDate.PrecisionType prec;
-			public bool error;
-		};
-
 		private bool TryParseGenDate(string sData, List<string> rgsFmt, out GenDate gdt)
 		{
 			GenDate.PrecisionType prec = GenDate.PrecisionType.Exact;
@@ -4713,5 +4248,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			m_fDirtySettings = true;
 		}
+		private enum OFType { Database, Project, Settings, SaveAs } // openfile type
 	}
 }

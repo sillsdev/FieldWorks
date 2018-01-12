@@ -1,16 +1,14 @@
-// Copyright (c) 2004-2014 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: EntryDlgListener.cs
-// Responsibility: Randy Regnier
+
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorer.Controls.LexText
+namespace LanguageExplorer.Dumpster
 {
 #if RANDYTODO
 	// TODO: Likely disposition: Dump MergeEntryDlgListener and just have relevant tool(s) add normal menu/toolbar event handlers for the merge.

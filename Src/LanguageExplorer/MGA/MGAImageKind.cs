@@ -4,7 +4,7 @@
 
 namespace LanguageExplorer.MGA
 {
-	internal enum ImageKind
+	internal enum MGAImageKind
 	{
 		closedFolder = 0,
 		openFolder,

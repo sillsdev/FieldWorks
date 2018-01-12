@@ -149,8 +149,8 @@ namespace LanguageExplorerTests.MGA
 		[Test]
 		public void TreeNodeBitmapTest()
 		{
-			Assert.AreEqual(ImageKind.userChoice, (ImageKind)treeViewGlossList.Nodes[0].Nodes[0].ImageIndex);
-			Assert.AreEqual(ImageKind.userChoice, (ImageKind)treeViewGlossList.Nodes[1].Nodes[1].ImageIndex);
+			Assert.AreEqual(MGAImageKind.userChoice, (MGAImageKind)treeViewGlossList.Nodes[0].Nodes[0].ImageIndex);
+			Assert.AreEqual(MGAImageKind.userChoice, (MGAImageKind)treeViewGlossList.Nodes[1].Nodes[1].ImageIndex);
 		}
 		[Test]
 		public void WritingSystemDefaultsToEnglishTest()

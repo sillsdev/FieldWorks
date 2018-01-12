@@ -232,7 +232,7 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					m_skipEvents = true;
 					treeNode.Checked = true;
-					treeNode.ImageIndex = (int)ImageKind.checkedBox;
+					treeNode.ImageIndex = (int)MGAImageKind.checkedBox;
 					treeNode.SelectedImageIndex = treeNode.ImageIndex;
 					treeNode.ForeColor = Color.Gray;
 				}

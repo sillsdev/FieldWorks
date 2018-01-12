@@ -26,7 +26,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private IApp m_app;
 		IFwMetaDataCacheManaged m_mdc;
 		IVwStylesheet m_stylesheet;
-		NotebookImportWiz.RnSfMarker m_rsfm;
+		RnSfMarker m_rsfm;
 		ListRefFieldOptions m_listOpt;
 		TextFieldOptions m_textOpt;
 		DateFieldOptions m_dateOpt;
@@ -60,7 +60,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		}
 
 		public void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app,
-			NotebookImportWiz.RnSfMarker rsf, Sfm2Xml.SfmFile sfmFile,
+			RnSfMarker rsf, Sfm2Xml.SfmFile sfmFile,
 			Dictionary<int, string> mapFlidName, IVwStylesheet stylesheet,
 			IPropertyTable propertyTable, IPublisher publisher)
 		{
@@ -93,7 +93,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				m_cbDestination.SelectedIndex = idx;
 		}
 
-		private void FillInContentsPane(NotebookImportWiz.RnSfMarker rsf, Sfm2Xml.SfmFile sfmFile)
+		private void FillInContentsPane(RnSfMarker rsf, Sfm2Xml.SfmFile sfmFile)
 		{
 			m_groupContents.Text = String.Format(m_sContentsGroupFmt, rsf.m_sMkr);
 			m_lvContents.Items.Clear();
@@ -332,11 +332,11 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// <summary>
 		/// This provides the results after the dialog has closed.
 		/// </summary>
-		public NotebookImportWiz.RnSfMarker Results
+		public RnSfMarker Results
 		{
 			get
 			{
-				NotebookImportWiz.RnSfMarker rsf = new NotebookImportWiz.RnSfMarker();
+				RnSfMarker rsf = new RnSfMarker();
 				rsf.m_flid = m_rsfm.m_flid;
 				rsf.m_nLevel = m_rsfm.m_nLevel;
 				rsf.m_sMkr = m_rsfm.m_sMkr;

@@ -1,12 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ImportDateFormatDlg.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Windows.Forms;
@@ -14,11 +8,7 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.LexText.DataNotebook
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public partial class ImportDateFormatDlg : Form
 	{
 		private IHelpTopicProvider m_helpTopicProvider;
@@ -26,11 +16,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		// This example DateTime value must match that found in DateFieldOptions.cs!
 		DateTime m_dtExample = new DateTime(1999, 3, 29, 15, 30, 45);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:ImportDateFormatDlg"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public ImportDateFormatDlg()
 		{
 			InitializeComponent();

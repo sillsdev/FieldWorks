@@ -14,7 +14,7 @@ namespace LanguageExplorer.MGA
 {
 	internal class MasterItem
 	{
-		protected ImageKind m_eKind;
+		protected MGAImageKind m_eKind;
 		protected string m_abbrev;
 		protected string m_abbrevWs;
 		protected string m_term;
@@ -31,7 +31,7 @@ namespace LanguageExplorer.MGA
 			m_citations = new List<MasterItemCitation>();
 		}
 
-		internal MasterItem(XmlNode node, ImageKind kind, string sTerm)
+		internal MasterItem(XmlNode node, MGAImageKind kind, string sTerm)
 		{
 			m_node = node;
 			m_eKind = kind;
@@ -70,12 +70,12 @@ namespace LanguageExplorer.MGA
 		}
 		public virtual bool KindCanBeInDatabase()
 		{
-			return (m_eKind == ImageKind.radio ||
-				m_eKind == ImageKind.radioSelected ||
-				m_eKind == ImageKind.checkBox ||
-				m_eKind == ImageKind.checkedBox ||
-				m_eKind == ImageKind.userChoice ||
-				m_eKind == ImageKind.complex);
+			return (m_eKind == MGAImageKind.radio ||
+				m_eKind == MGAImageKind.radioSelected ||
+				m_eKind == MGAImageKind.checkBox ||
+				m_eKind == MGAImageKind.checkedBox ||
+				m_eKind == MGAImageKind.userChoice ||
+				m_eKind == MGAImageKind.complex);
 		}
 
 		public virtual void AddToDatabase(LcmCache cache)
@@ -88,7 +88,7 @@ namespace LanguageExplorer.MGA
 
 		public bool InDatabase => m_fInDatabase;
 
-		public bool IsChosen => (m_eKind == ImageKind.radioSelected || m_eKind == ImageKind.checkedBox);
+		public bool IsChosen => (m_eKind == MGAImageKind.radioSelected || m_eKind == MGAImageKind.checkedBox);
 
 		public override string ToString()
 		{

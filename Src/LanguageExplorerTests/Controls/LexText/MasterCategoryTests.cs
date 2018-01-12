@@ -55,17 +55,17 @@ namespace LanguageExplorerTests.Controls.LexText
 			doc.LoadXml(input);
 			var rootItem = doc.DocumentElement.ChildNodes[1];
 
-			var mc = MasterCategoryListDlg.MasterCategory.Create(new HashSet<IPartOfSpeech>(), rootItem, Cache);
+			var mc = MasterCategory.Create(new HashSet<IPartOfSpeech>(), rootItem, Cache);
 			mc.AddToDatabase(Cache, posList, null, null);
 			var adposition = CheckPos("ae115ea8-2cd7-4501-8ae7-dc638e4f17c5", posList);
 
 			var childItem = rootItem.ChildNodes[3];
-			var mcChild = MasterCategoryListDlg.MasterCategory.Create(new HashSet<IPartOfSpeech> {adposition}, childItem, Cache);
+			var mcChild = MasterCategory.Create(new HashSet<IPartOfSpeech> {adposition}, childItem, Cache);
 			mcChild.AddToDatabase(Cache, posList, null, adposition);
 			var postPosition = CheckPos("18f1b2b8-0ce3-4889-90e9-003fed6a969f", adposition);
 
 			var grandChildItem = childItem.ChildNodes[3];
-			var mcGrandChild = MasterCategoryListDlg.MasterCategory.Create(new HashSet<IPartOfSpeech> {adposition, postPosition}, grandChildItem, Cache);
+			var mcGrandChild = MasterCategory.Create(new HashSet<IPartOfSpeech> {adposition, postPosition}, grandChildItem, Cache);
 			mcGrandChild.AddToDatabase(Cache, posList, mcChild, null);
 			CheckPos("82B1250A-E64F-4AD8-8B8C-5ABBC732087A", postPosition);
 		}
@@ -106,14 +106,14 @@ namespace LanguageExplorerTests.Controls.LexText
 			var doc = new XmlDocument();
 			doc.LoadXml(input);
 			var rootItem = doc.DocumentElement.ChildNodes[1];
-			var mc = MasterCategoryListDlg.MasterCategory.Create(new HashSet<IPartOfSpeech>(), rootItem, Cache);
+			var mc = MasterCategory.Create(new HashSet<IPartOfSpeech>(), rootItem, Cache);
 			m_actionHandler.EndUndoTask();
 			Assert.That(posList, Is.Not.Null, "Test requires default init of cache to create POS list");
 			mc.AddToDatabase(Cache, posList, null, null);
 
 			var childItem = rootItem.ChildNodes[3];
 			var firstPos = (IPartOfSpeech) posList.PossibilitiesOS[0];
-			var mcChild = MasterCategoryListDlg.MasterCategory.Create(new HashSet<IPartOfSpeech> { firstPos }, childItem, Cache);
+			var mcChild = MasterCategory.Create(new HashSet<IPartOfSpeech> { firstPos }, childItem, Cache);
 			mcChild.AddToDatabase(Cache, posList, null, firstPos);
 
 			Assert.That(firstPos.Guid, Is.Not.Null, "Item in the category should not be null Guid");

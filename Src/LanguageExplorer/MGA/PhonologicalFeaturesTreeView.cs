@@ -17,7 +17,7 @@ namespace LanguageExplorer.MGA
 		protected override TreeNode CreateNewNode(XmlNode currentNode, string sType, StringBuilder sbNode, string sTerm)
 		{
 			// we always use a check box
-			const ImageKind imageKind = ImageKind.checkBox;
+			const MGAImageKind imageKind = MGAImageKind.checkBox;
 			var newNode = new TreeNode(TsStringUtils.NormalizeToNFC(sbNode.ToString()), (int)imageKind, (int)imageKind);
 			var mpf = new MasterPhonologicalFeature(currentNode, imageKind, sTerm);
 			newNode.Tag = mpf;
@@ -35,11 +35,11 @@ namespace LanguageExplorer.MGA
 		{
 			if (tn.Checked)
 			{
-				tn.ImageIndex = tn.SelectedImageIndex = (int)ImageKind.checkedBox;
+				tn.ImageIndex = tn.SelectedImageIndex = (int)MGAImageKind.checkedBox;
 			}
 			else
 			{
-				tn.ImageIndex = tn.SelectedImageIndex = (int)ImageKind.checkBox;
+				tn.ImageIndex = tn.SelectedImageIndex = (int)MGAImageKind.checkBox;
 			}
 		}
 

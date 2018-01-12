@@ -13,7 +13,7 @@ namespace LanguageExplorer.MGA
 	internal class MasterInflectionFeature : MasterItem
 	{
 
-		internal MasterInflectionFeature(XmlNode node, ImageKind kind, string sTerm)
+		internal MasterInflectionFeature(XmlNode node, MGAImageKind kind, string sTerm)
 			: base(node, kind, sTerm)
 		{
 		}
@@ -26,7 +26,7 @@ namespace LanguageExplorer.MGA
 		{
 			var item = m_node.SelectSingleNode(".");
 			var sId = XmlUtils.GetOptionalAttributeValue(item, "id");
-			if (m_eKind == ImageKind.closedFolder || m_eKind == ImageKind.openFolder)
+			if (m_eKind == MGAImageKind.closedFolder || m_eKind == MGAImageKind.openFolder)
 			{
 				m_fInDatabase = false;
 			}
@@ -37,17 +37,17 @@ namespace LanguageExplorer.MGA
 			var featSys = cache.LanguageProject.MsFeatureSystemOA;
 			switch (m_eKind)
 			{
-				case ImageKind.radio: // fall through
-				case ImageKind.radioSelected: // fall through
-				case ImageKind.checkBox: // fall through
-				case ImageKind.checkedBox:
+				case MGAImageKind.radio: // fall through
+				case MGAImageKind.radioSelected: // fall through
+				case MGAImageKind.checkBox: // fall through
+				case MGAImageKind.checkedBox:
 					// these are all feature values
 					m_fInDatabase = featSys.GetSymbolicValue(sId) != null;
 					break;
-				case ImageKind.complex:
+				case MGAImageKind.complex:
 					m_fInDatabase = featSys.GetFeature(sId) != null;
 					break;
-				case ImageKind.userChoice: // closed feature
+				case MGAImageKind.userChoice: // closed feature
 					var sStatus = XmlUtils.GetOptionalAttributeValue(m_node, "status");
 					m_fInDatabase = featSys.GetFeature(sId) != null;
 					if (sStatus == "proxy")

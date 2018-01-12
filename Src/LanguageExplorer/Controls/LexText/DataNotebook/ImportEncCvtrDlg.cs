@@ -1,12 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ImportEncCvtrDlg.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Windows.Forms;
@@ -17,11 +11,9 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.LexText.DataNotebook
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Dialog for choosing an encoding converter for a given writing system.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public partial class ImportEncCvtrDlg : Form
 	{
 		private string m_sBlankEC = Sfm2Xml.STATICS.AlreadyInUnicode;
@@ -30,21 +22,14 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:ImportEncCvtrDlg"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public ImportEncCvtrDlg()
 		{
 			InitializeComponent();
 
 			m_sDescriptionFmt = m_lblDescription.Text;
-		}
-
-		protected override void OnShown(EventArgs e)
-		{
-			base.OnShown(e);
 		}
 
 		public void Initialize(string wsName, string encConverter, IHelpTopicProvider helpTopicProvider, IApp app)

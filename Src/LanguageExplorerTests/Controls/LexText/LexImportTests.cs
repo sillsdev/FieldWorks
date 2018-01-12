@@ -264,7 +264,7 @@ namespace LanguageExplorerTests.Controls.LexText
 
 				var phase1Output = Path.Combine(tempDir, LexImport.s_sPhase1FileName);
 
-				var converter = new LexImportWizard.FlexConverter(Cache);
+				var converter = new FlexConverter(Cache);
 				converter.AddPossibleAutoField("Entry", "eires"); // found these by running an example.
 				converter.AddPossibleAutoField("Sense", "sires");
 				converter.AddPossibleAutoField("Subentry", "seires");

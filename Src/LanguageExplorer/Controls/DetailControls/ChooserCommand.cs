@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -44,7 +44,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				dlg.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 				var morphType = GetMorphType();
-				dlg.SetDlgInfo(m_cache, morphType, MsaType.kInfl, m_slot, m_fPrefix ? InsertEntryDlg.MorphTypeFilterType.Prefix : InsertEntryDlg.MorphTypeFilterType.Suffix);
+				dlg.SetDlgInfo(m_cache, morphType, MsaType.kInfl, m_slot, m_fPrefix ? MorphTypeFilterType.Prefix : MorphTypeFilterType.Suffix);
 				dlg.DisableAffixTypeMainPosAndSlot();
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{

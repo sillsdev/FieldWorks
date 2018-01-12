@@ -1,12 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DateFieldOptions.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -16,11 +10,7 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.LexText.DataNotebook
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public partial class DateFieldOptions : UserControl
 	{
 		LcmCache m_cache;
@@ -29,11 +19,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		DateTime m_dtExample = new DateTime(1999, 3, 29, 15, 30, 45);
 		bool m_fGenDate = false;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:DateFieldOptions"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public DateFieldOptions()
 		{
 			InitializeComponent();
@@ -85,7 +73,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 
 		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider,
-			DataNotebook.NotebookImportWiz.RnSfMarker rsfm, bool fGenDate)
+			RnSfMarker rsfm, bool fGenDate)
 		{
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;

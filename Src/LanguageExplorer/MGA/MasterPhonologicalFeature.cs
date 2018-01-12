@@ -11,7 +11,7 @@ namespace LanguageExplorer.MGA
 {
 	internal class MasterPhonologicalFeature : MasterItem
 	{
-		internal MasterPhonologicalFeature(XmlNode node, ImageKind kind, string sTerm)
+		internal MasterPhonologicalFeature(XmlNode node, MGAImageKind kind, string sTerm)
 			: base(node, kind, sTerm)
 		{
 		}

@@ -317,6 +317,54 @@
     <Compile Include="Areas\TextsAndWords\Tools\InterlinearEdit\InterlinearEditToolMenuHelper.cs" />
     <Compile Include="Areas\TreebarAvailability.cs" />
     <Compile Include="Areas\TreeBarHandlerAwareRecordList.cs" />
+    <Compile Include="Controls\LexText\CFChanges.cs" />
+    <Compile Include="Controls\LexText\ContentMapping.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\CharMapping.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\CmAnthroItemCreator.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\CmCustomItemCreator.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\CmLocationCreator.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\CmPersonCreator.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\CmPossibilityCreator.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\CmSemanticDomainCreator.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\DateOptions.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\EncConverterChoice.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\GenDateInfo.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\ImportMessage.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\LexEntryTypeCreator.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\LexRefTypeCreator.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\MoMorphTypeCreator.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\PartOfSpeechCreator.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\PendingLink.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\RnSfMarker.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\SfFieldType.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\StringOptions.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\TextOptions.cs" />
+    <Compile Include="Controls\LexText\FeatureSystemInflectionFeatureListDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\LexText\FeatureTreeNode.cs" />
+    <Compile Include="Controls\LexText\FeatureTreeNodeInfo.cs" />
+    <Compile Include="Controls\LexText\FlexConverter.cs" />
+    <Compile Include="Controls\LexText\IFMReader.cs" />
+    <Compile Include="Controls\LexText\InterlinearMapping.cs" />
+    <Compile Include="Controls\LexText\LexTextImageKind.cs" />
+    <Compile Include="Controls\LexText\InsertEventArgs.cs" />
+    <Compile Include="Controls\LexText\LAllomorph.cs" />
+    <Compile Include="Controls\LexText\LangConverter.cs" />
+    <Compile Include="Controls\LexText\LEntry.cs" />
+    <Compile Include="Controls\LexText\ListViewItemComparer.cs" />
+    <Compile Include="Controls\LexText\LMsa.cs" />
+    <Compile Include="Controls\LexText\LObject.cs" />
+    <Compile Include="Controls\LexText\LSense.cs" />
+    <Compile Include="Controls\LexText\MasterCategory.cs" />
+    <Compile Include="Controls\LexText\MasterCategoryCitation.cs" />
+    <Compile Include="Controls\LexText\MasterCategoryListChooserLauncher.cs" />
+    <Compile Include="Controls\LexText\OptionConverter.cs" />
+    <Compile Include="Controls\LexText\PossibilityListPopupTreeManager.cs" />
+    <Compile Include="Controls\LexText\Sfm2FlexTextBase.cs" />
+    <Compile Include="Controls\LexText\Sfm2FlexTextMappingBase.cs" />
+    <Compile Include="Controls\LexText\Sfm2FlexTextWordsFrag.cs" />
+    <Compile Include="Controls\MorphTypeFilterType.cs" />
     <Compile Include="DictionaryConfigurationServices.cs" />
     <Compile Include="DictionaryConfiguration\AlignmentType.cs" />
     <Compile Include="DictionaryConfiguration\ListIds.cs" />
@@ -553,7 +601,7 @@
     <Compile Include="Controls\LexText\BaseGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MGA\ImageKind.cs" />
+    <Compile Include="MGA\MGAImageKind.cs" />
     <Compile Include="MGA\MasterItemCitation.cs" />
     <Compile Include="RecordFilterParameterObject.cs" />
     <Compile Include="ToolbarServices.cs" />
@@ -638,7 +686,7 @@
     <Compile Include="Controls\LexText\DataNotebook\TextFieldOptions.Designer.cs">
       <DependentUpon>TextFieldOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LexText\EntryDlgListener.cs" />
+    <Compile Include="Dumpster\EntryDlgListener.cs" />
     <Compile Include="Controls\LexText\EntryGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -647,7 +695,7 @@
     <Compile Include="Controls\LexText\FeatureStructureTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\IFwExtension.cs" />
+    <Compile Include="IFwExtension.cs" />
     <Compile Include="Controls\LexText\InflectionClassPopupTreeManager.cs" />
     <Compile Include="Controls\LexText\InflectionFeaturePopupTreeManager.cs" />
     <Compile Include="Controls\LexText\InsertEntryDlg.cs">
@@ -660,7 +708,7 @@
     <Compile Include="Controls\LexText\InsertRecordDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\IPatternControl.cs" />
+    <Compile Include="IPatternControl.cs" />
     <Compile Include="Controls\LexText\LexImport.cs" />
     <Compile Include="Controls\LexText\LexImportWizard.cs">
       <SubType>Form</SubType>
@@ -668,7 +716,7 @@
     <Compile Include="Controls\LexText\LexImportWizardCharMarkerDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\LexImportWizardHelpers.cs" />
+    <Compile Include="Controls\LexText\MarkerPresenter.cs" />
     <Compile Include="Controls\LexText\LexImportWizardLanguage.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -752,13 +800,13 @@
     <Compile Include="Controls\LexText\PhonologicalFeaturePopupTreeManager.cs" />
     <Compile Include="Controls\LexText\PopupTreeManager.cs" />
     <Compile Include="Controls\LexText\POSPopupTreeManager.cs" />
-    <Compile Include="Controls\LexText\RecordDlgListener.cs" />
+    <Compile Include="Dumpster\RecordDlgListener.cs" />
     <Compile Include="Controls\LexText\RecordGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\LexText\RecordGoSearchEngine.cs" />
     <Compile Include="Controls\LexText\RemoveItemsRequestedEventArgs.cs" />
-    <Compile Include="Controls\LexText\Sfm2FlexTextWords.cs" />
+    <Compile Include="Controls\LexText\InterlinDestination.cs" />
     <Compile Include="Controls\LexText\SfmToTextsAndWordsMappingBaseDlg.cs">
       <SubType>Form</SubType>
     </Compile>

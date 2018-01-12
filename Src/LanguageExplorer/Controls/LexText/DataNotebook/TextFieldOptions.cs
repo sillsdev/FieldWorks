@@ -1,12 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TextFieldOptions.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Windows.Forms;
@@ -18,11 +12,7 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.LexText.DataNotebook
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public partial class TextFieldOptions : UserControl
 	{
 		LcmCache m_cache;
@@ -50,7 +40,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		}
 
 		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet,
-			NotebookImportWiz.RnSfMarker rsfm)
+			RnSfMarker rsfm)
 		{
 			m_cache = cache;
 			m_stylesheet = stylesheet;

@@ -1,12 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ImportMatchReplace.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Windows.Forms;
@@ -14,19 +8,14 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.LexText.DataNotebook
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public partial class ImportMatchReplaceDlg : Form
 	{
 		IHelpTopicProvider m_helpTopicProvider;
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:ImportMatchReplace"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public ImportMatchReplaceDlg()
 		{
 			InitializeComponent();
@@ -41,7 +30,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			SIL.FieldWorks.Common.FwUtils.ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpDataNotebookImportMatchReplace");
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpDataNotebookImportMatchReplace");
 		}
 
 		public string Match

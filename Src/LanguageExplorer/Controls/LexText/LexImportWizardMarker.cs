@@ -83,7 +83,7 @@ namespace LanguageExplorer.Controls.LexText
 			blbLangDesc.Enabled = cbLangDesc.Enabled = btnAddLangDesc.Enabled = enable;
 		}
 
-		public void Init(MarkerPresenter.ContentMapping currentMarker, Hashtable uiLangsHT, LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app)
+		public void Init(ContentMapping currentMarker, Hashtable uiLangsHT, LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app)
 		{
 			CheckDisposed();
 
@@ -183,7 +183,7 @@ namespace LanguageExplorer.Controls.LexText
 			if (cbLangDesc.SelectedIndex < 0)
 			{
 				// default to ignore if it's in the list
-				var ignorePos = cbLangDesc.FindStringExact(MarkerPresenter.ContentMapping.Ignore());
+				var ignorePos = cbLangDesc.FindStringExact(ContentMapping.Ignore());
 				cbLangDesc.SelectedIndex = ignorePos >= 0 ? ignorePos : 0;
 			}
 

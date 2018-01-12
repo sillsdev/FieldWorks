@@ -48,7 +48,7 @@ namespace LanguageExplorer.Controls.LexText
 			if (AllDaughtersAreChecked(node))
 			{
 				node.Checked = true;
-				node.ImageIndex = (int)ImageKind.checkedBox;
+				node.ImageIndex = (int)MGAImageKind.checkedBox;
 			}
 
 		}

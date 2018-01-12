@@ -1,9 +1,6 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LexImport.cs
-// Responsibility: FLEx Team
 
 using System;
 using System.Diagnostics;
@@ -20,11 +17,7 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Controls.LexText
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public class LexImport
 	{
 		private string m_sPhase2XSLT;

@@ -321,11 +321,11 @@ namespace LanguageExplorer.MGA
 			m_lastSelectedTreeNode.Checked = false;
 			if (m_fTerminalsUseCheckBoxes)
 			{
-				m_lastSelectedTreeNode.ImageIndex = m_lastSelectedTreeNode.SelectedImageIndex = (int) ImageKind.checkBox;
+				m_lastSelectedTreeNode.ImageIndex = m_lastSelectedTreeNode.SelectedImageIndex = (int) MGAImageKind.checkBox;
 			}
 			else
 			{
-				m_lastSelectedTreeNode.ImageIndex = m_lastSelectedTreeNode.SelectedImageIndex = (int)ImageKind.radio;
+				m_lastSelectedTreeNode.ImageIndex = m_lastSelectedTreeNode.SelectedImageIndex = (int)MGAImageKind.radio;
 			}
 		}
 		protected virtual void HandleCheckBoxNodes(TreeView tv, TreeNode tn)
@@ -343,13 +343,13 @@ namespace LanguageExplorer.MGA
 					if (mif == null || !mif.InDatabase)
 					{
 						tn.Checked = false;
-						tn.ImageIndex = tn.SelectedImageIndex = (int) ImageKind.checkBox;
+						tn.ImageIndex = tn.SelectedImageIndex = (int) MGAImageKind.checkBox;
 					}
 				}
 				else
 				{
 					tn.Checked = true;
-					tn.ImageIndex = tn.SelectedImageIndex = (int)ImageKind.checkedBox;
+					tn.ImageIndex = tn.SelectedImageIndex = (int)MGAImageKind.checkedBox;
 					if (mif != null)
 					{
 						var sId = XmlUtils.GetOptionalAttributeValue(mif.Node, "id");
@@ -368,7 +368,7 @@ namespace LanguageExplorer.MGA
 										if (m_cache.LanguageProject.MsFeatureSystemOA.GetSymbolicValue(sId) != null)
 										{
 											sibling.Checked = true;
-											sibling.ImageIndex = sibling.SelectedImageIndex = (int) ImageKind.checkedBox;
+											sibling.ImageIndex = sibling.SelectedImageIndex = (int) MGAImageKind.checkedBox;
 										}
 									}
 								}
@@ -384,7 +384,7 @@ namespace LanguageExplorer.MGA
 				if (IsTerminalNode(tn))
 				{
 					tn.Checked = true;
-					tn.ImageIndex = tn.SelectedImageIndex = (int)ImageKind.radioSelected;
+					tn.ImageIndex = tn.SelectedImageIndex = (int)MGAImageKind.radioSelected;
 					if (tn.Parent != null)
 					{
 						var sibling = tn.Parent.FirstNode;
@@ -393,7 +393,7 @@ namespace LanguageExplorer.MGA
 							if (IsTerminalNode(sibling) && sibling != tn)
 							{
 								sibling.Checked = false;
-								sibling.ImageIndex = sibling.SelectedImageIndex = (int)ImageKind.radio;
+								sibling.ImageIndex = sibling.SelectedImageIndex = (int)MGAImageKind.radio;
 							}
 							sibling = sibling.NextNode;
 						}
@@ -407,18 +407,18 @@ namespace LanguageExplorer.MGA
 		private static void OnAfterCollapse(object obj, TreeViewEventArgs tvea)
 		{
 			var tn = tvea.Node;
-			if (tn.ImageIndex == (int) ImageKind.openFolder)
+			if (tn.ImageIndex == (int) MGAImageKind.openFolder)
 			{
-				tn.ImageIndex = tn.SelectedImageIndex = (int)ImageKind.closedFolder;
+				tn.ImageIndex = tn.SelectedImageIndex = (int)MGAImageKind.closedFolder;
 			}
 		}
 
 		private static void OnAfterExpand(object obj, TreeViewEventArgs tvea)
 		{
 			var tn = tvea.Node;
-			if (tn.ImageIndex == (int) ImageKind.closedFolder)
+			if (tn.ImageIndex == (int) MGAImageKind.closedFolder)
 			{
-				tn.ImageIndex = tn.SelectedImageIndex = (int)ImageKind.openFolder;
+				tn.ImageIndex = tn.SelectedImageIndex = (int)MGAImageKind.openFolder;
 			}
 		}
 
@@ -557,25 +557,25 @@ namespace LanguageExplorer.MGA
 			return sTerm;
 		}
 
-		private ImageKind GetImageKind(string sType)
+		private MGAImageKind GetImageKind(string sType)
 		{
-			ImageKind ik;
+			MGAImageKind ik;
 			switch (sType)
 			{
 				case "value":
-					ik = TerminalsUseCheckBoxes ? ImageKind.checkBox : ImageKind.radio;
+					ik = TerminalsUseCheckBoxes ? MGAImageKind.checkBox : MGAImageKind.radio;
 					break;
 				case "feature":
-					ik = ImageKind.userChoice;
+					ik = MGAImageKind.userChoice;
 					break;
 				case "fsType":
-					ik = ImageKind.featureStructureType;
+					ik = MGAImageKind.featureStructureType;
 					break;
 				case "complex":
-					ik = ImageKind.complex;
+					ik = MGAImageKind.complex;
 					break;
 				default:
-					ik = ImageKind.closedFolder;
+					ik = MGAImageKind.closedFolder;
 					break;
 			}
 			return ik;

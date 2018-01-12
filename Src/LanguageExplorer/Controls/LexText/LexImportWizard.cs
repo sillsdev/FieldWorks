@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2016 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,7 +19,6 @@ using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
 using SilEncConverters40;
@@ -861,7 +860,7 @@ namespace LanguageExplorer.Controls.LexText
 				var markers = m_MappingMgr.ContentMappingItems;
 				foreach (DictionaryEntry markerEntry in markers)
 				{
-					var info = (MarkerPresenter.ContentMapping)markerEntry.Value;
+					var info = (ContentMapping)markerEntry.Value;
 					if (info.LanguageDescriptorRaw != langDesc)
 					{
 						continue;
@@ -912,7 +911,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private static void SetListViewItemColor(ref ListViewItem item)
 		{
-			var info = item.Tag as MarkerPresenter.ContentMapping;
+			var info = item.Tag as ContentMapping;
 			if (info == null)
 			{
 				return;
@@ -935,7 +934,7 @@ namespace LanguageExplorer.Controls.LexText
 				item.UseItemStyleForSubItems = false;
 				item.SubItems[5].ForeColor = Color.Blue;
 			}
-			if (info.LanguageDescriptor == MarkerPresenter.ContentMapping.Unknown())
+			if (info.LanguageDescriptor == ContentMapping.Unknown())
 			{
 				item.UseItemStyleForSubItems = false;
 				item.SubItems[5].ForeColor = Color.Red;	// column 5 due to column 1 being hidden (zero width)
@@ -950,7 +949,7 @@ namespace LanguageExplorer.Controls.LexText
 			var markers = m_MappingMgr.ContentMappingItems;
 			foreach(DictionaryEntry markerEntry in markers)
 			{
-				var info = (MarkerPresenter.ContentMapping)markerEntry.Value;
+				var info = (ContentMapping)markerEntry.Value;
 				if (info.LexImportField is LexImportCustomField)
 				{
 					(info.LexImportField as LexImportCustomField).UIClass = info.DestinationClass;
@@ -964,7 +963,7 @@ namespace LanguageExplorer.Controls.LexText
 				SetListViewItemColor(ref lvItem);
 			}
 			// sort initially by the 'order of appearance'
-			listViewContentMapping.ListViewItemSorter = new MarkerPresenter.ListViewItemComparer(1, false);
+			listViewContentMapping.ListViewItemSorter = new ListViewItemComparer(1, false);
 			//	this.m_MappingMgr.GetAndChangeColumnSortOrder(1));
 			// now hide the column
 			listViewContentMapping.Columns[1].Width = 0;
@@ -980,7 +979,7 @@ namespace LanguageExplorer.Controls.LexText
 			var selIndex = selIndexes[0];	// only support 1
 			var langDescs = GetUILanguages();
 
-			var contentMapping = listViewContentMapping.Items[selIndex].Tag as MarkerPresenter.ContentMapping;
+			var contentMapping = listViewContentMapping.Items[selIndex].Tag as ContentMapping;
 			using (var dlg = new LexImportWizardMarker(m_LexFields))
 			{
 				dlg.Init(contentMapping, langDescs, m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
@@ -995,7 +994,7 @@ namespace LanguageExplorer.Controls.LexText
 				var uiItems = listViewContentMapping.Items;
 				foreach (ListViewItem lvi in uiItems)
 				{
-					var content = (MarkerPresenter.ContentMapping)lvi.Tag;
+					var content = (ContentMapping)lvi.Tag;
 
 					if (!(content.LexImportField is ILexImportCustomField))
 					{
@@ -1003,12 +1002,12 @@ namespace LanguageExplorer.Controls.LexText
 					}
 					var customField = (LexImportCustomField)content.LexImportField;
 					var cfChange = m_MappingMgr.TESTTESTTEST(customField);
-					if (cfChange == MarkerPresenter.CFChanges.NoChanges)
+					if (cfChange == CFChanges.NoChanges)
 					{
 						continue;
 					}
 
-					if (cfChange == MarkerPresenter.CFChanges.DoesntExist)
+					if (cfChange == CFChanges.DoesntExist)
 					{
 						// default to the same as if field didn't exist when map was first read
 						content = m_MappingMgr.DefaultContent(content.Marker);
@@ -1140,7 +1139,7 @@ namespace LanguageExplorer.Controls.LexText
 		private void listViewContentMapping_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
 		{
 			// sort
-			listViewContentMapping.ListViewItemSorter = new MarkerPresenter.ListViewItemComparer(e.Column, m_MappingMgr.GetAndChangeColumnSortOrder(e.Column));
+			listViewContentMapping.ListViewItemSorter = new ListViewItemComparer(e.Column, m_MappingMgr.GetAndChangeColumnSortOrder(e.Column));
 		}
 
 		#endregion
@@ -1174,14 +1173,14 @@ namespace LanguageExplorer.Controls.LexText
 
 
 		// The idea here is to sort the individual markers by their source order
-		private class sortClassMarkers : IComparer {
+		private class SortClassMarkers : IComparer {
 			#region IComparer Members
 
 			public int  Compare(object x, object y)
 			{
-				MarkerPresenter.ContentMapping a, b;
-				a = (MarkerPresenter.ContentMapping) x;
-				b = (MarkerPresenter.ContentMapping) y;
+				ContentMapping a, b;
+				a = (ContentMapping) x;
+				b = (ContentMapping) y;
 
 				return a.Order.CompareTo(b.Order);
 			}
@@ -1190,15 +1189,15 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 		// This sorts a collection of marker groups by the source order of the first marker in the group
-		private class sortClasses : IComparer
+		private class SortClasses : IComparer
 		{
 			#region IComparer Members
 
 			public int Compare(object x, object y)
 			{
 				int a, b;
-				a = ((MarkerPresenter.ContentMapping) ((ArrayList) ((DictionaryEntry) x).Value)[0]).Order;
-				b = ((MarkerPresenter.ContentMapping) ((ArrayList) ((DictionaryEntry) y).Value)[0]).Order;
+				a = ((ContentMapping) ((ArrayList) ((DictionaryEntry) x).Value)[0]).Order;
+				b = ((ContentMapping) ((ArrayList) ((DictionaryEntry) y).Value)[0]).Order;
 
 				return a.CompareTo(b);
 			}
@@ -1214,7 +1213,7 @@ namespace LanguageExplorer.Controls.LexText
 			// fill the hashtable with keys[classes] and the contentmapping objects that belong to them
 			foreach (ListViewItem item in classesAndMappingsList)
 			{
-				var info = (MarkerPresenter.ContentMapping)item.Tag;
+				var info = (ContentMapping)item.Tag;
 				if (info.AutoImport)
 				{
 					continue; // autoimport fields can't be taged to start certian classes...
@@ -1243,10 +1242,10 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					continue; // We don't want classes without any markers
 				}
-				markers.Sort(new sortClassMarkers());
+				markers.Sort(new SortClassMarkers());
 				sortedClassMarkers.Add(dict);
 			}
-			sortedClassMarkers.Sort(new sortClasses());
+			sortedClassMarkers.Sort(new SortClasses());
 
 			// now have a hashtable of classes and each contains an arraylist of markers
 			tvBeginMarkers.BeginUpdate();
@@ -1272,7 +1271,7 @@ namespace LanguageExplorer.Controls.LexText
 				// Make it bold because this is a parent node
 				tnode.SelectedImageKey = tnode.ImageKey = "Bullet";
 
-				foreach(MarkerPresenter.ContentMapping field in mappingInfo)
+				foreach(ContentMapping field in mappingInfo)
 				{
 					var cnode = new TreeNode("\\" + field.Marker + " (" + field.DestinationField + ")")
 					{
@@ -1280,8 +1279,8 @@ namespace LanguageExplorer.Controls.LexText
 					};
 					if (field.Exclude ||
 						field.IsLangIgnore || // field.DestinationField == MarkerPresenter.ContentMapping.Ignore() ||
-						field.DestinationField == MarkerPresenter.ContentMapping.Unknown() ||
-						field.LanguageDescriptor == MarkerPresenter.ContentMapping.Unknown())	// can't pick field with unknown lang descriptor
+						field.DestinationField == ContentMapping.Unknown() ||
+						field.LanguageDescriptor == ContentMapping.Unknown())	// can't pick field with unknown lang descriptor
 					{
 						continue;
 					}
@@ -1413,7 +1412,7 @@ namespace LanguageExplorer.Controls.LexText
 			var sfmInfo = new List<FieldHierarchyInfo>();
 			foreach (ListViewItem lvItem in listViewContentMapping.Items)
 			{
-				var info = (MarkerPresenter.ContentMapping)lvItem.Tag;
+				var info = (ContentMapping)lvItem.Tag;
 				if (info == null || info.DestinationField == STATICS.Unknown)
 				{
 					continue;	// skip these from output
@@ -1482,7 +1481,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <returns></returns>
 		private bool IslxFieldAlreadyUnicode()
 		{
-			var info = m_MappingMgr.ContentMappingItems["lx"] as MarkerPresenter.ContentMapping;
+			var info = m_MappingMgr.ContentMappingItems["lx"] as ContentMapping;
 			if (info == null)
 			{
 				return false;
@@ -1492,31 +1491,6 @@ namespace LanguageExplorer.Controls.LexText
 			var langInfo = uiLangs[info.LanguageDescriptor] as LanguageInfoUI;
 			// no encoding converter == Unicode
 			return langInfo != null && langInfo.EncodingConverterName.Length == 0;
-		}
-
-		internal class FlexConverter : Converter
-		{
-			private LcmCache m_cache;
-			private int m_wsEn;
-
-			public FlexConverter(LcmCache cache)
-				: base()
-			{
-				m_cache = cache;
-				m_wsEn = m_cache.WritingSystemFactory.GetWsFromStr("en");
-			}
-
-			protected override string GetMorphTypeInfo(ref string sForm, out string sAlloClass, out string sMorphTypeWs)
-			{
-				var clsid = MoStemAllomorphTags.kClassId;
-				var mmt = sForm.Length > 0 ? MorphServices.FindMorphType(m_cache, ref sForm, out clsid) : m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
-				sAlloClass = m_cache.DomainDataByFlid.MetaDataCache.GetClassName(clsid);
-				int ws;
-				var tss = mmt.Name.GetAlternativeOrBestTss(m_wsEn, out ws);
-				sMorphTypeWs = ws == m_wsEn ? "en" : m_cache.WritingSystemFactory.GetStrFromWs(ws);
-				return tss.Text;
-
-			}
 		}
 
 		/// <summary>
@@ -2914,7 +2888,7 @@ namespace LanguageExplorer.Controls.LexText
 
 			// Save this information selected begin marker or unselected begin marker into
 			// the underlying data structure.
-			var data = tn.Tag as MarkerPresenter.ContentMapping;
+			var data = tn.Tag as ContentMapping;
 			if (data != null)
 			{
 				data.IsBeginMarker = tn.Checked;

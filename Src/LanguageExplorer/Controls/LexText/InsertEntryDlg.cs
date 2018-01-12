@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -34,13 +34,6 @@ namespace LanguageExplorer.Controls.LexText
 	/// </summary>
 	public class InsertEntryDlg : Form, IFlexComponent
 	{
-		public enum MorphTypeFilterType
-		{
-			Prefix,
-			Suffix,
-			Any
-		}
-
 		#region Data members
 
 		private LcmCache m_cache;
@@ -98,7 +91,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// This class allows a dummy LexEntryType replacement for "&lt;Unknown&gt;".
 		/// </summary>
-		internal class DummyEntryType
+		private class DummyEntryType
 		{
 			private readonly string m_sName;
 			private readonly bool m_fIsComplexForm;

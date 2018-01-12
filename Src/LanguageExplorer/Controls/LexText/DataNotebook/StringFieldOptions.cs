@@ -1,12 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MultiLingualFieldOptions.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Windows.Forms;
@@ -17,27 +11,21 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.LexText.DataNotebook
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public partial class StringFieldOptions : UserControl
 	{
 		LcmCache m_cache;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="StringFieldOptions"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public StringFieldOptions()
 		{
 			InitializeComponent();
 		}
 
 		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app,
-			NotebookImportWiz.RnSfMarker rsfm)
+			RnSfMarker rsfm)
 		{
 			m_cache = cache;
 			m_btnAddWritingSystem.Initialize(cache, helpTopicProvider, app);

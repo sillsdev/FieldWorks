@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,14 +15,6 @@ namespace LanguageExplorer.Controls.LexText
 	/// </summary>
 	public class FeatureStructureTreeView : TreeView
 	{
-		public enum ImageKind
-		{
-			complex = 0,
-			feature,
-			radio,
-			radioSelected
-		}
-//		private FeatureTreeNode m_lastSelectedTreeNode = null;
 		private System.Windows.Forms.ImageList imageList1;
 		private System.ComponentModel.IContainer components;
 
@@ -104,7 +96,7 @@ namespace LanguageExplorer.Controls.LexText
 						FeatureTreeNode noneOfTheAboveNode = new FeatureTreeNode(
 							// REVIEW: SHOULD THIS STRING BE LOCALIZED?
 							LexTextControls.ksNoneOfTheAbove,
-							(int)ImageKind.radio, (int)ImageKind.radio, 0,
+							(int)LexTextImageKind.radio, (int)LexTextImageKind.radio, 0,
 							FeatureTreeNodeInfo.NodeKind.Other);
 						InsertNode(noneOfTheAboveNode, childNode);
 					}
@@ -129,7 +121,7 @@ namespace LanguageExplorer.Controls.LexText
 				if (!AlreadyInTree(closed.Hvo, parentNode))
 				{ // avoid duplicates
 					FeatureTreeNode newNode = new FeatureTreeNode(closed.Name.AnalysisDefaultWritingSystem.Text,
-																	  (int)ImageKind.feature, (int)ImageKind.feature,
+																	  (int)LexTextImageKind.feature, (int)LexTextImageKind.feature,
 																	  closed.Hvo, FeatureTreeNodeInfo.NodeKind.Closed);
 					InsertNode(newNode, parentNode);
 
@@ -145,7 +137,7 @@ namespace LanguageExplorer.Controls.LexText
 				if (!AlreadyInTree(complex.Hvo, parentNode))
 				{ // avoid infinite loop if a complex feature's type is the same as other features.
 					FeatureTreeNode newNode = new FeatureTreeNode(complex.Name.BestAnalysisAlternative.Text,
-						(int)ImageKind.complex, (int)ImageKind.complex, complex.Hvo, FeatureTreeNodeInfo.NodeKind.Complex);
+						(int)LexTextImageKind.complex, (int)LexTextImageKind.complex, complex.Hvo, FeatureTreeNodeInfo.NodeKind.Complex);
 					InsertNode(newNode, parentNode);
 					var type = complex.TypeRA;
 					foreach (var defn2 in type.FeaturesRS)
@@ -157,7 +149,7 @@ namespace LanguageExplorer.Controls.LexText
 		private void AddNode(IFsSymFeatVal val, FeatureTreeNode parentNode)
 		{
 			FeatureTreeNode newNode = new FeatureTreeNode(val.Name.BestAnalysisAlternative.Text,
-				(int)ImageKind.radio, (int)ImageKind.radio, val.Hvo, FeatureTreeNodeInfo.NodeKind.SymFeatValue);
+				(int)LexTextImageKind.radio, (int)LexTextImageKind.radio, val.Hvo, FeatureTreeNodeInfo.NodeKind.SymFeatValue);
 			InsertNode(newNode, parentNode);
 		}
 
@@ -182,13 +174,13 @@ namespace LanguageExplorer.Controls.LexText
 				}
 				// did not find the node, so add it and its value (not to be expected, but we'd better deal with it)
 				FeatureTreeNode newNode = new FeatureTreeNode(defn.Name.AnalysisDefaultWritingSystem.Text,
-					(int)ImageKind.feature, (int)ImageKind.feature, defn.Hvo, FeatureTreeNodeInfo.NodeKind.Closed);
+					(int)LexTextImageKind.feature, (int)LexTextImageKind.feature, defn.Hvo, FeatureTreeNodeInfo.NodeKind.Closed);
 				InsertNode(newNode, parentNode);
 				var val = closed.ValueRA;
 				if (val != null)
 				{
 					FeatureTreeNode newValueNode = new FeatureTreeNode(val.Name.AnalysisDefaultWritingSystem.Text,
-						(int)ImageKind.radioSelected, (int)ImageKind.radioSelected, val.Hvo, FeatureTreeNodeInfo.NodeKind.SymFeatValue);
+						(int)LexTextImageKind.radioSelected, (int)LexTextImageKind.radioSelected, val.Hvo, FeatureTreeNodeInfo.NodeKind.SymFeatValue);
 					newValueNode.Chosen = true;
 					InsertNode(newValueNode, newNode);
 				}
@@ -206,7 +198,7 @@ namespace LanguageExplorer.Controls.LexText
 				}
 				// did not find the node, so add it and its value (not to be expected, but we'd better deal with it)
 				FeatureTreeNode newNode = new FeatureTreeNode(defn.Name.AnalysisDefaultWritingSystem.Text,
-					(int)ImageKind.complex, (int)ImageKind.complex, defn.Hvo, FeatureTreeNodeInfo.NodeKind.Complex);
+					(int)LexTextImageKind.complex, (int)LexTextImageKind.complex, defn.Hvo, FeatureTreeNodeInfo.NodeKind.Complex);
 				InsertNode(newNode, parentNode);
 				AddNode((IFsFeatStruc)complex.ValueOA, newNode);
 			}
@@ -225,15 +217,15 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				if (hvoVal == node.Hvo)
 				{ // already there (which is to be expected); mark it as selected
-					node.ImageIndex = (int)ImageKind.radioSelected;
-					node.SelectedImageIndex = (int)ImageKind.radioSelected;
+					node.ImageIndex = (int)LexTextImageKind.radioSelected;
+					node.SelectedImageIndex = (int)LexTextImageKind.radioSelected;
 					node.Chosen = true;
 					return;
 				}
 			}
 			// did not find the node, so add it (not to be expected, but we'd better deal with it)
 			FeatureTreeNode newNode = new FeatureTreeNode(val.Name.AnalysisDefaultWritingSystem.Text,
-				(int)ImageKind.radio, (int)ImageKind.radio, val.Hvo, FeatureTreeNodeInfo.NodeKind.SymFeatValue);
+				(int)LexTextImageKind.radio, (int)LexTextImageKind.radio, val.Hvo, FeatureTreeNodeInfo.NodeKind.SymFeatValue);
 			InsertNode(newNode, parentNode);
 			newNode.Chosen = true;
 		}
@@ -311,7 +303,7 @@ namespace LanguageExplorer.Controls.LexText
 			if (IsTerminalNode(tn))
 			{
 				tn.Chosen = true;
-				tn.ImageIndex = tn.SelectedImageIndex = (int)ImageKind.radioSelected;
+				tn.ImageIndex = tn.SelectedImageIndex = (int)LexTextImageKind.radioSelected;
 				if (tn.Parent != null)
 				{
 					FeatureTreeNode sibling = (FeatureTreeNode)tn.Parent.FirstNode;
@@ -320,7 +312,7 @@ namespace LanguageExplorer.Controls.LexText
 						if (IsTerminalNode(sibling) && sibling != tn)
 						{
 							sibling.Chosen = false;
-							sibling.ImageIndex = sibling.SelectedImageIndex = (int)ImageKind.radio;
+							sibling.ImageIndex = sibling.SelectedImageIndex = (int)LexTextImageKind.radio;
 						}
 						sibling = (FeatureTreeNode)sibling.NextNode;
 					}
@@ -386,85 +378,5 @@ namespace LanguageExplorer.Controls.LexText
 
 		}
 		#endregion
-	}
-	internal class FeatureTreeNode : TreeNode, IComparable
-	{
-		protected bool m_fChosen;
-		public FeatureTreeNode(string sName, int i, int iSel, int iHvo, FeatureTreeNodeInfo.NodeKind eKind) : base(sName, i, iSel)
-		{
-			FeatureTreeNodeInfo info = new FeatureTreeNodeInfo(iHvo, eKind);
-			Tag = info;
-		}
-		public int CompareTo(object obj)
-		{
-			TreeNode node = obj as TreeNode;
-			if (node == null)
-				return 0; // not sure what else to do...
-			return Text.CompareTo(node.Text);
-		}
-		/// <summary>
-		/// Gets/sets whether the node has been chosen by the user
-		/// </summary>
-		/// <remarks>For some reason, using the Checked property of TreeNode did not work.
-		/// I could set Checked to true when loading a feature structure, but when the dialog closed,
-		/// the value would always be false.</remarks>
-		public bool Chosen
-		{
-			get
-			{
-				return m_fChosen;
-			}
-			set
-			{
-				m_fChosen = value;
-			}
-		}
-		/// <summary>
-		/// Hvo associated with the node
-		/// </summary>
-		public int Hvo
-		{
-			get
-			{
-				FeatureTreeNodeInfo info = Tag as FeatureTreeNodeInfo;
-				if (info == null)
-					return 0;
-				else
-					return info.iHvo;
-			}
-		}
-		/// <summary>
-		/// Type of node
-		/// </summary>
-		public FeatureTreeNodeInfo.NodeKind Kind
-		{
-			get
-			{
-				FeatureTreeNodeInfo info = Tag as FeatureTreeNodeInfo;
-				if (info == null)
-					return FeatureTreeNodeInfo.NodeKind.Other;
-				else
-					return info.eKind;
-			}
-		}
-
-
-	}
-	internal class FeatureTreeNodeInfo
-	{
-		public enum NodeKind
-		{
-			Complex = 0,
-			Closed,
-			SymFeatValue,
-			Other
-		}
-		public NodeKind eKind;
-		public int iHvo;
-		public FeatureTreeNodeInfo(int hvo, NodeKind kind)
-		{
-			iHvo = hvo;
-			eKind = kind;
-		}
 	}
 }

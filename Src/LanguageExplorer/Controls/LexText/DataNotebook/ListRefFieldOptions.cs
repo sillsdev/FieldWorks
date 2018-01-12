@@ -1,12 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ListRefFieldOptions.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -20,11 +14,9 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.LexText.DataNotebook
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// This control display the options for list reference fields.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public partial class ListRefFieldOptions : UserControl
 	{
 		LcmCache m_cache;
@@ -112,8 +104,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				m_rbMatchAbbr.Checked = false;
 		}
 
-
-		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app, NotebookImportWiz.RnSfMarker rsfm,
+		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app, RnSfMarker rsfm,
 			CellarPropertyType cpt)
 		{
 			m_cache = cache;
