@@ -235,52 +235,58 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ArchivingTests.cs" />
-    <Compile Include="Interlinear\GlossToolLoadsGuessContentsTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\TextsTriStateTreeViewTests.cs" />
+    <Compile Include="Controls\XMLViews\XmlViewsResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>XmlViewsResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\GlossToolLoadsGuessContentsTests.cs" />
     <Compile Include="Repository\AreaRepositoryTests.cs" />
     <Compile Include="Repository\AreaTestBase.cs" />
-    <Compile Include="DetailControls\AtomicReferenceLauncherTests.cs" />
-    <Compile Include="DetailControls\DataTreeTests.cs" />
-    <Compile Include="DetailControls\PhoneEnvReferenceViewTests.cs" />
-    <Compile Include="DetailControls\SliceFactoryTests.cs" />
-    <Compile Include="DetailControls\SliceTests.cs" />
-    <Compile Include="DetailControls\VectorReferenceLauncherTests.cs" />
-    <Compile Include="Discourse\AdvancedMTDialogLogicTests.cs" />
-    <Compile Include="Discourse\ConstChartRowDecoratorTests.cs" />
-    <Compile Include="Discourse\ConstituentChartDatabaseTests.cs" />
-    <Compile Include="Discourse\ConstituentChartTests.cs">
+    <Compile Include="Controls\DetailControls\AtomicReferenceLauncherTests.cs" />
+    <Compile Include="Controls\DetailControls\DataTreeTests.cs" />
+    <Compile Include="Controls\DetailControls\PhoneEnvReferenceViewTests.cs" />
+    <Compile Include="Controls\DetailControls\SliceFactoryTests.cs" />
+    <Compile Include="Controls\DetailControls\SliceTests.cs" />
+    <Compile Include="Controls\DetailControls\VectorReferenceLauncherTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\AdvancedMTDialogLogicTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\ConstChartRowDecoratorTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\ConstituentChartDatabaseTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\ConstituentChartTests.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Discourse\DiscourseExportTests.cs" />
-    <Compile Include="Discourse\DiscourseTestHelper.cs" />
-    <Compile Include="Discourse\InMemoryDiscourseTestBase.cs" />
-    <Compile Include="Discourse\InMemoryLogicTest.cs" />
-    <Compile Include="Discourse\InMemoryMovedTextTests.cs" />
-    <Compile Include="Discourse\InMemoryMoveEditTests.cs" />
-    <Compile Include="Discourse\InterlinRibbonTests.cs" />
-    <Compile Include="Discourse\LogicTest.cs" />
-    <Compile Include="Discourse\NotifyChangeSpy.cs" />
-    <Compile Include="Discourse\TestCCLogic.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\DiscourseExportTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\DiscourseTestHelper.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\InMemoryDiscourseTestBase.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\InMemoryLogicTest.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\InMemoryMovedTextTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\InMemoryMoveEditTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\InterlinRibbonTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\LogicTest.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\NotifyChangeSpy.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\TestCCLogic.cs" />
     <Compile Include="Repository\GrammarAreaTests.cs" />
-    <Compile Include="Grammar\GoldEticGuidFixerTests.cs" />
-    <Compile Include="Interlinear\AddWordsToLexiconTests.cs" />
-    <Compile Include="Interlinear\BIRDFormatImportTests.cs" />
-    <Compile Include="Interlinear\ComboHandlerTests.cs" />
-    <Compile Include="Interlinear\ComplexConcPatternModelTests.cs" />
-    <Compile Include="Interlinear\ImportInterlinearAnalysesTests.cs" />
-    <Compile Include="Interlinear\InterlinDocForAnalysisTests.cs" />
-    <Compile Include="Interlinear\InterlinearExporterTests.cs" />
-    <Compile Include="Interlinear\InterlinearTextRecordClerkTests.cs" />
-    <Compile Include="Interlinear\InterlinLineChoicesTests.cs" />
-    <Compile Include="Interlinear\InterlinMasterTests.cs" />
-    <Compile Include="Interlinear\InterlinSfmImportTests.cs" />
-    <Compile Include="Interlinear\InterlinTaggingTests.cs" />
-    <Compile Include="Interlinear\MorphemeBreakerTests.cs" />
-    <Compile Include="Interlinear\SandboxBaseTests.cs" />
-    <Compile Include="Interlinear\ShowSpaceDecoratorTests.cs" />
-    <Compile Include="Interlinear\TestTaggingChild.cs">
+    <Compile Include="Areas\Grammar\GoldEticGuidFixerTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\AddWordsToLexiconTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\BIRDFormatImportTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComboHandlerTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcPatternModelTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ImportInterlinearAnalysesTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinDocForAnalysisTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporterTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearTextRecordClerkTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinLineChoicesTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinMasterTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinSfmImportTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinTaggingTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\MorphemeBreakerTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxBaseTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ShowSpaceDecoratorTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\TestTaggingChild.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Interlinear\WordBreakGuesserTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\WordBreakGuesserTests.cs" />
     <Compile Include="LanguageExplorerTestsResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -289,11 +295,11 @@
     <Compile Include="LayoutKeyUtilsTests.cs" />
     <Compile Include="LcmUi\LcmUiTests.cs" />
     <Compile Include="Repository\LexiconAreaTests.cs" />
-    <Compile Include="Lexicon\LexEntryChangeHandlerTests.cs" />
-    <Compile Include="Lexicon\LexReferenceTreeRootLauncherTests.cs" />
-    <Compile Include="Lexicon\CircularRefBreakerTests.cs" />
-    <Compile Include="Lexicon\SortReversalSubEntriesTests.cs" />
-    <Compile Include="Lexicon\TestUtils.cs" />
+    <Compile Include="Areas\Lexicon\LexEntryChangeHandlerTests.cs" />
+    <Compile Include="Areas\Lexicon\LexReferenceTreeRootLauncherTests.cs" />
+    <Compile Include="Areas\Lexicon\CircularRefBreakerTests.cs" />
+    <Compile Include="Areas\Lexicon\SortReversalSubEntriesTests.cs" />
+    <Compile Include="Areas\Lexicon\LexiconTestUtils.cs" />
     <Compile Include="Controls\LexText\LexImportTests.cs" />
     <Compile Include="Controls\LexText\LiftExportTests.cs" />
     <Compile Include="Controls\LexText\LiftMergerTests.cs" />
@@ -305,20 +311,20 @@
     <Compile Include="MGA\MGATests.cs" />
     <Compile Include="Repository\NotebookAreaTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PropertyTableTests.cs" />
-    <Compile Include="PubSubSystemTests.cs" />
+    <Compile Include="Impls\PropertyTableTests.cs" />
+    <Compile Include="Impls\PubSubSystemTests.cs" />
     <Compile Include="SendReceive\LiftBridgeTests.cs" />
-    <Compile Include="SilSidePaneTests\ItemTests.cs" />
-    <Compile Include="SilSidePaneTests\NavPaneOptionsDlgTests.cs" />
-    <Compile Include="SilSidePaneTests\OutlookBarButtonTests.cs" />
-    <Compile Include="SilSidePaneTests\SidePaneTests.cs" />
-    <Compile Include="SilSidePaneTests\TabTests.cs" />
-    <Compile Include="SilSidePaneTests\TestUtilities.cs" />
+    <Compile Include="Controls\SilSidePane\ItemTests.cs" />
+    <Compile Include="Controls\SilSidePane\NavPaneOptionsDlgTests.cs" />
+    <Compile Include="Controls\SilSidePane\OutlookBarButtonTests.cs" />
+    <Compile Include="Controls\SilSidePane\SidePaneTests.cs" />
+    <Compile Include="Controls\SilSidePane\TabTests.cs" />
+    <Compile Include="Controls\SilSidePane\TestUtilities.cs" />
     <Compile Include="SimpleLoggerTests.cs" />
     <Compile Include="TestSetupServices.cs" />
     <Compile Include="Repository\TextAndWordsAreaTests.cs" />
-    <Compile Include="TextsAndWords\RespellingTests.cs" />
-    <Compile Include="TextsAndWords\WordGrammarDebuggingTests.cs" />
+    <Compile Include="Areas\TextsAndWords\RespellingTests.cs" />
+    <Compile Include="Areas\TextsAndWords\WordGrammarDebuggingTests.cs" />
     <Compile Include="Areas\AddCustomFieldDialogTests.cs" />
     <Compile Include="DictionaryConfiguration\AllReversalEntriesRecordListTests.cs" />
     <Compile Include="DictionaryConfiguration\BulkEditBarTests.cs" />
@@ -364,43 +370,38 @@
     <Compile Include="DictionaryConfiguration\Migration\FirstBetaMigratorTests.cs" />
     <Compile Include="DictionaryConfiguration\Migration\PreHistoricMigratorTests.cs" />
     <Compile Include="DictionaryConfiguration\Migration\StubContentControlProvider.cs" />
-    <Compile Include="XMLViews\ConfiguredExportTests.cs" />
-    <Compile Include="XMLViews\DhListViewTests.cs" />
-    <Compile Include="XMLViews\LayoutMergerTests.cs" />
-    <Compile Include="XMLViews\Resources.Designer.cs">
-      <DependentUpon>Resources.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="XMLViews\SearchEngineTests.cs" />
-    <Compile Include="XMLViews\SimpleDataParser.cs" />
-    <Compile Include="XMLViews\TestColumnConfigureDialog.cs" />
-    <Compile Include="XMLViews\TestLayoutMerge.cs" />
-    <Compile Include="XMLViews\TestManyOneBrowse.cs" />
-    <Compile Include="XMLViews\TestNeededPropertyInfo.cs" />
-    <Compile Include="XMLViews\TestObjectListPublisher.cs" />
-    <Compile Include="XMLViews\TestPartGenerate.cs" />
-    <Compile Include="XMLViews\TestXmlBrowseView.cs" />
-    <Compile Include="XMLViews\TestXmlViewsDataCache.cs" />
-    <Compile Include="XMLViews\TestXmlViewsUtils.cs" />
-    <Compile Include="XMLViews\XhtmlHelperTests.cs" />
-    <Compile Include="XMLViews\XmlBrowseViewBaseTests.cs">
+    <Compile Include="Controls\XMLViews\ConfiguredExportTests.cs" />
+    <Compile Include="Controls\XMLViews\DhListViewTests.cs" />
+    <Compile Include="Controls\XMLViews\LayoutMergerTests.cs" />
+    <Compile Include="Controls\XMLViews\SearchEngineTests.cs" />
+    <Compile Include="Controls\XMLViews\SimpleDataParser.cs" />
+    <Compile Include="Controls\XMLViews\TestColumnConfigureDialog.cs" />
+    <Compile Include="Controls\XMLViews\TestLayoutMerge.cs" />
+    <Compile Include="Controls\XMLViews\TestManyOneBrowse.cs" />
+    <Compile Include="Controls\XMLViews\TestNeededPropertyInfo.cs" />
+    <Compile Include="Controls\XMLViews\TestObjectListPublisher.cs" />
+    <Compile Include="Controls\XMLViews\TestPartGenerate.cs" />
+    <Compile Include="Controls\XMLViews\TestXmlBrowseView.cs" />
+    <Compile Include="Controls\XMLViews\TestXmlViewsDataCache.cs" />
+    <Compile Include="Controls\XMLViews\TestXmlViewsUtils.cs" />
+    <Compile Include="Controls\XMLViews\XhtmlHelperTests.cs" />
+    <Compile Include="Controls\XMLViews\XmlBrowseViewBaseTests.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="XMLViews\XmlBrowseViewBaseVcTests.cs" />
-    <Compile Include="XMLViews\XmlVcTests.cs" />
+    <Compile Include="Controls\XMLViews\XmlBrowseViewBaseVcTests.cs" />
+    <Compile Include="Controls\XMLViews\XmlVcTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="BuildInclude.targets" />
-    <None Include="DetailControls\Test.fwlayout" />
-    <None Include="Interlinear\FlexTextImport\FlexTextExportOutput.flextext" />
-    <None Include="XMLViews\LayoutMergerTestData\LexEntry.fwlayout" />
-    <None Include="XMLViews\LayoutMergerTestData\LexSense.fwlayout" />
-    <None Include="XMLViews\LayoutMergerTestData\Morphology.fwlayout" />
+    <None Include="Controls\DetailControls\Test.fwlayout" />
+    <None Include="Areas\TextsAndWords\Interlinear\FlexTextImport\FlexTextExportOutput.flextext" />
+    <None Include="Controls\XMLViews\LayoutMergerTestData\LexEntry.fwlayout" />
+    <None Include="Controls\XMLViews\LayoutMergerTestData\LexSense.fwlayout" />
+    <None Include="Controls\XMLViews\LayoutMergerTestData\Morphology.fwlayout" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DetailControls\TestParts.xml" />
+    <Content Include="Controls\DetailControls\TestParts.xml" />
     <Content Include="Controls\LexText\FeatureSystem2.xml" />
     <Content Include="Controls\LexText\FeatureSystem3.xml" />
     <None Include="SettingsBackup\db_TestLocal_Settings.xml" />
@@ -408,43 +409,45 @@
     <Content Include="DictionaryConfiguration\strings-en.xml" />
     <Content Include="DictionaryConfiguration\strings-es-MX.xml" />
     <Content Include="DictionaryConfiguration\strings-fr.xml" />
-    <Content Include="XMLViews\LayoutMergerTestData\LexEntryParts.xml" />
-    <Content Include="XMLViews\LayoutMergerTestData\LexSenseParts.xml" />
-    <None Include="XMLViews\LayoutMergerTestData\LexSensePartsOutput.xml" />
-    <Content Include="XMLViews\LayoutMergerTestData\MorphologyParts.xml" />
-    <Content Include="XMLViews\LayoutMergerTestData\My_Stem-based_LexEntry_Layouts.xml" />
-    <None Include="XMLViews\LayoutMergerTestData\NewMaster.xml" />
-    <None Include="XMLViews\LayoutMergerTestData\User.xml" />
-    <Content Include="XMLViews\Resources\Layouts.xml" />
-    <Content Include="XMLViews\Resources\Parts.xml" />
-    <None Include="XMLViews\Resources\TextCacheModel.xml" />
+    <Content Include="Controls\XMLViews\LayoutMergerTestData\LexEntryParts.xml" />
+    <Content Include="Controls\XMLViews\LayoutMergerTestData\LexSenseParts.xml" />
+    <None Include="Controls\XMLViews\LayoutMergerTestData\LexSensePartsOutput.xml" />
+    <Content Include="Controls\XMLViews\LayoutMergerTestData\MorphologyParts.xml" />
+    <Content Include="Controls\XMLViews\LayoutMergerTestData\My_Stem-based_LexEntry_Layouts.xml" />
+    <None Include="Controls\XMLViews\LayoutMergerTestData\NewMaster.xml" />
+    <None Include="Controls\XMLViews\LayoutMergerTestData\User.xml" />
+    <None Include="Controls\XMLViews\Resources\Layouts.xml" />
+    <None Include="Controls\XMLViews\Resources\Parts.xml" />
+    <None Include="Controls\XMLViews\Resources\TextCacheModel.xml" />
     <None Include="DictionaryConfiguration\TestData\AudioFiles\abu2.wav" />
     <None Include="DictionaryConfiguration\TestData\ConfigurationSettings\Dictionary\ProjectDictionaryOverrides.css" />
     <None Include="DictionaryConfiguration\TestData\ConfigurationSettings\ReversalIndex\ProjectReversalOverrides.css" />
-    <None Include="Interlinear\ExportTestFiles\Phase1-KalabaTest.xml" />
-    <None Include="Interlinear\ExportTestFiles\Phase1-KalabaTestPunctuation.xml" />
-    <None Include="Interlinear\ExportTestFiles\Phase1-KalabaTestPunctuationWordAlignedXLingPap.xml" />
-    <None Include="Interlinear\ExportTestFiles\Phase1-KalabaTestWordAlignedXLingPap.xml" />
-    <None Include="Interlinear\ExportTestFiles\Phase1-OrizabaLesson2.xml" />
-    <None Include="Interlinear\ExportTestFiles\Phase1-OrizabaLesson2WordAlignedXLingPap.xml" />
-    <None Include="Interlinear\ExportTestFiles\Phase1-SETepehuanCorn.xml" />
-    <None Include="Interlinear\ExportTestFiles\SETepehuanCornSingleListExample.xml" />
-    <None Include="Interlinear\ExportTestFiles\SETepehuanCornWordsAppendix.xml" />
-    <Content Include="Interlinear\InterlinearExporterTests.xml" />
-    <Content Include="Interlinear\ParagraphParserTestTexts.xml" />
+    <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-KalabaTest.xml" />
+    <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-KalabaTestPunctuation.xml" />
+    <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-KalabaTestPunctuationWordAlignedXLingPap.xml" />
+    <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-KalabaTestWordAlignedXLingPap.xml" />
+    <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-OrizabaLesson2.xml" />
+    <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-OrizabaLesson2WordAlignedXLingPap.xml" />
+    <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-SETepehuanCorn.xml" />
+    <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\SETepehuanCornSingleListExample.xml" />
+    <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\SETepehuanCornWordsAppendix.xml" />
+    <Content Include="Areas\TextsAndWords\Interlinear\InterlinearExporterTests.xml" />
+    <Content Include="Areas\TextsAndWords\Interlinear\ParagraphParserTestTexts.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="LanguageExplorerTestsResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>LanguageExplorerTestsResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="XMLViews\Resources.resx">
+    <EmbeddedResource Include="Controls\XMLViews\XmlViewsResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <LastGenOutput>XmlViewsResources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="TextsAndWords\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="BuildInclude.targets" />
 </Project>
