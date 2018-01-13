@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -115,11 +115,9 @@ namespace LanguageExplorer.Controls
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="HtmlControl"/> class.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public HtmlControl()
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -155,6 +153,7 @@ namespace LanguageExplorer.Controls
 				m_browser.Refresh();
 			}
 		}
+
 		/// <summary>
 		/// Invoke "go forward" in browser history
 		/// </summary>
@@ -182,18 +181,6 @@ namespace LanguageExplorer.Controls
 			// Let the owning class know
 			HtmlControlEventArgs e = new HtmlControlEventArgs(url);
 			OnHCBeforeNavigate(e);
-			/*
-			try
-			{
-				System.Windows.Forms.MessageBox.Show("Going to URL: " + url);
-				//wasHandled=m_hostShell.HandleNavigationEvent(URL);
-			}
-			catch (Exception error)
-			{
-				System.Windows.Forms.MessageBox.Show("There was an error handling the click. "
-					+ error.Message, "Program Error");
-			}
-			*/
 		}
 
 		/// <summary>
@@ -238,14 +225,12 @@ namespace LanguageExplorer.Controls
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
 		/// resources; <c>false</c> to release only unmanaged resources.
 		/// </param>
-		/// -----------------------------------------------------------------------------------
 		protected override void Dispose( bool disposing )
 		{
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -310,34 +295,4 @@ namespace LanguageExplorer.Controls
 		}
 		#endregion
 	}
-
-	/// <summary>
-	/// Special event args class for Html Control
-	/// </summary>
-	public class HtmlControlEventArgs : EventArgs
-	{
-		private readonly string m_sUrl;
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="sUrl"></param>
-		public HtmlControlEventArgs(string sUrl)
-		{
-			m_sUrl = sUrl;
-		}
-
-		/// <summary>
-		/// Get the event's URL.
-		/// </summary>
-		public string URL
-		{
-			get { return m_sUrl;}
-		}
-	}
-
-	/// <summary>
-	/// Delegate declaration.
-	/// </summary>
-	public delegate void HtmlControlEventHandler(object sender, HtmlControlEventArgs e);
 }

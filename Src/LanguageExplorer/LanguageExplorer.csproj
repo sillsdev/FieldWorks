@@ -319,6 +319,7 @@
     <Compile Include="Areas\TreebarAvailability.cs" />
     <Compile Include="Areas\TreeBarHandlerAwareRecordList.cs" />
     <Compile Include="Controls\DetailControls\TypeAheadSupportVc.cs" />
+    <Compile Include="Controls\HtmlControlEventArgs.cs" />
     <Compile Include="Controls\LexText\CFChanges.cs" />
     <Compile Include="Controls\LexText\ContentMapping.cs" />
     <Compile Include="Controls\LexText\DataNotebook\CharMapping.cs" />

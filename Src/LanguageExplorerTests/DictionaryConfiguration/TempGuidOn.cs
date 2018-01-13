@@ -8,6 +8,13 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
+	/// <summary>
+	/// Intended to be used in unit tests to set, then reset on disposal, the Guid of CmObject.
+	/// </summary>
+	/// <remarks>
+	/// Since this is a disposable class, one needs to dispose of it, such as in a <code>using</code> statement.
+	/// </remarks>
+	/// <typeparam name="T">An ICmObject class of object.</typeparam>
 	internal sealed class TempGuidOn<T> : IDisposable where T : ICmObject
 	{
 		internal T Item { get; }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,6 +8,11 @@ using System.Windows.Forms;
 
 namespace LanguageExplorer.Controls
 {
+	/// <summary>
+	/// Signature for a method to be run when the Timer elapses or the TextChanged event occurs.
+	/// </summary>
+	public delegate void Searcher();
+
 	/// <summary>
 	/// This class is intended to be used with a text box (FwTextBox) to handle timing
 	/// of user input and then doing some search function after either a pause or a
@@ -22,11 +27,6 @@ namespace LanguageExplorer.Controls
 		private List<Control> m_controlsToDisable;
 
 		private readonly Searcher m_searcher;
-
-		/// <summary>
-		/// Signature for a method to be run when the Timer elapses or the TextChanged event occurs.
-		/// </summary>
-		public delegate void Searcher();
 
 		/// <summary>
 		/// Creates a SearchTimer.
