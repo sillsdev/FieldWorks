@@ -14,7 +14,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -43,7 +42,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private const string s_helpTopic = "khtpConfigureInterlinearLines";
 		private HelpProvider helpProvider;
 
-		private Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection> m_cachedComboBoxes;
+		private Dictionary<WsComboContent, ComboBox.ObjectCollection> m_cachedComboBoxes;
 		private IContainer components;
 
 		bool m_fUpdatingWsCombo = false; // true during UpdateWsCombo
@@ -69,7 +68,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 
-			m_cachedComboBoxes = new Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection>();
+			m_cachedComboBoxes = new Dictionary<WsComboContent, ComboBox.ObjectCollection>();
 
 			m_cache = cache;
 			m_choices = choices;
@@ -360,9 +359,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// This is used to create an object collection with the appropriate writing system choices to be used in wsCombo.  The reason it is cached is because
 		/// list generation will require looping through each kind of combo box several times.
 		/// </summary>
-		/// <param name="comboContent"></param>
-		/// <returns></returns>
-		private ComboBox.ObjectCollection WsComboItems(ColumnConfigureDialog.WsComboContent comboContent)
+		private ComboBox.ObjectCollection WsComboItems(WsComboContent comboContent)
 		{
 			return WsComboItemsInternal(m_cache, wsCombo, m_cachedComboBoxes, comboContent);
 		}
@@ -379,8 +376,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="owner"></param>
 		/// <returns></returns>
 		internal static ComboBox.ObjectCollection WsComboItemsInternal(LcmCache cache, ComboBox owner,
-			Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection> cachedBoxes,
-			ColumnConfigureDialog.WsComboContent comboContent)
+			Dictionary<WsComboContent, ComboBox.ObjectCollection> cachedBoxes,
+			WsComboContent comboContent)
 		{
 			ComboBox.ObjectCollection objectCollection;
 			if (!cachedBoxes.ContainsKey(comboContent))
@@ -391,8 +388,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// only be "real" writing systems.  So, English will be added, but not "Default Analysis".
 				// This functionality should eventually go away.  See LT-4740.
 				// JohnT: it now partially has, two lines support 'best analysis'.
-				ColumnConfigureDialog.AddWritingSystemsToCombo(cache, objectCollection, comboContent,
-					comboContent != ColumnConfigureDialog.WsComboContent.kwccBestAnalysis);
+				ColumnConfigureDialog.AddWritingSystemsToCombo(cache, objectCollection, comboContent, comboContent != WsComboContent.kwccBestAnalysis);
 				cachedBoxes[comboContent] = objectCollection;
 			}
 			else

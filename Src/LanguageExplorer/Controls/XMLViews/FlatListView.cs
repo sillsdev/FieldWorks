@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,11 +15,7 @@ using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public partial class FlatListView : UserControl
 	{
 		/// <summary>
@@ -44,11 +40,9 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		#region Construction and Initialization
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FlatListView"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public FlatListView()
 		{
 			InitializeComponent();
@@ -58,11 +52,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Create and initialize the browse view, storing the data it will display.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="stylesheet">The stylesheet.</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="xnConfig">The config node.</param>
-		/// <param name="objs">The objs.</param>
 		public void Initialize(LcmCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable,
 			XElement xnConfig, IEnumerable<ICmObject> objs)
 		{
@@ -79,8 +68,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// TODO: Call InitializeFlexComponent on m_bvList.
 			// TODO: Call FinishInitialization on m_bvList and feed it ObjectListFlid for the 'madeUpFieldIdentifier' parameter.
 #endif
-			m_bvList = new BrowseViewer(m_configNode, m_cache.LanguageProject.Hvo, m_cache,
-				null, m_listPublisher)
+			m_bvList = new BrowseViewer(m_configNode, m_cache.LanguageProject.Hvo, m_cache, null, m_listPublisher)
 			{
 				Location = new Point(0, 0),
 				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right,
@@ -99,18 +87,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Store the given hvos in the cache as a fake vector property belonging to the
 		/// language project.
 		/// </summary>
-		/// <param name="objs">The objs.</param>
 		private void StoreData(IEnumerable<ICmObject> objs)
 		{
-			var rghvo = (from obj in objs
-						 select obj.Hvo).ToArray();
-			m_listPublisher.CacheVecProp(m_cache.LanguageProject.Hvo, rghvo);
+			m_listPublisher.CacheVecProp(m_cache.LanguageProject.Hvo, objs.Select(obj => obj.Hvo).ToArray());
 		}
 		#endregion
 
 		#region IDisposable Members
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// This method throws an ObjectDisposedException if IsDisposed returns
 		/// true.  This is the case where a method or property in an object is being
@@ -118,12 +102,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// This method should be added to all public properties and methods of this
 		/// object and all other objects derived from it (extensive).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(
-					String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		#endregion
@@ -132,32 +116,26 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void m_bvList_SelectionChanged(object sender, FwObjectSelectionEventArgs e)
 		{
-			if (SelectionChanged != null)
-				SelectionChanged(this, e);
+			SelectionChanged?.Invoke(this, e);
 		}
 
 		/// <summary>
 		/// Set the initial list of checked items.
 		/// </summary>
-		/// <param name="objs">The objs.</param>
 		public void SetCheckedItems(IEnumerable<ICmObject> objs)
 		{
 			CheckDisposed();
 
-			var rghvo = (from obj in objs
-						 select obj.Hvo).ToArray();
-			m_bvList.SetCheckedItems(rghvo);
+			m_bvList.SetCheckedItems(objs.Select(obj => obj.Hvo).ToArray());
 		}
 
 		/// <summary>
 		/// Retrieve the final list of checked items.
 		/// </summary>
-		/// <returns></returns>
 		public IEnumerable<ICmObject> GetCheckedItems()
 		{
 			CheckDisposed();
-			return from hvo in m_bvList.CheckedItems
-				   select m_cache.ServiceLocator.GetObject(hvo);
+			return m_bvList.CheckedItems.Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
 		}
 
 		/// <summary>

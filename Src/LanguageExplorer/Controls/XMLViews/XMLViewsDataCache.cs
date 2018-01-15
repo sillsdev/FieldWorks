@@ -1,16 +1,13 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Xml.Linq;
-using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
-using SIL.Xml;
 using HvoFlidKey = SIL.LCModel.Application.HvoFlidKey;
 using HvoFlidWSKey = SIL.LCModel.Application.HvoFlidWSKey;
 
@@ -71,7 +68,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal const int ktagAlternateValueMultiBaseLim = 92000100;
 
 		// Stores override values (when value is different from DefaultSelected) for ktagItemSelected.
-		private readonly Dictionary<int, int> m_selectedCache;
 
 		private readonly Dictionary<HvoFlidKey, int> m_integerCache = new Dictionary<HvoFlidKey, int>();
 		private readonly Dictionary<HvoFlidWSKey, ITsString> m_mlStringCache = new Dictionary<HvoFlidWSKey, ITsString>();
@@ -92,8 +88,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			: base(domainDataByFlid)
 		{
 			DefaultSelected = defaultSelected;
-			m_selectedCache = selectedItems;
-			SetOverrideMdc(new XmlViewsMdc(domainDataByFlid.MetaDataCache as IFwMetaDataCacheManaged));
+			SelectedCache = selectedItems;
+			SetOverrideMdc(new XmlViewsMetaDataCacheDecorator(domainDataByFlid.MetaDataCache as IFwMetaDataCacheManaged));
 			m_tagReversalEntriesBulkText = domainDataByFlid.MetaDataCache.GetFieldId("LexSense", "ReversalEntriesBulkText", false);
 		}
 
@@ -101,8 +97,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Simpler constructor supplies default args
 		/// </summary>
 		internal XMLViewsDataCache(ISilDataAccessManaged domainDataByFlid, bool defaultSelected)
-			: this(domainDataByFlid, defaultSelected,
-			new Dictionary<int, int>())
+			: this(domainDataByFlid, defaultSelected, new Dictionary<int, int>())
 		{
 		}
 
@@ -113,7 +108,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		// The cache that controls ktagSelected along with DefaultSelected. Should only be used to save
 		// for creating a new instance later.
-		internal Dictionary<int, int> SelectedCache { get { return m_selectedCache; } }
+		internal Dictionary<int, int> SelectedCache { get; }
 
 		/// <summary>
 		/// Override to support fake integer properties.
@@ -130,8 +125,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				case ktagActiveColumn: // Fall through
 				case ktagItemEnabled: // Fall through
 					int result;
-					if (m_integerCache.TryGetValue(new HvoFlidKey(hvo,  tag), out result))
+					if (m_integerCache.TryGetValue(new HvoFlidKey(hvo, tag), out result))
+					{
 						return result;
+					}
 					return 0;
 				case ktagItemSelected:
 					return GetItemSelectedValue(hvo);
@@ -141,17 +138,16 @@ namespace LanguageExplorer.Controls.XMLViews
 		private int GetItemSelectedValue(int hvo)
 		{
 			int sel;
-			if (m_selectedCache.TryGetValue(hvo, out sel))
+			if (SelectedCache.TryGetValue(hvo, out sel))
+			{
 				return sel;
+			}
 			return DefaultSelected ? 1 : 0;
 		}
 
 		/// <summary>
 		/// Override to work with fake flids.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="tag"></param>
-		/// <returns></returns>
 		public override int get_ObjectProp(int hvo, int tag)
 		{
 			switch (tag)
@@ -166,9 +162,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Override to work with fake flid.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="tag"></param>
-		/// <returns></returns>
 		public override int get_VecSize(int hvo, int tag)
 		{
 			return tag == ktagTagMe ? -1 : base.get_VecSize(hvo, tag);
@@ -177,9 +170,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Override to support fake integer properties.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="tag"></param>
-		/// <param name="n"></param>
 		public override void SetInt(int hvo, int tag, int n)
 		{
 			switch (tag)
@@ -193,7 +183,9 @@ namespace LanguageExplorer.Controls.XMLViews
 						var key = new HvoFlidKey(hvo,  tag);
 						int oldVal;
 						if (m_integerCache.TryGetValue(key, out oldVal) && oldVal == n)
+						{
 							return; // unchanged, avoid especially PropChanged.
+						}
 						m_integerCache[key] = n;
 						SendPropChanged(hvo, tag, 0, 0, 0);
 					}
@@ -201,8 +193,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				case ktagItemSelected:
 					{
 						if (GetItemSelectedValue(hvo) == n)
+						{
 							return; // unchanged, avoid especially PropChanged.
-						m_selectedCache[hvo] = n;
+						}
+						SelectedCache[hvo] = n;
 						SendPropChanged(hvo, tag, 0, 0, 0);
 					}
 					break;
@@ -217,13 +211,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			switch (tag)
 			{
 				default:
-					if (tag == m_tagReversalEntriesBulkText &&
-						m_mlStringCache.ContainsKey(new HvoFlidWSKey(hvo, tag, ws)))
+					if (tag == m_tagReversalEntriesBulkText && m_mlStringCache.ContainsKey(new HvoFlidWSKey(hvo, tag, ws)))
 					{
 							return true;
 					}
 					if (tag >= ktagAlternateValueMultiBase && tag < ktagAlternateValueMultiBaseLim)
+					{
 						return m_stringCache.ContainsKey(new HvoFlidKey(hvo, tag));
+					}
 					return base.get_IsPropInCache(hvo, tag, cpt, ws);
 				case ktagTagMe:
 					return true; // hvo can always be itself.
@@ -249,13 +244,19 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				result1 = base.get_MultiStringAlt(hvo, tag, ws);
 				if (tag != m_tagReversalEntriesBulkText)
+				{
 					return result1;
+				}
 			}
 			ITsString result;
 			if (m_mlStringCache.TryGetValue(new HvoFlidWSKey(hvo, tag, ws), out result))
+			{
 				return result;
+			}
 			if (tag == m_tagReversalEntriesBulkText && result1 != null)
+			{
 				return result1;
+			}
 			return TsStringUtils.EmptyString(ws);
 		}
 
@@ -278,7 +279,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				base.SetMultiStringAlt(hvo, tag, ws, tss);
 				// Keep a local copy.
 				if (tag == m_tagReversalEntriesBulkText)
+				{
 					CacheMultiString(hvo, tag, ws, tss);
+				}
 				return;
 			}
 			CacheMultiString(hvo, tag, ws, tss);
@@ -294,7 +297,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				ITsString result;
 				if (m_stringCache.TryGetValue(new HvoFlidKey(hvo, tag), out result))
+				{
 					return result;
+				}
 				// Try to find a sensible WS from existing data, avoiding a crash if possible.
 				// See FWR-3598.
 				ITsString tss = null;
@@ -302,11 +307,13 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					tss = m_stringCache[x];
 					if (x.Flid == tag)
+					{
 						break;
+					}
 				}
 				if (tss == null)
 				{
-					foreach (HvoFlidWSKey x in m_mlStringCache.Keys)
+					foreach (var x in m_mlStringCache.Keys)
 					{
 						return TsStringUtils.EmptyString(x.Ws);
 					}
@@ -330,10 +337,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			if ((tag == ktagAlternateValue) || (tag >= ktagAlternateValueMultiBase && tag < ktagAlternateValueMultiBaseLim))
 			{
-				int oldLen = 0;
+				var oldLen = 0;
 				ITsString oldVal;
 				if (m_stringCache.TryGetValue(new HvoFlidKey(hvo, tag), out oldVal))
+				{
 					oldLen = oldVal.Length;
+				}
 				m_stringCache[new HvoFlidKey(hvo, tag)] = _tss;
 				SendPropChanged(hvo, tag, 0, _tss.Length, oldLen);
 				return;
@@ -344,54 +353,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Remove any ktagAlternateValueMultiBase values for this hvo
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="tag"></param>
 		public void RemoveMultiBaseStrings(int hvo, int tag)
 		{
 			m_stringCache.Remove(new HvoFlidKey(hvo, tag));
-		}
-
-	}
-
-	class XmlViewsMdc : LcmMetaDataCacheDecoratorBase
-	{
-		public XmlViewsMdc(IFwMetaDataCacheManaged metaDataCache) : base(metaDataCache)
-		{
-		}
-
-		public override void AddVirtualProp(string bstrClass, string bstrField, int luFlid, int type)
-		{
-			throw new NotImplementedException();
-		}
-
-		// So far, this is the only query that needs to know about the virtual props.
-		// It may not even need to know about all of these.
-		public override string GetFieldName(int flid)
-		{
-			switch (flid)
-			{
-				case XMLViewsDataCache.ktagTagMe: return "Me";
-				case XMLViewsDataCache.ktagActiveColumn: return "ActiveColumn";
-				case XMLViewsDataCache.ktagAlternateValue: return "AlternateValue";
-				case XMLViewsDataCache.ktagItemEnabled: return "ItemEnabled";
-				case XMLViewsDataCache.ktagItemSelected: return "ItemSelected";
-			}
-			// Paste operations currently require the column to have some name.
-			if (flid >= XMLViewsDataCache.ktagEditColumnBase && flid < XMLViewsDataCache.ktagEditColumnLim)
-				return "RdeColumn" + (flid - XMLViewsDataCache.ktagEditColumnBase);
-			if (flid >= XMLViewsDataCache.ktagAlternateValueMultiBase && flid < XMLViewsDataCache.ktagAlternateValueMultiBaseLim)
-				return "PhonFeatColumn" + (flid - XMLViewsDataCache.ktagAlternateValueMultiBase);
-			return base.GetFieldName(flid);
-		}
-
-		public override int GetFieldType(int luFlid)
-		{
-			// This is a bit arbitrary. Technically, the form column isn't formattable, while the one shadowing
-			// Definition could be. But pretending all are Unicode just means Collect Words can't do formatting
-			// of definitions, while allowing it in the Form could lead to crashes when we copy to the real field.
-			if (luFlid >= XMLViewsDataCache.ktagEditColumnBase && luFlid < XMLViewsDataCache.ktagEditColumnLim)
-				return (int)CellarPropertyType.Unicode;
-			return base.GetFieldType(luFlid);
 		}
 	}
 }

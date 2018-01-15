@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -285,7 +285,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_recursionProtection = true;
 #endif
 
-			m_bvMatches.SelectedRowHighlighting = XmlBrowseViewBase.SelectionHighlighting.border;
+			m_bvMatches.SelectedRowHighlighting = SelectionHighlighting.border;
 			base.OnEnter(e);
 			m_bvMatches.Select();
 
@@ -301,7 +301,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected override void OnLeave(EventArgs e)
 		{
 			base.OnLeave(e);
-			m_bvMatches.SelectedRowHighlighting = XmlBrowseViewBase.SelectionHighlighting.all;
+			m_bvMatches.SelectedRowHighlighting = SelectionHighlighting.all;
 		}
 
 		#endregion Event Handlers

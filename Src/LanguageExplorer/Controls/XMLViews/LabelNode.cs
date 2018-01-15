@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,11 +12,9 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
-	/// ------------------------------------------------------------------------------------
 	/// <summary>
 	/// This override to TreeNode handles the displaying of an ObjectLabel in a custom way
 	/// </summary>
-	/// ------------------------------------------------------------------------------------
 	public class LabelNode : TreeNode
 	{
 		/// <summary></summary>
@@ -29,7 +27,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Return the basic string representing the label for this node.
 		/// </summary>
-		protected virtual string BasicNodeString { get { return Label.AsTss.Text; } }
+		protected virtual string BasicNodeString => Label.AsTss.Text;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LabelNode"/> class.
@@ -44,18 +42,19 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_displayUsage = displayUsage;
 			m_fEnabled = true;
 			m_enabledColor = ForeColor;
-			ITsString tssDisplay = label.AsTss;
+			var tssDisplay = label.AsTss;
 			int wsVern;
-			if (HasVernacularText(tssDisplay, label.Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(ws => ws.Handle),
-								  out wsVern))
+			if (HasVernacularText(tssDisplay, label.Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(ws => ws.Handle), out wsVern))
 			{
 				NodeFont = GetVernacularFont(label.Cache.WritingSystemFactory, wsVern, stylesheet);
 			}
 			SetNodeText();
 			if (label.HaveSubItems)
+			{
 				// this is a hack to make the node expandable before we have filled in any
 				// actual children
 				Nodes.Add(new TreeNode("should not see this"));
+			}
 		}
 
 		/// <summary>
@@ -78,12 +77,14 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void SetNodeText()
 		{
-			string text = BasicNodeString;
+			var text = BasicNodeString;
 			if (m_displayUsage)
 			{
 				var count = CountUsages();
 				if (count > 0)
+				{
 					text += " (" + count + ")";
+				}
 			}
 			Text = text;
 		}
@@ -92,21 +93,22 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Count how many references this item has. Virtual so a subclass can use a different
 		/// algorithm (c.f. SemanticDomainsChooser's DomainNode).
 		/// </summary>
-		/// <returns></returns>
 		protected virtual int CountUsages()
 		{
 			// Don't count the reference from an overlay, since we have no way to tell
 			// how many times that overlay has been used.  See FWR-1050.
-			ObjectLabel label = Label;
-			int count = 0;
+			var label = Label;
+			var count = 0;
 			// I think only label.Object is likely to be null, but let's prevent crashes thoroughly.
-			if (label != null && label.Object != null && label.Object.ReferringObjects != null)
+			if (label?.Object?.ReferringObjects != null)
 			{
 				count = label.Object.ReferringObjects.Count;
-				foreach (ICmObject x in label.Object.ReferringObjects)
+				foreach (var x in label.Object.ReferringObjects)
 				{
 					if (x is ICmOverlay)
+					{
 						--count;
+					}
 				}
 			}
 			return count;
@@ -115,12 +117,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		private static bool HasVernacularText(ITsString tss, IEnumerable<int> vernWses, out int wsVern)
 		{
 			wsVern = 0;
-			int crun = tss.RunCount;
-			for (int irun = 0; irun < crun; irun++)
+			var crun = tss.RunCount;
+			for (var irun = 0; irun < crun; irun++)
 			{
-				ITsTextProps ttp = tss.get_Properties(irun);
+				var ttp = tss.get_Properties(irun);
 				int nvar;
-				int ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out nvar);
+				var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out nvar);
 				if (vernWses.Any(vernWS => ws == vernWS))
 				{
 					wsVern = ws;
@@ -130,14 +132,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			return false;
 		}
 
-		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Resets the vernacular font.
 		/// </summary>
-		/// <param name="wsf">The WSF.</param>
-		/// <param name="wsVern">The ws vern.</param>
-		/// <param name="stylesheet">The stylesheet.</param>
-		/// --------------------------------------------------------------------------------
 		public void ResetVernacularFont(ILgWritingSystemFactory wsf, int wsVern, IVwStylesheet stylesheet)
 		{
 			NodeFont = GetVernacularFont(wsf, wsVern, stylesheet);
@@ -147,29 +144,19 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			if (stylesheet == null)
 			{
-				ILgWritingSystem wsEngine = wsf.get_EngineOrNull(wsVern);
-				string fontName = wsEngine.DefaultFontName;
+				var wsEngine = wsf.get_EngineOrNull(wsVern);
+				var fontName = wsEngine.DefaultFontName;
 				return new Font(fontName, (float)10.0);
 			}
-			else
-			{
-				return FontHeightAdjuster.GetFontForNormalStyle(wsVern, stylesheet, wsf);
-			}
+			return FontHeightAdjuster.GetFontForNormalStyle(wsVern, stylesheet, wsf);
 		}
 
-		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the label.
 		/// </summary>
 		/// <value>The label.</value>
-		/// --------------------------------------------------------------------------------
-		public ObjectLabel Label
-		{
-			get
-			{
-				return (ObjectLabel) Tag;
-			}
-		}
+		public ObjectLabel Label => (ObjectLabel) Tag;
+
 		/// <summary>
 		/// Add the children nodes of a particular node in the tree. Do this recursively if
 		/// that parameter is set to true. Also set the node as Checked if is it in the set
@@ -184,21 +171,29 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				// This already has its nodes, but what about its children if recursive?
 				if (!recursively)
+				{
 					return;
+				}
 				foreach (LabelNode node in Nodes)
+				{
 					node.AddChildren(true, chosenObjs);
+				}
 				return;
 			}
 			Nodes.Clear(); // get rid of the dummy.
 
 			AddSecondaryNodes(this, Nodes, chosenObjs);
-			foreach (ObjectLabel label in ((ObjectLabel)Tag).SubItems)
+			foreach (var label in ((ObjectLabel)Tag).SubItems)
 			{
 				if (!WantNodeForLabel(label))
+				{
 					continue;
-				LabelNode node = Create(label, m_stylesheet, m_displayUsage);
+				}
+				var node = Create(label, m_stylesheet, m_displayUsage);
 				if (chosenObjs != null)
+				{
 					node.Checked = chosenObjs.Contains(label.Object);
+				}
 				Nodes.Add(node);
 				AddSecondaryNodes(node, node.Nodes, chosenObjs);
 				if (recursively)
@@ -207,23 +202,18 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 			}
 		}
-		/// --------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Wants the node for label.
 		/// </summary>
-		/// <param name="label">The label.</param>
-		/// <returns></returns>
-		/// --------------------------------------------------------------------------------
 		public virtual bool WantNodeForLabel(ObjectLabel label)
 		{
 			return true; // by default want all nodes.
 		}
+
 		/// <summary>
 		/// Adds the secondary nodes.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// <param name="nodes">The nodes.</param>
-		/// <param name="chosenObjs">The chosen objects.</param>
 		public virtual void AddSecondaryNodes(LabelNode node, TreeNodeCollection nodes, IEnumerable<ICmObject> chosenObjs)
 		{
 			// default is to do nothing
@@ -232,10 +222,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Creates the specified LabelNode from the ObjectLabel.
 		/// </summary>
-		/// <param name="nol"></param>
-		/// <param name="stylesheet"></param>
-		/// <param name="displayUsage"><c>true</c> if usage statistics will be displayed; otherwise, <c>false</c>.</param>
-		/// <returns></returns>
 		protected virtual LabelNode Create(ObjectLabel nol, IVwStylesheet stylesheet, bool displayUsage)
 		{
 			return new LabelNode(nol, stylesheet, displayUsage);
@@ -246,8 +232,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// While adding nodes if a match is found for objToSelect then nodeRepresentingCurrentChoice assigned to it
 		/// and is returned. Otherwise if no node in the tree matches objToSelect this method returns null.
 		/// </summary>
-		public virtual LabelNode AddChildrenAndLookForSelected (ICmObject objToSelect,
-			Stack<ICmObject> ownershipStack, IEnumerable<ICmObject> chosenObjs)
+		public virtual LabelNode AddChildrenAndLookForSelected (ICmObject objToSelect, Stack<ICmObject> ownershipStack, IEnumerable<ICmObject> chosenObjs)
 		{
 			LabelNode nodeRepresentingCurrentChoice = null;
 			// JohnT: if this.Nodes[0] is not a LabelNode, it is a dummy node we added so that
@@ -255,25 +240,25 @@ namespace LanguageExplorer.Controls.XMLViews
 			// we can expand. Therefore finding one of those, or finding more or less than one
 			// node, is evidence that we haven't previously computed the real children of this,
 			// and should do so.
-			bool fExpanded = Nodes.Count != 1 || (Nodes[0] as LabelNode) != null;
+			var fExpanded = Nodes.Count != 1 || (Nodes[0] as LabelNode) != null;
 			if (!fExpanded)
 			{
 				Nodes.Clear();
-				nodeRepresentingCurrentChoice = AddSecondaryNodesAndLookForSelected(this,
-					Nodes, nodeRepresentingCurrentChoice, objToSelect, ownershipStack, chosenObjs);
-				foreach (ObjectLabel label in ((ObjectLabel) Tag).SubItems)
+				nodeRepresentingCurrentChoice = AddSecondaryNodesAndLookForSelected(this, Nodes, nodeRepresentingCurrentChoice, objToSelect, ownershipStack, chosenObjs);
+				foreach (var label in ((ObjectLabel) Tag).SubItems)
 				{
 					if (!WantNodeForLabel(label))
+					{
 						continue;
-					LabelNode node = Create(label, m_stylesheet, m_displayUsage);
+					}
+					var node = Create(label, m_stylesheet, m_displayUsage);
 					if (chosenObjs != null)
+					{
 						node.Checked = chosenObjs.Contains(label.Object);
+					}
 					Nodes.Add(node);
-					nodeRepresentingCurrentChoice = CheckForSelection(label, objToSelect,
-						node, nodeRepresentingCurrentChoice);
-					nodeRepresentingCurrentChoice = AddSecondaryNodesAndLookForSelected(
-						node, node.Nodes, nodeRepresentingCurrentChoice, objToSelect,
-						ownershipStack, chosenObjs);
+					nodeRepresentingCurrentChoice = CheckForSelection(label, objToSelect, node, nodeRepresentingCurrentChoice);
+					nodeRepresentingCurrentChoice = AddSecondaryNodesAndLookForSelected(node, node.Nodes, nodeRepresentingCurrentChoice, objToSelect, ownershipStack, chosenObjs);
 				}
 			}
 			else
@@ -282,8 +267,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				// children for matches, and perhaps expand some of them.
 				foreach (LabelNode node in Nodes)
 				{
-					nodeRepresentingCurrentChoice = CheckForSelection(node.Label,
-						objToSelect, node, nodeRepresentingCurrentChoice);
+					nodeRepresentingCurrentChoice = CheckForSelection(node.Label, objToSelect, node, nodeRepresentingCurrentChoice);
 				}
 			}
 			if (nodeRepresentingCurrentChoice == null)
@@ -292,8 +276,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					if (ownershipStack.Contains(node.Label.Object))
 					{
-						nodeRepresentingCurrentChoice =	node.AddChildrenAndLookForSelected(
-							objToSelect, ownershipStack, chosenObjs);
+						nodeRepresentingCurrentChoice =	node.AddChildrenAndLookForSelected(objToSelect, ownershipStack, chosenObjs);
 						return nodeRepresentingCurrentChoice;
 					}
 				}
@@ -305,18 +288,12 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			return nodeRepresentingCurrentChoice;
 		}
+
 		/// <summary>
 		/// Add secondary nodes to tree at nodes (and check any that occur in rghvoChosen),
 		/// and return the one whose hvo is hvoToSelect, or nodeRepresentingCurrentChoice
 		/// if none match.
 		/// </summary>
-		/// <param name="node">node to be added</param>
-		/// <param name="nodes">where to add it</param>
-		/// <param name="nodeRepresentingCurrentChoice">The node representing current choice.</param>
-		/// <param name="objToSelect">The obj to select.</param>
-		/// <param name="ownershipStack">The ownership stack.</param>
-		/// <param name="chosenObjs">The chosen objects.</param>
-		/// <returns></returns>
 		public virtual LabelNode AddSecondaryNodesAndLookForSelected(LabelNode node,
 			TreeNodeCollection nodes, LabelNode nodeRepresentingCurrentChoice,
 			ICmObject objToSelect, Stack<ICmObject> ownershipStack, IEnumerable<ICmObject> chosenObjs)
@@ -324,14 +301,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			// default is to do nothing
 			return nodeRepresentingCurrentChoice;
 		}
+
 		/// <summary>
 		/// Checks for selection.
 		/// </summary>
-		/// <param name="label">The label.</param>
-		/// <param name="objToSelect">The obj to select.</param>
-		/// <param name="node">The node.</param>
-		/// <param name="nodeRepresentingCurrentChoice">The node representing current choice.</param>
-		/// <returns></returns>
 		protected virtual LabelNode CheckForSelection(ObjectLabel label, ICmObject objToSelect,
 			LabelNode node, LabelNode nodeRepresentingCurrentChoice)
 		{

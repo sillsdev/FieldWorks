@@ -704,7 +704,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			bool fMorphemeLevel = false;
 			bool fWordLevel = true;
 			int flidString = 0;
-			ColumnConfigureDialog.WsComboContent comboContent = ColumnConfigureDialog.WsComboContent.kwccAnalysis; // The usual choice
+			WsComboContent comboContent = WsComboContent.kwccAnalysis; // The usual choice
 			switch (flid)
 			{
 				case kflidWord:
@@ -722,7 +722,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					fMorphemeLevel = true;
 					ws = WritingSystemServices.kwsFirstAnal;
 					flidString = LexSenseTags.kflidGloss;
-					comboContent = ColumnConfigureDialog.WsComboContent.kwccBestAnalysis;
+					comboContent = WsComboContent.kwccBestAnalysis;
 					break; // analysis, morpheme
 				case kflidLexPos:
 					fMorphemeLevel = true;
@@ -730,7 +730,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// so just do it when we have the actual hvos.
 					flidString = -1;
 					ws = WritingSystemServices.kwsFirstAnal;
-					comboContent = ColumnConfigureDialog.WsComboContent.kwccBestAnalysis;
+					comboContent = WsComboContent.kwccBestAnalysis;
 					break; // analysis, morpheme
 				case kflidWordGloss:
 					ws = m_wsDefAnal;
@@ -738,7 +738,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case kflidWordPos:
 					ws = WritingSystemServices.kwsFirstAnal;
 					flidString = CmPossibilityTags.kflidAbbreviation;
-					comboContent = ColumnConfigureDialog.WsComboContent.kwccBestAnalysis;
+					comboContent = WsComboContent.kwccBestAnalysis;
 					break; // not morpheme-level
 				case kflidFreeTrans:
 				case kflidLitTrans:
@@ -746,7 +746,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					fWordLevel = false;
 					break;
 				case kflidNote:
-					comboContent = ColumnConfigureDialog.WsComboContent.kwccVernAndAnal;
+					comboContent = WsComboContent.kwccVernAndAnal;
 					ws = m_wsDefAnal;
 					fWordLevel = false;
 					break;
@@ -758,7 +758,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					ws = mdc.GetFieldWs(flid);
 					fWordLevel = false;
-					comboContent = ColumnConfigureDialog.WsComboContent.kwccAnalAndVern;
+					comboContent = WsComboContent.kwccAnalAndVern;
 					break;
 			}
 			InterlinLineSpec spec = new InterlinLineSpec();
@@ -1191,7 +1191,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		bool m_fMorpheme;
 		bool m_fWord;
 		int m_flidString; // the string property to use with m_ws
-		ColumnConfigureDialog.WsComboContent m_comboContent;
+		WsComboContent m_comboContent;
 		ITsString m_tssWsLabel;
 
 		public InterlinLineSpec()
@@ -1214,7 +1214,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			set { m_flid = value; }
 		}
 
-		public ColumnConfigureDialog.WsComboContent ComboContent
+		public WsComboContent ComboContent
 		{
 			get { return m_comboContent; }
 			set { m_comboContent = value; }

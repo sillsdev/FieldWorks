@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -89,38 +89,32 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
-		/// <summary></summary>
+		/// <summary />
 		protected int m_hvoRoot;
-		/// <summary></summary>
+		/// <summary />
 		protected string m_layoutName;
-		/// <summary></summary>
+		/// <summary />
 		protected XElement m_xnSpec;
-		/// <summary></summary>
+		/// <summary />
 		protected XmlVc m_xmlVc;
-		/// <summary></summary>
+		/// <summary />
 		protected IFwMetaDataCache m_mdc;
-		/// <summary></summary>
+		/// <summary />
 		protected bool m_fEditable = true;
-		bool m_fInChangeSelectedObjects = false;
-		private ISilDataAccess m_sda;
+		bool m_fInChangeSelectedObjects;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:XmlView"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public XmlView()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 		}
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:XmlView"/> class.
 		/// </summary>
-		/// <param name="hvoRoot">The hvo root.</param>
-		/// <param name="xnSpec">The xn spec.</param>
-		/// ------------------------------------------------------------------------------------
 		public XmlView(int hvoRoot, XElement xnSpec)
 		{
 			InitXmlViewRootSpec(hvoRoot, xnSpec);
@@ -149,7 +143,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public XmlView(int hvo, string layoutName, bool fEditable, ISilDataAccess sda)
 			: this(hvo, layoutName, fEditable)
 		{
-			m_sda = sda;
+			DecoratedDataAccess = sda;
 		}
 
 		private void InitXmlViewRootSpec(int hvoRoot, XElement xnSpec)
@@ -167,19 +161,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			CheckDisposed();
 
 			// Don't crash if we don't have any view content yet.  See LT-7244.
-			if (m_xmlVc != null)
-				m_xmlVc.ResetTables();
-			if (RootBox != null)
-				this.RootBox.Reconstruct();
+			m_xmlVc?.ResetTables();
+			RootBox?.Reconstruct();
 		}
 
 		/// <summary>
 		/// Get the (possibly decorated) SDA used to display data in this view.
 		/// </summary>
-		public ISilDataAccess DecoratedDataAccess
-		{
-			get { return m_sda; }
-		}
+		public ISilDataAccess DecoratedDataAccess { get; private set; }
 
 		/// <summary>
 		/// Reset the tables in the VC, and set a new layout, typically when the XML your view
@@ -191,12 +180,15 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			// Don't crash if we don't have any view content yet.  See LT-7244.
 			if (m_xmlVc != null)
+			{
 				m_xmlVc.ResetTables(sNewLayout);
-			// but save the new layout name just the same.  See FWR-2887.
+			}
 			else
+			{
+				// but save the new layout name just the same.  See FWR-2887.
 				m_layoutName = sNewLayout;
-			if (RootBox != null)
-				this.RootBox.Reconstruct();
+			}
+			RootBox?.Reconstruct();
 		}
 
 		/// <summary>
@@ -207,16 +199,15 @@ namespace LanguageExplorer.Controls.XMLViews
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			base.Dispose( disposing );
 
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			m_xmlVc = null;
 			m_layoutName = null;
@@ -227,13 +218,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Causes XMLViews to be editable by default.
 		/// </summary>
-		public static new Color DefaultBackColor
-		{
-			get
-			{
-				return System.Drawing.SystemColors.Window;
-			}
-		}
+		public new static Color DefaultBackColor => SystemColors.Window;
 
 		#region Component Designer generated code
 		/// <summary>
@@ -246,37 +231,37 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Override this method in your subclass.
 		/// It should make a root box and initialize it with appropriate data and
 		/// view constructor, etc.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public override void MakeRoot()
 		{
 			CheckDisposed();
 
 			if (m_cache == null || DesignMode)
+			{
 				return;
+			}
 
 			base.MakeRoot();
 
-			if (m_sda == null)
-				m_sda = m_cache.DomainDataByFlid;
+			if (DecoratedDataAccess == null)
+			{
+				DecoratedDataAccess = m_cache.DomainDataByFlid;
+			}
 
 			Debug.Assert(m_layoutName != null, "No layout name.");
-			var app = PropertyTable == null ? null : PropertyTable.GetValue<IFlexApp>("App");
-			m_xmlVc = new XmlVc(m_layoutName, m_fEditable, this, app, m_sda)
+			var app = PropertyTable.GetValue<IFlexApp>("App");
+			m_xmlVc = new XmlVc(m_layoutName, m_fEditable, this, app, DecoratedDataAccess)
 			{
 				Cache = m_cache,
-				DataAccess = m_sda
+				DataAccess = DecoratedDataAccess
 			};
-			// let it use the decorator if any.
 
-			m_rootb.DataAccess = m_sda;
-			//if (this.EditingHelper != null)
-			//    this.EditingHelper.Editable = m_fEditable;
+			// let it use the decorator if any.
+			m_rootb.DataAccess = DecoratedDataAccess;
 			RootObjectHvo = m_hvoRoot;
 		}
 
@@ -290,43 +275,41 @@ namespace LanguageExplorer.Controls.XMLViews
 				CheckDisposed();
 
 				m_hvoRoot = value;
-				int frag = 1; // magic number ALWAYS used for root fragment in this type of view.
-				m_rootb.SetRootObject(m_hvoRoot, m_xmlVc, frag, m_styleSheet);
+				m_rootb.SetRootObject(m_hvoRoot, m_xmlVc, 1 /* magic number ALWAYS used for root fragment in this type of view. */, m_styleSheet);
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Selections the changed.
 		/// </summary>
-		/// <param name="prootb">The prootb.</param>
-		/// <param name="sel">The sel.</param>
-		/// ------------------------------------------------------------------------------------
 		protected override void HandleSelectionChange(IVwRootBox prootb, IVwSelection sel)
 		{
 			CheckDisposed();
 
 			if (m_fInChangeSelectedObjects)
+			{
 				return;
+			}
 			m_fInChangeSelectedObjects = true;
 			try
 			{
-				int cvsli = 0;
-
+				var cvsli = 0;
 				// Out variables for AllTextSelInfo.
-				int ihvoRoot = 0;
-				int tagTextProp = 0;
-				int cpropPrevious = 0;
-				int ichAnchor = 0;
-				int ichEnd = 0;
-				int ws = 0;
-				bool fAssocPrev = false;
-				int ihvoEnd = 0;
+				var ihvoRoot = 0;
+				var tagTextProp = 0;
+				var cpropPrevious = 0;
+				var ichAnchor = 0;
+				var ichEnd = 0;
+				var ws = 0;
+				var fAssocPrev = false;
+				var ihvoEnd = 0;
 				ITsTextProps ttpBogus = null;
-				SelLevInfo[] rgvsli = new SelLevInfo[0];
+				var rgvsli = new SelLevInfo[0];
 
-				List<int> newSelectedObjects = new List<int>(4);
-				newSelectedObjects.Add(XmlVc.FocusHvo);
+				var newSelectedObjects = new List<int>(4)
+				{
+					XmlVc.FocusHvo
+				};
 				if (sel != null)
 				{
 					cvsli = sel.CLevels(false) - 1;
@@ -334,7 +317,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli,
 						out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
 						out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
-					for (int i = 0; i < cvsli; i++)
+					for (var i = 0; i < cvsli; i++)
 					{
 						newSelectedObjects.Add(rgvsli[i].hvo);
 					}
@@ -346,13 +329,14 @@ namespace LanguageExplorer.Controls.XMLViews
 					m_xmlVc.SelectedObjects = newSelectedObjects;
 					// Generate propChanged calls that force the relevant parts of the view to redraw
 					// to indicate which command icons should be visible.
-					foreach (int hvo in changed)
+					foreach (var hvo in changed)
+					{
 						m_rootb.PropChanged(hvo, XmlVc.IsObjectSelectedTag, 0, 1, 1);
+					}
 					if (sel != null && !sel.IsValid)
 					{
 						// we wiped it out by regenerating parts of the display in our PropChanged calls! Restore it if we can.
-						sel = m_rootb.MakeTextSelection(ihvoRoot, cvsli, rgvsli, tagTextProp,
-							cpropPrevious, ichAnchor, ichEnd, ws, fAssocPrev, ihvoEnd, ttpBogus, true);
+						sel = m_rootb.MakeTextSelection(ihvoRoot, cvsli, rgvsli, tagTextProp, cpropPrevious, ichAnchor, ichEnd, ws, fAssocPrev, ihvoEnd, ttpBogus, true);
 					}
 				}
 			}
@@ -382,17 +366,16 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// When we get focus, start filtering messages to catch characters
 		/// </summary>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnGotFocus(EventArgs e)
 		{
 			m_xmlVc.HasFocus = true;
 			if (!m_xmlVc.SelectedObjects.Contains(XmlVc.FocusHvo))
+			{
 				m_xmlVc.SelectedObjects.Add(XmlVc.FocusHvo);
+			}
 			UpdateFocusCommandIconVisibility();
 			base.OnGotFocus(e);
 		}
@@ -403,20 +386,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			// a WM_ACTIVATE message is handled, and its call chain can get to here when m_rootb is null.
 			// This simple fix is a band-aid, and the code still smells, although the origin of the
 			// code is not apparent.
-			if (m_rootb != null)
-			{
-				// This causes the critical part of the view to redraw to hide or show the icon,
-				// because the XmlVc.AddCommandIcon method made the icon 'depend on' this fake property.
-				m_rootb.PropChanged(XmlVc.FocusHvo, XmlVc.IsObjectSelectedTag, 0, 1, 1);
-			}
+			// This causes the critical part of the view to redraw to hide or show the icon,
+			// because the XmlVc.AddCommandIcon method made the icon 'depend on' this fake property.
+			m_rootb?.PropChanged(XmlVc.FocusHvo, XmlVc.IsObjectSelectedTag, 0, 1, 1);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Raises the <see cref="E:System.Windows.Forms.Control.LostFocus"/> event.
 		/// </summary>
-		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnLostFocus(EventArgs e)
 		{
 			m_xmlVc.HasFocus = false;
@@ -432,7 +409,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (m_rootb != null)
 			{
 				foreach (var hvo in oldSelectedObjects)
+				{
 					m_rootb.PropChanged(hvo, XmlVc.IsObjectSelectedTag, 0, 1, 1);
+				}
 			}
 			base.OnLostFocus(e);
 		}

@@ -345,7 +345,7 @@ namespace LanguageExplorer.Areas
 						continue;
 					}
 				}
-				var gsc = new GuidAndSubClass(poss.Guid, LexReferenceInfo.TypeSubClass.Normal);
+				var gsc = new GuidAndSubClass(poss.Guid, TypeSubClass.Normal);
 				if (lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair ||
 					lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair ||
 					lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair ||
@@ -353,7 +353,7 @@ namespace LanguageExplorer.Areas
 					lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree ||
 					lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseTree)
 				{
-					gsc.SubClass = LexReferenceInfo.TypeSubClass.Forward;
+					gsc.SubClass = TypeSubClass.Forward;
 				}
 				if (!setSortedGuids.Contains(gsc))
 				{
@@ -363,9 +363,9 @@ namespace LanguageExplorer.Areas
 						};
 					ltn.RelTypeList.Add(lri);
 				}
-				if (gsc.SubClass == LexReferenceInfo.TypeSubClass.Forward)
+				if (gsc.SubClass == TypeSubClass.Forward)
 				{
-					gsc.SubClass = LexReferenceInfo.TypeSubClass.Reverse;
+					gsc.SubClass = TypeSubClass.Reverse;
 					if (!setSortedGuids.Contains(gsc))
 					{
 						var lri = new LexReferenceInfo(true, poss.Guid)
@@ -381,7 +381,7 @@ namespace LanguageExplorer.Areas
 			foreach (var poss in m_rgRelationTypes)
 			{
 				var lrt = (ILexRefType)poss;
-				var gsc = new GuidAndSubClass(lrt.Guid, LexReferenceInfo.TypeSubClass.Normal);
+				var gsc = new GuidAndSubClass(lrt.Guid, TypeSubClass.Normal);
 				if (lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair ||
 					lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair ||
 					lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair ||
@@ -389,12 +389,12 @@ namespace LanguageExplorer.Areas
 					lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree ||
 					lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseTree)
 				{
-					gsc.SubClass = LexReferenceInfo.TypeSubClass.Forward;
+					gsc.SubClass = TypeSubClass.Forward;
 				}
 				mapGuidType.Add(gsc, lrt);
-				if (gsc.SubClass == LexReferenceInfo.TypeSubClass.Forward)
+				if (gsc.SubClass == TypeSubClass.Forward)
 				{
-					var gsc2 = new GuidAndSubClass(lrt.Guid, LexReferenceInfo.TypeSubClass.Reverse);
+					var gsc2 = new GuidAndSubClass(lrt.Guid, TypeSubClass.Reverse);
 					mapGuidType.Add(gsc2, lrt);
 				}
 			}
@@ -406,7 +406,7 @@ namespace LanguageExplorer.Areas
 			foreach (var lri in ltn.RelTypeList)
 			{
 				var lrt = mapGuidType[new GuidAndSubClass(lri.ItemGuid, lri.SubClass)];
-				if (lri.SubClass == LexReferenceInfo.TypeSubClass.Reverse)
+				if (lri.SubClass == TypeSubClass.Reverse)
 					lri.Name = lrt.ReverseName.BestAnalysisVernacularAlternative.Text;
 				else
 					lri.Name = lrt.Name.BestAnalysisVernacularAlternative.Text;
@@ -842,7 +842,7 @@ namespace LanguageExplorer.Areas
 				foreach (var lri in ltnDup.RelTypeList)
 				{
 					var lrt = repoLexRefType.GetObject(lri.ItemGuid);
-					if (lri.SubClass == LexReferenceInfo.TypeSubClass.Reverse)
+					if (lri.SubClass == TypeSubClass.Reverse)
 						lri.Name = lrt.ReverseName.BestAnalysisVernacularAlternative.Text;
 					else
 						lri.Name = lrt.Name.BestAnalysisVernacularAlternative.Text;
@@ -3266,9 +3266,9 @@ namespace LanguageExplorer.Areas
 		private sealed class GuidAndSubClass
 		{
 			private Guid ItemGuid { get; set; }
-			internal LexReferenceInfo.TypeSubClass SubClass { get; set; }
+			internal TypeSubClass SubClass { get; set; }
 
-			internal GuidAndSubClass(Guid guid, LexReferenceInfo.TypeSubClass sub)
+			internal GuidAndSubClass(Guid guid, TypeSubClass sub)
 			{
 				ItemGuid = guid;
 				SubClass = sub;

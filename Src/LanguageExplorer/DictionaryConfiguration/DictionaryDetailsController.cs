@@ -746,7 +746,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 						// REVIEW (Hasso) 2014.05: is there a less-expensive, equally-robust, way of appending the direction marker (:f or :r)?
 						Tag = new LexReferenceInfo(true, relType.Guid)
 						{
-							SubClass = LexReferenceInfo.TypeSubClass.Forward
+							SubClass = TypeSubClass.Forward
 						}.StorageString.Substring(1) // substring removes the leading "+";
 					});
 					if (!LexRefTypeTags.IsUnidirectional(mappingType))
@@ -756,7 +756,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 							Checked = true,
 							Tag = new LexReferenceInfo(true, relType.Guid)
 							{
-								SubClass = LexReferenceInfo.TypeSubClass.Reverse
+								SubClass = TypeSubClass.Reverse
 							}.StorageString.Substring(1)
 						});
 					}
@@ -768,7 +768,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 						Checked = true,
 						Tag = new LexReferenceInfo(true, relType.Guid)
 						{
-							SubClass = LexReferenceInfo.TypeSubClass.Normal
+							SubClass = TypeSubClass.Normal
 						}.StorageString.Substring(1)
 					});
 				}

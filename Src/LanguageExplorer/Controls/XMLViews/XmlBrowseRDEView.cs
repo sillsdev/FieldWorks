@@ -25,9 +25,7 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary> XML Browse View for Rapid Data Entry (Collect Words) </summary>
-	/// ----------------------------------------------------------------------------------------
 	internal class XmlBrowseRDEView : XmlBrowseViewBase, IUndoRedoHandler
 	{
 		#region Data members
@@ -43,18 +41,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// see XmlBrowseViewBase OnGotFocus
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnGotFocus(EventArgs e)
 		{
 			base.OnGotFocus(e);
 			SetSelection();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:XmlBrowseRDEView"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public XmlBrowseRDEView()
 		{
 			// This call is required by the Windows Form Designer.
@@ -69,7 +64,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -81,25 +78,14 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			if( disposing )
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the specified node spec.
 		/// </summary>
-		/// <param name="nodeSpec">The node spec.</param>
-		/// <param name="hvoRoot">The hvo root.</param>
-		/// <param name="madeUpFieldIdentifier">The made up field identifier.</param>
-		/// <param name="cache">The cache.</param>
-		/// <param name="bv">The bv.</param>
-		/// ------------------------------------------------------------------------------------
-		public override void Init(XElement nodeSpec, int hvoRoot, int madeUpFieldIdentifier,
-			LcmCache cache, BrowseViewer bv)
+		public override void Init(XElement nodeSpec, int hvoRoot, int madeUpFieldIdentifier, LcmCache cache, BrowseViewer bv)
 		{
 			CheckDisposed();
 
@@ -111,13 +97,10 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		#region Properties
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Return the VC. It has some important functions related to interpreting fragment IDs
 		/// that the filter bar needs.
 		/// </summary>
-		/// <value>The vc.</value>
-		/// ------------------------------------------------------------------------------------
 		internal override XmlBrowseViewBaseVc Vc
 		{
 			get
@@ -132,25 +115,16 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the RDE vc.
 		/// </summary>
-		/// <value>The RDE vc.</value>
-		/// ------------------------------------------------------------------------------------
-		protected XmlRDEBrowseViewVc RDEVc
-		{
-			get { return m_xbvvc as XmlRDEBrowseViewVc; }
-		}
+		protected XmlRDEBrowseViewVc RDEVc => m_xbvvc as XmlRDEBrowseViewVc;
 
 		/// <summary>
 		/// True if we are running the read-only version of the view that is primarily used for
 		/// selecting.
 		/// </summary>
-		protected override bool ReadOnlySelect
-		{
-			get { return false; }
-		}
+		protected override bool ReadOnlySelect => false;
 
 		/// <summary>
 		/// Overrides the selected row highlighting method so the highlighting will always be none instead of being reliant on
@@ -197,16 +171,13 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// the object that has properties that are shown by this view.
 		/// </summary>
-		/// <value></value>
 		/// <remarks> this will be changed often in the case where this view is dependent on another one;
 		/// that is, or some other browse view has a list and each time to selected item changes, our
 		/// root object changes.
 		/// </remarks>
-		/// ------------------------------------------------------------------------------------
 		public override int RootObjectHvo
 		{
 			set
@@ -222,8 +193,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// In general, we just want to make sure to scroll to the current selection,
 		/// or if none exists, make one in the new row and scroll there.
 		/// </summary>
-		/// <param name="hvo">ignore</param>
-		/// <param name="index">ignore</param>
+		/// <remarks>
+		/// Both parameters are ignored.
+		/// </remarks>
 		protected override void DoSelectAndScroll(int hvo, int index)
 		{
 			if (m_rootb == null)
@@ -257,10 +229,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Cleanup any pending edits.
 		/// </summary>
-		/// <returns>True to cancel the window closing, otherwise false.</returns>
+		/// <returns>Always retruns false.</returns>
 		private bool CleanupPendingEdits()
 		{
-			var cancelClose = false;
+			const bool cancelClose = false;
 			ITsString[] rgtss;
 			if (CanGotoNextRow(out rgtss))
 			{
@@ -280,6 +252,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			return cancelClose;
 		}
+
 		/// <summary>
 		/// Check whether we have enough data entered in this row to go on to create another row.
 		/// </summary>
@@ -305,13 +278,13 @@ namespace LanguageExplorer.Controls.XMLViews
 				// get column label without writing system or extraneous information.
 				var columnBasicLabel = LocalizeIfPossible(columnLabelComponents[0]);
 				// true if we find any Word column entry of nonzero length.
-				if (!fCanGotoNextRow &&
-					columnBasicLabel == LocalizeIfPossible("Word") &&
-					rgtss[i - 1].Length > 0)
+				if (!fCanGotoNextRow && columnBasicLabel == LocalizeIfPossible("Word") && rgtss[i - 1].Length > 0)
 				{
 					var s = rgtss[i - 1].Text;
 					if (s.Trim().Length > 0)
+					{
 						fCanGotoNextRow = true;
+					}
 				}
 			}
 			return fCanGotoNextRow;
@@ -319,19 +292,16 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private ITsString[] GetColumnStringsFromNewRow()
 		{
-			ITsString[] rgtss;
 			ISilDataAccess sda = m_bv.SpecialCache;
 			var columns = m_xbvvc.ColumnSpecs;
 			// Conceptual model class.
-			rgtss = new ITsString[columns.Count];
+			var rgtss = new ITsString[columns.Count];
 			for (var i = 1; i <= columns.Count; ++i)
 			{
 				var kflid = XMLViewsDataCache.ktagEditColumnBase + i;
-				int wsCol = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.ConvertElement(columns[i - 1]), null,
-					m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
+				var wsCol = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.ConvertElement(columns[i - 1]), null, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 				// Get the string for each column.
-				rgtss[i - 1] = sda.get_MultiStringAlt(XmlRDEBrowseViewVc.khvoNewItem,
-					kflid, wsCol);
+				rgtss[i - 1] = sda.get_MultiStringAlt(XmlRDEBrowseViewVc.khvoNewItem, kflid, wsCol);
 			}
 			return rgtss;
 		}
@@ -349,8 +319,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			for (var i = 1; i <= columns.Count; ++i)
 			{
 				var kflid = XMLViewsDataCache.ktagEditColumnBase + i;
-				int wsCol = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.ConvertElement(columns[i - 1]), null,
-					m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
+				var wsCol = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.ConvertElement(columns[i - 1]), null, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 				sda.SetMultiStringAlt(XmlRDEBrowseViewVc.khvoNewItem, kflid, wsCol, TsStringUtils.EmptyString(wsCol));
 			}
 			// Set the selection to the first column.
@@ -371,11 +340,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <returns>true if the key press has been handled, otherwise false.</returns>
 		private bool ProcessRDEKeyPress(char keyPressed)
 		{
-			IVwSelection vwsel = m_rootb.Selection;
+			var vwsel = m_rootb.Selection;
 			if (vwsel == null)
+			{
 				return false;
+			}
 
-			int cvsli = vwsel.CLevels(false) - 1;
+			var cvsli = vwsel.CLevels(false) - 1;
 			int ihvoRoot;
 			int tagTextProp;
 			int cpropPrevious;
@@ -385,30 +356,34 @@ namespace LanguageExplorer.Controls.XMLViews
 			bool fAssocPrev;
 			int ihvoEnd;
 			ITsTextProps ttp;
-			SelLevInfo[] rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli,
+			var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli,
 				out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
 				out ws, out fAssocPrev, out ihvoEnd, out ttp);
 
-			bool fNewOrEditable = rgvsli[0].hvo == XmlRDEBrowseViewVc.khvoNewItem;
+			var fNewOrEditable = rgvsli[0].hvo == XmlRDEBrowseViewVc.khvoNewItem;
 			if (!fNewOrEditable)
 			{
-				for (int i = 0; i < cvsli; ++i)
+				for (var i = 0; i < cvsli; ++i)
 				{
-					if (RDEVc.EditableObjectsContains(rgvsli[i].hvo))
+					if (!RDEVc.EditableObjectsContains(rgvsli[i].hvo))
 					{
-						fNewOrEditable = true;
-						break;
+						continue;
 					}
+					fNewOrEditable = true;
+					break;
 				}
 				if (!fNewOrEditable)
+				{
 					return false;
+				}
 			}
 
 			var columns = m_xbvvc.ColumnSpecs;
 			if (columns == null || columns.Count == 0)
+			{
 				return false;		// Something is broken!
+			}
 
-			ITsString[] rgtss;
 			var retval = true;
 			switch (keyPressed)
 			{
@@ -419,8 +394,11 @@ namespace LanguageExplorer.Controls.XMLViews
 					ScrollToCurrentSelection();
 					break;
 				case '\r':
+					ITsString[] rgtss;
 					if (!CanGotoNextRow(out rgtss))
+					{
 						return true;
+					}
 					HandleEnterKey(rgtss);
 					break;
 			}
@@ -431,9 +409,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Handle a tab key.
 		/// </summary>
-		/// <param name="vwsel"></param>
-		/// <param name="rgtss"></param>
-		/// <returns></returns>
 		private bool CanAdvanceToNewRow(IVwSelection vwsel, out ITsString[] rgtss)
 		{
 			rgtss = null;
@@ -445,11 +420,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			int iCellBox;
 			int cCellBoxes;
 			int iCellLevel;
-			GetCurrentTableCellInfo(vwsel, out iLevel, out iBox, out iTableBox, out cTableBoxes,
-				out iTableLevel, out iCellBox, out cCellBoxes, out iCellLevel);
-			bool fBackTab = (ModifierKeys & Keys.Shift) == Keys.Shift;
-			//bool fPrevRow = false;
-			//bool fNextRowRTL = false;
+			GetCurrentTableCellInfo(vwsel, out iLevel, out iBox, out iTableBox, out cTableBoxes, out iTableLevel, out iCellBox, out cCellBoxes, out iCellLevel);
+			var fBackTab = (ModifierKeys & Keys.Shift) == Keys.Shift;
 			iLevel = iCellLevel;
 			if (m_xbvvc.ShowColumnsRTL)
 			{
@@ -551,12 +523,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			return false;	// signal we're done.
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Process an Enter key by creating a new edit row and moving to it.
 		/// </summary>
-		/// <param name="rgtss">The RGTSS.</param>
-		/// ------------------------------------------------------------------------------------
 		private void HandleEnterKey(ITsString[] rgtss)
 		{
 			// Use reflection to invoke a static method on an assembly/class.
@@ -569,7 +538,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void SetSelectionToFirstColumnInNewRow()
 		{
 			var columns = m_xbvvc.ColumnSpecs;
-			var flidNew = XMLViewsDataCache.ktagEditColumnBase + 1;
+			const int flidNew = XMLViewsDataCache.ktagEditColumnBase + 1;
 			var wsNew = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.ConvertElement(columns[0]), null,
 				m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 			try
@@ -577,8 +546,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				var rgvsli = new SelLevInfo[1];
 				rgvsli[0].hvo = XmlRDEBrowseViewVc.khvoNewItem;
 				rgvsli[0].tag = -1;
-				var vwsel = m_rootb.MakeTextSelection(0, rgvsli.Length, rgvsli, flidNew, 0,
-					0, 0, wsNew, false, -1, null, false);
+				var vwsel = m_rootb.MakeTextSelection(0, rgvsli.Length, rgvsli, flidNew, 0, 0, 0, wsNew, false, -1, null, false);
 				if (m_xbvvc.ShowColumnsRTL)
 				{
 					int iLevel;
@@ -592,8 +560,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					GetCurrentTableCellInfo(vwsel, out iLevel, out iBox, out iTableBox,
 						out cTableBoxes, out iTableLevel, out iCellBox, out cCellBoxes,
 						out iCellLevel);
-					m_rootb.MakeSelInBox(vwsel, true, iCellLevel, cCellBoxes - 1,
-							true, false, true);
+					m_rootb.MakeSelInBox(vwsel, true, iCellLevel, cCellBoxes - 1, true, false, true);
 				}
 				else
 				{
@@ -608,14 +575,18 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		void ScrollToCurrentSelection()
+		private void ScrollToCurrentSelection()
 		{
 			if (m_rootb == null)
+			{
 				MakeRoot();
+			}
 
 			if (m_rootb.Selection == null)
+			{
 				return;
-			this.ScrollSelectionIntoView(m_rootb.Selection, VwScrollSelOpts.kssoDefault);
+			}
+			ScrollSelectionIntoView(m_rootb.Selection, VwScrollSelOpts.kssoDefault);
 		}
 
 		#region Implementation of IUndoRedoHandler
@@ -684,14 +655,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-
 		/// <summary>
 		/// Create an undo/redo action for updating the display after the user commits changes in a new row.
 		/// </summary>
-		class CreateObjectFromEntryRowUndoAction : UndoActionBase
+		private sealed class CreateObjectFromEntryRowUndoAction : UndoActionBase
 		{
-			XmlBrowseRDEView m_xbrdev = null;
-			int m_newObjHvo = 0;
+			XmlBrowseRDEView m_xbrdev;
+			int m_newObjHvo;
 			bool m_fAddItems;
 
 			internal CreateObjectFromEntryRowUndoAction(XmlBrowseRDEView browseView, int newObjHvo, bool fAddItems)
@@ -736,30 +706,25 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Create an object from the current data entry row.
 		/// </summary>
-		/// <param name="rgtss"></param>
-		/// <param name="fAddItems"></param>
-		/// <returns></returns>
 		private int CreateObjectFromEntryRow(ITsString[] rgtss, bool fAddItems)
 		{
-			int newObjHvo = 0;
+			var newObjHvo = 0;
 			// Conceptual model class.
-			string sUndo = String.Format(XMLViewsStrings.ksUndoNewEntryX, rgtss[0].Text);
-			string sRedo = String.Format(XMLViewsStrings.ksRedoNewEntryX, rgtss[0].Text);
+			var sUndo = string.Format(XMLViewsStrings.ksUndoNewEntryX, rgtss[0].Text);
+			var sRedo = string.Format(XMLViewsStrings.ksRedoNewEntryX, rgtss[0].Text);
 			try
 			{
 				UndoableUnitOfWorkHelper.Do(sUndo, sRedo, Cache.ActionHandlerAccessor, () =>
 				{
 					newObjHvo = CreateObjectFromEntryRow(rgtss);
-					CreateObjectFromEntryRowUndoAction undoRedoAction = new CreateObjectFromEntryRowUndoAction(this, newObjHvo, fAddItems);
+					var undoRedoAction = new CreateObjectFromEntryRowUndoAction(this, newObjHvo, fAddItems);
 					Cache.ActionHandlerAccessor.AddAction(undoRedoAction);
 					undoRedoAction.DoIt();
 				});
 			}
 			catch (Exception error)
 			{
-				throw new RuntimeConfigurationException(String.Format(
-					"XmlBrowseRDEView.ProcessRDEKeyPress() could not invoke the static {0} method of the class {1}",
-					RDEVc.EditRowSaveMethod, RDEVc.EditRowClass), error);
+				throw new RuntimeConfigurationException($"XmlBrowseRDEView.ProcessRDEKeyPress() could not invoke the static {RDEVc.EditRowSaveMethod} method of the class {RDEVc.EditRowClass}", error);
 			}
 			return newObjHvo;
 		}
@@ -773,7 +738,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var factoryClassName = RDEVc.EditRowClass + "Factory";
 			var factoryType = ReflectionHelper.GetType(RDEVc.EditRowAssembly, factoryClassName);
 			var factory = Cache.ServiceLocator.GetService(factoryType);
-			System.Reflection.MethodInfo mi = factoryType.GetMethod(RDEVc.EditRowSaveMethod);
+			var mi = factoryType.GetMethod(RDEVc.EditRowSaveMethod);
 			var parameters = new object[3];
 			parameters[0] = m_hvoRoot;
 			parameters[1] = columns;
@@ -803,7 +768,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Check for recursive calls, which can happen when deleting duplicate entries
 			// generates a PropChanged which CleanupPendingEdits handles by calling us again.
 			if (fInDoMerges)
+			{
 				return;
+			}
 
 			try
 			{
@@ -811,28 +778,28 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					RDEVc.EditableObjectsRemoveInvalidObjects();
 
-					ISet<int> idsClone = RDEVc.EditableObjectsClone();
+					var idsClone = RDEVc.EditableObjectsClone();
 					fInDoMerges = true;
-					Type targetType = ReflectionHelper.GetType(RDEVc.EditRowAssembly, RDEVc.EditRowClass);
-					System.Reflection.MethodInfo mi = targetType.GetMethod(RDEVc.EditRowMergeMethod);
-					object[] parameters = new object[2];
-					parameters[0] = (object)m_hvoRoot;
-					parameters[1] = (object)idsClone; // This is a Set<int>.
+					var targetType = ReflectionHelper.GetType(RDEVc.EditRowAssembly, RDEVc.EditRowClass);
+					var mi = targetType.GetMethod(RDEVc.EditRowMergeMethod);
+					var parameters = new object[2];
+					parameters[0] = m_hvoRoot;
+					parameters[1] = idsClone; // This is a Set<int>.
 
 					// Make a copy. I (JohnT) don't see how this collection can get modified
 					// during the loop, but we've had exceptions (e.g., LT-1355) claiming that
 					// it has been.
-					foreach (int hvoSense in idsClone)
+					foreach (var hvoSense in idsClone)
 					{
-						ICmObject target = Cache.ServiceLocator.GetObject(hvoSense);
+						var target = Cache.ServiceLocator.GetObject(hvoSense);
 						try
 						{
 							if ((bool)mi.Invoke(target, parameters))
 							{
 								// The sense was deleted as a duplicate; get rid of it from our madeUpFieldIdentifier, too.
 								ISilDataAccessManaged sda = m_bv.SpecialCache;
-								int[] oldList = sda.VecProp(m_hvoRoot, m_madeUpFieldIdentifier);
-								for (int i = 0; i < oldList.Length; i++)
+								var oldList = sda.VecProp(m_hvoRoot, m_madeUpFieldIdentifier);
+								for (var i = 0; i < oldList.Length; i++)
 								{
 									if (oldList[i] == hvoSense)
 									{
@@ -854,12 +821,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				catch (Exception error)
 				{
-					throw new RuntimeConfigurationException(String.Format(
-						"XmlBrowseRDEView.DoMerges() could not invoke the static {0} method of the class {1}",
-						RDEVc.EditRowMergeMethod, RDEVc.EditRowClass), error);
+					throw new RuntimeConfigurationException($"XmlBrowseRDEView.DoMerges() could not invoke the static {RDEVc.EditRowMergeMethod} method of the class {RDEVc.EditRowClass}", error);
 				}
 				RDEVc.EditableObjectsClear();
-				int cobj = m_bv.SpecialCache.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
+				var cobj = m_bv.SpecialCache.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
 				m_bv.BrowseView.RootBox.PropChanged(m_hvoRoot, m_madeUpFieldIdentifier, 0, cobj, cobj);
 			}
 			finally
@@ -877,28 +842,32 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// We would prefer to implement this using the methods of CmObjectUi, but the assembly
 		/// dependencies go the wrong way.
 		/// </summary>
-		/// <param name="pt"></param>
-		/// <param name="rcSrcRoot"></param>
-		/// <param name="rcDstRoot"></param>
-		/// <returns></returns>
 		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
 			var sel = MakeSelectionAt(new MouseEventArgs(MouseButtons.Right, 1, pt.X, pt.Y, 0));
 			if (sel == null)
+			{
 				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
+			}
 			var index = GetRowIndexFromSelection(sel, false);
 			if (index < 0)
-				 return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
-			int hvo = m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, index);
+			{
+				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
+			}
+			var hvo = m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, index);
 			// It would sometimes work to jump to one of the editable objects.
 			// But sometimes one of them will get destroyed when we switch away from this view
 			// (e.g., because there is already a similar sense to which we can just add this semantic domain).
 			// Then we would crash trying to jump to it.
 			if (RDEVc.EditableObjectsContains(hvo))
+			{
 				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
+			}
 			ICmObject target;
 			if (!Cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out target) || !(target is ILexSense))
+			{
 				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
+			}
 			// We have a valid (real, not temporary fake) LexEntry and will put up the context menu
 			var menu = new ContextMenuStrip();
 			var item = new ToolStripMenuItem(XMLViewsStrings.ksShowEntryInLexicon);
@@ -922,18 +891,16 @@ namespace LanguageExplorer.Controls.XMLViews
 											};
 			Publisher.Publish(commands, parms);
 		}
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Handles OnKeyDown.
 		/// </summary>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			// try to calculate whether we will be advancing to the next row
 			// BEFORE we call OnKeyDown, because it will change the selection.
-			IVwSelection vwsel = RootBox.Selection;
-			bool fHandleEnterKey = false;
+			var vwsel = RootBox.Selection;
+			var fHandleEnterKey = false;
 			ITsString[] rgtss = null;
 			if (e.KeyCode == Keys.Tab && vwsel != null)
 			{
@@ -941,19 +908,20 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			base.OnKeyDown(e);
 			if (fHandleEnterKey)
+			{
 				HandleEnterKey(rgtss);
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles OnKeyPress.  Passes most things to EditingHelper.OnKeyPress
 		/// </summary>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
 			if (!ProcessRDEKeyPress(e.KeyChar))
+			{
 				base.OnKeyPress(e);
+			}
 		}
 
 #if RANDYTODO
@@ -1021,29 +989,30 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 #endif
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when [delete record].
 		/// </summary>
-		/// <param name="commandObject">The command object.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public override bool OnDeleteRecord(object commandObject)
 		{
 			CheckDisposed();
 
 			if (m_rootb == null)
+			{
 				MakeRoot();
+			}
 
-			IVwSelection vwsel = m_rootb.Selection;
+			var vwsel = m_rootb.Selection;
 			if (vwsel == null)
+			{
 				return false;
-			ISilDataAccess sda = m_bv.SpecialCache;
+			}
 			var columns = m_xbvvc.ColumnSpecs;
 			if (columns == null || columns.Count == 0)
+			{
 				return false;		// Something is broken!
+			}
 
-			TextSelInfo tsi = new TextSelInfo(m_rootb.Selection);
+			var tsi = new TextSelInfo(m_rootb.Selection);
 			if (tsi.ContainingObject(0) == XmlRDEBrowseViewVc.khvoNewItem)
 			{
 				ClearColumnStringsFromNewRow();
@@ -1053,21 +1022,20 @@ namespace LanguageExplorer.Controls.XMLViews
 				// 1. Remove the domain from the sense shown in the second column.
 				// 2. Delete the sense iff it is now empty except for the definition shown.
 				// 3. Delete the entry iff the entry now has no senses.
-				int cvsli = tsi.Levels(false) - 1;
-				int tag = tsi.ContainingObjectTag(cvsli - 1);
+				var cvsli = tsi.Levels(false) - 1;
 				Debug.Assert(cvsli >= 1); // there should be at least one level (each row is a sense)
 				// The outermost thing in the VC is a display of all the senses of the root domain.
 				// Therefore the last thing in rgvsli is always the information identifying the sense we
 				// want to process.
-				int hvoSense = tsi.ContainingObject(cvsli - 1);
-				int hvoEntry = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoSense).Owner.Hvo;
+				var hvoSense = tsi.ContainingObject(cvsli - 1);
+				var hvoEntry = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoSense).Owner.Hvo;
 				// If this was an editable object, it no longer is, because it's about to no longer exist.
 				RDEVc.EditableObjectsRemove(hvoSense);
 
 				var le = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoEntry);
 				var ls = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
-				string sUndo = XMLViewsStrings.ksUndoDeleteRecord;
-				string sRedo = XMLViewsStrings.ksRedoDeleteRecord;
+				var sUndo = XMLViewsStrings.ksUndoDeleteRecord;
+				var sRedo = XMLViewsStrings.ksRedoDeleteRecord;
 				UndoableUnitOfWorkHelper.Do(sUndo, sRedo, Cache.ActionHandlerAccessor, () =>
 				{
 					ls.SemanticDomainsRC.Remove(Cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>().GetObject(m_hvoRoot));
@@ -1078,57 +1046,75 @@ namespace LanguageExplorer.Controls.XMLViews
 					ls.ThesaurusItemsRC.Count == 0 &&
 					ls.UsageTypesRC.Count == 0)
 					{
-						bool fKeep = false;
-						ITsString tss = ls.Gloss.AnalysisDefaultWritingSystem;
+						var fKeep = false;
+						var tss = ls.Gloss.AnalysisDefaultWritingSystem;
 						if (tss != null && tss.Length > 0)
+						{
 							fKeep = true;
+						}
 						if (!fKeep)
 						{
 							tss = ls.Gloss.UserDefaultWritingSystem;
 							if (tss != null && tss.Length > 0)
+							{
 								fKeep = true;
+							}
 						}
 						if (!fKeep)
 						{
 							tss = ls.Gloss.VernacularDefaultWritingSystem;
 							if (tss != null && tss.Length > 0)
+							{
 								fKeep = true;
+							}
 						}
 						if (!fKeep)
 						{
 							tss = ls.Definition.VernacularDefaultWritingSystem;
 							if (tss != null && tss.Length > 0)
+							{
 								fKeep = true;
+							}
 						}
 						if (!fKeep)
 						{
 							tss = ls.DiscourseNote.AnalysisDefaultWritingSystem;
 							if (tss != null && tss.Length > 0)
+							{
 								fKeep = true;
+							}
 						}
 						if (!fKeep)
 						{
 							tss = ls.DiscourseNote.UserDefaultWritingSystem;
 							if (tss != null && tss.Length > 0)
+							{
 								fKeep = true;
+							}
 						}
 						if (!fKeep)
 						{
 							tss = ls.DiscourseNote.VernacularDefaultWritingSystem;
 							if (tss != null && tss.Length > 0)
+							{
 								fKeep = true;
+							}
 						}
 						if (!fKeep)
 						{
 							tss = ls.ScientificName;
 							if (tss != null && tss.Length > 0)
+							{
 								fKeep = true;
+							}
 						}
 						if (!fKeep)
 						{
 							tss = ls.Source;
 							if (tss != null && tss.Length > 0)
+							{
 								fKeep = true;
+							}
 						}
 						if (!fKeep)
 						{

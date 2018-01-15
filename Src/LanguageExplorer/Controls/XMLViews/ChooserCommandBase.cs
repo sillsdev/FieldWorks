@@ -1,13 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ChooserCommand.cs
-// Responsibility: Andy Black
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -36,7 +29,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected string m_sHelp;
 #endif
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:ChooserCommand"/> class.
 		/// </summary>
@@ -46,7 +38,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="propertyTable"></param>
 		/// <param name="publisher"></param>
 		/// <param name="subscriber"></param>
-		/// ------------------------------------------------------------------------------------
 		protected ChooserCommand(LcmCache cache, bool fCloseBeforeExecuting, string sLabel, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
 			m_cache = cache;
@@ -57,7 +48,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_subscriber = subscriber;
 		}
 
-		//properties
 		/// <summary>
 		/// Indicates whether or not the chooser dialog should close before executing the link command
 		/// </summary>
@@ -87,6 +77,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_fShouldCloseBeforeExecuting = value;
 			}
 		}
+
 		/// <summary>
 		/// The entire text of the label that will appear in the chooser
 		/// </summary>
@@ -102,14 +93,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		//methods
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Executes this instance.
 		/// </summary>
 		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public virtual ObjectLabel Execute()
 		{
 			return null;

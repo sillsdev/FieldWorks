@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,19 +26,6 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public class XhtmlHelper
 	{
-		/// <summary>
-		/// List the possible types of Cascading Stylesheet that we can produce.
-		/// </summary>
-		public enum CssType
-		{
-			/// <summary>Dictionary type display</summary>
-			Dictionary,
-			/// <summary>Scripture type display</summary>
-			Scripture,
-			/// <summary>Notebook type display</summary>
-			Notebook
-		};
-
 		StyleInfoTable m_styleTable;
 		// The keys in these three dictionaries are VALID CSS class names, that is, typically the output
 		// of calling GetValidCssClassName. (This is not necessary with fixed strings known not to contain
@@ -59,20 +46,18 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private TextWriter m_writer;
 		private LcmCache m_cache;
-		private bool m_fRTL = false;
+		private bool m_fRTL;
 		private int m_cColumns = 2;		// default for dictionary output.
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="w"></param>
-		/// <param name="cache"></param>
 		public XhtmlHelper(TextWriter w, LcmCache cache)
 		{
 			m_writer = w;
 			m_cache = cache;
 
-			CoreWritingSystemDefinition ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			var ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			m_fRTL = ws.RightToLeftScript;
 		}
 
@@ -81,22 +66,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="cssClass"></param>
-		/// <param name="node"></param>
+		/// <summary />
 		public void MapCssClassToXElement(string cssClass, XElement node)
 		{
 			m_mapCssClassToXnode.Add(GetValidCssClassName(cssClass), node);
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="cssClass"></param>
-		/// <param name="node"></param>
-		/// <returns></returns>
+		/// <summary />
 		public bool TryGetNodeFromCssClass(string cssClass, out XElement node)
 		{
 			return m_mapCssClassToXnode.TryGetValue(GetValidCssClassName(cssClass), out node);
@@ -105,19 +81,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// This method adds the given List of envirs strings with the key of cssClass, throws on duplicate key
 		/// </summary>
-		/// <param name="cssClass"></param>
-		/// <param name="envirs"></param>
 		public void MapCssToStyleEnv(string cssClass, List<string> envirs)
 		{
 			m_mapCssToStyleEnv.Add(cssClass, envirs);
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="cssClass"></param>
-		/// <param name="envirs"></param>
-		/// <returns></returns>
+		/// <summary />
 		public bool MapCssToStyleEnv(string cssClass, out List<string> envirs)
 		{
 			return m_mapCssToStyleEnv.TryGetValue(cssClass, out envirs);
@@ -127,8 +96,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// This method will take a List of languages(string representation) and map this list to a given
 		/// cssClass string. This will throw an exception if the cssClass string has already been used in the dictionary.
 		/// </summary>
-		/// <param name="cssClass"></param>
-		/// <param name="rgsLangs"></param>
 		public void MapCssToLangs(string cssClass, List<string> rgsLangs)
 		{
 			m_dictClassData.Add(GetValidCssClassName(cssClass), rgsLangs);
@@ -139,8 +106,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// cssClass string. If the cssClass has already been used it will add the language to the existing language list. If no list exists
 		/// one will be created.
 		/// </summary>
-		/// <param name="cssClass"></param>
-		/// <param name="sLang"></param>
 		public void MapCssToLang(string cssClass, string sLang)
 		{
 			var key = GetValidCssClassName(cssClass);
@@ -152,7 +117,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_dictClassData.Add(key, rgsLangs);
 			}
 			if (!rgsLangs.Contains(sLang))
+			{
 				rgsLangs.Add(sLang);
+			}
 		}
 
 		/// <summary>
@@ -171,18 +138,18 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void WriteXhtmlHeading(string sOutPath, string sDescription, string sBodyClass)
 		{
-			string sOutFile = Path.GetFileName(sOutPath);
+			var sOutFile = Path.GetFileName(sOutPath);
 			m_writer.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			m_writer.WriteLine("<html xml:lang=\"utf-8\" lang=\"utf-8\">");
 			WriteWritingSystemInfo();
 			m_writer.WriteLine("<head>");
 			m_writer.WriteLine("<title/>");
-			m_writer.WriteLine("<link rel=\"stylesheet\" href=\"{0}\" type=\"text/css\"/>",
-				XmlUtils.MakeSafeXmlAttribute(Path.ChangeExtension(sOutFile, ".css")));
-			m_writer.WriteLine("<meta name=\"linkedFilesRootDir\" content=\"{0}\"/>",
-				XmlUtils.MakeSafeXmlAttribute(m_cache.LangProject.LinkedFilesRootDir));
-			if (!String.IsNullOrEmpty(sDescription))
+			m_writer.WriteLine("<link rel=\"stylesheet\" href=\"{0}\" type=\"text/css\"/>", XmlUtils.MakeSafeXmlAttribute(Path.ChangeExtension(sOutFile, ".css")));
+			m_writer.WriteLine("<meta name=\"linkedFilesRootDir\" content=\"{0}\"/>", XmlUtils.MakeSafeXmlAttribute(m_cache.LangProject.LinkedFilesRootDir));
+			if (!string.IsNullOrEmpty(sDescription))
+			{
 				m_writer.WriteLine("<meta name=\"description\" content=\"{0}\"/>", XmlUtils.MakeSafeXmlAttribute(sDescription));
+			}
 			m_writer.WriteLine("<meta name=\"filename\" content=\"{0}\"/>", XmlUtils.MakeSafeXmlAttribute(sOutFile));
 			m_writer.WriteLine("</head>");
 			m_writer.WriteLine("<body class=\"{0}\">", sBodyClass);
@@ -193,39 +160,42 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void WriteXhtmlEnding()
 		{
-			//if (m_chCurrent != '\0')
-			//    m_writer.WriteLine("</div>");	// for letData
 			m_writer.WriteLine("</body>");
 			m_writer.WriteLine("</html>");
 		}
 
 		private void WriteWritingSystemInfo()
 		{
-			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			foreach (var ws in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
-				m_writer.Write("<WritingSystemInfo lang=\"{0}\" dir=\"{1}\"",
-					ws.Id, ws.RightToLeftScript ? "rtl" : "ltr");
+				m_writer.Write("<WritingSystemInfo lang=\"{0}\" dir=\"{1}\"", ws.Id, ws.RightToLeftScript ? "rtl" : "ltr");
 				WriteWsListTag(ws, m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems, "vernTag");
 				WriteWsListTag(ws, m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems, "analTag");
 				WriteWsListTag(ws, m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems, "pronTag");
-				if (!String.IsNullOrEmpty(ws.DefaultFontName))
+				if (!string.IsNullOrEmpty(ws.DefaultFontName))
+				{
 					m_writer.Write(" font=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(ws.DefaultFontName));
-				if (!String.IsNullOrEmpty(ws.LanguageName))
+				}
+				if (!string.IsNullOrEmpty(ws.LanguageName))
+				{
 					m_writer.Write(" name=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(ws.DisplayLabel));
+				}
 				m_writer.WriteLine("/>");
 			}
 		}
 
 		private void WriteWsListTag(CoreWritingSystemDefinition ws, IEnumerable<CoreWritingSystemDefinition> wss, string sAttr)
 		{
-			int i = 0;
-			foreach (CoreWritingSystemDefinition curWs in wss)
+			var i = 0;
+			foreach (var curWs in wss)
 			{
 				if (ws == curWs)
 				{
-					string sTag = string.Empty;
+					var sTag = string.Empty;
 					if (i > 0)
-						sTag = string.Format("_L{0}", i + 1);
+					{
+						sTag = $"_L{i + 1}";
+					}
 					m_writer.Write(" {0}=\"{1}\"", sAttr, sTag);
 				}
 				i++;
@@ -245,12 +215,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Write a Cascading Style Sheet file based on the layouts accumulated in
 		/// m_dictCssXnode and the given stylesheet.
 		/// </summary>
-		/// <param name="sOutputFile"></param>
-		/// <param name="vss"></param>
-		/// <param name="type"></param>
-		/// <param name="pub"></param>
-		public void WriteCssFile(string sOutputFile, IVwStylesheet vss, CssType type,
-			IPublication pub)
+		public void WriteCssFile(string sOutputFile, IVwStylesheet vss, CssType type, IPublication pub)
 		{
 			// Read all the style information from the database.
 			ReadStyles(vss);
@@ -300,8 +265,8 @@ namespace LanguageExplorer.Controls.XMLViews
 							ConvertMptToPt(pub.IsLeftBound ?
 								pub.DivisionsOS[0].PageLayoutOA.MarginInside :
 								pub.DivisionsOS[0].PageLayoutOA.MarginOutside));
-						string sInside = pub.IsLeftBound ? "left" : "right";
-						string sOutside = pub.IsLeftBound ? "right" : "left";
+						var sInside = pub.IsLeftBound ? "left" : "right";
+						var sOutside = pub.IsLeftBound ? "right" : "left";
 						WriteHeaderFooterBlock("top-" + sInside, pub.DivisionsOS[0].HFSetOA.DefaultHeaderOA.InsideAlignedText);
 						WriteHeaderFooterBlock("top-center", pub.DivisionsOS[0].HFSetOA.DefaultHeaderOA.CenteredText);
 						WriteHeaderFooterBlock("top-" + sOutside, pub.DivisionsOS[0].HFSetOA.DefaultHeaderOA.OutsideAlignedText);
@@ -315,10 +280,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						if (pub.DivisionsOS[0].DifferentEvenHF)
 						{
 							m_writer.WriteLine("}");
-							if (pub.IsLeftBound)
-								m_writer.WriteLine("@page :left {");
-							else
-								m_writer.WriteLine("@page :right {");
+							m_writer.WriteLine(pub.IsLeftBound ? "@page :left {" : "@page :right {");
 							WriteHeaderFooterBlock("top-" + sInside, pub.DivisionsOS[0].HFSetOA.EvenHeaderOA.OutsideAlignedText);
 							WriteHeaderFooterBlock("top-center", pub.DivisionsOS[0].HFSetOA.EvenHeaderOA.CenteredText);
 							WriteHeaderFooterBlock("top-" + sOutside, pub.DivisionsOS[0].HFSetOA.EvenHeaderOA.InsideAlignedText);
@@ -340,44 +302,47 @@ namespace LanguageExplorer.Controls.XMLViews
 						m_cColumns = pub.DivisionsOS[0].NumColumns;
 					}
 				}
-				else if (type == CssType.Dictionary)
+				else
 				{
-					m_writer.WriteLine("    margin: 2cm 2cm 2cm 2cm;");
-					m_writer.WriteLine("    @top-left {");
-					m_writer.WriteLine("        content: string(guideword, first);");
-					WriteSansSerifFontFamilyForWs(m_cache.DefaultVernWs, true);
-					m_writer.WriteLine("        font-weight: bold;");
-					m_writer.WriteLine("        font-size: 12pt;");
-					m_writer.WriteLine("        margin-top: 1em;");
-					m_writer.WriteLine("    }");
-					m_writer.WriteLine("    @top-center {");
-					m_writer.WriteLine("        content: counter(page);");
-					m_writer.WriteLine("        margin-top: 1em");
-					m_writer.WriteLine("    }");
-					m_writer.WriteLine("    @top-right {");
-					m_writer.WriteLine("        content: string(guideword, last);");
-					WriteSansSerifFontFamilyForWs(m_cache.DefaultVernWs, true);
-					m_writer.WriteLine("        font-weight: bold;");
-					m_writer.WriteLine("        font-size: 12pt;");
-					m_writer.WriteLine("        margin-top: 1em;");
-					m_writer.WriteLine("    }");
-					WriteFootnotesBlock(type);
-					m_writer.WriteLine("}");
-					m_writer.WriteLine("@page :first {");
-					m_writer.WriteLine("    @top-left { content: ''; }");
-					m_writer.WriteLine("    @top-center { content: ''; }");
-					m_writer.WriteLine("    @top-right { content: ''; }");
-				}
-				else if (type == CssType.Scripture)
-				{
-					m_writer.WriteLine("    margin: 2cm 2cm 2cm 2cm;");
-					m_writer.WriteLine("    counter-increment: page;");
-					WriteFootnotesBlock(type);
-				}
-				else if (type == CssType.Notebook)
-				{
-					m_writer.WriteLine("    margin: 2cm 2cm 2cm 2cm;");
-					m_writer.WriteLine("    counter-increment: page;");
+					switch (type)
+					{
+					case CssType.Dictionary:
+						m_writer.WriteLine("    margin: 2cm 2cm 2cm 2cm;");
+						m_writer.WriteLine("    @top-left {");
+						m_writer.WriteLine("        content: string(guideword, first);");
+						WriteSansSerifFontFamilyForWs(m_cache.DefaultVernWs, true);
+						m_writer.WriteLine("        font-weight: bold;");
+						m_writer.WriteLine("        font-size: 12pt;");
+						m_writer.WriteLine("        margin-top: 1em;");
+						m_writer.WriteLine("    }");
+						m_writer.WriteLine("    @top-center {");
+						m_writer.WriteLine("        content: counter(page);");
+						m_writer.WriteLine("        margin-top: 1em");
+						m_writer.WriteLine("    }");
+						m_writer.WriteLine("    @top-right {");
+						m_writer.WriteLine("        content: string(guideword, last);");
+						WriteSansSerifFontFamilyForWs(m_cache.DefaultVernWs, true);
+						m_writer.WriteLine("        font-weight: bold;");
+						m_writer.WriteLine("        font-size: 12pt;");
+						m_writer.WriteLine("        margin-top: 1em;");
+						m_writer.WriteLine("    }");
+						WriteFootnotesBlock(type);
+						m_writer.WriteLine("}");
+						m_writer.WriteLine("@page :first {");
+						m_writer.WriteLine("    @top-left { content: ''; }");
+						m_writer.WriteLine("    @top-center { content: ''; }");
+						m_writer.WriteLine("    @top-right { content: ''; }");
+						break;
+					case CssType.Scripture:
+						m_writer.WriteLine("    margin: 2cm 2cm 2cm 2cm;");
+						m_writer.WriteLine("    counter-increment: page;");
+						WriteFootnotesBlock(type);
+						break;
+					case CssType.Notebook:
+						m_writer.WriteLine("    margin: 2cm 2cm 2cm 2cm;");
+						m_writer.WriteLine("    counter-increment: page;");
+						break;
+					}
 				}
 				m_writer.WriteLine("}");
 				m_writer.WriteLine();
@@ -388,18 +353,18 @@ namespace LanguageExplorer.Controls.XMLViews
 					m_writer.WriteLine(":lang(" + ws.IcuLocale+ ") {direction:" + (dir ? "rtl" : "ltr") + "}");
 				}
 				m_writer.WriteLine();
-				if (type == CssType.Dictionary)
+				switch (type)
 				{
-					ProcessDictionaryTypeClasses();
-				}
-				else if (type == CssType.Scripture)
-				{
-					foreach (string sClass in m_dictClassData.Keys)
-						ProcessScriptureCssStyle(sClass, m_dictClassData[sClass]);
-				}
-				else if (type == CssType.Notebook)
-				{
-					ProcessNotebookTypeClasses();
+					case CssType.Dictionary:
+						ProcessDictionaryTypeClasses();
+						break;
+					case CssType.Scripture:
+						foreach (string sClass in m_dictClassData.Keys)
+							ProcessScriptureCssStyle(sClass, m_dictClassData[sClass]);
+						break;
+					case CssType.Notebook:
+						ProcessNotebookTypeClasses();
+						break;
 				}
 				m_writer.Close();
 			}
@@ -409,7 +374,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void WriteFootnotesBlock(CssType type)
 		{
 			if (type != CssType.Scripture)
+			{
 				return;
+			}
 			m_writer.WriteLine("    @footnotes {");		// Prince XML
 			m_writer.WriteLine("        border-top: thin solid black;");
 			m_writer.WriteLine("        padding: 0.3em 0;");
@@ -427,57 +394,80 @@ namespace LanguageExplorer.Controls.XMLViews
 		// it would be nice to get these from HeaderFooterVc, but that DLL depends on this one,
 		// so we can't get there from here.  But since these are constant, and this is probably
 		// a fixed list that won't change much if at all, ...
-		static readonly Guid PageNumberGuid = new Guid("644DF48A-3B60-45f4-80C7-739BE6E56A96");
-		static readonly Guid FirstReferenceGuid = new Guid("397F43AE-E2B2-4f20-928A-1DF193C07674");
-		static readonly Guid LastReferenceGuid = new Guid("85EE15C6-0799-46c6-8769-F9B3CE313AE2");
-		static readonly Guid TotalPagesGuid = new Guid("E0EF9EDA-E4E2-4fcf-8720-5BC361BCE110");
-		static readonly Guid PrintDateGuid = new Guid("C4556A21-41A8-4675-A74D-59B2C1A7E2B8");
-		static readonly Guid DivisionNameGuid = new Guid("2277B85F-47BB-45c9-BC7A-7232E26E901C");
-		static readonly Guid PublicationTitleGuid = new Guid("C8136D98-6957-43bd-BEA9-7DCE35200900");
-		static readonly Guid PageReferenceGuid = new Guid("8978089A-8969-424e-AE54-B94C554F882D");
-		static readonly Guid ProjectNameGuid = new Guid("5610D086-635F-4ae2-8E85-A95896F3D62D");
-		static readonly Guid BookNameGuid = new Guid("48C0E5E3-C909-42e1-8F82-3489E3DE96FA");
+		private static readonly Guid PageNumberGuid = new Guid("644DF48A-3B60-45f4-80C7-739BE6E56A96");
+		private static readonly Guid FirstReferenceGuid = new Guid("397F43AE-E2B2-4f20-928A-1DF193C07674");
+		private static readonly Guid LastReferenceGuid = new Guid("85EE15C6-0799-46c6-8769-F9B3CE313AE2");
+		private static readonly Guid TotalPagesGuid = new Guid("E0EF9EDA-E4E2-4fcf-8720-5BC361BCE110");
+		private static readonly Guid PrintDateGuid = new Guid("C4556A21-41A8-4675-A74D-59B2C1A7E2B8");
+		private static readonly Guid DivisionNameGuid = new Guid("2277B85F-47BB-45c9-BC7A-7232E26E901C");
+		private static readonly Guid PublicationTitleGuid = new Guid("C8136D98-6957-43bd-BEA9-7DCE35200900");
+		private static readonly Guid PageReferenceGuid = new Guid("8978089A-8969-424e-AE54-B94C554F882D");
+		private static readonly Guid ProjectNameGuid = new Guid("5610D086-635F-4ae2-8E85-A95896F3D62D");
+		private static readonly Guid BookNameGuid = new Guid("48C0E5E3-C909-42e1-8F82-3489E3DE96FA");
 
 		private void WriteHeaderFooterBlock(string sBlockName, ITsString tss)
 		{
 			if (tss == null)
-				return;
-			StringBuilder bldr = new StringBuilder();
-			int crun = tss.RunCount;
-			for (int i = 0; i < crun; ++i)
 			{
-				string sRun = tss.get_RunText(i);
-				if (String.IsNullOrEmpty(sRun))
+				return;
+			}
+			var bldr = new StringBuilder();
+			var crun = tss.RunCount;
+			for (var i = 0; i < crun; ++i)
+			{
+				var sRun = tss.get_RunText(i);
+				if (string.IsNullOrEmpty(sRun))
+				{
 					continue;
-				ITsTextProps ttp = tss.get_Properties(i);
+				}
+				var ttp = tss.get_Properties(i);
 				if (sRun.Length == 1 && sRun[0] == StringUtils.kChObject)
 				{
-					string objData = ttp.GetStrPropValue((int)FwTextPropType.ktptObjData);
-					if (!String.IsNullOrEmpty(objData) && objData[0] == (char)FwObjDataTypes.kodtContextString)
+					var objData = ttp.GetStrPropValue((int)FwTextPropType.ktptObjData);
+					if (string.IsNullOrEmpty(objData) || objData[0] != (char) FwObjDataTypes.kodtContextString)
 					{
-						Guid guid = MiscUtils.GetGuidFromObjData(objData.Substring(1));
-						if (guid == PageNumberGuid)
-							bldr.Append("counter(page) ");
-						else if (guid == FirstReferenceGuid)
-							bldr.AppendFormat("string(bookname, first) ' ' string(chapter, first) '{0}' string(verse, first) ",
-								m_cache.LangProject.TranslatedScriptureOA.ChapterVerseSepr);
-						else if (guid == LastReferenceGuid)
-							bldr.AppendFormat("string(bookname, last) ' ' string(chapter, last) '{0}' string(verse, last) ",
-								m_cache.LangProject.TranslatedScriptureOA.ChapterVerseSepr);
-						else if (guid == TotalPagesGuid)
-							bldr.Append("totalpagecount() ");
-						else if (guid == PrintDateGuid)
-							bldr.AppendFormat("'{0}' ", DateTime.Now.ToShortDateString());
-						else if (guid == DivisionNameGuid)
-							bldr.Append("string(divisionname) ");
-						else if (guid == PublicationTitleGuid)
-							bldr.Append("string(title)");
-						else if (guid == PageReferenceGuid)
-							bldr.Append("string(reference, page) ");
-						else if (guid == ProjectNameGuid)
-							bldr.AppendFormat("'{0}' ", m_cache.ProjectId.Name);
-						else if (guid == BookNameGuid)
-							bldr.Append("string(bookname)");
+						continue;
+					}
+					var guid = MiscUtils.GetGuidFromObjData(objData.Substring(1));
+					if (guid == PageNumberGuid)
+					{
+						bldr.Append("counter(page) ");
+					}
+					else if (guid == FirstReferenceGuid)
+					{
+						bldr.AppendFormat("string(bookname, first) ' ' string(chapter, first) '{0}' string(verse, first) ", m_cache.LangProject.TranslatedScriptureOA.ChapterVerseSepr);
+					}
+					else if (guid == LastReferenceGuid)
+					{
+						bldr.AppendFormat("string(bookname, last) ' ' string(chapter, last) '{0}' string(verse, last) ", m_cache.LangProject.TranslatedScriptureOA.ChapterVerseSepr);
+					}
+					else if (guid == TotalPagesGuid)
+					{
+						bldr.Append("totalpagecount() ");
+					}
+					else if (guid == PrintDateGuid)
+					{
+						bldr.AppendFormat("'{0}' ", DateTime.Now.ToShortDateString());
+					}
+					else if (guid == DivisionNameGuid)
+					{
+						bldr.Append("string(divisionname) ");
+					}
+					else if (guid == PublicationTitleGuid)
+					{
+						bldr.Append("string(title)");
+					}
+					else if (guid == PageReferenceGuid)
+					{
+						bldr.Append("string(reference, page) ");
+					}
+					else if (guid == ProjectNameGuid)
+					{
+						bldr.AppendFormat("'{0}' ", m_cache.ProjectId.Name);
+					}
+					else if (guid == BookNameGuid)
+					{
+						bldr.Append("string(bookname)");
 					}
 				}
 				else
@@ -548,76 +538,79 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void WriteScriptureCssStyle(string sStyle, List<string> langs)
 		{
-			string sCssStyleName = GetValidCssClassName(sStyle);
+			var sCssStyleName = GetValidCssClassName(sStyle);
 			string sStyleName;
 			if (!m_mapCssClassToFwStyle.TryGetValue(sCssStyleName, out sStyleName))
+			{
 				sStyleName = sStyle.Replace('_', ' ');		// just in case...
+			}
 			m_writer.WriteLine(".{0} {{", sCssStyleName);
-			ExportStyleInfo esi = WriteFontInfoToCss(m_cache.DefaultVernWs, sStyleName, null);
+			var esi = WriteFontInfoToCss(m_cache.DefaultVernWs, sStyleName, null);
 			if (esi != null)
+			{
 				WriteParaStyleInfoToCss(esi);
-			if (sStyleName == "Chapter Number")
-			{
-				if (m_fRTL)
-					m_writer.WriteLine("    float: right;");
-				else
-					m_writer.WriteLine("    float: left;");
-				m_writer.WriteLine("    string-set: chapter content();");
 			}
-			else if (sStyleName == "Verse Number")
+			switch (sStyleName)
 			{
-				m_writer.WriteLine("    string-set: verse content();");
-			}
-			else if (sStyleName == "Note General Paragraph" ||
-				sStyleName == "Note Cross-Reference Paragraph")
-			{
-				m_writer.WriteLine("    display: inline;");
-				m_writer.WriteLine("    display: footnote;");
-				m_writer.WriteLine("    display: prince-footnote;");
-				m_writer.WriteLine("    position: footnote;");
-				m_writer.WriteLine("    list-style-position: inside;");
-			}
-			else if (sStyleName == "columns")
-			{
-				m_writer.WriteLine("    column-count: 2; -moz-column-count: 2;");
-				m_writer.WriteLine("    column-gap: .5cm; -moz-column-gap: .5cm;");
-
+				case "Chapter Number":
+					m_writer.WriteLine(m_fRTL ? "    float: right;" : "    float: left;");
+					m_writer.WriteLine("    string-set: chapter content();");
+					break;
+				case "Verse Number":
+					m_writer.WriteLine("    string-set: verse content();");
+					break;
+				case "Note General Paragraph":
+				case "Note Cross-Reference Paragraph":
+					m_writer.WriteLine("    display: inline;");
+					m_writer.WriteLine("    display: footnote;");
+					m_writer.WriteLine("    display: prince-footnote;");
+					m_writer.WriteLine("    position: footnote;");
+					m_writer.WriteLine("    list-style-position: inside;");
+					break;
+				case "columns":
+					m_writer.WriteLine("    column-count: 2; -moz-column-count: 2;");
+					m_writer.WriteLine("    column-gap: .5cm; -moz-column-gap: .5cm;");
+					break;
 			}
 			m_writer.WriteLine("}");
-			foreach (string sLang in langs)
+			foreach (var sLang in langs)
 			{
-				int ws = m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(sLang);
-				if (ws != 0 && ws != m_cache.DefaultVernWs)
+				var ws = m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(sLang);
+				if (ws == 0 || ws == m_cache.DefaultVernWs)
 				{
-					m_writer.WriteLine(".{0}[lang='{1}'] {{", sCssStyleName, sLang);
-					esi = WriteFontInfoToCss(ws, sStyleName, null);
-					if (esi != null)
-						WriteParaStyleInfoToCss(esi);
-					m_writer.WriteLine("}");
+					continue;
 				}
+				m_writer.WriteLine(".{0}[lang='{1}'] {{", sCssStyleName, sLang);
+				esi = WriteFontInfoToCss(ws, sStyleName, null);
+				if (esi != null)
+				{
+					WriteParaStyleInfoToCss(esi);
+				}
+				m_writer.WriteLine("}");
 			}
-			if (sStyleName == "Note General Paragraph" ||
-				sStyleName == "Note Cross-Reference Paragraph")
+			if (sStyleName != "Note General Paragraph" && sStyleName != "Note Cross-Reference Paragraph")
 			{
-				m_writer.WriteLine(".{0}::footnote-call {{", sCssStyleName);
-				m_writer.WriteLine("    color: purple;");
-				m_writer.WriteLine("    content: attr(title);");
-				m_writer.WriteLine("    font-size: 6pt;");
-				m_writer.WriteLine("    vertical-align: super;");
-				m_writer.WriteLine("    line-height: none;");
-				m_writer.WriteLine("}");
-				m_writer.WriteLine(".{0}::footnote-marker {{", sCssStyleName);
-				m_writer.WriteLine("    font-size: 10pt;");
-				m_writer.WriteLine("    font-weight: bold;");
-				m_writer.WriteLine("    content: string(chapter) ':' string(verse) ' = ';");
-				m_writer.WriteLine("    /* content: string(footnoteMarker); font-size: 6pt; vertical-align: super; color: purple; */");
-				m_writer.WriteLine("    text-align: left;");
-				m_writer.WriteLine("}");
+				return;
 			}
+			m_writer.WriteLine(".{0}::footnote-call {{", sCssStyleName);
+			m_writer.WriteLine("    color: purple;");
+			m_writer.WriteLine("    content: attr(title);");
+			m_writer.WriteLine("    font-size: 6pt;");
+			m_writer.WriteLine("    vertical-align: super;");
+			m_writer.WriteLine("    line-height: none;");
+			m_writer.WriteLine("}");
+			m_writer.WriteLine(".{0}::footnote-marker {{", sCssStyleName);
+			m_writer.WriteLine("    font-size: 10pt;");
+			m_writer.WriteLine("    font-weight: bold;");
+			m_writer.WriteLine("    content: string(chapter) ':' string(verse) ' = ';");
+			m_writer.WriteLine("    /* content: string(footnoteMarker); font-size: 6pt; vertical-align: super; color: purple; */");
+			m_writer.WriteLine("    text-align: left;");
+			m_writer.WriteLine("}");
 		}
 
-		private Dictionary<string, string> m_mapFwStyleToCssClass = new Dictionary<string, string>();
-		private Dictionary<string, string> m_mapCssClassToFwStyle = new Dictionary<string, string>();
+		private readonly Dictionary<string, string> m_mapFwStyleToCssClass = new Dictionary<string, string>();
+		private readonly Dictionary<string, string> m_mapCssClassToFwStyle = new Dictionary<string, string>();
+
 		/// <summary>
 		/// Convert a FieldWorks Style name into a valid CSS class name.
 		/// This is also used for other names that need to be valid CSS classes, such as internal names that might
@@ -630,21 +623,23 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			string sCssClassName;
 			if (m_mapFwStyleToCssClass.TryGetValue(sFwStyle, out sCssClassName))
-				return sCssClassName;
-			sCssClassName = sFwStyle.Replace(' ', '_');
-			char[] rgchStyleName = sCssClassName.ToCharArray();
-			for (int i = 0; i < rgchStyleName.Length; ++i)
 			{
-				char ch1 = rgchStyleName[i];
+				return sCssClassName;
+			}
+			sCssClassName = sFwStyle.Replace(' ', '_');
+			var rgchStyleName = sCssClassName.ToCharArray();
+			for (var i = 0; i < rgchStyleName.Length; ++i)
+			{
+				var ch1 = rgchStyleName[i];
 				int ch32;
 				string sChar;
 				if (Surrogates.IsLeadSurrogate(ch1))
 				{
 					if (++i < rgchStyleName.Length)
 					{
-						char ch2 = rgchStyleName[i];
+						var ch2 = rgchStyleName[i];
 						ch32 = Surrogates.Int32FromSurrogates(ch1, ch2);
-						sChar = ch1.ToString() + ch2.ToString();
+						sChar = ch1 + ch2.ToString();
 					}
 					else
 					{
@@ -668,11 +663,15 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			var validStarts = new Regex("^[a-zA-Z]"); // standard allows _, -, but these are reserved for browser specials and have other conditions.
 			if (!validStarts.IsMatch(sCssClassName))
+			{
 				sCssClassName = 'X' + sCssClassName;
+			}
 			m_mapFwStyleToCssClass.Add(sFwStyle, sCssClassName);
 			string sOldStyle;
 			if (!m_mapCssClassToFwStyle.TryGetValue(sCssClassName, out sOldStyle))
+			{
 				m_mapCssClassToFwStyle.Add(sCssClassName, sFwStyle);
+			}
 			return sCssClassName;
 		}
 
@@ -865,8 +864,8 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_dictClassData.Remove("xitem");
 			}
 			m_writer.WriteLine();
-			XElement xnDummy = new XElement("dummy", new XAttribute("style", string.Empty));
-			foreach (string sClass in m_dictClassData.Keys)
+			var xnDummy = new XElement("dummy", new XAttribute("style", string.Empty));
+			foreach (var sClass in m_dictClassData.Keys)
 			{
 				// Check for actual FW style names (possibly munged) that appear in the
 				// exported data, but aren't mapped to an XmlNode containing necessary
@@ -884,7 +883,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						sStyle = sClass.Replace('_', ' ');
 					}
-					if (!String.IsNullOrEmpty(sStyle))
+					if (!string.IsNullOrEmpty(sStyle))
 					{
 						xnDummy.Attribute("style").Value = sStyle;
 						m_mapCssClassToXnode.Add(sClass, xnDummy);
@@ -941,7 +940,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void WriteCssEntry()
 		{
 			m_writer.WriteLine(".entry {");
-			ExportStyleInfo esi = WriteFontInfoToCss(m_cache.DefaultAnalWs, "Dictionary-Normal", "entry");
+			var esi = WriteFontInfoToCss(m_cache.DefaultAnalWs, "Dictionary-Normal", "entry");
 			WriteParaStyleInfoToCss(esi, true, true); // LT-12658 allow to indent
 			m_writer.WriteLine("    counter-reset: sense;");
 			m_writer.WriteLine("}");
@@ -954,7 +953,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			string style;
 			var fShowAsIndentedPara = false;
 			if (m_mapCssClassToXnode.TryGetValue("complexformrefs", out xn))
+			{
 				fShowAsIndentedPara = XmlUtils.GetOptionalBooleanAttributeValue(xn, "showasindentedpara", false);
+			}
 			if (!fShowAsIndentedPara)
 			{
 				m_writer.WriteLine(".complexform {");
@@ -964,15 +965,23 @@ namespace LanguageExplorer.Controls.XMLViews
 				return;
 			}
 			if (!m_mapCssClassToFwStyle.TryGetValue("complexformrefs", out style))
+			{
 				style = XmlUtils.GetOptionalAttributeValue(xn, "style");
+			}
 			if (!m_dictClassData.TryGetValue("complexformrefs", out rgsLangs))
+			{
 				rgsLangs = null;
+			}
 
 			m_mapCssClassToXnode.Remove("complexformrefs");
 			if (m_mapCssClassToFwStyle.ContainsKey("complexformrefs"))
+			{
 				m_mapCssClassToFwStyle.Remove("complexformrefs");
+			}
 			if (m_dictClassData.ContainsKey("complexformrefs"))
+			{
 				m_dictClassData.Remove("complexformrefs");
+			}
 
 			m_writer.WriteLine(".complexformrefs {");
 			m_writer.WriteLine("    counter-reset: complexformpara;");
@@ -990,9 +999,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			XElement xnSub;
 			string style = null;
 			if (m_mapCssClassToXnode.TryGetValue("subentries", out xnSub))
+			{
 				style = XmlUtils.GetOptionalAttributeValue(xnSub, "parastyle");
-			if (String.IsNullOrEmpty(style))
+			}
+			if (string.IsNullOrEmpty(style))
+			{
 				style = "Dictionary-Subentry";
+			}
 			var esi = WriteFontInfoToCss(m_cache.DefaultAnalWs, style, "subentry");
 			WriteParaStyleInfoToCss(esi);
 			m_writer.WriteLine("}");
@@ -1005,9 +1018,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			XElement xnSub;
 			string style = null;
 			if (m_mapCssClassToXnode.TryGetValue("minorentries", out xnSub))
+			{
 				style = XmlUtils.GetOptionalAttributeValue(xnSub, "parastyle");
-			if (String.IsNullOrEmpty(style))
+			}
+			if (string.IsNullOrEmpty(style))
+			{
 				style = "Dictionary-Minor";
+			}
 			var esi = WriteFontInfoToCss(m_cache.DefaultAnalWs, style, "minorentry");
 			WriteParaStyleInfoToCss(esi, true, true); // LT-12658 allow to indent
 			m_writer.WriteLine("}");
@@ -1153,8 +1170,8 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void WriteCssHeadrefAfter()
 		{
-			List<String> texts;
 			m_writer.Write(".headref:after {content:\"");
+			List<string> texts;
 			m_dictClassData.TryGetValue("headref-after", out texts);
 			m_writer.Write(texts[0]); // only one text in the list
 			m_writer.WriteLine("\"}");
@@ -1205,33 +1222,38 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void WriteSansSerifFontFamilyForWs(int ws, bool fWriteDirection)
 		{
-			CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+			var wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 			if (fWriteDirection)
+			{
 				m_writer.WriteLine("        direction: {0};", wsObj.RightToLeftScript ? "rtl" : "ltr");
-			if (!String.IsNullOrEmpty(wsObj.DefaultFontName))
-				m_writer.WriteLine("        font-family: \"{0}\", sans-serif;   /* default Serif font */",
-					wsObj.DefaultFontName);
+			}
+			if (!string.IsNullOrEmpty(wsObj.DefaultFontName))
+			{
+				m_writer.WriteLine("        font-family: \"{0}\", sans-serif;   /* default Serif font */", wsObj.DefaultFontName);
+			}
 		}
 
 		private void WriteFontFamilyForWs(int ws, bool fWriteDirection)
 		{
-			CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+			var wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 			if (fWriteDirection)
+			{
 				m_writer.WriteLine("    direction: {0};", wsObj.RightToLeftScript ? "rtl" : "ltr");
-			if (!String.IsNullOrEmpty(wsObj.DefaultFontName))
-				m_writer.WriteLine("    font-family: \"{0}\", serif;	/* default Serif font */",
-					wsObj.DefaultFontName);
+			}
+			if (!string.IsNullOrEmpty(wsObj.DefaultFontName))
+			{
+				m_writer.WriteLine("    font-family: \"{0}\", serif;	/* default Serif font */", wsObj.DefaultFontName);
+			}
 		}
 
 		private void ReadStyles(IVwStylesheet vss)
 		{
-			string normalStyleName = vss.GetDefaultBasedOnStyleName();
-			m_styleTable = new StyleInfoTable(normalStyleName,
-				m_cache.ServiceLocator.WritingSystemManager);
-			int cStyles = vss.CStyles;
-			for (int i = 0; i < cStyles; ++i)
+			var normalStyleName = vss.GetDefaultBasedOnStyleName();
+			m_styleTable = new StyleInfoTable(normalStyleName, m_cache.ServiceLocator.WritingSystemManager);
+			var cStyles = vss.CStyles;
+			for (var i = 0; i < cStyles; ++i)
 			{
-				int hvo = vss.get_NthStyle(i);
+				var hvo = vss.get_NthStyle(i);
 				var sty = m_cache.ServiceLocator.GetInstance<IStStyleRepository>().GetObject(hvo);
 				// CSS does not implement the kind of inheritance our styles use. To get the style
 				// definitions we want in the CSS, we must create these styles using the 'net effect' of
@@ -1249,12 +1271,16 @@ namespace LanguageExplorer.Controls.XMLViews
 			string sBaseClass;
 			if (!m_mapCssClassToXnode.TryGetValue(GetValidCssClassName(sClass), out xn))
 			{
-				int idx = sClass.IndexOf("_L", StringComparison.Ordinal);
+				var idx = sClass.IndexOf("_L", StringComparison.Ordinal);
 				if (idx <= 0)
+				{
 					return;
+				}
 				sBaseClass = sClass.Substring(0, idx);
 				if (!m_mapCssClassToXnode.TryGetValue(GetValidCssClassName(sBaseClass), out xn))
+				{
 					return;
+				}
 			}
 			else
 			{
@@ -1262,11 +1288,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			//string sBefore = XmlUtils.GetOptionalAttributeValue(xn, "before");
 			//string sAfter = XmlUtils.GetOptionalAttributeValue(xn, "after");
-			string sSep = XmlUtils.GetOptionalAttributeValue(xn, "sep");
-			string sStyle = XmlUtils.GetOptionalAttributeValue(xn, "style");
+			var sSep = XmlUtils.GetOptionalAttributeValue(xn, "sep");
+			var sStyle = XmlUtils.GetOptionalAttributeValue(xn, "style");
 			var fShowAsIndentedPara = XmlUtils.GetOptionalBooleanAttributeValue(xn, "showasindentedpara", false);
 
-			int ws = 0;
+			var ws = 0;
 			List<string> rgsLangs;
 			string sLang = null;
 			if (m_dictClassData.TryGetValue(GetValidCssClassName(sClass), out rgsLangs) && rgsLangs.Count > 0)
@@ -1276,8 +1302,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			if (ws == 0)
 			{
-				string sWs = StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(xn, "ws"));
-				string sWsType = XmlUtils.GetOptionalAttributeValue(xn, "wsType");
+				var sWs = StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(xn, "ws"));
+				var sWsType = XmlUtils.GetOptionalAttributeValue(xn, "wsType");
 				switch (sWs)
 				{
 					case "analysis":
@@ -1303,7 +1329,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						ws = m_cache.DefaultUserWs;	// need something!
 						break;
 					default:
-						string[] rgsWs = sWs.Split(',');
+						var rgsWs = sWs.Split(',');
 						if (rgsWs.Length > 0)
 						{
 							ws = m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(rgsWs[0]);
@@ -1330,33 +1356,38 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 			}
 			m_writer.WriteLine(".{0} {{", sClass.Replace(' ', '_'));
-			if (!String.IsNullOrEmpty(sLang))
+			if (!string.IsNullOrEmpty(sLang))
 			{
 				m_writer.Write("    /* lang = '{0}'", sLang);
-				for (int i = 1; i < rgsLangs.Count; ++i)
+				for (var i = 1; i < rgsLangs.Count; ++i)
+				{
 					m_writer.Write(", '{0}'", rgsLangs[i]);
+				}
 				m_writer.WriteLine(" */");
 			}
 			List<string> rgsStyles;
-			if (!String.IsNullOrEmpty(sStyle))
+			if (!string.IsNullOrEmpty(sStyle))
 			{
 				m_writer.WriteLine("    /* explicit FieldWorks style = '{0}' */", sStyle);
 				var esi = WriteFontInfoToCss(ws, sStyle, sBaseClass);
 				if (esi != null)
+				{
 					WriteParaStyleInfoToCss(esi);
+				}
 			}
-			else if (ws != m_cache.DefaultAnalWs &&
-					 m_mapCssToStyleEnv.TryGetValue(sBaseClass, out rgsStyles) && rgsStyles.Count > 0)
+			else if (ws != m_cache.DefaultAnalWs && m_mapCssToStyleEnv.TryGetValue(sBaseClass, out rgsStyles) && rgsStyles.Count > 0)
 			{
 				m_writer.WriteLine("    /* cascaded environment FieldWorks style = '{0}' */", rgsStyles[0]);
 				var esi = WriteFontInfoToCss(ws, rgsStyles[0], null);
 				if (esi != null)
+				{
 					WriteParaStyleInfoToCss(esi);
+				}
 			}
 			else if (xn != null && XmlUtils.GetOptionalBooleanAttributeValue(xn, "indent", false))
 			{
 				var parastyle = XmlUtils.GetOptionalAttributeValue(xn, "parastyle");
-				if (!String.IsNullOrEmpty(parastyle))
+				if (!string.IsNullOrEmpty(parastyle))
 				{
 					BaseStyleInfo bsi;
 					if (m_styleTable.TryGetValue(GetValidCssClassName(parastyle), out bsi))
@@ -1375,9 +1406,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				m_writer.WriteLine("    counter-reset: subentryCounter;");
 			}
-			string sClassLowered = sClass.ToLowerInvariant();
+			var sClassLowered = sClass.ToLowerInvariant();
 			if (sClassLowered.Contains("headword") && !sClassLowered.Contains("sub"))
+			{
 				m_writer.WriteLine("    string-set: guideword content();");
+			}
 			m_writer.WriteLine("}");
 			if (!fShowAsIndentedPara)
 			{
@@ -1387,7 +1420,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				//if (!String.IsNullOrEmpty(sAfter))
 				//    m_writer.WriteLine(".{0}:after {{ content: \"{1}\" }}",
 				//                       sClass, EscapeCharsForCss(sAfter));
-				if (!String.IsNullOrEmpty(sSep))
+				if (!string.IsNullOrEmpty(sSep))
 				{
 					switch (sClass)
 					{
@@ -1397,21 +1430,21 @@ namespace LanguageExplorer.Controls.XMLViews
 						case "subsenses":
 						case "subsenses-minor":
 						case "subsenses-sub":
-							m_writer.WriteLine(".{0}>.sense + .sense:before {{ content: \"{1}\" }}",
-											   sClass, EscapeCharsForCss(sSep));
+							m_writer.WriteLine(".{0}>.sense + .sense:before {{ content: \"{1}\" }}", sClass, EscapeCharsForCss(sSep));
 							break;
 						default:
-							m_writer.WriteLine(".{0}>.xitem + .xitem:before {{ content: \"{1}\" }}",
-											   sClass, EscapeCharsForCss(sSep));
+							m_writer.WriteLine(".{0}>.xitem + .xitem:before {{ content: \"{1}\" }}", sClass, EscapeCharsForCss(sSep));
 							break;
 					}
 				}
 			}
-			if (!String.IsNullOrEmpty(sStyle))
+			if (!string.IsNullOrEmpty(sStyle))
 			{
 				var sCounter = "custompara";
 				if (sClass == "complexform")
+				{
 					sCounter = "complexformpara";
+				}
 				WriteParaBulletInfoToCss(sStyle, sClass, sCounter);
 			}
 		}
@@ -1420,16 +1453,24 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			BaseStyleInfo bsi;
 			if (!m_styleTable.TryGetValue(GetValidCssClassName(sStyle), out bsi))
+			{
 				return;
+			}
 			if (bsi.IsCharacterStyle)
+			{
 				return;
+			}
 			var esi = bsi as ExportStyleInfo;
 			if (esi == null)
+			{
 				return;
+			}
 			var scheme = esi.NumberScheme;
 			if (scheme < VwBulNum.kvbnNumberBase || scheme > VwBulNum.kvbnBulletMax)
+			{
 				return;
-			var type = "";
+			}
+			var type = string.Empty;
 			string bullet = null;
 			switch (scheme)
 			{
@@ -1471,100 +1512,133 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			m_writer.WriteLine(".{0}:before {{", sClass.Replace(' ', '_'));
 			if (bullet != null)
+			{
 				m_writer.WriteLine("    content: \"{0}  \";", bullet);
+			}
 			else
+			{
 				m_writer.WriteLine("    content: counter({0}{1}) \" \";", sCounter, type);
+			}
 			m_writer.WriteLine("    counter-increment: {0};", sCounter);
 			m_writer.WriteLine("}");
 		}
 
 		private ExportStyleInfo WriteFontInfoToCss(int ws, string sStyle, string sCss)
 		{
-			BaseStyleInfo bsi = null;
-			if (m_styleTable.TryGetValue(GetValidCssClassName(sStyle), out bsi))
+			BaseStyleInfo bsi;
+			if (!m_styleTable.TryGetValue(GetValidCssClassName(sStyle), out bsi))
 			{
-				ExportStyleInfo esi = bsi as ExportStyleInfo;
-				if (!WriteFontAttr(ws, "font-family", esi, sCss, true) && ws != -1)
+				return null;
+			}
+			var esi = bsi as ExportStyleInfo;
+			if (!WriteFontAttr(ws, "font-family", esi, sCss, true) && ws != -1)
+			{
+				if (!WriteFontAttr(-1, "font-family", esi, sCss, true))
 				{
-					if (!WriteFontAttr(-1, "font-family", esi, sCss, true))
-						WriteFontFamilyForWs(ws, false);
+					WriteFontFamilyForWs(ws, false);
 				}
-				if (!WriteFontAttr(ws, "font-size", esi, sCss, true) && ws != -1)
+			}
+			if (!WriteFontAttr(ws, "font-size", esi, sCss, true) && ws != -1)
+			{
+				if (!WriteFontAttr(-1, "font-size", esi, sCss, true))
 				{
-					if (!WriteFontAttr(-1, "font-size", esi, sCss, true))
+					switch (sStyle)
 					{
-						if (sStyle == "Verse Number")
+						case "Verse Number":
 							m_writer.WriteLine("    font-size: smaller;");
-						else if (sStyle == "Chapter Number")
+							break;
+						case "Chapter Number":
 							m_writer.WriteLine("    font-size: 200%;");
+							break;
 					}
 				}
-				if (!WriteFontAttr(ws, "font-weight", esi, sCss, true) && ws != -1)
+			}
+			if (!WriteFontAttr(ws, "font-weight", esi, sCss, true) && ws != -1)
+			{
+				if (!WriteFontAttr(-1, "font-weight", esi, sCss, true))
 				{
-					if (!WriteFontAttr(-1, "font-weight", esi, sCss, true))
+					if (sStyle == "Chapter Number")
 					{
-						if (sStyle == "Chapter Number")
-							m_writer.WriteLine("    font-weight: bolder;");
+						m_writer.WriteLine("    font-weight: bolder;");
 					}
 				}
-				if (!WriteFontAttr(ws, "font-style", esi, sCss, true) && ws != -1)
-					WriteFontAttr(-1, "font-style", esi, sCss, true);
-				if (!WriteFontAttr(ws, "color", esi, sCss, true) && ws != -1)
-					WriteFontAttr(-1, "color", esi, sCss, true);
-				if (!WriteFontAttr(ws, "background-color", esi, sCss, true) && ws != -1)
-					WriteFontAttr(-1, "background-color", esi, sCss, true);
-				if (!WriteFontAttr(ws, "vertical-align", esi, sCss, true) && ws != -1)
+			}
+			if (!WriteFontAttr(ws, "font-style", esi, sCss, true) && ws != -1)
+			{
+				WriteFontAttr(-1, "font-style", esi, sCss, true);
+			}
+			if (!WriteFontAttr(ws, "color", esi, sCss, true) && ws != -1)
+			{
+				WriteFontAttr(-1, "color", esi, sCss, true);
+			}
+			if (!WriteFontAttr(ws, "background-color", esi, sCss, true) && ws != -1)
+			{
+				WriteFontAttr(-1, "background-color", esi, sCss, true);
+			}
+			if (!WriteFontAttr(ws, "vertical-align", esi, sCss, true) && ws != -1)
+			{
+				if (!WriteFontAttr(-1, "vertical-align", esi, sCss, true))
 				{
-					if (!WriteFontAttr(-1, "vertical-align", esi, sCss, true))
+					switch (sStyle)
 					{
-						if (sStyle == "Verse Number")
+						case "Verse Number":
 							m_writer.WriteLine("    vertical-align: super;");
-						else if (sStyle == "Chapter Number")
+							break;
+						case "Chapter Number":
 							m_writer.WriteLine("    vertical-align: top;");
+							break;
 					}
 				}
-				if (!WriteFontAttr(ws, "text-decoration", esi, sCss, true) && ws != -1)
-					WriteFontAttr(-1, "text-decoration", esi, sCss, true);
+			}
+			if (!WriteFontAttr(ws, "text-decoration", esi, sCss, true) && ws != -1)
+			{
+				WriteFontAttr(-1, "text-decoration", esi, sCss, true);
+			}
 
-				if (esi.DirectionIsRightToLeft != TriStateBool.triNotSet)
-					m_writer.WriteLine("    direction: {0};",
-						esi.DirectionIsRightToLeft == TriStateBool.triTrue ? "rtl" : "ltr");
+			if (esi.DirectionIsRightToLeft != TriStateBool.triNotSet)
+			{
+				m_writer.WriteLine("    direction: {0};", esi.DirectionIsRightToLeft == TriStateBool.triTrue ? "rtl" : "ltr");
 			}
 			return bsi as ExportStyleInfo;		// in case someone else needs it.
 		}
 
 		private bool WriteFontAttr(int ws, string sAttr, ExportStyleInfo esi, string sCss, bool fTopLevel)
 		{
-			FontInfo fi = esi.FontInfoForWs(ws);
-			bool fInherited = false;
-			string sInheritance = String.Empty;
+			var fi = esi.FontInfoForWs(ws);
+			var fInherited = false;
+			var sInheritance = string.Empty;
 			if (sCss == null && !fTopLevel)
+			{
 				sInheritance = "\t/* inherited through cascaded environment */";
+			}
 			if (sCss == null)
+			{
 				sInheritance = "\t/* cascaded environment */";
+			}
 			else if (!fTopLevel)
+			{
 				sInheritance = "\t/* inherited */";
+			}
 			switch (sAttr)
 			{
 				case "font-family":
 					if (fi.m_fontName.ValueIsSet)
 					{
-						string sFontName = esi.RealFontNameForWs(ws);
-						if (String.IsNullOrEmpty(sFontName))
-							m_writer.WriteLine("    font-family: \"{0}\", serif;{1}", fi.m_fontName.Value, sInheritance);
-						else
-							m_writer.WriteLine("    font-family: \"{0}\", serif;{1}", sFontName, sInheritance);
+						var sFontName = esi.RealFontNameForWs(ws);
+						m_writer.WriteLine("    font-family: \"{0}\", serif;{1}", string.IsNullOrEmpty(sFontName) ? fi.m_fontName.Value : sFontName, sInheritance);
 						return true;
 					}
 					fInherited = fi.m_fontName.IsInherited;
 					break;
 				case "font-size":
-					bool superSub = fi.m_superSub.ValueIsSet && fi.m_superSub.Value != FwSuperscriptVal.kssvOff;
+					var superSub = fi.m_superSub.ValueIsSet && fi.m_superSub.Value != FwSuperscriptVal.kssvOff;
 					if (fi.m_fontSize.ValueIsSet)
 					{
 						var pointSize = fi.m_fontSize.Value;
 						if (superSub)
+						{
 							pointSize = pointSize*55/100;
+						}
 						m_writer.WriteLine("    font-size: {0}pt;{1}", ConvertMptToPt(pointSize), sInheritance);
 						return true;
 					}
@@ -1641,8 +1715,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				case "text-decoration":
 					if (fi.m_underline.ValueIsSet)
 					{
-						m_writer.WriteLine("    text-decoration: {0};{1}",
-							(fi.m_underline.Value == FwUnderlineType.kuntNone ? "none" : "underline"), sInheritance);
+						m_writer.WriteLine("    text-decoration: {0};{1}", (fi.m_underline.Value == FwUnderlineType.kuntNone ? "none" : "underline"), sInheritance);
 						return true;
 					}
 					fInherited = fi.m_underline.IsInherited;
@@ -1650,23 +1723,24 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			if (fInherited)
 			{
-				string sBaseStyle = esi.InheritsFrom;
+				var sBaseStyle = esi.InheritsFrom;
 				BaseStyleInfo bsiBase;
-				if (!String.IsNullOrEmpty(sBaseStyle) && m_styleTable.TryGetValue(GetValidCssClassName(sBaseStyle), out bsiBase))
+				if (!string.IsNullOrEmpty(sBaseStyle) && m_styleTable.TryGetValue(GetValidCssClassName(sBaseStyle), out bsiBase))
 				{
 					if (WriteFontAttr(ws, sAttr, bsiBase as ExportStyleInfo, sCss, false))
+					{
 						return true;
+					}
 				}
-				if (!String.IsNullOrEmpty(sCss))
+				if (!string.IsNullOrEmpty(sCss))
 				{
 					List<string> rgsStyles;
 					if (m_mapCssToStyleEnv.TryGetValue(sCss, out rgsStyles))
 					{
-						foreach (string sParaStyle in rgsStyles)
+						foreach (var sParaStyle in rgsStyles)
 						{
 							BaseStyleInfo bsiPara;
-							if (m_styleTable.TryGetValue(GetValidCssClassName(sParaStyle), out bsiPara) &&
-								WriteFontAttr(ws, sAttr, bsiPara as ExportStyleInfo, null, false))
+							if (m_styleTable.TryGetValue(GetValidCssClassName(sParaStyle), out bsiPara) && WriteFontAttr(ws, sAttr, bsiPara as ExportStyleInfo, null, false))
 							{
 								return true;
 							}
@@ -1685,7 +1759,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void WriteParaStyleInfoToCss(ExportStyleInfo esi, bool hangingIndent, bool entryOrMinorEntry = false)
 		{
 			if (esi == null)
+			{
 				return; // If the style was not defined in our stylesheet, we can't write anything for it.
+			}
 			string sLeading;
 			string sTrailing;
 			WriteHorizontalPaddingValues(esi, hangingIndent, out sLeading, out sTrailing);
@@ -1724,8 +1800,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_writer.WriteLine("    border-right-width: {0}pt;", ConvertMptToPt(esi.BorderTrailing));
 			}
 			if (esi.HasBorderColor)
-				m_writer.WriteLine("    border-color: rgb({0},{1},{2});",
-					esi.BorderColor.R, esi.BorderColor.G, esi.BorderColor.B);
+			{
+				m_writer.WriteLine("    border-color: rgb({0},{1},{2});", esi.BorderColor.R, esi.BorderColor.G, esi.BorderColor.B);
+			}
 			if (hangingIndent)
 			{
 				// Indent is allowed, write it out if specified; otherwise, allow it to be inherited.
@@ -1733,13 +1810,19 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					var firstLineIndentAdjusted = esi.FirstLineIndent;
 					if (entryOrMinorEntry) //LT-14757 Need to reduce indent for cell phone devices.
+					{
 						firstLineIndentAdjusted = firstLineIndentAdjusted/3;
+					}
 					m_writer.WriteLine("    text-indent: {0}pt;", ConvertMptToPt(firstLineIndentAdjusted));
 					m_writer.Write("    margin-{0}: ", sLeading);
 					if (esi.FirstLineIndent < 0)
+					{
 						m_writer.WriteLine("{0}pt;", ConvertMptToPt(-firstLineIndentAdjusted));
+					}
 					else
+					{
 						m_writer.WriteLine("0pt;");
+					}
 				}
 			}
 			else
@@ -1750,18 +1833,28 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			if (esi.HasLineSpacing)
 			{
-				LineHeightInfo lhi = esi.LineSpacing;
+				var lhi = esi.LineSpacing;
 				if (lhi.m_relative)
+				{
 					m_writer.WriteLine("    line-height: {0}%;", lhi.m_lineHeight / 100);
+				}
 				else if (lhi.m_lineHeight < 0)
+				{
 					m_writer.WriteLine("    line-height: {0}pt;", ConvertMptToPt(-lhi.m_lineHeight));
+				}
 				else
+				{
 					m_writer.WriteLine("    line-height: normal;");	// "at least" semantics??
+				}
 			}
 			if (esi.HasSpaceAfter)
+			{
 				m_writer.WriteLine("    padding-bottom: {0}pt;", ConvertMptToPt(esi.SpaceAfter));
+			}
 			if (esi.HasSpaceBefore)
+			{
 				m_writer.WriteLine("    padding-top: {0}pt;", ConvertMptToPt(esi.SpaceBefore));
+			}
 			if (esi.HasWidowOrphanControl)
 			{
 				m_writer.WriteLine("    orphans: {0};", esi.WidowOrphanControl ? "2" : "1");
@@ -1771,18 +1864,21 @@ namespace LanguageExplorer.Controls.XMLViews
 			// esi.KeepWithNext;
 		}
 
-		private void WriteHorizontalPaddingValues(ExportStyleInfo esi, bool hangingIndent,
-			out string sLeading, out string sTrailing)
+		private void WriteHorizontalPaddingValues(ExportStyleInfo esi, bool hangingIndent, out string sLeading, out string sTrailing)
 		{
 			sLeading = esi.DirectionIsRightToLeft == TriStateBool.triTrue ? "right" : "left";
 			sTrailing = esi.DirectionIsRightToLeft == TriStateBool.triTrue ? "left" : "right";
 			if (esi.HasLeadingIndent && hangingIndent) // LT-12658 suppress indentation inside paragraphs
+			{
 				m_writer.WriteLine("    padding-{0}: {1}pt;", sLeading, ConvertMptToPt(esi.LeadingIndent));
+			}
 			if (esi.HasTrailingIndent)
+			{
 				m_writer.WriteLine("    padding-{0}: {1}pt;", sTrailing, ConvertMptToPt(esi.TrailingIndent));
+			}
 		}
 
-		private string GetVerticalAlign(FwSuperscriptVal super)
+		private static string GetVerticalAlign(FwSuperscriptVal super)
 		{
 			switch (super)
 			{
@@ -1795,19 +1891,16 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		private string ConvertMptToPt(int mpt)
+		private static string ConvertMptToPt(int mpt)
 		{
-			int pt = mpt / 1000;
-			int frac = Math.Abs(mpt) % 1000;
-			if (frac == 0)
-				return pt.ToString();
-			else
-				return String.Format("{0}.{1:d3}", pt, frac);
+			var pt = mpt / 1000;
+			var frac = Math.Abs(mpt) % 1000;
+			return frac == 0 ? pt.ToString() : $"{pt}.{frac:d3}";
 		}
 
-		private string EscapeCharsForCss(string sBefore)
+		private static string EscapeCharsForCss(string sBefore)
 		{
-			string s = sBefore.Replace("\\", "\\\\");
+			var s = sBefore.Replace("\\", "\\\\");
 			s = s.Replace("\"", "\\\"");
 			s = s.Replace("\r", "\\00000d");
 			s = s.Replace("\n", "\\00000a");
@@ -1839,15 +1932,14 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_dictClassData.Remove("xitem");
 			}
 			m_writer.WriteLine();
-			XElement xnDummy = new XElement("dummy", new XAttribute("style", string.Empty));
+			var xnDummy = new XElement("dummy", new XAttribute("style", string.Empty));
 			foreach (string sClass in m_dictClassData.Keys)
 			{
 				// Check for actual FW style names (possibly munged) that appear in the
 				// exported data, but aren't mapped to an XmlNode containing necessary
 				// information.  Map them simply to the FW style.
 				XElement xn;
-				if (m_dictClassData[sClass].Count > 0 &&
-					!m_mapCssClassToXnode.TryGetValue(sClass, out xn))
+				if (m_dictClassData[sClass].Count > 0 && !m_mapCssClassToXnode.TryGetValue(sClass, out xn))
 				{
 					// We probably need to put this out anyway if it's an actual FW style name.
 					string sStyle = null;
@@ -1859,7 +1951,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						sStyle = sClass.Replace('_', ' ');
 					}
-					if (!String.IsNullOrEmpty(sStyle))
+					if (!string.IsNullOrEmpty(sStyle))
 					{
 						xnDummy.Attribute("style").Value = sStyle;
 						m_mapCssClassToXnode.Add(sClass, xnDummy);
@@ -1875,7 +1967,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void WriteCssNotebookEntry()
 		{
 			m_writer.WriteLine(".entry {");
-			ExportStyleInfo esi = WriteFontInfoToCss(m_cache.DefaultAnalWs, "Normal", "entry");
+			var esi = WriteFontInfoToCss(m_cache.DefaultAnalWs, "Normal", "entry");
 			WriteParaStyleInfoToCss(esi);
 			m_writer.WriteLine("}");
 
@@ -1887,22 +1979,26 @@ namespace LanguageExplorer.Controls.XMLViews
 			string sBaseClass;
 			if (!m_mapCssClassToXnode.TryGetValue(GetValidCssClassName(sClass), out xn))
 			{
-				int idx = sClass.IndexOf("_L", StringComparison.Ordinal);
+				var idx = sClass.IndexOf("_L", StringComparison.Ordinal);
 				if (idx <= 0)
+				{
 					return;
+				}
 				sBaseClass = sClass.Substring(0, idx);
 				if (!m_mapCssClassToXnode.TryGetValue(GetValidCssClassName(sBaseClass), out xn))
+				{
 					return;
+				}
 			}
 			else
 			{
 				sBaseClass = sClass;
 			}
-			string sBefore = XmlUtils.GetOptionalAttributeValue(xn, "before");
-			string sAfter = XmlUtils.GetOptionalAttributeValue(xn, "after");
-			string sSep = XmlUtils.GetOptionalAttributeValue(xn, "sep");
-			string sStyle = XmlUtils.GetOptionalAttributeValue(xn, "style");
-			int ws = 0;
+			var sBefore = XmlUtils.GetOptionalAttributeValue(xn, "before");
+			var sAfter = XmlUtils.GetOptionalAttributeValue(xn, "after");
+			var sSep = XmlUtils.GetOptionalAttributeValue(xn, "sep");
+			var sStyle = XmlUtils.GetOptionalAttributeValue(xn, "style");
+			var ws = 0;
 			List<string> rgsLangs;
 			string sLang = null;
 			if (m_dictClassData.TryGetValue(GetValidCssClassName(sClass), out rgsLangs) && rgsLangs.Count > 0)
@@ -1912,8 +2008,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			if (ws == 0)
 			{
-				string sWs = StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(xn, "ws"));
-				string sWsType = XmlUtils.GetOptionalAttributeValue(xn, "wsType");
+				var sWs = StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(xn, "ws"));
+				var sWsType = XmlUtils.GetOptionalAttributeValue(xn, "wsType");
 				switch (sWs)
 				{
 					case "analysis":
@@ -1939,7 +2035,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						ws = m_cache.DefaultUserWs;	// need something!
 						break;
 					default:
-						string[] rgsWs = sWs.Split(',');
+						var rgsWs = sWs.Split(',');
 						if (rgsWs.Length > 0)
 						{
 							ws = m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(rgsWs[0]);
@@ -1966,45 +2062,48 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 			}
 			m_writer.WriteLine(".{0} {{", sClass.Replace(' ', '_'));
-			if (!String.IsNullOrEmpty(sLang))
+			if (!string.IsNullOrEmpty(sLang))
 			{
 				m_writer.Write("    /* lang = '{0}'", sLang);
-				for (int i = 1; i < rgsLangs.Count; ++i)
+				for (var i = 1; i < rgsLangs.Count; ++i)
+				{
 					m_writer.Write(", '{0}'", rgsLangs[i]);
+				}
 				m_writer.WriteLine(" */");
 			}
 			List<string> rgsStyles;
-			if (!String.IsNullOrEmpty(sStyle))
+			if (!string.IsNullOrEmpty(sStyle))
 			{
 				m_writer.WriteLine("    /* explicit FieldWorks style = '{0}' */", sStyle);
 				WriteFontInfoToCss(ws, sStyle, sBaseClass);
 			}
-			else if (ws != m_cache.DefaultAnalWs &&
-				m_mapCssToStyleEnv.TryGetValue(sBaseClass, out rgsStyles) && rgsStyles.Count > 0)
+			else if (ws != m_cache.DefaultAnalWs && m_mapCssToStyleEnv.TryGetValue(sBaseClass, out rgsStyles) && rgsStyles.Count > 0)
 			{
 				m_writer.WriteLine("    /* cascaded environment FieldWorks style = '{0}' */", rgsStyles[0]);
 				WriteFontInfoToCss(ws, rgsStyles[0], null);
 			}
-			string sClassLowered = sClass.ToLowerInvariant();
+			var sClassLowered = sClass.ToLowerInvariant();
 			if (sClassLowered.Contains("headword") && !sClassLowered.Contains("sub"))
-				m_writer.WriteLine("    string-set: guideword content();");
-			m_writer.WriteLine("}");
-			if (!String.IsNullOrEmpty(sBefore))
-				m_writer.WriteLine(".{0}:before {{ content: \"{1}\" }}",
-					sClass, EscapeCharsForCss(sBefore));
-			if (!String.IsNullOrEmpty(sAfter))
-				m_writer.WriteLine(".{0}:after {{ content: \"{1}\" }}",
-					sClass, EscapeCharsForCss(sAfter));
-			if (!String.IsNullOrEmpty(sSep))
 			{
-				m_writer.WriteLine(".{0}>.xitem + .xitem:before {{ content: \"{1}\" }}",
-					sClass, EscapeCharsForCss(sSep));
+				m_writer.WriteLine("    string-set: guideword content();");
+			}
+			m_writer.WriteLine("}");
+			if (!string.IsNullOrEmpty(sBefore))
+			{
+				m_writer.WriteLine(".{0}:before {{ content: \"{1}\" }}", sClass, EscapeCharsForCss(sBefore));
+			}
+			if (!string.IsNullOrEmpty(sAfter))
+			{
+				m_writer.WriteLine(".{0}:after {{ content: \"{1}\" }}", sClass, EscapeCharsForCss(sAfter));
+			}
+			if (!string.IsNullOrEmpty(sSep))
+			{
+				m_writer.WriteLine(".{0}>.xitem + .xitem:before {{ content: \"{1}\" }}", sClass, EscapeCharsForCss(sSep));
 			}
 			else if (sClass == "subentries")
 			{
 				// We need to do something to cause indentation.
-				m_writer.WriteLine(".{0}>.entry + .entry {{ text-indent: 6% }}",
-					sClass);
+				m_writer.WriteLine(".{0}>.entry + .entry {{ text-indent: 6% }}", sClass);
 			}
 		}
 
@@ -2015,12 +2114,14 @@ namespace LanguageExplorer.Controls.XMLViews
 				var sClass = numberStyle.Key;
 				var sBefore = numberStyle.Value.Item1;
 				var sAfter = numberStyle.Value.Item2;
-				if (!String.IsNullOrEmpty(sBefore))
-					m_writer.WriteLine(".{0}:before {{ content: \"{1}\" }}",
-						sClass, EscapeCharsForCss(sBefore));
-				if (!String.IsNullOrEmpty(sAfter))
-					m_writer.WriteLine(".{0}:after {{ content: \"{1}\" }}",
-						sClass, EscapeCharsForCss(sAfter));
+				if (!string.IsNullOrEmpty(sBefore))
+				{
+					m_writer.WriteLine(".{0}:before {{ content: \"{1}\" }}", sClass, EscapeCharsForCss(sBefore));
+				}
+				if (!string.IsNullOrEmpty(sAfter))
+				{
+					m_writer.WriteLine(".{0}:after {{ content: \"{1}\" }}", sClass, EscapeCharsForCss(sAfter));
+				}
 
 			}
 		}
@@ -2029,117 +2130,122 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// html element.  We also need to retrieve the class and lang attributes that result
 		/// from the XSLT processing, so we do that as well.
 		/// </summary>
-		/// <param name="sOutputFile"></param>
-		/// <param name="sTempFile"></param>
 		public void FinalizeXhtml(string sOutputFile, string sTempFile)
 		{
-			using (TextReader rdr = FileUtils.OpenFileForRead(sTempFile, Encoding.UTF8))
+			using (var rdr = FileUtils.OpenFileForRead(sTempFile, Encoding.UTF8))
+			using (var wtr = FileUtils.OpenFileForWrite(sOutputFile, Encoding.UTF8))
 			{
-				using (TextWriter wtr = FileUtils.OpenFileForWrite(sOutputFile, Encoding.UTF8))
+				var sLine = rdr.ReadLine();
+				while (sLine != null)
 				{
-					string sLine = rdr.ReadLine();
-					while (sLine != null)
+					// Users expect both these characters to cause a break before the next element, but embedding
+					// them in HTML is considered bad practice (LT-13592) so we replace with a break.
+					sLine = sLine.Replace("\u2028", "<br/>");
+					sLine = sLine.Replace("\u2029", "<br/>");
+					var idxClass = -1;
+					while ((idxClass = sLine.IndexOf(" class=\"", idxClass + 1, StringComparison.Ordinal)) >= 0)
 					{
-						// Users expect both these characters to cause a break before the next element, but embedding
-						// them in HTML is considered bad practice (LT-13592) so we replace with a break.
-						sLine = sLine.Replace("\u2028", "<br/>");
-						sLine = sLine.Replace("\u2029", "<br/>");
-						int idxClass = -1;
-						while ((idxClass = sLine.IndexOf(" class=\"", idxClass + 1, StringComparison.Ordinal)) >= 0)
+						var idxMin = idxClass + 8;
+						var idxLim = sLine.IndexOf('"', idxMin);
+						if (idxLim <= idxMin)
 						{
-							int idxMin = idxClass + 8;
-							int idxLim = sLine.IndexOf('"', idxMin);
-							if (idxLim > idxMin)
+							continue;
+						}
+						var sClass = sLine.Substring(idxMin, idxLim - idxMin);
+						string sLang = null;
+						if (sLine.Substring(idxLim).StartsWith("\" lang=\"", StringComparison.Ordinal))
+						{
+							var idxLang = idxLim + 8;
+							var idxLangLim = sLine.IndexOf('"', idxLang);
+							if (idxLangLim > idxLang)
 							{
-								string sClass = sLine.Substring(idxMin, idxLim - idxMin);
-								string sLang = null;
-								if (sLine.Substring(idxLim).StartsWith("\" lang=\"", StringComparison.Ordinal))
-								{
-									int idxLang = idxLim + 8;
-									int idxLangLim = sLine.IndexOf('"', idxLang);
-									if (idxLangLim > idxLang)
-										sLang = sLine.Substring(idxLang, idxLangLim - idxLang);
-								}
-								else if (sLine.Substring(idxLim).StartsWith("\"><span ") &&
-										 (idxClass - 4 >= 0) && sLine.Substring(idxClass - 4).StartsWith("<div "))
-								{
-									var piece = sLine.Substring(idxLim + 2);
-									var idx = piece.IndexOf(">", StringComparison.Ordinal);
-									if (idx > 0)
-									{
-										piece = piece.Remove(idx + 1);
-										idx = piece.IndexOf(" lang=\"", StringComparison.Ordinal);
-										if (idx > 0)
-										{
-											var idxLang = idx + 7;
-											var idxLangLim = piece.IndexOf('"', idxLang);
-											if (idxLangLim > idxLang)
-												sLang = piece.Substring(idxLang, idxLangLim - idxLang);
-										}
-									}
-								}
-								else if ((idxClass - 4 >= 0) && sLine.Substring(idxClass - 4).StartsWith("<div ") &&
-									sLine.Substring(idxLim).StartsWith("\" id=\""))
-								{
-									var idx = sLine.IndexOf(">", idxLim, StringComparison.Ordinal);
-									if (idx > 0)
-									{
-										var piece = sLine.Substring(idxLim, idx - idxLim);
-										if (piece.Contains(" style=\""))
-										{
-											idx = sLine.IndexOf(" style=\"", idxLim, StringComparison.Ordinal);
-											var idxStyle = idx + 8;
-											var idxStyleLim = sLine.IndexOf('"', idxStyle);
-											var style = sLine.Substring(idx + 8, idxStyleLim - idxStyle);
-											sLine = sLine.Remove(idx, idxStyleLim - idx + 1);
-											if (!m_mapClassToStyle.ContainsKey(sClass))
-												m_mapClassToStyle.Add(sClass, style);
-										}
-									}
-								}
-								List<string> rgsLangs;
-								if (!m_dictClassData.TryGetValue(GetValidCssClassName(sClass), out rgsLangs))
-								{
-									// Many TE styles have spaces in their names, which are
-									// replaced by underscores.  Try finding the original name
-									// before inserting a new value into the table.
-									string sFwStyle;
-									if (!m_mapCssClassToFwStyle.TryGetValue(sClass, out sFwStyle))
-										sFwStyle = sClass.Replace('_', ' ');		// just in case...
-									if (!m_dictClassData.TryGetValue(GetValidCssClassName(sFwStyle), out rgsLangs))
-									{
-										string before = ExtractText(sLine, idxLim, " before", "\"");
-										string after = ExtractText(sLine, idxLim, " after", "\"");
-										if (!String.IsNullOrEmpty(before) || !String.IsNullOrEmpty(after))
-										{
-											if (!String.IsNullOrEmpty(before))
-											{
-												List<string> rgsBefores = new List<string>();
-												rgsBefores.Add(before); // sorry, literal text not a language
-												MapCssToLangs(sClass, rgsBefores);
-											}
-											if (!String.IsNullOrEmpty(after))
-											{
-												List<string> rgsAfters = new List<string>();
-												rgsAfters.Add(after); // sorry, literal text not a language
-												MapCssToLangs(sClass, rgsAfters);
-											}
-										}
-										else
-										{
-											rgsLangs = new List<string>();
-											MapCssToLangs(sClass, rgsLangs);
-										}
-									}
-								}
-								if (!String.IsNullOrEmpty(sLang) && !rgsLangs.Contains(sLang))
-									rgsLangs.Add(sLang);
+								sLang = sLine.Substring(idxLang, idxLangLim - idxLang);
 							}
 						}
-						sLine = InsertHtmlNamespace(sLine);
-						wtr.WriteLine(sLine);
-						sLine = rdr.ReadLine();
+						else if (sLine.Substring(idxLim).StartsWith("\"><span ") && (idxClass - 4 >= 0) && sLine.Substring(idxClass - 4).StartsWith("<div "))
+						{
+							var piece = sLine.Substring(idxLim + 2);
+							var idx = piece.IndexOf(">", StringComparison.Ordinal);
+							if (idx > 0)
+							{
+								piece = piece.Remove(idx + 1);
+								idx = piece.IndexOf(" lang=\"", StringComparison.Ordinal);
+								if (idx > 0)
+								{
+									var idxLang = idx + 7;
+									var idxLangLim = piece.IndexOf('"', idxLang);
+									if (idxLangLim > idxLang)
+									{
+										sLang = piece.Substring(idxLang, idxLangLim - idxLang);
+									}
+								}
+							}
+						}
+						else if ((idxClass - 4 >= 0) && sLine.Substring(idxClass - 4).StartsWith("<div ") && sLine.Substring(idxLim).StartsWith("\" id=\""))
+						{
+							var idx = sLine.IndexOf(">", idxLim, StringComparison.Ordinal);
+							if (idx > 0)
+							{
+								var piece = sLine.Substring(idxLim, idx - idxLim);
+								if (piece.Contains(" style=\""))
+								{
+									idx = sLine.IndexOf(" style=\"", idxLim, StringComparison.Ordinal);
+									var idxStyle = idx + 8;
+									var idxStyleLim = sLine.IndexOf('"', idxStyle);
+									var style = sLine.Substring(idx + 8, idxStyleLim - idxStyle);
+									sLine = sLine.Remove(idx, idxStyleLim - idx + 1);
+									if (!m_mapClassToStyle.ContainsKey(sClass))
+									{
+										m_mapClassToStyle.Add(sClass, style);
+									}
+								}
+							}
+						}
+						List<string> rgsLangs;
+						if (!m_dictClassData.TryGetValue(GetValidCssClassName(sClass), out rgsLangs))
+						{
+							// Many TE styles have spaces in their names, which are
+							// replaced by underscores.  Try finding the original name
+							// before inserting a new value into the table.
+							string sFwStyle;
+							if (!m_mapCssClassToFwStyle.TryGetValue(sClass, out sFwStyle))
+							{
+								sFwStyle = sClass.Replace('_', ' ');		// just in case...
+							}
+							if (!m_dictClassData.TryGetValue(GetValidCssClassName(sFwStyle), out rgsLangs))
+							{
+								var before = ExtractText(sLine, idxLim, " before", "\"");
+								var after = ExtractText(sLine, idxLim, " after", "\"");
+								if (!string.IsNullOrEmpty(before) || !String.IsNullOrEmpty(after))
+								{
+									if (!string.IsNullOrEmpty(before))
+									{
+										var rgsBefores = new List<string> {before};
+										// sorry, literal text not a language
+										MapCssToLangs(sClass, rgsBefores);
+									}
+									if (!string.IsNullOrEmpty(after))
+									{
+										var rgsAfters = new List<string> {after};
+										// sorry, literal text not a language
+										MapCssToLangs(sClass, rgsAfters);
+									}
+								}
+								else
+								{
+									rgsLangs = new List<string>();
+									MapCssToLangs(sClass, rgsLangs);
+								}
+							}
+						}
+						if (!string.IsNullOrEmpty(sLang) && !rgsLangs.Contains(sLang))
+						{
+							rgsLangs.Add(sLang);
+						}
 					}
+					sLine = InsertHtmlNamespace(sLine);
+					wtr.WriteLine(sLine);
+					sLine = rdr.ReadLine();
 				}
 			}
 		}
@@ -2148,13 +2254,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// If this line contains the opening html attribute, add the required namespace info.
 		/// XSLT processors do too much with xmlns attributes, so we generally add it after the final xslt.
 		/// </summary>
-		/// <param name="sLine"></param>
-		/// <returns></returns>
 		public static string InsertHtmlNamespace(string sLine)
 		{
-			int idxHtml = sLine.IndexOf("<html ", StringComparison.Ordinal);
+			var idxHtml = sLine.IndexOf("<html ", StringComparison.Ordinal);
 			if (idxHtml >= 0)
+			{
 				sLine = sLine.Insert(idxHtml + 5, " xmlns=\"http://www.w3.org/1999/xhtml\"");
+			}
 			return sLine;
 		}
 
@@ -2163,23 +2269,18 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// ex:  str = 'stuff ... attrname = "delimited text" ... '
 		/// use: delimitedText = ExtractText(str, idxLim, "attrname", "\"");
 		/// </summary>
-		/// <param name="str"></param>
-		/// <param name="fromHere"></param>
-		/// <param name="label"></param>
-		/// <param name="delimiter"></param>
-		/// <returns></returns>
-		private string ExtractText(string str, int fromHere, string label, string delimiter)
+		private static string ExtractText(string str, int fromHere, string label, string delimiter)
 		{
-			int horizon = 30;
+			var horizon = 30;
 			if (fromHere > str.Length - 1) return null; // nothing to look for
 			if (fromHere + horizon > str.Length - 1) horizon = str.Length - fromHere - 1;
-			int start = str.IndexOf(label, fromHere, horizon, StringComparison.Ordinal);
+			var start = str.IndexOf(label, fromHere, horizon, StringComparison.Ordinal);
 			if (start < 0) return null; // no label found
 			start += label.Length; // one char past label
-			int delim = str.IndexOf(delimiter, start, StringComparison.Ordinal); // pos of 1st delimiter
+			var delim = str.IndexOf(delimiter, start, StringComparison.Ordinal); // pos of 1st delimiter
 			if (delim < 0) return null; // no text between delimiters
 			start = delim + delimiter.Length; // start of text between delimiters
-			int end = str.IndexOf(delimiter, start, StringComparison.Ordinal);
+			var end = str.IndexOf(delimiter, start, StringComparison.Ordinal);
 			if (end < 0) return null; // no end delimiter on this line - should have used an xml parser ;-)
 			return str.Substring(start, end - start);
 		}

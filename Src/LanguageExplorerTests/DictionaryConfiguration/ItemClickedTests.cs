@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using LanguageExplorer;
 using LanguageExplorer.Controls.XMLViews;
 using NUnit.Framework;
 using SIL.LCModel.Core.Text;

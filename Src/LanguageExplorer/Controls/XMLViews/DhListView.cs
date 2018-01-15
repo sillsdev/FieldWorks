@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,7 +23,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		private ImageList m_imgList;
 		private bool m_fInAdjustWidth = false; // used to ignore recursive calls to AdjustWidth.
 		private bool m_fColumnDropped = false;	// set this after we've drag and dropped a column
-		bool m_suppressColumnWidthChanges;
 		private ToolTip m_tooltip;
 
 #if __MonoCS__	// FWNX-224
@@ -74,14 +73,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Create one and set the browse view it belongs to.
 		/// </summary>
-		/// <param name="bv"></param>
 		public DhListView(BrowseViewer bv)
 		{
 			m_bv = bv;
 
-			m_imgList = new ImageList();
-			m_imgList.ImageSize = new Size(kHalfArrowSize * 2, kHalfArrowSize * 2);
-			m_imgList.TransparentColor = Color.FromKnownColor(KnownColor.ControlLight);
+			m_imgList = new ImageList
+			{
+				ImageSize = new Size(kHalfArrowSize * 2, kHalfArrowSize * 2),
+				TransparentColor = Color.FromKnownColor(KnownColor.ControlLight)
+			};
 
 			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Ascending, ArrowSize.Large));		// Add ascending arrow
 			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Ascending, ArrowSize.Medium));		// Add ascending arrow
@@ -164,8 +164,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			columnDisplayOrder.Insert(e.NewDisplayIndex, reorderedColumnHeader);
 
 			// Let affected browse view update its columns of data
-			if (ColumnDragDropReordered != null)
-				ColumnDragDropReordered(this, new ColumnDragDropReorderedEventArgs(columnDisplayOrder));
+			ColumnDragDropReordered?.Invoke(this, new ColumnDragDropReorderedEventArgs(columnDisplayOrder));
 
 			//Adjust the browseViewer column ordering whenever columns are moved.
 			m_bv.OrderForColumnsDisplay = m_orderForColumnsDisplay;
@@ -265,8 +264,8 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private int GetColumnIndexFromMousePosition(Point pt)
 		{
-			int width = 0;
-			for (int col = 0; col < Columns.Count; ++col)
+			var width = 0;
+			for (var col = 0; col < Columns.Count; ++col)
 			{
 				width += Columns[col].Width;
 				// Review: is there some way we can check for a valid pt.Y value?
@@ -305,7 +304,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -319,25 +318,20 @@ namespace LanguageExplorer.Controls.XMLViews
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
-				if (m_imgList != null)
-					m_imgList.Dispose();
-				if (m_timer != null)
-				{
-					m_timer.Dispose();
-					m_timer = null;
-				}
-				if (m_tooltip != null)
-				{
-					m_tooltip.Dispose();
-					m_tooltip = null;
-				}
+				m_imgList?.Dispose();
+				m_timer?.Dispose();
+				m_tooltip?.Dispose();
 			}
 			m_imgList = null;
 			m_bv = null;
+			m_timer = null;
+			m_tooltip = null;
 
 			base.Dispose (disposing);
 		}
@@ -345,36 +339,22 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// If there is a checkbox column
 		/// </summary>
-		public virtual bool HasCheckBoxColumn
-		{
-			get
-			{
-				return m_bv.m_xbv.Vc.HasSelectColumn;
-			}
-		}
+		public virtual bool HasCheckBoxColumn => m_bv.m_xbv.Vc.HasSelectColumn;
 
 		/// <summary>
 		/// May be used to suppress the normal behavior of adjusting things and saving column widths
 		/// when a header column width changes.
 		/// </summary>
-		internal bool SuppressColumnWidthChanges
-		{
-			get { return m_suppressColumnWidthChanges; }
-			set { m_suppressColumnWidthChanges = value; }
-		}
+		internal bool SuppressColumnWidthChanges { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// </summary>
-		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data.</param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			m_suppressColumnWidthChanges = true;
-			base.OnHandleCreated (e);
-			m_suppressColumnWidthChanges = false;
-			this.OwnerDraw = true;
-			this.DrawColumnHeader += DhListView_DrawColumnHeader;
+			SuppressColumnWidthChanges = true;
+			base.OnHandleCreated(e);
+			SuppressColumnWidthChanges = false;
+			OwnerDraw = true;
+			DrawColumnHeader += DhListView_DrawColumnHeader;
 		}
 
 		// Set when we paint with the background color that indicates the mouse is inside.
@@ -391,7 +371,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		// during the same visit to the same header.
 		private string m_lastTooltipText;
 
-		void m_timer_Tick(object sender, EventArgs e)
+		private void m_timer_Tick(object sender, EventArgs e)
 		{
 			var cursorLocation = PointToClient(Cursor.Position);
 			if (m_hotRectangle.Height > 0 && !m_hotRectangle.Contains(cursorLocation))
@@ -415,16 +395,18 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_lastTooltipText = m_tooltipText;
 				if (m_tooltip == null)
 				{
-					m_tooltip = new ToolTip();
-					m_tooltip.InitialDelay = 10;
-					m_tooltip.ReshowDelay = 10;
+					m_tooltip = new ToolTip
+					{
+						InitialDelay = 10,
+						ReshowDelay = 10
+					};
 					m_tooltip.SetToolTip(this, m_tooltipText);
 				}
 				m_tooltip.Show(m_tooltipText, this, cursorLocation.X, cursorLocation.Y, 2000);
 			}
 		}
 
-		void DhListView_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+		private void DhListView_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
 		{
 			var paleBlue = Color.FromArgb(187, 235, 254);
 			var veryPaleBlue = Color.FromArgb(227, 247, 255);
@@ -437,9 +419,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			//m_columnIconIndexes is indexed by the current display position of columns that require the icon to be displayed.
 			var currentDisplayPositionOfColumn = OrderForColumnsDisplay[e.Header.Index];
 			if (!m_columnIconIndexes.TryGetValue(currentDisplayPositionOfColumn, out imageIndex))
+			{
 				imageIndex = -1;
+			}
 			if (imageIndex >= 0)
+			{
 				drawRect.Width -= m_imgList.ImageSize.Width;
+			}
 
 			var topHeight = drawRect.Height / 2 - 1;
 			var drawText = e.Header.Text;
@@ -460,20 +446,15 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_hotRectangle = e.Bounds;
 				if (m_timer == null)
 				{
-					m_timer = new Timer();
-					m_timer.Interval = 50;
+					m_timer = new Timer
+					{
+						Interval = 50
+					};
 					m_timer.Tick += m_timer_Tick;
 					m_timer.Start();
 				}
 				m_cTicks = 0;
-				if (realSize.Width > drawRect.Width)
-				{
-					m_tooltipText = drawText;
-				}
-				else
-				{
-					m_tooltipText = null;
-				}
+				m_tooltipText = realSize.Width > drawRect.Width ? drawText : null;
 				using (var brush = new SolidBrush(veryPaleBlue))
 				{
 					e.Graphics.FillRectangle(brush, new Rectangle(e.Bounds.Left, e.Bounds.Top, e.Bounds.Width, topHeight));
@@ -491,7 +472,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (realSize.Width > drawRect.Width)
 			{
 				// Guess how much we can fit.
-				int len = (int)(drawText.Length * drawRect.Width / realSize.Width) + 1;
+				var len = (int)(drawText.Length * drawRect.Width / realSize.Width) + 1;
 
 				// Subtract more until it fits.
 				do
@@ -509,22 +490,18 @@ namespace LanguageExplorer.Controls.XMLViews
 					var possibleText = e.Header.Text.Substring(0, len) + "\x2026"; // ellipsis
 					realSize = e.Graphics.MeasureString(possibleText, e.Font);
 					if (realSize.Width > drawRect.Width)
+					{
 						break; // we can't add this one more character.
+					}
 					drawText = possibleText; // we can fit this much at least.
 				}
 			}
-			using (StringFormat sf = new StringFormat())
+			using (var sf = new StringFormat())
 			{
 				sf.Trimming = StringTrimming.Character;
 				sf.FormatFlags = StringFormatFlags.NoWrap;
 				sf.LineAlignment = StringAlignment.Far; // bottom
-
-				//if (drawRect.Height > realSize.Height - 2)
-				//{
-				//    drawRect = new Rectangle(drawRect.X, drawRect.Top + drawRect.Height - (int)realSize.Height - 2, drawRect.Width, (int)realSize.Height + 2);
-				//}
-				e.Graphics.DrawString(drawText, e.Font,
-					Brushes.Black, drawRect, sf);
+				e.Graphics.DrawString(drawText, e.Font, Brushes.Black, drawRect, sf);
 			}
 			if (imageIndex >= 0)
 			{
@@ -539,7 +516,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			// and while making secondary adjustments, and allow us only to make a new call to AdjustColumns
 			// when the user has actually dragged to change a column width.
 			if (!AdjustingWidth && !SuppressColumnWidthChanges)
+			{
 				m_bv.AdjustColumnWidths(true);
+			}
 		}
 
 		/// <summary>
@@ -552,7 +531,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void ListView_ColumnWidthChanging(Object sender, ColumnWidthChangingEventArgs e)
 		{
 			if (!IsThisColumnChangeAllowable(e.ColumnIndex, Columns[e.ColumnIndex].Width, e.NewWidth))
+			{
 				e.Cancel = true;
+			}
 		}
 
 		/// <summary>
@@ -562,25 +543,23 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			// Don't allow resizing the checkbox column, if present.
 			if (HasCheckBoxColumn && columnIndex == 0)
+			{
 				return false;
+			}
 			// Don't allow resizing if the new width is less than it should be.
 			// But it's okay if the new width is less than the minimum if it's at least
 			// bigger than the current width. Otherwise if a column were somehow
 			// smaller than the minimum, a user couldn't ever make it bigger.
 			if (newWidth >= currentWidth)
+			{
 				return true;
-			if (newWidth < kMinColWidth)
-				return false;
-			return true;
+			}
+			return newWidth >= kMinColWidth;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle a right click event in a column header.
 		/// </summary>
-		/// <param name="iItem">The i item.</param>
-		/// <param name="ptLoc">The pt loc.</param>
-		/// ------------------------------------------------------------------------------------
 		protected void OnColumnRightClick(int iItem, Point ptLoc)
 		{
 #if __MonoCS__ // FWNX-224
@@ -588,8 +567,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_fIgnoreNextClick = true;
 #endif
 
-			if (ColumnRightClick != null)
-				ColumnRightClick(this, new ColumnRightClickEventArgs(iItem, ptLoc));
+			ColumnRightClick?.Invoke(this, new ColumnRightClickEventArgs(iItem, ptLoc));
 		}
 
 		internal const int kgapForScrollBar = 23;
@@ -598,26 +576,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal const int kMinColWidth = 25;
 
-		enum ArrowType { Ascending, Descending }
-		/// <summary></summary>
-		public enum ArrowSize {
-			/// <summary></summary>
-			Large = 0,
-			/// <summary></summary>
-			Medium = 1,
-			/// <summary></summary>
-			Small = 2
-		}
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Create up/down icon (Adapted from a post by Eddie Velasquez.)
 		/// </summary>
-		/// <param name="type">The type.</param>
-		/// <param name="size">The size.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		Bitmap GetArrowBitmap(ArrowType type, ArrowSize size)
+		private Bitmap GetArrowBitmap(ArrowType type, ArrowSize size)
 		{
 			int offset;
 			switch(size)
@@ -636,38 +598,24 @@ namespace LanguageExplorer.Controls.XMLViews
 					break;
 			}
 
-			Bitmap bmp = new Bitmap(kHalfArrowSize * 2, kHalfArrowSize * 2);
-			using (Graphics gfx = Graphics.FromImage(bmp))
+			var bmp = new Bitmap(kHalfArrowSize * 2, kHalfArrowSize * 2);
+			using (var gfx = Graphics.FromImage(bmp))
 			{
 				Brush brush = new SolidBrush(Color.FromArgb(215,230,255));
-				Pen pen = new Pen(Color.FromArgb(49,106,197));
+				var pen = new Pen(Color.FromArgb(49,106,197));
 
 				gfx.FillRectangle(new SolidBrush(Color.FromKnownColor(KnownColor.ControlLight)), 0, 0, kHalfArrowSize * 2, kHalfArrowSize * 2);
 
-				Point[] points = null;
-				if(type == ArrowType.Ascending)
+				Point[] points;
+				if (type == ArrowType.Ascending)
 				{
-//					Point left = new Point(kHalfArrowSize, 0);
-//					Point right = new Point(kHalfArrowSize, 0);
-//					for (int i = 0; i < kHalfArrowSize; i++)
-//					{
-//						left.X -= 1;
-//						right.X += 1;
-//						gfx.DrawLine(pen, left, right);
-//						left.Y += 1;
-//						right.Y += 1;
-//						gfx.DrawLine(pen, left, right);
-//						left.Y += 1;
-//						right.Y += 1;
-//					}
-					points = new Point[] { new Point(kHalfArrowSize, offset), new Point(kHalfArrowSize * 2 - 1 - offset, kHalfArrowSize * 2 - 1 - offset),
-						new Point(offset,kHalfArrowSize * 2 - 1 - offset)};
+					points = new[] { new Point(kHalfArrowSize, offset), new Point(kHalfArrowSize * 2 - 1 - offset, kHalfArrowSize * 2 - 1 - offset), new Point(offset,kHalfArrowSize * 2 - 1 - offset)};
 					gfx.FillPolygon(brush, points);
 					gfx.DrawPolygon(pen, points);
 				}
 				else if(type == ArrowType.Descending)
 				{
-					points = new Point[] { new Point(offset,offset), new Point(kHalfArrowSize * 2 - 1 - offset, offset), new Point(kHalfArrowSize,kHalfArrowSize * 2 - 1 - offset)};
+					points = new[] { new Point(offset,offset), new Point(kHalfArrowSize * 2 - 1 - offset, offset), new Point(kHalfArrowSize,kHalfArrowSize * 2 - 1 - offset)};
 					gfx.FillPolygon(brush, points);
 					gfx.DrawPolygon(pen, points);
 				}
@@ -677,20 +625,18 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		Dictionary<int, int> m_columnIconIndexes = new Dictionary<int, int>();
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Set the header icon. (Thanks to a post by Eddie Velasquez.)
 		/// </summary>
-		/// <param name="columnIndex">Index of the column.</param>
-		/// <param name="sortOrder">The sort order.</param>
-		/// <param name="size">The size.</param>
-		/// ------------------------------------------------------------------------------------
 		public void ShowHeaderIcon(int columnIndex, SortOrder sortOrder, ArrowSize size)
 		{
 			CheckDisposed();
 
 			if (columnIndex < 0 || columnIndex >= Columns.Count)
+			{
 				return;
+			}
 
 			if (sortOrder == SortOrder.None)
 			{
@@ -701,129 +647,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				// There are 3 potential sizes: Large, Medium, and Small with 2 sort orders, Ascending and Descending
 				// The images are stored in that order, so the following works
 				m_columnIconIndexes[columnIndex] = (int)size + (3 * ((int)sortOrder - 1));
-			}
-		}
-	}
-
-	/// <summary>
-	/// Specialized event handler for right mouse button clicks in list view column headers.
-	/// </summary>
-	public delegate void ColumnRightClickEventHandler(object sender,
-	ColumnRightClickEventArgs e);
-
-	/// <remarks>
-	/// Specialized event argument for right mouse button clicks in list view column headers.
-	/// </remarks>
-	public class ColumnRightClickEventArgs : EventArgs
-	{
-		private int m_icol;
-		private Point m_ptLocation;
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public ColumnRightClickEventArgs(int icol, Point ptLoc)
-		{
-			m_icol = icol;
-			m_ptLocation = ptLoc;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the column.
-		/// </summary>
-		/// <value>The column.</value>
-		/// ------------------------------------------------------------------------------------
-		public int Column
-		{
-			get { return m_icol; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the location.
-		/// </summary>
-		/// <value>The location.</value>
-		/// ------------------------------------------------------------------------------------
-		public Point Location
-		{
-			get { return m_ptLocation; }
-		}
-	}
-
-	/// <summary>
-	/// Handles clicking on ConfigIcon
-	/// </summary>
-	public delegate void ConfigIconClickHandler(object sender,
-		ConfigIconClickEventArgs e);
-
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Arguments for clicking on ConfigIcon
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public class ConfigIconClickEventArgs : EventArgs
-	{
-		private Rectangle m_buttonLocation;
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="location">The location.</param>
-		/// ------------------------------------------------------------------------------------
-		public ConfigIconClickEventArgs(Rectangle location)
-		{
-			m_buttonLocation = location;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// This is the location of the button relative to the DhListView's client area.
-		/// It provides a good idea of where to display a popup.
-		/// </summary>
-		/// <value>The location.</value>
-		/// ------------------------------------------------------------------------------------
-		public Rectangle Location
-		{
-			get { return m_buttonLocation; }
-		}
-	}
-
-	/// <summary>
-	/// Handles drag-n-drop for reordering columns
-	/// </summary>
-	public delegate void ColumnDragDropReorderedHandler(object sender,
-		ColumnDragDropReorderedEventArgs e);
-
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public class ColumnDragDropReorderedEventArgs : EventArgs
-	{
-		private List<int> m_displayedColumnOrder;
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public ColumnDragDropReorderedEventArgs(List<int> newColumnOrder)
-		{
-			m_displayedColumnOrder = newColumnOrder;
-		}
-
-		/// <summary>
-		/// Contains indices for the Columns collection in the order they are displayed.
-		/// </summary>
-		public List<int> DragDropColumnOrder
-		{
-			get
-			{
-				if (m_displayedColumnOrder == null)
-					m_displayedColumnOrder = new List<int>();	// empty list
-
-				return m_displayedColumnOrder;
 			}
 		}
 	}

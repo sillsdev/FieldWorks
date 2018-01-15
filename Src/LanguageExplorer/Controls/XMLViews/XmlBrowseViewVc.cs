@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,9 @@ using System.Xml.Linq;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
+#if RANDYTODO
+	// TODO: Why does this class exist, since it does nothing other than what the base class does.
+#endif
 	/// <summary>
 	/// View constructor for BrowseView. The argument XmlNode represents XML like this:
 	/// <browseview>

@@ -611,7 +611,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			using (var dummyCombobox = new ComboBox())
 			{
-				var dummyCachedBoxes = new Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection>();
+				var dummyCachedBoxes = new Dictionary<WsComboContent, ComboBox.ObjectCollection>();
 				var comboObjects = ConfigureInterlinDialog.WsComboItemsInternal(
 				Cache, dummyCombobox, dummyCachedBoxes, curSpec.ComboContent);
 				var choices = new WsComboItem[comboObjects.Count];

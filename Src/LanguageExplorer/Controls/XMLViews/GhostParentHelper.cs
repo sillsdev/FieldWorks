@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Linq;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -24,7 +23,6 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		// The class of objects that are considered parents (they don't have the basic property we
 		// try to set).
-		private int m_parentClsid;
 		// The property of m_parentClsid that owns signature objects.
 		private int m_flidOwning;
 		// Index at which to insert a new child; hence indicates type of m_flidOwning.
@@ -40,15 +38,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var result = CreateIfPossible(services, classDotMethod);
 			if (result == null)
-				throw new ArgumentException("Unexpected field request to GhostParentHelper.Create", "classDotMethod");
+			{
+				throw new ArgumentException(@"Unexpected field request to GhostParentHelper.Create", nameof(classDotMethod));
+			}
 			return result;
 		}
 		/// <summary>
 		/// Returns GPHs for the four properties we currently know about, or null if not a known property that has ghosts.
 		/// </summary>
-		/// <param name="services"></param>
-		/// <param name="classDotMethod"></param>
-		/// <returns></returns>
 		public static GhostParentHelper CreateIfPossible(ILcmServiceLocator services, string classDotMethod)
 		{
 			switch (classDotMethod)
@@ -82,12 +79,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// since the properties hold a mixture of classes and therefore have CmObject as their
 		/// signature, but the bulk edit code needs to treat them as having the class they primarily contain.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="listFlid"></param>
-		/// <returns></returns>
 		public static int GetBulkEditDestinationClass(LcmCache cache, int listFlid)
 		{
-			int destClass = cache.GetDestinationClass(listFlid);
+			var destClass = cache.GetDestinationClass(listFlid);
 			if (destClass == 0)
 			{
 				// May be a special "ghost" property used for bulk edit operations which primarily contains,
@@ -131,7 +125,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal GhostParentHelper(ILcmServiceLocator services, int parentClsid, int flidOwning)
 		{
 			m_services = services;
-			m_parentClsid = parentClsid;
+			GhostOwnerClass = parentClsid;
 			m_flidOwning = flidOwning;
 			var mdc = m_services.GetInstance<IFwMetaDataCacheManaged>();
 			TargetClass = mdc.GetDstClsId(flidOwning);
@@ -154,22 +148,22 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// The class of objects we expect to be the children; the destination class of FlidOwning.
 		/// </summary>
-		public int TargetClass { get; private set; }
+		public int TargetClass { get; }
 
 		/// <summary>
 		/// Get the object related to hvo that has the basic properties of interest: that is, a child object.
 		/// hvo is assumed to be the desired object unless it is of the parent class, in which case,
 		/// we return its first child if any, or zero if it has no relevant children.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <returns></returns>
 		public int GetOwnerOfTargetProperty(int hvo)
 		{
-			int hvoTargetOwner = hvo; // by default, we assume hvo is the owner
+			var hvoTargetOwner = hvo; // by default, we assume hvo is the owner
 			if (IsGhostOwnerClass(hvo))
 			{
 				if (IsGhostOwnerChildless(hvo))
+				{
 					return 0;
+				}
 				// this owning object has a child, so get the property from it
 				hvoTargetOwner = GetFirstChildFromParent(hvo);
 			}
@@ -179,7 +173,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Override if you should always create a particular class.
 		/// </summary>
-		/// <returns></returns>
 		internal virtual int ClassToCreate(int hvoItem, int flidBasicProp)
 		{
 			var mdc = m_services.GetInstance<IFwMetaDataCacheManaged>();
@@ -192,7 +185,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public int FindOrCreateOwnerOfTargetProp(int hvoItem, int flidBasicProp)
 		{
-			int hvoOwnerOfTargetProp = GetOwnerOfTargetProperty(hvoItem);
+			var hvoOwnerOfTargetProp = GetOwnerOfTargetProperty(hvoItem);
 			if (hvoOwnerOfTargetProp == 0)
 			{
 				hvoOwnerOfTargetProp = CreateOwnerOfTargetProp(hvoItem, flidBasicProp);
@@ -205,8 +198,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal virtual int CreateOwnerOfTargetProp(int hvoItem, int flidBasicProp)
 		{
-			int clidCreate = ClassToCreate(hvoItem, flidBasicProp);
-			return GetSda().MakeNewObject(clidCreate, hvoItem, m_flidOwning, m_indexToCreate);
+			return GetSda().MakeNewObject(ClassToCreate(hvoItem, flidBasicProp), hvoItem, m_flidOwning, m_indexToCreate);
 		}
 
 		internal ISilDataAccessManaged GetSda()
@@ -219,8 +211,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public virtual bool IsGhostOwnerChildless(int hvoItem)
 		{
-			return IsOwningPropVector() ? GetSda().get_VecSize(hvoItem, m_flidOwning) == 0 :
-					GetSda().get_ObjectProp(hvoItem, m_flidOwning) == 0;
+			return IsOwningPropVector() ? GetSda().get_VecSize(hvoItem, m_flidOwning) == 0 : GetSda().get_ObjectProp(hvoItem, m_flidOwning) == 0;
 		}
 
 		private bool IsOwningPropVector()
@@ -230,138 +221,21 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal virtual int GetFirstChildFromParent(int hvoParent)
 		{
-			if (IsOwningPropVector())
-				return GetSda().get_VecItem(hvoParent, m_flidOwning, 0);
-			else
-				return GetSda().get_ObjectProp(hvoParent, m_flidOwning);
+			return IsOwningPropVector() ? GetSda().get_VecItem(hvoParent, m_flidOwning, 0) : GetSda().get_ObjectProp(hvoParent, m_flidOwning);
 		}
 
 		/// <summary>
 		/// Return true if the object represented by the HVO is of the parent object class.
 		/// Enhance JohnT: improve name!
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <returns></returns>
 		public bool IsGhostOwnerClass(int hvo)
 		{
-			return m_parentClsid == m_services.GetObject(hvo).ClassID;
+			return GhostOwnerClass == m_services.GetObject(hvo).ClassID;
 		}
 
 		/// <summary>
 		/// Answer the class of parent objects.
 		/// </summary>
-		public int GhostOwnerClass
-		{
-			get { return m_parentClsid; }
-		}
-	}
-
-	/// <summary>
-	/// Subclass for LexDb.AllPossibleAllomorphs.
-	/// </summary>
-	internal class GphAllPossibleAllomorphs : GhostParentHelper
-	{
-		internal GphAllPossibleAllomorphs(ILcmServiceLocator services, int parentClsid, int flidOwning)
-			: base(services, parentClsid, flidOwning)
-		{
-		}
-
-		/// <summary>
-		/// In the case of AllPossibleAllomorphs, the class to create is determined by the owning entry.
-		/// </summary>
-		internal override int ClassToCreate(int hvoItem, int flidBasicProp)
-		{
-			var entry = m_services.GetObject(hvoItem) as ILexEntry;
-			return entry.GetDefaultClassForNewAllomorph();
-		}
-	}
-
-	/// <summary>
-	/// GhostParentHelper subclass for the complex entry type field.
-	/// - a ghost owner is considered childless although it may have variant EntryRefs if it has no complex form ones.
-	/// </summary>
-	internal class GphComplexEntries : GhostParentHelper
-	{
-		internal GphComplexEntries(ILcmServiceLocator services)
-			: base(services, LexEntryTags.kClassId, LexEntryTags.kflidEntryRefs)
-		{
-		}
-
-		/// <summary>
-		/// Return true if we have no complex form EntryRef.
-		/// Although the property for which this GPH is used initially contains only entries
-		/// that have no complex form LER, a previous bulk edit might have created one.
-		/// </summary>
-		public override bool IsGhostOwnerChildless(int hvoItem)
-		{
-			var le = m_services.GetInstance<ILexEntryRepository>().GetObject(hvoItem);
-			return le.EntryRefsOS.Where(ler => ler.RefType == LexEntryRefTags.krtComplexForm).Take(1).Count() == 0;
-		}
-
-		/// <summary>
-		/// We want specifically the first EntryRef of type complex form.
-		/// </summary>
-		internal override int GetFirstChildFromParent(int hvoParent)
-		{
-			var le = m_services.GetInstance<ILexEntryRepository>().GetObject(hvoParent);
-			return le.EntryRefsOS.Where(ler => ler.RefType == LexEntryRefTags.krtComplexForm).First().Hvo;
-		}
-
-		/// <summary>
-		/// Override to make the new object a complex one.
-		/// </summary>
-		/// <param name="hvoItem"></param>
-		/// <param name="flidBasicProp"></param>
-		/// <returns></returns>
-		internal override int CreateOwnerOfTargetProp(int hvoItem, int flidBasicProp)
-		{
-			var result = base.CreateOwnerOfTargetProp(hvoItem, flidBasicProp);
-			GetSda().SetInt(result, LexEntryRefTags.kflidRefType, LexEntryRefTags.krtComplexForm);
-			return result;
-		}
-	}
-	/// <summary>
-	/// GhostParentHelper subclass for the complex entry type field.
-	/// - a ghost owner is considered childless although it may have variant EntryRefs if it has no complex form ones.
-	/// </summary>
-	internal class GphVariants : GhostParentHelper
-	{
-		internal GphVariants(ILcmServiceLocator services)
-			: base(services, LexEntryTags.kClassId, LexEntryTags.kflidEntryRefs)
-		{
-		}
-
-		/// <summary>
-		/// Return true if we have no complex form EntryRef.
-		/// Although the property for which this GPH is used initially contains only entries
-		/// that have no complex form LER, a previous bulk edit might have created one.
-		/// </summary>
-		public override bool IsGhostOwnerChildless(int hvoItem)
-		{
-			var le = m_services.GetInstance<ILexEntryRepository>().GetObject(hvoItem);
-			return le.EntryRefsOS.Where(ler => ler.RefType == LexEntryRefTags.krtVariant).Take(1).Count() == 0;
-		}
-
-		/// <summary>
-		/// We want specifically the first EntryRef of type variant.
-		/// </summary>
-		internal override int GetFirstChildFromParent(int hvoParent)
-		{
-			var le = m_services.GetInstance<ILexEntryRepository>().GetObject(hvoParent);
-			return le.EntryRefsOS.Where(ler => ler.RefType == LexEntryRefTags.krtVariant).First().Hvo;
-		}
-
-		/// <summary>
-		/// Override to make the new object a complex one.
-		/// </summary>
-		/// <param name="hvoItem"></param>
-		/// <param name="flidBasicProp"></param>
-		/// <returns></returns>
-		internal override int CreateOwnerOfTargetProp(int hvoItem, int flidBasicProp)
-		{
-			var result = base.CreateOwnerOfTargetProp(hvoItem, flidBasicProp);
-			GetSda().SetInt(result, LexEntryRefTags.kflidRefType, LexEntryRefTags.krtVariant);
-			return result;
-		}
+		public int GhostOwnerClass { get; }
 	}
 }

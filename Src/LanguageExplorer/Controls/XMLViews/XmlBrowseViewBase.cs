@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2017 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,11 +17,9 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Control to show rows of data
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	internal class XmlBrowseViewBase : RootSite, IVwNotifyChange, IPostLayoutInit, IClearValues
 	{
 		#region Events
@@ -68,7 +66,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary></summary>
 		protected XElement m_nodeSpec;
 		/// <summary></summary>
-		internal protected BrowseViewer m_bv;
+		protected internal BrowseViewer m_bv;
 		/// <summary> record list supplying browse view content </summary>
 		protected ISortItemProvider m_sortItemProvider;
 		/// <summary></summary>
@@ -98,20 +96,6 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		#region Properties
 
-		class LineCollector : StringCollectorEnv
-		{
-			public LineCollector(IVwEnv baseEnv, ISilDataAccess sda, int hvoRoot) : base(baseEnv, sda, hvoRoot)
-			{
-			}
-
-			public override void AddObjProp(int tag, IVwViewConstructor vc, int frag)
-			{
-				base.AddObjProp(tag, vc, frag);
-				if (frag == XmlBrowseViewBaseVc.kfragListItemInner)
-					m_builder.AppendLine();
-			}
-		}
-
 		/// <summary>
 		/// Export the contents of the browse view to the debug window. Answer false so other browse views can export theirs also.
 		/// </summary>
@@ -129,27 +113,19 @@ namespace LanguageExplorer.Controls.XMLViews
 			return false;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		internal ISortItemProvider SortItemProvider
-		{
-			get { return m_sortItemProvider; }
-		}
+		/// <summary />
+		internal ISortItemProvider SortItemProvider => m_sortItemProvider;
 
 		/// <summary>
 		/// It's better to return our SDA directly rather than going to the root box, because occasionally
 		/// when filtering or sorting we may need to obtain it before the root box is created.
 		/// </summary>
-		public override ISilDataAccess DataAccess { get { return m_sda; } }
+		public override ISilDataAccess DataAccess => m_sda;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Return the VC. It has some important functions related to interpreting fragment IDs
 		/// that the filter bar needs.
 		/// </summary>
-		/// <value>The vc.</value>
-		/// ------------------------------------------------------------------------------------
 		internal virtual XmlBrowseViewBaseVc Vc
 		{
 			get
@@ -159,13 +135,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when [request debug info].
 		/// </summary>
-		/// <param name="commandObj">The command obj.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public bool OnRequestDebugInfo(object commandObj)
 		{
 			CheckDisposed();
@@ -173,11 +145,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			using (var logger = new SimpleLogger())
 			{
 				m_xbvvc.LogStream = logger;
-				int cv = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
+				var cv = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
 				if (cv > 0)
 				{
-					int hvoObjSel = m_sda.get_VecItem(m_hvoRoot,
-													  m_madeUpFieldIdentifier, m_selectedIndex < 0 ? 0 : m_selectedIndex);
+					var hvoObjSel = m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, m_selectedIndex < 0 ? 0 : m_selectedIndex);
 					m_rootb.PropChanged(hvoObjSel, m_tagMe, 0, 0, 0);
 					Update(); // causes the PropChanged to actually invoke the VC.
 				}
@@ -185,22 +156,21 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					logger.WriteLine("The record list is empty.");
 				}
-				MessageBox.Show(this, logger.Content, "DEBUG: Row generation info");
+				MessageBox.Show(this, logger.Content, @"DEBUG: Row generation info");
 			}
 			return true;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public override bool RefreshDisplay()
 		{
 			CheckDisposed();
 
-			bool fChanged = m_xbvvc.RemoveInvalidColumns();
+			var fChanged = m_xbvvc.RemoveInvalidColumns();
 			if (fChanged)
+			{
 				m_bv.InstallNewColumns(m_xbvvc.ColumnSpecs);
+			}
 			base.RefreshDisplay();
 			if (!Cache.ServiceLocator.IsValidObjectId(m_hvoRoot))
 			{
@@ -208,26 +178,23 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_selectedIndex = -1;
 			}
 
-			int chvo = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
+			var chvo = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
 			if (m_selectedIndex >= chvo)
 			{
 				m_selectedIndex = chvo - 1;
 			}
 			if (m_selectedIndex >= 0)
 			{
-				int hvoNewObj = m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, m_selectedIndex);
-						DoSelectAndScroll(hvoNewObj, m_selectedIndex);
+				var hvoNewObj = m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, m_selectedIndex);
+				DoSelectAndScroll(hvoNewObj, m_selectedIndex);
 			}
 			//Enhance: if all the RefreshDisplay work has been done for all the descendants then return true here.
 			return false;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the HVO of the selected object.
 		/// </summary>
-		/// <value>The selected object.</value>
-		/// ------------------------------------------------------------------------------------
 		public int SelectedObject
 		{
 			get
@@ -235,7 +202,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				CheckDisposed();
 
 				if (SelectedIndex < 0)
+				{
 					return 0;
+				}
 				if (m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier) <= SelectedIndex)
 				{
 					return 0; // The only time this happens is during refresh.
@@ -281,19 +250,22 @@ namespace LanguageExplorer.Controls.XMLViews
 				Debug.Assert(value >= -1, "The selected index cannot be set to less than -1.");
 				// Just in case it isn't caught in a Debug build...
 				if (value < -1)
-					throw new ArgumentOutOfRangeException("XmlBrowseViewBase.SelectedIndex", value.ToString(), "Index cannot be set to less than -1.");
+				{
+					throw new ArgumentOutOfRangeException(@"XmlBrowseViewBase.SelectedIndex", value.ToString(), @"Index cannot be set to less than -1.");
+				}
 				if (m_selectedIndex == value)
 				{
 					// It's useful to check this anyway, since the width of the window or something else
 					// that affects visibility may have changed...but don't CHANGE the selection, the user may be editing...(LT-12092)
 					if (value >= 0 && m_wantScrollIntoView)
+					{
 						MakeSelectionVisible(GetRowSelection(value));
+					}
 					return;
 				}
 
-				int oldIndex = m_selectedIndex;
-
-				int cobj = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
+				var oldIndex = m_selectedIndex;
+				var cobj = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
 				Debug.Assert((cobj == 0 && value == -1) || (cobj > 0 && value >= 0), "The new index must be -1, if there are no items in the list, or the new value must be zero, or greater.");
 				Debug.Assert(value < cobj, "You cannot set the index to a value greater then number of objects.");
 
@@ -303,7 +275,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				// repeatable circumstances. So if someone tries to select the first object of an empty
 				// list, for now we'll just treat it as selecting nothing.
 				if (value >= cobj && cobj > 0)
-					throw new ArgumentOutOfRangeException("XmlBrowseViewBase.SelectedIndex", value.ToString(), "Index cannot be set to more than are in the collection.");
+				{
+					throw new ArgumentOutOfRangeException(@"XmlBrowseViewBase.SelectedIndex", value.ToString(), @"Index cannot be set to more than are in the collection.");
+				}
 				// One may be tempted to move this above the assert and exception,
 				// but no one who knows anything about the contents should be trying
 				// to set the index of an empty collection.
@@ -315,7 +289,9 @@ namespace LanguageExplorer.Controls.XMLViews
 					// Allow zero on release builds since that's the common case, and this bug
 					// is not reliably repeatable, it just happens often enough to be worrisome.
 					if (value > 0)
-						throw new ArgumentOutOfRangeException("XmlBrowseViewBase.SelectedIndex", value.ToString(), "Cannot set the index to anything except -1, when there are no items in the list.");
+					{
+						throw new ArgumentOutOfRangeException(@"XmlBrowseViewBase.SelectedIndex", value.ToString(), @"Cannot set the index to anything except -1, when there are no items in the list.");
+					}
 					m_hvoOldSel = 0;
 					m_selectedIndex = -1;
 #if RANDYTODO
@@ -324,7 +300,7 @@ namespace LanguageExplorer.Controls.XMLViews
 #endif
 					return;
 				}
-				int hvoObjNewSel = GetNewSelectionObject(value);
+				var hvoObjNewSel = GetNewSelectionObject(value);
 
 				// Set the member variable before firing the events,
 				// in case the event handlers access the Selectedindex property.
@@ -347,8 +323,8 @@ namespace LanguageExplorer.Controls.XMLViews
 				// Some of the changes below may destroy the new selection, especially setting the new index, but
 				// possibly also clearing the old one. So save the selection info in order to restore it afterwards.
 				SelectionHelper selection = null;
-				int oldSelectionAnchorIndex = -1;
-				int oldSelectionEndIndex = -1;
+				var oldSelectionAnchorIndex = -1;
+				var oldSelectionEndIndex = -1;
 				if (RootBox != null)
 				{
 					var vwSelection = RootBox.Selection;
@@ -360,13 +336,12 @@ namespace LanguageExplorer.Controls.XMLViews
 				// If they access the SelectedIndex property between the event firing and this setting,
 				// they would get the old value, which is wrong.
 				//m_selectedIndex = value;
-				if (SelectedIndexChanged != null)
-					SelectedIndexChanged(this, new EventArgs());
+				SelectedIndexChanged?.Invoke(this, new EventArgs());
 
 				if (oldIndex >= 0 && oldIndex < cobj)
 				{
 					// Turn off the highlighting of the old item.
-					int hvoObjOldSel = m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, oldIndex);
+					var hvoObjOldSel = m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, oldIndex);
 					try
 					{
 						m_rootb.PropChanged(hvoObjOldSel, m_tagMe, 0, 0, 0);
@@ -380,8 +355,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				// Turn on the highlighting of the new item.
 				try
 				{
-					if (m_rootb != null) // programmatic selection could be made before we create the root.
-						m_rootb.PropChanged(hvoObjNewSel, m_tagMe, 0, 0, 0);
+					m_rootb?.PropChanged(hvoObjNewSel, m_tagMe, 0, 0, 0);
 				}
 				catch (Exception)
 				{
@@ -393,8 +367,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				// DO want to restore it. Also if it is entirely within the new selected row, where the user might also have dragged.
 				// OTOH, we must NOT restore one somewhere else, like the old selected row, because that will
 				// move the selected row back there!
-				if (!ReadOnlySelect && selection != null &&
-					(SelectedIndex == oldSelectionEndIndex || oldSelectionEndIndex != oldSelectionAnchorIndex))
+				if (!ReadOnlySelect && selection != null && (SelectedIndex == oldSelectionEndIndex || oldSelectionEndIndex != oldSelectionAnchorIndex))
 				{
 					selection.RestoreSelectionAndScrollPos();
 				}
@@ -406,7 +379,9 @@ namespace LanguageExplorer.Controls.XMLViews
 					// allow preventing setting the focus (LT-9481)
 					// Don't steal the focus from another window.  See FWR-1795.
 					if (CanFocus && ParentForm == Form.ActiveForm)
+					{
 						Focus(); // Note: used to be part of DoSelectAndScroll, but I'm not sure why...
+}
 				}
 				Update();
 #if RANDYTODO
@@ -417,11 +392,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		bool FireSelectionChanged(object parameter)
+		private bool FireSelectionChanged(object parameter)
 		{
 			if (IsDisposed || m_rootb == null)
+			{
 				return true; // presumably we've been disposed; this happens (at least) in tests where a later test may simulate idle events.
-			int hvoObjNewSel = GetNewSelectionObject(m_selectedIndex);
+			}
+			var hvoObjNewSel = GetNewSelectionObject(m_selectedIndex);
 			if (hvoObjNewSel == 0)
 			{
 				if (m_selectedIndex == 0)
@@ -430,7 +407,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				else if (m_selectedIndex > 0)
 				{
-					int cobj = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
+					var cobj = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
 					Debug.Assert(m_selectedIndex >= cobj);
 					m_selectedIndex = cobj - 1;
 					hvoObjNewSel = GetNewSelectionObject(m_selectedIndex);
@@ -441,13 +418,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_hvoOldSel = hvoObjNewSel;
 				// Notify any delegates that the selection of the main object in the vector
 				// has changed.
-				if (SelectionChangedEvent != null)
-				{
-					SelectionChangedEvent(this, new FwObjectSelectionEventArgs(hvoObjNewSel, m_selectedIndex));
-				}
+				SelectionChangedEvent?.Invoke(this, new FwObjectSelectionEventArgs(hvoObjNewSel, m_selectedIndex));
 			}
-			if (SelectedIndexChanged != null)
-				SelectedIndexChanged(this, new EventArgs());
+			SelectedIndexChanged?.Invoke(this, new EventArgs());
 			return true;
 		}
 
@@ -455,7 +428,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Because this is a simple root site, which is derived from UserControl, we can't prevent MouseDown from
 		/// giving it focus. But we can give other linked windows a chance to take it back.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnGotFocus(EventArgs e)
 		{
 			base.OnGotFocus(e);
@@ -475,10 +447,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		private int GetNewSelectionObject(int index)
 		{
 			if (index < 0)
+			{
 				return 0;
-			int cobj = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
+			}
+			var cobj = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
 			if (cobj == 0 || index >= cobj)
+			{
 				return 0;
+			}
 			return m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, index);
 		}
 
@@ -486,19 +462,18 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// read configuration for the browse view to determine whether to try to convert dummy objects to real objects
 		/// when as they become painted on the screen. (Default is false)
 		/// </summary>
-		/// <returns></returns>
 		internal bool ShouldConvertDummiesInView()
 		{
 			return m_nodeSpec != null && XmlUtils.GetOptionalBooleanAttributeValue(m_nodeSpec, "convertDummiesInView", false);
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		protected int m_ydSelTop = 0;
-		/// <summary></summary>
+		/// <summary />
 		protected int m_ydSelBottom = 0;
-		/// <summary></summary>
+		/// <summary />
 		protected int m_ydSelScrollPos = 0;
-		/// <summary></summary>
+		/// <summary />
 		protected int m_iSelIndex = 0;
 		/// <summary>
 		/// Handle the special aspects of adjusting the scroll position for a table of cells
@@ -510,35 +485,31 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="dydSize">change in the vertical size</param>
 		/// <param name="dydPosition">vertical position where change occurred</param>
 		/// <returns></returns>
-		protected override bool AdjustScrollRange1(int dxdSize, int dxdPosition, int dydSize,
-			int dydPosition)
+		protected override bool AdjustScrollRange1(int dxdSize, int dxdPosition, int dydSize, int dydPosition)
 		{
-			int dydRangeNew = AdjustedScrollRange.Height;
+			var dydRangeNew = AdjustedScrollRange.Height;
 			// Remember: ScrollPosition returns negative values!
-			int dydPosOld = -ScrollPosition.Y;
+			var dydPosOld = -ScrollPosition.Y;
 			int dydPosNew;
 			// If the current position is after where the change occurred, it needs to
 			// be adjusted by the same amount.
 			if (dydPosOld > dydPosition)
+			{
 				dydPosNew = dydPosOld + dydSize;
+			}
 			else
+			{
 				dydPosNew = dydPosOld;
-			//Debug.WriteLine(
-			//	"XmlBrowseViewBase.AdjustScrollRange(dxdSize=" + dxdSize.ToString() +
-			//	", dxdPos=" + dxdPosition.ToString() + ", dydSize=" + dydSize.ToString() +
-			//	", dydPos=" + dydPosition.ToString() +
-			//	"): dydRangeNew=" + dydRangeNew.ToString() +
-			//	", dydPosOld=" + dydPosOld.ToString() + ", dydPosNew=" + dydPosNew.ToString());
+			}
 			// But that doesn't quite work for browse view, because we want the whole row to
 			// show, either at the top or the bottom.
 			// Use values stored by MakeSelectionVisible if they're available.
-			int iSelIndex = m_iSelIndex;
-			if (iSelIndex == SelectedIndex &&
-				(m_ydSelTop != 0 || m_ydSelBottom != 0))
+			var iSelIndex = m_iSelIndex;
+			if (iSelIndex == SelectedIndex && (m_ydSelTop != 0 || m_ydSelBottom != 0))
 			{
-				int dyBottomNew = dydPosNew + ClientHeight - m_dyHeader;
-				int dySelTop = m_ydSelTop;
-				int dySelBottom = m_ydSelBottom;
+				var dyBottomNew = dydPosNew + ClientHeight - m_dyHeader;
+				var dySelTop = m_ydSelTop;
+				var dySelBottom = m_ydSelBottom;
 				//int dySelScrollPos = m_ydSelScrollPos;
 				// clear these values so they won't be used when stale.
 				m_ydSelTop = 0;
@@ -552,39 +523,24 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				if (dySelTop < dydPosNew)
 				{
-					//Debug.WriteLine("    XmlBrowseViewBase.AdjustScrollRange() - dySelTop=" +
-					//	dySelTop.ToString());
 					dydPosNew = dySelTop;
 				}
 				else if (dySelBottom > dyBottomNew)
 				{
-					int deltaY = dySelBottom - dyBottomNew;
+					var deltaY = dySelBottom - dyBottomNew;
 					dydPosNew += deltaY;
-					//Debug.WriteLine("    XmlBrowseViewBase.AdjustScrollRange() - deltaY=" +
-					//	deltaY.ToString());
 				}
-				//Debug.WriteLine(
-				//	"XmlBrowseViewBase.AdjustScrollRange(dxdSize=" + dxdSize.ToString() +
-				//	", dxdPos=" + dxdPosition.ToString() + ", dydSize=" + dydSize.ToString() +
-				//	", dydPos=" + dydPosition.ToString() +
-				//	"): dydPosNew=" + dydPosNew.ToString() +
-				//	", dySelTop=" + dySelTop.ToString() +
-				//	", dySelBottom=" + dySelBottom.ToString());
-				//int dyBottomOld = dydPosOld + ClientHeight - m_dyHeader;
-				//Debug.WriteLine("    XmlBrowseViewBase.AdjustScrollRange(): height=" +
-				//	(ClientHeight - m_dyHeader).ToString() +
-				//	", SelScrollPos=" + dySelScrollPos.ToString() +
-				//	", dyBottomOld=" + dyBottomOld.ToString() +
-				//	", dyBottomNew=" + dyBottomNew.ToString());
 			}
 
-			int dxdRangeNew = AutoScrollMinSize.Width + dxdSize;
-			int dxdPosNew = -ScrollPosition.X;
+			var dxdRangeNew = AutoScrollMinSize.Width + dxdSize;
+			var dxdPosNew = -ScrollPosition.X;
 			if (HScroll)
 			{
 				// Similarly for horizontal scroll bar.
 				if (dxdPosNew > dxdPosition)
+				{
 					dxdPosNew += dxdSize;
+				}
 			}
 			return UpdateScrollRange(dxdRangeNew, dxdPosNew, dydRangeNew, dydPosNew);
 		}
@@ -593,18 +549,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Make the selection that would be made by clicking at the specified mouse event,
 		/// but don't install it.
 		/// </summary>
-		/// <param name="e"></param>
-		/// <returns></returns>
 		internal IVwSelection MakeSelectionAt(MouseEventArgs e)
 		{
 			CheckDisposed();
 
-			Point pt;
-			Rectangle rcSrcRoot;
-			Rectangle rcDstRoot;
 			using(new HoldGraphics(this))
 			{
-				pt = PixelToView(new Point(e.X, e.Y));
+				var pt = PixelToView(new Point(e.X, e.Y));
+				Rectangle rcSrcRoot;
+				Rectangle rcDstRoot;
 				GetCoordRects(out rcSrcRoot, out rcDstRoot);
 				// This can legitimately return null,
 				// e.g. because they selected beyond the last item.
@@ -616,12 +569,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			CheckDisposed();
 
-			IVwSelection vwselNew = MakeSelectionAt(e);
+			var vwselNew = MakeSelectionAt(e);
 			if (vwselNew != null)
 			{
-				//m_wantScrollIntoView = false; // It should already be visible here, since they clicked here.
 				DoSelectionSideEffects(vwselNew);
-				//m_wantScrollIntoView = true;
 			}
 		}
 
@@ -638,15 +589,19 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal int GetRowIndexFromSelection(IVwSelection sel, bool fEndPoint)
 		{
 			if (sel == null)
+			{
 				return -1;
+			}
 			try
 			{
-				int clev = sel.CLevels(fEndPoint);
+				var clev = sel.CLevels(fEndPoint);
 				int hvoRoot, tag, ihvo, cpropPrevious;
 				IVwPropertyStore vps;
 				sel.PropInfo(fEndPoint, clev - 1, out hvoRoot, out tag, out ihvo, out cpropPrevious, out vps);
 				if (tag != m_madeUpFieldIdentifier) // not sure how this could happen, but the precaution was in an earlier version.
+				{
 					return -1;
+				}
 				return ihvo;
 			}
 			catch (System.Runtime.InteropServices.COMException)
@@ -669,13 +624,17 @@ namespace LanguageExplorer.Controls.XMLViews
 			// If we're in the middle of a drag, or processing mouse down, we don't want to change
 			// the selected row...we're postponing that to mouse up.
 			if (!m_fMouseUpEnabled)
-			SetSelectedIndex(GetRowIndexFromSelection(sel, true));
+			{
+				SetSelectedIndex(GetRowIndexFromSelection(sel, true));
+			}
 		}
 
 		internal void SetSelectedIndex(int ihvo)
 		{
 			if (m_fHandlingSideEffects)
+			{
 				return;
+			}
 			if (ihvo == -1)
 			{
 				// we seem to have cleared our list, so make sure we
@@ -691,42 +650,30 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the row/cell information of the current selection.
 		/// </summary>
-		/// <param name="vwsel"></param>
-		/// <param name="iLevel"></param>
-		/// <param name="iBox"></param>
-		/// <param name="iTableBox"></param>
-		/// <param name="cTableBoxes"></param>
-		/// <param name="iTableLevel"></param>
-		/// <param name="iCellBox"></param>
-		/// <param name="cCellBoxes"></param>
-		/// <param name="iCellLevel"></param>
-		/// ------------------------------------------------------------------------------------
 		internal static void GetCurrentTableCellInfo(IVwSelection vwsel, out int iLevel, out int iBox, out int iTableBox, out int cTableBoxes, out int iTableLevel, out int iCellBox, out int cCellBoxes, out int iCellLevel)
 		{
-			int cBoxes = -1;
+			var cBoxes = -1;
 			iBox = -1;
 			iTableBox = -1;
 			cTableBoxes = -1;
 			iTableLevel = -1;
-			int iRowBox = -1;
-			int cRowBoxes = -1;
-			int iRowLevel = -1;
+			var iRowBox = -1;
+			var cRowBoxes = -1;
+			var iRowLevel = -1;
 			iCellBox = -1;
 			cCellBoxes = -1;
 			iCellLevel = -1;
 			// Find the current table cell and advance to the next one, possibly on the
 			// next or previous row.
-			int cLevels = vwsel.get_BoxDepth(true);
-			VwBoxType vbt = VwBoxType.kvbtUnknown;
+			var cLevels = vwsel.get_BoxDepth(true);
 			for (iLevel = 0; iLevel < cLevels; ++iLevel)
 			{
 				cBoxes = vwsel.get_BoxCount(true, iLevel);
 				iBox = vwsel.get_BoxIndex(true, iLevel);
-				vbt = vwsel.get_BoxType(true, iLevel);
+				var vbt = vwsel.get_BoxType(true, iLevel);
 				switch (vbt)
 				{
 					case VwBoxType.kvbtTable:
@@ -764,18 +711,15 @@ namespace LanguageExplorer.Controls.XMLViews
 			Debug.Assert(iCellLevel != -1);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle the OnKeyDown event
 		/// </summary>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			base.OnKeyDown(e);
 
 			// if we've done a tab, expand the current selection to whole cell contents.
-			IVwSelection vwsel = RootBox.Selection;
+			var vwsel = RootBox.Selection;
 			if (e.KeyCode == Keys.Tab && vwsel != null)
 			{
 				SelectContentsOfCell(vwsel);
@@ -783,13 +727,13 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		protected void SelectContentsOfCell(IVwSelection vwsel)
 		{
 			if (vwsel == null)
+			{
 				return;
+			}
 			int iLevel;
 			int iBox;
 			int iTableBox;
@@ -801,10 +745,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			GetCurrentTableCellInfo(vwsel, out iLevel, out iBox, out iTableBox,
 									out cTableBoxes, out iTableLevel, out iCellBox, out cCellBoxes,
 									out iCellLevel);
-			IVwSelection vwsel2 = m_rootb.MakeSelInBox(vwsel, true, iCellLevel, iCellBox,
-													   true, true, false);
+			var vwsel2 = m_rootb.MakeSelInBox(vwsel, true, iCellLevel, iCellBox, true, true, false);
 			if (vwsel2 == null)
+			{
 				return; // can't do anything, so give up.  See LT-9706.
+			}
 			// Make sure it's in the same cell. In pathological cases, for example, tabbing
 			// from a bulk edit check box in a row that is all read-only, the resulting
 			// selection may be in another row. If we can't make a valid selection where
@@ -816,8 +761,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			GetCurrentTableCellInfo(vwsel2, out iLevel2, out iBox2, out iTableBox2,
 									out cTableBoxes, out iTableLevel, out iCellBox2, out cCellBoxes,
 									out iCellLevel);
-			if (iLevel2 == iLevel && iBox2 == iBox && iTableBox2 == iTableBox
-				&& iCellBox2 == iCellBox)
+			if (iLevel2 == iLevel && iBox2 == iBox && iTableBox2 == iTableBox && iCellBox2 == iCellBox)
 			{
 				vwsel2.Install();
 			}
@@ -827,57 +771,53 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// We only want to do something on mouse up events if the XmlBrowseView has gotten a
 		/// mouseDown event.
 		/// </summary>
-		protected bool m_fMouseUpEnabled = false;
+		protected bool m_fMouseUpEnabled;
 
 		/// <summary>
 		/// MouseUp actions on XmlBrowseView should only be enabled if a preceeding MouseDown occured
 		/// in the view.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			m_fMouseUpEnabled = true;
 			base.OnMouseDown(e);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Process left or right mouse button down
 		/// </summary>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			//If XmlBrouseView did not receive a mouse down event then we do not want to
 			//do anything on the mouseUp because the mouseUp would have come from clicking
 			//somewhere else. LT-8939
 			if (!m_fMouseUpEnabled)
+			{
 				return;
+			}
 
 			try
 			{
-			int newSelectedIndex = GetRowIndexFromSelection(MakeSelectionAt(e), true);
-			// If we leave this set, the base method call's side effects like updating the WS combo
-			// don't happen.
-			m_fHandlingMouseUp = false;
-			// Do this before we do stuff that might mess up scroll positions and make the mouse
-			// position invalid.
-			base.OnMouseUp(e);
-			m_fHandlingMouseUp = true;
-			// preserve any selection the mouse down made, which may be destroyed by the process
-			// of moving the highlight.
-			SelectionHelper helper = SelectionHelper.Create(this);
-			SetSelectedIndex(newSelectedIndex);
-			if (helper != null)
-				helper.SetSelection(this, true, false, VwScrollSelOpts.kssoDefault);
-			if (m_bv != null)
-				m_bv.BrowseViewMouseUp(e);
+				var newSelectedIndex = GetRowIndexFromSelection(MakeSelectionAt(e), true);
+				// If we leave this set, the base method call's side effects like updating the WS combo
+				// don't happen.
+				m_fHandlingMouseUp = false;
+				// Do this before we do stuff that might mess up scroll positions and make the mouse
+				// position invalid.
+				base.OnMouseUp(e);
+				m_fHandlingMouseUp = true;
+				// preserve any selection the mouse down made, which may be destroyed by the process
+				// of moving the highlight.
+				var helper = SelectionHelper.Create(this);
+				SetSelectedIndex(newSelectedIndex);
+				helper?.SetSelection(this, true, false, VwScrollSelOpts.kssoDefault);
+				m_bv?.BrowseViewMouseUp(e);
 			}
 			finally
 			{
 				m_fMouseUpEnabled = false;
-			m_fHandlingMouseUp = false;
-		}
+				m_fHandlingMouseUp = false;
+			}
 		}
 
 		/// <summary>
@@ -886,38 +826,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected override void EnsureDefaultSelection()
 		{
-			return;
 		}
-		///// <summary>
-		///// Side effects like record navigation happen after the mouse down itself is done, but hopefully
-		///// before the mouse up.
-		///// </summary>
-		///// <param name="e"></param>
-		//protected override void OnMouseUp(MouseEventArgs e)
-		//{
-		//    base.OnMouseUp(e);
-		//    m_fHandlingMouseDown = false;
-		//}
 
-		/// <summary></summary>
-		public enum SelectionHighlighting
-		{
-			/// <summary></summary>
-			all,
-			/// <summary></summary>
-			border,
-			/// <summary></summary>
-			none
-		};
-
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets whether the selected row is indicated by highlighting.  Intended to be used from SetSelectedRowHighlighting.  Do not
 		/// use directly, but override SetSelectedRowHighlighting if a different kind of highlighting is needed.
 		/// </summary>
-		/// <value>The selected row highlighting.</value>
-		/// ------------------------------------------------------------------------------------
 		internal SelectionHighlighting SelectedRowHighlighting
 		{
 			get
@@ -930,14 +844,15 @@ namespace LanguageExplorer.Controls.XMLViews
 				CheckDisposed();
 
 				if (m_fSelectedRowHighlighting == value)
+				{
 					return; // Nothing to do.
+				}
 
 				m_fSelectedRowHighlighting = value;
 				// Turn on or off the highlighting of the current row.
 				if (m_selectedIndex >= 0 && m_rootb != null)
 				{
-					int hvoObjSel = m_sda.get_VecItem(m_hvoRoot,
-						m_madeUpFieldIdentifier, m_selectedIndex);
+					var hvoObjSel = m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, m_selectedIndex);
 					m_rootb.PropChanged(hvoObjSel, m_tagMe, 0, 0, 0);
 				}
 			}
@@ -952,7 +867,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			get
 			{
 				if (PropertyTable == null)
+				{
 					return false;
+				}
 				// if we have an editable attribute defined use its value
 				if (m_nodeSpec == null)
 				{
@@ -960,14 +877,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				if (m_nodeSpec.Attribute("editable") != null)
 				{
-					bool fEditable = XmlUtils.GetBooleanAttributeValue(m_nodeSpec, "editable");
+					var fEditable = XmlUtils.GetBooleanAttributeValue(m_nodeSpec, "editable");
 					return !fEditable;
 				}
-				else
-				{
-					return false; // "_readOnlyBrowse" properties are deprecated.
-				}
-
+				return false; // "_readOnlyBrowse" properties are deprecated.
 			}
 		}
 
@@ -990,9 +903,11 @@ namespace LanguageExplorer.Controls.XMLViews
 				CheckDisposed();
 
 				if (m_rootObjectHasBeenSet && m_hvoRoot == value)
+				{
 					return; // No sense getting all worked up, if it is the same as before.
+				}
 				m_hvoRoot = value;
-				m_rootb.SetRootObject(m_hvoRoot, m_xbvvc, (int)XmlBrowseViewVc.kfragRoot, m_styleSheet);
+				m_rootb.SetRootObject(m_hvoRoot, m_xbvvc, XmlBrowseViewBaseVc.kfragRoot, m_styleSheet);
 				m_rootObjectHasBeenSet = true;
 				// This seems to be necessary to get the data entry row to resize even if the new
 				// list is the same length as the old. Must NOT remember new positions, because
@@ -1000,14 +915,14 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_bv.AdjustColumnWidths(false);
 				// The old index and selected object must be wrong by now, so reset them.
 				m_hvoOldSel = 0;
-				int chvo = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
+				var chvo = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
 				if (chvo == 0)
 				{
 					m_selectedIndex = -1;
 				}
 				else
 				{
-					int hvo = m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, 0);
+					var hvo = m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, 0);
 					if (hvo == (int) SpecialHVOValues.kHvoObjectDeleted)
 					{
 						// Deleting everything in one view doesn't seem to fix the RecordList in
@@ -1023,9 +938,13 @@ namespace LanguageExplorer.Controls.XMLViews
 						}
 						chvo = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
 						if (chvo == 0)
+						{
 							m_selectedIndex = -1;
+						}
 						else
+						{
 							SelectedIndex = 0;
+						}
 					}
 					else
 					{
@@ -1051,33 +970,22 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		#region Construction, Initialization and disposal
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:XmlBrowseViewBase"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		internal XmlBrowseViewBase() : base(null)
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 
-			AccessibleName = "XmlBrowseViewBase";
-			//Dock = System.Windows.Forms.DockStyle.Fill;
+			AccessibleName = @"XmlBrowseViewBase";
 			BackColor = SystemColors.Window;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the specified node spec.
 		/// </summary>
-		/// <param name="nodeSpec">The node spec.</param>
-		/// <param name="hvoRoot">The hvo root.</param>
-		/// <param name="madeUpFieldIdentifier">The made up field identifier.</param>
-		/// <param name="cache">The cache.</param>
-		/// <param name="bv">The bv. Also used to set SortItemProvider</param>
-		/// ------------------------------------------------------------------------------------
-		public virtual void Init(XElement nodeSpec, int hvoRoot, int madeUpFieldIdentifier,
-			LcmCache cache, BrowseViewer bv)
+		public virtual void Init(XElement nodeSpec, int hvoRoot, int madeUpFieldIdentifier, LcmCache cache, BrowseViewer bv)
 		{
 			CheckDisposed();
 
@@ -1087,7 +995,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_hvoRoot = hvoRoot;
 			m_madeUpFieldIdentifier = madeUpFieldIdentifier;
 			if (m_nodeSpec == null)
+			{
 				m_nodeSpec = nodeSpec;
+			}
 			// Do this early...we need the ID to restore the columns when the VC is created.
 			m_id = XmlUtils.GetOptionalAttributeValue(m_nodeSpec, "id", "NeedsId");
 			m_bv = bv;
@@ -1097,13 +1007,16 @@ namespace LanguageExplorer.Controls.XMLViews
 			// because right after we make this window we use info from the VC to help make
 			// the column headers.
 			if (bv != null)
+			{
 				m_sortItemProvider = bv.SortItemProvider;
+			}
 			m_xbvvc = Vc;
-			string sDefaultCursor = XmlUtils.GetOptionalAttributeValue(nodeSpec,
-				"defaultCursor", null);
+			var sDefaultCursor = XmlUtils.GetOptionalAttributeValue(nodeSpec, "defaultCursor", null);
 			// Set a default cursor for a ReadOnly view, if none is given.
 			if (sDefaultCursor == null && ReadOnlySelect)
+			{
 				sDefaultCursor = "Arrow";
+			}
 			if (sDefaultCursor != null)
 			{
 				switch (sDefaultCursor)
@@ -1127,16 +1040,18 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// If the text for pasting is too long, truncate it and warn the user.
 		/// </summary>
-		void OnPasteFixTssEvent(EditingHelper sender, FwPasteFixTssEventArgs e)
+		private static void OnPasteFixTssEvent(EditingHelper sender, FwPasteFixTssEventArgs e)
 		{
 			if (!sender.Editable)
+			{
 				return;
-			TextSelInfo tsi = e.TextSelInfo;
+			}
+			var tsi = e.TextSelInfo;
 			if (tsi == null)
+			{
 				return;
-			int flid = tsi.TagAnchor;
-			if (flid == 0)
-				return;
+			}
+			var flid = tsi.TagAnchor;
 		}
 
 		/// <summary>
@@ -1147,7 +1062,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -1155,19 +1072,20 @@ namespace LanguageExplorer.Controls.XMLViews
 				Subscriber.Unsubscribe("RestoreScrollPosition", RestoreScrollPosition);
 
 				if (m_bv != null && !m_bv.IsDisposed && m_bv.SpecialCache != null)
+				{
 					m_bv.SpecialCache.RemoveNotification(this);
+				}
 			}
 
 			base.Dispose(disposing);
 
 			if( disposing )
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 				if (m_bv != null && !m_bv.IsDisposed)
+				{
 					m_bv.Dispose();
+				}
 			}
 			m_xbvvc = null;
 			m_nodeSpec = null;
@@ -2044,13 +1962,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 #endif
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when [delete record].
 		/// </summary>
-		/// <param name="commandObject">The command object.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public virtual bool OnDeleteRecord(object commandObject)
 		{
 			CheckDisposed();
@@ -2127,8 +2041,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					// But, the BrowseViewer and BulkEditBar (Delete tab) also needs to know when
 					// RecordList has been loaded, so that they can manage checkbox behavior for
 					// the actual items being displayed.
-					if (m_bv != null)
-						m_bv.UpdateCheckedItems();
+					m_bv?.UpdateCheckedItems();
 				}
 				if (SelectedObject != m_hvoOldSel)
 				{
@@ -2152,13 +2065,19 @@ namespace LanguageExplorer.Controls.XMLViews
 				// PropChanged when virtuals change.
 				// See FWR-661.
 				if (m_repo == null)
-					m_repo = this.Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+				{
+					m_repo = Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+				}
 				ICmObject objSel;
 				if (!m_repo.TryGetObject(SelectedObject, out objSel))
+				{
 					return;
+				}
 				ICmObject obj;
 				if (!m_repo.TryGetObject(hvo, out obj))
+				{
 					return;
+				}
 				if (obj == objSel || obj.OwnerOfClass(objSel.ClassID) == objSel)
 				{
 #if RANDYTODO
@@ -2174,15 +2093,20 @@ namespace LanguageExplorer.Controls.XMLViews
 		private bool UpdateSelectedRow(object args)
 		{
 			if (IsDisposed || m_rootb == null)
+			{
 				return true; // presumably we've been disposed; this happens (at least) in tests where a later test may simulate idle events.
+			}
 			if (SelectedIndex < 0)
+			{
 				return true; // no current row to update
+			}
 			SelectionHelper helper = null;
 			if (RootBox.Selection != null)
+			{
 				helper = SelectionHelper.Create(this);
+			}
 			RootBox.PropChanged(m_hvoRoot, MainTag, SelectedIndex, 1, 1);
-			if (helper != null)
-				helper.MakeBest(false);
+			helper?.MakeBest(false);
 			return true; // we did it.
 		}
 
@@ -2194,7 +2118,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		public void PostLayoutInit()
 		{
 			if (m_rootb == null || SelectedIndex < 0)
+			{
 				return;
+			}
 			MakeSelectionVisible(GetRowSelection(SelectedIndex), true, true, true);
 		}
 
@@ -2207,27 +2133,30 @@ namespace LanguageExplorer.Controls.XMLViews
 			while (sda != null)
 			{
 				var cv = sda as IClearValues;
-				if (cv != null)
-					cv.ClearValues();
+				cv?.ClearValues();
 				var decorator = sda as DomainDataByFlidDecoratorBase;
 				if (decorator == null)
+				{
 					break;
+				}
 				sda = decorator.BaseSda;
 			}
 		}
-	}
 
-	/// <summary>
-	/// This interface indicates a control or other object that may need to clear its values,
-	/// typically as one stage of a Refresh that will ultimately restore current values.
-	/// Typically this is because the old values are dummy ones that are no longer valid,
-	/// and there is danger of an intermediate stage of the Refresh attempting to use them and crashing.
-	/// </summary>
-	public interface IClearValues
-	{
-		/// <summary>
-		/// Clear values that might otherwise be reused before being fully reset.
-		/// </summary>
-		void ClearValues();
+		private sealed class LineCollector : StringCollectorEnv
+		{
+			public LineCollector(IVwEnv baseEnv, ISilDataAccess sda, int hvoRoot) : base(baseEnv, sda, hvoRoot)
+			{
+			}
+
+			public override void AddObjProp(int tag, IVwViewConstructor vc, int frag)
+			{
+				base.AddObjProp(tag, vc, frag);
+				if (frag == XmlBrowseViewBaseVc.kfragListItemInner)
+				{
+					m_builder.AppendLine();
+				}
+			}
+		}
 	}
 }

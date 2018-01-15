@@ -152,7 +152,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 					IdentifySource = true
 				};
 				vc.SetCache(Cache);
-				vc.m_layouts = m_layouts;
+				vc.LayoutCache = m_layouts;
 				vc.DataAccess = m_sda;
 				var testEnv = new MockEnv() {DataAccess = m_sda, OpenObject = m_hvoLexDb};
 				vc.Display(testEnv, m_hvoLexDb, XmlVc.kRootFragId);

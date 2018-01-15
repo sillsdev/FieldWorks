@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,12 +20,10 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// The old XmlVc.DisplayVec() method had gotten to 370 lines of code. This class is a method
 	/// object whose primary purpose is to allow refactoring of this huge method.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	internal class XmlVcDisplayVec
 	{
 		#region Member Variables
@@ -50,11 +48,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// The method object's constructor.
 		/// </summary>
-		/// <param name="vc">The view constructor</param>
-		/// <param name="vwenv">The view environment</param>
-		/// <param name="hvo">A handle on the root object</param>
-		/// <param name="flid">The field ID</param>
-		/// <param name="frag">A code identifying the current part of the display</param>
 		internal XmlVcDisplayVec(XmlVc vc, IVwEnv vwenv, int hvo, int flid, int frag)
 		{
 			m_viewConstructor = vc;
@@ -65,22 +58,15 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_cache = m_viewConstructor.Cache;
 			m_sda = m_viewConstructor.DataAccess;
 			if (vwenv.DataAccess != null)
+			{
 				m_sda = vwenv.DataAccess;
+			}
 			m_objRepo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 		}
 
-		private LayoutCache Layouts
-		{
-			get { return m_viewConstructor.m_layouts; }
-		}
+		private LayoutCache Layouts => m_viewConstructor.LayoutCache;
 
-		internal bool DelayedNumberExists
-		{
-			get
-			{
-				return m_viewConstructor.DelayedNumberExists;
-			}
-		}
+		internal bool DelayedNumberExists => m_viewConstructor.DelayedNumberExists;
 
 		const string strEng = "en";
 
@@ -97,13 +83,14 @@ namespace LanguageExplorer.Controls.XMLViews
 				return;
 			}
 
-			XElement listDelimitNode; // has the list seps attrs like 'sep'
 			XElement specialAttrsNode;  // has the more exotic ones like 'excludeHvo'
-			listDelimitNode = specialAttrsNode = dispInfo.MainElement;
+			var listDelimitNode = specialAttrsNode = dispInfo.MainElement;
 			// 'inheritSeps' attr means to use the 'caller' (the part ref node)
 			// to get the separator information.
 			if (XmlUtils.GetOptionalBooleanAttributeValue(listDelimitNode, "inheritSeps", false))
+			{
 				listDelimitNode = dispInfo.Caller;
+			}
 
 			//
 			// 1. get number of items in vector
@@ -121,7 +108,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			//		b) call AddObj
 			//		c) print separator if desired and needed
 			//
-			int[] rghvo = GetVector(m_sda, m_hvo, m_flid);
+			var rghvo = GetVector(m_sda, m_hvo, m_flid);
 			Debug.Assert(chvo == rghvo.Length);
 			//
 			// Define some special boolean flags.
@@ -129,9 +116,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Note that we deliberately don't use the listDelimitNode here.
 			// These three props are not currently configurable, and they belong on the 'seq' element,
 			// not the part ref.
-			var fCheckForEmptyItems = XmlUtils.GetOptionalBooleanAttributeValue(specialAttrsNode,
-				"checkForEmptyItems", false);
-			string exclude = XmlUtils.GetOptionalAttributeValue(specialAttrsNode, "excludeHvo", null);
+			var fCheckForEmptyItems = XmlUtils.GetOptionalBooleanAttributeValue(specialAttrsNode, "checkForEmptyItems", false);
+			var exclude = XmlUtils.GetOptionalAttributeValue(specialAttrsNode, "excludeHvo", null);
 			var fFirstOnly = XmlUtils.GetOptionalBooleanAttributeValue(specialAttrsNode, "firstOnly", false);
 
 			XAttribute xaNum;
@@ -142,7 +128,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Determine if sequence should be filtered by a stored list of Guids.
 			// Note that if we filter, we replace rghvo with the filtered list.
 			if (m_viewConstructor.ShouldFilterByGuid)
-			{  // order by vector item type guids
+			{
+				// order by vector item type guids
 				// Don't reorder LexEntry VisibleComplexFormBackRefs vector if the user overrode it manually.
 				var obj = m_cache.ServiceLocator.GetObject(m_hvo);
 				if (obj is ILexEntry)
@@ -151,7 +138,9 @@ namespace LanguageExplorer.Controls.XMLViews
 					if (m_flid == m_cache.MetaDataCacheAccessor.GetFieldId("LexEntry", "VisibleComplexFormBackRefs", false))
 					{
 						if (!VirtualOrderingServices.HasVirtualOrdering(lexEntry, "VisibleComplexFormBackRefs"))
+						{
 							chvo = ApplyFilterToSequence(ref rghvo);
+						}
 					}
 					else
 					{
@@ -170,7 +159,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			var childFrag = m_frag;
 			var fSingleGramInfoFirst = false;
 			if (m_flid == LexEntryTags.kflidSenses)
+			{
 				fSingleGramInfoFirst = XmlUtils.GetOptionalBooleanAttributeValue(listDelimitNode, "singlegraminfofirst", false);
+			}
 
 			// This groups senses by placing graminfo before the number, and omitting it if the same as the
 			// previous sense in the entry.  This isn't yet supported by the UI, but may well be requested in
@@ -178,7 +169,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			//bool fGramInfoBeforeNumber = XmlUtils.GetOptionalBooleanAttributeValue(listDelimitNode, "graminfobeforenumber", false);
 
 			// Setup text properties for any numbering
-			int wsEng = m_cache.WritingSystemFactory.GetWsFromStr(strEng);
+			var wsEng = m_cache.WritingSystemFactory.GetWsFromStr(strEng);
 			ITsTextProps ttpNum = null;
 			var fDelayNumber = false;
 			if (fNumber)
@@ -189,8 +180,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			// A vector may be conditionally configured to display its objects as separate paragraphs
 			// in dictionary (document) configuration.  See LT-9667.
-			var fShowAsParagraphsInInnerPile = XmlUtils.GetOptionalBooleanAttributeValue(listDelimitNode,
-				"showasindentedpara", false);
+			var fShowAsParagraphsInInnerPile = XmlUtils.GetOptionalBooleanAttributeValue(listDelimitNode, "showasindentedpara", false);
 			// We have (this is probably bad) two ways to do this. The better one is setting the flowType to divInPara.
 			// When we do this for a vector, and configure properties that require us to insert numbering and so forth,
 			// we currently force a paragraph for each item. It's too hard otherwise to get the numbers etc. into the paragraph.
@@ -207,8 +197,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				tssBefore = SetBeforeString(specialAttrsNode, listDelimitNode);
 				// We need a line break here to force the inner pile of paragraphs to begin at
 				// the margin, rather than somewhere in the middle of the line.
-				m_vwEnv.AddString(TsStringUtils.MakeString(StringUtils.kChHardLB.ToString(),
-					m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle));
+				m_vwEnv.AddString(TsStringUtils.MakeString(StringUtils.kChHardLB.ToString(), m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle));
 				m_vwEnv.OpenInnerPile();
 			}
 			else if (fShowAsParagraphsInDivInPara)
@@ -220,7 +209,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var xattrSeparator = listDelimitNode.Attribute("sep");
 			var fFirst = true; // May actually mean first non-empty.
 			WrapParagraphDisplayCommand tempCommand = null;
-			int tempId = 0;
+			var tempId = 0;
 			if (fShowAsParagraphsInInnerPile || fShowAsParagraphsInDivInPara)
 			{
 				// We make a temporary command object, whose purpose is to wrap the paragraphs we want to create
@@ -237,18 +226,21 @@ namespace LanguageExplorer.Controls.XMLViews
 				// require extensive analysis of at least how the member variables it modifies are used to make
 				// sure it is safe. At this point I'm going for the safest change I can. This whole area of the
 				// system is likely to be rewritten sometime.
-				tempCommand = new WrapParagraphDisplayCommand(childFrag, this, sParaStyle, tssBefore,
-					listDelimitNode, fNumber, fDelayNumber, xaNum, ttpNum);
+				tempCommand = new WrapParagraphDisplayCommand(childFrag, this, sParaStyle, tssBefore, listDelimitNode, fNumber, fDelayNumber, xaNum, ttpNum);
 				tempId = m_viewConstructor.GetId(tempCommand);
 				tempCommand.DelayedNumber = tssDelayedNumber;
 			}
 			for (var ihvo = 0; ihvo < chvo; ++ihvo)
 			{
 				if (IsExcluded(exclude, ihvo, rghvo))
+				{
 					continue;
+				}
 
 				if (fCheckForEmptyItems && IsItemEmpty(rghvo[ihvo], childFrag))
+				{
 					continue;
+				}
 
 				Debug.Assert(ihvo < rghvo.Length);
 				if (fShowAsParagraphsInInnerPile || fShowAsParagraphsInDivInPara)
@@ -272,7 +264,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 
 				if (fFirstOnly)
+				{
 					break;
+				}
 			} // end of sequence 'for' loop
 			if (tempCommand != null)
 			{
@@ -282,12 +276,16 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			// Close Inner Pile if displaying paragraphs
 			if (fShowAsParagraphsInInnerPile && chvo > 0)
+			{
 				m_vwEnv.CloseInnerPile();
+			}
 
 			// Reset the flag for ignoring grammatical information after the first if it was set
 			// earlier in this method.
 			if (fSingleGramInfoFirst)
+			{
 				m_viewConstructor.ShouldIgnoreGramInfo = false;
+			}
 
 			// Reset the flag for delaying displaying a number.
 			if (m_viewConstructor.DelayNumFlag && m_hvo == m_hvoDelayedNumber)
@@ -295,33 +293,34 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_viewConstructor.DelayNumFlag = false;
 				tssDelayedNumber = null;
 			}
-
-			// end of Display method
 		}
 
 		private void AddItemEmbellishments(XElement listDelimitNode, bool fNumber, int hvo, int ihvo, XAttribute xaNum, ITsTextProps ttpNum, bool fDelayNumber, ref ITsString tssDelayedNumber)
 		{
 			// add the numbering if needed.
-			if (fNumber)
+			if (!fNumber)
 			{
-				var sTag = CalculateAndFormatSenseLabel(hvo, ihvo, xaNum.Value);
-
-				ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
-				tsb.Replace(0, 0, sTag, ttpNum);
-				ITsString tss = tsb.GetString();
-				m_numberPartRef = listDelimitNode;
-				AddNumberingNowOrDelayed(fDelayNumber, tss, out tssDelayedNumber);
+				return;
 			}
+
+			var sTag = CalculateAndFormatSenseLabel(hvo, ihvo, xaNum.Value);
+			var tsb = TsStringUtils.MakeStrBldr();
+			tsb.Replace(0, 0, sTag, ttpNum);
+			var tss = tsb.GetString();
+			m_numberPartRef = listDelimitNode;
+			AddNumberingNowOrDelayed(fDelayNumber, tss, out tssDelayedNumber);
 		}
 
 		private ITsString SetBeforeString(XElement specialAttrsNode, XElement listDelimitNode)
 		{
 			ITsString tssBefore = null;
-			string sBefore = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(listDelimitNode, "before", null));
-			if (!String.IsNullOrEmpty(sBefore) || DelayedNumberExists)
+			var sBefore = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(listDelimitNode, "before", null));
+			if (!string.IsNullOrEmpty(sBefore) || DelayedNumberExists)
 			{
 				if (sBefore == null)
-					sBefore = String.Empty;
+				{
+					sBefore = string.Empty;
+				}
 				tssBefore = TsStringUtils.MakeString(sBefore, m_cache.WritingSystemFactory.UserWs);
 				tssBefore = ApplyStyleToBeforeString(listDelimitNode, tssBefore);
 				tssBefore = ApplyDelayedNumber(specialAttrsNode, tssBefore);
@@ -332,7 +331,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private static ITsString ApplyStyleToBeforeString(XElement listDelimitNode, ITsString tssBefore)
 		{
 			var sStyle = XmlUtils.GetOptionalAttributeValue(listDelimitNode, "beforeStyle");
-			if (!String.IsNullOrEmpty(sStyle))
+			if (!string.IsNullOrEmpty(sStyle))
 			{
 				var bldr = tssBefore.GetBldr();
 				bldr.SetStrPropValue(0, bldr.Length, (int) FwTextPropType.ktptNamedStyle, sStyle);
@@ -343,8 +342,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private ITsString ApplyDelayedNumber(XElement specialAttrsNode, ITsString tssBefore)
 		{
-			var tssNumber = m_viewConstructor.GetDelayedNumber(
-				specialAttrsNode, m_vwEnv is TestCollectorEnv);
+			var tssNumber = m_viewConstructor.GetDelayedNumber(specialAttrsNode, m_vwEnv is TestCollectorEnv);
 			if (tssNumber != null)
 			{
 				var tsb = tssBefore.GetBldr();
@@ -356,17 +354,18 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private ITsTextProps SetNumberTextProperties(int wsEng, XElement listDelimitNode)
 		{
-			ITsTextProps ttpNum;
-			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
+			var tpb = TsStringUtils.MakePropsBldr();
 			// TODO: find more appropriate writing system?
 			tpb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, wsEng);
-			string style = XmlUtils.GetOptionalAttributeValue(listDelimitNode, "numstyle", null);
+			var style = XmlUtils.GetOptionalAttributeValue(listDelimitNode, "numstyle", null);
 			ApplyStyleToTsPropertyBuilder(tpb, style);
-			string font = XmlUtils.GetOptionalAttributeValue(listDelimitNode, "numfont", null);
-			if (!String.IsNullOrEmpty(font))
+			var font = XmlUtils.GetOptionalAttributeValue(listDelimitNode, "numfont", null);
+			if (!string.IsNullOrEmpty(font))
+			{
 				tpb.SetStrPropValue((int) FwTextPropType.ktptFontFamily, font);
+			}
 			m_viewConstructor.MarkSource(tpb, listDelimitNode);
-			ttpNum = tpb.GetTextProps();
+			var ttpNum = tpb.GetTextProps();
 			return ttpNum;
 		}
 
@@ -374,9 +373,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			Debug.Assert(listDelimitNode != null, "Node can not be null!");
 			xaNum = listDelimitNode.Attribute("number");
-			var flag = xaNum != null && !String.IsNullOrEmpty(xaNum.Value);
+			var flag = !string.IsNullOrEmpty(xaNum?.Value);
 			if (flag && chvo == 1)
+			{
 				flag = XmlUtils.GetOptionalBooleanAttributeValue(listDelimitNode, "numsingle", false);
+			}
 			return flag;
 		}
 
@@ -395,7 +396,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void AddSeparatorIfNeeded(bool fFirst, XAttribute xaSep, XElement listDelimitNode, int ws)
 		{
 			if (fFirst || xaSep == null)
+			{
 				return;
+			}
 
 			// add the separator.
 			var sSep = !string.IsNullOrEmpty(xaSep.Value) ? xaSep.Value : " ";
@@ -404,26 +407,35 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void SetupParagraph(string sParaStyle, ITsString tssBefore, XElement listDelimitNode)
 		{
-			if (!String.IsNullOrEmpty(sParaStyle))
+			if (!string.IsNullOrEmpty(sParaStyle))
+			{
 				m_vwEnv.set_StringProperty((int) FwTextPropType.ktptNamedStyle, sParaStyle);
+			}
 			m_vwEnv.OpenParagraph();
 			if (tssBefore != null)
+			{
 				m_viewConstructor.AddMarkedString(m_vwEnv, listDelimitNode, tssBefore);
+			}
 		}
 
 		private bool IsExcluded(string exclude, int ihvo, int[] rghvo)
 		{
-			if (String.IsNullOrEmpty(exclude))
+			if (string.IsNullOrEmpty(exclude))
+			{
 				return false;
+			}
 			if (exclude == "this" && rghvo[ihvo] == m_hvo)
+			{
 				return true;
+			}
 			if (exclude == "parent")
 			{
 				int hvoParent, tagDummy, ihvoDummy;
-				m_vwEnv.GetOuterObject(m_vwEnv.EmbeddingLevel - 1, out hvoParent,
-					out tagDummy, out ihvoDummy);
+				m_vwEnv.GetOuterObject(m_vwEnv.EmbeddingLevel - 1, out hvoParent, out tagDummy, out ihvoDummy);
 				if (rghvo[ihvo] == hvoParent)
+				{
 					return true;
+				}
 			}
 			return false;
 		}
@@ -434,7 +446,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				m_viewConstructor.DelayNumFlag = true;
 
-				ITsIncStrBldr tisb = tss.GetIncBldr();
+				var tisb = tss.GetIncBldr();
 				tisb.Append("  "); // add some padding for separation
 				tssDelayedNumber = tisb.GetString();
 				m_hvoDelayedNumber = m_hvo;
@@ -446,41 +458,35 @@ namespace LanguageExplorer.Controls.XMLViews
 				OutputItemNumber(m_vwEnv, tss);
 				tssDelayedNumber = null;
 			}
-			// This groups senses by placing graminfo before the number, and omitting it if the same as the
-			// previous sense in the entry.  This isn't yet supported by the UI, but may well be requested in
-			// the future.  (See LT-9663.)
-			//if (fGramInfoBeforeNumber)
-			//{
-			//    tssDelayedNumber = tss;
-			//    if (fFirst)
-			//        m_hvoGroupedValue = 0;
-			//}
-			//else if (!m_fDelayNumber)
-			//{
-			//    m_vwEnv.AddString(tss);
-			//    tssDelayedNumber = null;
-			//}
 		}
 
 		private void ApplySortingIfSpecified(int[] rghvo, XElement specialAttrsNode)
 		{
-			string sort = XmlUtils.GetOptionalAttributeValue(specialAttrsNode, "sort", null);
-			if (sort == null)
+			var sort = XmlUtils.GetOptionalAttributeValue(specialAttrsNode, "sort", string.Empty);
+			if (string.IsNullOrEmpty(sort))
+			{
 				return;
+			}
 			// sort the items in this collection, based on the SortKey property
-			bool ascending = sort.ToLowerInvariant() == "ascending";
+			var ascending = sort.ToLowerInvariant() == "ascending";
 			var hvos = new List<int>(rghvo);
 			using (var comparer = new CmObjectComparer(m_cache))
+			{
 				hvos.Sort(comparer);
+			}
 			if (!ascending)
+			{
 				hvos.Reverse();
+			}
 			hvos.CopyTo(rghvo);
 		}
 
 		private static void ApplyStyleToTsPropertyBuilder(ITsPropsBldr tpb, string style)
 		{
-			if (String.IsNullOrEmpty(style))
+			if (string.IsNullOrEmpty(style))
+			{
 				return;
+			}
 			style = style.ToLowerInvariant();
 			// N.B.: Was tempted to refactor with IndexOf("-"), but realized
 			// that style could be "italic -bold" or "-italic bold" or "-italic -bold".
@@ -511,36 +517,24 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>Returns the list of number styles supported by <see cref="CalculateAndFormatSenseLabel"/></summary>
-		public static List<NumberingStyleComboItem> SupportedNumberingStyles
+		public static List<NumberingStyleComboItem> SupportedNumberingStyles => new List<NumberingStyleComboItem>
 		{
-			get
-			{
-				return new List<NumberingStyleComboItem>
-				{
-					new NumberingStyleComboItem(XMLViewsStrings.ksNone, ""),
-					new NumberingStyleComboItem("1  1.2  1.2.3", "%O"),
-					new NumberingStyleComboItem("1  2  3", "%d"),
-					new NumberingStyleComboItem("A  B  C", "%A"),
-					new NumberingStyleComboItem("a  b  c", "%a"),
-					new NumberingStyleComboItem("I  II  III", "%I"),
-					new NumberingStyleComboItem("i  ii  iii", "%i"),
-				};
-			}
-		}
+			new NumberingStyleComboItem(XMLViewsStrings.ksNone, ""),
+			new NumberingStyleComboItem("1  1.2  1.2.3", "%O"),
+			new NumberingStyleComboItem("1  2  3", "%d"),
+			new NumberingStyleComboItem("A  B  C", "%A"),
+			new NumberingStyleComboItem("a  b  c", "%a"),
+			new NumberingStyleComboItem("I  II  III", "%I"),
+			new NumberingStyleComboItem("i  ii  iii", "%i"),
+		};
 
 		/// <summary>Returns the list of parent sense number styles</summary>
-		public static List<NumberingStyleComboItem> SupportedParentSenseNumberStyles
+		public static List<NumberingStyleComboItem> SupportedParentSenseNumberStyles => new List<NumberingStyleComboItem>
 		{
-			get
-			{
-				return new List<NumberingStyleComboItem>
-				{
-					new NumberingStyleComboItem(XMLViewsStrings.ksNone, ""),
-					new NumberingStyleComboItem("Joined", "%j"),
-					new NumberingStyleComboItem("Separated by dot", "%."),
-				};
-			}
-		}
+			new NumberingStyleComboItem(XMLViewsStrings.ksNone, ""),
+			new NumberingStyleComboItem("Joined", "%j"),
+			new NumberingStyleComboItem("Separated by dot", "%."),
+		};
 
 		/// <summary>
 		/// Takes a coded number string and interprets it.
@@ -558,17 +552,19 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <returns>The format filled in with the sequence number</returns>
 		internal string CalculateAndFormatSenseLabel(int hvo, int ihvo, string sTag)
 		{
-			var sNum = "";
+			var sNum = string.Empty;
 			int ich;
 			for (ich = 0; ich < sTag.Length; ++ich)
 			{
 				if (sTag[ich] != '%' || sTag.Length <= ich + 1)
+				{
 					continue;
+				}
 				++ich;
 				switch (sTag[ich])
 				{
 					case 'd':
-						sNum = string.Format("{0}", ihvo + 1);
+						sNum = $"{ihvo + 1}";
 						break;
 					case 'A':
 						sNum = AlphaOutline.NumToAlphaOutline(ihvo + 1);
@@ -584,7 +580,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						break;
 					case 'O':
 						if (m_cache.MetaDataCacheAccessor.get_IsVirtual(m_flid))
-							sNum = String.Format("{0}", ihvo + 1);
+							sNum = $"{ihvo + 1}";
 						else
 						{
 							var item = m_objRepo.GetObject(hvo);
@@ -637,7 +633,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			switch (cchPeriods)
 			{
 				case 0:
-					sNum = string.Format("{0}", ihvo + 1);
+					sNum = $"{ihvo + 1}";
 					break;
 				case 1:
 					sNum = AlphaOutline.NumToAlphaOutline(ihvo + 1).ToLower();
@@ -655,7 +651,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private static int[] GetVector(ISilDataAccess sda, int hvo, int tag)
 		{
 			var chvo = sda.get_VecSize(hvo, tag);
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
+			using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 			{
 				sda.VecProp(hvo, tag, chvo, out chvo, arrayPtr);
 				return MarshalEx.NativeToArray<int>(arrayPtr, chvo);
@@ -668,63 +664,75 @@ namespace LanguageExplorer.Controls.XMLViews
 			// is not empty.
 			MainCallerDisplayCommand command;
 			if (!m_viewConstructor.CanGetMainCallerDisplayCommand(fragId, out command))
+			{
 				return false;
+			}
 
 			string layoutName;
 			var node = command.GetNodeForChild(out layoutName, fragId, m_viewConstructor, hvo);
-			var keys = XmlViewsUtils.ChildKeys(m_cache, m_sda, node, hvo, Layouts,
-				command.Caller, m_viewConstructor.WsForce);
+			var keys = XmlViewsUtils.ChildKeys(m_cache, m_sda, node, hvo, Layouts, command.Caller, m_viewConstructor.WsForce);
 			return AreAllKeysEmpty(keys);
 		}
 
 		/// <summary>
 		/// Return true if every key in the array is empty or null. This includes the case of zero keys.
 		/// </summary>
-		/// <param name="keys"></param>
-		/// <returns></returns>
 		private static bool AreAllKeysEmpty(IEnumerable<string> keys)
 		{
-			return keys == null || keys.All(String.IsNullOrEmpty);
+			return keys == null || keys.All(string.IsNullOrEmpty);
 		}
 
 		/// <summary>
 		/// Processes the empty vector.
 		/// </summary>
-		/// <param name="vwenv">The vwenv.</param>
-		/// <param name="hvo">The hvo.</param>
-		/// <param name="flid">The flid.</param>
 		private void ProcessEmptyVector(IVwEnv vwenv, int hvo, int flid)
 		{
 			// If we're collecting displayed items, and we could have a list of items but don't,
 			// add an hvo of 0 to the collection for use in filtering on missing information.
 			// See LT-9687.
-			if (vwenv is XmlBrowseViewBaseVc.ItemsCollectorEnv)
+			if (!(vwenv is ItemsCollectorEnv))
 			{
-				// The complexities of LexEntryRef objects makes the following special case code
-				// necessary to achieve satisfactory results for LT-9687.
-				if (flid == LexEntryRefTags.kflidComplexEntryTypes)
+				return;
+			}
+			// The complexities of LexEntryRef objects makes the following special case code
+			// necessary to achieve satisfactory results for LT-9687.
+			switch (flid)
+			{
+				case LexEntryRefTags.kflidComplexEntryTypes:
 				{
-					int type = m_sda.get_IntProp(hvo, LexEntryRefTags.kflidRefType);
+					var type = m_sda.get_IntProp(hvo, LexEntryRefTags.kflidRefType);
 					if (type != LexEntryRefTags.krtComplexForm)
+					{
 						return;
+					}
+					break;
 				}
-				else if (flid == LexEntryRefTags.kflidVariantEntryTypes)
+				case LexEntryRefTags.kflidVariantEntryTypes:
 				{
-					int type = m_sda.get_IntProp(hvo, LexEntryRefTags.kflidRefType);
+					var type = m_sda.get_IntProp(hvo, LexEntryRefTags.kflidRefType);
 					if (type != LexEntryRefTags.krtVariant)
+					{
 						return;
+					}
+					break;
 				}
-				if ((vwenv as XmlBrowseViewBaseVc.ItemsCollectorEnv).HvosCollectedInCell.Count == 0)
-					(vwenv as XmlBrowseViewBaseVc.ItemsCollectorEnv).HvosCollectedInCell.Add(0);
+			}
+			if (((ItemsCollectorEnv) vwenv).HvosCollectedInCell.Count == 0)
+			{
+				((ItemsCollectorEnv) vwenv).HvosCollectedInCell.Add(0);
 			}
 		}
 
 		private void OutputItemNumber(IVwEnv vwenv, ITsString tssNumber)
 		{
 			if (vwenv is ConfiguredExport)
-				(vwenv as ConfiguredExport).OutputItemNumber(tssNumber, m_numberPartRef);
+			{
+				((ConfiguredExport) vwenv).OutputItemNumber(tssNumber, m_numberPartRef);
+			}
 			else
+			{
 				vwenv.AddString(tssNumber);
+			}
 		}
 
 		/// <summary>
@@ -736,20 +744,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Note that, unlike most DisplayCommand subclasses, we deliberately do NOT override Equals. In case anything goes
 		/// wrong with removing one of these from the dictionary, it still won't get reused by any other instance of XmlVcDisplayVec.
 		/// </summary>
-		internal class WrapParagraphDisplayCommand : DisplayCommand
+		private sealed class WrapParagraphDisplayCommand : DisplayCommand
 		{
-			/// <summary>
-			/// Make one.
-			/// </summary>
-			/// <param name="wrappedFragId"></param>
-			/// <param name="creator"></param>
-			/// <param name="paraStyle"></param>
-			/// <param name="before"></param>
-			/// <param name="listDelimitNode"></param>
-			/// <param name="number"></param>
-			/// <param name="delayNumber"></param>
-			/// <param name="xaNum"></param>
-			/// <param name="ttpNum"></param>
+			/// <summary />
 			public WrapParagraphDisplayCommand(int wrappedFragId, XmlVcDisplayVec creator, string paraStyle, ITsString before, XElement listDelimitNode,
 				bool number, bool delayNumber, XAttribute xaNum, ITsTextProps ttpNum)
 			{
@@ -776,7 +773,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			internal override void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv)
 			{
-				int level = vwenv.EmbeddingLevel;
+				var level = vwenv.EmbeddingLevel;
 				int hvoDum, tag, ihvo;
 				vwenv.GetOuterObject(level - 2, out hvoDum, out tag, out ihvo);
 				m_creator.SetupParagraph(m_paraStyle, m_tssBefore, m_listDelimitNode);
