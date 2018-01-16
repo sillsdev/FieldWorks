@@ -77,7 +77,7 @@ namespace LanguageExplorer.Areas.Grammar
 				"InterlinearName",
 				ContainingDataTree.PersistenceProvder,
 				"InterlinearName",
-				XmlUtils.GetOptionalAttributeValue(m_configurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
+				XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
 			MSADlglauncherView view = ctrl.MainControl as MSADlglauncherView;
 			view.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 		}

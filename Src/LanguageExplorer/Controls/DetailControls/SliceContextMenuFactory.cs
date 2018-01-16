@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.Code;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -34,9 +35,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal void RegisterHotlinksMenuCreatorMethod(string hotlinksMenuId, Func<Slice, string, List<Tuple<ToolStripMenuItem, EventHandler>>> hotlinksMenuCreatorMethod)
 		{
-			if (string.IsNullOrWhiteSpace(hotlinksMenuId)) throw new ArgumentNullException(nameof(hotlinksMenuId));
-			if (hotlinksMenuCreatorMethod == null) throw new ArgumentNullException(nameof(hotlinksMenuCreatorMethod));
-			if (_hotLinksCreatorMethods.ContainsKey(hotlinksMenuId)) throw new InvalidOperationException($"The method to create '{nameof(hotlinksMenuId)}' has already been registered.");
+			Guard.AgainstNullOrEmptyString(hotlinksMenuId, nameof(hotlinksMenuId));
+			Guard.AgainstNull(hotlinksMenuCreatorMethod, nameof(hotlinksMenuCreatorMethod));
+			Guard.AssertThat(_hotLinksCreatorMethods.ContainsKey(hotlinksMenuId), $"The method to create '{nameof(hotlinksMenuId)}' has already been registered.");
 
 			_hotLinksCreatorMethods.Add(hotlinksMenuId, hotlinksMenuCreatorMethod);
 		}
@@ -60,9 +61,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal void RegisterOrdinaryMenuCreatorMethod(string ordinaryMenuId, Func<Slice, string, Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>> ordinaryMenuCreatorMethod)
 		{
-			if (string.IsNullOrWhiteSpace(ordinaryMenuId)) throw new ArgumentNullException(nameof(ordinaryMenuId));
-			if (ordinaryMenuCreatorMethod == null) throw new ArgumentNullException(nameof(ordinaryMenuCreatorMethod));
-			if (_ordinaryMenuCreatorMethods.ContainsKey(ordinaryMenuId)) throw new InvalidOperationException($"The method to create '{nameof(ordinaryMenuId)}' has already been registered.");
+			Guard.AgainstNullOrEmptyString(ordinaryMenuId, nameof(ordinaryMenuId));
+			Guard.AgainstNull(ordinaryMenuCreatorMethod, nameof(ordinaryMenuCreatorMethod));
+			Guard.AssertThat(_ordinaryMenuCreatorMethods.ContainsKey(ordinaryMenuId), $"The method to create '{nameof(ordinaryMenuId)}' has already been registered.");
 
 			_ordinaryMenuCreatorMethods.Add(ordinaryMenuId, ordinaryMenuCreatorMethod);
 		}
@@ -84,9 +85,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal void RegisterPanelMenuCreatorMethod(string panelMenuId, Func<string, Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>> panelMenuCreatorMethod)
 		{
-			if (string.IsNullOrWhiteSpace(panelMenuId)) throw new ArgumentNullException(nameof(panelMenuId));
-			if (panelMenuCreatorMethod == null) throw new ArgumentNullException(nameof(panelMenuCreatorMethod));
-			if (_panelMenuCreatorMethods.ContainsKey(panelMenuId)) throw new InvalidOperationException($"The method to create '{nameof(panelMenuId)}' has already been registered.");
+			Guard.AgainstNullOrEmptyString(panelMenuId, nameof(panelMenuId));
+			Guard.AgainstNull(panelMenuCreatorMethod, nameof(panelMenuCreatorMethod));
+			Guard.AssertThat(_panelMenuCreatorMethods.ContainsKey(panelMenuId), $"The method to create '{nameof(panelMenuId)}' has already been registered.");
 
 			_panelMenuCreatorMethods.Add(panelMenuId, panelMenuCreatorMethod);
 		}

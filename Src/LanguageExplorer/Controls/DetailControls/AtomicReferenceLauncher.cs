@@ -1,12 +1,10 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: AtomicReferenceLauncher.cs
-// Responsibility: RandyR
 
 using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using LanguageExplorer.Controls.DetailControls.Resources;
@@ -48,7 +46,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -58,8 +58,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.Dispose(disposing);
 		}
 
-		public override void Initialize(LcmCache cache, ICmObject obj, int flid,
-			string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
@@ -72,13 +71,15 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels)
 		{
-			string nullLabel = DetailControlsStrings.ksNullLabel;
+			var nullLabel = DetailControlsStrings.ksNullLabel;
 			if (m_configurationNode != null)
 			{
 				var node = m_configurationNode.Element("deParams");
 				nullLabel = XmlUtils.GetOptionalAttributeValue(node, "nullLabel", nullLabel);
 				if (nullLabel == string.Empty)
+				{
 					nullLabel = null;
+				}
 			}
 			var c = new SimpleListChooser(m_cache, m_persistProvider,
 				PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), labels, Target,
@@ -88,14 +89,21 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void AddItem(ICmObject obj)
 		{
-			AddItem(obj, string.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
-				string.Format(DetailControlsStrings.ksRedoSet, m_fieldName));
+			AddItem(obj, string.Format(DetailControlsStrings.ksUndoSet, m_fieldName), string.Format(DetailControlsStrings.ksRedoSet, m_fieldName));
+		}
+
+		/// <summary>
+		/// Sets a reference collection or sequence.
+		/// </summary>
+		public override void SetItems(IEnumerable<ICmObject> chosenObjs)
+		{
+			throw new NotSupportedException();
 		}
 
 		protected void AddItem(ICmObject obj, string undoText, string redoText)
 		{
 			CheckDisposed();
-			int h1 = m_atomicRefView.RootBox.Height;
+			var h1 = m_atomicRefView.RootBox.Height;
 			UndoableUnitOfWorkHelper.Do(undoText, redoText, m_obj, () =>
 			{
 				Target = obj;
@@ -105,9 +113,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				//m_atomicRefView.SetObject(obj);
 				UpdateDisplayFromDatabase();
-				if (ReferenceChanged != null)
-					ReferenceChanged(this, new FwObjectSelectionEventArgs(obj.Hvo));
-				int h2 = m_atomicRefView.RootBox.Height;
+				ReferenceChanged?.Invoke(this, new FwObjectSelectionEventArgs(obj.Hvo));
+				var h2 = m_atomicRefView.RootBox.Height;
 				CheckViewSizeChanged(h1, h2);
 			}
 		}
@@ -117,7 +124,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			get
 			{
 				if (!m_obj.IsValidObject)
+				{
 					return null;
+				}
 				var hvo = m_cache.DomainDataByFlid.get_ObjectProp(m_obj.Hvo, m_flid);
 				return hvo > 0 ? m_cache.ServiceLocator.GetObject(hvo) : null;
 			}
@@ -140,12 +149,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Clear any existing selection in the view when we leave the launcher.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnLeave(EventArgs e)
 		{
 			base.OnLeave (e);
-			if (m_atomicRefView != null && m_atomicRefView.RootBox != null)
-				m_atomicRefView.RootBox.DestroySelection();
+			m_atomicRefView?.RootBox?.DestroySelection();
 		}
 
 		#endregion // Overrides
@@ -197,22 +204,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Allow access to the AtomicRefView Control other than accessing by Control index.
 		/// </summary>
-		public System.Windows.Forms.Control AtomicRefViewControl
-		{
-			get {
-				return m_atomicRefView;
-			}
-		}
+		public Control AtomicRefViewControl => m_atomicRefView;
 
 		/// <summary>
 		/// Allow access to the panel Control other than accessing by Control index.
 		/// </summary>
-		public System.Windows.Forms.Control PanelControl
-		{
-			get {
-				return m_panel;
-			}
-		}
+		public Control PanelControl => m_panel;
 
 		/// <summary>
 		/// Keep the view width equal to the launcher width minus the button width.
@@ -221,37 +218,33 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-			if (m_panel != null && m_atomicRefView != null)
+			if (m_panel == null || m_atomicRefView == null)
 			{
-				int w = Width - m_panel.Width;
-				int h1 = RootBoxHeight;
-				if (w < 0)
-					w = 0;
-				if (w == m_atomicRefView.Width)
-					return; // cuts down on recursive calls.
-				m_atomicRefView.Width = w;
-				m_atomicRefView.PerformLayout();
-				int h2 = RootBoxHeight;
-				CheckViewSizeChanged(h1, h2);
+				return;
 			}
+			var w = Width - m_panel.Width;
+			var h1 = RootBoxHeight;
+			if (w < 0)
+			{
+				w = 0;
+			}
+			if (w == m_atomicRefView.Width)
+			{
+				return; // cuts down on recursive calls.
+			}
+			m_atomicRefView.Width = w;
+			m_atomicRefView.PerformLayout();
+			var h2 = RootBoxHeight;
+			CheckViewSizeChanged(h1, h2);
 		}
 
-		int RootBoxHeight
-		{
-			get
-			{
-				if (m_atomicRefView == null || m_atomicRefView.RootBox == null)
-					return 0;
-				return m_atomicRefView.RootBox.Height;
-			}
-		}
+		private int RootBoxHeight => m_atomicRefView?.RootBox?.Height ?? 0;
 
 		protected void CheckViewSizeChanged(int h1, int h2)
 		{
-			if (h1 != h2 && ViewSizeChanged != null)
+			if (h1 != h2)
 			{
-				ViewSizeChanged(this,
-					new FwViewSizeEventArgs(h2, m_atomicRefView.RootBox.Width));
+				ViewSizeChanged?.Invoke(this, new FwViewSizeEventArgs(h2, m_atomicRefView.RootBox.Width));
 			}
 		}
 

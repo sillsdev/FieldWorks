@@ -12,7 +12,7 @@ using SIL.LCModel;
 
 namespace LanguageExplorerTests.Controls.DetailControls
 {
-	/// <summary></summary>
+	/// <summary />
 	[TestFixture]
 	public class SliceTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
@@ -29,7 +29,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		}
 		#endregion
 
-		/// <summary/>
+		/// <summary />
 		public override void TestTearDown()
 		{
 			m_Slice?.Dispose();
@@ -43,7 +43,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			base.TestTearDown();
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		public void Basic1()
 		{
@@ -51,7 +51,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			Assert.NotNull(m_Slice);
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		public void Basic2()
 		{
@@ -59,9 +59,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			{
 				using (var slice = new Slice(control))
 				{
-			Assert.AreEqual(control, slice.Control);
-			Assert.NotNull(slice);
-		}
+					Assert.AreEqual(control, slice.Control);
+					Assert.NotNull(slice);
+				}
 			}
 		}
 
@@ -85,15 +85,16 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		/// <summary>Helper</summary>
 		private static ArrayList GeneratePath()
 		{
-			var path = new ArrayList(7);
 			// Data taken from a running Sena 3
-			path.Add(CreateXmlElementFromOuterXmlOf("<layout class=\"LexEntry\" type=\"detail\" name=\"Normal\"><part label=\"Lexeme Form\" ref=\"LexemeForm\" /><part label=\"Citation Form\" ref=\"CitationFormAllV\" /><part ref=\"ComplexFormEntries\" visibility=\"ifdata\" /><part ref=\"EntryRefs\" param=\"Normal\" visibility=\"ifdata\" /><part ref=\"EntryRefsGhostComponents\" visibility=\"always\" /><part ref=\"EntryRefsGhostVariantOf\" visibility=\"never\" /><part ref=\"Pronunciations\" param=\"Normal\" visibility=\"ifdata\" /><part ref=\"Etymology\" menu=\"mnuDataTree-InsertEtymology\" visibility=\"ifdata\" /><part ref=\"CommentAllA\" /><part ref=\"LiteralMeaningAllA\" visibility=\"ifdata\" /><!-- Only for Subentries. --><part ref=\"BibliographyAllA\" visibility=\"ifdata\" /><part ref=\"RestrictionsAllA\" visibility=\"ifdata\" /><part ref=\"SummaryDefinitionAllA\" visibility=\"ifdata\" /><part ref=\"ExcludeAsHeadword\" label=\"Exclude As Headword\" visibility=\"never\" /><!-- todo 'ifTrue' --><part ref=\"CurrentLexReferences\" visibility=\"ifdata\" /><!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree --><part customFields=\"here\" /><part ref=\"ImportResidue\" label=\"Import Residue\" visibility=\"ifdata\" /><part ref=\"DateCreatedAllA\" visibility=\"never\" /><part ref=\"DateModifiedAllA\" visibility=\"never\" /><part ref=\"Senses\" param=\"Normal\" expansion=\"expanded\" /><part ref=\"VariantFormsSection\" expansion=\"expanded\" label=\"Variants\" menu=\"mnuDataTree-VariantForms\" hotlinks=\"mnuDataTree-VariantForms-Hotlinks\"><indent><part ref=\"VariantForms\" /></indent></part><part ref=\"AlternateFormsSection\" expansion=\"expanded\" label=\"Allomorphs\" menu=\"mnuDataTree-AlternateForms\" hotlinks=\"mnuDataTree-AlternateForms-Hotlinks\"><indent><part ref=\"AlternateForms\" param=\"Normal\" /></indent></part><part ref=\"GrammaticalFunctionsSection\" label=\"Grammatical Info. Details\" menu=\"mnuDataTree-Help\" hotlinks=\"mnuDataTree-Help\"><indent><part ref=\"MorphoSyntaxAnalyses\" param=\"Normal\" /></indent></part></layout>"));
-			path.Add(CreateXmlElementFromOuterXmlOf("<part label=\"Lexeme Form\" ref=\"LexemeForm\" />"));
-			path.Add(CreateXmlElementFromOuterXmlOf("<obj field=\"LexemeForm\" layout=\"AsLexemeFormBasic\" menu=\"mnuDataTree-Help\" ghost=\"Form\" ghostWs=\"vernacular\" ghostLabel=\"Lexeme Form\" ghostClass=\"MoStemAllomorph\" ghostInitMethod=\"SetMorphTypeToRoot\" />"));
-			path.Add(21631);
-			path.Add(CreateXmlElementFromOuterXmlOf("<layout class=\"MoStemAllomorph\" type=\"detail\" name=\"AsLexemeFormBasic\"><part ref=\"AsLexemeForm\" label=\"Lexeme Form\" expansion=\"expanded\"><indent><part ref=\"IsAbstractBasic\" label=\"Is Abstract Form\" visibility=\"never\" /><!-- could use 'ifTrue' if we had it --><part ref=\"MorphTypeBasic\" visibility=\"ifdata\" /><part ref=\"PhoneEnvBasic\" visibility=\"ifdata\" /><part ref=\"StemNameForLexemeForm\" visibility=\"ifdata\" /></indent></part></layout>"));
-			path.Add(CreateXmlElementFromOuterXmlOf("<part ref=\"AsLexemeForm\" label=\"Lexeme Form\" expansion=\"expanded\"><indent><part ref=\"IsAbstractBasic\" label=\"Is Abstract Form\" visibility=\"never\" /><!-- could use 'ifTrue' if we had it --><part ref=\"MorphTypeBasic\" visibility=\"ifdata\" /><part ref=\"PhoneEnvBasic\" visibility=\"ifdata\" /><part ref=\"StemNameForLexemeForm\" visibility=\"ifdata\" /></indent></part>"));
-			path.Add(CreateXmlElementFromOuterXmlOf("<slice field=\"Form\" label=\"Form\" editor=\"multistring\" ws=\"all vernacular\" weight=\"light\" menu=\"mnuDataTree-LexemeForm\" contextMenu=\"mnuDataTree-LexemeFormContext\" spell=\"no\"><properties><bold value=\"on\" /><fontsize value=\"120%\" /></properties></slice>"));
+			var path = new ArrayList(7)
+			{
+				CreateXmlElementFromOuterXmlOf("<layout class=\"LexEntry\" type=\"detail\" name=\"Normal\"><part label=\"Lexeme Form\" ref=\"LexemeForm\" /><part label=\"Citation Form\" ref=\"CitationFormAllV\" /><part ref=\"ComplexFormEntries\" visibility=\"ifdata\" /><part ref=\"EntryRefs\" param=\"Normal\" visibility=\"ifdata\" /><part ref=\"EntryRefsGhostComponents\" visibility=\"always\" /><part ref=\"EntryRefsGhostVariantOf\" visibility=\"never\" /><part ref=\"Pronunciations\" param=\"Normal\" visibility=\"ifdata\" /><part ref=\"Etymology\" menu=\"mnuDataTree-InsertEtymology\" visibility=\"ifdata\" /><part ref=\"CommentAllA\" /><part ref=\"LiteralMeaningAllA\" visibility=\"ifdata\" /><!-- Only for Subentries. --><part ref=\"BibliographyAllA\" visibility=\"ifdata\" /><part ref=\"RestrictionsAllA\" visibility=\"ifdata\" /><part ref=\"SummaryDefinitionAllA\" visibility=\"ifdata\" /><part ref=\"ExcludeAsHeadword\" label=\"Exclude As Headword\" visibility=\"never\" /><!-- todo 'ifTrue' --><part ref=\"CurrentLexReferences\" visibility=\"ifdata\" /><!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree --><part customFields=\"here\" /><part ref=\"ImportResidue\" label=\"Import Residue\" visibility=\"ifdata\" /><part ref=\"DateCreatedAllA\" visibility=\"never\" /><part ref=\"DateModifiedAllA\" visibility=\"never\" /><part ref=\"Senses\" param=\"Normal\" expansion=\"expanded\" /><part ref=\"VariantFormsSection\" expansion=\"expanded\" label=\"Variants\" menu=\"mnuDataTree-VariantForms\" hotlinks=\"mnuDataTree-VariantForms-Hotlinks\"><indent><part ref=\"VariantForms\" /></indent></part><part ref=\"AlternateFormsSection\" expansion=\"expanded\" label=\"Allomorphs\" menu=\"mnuDataTree-AlternateForms\" hotlinks=\"mnuDataTree-AlternateForms-Hotlinks\"><indent><part ref=\"AlternateForms\" param=\"Normal\" /></indent></part><part ref=\"GrammaticalFunctionsSection\" label=\"Grammatical Info. Details\" menu=\"mnuDataTree-Help\" hotlinks=\"mnuDataTree-Help\"><indent><part ref=\"MorphoSyntaxAnalyses\" param=\"Normal\" /></indent></part></layout>"),
+				CreateXmlElementFromOuterXmlOf("<part label=\"Lexeme Form\" ref=\"LexemeForm\" />"),
+				CreateXmlElementFromOuterXmlOf("<obj field=\"LexemeForm\" layout=\"AsLexemeFormBasic\" menu=\"mnuDataTree-Help\" ghost=\"Form\" ghostWs=\"vernacular\" ghostLabel=\"Lexeme Form\" ghostClass=\"MoStemAllomorph\" ghostInitMethod=\"SetMorphTypeToRoot\" />"), 21631,
+				CreateXmlElementFromOuterXmlOf("<layout class=\"MoStemAllomorph\" type=\"detail\" name=\"AsLexemeFormBasic\"><part ref=\"AsLexemeForm\" label=\"Lexeme Form\" expansion=\"expanded\"><indent><part ref=\"IsAbstractBasic\" label=\"Is Abstract Form\" visibility=\"never\" /><!-- could use 'ifTrue' if we had it --><part ref=\"MorphTypeBasic\" visibility=\"ifdata\" /><part ref=\"PhoneEnvBasic\" visibility=\"ifdata\" /><part ref=\"StemNameForLexemeForm\" visibility=\"ifdata\" /></indent></part></layout>"),
+				CreateXmlElementFromOuterXmlOf("<part ref=\"AsLexemeForm\" label=\"Lexeme Form\" expansion=\"expanded\"><indent><part ref=\"IsAbstractBasic\" label=\"Is Abstract Form\" visibility=\"never\" /><!-- could use 'ifTrue' if we had it --><part ref=\"MorphTypeBasic\" visibility=\"ifdata\" /><part ref=\"PhoneEnvBasic\" visibility=\"ifdata\" /><part ref=\"StemNameForLexemeForm\" visibility=\"ifdata\" /></indent></part>"),
+				CreateXmlElementFromOuterXmlOf("<slice field=\"Form\" label=\"Form\" editor=\"multistring\" ws=\"all vernacular\" weight=\"light\" menu=\"mnuDataTree-LexemeForm\" contextMenu=\"mnuDataTree-LexemeFormContext\" spell=\"no\"><properties><bold value=\"on\" /><fontsize value=\"120%\" /></properties></slice>")
+			};
 			return path;
 		}
 
@@ -103,7 +104,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		[Test]
 		public void CreateIndentedNodes_basic()
 		{
+			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
 			m_DataTree = new DataTree();
+			m_DataTree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_Slice = GenerateSlice(Cache, m_DataTree);
 
 			// Data taken from a running Sena 3
@@ -111,7 +114,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			const int indent = 0;
-			int insPos = 1;
+			var insPos = 1;
 
 			var path = GeneratePath();
 
@@ -128,8 +131,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		[Test]
 		public void Expand()
 		{
-			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
+			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			m_DataTree = new DataTree();
 			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
@@ -152,8 +154,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 
-			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
+			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
 			m_DataTree = new DataTree();
 			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
 			m_DataTree.InitializeFlexComponent(flexComponentParameters);
@@ -165,6 +166,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 			m_Slice.Collapse();
 		}
+
 		/// <summary>
 		/// Create a DataTree with a GhostStringSlice object. Test to ensure that the PropTable is not null.
 		/// </summary>
@@ -174,8 +176,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var path = GeneratePath();
 			var reuseMap = new ObjSeqHashMap();
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
+			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
 			m_DataTree = new DataTree();
 			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
 			m_DataTree.InitializeFlexComponent(flexComponentParameters);

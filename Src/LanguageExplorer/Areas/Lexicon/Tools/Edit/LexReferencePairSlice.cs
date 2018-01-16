@@ -32,12 +32,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			CheckDisposed();
 			Debug.Assert(m_cache != null);
-			Debug.Assert(m_configurationNode != null);
+			Debug.Assert(ConfigurationNode != null);
 
 			base.FinishInit();
 
 			var hvoDisplayParent = XmlUtils.GetMandatoryIntegerAttributeValue(
-				m_configurationNode, "hvoDisplayParent");
+				ConfigurationNode, "hvoDisplayParent");
 			((LexReferencePairLauncher)Control).DisplayParent = hvoDisplayParent != 0
 				? m_cache.ServiceLocator.GetObject(hvoDisplayParent) : null;
 		}
@@ -67,7 +67,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public override void HandleEditCommand()
 		{
 			CheckDisposed();
-			((LexReferenceMultiSlice)m_parentSlice).EditReferenceDetails(GetObjectForMenusToOperateOn() as ILexReference);
+			((LexReferenceMultiSlice)ParentSlice).EditReferenceDetails(GetObjectForMenusToOperateOn() as ILexReference);
 		}
 
 		#endregion

@@ -1,10 +1,9 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.Cellar;
@@ -16,7 +15,7 @@ using SIL.Xml;
 namespace LanguageExplorer.Controls.DetailControls
 {
 	/// <summary></summary>
-	internal class ReferenceLauncher : ButtonLauncher
+	internal abstract class ReferenceLauncher : ButtonLauncher
 	{
 		#region event handler declarations
 
@@ -39,17 +38,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
-		/// flag whether we can modify the slice contents.
-		/// </summary>
-		protected bool m_fEditable = true;
-		/// <summary>
 		/// Flag whether we can modify the slice contents.
 		/// </summary>
-		public bool Editable
-		{
-			get { return m_fEditable; }
-			set { m_fEditable = value; }
-		}
+		public bool Editable { get; set; } = true;
+
 		/// <summary>
 		/// Allow the launcher button to become visible only if we're editable.
 		/// </summary>
@@ -57,38 +49,33 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			set
 			{
-				if (m_fEditable)
+				if (Editable)
+				{
 					base.SliceIsCurrent = value;
+				}
 			}
 		}
 		#endregion // Properties
 
 		#region Construction, Initialization, and Disposing
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ReferenceLauncher"/> class.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		internal ReferenceLauncher()
 		{
-			// This call is required by the Windows.Forms Form Designer.
-			//InitializeComponent();
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
-		/// resources; <c>false</c> to release only unmanaged resources.
-		/// </param>
-		/// -----------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -107,21 +94,16 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </remarks>
 		protected override void HandleChooser()
 		{
-			string displayWs = "analysis vernacular";
-			//string displayWs = "best analysis";
+			var displayWs = "analysis vernacular";
 			string postDialogMessageTrigger = null;
 
-			if (m_configurationNode != null)
+			var node = m_configurationNode?.Element("deParams");
+			if (node != null)
 			{
-				var node = m_configurationNode.Element("deParams");
-				if (node != null)
-				{
-					displayWs = XmlUtils.GetOptionalAttributeValue(node, "ws", "analysis vernacular").ToLower();
-					postDialogMessageTrigger = XmlUtils.GetOptionalAttributeValue(node, "postChangeMessageTrigger", null);
-				}
+				displayWs = XmlUtils.GetOptionalAttributeValue(node, "ws", "analysis vernacular").ToLower();
+				postDialogMessageTrigger = XmlUtils.GetOptionalAttributeValue(node, "postChangeMessageTrigger", null);
 			}
-			var labels = ObjectLabel.CreateObjectLabels(m_cache, m_obj.ReferenceTargetCandidates(m_flid),
-				m_displayNameProperty, displayWs);
+			var labels = ObjectLabel.CreateObjectLabels(m_cache, m_obj.ReferenceTargetCandidates(m_flid), m_displayNameProperty, displayWs);
 
 			// I (JH) started down this road to sorting the object labels... it proved bumpy
 			// and I bailed out and just turned on the "sorted" property of the chooser,
@@ -145,7 +127,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			//	new PropertyRecordSorter(AreaServices.ShortName);
 			//sorter.Sort ((ArrayList) labels);
 
-			using (SimpleListChooser chooser = GetChooser(labels))
+			using (var chooser = GetChooser(labels))
 			{
 				chooser.Cache = m_cache;
 				chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);	// may set TextParamHvo
@@ -160,33 +142,44 @@ namespace LanguageExplorer.Controls.DetailControls
 					//if (candidates.Count != 0)
 					//    chooser.TextParamHvo = m_cache.GetOwnerOfObject((int)candidates[0]);
 					// JohnT: this approach depends on a new FDO method.
-					ICmObject referenceTargetOwner = m_obj.ReferenceTargetOwner(m_flid);
+					var referenceTargetOwner = m_obj.ReferenceTargetOwner(m_flid);
 					if (referenceTargetOwner != null)
+					{
 						chooser.TextParamHvo = referenceTargetOwner.Hvo;
+					}
 					chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
 					chooser.InitializeExtras(m_configurationNode, PropertyTable);
 				}
 
 				var res = chooser.ShowDialog(MainControl.FindForm());
 				if (DialogResult.Cancel == res)
+				{
 					return;
+				}
 
 				if (m_configurationNode != null)
+				{
 					chooser.HandleAnyJump();
+				}
 
 				if (chooser.ChosenOne != null)
+				{
 					AddItem(chooser.ChosenOne.Object);
+				}
 				else if (chooser.ChosenObjects != null)
+				{
 					SetItems(chooser.ChosenObjects);
+				}
 			}
 
-			//if the configuration file says that we should put up a message dialog after a change has been made,
-			//do that now.
+			// If the configuration file says that we should put up a message dialog after a change has been made,
+			// do that now.
 			if (postDialogMessageTrigger != null)
+			{
 				MessageBoxExManager.Trigger(postDialogMessageTrigger);
+			}
 			// If the configuration file says to refresh the slice list, do that now.
-			if (ChoicesMade != null)
-				ChoicesMade(this, new EventArgs());
+			ChoicesMade?.Invoke(this, new EventArgs());
 		}
 
 		/// <summary>
@@ -196,8 +189,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>The SimpleListChooser.</returns>
 		protected virtual SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels)
 		{
-			SimpleListChooser x = new SimpleListChooser(m_persistProvider, labels,
-				m_fieldName, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+			var x = new SimpleListChooser(m_persistProvider, labels, m_fieldName, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			x.NullLabel.DisplayName  = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "nullLabel", "<EMPTY>");
 			return x;
 		}
@@ -206,24 +198,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Sets an atomic reference property or appends an object to a reference collection
 		/// or sequence.
 		/// </summary>
-		/// <param name="obj">The obj.</param>
-		public virtual void AddItem(ICmObject obj)
-		{
-			CheckDisposed();
-
-			Debug.Assert(false, "Subclasses must override this to set the new value.");
-		}
+		public abstract void AddItem(ICmObject obj);
 
 		/// <summary>
 		/// Sets a reference collection or sequence.
 		/// </summary>
-		/// <param name="chosenObjs">The chosen objs.</param>
-		public virtual void SetItems(IEnumerable<ICmObject> chosenObjs)
-		{
-			CheckDisposed();
-
-			Debug.Assert(false, "Subclasses must override this to set the new value.");
-		}
+		public abstract void SetItems(IEnumerable<ICmObject> chosenObjs);
 
 		public virtual void UpdateDisplayFromDatabase()
 		{

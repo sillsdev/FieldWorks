@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2017 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,12 +15,6 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	internal class ButtonLauncher : UserControl, IFlexComponent, INotifyControlInCurrentSlice
 	{
-		#region event handler declarations
-
-		//public event EventHandler ChoicesMade;
-
-		#endregion event handler declarations
-
 		#region Data Members
 
 		protected LcmCache m_cache;
@@ -45,15 +39,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				// Depending on compile switch for SLICE_IS_SPLITCONTAINER,
-				// grandParent will be both a Slice and a SplitContainer
-				// (Slice is a subclass of SplitContainer),
-				// or just a SplitContainer (SplitContainer is the only child Control of a Slice).
-				// If grandParent is not a Slice, then we have to move up to the great-grandparent
-				// to find the Slice.
-				Control parent = Parent;
+				var parent = Parent;
 				while (!(parent is Slice))
+				{
 					parent = parent.Parent;
+				}
 
 				Debug.Assert(parent is Slice);
 
@@ -104,34 +94,25 @@ namespace LanguageExplorer.Controls.DetailControls
 		#endregion // Properties
 
 		#region Construction, Initialization, and Disposing
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ReferenceLauncher"/> class.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public ButtonLauncher()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-			if (!Application.RenderWithVisualStyles)
+			if (Application.RenderWithVisualStyles)
 			{
-				m_btnLauncher.ImageIndex = 2;
-				m_btnLauncher.BackColor = System.Drawing.SystemColors.Control;
+				return;
 			}
+			m_btnLauncher.ImageIndex = 2;
+			m_btnLauncher.BackColor = System.Drawing.SystemColors.Control;
 		}
 
 		/// <summary>
 		/// Initialize the launcher.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="obj"></param>
-		/// <param name="flid"></param>
-		/// <param name="fieldName"></param>
-		/// <param name="persistProvider"></param>
-		/// <param name="displayNameProperty"></param>
-		/// <param name="displayWs"></param>
-		public virtual void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName,
-			IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
+		public virtual void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			Debug.Assert(cache != null);
 			Debug.Assert(flid != 0);
@@ -190,14 +171,9 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#endregion
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
-		/// resources; <c>false</c> to release only unmanaged resources.
-		/// </param>
-		/// -----------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -207,12 +183,11 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if (disposing)
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 				if (m_mainControl != null && m_mainControl.Parent == null)
+				{
 					m_mainControl.Dispose();
+				}
 			}
 			m_fieldName = null;
 			m_cache = null;
@@ -238,7 +213,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException("ButtonLauncher", "This object is being used after it has been disposed: this is an Error.");
+			}
 		}
 
 		/// <summary>
@@ -258,12 +235,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		#region Component Designer generated code
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
@@ -316,7 +291,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected virtual void OnObjectCreated()
 		{
-
 		}
 
 		/// <summary>
@@ -324,7 +298,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="arguments"></param>
-		protected virtual void OnClick(Object sender, EventArgs arguments)
+		protected virtual void OnClick(object sender, EventArgs arguments)
 		{
 			bool fValid;
 			if (m_obj == null && ObjectCreator != null)
@@ -348,15 +322,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected void ReferenceLauncher_Enter(object sender, EventArgs e)
 		{
-			if (m_mainControl != null)
+			m_mainControl?.Focus();
+			if (!(Parent is IContainerControl))
 			{
-				m_mainControl.Focus();
+				return;
 			}
-			if (Parent is IContainerControl)
-			{
-				IContainerControl uc = (IContainerControl)Parent;
-				uc.ActiveControl = this;
-			}
+			var uc = (IContainerControl)Parent;
+			uc.ActiveControl = this;
 		}
 
 		protected void ReferenceLauncher_Leave(object sender, System.EventArgs e)
@@ -377,25 +349,16 @@ namespace LanguageExplorer.Controls.DetailControls
 				CheckDisposed();
 				// The panel (with the button) is visible only when the slice is current
 				if (value)
+				{
 					m_panel.Show();
+				}
 				else
+				{
 					m_panel.Hide();
+				}
 			}
 		}
 
 		#endregion
-	}
-
-	/// <summary>
-	/// A control within a slice may implement this in order to receive notification when the slice
-	/// becomes active.
-	/// It's crazy to define this over in LexTextControls, but then, it's crazy for ButtonLauncher
-	/// and most of its subclasses to be here, either. It's a historical artifact resulting from
-	/// the fact that LexTextControls doesn't reference DetailControls; rather, DetailControls
-	/// references LexTextControls. We need references both ways, but can't achieve it.
-	/// </summary>
-	public interface INotifyControlInCurrentSlice
-	{
-		bool SliceIsCurrent { set; }
 	}
 }

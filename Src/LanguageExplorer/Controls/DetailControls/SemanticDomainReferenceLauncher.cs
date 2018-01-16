@@ -1,11 +1,6 @@
-﻿// Copyright (c) 2012-2013 SIL International
+﻿// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SemanticDomainReferenceLauncher.cs
-//
-// <remarks>
-// </remarks>
 
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -21,11 +16,9 @@ namespace LanguageExplorer.Controls.DetailControls
 	{
 		#region Construction, Initialization, and Disposing
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ReferenceLauncher"/> class.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public SemanticDomainReferenceLauncher()
 		{
 		}

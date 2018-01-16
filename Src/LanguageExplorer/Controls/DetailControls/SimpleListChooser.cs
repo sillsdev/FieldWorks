@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -30,7 +30,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// deprecated constructor for use with changing or setting a value
 		/// </summary>
@@ -42,7 +41,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <param name="currentObj">use null if empty.</param>
 		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
 		/// <param name="nullLabel">The null label.</param>
-		/// ------------------------------------------------------------------------------------
 		public SimpleListChooser(LcmCache cache, IPersistenceProvider persistProvider,
 			IHelpTopicProvider helpTopicProvider, IEnumerable<ObjectLabel> labels,
 			ICmObject currentObj, string fieldName, string nullLabel)
@@ -50,7 +48,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// constructor for use with changing or setting a value
 		/// </summary>
@@ -63,14 +60,13 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
 		/// <param name="nullLabel">The null label.</param>
 		/// <param name="stylesheet">The stylesheet.</param>
-		/// ------------------------------------------------------------------------------------
 		public SimpleListChooser(LcmCache cache, IPersistenceProvider persistProvider,
 			IHelpTopicProvider helpTopicProvider, IEnumerable<ObjectLabel> labels,
 			ICmObject currentObj, string fieldName, string nullLabel, IVwStylesheet stylesheet)
 			: base(cache, helpTopicProvider, persistProvider, labels, currentObj, fieldName, nullLabel, stylesheet)
 		{
 		}
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// constructor for use with changing or setting a value
 		/// </summary>
@@ -81,7 +77,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <param name="labels">The labels.</param>
 		/// <param name="currentObj">use null if emtpy.</param>
 		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
-		/// ------------------------------------------------------------------------------------
 		public SimpleListChooser(LcmCache cache, IPersistenceProvider persistProvider,
 			IHelpTopicProvider helpTopicProvider, IEnumerable<ObjectLabel> labels,
 			ICmObject currentObj, string fieldName)
@@ -89,7 +84,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// constructor for use with adding a new value
 		/// </summary>
@@ -97,14 +91,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <param name="labels">The labels.</param>
 		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// ------------------------------------------------------------------------------------
 		public SimpleListChooser(IPersistenceProvider persistProvider,
 			IEnumerable<ObjectLabel> labels, string fieldName, IHelpTopicProvider helpTopicProvider)
 			: base(persistProvider, labels, fieldName, helpTopicProvider)
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// constructor for use with adding a new value
 		/// </summary>
@@ -113,7 +105,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
 		/// <param name="stylesheet">The stylesheet.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// ------------------------------------------------------------------------------------
 		public SimpleListChooser(IPersistenceProvider persistProvider,
 			IEnumerable<ObjectLabel> labels, string fieldName, IVwStylesheet stylesheet,
 			IHelpTopicProvider helpTopicProvider)
@@ -121,7 +112,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// constructor for use with changing or setting multiple values.
 		/// </summary>
@@ -132,7 +122,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <param name="cache">The cache.</param>
 		/// <param name="chosenObjs">use null or ICmObject[0] if empty</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// ------------------------------------------------------------------------------------
 		public SimpleListChooser(IPersistenceProvider persistProvider,
 			IEnumerable<ObjectLabel> labels, string fieldName, LcmCache cache,
 			IEnumerable<ICmObject> chosenObjs, IHelpTopicProvider helpTopicProvider)
@@ -146,9 +135,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				case "MakeInflAffixSlotChooserCommand":
 					{
-						string sTarget = XmlUtils.GetOptionalAttributeValue(node, "target");
-						int hvoPos = 0;
-						string sTopPOS = DetailControlsStrings.ksQuestionable;
+						var sTarget = XmlUtils.GetOptionalAttributeValue(node, "target");
+						var hvoPos = 0;
+						var sTopPOS = DetailControlsStrings.ksQuestionable;
 						if (sTarget == null || sTarget.ToLower() == "owner")
 						{
 							hvoPos = m_hvoTextParam;
@@ -158,12 +147,9 @@ namespace LanguageExplorer.Controls.DetailControls
 						{
 							hvoPos = GetHvoOfHighestPOS(m_hvoTextParam, out sTopPOS);
 						}
-						sLabel = String.Format(sLabel, sTopPOS);
-						bool fOptional = XmlUtils.GetOptionalBooleanAttributeValue(node, "optional",
-							false);
-						string sTitle = StringTable.Table.GetString(
-							fOptional ? "OptionalSlot" : "ObligatorySlot",
-							"Linguistics/Morphology/TemplateTable");
+						sLabel = string.Format(sLabel, sTopPOS);
+						var fOptional = XmlUtils.GetOptionalBooleanAttributeValue(node, "optional", false);
+						var sTitle = StringTable.Table.GetString(fOptional ? "OptionalSlot" : "ObligatorySlot", "Linguistics/Morphology/TemplateTable");
 						AddLink(sLabel, LinkType.kSimpleLink,
 							new MakeInflAffixSlotChooserCommand(m_cache, true, sTitle, hvoPos,
 							fOptional, m_propertyTable, m_publisher, m_subscriber));
@@ -178,10 +164,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Get tree view of the chooser
 		/// </summary>
-		public TreeView TreeView
-		{
-			get { return m_labelsTreeView; }
-		}
-
+		public TreeView TreeView => m_labelsTreeView;
 	}
 }

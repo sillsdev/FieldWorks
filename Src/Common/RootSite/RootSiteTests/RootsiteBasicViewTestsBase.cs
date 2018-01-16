@@ -255,8 +255,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				ScriptureTags.kflidStyles);
 
 			Debug.Assert(m_basicView == null, "m_basicView is not null.");
-			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
+			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
 
 			m_basicView = new DummyBasicView {Cache = Cache, Visible = false, StyleSheet = styleSheet};
 			m_basicView.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));

@@ -115,7 +115,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				if (roledPartic.RoleRA != null)
 					GenerateChildNode(roledPartic, node, caller, indent, ref insPos, path, reuseMap);
 			}
-			Expansion = Record.ParticipantsOC.Count == 0 ? DataTree.TreeItemState.ktisCollapsedEmpty : DataTree.TreeItemState.ktisExpanded;
+			Expansion = Record.ParticipantsOC.Count == 0 ? TreeItemState.ktisCollapsedEmpty : TreeItemState.ktisExpanded;
 		}
 
 		private void GenerateChildNode(IRnRoledPartic roledPartic, XElement node, XElement caller, int indent,
@@ -234,9 +234,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			var role = (ICmPossibility) item.Tag;
 			string roleName = role.Name.BestAnalysisAlternative.Text;
 			string displayWs = "analysis vernacular";
-			if (m_configurationNode != null)
+			if (ConfigurationNode != null)
 			{
-				var node = m_configurationNode.Element("deParams");
+				var node = ConfigurationNode.Element("deParams");
 				if (node != null)
 					displayWs = XmlUtils.GetOptionalAttributeValue(node, "ws", "analysis vernacular").ToLower();
 			}
@@ -248,14 +248,14 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				chooser.TextParamHvo = m_cache.LanguageProject.PeopleOA.Hvo;
 				chooser.SetHelpTopic(GetChooserHelpTopicID());
-				if (m_configurationNode != null)
-					chooser.InitializeExtras(m_configurationNode, PropertyTable);
+				if (ConfigurationNode != null)
+					chooser.InitializeExtras(ConfigurationNode, PropertyTable);
 
 				DialogResult res = chooser.ShowDialog();
 				if (DialogResult.Cancel == res)
 					return;
 
-				if (m_configurationNode != null)
+				if (ConfigurationNode != null)
 					chooser.HandleAnyJump();
 
 				if (chooser.ChosenObjects != null)
@@ -366,8 +366,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				if (Key.Length > 1)
 					caller = Key[Key.Length - 2] as XElement;
 				int insPos = IndexInContainer + Record.ParticipantsOC.Count - 1;
-				GenerateChildNode(roledPartic, m_configurationNode, caller, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap());
-				Expansion = DataTree.TreeItemState.ktisExpanded;
+				GenerateChildNode(roledPartic, ConfigurationNode, caller, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap());
+				Expansion = TreeItemState.ktisExpanded;
 			}
 			finally
 			{
@@ -390,8 +390,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				if (Key.Length > 1)
 					caller = Key[Key.Length - 2] as XElement;
 				int insPos = iSlice + 1;
-				GenerateChildren(m_configurationNode, caller, m_obj, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), false);
-				Expansion = DataTree.TreeItemState.ktisExpanded;
+				GenerateChildren(ConfigurationNode, caller, m_obj, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), false);
+				Expansion = TreeItemState.ktisExpanded;
 			}
 			finally
 			{

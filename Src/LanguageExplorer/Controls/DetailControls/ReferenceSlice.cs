@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,7 +19,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ReferenceSlice"/> class.
 		/// </summary>
-		/// <param name="control">The control.</param>
 		protected ReferenceSlice(Control control)
 			: base(control)
 		{
@@ -28,10 +27,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ReferenceSlice"/> class.
 		/// </summary>
-		/// <param name="control">The control.</param>
-		/// <param name="cache">The cache.</param>
-		/// <param name="obj">The obj.</param>
-		/// <param name="flid">The flid.</param>
 		protected ReferenceSlice(Control control, LcmCache cache, ICmObject obj, int flid)
 			: base(control, cache, obj, flid)
 		{
@@ -44,7 +39,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (m_fieldName != null)
 			{
 				// have chooser title use the same text as the label
-				m_fieldName = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(m_configurationNode, "label", m_fieldName));
+				m_fieldName = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", m_fieldName));
 			}
 		}
 
@@ -58,10 +53,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			get
 			{
 				var parameters = ConfigurationNode.Element("deParams");
-				if (parameters == null)
-					return "";
-
-				return XmlUtils.GetOptionalAttributeValue(parameters, "displayProperty", "");
+				return parameters == null ? string.Empty : XmlUtils.GetOptionalAttributeValue(parameters, "displayProperty", "");
 			}
 		}
 
@@ -70,10 +62,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			get
 			{
 				var parameters = ConfigurationNode.Element("deParams");
-				if (parameters == null)
-					return "analysis";
-
-				return XmlUtils.GetOptionalAttributeValue(parameters, "ws", "analysis");
+				return parameters == null ? "analysis" : XmlUtils.GetOptionalAttributeValue(parameters, "ws", "analysis");
 			}
 		}
 		/// <summary>
@@ -88,23 +77,21 @@ namespace LanguageExplorer.Controls.DetailControls
 			CheckDisposed();
 			base.AboutToDiscard();
 			var launcher = Control as ButtonLauncher;
-			if (launcher == null)
-				return;
-			var rs = launcher.MainControl as SimpleRootSite;
-			if (rs != null)
-				rs.AboutToDiscard();
+			var rs = launcher?.MainControl as SimpleRootSite;
+			rs?.AboutToDiscard();
 		}
 
 		/// <summary>
 		/// Set the Editable property on the launcher, which is created before installation, and
 		/// then finish installing this slice.
 		/// </summary>
-		/// <param name="parentDataTree"></param>
 		public override void Install(DataTree parentDataTree)
 		{
 			var launcher = Control as ReferenceLauncher;
 			if (launcher != null)
-				launcher.Editable = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationNode, "editable", true);
+			{
+				launcher.Editable = XmlUtils.GetOptionalBooleanAttributeValue(ConfigurationNode, "editable", true);
+			}
 			base.Install(parentDataTree);
 		}
 	}

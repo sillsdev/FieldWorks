@@ -13,7 +13,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		public override void FinishInit()
 		{
 			CheckDisposed();
-			Control = new MetaRuleFormulaControl(m_configurationNode);
+			Control = new MetaRuleFormulaControl(ConfigurationNode);
 		}
 
 	}

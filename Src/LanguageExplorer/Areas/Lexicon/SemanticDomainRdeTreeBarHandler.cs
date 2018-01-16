@@ -151,7 +151,7 @@ namespace LanguageExplorer.Areas.Lexicon
 					_recordBar.IsFlatList = true;
 					_recordBar.ListView.ItemChecked -= OnDomainListChecked;
 					var semDomainsToShow = m_semDomRepo.FindDomainsThatMatch(searchString);
-					SemanticDomainSelectionUtility.UpdateDomainListLabels(
+					SemanticDomainSelectionServices.UpdateDomainListLabels(
 						ObjectLabel.CreateObjectLabels(m_cache, semDomainsToShow, string.Empty, m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs)),
 						m_stylesheet, _recordBar.ListView, true);
 					m_btnCancelSearch.SearchIsActive = true;
@@ -171,7 +171,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		private void OnDomainListChecked(object sender, ItemCheckedEventArgs e)
 		{
 			var domain = m_semDomRepo.GetObject((int) e.Item.Tag);
-			SemanticDomainSelectionUtility.AdjustSelectedDomainList(domain, m_stylesheet, e.Item.Checked, _recordBar.ListView);
+			SemanticDomainSelectionServices.AdjustSelectedDomainList(domain, m_stylesheet, e.Item.Checked, _recordBar.ListView);
 		}
 
 		private void m_textSearch_GotFocus(object sender, EventArgs e)
@@ -223,7 +223,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			{
 				return baseName; // pathological defensive programming
 			}
-			var senseCount = SemanticDomainSelectionUtility.SenseReferenceCount(sd);
+			var senseCount = SemanticDomainSelectionServices.SenseReferenceCount(sd);
 			if (senseCount == 0)
 			{
 				return baseName;

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -31,27 +31,27 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ConfigureWritingSystemsDlg"/> class.
 		/// </summary>
-		/// <param name="allWss">All writing systems to display.</param>
-		/// <param name="selectedWss">The selected writing systems.</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		public ConfigureWritingSystemsDlg(IEnumerable<CoreWritingSystemDefinition> allWss, IEnumerable<CoreWritingSystemDefinition> selectedWss,
-			IHelpTopicProvider helpTopicProvider)
+		public ConfigureWritingSystemsDlg(IEnumerable<CoreWritingSystemDefinition> allWss, IEnumerable<CoreWritingSystemDefinition> selectedWss, IHelpTopicProvider helpTopicProvider)
 		{
 			//
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
 
-			foreach (CoreWritingSystemDefinition curWs in allWss)
+			foreach (var curWs in allWss)
+			{
 				m_wsListBox.Items.Add(curWs, selectedWss.Contains(curWs));
+			}
 			m_wsListBox.SelectedIndex = 0;
 
 			m_helpTopicProvider = helpTopicProvider;
 
 			if (m_helpTopicProvider != null) // m_helpTopicProvider could be null for testing
 			{
-				m_helpProvider = new HelpProvider();
-				m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
+				m_helpProvider = new HelpProvider
+				{
+					HelpNamespace = m_helpTopicProvider.HelpFile
+				};
 				m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
 				m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
@@ -67,14 +67,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Gets the selected writing system.
 		/// </summary>
-		/// <value>The selected writing system.</value>
-		public IEnumerable<CoreWritingSystemDefinition> SelectedWritingSystems
-		{
-			get
-			{
-				return m_wsListBox.CheckedItems.Cast<CoreWritingSystemDefinition>();
-			}
-		}
+		public IEnumerable<CoreWritingSystemDefinition> SelectedWritingSystems => m_wsListBox.CheckedItems.Cast<CoreWritingSystemDefinition>();
 
 		#region Windows Form Designer generated code
 		/// <summary>
@@ -151,8 +144,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void m_wsListBox_ItemCheck(object sender, ItemCheckEventArgs e)
 		{
-			m_okButton.Enabled = e.NewValue == CheckState.Checked || m_wsListBox.CheckedIndices.Count > 1
-				|| !m_wsListBox.CheckedIndices.Contains(e.Index);
+			m_okButton.Enabled = e.NewValue == CheckState.Checked || m_wsListBox.CheckedIndices.Count > 1 || !m_wsListBox.CheckedIndices.Contains(e.Index);
 		}
 	}
 }

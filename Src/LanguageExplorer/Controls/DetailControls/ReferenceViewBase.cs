@@ -1,5 +1,5 @@
 //#define TESTMS
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,7 +10,6 @@ using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -61,9 +60,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_rootFlid = rootFlid;
 			m_rootFieldName = rootFieldName;
 			if (m_rootb == null)
+			{
 				MakeRoot();
+			}
 			else
+			{
 				SetupRoot();
+			}
 		}
 
 		/// <summary>
@@ -75,35 +78,37 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#endregion // Construction
 
-		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot,
-			Rectangle rcDstRoot)
+		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
 			// if we don't install the selection here, a previous selection may give us
 			// spurious results later on when handling the UI this right click brings up;
 			// see LT-12154.
-			IVwSelection sel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, true);
-			TextSelInfo tsi = new TextSelInfo(sel);
+			var sel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, true);
+			var tsi = new TextSelInfo(sel);
 			return HandleRightClickOnObject(tsi.Hvo(false));
 		}
 
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			base.OnMouseUp(e);
-			if (e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.Control)
+			if (e.Button != MouseButtons.Left || (ModifierKeys & Keys.Control) != Keys.Control)
 			{
-				// Control-click: take the first jump-to-tool command from the right-click menu for this location.
-				// Create a selection where we right clicked
-				IVwSelection sel = GetSelectionAtPoint(new Point(e.X, e.Y), false);
-				TextSelInfo tsi = new TextSelInfo(sel);
-				int hvoTarget = tsi.Hvo(false);
-				// May be (for example) dummy ID used for type-ahead object in reference vector list.
-				if (hvoTarget == 0 || !Cache.ServiceLocator.IsValidObjectId(hvoTarget))
-					return;
-				using (ReferenceBaseUi ui = GetCmObjectUiForRightClickMenu(hvoTarget))
-				{
-					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-					ui.HandleCtrlClick(this);
-				}
+				return;
+			}
+			// Control-click: take the first jump-to-tool command from the right-click menu for this location.
+			// Create a selection where we right clicked
+			var sel = GetSelectionAtPoint(new Point(e.X, e.Y), false);
+			var tsi = new TextSelInfo(sel);
+			var hvoTarget = tsi.Hvo(false);
+			// May be (for example) dummy ID used for type-ahead object in reference vector list.
+			if (hvoTarget == 0 || !Cache.ServiceLocator.IsValidObjectId(hvoTarget))
+			{
+				return;
+			}
+			using (var ui = GetCmObjectUiForRightClickMenu(hvoTarget))
+			{
+				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+				ui.HandleCtrlClick(this);
 			}
 		}
 

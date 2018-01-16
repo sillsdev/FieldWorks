@@ -72,8 +72,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		{
 			base.TestSetup();
 
-			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
+			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
 			m_propertyTable.SetProperty("cache", Cache, false, false);
 		}
 

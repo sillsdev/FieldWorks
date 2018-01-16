@@ -24,7 +24,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		[Test]
 		public void EnvsBeingRequestedForThisEntry_HandlesItemFollowingEmptyString()
 		{
-			var sda = new PhoneEnvReferenceView.PhoneEnvReferenceSda(Cache.DomainDataByFlid as ISilDataAccessManaged);
+			var sda = new PhoneEnvReferenceSda(Cache.DomainDataByFlid as ISilDataAccessManaged);
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
@@ -34,8 +34,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			sda.SetString(hvos[1], PhoneEnvReferenceView.kEnvStringRep, TsStringUtils.MakeString("abc", 6));
 			IPublisher publisher;
 			ISubscriber subscriber;
-			TestSetupServices.SetupTestPubSubSystem(out publisher, out subscriber);
-			using (var propertyTable = TestSetupServices.SetupTestPropertyTable(publisher))
+			using (var propertyTable = TestSetupServices.SetupTestTriumvirate(out publisher, out subscriber))
 			using (var view = new PhoneEnvReferenceView())
 			{
 				view.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));

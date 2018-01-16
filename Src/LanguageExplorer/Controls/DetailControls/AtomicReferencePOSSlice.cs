@@ -1,11 +1,10 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
-using SIL.LCModel.Core.WritingSystems;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.LexText;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -30,60 +29,56 @@ namespace LanguageExplorer.Controls.DetailControls
 		private ISilDataAccess m_sda;
 		private POSPopupTreeManager m_pOSPopupTreeManager;
 		private IPartOfSpeech m_pos;
-		private bool m_handlingMessage = false;
-		protected TreeCombo m_tree;
+		private bool m_handlingMessage;
 
-		private TreeCombo Tree
-		{
-			get { return m_tree; }
-		}
+		protected TreeCombo Tree { get; set; }
 
 		private IPartOfSpeech POS
 		{
-			set { m_pos = value; }
 			get
 			{
-				int posHvo = m_cache.DomainDataByFlid.get_ObjectProp(m_obj.Hvo, m_flid);
+				var posHvo = m_cache.DomainDataByFlid.get_ObjectProp(m_obj.Hvo, m_flid);
 				if (posHvo == 0)
+				{
 					m_pos = null;
+				}
 				else if (m_pos == null || m_pos.Hvo != posHvo)
+				{
 					m_pos = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(posHvo);
+				}
 				return m_pos;
 			}
 		}
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="obj">CmObject that is being displayed.</param>
-		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
+		/// <summary />
 		public AtomicReferencePOSSlice(LcmCache cache, ICmObject obj, int flid, IPropertyTable propertyTable, IPublisher publisher)
 			: base(new UserControl(), cache, obj, flid)
 		{
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
-			CoreWritingSystemDefinition defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
-			m_tree = new TreeCombo();
-			m_tree.WritingSystemFactory = cache.WritingSystemFactory;
-			m_tree.WritingSystemCode = defAnalWs.Handle;
-			m_tree.Font = new Font(defAnalWs.DefaultFontName, 10);
-			m_tree.StyleSheet = stylesheet;
+			var defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			Tree = new TreeCombo
+			{
+				WritingSystemFactory = cache.WritingSystemFactory,
+				WritingSystemCode = defAnalWs.Handle,
+				Font = new Font(defAnalWs.DefaultFontName, 10),
+				StyleSheet = stylesheet
+			};
 			if (!Application.RenderWithVisualStyles)
-				m_tree.HasBorder = false;
+			{
+				Tree.HasBorder = false;
+			}
 			// We embed the tree combo in a layer of UserControl, so it can have a fixed width
 			// while the parent window control is, as usual, docked 'fill' to work with the splitter.
-			m_tree.Dock = DockStyle.Left;
-			m_tree.Width = 200;
-			Control.Controls.Add(m_tree);
+			Tree.Dock = DockStyle.Left;
+			Tree.Width = 200;
+			Control.Controls.Add(Tree);
 			if (m_pOSPopupTreeManager == null)
 			{
 				ICmPossibilityList list;
 				int ws;
-				if (obj is IReversalIndexEntry)
+				var rie = obj as IReversalIndexEntry;
+				if (rie != null)
 				{
-					var rie = obj as IReversalIndexEntry;
 					list = rie.ReversalIndex.PartsOfSpeechOA;
 					ws = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(rie.ReversalIndex.WritingSystem);
 				}
@@ -92,41 +87,36 @@ namespace LanguageExplorer.Controls.DetailControls
 					list = m_cache.LanguageProject.PartsOfSpeechOA;
 					ws = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
 				}
-				m_tree.WritingSystemCode = ws;
-				m_pOSPopupTreeManager = new POSPopupTreeManager(m_tree, m_cache, list, ws, false, propertyTable, publisher, propertyTable.GetValue<Form>("window"));
+				Tree.WritingSystemCode = ws;
+				m_pOSPopupTreeManager = new POSPopupTreeManager(Tree, m_cache, list, ws, false, propertyTable, publisher, propertyTable.GetValue<Form>("window"));
 				m_pOSPopupTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
 			}
 			try
 			{
 				m_handlingMessage = true;
-				m_pOSPopupTreeManager.LoadPopupTree(POS == null ? 0 : POS.Hvo);
+				m_pOSPopupTreeManager.LoadPopupTree(POS?.Hvo ?? 0);
 			}
 			finally
 			{
 				m_handlingMessage = false;
 			}
-			Control.Height = m_tree.PreferredHeight;
-					 // m_tree has sensible PreferredHeight once the text is set, UserControl does not.
-					 // we need to set the Height after m_tree.Text has a value set to it.
+			// m_tree has sensible PreferredHeight once the text is set, UserControl does not.
+			// we need to set the Height after m_tree.Text has a value set to it.
+			Control.Height = Tree.PreferredHeight;
 		}
 
 		#region IVwNotifyChange methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The dafault behavior is for change watchers to call DoEffectsOfPropChange if the
 		/// data for the tag being watched has changed.
 		/// </summary>
-		/// <param name="hvo">The object that was changed</param>
-		/// <param name="tag">The property of the object that was changed</param>
-		/// <param name="ivMin">the starting character index where the change occurred</param>
-		/// <param name="cvIns">the number of characters inserted</param>
-		/// <param name="cvDel">the number of characters deleted</param>
-		/// ------------------------------------------------------------------------------------
 		public virtual void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			CheckDisposed();
 			if (m_handlingMessage)
+			{
 				return;
+			}
 
 			if (hvo == m_obj.Hvo && tag == m_flid)
 			{
@@ -136,13 +126,19 @@ namespace LanguageExplorer.Controls.DetailControls
 					var pos = POS;
 					HvoTreeNode selNode = null;
 					if (Tree.Tree != null)
+					{
 						selNode = (Tree.Tree.SelectedNode as HvoTreeNode);
+					}
 					if (selNode != null)
 					{
 						if (pos == null)
+						{
 							Tree.Tree.SelectObj(0);
+						}
 						else if (pos.Hvo != selNode.Hvo)
+						{
 							Tree.Tree.SelectObj(pos.Hvo);
+						}
 					}
 				}
 				finally
@@ -195,15 +191,16 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				if (m_sda != null)
-					m_sda.RemoveNotification(this);
+				m_sda?.RemoveNotification(this);
 
-				if (m_tree != null && m_tree.Parent == null)
-					m_tree.Dispose();
+				if (Tree != null && Tree.Parent == null)
+				{
+					Tree.Dispose();
+				}
 
 				if (m_pOSPopupTreeManager != null)
 				{
-					m_pOSPopupTreeManager.AfterSelect -= new TreeViewEventHandler(m_pOSPopupTreeManager_AfterSelect);
+					m_pOSPopupTreeManager.AfterSelect -= m_pOSPopupTreeManager_AfterSelect;
 					m_pOSPopupTreeManager.Dispose();
 				}
 			}
@@ -211,7 +208,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_sda = null;
 			m_cache = null;
-			m_tree = null;
+			Tree = null;
 			m_pOSPopupTreeManager = null;
 			m_pos = null;
 
@@ -224,13 +221,17 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			// unless we get a mouse click or simulated mouse click (e.g. by ENTER or TAB),
 			// do not treat as an actual selection.
-			if (m_handlingMessage  || e.Action != TreeViewAction.ByMouse)
+			if (m_handlingMessage || e.Action != TreeViewAction.ByMouse)
+			{
 				return;
+			}
 
-			int hvoPos = (e.Node as HvoTreeNode).Hvo;
+			var hvoPos = (e.Node as HvoTreeNode).Hvo;
 			// if hvoPos is negative, then allow POSPopupTreeManager AfterSelect to handle it.
 			if (hvoPos < 0)
+			{
 				return;
+			}
 			try
 			{
 				m_handlingMessage = true;
@@ -250,21 +251,19 @@ namespace LanguageExplorer.Controls.DetailControls
 						{
 							var allSlots = msa.PartOfSpeechRA.AllAffixSlots;
 							if (msa.SlotsRC.All(slot => !allSlots.Contains(slot)))
+							{
 								msa.SlotsRC.Clear();
+							}
 						}
 					}
 					else if (m_obj is IMoDerivAffMsa)
 					{
-						var msa = m_obj as IMoDerivAffMsa;
-						if (hvoPos > 0
-							&& m_flid == MoDerivAffMsaTags.kflidFromPartOfSpeech
-							&& msa.ToPartOfSpeechRA == null)
+						var msa = (IMoDerivAffMsa)m_obj;
+						if (hvoPos > 0 && m_flid == MoDerivAffMsaTags.kflidFromPartOfSpeech && msa.ToPartOfSpeechRA == null)
 						{
 							msa.ToPartOfSpeechRA = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoPos);
 						}
-						else if (hvoPos > 0
-							&& m_flid == MoDerivAffMsaTags.kflidToPartOfSpeech
-							&& msa.FromPartOfSpeechRA == null)
+						else if (hvoPos > 0 && m_flid == MoDerivAffMsaTags.kflidToPartOfSpeech && msa.FromPartOfSpeechRA == null)
 						{
 							msa.FromPartOfSpeechRA = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoPos);
 						}
@@ -275,26 +274,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				m_handlingMessage = false;
 			}
-		}
-	}
-	/// <summary>
-	/// This class shows the POS slice as being disabled.
-	/// </summary>
-	internal class AutomicReferencePOSDisabledSlice : AtomicReferencePOSSlice
-	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="obj">CmObject that is being displayed.</param>
-		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
-		public AutomicReferencePOSDisabledSlice(LcmCache cache, ICmObject obj, int flid, IPropertyTable propertyTable, IPublisher publisher)
-			: base(cache, obj, flid, propertyTable, publisher)
-		{
-			if (m_tree != null)
-				m_tree.ForeColor = SystemColors.GrayText;
 		}
 	}
 }

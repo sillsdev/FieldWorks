@@ -1,9 +1,10 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Diagnostics;
+using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -54,7 +55,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -78,22 +81,20 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// This method is called to handle Undo/Redo operations on this slice.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="tag"></param>
-		/// <returns></returns>
 		protected internal override bool UpdateDisplayIfNeeded(int hvo, int tag)
 		{
-			if (tag == Flid)
+			if (tag != Flid)
 			{
-				PhoneEnvReferenceLauncher rl = Control as PhoneEnvReferenceLauncher;
-				if (rl != null)
-				{
-					PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
-					view.ResynchListToDatabaseAndRedisplay();
-					return true;
-				}
+				return base.UpdateDisplayIfNeeded(hvo, tag);
 			}
-			return base.UpdateDisplayIfNeeded(hvo, tag);
+			var rl = Control as PhoneEnvReferenceLauncher;
+			if (rl == null)
+			{
+				return base.UpdateDisplayIfNeeded(hvo, tag);
+			}
+			var view = (PhoneEnvReferenceView)rl.MainControl;
+			view.ResynchListToDatabaseAndRedisplay();
+			return true;
 		}
 
 		public override void FinishInit()
@@ -113,28 +114,30 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		// JohnT: this is the proper way to detect changes in height that come from editing within the view.
 		// Probably the private ViewSizeChanged event isn't really needed but I'm leaving it for now just in case.
-		void view_LayoutSizeChanged(object sender, EventArgs e)
+		private void view_LayoutSizeChanged(object sender, EventArgs e)
 		{
-			PhoneEnvReferenceLauncher rl = Control as PhoneEnvReferenceLauncher;
-			PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
-			this.OnViewSizeChanged(this, new FwViewSizeEventArgs(view.RootBox.Height, view.RootBox.Width));
+			var rl = Control as PhoneEnvReferenceLauncher;
+			var view = (PhoneEnvReferenceView)rl.MainControl;
+			OnViewSizeChanged(this, new FwViewSizeEventArgs(view.RootBox.Height, view.RootBox.Width));
 		}
 
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged (e);
-			if (this.Width == m_dxLastWidth)
+			if (Width == m_dxLastWidth)
+			{
 				return;
+			}
 			m_dxLastWidth = Width; // BEFORE doing anything, actions below may trigger recursive call.
-			ReferenceLauncher rl = (ReferenceLauncher)this.Control;
-			RootSite rs = (RootSite)rl.MainControl;
+			var rl = (ReferenceLauncher)Control;
+			var rs = (RootSite)rl.MainControl;
 			rs.PerformLayout();
 			if (rs.RootBox != null)
 			{
 				// Allow it to be the height it wants + fluff to get rid of scroll bar.
 				// Adjust our own height to suit.
 				// Note that this may produce a recursive call!
-				this.Height = rs.RootBox.Height + 8;
+				Height = rs.RootBox.Height + 8;
 			}
 		}
 
@@ -142,9 +145,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			CheckDisposed();
 
-			string caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", ""));
+			var caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", String.Empty));
 
-			PhoneEnvReferenceLauncher launcher = (PhoneEnvReferenceLauncher)this.Control;
+			var launcher = (PhoneEnvReferenceLauncher)Control;
 #if RANDYTODO
 			// TODO: Skip it for now, and figure out what to do with those context menus
 			Publisher.Publish("RegisterHelpTargetWithId", new object[]{launcher.Controls[1], caption, HelpId});
@@ -158,36 +161,40 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected void OnViewSizeChanged(object sender, FwViewSizeEventArgs e)
 		{
 			// For now, just handle changes in the height.
-			PhoneEnvReferenceLauncher rl = (PhoneEnvReferenceLauncher)this.Control;
-			PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
+			var rl = (PhoneEnvReferenceLauncher)Control;
+			var view = (PhoneEnvReferenceView)rl.MainControl;
 
 			if (ContainingDataTree == null)
-				return; // called too soon, from initial layout before connected.
-			int hMin = ContainingDataTree.GetMinFieldHeight();
-			int h1 = view.RootBox.Height;
-			Debug.Assert(e.Height == h1);
-			int hOld = TreeNode == null ? 0 : TreeNode.Height;
-			int hNew = Math.Max(h1, hMin) + 3;
-			if (hNew != hOld)
 			{
-				if (TreeNode != null)
-					TreeNode.Height = hNew;
-				Height = hNew - 1;
+				return; // called too soon, from initial layout before connected.
 			}
+			var hMin = ContainingDataTree.GetMinFieldHeight();
+			var h1 = view.RootBox.Height;
+			Debug.Assert(e.Height == h1);
+			var hOld = TreeNode?.Height ?? 0;
+			var hNew = Math.Max(h1, hMin) + 3;
+			if (hNew == hOld)
+			{
+				return;
+			}
+
+			if (TreeNode != null)
+			{
+				TreeNode.Height = hNew;
+			}
+			Height = hNew - 1;
 		}
 
 		/// <summary>
 		/// This action is needed whenever we leave the slice, not just when we move to another
 		/// slice but also when we move directly to another tool.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnLeave(EventArgs e)
 		{
-			PhoneEnvReferenceLauncher rl = (PhoneEnvReferenceLauncher)this.Control;
-			PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
+			var rl = (PhoneEnvReferenceLauncher)Control;
+			var view = (PhoneEnvReferenceView)rl.MainControl;
 			view.ConnectToRealCache();
-			if (view.RootBox != null)
-				view.RootBox.DestroySelection();
+			view.RootBox?.DestroySelection();
 			base.OnLeave(e);
 		}
 
@@ -214,8 +221,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool OnShowEnvironmentError(object args)
 		{
 			CheckDisposed();
-			PhoneEnvReferenceLauncher rl = (PhoneEnvReferenceLauncher)this.Control;
-			PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
+			var rl = (PhoneEnvReferenceLauncher)Control;
+			var view = (PhoneEnvReferenceView)rl.MainControl;
 			view.ShowEnvironmentError();
 			return true;
 		}
@@ -241,8 +248,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool OnInsertSlash(object args)
 		{
 			CheckDisposed();
-			PhoneEnvReferenceLauncher rl = (PhoneEnvReferenceLauncher)this.Control;
-			PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
+			var rl = (PhoneEnvReferenceLauncher)Control;
+			var view = (PhoneEnvReferenceView)rl.MainControl;
 			view.RootBox.OnChar((int)'/');
 			return true;
 		}
@@ -269,9 +276,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool OnInsertEnvironmentBar(object args)
 		{
 			CheckDisposed();
-			PhoneEnvReferenceLauncher rl = (PhoneEnvReferenceLauncher)this.Control;
-			PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
-			view.RootBox.OnChar((int)'_');
+			var rl = (PhoneEnvReferenceLauncher)Control;
+			var view = (PhoneEnvReferenceView)rl.MainControl;
+			view.RootBox.OnChar('_');
 			return true;
 		}
 
@@ -296,10 +303,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool OnInsertNaturalClass(object args)
 		{
 			CheckDisposed();
-			PhoneEnvReferenceLauncher rl = (PhoneEnvReferenceLauncher)this.Control;
-			PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
-			return SimpleListChooser.ChooseNaturalClass(view.RootBox, m_cache,
-				m_persistenceProvider, PropertyTable, Publisher);
+			var rl = (PhoneEnvReferenceLauncher)Control;
+			var view = (PhoneEnvReferenceView)rl.MainControl;
+			return ReallySimpleListChooser.ChooseNaturalClass(view.RootBox, m_cache, m_persistenceProvider, PropertyTable, Publisher);
 		}
 
 #if RANDYTODO
@@ -323,9 +329,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool OnInsertOptionalItem(object args)
 		{
 			CheckDisposed();
-			PhoneEnvReferenceLauncher rl = (PhoneEnvReferenceLauncher)this.Control;
-			PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
-			IVwRootBox rootb = view.RootBox;
+			var rl = (PhoneEnvReferenceLauncher)Control;
+			var view = (PhoneEnvReferenceView)rl.MainControl;
+			var rootb = view.RootBox;
 			InsertOptionalItem(rootb);
 			return true;
 		}
@@ -334,7 +340,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Insert "()" into the rootbox at the current selection, then back up the selection
 		/// to be between the parentheses.
 		/// </summary>
-		/// <param name="rootb"></param>
 		public static void InsertOptionalItem(IVwRootBox rootb)
 		{
 			rootb.OnChar('(');
@@ -360,8 +365,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			Debug.Assert(ichAnchor > 0);
 			--ichEnd;
 			--ichAnchor;
-			rootb.MakeTextSelection(ihvoRoot, cvsli, rgvsli, tagTextProp, cpropPrevious,
-									ichAnchor, ichEnd, ws, fAssocPrev, ihvoEnd, ttp, true);
+			rootb.MakeTextSelection(ihvoRoot, cvsli, rgvsli, tagTextProp, cpropPrevious, ichAnchor, ichEnd, ws, fAssocPrev, ihvoEnd, ttp, true);
 		}
 
 #if RANDYTODO
@@ -385,9 +389,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool OnInsertHashMark(object args)
 		{
 			CheckDisposed();
-			PhoneEnvReferenceLauncher rl = (PhoneEnvReferenceLauncher)this.Control;
-			PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
-			view.RootBox.OnChar((int)'#');
+			var rl = (PhoneEnvReferenceLauncher)Control;
+			var view = (PhoneEnvReferenceView)rl.MainControl;
+			view.RootBox.OnChar('#');
 			return true;
 		}
 #endregion

@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		public override void FinishInit()
 		{
 			CheckDisposed();
-			Control = new RegRuleFormulaControl(m_configurationNode);
+			Control = new RegRuleFormulaControl(ConfigurationNode);
 		}
 
 		RegRuleFormulaControl RegRuleFormulaControl

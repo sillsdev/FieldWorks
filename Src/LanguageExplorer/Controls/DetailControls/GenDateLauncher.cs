@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -35,24 +35,25 @@ namespace LanguageExplorer.Controls.DetailControls
 			using (var dlg = new GenDateChooserDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				dlg.Text = string.Format(DetailControlsStrings.ksFieldChooserDlgTitle, m_fieldName);
-				GenDate x = (m_cache.DomainDataByFlid as ISilDataAccessManaged).get_GenDateProp(m_obj.Hvo, m_flid);
+				var x = (m_cache.DomainDataByFlid as ISilDataAccessManaged).get_GenDateProp(m_obj.Hvo, m_flid);
 				// If we don't yet have a value, make today the default.
 				if (x.IsEmpty)
 				{
-					DateTime now = DateTime.Now;
+					var now = DateTime.Now;
 					x = new GenDate(GenDate.PrecisionType.Exact, now.Month, now.Day, now.Year, true);
 				}
 				dlg.GenericDate = x;
-				if (dlg.ShowDialog(PropertyTable.GetValue<IWin32Window>("window")) == DialogResult.OK)
+				if (dlg.ShowDialog(PropertyTable.GetValue<IWin32Window>("window")) != DialogResult.OK)
 				{
-					var genDate = dlg.GenericDate;
-					UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
-						string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), m_obj, () =>
+					return;
+				}
+				var genDate = dlg.GenericDate;
+				UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
+					string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), m_obj, () =>
 					{
 						(m_cache.DomainDataByFlid as ISilDataAccessManaged).SetGenDate(m_obj.Hvo, m_flid, genDate);
 					});
-					m_genDateTextBox.Text = genDate.ToLongString();
-				}
+				m_genDateTextBox.Text = genDate.ToLongString();
 			}
 		}
 

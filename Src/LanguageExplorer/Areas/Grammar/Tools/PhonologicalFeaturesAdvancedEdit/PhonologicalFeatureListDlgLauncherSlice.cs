@@ -83,7 +83,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 
 			var ctrl = (PhonologicalFeatureListDlgLauncher)Control;
 
-			m_flid = GetFlid(m_configurationNode, m_obj);
+			m_flid = GetFlid(ConfigurationNode, m_obj);
 			if (m_flid != 0)
 				m_fs = GetFeatureStructureFromOwner(m_obj, m_flid);
 			else
@@ -99,7 +99,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 				"Name",
 				m_persistenceProvider,
 				"Name",
-				XmlUtils.GetOptionalAttributeValue(m_configurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
+				XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
 		}
 
 		/// <summary />

@@ -295,8 +295,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			IPublisher publisher;
 			ISubscriber subscriber;
-			TestSetupServices.SetupTestPubSubSystem(out publisher, out subscriber);
-			using (var propertyTable = TestSetupServices.SetupTestPropertyTable(publisher))
+			using (var propertyTable = TestSetupServices.SetupTestTriumvirate(out publisher, out subscriber))
 			using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache))
 			{
 				footnoteView.StyleSheet = styleSheet;
@@ -365,8 +364,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// Prepare the test by creating a footnote view
 			IPublisher publisher;
 			ISubscriber subscriber;
-			TestSetupServices.SetupTestPubSubSystem(out publisher, out subscriber);
-			using (var propertyTable = TestSetupServices.SetupTestPropertyTable(publisher))
+			using (var propertyTable = TestSetupServices.SetupTestTriumvirate(out publisher, out subscriber))
 			using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache, true))
 			{
 				footnoteView.StyleSheet = styleSheet;

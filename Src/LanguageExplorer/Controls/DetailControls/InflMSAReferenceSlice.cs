@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,9 +19,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Initializes a new instance of the <see cref="InflMSAReferenceSlice"/> class.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="obj">The obj.</param>
-		/// <param name="flid">The flid.</param>
 		internal InflMSAReferenceSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(cache, obj, flid)
 		{
@@ -55,7 +52,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -83,8 +82,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Handle interaction between POS and Slot ptoeprties for a inflectional affix MSA.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		/// <remarks>
 		/// If the new value is zero, then set the Slot prop to zero.
 		/// If the new value is not zero, then make sure the Slot prop is valid.
@@ -98,9 +95,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			Debug.Assert(Control == source);
 			Debug.Assert(Object is IMoInflAffMsa);
 
-			int idxSender = ContainingDataTree.Slices.IndexOf(this);
-
-			int otherFlid = MoInflAffMsaTags.kflidSlots;
+			var idxSender = ContainingDataTree.Slices.IndexOf(this);
+			var otherFlid = MoInflAffMsaTags.kflidSlots;
 			Slice otherSlice = null;
 			int idxOther;
 
@@ -109,13 +105,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (idxSender > 0)
 			{
 				idxOther = idxSender - 1;
-				while (idxOther >= 0
-					&& (otherSlice == null
-						|| (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.Object == Object)))
+				while (idxOther >= 0 && (otherSlice == null || (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.Object == Object)))
 				{
 					otherSlice = ContainingDataTree.Slices[idxOther--];
 					if (otherSlice is ReferenceVectorSlice && (otherSlice as ReferenceVectorSlice).Flid == otherFlid)
+					{
 						break;
+					}
 					otherSlice = null;
 				}
 			}
@@ -124,13 +120,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (otherSlice == null && idxSender < ContainingDataTree.Slices.Count)
 			{
 				idxOther = idxSender + 1;
-				while (idxOther < ContainingDataTree.Slices.Count
-					&& (otherSlice == null
-						|| (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.Object == Object)))
+				while (idxOther < ContainingDataTree.Slices.Count && (otherSlice == null || (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.Object == Object)))
 				{
 					otherSlice = ContainingDataTree.Slices[idxOther++];
 					if (otherSlice is ReferenceVectorSlice && (otherSlice as ReferenceVectorSlice).Flid == otherFlid)
+					{
 						break;
+					}
 					otherSlice = null;
 				}
 			}
@@ -150,18 +146,25 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				slot = msa.SlotsRC.First();
 			}
-			if (e.Hvo == 0 || slot != null)
+
+			if (e.Hvo != 0 && slot == null)
 			{
-				var pos = msa.PartOfSpeechRA;
-				var slots = pos != null ? pos.AllAffixSlots : Enumerable.Empty<IMoInflAffixSlot>();
-				bool clearSlot = e.Hvo == 0 || !slots.Contains(slot);
-				if (clearSlot)
-				{
-					if (otherControl == null)
-						msa.SlotsRC.Clear(); // The slot slice is not showing, so directly set the object's Slot property.
-					else
-						otherControl.AddItem(null); // Reset it using the other slice, so it gets refreshed.
-				}
+				return;
+			}
+			var pos = msa.PartOfSpeechRA;
+			var slots = pos != null ? pos.AllAffixSlots : Enumerable.Empty<IMoInflAffixSlot>();
+			var clearSlot = e.Hvo == 0 || !slots.Contains(slot);
+			if (!clearSlot)
+			{
+				return;
+			}
+			if (otherControl == null)
+			{
+				msa.SlotsRC.Clear(); // The slot slice is not showing, so directly set the object's Slot property.
+			}
+			else
+			{
+				otherControl.AddItem(null); // Reset it using the other slice, so it gets refreshed.
 			}
 		}
 

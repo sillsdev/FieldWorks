@@ -11,7 +11,7 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	/// <summary>
 	/// Class that shows a button (or hyperlink someday) that
-	/// runs some arbitrary XCore command, based on its ID.
+	/// runs some arbitrary command, based on its ID.
 	/// </summary>
 	internal class CommandSlice : Slice
 	{
@@ -30,10 +30,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			var cmdNode = node.Element("command");
 			Debug.Assert(cmdNode != null);
 			m_cmdNode = cmdNode;
-			Button btn = new Button();
-
-			btn.FlatStyle = FlatStyle.Popup;
-			btn.Click += new EventHandler(btn_Click);
+			var btn = new Button
+			{
+				FlatStyle = FlatStyle.Popup
+			};
+			btn.Click += btn_Click;
 			Control = btn;
 		}
 
@@ -70,9 +71,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				Button btn = Control as Button;
+				var btn = Control as Button;
 				if (btn != null)
-					btn.Click -= new EventHandler(btn_Click);
+				{
+					btn.Click -= btn_Click;
+				}
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -82,20 +85,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		#endregion IDisposable override
-
-//		// Overhaul Aug 05: want all Window backgrounds in Detail controls.
-//		/// <summary>
-//		/// Override to set it to the Control color.
-//		/// </summary>
-//		/// <param name="clr"></param>
-//		public override void OverrideBackColor(String backColorName)
-//		{
-//			CheckDisposed();
-//
-//			if (this.Control == null)
-//				return;
-//			this.Control.BackColor = System.Drawing.SystemColors.Control;
-//		}
 
 		public override void RegisterWithContextHelper()
 		{

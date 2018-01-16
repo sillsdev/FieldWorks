@@ -14,38 +14,18 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary> Constructor.</summary>
 		public LiteralMessageSlice(string message) : base(new Label())
 		{
-			this.Control.Text = message;
-			this.Control.BackColor = System.Drawing.SystemColors.ControlLight;
+			Control.Text = message;
+			Control.BackColor = System.Drawing.SystemColors.ControlLight;
 		}
-//		// Overhaul Aug 05: want all Window backgrounds in Detail controls.
-//		/// <summary>
-//		/// This is passed the color that the XDE specified, if any, otherwise null.
-//		/// The default is to use the normal window color for editable text.
-//		/// Messages have a default already set in the constructor, so ignore
-//		/// if null.
-//		/// </summary>
-//		/// <param name="clr"></param>
-//		public override void OverrideBackColor(String backColorName)
-//		{
-//			CheckDisposed();
-//
-//			if (this.Control == null)
-//				return;
-//			if (backColorName != null)
-//				this.Control.BackColor = Color.FromName(backColorName);
-		//		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="parentDataTree"></param>
+		/// <summary />
 		public override void Install(DataTree parentDataTree)
 		{
 			base.Install(parentDataTree);
 
-			if (this.Control != null)
+			if (Control != null)
 			{
-				this.Control.AccessibilityObject.Value = this.Control.Text;
+				Control.AccessibilityObject.Value = Control.Text;
 			}
 		}
 	}

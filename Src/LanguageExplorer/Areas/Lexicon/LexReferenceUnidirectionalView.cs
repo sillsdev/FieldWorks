@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,7 +13,7 @@ namespace LanguageExplorer.Areas.Lexicon
 	/// <summary>
 	/// Summary description for LexReferenceUnidirectionalView.
 	/// </summary>
-	public class LexReferenceUnidirectionalView : VectorReferenceView
+	internal class LexReferenceUnidirectionalView : VectorReferenceView
 	{
 		public LexReferenceUnidirectionalView()
 		{
@@ -77,7 +77,7 @@ namespace LanguageExplorer.Areas.Lexicon
 	/// <summary>
 	///  View constructor for creating the view details.
 	/// </summary>
-	public class LexReferenceUnidirectionalVc : VectorReferenceVc
+	internal class LexReferenceUnidirectionalVc : VectorReferenceVc
 	{
 		/// <summary>
 		/// Constructor for the Vector Reference View Constructor Class.

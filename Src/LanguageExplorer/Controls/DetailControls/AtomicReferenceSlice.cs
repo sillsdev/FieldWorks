@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -27,7 +27,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Initializes a new instance of the <see cref="AtomicReferenceSlice"/> class.
 		/// Used by custom slices that extend this class.
 		/// </summary>
-		/// <param name="control"></param>
 		protected AtomicReferenceSlice(Control control)
 			: base(control)
 		{
@@ -37,10 +36,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Initializes a new instance of the <see cref="AtomicReferenceSlice"/> class.
 		/// Used by slices that extend this class.
 		/// </summary>
-		/// <param name="control">The control.</param>
-		/// <param name="cache">The cache.</param>
-		/// <param name="obj">The obj.</param>
-		/// <param name="flid">The flid.</param>
 		protected AtomicReferenceSlice(Control control, LcmCache cache, ICmObject obj, int flid)
 			: base(control, cache, obj, flid)
 		{
@@ -48,11 +43,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_sda.AddNotification(this);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AtomicReferenceSlice"/> class.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public AtomicReferenceSlice(LcmCache cache, ICmObject obj, int flid)
 			: this(new AtomicReferenceLauncher(), cache, obj, flid)
 		{
@@ -86,16 +79,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				if (m_sda != null)
-				{
-					m_sda.RemoveNotification(this);
-					m_sda = null;
-				}
+				m_sda?.RemoveNotification(this);
 				var arl = Control as AtomicReferenceLauncher;
 				if (arl != null)
 				{
@@ -105,6 +96,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					view.ViewSizeChanged -= OnViewSizeChanged;
 				}
 			}
+			m_sda = null;
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 
@@ -123,8 +115,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				BestWsName); // TODO: Get better default 'best ws'.
 			arl.ConfigurationNode = ConfigurationNode;
 			var deParams = ConfigurationNode.Element("deParams");
-			if (XmlUtils.GetOptionalBooleanAttributeValue(
-				deParams, "changeRequiresRefresh", false))
+			if (XmlUtils.GetOptionalBooleanAttributeValue(deParams, "changeRequiresRefresh", false))
 			{
 				arl.ChoicesMade += RefreshTree;
 			}
@@ -162,35 +153,40 @@ namespace LanguageExplorer.Controls.DetailControls
 			// When height is more than one line (e.g., long definition without gloss),
 			// this can get called initially before it has a parent.
 			if (ContainingDataTree == null)
+			{
 				return;
+			}
 			// For now, just handle changes in the height.
 			var arl = (AtomicReferenceLauncher)Control;
 			var view = (AtomicReferenceView)arl.MainControl;
-			int hMin = ContainingDataTree.GetMinFieldHeight();
-			int h1 = view.RootBox.Height;
+			var hMin = ContainingDataTree.GetMinFieldHeight();
+			var h1 = view.RootBox.Height;
 			Debug.Assert(e.Height == h1);
-			int hOld = TreeNode.Height;
-			int hNew = Math.Max(h1, hMin) + 3;
-			if (hNew > hOld)
+			var hOld = TreeNode.Height;
+			var hNew = Math.Max(h1, hMin) + 3;
+			if (hNew <= hOld)
 			{
-				TreeNode.Height = hNew;
-				arl.Height = hNew - 1;
-				view.Height = hNew - 1;
-				Height = hNew;
+				return;
 			}
+			TreeNode.Height = hNew;
+			arl.Height = hNew - 1;
+			view.Height = hNew - 1;
+			Height = hNew;
 		}
 
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
 			if (Width == m_dxLastWidth)
+			{
 				return;
+			}
 			m_dxLastWidth = Width; // BEFORE doing anything, actions below may trigger recursive call.
 			var arl = (AtomicReferenceLauncher)Control;
 			var view = (AtomicReferenceView)arl.MainControl;
 			view.PerformLayout();
-			int h1 = view.RootBox.Height;
-			int hNew = Math.Max(h1, ContainingDataTree.GetMinFieldHeight()) + 3;
+			var h1 = view.RootBox.Height;
+			var hNew = Math.Max(h1, ContainingDataTree.GetMinFieldHeight()) + 3;
 			if (hNew != Height)
 			{
 				Height = hNew;
@@ -207,9 +203,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			CheckDisposed();
 
 			if (Control == null)
+			{
 				return;
+			}
 
-			string caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", ""));
+			var caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", ""));
 			var launcher = (AtomicReferenceLauncher)Control;
 #if RANDYTODO
 			// TODO: Skip it for now, and figure out what to do with those context menus
@@ -218,60 +216,22 @@ namespace LanguageExplorer.Controls.DetailControls
 #endif
 		}
 
-#region IVwNotifyChange Members
+		#region IVwNotifyChange Members
 		/// <summary>
 		/// This PropChanged detects a needed UI update.  See LT-9002.
 		/// </summary>
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			if (m_flid == PartOfSpeechTags.kflidDefaultInflectionClass &&
-				cvIns == 0 && cvDel > 0 &&
-				(tag == PartOfSpeechTags.kflidInflectionClasses ||
-				 tag == MoInflClassTags.kflidSubclasses) &&
-				((IPartOfSpeech)m_obj).DefaultInflectionClassRA == null)
+			if (m_flid != PartOfSpeechTags.kflidDefaultInflectionClass || cvIns != 0 || cvDel <= 0 ||
+			    (tag != PartOfSpeechTags.kflidInflectionClasses && tag != MoInflClassTags.kflidSubclasses) ||
+			    ((IPartOfSpeech) m_obj).DefaultInflectionClassRA != null)
 			{
-				var arl = (AtomicReferenceLauncher)Control;
-				arl.UpdateDisplayFromDatabase();
+				return;
 			}
-		}
-
-#endregion
-	}
-
-	/// <summary>
-	/// This class should be extended by any custom atomic reference slices.
-	/// </summary>
-	internal abstract class CustomAtomicReferenceSlice : AtomicReferenceSlice
-	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="CustomAtomicReferenceSlice"/> class.
-		/// </summary>
-		/// <param name="control"></param>
-		protected CustomAtomicReferenceSlice(Control control)
-			: base(control)
-		{
-		}
-
-		public override void FinishInit()
-		{
-			CheckDisposed();
-			SetFieldFromConfig();
-			base.FinishInit();
-		}
-	}
-	internal class AtomicReferenceDisabledSlice: AtomicReferenceSlice
-	{
-		public AtomicReferenceDisabledSlice(LcmCache cache, ICmObject obj, int flid)
-			:base(cache, obj, flid)
-		{
-		}
-		public override void FinishInit()
-		{
-			CheckDisposed();
-			base.FinishInit();
 			var arl = (AtomicReferenceLauncher)Control;
-			var view = (AtomicReferenceView)arl.MainControl;
-			view.FinishInit(ConfigurationNode);
+			arl.UpdateDisplayFromDatabase();
 		}
+
+		#endregion
 	}
 }

@@ -21,8 +21,7 @@ namespace LanguageExplorerTests.Impls
 			// Setup
 			IPublisher publisher;
 			ISubscriber subscriber;
-			TestSetupServices.SetupTestPubSubSystem(out publisher, out subscriber);
-			using (var propertyTable = TestSetupServices.SetupTestPropertyTable(publisher))
+			using (var propertyTable = TestSetupServices.SetupTestTriumvirate(out publisher, out subscriber))
 			using (var dummyWindow = new DummyFwMainWnd())
 			using (var statusbar = new StatusBar())
 			using (IRecordListRepository recordListRepository = new RecordListRepository(Cache, new FlexComponentParameters(propertyTable, publisher, subscriber)))

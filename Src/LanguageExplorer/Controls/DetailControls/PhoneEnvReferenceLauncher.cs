@@ -1,13 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: PhoneEnvReferenceLauncher.cs
-// Responsibility: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -53,14 +46,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if ( disposing )
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			m_phoneEnvRefView = null; // Disposed automatically, since it is in the Controls collection.
 
@@ -87,8 +79,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels)
 		{
-			var contents = from hvo in (m_cache.DomainDataByFlid as ISilDataAccessManaged).VecProp(m_obj.Hvo, m_flid)
-						   select m_cache.ServiceLocator.GetObject(hvo);
+			var contents = (m_cache.DomainDataByFlid as ISilDataAccessManaged).VecProp(m_obj.Hvo, m_flid).Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
 
 			return new SimpleListChooser(m_persistProvider,
 				labels.OrderBy(ol => ol.Object.ShortName),
@@ -98,20 +89,28 @@ namespace LanguageExplorer.Controls.DetailControls
 				PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 		}
 
-		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Sets an atomic reference property or appends an object to a reference collection
+		/// or sequence.
+		/// </summary>
+		public override void AddItem(ICmObject obj)
+		{
+			throw new NotSupportedException();
+		}
+
 		/// <summary>
 		/// Overridden to set the new values selected from the chooser dialog.
 		/// </summary>
-		/// <param name="chosenObjs">The chosen objs.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void SetItems(IEnumerable<ICmObject> chosenObjs)
 		{
 			CheckDisposed();
 			// null indicates that we cancelled out of the chooser dialog -- we shouldn't get
 			// here with that value, but just in case...
 			if (chosenObjs == null)
+			{
 				return;
-			int h1 = m_phoneEnvRefView.RootBox.Height;
+			}
+			var h1 = m_phoneEnvRefView.RootBox.Height;
 
 			ICollection<IPhEnvironment> envs;
 			if (m_flid == MoAffixAllomorphTags.kflidPosition)
@@ -120,44 +119,43 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			else
 			{
-				if (m_obj is IMoAffixAllomorph)
-					envs = ((IMoAffixAllomorph)m_obj).PhoneEnvRC;
-				else
-					envs = ((IMoStemAllomorph)m_obj).PhoneEnvRC;
+				envs = m_obj is IMoAffixAllomorph ? ((IMoAffixAllomorph)m_obj).PhoneEnvRC : ((IMoStemAllomorph)m_obj).PhoneEnvRC;
 			}
 
 			// First, we need a list of hvos added and a list of hvos deleted.
-			HashSet<IPhEnvironment> newEnvs = new HashSet<IPhEnvironment>(chosenObjs.Cast<IPhEnvironment>());
-			HashSet<IPhEnvironment> delEnvs = new HashSet<IPhEnvironment>();
-			foreach (IPhEnvironment env in envs)
+			var newEnvs = new HashSet<IPhEnvironment>(chosenObjs.Cast<IPhEnvironment>());
+			var delEnvs = new HashSet<IPhEnvironment>();
+			foreach (var env in envs)
 			{
 				if (newEnvs.Contains(env))
+				{
 					newEnvs.Remove(env);
+				}
 				else
+				{
 					delEnvs.Add(env);
+				}
 			}
 
 			// Add all the new environments.
-			UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
-				string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), m_obj, () =>
+			UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName), string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), m_obj, () =>
 			{
-				foreach (IPhEnvironment env in newEnvs)
+				foreach (var env in newEnvs)
 				{
 					m_phoneEnvRefView.AddNewItem(env);
 					envs.Add(env);
 				}
 
-				foreach (IPhEnvironment env in delEnvs)
+				foreach (var env in delEnvs)
 				{
 					m_phoneEnvRefView.RemoveItem(env);
 					envs.Remove(env);
 				}
 			});
-			int h2 = m_phoneEnvRefView.RootBox.Height;
-			if (h1 != h2 && ViewSizeChanged != null)
+			var h2 = m_phoneEnvRefView.RootBox.Height;
+			if (h1 != h2)
 			{
-				ViewSizeChanged(this,
-					new FwViewSizeEventArgs(h2, m_phoneEnvRefView.RootBox.Width));
+				ViewSizeChanged?.Invoke(this, new FwViewSizeEventArgs(h2, m_phoneEnvRefView.RootBox.Width));
 			}
 		}
 
@@ -166,21 +164,20 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.OnBackColorChanged(e);
 			if (m_phoneEnvRefView != null)
 			{
-				m_phoneEnvRefView.BackColor = this.BackColor;
+				m_phoneEnvRefView.BackColor = BackColor;
 			}
 		}
 
 		/// <summary>
 		/// Keep the view width equal to the launcher width minus the button width.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-			if (this.m_panel != null && this.m_phoneEnvRefView != null)
+			if (m_panel != null && m_phoneEnvRefView != null)
 			{
-				int w = this.Width - this.m_panel.Width;
-				this.m_phoneEnvRefView.Width = w > 0 ? w : 0;
+				var w = Width - m_panel.Width;
+				m_phoneEnvRefView.Width = w > 0 ? w : 0;
 			}
 		}
 

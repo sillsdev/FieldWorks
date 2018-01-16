@@ -19,7 +19,7 @@ using SIL.Xml;
 
 namespace LanguageExplorerTests.Controls.DetailControls
 {
-	/// <summary></summary>
+	/// <summary />
 	[TestFixture]
 	public class DataTreeTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
@@ -62,11 +62,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			return layouts;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Setups this instance.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -88,11 +86,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		#endregion
 
 		#region Test setup and teardown
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Create DataTree and parent form
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public override void TestSetup()
 		{
 			base.TestSetup();
@@ -105,15 +101,12 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 		private void SetupPubSubAndPropertyTable()
 		{
-			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
+			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Close and dispose DataTree and parent form
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public override void TestTearDown()
 		{
 			// m_dtree gets disposed from m_parent because it's part of its Controls
@@ -135,12 +128,14 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		public override void FixtureTeardown()
 		{
 			base.FixtureTeardown();
-			if(Cache != null && Cache.MainCacheAccessor.MetaDataCache != null)
+			if (Cache != null && Cache.MainCacheAccessor.MetaDataCache != null)
+			{
 				m_customField.Dispose();
+			}
 		}
 		#endregion
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		public void OneStringAttr()
 		{
@@ -154,7 +149,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			// layouts and parts to get slices.
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		public void TwoStringAttr()
 		{
@@ -165,7 +160,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			Assert.AreEqual("Bibliography", (m_dtree.Controls[1] as Slice).Label);
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		public void LabelAbbreviations()
 		{
@@ -190,7 +185,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			Assert.IsFalse(abbr2 == (m_dtree.Controls[2] as Slice).Abbreviation);
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		public void IfDataEmpty()
 		{
@@ -212,7 +207,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			}
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		public void NestedExpandedPart()
 		{
@@ -246,7 +241,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			Assert.IsTrue(XmlUtils.NodesMatch(expectedElement, template), "The previously empty ref on the customFields=\"here\" part should be _CustomFieldPlaceholder.");
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		[Ignore("Collapsed nodes are currently not implemented")]
 		public void NestedCollapsedPart()
@@ -257,7 +252,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			Assert.AreEqual("Header", (m_dtree.Controls[0] as Slice).Label);
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[Test]
 		public void OwnedObjects()
 		{

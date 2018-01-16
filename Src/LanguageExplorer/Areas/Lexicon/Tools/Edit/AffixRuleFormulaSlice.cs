@@ -25,7 +25,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public override void FinishInit()
 		{
 			CheckDisposed();
-			Control = new AffixRuleFormulaControl(m_configurationNode);
+			Control = new AffixRuleFormulaControl(ConfigurationNode);
 		}
 
 #if RANDYTODO

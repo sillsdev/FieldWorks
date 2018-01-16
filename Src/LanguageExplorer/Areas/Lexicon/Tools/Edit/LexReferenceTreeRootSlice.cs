@@ -43,7 +43,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public override void HandleEditCommand()
 		{
 			CheckDisposed();
-			((LexReferenceMultiSlice)m_parentSlice).EditReferenceDetails(GetObjectForMenusToOperateOn() as ILexReference);
+			((LexReferenceMultiSlice)ParentSlice).EditReferenceDetails(GetObjectForMenusToOperateOn() as ILexReference);
 		}
 
 		#endregion

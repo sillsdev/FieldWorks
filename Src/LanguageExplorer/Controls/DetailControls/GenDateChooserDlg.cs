@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,13 +20,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private const int ERA_AD = 0;
 		private const int ERA_BC = 1;
 		private const int LEAP_YEAR = 2008;
-		private int DAY_UNKNOWN
-		{
-			get
-			{
-				return m_dayComboBox.Items.Count - 1;
-			}
-		}
+		private int DAY_UNKNOWN => m_dayComboBox.Items.Count - 1;
 
 		private ComboBox m_precisionComboBox;
 		private ComboBox m_monthComboBox;
@@ -41,8 +35,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private Label label1;
 		private HelpProvider m_helpProvider;
 		private ComboBox m_dayComboBox;
-		private bool m_changingDate = false;
-
+		private bool m_changingDate;
 		private string m_helpTopic = "khtpGenDateChooserDlg";
 
 		/// <summary>
@@ -66,21 +59,19 @@ namespace LanguageExplorer.Controls.DetailControls
 #endif
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="GenDateChooserDlg"/> class.
 		/// </summary>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// ------------------------------------------------------------------------------------
 		public GenDateChooserDlg(IHelpTopicProvider helpTopicProvider) : this()
 		{
 			m_helpTopicProvider = helpTopicProvider;
-			if (m_helpTopicProvider != null)
+			if (m_helpTopicProvider == null)
 			{
-				m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
-				m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_helpTopic));
-				m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+				return;
 			}
+			m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
+			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_helpTopic));
+			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 		}
 
 		/// <summary>
@@ -91,7 +82,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -102,12 +95,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
-				if (m_helpProvider != null)
-					m_helpProvider.Dispose();
+				m_helpProvider?.Dispose();
 			}
 
 			base.Dispose(disposing);
@@ -116,7 +110,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Gets or sets the help topic.
 		/// </summary>
-		/// <value>The help topic.</value>
 		public string HelpTopic
 		{
 			get
@@ -137,7 +130,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Gets the number of days in the currently selected month. If the year is unknown, this will return
 		/// the number of days in the currently selected month for a leap year.
 		/// </summary>
-		/// <value>The days in month.</value>
 		private int DaysInMonth
 		{
 			get
@@ -162,7 +154,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Gets or sets the generic date.
 		/// </summary>
-		/// <value>The generic date.</value>
 		public GenDate GenericDate
 		{
 			get
@@ -170,7 +161,9 @@ namespace LanguageExplorer.Controls.DetailControls
 				CheckDisposed();
 
 				if (m_precisionComboBox.SelectedIndex == PRECISION_NO_DATE)
+				{
 					return new GenDate();
+				}
 
 				var precision = (GenDate.PrecisionType)m_precisionComboBox.SelectedIndex;
 				var month = m_monthComboBox.SelectedIndex == -1 ? GenDate.UnknownMonth : m_monthComboBox.SelectedIndex + 1;
@@ -225,8 +218,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			var selectedIndex = m_dayComboBox.SelectedIndex;
 			m_dayComboBox.BeginUpdate();
 			m_dayComboBox.Items.Clear();
-			for (int i = 1; i <= numDays; i++)
+			for (var i = 1; i <= numDays; i++)
+			{
 				m_dayComboBox.Items.Add(i);
+			}
 			m_dayComboBox.Items.Add(DetailControlsStrings.ksGenDateUnknown);
 			m_dayComboBox.EndUpdate();
 			m_dayComboBox.SelectedIndex = selectedIndex < numDays ? selectedIndex : -1;
@@ -235,7 +230,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void m_monthComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (m_monthComboBox.SelectedIndex == -1 || m_changingDate)
+			{
 				return;
+			}
 
 			try
 			{
@@ -246,14 +243,18 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_dayComboBox.SelectedIndex = -1;
 					m_dayComboBox.Enabled = false;
 					if (m_yearUpDown.Value == 0)
+					{
 						m_precisionComboBox.SelectedIndex = PRECISION_NO_DATE;
+					}
 				}
 				else
 				{
 					m_dayComboBox.Enabled = true;
 					PopulateDayComboBox();
 					if (m_precisionComboBox.SelectedIndex == PRECISION_NO_DATE)
+					{
 						m_precisionComboBox.SelectedIndex = (int)GenDate.PrecisionType.Exact;
+					}
 				}
 				UpdateCalendar();
 			}
@@ -266,7 +267,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void m_yearUpDown_ValueChanged(object sender, EventArgs e)
 		{
 			if (m_changingDate)
+			{
 				return;
+			}
 
 			try
 			{
@@ -276,13 +279,19 @@ namespace LanguageExplorer.Controls.DetailControls
 				m_calendar.Visible = m_eraComboBox.SelectedIndex == ERA_AD && IsDateInCalendarRange;
 
 				if (m_monthComboBox.SelectedIndex != -1 && DaysInMonth != m_dayComboBox.Items.Count - 1)
+				{
 					// only repopulate the day combo if the number of days in the month has changed
 					PopulateDayComboBox();
+				}
 
 				if (year == 0 && m_monthComboBox.SelectedIndex == -1)
+				{
 					m_precisionComboBox.SelectedIndex = PRECISION_NO_DATE;
+				}
 				else if (m_precisionComboBox.SelectedIndex == PRECISION_NO_DATE)
+				{
 					m_precisionComboBox.SelectedIndex = (int)GenDate.PrecisionType.Exact;
+				}
 
 				UpdateCalendar();
 			}
@@ -307,7 +316,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			else
 			{
 				m_monthComboBox.Enabled = true;
-				var year = (int)m_yearUpDown.Value;
 				m_calendar.Visible = IsDateInCalendarRange;
 			}
 		}
@@ -315,13 +323,17 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void m_dayComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (m_dayComboBox.SelectedIndex == -1 || m_changingDate)
+			{
 				return;
+			}
 
 			try
 			{
 				m_changingDate = true;
 				if (m_dayComboBox.SelectedIndex == DAY_UNKNOWN)
+				{
 					m_dayComboBox.SelectedIndex = -1;
+				}
 
 				UpdateCalendar();
 			}
@@ -349,11 +361,15 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void m_calendar_DateChanged(object sender, DateRangeEventArgs e)
 		{
 			if (m_changingDate)
+			{
 				return;
+			}
 
 			var date = m_calendar.SelectionStart;
 			if (m_precisionComboBox.SelectedIndex == PRECISION_NO_DATE)
+			{
 				m_precisionComboBox.SelectedIndex = (int)GenDate.PrecisionType.Exact;
+			}
 			m_yearUpDown.Value = date.Year;
 			m_monthComboBox.SelectedIndex = date.Month - 1;
 			m_dayComboBox.SelectedIndex = date.Day - 1;
@@ -524,22 +540,19 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
+		/// <summary />
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
 
 			//Here we want to make sure the size of the dialog is reasonable so that the buttons are not hidden
 			//by the calendar when the dialog is loaded in 120 dpi
-			if (m_calendar.Bottom > m_okButton.Top)
+			if (m_calendar.Bottom <= m_okButton.Top)
 			{
-				this.Height = 337;
-				m_calendar.Left = 43;
+				return;
 			}
+			Height = 337;
+			m_calendar.Left = 43;
 		}
 	}
 }

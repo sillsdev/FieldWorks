@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,9 +21,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <remarks>Will throw an exception if the image is not found.</remarks>
 		public ImageSlice(string distFilesPath, string relativeImagePath) : base(new PictureBox())
 		{
-			string sPathname = System.IO.Path.Combine(distFilesPath, relativeImagePath);
-			((PictureBox)this.Control).Image = Image.FromFile(FileUtils.ActualFilePath(sPathname));
-			((PictureBox)this.Control).Height = ((PictureBox)this.Control).Image.Height;
+			var sPathname = System.IO.Path.Combine(distFilesPath, relativeImagePath);
+			var controlAsPictureBox = (PictureBox)Control;
+			controlAsPictureBox.Image = Image.FromFile(FileUtils.ActualFilePath(sPathname));
+			controlAsPictureBox.Height = controlAsPictureBox.Image.Height;
 		}
 
 		protected override void Dispose(bool disposing)
@@ -31,8 +32,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (disposing)
 			{
 				// Prevents memory leaks and also spurious continued locking of the file.
-				var picBox = this.Control as PictureBox;
-				if (picBox != null && picBox.Image != null)
+				var picBox = Control as PictureBox;
+				if (picBox?.Image != null)
 				{
 					picBox.Image.Dispose();
 					picBox.Image = null;
@@ -40,22 +41,5 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			base.Dispose(disposing);
 		}
-//		// Overhaul Aug 05: want all Window backgrounds in Detail controls.
-//		/// <summary>
-//		/// This is passed the color that the XDE specified, if any, otherwise null.
-//		/// Images are not editable, so use the inactive color.
-//		/// </summary>
-//		/// <param name="clr"></param>
-//		public override void OverrideBackColor(String backColorName)
-//		{
-//			CheckDisposed();
-//
-//			if (this.Control == null)
-//				return;
-//			if (backColorName != null)
-//				this.Control.BackColor = Color.FromName(backColorName);
-//			else
-//				this.Control.BackColor = System.Drawing.SystemColors.ControlLight;
-//		}
 	}
 }

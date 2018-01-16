@@ -1,14 +1,6 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DerivMSAReferenceSlice.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
-// --------------------------------------------------------------------------------------------
 
 using System.Diagnostics;
 using SIL.LCModel;
@@ -21,11 +13,9 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// </summary>
 	internal class DerivMSAReferenceSlice : AtomicReferenceSlice
 	{
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AtomicReferenceSlice"/> class.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		internal DerivMSAReferenceSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(cache, obj, flid)
 		{
@@ -59,7 +49,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -87,8 +79,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Handle interaction between to and from POS for a derivational affix MSA.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		/// <remarks>
 		/// If the new value is zero, then set the other one's value to zero, as well.
 		/// If the other one's value is zero, then set it to the new value.
@@ -102,17 +92,19 @@ namespace LanguageExplorer.Controls.DetailControls
 			Debug.Assert(Object is IMoDerivAffMsa);
 
 			AtomicReferenceLauncher otherControl = null;
-			int idxSender = ContainingDataTree.Slices.IndexOf(this);
+			var idxSender = ContainingDataTree.Slices.IndexOf(this);
 			int otherFlid;
-			bool myIsFromPOS = true;
+			var myIsFromPOS = true;
 			if (m_flid == MoDerivAffMsaTags.kflidFromPartOfSpeech)
+			{
 				otherFlid = MoDerivAffMsaTags.kflidToPartOfSpeech;
+			}
 			else
 			{
 				otherFlid = MoDerivAffMsaTags.kflidFromPartOfSpeech;
 				myIsFromPOS = false;
 			}
-			int otherHvo = 0;
+			var otherHvo = 0;
 			Slice otherSlice = null;
 			int idxOther;
 			if (idxSender > 0)
@@ -122,27 +114,40 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					otherSlice = ContainingDataTree.Slices[idxOther--];
 					if (otherSlice is AtomicReferenceSlice && (otherSlice as AtomicReferenceSlice).Flid == otherFlid)
+					{
 						break;
+					}
 				}
-				if (otherSlice != null && otherSlice is AtomicReferenceSlice)
-					otherHvo = GetOtherHvo(otherSlice as AtomicReferenceSlice, otherFlid, myIsFromPOS, out otherControl);
+
+				if (otherSlice is AtomicReferenceSlice)
+				{
+					otherHvo = GetOtherHvo((AtomicReferenceSlice)otherSlice, otherFlid, myIsFromPOS, out otherControl);
+				}
 				else
+				{
 					otherSlice = null;
+				}
 			}
 			if (otherControl == null && idxSender < ContainingDataTree.Slices.Count)
 			{
 				idxOther = idxSender + 1;
-				while (otherSlice == null
-					|| (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.Object == Object))
+				while (otherSlice == null || (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.Object == Object))
 				{
 					otherSlice = ContainingDataTree.Slices[idxOther++];
-					if (otherSlice is AtomicReferenceSlice && (otherSlice as AtomicReferenceSlice).Flid == otherFlid)
+					if (otherSlice is AtomicReferenceSlice && ((AtomicReferenceSlice)otherSlice).Flid == otherFlid)
+					{
 						break;
+					}
 				}
-				if (otherSlice != null && otherSlice is AtomicReferenceSlice)
-					otherHvo = GetOtherHvo(otherSlice as AtomicReferenceSlice, otherFlid, myIsFromPOS, out otherControl);
+
+				if (otherSlice is AtomicReferenceSlice)
+				{
+					otherHvo = GetOtherHvo((AtomicReferenceSlice)otherSlice, otherFlid, myIsFromPOS, out otherControl);
+				}
 				else
+				{
 					otherSlice = null;
+				}
 			}
 
 			var msa = Object as IMoDerivAffMsa;
@@ -151,9 +156,13 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (otherControl != null)
 				{
 					if (m_flid == MoDerivAffMsaTags.kflidFromPartOfSpeech)
+					{
 						msa.ToPartOfSpeechRA = null;
+					}
 					else
+					{
 						msa.FromPartOfSpeechRA = null;
+					}
 				}
 			}
 			else if (otherHvo == 0 && e.Hvo > 0)
@@ -163,9 +172,13 @@ namespace LanguageExplorer.Controls.DetailControls
 					// The other one is not available (filtered out?),
 					// so set it directly using the msa.
 					if (m_flid == MoDerivAffMsaTags.kflidFromPartOfSpeech)
+					{
 						msa.ToPartOfSpeechRA = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(e.Hvo);
+					}
 					else
+					{
 						msa.FromPartOfSpeechRA = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(e.Hvo);
+					}
 				}
 				else
 				{
@@ -177,18 +190,16 @@ namespace LanguageExplorer.Controls.DetailControls
 		private int GetOtherHvo(AtomicReferenceSlice otherSlice, int otherFlid, bool myIsFromPOS, out AtomicReferenceLauncher otherOne)
 		{
 			otherOne = null;
-			int otherHvo = 0;
+			var otherHvo = 0;
 
 			if (otherSlice != null)
 			{
 
 				var otherControl = otherSlice.Control as AtomicReferenceLauncher;
-				if (otherSlice.Object == Object
-					&& (otherSlice.Flid == otherFlid))
+				if (otherSlice.Object == Object && (otherSlice.Flid == otherFlid))
 				{
 					otherOne = otherControl;
-					otherHvo = myIsFromPOS ? ((IMoDerivAffMsa)Object).ToPartOfSpeechRA.Hvo
-						: ((IMoDerivAffMsa)Object).FromPartOfSpeechRA.Hvo;
+					otherHvo = myIsFromPOS ? ((IMoDerivAffMsa)Object).ToPartOfSpeechRA.Hvo : ((IMoDerivAffMsa)Object).FromPartOfSpeechRA.Hvo;
 				}
 			}
 			return otherHvo;

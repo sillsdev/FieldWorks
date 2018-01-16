@@ -318,7 +318,119 @@
     <Compile Include="Areas\TextsAndWords\Tools\InterlinearEdit\InterlinearEditToolMenuHelper.cs" />
     <Compile Include="Areas\TreebarAvailability.cs" />
     <Compile Include="Areas\TreeBarHandlerAwareRecordList.cs" />
+    <Compile Include="Controls\DetailControls\AtomicReferenceDisabledSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\AtomicReferenceVc.cs" />
+    <Compile Include="Controls\DetailControls\AtomicRefTypeAheadVc.cs" />
+    <Compile Include="Controls\DetailControls\AtomicRefTypeAheadView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\AudioVisualLauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\AudioVisualVc.cs" />
+    <Compile Include="Controls\DetailControls\AudioVisualView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\AutomicReferencePOSDisabledSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\CheckboxRefreshSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\ConcSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\ConcView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\ContextInfo.cs" />
+    <Compile Include="Controls\DetailControls\ContextVc.cs" />
+    <Compile Include="Controls\DetailControls\CustomAtomicReferenceSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\CustomReferenceVectorSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\DateSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\DummyConcSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\DummyObjectSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\ExpandCollapseButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\GhostDaDecorator.cs" />
+    <Compile Include="Controls\DetailControls\GhostDataCacheDecorator.cs" />
+    <Compile Include="Controls\DetailControls\GhostReferenceVectorLauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\GhostStringSliceVc.cs" />
+    <Compile Include="Controls\DetailControls\GhostStringSliceView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\IConcPolicy.cs" />
+    <Compile Include="Controls\DetailControls\IConcSliceInfo.cs" />
+    <Compile Include="Controls\DetailControls\IGetNodeInfo.cs" />
+    <Compile Include="Controls\DetailControls\IKeyedObject.cs" />
+    <Compile Include="Controls\DetailControls\INodeInfo.cs" />
+    <Compile Include="Controls\DetailControls\INotifyControlInCurrentSlice.cs" />
+    <Compile Include="Controls\DetailControls\IntegerSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\LayoutStates.cs" />
+    <Compile Include="Controls\DetailControls\ListHashCodeProvider.cs" />
+    <Compile Include="Controls\DetailControls\LiteralLabelVc.cs" />
+    <Compile Include="Controls\DetailControls\LiteralLabelView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\MakeInflAffixSlotChooserCommand.cs" />
+    <Compile Include="Controls\DetailControls\NodeTestResult.cs" />
+    <Compile Include="Controls\DetailControls\ObjectDragInfo.cs" />
+    <Compile Include="Controls\DetailControls\ObjectWeight.cs" />
+    <Compile Include="Controls\DetailControls\ParaNodeInfo.cs" />
+    <Compile Include="Controls\DetailControls\PhoneEnvReferenceDataCacheDecorator.cs" />
+    <Compile Include="Controls\DetailControls\PhoneEnvReferenceSda.cs" />
+    <Compile Include="Controls\DetailControls\PhoneEnvReferenceVc.cs" />
+    <Compile Include="Controls\DetailControls\PossibilityAtomicReferenceVc.cs" />
+    <Compile Include="Controls\DetailControls\PossibilityAtomicReferenceViewMetaDataCacheDecorator.cs" />
+    <Compile Include="Controls\DetailControls\PossibilityAtomicReferenceViewSdaDecorator.cs" />
+    <Compile Include="Controls\DetailControls\PossibilityVectorReferenceVc.cs" />
+    <Compile Include="Controls\DetailControls\PossibilityVectorReferenceViewMetaDataCacheDecorator.cs" />
+    <Compile Include="Controls\DetailControls\PossibilityVectorReferenceViewSdaDecorator.cs" />
+    <Compile Include="Controls\DetailControls\ReferenceVectorDisabledSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\SemanticDomainSelectionServices.cs" />
+    <Compile Include="Controls\DetailControls\StringListConcPolicy.cs" />
+    <Compile Include="Controls\DetailControls\StringSliceVc.cs" />
+    <Compile Include="Controls\DetailControls\StringSliceView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\StTextView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\SummaryInfo.cs" />
+    <Compile Include="Controls\DetailControls\SummaryVc.cs" />
+    <Compile Include="Controls\DetailControls\SummaryXmlView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\TreeItemState.cs" />
+    <Compile Include="Controls\DetailControls\TwoLevelConcSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\TwoLevelConcVc.cs" />
+    <Compile Include="Controls\DetailControls\TwoLevelConcView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\DetailControls\TypeAheadSupportVc.cs" />
+    <Compile Include="Controls\DetailControls\UnicodeStringSliceVc.cs" />
+    <Compile Include="Controls\DetailControls\VectorReferenceVc.cs" />
     <Compile Include="Controls\HtmlControlEventArgs.cs" />
     <Compile Include="Controls\LexText\CFChanges.cs" />
     <Compile Include="Controls\LexText\ContentMapping.cs" />
@@ -522,13 +634,13 @@
     <Compile Include="Controls\DetailControls\AudioVisualSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\BasicTypeSlices.cs">
+    <Compile Include="Controls\DetailControls\CheckboxSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\ButtonLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\ChooserCommand.cs" />
+    <Compile Include="Controls\DetailControls\MakeInflAffixEntryChooserCommand.cs" />
     <Compile Include="Controls\DetailControls\CommandSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>

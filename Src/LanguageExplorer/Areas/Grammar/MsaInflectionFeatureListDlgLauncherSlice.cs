@@ -79,7 +79,7 @@ namespace LanguageExplorer.Areas.Grammar
 
 			MsaInflectionFeatureListDlgLauncher ctrl = (MsaInflectionFeatureListDlgLauncher)Control;
 
-			m_flid = GetFlid(m_configurationNode, m_obj);
+			m_flid = GetFlid(ConfigurationNode, m_obj);
 			if (m_flid != 0)
 				m_fs = GetFeatureStructureFromMSA(m_obj, m_flid);
 			else
@@ -95,7 +95,7 @@ namespace LanguageExplorer.Areas.Grammar
 				"Name",
 				ContainingDataTree.PersistenceProvder,
 				"Name",
-				XmlUtils.GetOptionalAttributeValue(m_configurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
+				XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
 		}
 
 		private void RemoveFeatureStructureFromMSA()

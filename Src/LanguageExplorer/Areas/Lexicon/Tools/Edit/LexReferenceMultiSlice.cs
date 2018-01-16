@@ -93,14 +93,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			CheckDisposed();
 			Debug.Assert(m_cache != null);
-			Debug.Assert(m_configurationNode != null);
+			Debug.Assert(ConfigurationNode != null);
 
 			base.FinishInit();
 		}
 
 		void SetRefs()
 		{
-			var fieldName = XmlUtils.GetMandatoryAttributeValue(m_configurationNode, "field");
+			var fieldName = XmlUtils.GetMandatoryAttributeValue(ConfigurationNode, "field");
 			var refs = ReflectionHelper.GetProperty(m_obj, fieldName);
 			var refsInts = refs as IEnumerable<int>;
 			if (refsInts != null)
@@ -138,7 +138,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			if (m_refs.Count == 0)
 			{
 				// It could have children but currently can't: we always show this as collapsedEmpty.
-				Expansion = DataTree.TreeItemState.ktisCollapsedEmpty;
+				Expansion = TreeItemState.ktisCollapsedEmpty;
 				return;
 			}
 
@@ -147,7 +147,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				GenerateChildNode(i, node, caller, indent, ref insPos, path, reuseMap);
 			}
 
-			Expansion = DataTree.TreeItemState.ktisExpanded;
+			Expansion = TreeItemState.ktisExpanded;
 		}
 
 		private void GenerateChildNode(int iChild, XElement node, XElement caller, int indent,
@@ -795,9 +795,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				if (Key.Length > 1)
 					caller = Key[Key.Length - 2] as XElement;
 				int insPos = this.IndexInContainer + m_refs.Count;
-				GenerateChildNode(m_refs.Count-1, m_configurationNode, caller, Indent,
+				GenerateChildNode(m_refs.Count-1, ConfigurationNode, caller, Indent,
 					ref insPos, new ArrayList(Key), new ObjSeqHashMap());
-				Expansion = DataTree.TreeItemState.ktisExpanded;
+				Expansion = TreeItemState.ktisExpanded;
 			}
 			finally
 			{
@@ -822,8 +822,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				if (Key.Length > 1)
 					caller = Key[Key.Length - 2] as XElement;
 				int insPos = iSlice + 1;
-				GenerateChildren(m_configurationNode, caller, m_obj, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), false);
-				Expansion = DataTree.TreeItemState.ktisExpanded;
+				GenerateChildren(ConfigurationNode, caller, m_obj, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), false);
+				Expansion = TreeItemState.ktisExpanded;
 			}
 			finally
 			{
@@ -843,7 +843,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			CheckDisposed();
 			if (lr == null)
 			{
-				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", m_configurationNode);
+				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", ConfigurationNode);
 			}
 			else
 			{
@@ -919,7 +919,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			CheckDisposed();
 			if (lr == null)
 			{
-				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", m_configurationNode);
+				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", ConfigurationNode);
 			}
 			else
 			{
@@ -988,7 +988,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			CheckDisposed();
 			if (lr == null)
 			{
-				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", m_configurationNode);
+				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", ConfigurationNode);
 			}
 			else
 			{

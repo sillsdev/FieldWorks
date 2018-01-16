@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,9 +14,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MorphTypeAtomicReferenceSlice"/> class.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="obj">The obj.</param>
-		/// <param name="flid">The flid.</param>
 		public MorphTypeAtomicReferenceSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(new MorphTypeAtomicLauncher(), cache, obj, flid)
 		{

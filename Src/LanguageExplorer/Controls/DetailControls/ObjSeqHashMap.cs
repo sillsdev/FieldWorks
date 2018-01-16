@@ -1,10 +1,11 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -18,7 +19,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// </summary>
 	internal class ObjSeqHashMap
 	{
-		Hashtable m_table;
+		private readonly Hashtable m_table;
 		// These are slices looked up by type name. The same ones as m_table. This supports reuse for different objects.
 		private Dictionary<string, List<Slice>> m_slicesToReuse;
 
@@ -34,10 +35,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				object result = m_table[keyList];
+				var result = m_table[keyList];
 				if (result == null)
+				{
 					return new object[0];
-				else return (IList) result;
+				}
+				return (IList) result;
 			}
 		}
 
@@ -49,19 +52,28 @@ namespace LanguageExplorer.Controls.DetailControls
 			get
 			{
 				foreach (ICollection list in m_table.Values)
+				{
 					foreach (Slice item in list)
+					{
 						yield return item;
+					}
+				}
 				foreach (var list in m_slicesToReuse.Values)
+				{
 					foreach (var item in list)
+					{
 						yield return item;
+					}
+				}
 			}
 		}
+
 		/// <summary>
 		/// Add the item to the list associated with this key.
 		/// </summary>
 		public void Add(IList keyList, Slice obj)
 		{
-			ArrayList list = (ArrayList)(m_table[keyList]);
+			var list = (ArrayList)m_table[keyList];
 			if (list == null)
 			{
 				list = new ArrayList(1);
@@ -82,19 +94,25 @@ namespace LanguageExplorer.Controls.DetailControls
 		public void ClearUnwantedPart(bool differentObject)
 		{
 			if (differentObject)
-				m_table.Clear(); // no slice is safe to reuse without resetting it for a different root object.
+			{
+				// no slice is safe to reuse without resetting it for a different root object.
+				m_table.Clear();
+			}
 			else
-				m_slicesToReuse.Clear(); // ONLY want strict reuse (otherwise we lose closed/open states).
+			{
+				// ONLY want strict reuse (otherwise we lose closed/open states).
+				m_slicesToReuse.Clear();
+			}
 		}
+
 		/// <summary>
 		/// Remove the argument object from the indicated collection.
 		/// Currently it is not considered an error if the object is not found, just nothing happens.
 		/// </summary>
 		public void Remove(IList keyList, Slice obj)
 		{
-			ArrayList list = (ArrayList)(m_table[keyList]);
-			if (list != null)
-				list.Remove(obj);
+			var list = (ArrayList)m_table[keyList];
+			list?.Remove(obj);
 			List<Slice> reusableSlices;
 			var key = obj.GetType().Name;
 			if (m_slicesToReuse.TryGetValue(key, out reusableSlices))
@@ -103,20 +121,23 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public Slice GetSliceToReuse(string className)
 		{
 			List<Slice> reusableSlices;
-			if (m_slicesToReuse.TryGetValue(className, out reusableSlices))
+			if (!m_slicesToReuse.TryGetValue(className, out reusableSlices))
 			{
-				if (reusableSlices.Count > 0) // may have used all that are available.
-				{
-					var result = reusableSlices[0];
-					Remove(result.Key, result);
-					return result;
-				}
+				return null;
 			}
-			return null;
+
+			if (!reusableSlices.Any())
+			{
+				return null;
+			}
+
+			var result = reusableSlices[0];
+			Remove(result.Key, result);
+			return result;
 		}
 
 		/// <summary>
@@ -124,67 +145,13 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal void Report()
 		{
-			int total = 0;
+			var total = 0;
 			foreach (var kvp in m_slicesToReuse)
 			{
 				Debug.WriteLine("  " + kvp.Key + ": " + kvp.Value.Count);
 				total += kvp.Value.Count;
 			}
 			Debug.WriteLine("    total slices not reused: " + total);
-		}
-	}
-
-	/// <summary></summary>
-	public class ListHashCodeProvider : IEqualityComparer
-	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the hash code.
-		/// </summary>
-		/// <param name="objList">The obj list.</param>
-		/// ------------------------------------------------------------------------------------
-		int IEqualityComparer.GetHashCode(object objList)
-		{
-			IList list = (IList) objList;
-			int hash = 0;
-			foreach (object obj in list)
-			{
-				// This ensures that two sequences containing the same boxed integer produce the same hash value.
-				if (obj is int)
-					hash += (int) obj;
-				else
-					hash += obj.GetHashCode();
-			}
-			return hash;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// This comparer is only suitable for hash tables; it doesn't provide a valid
-		/// (commutative) ordering of items.
-		/// </summary>
-		/// <param name="xArg">The x arg.</param>
-		/// <param name="yArg">The y arg.</param>
-		/// <returns><c>false</c> for any non-equal items.</returns>
-		/// <remarks>Note that in general, boxed values are not equal, even if the unboxed
-		/// values would be. The current code makes a special case for ints, which behave
-		/// as expected.
-		/// This used to be class ListComparer</remarks>
-		/// ------------------------------------------------------------------------------------
-		bool IEqualityComparer.Equals(object xArg, object yArg)
-		{
-			IList listX = (IList)xArg;
-			IList listY = (IList)yArg;
-			if (listX.Count != listY.Count)
-				return false;
-			for (int i = 0; i < listX.Count; i++)
-			{
-				object x = listX[i];
-				object y = listY[i];
-				if (x != y && !(x is int && y is int && ((int)x) == ((int)y)))
-					return false;
-			}
-			return true;
 		}
 	}
 }

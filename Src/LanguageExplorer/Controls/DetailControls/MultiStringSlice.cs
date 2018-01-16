@@ -150,7 +150,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void DoSideEffects()
 		{
-			var sideEffectMethod = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "sideEffectMethod");
+			var sideEffectMethod = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "sideEffectMethod");
 			if (string.IsNullOrEmpty(sideEffectMethod))
 			{
 				return;
@@ -172,8 +172,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			e.EventHandled = true;
 			e.Selection.Install();
-			var fwMainWnd = PropertyTable.GetValue<IFwMainWnd>("window");
 #if RANDYTODO
+			var fwMainWnd = PropertyTable.GetValue<IFwMainWnd>("window");
 			fwMainWnd.ShowContextMenu(sMenu, new Point(Cursor.Position.X, Cursor.Position.Y), null, null);
 #endif
 		}
@@ -187,8 +187,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// convert the given writing systems into a property containing comma-delimited icuLocales.
 		/// </summary>
-		/// <param name="wss"></param>
-		/// <returns></returns>
 		private static string EncodeWssToDisplayPropertyValue(IEnumerable<CoreWritingSystemDefinition> wss)
 		{
 			var wsIds = wss.Select(ws => ws.Id).ToArray();

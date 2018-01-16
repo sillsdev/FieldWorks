@@ -302,8 +302,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				StyleSheet = styleSheet,
 				WritingSystemFactory = m_wsManager
 			};
-			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
+			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
 			m_basicView.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 		}
 

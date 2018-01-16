@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,12 +21,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// constructor for use with adding a new value
 		/// </summary>
-		/// <param name="persistProvider">The persist provider.</param>
-		/// <param name="labels">The labels.</param>
-		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
-		/// <param name="helpTopicProvider"></param>
-		public MorphTypeChooser(IPersistenceProvider persistProvider,
-			IEnumerable<ObjectLabel> labels, string fieldName, IHelpTopicProvider helpTopicProvider) :
+		public MorphTypeChooser(IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, string fieldName, IHelpTopicProvider helpTopicProvider) :
 			base(persistProvider, labels, fieldName, helpTopicProvider)
 		{
 			InitMorphTypeForm(null);
@@ -43,17 +38,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// constructor for use with adding a new value
 		/// </summary>
-		/// <param name="persistProvider">The persist provider.</param>
-		/// <param name="labels">The labels.</param>
-		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
-		/// <param name="obj">The obj.</param>
-		/// <param name="displayNameProperty">The display name property.</param>
-		/// <param name="flid">The flid.</param>
-		/// <param name="sShowAllTypes">The show all types string.</param>
-		/// <param name="helpTopicProvider"></param>
-		public MorphTypeChooser(IPersistenceProvider persistProvider,
-			IEnumerable<ObjectLabel> labels, string fieldName, ICmObject obj, string displayNameProperty,
-			int flid, string sShowAllTypes, IHelpTopicProvider helpTopicProvider) :
+		public MorphTypeChooser(IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, string fieldName, ICmObject obj, string displayNameProperty, int flid, string sShowAllTypes, IHelpTopicProvider helpTopicProvider) :
 			base(persistProvider, labels, fieldName, helpTopicProvider)
 		{
 			m_obj = obj;
@@ -95,9 +80,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				candidates = m_obj.ReferenceTargetCandidates(m_flid);
 			}
-			IEnumerable<ObjectLabel> labels = ObjectLabel.CreateObjectLabels(m_cache, candidates,
-				m_displayNameProperty, "best analorvern");
-			LoadTree(labels, null, false);
+			LoadTree(ObjectLabel.CreateObjectLabels(m_cache, candidates, m_displayNameProperty, "best analorvern"), null, false);
 			MakeSelection(selected);
 		}
 	}

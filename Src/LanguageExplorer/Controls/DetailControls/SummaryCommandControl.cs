@@ -62,7 +62,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -73,7 +75,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
@@ -165,9 +169,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 					m_buttonMenuItems.Add(item);
 					availButtonWidth -= width + kGapInBetweenButtons;
-				}
-				for (var i = 0; i < m_menuItems.Count; i++)
-				{
 				}
 				m_firstButtonOffset = availButtonWidth;
 				m_buttonDrawnEnabled = new bool[m_buttonMenuItems.Count];
@@ -264,13 +265,9 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void m_timer_Tick(object sender, EventArgs e)
 		{
-			for (var i = 0; i < m_buttonDrawnEnabled.Length; i++)
+			if (m_buttonDrawnEnabled.Where((t, i) => t != (m_buttonMenuItems[i]).Enabled).Any())
 			{
-				if (m_buttonDrawnEnabled[i] != (m_buttonMenuItems[i]).Enabled)
-				{
-					Invalidate();
-					break;
-				}
+				Invalidate();
 			}
 		}
 	}

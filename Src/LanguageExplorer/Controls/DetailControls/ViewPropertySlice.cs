@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,8 +10,6 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary></summary>
 	internal class ViewPropertySlice : ViewSlice
 	{
-		protected int m_flid; // The field identifier for the attribute we are displaying.
-
 		/// <summary></summary>
 		public ViewPropertySlice()
 		{
@@ -29,25 +27,13 @@ namespace LanguageExplorer.Controls.DetailControls
 		public void Reuse(ICmObject obj, int flid)
 		{
 			Object = obj;
-			m_flid = flid;
+			FieldId = flid;
 
 		}
 
 		/// <summary>
 		/// Gets the ID of the field we are editing.
 		/// </summary>
-		public int FieldId
-		{
-			get
-			{
-				CheckDisposed();
-				return m_flid;
-			}
-			set
-			{
-				CheckDisposed();
-				m_flid = value;
-			}
-		}
+		public int FieldId { get; set; }
 	}
 }

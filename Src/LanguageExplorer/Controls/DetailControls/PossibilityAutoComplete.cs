@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -34,8 +34,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public event EventHandler PossibilitySelected;
 
-		public PossibilityAutoComplete(LcmCache cache, IPropertyTable propertyTable, ICmPossibilityList list, Control control,
-			string displayNameProperty, string displayWs)
+		public PossibilityAutoComplete(LcmCache cache, IPropertyTable propertyTable, ICmPossibilityList list, Control control, string displayNameProperty, string displayWs)
 		{
 			m_cache = cache;
 			m_control = control;
@@ -52,10 +51,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			var stack = new Stack<ICmPossibility>(list.PossibilitiesOS);
 			while (stack.Count > 0)
 			{
-				ICmPossibility poss = stack.Pop();
+				var poss = stack.Pop();
 				m_possibilities.Add(poss);
-				foreach (ICmPossibility child in poss.SubPossibilitiesOS)
+				foreach (var child in poss.SubPossibilitiesOS)
+				{
 					stack.Push(child);
+				}
 			}
 
 			m_control.KeyDown += HandleKeyDown;
@@ -67,10 +68,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			get { return m_listBox.Items.Cast<CmPossibilityLabel>().Select(label => label.Possibility); }
 		}
 
-		public ICmPossibility SelectedPossibility
-		{
-			get { return ((CmPossibilityLabel) m_listBox.SelectedItem).Possibility; }
-		}
+		public ICmPossibility SelectedPossibility => ((CmPossibilityLabel)m_listBox.SelectedItem).Possibility;
 
 		protected override void DisposeManagedResources()
 		{
@@ -84,14 +82,15 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected virtual void OnItemSelected(EventArgs e)
 		{
 			m_listBox.HideForm();
-			if (PossibilitySelected != null)
-				PossibilitySelected(this, e);
+			PossibilitySelected?.Invoke(this, e);
 		}
 
 		private void HandleSelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (m_changingSelection || !m_listBox.Visible)
+			{
 				return;
+			}
 
 			OnItemSelected(new EventArgs());
 		}
@@ -99,7 +98,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void HandleSameItemSelected(object sender, EventArgs eventArgs)
 		{
 			if (m_changingSelection || !m_listBox.Visible)
+			{
 				return;
+			}
 
 			OnItemSelected(new EventArgs());
 		}
@@ -107,7 +108,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void HandleKeyDown(object sender, KeyEventArgs e)
 		{
 			if (!m_listBox.Visible)
+			{
 				return;
+			}
 
 			switch (e.KeyCode)
 			{
@@ -143,7 +146,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void HandleKeyPress(object sender, KeyPressEventArgs e)
 		{
-			if (e.KeyChar == (char) Keys.Enter && m_listBox.Visible)
+			if (e.KeyChar == (char)Keys.Enter && m_listBox.Visible)
 			{
 				OnItemSelected(new EventArgs());
 				e.Handled = true;
@@ -173,11 +176,13 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_listBox.BeginUpdate();
 					m_listBox.Items.Clear();
 					// TODO: sort the results
-					foreach (ICmPossibility poss in m_searcher.Search(0, (ITsString) param))
+					foreach (var poss in m_searcher.Search(0, (ITsString) param))
 					{
 						// Every so often see whether the user has typed something that makes our search irrelevant.
 						if (ShouldAbort())
+						{
 							return false;
+						}
 
 						m_listBox.Items.Add(ObjectLabel.CreateObjectLabel(m_cache, poss, m_displayNameProperty, m_displayWs));
 					}
@@ -207,44 +212,46 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void CreateSearcher()
 		{
-			int control = 0;
+			var control = 0;
 			for (; m_curPossIndex < m_possibilities.Count; m_curPossIndex++)
 			{
 				// Every so often see whether the user has typed something that makes our search irrelevant.
 				if (control++ % 50 == 0 && ShouldAbort())
-					return;
-
-				ICmPossibility poss = m_possibilities[m_curPossIndex];
-				ITsString name = null;
-				foreach (int ws in WritingSystemServices.GetWritingSystemIdsFromLabel(m_cache, m_displayWs, m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem,
-					poss.Hvo, CmPossibilityTags.kflidName, null))
 				{
-					ITsString tss = poss.Name.StringOrNull(ws);
-					if (tss != null && tss.Length > 0)
-					{
-						name = tss;
-						m_searcher.Add(poss, 0, tss);
-						break;
-					}
+					return;
 				}
 
-				foreach (int ws in WritingSystemServices.GetWritingSystemIdsFromLabel(m_cache, m_displayWs, m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem,
-					poss.Hvo, CmPossibilityTags.kflidAbbreviation, null))
+				var poss = m_possibilities[m_curPossIndex];
+				ITsString name = null;
+				foreach (var ws in WritingSystemServices.GetWritingSystemIdsFromLabel(m_cache, m_displayWs, m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem, poss.Hvo, CmPossibilityTags.kflidName, null))
 				{
-					ITsString tss = poss.Abbreviation.StringOrNull(ws);
-					if (tss != null && tss.Length > 0)
+					var tss = poss.Name.StringOrNull(ws);
+					if (tss == null || tss.Length <= 0)
 					{
-						m_searcher.Add(poss, 0, tss);
-						if (name != null)
-						{
-							var tisb = TsStringUtils.MakeIncStrBldr();
-							tisb.AppendTsString(tss);
-							tisb.AppendTsString(TsStringUtils.MakeString(" - ", m_cache.DefaultUserWs));
-							tisb.AppendTsString(name);
-							m_searcher.Add(poss, 0, tisb.GetString());
-						}
-						break;
+						continue;
 					}
+					name = tss;
+					m_searcher.Add(poss, 0, tss);
+					break;
+				}
+
+				foreach (var ws in WritingSystemServices.GetWritingSystemIdsFromLabel(m_cache, m_displayWs, m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem, poss.Hvo, CmPossibilityTags.kflidAbbreviation, null))
+				{
+					var tss = poss.Abbreviation.StringOrNull(ws);
+					if (tss == null || tss.Length <= 0)
+					{
+						continue;
+					}
+					m_searcher.Add(poss, 0, tss);
+					if (name != null)
+					{
+						var tisb = TsStringUtils.MakeIncStrBldr();
+						tisb.AppendTsString(tss);
+						tisb.AppendTsString(TsStringUtils.MakeString(" - ", m_cache.DefaultUserWs));
+						tisb.AppendTsString(name);
+						m_searcher.Add(poss, 0, tisb.GetString());
+					}
+					break;
 				}
 			}
 		}
@@ -253,7 +260,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Abort resetting if the user types anything, anywhere.
 		/// Also sets the flag (if it returns true) to indicate the search WAS aborted.
 		/// </summary>
-		/// <returns></returns>
 		private static bool ShouldAbort()
 		{
 #if !__MonoCS__

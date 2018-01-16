@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		public override void FinishInit()
 		{
-			var btnLauncher = new GhostLexRefLauncher(m_obj, m_configurationNode);
+			var btnLauncher = new GhostLexRefLauncher(m_obj, ConfigurationNode);
 			btnLauncher.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			Control = btnLauncher;
 

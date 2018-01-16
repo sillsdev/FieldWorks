@@ -1,13 +1,6 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: VectorReferenceLauncher.cs
-// Responsibility: Steve McConnel (was RandyR)
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -19,11 +12,7 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	internal class PossibilityVectorReferenceLauncher : VectorReferenceLauncher, IVwNotifyChange
 	{
-		#region Data Members
-
 		private PossibilityAutoComplete m_autoComplete;
-
-		#endregion // Data Members
 
 		#region Construction, Initialization, and Disposal
 
@@ -35,7 +24,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -54,8 +45,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			CheckDisposed();
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 
-			m_autoComplete = new PossibilityAutoComplete(cache, PropertyTable, (ICmPossibilityList) obj.ReferenceTargetOwner(flid),
-				m_vectorRefView, displayNameProperty, displayWs);
+			m_autoComplete = new PossibilityAutoComplete(cache, PropertyTable, (ICmPossibilityList) obj.ReferenceTargetOwner(flid), m_vectorRefView, displayNameProperty, displayWs);
 			m_autoComplete.PossibilitySelected += HandlePossibilitySelected;
 			m_vectorRefView.RootBox.DataAccess.AddNotification(this);
 		}
@@ -73,10 +63,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.OnLeave(e);
 			if (m_vectorRefView != null && m_vectorRefView.RootBox != null)
 			{
-				ICmPossibility[] possibilities = m_autoComplete.Possibilities.ToArray();
+				var possibilities = m_autoComplete.Possibilities.ToArray();
 				if (possibilities.Length == 1)
 				{
-					ICmObject selected = m_vectorRefView.SelectedObject;
+					var selected = m_vectorRefView.SelectedObject;
 					if (possibilities[0] != selected)
 					{
 						if (selected == null)
@@ -86,8 +76,10 @@ namespace LanguageExplorer.Controls.DetailControls
 						else
 						{
 							var newTargets = new List<ICmObject>();
-							foreach (ICmObject target in Targets)
+							foreach (var target in Targets)
+							{
 								newTargets.Add(target == selected ? possibilities[0] : target);
+							}
 							SetItems(newTargets);
 						}
 					}
@@ -110,13 +102,15 @@ namespace LanguageExplorer.Controls.DetailControls
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			if (tag == PossibilityVectorReferenceView.kflidFake)
+			{
 				m_autoComplete.Update(m_vectorRefView.RootBox.DataAccess.get_StringProp(hvo, tag));
+			}
 		}
 
 		private void HandlePossibilitySelected(object sender, EventArgs e)
 		{
-			ICmPossibility poss = m_autoComplete.SelectedPossibility;
-			ICmObject curObj = m_vectorRefView.SelectedObject;
+			var poss = m_autoComplete.SelectedPossibility;
+			var curObj = m_vectorRefView.SelectedObject;
 			if (curObj == null)
 			{
 				AddItem(poss);
@@ -124,8 +118,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			else if (poss != curObj)
 			{
 				var newTargets = new List<ICmObject>();
-				foreach (ICmObject target in Targets)
+				foreach (var target in Targets)
+				{
 					newTargets.Add(target == curObj ? poss : target);
+				}
 				SetItems(newTargets);
 			}
 			else

@@ -13,11 +13,7 @@ using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorerTests.Controls.DetailControls
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	[TestFixture]
 	public class VectorReferenceLauncherTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
@@ -43,8 +39,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			base.CreateTestData();
 
-			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
+			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
 
 			var servLoc = Cache.ServiceLocator;
 			m_leFact = servLoc.GetInstance<ILexEntryFactory>();
@@ -127,11 +122,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			return newLer;
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests adding a new Target item to the reference vector in the case where a list exists.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void AddNewTargetToExistingList()
 		{
@@ -159,11 +152,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				"Shouldn't ever have any entry refs here.");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests adding a new Target item to the reference vector in the case where a list exists.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void AddTwoNewTargetsToNonExistingList()
 		{
@@ -192,11 +183,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				"testItem2 should be in ComponentLexemes property");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests removing a Target item from the reference vector leaving an empty list.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void RemoveTargetFromList_NowEmpty()
 		{
@@ -224,12 +213,10 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				"Shouldn't ever have any entry refs here.");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests removing a Target item from the reference vector in the case where the Target
 		/// item is the second of a list of three items.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void RemoveTargetFromMiddleOfList()
 		{
@@ -262,12 +249,10 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				"The entry2 object should have been removed from ComponentLexemes.");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests removing a Target item from the end of a reference vector in the case where it
 		/// should remove the same item from a related vector.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void RemoveTargetFromEndOfListAffectingRelatedVector()
 		{
@@ -308,12 +293,10 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				"Deleting entry3 object from ComponentLexemes, should remove it from PrimaryLexemes.");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests removing a Target item from the end of a reference vector in the case where it
 		/// should not remove another item from a related vector.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void RemoveTargetFromEndOfListNotAffectingRelatedVector()
 		{
@@ -354,12 +337,10 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				"Deleting entry3 object from ComponentLexemes, should not remove existing PrimaryLexeme.");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests removing a Target item from the reference vector and adding another item in the
 		/// case where it should not affect the related vector.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void RemoveAndAddTargetsFromListNotAffectingRelatedVector()
 		{
@@ -403,12 +384,10 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				"Entry2 object should be in PrimaryLexemes.");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests removing the first Target item from the reference vector in the case where it
 		/// should not affect the related vector.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void RemoveFirstTargetFromListNotAffectingRelatedVector()
 		{
@@ -451,12 +430,10 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				"Entry2 object should be in PrimaryLexemes.");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests removing a Target item from the reference vector and adding another item in the
 		/// case where it should affect the related vector.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void RemoveAndAddTargetsFromListAffectingRelatedVector()
 		{
@@ -498,11 +475,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				"Modifications of ComponentLexemes, should remove the one PrimaryLexeme.");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests that Targets returns an empty array if the object is invalid (hvo less than 1).
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void CheckTargetsReturnsNothingIfObjectIsInvalid()
 		{
@@ -537,20 +512,14 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			return new MockVectorReferenceView();
 		}
 
-		protected override int RootBoxHeight
-		{
-			get { return 16; }
-		}
+		protected override int RootBoxHeight => 16;
 
 		protected override void AdjustFormScrollbars(bool displayScrollbars)
 		{
 			base.AdjustFormScrollbars(false);
 		}
 
-		protected override bool CanRaiseEvents
-		{
-			get { return false; }
-		}
+		protected override bool CanRaiseEvents => false;
 
 		#endregion
 
@@ -582,18 +551,16 @@ namespace LanguageExplorerTests.Controls.DetailControls
 	/// Functions with MockVectorReferenceLauncher to eliminate views from
 	/// these VectorReferenceLauncher tests.
 	/// </summary>
-	public class MockVectorReferenceView : VectorReferenceView
+	internal class MockVectorReferenceView : VectorReferenceView
 	{
 		#region overrides
 
 		public override void MakeRoot()
 		{
-			//base.MakeRoot();
 		}
 
 		public override void ReloadVector()
 		{
-
 		}
 		#endregion
 

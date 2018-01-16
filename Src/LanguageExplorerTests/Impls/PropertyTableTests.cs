@@ -17,7 +17,6 @@ namespace LanguageExplorerTests.Impls
 	[TestFixture]
 	public class PropertyTableTests
 	{
-		private IPublisher _publisher;
 		private IPropertyTable _propertyTable;
 		string _originalSettingsPath;
 
@@ -47,8 +46,7 @@ namespace LanguageExplorerTests.Impls
 		[SetUp]
 		public void SetUp()
 		{
-			TestSetupServices.SetupTestPubSubSystem(out _publisher);
-			_propertyTable = TestSetupServices.SetupTestPropertyTable(_publisher);
+			_propertyTable = TestSetupServices.SetupTestPropertyTable();
 			_propertyTable.LocalSettingsId = "TestLocal";
 			_propertyTable.UserSettingDirectory = _originalSettingsPath;
 
@@ -61,7 +59,6 @@ namespace LanguageExplorerTests.Impls
 		{
 			_propertyTable.Dispose();
 			_propertyTable = null;
-			_publisher = null;
 		}
 
 		/// <summary>

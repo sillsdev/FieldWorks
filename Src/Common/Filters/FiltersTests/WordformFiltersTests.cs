@@ -27,8 +27,7 @@ namespace SIL.FieldWorks.Filters
 			var wsf = new WordSetFilter(wfiset);
 			IPublisher publisher;
 			ISubscriber subscriber;
-			TestSetupServices.SetupTestPubSubSystem(out publisher, out subscriber);
-			using (var propertyTable = TestSetupServices.SetupTestPropertyTable(publisher))
+			using (var propertyTable = TestSetupServices.SetupTestTriumvirate(out publisher, out subscriber))
 			{
 				propertyTable.SetProperty("cache", Cache, true, true);
 				flp.InitializeFlexComponent(new FlexComponentParameters(propertyTable, publisher, subscriber));

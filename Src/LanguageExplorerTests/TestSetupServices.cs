@@ -15,18 +15,22 @@ namespace LanguageExplorerTests
 {
 	public static class TestSetupServices
 	{
-		public static void SetupTestPubSubSystem(out IPublisher publisher)
-		{
-			publisher = new Publisher();
-		}
 		public static void SetupTestPubSubSystem(out IPublisher publisher, out ISubscriber subscriber)
 		{
 			subscriber = new Subscriber();
 			publisher = new Publisher(subscriber);
 		}
 
-		public static IPropertyTable SetupTestPropertyTable(IPublisher publisher)
+		public static IPropertyTable SetupTestPropertyTable()
 		{
+			ISubscriber subscriber;
+			IPublisher publisher;
+			return SetupTestTriumvirate(out publisher, out subscriber);
+		}
+
+		public static IPropertyTable SetupTestTriumvirate(out IPublisher publisher, out ISubscriber subscriber)
+		{
+			SetupTestPubSubSystem(out publisher, out subscriber);
 			return new PropertyTable(publisher);
 		}
 
@@ -34,9 +38,9 @@ namespace LanguageExplorerTests
 		{
 			SetupCache(cache);
 
-			var subscriber = new Subscriber();
-			var publisher = new Publisher(subscriber);
-			var propertyTable = SetupTestPropertyTable(publisher);
+			ISubscriber subscriber;
+			IPublisher publisher;
+			var propertyTable = SetupTestTriumvirate(out publisher, out subscriber);
 			propertyTable.SetProperty("cache", cache, SettingsGroup.BestSettings, false, false);
 			var flexComponentParameters = new FlexComponentParameters(propertyTable, publisher, subscriber);
 			if (includeStylesheet)

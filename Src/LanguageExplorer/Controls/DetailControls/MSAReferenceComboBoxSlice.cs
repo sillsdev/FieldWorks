@@ -1,18 +1,9 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MSAReferenceComboBoxSlice.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// Implements the "MSAReferenceComboBox" XDE editor.
-// </remarks>
 
 using System;
 using System.Windows.Forms;
-using SIL.LCModel.Core.WritingSystems;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
@@ -31,45 +22,38 @@ namespace LanguageExplorer.Controls.DetailControls
 		private IPersistenceProvider m_persistProvider;
 		private MSAPopupTreeManager m_MSAPopupTreeManager;
 		private TreeCombo m_tree;
-		int m_treeBaseWidth = 0;
+		int m_treeBaseWidth;
+		private bool m_handlingMessage;
 
-		//private bool m_processSelectionEvent = true;
-		private bool m_handlingMessage = false;
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="cache">FDO cache.</param>
-		/// <param name="obj">CmObject that is being displayed.</param>
-		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
-		/// <param name="persistenceProvider">The persistence provider.</param>
-		/// ------------------------------------------------------------------------------------
-		public MSAReferenceComboBoxSlice(LcmCache cache, ICmObject obj, int flid,
-			IPersistenceProvider persistenceProvider)
+		public MSAReferenceComboBoxSlice(LcmCache cache, ICmObject obj, int flid, IPersistenceProvider persistenceProvider)
 			: base(new UserControl(), cache, obj, flid)
 		{
-			CoreWritingSystemDefinition defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			var defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			m_persistProvider = persistenceProvider;
-			m_tree = new TreeCombo();
-			m_tree.WritingSystemFactory = cache.WritingSystemFactory;
-			m_tree.Font = new System.Drawing.Font(defAnalWs.DefaultFontName, 10);
+			m_tree = new TreeCombo
+			{
+				WritingSystemFactory = cache.WritingSystemFactory,
+				Font = new System.Drawing.Font(defAnalWs.DefaultFontName, 10),
+				WritingSystemCode = defAnalWs.Handle,
+				Dock = DockStyle.Left,
+				Width = 240,
+			};
 			if (!Application.RenderWithVisualStyles)
+			{
 				m_tree.HasBorder = false;
-
-			m_tree.WritingSystemCode = defAnalWs.Handle;
+			}
 
 			// We embed the tree combo in a layer of UserControl, so it can have a fixed width
 			// while the parent window control is, as usual, docked 'fill' to work with the splitter.
-			m_tree.Dock = DockStyle.Left;
-			m_tree.Width = 240;
 			m_tree.DropDown += m_tree_DropDown;
 
 			Control.Controls.Add(m_tree);
 			m_tree.SizeChanged += m_tree_SizeChanged;
 
-			if (m_cache != null)
-				m_cache.DomainDataByFlid.AddNotification(this);
+			m_cache?.DomainDataByFlid.AddNotification(this);
 			m_treeBaseWidth = m_tree.Width;
 
 			// m_tree has sensible PreferredHeight once the text is set, UserControl does not.
@@ -84,31 +68,31 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
 		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-			{
+		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-				//Set the stylesheet so that the font size for the...
+			//Set the stylesheet so that the font size for the...
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
-				m_tree.StyleSheet = stylesheet;
-				var list = m_cache.LanguageProject.PartsOfSpeechOA;
+			m_tree.StyleSheet = stylesheet;
+			var list = m_cache.LanguageProject.PartsOfSpeechOA;
 
-				m_MSAPopupTreeManager = new MSAPopupTreeManager(m_tree, m_cache, list,
+			m_MSAPopupTreeManager = new MSAPopupTreeManager(m_tree, m_cache, list,
 				m_tree.WritingSystemCode, true, PropertyTable, Publisher,
 				PropertyTable.GetValue<Form>("window"));
-				m_MSAPopupTreeManager.AfterSelect += m_MSAPopupTreeManager_AfterSelect;
-				m_MSAPopupTreeManager.Sense = m_obj as ILexSense;
-				m_MSAPopupTreeManager.PersistenceProvider = m_persistProvider;
+			m_MSAPopupTreeManager.AfterSelect += m_MSAPopupTreeManager_AfterSelect;
+			m_MSAPopupTreeManager.Sense = m_obj as ILexSense;
+			m_MSAPopupTreeManager.PersistenceProvider = m_persistProvider;
 
-				try
-				{
-					m_handlingMessage = true;
-					m_tree.SelectedNode = m_MSAPopupTreeManager.MakeTargetMenuItem();
-				}
-				finally
-				{
-					m_handlingMessage = false;
-				}
+			try
+			{
+				m_handlingMessage = true;
+				m_tree.SelectedNode = m_MSAPopupTreeManager.MakeTargetMenuItem();
 			}
+			finally
+			{
+				m_handlingMessage = false;
+			}
+		}
 
 		#endregion
 
@@ -116,25 +100,22 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Make the slice tall enough to hold the tree combo's internal textbox at a
 		/// comfortable size.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		void m_tree_SizeChanged(object sender, EventArgs e)
 		{
-			this.Height = Math.Max(this.Height, m_tree.PreferredHeight);
+			Height = Math.Max(Height, m_tree.PreferredHeight);
 		}
 
 		public override void Install(DataTree parentDataTree)
 		{
 			base.Install(parentDataTree);
-			SplitCont.Panel2.SizeChanged += new EventHandler(SplitContPanel2_SizeChanged);
+			SplitCont.Panel2.SizeChanged += SplitContPanel2_SizeChanged;
 		}
 
-		void SplitContPanel2_SizeChanged(object sender, EventArgs e)
+		private void SplitContPanel2_SizeChanged(object sender, EventArgs e)
 		{
-			int dxPanelWidth = SplitCont.Panel2.Width;
+			var dxPanelWidth = SplitCont.Panel2.Width;
 
-			if ((dxPanelWidth < m_tree.Width && dxPanelWidth >= 80) ||
-				(dxPanelWidth > m_tree.Width && dxPanelWidth <= m_treeBaseWidth))
+			if ((dxPanelWidth < m_tree.Width && dxPanelWidth >= 80) || (dxPanelWidth > m_tree.Width && dxPanelWidth <= m_treeBaseWidth))
 			{
 				m_tree.Width = dxPanelWidth;
 			}
@@ -153,23 +134,23 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
-
-			// m_sda COM object block removed due to crash in Finializer thread LT-6124
+			}
 
 			if (disposing)
 			{
-				if (SplitCont != null && !SplitCont.IsDisposed &&
-					SplitCont.Panel2 != null && !SplitCont.Panel2.IsDisposed)
+				if (SplitCont != null && !SplitCont.IsDisposed && SplitCont.Panel2 != null && !SplitCont.Panel2.IsDisposed)
 				{
-					SplitCont.Panel2.SizeChanged -= new EventHandler(SplitContPanel2_SizeChanged);
+					SplitCont.Panel2.SizeChanged -= SplitContPanel2_SizeChanged;
 				}
 				// Dispose managed resources here.
-				if (m_cache != null)
-					m_cache.DomainDataByFlid.RemoveNotification(this);
+				m_cache?.DomainDataByFlid.RemoveNotification(this);
 
 				if (m_tree != null && m_tree.Parent == null)
+				{
 					m_tree.Dispose();
+				}
 
 				if (m_MSAPopupTreeManager != null)
 				{
@@ -190,29 +171,28 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Override FieldSlice method because UpdateDisplayFromDatabase has too many code paths with
 		/// recursive side-effects.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="tag"></param>
-		/// <returns></returns>
-		internal protected override bool UpdateDisplayIfNeeded(int hvo, int tag)
+		protected internal override bool UpdateDisplayIfNeeded(int hvo, int tag)
 		{
 			CheckDisposed();
-			if (tag == Flid)
+			if (tag != Flid)
 			{
-				m_handlingMessage = true;
-				try
-				{
-					var sense = m_obj as ILexSense;
-					if (sense.MorphoSyntaxAnalysisRA != null)
-						m_MSAPopupTreeManager.LoadPopupTree(sense.MorphoSyntaxAnalysisRA.Hvo);
-					ContainingDataTree.RefreshListNeeded = true;
-					return true;
-				}
-				finally
-				{
-					m_handlingMessage = false;
-				}
+				return false;
 			}
-			return false;
+			m_handlingMessage = true;
+			try
+			{
+				var sense = m_obj as ILexSense;
+				if (sense.MorphoSyntaxAnalysisRA != null)
+				{
+					m_MSAPopupTreeManager.LoadPopupTree(sense.MorphoSyntaxAnalysisRA.Hvo);
+				}
+				ContainingDataTree.RefreshListNeeded = true;
+				return true;
+			}
+			finally
+			{
+				m_handlingMessage = false;
+			}
 		}
 
 		protected override void UpdateDisplayFromDatabase()
@@ -225,16 +205,22 @@ namespace LanguageExplorer.Controls.DetailControls
 			// unless we get a mouse click or simulated mouse click (e.g. by ENTER or TAB),
 			// do not treat as an actual selection.
 			if (m_handlingMessage || e.Action != TreeViewAction.ByMouse)
+			{
 				return;
-			HvoTreeNode htn = e.Node as HvoTreeNode;
+			}
+			var htn = e.Node as HvoTreeNode;
 			if (htn == null)
+			{
 				return;
+			}
 
 			// Don't try changing values on a deleted object!  See LT-8656 and LT-9119.
 			if (!m_obj.IsValidObject)
+			{
 				return;
+			}
 
-			int hvoSel = htn.Hvo;
+			var hvoSel = htn.Hvo;
 			// if hvoSel is negative, then MSAPopupTreeManager's AfterSelect has handled it,
 			// except possibly for refresh.
 			if (hvoSel < 0)
@@ -245,37 +231,42 @@ namespace LanguageExplorer.Controls.DetailControls
 			var sense = m_obj as ILexSense;
 			// Setting sense.DummyMSA can cause the DataTree to want to refresh.  Don't
 			// let this happen until after we're through!  See LT-9713 and LT-9714.
-			bool fOldDoNotRefresh = ContainingDataTree.DoNotRefresh;
+			var fOldDoNotRefresh = ContainingDataTree.DoNotRefresh;
 			try
 			{
 				m_handlingMessage = true;
-				if (hvoSel > 0)
+				if (hvoSel <= 0)
 				{
-					ICmObject obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoSel);
-					if (obj.ClassID == PartOfSpeechTags.kClassId)
+					return;
+				}
+				var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoSel);
+				if (obj.ClassID == PartOfSpeechTags.kClassId)
+				{
+					ContainingDataTree.DoNotRefresh = true;
+					var sandoxMSA = new SandboxGenericMSA
 					{
-						ContainingDataTree.DoNotRefresh = true;
-						var sandoxMSA = new SandboxGenericMSA();
-						sandoxMSA.MsaType = sense.GetDesiredMsaType();
-						sandoxMSA.MainPOS = obj as IPartOfSpeech;
-						var stemMsa = sense.MorphoSyntaxAnalysisRA as IMoStemMsa;
-						if (stemMsa != null)
-							sandoxMSA.FromPartsOfSpeech = stemMsa.FromPartsOfSpeechRC;
-						UndoableUnitOfWorkHelper.Do(String.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
-							String.Format(DetailControlsStrings.ksRedoSet, m_fieldName), sense, () =>
+						MsaType = sense.GetDesiredMsaType(),
+						MainPOS = obj as IPartOfSpeech
+					};
+					var stemMsa = sense.MorphoSyntaxAnalysisRA as IMoStemMsa;
+					if (stemMsa != null)
+					{
+						sandoxMSA.FromPartsOfSpeech = stemMsa.FromPartsOfSpeechRC;
+					}
+					UndoableUnitOfWorkHelper.Do(String.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
+						string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), sense, () =>
 						{
 							sense.SandboxMSA = sandoxMSA;
 						});
-					}
-					else if (sense.MorphoSyntaxAnalysisRA != obj)
-					{
-						ContainingDataTree.DoNotRefresh = true;
-						UndoableUnitOfWorkHelper.Do(String.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
-							String.Format(DetailControlsStrings.ksRedoSet, m_fieldName), sense, () =>
+				}
+				else if (sense.MorphoSyntaxAnalysisRA != obj)
+				{
+					ContainingDataTree.DoNotRefresh = true;
+					UndoableUnitOfWorkHelper.Do(String.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
+						string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), sense, () =>
 						{
 							sense.MorphoSyntaxAnalysisRA = obj as IMoMorphSynAnalysis;
 						});
-					}
 				}
 			}
 			finally
@@ -300,9 +291,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (sense.MorphoSyntaxAnalysisRA != null)
 			{
 				if (sense.MorphoSyntaxAnalysisRA.Hvo == hvo)
+				{
 					m_MSAPopupTreeManager.LoadPopupTree(sense.MorphoSyntaxAnalysisRA.Hvo);
+				}
 				else if (sense.Hvo == hvo && tag == LexSenseTags.kflidMorphoSyntaxAnalysis)
+				{
 					m_MSAPopupTreeManager.LoadPopupTree(sense.MorphoSyntaxAnalysisRA.Hvo);
+				}
 			}
 		}
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -41,7 +41,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			set
 			{
-				int h1 = RootBoxHeight;
+				var h1 = RootBoxHeight;
 				base.SliceIsCurrent = value;
 				CheckViewSizeChanged(h1, RootBoxHeight);
 			}
@@ -55,7 +55,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -65,9 +67,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.Dispose(disposing);
 		}
 
-		public override void Initialize(LcmCache cache, ICmObject obj, int flid,
-			string fieldName, IPersistenceProvider persistProvider,
-			string displayNameProperty, string displayWs)
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
@@ -109,18 +109,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Make our field id accessible to other slices, again to support LT-5913.
 		/// </summary>
-		public int Flid
-		{
-			get { return m_flid; }
-		}
+		public int Flid => m_flid;
 
 		/// <summary>
 		/// Overridden to provide a chooser with multiple selections (checkboxes and all).
 		/// </summary>
 		protected override SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels)
 		{
-			var contents = from hvo in ((ISilDataAccessManaged) m_cache.DomainDataByFlid).VecProp(m_obj.Hvo, m_flid)
-						   select m_cache.ServiceLocator.GetObject(hvo);
+			var contents = ((ISilDataAccessManaged)m_cache.DomainDataByFlid).VecProp(m_obj.Hvo, m_flid).Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
 
 			return new SimpleListChooser(m_persistProvider,
 				labels,
@@ -132,22 +128,19 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void SetItems(IEnumerable<ICmObject> chosenObjs)
 		{
-			SetItems(chosenObjs, string.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
-				string.Format(DetailControlsStrings.ksRedoSet, m_fieldName));
+			SetItems(chosenObjs, string.Format(DetailControlsStrings.ksUndoSet, m_fieldName), string.Format(DetailControlsStrings.ksRedoSet, m_fieldName));
 		}
 
 		public override void AddItem(ICmObject obj)
 		{
-			AddItem(obj, string.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
-				string.Format(DetailControlsStrings.ksRedoSet, m_fieldName));
+			AddItem(obj, string.Format(DetailControlsStrings.ksUndoSet, m_fieldName), string.Format(DetailControlsStrings.ksRedoSet, m_fieldName));
 		}
 
 		protected void CheckViewSizeChanged(int h1, int h2)
 		{
-			if (h1 != h2 && ViewSizeChanged != null)
+			if (h1 != h2)
 			{
-				ViewSizeChanged(this,
-					new FwViewSizeEventArgs(h2, m_vectorRefView.RootBox.Width));
+				ViewSizeChanged?.Invoke(this, new FwViewSizeEventArgs(h2, m_vectorRefView.RootBox.Width));
 			}
 		}
 
@@ -165,7 +158,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			get
 			{
 				if (m_vectorRefView == null || m_vectorRefView.RootBox == null)
+				{
 					return 0;
+				}
 				return m_vectorRefView.RootBox.Height;
 			}
 		}
@@ -177,19 +172,24 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-			if (m_panel != null && m_vectorRefView != null)
+			if (m_panel == null || m_vectorRefView == null)
 			{
-				int w = Width - m_panel.Width;
-				int h1 = RootBoxHeight;
-				if (w < 0)
-					w = 0;
-				if (w == m_vectorRefView.Width)
-					return; // cuts down on recursive calls.
-				m_vectorRefView.Width = w;
-				m_vectorRefView.PerformLayout();
-				int h2 = RootBoxHeight;
-				CheckViewSizeChanged(h1, h2);
+				return;
 			}
+			var w = Width - m_panel.Width;
+			var h1 = RootBoxHeight;
+			if (w < 0)
+			{
+				w = 0;
+			}
+			if (w == m_vectorRefView.Width)
+			{
+				return; // cuts down on recursive calls.
+			}
+			m_vectorRefView.Width = w;
+			m_vectorRefView.PerformLayout();
+			var h2 = RootBoxHeight;
+			CheckViewSizeChanged(h1, h2);
 		}
 
 		/// <summary>
@@ -199,8 +199,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void OnLeave(EventArgs e)
 		{
 			base.OnLeave(e);
-			if (m_vectorRefView != null && m_vectorRefView.RootBox != null)
-				m_vectorRefView.RootBox.DestroySelection();
+			m_vectorRefView?.RootBox?.DestroySelection();
 		}
 
 		#endregion // Overrides
@@ -220,10 +219,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			// null indicates that we cancelled out of the chooser dialog -- we shouldn't get
 			// here with that value, but just in case...
 			if (chosenObjs == null)
+			{
 				return;
+			}
 
-			int h1 = RootBoxHeight;
-
+			var h1 = RootBoxHeight;
 			var oldObjs = Targets;
 			if (oldObjs.Count() != chosenObjs.Count() || oldObjs.Intersect(chosenObjs).Count() != chosenObjs.Count())
 			{
@@ -233,7 +233,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					// FWR-3238 Keep these lines inside the UOW block, since for some reason
 					// 'this' is disposed after we come out of the block.
 					UpdateDisplayFromDatabase();
-					int h2 = RootBoxHeight;
+					var h2 = RootBoxHeight;
 					CheckViewSizeChanged(h1, h2);
 				});
 			}
@@ -249,9 +249,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			get
 			{
 				if (m_obj == null || !m_obj.IsValidObject)
+				{
 					return new ICmObject[0];
-				return from hvo in ((ISilDataAccessManaged) m_cache.DomainDataByFlid).VecProp(m_obj.Hvo, m_flid)
-					   select m_cache.ServiceLocator.GetObject(hvo);
+				}
+				return ((ISilDataAccessManaged)m_cache.DomainDataByFlid).VecProp(m_obj.Hvo, m_flid).Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
 			}
 
 			set
@@ -263,23 +264,23 @@ namespace LanguageExplorer.Controls.DetailControls
 				var objsChosen = value.ToArray();
 				RemoveUnneededObjectsFromProperty(oldObjs, objsChosen);
 				if (objsChosen.Length == 0)
+				{
 					return;
+				}
 				var objToAdd = objsChosen.Except(oldObjs);
 				AddNewObjectsToProperty(objToAdd);
-				// FWR-2841 Replace with start=0, deletes all and re-adds the chosen ones; not what we want.
-				// The Replace all method generates too many side effects calls [RemoveObjectSideEffects()].
-				//m_cache.DomainDataByFlid.Replace(m_obj.Hvo, m_flid, 0, oldCount, rghvosChosen, rghvosChosen.Length);
 			}
 		}
 
 		/// <summary>
 		/// Add the specified objects to the property the launcher is editing. Caller makes UOW.
 		/// </summary>
-		/// <param name="objectsToAdd"></param>
 		protected virtual void AddNewObjectsToProperty(IEnumerable<ICmObject> objectsToAdd)
 		{
-			if (objectsToAdd.Count() == 0)
+			if (!objectsToAdd.Any())
+			{
 				return;
+			}
 			var cvec = m_cache.DomainDataByFlid.get_VecSize(m_obj.Hvo, m_flid);
 			var hvosToAdd = objectsToAdd.Select(obj => obj.Hvo).ToArray();
 			m_cache.DomainDataByFlid.Replace(m_obj.Hvo, m_flid, cvec, cvec, hvosToAdd, hvosToAdd.Length);
@@ -288,7 +289,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void RemoveUnneededObjectsFromProperty(ICmObject[] oldObjs, ICmObject[] objsChosen)
 		{
 			if (oldObjs.Length == 0)
+			{
 				return;
+			}
 			var i = 0;
 			foreach (var oldObj in oldObjs)
 			{

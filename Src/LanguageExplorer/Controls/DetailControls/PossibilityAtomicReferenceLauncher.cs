@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -24,7 +24,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -36,15 +38,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.Dispose(disposing);
 		}
 
-		public override void Initialize(LcmCache cache, ICmObject obj, int flid,
-			string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 
-			m_autoComplete = new PossibilityAutoComplete(cache, PropertyTable, (ICmPossibilityList) obj.ReferenceTargetOwner(flid),
-				m_atomicRefView, displayNameProperty, displayWs);
+			m_autoComplete = new PossibilityAutoComplete(cache, PropertyTable, (ICmPossibilityList) obj.ReferenceTargetOwner(flid), m_atomicRefView, displayNameProperty, displayWs);
 			m_autoComplete.PossibilitySelected += HandlePossibilitySelected;
 			m_atomicRefView.RootBox.DataAccess.AddNotification(this);
 		}
@@ -60,7 +60,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void OnLeave(EventArgs e)
 		{
 			base.OnLeave(e);
-			if (m_atomicRefView != null && m_atomicRefView.RootBox != null)
+			if (m_atomicRefView?.RootBox != null)
 			{
 				if (AllowEmptyItem && m_atomicRefView.RootBox.DataAccess.get_StringProp(m_obj.Hvo, PossibilityAtomicReferenceView.kflidFake).Length == 0 && Target != null)
 				{
@@ -68,11 +68,13 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				else
 				{
-					ICmPossibility[] possibilities = m_autoComplete.Possibilities.ToArray();
+					var possibilities = m_autoComplete.Possibilities.ToArray();
 					if (possibilities.Length == 1)
 					{
 						if (possibilities[0] != Target)
+						{
 							AddItem(possibilities[0]);
+						}
 					}
 					else
 					{
@@ -90,7 +92,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			get
 			{
 				var node = m_configurationNode.Element("deParams");
-				string nullLabel = XmlUtils.GetOptionalAttributeValue(node, "nullLabel");
+				var nullLabel = XmlUtils.GetOptionalAttributeValue(node, "nullLabel");
 				return nullLabel == null || nullLabel.Length > 0;
 			}
 		}
@@ -102,19 +104,25 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void HandlePossibilitySelected(object sender, EventArgs e)
 		{
-			ICmPossibility poss = m_autoComplete.SelectedPossibility;
+			var poss = m_autoComplete.SelectedPossibility;
 			if (poss != Target)
+			{
 				AddItem(poss);
+			}
 			else
+			{
 				UpdateDisplayFromDatabase();
-			if (m_atomicRefView != null)
-				m_atomicRefView.RootBox.MakeSimpleSel(true, true, true, true);
+			}
+
+			m_atomicRefView?.RootBox.MakeSimpleSel(true, true, true, true);
 		}
 
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			if (tag == PossibilityAtomicReferenceView.kflidFake)
+			{
 				m_autoComplete.Update(m_atomicRefView.RootBox.DataAccess.get_StringProp(hvo, tag));
+			}
 		}
 	}
 }

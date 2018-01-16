@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Runtime.Serialization;
 using System.Windows.Forms;
 using System.Linq;
 using SIL.LCModel.Core.Cellar;
@@ -44,7 +43,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected bool m_inMenuButton = false;
 		private Slice m_myParentSlice;
-		private bool m_fShowPlusMinus = false;
 		private SliceContextMenuFactory _sliceContextMenuFactory;
 		private string _ordinaryMenuId;
 		private Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> _ordinaryMenuStuff;
@@ -53,26 +51,16 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		/// <summary></summary>
-		public bool ShowPlusMinus
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fShowPlusMinus;
-			}
-			set
-			{
-				CheckDisposed();
-				m_fShowPlusMinus = value;
-			}
-		}
+		/// <summary />
+		public bool ShowPlusMinus { get; set; }
 
-		/// <summary></summary>
+		/// <summary />
 		internal SliceTreeNode(Slice myParentSlice, SliceContextMenuFactory sliceContextMenuFactory, string ordinaryMenuId)
 		{
 			if (myParentSlice == null)
+			{
 				throw new ArgumentNullException(nameof(myParentSlice));
+			}
 
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -84,33 +72,30 @@ namespace LanguageExplorer.Controls.DetailControls
 			_ordinaryMenuStuff = _sliceContextMenuFactory.GetOrdinaryMenu(myParentSlice, _ordinaryMenuId);
 
 			SuspendLayout();
-			this.Paint += new PaintEventHandler(this.HandlePaint);
-			//this.MouseDown += new MouseEventHandler(this.HandleMouseDown);
-			this.SizeChanged += new EventHandler(this.HandleSizeChanged);
+			Paint += HandlePaint;
+			SizeChanged += HandleSizeChanged;
 			// Among other possible benefits, this suppresses a really nasty Heisenbug:
 			// On collapsing a summary, the expansion box for the next summary was being
 			// drawn without either plus or minus. This did not happen while stepping through
 			// the OnPaint method, only when the program ran at full speed.
-			this.SetStyle(ControlStyles.DoubleBuffer, true);
-			this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-			this.SetStyle(ControlStyles.UserPaint, true);
-			this.TabStop = false;
+			SetStyle(ControlStyles.DoubleBuffer, true);
+			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+			SetStyle(ControlStyles.UserPaint, true);
+			TabStop = false;
 
-			if (myParentSlice.Label != null)
-				this.AccessibleName = myParentSlice.Label;
-			else
-				this.AccessibleName = "SliceTreeNode";
+			AccessibleName = myParentSlice.Label ?? @"SliceTreeNode";
 			ResumeLayout(false);
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public void HandleSizeChanged(object sender, EventArgs ea)
 		{
 			CheckDisposed();
 		}
 
-		// Things can (potentially) be dropped on this control.
-		/// <summary></summary>
+		/// <summary>
+		/// Things can (potentially) be dropped on this control.
+		/// </summary>
 		public override bool AllowDrop
 		{
 			get
@@ -136,11 +121,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			int hvoDstOwner;
 			int flidDst;
 			int ihvoDstStart;
-			ObjectDragInfo odi = TestDropEffects(drgevent, out hvoDstOwner, out flidDst, out ihvoDstStart);
+			var odi = TestDropEffects(drgevent, out hvoDstOwner, out flidDst, out ihvoDstStart);
 			if (drgevent.Effect == DragDropEffects.None)
+			{
 				return;
+			}
 			// Todo JohnT: verify that m_slice is the last slice in the representation of flid.
-			LcmCache cache = m_myParentSlice.ContainingDataTree.Cache;
+			var cache = m_myParentSlice.ContainingDataTree.Cache;
 			UndoableUnitOfWorkHelper.Do("Undo Move Item", "Redo Move Item",
 				cache.ActionHandlerAccessor, () =>
 				{
@@ -171,38 +158,40 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <param name="ihvoDstStart">Place to put them (if sequence).</param>
 		private ObjectDragInfo TestDropEffects(DragEventArgs drgevent, out int hvoDstOwner, out int flidDst, out int ihvoDstStart)
 		{
-			ObjectDragInfo odi = (ObjectDragInfo) drgevent.Data.GetData(typeof(ObjectDragInfo));
+			var odi = (ObjectDragInfo) drgevent.Data.GetData(typeof(ObjectDragInfo));
 			drgevent.Effect = DragDropEffects.None; // default
 			hvoDstOwner = 0; // not used unless we get to GetSeqContext call, but compiler demands we set them.
 			flidDst = 0;
 			ihvoDstStart = 0;
-			if (odi != null)
+			if (odi == null)
 			{
-				// Enhance JohnT: options to allow dragging onto this object, putting the dragged object into
-				// one of its owning properties.
-				// Try to drag the object after 'this' in the relevant property.
-				if (m_myParentSlice.GetSeqContext(out hvoDstOwner, out flidDst, out ihvoDstStart))
+				return null;
+			}
+			// Enhance JohnT: options to allow dragging onto this object, putting the dragged object into
+			// one of its owning properties.
+			// Try to drag the object after 'this' in the relevant property.
+			if (m_myParentSlice.GetSeqContext(out hvoDstOwner, out flidDst, out ihvoDstStart))
+			{
+				ihvoDstStart++; // Insert after the present object (if a sequence).
+				if (OkToMove(hvoDstOwner, flidDst, ihvoDstStart, odi))
 				{
-					ihvoDstStart++; // Insert after the present object (if a sequence).
-					if (OkToMove(hvoDstOwner, flidDst, ihvoDstStart, odi))
-					{
-						drgevent.Effect = DragDropEffects.Move;
-						return odi;
-					}
+					drgevent.Effect = DragDropEffects.Move;
+					return odi;
 				}
-				// See if the first child is a sequence we could insert at the start of.
-				var firstChild = m_myParentSlice.ConfigurationNode.Elements().FirstOrDefault();
-				if (firstChild != null && firstChild.Name == "seq")
-				{
-					hvoDstOwner = m_myParentSlice.Object.Hvo;
-					flidDst = m_myParentSlice.ContainingDataTree.Cache.DomainDataByFlid.MetaDataCache.GetFieldId2(m_myParentSlice.Object.ClassID, firstChild.Attribute("field").Value, true);
-					ihvoDstStart = 0;
-					if (OkToMove(hvoDstOwner, flidDst, ihvoDstStart, odi))
-					{
-						drgevent.Effect = DragDropEffects.Move;
-						return odi;
-					}
-				}
+			}
+			// See if the first child is a sequence we could insert at the start of.
+			var firstChild = m_myParentSlice.ConfigurationNode.Elements().FirstOrDefault();
+			if (firstChild == null || firstChild.Name != "seq")
+			{
+				return odi;
+			}
+			hvoDstOwner = m_myParentSlice.Object.Hvo;
+			flidDst = m_myParentSlice.ContainingDataTree.Cache.DomainDataByFlid.MetaDataCache.GetFieldId2(m_myParentSlice.Object.ClassID, firstChild.Attribute("field").Value, true);
+			ihvoDstStart = 0;
+			if (OkToMove(hvoDstOwner, flidDst, ihvoDstStart, odi))
+			{
+				drgevent.Effect = DragDropEffects.Move;
+				return odi;
 			}
 			return odi;
 		}
@@ -214,8 +203,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			CheckDisposed();
 
-			LcmCache cache = m_myParentSlice.ContainingDataTree.Cache;
-			ICmObjectRepository repo = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			var cache = m_myParentSlice.ContainingDataTree.Cache;
+			var repo = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			if (flidDst == odi.FlidSrc)
 			{
 				// Verify that it is not a no-operation.
@@ -226,8 +215,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					// We can't drag it to the position it's already at; that's no change. We also can't drag it
 					// to the position one greater: that amounts to trying to place it after itself, which (after
 					// removing it from before itself) amounts to a no-operation.
-					if (fieldType == CellarPropertyType.OwningSequence &&
-						ihvoDstStart != odi.IhvoSrcStart && ihvoDstStart != odi.IhvoSrcStart + 1)
+					if (fieldType == CellarPropertyType.OwningSequence && ihvoDstStart != odi.IhvoSrcStart && ihvoDstStart != odi.IhvoSrcStart + 1)
 					{
 						// It's a sequence and the target and source positions are different, so we can do it.
 						return true;
@@ -236,17 +224,19 @@ namespace LanguageExplorer.Controls.DetailControls
 				else
 				{
 					// Different objects; need to verify no circular ownership involved.
-					for (int ihvo = odi.IhvoSrcStart; ihvo <= odi.IhvoSrcEnd; ihvo++)
+					for (var ihvo = odi.IhvoSrcStart; ihvo <= odi.IhvoSrcEnd; ihvo++)
 					{
-						int hvo = cache.DomainDataByFlid.get_VecItem(odi.HvoSrcOwner, odi.FlidSrc, ihvo);
+						var hvo = cache.DomainDataByFlid.get_VecItem(odi.HvoSrcOwner, odi.FlidSrc, ihvo);
 						// See if hvoDstOwner is owned by hvo
-						ICmObject obj2 = repo.GetObject(hvoDstOwner);
+						var obj2 = repo.GetObject(hvoDstOwner);
 						// loop from hvo2 to root owner of hvo2. If hvo2 or any of its owners is hvo,
 						// we have a problem.
 						while (obj2 != null)
 						{
 							if (hvo == obj2.Hvo)
+							{
 								return false; // circular ownership, can't drop.
+							}
 							obj2 = obj2.Owner;
 						}
 					}
@@ -256,18 +246,20 @@ namespace LanguageExplorer.Controls.DetailControls
 			else
 			{
 				// Different property, check signature.
-				IFwMetaDataCache mdc = cache.DomainDataByFlid.MetaDataCache;
-				int luclid = mdc.GetDstClsId((int) flidDst);
-				for (int ihvo = odi.IhvoSrcStart; ihvo <= odi.IhvoSrcEnd; ihvo++)
+				var mdc = cache.DomainDataByFlid.MetaDataCache;
+				var luclid = mdc.GetDstClsId(flidDst);
+				for (var ihvo = odi.IhvoSrcStart; ihvo <= odi.IhvoSrcEnd; ihvo++)
 				{
-					int hvo = cache.DomainDataByFlid.get_VecItem(odi.HvoSrcOwner, odi.FlidSrc, ihvo);
-					int cls = repo.GetObject(hvo).ClassID;
+					var hvo = cache.DomainDataByFlid.get_VecItem(odi.HvoSrcOwner, odi.FlidSrc, ihvo);
+					var cls = repo.GetObject(hvo).ClassID;
 					while (cls != 0 && cls != luclid)
 					{
 						cls = mdc.GetBaseClsId(cls);
 					}
 					if (cls == 0)
+					{
 						return false; // wrong signature, can't drop.
+					}
 				}
 				// All sigs OK, allow drop.
 				return true;
@@ -284,7 +276,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -295,19 +289,18 @@ namespace LanguageExplorer.Controls.DetailControls
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
 				_sliceContextMenuFactory.DisposeContextMenu(_ordinaryMenuStuff);
-				this.Paint -= new PaintEventHandler(this.HandlePaint);
-				this.SizeChanged -= new EventHandler(this.HandleSizeChanged);
-				this.KeyPress -= new System.Windows.Forms.KeyPressEventHandler(this.SliceTreeNode_KeyPress);
-				this.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.SliceTreeNode_KeyDown);
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				Paint -= HandlePaint;
+				SizeChanged -= HandleSizeChanged;
+				KeyPress -= SliceTreeNode_KeyPress;
+				KeyDown -= SliceTreeNode_KeyDown;
+				components?.Dispose();
 			}
 			m_myParentSlice = null;
 			_sliceContextMenuFactory = null;
@@ -324,44 +317,44 @@ namespace LanguageExplorer.Controls.DetailControls
 			// that generates more slices, which get drawn invisibly in turn, and
 			// laziness is defeated completely.
 			if (pea.ClipRectangle.Height == 0 || pea.ClipRectangle.Width == 0)
+			{
 				return;
+			}
 
 			if (m_myParentSlice.Parent == null)
+			{
 				// FWNX-436
 				return;
+			}
 
-			Graphics gr = pea.Graphics;
-
-			Color lineColor = Color.FromKnownColor(KnownColor.ControlDark);
-			using (Pen linePen = new Pen(lineColor, 1))
+			var gr = pea.Graphics;
+			var lineColor = Color.FromKnownColor(KnownColor.ControlDark);
+			using (var linePen = new Pen(lineColor, 1))
 			{
 				linePen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
-				using (Pen boxLinePen = new Pen(lineColor, 1))
+				using (var boxLinePen = new Pen(lineColor, 1))
 				using (Brush backgroundBrush = new SolidBrush(m_myParentSlice.ContainingDataTree.BackColor))
 				using (Brush lineBrush = new SolidBrush(lineColor))
 				{
-					int nIndent = m_myParentSlice.Indent;
-					DataTree.TreeItemState tis = m_myParentSlice.Expansion;
+					var nIndent = m_myParentSlice.Indent;
+					var tis = m_myParentSlice.Expansion;
 					// Drawing within a control that covers the tree node portion of this slice, we always
 					// draw relative to a top-of-slice that is 0. I'm keeping the variable just in case
 					// we ever go back to drawing in the parent window.
-					int ypTopOfSlice = 0;
-					// int ypTopOfNextSlice = this.Height; // CS2019
-					int iSlice = m_myParentSlice.ContainingDataTree.Slices.IndexOf(m_myParentSlice);
+					var ypTopOfSlice = 0;
 					// Go through the indents. This used to draw the correct tree structure at each level.
 					// Now we leave out the structue, but this figures out some stuff we need if we end up
 					// drawing a box. This could be optimized if we really never want the tree diagram.
-					for (int nInd = 0; nInd <= nIndent; ++nInd)
+					for (var nInd = 0; nInd <= nIndent; ++nInd)
 					{
 						// int ypTreeTop = ypTopOfSlice; // CS2019
-						int xpBoxLeft = kdxpLeftMargin + nInd * kdxpIndDist;
-						int xpBoxCtr = xpBoxLeft + kdxpBoxCtr;
+						var xpBoxLeft = kdxpLeftMargin + nInd * kdxpIndDist;
+						var xpBoxCtr = xpBoxLeft + kdxpBoxCtr;
 						// Enhance JohnT: 2nd argument of max should be label height.
-						int dypBranchHeight = m_myParentSlice.GetBranchHeight();
-						int dypLeftOver = Math.Max(kdypBoxHeight / 2, dypBranchHeight) - kdypBoxHeight / 2;
-						int ypBoxTop = ypTopOfSlice + dypLeftOver;
-						int ypBoxCtr = ypBoxTop + kdypBoxHeight / 2;
-						// int xpRtLineEnd = xpBoxCtr + kdxpLongLineLen; // CS2019
+						var dypBranchHeight = m_myParentSlice.GetBranchHeight();
+						var dypLeftOver = Math.Max(kdypBoxHeight / 2, dypBranchHeight) - kdypBoxHeight / 2;
+						var ypBoxTop = ypTopOfSlice + dypLeftOver;
+						var ypBoxCtr = ypBoxTop + kdypBoxHeight / 2;
 
 						// There are two possible locations for the start and stop points for the
 						// vertical line. That will produce three different results which I have
@@ -374,44 +367,31 @@ namespace LanguageExplorer.Controls.DetailControls
 						// |  > ypStart = center point of +/- box, ypStop = bottom of field.
 						//
 						// Draw the vertical line.
-
 						// Process a terminal level with a box.
-						if (ShowPlusMinus && nInd == nIndent && tis != DataTree.TreeItemState.ktisFixed)
+						if (ShowPlusMinus && nInd == nIndent && tis != TreeItemState.ktisFixed)
 						{
 							// Draw the box.
-							Rectangle rcBox = new Rectangle(xpBoxLeft, ypBoxTop, kdxpBoxWid, kdypBoxHeight);
+							var rcBox = new Rectangle(xpBoxLeft, ypBoxTop, kdxpBoxWid, kdypBoxHeight);
 							gr.FillRectangle(lineBrush, rcBox);
 							// Erase the inside of the box as we may have drawn dotted lines there.
 							rcBox.Inflate(-1, -1);
 							gr.FillRectangle(backgroundBrush, rcBox);
 
-							if (tis != DataTree.TreeItemState.ktisCollapsedEmpty)
+							if (tis != TreeItemState.ktisCollapsedEmpty)
 							{
 								// Draw the minus sign.
-								int xpLeftMinus = xpBoxLeft + 1 + kdzpIconGap;
+								var xpLeftMinus = xpBoxLeft + 1 + kdzpIconGap;
 								gr.DrawLine(boxLinePen, xpLeftMinus, ypBoxCtr, xpLeftMinus + kdxpIconWid - 1, ypBoxCtr);
 
-								if (tis == DataTree.TreeItemState.ktisCollapsed)
+								if (tis == TreeItemState.ktisCollapsed)
 								{
 									// Draw the vertical part of the plus, if we are collapsed.
-									int ypTopPlus = ypBoxTop + 1 + kdzpIconGap;
+									var ypTopPlus = ypBoxTop + 1 + kdzpIconGap;
 									gr.DrawLine(boxLinePen, xpBoxCtr, ypTopPlus, xpBoxCtr, ypTopPlus + kdypIconHeight - 1);
 								}
 							}
 						}
 					}
-
-					//			// If the height of the slice is greater then one line (1.5 * LabelHeight) and
-					//			// the slice has a child, then we need to draw a line to that child. (fixes a
-					//			// gap that appears otherwise)
-					//			int left = kdxpLeftMargin + (nIndent + 1) * kdxpIndDist;
-					//			int center = left + kdxpBoxCtr;
-					//			bool fHasChildren = (m_slice.Diagram.NextFieldAtIndent(nIndent + 1, iSlice) != 0);
-					//			if (fHasChildren && Height > m_slice.LabelHeight * 1.5)
-					//			{
-					//				gr.DrawLine(linePen, center, ypTopOfSlice + m_slice.LabelHeight,
-					//					center, ypTopOfNextSlice);
-					//			}
 
 					if (ShowingContextIcon)
 					{
@@ -419,30 +399,12 @@ namespace LanguageExplorer.Controls.DetailControls
 						gr.DrawImage(ResourceHelper.BlueCircleDownArrow, 2, 1);
 					}
 
-					//			int xIndent = m_slice.LabelIndent();
-					//			int lineWidth = 1;
-					//			Slice nextSlice = m_slice.ContainingDataTree.Slices[m_slice.IndexInContainer + 1] as Slice;
-					//			int yPos = this.Height - 1;
-					//			if (nextSlice.Weight == ObjectWeight.heavy)
-					//			{
-					//				lineWidth += DataTree.HeavyweightObjectExtra;
-					//				//yPos -= DataTree.HeavyweightObjectExtra / 2;
-					//			}
-					//			Pen borderPen = new Pen(Color.LightGray, lineWidth);
-					//			gr.DrawLine(borderPen, xIndent, yPos, this.Width, yPos);
-
 					m_myParentSlice.DrawLabel(ypTopOfSlice, gr, pea.ClipRectangle.Width);
 				}
 			}
 		}
 
-		private bool ShowingContextIcon
-		{
-			get
-			{
-				return !ShowPlusMinus && m_myParentSlice.ShowContextMenuIconInTreeNode();
-			}
-		}
+		private bool ShowingContextIcon => !ShowPlusMinus && m_myParentSlice.ShowContextMenuIconInTreeNode();
 
 		/// <summary>
 		/// Double-click causes expand/contract wherever it is.
@@ -450,11 +412,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void OnDoubleClick(EventArgs e)
 		{
 			base.OnDoubleClick (e);
-			if (m_myParentSlice.Expansion != DataTree.TreeItemState.ktisFixed)
+			if (m_myParentSlice.Expansion == TreeItemState.ktisFixed)
 			{
-				int iSlice = m_myParentSlice.ContainingDataTree.Slices.IndexOf(m_myParentSlice);
-				ToggleExpansionAndScroll(iSlice);
+				return;
 			}
+			var iSlice = m_myParentSlice.ContainingDataTree.Slices.IndexOf(m_myParentSlice);
+			ToggleExpansionAndScroll(iSlice);
 		}
 
 		/// <summary>
@@ -480,14 +443,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			//base.OnMouseDown(meArgs);
 			if (meArgs.Button.Equals(MouseButtons.Right) || (ShowingContextIcon && meArgs.X < 20))
 			{
-				//begin test (JDH)
-				Point p = new Point(meArgs.X,meArgs.Y);
+				var p = new Point(meArgs.X,meArgs.Y);
 				if (m_myParentSlice.HandleMouseDown(p) && _ordinaryMenuStuff != null)
 				{
 					_ordinaryMenuStuff.Item1.Show(m_myParentSlice, p);
 					return;
 				}
-				//end test
 			}
 
 			// Enhance JohnT: Could we find a better label that shows more clearly what is being moved?
@@ -495,9 +456,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			int flidSrc;
 			int ihvoSrcStart;
 			if (!m_myParentSlice.GetSeqContext(out hvoSrcOwner, out flidSrc, out ihvoSrcStart))
+			{
 				return; // If we can't identify an object to move, don't do a drag.
-			ObjectDragInfo objinfo = new ObjectDragInfo(hvoSrcOwner, flidSrc, ihvoSrcStart, ihvoSrcStart, m_myParentSlice.Label);
-			DataObject dataobj = new DataObject(objinfo);
+			}
+			var objinfo = new ObjectDragInfo(hvoSrcOwner, flidSrc, ihvoSrcStart, ihvoSrcStart, m_myParentSlice.Label);
+			var dataobj = new DataObject(objinfo);
 			// Initiate a drag/drop operation. Currently we only support move.
 			// Enhance JohnT: Also support Copy.
 			DoDragDrop(dataobj, DragDropEffects.Move);
@@ -523,12 +486,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			CheckDisposed();
 
 			// Why don't we just let the slice do all the toggle work?
-			if (m_myParentSlice.Expansion == DataTree.TreeItemState.ktisCollapsed)
+			if (m_myParentSlice.Expansion == TreeItemState.ktisCollapsed)
 			{
 				// expand it
 				m_myParentSlice.Expand(iSlice);
 			}
-			else if (m_myParentSlice.Expansion == DataTree.TreeItemState.ktisExpanded)
+			else if (m_myParentSlice.Expansion == TreeItemState.ktisExpanded)
 			{
 				// collapse it
 				m_myParentSlice.Collapse(iSlice);
@@ -581,92 +544,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override bool ProcessDialogChar(char charCode)
 		{
 			if (Control.ModifierKeys == Keys.Alt)
+			{
 				return base.ProcessDialogChar(charCode);
+			}
 			return false;
 		}
 		#endif
-	}
-
-	/// <summary></summary>
-	[Serializable()]
-	public class ObjectDragInfo : ISerializable
-	{
-		int m_hvoSrcOwner;
-		int m_flidSrc;
-		int m_ihvoSrcStart;
-		int m_ihvoSrcEnd;
-		string m_label; // The label to display during dragging.
-
-		/// <summary></summary>
-		public ObjectDragInfo(int hvoSrcOwner, int flidSrc, int ihvoSrcStart, int ihvoSrcEnd, string label)
-		{
-			m_hvoSrcOwner = hvoSrcOwner;
-			m_flidSrc = flidSrc;
-			m_ihvoSrcStart = ihvoSrcStart;
-			m_ihvoSrcEnd = ihvoSrcEnd;
-			m_label = label;
-		}
-
-		/// <summary></summary>
-		public override string ToString()
-		{
-			return m_label;
-		}
-
-		/// <summary>Deserialization constructor.</summary>
-		public ObjectDragInfo (SerializationInfo info, StreamingContext context)
-		{
-			m_hvoSrcOwner = (int)info.GetValue("SrcOwner", typeof(int));
-			m_flidSrc = (int)info.GetValue("FlidSrc", typeof(int));
-			m_ihvoSrcStart = (int)info.GetValue("IhvoSrcStart", typeof(int));
-			m_ihvoSrcEnd = (int)info.GetValue("IhvoSrcEnd", typeof(int));
-			m_label = (String)info.GetValue("label", typeof(string));
-		}
-
-		/// <summary>Serialization function.</summary>
-		public void GetObjectData(SerializationInfo info, StreamingContext context)
-		{
-			info.AddValue("SrcOwner", m_hvoSrcOwner);
-			info.AddValue("FlidSrc", m_flidSrc);
-			info.AddValue("IhvoSrcStart", m_ihvoSrcStart);
-			info.AddValue("IhvoSrcEnd", m_ihvoSrcEnd);
-			info.AddValue("label", m_label);
-		}
-
-		/// <summary></summary>
-		public int HvoSrcOwner
-		{
-			get
-			{
-				return m_hvoSrcOwner;
-			}
-		}
-
-		/// <summary></summary>
-		public int FlidSrc
-		{
-			get
-			{
-				return m_flidSrc;
-			}
-		}
-
-		/// <summary></summary>
-		public int IhvoSrcStart
-		{
-			get
-			{
-				return m_ihvoSrcStart;
-			}
-		}
-
-		/// <summary></summary>
-		public int IhvoSrcEnd
-		{
-			get
-			{
-				return m_ihvoSrcEnd;
-			}
-		}
 	}
 }

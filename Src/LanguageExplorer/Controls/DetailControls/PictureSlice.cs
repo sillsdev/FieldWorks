@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,30 +23,27 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// </summary>
 	internal class PictureSlice: Slice
 	{
-		ICmPicture m_picture;
+		readonly ICmPicture m_picture;
 		Size m_lastSize = new Size(0, 0);
 		float m_aspectRatio; // ideal aspect ratio for picture (height/width).
 		PictureBox m_picBox;
 		bool m_fThumbnail; // true to force smaller size.
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+
+		/// <summary />
 		public PictureSlice(ICmPicture picture)
 		{
 			m_picBox = new PictureBox();
-			m_picBox.Click += new EventHandler(pb_Click);
+			m_picBox.Click += pb_Click;
 			m_picBox.Location = new Point(0,0); // not docked, because width may not be whole width
 			m_picBox.SizeMode = PictureBoxSizeMode.Zoom;
 			m_picture = picture;
 			InstallPicture(m_picBox);
 			// We need an extra layer of panel because the slice's control is always docked,
 			// and we don't want that for the picture box.
-			Panel panel = new Panel();
+			var panel = new Panel();
 			panel.Controls.Add(m_picBox);
-			panel.SizeChanged += new EventHandler(panel_SizeChanged);
-			this.Control = panel;
+			panel.SizeChanged += panel_SizeChanged;
+			Control = panel;
 		}
 
 		// Read the thumbnail property from the configuration
@@ -54,7 +51,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			CheckDisposed();
 			base.FinishInit ();
-			m_fThumbnail = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationNode, "thumbnail", false);
+			m_fThumbnail = XmlUtils.GetOptionalBooleanAttributeValue(ConfigurationNode, "thumbnail", false);
 		}
 
 		private void InstallPicture(PictureBox pb)
@@ -62,9 +59,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			try
 			{
 				pb.Image = Image.FromFile(FileUtils.ActualFilePath(m_picture.PictureFileRA.AbsoluteInternalPath));
-				m_aspectRatio = (float)pb.Image.Height / (float) pb.Image.Width;
+				m_aspectRatio = pb.Image.Height / (float)pb.Image.Width;
 				if (m_aspectRatio == 0.0)
+				{
 					m_aspectRatio = 0.0001F; // avoid divide by zero.
+				}
 			}
 			catch
 			{
@@ -100,14 +99,16 @@ namespace LanguageExplorer.Controls.DetailControls
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
 				// Dispose managed resources here.
 
 				// Prevents memory leaks and also spurious continued locking of the file.
-				if (m_picBox != null && m_picBox.Image != null)
+				if (m_picBox?.Image != null)
 				{
 					m_picBox.Image.Dispose();
 					m_picBox.Image = null;
@@ -127,25 +128,35 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Skip handling this, if the DataTree hasn't
 			// set the official width using SetWidthForDataTreeLayout
 			if (!m_widthHasBeenSetByDataTree)
+			{
 				return;
+			}
 
 			base.OnSizeChanged (e);
 
 			if (Control.Size == m_lastSize)
+			{
 				return;
+			}
 			m_lastSize = Control.Size;
-			Image image = m_picBox.Image;
+			var image = m_picBox.Image;
 			if (image == null || image.Width == 0)
-				this.Height = LabelHeight;
-			int idealHeight = (int)(m_aspectRatio * Control.Width);
-			int height = Math.Min(idealHeight, ContainingDataTree.Height / 3);
+			{
+				Height = LabelHeight;
+			}
+			var idealHeight = (int)(m_aspectRatio * Control.Width);
+			var height = Math.Min(idealHeight, ContainingDataTree.Height / 3);
 			if (m_fThumbnail && height > 80)
+			{
 				height = 80;
+			}
 
-			this.Height = Math.Max(LabelHeight, height);
-			m_picBox.Height = this.Height;
-			if (Control.Height != this.Height)
-				Control.Height = this.Height;
+			Height = Math.Max(LabelHeight, height);
+			m_picBox.Height = Height;
+			if (Control.Height != Height)
+			{
+				Control.Height = Height;
+			}
 			if (height < idealHeight)
 			{
 				m_picBox.Width = (int)(Control.Height / m_aspectRatio);
@@ -169,23 +180,24 @@ namespace LanguageExplorer.Controls.DetailControls
 			var app = PropertyTable.GetValue<IApp>("App");
 			using (var dlg = new PicturePropertiesDialog(m_cache, pic, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, true))
 			{
-				if (dlg.Initialize())
+				if (!dlg.Initialize())
 				{
-					var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
-					dlg.UseMultiStringCaption(m_cache, WritingSystemServices.kwsVernAnals, stylesheet);
-					dlg.SetMultilingualCaptionValues(pic.Caption);
-					if (dlg.ShowDialog() == DialogResult.OK)
+					return;
+				}
+				var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+				dlg.UseMultiStringCaption(m_cache, WritingSystemServices.kwsVernAnals, stylesheet);
+				dlg.SetMultilingualCaptionValues(pic.Caption);
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoUpdatePicture, DetailControlsStrings.ksRedoUpdatePicture, m_obj, () =>
 					{
-						UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoUpdatePicture, DetailControlsStrings.ksRedoUpdatePicture, m_obj, () =>
-						{
-							string strLocalPictures = CmFolderTags.DefaultPictureFolder;
-							dlg.GetMultilingualCaptionValues(pic.Caption);
-							pic.UpdatePicture(dlg.CurrentFile, null, strLocalPictures, 0);
-						});
-						InstallPicture(m_picBox);
-						m_lastSize = new Size(0, 0); // forces OnSizeChanged to do something (we need to adjust to new aspect ratio).
-						OnSizeChanged(new EventArgs());
-					}
+						var strLocalPictures = CmFolderTags.DefaultPictureFolder;
+						dlg.GetMultilingualCaptionValues(pic.Caption);
+						pic.UpdatePicture(dlg.CurrentFile, null, strLocalPictures, 0);
+					});
+					InstallPicture(m_picBox);
+					m_lastSize = new Size(0, 0); // forces OnSizeChanged to do something (we need to adjust to new aspect ratio).
+					OnSizeChanged(new EventArgs());
 				}
 			}
 		}

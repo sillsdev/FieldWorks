@@ -55,7 +55,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// Finally, the client should override OnLoseFocus and (among any other behavior) call m_tasvc.LoseFocus(rootb);
 	/// Similarly OnGotFocus(rootb).
 	/// </summary>
-	public class TypeAheadSupportVc : FwBaseVc
+	internal class TypeAheadSupportVc : FwBaseVc
 	{
 		// Top-level fragment used in the Display method.
 		public const int kfragName = 3039;
@@ -81,13 +81,13 @@ namespace LanguageExplorer.Controls.DetailControls
 		// for this property does not depend on the particular parent.
 		List<string> m_shortnames = new List<string>();
 		bool m_fPossibilitiesDependOnObject = true;
-		bool m_fInSelectionChanged = false;
-		bool m_fGotFocus = false; // True if we have focus.
+		bool m_fInSelectionChanged;
+		bool m_fGotFocus; // True if we have focus.
 
 		public TypeAheadSupportVc(int tag, LcmCache cache)
 		{
 			m_tag = tag;
-			IFwMetaDataCache mdc = cache.DomainDataByFlid.MetaDataCache;
+			var mdc = cache.DomainDataByFlid.MetaDataCache;
 			m_clid = mdc.GetOwnClsId(m_tag);
 			m_className = mdc.GetClassName(m_clid);
 			m_fieldName = mdc.GetFieldName(m_tag);
@@ -99,8 +99,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Insert a display of the relevant property for the indicated object, which is atomic.
 		/// </summary>
-		/// <param name="vwenv"></param>
-		/// <param name="hvo"></param>
 		public void Insert(IVwEnv vwenv, int hvo)
 		{
 			vwenv.AddObjProp(FakePropTag, this, kfragName);
@@ -124,8 +122,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Insert a display of the relevant property for the indicated object, which is a sequence or collection.
 		/// </summary>
-		/// <param name="vwenv"></param>
-		/// <param name="hvo"></param>
 		public void InsertSeq(IVwEnv vwenv, int hvo)
 		{
 			vwenv.AddObjVecItems(FakePropTag, this, kfragName);
@@ -140,16 +136,20 @@ namespace LanguageExplorer.Controls.DetailControls
 		public void SelectionChanged(IVwRootBox rootb, IVwSelection sel)
 		{
 			if (m_fInSelectionChanged)
+			{
 				return;
+			}
 			try
 			{
 				m_fInSelectionChanged = true; // suppress recursive calls.
 				int hvoParent;
 				int ihvo;
-				int hvoSel = SelectedObject(rootb, sel, out hvoParent, out ihvo);
+				var hvoSel = SelectedObject(rootb, sel, out hvoParent, out ihvo);
 				if (hvoSel == m_hvoTa && hvoParent == m_hvoParent)
+				{
 					return;
-				int hvoTaOld = m_hvoTa;
+				}
+				var hvoTaOld = m_hvoTa;
 				m_hvoTa = hvoSel; // must change before PropChange converting old one back.
 				if (hvoTaOld != 0)
 				{
@@ -185,10 +185,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			set
 			{
 				if (m_hvoParent == value)
+				{
 					return;
+				}
 				m_hvoParent = value;
 				if (m_fPossibilitiesDependOnObject)
+				{
 					m_shortnames.Clear();
+				}
 			}
 		}
 
@@ -197,24 +201,24 @@ namespace LanguageExplorer.Controls.DetailControls
 		// newTagName.
 		private void SwitchTagAndFixSel(int newTagName, IVwRootBox rootb)
 		{
-			IVwSelection sel = rootb.Selection;
-			int cvsli = 0;
+			var sel = rootb.Selection;
+			var cvsli = 0;
 			// Get selection information to determine where the user is typing.
-			int ihvoRoot = 0;
-			int tagTextProp = 0;
-			int cpropPrevious = 0;
-			int ichAnchor = 0;
-			int ichEnd = 0;
-			int ihvoEnd = 0;
-			int ws = 0;
-			ITsTextProps ttp = null;
-			bool fAssocPrev = false;
+			var ihvoRoot = 0;
+			var cpropPrevious = 0;
+			var ichAnchor = 0;
+			var ichEnd = 0;
+			var ihvoEnd = 0;
+			var ws = 0;
+			var fAssocPrev = false;
 			SelLevInfo[] rgvsli = null;
 			if (sel != null)
 			{
 				// Next step will destroy selection. Save info to install new one.
 				cvsli = sel.CLevels(false) - 1;
 				// Get selection information to determine where the user is typing.
+				int tagTextProp;
+				ITsTextProps ttp;
 				rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli,
 					out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
 					out ws, out fAssocPrev, out ihvoEnd, out ttp);
@@ -227,8 +231,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// now that this is the active object the property displayed for its name is newTagName.
 				try
 				{
-					rootb.MakeTextSelection(ihvoRoot, cvsli, rgvsli, newTagName, cpropPrevious, ichAnchor, ichEnd, ws,
-						fAssocPrev, ihvoEnd, null, true);
+					rootb.MakeTextSelection(ihvoRoot, cvsli, rgvsli, newTagName, cpropPrevious, ichAnchor, ichEnd, ws, fAssocPrev, ihvoEnd, null, true);
 				}
 				catch
 				{
@@ -262,19 +265,19 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// in the relevant property that is selected (return result), and its index within the property
 		/// (0 if atomic).
 		/// </summary>
-		/// <param name="rootb"></param>
-		/// <param name="sel"></param>
-		/// <param name="hvoParent"></param>
-		/// <param name="ihvo"></param>
-		/// <returns></returns>
 		private int SelectedObject(IVwRootBox rootb, IVwSelection sel, out int hvoParent, out int ihvo)
 		{
 			hvoParent = 0;
 			ihvo = 0;
 			if (rootb == null) // If we don't have a root box, can't do anything interesting.
+			{
 				return 0;
+			}
+
 			if (sel == null) // nothing interesting to do without a selection, either.
+			{
 				return 0;
+			}
 			ITsString tssA, tssE;
 			int ichA, ichE, hvoObjA, hvoObjE, tagA, tagE, ws;
 			bool fAssocPrev;
@@ -282,24 +285,28 @@ namespace LanguageExplorer.Controls.DetailControls
 			// all in one string property. We could readily have a method in the selection interface to tell us that.
 			sel.TextSelInfo(false, out tssA, out ichA, out fAssocPrev, out hvoObjA, out tagA, out ws);
 			if (tagA != m_taTagName && tagA != m_snTagName)
+			{
 				return 0; // selection not anchored in any sort of type-ahead name property.
+			}
 			sel.TextSelInfo(true, out tssE, out ichE, out fAssocPrev, out hvoObjE, out tagE, out ws);
-			int cch = tssA.Length;
+			var cch = tssA.Length;
 			// To do our type-ahead trick, both ends of the seleciton must be in the same string property.
 			// Also, we want the selection to extend to the end of the name.
 			// Enhance JohnT: if we do a popup window, it may not matter whether the selection extends
 			// to the end; just show items that match.
 			if (tagE != tagA || hvoObjE != hvoObjA || cch != tssE.Length || Math.Max(ichA, ichE) != cch)
+			{
 				return 0; // not going to attempt type-ahead behavior
-			int clev = sel.CLevels(false);
+			}
+			var clev = sel.CLevels(false);
 			if (clev < 2)
+			{
 				return 0; // can't be our property.
+			}
 			int tagParent, cpropPrevious;
 			IVwPropertyStore vps;
 			sel.PropInfo(false, 1, out hvoParent, out tagParent, out ihvo, out cpropPrevious, out vps);
-			if (tagParent != m_virtualTagObj)
-				return 0; // not our virtual property!
-			return hvoObjA;
+			return tagParent != m_virtualTagObj ? 0 : hvoObjA;
 		}
 		/// <summary>
 		/// Return the 'tag' or 'flid' that is used to identify the fake property (ref atomic or ref sequence)
@@ -310,7 +317,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			get
 			{
 				if (m_virtualTagObj == 0)
+				{
 					InitDefault();
+				}
 				return m_virtualTagObj;
 			}
 		}
@@ -334,15 +343,21 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
-			int hvoParent, tag, ihvo;
 			switch(frag)
 			{
 			case kfragName:
+				int hvoParent;
+				int tag;
+				int ihvo;
 				vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoParent, out tag, out ihvo);
 				if (m_fGotFocus && hvo == m_hvoTa && hvoParent == m_hvoParent && ihvo == m_ihvoTa)
+				{
 					vwenv.AddStringProp(m_taTagName, this);
+				}
 				else
+				{
 					vwenv.AddStringProp(m_snTagName, this);
+				}
 				break;
 			default:
 				throw new Exception("Unexpected fragment ID in TypeAheadSupportVc");
@@ -356,12 +371,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual bool OnKeyPress(EditingHelper ehelp, KeyPressEventArgs e, Keys modifiers, IVwGraphics vwGraphics)
 		{
-			IVwRootBox rootb = ehelp.Callbacks.EditedRootBox;
-			if (rootb == null) // If we don't have a root box, can't do anything interesting.
-				return false;
-			IVwSelection sel = rootb.Selection;
+			var rootb = ehelp.Callbacks.EditedRootBox;
+			var sel = rootb?.Selection;
 			if (sel == null) // nothing interesting to do without a selection, either.
+			{
 				return false;
+			}
 			ITsString tssA, tssE;
 			int ichA, ichE, hvoObjA, hvoObjE, tagA, tagE, ws;
 			bool fAssocPrev;
@@ -369,29 +384,37 @@ namespace LanguageExplorer.Controls.DetailControls
 			// all in one string property. We could readily have a method in the selection interface to tell us that.
 			sel.TextSelInfo(false, out tssA, out ichA, out fAssocPrev, out hvoObjA, out tagA, out ws);
 			if (tagA != m_taTagName)
+			{
 				return false; // selection not anchored in a type-ahead name property.
+			}
 			sel.TextSelInfo(true, out tssE, out ichE, out fAssocPrev, out hvoObjE, out tagE, out ws);
-			int cch = tssA.Length;
+			var cch = tssA.Length;
 			// To do our type-ahead trick, both ends of the seleciton must be in the same string property.
 			// Also, we want the selection to extend to the end of the name.
 			// Enhance JohnT: poupu list may not depend on selection extending to end.
 			if (tagE != m_taTagName || hvoObjE != hvoObjA || cch != tssE.Length || Math.Max(ichA, ichE) != cch)
+			{
 				return false; // not going to attempt type-ahead behavior
+			}
 			// if the key pressed is a backspace or del, prevent smart completion,
 			// otherwise we are likely to put back what the user deleted.
 			// Review JohnT: do arrow keys come through here? What do we do if so?
-			int charT = Convert.ToInt32(e.KeyChar);
+			var charT = Convert.ToInt32(e.KeyChar);
 			if (charT == (int)Keys.Back || charT == (int)Keys.Delete)
+			{
 				return false; // normal key handling will just delete selection. // Review: should backspace delete one more?
+			}
 			// OK, we're in a type-ahead situation. First step is to let normal editing take place.
 			ehelp.OnKeyPress(e, modifiers);
 			e.Handled = true;
 			// Now see what we have. Note that our old selection is no longer valid.
 			sel = rootb.Selection;
 			if (sel == null)
+			{
 				return true; // can't be smart, but we already did the keypress.
+			}
 
-			int cvsli = sel.CLevels(false);
+			var cvsli = sel.CLevels(false);
 			// CLevels includes the string prop itself, but AllTextSelInfo does not need it.
 			cvsli--;
 			// Get selection information to determine where the user is typing.
@@ -399,12 +422,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			int tagTextProp;
 			int cpropPrevious, ichAnchor, ichEnd, ihvoEnd;
 			ITsTextProps ttp;
-			SelLevInfo[] rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli,
+			var rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli,
 				out ihvoObj, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
 				out ws, out fAssocPrev, out ihvoEnd, out ttp);
 			if (tagTextProp != m_taTagName || ichAnchor != ichEnd || ihvoEnd != -1 || cvsli < 1)
+			{
 				return true; // something bizarre happened, but keypress is done.
-			int hvoLeaf = rgvsli[0].hvo;
+			}
+			var hvoLeaf = rgvsli[0].hvo;
 
 			// Get the parent object we will modify.
 			// (This would usually work, but not if the parent object is the root of the whole display,
@@ -416,22 +441,22 @@ namespace LanguageExplorer.Controls.DetailControls
 			sel.PropInfo(false, 1, out hvoParent, out tagParent, out ihvo, out cpropPreviousDummy, out vps);
 
 			if (hvoParent != m_hvoParent)
+			{
 				return true; // another bizarre unexpected event.
+			}
 			// This is what the name looks like after the keypress.
-			ITsString tssTyped = m_sda.get_StringProp(hvoLeaf, m_taTagName);
+			var tssTyped = m_sda.get_StringProp(hvoLeaf, m_taTagName);
 			// Get the substitute. This is where the actual type-ahead behavior happens. Sets hvoNewRef to 0 if no match.
 			ICmObject objNewRef;
-			ITsString tssLookup = Lookup(tssTyped, out objNewRef);
-			int hvoNewRef = (objNewRef != null) ? objNewRef.Hvo : 0;
-			IVwCacheDa cda = m_sda as IVwCacheDa;
+			var tssLookup = Lookup(tssTyped, out objNewRef);
+			var hvoNewRef = objNewRef?.Hvo ?? 0;
+			var cda = m_sda as IVwCacheDa;
 			if (hvoNewRef == 0 && tssTyped.Length > 0)
 			{
 				// No match...underline string in red squiggle.
-				ITsStrBldr bldr = tssLookup.GetBldr();
-				bldr.SetIntPropValues(0, tssLookup.Length, (int) FwTextPropType.ktptUnderline,
-					(int) FwTextPropVar.ktpvEnum, (int) FwUnderlineType.kuntSquiggle);
-				bldr.SetIntPropValues(0, tssLookup.Length, (int) FwTextPropType.ktptUnderColor,
-					(int) FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Red));
+				var bldr = tssLookup.GetBldr();
+				bldr.SetIntPropValues(0, tssLookup.Length, (int) FwTextPropType.ktptUnderline, (int) FwTextPropVar.ktpvEnum, (int) FwUnderlineType.kuntSquiggle);
+				bldr.SetIntPropValues(0, tssLookup.Length, (int) FwTextPropType.ktptUnderColor, (int) FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Red));
 				tssLookup = bldr.GetString();
 			}
 
@@ -441,60 +466,66 @@ namespace LanguageExplorer.Controls.DetailControls
 				m_hvoTa = hvoNewRef; // Before we replace in the prop, so it gets displayed using special ta prop.
 				switch (m_type)
 				{
-				case CellarPropertyType.ReferenceAtomic:
-					if (m_hvoParent != 0) // I think it always is, except when loss of focus during debugging causes problems.
-					{
-						// If nothing matched, set the real property to null and the fake one to kbaseFakeObj.
-						// Otherwise set both to the indicated object.
-						m_sda.SetObjProp(m_hvoParent, m_tag, hvoNewRef); // Review: do we want to set the real thing yet?
-						m_sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoParent, m_tag, 0, 1, 1);
+					case CellarPropertyType.ReferenceAtomic:
+						if (m_hvoParent != 0) // I think it always is, except when loss of focus during debugging causes problems.
+						{
+							// If nothing matched, set the real property to null and the fake one to kbaseFakeObj.
+							// Otherwise set both to the indicated object.
+							m_sda.SetObjProp(m_hvoParent, m_tag, hvoNewRef); // Review: do we want to set the real thing yet?
+							m_sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoParent, m_tag, 0, 1, 1);
+							if (hvoNewRef == 0)
+							{
+								hvoNewRef = m_hvoTa = kBaseFakeObj; // use in fake so we can display something.
+							}
+							cda.CacheObjProp(m_hvoParent, m_virtualTagObj, hvoNewRef); // Change the fake property
+							m_sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoParent, m_virtualTagObj, 0, 1, 1);
+						}
+						break;
+					case CellarPropertyType.ReferenceSequence:
+					case CellarPropertyType.ReferenceCollection:
+						// Several cases, depending on whether we got a match and whether hvoLeaf is the dummy object
+						// 1. match on dummy: insert appropriate real object, change dummy name to empty.
+						// 2. match on non-dummy: replace old object with new
+						// 3: non-match: do nothing. (Even if not looking at the fake object, we'll go on using the
+						// actual object as a base for the fake name, since it's displayed only for the active position.)
 						if (hvoNewRef == 0)
-							hvoNewRef = m_hvoTa = kBaseFakeObj; // use in fake so we can display something.
-						cda.CacheObjProp(m_hvoParent, m_virtualTagObj, hvoNewRef); // Change the fake property
-						m_sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoParent, m_virtualTagObj, 0, 1, 1);
-					}
-					break;
-				case CellarPropertyType.ReferenceSequence:
-				case CellarPropertyType.ReferenceCollection:
-					// Several cases, depending on whether we got a match and whether hvoLeaf is the dummy object
-					// 1. match on dummy: insert appropriate real object, change dummy name to empty.
-					// 2. match on non-dummy: replace old object with new
-					// 3: non-match: do nothing. (Even if not looking at the fake object, we'll go on using the
-					// actual object as a base for the fake name, since it's displayed only for the active position.)
-					if (hvoNewRef == 0)
-						break; // case 3
-					if (hvoLeaf == kBaseFakeObj)
-					{ // case 1
-						// The fake object goes back to being an empty name at the end of the list.
-						ITsStrBldr bldr = tssLookup.GetBldr();
-						bldr.ReplaceTsString(0, bldr.Length, null); // makes an empty string in correct ws.
-						cda.CacheStringProp(kBaseFakeObj, m_taTagName, bldr.GetString());
-						// Insert the new object before the fake one in fake prop and at end of real seq.
-						// Include the fake object in the replace to get it redisplayed also.
-						cda.CacheReplace(m_hvoParent, m_virtualTagObj, m_ihvoTa, m_ihvoTa + 1, new int[] {hvoNewRef, kBaseFakeObj}, 2);
-						m_sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoParent, m_virtualTagObj, m_ihvoTa, 2, 1);
-						m_sda.Replace(m_hvoParent, m_tag, m_ihvoTa, m_ihvoTa, new int[] {hvoNewRef}, 1);
-						m_sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoParent, m_tag, m_ihvoTa, 1, 0);
-					}
-					else
-					{ // case 2
-						// Replace the object being edited with the indicated one in both props.
-						cda.CacheReplace(m_hvoParent, m_virtualTagObj, m_ihvoTa, m_ihvoTa + 1, new int[] {hvoNewRef}, 1);
-						m_sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoParent, m_virtualTagObj, m_ihvoTa, 1, 1);
-						m_sda.Replace(m_hvoParent, m_tag, m_ihvoTa, m_ihvoTa + 1, new int[] {hvoNewRef}, 1);
-						m_sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoParent, m_tag, m_ihvoTa, 1, 1);
-					}
-					break;
-				default:
-					throw new Exception("unsupported property type for type-ahead chooser");
+						{
+							// case 3
+							break;
+						}
+						if (hvoLeaf == kBaseFakeObj)
+						{
+							// case 1
+							// The fake object goes back to being an empty name at the end of the list.
+							var bldr = tssLookup.GetBldr();
+							bldr.ReplaceTsString(0, bldr.Length, null); // makes an empty string in correct ws.
+							cda.CacheStringProp(kBaseFakeObj, m_taTagName, bldr.GetString());
+							// Insert the new object before the fake one in fake prop and at end of real seq.
+							// Include the fake object in the replace to get it redisplayed also.
+							cda.CacheReplace(m_hvoParent, m_virtualTagObj, m_ihvoTa, m_ihvoTa + 1, new int[] { hvoNewRef, kBaseFakeObj }, 2);
+							m_sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoParent, m_virtualTagObj, m_ihvoTa, 2, 1);
+							m_sda.Replace(m_hvoParent, m_tag, m_ihvoTa, m_ihvoTa, new int[] { hvoNewRef }, 1);
+							m_sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoParent, m_tag, m_ihvoTa, 1, 0);
+						}
+						else
+						{
+							// case 2
+							// Replace the object being edited with the indicated one in both props.
+							cda.CacheReplace(m_hvoParent, m_virtualTagObj, m_ihvoTa, m_ihvoTa + 1, new int[] { hvoNewRef }, 1);
+							m_sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoParent, m_virtualTagObj, m_ihvoTa, 1, 1);
+							m_sda.Replace(m_hvoParent, m_tag, m_ihvoTa, m_ihvoTa + 1, new int[] { hvoNewRef }, 1);
+							m_sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoParent, m_tag, m_ihvoTa, 1, 1);
+						}
+						break;
+					default:
+						throw new Exception("unsupported property type for type-ahead chooser");
 				}
 			}
 			cda.CacheStringProp(hvoNewRef, m_taTagName, tssLookup);
 			m_sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, hvoNewRef, m_taTagName, 0, tssLookup.Length, tssTyped.Length);
 			// Make a new selection, typically the range that is the bit added to the typed string.
 			// no change is needed to rgvsli because it's the same object index in the same property of the same parent.
-			sel = rootb.MakeTextSelection(ihvoObj, cvsli, rgvsli, m_taTagName, cpropPrevious, ichAnchor,
-				tssLookup.Length, ws, true, -1, null, true);
+			rootb.MakeTextSelection(ihvoObj, cvsli, rgvsli, m_taTagName, cpropPrevious, ichAnchor, tssLookup.Length, ws, true, -1, null, true);
 			return true;
 		}
 
@@ -506,10 +537,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected virtual ITsString Lookup(ITsString tssTyped, out ICmObject objNew)
 		{
 			var parent = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoParent);
-			string sTyped = tssTyped == null ? "" : tssTyped.Text;
-			if (sTyped == null)
-				sTyped = "";
-			int cchTyped = sTyped.Length;
+			var sTyped = (tssTyped == null ? string.Empty : tssTyped.Text) ?? string.Empty;
+			var cchTyped = sTyped.Length;
 			if (cchTyped == 0)
 			{
 				// Otherwise we'd match the first item and arbitrarily insert it when the user backspaces to
@@ -518,13 +547,15 @@ namespace LanguageExplorer.Controls.DetailControls
 				return tssTyped;
 			}
 
-			int ipossibility = -1;
-			foreach(ICmObject obj in parent.ReferenceTargetCandidates(m_tag))
+			var ipossibility = -1;
+			foreach(var obj in parent.ReferenceTargetCandidates(m_tag))
 			{
 				ipossibility ++;
-				string key = null;
+				string key;
 				if (ipossibility < m_shortnames.Count)
+				{
 					key = m_shortnames[ipossibility]; // Use the cache as far as it goes
+				}
 				else
 				{
 					key = obj.ShortName;
@@ -533,13 +564,11 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (sTyped.Length < key.Length && key.Substring(0, cchTyped) == sTyped)
 				{
 					objNew = obj;
-					ITsStrBldr bldr = tssTyped.GetBldr();
+					var bldr = tssTyped.GetBldr();
 					bldr.Replace(0, bldr.Length, key, null);
 					// Clear any underlining left over from previous bad value.
-					bldr.SetIntPropValues(0, bldr.Length, (int) FwTextPropType.ktptUnderline,
-						-1, -1);
-					bldr.SetIntPropValues(0, bldr.Length, (int) FwTextPropType.ktptUnderColor,
-						-1, -1);
+					bldr.SetIntPropValues(0, bldr.Length, (int) FwTextPropType.ktptUnderline, -1, -1);
+					bldr.SetIntPropValues(0, bldr.Length, (int) FwTextPropType.ktptUnderColor, -1, -1);
 					return bldr.GetString(); // Same ws as input, contents replaced.
 				}
 			}

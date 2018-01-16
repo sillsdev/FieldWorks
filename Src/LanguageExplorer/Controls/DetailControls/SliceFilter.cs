@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,12 +14,12 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	/// a class to determine, at display time, whether individual slices should be displayed or hidden.
 	/// </summary>
-	public class SliceFilter
+	internal sealed class SliceFilter
 	{
-		protected XDocument m_filterList;
+		private readonly XDocument m_filterList;
 
 		/// <summary>
-		/// create a filter which does not have an external setup notes to filter (but which will still ask FDO)
+		/// create a filter which does not have an external setup notes to filter (but which will still ask LCM)
 		/// </summary>
 		public SliceFilter()
 		{
@@ -39,17 +39,19 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// tell whether to include the slice
 		/// </summary>
 		/// <returns>true if this slice should be included</returns>
-		virtual public bool IncludeSlice(XElement configurationNode, ICmObject obj, int flid, HashSet<Tuple<int, int>> propsToMonitor)
+		public bool IncludeSlice(XElement configurationNode, ICmObject obj, int flid, HashSet<Tuple<int, int>> propsToMonitor)
 		{
 			if (m_filterList!= null)
 			{
-				string id = XmlUtils.GetOptionalAttributeValue(configurationNode, "id");
+				var id = XmlUtils.GetOptionalAttributeValue(configurationNode, "id");
 				if (id != null)
 				{
 					var instruction = m_filterList.XPathSelectElement("SliceFilter/node[@id='" + id + "']");
 
 					if (instruction != null)
+					{
 						return false;
+					}
 				}
 			}
 

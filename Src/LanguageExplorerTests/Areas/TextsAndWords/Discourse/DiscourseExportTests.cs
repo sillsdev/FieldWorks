@@ -40,8 +40,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_chart = m_helper.SetupAChart();
 
 			m_constChart = new ConstituentChart(Cache, m_logic);
-			TestSetupServices.SetupTestPubSubSystem(out m_publisher, out m_subscriber);
-			m_propertyTable = TestSetupServices.SetupTestPropertyTable(m_publisher);
+			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
 			m_constChart.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_chartBody = m_constChart.Body;
 			m_chartBody.Cache = Cache; // don't know why constructor doesn't do this, but it doesn't.

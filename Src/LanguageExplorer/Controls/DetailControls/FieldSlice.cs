@@ -1,14 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FieldSlice.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
-// --------------------------------------------------------------------------------------------
 
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -45,19 +37,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FieldSlice"/> class.
 		/// </summary>
-		/// <param name="control">The control.</param>
 		protected FieldSlice(Control control)
 			: base(control)
 		{
 		}
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="control">The control.</param>
-		/// <param name="cache">The cache.</param>
-		/// <param name="obj">CmObject that is being displayed.</param>
-		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
+		/// <summary />
 		protected FieldSlice(Control control, LcmCache cache, ICmObject obj, int flid)
 			: base(control)
 		{
@@ -82,7 +67,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected abstract void UpdateDisplayFromDatabase();
 
-		internal protected override bool UpdateDisplayIfNeeded(int hvo, int tag)
+		protected internal override bool UpdateDisplayIfNeeded(int hvo, int tag)
 		{
 			CheckDisposed();
 			if (tag == Flid)
@@ -97,7 +82,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Called when the slice is first created, but also when it is
 		/// "reused" (e.g. refresh or new target object)
 		/// </summary>
-		/// <param name="parentDataTree"></param>
 		public override void Install(DataTree parentDataTree)
 		{
 			base.Install(parentDataTree);
@@ -109,10 +93,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected void SetFieldFromConfig()
 		{
 			Debug.Assert(m_cache != null);
-			Debug.Assert(m_configurationNode != null);
+			Debug.Assert(ConfigurationNode != null);
 
-			string className = m_cache.DomainDataByFlid.MetaDataCache.GetClassName(m_obj.ClassID);
-			m_fieldName = XmlUtils.GetMandatoryAttributeValue(m_configurationNode, "field");
+			var className = m_cache.DomainDataByFlid.MetaDataCache.GetClassName(m_obj.ClassID);
+			m_fieldName = XmlUtils.GetMandatoryAttributeValue(ConfigurationNode, "field");
 			var mdc = m_cache.DomainDataByFlid.MetaDataCache;
 			m_flid = mdc.GetFieldId2(mdc.GetClassId(className), m_fieldName, true);
 		}

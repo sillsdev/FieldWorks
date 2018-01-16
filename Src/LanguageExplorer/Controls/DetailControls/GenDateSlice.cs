@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,10 +22,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			base.FinishInit();
 			// have chooser title use the same text as the label
-			m_fieldName = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(m_configurationNode, "label", m_fieldName));
+			m_fieldName = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", m_fieldName));
 
-			((GenDateLauncher)Control).Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider,
-				"", "analysis");
+			((GenDateLauncher)Control).Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, "", "analysis");
 		}
 
 		protected override void UpdateDisplayFromDatabase()
