@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorerTests.Areas.Lists;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.Cellar;
@@ -35,7 +36,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			ICmObject cmObject = new CmObjectStub();
 			int cmObjectCustomFieldFlid = 5002500;
 			ISilDataAccess mainCacheAccessor = new SILDataAccessStub();
-			IFwMetaDataCache metadataCache=new FwMetaDataCacheStub((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
+			IFwMetaDataCache metadataCache=new FwMetaDataCacheStub(Cache.GetManagedMetaDataCache());
 
 			CreateTestData();
 			ICmPossibility cmPossibility = CreateCustomItemAddToList(m_testList, "itemname");

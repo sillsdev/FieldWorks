@@ -818,7 +818,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				node.FieldDescription = node.Label;
 			}
 
-			var metaDataCache = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
+			var metaDataCache = Cache.GetManagedMetaDataCache();
 			if (node.Children != null)
 			{
 				foreach (var child in node.Children)

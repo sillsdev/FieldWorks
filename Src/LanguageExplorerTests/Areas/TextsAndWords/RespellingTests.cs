@@ -415,7 +415,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 
 			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Return(ScrTxtParaTags.kClassId);
 			xmlCache.Stub(c => c.VecProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int[]>(publisher.VecProp));
-			xmlCache.MetaDataCache = new RespellingMdc((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
+			xmlCache.MetaDataCache = new RespellingMdc(Cache.GetManagedMetaDataCache());
 			xmlCache.Stub(c => c.get_ObjectProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_ObjectProp));
 			xmlCache.Stub(c => c.get_IntProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_IntProp));
 
@@ -499,7 +499,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 
 			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Return(ScrTxtParaTags.kClassId);
 			xmlCache.Stub(c => c.VecProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int[]>(publisher.VecProp));
-			xmlCache.MetaDataCache = new RespellingMdc((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
+			xmlCache.MetaDataCache = new RespellingMdc(Cache.GetManagedMetaDataCache());
 			xmlCache.Stub(c => c.get_ObjectProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_ObjectProp));
 			xmlCache.Stub(c => c.get_IntProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_IntProp));
 

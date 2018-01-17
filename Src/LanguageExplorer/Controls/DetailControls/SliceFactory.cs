@@ -560,17 +560,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		internal static int GetCustomFieldFlid(XElement caller, IFwMetaDataCache mdc, ICmObject obj)
 		{
 			var fieldName = XmlUtils.GetMandatoryAttributeValue(caller, "param");
-			// It would be nice to avoid all the possible throws for invalid fields, but hard
-			// to achieve in a static method.
-			try
-			{
-				var flid = mdc.GetFieldId2(obj.ClassID, fieldName, true);
-				return flid;
-			}
-			catch
-			{
-				return 0;
-			}
+			int flid;
+			mdc.GetManagedMetaDataCache().TryGetFieldId(obj.ClassID, fieldName, out flid);
+			return flid;
 		}
 	}
 }

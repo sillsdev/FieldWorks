@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using LanguageExplorer.LcmUi;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -17,7 +18,6 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -2076,7 +2076,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						vwenv.AddObjVecItems(SegmentTags.kflidNotes, this, kfragSegFfChoices + ispec);
 						break;
 					default:
-						if (((IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor).IsCustom(flid))
+						if (m_cache.GetManagedMetaDataCache().IsCustom(flid))
 							AddCustomFreeFormComment(vwenv, hvoSeg, ispec);
 						break; // unknown type, ignore it.
 

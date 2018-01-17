@@ -874,7 +874,7 @@ namespace LanguageExplorer.Controls.LexText
 				m_cache = cache;
 				m_objProps = new Dictionary<int, int>();
 				m_unicodeProps = new Dictionary<int, string>();
-				SetOverrideMdc(new PhonologicalFeatureMdc((IFwMetaDataCacheManaged) MetaDataCache));
+				SetOverrideMdc(new PhonologicalFeatureMdc((IFwMetaDataCacheManaged)MetaDataCache));
 			}
 
 			public override int get_ObjectProp(int hvo, int tag)

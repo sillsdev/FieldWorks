@@ -1237,7 +1237,6 @@
     <Compile Include="LcmUi\FwLcmUI.cs" />
     <Compile Include="LcmUi\InflectionClassEditor.cs" />
     <Compile Include="LcmUi\InflectionFeatureEditor.cs" />
-    <Compile Include="LcmUi\LcmExtensions.cs" />
     <Compile Include="LcmUi\LexEntryUi.cs" />
     <Compile Include="LcmUi\LexPronunciationUi.cs" />
     <Compile Include="LcmUi\PartOfSpeechUi.cs" />

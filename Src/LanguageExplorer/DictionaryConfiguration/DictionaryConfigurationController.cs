@@ -210,7 +210,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				MasterRefreshRequired = true;
 			View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _allEntriesPublicationDecorator, PropertyTable, Cache);
 			if(_isHighlighted)
-				View.HighlightContent(View.TreeControl.Tree.SelectedNode.Tag as ConfigurableDictionaryNode, (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
+				View.HighlightContent(View.TreeControl.Tree.SelectedNode.Tag as ConfigurableDictionaryNode, Cache.GetManagedMetaDataCache());
 		}
 
 		/// <summary>
@@ -1070,10 +1070,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			Type unneeded;
 			// The class that contains the type information for the field we are inspecting
-			var lookupClass = ConfiguredXHTMLGenerator.GetTypeForConfigurationNode(parent, (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor, out unneeded);
+			var lookupClass = ConfiguredXHTMLGenerator.GetTypeForConfigurationNode(parent, cache.GetManagedMetaDataCache(), out unneeded);
 			// If the node describes a collection we may want to add the custom field node if the collection is of
 			// the type that the field is added to. (e.g. Senses, ExampleSentences)
-			if(ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(parent, (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor) == PropertyType.CollectionType)
+			if(ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(parent, cache.GetManagedMetaDataCache()) == PropertyType.CollectionType)
 			{
 				if(lookupClass.IsGenericType)
 				{
@@ -1089,7 +1089,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		public static Dictionary<string, List<int>> BuildCustomFieldMap(LcmCache cache)
 		{
-			var metaDataCache = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
+			var metaDataCache = cache.GetManagedMetaDataCache();
 			var classToCustomFields = new Dictionary<string, List<int>>();
 			var fieldIds = metaDataCache.GetFieldIds();
 			var customFieldIds = fieldIds.Where(metaDataCache.IsCustom);
@@ -1185,7 +1185,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				return new List<ConfigurableDictionaryNode>();
 
 			var customFieldList = new List<ConfigurableDictionaryNode>();
-			var metaDataCache = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
+			var metaDataCache = cache.GetManagedMetaDataCache();
 			var isEntryRefType = className.EndsWith("EntryRef");
 			foreach(var field in customFieldMap[className])
 			{
@@ -1561,7 +1561,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				}
 				RefreshView();
 			};
-			var metaDataCacheAccessor = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
+			var metaDataCacheAccessor = cache.GetManagedMetaDataCache();
 			View.TreeControl.Highlight += (node, button, tooltip) =>
 			{
 				_isHighlighted = !_isHighlighted;

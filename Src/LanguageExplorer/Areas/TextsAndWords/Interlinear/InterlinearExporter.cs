@@ -6,13 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -121,7 +121,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// <item type="punct">
 				WriteItem(tag, "punct", 0);
 			}
-			else if (((IFwMetaDataCacheManaged) m_cache.MetaDataCacheAccessor).IsCustom(tag))
+			else if (m_cache.GetManagedMetaDataCache().IsCustom(tag))
 			{
 				// custom fields are not multi-strings, so pass 0 for the ws
 				WriteItem(tag, m_cache.MetaDataCacheAccessor.GetFieldName(tag), 0);

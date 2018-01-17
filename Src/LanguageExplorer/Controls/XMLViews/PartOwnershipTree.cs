@@ -11,7 +11,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 using SIL.ObjectModel;
 using SIL.Xml;
 
@@ -178,7 +177,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				case RelationshipOfRelatives.Descendent:
 				case RelationshipOfRelatives.Cousin:
 				{
-					var newClasses = new HashSet<int>(((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor).GetAllSubclasses(newListItemsClass));
+					var newClasses = new HashSet<int>(Cache.GetManagedMetaDataCache().GetAllSubclasses(newListItemsClass));
 					foreach (var hvoBeforeListChange in itemsBeforeListChange)
 					{
 						if (!Cache.ServiceLocator.IsValidObjectId(hvoBeforeListChange))

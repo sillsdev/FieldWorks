@@ -65,7 +65,7 @@ namespace LanguageExplorer.LcmUi
 			// commands if we just leave specifiedClsid zero (code takes the second branch of the if below,
 			// since CmObject does not inherit from CmPossibility, and depending on the override
 			// usually it isn't displayed, but there may be some override that does.
-			if (((IFwMetaDataCacheManaged) m_cache.DomainDataByFlid.MetaDataCache).ClassExists(className))
+			if (m_cache.GetManagedMetaDataCache().ClassExists(className))
 				specifiedClsid = m_cache.DomainDataByFlid.MetaDataCache.GetClassId(className);
 
 			var cp = (ICmPossibility) Object;

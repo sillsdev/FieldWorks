@@ -89,7 +89,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 	{
 		public FakeDecorator(ISilDataAccessManaged domainDataByFlid) : base(domainDataByFlid)
 		{
-			m_mdc = new FakeMdc((IFwMetaDataCacheManaged)domainDataByFlid.MetaDataCache);
+			m_mdc = new FakeMdc(domainDataByFlid.GetManagedMetaDataCache());
 		}
 		public Dictionary<int, int> HvoToOccurrenceCount = new Dictionary<int, int>();
 

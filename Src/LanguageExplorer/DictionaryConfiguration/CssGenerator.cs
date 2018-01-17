@@ -13,6 +13,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 using Property = ExCSS.Property;
@@ -634,7 +635,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			// TODO: REFACTOR this method to handle certain nodes more specifically. The options type should be used to branch into node specific code.
 			var analWsId = cache.DefaultAnalWs;
 			var wsEngine = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(analWsId);
-			var metaDataCacheAccessor = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
+			var metaDataCacheAccessor = cache.GetManagedMetaDataCache();
 			parentSelector = GetParentForFactoredReference(parentSelector, configNode);
 			var rules = new List<StyleRule>();
 			// simpleSelector is used for nodes that use before and after.  Collection type nodes produce wrong
@@ -810,7 +811,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <returns></returns>
 		private static string SelectClassName(ConfigurableDictionaryNode configNode, LcmCache cache = null)
 		{
-			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, (IFwMetaDataCacheManaged)cache?.MetaDataCacheAccessor);
+			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, cache?.GetManagedMetaDataCache());
 			return SelectClassName(configNode, type);
 		}
 

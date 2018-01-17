@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -22,13 +22,13 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.SpellChecking;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.LCModel.Infrastructure;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
@@ -345,10 +345,8 @@ namespace SIL.FieldWorks.Common.RootSites
 					return false;
 
 				// Don't use LcmCache here, it doesn't know about decorators.
-				var mdc = m_rootb.DataAccess.MetaDataCache;
-				if (mdc == null)
-					mdc = Cache.MetaDataCacheAccessor;		// better than null!
-				if (mdc is IFwMetaDataCacheManaged && !((IFwMetaDataCacheManaged)mdc).FieldExists(flid))
+				var mdc = m_rootb.DataAccess.GetManagedMetaDataCache() ?? Cache.GetManagedMetaDataCache();
+				if (!mdc.FieldExists(flid))
 					return false; // some sort of special field; if it ought to be formattable, make a decorator MDC that recognizes it.
 				CellarPropertyType type = (CellarPropertyType)mdc.GetFieldType((int)flid);
 				return !(type == CellarPropertyType.Unicode
@@ -415,8 +413,8 @@ namespace SIL.FieldWorks.Common.RootSites
 							}
 							else
 							{
-								var mdc = m_rootb.DataAccess.MetaDataCache;
-								if (mdc is IFwMetaDataCacheManaged && !((IFwMetaDataCacheManaged)mdc).FieldExists(flidAnchor))
+								var mdc = m_rootb.DataAccess.GetManagedMetaDataCache();
+								if (!mdc.FieldExists(flidAnchor))
 								{
 									bestStyle = string.Empty;
 								}

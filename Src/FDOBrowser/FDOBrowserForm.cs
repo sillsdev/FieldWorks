@@ -1215,7 +1215,7 @@ namespace FDOBrowser
 		/// ------------------------------------------------------------------------------------
 		private HashSet<int> GetClassesForRefObjs(int flid, int sclid, out List<ICmPossibility> possList)
 		{
-			var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+			var mdc = m_cache.GetManagedMetaDataCache();
 
 			var clid = Int32.Parse(flid.ToString().Substring(0,flid.ToString().Length-3));
 
@@ -1412,7 +1412,7 @@ namespace FDOBrowser
 		private string GetTypeForRefObjs(int flid, int sclid, bool dispFlag, ref int saveClid)
 		{
 			var list = new List<string>();
-			var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+			var mdc = m_cache.GetManagedMetaDataCache();
 
 			var clid = Int32.Parse(flid.ToString().Substring(0,flid.ToString().Length-3));
 			IEnumerable<ObjectLabel> labels = new List<ObjectLabel>();;

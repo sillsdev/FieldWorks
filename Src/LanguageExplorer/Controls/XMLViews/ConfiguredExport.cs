@@ -22,7 +22,6 @@ using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Infrastructure;
 using SIL.WritingSystems;
 using SIL.Xml;
 
@@ -1012,7 +1011,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			string sXml;
 			try
 			{
-				var mdc = (IFwMetaDataCacheManaged)m_sda.MetaDataCache;
+				var mdc = m_sda.GetManagedMetaDataCache();
 				var cpt = (CellarPropertyType)mdc.GetFieldType(flid);
 				var sField = mdc.GetFieldName((int)flid);
 				switch (cpt)

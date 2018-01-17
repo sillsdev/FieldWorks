@@ -2,9 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -13,7 +13,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		internal PossibilityAtomicReferenceViewSdaDecorator(ISilDataAccessManaged domainDataByFlid)
 			: base(domainDataByFlid)
 		{
-			SetOverrideMdc(new PossibilityAtomicReferenceViewMetaDataCacheDecorator((IFwMetaDataCacheManaged)domainDataByFlid.MetaDataCache));
+			SetOverrideMdc(new PossibilityAtomicReferenceViewMetaDataCacheDecorator(domainDataByFlid.GetManagedMetaDataCache()));
 		}
 
 		public ITsString Tss { get; set; }

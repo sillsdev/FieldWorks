@@ -2,10 +2,11 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorer.LcmUi
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// Restore some LCM behavior that went away, when LCM went away.
@@ -44,6 +45,46 @@ namespace LanguageExplorer.LcmUi
 		public static string ItemTypeName(this ICmCustomItem me)
 		{
 			return StringTable.Table.GetString(me.GetType().Name, "ClassNames");
+		}
+
+		public static bool TryGetFieldId(this IFwMetaDataCacheManaged me, string className, string fieldName, out int flid, bool includeBaseClasses = true)
+		{
+			if (me.FieldExists(className, fieldName, includeBaseClasses))
+			{
+				var classId = me.GetClassId(className);
+				flid = me.GetFieldId2(classId, fieldName, includeBaseClasses);
+				return true;
+			}
+			flid = 0;
+			return false;
+		}
+
+		public static bool TryGetFieldId(this IFwMetaDataCacheManaged me, int classId, string fieldName, out int flid, bool includeBaseClasses = true)
+		{
+			if (me.FieldExists(classId, fieldName, includeBaseClasses))
+			{
+				flid = me.GetFieldId2(classId, fieldName, includeBaseClasses);
+				return true;
+			}
+			flid = 0;
+			return false;
+		}
+
+		public static IFwMetaDataCacheManaged GetManagedMetaDataCache(this LcmCache me)
+		{
+			return me.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
+		}
+
+		public static IFwMetaDataCacheManaged GetManagedMetaDataCache(this ISilDataAccess me)
+		{
+			// Thoeretically it could be null.
+			return me.MetaDataCache as IFwMetaDataCacheManaged;
+		}
+
+		public static IFwMetaDataCacheManaged GetManagedMetaDataCache(this IFwMetaDataCache me)
+		{
+			// Thoeretically it could be null.
+			return me as IFwMetaDataCacheManaged;
 		}
 	}
 }

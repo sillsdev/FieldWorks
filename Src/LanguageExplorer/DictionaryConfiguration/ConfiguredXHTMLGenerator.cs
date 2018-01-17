@@ -825,7 +825,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			if (config.IsCustomField && config.SubField == null)
 			{
-				var customFieldOwnerClassName = GetClassNameForCustomFieldParent(config, (IFwMetaDataCacheManaged)settings.Cache.MetaDataCacheAccessor);
+				var customFieldOwnerClassName = GetClassNameForCustomFieldParent(config, settings.Cache.GetManagedMetaDataCache());
 				if (!GetPropValueForCustomField(field, config, cache, customFieldOwnerClassName, config.FieldDescription, ref propertyValue))
 				{
 					return string.Empty;
@@ -885,7 +885,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			ICmObject fileOwner;
 			var typeForNode = config.IsCustomField
 										? GetPropertyTypeFromReflectedTypes(propertyValue.GetType(), null)
-										: GetPropertyTypeForConfigurationNode(config, propertyValue.GetType(), (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor);
+										: GetPropertyTypeForConfigurationNode(config, propertyValue.GetType(), cache.GetManagedMetaDataCache());
 			switch (typeForNode)
 			{
 				case PropertyType.CollectionType:
@@ -983,7 +983,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static bool GetPropValueForCustomField(object fieldOwner, ConfigurableDictionaryNode config,
 			LcmCache cache, string customFieldOwnerClassName, string customFieldName, ref object propertyValue)
 		{
-			int customFieldFlid = GetCustomFieldFlid(config, (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor, customFieldOwnerClassName, customFieldName);
+			int customFieldFlid = GetCustomFieldFlid(config, cache.GetManagedMetaDataCache(), customFieldOwnerClassName, customFieldName);
 			if (customFieldFlid != 0)
 			{
 				var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
@@ -991,7 +991,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				if (fieldOwner is ISenseOrEntry)
 				{
 					specificObject = ((ISenseOrEntry)fieldOwner).Item;
-					if (!((IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor).GetFields(specificObject.ClassID,
+					if (!cache.GetManagedMetaDataCache().GetFields(specificObject.ClassID,
 						true, (int)CellarPropertyTypeFilter.All).Contains(customFieldFlid))
 					{
 						return false;

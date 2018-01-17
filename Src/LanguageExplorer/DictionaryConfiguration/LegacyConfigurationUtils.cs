@@ -8,9 +8,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.XMLViews;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
 using SIL.Xml;
 
 namespace LanguageExplorer.DictionaryConfiguration
@@ -310,7 +310,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				// Failure should be fairly unusual, but, for example, part MoForm-Jt-FormEnvPub attempts to display
 				// the property PhoneEnv inside an if that checks that the MoForm is one of the subclasses that has
 				// the PhoneEnv property. MoForm itself does not.
-				if (!((IFwMetaDataCacheManaged)converter.Cache.DomainDataByFlid.MetaDataCache).FieldExists(className, sField, true))
+				if (!converter.Cache.GetManagedMetaDataCache().FieldExists(className, sField, true))
 					return;
 				var flid = converter.Cache.DomainDataByFlid.MetaDataCache.GetFieldId(className, sField, true);
 				var type = (CellarPropertyType)converter.Cache.DomainDataByFlid.MetaDataCache.GetFieldType(flid);

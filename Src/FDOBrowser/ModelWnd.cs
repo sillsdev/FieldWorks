@@ -45,7 +45,7 @@ namespace FDOBrowser
 			// Add model browsing cache (no data, just model browsing).
 			m_cache = LcmCache.CreateCacheWithNoLangProj(new BrowserProjectId(BackendProviderType.kMemoryOnly, null), "en",
 				new SilentLcmUI(this), FwDirectoryFinder.LcmDirectories, new LcmSettings());
-			m_mdc = (IFwMetaDataCacheManaged)m_cache.MainCacheAccessor.MetaDataCache;
+			m_mdc = m_cache.GetManagedMetaDataCache();
 			PopulateModelTree();
 
 			if (Properties.Settings.Default.ModelWndSplitterLocation > 0)

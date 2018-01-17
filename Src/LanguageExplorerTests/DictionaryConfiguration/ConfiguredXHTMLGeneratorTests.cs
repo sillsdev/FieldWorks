@@ -11,7 +11,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using NUnit.Framework;
-using SIL.Linq;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -33,7 +32,6 @@ using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Impls;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
@@ -1693,7 +1691,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = PropertyType.InvalidProperty;
 			// SUT
-			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(memberNode, (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor));
+			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(memberNode, Cache.GetManagedMetaDataCache()));
 			Assert.That(result, Is.EqualTo(PropertyType.PrimitiveType));
 		}
 
@@ -1782,7 +1780,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				textObject.ParagraphsOS.Add(paragraph);
 				paragraph.Contents = TsStringUtils.MakeString(customData, _wsFr);
 				//SUT
-				var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(customFieldNode, (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
+				var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(customFieldNode, Cache.GetManagedMetaDataCache());
 				Assert.AreEqual(PropertyType.PrimitiveType, type);
 			}
 		}
@@ -5535,7 +5533,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				// Set custom field data
 				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
 				//SUT
-				Assert.AreEqual(PropertyType.PrimitiveType, ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(customFieldNode, (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor));
+				Assert.AreEqual(PropertyType.PrimitiveType, ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(customFieldNode, Cache.GetManagedMetaDataCache()));
 			}
 		}
 

@@ -2277,11 +2277,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var flid = 0;
 			if (attrName != null)
 			{
-				try
-				{
-					flid = m_mdc.GetFieldId2(obj.ClassID, attrName, true);
-				}
-				catch
+				if (!obj.Cache.GetManagedMetaDataCache().TryGetFieldId(obj.ClassID, attrName, out flid))
 				{
 					throw new ApplicationException($"DataTree could not find the flid for attribute '{attrName}' of class '{obj.ClassID}'.");
 				}

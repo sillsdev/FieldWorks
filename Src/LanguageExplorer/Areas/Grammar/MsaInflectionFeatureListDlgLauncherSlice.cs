@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -133,19 +133,13 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <summary />
 		protected static int GetFlid(XElement node, ICmObject obj)
 		{
-			string attrName = XmlUtils.GetOptionalAttributeValue(node, "field");
-			int flid = 0;
+			var attrName = XmlUtils.GetOptionalAttributeValue(node, "field");
+			var flid = 0;
 			if (attrName != null)
 			{
-				try
+				if (!obj.Cache.GetManagedMetaDataCache().TryGetFieldId(obj.ClassID, attrName, out flid))
 				{
-					flid = obj.Cache.DomainDataByFlid.MetaDataCache.GetFieldId2(obj.ClassID, attrName, true);
-				}
-				catch
-				{
-					throw new ApplicationException(
-						"DataTree could not find the flid for attribute '" + attrName +
-						"' of class '" + obj.ClassID + "'.");
+					throw new ApplicationException($"DataTree could not find the flid for attribute '{attrName}' of class '{obj.ClassID}'.");
 				}
 			}
 			return flid;

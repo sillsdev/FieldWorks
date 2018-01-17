@@ -556,7 +556,7 @@ namespace LanguageExplorer.Areas
 			}
 			// Name actually gets set later to whatever Userlabel is, so test Userlabel.
 			// 'false' is the best answer.
-			return ((IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor).FieldExists(fdw.Fd.Class, fdw.Fd.Userlabel, true);
+			return m_cache.GetManagedMetaDataCache().FieldExists(fdw.Fd.Class, fdw.Fd.Userlabel, true);
 		}
 
 		private static string FindUniqueName(IReadOnlyCollection<FDWrapper> allCustomFields, FDWrapper currentFdw)

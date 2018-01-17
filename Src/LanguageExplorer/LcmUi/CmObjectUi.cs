@@ -555,7 +555,7 @@ namespace LanguageExplorer.LcmUi
 
 
 			int specifiedClsid = 0;
-			var mdc = (IFwMetaDataCacheManaged)m_cache.DomainDataByFlid.MetaDataCache;
+			var mdc = m_cache.GetManagedMetaDataCache();
 			if (mdc.ClassExists(className)) // otherwise is is a 'magic' class name treated specially in other OnDisplays.
 				specifiedClsid = mdc.GetClassId(className);
 

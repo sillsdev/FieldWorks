@@ -27,7 +27,6 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.Reporting;
 
@@ -591,7 +590,7 @@ namespace LanguageExplorer
 
 		public bool AreCustomFieldsAProblem(int[] clsids)
 		{
-			var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+			var mdc = m_cache.GetManagedMetaDataCache();
 			var rePunct = new Regex(@"\p{P}");
 			foreach (var clsid in clsids)
 			{
@@ -1238,7 +1237,7 @@ namespace LanguageExplorer
 					// We can get here with an irrelevant target hvo, for example by inserting a new
 					// affix allomorph in an entry (see LT-4025).  So make sure we have a suitable
 					// target before complaining to the user about a filter being on.
-					var mdc = (IFwMetaDataCacheManaged)VirtualListPublisher.MetaDataCache;
+					var mdc = VirtualListPublisher.GetManagedMetaDataCache();
 					var clidList = mdc.FieldExists(m_flid) ? mdc.GetDstClsId(m_flid) : -1;
 					var clidObj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoTarget).ClassID;
 

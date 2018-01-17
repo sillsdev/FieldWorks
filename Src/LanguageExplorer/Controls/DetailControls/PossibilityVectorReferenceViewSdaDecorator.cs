@@ -5,11 +5,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using LanguageExplorer.Controls.XMLViews;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -31,7 +31,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public PossibilityVectorReferenceViewSdaDecorator(ISilDataAccessManaged domainDataByFlid, LcmCache cache, string displayNameProperty, string displayWs)
 			: base(domainDataByFlid)
 		{
-			SetOverrideMdc(new PossibilityVectorReferenceViewMetaDataCacheDecorator((IFwMetaDataCacheManaged)domainDataByFlid.MetaDataCache));
+			SetOverrideMdc(new PossibilityVectorReferenceViewMetaDataCacheDecorator(domainDataByFlid.GetManagedMetaDataCache()));
 			m_strings = new Dictionary<int, ITsString>();
 			Cache = cache;
 			DisplayNameProperty = displayNameProperty;

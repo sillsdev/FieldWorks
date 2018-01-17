@@ -16,7 +16,6 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Application.ApplicationServices;
 using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -383,7 +382,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							break;
 						default:
 							var classId = cache.MetaDataCacheAccessor.GetClassId("Segment");
-							var mdc = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
+							var mdc = cache.GetManagedMetaDataCache();
 							foreach (int flid in mdc.GetFields(classId, false, (int)CellarPropertyTypeFilter.All))
 							{
 								if (!mdc.IsCustom(flid))

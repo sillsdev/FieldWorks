@@ -15,7 +15,6 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer
 {
@@ -339,7 +338,7 @@ namespace LanguageExplorer
 		private void BuildFieldsToFilter()
 		{
 			m_fieldsToFilter.Clear();
-			var mdc = ((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
+			var mdc = Cache.GetManagedMetaDataCache();
 			// Filter EVERY field in the entire model that stores entries, senses, examples, and (slightly differently)
 			// LexReferences or LexEntryRefs in vector properties.
 			foreach (var flid in mdc.GetFieldIds())

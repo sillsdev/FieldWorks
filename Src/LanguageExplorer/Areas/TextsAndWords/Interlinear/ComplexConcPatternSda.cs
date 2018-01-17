@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
@@ -21,7 +22,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public ComplexConcPatternSda(ISilDataAccessManaged domainDataByFlid, ComplexConcPatternNode root)
 			: base(domainDataByFlid)
 		{
-			SetOverrideMdc(new ComplexConcordancePatternMdc((IFwMetaDataCacheManaged) domainDataByFlid.MetaDataCache));
+			SetOverrideMdc(new ComplexConcordancePatternMdc(domainDataByFlid.GetManagedMetaDataCache()));
 			m_nodes = new Dictionary<int, ComplexConcPatternNode>();
 			m_root = root;
 			m_root.Sda = this;

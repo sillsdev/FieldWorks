@@ -144,7 +144,7 @@ namespace FDOBrowser
 			using (LcmCache cache = LcmCache.CreateCacheWithNoLangProj(new BrowserProjectId(BackendProviderType.kMemoryOnly, null), "en",
 				new SilentLcmUI(threadHelper), FwDirectoryFinder.LcmDirectories, new LcmSettings()))
 			{
-				IFwMetaDataCacheManaged mdc = (IFwMetaDataCacheManaged)cache.MainCacheAccessor.MetaDataCache;
+				IFwMetaDataCacheManaged mdc = cache.GetManagedMetaDataCache();
 				s_allFDOClassNames = new List<string>();
 
 				foreach (int clsid in mdc.GetClassIds())

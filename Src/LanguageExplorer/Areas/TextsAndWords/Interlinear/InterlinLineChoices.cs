@@ -16,6 +16,7 @@ using System.Linq;
 using System.Text;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
@@ -23,7 +24,6 @@ using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -393,7 +393,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					if (m_cache != null)
 					{
 						var classId = m_cache.MetaDataCacheAccessor.GetClassId("Segment");
-						var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+						var mdc = m_cache.GetManagedMetaDataCache();
 						foreach (int flid in mdc.GetFields(classId, false, (int)CellarPropertyTypeFilter.All))
 						{
 							if (!mdc.IsCustom(flid))
@@ -751,7 +751,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					fWordLevel = false;
 					break;
 				default:
-					var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+					var mdc = m_cache.GetManagedMetaDataCache();
 					if (!mdc.IsCustom(flid))
 					{
 						throw new Exception("Adding unknown field to interlinear");

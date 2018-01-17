@@ -33,7 +33,6 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 using SIL.Windows.Forms;
 using SIL.Xml;
 using static System.Char;
@@ -953,7 +952,7 @@ namespace LanguageExplorer.Areas
 				// Failure should be fairly unusual, but, for example, part MoForm-Jt-FormEnvPub attempts to display
 				// the property PhoneEnv inside an if that checks that the MoForm is one of the subclasses that has
 				// the PhoneEnv property. MoForm itself does not.
-				var mdc = (IFwMetaDataCacheManaged)Cache.DomainDataByFlid.MetaDataCache;
+				var mdc = Cache.GetManagedMetaDataCache();
 				if (!mdc.FieldExists(className, sField, true))
 				{
 					return;
