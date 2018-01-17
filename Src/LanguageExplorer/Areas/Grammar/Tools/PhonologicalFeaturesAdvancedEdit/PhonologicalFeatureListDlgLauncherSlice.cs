@@ -34,7 +34,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -68,13 +70,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		#endregion
 
 		/// <summary />
-		public override RootSite RootSite
-		{
-			get
-			{
-				return ((PhonologicalFeatureListDlgLauncher)Control).MainControl as RootSite;
-			}
-		}
+		public override RootSite RootSite => ((PhonologicalFeatureListDlgLauncher)Control).MainControl as RootSite;
 
 		/// <summary />
 		public override void Install(DataTree parentDataTree)
@@ -85,7 +81,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 
 			m_flid = GetFlid(ConfigurationNode, m_obj);
 			if (m_flid != 0)
+			{
 				m_fs = GetFeatureStructureFromOwner(m_obj, m_flid);
+			}
 			else
 			{
 				m_fs = m_obj as IFsFeatStruc;
@@ -117,11 +115,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 					switch (m_obj.ClassID)
 					{
 						case PhPhonemeTags.kClassId:
-							var phoneme = (IPhPhoneme) m_obj;
+							var phoneme = (IPhPhoneme)m_obj;
 							phoneme.FeaturesOA = null;
 							break;
 						case PhNCFeaturesTags.kClassId:
-							var features = (IPhNCFeatures) m_obj;
+							var features = (IPhNCFeatures)m_obj;
 							features.FeaturesOA = null;
 							break;
 					}
@@ -131,24 +129,23 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 
 		private static int GetFlid(XElement node, ICmObject obj)
 		{
-			string attrName = XmlUtils.GetOptionalAttributeValue(node, "field");
+			var attrName = XmlUtils.GetOptionalAttributeValue(node, "field");
 			var flid = 0;
-			if (attrName != null)
+			if (attrName == null)
 			{
-				if (!obj.Cache.GetManagedMetaDataCache().TryGetFieldId(obj.ClassID, attrName, out flid))
-				{
-					throw new ApplicationException($"DataTree could not find the flid for attribute '{attrName}' of class '{obj.ClassID}'.");
-				}
+				return flid;
+			}
+			if (!obj.Cache.GetManagedMetaDataCache().TryGetFieldId(obj.ClassID, attrName, out flid))
+			{
+				throw new ApplicationException($"DataTree could not find the flid for attribute '{attrName}' of class '{obj.ClassID}'.");
 			}
 			return flid;
 		}
 
 		private static IFsFeatStruc GetFeatureStructureFromOwner(ICmObject obj, int flid)
 		{
-			int hvoFs = obj.Cache.DomainDataByFlid.get_ObjectProp(obj.Hvo, flid);
-			if (hvoFs == 0)
-				return null;
-			return obj.Services.GetInstance<IFsFeatStrucRepository>().GetObject(hvoFs);
+			var hvoFs = obj.Cache.DomainDataByFlid.get_ObjectProp(obj.Hvo, flid);
+			return hvoFs == 0 ? null : obj.Services.GetInstance<IFsFeatStrucRepository>().GetObject(hvoFs);
 		}
 
 		/// <summary>
@@ -170,20 +167,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		/// </returns>
 		public static bool ShowSliceForVisibleIfData(XElement node, ICmObject obj)
 		{
+			var flid = GetFlid(node, obj);
+			var fs = flid != 0 ? GetFeatureStructureFromOwner(obj, flid) : obj as IFsFeatStruc;
 
-			//FDO.Cellar.IFsFeatStruc fs = obj as FDO.Cellar.IFsFeatStruc;
-			int flid = GetFlid(node, obj);
-			IFsFeatStruc fs;
-			if (flid != 0)
-				fs = GetFeatureStructureFromOwner(obj, flid);
-			else
-				fs = obj as IFsFeatStruc;
-			if (fs != null)
-			{
-				if (fs.FeatureSpecsOC.Count > 0)
-					return true;
-			}
-			return false;
+			return fs?.FeatureSpecsOC.Count > 0;
 		}
 
 		/// <summary />

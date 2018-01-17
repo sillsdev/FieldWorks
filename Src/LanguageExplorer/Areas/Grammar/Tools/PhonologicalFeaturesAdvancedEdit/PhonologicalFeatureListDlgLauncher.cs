@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,15 +26,16 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		/// <summary>
 		/// Initialize the launcher.
 		/// </summary>
-		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName,
-			IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 			m_PhonologicalFeatureListDlgLauncherView.Init(PropertyTable.GetValue<LcmCache>("cache"), obj as IFsFeatStruc);
 			if (Slice.Object.ClassID == PhPhonemeTags.kClassId)
+			{
 				m_PhonologicalFeatureListDlgLauncherView.Phoneme = Slice.Object as IPhPhoneme;
+			}
 		}
 
 		/// <summary>
@@ -46,29 +47,37 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 			using (PhonologicalFeatureChooserDlg dlg = new PhonologicalFeatureChooserDlg())
 			{
 				IFsFeatStruc originalFs = null;
-				Slice parentSlice = Slice;
-				int parentSliceClass = parentSlice.Object.ClassID;
-				int owningFlid = (parentSlice as PhonologicalFeatureListDlgLauncherSlice).Flid;
+				var parentSlice = Slice;
+				var parentSliceClass = parentSlice.Object.ClassID;
+				var owningFlid = (parentSlice as PhonologicalFeatureListDlgLauncherSlice).Flid;
 				switch (parentSliceClass)
 				{
 					case PhPhonemeTags.kClassId:
-						IPhPhoneme phoneme = parentSlice.Object as IPhPhoneme;
+						var phoneme = parentSlice.Object as IPhPhoneme;
 						if (phoneme.FeaturesOA != null)
+						{
 							originalFs = phoneme.FeaturesOA;
+						}
 						break;
 					case PhNCFeaturesTags.kClassId:
-						IPhNCFeatures features = parentSlice.Object as IPhNCFeatures;
+						var features = parentSlice.Object as IPhNCFeatures;
 						if (features.FeaturesOA != null)
+						{
 							originalFs = features.FeaturesOA;
+						}
 						break;
 				}
 
 				if (originalFs == null)
+				{
 					dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, parentSlice.Object, owningFlid);
+				}
 				else
+				{
 					dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, originalFs);
+				}
 
-				DialogResult result = dlg.ShowDialog(parentSlice.FindForm());
+				var result = dlg.ShowDialog(parentSlice.FindForm());
 				if (result == DialogResult.OK)
 				{
 					if (dlg.FS != null)
@@ -98,14 +107,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}

@@ -54,13 +54,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				if (m_menuHandler != null)
-					m_menuHandler.Dispose();
+				m_menuHandler?.Dispose();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -78,9 +79,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		public override void FinishInit()
 		{
 			CheckDisposed();
-			IWritingSystemContainer wsContainer = Cache.ServiceLocator.WritingSystems;
-			bool fVernRTL = wsContainer.DefaultVernacularWritingSystem.RightToLeftScript;
-			bool fAnalRTL = wsContainer.DefaultAnalysisWritingSystem.RightToLeftScript;
+			var wsContainer = Cache.ServiceLocator.WritingSystems;
+			var fVernRTL = wsContainer.DefaultVernacularWritingSystem.RightToLeftScript;
+			var fAnalRTL = wsContainer.DefaultAnalysisWritingSystem.RightToLeftScript;
 			var xa = ConfigurationNode.Attribute("layout");
 			// To properly fix LT-6239, we need to consider all four mixtures of directionality
 			// involving the vernacular (table) and analysis (slot name) writing systems.
@@ -88,38 +89,57 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			if (fVernRTL && fAnalRTL)
 			{
 				if (xa.Value.EndsWith("RTLinLTR") || xa.Value.EndsWith("LTRinRTL"))
+				{
 					xa.Value = xa.Value.Substring(0, xa.Value.Length - 8);
+				}
 				if (!xa.Value.EndsWith("RTL"))
+				{
 					xa.Value += "RTL";		// both vern and anal are RTL
+				}
 			}
-			else if (fVernRTL && !fAnalRTL)
+			else if (fVernRTL)
 			{
 				if (xa.Value.EndsWith("RTLinLTR"))
+				{
 					xa.Value = xa.Value.Substring(0, xa.Value.Length - 8);
+				}
 				else if (xa.Value.EndsWith("RTL") && !xa.Value.EndsWith("LTRinRTL"))
+				{
 					xa.Value = xa.Value.Substring(0, xa.Value.Length - 3);
+				}
 				if (!xa.Value.EndsWith("LTRinRTL"))
+				{
 					xa.Value += "LTRinRTL";		// LTR anal name in RTL vern table
+				}
 			}
-			else if (!fVernRTL && fAnalRTL)
+			else if (fAnalRTL)
 			{
 				if (xa.Value.EndsWith("LTRinRTL"))
+				{
 					xa.Value = xa.Value.Substring(0, xa.Value.Length - 8);
+				}
 				else if (xa.Value.EndsWith("RTL"))
+				{
 					xa.Value = xa.Value.Substring(0, xa.Value.Length - 3);
+				}
 				if (!xa.Value.EndsWith("RTLinLTR"))
+				{
 					xa.Value += "RTLinLTR";		// RTL anal name in LTR vern table
+				}
 			}
 			else
 			{
 				if (xa.Value.EndsWith("RTLinLTR") || xa.Value.EndsWith("LTRinRTL"))
+				{
 					xa.Value = xa.Value.Substring(0, xa.Value.Length - 8);
+				}
 				else if (xa.Value.EndsWith("RTL"))
+				{
 					xa.Value = xa.Value.Substring(0, xa.Value.Length - 3);
+				}
 				// both vern and anal are LTR (unmarked case)
 			}
-			var ctrl = new InflAffixTemplateControl(PropertyTable.GetValue<LcmCache>("cache"),
-				Object.Hvo, ConfigurationNode);
+			var ctrl = new InflAffixTemplateControl(PropertyTable.GetValue<LcmCache>("cache"), Object.Hvo, ConfigurationNode);
 			ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			Control = ctrl;
 			m_menuHandler = InflAffixTemplateMenuHandler.Create(ctrl, ConfigurationNode);
@@ -134,7 +154,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 #endif
 			ctrl.SetStringTableValues();
 			if (ctrl.RootBox == null)
+			{
 				ctrl.MakeRoot();
+			}
 		}
 
 		public InflAffixTemplateSlice(SimpleRootSite ctrlT): base(ctrlT)

@@ -31,14 +31,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}
@@ -49,15 +48,20 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		/// </summary>
 		protected override void HandleChooser()
 		{
-			Form frm = FindForm();
+			var frm = FindForm();
 			WaitCursor wc = null;
 			BaseGoDlg dlg = null;
 			try
 			{
 				if (frm != null)
+				{
 					wc = new WaitCursor(frm);
+				}
+
 				if (m_obj is IMoAlloAdhocProhib)
+				{
 					dlg = new LinkAllomorphDlg();
+				}
 				else
 				{
 					Debug.Assert(m_obj is IMoMorphAdhocProhib);
@@ -67,14 +71,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 				Debug.Assert(dlg != null);
 				dlg.SetDlgInfo(m_cache, null);
 				if (dlg.ShowDialog(frm) == DialogResult.OK)
+				{
 					AddItem(dlg.SelectedObject);
+				}
 			}
 			finally
 			{
-				if (wc != null)
-					wc.Dispose();
-				if (dlg != null)
-					dlg.Dispose();
+				wc?.Dispose();
+				dlg?.Dispose();
 			}
 		}
 

@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
@@ -59,6 +60,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
+		#endregion
+
+		#region Implementation of IFlexComponent
+
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -75,7 +80,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		#endregion
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -85,21 +89,15 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed = false;
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		public bool IsDisposed { get; private set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -141,21 +139,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// other managed objects, as they already have been garbage collected.
 		/// Only unmanaged resources can be disposed.
 		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -174,7 +165,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			Publisher = null;
 			Subscriber = null;
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
@@ -182,22 +173,19 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <summary>
 		/// factory method which creates the correct subclass based on the XML parameters
 		/// </summary>
-		/// <param name="inflAffixTemplateCtrl"></param>
-		/// <param name="configuration"></param>
-		/// <returns></returns>
 		internal static InflAffixTemplateMenuHandler Create(InflAffixTemplateControl inflAffixTemplateCtrl, XElement configuration)
 		{
 			InflAffixTemplateMenuHandler h = null;
-			if(configuration != null)
+			var node = configuration?.Element("menuHandler");
+			if (node != null)
 			{
-				var node = configuration.Element("menuHandler");
-				if (node != null)
-				{
-					h = (InflAffixTemplateMenuHandler)DynamicLoader.CreateObject(node);
-				}
+				h = (InflAffixTemplateMenuHandler)DynamicLoader.CreateObject(node);
 			}
-			if (h == null)			//no class specified, so just returned a generic InflAffixTemplateControl
+
+			if (h == null) //no class specified, so just returned a generic InflAffixTemplateControl
+			{
 				h = new InflAffixTemplateMenuHandler();
+			}
 			h.InflAffixTemplate = inflAffixTemplateCtrl;
 			return h;
 		}
@@ -249,13 +237,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		}
 #endif
 
-		protected LcmCache Cache
-		{
-			get
-			{
-				return m_inflAffixTemplateCtrl.Cache;
-			}
-		}
+		protected LcmCache Cache => m_inflAffixTemplateCtrl.Cache;
 
 		/// <summary>
 		/// Invoked by a DataTree (which is in turn invoked by the slice)
@@ -266,19 +248,23 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			CheckDisposed();
 
 			var configuration = e.ConfigurationNode;
-			string menuId = XmlUtils.GetOptionalAttributeValue(configuration, "menu");
+			var menuId = XmlUtils.GetOptionalAttributeValue(configuration, "menu");
 
 			//an empty menu attribute means no menu
-			if (menuId != null && menuId.Length== 0)
+			if (menuId != null && menuId.Length == 0)
+			{
 				return;
+			}
 
 			//a missing menu attribute means "figure out a default"
 			if (menuId == null)
 			{
 				menuId="mnuInflAffixTemplate-Error"; // this is our default
 			}
-			if (menuId == "")
+			if (menuId == string.Empty)
+			{
 				return;	//explicitly stated that there should not be a menu
+			}
 
 			m_rgfmi = BuildMenu(menuId);
 			LaunchFwContextMenu(new Point(Cursor.Position.X, Cursor.Position.Y));
@@ -287,7 +273,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		private void LaunchFwContextMenu(Point ptLoc)
 		{
 			if (m_rgfmi == null || m_rgfmi.Count == 0)
+			{
 				return;
+			}
 			m_fConstructingMenu = true;
 			if (m_clb == null)
 			{
@@ -300,47 +288,51 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				m_clb.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 			}
 			m_clb.Items.Clear();
-			for (int i = 0; i < m_rgfmi.Count; ++i)
+			foreach (var menuItem in m_rgfmi)
 			{
-				if (m_rgfmi[i].Enabled)
-					m_clb.Items.Add(m_rgfmi[i].Label);
+				if (menuItem.Enabled)
+				{
+					m_clb.Items.Add(menuItem.Label);
+				}
 			}
 			AdjustListBoxSize();
 			m_clb.AdjustSize(500, 400); // these are maximums!
 			m_clb.SelectedIndex = 0;
-			Rectangle boundsLauncher = new Rectangle(ptLoc, new Size(10,10));
-			Rectangle boundsScreen = Screen.GetWorkingArea(m_inflAffixTemplateCtrl);
+			var boundsLauncher = new Rectangle(ptLoc, new Size(10,10));
+			var boundsScreen = Screen.GetWorkingArea(m_inflAffixTemplateCtrl);
 			m_fConstructingMenu = false;
 			m_clb.Launch(boundsLauncher, boundsScreen);
 		}
 
 		private void AdjustListBoxSize()
 		{
-			using (System.Drawing.Graphics g = m_inflAffixTemplateCtrl.CreateGraphics())
+			using (Graphics g = m_inflAffixTemplateCtrl.CreateGraphics())
 			{
-				int nMaxWidth = 0;
-				int nHeight = 0;
-				System.Collections.IEnumerator ie = m_clb.Items.GetEnumerator();
+				var nMaxWidth = 0;
+				var nHeight = 0;
+				var ie = m_clb.Items.GetEnumerator();
 				while (ie.MoveNext())
 				{
 					string s = null;
 					if (ie.Current is ITsString)
 					{
-						ITsString tss = ie.Current as ITsString;
+						var tss = (ITsString)ie.Current;
 						s = tss.Text;
 					}
-					else if (ie.Current is String)
+					else if (ie.Current is string)
 					{
-						s = ie.Current as string;
+						s = (string)ie.Current;
 					}
 					if (s != null)
 					{
-						SizeF szf = g.MeasureString(s, m_clb.Font);
-						int nWidth = (int)szf.Width + 2;
+						var szf = g.MeasureString(s, m_clb.Font);
+						var nWidth = (int)szf.Width + 2;
 						if (nMaxWidth < nWidth)
+						{
 							// 2 is not quite enough for height if you have homograph
 							// subscripts.
 							nMaxWidth = nWidth;
+						}
 						nHeight += (int)szf.Height + 3;
 					}
 				}
@@ -353,12 +345,16 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		{
 			CheckDisposed();
 			if (m_fConstructingMenu)
+			{
 				return;
-			int iSel = m_clb.SelectedIndex;
+			}
+			var iSel = m_clb.SelectedIndex;
 			m_clb.HideForm();
-			FwMenuItem fmi = FindEnabledItem(iSel);
+			var fmi = FindEnabledItem(iSel);
 			if (fmi == null)
+			{
 				return;
+			}
 #if RANDYTODO
 			var command = new Command(m_mediator, fmi.ConfigurationNode);
 			m_mediator.SendMessage(fmi.Message, command);
@@ -368,16 +364,21 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		private FwMenuItem FindEnabledItem(int iSel)
 		{
 			if (iSel < 0 || iSel >= m_rgfmi.Count)
-				return null;
-			for (int i = 0; i < m_rgfmi.Count; ++i)
 			{
-				if (m_rgfmi[i].Enabled)
+				return null;
+			}
+			foreach (var menuItem in m_rgfmi)
+			{
+				if (!menuItem.Enabled)
 				{
-					if (iSel == 0)
-						return m_rgfmi[i];
-					else
-						--iSel;
+					continue;
 				}
+
+				if (iSel == 0)
+				{
+					return menuItem;
+				}
+				--iSel;
 			}
 			return null;
 		}
@@ -387,31 +388,36 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// won't work, and we must do something else...  Actually the analysis and user writing systems
 		/// (or fonts) may differ as well.
 		/// </summary>
-		/// <param name="menuId"></param>
-		private System.Collections.Generic.List<FwMenuItem> BuildMenu(string menuId)
+		private List<FwMenuItem> BuildMenu(string menuId)
 		{
-			System.Collections.Generic.List<FwMenuItem> rgfmi = new System.Collections.Generic.List<FwMenuItem>();
+			var rgfmi = new List<FwMenuItem>();
 			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			Debug.Assert(xnWindow != null);
 			var xnMenu = xnWindow.XPathSelectElement("contextMenus/menu[@id=\"" + menuId + "\"]");
 			Debug.Assert(xnMenu != null && xnMenu.HasElements && xnMenu.Elements().Any());
 			foreach (var xnItem in xnMenu.Elements())
 			{
-				string sCmd = XmlUtils.GetOptionalAttributeValue(xnItem, "command");
+				var sCmd = XmlUtils.GetOptionalAttributeValue(xnItem, "command");
 				Debug.Assert(!String.IsNullOrEmpty(sCmd));
-				if (String.IsNullOrEmpty(sCmd))
+				if (string.IsNullOrEmpty(sCmd))
+				{
 					continue;
+				}
 				var xn = xnWindow.XPathSelectElement("commands/command[@id=\"" + sCmd + "\"]");
 				Debug.Assert(xn != null);
 				if (xn == null)
+				{
 					continue;
-				string sMsg = XmlUtils.GetOptionalAttributeValue(xn, "message");
-				string sLabel = XmlUtils.GetOptionalAttributeValue(xn, "label");
-				Debug.Assert(!String.IsNullOrEmpty(sMsg) && !String.IsNullOrEmpty(sLabel));
-				if (String.IsNullOrEmpty(sMsg) || String.IsNullOrEmpty(sLabel))
+				}
+				var sMsg = XmlUtils.GetOptionalAttributeValue(xn, "message");
+				var sLabel = XmlUtils.GetOptionalAttributeValue(xn, "label");
+				Debug.Assert(!string.IsNullOrEmpty(sMsg) && !String.IsNullOrEmpty(sLabel));
+				if (string.IsNullOrEmpty(sMsg) || String.IsNullOrEmpty(sLabel))
+				{
 					continue;
+				}
 				ITsString tssLabel;
-				bool fEnabled = true;
+				var fEnabled = true;
 				switch (sMsg)
 				{
 					case "InflTemplateAddInflAffixMsa":
@@ -449,44 +455,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 					rgfmi.Add(new FwMenuItem(tssLabel, xn, fEnabled));
 			}
 			return rgfmi;
-		}
-	}
-
-	/// <summary>
-	/// This class stores the information needed for one menu item in a menu that must be displayed
-	/// using views code (in order to handle multiple writing systems/fonts within each menu item).
-	/// </summary>
-	class FwMenuItem
-	{
-		ITsString m_tssItem;
-		XElement m_xnConfig;
-		bool m_fEnabled;
-
-		public FwMenuItem(ITsString tssItem, XElement xnConfig, bool fEnabled)
-		{
-			m_tssItem = tssItem;
-			m_xnConfig = xnConfig;
-			m_fEnabled = fEnabled;
-		}
-
-		public ITsString Label
-		{
-			get { return m_tssItem; }
-		}
-
-		public string Message
-		{
-			get { return XmlUtils.GetOptionalAttributeValue(m_xnConfig, "message"); }
-		}
-
-		public bool Enabled
-		{
-			get { return m_fEnabled; }
-		}
-
-		public XElement ConfigurationNode
-		{
-			get { return m_xnConfig; }
 		}
 	}
 }

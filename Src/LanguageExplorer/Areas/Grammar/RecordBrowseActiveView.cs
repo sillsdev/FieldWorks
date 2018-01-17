@@ -33,8 +33,6 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <summary>
 		/// Event handler, which makes any changes to the Active flag.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		public void OnCheckBoxActiveChanged(object sender, CheckBoxActiveChangedEventArgs e)
 		{
 			OnCheckBoxChanged(sender, e);
@@ -45,17 +43,17 @@ namespace LanguageExplorer.Areas.Grammar
 		{
 			foreach (var hvo in changedHvos)
 			{
-				ICmObject obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+				var obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 				switch (obj.ClassID)
 				{
 					case PhRegularRuleTags.kClassId: // fall through
 					case PhMetathesisRuleTags.kClassId:
-						var segmentRule = obj as IPhSegmentRule;
+						var segmentRule = (IPhSegmentRule)obj;
 						segmentRule.Disabled = !segmentRule.Disabled;
 						break;
 					case MoEndoCompoundTags.kClassId: // fall through
 					case MoExoCompoundTags.kClassId:
-						var compoundRule = obj as IMoCompoundRule;
+						var compoundRule = (IMoCompoundRule)obj;
 						compoundRule.Disabled = !compoundRule.Disabled;
 						break;
 				}

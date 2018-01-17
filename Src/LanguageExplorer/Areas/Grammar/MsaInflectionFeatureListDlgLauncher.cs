@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -30,15 +30,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <summary>
 		/// Initialize the launcher.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="obj"></param>
-		/// <param name="flid"></param>
-		/// <param name="fieldName"></param>
-		/// <param name="persistProvider"></param>
-		/// <param name="displayNameProperty"></param>
-		/// <param name="displayWs"></param>
-		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName,
-			IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
@@ -54,22 +46,21 @@ namespace LanguageExplorer.Areas.Grammar
 			VectorReferenceLauncher vrl = null;
 			using (MsaInflectionFeatureListDlg dlg = new MsaInflectionFeatureListDlg())
 			{
-				IFsFeatStruc originalFs = m_obj as IFsFeatStruc;
-
-				Slice parentSlice = Slice;
+				var originalFs = m_obj as IFsFeatStruc;
+				var parentSlice = Slice;
 				if (originalFs == null)
 				{
 					int owningFlid;
-					int parentSliceClass = (int)parentSlice.Object.ClassID;
+					var parentSliceClass = (int)parentSlice.Object.ClassID;
 					switch (parentSliceClass)
 					{
 						case MoAffixAllomorphTags.kClassId:
-							IMoAffixAllomorph allo = parentSlice.Object as IMoAffixAllomorph;
+							var allo = parentSlice.Object as IMoAffixAllomorph;
 							owningFlid = (parentSlice as MsaInflectionFeatureListDlgLauncherSlice).Flid;
 							dlg.SetDlgInfo(m_cache, PropertyTable, allo, owningFlid);
 							break;
 						default:
-							IMoMorphSynAnalysis msa = parentSlice.Object as IMoMorphSynAnalysis;
+							var msa = parentSlice.Object as IMoMorphSynAnalysis;
 							owningFlid = (parentSlice as MsaInflectionFeatureListDlgLauncherSlice).Flid;
 							dlg.SetDlgInfo(m_cache, PropertyTable, msa, owningFlid);
 							break;
@@ -84,68 +75,74 @@ namespace LanguageExplorer.Areas.Grammar
 				dlg.Text = StringTable.Table.GetStringWithXPath("InflectionFeatureTitle", ksPath);
 				dlg.Prompt = StringTable.Table.GetStringWithXPath("InflectionFeaturePrompt", ksPath);
 				dlg.LinkText = StringTable.Table.GetStringWithXPath("InflectionFeatureLink", ksPath);
-				DialogResult result = dlg.ShowDialog(parentSlice.FindForm());
-				if (result == DialogResult.OK)
+				var result = dlg.ShowDialog(Slice.FindForm());
+				switch (result)
 				{
-					// Note that this may set m_obj to null. dlg.FS will be null if all inflection features have been
-					// removed. That is a valid state for this slice; m_obj deleted is not.
-					m_obj = dlg.FS;
-					m_msaInflectionFeatureListDlgLauncherView.Init(m_cache, dlg.FS);
-				}
-				else if (result == DialogResult.Yes)
-				{
-					// Get the VectorReferenceLauncher for the Inflection Features slice.
-					// Since we're not changing tools, we want to change the chooser dialog.
-					// See LT-5913 for motivation.
-					Control ctl = this.Parent;
-					while (ctl != null && !(ctl is Slice))
-						ctl = ctl.Parent;
-					Slice slice = ctl as Slice;
-					if (slice != null)
-					{
-						DataTree dt = slice.ContainingDataTree;
-						for (int i = 0; i < dt.Slices.Count; ++i)
+					case DialogResult.OK:
+						// Note that this may set m_obj to null. dlg.FS will be null if all inflection features have been
+						// removed. That is a valid state for this slice; m_obj deleted is not.
+						m_obj = dlg.FS;
+						m_msaInflectionFeatureListDlgLauncherView.Init(m_cache, dlg.FS);
+						break;
+					case DialogResult.Yes:
+						// Get the VectorReferenceLauncher for the Inflection Features slice.
+						// Since we're not changing tools, we want to change the chooser dialog.
+						// See LT-5913 for motivation.
+						var ctl = Parent;
+						while (ctl != null && !(ctl is Slice))
 						{
-							Slice sliceT = dt.FieldOrDummyAt(i);
-							vrl = sliceT.Control as VectorReferenceLauncher;
-							if (vrl != null)
+							ctl = ctl.Parent;
+						}
+						var slice = ctl as Slice;
+						if (slice != null)
+						{
+							var dt = slice.ContainingDataTree;
+							for (var i = 0; i < dt.Slices.Count; ++i)
 							{
-								if (vrl.Flid == PartOfSpeechTags.kflidInflectableFeats)
-									break;
-								vrl = null;
+								var sliceT = dt.FieldOrDummyAt(i);
+								vrl = sliceT.Control as VectorReferenceLauncher;
+								if (vrl != null)
+								{
+									if (vrl.Flid == PartOfSpeechTags.kflidInflectableFeats)
+									{
+										break;
+									}
+									vrl = null;
+								}
 							}
 						}
-					}
-					if (vrl == null)
-					{
-						// We do, too, need to change tools! Sometimes this slice shows up in a different context,
-						// such as the main data entry view. See LT-7167.
-						// go to m_highestPOS in editor
-						// TODO: this should be reviewed by someone who knows how these links should be done
-						// I'm just guessing.
-						// Also, is there some way to know the application name and tool name without hard coding them?
-						var commands = new List<string>
+						if (vrl == null)
 						{
-							"AboutToFollowLink",
-							"FollowLink"
-						};
-						var parms = new List<object>
+							// We do, too, need to change tools! Sometimes this slice shows up in a different context,
+							// such as the main data entry view. See LT-7167.
+							// go to m_highestPOS in editor
+							// TODO: this should be reviewed by someone who knows how these links should be done
+							// I'm just guessing.
+							// Also, is there some way to know the application name and tool name without hard coding them?
+							var commands = new List<string>
+							{
+								"AboutToFollowLink",
+								"FollowLink"
+							};
+							var parms = new List<object>
+							{
+								null,
+								new FwLinkArgs(AreaServices.PosEditMachineName, dlg.HighestPOS.Guid)
+							};
+							Publisher.Publish(commands, parms);
+						}
+						else
 						{
-							null,
-							new FwLinkArgs(AreaServices.PosEditMachineName, dlg.HighestPOS.Guid)
-						};
-						Publisher.Publish(commands, parms);
-					}
-					else
-					{
-						vrl.HandleExternalChooser();
-					}
+							vrl.HandleExternalChooser();
+						}
+
+						break;
 				}
 			}
 		}
 
 		/// <summary />
-		protected override void OnClick(Object sender, EventArgs arguments)
+		protected override void OnClick(object sender, EventArgs arguments)
 		{
 			HandleChooser();
 		}
@@ -157,14 +154,13 @@ namespace LanguageExplorer.Areas.Grammar
 		{
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}

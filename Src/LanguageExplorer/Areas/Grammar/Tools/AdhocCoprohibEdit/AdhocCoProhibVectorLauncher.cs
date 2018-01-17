@@ -1,10 +1,9 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
@@ -39,14 +38,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}
@@ -56,15 +54,20 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		/// </summary>
 		protected override void HandleChooser()
 		{
-			Form frm = FindForm();
+			var frm = FindForm();
 			WaitCursor wc = null;
 			BaseGoDlg dlg = null;
 			try
 			{
 				if (frm != null)
+				{
 					wc = new WaitCursor(frm);
+				}
+
 				if (m_obj is IMoAlloAdhocProhib)
+				{
 					dlg = new LinkAllomorphDlg();
+				}
 				else
 				{
 					Debug.Assert(m_obj is IMoMorphAdhocProhib);
@@ -74,14 +77,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 				Debug.Assert(dlg != null);
 				dlg.SetDlgInfo(m_cache, null);
 				if (dlg.ShowDialog(frm) == DialogResult.OK)
+				{
 					AddItem(dlg.SelectedObject);
+				}
 			}
 			finally
 			{
-				if (wc != null)
-					wc.Dispose();
-				if (dlg != null)
-					dlg.Dispose();
+				wc?.Dispose();
+				dlg?.Dispose();
 			}
 		}
 
@@ -89,17 +92,17 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		{
 			CheckDisposed();
 
-			List<ICmObject> results = null;
+			List<ICmObject> results;
 			if (m_obj is IMoAlloAdhocProhib)
 			{
 				var acop = m_obj as IMoAlloAdhocProhib;
-				results = new List<ICmObject>(acop.RestOfAllosRS.Cast<ICmObject>());
+				results = new List<ICmObject>(acop.RestOfAllosRS);
 			}
 			else
 			{
 				Debug.Assert(m_obj is IMoMorphAdhocProhib);
 				var mcop = m_obj as IMoMorphAdhocProhib;
-				results = new List<ICmObject>(mcop.RestOfMorphsRS.Cast<ICmObject>());
+				results = new List<ICmObject>(mcop.RestOfMorphsRS);
 			}
 			results.Add(obj);
 			SetItems(results);

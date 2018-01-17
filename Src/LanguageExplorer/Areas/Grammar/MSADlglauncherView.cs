@@ -37,22 +37,13 @@ namespace LanguageExplorer.Areas.Grammar
 			}
 			else
 			{
-				m_rootb.SetRootObject(m_msa.Hvo, Vc,
-					(int)VcFrags.kfragFullMSAInterlinearname, m_rootb.Stylesheet);
+				m_rootb.SetRootObject(m_msa.Hvo, Vc, (int)VcFrags.kfragFullMSAInterlinearname, m_rootb.Stylesheet);
 				m_rootb.Reconstruct();
 			}
 			m_cache.DomainDataByFlid.AddNotification(this);
 		}
 
-		private IVwViewConstructor Vc
-		{
-			get
-			{
-				if (m_vc == null)
-					m_vc = new MsaVc(m_cache);
-				return m_vc;
-			}
-		}
+		private IVwViewConstructor Vc => m_vc ?? (m_vc = new MsaVc(m_cache));
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -61,16 +52,14 @@ namespace LanguageExplorer.Areas.Grammar
 		{
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
-				if (m_cache != null)
-					m_cache.DomainDataByFlid.RemoveNotification(this);
+				components?.Dispose();
+				m_cache?.DomainDataByFlid.RemoveNotification(this);
 			}
 			m_vc = null;
 			m_msa = null;
@@ -83,13 +72,14 @@ namespace LanguageExplorer.Areas.Grammar
 		public override void MakeRoot()
 		{
 			if (m_cache == null || DesignMode)
+			{
 				return;
+			}
 
 			base.MakeRoot();
 
 			m_rootb.DataAccess = m_cache.DomainDataByFlid;
-			m_rootb.SetRootObject(m_msa.Hvo, Vc,
-				(int)VcFrags.kfragFullMSAInterlinearname, m_rootb.Stylesheet);
+			m_rootb.SetRootObject(m_msa.Hvo, Vc, (int)VcFrags.kfragFullMSAInterlinearname, m_rootb.Stylesheet);
 		}
 
 		#endregion // RootSite required methods
@@ -117,7 +107,9 @@ namespace LanguageExplorer.Areas.Grammar
 			CheckDisposed();
 
 			if (m_msa.Hvo == hvo)
+			{
 				m_rootb.Reconstruct();
+			}
 		}
 
 		#endregion

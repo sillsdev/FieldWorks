@@ -78,7 +78,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		/// <summary />
 		/// <remarks>This is only internal, because a test uses it.</remarks>
-		/// <returns></returns>
 		internal static bool ReplacePOSGuidsWithGoldEticGuids(LcmCache cache)
 		{
 			var goldDocument = new XmlDocument();
@@ -112,7 +111,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			}
 			else
 			{
-				IPartOfSpeech badPartOfSpeechOwner = badPartOfSpeech.Owner as IPartOfSpeech;
+				var badPartOfSpeechOwner = badPartOfSpeech.Owner as IPartOfSpeech;
 				replacementPos = cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create(correctedGuid, badPartOfSpeechOwner);
 				badPartOfSpeechOwner.SubPossibilitiesOS.Insert(badPartOfSpeech.IndexInOwner, replacementPos);
 			}

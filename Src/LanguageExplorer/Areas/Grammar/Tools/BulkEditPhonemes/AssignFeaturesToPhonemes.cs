@@ -14,11 +14,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 	/// <summary />
 	internal partial class AssignFeaturesToPhonemes : RecordBrowseView
 	{
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AssignFeaturesToPhonemes"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public AssignFeaturesToPhonemes()
 		{
 			InitializeComponent();
@@ -50,8 +48,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 
 		#endregion
 
-		protected override BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, LcmCache cache,
-			ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+		protected override BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
 			return new BrowseViewerPhonologicalFeatures(nodeSpec, hvoRoot, cache, sortItemProvider, sda);
 		}

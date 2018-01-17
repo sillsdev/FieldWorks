@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -37,16 +37,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			}
 		}
 
-		IPhMetathesisRule Rule
-		{
-			get
-			{
-				return m_obj as IPhMetathesisRule;
-			}
-		}
+		private IPhMetathesisRule Rule => m_obj as IPhMetathesisRule;
 
-		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
-			string displayNameProperty, string displayWs)
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
@@ -63,11 +56,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		private bool DisplayOption(object option)
 		{
-			RuleInsertType type = ((InsertOption) option).Type;
-			SelectionHelper sel = SelectionHelper.Create(m_view);
-			int cellId = GetCell(sel);
+			var type = ((InsertOption) option).Type;
+			var sel = SelectionHelper.Create(m_view);
+			var cellId = GetCell(sel);
 			if (cellId == -1 || cellId == -2)
+			{
 				return false;
+			}
 
 			switch (cellId)
 			{
@@ -79,7 +74,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 						case RuleInsertType.MorphemeBoundary:
 							if (Rule.LeftSwitchIndex == -1 || Rule.MiddleIndex != -1 || sel.IsRange)
+							{
 								return false;
+							}
 							return GetInsertionIndex(Rule.StrucDescOS.Cast<ICmObject>().ToArray(), sel) == Rule.LeftSwitchIndex + 1;
 
 						default:
@@ -87,20 +84,25 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 							{
 								return true;
 							}
-							if (sel.IsRange)
+
+							if (!sel.IsRange)
 							{
-								var beginObj = GetCmObject(sel, SelectionHelper.SelLimitType.Top);
-								var endObj = GetCmObject(sel, SelectionHelper.SelLimitType.Bottom);
-
-								IPhSimpleContext lastCtxt;
-								if (Rule.MiddleIndex != -1 && Rule.IsMiddleWithLeftSwitch)
-									lastCtxt = Rule.StrucDescOS[Rule.MiddleLimit - 1];
-								else
-									lastCtxt = Rule.StrucDescOS[Rule.LeftSwitchLimit - 1];
-
-								return beginObj == Rule.StrucDescOS[Rule.LeftSwitchIndex] && endObj == lastCtxt;
+								return false;
 							}
-							return false;
+							var beginObj = GetCmObject(sel, SelectionHelper.SelLimitType.Top);
+							var endObj = GetCmObject(sel, SelectionHelper.SelLimitType.Bottom);
+
+							IPhSimpleContext lastCtxt;
+							if (Rule.MiddleIndex != -1 && Rule.IsMiddleWithLeftSwitch)
+							{
+								lastCtxt = Rule.StrucDescOS[Rule.MiddleLimit - 1];
+							}
+							else
+							{
+								lastCtxt = Rule.StrucDescOS[Rule.LeftSwitchLimit - 1];
+							}
+
+							return beginObj == Rule.StrucDescOS[Rule.LeftSwitchIndex] && endObj == lastCtxt;
 					}
 
 				case PhMetathesisRuleTags.kidxRightSwitch:
@@ -111,7 +113,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 						case RuleInsertType.MorphemeBoundary:
 							if (Rule.RightSwitchIndex == -1 || Rule.MiddleIndex != -1 || sel.IsRange)
+							{
 								return false;
+							}
 							return GetInsertionIndex(Rule.StrucDescOS.Cast<ICmObject>().ToArray(), sel) == Rule.RightSwitchIndex;
 
 						default:
@@ -119,51 +123,62 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 							{
 								return true;
 							}
-							if (sel.IsRange)
+
+							if (!sel.IsRange)
 							{
-								var beginObj = GetCmObject(sel, SelectionHelper.SelLimitType.Top);
-								var endObj = GetCmObject(sel, SelectionHelper.SelLimitType.Bottom);
-
-								IPhSimpleContext firstCtxt;
-								if (Rule.MiddleIndex != -1 && !Rule.IsMiddleWithLeftSwitch)
-									firstCtxt = Rule.StrucDescOS[Rule.MiddleIndex];
-								else
-									firstCtxt = Rule.StrucDescOS[Rule.RightSwitchIndex];
-
-								return beginObj == firstCtxt && endObj == Rule.StrucDescOS[Rule.RightSwitchLimit - 1];
+								return false;
 							}
-							return false;
+							var beginObj = GetCmObject(sel, SelectionHelper.SelLimitType.Top);
+							var endObj = GetCmObject(sel, SelectionHelper.SelLimitType.Bottom);
+
+							IPhSimpleContext firstCtxt;
+							if (Rule.MiddleIndex != -1 && !Rule.IsMiddleWithLeftSwitch)
+							{
+								firstCtxt = Rule.StrucDescOS[Rule.MiddleIndex];
+							}
+							else
+							{
+								firstCtxt = Rule.StrucDescOS[Rule.RightSwitchIndex];
+							}
+
+							return beginObj == firstCtxt && endObj == Rule.StrucDescOS[Rule.RightSwitchLimit - 1];
 					}
 
 				case PhMetathesisRuleTags.kidxLeftEnv:
-					ICmObject[] leftCtxts = Rule.StrucDescOS.Cast<ICmObject>().ToArray();
+					var leftCtxts = Rule.StrucDescOS.Cast<ICmObject>().ToArray();
 					IPhSimpleContext first = null;
 					if (Rule.StrucDescOS.Count > 0)
+					{
 						first = Rule.StrucDescOS[0];
+					}
 
 					if (type == RuleInsertType.WordBoundary)
 					{
 						// only display the word boundary option if we are at the beginning of the left context and
 						// there is no word boundary already inserted
 						if (sel.IsRange)
+						{
 							return GetIndicesToRemove(leftCtxts, sel)[0] == 0;
+						}
 						return GetInsertionIndex(leftCtxts, sel) == 0 && !IsWordBoundary(first);
 					}
 					// we cannot insert anything to the left of a word boundary in the left context
 					return sel.IsRange || GetInsertionIndex(leftCtxts, sel) != 0 || !IsWordBoundary(first);
 
 				case PhMetathesisRuleTags.kidxRightEnv:
-					ICmObject[] rightCtxts = Rule.StrucDescOS.Cast<ICmObject>().ToArray();
+					var rightCtxts = Rule.StrucDescOS.Cast<ICmObject>().ToArray();
 					IPhSimpleContext last = null;
 					if (Rule.StrucDescOS.Count > 0)
+					{
 						last = Rule.StrucDescOS[Rule.StrucDescOS.Count - 1];
+					}
 					if (type == RuleInsertType.WordBoundary)
 					{
 						// only display the word boundary option if we are at the end of the right context and
 						// there is no word boundary already inserted
 						if (sel.IsRange)
 						{
-							int[] indices = GetIndicesToRemove(rightCtxts, sel);
+							var indices = GetIndicesToRemove(rightCtxts, sel);
 							return indices[indices.Length - 1] == rightCtxts.Length - 1;
 						}
 						return GetInsertionIndex(rightCtxts, sel) == rightCtxts.Length && !IsWordBoundary(last);
@@ -177,8 +192,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		private string DisplayNoOptsMsg()
 		{
-			SelectionHelper sel = SelectionHelper.Create(m_view);
-			int cellId = GetCell(sel);
+			var sel = SelectionHelper.Create(m_view);
+			var cellId = GetCell(sel);
 			switch (cellId)
 			{
 				case PhMetathesisRuleTags.kidxLeftSwitch:
@@ -192,20 +207,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			return null;
 		}
 
-		protected override string FeatureChooserHelpTopic
-		{
-			get { return "khtpChoose-Grammar-PhonFeats-MetaRuleFormulaControl"; }
-		}
+		protected override string FeatureChooserHelpTopic => "khtpChoose-Grammar-PhonFeats-MetaRuleFormulaControl";
 
-		protected override string RuleName
-		{
-			get { return Rule.Name.BestAnalysisAlternative.Text; }
-		}
+		protected override string RuleName => Rule.Name.BestAnalysisAlternative.Text;
 
-		protected override string ContextMenuID
-		{
-			get { return "mnuPhMetathesisRule"; }
-		}
+		protected override string ContextMenuID => "mnuPhMetathesisRule";
 
 		protected override int GetNextCell(int cellId)
 		{
@@ -241,7 +247,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		protected override int GetCell(SelectionHelper sel, SelectionHelper.SelLimitType limit)
 		{
-			int tag = sel.GetTextPropId(limit);
+			var tag = sel.GetTextPropId(limit);
 			switch (tag)
 			{
 				case MetaRuleFormulaVc.ktagLeftEnv:
@@ -264,7 +270,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		protected override ICmObject GetCmObject(SelectionHelper sel, SelectionHelper.SelLimitType limit)
 		{
 			if (Rule.StrucDescOS.Count == 0 || sel.GetNumberOfLevels(limit) == 0)
+			{
 				return null;
+			}
 
 			var levels = sel.GetLevelInfo(limit);
 			return m_cache.ServiceLocator.GetObject(levels[levels.Length - 1].hvo);
@@ -273,37 +281,55 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		protected override int GetItemCellIndex(int cellId, ICmObject obj)
 		{
 			if (obj == null)
+			{
 				return -1;
+			}
 			return ConvertToCellIndex(cellId, obj.IndexInOwner);
 		}
 
-		int ConvertToCellIndex(int cellId, int index)
+		private int ConvertToCellIndex(int cellId, int index)
 		{
 			switch (cellId)
 			{
 				case PhMetathesisRuleTags.kidxLeftEnv:
 					if (Rule.LeftEnvIndex == -1)
+					{
 						index = -1;
+					}
 					break;
 				case PhMetathesisRuleTags.kidxLeftSwitch:
 					if (Rule.LeftSwitchIndex == -1)
+					{
 						index = -1;
+					}
 					else
+					{
 						index -= Rule.LeftSwitchIndex;
+					}
 					break;
 				case PhMetathesisRuleTags.kidxRightSwitch:
 					if (Rule.RightSwitchIndex == -1)
+					{
 						index = -1;
+					}
 					else if (Rule.MiddleIndex != -1 && !Rule.IsMiddleWithLeftSwitch)
+					{
 						index -= Rule.MiddleIndex;
+					}
 					else
+					{
 						index -= Rule.RightSwitchIndex;
+					}
 					break;
 				case PhMetathesisRuleTags.kidxRightEnv:
 					if (Rule.RightEnvIndex == -1)
+					{
 						index = -1;
+					}
 					else
+					{
 						index -= Rule.RightEnvIndex;
+					}
 					break;
 			}
 			return index;
@@ -311,29 +337,34 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		protected override SelLevInfo[] GetLevelInfo(int cellId, int cellIndex)
 		{
-			SelLevInfo[] levels = null;
-			if (cellIndex > -1)
+			if (cellIndex <= -1)
 			{
-				switch (cellId)
-				{
-					case PhMetathesisRuleTags.kidxLeftSwitch:
-						cellIndex += Rule.LeftSwitchIndex;
-						break;
-					case PhMetathesisRuleTags.kidxRightSwitch:
-						if (Rule.MiddleIndex != -1 && !Rule.IsMiddleWithLeftSwitch)
-							cellIndex += Rule.MiddleIndex;
-						else
-							cellIndex += Rule.RightSwitchIndex;
-						break;
-					case PhMetathesisRuleTags.kidxRightEnv:
-						cellIndex += Rule.RightEnvIndex;
-						break;
-				}
-
-				levels = new SelLevInfo[1];
-				levels[0].cpropPrevious = cellIndex;
-				levels[0].tag = -1;
+				return null;
 			}
+
+			switch (cellId)
+			{
+				case PhMetathesisRuleTags.kidxLeftSwitch:
+					cellIndex += Rule.LeftSwitchIndex;
+					break;
+				case PhMetathesisRuleTags.kidxRightSwitch:
+					if (Rule.MiddleIndex != -1 && !Rule.IsMiddleWithLeftSwitch)
+					{
+						cellIndex += Rule.MiddleIndex;
+					}
+					else
+					{
+						cellIndex += Rule.RightSwitchIndex;
+					}
+					break;
+				case PhMetathesisRuleTags.kidxRightEnv:
+					cellIndex += Rule.RightEnvIndex;
+					break;
+			}
+
+			var levels = new SelLevInfo[1];
+			levels[0].cpropPrevious = cellIndex;
+			levels[0].tag = -1;
 			return levels;
 		}
 
@@ -343,7 +374,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			{
 				case PhMetathesisRuleTags.kidxLeftEnv:
 					if (Rule.LeftEnvIndex == -1)
+					{
 						return 0;
+					}
 					return Rule.LeftEnvLimit;
 
 				case PhMetathesisRuleTags.kidxLeftSwitch:
@@ -351,7 +384,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 					{
 						return 0;
 					}
-					int leftMidCount = 0;
+					var leftMidCount = 0;
 					if (Rule.MiddleIndex != -1 && Rule.IsMiddleWithLeftSwitch)
 					{
 						leftMidCount = Rule.MiddleLimit - Rule.MiddleIndex;
@@ -363,7 +396,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 					{
 						return 0;
 					}
-					int rightMidCount = 0;
+					var rightMidCount = 0;
 					if (Rule.MiddleIndex != -1 && !Rule.IsMiddleWithLeftSwitch)
 					{
 						rightMidCount = Rule.MiddleLimit - Rule.MiddleIndex;
@@ -372,7 +405,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 				case PhMetathesisRuleTags.kidxRightEnv:
 					if (Rule.RightEnvIndex == -1)
+					{
 						return 0;
+					}
 					return Rule.RightEnvLimit - Rule.RightEnvIndex;
 			}
 			return 0;
@@ -418,10 +453,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			return cellId;
 		}
 
-		int InsertContext(IPhSimpleContext ctxt, SelectionHelper sel, out int cellIndex)
+		private int InsertContext(IPhSimpleContext ctxt, SelectionHelper sel, out int cellIndex)
 		{
-			int cellId = GetCell(sel);
-			int index = InsertContextInto(ctxt, sel, Rule.StrucDescOS);
+			var cellId = GetCell(sel);
+			var index = InsertContextInto(ctxt, sel, Rule.StrucDescOS);
 			Rule.UpdateStrucChange(cellId, index, true);
 			cellIndex = ConvertToCellIndex(cellId, index);
 			return cellId;
@@ -429,54 +464,67 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		protected override int GetInsertionIndex(ICmObject[] objs, SelectionHelper sel)
 		{
-			if (sel.GetNumberOfLevels(SelectionHelper.SelLimitType.Top) == 0)
+			if (sel.GetNumberOfLevels(SelectionHelper.SelLimitType.Top) != 0)
 			{
-				int cellId = GetCell(sel, SelectionHelper.SelLimitType.Top);
-				switch (cellId)
-				{
-					case PhMetathesisRuleTags.kidxLeftEnv:
-						return 0;
-
-					case PhMetathesisRuleTags.kidxLeftSwitch:
-						if (Rule.MiddleIndex != -1)
-							return Rule.MiddleIndex;
-						if (Rule.RightSwitchIndex != -1)
-							return Rule.RightSwitchIndex;
-						if (Rule.RightEnvIndex != -1)
-							return Rule.RightEnvIndex;
-						break;
-
-					case PhMetathesisRuleTags.kidxRightSwitch:
-						if (Rule.RightEnvIndex != -1)
-							return Rule.RightEnvIndex;
-						break;
-				}
-				return objs.Length;
+				return base.GetInsertionIndex(objs, sel);
 			}
-			return base.GetInsertionIndex(objs, sel);
+			var cellId = GetCell(sel, SelectionHelper.SelLimitType.Top);
+			switch (cellId)
+			{
+				case PhMetathesisRuleTags.kidxLeftEnv:
+					return 0;
+
+				case PhMetathesisRuleTags.kidxLeftSwitch:
+					if (Rule.MiddleIndex != -1)
+					{
+						return Rule.MiddleIndex;
+					}
+
+					if (Rule.RightSwitchIndex != -1)
+					{
+						return Rule.RightSwitchIndex;
+					}
+
+					if (Rule.RightEnvIndex != -1)
+					{
+						return Rule.RightEnvIndex;
+					}
+					break;
+
+				case PhMetathesisRuleTags.kidxRightSwitch:
+					if (Rule.RightEnvIndex != -1)
+					{
+						return Rule.RightEnvIndex;
+					}
+					break;
+			}
+			return objs.Length;
 		}
 
 		protected override int RemoveItems(SelectionHelper sel, bool forward, out int cellIndex)
 		{
 			cellIndex = -1;
-			int cellId = GetCell(sel);
+			var cellId = GetCell(sel);
 			int index;
 			// PhMetathesisRule.UpdateStrucChange does not need to be called here, because it is called in
 			// PhSimpleContext.DeleteObjectSideEffects
-			bool reconstruct = RemoveContextsFrom(forward, sel, Rule.StrucDescOS, true, out index);
+			var reconstruct = RemoveContextsFrom(forward, sel, Rule.StrucDescOS, true, out index);
 			if (reconstruct)
+			{
 				cellIndex = ConvertToCellIndex(cellId, index);
+			}
 			return reconstruct ? cellId : -1;
 		}
 
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-			if (m_view != null)
+			if (m_view == null)
 			{
-				int w = Width;
-				m_view.Width = w > 0 ? w : 0;
+				return;
 			}
+			var w = Width;
+			m_view.Width = w > 0 ? w : 0;
 		}
 	}
 }

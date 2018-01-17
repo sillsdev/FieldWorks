@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -33,14 +33,13 @@ namespace LanguageExplorer.Areas.Grammar
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}
@@ -65,7 +64,7 @@ namespace LanguageExplorer.Areas.Grammar
 		{
 			base.Install(parentDataTree);
 
-			MSADlgLauncher ctrl = (MSADlgLauncher)Control;
+			var ctrl = (MSADlgLauncher)Control;
 			if (ctrl.PropertyTable == null)
 			{
 				ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
@@ -78,7 +77,7 @@ namespace LanguageExplorer.Areas.Grammar
 				ContainingDataTree.PersistenceProvder,
 				"InterlinearName",
 				XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
-			MSADlglauncherView view = ctrl.MainControl as MSADlglauncherView;
+			var view = (MSADlglauncherView)ctrl.MainControl;
 			view.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 		}
 
@@ -119,7 +118,7 @@ namespace LanguageExplorer.Areas.Grammar
 		{
 			CheckDisposed();
 			base.AboutToDiscard ();
-			MSADlgLauncher ctrl = (MSADlgLauncher)Control;
+			var ctrl = (MSADlgLauncher)Control;
 			(ctrl.MainControl as SimpleRootSite).AboutToDiscard();
 		}
 	}

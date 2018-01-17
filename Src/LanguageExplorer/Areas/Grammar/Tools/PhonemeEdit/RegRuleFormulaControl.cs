@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -33,36 +33,32 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// <summary>
 		/// the right hand side
 		/// </summary>
-		public IPhSegRuleRHS Rhs
-		{
-			get
-			{
-				return (IPhSegRuleRHS) m_obj;
-			}
-		}
+		public IPhSegRuleRHS Rhs => (IPhSegRuleRHS) m_obj;
 
 		public bool CanModifyContextOccurrence
 		{
 			get
 			{
 				CheckDisposed();
-				SelectionHelper sel = SelectionHelper.Create(m_view);
-				int cellId = GetCell(sel);
-				if (cellId == PhSegmentRuleTags.kflidStrucDesc
-					|| cellId == PhSegRuleRHSTags.kflidStrucChange)
+				var sel = SelectionHelper.Create(m_view);
+				var cellId = GetCell(sel);
+				if (cellId == PhSegmentRuleTags.kflidStrucDesc || cellId == PhSegRuleRHSTags.kflidStrucChange)
+				{
 					return false;
+				}
 
 				var obj = GetCmObject(sel, SelectionHelper.SelLimitType.Anchor);
 				var endObj = GetCmObject(sel, SelectionHelper.SelLimitType.End);
 				if (obj != endObj || obj == null || endObj == null)
+				{
 					return false;
+				}
 
 				return obj.ClassID != PhSimpleContextBdryTags.kClassId;
 			}
 		}
 
-		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
-			string displayNameProperty, string displayWs)
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
@@ -78,34 +74,29 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			m_insertionControl.NoOptionsMessage = DisplayNoOptsMsg;
 		}
 
-		protected override string FeatureChooserHelpTopic
-		{
-			get { return "khtpChoose-Grammar-PhonFeats-RegRuleFormulaControl"; }
-		}
+		protected override string FeatureChooserHelpTopic => "khtpChoose-Grammar-PhonFeats-RegRuleFormulaControl";
 
-		protected override string RuleName
-		{
-			get { return Rhs.OwningRule.Name.BestAnalysisAlternative.Text; }
-		}
+		protected override string RuleName => Rhs.OwningRule.Name.BestAnalysisAlternative.Text;
 
-		protected override string ContextMenuID
-		{
-			get { return "mnuPhRegularRule"; }
-		}
+		protected override string ContextMenuID => "mnuPhRegularRule";
 
 		private bool DisplayOption(object option)
 		{
-			var opt = (InsertOption) option;
-			SelectionHelper sel = SelectionHelper.Create(m_view);
-			int cellId = GetCell(sel);
+			var opt = (InsertOption)option;
+			var sel = SelectionHelper.Create(m_view);
+			var cellId = GetCell(sel);
 			if (cellId < 0)
+			{
 				return false;
+			}
 
 			switch (cellId)
 			{
 				case PhSegRuleRHSTags.kflidLeftContext:
 					if (Rhs.LeftContextOA == null)
+					{
 						return true;
+					}
 
 					ICmObject[] leftCtxts;
 					IPhPhonContext first = null;
@@ -118,7 +109,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 					{
 						var seqCtxt = (IPhSequenceContext) Rhs.LeftContextOA;
 						if (seqCtxt.MembersRS.Count > 0)
+						{
 							first = seqCtxt.MembersRS[0];
+						}
 						leftCtxts = seqCtxt.MembersRS.Cast<ICmObject>().ToArray();
 					}
 
@@ -127,7 +120,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 						// only display the word boundary option if we are at the beginning of the left context and
 						// there is no word boundary already inserted
 						if (sel.IsRange)
+						{
 							return GetIndicesToRemove(leftCtxts, sel)[0] == 0;
+						}
 						return GetInsertionIndex(leftCtxts, sel) == 0 && !IsWordBoundary(first);
 					}
 					// we cannot insert anything to the left of a word boundary in the left context
@@ -135,7 +130,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 
 				case PhSegRuleRHSTags.kflidRightContext:
 					if (Rhs.RightContextOA == null || sel.IsRange)
+					{
 						return true;
+					}
 
 					ICmObject[] rightCtxts;
 					IPhPhonContext last = null;
@@ -148,23 +145,25 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 					{
 						var seqCtxt = (IPhSequenceContext) Rhs.RightContextOA;
 						if (seqCtxt.MembersRS.Count > 0)
+						{
 							last = seqCtxt.MembersRS[seqCtxt.MembersRS.Count - 1];
+						}
 						rightCtxts = seqCtxt.MembersRS.Cast<ICmObject>().ToArray();
 					}
 
-					if (opt.Type == RuleInsertType.WordBoundary)
+					if (opt.Type != RuleInsertType.WordBoundary)
 					{
-						// only display the word boundary option if we are at the end of the right context and
-						// there is no word boundary already inserted
-						if (sel.IsRange)
-						{
-							int[] indices = GetIndicesToRemove(rightCtxts, sel);
-							return indices[indices.Length - 1] == rightCtxts.Length - 1;
-						}
+						return sel.IsRange || GetInsertionIndex(rightCtxts, sel) != rightCtxts.Length || !IsWordBoundary(last);
+					}
+					// only display the word boundary option if we are at the end of the right context and
+					// there is no word boundary already inserted
+					if (!sel.IsRange)
+					{
 						return GetInsertionIndex(rightCtxts, sel) == rightCtxts.Length && !IsWordBoundary(last);
 					}
+					var indices = GetIndicesToRemove(rightCtxts, sel);
+					return indices[indices.Length - 1] == rightCtxts.Length - 1;
 					// we cannot insert anything to the right of a word boundary in the right context
-					return sel.IsRange || GetInsertionIndex(rightCtxts, sel) != rightCtxts.Length || !IsWordBoundary(last);
 
 				default:
 					return opt.Type != RuleInsertType.WordBoundary;
@@ -178,10 +177,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 
 		protected override int UpdateEnvironment(IPhEnvironment env)
 		{
-			string envStr = env.StringRepresentation.Text.Trim().Substring(1).Trim();
-			int index = envStr.IndexOf('_');
-			string leftEnv = envStr.Substring(0, index).Trim();
-			string rightEnv = envStr.Substring(index + 1).Trim();
+			var envStr = env.StringRepresentation.Text.Trim().Substring(1).Trim();
+			var index = envStr.IndexOf('_');
+			var leftEnv = envStr.Substring(0, index).Trim();
+			var rightEnv = envStr.Substring(index + 1).Trim();
 
 			if (Rhs.LeftContextOA != null)
 			{
@@ -204,12 +203,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// Parses the string representation of the specified environment and creates contexts
 		/// based off of the environment. This is called recursively.
 		/// </summary>
-		/// <param name="envStr">The environment string.</param>
-		/// <param name="flid"></param>
-		/// <param name="iterCtxt">The iteration context to insert into.</param>
 		private void InsertContextsFromEnv(string envStr, int flid, IPhIterationContext iterCtxt)
 		{
-			int i = 0;
+			var i = 0;
 			while (i < envStr.Length)
 			{
 				switch (envStr[i])
@@ -222,35 +218,38 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 						break;
 
 					case '[':
-						int closeBracket = envStr.IndexOf(']', i + 1);
-						string ncAbbr = envStr.Substring(i + 1, closeBracket - (i + 1));
-						int redupIndex = ncAbbr.IndexOf('^');
+						var closeBracket = envStr.IndexOf(']', i + 1);
+						var ncAbbr = envStr.Substring(i + 1, closeBracket - (i + 1));
+						var redupIndex = ncAbbr.IndexOf('^');
 						if (redupIndex != -1)
-							ncAbbr = ncAbbr.Substring(0, redupIndex);
-						foreach (IPhNaturalClass nc in m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS)
 						{
-							if (nc.Abbreviation.BestAnalysisAlternative.Text == ncAbbr)
+							ncAbbr = ncAbbr.Substring(0, redupIndex);
+						}
+						foreach (var nc in m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS)
+						{
+							if (nc.Abbreviation.BestAnalysisAlternative.Text != ncAbbr)
 							{
-								var ncCtxt = m_cache.ServiceLocator.GetInstance<IPhSimpleContextNCFactory>().Create();
-								if (iterCtxt != null)
-								{
-									m_cache.LangProject.PhonologicalDataOA.ContextsOS.Add(ncCtxt);
-									iterCtxt.MemberRA = ncCtxt;
-								}
-								else
-								{
-									AppendToEnv(ncCtxt, flid);
-								}
-								ncCtxt.FeatureStructureRA = nc;
-								break;
+								continue;
 							}
+							var ncCtxt = m_cache.ServiceLocator.GetInstance<IPhSimpleContextNCFactory>().Create();
+							if (iterCtxt != null)
+							{
+								m_cache.LangProject.PhonologicalDataOA.ContextsOS.Add(ncCtxt);
+								iterCtxt.MemberRA = ncCtxt;
+							}
+							else
+							{
+								AppendToEnv(ncCtxt, flid);
+							}
+							ncCtxt.FeatureStructureRA = nc;
+							break;
 						}
 						i = closeBracket + 1;
 						break;
 
 					case '(':
-						int closeParen = envStr.IndexOf(')', i + 1);
-						string str = envStr.Substring(i + 1, closeParen - (i + 1));
+						var closeParen = envStr.IndexOf(')', i + 1);
+						var str = envStr.Substring(i + 1, closeParen - (i + 1));
 						var newIterCtxt = m_cache.ServiceLocator.GetInstance<IPhIterationContextFactory>().Create();
 						AppendToEnv(newIterCtxt, flid);
 						newIterCtxt.Minimum = 0;
@@ -264,42 +263,49 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 						break;
 
 					default:
-						int nextIndex = envStr.IndexOfAny(new[] { '[', ' ', '#', '(' }, i + 1);
+						var nextIndex = envStr.IndexOfAny(new[] { '[', ' ', '#', '(' }, i + 1);
 						if (nextIndex == -1)
+						{
 							nextIndex = envStr.Length;
-						int len = nextIndex - i;
+						}
+						var len = nextIndex - i;
 						while (len > 0)
 						{
-							string phonemeStr = envStr.Substring(i, len);
-							foreach (IPhPhoneme phoneme in m_cache.LangProject.PhonologicalDataOA.PhonemeSetsOS[0].PhonemesOC)
+							var phonemeStr = envStr.Substring(i, len);
+							foreach (var phoneme in m_cache.LangProject.PhonologicalDataOA.PhonemeSetsOS[0].PhonemesOC)
 							{
-								foreach (IPhCode code in phoneme.CodesOS)
+								foreach (var code in phoneme.CodesOS)
 								{
-									if (code.Representation.BestVernacularAlternative.Text == phonemeStr)
+									if (code.Representation.BestVernacularAlternative.Text != phonemeStr)
 									{
-										var segCtxt = m_cache.ServiceLocator.GetInstance<IPhSimpleContextSegFactory>().Create();
-										if (iterCtxt != null)
-										{
-											m_cache.LangProject.PhonologicalDataOA.ContextsOS.Add(segCtxt);
-											iterCtxt.MemberRA = segCtxt;
-										}
-										else
-										{
-											AppendToEnv(segCtxt, flid);
-										}
-										segCtxt.FeatureStructureRA = phoneme;
-										goto Found;
+										continue;
 									}
+									var segCtxt = m_cache.ServiceLocator.GetInstance<IPhSimpleContextSegFactory>().Create();
+									if (iterCtxt != null)
+									{
+										m_cache.LangProject.PhonologicalDataOA.ContextsOS.Add(segCtxt);
+										iterCtxt.MemberRA = segCtxt;
+									}
+									else
+									{
+										AppendToEnv(segCtxt, flid);
+									}
+									segCtxt.FeatureStructureRA = phoneme;
+									goto Found;
 								}
 							}
 							len--;
 						}
-				Found:
+						Found:
 
 						if (len == 0)
+						{
 							i++;
+						}
 						else
+						{
 							i += len;
+						}
 						break;
 				}
 			}
@@ -313,43 +319,58 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			{
 				case PhSegRuleRHSTags.kflidLeftContext:
 					if (Rhs.LeftContextOA == null)
+					{
 						Rhs.LeftContextOA = ctxt;
+					}
 					else
+					{
 						seqCtxt = CreateSeqCtxt(flid);
+					}
 					break;
 
 				case PhSegRuleRHSTags.kflidRightContext:
 					if (Rhs.RightContextOA == null)
+					{
 						Rhs.RightContextOA = ctxt;
+					}
 					else
+					{
 						seqCtxt = CreateSeqCtxt(flid);
+					}
 					break;
 			}
 
-			if (seqCtxt != null)
+			if (seqCtxt == null)
 			{
-				m_cache.LangProject.PhonologicalDataOA.ContextsOS.Add(ctxt);
-				seqCtxt.MembersRS.Add(ctxt);
+				return;
 			}
+			m_cache.LangProject.PhonologicalDataOA.ContextsOS.Add(ctxt);
+			seqCtxt.MembersRS.Add(ctxt);
 		}
 
 		protected override int GetCell(SelectionHelper sel, SelectionHelper.SelLimitType limit)
 		{
 			if (sel == null)
+			{
 				return -1;
+			}
 
-			foreach (SelLevInfo level in sel.GetLevelInfo(limit))
+			foreach (var level in sel.GetLevelInfo(limit))
 			{
 				if (IsCellFlid(level.tag))
+				{
 					return level.tag;
+				}
 			}
 
 			if (IsCellFlid(sel.GetTextPropId(limit)))
+			{
 				return sel.GetTextPropId(limit);
+			}
 			return -1;
 		}
 
-		bool IsCellFlid(int flid)
+		private static bool IsCellFlid(int flid)
 		{
 			return flid == PhSegmentRuleTags.kflidStrucDesc
 				|| flid == PhSegRuleRHSTags.kflidStrucChange
@@ -392,19 +413,19 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		protected override ICmObject GetCmObject(SelectionHelper sel, SelectionHelper.SelLimitType limit)
 		{
 			if (sel == null)
-				return null;
-
-			int cellId = GetCell(sel);
-			if (cellId < 0)
-				return null;
-
-			foreach (SelLevInfo level in sel.GetLevelInfo(limit))
 			{
-				if (IsCellFlid(level.tag) || level.tag == PhSequenceContextTags.kflidMembers)
-					return m_cache.ServiceLocator.GetObject(level.hvo);
+				return null;
 			}
 
-			return null;
+			var cellId = GetCell(sel);
+			if (cellId < 0)
+			{
+				return null;
+			}
+
+			return (sel.GetLevelInfo(limit)
+				.Where(level => IsCellFlid(level.tag) || level.tag == PhSequenceContextTags.kflidMembers)
+				.Select(level => m_cache.ServiceLocator.GetObject(level.hvo))).FirstOrDefault();
 		}
 
 		protected override int GetItemCellIndex(int cellId, ICmObject obj)
@@ -416,7 +437,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			}
 			else
 			{
-				bool leftEnv = cellId == PhSegRuleRHSTags.kflidLeftContext;
+				var leftEnv = cellId == PhSegRuleRHSTags.kflidLeftContext;
 				var ctxt = leftEnv ? Rhs.LeftContextOA : Rhs.RightContextOA;
 
 				if (ctxt.ClassID == PhSequenceContextTags.kClassId)
@@ -463,7 +484,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 
 				case PhSegRuleRHSTags.kflidLeftContext:
 				case PhSegRuleRHSTags.kflidRightContext:
-					bool leftEnv = cellId == PhSegRuleRHSTags.kflidLeftContext;
+					var leftEnv = cellId == PhSegRuleRHSTags.kflidLeftContext;
 					var ctxt = leftEnv ? Rhs.LeftContextOA : Rhs.RightContextOA;
 					if (ctxt != null)
 					{
@@ -511,12 +532,17 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 
 				case PhSegRuleRHSTags.kflidLeftContext:
 				case PhSegRuleRHSTags.kflidRightContext:
-					bool leftEnv = cellId == PhSegRuleRHSTags.kflidLeftContext;
+					var leftEnv = cellId == PhSegRuleRHSTags.kflidLeftContext;
 					var ctxt = leftEnv ? Rhs.LeftContextOA : Rhs.RightContextOA;
 					if (ctxt == null)
+					{
 						return 0;
+					}
+
 					if (ctxt.ClassID != PhSequenceContextTags.kClassId)
+					{
 						return 1;
+					}
 					return ((IPhSequenceContext) ctxt).MembersRS.Count;
 			}
 			return 0;
@@ -551,10 +577,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			return cellId;
 		}
 
-		int InsertContext(IPhSimpleContext ctxt, SelectionHelper sel, out int cellIndex)
+		private int InsertContext(IPhSimpleContext ctxt, SelectionHelper sel, out int cellIndex)
 		{
 			cellIndex = -1;
-			int cellId = GetCell(sel);
+			var cellId = GetCell(sel);
 			switch (cellId)
 			{
 				case PhSegmentRuleTags.kflidStrucDesc:
@@ -582,12 +608,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			return cellId;
 		}
 
-		IPhSequenceContext CreateSeqCtxt(int flid)
+		private IPhSequenceContext CreateSeqCtxt(int flid)
 		{
-			bool leftEnv = flid == PhSegRuleRHSTags.kflidLeftContext;
+			var leftEnv = flid == PhSegRuleRHSTags.kflidLeftContext;
 			var ctxt = leftEnv ? Rhs.LeftContextOA : Rhs.RightContextOA;
 			if (ctxt == null)
+			{
 				return null;
+			}
 
 			IPhSequenceContext seqCtxt;
 			if (ctxt.ClassID != PhSequenceContextTags.kClassId)
@@ -595,9 +623,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 				m_cache.LangProject.PhonologicalDataOA.ContextsOS.Add(ctxt);
 				seqCtxt = m_cache.ServiceLocator.GetInstance<IPhSequenceContextFactory>().Create();
 				if (leftEnv)
+				{
 					Rhs.LeftContextOA = seqCtxt;
+				}
 				else
+				{
 					Rhs.RightContextOA = seqCtxt;
+				}
 				seqCtxt.MembersRS.Add(ctxt);
 			}
 			else
@@ -611,12 +643,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		{
 			cellIndex = -1;
 
-			int cellId = GetCell(sel);
+			var cellId = GetCell(sel);
 			switch (cellId)
 			{
 				case PhSegmentRuleTags.kflidStrucDesc:
 					if (!RemoveContextsFrom(forward, sel, Rhs.OwningRule.StrucDescOS, true, out cellIndex))
+					{
 						cellId = -1;
+					}
 					break;
 
 				case PhSegRuleRHSTags.kflidStrucChange:
@@ -625,8 +659,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 						cellId = -1;
 						break;
 					}
+
 					if (!RemoveContextsFrom(forward, sel, Rhs.StrucChangeOS, true, out cellIndex))
+					{
 						cellId = -1;
+					}
 					break;
 
 				case PhSegRuleRHSTags.kflidLeftContext:
@@ -639,11 +676,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 					{
 						var seqCtxt = Rhs.LeftContextOA as IPhSequenceContext;
 						if (!RemoveContextsFrom(forward, sel, seqCtxt, true, out cellIndex))
+						{
 							cellId = -1;
+						}
 					}
 					else
 					{
-						int idx = GetIndexToRemove(new ICmObject[] { Rhs.LeftContextOA }, sel, forward);
+						var idx = GetIndexToRemove(new ICmObject[] { Rhs.LeftContextOA }, sel, forward);
 						if (idx > -1)
 						{
 							Rhs.LeftContextOA.PreRemovalSideEffects();
@@ -666,11 +705,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 					{
 						var seqCtxt = Rhs.RightContextOA as IPhSequenceContext;
 						if (!RemoveContextsFrom(forward, sel, seqCtxt, true, out cellIndex))
+						{
 							cellId = -1;
+						}
 					}
 					else
 					{
-						int idx = GetIndexToRemove(new ICmObject[] { Rhs.RightContextOA }, sel, forward);
+						var idx = GetIndexToRemove(new ICmObject[] { Rhs.RightContextOA }, sel, forward);
 						if (idx > -1)
 						{
 							Rhs.RightContextOA.PreRemovalSideEffects();
@@ -696,8 +737,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// <summary>
 		/// Sets the number of occurrences of a context.
 		/// </summary>
-		/// <param name="min">The min.</param>
-		/// <param name="max">The max.</param>
 		public void SetContextOccurrence(int min, int max)
 		{
 			CheckDisposed();
@@ -705,7 +744,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			var cellId = GetCell(sel);
 			var obj = GetCmObject(sel, SelectionHelper.SelLimitType.Anchor);
 			var ctxt = (IPhPhonContext) obj;
-			int index = -1;
+			var index = -1;
 			UndoableUnitOfWorkHelper.Do(AreaResources.ksRegRuleUndoSetOccurrence, AreaResources.ksRegRuleRedoSetOccurrence, ctxt, () =>
 			{
 				if (ctxt.ClassID == PhIterationContextTags.kClassId)
@@ -752,39 +791,47 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			ReconstructView(cellId, index, true);
 		}
 
-		int OverwriteContext(IPhPhonContext src, IPhPhonContext dest, bool leftEnv, bool preserveDest)
+		private int OverwriteContext(IPhPhonContext src, IPhPhonContext dest, bool leftEnv, bool preserveDest)
 		{
 			IPhSequenceContext seqCtxt;
-			int index = GetIndex(dest, leftEnv ? Rhs.LeftContextOA : Rhs.RightContextOA, out seqCtxt);
+			var index = GetIndex(dest, leftEnv ? Rhs.LeftContextOA : Rhs.RightContextOA, out seqCtxt);
 			if (index != -1)
 			{
 				if (!src.IsValidObject)
+				{
 					m_cache.LangProject.PhonologicalDataOA.ContextsOS.Add(src);
+				}
 
 				seqCtxt.MembersRS.Insert(index, src);
 				seqCtxt.MembersRS.Remove(dest);
 				if (!preserveDest)
+				{
 					m_cache.LangProject.PhonologicalDataOA.ContextsOS.Remove(dest);
+				}
 			}
 			else
 			{
 				if (leftEnv)
 				{
 					if (preserveDest)
+					{
 						m_cache.LangProject.PhonologicalDataOA.ContextsOS.Add(Rhs.LeftContextOA);
+					}
 					Rhs.LeftContextOA = src;
 				}
 				else
 				{
 					if (preserveDest)
+					{
 						m_cache.LangProject.PhonologicalDataOA.ContextsOS.Add(Rhs.RightContextOA);
+					}
 					Rhs.RightContextOA = src;
 				}
 			}
 			return index;
 		}
 
-		int GetIndex(IPhPhonContext ctxt, IPhPhonContext envCtxt, out IPhSequenceContext seqCtxt)
+		static int GetIndex(IPhPhonContext ctxt, IPhPhonContext envCtxt, out IPhSequenceContext seqCtxt)
 		{
 			if (envCtxt.ClassID == PhSequenceContextTags.kClassId)
 			{
@@ -799,8 +846,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// <summary>
 		/// Gets the number of occurrences of the currently selected context.
 		/// </summary>
-		/// <param name="min">The min.</param>
-		/// <param name="max">The max.</param>
 		public void GetContextOccurrence(out int min, out int max)
 		{
 			CheckDisposed();
@@ -822,12 +867,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-			if (m_panel != null && m_view != null)
+			if (m_panel == null || m_view == null)
 			{
-				// make room for the environment button launcher
-				int w = Width - m_panel.Width;
-				m_view.Width = w > 0 ? w : 0;
+				return;
 			}
+			// make room for the environment button launcher
+			var w = Width - m_panel.Width;
+			m_view.Width = w > 0 ? w : 0;
 		}
 	}
 }

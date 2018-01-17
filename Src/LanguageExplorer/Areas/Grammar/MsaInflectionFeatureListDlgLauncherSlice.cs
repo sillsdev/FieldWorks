@@ -35,7 +35,9 @@ namespace LanguageExplorer.Areas.Grammar
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
@@ -48,10 +50,8 @@ namespace LanguageExplorer.Areas.Grammar
 					// messing up modify times on entries.
 					RemoveFeatureStructureFromMSA(); // it's empty so don't bother keeping it
 				}
-				if (components != null)
-				{
-					components.Dispose();
-				}
+
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}
@@ -77,11 +77,13 @@ namespace LanguageExplorer.Areas.Grammar
 		{
 			base.Install(parentDataTree);
 
-			MsaInflectionFeatureListDlgLauncher ctrl = (MsaInflectionFeatureListDlgLauncher)Control;
+			var ctrl = (MsaInflectionFeatureListDlgLauncher)Control;
 
 			m_flid = GetFlid(ConfigurationNode, m_obj);
 			if (m_flid != 0)
+			{
 				m_fs = GetFeatureStructureFromMSA(m_obj, m_flid);
+			}
 			else
 			{
 				m_fs = m_obj as IFsFeatStruc;
@@ -107,15 +109,15 @@ namespace LanguageExplorer.Areas.Grammar
 					switch (m_obj.ClassID)
 					{
 						case MoStemMsaTags.kClassId:
-							IMoStemMsa stem = m_obj as IMoStemMsa;
+							var stem = (IMoStemMsa)m_obj;
 							stem.MsFeaturesOA = null;
 							break;
 						case MoInflAffMsaTags.kClassId:
-							IMoInflAffMsa infl = m_obj as IMoInflAffMsa;
+							var infl = (IMoInflAffMsa)m_obj;
 							infl.InflFeatsOA = null;
 							break;
 						case MoDerivAffMsaTags.kClassId:
-							IMoDerivAffMsa derv = m_obj as IMoDerivAffMsa;
+							var derv = (IMoDerivAffMsa) m_obj;
 							if (m_flid == MoDerivAffMsaTags.kflidFromMsFeatures)
 							{
 								derv.FromMsFeaturesOA = null;
@@ -148,9 +150,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <summary />
 		protected static IFsFeatStruc GetFeatureStructureFromMSA(ICmObject obj, int flid)
 		{
-			//IFsFeatStruc fs = obj.GetObjectInAtomicField(flid) as IFsFeatStruc;
-			IFsFeatStruc fs = obj.Cache.GetAtomicPropObject(obj.Cache.DomainDataByFlid.get_ObjectProp(obj.Hvo, flid)) as IFsFeatStruc;
-			return fs;
+			return obj.Cache.GetAtomicPropObject(obj.Cache.DomainDataByFlid.get_ObjectProp(obj.Hvo, flid)) as IFsFeatStruc;
 		}
 
 		/// <summary>
@@ -172,19 +172,10 @@ namespace LanguageExplorer.Areas.Grammar
 		public static bool ShowSliceForVisibleIfData(XElement node, ICmObject obj)
 		{
 
-			//FDO.Cellar.IFsFeatStruc fs = obj as FDO.Cellar.IFsFeatStruc;
-			int flid = GetFlid(node, obj);
-			IFsFeatStruc fs;
-			if (flid != 0)
-				fs = GetFeatureStructureFromMSA(obj, flid);
-			else
-				fs = obj as IFsFeatStruc;
-			if (fs != null)
-			{
-				if (fs.FeatureSpecsOC.Count > 0)
-					return true;
-			}
-			return false;
+			//LCM.Cellar.IFsFeatStruc fs = obj as FDO.Cellar.IFsFeatStruc;
+			var flid = GetFlid(node, obj);
+			var fs = flid != 0 ? GetFeatureStructureFromMSA(obj, flid) : obj as IFsFeatStruc;
+			return fs?.FeatureSpecsOC.Count > 0;
 		}
 
 		/// <summary />

@@ -9,58 +9,28 @@ using System.Xml.Linq;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 {
-	/// <summary>
-	///
-	/// </summary>
+	/// <summary />
 	public delegate void InflAffixTemplateEventHandler (object sender, InflAffixTemplateEventArgs e);
 
-	/// <summary>
-	///
-	/// </summary>
+	/// <summary />
 	public class InflAffixTemplateEventArgs : EventArgs
 	{
-		private XElement m_node;
-		private Point m_location;
-		private Control m_contextControl;
-		private int m_tag;
-
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		public InflAffixTemplateEventArgs(Control context, XElement node, Point location, int tag)
 		{
-			m_location = location;
-			m_node = node;
-			m_contextControl = context;
-			m_tag = tag;
+			Location = location;
+			ConfigurationNode = node;
+			Context = context;
+			Tag = tag;
 		}
-		public Control Context
-		{
-			get
-			{
-				return m_contextControl;
-			}
-		}
-		public int Tag
-		{
-			get
-			{
-				return m_tag;
-			}
-		}
-		public XElement ConfigurationNode
-		{
-			get
-			{
-				return m_node;
-			}
-		}
-		public Point Location
-		{
-			get
-			{
-				return m_location;
-			}
-		}
+		public Control Context { get; }
+
+		public int Tag { get; }
+
+		public XElement ConfigurationNode { get; }
+
+		public Point Location { get; }
 	}
 }

@@ -31,10 +31,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		protected override void Dispose(bool disposing)
 		{
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
+			{
 				m_cache.DomainDataByFlid.RemoveNotification(this);
+			}
 
 			base.Dispose(disposing);
 		}
@@ -70,7 +74,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 			CheckDisposed();
 
 			if (m_cache == null || DesignMode)
+			{
 				return;
+			}
 
 			base.MakeRoot();
 
@@ -92,26 +98,33 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			if (hvo == 0)
+			{
 				return;
+			}
 			// We only want to do something when the basic IPA symbol changes
 			if ((tag != PhPhonemeTags.kflidFeatures) && (tag != FsFeatStrucTags.kflidFeatureSpecs))
+			{
 				return;
+			}
 			if (tag == FsFeatStrucTags.kflidFeatureSpecs)
 			{
-				IFsFeatStruc featStruc = m_cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>().GetObject(hvo);
+				var featStruc = m_cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>().GetObject(hvo);
 				// only want to do something when the feature structure is part of a IPhPhoneme))
 				if (featStruc.OwningFlid != PhPhonemeTags.kflidFeatures)
+				{
 					return;
+				}
 			}
 			if (tag == PhPhonemeTags.kflidFeatures && Phoneme != null && hvo == Phoneme.Hvo)
 			{
 				m_fs = Phoneme.FeaturesOA;
-				if (m_fs != null && m_rootb != null)
-					m_rootb.SetRootObject(m_fs.Hvo, m_vc, (int)VcFrags.kfragName, m_rootb.Stylesheet);
+				if (m_fs != null)
+				{
+					m_rootb?.SetRootObject(m_fs.Hvo, m_vc, (int)VcFrags.kfragName, m_rootb.Stylesheet);
+				}
 			}
 
-			if (m_rootb != null)
-				m_rootb.Reconstruct();
+			m_rootb?.Reconstruct();
 		}
 	}
 }

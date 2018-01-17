@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
@@ -30,8 +29,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <summary>
 		/// Initialize the launcher.
 		/// </summary>
-		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName,
-			IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
@@ -44,10 +42,10 @@ namespace LanguageExplorer.Areas.Grammar
 		/// </summary>
 		protected override void HandleChooser()
 		{
-			using (MsaCreatorDlg dlg = new MsaCreatorDlg())
+			using (var dlg = new MsaCreatorDlg())
 			{
-				IMoMorphSynAnalysis originalMsa = m_obj as IMoMorphSynAnalysis;
-				ILexEntry entry = originalMsa.Owner as ILexEntry;
+				var originalMsa = m_obj as IMoMorphSynAnalysis;
+				var entry = originalMsa.Owner as ILexEntry;
 				dlg.SetDlgInfo(m_cache,
 					m_persistProvider,
 					PropertyTable,
@@ -56,17 +54,18 @@ namespace LanguageExplorer.Areas.Grammar
 					SandboxGenericMSA.Create(originalMsa),
 					originalMsa.Hvo,
 					true,
-					String.Format(LanguageExplorerResources.ksEditX, Slice.Label));
-				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
+					string.Format(LanguageExplorerResources.ksEditX, Slice.Label));
+				if (dlg.ShowDialog(FindForm()) != DialogResult.OK)
 				{
-					SandboxGenericMSA sandboxMsa = dlg.SandboxMSA;
-					if (!originalMsa.EqualsMsa(sandboxMsa))
+					return;
+				}
+				var sandboxMsa = dlg.SandboxMSA;
+				if (!originalMsa.EqualsMsa(sandboxMsa))
+				{
+					UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoEditFunction, LanguageExplorerResources.ksRedoEditFunction, entry, () =>
 					{
-						UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoEditFunction, LanguageExplorerResources.ksRedoEditFunction, entry, () =>
-						{
-							originalMsa.UpdateOrReplace(sandboxMsa);
-						});
-					}
+						originalMsa.UpdateOrReplace(sandboxMsa);
+					});
 				}
 			}
 		}
@@ -79,14 +78,13 @@ namespace LanguageExplorer.Areas.Grammar
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}

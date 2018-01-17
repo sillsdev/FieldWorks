@@ -37,7 +37,7 @@ namespace LanguageExplorer.Areas.Grammar
 			}
 			else
 			{
-				m_rootb.SetRootObject(m_fs == null ? 0 : m_fs.Hvo, m_vc, (int)VcFrags.kfragName, m_rootb.Stylesheet);
+				m_rootb.SetRootObject(m_fs?.Hvo ?? 0, m_vc, (int)VcFrags.kfragName, m_rootb.Stylesheet);
 				m_rootb.Reconstruct();
 			}
 		}
@@ -55,10 +55,7 @@ namespace LanguageExplorer.Areas.Grammar
 
 			if (disposing)
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			m_vc = null;
 			m_fs = null;
@@ -72,7 +69,9 @@ namespace LanguageExplorer.Areas.Grammar
 			CheckDisposed();
 
 			if (m_cache == null || DesignMode)
+			{
 				return;
+			}
 
 			base.MakeRoot();
 

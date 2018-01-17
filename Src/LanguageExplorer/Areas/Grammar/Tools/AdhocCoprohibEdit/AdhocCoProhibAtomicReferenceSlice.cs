@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,9 +10,6 @@ using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 {
-#if RANDYTODO
-	// TODO: 1. Split out AdhocCoProhibAtomicReferenceDisabledSlice into its own file after move.
-#endif
 	/// <summary>
 	/// Summary description for AdhocCoProhibAtomicReferenceSlice.
 	/// </summary>
@@ -39,24 +36,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 			//We need to set the Font so the height of this slice will be
 			//set appropriately to fit the text.
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
-			int fontHeight = FontHeightAdjuster.GetFontHeightForStyle(
-					"Normal", stylesheet,
-					m_cache.DefaultVernWs, m_cache.LanguageWritingSystemFactoryAccessor);
-			Font = new Font(m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.DefaultFontName,
-				fontHeight / 1000f);
+			var fontHeight = FontHeightAdjuster.GetFontHeightForStyle("Normal", stylesheet, m_cache.DefaultVernWs, m_cache.LanguageWritingSystemFactoryAccessor);
+			Font = new Font(m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.DefaultFontName, fontHeight / 1000f);
 		}
 	}
-
-	internal class AdhocCoProhibAtomicReferenceDisabledSlice : AdhocCoProhibAtomicReferenceSlice
-	{
-		public override void FinishInit()
-		{
-			CheckDisposed();
-			base.FinishInit();
-			var arl = (AtomicReferenceLauncher)Control;
-			var view = (AtomicReferenceView)arl.MainControl;
-			view.FinishInit(ConfigurationNode);
-		}
-	}
-
 }

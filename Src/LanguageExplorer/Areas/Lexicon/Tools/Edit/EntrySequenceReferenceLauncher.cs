@@ -126,7 +126,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					chooser.Text = LanguageExplorerResources.ksChooseWhereToShowSubentry;
 					chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
 					chooser.InitializeExtras(null, PropertyTable);
-					chooser.AddLink(LanguageExplorerResources.ksAddAComponent, ReallySimpleListChooser.LinkType.kDialogLink,
+					chooser.AddLink(LanguageExplorerResources.ksAddAComponent, LinkType.kDialogLink,
 						new AddPrimaryLexemeChooserCommand(m_cache, false, null, PropertyTable, Publisher, Subscriber, m_obj, FindForm()));
 					DialogResult res = chooser.ShowDialog();
 					if (DialogResult.Cancel == res)
@@ -205,7 +205,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				chooser.SetHelpTopic(Slice.GetChooserHelpTopicID() + "-CFChooser");
 				chooser.InitializeExtras(null, PropertyTable);
 				// Step 3 of LT-11155:
-				chooser.AddLink(LanguageExplorerResources.ksAddAComplexForm, ReallySimpleListChooser.LinkType.kDialogLink,
+				chooser.AddLink(LanguageExplorerResources.ksAddAComplexForm, LinkType.kDialogLink,
 					new AddComplexFormChooserCommand(m_cache, false, null, PropertyTable, Publisher, Subscriber, m_obj, FindForm()));
 				DialogResult res = chooser.ShowDialog();
 				if (DialogResult.Cancel == res)

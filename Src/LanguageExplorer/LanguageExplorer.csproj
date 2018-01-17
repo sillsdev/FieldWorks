@@ -297,7 +297,14 @@
     <Compile Include="Areas\FxtType.cs" />
     <Compile Include="Areas\FxtTypes.cs" />
     <Compile Include="Areas\Grammar\GrammarAreaMenuHelper.cs" />
+    <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibAtomicReferenceDisabledSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibVectorReferenceDisabledSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchToolMenuHelper.cs" />
+    <Compile Include="Areas\Grammar\Tools\PosEdit\FwMenuItem.cs" />
     <Compile Include="Areas\IdAndString.cs" />
     <Compile Include="Areas\IFwGuiControl.cs" />
     <Compile Include="Areas\InsertOption.cs" />
@@ -546,7 +553,11 @@
     <Compile Include="Controls\XMLViews\IGhostable.cs" />
     <Compile Include="Controls\XMLViews\ItemsCollectorEnv.cs" />
     <Compile Include="Controls\XMLViews\ItemTypeInfo.cs" />
+    <Compile Include="Controls\XMLViews\LeafChooser.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Controls\XMLViews\LexReferenceInfo.cs" />
+    <Compile Include="Controls\XMLViews\LinkType.cs" />
     <Compile Include="Controls\XMLViews\MainCallerDisplayCommand.cs" />
     <Compile Include="Controls\XMLViews\MainCallerDisplayCommandSeq.cs" />
     <Compile Include="Controls\XMLViews\NodeChildrenDisplayCommand.cs" />

@@ -1,9 +1,6 @@
 // Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: GrammarSketchHtmlViewer.cs
-// Responsibility: AndyBlack
 
 using System;
 using System.Collections.Generic;
@@ -16,6 +13,7 @@ using System.Xml.Linq;
 using System.Xml.Xsl;
 using LanguageExplorer.Controls;
 using Microsoft.Win32;
+using SIL.Code;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
@@ -86,42 +84,27 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// <summary>
 		/// Path to transforms
 		/// </summary>
-		private static string TransformPath
-		{
-			get { return Path.Combine(FwDirectoryFinder.FlexFolder, "Transforms"); }
-		}
+		private static string TransformPath => Path.Combine(FwDirectoryFinder.FlexFolder, "Transforms");
 
 		/// <summary>
 		/// Path to Export Templates
 		/// </summary>
-		private static string ExportTemplatePath
-		{
-			get { return Path.Combine(FwDirectoryFinder.FlexFolder, "Export Templates"); }
-		}
+		private static string ExportTemplatePath => Path.Combine(FwDirectoryFinder.FlexFolder, "Export Templates");
 
 		/// <summary>
 		/// Path to utility html files
 		/// </summary>
-		private static string UtilityHtmlPath
-		{
-			get { return Path.Combine(FwDirectoryFinder.FlexFolder, "GeneratedHtmlViewer"); }
-		}
+		private static string UtilityHtmlPath => Path.Combine(FwDirectoryFinder.FlexFolder, "GeneratedHtmlViewer");
 
 		/// <summary>
 		/// Name of htm file to display if in the process of generating
 		/// </summary>
-		private static string GeneratingDocument
-		{
-			get { return Path.Combine(UtilityHtmlPath, "GeneratingDocumentPleaseWait.htm"); }
-		}
+		private static string GeneratingDocument => Path.Combine(UtilityHtmlPath, "GeneratingDocumentPleaseWait.htm");
 
 		/// <summary>
 		/// Name of htm file to display the first time
 		/// </summary>
-		private static string InitialDocument
-		{
-			get { return Path.Combine(UtilityHtmlPath, "InitialDocument.htm"); }
-		}
+		private static string InitialDocument => Path.Combine(UtilityHtmlPath, "InitialDocument.htm");
 
 		private RegistryKey RegistryKey
 		{
@@ -129,22 +112,15 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			{
 				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey)
 				{
-					return regKey.CreateSubKey("GeneratedHtmlViewer\\" +
-						Cache.ProjectId.Name + "\\" + m_sRegKeyName);
+					return regKey.CreateSubKey("GeneratedHtmlViewer\\" + Cache.ProjectId.Name + "\\" + m_sRegKeyName);
 				}
 			}
 		}
 
 		/// <summary>
-		/// FDO cache.
+		/// LCM cache.
 		/// </summary>
-		private LcmCache Cache
-		{
-			get
-			{
-				return m_cache ?? (m_cache = PropertyTable.GetValue<LcmCache>("cache"));
-			}
-		}
+		private LcmCache Cache => m_cache ?? (m_cache = PropertyTable.GetValue<LcmCache>("cache"));
 
 		#endregion // Properties
 
@@ -254,7 +230,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		{
 			var uri = new Uri(m_sHtmlFileName);
 			m_htmlControl.URL = uri.AbsoluteUri;
-			//m_htmlControl.Invalidate();
 		}
 
 		/// <summary>
@@ -290,7 +265,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		#endregion // Construction, Initialization, and disposal
@@ -333,7 +310,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// <summary>
 		/// Handles the message "SaveAsWebpage", which is currently sent by the "ExportDialog"
 		/// </summary>
-		/// <param name="parameterObj"></param>
 		private void SaveAsWebpage(object parameterObj)
 		{
 			var param = parameterObj as Tuple<string, string, string>;
@@ -413,7 +389,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		private static void RemoveWriteProtection(string dlgFileName)
 		{
 			if (File.Exists(dlgFileName) && (File.GetAttributes(dlgFileName) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+			{
 				File.SetAttributes(dlgFileName, FileAttributes.Normal);
+			}
 		}
 
 		/// <summary />
@@ -442,7 +420,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 		private void WriteRegistry()
 		{
-			using (RegistryKey regkey = RegistryKey)
+			using (var regkey = RegistryKey)
 			{
 				regkey.SetValue(m_ksHtmlFilePath, m_sHtmlFileName);
 				regkey.SetValue(m_ksAlsoSaveFilePath, m_step1MainOutputFileName);
@@ -455,15 +433,17 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			var owner = FindForm();
 			Icon icon = null;
 			if (owner != null)
+			{
 				icon = owner.Icon;
+			}
 			var dlg = new ProgressDialogWorkingOn
-						{
-							Owner = owner,
-							Icon = icon,
-							Minimum = 0,
-							Maximum = m_promptsCount + m_transformsCount,
-							Text = @"Generate Morphological Sketch"
-						};
+			{
+				Owner = owner,
+				Icon = icon,
+				Minimum = 0,
+				Maximum = m_promptsCount + m_transformsCount,
+				Text = @"Generate Morphological Sketch"
+			};
 			dlg.Show();
 			return dlg;
 		}
@@ -541,7 +521,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 				XslCompiledTransform transform;
 				m_transforms.TryGetValue(xslPath, out transform);
 				if (transform != null)
+				{
 					return transform;
+				}
 
 				transform = new XslCompiledTransform();
 				transform.Load(xslPath);
@@ -564,7 +546,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			var parameterList = new XsltArgumentList();
 			foreach (var xsltParameterElement in element.Elements("xsltParameters"))
 			{
-				int cParams = CountParams(xsltParameterElement);
+				var cParams = CountParams(xsltParameterElement);
 				if (cParams > 0)
 				{
 					parameterList = GetParameters(xsltParameterElement);
@@ -657,7 +639,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 
 				return "GeneratedHtmlViewer";
 			}
-			set { ;}
+			set { }
 		}
 
 		/// <summary>
@@ -667,7 +649,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		public string MessageBoxTrigger
 		{
 			get { return string.Empty; }
-			set { ;}
+			set { }
 		}
 
 		#endregion IMainUserControl implementation
@@ -677,8 +659,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// <summary />
 		public Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
-			if (targetCandidates == null)
-				throw new ArgumentNullException(nameof(targetCandidates));
+			Guard.AgainstNull(targetCandidates, nameof(targetCandidates));
 
 			targetCandidates.Add(this);
 

@@ -58,7 +58,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		{
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			base.Dispose(disposing);
 
@@ -121,7 +123,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			{
 				pt = PixelToView(new Point(e.X, e.Y));
 				GetCoordRects(out rcSrcRoot, out rcDstRoot);
-				IVwSelection sel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
+				var sel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
 
 				ITsString tss;
 				int ichAnchor;
@@ -132,37 +134,46 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			}
 
 			if (tag == 0) // indicates it is an icon
+			{
 				OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
+			}
 			else
+			{
 				base.OnMouseUp(e);
+			}
 		}
 
 		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
-			Slice slice = FindParentSlice();
+			var slice = FindParentSlice();
 			Debug.Assert(slice != null);
 			if (slice != null)
 			{
 				// Make sure we are a current slice so we are a colleague so we can enable menu items.
 				if (slice != slice.ContainingDataTree.CurrentSlice)
+				{
 					slice.ContainingDataTree.CurrentSlice = slice;
+				}
 			}
+
 			if (ShowContextMenu == null)
-				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
-			else
 			{
-				IVwSelection sel = RootBox.MakeSelAt(pt.X, pt.Y,
-					new Rect(rcSrcRoot.Left, rcSrcRoot.Top, rcSrcRoot.Right, rcSrcRoot.Bottom),
-					new Rect(rcDstRoot.Left, rcDstRoot.Top, rcDstRoot.Right, rcDstRoot.Bottom),
-					false);
-				if (sel == null)
-					return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot); // no object, so quit and let base handle it
-				int index;
-				int hvo, tag, prev; // dummies.
-				IVwPropertyStore vps; // dummy
-				// Level 0 would give info about ktagText and the hvo of the dummy line object.
-				// Level 1 gives info about which line object it is in the root.
-				sel.PropInfo(false, 0, out hvo, out tag, out index, out prev, out vps);  // using level 1 for an msa should return the slot it belongs in
+				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
+			}
+			var sel = RootBox.MakeSelAt(pt.X, pt.Y,
+				new Rect(rcSrcRoot.Left, rcSrcRoot.Top, rcSrcRoot.Right, rcSrcRoot.Bottom),
+				new Rect(rcDstRoot.Left, rcDstRoot.Top, rcDstRoot.Right, rcDstRoot.Bottom),
+				false);
+			if (sel == null)
+			{
+				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot); // no object, so quit and let base handle it
+}
+			int index;
+			int hvo, tag, prev; // dummies.
+			IVwPropertyStore vps; // dummy
+			// Level 0 would give info about ktagText and the hvo of the dummy line object.
+			// Level 1 gives info about which line object it is in the root.
+			sel.PropInfo(false, 0, out hvo, out tag, out index, out prev, out vps);  // using level 1 for an msa should return the slot it belongs in
 #if MaybeSomeDayToTryAndGetRemoveMsaCorrectForCircumfixes
 				int indexSlot;
 				int hvoSlot, tagSlot, prevSlot; // dummies.
@@ -172,24 +183,24 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				if (classSlot == FDO.Ling.MoInflAffixSlot.kClassId)
 					m_hvoSlot = hvoSlot;
 #endif
-				m_obj = Cache.ServiceLocator.GetObject(hvo);
-				ShowContextMenu(this, new InflAffixTemplateEventArgs(this, m_xnSpec, pt, tag));
-				return true; // we've handled it
-			}
+			m_obj = Cache.ServiceLocator.GetObject(hvo);
+			ShowContextMenu(this, new InflAffixTemplateEventArgs(this, m_xnSpec, pt, tag));
+			return true; // we've handled it
 		}
 
 		/// <summary>
 		/// The slice is no longer a direct parent, so hunt for it up the Parent chain.
 		/// </summary>
-		/// <returns></returns>
 		private Slice FindParentSlice()
 		{
-			Control ctl = this.Parent;
+			var ctl = Parent;
 			while (ctl != null)
 			{
-				Slice slice = ctl as Slice;
+				var slice = ctl as Slice;
 				if (slice != null)
+				{
 					return slice;
+				}
 				ctl = ctl.Parent;
 			}
 			return null;
@@ -276,19 +287,19 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			CheckDisposed();
 
 			var slot = m_obj as IMoInflAffixSlot;
-			if (slot != null)
+			if (slot == null)
 			{
-				string sName = slot.Name.BestAnalysisVernacularAlternative.Text;
-				string sUndo = String.Format(AreaResources.ksUndoChangeOptionalityOfSlot, sName);
-				string sRedo = String.Format(AreaResources.ksRedoChangeOptionalityOfSlot, sName);
-				using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(
-					Cache.ActionHandlerAccessor, sUndo, sRedo))
-				{
-					slot.Optional = !slot.Optional;
-					helper.RollBack = false;
-				}
-				m_rootb.Reconstruct();
+				return true; //we handled this.
 			}
+			var sName = slot.Name.BestAnalysisVernacularAlternative.Text;
+			var sUndo = String.Format(AreaResources.ksUndoChangeOptionalityOfSlot, sName);
+			var sRedo = String.Format(AreaResources.ksRedoChangeOptionalityOfSlot, sName);
+			using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, sUndo, sRedo))
+			{
+				slot.Optional = !slot.Optional;
+				helper.RollBack = false;
+			}
+			m_rootb.Reconstruct();
 			return true;	//we handled this.
 		}
 		public bool OnInflTemplateRemoveSlot(object cmd)
@@ -298,9 +309,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			ILcmReferenceSequence<IMoInflAffixSlot> seq;
 			int index;
 			GetAffixSequenceContainingSlot(m_obj as IMoInflAffixSlot, out seq, out index);
-			using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor,
-				String.Format(AreaResources.ksUndoRemovingSlot, seq[index].Name.BestAnalysisVernacularAlternative.Text),
-				String.Format(AreaResources.ksRedoRemovingSlot, seq[index].Name.BestAnalysisVernacularAlternative.Text)))
+			using (var helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor,
+				string.Format(AreaResources.ksUndoRemovingSlot, seq[index].Name.BestAnalysisVernacularAlternative.Text),
+				string.Format(AreaResources.ksRedoRemovingSlot, seq[index].Name.BestAnalysisVernacularAlternative.Text)))
 			{
 				seq.RemoveAt(index);
 				helper.RollBack = false;
@@ -339,11 +350,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			// if there are other infl affix msas in the entry, we delete the MoInflAffMsa completely;
 			// otherwise, we remove the slot info.
 			var inflMsa = m_obj as IMoInflAffMsa;
-			if (inflMsa == null)
-				return true; // play it safe
-			var lex = inflMsa.OwnerOfClass<ILexEntry>();
+			var lex = inflMsa?.OwnerOfClass<ILexEntry>();
 			if (lex == null)
+			{
 				return true; // play it safe
+			}
 			UndoableUnitOfWorkHelper.Do(AreaResources.ksUndoRemovingAffix, AreaResources.ksRedoRemovingAffix,
 				Cache.ActionHandlerAccessor,
 				() =>
@@ -365,17 +376,20 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		private bool OtherInflAffixMsasExist(ILexEntry lex, IMoInflAffMsa inflMsa)
 		{
-			bool fOtherInflAffixMsasExist = false;  // assume we won't find an existing infl affix msa
+			var fOtherInflAffixMsasExist = false;  // assume we won't find an existing infl affix msa
 			foreach (var msa in lex.MorphoSyntaxAnalysesOC)
 			{
-				if (msa.ClassID == MoInflAffMsaTags.kClassId)
-				{ // is an inflectional affix msa
-					if (msa != inflMsa)
-					{ // it's not the one the user requested to remove
-						fOtherInflAffixMsasExist = true;
-						break;
-					}
+				if (msa.ClassID != MoInflAffMsaTags.kClassId)
+				{
+					continue;
 				}
+				// is an inflectional affix msa
+				if (msa == inflMsa)
+				{
+					continue; // it's not the one the user requested to remove
+				}
+				fOtherInflAffixMsasExist = true;
+				break;
 			}
 			return fOtherInflAffixMsasExist;
 		}
@@ -411,62 +425,68 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		private void AddInflAffixMsaToSlot(ICmObject obj, IMoInflAffixSlot slot)
 		{
 			var inflMsa = obj as IMoInflAffMsa;
-			if (inflMsa == null)
-				return;
-			var lex = inflMsa.OwnerOfClass<ILexEntry>();
+			var lex = inflMsa?.OwnerOfClass<ILexEntry>();
 			if (lex == null)
+			{
 				return; // play it safe
-			bool fMiamSet = false;  // assume we won't find an existing infl affix msa
+			}
+			var fMiamSet = false;  // assume we won't find an existing infl affix msa
 			foreach (var msa in lex.MorphoSyntaxAnalysesOC)
 			{
-				if (msa.ClassID == MoInflAffMsaTags.kClassId)
-				{ // is an inflectional affix msa
-					var miam = (IMoInflAffMsa)msa;
-					var pos = miam.PartOfSpeechRA;
-					if (pos == null)
-					{ // use the first unspecified one
-						miam.PartOfSpeechRA = slot.OwnerOfClass<IPartOfSpeech>();
-						miam.SlotsRC.Clear();  // just in case...
-						miam.SlotsRC.Add(slot);
-						fMiamSet = true;
-						break;
-					}
-					else if (pos.AllAffixSlots.Contains(slot))
-					{ // if the slot is in this POS
-						if (miam.SlotsRC.Count == 0)
-						{ // use the first available
-							miam.SlotsRC.Add(slot);
-							fMiamSet = true;
-							break;
-						}
-						else if (miam.SlotsRC.Contains(slot))
-						{ // it is already set (probably done by the CreateEntry dialog process)
-							fMiamSet = true;
-							break;
-						}
-						else if (lex.IsCircumfix())
-						{ // only circumfixes can more than one slot
-							miam.SlotsRC.Add(slot);
-							fMiamSet = true;
-							break;
-						}
-					}
+				if (msa.ClassID != MoInflAffMsaTags.kClassId)
+				{
+					continue; // is an inflectional affix msa
+				}
+				var miam = (IMoInflAffMsa)msa;
+				var pos = miam.PartOfSpeechRA;
+				if (pos == null)
+				{ // use the first unspecified one
+					miam.PartOfSpeechRA = slot.OwnerOfClass<IPartOfSpeech>();
+					miam.SlotsRC.Clear();  // just in case...
+					miam.SlotsRC.Add(slot);
+					fMiamSet = true;
+					break;
+				}
+
+				if (!pos.AllAffixSlots.Contains(slot))
+				{
+					continue;
+				}
+				// if the slot is in this POS
+				if (miam.SlotsRC.Count == 0)
+				{ // use the first available
+					miam.SlotsRC.Add(slot);
+					fMiamSet = true;
+					break;
+				}
+				if (miam.SlotsRC.Contains(slot))
+				{ // it is already set (probably done by the CreateEntry dialog process)
+					fMiamSet = true;
+					break;
+				}
+				if (lex.IsCircumfix())
+				{ // only circumfixes can more than one slot
+					miam.SlotsRC.Add(slot);
+					fMiamSet = true;
+					break;
 				}
 			}
-			if (!fMiamSet)
-			{  // need to create a new infl affix msa
-				var newMsa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
-				lex.MorphoSyntaxAnalysesOC.Add(newMsa);
-				EnsureNewMsaHasSense(lex, newMsa);
-				newMsa.SlotsRC.Add(slot);
-				newMsa.PartOfSpeechRA = slot.OwnerOfClass<IPartOfSpeech>();
+
+			if (fMiamSet)
+			{
+				return; // need to create a new infl affix msa
 			}
+			var newMsa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
+			lex.MorphoSyntaxAnalysesOC.Add(newMsa);
+			EnsureNewMsaHasSense(lex, newMsa);
+			newMsa.SlotsRC.Add(slot);
+			newMsa.PartOfSpeechRA = slot.OwnerOfClass<IPartOfSpeech>();
 		}
 
 		private void EnsureNewMsaHasSense(ILexEntry lex, IMoInflAffMsa newMsa)
 		{
 			// if no lexsense has this msa, copy first sense and have it refer to this msa
-			bool fASenseHasMsa = false;
+			var fASenseHasMsa = false;
 			foreach (var sense in lex.AllSenses)
 			{
 				if (sense.MorphoSyntaxAnalysisRA == newMsa)
@@ -475,18 +495,20 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 					break;
 				}
 			}
-			if (!fASenseHasMsa)
+
+			if (fASenseHasMsa)
 			{
-				var newSense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
-				lex.SensesOS.Add(newSense);
-				var firstSense = lex.SensesOS[0];
-				// only copying gloss for now and only copying default analysis ws
-				//newSense.Definition.AnalysisDefaultWritingSystem.Text = firstSense.Definition.AnalysisDefaultWritingSystem.Text;
-				newSense.Gloss.AnalysisDefaultWritingSystem = firstSense.Gloss.AnalysisDefaultWritingSystem;
-				//newSense.GrammarNote.AnalysisDefaultWritingSystem.Text = firstSense.GrammarNote.AnalysisDefaultWritingSystem.Text;
-				//newSense.SemanticsNote.AnalysisDefaultWritingSystem.Text = firstSense.SemanticsNote.AnalysisDefaultWritingSystem.Text;
-				newSense.MorphoSyntaxAnalysisRA = newMsa;
+				return;
 			}
+			var newSense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			lex.SensesOS.Add(newSense);
+			var firstSense = lex.SensesOS[0];
+			// only copying gloss for now and only copying default analysis ws
+			//newSense.Definition.AnalysisDefaultWritingSystem.Text = firstSense.Definition.AnalysisDefaultWritingSystem.Text;
+			newSense.Gloss.AnalysisDefaultWritingSystem = firstSense.Gloss.AnalysisDefaultWritingSystem;
+			//newSense.GrammarNote.AnalysisDefaultWritingSystem.Text = firstSense.GrammarNote.AnalysisDefaultWritingSystem.Text;
+			//newSense.SemanticsNote.AnalysisDefaultWritingSystem.Text = firstSense.SemanticsNote.AnalysisDefaultWritingSystem.Text;
+			newSense.MorphoSyntaxAnalysisRA = newMsa;
 		}
 
 #if RANDYTODO
@@ -547,7 +569,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <returns>true if the lex entry can appear in the slot</returns>
 		private bool EntryHasAffixThatMightBeInSlot(ILexEntry lex, bool fIsPrefixSlot)
 		{
-			bool fInclude = false; // be pessimistic
+			var fInclude = false; // be pessimistic
 			var morphTypes = lex.MorphTypes;
 			foreach (var morphType in morphTypes)
 			{
@@ -574,73 +596,66 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		private void HandleInsert(bool fBefore)
 		{
-			bool fIsPrefixSlot = GetIsPrefixSlot(fBefore);
-			using (SimpleListChooser chooser = MakeChooserWithExtantSlots(fIsPrefixSlot))
+			var fIsPrefixSlot = GetIsPrefixSlot(fBefore);
+			using (var chooser = MakeChooserWithExtantSlots(fIsPrefixSlot))
 			{
 				chooser.ShowDialog(this);
-				if (chooser.ChosenOne != null)
+				if (chooser.ChosenOne == null)
 				{
-					var chosenSlot = chooser.ChosenOne.Object as IMoInflAffixSlot;
-					int flid = 0;
-					int ihvo = -1;
-					if (m_obj.ClassID == MoInflAffixSlotTags.kClassId)
-					{
-						HandleInsertAroundSlot(fBefore, chosenSlot, out flid, out ihvo);
-					}
-					else if (m_obj.ClassID == MoInflAffixTemplateTags.kClassId)
-					{
-						HandleInsertAroundStem(fBefore, chosenSlot, out flid, out ihvo);
-					}
-					m_rootb.Reconstruct(); // Ensure that the table gets redrawn
-					if (chooser.LinkExecuted)
-					{
-						// Select the header of the newly added slot in case the user wants to edit it.
-						// See LT-8209.
-						SelLevInfo[] rgvsli = new SelLevInfo[1];
-						rgvsli[0].hvo = chosenSlot.Hvo;
-						rgvsli[0].ich = -1;
-						rgvsli[0].ihvo = ihvo;
-						rgvsli[0].tag = flid;
-						m_rootb.MakeTextSelInObj(0, 1, rgvsli, 0, null, true, true, true, false, true);
-					}
-#if CausesDebugAssertBecauseOnlyWorksOnStTexts
-					RefreshDisplay();
-#endif
+					return;
 				}
+				var chosenSlot = chooser.ChosenOne.Object as IMoInflAffixSlot;
+				var flid = 0;
+				var ihvo = -1;
+				switch (m_obj.ClassID)
+				{
+					case MoInflAffixSlotTags.kClassId:
+						HandleInsertAroundSlot(fBefore, chosenSlot, out flid, out ihvo);
+						break;
+					case MoInflAffixTemplateTags.kClassId:
+						HandleInsertAroundStem(fBefore, chosenSlot, out flid, out ihvo);
+						break;
+				}
+				m_rootb.Reconstruct(); // Ensure that the table gets redrawn
+				if (!chooser.LinkExecuted)
+				{
+					return;
+				}
+				// Select the header of the newly added slot in case the user wants to edit it.
+				// See LT-8209.
+				var rgvsli = new SelLevInfo[1];
+				rgvsli[0].hvo = chosenSlot.Hvo;
+				rgvsli[0].ich = -1;
+				rgvsli[0].ihvo = ihvo;
+				rgvsli[0].tag = flid;
+				m_rootb.MakeTextSelInObj(0, 1, rgvsli, 0, null, true, true, true, false, true);
+#if CausesDebugAssertBecauseOnlyWorksOnStTexts
+				RefreshDisplay();
+#endif
 			}
 		}
 
 		private bool GetIsPrefixSlot(bool fBefore)
 		{
-			bool fIsPrefixSlot = false;
-			if (m_obj.ClassID == MoInflAffixTemplateTags.kClassId)
+			var fIsPrefixSlot = false;
+			switch (m_obj.ClassID)
 			{
-				if (fBefore)
-					fIsPrefixSlot = true;
-				else
-					fIsPrefixSlot = false;
-			}
-			else if (m_obj.ClassID == MoInflAffixSlotTags.kClassId)
-			{
-				if (m_template.PrefixSlotsRS.Contains(m_obj as IMoInflAffixSlot))
-					fIsPrefixSlot = true;
-				else
-					fIsPrefixSlot = false;
+				case MoInflAffixTemplateTags.kClassId:
+					fIsPrefixSlot = fBefore;
+					break;
+				case MoInflAffixSlotTags.kClassId:
+					fIsPrefixSlot = m_template.PrefixSlotsRS.Contains(m_obj as IMoInflAffixSlot);
+					break;
 			}
 			return fIsPrefixSlot;
 		}
 
 		private SimpleListChooser MakeChooserWithExtantSlots(bool fIsPrefixSlot)
 		{
-			int slotFlid;
-			if (fIsPrefixSlot)
-				slotFlid = MoInflAffixTemplateTags.kflidPrefixSlots;
-			else
-				slotFlid = MoInflAffixTemplateTags.kflidSuffixSlots;
+			var slotFlid = fIsPrefixSlot ? MoInflAffixTemplateTags.kflidPrefixSlots : MoInflAffixTemplateTags.kflidSuffixSlots;
 			var labels = ObjectLabel.CreateObjectLabels(Cache, m_template.ReferenceTargetCandidates(slotFlid), null);
 			var persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
-			SimpleListChooser chooser = new SimpleListChooser(persistProvider, labels,
-				m_ChooseSlotHelpTopic, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+			var chooser = new SimpleListChooser(persistProvider, labels, m_ChooseSlotHelpTopic, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			chooser.SetHelpTopic("khtpChoose-Grammar-InflAffixTemplateControl");
 			chooser.Cache = Cache;
 			chooser.TextParamHvo = m_template.Owner.Hvo;
@@ -648,12 +663,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			chooser.InstructionalText = m_sSlotChooserInstructionalText;
 			string sTopPOS;
 			var pos = GetHighestPOS(m_template.OwnerOfClass<IPartOfSpeech>(), out sTopPOS);
-			string sLabel = String.Format(m_sObligatorySlot, sTopPOS);
-			chooser.AddLink(sLabel, SimpleListChooser.LinkType.kSimpleLink,
+			var sLabel = string.Format(m_sObligatorySlot, sTopPOS);
+			chooser.AddLink(sLabel, LinkType.kSimpleLink,
 				new MakeInflAffixSlotChooserCommand(Cache, true, sLabel, pos.Hvo,
 				false, PropertyTable, Publisher, Subscriber));
-			sLabel = String.Format(m_sOptionalSlot, sTopPOS);
-			chooser.AddLink(sLabel, SimpleListChooser.LinkType.kSimpleLink,
+			sLabel = string.Format(m_sOptionalSlot, sTopPOS);
+			chooser.AddLink(sLabel, LinkType.kSimpleLink,
 				new MakeInflAffixSlotChooserCommand(Cache, true, sLabel, pos.Hvo, true,
 				PropertyTable, Publisher, Subscriber));
 			chooser.SetObjectAndFlid(pos.Hvo, MoInflAffixTemplateTags.kflidSlots);
