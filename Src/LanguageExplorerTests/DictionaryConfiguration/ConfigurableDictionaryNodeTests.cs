@@ -4,8 +4,10 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using LanguageExplorer.DictionaryConfiguration;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
@@ -69,11 +71,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				Assert.AreNotSame(node.DictionaryNodeOptions, clone.DictionaryNodeOptions, "Didn't deep-clone");
 				if (node.DictionaryNodeOptions is DictionaryNodeListOptions)
+				{
 					DictionaryNodeOptionsTests.AssertListWasDeepCloned(((DictionaryNodeListOptions)node.DictionaryNodeOptions).Options,
 																		((DictionaryNodeListOptions)clone.DictionaryNodeOptions).Options);
+				}
 				else if (node.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
+				{
 					DictionaryNodeOptionsTests.AssertListWasDeepCloned(((DictionaryNodeWritingSystemOptions)node.DictionaryNodeOptions).Options,
 																		((DictionaryNodeWritingSystemOptions)clone.DictionaryNodeOptions).Options);
+				}
 			}
 
 			VerifyDuplicationList(clone.Children, node.Children, clone);
@@ -89,7 +95,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 
 			Assert.That(clone.Count, Is.EqualTo(list.Count));
-			for (int childIndex = 0; childIndex < list.Count; childIndex++)
+			for (var childIndex = 0; childIndex < list.Count; childIndex++)
 			{
 				Assert.That(clone[childIndex].Label, Is.EqualTo(list[childIndex].Label));
 				VerifyDuplicationInner(clone[childIndex], list[childIndex]);
@@ -97,8 +103,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Assert.That(clone[childIndex].Parent, Is.SameAs(cloneParent), "cloned children were not re-parented within deep-cloned object");
 				if (cloneParent != null)
 				{
-					Assert.That(clone[childIndex].Parent, Is.Not.SameAs(list[childIndex].Parent),
-						"Cloned children should be pointing to different parent nodes than the original");
+					Assert.That(clone[childIndex].Parent, Is.Not.SameAs(list[childIndex].Parent), "Cloned children should be pointing to different parent nodes than the original");
 				}
 			}
 		}
@@ -330,11 +335,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
 
-			var originallabel = "originalLabel";
+			const string originallabel = "originalLabel";
 			var node = new ConfigurableDictionaryNode { Parent = parent, Label = originallabel, LabelSuffix = "orig"};
 			parent.Children.Add(node);
 
-			var newSuffix = "new";
+			const string newSuffix = "new";
 			// SUT
 			node.ChangeSuffix(newSuffix);
 			Assert.That(node.LabelSuffix, Is.EqualTo(newSuffix), "suffix was not updated");
@@ -346,11 +351,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
 
-			var originallabel = "originalLabel";
+			const string originallabel = "originalLabel";
 			var node = new ConfigurableDictionaryNode { Parent = parent, Label = originallabel, LabelSuffix = null };
 			parent.Children.Add(node);
 
-			var newSuffix = "new";
+			const string newSuffix = "new";
 			// SUT
 			node.ChangeSuffix(newSuffix);
 			Assert.That(node.LabelSuffix, Is.EqualTo(newSuffix), "suffix was not updated");
@@ -373,8 +378,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void CantHaveTwoSiblingsWithSameNonNullSuffix()
 		{
 			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
-			var originalLabel = "originalLabel";
-			var originalSuffix = "originalSuffix";
+			const string originalLabel = "originalLabel";
+			const string originalSuffix = "originalSuffix";
 			var node = new ConfigurableDictionaryNode { Parent = parent, Label = originalLabel, LabelSuffix = originalSuffix};
 			var otherNode = new ConfigurableDictionaryNode { Parent = parent, Label = originalLabel, LabelSuffix = "otherSuffix"};
 			parent.Children.Add(node);
@@ -390,8 +395,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void CanRequestChangingSuffixToSameSuffix()
 		{
 			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
-			var originalLabel = "originalLabel";
-			var originalSuffix = "blah";
+			const string originalLabel = "originalLabel";
+			const string originalSuffix = "blah";
 			var node = new ConfigurableDictionaryNode { Parent = parent, Label = originalLabel, LabelSuffix = originalSuffix };
 			parent.Children.Add(node);
 
@@ -680,6 +685,46 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.IsNull(returnedMasterParent, "Master Parent");
 			Assert.False(root.TryGetMasterParent(out returnedMasterParent), "The root node *certainly* doesn't have a master parent"); // SUT
 			Assert.IsNull(returnedMasterParent, "Root Node");
+		}
+
+		[Test]
+		[TestCase(StyleTypes.Character, "character")]
+		[TestCase(StyleTypes.Paragraph, "paragraph")]
+		public void StyleTypePropertySerializesCorrectlyInConfigurableDictionaryNode(StyleTypes persistedValue, string expectedValue)
+		{
+			var node = new ConfigurableDictionaryNode
+			{
+				Label = "My 'GetHashCode' crash prevention label",
+				StyleType = persistedValue
+			};
+			var serializedNode = XmlSerializationHelper.SerializeToString(node);
+
+			// SUT 1: Serializes correctly.
+			var doc = XDocument.Parse(serializedNode);
+			Assert.That(doc.Root.Attribute("styleType").Value, Is.EqualTo(expectedValue));
+
+			// SUT 2: De-serializes correctly.
+			var deserializedNode = XmlSerializationHelper.DeserializeFromString<ConfigurableDictionaryNode>(serializedNode);
+			Assert.That(deserializedNode.StyleType, Is.EqualTo(persistedValue));
+		}
+
+		[Test]
+		public void StyleTypePropertyDefaultNotSerializedInConfigurableDictionaryNode()
+		{
+			var node = new ConfigurableDictionaryNode
+			{
+				Label = "My 'GetHashCode' crash prevention label",
+				StyleType = StyleTypes.Default
+			};
+			var serializedNode = XmlSerializationHelper.SerializeToString(node);
+
+			// SUT 1: Serializes correctly.
+			var doc = XDocument.Parse(serializedNode);
+			Assert.That(doc.Root.Attribute("styleType"), Is.Null); // Default is not persisted
+
+			// SUT 2: De-serializes correctly.
+			var deserializedNode = XmlSerializationHelper.DeserializeFromString<ConfigurableDictionaryNode>(serializedNode);
+			Assert.That(deserializedNode.StyleType, Is.EqualTo(StyleTypes.Default));
 		}
 	}
 }

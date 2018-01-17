@@ -153,7 +153,9 @@ namespace LanguageExplorer.Areas
 			// to a non-existent flid at some point.
 			var owningListGuid = fd.ListRootId;
 			if (owningListGuid == Guid.Empty)
+			{
 				return false;
+			}
 
 			var list = cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().GetObject(owningListGuid);
 			// This is only a problem for fields referencing a custom list
@@ -176,15 +178,16 @@ namespace LanguageExplorer.Areas
 					// Handle multiple reference fields
 					// Is there a way to do this in LINQ without repeating the get_VecSize call?
 					var tupleList = new List<Tuple<int, int>>();
-					tupleList.AddRange(
-						from obj in objRepo.AllInstances(objClass)
-						where ddbf.get_VecSize(obj.Hvo, flid) > 0
-						select new Tuple<int, int>(obj.Hvo, ddbf.get_VecSize(obj.Hvo, flid)));
+					tupleList.AddRange(objRepo.AllInstances(objClass)
+						.Where(obj => ddbf.get_VecSize(obj.Hvo, flid) > 0)
+						.Select(obj => new Tuple<int, int>(obj.Hvo, ddbf.get_VecSize(obj.Hvo, flid))));
 
 					NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 					{
 						foreach (var partResult in tupleList)
+						{
 							ddbf.Replace(partResult.Item1, flid, 0, partResult.Item2, null, 0);
+						}
 					});
 
 					fchanged = tupleList.Any();
@@ -202,7 +205,9 @@ namespace LanguageExplorer.Areas
 					NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 					{
 						foreach (var hvo in objsWithDataThisFlid)
+						{
 							ddbf.SetObjProp(hvo, flid, LcmCache.kNullHvo);
+						}
 					});
 
 					fchanged = objsWithDataThisFlid.Any();

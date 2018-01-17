@@ -46,7 +46,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			m_statusBarProgressPanel = progressPanel;
 		}
 
-		#region Overrides of XWorksViewBase
+		#region Overrides of ViewBase
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.

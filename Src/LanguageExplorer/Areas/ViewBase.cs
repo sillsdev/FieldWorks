@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.Xml;
@@ -104,6 +105,10 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
+		#endregion
+
+		#region Implementation of IFlexComponent
+
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -131,7 +136,7 @@ namespace LanguageExplorer.Areas
 			InitializeComponent();
 
 
-			AccNameDefault = "XWorksViewBase";		// default accessibility name
+			AccNameDefault = "ViewBase";		// default accessibility name
 		}
 
 		/// <summary>
@@ -145,20 +150,17 @@ namespace LanguageExplorer.Areas
 			MyRecordList = recordList;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
-		/// resources; <c>false</c> to release only unmanaged resources.
-		/// </param>
-		/// -----------------------------------------------------------------------------------
 		protected override void Dispose( bool disposing )
 		{
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
@@ -185,7 +187,7 @@ namespace LanguageExplorer.Areas
 #region Properties
 
 		/// <summary>
-		/// FDO cache.
+		/// LCM cache.
 		/// </summary>
 		protected LcmCache Cache { get; }
 
@@ -214,7 +216,9 @@ namespace LanguageExplorer.Areas
 				CheckDisposed();
 
 				if (m_informationBar != null)
+				{
 					return m_informationBar as IPaneBar;
+				}
 
 				return (Parent is IPaneBarContainer) ? ((IPaneBarContainer)Parent).PaneBar : null;
 			}
@@ -261,8 +265,7 @@ namespace LanguageExplorer.Areas
 
 		public virtual Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
-			if (targetCandidates == null)
-				throw new ArgumentNullException("targetCandidates");
+			Guard.AgainstNull(targetCandidates, nameof(targetCandidates));
 
 			targetCandidates.Add(this);
 
@@ -272,12 +275,10 @@ namespace LanguageExplorer.Areas
 #endregion  ICtrlTabProvider implementation
 
 #region Component Designer generated code
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		private void InitializeComponent()
 		{
 			this.SuspendLayout();
@@ -330,13 +331,14 @@ namespace LanguageExplorer.Areas
 		protected void ResetSpacer(int spacerWidth, string activeLayoutName)
 		{
 			var bar = TitleBar;
-			if(bar is Panel && bar.Controls.Count > 1)
+			if (!(bar is Panel) || bar.Controls.Count <= 1)
 			{
-				var cctrls = bar.Controls.Count;
-				bar.Controls[cctrls - 1].Width = spacerWidth;
-				bar.Controls[cctrls - 1].Text = activeLayoutName;
-				bar.Refresh();
+				return;
 			}
+			var cctrls = bar.Controls.Count;
+			bar.Controls[cctrls - 1].Width = spacerWidth;
+			bar.Controls[cctrls - 1].Text = activeLayoutName;
+			bar.Refresh();
 		}
 
 		protected string GetBaseTitleStringFromConfig()
@@ -347,7 +349,7 @@ namespace LanguageExplorer.Areas
 			if(titleId != null)
 			{
 				titleStr = StringTable.Table.GetString(titleId, "AlternativeTitles");
-				if(MyRecordList.OwningObject != null && XmlUtils.GetBooleanAttributeValue(m_configurationParametersElement, "ShowOwnerShortname"))
+				if (MyRecordList.OwningObject != null && XmlUtils.GetBooleanAttributeValue(m_configurationParametersElement, "ShowOwnerShortname"))
 				{
 					// Originally this option was added to enable the Reversal Index title bar to show
 					// which reversal index was being shown.
@@ -373,14 +375,18 @@ namespace LanguageExplorer.Areas
 			base.OnParentChanged (e);
 
 			if (Parent == null)
+			{
 				return;
+			}
 
 			var mp = Parent as MultiPane ?? Parent.Parent as MultiPane;
 
 			if (mp == null)
+			{
 				return;
+			}
 
-			string suppress = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "suppressInfoBar", "false");
+			var suppress = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "suppressInfoBar", "false");
 			if (suppress == "ifNotFirst")
 			{
 #if RANDYTODO
@@ -417,18 +423,20 @@ namespace LanguageExplorer.Areas
 		protected virtual void SetInfoBarText()
 		{
 			if (m_informationBar == null)
+			{
 				return;
-			string className = StringTable.Table.GetString("No Record", "Misc");
+			}
+			var className = StringTable.Table.GetString("No Record", "Misc");
 			if (MyRecordList.CurrentObject != null)
 			{
-				string typeName = MyRecordList.CurrentObject.GetType().Name;
+				var typeName = MyRecordList.CurrentObject.GetType().Name;
 				if (MyRecordList.CurrentObject is ICmPossibility)
 				{
-					var possibility = MyRecordList.CurrentObject as ICmPossibility;
+					var possibility = (ICmPossibility)MyRecordList.CurrentObject;
 					className = possibility.ItemTypeName();
-			}
-			else
-			{
+				}
+				else
+				{
 					className = StringTable.Table.GetString(typeName, "ClassNames");
 				}
 				if (className == "*" + typeName + "*")
@@ -438,13 +446,15 @@ namespace LanguageExplorer.Areas
 			}
 			else
 			{
-				string emptyTitleId = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "emptyTitleId");
-				if (!String.IsNullOrEmpty(emptyTitleId))
+				var emptyTitleId = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "emptyTitleId");
+				if (!string.IsNullOrEmpty(emptyTitleId))
 				{
 					string titleStr;
 					XmlViewsUtils.TryFindString("EmptyTitles", emptyTitleId, out titleStr);
 					if (titleStr != "*" + emptyTitleId + "*")
+					{
 						className = titleStr;
+					}
 					MyRecordList.UpdateStatusBarRecordNumber(titleStr);
 				}
 			}
@@ -464,16 +474,18 @@ namespace LanguageExplorer.Areas
 		{
 			var mpSender = (MultiPane) sender;
 
-			bool fWantInfoBar = (this == mpSender.FirstVisibleControl);
+			var fWantInfoBar = (this == mpSender.FirstVisibleControl);
 			if (fWantInfoBar && m_informationBar == null)
 			{
 				AddPaneBar();
 				if (m_informationBar != null)
+				{
 					SetInfoBarText();
+				}
 			}
 			else if (m_informationBar != null && !fWantInfoBar)
 			{
-				Controls.Remove((UserControl)m_informationBar);
+				Controls.Remove(m_informationBar);
 				m_informationBar.Dispose();
 				m_informationBar = null;
 			}

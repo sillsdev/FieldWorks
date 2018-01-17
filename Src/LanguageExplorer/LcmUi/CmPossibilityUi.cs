@@ -257,9 +257,11 @@ namespace LanguageExplorer.LcmUi
 			{
 				var rootPossibility = (ICmPossibility) Object;
 				while (rootPossibility.Owner is ICmPossibility)
+				{
 					rootPossibility = (ICmPossibility) rootPossibility.Owner;
-				IDsChart chart = rootPossibility.Services.GetInstance<IDsChartRepository>().InstancesWithTemplate(rootPossibility).First();
-				string textName = ((IDsConstChart) chart).BasedOnRA.Title.BestAnalysisVernacularAlternative.Text;
+				}
+				var chart = rootPossibility.Services.GetInstance<IDsChartRepository>().InstancesWithTemplate(rootPossibility).First();
+				var textName = ((IDsConstChart)chart).BasedOnRA.Title.BestAnalysisVernacularAlternative.Text;
 				// This is an actual column; it's a problem if it has instances
 				msg = string.Format(LcmUiStrings.ksCantModifyTemplateInUse, textName);
 				return false;

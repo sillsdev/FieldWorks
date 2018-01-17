@@ -749,7 +749,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			services.GenerateEntryGuesses(stText);
 		}
 
-#region Overrides of XWorksViewBase
+		#region Overrides of ViewBase
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
@@ -770,7 +770,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			m_fSuppressAutoCreate = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParametersElement, "suppressAutoCreate", false);
 		}
 
-#endregion
+		#endregion
 
 		/// <summary>
 		/// About to show, so finish initializing.

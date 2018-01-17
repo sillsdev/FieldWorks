@@ -13,7 +13,7 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas
 {
-	class RegRuleFormulaVc : RuleFormulaVcBase
+	internal class RegRuleFormulaVc : RuleFormulaVcBase
 	{
 		public const int kfragRHS = 200;
 		public const int kfragRule = 201;
@@ -30,17 +30,15 @@ namespace LanguageExplorer.Areas
 		public RegRuleFormulaVc(LcmCache cache, IPropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
-			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
+			var tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
+			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
 			m_ctxtProps = tpb.GetTextProps();
 
 			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 20000);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
+			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptPadLeading, (int)FwTextPropVar.ktpvMilliPoint, 2000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptPadTrailing, (int)FwTextPropVar.ktpvMilliPoint, 2000);
@@ -56,27 +54,35 @@ namespace LanguageExplorer.Areas
 
 		protected override int GetMaxNumLines()
 		{
-			int numLines = GetNumLines(m_rhs.OwningRule.StrucDescOS);
-			int maxNumLines = numLines;
+			var numLines = GetNumLines(m_rhs.OwningRule.StrucDescOS);
+			var maxNumLines = numLines;
 			numLines = GetNumLines(m_rhs.StrucChangeOS);
 			if (numLines > maxNumLines)
+			{
 				maxNumLines = numLines;
+			}
 			numLines = GetNumLines(m_rhs.LeftContextOA);
 			if (numLines > maxNumLines)
+			{
 				maxNumLines = numLines;
+			}
 			numLines = GetNumLines(m_rhs.RightContextOA);
 			if (numLines > maxNumLines)
+			{
 				maxNumLines = numLines;
+			}
 			return maxNumLines;
 		}
 
 		protected override int GetVarIndex(IPhFeatureConstraint var)
 		{
-			int i = 0;
+			var i = 0;
 			foreach (var curVar in m_rhs.OwningRule.FeatureConstraints)
 			{
 				if (var == curVar)
+				{
 					return i;
+				}
 				i++;
 			}
 			return -1;
@@ -96,7 +102,7 @@ namespace LanguageExplorer.Areas
 
 					int arrowWidth, slashWidth, underscoreWidth, charHeight;
 					vwenv.get_StringWidth(m_arrow, m_charProps, out arrowWidth, out charHeight);
-					int maxCharHeight = charHeight;
+					var maxCharHeight = charHeight;
 					vwenv.get_StringWidth(m_slash, m_charProps, out slashWidth, out charHeight);
 					maxCharHeight = Math.Max(charHeight, maxCharHeight);
 					vwenv.get_StringWidth(m_underscore, m_charProps, out underscoreWidth, out charHeight);
@@ -105,12 +111,12 @@ namespace LanguageExplorer.Areas
 					int dmpx, spaceHeight;
 					vwenv.get_StringWidth(m_zwSpace, m_bracketProps, out dmpx, out spaceHeight);
 
-					int maxNumLines = GetMaxNumLines();
-					int maxCtxtHeight = maxNumLines * spaceHeight;
+					var maxNumLines = GetMaxNumLines();
+					var maxCtxtHeight = maxNumLines * spaceHeight;
 
-					int maxHeight = Math.Max(maxCharHeight, maxCtxtHeight);
-					int charOffset = maxHeight;
-					int ctxtPadding = maxHeight - maxCtxtHeight;
+					var maxHeight = Math.Max(maxCharHeight, maxCtxtHeight);
+					var charOffset = maxHeight;
+					var ctxtPadding = maxHeight - maxCtxtHeight;
 
 					VwLength tableLen;
 					tableLen.nVal = 10000;

@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas
 
 		public override void AddVirtualProp(string bstrClass, string bstrField, int luFlid, int type)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		// Not sure which of these we need, do both.

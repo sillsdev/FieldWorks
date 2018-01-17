@@ -66,7 +66,9 @@ namespace LanguageExplorer.Areas
 			get
 			{
 				if (m_clickNode == null)
+				{
 					return 0;
+				}
 				return (int)m_clickNode.Tag;
 			}
 		}
@@ -131,30 +133,38 @@ namespace LanguageExplorer.Areas
 			}
 			m_fOutOfDate = false;
 
-			TreeNode node = m_hvoToTreeNodeTable[currentObject.Hvo];
+			var node = m_hvoToTreeNodeTable[currentObject.Hvo];
 			if (node == null)
+			{
 				return;
+			}
 			Font font;
 			var text = GetTreeNodeLabel(currentObject, out font);
 			// ReSharper disable RedundantCheckBeforeAssignment
 			if (text != node.Text)
+			{
 				node.Text = text;
+			}
+
 			if (font != node.NodeFont)
+			{
 				node.NodeFont = font;
+			}
 			// ReSharper restore RedundantCheckBeforeAssignment
 		}
 
 		public virtual void ReleaseRecordBar()
 		{
-			if (m_tree != null)
+			if (m_tree == null)
 			{
-				m_tree.NodeMouseClick -= tree_NodeMouseClick;
-				m_tree.MouseDown -= tree_MouseDown;
-				m_tree.MouseMove -= tree_MouseMove;
-				m_tree.DragDrop -= tree_DragDrop;
-				m_tree.DragOver -= tree_DragOver;
-				m_tree.GiveFeedback -= tree_GiveFeedback;
+				return;
 			}
+			m_tree.NodeMouseClick -= tree_NodeMouseClick;
+			m_tree.MouseDown -= tree_MouseDown;
+			m_tree.MouseMove -= tree_MouseMove;
+			m_tree.DragDrop -= tree_DragDrop;
+			m_tree.DragOver -= tree_DragOver;
+			m_tree.GiveFeedback -= tree_GiveFeedback;
 		}
 
 		#endregion IRecordBarHandler implementation
@@ -252,81 +262,85 @@ namespace LanguageExplorer.Areas
 
 			var window = m_propertyTable.GetValue<IFwMainWnd>("window");
 			var recordBarControl = window.RecordBarControl;
-			if (recordBarControl != null)
+			if (recordBarControl == null)
 			{
-				using (new WaitCursor((Form)window))
+				return;
+			}
+			using (new WaitCursor((Form)window))
+			{
+				var tree = window.TreeStyleRecordList;
+				var expandedItems = new HashSet<int>();
+				if (m_tree != null && !m_expand)
 				{
-					var tree = window.TreeStyleRecordList;
-					var expandedItems = new HashSet<int>();
-					if (m_tree != null && !m_expand)
-					{
-						GetExpandedItems(m_tree.Nodes, expandedItems);
-					}
-					m_tree = tree;
-
-					// Removing the handlers first seems to be necessary because multiple tree handlers are
-					// working with one treeview. Only this active one should have handlers connected.
-					// If we fail to do this, switching to a different list causes drag and drop to stop working.
-					ReleaseRecordBar();
-
-					tree.NodeMouseClick += tree_NodeMouseClick;
-					if (editable)
-					{
-						tree.MouseDown += tree_MouseDown;
-						tree.MouseMove += tree_MouseMove;
-						tree.DragDrop += tree_DragDrop;
-						tree.DragOver += tree_DragOver;
-						tree.GiveFeedback += tree_GiveFeedback; // REVIEW (Hasso) 2015.02: this handler currently does nothing.  Needed?
-						tree.ContextMenuStrip = CreateTreebarContextMenuStrip();
-						tree.ContextMenuStrip.MouseClick += tree_MouseClicked;
-					}
-					else
-					{
-						tree.ContextMenuStrip = new ContextMenuStrip();
-					}
-					tree.AllowDrop = editable;
-					tree.BeginUpdate();
-					recordBarControl.Clear();
-					m_hvoToTreeNodeTable.Clear();
-
-					// type size must be set before AddTreeNodes is called
-					m_typeSize = recordList.TypeSize;
-					AddTreeNodes(recordList.SortedObjects, tree);
-
-					tree.Font = new Font(recordList.FontName, m_typeSize);
-					tree.ShowRootLines = m_hierarchical;
-
-					if (m_expand)
-						tree.ExpandAll();
-					else
-					{
-						tree.CollapseAll();
-						ExpandItems(tree.Nodes, expandedItems);
-					}
-					// Set the selection after expanding/collapsing the tree.  This allows the true
-					// selection to be visible even when the tree is collapsed but the selection is
-					// an internal node.  (See LT-4508.)
-					UpdateSelection(recordList.CurrentObject);
-					tree.EndUpdate();
+					GetExpandedItems(m_tree.Nodes, expandedItems);
 				}
+				m_tree = tree;
+
+				// Removing the handlers first seems to be necessary because multiple tree handlers are
+				// working with one treeview. Only this active one should have handlers connected.
+				// If we fail to do this, switching to a different list causes drag and drop to stop working.
+				ReleaseRecordBar();
+
+				tree.NodeMouseClick += tree_NodeMouseClick;
+				if (editable)
+				{
+					tree.MouseDown += tree_MouseDown;
+					tree.MouseMove += tree_MouseMove;
+					tree.DragDrop += tree_DragDrop;
+					tree.DragOver += tree_DragOver;
+					tree.GiveFeedback += tree_GiveFeedback; // REVIEW (Hasso) 2015.02: this handler currently does nothing.  Needed?
+					tree.ContextMenuStrip = CreateTreebarContextMenuStrip();
+					tree.ContextMenuStrip.MouseClick += tree_MouseClicked;
+				}
+				else
+				{
+					tree.ContextMenuStrip = new ContextMenuStrip();
+				}
+				tree.AllowDrop = editable;
+				tree.BeginUpdate();
+				recordBarControl.Clear();
+				m_hvoToTreeNodeTable.Clear();
+
+				// type size must be set before AddTreeNodes is called
+				m_typeSize = recordList.TypeSize;
+				AddTreeNodes(recordList.SortedObjects, tree);
+
+				tree.Font = new Font(recordList.FontName, m_typeSize);
+				tree.ShowRootLines = m_hierarchical;
+
+				if (m_expand)
+				{
+					tree.ExpandAll();
+				}
+				else
+				{
+					tree.CollapseAll();
+					ExpandItems(tree.Nodes, expandedItems);
+				}
+				// Set the selection after expanding/collapsing the tree.  This allows the true
+				// selection to be visible even when the tree is collapsed but the selection is
+				// an internal node.  (See LT-4508.)
+				UpdateSelection(recordList.CurrentObject);
+				tree.EndUpdate();
 			}
 		}
 
 		/// <summary>
 		/// For all the nodes that are expanded, if their tag is an int, add it to the set.
 		/// </summary>
-		/// <param name="treeNodeCollection"></param>
-		/// <param name="expandedItems"></param>
-		private void GetExpandedItems(TreeNodeCollection treeNodeCollection, HashSet<int> expandedItems)
+		private static void GetExpandedItems(TreeNodeCollection treeNodeCollection, HashSet<int> expandedItems)
 		{
 			foreach (TreeNode node in treeNodeCollection)
 			{
-				if (node.IsExpanded)
+				if (!node.IsExpanded)
 				{
-					if (node.Tag is int)
-						expandedItems.Add((int)node.Tag);
-					GetExpandedItems(node.Nodes, expandedItems);
+					continue;
 				}
+				if (node.Tag is int)
+				{
+					expandedItems.Add((int)node.Tag);
+				}
+				GetExpandedItems(node.Nodes, expandedItems);
 			}
 		}
 
@@ -334,17 +348,16 @@ namespace LanguageExplorer.Areas
 		/// If any of the nodes in treeNodeCollection has a tag that is an int that is in the set,
 		/// expand it, and recursively check its children.
 		/// </summary>
-		/// <param name="treeNodeCollection"></param>
-		/// <param name="expandedItems"></param>
-		private void ExpandItems(TreeNodeCollection treeNodeCollection, HashSet<int> expandedItems)
+		private static void ExpandItems(TreeNodeCollection treeNodeCollection, HashSet<int> expandedItems)
 		{
 			foreach (TreeNode node in treeNodeCollection)
 			{
-				if (node.Tag is int && expandedItems.Contains((int)node.Tag))
+				if (!(node.Tag is int) || !expandedItems.Contains((int) node.Tag))
 				{
-					node.Expand();
-					ExpandItems(node.Nodes, expandedItems);
+					continue;
 				}
+				node.Expand();
+				ExpandItems(node.Nodes, expandedItems);
 			}
 		}
 
@@ -356,7 +369,7 @@ namespace LanguageExplorer.Areas
 			return contStrip;
 		}
 
-		void tree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+		private void tree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
 		{
 			m_clickNode = e.Node;
 		}
@@ -373,7 +386,7 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		void tree_Promote()
+		private void tree_Promote()
 		{
 			if (m_clickNode == null) // LT-5652: don't promote anything
 			{
@@ -387,7 +400,7 @@ namespace LanguageExplorer.Areas
 			MoveItem(m_tree, destNode, source);
 		}
 
-		void tree_MouseClicked(object sender, MouseEventArgs e)
+		private void tree_MouseClicked(object sender, MouseEventArgs e)
 		{
 			// LT-5664  This event handler was set up to ensure the user does not
 			// accidentally select the Promote command with a right mouse click.
@@ -430,7 +443,7 @@ namespace LanguageExplorer.Areas
 		{
 		}
 
-		void tree_DragOver(object sender, DragEventArgs e)
+		private void tree_DragOver(object sender, DragEventArgs e)
 		{
 			if (!e.Data.GetDataPresent(typeof(LocalDragItem)))
 			{
@@ -441,34 +454,41 @@ namespace LanguageExplorer.Areas
 			// opinion at all about drag effects.
 			var item = (LocalDragItem)e.Data.GetData(typeof(LocalDragItem));
 			if (item.TreeBarHandler != this)
+			{
 				return;
+			}
 
 			TreeNode destNode;
 			e.Effect = OkToDrop(sender, e, out destNode) ? DragDropEffects.Move : DragDropEffects.None;
-			if (destNode != m_dragHiliteNode)
+			if (destNode == m_dragHiliteNode)
 			{
-				ClearDragHilite();
-				m_dragHiliteNode = destNode;
-				if (m_dragHiliteNode != null)
-					m_dragHiliteNode.BackColor = Color.Gray;
+				return;
+			}
+			ClearDragHilite();
+			m_dragHiliteNode = destNode;
+			if (m_dragHiliteNode != null)
+			{
+				m_dragHiliteNode.BackColor = Color.Gray;
 			}
 		}
 
-		void tree_MouseMove(object sender, MouseEventArgs e)
+		private void tree_MouseMove(object sender, MouseEventArgs e)
 		{
 			if ((e.Button & MouseButtons.Left) != MouseButtons.Left)
+			{
 				return;
+			}
 			var tree = sender as TreeView;
-			if (tree == null)
-				return;
 			// The location here is always different than the one in tree_MouseDown.
 			// Sometimes, the difference is great enough to choose an adjacent item!
 			// See LT-10295.  So we'll use the location stored in tree_MouseDown.
 			// (The sample code in MSDN uses the item/location information in MouseDown
 			// establish the item to drag in MouseMove.)
-			TreeNode selItem = tree.GetNodeAt(m_mouseDownLocation);
+			var selItem = tree?.GetNodeAt(m_mouseDownLocation);
 			if (selItem == null)
+			{
 				return;
+			}
 			var item = new LocalDragItem(this, selItem);
 			tree.DoDragDrop(item, DragDropEffects.Move);
 			ClearDragHilite();
@@ -477,19 +497,24 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Currently we only know how to move our own items.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void tree_DragDrop(object sender, DragEventArgs e)
+		private void tree_DragDrop(object sender, DragEventArgs e)
 		{
 			TreeNode destNode;
 			if (!OkToDrop(sender, e, out destNode))
+			{
 				return;
+			}
 			// Notification also gets sent to inactive handlers, which should ignore it.
 			var item = (LocalDragItem)e.Data.GetData(typeof(LocalDragItem));
 			if (item.TreeBarHandler != this)
+			{
 				return;
+			}
+
 			if (e.Effect != DragDropEffects.Move)
+			{
 				return;
+			}
 			MoveItem(sender, destNode, item.SourceNode);
 		}
 
@@ -513,8 +538,11 @@ namespace LanguageExplorer.Areas
 					hvoDest = dest.Hvo;
 					break;
 				}
+
 				if (dest == null)
+				{
 					return;
+				}
 				flidDest = CmPossibilityListTags.kflidPossibilities;
 				newSiblings = tree.Nodes;
 			}
@@ -524,12 +552,17 @@ namespace LanguageExplorer.Areas
 				flidDest = CmPossibilityTags.kflidSubPossibilities;
 				newSiblings = destNode.Nodes;
 			}
+
 			if (CheckAndReportForbiddenMove(hvoMove, hvoDest))
+			{
 				return;
+			}
 
 			var hvoOldOwner = move.Owner.Hvo;
 			if (hvoOldOwner == hvoDest)
+			{
 				return; // nothing to do.
+			}
 
 			var flidSrc = move.OwningFlid;
 			var srcIndex = cache.DomainDataByFlid.GetObjIndex(hvoOldOwner, flidSrc, hvoMove);
@@ -537,7 +570,9 @@ namespace LanguageExplorer.Areas
 			for (; ihvoDest < newSiblings.Count; ihvoDest++)
 			{
 				if (newSiblings[ihvoDest].Text.CompareTo(moveLabel) > 0) // Enhance JohnT: use ICU comparison...
+				{
 					break;
+				}
 			}
 			using (new WaitCursor(tree.TopLevelControl))
 			using (new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = MyRecordList }))
@@ -546,13 +581,6 @@ namespace LanguageExplorer.Areas
 					cache.ActionHandlerAccessor, () =>
 						cache.DomainDataByFlid.MoveOwnSeq(hvoOldOwner, flidSrc, srcIndex, srcIndex,
 														 hvoDest, flidDest, ihvoDest));
-				// Note: use MoveOwningSequence off LcmCache,
-				// so we get propchanges that can be picked up by SyncWatcher (CLE-76)
-				// (Hopefully the propchanges won't cause too much intermediant flicker,
-				// before ListUpdateHelper calls ReloadList())
-				//cache.DomainDataByFlid.MoveOwnSeq(hvoOldOwner, flidSrc, srcIndex, srcIndex,
-				//    hvoDest, flidDest, ihvoDest);
-				//move.MoveSideEffects(hvoOldOwner);
 			}
 		}
 
@@ -564,9 +592,6 @@ namespace LanguageExplorer.Areas
 		/// refactored a bit.
 		/// Review: Should these be pulled out to the PossibilityTreeBarHandler subclass?
 		/// </summary>
-		/// <param name="hvoMove"></param>
-		/// <param name="hvoDest"></param>
-		/// <returns>true if a problem was reported and the move should be cancelled.</returns>
 		private bool CheckAndReportForbiddenMove(int hvoMove, int hvoDest)
 		{
 			var movingPossItem = m_possRepo.GetObject(hvoMove);
@@ -600,14 +625,15 @@ namespace LanguageExplorer.Areas
 		/// <param name="hvoMainTagList">The hvo of the main PossiblityList grouping all TextMarkup Tags.</param>
 		/// <param name="hvoDest">The hvo of the destination tag item.</param>
 		/// <returns>true if we found and reported a bad move.</returns>
-		private bool CheckAndReportBadTagListMove(ICmPossibility movingTagItem, int hvoSubListRoot,
-			int hvoMainTagList, int hvoDest)
+		private bool CheckAndReportBadTagListMove(ICmPossibility movingTagItem, int hvoSubListRoot, int hvoMainTagList, int hvoDest)
 		{
 			// Check if movingTagItem is a top-level Tag Type.
 			if (movingTagItem.Hvo == hvoSubListRoot)
 			{
 				if (hvoDest == hvoMainTagList) // top-level Tag Type can move to main list (probably already there)
+				{
 					return false;
+				}
 
 				// The moving item is a top-level Tag Type, it cannot be demoted.
 				MessageBox.Show(m_tree, AreaResources.ksCantDemoteTagList, AreaResources.ksProhibitedMovement, MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -643,6 +669,7 @@ namespace LanguageExplorer.Areas
 		{
 			using (var movingColumnUI = new CmPossibilityUi(movingColumn))
 			{
+				// NB: Doesn't need to call 'InitializeFlexComponent', since the code doesn't access the three objects the init call sets.
 				// First, check whether we're allowed to manipulate this column at all. This is the same check as
 				// whether we're allowed to delete it.
 				if (movingColumnUI.CheckAndReportProtectedChartColumn())
@@ -672,6 +699,7 @@ namespace LanguageExplorer.Areas
 				var dest = m_possRepo.GetObject(hvoDest);
 				using (var destUI = new CmPossibilityUi(dest))
 				{
+					// NB: Doesn't need to call 'InitializeFlexComponent', since the code doesn't access the three objects the init call sets.
 					// If it isn't already a group, we can only turn it into one if it's empty
 					if (dest.SubPossibilitiesOS.Count == 0)
 					{
@@ -737,9 +765,11 @@ namespace LanguageExplorer.Areas
 			var tree = (TreeView) sender;
 			if (e.Button != MouseButtons.Left)
 			{
-				TreeNode node = tree.GetNodeAt(e.X, e.Y);
+				var node = tree.GetNodeAt(e.X, e.Y);
 				if (node != null)
+				{
 					tree.SelectedNode = node;
+				}
 			}
 			m_mouseDownLocation = e.Location;
 		}
@@ -756,11 +786,13 @@ namespace LanguageExplorer.Areas
 		public void EnsureSelectedNodeVisible(TreeView tree)
 		{
 			if (tree.SelectedNode == null)
+			{
 				return;
-			TreeNode node = tree.SelectedNode;
+			}
+			var node = tree.SelectedNode;
 			m_clickNode = node;		// use the current selection just incase the
 									// user clicks off the list.  LT-5652
-			string label = node.Text;
+			var label = node.Text;
 			try
 			{
 				node.Text = "a"; // Ugh! Hope the user never sees this! But otherwise it may scroll horizontally.
@@ -778,11 +810,15 @@ namespace LanguageExplorer.Areas
 			foreach(IManyOnePathSortItem item in sortedObjects)
 			{
 				var hvo = item.RootObjectHvo;
-				if(hvo < 0)//was deleted
+				if (hvo < 0) //was deleted
+				{
 					continue;
+				}
 				var obj = item.RootObjectUsing(m_cache);
 				if (!ShouldAddNode(obj))
+				{
 					continue;
+				}
 				AddTreeNode(obj, tree.Nodes);
 			}
 		}
@@ -800,27 +836,26 @@ namespace LanguageExplorer.Areas
 			// but when the object is forced to be selected, it will select the one in the Dictionary,
 			// not any of the others in the tree.
 			if (!m_hvoToTreeNodeTable.ContainsKey(keyHvo))
+			{
 				m_hvoToTreeNodeTable.Add(keyHvo, node);
+			}
 		}
 
-		protected virtual string GetDisplayPropertyName
-		{
-			get { return "ShortNameTSS"; }
-		}
+		protected virtual string GetDisplayPropertyName => "ShortNameTSS";
 
 		protected virtual string GetTreeNodeLabel(ICmObject obj, out Font font)
 		{
-			string displayPropertyName = GetDisplayPropertyName;
-			ObjectLabel label = ObjectLabel.CreateObjectLabel(obj.Cache, obj, displayPropertyName, m_bestWS);
+			var displayPropertyName = GetDisplayPropertyName;
+			var label = ObjectLabel.CreateObjectLabel(obj.Cache, obj, displayPropertyName, m_bestWS);
 			// Get the ws of the name, not the abbreviation, if we can.  See FWNX-1059.
 			// The string " - " is inserted by ObjectLabel.AsTss after the abbreviation
 			// and before the name for semantic domains and anthropology codes.  When
 			// localized, these lists are likely not to have localized the abbreviation.
 			var tss = label.AsTss;
-			int ws = tss.get_WritingSystem(tss.RunCount - 1);
+			var ws = tss.get_WritingSystem(tss.RunCount - 1);
 			if (!m_wsToFontTable.TryGetValue(ws, out font))
 			{
-				string sFont = m_cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName;
+				var sFont = m_cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName;
 				font = new Font(sFont, m_typeSize);
 				m_wsToFontTable.Add(ws, font);
 			}
@@ -840,11 +875,8 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// the default implementation does not add any sub nodes
 		/// </summary>
-		/// <param name="obj"></param>
-		/// <param name="parentsCollection"></param>
 		protected virtual void AddSubNodes(ICmObject obj, TreeNodeCollection parentsCollection)
 		{
-
 		}
 	}
 }

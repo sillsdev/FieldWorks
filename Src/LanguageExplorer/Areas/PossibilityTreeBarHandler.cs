@@ -55,7 +55,7 @@ namespace LanguageExplorer.Areas
 		/// <param name="parentsCollection"></param>
 		protected override void AddSubNodes(ICmObject obj, TreeNodeCollection parentsCollection)
 		{
-			var pss = (ICmPossibility) obj;
+			var pss = (ICmPossibility)obj;
 			foreach (var subPss in pss.SubPossibilitiesOS)
 			{
 				AddTreeNode(subPss, parentsCollection);
@@ -77,9 +77,8 @@ namespace LanguageExplorer.Areas
 
 		protected override ContextMenuStrip CreateTreebarContextMenuStrip()
 		{
-			ContextMenuStrip menu = base.CreateTreebarContextMenuStrip();
-			if (MyRecordList.OwningObject is ICmPossibilityList
-			    && !(MyRecordList.OwningObject as ICmPossibilityList).IsSorted)
+			var menu = base.CreateTreebarContextMenuStrip();
+			if (MyRecordList.OwningObject is ICmPossibilityList && !(MyRecordList.OwningObject as ICmPossibilityList).IsSorted)
 			{
 				// Move up and move down items make sense
 				menu.Items.Add(new DisposableToolStripMenuItem(LanguageExplorerResources.MoveUp));

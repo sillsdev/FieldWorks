@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,7 +9,6 @@ using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
-using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
@@ -30,7 +28,7 @@ namespace LanguageExplorer.Areas
 	/// keyword), the object (typically StTxtPara) and segment they belong to, and several other derived properties which can
 	/// be displayed in optional columns of the concordance views.
 	/// </summary>
-	public class ConcDecorator : DomainDataByFlidDecoratorBase, IAnalysisOccurrenceFromHvo, IFlexComponent
+	internal class ConcDecorator : DomainDataByFlidDecoratorBase, IAnalysisOccurrenceFromHvo, IFlexComponent
 	{
 		/// <summary>
 		/// Maps from wf hvo to array of dummy HVOs generated to represent occurrences.
@@ -102,6 +100,10 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
+		#endregion
+
+		#region Implementation of IFlexComponent
+
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -123,16 +125,17 @@ namespace LanguageExplorer.Areas
 		{
 			base.RemoveNotification(nchng);
 			m_notifieeCount--;
-			if (m_notifieeCount <= 0 && m_interestingTexts != null)
+			if (m_notifieeCount > 0 || m_interestingTexts == null)
 			{
-				m_interestingTexts.InterestingTextsChanged -= m_interestingTexts_InterestingTextsChanged;
-				// Also we need to make sure the InterestingTextsList doesn't do propchanges for us anymore
-				// N.B. This avoids LT-12437, but we are assuming that this only gets triggered during Refresh or
-				// shutting down the main window, when all the record lists are being disposed.
-				// If a record list were to be disposed some other time when another record list was still using the ITL,
-				// this would be a bad thing to do.
-				base.RemoveNotification(m_interestingTexts);
+				return;
 			}
+			m_interestingTexts.InterestingTextsChanged -= m_interestingTexts_InterestingTextsChanged;
+			// Also we need to make sure the InterestingTextsList doesn't do propchanges for us anymore
+			// N.B. This avoids LT-12437, but we are assuming that this only gets triggered during Refresh or
+			// shutting down the main window, when all the record lists are being disposed.
+			// If a record list were to be disposed some other time when another record list was still using the ITL,
+			// this would be a bad thing to do.
+			base.RemoveNotification(m_interestingTexts);
 		}
 
 		/// <summary>
@@ -148,7 +151,6 @@ namespace LanguageExplorer.Areas
 			m_notifieeCount++;
 		}
 
-		//public const int kdummyOwner = -200000;
 		private const int kBaseDummyId = -200001;
 		private int m_nextId = kBaseDummyId;
 
@@ -157,17 +159,16 @@ namespace LanguageExplorer.Areas
 			return GetAnalysisOccurrences(hvo, true);
 		}
 
-		public IEnumerable<IStText> InterestingTexts
-		{
-			get { return m_interestingTexts.InterestingTexts; }
-		}
+		public IEnumerable<IStText> InterestingTexts => m_interestingTexts.InterestingTexts;
 
 		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			base.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
 			int[] values;
 			if (!m_values.TryGetValue(hvo, out values))
+			{
 				return;
+			}
 			// We are mainly looking for changes to FullConcordanceCount; but rather than taking the
 			// time to look up that flid, just invalidate our cache on any change to the wordform.
 			// occurrences is by far the most likely thing to change, and will probably be affected if
@@ -186,7 +187,9 @@ namespace LanguageExplorer.Areas
 		{
 			int[] values;
 			if (m_values.TryGetValue(hvo, out values))
+			{
 				return values;
+			}
 			var analysis = (IAnalysis)m_services.GetObject(hvo);
 			var wf = analysis.Wordform;
 			var bag = wf.OccurrencesBag;
@@ -219,7 +222,9 @@ namespace LanguageExplorer.Areas
 		public void OnItemDataModified(object argument)
 		{
 			if (!(argument is IAnalysis))
+			{
 				return;
+			}
 			UpdateAnalysisOccurrences((IAnalysis)argument, true);
 		}
 
@@ -246,10 +251,12 @@ namespace LanguageExplorer.Areas
 		// If we've ever been asked for it, send a PropChanged notification to indicate that it has changed.
 		public void UpdateAnalysisOccurrences(IAnalysis obj, bool includeChildren)
 		{
-			int hvo = obj.Hvo;
+			var hvo = obj.Hvo;
 			int[] values;
 			if (!m_values.TryGetValue(hvo, out values))
+			{
 				return; // never loaded it, don't unless we get asked for it.
+			}
 			m_values.Remove(hvo); // get rid of dubious value.
 			int[] newvalues = GetAnalysisOccurrences(hvo, includeChildren);
 			int flidExact, flidAll;
@@ -270,10 +277,8 @@ namespace LanguageExplorer.Areas
 				default:
 					return;
 			}
-			if (includeChildren)
-				SendPropChanged(hvo, flidAll, 0, newvalues.Length, values.Length);
-			else
-				SendPropChanged(hvo, flidExact, 0, newvalues.Length, values.Length);
+
+			SendPropChanged(hvo, includeChildren ? flidAll : flidExact, 0, newvalues.Length, values.Length);
 			SendPropChanged(hvo, kflidOccurrenceCount, 0, 0, 0);
 		}
 
@@ -285,12 +290,12 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public void SetOccurrences(int hvo, IEnumerable<IParaFragment> occurrences)
 		{
-			int oldCount = m_concValues.Length;
+			var oldCount = m_concValues.Length;
 			var values = new int[occurrences.Count()];
-			int i = 0;
+			var i = 0;
 			foreach (var occurrence in occurrences)
 			{
-				int hvoOcc = m_nextId--;
+				var hvoOcc = m_nextId--;
 				values[i++] = hvoOcc;
 				m_occurrences[hvoOcc] = occurrence;
 			}
@@ -302,7 +307,6 @@ namespace LanguageExplorer.Areas
 		/// Update the occurrences list (kflidConcOccurrences of LangProject) to the specified array,
 		/// without sending PropChanged. (Typically used during ReloadList.)
 		/// </summary>
-		/// <param name="values"></param>
 		public void UpdateOccurrences(int[] values)
 		{
 			m_concValues = values;
@@ -311,24 +315,24 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Get the values we want for the occurrences of the specified LexSE HVO.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <returns></returns>
-		int[] GetSenseOccurrences(int hvo)
+		private int[] GetSenseOccurrences(int hvo)
 		{
 			int[] values;
 			if (m_values.TryGetValue(hvo, out values))
+			{
 				return values;
+			}
 			var sense = m_services.GetInstance<ILexSenseRepository>().GetObject(hvo);
 			var bundles = m_services.GetInstance<IWfiMorphBundleRepository>().InstancesWithSense(sense);
 			var valuesList = new List<int>();
-			foreach (IWfiAnalysis wa in (from bundle in bundles select bundle.Owner).Distinct())
+			foreach (IWfiAnalysis wa in (bundles.Select(bundle => bundle.Owner)).Distinct())
 			{
 				var bag = ((IWfiWordform)wa.Owner).OccurrencesBag;
 				foreach (var seg in from item in bag.Items where BelongsToInterestingText(item) select item)
 				{
 					foreach (var occurrence in seg.GetOccurrencesOfAnalysis(wa, bag.Occurrences(seg), true))
 					{
-						int hvoOcc = m_nextId--;
+						var hvoOcc = m_nextId--;
 						valuesList.Add(hvoOcc);
 						m_occurrences[hvoOcc] = occurrence;
 					}
@@ -342,8 +346,10 @@ namespace LanguageExplorer.Areas
 		private bool BelongsToInterestingText(ISegment seg)
 		{
 			if (m_interestingTexts == null)
+			{
 				return true; // no filtering
-			IStText text = seg.Paragraph != null ? seg.Paragraph.Owner as IStText : null;
+			}
+			var text = seg.Paragraph?.Owner as IStText;
 			return (text != null && m_interestingTexts.IsInterestingText(text));
 
 		}
@@ -353,9 +359,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public bool IsInterestingText(IStText text)
 		{
-			if (m_interestingTexts == null)
-				return true;
-			return m_interestingTexts.IsInterestingText(text);
+			return m_interestingTexts == null || m_interestingTexts.IsInterestingText(text);
 		}
 
 		public override int[] VecProp(int hvo, int tag)
@@ -377,7 +381,9 @@ namespace LanguageExplorer.Areas
 				case kflidTextGenres:
 					var text = GetStText(hvo);
 					if (text != null)
+					{
 						return (from poss in text.GenreCategories select poss.Hvo).ToArray();
+					}
 					return new int[0];
 
 			}
@@ -403,7 +409,9 @@ namespace LanguageExplorer.Areas
 				case kflidTextGenres:
 					var text = GetStText(hvo);
 					if (text != null)
+					{
 						return text.GenreCategories[index].Hvo;
+					}
 					return 0;
 			}
 			return base.get_VecItem(hvo, tag, index);
@@ -428,7 +436,9 @@ namespace LanguageExplorer.Areas
 				case kflidTextGenres:
 					var text = GetStText(hvo);
 					if (text != null)
+					{
 						return text.GenreCategories.Count;
+					}
 					return 0;
 			}
 			return base.get_VecSize(hvo, tag);
@@ -441,7 +451,9 @@ namespace LanguageExplorer.Areas
 				case kflidTextIsTranslation:
 					var text = GetStText(hvo);
 					if (text != null)
+					{
 						return text.IsTranslation;
+					}
 					return false;
 
 			}
@@ -458,18 +470,25 @@ namespace LanguageExplorer.Areas
 					{
 						IParaFragment occurrence;
 						if (m_occurrences.TryGetValue(hvo, out occurrence) && occurrence.IsValid)
+						{
 							return occurrence.GetMyBeginOffsetInPara();
+						}
 						return 0;
 					}
 				case kflidEndOffset:
 					{
 						IParaFragment occurrence;
 						if (m_occurrences.TryGetValue(hvo, out occurrence) && occurrence.IsValid)
+						{
 							return occurrence.GetMyEndOffsetInPara();
+						}
 						return 0;
 					}
 				case CmObjectTags.kflidClass:
-					if (hvo < 0) return kclidFakeOccurrence;
+					if (hvo < 0)
+					{
+						return kclidFakeOccurrence;
+					}
 					break;
 			}
 			return base.get_IntProp(hvo, tag);
@@ -496,23 +515,17 @@ namespace LanguageExplorer.Areas
 				case kflidTextTitle:
 					{
 						var text = GetStText(hvo);
-						if (text != null)
-							return text.Title.get_String(ws);
-						return TsStringUtils.EmptyString(ws);
+						return text != null ? text.Title.get_String(ws) : TsStringUtils.EmptyString(ws);
 					}
 				case kflidTextSource:
 					{
 						var text = GetStText(hvo);
-						if (text != null)
-							return text.Source.get_String(ws);
-						return TsStringUtils.EmptyString(ws);
+						return text != null ? text.Source.get_String(ws) : TsStringUtils.EmptyString(ws);
 					}
 				case kflidTextComment:
 					{
 						var text = GetStText(hvo);
-						if (text != null)
-							return text.Comment.get_String(ws);
-						return TsStringUtils.EmptyString(ws);
+						return text != null ? text.Comment.get_String(ws) : TsStringUtils.EmptyString(ws);
 					}
 			}
 			return base.get_MultiStringAlt(hvo, tag, ws);
@@ -531,7 +544,9 @@ namespace LanguageExplorer.Areas
 					{
 						IParaFragment occurrence;
 						if (m_occurrences.TryGetValue(hvo, out occurrence) && occurrence.IsValid)
+						{
 							return occurrence.TextObject.Hvo;
+						}
 						return 0;
 					}
 				case kflidSegment:
@@ -545,7 +560,9 @@ namespace LanguageExplorer.Areas
 					{
 						IParaFragment occurrence;
 						if (m_occurrences.TryGetValue(hvo, out occurrence) && occurrence.IsValid && occurrence.Analysis != null)
+						{
 							return occurrence.Analysis.Hvo;
+						}
 						return 0;
 					}
 				case kflidParagraph:
@@ -562,8 +579,6 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Makes the actual analysis occurrence available (e.g., for configuring the appropriate interlinear view).
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <returns></returns>
 		public IParaFragment OccurrenceFromHvo(int hvo)
 		{
 			Debug.Assert(m_occurrences.ContainsKey(hvo), "Attempting to retrieve an item from m_occurrences which isn't there.");
@@ -573,10 +588,10 @@ namespace LanguageExplorer.Areas
 		void m_interestingTexts_InterestingTextsChanged(object sender, InterestingTextsChangedArgs e)
 		{
 			m_values.Clear(); // Forget all we know about occurrences, since the texts they are based on have changed.
-			int flid = ObjectListPublisher.OwningFlid;
+			const int flid = ObjectListPublisher.OwningFlid;
 			var langProj = m_services.GetInstance<ILangProjectRepository>().AllInstances().First();
-			int oldSize = m_services.GetInstance<IWfiWordformRepository>().AllInstances().Count();
-;
+			var oldSize = m_services.GetInstance<IWfiWordformRepository>().AllInstances().Count();
+
 			// Force everything to be redisplayed by pretending all the wordforms were replaced.
 			SendPropChanged(langProj.Hvo, flid, 0, oldSize, oldSize);
 		}
@@ -605,312 +620,5 @@ namespace LanguageExplorer.Areas
 			m_fRefreshSuspended = false;
 			base.ResumeRefresh();
 		}
-	}
-
-	public class ConcMdc : LcmMetaDataCacheDecoratorBase
-	{
-		public ConcMdc(IFwMetaDataCacheManaged metaDataCache)
-			: base(metaDataCache)
-		{
-		}
-
-		public override void AddVirtualProp(string bstrClass, string bstrField, int luFlid, int type)
-		{
-			throw new NotImplementedException();
-		}
-
-		// Not sure which of these we need, do both.
-		public override int GetFieldId2(int luClid, string bstrFieldName, bool fIncludeBaseClasses)
-		{
-			switch (luClid)
-			{
-				case WfiWordformTags.kClassId:
-					{
-						switch (bstrFieldName)
-						{
-							case "ExactOccurrences":
-								return ConcDecorator.kflidWfExactOccurrences;
-							case "Occurrences":
-								return ConcDecorator.kflidWfOccurrences;
-							case "ConcOccurrences":
-								return ConcDecorator.kflidConcOccurrences;
-							case "OccurrenceCount":
-								return ConcDecorator.kflidOccurrenceCount;
-						}
-					}
-					break;
-				case WfiAnalysisTags.kClassId:
-					{
-						switch (bstrFieldName)
-						{
-							case "ExactOccurrences":
-								return ConcDecorator.kflidWaExactOccurrences;
-							case "Occurrences":
-								return ConcDecorator.kflidWaOccurrences;
-						}
-					}
-					break;
-				case WfiGlossTags.kClassId:
-					{
-						switch (bstrFieldName)
-						{
-							case "ExactOccurrences":
-								return ConcDecorator.kflidWgExactOccurrences;
-							case "Occurrences":
-								return ConcDecorator.kflidWgOccurrences;
-						}
-					}
-					break;
-				case LexSenseTags.kClassId:
-					{
-						switch (bstrFieldName)
-						{
-							case "Occurrences":
-								return ConcDecorator.kflidSenseOccurrences;
-						}
-					}
-					break;
-				case LangProjectTags.kClassId:
-					{
-						switch (bstrFieldName)
-						{
-							case "ConcOccurrences":
-								return ConcDecorator.kflidConcOccurrences;
-						}
-					}
-					break;
-				case ConcDecorator.kclidFakeOccurrence:
-					switch (bstrFieldName)
-					{
-						case "Reference":
-							return ConcDecorator.kflidReference;
-						case "BeginOffset":
-							return ConcDecorator.kflidBeginOffset;
-						case "EndOffset":
-							return ConcDecorator.kflidEndOffset;
-						case "TextObject":
-							return ConcDecorator.kflidTextObject;
-						case "Paragraph":
-							return ConcDecorator.kflidParagraph;
-						case "Segment":
-							return ConcDecorator.kflidSegment;
-						case "Analysis":
-							return ConcDecorator.kflidAnalysis;
-						case "TextTitle":
-							return ConcDecorator.kflidTextTitle;
-						case "TextGenres":
-							return ConcDecorator.kflidTextGenres;
-						case "TextIsTranslation":
-							return ConcDecorator.kflidTextIsTranslation;
-						case "TextSource":
-							return ConcDecorator.kflidTextSource;
-						case "TextComment":
-							return ConcDecorator.kflidTextComment;
-					}
-					break;
-			}
-			return base.GetFieldId2(luClid, bstrFieldName, fIncludeBaseClasses);
-		}
-
-		public override int GetFieldId(string bstrClassName, string bstrFieldName, bool fIncludeBaseClasses)
-		{
-			switch (bstrClassName)
-			{
-				case "FakeOccurrence":
-				switch (bstrFieldName)
-				{
-					case "Reference":
-						return ConcDecorator.kflidReference;
-					case "BeginOffset":
-						return ConcDecorator.kflidBeginOffset;
-					case "EndOffset":
-						return ConcDecorator.kflidEndOffset;
-					case "TextObject":
-						return ConcDecorator.kflidTextObject;
-					case "Paragraph":
-						return ConcDecorator.kflidParagraph;
-					case "Segment":
-						return ConcDecorator.kflidSegment;
-					case "TextTitle":
-						return ConcDecorator.kflidTextTitle;
-					case "TextGenres":
-						return ConcDecorator.kflidTextGenres;
-					case "TextIsTranslation":
-						return ConcDecorator.kflidTextIsTranslation;
-					case "TextSource":
-						return ConcDecorator.kflidTextSource;
-					case "TextComment":
-						return ConcDecorator.kflidTextComment;
-				}
-					break;
-				case "WfiWordform":
-					return GetFieldId2(WfiWordformTags.kClassId, bstrFieldName, fIncludeBaseClasses);
-				case "LexSense":
-					return GetFieldId2(LexSenseTags.kClassId, bstrFieldName, fIncludeBaseClasses);
-				case "LangProject":
-					return GetFieldId2(LangProjectTags.kClassId, bstrFieldName, fIncludeBaseClasses);
-				case "WfiAnalysis":
-					return GetFieldId2(WfiAnalysisTags.kClassId, bstrFieldName, fIncludeBaseClasses);
-				case "WfiGloss":
-					return GetFieldId2(WfiGlossTags.kClassId, bstrFieldName, fIncludeBaseClasses);
-			}
-
-			return base.GetFieldId(bstrClassName, bstrFieldName, fIncludeBaseClasses);
-		}
-
-		public override string GetOwnClsName(int flid)
-		{
-			switch (flid)
-			{
-				case ConcDecorator.kflidWfExactOccurrences: // Fall through
-				case ConcDecorator.kflidWfOccurrences: return "WfiWordform";
-				case ConcDecorator.kflidWaExactOccurrences: // Fall through
-				case ConcDecorator.kflidWaOccurrences: return "WfiAnalysis";
-				case ConcDecorator.kflidWgExactOccurrences: // Fall through
-				case ConcDecorator.kflidWgOccurrences: return "WfiGloss";
-				case ConcDecorator.kflidSenseOccurrences: return "LexSense";
-				case ConcDecorator.kflidConcOccurrences: return "LangProject";
-				case ConcDecorator.kflidTextSource: return "FakeOccurrence";
-				case ConcDecorator.kflidTextTitle: return "FakeOccurrence";
-				case ConcDecorator.kflidTextComment: return "FakeOccurrence";
-				//case ConcDecorator.kflidOccurrenceCount: return "WfiWordform";
-				//case ConcDecorator.kflidReference: return "FakeOccurrence";
-				//case ConcDecorator.kflidBeginOffset: return "FakeOccurrence";
-				//case ConcDecorator.kflidEndOffset: return "FakeOccurrence";
-				// And several other FakeOccurrence properties.
-			}
-			return base.GetOwnClsName(flid);
-		}
-
-		/// <summary>
-		/// The record list currently ignores properties with signature 0, so doesn't do more with them.
-		/// </summary>
-		public override int GetDstClsId(int flid)
-		{
-			switch (flid)
-			{
-				case ConcDecorator.kflidWfExactOccurrences: // Fall through.
-				case ConcDecorator.kflidWfOccurrences:
-					return 0;
-				case ConcDecorator.kflidTextObject:
-					return CmObjectTags.kClassId;
-				case ConcDecorator.kflidParagraph:
-					return StTxtParaTags.kClassId;
-				case ConcDecorator.kflidOccurrenceCount:
-					return 0;
-				case ConcDecorator.kflidReference:
-					return 0; // 'Reference' of an occurrence.
-				case ConcDecorator.kflidBeginOffset:
-					return 0; // 'BeginOffset' of an occurrence.
-				case ConcDecorator.kflidEndOffset:
-					return 0; // 'EndOffset' of an occurrence.
-				case ConcDecorator.kflidSenseOccurrences:
-					return 0; // top-level property for occurrences of a sense.
-				case ConcDecorator.kflidSegment:
-					return 030; // segment from occurrence.
-				case ConcDecorator.kflidConcOccurrences:
-					return 0; // occurrences in Concordance view, supposedly of LangProject.
-				case ConcDecorator.kflidAnalysis:
-					return 032; // from fake concordance object to Analysis.
-				case ConcDecorator.kflidWaExactOccurrences: // Fall through.
-				case ConcDecorator.kflidWaOccurrences:
-					return 0; // occurrences of a WfiAnalysis
-				case ConcDecorator.kflidWgExactOccurrences: // Fall through.
-				case ConcDecorator.kflidWgOccurrences:
-					return 0; // occurrences of a WfiGloss.
-				case ConcDecorator.kflidTextTitle:
-					return 0; // of a FakeOccurrence
-				case ConcDecorator.kflidTextGenres:
-					return 0; // of a FakeOccurrence
-				case ConcDecorator.kflidTextIsTranslation:
-					return 0; // of a FakeOccurrence
-				case ConcDecorator.kflidTextSource:
-					return 0; // of a FakeOccurrence
-				case ConcDecorator.kflidTextComment:
-					return 0; // of a FakeOccurrence
-				case ConcDecorator.kclidFakeOccurrence:
-					return 0;
-			}
-			return base.GetDstClsId(flid);
-		}
-
-		public override string GetClassName(int clid)
-		{
-			if (clid == ConcDecorator.kclidFakeOccurrence)
-				return "FakeOccurrence";
-			return base.GetClassName(clid);
-		}
-
-		public override string GetFieldName(int flid)
-		{
-			switch (flid)
-			{
-				case ConcDecorator.kflidWfExactOccurrences: return "ExactOccurrences";
-				case ConcDecorator.kflidWaExactOccurrences: return "ExactOccurrences";
-				case ConcDecorator.kflidWgExactOccurrences: return "ExactOccurrences";
-				case ConcDecorator.kflidWfOccurrences: return "Occurrences";
-				case ConcDecorator.kflidWaOccurrences: return "Occurrences";
-				case ConcDecorator.kflidWgOccurrences: return "Occurrences";
-				case ConcDecorator.kflidSenseOccurrences: return "Occurrences";
-				case ConcDecorator.kflidConcOccurrences: return "ConcOccurrences";
-				//case ConcDecorator.kflidOccurrenceCount: return "OccurrenceCount";
-				//case ConcDecorator.kflidReference: return "Reference";
-				//case ConcDecorator.kflidBeginOffset: return "BeginOffset";
-				//case ConcDecorator.kflidEndOffset: return "EndOffset";
-				// and several other FakeObject properties
-			}
-			return base.GetFieldName(flid);
-		}
-
-		public override int GetFieldType(int flid)
-		{
-			switch (flid)
-			{
-				case ConcDecorator.kflidWfExactOccurrences:
-				case ConcDecorator.kflidWfOccurrences:
-				case ConcDecorator.kflidWaExactOccurrences:
-				case ConcDecorator.kflidWaOccurrences:
-				case ConcDecorator.kflidWgExactOccurrences:
-				case ConcDecorator.kflidWgOccurrences:
-				case ConcDecorator.kflidConcOccurrences:
-				case ConcDecorator.kflidSenseOccurrences:
-					return (int)CellarPropertyType.ReferenceSequence;
-				case ConcDecorator.kflidOccurrenceCount:
-					return (int)CellarPropertyType.Integer;
-				case ConcDecorator.kflidReference:
-					return (int)CellarPropertyType.String;
-				case ConcDecorator.kflidBeginOffset:
-					return (int)CellarPropertyType.Integer;
-				case ConcDecorator.kflidEndOffset:
-					return (int)CellarPropertyType.Integer;
-				case ConcDecorator.kflidTextTitle:
-					return (int)CellarPropertyType.MultiString;
-				case ConcDecorator.kflidTextGenres:
-					return (int)CellarPropertyType.ReferenceSequence;
-				case ConcDecorator.kflidTextIsTranslation:
-					return (int)CellarPropertyType.Boolean;
-				case ConcDecorator.kflidTextSource:
-					return (int)CellarPropertyType.MultiString;
-				case ConcDecorator.kflidTextComment:
-					return (int)CellarPropertyType.MultiString;
-			}
-			return base.GetFieldType(flid);
-		}
-
-		// Not sure whether we need this one.
-		// Conceivably we might need to override field type etc.
-		//public override string GetFieldName(int flid)
-		//{
-		//    switch (flid)
-		//    {
-		//        case ConcDecorator.kflidOccurrences: return "Occurrences";
-		//        case ConcDecorator.kflidOccurrenceCount: return "OccurrenceCount";
-		//        case ConcDecorator.kflidReference: return "Reference";
-		//        case ConcDecorator.kflidBeginOffset: return "BeginOffset";
-		//        case ConcDecorator.kflidEndOffset: return "EndOffset";
-		//          and other FakeObject properties, and various others.
-		//    }
-		//    return base.GetFieldName(flid);
-		//}
 	}
 }

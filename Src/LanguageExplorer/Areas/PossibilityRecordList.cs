@@ -65,7 +65,9 @@ namespace LanguageExplorer.Areas
 					? sPossClass
 					: currentObjOwner.ClassName;
 				if (classNameOfOwnerOfCurrentObject != className)
+				{
 					return null;
+				}
 			}
 			else if (sPossClass != className)
 			{

@@ -40,7 +40,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			var bulkEditBar = m_browseViewer.BulkEditBar;
+			var bulkEditBar = BrowseViewer.BulkEditBar;
 			// We want a custom name for the tab, the operation label, and the target item
 			// Now we use good old List Choice.  bulkEditBar.ListChoiceTab.Text = LanguageExplorerResources.ksAssignFeaturesToPhonemes;
 			bulkEditBar.OperationLabel.Text = LanguageExplorerResources.ksListChoiceDesc;

@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
@@ -65,33 +64,6 @@ namespace LanguageExplorer.Areas
 
 		protected string m_helpTopic;
 		private HelpProvider helpProvider;
-
-		// ReSharper disable InconsistentNaming
-		// This stores the values of the format, configured, filtered, and sorted attributes of
-		// the toplevel <template> element.
-		protected internal enum FxtTypes
-		{
-			kftFxt = 0,
-			kftConfigured = 1,
-			kftReversal = 2,
-			kftTranslatedLists = 3,
-			kftPathway = 4,
-			kftLift = 5,
-			kftGrammarSketch,
-			kftClassifiedDict,
-			kftSemanticDomains,
-			kftWebonary
-		}
-		// ReSharper restore InconsistentNaming
-		protected internal struct FxtType
-		{
-			public string m_sFormat;
-			public FxtTypes m_ft;
-			public bool m_filtered;
-			public string m_sDataType;
-			public string m_sXsltFiles;
-			public string m_path; // Used to keep track of items after they are sorted.
-		}
 		protected List<FxtType> m_rgFxtTypes = new List<FxtType>(8);
 
 		protected ConfiguredExport m_ce;
@@ -148,9 +120,11 @@ namespace LanguageExplorer.Areas
 
 		private void InitFromMainControl(object objCurrentControl)
 		{
-			XmlDocView docView = FindXmlDocView(objCurrentControl as Control);
+			var docView = FindXmlDocView(objCurrentControl as Control);
 			if (docView != null)
+			{
 				m_seqView = docView.Controls[0] as XmlSeqView;
+			}
 			if (m_seqView != null)
 			{
 				m_xvc = m_seqView.Vc;
@@ -168,17 +142,17 @@ namespace LanguageExplorer.Areas
 				}
 			}
 
-			XmlBrowseView browseView = FindXmlBrowseView(objCurrentControl as Control);
+			var browseView = FindXmlBrowseView(objCurrentControl as Control);
 			if (browseView != null)
+			{
 				m_sda = browseView.RootBox.DataAccess;
+			}
 		}
 
 		/// <summary>
 		/// Allows process to find an appropriate root hvo and change the current root.
 		/// Subclasses (e.g. NotebookExportDialog) can override.
 		/// </summary>
-		/// <param name="cmo"></param>
-		/// <param name="clidRoot"></param>
 		/// <returns>Returns -1 if root hvo doesn't need changing.</returns>
 		protected virtual int SetRoot(ICmObject cmo, out int clidRoot)
 		{
@@ -209,14 +183,21 @@ namespace LanguageExplorer.Areas
 		private XmlDocView FindXmlDocView(Control control)
 		{
 			if (control == null)
+			{
 				return null;
+			}
+
 			if (control is XmlDocView)
-				return control as XmlDocView;
+			{
+				return (XmlDocView)control;
+			}
 			foreach (Control c in control.Controls)
 			{
-				XmlDocView xdv = FindXmlDocView(c);
+				var xdv = FindXmlDocView(c);
 				if (xdv != null)
+				{
 					return xdv;
+				}
 			}
 			return null;
 		}
@@ -227,14 +208,21 @@ namespace LanguageExplorer.Areas
 		private XmlBrowseView FindXmlBrowseView(Control control)
 		{
 			if (control == null)
+			{
 				return null;
+			}
+
 			if (control is XmlBrowseView)
-				return control as XmlBrowseView;
+			{
+				return (XmlBrowseView) control;
+			}
 			foreach (Control c in control.Controls)
 			{
-				XmlBrowseView xbv = FindXmlBrowseView(c);
+				var xbv = FindXmlBrowseView(c);
 				if (xbv != null)
+				{
 					return xbv;
+				}
 			}
 			return null;
 		}
@@ -258,7 +246,9 @@ namespace LanguageExplorer.Areas
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
@@ -397,12 +387,16 @@ namespace LanguageExplorer.Areas
 			string area, tool;
 			m_areaOrig = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
 			if (m_rgFxtTypes.Count == 0)
+			{
 				return null; // only non-Fxt exports available (like Discourse chart?)
+			}
 			var ft = m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft;
 			if (m_areaOrig == AreaServices.NotebookAreaMachineName)
 			{
 				if (ft != FxtTypes.kftConfigured) // Different from Configured Dictionary; Notebook uses a subclass of ExportDialog
+				{
 					return null; // nothing to do.
+				}
 				area = m_areaOrig;
 				tool = AreaServices.NotebookDocumentToolMachineName;
 			}
@@ -430,8 +424,7 @@ namespace LanguageExplorer.Areas
 			var dynLoaderNode = controlElement.Element("dynamicloaderinfo");
 			var contentAssemblyPath = XmlUtils.GetOptionalAttributeValue(dynLoaderNode, "assemblyPath");
 			var contentClass = XmlUtils.GetOptionalAttributeValue(dynLoaderNode, "class");
-			Control mainControl = (Control)DynamicLoader.CreateObject(contentAssemblyPath, contentClass);
-			var parameters = controlElement.Element("parameters");
+			var mainControl = (Control)DynamicLoader.CreateObject(contentAssemblyPath, contentClass);
 			((IFlexComponent)mainControl).InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			InitFromMainControl(mainControl);
 			return mainControl;
@@ -444,16 +437,22 @@ namespace LanguageExplorer.Areas
 		private void btnExport_Click(object sender, EventArgs e)
 		{
 			if (m_exportList.SelectedItems.Count == 0)
+			{
 				return;
+			}
 
 			m_exportItems.Clear();
 			foreach (ListViewItem sel in m_exportList.SelectedItems)
+			{
 				m_exportItems.Add(sel);
+			}
 			using (EnsureViewInfo())
 			{
 				if (!PrepareForExport())
+				{
 					return;
-				bool fLiftExport = m_exportItems[0].SubItems[2].Text == "lift";
+				}
+				var fLiftExport = m_exportItems[0].SubItems[2].Text == @"lift";
 				string sFileName;
 				string sDirectory;
 				if (fLiftExport)
@@ -461,19 +460,20 @@ namespace LanguageExplorer.Areas
 					using (var dlg = new FolderBrowserDialogAdapter())
 					{
 						dlg.Tag = AreaResources.ksChooseLIFTFolderTitle; // can't set title !!??
-						dlg.Description = string.Format(AreaResources.ksChooseLIFTExportFolder,
-							m_exportItems[0].SubItems[1].Text);
+						dlg.Description = string.Format(AreaResources.ksChooseLIFTExportFolder, m_exportItems[0].SubItems[1].Text);
 						dlg.ShowNewFolderButton = true;
 						dlg.RootFolder = Environment.SpecialFolder.Desktop;
 						dlg.SelectedPath = PropertyTable.GetValue("ExportDir", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
 						if (dlg.ShowDialog(this) != DialogResult.OK)
+						{
 							return;
+						}
 						sDirectory = dlg.SelectedPath;
 					}
-					string sFile = Path.GetFileName(sDirectory);
+					var sFile = Path.GetFileName(sDirectory);
 					sFileName = Path.Combine(sDirectory, sFile + FwFileExtensions.ksLexiconInterchangeFormat);
 					string sMsg = null;
-					MessageBoxButtons btns = MessageBoxButtons.OKCancel;
+					var btns = MessageBoxButtons.OKCancel;
 					if (File.Exists(sFileName))
 					{
 						sMsg = AreaResources.ksLIFTAlreadyExists;
@@ -481,19 +481,21 @@ namespace LanguageExplorer.Areas
 					}
 					else
 					{
-						string[] rgfiles = Directory.GetFiles(sDirectory);
+						var rgfiles = Directory.GetFiles(sDirectory);
 						if (rgfiles.Length > 0)
 						{
 							sMsg = AreaResources.ksLIFTFolderNotEmpty;
 							btns = MessageBoxButtons.YesNo;
 						}
 					}
-					if (!String.IsNullOrEmpty(sMsg))
+					if (!string.IsNullOrEmpty(sMsg))
 					{
-						using (LiftExportMessageDlg dlg = new LiftExportMessageDlg(sMsg, btns))
+						using (var dlg = new LiftExportMessageDlg(sMsg, btns))
 						{
 							if (dlg.ShowDialog(this) != DialogResult.OK)
+							{
 								return;
+							}
 						}
 					}
 				}
@@ -504,7 +506,7 @@ namespace LanguageExplorer.Areas
 					// See FWR-2506.
 					if (m_rgFxtTypes.Count > 0)
 					{
-						string fxtPath = (string) m_exportItems[0].Tag;
+						var fxtPath = (string) m_exportItems[0].Tag;
 						ft = m_rgFxtTypes[FxtIndex(fxtPath)];
 					}
 					else
@@ -523,7 +525,9 @@ namespace LanguageExplorer.Areas
 									m_exportItems[0].SubItems[2].Text,
 									m_exportItems[0].SubItems[3].Text);
 								if (dlg.ShowDialog(this) != DialogResult.OK)
+								{
 									return;
+								}
 								sFileName = dlg.FileName;
 								sDirectory = Path.GetDirectoryName(sFileName);
 								m_translationWritingSystems = dlg.SelectedWritingSystems;
@@ -535,9 +539,14 @@ namespace LanguageExplorer.Areas
 							{
 								dlg.Initialize(m_cache);
 								if (dlg.ShowDialog(this) != DialogResult.OK)
+								{
 									return;
-								m_translationWritingSystems = new List<int>();
-								m_translationWritingSystems.Add(dlg.SelectedWs);
+								}
+
+								m_translationWritingSystems = new List<int>
+								{
+									dlg.SelectedWs
+								};
 								m_allQuestions = dlg.AllQuestions;
 							}
 							goto default;
@@ -655,15 +664,14 @@ namespace LanguageExplorer.Areas
 
 		protected void DoExport(string outPath, bool fLiftOutput)
 		{
-			string fxtPath = (string)m_exportItems[0].Tag;
-			FxtType ft = m_rgFxtTypes[FxtIndex(fxtPath)];
+			var fxtPath = (string)m_exportItems[0].Tag;
+			var ft = m_rgFxtTypes[FxtIndex(fxtPath)];
 			using (new WaitCursor(this))
 			using (var progressDlg = new ProgressDialogWithTask(this))
 			{
 				try
 				{
-				    UsageReporter.SendEvent(m_areaOrig + @"Export", @"Export", ft.m_ft.ToString(),
-					    string.Format("{0} {1} {2}", ft.m_sDataType, ft.m_sFormat, ft.m_filtered ? "filtered" : "unfiltered"), 0);
+					UsageReporter.SendEvent(m_areaOrig + @"Export", @"Export", ft.m_ft.ToString(), $"{ft.m_sDataType} {ft.m_sFormat} {(ft.m_filtered ? "filtered" : "unfiltered")}", 0);
 
 					switch (ft.m_ft)
 					{
@@ -690,9 +698,8 @@ namespace LanguageExplorer.Areas
 							progressDlg.Maximum = m_seqView.ObjectCount;
 							progressDlg.AllowCancel = true;
 
-							IVwStylesheet vss = m_seqView.RootBox == null ? null : m_seqView.RootBox.Stylesheet;
-							progressDlg.RunTask(true, ExportConfiguredDocView,
-								outPath, fxtPath, ft, vss);
+							var vss = m_seqView.RootBox?.Stylesheet;
+							progressDlg.RunTask(true, ExportConfiguredDocView, outPath, fxtPath, ft, vss);
 							break;
 						case FxtTypes.kftTranslatedLists:
 							progressDlg.Minimum = 0;
@@ -788,15 +795,9 @@ namespace LanguageExplorer.Areas
 			return null;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Exports as a LIFT file (possibly with one or more range files.
 		/// </summary>
-		/// <param name="progress">The progress dialog.</param>
-		/// <param name="args">The parameters: (only 1) the output file pathname.
-		/// </param>
-		/// <returns>Always null.</returns>
-		/// ------------------------------------------------------------------------------------
 		private object ExportLift(IThreadedProgress progress, object[] args)
 		{
 			var outPath = (string)args[0];
@@ -845,24 +846,18 @@ namespace LanguageExplorer.Areas
 			return null;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Exports as FXT.
 		/// </summary>
-		/// <param name="progressDialog">The progress dialog.</param>
-		/// <param name="parameters">The parameters: 1) output file, 2) template file path.
-		/// </param>
-		/// <returns>Always null.</returns>
-		/// ------------------------------------------------------------------------------------
 		private object ExportFxt(IThreadedProgress progressDialog, object[] parameters)
 		{
 			Debug.Assert(parameters.Length == 3);
 			m_progressDlg = progressDialog;
-			string outPath = (string)parameters[0];
-			string fxtPath = (string)parameters[1];
-			bool fLiftOutput = (bool)parameters[2];
+			var outPath = (string)parameters[0];
+			var fxtPath = (string)parameters[1];
+			var fLiftOutput = (bool)parameters[2];
 #if DEBUG
-			DateTime dtStart = DateTime.Now;
+			var dtStart = DateTime.Now;
 #endif
 			using (TextWriter w = new StreamWriter(outPath))
 			{
@@ -875,7 +870,7 @@ namespace LanguageExplorer.Areas
 				m_dumper.Go(m_cache.LangProject, fxtPath, w);
 			}
 #if DEBUG
-			DateTime dtExport = DateTime.Now;
+			var dtExport = DateTime.Now;
 #endif
 			if (fLiftOutput)
 			{
@@ -891,20 +886,17 @@ namespace LanguageExplorer.Areas
 			return null;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Exports the configured doc view.
 		/// </summary>
-		/// <param name="progressDlg">The progress dialog.</param>
-		/// <param name="parameters">The parameters.</param>
-		/// <returns>Always null.</returns>
-		/// ------------------------------------------------------------------------------------
 		protected object ExportConfiguredDocView(IThreadedProgress progressDlg, object[] parameters)
 		{
 			Debug.Assert(parameters.Length == 4);
 			m_progressDlg = progressDlg;
 			if (m_xvc == null)
+			{
 				return null;
+			}
 
 			var outPath = (string) parameters[0];
 			var fxtPath = (string) parameters[1];
@@ -915,14 +907,13 @@ namespace LanguageExplorer.Areas
 			{
 				// FileInfo outFile = new FileInfo(outPath); // CS 219
 #if DEBUG
-				string dirPath = Path.GetTempPath();
-				int copyCount = 1;
-				string s = string.Format("Starting Configured Export at {0}",
-					DateTime.Now.ToLongTimeString());
+				var dirPath = Path.GetTempPath();
+				var copyCount = 1;
+				var s = $"Starting Configured Export at {DateTime.Now.ToLongTimeString()}";
 				Debug.WriteLine(s);
 #endif
 				m_ce = new ConfiguredExport(null, m_xvc.DataAccess, m_hvoRootObj);
-				string sBodyClass = (m_areaOrig == AreaServices.NotebookAreaMachineName) ? "notebookBody" : "dicBody";
+				var sBodyClass = (m_areaOrig == AreaServices.NotebookAreaMachineName) ? "notebookBody" : "dicBody";
 				m_ce.Initialize(m_cache, PropertyTable, w, ft.m_sDataType, ft.m_sFormat, outPath, sBodyClass);
 				m_ce.UpdateProgress += ce_UpdateProgress;
 				m_xvc.Display(m_ce, m_hvoRootObj, m_seqView.RootFrag);
@@ -955,14 +946,7 @@ namespace LanguageExplorer.Areas
 #if DEBUG
 						File.Copy(outPath, Path.Combine(dirPath, "DebugOnlyExportStage" + copyCount + ".txt"), true);
 						copyCount++;
-						if (ix < cXslts)
-						{
-							s = $"Starting Configured Export XSLT file {rgsXslts[ix]} at {DateTime.Now.ToLongTimeString()}";
-						}
-						else
-						{
-							s = $"Starting final postprocess phase at {DateTime.Now.ToLongTimeString()}";
-						}
+						s = ix < cXslts ? $"Starting Configured Export XSLT file {rgsXslts[ix]} at {DateTime.Now.ToLongTimeString()}" : $"Starting final postprocess phase at {DateTime.Now.ToLongTimeString()}";
 						Debug.WriteLine(s);
 #endif
 						if (ix < cXslts)
@@ -985,8 +969,7 @@ namespace LanguageExplorer.Areas
 				m_ce = null;
 #if DEBUG
 				File.Copy(outPath, Path.Combine(dirPath, "DebugOnlyExportStage" + copyCount + ".txt"), true);
-				s = string.Format("Totally Finished Configured Export at {0}",
-					DateTime.Now.ToLongTimeString());
+				s = $"Totally Finished Configured Export at {DateTime.Now.ToLongTimeString()}";
 				Debug.WriteLine(s);
 #endif
 			}
@@ -1006,18 +989,18 @@ namespace LanguageExplorer.Areas
 			Close();
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Registry key for settings for this Dialog.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public RegistryKey SettingsKey
 		{
 			get
 			{
 				CheckDisposed();
 				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey)
+				{
 					return regKey.CreateSubKey("ExportInterlinearDialog");
+				}
 			}
 		}
 
@@ -1037,41 +1020,40 @@ namespace LanguageExplorer.Areas
 		/// If we defeat it, it may look a bit small the first time at high resolution,
 		/// but at least it will stay the size the user sets.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnLoad(EventArgs e)
 		{
-			Size size = Size;
+			var size = Size;
 			base.OnLoad(e);
 			if (Size != size)
+			{
 				Size = size;
+			}
 		}
 
 		private void ExportDialog_Load(object sender, EventArgs e)
 		{
-			string p = FxtDirectory;
+			var p = FxtDirectory;
 			if (Directory.Exists(p))
+			{
 				AddFxts(Directory.GetFiles(p, "*.xml"));
+			}
 		}
 
-		internal string FxtDirectory
-		{
-			get { return Path.Combine(FwDirectoryFinder.CodeDirectory, ConfigurationFilePath); }
-		}
+		internal string FxtDirectory => Path.Combine(FwDirectoryFinder.CodeDirectory, ConfigurationFilePath);
 
-		protected virtual string ConfigurationFilePath
-		{
-			get { return String.Format("Language Explorer{0}Export Templates", Path.DirectorySeparatorChar); }
-		}
+		protected virtual string ConfigurationFilePath => $"Language Explorer{Path.DirectorySeparatorChar}Export Templates";
 
 		protected void AddFxts(string[] filePaths)
 		{
 			Debug.Assert(filePaths != null);
 
-			foreach (string path in filePaths)
+			foreach (var path in filePaths)
 			{
 				if (path.EndsWith(".xml~"))
+				{
 					continue;	// ignore editor backup files.
-				XmlDocument document = new XmlDocument();
+				}
+				var document = new XmlDocument();
 				// If we have an xml file that can't be loaded, ignore it.
 				try
 				{
@@ -1081,25 +1063,24 @@ namespace LanguageExplorer.Areas
 				{
 					continue;
 				}
-				XmlNode node = document.SelectSingleNode("//FxtDocumentDescription");
+				var node = document.SelectSingleNode("//FxtDocumentDescription");
 				if (node == null)
-					continue;
-				string dataLabel = XmlUtils.GetOptionalAttributeValue(node,"dataLabel", "unknown");
-				string formatLabel = XmlUtils.GetOptionalAttributeValue(node,"formatLabel", "unknown");
-				string defaultExtension = XmlUtils.GetOptionalAttributeValue(node,"defaultExtension", "txt");
-				string sDefaultFilter = ResourceHelper.FileFilter(FileFilterType.AllFiles);
-				string filter = XmlUtils.GetOptionalAttributeValue(node,"filter", sDefaultFilter);
-				string description = node.InnerText;
-				if (description != null)
 				{
-					description = description.Trim();
+					continue;
 				}
+				var dataLabel = XmlUtils.GetOptionalAttributeValue(node,"dataLabel", "unknown");
+				var formatLabel = XmlUtils.GetOptionalAttributeValue(node,"formatLabel", "unknown");
+				var defaultExtension = XmlUtils.GetOptionalAttributeValue(node,"defaultExtension", "txt");
+				var sDefaultFilter = ResourceHelper.FileFilter(FileFilterType.AllFiles);
+				var filter = XmlUtils.GetOptionalAttributeValue(node,"filter", sDefaultFilter);
+				var description = node.InnerText;
+				description = description.Trim();
 				if (string.IsNullOrEmpty(description))
 				{
 					description = AreaResources.NoDescriptionForItem;
 				}
-				var item = new ListViewItem(new[]{dataLabel, formatLabel, defaultExtension, filter, description});
-				item.Tag = path;
+
+				var item = new ListViewItem(new[] {dataLabel, formatLabel, defaultExtension, filter, description}) {Tag = path};
 				m_exportList.Items.Add(item);
 				ConfigureItem(document, item, node);
 			}
@@ -1121,16 +1102,13 @@ namespace LanguageExplorer.Areas
 		/// Store the attributes of the "template" element.
 		/// Override (often to do nothing) if not configuring an FXT export process.
 		/// </summary>
-		/// <param name="document"></param>
-		/// <param name="item"></param>
-		/// <param name="ddNode"></param>
 		protected virtual void ConfigureItem(XmlDocument document, ListViewItem item, XmlNode ddNode)
 		{
-			XmlNode templateRootNode = document.SelectSingleNode("//template");
+			var templateRootNode = document.SelectSingleNode("//template");
 			Debug.Assert(templateRootNode != null, "FXT files must always have a <template> node somewhere.");
 			FxtType ft;
 			ft.m_sFormat = XmlUtils.GetOptionalAttributeValue(templateRootNode, "format", "xml");
-			string sType = XmlUtils.GetOptionalAttributeValue(templateRootNode, "type", "fxt");
+			var sType = XmlUtils.GetOptionalAttributeValue(templateRootNode, "type", "fxt");
 			switch (sType)
 			{
 				case "fxt":
@@ -1176,13 +1154,17 @@ namespace LanguageExplorer.Areas
 			// We can't actually disable a list item, but we can make it look and act like it's
 			// disabled.
 			if (ItemDisabled(ft.m_ft, ft.m_filtered, ft.m_sFormat))
+			{
 				item.ForeColor = SystemColors.GrayText;
+			}
 		}
 
 		private void m_exportList_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (m_exportList.SelectedItems.Count == 0)
+			{
 				return;
+			}
 
 			m_fExportPicturesAndMedia = false;
 			m_description.Text = m_exportList.SelectedItems[0].SubItems[4].Text;
@@ -1218,10 +1200,12 @@ namespace LanguageExplorer.Areas
 
 		protected int FxtIndex(string tag)
 		{
-			for (int i = 0; i < m_rgFxtTypes.Count; i++)
+			for (var i = 0; i < m_rgFxtTypes.Count; i++)
 			{
 				if (m_rgFxtTypes[i].m_path == tag)
+				{
 					return i;
+				}
 			}
 			return 0;
 		}
@@ -1234,7 +1218,7 @@ namespace LanguageExplorer.Areas
 		private bool ItemDisabled(FxtTypes ft, bool isFiltered, string formatType)
 		{
 			//enable unless the type is pathway & pathway is not installed, or if the type is lift and it is filtered, but there is no filter available, or if the filter excludes all items
-			bool fFilterAvailable = DetermineIfFilterIsAvailable();
+			var fFilterAvailable = DetermineIfFilterIsAvailable();
 			return (ft == FxtTypes.kftPathway && !PathwayUtils.IsPathwayInstalled) ||
 				   (ft == FxtTypes.kftLift && isFiltered && fFilterAvailable) ||
 				   (ft == FxtTypes.kftConfigured && (formatType == "htm" || formatType == "sfm")) ||
@@ -1250,7 +1234,9 @@ namespace LanguageExplorer.Areas
 			Debug.Assert(m_progressDlg != null);
 			m_progressDlg.Step(0);
 			if (m_progressDlg.Canceled)
+			{
 				m_dumper.Cancel();
+			}
 		}
 
 		private void OnDumperSetProgressMessage(object sender, ProgressMessageArgs e)
@@ -1265,7 +1251,9 @@ namespace LanguageExplorer.Areas
 			m_progressDlg.Minimum = 0;
 			m_progressDlg.Maximum = e.Max;
 			if (m_progressDlg.Canceled)
+			{
 				m_dumper.Cancel();
+			}
 		}
 
 		private void buttonHelp_Click(object sender, EventArgs e)
@@ -1278,17 +1266,20 @@ namespace LanguageExplorer.Areas
 			Debug.Assert(m_progressDlg != null);
 			m_progressDlg.Step(0);
 			if (m_progressDlg.Canceled)
+			{
 				m_ce.Cancel();
+			}
 		}
 
 		protected object ExportTranslatedLists(IThreadedProgress progressDlg, object[] parameters)
 		{
-			string outPath = (string)parameters[0];
+			var outPath = (string)parameters[0];
 			m_progressDlg = progressDlg;
 			if (m_translatedLists.Count == 0 || m_translationWritingSystems.Count == 0)
+			{
 				return null;
-			TranslatedListsExporter exporter = new TranslatedListsExporter(m_translatedLists,
-				m_translationWritingSystems, progressDlg);
+			}
+			var exporter = new TranslatedListsExporter(m_translatedLists, m_translationWritingSystems, progressDlg);
 			exporter.ExportLists(outPath);
 			return null;
 		}
@@ -1296,7 +1287,6 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// For testing.
 		/// </summary>
-		/// <param name="wss"></param>
 		internal void SetTranslationWritingSystems(List<int> wss)
 		{
 			m_translationWritingSystems = wss;
@@ -1305,7 +1295,6 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// for testing
 		/// </summary>
-		/// <param name="cache"></param>
 		internal void SetCache(LcmCache cache)
 		{
 			m_cache = cache;
@@ -1318,9 +1307,6 @@ namespace LanguageExplorer.Areas
 		/// The signature of this method is required by the way it is used as the task of the ProgressDialog.
 		/// See the first few lines for the required parameters.
 		/// </summary>
-		/// <param name="progressDlg"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
 		internal object ExportSemanticDomains(IThreadedProgress progressDlg, object[] parameters)
 		{
 			var outPath = (string) parameters[0];
@@ -1352,7 +1338,7 @@ namespace LanguageExplorer.Areas
 			}
 			var basePath = fxtPath.Substring(0, idx);
 			var sXsltPath = basePath + xslt;
-			var sIntermediateFile = ConfiguredExport.RenameOutputToPassN(outPath, 0);
+			var sIntermediateFile = CollectorEnv.RenameOutputToPassN(outPath, 0);
 
 			// The semantic domain xslt uses document('folderStart.xml') to retrieve the list of H1 topics.
 			// This is not allowed by default so we must use a settings object to enable it.
@@ -1400,13 +1386,13 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private void ProcessPathwayExport()
 		{
-			IApp app = PropertyTable.GetValue<IApp>("App");
-			string cssDialog = Path.Combine(PathwayUtils.PathwayInstallDirectory, "CssDialog.dll");
+			var app = PropertyTable.GetValue<IApp>("App");
+			var cssDialog = Path.Combine(PathwayUtils.PathwayInstallDirectory, "CssDialog.dll");
 			var sf = ReflectionHelper.CreateObject(cssDialog, "SIL.PublishingSolution.Contents", null);
 			Debug.Assert(sf != null);
-			LcmCache cache = PropertyTable.GetValue<LcmCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			ReflectionHelper.SetProperty(sf, "DatabaseName", cache.ProjectId.Name);
-			bool fContentsExists = SelectOption("ReversalIndexXHTML");
+			var fContentsExists = SelectOption("ReversalIndexXHTML");
 			if (fContentsExists)
 			{
 				// Inform Pathway if the reversal index is empty (or doesn't exist).  See FWR-3283.
@@ -1415,7 +1401,7 @@ namespace LanguageExplorer.Areas
 				{
 					try
 					{
-						IReversalIndex ri = m_cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
+						var ri = m_cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
 						fContentsExists = ri.EntriesOC.Count > 0;
 					}
 					catch
@@ -1428,25 +1414,27 @@ namespace LanguageExplorer.Areas
 			ReflectionHelper.SetProperty(sf, "ReversalExists", fContentsExists);
 			ReflectionHelper.SetProperty(sf, "GrammarExists", false);
 
-			DialogResult result = (DialogResult)ReflectionHelper.GetResult(sf, "ShowDialog");
+			var result = (DialogResult)ReflectionHelper.GetResult(sf, "ShowDialog");
 			if (result == DialogResult.Cancel)
+			{
 				return;
+			}
 
 			const string MainXhtml = "main.xhtml";
 			const string ExpCss = "main.css";
 			const string RevXhtml = "FlexRev.xhtml";
 
-			string strOutputPath = (string)ReflectionHelper.GetProperty(sf, "OutputLocationPath");
-			string strDictionaryName = (string)ReflectionHelper.GetProperty(sf, "DictionaryName");
-			string outPath = Path.Combine(strOutputPath, strDictionaryName);
+			var strOutputPath = (string)ReflectionHelper.GetProperty(sf, "OutputLocationPath");
+			var strDictionaryName = (string)ReflectionHelper.GetProperty(sf, "DictionaryName");
+			var outPath = Path.Combine(strOutputPath, strDictionaryName);
 
-			bool fExistingDirectoryInput = (bool)ReflectionHelper.GetProperty(sf, "ExistingDirectoryInput");
+			var fExistingDirectoryInput = (bool)ReflectionHelper.GetProperty(sf, "ExistingDirectoryInput");
 			if (fExistingDirectoryInput)
 			{
-				string inputPath = (string)ReflectionHelper.GetProperty(sf, "ExistingDirectoryLocationPath");
+				var inputPath = (string)ReflectionHelper.GetProperty(sf, "ExistingDirectoryLocationPath");
 				if (inputPath != outPath)
 				{
-					string dirFilter = string.Empty;
+					var dirFilter = string.Empty;
 					if (strOutputPath == inputPath)
 					{
 						dirFilter = strDictionaryName;
@@ -1454,7 +1442,9 @@ namespace LanguageExplorer.Areas
 					try
 					{
 						if (!Folders.Copy(inputPath, outPath, dirFilter, app.ApplicationName))
+						{
 							return;
+						}
 					}
 					catch (Exception ex)
 					{
@@ -1466,14 +1456,21 @@ namespace LanguageExplorer.Areas
 			}
 
 			if (!Folders.CreateDirectory(outPath, app.ApplicationName))
+			{
 				return;
+			}
 
-			string mainFullName = Path.Combine(outPath, MainXhtml);
-			string revFullXhtml = Path.Combine(outPath, RevXhtml);
-			if (!(bool)ReflectionHelper.GetProperty(sf, "ExportMain"))
-				mainFullName = "";
-			if (!(bool)ReflectionHelper.GetProperty(sf, "ExportReversal"))
-				revFullXhtml = "";
+			var mainFullName = Path.Combine(outPath, MainXhtml);
+			var revFullXhtml = Path.Combine(outPath, RevXhtml);
+			if (!(bool) ReflectionHelper.GetProperty(sf, "ExportMain"))
+			{
+				mainFullName = string.Empty;
+			}
+
+			if (!(bool) ReflectionHelper.GetProperty(sf, "ExportReversal"))
+			{
+				revFullXhtml = string.Empty;
+			}
 
 			switch (result)
 			{
@@ -1484,37 +1481,36 @@ namespace LanguageExplorer.Areas
 				case DialogResult.Yes:
 					if (!DoFlexExports(ExpCss, mainFullName, revFullXhtml))
 					{
-						this.Close();
+						Close();
 						return;
 					}
 					break;
 			}
 
-			string psExport = Path.Combine(PathwayUtils.PathwayInstallDirectory, "PsExport.dll");
+			var psExport = Path.Combine(PathwayUtils.PathwayInstallDirectory, "PsExport.dll");
 			var exporter = ReflectionHelper.CreateObject(psExport, "SIL.PublishingSolution.PsExport", null);
 			Debug.Assert(exporter != null);
 			ReflectionHelper.SetProperty(exporter, "DataType", "Dictionary");
 			ReflectionHelper.SetProperty(exporter, "ProgressBar", null);
 			ReflectionHelper.CallMethod(exporter, "Export", mainFullName != "" ? mainFullName : revFullXhtml);
-
-			RegistryKey applicationKey = app.SettingsKey;
+			var applicationKey = app.SettingsKey;
 			UsageEmailDialog.IncrementLaunchCount(applicationKey);
-			Assembly assembly = exporter.GetType().Assembly;
+			var assembly = exporter.GetType().Assembly;
 
 			const string FeedbackEmailAddress = "pathway@sil.org";
 			const string utilityLabel = "Pathway";
 
 			UsageEmailDialog.DoTrivialUsageReport(utilityLabel, applicationKey, FeedbackEmailAddress,
-				string.Format("1. What do you hope {0} will do for you?%0A%0A2. What languages are you working on?", utilityLabel),
+				$"1. What do you hope {utilityLabel} will do for you?%0A%0A2. What languages are you working on?",
 				false, 1, assembly);
 			UsageEmailDialog.DoTrivialUsageReport(utilityLabel, applicationKey, FeedbackEmailAddress,
-				string.Format("1. Do you have suggestions to improve the program?%0A%0A2. What are you happy with?"),
+				"1. Do you have suggestions to improve the program?%0A%0A2. What are you happy with?",
 				false, 10, assembly);
 			UsageEmailDialog.DoTrivialUsageReport(utilityLabel, applicationKey, FeedbackEmailAddress,
 				string.Format("1. What would you like to say to others about {0}?%0A%0A2. What languages have you used with {0}", utilityLabel),
 				false, 40, assembly);
 
-			this.Close();
+			Close();
 		}
 
 		/// <summary>
@@ -1531,28 +1527,16 @@ namespace LanguageExplorer.Areas
 		{
 			// LT-12279 selected a user disturbing, different menu item
 			// return m_exportList.Items.Cast<ListViewItem>().Where(lvi => lvi.Tag.ToString().Contains(exportFormat));
-			foreach (ListViewItem lvi in
-				m_exportList.Items.Cast<ListViewItem>().Where(lvi => lvi.Tag.ToString().Contains(exportFormat)))
+			foreach (var lvi in m_exportList.Items.Cast<ListViewItem>().Where(lvi => lvi.Tag.ToString().Contains(exportFormat)))
 			{
-				if (!ItemDisabled(lvi.Tag.ToString()))
+				if (ItemDisabled(lvi.Tag.ToString()))
 				{
-					m_exportItems.Insert(0, lvi);
-					return true;
+					return false;
 				}
-				return false;
+				m_exportItems.Insert(0, lvi);
+				return true;
 			}
 			return false;
-			/* foreach (ListViewItem lvi in m_exportList.Items)
-			{
-				if (lvi.Tag.ToString().Contains(exportFormat))
-				{
-					if (ItemDisabled(lvi.Tag.ToString()))
-						return false;
-					lvi.Selected = true;
-					return true;
-				}
-			}
-			return false; */
 		}
 
 		/// <summary>
@@ -1565,23 +1549,32 @@ namespace LanguageExplorer.Areas
 		protected bool DoFlexExports(string expCss, string mainFullName, string revFullXhtml)
 		{
 			if (File.Exists(mainFullName))
+			{
 				File.Delete(mainFullName);
+			}
 
 			if (File.Exists(revFullXhtml))
+			{
 				File.Delete(revFullXhtml);
+			}
 
-			string currInput = string.Empty;
+			var currInput = string.Empty;
 			try
 			{
-				if (mainFullName != "")
+				if (mainFullName != string.Empty)
+				{
 					ExportFor("ConfiguredXHTML", mainFullName);
-				if (revFullXhtml != "")
+				}
+
+				if (revFullXhtml != string.Empty)
+				{
 					ExportFor("ReversalIndexXHTML", revFullXhtml);
+				}
 			}
 			catch (FileNotFoundException)
 			{
-				IApp app = PropertyTable.GetValue<IApp>("App");
-				MessageBox.Show(@"The " + currInput + @" Section may be Empty (or) Not exported", app.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				var app = PropertyTable.GetValue<IApp>("App");
+				MessageBox.Show($@"The {currInput} Section may be Empty (or) Not exported", app.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return false;
 
 			}
@@ -1595,20 +1588,21 @@ namespace LanguageExplorer.Areas
 
 		private void ExportFor(string type, string file)
 		{
-			if (SelectOption(type))
+			if (!SelectOption(type))
 			{
-				using (EnsureViewInfo())
-				{
-					DoExport(file);
-					CheckForWellformedXmlFile(file);
-				}
+				return;
+			}
+			using (EnsureViewInfo())
+			{
+				DoExport(file);
+				CheckForWellformedXmlFile(file);
 			}
 		}
 
 		/// <summary>
-		/// Validating the xml file with xmldocument to avoid further processing.
+		/// Checking for well formed xml file with xmldocument to avoid further processing.
 		/// </summary>
-		/// <param name="xml">Xml file Name for Validating</param>
+		/// <param name="xml">Xml file Name to check</param>
 		/// <exception cref="FileNotFoundException">if xml file missing</exception>
 		/// <exception cref="XmlException">if xml file won't load</exception>
 		protected static void CheckForWellformedXmlFile(string xml)
@@ -1617,8 +1611,11 @@ namespace LanguageExplorer.Areas
 			{
 				throw new FileNotFoundException();
 			}
-			var xDoc = new XmlDocument();
-			xDoc.XmlResolver = new FileStreamXmlResolver();
+
+			var xDoc = new XmlDocument
+			{
+				XmlResolver = new FileStreamXmlResolver()
+			};
 			xDoc.Load(xml);
 		}
 
@@ -1647,6 +1644,10 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
+		#endregion
+
+		#region Implementation of IFlexComponent
+
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -1664,7 +1665,7 @@ namespace LanguageExplorer.Areas
 			AccessibleName = GetType().Name;
 
 			// Figure out where to locate the dlg.
-			object obj = SettingsKey.GetValue("InsertX");
+			var obj = SettingsKey.GetValue("InsertX");
 			if (obj != null)
 			{
 				var x = (int)obj;
@@ -1680,8 +1681,10 @@ namespace LanguageExplorer.Areas
 			m_helpTopic = "khtpExportLexicon";
 
 			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
-			helpProvider = new HelpProvider();
-			helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
+			helpProvider = new HelpProvider
+			{
+				HelpNamespace = helpTopicProvider.HelpFile
+			};
 			helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(m_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 
@@ -1699,10 +1702,7 @@ namespace LanguageExplorer.Areas
 
 			//Set  m_chkShowInFolder to it's last state.
 			var showInFolder = PropertyTable.GetValue("ExportDlgShowInFolder", "true");
-			if (showInFolder.Equals("true"))
-				m_chkShowInFolder.Checked = true;
-			else
-				m_chkShowInFolder.Checked = false;
+			m_chkShowInFolder.Checked = showInFolder.Equals("true");
 
 			m_exportItems = new List<ListViewItem>();
 		}

@@ -1,3 +1,7 @@
+// Copyright (c) ????-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Drawing;
 using SIL.LCModel.Core.Text;
@@ -9,7 +13,7 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas
 {
-	class MetaRuleFormulaVc : RuleFormulaVcBase
+	internal class MetaRuleFormulaVc : RuleFormulaVcBase
 	{
 		public const int kfragRule = 200;
 
@@ -34,28 +38,23 @@ namespace LanguageExplorer.Areas
 		public MetaRuleFormulaVc(LcmCache cache, IPropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
-			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
-			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
+			var tpb = TsStringUtils.MakePropsBldr();
+			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
 			m_inputCtxtProps = tpb.GetTextProps();
 
 			tpb = TsStringUtils.MakePropsBldr();
-			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
+			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
+			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			m_resultCtxtProps = tpb.GetTextProps();
 
 			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, MiscUtils.StandardSansSerif);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 10000);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
-			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
+			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
+			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			m_colHeaderProps = tpb.GetTextProps();
@@ -63,8 +62,7 @@ namespace LanguageExplorer.Areas
 			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, MiscUtils.StandardSansSerif);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 10000);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
+			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalLeft);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			m_rowHeaderProps = tpb.GetTextProps();
@@ -98,7 +96,7 @@ namespace LanguageExplorer.Areas
 						vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, "Disabled Text");
 					}
 
-					int maxNumLines = GetMaxNumLines();
+					var maxNumLines = GetMaxNumLines();
 
 					VwLength tableLen;
 					tableLen.nVal = 10000;
@@ -177,8 +175,10 @@ namespace LanguageExplorer.Areas
 					}
 					else
 					{
-						for (int i = 0; i < m_rule.LeftEnvLimit; i++)
+						for (var i = 0; i < m_rule.LeftEnvLimit; i++)
+						{
 							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
+						}
 					}
 					vwenv.CloseParagraph();
 					vwenv.CloseTableCell();
@@ -200,13 +200,17 @@ namespace LanguageExplorer.Areas
 					}
 					else
 					{
-						for (int i = m_rule.LeftSwitchIndex; i < m_rule.LeftSwitchLimit; i++)
+						for (var i = m_rule.LeftSwitchIndex; i < m_rule.LeftSwitchLimit; i++)
+						{
 							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
+						}
 
 						if (m_rule.MiddleIndex != -1 && m_rule.IsMiddleWithLeftSwitch)
 						{
-							for (int i = m_rule.MiddleIndex; i < m_rule.MiddleLimit; i++)
+							for (var i = m_rule.MiddleIndex; i < m_rule.MiddleLimit; i++)
+							{
 								vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
+							}
 						}
 					}
 					vwenv.CloseParagraph();
@@ -230,12 +234,16 @@ namespace LanguageExplorer.Areas
 					{
 						if (m_rule.MiddleIndex != -1 && !m_rule.IsMiddleWithLeftSwitch)
 						{
-							for (int i = m_rule.MiddleIndex; i < m_rule.MiddleLimit; i++)
+							for (var i = m_rule.MiddleIndex; i < m_rule.MiddleLimit; i++)
+							{
 								vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
+							}
 						}
 
-						for (int i = m_rule.RightSwitchIndex; i < m_rule.RightSwitchLimit; i++)
+						for (var i = m_rule.RightSwitchIndex; i < m_rule.RightSwitchLimit; i++)
+						{
 							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
+						}
 					}
 					vwenv.CloseParagraph();
 					vwenv.CloseTableCell();
@@ -256,8 +264,10 @@ namespace LanguageExplorer.Areas
 					}
 					else
 					{
-						for (int i = m_rule.RightEnvIndex; i < m_rule.RightEnvLimit; i++)
+						for (var i = m_rule.RightEnvIndex; i < m_rule.RightEnvLimit; i++)
+						{
 							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
+						}
 					}
 					vwenv.CloseParagraph();
 					vwenv.CloseTableCell();
@@ -280,8 +290,10 @@ namespace LanguageExplorer.Areas
 					vwenv.OpenParagraph();
 					if (m_rule.LeftEnvIndex != -1)
 					{
-						for (int i = 0; i < m_rule.LeftEnvLimit; i++)
+						for (var i = 0; i < m_rule.LeftEnvLimit; i++)
+						{
 							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
+						}
 					}
 					vwenv.CloseParagraph();
 					vwenv.CloseTableCell();
@@ -295,13 +307,17 @@ namespace LanguageExplorer.Areas
 					vwenv.OpenParagraph();
 					if (m_rule.RightSwitchIndex != -1)
 					{
-						for (int i = m_rule.RightSwitchIndex; i < m_rule.RightSwitchLimit; i++)
+						for (var i = m_rule.RightSwitchIndex; i < m_rule.RightSwitchLimit; i++)
+						{
 							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
+						}
 					}
 					if (m_rule.MiddleIndex != -1 && m_rule.IsMiddleWithLeftSwitch)
 					{
-						for (int i = m_rule.MiddleIndex; i < m_rule.MiddleLimit; i++)
+						for (var i = m_rule.MiddleIndex; i < m_rule.MiddleLimit; i++)
+						{
 							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
+						}
 					}
 					vwenv.CloseParagraph();
 					vwenv.CloseTableCell();
@@ -315,13 +331,17 @@ namespace LanguageExplorer.Areas
 
 					if (m_rule.MiddleIndex != -1 && !m_rule.IsMiddleWithLeftSwitch)
 					{
-						for (int i = m_rule.MiddleIndex; i < m_rule.MiddleLimit; i++)
+						for (var i = m_rule.MiddleIndex; i < m_rule.MiddleLimit; i++)
+						{
 							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
+						}
 					}
 					if (m_rule.LeftSwitchIndex != -1)
 					{
-						for (int i = m_rule.LeftSwitchIndex; i < m_rule.LeftSwitchLimit; i++)
+						for (var i = m_rule.LeftSwitchIndex; i < m_rule.LeftSwitchLimit; i++)
+						{
 							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
+						}
 					}
 					vwenv.CloseParagraph();
 					vwenv.CloseTableCell();
@@ -334,8 +354,10 @@ namespace LanguageExplorer.Areas
 					vwenv.OpenParagraph();
 					if (m_rule.RightEnvIndex != -1)
 					{
-						for (int i = m_rule.RightEnvIndex; i < m_rule.RightEnvLimit; i++)
+						for (var i = m_rule.RightEnvIndex; i < m_rule.RightEnvLimit; i++)
+						{
 							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
+						}
 					}
 					vwenv.CloseParagraph();
 					vwenv.CloseTableCell();

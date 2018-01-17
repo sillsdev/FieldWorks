@@ -260,7 +260,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// there are several instances where we can have a reference to an instance that was disposed, which will
 			// cause problems later on.
 			// Enhance CurtisH/EricP: If this VC gets used in other places, rather than adding more checks like this one,
-			// it may be better to refactor XWorksViewBase to cause it to reload the sorter and filter from persistence
+			// it may be better to refactor ViewBase to cause it to reload the sorter and filter from persistence
 			// every time the tool is changed
 			if (m_vc == null)
 			{

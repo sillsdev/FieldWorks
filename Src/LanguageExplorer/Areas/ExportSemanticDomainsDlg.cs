@@ -17,11 +17,9 @@ namespace LanguageExplorer.Areas
 			InitializeComponent();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initialize the dialog with all needed information.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void Initialize( LcmCache cache)
 		{
 			m_cache = cache;
@@ -43,20 +41,18 @@ namespace LanguageExplorer.Areas
 
 		private object CreateItemForWs(CoreWritingSystemDefinition xws)
 		{
-			return new Item {Label = xws.DisplayLabel, Ws = xws.Handle};
+			return new Item
+			{
+				Label = xws.DisplayLabel,
+				Ws = xws.Handle
+			};
 		}
 
-		public int SelectedWs
-		{
-			get { return ((Item) m_writingSystemsListBox.SelectedItem).Ws; }
-		}
+		public int SelectedWs => ((Item)m_writingSystemsListBox.SelectedItem).Ws;
 
-		public bool AllQuestions
-		{
-			get { return m_EnglishInRedCheckBox.Enabled && m_EnglishInRedCheckBox.Checked; }
-		}
+		public bool AllQuestions => m_EnglishInRedCheckBox.Enabled && m_EnglishInRedCheckBox.Checked;
 
-		class Item
+		private sealed class Item
 		{
 			public string Label;
 			public int Ws;

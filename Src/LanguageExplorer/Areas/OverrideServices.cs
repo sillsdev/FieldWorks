@@ -24,7 +24,9 @@ namespace LanguageExplorer.Areas
 				var layoutKey = overrideElement.Attribute(layout).Value;
 				var matchingSourceElement = sourceElement.Elements("column").FirstOrDefault(column => column.Attribute(layout).Value == layoutKey);
 				if (matchingSourceElement == null)
+				{
 					continue;
+				}
 				var overrideVisibilityAttr = overrideElement.Attribute(visibility);
 				var sourceVisbilityAttribute = matchingSourceElement.Attribute(visibility);
 				if (sourceVisbilityAttribute == null)

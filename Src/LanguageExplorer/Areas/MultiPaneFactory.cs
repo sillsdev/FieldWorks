@@ -66,7 +66,7 @@ namespace LanguageExplorer.Areas
 			// will use this to come up with a reasonable default location for its splitter.
 			if (subControl is MultiPane)
 			{
-				var mpSubControl = subControl as MultiPane;
+				var mpSubControl = (MultiPane)subControl;
 				mpSubControl.ParentSizeHint = parentMultiPane.ParentSizeHint;
 				// cause our subcontrol to inherit our DefaultPrintPane property.
 				mpSubControl.DefaultPrintPaneId = parentMultiPane.DefaultPrintPaneId;
@@ -77,18 +77,18 @@ namespace LanguageExplorer.Areas
 			// will use this to come up with a reasonable default location for its splitter.
 			if (subControl is PaneBarContainer)
 			{
-				var mpSubControl = subControl as PaneBarContainer;
+				var mpSubControl = (PaneBarContainer)subControl;
 				mpSubControl.ParentSizeHint = parentMultiPane.ParentSizeHint;
 				// cause our subcontrol to inherit our DefaultPrintPane property.
 				mpSubControl.DefaultPrintPaneId = parentMultiPane.DefaultPrintPaneId;
 			}
 			if (isFirstControl)
 			{
-				subControl.AccessibleName += ".First";
+				subControl.AccessibleName += @".First";
 			}
 			else
 			{
-				subControl.AccessibleName += ".Second";
+				subControl.AccessibleName += @".Second";
 			}
 			subControl.ResumeLayout();
 		}
@@ -133,16 +133,6 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Create a new MultiPane instance where both main child controls are PaneBarContainer instances
 		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		/// <param name="mainCollapsingSplitContainer">Parent control for the new MultiPane, which goes into its SecondControl</param>
-		/// <param name="multiPaneParameters"></param>
-		/// <param name="firstControl">Child control of new Left/Top PaneBarContainer instance</param>
-		/// <param name="firstlabel"></param>
-		/// <param name="firstPaneBar"></param>
-		/// <param name="secondControl">Child control of new Right/Bottom PaneBarContainer instance</param>
-		/// <param name="secondlabel"></param>
-		/// <param name="secondPaneBar"></param>
-		/// <returns>New instance of MultiPane that has PaneBarContainers as it two main controls.</returns>
 		internal static MultiPane CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(FlexComponentParameters flexComponentParameters, ICollapsingSplitContainer mainCollapsingSplitContainer, MultiPaneParameters multiPaneParameters, Control firstControl, string firstlabel, PaneBar firstPaneBar, Control secondControl, string secondlabel, PaneBar secondPaneBar)
 		{
 			var mainCollapsingSplitContainerAsControl = (Control)mainCollapsingSplitContainer;

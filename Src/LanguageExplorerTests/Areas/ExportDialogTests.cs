@@ -496,7 +496,7 @@ namespace LanguageExplorerTests.Areas
 			{
 				exportDlg.SetCache(m_cache);
 				var tempPath = Path.GetTempFileName();
-				var fxt = new ExportDialog.FxtType { m_sXsltFiles = "SemDomQs.xsl" };
+				var fxt = new FxtType { m_sXsltFiles = "SemDomQs.xsl" };
 				var fxtPath = Path.Combine(exportDlg.FxtDirectory, "SemDomQs.xml");
 				var wss = new List<int> { m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en") };
 				exportDlg.SetTranslationWritingSystems(wss);

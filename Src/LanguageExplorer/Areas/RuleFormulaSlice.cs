@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas
 	/// phonological/morphological rule slices.
 	/// </summary>
 	internal class RuleFormulaSlice : ViewSlice
-		{
+	{
 		public override RootSite RootSite
 		{
 			get
@@ -46,11 +46,13 @@ namespace LanguageExplorer.Areas
 		{
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
-				RuleFormulaControl.InsertionControl.SizeChanged -= new EventHandler(InsertionControl_SizeChanged);
+				RuleFormulaControl.InsertionControl.SizeChanged -= InsertionControl_SizeChanged;
 			}
 
 			base.Dispose(disposing);
@@ -67,13 +69,11 @@ namespace LanguageExplorer.Areas
 			base.OnEnter(e);
 
 			// show the insertion control
-			int oldHeight = Height;
+			var oldHeight = Height;
 			RuleFormulaControl.InsertionControl.Show();
 			Height = DesiredHeight(RuleFormulaControl.RootSite);
 			// FWNX-753 called attention to misbehavior around here.
-			if (MiscUtils.IsMono &&
-				RuleFormulaControl.Height != Height &&
-				RuleFormulaControl.Height == oldHeight)
+			if (MiscUtils.IsMono && RuleFormulaControl.Height != Height && RuleFormulaControl.Height == oldHeight)
 			{
 				SetSubcontrolHeights(this, oldHeight, Height);
 			}
@@ -99,12 +99,16 @@ namespace LanguageExplorer.Areas
 		private void SetSubcontrolHeights(Control ctrl, int oldHeight, int newHeight)
 		{
 			if (ctrl.Height == oldHeight)
+			{
 				ctrl.Height = newHeight;
+			}
 			foreach (var c in ctrl.Controls)
 			{
 				var ctl = c as Control;
 				if (ctl != null)
+				{
 					SetSubcontrolHeights(ctl, oldHeight, newHeight);
+				}
 			}
 		}
 
@@ -115,17 +119,23 @@ namespace LanguageExplorer.Areas
 			// hide the insertion control
 			RuleFormulaControl.InsertionControl.Hide();
 			if (RuleFormulaControl.RootSite.RootBox != null && ContainingDataTree != null)
+			{
 				Height = DesiredHeight(RuleFormulaControl.RootSite);
+			}
 		}
 
 		protected override int DesiredHeight(RootSite rs)
 		{
 			if (rs != null && !rs.AllowLayout)
+			{
 				rs.AllowLayout = true; // Fixes LT-13603 where sometimes the slice was constructed by not laid out by now.
-			int height = base.DesiredHeight(rs);
+			}
+			var height = base.DesiredHeight(rs);
 			// only include the height of the insertion contorl when it is visible
 			if (RuleFormulaControl.InsertionControl.Visible)
+			{
 				height += RuleFormulaControl.InsertionControl.Height;
+			}
 			return height;
 		}
 
@@ -133,9 +143,7 @@ namespace LanguageExplorer.Areas
 		{
 			base.Install(parentDataTree);
 
-			RuleFormulaControl.Initialize(PropertyTable.GetValue<LcmCache>("cache"), Object, -1, AreaResources.ksRuleEnvChooserName,
-				ContainingDataTree.PersistenceProvder, null, null);
-
+			RuleFormulaControl.Initialize(PropertyTable.GetValue<LcmCache>("cache"), Object, -1, AreaResources.ksRuleEnvChooserName, ContainingDataTree.PersistenceProvder, null, null);
 			RuleFormulaControl.InsertionControl.Hide();
 			RuleFormulaControl.InsertionControl.SizeChanged += InsertionControl_SizeChanged;
 		}
@@ -172,17 +180,17 @@ namespace LanguageExplorer.Areas
 		public bool OnContextJumpToNaturalClass(object args)
 		{
 			CheckDisposed();
-			IPhSimpleContextNC ctxt = RuleFormulaControl.CurrentContext as IPhSimpleContextNC;
+			var ctxt = RuleFormulaControl.CurrentContext as IPhSimpleContextNC;
 			var commands = new List<string>
-											{
-												"AboutToFollowLink",
-												"FollowLink"
-											};
+			{
+				"AboutToFollowLink",
+				"FollowLink"
+			};
 			var parms = new List<object>
-											{
-												null,
-												new FwLinkArgs(AreaServices.NaturalClassEditMachineName, ctxt.FeatureStructureRA.Guid)
-											};
+			{
+				null,
+				new FwLinkArgs(AreaServices.NaturalClassEditMachineName, ctxt.FeatureStructureRA.Guid)
+			};
 			Publisher.Publish(commands, parms);
 			return true;
 		}
@@ -203,15 +211,15 @@ namespace LanguageExplorer.Areas
 			CheckDisposed();
 			IPhSimpleContextSeg ctxt = RuleFormulaControl.CurrentContext as IPhSimpleContextSeg;
 			var commands = new List<string>
-											{
-												"AboutToFollowLink",
-												"FollowLink"
-											};
+			{
+				"AboutToFollowLink",
+				"FollowLink"
+			};
 			var parms = new List<object>
-											{
-												null,
-												new FwLinkArgs(AreaServices.PhonemeEditMachineName, ctxt.FeatureStructureRA.Guid)
-											};
+			{
+				null,
+				new FwLinkArgs(AreaServices.PhonemeEditMachineName, ctxt.FeatureStructureRA.Guid)
+			};
 			Publisher.Publish(commands, parms);
 			return true;
 		}

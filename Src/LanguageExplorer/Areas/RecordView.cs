@@ -66,8 +66,6 @@ namespace LanguageExplorer.Areas
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 
-			//MakePaneBar();
-
 			AccNameDefault = "RecordView"; // default accessibility name
 
 			MyRecordList.RecordChanged += RecordList_RecordChanged_Handler;
@@ -76,7 +74,9 @@ namespace LanguageExplorer.Areas
 		protected virtual void RecordList_RecordChanged_Handler(object sender, RecordNavigationEventArgs e)
 		{
 			if (!m_fullyInitialized)
+			{
 				return;
+			}
 
 			var options = new ListUpdateHelperParameterObject
 			{
@@ -92,15 +92,14 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
-		/// resources; <c>false</c> to release only unmanaged resources.
-		/// </param>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
@@ -118,11 +117,12 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Shows the record.
 		/// </summary>
-		/// <param name="rni">The record navigation info.</param>
 		protected virtual void ShowRecord(RecordNavigationInfo rni)
 		{
 			if (!rni.SkipShowRecord)
+			{
 				ShowRecord();
+			}
 		}
 
 		/// <summary>
@@ -131,8 +131,7 @@ namespace LanguageExplorer.Areas
 		protected override void ShowRecord()
 		{
 			base.ShowRecord();
-			if (m_configurationParametersElement != null
-				&& !XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParametersElement, "omitFromHistory", false))
+			if (m_configurationParametersElement != null && !XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParametersElement, "omitFromHistory", false))
 			{
 				UpdateContextHistory();
 			}
@@ -146,17 +145,19 @@ namespace LanguageExplorer.Areas
 			//are we the dominant pane? The thinking here is that if our record list is controlling the record tree bar, then we are.
 			// The second condition prevents recording the intermediate record in the history when following a link
 			// causes us to change areas and then change records.
-			if (MyRecordList.IsControllingTheRecordTreeBar && string.IsNullOrEmpty(PropertyTable.GetValue<string>("SuspendLoadingRecordUntilOnJumpToRecord")))
+			if (!MyRecordList.IsControllingTheRecordTreeBar ||
+				!string.IsNullOrEmpty(PropertyTable.GetValue<string>("SuspendLoadingRecordUntilOnJumpToRecord")))
 			{
-				//add our current state to the history system
-				var guid = Guid.Empty;
-				if (MyRecordList.CurrentObject != null)
-				{
-					guid = MyRecordList.CurrentObject.Guid;
-				}
-				MyRecordList.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
-				PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), guid));
+				return;
 			}
+			//add our current state to the history system
+			var guid = Guid.Empty;
+			if (MyRecordList.CurrentObject != null)
+			{
+				guid = MyRecordList.CurrentObject.Guid;
+			}
+			MyRecordList.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
+			PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), guid));
 		}
 
 		/// <summary>
@@ -227,7 +228,9 @@ namespace LanguageExplorer.Areas
 			var filenameWithExt = Path.ChangeExtension(filename, "fwss");
 			var tempDirectory = Path.Combine(cache.ProjectId.ProjectFolder, LcmFileHelper.ksSortSequenceTempDir);
 			if (!Directory.Exists(tempDirectory))
+			{
 				Directory.CreateDirectory(tempDirectory);
+			}
 			return Path.Combine(tempDirectory, filenameWithExt);
 		}
 
@@ -246,11 +249,15 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			var pathname = GetRecordListPersistPathname();
+#if DEBUG
 			var watch = new Stopwatch();
 			watch.Start();
+#endif
 			MyRecordList.PersistListOn(pathname);
+#if DEBUG
 			watch.Stop();
 			Debug.WriteLine("Saving record list " + pathname + " took " + watch.ElapsedMilliseconds + " ms.");
+#endif
 		}
 
 		// Enhance JohnT: need to verify that sort sequence is current.
@@ -258,12 +265,18 @@ namespace LanguageExplorer.Areas
 		{
 			var pathname = GetRecordListPersistPathname();
 			if (!File.Exists(pathname))
+			{
 				return false;
+			}
+#if DEBUG
 			var watch = new Stopwatch();
 			watch.Start();
+#endif
 			var result = MyRecordList.RestoreListFrom(pathname);
+#if DEBUG
 			watch.Stop();
 			Debug.WriteLine("Restoring record list " + pathname + " took " + watch.ElapsedMilliseconds + " ms.");
+#endif
 			return result;
 		}
 
@@ -293,15 +306,9 @@ namespace LanguageExplorer.Areas
 		/// if the XML configuration does not specify the availability of the treebar
 		/// (e.g. treeBarAvailability="Required"), then use this.
 		/// </summary>
-		protected virtual TreebarAvailability DefaultTreeBarAvailability
-		{
-			get
-			{
-				return TreebarAvailability.Required;
-			}
-		}
+		protected virtual TreebarAvailability DefaultTreeBarAvailability => TreebarAvailability.Required;
 
-#endregion // Other methods
+		#endregion // Other methods
 
 #region Component Designer generated code
 

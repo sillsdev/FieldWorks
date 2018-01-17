@@ -56,11 +56,9 @@ namespace LanguageExplorer.Areas
 		private System.ComponentModel.Container components = null;
 
 		#region Consruction and disposal
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XmlDocView"/> class.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public XmlDocView()
 		{
 			m_fullyInitialized = false;
@@ -112,38 +110,35 @@ namespace LanguageExplorer.Areas
 		{
 			var configLayouts = XmlUtils.FindElement(configNode, "configureLayouts");
 			// The configureLayouts node doesn't always exist!
-			if (configLayouts != null)
+			if (configLayouts == null)
 			{
-				var layouts = configLayouts.Elements();
-				return ExtractLayoutsFromLayoutTypeList(layouts);
-			}
 				return new List<Tuple<string, string>>();
+			}
+			var layouts = configLayouts.Elements();
+			return ExtractLayoutsFromLayoutTypeList(layouts);
 		}
 
 		private static IEnumerable<Tuple<string, string>> ExtractLayoutsFromLayoutTypeList(IEnumerable<XElement> layouts)
 		{
-			return from XElement layout in layouts
-				   select new Tuple<string, string>(XmlUtils.GetOptionalAttributeValue(layout, "label"),
-													XmlUtils.GetOptionalAttributeValue(layout, "layout"));
+			return layouts.Select(layout => new Tuple<string, string>(XmlUtils.GetOptionalAttributeValue(layout, "label"),
+					XmlUtils.GetOptionalAttributeValue(layout, "layout")));
 		}
 
-		private static IEnumerable<Tuple<string, string>> GetUserDefinedDictLayouts(
-			IEnumerable<string> builtInLayouts,
-			IEnumerable<XElement> layouts)
+		private static IEnumerable<Tuple<string, string>> GetUserDefinedDictLayouts(IEnumerable<string> builtInLayouts, IEnumerable<XElement> layouts)
 		{
 			var allUserLayoutTypes = ExtractLayoutsFromLayoutTypeList(layouts);
 			var result = new List<Tuple<string, string>>();
 			// This part prevents getting Reversal Index layouts or Notebook layouts in our (Dictionary) menu.
-			result.AddRange(from layout in allUserLayoutTypes
-							where builtInLayouts.Any(builtIn => builtIn == BaseLayoutName(layout.Item2))
-							select layout);
+			result.AddRange(allUserLayoutTypes.Where(layout => builtInLayouts.Any(builtIn => builtIn == BaseLayoutName(layout.Item2))));
 			return result;
 		}
 
 		private static string BaseLayoutName(string name)
 		{
-			if (String.IsNullOrEmpty(name))
-				return String.Empty;
+			if (string.IsNullOrEmpty(name))
+			{
+				return string.Empty;
+			}
 			// Find out if this layout name has a hashmark (#) in it. Return the part before it.
 			var parts = name.Split(Inventory.kcMarkLayoutCopy);
 			var result = parts.Length > 1 ? parts[0] : name;
@@ -171,9 +166,7 @@ namespace LanguageExplorer.Areas
 						}
 						else
 						{   // look up the publication object
-							var pub = (from item in Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS
-									   where item.Name.UserDefaultWritingSystem.Text == pubName
-									   select item).FirstOrDefault();
+							var pub = (Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Where(item => item.Name.UserDefaultWritingSystem.Text == pubName)).FirstOrDefault();
 							if (pub != null && pub != pubDecorator.Publication)
 							{   // change the publication if it is different from the current one
 								pubDecorator.Publication = pub;
@@ -199,8 +192,10 @@ namespace LanguageExplorer.Areas
 		{
 			var sda = m_mainView.DataAccess;
 			while (sda != null && !(sda is DictionaryPublicationDecorator) && sda is DomainDataByFlidDecoratorBase)
-				sda = ((DomainDataByFlidDecoratorBase) sda).BaseSda;
-			return sda as DictionaryPublicationDecorator;
+			{
+				sda = ((DomainDataByFlidDecoratorBase)sda).BaseSda;
+			}
+			return (DictionaryPublicationDecorator)sda;
 		}
 
 		// Return CmPossibility if any alternative matches SelectedPublication.
@@ -218,9 +213,7 @@ namespace LanguageExplorer.Areas
 				{
 					return Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Count > 0 ? Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0] : null;
 				}
-				var pub = (from item in Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS
-					where IsDesiredPublication(item, pubName)
-						   select item).FirstOrDefault();
+				var pub = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.FirstOrDefault(item => IsDesiredPublication(item, pubName));
 				return pub;
 			}
 		}
@@ -246,19 +239,16 @@ namespace LanguageExplorer.Areas
 			return PropertyTable.GetValue("SelectedPublication", LanguageExplorerResources.AllEntriesPublication);
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
-		/// resources; <c>false</c> to release only unmanaged resources.
-		/// </param>
-		/// -----------------------------------------------------------------------------------
 		protected override void Dispose( bool disposing )
 		{
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -278,16 +268,20 @@ namespace LanguageExplorer.Areas
 		protected override void SetInfoBarText()
 		{
 			if (m_informationBar == null)
+			{
 				return;
+			}
 
 			var context = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "persistContext", "");
 			// SetInfoBarText() was getting run about 4 times just creating one XmlDocView!
 			// To prevent that, add the following guards:
 			if (m_titleStr != null && NoReasonToChangeTitle(context))
+			{
 				return;
+			}
 			var titleStr = GetBaseTitleStringFromConfig();
 
-			bool fBaseCalled = false;
+			var fBaseCalled = false;
 			if (titleStr == string.Empty)
 			{
 				base.SetInfoBarText();
@@ -299,7 +293,9 @@ namespace LanguageExplorer.Areas
 				// base.SetInfoBarText() does here, or get the string set by the base.
 				// for now, let's just return.
 				if (titleStr == string.Empty)
+				{
 					return;
+				}
 			}
 			if (context == "Dict")
 			{
@@ -310,10 +306,10 @@ namespace LanguageExplorer.Areas
 			}
 
 			// If we have a format attribute, format the title accordingly.
-			string sFmt = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "TitleFormat");
+			var sFmt = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "TitleFormat");
 			if (sFmt != null)
 			{
-				titleStr = String.Format(sFmt, titleStr);
+				titleStr = string.Format(sFmt, titleStr);
 			}
 
 			// If we find that the title is something like ClassifiedDictionary ({SelectedPublication})
@@ -346,7 +342,9 @@ namespace LanguageExplorer.Areas
 			// if we haven't already set the text through the base,
 			// or if we had some formatting to do, then set the infoBar text.
 			if (!fBaseCalled || sFmt != null)
+			{
 				((IPaneBar)m_informationBar).Text = titleStr;
+			}
 			m_titleStr = titleStr;
 		}
 
@@ -356,15 +354,16 @@ namespace LanguageExplorer.Areas
 
 		private void SetConfigViewTitle()
 		{
-			if (!String.IsNullOrEmpty(m_currentConfigView))
+			if (string.IsNullOrEmpty(m_currentConfigView))
 			{
-				var maxLayoutViewWidth = Width/2 - kSpaceForMenuButton;
-				var result = GatherBuiltInAndUserLayouts();
-				var curViewName = FindViewNameInList(result);
-				// Limit length of View title to remaining available width
-				curViewName = TrimToMaxPixelWidth(Math.Max(2, maxLayoutViewWidth), curViewName);
-				ResetSpacer(maxLayoutViewWidth, curViewName);
+				return;
 			}
+			var maxLayoutViewWidth = Width/2 - kSpaceForMenuButton;
+			var result = GatherBuiltInAndUserLayouts();
+			var curViewName = FindViewNameInList(result);
+			// Limit length of View title to remaining available width
+			curViewName = TrimToMaxPixelWidth(Math.Max(2, maxLayoutViewWidth), curViewName);
+			ResetSpacer(maxLayoutViewWidth, curViewName);
 		}
 
 		protected override void OnSizeChanged(EventArgs e)
@@ -380,7 +379,7 @@ namespace LanguageExplorer.Areas
 
 		private string FindViewNameInList(IEnumerable<Tuple<string, string>> layoutList)
 		{
-			var result = "";
+			var result = string.Empty;
 			foreach (var tuple in layoutList.Where(tuple => tuple.Item2 == m_currentConfigView))
 			{
 				result = tuple.Item1;
@@ -394,8 +393,7 @@ namespace LanguageExplorer.Areas
 			// titleStr to start is localized equivalent of 'Entries'
 			// Limit length of Publication title to half of available width
 			var maxPublicationTitleWidth = Math.Max(2, Width/2 - kSpaceForMenuButton);
-			if (string.IsNullOrEmpty(m_currentPublication) ||
-				m_currentPublication == LanguageExplorerResources.AllEntriesPublication)
+			if (string.IsNullOrEmpty(m_currentPublication) || m_currentPublication == LanguageExplorerResources.AllEntriesPublication)
 			{
 				m_currentPublication = LanguageExplorerResources.AllEntriesPublication;
 				titleStr = AreaResources.ksAllEntries;
@@ -412,11 +410,7 @@ namespace LanguageExplorer.Areas
 
 		private string GetPublicationName()
 		{
-			if (Publication?.Name?.BestAnalysisAlternative == null)
-			{
-				return "***"; // what we show in the menu for a pub with no name in any language.
-			}
-			return Publication.Name.BestAnalysisAlternative.Text;
+			return Publication?.Name?.BestAnalysisAlternative == null ? "***" : Publication.Name.BestAnalysisAlternative.Text;
 		}
 
 		private bool NoReasonToChangeTitle(string context)
@@ -436,24 +430,22 @@ namespace LanguageExplorer.Areas
 		private bool IsCurrentReversalWsChanged()
 		{
 			if (m_currentObject == null)
+			{
 				return true;
+			}
 			var wsName = GetSafeWsName();
 			return m_currentPublication == null || m_currentPublication != wsName;
 		}
 
 		private string GetSafeWsName()
 		{
-			if (m_currentObject == null || !m_currentObject.IsValidObject)
+			if (m_currentObject != null && m_currentObject.IsValidObject)
 			{
-				if (m_hvoOwner < 1)
-					return String.Empty;
-				return WritingSystemServices.GetReversalIndexWritingSystems(
-					Cache, m_hvoOwner, false)[0].LanguageName;
+				return WritingSystemServices
+					.GetReversalIndexEntryWritingSystem(Cache, m_currentObject.Hvo, Cache.LangProject.CurrentAnalysisWritingSystems[0])
+					.LanguageName;
 			}
-			return WritingSystemServices.GetReversalIndexEntryWritingSystem(
-				Cache,
-				m_currentObject.Hvo,
-				Cache.LangProject.CurrentAnalysisWritingSystems[0]).LanguageName;
+			return m_hvoOwner < 1 ? string.Empty : WritingSystemServices.GetReversalIndexWritingSystems(Cache, m_hvoOwner, false)[0].LanguageName;
 		}
 
 		private bool IsCurrentPublicationChanged()
@@ -485,21 +477,22 @@ namespace LanguageExplorer.Areas
 		{
 			CheckDisposed();
 
-			if (!m_fullyInitialized
-				|| RecordNavigationInfo.GetSendingList(argument) != MyRecordList) // Don't pretend to have handled it if it isn't our record list.
+			if (!m_fullyInitialized || RecordNavigationInfo.GetSendingList(argument) != MyRecordList
+			) // Don't pretend to have handled it if it isn't our record list.
+			{
 				return false;
+			}
 
 			// persist record list's CurrentIndex in a db specific way
 #if RANDYTODO
 // As of 21JUL17 nobody cares about that 'propName' changing, so skip the broadcast.
 #endif
-			string propName = MyRecordList.PersistedIndexProperty;
+			var propName = MyRecordList.PersistedIndexProperty;
 			PropertyTable.SetProperty(propName, MyRecordList.CurrentIndex, SettingsGroup.LocalSettings, true, false);
 
 			MyRecordList.SuppressSaveOnChangeRecord = (argument as RecordNavigationInfo).SuppressSaveOnChangeRecord;
-			using (WaitCursor wc = new WaitCursor(this))
+			using (new WaitCursor(this))
 			{
-				//DateTime dt0 = DateTime.Now;
 				try
 				{
 					ShowRecord();
@@ -508,9 +501,6 @@ namespace LanguageExplorer.Areas
 				{
 					MyRecordList.SuppressSaveOnChangeRecord = false;
 				}
-				//DateTime dt1 = DateTime.Now;
-				//TimeSpan ts = TimeSpan.FromTicks(dt1.Ticks - dt0.Ticks);
-				//Debug.WriteLine("XmlDocView.OnRecordNavigation(): ShowRecord() took " + ts.ToString() + " at " + dt1.ToString());
 			}
 			return true;	//we handled this.
 		}
@@ -525,9 +515,13 @@ namespace LanguageExplorer.Areas
 			{
 				var sel = m_mainView.GetSelectionAtPoint(e.Location, false);
 				if (sel == null)
+				{
 					return;
+				}
 				if (XmlUtils.FindElement(m_configurationParametersElement, "configureLayouts") == null)
+				{
 					return; // view is not configurable, don't show menu option.
+				}
 
 				int hvo, tag, ihvo, cpropPrevious;
 				IVwPropertyStore propStore;
@@ -564,12 +558,12 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		void m_contextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+		private void m_contextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
 		{
 			Application.Idle += DisposeContextMenu;
 		}
 
-		void DisposeContextMenu(object sender, EventArgs e)
+		private void DisposeContextMenu(object sender, EventArgs e)
 		{
 			Application.Idle -= DisposeContextMenu;
 			if (m_contextMenu != null)
@@ -582,7 +576,7 @@ namespace LanguageExplorer.Areas
 		// Context menu exists just for one invocation (until idle).
 		private ContextMenuStrip m_contextMenu;
 
-		void RunConfigureDialogAt(object sender, EventArgs e)
+		private void RunConfigureDialogAt(object sender, EventArgs e)
 		{
 			var item = (ToolStripMenuItem) sender;
 			var nodePath = (string) item.Tag;
@@ -684,58 +678,71 @@ namespace LanguageExplorer.Areas
 			var sel = view.GetSelectionAtPoint(where, false);
 			if (sel == null)
 				return null;
-			Rect rcPrimary = view.GetPrimarySelRect(sel);
-			Rectangle selRect = new Rectangle(rcPrimary.left, rcPrimary.top, rcPrimary.right - rcPrimary.left, rcPrimary.bottom - rcPrimary.top);
+			var rcPrimary = view.GetPrimarySelRect(sel);
+			var selRect = new Rectangle(rcPrimary.left, rcPrimary.top, rcPrimary.right - rcPrimary.left, rcPrimary.bottom - rcPrimary.top);
 			selRect.Inflate(8,2);
 			if (!selRect.Contains(where))
+			{
 				return null; // off somewhere in white space, tooltip is confusing
+			}
 			var helper = SelectionHelper.Create(sel, view);
 			var levels = helper.GetLevelInfo(SelectionHelper.SelLimitType.Anchor);
 			ICmObject firstMatch = null;
 			ICmObject lastMatch = null;
 			foreach (var info in levels)
 			{
-				int hvo = info.hvo;
+				var hvo = info.hvo;
 				if (!cache.ServiceLocator.IsValidObjectId(hvo))
+				{
 					continue; // may be some invalid numbers in there
+				}
 				var obj = cache.ServiceLocator.GetObject(hvo);
 				var target = GetTarget(obj, clsid);
 				if (target == null)
+				{
 					continue; // nothing interesting at this level.
+				}
 				lastMatch = target; // last one we've seen.
 				if (firstMatch == null)
+				{
 					firstMatch = target; // first one we've seen
+				}
 			}
 			firstMatch = adjuster.AdjustTarget(firstMatch);
 			if (firstMatch == lastMatch)
+			{
 				return null; // the only object we can find to jump to is the top-level one we clicked inside. A jump would go nowhere.
+			}
 			if (sortItemProvider.IndexOf(firstMatch.Hvo) != -1)
+			{
 				return firstMatch;  // it's a link to a top-level item in the list, we can jump
+			}
 			// Enhance JohnT: we'd like to be able to jump to the parent entry, if target is a subentry.
 			// That's tricky, because this is generic code, and finding the right object requires domain knowledge.
 			// For now I'm putting a special case in. At some point we could move this into a helper that could be configured by XML.
-			if(firstMatch is ILexSense)
+			if (!(firstMatch is ILexSense))
 			{
-				firstMatch = ((ILexSense) firstMatch).Entry;
-				if (sortItemProvider.IndexOf(firstMatch.Hvo) != -1)
-					return firstMatch;  // it's a link to a top-level item in the list, we can jump
+				return null;
 			}
-			return null;
+			firstMatch = ((ILexSense)firstMatch).Entry;
+			return sortItemProvider.IndexOf(firstMatch.Hvo) != -1 ? firstMatch : null;
 		}
 
 		static ICmObject GetTarget(ICmObject obj, int clsid)
 		{
 			if (obj.ClassID == clsid)
+			{
 				return obj;
-			if (obj.OwnerOfClass(clsid) != null)
-				return obj.OwnerOfClass(clsid);
-			return null;
+			}
+			return obj.OwnerOfClass(clsid);
 		}
 
 		private void RecordListOwningObjChanged_Message_Handler(object newValue)
 		{
 			if (m_mainView == null)
+			{
 				return;
+			}
 
 			if (MyRecordList.OwningObject == null)
 			{
@@ -743,7 +750,7 @@ namespace LanguageExplorer.Areas
 				//list we are dependent on, but no records are selected by the filter.
 				//thus, we now do not have an object to get records out of,
 				//so we need to just show a blank list.
-				this.m_hvoOwner = -1;
+				m_hvoOwner = -1;
 			}
 			else
 			{
@@ -757,24 +764,33 @@ namespace LanguageExplorer.Areas
 		/// By default this returns RecordList.CurrentIndex. However, when we are using a decorator
 		/// for the view, we may need to adjust the index.
 		/// </summary>
-		int AdjustedRecordListIndex()
+		private int AdjustedRecordListIndex()
 		{
 			var sda = m_mainView.DataAccess as ISilDataAccessManaged;
 			if (sda == null || sda == MyRecordList.VirtualListPublisher)
+			{
 				return MyRecordList.CurrentIndex; // no tricks.
+			}
+
 			if (MyRecordList.CurrentObjectHvo == 0)
+			{
 				return -1;
+			}
 			var items = sda.VecProp(m_hvoOwner, m_madeUpFieldIdentifier);
 			// Search for the indicated item, working back from the place we expect it to be.
 			// This is efficient, because usually only a few items are filtered and it will be close.
 			// Also, currently the decorator only removes items, so we won't find it at a larger index.
 			// Finally, if there are duplicates, we will find the one closest to the expected position.
-			int target = MyRecordList.CurrentObjectHvo;
-			int index = Math.Min(MyRecordList.CurrentIndex, items.Length - 1);
+			var target = MyRecordList.CurrentObjectHvo;
+			var index = Math.Min(MyRecordList.CurrentIndex, items.Length - 1);
 			while (index >= 0 && items[index] != target)
+			{
 				index--;
+			}
 			if (index < 0 && sda.get_VecSize(m_hvoOwner, m_madeUpFieldIdentifier) > 0)
+			{
 				return 0; // can we do better? The object selected in other views is hidden in this.
+			}
 			return index;
 		}
 
@@ -810,23 +826,22 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Check to see if the user needs to be alerted that JumpToRecord is not possible.
 		/// </summary>
-		/// <param name="argument">the hvo of the record</param>
-		/// <returns></returns>
 		public bool OnCheckJump(object argument)
 		{
 			var hvoTarget = (int)argument;
 			var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 			// Currently this (LT-11447) only applies to Dictionary view
-			if (hvoTarget > 0 && toolChoice == AreaServices.LexiconDictionaryMachineName)
+			if (hvoTarget <= 0 || toolChoice != AreaServices.LexiconDictionaryMachineName)
 			{
-				ExclusionReasonCode xrc;
-				// Make sure we explain to the user in case hvoTarget is not visible due to
-				// the current Publication layout or Configuration view.
-				if (!IsObjectVisible(hvoTarget, out xrc))
-				{
-					// Tell the user why we aren't jumping to his record
-					AreaServices.GiveSimpleWarning(PropertyTable.GetValue<Form>("window"), PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile, xrc);
-				}
+				return true;
+			}
+			ExclusionReasonCode xrc;
+			// Make sure we explain to the user in case hvoTarget is not visible due to
+			// the current Publication layout or Configuration view.
+			if (!IsObjectVisible(hvoTarget, out xrc))
+			{
+				// Tell the user why we aren't jumping to his record
+				AreaServices.GiveSimpleWarning(PropertyTable.GetValue<Form>("window"), PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile, xrc);
 			}
 			return true;
 		}
@@ -866,7 +881,7 @@ namespace LanguageExplorer.Areas
 			}
 			// Third deal with whether the entry shouldn't be shown as a minor entry.
 			// commented out until conditions are clarified (LT-11447)
-			if (entry.EntryRefsOS.Count > 0 && !entry.PublishAsMinorEntry && IsRootBasedView)
+			if (entry.EntryRefsOS.Any() && !entry.PublishAsMinorEntry && IsRootBasedView)
 			{
 				xrc = ExclusionReasonCode.ExcludedMinorEntry;
 				return false;
@@ -893,12 +908,10 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Ensure that we have the current record selected and visible in the window.  See LT-9109.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-			if (m_mainView != null && m_mainView.RootBox != null && !m_mainView.PaintInProgress && !m_mainView.LayoutInProgress
-				&& m_mainView.RootBox.Selection == null)
+			if (m_mainView?.RootBox != null && !m_mainView.PaintInProgress && !m_mainView.LayoutInProgress && m_mainView.RootBox.Selection == null)
 			{
 				SelectAndScrollToCurrentRecord();
 			}
@@ -990,9 +1003,11 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public void PostLayoutInit()
 		{
-			IVwRootBox rootb = (m_mainView as IVwRootSite).RootBox;
-			if (rootb != null && rootb.Selection != null)
+			var rootb = (m_mainView as IVwRootSite).RootBox;
+			if (rootb?.Selection != null)
+			{
 				(m_mainView as IVwRootSite).ScrollSelectionIntoView(rootb.Selection, VwScrollSelOpts.kssoBoth);
+			}
 		}
 
 		protected override void SetupDataContext()
@@ -1060,24 +1075,18 @@ namespace LanguageExplorer.Areas
 
 		protected override void SetupStylesheet()
 		{
-			LcmStyleSheet ss = StyleSheet;
+			var ss = StyleSheet;
 			if (ss != null)
-				m_mainView.StyleSheet = ss;
-		}
-
-		private LcmStyleSheet StyleSheet
-		{
-			get
 			{
-				return FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+				m_mainView.StyleSheet = ss;
 			}
 		}
+
+		private LcmStyleSheet StyleSheet => FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 
 		/// <summary>
 		///	invoked when our XmlDocView selection changes.
 		/// </summary>
-		/// <param name="sender">unused</param>
-		/// <param name="e">the event arguments</param>
 		public void OnSelectionChanged(object sender, FwObjectSelectionEventArgs e)
 		{
 			CheckDisposed();
@@ -1085,7 +1094,9 @@ namespace LanguageExplorer.Areas
 			// paranoid sanity check.
 			Debug.Assert(e.Hvo != 0);
 			if (e.Hvo == 0)
+			{
 				return;
+			}
 			MyRecordList.ViewChangedSelectedRecord(e);
 			// Change it if it's actually changed.
 			SetInfoBarText();
@@ -1122,30 +1133,29 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Launch the configure dialog.
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <returns></returns>
 		public bool OnConfigureXmlDocView(object commandObject)
 		{
 			CheckDisposed();
 
-			RunConfigureDialog("");
+			RunConfigureDialog(string.Empty);
 			return true; // we handled it
 		}
 
 		private void RunConfigureDialog(string nodePath)
 		{
-			string sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "layoutProperty");
-			if(String.IsNullOrEmpty(sProp))
+			var sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "layoutProperty");
+			if (string.IsNullOrEmpty(sProp))
+			{
 				sProp = "DictionaryPublicationLayout";
+			}
 			using(var dlg = new XmlDocConfigureDlg())
 			{
 				var mainWindow = PropertyTable.GetValue<IFwMainWnd>("window");
-				dlg.SetConfigDlgInfo(m_configurationParametersElement, Cache, StyleSheet,
-					mainWindow, PropertyTable, Publisher, sProp);
+				dlg.SetConfigDlgInfo(m_configurationParametersElement, Cache, StyleSheet, mainWindow, PropertyTable, Publisher, sProp);
 				dlg.SetActiveNode(nodePath);
 				if(dlg.ShowDialog(this) == DialogResult.OK)
 				{
-					string sNewLayout = PropertyTable.GetValue<string>(sProp);
+					var sNewLayout = PropertyTable.GetValue<string>(sProp);
 					m_mainView.ResetTables(sNewLayout);
 					SelectAndScrollToCurrentRecord();
 				}
@@ -1179,12 +1189,14 @@ namespace LanguageExplorer.Areas
 		{
 			base.OnParentChanged(e);
 			if (m_mainView != null && m_mainView.StyleSheet == null)
+			{
 				SetupStylesheet();
+			}
 		}
 
 		#endregion // Other methods
 
-		#region Overrides of XWorksViewBase
+		#region Overrides of ViewBase
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
@@ -1202,12 +1214,10 @@ namespace LanguageExplorer.Areas
 		#endregion
 
 		#region Component Designer generated code
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		private void InitializeComponent()
 		{
 			this.SuspendLayout();
@@ -1288,8 +1298,6 @@ namespace LanguageExplorer.Areas
 		/// If this gets called (which it never should), just say we did it, unless we are in the context of reversal entries.
 		/// In the case of reversal entries, we say we did not do it, so the record list deals with it.
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <returns></returns>
 		public bool OnDeleteRecord(object commandObject)
 		{
 			CheckDisposed();
@@ -1305,49 +1313,6 @@ namespace LanguageExplorer.Areas
 			return true;
 		}
 
-		public string FindTabHelpId
-		{
-			get { return XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "findHelpId", null); }
-		}
-	}
-
-	/// <summary>
-	/// Interface that may be implemented to adjust the object that we will try to jump to when it
-	/// is clicked in the view.
-	/// </summary>
-	public interface IPreferedTargetAdjuster
-	{
-		ICmObject AdjustTarget(ICmObject target);
-	}
-
-	/// <summary>
-	/// If the initial target is a subentry replace it with the appropriate top-level entry.
-	/// </summary>
-	internal class MainEntryFromSubEntryTargetAdjuster : IPreferedTargetAdjuster
-	{
-		public ICmObject AdjustTarget(ICmObject firstMatch)
-		{
-			if (firstMatch is ILexEntry)
-			{
-				var subentry = (ILexEntry)firstMatch;
-				var componentsEntryRef =
-					subentry.EntryRefsOS.Where(se => se.RefType == LexEntryRefTags.krtComplexForm).FirstOrDefault();
-				if (componentsEntryRef != null)
-				{
-					var root = componentsEntryRef.PrimaryEntryRoots.FirstOrDefault();
-					if (root != null)
-						return root;
-				}
-			}
-			return firstMatch; // by default change nothing.
-		}
-	}
-
-	public class NullTargetAdjuster : IPreferedTargetAdjuster
-	{
-		public ICmObject AdjustTarget(ICmObject target)
-		{
-			return target;
-		}
+		public string FindTabHelpId => XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "findHelpId", null);
 	}
 }

@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using LanguageExplorer.Controls.DetailControls;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
@@ -81,7 +82,7 @@ namespace LanguageExplorer.Areas
 			AccNameDefault = "RecordEditView";		// default accessibility name
 		}
 
-		#region Overrides of XWorksViewBase
+		#region Overrides of ViewBase
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
@@ -106,11 +107,11 @@ namespace LanguageExplorer.Areas
 			m_showDescendantInRoot = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParametersElement, "showDescendantInRoot", false);
 
 			// retrieve persisted record list index and set it.
-			int idx = PropertyTable.GetValue(MyRecordList.PersistedIndexProperty, SettingsGroup.LocalSettings, -1);
-			int lim = MyRecordList.ListSize;
+			var idx = PropertyTable.GetValue(MyRecordList.PersistedIndexProperty, SettingsGroup.LocalSettings, -1);
+			var lim = MyRecordList.ListSize;
 			if (idx >= 0 && idx < lim)
 			{
-				int idxOld = MyRecordList.CurrentIndex;
+				var idxOld = MyRecordList.CurrentIndex;
 				try
 				{
 					MyRecordList.JumpToIndex(idx);
@@ -118,7 +119,9 @@ namespace LanguageExplorer.Areas
 				catch
 				{
 					if (lim > idxOld && lim > 0)
+					{
 						MyRecordList.JumpToIndex(idxOld >= 0 ? idxOld : 0);
+					}
 				}
 			}
 
@@ -128,20 +131,17 @@ namespace LanguageExplorer.Areas
 			m_fullyInitialized = true;
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
-		/// resources; <c>false</c> to release only unmanaged resources.
-		/// </param>
-		/// -----------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -173,13 +173,15 @@ namespace LanguageExplorer.Areas
 		{
 			// Don't call base, since we don't want that behavior.
 			if (!m_fullyInitialized)
+			{
 				return;
+			}
 
 #if RANDYTODO
 // As of 21JUL17 nobody cares about that 'propName' changing, so skip the broadcast.
 #endif
 			// persist record lists's CurrentIndex in a db specific way
-			string propName = MyRecordList.PersistedIndexProperty;
+			var propName = MyRecordList.PersistedIndexProperty;
 			PropertyTable.SetProperty(propName, MyRecordList.CurrentIndex, SettingsGroup.LocalSettings, true, false);
 			var window = PropertyTable.GetValue<IFwMainWnd>("window");
 
@@ -210,21 +212,24 @@ namespace LanguageExplorer.Areas
 		{
 			CheckDisposed();
 
-			if (m_dataTree != null)
-				m_dataTree.PrepareToGoAway();
+			m_dataTree?.PrepareToGoAway();
 			return base.PrepareToGoAway();
 		}
 
 		private void DataTreeCurrentSliceChanged(object sender, EventArgs e)
 		{
 			if (!m_showDescendantInRoot)
+			{
 				return;
+			}
 
 			if (m_dataTree.Descendant != null && MyRecordList.CurrentObject != m_dataTree.Descendant)
+			{
 				// if the user has clicked on a different descendant's slice, update the currently
 				// selected record (we want to keep the browse view in sync), but do not change the
 				// focus
 				MyRecordList.JumpToRecord(m_dataTree.Descendant.Hvo, true);
+			}
 		}
 
 		#endregion // Message Handlers
@@ -234,7 +239,9 @@ namespace LanguageExplorer.Areas
 		protected override void SetInfoBarText()
 		{
 			if (m_informationBar == null)
+			{
 				return;
+			}
 
 			// See if we have an AlternativeTitle string table id for an alternate title.
 			string titleStr = null;
@@ -244,29 +251,32 @@ namespace LanguageExplorer.Areas
 			}
 			else if (!string.IsNullOrEmpty(m_titleField))
 			{
-				ICmObject curObj = MyRecordList.CurrentObject;
+				var curObj = MyRecordList.CurrentObject;
 				if (curObj != null)
 				{
-					int flid = Cache.MetaDataCacheAccessor.GetFieldId2(curObj.ClassID, m_titleField, true);
-					int hvo = Cache.DomainDataByFlid.get_ObjectProp(curObj.Hvo, flid);
+					var flid = Cache.MetaDataCacheAccessor.GetFieldId2(curObj.ClassID, m_titleField, true);
+					var hvo = Cache.DomainDataByFlid.get_ObjectProp(curObj.Hvo, flid);
 					if (hvo != 0)
 					{
-						ICmObject titleObj = Cache.ServiceLocator.GetObject(hvo);
+						var titleObj = Cache.ServiceLocator.GetObject(hvo);
 						titleStr = titleObj.ShortName;
 					}
 				}
 			}
 
 			if (!string.IsNullOrEmpty(titleStr))
-				((IPaneBar) m_informationBar).Text = titleStr;
+			{
+				((IPaneBar)m_informationBar).Text = titleStr;
+			}
 			else
+			{
 				base.SetInfoBarText();
+			}
 		}
 
 		/// <summary>
 		/// Schedules the record to be shown when the application is idle.
 		/// </summary>
-		/// <param name="rni">The record navigation info.</param>
 		protected override void ShowRecord(RecordNavigationInfo rni)
 		{
 			if (!rni.SkipShowRecord)
@@ -293,15 +303,17 @@ namespace LanguageExplorer.Areas
 		void ShowRecordOnIdle(RecordNavigationInfo rni)
 		{
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			base.ShowRecord();
 #if DEBUG
-			int msStart = Environment.TickCount;
+			var msStart = Environment.TickCount;
 			Debug.Assert(m_dataTree != null);
 #endif
 
-			bool oldSuppressSaveOnChangeRecord = MyRecordList.SuppressSaveOnChangeRecord;
+			var oldSuppressSaveOnChangeRecord = MyRecordList.SuppressSaveOnChangeRecord;
 			MyRecordList.SuppressSaveOnChangeRecord = rni.SuppressSaveOnChangeRecord;
 			PrepCacheForNewRecord();
 			MyRecordList.SuppressSaveOnChangeRecord = oldSuppressSaveOnChangeRecord;
@@ -317,28 +329,29 @@ namespace LanguageExplorer.Areas
 				m_dataTree.Show();
 				using (new WaitCursor(this))
 				{
-				// Enhance: Maybe do something here to allow changing the templates without the starting the application.
-				ICmObject obj = MyRecordList.CurrentObject;
+					// Enhance: Maybe do something here to allow changing the templates without the starting the application.
+					var obj = MyRecordList.CurrentObject;
 
-				if (m_showDescendantInRoot)
-				{
-					// find the root object of the current object
-					while (obj.Owner != MyRecordList.OwningObject)
-						obj = obj.Owner;
+					if (m_showDescendantInRoot)
+					{
+						// find the root object of the current object
+						while (obj.Owner != MyRecordList.OwningObject)
+						{
+							obj = obj.Owner;
+						}
+					}
+
+					m_dataTree.ShowObject(obj, m_layoutName, m_layoutChoiceField, MyRecordList.CurrentObject, ShouldSuppressFocusChange(rni));
 				}
-
-				m_dataTree.ShowObject(obj, m_layoutName, m_layoutChoiceField, MyRecordList.CurrentObject, ShouldSuppressFocusChange(rni));
-			}
 			}
 			catch (Exception error)
 			{
 				//don't really need to make the program stop just because we could not show this record.
-				IApp app = PropertyTable.GetValue<IApp>("App");
-				ErrorReporter.ReportException(error, app.SettingsKey, app.SupportEmailAddress,
-					null, false);
+				var app = PropertyTable.GetValue<IApp>("App");
+				ErrorReporter.ReportException(error, app.SettingsKey, app.SupportEmailAddress, null, false);
 			}
 #if DEBUG
-			int msEnd = Environment.TickCount;
+			var msEnd = Environment.TickCount;
 			var traceSwitch = new TraceSwitch("Works_Timing", "Used for diagnostic timing output", "Off");
 			Debug.WriteLineIf(traceSwitch.TraceInfo, "ShowRecord took " + (msEnd - msStart) + " ms", traceSwitch.DisplayName);
 #endif
@@ -348,18 +361,14 @@ namespace LanguageExplorer.Areas
 		/// If this is not the focused pane in a multipane suppress, or if the navigation info requested
 		/// a suppression of the focus change then return true (suppress)
 		/// </summary>
-		/// <param name="rni"></param>
-		/// <returns></returns>
 		private bool ShouldSuppressFocusChange(RecordNavigationInfo rni)
 		{
 			return !IsFocusedPane || rni.SuppressFocusChange;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Base method saves any time you switch between records.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected virtual void PrepCacheForNewRecord()
 		{
 			MyRecordList.SaveOnChangeRecord();
@@ -376,10 +385,14 @@ namespace LanguageExplorer.Areas
 			m_layoutChoiceField = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "layoutChoiceField");
 			m_titleField = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "titleField");
 			if (!string.IsNullOrEmpty(m_titleField))
+			{
 				Cache.DomainDataByFlid.AddNotification(this);
-			string titleId = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "altTitleId");
+			}
+			var titleId = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "altTitleId");
 			if (titleId != null)
+			{
 				m_titleStr = StringTable.Table.GetString(titleId, "AlternativeTitles");
+			}
 			m_printLayout = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "printLayout");
 		}
 
@@ -397,12 +410,13 @@ namespace LanguageExplorer.Areas
 #if RANDYTODO
 			m_dataEntryForm.SmallImages = PropertyTable.GetValue<ImageList.ImageCollection>("smallImages");
 #endif
-			string sDatabase = Cache.ProjectId.Name;
-			m_dataTree.Initialize(Cache, true, Inventory.GetInventory("layouts", sDatabase),
-				Inventory.GetInventory("parts", sDatabase));
+			var sDatabase = Cache.ProjectId.Name;
+			m_dataTree.Initialize(Cache, true, Inventory.GetInventory("layouts", sDatabase), Inventory.GetInventory("parts", sDatabase));
 			// Already done. m_dataEntryForm.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			if (m_dataTree.AccessibilityObject != null)
+			{
 				m_dataTree.AccessibilityObject.Name = "RecordEditView.DataTree";
+			}
 
 			Controls.Clear();
 			Controls.Add(m_informationBar);
@@ -430,11 +444,10 @@ namespace LanguageExplorer.Areas
 
 		public override Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
-			if (targetCandidates == null)
-				throw new ArgumentNullException("targetCandidates");
+			Guard.AgainstNull(targetCandidates, nameof(targetCandidates));
 
 			// when switching panes, we want to give the focus to the CurrentSlice(if any)
-			if (m_dataTree != null && m_dataTree.CurrentSlice != null)
+			if (m_dataTree?.CurrentSlice != null)
 			{
 				targetCandidates.Add(m_dataTree.CurrentSlice);
 				return m_dataTree.CurrentSlice.ContainsFocus ? m_dataTree.CurrentSlice : null;
@@ -446,12 +459,10 @@ namespace LanguageExplorer.Areas
 		#endregion  ICtrlTabProvider implementation
 
 		#region Component Designer generated code
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
@@ -508,15 +519,19 @@ namespace LanguageExplorer.Areas
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			// if the title field property changed, update the pane bar text
-			if (!string.IsNullOrEmpty(m_titleField))
+			if (string.IsNullOrEmpty(m_titleField))
 			{
-				ICmObject curObj = MyRecordList.CurrentObject;
-				if (curObj != null)
-				{
-					int flid = Cache.MetaDataCacheAccessor.GetFieldId2(curObj.ClassID, m_titleField, true);
-					if (hvo == curObj.Hvo && tag == flid)
-						SetInfoBarText();
-				}
+				return;
+			}
+			var curObj = MyRecordList.CurrentObject;
+			if (curObj == null)
+			{
+				return;
+			}
+			var flid = Cache.MetaDataCacheAccessor.GetFieldId2(curObj.ClassID, m_titleField, true);
+			if (hvo == curObj.Hvo && tag == flid)
+			{
+				SetInfoBarText();
 			}
 		}
 
@@ -525,7 +540,9 @@ namespace LanguageExplorer.Areas
 		private void PrintMenu_Click(object sender, EventArgs e)
 		{
 			if (m_printLayout == null || MyRecordList.CurrentObject == null)
+			{
 				return; // Don't bother; this edit view does not specify a print layout, or there's nothing to print.
+			}
 
 			var area = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
 			string toolId;
@@ -560,14 +577,15 @@ namespace LanguageExplorer.Areas
 					dlg.AllowSelection = false;
 					dlg.PrinterSettings.FromPage = 1;
 					dlg.PrinterSettings.ToPage = 1;
-					if (dlg.ShowDialog() == DialogResult.OK)
+					if (dlg.ShowDialog() != DialogResult.OK)
 					{
-						// REVIEW: .NET does not appear to handle the collation setting correctly
-						// so for now, we do not support non-collated printing.  Forcing the setting
-						// seems to work fine.
-						dlg.Document.PrinterSettings.Collate = true;
-						docView.PrintFromDetail(pd, MyRecordList.CurrentObject.Hvo);
+						return;
 					}
+					// REVIEW: .NET does not appear to handle the collation setting correctly
+					// so for now, we do not support non-collated printing.  Forcing the setting
+					// seems to work fine.
+					dlg.Document.PrinterSettings.Collate = true;
+					docView.PrintFromDetail(pd, MyRecordList.CurrentObject.Hvo);
 				}
 			}
 		}
@@ -575,9 +593,7 @@ namespace LanguageExplorer.Areas
 		private XElement GetToolInnerControlNodeWithRightLayout(XElement docViewConfig)
 		{
 			var paramNode = docViewConfig.XPathSelectElement("control//parameters[@layout = \"" + m_printLayout + "\"]");
-			if (paramNode == null)
-				return null;
-			return paramNode.Parent;
+			return paramNode?.Parent;
 		}
 
 		private XElement FindToolInXMLConfig(string docToolValue)

@@ -753,11 +753,11 @@ namespace FDOBrowser
 
 				work = FDOBrowserForm.StripOffTypeChars(props[i].Name);
 
-				try
+				if (m_mdc.FieldExists(cmObj.ClassID, work, true))
 				{
 					flid = m_mdc.GetFieldId2(cmObj.ClassID, work, true);
 				}
-				catch (LcmInvalidFieldException)
+				else
 				{
 					if (ObjectBrowser.m_virtualFlag == false)
 					{

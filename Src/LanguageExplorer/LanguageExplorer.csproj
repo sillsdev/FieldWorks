@@ -292,22 +292,34 @@
     <Compile Include="AccessibleNameCreator.cs" />
     <Compile Include="Areas\AreaServices.cs" />
     <Compile Include="Areas\AreaWideMenuHelper.cs" />
+    <Compile Include="Areas\ConcMdc.cs" />
     <Compile Include="Areas\CustomFieldLocationType.cs" />
+    <Compile Include="Areas\FxtType.cs" />
+    <Compile Include="Areas\FxtTypes.cs" />
     <Compile Include="Areas\Grammar\GrammarAreaMenuHelper.cs" />
     <Compile Include="Areas\Grammar\Tools\GrammarSketch\GrammarSketchToolMenuHelper.cs" />
     <Compile Include="Areas\IdAndString.cs" />
     <Compile Include="Areas\IFwGuiControl.cs" />
+    <Compile Include="Areas\InsertOption.cs" />
+    <Compile Include="Areas\IPreferedTargetAdjuster.cs" />
     <Compile Include="Areas\Lexicon\ISemanticDomainTreeBarHandler.cs" />
     <Compile Include="Areas\Lexicon\LexiconAreaMenuHelper.cs" />
     <Compile Include="Areas\Lists\Tools\DialectsListEdit\DialectsListEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\ExtNoteTypeEdit\ExtNoteTypeEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\LanguagesListEdit\LanguagesListEditTool.cs" />
+    <Compile Include="Areas\MainEntryFromSubEntryTargetAdjuster.cs" />
+    <Compile Include="Areas\NullTargetAdjuster.cs" />
     <Compile Include="Areas\ReversalListBase.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\ConcRecordList.cs" />
     <Compile Include="Areas\Lists\ListsAreaMenuHelper.cs" />
     <Compile Include="Areas\Lists\Tools\CustomListEdit\CustomListEditTool.cs" />
     <Compile Include="Areas\Notebook\NotebookAreaMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditToolMenuHelper.cs" />
+    <Compile Include="Areas\RuleInsertType.cs" />
+    <Compile Include="Areas\StringRepSliceVc.cs" />
+    <Compile Include="Areas\StringRepSliceView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Areas\SubservientRecordList.cs" />
     <Compile Include="Areas\TemporaryRecordList.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\CreateAndInsertStText.cs" />

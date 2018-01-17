@@ -1,3 +1,7 @@
+// Copyright (c) ????-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Drawing;
 using System.Linq;
@@ -10,7 +14,7 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas
 {
-	class AffixRuleFormulaVc : RuleFormulaVcBase
+	internal class AffixRuleFormulaVc : RuleFormulaVcBase
 	{
 		public const int kfragRule = 200;
 		public const int kfragInput = 201;
@@ -39,21 +43,18 @@ namespace LanguageExplorer.Areas
 		public AffixRuleFormulaVc(LcmCache cache, IPropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
-			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
+			var tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, MiscUtils.StandardSansSerif);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 10000);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
-			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
+			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
+			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			m_headerProps = tpb.GetTextProps();
 
 			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 24000);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
+			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
 			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, "Charis SIL");
 			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
@@ -63,26 +64,22 @@ namespace LanguageExplorer.Areas
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderTop, (int)FwTextPropVar.ktpvMilliPoint, 1000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderTrailing, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
+			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
 			m_ctxtProps = tpb.GetTextProps();
 
 			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderTrailing, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
+			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
+			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			m_indexProps = tpb.GetTextProps();
 
 			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
+			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			m_resultProps = tpb.GetTextProps();
 
 			var userWs = m_cache.DefaultUserWs;
@@ -95,12 +92,14 @@ namespace LanguageExplorer.Areas
 
 		protected override int GetMaxNumLines()
 		{
-			int maxNumLines = 1;
-			foreach (IPhContextOrVar ctxtOrVar in m_rule.InputOS)
+			var maxNumLines = 1;
+			foreach (var ctxtOrVar in m_rule.InputOS)
 			{
-				int numLines = GetNumLines(ctxtOrVar);
+				var numLines = GetNumLines(ctxtOrVar);
 				if (numLines > maxNumLines)
+				{
 					maxNumLines = numLines;
+				}
 			}
 
 			return maxNumLines;
@@ -108,15 +107,18 @@ namespace LanguageExplorer.Areas
 
 		private int GetOutputMaxNumLines()
 		{
-			int maxNumLines = 1;
-			foreach (IMoModifyFromInput modify in m_rule.OutputOS.OfType<IMoModifyFromInput>())
+			var maxNumLines = 1;
+			foreach (var modify in m_rule.OutputOS.OfType<IMoModifyFromInput>())
 			{
-				IPhNCFeatures nc = modify.ModificationRA;
-				if (nc != null && nc.FeaturesOA != null)
+				var nc = modify.ModificationRA;
+				if (nc?.FeaturesOA == null)
 				{
-					int numLines = nc.FeaturesOA.FeatureSpecsOC.Count;
-					if (numLines > maxNumLines)
-						maxNumLines = numLines;
+					continue;
+				}
+				var numLines = nc.FeaturesOA.FeatureSpecsOC.Count;
+				if (numLines > maxNumLines)
+				{
+					maxNumLines = numLines;
 				}
 			}
 			return maxNumLines;
@@ -129,13 +131,13 @@ namespace LanguageExplorer.Areas
 
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
-			int userWs = m_cache.DefaultUserWs;
+			var userWs = m_cache.DefaultUserWs;
 			switch (frag)
 			{
 				case kfragRule:
 					m_rule = m_cache.ServiceLocator.GetInstance<IMoAffixProcessRepository>().GetObject(hvo);
 
-					int maxNumLines = GetMaxNumLines();
+					var maxNumLines = GetMaxNumLines();
 
 					VwLength tableLen;
 					tableLen.nVal = 10000;
@@ -146,8 +148,8 @@ namespace LanguageExplorer.Areas
 					inputLen.nVal = 0;
 					inputLen.unit = VwUnit.kunPoint1000;
 
-					int indexWidth = GetStrWidth(m_indexStr, m_headerProps, vwenv);
-					int inputWidth = GetStrWidth(m_inputStr, m_headerProps, vwenv);
+					var indexWidth = GetStrWidth(m_indexStr, m_headerProps, vwenv);
+					var inputWidth = GetStrWidth(m_inputStr, m_headerProps, vwenv);
 					VwLength headerLen;
 					headerLen.nVal = Math.Max(indexWidth, inputWidth) + 8000;
 					headerLen.unit = VwUnit.kunPoint1000;
@@ -160,10 +162,10 @@ namespace LanguageExplorer.Areas
 
 					var ctxtLens = new VwLength[m_rule.InputOS.Count];
 					vwenv.NoteDependency(new[] {m_rule.Hvo}, new[] {MoAffixProcessTags.kflidInput}, 1 );
-					for (int i = 0; i < m_rule.InputOS.Count; i++)
+					for (var i = 0; i < m_rule.InputOS.Count; i++)
 					{
-						int idxWidth = GetStrWidth(TsStringUtils.MakeString(Convert.ToString(i + 1), userWs), m_indexProps, vwenv);
-						int ctxtWidth = GetWidth(m_rule.InputOS[i], vwenv);
+						var idxWidth = GetStrWidth(TsStringUtils.MakeString(Convert.ToString(i + 1), userWs), m_indexProps, vwenv);
+						var ctxtWidth = GetWidth(m_rule.InputOS[i], vwenv);
 						ctxtLens[i].nVal = Math.Max(idxWidth, ctxtWidth) + 8000 + 1000;
 						ctxtLens[i].unit = VwUnit.kunPoint1000;
 						inputLen.nVal += ctxtLens[i].nVal;
@@ -194,8 +196,10 @@ namespace LanguageExplorer.Areas
 					vwenv.OpenTable(m_rule.InputOS.Count + 3, tableLen, 0, VwAlignment.kvaCenter, VwFramePosition.kvfpVoid, VwRule.kvrlNone, 0, 4000, false);
 					vwenv.MakeColumns(1, headerLen);
 					vwenv.MakeColumns(1, leftEmptyLen);
-					foreach (VwLength ctxtLen in ctxtLens)
+					foreach (var ctxtLen in ctxtLens)
+					{
 						vwenv.MakeColumns(1, ctxtLen);
+					}
 					vwenv.MakeColumns(1, rightEmptyLen);
 
 					vwenv.OpenTableBody();
@@ -249,7 +253,7 @@ namespace LanguageExplorer.Areas
 					vwenv.CloseTableCell();
 
 					// index cells
-					for (int i = 0; i < m_rule.InputOS.Count; i++)
+					for (var i = 0; i < m_rule.InputOS.Count; i++)
 					{
 						vwenv.Props = m_indexProps;
 						vwenv.OpenTableCell(1, 1);
@@ -295,9 +299,13 @@ namespace LanguageExplorer.Areas
 					vwenv.OpenTableCell(1, 1);
 					vwenv.OpenParagraph();
 					if (m_rule.OutputOS.Count == 0)
+					{
 						vwenv.AddProp(MoAffixProcessTags.kflidOutput, this, kfragEmpty);
+					}
 					else
+					{
 						vwenv.AddObjVecItems(MoAffixProcessTags.kflidOutput, this, kfragRuleMapping);
+					}
 					vwenv.CloseParagraph();
 					vwenv.CloseTableCell();
 
@@ -319,9 +327,13 @@ namespace LanguageExplorer.Areas
 							var copy = (IMoCopyFromInput) mapping;
 							OpenSingleLinePile(vwenv, GetOutputMaxNumLines());
 							if (copy.ContentRA == null)
+							{
 								vwenv.AddProp(ktagIndex, this, 0);
+							}
 							else
+							{
 								vwenv.AddProp(ktagIndex, this, copy.ContentRA.IndexInOwner + 1);
+							}
 							CloseSingleLinePile(vwenv);
 							break;
 
@@ -333,8 +345,8 @@ namespace LanguageExplorer.Areas
 
 						case MoModifyFromInputTags.kClassId:
 							var modify = (IMoModifyFromInput) mapping;
-							int outputMaxNumLines = GetOutputMaxNumLines();
-							int numLines = modify.ModificationRA.FeaturesOA.FeatureSpecsOC.Count;
+							var outputMaxNumLines = GetOutputMaxNumLines();
+							var numLines = modify.ModificationRA.FeaturesOA.FeatureSpecsOC.Count;
 
 							// index pile
 							vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
@@ -344,9 +356,13 @@ namespace LanguageExplorer.Areas
 							vwenv.Props = m_bracketProps;
 							vwenv.AddProp(ktagLeftBoundary, this, kfragZeroWidthSpace);
 							if (modify.ContentRA == null)
+							{
 								vwenv.AddProp(ktagIndex, this, 0);
+							}
 							else
+							{
 								vwenv.AddProp(ktagIndex, this, modify.ContentRA.IndexInOwner + 1);
+							}
 							vwenv.CloseParagraph();
 							vwenv.CloseInnerPile();
 
@@ -366,7 +382,7 @@ namespace LanguageExplorer.Areas
 								vwenv.Props = m_bracketProps;
 								vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalRight);
 								vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketUpHook);
-								for (int i = 1; i < numLines - 1; i++)
+								for (var i = 1; i < numLines - 1; i++)
 								{
 									vwenv.Props = m_bracketProps;
 									vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalRight);
@@ -383,9 +399,13 @@ namespace LanguageExplorer.Areas
 							vwenv.OpenInnerPile();
 							AddExtraLines(outputMaxNumLines - numLines, vwenv);
 							if (numLines == 0)
+							{
 								vwenv.AddProp(MoModifyFromInputTags.kflidModification, this, kfragQuestions);
+							}
 							else
+							{
 								vwenv.AddObjProp(MoModifyFromInputTags.kflidModification, this, kfragFeatNC);
+							}
 							vwenv.CloseInnerPile();
 
 							// right bracket pile
@@ -404,7 +424,7 @@ namespace LanguageExplorer.Areas
 								AddExtraLines(outputMaxNumLines - numLines, vwenv);
 								vwenv.Props = m_bracketProps;
 								vwenv.AddProp(ktagRightNonBoundary, this, kfragRightBracketUpHook);
-								for (int i = 1; i < numLines - 1; i++)
+								for (var i = 1; i < numLines - 1; i++)
 								{
 									vwenv.Props = m_bracketProps;
 									vwenv.AddProp(ktagRightNonBoundary, this, kfragRightBracketExt);

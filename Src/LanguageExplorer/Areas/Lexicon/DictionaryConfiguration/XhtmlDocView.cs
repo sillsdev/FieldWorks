@@ -47,7 +47,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			m_printMenu.Enabled = true;
 		}
 
-		#region Overrides of XWorksViewBase
+		#region Overrides of ViewBase
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.

@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas
@@ -107,11 +108,13 @@ namespace LanguageExplorer.Areas
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
+
 			if (disposing)
 			{
-				if(components != null)
-					components.Dispose();
+				components?.Dispose();
 			}
 
 			base.Dispose(disposing);
@@ -125,10 +128,6 @@ namespace LanguageExplorer.Areas
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-//			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(MultiPane));
-			//
-			// MultiPane
-			//
 			this.Name = "MultiPane";
 
 		}
@@ -206,29 +205,31 @@ namespace LanguageExplorer.Areas
 
 		public Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
-			if (targetCandidates == null)
-				throw new ArgumentNullException("'targetCandidates' is null.");
+			Guard.AgainstNull(targetCandidates, nameof(targetCandidates));
 
-			int sizeOfSharedDimensionPanel1 = Orientation == Orientation.Vertical ? Panel1.Width : Panel1.Height;
+			var sizeOfSharedDimensionPanel1 = Orientation == Orientation.Vertical ? Panel1.Width : Panel1.Height;
 			Control result = null;
-			if (sizeOfSharedDimensionPanel1 != CollapsingSplitContainer.kCollapsedSize && !Panel1Collapsed)
+			if (sizeOfSharedDimensionPanel1 != kCollapsedSize && !Panel1Collapsed)
 			{
 				// Panel1 is visible and wide.
 				result = (FirstControl as ICtrlTabProvider).PopulateCtrlTabTargetCandidateList(targetCandidates);
 				if (!FirstControl.ContainsFocus)
-					result = null;
-			}
-			int sizeOfSharedDimensionPanel2 = Orientation == Orientation.Vertical ? Panel2.Width : Panel2.Height;
-			if (sizeOfSharedDimensionPanel2 != CollapsingSplitContainer.kCollapsedSize && !Panel2Collapsed)
-			{
-				// Panel2 is visible and wide.
-				Control otherResult = (SecondControl as ICtrlTabProvider).PopulateCtrlTabTargetCandidateList(targetCandidates);
-				if (SecondControl.ContainsFocus)
 				{
-					Debug.Assert(result == null, "result is unexpectedly not null.");
-					Debug.Assert(otherResult != null, "otherResult is unexpectedly null.");
-					result = otherResult;
+					result = null;
 				}
+			}
+			var sizeOfSharedDimensionPanel2 = Orientation == Orientation.Vertical ? Panel2.Width : Panel2.Height;
+			if (sizeOfSharedDimensionPanel2 == kCollapsedSize || Panel2Collapsed)
+			{
+				return result;
+			}
+			// Panel2 is visible and wide.
+			var otherResult = (SecondControl as ICtrlTabProvider).PopulateCtrlTabTargetCandidateList(targetCandidates);
+			if (SecondControl.ContainsFocus)
+			{
+				Debug.Assert(result == null, "result is unexpectedly not null.");
+				Debug.Assert(otherResult != null, "otherResult is unexpectedly null.");
+				result = otherResult;
 			}
 
 			return result;
@@ -249,9 +250,8 @@ namespace LanguageExplorer.Areas
 			set { m_parentSizeHint = value; }
 		}
 
-		/// <summary>
-		/// </summary>
-		internal String DefaultPrintPaneId
+		/// <summary />
+		internal string DefaultPrintPaneId
 		{
 			get { return m_defaultPrintPaneId; }
 			set { m_defaultPrintPaneId = value; }
@@ -262,25 +262,19 @@ namespace LanguageExplorer.Areas
 		/// typically docked in some parent, it will be big enough not to interfere with
 		/// the splitter position set in its Init method.
 		/// </summary>
-		protected override Size DefaultSize
-		{
-			get
-			{
-				return new Size(2000,2000);
-			}
-		}
+		protected override Size DefaultSize => new Size(2000,2000);
 
 		/// <summary />
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
 
-			Control parent = Parent;
-			if (parent != null && PropertyTable != null)
+			if (Parent == null)
 			{
-				ResetSplitterEventHandler(true);
-				SetSplitterDistance();
+				return;
 			}
+			ResetSplitterEventHandler(true);
+			SetSplitterDistance();
 		}
 
 		private string SplitterDistancePropertyName => $"MultiPaneSplitterDistance_{m_areaMachineName}_{PropertyTable.GetValue<string>(AreaServices.ToolChoice)}_{m_id}";
@@ -289,7 +283,9 @@ namespace LanguageExplorer.Areas
 		protected override void OnSplitterMoved(object sender, SplitterEventArgs e)
 		{
 			if (InSplitterMovedMethod)
+			{
 				return;
+			}
 
 			base.OnSplitterMoved(sender, e);
 
@@ -300,7 +296,6 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		/// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data. </param>
 		protected override void OnParentChanged(EventArgs e)
 		{
 			base.OnParentChanged(e);
@@ -312,32 +307,31 @@ namespace LanguageExplorer.Areas
 
 		private void SetSplitterDistance()
 		{
-			int sizeOfSharedDimension = Orientation == Orientation.Vertical ? Width : Height;
+			var sizeOfSharedDimension = Orientation == Orientation.Vertical ? Width : Height;
 			int defaultLocation;
 
 			// Find 'total', which will be the height or width,
 			// depending on the orientation of the multi pane.
-			bool proportional = m_defaultFixedPaneSizePoints.EndsWith("%");
+			var proportional = m_defaultFixedPaneSizePoints.EndsWith("%");
 			int total;
-			Size size = Size;
+			var size = Size;
 			if (m_parentSizeHint.Width != 0 && !proportional)
+			{
 				size = m_parentSizeHint;
-			if (Orientation == Orientation.Vertical)
-				total = size.Width;
-			else
-				total = size.Height;
+			}
+			total = Orientation == Orientation.Vertical ? size.Width : size.Height;
 
 			if (proportional)
 			{
-				string percentStr = m_defaultFixedPaneSizePoints.Substring(0, m_defaultFixedPaneSizePoints.Length - 1);
-				int percent = Int32.Parse(percentStr);
-				float loc = (total * (((float)percent) / 100));
-				double locD = Math.Round(loc);
+				var percentStr = m_defaultFixedPaneSizePoints.Substring(0, m_defaultFixedPaneSizePoints.Length - 1);
+				var percent = int.Parse(percentStr);
+				var loc = (total * (((float)percent) / 100));
+				var locD = Math.Round(loc);
 				defaultLocation = (int)locD;
 			}
 			else
 			{
-				defaultLocation = Int32.Parse(m_defaultFixedPaneSizePoints);
+				defaultLocation = int.Parse(m_defaultFixedPaneSizePoints);
 			}
 
 			if (PropertyTable != null)
@@ -348,34 +342,34 @@ namespace LanguageExplorer.Areas
 				// So, first see whether there is a value in the property table at all.
 				defaultLocation = PropertyTable.GetValue(SplitterDistancePropertyName, defaultLocation);
 			}
-			if (defaultLocation < kCollapsedSize)
-				defaultLocation = kCollapsedSize;
 
-			if (SplitterDistance != defaultLocation)
+			if (defaultLocation < kCollapsedSize)
 			{
-				int originalSD = SplitterDistance;
-				try
+				defaultLocation = kCollapsedSize;
+			}
+
+			if (SplitterDistance == defaultLocation)
+			{
+				return;
+			}
+			var originalSD = SplitterDistance;
+			try
+			{
+				// Msg: SplitterDistance (aka: defaultLocation) must be between Panel1MinSize and Width - Panel2MinSize.
+				if (defaultLocation >= Panel1MinSize && defaultLocation <= (sizeOfSharedDimension - Panel2MinSize))
 				{
-					// Msg: SplitterDistance (aka: defaultLocation) must be between Panel1MinSize and Width - Panel2MinSize.
-					if (defaultLocation >= Panel1MinSize && defaultLocation <= (sizeOfSharedDimension - Panel2MinSize))
-					{
-						// We do NOT want to persist this computed position!
-						bool old = m_fOkToPersistSplit;
-						m_fOkToPersistSplit = false;
-						SplitterDistance = defaultLocation;
-						m_fOkToPersistSplit = old;
-					}
+					// We do NOT want to persist this computed position!
+					var old = m_fOkToPersistSplit;
+					m_fOkToPersistSplit = false;
+					SplitterDistance = defaultLocation;
+					m_fOkToPersistSplit = old;
 				}
-				catch (Exception err)
-				{
-					Debug.WriteLine(err.Message);
-					string msg = string.Format("Orientation: {0} Width: {1} Height: {2} Original SD: {3} New SD: {4} Panel1MinSize: {5} Panel2MinSize: {6} ID: {7} Panel1Collapsed: {8} Panel2Collapsed: {9}",
-						Orientation, Width, Height, originalSD, defaultLocation,
-						Panel1MinSize, Panel2MinSize,
-						m_id,
-						Panel1Collapsed, Panel2Collapsed);
-					throw new ArgumentOutOfRangeException(msg, err);
-				}
+			}
+			catch (Exception err)
+			{
+				Debug.WriteLine(err.Message);
+				var msg = $"Orientation: {Orientation} Width: {Width} Height: {Height} Original SD: {originalSD} New SD: {defaultLocation} Panel1MinSize: {Panel1MinSize} Panel2MinSize: {Panel2MinSize} ID: {m_id} Panel1Collapsed: {Panel1Collapsed} Panel2Collapsed: {Panel2Collapsed}";
+				throw new ArgumentOutOfRangeException(msg, err);
 			}
 		}
 
@@ -392,10 +386,11 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private void SetFocusInDefaultControl()
 		{
-			if (String.IsNullOrEmpty(m_defaultFocusControl))
+			if (string.IsNullOrEmpty(m_defaultFocusControl))
+			{
 				return;
-			var defaultFocusControl = (FwUtils.FindControl(FirstControl, m_defaultFocusControl) ??
-				FwUtils.FindControl(SecondControl, m_defaultFocusControl)) as IFocusablePanePortion;
+			}
+			var defaultFocusControl = (FwUtils.FindControl(FirstControl, m_defaultFocusControl) ?? FwUtils.FindControl(SecondControl, m_defaultFocusControl)) as IFocusablePanePortion;
 			Debug.Assert(defaultFocusControl != null,
 				"Failed to find focusable subcontrol.",
 				"This MultiPane was configured to focus {0} as a default control. But it either was not found or was not an IFocuablePanePortion",
@@ -434,6 +429,10 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
+		#endregion
+
+		#region Implementation of IFlexComponent
+
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -446,7 +445,7 @@ namespace LanguageExplorer.Areas
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			Panel1Collapsed = !PropertyTable.GetValue(string.Format("Show_{0}", m_id), true);
+			Panel1Collapsed = !PropertyTable.GetValue($"Show_{m_id}", true);
 
 			m_fOkToPersistSplit = true;
 			SetSplitterDistance();

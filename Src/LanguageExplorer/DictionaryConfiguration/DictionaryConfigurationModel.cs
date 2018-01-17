@@ -171,7 +171,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				Publications = DictionaryConfigurationController.GetAllPublications(cache);
 			else
 				DictionaryConfigurationController.FilterInvalidPublicationsFromModel(this, cache);
-			// Update FDO's homograph configuration from the loaded dictionary configuration homograph settings
+			// Update LCM's homograph configuration from the loaded dictionary configuration homograph settings
 			if (HomographConfiguration != null)
 			{
 				var wsTtype = WritingSystemType.Both;

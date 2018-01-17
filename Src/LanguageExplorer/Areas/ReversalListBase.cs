@@ -44,9 +44,7 @@ namespace LanguageExplorer.Areas
 			ChangeOwningObjectIfPossible();
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		/// <returns><c>true</c> if we changed or initialized a new sorter,
 		/// <c>false</c>if the one installed matches the one we had stored to persist.</returns>
 		protected override bool TryRestoreSorter()
@@ -276,9 +274,10 @@ namespace LanguageExplorer.Areas
 			try
 			{
 				Debug.Assert(ri.Hvo == OwningObject.Hvo);
-				ListModificationInProgress = true; // can't reload deleted list! (LT-5353)
-																// We're about to do a MasterRefresh which clobbers the Undo stack,
-																// so we might as well make this UOW not undoable
+				// can't reload deleted list! (LT-5353)
+				ListModificationInProgress = true;
+				// We're about to do a MasterRefresh which clobbers the Undo stack,
+				// so we might as well make this UOW not undoable
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 					{
 						m_cache.DomainDataByFlid.DeleteObj(ri.Hvo);
@@ -300,8 +299,6 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Returns the index of the root object whose descendent is the object at lastValidIndex.
 		/// </summary>
-		/// <param name="lastValidIndex"></param>
-		/// <returns></returns>
 		private int GetRootIndex(int lastValidIndex)
 		{
 			var item = SortItemAt(lastValidIndex);

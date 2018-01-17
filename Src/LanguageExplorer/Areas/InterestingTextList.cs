@@ -46,7 +46,13 @@ namespace LanguageExplorer.Areas
 		/// (LT-13217)
 		/// So if one changes this list of texts, the other's sort sequence file will be deleted.
 		/// </summary>
-		private static string[] RelatedRecordListsIds = { TextAndWordsArea.InterlinearTexts, TextAndWordsArea.ConcordanceWords, ConcordanceTool.OccurrencesOfSelectedUnit, ComplexConcordanceTool.ComplexConcOccurrencesOfSelectedUnit };
+		private static readonly string[] RelatedRecordListsIds =
+		{
+			TextAndWordsArea.InterlinearTexts,
+			TextAndWordsArea.ConcordanceWords,
+			ConcordanceTool.OccurrencesOfSelectedUnit,
+			ComplexConcordanceTool.ComplexConcOccurrencesOfSelectedUnit
+		};
 
 		/// <summary>
 		/// Used by InvalidateRelatedSortSequences()
@@ -58,8 +64,7 @@ namespace LanguageExplorer.Areas
 		{
 		}
 
-		public InterestingTextList(IPropertyTable propertyTable, ITextRepository repo,
-			IStTextRepository stTextRepo, bool includeScripture)
+		public InterestingTextList(IPropertyTable propertyTable, ITextRepository repo, IStTextRepository stTextRepo, bool includeScripture)
 		{
 			m_textRepository = repo;
 			m_propertyTable = propertyTable;
@@ -79,17 +84,12 @@ namespace LanguageExplorer.Areas
 		public List<IStText> CoreTexts
 		{
 
-			get
-			{
-				if (m_coreTexts == null)
-					m_coreTexts = GetCoreTexts();
-				return m_coreTexts;
-			}
+			get { return m_coreTexts ?? (m_coreTexts = GetCoreTexts()); }
 			set { m_coreTexts = value; }
 		}
 		private List<IStText> m_scriptureTexts;
 
-		public bool IncludeScripture { get; private set; }
+		public bool IncludeScripture { get; }
 
 		/// <summary>
 		/// Get the "core" (non-scripture) texts that we want to display. This is all the ones not on the excluded list.
@@ -99,24 +99,19 @@ namespace LanguageExplorer.Areas
 		{
 			var result = AllCoreTexts.ToList();
 			var excludedGuids = ExcludedCoreTextIdList();
-			if (excludedGuids.Count == 0)
-				return result;
-			return (from obj in result where !excludedGuids.Contains(obj.Guid) select obj).ToList();
+			return excludedGuids.Count == 0 ? result : (result.Where(obj => !excludedGuids.Contains(obj.Guid))).ToList();
 		}
 
 		/// <summary>
 		/// True if all (non-scripture) texts are published
 		/// </summary>
-		public bool AllCoreTextsAreIncluded
-		{
-			get { return ExcludedCoreTextIdList().Count == 0; }
-		}
+		public bool AllCoreTextsAreIncluded => ExcludedCoreTextIdList().Count == 0;
 
 		private HashSet<Guid> ExcludedCoreTextIdList()
 		{
 			var idList = m_propertyTable.GetValue(ExcludeCoreTextPropertyName, "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 			var excludedGuids = new HashSet<Guid>();
-			foreach (string id in idList)
+			foreach (var id in idList)
 			{
 				Guid guid;
 				try
@@ -137,24 +132,20 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// The core (non-Scripture) texts that might be selected to display and concord.
 		/// </summary>
-		public IEnumerable<IStText> AllCoreTexts
-		{
-			get
-			{
-				return from text in m_textRepository.AllInstances()
-					where text.ContentsOA != null
-					select text.ContentsOA;
-			}
-		}
+		public IEnumerable<IStText> AllCoreTexts => m_textRepository.AllInstances()
+			.Where(text => text.ContentsOA != null)
+			.Select(text => text.ContentsOA);
 
 		private List<IStText> GetScriptureTexts()
 		{
 			var result = new List<IStText>();
 			var idList = m_propertyTable.GetValue(PersistPropertyName, "");
-			foreach (string id in idList.Split(','))
+			foreach (var id in idList.Split(','))
 			{
 				if (id.Length == 0)
+				{
 					continue; // we get one empty string even from splitting an empty one.
+				}
 				Guid guid;
 				try
 				{
@@ -168,7 +159,9 @@ namespace LanguageExplorer.Areas
 				}
 				IStText item;
 				if (m_stTextRepository.TryGetObject(guid, out item))
+				{
 					result.Add(m_stTextRepository.GetObject(guid));
+				}
 				// An invalid item is not an error, it may just have been deleted while the interesting
 				// text list was not monitoring things.
 			}
@@ -178,7 +171,9 @@ namespace LanguageExplorer.Areas
 		public bool IsInterestingText(IStText text)
 		{
 			if (m_interestingTests == null)
+			{
 				m_interestingTests = new HashSet<IStText>(InterestingTexts);
+			}
 			return m_interestingTests.Contains(text);
 		}
 
@@ -190,11 +185,15 @@ namespace LanguageExplorer.Areas
 			get
 			{
 				foreach (var st in CoreTexts)
+				{
 					yield return st;
+				}
 				if (IncludeScripture)
 				{
 					foreach (var st in m_scriptureTexts)
+					{
 						yield return st;
+					}
 				}
 			}
 		}
@@ -202,10 +201,7 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// The subset of Scripture that we currently want to include (saved as part of project properties).
 		/// </summary>
-		public IEnumerable<IStText> ScriptureTexts
-		{
-			get { return m_scriptureTexts.ToArray(); }
-		}
+		public IEnumerable<IStText> ScriptureTexts => m_scriptureTexts.ToArray();
 
 		public event EventHandler<InterestingTextsChangedArgs> InterestingTextsChanged;
 
@@ -218,8 +214,7 @@ namespace LanguageExplorer.Areas
 					{
 						var text = m_textRepository.GetObject(hvo);
 						CoreTexts.Add(text.ContentsOA);
-						if (m_interestingTests != null)
-							m_interestingTests.Add(text.ContentsOA);
+						m_interestingTests?.Add(text.ContentsOA);
 						RaiseInterestingTextsChanged(CoreTexts.Count - 1, 1, 0);
 					}
 					else if (cvIns == 1 && cvDel == 1)
@@ -227,8 +222,7 @@ namespace LanguageExplorer.Areas
 						ClearInvalidObjects(CoreTexts, 0, false); // get rid of the old one but do NOT raise notification.
 						var text = m_textRepository.GetObject(hvo);
 						CoreTexts.Add(text.ContentsOA);
-						if (m_interestingTests != null)
-							m_interestingTests.Add(text.ContentsOA);
+						m_interestingTests?.Add(text.ContentsOA);
 						// We don't know where the old one was removed, safest to treat as changing all.
 						RaiseInterestingTextsChanged(0, CoreTexts.Count, CoreTexts.Count);
 					}
@@ -253,7 +247,9 @@ namespace LanguageExplorer.Areas
 					if (cvDel > 0)
 					{
 						if (ClearInvalidObjects(m_scriptureTexts, CoreTexts.Count, IncludeScripture))
+						{
 							UpdatePropertyTable();
+						}
 					}
 					break;
 				default:
@@ -269,13 +265,12 @@ namespace LanguageExplorer.Areas
 		{
 			// Need to add the new text(s). Have to find which ones to add.
 			var coreTextsSet = new HashSet<IStText>(CoreTexts);
-			int count = 0;
-			foreach (var newText in (from sttext in GetCoreTexts() where !coreTextsSet.Contains(sttext) select sttext))
+			var count = 0;
+			foreach (var newText in (GetCoreTexts().Where(sttext => !coreTextsSet.Contains(sttext))))
 			{
 				count++;
 				CoreTexts.Add(newText);
-				if (m_interestingTests != null)
-					m_interestingTests.Add(newText);
+				m_interestingTests?.Add(newText);
 			}
 			RaiseInterestingTextsChanged(CoreTexts.Count - count, count, 0);
 			ClearInvalidObjects(CoreTexts, 0, true);
@@ -284,21 +279,26 @@ namespace LanguageExplorer.Areas
 		private void RaiseInterestingTextsChanged(int insertAt, int inserted, int deleted)
 		{
 			if (inserted == 0 && deleted == 0)
+			{
 				return;
+			}
 			InvalidateRelatedSortSequences();
-			if (InterestingTextsChanged != null)
-				InterestingTextsChanged(this, new InterestingTextsChangedArgs(insertAt, inserted, deleted));
+			InterestingTextsChanged?.Invoke(this, new InterestingTextsChangedArgs(insertAt, inserted, deleted));
 		}
 
 		private void InvalidateRelatedSortSequences()
 		{
 			if (Cache == null)
+			{
 				return;
+			}
 
 			// We won't keep track of the record list between calls since it could change from time to time.
 			var recordList = RecordList.ActiveRecordListRepository.ActiveRecordList;
 			if (recordList == null)
+			{
 				return;
+			}
 
 			if (!RelatedRecordListsIds.Contains(recordList.Id))
 			{
@@ -325,18 +325,19 @@ namespace LanguageExplorer.Areas
 		//Remove invalid objects from the list. Return true if any were removed.
 		private bool ClearInvalidObjects(List<IStText> listToSearch, int offset, bool raiseChangeNotification)
 		{
-			bool didRemoveAny = false;
-			for (int i = listToSearch.Count - 1; i >= 0; i--)
+			var didRemoveAny = false;
+			for (var i = listToSearch.Count - 1; i >= 0; i--)
 			{
 				if (!listToSearch[i].IsValidObject || listToSearch[i].OwnerOfClass(ScrDraftTags.kClassId) != null)
 				{
 					// Enhance JohnT: if several are removed, especially close together, we might want
 					// to combine the change notifications. However I think this will be quite unusual.
-					if (m_interestingTests != null)
-						m_interestingTests.Remove(listToSearch[i]);
+					m_interestingTests?.Remove(listToSearch[i]);
 					listToSearch.RemoveAt(i);
 					if (raiseChangeNotification)
+					{
 						RaiseInterestingTextsChanged(i + offset, 0, 1);
+					}
 					didRemoveAny = true;
 				}
 			}
@@ -367,7 +368,6 @@ namespace LanguageExplorer.Areas
 		/// Storing a lis of EXCLUDED regular texts means that originally, or if we clear all saved settings,
 		/// ALL regular texts are included, and if we add a new one, it is automatically included.
 		/// </summary>
-		/// <param name="stTexts"></param>
 		public void SetInterestingTexts(IEnumerable<IStText> stTexts)
 		{
 			var oldTexts = InterestingTexts.ToArray();
@@ -376,22 +376,31 @@ namespace LanguageExplorer.Areas
 			foreach (var obj in stTexts)
 			{
 				if (obj.Owner is IText)
+				{
 					excludedGuids.Remove(obj.Guid);
+				}
 				else
+				{
 					m_scriptureTexts.Add(obj);
+				}
 			}
 			UpdatePropertyTable();
 			UpdateExcludedCoreTexts(excludedGuids);
 			m_coreTexts = null;
 			m_interestingTests = null; // regenerate when next needed. (Before we raise changed, which may use it...)
 			var newTexts = InterestingTexts.ToArray();
-			int firstChange = 0;
-			int minLength = Math.Min(oldTexts.Length, newTexts.Length);
+			var firstChange = 0;
+			var minLength = Math.Min(oldTexts.Length, newTexts.Length);
 			while (firstChange < minLength && newTexts[firstChange] == oldTexts[firstChange])
+			{
 				firstChange++;
-			int endMatchCount = 0;
-			while (endMatchCount < minLength - firstChange && newTexts[newTexts.Length - endMatchCount - 1] == oldTexts[oldTexts.Length - endMatchCount - 1])
+			}
+			var endMatchCount = 0;
+			while (endMatchCount < minLength - firstChange && newTexts[newTexts.Length - endMatchCount - 1] ==
+				   oldTexts[oldTexts.Length - endMatchCount - 1])
+			{
 				endMatchCount++;
+			}
 			// Enhance JohnT: could look for unchanged items in the list. But this is fairly rare,
 			// typically when someone runs the configure dialog and OKs it.
 			RaiseInterestingTextsChanged(firstChange, newTexts.Length - firstChange - endMatchCount, oldTexts.Length - firstChange - endMatchCount);
@@ -411,8 +420,6 @@ namespace LanguageExplorer.Areas
 		/// Store in the property table what needs to be there so that we will use the specified set of scripture
 		/// texts as 'interesting'.
 		/// </summary>
-		/// <param name="propertyTable"></param>
-		/// <param name="texts"></param>
 		public static void SetScriptureTextsInPropertyTable(IPropertyTable propertyTable, IEnumerable<IStText> texts)
 		{
 			propertyTable.SetProperty(PersistPropertyName, MakeIdList(texts), true, true);
@@ -426,22 +433,21 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public bool AddChapterToInterestingTexts(IStText newText)
 		{
-			int oldCount = m_scriptureTexts.Count;
-			int targetPosition = TextPosition(newText);
+			var oldCount = m_scriptureTexts.Count;
+			var targetPosition = TextPosition(newText);
 			if (targetPosition < 0)
 			{
 				var excludedCoreTextIdList = ExcludedCoreTextIdList();
-				if (newText.Owner is IText && excludedCoreTextIdList.Contains(newText.Guid))
+				if (!(newText.Owner is IText) || !excludedCoreTextIdList.Contains(newText.Guid))
 				{
-					CoreTexts.Add(newText);
-					if (m_interestingTests != null)
-						m_interestingTests.Add(newText);
-					excludedCoreTextIdList.Remove(newText.Guid);
-					UpdateExcludedCoreTexts(excludedCoreTextIdList);
-					RaiseInterestingTextsChanged(CoreTexts.Count - 1, 1, 0);
-					return true; // added sucessfully
+					return false; // not a text in current Scripture.
 				}
-				return false; // not a text in current Scripture.
+				CoreTexts.Add(newText);
+				m_interestingTests?.Add(newText);
+				excludedCoreTextIdList.Remove(newText.Guid);
+				UpdateExcludedCoreTexts(excludedCoreTextIdList);
+				RaiseInterestingTextsChanged(CoreTexts.Count - 1, 1, 0);
+				return true; // added sucessfully
 			}
 			int index;
 			for (index = 0; index < m_scriptureTexts.Count; index++)
@@ -459,40 +465,52 @@ namespace LanguageExplorer.Areas
 				if (newText == sec.ContentOA && sec.HeadingOA != null)
 				{
 					if (index == 0 || m_scriptureTexts[index - 1] != sec.HeadingOA)
+					{
 						m_scriptureTexts.Insert(index, sec.HeadingOA);
+					}
 					else
+					{
 						index--; // move index to point at heading
+					}
 				}
 				else if (sec.ContentOA != null)
 				{
 					if (index >= m_scriptureTexts.Count - 1 || m_scriptureTexts[index + 1] != sec.ContentOA)
+					{
 						m_scriptureTexts.Insert(index + 1, sec.ContentOA);
+					}
 				}
 				// At this point the heading and contents of the section for the inserted text
 				// are at index. We look for adjacent sections in the same chapter and if necessary
 				// add them too.
-				int indexAfter = index + 1;
+				var indexAfter = index + 1;
 				if (sec.ContentOA != null && sec.HeadingOA != null)
-					indexAfter++;
-				// It would be nicer to use ScrReference, but not worth adding a whole project reference.
-				int chapMax = sec.VerseRefMax / 1000;
-				int chapMin = sec.VerseRefMin / 1000;
-				var book = (IScrBook)sec.Owner;
-				int csec = book.SectionsOS.Count;
-				int isecCur = sec.IndexInOwner;
-				for (int isec = isecCur + 1; isec < csec; isec++)
 				{
-					IScrSection secNext = book.SectionsOS[isec];
+					indexAfter++;
+				}
+				// It would be nicer to use ScrReference, but not worth adding a whole project reference.
+				var chapMax = sec.VerseRefMax / 1000;
+				var chapMin = sec.VerseRefMin / 1000;
+				var book = (IScrBook)sec.Owner;
+				var csec = book.SectionsOS.Count;
+				var isecCur = sec.IndexInOwner;
+				for (var isec = isecCur + 1; isec < csec; isec++)
+				{
+					var secNext = book.SectionsOS[isec];
 					if (secNext.VerseRefMin / 1000 != chapMax)
+					{
 						break; // different chapter.
+					}
 					indexAfter = AddAfter(indexAfter, secNext.HeadingOA);
 					indexAfter = AddAfter(indexAfter, secNext.ContentOA);
 				}
-				for (int isec = isecCur - 1; isec >= 0; isec--)
+				for (var isec = isecCur - 1; isec >= 0; isec--)
 				{
-					IScrSection secPrev = book.SectionsOS[isec];
+					var secPrev = book.SectionsOS[isec];
 					if (secPrev.VerseRefMax / 1000 != chapMin)
+					{
 						break;
+					}
 					index = AddBefore(index, secPrev.ContentOA);
 					index = AddBefore(index, secPrev.HeadingOA);
 				}
@@ -505,20 +523,25 @@ namespace LanguageExplorer.Areas
 		private int AddBefore(int index, IStText item)
 		{
 			if (item == null)
-				return index; // nothing to add
-			if (index == 0 || m_scriptureTexts[index - 1] != item)
 			{
-				// Not present, add it.
-				m_scriptureTexts.Insert(index, item);
-				return index; // no change, things moved up.
+				return index; // nothing to add
 			}
-			return index - 1; // next earlier item goes before one already present.
+
+			if (index != 0 && m_scriptureTexts[index - 1] == item)
+			{
+				return index - 1; // next earlier item goes before one already present.
+			}
+			// Not present, add it.
+			m_scriptureTexts.Insert(index, item);
+			return index; // no change, things moved up.
 		}
 
 		private int AddAfter(int indexAfter, IStText item)
 		{
 			if (item == null)
+			{
 				return indexAfter; // nothing to add
+			}
 			if (indexAfter >= m_scriptureTexts.Count - 1 || m_scriptureTexts[indexAfter] != item)
 			{
 				// Not already present, add it.
@@ -533,20 +556,19 @@ namespace LanguageExplorer.Areas
 		/// if not in the title, add (section index + 1)*2.
 		/// If in contents add 1.
 		/// </summary>
-		/// <param name="text"></param>
-		/// <returns></returns>
-		int TextPosition(IStText text)
+		private int TextPosition(IStText text)
 		{
-			ICmObject owner = text.Owner;
-			int flid = text.OwningFlid;
-			if (flid != ScrSectionTags.kflidContent &&
-				flid != ScrSectionTags.kflidHeading
-				&& flid != ScrBookTags.kflidTitle)
+			var owner = text.Owner;
+			var flid = text.OwningFlid;
+			if (flid != ScrSectionTags.kflidContent && flid != ScrSectionTags.kflidHeading && flid != ScrBookTags.kflidTitle)
 			{
 				return -1;
 			}
+
 			if (flid == ScrBookTags.kflidTitle)
+			{
 				return BookPosition((IScrBook)owner);
+			}
 			var section = (IScrSection)owner;
 			var book = (IScrBook)section.Owner;
 			return BookPosition(book)

@@ -108,8 +108,7 @@ namespace LanguageExplorer.Areas
 			var repo = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
 			foreach (var list in repo.AllInstances())
 			{
-				if (list.Owner == null || list.Owner == m_cache.LangProject.TranslatedScriptureOA ||
-				    m_excludedListFlids.ContainsKey(list.OwningFlid))
+				if (list.Owner == null || list.Owner == m_cache.LangProject.TranslatedScriptureOA || m_excludedListFlids.ContainsKey(list.OwningFlid))
 				{
 					continue;
 				}

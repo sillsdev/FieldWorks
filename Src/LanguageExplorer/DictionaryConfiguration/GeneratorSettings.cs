@@ -8,6 +8,9 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {
+	/// <summary>
+	/// Settings used while generating XHTML output by ConfiguredXHTMLGenerator
+	/// </summary>
 	internal sealed class GeneratorSettings
 	{
 		internal LcmCache Cache { get; }

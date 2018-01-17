@@ -60,42 +60,40 @@ namespace LanguageExplorer.Areas
 		}
 
 		static string InterestingTextKey = "InterestingTexts";
-		static public InterestingTextList GetInterestingTextList(IPropertyTable propertyTable, ILcmServiceLocator services)
+		public static InterestingTextList GetInterestingTextList(IPropertyTable propertyTable, ILcmServiceLocator services)
 		{
 			InterestingTextList interestingTextList;
-			if (!propertyTable.TryGetValue(InterestingTextKey, out interestingTextList))
+			if (propertyTable.TryGetValue(InterestingTextKey, out interestingTextList))
 			{
-				interestingTextList = new InterestingTextList(propertyTable, services.GetInstance<ITextRepository>(),
-					services.GetInstance<IStTextRepository>(), services.GetInstance<IScrBookRepository>().AllInstances().Any());
-				// Make this list available for other tools in this window, but don't try to persist it.
-				propertyTable.SetProperty(InterestingTextKey, interestingTextList, false, false);
-				// Since the list hangs around indefinitely, it indefinitely monitors prop changes.
-				// I can't find any way to make sure it eventually gets removed from the notification list.
-				services.GetInstance<ISilDataAccessManaged>().AddNotification(interestingTextList);
+				return interestingTextList;
 			}
+			interestingTextList = new InterestingTextList(propertyTable, services.GetInstance<ITextRepository>(),
+				services.GetInstance<IStTextRepository>(), services.GetInstance<IScrBookRepository>().AllInstances().Any());
+			// Make this list available for other tools in this window, but don't try to persist it.
+			propertyTable.SetProperty(InterestingTextKey, interestingTextList, false, false);
+			// Since the list hangs around indefinitely, it indefinitely monitors prop changes.
+			// I can't find any way to make sure it eventually gets removed from the notification list.
+			services.GetInstance<ISilDataAccessManaged>().AddNotification(interestingTextList);
 			return interestingTextList;
 		}
 
 		void m_interestingTexts_InterestingTextsChanged(object sender, InterestingTextsChangedArgs e)
 		{
-			if (m_rootHvo != 0)
+			if (m_rootHvo == 0)
 			{
-				m_interestingHvos = null; // recompute on next call
-				SendPropChanged(m_rootHvo, kflidInterestingTexts, e.InsertedAt, e.NumberInserted, e.NumberDeleted);
+				return;
 			}
+			m_interestingHvos = null; // recompute on next call
+			SendPropChanged(m_rootHvo, kflidInterestingTexts, e.InsertedAt, e.NumberInserted, e.NumberDeleted);
 		}
 
 		internal const int kflidInterestingTexts = 899800;
 
 		internal int[] m_interestingHvos;
 
-		int[] GetInterestingTexts()
+		private int[] GetInterestingTexts()
 		{
-			if (m_interestingHvos == null)
-			{
-				m_interestingHvos = (from text in m_interestingTexts.InterestingTexts select text.Hvo).ToArray();
-			}
-			return m_interestingHvos;
+			return m_interestingHvos ?? (m_interestingHvos = (m_interestingTexts.InterestingTexts.Select(text => text.Hvo)).ToArray());
 		}
 
 		public override int[] VecProp(int hvo, int tag)
@@ -120,10 +118,7 @@ namespace LanguageExplorer.Areas
 			return base.get_VecItem(hvo, tag, index);
 		}
 
-		public IEnumerable<IStText> ScriptureTexts
-		{
-			get { return m_interestingTexts.ScriptureTexts; }
-		}
+		public IEnumerable<IStText> ScriptureTexts => m_interestingTexts.ScriptureTexts;
 
 		public void SetInterestingTexts(IEnumerable<IStText> newTexts)
 		{

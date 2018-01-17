@@ -1946,7 +1946,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// <summary>
 	/// Entend the ConcDecorator with a few more properties needed for respelling.
 	/// </summary>
-	public class RespellingSda : ConcDecorator
+	internal class RespellingSda : ConcDecorator
 	{
 		internal class RespellInfo
 		{
@@ -2257,7 +2257,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		}
 	}
 
-	public class RespellingMdc : ConcMdc
+	internal class RespellingMdc : ConcMdc
 	{
 		public RespellingMdc(IFwMetaDataCacheManaged metaDataCache)
 			: base(metaDataCache)
