@@ -68,11 +68,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				var node = tnode as LabelNode;
 				if (node == null)
+				{
 					continue;
+				}
 				var label = node.Label;
 				var obj = label.Object;
 				if (obj.ClassID == classId)
+				{
 					node.Enabled = false;
+				}
 				DisableNodes(node.Nodes, classId);
 			}
 		}
@@ -104,11 +108,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		protected SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels, int classId)
 		{
-			var contents = from lexEntryType in m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities
-				where lexEntryType.ClassID == classId
-				select lexEntryType;
+			var contents = m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.Where(lexEntryType => lexEntryType.ClassID == classId);
 			var persistProvider = m_dlg.PropertyTable.GetValue<IPersistenceProvider>("persistProvider");
-			string fieldName = StringTable.Table.GetString("VariantEntryTypes", "PossibilityListItemTypeNames");
+			var fieldName = StringTable.Table.GetString("VariantEntryTypes", "PossibilityListItemTypeNames");
 			return new SimpleListChooser(persistProvider,
 				labels,
 				fieldName,
@@ -133,7 +135,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				m_obj.ReferenceTargetCandidates(m_flid),
 				"LexEntryType" /*"m_displayNameProperty*/,
 				"best analysis");
-			using (SimpleListChooser chooser = GetChooser(labels, targetClassId))
+			using (var chooser = GetChooser(labels, targetClassId))
 			{
 				chooser.Cache = m_cache;
 				chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);
@@ -144,9 +146,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var res = chooser.ShowDialog(m_dlg.FindForm());
 				if (res == DialogResult.OK && chooser.ChosenObjects.Any())
 				{
-					var itemsToChange = (from lexEntryType in chooser.ChosenObjects
-						where lexEntryType.ClassID != targetClassId
-						select lexEntryType).Cast<ILexEntryType>();
+					var itemsToChange = chooser.ChosenObjects.Where(lexEntryType => lexEntryType.ClassID != targetClassId).Cast<ILexEntryType>();
 					Convert(itemsToChange);
 				}
 			}

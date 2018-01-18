@@ -311,6 +311,12 @@
     <Compile Include="Areas\IPreferedTargetAdjuster.cs" />
     <Compile Include="Areas\Lexicon\ISemanticDomainTreeBarHandler.cs" />
     <Compile Include="Areas\Lexicon\LexiconAreaMenuHelper.cs" />
+    <Compile Include="Areas\Lexicon\LexReferenceUnidirectionalVc.cs" />
+    <Compile Include="Areas\Lexicon\Tools\Edit\ReversalEntryDataAccess.cs" />
+    <Compile Include="Areas\Lexicon\Tools\Edit\ReversalIndexEntrySliceView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\Lexicon\Tools\Edit\ReversalIndexEntryVc.cs" />
     <Compile Include="Areas\Lists\Tools\DialectsListEdit\DialectsListEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\ExtNoteTypeEdit\ExtNoteTypeEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\LanguagesListEdit\LanguagesListEditTool.cs" />

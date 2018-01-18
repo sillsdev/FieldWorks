@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -52,7 +52,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			var allItems = base.GetVisibleItemList();
 			if (allItems.Count != 0)
+			{
 				items.Insert(0, allItems[0]);
+			}
 		}
 
 		/// <summary>

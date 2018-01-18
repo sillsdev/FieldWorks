@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		protected override void HandleChooser()
 		{
-			using (LinkEntryOrSenseDlg dlg = new LinkEntryOrSenseDlg())
+			using (var dlg = new LinkEntryOrSenseDlg())
 			{
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				var le = m_obj as ILexEntry;
@@ -40,20 +40,20 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var str = ShowHelp.RemoveSpaces(Slice.Label);
 				dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense-" + str);
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
+				{
 					AddItem(dlg.SelectedObject);
-
+				}
 			}
 		}
 
 		/// <summary>
 		/// The user selected an item; now we actually need a LexEntryRef.
 		/// </summary>
-		/// <param name="newObj"></param>
 		private void AddItem(ICmObject newObj)
 		{
 			CheckDisposed();
 
-			bool fForVariant = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationNode, "forVariant", false);
+			var fForVariant = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationNode, "forVariant", false);
 			string sUndo, sRedo;
 			if (fForVariant)
 			{
@@ -70,15 +70,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				UndoableUnitOfWorkHelper.Do(sUndo, sRedo, m_obj,
 					() =>
 					{
-						ILexEntry ent = m_obj as ILexEntry;
+						var ent = m_obj as ILexEntry;
 
 						// Adapted from part of DtMenuHandler.AddNewLexEntryRef.
-						ILexEntryRef ler = ent.Services.GetInstance<ILexEntryRefFactory>().Create();
+						var ler = ent.Services.GetInstance<ILexEntryRefFactory>().Create();
 						ent.EntryRefsOS.Add(ler);
 						if (fForVariant)
 						{
 							// The slice this is part of should only be displayed for lex entries with no VariantEntryRefs.
-							Debug.Assert(ent.VariantEntryRefs.Count() == 0);
+							Debug.Assert(!ent.VariantEntryRefs.Any());
 							ler.VariantEntryTypesRS.Add(ent.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0] as ILexEntryType);
 							ler.RefType = LexEntryRefTags.krtVariant;
 							ler.HideMinorEntry = 0;
@@ -86,8 +86,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						else
 						{
 							// The slice this is part of should only be displayed for lex entries with no ComplexEntryRefs.
-							Debug.Assert(ent.ComplexFormEntryRefs.Count() == 0);
-							//ler.ComplexEntryTypesRS.Append(ent.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS[0].Hvo);
+							Debug.Assert(!ent.ComplexFormEntryRefs.Any());
 							ler.RefType = LexEntryRefTags.krtComplexForm;
 							ler.HideMinorEntry = 0; // LT-10928
 							// Logic similar to this is in EntrySequenceReferenceLauncher.AddNewObjectsToProperty()

@@ -48,12 +48,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		// suspend loading the property until given a class by RecordBrowseView via
 		// RecordList.OnChangeListItemsClass();
 		bool m_suspendReloadUntilOnChangeListItemsClass = true;
-		private readonly XElement m_partOwnershipTreeSpec = XDocument.Parse(LexiconResources.EntriesOrChildrenClerkPartOwnershipTree).Root;
 
 		/// <summary />
 		internal EntriesOrChildClassesRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, ILexDb owner)
-			:base(id, statusBar,
-				decorator, false, new VectorPropertyParameterObject(owner, "Entries", decorator.MetaDataCache.GetFieldId("LexDb", "Entries", false)), new Dictionary<string, PropertyRecordSorter>
+			:base(id, statusBar, decorator, false, new VectorPropertyParameterObject(owner, "Entries", decorator.MetaDataCache.GetFieldId("LexDb", "Entries", false)), new Dictionary<string, PropertyRecordSorter>
 				{
 					{ AreaServices.Default, new PropertyRecordSorter(AreaServices.ShortName) },
 					{ "PrimaryGloss", new PropertyRecordSorter("PrimaryGloss") }
@@ -272,7 +270,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		/// <returns></returns>
 		protected override string PropertyTableId(string sorterOrFilter)
 		{
-			return $"{@"LexDb"}.{@"Entries"}_{sorterOrFilter}";
+			return $"LexDb.Entries_{sorterOrFilter}";
 		}
 
 		#endregion
@@ -292,13 +290,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		/// <summary>
 		/// See documentation for IMultiListSortItemProvider
 		/// </summary>
-		public XElement PartOwnershipTreeSpec => m_partOwnershipTreeSpec;
+		public XElement PartOwnershipTreeSpec { get; } = XDocument.Parse(LexiconResources.EntriesOrChildrenClerkPartOwnershipTree).Root;
 
 		/// <summary>
 		/// See documentation for IMultiListSortItemProvider
 		/// </summary>
-		/// <param name="oldItems"></param>
-		/// <returns></returns>
 		public void ConvertItemsToRelativesThatApplyToCurrentList(ref IDictionary<int, object> oldItems)
 		{
 			var oldItemsToRemove = new HashSet<int>();

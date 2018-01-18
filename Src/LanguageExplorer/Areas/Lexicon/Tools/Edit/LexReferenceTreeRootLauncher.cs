@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -64,15 +64,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						lr.TargetsRS[0] = value;
 						return; // must not try to insert into newRef.
 					}
-					else
-					{
-						// There are other parts in the relation.
-						// We need to remove ourself from the relation and create a new one for the new relationship.
-						lr.TargetsRS.Remove(objToLink);
-						newRef = lrt.Services.GetInstance<ILexReferenceFactory>().Create();
-						lrt.MembersOC.Add(newRef);
-						newRef.TargetsRS.Add(value); // must be the first (root) item
-					}
+					// There are other parts in the relation.
+					// We need to remove ourself from the relation and create a new one for the new relationship.
+					lr.TargetsRS.Remove(objToLink);
+					newRef = lrt.Services.GetInstance<ILexReferenceFactory>().Create();
+					lrt.MembersOC.Add(newRef);
+					newRef.TargetsRS.Add(value); // must be the first (root) item
 				}
 				else
 				{
@@ -107,7 +104,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// has a ParentSlice whose Object is the one we want.
 		/// </summary>
 		/// <remarks>internal and virtual to support testing...otherwise would be private</remarks>
-		/// <returns></returns>
 		internal virtual ICmObject GetChildObject()
 		{
 			LexReferenceTreeRootSlice owningSlice = null;
@@ -115,8 +111,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				owningSlice = parent as LexReferenceTreeRootSlice;
 			}
+
 			if (owningSlice == null)
+			{
 				throw new FwConfigurationException("LexReferenceTreeRootLauncher must be a child of a LexReferenceTreeRootSlice");
+			}
 			return owningSlice.ParentSlice.Object;
 		}
 
@@ -135,8 +134,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		protected override void HandleChooser()
 		{
-			ILexRefType lrt = (ILexRefType)m_obj.Owner;
-			int type = lrt.MappingType;
+			var lrt = (ILexRefType)m_obj.Owner;
+			var type = lrt.MappingType;
 			BaseGoDlg dlg = null;
 			try
 			{
@@ -144,7 +143,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					case LexRefTypeTags.MappingTypes.kmtSenseTree:
 						dlg = new LinkEntryOrSenseDlg();
-						(dlg as LinkEntryOrSenseDlg).SelectSensesOnly = true;
+						((LinkEntryOrSenseDlg)dlg).SelectSensesOnly = true;
 						break;
 					case LexRefTypeTags.MappingTypes.kmtEntryTree:
 						dlg = new EntryGoDlg();
@@ -166,13 +165,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 				{
 					if (dlg.SelectedObject != null)
+					{
 						AddItem(dlg.SelectedObject);
+					}
 				}
 			}
 			finally
 			{
-				if (dlg != null)
-					dlg.Dispose();
+				dlg?.Dispose();
 			}
 		}
 

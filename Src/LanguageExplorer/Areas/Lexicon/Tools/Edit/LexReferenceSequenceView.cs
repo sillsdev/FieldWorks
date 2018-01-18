@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -27,9 +27,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		protected override VectorReferenceVc CreateVectorReferenceVc()
 		{
-			LexReferenceSequenceVc vc = new LexReferenceSequenceVc(m_cache, m_rootFlid, m_displayNameProperty, m_displayWs);
+			var vc = new LexReferenceSequenceVc(m_cache, m_rootFlid, m_displayNameProperty, m_displayWs);
 			if (m_displayParent != null)
+			{
 				vc.DisplayParent = m_displayParent;
+			}
 			return vc;
 		}
 
@@ -42,7 +44,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				m_displayParent = value;
 				if (m_VectorReferenceVc != null)
+				{
 					(m_VectorReferenceVc as LexReferenceSequenceVc).DisplayParent = value;
+				}
 			}
 		}
 
@@ -55,7 +59,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		protected override bool HandleRightClickOnObject(int hvo)
 		{
 			if (hvo == 0)
+			{
 				return false;
+			}
 
 			// We do NOT want a Using here. The temporary colleague created inside HandleRightClick should dispose
 			// of the object. (Not working as of the time of writing, but disposing it makes a much more definite
@@ -76,17 +82,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var sel = m_rootb.Selection;
 			int cvsli;
 			int hvoObj;
-			if (CheckForValidDelete(sel, out cvsli, out hvoObj))
+			if (!CheckForValidDelete(sel, out cvsli, out hvoObj))
 			{
-				if (m_displayParent != null && hvoObj == m_displayParent.Hvo)
-				{
-					// We need to handle this the same way as the delete command in the slice menu.
-					Publisher.Publish("DataTreeDelete", null);
-				}
-				else
-				{
-					DeleteObjectFromVector(sel, cvsli, hvoObj, LanguageExplorerResources.ksUndoDeleteRef, LanguageExplorerResources.ksRedoDeleteRef);
-				}
+				return;
+			}
+			if (m_displayParent != null && hvoObj == m_displayParent.Hvo)
+			{
+				// We need to handle this the same way as the delete command in the slice menu.
+				Publisher.Publish("DataTreeDelete", null);
+			}
+			else
+			{
+				DeleteObjectFromVector(sel, cvsli, hvoObj, LanguageExplorerResources.ksUndoDeleteRef, LanguageExplorerResources.ksRedoDeleteRef);
 			}
 		}
 

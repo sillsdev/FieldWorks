@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,13 +14,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 		}
 
-		AffixRuleFormulaControl AffixRuleFormulaControl
-		{
-			get
-			{
-				return Control as AffixRuleFormulaControl;
-			}
-		}
+		AffixRuleFormulaControl AffixRuleFormulaControl => (AffixRuleFormulaControl)Control;
 
 		public override void FinishInit()
 		{
@@ -80,15 +74,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			CheckDisposed();
 			var mapping = (IMoModifyFromInput)RuleFormulaControl.CurrentObject;
 			var commands = new List<string>
-										{
-											"AboutToFollowLink",
-											"FollowLink"
-										};
+			{
+				"AboutToFollowLink",
+				"FollowLink"
+			};
 			var parms = new List<object>
-										{
-											null,
-											new FwLinkArgs(AreaServices.NaturalClassEditMachineName, mapping.ModificationRA.Guid)
-										};
+			{
+				null,
+				new FwLinkArgs(AreaServices.NaturalClassEditMachineName, mapping.ModificationRA.Guid)
+			};
 			Publisher.Publish(commands, parms);
 			return true;
 		}
@@ -109,15 +103,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			CheckDisposed();
 			var mapping = (IMoInsertPhones)RuleFormulaControl.CurrentObject;
 			var commands = new List<string>
-										{
-											"AboutToFollowLink",
-											"FollowLink"
-										};
+			{
+				"AboutToFollowLink",
+				"FollowLink"
+			};
 			var parms = new List<object>
-										{
-											null,
-											new FwLinkArgs(AreaServices.PhonemeEditMachineName, mapping.ContentRS[0].Guid)
-										};
+			{
+				null,
+				new FwLinkArgs(AreaServices.PhonemeEditMachineName, mapping.ContentRS[0].Guid)
+			};
 			Publisher.Publish(commands, parms);
 			return true;
 		}

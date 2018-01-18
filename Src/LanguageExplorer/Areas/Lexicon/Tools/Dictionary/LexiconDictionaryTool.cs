@@ -336,7 +336,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			<parameters tool="publicationsEdit" className="ICmPossibility" ownerClass="LangProject" ownerField="PublicationTypes" />
 		</command>
 			 */
-			MessageBox.Show((Form)_fwMainWnd, "Stay tuned for jump to: 'publicationsEdit' in list 'LangProject->PublicationTypes'");
+			MessageBox.Show((Form)_fwMainWnd, @"Stay tuned for jump to: 'publicationsEdit' in list 'LangProject->PublicationTypes'");
 		}
 
 		private void Publication_Clicked(object sender, EventArgs e)

@@ -1,11 +1,10 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
-using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -29,13 +28,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public override void DisplayVec(IVwEnv vwenv, int hvo, int tag, int frag)
 		{
-			ISilDataAccess da = vwenv.DataAccess;
-			int count = da.get_VecSize(hvo, tag);
+			var da = vwenv.DataAccess;
 			// Tree Branches consist of everything FOLLOWING the first element which is the Tree root.
-			for (int i = 1; i < count; ++i)
+			for (var i = 1; i < da.get_VecSize(hvo, tag); ++i)
 			{
-				vwenv.AddObj(da.get_VecItem(hvo, tag, i), this,
-					VectorReferenceView.kfragTargetObj);
+				vwenv.AddObj(da.get_VecItem(hvo, tag, i), this, VectorReferenceView.kfragTargetObj);
 				vwenv.AddSeparatorBar();
 			}
 		}

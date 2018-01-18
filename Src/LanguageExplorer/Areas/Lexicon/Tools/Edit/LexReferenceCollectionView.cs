@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,7 +17,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal class LexReferenceCollectionView : VectorReferenceView
 	{
 		/// <summary />
-		protected ICmObject m_displayParent = null;
+		protected ICmObject m_displayParent;
 
 		/// <summary />
 		public LexReferenceCollectionView()
@@ -29,9 +29,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		protected override VectorReferenceVc CreateVectorReferenceVc()
 		{
-			LexReferenceCollectionVc vc = new LexReferenceCollectionVc(m_cache, m_rootFlid, m_displayNameProperty, m_displayWs);
+			var vc = new LexReferenceCollectionVc(m_cache, m_rootFlid, m_displayNameProperty, m_displayWs);
 			if (m_displayParent != null)
+			{
 				vc.DisplayParent = m_displayParent;
+			}
 			return vc;
 		}
 
@@ -44,7 +46,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				m_displayParent = value;
 				if (m_VectorReferenceVc != null)
+				{
 					(m_VectorReferenceVc as LexReferenceCollectionVc).DisplayParent = value;
+				}
 			}
 		}
 
@@ -55,9 +59,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var objRepo = Cache.ServiceLocator.ObjectRepository;
 			if (sda != null) //sda should never be null
 			{
-				return (from i in sda.VecProp(m_rootObj.Hvo, m_rootFlid)
-						where objRepo.GetObject(i) != m_displayParent
-						select objRepo.GetObject(i)).ToList();
+				return (sda.VecProp(m_rootObj.Hvo, m_rootFlid)
+					.Where(i => objRepo.GetObject(i) != m_displayParent)
+					.Select(i => objRepo.GetObject(i))).ToList();
 			}
 			Debug.Assert(false, "Error retrieving DataAccess, crash imminent.");
 			return null;
@@ -70,9 +74,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var objRepo = Cache.ServiceLocator.ObjectRepository;
 			if (sda != null) //sda should never be null
 			{
-				return (from i in sda.VecProp(m_rootObj.Hvo, m_rootFlid)
-						where objRepo.GetObject(i) == m_displayParent
-						select objRepo.GetObject(i)).ToList();
+				return (sda.VecProp(m_rootObj.Hvo, m_rootFlid)
+					.Where(i => objRepo.GetObject(i) == m_displayParent)
+					.Select(i => objRepo.GetObject(i))).ToList();
 			}
 			Debug.Assert(false, "Error retrieving DataAccess, crash imminent.");
 			return null;

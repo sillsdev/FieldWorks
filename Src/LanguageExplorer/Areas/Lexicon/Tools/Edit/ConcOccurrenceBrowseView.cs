@@ -32,10 +32,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		protected override void ShowRecord()
 		{
-			if (!m_fullyInitialized || m_suppressShowRecord)
+			if (!m_fullyInitialized || m_suppressShowRecord || MyRecordList == null || MyRecordList.CurrentObjectHvo == 0)
+			{
 				return;
-			if (MyRecordList == null || MyRecordList.CurrentObjectHvo == 0)
-				return;
+			}
 			PreviewCurrentSelection(MyRecordList.CurrentObjectHvo);
 			base.ShowRecord();
 		}
@@ -43,7 +43,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void PreviewCurrentSelection(int hvoOccurrence)
 		{
 			if (m_hvoSelectedOccurrence == hvoOccurrence)
+			{
 				return;
+			}
 			m_hvoSelectedOccurrence = hvoOccurrence;
 			m_previewPane.RootObjectHvo = m_decoratedSda.get_ObjectProp(m_hvoSelectedOccurrence, ConcDecorator.kflidSegment);
 		}

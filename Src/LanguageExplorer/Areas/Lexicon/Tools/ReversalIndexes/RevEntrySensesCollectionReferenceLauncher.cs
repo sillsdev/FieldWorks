@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -33,14 +33,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}
@@ -67,7 +66,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				dlg.SetDlgInfo(m_cache, wp);
 				dlg.SelectSensesOnly = true;
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK && dlg.SelectedObject != null)
+				{
 					AddItem(dlg.SelectedObject);
+				}
 			}
 		}
 
@@ -76,21 +77,20 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		{
 			CheckDisposed();
 
-			ILexSense selectedSense = obj as ILexSense;
-			ILcmReferenceCollection<IReversalIndexEntry> col = selectedSense.ReversalEntriesRC;
-			if (!col.Contains(m_obj as IReversalIndexEntry))
+			var selectedSense = obj as ILexSense;
+			var col = selectedSense.ReversalEntriesRC;
+			if (col.Contains(m_obj as IReversalIndexEntry))
 			{
-				int h1 = m_vectorRefView.RootBox.Height;
-				using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(
-					m_cache.ActionHandlerAccessor, LanguageExplorerResources.ksUndoAddRevToSense,
-					LanguageExplorerResources.ksRedoAddRevToSense))
-				{
-					col.Add(m_obj as IReversalIndexEntry);
-					helper.RollBack = false;
-				}
-				int h2 = m_vectorRefView.RootBox.Height;
-				CheckViewSizeChanged(h1, h2);
+				return;
 			}
+			var h1 = m_vectorRefView.RootBox.Height;
+			using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, LanguageExplorerResources.ksUndoAddRevToSense, LanguageExplorerResources.ksRedoAddRevToSense))
+			{
+				col.Add(m_obj as IReversalIndexEntry);
+				helper.RollBack = false;
+			}
+			var h2 = m_vectorRefView.RootBox.Height;
+			CheckViewSizeChanged(h1, h2);
 		}
 
 		#region Designer generated code

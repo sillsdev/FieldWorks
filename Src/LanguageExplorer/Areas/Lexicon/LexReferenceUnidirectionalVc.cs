@@ -7,21 +7,18 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
-namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
+namespace LanguageExplorer.Areas.Lexicon
 {
 	/// <summary>
 	///  View constructor for creating the view details.
 	/// </summary>
-	internal class LexReferenceCollectionVc : VectorReferenceVc
+	internal class LexReferenceUnidirectionalVc : VectorReferenceVc
 	{
-		/// <summary />
-		protected ICmObject m_displayParent;
-
 		/// <summary>
 		/// Constructor for the Vector Reference View Constructor Class.
 		/// </summary>
-		public LexReferenceCollectionVc(LcmCache cache, int flid, string displayNameProperty, string displayWs)
-			: base (cache, flid, displayNameProperty, displayWs)
+		public LexReferenceUnidirectionalVc(LcmCache cache, int flid, string displayNameProperty, string displayWs)
+			: base(cache, flid, displayNameProperty, displayWs)
 		{
 		}
 
@@ -34,23 +31,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			var da = vwenv.DataAccess;
 			var count = da.get_VecSize(hvo, tag);
-			// Show everything in the collection except the current element from the main display.
-			for (var i = 0; i < count; ++i)
+			// Unidirectional consist of everything FOLLOWING the first element which is the owning root.
+			for (var i = 1; i < count; ++i)
 			{
-				var hvoItem = da.get_VecItem(hvo, tag, i);
-				if (m_displayParent != null && hvoItem == m_displayParent.Hvo)
-				{
-					continue;
-				}
-				vwenv.AddObj(hvoItem, this,	VectorReferenceView.kfragTargetObj);
+				vwenv.AddObj(da.get_VecItem(hvo, tag, i), this, VectorReferenceView.kfragTargetObj);
 				vwenv.AddSeparatorBar();
 			}
-		}
-
-		/// <summary />
-		public ICmObject DisplayParent
-		{
-			set { m_displayParent = value; }
 		}
 	}
 }

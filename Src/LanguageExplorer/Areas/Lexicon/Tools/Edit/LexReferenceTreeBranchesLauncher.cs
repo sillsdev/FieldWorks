@@ -1,8 +1,7 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
@@ -39,8 +38,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		protected override void HandleChooser()
 		{
-			ILexRefType lrt = (ILexRefType)m_obj.Owner;
-			int type = lrt.MappingType;
+			var lrt = (ILexRefType)m_obj.Owner;
+			var type = lrt.MappingType;
 			BaseGoDlg dlg = null;
 			try
 			{
@@ -48,7 +47,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					case LexRefTypeTags.MappingTypes.kmtSenseTree:
 						dlg = new LinkEntryOrSenseDlg();
-						(dlg as LinkEntryOrSenseDlg).SelectSensesOnly = true;
+						((LinkEntryOrSenseDlg)dlg).SelectSensesOnly = true;
 						break;
 					case LexRefTypeTags.MappingTypes.kmtEntryTree:
 						dlg = new EntryGoDlg();
@@ -61,22 +60,23 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				Debug.Assert(dlg != null);
 				var wp = new WindowParams
 				{
-					m_title = String.Format(LanguageExplorerResources.ksIdentifyXEntry,
-					lrt.Name.BestAnalysisAlternative.Text),
-					m_btnText = LanguageExplorerResources.ks_Add
+					m_title = string.Format(LanguageExplorerResources.ksIdentifyXEntry,
+						lrt.Name.BestAnalysisAlternative.Text),
+						m_btnText = LanguageExplorerResources.ks_Add
 				};
 				dlg.SetDlgInfo(m_cache, wp);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 				{
 					if (!(m_obj as ILexReference).TargetsRS.Contains(dlg.SelectedObject))
+					{
 						AddItem(dlg.SelectedObject);
+					}
 				}
 			}
 			finally
 			{
-				if (dlg != null)
-					dlg.Dispose();
+				dlg?.Dispose();
 			}
 		}
 

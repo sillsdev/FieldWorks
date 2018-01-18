@@ -59,7 +59,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -76,14 +78,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		protected override RootSite ConstructRoot()
 		{
-			string sLayout = GetLayoutName(m_jtSpecs, PropertyTable);
+			var sLayout = GetLayoutName(m_jtSpecs, PropertyTable);
 			return new XmlDocItemView(0, m_jtSpecs, sLayout);
 		}
 
-		protected override TreebarAvailability DefaultTreeBarAvailability
-		{
-			get { return TreebarAvailability.NotMyBusiness; }
-		}
+		protected override TreebarAvailability DefaultTreeBarAvailability => TreebarAvailability.NotMyBusiness;
 
 		/// <summary>
 		/// This routine encapsulates the process for looking at the spec node of a tool (specifically the
@@ -105,15 +104,21 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public static string GetLayoutName(XElement xnSpec, IPropertyTable propertyTable)
 		{
 			string sLayout = null;
-			string sProp = XmlUtils.GetOptionalAttributeValue(xnSpec, "layoutProperty", null);
-			if (!String.IsNullOrEmpty(sProp))
+			var sProp = XmlUtils.GetOptionalAttributeValue(xnSpec, "layoutProperty", null);
+			if (!string.IsNullOrEmpty(sProp))
+			{
 				sLayout = propertyTable.GetValue<string>(sProp);
-			if (String.IsNullOrEmpty(sLayout))
+			}
+
+			if (string.IsNullOrEmpty(sLayout))
+			{
 				sLayout = XmlUtils.GetMandatoryAttributeValue(xnSpec, "layout");
+			}
 			var parts = sLayout.Split('#');
 			parts[0] += XmlUtils.GetOptionalAttributeValue(xnSpec, "layoutSuffix", "");
 			return string.Join("#", parts);
 		}
+
 		protected override void SetupDataContext()
 		{
 			// The base class uses these specs, so locate them first!
@@ -168,9 +173,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public bool OnConfigureXmlDocView(object commandObject)
 		{
 			CheckDisposed();
-			string sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "layoutProperty");
-			if(String.IsNullOrEmpty(sProp))
+			var sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "layoutProperty");
+			if (string.IsNullOrEmpty(sProp))
+			{
 				sProp = "DictionaryPublicationLayout";
+			}
 			using(var dlg = new XmlDocConfigureDlg())
 			{
 				var mainWindow = PropertyTable.GetValue<IFwMainWnd>("window");
@@ -192,6 +199,5 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				return true; // we handled it
 			}
 		}
-
 	}
 }

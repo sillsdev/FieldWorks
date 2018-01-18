@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -31,7 +31,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		private ISilDataAccess m_sda;
 
-		private System.ComponentModel.IContainer components = null;
+		private System.ComponentModel.IContainer components;
 
 		/// <summary />
 		public EntrySequenceReferenceLauncher()
@@ -56,15 +56,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
 				// Do this first, before setting m_fDisposing to true.
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}
@@ -81,121 +80,123 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		protected override void HandleChooser()
 		{
-			if (m_flid == LexEntryRefTags.kflidComponentLexemes)
+			switch (m_flid)
 			{
-				using (LinkEntryOrSenseDlg dlg = new LinkEntryOrSenseDlg())
-				{
-					dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-					ILexEntry le = null;
-					if (m_obj.ClassID == LexEntryTags.kClassId)
+				case LexEntryRefTags.kflidComponentLexemes:
+					using (var dlg = new LinkEntryOrSenseDlg())
 					{
-						// filter this entry from the list.
-						le = m_obj as ILexEntry;
-					}
-					else
-					{
-						// assume the owner is the entry (e.g. owner of LexEntryRef)
-						le = m_obj.OwnerOfClass<ILexEntry>();
-					}
-					dlg.SetDlgInfo(m_cache, le);
-					String str = ShowHelp.RemoveSpaces(this.Slice.Label);
-					dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense-" + str);
-					if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
-						AddItem(dlg.SelectedObject);
-				}
-			}
-			else if (m_flid == LexEntryRefTags.kflidPrimaryLexemes)
-			{
-				string displayWs = "analysis vernacular";
-				if (m_configurationNode != null)
-				{
-					var node = m_configurationNode.Element("deParams");
-					if (node != null)
-						displayWs = XmlUtils.GetOptionalAttributeValue(node, "ws", "analysis vernacular").ToLower();
-				}
-				ILexEntryRef ler = m_obj as ILexEntryRef;
-				Debug.Assert(ler != null);
-				var labels = ObjectLabel.CreateObjectLabels(m_cache, ler.ComponentLexemesRS.Cast<ICmObject>(),
-					m_displayNameProperty, displayWs);
-				using (ReallySimpleListChooser chooser = new ReallySimpleListChooser(null,
-					labels, "PrimaryLexemes", m_cache, ler.PrimaryLexemesRS.Cast<ICmObject>(),
-					false, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
-				{
-					chooser.HideDisplayUsageCheckBox();
-					chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);	// may set TextParamHvo
-					chooser.Text = LanguageExplorerResources.ksChooseWhereToShowSubentry;
-					chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
-					chooser.InitializeExtras(null, PropertyTable);
-					chooser.AddLink(LanguageExplorerResources.ksAddAComponent, LinkType.kDialogLink,
-						new AddPrimaryLexemeChooserCommand(m_cache, false, null, PropertyTable, Publisher, Subscriber, m_obj, FindForm()));
-					DialogResult res = chooser.ShowDialog();
-					if (DialogResult.Cancel == res)
-						return;
-					if (chooser.ChosenObjects != null)
-						SetItems(chooser.ChosenObjects);
-				}
-			}
-			else
-			{
-				string fieldName = m_obj.Cache.MetaDataCacheAccessor.GetFieldName(m_flid);
-				Debug.Assert(m_obj is ILexEntry || m_obj is ILexSense);
-				switch(fieldName)
-				{
-					case "ComplexFormEntries":
-						using (var dlg = new EntryGoDlg())
+						dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+						ILexEntry le;
+						if (m_obj.ClassID == LexEntryTags.kClassId)
 						{
-							dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-							dlg.StartingEntry = m_obj as ILexEntry ?? (m_obj as ILexSense).Entry;
-							dlg.SetDlgInfo(m_cache, null);
-							var str = ShowHelp.RemoveSpaces(Slice.Label);
-							dlg.SetHelpTopic("khtpChooseComplexFormEntryOrSense-" + str);
-							dlg.SetOkButtonText(LanguageExplorerResources.ksMakeComponentOf);
-							if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
+							// filter this entry from the list.
+							le = m_obj as ILexEntry;
+						}
+						else
+						{
+							// assume the owner is the entry (e.g. owner of LexEntryRef)
+							le = m_obj.OwnerOfClass<ILexEntry>();
+						}
+						dlg.SetDlgInfo(m_cache, le);
+						var str = ShowHelp.RemoveSpaces(this.Slice.Label);
+						dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense-" + str);
+						if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
+						{
+							AddItem(dlg.SelectedObject);
+						}
+					}
+
+					break;
+				case LexEntryRefTags.kflidPrimaryLexemes:
+					var displayWs = "analysis vernacular";
+					var node = m_configurationNode?.Element("deParams");
+					if (node != null)
+					{
+						displayWs = XmlUtils.GetOptionalAttributeValue(node, "ws", "analysis vernacular").ToLower();
+					}
+					var ler = m_obj as ILexEntryRef;
+					Debug.Assert(ler != null);
+					var labels = ObjectLabel.CreateObjectLabels(m_cache, ler.ComponentLexemesRS, m_displayNameProperty, displayWs);
+					using (var chooser = new ReallySimpleListChooser(null, labels, "PrimaryLexemes", m_cache, ler.PrimaryLexemesRS, false, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+					{
+						chooser.HideDisplayUsageCheckBox();
+						chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);	// may set TextParamHvo
+						chooser.Text = LanguageExplorerResources.ksChooseWhereToShowSubentry;
+						chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
+						chooser.InitializeExtras(null, PropertyTable);
+						chooser.AddLink(LanguageExplorerResources.ksAddAComponent, LinkType.kDialogLink, new AddPrimaryLexemeChooserCommand(m_cache, false, null, PropertyTable, Publisher, Subscriber, m_obj, FindForm()));
+						var res = chooser.ShowDialog();
+						if (DialogResult.Cancel == res)
+						{
+							return;
+						}
+
+						if (chooser.ChosenObjects != null)
+						{
+							SetItems(chooser.ChosenObjects);
+						}
+					}
+
+					break;
+				default:
+					var fieldName = m_obj.Cache.MetaDataCacheAccessor.GetFieldName(m_flid);
+					Debug.Assert(m_obj is ILexEntry || m_obj is ILexSense);
+					switch(fieldName)
+					{
+						case "ComplexFormEntries":
+							using (var dlg = new EntryGoDlg())
 							{
-								try
+								dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+								dlg.StartingEntry = m_obj as ILexEntry ?? (m_obj as ILexSense).Entry;
+								dlg.SetDlgInfo(m_cache, null);
+								var str = ShowHelp.RemoveSpaces(Slice.Label);
+								dlg.SetHelpTopic("khtpChooseComplexFormEntryOrSense-" + str);
+								dlg.SetOkButtonText(LanguageExplorerResources.ksMakeComponentOf);
+								if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 								{
-									UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAddComplexForm, LanguageExplorerResources.ksRedoAddComplexForm,
-										m_obj.Cache.ActionHandlerAccessor,
-										() => ((ILexEntry)dlg.SelectedObject).AddComponent(m_obj));
-								}
-								catch (ArgumentException)
-								{
-									MessageBoxes.ReportLexEntryCircularReference(dlg.SelectedObject, m_obj, false);
+									try
+									{
+										UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAddComplexForm, LanguageExplorerResources.ksRedoAddComplexForm,
+											m_obj.Cache.ActionHandlerAccessor,
+											() => ((ILexEntry)dlg.SelectedObject).AddComponent(m_obj));
+									}
+									catch (ArgumentException)
+									{
+										MessageBoxes.ReportLexEntryCircularReference(dlg.SelectedObject, m_obj, false);
+									}
 								}
 							}
-						}
-						break;
-					case "VisibleComplexFormEntries": // obsolete?
-					case "Subentries":
-						HandleChooserForBackRefs(fieldName, false);
-						break;
-					case "VisibleComplexFormBackRefs":
-						HandleChooserForBackRefs(fieldName, true);
-						break;
-					default:
-						Debug.Fail("EntrySequenceReferenceLauncher should only be used for variants, components, or complex forms");
-						break;
-				}
+							break;
+						case "VisibleComplexFormEntries": // obsolete?
+						case "Subentries":
+							HandleChooserForBackRefs(fieldName, false);
+							break;
+						case "VisibleComplexFormBackRefs":
+							HandleChooserForBackRefs(fieldName, true);
+							break;
+						default:
+							Debug.Fail("EntrySequenceReferenceLauncher should only be used for variants, components, or complex forms");
+							break;
+					}
+
+					break;
 			}
 		}
 
 		private void HandleChooserForBackRefs(string fieldName, bool fPropContainsEntryRefs)
 		{
-			string displayWs = "analysis vernacular";
-			IEnumerable<ICmObject> options;
-			if (m_obj is ILexEntry)
-				options = ((ILexEntry) m_obj).ComplexFormEntries.Cast<ICmObject>();
-			else
-				options = ((ILexSense)m_obj).ComplexFormEntries.Cast<ICmObject>();
-			var oldValue = from hvo in ((ISilDataAccessManaged) m_cache.DomainDataByFlid).VecProp(m_obj.Hvo, m_flid)
-				select m_cache.ServiceLocator.GetObject(hvo);
+			var displayWs = "analysis vernacular";
+			IEnumerable<ICmObject> options = m_obj is ILexEntry ? ((ILexEntry)m_obj).ComplexFormEntries : ((ILexSense)m_obj).ComplexFormEntries;
+			var oldValue = ((ISilDataAccessManaged) m_cache.DomainDataByFlid).VecProp(m_obj.Hvo, m_flid)
+				.Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
 			// We want a collection of LexEntries as the current values. If we're displaying lex entry refs we want their owners.
 			if (fPropContainsEntryRefs)
+			{
 				oldValue = from obj in oldValue select obj.Owner;
+			}
 
-			var labels = ObjectLabel.CreateObjectLabels(m_cache, options,
-				m_displayNameProperty, displayWs);
-			using (ReallySimpleListChooser chooser = new ReallySimpleListChooser(null,
+			var labels = ObjectLabel.CreateObjectLabels(m_cache, options, m_displayNameProperty, displayWs);
+			using (var chooser = new ReallySimpleListChooser(null,
 				labels, fieldName, m_cache, oldValue,
 				false, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
@@ -205,11 +206,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				chooser.SetHelpTopic(Slice.GetChooserHelpTopicID() + "-CFChooser");
 				chooser.InitializeExtras(null, PropertyTable);
 				// Step 3 of LT-11155:
-				chooser.AddLink(LanguageExplorerResources.ksAddAComplexForm, LinkType.kDialogLink,
-					new AddComplexFormChooserCommand(m_cache, false, null, PropertyTable, Publisher, Subscriber, m_obj, FindForm()));
-				DialogResult res = chooser.ShowDialog();
+				chooser.AddLink(LanguageExplorerResources.ksAddAComplexForm, LinkType.kDialogLink, new AddComplexFormChooserCommand(m_cache, false, null, PropertyTable, Publisher, Subscriber, m_obj, FindForm()));
+				var res = chooser.ShowDialog();
 				if (DialogResult.Cancel == res)
+				{
 					return;
+				}
 				var chosenObjects = chooser.ChosenObjects;
 				if (chosenObjects != null)
 				{
@@ -231,7 +233,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <param name="objectsToAdd"></param>
 		protected override void AddNewObjectsToProperty(IEnumerable<ICmObject> objectsToAdd)
 		{
-			string fieldName = m_obj.Cache.MetaDataCacheAccessor.GetFieldName(m_flid);
+			var fieldName = m_obj.Cache.MetaDataCacheAccessor.GetFieldName(m_flid);
 			// Note that the attempt to add to compoments may fail, due to creating a circular reference.
 			// This is caught further out, outside the UOW, so the UOW will be properly rolled back.
 			switch (fieldName)
@@ -244,34 +246,44 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					break;
 				case "VisibleComplexFormBackRefs":
 					foreach (var obj in objectsToAdd)
+					{
 						((ILexEntryRef)obj).ShowComplexFormsInRS.Add(m_obj);
+					}
 					break;
 				default:
 					base.AddNewObjectsToProperty(objectsToAdd);
 					break;
 			}
-			if (m_flid == LexEntryRefTags.kflidComponentLexemes)
+
+			if (m_flid != LexEntryRefTags.kflidComponentLexemes)
+			{
+				return;
+			}
 			{
 				// Some special rules when adding to component lexemes here.
 				// Logic similar to this is in GhostLexRefSlice.AddItem()
 				// (when LER does not exist so we have a ghost slice)
 				var ler = (ILexEntryRef)m_obj;
 				if (ler.PrimaryLexemesRS.Count == 0)
+				{
 					ler.PrimaryLexemesRS.Add(objectsToAdd.First());
+				}
 				if (!ler.ComplexEntryTypesRS.Contains(ler.Services.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypDerivation)))
+				{
 					foreach (var item in objectsToAdd)
 					{
 						// Don't add it twice!  See LT-12285.
 						if (!ler.ShowComplexFormsInRS.Contains(item))
 							ler.ShowComplexFormsInRS.Add(item);
 					}
+				}
 			}
 		}
 
 		/// <summary />
 		protected override void RemoveFromPropertyAt(int index, ICmObject oldObj)
 		{
-			string fieldName = m_obj.Cache.MetaDataCacheAccessor.GetFieldName(m_flid);
+			var fieldName = m_obj.Cache.MetaDataCacheAccessor.GetFieldName(m_flid);
 			switch (fieldName)
 			{
 				case "VisibleComplexFormEntries":
@@ -293,7 +305,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// Do something (typically add or remove m_obj from a property) with each item in the list,
 		/// finding the LexEntryRef on that item which is a complex one and has item as a component.
 		/// </summary>
-		void ChangeItemsInLexEntryRefs(IEnumerable<ICmObject> objectsToAdd, Action<ILexEntryRef> handleItem)
+		private void ChangeItemsInLexEntryRefs(IEnumerable<ICmObject> objectsToAdd, Action<ILexEntryRef> handleItem)
 		{
 			foreach (var item in objectsToAdd)
 			{
@@ -312,23 +324,29 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			CheckDisposed();
 
 			var lexemes = new HashSet<ICmObject>();
-			ILexEntryRef ler = m_obj as ILexEntryRef;
-			if (m_flid == LexEntryRefTags.kflidComponentLexemes)
-				lexemes.UnionWith(ler.ComponentLexemesRS);
-			else if (m_flid == LexEntryRefTags.kflidPrimaryLexemes)
-				lexemes.UnionWith(ler.PrimaryLexemesRS);
-			// don't add a duplicate items.
-			if (!lexemes.Contains(obj))
+			var ler = m_obj as ILexEntryRef;
+			switch (m_flid)
 			{
-				lexemes.Add(obj);
-				try
-				{
-					SetItems(lexemes);
-				}
-				catch (ArgumentException)
-				{
-					MessageBoxes.ReportLexEntryCircularReference(m_obj.Owner, obj, true);
-				}
+				case LexEntryRefTags.kflidComponentLexemes:
+					lexemes.UnionWith(ler.ComponentLexemesRS);
+					break;
+				case LexEntryRefTags.kflidPrimaryLexemes:
+					lexemes.UnionWith(ler.PrimaryLexemesRS);
+					break;
+			}
+			// don't add a duplicate items.
+			if (lexemes.Contains(obj))
+			{
+				return;
+			}
+			lexemes.Add(obj);
+			try
+			{
+				SetItems(lexemes);
+			}
+			catch (ArgumentException)
+			{
+				MessageBoxes.ReportLexEntryCircularReference(m_obj.Owner, obj, true);
 			}
 		}
 

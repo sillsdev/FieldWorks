@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,47 +32,49 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		public override ObjectLabel Execute()
 		{
-			ObjectLabel result = null;
-			if (m_lexEntryRef != null)
+			if (m_lexEntryRef == null)
 			{
-				using (LinkEntryOrSenseDlg dlg = new LinkEntryOrSenseDlg())
+				return null;
+			}
+			using (var dlg = new LinkEntryOrSenseDlg())
+			{
+				dlg.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
+				// assume the owner is the entry (e.g. owner of LexEntryRef)
+				var le = m_lexEntryRef.OwnerOfClass<ILexEntry>();
+				dlg.SetDlgInfo(m_cache, le);
+				dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense");
+				if (dlg.ShowDialog(m_parentWindow) == DialogResult.OK)
 				{
-					dlg.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
-					ILexEntry le = null;
-					// assume the owner is the entry (e.g. owner of LexEntryRef)
-					le = m_lexEntryRef.OwnerOfClass<ILexEntry>();
-					dlg.SetDlgInfo(m_cache, le);
-					dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense");
-					if (dlg.ShowDialog(m_parentWindow) == DialogResult.OK)
+					var obj = dlg.SelectedObject;
+					if (obj == null)
 					{
-						ICmObject obj = dlg.SelectedObject;
-						if (obj != null)
-						{
-							if (!m_lexEntryRef.PrimaryLexemesRS.Contains(obj))
+						return null;
+					}
+
+					if (m_lexEntryRef.PrimaryLexemesRS.Contains(obj))
+					{
+						return null;
+					}
+					try
+					{
+						UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
+							LanguageExplorerResources.ksUndoCreatingEntry,
+							LanguageExplorerResources.ksRedoCreatingEntry,
+							Cache.ActionHandlerAccessor,
+							() =>
 							{
-								try
-								{
-									UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-										LanguageExplorerResources.ksUndoCreatingEntry,
-										LanguageExplorerResources.ksRedoCreatingEntry,
-										Cache.ActionHandlerAccessor,
-										() =>
-										{
-											if (!m_lexEntryRef.ComponentLexemesRS.Contains(obj))
-												m_lexEntryRef.ComponentLexemesRS.Add(obj);
-											m_lexEntryRef.PrimaryLexemesRS.Add(obj);
-										});
-								}
-								catch (ArgumentException)
-								{
-									MessageBoxes.ReportLexEntryCircularReference(m_lexEntryRef.Owner, obj, true);
-								}
-							}
-						}
+								if (!m_lexEntryRef.ComponentLexemesRS.Contains(obj))
+									m_lexEntryRef.ComponentLexemesRS.Add(obj);
+								m_lexEntryRef.PrimaryLexemesRS.Add(obj);
+							});
+					}
+					catch (ArgumentException)
+					{
+						MessageBoxes.ReportLexEntryCircularReference(m_lexEntryRef.Owner, obj, true);
 					}
 				}
 			}
-			return result;
+			return null;
 		}
 	}
 }

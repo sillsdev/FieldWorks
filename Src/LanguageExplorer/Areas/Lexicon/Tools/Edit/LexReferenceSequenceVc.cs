@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,12 +32,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public override void DisplayVec(IVwEnv vwenv, int hvo, int tag, int frag)
 		{
-			ISilDataAccess da = vwenv.DataAccess;
-			int count = da.get_VecSize(hvo, tag);
+			var da = vwenv.DataAccess;
+			var count = da.get_VecSize(hvo, tag);
 			// Show everything in the sequence including current element from the main display.
-			for (int i = 0; i < count; ++i)
+			for (var i = 0; i < count; ++i)
 			{
-				int hvoItem = da.get_VecItem(hvo, tag, i);
+				var hvoItem = da.get_VecItem(hvo, tag, i);
 				vwenv.AddObj(hvoItem, this,	VectorReferenceView.kfragTargetObj);
 				vwenv.AddSeparatorBar();
 			}

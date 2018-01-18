@@ -1399,15 +1399,8 @@ namespace LanguageExplorer.Areas
 				var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(PropertyTable, "ReversalIndexGuid");
 				if (!riGuid.Equals(Guid.Empty))
 				{
-					try
-					{
-						var ri = m_cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
-						fContentsExists = ri.EntriesOC.Count > 0;
-					}
-					catch
-					{
-						fContentsExists = false; // Can't get an index if we have a bad guid.
-					}
+					IReversalIndex ri;
+					fContentsExists = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().TryGetObject(riGuid, out ri) && ri.EntriesOC.Any();
 				}
 			}
 			ReflectionHelper.SetProperty(sf, "ExportReversal", fContentsExists);

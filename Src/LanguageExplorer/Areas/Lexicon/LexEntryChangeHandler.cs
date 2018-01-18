@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 SIL International
+﻿// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -34,7 +34,9 @@ namespace LanguageExplorer.Areas.Lexicon
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(string.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -62,10 +64,14 @@ namespace LanguageExplorer.Areas.Lexicon
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 
 			if (IsDisposed) // Must not be run more than once.
+			{
 				return;
+			}
 
-			if (disposing && Disposed != null)
-				Disposed(this, EventArgs.Empty);
+			if (disposing)
+			{
+				Disposed?.Invoke(this, EventArgs.Empty);
+			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_entry = null;
@@ -112,7 +118,9 @@ namespace LanguageExplorer.Areas.Lexicon
 			// If our old entry isn't even valid any more, something has deleted it, and whatever did so should have fixed up the list.
 			// We really don't want to reload the whole thing if we don't need to (takes ages in a big lexicon), so do nothing...JohnT
 			if (!m_entry.IsValidObject)
+			{
 				return;
+			}
 
 			var danglingRefs = m_entry.EntryRefsOS.Where(ler => !(ler.ComponentLexemesRS.Any() || ler.ComplexEntryTypesRS.Any() || ler.VariantEntryTypesRS.Any())).ToList();
 			var typelessRefs = m_entry.EntryRefsOS.Where(ler => ler.ComponentLexemesRS.Any() && !(ler.ComplexEntryTypesRS.Any() || ler.VariantEntryTypesRS.Any())).ToList();

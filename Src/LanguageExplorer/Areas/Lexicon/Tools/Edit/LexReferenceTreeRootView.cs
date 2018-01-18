@@ -21,8 +21,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			CheckDisposed();
 
-			m_atomicReferenceVc = new LexReferenceTreeRootVc(m_cache,
-					m_rootObj.Hvo, m_rootFlid, m_displayNameProperty);
+			m_atomicReferenceVc = new LexReferenceTreeRootVc(m_cache, m_rootObj.Hvo, m_rootFlid, m_displayNameProperty);
 		}
 	}
 }

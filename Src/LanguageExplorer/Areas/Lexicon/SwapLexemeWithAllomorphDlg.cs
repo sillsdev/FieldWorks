@@ -107,29 +107,15 @@ namespace LanguageExplorer.Areas.Lexicon
 			// However, because of putting multiple lines in the box, we also need to do it AFTER we set the text
 			// (in SetBottomMessage) so it adjusts to the resulting even greater height.
 			m_fwTextBoxBottomMsg.AdjustForStyleSheet(this, null, stylesheet);
-			Font f = FontHeightAdjuster.GetFontForNormalStyle(
-				m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle, stylesheet, m_cache.LanguageWritingSystemFactoryAccessor);
-			foreach (IMoForm allo in entry.AlternateFormsOS)
+			var f = FontHeightAdjuster.GetFontForNormalStyle(m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle, stylesheet, m_cache.LanguageWritingSystemFactoryAccessor);
+			foreach (var allo in entry.AlternateFormsOS)
 			{
-				ListViewItem lvi = m_lvAlloOptions.Items.Add(allo.Form.VernacularDefaultWritingSystem.Text);
+				var lvi = m_lvAlloOptions.Items.Add(allo.Form.VernacularDefaultWritingSystem.Text);
 				lvi.Tag = allo;
 				lvi.UseItemStyleForSubItems = true;
 				lvi.Font = f;
 			}
 			m_lvAlloOptions.Font = f;
-			// Get location to the stored values, if any.
-			//object locWnd = m_mediator.PropertyTable.GetValue("swapDlgLocation");
-			// And when I do this, it works the first time, but later times the window is
-			// too small and doesn't show all the controls. Give up on smart location for now.
-			//object szWnd = this.Size;
-			//object szWnd = null; // suppresses the smart location stuff.
-			//if (locWnd != null && szWnd != null)
-			//{
-			//    Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
-			//    ScreenHelper.EnsureVisibleRect(ref rect);
-			//    DesktopBounds = rect;
-			//    StartPosition = FormStartPosition.Manual;
-			//}
 			m_lvAlloOptions.Items[0].Selected = true;
 			Text = LanguageExplorerResources.ksSwapLexWithAllo;
 			label2.Text = LanguageExplorerResources.ksAlternateForms;
@@ -138,13 +124,16 @@ namespace LanguageExplorer.Areas.Lexicon
 			m_helpTopic = "khtpSwapLexemeWithAllomorph";
 
 			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
-			if (helpTopicProvider != null)
+			if (helpTopicProvider == null)
 			{
-				helpProvider = new HelpProvider();
-				helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
-				helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(m_helpTopic));
-				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+				return;
 			}
+			helpProvider = new HelpProvider
+			{
+				HelpNamespace = helpTopicProvider.HelpFile
+			};
+			helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(m_helpTopic));
+			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 		}
 
 		/// <summary>
@@ -155,7 +144,9 @@ namespace LanguageExplorer.Areas.Lexicon
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -166,16 +157,15 @@ namespace LanguageExplorer.Areas.Lexicon
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
 				Controls.Remove(m_fwTextBoxBottomMsg);
 				m_fwTextBoxBottomMsg.Dispose();
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			m_fwTextBoxBottomMsg = null;
 			m_cache = null;
@@ -187,17 +177,15 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		private void SetBottomMessage()
 		{
-			int userWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
+			var userWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
 			m_fwTextBoxBottomMsg.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 			m_fwTextBoxBottomMsg.WritingSystemCode = userWs;
 			// Treat null value as empty string.  This fixes LT-5889, LT-5891, and LT-5914.
-			string sLexVal = m_entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text ?? String.Empty;
-			string sFmt = LanguageExplorerResources.ksSwapXWithY;
-			string sWithVal = m_allomorph.Form.VernacularDefaultWritingSystem.Text ?? String.Empty;
-			ITsString tss = TsStringUtils.MakeString(String.Format(sFmt, sLexVal, sWithVal, StringUtils.kChHardLB), userWs);
+			var sLexVal = m_entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text ?? string.Empty;
+			var sFmt = LanguageExplorerResources.ksSwapXWithY;
+			var sWithVal = m_allomorph.Form.VernacularDefaultWritingSystem.Text ?? string.Empty;
+			var tss = TsStringUtils.MakeString(string.Format(sFmt, sLexVal, sWithVal, StringUtils.kChHardLB), userWs);
 			m_fwTextBoxBottomMsg.Tss = tss;
-			// Do this AFTER setting the selected item, since that changes the text of the box and the needed size.
-			//m_fwTextBoxBottomMsg.AdjustForStyleSheet(this, null, m_mediator);
 		}
 		#endregion Other methods
 
@@ -301,11 +289,12 @@ namespace LanguageExplorer.Areas.Lexicon
 		{
 			foreach (ListViewItem lvi in m_lvAlloOptions.Items)
 			{
-				if (lvi.Selected)
+				if (!lvi.Selected)
 				{
-					m_allomorph = lvi.Tag as IMoForm;
-					SetBottomMessage();
+					continue;
 				}
+				m_allomorph = (IMoForm)lvi.Tag;
+				SetBottomMessage();
 			}
 			btnOK.Enabled = true;
 		}
@@ -318,10 +307,7 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		private void SwapLexemeWithAllomorphDlg_Closed(object sender, EventArgs e)
 		{
-			if (m_propertyTable != null)
-			{
-				m_propertyTable.SetProperty("swapDlgLocation", Location, true, true);
-			}
+			m_propertyTable?.SetProperty("swapDlgLocation", Location, true, true);
 		}
 
 		private void buttonHelp_Click(object sender, EventArgs e)

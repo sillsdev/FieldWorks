@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Linq;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.UtilityTools;
+using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
@@ -23,10 +24,8 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary />
 		internal HomographResetter(UtilityDlg utilityDlg)
 		{
-			if (utilityDlg == null)
-			{
-				throw new ArgumentNullException(nameof(utilityDlg));
-			}
+			Guard.AgainstNull(utilityDlg, nameof(utilityDlg));
+
 			m_dlg = utilityDlg;
 		}
 
@@ -71,8 +70,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			if (homographWsId != defaultVernacularWsId)
 			{
 				var caution = string.Format(LanguageExplorerResources.ksReassignHomographsCaution, homographWsLabel, defaultVernacularWs.DisplayLabel);
-				if (MessageBox.Show(caution, LanguageExplorerResources.ksReassignHomographs, MessageBoxButtons.YesNo) ==
-				    DialogResult.Yes)
+				if (MessageBox.Show(caution, LanguageExplorerResources.ksReassignHomographs, MessageBoxButtons.YesNo) == DialogResult.Yes)
 				{
 					changeWs = true;
 				}

@@ -44,18 +44,20 @@ namespace LanguageExplorer.Controls.DetailControls
 					var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
 					if (!riGuid.Equals(Guid.Empty))
 					{
-						try
+						IReversalIndex ri;
+						if (cache.ServiceLocator.GetInstance<IReversalIndexRepository>().TryGetObject(riGuid, out ri))
 						{
-							var ri = cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
 							ws = cache.ServiceLocator.WritingSystemManager.GetWsFromStr(ri.WritingSystem);
 						}
-						catch
+						else
 						{
 							throw new ApplicationException("Couldn't find current reversal index.");
 						}
 					}
 					else
+					{
 						throw new ApplicationException("Couldn't find current reversal index.");
+					}
 					break;
 				default:
 					throw new ApplicationException($"ws must be 'vernacular', 'analysis', 'pronunciation',  or 'reversal': it said '{wsSpec}'.");

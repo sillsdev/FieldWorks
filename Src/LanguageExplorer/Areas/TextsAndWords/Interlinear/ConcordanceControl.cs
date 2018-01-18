@@ -766,12 +766,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private ICmObject GetMatchObject()
 		{
-			try
+			ICmObject matchingObject;
+			if (m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(m_hvoMatch, out matchingObject))
 			{
-				return m_cache.ServiceLocator.GetObject(m_hvoMatch);
-			}
-			catch (KeyNotFoundException e)
-			{
+				return matchingObject;
 			}
 			// LT-13503 It is just possible that we are deleting the last remaining analysis of a wordform
 			m_hvoMatch = m_backupHvo;

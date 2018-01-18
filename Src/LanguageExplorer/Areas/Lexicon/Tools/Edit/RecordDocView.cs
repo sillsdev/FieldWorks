@@ -63,20 +63,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		#endregion
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
-		/// resources; <c>false</c> to release only unmanaged resources.
-		/// </param>
-		/// -----------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -128,17 +125,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		protected override void ShowRecord()
 		{
-#if RANDYTODO
 			Debug.Assert(MyRecordList.CurrentObject != null);
 			Debug.Assert(m_rootSite != null);
-#else
-			// TODO: I run release builds, so the above assert doesn't do anything.
-			// TODO: Remove this approach, when I'm satisfied all callers are well-behaved.
-			if (MyRecordList.CurrentObject == null)
-				throw new InvalidOperationException("'ShowRecord' called too early.");
-			if (m_rootSite == null)
-				throw new InvalidOperationException("'ShowRecord' called too early.");
-#endif
 
 			//todo: add the document view name to the task label
 			//todo: fast machine, this doesn't really seem to do any good. I think maybe the parts that
@@ -146,19 +134,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			//todo: test on a machine that is slow enough to see if this is helpful or not!
 			using (var progress = ProgressState.CreatePredictiveProgressState(m_statusBarProgressPanel, MyRecordList.PropertyName))
 			{
-
 				progress.Breath();
-
 				base.ShowRecord();
-
 				MyRecordList.SaveOnChangeRecord();
-
 				progress.Breath();
 
 				try
 				{
 					progress.SetMilestone();
-
 					if (!m_rootSite.Visible)
 					{
 						m_rootSite.Visible = true;
@@ -167,9 +150,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					m_rootSite.BringToFront();
 					using (new WaitCursor(this))
 					{
-						IChangeRootObject root = m_rootSite as IChangeRootObject;
+						var root = m_rootSite as IChangeRootObject;
 						if (root != null && !MyRecordList.SuspendLoadingRecordUntilOnJumpToRecord)
+						{
 							root.SetRoot(MyRecordList.CurrentObject.Hvo);
+						}
 					}
 				}
 				catch (Exception error)
@@ -178,8 +163,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					using (var appSettingsKey = app.SettingsKey)
 					{
 						//don't really need to make the program stop just because we could not show this record.
-						ErrorReporter.ReportException(error, appSettingsKey,
-							app.SupportEmailAddress, null, false);
+						ErrorReporter.ReportException(error, appSettingsKey, app.SupportEmailAddress, null, false);
 					}
 				}
 			}

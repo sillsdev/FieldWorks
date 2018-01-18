@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -60,10 +60,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		}
 
 		/// <summary />
-		protected override string PersistenceLabel
-		{
-			get { return "ReversalEntryGo"; }
-		}
+		protected override string PersistenceLabel => "ReversalEntryGo";
 
 		/// <summary />
 		protected override void InitializeMatchingObjects()
@@ -81,7 +78,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if (wsObj != null)
 			{
-				ITsString tss = TsStringUtils.EmptyString(wsObj.Handle);
+				var tss = TsStringUtils.EmptyString(wsObj.Handle);
 				var field = new SearchField(ReversalIndexEntryTags.kflidReversalForm, tss);
 				m_matchingObjectsBrowser.SearchAsync(new[] { field });
 			}
@@ -109,7 +106,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		protected override void ResetMatches(string searchKey)
 		{
 			if (m_oldSearchKey == searchKey)
+			{
 				return; // Nothing new to do, so skip it.
+			}
 
 			// disable Go button until we rebuild our match list.
 			m_btnOK.Enabled = false;
@@ -117,12 +116,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 
 			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if (wsObj == null)
+			{
 				return;
+			}
 
 			if (m_oldSearchKey != string.Empty || searchKey != string.Empty)
+			{
 				StartSearchAnimation();
+			}
 
-			ITsString tss = TsStringUtils.MakeString(searchKey, wsObj.Handle);
+			var tss = TsStringUtils.MakeString(searchKey, wsObj.Handle);
 			var field = new SearchField(ReversalIndexEntryTags.kflidReversalForm, tss);
 			m_matchingObjectsBrowser.SearchAsync(new[] { field });
 		}
@@ -195,7 +198,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 					case ReversalIndexEntryTags.kflidReversalForm:
 						var form = rie.ReversalForm.StringOrNull(ws);
 						if (form != null && form.Length > 0)
+						{
 							yield return form;
+						}
 						break;
 
 					default:
@@ -236,7 +241,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 
 			protected override IEnumerable<int> FilterResults(IEnumerable<int> results)
 			{
-				return results == null ? null : results.Where(hvo => !FilteredEntryHvos.Contains(hvo));
+				return results?.Where(hvo => !FilteredEntryHvos.Contains(hvo));
 			}
 		}
 	}

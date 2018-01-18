@@ -896,11 +896,7 @@ namespace LanguageExplorer.Areas
 			}
 			var rootId = ((IdAndString<Guid>)m_listComboBox.SelectedItem).Id;
 			ICmPossibilityList list;
-			try
-			{
-				list = m_cache.ServiceLocator.GetObject(rootId) as ICmPossibilityList;
-			}
-			catch (KeyNotFoundException)
+			if (!m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().TryGetObject(rootId, out list))
 			{
 				// Shouldn't happen, but... just being safe.
 				// OTOH, what ought to happen if the list doesn't exist?!
@@ -908,6 +904,7 @@ namespace LanguageExplorer.Areas
 				m_listComboBox.Items.Remove(m_listComboBox.SelectedItem);
 				return;
 			}
+
 			if (list != null)
 			{
 				m_fdwCurrentField.Fd.ListRootId = rootId;

@@ -74,7 +74,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			Controls.Add(m_mainView);
 			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
 			if (browser != null)
+			{
 				browser.DomClick += OnDomClick;
+			}
 			m_fullyInitialized = true;
 			// Add ourselves as a listener for changes to the item we are displaying
 			MyRecordList.VirtualListPublisher.AddNotification(this);
@@ -91,8 +93,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		protected override void ReadParameters()
 		{
 			base.ReadParameters();
-			var backColorName = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement,
-				"backColor", "Window");
+			var backColorName = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "backColor", "Window");
 			BackColor = Color.FromName(backColorName);
 			m_configObjectName = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "configureObjectName", null);
 		}
@@ -104,18 +105,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			XhtmlDocView.CloseContextMenuIfOpen();
 			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
-			if (browser == null)
-				return;
-			var element = browser.DomDocument.ElementFromPoint(e.ClientX, e.ClientY);
+			var element = browser?.DomDocument.ElementFromPoint(e.ClientX, e.ClientY);
 			if (element == null || element.TagName == "html")
+			{
 				return;
-			if (e.Button == GeckoMouseButton.Left)
-			{
-				XhtmlDocView.HandleDomLeftClick(MyRecordList, Cache.ServiceLocator.ObjectRepository, e, element);
 			}
-			else if (e.Button == GeckoMouseButton.Right)
+			switch (e.Button)
 			{
-				XhtmlDocView.HandleDomRightClick(browser, e, element, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_configObjectName, Cache, MyRecordList);
+				case GeckoMouseButton.Left:
+					XhtmlDocView.HandleDomLeftClick(MyRecordList, Cache.ServiceLocator.ObjectRepository, e, element);
+					break;
+				case GeckoMouseButton.Right:
+					XhtmlDocView.HandleDomRightClick(browser, e, element, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_configObjectName, Cache, MyRecordList);
+					break;
 			}
 		}
 
@@ -141,7 +143,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		protected override void ShowRecord()
 		{
 			if (!m_fullyInitialized)
+			{
 				return;
+			}
 			base.ShowRecord();
 			var cmo = MyRecordList.CurrentObject;
 			// Don't steal focus
@@ -196,10 +200,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private bool ShowRecordOnIdle(object arg)
 		{
 			if (IsDisposed)
+			{
 				return true; // no longer necessary to refresh the view
+			}
 			var ui = Cache.ServiceLocator.GetInstance<ILcmUI>();
 			if (ui != null && DateTime.Now - ui.LastActivityTime < TimeSpan.FromMilliseconds(400))
+			{
 				return false; // Don't interrupt a user who is busy typing. Wait for a pause to refresh the view.
+			}
 			ShowRecord();
 			return true;
 		}

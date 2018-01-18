@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -31,10 +31,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// (see HgRepository.SetUserNameInIni/GetUserNameFromIni). But until we merge FlexBridge,
 		/// FLEx does not have access to code that knows about Mercurial.
 		/// </summary>
-		public static string SendReceiveUser
-		{
-			get { return CommonBridgeServices.SendReceiveUser; }
-		}
+		public static string SendReceiveUser => CommonBridgeServices.SendReceiveUser;
 
 		/// <summary />
 		public override void FinishInit()
@@ -43,12 +40,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			m_chorusSystem.InitWithoutHg(SendReceiveUser);
 			// This is a required object for CreateNotesBar. It specifies delegates for getting the information
 			// the bar requires about the current object.
-			var notesToRecordMapping = new NotesToRecordMapping()
-				{
-					FunctionToGetCurrentUrlForNewNotes = GetCurrentUrlForNewNotes,
-					FunctionToGoFromObjectToItsId = GetIdForObject,
-					FunctionToGoFromObjectToAdditionalIds = GetAdditionalIdsForObject
-				};
+			var notesToRecordMapping = new NotesToRecordMapping
+			{
+				FunctionToGetCurrentUrlForNewNotes = GetCurrentUrlForNewNotes,
+				FunctionToGoFromObjectToItsId = GetIdForObject,
+				FunctionToGoFromObjectToAdditionalIds = GetAdditionalIdsForObject
+			};
 			var dataFilePath = GetDataFilePath(Cache);
 			var additionalPaths = GetAdditionalLexiconFilePaths(Cache);
 			const string idAttrForOtherFiles = "guid"; // .lexdb chorus notes files identify FLEx object with a url attr of "guid".
@@ -61,7 +58,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var analWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			var msgWs = new ChorusWritingSystem(analWs.LanguageName, analWs.Id, analWs.DefaultFontName, 12);
 			m_notesBar.MessageWritingSystem = msgWs;
-			this.Control = m_notesBar;
+			Control = m_notesBar;
 		}
 
 		// The notes bar expects to store notes about a particular file. Our notes are currently about the lexicon,
@@ -91,19 +88,21 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// We do check for the existence of the ChorusNotes files (though I think the NotesBar would
 		/// handle their absence itself) just as a performance optimization.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <returns></returns>
 		private static IEnumerable<string> GetAdditionalLexiconFilePaths(LcmCache cache)
 		{
 			var results = new List<string>();
 			var lexiconFolder = Path.Combine(cache.ProjectId.ProjectFolder, "Linguistics", "Lexicon");
 			if (!Directory.Exists(lexiconFolder))
+			{
 				return results;
+			}
 			foreach (var path in Directory.EnumerateFiles(lexiconFolder, "*.lexdb"))
 			{
 				var notesFile = path + CommonBridgeServices.kChorusNotesExtension;
 				if (File.Exists(notesFile))
+				{
 					results.Add(path);
+				}
 			}
 			return results;
 		}
@@ -130,7 +129,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		// so it will never need the URL for a new annotation.
 		private static string DummyGetCurrentUrlForNewNotes(object dataItemInFocus, string escapedId)
 		{
-			return "";
+			return string.Empty;
 		}
 
 		/// <summary>

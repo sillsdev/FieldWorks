@@ -170,8 +170,7 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		private void OnDomainListChecked(object sender, ItemCheckedEventArgs e)
 		{
-			var domain = m_semDomRepo.GetObject((int) e.Item.Tag);
-			SemanticDomainSelectionServices.AdjustSelectedDomainList(domain, m_stylesheet, e.Item.Checked, _recordBar.ListView);
+			SemanticDomainSelectionServices.AdjustSelectedDomainList(m_semDomRepo.GetObject((int)e.Item.Tag), m_stylesheet, e.Item.Checked, _recordBar.ListView);
 		}
 
 		private void m_textSearch_GotFocus(object sender, EventArgs e)
@@ -186,8 +185,8 @@ namespace LanguageExplorer.Areas.Lexicon
 
 		private void SetInfoBarText()
 		{
-			var titleStr = string.Empty;
-			var titleId = "SemanticDomain-Plural";
+			const string titleId = "SemanticDomain-Plural";
+			string titleStr;
 			XmlViewsUtils.TryFindString("AlternativeTitles", titleId, out titleStr);
 			// if they specified an altTitleId, but it wasn't found, they need to do something,
 			// so just return *titleId*

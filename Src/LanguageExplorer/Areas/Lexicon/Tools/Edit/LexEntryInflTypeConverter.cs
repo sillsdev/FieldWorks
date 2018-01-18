@@ -58,6 +58,5 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			m_cache.LanguageProject.LexDbOA.ConvertLexEntryInflTypes(new ProgressBarWrapper(m_dlg.ProgressBar), itemsToChange);
 		}
-
 	}
 }

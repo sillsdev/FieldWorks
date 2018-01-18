@@ -156,7 +156,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (_isDisposed)
+			{
 				return; // No need to do it more than once.
+			}
 
 			if (disposing)
 			{
@@ -459,11 +461,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			var currentObject = MyRecordList.CurrentObject;
 			if (currentObject == null)
+			{
 				return; // should never happen, but nothing we can do if it does!
+			}
 
 			var currentEntry = currentObject as ILexEntry ?? currentObject.OwnerOfClass(LexEntryTags.kClassId) as ILexEntry;
 			if (currentEntry == null)
+			{
 				return;
+			}
 
 			using (var dlg = new MergeEntryDlg())
 			{
@@ -545,15 +551,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var mainWindow = PropertyTable.GetValue<IFwMainWnd>("window");
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				dlg.SetDlgInfo(_majorFlexComponentParameters.LcmCache, PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable));
-				if (dlg.ShowDialog((Form)mainWindow) == DialogResult.OK)
+				if (dlg.ShowDialog((Form) mainWindow) != DialogResult.OK)
 				{
-					ILexEntry entry;
-					bool newby;
-					dlg.GetDialogInfo(out entry, out newby);
-					// No need for a PropChanged here because InsertEntryDlg takes care of that. (LT-3608)
-					mainWindow.RefreshAllViews();
-					MyRecordList.JumpToRecord(entry.Hvo);
+					return;
 				}
+				ILexEntry entry;
+				bool newby;
+				dlg.GetDialogInfo(out entry, out newby);
+				// No need for a PropChanged here because InsertEntryDlg takes care of that. (LT-3608)
+				mainWindow.RefreshAllViews();
+				MyRecordList.JumpToRecord(entry.Hvo);
 			}
 		}
 

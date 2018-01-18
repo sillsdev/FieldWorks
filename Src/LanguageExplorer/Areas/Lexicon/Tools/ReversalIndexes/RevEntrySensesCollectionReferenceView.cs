@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -40,16 +40,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			base.Dispose(disposing);
 
 			if (disposing)
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 		}
 
@@ -70,18 +69,22 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			CheckDisposed();
 
 			if (m_handlingSelectionChanged)
+			{
 				return;
+			}
 
 			m_handlingSelectionChanged = true;
 			try
 			{
 				m_selectedSenseHvo = 0;
 				if (vwselNew == null)
+				{
 					return;
+				}
 				base.HandleSelectionChange(rootb, vwselNew);
 
 				// Get the Id of the selected snes, and store it.
-				int cvsli = vwselNew.CLevels(false);
+				var cvsli = vwselNew.CLevels(false);
 				// CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
 				cvsli--;
 				if (cvsli == 0)
@@ -99,12 +102,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				int hvoObjEnd;
 				int tag;
 				int ws;
-				vwselNew.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObj,
-					out tag, out ws);
-				vwselNew.TextSelInfo(true, out tss, out ichEnd, out fAssocPrev, out hvoObjEnd,
-					out tag, out ws);
+				vwselNew.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObj, out tag, out ws);
+				vwselNew.TextSelInfo(true, out tss, out ichEnd, out fAssocPrev, out hvoObjEnd, out tag, out ws);
 				if (hvoObj != hvoObjEnd)
+				{
 					return;
+				}
 				m_selectedSenseHvo = hvoObj;
 			}
 			finally
@@ -116,11 +119,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		private void RemoveReversalEntryFromSense()
 		{
 			if (m_selectedSenseHvo == 0)
+			{
 				return;		// must be selecting multiple objects!  (See LT-5724.)
-			int h1 = m_rootb.Height;
-			ILexSense sense = (ILexSense)m_cache.ServiceLocator.GetObject(m_selectedSenseHvo);
-			ILcmReferenceCollection<IReversalIndexEntry> col = sense.ReversalEntriesRC;
-			using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(
+			}
+			var h1 = m_rootb.Height;
+			var sense = (ILexSense)m_cache.ServiceLocator.GetObject(m_selectedSenseHvo);
+			using (var helper = new UndoableUnitOfWorkHelper(
 				m_cache.ActionHandlerAccessor,
 				LanguageExplorerResources.ksUndoDeleteRevFromSense,
 				LanguageExplorerResources.ksRedoDeleteRevFromSense))

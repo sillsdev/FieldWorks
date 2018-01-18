@@ -41,7 +41,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -98,16 +100,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
-				if (Disposed != null)
-					Disposed(this, new EventArgs());
+				Disposed?.Invoke(this, new EventArgs());
 
 				// Dispose managed resources here.
 				if (m_rlu != null)
+				{
 					m_rlu.RecordChangeHandler = null;
+				}
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -130,10 +135,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <summary>
 		/// True, if the updater was not null in the Setup call, otherwise false.
 		/// </summary>
-		public bool HasRecordListUpdater
-		{
-			get { return m_rlu != null; }
-		}
+		public bool HasRecordListUpdater => m_rlu != null;
 
 		/// <summary></summary>
 		public void Setup(object record, IRecordListUpdater rlu, LcmCache cache)

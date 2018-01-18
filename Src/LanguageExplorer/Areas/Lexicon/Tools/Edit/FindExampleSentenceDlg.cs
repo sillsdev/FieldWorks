@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
@@ -91,6 +90,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
+		#endregion
+
+		#region Implementation of IFlexComponent
+
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -162,7 +165,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		#endregion
 
-		XmlNode BrowseViewControlParameters => m_configurationNode.SelectSingleNode("control/parameters[@id='ConcOccurrenceList']");
+		private XmlNode BrowseViewControlParameters => m_configurationNode.SelectSingleNode("control/parameters[@id='ConcOccurrenceList']");
 
 		private void AddConfigurableControls()
 		{
@@ -231,17 +234,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void btnAdd_Click(object sender, EventArgs e)
 		{
 			// Get the checked occurrences;
-			List<int> occurrences = m_rbv.CheckedItems;
+			var occurrences = m_rbv.CheckedItems;
 			if (occurrences == null || occurrences.Count == 0)
 			{
 				// do nothing.
 				return;
 			}
-			List<int> uniqueSegments =
-				(from fake in occurrences
-				 select m_recordList.VirtualListPublisher.get_ObjectProp(fake, ConcDecorator.kflidSegment)).Distinct().ToList
-					();
-			int insertIndex = m_owningSense.ExamplesOS.Count; // by default, insert at the end.
+			var uniqueSegments = (occurrences.Select(fake => m_recordList.VirtualListPublisher.get_ObjectProp(fake, ConcDecorator.kflidSegment))).Distinct().ToList();
+			var insertIndex = m_owningSense.ExamplesOS.Count; // by default, insert at the end.
 			if (m_les != null)
 			{
 				// we were given a LexExampleSentence, so set our insertion index after the given one.
@@ -252,11 +252,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				m_cache.ActionHandlerAccessor,
 				() =>
 					{
-						int cNewExamples = 0;
-						ILexExampleSentence newLexExample = null;
-						foreach (int segHvo in uniqueSegments)
+						var cNewExamples = 0;
+						foreach (var segHvo in uniqueSegments)
 						{
 							var seg = m_cache.ServiceLocator.GetObject(segHvo) as ISegment;
+							ILexExampleSentence newLexExample;
 							if (cNewExamples == 0 && m_les != null &&
 								m_les.Example.BestVernacularAlternative.Text == "***" &&
 								(m_les.TranslationsOC == null || m_les.TranslationsOC.Count == 0) &&
@@ -268,8 +268,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 							else
 							{
 								// create a new example sentence.
-								newLexExample =
-									m_cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>().Create();
+								newLexExample = m_cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>().Create();
 								m_owningSense.ExamplesOS.Insert(insertIndex + cNewExamples, newLexExample);
 								cNewExamples++;
 							}
@@ -281,27 +280,21 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 							if (seg.FreeTranslation.AvailableWritingSystemIds.Length > 0)
 							{
 								var trans = m_cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(newLexExample,
-									m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(
-										CmPossibilityTags.kguidTranFreeTranslation));
+									m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation));
 								trans.Translation.CopyAlternatives(seg.FreeTranslation);
 							}
 							if (seg.LiteralTranslation.AvailableWritingSystemIds.Length > 0)
 							{
 								var trans = m_cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(newLexExample,
-									m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(
-										CmPossibilityTags.kguidTranLiteralTranslation));
+									m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranLiteralTranslation));
 								trans.Translation.CopyAlternatives(seg.LiteralTranslation);
 							}
 						   // copy the reference.
-							ITsString tssRef = seg.Paragraph.Reference(seg, seg.BeginOffset);
+							var tssRef = seg.Paragraph.Reference(seg, seg.BeginOffset);
 							// convert the plain reference string into a link.
-							ITsStrBldr tsb = tssRef.GetBldr();
-							FwLinkArgs fwl = new FwLinkArgs(AreaServices.InterlinearEditMachineName, seg.Owner.Owner.Guid);
-							// It's not clear how to focus in on something smaller than the text when following
-							// a link.
-							//fwl.LinkProperties.Add(new LinkProperty("LinkSegmentGuid", seg.Guid.ToString()));
-							tsb.SetStrPropValue(0, tsb.Length, (int)FwTextPropType.ktptObjData,
-								(char)FwObjDataTypes.kodtExternalPathName + fwl.ToString());
+							var tsb = tssRef.GetBldr();
+							var fwl = new FwLinkArgs(AreaServices.InterlinearEditMachineName, seg.Owner.Owner.Guid);
+							tsb.SetStrPropValue(0, tsb.Length, (int)FwTextPropType.ktptObjData,(char)FwObjDataTypes.kodtExternalPathName + fwl.ToString());
 							tsb.SetStrPropValue(0, tsb.Length, (int)FwTextPropType.ktptNamedStyle, "Hyperlink");
 							newLexExample.Reference = tsb.GetString();
 						}
@@ -312,7 +305,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			var baseWs = seg.BaselineText.get_WritingSystem(0);
 			if (baseWs < 1)
+			{
 				return m_cache.DefaultVernWs;
+			}
 
 			var possibleWss = m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems;
 			var wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(baseWs);

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -54,14 +54,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				CheckDisposed();
 
 				var obj = CurrentObject;
-				if (obj.ClassID == MoCopyFromInputTags.kClassId)
+				if (obj.ClassID != MoCopyFromInputTags.kClassId)
 				{
-					var copy = (IMoCopyFromInput) obj;
-					// we don't want to change a MoCopyFromInput to a MoModifyFromInput if it is pointing to
-					// a variable
-					return copy.ContentRA.ClassID != PhVariableTags.kClassId;
+					return obj.ClassID == MoModifyFromInputTags.kClassId;
 				}
-				return obj.ClassID == MoModifyFromInputTags.kClassId;
+				var copy = (IMoCopyFromInput)obj;
+				// we don't want to change a MoCopyFromInput to a MoModifyFromInput if it is pointing to
+				// a variable
+				return copy.ContentRA.ClassID != PhVariableTags.kClassId;
 			}
 		}
 
@@ -92,13 +92,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 		}
 
-		IMoAffixProcess Rule
-		{
-			get
-			{
-				return m_obj as IMoAffixProcess;
-			}
-		}
+		IMoAffixProcess Rule => (IMoAffixProcess)m_obj;
 
 		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
 			string displayNameProperty, string displayWs)
@@ -123,11 +117,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private bool DisplayOption(object option)
 		{
-			RuleInsertType type = ((InsertOption) option).Type;
-			SelectionHelper sel = SelectionHelper.Create(m_view);
-			int cellId = GetCell(sel);
+			var type = ((InsertOption) option).Type;
+			var sel = SelectionHelper.Create(m_view);
+			var cellId = GetCell(sel);
 			if (cellId == -1 || cellId == -2)
+			{
 				return false;
+			}
 
 			switch (cellId)
 			{
@@ -141,17 +137,21 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					if (ctxtOrVar.ClassID == PhVariableTags.kClassId)
+					{
 						return false;
+					}
 					return type != RuleInsertType.Index;
 			}
 		}
 
 		private bool DisplayVariableOption(object option)
 		{
-			SelectionHelper sel = SelectionHelper.Create(m_view);
-			int cellId = GetCell(sel);
+			var sel = SelectionHelper.Create(m_view);
+			var cellId = GetCell(sel);
 			if (cellId == -1 || cellId == -2)
+			{
 				return false;
+			}
 
 			switch (cellId)
 			{
@@ -164,11 +164,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
-					if (ctxtOrVar.ClassID == PhSequenceContextTags.kClassId)
+					if (ctxtOrVar.ClassID != PhSequenceContextTags.kClassId)
 					{
-						var seqCtxt = (IPhSequenceContext) ctxtOrVar;
-						if (seqCtxt.MembersRS.Count == 0)
-							return true;
+						return false;
+					}
+					var seqCtxt = (IPhSequenceContext) ctxtOrVar;
+					if (seqCtxt.MembersRS.Count == 0)
+					{
+						return true;
 					}
 					return false;
 			}
@@ -176,13 +179,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private bool DisplayColumnOption(object option)
 		{
-			SelectionHelper sel = SelectionHelper.Create(m_view);
+			var sel = SelectionHelper.Create(m_view);
 			if (sel.IsRange)
+			{
 				return false;
+			}
 
-			int cellId = GetCell(sel);
+			var cellId = GetCell(sel);
 			if (cellId == -1 || cellId == -2)
+			{
 				return false;
+			}
 			switch (cellId)
 			{
 				case AffixRuleFormulaVc.ktagLeftEmpty:
@@ -198,17 +205,21 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private IEnumerable<object> DisplayIndices()
 		{
 			var indices = new int[Rule.InputOS.Count];
-			for (int i = 0; i < indices.Length; i++)
+			for (var i = 0; i < indices.Length; i++)
+			{
 				indices[i] = i + 1;
+			}
 			return indices.Cast<object>();
 		}
 
 		private string DisplayNoOptsMsg()
 		{
-			SelectionHelper sel = SelectionHelper.Create(m_view);
-			int cellId = GetCell(sel);
+			var sel = SelectionHelper.Create(m_view);
+			var cellId = GetCell(sel);
 			if (cellId == -1 || cellId == 2)
+			{
 				return null;
+			}
 			return AreaResources.ksAffixRuleNoOptsMsg;
 		}
 
@@ -217,33 +228,34 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			get { return "khtpChoose-LexiconEdit-PhonFeats-AffixRuleFormulaControl"; }
 		}
 
-		protected override string RuleName
-		{
-			get { return Rule.Form.BestVernacularAnalysisAlternative.Text; }
-		}
+		protected override string RuleName => Rule.Form.BestVernacularAnalysisAlternative.Text;
 
-		protected override string ContextMenuID
-		{
-			get { return "mnuMoAffixProcess"; }
-		}
+		protected override string ContextMenuID => "mnuMoAffixProcess";
 
 		protected override int GetCell(SelectionHelper sel, SelectionHelper.SelLimitType limit)
 		{
 			if (sel == null)
+			{
 				return -1;
+			}
 
-			int tag = sel.GetTextPropId(limit);
+			var tag = sel.GetTextPropId(limit);
 			if (tag == AffixRuleFormulaVc.ktagLeftEmpty
 				|| tag == AffixRuleFormulaVc.ktagRightEmpty
 				|| tag == MoAffixProcessTags.kflidOutput)
-				return tag;
-
-			foreach (SelLevInfo level in sel.GetLevelInfo(limit))
 			{
-				if (level.tag == MoAffixProcessTags.kflidOutput)
-					return level.tag;
-				if (level.tag == MoAffixProcessTags.kflidInput)
-					return level.hvo;
+				return tag;
+			}
+
+			foreach (var level in sel.GetLevelInfo(limit))
+			{
+				switch (level.tag)
+				{
+					case MoAffixProcessTags.kflidOutput:
+						return level.tag;
+					case MoAffixProcessTags.kflidInput:
+						return level.hvo;
+				}
 			}
 
 			return -1;
@@ -252,14 +264,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		protected override ICmObject GetCmObject(SelectionHelper sel, SelectionHelper.SelLimitType limit)
 		{
 			if (sel == null)
+			{
 				return null;
+			}
 
-			foreach (SelLevInfo level in sel.GetLevelInfo(limit))
+			foreach (var level in sel.GetLevelInfo(limit))
 			{
 				if (level.tag == MoAffixProcessTags.kflidInput
 					|| level.tag == PhSequenceContextTags.kflidMembers
 					|| level.tag == MoAffixProcessTags.kflidOutput)
+				{
 					return m_cache.ServiceLocator.GetObject(level.hvo);
+				}
 			}
 
 			return null;
@@ -278,12 +294,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
-					if (obj.ClassID == PhSequenceContextTags.kClassId)
+					if (obj.ClassID != PhSequenceContextTags.kClassId)
 					{
-						var seqCtxt = (IPhSequenceContext) ctxtOrVar;
-						return seqCtxt.MembersRS.IndexOf(obj as IPhPhonContext);
+						return -1;
 					}
-					return -1;
+					var seqCtxt = (IPhSequenceContext) ctxtOrVar;
+					return seqCtxt.MembersRS.IndexOf(obj as IPhPhonContext);
 			}
 		}
 
@@ -341,7 +357,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					if (ctxtOrVar.ClassID == PhSequenceContextTags.kClassId)
+					{
 						return ((IPhSequenceContext) ctxtOrVar).MembersRS.Count;
+					}
 					return 1;
 			}
 		}
@@ -361,9 +379,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
-					int index = ctxtOrVar.IndexInOwner;
+					var index = ctxtOrVar.IndexInOwner;
 					if (index == Rule.InputOS.Count - 1)
+					{
 						return AffixRuleFormulaVc.ktagRightEmpty;
+					}
 					return Rule.InputOS[index + 1].Hvo;
 			}
 		}
@@ -383,9 +403,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
-					int index = ctxtOrVar.IndexInOwner;
+					var index = ctxtOrVar.IndexInOwner;
 					if (index == 0)
+					{
 						return AffixRuleFormulaVc.ktagLeftEmpty;
+					}
 					return Rule.InputOS[index - 1].Hvo;
 			}
 		}
@@ -406,7 +428,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		protected override int InsertPhoneme(IPhPhoneme phoneme, SelectionHelper sel, out int cellIndex)
 		{
-			int cellId = GetCell(sel);
+			var cellId = GetCell(sel);
 			if (cellId == MoAffixProcessTags.kflidOutput)
 			{
 				var insertPhones = m_cache.ServiceLocator.GetInstance<IMoInsertPhonesFactory>().Create();
@@ -424,7 +446,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		protected override int InsertBdry(IPhBdryMarker bdry, SelectionHelper sel, out int cellIndex)
 		{
-			int cellId = GetCell(sel);
+			var cellId = GetCell(sel);
 			if (cellId == MoAffixProcessTags.kflidOutput)
 			{
 				var insertPhones = m_cache.ServiceLocator.GetInstance<IMoInsertPhonesFactory>().Create();
@@ -448,24 +470,26 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			return cellId;
 		}
 
-		int InsertIntoOutput(IMoRuleMapping mapping, SelectionHelper sel)
+		private int InsertIntoOutput(IMoRuleMapping mapping, SelectionHelper sel)
 		{
-			ICmObject[] mappings = Rule.OutputOS.Cast<ICmObject>().ToArray();
-			int index = GetInsertionIndex(mappings, sel);
+			var mappings = Rule.OutputOS.Cast<ICmObject>().ToArray();
+			var index = GetInsertionIndex(mappings, sel);
 			Rule.OutputOS.Insert(index, mapping);
-			if (sel.IsRange)
+			if (!sel.IsRange)
 			{
-				IEnumerable<int> indices = GetIndicesToRemove(mappings, sel);
-				foreach (int idx in indices)
-					Rule.OutputOS.Remove((IMoRuleMapping) mappings[idx]);
+				return index;
+			}
+			foreach (var idx in GetIndicesToRemove(mappings, sel))
+			{
+				Rule.OutputOS.Remove((IMoRuleMapping) mappings[idx]);
 			}
 			return index;
 		}
 
-		int InsertContext(IPhContextOrVar ctxtOrVar, SelectionHelper sel, out int cellIndex)
+		private int InsertContext(IPhContextOrVar ctxtOrVar, SelectionHelper sel, out int cellIndex)
 		{
 			m_removeCol = null;
-			int cellId = GetCell(sel);
+			var cellId = GetCell(sel);
 			switch (cellId)
 			{
 				case AffixRuleFormulaVc.ktagLeftEmpty:
@@ -482,7 +506,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					var cellCtxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					if (ctxtOrVar.ClassID == PhVariableTags.kClassId)
 					{
-						int index = cellCtxtOrVar.IndexInOwner;
+						var index = cellCtxtOrVar.IndexInOwner;
 						Rule.InputOS.Insert(index, ctxtOrVar);
 						UpdateMappings(cellCtxtOrVar, ctxtOrVar);
 						Rule.InputOS.Remove(cellCtxtOrVar);
@@ -500,7 +524,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			IPhSequenceContext seqCtxt;
 			if (ctxt.ClassID != PhSequenceContextTags.kClassId)
 			{
-				int index = ctxt.IndexInOwner;
+				var index = ctxt.IndexInOwner;
 				m_cache.LangProject.PhonologicalDataOA.ContextsOS.Add(ctxt);
 				seqCtxt = m_cache.ServiceLocator.GetInstance<IPhSequenceContextFactory>().Create();
 				Rule.InputOS.Insert(index, seqCtxt);
@@ -516,7 +540,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		protected override int InsertColumn(SelectionHelper sel)
 		{
-			int index = GetColumnInsertIndex(sel);
+			var index = GetColumnInsertIndex(sel);
 			var seqCtxt = m_cache.ServiceLocator.GetInstance<IPhSequenceContextFactory>().Create();
 			Rule.InputOS.Insert(index, seqCtxt);
 			return seqCtxt.Hvo;
@@ -524,9 +548,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		int GetColumnInsertIndex(SelectionHelper sel)
 		{
-			int hvo = GetCell(sel);
+			var hvo = GetCell(sel);
 			if (hvo <= 0)
+			{
 				return -1;
+			}
 
 			ICmObject[] ctxtOrVars;
 			var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(hvo);
@@ -539,21 +565,28 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var seqCtxt = (IPhSequenceContext) ctxtOrVar;
 				ctxtOrVars = seqCtxt.MembersRS.Cast<ICmObject>().ToArray();
 			}
-			if (ctxtOrVars.Length == 0)
-				return -1;
 
-			int insertIndex = GetInsertionIndex(ctxtOrVars, sel);
+			if (ctxtOrVars.Length == 0)
+			{
+				return -1;
+			}
+
+			var insertIndex = GetInsertionIndex(ctxtOrVars, sel);
 			if (insertIndex == 0 && ctxtOrVar.IndexInOwner != 0)
 			{
 				var prev = Rule.InputOS[ctxtOrVar.IndexInOwner - 1];
 				if (GetCellCount(prev.Hvo) > 0)
+				{
 					return ctxtOrVar.IndexInOwner;
+				}
 			}
 			else if (insertIndex == ctxtOrVars.Length && ctxtOrVar.IndexInOwner != Rule.InputOS.Count - 1)
 			{
 				var next = Rule.InputOS[ctxtOrVar.IndexInOwner + 1];
 				if (GetCellCount(next.Hvo) > 0)
+				{
 					return next.IndexInOwner;
+				}
 			}
 
 			return -1;
@@ -576,9 +609,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			cellIndex = -1;
 
-			int cellId = GetCell(sel);
+			var cellId = GetCell(sel);
 			if (cellId == -1 || cellId == -2)
+			{
 				return -1;
+			}
 
 			switch (cellId)
 			{
@@ -597,80 +632,71 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						if (seqCtxt.MembersRS.Count == 0 && forward)
 						{
 							// remove an empty column
-							int prevCellId = GetPrevCell(seqCtxt.Hvo);
+							var prevCellId = GetPrevCell(seqCtxt.Hvo);
 							cellIndex = GetCellCount(prevCellId) - 1;
 							Rule.InputOS.Remove(seqCtxt);
 							return prevCellId;
 						}
-						bool reconstruct = RemoveContextsFrom(forward, sel, seqCtxt, false, out cellIndex);
+						var reconstruct = RemoveContextsFrom(forward, sel, seqCtxt, false, out cellIndex);
 						// if the column is empty, schedule it to be removed when the selection has changed
 						if (seqCtxt.MembersRS.Count == 0)
+						{
 							m_removeCol = seqCtxt;
+						}
 						return reconstruct ? seqCtxt.Hvo : -1;
 					}
-					int idx = GetIndexToRemove(new ICmObject[] { ctxtOrVar }, sel, forward);
-					if (idx > -1 && !IsLastVariable(ctxtOrVar))
+					var idx = GetIndexToRemove(new ICmObject[] { ctxtOrVar }, sel, forward);
+					if (idx <= -1 || IsLastVariable(ctxtOrVar))
 					{
-						var seqCtxt = m_cache.ServiceLocator.GetInstance<IPhSequenceContextFactory>().Create();
-						Rule.InputOS.Insert(ctxtOrVar.IndexInOwner, seqCtxt);
-						// if the column is empty, schedule it to be removed when the selection has changed
-						m_removeCol = seqCtxt;
-						UpdateMappings(ctxtOrVar, seqCtxt);
-
-						ctxtOrVar.PreRemovalSideEffects();
-						Rule.InputOS.Remove(ctxtOrVar);
-						return seqCtxt.Hvo;
+						return -1;
 					}
-					return -1;
+				{
+					var seqCtxt = m_cache.ServiceLocator.GetInstance<IPhSequenceContextFactory>().Create();
+					Rule.InputOS.Insert(ctxtOrVar.IndexInOwner, seqCtxt);
+					// if the column is empty, schedule it to be removed when the selection has changed
+					m_removeCol = seqCtxt;
+					UpdateMappings(ctxtOrVar, seqCtxt);
+
+					ctxtOrVar.PreRemovalSideEffects();
+					Rule.InputOS.Remove(ctxtOrVar);
+					return seqCtxt.Hvo;
+				}
 			}
 		}
 
-		bool IsLastVariable(IPhContextOrVar ctxtOrVar)
+		private bool IsLastVariable(IPhContextOrVar ctxtOrVar)
 		{
 			if (ctxtOrVar.ClassID != PhVariableTags.kClassId)
+			{
 				return false;
-
-			int numVars = 0;
-			foreach (var cur in Rule.InputOS)
-			{
-				if (cur.ClassID == PhVariableTags.kClassId)
-					numVars++;
 			}
-			return numVars == 1;
+
+			return Rule.InputOS.Count(cur => cur.ClassID == PhVariableTags.kClassId) == 1;
 		}
 
-		bool IsLastVariableMapping(IMoRuleMapping mapping)
+		private bool IsLastVariableMapping(IMoRuleMapping mapping)
 		{
-			if (mapping.ClassID == MoCopyFromInputTags.kClassId)
+			if (mapping.ClassID != MoCopyFromInputTags.kClassId)
 			{
-				var copy = (IMoCopyFromInput) mapping;
-				if (IsLastVariable(copy.ContentRA))
-					return true;
+				return false;
 			}
-			return false;
+			var copy = (IMoCopyFromInput) mapping;
+			return IsLastVariable(copy.ContentRA);
 		}
 
-		bool IsFinalLastVariableMapping(IMoRuleMapping mapping)
+		private bool IsFinalLastVariableMapping(IMoRuleMapping mapping)
 		{
-			if (IsLastVariableMapping(mapping))
+			if (!IsLastVariableMapping(mapping))
 			{
-				int numLastVarMappings = 0;
-				foreach (var curMapping in Rule.OutputOS)
-				{
-					if (IsLastVariableMapping(curMapping))
-						numLastVarMappings++;
-				}
-				return numLastVarMappings == 1;
+				return false;
 			}
-			return false;
+			return Rule.OutputOS.Count(curMapping => IsLastVariableMapping(curMapping)) == 1;
 		}
 
 		/// <summary>
 		/// Updates the context that the mappings point to. This is used when the context changes
 		/// from a single context to a sequence context.
 		/// </summary>
-		/// <param name="oldCtxtOrVar"></param>
-		/// <param name="newCtxtOrVar"></param>
 		private void UpdateMappings(IPhContextOrVar oldCtxtOrVar, IPhContextOrVar newCtxtOrVar)
 		{
 			foreach (var mapping in Rule.OutputOS)
@@ -680,13 +706,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					case MoCopyFromInputTags.kClassId:
 						var copy = (IMoCopyFromInput) mapping;
 						if (copy.ContentRA == oldCtxtOrVar)
+						{
 							copy.ContentRA = newCtxtOrVar;
+						}
 						break;
 
 					case MoModifyFromInputTags.kClassId:
 						var modify = (IMoModifyFromInput) mapping;
 						if (modify.ContentRA == oldCtxtOrVar)
+						{
 							modify.ContentRA = newCtxtOrVar;
+						}
 						break;
 				}
 			}
@@ -695,69 +725,74 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private bool RemoveFromOutput(bool forward, SelectionHelper sel, out int index)
 		{
 			index = -1;
-			bool reconstruct = false;
-			ICmObject[] mappings = Rule.OutputOS.Cast<ICmObject>().ToArray();
+			var reconstruct = false;
+			var mappings = Rule.OutputOS.Cast<ICmObject>().ToArray();
 			if (sel.IsRange)
 			{
-				int[] indices = GetIndicesToRemove(mappings, sel);
+				var indices = GetIndicesToRemove(mappings, sel);
 				if (indices.Length > 0)
-					index = indices[0] - 1;
-
-
-				foreach (int idx in indices)
 				{
-					var mapping = (IMoRuleMapping) mappings[idx];
-					if (!IsFinalLastVariableMapping(mapping))
+					index = indices[0] - 1;
+				}
+
+				foreach (var idx in indices)
+				{
+					var mapping = (IMoRuleMapping)mappings[idx];
+					if (IsFinalLastVariableMapping(mapping))
 					{
-						Rule.OutputOS.Remove(mapping);
-						reconstruct = true;
+						continue;
 					}
+					Rule.OutputOS.Remove(mapping);
+					reconstruct = true;
 				}
 			}
 			else
 			{
-				int idx = GetIndexToRemove(mappings, sel, forward);
-				if (idx > -1)
+				var idx = GetIndexToRemove(mappings, sel, forward);
+				if (idx <= -1)
 				{
-					var mapping = (IMoRuleMapping) mappings[idx];
-					index = idx - 1;
-					if (!IsFinalLastVariableMapping(mapping))
-					{
-						Rule.OutputOS.Remove(mapping);
-						reconstruct = true;
-					}
+					return false;
 				}
+				var mapping = (IMoRuleMapping) mappings[idx];
+				index = idx - 1;
+				if (IsFinalLastVariableMapping(mapping))
+				{
+					return false;
+				}
+				Rule.OutputOS.Remove(mapping);
+				reconstruct = true;
 			}
 			return reconstruct;
 		}
 
 		private void SelectionChanged(object sender, EventArgs e)
 		{
-			if (m_removeCol != null)
+			if (m_removeCol == null)
 			{
-				// if there is a column that is scheduled to be removed, go ahead and remove it now
-				SelectionHelper sel = SelectionHelper.Create(m_view);
-				int cellId = GetCell(sel);
-				if (m_removeCol.Hvo != cellId)
-				{
-					UndoableUnitOfWorkHelper.Do(AreaResources.ksRuleUndoRemove, AreaResources.ksRuleRedoRemove, Rule, () =>
-					{
-						m_removeCol.PreRemovalSideEffects();
-						Rule.InputOS.Remove(m_removeCol);
-						m_removeCol = null;
-					});
-					sel.RestoreSelectionAndScrollPos();
-				}
+				return;
 			}
+			// if there is a column that is scheduled to be removed, go ahead and remove it now
+			var sel = SelectionHelper.Create(m_view);
+			var cellId = GetCell(sel);
+			if (m_removeCol.Hvo == cellId)
+			{
+				return;
+			}
+			UndoableUnitOfWorkHelper.Do(AreaResources.ksRuleUndoRemove, AreaResources.ksRuleRedoRemove, Rule, () =>
+			{
+				m_removeCol.PreRemovalSideEffects();
+				Rule.InputOS.Remove(m_removeCol);
+				m_removeCol = null;
+			});
+			sel.RestoreSelectionAndScrollPos();
 		}
 
 		public void SetMappingFeatures()
 		{
 			SelectionHelper.Create(m_view);
-			bool reconstruct = false;
-			int index = -1;
-			UndoableUnitOfWorkHelper.Do(AreaResources.ksAffixRuleUndoSetMappingFeatures,
-				AreaResources.ksAffixRuleRedoSetMappingFeatures, m_cache.ActionHandlerAccessor, () =>
+			var reconstruct = false;
+			var index = -1;
+			UndoableUnitOfWorkHelper.Do(AreaResources.ksAffixRuleUndoSetMappingFeatures, AreaResources.ksAffixRuleRedoSetMappingFeatures, m_cache.ActionHandlerAccessor, () =>
 			{
 				using (var featChooser = new PhonologicalFeatureChooserDlg())
 				{
@@ -771,8 +806,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 								// create a new natural class behind the scenes
 								var featNC = m_cache.ServiceLocator.GetInstance<IPhNCFeaturesFactory>().Create();
 								m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(featNC);
-								featNC.Name.SetUserWritingSystem(string.Format(AreaResources.ksRuleNCFeatsName,
-									Rule.Form.BestVernacularAnalysisAlternative.Text));
+								featNC.Name.SetUserWritingSystem(string.Format(AreaResources.ksRuleNCFeatsName, Rule.Form.BestVernacularAnalysisAlternative.Text));
 								featNC.FeaturesOA = m_cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
 								featChooser.FS = featNC.FeaturesOA;
 								featChooser.UpdateFeatureStructure();
@@ -816,7 +850,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			m_view.Select();
 			if (reconstruct)
+			{
 				ReconstructView(MoAffixProcessTags.kflidOutput, index, true);
+			}
 		}
 
 		public void SetMappingNaturalClass()
@@ -827,16 +863,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			foreach (var nc in m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS)
 			{
 				if (nc.ClassID == PhNCFeaturesTags.kClassId)
+				{
 					natClasses.Add(nc);
+				}
 			}
 			var selectedNc = DisplayChooser(AreaResources.ksRuleNCOpt, AreaResources.ksRuleNCChooserLink,
 				AreaServices.NaturalClassEditMachineName, "RuleNaturalClassFlatList", natClasses) as IPhNCFeatures;
 			m_view.Select();
-			if (selectedNc != null)
+			if (selectedNc == null)
 			{
-				int index = -1;
-				UndoableUnitOfWorkHelper.Do(AreaResources.ksAffixRuleUndoSetNC,
-					AreaResources.ksAffixRuleRedoSetNC, m_cache.ActionHandlerAccessor, () =>
+				return;
+			}
+			var index = -1;
+			UndoableUnitOfWorkHelper.Do(AreaResources.ksAffixRuleUndoSetNC, AreaResources.ksAffixRuleRedoSetNC, m_cache.ActionHandlerAccessor, () =>
 				{
 					var curObj = CurrentObject;
 					switch (curObj.ClassID)
@@ -860,8 +899,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					}
 				});
 
-				ReconstructView(MoAffixProcessTags.kflidOutput, index, true);
-			}
+			ReconstructView(MoAffixProcessTags.kflidOutput, index, true);
 		}
 
 		protected override void OnSizeChanged(EventArgs e)
@@ -873,6 +911,5 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				m_view.Width = w > 0 ? w : 0;
 			}
 		}
-
 	}
 }

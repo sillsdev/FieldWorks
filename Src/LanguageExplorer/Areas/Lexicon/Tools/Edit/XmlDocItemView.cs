@@ -32,11 +32,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			CheckDisposed();
 			if (m_hvoRoot == hvo)
+			{
 				return; // OnRecordNavigation is often called repeatedly wit the same HVO, we don't need to recompute every time.
+			}
 
 			m_hvoRoot = hvo;
-			if (RootBox != null)
-				RootBox.SetRootObject(m_hvoRoot, m_xmlVc, 1, m_styleSheet);
+			RootBox?.SetRootObject(m_hvoRoot, m_xmlVc, 1, m_styleSheet);
 			// If the root box doesn't exist yet, the right root will be used in MakeRoot.
 		}
 		#endregion
@@ -45,7 +46,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			base(hvoRoot, sLayout, XmlUtils.GetOptionalBooleanAttributeValue(xnSpec, "editable", true))
 		{
 			if (m_xnSpec == null)
+			{
 				m_xnSpec = xnSpec;
+			}
 		}
 
 		public override void MakeRoot()
@@ -57,16 +60,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		// Context menu exists just for one invocation (until idle).
 		private ContextMenuStrip m_contextMenu;
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Provides a context menu so we can configure parts of the dictionary preview.
 		/// </summary>
-		/// <param name="sel"></param>
-		/// <param name="pt"></param>
-		/// <param name="rcSrcRoot"></param>
-		/// <param name="rcDstRoot"></param>
-		/// <returns></returns>
-		/// -----------------------------------------------------------------------------------
 		protected override bool DoContextMenu(IVwSelection sel, Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
 			int hvo, tag, ihvo, cpropPrevious;
@@ -139,7 +135,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 		}
 
-		void m_contextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+		private void m_contextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
 		{
 			Application.Idle += DisposeContextMenu;
 		}
