@@ -276,7 +276,6 @@ namespace LanguageExplorer.Areas.Lists
 		/// <summary>
 		/// Remove a custom list's tool from the area and from the Tab
 		/// </summary>
-		/// <param name="gonerTool"></param>
 		public void RemoveCustomListTool(ITool gonerTool)
 		{
 			_sortedListOfCustomTools.Remove(gonerTool.MachineName);

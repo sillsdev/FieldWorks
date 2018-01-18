@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -27,16 +27,15 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		protected override void HandleChooser()
 		{
 			VectorReferenceLauncher vrl = null;
-			using (FeatureSystemInflectionFeatureListDlg dlg = new FeatureSystemInflectionFeatureListDlg())
+			using (var dlg = new FeatureSystemInflectionFeatureListDlg())
 			{
-				IFsFeatStruc originalFs = m_obj as IFsFeatStruc;
+				var originalFs = m_obj as IFsFeatStruc;
 
-				Slice parentSlice = Slice;
+				var parentSlice = Slice;
 				if (originalFs == null)
 				{
-					int owningFlid;
-					ILexEntryInflType leit = parentSlice.Object as ILexEntryInflType;
-					owningFlid = (parentSlice as FeatureSystemInflectionFeatureListDlgLauncherSlice).Flid;
+					var leit = parentSlice.Object as ILexEntryInflType;
+					var owningFlid = (parentSlice as FeatureSystemInflectionFeatureListDlgLauncherSlice).Flid;
 					dlg.SetDlgInfo(m_cache, PropertyTable, leit, owningFlid);
 				}
 				else
@@ -48,26 +47,29 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 				dlg.Text = StringTable.Table.GetStringWithXPath("InflectionFeatureTitle", ksPath);
 				dlg.Prompt = StringTable.Table.GetStringWithXPath("InflectionFeaturesPrompt", ksPath);
 				dlg.LinkText = StringTable.Table.GetStringWithXPath("InflectionFeaturesLink", ksPath);
-				DialogResult result = dlg.ShowDialog(parentSlice.FindForm());
-				if (result == DialogResult.OK)
+				var result = dlg.ShowDialog(parentSlice.FindForm());
+				switch (result)
 				{
-					if (dlg.FS != null)
-						m_obj = dlg.FS;
-					m_msaInflectionFeatureListDlgLauncherView.Init(m_cache, dlg.FS);
-				}
-				else if (result == DialogResult.Yes)
-				{
-					var commands = new List<string>
-					{
-						"AboutToFollowLink",
-						"FollowLink"
-					};
-					var parms = new List<object>
-					{
-						null,
-						new FwLinkArgs(AreaServices.FeaturesAdvancedEditMachineName, m_cache.LanguageProject.MsFeatureSystemOA.Guid)
-					};
-					Publisher.Publish(commands, parms);
+					case DialogResult.OK:
+						if (dlg.FS != null)
+						{
+							m_obj = dlg.FS;
+						}
+						m_msaInflectionFeatureListDlgLauncherView.Init(m_cache, dlg.FS);
+						break;
+					case DialogResult.Yes:
+						var commands = new List<string>
+						{
+							"AboutToFollowLink",
+							"FollowLink"
+						};
+						var parms = new List<object>
+						{
+							null,
+							new FwLinkArgs(AreaServices.FeaturesAdvancedEditMachineName, m_cache.LanguageProject.MsFeatureSystemOA.Guid)
+						};
+						Publisher.Publish(commands, parms);
+						break;
 				}
 			}
 		}

@@ -36,7 +36,6 @@ namespace LanguageExplorer.Areas.Lists
 
 		#endregion
 
-		/// ----------------------------------------------------------------------------------------
 		/// <summary>
 		/// Main entry point for deleting Custom Lists.
 		/// Needs to:
@@ -45,7 +44,6 @@ namespace LanguageExplorer.Areas.Lists
 		/// 3 - Delete the list (and its possibilities and subpossibilities) and, consequently,
 		///     any references to those possibilities.
 		/// </summary>
-		/// ----------------------------------------------------------------------------------------
 		public void Run(ICmPossibilityList curList)
 		{
 			m_listToDelete = curList;
@@ -53,7 +51,9 @@ namespace LanguageExplorer.Areas.Lists
 			// Make sure list is a CUSTOM list!
 			var owner = m_listToDelete.Owner; // Custom lists are unowned!
 			if (owner != null)
+			{
 				return; // Not a Custom list!
+			}
 
 			// Make sure user knows if any possibilities owned by this list are referenced
 			// by anything else!
@@ -64,15 +64,16 @@ namespace LanguageExplorer.Areas.Lists
 				var name = poss.Name.BestAnalysisVernacularAlternative.Text;
 				// Warn user that possibilities in this list are in use.
 				if (CheckWithUser(name) != DialogResult.Yes)
+				{
 					return;
+				}
 			}
 			DeleteList(m_listToDelete);
 		}
 
 		private int HasPossibilityReferences(out ICmPossibility poss1)
 		{
-			var refs = m_listToDelete.ReallyReallyAllPossibilities.Where(
-				poss => poss.ReferringObjects.Count > 0).ToList();
+			var refs = m_listToDelete.ReallyReallyAllPossibilities.Where(poss => poss.ReferringObjects.Count > 0).ToList();
 			poss1 = refs.FirstOrDefault();
 			return refs.Count;
 		}
@@ -90,7 +91,9 @@ namespace LanguageExplorer.Areas.Lists
 			// Get all the custom fields
 			//GetCustomFieldsReferencingList(listGuid); now done earlier
 			if (m_customFields.Count == 0)
+			{
 				return;
+			}
 			foreach (var fd in m_customFields)
 			{
 				fd.MarkForDeletion = true;
@@ -104,9 +107,7 @@ namespace LanguageExplorer.Areas.Lists
 			FieldDescription.ClearDataAbout();
 			var fdCollection = FieldDescription.FieldDescriptors(m_cache);
 			m_customFields = new List<FieldDescription>();
-			m_customFields.AddRange(from fd in fdCollection
-									where fd.IsCustomField && fd.ListRootId == listGuid
-									select fd);
+			m_customFields.AddRange(fdCollection.Where(fd => fd.IsCustomField && fd.ListRootId == listGuid));
 		}
 
 		/// <summary>

@@ -317,6 +317,12 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\Edit\ReversalIndexEntryVc.cs" />
+    <Compile Include="Areas\Lists\AddCustomListDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\Lists\ConfigureListDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Areas\Lists\Tools\DialectsListEdit\DialectsListEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\ExtNoteTypeEdit\ExtNoteTypeEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\LanguagesListEdit\LanguagesListEditTool.cs" />
