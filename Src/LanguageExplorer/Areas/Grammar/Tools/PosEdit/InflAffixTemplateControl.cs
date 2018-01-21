@@ -180,7 +180,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				IVwPropertyStore vpsSlot; // dummy
 				sel.PropInfo(false, 1, out hvoSlot, out tagSlot, out indexSlot, out prevSlot, out vpsSlot);
 				int classSlot = Cache.GetClassOfObject(hvoSlot);
-				if (classSlot == FDO.Ling.MoInflAffixSlot.kClassId)
+				if (classSlot == LCM.Ling.MoInflAffixSlot.kClassId)
 					m_hvoSlot = hvoSlot;
 #endif
 			m_obj = Cache.ServiceLocator.GetObject(hvo);
@@ -775,7 +775,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		//    CheckDisposed();
 		//
 		//    DetermineSlotContextMenuItemContent(display);
-		//    if (m_class != SIL.FieldWorks.FDO.Ling.MoInflAffixSlot.kclsidMoInflAffixSlot)
+		//    if (m_class != SIL.FieldWorks.LCM.Ling.MoInflAffixSlot.kclsidMoInflAffixSlot)
 		//        display.Enabled = false;
 		//    else
 		//    {
@@ -813,7 +813,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		//    CheckDisposed();
 		//
 		//    DetermineSlotContextMenuItemContent(display);
-		//    if (m_class != SIL.FieldWorks.FDO.Ling.MoInflAffixSlot.kclsidMoInflAffixSlot)
+		//    if (m_class != SIL.FieldWorks.LCM.Ling.MoInflAffixSlot.kclsidMoInflAffixSlot)
 		//        display.Enabled = false;
 		//    else
 		//    {
@@ -1213,7 +1213,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			tssResult = TsSlotName(slot);
 			m_slot = slot;
 #else
-			slot = (FDO.Ling.MoInflAffixSlot)CmObject.CreateFromDBObject(this.Cache, m_hvoSlot);
+			slot = (LCM.Ling.MoInflAffixSlot)CmObject.CreateFromDBObject(this.Cache, m_hvoSlot);
 			sResult = TsSlotName(slot);
 #endif
 			return tssResult;

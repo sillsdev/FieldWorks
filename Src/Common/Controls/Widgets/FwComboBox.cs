@@ -1265,7 +1265,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	///
 	/// To get this behavior, you can
 	///		(a) Let the items actually be ITsStrings.
-	///		(b) Let the items implement the SIL.FieldWorks.FDO.ITssValue interface, which has just one property, public ITsString AsTss {get;}
+	///		(b) Let the items implement the SIL.FieldWorks.LCM.ITssValue interface, which has just one property, public ITsString AsTss {get;}
 	///
 	///	You must also pass your writing system factory to the FwComboBox (set the WritingSystemFactory property).
 	///	Otherwise, the combo box will not be able to interpret the writing systems of any TsStrings it is asked to display.

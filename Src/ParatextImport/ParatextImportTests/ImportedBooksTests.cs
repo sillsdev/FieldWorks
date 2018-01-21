@@ -197,7 +197,7 @@ namespace ParatextImport
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initialize the FDO cache and open database
+		/// Initialize the LCM cache and open database
 		/// </summary>
 		/// <remarks>This method is called before each test</remarks>
 		/// ------------------------------------------------------------------------------------

@@ -832,7 +832,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				//Next, change the Sid of the Ucac in the tag of lvi to the new Sid
 				//before irun can do that, however, the ucac irun'm modifying has to be connected to
-				//		the fdo db
+				//		the LCM db
 				var ucacTemp = lvi.Tag as IUserConfigAcct;
 				ucacTemp.Sid = rgbNewSid;
 				lvi.Tag = ucacTemp;

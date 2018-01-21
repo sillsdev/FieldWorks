@@ -13,6 +13,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Application;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using LanguageExplorer.Controls.DetailControls.Resources;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Xml;
@@ -479,7 +480,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				return;
 			}
 			// We've selected the whole string for it, so remove the object from the vector.
-			var hvosOld = ((ISilDataAccessManaged)m_cache.DomainDataByFlid).VecProp(m_rootObj.Hvo, m_rootFlid);
+			var hvosOld = m_cache.GetManagedSilDataAccess().VecProp(m_rootObj.Hvo, m_rootFlid);
 			UpdateTimeStampsIfNeeded(hvosOld);
 			for (var i = 0; i < hvosOld.Length; ++i)
 			{
@@ -557,7 +558,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
-		/// Remove the indicated object from the editable list which can be virtual (like FdoInvertSet).
+		/// Remove the indicated object from the editable list which can be virtual (like LcmInvertSet).
 		/// </summary>
 		private void RemoveObjectFromEditableList(int ihvo, string undoText, string redoText)
 		{

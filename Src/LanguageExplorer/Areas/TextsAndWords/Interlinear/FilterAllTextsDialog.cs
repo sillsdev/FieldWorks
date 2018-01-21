@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		#region Data Members
 		/// <summary>List of Scripture objects</summary>
 		protected IStText[] m_objList;
-		/// <summary>fdo cache</summary>
+		/// <summary>LCM cache</summary>
 		protected LcmCache m_cache;
 		/// <summary>Help Provider</summary>
 		protected HelpProvider m_helpProvider;

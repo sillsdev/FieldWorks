@@ -17,9 +17,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	{
 		private readonly LcmCache m_cache;
 
-		public FwXmlTraceManager(LcmCache fdoCache)
+		public FwXmlTraceManager(LcmCache lcmCache)
 		{
-			m_cache = fdoCache;
+			m_cache = lcmCache;
 		}
 
 		public bool IsTracing { get; set; }

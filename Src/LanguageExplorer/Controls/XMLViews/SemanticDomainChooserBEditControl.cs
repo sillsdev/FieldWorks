@@ -105,7 +105,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			m_doingSuggest = true;
 			ChosenObjects = new List<ICmObject>(0);
-			// Unfortunately ProgressState is from FwControls which depends on FDO, so passing it as a parameter
+			// Unfortunately ProgressState is from FwControls which depends on LCM, so passing it as a parameter
 			// to the searchCache's InitializeCache method would result in a circular dependency.
 			state.PercentDone = 15;
 			state.Breath(); // give the user a LITTLE hope that things are happening!

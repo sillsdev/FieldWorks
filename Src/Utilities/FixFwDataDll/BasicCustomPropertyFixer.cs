@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.FixData
 						break;
 					case "GenDate":
 						break;
-						// Eventually, we may need to handle all the types for which FdoIFwMetaDataCache.IsValueType returns true,
+						// Eventually, we may need to handle all the types for which LcmIFwMetaDataCache.IsValueType returns true,
 						// currently Boolean, GenDate, Guid, Integer, Float, Numeric, and Time.
 						// Some of these would need other default values, such as 'false' (or False?).
 						// However, currently Integer and GenDate are the only supported kinds of custom basic property,

@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// RootSite is the most commonly used implementation of IVwRootSite for applications that
 	/// don't want to use the FieldWorks Framework classes (if using them is OK, FwRootSite
 	/// adds considerable functionality, such as stylesheets and find/replace). It requires
-	/// initialization with an fdoCache.
+	/// initialization with an LcmCache.
 	/// </summary>
 	/// -----------------------------------------------------------------------------------------
 	public class RootSite : SimpleRootSite, IHeightEstimator, IRootSiteSlave
@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public const int kdxBaselineRootsiteWidth = 1500;
 
-		/// <summary>The FDO cache</summary>
+		/// <summary>The LCM cache</summary>
 		protected LcmCache m_cache;
 		/// <summary>
 		/// the group root site that controls this one.
@@ -515,7 +515,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the FDO cache
+		/// Gets or sets the LCM cache
 		/// </summary>
 		/// <value>A <see cref="LcmCache"/></value>
 		/// -----------------------------------------------------------------------------------
@@ -1175,7 +1175,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		///
 		/// </summary>
-		/// <param name="cache">The Fdo Cache</param>
+		/// <param name="cache">The LCM Cache</param>
 		/// <param name="viewTypeId">An identifier for a group of views that share the same
 		/// height estimates</param>
 		/// ------------------------------------------------------------------------------------

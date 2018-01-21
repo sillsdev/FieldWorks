@@ -33,7 +33,7 @@ namespace ParatextImport
 		#endregion
 
 		#region Data members
-		/// <summary>The FDO Cache</summary>
+		/// <summary>The LCM Cache</summary>
 		protected readonly LcmCache m_cache;
 
 		private readonly IApp m_app;

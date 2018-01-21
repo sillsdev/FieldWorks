@@ -29,7 +29,7 @@ namespace SIL.FieldWorks
 		/// Create configuration file for analysis writing systems in Reversal Index
 		/// </summary>
 		/// <param name="wsMgr">IWritingSystemManager</param>
-		/// <param name="cache">The FDO cache</param>
+		/// <param name="cache">The LCM cache</param>
 		/// <param name="defaultConfigDir">Default Configuration directory</param>
 		/// <param name="projectsDir">Projects directory</param>
 		/// <param name="originalProjectName">Project Name</param>
@@ -87,7 +87,7 @@ namespace SIL.FieldWorks
 					}
 					else if (wsAtt.Value != curWs)
 					{
-						// REVIEW (Hasso) 2016.09: what to do? Rename the conflicting file, or re-WS the config? Can't ask, b/c FDO has no UI
+						// REVIEW (Hasso) 2016.09: what to do? Rename the conflicting file, or re-WS the config? Can't ask, b/c LCM has no UI
 						// If the user has duplicated some other Reversal Index Config and given it this name, it is possible they were trying
 						// to configure the RI for this WS. Update the Config to point to this WS
 						wsAtt.Value = curWs;
@@ -134,7 +134,7 @@ namespace SIL.FieldWorks
 		/// Method returns Guid of existing or created writing system
 		/// </summary>
 		/// <param name="wsObj">Writing system Object</param>
-		/// <param name="cache">The FDO cache</param>
+		/// <param name="cache">The LCM cache</param>
 		/// <returns>returns Guid</returns>
 		public static Guid GetOrCreateWsGuid(CoreWritingSystemDefinition wsObj, LcmCache cache)
 		{

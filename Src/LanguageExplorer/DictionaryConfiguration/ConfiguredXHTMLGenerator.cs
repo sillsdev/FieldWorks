@@ -1513,7 +1513,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					{
 						// When a node points to a collection all the child nodes operate on individual items in the
 						// collection, so look them up in the type that the collection contains. e.g. IEnumerable<ILexEntry>
-						// gives ILexEntry and IFdoVector<ICmObject> gives ICmObject
+						// gives ILexEntry and ILcmVector<ICmObject> gives ICmObject
 						lookupType = fieldType.GetGenericArguments()[0];
 					}
 					else
@@ -1528,7 +1528,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private static Type GetCustomFieldType(Type lookupType, ConfigurableDictionaryNode config, IFwMetaDataCacheManaged metaDataCacheAccessor)
 		{
-			// FDO doesn't work with interfaces, just concrete classes so chop the I off any interface types
+			// LCM doesn't work with interfaces, just concrete classes so chop the I off any interface types
 			var customFieldOwnerClassName = lookupType.Name.TrimStart('I');
 			var customFieldFlid = GetCustomFieldFlid(config, metaDataCacheAccessor, customFieldOwnerClassName);
 			if (customFieldFlid != 0)
@@ -2174,7 +2174,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				}
 			}
 			//Adding tags for Sense Number and Caption
-			// Note: this SenseNumber comes from a field in the FDO model (not generated based on a DictionaryNodeSenseOptions).
+			// Note: this SenseNumber comes from a field in the LCM model (not generated based on a DictionaryNodeSenseOptions).
 			//  Should we choose in the future to generate the Picture's sense number using ConfiguredXHTMLGenerator based on a SenseOption,
 			//  we will need to pass the SenseOptions to this point in the call tree.
 			var captionBldr = new StringBuilder();

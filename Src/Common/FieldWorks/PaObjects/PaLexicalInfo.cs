@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.PaObjects
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes the FDO repositories from the specified project and server but only
+		/// Initializes the LCM repositories from the specified project and server but only
 		/// loads the writing systems. Initialize must be called to get the rest of the data.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.PaObjects
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes the FDO repositories from the specified project and server.
+		/// Initializes the LCM repositories from the specified project and server.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public bool Initialize(string name, string server, int timeToWaitForProcessStart,
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.PaObjects
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes the FDO repositories from the specified project and server.
+		/// Initializes the LCM repositories from the specified project and server.
 		///
 		/// <returns>
 		/// true if the repositories are successfully initialized and FieldWorks started;

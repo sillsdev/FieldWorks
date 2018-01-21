@@ -3973,7 +3973,7 @@ namespace ParatextImport
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Create an FDO object from the GUID in the given props
+		/// Create an LCM object from the GUID in the given props
 		/// </summary>
 		/// <param name="ttp">The props that we hope represent an object</param>
 		/// <returns>The extracted object</returns>
@@ -6067,7 +6067,7 @@ namespace ParatextImport
 			ITsStrBldr bldr = tss.GetBldr();
 			bldr.ReplaceTsString(tss.Length, tss.Length, para.Contents);
 			prevPara.Contents = bldr.GetString();
-			// FDO takes care of doing the PropChanged when setting the TsString
+			// LCM takes care of doing the PropChanged when setting the TsString
 
 			// Append the translations to the previous paragraph translations
 			ICmTranslation prevBT = prevPara.GetOrCreateBT();
@@ -6079,7 +6079,7 @@ namespace ParatextImport
 
 			// Delete the given paragraph
 			((IStText)para.Owner).ParagraphsOS.Remove(para);
-			// fdo Remove does propchanged
+			// LCM Remove does propchanged
 		}
 
 		/// ------------------------------------------------------------------------------------

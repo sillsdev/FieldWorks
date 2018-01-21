@@ -113,7 +113,7 @@
       <Link>Properties\AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="DummyLcmUI.cs" />
-    <Compile Include="FdoLexiconTests.cs" />
+    <Compile Include="LcmLexiconTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

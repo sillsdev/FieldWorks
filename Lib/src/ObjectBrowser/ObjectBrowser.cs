@@ -13,7 +13,7 @@ namespace SIL.ObjectBrowser
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// FDOBrowserForm Class
+	/// ObjectBrowser Class
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	public partial class ObjectBrowser : Form

@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.Filters
 
 		// Comparers:
 		// IcuComparer (PersistSimpleSorter)
-		// FdoCompare (created only temporarily in PropertyRecordSorter, does not need persistence)
+		// LcmCompare (created only temporarily in PropertyRecordSorter, does not need persistence)
 		// StringFinderCompare (SortersEtc)
 		// ReverseComparer (SortersEtc)
 		// IntStringComparer (SortersEtc)

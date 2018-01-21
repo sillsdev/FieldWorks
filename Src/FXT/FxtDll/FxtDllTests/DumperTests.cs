@@ -15,7 +15,7 @@ using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FXT
 {
-#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO
+#if WANTTESTPORT //(FLEx) Need to port these tests to the new LCM
 	[TestFixture]
 	public class DumperTests : MemoryOnlyBackendProviderTestBase
 	{
@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.Common.FXT
 		[Test]
 		public void MultilingualStringBasedonStringDictionary()
 		{
-			FdoReferenceSequence<LgWritingSystem> systems = Cache.LangProject.CurVernWssRS;
+			LcmReferenceSequence<LgWritingSystem> systems = Cache.LangProject.CurVernWssRS;
 			LexDb ld = Cache.LangProject.LexDbOA;
 			LexEntry le = MakeLexEntry("xyzTest1", "xyzDefn1.1", null);
 			MoForm m = MoForm.MakeMorph(le, "-is");

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
@@ -31,7 +32,7 @@ namespace LanguageExplorer.Areas.Lists
 		public DeleteCustomList(LcmCache cache)
 		{
 			m_cache = cache;
-			m_ddbf = (ISilDataAccessManaged)m_cache.DomainDataByFlid;
+			m_ddbf = m_cache.GetManagedSilDataAccess();
 		}
 
 		#endregion

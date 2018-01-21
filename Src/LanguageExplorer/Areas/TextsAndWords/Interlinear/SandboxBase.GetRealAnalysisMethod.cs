@@ -114,8 +114,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			/// <returns>HVO of analysis (WfiWordform, WfiAnalyis, or WfiGloss)</returns>
 			private IAnalysis FinishItOff()
 			{
-				LcmCache fdoCache = m_caches.MainCache;
-				var wfRepository = fdoCache.ServiceLocator.GetInstance<IWfiWordformRepository>();
+				LcmCache lcmCache = m_caches.MainCache;
+				var wfRepository = lcmCache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 				if (m_wf == null)
 				{
 					IWfiWordform wf;
@@ -128,7 +128,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						// Since he is confirming this analysis, we now need to create one.
 						// Note: if in context of the wordforms DummyRecordList, the RecordList is
 						// smart enough to handle inserting one object without having to Reload the whole list.
-						m_wf = fdoCache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create(m_tssForm);
+						m_wf = lcmCache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create(m_tssForm);
 					}
 				}
 				// If sandbox contains only an empty morpheme string, don't consider this to be a true analysis.
@@ -271,14 +271,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						else if (bestEntry != null)
 						{
 							// we found matching lex entry, so create a new sense for it
-							var senseFactory = fdoCache.ServiceLocator.GetInstance<ILexSenseFactory>();
+							var senseFactory = lcmCache.ServiceLocator.GetInstance<ILexSenseFactory>();
 							ILexSense newSense = senseFactory.Create(bestEntry, new SandboxGenericMSA(), "");
 							// copy over any word glosses we're showing.
 							CopyGlossesToSense(newSense);
 							// copy over the Word POS
 							var pos = m_caches.RealObject(m_sda.get_ObjectProp(m_hvoSbWord, ktagSbWordPos)) as IPartOfSpeech;
 							(newSense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA = pos;
-							var morph = fdoCache.ServiceLocator.GetInstance<IMoFormRepository>().GetObject(matchingMorphItem.m_hvoMorph);
+							var morph = lcmCache.ServiceLocator.GetInstance<IMoFormRepository>().GetObject(matchingMorphItem.m_hvoMorph);
 							handler.UpdateMorphEntry(morph, bestEntry, newSense);
 						}
 						else
@@ -365,7 +365,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							}
 						}
 						// Create one.
-						var waFactory = fdoCache.ServiceLocator.GetInstance<IWfiAnalysisFactory>();
+						var waFactory = lcmCache.ServiceLocator.GetInstance<IWfiAnalysisFactory>();
 						var waNew = waFactory.Create();
 						m_wf.AnalysesOC.Add(waNew);
 						m_wa = waNew;
@@ -379,13 +379,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					IPartOfSpeech pos = null;
 					if (m_hvoCategoryReal != 0)
-						pos = fdoCache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(m_hvoCategoryReal);
+						pos = lcmCache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(m_hvoCategoryReal);
 					m_wa.CategoryRA = pos;
-					var mbFactory = fdoCache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>();
-					var msaRepository = fdoCache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>();
-					var mfRepository = fdoCache.ServiceLocator.GetInstance<IMoFormRepository>();
-					var senseRepository = fdoCache.ServiceLocator.GetInstance<ILexSenseRepository>();
-					var inflTypeRepository = fdoCache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>();
+					var mbFactory = lcmCache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>();
+					var msaRepository = lcmCache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>();
+					var mfRepository = lcmCache.ServiceLocator.GetInstance<IMoFormRepository>();
+					var senseRepository = lcmCache.ServiceLocator.GetInstance<ILexSenseRepository>();
+					var inflTypeRepository = lcmCache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>();
 					for (int imorph = 0; imorph < m_cmorphs; imorph++)
 					{
 						IWfiMorphBundle mb;
@@ -561,7 +561,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (gloss == null)
 				{
 					// Create one.
-					var wgFactory = fdoCache.ServiceLocator.GetInstance<IWfiGlossFactory>();
+					var wgFactory = lcmCache.ServiceLocator.GetInstance<IWfiGlossFactory>();
 					gloss = wgFactory.Create();
 					m_wa.MeaningsOC.Add(gloss);
 				}

@@ -97,7 +97,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ConsoleLogger.cs" />
-    <Compile Include="NullFdoDirectories.cs" />
+    <Compile Include="NullLcmDirectories.cs" />
     <Compile Include="NullThreadedProgress.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectIdentifier.cs" />

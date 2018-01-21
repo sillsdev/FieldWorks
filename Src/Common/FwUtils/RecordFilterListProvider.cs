@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
-		/// <remarks>This has a signature of object just because is confined to CoreImpl, so does not know about FDO RecordFilters</remarks>
+		/// <remarks>This has a signature of object just because is confined to CoreImpl, so does not know about LCM RecordFilters</remarks>
 		public abstract object GetFilter(string id);
 
 		/// <summary>

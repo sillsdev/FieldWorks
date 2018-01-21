@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string ksFlexFolderName = "Language Explorer";
 
 
-		/// <summary>The Scripture-specific stylesheet (ideally, this would be in a TE-specific place, but FDO needs it)</summary>
+		/// <summary>The Scripture-specific stylesheet (ideally, this would be in a TE-specific place, but LCM needs it)</summary>
 		public const string kTeStylesFilename = "TeStyles.xml";
 		private const string ksProjectsDir = "ProjectsDir";
 

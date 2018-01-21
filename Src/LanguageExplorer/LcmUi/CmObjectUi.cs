@@ -202,7 +202,7 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		/// <summary>
-		/// In many cases we don't really need the FDO object, which can be relatively expensive
+		/// In many cases we don't really need the LCM object, which can be relatively expensive
 		/// to create. This version saves the information, and creates it when needed.
 		/// </summary>
 		/// <param name="cache"></param>
@@ -303,15 +303,8 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		/// <summary>
-		/// Create a new FDO object.
+		/// Create a new LCM object.
 		/// </summary>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
-		/// <param name="classId"></param>
-		/// <param name="hvoOwner"></param>
-		/// <param name="flid"></param>
-		/// <param name="insertionPosition"></param>
-		/// <returns></returns>
 		public static CmObjectUi CreateNewUiObject(IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			var cache = propertyTable.GetValue<LcmCache>("cache");

@@ -547,7 +547,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// For a set of elements in cmObject that are referred to by setFlid, return the first element, or null.
 		/// </summary>
-		private static ICmPossibility FetchFirstElementFromSet(ICmObject cmObject, int setFlid, ISilDataAccess mainCacheAccessor, ILcmServiceLocator fdoServiceLocator)
+		private static ICmPossibility FetchFirstElementFromSet(ICmObject cmObject, int setFlid, ISilDataAccess mainCacheAccessor, ILcmServiceLocator lcmServiceLocator)
 		{
 			var elementCount = mainCacheAccessor.get_VecSize(cmObject.Hvo, setFlid);
 			if (elementCount == 0)
@@ -556,7 +556,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 
 			var firstElementHvo = mainCacheAccessor.get_VecItem(cmObject.Hvo, setFlid, 0);
-			return fdoServiceLocator.GetObject(firstElementHvo) as ICmPossibility;
+			return lcmServiceLocator.GetObject(firstElementHvo) as ICmPossibility;
 		}
 
 		internal static int GetCustomFieldFlid(XElement caller, IFwMetaDataCache mdc, ICmObject obj)

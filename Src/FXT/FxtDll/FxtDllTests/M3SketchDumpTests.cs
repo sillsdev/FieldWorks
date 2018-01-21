@@ -16,7 +16,7 @@ using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FXT
 {
-#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO
+#if WANTTESTPORT //(FLEx) Need to port these tests to the new LCM
 	/// <summary>
 	/// Summary description for M3SketchDumpTests.
 	/// </summary>

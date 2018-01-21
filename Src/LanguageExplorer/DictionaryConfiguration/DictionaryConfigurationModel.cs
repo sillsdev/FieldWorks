@@ -130,7 +130,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		}
 
 		/// <summary>
-		/// A concatenation of Parts and SharedItems; useful for migration and synchronization with the FDO model
+		/// A concatenation of Parts and SharedItems; useful for migration and synchronization with the LCM model
 		/// </summary>
 		[XmlIgnore]
 		public IEnumerable<ConfigurableDictionaryNode> PartsAndSharedItems => Parts.Concat(SharedItems);

@@ -553,7 +553,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Handle a WM_CHAR message.
 		/// Caller should ensure this is wrapped in a UOW (typically done in an override of
 		/// OnKeyPress in RootSiteEditingHelper, since SimpleRootSite does not have access
-		/// to FDO and UOW).
+		/// to LCM and UOW).
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		public virtual void OnKeyPress(KeyPressEventArgs e, Keys modifiers)
@@ -764,7 +764,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Handle a key press.
 		/// Caller should ensure this is wrapped in a UOW (typically done in an override of
 		/// OnKeyPress in RootSiteEditingHelper, since SimpleRootSite does not have access
-		/// to FDO and UOW).
+		/// to LCM and UOW).
 		/// </summary>
 		/// <param name="keyChar">The pressed character key</param>
 		/// <param name="modifiers">key modifies - shift status, etc.</param>
@@ -966,7 +966,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Handle typed character.
 		/// Caller should ensure this is wrapped in a UOW (typically done in an override of
 		/// OnKeyPress in RootSiteEditingHelper, since SimpleRootSite does not have access
-		/// to FDO and UOW).
+		/// to LCM and UOW).
 		/// </summary>
 		/// <param name="input">input string</param>
 		/// <param name="shiftStatus">Status of Shift/Control/Alt key</param>
@@ -1011,7 +1011,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
-		/// Another case of something we can currently only do in the FDO-aware subclass.
+		/// Another case of something we can currently only do in the LCM-aware subclass.
 		/// </summary>
 		protected virtual void MergeLastTwoUnitsOfWork()
 		{

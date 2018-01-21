@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				m_rgStyles.Add(style);
 			}
 
-			// Save the style properties in the fdocache's style object
+			// Save the style properties in the LCM cache's style object
 			style.Name = sName;
 			style.BasedOnStyle = hvoBasedOn;
 			style.NextStyle = hvoNext;

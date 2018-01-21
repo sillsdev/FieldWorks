@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.Common.Framework
 	public abstract class StylesXmlAccessor : SettingsXmlAccessorBase
 	{
 		#region Data members
-		/// <summary>The FDO cache (must not be null)</summary>
+		/// <summary>The LCM cache (must not be null)</summary>
 		protected readonly LcmCache m_cache;
 		/// <summary>The progress dialog (may be null)</summary>
 		protected IProgress m_progressDlg;
@@ -217,7 +217,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="progressDlg">The progress dialog.</param>
 		/// <param name="parameters">The parameters. First parameter is the style objects
-		/// (a FdoOwningCollection&lt;IStStyle&gt;), second is the styles (an XmlNode).</param>
+		/// (a LcmOwningCollection&lt;IStStyle&gt;), second is the styles (an XmlNode).</param>
 		/// ------------------------------------------------------------------------------------
 		protected object CreateStyles(IProgress progressDlg, params object[] parameters)
 		{

@@ -263,7 +263,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the FDO cache for the view constructor.
+		/// Gets or sets the LCM cache for the view constructor.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public override LcmCache Cache
@@ -336,7 +336,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// We need to show something, since the current view code can't handle a property
 		/// containing no boxes.  Check to see if the StText is missing or if there are
 		/// no paragraphs.  If so, then put in an empty string placeholder.
-		/// TODO (FWR-1688): If we prevent the occurrence of texts with no paragraphs in FDO,
+		/// TODO (FWR-1688): If we prevent the occurrence of texts with no paragraphs in LCM,
 		/// this code can be removed.
 		/// </summary>
 		/// <param name="vwenv">view environment</param>

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -14,8 +14,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Application;
 using SIL.LCModel.Utils;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -897,7 +897,7 @@ namespace SIL.FieldWorks.Common.FXT
 				return m_cache.ServiceLocator.GetInstance<IPhEnvironmentRepository>().AllValidInstances().Select(env => env.Hvo).ToList();
 			}
 
-			int[] hvos = ((ISilDataAccessManaged)m_cache.DomainDataByFlid).VecProp(hvoItem, flid);
+			int[] hvos = m_cache.GetManagedSilDataAccess().VecProp(hvoItem, flid);
 			return new List<int>(hvos);
 		}
 

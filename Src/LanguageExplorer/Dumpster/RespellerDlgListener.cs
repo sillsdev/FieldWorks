@@ -87,7 +87,7 @@ namespace LanguageExplorer.Dumpster
 			{
 				// Check for a valid vernacular writing system.  (See LT-8892.)
 				var ws = TsStringUtils.GetWsAtOffset(tssWord, 0);
-				var cache = PropertyTable.GetValue<FdoCache>("cache");
+				var cache = PropertyTable.GetValue<LcmCache>("cache");
 				CoreWritingSystemDefinition wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
 				if (cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(wsObj))
 					return tssWord;
@@ -175,7 +175,7 @@ namespace LanguageExplorer.Dumpster
 			if (tss == null || string.IsNullOrEmpty(tss.Text))
 				return;
 
-			var cache = PropertyTable.GetValue<FdoCache>("cache");
+			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			var wordform = WordformApplicationServices.GetWordformForForm(cache, tss);
 			using (var luh = new ListUpdateHelper(RecordList.RecordListRepository.ActiveRecordList))
 			{

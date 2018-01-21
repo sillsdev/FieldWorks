@@ -234,7 +234,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		#region GetProperties
 
 		/// <summary>
-		/// Gets the FDO cache.
+		/// Gets the LCM cache.
 		/// </summary>
 		public LcmCache Cache
 		{

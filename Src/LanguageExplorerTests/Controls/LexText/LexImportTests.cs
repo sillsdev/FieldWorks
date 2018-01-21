@@ -17,7 +17,7 @@ using SIL.LCModel;
 namespace LanguageExplorerTests.Controls.LexText
 {
 	/// <summary>
-	/// Tests the behavior of LexImport (and hence some aspects of FDO.XmlImportData).
+	/// Tests the behavior of LexImport (and hence some aspects of SIL.LCModel.Application.ApplicationServices.XmlImportData).
 	/// </summary>
 	[TestFixture]
 	public class LexImportTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase

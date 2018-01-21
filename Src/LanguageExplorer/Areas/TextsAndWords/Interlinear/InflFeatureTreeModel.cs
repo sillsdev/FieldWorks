@@ -11,16 +11,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	public class InflFeatureTreeModel : TreeModel
 	{
-		private readonly IFsFeatureSystem m_fdoFeatSys;
+		private readonly IFsFeatureSystem m_lcmFeatSys;
 		private readonly Image m_complexImage;
 		private readonly Image m_closedImage;
 
-		public InflFeatureTreeModel(IFsFeatureSystem fdoFeatSys, IDictionary<IFsFeatDefn, object> inflFeats, Image complexImage, Image closedImage)
+		public InflFeatureTreeModel(IFsFeatureSystem lcmFeatSys, IDictionary<IFsFeatDefn, object> inflFeats, Image complexImage, Image closedImage)
 		{
-			m_fdoFeatSys = fdoFeatSys;
+			m_lcmFeatSys = lcmFeatSys;
 			m_complexImage = complexImage;
 			m_closedImage = closedImage;
-			AddFeatures(Root, m_fdoFeatSys.FeaturesOC, inflFeats);
+			AddFeatures(Root, m_lcmFeatSys.FeaturesOC, inflFeats);
 		}
 
 		private void AddFeatures(Node parent, IEnumerable<IFsFeatDefn> features, IDictionary<IFsFeatDefn, object> values)

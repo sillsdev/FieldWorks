@@ -19,7 +19,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 	/// <summary>
 	/// Test the itemClicked method in XmlDocView.
 	/// There's really nothing XmlDocView-specific to this so we test with a simple root site for proof of concept.
-	/// There's still a good deal of integration test to this (it uses chunks of SimpleRootSite and FDO and the Views code)
+	/// There's still a good deal of integration test to this (it uses chunks of SimpleRootSite and LCM and the Views code)
 	/// but at least it's not using all of XmlDocView and the XML configuration.
 	/// </summary>
 #if RANDYTODO // Restore once Mediator/pubsub all work again

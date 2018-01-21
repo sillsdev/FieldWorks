@@ -59,7 +59,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Initialize for adding new writing systems during import.
 		/// </summary>
-		/// <param name="cache">primary FDO data cache</param>
+		/// <param name="cache">primary LCM data cache</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The app.</param>
 		/// <param name="wss">The writing systems already displayed.</param>
@@ -169,7 +169,7 @@ namespace LanguageExplorer.Controls.LexText
 			if (ws != null)
 			{
 				m_wsNew = ws;
-				// now add the ws to the FDO list for it
+				// now add the ws to the LCM list for it
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 				{
 					// Add a global writing system to the local writing system store.  (Replace

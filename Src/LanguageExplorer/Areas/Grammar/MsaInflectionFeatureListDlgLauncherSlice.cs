@@ -171,8 +171,6 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <returns>true if the feature structure has content in FeatureSpecs; false otherwise</returns>
 		public static bool ShowSliceForVisibleIfData(XElement node, ICmObject obj)
 		{
-
-			//LCM.Cellar.IFsFeatStruc fs = obj as FDO.Cellar.IFsFeatStruc;
 			var flid = GetFlid(node, obj);
 			var fs = flid != 0 ? GetFeatureStructureFromMSA(obj, flid) : obj as IFsFeatStruc;
 			return fs?.FeatureSpecsOC.Count > 0;

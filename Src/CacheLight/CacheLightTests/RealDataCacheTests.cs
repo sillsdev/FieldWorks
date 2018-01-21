@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.CacheLightTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Shuts down the FDO cache
+		/// Shuts down the LCM cache
 		/// </summary>
 		/// <remarks>This method is called after each test</remarks>
 		/// ------------------------------------------------------------------------------------

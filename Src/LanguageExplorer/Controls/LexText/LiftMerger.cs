@@ -994,9 +994,9 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		/// <param name="multiText"></param>
 		/// <remarks>JohnT: this is slightly bizarre, since LiftMerger is an IMPORT function and for the most part,
-		/// we are not creating XML files. Most of the places we want to put this text, in FDO objects, we end up
+		/// we are not creating XML files. Most of the places we want to put this text, in LCM objects, we end up
 		/// Decoding it again. Worth considering refactoring so that this method (renamed) just deals with characters
-		/// we don't want in FDO objects, like tab and newline, and leaves the XML reserved characters alone. Then
+		/// we don't want in LCM objects, like tab and newline, and leaves the XML reserved characters alone. Then
 		/// we could get rid of a lot of Decode statements also.
 		/// Steve says one place we do need to make encoded XML is in the content of Residue fields.</remarks>
 		/// <returns></returns>

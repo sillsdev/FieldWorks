@@ -466,7 +466,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// except that any "generate" elements are replaced with what they generate.
 		/// </summary>
 		/// <param name="root">The root.</param>
-		/// <param name="cache">The FDO cache.</param>
+		/// <param name="cache">The LCM cache.</param>
 		/// <param name="vc">for parts/layouts</param>
 		/// <param name="rootClassId">the class of the rootObject used to generate the part</param>
 		/// <returns></returns>
@@ -483,7 +483,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// For generating parts through "layouts" use the interface that passes a Vc.
 		/// </summary>
 		/// <param name="root">The root.</param>
-		/// <param name="cache">The FDO cache.</param>
+		/// <param name="cache">The LCM cache.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
 		static public List<XElement> GetGeneratedChildren(XElement root, LcmCache cache)
@@ -497,7 +497,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// except that any "generate" elements are replaced with what they generate.
 		/// </summary>
 		/// <param name="root">The root.</param>
-		/// <param name="cache">The FDO cache.</param>
+		/// <param name="cache">The LCM cache.</param>
 		/// <param name="keyAttrNames">if non-null, gives a list of key attribute names.
 		/// generated children which match another node in root in all key attributes are omitted.</param>
 		/// <returns></returns>

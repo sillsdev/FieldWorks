@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// view constructor as needed. It must implement IChangeRootObject.
 	/// 2. Override ConstructRoot, which should return a new instance of the SimpleRootSite subclass.
 	///		(This class will take care of docking the root site and making it visible and setting
-	///		its FdoCache, which will result in its MakeRoot being called.)
+	///		its LcmCache, which will result in its MakeRoot being called.)
 	/// </summary>
 	internal class RecordDocView : RecordView
 	{

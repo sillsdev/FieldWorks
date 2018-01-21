@@ -168,7 +168,7 @@ namespace ParatextImport
 		/// ------------------------------------------------------------------------------------
 		private void AddSegmentTranslations(IScrTxtPara para, int ichMin, string freeTrans)
 		{
-			// In the new FDO we can't really add arbitrary segments anymore. FDO now keeps
+			// In the new LCM we can't really add arbitrary segments anymore. LCM now keeps
 			// track of the paragraph content changes and creates segments for them on the
 			// fly. The best we can do anymore is to find a segment that matches what we
 			// think we want (a segment that starts at ichMin) and set the free translation
@@ -1285,11 +1285,9 @@ namespace ParatextImport
 
 			// We used to revise the BT of the unchanged sentence, since it is part of a single segment sequence with
 			// the one we are replacing. We had to change this behavior when moving the segmenting code to
-			// FDO. If we want that behavior back, we need to change this test (FWR-1124).
+			// LCM. If we want that behavior back, we need to change this test (FWR-1124).
 			VerifyTranslations(para1Curr, new []{ "My aching head Trans", "Current Trans" },
 				new[] { "My aching head!".Length, "An unchanged sentence".Length }, new[] { 1, 1 }, "heading");
-			//VerifySegments(para1Curr, new[] { "My aching head Trans", "Rev Trans" },
-			//    new[] { "My aching head!".Length, "An unchanged sentence".Length }, "heading");
 		}
 
 		/// ------------------------------------------------------------------------------------

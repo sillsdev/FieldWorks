@@ -17,9 +17,6 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public class WordSetFilter : RecordFilter
 	{
-		//protected IWfiWordSet m_wordSet;
-		//protected FdoReferenceCollection m_cases;
-		//protected LcmCache m_cache;
 		/// <summary></summary>
 		protected int[] m_hvos;
 

@@ -812,7 +812,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						{
 							// Ignore a failure here - LT-3091 (after adding a word and def in cat entry,
 							// selecting undo and then closing the application causes the following error:
-							//     Msg: Tried to create an FDO object based on db object(hvo=39434class=0),
+							//     Msg: Tried to create an LCM object based on db object(hvo=39434class=0),
 							//     but that class is not fit in this signature (LexSense)
 							Debug.WriteLine("mi.Invoke failed in XmlBrowseRDEView: " + e.InnerException.Message);
 							throw e;

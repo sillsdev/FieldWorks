@@ -280,7 +280,8 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				convertedModel.Parts[1].Style = alphaDefaultModel.Parts[1].Style; // Main Entry had no style in the old model
 				for (var i = 2; i < convertedModel.Parts.Count; ++i)
 				{
-					CopyDefaultsIntoMinorEntryNode(convertedModel, convertedModel.Parts[i], alphaDefaultModel.Parts[2], /* Minor Entry (Variants)*/ ListIds.Variant);
+					// Minor Entry (Variants)
+					CopyDefaultsIntoMinorEntryNode(convertedModel, convertedModel.Parts[i], alphaDefaultModel.Parts[2], ListIds.Variant);
 				}
 			}
 			else

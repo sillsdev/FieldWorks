@@ -14,7 +14,7 @@ using HvoFlidWSKey = SIL.LCModel.Application.HvoFlidWSKey;
 namespace LanguageExplorer.Controls.XMLViews
 {
 	/// <summary>
-	/// A 'Decorator' class for the FDO ISilDataAccess implementation.
+	/// A 'Decorator' class for the LCM ISilDataAccess implementation.
 	/// This class allows for caching the 'fake' flids used in a browse view
 	/// (i.e., flides used for the check box and selection, etc.).
 	/// </summary>

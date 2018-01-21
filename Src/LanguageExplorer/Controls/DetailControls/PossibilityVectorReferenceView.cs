@@ -7,8 +7,8 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.XMLViews;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Application;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -83,7 +83,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override ISilDataAccess GetDataAccess()
 		{
-			return m_sda ?? (m_sda = new PossibilityVectorReferenceViewSdaDecorator((ISilDataAccessManaged) m_cache.DomainDataByFlid, m_cache,
+			return m_sda ?? (m_sda = new PossibilityVectorReferenceViewSdaDecorator(m_cache.GetManagedSilDataAccess(), m_cache,
 					m_displayNameProperty, m_displayWs)
 					{
 						Empty = TsStringUtils.EmptyString(m_cache.DefaultAnalWs)

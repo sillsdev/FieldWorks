@@ -2666,7 +2666,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public void ResetGuessCache()
 		{
-			// recreate the guess services, so they will use the latest FDO data.
+			// recreate the guess services, so they will use the latest LCM data.
 			GuessServices.ClearGuessData();
 			// clear the Decorator cache for the guesses, so it won't have any stale data.
 			m_sdaDecorator.ClearPropFromCache(InterlinViewDataCache.AnalysisMostApprovedFlid);

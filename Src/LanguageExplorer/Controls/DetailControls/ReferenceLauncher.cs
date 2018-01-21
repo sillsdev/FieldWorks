@@ -109,7 +109,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// and I bailed out and just turned on the "sorted" property of the chooser,
 			// which gives us a dumb English sort.
 			// but when it is time to get back to this... what I was doing what is misguided
-			// because this sorter wants FdoObjects, but object labels don't have those on the
+			// because this sorter wants LCM objects, but object labels don't have those on the
 			// surface.  instead, they can readily give a string, through ToString().which is
 			// what made me realize that until we have a way to sort something based on ICU, I
 			// might as well let .net do the sorting.
@@ -122,10 +122,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			// however, we need a TreeView in many cases... I think there's also a FieldWorks
 			// one of those that probably doesn't have sorting built-in yet...in which case we
 			// might want to do the sorting here.
-
-			//SIL.FieldWorks.Filters.RecordSorter sorter =
-			//	new PropertyRecordSorter(AreaServices.ShortName);
-			//sorter.Sort ((ArrayList) labels);
 
 			using (var chooser = GetChooser(labels))
 			{
@@ -141,7 +137,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					// if you know what I mean.)
 					//if (candidates.Count != 0)
 					//    chooser.TextParamHvo = m_cache.GetOwnerOfObject((int)candidates[0]);
-					// JohnT: this approach depends on a new FDO method.
+					// JohnT: this approach depends on a new LCM method.
 					var referenceTargetOwner = m_obj.ReferenceTargetOwner(m_flid);
 					if (referenceTargetOwner != null)
 					{

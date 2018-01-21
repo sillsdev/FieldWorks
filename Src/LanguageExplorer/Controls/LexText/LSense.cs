@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace LanguageExplorer.Controls.LexText
 {
 	/// <summary>
-	/// Cheapo version of the FDO LexSense object.
+	/// Cheapo version of the LCM LexSense object.
 	/// </summary>
 	internal class LSense : LObject
 	{

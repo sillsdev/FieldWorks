@@ -2253,8 +2253,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <returns></returns>
 		private IConstChartTag MakeChartTag(ChartLocation cell, int hvoListItem, int icellPartInsertAt)
 		{
-			// N.B. The below note used to be true, but is no longer because FDO barfs if an
-			// object that is required to be owned exits FDO without being owned by something!
+			// N.B. The below note used to be true, but is no longer because LCM barfs if an
+			// object that is required to be owned exits LCM without being owned by something!
 			//
 			// [It's best to change all its properties before we insert it into the row.
 			// This avoids multiple display updates. Also, currently Redo loses changes
@@ -2796,7 +2796,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		/// <summary>
 		/// Enhance JohnT/EricP: note that we are gradually developing mechanisms to prevent this happening
-		/// (like AnalysisAdjuster). It may eventually be unnecessary as FDO causes objects
+		/// (like AnalysisAdjuster). It may eventually be unnecessary as LCM causes objects
 		/// to clean up after themselves more and more. Protected for testing.
 		/// </summary>
 		protected internal void CleanupInvalidChartCells()

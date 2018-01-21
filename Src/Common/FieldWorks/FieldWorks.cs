@@ -829,7 +829,7 @@ namespace SIL.FieldWorks
 		/// between systems, the stored value may become hopelessly invalid.  See FWNX-1005
 		/// for an example of the havoc than can ensue.
 		/// </summary>
-		/// <remarks>This method gets called when we open the FDO cache.</remarks>
+		/// <remarks>This method gets called when we open the LCM cache.</remarks>
 		private static void EnsureValidLinkedFilesFolder(LcmCache cache)
 		{
 			// If the location of the LinkedFilesRootDir was changed when this project was restored just now;
@@ -1482,12 +1482,12 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Handles a project name change.
 		/// </summary>
-		/// <param name="sender">The FDO cache (should be the same as our static one).</param>
+		/// <param name="sender">The LCM cache (should be the same as our static one).</param>
 		private static void ProjectNameChanged(LcmCache sender)
 		{
 			Debug.Assert(sender == Cache);
 			// The ProjectId should have already been updated (as a result of the rename deep
-			// in FDO because we pass the ProjectId by reference and it gets set in the BEP),
+			// in LCM because we pass the ProjectId by reference and it gets set in the BEP),
 			// however, generally, we aren't guaranteed that this behavior actually takes place,
 			// so we need to do it here to make sure our reference is updated.
 			s_projectId.Path = Cache.ProjectId.Path;
@@ -2141,7 +2141,7 @@ namespace SIL.FieldWorks
 				// last for the duration of the program, but if you exit and restart the program, it
 				// gets the correct (updated) value!?
 				// (On the other hand, I somewhat prefer this code which is fairly straightforward and
-				// obvious to depending on calling some static method hidden in the depths of FDO.)
+				// obvious to depending on calling some static method hidden in the depths of LCM.)
 				var projFileName = Path.GetFileName(projectPath);
 				var projName = Path.GetFileNameWithoutExtension(projectPath);
 				var path = Path.Combine(Path.Combine(newFolderForProjects, projName), projFileName);

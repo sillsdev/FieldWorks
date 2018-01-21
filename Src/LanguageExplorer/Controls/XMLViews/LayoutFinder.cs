@@ -385,9 +385,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			string methodName = splits[1];
 			// Get the directory where our DLLs live
 			string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			// For now we assume an FDO class.
-			Assembly fdoAssembly = Assembly.LoadFrom(Path.Combine(baseDir, "FDO.dll"));
-			Type targetType = fdoAssembly.GetType("SIL.FieldWorks.FDO." + className);
+			// For now we assume an LCM class.
+			Assembly lcmAssembly = Assembly.LoadFrom(Path.Combine(baseDir, "SIL.LCModel.dll"));
+			Type targetType = lcmAssembly.GetType("SIL.LCModel." + className);
 			if (targetType == null)
 				return;
 			MethodInfo info = targetType.GetMethod(methodName, BindingFlags.Static | BindingFlags.Public);

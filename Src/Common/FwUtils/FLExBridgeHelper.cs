@@ -125,7 +125,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// <summary>
 		/// constant for locating the nested lift repository (within the "OtherRepositories" path of a project).
-		/// See also SIL.FieldWorks.FDO.LcmFileHelper.OtherRepositories
+		/// See also SIL.FieldWorks.LCM.LcmFileHelper.OtherRepositories
 		/// </summary>
 		public const string LIFT = @"LIFT";
 
@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="projectGuid">Optional Lang Project guid, that is only used with the 'move_lift' command</param>
 		/// <param name="liftModelVersionNumber">Version of LIFT schema that is supported by FLEx.</param>
 		/// <param name="writingSystemId">The id of the first vernacular writing system</param>
-		/// <param name="fwmodelVersionNumber">Current FDO model version number</param>
+		/// <param name="fwmodelVersionNumber">Current LCM model version number</param>
 		/// <param name="onNonBlockerCommandComplete">Callback called when a non-blocker command has completed</param>
 		/// <param name="changesReceived">true if S/R made changes to the project.</param>
 		/// <param name="projectName">Name of the project to be opened after launch returns.</param>

@@ -1186,7 +1186,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			return bldr.GetString();
 		}
 
-		// Enhance JohnT: could we get the FDO object and just ask whether it is StTxtPara/CmPicture?
+		// Enhance JohnT: could we get the LCM object and just ask whether it is StTxtPara/CmPicture?
 		// This approach is brittle if we add subclasses of either.
 		private int FlidOfTarget(int hvoTarget)
 		{

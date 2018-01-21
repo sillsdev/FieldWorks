@@ -7,7 +7,7 @@ using SIL.LCModel;
 namespace LanguageExplorer.Controls.LexText
 {
 	/// <summary>
-	/// Cheapo version of the FDO MoForm object.
+	/// Cheapo version of the LCM MoForm object.
 	/// </summary>
 	internal class LMsa : LObject
 	{

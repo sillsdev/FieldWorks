@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,7 +10,6 @@ using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using SIL.LCModel;
-using SIL.LCModel.Application;
 using SIL.LCModel.Application.ApplicationServices;
 using SIL.LCModel.Utils;
 using System.Text;
@@ -2245,7 +2244,7 @@ namespace SIL.FieldWorks.Common.FXT
 				{
 					throw new FwConfigurationException("There is no field named '" + field + "' in " +
 						currentObject.GetType().ToString() +
-						". Remember that fields are the actual CELLAR names, so they do not have FDO suffixes like OA or RS.");
+						". Remember that fields are the actual CELLAR names, so they do not have LCM suffixes like OA or RS.");
 				}
 			}
 			else
@@ -2333,7 +2332,7 @@ namespace SIL.FieldWorks.Common.FXT
 				}
 				else
 				{
-					throw new FwConfigurationException("There is no field named '" + field + "' in "+currentObject.GetType().ToString()+". Remember that fields are the actual CELLAR names, so they do not have FDO suffixes like OA or RS.");
+					throw new FwConfigurationException("There is no field named '" + field + "' in "+currentObject.GetType().ToString()+ ". Remember that fields are the actual CELLAR names, so they do not have LCM suffixes like OA or RS.");
 				}
 			}
 			else
@@ -2388,7 +2387,7 @@ namespace SIL.FieldWorks.Common.FXT
 								}
 								if (flidMemberOf != 0)
 								{
-									int[] rghvoT = ((ISilDataAccessManaged)m_cache.DomainDataByFlid).VecProp(currentObject.Hvo, flidMemberOf);
+									int[] rghvoT = m_cache.GetManagedSilDataAccess().VecProp(currentObject.Hvo, flidMemberOf);
 									for (int i = 0; i < rghvoT.Length; ++i)
 									{
 										if (rghvoT[i] == hvo)

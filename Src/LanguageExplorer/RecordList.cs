@@ -1721,7 +1721,7 @@ namespace LanguageExplorer
 
 #if RANDYTODO
 		// TODO: I think this may be a bad merge.
-		public virtual void Init(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
+		public virtual void Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
 		{
 			CheckDisposed();
 
@@ -1745,7 +1745,7 @@ namespace LanguageExplorer
 			return fontHeight;
 		}
 
-		protected void BaseInit(FdoCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
+		protected void BaseInit(LcmCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
 		{
 			Debug.Assert(mediator != null);
 
@@ -3794,7 +3794,7 @@ namespace LanguageExplorer
 // the real object. As far as I (JohnT) can tell, though, we don't currently have any virtual properties
 // at the top level of a record list into which we try to insert newly created objects in this way.
 // check to see if we're wanting to insert into an owning relationship via a virtual property.
-				BaseFDOPropertyVirtualHandler vh = Cache.VwCacheDaAccessor.GetVirtualHandlerId(m_flid) as BaseFDOPropertyVirtualHandler;
+				var vh = Cache.VwCacheDaAccessor.GetVirtualHandlerId(m_flid) as BaseLCMPropertyVirtualHandler;
 				if (vh != null)
 				{
 					cpi.hvoOwner = m_owningObject.Hvo;

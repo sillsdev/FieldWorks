@@ -11,7 +11,6 @@ using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -116,7 +115,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels)
 		{
-			var contents = ((ISilDataAccessManaged)m_cache.DomainDataByFlid).VecProp(m_obj.Hvo, m_flid).Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
+			var contents = m_cache.GetManagedSilDataAccess().VecProp(m_obj.Hvo, m_flid).Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
 
 			return new SimpleListChooser(m_persistProvider,
 				labels,
@@ -252,7 +251,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return new ICmObject[0];
 				}
-				return ((ISilDataAccessManaged)m_cache.DomainDataByFlid).VecProp(m_obj.Hvo, m_flid).Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
+				return m_cache.GetManagedSilDataAccess().VecProp(m_obj.Hvo, m_flid).Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
 			}
 
 			set

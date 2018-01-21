@@ -24,7 +24,7 @@ namespace LanguageExplorerTests.Areas.Lexicon
 					ler.ComponentLexemesRS.Add(item);
 					ler.PrimaryLexemesRS.Add(item);
 				}
-				// Change the owner to the real entry: this bypasses the check for circular references in FdoList.Add().
+				// Change the owner to the real entry: this bypasses the check for circular references in LcmList.Add().
 				entry.EntryRefsOS.Add(ler);
 				dummy.Delete();
 

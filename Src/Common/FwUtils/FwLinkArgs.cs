@@ -73,9 +73,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string kLink = "link";
 		/// <summary>Command-line argument: App-specific tool name for a FieldWorks link</summary>
 		public const string kTool = "tool";
-		/// <summary>Command-line argument: FDO object guid for a FieldWorks link</summary>
+		/// <summary>Command-line argument: LCM object guid for a FieldWorks link</summary>
 		public const string kGuid = "guid";
-		/// <summary>Command-line argument: FDO object field tag for a FieldWorks link</summary>
+		/// <summary>Command-line argument: LCM object field tag for a FieldWorks link</summary>
 		public const string kTag = "tag";
 		/// <summary>Fieldworks link prefix</summary>
 		public const string kFwUrlPrefix = kSilScheme + "://" + kLocalHost + "/" + kLink + "?";

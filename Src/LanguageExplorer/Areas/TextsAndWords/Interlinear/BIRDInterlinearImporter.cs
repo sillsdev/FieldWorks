@@ -159,21 +159,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Return true if the phrase has exactly one word which has exactly one item of type txt,
 		/// and that item is not a known wordform.
 		/// </summary>
-		/// <param name="fdoCache"></param>
+		/// <param name="lcmCache"></param>
 		/// <param name="phrase"></param>
 		/// <returns></returns>
-		private static bool PhraseHasExactlyOneTxtItemNotAKnownWordform(LcmCache fdoCache, Phrase phrase)
+		private static bool PhraseHasExactlyOneTxtItemNotAKnownWordform(LcmCache lcmCache, Phrase phrase)
 		{
 			if (phrase.WordsContent.Words.Length != 1 || phrase.WordsContent.Words[0].Items.Length != 1
 				|| phrase.WordsContent.Words[0].Items[0].type != "txt")
 				return false;
-			var wsFact = fdoCache.WritingSystemFactory;
+			var wsFact = lcmCache.WritingSystemFactory;
 			var wordItem = phrase.WordsContent.Words[0].Items[0];
 			int ws = GetWsEngine(wsFact, wordItem.lang).Handle;
 			if (string.IsNullOrEmpty(wordItem.Value))
 				return true; // if it has no text, it can't be a known wordform...
 			var wf =
-				fdoCache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetMatchingWordform(ws, wordItem.Value);
+				lcmCache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetMatchingWordform(ws, wordItem.Value);
 			return wf == null;
 		}
 

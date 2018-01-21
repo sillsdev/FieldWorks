@@ -43,7 +43,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LexImport"/> class.
 		/// </summary>
-		/// <param name="cache">The FDO cache.</param>
+		/// <param name="cache">The LCM cache.</param>
 		/// <param name="tempDir">The temp dir.</param>
 		/// <param name="transformDir">The transform dir.</param>
 		/// ------------------------------------------------------------------------------------

@@ -430,7 +430,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="cache">FDO Cache object.</param>
+		/// <param name="cache">LCM Cache object.</param>
 		/// <param name="pos">The possibility.</param>
 		/// <param name="displayNameProperty">property name to display</param>
 		/// <param name="displayWs">writing system to display</param>
@@ -442,7 +442,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="cache">FDO Cache object.</param>
+		/// <param name="cache">LCM Cache object.</param>
 		/// <param name="pos">The possibility.</param>
 		/// <param name="displayNameProperty">property name to display</param>
 		public CmPossibilityLabel(LcmCache cache, ICmPossibility pos, string displayNameProperty)
@@ -606,7 +606,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="cache">FDO Cache object.</param>
+		/// <param name="cache">LCM Cache object.</param>
 		/// <param name="inflClass">The inflection class.</param>
 		/// <param name="displayNameProperty">property name to display</param>
 		/// <param name="displayWs">writing system to display</param>
@@ -618,7 +618,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="cache">FDO Cache object.</param>
+		/// <param name="cache">LCM Cache object.</param>
 		/// <param name="inflClass">The inflection class.</param>
 		/// <param name="displayNameProperty">property name to display</param>
 		public MoInflClassLabel(LcmCache cache, IMoInflClass inflClass, string displayNameProperty)

@@ -2520,7 +2520,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				default:
 					// must be a custom field.
 					Debug.Assert(rsf.m_flid >= (RnGenericRecTags.kClassId * 1000) + 500);
-					// We don't yet have the necessary information in the new FDO/MetaDataCache.
+					// We don't yet have the necessary information in the new LCM MetaDataCache.
 					break;
 			}
 		}

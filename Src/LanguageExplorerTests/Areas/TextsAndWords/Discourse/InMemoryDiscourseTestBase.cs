@@ -9,7 +9,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 {
 	/// <summary>
 	/// Base class for several sets of tests for the Constituent chart, which share the need
-	/// to create an in-memory FDO cache, a text, at least one paragraph, and make wordforms
+	/// to create an in-memory LCM cache, a text, at least one paragraph, and make wordforms
 	/// in that paragraph.
 	/// </summary>
 	public class InMemoryDiscourseTestBase : MemoryOnlyBackendProviderRestoredForEachTestTestBase

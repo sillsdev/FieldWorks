@@ -13,7 +13,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 	/// The implementation assembly must have a file name starting "Macro". (This is mainly to reduce FLEx startup time
 	/// by not making it search every assembly for implementations of IFlexMacro.)
 	/// Your implementing class must have a no-argument constructor (or none). One instance will be created for each main window.
-	/// You will need to reference at least xWorks and very likely FDO and ViewsInterfaces.
+	/// You will need to reference at least Language Explorer and very likely LCM and ViewsInterfaces.
 	/// </summary>
 	public interface IFlexMacro
 	{

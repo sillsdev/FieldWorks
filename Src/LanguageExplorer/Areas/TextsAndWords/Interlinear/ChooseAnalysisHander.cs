@@ -331,7 +331,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		// Generate a suitable string representation of a WfiGloss.
 		// Todo: finish implementing (add the gloss!)
-		static internal ITsString MakeGlossStringRep(IWfiGloss wg, LcmCache fdoCache, bool fUseStyleSheet)
+		static internal ITsString MakeGlossStringRep(IWfiGloss wg, LcmCache lcmCache, bool fUseStyleSheet)
 		{
 			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 			var wa = wg.Owner as IWfiAnalysis;
@@ -339,19 +339,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var category = wa.CategoryRA;
 			if (category != null)
 			{
-				ITsString tssPos = category.Abbreviation.get_String( fdoCache.DefaultAnalWs);
+				ITsString tssPos = category.Abbreviation.get_String( lcmCache.DefaultAnalWs);
 				tsb.Replace(0, 0, tssPos.Text,
-					PartOfSpeechTextProperties(fdoCache,false, fUseStyleSheet));
+					PartOfSpeechTextProperties(lcmCache,false, fUseStyleSheet));
 			}
 			else
 			{
 				tsb.Replace(0, 0, ksMissingString,
-					PartOfSpeechTextProperties(fdoCache,false, fUseStyleSheet));
+					PartOfSpeechTextProperties(lcmCache,false, fUseStyleSheet));
 			}
 			tsb.Replace(tsb.Length, tsb.Length, " ", null);
 			tsb.Replace(tsb.Length, tsb.Length,
-						wg.Form.get_String(fdoCache.DefaultAnalWs).Text,
-				GlossTextProperties(fdoCache, false, fUseStyleSheet));
+						wg.Form.get_String(lcmCache.DefaultAnalWs).Text,
+				GlossTextProperties(lcmCache, false, fUseStyleSheet));
 
 			//indent
 			tsb.Replace(0,0, "    ", null);
@@ -359,19 +359,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		// Make a string representing a WfiAnalysis, suitable for use in a combo box item.
-		static internal ITsString MakeAnalysisStringRep(IWfiAnalysis wa, LcmCache fdoCache, bool fUseStyleSheet, int wsVern)
+		static internal ITsString MakeAnalysisStringRep(IWfiAnalysis wa, LcmCache lcmCache, bool fUseStyleSheet, int wsVern)
 		{
-			//			ITsTextProps boldItalicAnalysis = BoldItalicAnalysis(fdoCache);
-			//			ITsTextProps italicAnalysis = ItalicAnalysis(fdoCache, Sandbox.SandboxVc.krgbRed);
-			ITsTextProps posTextProperties = PartOfSpeechTextProperties(fdoCache, true, fUseStyleSheet);
-			ITsTextProps formTextProperties = FormTextProperties(fdoCache, fUseStyleSheet, wsVern);
-			ITsTextProps glossTextProperties = GlossTextProperties(fdoCache, true, fUseStyleSheet);
+			ITsTextProps posTextProperties = PartOfSpeechTextProperties(lcmCache, true, fUseStyleSheet);
+			ITsTextProps formTextProperties = FormTextProperties(lcmCache, fUseStyleSheet, wsVern);
+			ITsTextProps glossTextProperties = GlossTextProperties(lcmCache, true, fUseStyleSheet);
 			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
-			ISilDataAccess sda = fdoCache.MainCacheAccessor;
+			ISilDataAccess sda = lcmCache.MainCacheAccessor;
 			int cmorph = wa.MorphBundlesOS.Count;
 			if (cmorph == 0)
-				return TsStringUtils.MakeString(ITextStrings.ksNoMorphemes, fdoCache.DefaultUserWs);
-			bool fRtl = fdoCache.ServiceLocator.WritingSystemManager.Get(wsVern).RightToLeftScript;
+				return TsStringUtils.MakeString(ITextStrings.ksNoMorphemes, lcmCache.DefaultUserWs);
+			bool fRtl = lcmCache.ServiceLocator.WritingSystemManager.Get(wsVern).RightToLeftScript;
 			int start = 0;
 			int lim = cmorph;
 			int increment = 1;
@@ -428,7 +426,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				int ichMinSense = tsb.Length;
 				if (sense != null)
 				{
-					ITsString tssGloss = sense.Gloss.get_String(fdoCache.DefaultAnalWs);
+					ITsString tssGloss = sense.Gloss.get_String(lcmCache.DefaultAnalWs);
 					tsb.Replace(ichMinSense, ichMinSense, tssGloss.Text, glossTextProperties);
 				}
 				else
@@ -447,45 +445,33 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary />
-		public static ITsTextProps FormTextProperties(LcmCache fdoCache, bool fUseStyleSheet, int wsVern)
+		public static ITsTextProps FormTextProperties(LcmCache lcmCache, bool fUseStyleSheet, int wsVern)
 		{
 			int color =(int) CmObjectUi.RGB(Color.DarkBlue);
 			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			if (!fUseStyleSheet)
 			{
-				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize ,
-					(int)FwTextPropVar.ktpvMilliPoint, s_baseFontSize * 1000);
+				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, s_baseFontSize * 1000);
 			}
-			bldr.SetIntPropValues((int)FwTextPropType.ktptWs,
-				(int)FwTextPropVar.ktpvDefault, wsVern);
-			//			bldr.SetIntPropValues((int)FwTextPropType.ktptBold,
-			//				(int)FwTextPropVar.ktpvEnum,
-			//				(int)FwTextToggleVal.kttvInvert);
-			//			bldr.SetIntPropValues((int)FwTextPropType.ktptItalic,
-			//				(int)FwTextPropVar.ktpvEnum,
-			//				(int)FwTextToggleVal.kttvInvert);
+			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, wsVern);
 			bldr.SetIntPropValues((int)FwTextPropType.ktptForeColor,
 				(int)FwTextPropVar.ktpvDefault, color);
 			return bldr.GetTextProps();
 		}
 
-		public static ITsTextProps GlossTextProperties(LcmCache fdoCache, bool inAnalysisLine, bool fUseStyleSheet)
+		public static ITsTextProps GlossTextProperties(LcmCache lcmCache, bool inAnalysisLine, bool fUseStyleSheet)
 		{
 			int color =(int) CmObjectUi.RGB(Color.DarkRed);
 			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			if (!fUseStyleSheet)
 			{
-				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize ,
-					(int)FwTextPropVar.ktpvMilliPoint, s_baseFontSize * 1000);
+				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, s_baseFontSize * 1000);
 			}
-			bldr.SetIntPropValues((int)FwTextPropType.ktptWs,
-				(int)FwTextPropVar.ktpvDefault, fdoCache.DefaultAnalWs);
+			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, lcmCache.DefaultAnalWs);
 
 			if (inAnalysisLine)
 			{
-				bldr.SetIntPropValues((int)FwTextPropType.ktptSuperscript,
-					(int)FwTextPropVar.ktpvEnum,
-					(int)FwSuperscriptVal.kssvSuper);
+				bldr.SetIntPropValues((int)FwTextPropType.ktptSuperscript, (int)FwTextPropVar.ktpvEnum, (int)FwSuperscriptVal.kssvSuper);
 			}
 
 			bldr.SetIntPropValues((int)FwTextPropType.ktptForeColor,
@@ -494,7 +480,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary />
-		public static ITsTextProps PartOfSpeechTextProperties(LcmCache fdoCache, bool inAnalysisLine, bool fUseStyleSheet)
+		public static ITsTextProps PartOfSpeechTextProperties(LcmCache lcmCache, bool inAnalysisLine, bool fUseStyleSheet)
 		{
 			int color =(int) CmObjectUi.RGB(Color.Green);
 			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
@@ -504,10 +490,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					(int)FwTextPropVar.ktpvMilliPoint, (int)( s_baseFontSize * 1000* .8));
 			}
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs,
-				(int)FwTextPropVar.ktpvDefault, fdoCache.DefaultAnalWs);
-			//			bldr.SetIntPropValues((int)FwTextPropType.ktptItalic,
-			//				(int)FwTextPropVar.ktpvEnum,
-			//				(int)FwTextToggleVal.kttvInvert);
+				(int)FwTextPropVar.ktpvDefault, lcmCache.DefaultAnalWs);
 
 			if (inAnalysisLine)
 			{

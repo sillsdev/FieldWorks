@@ -3,10 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using LanguageExplorer.Controls.XMLViews;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
-using SIL.LCModel.Application;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -60,7 +60,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override ISilDataAccess GetDataAccess()
 		{
-			m_sda = new PossibilityAtomicReferenceViewSdaDecorator((ISilDataAccessManaged) m_cache.DomainDataByFlid);
+			m_sda = new PossibilityAtomicReferenceViewSdaDecorator(m_cache.GetManagedSilDataAccess());
 			return m_sda;
 		}
 

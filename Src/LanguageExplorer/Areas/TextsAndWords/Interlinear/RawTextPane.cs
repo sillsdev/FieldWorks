@@ -16,7 +16,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
-using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.Xml;
@@ -424,8 +423,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_vc = new RawTextVc(m_rootb, m_cache, wsFirstPara);
 			SetupVc();
 
-			m_showSpaceDa = new ShowSpaceDecorator((ISilDataAccessManaged)m_cache.MainCacheAccessor);
-			m_showSpaceDa.ShowSpaces = ShowInvisibleSpaces;
+			m_showSpaceDa = new ShowSpaceDecorator(m_cache.GetManagedSilDataAccess())
+			{
+				ShowSpaces = ShowInvisibleSpaces
+			};
 			m_rootb.DataAccess = m_showSpaceDa;
 
 			m_rootb.SetRootObject(m_hvoRoot, m_vc, (int)StTextFrags.kfrText, m_styleSheet);
@@ -642,7 +643,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			rgsli[0].ihvo = ipara;
 			rgsli[0].tag = StTextTags.kflidParagraphs;
 			// entry 1 says to use the Contents of the Text.
-			//rgsli[1].tag = (int)FDO.Ling.Text.TextTags.kflidContents;
 			try
 			{
 				RootBox.MakeTextSelection(0, rgsli.Length, rgsli,

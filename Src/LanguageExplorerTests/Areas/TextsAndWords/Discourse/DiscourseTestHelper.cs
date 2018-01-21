@@ -400,7 +400,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		}
 
 		/// <summary>
-		/// The FDO factory now inserts the row in a particular spot in the chart.
+		/// The LCM factory now inserts the row in a particular spot in the chart.
 		/// This method assumes you want to put it at the end.
 		/// </summary>
 		/// <param name="chart"></param>
@@ -414,7 +414,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 		/// <summary>
 		/// Make a chart WordGroup object for the specified column that groups the specified words
-		/// The FDO factory now inserts the item in a particular spot in the row.
+		/// The LCM factory now inserts the item in a particular spot in the row.
 		/// This method assumes you want to put it at the end of the row.
 		/// </summary>
 		/// <param name="row"></param>

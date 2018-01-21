@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		string ApplicationName { get; }
 
 		/// <summary>
-		/// Get the FDO cache.
+		/// Get the LCM cache.
 		/// </summary>
 		LcmCache Cache { get; }
 

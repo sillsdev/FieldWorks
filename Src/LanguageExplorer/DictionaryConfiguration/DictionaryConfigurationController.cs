@@ -16,7 +16,6 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Application;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
@@ -1096,7 +1095,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			foreach(var customFieldId in customFieldIds)
 			{
 				var cfOwnerClassName = metaDataCache.GetOwnClsName(customFieldId);
-				// Also generate a mapping for the corresponding FDO interface (metadata does not contain this)
+				// Also generate a mapping for the corresponding LCM interface (metadata does not contain this)
 				var cfOwnerInterfaceName = cfOwnerClassName.Insert(0, "I");
 				// Map the class name and then the interface name to the custom field id list
 				if (classToCustomFields.ContainsKey(cfOwnerClassName))
@@ -1465,7 +1464,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				_previewEntry = GetDefaultEntryForType(DictionaryConfigurationServices.GetDictionaryConfigurationBaseType(PropertyTable), cache);
 			}
-			_allEntriesPublicationDecorator = new DictionaryPublicationDecorator(cache, (ISilDataAccessManaged)cache.MainCacheAccessor, cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			_allEntriesPublicationDecorator = new DictionaryPublicationDecorator(cache, cache.GetManagedSilDataAccess(), cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 
 			_projectConfigDir = DictionaryConfigurationServices.GetProjectConfigurationDirectory(PropertyTable);
 			_defaultConfigDir = DictionaryConfigurationServices.GetDefaultConfigurationDirectory(PropertyTable);

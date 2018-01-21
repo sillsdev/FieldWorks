@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// <param name="name">new style name</param>
 		/// <param name="basedOnStyle">style to be based on</param>
 		/// <param name="styleType"></param>
-		/// <param name="cache">FDO cache</param>
+		/// <param name="cache">LCM cache</param>
 		/// ------------------------------------------------------------------------------------
 		public StyleInfo(string name, StyleInfo basedOnStyle, StyleType styleType,
 			LcmCache cache) : base(cache)

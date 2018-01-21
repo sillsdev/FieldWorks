@@ -80,9 +80,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal ISortItemProvider m_sortItemProvider;
 		private int m_lastLayoutWidth;
 		/// <summary>
-		/// This cache is a 'Decorator' of the main FDO ISilDataAccess implementation.
+		/// This cache is a 'Decorator' of the main LCM ISilDataAccess implementation.
 		/// This class adds support for fake flids used by the Browse view system,
-		/// which would normally not be available in the min FDO SDA implementation.
+		/// which would normally not be available in the main LCM SDA implementation.
 		/// </summary>
 		private XMLViewsDataCache m_specialCache;
 		/// <summary/>

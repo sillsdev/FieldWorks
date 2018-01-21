@@ -11,7 +11,7 @@ using SIL.LCModel.DomainServices;
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <summary>
-	/// Provides a common place for calls which utilize FDO's SharedBackendServices
+	/// Provides a common place for calls which utilize LCM's SharedBackendServices
 	/// </summary>
 	public static class SharedBackendServicesHelper
 	{

@@ -6,7 +6,7 @@ namespace LanguageExplorer.Controls.LexText
 {
 	/// <summary>
 	/// Abstract base class for LEnty and LSense,
-	/// which are 'cheap' versions of the corresponding FDO classes.
+	/// which are 'cheap' versions of the corresponding LCM classes.
 	/// </summary>
 	internal abstract class LObject
 	{

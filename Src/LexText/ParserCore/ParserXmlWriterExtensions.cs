@@ -118,12 +118,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			writer.WriteEndElement(); //stemMsa
 		}
 
-		private static void WriteInflectionClasses(XmlWriter writer, LcmCache fdoCache, int allomorphHvo)
+		private static void WriteInflectionClasses(XmlWriter writer, LcmCache lcmCache, int allomorphHvo)
 		{
 			if (allomorphHvo <= 0)
 				return;
 			// use IMoForm instead of IMoAffixForm or IMoAffixAllomorph because it could be an IMoStemAllomorph
-			IMoForm form = fdoCache.ServiceLocator.GetInstance<IMoFormRepository>().GetObject(allomorphHvo);
+			IMoForm form = lcmCache.ServiceLocator.GetInstance<IMoFormRepository>().GetObject(allomorphHvo);
 			if (form == null)
 				return;
 			if (!(form is IMoAffixForm))

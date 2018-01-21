@@ -679,7 +679,7 @@ namespace SIL.FieldWorks.Common.Controls
 		#region static methods to encapsulate usages of the dialog
 		/// <summary>
 		/// I'd like to put all this logic into XmlTranslatedLists, because it is common to most cases of
-		/// calling ImportTranslatedListsForWs, which is the point of this method. Unfortunately FDO
+		/// calling ImportTranslatedListsForWs, which is the point of this method. Unfortunately LCM
 		/// cannot reference the DLL that has ProgressDialogWithTask. I've made it public static so that
 		/// anything that references FwControls can use it at least.
 		/// </summary>

@@ -33,7 +33,7 @@ namespace GenerateHCConfig
 
 			var projectId = new ProjectIdentifier(args[0]);
 			var logger = new ConsoleLogger(synchronizeInvoke);
-			var dirs = new NullFdoDirectories();
+			var dirs = new NullLcmDirectories();
 			var settings = new LcmSettings {DisableDataMigration = true};
 			var progress = new NullThreadedProgress(synchronizeInvoke);
 			Console.WriteLine("Loading FieldWorks project...");

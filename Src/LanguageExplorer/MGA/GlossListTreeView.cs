@@ -80,7 +80,7 @@ namespace LanguageExplorer.MGA
 			}
 		}
 		/// <summary>
-		/// Sets FDO cache
+		/// Sets LCM cache
 		/// </summary>
 		public LcmCache Cache
 		{

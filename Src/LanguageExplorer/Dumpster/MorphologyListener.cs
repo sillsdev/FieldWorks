@@ -129,7 +129,7 @@ namespace LanguageExplorer.Dumpster
 			{
 				RestartSpellChecking();
 				// This keeps the spelling dictionary in sync with the WFI.
-				// Arguably this should be done in FDO. However the spelling dictionary is used to
+				// Arguably this should be done in LCM. However the spelling dictionary is used to
 				// keep the UI showing squiggles, so it's also arguable that it is a UI function.
 				// In any case it's easier to do it in PropChanged (which also fires in Undo/Redo)
 				// than in a data-change method which does not.

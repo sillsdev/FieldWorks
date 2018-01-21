@@ -40,18 +40,18 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 			CreateTestData();
 			ICmPossibility cmPossibility = CreateCustomItemAddToList(m_testList, "itemname");
-			ILcmServiceLocator fdoServiceLocator = new FdoServiceLocatorStub(cmPossibility);
+			ILcmServiceLocator lcmServiceLocator = new LcmServiceLocatorStub(cmPossibility);
 
 			// SUT
-			SliceFactory.SetConfigurationDisplayPropertyIfNeeded(configurationNode, cmObject, cmObjectCustomFieldFlid, mainCacheAccessor, fdoServiceLocator, metadataCache);
+			SliceFactory.SetConfigurationDisplayPropertyIfNeeded(configurationNode, cmObject, cmObjectCustomFieldFlid, mainCacheAccessor, lcmServiceLocator, metadataCache);
 
 			AssertThatXmlIn.String(configurationNode.GetOuterXml()).HasSpecifiedNumberOfMatchesForXpath("/slice/deParams[@displayProperty]", 1);
 		}
 
-		class FdoServiceLocatorStub : ILcmServiceLocator
+		class LcmServiceLocatorStub : ILcmServiceLocator
 		{
 			ICmPossibility m_returnObject;
-			public FdoServiceLocatorStub(ICmPossibility returnObject)
+			public LcmServiceLocatorStub(ICmPossibility returnObject)
 			{
 				m_returnObject = returnObject;
 			}

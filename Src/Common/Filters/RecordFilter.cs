@@ -7,7 +7,7 @@
 //	This does not imply that all filtering will always be done in memory, only that we haven't
 //	yet designed or implemented a way to do the filtering while querying.
 //		when we do, we will probably split RecordFilter into two subclasses, one for in memory
-//	filters which can use FDO properties, and one which will somehow contribute to the Where
+//	filters which can use LCM properties, and one which will somehow contribute to the Where
 //	clause which populates the RecordList. In that case, the RecordList will be aware of the filter
 //	and will be responsible for somehow incorporating its filtering desires as it does the query.
 
@@ -2322,7 +2322,7 @@ namespace SIL.FieldWorks.Filters
 	/// specifies how to determine whether a string matches. An object passes if any of the target strings
 	/// produced by the finder matches the pattern.
 	///
-	/// The design avoids using FDO objects as performance is likely to be critical. For a long list,
+	/// The design avoids using LCM objects as performance is likely to be critical. For a long list,
 	/// it would be well to pre-load the cache with all relevant properties in as few queries as
 	/// possible. It is designed to allow easy conversion to passing an HVO to Accept.
 	/// </summary>

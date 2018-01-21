@@ -22,8 +22,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	{
 		private LcmCache m_cache;
 		private ISilDataAccess m_sda;
-		private Dictionary<int, int> m_FdoToSda;
-		private Dictionary<int, int> m_SdaToFdo;
+		private Dictionary<int, int> m_lcmToSda;
+		private Dictionary<int, int> m_SdaToLcm;
 		private ICmObjectRepository m_coRepository;
 
 		#region IDisposable & Co. implementation
@@ -112,18 +112,18 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				if (m_FdoToSda != null)
-					m_FdoToSda.Clear();
-				if (m_SdaToFdo != null)
-					m_SdaToFdo.Clear();
+				if (m_lcmToSda != null)
+					m_lcmToSda.Clear();
+				if (m_SdaToLcm != null)
+					m_SdaToLcm.Clear();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			Marshal.ReleaseComObject(m_sda);
 			m_sda = null;
 			m_cache = null;
-			m_FdoToSda = null;
-			m_SdaToFdo = null;
+			m_lcmToSda = null;
+			m_SdaToLcm = null;
 			m_coRepository = null;
 
 			m_isDisposed = true;
@@ -138,8 +138,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		public void ClearMaps()
 		{
 			CheckDisposed();
-			m_SdaToFdo.Clear();
-			m_FdoToSda.Clear();
+			m_SdaToLcm.Clear();
+			m_lcmToSda.Clear();
 		}
 		/// <summary>
 		///
@@ -159,8 +159,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 				m_cache = value;
 				// Forget any existing relationships.
-				m_FdoToSda = new Dictionary<int, int>();
-				m_SdaToFdo = new Dictionary<int, int>();
+				m_lcmToSda = new Dictionary<int, int>();
+				m_SdaToLcm = new Dictionary<int, int>();
 				m_coRepository = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			}
 		}
@@ -184,8 +184,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					Marshal.ReleaseComObject(m_sda);
 				m_sda = value;
 				// Forget any existing relationships.
-				m_FdoToSda = new Dictionary<int, int>();
-				m_SdaToFdo = new Dictionary<int, int>();
+				m_lcmToSda = new Dictionary<int, int>();
+				m_SdaToLcm = new Dictionary<int, int>();
 			}
 		}
 
@@ -209,8 +209,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		public int RealHvo(int secHvo)
 		{
 			CheckDisposed();
-			if (m_SdaToFdo.ContainsKey(secHvo))
-				return m_SdaToFdo[secHvo];
+			if (m_SdaToLcm.ContainsKey(secHvo))
+				return m_SdaToLcm[secHvo];
 
 			return 0;
 		}
@@ -232,12 +232,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// Create a two-way mapping.
 		/// </summary>
 		/// <param name="secHvo">SilDataAccess HVO</param>
-		/// <param name="realHvo">In the FDO Cache</param>
+		/// <param name="realHvo">In the LCM Cache</param>
 		public void Map(int secHvo, int realHvo)
 		{
 			CheckDisposed();
-			m_SdaToFdo[secHvo] = realHvo;
-			m_FdoToSda[realHvo] = secHvo;
+			m_SdaToLcm[secHvo] = realHvo;
+			m_lcmToSda[realHvo] = secHvo;
 		}
 
 		/// <summary>
@@ -249,23 +249,23 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			CheckDisposed();
 			int realHvo;
-			if (m_SdaToFdo.TryGetValue(secHvo, out realHvo))
-				m_FdoToSda.Remove(realHvo);
-			return m_SdaToFdo.Remove(secHvo);
+			if (m_SdaToLcm.TryGetValue(secHvo, out realHvo))
+				m_lcmToSda.Remove(realHvo);
+			return m_SdaToLcm.Remove(secHvo);
 		}
 
 		/// <summary>
 		/// Removes a two-way mapping.
 		/// </summary>
-		/// <param name="realHvo">In the FDO Cache</param>
+		/// <param name="realHvo">In the LCM Cache</param>
 		/// <returns><c>true</c> if the mapping was successfully removed, otherwise <c>false</c>.</returns>
 		public bool RemoveReal(int realHvo)
 		{
 			CheckDisposed();
 			int secHvo;
-			if (m_FdoToSda.TryGetValue(realHvo, out secHvo))
-				m_SdaToFdo.Remove(secHvo);
-			return m_FdoToSda.Remove(realHvo);
+			if (m_lcmToSda.TryGetValue(realHvo, out secHvo))
+				m_SdaToLcm.Remove(secHvo);
+			return m_lcmToSda.Remove(realHvo);
 		}
 
 		/// <summary>
@@ -276,8 +276,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		public int SecHvo(int realHvo)
 		{
 			CheckDisposed();
-			if (m_FdoToSda.ContainsKey(realHvo))
-				return m_FdoToSda[realHvo];
+			if (m_lcmToSda.ContainsKey(realHvo))
+				return m_lcmToSda[realHvo];
 
 			return 0;
 		}

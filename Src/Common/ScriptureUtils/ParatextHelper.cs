@@ -236,11 +236,11 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 	/// <remarks>
 	/// ENHANCE (TimS): This class should somehow make it's way into FwUtils or similar.
 	/// The only reason it hasn't been moved already is because LoadProjecMappings depends
-	/// on ScrMappingList and ImportDomain which are currently defined in FDO. Those classes
+	/// on ScrMappingList and ImportDomain which are currently defined in LCM. Those classes
 	/// could, theoretically, also be moved, but I didn't feel like it. :p
 	/// Enhance (response, Hasso, 2013.09): LoadProjectMappings also depends on a couple other classes, some of which
-	/// depend on FDOGenerate, and thus cannot be removed from FDO without removing those dependencies.
-	/// Enhance (response, TimS, 2013.09): I think the idea was to get rid FDO's direct dependency on ParatextShared.dll.
+	/// depend on LcmGenerate, and thus cannot be removed from LCM without removing those dependencies.
+	/// Enhance (response, TimS, 2013.09): I think the idea was to get rid LCM's direct dependency on ParatextShared.dll.
 	/// This could be accomplished by moving the remaining method to ParatextHelper. The way this could be done would be
 	/// to factor out the Paratext code and move it to ParatextHelper (i.e. the code that gets the marker/endmarker
 	/// combinations and determining which markers are actually in-use). The code that uses the ParatextProxy could then

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,6 +12,7 @@ using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.Collections;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Matching;
@@ -37,7 +38,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_cache = cache;
 			m_root = root;
 			m_spanFactory = new ShapeSpanFactory();
-			m_sda = new ComplexConcPatternSda((ISilDataAccessManaged) cache.DomainDataByFlid, m_root);
+			m_sda = new ComplexConcPatternSda(cache.GetManagedSilDataAccess(), m_root);
 		}
 
 		public ISilDataAccessManaged DataAccess

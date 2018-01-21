@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the FDO cache for the view constructor.
+		/// Gets or sets the LCM cache for the view constructor.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public virtual LcmCache Cache

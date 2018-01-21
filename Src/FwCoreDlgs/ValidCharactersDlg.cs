@@ -694,7 +694,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="cache">The cache. Can be <c>null</c> if called from New Project
 		/// dialog.</param>
-		/// <param name="wsContainer">The FDO writing system container. Can't be
+		/// <param name="wsContainer">The LCM writing system container. Can't be
 		/// <c>null</c>.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The app.</param>

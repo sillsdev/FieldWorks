@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace LanguageExplorer.Controls.LexText
 {
 	/// <summary>
-	/// Cheapo version of the FDO LexEntry object.
+	/// Cheapo version of the LCM LexEntry object.
 	/// </summary>
 	internal class LEntry : LObject
 	{

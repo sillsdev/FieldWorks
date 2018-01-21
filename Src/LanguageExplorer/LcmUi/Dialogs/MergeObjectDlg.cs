@@ -17,7 +17,6 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
-using SIL.LCModel.Application;
 using SIL.LCModel.Utils;
 using SIL.Windows.Forms;
 
@@ -85,12 +84,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		/// <param name="cache">FDO cache.</param>
-		/// <param name="wp">Strings used for various items in this dialog.</param>
-		/// <param name="mainObj"></param>
-		/// <param name="mergeCandidates"></param>
-		/// <param name="guiControl"></param>
-		/// <param name="helpTopic"></param>
 		public void SetDlgInfo(LcmCache cache, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates,
 			string guiControl, string helpTopic)
 		{
@@ -148,7 +141,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			var toolNode = configurationParameters.XPathSelectElement("controls/parameters/guicontrol[@id='" + guiControl + "']/parameters");
 
 			const int kMadeUpFieldIdentifier = 8999958;
-			ObjectListPublisher sda = new ObjectListPublisher((ISilDataAccessManaged)m_cache.DomainDataByFlid , kMadeUpFieldIdentifier);
+			ObjectListPublisher sda = new ObjectListPublisher(m_cache.GetManagedSilDataAccess(), kMadeUpFieldIdentifier);
 
 			int[] hvos = (from obj in mergeCandidates select obj.Hvo).ToArray();
 			for (int i = 0; i < mergeCandidates.Count; i++)

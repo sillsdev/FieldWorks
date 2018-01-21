@@ -13,7 +13,6 @@ using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Xml;
@@ -187,7 +186,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			var displayWs = "analysis vernacular";
 			IEnumerable<ICmObject> options = m_obj is ILexEntry ? ((ILexEntry)m_obj).ComplexFormEntries : ((ILexSense)m_obj).ComplexFormEntries;
-			var oldValue = ((ISilDataAccessManaged) m_cache.DomainDataByFlid).VecProp(m_obj.Hvo, m_flid)
+			var oldValue = m_cache.GetManagedSilDataAccess().VecProp(m_obj.Hvo, m_flid)
 				.Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
 			// We want a collection of LexEntries as the current values. If we're displaying lex entry refs we want their owners.
 			if (fPropContainsEntryRefs)

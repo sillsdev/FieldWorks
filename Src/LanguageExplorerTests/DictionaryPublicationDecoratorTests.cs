@@ -213,11 +213,11 @@ namespace LanguageExplorerTests
 
 						m_revIndex = CreateInterestingReversalEntries();
 
-						m_mockObjectListPublisher = new MockObjectListPublisher((ISilDataAccessManaged)Cache.DomainDataByFlid, kmainFlid);
+						m_mockObjectListPublisher = new MockObjectListPublisher(Cache.GetManagedSilDataAccess(), kmainFlid);
 						m_mockObjectListPublisher.SetOwningPropValue(Cache.LangProject.LexDbOA.Entries.Select(le => le.Hvo).ToArray());
 						m_decorator = new DictionaryPublicationDecorator(Cache, m_mockObjectListPublisher, ObjectListPublisher.OwningFlid);
 
-						m_revMockObjectListPublisher = new MockObjectListPublisher((ISilDataAccessManaged)Cache.DomainDataByFlid, kmainFlid);
+						m_revMockObjectListPublisher = new MockObjectListPublisher(Cache.GetManagedSilDataAccess(), kmainFlid);
 						m_revMockObjectListPublisher.SetOwningPropValue(m_revIndex.AllEntries.Select(rie => rie.Hvo).ToArray());
 						m_revDecorator = new DictionaryPublicationDecorator(Cache, m_revMockObjectListPublisher, ObjectListPublisher.OwningFlid);
 					});

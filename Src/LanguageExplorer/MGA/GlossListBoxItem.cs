@@ -152,7 +152,7 @@ namespace LanguageExplorer.MGA
 		/// <summary>
 		/// Add the item to the language database
 		/// </summary>
-		/// <param name="cache">FDO cache to use</param>
+		/// <param name="cache">LCM cache to use</param>
 		public void AddToDataBase(LcmCache cache)
 		{
 			ILangProject lp=cache.LangProject;

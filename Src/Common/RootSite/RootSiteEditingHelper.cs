@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		#endregion
 
 		#region Member variables
-		/// <summary>The FDO cache</summary>
+		/// <summary>The LCM cache</summary>
 		protected LcmCache m_cache;
 		private SpellCheckStatus m_spellCheckStatus = SpellCheckStatus.Disabled;
 		private SpellCheckHelper m_spellCheckHelper = null;
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RootSiteEditingHelper"/> class.
 		/// </summary>
-		/// <param name="cache">The FDO Cache</param>
+		/// <param name="cache">The LCM Cache</param>
 		/// <param name="callbacks">implementation of <see cref="IEditingCallbacks"/></param>
 		/// ------------------------------------------------------------------------------------
 		public RootSiteEditingHelper(LcmCache cache, IEditingCallbacks callbacks)
@@ -321,7 +321,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets a string representation of the object suitable to put on the clipboard.
 		/// </summary>
-		/// <param name="cache">FDO cache representing the DB connection to use</param>
+		/// <param name="cache">LCM cache representing the DB connection to use</param>
 		/// <param name="guid">The guid of the object in the DB</param>
 		/// ------------------------------------------------------------------------------------
 		public string TextRepOfObj(LcmCache cache, Guid guid)
@@ -340,7 +340,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Create a new object, given a text representation (e.g., from the clipboard).
 		/// </summary>
-		/// <param name="cache">FDO cache representing the DB connection to use</param>
+		/// <param name="cache">LCM cache representing the DB connection to use</param>
 		/// <param name="sTextRep">Text representation of object</param>
 		/// <param name="selDst">Provided for information in case it's needed to generate
 		/// the new object (E.g., footnotes might need it to generate the proper sequence
@@ -502,7 +502,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
-		/// Another case of something we can currently only do in the FDO-aware subclass.
+		/// Another case of something we can currently only do in the LCM-aware subclass.
 		/// </summary>
 		protected override void MergeLastTwoUnitsOfWork()
 		{

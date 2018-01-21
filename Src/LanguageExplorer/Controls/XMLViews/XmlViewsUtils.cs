@@ -515,9 +515,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Returns an array of string values (keys) for the objects under the layout child nodes.
 		/// </summary>
-		internal static string[] ChildKeys(LcmCache fdoCache, ISilDataAccess sda, XElement layout, int hvo, LayoutCache layoutCache, XElement caller, int wsForce)
+		internal static string[] ChildKeys(LcmCache lcmCache, ISilDataAccess sda, XElement layout, int hvo, LayoutCache layoutCache, XElement caller, int wsForce)
 		{
-			return layout.Elements().Aggregate<XElement, string[]>(null, (current, child) => Concatenate(current, StringsFor(fdoCache, sda, child, hvo, layoutCache, caller, wsForce)));
+			return layout.Elements().Aggregate<XElement, string[]>(null, (current, child) => Concatenate(current, StringsFor(lcmCache, sda, child, hvo, layoutCache, caller, wsForce)));
 		}
 
 		private static void AddSeparator(ref string item, int ichInsert, XElement layout)
@@ -536,9 +536,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 
-		private static string[] AssembleChildKeys(LcmCache fdoCache, ISilDataAccess sda, XElement layout, int hvo, LayoutCache layoutCache, XElement caller, int wsForce)
+		private static string[] AssembleChildKeys(LcmCache lcmCache, ISilDataAccess sda, XElement layout, int hvo, LayoutCache layoutCache, XElement caller, int wsForce)
 		{
-			return Assemble(ChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce));
+			return Assemble(ChildKeys(lcmCache, sda, layout, hvo, layoutCache, caller, wsForce));
 		}
 
 		/// <summary>
@@ -656,7 +656,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Returns an array of string values (keys) for the objects under this layout node.
 		/// </summary>
-		/// <param name="fdoCache">The fdo cache.</param>
+		/// <param name="lcmCache">The LCM cache.</param>
 		/// <param name="sda">The sda.</param>
 		/// <param name="layout">The layout.</param>
 		/// <param name="hvo">The hvo.</param>
@@ -665,7 +665,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// is the 'part ref' that invoked it.</param>
 		/// <param name="wsForce">if non-zero, "string" elements are forced to use that writing system for multistrings.</param>
 		/// <returns></returns>
-		public static string[] StringsFor(LcmCache fdoCache, ISilDataAccess sda, XElement layout, int hvo, LayoutCache layoutCache, XElement caller, int wsForce)
+		public static string[] StringsFor(LcmCache lcmCache, ISilDataAccess sda, XElement layout, int hvo, LayoutCache layoutCache, XElement caller, int wsForce)
 		{
 			// Some nodes are known to be uninteresting.
 			if (XmlVc.CanSkipNode(layout))
@@ -681,7 +681,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					XmlVc.GetActualTarget(layout, ref hvoTarget, sda);	// modify the hvo if needed
 					if (hvo != hvoTarget)
 					{
-						return AddStringFromOtherObj(layout, hvoTarget, fdoCache, sda);
+						return AddStringFromOtherObj(layout, hvoTarget, lcmCache, sda);
 					}
 					var flid = GetFlid(sda, layout, hvo);
 					if (wsForce != 0)
@@ -696,14 +696,14 @@ namespace LanguageExplorer.Controls.XMLViews
 								if (wsForce < 0)
 								{
 									int wsActual;
-									var tss = WritingSystemServices.GetMagicStringAlt(fdoCache, sda, wsForce, hvo, flid, true, out wsActual);
+									var tss = WritingSystemServices.GetMagicStringAlt(lcmCache, sda, wsForce, hvo, flid, true, out wsActual);
 									return new[] {tss == null ? "" : tss.Text };
 								}
 								return new[] {sda.get_MultiStringAlt(hvo, flid, wsForce).Text};
 						}
 					}
 					bool fFoundType;
-					var strValue = fdoCache.GetText(hvo, flid, FwUtils.ConvertElement(layout), out fFoundType);
+					var strValue = lcmCache.GetText(hvo, flid, FwUtils.ConvertElement(layout), out fFoundType);
 					if (fFoundType)
 					{
 						return new[] {strValue};
@@ -715,16 +715,16 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					var flid = GetFlid(sda, layout, hvo);
 					// The Ws info specified in the part ref node
-					var wsIds = WritingSystemServices.GetAllWritingSystems(fdoCache, FwUtils.ConvertElement(caller), null, hvo, flid);
+					var wsIds = WritingSystemServices.GetAllWritingSystems(lcmCache, FwUtils.ConvertElement(caller), null, hvo, flid);
 					if (wsIds.Count == 1)
 					{
 						var strValue = sda.get_MultiStringAlt(hvo, flid, wsIds.First()).Text;
 						return new[] {strValue};
 					}
-					return new[] {AddMultipleAlternatives(fdoCache, sda, wsIds, hvo, flid, caller)};
+					return new[] {AddMultipleAlternatives(lcmCache, sda, wsIds, hvo, flid, caller)};
 				}
 				case "multiling":
-					return ProcessMultiLingualChildren(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce);
+					return ProcessMultiLingualChildren(lcmCache, sda, layout, hvo, layoutCache, caller, wsForce);
 				case "layout":
 					// "layout" can occur when GetNodeToUseForColumn returns a phony 'layout'
 					// formed by unifying a layout with child nodes. Assemble its children.
@@ -733,34 +733,34 @@ namespace LanguageExplorer.Controls.XMLViews
 				case "para":
 				case "span":
 				{
-					return AssembleChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce);
+					return AssembleChildKeys(lcmCache, sda, layout, hvo, layoutCache, caller, wsForce);
 				}
 				case "column":
 					// top-level node for whole column; concatenate children as for "para"
 					// if multipara is false, otherwise as for "div"
 					if (XmlUtils.GetOptionalBooleanAttributeValue(layout, "multipara", false))
 					{
-						return ChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce);
+						return ChildKeys(lcmCache, sda, layout, hvo, layoutCache, caller, wsForce);
 					}
-					return AssembleChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce);
+					return AssembleChildKeys(lcmCache, sda, layout, hvo, layoutCache, caller, wsForce);
 
 				case "part":
 				{
 					var partref = XmlUtils.GetOptionalAttributeValue(layout, "ref");
 					if (partref == null)
 					{
-						return ChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce); // an actual part, made up of its pieces
+						return ChildKeys(lcmCache, sda, layout, hvo, layoutCache, caller, wsForce); // an actual part, made up of its pieces
 					}
 					var part = XmlVc.GetNodeForPart(hvo, partref, false, sda, layoutCache);
 					// This is the critical place where we introduce a caller. The 'layout' is really a 'part ref' which is the
 					// 'caller' for all embedded nodes in the called part.
-					return StringsFor(fdoCache, sda, part, hvo, layoutCache, layout, wsForce);
+					return StringsFor(lcmCache, sda, part, hvo, layoutCache, layout, wsForce);
 				}
 				case "div":
 				case "innerpile":
 				{
 					// Concatenate keys for child nodes (as distinct strings)
-					return ChildKeys(fdoCache, sda, layout, hvo, layoutCache, caller, wsForce);
+					return ChildKeys(lcmCache, sda, layout, hvo, layoutCache, caller, wsForce);
 				}
 				case "obj":
 				{
@@ -778,7 +778,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						break;
 					}
-					return ChildKeys(fdoCache, sda, layoutTarget, hvoTarget, layoutCache, caller, wsForce);
+					return ChildKeys(lcmCache, sda, layoutTarget, hvoTarget, layoutCache, caller, wsForce);
 				}
 				case "seq":
 				{
@@ -805,7 +805,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						{
 							continue; // should not happen, but best recovery we can make
 						}
-						result = Concatenate(result, ChildKeys(fdoCache, sda, layoutTarget, hvoTarget, layoutCache, caller, wsForce));
+						result = Concatenate(result, ChildKeys(lcmCache, sda, layoutTarget, hvoTarget, layoutCache, caller, wsForce));
 						// add a separator between the new childkey group and the previous childkey group
 						if (i > 0 && prevResultLength != GetArrayLength(result) && prevResultLength > 0)
 						{
@@ -829,29 +829,29 @@ namespace LanguageExplorer.Controls.XMLViews
 						{
 							if (whereNode.Name == "otherwise")
 							{
-								return StringsFor(fdoCache, sda, XmlUtils.GetFirstNonCommentChild(whereNode), hvo, layoutCache, caller, wsForce);
+								return StringsFor(lcmCache, sda, XmlUtils.GetFirstNonCommentChild(whereNode), hvo, layoutCache, caller, wsForce);
 							}
 							continue; // ignore any other nodes,typically comments
 						}
 						// OK, it's a where node.
-						if (XmlVc.ConditionPasses(whereNode, hvo, fdoCache, sda, caller))
+						if (XmlVc.ConditionPasses(whereNode, hvo, lcmCache, sda, caller))
 						{
-							return StringsFor(fdoCache, sda, XmlUtils.GetFirstNonCommentChild(whereNode), hvo, layoutCache, caller, wsForce);
+							return StringsFor(lcmCache, sda, XmlUtils.GetFirstNonCommentChild(whereNode), hvo, layoutCache, caller, wsForce);
 						}
 					}
 					break; // if no condition passes and no otherwise, return null.
 				}
 				case "if":
 				{
-					if (XmlVc.ConditionPasses(layout, hvo, fdoCache, sda, caller))
-						return StringsFor(fdoCache, sda, XmlUtils.GetFirstNonCommentChild(layout), hvo, layoutCache, caller, wsForce);
+					if (XmlVc.ConditionPasses(layout, hvo, lcmCache, sda, caller))
+						return StringsFor(lcmCache, sda, XmlUtils.GetFirstNonCommentChild(layout), hvo, layoutCache, caller, wsForce);
 					break;
 				}
 				case "ifnot":
 				{
-					if (!XmlVc.ConditionPasses(layout, hvo, fdoCache, sda, caller))
+					if (!XmlVc.ConditionPasses(layout, hvo, lcmCache, sda, caller))
 					{
-						return StringsFor(fdoCache, sda, XmlUtils.GetFirstNonCommentChild(layout), hvo, layoutCache, caller, wsForce);
+						return StringsFor(lcmCache, sda, XmlUtils.GetFirstNonCommentChild(layout), hvo, layoutCache, caller, wsForce);
 					}
 					break;
 				}
@@ -897,7 +897,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Process a fragment's children against multiple writing systems.
 		/// </summary>
-		private static string[] ProcessMultiLingualChildren(LcmCache fdoCache, ISilDataAccess sda, XElement frag, int hvo, LayoutCache layoutCache, XElement caller, int wsForce)
+		private static string[] ProcessMultiLingualChildren(LcmCache lcmCache, ISilDataAccess sda, XElement frag, int hvo, LayoutCache layoutCache, XElement caller, int wsForce)
 		{
 			var sWs = XmlUtils.GetOptionalAttributeValue(frag, "ws");
 			if (sWs == null)
@@ -910,7 +910,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			string[] result = null;
 			try
 			{
-				var wsIds = WritingSystemServices.GetAllWritingSystems(fdoCache, FwUtils.ConvertElement(frag), s_qwsCurrent, 0, 0);
+				var wsIds = WritingSystemServices.GetAllWritingSystems(lcmCache, FwUtils.ConvertElement(frag), s_qwsCurrent, 0, 0);
 				s_cwsMulti = wsIds.Count;
 				if (s_cwsMulti > 1)
 				{
@@ -919,8 +919,8 @@ namespace LanguageExplorer.Controls.XMLViews
 				s_fMultiFirst = true;
 				foreach (var WSId in wsIds)
 				{
-					s_qwsCurrent = fdoCache.ServiceLocator.WritingSystemManager.Get(WSId);
-					result = Concatenate(result, ChildKeys(fdoCache, sda, frag, hvo, layoutCache, caller, wsForce));
+					s_qwsCurrent = lcmCache.ServiceLocator.WritingSystemManager.Get(WSId);
+					result = Concatenate(result, ChildKeys(lcmCache, sda, frag, hvo, layoutCache, caller, wsForce));
 				}
 			}
 			finally

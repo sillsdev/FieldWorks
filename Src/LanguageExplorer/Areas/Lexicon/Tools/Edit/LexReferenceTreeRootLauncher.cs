@@ -60,7 +60,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						// No other parts use the same relation, and there is no other relation with the new 'whole'.
 						// Therefore, we can just modify the relation.
 						Debug.Assert(lr.TargetsRS[1] == objToLink);
-						// Do this in one step; if we delete first, FDO gets too smart and deletes the whole lexical relation.
+						// Do this in one step; if we delete first, LCM gets too smart and deletes the whole lexical relation.
 						lr.TargetsRS[0] = value;
 						return; // must not try to insert into newRef.
 					}

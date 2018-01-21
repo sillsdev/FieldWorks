@@ -104,7 +104,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		/// <param name="cache">FDO cache.</param>
+		/// <param name="cache">LCM cache.</param>
 		/// <param name="wp">Strings used for various items in this dialog.</param>
 		/// <param name="tssform">The form.</param>
 		/// <param name="hvoType">The HVO of the type.</param>

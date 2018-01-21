@@ -15,10 +15,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			m_wsDefault = -1;
 		}
-		public UnicodeStringSliceVc(int flid, int ws, LcmCache fdoCache)
+		public UnicodeStringSliceVc(int flid, int ws, LcmCache lcmCache)
 		{
 			m_flid = flid;
-			m_wsDefault = ws == -1 ? fdoCache.WritingSystemFactory.UserWs : ws;
+			m_wsDefault = ws == -1 ? lcmCache.WritingSystemFactory.UserWs : ws;
 		}
 
 		public override void Display(IVwEnv vwenv, int hvo, int frag)

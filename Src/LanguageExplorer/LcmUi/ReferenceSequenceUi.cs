@@ -49,13 +49,13 @@ namespace LanguageExplorer.LcmUi
 		{
 			CheckDisposed();
 
-			if (m_iCurrent < 0 || m_fdoRS == null || m_fdoRS.Count == 0)
+			if (m_iCurrent < 0 || _lcmRefSeq == null || _lcmRefSeq.Count == 0)
 			{
 				display.Visible = display.Enabled = false;
 				return true;
 			}
 
-			if ((m_iCurrent + 1) == m_fdoRS.Count)
+			if ((m_iCurrent + 1) == _lcmRefSeq.Count)
 			{
 				display.Visible = true;
 				display.Enabled = false;
@@ -71,7 +71,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			CheckDisposed();
 
-			if (m_iCurrent < 0 || m_fdoRS == null || m_fdoRS.Count == 0)
+			if (m_iCurrent < 0 || _lcmRefSeq == null || _lcmRefSeq.Count == 0)
 			{
 				display.Visible = display.Enabled = false;
 				return true;

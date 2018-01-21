@@ -45,7 +45,7 @@ namespace ParatextImport
 		/// <summary></summary>
 		protected MappingTargetType m_target = MappingTargetType.TEStyle;
 		/// <summary>
-		/// The FDO style represented by this proxy. This will be null if this proxy is not
+		/// The LCM style represented by this proxy. This will be null if this proxy is not
 		/// for a real style.
 		/// </summary>
 		/// <remarks>If this is a proxy for a potential style, then when it is really needed

@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.LCModel;
+using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
 
@@ -85,6 +86,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			// Thoeretically it could be null.
 			return me as IFwMetaDataCacheManaged;
+		}
+
+		public static ISilDataAccessManaged GetManagedSilDataAccess(this LcmCache me)
+		{
+			return (ISilDataAccessManaged)me.DomainDataByFlid;
 		}
 	}
 }

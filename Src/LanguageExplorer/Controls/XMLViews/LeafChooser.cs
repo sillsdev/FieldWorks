@@ -7,7 +7,6 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls.XMLViews
@@ -126,7 +125,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				LabelNode result = nodeRepresentingCurrentChoice; // result unless we match hvoToSelect
 				var label = (ObjectLabel) Tag;
-				var sda = (ISilDataAccessManaged) label.Cache.DomainDataByFlid;
+				var sda = label.Cache.GetManagedSilDataAccess();
 				var objs = from hvo in sda.VecProp(label.Object.Hvo, m_leafFlid)
 					select label.Cache.ServiceLocator.GetObject((int) hvo);
 				var secLabels = ObjectLabel.CreateObjectLabels(label.Cache, objs,

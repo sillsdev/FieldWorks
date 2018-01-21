@@ -326,7 +326,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		/// <summary>
 		/// This is the default initialization of the VC. It is adequate if
-		///		1. A list of possible values for the real property can be obtained from FDO by calling ReferenceTargetCandidates
+		///		1. A list of possible values for the real property can be obtained from LCM by calling ReferenceTargetCandidates
 		///		Enhance JohnT: support the following also:
 		///		2. The signature of the real property is CmPossibility (or a subclass), and the actual
 		///		list can be obtained from the ListRootId.

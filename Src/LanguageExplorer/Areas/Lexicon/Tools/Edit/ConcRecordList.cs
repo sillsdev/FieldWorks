@@ -10,7 +10,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// <summary>
 	/// This one is used for concordances. Currently a concordance never controls the record bar, and indicating this
 	/// prevents a variety of activity that undesirably calls CurrentObject, which causes problems because in a concordance
-	/// list the HVOs don't correspond to real FDO objects.
+	/// list the HVOs don't correspond to real LCM objects.
 	/// </summary>
 	/// <remarks>
 	/// Only used by LanguageExplorer.Areas.Lexicon.Tools.Edit.FindExampleSentenceDlg.

@@ -525,7 +525,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Initialize the dialog.
 		/// </summary>
-		/// <param name="cache">The FDO cache to use.</param>
+		/// <param name="cache">The LCM cache to use.</param>
 		/// <param name="morphType">The morpheme type</param>
 		/// <remarks>All other variations of SetDlgInfo should eventually call this one.</remarks>
 		protected void SetDlgInfo(LcmCache cache, IMoMorphType morphType)
@@ -740,7 +740,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Initialize an InsertEntryDlg from something like an "Insert Major Entry menu".
 		/// </summary>
-		/// <param name="cache">The FDO cache to use.</param>
+		/// <param name="cache">The LCM cache to use.</param>
 		/// <param name="tssForm">The initial form to use.</param>
 		public void SetDlgInfo(LcmCache cache, ITsString tssForm)
 		{
@@ -785,7 +785,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Initialize an InsertEntryDlg from something like an "Insert Major Entry menu".
 		/// </summary>
-		/// <param name="cache">The FDO cache to use.</param>
+		/// <param name="cache">The LCM cache to use.</param>
 		/// <param name="persistProvider">The persistence provider to use.</param>
 		public void SetDlgInfo(LcmCache cache, IPersistenceProvider persistProvider)
 		{
@@ -799,7 +799,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Initialize the dialog.
 		/// </summary>
-		/// <param name="cache">The FDO cache to use.</param>
+		/// <param name="cache">The LCM cache to use.</param>
 		/// <param name="morphType">The morpheme type</param>
 		/// <param name="msaType">The type of msa</param>
 		/// <param name="slot">The default slot of the inflectional affix msa to</param>
@@ -816,7 +816,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Initialize an InsertEntryDlg from something like an "Insert Major Entry menu".
 		/// </summary>
-		/// <param name="cache">The FDO cache to use.</param>
+		/// <param name="cache">The LCM cache to use.</param>
 		protected void SetDlgInfo(LcmCache cache)
 		{
 			SetDlgInfo(cache, cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem));

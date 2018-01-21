@@ -18,15 +18,15 @@ namespace SIL.FieldWorks.FixData
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// This class contains code to fix situations where merges have resulted in sequences that
-	/// are empty and shouldn't be. In normal operation, FDO takes care of these situations
-	/// automatically, but in a Send/Receive situation FDO might not 'know' that one user deleted
+	/// are empty and shouldn't be. In normal operation, LCM takes care of these situations
+	/// automatically, but in a Send/Receive situation LCM might not 'know' that one user deleted
 	/// a sequence element while another user deleted the other with the result on merging that
 	/// now both are gone. Usually the required fix is to delete the parent that holds the sequence.
 	///
 	/// This class also contains code to fix situations where merges have resulted in a Segment being
 	/// deleted and dangling references still exist in TextTag objects and ConstChartWordGroup
-	/// objects. In normal operation, FDO takes care of these situations automatically, but in a
-	/// Send/Receive situation FDO might not 'know' that one user deleted a Segment element while
+	/// objects. In normal operation, LCM takes care of these situations automatically, but in a
+	/// Send/Receive situation LCM might not 'know' that one user deleted a Segment element while
 	/// another user created references to it, with the result on merging that now references to a
 	/// non-existent Segment exist. The Original Fixer will delete the dangling references to the
 	/// Segment, but the TextTag and WordGroup objects should not have empty Begin or EndSegment

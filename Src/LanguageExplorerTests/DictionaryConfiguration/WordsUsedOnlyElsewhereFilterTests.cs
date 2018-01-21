@@ -28,7 +28,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var filter = new WordsUsedOnlyElsewhereFilter();
 			filter.Init(Cache, null);
-			var sda = new FakeDecorator((ISilDataAccessManaged)Cache.DomainDataByFlid);
+			var sda = new FakeDecorator(Cache.GetManagedSilDataAccess());
 			filter.DataAccess = sda;
 			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
 				() =>

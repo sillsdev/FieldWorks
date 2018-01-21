@@ -27,7 +27,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
-		/// create a filter which will consult both FDO and an external XML document when making filtering decisions
+		/// create a filter which will consult both LCM and an external XML document when making filtering decisions
 		/// </summary>
 		/// <param name="filterList">XML document (see distfiles/lexed/basicFilter.xml for an example)</param>
 		public SliceFilter(XDocument filterList)

@@ -254,7 +254,7 @@ namespace LanguageExplorer.Dumpster
 			using (var dlg = new ReversalEntryGoDlg())
 			{
 				dlg.ReversalIndex = Entry.ReversalIndex;
-				var cache = PropertyTable.GetValue<FdoCache>("cache");
+				var cache = PropertyTable.GetValue<LcmCache>("cache");
 				dlg.SetDlgInfo(cache, null, PropertyTable, Publisher);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
@@ -340,7 +340,7 @@ namespace LanguageExplorer.Dumpster
 			CheckDisposed();
 
 			display.List.Clear();
-			var lp = m_propertyTable.GetValue<FdoCache>("cache").LanguageProject;
+			var lp = m_propertyTable.GetValue<LcmCache>("cache").LanguageProject;
 			// List all existing reversal indexes.  (LT-4479, as amended)
 			// But only for analysis wss
 			foreach (IReversalIndex ri in from ri in lp.LexDbOA.ReversalIndexesOC

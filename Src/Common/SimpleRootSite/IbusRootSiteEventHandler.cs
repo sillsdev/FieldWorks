@@ -214,7 +214,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (underLine)
 			{
 				// REVIEW: this code seems to work, but it asserts in
-				// SIL.FieldWorks.FDO.DomainImpl.MultiUnicodeAccessor.set_String (The given
+				// SIL.FieldWorks.LCM.DomainImpl.MultiUnicodeAccessor.set_String (The given
 				// ITsString has more than one run in it). Is there a way to make it work
 				// without assertion?
 				propsBuilder.SetIntPropValues((int)FwTextPropType.ktptUnderline,
@@ -344,7 +344,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		#region IIbusEventHandler implementation
+#region IIbusEventHandler implementation
 
 		/// <summary>
 		/// Called by the IBusKeyboardAdapter to cancel any open compositions, e.g. after the
@@ -649,7 +649,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			get { return m_InitialSelection != null; }
 		}
 
-		#endregion
+#endregion
 	}
 }
 #endif

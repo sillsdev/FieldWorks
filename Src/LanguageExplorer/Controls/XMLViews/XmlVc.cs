@@ -3832,7 +3832,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected IApp TheApp { get; set; }
 
 		/// <summary>
-		/// get an integer value, including from an FDO property if specified
+		/// get an integer value, including from an LCM property if specified
 		/// </summary>
 		/// <remarks> the version of this method without the object ID could go away, but
 		/// many callers would have to be changed</remarks>

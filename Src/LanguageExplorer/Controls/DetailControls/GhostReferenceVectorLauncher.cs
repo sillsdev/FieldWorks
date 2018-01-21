@@ -46,7 +46,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				//    // if you know what I mean.)
 				//    //if (candidates.Count != 0)
 				//    //    chooser.TextParamHvo = m_cache.GetOwnerOfObject((int)candidates[0]);
-				//    // JohnT: this approach depends on a new FDO method.
+				//    // JohnT: this approach depends on a new LCM method.
 				//    ICmObject referenceTargetOwner = m_obj.ReferenceTargetOwner(m_flid);
 				//    if (referenceTargetOwner != null)
 				//        chooser.TextParamHvo = referenceTargetOwner.Hvo;

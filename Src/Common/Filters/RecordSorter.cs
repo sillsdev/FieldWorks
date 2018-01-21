@@ -156,7 +156,6 @@ namespace SIL.FieldWorks.Filters
 			m_comp = getComparer();
 			if (m_comp is LcmCompare)
 			{
-				//(m_comp as FdoCompare).Init();
 				(m_comp as LcmCompare).ComparisonNoter = this;
 				m_comparisonsDone = 0;
 				m_percentDone = 0;
@@ -354,7 +353,7 @@ namespace SIL.FieldWorks.Filters
 			private LcmCache m_cache;
 
 			/// <summary>
-			/// Initializes a new instance of the <see cref="T:FdoCompare"/> class.
+			/// Initializes a new instance of the <see cref="T:LcmCompare"/> class.
 			/// </summary>
 			public LcmCompare(string propertyName, LcmCache cache)
 			{
@@ -853,7 +852,7 @@ namespace SIL.FieldWorks.Filters
 
 	/// <summary>
 	/// A very general record sorter class, based on an arbitrary implementation of IComparer
-	/// that can compare two FDO objects.
+	/// that can compare two LCM objects.
 	/// </summary>
 	public class GenRecordSorter : RecordSorter
 	{
@@ -970,7 +969,7 @@ namespace SIL.FieldWorks.Filters
 			if (first is IntStringComparer && second is IntStringComparer)
 				return true;
 
-			// FdoComparers on the same property?
+			// LcmComparers on the same property?
 			LcmCompare firstLcm = first as LcmCompare;
 			LcmCompare secondLcm = second as LcmCompare;
 			if (firstLcm != null && secondLcm != null && firstLcm.PropertyName == secondLcm.PropertyName)

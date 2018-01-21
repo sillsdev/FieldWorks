@@ -46,7 +46,7 @@ namespace LanguageExplorer.LcmUi
 			bool updateParserCount, bool updateParserStatusIcon)
 		{
 			CheckDisposed();
-			// JohnT: hopefully we have code in FDO or in various decorators to update stuff as much as we choose,
+			// JohnT: hopefully we have code in LCM or in various decorators to update stuff as much as we choose,
 			// based on side effect and PropChanged handlers.
 			// Perfect updating is probably too expensive.
 			// Nothing useful we can currently do here, anyway.

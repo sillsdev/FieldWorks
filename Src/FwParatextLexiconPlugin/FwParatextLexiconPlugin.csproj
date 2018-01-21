@@ -105,19 +105,19 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="ChooseFdoProjectForm.cs">
+    <Compile Include="ChooseLcmProjectForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ChooseFdoProjectForm.Designer.cs">
-      <DependentUpon>ChooseFdoProjectForm.cs</DependentUpon>
+    <Compile Include="ChooseLcmProjectForm.Designer.cs">
+      <DependentUpon>ChooseLcmProjectForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="FdoLanguageText.cs" />
-    <Compile Include="FdoLexemeAddedEventArgs.cs" />
-    <Compile Include="FdoLexicalRelation.cs" />
-    <Compile Include="FdoLexEntryLexeme.cs" />
-    <Compile Include="FdoLexicon.cs" />
-    <Compile Include="FdoLexiconGlossAddedEventArgs.cs" />
-    <Compile Include="FdoLexiconSenseAddedEventArgs.cs" />
+    <Compile Include="LcmLanguageText.cs" />
+    <Compile Include="LcmLexemeAddedEventArgs.cs" />
+    <Compile Include="LcmLexicalRelation.cs" />
+    <Compile Include="LcmLexEntryLexeme.cs" />
+    <Compile Include="LcmLexicon.cs" />
+    <Compile Include="LcmLexiconGlossAddedEventArgs.cs" />
+    <Compile Include="LcmLexiconSenseAddedEventArgs.cs" />
     <Compile Include="FilesToRestoreAreOlder.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -125,9 +125,9 @@
       <DependentUpon>FilesToRestoreAreOlder.cs</DependentUpon>
     </Compile>
     <Compile Include="FwLexiconPlugin.cs" />
-    <Compile Include="FdoSemanticDomain.cs" />
-    <Compile Include="FdoWordAnalysis.cs" />
-    <Compile Include="FdoWordformLexeme.cs" />
+    <Compile Include="LcmSemanticDomain.cs" />
+    <Compile Include="LcmWordAnalysis.cs" />
+    <Compile Include="LcmWordformLexeme.cs" />
     <Compile Include="GeneratedParatextLexiconPluginRegistryHelper.cs" />
     <Compile Include="LexemeKey.cs" />
     <Compile Include="ParatextLexiconPluginDirectoryFinder.cs" />
@@ -154,8 +154,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ChooseFdoProjectForm.resx">
-      <DependentUpon>ChooseFdoProjectForm.cs</DependentUpon>
+    <EmbeddedResource Include="ChooseLcmProjectForm.resx">
+      <DependentUpon>ChooseLcmProjectForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FilesToRestoreAreOlder.resx">
       <DependentUpon>FilesToRestoreAreOlder.cs</DependentUpon>

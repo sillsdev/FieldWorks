@@ -17,7 +17,6 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Application;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.TestUtilities;
@@ -58,8 +57,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			get
 			{
-				return new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+				return new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			}
 		}
 
@@ -92,7 +90,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private IRecordList CreateRecordList()
 		{
 			var recordList = new RecordList(LexiconArea.Entries, _statusBar,
-				Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false,
+				Cache.GetManagedSilDataAccess(), false,
 				new VectorPropertyParameterObject(Cache.LanguageProject.LexDbOA, "Entries", Cache.MetaDataCacheAccessor.GetFieldId2(Cache.LanguageProject.LexDbOA.ClassID, "Entries", false)),
 				new Dictionary<string, PropertyRecordSorter>
 				{
@@ -204,7 +202,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var firstAEntry = CreateInterestingLexEntry(Cache, "alpha1");
 			// PublicationDecorator is used to force generation of Letter Headings when there is only one entry
 			var flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
-			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var pubEverything = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual);
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
@@ -786,7 +784,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			thirdSense.DoNotPublishInRC.Add(mainDict);
 
 			// create decorator
-			var mainDictionaryDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
+			var mainDictionaryDecorator = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(),
 				Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries, mainDict);
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			// SUT
@@ -2900,7 +2898,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			firstEntry.SensesOS[0].SensesOS[0].MorphoSyntaxAnalysisRA = msa1;
 
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
-			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var pubEverything = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual);
 
 			var categNode = new ConfigurableDictionaryNode
 			{
@@ -7175,9 +7173,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(typeof(IEnumerable<>)));
 			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(typeof(ILcmOwningSequence<>)));
 			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(typeof(ILcmReferenceCollection<>)));
-			var twoParamImplOfIFdoVector =
-				assembly.GetType("SIL.LCModel.DomainImpl.ScrTxtPara").GetNestedType("OwningSequenceWrapper`2", BindingFlags.NonPublic);
-			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(twoParamImplOfIFdoVector));
+			var twoParamImplOfILcmVector = assembly.GetType("SIL.LCModel.DomainImpl.ScrTxtPara").GetNestedType("OwningSequenceWrapper`2", BindingFlags.NonPublic);
+			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(twoParamImplOfILcmVector));
 			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(typeof(ILcmVector)), "Custom fields containing list items may no longer work.");
 
 			// Strings and MultiStrings, while enumerable, are not collections as we define them for the purpose of publishing data as XHTML
@@ -7251,9 +7248,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			// Note that the decorators must be created (or refreshed) *after* the data exists.
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
-			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
-			var pubMain = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual, typeMain);
-			var pubTest = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual, typeTest);
+			var pubEverything = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual);
+			var pubMain = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual, typeMain);
+			var pubTest = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual, typeTest);
 			//SUT
 			var hvosMain = new List<int>( pubMain.GetEntriesToPublish(_flexComponentParameters.PropertyTable, flidVirtual) );
 			Assert.AreEqual(5, hvosMain.Count, "there are five entries in the main publication");
@@ -7658,7 +7655,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			CreateComplexForm(Cache, entryEntry, thirdComplexForm, false); //Compound
 
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
-			var pubMain = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual, typeMain);
+			var pubMain = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual, typeMain);
 
 			var complexFormTypeNameNode = new ConfigurableDictionaryNode
 			{
@@ -7721,7 +7718,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			CreateComplexForm(Cache, entryEntry, thirdComplexForm, false); //Compound
 
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
-			var pubMain = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual, typeMain);
+			var pubMain = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual, typeMain);
 
 			var complexFormTypeNameNode = new ConfigurableDictionaryNode
 			{
@@ -7932,7 +7929,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var lexentry2 = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(lexentry2, "homme", _wsFr);
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
-			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var pubEverything = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual);
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }) };
 			var SenseNode = new ConfigurableDictionaryNode
 			{
@@ -7996,7 +7993,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var bEntry = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(bEntry, bHeadword, _wsFr);
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
-			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var pubEverything = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual);
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
@@ -8042,7 +8039,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var bEntry = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(bEntry, bHeadword, _wsFr);
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
-			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var pubEverything = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual);
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
@@ -8094,7 +8091,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var bEntry = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(bEntry, bHeadword, _wsFr);
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
-			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var pubEverything = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual);
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
@@ -8147,7 +8144,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				hvos[i] = entry.Hvo;
 			}
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
-			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var pubEverything = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual);
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
@@ -8196,7 +8193,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				hvos[i] = CreateInterestingLexEntry(Cache, "a" + i).Hvo;
 			}
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
-			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var pubEverything = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual);
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
@@ -8241,7 +8238,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var hvos = new int[0];
 			var flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
-			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var pubEverything = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual);
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
@@ -8313,7 +8310,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			thirdEntry.SensesOS[1].SensesOS[1].MorphoSyntaxAnalysisRA = msa4;
 
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
-			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var pubEverything = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual);
 
 			var subCategNode = new ConfigurableDictionaryNode
 			{
@@ -9154,7 +9151,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "Subentries should be sorted by Type");
 		}
 
-		// <summary>
+		/// <summary>
 		/// LT-18171:Crash displaying entry or doing xhtml export
 		/// </summary>
 		[Test]
@@ -9340,7 +9337,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var fourthEntry = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(fourthEntry, "familliar", _wsFr);
 
-			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			var pubEverything = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
@@ -9395,7 +9392,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var fourthEntry = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(fourthEntry, "familliar", _wsFr);
 
-			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			var pubEverything = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",

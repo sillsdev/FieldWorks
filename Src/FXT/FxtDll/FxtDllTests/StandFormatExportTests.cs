@@ -10,7 +10,6 @@ using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FXT
 {
-//#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO & to use FileUtils
 	/// <summary>
 	/// Test SFM export
 	/// </summary>
@@ -101,5 +100,4 @@ namespace SIL.FieldWorks.Common.FXT
 		}
 
 	}
-//#endif
 }

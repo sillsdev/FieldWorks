@@ -78,9 +78,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		[TearDown]
 		public override void  TestTearDown()
 		{
-			// FdoTestBase::TestTeardown uses m_actionHandler which seems to
+			// LcmTestBase::TestTeardown uses m_actionHandler which seems to
 			// require its associated RootBox to have a valid root site.
-			// This m_basicView needs to be disposed after FdoTestBase::TestTeardown is called.
+			// This m_basicView needs to be disposed after LcmTestBase::TestTeardown is called.
 			base.TestTearDown();
 
 			if (m_basicView != null)

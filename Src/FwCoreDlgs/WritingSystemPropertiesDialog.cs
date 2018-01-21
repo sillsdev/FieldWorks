@@ -1745,7 +1745,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		protected void SaveChanges()
 		{
-			// when this dialog is called from the new language project dialog, there is no FDO cache,
+			// when this dialog is called from the new language project dialog, there is no LCM cache,
 			// but we still need to update the WS manager, so we have to execute the save even if m_cache is null
 			NonUndoableUnitOfWorkHelper uowHelper = null;
 			if (m_cache != null)

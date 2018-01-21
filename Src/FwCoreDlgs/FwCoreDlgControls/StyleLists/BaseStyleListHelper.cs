@@ -356,7 +356,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets a value indicating the FDO cache from which StStyle objects will be
+		/// Gets or sets a value indicating the LCM cache from which StStyle objects will be
 		/// created.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[ExpectedException(typeof(ArgumentException))]
 		public void InvalidType()
 		{
-			// This was using new CmObject, which made the whole assembly depend on FDO.
+			// This was using new CmObject, which made the whole assembly depend on LCM.
 			// There are cheaper ways to test some non reference object (I, RBR, hope).
 			m_comparer.Compare(01001001, new ArgumentException());
 		}
