@@ -99,8 +99,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 			using (var gr = _multiPane.CreateGraphics())
 			{
-				_multiPane.Panel2MinSize = Math.Max((int)(162000 * gr.DpiX) / MiscUtils.kdzmpInch,
-						CollapsingSplitContainer.kCollapseZone);
+				_multiPane.Panel2MinSize = Math.Max((int)(162000 * gr.DpiX) / MiscUtils.kdzmpInch, CollapsingSplitContainer.kCollapseZone);
 			}
 
 			panelButton.DatTree = recordEditView.DatTree;

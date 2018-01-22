@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,7 +28,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				dlg.SetDlgInfo(m_cache, wp);
 				dlg.SetHelpTopic(Slice.GetChooserHelpTopicID());
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
+				{
 					AddItem(dlg.SelectedObject);
+				}
 			}
 		}
 
@@ -36,7 +38,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		public override void AddItem(ICmObject obj)
 		{
 			if (!Targets.Contains(obj))
+			{
 				AddItem(obj, LanguageExplorerResources.ksUndoAddRef, LanguageExplorerResources.ksRedoAddRef);
+			}
 		}
 	}
 }

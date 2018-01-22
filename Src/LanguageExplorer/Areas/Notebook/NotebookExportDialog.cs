@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
@@ -134,26 +135,29 @@ namespace LanguageExplorer.Areas.Notebook
 				progress.Step(3);
 				writer.WriteLine("</Notebook>");
 			}
-			if (!string.IsNullOrEmpty(ft.m_sXsltFiles))
+
+			if (string.IsNullOrEmpty(ft.m_sXsltFiles))
 			{
-				var rgsXslts = ft.m_sXsltFiles.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-				var cXslts = rgsXslts.Length;
-				if (cXslts > 0)
-				{
-					progress.Position = 0;
-					progress.Minimum = 0;
-					progress.Maximum = cXslts;
-					progress.Message = AreaResources.ProcessingIntoFinalForm;
-					var basePath = Path.GetDirectoryName(fxtPath);
-					for (var ix = 0; ix < cXslts; ++ix)
-					{
-						var sXsltPath = Path.Combine(basePath, rgsXslts[ix]);
-						// Apply XSLT to the output file, first renaming it so that the user sees
-						// the expected final output file.
-						CollectorEnv.ProcessXsltForPass(sXsltPath, outPath, ix + 1);
-						progress.Step(1);
-					}
-				}
+				return null;
+			}
+			var rgsXslts = ft.m_sXsltFiles.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+			var cXslts = rgsXslts.Length;
+			if (cXslts <= 0)
+			{
+				return null;
+			}
+			progress.Position = 0;
+			progress.Minimum = 0;
+			progress.Maximum = cXslts;
+			progress.Message = AreaResources.ProcessingIntoFinalForm;
+			var basePath = Path.GetDirectoryName(fxtPath);
+			for (var ix = 0; ix < cXslts; ++ix)
+			{
+				var sXsltPath = Path.Combine(basePath, rgsXslts[ix]);
+				// Apply XSLT to the output file, first renaming it so that the user sees
+				// the expected final output file.
+				CollectorEnv.ProcessXsltForPass(sXsltPath, outPath, ix + 1);
+				progress.Step(1);
 			}
 			return null;
 		}
@@ -276,10 +280,10 @@ namespace LanguageExplorer.Areas.Notebook
 		ITsString m_tssSpace = null;
 		ITsString m_tssCommaSpace = null;
 		string m_wsUserTag = null;
-		string UserWsTag => m_wsUserTag ?? (m_wsUserTag = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultUserWs));
+		private string UserWsTag => m_wsUserTag ?? (m_wsUserTag = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultUserWs));
 
 		string m_wsAnalTag = null;
-		string AnalWsTag => m_wsAnalTag ?? (m_wsAnalTag = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultAnalWs));
+		private string AnalWsTag => m_wsAnalTag ?? (m_wsAnalTag = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultAnalWs));
 
 		private void ExportRecord(TextWriter writer, IRnGenericRec record, int level)
 		{
@@ -289,7 +293,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 			ExportAtomicReference(writer, record.TypeRA, "Type", "CmPossibility");
 
-			List<ICmPossibility> collection = new List<ICmPossibility>();
+			var collection = new List<ICmPossibility>();
 			collection.AddRange(record.RestrictionsRC);
 			ExportReferenceList(writer, collection, "Restrictions", "CmPossibility", CellarPropertyType.ReferenceCollection);
 			collection.Clear();
@@ -302,8 +306,7 @@ namespace LanguageExplorer.Areas.Notebook
 			}
 
 			collection.AddRange(record.TimeOfEventRC);
-			ExportReferenceList(writer, collection, "TimeOfEvent", "CmPossibility",
-				CellarPropertyType.ReferenceCollection);
+			ExportReferenceList(writer, collection, "TimeOfEvent", "CmPossibility", CellarPropertyType.ReferenceCollection);
 			collection.Clear();
 
 			collection.AddRange(record.ResearchersRC.ToArray());
@@ -417,12 +420,12 @@ namespace LanguageExplorer.Areas.Notebook
 			writer.WriteLine("</Entry>");
 		}
 
-		ICmPossibilityRepository m_repoPoss = null;
-		IStTextRepository m_repoText = null;
+		ICmPossibilityRepository m_repoPoss;
+		IStTextRepository m_repoText;
 
-		ICmPossibilityRepository PossibilityRepository => m_repoPoss ?? (m_repoPoss = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>());
+		private ICmPossibilityRepository PossibilityRepository => m_repoPoss ?? (m_repoPoss = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>());
 
-		IStTextRepository StTextRepository => m_repoText ?? (m_repoText = m_cache.ServiceLocator.GetInstance<IStTextRepository>());
+		private IStTextRepository StTextRepository => m_repoText ?? (m_repoText = m_cache.ServiceLocator.GetInstance<IStTextRepository>());
 
 		private void ExportCustomFields(TextWriter writer, IRnGenericRec record)
 		{
@@ -456,42 +459,44 @@ namespace LanguageExplorer.Areas.Notebook
 						break;
 					case CellarPropertyType.String:
 						tss = sda.get_StringProp(record.Hvo, flid);
-						if (tss != null && tss.Text != null)
+						if (tss?.Text != null)
+						{
 							ExportString(writer, tss, fieldName);
+						}
 						fHandled = true;
 						break;
 					case CellarPropertyType.MultiString:
 					case CellarPropertyType.MultiUnicode:
-						ITsMultiString tms = sda.get_MultiStringProp(record.Hvo, flid);
-						int cch = 0;
-						for (int i = 0; i < tms.StringCount; ++i)
+						var tms = sda.get_MultiStringProp(record.Hvo, flid);
+						var cch = 0;
+						for (var i = 0; i < tms.StringCount; ++i)
 						{
 							int ws;
 							tss = tms.GetStringFromIndex(i, out ws);
 							cch += tss.Length;
 							if (cch > 0)
+							{
 								break;
+							}
 						}
 						if (cch > 0)
 						{
 							writer.WriteLine("<Field name=\"{0}\" type=\"MultiString\">", fieldName);
-							for (int i = 0; i < tms.StringCount; ++i)
+							for (var i = 0; i < tms.StringCount; ++i)
 							{
 								int ws;
 								tss = tms.GetStringFromIndex(i, out ws);
-								if (tss != null && tss.Length > 0)
+								if (tss == null || tss.Length <= 0)
 								{
-									if (cpt == CellarPropertyType.MultiString)
-									{
-										writer.WriteLine(TsStringUtils.GetXmlRep(tss,
-											m_cache.WritingSystemFactory, ws, true));
-									}
-									else
-									{
-										writer.WriteLine("<AUni ws=\"{0}\">{1}</AUni>",
-											m_cache.WritingSystemFactory.GetStrFromWs(ws),
-											XmlUtils.MakeSafeXml(tss.Text));
-									}
+									continue;
+								}
+								if (cpt == CellarPropertyType.MultiString)
+								{
+									writer.WriteLine(TsStringUtils.GetXmlRep(tss, m_cache.WritingSystemFactory, ws));
+								}
+								else
+								{
+									writer.WriteLine("<AUni ws=\"{0}\">{1}</AUni>", m_cache.WritingSystemFactory.GetStrFromWs(ws), XmlUtils.MakeSafeXml(tss.Text));
 								}
 							}
 							writer.WriteLine("</Field>");
@@ -504,16 +509,16 @@ namespace LanguageExplorer.Areas.Notebook
 					case CellarPropertyType.ReferenceCollection:
 					case CellarPropertyType.ReferenceSequence:
 						{
-							int destClid = m_mdc.GetDstClsId(flid);
-							List<int> rghvoDest = new List<int>();
+							var destClid = m_mdc.GetDstClsId(flid);
+							var rghvoDest = new List<int>();
 							if (cpt == CellarPropertyType.ReferenceAtomic)
 							{
-								int hvo = sda.get_ObjectProp(record.Hvo, flid);
+								var hvo = sda.get_ObjectProp(record.Hvo, flid);
 								if (hvo != 0)
 								{
 									if (destClid == CmPossibilityTags.kClassId)
 									{
-										ICmPossibility poss = PossibilityRepository.GetObject(hvo);
+										var poss = PossibilityRepository.GetObject(hvo);
 										ExportAtomicReference(writer, poss, fieldName, "CmPossibility");
 										fHandled = true;
 									}
@@ -529,14 +534,12 @@ namespace LanguageExplorer.Areas.Notebook
 							}
 							else
 							{
-								int[] hvos = sda.VecProp(record.Hvo, flid);
+								var hvos = sda.VecProp(record.Hvo, flid);
 								if (hvos.Length > 0)
 								{
 									if (destClid == CmPossibilityTags.kClassId)
 									{
-										List<ICmPossibility> collection = new List<ICmPossibility>();
-										foreach (int hvo in hvos)
-											collection.Add(PossibilityRepository.GetObject(hvo));
+										var collection = hvos.Select(hvo => PossibilityRepository.GetObject(hvo)).ToList();
 										ExportReferenceList(writer, collection, fieldName, "CmPossibility", cpt);
 										fHandled = true;
 									}
@@ -559,16 +562,16 @@ namespace LanguageExplorer.Areas.Notebook
 					case CellarPropertyType.OwningCollection:
 					case CellarPropertyType.OwningSequence:
 						{
-							int destClid = m_mdc.GetDstClsId(flid);
-							List<int> rghvoDest = new List<int>();
+							var destClid = m_mdc.GetDstClsId(flid);
+							var rghvoDest = new List<int>();
 							if (cpt == CellarPropertyType.OwningAtomic)
 							{
-								int hvo = sda.get_ObjectProp(record.Hvo, flid);
+								var hvo = sda.get_ObjectProp(record.Hvo, flid);
 								if (hvo != 0)
 								{
 									if (destClid == StTextTags.kClassId)
 									{
-										IStText text = StTextRepository.GetObject(hvo);
+										var text = StTextRepository.GetObject(hvo);
 										ExportStText(writer, text, fieldName);
 										fHandled = true;
 									}
@@ -582,9 +585,6 @@ namespace LanguageExplorer.Areas.Notebook
 									fHandled = true;
 								}
 							}
-							else
-							{
-							}
 						}
 						break;
 				}
@@ -594,123 +594,135 @@ namespace LanguageExplorer.Areas.Notebook
 			}
 		}
 
-		private void ExportMultiString(TextWriter writer, ITsString tss, int ws,
-			string fieldName, string p, string fieldName_6)
+		private void ExportMultiString(TextWriter writer, ITsString tss, int ws, string fieldName, string p, string fieldName_6)
 		{
 			writer.WriteLine("<!-- ExportMultiString not yet written... -->");
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get a label for a cross-referenced record.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private string GetLinkLabelForRecord(IRnGenericRec rec)
 		{
-			StringBuilder bldr = new StringBuilder();
+			var bldr = new StringBuilder();
 			if (rec.TypeRA != null && rec.TypeRA.Name != null)
 			{
 				int ws;
-				ITsString tss = rec.TypeRA.Name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out ws);
+				var tss = rec.TypeRA.Name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out ws);
 				if (tss.Length > 0)
+				{
 					bldr.AppendFormat("{0} - ", tss.Text);
+				}
 			}
+
 			if (rec.Title != null && rec.Title.Length > 0)
+			{
 				bldr.Append(TsStringUtils.GetXmlRep(rec.Title, m_cache.WritingSystemFactory, 0, true));
+			}
+
 			if (!rec.DateOfEvent.IsEmpty)
+			{
 				bldr.AppendFormat(" - {0}", rec.DateOfEvent.ToXMLExportShortString());
+			}
 			return bldr.ToString();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Export an atomic list reference field.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void ExportAtomicReference(TextWriter writer, ICmPossibility poss,
 			string fieldName, string targetType)
 		{
 			if (poss == null)
+			{
 				return;
+			}
 			int ws;
-			ITsString tss = poss.Name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out ws);
+			var tss = poss.Name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out ws);
 			writer.WriteLine("<Field name=\"{0}\" type=\"{1}\" card=\"atomic\">", fieldName, targetType);
-			writer.WriteLine("<Item ws=\"{0}\">{1}</Item>",
-				m_cache.WritingSystemFactory.GetStrFromWs(ws), XmlUtils.MakeSafeXml(tss.Text));
+			writer.WriteLine("<Item ws=\"{0}\">{1}</Item>", m_cache.WritingSystemFactory.GetStrFromWs(ws), XmlUtils.MakeSafeXml(tss.Text));
 			writer.WriteLine("</Field>");
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Export a collection/sequence list reference field.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void ExportReferenceList(TextWriter writer, List<ICmPossibility> collection,
-			string fieldName, string targetType, CellarPropertyType cpt)
+		private void ExportReferenceList(TextWriter writer, List<ICmPossibility> collection, string fieldName, string targetType, CellarPropertyType cpt)
 		{
 			if (collection == null || collection.Count == 0)
+			{
 				return;
-			if (cpt == CellarPropertyType.ReferenceCollection)
-				writer.WriteLine("<Field name=\"{0}\" type=\"{1}\" card=\"collection\">", fieldName, targetType);
-			else
-				writer.WriteLine("<Field name=\"{0}\" type=\"{1}\" card=\"sequence\">", fieldName, targetType);
-			int ws;
+			}
+
+			writer.WriteLine(
+				cpt == CellarPropertyType.ReferenceCollection
+					? "<Field name=\"{0}\" type=\"{1}\" card=\"collection\">"
+					: "<Field name=\"{0}\" type=\"{1}\" card=\"sequence\">", fieldName, targetType);
 			foreach (var item in collection)
 			{
-				ITsString tss = item.Name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out ws);
-				writer.WriteLine("<Item ws=\"{0}\">{1}</Item>",
-					m_cache.WritingSystemFactory.GetStrFromWs(ws), XmlUtils.MakeSafeXml(tss.Text));
+				int ws;
+				var tss = item.Name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out ws);
+				writer.WriteLine("<Item ws=\"{0}\">{1}</Item>", m_cache.WritingSystemFactory.GetStrFromWs(ws), XmlUtils.MakeSafeXml(tss.Text));
 			}
 			writer.WriteLine("</Field>");
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Export a simple string field.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void ExportString(TextWriter writer, ITsString tss, string fieldName)
 		{
 			if (tss == null || tss.Length == 0)
+			{
 				return;
+			}
 			writer.WriteLine("<Field name=\"{0}\" type=\"TsString\">", fieldName);
 			writer.Write(TsStringUtils.GetXmlRep(tss, m_cache.WritingSystemFactory, 0, true));
 			writer.WriteLine("</Field>");
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Export a structured text field.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void ExportStText(TextWriter writer, IStText text, string fieldName)
 		{
 			// Don't export an empty text.
-			if (text == null || text.ParagraphsOS == null)
+			if (text?.ParagraphsOS == null)
+			{
 				return;
+			}
 			// There may be paragraphs, but do they have any content?
-			int cch = 0;
+			var cch = 0;
 			foreach (var para in text.ParagraphsOS)
 			{
-				IStTxtPara stp = para as IStTxtPara;
+				var stp = para as IStTxtPara;
 				if (stp != null && stp.Contents != null)
+				{
 					cch += stp.Contents.Length;
+				}
+
 				if (cch > 0)
+				{
 					break;
+				}
 			}
+
 			if (cch == 0)
+			{
 				return;
+			}
 			writer.WriteLine("<Field name=\"{0}\" type=\"StText\">", fieldName);
 			foreach (var para in text.ParagraphsOS)
 			{
-				IStTxtPara stp = para as IStTxtPara;
+				var stp = para as IStTxtPara;
 				if (stp == null)
+				{
 					continue;
+				}
 				writer.WriteLine("<StTxtPara>");
 				if (stp.StyleRules != null)
 				{
-					writer.WriteLine("<StyleRules>{0}</StyleRules>",
-									 TsStringUtils.GetXmlRep(stp.StyleRules, m_cache.WritingSystemFactory));
+					writer.WriteLine("<StyleRules>{0}</StyleRules>", TsStringUtils.GetXmlRep(stp.StyleRules, m_cache.WritingSystemFactory));
 				}
 				writer.WriteLine("<Contents>");
 				writer.Write(TsStringUtils.GetXmlRep(stp.Contents, m_cache.WritingSystemFactory, 0, true));

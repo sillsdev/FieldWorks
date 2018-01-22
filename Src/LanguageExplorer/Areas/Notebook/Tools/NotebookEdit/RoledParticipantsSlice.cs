@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -35,7 +35,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		protected override void Dispose(bool disposing)
 		{
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -44,13 +46,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			base.Dispose(disposing);
 		}
 
-		private IRnGenericRec Record
-		{
-			get
-			{
-				return (IRnGenericRec) m_obj;
-			}
-		}
+		private IRnGenericRec Record => (IRnGenericRec)m_obj;
 
 		/// <summary />
 		public override void FinishInit()
@@ -65,7 +61,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		{
 			CheckDisposed();
 
-			IRnRoledPartic defaultRoledPartic = Record.DefaultRoledParticipants;
+			var defaultRoledPartic = Record.DefaultRoledParticipants;
 			Func<ICmObject> defaultRoleCreator = null;
 			if (defaultRoledPartic == null)
 			{
@@ -113,7 +109,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			foreach (IRnRoledPartic roledPartic in Record.ParticipantsOC)
 			{
 				if (roledPartic.RoleRA != null)
+				{
 					GenerateChildNode(roledPartic, node, caller, indent, ref insPos, path, reuseMap);
+				}
 			}
 			Expansion = Record.ParticipantsOC.Count == 0 ? TreeItemState.ktisCollapsedEmpty : TreeItemState.ktisExpanded;
 		}
@@ -147,13 +145,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			// is the default roled participants and it does not contain any participants
 			var rec = (IRnGenericRec) obj;
 			if (rec.ParticipantsOC.Count > 1)
-				return true;
-			foreach (IRnRoledPartic roledPartic in rec.ParticipantsOC)
 			{
-				if (roledPartic.ParticipantsRC.Count > 0)
-					return true;
+				return true;
 			}
-			return false;
+
+			return rec.ParticipantsOC.Any(roledPartic => roledPartic.ParticipantsRC.Any());
 		}
 
 		private ContextMenuStrip m_contextMenuStrip;
@@ -188,14 +184,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		private ContextMenuStrip CreateContextMenu()
 		{
 			var contextMenuStrip = new ContextMenuStrip();
-
-			IEnumerable<ICmPossibility> existingRoles = Record.Roles;
-			foreach (ICmPossibility role in m_cache.LanguageProject.RolesOA.PossibilitiesOS)
+			var existingRoles = Record.Roles;
+			foreach (var role in m_cache.LanguageProject.RolesOA.PossibilitiesOS)
 			{
 				// only display add menu options for roles that have not been added yet
 				if (!existingRoles.Contains(role))
 				{
-					string label = string.Format(LanguageExplorerResources.ksAddParticipants, role.Name.BestAnalysisAlternative.Text);
+					var label = string.Format(LanguageExplorerResources.ksAddParticipants, role.Name.BestAnalysisAlternative.Text);
 					var item = new ToolStripMenuItem(label, null, AddParticipants) {Tag = role};
 					contextMenuStrip.Items.Add(item);
 				}
@@ -232,16 +227,14 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		{
 			var item = (ToolStripMenuItem) sender;
 			var role = (ICmPossibility) item.Tag;
-			string roleName = role.Name.BestAnalysisAlternative.Text;
-			string displayWs = "analysis vernacular";
-			if (ConfigurationNode != null)
+			var roleName = role.Name.BestAnalysisAlternative.Text;
+			var displayWs = "analysis vernacular";
+			var node = ConfigurationNode?.Element("deParams");
+			if (node != null)
 			{
-				var node = ConfigurationNode.Element("deParams");
-				if (node != null)
-					displayWs = XmlUtils.GetOptionalAttributeValue(node, "ws", "analysis vernacular").ToLower();
+				displayWs = XmlUtils.GetOptionalAttributeValue(node, "ws", "analysis vernacular").ToLower();
 			}
-			IEnumerable<ObjectLabel> labels = ObjectLabel.CreateObjectLabels(m_cache, m_cache.LanguageProject.PeopleOA.PossibilitiesOS,
-				DisplayNameProperty, displayWs);
+			var labels = ObjectLabel.CreateObjectLabels(m_cache, m_cache.LanguageProject.PeopleOA.PossibilitiesOS, DisplayNameProperty, displayWs);
 
 			using (var chooser = new SimpleListChooser(m_persistenceProvider, labels, m_fieldName,
 				m_cache, null, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
@@ -249,29 +242,37 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				chooser.TextParamHvo = m_cache.LanguageProject.PeopleOA.Hvo;
 				chooser.SetHelpTopic(GetChooserHelpTopicID());
 				if (ConfigurationNode != null)
+				{
 					chooser.InitializeExtras(ConfigurationNode, PropertyTable);
+				}
 
-				DialogResult res = chooser.ShowDialog();
-				if (DialogResult.Cancel == res)
+				if (DialogResult.Cancel == chooser.ShowDialog())
+				{
 					return;
+				}
 
 				if (ConfigurationNode != null)
-					chooser.HandleAnyJump();
-
-				if (chooser.ChosenObjects != null)
 				{
-					IRnRoledPartic roledPartic = null;
-					UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.ksUndoAddParticipants, roleName),
-						string.Format(LanguageExplorerResources.ksRedoAddParticipants, roleName), role, () =>
+					chooser.HandleAnyJump();
+				}
+
+				if (chooser.ChosenObjects == null)
+				{
+					return;
+				}
+				IRnRoledPartic roledPartic = null;
+				UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.ksUndoAddParticipants, roleName),
+					string.Format(LanguageExplorerResources.ksRedoAddParticipants, roleName), role, () =>
 					{
 						roledPartic = m_cache.ServiceLocator.GetInstance<IRnRoledParticFactory>().Create();
 						Record.ParticipantsOC.Add(roledPartic);
 						roledPartic.RoleRA = role;
 						foreach (ICmPerson person in chooser.ChosenObjects)
+						{
 							roledPartic.ParticipantsRC.Add(person);
+						}
 					});
-					ExpandNewNode(roledPartic);
-				}
+				ExpandNewNode(roledPartic);
 			}
 		}
 
@@ -296,16 +297,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		private void ShowHelpTopic(object sender, EventArgs e)
 		{
 			CheckDisposed();
-			string areaName = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
-			if (areaName == AreaServices.TextAndWordsAreaMachineName)
-			{
-				ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
-					"khtpField-notebookEdit-InterlinearEdit-RnGenericRec-Participants");
-			}
-			else
-			{
-				ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpField-notebookEdit-CustomSlice-RnGenericRec-Participants");
-			}
+			var areaName = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
+			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+				areaName == AreaServices.TextAndWordsAreaMachineName
+					? "khtpField-notebookEdit-InterlinearEdit-RnGenericRec-Participants"
+					: "khtpField-notebookEdit-CustomSlice-RnGenericRec-Participants");
 		}
 
 #if RANDYTODO
@@ -318,12 +314,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			return true;
 		}
 #endif
+
 		/// <summary />
 		public bool OnDeleteParticipants(object args)
 		{
 			CheckDisposed();
 
-			Slice slice = ContainingDataTree.CurrentSlice;
+			var slice = ContainingDataTree.CurrentSlice;
 			var roledPartic = slice.Object as IRnRoledPartic;
 			if (roledPartic != null)
 			{
@@ -338,9 +335,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// <summary>
 		/// Updates the display of a slice, if an hvo and tag it cares about has changed in some way.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="tag"></param>
-		/// <returns>true, if it the slice updated its display</returns>
 		protected internal override bool UpdateDisplayIfNeeded(int hvo, int tag)
 		{
 			CheckDisposed();
@@ -364,8 +358,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				ContainingDataTree.DeepSuspendLayout();
 				XElement caller = null;
 				if (Key.Length > 1)
+				{
 					caller = Key[Key.Length - 2] as XElement;
-				int insPos = IndexInContainer + Record.ParticipantsOC.Count - 1;
+				}
+				var insPos = IndexInContainer + Record.ParticipantsOC.Count - 1;
 				GenerateChildNode(roledPartic, ConfigurationNode, caller, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap());
 				Expansion = TreeItemState.ktisExpanded;
 			}
@@ -388,8 +384,10 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				ContainingDataTree.DeepSuspendLayout();
 				XElement caller = null;
 				if (Key.Length > 1)
+				{
 					caller = Key[Key.Length - 2] as XElement;
-				int insPos = iSlice + 1;
+				}
+				var insPos = iSlice + 1;
 				GenerateChildren(ConfigurationNode, caller, m_obj, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), false);
 				Expansion = TreeItemState.ktisExpanded;
 			}
@@ -405,19 +403,23 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			CheckDisposed();
 			if (Record != null && Record.IsValidObject)
 			{
-				List<IRnRoledPartic> rgDel = new List<IRnRoledPartic>();
-				foreach (IRnRoledPartic roledPartic in Record.ParticipantsOC)
+				var rgDel = new List<IRnRoledPartic>();
+				foreach (var roledPartic in Record.ParticipantsOC)
 				{
 					if (roledPartic.RoleRA != null && roledPartic.ParticipantsRC.Count == 0)
+					{
 						rgDel.Add(roledPartic);
+					}
 				}
 				if (rgDel.Count > 0)
 				{
 					// remove all empty roled participants when we leave this record
 					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 					{
-						foreach (IRnRoledPartic roledPartic in rgDel)
+						foreach (var roledPartic in rgDel)
+						{
 							Record.ParticipantsOC.Remove(roledPartic);
+						}
 					});
 				}
 			}

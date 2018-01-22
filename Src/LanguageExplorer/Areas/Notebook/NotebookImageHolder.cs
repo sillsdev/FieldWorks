@@ -10,17 +10,15 @@ namespace LanguageExplorer.Areas.Notebook
 	/// <summary>
 	/// Summary description for ImageHolder.
 	/// </summary>
-	internal sealed class ImageHolder : UserControl
+	internal sealed class NotebookImageHolder : UserControl
 	{
 		public ImageList buttonImages;
 		private System.ComponentModel.IContainer components;
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ImageHolder"/> class.
+		/// Initializes a new instance of the <see cref="NotebookImageHolder"/> class.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public ImageHolder()
+		public NotebookImageHolder()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -37,44 +35,39 @@ namespace LanguageExplorer.Areas.Notebook
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
-		/// resources; <c>false</c> to release only unmanaged resources.
-		/// </param>
 		protected override void Dispose( bool disposing )
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}
 
 		#region Component Designer generated code
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImageHolder));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NotebookImageHolder));
 			this.buttonImages = new System.Windows.Forms.ImageList(this.components);
 			this.SuspendLayout();
 			//
@@ -87,7 +80,7 @@ namespace LanguageExplorer.Areas.Notebook
 			//
 			// ImageHolder
 			//
-			this.Name = "ImageHolder";
+			this.Name = "NotebookImageHolder";
 			this.ResumeLayout(false);
 
 		}
