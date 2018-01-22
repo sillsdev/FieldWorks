@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.PaObjects
 					if (!newProcessStarted)
 					{
 						newProcessStarted = true;
-						newFwInstance = FieldWorks.OpenProjectWithNewProcess(name, "-" + FwAppArgs.kNoUserInterface);
+						newFwInstance = FieldWorks.OpenProjectWithRealNewProcess(name, "-" + FwAppArgs.kNoUserInterface);
 
 						// TODO-Linux: WaitForInputIdle isn't fully implemented on Linux.
 						if (!newFwInstance.WaitForInputIdle(timeToWaitForProcessStart))

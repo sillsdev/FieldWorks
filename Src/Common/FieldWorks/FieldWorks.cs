@@ -154,6 +154,9 @@ namespace SIL.FieldWorks
 		[STAThread]
 		private static int Main(string[] rgArgs)
 		{
+			// Enable the message box to be able to attach a new FW process to a debugger.
+			//MessageBox.Show(@"Attach to your debugger now.", @"Attach Now", MessageBoxButtons.OK);
+
 			FwUtils.InCrashedState = false;
 			Thread.CurrentThread.Name = "Main thread";
 			Logger.Init(FwUtils.ksSuiteName);
@@ -681,8 +684,8 @@ namespace SIL.FieldWorks
 		/// Starts the specified FieldWorks application.
 		/// </summary>
 		/// <param name="rgArgs">The command-line arguments.</param>
-		/// <returns>True if the process was successfully started, false otherwise</returns>
-		private static Process StartFwApp(params string[] rgArgs)
+		/// <returns>The new process if started, otherwise, null</returns>
+		private static Process StartFwAppAndGetProcess(params string[] rgArgs)
 		{
 			var bldr = new StringBuilder();
 
@@ -727,6 +730,24 @@ namespace SIL.FieldWorks
 
 			// Something went very wrong :(
 			return null;
+		}
+
+		/// <summary>
+		/// Starts the specified FieldWorks application.
+		/// </summary>
+		/// <param name="rgArgs">The command-line arguments.</param>
+		/// <returns>True if the process was successfully started, false otherwise</returns>
+		private static bool StartFwApp(params string[] rgArgs)
+		{
+			var newProcess = StartFwAppAndGetProcess(rgArgs);
+
+			if (newProcess == null)
+			{
+				// Something went very wrong :(
+				return false;
+			}
+			newProcess.Dispose();
+			return true;
 		}
 
 		/// <summary>
@@ -1344,7 +1365,7 @@ namespace SIL.FieldWorks
 			Guard.AgainstNull(projectId, nameof(projectId));
 			Debug.Assert(!projectId.Equals(s_projectId));
 
-			return OpenProjectWithNewProcess(projectId) != null;
+			return OpenProjectWithNewProcess(projectId);
 		}
 
 		/// <summary>
@@ -1370,7 +1391,7 @@ namespace SIL.FieldWorks
 				return true; // Found another process for this project, so we're done.
 			}
 
-			return OpenProjectWithNewProcess(projectId) != null;
+			return OpenProjectWithNewProcess(projectId);
 		}
 
 		/// <summary>
@@ -1380,7 +1401,7 @@ namespace SIL.FieldWorks
 		/// <param name="otherArgs">Other command-line arguments to pass to the new FieldWorks
 		/// process.</param>
 		/// <returns>True if the project was opened, false otherwise</returns>
-		private static Process OpenProjectWithNewProcess(ProjectId project, params string[] otherArgs)
+		private static bool OpenProjectWithNewProcess(ProjectId project, params string[] otherArgs)
 		{
 			return OpenProjectWithNewProcess(project.Handle, otherArgs);
 		}
@@ -1392,7 +1413,7 @@ namespace SIL.FieldWorks
 		/// <param name="otherArgs">Other command-line arguments to pass to the new FieldWorks
 		/// process.</param>
 		/// <returns>True if the project was opened, false otherwise</returns>
-		internal static Process OpenProjectWithNewProcess(string projectName, params string[] otherArgs)
+		internal static bool OpenProjectWithNewProcess(string projectName, params string[] otherArgs)
 		{
 			Logger.WriteEvent("Starting new FieldWorks.exe process for project " + projectName);
 			var args = new List<string>
@@ -1402,6 +1423,25 @@ namespace SIL.FieldWorks
 			};
 			args.AddRange(otherArgs);
 			return StartFwApp(args.ToArray());
+		}
+
+		/// <summary>
+		/// Opens the specified project by starting a new FieldWorks.exe process.
+		/// </summary>
+		/// <param name="projectName">The name of the project.</param>
+		/// <param name="otherArgs">Other command-line arguments to pass to the new FieldWorks
+		/// process.</param>
+		/// <returns>The new process if started, otherwise, null</returns>
+		internal static Process OpenProjectWithRealNewProcess(string projectName, params string[] otherArgs)
+		{
+			Logger.WriteEvent("Starting new FieldWorks.exe process for project " + projectName);
+			var args = new List<string>
+			{
+				"-" + FwAppArgs.kProject,
+				projectName
+			};
+			args.AddRange(otherArgs);
+			return StartFwAppAndGetProcess(args.ToArray());
 		}
 
 		/// <summary>
@@ -2254,14 +2294,7 @@ namespace SIL.FieldWorks
 						}
 
 						var settings = restoreSettings.Settings;
-						// REVIEW: it might look strange to dispose the return value of OpenProjectWithNewProcess.
-						// However, that is a Process that gets started, and it is ok to dispose that
-						// right away if we don't work with the process object. It might be better
-						// though to change the signature of OpenProjectWithNewProcess to return
-						// a boolean.
-						using (OpenProjectWithNewProcess(settings.ProjectName, "-" + FwAppArgs.kRestoreFile, settings.Backup.File, "-" + FwAppArgs.kRestoreOptions, settings.CommandLineOptions))
-						{
-						}
+						OpenProjectWithNewProcess(settings.ProjectName, "-" + FwAppArgs.kRestoreFile, settings.Backup.File, "-" + FwAppArgs.kRestoreOptions, settings.CommandLineOptions);
 					}
 				}
 			});
@@ -2452,14 +2485,7 @@ namespace SIL.FieldWorks
 				{
 					// No other FieldWorks process was running that could handle the request, so
 					// start a brand new process for the project requested by the link.
-					// REVIEW: it might look strange to dispose the return value of OpenProjectWithNewProcess.
-					// However, that is a Process that gets started, and it is ok to dispose that
-					// right away if we don't work with the process object. It might be better
-					// though to change the signature of OpenProjectWithNewProcess to return
-					// a boolean (true iff the link was successfully handled).
-					using (OpenProjectWithNewProcess(linkedProject, "-" + FwLinkArgs.kLink, link.ToString()))
-					{
-					}
+					OpenProjectWithNewProcess(linkedProject, "-" + FwLinkArgs.kLink, link.ToString());
 				}
 			});
 		}
