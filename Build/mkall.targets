@@ -417,11 +417,11 @@
 		<MakeDir Directories="$(DownloadsDir)"/>
 		<Message Text="Downloading artifacts for Palaso, including  L10NSharp, Enchant.Net, ibusdotnet, NDesk.DBus, Spart, and Newtonsoft.Json."/>
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(PalasoBuildType)" VersionInfo="$(MasterVersionInfo)"
-			Artifacts="@(PalasoFiles)" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalPalaso)'!='Y'"/>
+			Artifacts="@(PalasoFiles)" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalLibraries)'!='Y'"/>
 
 		<Message Text="Downloading artifacts for Chorus."/>
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ChorusBuildType)" VersionInfo="$(MasterVersionInfo)"
-			Artifacts="@(ChorusFiles)" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalChorus)'!='Y'"/>
+			Artifacts="@(ChorusFiles)" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalLibraries)'!='Y'"/>
 
 		<Message Text="Downloading an artifact for IPCFramework."/>
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(IPCFrameworkBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="IPCFramework.dll" DownloadsDir="$(DownloadsDir)"/>
@@ -449,7 +449,7 @@
 		<DownloadFile Address="$(NUnitDownloadUrl)" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading artifacts for LCM." />
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(LcmBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="LCM.zip" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalLiblcm)'!='Y'" Tag=".lastSuccessful"/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(LcmBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="LCM.zip" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalLibraries)'!='Y'" Tag=".lastSuccessful"/>
 	</Target>
 
 	<!-- Setup source variables (to enable local development in libpalaso, chorus, and liblcm) -->
@@ -504,8 +504,6 @@
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'  AND '$(arch)'!='x64'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/xample64.dll" DestinationFiles="$(dir-outputBase)/xample.dll"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"/>
-		<Copy SourceFiles="$(DownloadsDir)/Commons.Xml.Relaxng.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- ICU libs -->
 		<Copy SourceFiles="$(DownloadsDir)/icudt.lib" DestinationFolder="$(fwrt)/Lib"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
@@ -523,7 +521,7 @@
 		<ForceDelete Files="$(DownloadsDir)/NUnit-2.6.4/" />
 		<!-- LCM dlls -->
 		<ForceDelete Files="$(DownloadsDir)/LCM/" />
-		<Unzip ZipFilename="$(DownloadsDir)/LCM.zip" ToDir="$(DownloadsDir)/LCM/" Condition="'$(UseLocalLiblcm)'!='Y'"/>
+		<Unzip ZipFilename="$(DownloadsDir)/LCM.zip" ToDir="$(DownloadsDir)/LCM/" Condition="'$(UseLocalLibraries)'!='Y'"/>
 		<Copy SourceFiles="@(LcmOutputBaseFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(LcmOutputCommonFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-fwoutputCommon)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(LcmFwKernelFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/Src/Kernel" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
