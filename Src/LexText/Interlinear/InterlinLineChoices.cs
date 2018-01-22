@@ -1,3 +1,6 @@
+// Copyright (c) 2015-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 // NOTE: whenever this class is updated to include the tagging line(s), InterlinClipboardHelper
 // (in InterlinDocView.cs) has to be fixed.  It currently hacks up a solution for a single
 // tagging line when it thinks it needs to do so.
@@ -578,10 +581,8 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Answer an array list of integers, the writing systems we care about for the view.
+		/// A list of integers representing the writing systems we care about for the view.
 		/// </summary>
-		/// <param name="flid"></param>
-		/// <returns></returns>
 		public List<int> WritingSystems
 		{
 			get
@@ -612,10 +613,9 @@ namespace SIL.FieldWorks.IText
 			for (int i = first; i < lim; i++)
 			{
 				var wsId = this[i].WritingSystem;
-				var magicWsName = WritingSystemServices.GetMagicWsNameFromId(wsId);
-				if (!string.IsNullOrEmpty(magicWsName))
+				if (wsId < 0) // if this is a magic writing system
 				{
-					wsId = WritingSystemServices.ActualWs(m_cache, magicWsName, hvo, this[i].Flid);
+					wsId = WritingSystemServices.ActualWs(m_cache, wsId, hvo, this[i].Flid);
 				}
 				result[i - first] = wsId;
 			}
@@ -1265,26 +1265,20 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Get the actual ws of the WritingSystem based on the given hvo.
-		/// If the WritingSystem is not magic, it'll just return WritingSystem.
+		/// Get the actual ws of the WritingSystem based on the given hvo, if it refers to a non-empty alternative;
+		/// otherwise, get the actual ws for wsFallback
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="hvo"></param>
-		/// <param name="wsPreferred">the ws to prefer over the standard sequence in current writing systems list. also used as a default
-		/// if no alternative ws can be found.</param>
-		/// <returns></returns>
-		public int GetActualWs(LcmCache cache, int hvo, int wsPreferred)
+		public int GetActualWs(LcmCache cache, int hvo, int wsFallback)
 		{
-			int wsActual = 0;
-			if (this.StringFlid == -1)
+			if (StringFlid == -1)
 			{
 				// we depend upon someone else to determine the ws.
 				return 0;
 			}
-			ITsString tssActual;
-			if (WritingSystemServices.TryWs(cache, WritingSystem, wsPreferred, hvo, StringFlid, out wsActual, out tssActual))
-				return wsActual;
-			return wsPreferred;
+			int wsActual;
+			ITsString dummy;
+			WritingSystemServices.TryWs(cache, WritingSystem, wsFallback, hvo, StringFlid, out wsActual, out dummy);
+			return wsActual;
 		}
 
 		public bool LexEntryLevel

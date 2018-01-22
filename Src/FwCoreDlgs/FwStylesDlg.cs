@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2017 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -1150,7 +1150,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// save the changes from the other tabs
 			m_generalTab.SaveToInfo(styleInfo);
 			m_fontTab.SaveToInfo(styleInfo);
-			m_bulletsTab.SaveToInfo(styleInfo);
 			if (styleInfo.IsParagraphStyle)
 			{
 				m_paragraphTab.SaveToInfo(styleInfo);

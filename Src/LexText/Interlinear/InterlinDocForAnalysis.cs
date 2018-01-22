@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -1463,8 +1463,6 @@ namespace SIL.FieldWorks.IText
 			ISegment seg;
 			if (!CanAddWordGlosses(out seg, out ws))
 				return;
-			int wsText = WritingSystemServices.ActualWs(Cache, WritingSystemServices.kwsVernInParagraph,
-				m_hvoRoot, StTextTags.kflidParagraphs);
 
 			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bool fOpenPunc = false;
@@ -2402,9 +2400,10 @@ namespace SIL.FieldWorks.IText
 					// first line of text) an appropriate distance from the top of the Sandbox. This aligns it's
 					// top line of text properly.
 					// Enhance JohnT: 90% of font height is not always exactly right, but it's the closest
-					// I can get wihtout a new API to get the exact ascent of the font.
+					// I can get without a new API to get the exact ascent of the font.
+					var wsSeg = TsStringUtils.GetWsAtOffset(FocusBoxOccurrence.Segment.BaselineText, 0);
 					int dympBaseline = Common.Widgets.FontHeightAdjuster.
-						GetFontHeightForStyle("Normal", m_stylesheet, m_wsVernForDisplay,
+						GetFontHeightForStyle("Normal", m_stylesheet, wsSeg,
 						m_cache.LanguageWritingSystemFactoryAccessor) * 9 / 10;
 					uint transparent = 0xC0000000; // FwTextColor.kclrTransparent won't convert to uint
 					vwenv.AddSimpleRect((int)transparent,

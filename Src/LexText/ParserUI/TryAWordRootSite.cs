@@ -120,7 +120,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidLexPos); //5
 
 			m_rootb.DataAccess = m_cache.MainCacheAccessor;
-			FixWs(); // AFTER setting DA!
 
 			if (m_wordform != null)
 				m_rootb.SetRootObject(m_wordform.Hvo, m_vc, m_kfragSingleInterlinearAnalysisWithLabels, m_styleSheet);
@@ -154,21 +153,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private void FixWs()
-		{
-			if (m_wordform == null)
-				return;
-			if (m_vc == null)
-				return;
-			if (m_rootb == null)
-				return;
-
-			int wsPreferred;
-			if (m_wordform.Form.TryWs(WritingSystemServices.kwsFirstVern, out wsPreferred))
-			{
-				m_vc.PreferredVernWs = wsPreferred;
-			}
-		}
 		// Set the size of the sandbox on the VC...if it exists yet.
 		private void SetSandboxSize()
 		{

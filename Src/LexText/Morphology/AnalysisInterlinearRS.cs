@@ -156,7 +156,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidLexPos); //4
 
 			m_rootb.DataAccess = m_cache.MainCacheAccessor;
-			FixWs(); // AFTER setting DA!
 
 			const int selectorId = InterlinVc.kfragSingleInterlinearAnalysisWithLabelsLeftAlign;
 			m_rootb.SetRootObject(m_wfiAnalysis.Hvo, m_vc, selectorId, m_styleSheet);
@@ -421,22 +420,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		#endregion
 
 		#region Other methods
-
-		private void FixWs()
-		{
-			if (m_wordform == null)
-				return;
-			if (m_vc == null)
-				return;
-			if (m_rootb == null)
-				return;
-
-			int wsPreferred;
-			if (m_wordform.Form.TryWs(WritingSystemServices.kwsFirstVern, out wsPreferred))
-			{
-				m_vc.PreferredVernWs = wsPreferred;
-			}
-		}
 
 		// Set the size of the sandbox on the VC...if it exists yet.
 		private void SetSandboxSize()
