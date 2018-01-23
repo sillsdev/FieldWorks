@@ -923,11 +923,27 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (!m_widthHasBeenSetByDataTree)
 				return;
 
+			// LT-18750 Calling OnSizeChanged in the base class sometimes resets the AutoScrollPosition to the top of the Slice (Windows).
+			// When m_splitter.Size is changed, it also has the same effect. It is possible that ScrollControlIntoView() is called
+			// in a method subscribed to an event in the base class, but my investigation was unsuccessful.
+			Point oldPoint = ContainingDataTree.AutoScrollPosition;
+			bool scrollChanged = false;
 			base.OnSizeChanged(e);
-
+			if (ContainingDataTree.AutoScrollPosition != oldPoint)
+			{
+				scrollChanged = true;
+			}
+			int verticalAdjustment = Size.Height - m_splitter.Size.Height;
 			// This should be done by setting DockStyle to Fill but that somehow doesn't always fix the
 			// height of the splitter's panels.
 			m_splitter.Size = Size;
+			if (scrollChanged)
+			{
+				bool verticalScrollChangedCorrectly = ContainingDataTree.AutoScrollPosition.Y - oldPoint.Y == -verticalAdjustment;
+				if (!verticalScrollChangedCorrectly)
+					// Set the AutoScrollPosition to scroll the distance reflecting the change to the SplitContainer
+					ContainingDataTree.AutoScrollPosition = new Point(-oldPoint.X, -oldPoint.Y + verticalAdjustment);
+			}
 			// This definitely seems as if it shouldn't be necessary at all. And if it were necessary,
 			// it should be fine to just call PerformLayout at once. But it doesn't work. Dragging the splitter
 			// of a multi-line view in a way that changes its height somehow leaves the panels of the splitter
