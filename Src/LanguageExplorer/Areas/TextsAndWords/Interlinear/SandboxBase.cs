@@ -1791,8 +1791,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					try
 					{
-						m_caches.DataAccess.SetMultiStringAlt(hvoSbForm, ktagSbNamedObjName, ws,
-							defFormReal.Form.get_String(ws));
+						m_caches.DataAccess.SetMultiStringAlt(hvoSbForm, ktagSbNamedObjName, ws, ws >= 0 ? defFormReal.Form.get_String(ws) : WritingSystemServices.GetMagicStringAlt(Cache, ws, defFormReal.Hvo, MoFormTags.kflidForm));
 					}
 					catch (Exception e)
 					{

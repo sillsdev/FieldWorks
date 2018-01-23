@@ -105,18 +105,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 				get { return Registry.LocalMachine; }
 			}
 
-			/// ------------------------------------------------------------------------------------
 			/// <summary>
 			/// Gets the read-only local machine Registry key for FieldWorksBridge.
-			/// NOTE: This key is not opened for write access because it will fail on
-			/// non-administrator logins.
 			/// </summary>
-			/// ------------------------------------------------------------------------------------
+			/// <remarks>This key is not opened for write access because it will fail on
+			/// non-administrator logins. 32bit registry section on a 64bit machine is checked first
+			/// and then the 'normal' registry location.
+			/// </remarks>
 			public RegistryKey FieldWorksBridgeRegistryKeyLocalMachine
 			{
 				get
 				{
-					return Registry.LocalMachine.OpenSubKey("Software\\SIL\\FLEx Bridge\\" + FwUtils.SuiteVersion);
+					var flexBridgeKey = $@"SIL\\FLEx Bridge\\{FwUtils.SuiteVersion}";
+					return Registry.LocalMachine.OpenSubKey("Software\\WOW6432Node\\" + flexBridgeKey) ?? Registry.LocalMachine.OpenSubKey("Software\\" + flexBridgeKey);
 				}
 			}
 
