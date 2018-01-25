@@ -1,12 +1,6 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: InterlinViewDataCache.cs
-// Responsibility: pyle
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -16,11 +10,7 @@ using HvoFlidKey=SIL.LCModel.HvoFlidKey;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public class InterlinViewDataCache : DomainDataByFlidDecoratorBase
 	{
 		private const int ktagMostApprovedAnalysis = -64; // arbitrary non-valid flid to use for storing Guesses
@@ -55,9 +45,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case ktagMostApprovedAnalysis:
 					{
 						int result;
-						if (m_guessCache.TryGetValue(new HvoFlidKey(hvo, tag), out result))
-							return result;
-						return 0; // no guess cached.
+						return m_guessCache.TryGetValue(new HvoFlidKey(hvo, tag), out result) ? result : 0;
 					}
 			}
 		}
@@ -71,9 +59,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case ktagOpinionAgent:
 					{
 						int result;
-						if (m_humanApproved.TryGetValue(new HvoFlidKey(hvo, tag), out result))
-							return result;
-						return 0; // not cached.
+						return m_humanApproved.TryGetValue(new HvoFlidKey(hvo, tag), out result) ? result : 0;
 					}
 			}
 		}
@@ -88,9 +74,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case ktagMostApprovedAnalysis:
 					var key = new HvoFlidKey(hvo, tag);
 					if (hvoObj == 0)
+					{
 						m_guessCache.Remove(key);
+					}
 					else
+					{
 						m_guessCache[key] = hvoObj;
+					}
 					break;
 			}
 		}
@@ -113,7 +103,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Perform this action, without clearing your guesses if it modifies a property that would normally cause that.
 		/// </summary>
-		/// <param name="task"></param>
 		internal void SuppressResettingGuesses(Action task)
 		{
 			try
@@ -137,7 +126,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case ktagOpinionAgent:
 				case ktagMostApprovedAnalysis:
 					if (m_fSuppressResettingGuesses)
+					{
 						break;
+					}
 					m_guessCache.Clear();
 					m_humanApproved.Clear();
 					break;
@@ -150,17 +141,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// 1) has been most approved by a user in texts. If never approved in texts, then
 		/// 2) has a ICmAgentEvaluation assigned as Approved.
 		/// </summary>
-		internal static int AnalysisMostApprovedFlid
-		{
-			get { return ktagMostApprovedAnalysis; }
-		}
+		internal static int AnalysisMostApprovedFlid => ktagMostApprovedAnalysis;
 
 		/// <summary>
 		/// indicate whether the given (guess) analysis is human approved.
 		/// </summary>
-		internal static int OpinionAgentFlid
-		{
-			get { return ktagOpinionAgent; }
-		}
+		internal static int OpinionAgentFlid => ktagOpinionAgent;
 	}
 }

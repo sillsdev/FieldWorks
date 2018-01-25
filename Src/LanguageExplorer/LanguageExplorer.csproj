@@ -341,10 +341,115 @@
     </Compile>
     <Compile Include="Areas\SubservientRecordList.cs" />
     <Compile Include="Areas\TemporaryRecordList.cs" />
+    <Compile Include="Areas\TextsAndWords\CaptionParaFragment.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\AdvancedMTDialogLogic.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\CChartSentenceElements.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\ChartHeaderView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Discourse\ColumnMenuItem.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\ConstChartVc.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\DecoratorMethodTypes.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\DepClauseMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Discourse\DialogInterlinRibbon.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Discourse\FindWhereToAddResult.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\IInterlinRibbon.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\MakeCellsMethod.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\MakeMovedTextMethod.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\MergeCellContentsMethod.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\OccurrenceSorter.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\OneValMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Discourse\RibbonVc.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\RowColMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Discourse\RowColPossibilityMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Discourse\RowMenuItem.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\RowModifiedEventArgs.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\StoredMethod.cs" />
+    <Compile Include="Areas\TextsAndWords\Discourse\TwoColumnMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Discourse\UpdateRibbonAction.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\AddLineMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\AddWritingSystemMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\AnnotationInfo.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\AnnotationInfo2.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\AnnotationMoveHelper.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\CreateAndInsertStText.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\EditableInterlinLineChoices.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\IAnalysisControlInternal.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\IComboHandler.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\IHandleBookmark.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\IhLexWordGloss.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\IhMissingMorphs.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\IhMissingWordPos.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\IhMorphEntry.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\IhMorphForm.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\IhSbWordForm.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\IhWordGloss.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\IhWordPos.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\IInterlinearTabControl.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ImportAnalysesLevel.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ImportInterlinearOptions.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InsertEntryNow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinComboHandler.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinComboHandlerActionComboItem.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinDocForAnalysisVc.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporterForElan.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearTextsRecordEditView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearTextsRecordList.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinLineSpec.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinMode.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinPrintVc.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinTaggingVc.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinViewCacheLoader.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\IParaDataLoader.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ISelectOccurrence.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ISetupLineChoices.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\IStTextBookmark.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\IStyleSheet.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\LanguageMapping.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\LineOption.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\MatchingConcordanceItems.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\MorphComboItem.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\MorphItem.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\MorphItemOptions.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\NonUndoableCreateAndInsertStText.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ParaDataUpdateTracker.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\RawTextVc.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxChangedEventArgs.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxEditMonitor.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxEditMonitorHelper.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\StTextDataTree.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\TabPageSelection.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\TextCreationParams.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\TitleContentsVc.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\UndoableCreateAndInsertStText.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\UpdateMorphEntryAction.cs" />
+    <Compile Include="Areas\TextsAndWords\ParaChangeInfo.cs" />
+    <Compile Include="Areas\TextsAndWords\RespellingMdc.cs" />
+    <Compile Include="Areas\TextsAndWords\RespellingSda.cs" />
+    <Compile Include="Areas\TextsAndWords\RespellOccurrence.cs" />
+    <Compile Include="Areas\TextsAndWords\RespellUndoAction.cs" />
     <Compile Include="Areas\TextsAndWords\TextAndWordsAreaMenuHelper.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\InterlinearEdit\InterlinearEditToolMenuHelper.cs" />
     <Compile Include="Areas\TreebarAvailability.cs" />
@@ -2334,17 +2439,13 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\FilterTextsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\FocusBoxController.ApproveAndMove.cs">
-      <DependentUpon>FocusBoxController.cs</DependentUpon>
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\FocusBoxController.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\FocusBoxController.Designer.cs">
       <DependentUpon>FocusBoxController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\ImageHolder.cs">
+    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearImageHolder.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\InflFeatureTreeModel.cs" />
@@ -2432,28 +2533,16 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\Sandbox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxBase.ComboHandlers.cs">
-      <DependentUpon>SandboxBase.cs</DependentUpon>
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\IhMissingEntry.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\SandboxBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\SandboxBase.designer.cs">
       <DependentUpon>SandboxBase.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxBase.GetRealAnalysisMethod.cs">
-      <DependentUpon>SandboxBase.cs</DependentUpon>
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxBase.MorphemeBreaker.cs">
-      <DependentUpon>SandboxBase.cs</DependentUpon>
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxBase.SandboxVc.cs">
-      <DependentUpon>SandboxBase.cs</DependentUpon>
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\GetRealAnalysisMethod.GetRealAnalysisMethod.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\MorphemeBreaker.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxVc.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\Sfm2FlexText.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ShowSpaceDecorator.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\SymbolicValue.cs" />
@@ -2908,8 +2997,8 @@
       <DependentUpon>FocusBoxController.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\ImageHolder.resx">
-      <DependentUpon>ImageHolder.cs</DependentUpon>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinearImageHolder.resx">
+      <DependentUpon>InterlinearImageHolder.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InfoPane.resx">

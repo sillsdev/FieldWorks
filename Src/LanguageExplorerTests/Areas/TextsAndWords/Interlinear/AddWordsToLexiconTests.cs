@@ -96,8 +96,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			InterlinLineChoices lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject,
 																				 Cache.DefaultVernWs,
 																				 Cache.DefaultAnalWs,
-																				 InterlinLineChoices.InterlinMode.
-																					 GlossAddWordsToLexicon);
+																				 InterlinMode.GlossAddWordsToLexicon);
 
 			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
 			m_sandbox = new SandboxForTests(Cache, lineChoices);
@@ -115,13 +114,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			internal ISilDataAccess SandboxCacheDa
 			{
-				get { return m_caches.DataAccess; }
+				get { return Caches.DataAccess; }
 			}
 
 #pragma warning disable 169
 			ISilDataAccess MainCacheDa
 			{
-				get { return m_caches.MainCache.MainCacheAccessor; }
+				get { return Caches.MainCache.MainCacheAccessor; }
 			}
 #pragma warning restore 169
 
@@ -148,7 +147,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					default:
 						break;
 					case InterlinLineChoices.kflidWordPos:
-						hvo = m_caches.RealHvo(SandboxCacheDa.get_ObjectProp(kSbWord, ktagSbWordPos));
+						hvo = Caches.RealHvo(SandboxCacheDa.get_ObjectProp(kSbWord, ktagSbWordPos));
 						break;
 				}
 				return hvo;
@@ -164,7 +163,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 						tss = null;
 						break;
 					case InterlinLineChoices.kflidWordGloss:
-						m_caches.DataAccess.SetMultiStringAlt(kSbWord, ktagSbWordGloss, ws, tss);
+						Caches.DataAccess.SetMultiStringAlt(kSbWord, ktagSbWordGloss, ws, tss);
 						break;
 				}
 				return tss;
@@ -205,13 +204,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			}
 
 
-			protected override bool ShouldAddWordGlossToLexicon
-			{
-				get
-				{
-					return true;
-				}
-			}
+			internal override bool ShouldAddWordGlossToLexicon => true;
 
 			internal AnalysisTree ConfirmAnalysis()
 			{

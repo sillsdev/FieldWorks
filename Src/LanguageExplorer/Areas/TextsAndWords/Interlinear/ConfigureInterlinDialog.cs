@@ -20,7 +20,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// <summary>
 	/// Summary description for ConfigureInterlinDialog.
 	/// </summary>
-	public class ConfigureInterlinDialog : Form
+	internal class ConfigureInterlinDialog : Form
 	{
 		private Label label1;
 		private Label label2;
@@ -53,8 +53,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		InterlinLineChoices m_choices;
 
 
-		public ConfigureInterlinDialog(LcmCache cache, IHelpTopicProvider helpTopicProvider,
-			InterlinLineChoices choices)
+		public ConfigureInterlinDialog(LcmCache cache, IHelpTopicProvider helpTopicProvider, InterlinLineChoices choices)
 		{
 			//
 			// Required for Windows Form Designer support
@@ -63,8 +62,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			AccessibleName = GetType().Name;
 
 			m_helpTopicProvider = helpTopicProvider;
-			helpProvider = new HelpProvider();
-			helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
+			helpProvider = new HelpProvider
+			{
+				HelpNamespace = m_helpTopicProvider.HelpFile
+			};
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 
@@ -92,7 +93,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -103,10 +106,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}
@@ -324,10 +324,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						wsName = item.ToString();
 						break;
 					}
-					else
-					{
-						Debug.WriteLine(item.Id);
-					}
+					Debug.WriteLine(item.Id);
 				}
 				// Last ditch effort
 				if (wsName == string.Empty)
@@ -341,16 +338,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				cols[1] = TsStringUtils.NormalizeToNFC(wsName);
 				cols[1] = cols[1].Substring(0, Math.Min(cols[1].Length, 42));
 
-				var item1WithToolTip = new ListViewItem(cols);
-				item1WithToolTip.ToolTipText = TsStringUtils.NormalizeToNFC(wsName);
+				var item1WithToolTip = new ListViewItem(cols)
+				{
+					ToolTipText = TsStringUtils.NormalizeToNFC(wsName)
+				};
 
 				currentList.Items.Add(item1WithToolTip);
 			}
 
 			if (index > currentList.Items.Count && index > 0)
+			{
 				index--; // for when we delete the last item.
+			}
+
 			if (index >= 0 && index < currentList.Items.Count) // range check mainly for passing 0 on empty
+			{
 				currentList.Items[index].Selected = true;
+			}
 
 			currentList.ResumeLayout();
 		}
@@ -370,14 +374,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		///
 		/// This version is visible to InterlinDocRootSiteBase for its context menu.
 		/// </summary>
-		/// <param name="cachedBoxes"></param>
-		/// <param name="comboContent"></param>
-		/// <param name="cache"></param>
-		/// <param name="owner"></param>
-		/// <returns></returns>
-		internal static ComboBox.ObjectCollection WsComboItemsInternal(LcmCache cache, ComboBox owner,
-			Dictionary<WsComboContent, ComboBox.ObjectCollection> cachedBoxes,
-			WsComboContent comboContent)
+		internal static ComboBox.ObjectCollection WsComboItemsInternal(LcmCache cache, ComboBox owner, Dictionary<WsComboContent, ComboBox.ObjectCollection> cachedBoxes, WsComboContent comboContent)
 		{
 			ComboBox.ObjectCollection objectCollection;
 			if (!cachedBoxes.ContainsKey(comboContent))
@@ -399,12 +396,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return objectCollection;
 		}
 
-		int CurrentListIndex
+		private int CurrentListIndex
 		{
 			get
 			{
 				if (currentList.SelectedIndices.Count == 0)
+				{
 					return -1;
+				}
 				return currentList.SelectedIndices[0];
 			}
 		}
@@ -412,12 +411,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Set all controls to appropriate states for the current list selections.
 		/// </summary>
-		void EnableControls()
+		private void EnableControls()
 		{
 			addButton.Enabled = optionsList.SelectedIndex >= 0;
 			// We could use OkToRemove here, but we'd rather be able to display the message
 			// if there is some reason not to.
-			int listIndex = CurrentListIndex;
+			var listIndex = CurrentListIndex;
 			removeButton.Enabled = listIndex >= 0; //Enhance: && m_choices.OkToRemove(listIndex);
 			moveDownButton.Enabled = listIndex >= 0 && m_choices.OkToMoveDown(listIndex);
 			moveUpButton.Enabled = listIndex >= 0 && m_choices.OkToMoveUp(listIndex);
@@ -430,22 +429,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			try
 			{
 				m_fUpdatingWsCombo = true;
-				int index = CurrentListIndex;
+				var index = CurrentListIndex;
 				if (index < 0 || index >= m_choices.Count)
 				{
 					wsCombo.SelectedIndex = -1;
 					wsCombo.Enabled = false;
 					return;
 				}
-				InterlinLineSpec spec = m_choices[index];
+				var spec = m_choices[index];
 
-				ComboBox.ObjectCollection comboObjects = WsComboItems(spec.ComboContent);
-				object[] choices = new object[comboObjects.Count];
+				var comboObjects = WsComboItems(spec.ComboContent);
+				var choices = new object[comboObjects.Count];
 				comboObjects.CopyTo(choices, 0);
 				wsCombo.Items.Clear();
 				wsCombo.Items.AddRange(choices);
-
-				int ws = spec.WritingSystem;
+				var ws = spec.WritingSystem;
 				wsCombo.Enabled = true;
 				// JohnT: note that, because 'Default analysis' and 'Default Vernacular'
 				// come first, the corresponding actual writing systems will never be
@@ -468,13 +466,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private int getWsFromId(string id)
 		{
 			// special case, the only few we support so far (and only for a few fields).
-			if (id == "best analysis")
-				return WritingSystemServices.kwsFirstAnal;//LangProject.kwsFirstAnal;
-			else if (id == "vern in para")
-				return WritingSystemServices.kwsVernInParagraph;
-			Debug.Assert(!XmlViewsUtils.GetWsRequiresObject(id), "Writing system is magic.  These should never be used in the Interlinear area.");
+			switch (id)
+			{
+				case "best analysis":
+					return WritingSystemServices.kwsFirstAnal;//LangProject.kwsFirstAnal;
+				case "vern in para":
+					return WritingSystemServices.kwsVernInParagraph;
+			}
+			Debug.Assert(!XmlViewsUtils.GetWsRequiresObject(id), "Writing system is magic. These should never be used in the Interlinear area.");
 
-			int ws = -50;
+			var ws = -50;
 			try
 			{
 				if (!XmlViewsUtils.GetWsRequiresObject(id))
@@ -497,14 +498,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void wsCombo_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (m_fUpdatingWsCombo)
+			{
 				return;
-			if (!(wsCombo.SelectedItem is WsComboItem))
-				return;
-			int listIndex = CurrentListIndex;
-			if (listIndex < 0)
-				return;
+			}
 
-			InterlinLineSpec spec = m_choices[listIndex];
+			if (!(wsCombo.SelectedItem is WsComboItem))
+			{
+				return;
+			}
+			var listIndex = CurrentListIndex;
+			if (listIndex < 0)
+			{
+				return;
+			}
+
+			var spec = m_choices[listIndex];
 			spec.WritingSystem = getWsFromId(((WsComboItem)wsCombo.SelectedItem).Id);
 
 			InitCurrentList(listIndex);
@@ -512,20 +520,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void addButton_Click(object sender, System.EventArgs e)
 		{
-			if (optionsList.SelectedItem == null || !(optionsList.SelectedItem is LineOption))
+			if (!(optionsList.SelectedItem is LineOption))
+			{
 				return;
-			int flid = (optionsList.SelectedItem as LineOption).Flid;
-
-			int ws = 0;
+			}
+			var flid = ((LineOption)optionsList.SelectedItem).Flid;
+			var ws = 0;
 			if (m_choices.IndexOf(flid) != -1) // i.e., if m_choices contains flid.
 			{
-				InterlinLineSpec existingSpec = m_choices[m_choices.IndexOf(flid)];
-				int prevWs = existingSpec.WritingSystem;
+				var existingSpec = m_choices[m_choices.IndexOf(flid)];
+				var prevWs = existingSpec.WritingSystem;
 
 				foreach (WsComboItem item in WsComboItems(existingSpec.ComboContent))
 				{
-					int newWs = getWsFromId(item.Id);
-
+					var newWs = getWsFromId(item.Id);
 					if (newWs != prevWs && m_choices.IndexOf(flid, newWs, true) == -1)
 					{
 						ws = newWs;
@@ -534,26 +542,31 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 			}
 
-			int index = m_choices.Add(flid, ws);
+			var index = m_choices.Add(flid, ws);
 			InitCurrentList(index);
 
 		}
 
 		private void removeButton_Click(object sender, System.EventArgs e)
 		{
-			int index =  CurrentListIndex;
+			var index =  CurrentListIndex;
 			if (index < 0)
+			{
 				return;
+			}
 			string message;
-			InterlinLineSpec spec = m_choices[index];
+			var spec = m_choices[index];
 			if (!m_choices.OkToRemove(spec, out message))
 			{
 				MessageBox.Show(this, message, ITextStrings.ksCannotHideField);
 				return;
 			}
-			if (message != null && MessageBox.Show(this, message, ITextStrings.ksWarning, MessageBoxButtons.OKCancel)
-				== DialogResult.Cancel)
+
+			if (message != null && MessageBox.Show(this, message, ITextStrings.ksWarning, MessageBoxButtons.OKCancel) ==
+			    DialogResult.Cancel)
+			{
 				return;
+			}
 			m_choices.Remove(spec);
 			InitCurrentList(index);
 		}
@@ -561,8 +574,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void moveUpButton_Click(object sender, System.EventArgs e)
 		{
 			if (CurrentListIndex < 0 || !m_choices.OkToMoveUp(CurrentListIndex))
+			{
 				return;
-			InterlinLineSpec spec = m_choices[CurrentListIndex];
+			}
+			var spec = m_choices[CurrentListIndex];
 			m_choices.MoveUp(CurrentListIndex);
 			InitCurrentList(spec);
 		}
@@ -570,8 +585,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void moveDownButton_Click(object sender, System.EventArgs e)
 		{
 			if (CurrentListIndex < 0 || !m_choices.OkToMoveDown(CurrentListIndex))
+			{
 				return;
-			InterlinLineSpec spec = m_choices[CurrentListIndex];
+			}
+			var spec = m_choices[CurrentListIndex];
 			m_choices.MoveDown(CurrentListIndex);
 			InitCurrentList(spec);
 		}
@@ -593,40 +610,40 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void optionsList_DrawItem(object sender, System.Windows.Forms.DrawItemEventArgs e)
 		{
-			LineOption option = optionsList.Items[e.Index] as LineOption;
-			InterlinLineSpec spec = m_choices.CreateSpec(option.Flid, 0);
+			var option = optionsList.Items[e.Index] as LineOption;
+			var spec = m_choices.CreateSpec(option.Flid, 0);
 			DrawItem(e, spec);
 		}
 
 		private void DrawItem(System.Windows.Forms.DrawItemEventArgs e, InterlinLineSpec spec)
 		{
-			bool selected = ((e.State & DrawItemState.Selected) != 0);
-			Brush textBrush = GetBrush(spec, selected);
+			var selected = ((e.State & DrawItemState.Selected) != 0);
+			var textBrush = GetBrush(spec, selected);
 			try
 			{
-				Font drawFont = e.Font;
+				var drawFont = e.Font;
 				e.DrawBackground();
 				e.Graphics.DrawString(optionsList.Items[e.Index].ToString(), drawFont, textBrush, e.Bounds);
 			}
 			finally
 			{
 				if (!selected)
+				{
 					textBrush.Dispose();
+				}
 			}
 		}
 
 		private void currentList_DrawItem(object sender, DrawListViewItemEventArgs e)
 		{
-			InterlinLineSpec spec = m_choices[e.ItemIndex] as InterlinLineSpec;
+			var spec = m_choices[e.ItemIndex] as InterlinLineSpec;
 			DrawItem(e, spec);
 		}
 
 		/// <summary>
 		/// Owner draw requires drawing the column header as well as the list items.  See LT-7007.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void currentList_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+		static void currentList_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
 		{
 			e.DrawBackground();
 			e.DrawText();
@@ -634,41 +651,37 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private Brush GetBrush(InterlinLineSpec spec, bool selected)
 		{
-			Brush textBrush = SystemBrushes.ControlText;
-			if (selected)
-			{
-				textBrush = SystemBrushes.HighlightText;
-			}
-			else
-			{
-				textBrush = new SolidBrush(m_choices.LabelColorFor(spec));
-			}
-			return textBrush;
+			return selected ? SystemBrushes.HighlightText : new SolidBrush(m_choices.LabelColorFor(spec));
 		}
 
 		private void DrawItem(System.Windows.Forms.DrawListViewItemEventArgs e, InterlinLineSpec spec)
 		{
-			Brush backBrush = SystemBrushes.ControlLightLight;
+			var backBrush = SystemBrushes.ControlLightLight;
 			if (e.Item.Selected)
+			{
 				backBrush = SystemBrushes.Highlight;
+			}
 			e.Graphics.FillRectangle(backBrush, e.Bounds);
 			if (e.Item.Focused)
+			{
 				ControlPaint.DrawFocusRectangle(e.Graphics, e.Bounds);
-			SolidBrush textBrush = GetBrush(spec, e.Item.Selected) as SolidBrush;
+			}
+			var textBrush = GetBrush(spec, e.Item.Selected) as SolidBrush;
 			try
 			{
-				Font drawFont = e.Item.Font;
-				ListViewItem item = e.Item as ListViewItem;
+				var drawFont = e.Item.Font;
+				var item = e.Item;
 				// Draw the line label.
 				e.Graphics.DrawString(item.Text, drawFont, textBrush, e.Bounds);
 				// Now draw the WritingSystem info.
-				e.Graphics.DrawString(item.SubItems[1].Text, item.SubItems[1].Font,
-									  e.Item.Selected ? textBrush : SystemBrushes.ControlText, item.SubItems[1].Bounds);
+				e.Graphics.DrawString(item.SubItems[1].Text, item.SubItems[1].Font, e.Item.Selected ? textBrush : SystemBrushes.ControlText, item.SubItems[1].Bounds);
 			}
 			finally
 			{
 				if (!e.Item.Selected)
+				{
 					textBrush.Dispose();
+				}
 			}
 		}
 	}

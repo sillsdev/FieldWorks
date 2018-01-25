@@ -355,9 +355,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				CheckDisposed();
 
-				string low = ParserUIStrings.ksDash;
-				string med = ParserUIStrings.ksDash;
-				string high = ParserUIStrings.ksDash;
+				var low = ParserUIStrings.ksDash;
+				var med = ParserUIStrings.ksDash;
+				var high = ParserUIStrings.ksDash;
 				if (m_parserConnection != null)
 				{
 					low = m_parserConnection.GetQueueSize(ParserPriority.Low).ToString();
@@ -386,14 +386,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		}
 
 		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed;
-
-		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed => m_isDisposed;
+		public bool IsDisposed { get; private set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -448,8 +443,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
+			{
 				return;
+			}
 
 			// m_sda COM object block removed due to crash in Finializer thread LT-6124
 
@@ -499,7 +496,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			Subscriber = null;
 			_recordList = null;
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
@@ -524,13 +521,14 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				var md = m_cache.LangProject.MorphologicalDataOA;
 				dlg.SetDlgInfo(ParserUIStrings.ksParserParameters, md.ParserParameters);
-				if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
+				if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) != DialogResult.OK)
 				{
-					using (var helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, ParserUIStrings.ksUndoEditingParserParameters, ParserUIStrings.ksRedoEditingParserParameters))
-					{
-						md.ParserParameters = dlg.XmlRep;
-						helper.RollBack = false;
-					}
+					return;
+				}
+				using (var helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, ParserUIStrings.ksUndoEditingParserParameters, ParserUIStrings.ksRedoEditingParserParameters))
+				{
+					md.ParserParameters = dlg.XmlRep;
+					helper.RollBack = false;
 				}
 			}
 		}
@@ -661,7 +659,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_dialog.SizeChanged += (sender1, e1) =>
 				{
 					if (m_dialog.WindowState != FormWindowState.Minimized)
+					{
 						m_prevWindowState = m_dialog.WindowState;
+					}
 				};
 				m_dialog.SetDlgInfo(CurrentWordform, this);
 				var form = PropertyTable.GetValue<Form>("window");
@@ -694,13 +694,17 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		}
 		private void TraceVerboseLine(string s)
 		{
-			if(m_traceSwitch.TraceVerbose)
+			if (m_traceSwitch.TraceVerbose)
+			{
 				Trace.WriteLine("PLID="+System.Threading.Thread.CurrentThread.GetHashCode()+": "+s);
+			}
 		}
 		private void TraceInfoLine(string s)
 		{
-			if(m_traceSwitch.TraceInfo || m_traceSwitch.TraceVerbose)
+			if (m_traceSwitch.TraceInfo || m_traceSwitch.TraceVerbose)
+			{
 				Trace.WriteLine("PLID="+System.Threading.Thread.CurrentThread.GetHashCode()+": "+s);
+			}
 		}
 
 		#endregion TraceSwitch methods

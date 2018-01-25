@@ -55,6 +55,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
+		#endregion
+
+		#region Implementation of IFlexComponent
+
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -77,7 +81,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 		}
 
@@ -124,7 +128,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -151,19 +157,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		// True after the first time we do it.
-		internal protected bool HasLoadedMatches { get; protected set; }
+		protected internal bool HasLoadedMatches { get; protected set; }
 		// True while loading matches, to prevent recursive call.
-		internal protected bool IsLoadingMatches { get; protected set; }
+		protected internal bool IsLoadingMatches { get; protected set; }
 
-		internal protected void LoadMatches()
+		protected internal void LoadMatches()
 		{
 			LoadMatches(true);
 		}
 
-		internal protected void LoadMatches(bool fLoadVirtualProperty)
+		protected internal void LoadMatches(bool fLoadVirtualProperty)
 		{
 			var occurrences = SearchForMatches();
-			var decorator = (ConcDecorator) ((DomainDataByFlidDecoratorBase) m_recordList.VirtualListPublisher).BaseSda;
+			var decorator = (ConcDecorator)((DomainDataByFlidDecoratorBase) m_recordList.VirtualListPublisher).BaseSda;
 			// Set this BEFORE we start loading, otherwise, calls to ReloadList triggered here just make it empty.
 			HasLoadedMatches = true;
 			IsLoadingMatches = true;
@@ -179,14 +185,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		protected ConcDecorator ConcDecorator
-		{
-			get { return ((ObjectListPublisher) m_recordList.VirtualListPublisher).BaseSda as ConcDecorator; }
-		}
+		protected ConcDecorator ConcDecorator => ((ObjectListPublisher)m_recordList.VirtualListPublisher).BaseSda as ConcDecorator;
 
 		protected virtual List<IParaFragment> SearchForMatches()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>

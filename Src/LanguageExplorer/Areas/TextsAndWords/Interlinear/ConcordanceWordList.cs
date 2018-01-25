@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
@@ -26,7 +25,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		//set when the index in the list is changed
 		private bool selectionChanged = true;
 		//This indicates that a reload has been requested,
-		private bool reloadRequested;
 
 		/// <summary />
 		internal ConcordanceWordList(StatusBar statusBar, ILangProject languageProject, ConcDecorator decorator)
@@ -48,7 +46,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public void RequestRefresh()
 		{
 			//indicate that a refresh is desired so ReloadList would be triggered by an index change
-			reloadRequested = true;
+			ReloadRequested = true;
 			//indicate that the selection has changed, ReloadList will now actually reload the list
 			selectionChanged = true;
 		}
@@ -57,7 +55,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Returns the value that indicates if a reload has been requested (and ignored) by the list
 		/// If you want to force a re-load call RequestRefresh
 		/// </summary>
-		public bool ReloadRequested { get { return reloadRequested; } }
+		public bool ReloadRequested { get; private set; }
 
 		/// <summary>
 		/// We want to reload the list on an index change if a reload has been
@@ -74,8 +72,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				selectionChanged = true;
 				base.CurrentIndex = value;
 				//if noone has actually asked for the list to be reloaded it would be a waste to do so
-				if (reloadRequested)
+				if (ReloadRequested)
+				{
 					ReloadList();
+				}
 			}
 		}
 
@@ -85,7 +85,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns></returns>
 		protected override bool NeedToReloadList()
 		{
-			return base.NeedToReloadList() || reloadRequested;
+			return base.NeedToReloadList() || ReloadRequested;
 		}
 
 		protected override void ChangeSorter(RecordSorter sorter)
@@ -107,12 +107,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (selectionChanged || CurrentIndex == -1)
 			{
-				reloadRequested = selectionChanged = false; // BEFORE base call, which could set CurrentIndex and cause stack overflow otherwise
+				ReloadRequested = selectionChanged = false; // BEFORE base call, which could set CurrentIndex and cause stack overflow otherwise
 				base.ReloadList();
 			}
 			else
 			{
-				reloadRequested = true;
+				ReloadRequested = true;
 			}
 		}
 
@@ -121,7 +121,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override bool UpdatePrivateList()
 		{
 			if (m_flid != ObjectListPublisher.OwningFlid)
+			{
 				return false; // we are not involved in the reload process.
+			}
 
 			if (((IActionHandlerExtensions)m_cache.ActionHandlerAccessor).CanStartUow)
 			{
@@ -142,8 +144,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var publisher = (VirtualListPublisher as ObjectListPublisher);
 			publisher.SetOwningPropInfo(WfiWordformTags.kClassId, "WordformInventory", "Wordforms");
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, ParseInterestingTexts);
-			publisher.SetOwningPropValue(
-				(from wf in m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances() select wf.Hvo).ToArray());
+			publisher.SetOwningPropValue((m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances().Select(wf => wf.Hvo)).ToArray());
 		}
 
 		/// <summary>
@@ -152,16 +153,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void ParseInterestingTexts()
 		{
 			// Also it should be forced to be empty if FwUtils.IsOkToDisplayScriptureIfPresent returns false.
-			IEnumerable<IStText> scriptureTexts = m_cache.LangProject.TranslatedScriptureOA == null ? new IStText[0] :
-				from aText in m_cache.LangProject.TranslatedScriptureOA.StTexts
-				where IsInterestingScripture(aText)
-				select aText;
+			var scriptureTexts = m_cache.LangProject.TranslatedScriptureOA?.StTexts.Where(aText => IsInterestingScripture(aText)) ?? new IStText[0];
 			// Enhance JohnT: might eventually want to be more selective here, perhaps a genre filter.
-			IEnumerable<IStText> vernacularTexts = from st in m_cache.LangProject.Texts select st.ContentsOA;
+			var vernacularTexts = from st in m_cache.LangProject.Texts select st.ContentsOA;
 			// Filtered list that excludes IScrBookAnnotations.
 			var texts = vernacularTexts.Concat(scriptureTexts).Where(x => x != null).ToList();
-			int count = (from text in texts from para in text.ParagraphsOS select para).Count();
-			int done = 0;
+			var count = (from text in texts from para in text.ParagraphsOS select para).Count();
+			var done = 0;
 #if RANDYTODO
 			using (var progress = FwXWindow.CreateSimpleProgressState(m_propertyTable))
 			{
@@ -193,12 +191,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				var concDecorator = ((DomainDataByFlidDecoratorBase)VirtualListPublisher).BaseSda as ConcDecorator;
 				if (concDecorator != null)
+				{
 					return concDecorator.IsInterestingText(text);
+				}
 			}
 			return true; // if by any chance this is used without a conc decorator, assume all Scripture is interesting.
 		}
 
-		void RecordList_PropChangedCompleted()
+		private void RecordList_PropChangedCompleted()
 		{
 			ReloadList();
 		}

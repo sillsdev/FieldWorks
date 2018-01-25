@@ -854,7 +854,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kAppendToExisting, result);
+			Assert.AreEqual(FindWhereToAddResult.kAppendToExisting, result);
 			Assert.AreEqual(2, whereToInsertActual);
 			Assert.AreEqual(wg1_2.Hvo, existingWordGroupActual.Hvo);
 		}
@@ -893,8 +893,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kAppendToExisting, result,
-				"Wrong enum result.");
+			Assert.AreEqual(FindWhereToAddResult.kAppendToExisting, result, "Wrong enum result.");
 			Assert.AreEqual(2, whereToInsertActual, "The index whereToInsert is wrong.");
 			Assert.AreEqual(wg1_2.Hvo, existingWordGroupActual.Hvo, "Wrong WordGroup.");
 		}
@@ -937,7 +936,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertChOrphInWordGrp, result);
+			Assert.AreEqual(FindWhereToAddResult.kInsertChOrphInWordGrp, result);
 			Assert.AreEqual(0, whereToInsertActual);
 			Assert.AreEqual(wg2_0.Hvo, existingWordGroupActual.Hvo);
 		}
@@ -973,7 +972,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
+			Assert.AreEqual(FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(1, whereToInsertActual); // index in Row.Cells!
 			Assert.IsNull(existingWordGroupActual);
 		}
@@ -1012,7 +1011,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kAppendToExisting, result);
+			Assert.AreEqual(FindWhereToAddResult.kAppendToExisting, result);
 			Assert.AreEqual(wg1_1.Hvo, existingWordGroupActual.Hvo);
 		}
 
@@ -1049,7 +1048,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kAppendToExisting, result);
+			Assert.AreEqual(FindWhereToAddResult.kAppendToExisting, result);
 			Assert.AreEqual(wg1_1.Hvo, existingWordGroupActual.Hvo);
 			Assert.AreEqual(1, whereToInsertActual); // not used, but it should be this value anyway.
 		}
@@ -1086,7 +1085,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertChOrphInWordGrp, result);
+			Assert.AreEqual(FindWhereToAddResult.kInsertChOrphInWordGrp, result);
 			Assert.AreEqual(wg1_1.Hvo, existingWordGroupActual.Hvo);
 			Assert.AreEqual(0, whereToInsertActual, "Should insert at beginning of WordGroup"); // insert at beginning
 		}

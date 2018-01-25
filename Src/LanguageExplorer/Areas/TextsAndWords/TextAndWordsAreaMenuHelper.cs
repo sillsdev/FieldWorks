@@ -65,7 +65,7 @@ DONE:					<item command="CmdImportWordSet" defaultVisible="false"/>
 
 		private void InsertHumanApprovedAnalysis_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("TODO: Adding new human approved analysis here.");
+			MessageBox.Show(@"TODO: Adding new human approved analysis here.");
 		}
 
 		private void ImportWordSetToolStripMenuItemOnClick(object sender, EventArgs eventArgs)

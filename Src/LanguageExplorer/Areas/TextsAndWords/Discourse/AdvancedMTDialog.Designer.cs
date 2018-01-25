@@ -24,13 +24,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
-				if (m_AMTDLogic != null)
-					m_AMTDLogic.Dispose();
+				components?.Dispose();
+				DlgLogic?.Dispose();
 			}
 			components = null;
-			m_AMTDLogic = null;
+			DlgLogic = null;
 
 			base.Dispose(disposing);
 		}
@@ -44,7 +42,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdvancedMTDialog));
-			this.helpProvider = new HelpProvider();
+			this._helpProvider = new HelpProvider();
 			this.m_rowLabel = new System.Windows.Forms.Label();
 			this.m_columnLabel = new System.Windows.Forms.Label();
 			this.m_rowsCombo = new System.Windows.Forms.ComboBox();

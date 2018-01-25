@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -30,17 +30,19 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			var wf = (IWfiWordform) obj;
 
-			int ws = field.String.get_WritingSystemAt(0);
+			var ws = field.String.get_WritingSystemAt(0);
 			switch (field.Flid)
 			{
 				case WfiWordformTags.kflidForm:
 					var form = wf.Form.StringOrNull(ws);
 					if (form != null && form.Length > 0)
+					{
 						yield return form;
+					}
 					break;
 
 				default:
-					throw new ArgumentException("Unrecognized field.", "field");
+					throw new ArgumentException(@"Unrecognized field.", nameof(field));
 			}
 		}
 
@@ -51,16 +53,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		protected override bool IsIndexResetRequired(int hvo, int flid)
 		{
-			if (flid == m_virtuals.LangProjectAllWordforms)
-				return true;
-
-			switch (flid)
-			{
-				case WfiWordformTags.kflidForm:
-					return true;
-			}
-
-			return false;
+			return flid == m_virtuals.LangProjectAllWordforms || flid == WfiWordformTags.kflidForm;
 		}
 
 		protected override bool IsFieldMultiString(SearchField field)
@@ -71,7 +64,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					return true;
 			}
 
-			throw new ArgumentException("Unrecognized field.", "field");
+			throw new ArgumentException(@"Unrecognized field.", nameof(field));
 		}
 	}
 }

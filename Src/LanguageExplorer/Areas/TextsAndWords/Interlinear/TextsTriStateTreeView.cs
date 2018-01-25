@@ -70,11 +70,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public IApp App { private get; set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Loads the non-Scripture texts.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void LoadGeneralTexts()
 		{
 			var tnTexts = LoadTextsByGenreAndWithoutGenre();
@@ -157,19 +155,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Nodes.Add(bibleNode);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Load texts by Genre into the texts tree view.
 		/// </summary>
-		/// <returns>A control tree of the Texts in the project</returns>
-		/// ------------------------------------------------------------------------------------
+		/// <returns>A TreeNode control of the Texts in the project</returns>
 		private TreeNode LoadTextsByGenreAndWithoutGenre()
 		{
 			if (m_cache.LanguageProject.GenreListOA == null) return null;
 			var genreList = m_cache.LanguageProject.GenreListOA.PossibilitiesOS;
 			Debug.Assert(genreList != null);
-			var allTexts = m_cache.ServiceLocator.GetInstance<ITextRepository>().AllInstances();
-			if (allTexts == null)
+			var allTexts = m_cache.ServiceLocator.GetInstance<ITextRepository>().AllInstances().ToList();
+			if (!allTexts.Any())
 			{
 				return null;
 			}
@@ -238,7 +234,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="parent">The parent to attach the genres to. If null, nothing is done.</param>
 		/// <param name="genreList">The owning sequence of genres - its a tree.</param>
 		/// <param name="allTexts">The flat list of all texts in the project.</param>
-		private static void LoadTextsFromGenres(TreeNode parent, ILcmOwningSequence<ICmPossibility> genreList, IEnumerable<IText> allTexts)
+		private static void LoadTextsFromGenres(TreeNode parent, ILcmOwningSequence<ICmPossibility> genreList, List<IText> allTexts)
 		{
 			if (parent == null)
 			{
@@ -308,7 +304,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		// Class to sort the Genre's before they are displayed.
-		private class CmPossibilitySorter : IComparer<ICmPossibility>
+		private sealed class CmPossibilitySorter : IComparer<ICmPossibility>
 		{
 			internal CmPossibilitySorter()
 			{
@@ -326,42 +322,32 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			#endregion
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Since we're being lazy about filling in sections and footnotes, we need to do it for
 		/// checked books when obtaining their children.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected override void FillInMissingChildren(TreeNode bookNode)
 		{
 			FillInChildren(bookNode, true);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// If using lazy initialization, fill this in to make sure the relevant part of the
 		/// tree is built so that the specified tag can be checked.
 		/// </summary>
 		/// <param name="tag">The object that better be the Tag of some node </param>
-		/// ------------------------------------------------------------------------------------
 		protected override void FillInIfHidden(object tag)
 		{
-			if (!(tag is ICmObject))
-			{
-				return;
-			}
-			var book = ((ICmObject)tag).OwnerOfClass<IScrBook>();
+			var book = (tag as ICmObject)?.OwnerOfClass<IScrBook>();
 			if (book != null)
 			{
 				FillInChildren(FindNode(Nodes, book), false);
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Finds the node for the specified book.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private static TreeNode FindNode(IEnumerable nodes, IScrBook book)
 		{
 			foreach (TreeNode node in nodes)
@@ -379,7 +365,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return null;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Fills the in children.
 		/// </summary>
@@ -388,7 +373,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// See FWR-3498 for details.</param>
 		/// <param name="checkChildren">if set to <c>true</c> all child nodes will be selected.</param>
 		/// <returns><c>true</c> if the given node has real child node(s) (after filling them in).</returns>
-		/// ------------------------------------------------------------------------------------
 		private bool FillInChildren(TreeNode bookNode, bool checkChildren)
 		{
 			if (bookNode == null)
@@ -409,11 +393,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return retval;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Selects all the children of the given node (recursively).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void CheckAllChildren(TreeNode node)
 		{
 			foreach (TreeNode child in node.Nodes)
@@ -423,14 +405,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the BeforeExpand event of the TextsTriStateTreeView control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.Windows.Forms.TreeViewCancelEventArgs"/>
-		/// instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		private void TriStateTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
 		{
 			e.Cancel = !FillInChildren(e.Node, false);
@@ -481,7 +458,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Fill in the children for a particular book. This is typically done when it gets
 		/// expanded or when we need a list including the children. Separating it from the
@@ -490,7 +466,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="bookNode">The book node.</param>
 		/// <returns><c>true</c> if the dummy node was replaced by real child node(s)</returns>
 		/// <remarks>protected virtual for unit tests</remarks>
-		/// ------------------------------------------------------------------------------------
 		protected virtual bool FillInBookChildren(TreeNode bookNode)
 		{
 			var book = bookNode.Tag as IScrBook;
@@ -530,7 +505,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 
 				// Update back translation
-				IScrText btProject = ParatextHelper.GetBtsForProject(m_associatedPtText).FirstOrDefault();
+				var btProject = ParatextHelper.GetBtsForProject(m_associatedPtText).FirstOrDefault();
 				if (btProject != null && btProject.BookPresent(book.CanonicalNum) && !btProject.IsCheckSumCurrent(book.CanonicalNum, book.ImportedBtCheckSum.get_String(book.Cache.DefaultAnalWs).Text))
 				{
 					// The BT for this book node is out-of-date with the Paratext BT data
@@ -607,11 +582,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Expand nodes to book level
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void ExpandToBooks()
 		{
 			BeforeExpand -= TriStateTreeView_BeforeExpand; // Prevent loading Books before the user expands them
@@ -628,7 +601,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Imports the specified book.
 		/// </summary>
@@ -638,7 +610,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns>
 		/// The ScrBook created to hold the imported data
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		private IScrBook ImportBook(Form owningForm, int bookNum)
 		{
 			IScrImportSet importSettings = null;

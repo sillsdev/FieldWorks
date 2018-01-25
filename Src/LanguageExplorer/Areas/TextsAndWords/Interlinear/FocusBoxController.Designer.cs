@@ -22,13 +22,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
-				if (m_sandbox != null)
-					((IDisposable)m_sandbox).Dispose();
+				components?.Dispose();
+				((IDisposable)InterlinWordControl)?.Dispose();
 			}
 			components = null;
-			m_sandbox = null;
+			InterlinWordControl = null;
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;

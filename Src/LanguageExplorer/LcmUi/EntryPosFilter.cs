@@ -14,7 +14,7 @@ namespace LanguageExplorer.LcmUi
 {
 	/// <summary>
 	/// A special filter, where items are LexEntries, and matches are ones where an MSA is an MoStemMsa that
-	/// has the correct POS. (not used yet.
+	/// has the correct POS.
 	/// </summary>
 	internal class EntryPosFilter : ListChoiceFilter
 	{

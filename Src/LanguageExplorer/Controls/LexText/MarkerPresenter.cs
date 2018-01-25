@@ -53,7 +53,7 @@ namespace LanguageExplorer.Controls.LexText
 			return rval;
 		}
 
-		public MarkerPresenter(/*LcmCache cache, */ string rootDir, Hashtable uiLangInfo, string topAnalysisWS,
+		public MarkerPresenter(string rootDir, Hashtable uiLangInfo, string topAnalysisWS,
 			string mapfile, string datafile, string fwFile, int numColumns)
 		{
 			m_rootDir = rootDir;

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -25,37 +25,42 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void AddFeatures(Node parent, IEnumerable<IFsFeatDefn> features, IDictionary<IFsFeatDefn, object> values)
 		{
-			foreach (IFsFeatDefn feature in features)
+			foreach (var feature in features)
 			{
 				var complexFeat = feature as IFsComplexFeature;
 				if (complexFeat != null)
 				{
 					// skip complex features without a type specified
 					if (complexFeat.TypeRA == null)
+					{
 						continue;
+					}
 
 					var node = new ComplexFeatureNode(complexFeat) {Image = m_complexImage};
 					object value;
 					if (values == null || !values.TryGetValue(complexFeat, out value))
+					{
 						value = null;
+					}
 					AddFeatures(node, complexFeat.TypeRA.FeaturesRS, (IDictionary<IFsFeatDefn, object>) value);
 					parent.Nodes.Add(node);
 				}
 				else
 				{
 					var closedFeat = feature as IFsClosedFeature;
-					if (closedFeat != null)
+					if (closedFeat == null)
 					{
-						var node = new ClosedFeatureNode(closedFeat) {Image = m_closedImage};
-						object value;
-						if (values != null && values.TryGetValue(closedFeat, out value))
-						{
-							var closedVal = (ClosedFeatureValue) value;
-							node.IsChecked = closedVal.Negate;
-							node.Value = new SymbolicValue(closedVal.Symbol);
-						}
-						parent.Nodes.Add(node);
+						continue;
 					}
+					var node = new ClosedFeatureNode(closedFeat) {Image = m_closedImage};
+					object value;
+					if (values != null && values.TryGetValue(closedFeat, out value))
+					{
+						var closedVal = (ClosedFeatureValue) value;
+						node.IsChecked = closedVal.Negate;
+						node.Value = new SymbolicValue(closedVal.Symbol);
+					}
+					parent.Nodes.Add(node);
 				}
 			}
 		}
@@ -66,9 +71,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			AddInflFeatures(Root, inflFeatures);
 		}
 
-		private void AddInflFeatures(Node node, IDictionary<IFsFeatDefn, object> values)
+		private static void AddInflFeatures(Node node, IDictionary<IFsFeatDefn, object> values)
 		{
-			foreach (Node child in node.Nodes)
+			foreach (var child in node.Nodes)
 			{
 				var complexNode = child as ComplexFeatureNode;
 				if (complexNode != null)
@@ -76,13 +81,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					var newValues = new Dictionary<IFsFeatDefn, object>();
 					AddInflFeatures(complexNode, newValues);
 					if (newValues.Count > 0)
+					{
 						values[complexNode.Feature] = newValues;
+					}
 				}
 				else
 				{
 					var closedNode = child as ClosedFeatureNode;
-					if (closedNode != null && closedNode.Value.FeatureValue != null)
+					if (closedNode?.Value.FeatureValue != null)
+					{
 						values[closedNode.Feature] = new ClosedFeatureValue(closedNode.Value.FeatureValue, closedNode.IsChecked);
+					}
 				}
 			}
 		}

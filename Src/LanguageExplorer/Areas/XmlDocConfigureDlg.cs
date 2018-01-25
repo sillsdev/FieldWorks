@@ -1945,15 +1945,9 @@ namespace LanguageExplorer.Areas
 			}
 			ltn.ShowSingleGramInfoFirst = m_chkShowSingleGramInfoFirst.Checked;
 			// Set the information on the child grammatical info node as well.
-			foreach (TreeNode n in ltn.Nodes)
+			foreach (var tn in ltn.Nodes.Cast<LayoutTreeNode>().Where(n => n.ShowGramInfoConfig))
 			{
-				var tn = n as LayoutTreeNode;
-				if (tn == null || !tn.ShowGramInfoConfig)
-				{
-					continue;
-				}
 				tn.ShowSingleGramInfoFirst = m_chkShowSingleGramInfoFirst.Checked;
-				break;
 			}
 			ltn.ShowSenseAsPara = m_cfgSenses.DisplaySenseInPara;
 			ltn.SenseParaStyle = m_cfgSenses.SenseParaStyle;

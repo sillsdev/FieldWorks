@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2015 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,7 +17,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	/// view constructor in the left to right fashion that it needs. If the chart is left to right
 	/// (the more common case), the decorator just feeds through to the base class.
 	/// </summary>
-	class ChartRowEnvDecorator : IVwEnv
+	internal class ChartRowEnvDecorator : IVwEnv
 	{
 		protected IVwEnv m_vwEnv; // protected for testing
 		protected int m_numOfCalls;
@@ -57,7 +57,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		internal void FlushDecorator()
 		{
 			if (!IsRtL)
+			{
 				return;
+			}
 
 			InternalFlush();
 
@@ -72,14 +74,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			for (var i = m_iStartEmbedding.Count - 1; i > -1; i--)
 			{
 				var index = m_iStartEmbedding[i];
-				if (m_calledMethods[index].MethodType == DecoratorMethodTypes.OpenTableCell)
+				switch (m_calledMethods[index].MethodType)
 				{
-					index = FindMatchingEndEmbeddingIndex(index);
-					PutOutTableCellStartingAt(index);
-					continue;
+					case DecoratorMethodTypes.OpenTableCell:
+						index = FindMatchingEndEmbeddingIndex(index);
+						PutOutTableCellStartingAt(index);
+						continue;
+					case DecoratorMethodTypes.AddObjProp:
+						RegurgitateIVwEnvCall(m_calledMethods[index]);
+						break;
 				}
-				if (m_calledMethods[index].MethodType == DecoratorMethodTypes.AddObjProp)
-					RegurgitateIVwEnvCall(m_calledMethods[index]);
 			}
 			m_fInRegurgitation = false;
 		}
@@ -91,8 +95,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			for (var i = index - 1; i > -1; i--)
 			{
 				if (m_calledMethods[i].MethodType == DecoratorMethodTypes.SetIntProperty ||
-					m_calledMethods[i].MethodType == DecoratorMethodTypes.NoteDependency)
+				    m_calledMethods[i].MethodType == DecoratorMethodTypes.NoteDependency)
+				{
 					continue;
+				}
 				return i + 1;
 			}
 			return 0;
@@ -104,7 +110,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			for (var i = iopenCell; (i < m_calledMethods.Count && !fsentCloseCell); i++)
 			{
 				if (m_calledMethods[i].MethodType == DecoratorMethodTypes.CloseTableCell)
+				{
 					fsentCloseCell = true;
+				}
 				RegurgitateIVwEnvCall(m_calledMethods[i]);
 			}
 		}
@@ -157,10 +165,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					m_vwEnv.CloseTableCell();
 					break;
 				case DecoratorMethodTypes.NoteDependency:
-					var _rghvo = (int[])storedMethod.ParamArray[0];
-					var _rgtag = (int[])storedMethod.ParamArray[1];
+					var rghvo = (int[])storedMethod.ParamArray[0];
+					var rgtag = (int[])storedMethod.ParamArray[1];
 					var chvo = (int) storedMethod.ParamArray[2];
-					m_vwEnv.NoteDependency(_rghvo, _rgtag, chvo);
+					m_vwEnv.NoteDependency(rghvo, rgtag, chvo);
 					break;
 				case DecoratorMethodTypes.OpenParagraph:
 					m_vwEnv.OpenParagraph();
@@ -207,80 +215,79 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_numOfCalls++;
 		}
 
-		public virtual void AddObjVec(int tag, IVwViewConstructor _vwvc, int frag)
+		public virtual void AddObjVec(int tag, IVwViewConstructor vwvc, int frag)
 		{
 			if (!IsRtL)
 			{
-				m_vwEnv.AddObjVec(tag, _vwvc, frag);
+				m_vwEnv.AddObjVec(tag, vwvc, frag);
 				return;
 			}
-			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.AddObjVec, new object[] { tag, _vwvc, frag }));
+			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.AddObjVec, new object[] { tag, vwvc, frag }));
 			m_numOfCalls++;
 		}
 
-		public virtual void AddObjVecItems(int tag, IVwViewConstructor _vwvc, int frag)
+		public virtual void AddObjVecItems(int tag, IVwViewConstructor vwvc, int frag)
 		{
 			if (!IsRtL)
 			{
-				m_vwEnv.AddObjVecItems(tag, _vwvc, frag);
+				m_vwEnv.AddObjVecItems(tag, vwvc, frag);
 				return;
 			}
-			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.AddObjVecItems, new object[] { tag, _vwvc, frag }));
+			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.AddObjVecItems, new object[] { tag, vwvc, frag }));
 			m_numOfCalls++;
 		}
 
-		public virtual void AddObj(int hvo, IVwViewConstructor _vwvc, int frag)
+		public virtual void AddObj(int hvo, IVwViewConstructor vwvc, int frag)
 		{
 			if (!IsRtL)
 			{
-				m_vwEnv.AddObj(hvo, _vwvc, frag);
+				m_vwEnv.AddObj(hvo, vwvc, frag);
 				return;
 			}
-			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.AddObj, new object[] { hvo, _vwvc, frag }));
+			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.AddObj, new object[] { hvo, vwvc, frag }));
 			m_numOfCalls++;
 		}
 
-		public virtual void AddProp(int tag, IVwViewConstructor _vwvc, int frag)
+		public virtual void AddProp(int tag, IVwViewConstructor vwvc, int frag)
 		{
 			if (!IsRtL)
 			{
-				m_vwEnv.AddProp(tag, _vwvc, frag);
+				m_vwEnv.AddProp(tag, vwvc, frag);
 				return;
 			}
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		public virtual void NoteDependency(int[] _rghvo, int[] _rgtag, int chvo)
+		public virtual void NoteDependency(int[] rghvo, int[] rgtag, int chvo)
 		{
 			if (!IsRtL)
 			{
-				m_vwEnv.NoteDependency(_rghvo, _rgtag, chvo);
+				m_vwEnv.NoteDependency(rghvo, rgtag, chvo);
 				return;
 			}
-			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.NoteDependency,
-				new object[] { _rghvo, _rgtag, chvo }));
+			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.NoteDependency, new object[] { rghvo, rgtag, chvo }));
 			m_numOfCalls++;
 		}
 
-		public virtual void AddStringProp(int tag, IVwViewConstructor _vwvc)
+		public virtual void AddStringProp(int tag, IVwViewConstructor vwvc)
 		{
 			if (!IsRtL)
 			{
-				m_vwEnv.AddStringProp(tag, _vwvc);
+				m_vwEnv.AddStringProp(tag, vwvc);
 				return;
 			}
-			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.AddStringProp, new object[] { tag, _vwvc }));
+			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.AddStringProp, new object[] { tag, vwvc }));
 			m_numOfCalls++;
 		}
 
-		public virtual void AddString(ITsString _ss)
+		public virtual void AddString(ITsString tss)
 		{
 			if (!IsRtL)
 			{
-				m_vwEnv.AddString(_ss);
+				m_vwEnv.AddString(tss);
 				return;
 			}
-			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.AddString, new object[] { _ss }));
+			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.AddString, new object[] { tss }));
 			m_numOfCalls++;
 		}
 
@@ -290,7 +297,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <returns></returns>
 		public bool IsParagraphOpen()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public virtual void OpenParagraph()
@@ -318,7 +325,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 									}));
 			}
 			else // Only count OpenParagraph if regurgitating, since other calls will be counted separately.
+			{
 				m_numOfCalls++;
+			}
 			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.OpenParagraph, new object[] { }));
 		}
 
@@ -413,19 +422,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 			// Right to Left modifications
 			if (tpt == (int) FwTextPropType.ktptBorderTrailing)
+			{
 				tpt = (int) FwTextPropType.ktptBorderLeading;
-			if (tpt == (int) FwTextPropType.ktptMarginTrailing)
-				tpt = (int) FwTextPropType.ktptMarginLeading;
+			}
 
-			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.SetIntProperty,
-				new object[] { tpt, tpv, nValue }));
+			if (tpt == (int) FwTextPropType.ktptMarginTrailing)
+			{
+				tpt = (int) FwTextPropType.ktptMarginLeading;
+			}
+
+			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.SetIntProperty, new object[] { tpt, tpv, nValue }));
 			m_numOfCalls++;
 		}
 
-		public ISilDataAccess DataAccess
-		{
-			get { return m_vwEnv.DataAccess; }
-		}
+		public ISilDataAccess DataAccess => m_vwEnv.DataAccess;
 
 		public ITsTextProps Props
 		{
@@ -436,8 +446,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					m_vwEnv.Props = value;
 					return;
 				}
-				m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.PropsSetter,
-					new object[] { value }));
+				m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.PropsSetter, new object[] { value }));
 				m_numOfCalls++;
 			}
 		}
@@ -446,272 +455,237 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		#region Unimplemented Methods
 
-		public void AddReversedObjVecItems(int tag, IVwViewConstructor _vwvc, int frag)
+		public void AddReversedObjVecItems(int tag, IVwViewConstructor vwvc, int frag)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void AddLazyVecItems(int tag, IVwViewConstructor _vwvc, int frag)
+		public void AddLazyVecItems(int tag, IVwViewConstructor vwvc, int frag)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		public void AddLazyItems(int[] _rghvo, int chvo, IVwViewConstructor _vwvc, int frag)
+		public void AddLazyItems(int[] rghvo, int chvo, IVwViewConstructor vwvc, int frag)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		public void AddDerivedProp(int[] _rgtag, int ctag, IVwViewConstructor _vwvc, int frag)
+		public void AddDerivedProp(int[] rgtag, int ctag, IVwViewConstructor vwvc, int frag)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		public void NoteStringValDependency(int hvo, int tag, int ws, ITsString _tssVal)
+		public void NoteStringValDependency(int hvo, int tag, int ws, ITsString tssVal)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		public void AddUnicodeProp(int tag, int ws, IVwViewConstructor _vwvc)
+		public void AddUnicodeProp(int tag, int ws, IVwViewConstructor vwvc)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void AddIntProp(int tag)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		public void AddIntPropPic(int tag, IVwViewConstructor _vc, int frag, int nMin, int nMax)
+		public void AddIntPropPic(int tag, IVwViewConstructor vc, int frag, int nMin, int nMax)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		public void AddStringAltMember(int tag, int ws, IVwViewConstructor _vwvc)
+		public void AddStringAltMember(int tag, int ws, IVwViewConstructor vwvc)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void AddStringAlt(int tag)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		public void AddStringAltSeq(int tag, int[] _rgenc, int cws)
+		public void AddStringAltSeq(int tag, int[] rgenc, int cws)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void AddTimeProp(int tag, uint flags)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public int CurrentObject()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		public void GetOuterObject(int ichvoLevel, out int _hvo, out int _tag, out int _ihvo)
+		public void GetOuterObject(int ichvoLevel, out int hvo, out int tag, out int ihvo)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		public void AddWindow(IVwEmbeddedWindow _ew, int dmpAscent, bool fJustifyRight, bool fAutoShow)
+		public void AddWindow(IVwEmbeddedWindow ew, int dmpAscent, bool fJustifyRight, bool fAutoShow)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void AddSeparatorBar()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void AddSimpleRect(int rgb, int dmpWidth, int dmpHeight, int dmpBaselineOffset)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void OpenDiv()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void CloseDiv()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void OpenTaggedPara()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void OpenMappedPara()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void OpenMappedTaggedPara()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void OpenConcPara(int ichMinItem, int ichLimItem, VwConcParaOpts cpoFlags, int dmpAlign)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		public void OpenOverridePara(int cOverrideProperties, DispPropOverride[] _rgOverrideProperties)
+		public void OpenOverridePara(int cOverrideProperties, DispPropOverride[] rgOverrideProperties)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void OpenTable(int cCols, VwLength vlWidth, int mpBorder, VwAlignment vwalign, VwFramePosition frmpos, VwRule vwrule, int mpSpacing, int mpPadding, bool fSelectOneCol)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void CloseTable()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void OpenTableRow()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void CloseTableRow()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void CloseTableBody()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void OpenTableHeaderCell(int nRowSpan, int nColSpan)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void CloseTableHeaderCell()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void MakeColumns(int nColSpan, VwLength vlWidth)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void MakeColumnGroup(int nColSpan, VwLength vlWidth)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void OpenTableHeader()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void CloseTableHeader()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void OpenTableFooter()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void CloseTableFooter()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void OpenTableBody()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void set_StringProperty(int sp, string bstrValue)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		public void get_StringWidth(ITsString _tss, ITsTextProps _ttp, out int dmpx, out int dmpy)
+		public void get_StringWidth(ITsString tss, ITsTextProps ttp, out int dmpx, out int dmpy)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		public void AddPictureWithCaption(IPicture _pict, int tag, ITsTextProps _ttpCaption, int hvoCmFile, int ws, int dxmpWidth, int dympHeight, IVwViewConstructor _vwvc)
+		public void AddPictureWithCaption(IPicture pict, int tag, ITsTextProps ttpCaption, int hvoCmFile, int ws, int dxmpWidth, int dympHeight, IVwViewConstructor vwvc)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		public void AddPicture(IPicture _pict, int tag, int dxmpWidth, int dympHeight)
+		public void AddPicture(IPicture pict, int tag, int dxmpWidth, int dympHeight)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void SetParagraphMark(VwBoundaryMark boundaryMark)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void EmptyParagraphBehavior(int behavior)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public int OpenObject
 		{
-			get { throw new NotImplementedException(); }
+			get { throw new NotSupportedException(); }
 		}
 
 		public int EmbeddingLevel
 		{
-			get { throw new NotImplementedException(); }
+			get { throw new NotSupportedException(); }
 		}
 
 		#endregion
 
 	}
-
-	enum DecoratorMethodTypes
-	{
-		UnknownMethod,
-		AddObj,
-		AddObjProp,
-		AddObjVec,
-		AddObjVecItems,
-		AddString,
-		AddStringProp,
-		CloseInnerPile,
-		CloseParagraph,
-		CloseSpan,
-		CloseTableCell,
-		NoteDependency,
-		OpenInnerPile,
-		OpenParagraph,
-		OpenSpan,
-		OpenTableCell,
-		PropsSetter,
-		SetIntProperty
-	}
-
-	class StoredMethod
-	{
-		public StoredMethod(DecoratorMethodTypes mtype, object[] paramArray)
-		{
-			MethodType = mtype;
-			ParamArray = paramArray;
-		}
-		public DecoratorMethodTypes MethodType { get; private set; }
-		public object[] ParamArray { get; private set; }
-		public int ParamCount { get { return ParamArray.Length; } }
-	}
-
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,15 +13,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	internal sealed class HCTrace : IParserTrace
 	{
 		private static ParserTraceUITransform s_traceTransform;
-		private static ParserTraceUITransform TraceTransform
-		{
-			get
-			{
-				if (s_traceTransform == null)
-					s_traceTransform = new ParserTraceUITransform("FormatHCTrace");
-				return s_traceTransform;
-			}
-		}
+		private static ParserTraceUITransform TraceTransform => s_traceTransform ?? (s_traceTransform = new ParserTraceUITransform("FormatHCTrace"));
 
 		public string CreateResultPage(IPropertyTable propertyTable, XDocument result, bool isTrace)
 		{

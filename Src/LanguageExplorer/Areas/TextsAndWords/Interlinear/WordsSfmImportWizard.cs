@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -51,7 +51,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Until we have a better idea, assume we're half done with the import when we've produced the intermediate.
 			// TODO: we could do progress based on number of words to import.
 			dlg.Position += 50;
-			stage2Converter.ImportWordsFrag(() => new MemoryStream(stage1), LinguaLinksImport.ImportAnalysesLevel.WordGloss);
+			stage2Converter.ImportWordsFrag(() => new MemoryStream(stage1), ImportAnalysesLevel.WordGloss);
 		}
 	}
 }

@@ -37,7 +37,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <summary>
 		/// Override method to return the Label property.
 		/// </summary>
-		/// <returns></returns>
 		public override string ToString()
 		{
 			return Label;

@@ -232,13 +232,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			var uniqueWords = 0;
 			var languageCount = new Dictionary<int, int>();
 			var languageTypeCount = new Dictionary<int, HashSet<string>>();
-			//for each interesting text
 			foreach (var interestingText in textList.InterestingTexts)
 			{
 				//if a text is deleted in Interlinear there could be a text in this list which has invalid data.
 				if (interestingText.Hvo < 0)
+				{
 					continue;
-				//for every paragraph in the interesting text
+				}
 				for (var index = 0; index < interestingText.ParagraphsOS.Count; ++index)
 				{
 					//count the segments in this paragraph
@@ -283,40 +283,41 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 					wordCount += words.Count;
 				}
 			}
+
+			const string tabCharacter = "\t";
 			// insert total word type count
-			statisticsBox.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine + "\t" + LanguageExplorerResources.ksStatisticsViewTotalWordTypesText + "\t"; // Todo: find the right System.?.NewLine constant
+			statisticsBox.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine + tabCharacter + LanguageExplorerResources.ksStatisticsViewTotalWordTypesText + tabCharacter;
 
 			//add one row for the unique words in each language.
 			foreach (var keyValuePair in languageTypeCount)
 			{
 				var ws = cache.WritingSystemFactory.get_EngineOrNull(keyValuePair.Key);
-				var labText = (ws != null ? ws.ToString() : "#unknown#") + @":";
-				statisticsBox.Text += Environment.NewLine + Environment.NewLine + "\t" + labText + "\t"; // Todo: find the right System.?.NewLine constant
+				var labText = (ws?.ToString() ?? "#unknown#") + @":";
+				statisticsBox.Text += Environment.NewLine + Environment.NewLine + tabCharacter + labText + tabCharacter;
 				statisticsBox.Text += "" + keyValuePair.Value.Count;
 				uniqueWords += keyValuePair.Value.Count; //increase the total of unique words
 			}
 
 			// next insert the word count.
-			statisticsBox.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine + "\t" + LanguageExplorerResources.ksStatisticsViewTotalWordTokensText + "\t"; // Todo: find the right System.?.NewLine constant
+			statisticsBox.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine + tabCharacter + LanguageExplorerResources.ksStatisticsViewTotalWordTokensText + tabCharacter;
 			statisticsBox.Text += wordCount;
 			//add one row for the token count for each language.
 			foreach (var keyValuePair in languageCount)
 			{
 				var ws = cache.WritingSystemFactory.get_EngineOrNull(keyValuePair.Key);
 				var labText = (ws?.ToString() ?? "#unknown#") + @":";
-				statisticsBox.Text += Environment.NewLine + Environment.NewLine + "\t" + labText + "\t"; // Todo: find the right System.?.NewLine constant
+				statisticsBox.Text += Environment.NewLine + Environment.NewLine + tabCharacter + labText + tabCharacter;
 				statisticsBox.Text += "" + keyValuePair.Value;
 			}
-			statisticsBox.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine + "\t" + LanguageExplorerResources.ksStatisticsViewTotalSentencesText + "\t"; // Todo: find the right System.?.NewLine constant
+			statisticsBox.Text += Environment.NewLine + Environment.NewLine + Environment.NewLine + tabCharacter + LanguageExplorerResources.ksStatisticsViewTotalSentencesText + tabCharacter;
 
 			// next insert the sentence count.
 			statisticsBox.Text += numberOfSegments;
 
 			// insert the total word type count into the richTextBox (it wasn't available earlier)
-			statisticsBox.SelectionStart = statisticsBox.Find(LanguageExplorerResources.ksStatisticsViewTotalWordTypesText) +
-										   LanguageExplorerResources.ksStatisticsViewTotalWordTypesText.Length;
+			statisticsBox.SelectionStart = statisticsBox.Find(LanguageExplorerResources.ksStatisticsViewTotalWordTypesText) + LanguageExplorerResources.ksStatisticsViewTotalWordTypesText.Length;
 			statisticsBox.SelectionLength = 1;
-			statisticsBox.SelectedText = "\t" + uniqueWords;
+			statisticsBox.SelectedText = tabCharacter + uniqueWords;
 
 			// Set the font for the header. Do this after we add the other stuff to make sure
 			// it doesn't apply to extra text added adjacent to it.

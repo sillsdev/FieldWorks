@@ -337,7 +337,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			{
 				LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
 				IText text = null;
-				var options = new LinguaLinksImport.ImportInterlinearOptions{Progress = new DummyProgressDlg(),
+				var options = new ImportInterlinearOptions{Progress = new DummyProgressDlg(),
 					BirdData = fileStream, AllottedProgress = 0,
 					CheckAndAddLanguages = DummyCheckAndAddLanguagesInternal };
 
@@ -391,10 +391,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
-				var options = new LinguaLinksImport.ImportInterlinearOptions
+				var options = new ImportInterlinearOptions
 				{
 					Progress = new DummyProgressDlg(),
-					AnalysesLevel = LinguaLinksImport.ImportAnalysesLevel.Wordform,
+					AnalysesLevel = ImportAnalysesLevel.Wordform,
 					BirdData = stream,
 					AllottedProgress = 0,
 					CheckAndAddLanguages = DummyCheckAndAddLanguagesInternal

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,17 +23,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected override TreeNode MakeMenuItems(PopupTree popupTree, int hvoTarget)
 		{
-			int tagName = UseAbbr ?
-				CmPossibilityTags.kflidAbbreviation :
-				CmPossibilityTags.kflidName;
+			var tagName = UseAbbr ? CmPossibilityTags.kflidAbbreviation : CmPossibilityTags.kflidName;
 			popupTree.Sorted = Sorted;
 			TreeNode match = null;
 			if (List != null)
-				match = AddNodes(popupTree.Nodes, List.Hvo,
-									CmPossibilityListTags.kflidPossibilities, hvoTarget, tagName);
+			{
+				match = AddNodes(popupTree.Nodes, List.Hvo, CmPossibilityListTags.kflidPossibilities, hvoTarget, tagName);
+			}
 			var empty = AddAnyItem(popupTree);
 			if (hvoTarget == 0)
+			{
 				match = empty;
+			}
 			return match;
 		}
 

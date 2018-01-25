@@ -26,8 +26,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private XDocument m_traceResult;
 		private readonly ManualResetEvent m_event = new ManualResetEvent(false);
 
-		private readonly object m_syncRoot = new object();
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ParserConnection"/> class.
 		/// This will attempt to connect to an existing parser or start a new one if necessary.
@@ -39,13 +37,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_scheduler.ParserUpdateVerbose += ParserUpdateHandlerForPolling;
 		}
 
-		private object SyncRoot
-		{
-			get
-			{
-				return m_syncRoot;
-			}
-		}
+		private object SyncRoot { get; } = new object();
 
 		/// <summary>
 		/// Get or Set state for the Try A Word dialog running
@@ -135,13 +127,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_scheduler.Dispose();
 
 			m_event.Close();
-			((IDisposable)m_event).Dispose();
+			m_event.Dispose();
 		}
 
-		/// <summary>
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="args">The <see cref="ParserUpdateEventArgs"/> instance containing the event data.</param>
+		/// <summary />
 		public void ParserUpdateHandlerForPolling(object sender, ParserUpdateEventArgs args)
 		{
 			CheckDisposed();
@@ -152,7 +141,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_activity = args.Task.Description;
 				//keeps us from getting the notification at the end of the task.
 				if (args.Task.NotificationMessage != null && args.Task.Phase != TaskReport.TaskPhase.Finished)
+				{
 					m_notificationMessage = args.Task.NotificationMessage;
+				}
 
 				//will have to do something more smart something when details is used for something else
 				if (args.Task.Details != null)
@@ -167,7 +158,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// returns a string describing what the Parser is up to.
 		/// Note that, alternatively, you can  subscribe to events so that you get every one.
 		/// </summary>
-		/// <value>The activity.</value>
 		public string Activity
 		{
 			get
@@ -175,21 +165,22 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				CheckDisposed();
 
 				lock (SyncRoot)
+				{
 					return m_activity;
+				}
 			}
 		}
 
 		/// <summary>
 		/// gives a notification string, if there is any.
 		/// </summary>
-		/// <returns></returns>
 		public string GetAndClearNotification()
 		{
 			CheckDisposed();
 
 			lock (SyncRoot)
 			{
-				string result = m_notificationMessage;
+				var result = m_notificationMessage;
 				m_notificationMessage = null;
 				return result;
 			}
@@ -202,14 +193,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			get
 			{
 				lock (SyncRoot)
+				{
 					return m_traceResult != null;
+				}
 			}
 		}
 
-		WaitHandle IAsyncResult.AsyncWaitHandle
-		{
-			get { return m_event; }
-		}
+		WaitHandle IAsyncResult.AsyncWaitHandle => m_event;
 
 		object IAsyncResult.AsyncState
 		{
@@ -217,17 +207,14 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				lock (SyncRoot)
 				{
-					XDocument res = m_traceResult;
+					var res = m_traceResult;
 					m_traceResult = null;
 					return res;
 				}
 			}
 		}
 
-		bool IAsyncResult.CompletedSynchronously
-		{
-			get { return false; }
-		}
+		bool IAsyncResult.CompletedSynchronously => false;
 
 		#endregion
 	}

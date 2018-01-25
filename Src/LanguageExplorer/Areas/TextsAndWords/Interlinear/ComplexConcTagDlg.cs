@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -54,10 +54,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 									publisher,
 									propertyTable.GetValue<Form>("window"));
 
-			m_posPopupTreeManager.LoadPopupTree(m_node.Tag != null ? m_node.Tag.Hvo : 0);
-
+			m_posPopupTreeManager.LoadPopupTree(m_node.Tag?.Hvo ?? 0);
 			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
-
 			m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
@@ -65,10 +63,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
-			var node = (HvoTreeNode) m_tagComboBox.SelectedNode;
+			var node = (HvoTreeNode)m_tagComboBox.SelectedNode;
 			if (node.Hvo != 0)
 			{
-				ICmPossibility tag = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(node.Hvo);
+				var tag = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(node.Hvo);
 				if (tag.OwningPossibility != null)
 				{
 					m_node.Tag = tag;

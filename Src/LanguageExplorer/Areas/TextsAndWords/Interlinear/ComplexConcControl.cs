@@ -51,27 +51,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return null;
 		}
 
-		private class InsertOption
+		private sealed class InsertOption
 		{
-			private readonly ComplexConcordanceInsertType m_type;
-
 			public InsertOption(ComplexConcordanceInsertType type)
 			{
-				m_type = type;
+				Type = type;
 			}
 
-			public ComplexConcordanceInsertType Type
-			{
-				get { return m_type; }
-			}
+			public ComplexConcordanceInsertType Type { get; }
 
 			public override string ToString()
 			{
-				return GetOptionString(m_type);
+				return GetOptionString(Type);
 			}
 		}
-
-		private ComplexConcPatternModel m_patternModel;
 
 		public ComplexConcControl()
 		{
@@ -109,11 +102,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				pattern = new ComplexConcGroupNode();
 				PropertyTable.SetProperty("ComplexConcPattern", pattern, false, true);
 			}
-			m_patternModel = new ComplexConcPatternModel(m_cache, pattern);
+			PatternModel = new ComplexConcPatternModel(m_cache, pattern);
 
 			m_view.InitializeFlexComponent(flexComponentParameters);
-			m_view.Init(m_patternModel.Root.Hvo, this, new ComplexConcPatternVc(m_cache, PropertyTable), ComplexConcPatternVc.kfragPattern,
-				m_patternModel.DataAccess);
+			m_view.Init(PatternModel.Root.Hvo, this, new ComplexConcPatternVc(m_cache, PropertyTable), ComplexConcPatternVc.kfragPattern, PatternModel.DataAccess);
 
 			m_view.SelectionChanged += SelectionChanged;
 			m_view.RemoveItemsRequested += RemoveItemsRequested;
@@ -130,35 +122,40 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#endregion
 
-		public ComplexConcPatternModel PatternModel
-		{
-			get { return m_patternModel; }
-		}
+		public ComplexConcPatternModel PatternModel { get; private set; }
 
 		private bool CanAddMorph(object option)
 		{
-			if (m_patternModel.Root.IsLeaf)
+			if (PatternModel.Root.IsLeaf)
+			{
 				return true;
+			}
 
-			SelectionHelper sel = SelectionHelper.Create(m_view);
+			var sel = SelectionHelper.Create(m_view);
 			if (sel.IsRange)
+			{
 				return true;
+			}
 
-			ComplexConcPatternNode anchorNode = GetNode(sel, SelectionHelper.SelLimitType.Anchor);
-			ComplexConcPatternNode endNode = GetNode(sel, SelectionHelper.SelLimitType.End);
+			var anchorNode = GetNode(sel, SelectionHelper.SelLimitType.Anchor);
+			var endNode = GetNode(sel, SelectionHelper.SelLimitType.End);
 			return anchorNode != null && endNode != null && anchorNode.Parent == endNode.Parent;
 		}
 
 		private bool CanAddConstraint(object option)
 		{
-			if (m_patternModel.Root.IsLeaf)
+			if (PatternModel.Root.IsLeaf)
+			{
 				return true;
+			}
 
-			SelectionHelper sel = SelectionHelper.Create(m_view);
-			ComplexConcPatternNode anchorNode = GetNode(sel, SelectionHelper.SelLimitType.Anchor);
-			ComplexConcPatternNode endNode = GetNode(sel, SelectionHelper.SelLimitType.End);
+			var sel = SelectionHelper.Create(m_view);
+			var anchorNode = GetNode(sel, SelectionHelper.SelLimitType.Anchor);
+			var endNode = GetNode(sel, SelectionHelper.SelLimitType.End);
 			if (anchorNode == null || endNode == null || anchorNode.Parent != endNode.Parent)
+			{
 				return false;
+			}
 
 			ComplexConcPatternNode parent;
 			int start, end;
@@ -181,14 +178,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private bool CanAddOr(object option)
 		{
-			SelectionHelper sel = SelectionHelper.Create(m_view);
+			var sel = SelectionHelper.Create(m_view);
 			if (sel.IsRange)
+			{
 				return false;
+			}
 			ComplexConcPatternNode parent;
 			int index;
 			GetInsertionIndex(sel, out parent, out index);
 			if (index == 0)
+			{
 				return false;
+			}
 
 			return (!(parent.Children[index - 1] is ComplexConcOrNode) && !(parent.Children[index - 1] is ComplexConcWordBdryNode))
 				&& (index == parent.Children.Count || (!(parent.Children[index] is ComplexConcOrNode) && !(parent.Children[index] is ComplexConcWordBdryNode)));
@@ -196,23 +197,33 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private bool CanAddWordBoundary(object option)
 		{
-			if (m_patternModel.Root.IsLeaf)
+			if (PatternModel.Root.IsLeaf)
+			{
 				return true;
+			}
 
-			SelectionHelper sel = SelectionHelper.Create(m_view);
+			var sel = SelectionHelper.Create(m_view);
 			if (sel.IsRange)
+			{
 				return false;
+			}
 			ComplexConcPatternNode parent;
 			int index;
 			GetInsertionIndex(sel, out parent, out index);
 			if (parent.IsLeaf)
+			{
 				return false;
+			}
 
 			if (index == 0)
+			{
 				return parent.Children[index] is ComplexConcMorphNode;
+			}
 
 			if (index == parent.Children.Count)
+			{
 				return parent.Children[index - 1] is ComplexConcMorphNode;
+			}
 
 			return parent.Children[index - 1] is ComplexConcMorphNode && parent.Children[index] is ComplexConcMorphNode;
 		}
@@ -220,14 +231,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void ParseUnparsedParagraphs()
 		{
 			var concDecorator = ConcDecorator;
-			IStTxtPara[] needsParsing = concDecorator.InterestingTexts.SelectMany(txt => txt.ParagraphsOS).Cast<IStTxtPara>().Where(para => !para.ParseIsCurrent).ToArray();
+			var needsParsing = concDecorator.InterestingTexts.SelectMany(txt => txt.ParagraphsOS).Cast<IStTxtPara>().Where(para => !para.ParseIsCurrent).ToArray();
 			if (needsParsing.Length > 0)
 			{
 				NonUndoableUnitOfWorkHelper.DoSomehow(m_cache.ActionHandlerAccessor,
 					() =>
 					{
 						foreach (var para in needsParsing)
+						{
 							ParagraphParser.ParseParagraph(para);
+						}
 					});
 			}
 		}
@@ -235,16 +248,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override List<IParaFragment> SearchForMatches()
 		{
 			var matches = new List<IParaFragment>();
-			if (m_patternModel.IsPatternEmpty)
+			if (PatternModel.IsPatternEmpty)
+			{
 				return matches;
+			}
 
 			using (new WaitCursor(this))
 			{
-				m_patternModel.Compile();
+				PatternModel.Compile();
 
 				ParseUnparsedParagraphs();
-				foreach (IStText text in ConcDecorator.InterestingTexts)
-					matches.AddRange(m_patternModel.Search(text));
+				foreach (var text in ConcDecorator.InterestingTexts)
+				{
+					matches.AddRange(PatternModel.Search(text));
+				}
 			}
 
 			return matches;
@@ -252,15 +269,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private ComplexConcPatternNode GetNode(SelectionHelper sel, SelectionHelper.SelLimitType limit)
 		{
-			if (sel == null || m_patternModel.Root.IsLeaf)
+			if (sel == null || PatternModel.Root.IsLeaf)
+			{
 				return null;
+			}
 
-			SelLevInfo[] levels = sel.GetLevelInfo(limit);
+			var levels = sel.GetLevelInfo(limit);
 			if (levels.Length == 0)
+			{
 				return null;
+			}
 
-			SelLevInfo level = levels.First(l => l.tag == ComplexConcPatternSda.ktagChildren);
-			return m_patternModel.GetNode(level.hvo);
+			var level = levels.First(l => l.tag == ComplexConcPatternSda.ktagChildren);
+			return PatternModel.GetNode(level.hvo);
 		}
 
 		public ComplexConcPatternNode[] CurrentNodes
@@ -268,15 +289,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			get
 			{
 				CheckDisposed();
-				SelectionHelper sel = SelectionHelper.Create(m_view);
-				ComplexConcPatternNode anchorNode = GetNode(sel, SelectionHelper.SelLimitType.Anchor);
-				ComplexConcPatternNode endNode = GetNode(sel, SelectionHelper.SelLimitType.End);
+				var sel = SelectionHelper.Create(m_view);
+				var anchorNode = GetNode(sel, SelectionHelper.SelLimitType.Anchor);
+				var endNode = GetNode(sel, SelectionHelper.SelLimitType.End);
 				if (anchorNode == null || endNode == null || anchorNode.Parent != endNode.Parent)
+				{
 					return new ComplexConcPatternNode[0];
+				}
 
-				int anchorIndex = GetNodeIndex(anchorNode);
-				int endIndex = GetNodeIndex(endNode);
-
+				var anchorIndex = GetNodeIndex(anchorNode);
+				var endIndex = GetNodeIndex(endNode);
 				int index1, index2;
 				if (anchorIndex < endIndex)
 				{
@@ -289,36 +311,42 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					index2 = anchorIndex;
 				}
 
-				int j = 0;
+				var j = 0;
 				var nodes = new ComplexConcPatternNode[index2 - index1 + 1];
-				for (int i = index1; i <= index2; i++)
+				for (var i = index1; i <= index2; i++)
+				{
 					nodes[j++] = anchorNode.Parent.Children[i];
+				}
 				return nodes;
 			}
 		}
 
 		private void RemoveItemsRequested(object sender, RemoveItemsRequestedEventArgs e)
 		{
-			if (m_patternModel.Root.IsLeaf)
+			if (PatternModel.Root.IsLeaf)
+			{
 				return;
+			}
 
-			SelectionHelper sel = SelectionHelper.Create(m_view);
+			var sel = SelectionHelper.Create(m_view);
 			ComplexConcPatternNode parent = null;
-			int index = -1;
+			var index = -1;
 			if (sel.IsRange)
 			{
-				ComplexConcPatternNode[] nodes = CurrentNodes;
+				var nodes = CurrentNodes;
 				if (nodes.Length > 0)
 				{
 					parent = nodes[0].Parent;
 					index = GetNodeIndex(nodes[0]);
-					foreach (ComplexConcPatternNode node in nodes)
+					foreach (var node in nodes)
+					{
 						node.Parent.Children.Remove(node);
+					}
 				}
 			}
 			else
 			{
-				ComplexConcPatternNode n = GetNode(sel, SelectionHelper.SelLimitType.Top);
+				var n = GetNode(sel, SelectionHelper.SelLimitType.Top);
 				parent = n.Parent;
 				index = GetNodeIndex(n);
 				var tss = sel.GetTss(SelectionHelper.SelLimitType.Anchor);
@@ -332,100 +360,124 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					if (e.Forward)
 					{
 						if (index == n.Parent.Children.Count - 1)
+						{
 							index = -1;
+						}
 						else
+						{
 							index++;
+						}
 					}
 				}
 				else
 				{
 					if (!e.Forward)
+					{
 						index--;
+					}
 				}
 
 				if (index != -1)
+				{
 					parent.Children.RemoveAt(index);
+				}
 			}
 
-			if (parent != null && index != -1)
+			if (parent == null || index == -1)
 			{
-				if (!parent.IsLeaf)
-				{
-					bool isFirstBdry = parent.Children[0] is ComplexConcWordBdryNode;
-					if ((parent.Children.Count == 1 && isFirstBdry)
-						|| (parent.Children.Count > 1 && isFirstBdry && !(parent.Children[1] is ComplexConcMorphNode)))
-					{
-						parent.Children.RemoveAt(0);
-						if (index > 0)
-							index--;
-					}
-				}
-				if (parent.Children.Count > 1 && parent.Children[parent.Children.Count - 1] is ComplexConcWordBdryNode
-					&& !(parent.Children[parent.Children.Count - 2] is ComplexConcMorphNode))
-				{
-					parent.Children.RemoveAt(parent.Children.Count - 1);
-					if (index >= parent.Children.Count)
-						index--;
-				}
-				for (int i = parent.Children.Count - 1; i > 0 ; i--)
-				{
-					if (parent.Children[i] is ComplexConcWordBdryNode)
-					{
-						if (parent.Children[i - 1] is ComplexConcWordBdryNode
-							|| (!(parent.Children[i - 1] is ComplexConcMorphNode) || (i + 1 < parent.Children.Count && !(parent.Children[i + 1] is ComplexConcMorphNode))))
-						{
-							parent.Children.RemoveAt(i);
-							if (index > i)
-								index--;
-						}
-					}
-				}
-
-				if (!parent.IsLeaf && parent.Children[0] is ComplexConcOrNode)
+				return;
+			}
+			if (!parent.IsLeaf)
+			{
+				var isFirstBdry = parent.Children[0] is ComplexConcWordBdryNode;
+				if (parent.Children.Count == 1 && isFirstBdry || (parent.Children.Count > 1 && isFirstBdry && !(parent.Children[1] is ComplexConcMorphNode)))
 				{
 					parent.Children.RemoveAt(0);
 					if (index > 0)
-						index--;
-				}
-				if (!parent.IsLeaf && parent.Children[parent.Children.Count - 1] is ComplexConcOrNode)
-				{
-					parent.Children.RemoveAt(parent.Children.Count - 1);
-					if (index >= parent.Children.Count)
-						index--;
-				}
-				for (int i = parent.Children.Count - 1; i > 0 ; i--)
-				{
-					if (parent.Children[i] is ComplexConcOrNode && parent.Children[i - 1] is ComplexConcOrNode)
 					{
-						parent.Children.RemoveAt(i);
-						if (index > i)
-							index--;
+						index--;
 					}
 				}
-
-				if (parent.Parent != null && parent.Children.Count == 1)
-				{
-					ComplexConcPatternNode p = parent.Parent;
-					int parentIndex = GetNodeIndex(parent);
-					p.Children.RemoveAt(parentIndex);
-					p.Children.Insert(parentIndex, parent.Children[0]);
-					index = index == 1 ? parentIndex + 1 : parentIndex;
-				}
-				else
-				{
-					while (parent.Parent != null && parent.IsLeaf)
-					{
-						ComplexConcPatternNode p = parent.Parent;
-						index = GetNodeIndex(parent);
-						p.Children.Remove(parent);
-						parent = p;
-					}
-				}
-
+			}
+			if (parent.Children.Count > 1 && parent.Children[parent.Children.Count - 1] is ComplexConcWordBdryNode
+			                              && !(parent.Children[parent.Children.Count - 2] is ComplexConcMorphNode))
+			{
+				parent.Children.RemoveAt(parent.Children.Count - 1);
 				if (index >= parent.Children.Count)
-					ReconstructView(parent, parent.Children.Count - 1, false);
-				else
-					ReconstructView(parent, index, true);
+				{
+					index--;
+				}
+			}
+			for (var i = parent.Children.Count - 1; i > 0 ; i--)
+			{
+				if (!(parent.Children[i] is ComplexConcWordBdryNode))
+				{
+					continue;
+				}
+				if (parent.Children[i - 1] is ComplexConcWordBdryNode || (!(parent.Children[i - 1] is ComplexConcMorphNode) || (i + 1 < parent.Children.Count && !(parent.Children[i + 1] is ComplexConcMorphNode))))
+				{
+					parent.Children.RemoveAt(i);
+					if (index > i)
+					{
+						index--;
+					}
+				}
+			}
+
+			if (!parent.IsLeaf && parent.Children[0] is ComplexConcOrNode)
+			{
+				parent.Children.RemoveAt(0);
+				if (index > 0)
+				{
+					index--;
+				}
+			}
+			if (!parent.IsLeaf && parent.Children[parent.Children.Count - 1] is ComplexConcOrNode)
+			{
+				parent.Children.RemoveAt(parent.Children.Count - 1);
+				if (index >= parent.Children.Count)
+				{
+					index--;
+				}
+			}
+			for (var i = parent.Children.Count - 1; i > 0 ; i--)
+			{
+				if (parent.Children[i] is ComplexConcOrNode && parent.Children[i - 1] is ComplexConcOrNode)
+				{
+					parent.Children.RemoveAt(i);
+					if (index > i)
+					{
+						index--;
+					}
+				}
+			}
+
+			if (parent.Parent != null && parent.Children.Count == 1)
+			{
+				var p = parent.Parent;
+				var parentIndex = GetNodeIndex(parent);
+				p.Children.RemoveAt(parentIndex);
+				p.Children.Insert(parentIndex, parent.Children[0]);
+				index = index == 1 ? parentIndex + 1 : parentIndex;
+			}
+			else
+			{
+				while (parent.Parent != null && parent.IsLeaf)
+				{
+					var p = parent.Parent;
+					index = GetNodeIndex(parent);
+					p.Children.Remove(parent);
+					parent = p;
+				}
+			}
+
+			if (index >= parent.Children.Count)
+			{
+				ReconstructView(parent, parent.Children.Count - 1, false);
+			}
+			else
+			{
+				ReconstructView(parent, index, true);
 			}
 		}
 
@@ -454,18 +506,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private int GetNodeIndex(ComplexConcPatternNode node)
 		{
-			if (node.Parent == null)
-				return 0;
-			return node.Parent.Children.IndexOf(node);
+			return node.Parent?.Children.IndexOf(node) ?? 0;
 		}
 
 		private void ContextMenuRequested(object sender, ContextMenuRequestedEventArgs e)
-				{
-			SelectionHelper sh = SelectionHelper.Create(e.Selection, m_view);
-			ComplexConcPatternNode node = GetNode(sh, SelectionHelper.SelLimitType.Anchor);
-			HashSet<ComplexConcPatternNode> nodes = new HashSet<ComplexConcPatternNode>(CurrentNodes.SelectMany(GetAllNodes));
+		{
+			var sh = SelectionHelper.Create(e.Selection, m_view);
+			var node = GetNode(sh, SelectionHelper.SelLimitType.Anchor);
+			var nodes = new HashSet<ComplexConcPatternNode>(CurrentNodes.SelectMany(GetAllNodes));
 			if (!nodes.Contains(node))
+			{
 				sh.Selection.Install();
+			}
 			if (nodes.Count > 0)
 			{
 				// we only bother to display the context menu if an item is selected
@@ -482,12 +534,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private IEnumerable<ComplexConcPatternNode> GetAllNodes(ComplexConcPatternNode node)
 		{
 			yield return node;
-			if (!node.IsLeaf)
+			if (node.IsLeaf)
 			{
-				foreach (ComplexConcPatternNode child in node.Children)
+				yield break;
+			}
+			foreach (var child in node.Children)
+			{
+				foreach (var n in GetAllNodes(child))
 				{
-					foreach (ComplexConcPatternNode n in GetAllNodes(child))
-						yield return n;
+					yield return n;
 				}
 			}
 		}
@@ -503,7 +558,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						var morphNode = new ComplexConcMorphNode();
 						dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, morphNode);
 						if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
+						{
 							node = morphNode;
+						}
 					}
 					break;
 
@@ -513,7 +570,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						var wordNode = new ComplexConcWordNode();
 						dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, wordNode);
 						if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
+						{
 							node = wordNode;
+						}
 					}
 					break;
 
@@ -523,7 +582,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						var tagNode = new ComplexConcTagNode();
 						dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, tagNode);
 						if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
+						{
 							node = tagNode;
+						}
 					}
 					break;
 
@@ -539,18 +600,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_view.Select();
 
 			if (node == null)
+			{
 				return;
+			}
 
-			SelectionHelper sel = SelectionHelper.Create(m_view);
-
+			var sel = SelectionHelper.Create(m_view);
 			ComplexConcPatternNode parent;
 			int index;
 			GetInsertionIndex(sel, out parent, out index);
 			// if the current selection is a range remove the items we are overwriting
 			if (sel.IsRange)
 			{
-				foreach (ComplexConcPatternNode n in CurrentNodes)
+				foreach (var n in CurrentNodes)
+				{
 					n.Parent.Children.Remove(n);
+				}
 			}
 
 			parent.Children.Insert(index, node);
@@ -559,33 +623,37 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void GetInsertionIndex(SelectionHelper sel, out ComplexConcPatternNode parent, out int index)
 		{
-			ComplexConcPatternNode curNode = GetNode(sel, SelectionHelper.SelLimitType.Top);
-			if (m_patternModel.Root.IsLeaf || curNode == null)
+			var curNode = GetNode(sel, SelectionHelper.SelLimitType.Top);
+			if (PatternModel.Root.IsLeaf || curNode == null)
 			{
-				parent = m_patternModel.Root;
+				parent = PatternModel.Root;
 				index = 0;
 				return;
 			}
 
 			parent = curNode.Parent;
-			int ich = sel.GetIch(SelectionHelper.SelLimitType.Top);
+			var ich = sel.GetIch(SelectionHelper.SelLimitType.Top);
 			index = GetNodeIndex(curNode);
 			if (ich != 0)
+			{
 				index++;
+			}
 		}
 
 		private void m_view_LayoutSizeChanged(object sender, EventArgs e)
 		{
 			if (m_view.RootBox == null)
+			{
 				return;
+			}
 
 			UpdateViewHeight();
 		}
 
 		private void UpdateViewHeight()
 		{
-			int height = m_view.RootBox.Height;
-			int bottom = m_view.Bottom;
+			var height = m_view.RootBox.Height;
+			var bottom = m_view.Bottom;
 			m_view.Top = bottom - height;
 			m_view.Height = height;
 		}
@@ -605,8 +673,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public bool OnPatternNodeGroup(object args)
 		{
 			CheckDisposed();
-			ComplexConcPatternNode[] nodes = CurrentNodes;
-			ComplexConcPatternNode group = GroupNodes(nodes);
+			var nodes = CurrentNodes;
+			var group = GroupNodes(nodes);
 			ReconstructView(group, false);
 			return true;
 		}
@@ -628,7 +696,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			CheckDisposed();
 
-			ComplexConcPatternNode[] nodes = CurrentNodes;
+			var nodes = CurrentNodes;
 
 			int min, max;
 #if RANDYTODO
@@ -671,7 +739,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 			}
 
-			ComplexConcPatternNode node = nodes.Length > 1 ? GroupNodes(nodes) : nodes[0];
+			var node = nodes.Length > 1 ? GroupNodes(nodes) : nodes[0];
 			node.Minimum = min;
 			node.Maximum = max;
 			ReconstructView(node, false);
@@ -680,11 +748,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private ComplexConcPatternNode GroupNodes(ComplexConcPatternNode[] nodes)
 		{
-			ComplexConcPatternNode parent = nodes[0].Parent;
-			int index = GetNodeIndex(nodes[0]);
+			var parent = nodes[0].Parent;
+			var index = GetNodeIndex(nodes[0]);
 			var group = new ComplexConcGroupNode();
 			parent.Children.Insert(index, group);
-			foreach (ComplexConcPatternNode node in nodes)
+			foreach (var node in nodes)
 			{
 				parent.Children.Remove(node);
 				group.Children.Add(node);
@@ -708,17 +776,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public bool OnPatternNodeSetCriteria(object args)
 		{
 			CheckDisposed();
-			ComplexConcPatternNode[] nodes = CurrentNodes;
+			var nodes = CurrentNodes;
 
 			var wordNode = nodes[0] as ComplexConcWordNode;
-			var fwMainWnd = PropertyTable.GetValue<IFwMainWnd>("window");
+			var fwMainWnd = PropertyTable.GetValue<Form>("window");
 			if (wordNode != null)
 			{
 				using (var dlg = new ComplexConcWordDlg())
 				{
 					dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, wordNode);
-					if (dlg.ShowDialog((Form)fwMainWnd) == DialogResult.Cancel)
+					if (dlg.ShowDialog(fwMainWnd) == DialogResult.Cancel)
+					{
 						return true;
+					}
 				}
 			}
 			else
@@ -729,8 +799,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					using (var dlg = new ComplexConcMorphDlg())
 					{
 						dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, morphNode);
-						if (dlg.ShowDialog((Form)fwMainWnd) == DialogResult.Cancel)
+						if (dlg.ShowDialog(fwMainWnd) == DialogResult.Cancel)
+						{
 							return true;
+						}
 					}
 				}
 				else
@@ -741,8 +813,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						using (var dlg = new ComplexConcTagDlg())
 						{
 							dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, tagNode);
-							if (dlg.ShowDialog((Form)fwMainWnd) == DialogResult.Cancel)
+							if (dlg.ShowDialog(fwMainWnd) == DialogResult.Cancel)
+							{
 								return true;
+							}
 						}
 					}
 				}
@@ -766,8 +840,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public object GetContext(SelectionHelper sel, SelectionHelper.SelLimitType limit)
 		{
-			ComplexConcPatternNode node = GetNode(sel, limit);
-			return node == null ? null : node.Parent;
+			var node = GetNode(sel, limit);
+			return node?.Parent;
 		}
 
 		public object GetItem(SelectionHelper sel, SelectionHelper.SelLimitType limit)
@@ -782,17 +856,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public SelLevInfo[] GetLevelInfo(object ctxt, int cellIndex)
 		{
-			List<SelLevInfo> levels = new List<SelLevInfo>();
-			if (!m_patternModel.Root.IsLeaf)
+			if (PatternModel.Root.IsLeaf)
 			{
-				ComplexConcPatternNode node = (ComplexConcPatternNode) ctxt;
-				int i = cellIndex;
-				while (node != null)
-				{
-					levels.Add(new SelLevInfo {tag = ComplexConcPatternSda.ktagChildren, ihvo = i});
-					i = GetNodeIndex(node);
-					node = node.Parent;
-				}
+				return new SelLevInfo[0];
+			}
+			var node = (ComplexConcPatternNode) ctxt;
+			var i = cellIndex;
+			var levels = new List<SelLevInfo>();
+			while (node != null)
+			{
+				levels.Add(new SelLevInfo {tag = ComplexConcPatternSda.ktagChildren, ihvo = i});
+				i = GetNodeIndex(node);
+				node = node.Parent;
 			}
 			return levels.ToArray();
 		}

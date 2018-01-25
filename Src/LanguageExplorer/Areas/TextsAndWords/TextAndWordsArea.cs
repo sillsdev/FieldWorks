@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords

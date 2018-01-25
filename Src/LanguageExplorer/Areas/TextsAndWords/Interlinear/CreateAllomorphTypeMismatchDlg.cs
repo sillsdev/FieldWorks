@@ -13,13 +13,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </summary>
 	public class CreateAllomorphTypeMismatchDlg : Form
 	{
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Button m_btnYes;
-		private System.Windows.Forms.Button m_btnNo;
-		private System.Windows.Forms.Button m_btnCreateNew;
-		private System.Windows.Forms.PictureBox pictureBox1;
-		private System.Windows.Forms.Label m_lblMessage1_Warning;
-		private System.Windows.Forms.Label m_lblMessage2_Question;
+		private Label label1;
+		private Button m_btnYes;
+		private Button m_btnNo;
+		private Button m_btnCreateNew;
+		private PictureBox pictureBox1;
+		private Label m_lblMessage1_Warning;
+		private Label m_lblMessage2_Question;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -56,7 +56,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-			this.pictureBox1.Image = System.Drawing.SystemIcons.Warning.ToBitmap();
+			pictureBox1.Image = System.Drawing.SystemIcons.Warning.ToBitmap();
 			//
 			// TODO: Add any constructor code after InitializeComponent call
 			//
@@ -70,7 +70,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -81,14 +83,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}

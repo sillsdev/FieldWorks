@@ -16,7 +16,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	{
 		public const int ktagChildren = -1000;
 
-		private readonly ComplexConcPatternNode m_root;
 		private readonly Dictionary<int, ComplexConcPatternNode> m_nodes;
 
 		public ComplexConcPatternSda(ISilDataAccessManaged domainDataByFlid, ComplexConcPatternNode root)
@@ -24,19 +23,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			SetOverrideMdc(new ComplexConcordancePatternMdc(domainDataByFlid.GetManagedMetaDataCache()));
 			m_nodes = new Dictionary<int, ComplexConcPatternNode>();
-			m_root = root;
-			m_root.Sda = this;
+			Root = root;
+			Root.Sda = this;
 		}
 
-		public ComplexConcPatternNode Root
-		{
-			get { return m_root; }
-		}
+		public ComplexConcPatternNode Root { get; }
 
-		public IDictionary<int, ComplexConcPatternNode> Nodes
-		{
-			get { return m_nodes; }
-		}
+		public IDictionary<int, ComplexConcPatternNode> Nodes => m_nodes;
 
 		public override int get_VecItem(int hvo, int tag, int index)
 		{
@@ -57,7 +50,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case ktagChildren:
 					var node = m_nodes[hvo];
 					if (node.IsLeaf)
+					{
 						return 0;
+					}
 					return node.Children.Count;
 
 				default:
@@ -72,7 +67,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case ktagChildren:
 					var node = m_nodes[hvo];
 					if (node.IsLeaf)
+					{
 						return new int[0];
+					}
 					return node.Children.Select(n => n.Hvo).ToArray();
 
 				default:
@@ -82,12 +79,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override bool get_IsValidObject(int hvo)
 		{
-			if (m_nodes.ContainsKey(hvo))
-				return true;
-			return base.get_IsValidObject(hvo);
+			return m_nodes.ContainsKey(hvo) || base.get_IsValidObject(hvo);
 		}
 
-		private class ComplexConcordancePatternMdc : LcmMetaDataCacheDecoratorBase
+		private sealed class ComplexConcordancePatternMdc : LcmMetaDataCacheDecoratorBase
 		{
 			public ComplexConcordancePatternMdc(IFwMetaDataCacheManaged metaDataCache)
 				: base(metaDataCache)
@@ -96,7 +91,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			public override void AddVirtualProp(string bstrClass, string bstrField, int luFlid, int type)
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 
 			public override int GetFieldType(int luFlid)

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,7 +15,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private HelpProvider helpProvider;
 		private const string s_helpTopic = "khtpBaselineTextWs";
 
-		private int m_ws;
 		private IHelpTopicProvider m_helpTopicProvider;
 
 		public ChooseTextWritingSystemDlg()
@@ -25,24 +24,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			helpProvider = new HelpProvider();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Populate the combo box and default to the ws from the current text.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// <param name="wsCurrent">The ws current.</param>
-		/// ------------------------------------------------------------------------------------
 		public void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, int wsCurrent)
 		{
 			m_helpTopicProvider = helpTopicProvider;
-			m_ws = wsCurrent;
-			int iSel = 0;
+			TextWs = wsCurrent;
+			var iSel = 0;
 			foreach (var ws in cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
 				m_cbWritingSystems.Items.Add(ws);
 				if (ws.Handle == wsCurrent)
+				{
 					iSel = m_cbWritingSystems.Items.Count - 1;
+				}
 			}
 			m_cbWritingSystems.SelectedIndex = iSel;
 
@@ -53,13 +49,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void m_cbWritingSystems_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			m_ws = ((CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem).Handle;
+			TextWs = ((CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem).Handle;
 		}
 
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
 			DialogResult = DialogResult.OK;
-			m_ws = ((CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem).Handle;
+			TextWs = ((CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem).Handle;
 			Close();
 		}
 
@@ -68,9 +64,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, s_helpTopic);
 		}
 
-		public int TextWs
-		{
-			get { return m_ws; }
-		}
+		public int TextWs { get; private set; }
 	}
 }

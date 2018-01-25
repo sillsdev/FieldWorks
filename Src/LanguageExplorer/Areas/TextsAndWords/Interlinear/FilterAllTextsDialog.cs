@@ -1,10 +1,11 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.Code;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
@@ -51,23 +52,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the FilterAllTextsDialog class.
 		/// </summary>
-		/// <param name="app"></param>
-		/// <param name="cache">The cache.</param>
-		/// <param name="objList">A list of objects (hvos) to check as an array</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// ------------------------------------------------------------------------------------
 		protected FilterAllTextsDialog(IApp app, LcmCache cache, IStText[] objList, IHelpTopicProvider helpTopicProvider) : this()
 		{
-			if (app == null)
-				throw new ArgumentNullException(nameof(app));
-			if (cache == null)
-				throw new ArgumentNullException(nameof(cache));
-			if (objList == null)
-				throw new ArgumentNullException(nameof(objList));
+			Guard.AgainstNull(app, nameof(app));
+			Guard.AgainstNull(cache, nameof(cache));
+			Guard.AgainstNull(objList, nameof(objList));
 
 			m_treeTexts.App = app;
 			m_treeTexts.Cache = cache;
@@ -83,7 +75,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
 			if (disposing)
+			{
 				components?.Dispose();
+			}
 			base.Dispose(disposing);
 		}
 		#endregion
@@ -106,8 +100,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_treeTexts.EndUpdate();
 
 			if (m_btnOK == null || m_objList == null)
+			{
 				return;
-			int prevSeqCount = m_cache.ActionHandlerAccessor.UndoableSequenceCount;
+			}
+			var prevSeqCount = m_cache.ActionHandlerAccessor.UndoableSequenceCount;
 			foreach (var obj in m_objList)
 			{
 				m_treeTexts.CheckNodeByTag(obj, TriStateTreeView.CheckState.Checked);
@@ -142,12 +138,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		#region Windows Form Designer generated code
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
@@ -227,13 +221,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, m_helpTopicId);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called after the box is checked or unchecked
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected void OnCheckedChanged(object sender, TreeViewEventArgs e)
 		{
 			UpdateButtonState();

@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2015 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,15 +22,16 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			var servLoc = cache.ServiceLocator;
 			var wordformRepos = servLoc.GetInstance<IWfiWordformRepository>();
 			IWfiWordform retval;
-			if (!wordformRepos.TryGetObject(form, false, out retval))
+			if (wordformRepos.TryGetObject(form, false, out retval))
 			{
-				// Have to make it.
-				var wordformFactory = servLoc.GetInstance<IWfiWordformFactory>();
-				NonUndoableUnitOfWorkHelper.Do(servLoc.GetInstance<IActionHandler>(), () =>
-				{
-					retval = wordformFactory.Create(form);
-				});
+				return retval;
 			}
+			// Have to make it.
+			var wordformFactory = servLoc.GetInstance<IWfiWordformFactory>();
+			NonUndoableUnitOfWorkHelper.Do(servLoc.GetInstance<IActionHandler>(), () =>
+			{
+				retval = wordformFactory.Create(form);
+			});
 			return retval;
 		}
 	}

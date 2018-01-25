@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -37,21 +37,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed;
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		public bool IsDisposed { get; private set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -66,10 +58,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
+		/// <summary />
 		public void Dispose()
 		{
 			Dispose(true);
@@ -106,16 +95,16 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				if (m_lcmToSda != null)
-					m_lcmToSda.Clear();
-				if (m_SdaToLcm != null)
-					m_SdaToLcm.Clear();
+				m_lcmToSda?.Clear();
+				m_SdaToLcm?.Clear();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -126,7 +115,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_SdaToLcm = null;
 			m_coRepository = null;
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
@@ -141,9 +130,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_SdaToLcm.Clear();
 			m_lcmToSda.Clear();
 		}
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		public LcmCache MainCache
 		{
 			get
@@ -155,7 +142,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				CheckDisposed();
 				if (m_cache == value)
+				{
 					return;
+				}
 
 				m_cache = value;
 				// Forget any existing relationships.
@@ -165,9 +154,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		public ISilDataAccess DataAccess
 		{
 			get
@@ -179,9 +166,14 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				CheckDisposed();
 				if (m_sda == value)
+				{
 					return;
+				}
+
 				if (m_sda != null)
+				{
 					Marshal.ReleaseComObject(m_sda);
+				}
 				m_sda = value;
 				// Forget any existing relationships.
 				m_lcmToSda = new Dictionary<int, int>();
@@ -209,30 +201,21 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		public int RealHvo(int secHvo)
 		{
 			CheckDisposed();
-			if (m_SdaToLcm.ContainsKey(secHvo))
-				return m_SdaToLcm[secHvo];
-
-			return 0;
+			return m_SdaToLcm.ContainsKey(secHvo) ? m_SdaToLcm[secHvo] : 0;
 		}
 
 		/// <summary>
 		/// Map from secondary hvo (in the SilDataAccess) to real object (in ICmOjectRepository).
 		/// </summary>
-		/// <param name="secHvo"></param>
-		/// <returns></returns>
 		public ICmObject RealObject(int secHvo)
 		{
-			int hvoReal = RealHvo(secHvo);
-			if (hvoReal != 0 && m_coRepository != null)
-				return m_coRepository.GetObject(hvoReal);
-			return null;
+			var hvoReal = RealHvo(secHvo);
+			return hvoReal != 0 && m_coRepository != null ? m_coRepository.GetObject(hvoReal) : null;
 		}
 
 		/// <summary>
 		/// Create a two-way mapping.
 		/// </summary>
-		/// <param name="secHvo">SilDataAccess HVO</param>
-		/// <param name="realHvo">In the LCM Cache</param>
 		public void Map(int secHvo, int realHvo)
 		{
 			CheckDisposed();
@@ -243,65 +226,59 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Removes a two-way mapping.
 		/// </summary>
-		/// <param name="secHvo">SilDataAccess HVO</param>
-		/// <returns><c>true</c> if the mapping was successfully removed, otherwise <c>false</c>.</returns>
 		public bool RemoveSec(int secHvo)
 		{
 			CheckDisposed();
 			int realHvo;
 			if (m_SdaToLcm.TryGetValue(secHvo, out realHvo))
+			{
 				m_lcmToSda.Remove(realHvo);
+			}
 			return m_SdaToLcm.Remove(secHvo);
 		}
 
 		/// <summary>
 		/// Removes a two-way mapping.
 		/// </summary>
-		/// <param name="realHvo">In the LCM Cache</param>
-		/// <returns><c>true</c> if the mapping was successfully removed, otherwise <c>false</c>.</returns>
 		public bool RemoveReal(int realHvo)
 		{
 			CheckDisposed();
 			int secHvo;
 			if (m_lcmToSda.TryGetValue(realHvo, out secHvo))
+			{
 				m_SdaToLcm.Remove(secHvo);
+			}
 			return m_lcmToSda.Remove(realHvo);
 		}
 
 		/// <summary>
 		/// Map from real hvo (in the LcmCache) to secondary (in the SilDataAccess).
 		/// </summary>
-		/// <param name="realHvo"></param>
-		/// <returns></returns>
 		public int SecHvo(int realHvo)
 		{
 			CheckDisposed();
-			if (m_lcmToSda.ContainsKey(realHvo))
-				return m_lcmToSda[realHvo];
-
-			return 0;
+			return m_lcmToSda.ContainsKey(realHvo) ? m_lcmToSda[realHvo] : 0;
 		}
 
 		/// <summary>
 		/// Look for a secondary-cache object that corresponds to hvoReal. If one does not already exist,
 		/// create it by appending to property flidOwn of object hvoOwner.
 		/// </summary>
-		/// <param name="hvoReal"></param>
-		/// <param name="clid"></param>
-		/// <param name="hvoOwner"></param>
-		/// <param name="flidOwn"></param>
-		/// <returns></returns>
 		public int FindOrCreateSec(int hvoReal, int clid, int hvoOwner, int flidOwn)
 		{
 			CheckDisposed();
-			int hvoSec = 0;
+			var hvoSec = 0;
 			if (hvoReal != 0)
+			{
 				hvoSec = SecHvo(hvoReal);
+			}
 			if (hvoSec == 0)
 			{
 				hvoSec = m_sda.MakeNewObject(clid, hvoOwner, flidOwn, m_sda.get_VecSize(hvoOwner, flidOwn));
 				if (hvoReal != 0)
+				{
 					Map(hvoSec, hvoReal);
+				}
 			}
 			return hvoSec;
 		}
@@ -311,17 +288,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// Set its flidName property to a string name in writing system ws.
 		/// If hvoReal is zero, just create an object, but don't look for or create an association.
 		/// </summary>
-		/// <param name="hvoReal"></param>
-		/// <param name="clid"></param>
-		/// <param name="hvoOwner"></param>
-		/// <param name="flidOwn"></param>
-		/// <param name="flidName"></param>
-		/// <param name="tss"></param>
-		/// <returns></returns>
 		public int FindOrCreateSec(int hvoReal, int clid, int hvoOwner, int flidOwn, int flidName, ITsString tss)
 		{
 			CheckDisposed();
-			int hvoSec = FindOrCreateSec(hvoReal, clid, hvoOwner, flidOwn);
+			var hvoSec = FindOrCreateSec(hvoReal, clid, hvoOwner, flidOwn);
 			m_sda.SetString(hvoSec, flidName, tss);
 			return hvoSec;
 		}
@@ -331,14 +301,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// create it by appending to property flidOwn of object hvoOwner.
 		/// Set its flidName property to a string name in writing system ws.
 		/// </summary>
-		/// <param name="hvoReal"></param>
-		/// <param name="clid"></param>
-		/// <param name="hvoOwner"></param>
-		/// <param name="flidOwn"></param>
-		/// <param name="name"></param>
-		/// <param name="flidName"></param>
-		/// <param name="ws"></param>
-		/// <returns></returns>
 		public int FindOrCreateSec(int hvoReal, int clid, int hvoOwner, int flidOwn, string name, int flidName, int ws)
 		{
 			CheckDisposed();
@@ -348,37 +310,19 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Like FindOrCreateSec, except the ws is taken automaticaly as the default analysis ws of the main cache.
 		/// </summary>
-		/// <param name="hvoReal"></param>
-		/// <param name="clid"></param>
-		/// <param name="hvoOwner"></param>
-		/// <param name="flidOwn"></param>
-		/// <param name="name"></param>
-		/// <param name="flidName"></param>
-		/// <returns></returns>
 		public int FindOrCreateSecAnalysis(int hvoReal, int clid, int hvoOwner, int flidOwn, string name, int flidName)
 		{
 			CheckDisposed();
-			return FindOrCreateSec(hvoReal, clid, hvoOwner, flidOwn, name,
-				flidName,
-				m_cache.DefaultAnalWs);
+			return FindOrCreateSec(hvoReal, clid, hvoOwner, flidOwn, name, flidName, m_cache.DefaultAnalWs);
 		}
 
 		/// <summary>
 		/// Like FindOrCreateSec, except the ws is taken automaticaly as the default vernacular ws of the main cache.
 		/// </summary>
-		/// <param name="hvoReal"></param>
-		/// <param name="clid"></param>
-		/// <param name="hvoOwner"></param>
-		/// <param name="flidOwn"></param>
-		/// <param name="name"></param>
-		/// <param name="flidName"></param>
-		/// <returns></returns>
 		public int FindOrCreateSecVern(int hvoReal, int clid, int hvoOwner, int flidOwn, string name, int flidName)
 		{
 			CheckDisposed();
-			return FindOrCreateSec(hvoReal, clid, hvoOwner, flidOwn, name,
-				flidName,
-				m_cache.DefaultVernWs);
+			return FindOrCreateSec(hvoReal, clid, hvoOwner, flidOwn, name, flidName, m_cache.DefaultVernWs);
 		}
 	}
 }

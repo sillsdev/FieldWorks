@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,23 +8,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	public class ClosedFeatureValue
 	{
-		private readonly IFsSymFeatVal m_symbol;
-		private readonly bool m_negate;
-
 		public ClosedFeatureValue(IFsSymFeatVal symbol, bool negate)
 		{
-			m_symbol = symbol;
-			m_negate = negate;
+			Symbol = symbol;
+			Negate = negate;
 		}
 
-		public IFsSymFeatVal Symbol
-		{
-			get { return m_symbol; }
-		}
+		public IFsSymFeatVal Symbol { get; }
 
-		public bool Negate
-		{
-			get { return m_negate; }
-		}
+		public bool Negate { get; }
 	}
 }

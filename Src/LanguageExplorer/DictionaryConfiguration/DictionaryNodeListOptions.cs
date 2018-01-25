@@ -20,7 +20,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		public ListIds ListId { get; set; }
 
 		/// <summary>ShouldSerialize___ is a magic method to prevent XmlSerializer from serializing ListId if there is none.</summary>
-		/// <note>Per https://bugzilla.xamarin.com/show_bug.cgi?id=1852, this does not work until Mono 3.3.0</note>
 		public bool ShouldSerializeListId()
 		{
 			return ListId != ListIds.None;

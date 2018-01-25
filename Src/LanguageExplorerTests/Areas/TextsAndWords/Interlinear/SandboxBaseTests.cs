@@ -24,9 +24,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 	[TestFixture]
 	public class SandboxBaseTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private IPropertyTable m_propertyTable;
-		private IPublisher m_publisher;
-		private ISubscriber m_subscriber;
+		private IPropertyTable _propertyTable;
+		private IPublisher _publisher;
+		private ISubscriber _subscriber;
 		private bool _didIInitSLDR;
 
 		[TestFixtureSetUp]
@@ -62,7 +62,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			base.TestSetup();
 
-			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
+			_propertyTable = TestSetupServices.SetupTestTriumvirate(out _publisher, out _subscriber);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -73,13 +73,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		/// ------------------------------------------------------------------------------------
 		public override void TestTearDown()
 		{
-			if (m_propertyTable != null)
-			{
-				m_propertyTable.Dispose();
-			}
-				m_propertyTable = null;
-			m_publisher = null;
-			m_subscriber = null;
+			_propertyTable?.Dispose();
+			_propertyTable = null;
+			_publisher = null;
+			_subscriber = null;
 			base.TestTearDown();
 		}
 
@@ -180,39 +177,39 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			int hvoAbc = 123456;
 
 			// Basic check: no glosses, we don't find any.
-			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.Null);
+			Assert.That(GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.Null);
 
 			// Only possibility, everything blank, we want it.
 			var wgAbc = Cache.ServiceLocator.GetInstance<IWfiGlossFactory>().Create();
 			wa.MeaningsOC.Add(wgAbc);
-			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc));
+			Assert.That(GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc));
 
 			// Looking for a particular string and not finding one that has it, we fail
 			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, Cache.DefaultAnalWs, MakeAnalysisString("abc"));
-			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.Null);
+			Assert.That(GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.Null);
 
 			// Likewise, we won't return a gloss that has relevant alternatives, even if all the desired strings are empty.
 			// (An easy way to have all the SDA strings be empty is to use a different HVO.)
 			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, Cache.DefaultAnalWs, MakeAnalysisString("abc"));
 			wgAbc.Form.AnalysisDefaultWritingSystem = MakeAnalysisString("abc");
-			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, 27), Is.Null);
+			Assert.That(GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, 27), Is.Null);
 
 			// Simple success: the one and only WS matches.
-			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc));
+			Assert.That(GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc));
 
 			// It matches even if there is another, empty one.
 			var wgDef = Cache.ServiceLocator.GetInstance<IWfiGlossFactory>().Create();
 			wa.MeaningsOC.Add(wgDef);
-			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc));
+			Assert.That(GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc));
 
 			// Also if there is another one with a different value for the form
 			wgDef.Form.AnalysisDefaultWritingSystem = MakeAnalysisString("def");
-			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc));
+			Assert.That(GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc));
 
 			// We can also find the def one.
 			int hvoDef = 123457;
 			sda.CacheStringAlt(hvoDef, SandboxBase.ktagSbWordGloss, Cache.DefaultAnalWs, MakeAnalysisString("def"));
-			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoDef), Is.EqualTo(wgDef));
+			Assert.That(GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoDef), Is.EqualTo(wgDef));
 
 			// Now trying to match two writing systems. One with both correct should beat one with only one correct.
 			var wgAbc3 = Cache.ServiceLocator.GetInstance<IWfiGlossFactory>().Create();
@@ -224,7 +221,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			wgAbc3.Form.set_String(wsFrn, TsStringUtils.MakeString("abcF", wsFrn));
 			wsIds.Add(wsSpn);
 			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsSpn, TsStringUtils.MakeString("abcS", wsSpn));
-			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc3));
+			Assert.That(GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc3));
 
 			// Of two partial matches, prefer the one where other alternatives are empty.
 			// wgAbc2, wgAbc3 both match on English and Spanish. Neither matches on French, but wgAbc2 has no French
@@ -235,16 +232,16 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			wgAbc2.Form.set_String(wsSpn, TsStringUtils.MakeString("abcS", wsSpn));
 			wsIds.Add(wsFrn);
 			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsFrn, TsStringUtils.MakeString("abcOther", wsFrn));
-			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc2));
+			Assert.That(GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc2));
 
 			// Of two perfect matches, we prefer the one that has no other information.
 			wsIds.Remove(wsFrn);
-			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc2));
+			Assert.That(GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc2));
 
 			// We will not return one where the WfiGloss has a relevant non-empty alternative, even if the corresponding target is empty.
 			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsSpn, TsStringUtils.MakeString("", wsSpn));
 			wa.MeaningsOC.Remove(wgAbc);
-			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.Null);
+			Assert.That(GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.Null);
 		}
 
 		/// <summary>
@@ -269,7 +266,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					return new AnalysisOccurrence(seg, 0);
 				}))
 			{
-				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as SandboxBase.IhMissingEntry)
+				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as IhMissingEntry)
 				{
 					var imorphItemCurrentSandboxState = handler.IndexOfCurrentItem;
 					Assert.That(imorphItemCurrentSandboxState, Is.EqualTo(-1)); // no menu item corresponds to no allomorph.
@@ -311,7 +308,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			}))
 			{
 				var initialAnalysisStack = sandbox.CurrentAnalysisTree;
-				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as SandboxBase.IhMissingEntry)
+				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as IhMissingEntry)
 				{
 					var imorphItemCurrentSandboxState = handler.IndexOfCurrentItem;
 					Assert.That(imorphItemCurrentSandboxState, Is.GreaterThan(-1));
@@ -371,7 +368,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			}))
 			{
 				var initialAnalysisStack = sandbox.CurrentAnalysisTree;
-				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as SandboxBase.IhMissingEntry)
+				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as IhMissingEntry)
 				{
 					var imorphItemCurrentSandboxState = handler.IndexOfCurrentItem;
 
@@ -440,7 +437,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			}))
 			{
 				var initialAnalysisStack = sandbox.CurrentAnalysisTree;
-				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as SandboxBase.IhMissingEntry)
+				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as IhMissingEntry)
 				{
 					var imorphItemCurrentSandboxState = handler.IndexOfCurrentItem;
 
@@ -505,7 +502,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			}))
 			{
 				var initialAnalysisStack = sandbox.CurrentAnalysisTree;
-				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as SandboxBase.IhMissingEntry)
+				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as IhMissingEntry)
 				{
 					var imorphItemCurrentSandboxState = handler.IndexOfCurrentItem;
 					var items = handler.MorphItems;
@@ -588,7 +585,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(
 						LexEntryTypeTags.kguidLexTypPastVar);
 
-				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as SandboxBase.IhMissingEntry)
+				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as IhMissingEntry)
 				{
 					var sortedMorphItems = handler.MorphItems;
 					sortedMorphItems.Sort();
@@ -670,7 +667,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(
 						LexEntryTypeTags.kguidLexTypPastVar);
 
-				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as SandboxBase.IhMissingEntry)
+				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as IhMissingEntry)
 				{
 					var sortedMorphItems = handler.MorphItems;
 					sortedMorphItems.Sort();
@@ -720,9 +717,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			// Make a sandbox and sut
 			InterlinLineChoices lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject,
-				Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze);
+				Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinMode.Analyze);
 			using(var sandbox = new SandboxBase(Cache, null, lineChoices, wa.Hvo))
 			{
+				sandbox.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
 				var mockList = new MockComboHandler();
 				sandbox.m_ComboHandler = mockList;
 				// Merge the first sense into the second (invalidating analysis and sandbox cache)
@@ -740,7 +738,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		private SandboxBase.InterlinComboHandler GetComboHandler(SandboxBase sandbox, int flid, int morphIndex)
+		private InterlinComboHandler GetComboHandler(SandboxBase sandbox, int flid, int morphIndex)
 		{
 			// first select the proper pull down icon.
 			int tagIcon = 0;
@@ -759,7 +757,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					tagIcon = SandboxBase.ktagWordPosIcon;
 					break;
 			}
-			return SandboxBase.InterlinComboHandler.MakeCombo(null, tagIcon, sandbox, morphIndex) as SandboxBase.InterlinComboHandler;
+			return InterlinComboHandler.MakeCombo(null, tagIcon, sandbox, morphIndex) as InterlinComboHandler;
 		}
 
 		public class MockComboHandler : DisposableBase, IComboHandler
@@ -792,7 +790,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var occurrence = createDataForSandbox();
 			var lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs);
 			var sandbox = new SandboxBase(Cache, null, lineChoices, occurrence.Analysis.Hvo);
-			sandbox.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
+			sandbox.InitializeFlexComponent(new FlexComponentParameters(_propertyTable, _publisher, _subscriber));
 			sandbox.MakeRoot();
 			return sandbox;
 		}

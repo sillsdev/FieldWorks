@@ -219,7 +219,6 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			// the current Publication layout or Configuration view.
 			if (!IsObjectVisible(hvoTarget, out xrc))
 			{
-				// Tell the user why we aren't jumping to his record
 				AreaServices.GiveSimpleWarning(PropertyTable.GetValue<Form>("window"), PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile, xrc);
 			}
 			return false;

@@ -6,7 +6,6 @@ using System.IO;
 using System.Collections.Generic;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 
@@ -30,7 +29,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			// Note: The ref collection class ensures duplicates are not added to CasesRC.
 			foreach (var wordform in GetWordformsInFile(path))
+			{
 				wordSet.CasesRC.Add(wordform);
+			}
 		}
 
 		// NB: This will currently return hvos
@@ -49,8 +50,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				// exception will be thrown if the line length exceeds the MaxValue constant property of an Int32,
 				// which is 2,147,483,647. I doubt you will run into this exception any time soon. :-)
 				string line;
-				while((line = reader.ReadLine()) != null)
+				while ((line = reader.ReadLine()) != null)
+				{
 					GetUniqueWords(wordforms, line);
+				}
 			}
 			return wordforms.Values;
 		}
@@ -62,31 +65,32 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <param name="buffer"></param>
 		private void GetUniqueWords(Dictionary<string, IWfiWordform> wordforms, string buffer)
 		{
-			int start = -1; // -1 means we're still looking for a word to start.
-			int length = 0;
-			int totalLengh = buffer.Length;
-			for(int i = 0; i < totalLengh; i++)
+			var start = -1; // -1 means we're still looking for a word to start.
+			var length = 0;
+			var totalLengh = buffer.Length;
+			for(var i = 0; i < totalLengh; i++)
 			{
-				bool isWordforming = m_ws.get_IsWordForming(buffer[i]);
+				var isWordforming = m_ws.get_IsWordForming(buffer[i]);
 				if (isWordforming)
 				{
 					length++;
 					if (start < 0) //first character in this word?
+					{
 						start = i;
+					}
 				}
 
-				if ((start > -1) // had a word and found yet?
-					 && (!isWordforming || i == totalLengh - 1 /*last char of the input*/))
+				if ((start <= -1) || (isWordforming && i != totalLengh - 1))
 				{
-					string word = buffer.Substring(start, length);
-					if (!wordforms.ContainsKey(word))
-					{
-						ITsString tss = TsStringUtils.MakeString(word, m_ws.Handle);
-						wordforms.Add(word, WfiWordformServices.FindOrCreateWordform(m_cache, tss));
-					}
-					length = 0;
-					start = -1;
+					continue;
 				}
+				var word = buffer.Substring(start, length);
+				if (!wordforms.ContainsKey(word))
+				{
+					wordforms.Add(word, WfiWordformServices.FindOrCreateWordform(m_cache, TsStringUtils.MakeString(word, m_ws.Handle)));
+				}
+				length = 0;
+				start = -1;
 			}
 		}
 	}

@@ -383,8 +383,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			// when we change wordforms we should create a new Analysis Tree, so we don't
 			// overwrite the last state of one we may have saved during the tests.
-			if (m_sandbox != null && selected != SelectedOccurrence)
-				(m_sandbox as MockSandbox).NewAnalysisTree = new AnalysisTree();
+			if (InterlinWordControl != null && selected != SelectedOccurrence)
+				(InterlinWordControl as MockSandbox).NewAnalysisTree = new AnalysisTree();
 			base.SelectOccurrence(selected);
 		}
 
@@ -411,7 +411,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 		internal AnalysisTree NewAnalysisTree
 		{
-			get { return (m_sandbox as MockSandbox).NewAnalysisTree; }
+			get { return (InterlinWordControl as MockSandbox).NewAnalysisTree; }
 		}
 	}
 

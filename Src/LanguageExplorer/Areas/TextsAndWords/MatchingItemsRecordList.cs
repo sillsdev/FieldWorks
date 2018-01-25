@@ -78,7 +78,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// This reloads the list using the supplied set of hvos.
 		/// </summary>
-		/// <param name="objs"></param>
 		public void UpdateList(IEnumerable<int> objs)
 		{
 			m_objs = objs;

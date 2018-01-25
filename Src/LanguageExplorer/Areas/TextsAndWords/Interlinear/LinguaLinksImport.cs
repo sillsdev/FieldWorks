@@ -1,18 +1,13 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LinguaLinksImport.cs
-// Responsibility:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
@@ -29,21 +24,15 @@ using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public partial class LinguaLinksImport
 	{
 		private int m_phaseProgressStart, m_phaseProgressEnd, m_shownProgress;
 		private IThreadedProgress m_progress;
-		private string m_sErrorMsg;
 		private LanguageMapping[] m_languageMappings;
 		private LanguageMapping m_current;
 		private int m_version; // of FLExText being imported. 0 if no version found.
 		private EncConverters m_converters;
-		private string m_nextInput;
 		private string m_sTempDir;
 		private string m_sRootDir;
 		private LcmCache m_cache;
@@ -52,14 +41,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public delegate void ErrorHandler(object sender, string message, string caption);
 		public event ErrorHandler Error;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LinguaLinksImport"/> class.
 		/// </summary>
-		/// <param name="cache">The LCM cache.</param>
-		/// <param name="tempDir">The temp directory.</param>
-		/// <param name="rootDir">The root directory.</param>
-		/// ------------------------------------------------------------------------------------
 		public LinguaLinksImport(LcmCache cache, string tempDir, string rootDir)
 		{
 			m_cache = cache;
@@ -67,30 +51,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_sRootDir = rootDir;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the error message.
 		/// </summary>
-		/// <value>The error message.</value>
-		/// ------------------------------------------------------------------------------------
-		public string ErrorMessage
-		{
-			get { return m_sErrorMsg; }
-		}
+		public string ErrorMessage { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the next input.
 		/// </summary>
-		/// <value>The next input.</value>
-		/// ------------------------------------------------------------------------------------
-		public string NextInput
-		{
-			get { return m_nextInput; }
-			set { m_nextInput = value; }
-		}
+		public string NextInput { get; set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Does the import.
 		/// </summary>
@@ -99,45 +69,52 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// LanguageMappings, 3) start phase.</param>
 		/// <returns>Returns <c>true</c> if we did the complete import, false if we
 		/// quit early.</returns>
-		/// ------------------------------------------------------------------------------------
 		public object Import(IThreadedProgress dlg, object[] parameters)
 		{
 			Debug.Assert(parameters.Length == 3);
-			bool runToCompletion = (bool)parameters[0];
+			var runToCompletion = (bool)parameters[0];
 			m_languageMappings = (LanguageMapping[])parameters[1];
-			int startPhase = (int)parameters[2];
+			var startPhase = (int)parameters[2];
 			m_progress = dlg;
-			m_LinguaLinksXmlFileName = m_nextInput;
+			m_LinguaLinksXmlFileName = NextInput;
 
-			m_sErrorMsg = ITextStrings.ksTransformProblem;
+			ErrorMessage = ITextStrings.ksTransformProblem;
 			m_shownProgress = m_phaseProgressStart = 0;
 			m_phaseProgressEnd = 150;
 			if (startPhase < 2)
 			{
 				dlg.Title = ITextStrings.ksLLImportProgress;
 				dlg.Message = ITextStrings.ksLLImportPhase1;
-				m_sErrorMsg = ITextStrings.ksTransformProblem1;
+				ErrorMessage = ITextStrings.ksTransformProblem1;
 				if (!Convert1())
+				{
 					return false;
+				}
 			}
 			m_progress.Step(150);
 			if (m_progress.Canceled)
+			{
 				return false;
+			}
 
 			if (startPhase < 3)
 			{
-				m_sErrorMsg = ITextStrings.ksTransformProblem2;
+				ErrorMessage = ITextStrings.ksTransformProblem2;
 				dlg.Message = ITextStrings.ksLLImportPhase2;
 				if (!Convert2())
+				{
 					return false;
+				}
 			}
 			m_progress.Step(75);
 			if (m_progress.Canceled)
+			{
 				return false;
+			}
 
 			if (startPhase < 4)
 			{
-				m_sErrorMsg = ITextStrings.ksTransformProblem3;
+				ErrorMessage = ITextStrings.ksTransformProblem3;
 				dlg.Message = ITextStrings.ksLLImportPhase3;
 				if (!Convert3())
 					return false;
@@ -145,16 +122,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_progress.Step(25);
 			if (startPhase < 5)
 			{
-				m_sErrorMsg = ITextStrings.ksTransformProblem3A;
+				ErrorMessage = ITextStrings.ksTransformProblem3A;
 				if (!Convert4())
+				{
 					return false;
+				}
 			}
 			m_progress.Step(25);
 			if (startPhase < 6)
 			{
-				m_sErrorMsg = ITextStrings.ksTransformProblem3B;
+				ErrorMessage = ITextStrings.ksTransformProblem3B;
 				if (!Convert5())
+				{
 					return false;
+				}
 				m_progress.Step(25);
 			}
 			else
@@ -167,40 +148,32 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// There should be some contents in the phase 3 file if
 			// the process is valid and is using a valid file.
 			// Make sure the file isn't empty and show msg if it is.
-			FileInfo fi = new FileInfo(m_sTempDir + "LLPhase3Output.xml");
+			var fi = new FileInfo(m_sTempDir + "LLPhase3Output.xml");
 			if (fi.Length == 0)
 			{
-				ReportError(String.Format(ITextStrings.ksInvalidLLFile, m_LinguaLinksXmlFileName),
-					ITextStrings.ksLLImport);
+				ReportError(string.Format(ITextStrings.ksInvalidLLFile, m_LinguaLinksXmlFileName), ITextStrings.ksLLImport);
 				throw new InvalidDataException();
 			}
 
 			// There's no way to cancel from here on out.
 			dlg.AllowCancel = false;
 
-			if (runToCompletion)
+			if (!runToCompletion)
 			{
-				m_sErrorMsg = ITextStrings.ksXMLParsingProblem4;
-				dlg.Message = ITextStrings.ksLLImportPhase4;
-				if (Convert6())
-				{
-
-					m_sErrorMsg = ITextStrings.ksFinishLLTextsProblem5;
-					dlg.Message = ITextStrings.ksLLImportPhase5;
-					m_shownProgress = m_phaseProgressStart = dlg.Position;
-					m_phaseProgressEnd = 500;
-					Convert7();
-					return true;
-				}
+				return false;
 			}
-			return false;
-		}
-
-		[Flags]
-		public enum ImportAnalysesLevel
-		{
-			Wordform,
-			WordGloss
+			ErrorMessage = ITextStrings.ksXMLParsingProblem4;
+			dlg.Message = ITextStrings.ksLLImportPhase4;
+			if (!Convert6())
+			{
+				return false;
+			}
+			ErrorMessage = ITextStrings.ksFinishLLTextsProblem5;
+			dlg.Message = ITextStrings.ksLLImportPhase5;
+			m_shownProgress = m_phaseProgressStart = dlg.Position;
+			m_phaseProgressEnd = 500;
+			Convert7();
+			return true;
 		}
 
 		public void ImportWordsFrag(Func<Stream> createWordsFragDocStream, ImportAnalysesLevel analysesLevel)
@@ -226,18 +199,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			});
 		}
 
-		public class ImportInterlinearOptions
-		{
-			public IThreadedProgress Progress;
-			/// <summary>
-			/// The bird data. NOTE: caller is responsible for disposing stream!
-			/// </summary>
-			public Stream BirdData;
-			public int AllottedProgress;
-			public Func<LcmCache, Interlineartext, ILgWritingSystemFactory, IThreadedProgress, bool> CheckAndAddLanguages;
-			public ImportAnalysesLevel AnalysesLevel;
-		}
-
 		/// <summary>
 		/// The first text created by ImportInterlinear.
 		/// </summary>
@@ -245,12 +206,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Import a file which looks like a FieldWorks interlinear XML export.
 		/// </summary>
-		/// <param name="dlg"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
 		public object ImportInterlinear(IThreadedProgress dlg, object[] parameters)
 		{
-			bool retValue = false;
+			var retValue = false;
 			Debug.Assert(parameters.Length == 1);
 			using (var stream = new FileStream((string) parameters[0], FileMode.Open, FileAccess.Read))
 			{
@@ -263,8 +221,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public bool ImportInterlinear(IThreadedProgress progress, Stream birdData, int allottedProgress, ref IText firstNewText)
 		{
-			return ImportInterlinear(new ImportInterlinearOptions { Progress = progress, BirdData = birdData, AllottedProgress = allottedProgress },
-				ref firstNewText);
+			return ImportInterlinear(new ImportInterlinearOptions { Progress = progress, BirdData = birdData, AllottedProgress = allottedProgress }, ref firstNewText);
 		}
 
 		/// <summary>
@@ -272,41 +229,37 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// If a text was previously imported then attempt to merge it. If a text has not been imported before then a new text
 		/// is created and it is poplulated with the input if possible.
 		/// </summary>
-		/// <param name="options"></param>
-		/// <param name="firstNewText"></param>
-		/// <returns>return false to abort merge</returns>
 		public bool ImportInterlinear(ImportInterlinearOptions options, ref IText firstNewText)
 		{
-			IThreadedProgress progress = options.Progress;
-			Stream birdData = options.BirdData;
-			int allottedProgress = options.AllottedProgress;
-
-			bool mergeSucceeded = false;
-			bool continueMerge = false;
+			var progress = options.Progress;
+			var birdData = options.BirdData;
+			var allottedProgress = options.AllottedProgress;
+			var mergeSucceeded = false;
+			var continueMerge = false;
 			firstNewText = null;
-			BIRDDocument doc;
-			int initialProgress = progress.Position;
+			var initialProgress = progress.Position;
 			try
 			{
 				m_cache.DomainDataByFlid.BeginNonUndoableTask();
 				progress.Message = ITextStrings.ksInterlinImportPhase1of2;
 				var serializer = new XmlSerializer(typeof(BIRDDocument));
-				doc = (BIRDDocument)serializer.Deserialize(birdData);
+				var doc = (BIRDDocument)serializer.Deserialize(birdData);
 				Normalize(doc);
-				int version = 0;
+				var version = 0;
 				if (!string.IsNullOrEmpty(doc.version))
+				{
 					int.TryParse(doc.version, out version);
+				}
 				progress.Position = initialProgress + allottedProgress / 2;
 				progress.Message = ITextStrings.ksInterlinImportPhase2of2;
 				if (doc.interlineartext != null)
 				{
-					int step = 0;
+					var step = 0;
 					foreach (var interlineartext in doc.interlineartext)
 					{
 						step++;
-						ILangProject langProject = m_cache.LangProject;
-						IText newText = null;
-						if (!String.IsNullOrEmpty(interlineartext.guid))
+						IText newText;
+						if (!string.IsNullOrEmpty(interlineartext.guid))
 						{
 							ICmObject repoObj;
 							m_cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(interlineartext.guid), out repoObj);
@@ -340,11 +293,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 							continueMerge = PopulateTextIfPossible(options, ref newText, interlineartext, progress, version);
 						}
+
 						if (!continueMerge)
+						{
 							break;
+						}
 						progress.Position = initialProgress + allottedProgress/2 + allottedProgress*step/2/doc.interlineartext.Length;
 						if (firstNewText == null)
+						{
 							firstNewText = newText;
+						}
 
 					}
 					mergeSucceeded = continueMerge;
@@ -367,14 +325,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Attempt to populate a new FieldWorks text with a BIRD format interlinear text. If this fails
 		/// for some reason then the new text is deleted and also return false to tell the calling method to abort the import.
 		/// </summary>
-		/// <param name="options"></param>
-		/// <param name="newText"></param>
-		/// <param name="interlineartext"></param>
-		/// <param name="progress"></param>
-		/// <param name="version"></param>
 		/// <returns>true if operation completed, false if the import operation should be aborted</returns>
-		private bool PopulateTextIfPossible(ImportInterlinearOptions options, ref IText newText, Interlineartext interlineartext,
-												IThreadedProgress progress, int version)
+		private bool PopulateTextIfPossible(ImportInterlinearOptions options, ref IText newText, Interlineartext interlineartext, IThreadedProgress progress, int version)
 		{
 			if (!PopulateTextFromBIRDDoc(ref newText,
 					new TextCreationParams
@@ -395,26 +347,30 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// We want everything to be NFD, particularly so we match wordforms correctly.
 		/// </summary>
-		/// <param name="doc"></param>
 		private static void Normalize(BIRDDocument doc)
 		{
 			foreach (var text in doc.interlineartext)
 			{
 				NormalizeItems(text.Items);
 				if (text.paragraphs == null)
+				{
 					continue;
+				}
 				foreach (var para in text.paragraphs)
 				{
-					if (para.phrases != null)
+					if (para.phrases == null)
 					{
-						foreach (var phrase in para.phrases)
+						continue;
+					}
+					foreach (var phrase in para.phrases)
+					{
+						NormalizeItems(phrase.Items);
+						if (phrase.WordsContent == null || phrase.WordsContent.Words == null)
 						{
-							NormalizeItems(phrase.Items);
-							if (phrase.WordsContent == null || phrase.WordsContent.Words == null)
-								continue;
-							var words = phrase.WordsContent.Words;
-							NormalizeWords(words);
+							continue;
 						}
+						var words = phrase.WordsContent.Words;
+						NormalizeWords(words);
 					}
 				}
 			}
@@ -423,17 +379,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private static void NormalizeWords(IEnumerable<Word> words)
 		{
 			foreach (var word in words)
+			{
 				NormalizeItems(word.Items);
+			}
 		}
 
 		private static void NormalizeItems(item[] items)
 		{
 			if (items == null)
+			{
 				return;
+			}
 			foreach (var item in items)
 			{
 				if (item.Value == null)
+				{
 					continue;
+				}
 				item.Value = item.Value.Normalize(NormalizationForm.FormD);
 			}
 		}
@@ -441,45 +403,44 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// This method exists for testing purposes only, we don't want to show this dialog when we are testing the merge behavior.
 		/// </summary>
-		/// <param name="progress"></param>
-		/// <returns></returns>
 		protected virtual DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
-		{							//we need to invoke the dialog on the main thread so we can use the progress dialog as the parent.
+		{
+			//we need to invoke the dialog on the main thread so we can use the progress dialog as the parent.
 			//otherwise the message box can be displayed behind everything
-			IAsyncResult asyncResult = progress.SynchronizeInvoke.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
-																		 new object[]
-																			{
-																				progress,
-																				ITextStrings.ksAskMergeInterlinearText,
-																				ITextStrings.ksAskMergeInterlinearTextTitle,
-																				MessageBoxButtons.YesNo
-																			});
+			var asyncResult = progress.SynchronizeInvoke.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
+				new object[]
+				{
+					progress,
+					ITextStrings.ksAskMergeInterlinearText,
+					ITextStrings.ksAskMergeInterlinearTextTitle,
+					MessageBoxButtons.YesNo
+				});
 			return (DialogResult)progress.SynchronizeInvoke.EndInvoke(asyncResult);
 		}
 
 		private static ITsString GetSpaceAdjustedPunctString(ILgWritingSystemFactory wsFactory, item item, ITsString wordString, char space, bool followsWord)
 		{
-			if (item.Value.Length > 0)
+			if (item.Value.Length == 0)
 			{
-				var index = 0;
-				ITsString tempValue = AdjustPunctStringForCharacter(wsFactory, item, wordString, item.Value[index], index, space, followsWord);
-				if(item.Value.Length > 1)
-				{
-					index = item.Value.Length - 1;
-					tempValue = AdjustPunctStringForCharacter(wsFactory, item, tempValue, item.Value[index], index, space, followsWord);
-				}
+				return wordString;
+			}
+			var index = 0;
+			var tempValue = AdjustPunctStringForCharacter(wsFactory, item, wordString, item.Value[index], index, space, followsWord);
+			if (item.Value.Length < 2)
+			{
 				return tempValue;
 			}
-			return wordString;
+			index = item.Value.Length - 1;
+			tempValue = AdjustPunctStringForCharacter(wsFactory, item, tempValue, item.Value[index], index, space, followsWord);
+			return tempValue;
 		}
 
-		private static ITsString AdjustPunctStringForCharacter(ILgWritingSystemFactory wsFactory, item item, ITsString wordString, char punctChar, int index,
-			char space, bool followsWord)
+		private static ITsString AdjustPunctStringForCharacter(ILgWritingSystemFactory wsFactory, item item, ITsString wordString, char punctChar, int index, char space, bool followsWord)
 		{
-			bool spaceBefore = false;
-			bool spaceAfter = false;
-			bool spaceHere = false;
-			char quote = '"';
+			var spaceBefore = false;
+			var spaceAfter = false;
+			var spaceHere = false;
+			const char quote = '"';
 			var charType = Icu.GetCharType(punctChar);
 			switch (charType)
 			{
@@ -494,8 +455,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case Icu.UCharCategory.U_OTHER_PUNCTUATION: //handle special characters
 					if(wordString.Text.LastIndexOfAny(new[] {',','.',';',':','?','!',quote}) == wordString.Length - 1) //treat as ending characters
 					{
-						spaceAfter = punctChar != '"' || wordString.Length > 1; //quote characters are extra special, if we find them on their own
-																				//it is near impossible to know what to do, but it's usually nothing.
+						//quote characters are extra special, if we find them on their own
+						//it is near impossible to know what to do, but it's usually nothing.
+						spaceAfter = punctChar != '"' || wordString.Length > 1;
 					}
 					if (punctChar == '\xA1' || punctChar == '\xBF')
 					{
@@ -513,8 +475,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				ILgWritingSystem wsEngine;
 				if (TryGetWsEngine(wsFactory, item.lang, out wsEngine))
 				{
-					wordBuilder.ReplaceTsString(0, 0, TsStringUtils.MakeString("" + space,
-						wsEngine.Handle));
+					wordBuilder.ReplaceTsString(0, 0, TsStringUtils.MakeString("" + space, wsEngine.Handle));
 				}
 				wordString = wordBuilder.GetString();
 			}
@@ -523,18 +484,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				ILgWritingSystem wsEngine;
 				if (TryGetWsEngine(wsFactory, item.lang, out wsEngine))
 				{
-					wordBuilder.ReplaceTsString(index, index, TsStringUtils.MakeString("" + space,
-						wsEngine.Handle));
+					wordBuilder.ReplaceTsString(index, index, TsStringUtils.MakeString(string.Empty + space, wsEngine.Handle));
 				}
 				wordString = wordBuilder.GetString();
 			}
-			if(spaceAfter) //put a space to the right of the punct
+			if (spaceAfter) //put a space to the right of the punct
 			{
 				ILgWritingSystem wsEngine;
 				if (TryGetWsEngine(wsFactory, item.lang, out wsEngine))
 				{
-					wordBuilder.ReplaceTsString(wordBuilder.Length, wordBuilder.Length,
-						TsStringUtils.MakeString("" + space, wsEngine.Handle));
+					wordBuilder.ReplaceTsString(wordBuilder.Length, wordBuilder.Length, TsStringUtils.MakeString("" + space, wsEngine.Handle));
 				}
 				wordString = wordBuilder.GetString();
 			}
@@ -546,7 +505,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			index -= 1;
 			if (index < 0)
+			{
 				return false;
+			}
 			var charString = wordString.GetChars(index, index + 1);
 			return (charString[0] == space || charString[0] == quote);
 		}
@@ -566,11 +527,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return true;
 		}
 
-		enum modes { kStart, kRun1, kRun2, kRun3, kRun4, kAUni1, kAUni2, kAUni3, kAUni4, kAStr1, kAStr2, kAStr3, kRIE1, kRIE2, kRIE3, kRIE4, kRIE5, kRIE6, kRIE7, kLink1, kLink2, kLink3, kLink4, kLink5, kLinkA2, kLinkA3, kLinkA4, kICU1, kICU2, kDtd };
-
 		private void ProcessSearchBuffer(string searchBuffer, int size, bool bufferIt, ref string buffer, BinaryWriter bw)
 		{
-			for (int j = 0; j < size; j++)
+			for (var j = 0; j < size; j++)
 			{
 				if (bufferIt)
 				{
@@ -585,135 +544,142 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void ProcessLanguageCode(string buffer, BinaryWriter bw)
 		{
-			bool found = false;
-
-			foreach (LanguageMapping mapping in m_languageMappings)
+			var found = false;
+			foreach (var mapping in m_languageMappings)
 			{
-				if (!found && mapping.LlCode == buffer)
+				if (found || mapping.LlCode != buffer)
 				{
-					found = true;
-					for (int j = 0; j < mapping.FwCode.Length; j++)
-					{
-						bw.Write((byte)mapping.FwCode[j]);
-					}
-					m_current = mapping;
+					continue;
 				}
+				found = true;
+				foreach (var code in mapping.FwCode)
+				{
+					bw.Write((byte)code);
+				}
+				m_current = mapping;
 			}
 			//We shouldn't need the following code, but sometimes LL dumps unexpected language codes
-			if (!found)
+			if (found)
 			{
-				for (int j = 0; j < buffer.Length; j++)
-				{
-					bw.Write((byte)buffer[j]);
-				}
-				if (m_languageMappings.Length > 0)
-					m_current = m_languageMappings[0];
+				return;
+			}
+			foreach (var character in buffer)
+			{
+				bw.Write((byte)character);
+			}
+
+			if (m_languageMappings.Length > 0)
+			{
+				m_current = m_languageMappings[0];
 			}
 		}
 
 		private void ProcessLanguageCode2(string buffer)
 		{
-			bool found = false;
-
-			foreach (LanguageMapping mapping in m_languageMappings)
+			var found = false;
+			foreach (var mapping in m_languageMappings)
 			{
-				if (!found && mapping.LlCode == buffer)
+				if (found || mapping.LlCode != buffer)
 				{
-					found = true;
-					m_current = mapping;
+					continue;
 				}
+				found = true;
+				m_current = mapping;
 			}
 			//We shouldn't need the following code, but sometimes LL dumps unexpected language codes
 			if (!found && m_languageMappings.Length > 0)
+			{
 				m_current = m_languageMappings[0];
+			}
 		}
 
 		private void ProcessLanguageData(string buffer, BinaryWriter bw)
 		{
-			if (buffer.Length > 0)
+			if (buffer.Length <= 0)
 			{
-				IEncConverter converter = null;
-				string result = string.Empty;
+				return;
+			}
+			IEncConverter converter = null;
+			var result = string.Empty;
 
-				if (!string.IsNullOrEmpty(m_current.EncodingConverter))
+			if (!string.IsNullOrEmpty(m_current.EncodingConverter))
+			{
+				converter = m_converters[m_current.EncodingConverter];
+			}
+
+			if (converter != null)
+			{
+				// Replace any make sure the &lt; &gt; &amp; and &quot;
+				var specialEntities = new[] { "&lt;", "&gt;", "&quot;", "&amp;"};
+				var actualXML = new[] { "<", ">", "\"", "&"};
+				var replaced = new[] { false, false, false, false };
+				var anyReplaced = false;
+				Debug.Assert(specialEntities.Length == actualXML.Length && actualXML.Length == replaced.Length, "Programming error...");
+
+				var sb = new StringBuilder(buffer);	// use a string builder for performance
+				for (var i = 0; i < specialEntities.Length; i++)
 				{
-					converter = m_converters[m_current.EncodingConverter];
+					if (!buffer.Contains(specialEntities[i]))
+					{
+						continue;
+					}
+					replaced[i] = anyReplaced = true;
+					sb = sb.Replace(specialEntities[i], actualXML[i]);
 				}
 
-				if (converter != null)
+				var len = sb.Length;	// buffer.Length;
+				var subData = new byte[len];
+				for (var j = 0; j < len; j++)
 				{
-					// Replace any make sure the &lt; &gt; &amp; and &quot;
-					string[] specialEntities = new string[] { "&lt;", "&gt;", "&quot;", "&amp;"};
-					string[] actualXML = new string[] { "<", ">", "\"", "&"};
-					bool[] replaced = new bool[] { false, false, false, false };
-					bool anyReplaced = false;
-					Debug.Assert(specialEntities.Length == actualXML.Length && actualXML.Length == replaced.Length, "Programming error...");
+					subData[j] = (byte)sb[j];	// buffer[j];
+				}
 
-					StringBuilder sb = new StringBuilder(buffer);	// use a string builder for performance
-					for (int i = 0; i < specialEntities.Length; i++)
+				try
+				{
+					result = converter.ConvertToUnicode(subData);
+				}
+				catch (Exception e)
+				{
+					ReportError(string.Format(ITextStrings.ksEncConvFailed, converter.Name, e.Message), ITextStrings.ksLLEncConv);
+				}
+
+				// now put any of the four back to the Special Entity notation
+				if (anyReplaced)	// only if we changed on input
+				{
+					sb = new StringBuilder(result);
+					for (var i = specialEntities.Length-1; i >= 0; i--)
 					{
-						if (buffer.Contains(specialEntities[i]))
+						if (replaced[i])
 						{
-							replaced[i] = anyReplaced = true;
-							sb = sb.Replace(specialEntities[i], actualXML[i]);
+							sb = sb.Replace(actualXML[i], specialEntities[i]);
 						}
 					}
-
-					int len = sb.Length;	// buffer.Length;
-					byte[] subData = new byte[len];
-					for (int j = 0; j < len; j++)
-					{
-						subData[j] = (byte)sb[j];	// buffer[j];
-					}
-
-					try
-					{
-						result = converter.ConvertToUnicode(subData);
-					}
-					catch (System.Exception e)
-					{
-						ReportError(string.Format(ITextStrings.ksEncConvFailed,
-							converter.Name, e.Message), ITextStrings.ksLLEncConv);
-					}
-
-					// now put any of the four back to the Special Entity notation
-					if (anyReplaced)	// only if we changed on input
-					{
-						sb = new StringBuilder(result);
-						for (int i = specialEntities.Length-1; i >= 0; i--)
-						{
-							if (replaced[i])
-							{
-								sb = sb.Replace(actualXML[i], specialEntities[i]);
-							}
-						}
-						result = sb.ToString();
-					}
+					result = sb.ToString();
+				}
+			}
+			else
+			{
+				result = buffer;
+			}
+			foreach (var character in result)
+			{
+				if (128 > character)
+				{
+					//0XXX XXXX
+					bw.Write((byte)character);
+				}
+				else if (2048 > character)
+				{
+					//110X XXXX 10XX XXXX
+					bw.Write((byte)(192 + character / 64));
+					bw.Write((byte)(128 + (character & 63)));
 				}
 				else
 				{
-					result = buffer;
-				}
-				for (int j = 0; j < result.Length; j++)
-				{
-					if (128 > (ushort)result[j])
-					{
-						//0XXX XXXX
-						bw.Write((byte)result[j]);
-					}
-					else if (2048 > (ushort)result[j])
-					{
-						//110X XXXX 10XX XXXX
-						bw.Write((byte)(192 + ((ushort)result[j]) / 64));
-						bw.Write((byte)(128 + (((ushort)result[j]) & 63)));
-					}
-					else
-					{
-						//1110 XXXX 10XX XXXX 10XX XXXX}
-						bw.Write((byte)(224 + ((ushort)result[j]) / 4096));
-						bw.Write((byte)(128 + (((ushort)result[j]) & 4095) / 64));
-						bw.Write((byte)(128 + (((ushort)result[j]) & 63)));
-					}
+					//1110 XXXX 10XX XXXX 10XX XXXX}
+					bw.Write((byte)(224 + character / 4096));
+					bw.Write((byte)(128 + (character & 4095) / 64));
+					bw.Write((byte)(128 + (character & 63)));
 				}
 			}
 		}
@@ -747,733 +713,720 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Processing proceeds one character at a time. An array loc keeps track of how much of each search string has been
 		/// matched by the preceeding and current characters.
 		/// </summary>
-		/// <returns></returns>
 		private bool Convert1()
 		{
 			const int maxSearch = 8;
 
-			char c;
-			string[] searches = new string[maxSearch];
-			string buffer, searchBuffer, rieBufferLangData, rieBufferXML;
-			int[] locs = new int[maxSearch];
-			modes mode;
-			bool bufferIt;
-			int j;
-			bool found;
-			bool okay = true;
+			var searches = new string[maxSearch];
+			var locs = new int[maxSearch];
+			var okay = true;
 
-			if (!File.Exists(m_nextInput))
+			if (!File.Exists(NextInput))
 			{
-				ReportError(string.Format(ITextStrings.ksInputFileNotFound, m_nextInput),
-					ITextStrings.ksLLEncConv);
+				ReportError(string.Format(ITextStrings.ksInputFileNotFound, NextInput), ITextStrings.ksLLEncConv);
 				return false;
 			}
 			m_converters = new EncConverters();
-			using (FileStream fsi = new FileStream(m_nextInput, FileMode.Open, FileAccess.Read),
-				fso = new FileStream(m_sTempDir + "LLPhase1Output.xml", FileMode.Create, FileAccess.Write))
+			using (FileStream fsi = new FileStream(NextInput, FileMode.Open, FileAccess.Read), fso = new FileStream(m_sTempDir + "LLPhase1Output.xml", FileMode.Create, FileAccess.Write))
+			using (var br = new BinaryReader(fsi))
+			using (var bw = new BinaryWriter(fso))
 			{
-				using (BinaryReader br = new BinaryReader(fsi))
-				{
-					using (BinaryWriter bw = new BinaryWriter(fso))
-					{
-						buffer = string.Empty;
-						searchBuffer = string.Empty;
-						rieBufferXML = string.Empty;
-						rieBufferLangData = string.Empty;
+				var buffer = string.Empty;
+				var searchBuffer = string.Empty;
+				var rieBufferXML = string.Empty;
+				var rieBufferLangData = string.Empty;
 
-						for (int i = 0; i < m_languageMappings.Length; i++)
+				foreach (var lm in m_languageMappings)
+				{
+					var mapping = lm;
+					if (mapping.FwName != ITextStrings.ksIgnore && mapping.FwCode != string.Empty)
+					{
+						continue;
+					}
+					mapping.FwName = "zzzIgnore";
+					mapping.FwCode = "zzzIgnore";
+				}
+
+				//Start
+				var mode = Modes.kStart;
+				InitializeSearches(searches);
+				int j;
+				for (j = 0; j < maxSearch; j++)
+				{
+					locs[j] = 0;
+				}
+				var bufferIt = false;
+
+				while (okay && fsi.Position < fsi.Length)
+				{
+					var currentProgress = m_phaseProgressStart + (int)Math.Floor((double)((m_phaseProgressEnd - m_phaseProgressStart) * fsi.Position / fsi.Length));
+					if (currentProgress > m_shownProgress && currentProgress <= m_phaseProgressEnd)
+					{
+						m_progress.Step(currentProgress - m_shownProgress);
+						m_shownProgress = currentProgress;
+					}
+					var c = (char)br.ReadByte();
+					var found = false;
+					var tempDiff = 0;
+					for (j = 0; j < maxSearch; j++)
+					{
+						if (c == searches[j][locs[j]])
 						{
-							LanguageMapping mapping = m_languageMappings[i];
-							if (mapping.FwName == ITextStrings.ksIgnore || mapping.FwCode == string.Empty)
+							found = true;
+							locs[j]++;
+							if (locs[j] > tempDiff)
 							{
-								mapping.FwName = "zzzIgnore";
-								mapping.FwCode = "zzzIgnore";
+								tempDiff = locs[j];
 							}
 						}
-
-
-						//Start
-						mode = modes.kStart;
-						InitializeSearches(searches);
-						for (j = 0; j < maxSearch; j++)
+						else
 						{
 							locs[j] = 0;
 						}
-						bufferIt = false;
-
-						while (okay && fsi.Position < fsi.Length)
+					}
+					if (found)
+					{
+						searchBuffer += c;
+						tempDiff = searchBuffer.Length - tempDiff;
+						if (tempDiff > 0)
 						{
-							int m_currentProgress = m_phaseProgressStart + (int)Math.Floor((double)((m_phaseProgressEnd
-								- m_phaseProgressStart) * fsi.Position / fsi.Length));
-							if (m_currentProgress > m_shownProgress && m_currentProgress <= m_phaseProgressEnd)
-							{
-								m_progress.Step(m_currentProgress - m_shownProgress);
-								m_shownProgress = m_currentProgress;
-							}
-							c = (char)br.ReadByte();
-							found = false;
-							int TempDiff = 0;
-							for (j = 0; j < maxSearch; j++)
-							{
-								if (c == searches[j][locs[j]])
-								{
-									found = true;
-									locs[j]++;
-									if (locs[j] > TempDiff)
-									{
-										TempDiff = locs[j];
-									}
-								}
-								else
-								{
-									locs[j] = 0;
-								}
-							}
-							if (found)
-							{
-								searchBuffer += c;
-								TempDiff = searchBuffer.Length - TempDiff;
-								if (TempDiff > 0)
-								{
-									ProcessSearchBuffer(searchBuffer, TempDiff, bufferIt, ref buffer, bw);
-									searchBuffer = searchBuffer.Substring(TempDiff, searchBuffer.Length - TempDiff);
-								}
-								if ((locs[0] == searches[0].Length) && (locs[0] == searchBuffer.Length))
-								{
-									string s = string.Format(ITextStrings.ksExpectedXButGotY, searches[1], searches[0]);
-									ReportError(s, ITextStrings.ksLLEncConv);
-									s = "</Error>Parsing Error.  " + s;
-
-									for (j = 0; j < s.Length; j++)
-									{
-										bw.Write((byte)s[j]);
-									}
-									bw.Close();
-									fso.Close();
-									okay = false;
-								}
-								else if ((locs[1] == searches[1].Length) && (locs[1] == searchBuffer.Length))
-								{
-									if (mode == modes.kStart)
-									{
-										// <Run
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										bufferIt = false;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "</Run>";
-										searches[1] = "ws=\"";
-										mode = modes.kRun1;
-									}
-									else if (mode == modes.kRun1)
-									{
-										// <Run ws="
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										bufferIt = true;
-										buffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "</Run>";
-										searches[1] = "\"";
-										mode = modes.kRun2;
-									}
-									else if (mode == modes.kRun2)
-									{
-										// <Run ws="en"
-										ProcessLanguageCode(buffer, bw);
-										bufferIt = false;
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "</Run>";
-										searches[1] = ">";
-										mode = modes.kRun3;
-									}
-									else if (mode == modes.kRun3)
-									{
-										// <Run ws="en">
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										bufferIt = true;
-										buffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "<Run>";
-										searches[1] = "</Run>";
-										mode = modes.kRun4;
-									}
-									else if (mode == modes.kRun4)
-									{
-										// <Run ws="en">Data</Run>
-										ProcessLanguageData(buffer, bw);
-										bufferIt = false;
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										InitializeSearches(searches);
-										mode = modes.kStart;
-									}
-									else if (mode == modes.kAUni1)
-									{
-										// <AUni ws="
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										bufferIt = true;
-										buffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "</AUni>";
-										searches[1] = "\"";
-										mode = modes.kAUni2;
-									}
-									else if (mode == modes.kAUni2)
-									{
-										// <AUni ws="en"
-										ProcessLanguageCode(buffer, bw);
-										bufferIt = false;
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "</AUni>";
-										searches[1] = ">";
-										mode = modes.kAUni3;
-									}
-									else if (mode == modes.kAUni3)
-									{
-										// <AUni ws="en">
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										bufferIt = true;
-										buffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "<AUni>";
-										searches[1] = "</AUni>";
-										mode = modes.kAUni4;
-									}
-									else if (mode == modes.kAUni4)
-									{
-										// <AUni ws="en">Data</AUni>
-										ProcessLanguageData(buffer, bw);
-										bufferIt = false;
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										InitializeSearches(searches);
-										mode = modes.kStart;
-									}
-									else if (mode == modes.kAStr1)
-									{
-										// <AStr ws="
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										bufferIt = true;
-										buffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "<Run>";
-										searches[1] = "\"";
-										mode = modes.kAStr2;
-									}
-									else if (mode == modes.kAStr2)
-									{
-										// <AStr ws="en"
-										ProcessLanguageCode(buffer, bw);
-										bufferIt = false;
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "<Run>";
-										searches[1] = ">";
-										mode = modes.kAStr3;
-									}
-									else if (mode == modes.kAStr3)
-									{
-										// <AStr ws="en">
-										bufferIt = false;
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										InitializeSearches(searches);
-										mode = modes.kStart;
-									}
-									else if (mode == modes.kRIE1)
-									{
-										// <ReversalIndexEntry ... <Uni>
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										bufferIt = true;
-										buffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "</ReversalIndexEntry>";
-										searches[1] = "</Uni>";
-										mode = modes.kRIE2;
-									}
-									else if (mode == modes.kRIE2)
-									{
-										// <ReversalIndexEntry ... <Uni>Data</Uni>
-										rieBufferLangData = buffer;
-										bufferIt = true;
-										buffer = string.Empty;
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "</ReversalIndexEntry>";
-										searches[1] = "<WritingSystem5053>";
-										mode = modes.kRIE3;
-									}
-									else if (mode == modes.kRIE3)
-									{
-										// <ReversalIndexEntry ... <Uni>Data</Uni> ... <WritingSystem5053>
-										bufferIt = true;
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "</ReversalIndexEntry>";
-										searches[1] = "<Link";
-										mode = modes.kRIE4;
-									}
-									else if (mode == modes.kRIE4)
-									{
-										// <ReversalIndexEntry ... <Uni>Data</Uni> ... <WritingSystem5053> ... <Link
-										bufferIt = true;
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "</WritingSystem5053>";
-										searches[1] = "ws=\"";
-										mode = modes.kRIE5;
-									}
-									else if (mode == modes.kRIE5)
-									{
-										// <ReversalIndexEntry ... <Uni>Data</Uni> ... <WritingSystem5053> ... <ws="
-										bufferIt = true;
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										rieBufferXML = buffer;
-										buffer = string.Empty;
-										searchBuffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "</WritingSystem5053>";
-										searches[1] = "\"";
-										mode = modes.kRIE6;
-									}
-									else if (mode == modes.kRIE6)
-									{
-										// <ReversalIndexEntry ... <Uni>Data</Uni> ... <WritingSystem5053> ... <Link ws="en"
-										ProcessLanguageCode2(buffer);
-										if (m_current.FwCode != null)
-											rieBufferXML += m_current.FwCode;
-										ProcessLanguageData(rieBufferLangData, bw);
-										bufferIt = false;
-										ProcessSearchBuffer(rieBufferXML, rieBufferXML.Length, bufferIt, ref buffer, bw);
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "</Entries5052>";
-										searches[1] = "</WritingSystem5053>";
-										mode = modes.kRIE7;
-									}
-									else if (mode == modes.kRIE7)
-									{
-										// <ReversalIndexEntry ... <Uni>Data</Uni> ... <WritingSystem5053> ... <Link ws="en" ... </WritingSystem5053>
-										bufferIt = false;
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										InitializeSearches(searches);
-										mode = modes.kStart;
-									}
-									else if (mode == modes.kLink1)
-									{
-										// <Link target="XXXXXXX" ws="
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										bufferIt = true;
-										buffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "/>";
-										searches[1] = "\"";
-										mode = modes.kLink2;
-									}
-									else if (mode == modes.kLink2)
-									{
-										// <Link target="XXXXXXX" ws="en"
-										ProcessLanguageCode(buffer, bw);
-										bufferIt = false;
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[1] = "\"";
-										searches[2] = "/>";
-										mode = modes.kLink3;
-									}
-									else if (mode == modes.kLink3)
-									{
-										// <Link target="XXXXXXX" ws="en" form="
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										bufferIt = true;
-										buffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "/>";
-										searches[1] = "\"";
-										mode = modes.kLink4;
-									}
-									else if (mode == modes.kLink4)
-									{
-										// <Link target="XXXXXXX" ws="en" form="Data"
-										ProcessLanguageData(buffer, bw);
-										bufferIt = false;
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[1] = "\"";
-										searches[2] = "/>";
-										mode = modes.kLink3;
-									}
-									else if (mode == modes.kLinkA2)
-									{
-										// <Link target="XXXXXXX" wsa="en"
-										ProcessLanguageCode(buffer, bw);
-										bufferIt = false;
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[1] = "\"";
-										searches[2] = "/>";
-										searches[3] = "wsv=\"";
-										mode = modes.kLinkA3;
-									}
-									else if (mode == modes.kLinkA3)
-									{
-										// <Link target="XXXXXXX" wsa="en" abbr="
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										bufferIt = true;
-										buffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "/>";
-										searches[1] = "\"";
-										mode = modes.kLinkA4;
-									}
-									else if (mode == modes.kLinkA4)
-									{
-										// <Link target="XXXXXXX" wsa="en" form="Data"
-										ProcessLanguageData(buffer, bw);
-										bufferIt = false;
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[1] = "\"";
-										searches[2] = "/>";
-										searches[3] = "wsv=\"";
-										mode = modes.kLinkA3;
-									}
-									else if (mode == modes.kICU1)
-									{
-										// <ICULocale24> <Uni>
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										bufferIt = true;
-										buffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "</ICULocale24>";
-										searches[1] = "</Uni>";
-										mode = modes.kICU2;
-									}
-									else if (mode == modes.kICU2)
-									{
-										// <ICULocale24> <Uni>en</Uni>
-										ProcessLanguageCode(buffer, bw);
-										bufferIt = false;
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										InitializeSearches(searches);
-										mode = modes.kStart;
-									}
-									else if (mode == modes.kDtd)
-									{
-										// <!DOCTYPE ... >
-										ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										bufferIt = false;
-										InitializeSearches(searches);
-										mode = modes.kStart;
-									}
-									for (j = 0; j < maxSearch; j++)
-									{
-										locs[j] = 0;
-									}
-								}
-								else if ((locs[2] == searches[2].Length) && (locs[2] == searchBuffer.Length))
-								{
-									if (mode == modes.kStart)
-									{
-										// <AUni
-										ProcessSearchBuffer(searchBuffer, locs[2], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										bufferIt = false;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "</AUni>";
-										searches[1] = "ws=\"";
-										mode = modes.kAUni1;
-									}
-									else if ((mode == modes.kLink1) || (mode == modes.kLink3) || (mode == modes.kLinkA3))
-									{
-										// <Link ... /> or <Link ... ws="en" ... />
-										bufferIt = false;
-										ProcessSearchBuffer(searchBuffer, locs[2], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										InitializeSearches(searches);
-										mode = modes.kStart;
-									}
-									else if (mode == modes.kRIE1)
-									{
-										// <ReversalIndexEntry ... </ReversalIndexEntry>
-										bufferIt = false;
-										ProcessSearchBuffer(searchBuffer, locs[2], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										InitializeSearches(searches);
-										mode = modes.kStart;
-									}
-									for (j = 0; j < maxSearch; j++)
-									{
-										locs[j] = 0;
-									}
-								}
-								else if ((locs[3] == searches[3].Length) && (locs[3] == searchBuffer.Length))
-								{
-									if (mode == modes.kStart)
-									{
-										// <ReversalIndexEntry
-										ProcessSearchBuffer(searchBuffer, locs[3], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										bufferIt = false;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[1] = "<Uni>";
-										searches[2] = "</ReversalIndexEntry>";
-										mode = modes.kRIE1;
-									}
-									else if (mode == modes.kLink1)
-									{
-										// <Link target="XXXXXXX" wsa="
-										ProcessSearchBuffer(searchBuffer, locs[3], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										bufferIt = true;
-										buffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "/>";
-										searches[1] = "\"";
-										mode = modes.kLinkA2;
-									}
-									else if (mode == modes.kLinkA3)
-									{
-										// <Link target="XXXXXXX" wsa="en" abbr="llcr" wsv="
-										ProcessSearchBuffer(searchBuffer, locs[3], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										bufferIt = true;
-										buffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "/>";
-										searches[1] = "\"";
-										mode = modes.kLinkA2;
-									}
-									for (j = 0; j < maxSearch; j++)
-									{
-										locs[j] = 0;
-									}
-								}
-								else if ((locs[4] == searches[4].Length) && (locs[4] == searchBuffer.Length))
-								{
-									if (mode == modes.kStart)
-									{
-										// <AStr
-										ProcessSearchBuffer(searchBuffer, locs[4], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										bufferIt = false;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "<Run>";
-										searches[1] = "ws=\"";
-										mode = modes.kAStr1;
-									}
-									for (j = 0; j < maxSearch; j++)
-									{
-										locs[j] = 0;
-									}
-								}
-								else if ((locs[5] == searches[5].Length) && (locs[5] == searchBuffer.Length))
-								{
-									if (mode == modes.kStart)
-									{
-										// <Link
-										ProcessSearchBuffer(searchBuffer, locs[5], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										bufferIt = false;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[1] = "ws=\"";
-										searches[2] = "/>";
-										searches[3] = "wsa=\"";
-										mode = modes.kLink1;
-									}
-									for (j = 0; j < maxSearch; j++)
-									{
-										locs[j] = 0;
-									}
-								}
-								else if ((locs[6] == searches[6].Length) && (locs[6] == searchBuffer.Length))
-								{
-									if (mode == modes.kStart)
-									{
-										// <ICULocale24>
-										ProcessSearchBuffer(searchBuffer, locs[6], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										bufferIt = false;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "</ICULocale24>";
-										searches[1] = "<Uni>";
-										mode = modes.kICU1;
-									}
-									for (j = 0; j < maxSearch; j++)
-									{
-										locs[j] = 0;
-									}
-								}
-								else if ((locs[7] == searches[7].Length) && (locs[7] == searchBuffer.Length))
-								{
-									if (mode == modes.kStart)
-									{
-										// <!DOCTYPE
-										bufferIt = true;
-										ProcessSearchBuffer(searchBuffer, locs[7], bufferIt, ref buffer, bw);
-										searchBuffer = string.Empty;
-										for (j = 0; j < maxSearch; j++)
-										{
-											searches[j] = ">Dummy>";
-										}
-										searches[0] = "<";
-										searches[1] = ">";
-										mode = modes.kDtd;
-									}
-									for (j = 0; j < maxSearch; j++)
-									{
-										locs[j] = 0;
-									}
-								}
-							}
-							else
-							{
-								if (searchBuffer.Length > 0)
-								{
-									ProcessSearchBuffer(searchBuffer, searchBuffer.Length, bufferIt, ref buffer, bw);
-									searchBuffer = string.Empty;
-								}
-								if (bufferIt)
-								{
-									buffer += c;
-								}
-								else
-								{
-									bw.Write((byte)c);
-								}
-							}
+							ProcessSearchBuffer(searchBuffer, tempDiff, bufferIt, ref buffer, bw);
+							searchBuffer = searchBuffer.Substring(tempDiff, searchBuffer.Length - tempDiff);
 						}
-						if (okay)
+						if (locs[0] == searches[0].Length && (locs[0] == searchBuffer.Length))
 						{
-							if (searchBuffer.Length > 0)
+							var s = string.Format(ITextStrings.ksExpectedXButGotY, searches[1], searches[0]);
+							ReportError(s, ITextStrings.ksLLEncConv);
+							s = "</Error>Parsing Error.  " + s;
+
+							for (j = 0; j < s.Length; j++)
 							{
-								ProcessSearchBuffer(searchBuffer, searchBuffer.Length, bufferIt, ref buffer, bw);
+								bw.Write((byte)s[j]);
 							}
 							bw.Close();
-							br.Close();
-							fsi.Close();
 							fso.Close();
-							m_nextInput = m_sTempDir + "LLPhase1Output.xml";
+							okay = false;
 						}
-						return okay;
+						else if (locs[1] == searches[1].Length && (locs[1] == searchBuffer.Length))
+						{
+							if (mode == Modes.kStart)
+							{
+								// <Run
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								bufferIt = false;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "</Run>";
+								searches[1] = "ws=\"";
+								mode = Modes.kRun1;
+							}
+							else if (mode == Modes.kRun1)
+							{
+								// <Run ws="
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								bufferIt = true;
+								buffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "</Run>";
+								searches[1] = "\"";
+								mode = Modes.kRun2;
+							}
+							else if (mode == Modes.kRun2)
+							{
+								// <Run ws="en"
+								ProcessLanguageCode(buffer, bw);
+								bufferIt = false;
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "</Run>";
+								searches[1] = ">";
+								mode = Modes.kRun3;
+							}
+							else if (mode == Modes.kRun3)
+							{
+								// <Run ws="en">
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								bufferIt = true;
+								buffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "<Run>";
+								searches[1] = "</Run>";
+								mode = Modes.kRun4;
+							}
+							else if (mode == Modes.kRun4)
+							{
+								// <Run ws="en">Data</Run>
+								ProcessLanguageData(buffer, bw);
+								bufferIt = false;
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								InitializeSearches(searches);
+								mode = Modes.kStart;
+							}
+							else if (mode == Modes.kAUni1)
+							{
+								// <AUni ws="
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								bufferIt = true;
+								buffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "</AUni>";
+								searches[1] = "\"";
+								mode = Modes.kAUni2;
+							}
+							else if (mode == Modes.kAUni2)
+							{
+								// <AUni ws="en"
+								ProcessLanguageCode(buffer, bw);
+								bufferIt = false;
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "</AUni>";
+								searches[1] = ">";
+								mode = Modes.kAUni3;
+							}
+							else if (mode == Modes.kAUni3)
+							{
+								// <AUni ws="en">
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								bufferIt = true;
+								buffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "<AUni>";
+								searches[1] = "</AUni>";
+								mode = Modes.kAUni4;
+							}
+							else if (mode == Modes.kAUni4)
+							{
+								// <AUni ws="en">Data</AUni>
+								ProcessLanguageData(buffer, bw);
+								bufferIt = false;
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								InitializeSearches(searches);
+								mode = Modes.kStart;
+							}
+							else if (mode == Modes.kAStr1)
+							{
+								// <AStr ws="
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								bufferIt = true;
+								buffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "<Run>";
+								searches[1] = "\"";
+								mode = Modes.kAStr2;
+							}
+							else if (mode == Modes.kAStr2)
+							{
+								// <AStr ws="en"
+								ProcessLanguageCode(buffer, bw);
+								bufferIt = false;
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "<Run>";
+								searches[1] = ">";
+								mode = Modes.kAStr3;
+							}
+							else if (mode == Modes.kAStr3)
+							{
+								// <AStr ws="en">
+								bufferIt = false;
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								InitializeSearches(searches);
+								mode = Modes.kStart;
+							}
+							else if (mode == Modes.kRIE1)
+							{
+								// <ReversalIndexEntry ... <Uni>
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								bufferIt = true;
+								buffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "</ReversalIndexEntry>";
+								searches[1] = "</Uni>";
+								mode = Modes.kRIE2;
+							}
+							else if (mode == Modes.kRIE2)
+							{
+								// <ReversalIndexEntry ... <Uni>Data</Uni>
+								rieBufferLangData = buffer;
+								bufferIt = true;
+								buffer = string.Empty;
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "</ReversalIndexEntry>";
+								searches[1] = "<WritingSystem5053>";
+								mode = Modes.kRIE3;
+							}
+							else if (mode == Modes.kRIE3)
+							{
+								// <ReversalIndexEntry ... <Uni>Data</Uni> ... <WritingSystem5053>
+								bufferIt = true;
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "</ReversalIndexEntry>";
+								searches[1] = "<Link";
+								mode = Modes.kRIE4;
+							}
+							else if (mode == Modes.kRIE4)
+							{
+								// <ReversalIndexEntry ... <Uni>Data</Uni> ... <WritingSystem5053> ... <Link
+								bufferIt = true;
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "</WritingSystem5053>";
+								searches[1] = "ws=\"";
+								mode = Modes.kRIE5;
+							}
+							else if (mode == Modes.kRIE5)
+							{
+								// <ReversalIndexEntry ... <Uni>Data</Uni> ... <WritingSystem5053> ... <ws="
+								bufferIt = true;
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								rieBufferXML = buffer;
+								buffer = string.Empty;
+								searchBuffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "</WritingSystem5053>";
+								searches[1] = "\"";
+								mode = Modes.kRIE6;
+							}
+							else if (mode == Modes.kRIE6)
+							{
+								// <ReversalIndexEntry ... <Uni>Data</Uni> ... <WritingSystem5053> ... <Link ws="en"
+								ProcessLanguageCode2(buffer);
+								if (m_current.FwCode != null)
+									rieBufferXML += m_current.FwCode;
+								ProcessLanguageData(rieBufferLangData, bw);
+								bufferIt = false;
+								ProcessSearchBuffer(rieBufferXML, rieBufferXML.Length, bufferIt, ref buffer, bw);
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "</Entries5052>";
+								searches[1] = "</WritingSystem5053>";
+								mode = Modes.kRIE7;
+							}
+							else if (mode == Modes.kRIE7)
+							{
+								// <ReversalIndexEntry ... <Uni>Data</Uni> ... <WritingSystem5053> ... <Link ws="en" ... </WritingSystem5053>
+								bufferIt = false;
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								InitializeSearches(searches);
+								mode = Modes.kStart;
+							}
+							else if (mode == Modes.kLink1)
+							{
+								// <Link target="XXXXXXX" ws="
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								bufferIt = true;
+								buffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "/>";
+								searches[1] = "\"";
+								mode = Modes.kLink2;
+							}
+							else if (mode == Modes.kLink2)
+							{
+								// <Link target="XXXXXXX" ws="en"
+								ProcessLanguageCode(buffer, bw);
+								bufferIt = false;
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[1] = "\"";
+								searches[2] = "/>";
+								mode = Modes.kLink3;
+							}
+							else if (mode == Modes.kLink3)
+							{
+								// <Link target="XXXXXXX" ws="en" form="
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								bufferIt = true;
+								buffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "/>";
+								searches[1] = "\"";
+								mode = Modes.kLink4;
+							}
+							else if (mode == Modes.kLink4)
+							{
+								// <Link target="XXXXXXX" ws="en" form="Data"
+								ProcessLanguageData(buffer, bw);
+								bufferIt = false;
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[1] = "\"";
+								searches[2] = "/>";
+								mode = Modes.kLink3;
+							}
+							else if (mode == Modes.kLinkA2)
+							{
+								// <Link target="XXXXXXX" wsa="en"
+								ProcessLanguageCode(buffer, bw);
+								bufferIt = false;
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[1] = "\"";
+								searches[2] = "/>";
+								searches[3] = "wsv=\"";
+								mode = Modes.kLinkA3;
+							}
+							else if (mode == Modes.kLinkA3)
+							{
+								// <Link target="XXXXXXX" wsa="en" abbr="
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								bufferIt = true;
+								buffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "/>";
+								searches[1] = "\"";
+								mode = Modes.kLinkA4;
+							}
+							else if (mode == Modes.kLinkA4)
+							{
+								// <Link target="XXXXXXX" wsa="en" form="Data"
+								ProcessLanguageData(buffer, bw);
+								bufferIt = false;
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[1] = "\"";
+								searches[2] = "/>";
+								searches[3] = "wsv=\"";
+								mode = Modes.kLinkA3;
+							}
+							else if (mode == Modes.kICU1)
+							{
+								// <ICULocale24> <Uni>
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								bufferIt = true;
+								buffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "</ICULocale24>";
+								searches[1] = "</Uni>";
+								mode = Modes.kICU2;
+							}
+							else if (mode == Modes.kICU2)
+							{
+								// <ICULocale24> <Uni>en</Uni>
+								ProcessLanguageCode(buffer, bw);
+								bufferIt = false;
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								InitializeSearches(searches);
+								mode = Modes.kStart;
+							}
+							else if (mode == Modes.kDtd)
+							{
+								// <!DOCTYPE ... >
+								ProcessSearchBuffer(searchBuffer, locs[1], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								bufferIt = false;
+								InitializeSearches(searches);
+								mode = Modes.kStart;
+							}
+							for (j = 0; j < maxSearch; j++)
+							{
+								locs[j] = 0;
+							}
+						}
+						else if ((locs[2] == searches[2].Length) && (locs[2] == searchBuffer.Length))
+						{
+							if (mode == Modes.kStart)
+							{
+								// <AUni
+								ProcessSearchBuffer(searchBuffer, locs[2], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								bufferIt = false;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "</AUni>";
+								searches[1] = "ws=\"";
+								mode = Modes.kAUni1;
+							}
+							else if ((mode == Modes.kLink1) || (mode == Modes.kLink3) || (mode == Modes.kLinkA3))
+							{
+								// <Link ... /> or <Link ... ws="en" ... />
+								bufferIt = false;
+								ProcessSearchBuffer(searchBuffer, locs[2], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								InitializeSearches(searches);
+								mode = Modes.kStart;
+							}
+							else if (mode == Modes.kRIE1)
+							{
+								// <ReversalIndexEntry ... </ReversalIndexEntry>
+								bufferIt = false;
+								ProcessSearchBuffer(searchBuffer, locs[2], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								InitializeSearches(searches);
+								mode = Modes.kStart;
+							}
+							for (j = 0; j < maxSearch; j++)
+							{
+								locs[j] = 0;
+							}
+						}
+						else if ((locs[3] == searches[3].Length) && (locs[3] == searchBuffer.Length))
+						{
+							if (mode == Modes.kStart)
+							{
+								// <ReversalIndexEntry
+								ProcessSearchBuffer(searchBuffer, locs[3], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								bufferIt = false;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[1] = "<Uni>";
+								searches[2] = "</ReversalIndexEntry>";
+								mode = Modes.kRIE1;
+							}
+							else if (mode == Modes.kLink1)
+							{
+								// <Link target="XXXXXXX" wsa="
+								ProcessSearchBuffer(searchBuffer, locs[3], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								bufferIt = true;
+								buffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "/>";
+								searches[1] = "\"";
+								mode = Modes.kLinkA2;
+							}
+							else if (mode == Modes.kLinkA3)
+							{
+								// <Link target="XXXXXXX" wsa="en" abbr="llcr" wsv="
+								ProcessSearchBuffer(searchBuffer, locs[3], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								bufferIt = true;
+								buffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "/>";
+								searches[1] = "\"";
+								mode = Modes.kLinkA2;
+							}
+							for (j = 0; j < maxSearch; j++)
+							{
+								locs[j] = 0;
+							}
+						}
+						else if ((locs[4] == searches[4].Length) && (locs[4] == searchBuffer.Length))
+						{
+							if (mode == Modes.kStart)
+							{
+								// <AStr
+								ProcessSearchBuffer(searchBuffer, locs[4], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								bufferIt = false;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "<Run>";
+								searches[1] = "ws=\"";
+								mode = Modes.kAStr1;
+							}
+							for (j = 0; j < maxSearch; j++)
+							{
+								locs[j] = 0;
+							}
+						}
+						else if ((locs[5] == searches[5].Length) && (locs[5] == searchBuffer.Length))
+						{
+							if (mode == Modes.kStart)
+							{
+								// <Link
+								ProcessSearchBuffer(searchBuffer, locs[5], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								bufferIt = false;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[1] = "ws=\"";
+								searches[2] = "/>";
+								searches[3] = "wsa=\"";
+								mode = Modes.kLink1;
+							}
+							for (j = 0; j < maxSearch; j++)
+							{
+								locs[j] = 0;
+							}
+						}
+						else if ((locs[6] == searches[6].Length) && (locs[6] == searchBuffer.Length))
+						{
+							if (mode == Modes.kStart)
+							{
+								// <ICULocale24>
+								ProcessSearchBuffer(searchBuffer, locs[6], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								bufferIt = false;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "</ICULocale24>";
+								searches[1] = "<Uni>";
+								mode = Modes.kICU1;
+							}
+							for (j = 0; j < maxSearch; j++)
+							{
+								locs[j] = 0;
+							}
+						}
+						else if ((locs[7] == searches[7].Length) && (locs[7] == searchBuffer.Length))
+						{
+							if (mode == Modes.kStart)
+							{
+								// <!DOCTYPE
+								bufferIt = true;
+								ProcessSearchBuffer(searchBuffer, locs[7], bufferIt, ref buffer, bw);
+								searchBuffer = string.Empty;
+								for (j = 0; j < maxSearch; j++)
+								{
+									searches[j] = ">Dummy>";
+								}
+								searches[0] = "<";
+								searches[1] = ">";
+								mode = Modes.kDtd;
+							}
+							for (j = 0; j < maxSearch; j++)
+							{
+								locs[j] = 0;
+							}
+						}
+					}
+					else
+					{
+						if (searchBuffer.Length > 0)
+						{
+							ProcessSearchBuffer(searchBuffer, searchBuffer.Length, bufferIt, ref buffer, bw);
+							searchBuffer = string.Empty;
+						}
+						if (bufferIt)
+						{
+							buffer += c;
+						}
+						else
+						{
+							bw.Write((byte)c);
+						}
 					}
 				}
+				if (okay)
+				{
+					if (searchBuffer.Length > 0)
+					{
+						ProcessSearchBuffer(searchBuffer, searchBuffer.Length, bufferIt, ref buffer, bw);
+					}
+					bw.Close();
+					br.Close();
+					fsi.Close();
+					fso.Close();
+					NextInput = m_sTempDir + "LLPhase1Output.xml";
+				}
+				return okay;
 			}
 		}
 
@@ -1484,16 +1437,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				Encoding Utf8 = new UTF8Encoding(false);
 
 				//Create the XslTransform and load the stylesheet.
-				XslCompiledTransform xslt = new XslCompiledTransform();
+				var xslt = new XslCompiledTransform();
 				xslt.Load(xsl, XsltSettings.TrustedXslt, null);
 
 				//Load the XML data file.
-				XPathDocument doc = new XPathDocument(xml);
+				var doc = new XPathDocument(xml);
 
 				//Create an XmlTextWriter to output to the appropriate file. First make sure the expected
 				//directory exists.
 				if (!Directory.Exists(Path.GetDirectoryName(outputName)))
+				{
 					Directory.CreateDirectory(Path.GetDirectoryName(outputName));
+				}
 				File.Delete(outputName); // prevents re-importing the previous file if first step fails.
 				using (var writer = new XmlTextWriter(outputName, Utf8))
 				{
@@ -1513,8 +1468,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// It seems to be choking over the ThesaurusItems5016 template. Yet when the program
 				//  is run outside the debugger, it doesn't hit this. The transform also works fine via MSXSL.???
 				ReportError(ex.Message, ITextStrings.ksLLEncConv);
-				//Console.WriteLine("{0} Exception caught.", ex);
-				//Console.ReadLine();
 				return false; // LT-7223 transform was failing with an invalid character and then going on!
 			}
 
@@ -1522,29 +1475,29 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private bool Convert2()
 		{
-			bool res = DoTransform(m_sRootDir + "LLImportPhase1.xsl", m_nextInput, m_sTempDir + "LLPhase2Output.xml");
-			m_nextInput = m_sTempDir + "LLPhase2Output.xml";
+			var res = DoTransform(m_sRootDir + "LLImportPhase1.xsl", NextInput, m_sTempDir + "LLPhase2Output.xml");
+			NextInput = m_sTempDir + "LLPhase2Output.xml";
 			return res;
 		}
 
 		private bool Convert3()
 		{
-			bool res = DoTransform(m_sRootDir + "LLImportPhase2.xsl", m_nextInput, m_sTempDir + "LLPhase3Output.xml");
-			m_nextInput = m_sTempDir + "LLPhase3Output.xml";
+			var res = DoTransform(m_sRootDir + "LLImportPhase2.xsl", NextInput, m_sTempDir + "LLPhase3Output.xml");
+			NextInput = m_sTempDir + "LLPhase3Output.xml";
 			return res;
 		}
 
 		private bool Convert4()
 		{
-			bool res = DoTransform(m_sRootDir + "LLImportPhase3.xsl", m_nextInput, m_sTempDir + "LLPhase4Output.xml");
-			m_nextInput = m_sTempDir + "LLPhase4Output.xml";
+			var res = DoTransform(m_sRootDir + "LLImportPhase3.xsl", NextInput, m_sTempDir + "LLPhase4Output.xml");
+			NextInput = m_sTempDir + "LLPhase4Output.xml";
 			return res;
 		}
 
 		private bool Convert5()
 		{
-			bool res = DoTransform(m_sRootDir + "LLImportPhase4.xsl", m_nextInput, m_sTempDir + "LLPhase5Output.xml");
-			m_nextInput = m_sTempDir + "LLPhase5Output.xml";
+			var res = DoTransform(m_sRootDir + "LLImportPhase4.xsl", NextInput, m_sTempDir + "LLPhase5Output.xml");
+			NextInput = m_sTempDir + "LLPhase5Output.xml";
 			return res;
 		}
 
@@ -1552,13 +1505,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			try
 			{
-				XmlImportData xid = new XmlImportData(m_cache, true);
-				xid.ImportData(m_nextInput, m_progress);
+				var xid = new XmlImportData(m_cache, true);
+				xid.ImportData(NextInput, m_progress);
 				return true;
 			}
 			catch
 			{
-				string sLogFile = Path.Combine(m_sTempDir, m_nextInput);
+				var sLogFile = Path.Combine(m_sTempDir, NextInput);
 				ReportError(string.Format(ITextStrings.ksFailedLoadingLL,
 					m_LinguaLinksXmlFileName, m_cache.ProjectId.Name,
 					Environment.NewLine, sLogFile),
@@ -1568,25 +1521,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		}
 
-		public string LogFile
-		{
-			get { return Path.Combine(m_sTempDir, "LLPhase5Output-Import.log"); }
-		}
-
-		public struct AnnotationInfo
-		{
-			public int annotationId;
-			public Guid annotationType;
-			public int beginOffset;
-			public int endOffset;
-			public int paragraphId;
-			public int wfId;
-		}
-		public struct AnnotationInfo2
-		{
-			public ICmBaseAnnotation cba;
-			public IWfiWordform wf;
-		}
+		public string LogFile => Path.Combine(m_sTempDir, "LLPhase5Output-Import.log");
 
 		private void Convert7()
 		{
@@ -1597,78 +1532,63 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// Delete any WfiWordform that contain a digit.  FieldWorks doesn't allow
 				// numbers in its wordforms, whereas LinguaLinks did.  Letting them through
 				// causes interesting crashes...
-				IWfiWordformRepository repoWf = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
-				List<IWfiWordform> rgwfDel = new List<IWfiWordform>();
-				foreach (IWfiWordform wf in repoWf.AllInstances())
+				var repoWf = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
+				var rgwfDel = new List<IWfiWordform>();
+				foreach (var wf in repoWf.AllInstances())
 				{
-					string s = wf.Form.BestAnalysisVernacularAlternative.Text;
-					if (!String.IsNullOrEmpty(s))
+					var s = wf.Form.BestAnalysisVernacularAlternative.Text;
+					if (string.IsNullOrEmpty(s))
 					{
-						for (int i = 0; i < s.Length; ++i)
+						continue;
+					}
+					foreach (var character in s)
+					{
+						if (Icu.IsNumeric(character))
 						{
-							if (Icu.IsNumeric(s[i]))
-							{
-								rgwfDel.Add(wf);
-								break;
-							}
+							rgwfDel.Add(wf);
+							break;
 						}
 					}
 				}
-				foreach (IWfiWordform wf in rgwfDel)
+				foreach (var wf in rgwfDel)
 				{
 					m_cache.DomainDataByFlid.DeleteObj(wf.Hvo);
 				}
 
 				// Delete the CmAgent from LL, changing all imported references to the corresponding
 				// CmAgent that already existed.
-				ICmAgentRepository repoAgent = m_cache.ServiceLocator.GetInstance<ICmAgentRepository>();
-				ICmAgent goodAgent = null;
-				ICmAgent badAgent = null;
+				var agentRepository = m_cache.ServiceLocator.GetInstance<ICmAgentRepository>();
+				var badAgent = agentRepository.AllInstances().FirstOrDefault(agent => agent.Human && agent.Version == "LinguaLinksImport");
+				var goodAgent = agentRepository.AllInstances().FirstOrDefault(agent => agent.Human && agent.Version != "LinguaLinksImport");
+				if (badAgent == null || goodAgent == null)
+				{
+					return;
+				}
+				var badPositive = badAgent.ApprovesOA;
+				var badNegative = badAgent.DisapprovesOA;
+				var goodPositive = goodAgent.ApprovesOA;
+				var goodNegative = goodAgent.DisapprovesOA;
+				Debug.Assert(badPositive != null);
+				Debug.Assert(badNegative != null);
+				Debug.Assert(goodPositive != null);
+				Debug.Assert(goodNegative != null);
 
-				foreach (ICmAgent agent in repoAgent.AllInstances())
+				var repoWfiAnal = m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>();
+				foreach (var wfa in repoWfiAnal.AllInstances())
 				{
-					if (agent.Human && agent.Version == "LinguaLinksImport")
+					if (wfa.EvaluationsRC.Contains(badPositive))
 					{
-						badAgent = agent;
-						break;
+						wfa.EvaluationsRC.Remove(badPositive);
+						wfa.EvaluationsRC.Add(goodPositive);
+					}
+					else if (wfa.EvaluationsRC.Contains(badNegative))
+					{
+						wfa.EvaluationsRC.Remove(badNegative);
+						wfa.EvaluationsRC.Add(goodNegative);
 					}
 				}
-				foreach (ICmAgent agent in repoAgent.AllInstances())
-				{
-					if (agent.Human && agent.Version != "LinguaLinksImport")
-					{
-						goodAgent = agent;
-						break;
-					}
-				}
-				if (badAgent != null && goodAgent != null)
-				{
-					ICmAgentEvaluation badPositive = badAgent.ApprovesOA;
-					ICmAgentEvaluation badNegative = badAgent.DisapprovesOA;
-					ICmAgentEvaluation goodPositive = goodAgent.ApprovesOA;
-					ICmAgentEvaluation goodNegative = goodAgent.DisapprovesOA;
-					Debug.Assert(badPositive != null);
-					Debug.Assert(badNegative != null);
-					Debug.Assert(goodPositive != null);
-					Debug.Assert(goodNegative != null);
-
-					IWfiAnalysisRepository repoWfiAnal = m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>();
-					foreach (IWfiAnalysis wfa in repoWfiAnal.AllInstances())
-					{
-						if (wfa.EvaluationsRC.Contains(badPositive))
-						{
-							wfa.EvaluationsRC.Remove(badPositive);
-							wfa.EvaluationsRC.Add(goodPositive);
-						}
-						else if (wfa.EvaluationsRC.Contains(badNegative))
-						{
-							wfa.EvaluationsRC.Remove(badNegative);
-							wfa.EvaluationsRC.Add(goodNegative);
-						}
-					}
-					// delete the LinguaLinks agent.
-					m_cache.LangProject.AnalyzingAgentsOC.Remove(badAgent);
-				}
+				// delete the LinguaLinks agent.
+				m_cache.LangProject.AnalyzingAgentsOC.Remove(badAgent);
 			}
 			finally
 			{
@@ -1676,17 +1596,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Reports an error.
 		/// </summary>
-		/// <param name="message">The message.</param>
-		/// <param name="caption">The caption.</param>
-		/// ------------------------------------------------------------------------------------
 		private void ReportError(string message, string caption)
 		{
-			if (Error != null)
-				Error(this, message, caption);
+			Error?.Invoke(this, message, caption);
 		}
+
+		private enum Modes { kStart, kRun1, kRun2, kRun3, kRun4, kAUni1, kAUni2, kAUni3, kAUni4, kAStr1, kAStr2, kAStr3, kRIE1, kRIE2, kRIE3, kRIE4, kRIE5, kRIE6, kRIE7, kLink1, kLink2, kLink3, kLink4, kLink5, kLinkA2, kLinkA3, kLinkA4, kICU1, kICU2, kDtd }
 	}
 }

@@ -27,7 +27,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 	public class InterlinearExporterTestsBase : InterlinearTestBase
 	{
 		protected IText m_text1;
-		protected InterlinLineChoices m_choices;
+		internal InterlinLineChoices m_choices;
 		private XmlDocument m_textsDefn;
 		private bool _didIInitSLDR;
 

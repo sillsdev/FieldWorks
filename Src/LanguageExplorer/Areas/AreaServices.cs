@@ -226,9 +226,11 @@ namespace LanguageExplorer.Areas
 			return list.Owner == null;
 		}
 
+		/// <summary>
+		/// Tell the user why we aren't jumping to his record
+		/// </summary>
 		internal static void GiveSimpleWarning(Form form, string helpFile, ExclusionReasonCode xrc)
 		{
-			// Tell the user why we aren't jumping to his record
 			var msg = AreaResources.ksSelectedEntryNotInDict;
 			string caption;
 			string reason;

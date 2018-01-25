@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -34,18 +34,20 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			while (element != null)
 			{
 				switch (element.TagName.ToLowerInvariant())
-		{
+				{
 					case "table":
 					case "span":
 					case "th":
 					case "td":
-						string id = element.GetAttribute("id");
+						var id = element.GetAttribute("id");
 						if (!string.IsNullOrEmpty(id))
+						{
 							return int.TryParse(id, out hvo);
+						}
 						break;
-		}
+				}
 				element = element.ParentElement;
-		}
+			}
 
 			hvo = 0;
 			return false;
@@ -53,31 +55,36 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void HandleDomClick(object sender, DomMouseEventArgs e)
 		{
-			if (sender == null || e == null || e.Target == null)
+			if (sender == null || e?.Target == null)
+			{
 				return;
+			}
 
-			GeckoElement elem = e.Target.CastToGeckoElement();
+			var elem = e.Target.CastToGeckoElement();
 			int hvo;
 			if (TryGetHvo(elem, out hvo))
+			{
 				JumpToToolBasedOnHvo(hvo);
-
-			if (elem.TagName.Equals("input", StringComparison.InvariantCultureIgnoreCase)
-				&& elem.GetAttribute("type").Equals("button", StringComparison.InvariantCultureIgnoreCase))
-			{
-				switch (elem.GetAttribute("name"))
-			{
-					case "ShowWordGrammarDetail":
-						ShowWordGrammarDetail(elem.GetAttribute("id"));
-						break;
-
-					case "TryWordGrammarAgain":
-						TryWordGrammarAgain(elem.GetAttribute("id"));
-						break;
-
-					case "GoToPreviousWordGrammarPage":
-						GoToPreviousWordGrammarPage();
-						break;
 			}
+
+			if (!elem.TagName.Equals("input", StringComparison.InvariantCultureIgnoreCase) || !elem.GetAttribute("type")
+				    .Equals("button", StringComparison.InvariantCultureIgnoreCase))
+			{
+				return;
+			}
+			switch (elem.GetAttribute("name"))
+			{
+				case "ShowWordGrammarDetail":
+					ShowWordGrammarDetail(elem.GetAttribute("id"));
+					break;
+
+				case "TryWordGrammarAgain":
+					TryWordGrammarAgain(elem.GetAttribute("id"));
+					break;
+
+				case "GoToPreviousWordGrammarPage":
+					GoToPreviousWordGrammarPage();
+					break;
 			}
 		}
 
@@ -93,10 +100,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		public void JumpToToolBasedOnHvo(int hvo)
 		{
 			if (hvo == 0)
+			{
 				return;
+			}
 			string sTool = null;
-			int parentClassId = 0;
-			ICmObject cmo = m_cache.ServiceLocator.GetObject(hvo);
+			var parentClassId = 0;
+			var cmo = m_cache.ServiceLocator.GetObject(hvo);
 			switch (cmo.ClassID)
 			{
 				case MoFormTags.kClassId:					// fall through
@@ -135,20 +144,24 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					break;
 			}
 			if (parentClassId <= 0)
+			{
 				return; // do nothing
+			}
 			cmo = CmObjectUi.GetSelfOrParentOfClass(cmo, parentClassId);
 			if (cmo == null)
+			{
 				return; // do nothing
+			}
 			var commands = new List<string>
-											{
-												"AboutToFollowLink",
-												"FollowLink"
-											};
+			{
+				"AboutToFollowLink",
+				"FollowLink"
+			};
 			var parms = new List<object>
-											{
-												null,
-												new FwLinkArgs(sTool, cmo.Guid)
-											};
+			{
+				null,
+				new FwLinkArgs(sTool, cmo.Guid)
+			};
 			m_publisher.Publish(commands, parms);
 		}
 
@@ -158,7 +171,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <param name="sNodeId">The node id in the XAmple trace to use</param>
 		public void ShowWordGrammarDetail(string sNodeId)
 		{
-			string sForm = AdjustForm(m_tbWordForm.Text);
+			var sForm = AdjustForm(m_tbWordForm.Text);
 			m_htmlControl.URL = WordGrammarDebugger.SetUpWordGrammarDebuggerPage(sNodeId, sForm, m_htmlControl.URL);
 		}
 		/// <summary>
@@ -167,7 +180,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <param name="sNodeId">the node id of the step to try</param>
 		public void TryWordGrammarAgain(string sNodeId)
 		{
-			string sForm = AdjustForm(m_tbWordForm.Text);
+			var sForm = AdjustForm(m_tbWordForm.Text);
 			m_htmlControl.URL = WordGrammarDebugger.PerformAnotherWordGrammarDebuggerStepPage(sNodeId, sForm, m_htmlControl.URL);
 		}
 		/// <summary>
@@ -187,11 +200,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		/// <param name="sForm">form to adjust</param>
 		/// <returns>adjusted form</returns>
-		private string AdjustForm(string sForm)
+		private static string AdjustForm(string sForm)
 		{
-			string sResult1 = sForm.Replace("&", "&amp;");
-			string sResult2 = sResult1.Replace("<", "&lt;");
-			return sResult2;
+			return sForm.Replace("&", "&amp;").Replace("<", "&lt;");
 		}
 	}
 }

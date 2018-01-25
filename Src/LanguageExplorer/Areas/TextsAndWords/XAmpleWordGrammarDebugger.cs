@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,15 +20,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	internal sealed class XAmpleWordGrammarDebugger
 	{
 		private static ParserTraceUITransform s_pageTransform;
-		private static ParserTraceUITransform PageTransform
-		{
-			get
-			{
-				if (s_pageTransform == null)
-					s_pageTransform = new ParserTraceUITransform("FormatXAmpleWordGrammarDebuggerResult");
-				return s_pageTransform;
-			}
-		}
+		private static ParserTraceUITransform PageTransform => s_pageTransform ?? (s_pageTransform = new ParserTraceUITransform("FormatXAmpleWordGrammarDebuggerResult"));
 
 		/// <summary>
 		/// Word Grammar step stack
@@ -66,8 +58,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			m_xmlHtmlStack.Push(Tuple.Create((XDocument) null, lastUrl));
 			var doc = new XDocument();
-			using (XmlWriter writer = doc.CreateWriter())
+			using (var writer = doc.CreateWriter())
+			{
 				CreateAnalysisXml(writer, nodeId, form);
+			}
 			return CreateWordDebuggerPage(doc);
 		}
 
@@ -83,20 +77,22 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			m_xmlHtmlStack.Push(Tuple.Create(m_wordGrammarDebuggerXml, lastUrl));
 			var doc = new XDocument();
-			using (XmlWriter writer = doc.CreateWriter())
+			using (var writer = doc.CreateWriter())
+			{
 				CreateSelectedWordGrammarXml(writer, nodeId, form);
+			}
 			return CreateWordDebuggerPage(doc);
 		}
 
 		public string PopWordGrammarStack()
 		{
-			if (m_xmlHtmlStack.Count > 0)
+			if (m_xmlHtmlStack.Count <= 0)
 			{
-				Tuple<XDocument, string> wgsp = m_xmlHtmlStack.Pop();
-				m_wordGrammarDebuggerXml = wgsp.Item1;
-				return wgsp.Item2;
+				return "unknown";
 			}
-			return "unknown";
+			var wgsp = m_xmlHtmlStack.Pop();
+			m_wordGrammarDebuggerXml = wgsp.Item1;
+			return wgsp.Item2;
 		}
 
 		private void CreateAnalysisXml(XmlWriter writer, string nodeId, string form)
@@ -118,11 +114,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			// Find the sNode'th seq node
 			Debug.Assert(m_wordGrammarDebuggerXml.Root != null);
-			XElement selectedSeqNode = m_wordGrammarDebuggerXml.Root.Elements("seq").ElementAt(int.Parse(nodeId, CultureInfo.InvariantCulture) - 1);
+			var selectedSeqNode = m_wordGrammarDebuggerXml.Root.Elements("seq").ElementAt(int.Parse(nodeId, CultureInfo.InvariantCulture) - 1);
 			// create the "result so far node"
 			writer.WriteStartElement("resultSoFar");
-			foreach (XElement child in selectedSeqNode.Elements())
+			foreach (var child in selectedSeqNode.Elements())
+			{
 				child.WriteTo(writer);
+			}
 			writer.WriteEndElement();
 			// create the seq node
 			selectedSeqNode.WriteTo(writer);
@@ -133,8 +131,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			// apply word grammar step transform file
 			var output = new XDocument();
-			using (XmlWriter writer = output.CreateWriter())
+			using (var writer = output.CreateWriter())
+			{
 				m_intermediateTransform.Transform(xmlDoc.CreateNavigator(), writer);
+			}
 			m_wordGrammarDebuggerXml = output;
 			// format the result
 			return PageTransform.Transform(m_propertyTable, output, "WordGrammarDebugger" + m_xmlHtmlStack.Count);
@@ -142,15 +142,16 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void WriteMorphNodes(XmlWriter writer, string nodeId)
 		{
-			XElement failureElem = m_parseResult.Descendants("failure").FirstOrDefault(e => ((string) e.Attribute("id")) == nodeId);
-			if (failureElem != null)
+			var failureElem = m_parseResult.Descendants("failure").FirstOrDefault(e => ((string) e.Attribute("id")) == nodeId);
+			if (failureElem == null)
 			{
-				foreach (XElement parseNodeElem in failureElem.Ancestors("parseNode").Where(e => e.Element("morph") != null).Reverse())
-				{
-					XElement morphElem = parseNodeElem.Element("morph");
-					Debug.Assert(morphElem != null);
-					morphElem.WriteTo(writer);
-				}
+				return;
+			}
+			foreach (var parseNodeElem in failureElem.Ancestors("parseNode").Where(e => e.Element("morph") != null).Reverse())
+			{
+				var morphElem = parseNodeElem.Element("morph");
+				Debug.Assert(morphElem != null);
+				morphElem.WriteTo(writer);
 			}
 		}
 	}

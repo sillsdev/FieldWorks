@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -78,14 +78,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			m_categoryComboBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 
-			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			foreach (var ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
 				m_formWsComboBox.Items.Add(ws);
 				m_entryWsComboBox.Items.Add(ws);
 			}
 
-			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+			foreach (var ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+			{
 				m_glossWsComboBox.Items.Add(ws);
+			}
 
 			m_inflModel = new InflFeatureTreeModel(m_cache.LangProject.MsFeatureSystemOA, m_node.InflFeatures, m_imageList.Images[0], m_imageList.Images[1]);
 			m_inflFeatsTreeView.Model = m_inflModel;
@@ -125,7 +127,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (tss != null)
 			{
-				int ws = tss.get_WritingSystemAt(0);
+				var ws = tss.get_WritingSystemAt(0);
 				comboBox.SelectedItem = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 				textBox.Tss = tss;
 			}
@@ -223,9 +225,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				components?.Dispose();
 			}
 			base.Dispose(disposing);
 		}

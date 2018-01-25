@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,18 +20,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// InterlinearExporter is an IVwEnv implementation which exports interlinear data to an XmlWriter.
 	/// Make one of these by creating an XmlTextWriter.
 	/// </summary>
-	public class InterlinearExporter : CollectorEnv
+	internal class InterlinearExporter : CollectorEnv
 	{
 		protected XmlWriter m_writer;
 		protected LcmCache m_cache;
-		bool m_fItemIsOpen = false; // true while doing some <item> element (causes various things to output data)
-		bool m_fDoingHeadword = false; // true while displaying a headword (causes some special behaviors)
-		bool m_fDoingHomographNumber = false; // true after note dependency on homograph number, to end of headword.
-		bool m_fDoingVariantTypes = false; // can become true after processing headword and homograph number
-		bool m_fAwaitingHeadwordForm = false; // true after start of headword until we get a string alt.
-		bool m_fDoingMorphType = false; // true during display of MorphType of MoForm.
-		bool m_fDoingInterlinName = false; // true during MSA
-		bool m_fDoingGlossAppend = false; // true after special AddProp
+		bool m_fItemIsOpen; // true while doing some <item> element (causes various things to output data)
+		bool m_fDoingHeadword; // true while displaying a headword (causes some special behaviors)
+		bool m_fDoingHomographNumber; // true after note dependency on homograph number, to end of headword.
+		bool m_fDoingVariantTypes; // can become true after processing headword and homograph number
+		bool m_fAwaitingHeadwordForm; // true after start of headword until we get a string alt.
+		bool m_fDoingMorphType; // true during display of MorphType of MoForm.
+		bool m_fDoingInterlinName; // true during MSA
+		bool m_fDoingGlossAppend; // true after special AddProp
 		string m_sPendingPrefix; // got a prefix, need the ws from the form itself before we write it.
 		string m_sFreeAnnotationType;
 		ITsString m_tssPendingHomographNumber;
@@ -41,7 +41,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		List<ITsString> pendingComments = new List<ITsString>();
 		int m_flidStTextTitle;
 		int m_flidStTextSource;
-		InterlinVc m_vc = null;
+		InterlinVc m_vc;
 		private readonly HashSet<int> m_usedWritingSystems = new HashSet<int>();
 		/// <summary>saves the morphtype so that glosses can be marked as pro/enclitics.  See LT-8288.</summary>
 		Guid m_guidMorphType = Guid.Empty;
@@ -50,21 +50,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected WritingSystemManager m_wsManager;
 		protected ICmObjectRepository m_repoObj;
 
-		public static InterlinearExporter Create(string mode, LcmCache cache, XmlWriter writer, ICmObject objRoot,
-			InterlinLineChoices lineChoices, InterlinVc vc)
+		public static InterlinearExporter Create(string mode, LcmCache cache, XmlWriter writer, ICmObject objRoot, InterlinLineChoices lineChoices, InterlinVc vc)
 		{
-			if (mode != null && mode.ToLowerInvariant() == "elan")
-			{
-				return new InterlinearExporterForElan(cache, writer, objRoot, lineChoices, vc);
-			}
-			else
-			{
-				return new InterlinearExporter(cache, writer, objRoot, lineChoices, vc);
-			}
+			return mode != null && mode.ToLowerInvariant() == "elan"
+				? new InterlinearExporterForElan(cache, writer, objRoot, lineChoices, vc)
+				: new InterlinearExporter(cache, writer, objRoot, lineChoices, vc);
 		}
 
-		protected InterlinearExporter(LcmCache cache, XmlWriter writer, ICmObject objRoot,
-			InterlinLineChoices lineChoices, InterlinVc vc)
+		protected InterlinearExporter(LcmCache cache, XmlWriter writer, ICmObject objRoot, InterlinLineChoices lineChoices, InterlinVc vc)
 			: base(null, cache.MainCacheAccessor, objRoot.Hvo)
 		{
 			m_cache = cache;
@@ -93,7 +86,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public void ExportDisplay()
 		{
-			m_vc.Display(this, this.OpenObject, (int)InterlinVc.kfragStText);
+			m_vc.Display(this, OpenObject, InterlinVc.kfragStText);
 		}
 
 		public virtual void WriteBeginDocument()
@@ -114,7 +107,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			set { m_sFreeAnnotationType = value; }
 		}
 
-		public override void AddStringProp(int tag, IVwViewConstructor _vwvc)
+		public override void AddStringProp(int tag, IVwViewConstructor vwvc)
 		{
 			if (tag == PunctuationFormTags.kflidForm)
 			{
@@ -128,17 +121,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		public override void NoteDependency(int[] _rghvo, int[] rgtag, int chvo)
+		public override void NoteDependency(int[] rghvo, int[] rgtag, int chvo)
 		{
 			if (m_fDoingHeadword && rgtag.Length == 1 && rgtag[0] == LexEntryTags.kflidHomographNumber)
+			{
 				m_fDoingHomographNumber = true;
+			}
 		}
 
-		public override void AddStringAltMember(int tag, int ws, IVwViewConstructor _vwvc)
+		public override void AddStringAltMember(int tag, int ws, IVwViewConstructor vwvc)
 		{
 			//get the writing system for english for use in writing out the morphType, the types will ALWAYS be defined in english
 			//but they may not be defined in other languages, using English on import and export should garauntee the correct behavior
-			int englishWS = m_cache.WritingSystemFactory.GetWsFromStr("en");
+			var englishWS = m_cache.WritingSystemFactory.GetWsFromStr("en");
 			if (m_fDoingMorphType)
 			{
 				m_writer.WriteAttributeString("type", GetText(m_sda.get_MultiStringAlt(m_hvoCurr, tag, englishWS)));
@@ -161,50 +156,57 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			else if (m_fItemIsOpen)
 			{
-				if (tag == LexSenseTags.kflidGloss)
-					WriteLangAndContent(ws, GetMarkedGloss(m_hvoCurr, tag, ws));
-				else
-					WriteLangAndContent(ws, m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws));
+				WriteLangAndContent(ws, tag == LexSenseTags.kflidGloss
+						? GetMarkedGloss(m_hvoCurr, tag, ws)
+						: m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws));
 			}
-			else if (tag == WfiWordformTags.kflidForm)
+			else switch (tag)
 			{
-				WriteItem(tag, "txt", ws);
-			}
-			else if (tag == WfiGlossTags.kflidForm)
-			{
-				WriteItem(tag, "gls", ws);
-			}
-			else if (tag == WfiMorphBundleTags.kflidForm)
-			{
-				WriteItem(tag, "txt", ws);
-			}
-			else if (tag == SegmentTags.kflidFreeTranslation ||
-				tag == SegmentTags.kflidLiteralTranslation ||
-				tag == NoteTags.kflidContent)
-			{
-				WriteItem(tag, m_sFreeAnnotationType, ws);
-			}
-			else if (tag == m_flidStTextTitle)
-			{
-				ITsString tssTitle = m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws);
-				if (!pendingTitles.Contains(tssTitle))
-					pendingTitles.Add(tssTitle);
-			}
-			else if (tag == m_flidStTextSource)
-			{
-				ITsString source = m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws);
-				if (!pendingSources.Contains(source))
-					pendingSources.Add(source);
-			}
-			else if (tag == CmMajorObjectTags.kflidDescription)
-			{
-				ITsString comment = m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws);
-				if (!pendingComments.Contains(comment))
-					pendingComments.Add(comment);
-			}
-			else
-			{
-				Debug.WriteLine("Export.AddStringAltMember(hvo={0}, tag={1}, ws={2})", m_hvoCurr, tag, ws);
+				case WfiWordformTags.kflidForm:
+					WriteItem(tag, "txt", ws);
+					break;
+				case WfiGlossTags.kflidForm:
+					WriteItem(tag, "gls", ws);
+					break;
+				case WfiMorphBundleTags.kflidForm:
+					WriteItem(tag, "txt", ws);
+					break;
+				case SegmentTags.kflidFreeTranslation:
+				case SegmentTags.kflidLiteralTranslation:
+				case NoteTags.kflidContent:
+					WriteItem(tag, m_sFreeAnnotationType, ws);
+					break;
+				default:
+					if (tag == m_flidStTextTitle)
+					{
+						var tssTitle = m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws);
+						if (!pendingTitles.Contains(tssTitle))
+						{
+							pendingTitles.Add(tssTitle);
+						}
+					}
+					else if (tag == m_flidStTextSource)
+					{
+						var source = m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws);
+						if (!pendingSources.Contains(source))
+						{
+							pendingSources.Add(source);
+						}
+					}
+					else if (tag == CmMajorObjectTags.kflidDescription)
+					{
+						var comment = m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws);
+						if (!pendingComments.Contains(comment))
+						{
+							pendingComments.Add(comment);
+						}
+					}
+					else
+					{
+						Debug.WriteLine("Export.AddStringAltMember(hvo={0}, tag={1}, ws={2})", m_hvoCurr, tag, ws);
+					}
+
+					break;
 			}
 		}
 
@@ -217,15 +219,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (m_repoObj.IsValidObjectId(hvo))
 			{
-				ICmObject obj = m_repoObj.GetObject(hvo);
-				Guid guid = obj.Guid;
+				var obj = m_repoObj.GetObject(hvo);
+				var guid = obj.Guid;
 				m_writer.WriteAttributeString("guid", guid.ToString());
 				return guid;
 			}
-			else
-			{
-				return Guid.Empty;
-			}
+			return Guid.Empty;
 		}
 
 		/// <summary>
@@ -233,7 +232,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private ITsString GetMarkedGloss(int hvo, int tag, int ws)
 		{
-			ITsString tss = m_sda.get_MultiStringAlt(hvo, tag, ws);
+			var tss = m_sda.get_MultiStringAlt(hvo, tag, ws);
 			string sPrefix = null;
 			string sPostfix = null;
 			if (m_guidMorphType == m_mmtEnclitic.Guid)
@@ -246,21 +245,28 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				sPrefix = m_mmtProclitic.Prefix;
 				sPostfix = m_mmtProclitic.Postfix;
 			}
-			if (sPrefix != null || sPostfix != null)
+
+			if (sPrefix == null && sPostfix == null)
 			{
-				ITsStrBldr tsb = tss.GetBldr();
-				if (!String.IsNullOrEmpty(sPrefix))
-					tsb.Replace(0, 0, sPrefix, null);
-				if (!String.IsNullOrEmpty(sPostfix))
-					tsb.Replace(tsb.Length, tsb.Length, sPostfix, null);
-				tss = tsb.GetString();
+				return tss;
 			}
+			var tsb = tss.GetBldr();
+			if (!string.IsNullOrEmpty(sPrefix))
+			{
+				tsb.Replace(0, 0, sPrefix, null);
+			}
+
+			if (!string.IsNullOrEmpty(sPostfix))
+			{
+				tsb.Replace(tsb.Length, tsb.Length, sPostfix, null);
+			}
+			tss = tsb.GetString();
 			return tss;
 		}
 
 		private void WritePrefixLangAlt(int ws, int tag)
 		{
-			string icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(ws);
+			var icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(ws);
 			m_writer.WriteAttributeString("lang", icuCode);
 			if (m_sPendingPrefix != null)
 			{
@@ -272,16 +278,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void WriteItem(int tag, string itemType, int alt)
 		{
-			ITsString tss;
-			int ws = alt;
-			if (ws == 0)
-			{
-				tss = m_sda.get_StringProp(m_hvoCurr, tag);
-			}
-			else
-			{
-				tss = m_sda.get_MultiStringAlt(m_hvoCurr, tag, alt);
-			}
+			var ws = alt;
+			var tss = ws == 0 ? m_sda.get_StringProp(m_hvoCurr, tag) : m_sda.get_MultiStringAlt(m_hvoCurr, tag, alt);
 			WriteItem(itemType, tss);
 		}
 
@@ -289,14 +287,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			m_writer.WriteStartElement("item");
 			m_writer.WriteAttributeString("type", itemType);
-			int ws = GetWsFromTsString(tss);
+			var ws = GetWsFromTsString(tss);
 			WriteLangAndContent(ws, tss);
 			m_writer.WriteEndElement();
 		}
 
-		private int GetWsFromTsString(ITsString tss)
+		private static int GetWsFromTsString(ITsString tss)
 		{
-			ITsTextProps ttp = tss.get_PropertiesAt(0);
+			var ttp = tss.get_PropertiesAt(0);
 			int var;
 			return ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
 		}
@@ -305,17 +303,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Write a lang attribute identifying the string, then its content as the body of
 		/// an element.
 		/// </summary>
-		/// <param name="ws"></param>
-		/// <param name="tss"></param>
 		private void WriteLangAndContent(int ws, ITsString tss)
 		{
 			UpdateWsList(ws);
-			string icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(ws);
+			var icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(ws);
 			m_writer.WriteAttributeString("lang", icuCode);
 			m_writer.WriteString(GetText(tss));
 		}
 
-		void UpdateWsList(int ws)
+		private void UpdateWsList(int ws)
 		{
 			// only add valid actual ws
 			if (ws > 0)
@@ -324,60 +320,60 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		string GetText(ITsString tss)
+		private static string GetText(ITsString tss)
 		{
-			string result = tss.Text;
-			if (result == null)
-				return "";
-			else
-				return result.Normalize();
+			var result = tss.Text;
+			return result?.Normalize() ?? string.Empty;
 		}
 
 		public override void AddObj(int hvoItem, IVwViewConstructor vc, int frag)
 		{
-			if (frag == (int)LcmUi.VcFrags.kfragHeadWord)
+			switch (frag)
 			{
-				// In the course of this AddObj, typically we get AddString calls for
-				// morpheme separators, AddObjProp for kflidLexemeForm,
-				// AddStringAltMember for the form of the LF, NoteDependency for a homograph number,
-				// and possibly AddString for the HN itself. We want to produce something like
-				// <item type="cf" lang="xkal">-de<hn lang="en">2</hn></item>
-				OpenItem("cf");
-				m_fDoingHeadword = true;
-				m_fAwaitingHeadwordForm = true;
+				case (int)LcmUi.VcFrags.kfragHeadWord:
+					// In the course of this AddObj, typically we get AddString calls for
+					// morpheme separators, AddObjProp for kflidLexemeForm,
+					// AddStringAltMember for the form of the LF, NoteDependency for a homograph number,
+					// and possibly AddString for the HN itself. We want to produce something like
+					// <item type="cf" lang="xkal">-de<hn lang="en">2</hn></item>
+					OpenItem("cf");
+					m_fDoingHeadword = true;
+					m_fAwaitingHeadwordForm = true;
+					break;
+				case LcmUi.LexEntryVc.kfragVariantTypes:
+					m_fDoingVariantTypes = true;
+					OpenItem("variantTypes");
+					var icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs);
+					m_writer.WriteAttributeString("lang", icuCode);
+					break;
 			}
 			// (LT-9374) Export Variant Type information for variants
-			if (frag == LcmUi.LexEntryVc.kfragVariantTypes)
+			if (vc is InterlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + ((InterlinVc)vc).LineChoices.Count)
 			{
-				m_fDoingVariantTypes = true;
-				OpenItem("variantTypes");
-				string icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs);
-				m_writer.WriteAttributeString("lang", icuCode);
-			}
-			if (vc is InterlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + (vc as InterlinVc).LineChoices.Count)
-			{
-				var spec = (vc as InterlinVc).LineChoices[frag - InterlinVc.kfragLineChoices];
+				var spec = ((InterlinVc)vc).LineChoices[frag - InterlinVc.kfragLineChoices];
 				if (spec.Flid == InterlinLineChoices.kflidLexGloss)
 				{
 					OpenItem("gls");
 				}
 			}
 			base.AddObj (hvoItem, vc, frag);
-			if (frag == (int)LcmUi.VcFrags.kfragHeadWord)
+			switch (frag)
 			{
-				CloseItem();
-				m_fDoingHeadword = false;
-				m_fDoingHomographNumber = false;
-				WritePendingItem("hn", ref m_tssPendingHomographNumber);
+				case (int)LcmUi.VcFrags.kfragHeadWord:
+					CloseItem();
+					m_fDoingHeadword = false;
+					m_fDoingHomographNumber = false;
+					WritePendingItem("hn", ref m_tssPendingHomographNumber);
+					break;
+				case LcmUi.LexEntryVc.kfragVariantTypes:
+					CloseItem();
+					m_fDoingVariantTypes = false;
+					break;
 			}
-			if (frag == LcmUi.LexEntryVc.kfragVariantTypes)
+
+			if (!(vc is InterlinVc) || frag < InterlinVc.kfragLineChoices || frag >= InterlinVc.kfragLineChoices + ((InterlinVc)vc).LineChoices.Count) return;
 			{
-				CloseItem();
-				m_fDoingVariantTypes = false;
-			}
-			if (vc is InterlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + (vc as InterlinVc).LineChoices.Count)
-			{
-				var spec = (vc as InterlinVc).LineChoices[frag - InterlinVc.kfragLineChoices];
+				var spec = ((InterlinVc)vc).LineChoices[frag - InterlinVc.kfragLineChoices];
 				if (spec.Flid == InterlinLineChoices.kflidLexGloss)
 				{
 					CloseItem();
@@ -402,7 +398,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public override void AddTsString(ITsString tss)
 		{
 			if (m_fDoingGlossAppend)
+			{
 				WriteItem("glsAppend", tss);
+			}
 			base.AddTsString(tss);
 		}
 
@@ -410,7 +408,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			// Ignore directionality markers on export.
 			if (tss.Text == "\x200F" || tss.Text == "\x200E")
+			{
 				return;
+			}
 
 			if (m_fDoingHomographNumber)
 			{
@@ -515,7 +515,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void WritePendingItem(string itemType, ref ITsString tss)
 		{
 			if (tss == null)
+			{
 				return;
+			}
 			OpenItem(itemType);
 			WriteLangAndContent(GetWsFromTsString(tss), tss);
 			CloseItem();
@@ -539,9 +541,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// This method (as far as I know) will be first called on the StText object, and then recursively from the
 		/// base implementation for vector items in component objects.
 		/// </summary>
-		/// <param name="tag"></param>
-		/// <param name="vc"></param>
-		/// <param name="frag"></param>
 		public override void AddObjVecItems(int tag, IVwViewConstructor vc, int frag)
 		{
 			ICmObject text = null;
@@ -601,27 +600,32 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case InterlinVc.kfragInterlinPara:
 					m_writer.WriteEndElement(); // paragraphs
 					m_writer.WriteStartElement("languages");
-					foreach (int wsActual in m_usedWritingSystems)
+					foreach (var wsActual in m_usedWritingSystems)
 					{
 						m_writer.WriteStartElement("language");
 						// we don't have enough context at this point to get all the possible writing system
 						// information we may encounter in the word bundles.
-						string icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(wsActual);
+						var icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(wsActual);
 						m_writer.WriteAttributeString("lang", icuCode);
-						CoreWritingSystemDefinition ws = m_wsManager.Get(wsActual);
-						string fontName = ws.DefaultFontName;
+						var ws = m_wsManager.Get(wsActual);
+						var fontName = ws.DefaultFontName;
 						m_writer.WriteAttributeString("font", fontName);
 						if (m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(ws))
+						{
 							m_writer.WriteAttributeString("vernacular", "true");
+						}
+
 						if (ws.RightToLeftScript)
+						{
 							m_writer.WriteAttributeString("RightToLeft", "true");
+						}
 						m_writer.WriteEndElement();
 					}
 					m_writer.WriteEndElement();	// languages
 					//Media files section
-					if (text != null && text is IText && ((IText)text).MediaFilesOA != null)
+					if ((text as IText)?.MediaFilesOA != null)
 					{
-						IText theText = (IText) text;
+						var theText = (IText)text;
 						m_writer.WriteStartElement("media-files");
 						m_writer.WriteAttributeString("offset-type", theText.MediaFilesOA.OffsetType);
 						foreach (var mediaFile in theText.MediaFilesOA.MediaURIsOC)
@@ -654,13 +658,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void OpenTheObject(int hvo, int ihvo)
 		{
 			// NOTE: this block executes BEFORE we update CurrentObject() by calling base.OpenTheObject() below.
-			int tag = CurrentPropTag;
+			var tag = CurrentPropTag;
 			switch(tag)
 			{
 				case StTextTags.kflidParagraphs:
 					// The paragraph data may need to be loaded if the paragraph has not yet
 					// appeared on the screen.  See LT-7071.
-					m_vc.LoadDataFor(this, new int[1] { hvo }, 1, CurrentObject(), tag, -1, ihvo);
+					m_vc.LoadDataFor(this, new[] { hvo }, 1, CurrentObject(), tag, -1, ihvo);
 					WriteStartParagraph(hvo);
 					break;
 				case WfiAnalysisTags.kflidMorphBundles:
@@ -719,7 +723,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		public override void AddUnicodeProp(int tag, int ws, IVwViewConstructor _vwvc)
+		public override void AddUnicodeProp(int tag, int ws, IVwViewConstructor vwvc)
 		{
 			switch(tag)
 			{
@@ -730,7 +734,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					m_writer.WriteString(m_sda.get_UnicodeProp(m_hvoCurr, tag));
 					break;
 			}
-			base.AddUnicodeProp (tag, ws, _vwvc);
+			base.AddUnicodeProp (tag, ws, vwvc);
 		}
 
 		/// <summary>
@@ -745,11 +749,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Sets title, abbreviation, source and comment(description) data for the text.
 		/// </summary>
-		/// <param name="txt"></param>
 		private void SetTextTitleAndMetadata(IStText txt)
 		{
 			if (txt == null)
+			{
 				return;
+			}
 			var text = txt.Owner as IText;
 			if (text != null)
 			{
@@ -779,58 +784,4 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	}
 	// Todo:
 	// Freeforms.
-
-	/// <summary>
-	/// This handles exporting interlinear data into an xml format that is friendly to ELAN's overlapping time sequences.
-	/// (LT-9904)
-	/// </summary>
-	public class InterlinearExporterForElan : InterlinearExporter
-	{
-		private const int kDocVersion = 2;
-		protected internal InterlinearExporterForElan(LcmCache cache, XmlWriter writer, ICmObject objRoot,
-			InterlinLineChoices lineChoices, InterlinVc vc)
-			: base(cache, writer, objRoot, lineChoices, vc)
-		{
-		}
-
-		public override void WriteBeginDocument()
-		{
-			base.WriteBeginDocument();
-			m_writer.WriteAttributeString("version", kDocVersion.ToString());
-		}
-
-		protected override void WriteStartParagraph(int hvo)
-		{
-			base.WriteStartParagraph(hvo);
-			WriteGuidAttributeForObj(hvo);
-		}
-
-		protected override void WriteStartPhrase(int hvo)
-		{
-			base.WriteStartPhrase(hvo);
-			WriteGuidAttributeForObj(hvo);
-			ISegment phrase = m_repoObj.GetObject(hvo) as ISegment;
-			if(phrase != null && phrase.MediaURIRA != null)
-			{
-				m_writer.WriteAttributeString("begin-time-offset", phrase.BeginTimeOffset);
-				m_writer.WriteAttributeString("end-time-offset", phrase.EndTimeOffset);
-				if (phrase.SpeakerRA != null)
-				{
-					m_writer.WriteAttributeString("speaker", phrase.SpeakerRA.Name.BestVernacularAlternative.Text);
-				}
-				m_writer.WriteAttributeString("media-file", phrase.MediaURIRA.Guid.ToString());
-			}
-		}
-
-		protected override void WriteStartWord(int hvo)
-		{
-			base.WriteStartWord(hvo);
-			// Note that this guid may well not be unique in the file, since it refers to a
-			// WfiWordform, WfiAnalysis, WfiGloss, or PunctuationForm (the last is not output),
-			// any of which may be referred to repeatedly in an analyzed text.
-			int clid = m_repoObj.GetClsid(hvo);
-			if (clid != PunctuationFormTags.kClassId)
-				WriteGuidAttributeForObj(hvo);
-		}
-	}
 }

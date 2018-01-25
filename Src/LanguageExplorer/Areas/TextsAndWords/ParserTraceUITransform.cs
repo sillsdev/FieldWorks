@@ -35,38 +35,36 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			var cache = propertyTable.GetValue<LcmCache>("cache");
 			SetWritingSystemBasedArguments(cache, propertyTable, args);
 			args.AddParam("prmIconPath", "", IconPath);
-			string filePath = Path.Combine(Path.GetTempPath(), cache.ProjectId.Name + baseName + ".htm");
+			var filePath = Path.Combine(Path.GetTempPath(), cache.ProjectId.Name + baseName + ".htm");
 			using (var writer = new StreamWriter(filePath))
+			{
 				m_transform.Transform(doc.CreateNavigator(), args, writer);
+			}
 			return filePath;
 		}
 
 		private void SetWritingSystemBasedArguments(LcmCache cache, IPropertyTable propertyTable, XsltArgumentList argumentList)
 		{
-			ILgWritingSystemFactory wsf = cache.WritingSystemFactory;
-			IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;
-			CoreWritingSystemDefinition defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
+			var wsf = cache.WritingSystemFactory;
+			var wsContainer = cache.ServiceLocator.WritingSystems;
+			var defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
 			using (var myFont = FontHeightAdjuster.GetFontForNormalStyle(defAnalWs.Handle, wsf, propertyTable))
 			{
 				argumentList.AddParam("prmAnalysisFont", "", myFont.FontFamily.Name);
 				argumentList.AddParam("prmAnalysisFontSize", "", myFont.Size + "pt");
 			}
 
-			CoreWritingSystemDefinition defVernWs = wsContainer.DefaultVernacularWritingSystem;
+			var defVernWs = wsContainer.DefaultVernacularWritingSystem;
 			using (var myFont = FontHeightAdjuster.GetFontForNormalStyle(defVernWs.Handle, wsf, propertyTable))
 			{
 				argumentList.AddParam("prmVernacularFont", "", myFont.FontFamily.Name);
 				argumentList.AddParam("prmVernacularFontSize", "", myFont.Size + "pt");
 			}
 
-			string sRtl = defVernWs.RightToLeftScript ? "Y" : "N";
-			argumentList.AddParam("prmVernacularRTL", "", sRtl);
+			argumentList.AddParam("prmVernacularRTL", "", defVernWs.RightToLeftScript ? "Y" : "N");
 		}
 
-		private static string TransformPath
-		{
-			get { return FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer/Configuration/Words/Analyses/TraceParse"); }
-		}
+		private static string TransformPath => FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer/Configuration/Words/Analyses/TraceParse");
 
 		private static string IconPath
 		{

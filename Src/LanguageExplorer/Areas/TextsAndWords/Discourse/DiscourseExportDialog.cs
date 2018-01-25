@@ -52,11 +52,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		#endregion
 
-		protected override string ConfigurationFilePath
-		{
-			get { return String.Format("Language Explorer{0}Export Templates{0}Discourse",
-				Path.DirectorySeparatorChar); }
-		}
+		protected override string ConfigurationFilePath => Path.Combine("Language Explorer", "Export Templates", "Discourse");
 
 		// Items in this version are never disabled.
 		protected override bool ItemDisabled(string tag)
@@ -67,14 +63,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Override to do nothing since not configuring an FXT export process.
 		/// </summary>
-		/// <param name="document"></param>
-		/// <param name="item"></param>
-		/// <param name="ddNode"></param>
 		protected override void ConfigureItem(XmlDocument document, ListViewItem item, XmlNode ddNode)
 		{
 			m_ddNodes.Add(ddNode);
 			columnHeader1.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-			//columnHeader2.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
 		}
 
 		// Export the data according to specifications.
@@ -93,22 +85,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					ExportPhase1(out exporter, outPath);
 					var rootDir = FwDirectoryFinder.CodeDirectory;
 					var transform = XmlUtils.GetOptionalAttributeValue(ddNode, "transform", "");
-					var sTransformPath = Path.Combine(rootDir,
-						String.Format("Language Explorer{0}Export Templates{0}Discourse",
-						Path.DirectorySeparatorChar));
+					var sTransformPath = Path.Combine(rootDir, "Language Explorer", "Export Templates", "Discourse");
 					switch (mode)
 					{
 						case "doNothing":
 							break;
 						case "applySingleTransform":
-							string sTransform = Path.Combine(sTransformPath, transform);
+							var sTransform = Path.Combine(sTransformPath, transform);
 							exporter.PostProcess(sTransform, outPath, 1);
 							break;
 					}
 				}
 				catch (Exception e)
 				{
-					MessageBox.Show(this, String.Format(LanguageExplorerResources.ksExportErrorMsg, e.Message));
+					MessageBox.Show(this, string.Format(LanguageExplorerResources.ksExportErrorMsg, e.Message));
 				}
 			}
 			Close();
@@ -121,7 +111,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				var fileN = m_ddNodes[i].BaseURI.Substring(m_ddNodes[i].BaseURI.LastIndexOf('/') + 1);
 				if (fileN == file)
+				{
 					return i;
+				}
 			}
 			return 0;
 		}

@@ -58,11 +58,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#endregion
 
-		protected override string ConfigurationFilePath
-		{
-			get { return String.Format("Language Explorer{0}Export Templates{0}Interlinear",
-				Path.DirectorySeparatorChar); }
-		}
+		protected override string ConfigurationFilePath => $"Language Explorer{Path.DirectorySeparatorChar}Export Templates{Path.DirectorySeparatorChar}Interlinear";
 
 		// Items in this version are never disabled.
 		protected override bool ItemDisabled(string tag)
@@ -87,9 +83,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override bool PrepareForExport()
 		{
 			m_objs.Clear();
-			//if (m_objRoot.OwningFlid != TextTags.kflidContents) // MDL LT-11483
-			if (OnLaunchFilterScrScriptureSectionsDialog != null)
-				OnLaunchFilterScrScriptureSectionsDialog(this, EventArgs.Empty);
+			OnLaunchFilterScrScriptureSectionsDialog?.Invoke(this, EventArgs.Empty);
 			return m_objs.Count > 0;
 		}
 
@@ -99,8 +93,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// even the SE edition able to work with Paratext, which we want to do because it was not obvious to
 		/// users that they needed the BTE edition if using Paratext rather than TE.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
 		private void LaunchFilterTextsDialog(object sender, EventArgs args)
 		{
 			var interestingTextsList = InterestingTextsDecorator.GetInterestingTextList(PropertyTable, m_cache.ServiceLocator);
@@ -119,7 +111,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				dlg.PruneToInterestingTextsAndSelect(interestingTexts, (IStText)m_objRoot);
 				dlg.TreeViewLabel = ITextStrings.ksSelectSectionsExported;
 				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
 					m_objs.AddRange(dlg.GetListOfIncludedTexts());
+				}
 			}
 		}
 
@@ -146,7 +140,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var fxtPath = (string)args[1];
 
 			if (m_objs.Count == 0)
+			{
 				m_objs.Add(m_objRoot);
+			}
 
 			var ddNode = m_ddNodes[NodeIndex(fxtPath)];
 			var mode = XmlUtils.GetOptionalAttributeValue(ddNode, "mode", "xml");
@@ -156,11 +152,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					InterlinearExporter exporter;
 					ExportPhase1(mode, out exporter, outPath);
-					string rootDir = FwDirectoryFinder.CodeDirectory;
-					string transform = XmlUtils.GetOptionalAttributeValue(ddNode, "transform", "");
-					string sTransformPath = Path.Combine(rootDir,
-							String.Format("Language Explorer{0}Export Templates{0}Interlinear",
-							Path.DirectorySeparatorChar));
+					var rootDir = FwDirectoryFinder.CodeDirectory;
+					var transform = XmlUtils.GetOptionalAttributeValue(ddNode, "transform", "");
+					var sTransformPath = Path.Combine(rootDir, "Language Explorer", "Export Templates", "Interlinear");
 					switch (mode)
 					{
 						// ReSharper disable RedundantCaseLabel
@@ -172,14 +166,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							break;
 						// ReSharper restore RedundantCaseLabel
 						case "applySingleTransform":
-							string sTransform = Path.Combine(sTransformPath, transform);
+							var sTransform = Path.Combine(sTransformPath, transform);
 							exporter.PostProcess(sTransform, outPath, 1);
 							break;
 						case "openOffice":
-							string tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+							var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 							// Paranoia...probably GetRandomFileName will never make the name of an existing folder, but make sure of it.
 							while (Directory.Exists(tempDir))
+							{
 								tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+							}
 							Directory.CreateDirectory(tempDir);
 							try
 							{
@@ -187,34 +183,32 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 								var implementation = XmlUtils.GetFirstNonCommentChild(ddNode);
 								var styleFileTransform = "xml2OOStyles.xsl";
 								if (implementation != null)
-									styleFileTransform = XmlUtils.GetOptionalAttributeValue(implementation,
-																							"styleTransform",
-																							styleFileTransform);
+								{
+									styleFileTransform = XmlUtils.GetOptionalAttributeValue(implementation, "styleTransform", styleFileTransform);
+								}
 								xsl.Load(Path.Combine(sTransformPath, styleFileTransform));
 								xsl.Transform(outPath, Path.Combine(tempDir, "styles.xml"));
 
 								// Now generate the content. Do this after using outPath as the source above, because it renames the file.
-								string contentFileTransform = "xml2OO.xsl";
+								var contentFileTransform = "xml2OO.xsl";
 								if (implementation != null)
-									contentFileTransform = XmlUtils.GetOptionalAttributeValue(implementation,
-																							  "contentTransform",
-																							  contentFileTransform);
+								{
+									contentFileTransform = XmlUtils.GetOptionalAttributeValue(implementation, "contentTransform", contentFileTransform);
+								}
 #pragma warning disable 219 // ReSharper disable UnusedVariable
 								var xsl2 = new XslCompiledTransform();
 #pragma warning restore 219 // ReSharper restore UnusedVariable
 								xsl.Load(Path.Combine(sTransformPath, contentFileTransform));
 								xsl.Transform(outPath, Path.Combine(tempDir, "content.xml"));
-								string mimetypePath = Path.Combine(tempDir, "mimetype");
-								File.Copy(Path.Combine(sTransformPath, "mimetype"),
-										  mimetypePath);
+								var mimetypePath = Path.Combine(tempDir, "mimetype");
+								File.Copy(Path.Combine(sTransformPath, "mimetype"), mimetypePath);
 								File.SetAttributes(mimetypePath, File.GetAttributes(mimetypePath) & ~FileAttributes.ReadOnly);
-								string manifestDir = Path.Combine(tempDir, "META-INF");
-								string manifestPath = Path.Combine(manifestDir, "manifest.xml");
+								var manifestDir = Path.Combine(tempDir, "META-INF");
+								var manifestPath = Path.Combine(manifestDir, "manifest.xml");
 								Directory.CreateDirectory(manifestDir);
-								File.Copy(Path.Combine(sTransformPath, "manifest.xml"),
-										  manifestPath);
+								File.Copy(Path.Combine(sTransformPath, "manifest.xml"), manifestPath);
 								File.SetAttributes(manifestPath, File.GetAttributes(manifestPath) & ~FileAttributes.ReadOnly);
-								FastZip zf = new FastZip();
+								var zf = new FastZip();
 								zf.CreateZip(outPath, tempDir, true, string.Empty);
 							}
 							finally
@@ -234,12 +228,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected int NodeIndex(string pathname)
 		{
-			string file = Path.GetFileName(pathname);
-			for (int i = 0; i < m_ddNodes.Count; i++)
+			var file = Path.GetFileName(pathname);
+			for (var i = 0; i < m_ddNodes.Count; i++)
 			{
-				string fileN = m_ddNodes[i].BaseURI.Substring(m_ddNodes[i].BaseURI.LastIndexOf('/') + 1);
+				var fileN = m_ddNodes[i].BaseURI.Substring(m_ddNodes[i].BaseURI.LastIndexOf('/') + 1);
 				if (fileN == file)
+				{
 					return i;
+				}
 			}
 			return 0;
 		}
@@ -257,7 +253,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				exporter = InterlinearExporter.Create(mode, m_cache, writer, m_objs[0], m_vc.LineChoices, m_vc);
 				exporter.WriteBeginDocument();
 				exporter.ExportDisplay();
-				for (int i = 1; i < m_objs.Count; ++i)
+				for (var i = 1; i < m_objs.Count; ++i)
 				{
 					exporter.SetRootObject(m_objs[i]);
 					exporter.ExportDisplay();

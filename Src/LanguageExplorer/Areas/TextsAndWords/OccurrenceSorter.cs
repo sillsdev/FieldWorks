@@ -36,11 +36,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Do the actual sort.
 		/// </summary>
-		/// <param name="records"></param>
 		public override void Sort(ArrayList records)
 		{
 			var comp = new OccurrenceComparer(m_cache, m_sdaSpecial);
-			//foreach (IManyOnePathSortItem item in records)
 			MergeSort.Sort(ref records, comp);
 		}
 
@@ -48,8 +46,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// We only ever sort this list to start with, don't think we should need this,
 		/// but it's an abstract method so we have to have it.
 		/// </summary>
-		/// <param name="records"></param>
-		/// <param name="newRecords"></param>
 		public override void MergeInto(ArrayList records, ArrayList newRecords)
 		{
 			throw new Exception("The method or operation is not implemented.");

@@ -1,10 +1,9 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 
@@ -23,10 +22,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <summary>
 		/// Create a new one.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="ss">The stylesheet.</param>
-		/// <param name="choices">The choices.</param>
-		/// <param name="hvoAnalysis">The hvo analysis.</param>
 		public OneAnalysisSandbox(LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
 			: base(cache, ss, choices, hvoAnalysis)
 		{
@@ -39,10 +34,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <summary>
 		///  Pass through to the VC.
 		/// </summary>
-		protected override bool IsMorphemeFormEditable
-		{
-			get { return false; }
-		}
+		protected override bool IsMorphemeFormEditable => false;
 
 		/// <summary>
 		/// Update the analysis to what the sandbox is currently.
@@ -52,40 +44,29 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		{
 			CheckDisposed();
 
-			var uram = new UpdateRealAnalysisMethod(this, m_caches, m_choices, anal);
+			var uram = new UpdateRealAnalysisMethod(this, Caches, InterlinLineChoices, anal);
 			var result = uram.UpdateRealAnalysis();
-			m_caches.DataAccess.ClearDirty();
+			Caches.DataAccess.ClearDirty();
 			return result;
 		}
 
-		private class UpdateRealAnalysisMethod : GetRealAnalysisMethod
+		private sealed class UpdateRealAnalysisMethod : GetRealAnalysisMethod
 		{
 			private readonly IWfiAnalysis m_anal;
 			private readonly IMoFormRepository m_moFormRepos;
 			private readonly ILexSenseRepository m_senseRepos;
 			private readonly IMoMorphSynAnalysisRepository m_msaRepos;
-			/// <summary>
-			/// This contructor is only to be used by the
-			/// </summary>
-			/// <param name="owner"></param>
-			/// <param name="caches"></param>
-			/// <param name="choices"></param>
-			/// <param name="anal"></param>
-			internal UpdateRealAnalysisMethod(SandboxBase owner, CachePair caches, InterlinLineChoices choices,
-				IWfiAnalysis anal)
+			/// <summary />
+			internal UpdateRealAnalysisMethod(SandboxBase owner, CachePair caches, InterlinLineChoices choices, IWfiAnalysis anal)
 			{
 				m_sandbox = owner;
 				m_caches = caches;
 				m_hvoSbWord = kSbWord; // kSbWord really is a constant, not a real hvo.
-				//m_hvoWordform = hvoWordform;
-				//m_hvoWfiAnalysis = hvoWfiAnalysis;
 				m_anal = anal;
-				//m_hvoWordGloss = hvoWordGloss;
 				m_sda = m_caches.DataAccess;
 				m_sdaMain = m_caches.MainCache.MainCacheAccessor;
 				m_cmorphs = m_sda.get_VecSize(m_hvoSbWord, ktagSbWordMorphs);
 				m_choices = choices;
-				//m_tssForm = tssForm;
 				var servLoc = m_caches.MainCache.ServiceLocator;
 				m_moFormRepos = servLoc.GetInstance<IMoFormRepository>();
 				m_senseRepos = servLoc.GetInstance<ILexSenseRepository>();
@@ -100,11 +81,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			{
 				var isDirty = false;
 				BuildMorphLists();
-				/* Sets these three variables up.
-				m_analysisMorphs = new int[m_cmorphs];
-				m_analysisMsas = new int[m_cmorphs];
-				m_analysisSenses = new int[m_cmorphs];
-				*/
 				m_sdaMain.BeginUndoTask(TextAndWordsResources.ksUndoEditAnalysis, TextAndWordsResources.ksRedoEditAnalysis);
 
 				try
@@ -115,7 +91,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 						var mb = m_anal.MorphBundlesOS[imorph];
 
 						// Process Morph.
-						var oldHvo = mb.MorphRA == null ? 0 : mb.MorphRA.Hvo;
+						var oldHvo = mb.MorphRA?.Hvo ?? 0;
 						var newHvo = m_analysisMorphs[imorph];
 						if (oldHvo != newHvo)
 						{
@@ -123,8 +99,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 							{
 								// Change to 'unknown'. Will no longer be able to use the morph property to get
 								// at the actual form, so reinstate it in the bundle.
-								foreach (CoreWritingSystemDefinition ws in mb.Cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
+								foreach (var ws in mb.Cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
+								{
 									mb.Form.set_String(ws.Handle, mb.Cache.MainCacheAccessor.get_MultiStringAlt(oldHvo, MoFormTags.kflidForm, ws.Handle));
+								}
 								mb.MorphRA = null; // See LT-13878 for 'unrelated' crash reported by Santhosh
 							}
 							else
@@ -135,7 +113,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 						}
 
 						// Process Sense.
-						oldHvo = mb.SenseRA == null ? 0 : mb.SenseRA.Hvo;
+						oldHvo = mb.SenseRA?.Hvo ?? 0;
 						newHvo = m_analysisSenses[imorph];
 						if (oldHvo != newHvo)
 						{
@@ -144,10 +122,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 						}
 
 						// Process MSA.
-						oldHvo = mb.MsaRA == null ? 0 : mb.MsaRA.Hvo;
+						oldHvo = mb.MsaRA?.Hvo ?? 0;
 						newHvo = m_analysisMsas[imorph];
 						if (oldHvo == newHvo)
+						{
 							continue;
+						}
 						mb.MsaRA = newHvo == 0 ? null : m_msaRepos.GetObject(newHvo);
 						isDirty = true;
 					}
@@ -155,9 +135,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				finally
 				{
 					if (isDirty)
+					{
 						m_sdaMain.EndUndoTask();
+					}
 					else
+					{
 						m_sdaMain.Rollback();
+					}
 				}
 				return isDirty;
 			}

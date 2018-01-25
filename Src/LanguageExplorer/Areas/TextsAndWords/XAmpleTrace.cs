@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -19,26 +19,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	internal sealed class XAmpleTrace : IParserTrace
 	{
 		private static ParserTraceUITransform s_traceTransform;
-		private static ParserTraceUITransform TraceTransform
-		{
-			get
-			{
-				if (s_traceTransform == null)
-					s_traceTransform = new ParserTraceUITransform("FormatXAmpleTrace");
-				return s_traceTransform;
-			}
-		}
+		private static ParserTraceUITransform TraceTransform => s_traceTransform ?? (s_traceTransform = new ParserTraceUITransform("FormatXAmpleTrace"));
 
 		private static ParserTraceUITransform s_parseTransform;
-		private static ParserTraceUITransform ParseTransform
-		{
-			get
-			{
-				if (s_parseTransform == null)
-					s_parseTransform = new ParserTraceUITransform("FormatXAmpleParse");
-				return s_parseTransform;
-			}
-		}
+		private static ParserTraceUITransform ParseTransform => s_parseTransform ?? (s_parseTransform = new ParserTraceUITransform("FormatXAmpleParse"));
 
 		/// <summary>
 		/// Create an HTML page of the results

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,7 +17,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// have to worry, until the view closes, about whether the user is editing one of the
 	/// existing analyses or creating a new one.
 	/// </summary>
-	public class Sandbox : SandboxBase, IAnalysisControlInternal
+	internal class Sandbox : SandboxBase, IAnalysisControlInternal
 	{
 		#region Data members
 
@@ -47,36 +47,28 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			LoadForWordBundleAnalysis(m_occurrenceSelected.Analysis.Hvo);
 		}
 
-		///  <summary />
+		/// <summary />
 		public Sandbox(LcmCache cache, IVwStylesheet ss, InterlinLineChoices choices)
 			: base(cache, ss, choices)
 		{
 		}
 
-		public bool IsDirty
-		{
-			get { return Caches.DataAccess.IsDirty(); }
-		}
+		public bool IsDirty => Caches.DataAccess.IsDirty();
 
 		/// <summary>
 		/// let the parent control the selection.
 		/// </summary>
-		public override bool WantInitialSelection
-		{
-			get
-			{
-				return false;
-			}
-		}
+		public override bool WantInitialSelection => false;
 
 		/// <summary>
 		/// We don't want to do a load on our hvoAnalysis until our HvoAnnotation is setup.
 		/// </summary>
-		/// <param name="hvoAnalysis"></param>
 		protected override void LoadForWordBundleAnalysis(int hvoAnalysis)
 		{
 			if (HvoAnnotation != 0)
+			{
 				base.LoadForWordBundleAnalysis(hvoAnalysis);
+			}
 		}
 
 		/// <summary>
@@ -108,17 +100,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		protected override void Dispose( bool disposing )
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			base.Dispose( disposing );
 
@@ -138,11 +130,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		///		the present sandbox WordGloss if it doesn't match the original state of the Sandbox.
 		/// cf. (LT-1428).
 		/// </summary>
-		protected override int WordGlossReferenceCount
+		internal override int WordGlossReferenceCount
 		{
 			get
 			{
-				int glossReferenceCount = 0;
+				var glossReferenceCount = 0;
 				var glossRepository = Cache.ServiceLocator.GetInstance<IWfiGlossRepository>();
 				if (WordGlossHvo != 0)
 				{
@@ -154,24 +146,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				//		the present state of the database for WfiGlosses.
 				//		So, add it to the WfiGloss count before we return.
 				if (WordGlossHvo != m_hvoInitialWag)
+				{
 					++glossReferenceCount;
+				}
 
 				return glossReferenceCount;
 			}
 		}
 
-		internal override InterlinDocForAnalysis InterlinDoc
-		{
-			get
-			{
-				return m_interlinDoc;
-			}
-		}
+		internal override InterlinDocForAnalysis InterlinDoc => m_interlinDoc;
 
-		FocusBoxController FocusBox
+		private FocusBoxController FocusBox
 		{
 			get;
-			set;
 		}
 
 
@@ -189,10 +176,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Data has been modified since we first loaded it from real data,
 		/// indicating we may need to save the new state back to the database.
 		/// </summary>
-		bool IAnalysisControlInternal.HasChanged
-		{
-			get { return Caches.DataAccess.IsDirty(); }
-		}
+		bool IAnalysisControlInternal.HasChanged => Caches.DataAccess.IsDirty();
 
 		/// <summary>
 		/// This function will undo the last changes done to the project.

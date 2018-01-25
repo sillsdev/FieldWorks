@@ -580,7 +580,6 @@ If you are not the one designated user who adds fields, or you are making some o
   </data>
   <data name="ProcessingIntoFinalForm" xml:space="preserve">
     <value>Processing exported data into final form</value>
-    <comment>Parameter is the Lexeme Form of the entry.</comment>
   </data>
   <data name="Promote" xml:space="preserve">
     <value>Promote</value>

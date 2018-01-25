@@ -92,14 +92,14 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var itemMDC = strip.Items[index] as ToolStripMenuItem;
 			Assert.AreEqual(label, itemMDC.Text);
 			Assert.AreEqual(6, itemMDC.DropDownItems.Count); // 4 following clauses available, plus 'other'
-			Assert.AreEqual(ConstituentChartLogic.FTO_PreviousClauseMenuItem, itemMDC.DropDownItems[0].Text, "first subitem should be previous clause");
-			Assert.AreEqual(ConstituentChartLogic.FTO_NextClauseMenuItem, itemMDC.DropDownItems[1].Text, "2nd subitem should be next clause");
-			Assert.AreEqual(ConstituentChartLogic.FTO_NextTwoClausesMenuItem, itemMDC.DropDownItems[2].Text, "3nd subitem should be next 2 clauses");
-			Assert.AreEqual(String.Format(ConstituentChartLogic.FTO_NextNClausesMenuItem, "3"),
+			Assert.AreEqual(LanguageExplorerResources.ksPreviousClauseMenuItem, itemMDC.DropDownItems[0].Text, "first subitem should be previous clause");
+			Assert.AreEqual(LanguageExplorerResources.ksNextClauseMenuItem, itemMDC.DropDownItems[1].Text, "2nd subitem should be next clause");
+			Assert.AreEqual(LanguageExplorerResources.ksNextTwoClausesMenuItem, itemMDC.DropDownItems[2].Text, "3nd subitem should be next 2 clauses");
+			Assert.AreEqual(String.Format(LanguageExplorerResources.ksNextNClausesMenuItem, "3"),
 				itemMDC.DropDownItems[3].Text, "4th subitem should be next 3 clauses");
-			Assert.AreEqual(String.Format(ConstituentChartLogic.FTO_NextNClausesMenuItem, "4"),
+			Assert.AreEqual(String.Format(LanguageExplorerResources.ksNextNClausesMenuItem, "4"),
 				itemMDC.DropDownItems[4].Text, "5th subitem should be next 4 clauses");
-			Assert.AreEqual(ConstituentChartLogic.FTO_OtherMenuItem, itemMDC.DropDownItems[5].Text, "5th subitem should be next 4 clauses");
+			Assert.AreEqual(LanguageExplorerResources.ksOtherMenuItem, itemMDC.DropDownItems[5].Text, "5th subitem should be next 4 clauses");
 		}
 
 		private static void AssertMergeItem(ContextMenuStrip strip, string name, bool fExpected, string message)
@@ -154,12 +154,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 				// Check the moved text item and subitems
 				var itemMT = strip.Items[1] as ToolStripMenuItem;
-				Assert.AreEqual(ConstituentChartLogic.FTO_MovedTextMenuText, itemMT.Text);
+				Assert.AreEqual(LanguageExplorerResources.ksMovedFromMenuItem, itemMT.Text);
 				Assert.AreEqual(m_allColumns.Count - 1, itemMT.DropDownItems.Count);
 				// can't move from itself
 				Assert.AreEqual(m_logic.GetColumnLabel(1), itemMT.DropDownItems[0].Text, "first label for col0 menu should be col1");
 				Assert.AreEqual(m_logic.GetColumnLabel(2), itemMT.DropDownItems[1].Text, "second label for col0 menu should different");
-				Assert.AreEqual(ConstituentChartLogic.FTO_InsertAsClauseMenuText, (strip.Items[0] as ToolStripMenuItem).Text);
+				Assert.AreEqual(LanguageExplorerResources.ksMoveHereInNewClause, (strip.Items[0] as ToolStripMenuItem).Text);
 			}
 		}
 
@@ -178,7 +178,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 				// Check the moved text item and subitems
 				ToolStripMenuItem itemMT = strip.Items[1] as ToolStripMenuItem;
-				Assert.AreEqual(ConstituentChartLogic.FTO_MovedTextMenuText, itemMT.Text);
+				Assert.AreEqual(LanguageExplorerResources.ksMovedFromMenuItem, itemMT.Text);
 				Assert.AreEqual(m_allColumns.Count - 1, itemMT.DropDownItems.Count);
 				// can't move from itself
 				Assert.AreEqual(m_logic.GetColumnLabel(0), itemMT.DropDownItems[0].Text, "first label for col0 menu should be col1");
@@ -224,12 +224,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				// (The last two groups depend on how we initialized the ChartMarkers list.)
 
 				// Check the moved text item and subitems
-				var itemMDC = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_MakeDepClauseMenuText, 3);
-				AssertHasMenuWithText(itemMDC.DropDownItems, ConstituentChartLogic.FTO_PreviousClauseMenuItem, 0);
-				AssertHasMenuWithText(itemMDC.DropDownItems, ConstituentChartLogic.FTO_NextClauseMenuItem, 0);
-				AssertHasMenuWithText(itemMDC.DropDownItems, ConstituentChartLogic.FTO_OtherMenuItem, 0);
-				AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_MergeAfterMenuItem, 0);
-				AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_MergeBeforeMenuItem, 0);
+				var itemMDC = AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksMakeDepClauseMenuItem, 3);
+				AssertHasMenuWithText(itemMDC.DropDownItems, LanguageExplorerResources.ksPreviousClauseMenuItem, 0);
+				AssertHasMenuWithText(itemMDC.DropDownItems, LanguageExplorerResources.ksNextClauseMenuItem, 0);
+				AssertHasMenuWithText(itemMDC.DropDownItems, LanguageExplorerResources.ksOtherMenuItem, 0);
+				AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksMergeAfterMenuItem, 0);
+				AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksMergeBeforeMenuItem, 0);
 
 				// Verify items generated from chart markers. These results depend on the default chart markers.
 				// The 'Mark' part comes from LanguageExplorerResources.ksMarkMenuItemFormat. I decided not to repeat the
@@ -243,7 +243,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				VerifyMenuItemTextAndChecked(itemG2.DropDownItems[1] as ToolStripMenuItem, "Item3 (I3)", true);
 
 				// Verify the delete from here item
-				AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_ClearFromHereOnMenuItem, 0);
+				AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksClearFromHereOnMenuItem, 0);
 
 				// The target cell isn't empty so we shouldn't have this menu item.
 				// Except LT-8545 says possibility markers aren't 'contents' as such
@@ -262,18 +262,18 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 2)))
 			{
-				AssertHasNoMenuWithText(strip.Items, ConstituentChartLogic.FTO_PreposeFromMenuItem);
+				AssertHasNoMenuWithText(strip.Items, LanguageExplorerResources.ksPreposeFromMenuItem);
 			}
 			// Test a cell with words in a non-boundary column
 			var ccols = m_logic.AllMyColumns.Length;
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 1)))
 			{
 				// Prepose menu for col 1 should have subitems for all subsequent columns (& 'Advanced...')
-				var itemPre = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_PreposeFromMenuItem, ccols - 1);
-				AssertHasMenuWithText(itemPre.DropDownItems, ConstituentChartLogic.FTO_AnotherClause, 0);
+				var itemPre = AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksPreposeFromMenuItem, ccols - 1);
+				AssertHasMenuWithText(itemPre.DropDownItems, LanguageExplorerResources.ksAdvancedDlgMenuItem, 0);
 				// Postpose menu for col 1 should have one item (& 'Advanced...').
-				var itemPost = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_PostposeFromMenuItem, 2);
-				AssertHasMenuWithText(itemPost.DropDownItems, ConstituentChartLogic.FTO_AnotherClause, 0);
+				var itemPost = AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksPostposeFromMenuItem, 2);
+				AssertHasMenuWithText(itemPost.DropDownItems, LanguageExplorerResources.ksAdvancedDlgMenuItem, 0);
 				VerifyMenuItemTextAndChecked(itemPost.DropDownItems[0], m_logic.GetColumnLabel(0), false);
 				VerifyMenuItemTextAndChecked(itemPre.DropDownItems[1], m_logic.GetColumnLabel(3), true);
 			}
@@ -281,9 +281,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 0)))
 			{
 				// Prepose menu for col 0 should have subitems for all subsequent columns + Advanced...
-				AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_PreposeFromMenuItem, ccols);
+				AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksPreposeFromMenuItem, ccols);
 				// Postpose menu for col 0 should have no items.
-				AssertHasNoMenuWithText(strip.Items, ConstituentChartLogic.FTO_PostposeFromMenuItem);
+				AssertHasNoMenuWithText(strip.Items, LanguageExplorerResources.ksPostposeFromMenuItem);
 			}
 		}
 
@@ -408,18 +408,16 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row1, 2)))
 			{
 				// Postpose menu for row1 col 2 should have items for 2 columns plus 'Another clause...'.
-				var itemPost = AssertHasMenuWithText(strip.Items,
-						ConstituentChartLogic.FTO_PostposeFromMenuItem, 3);
+				var itemPost = AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksPostposeFromMenuItem, 3);
 				// Prepose menu for row1 col 2 should have subitems for all subsequent columns plus 'Another clause...'.
-				var itemPre = AssertHasMenuWithText(strip.Items,
-						ConstituentChartLogic.FTO_PreposeFromMenuItem, ccols - 3 + 1);
+				var itemPre = AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksPreposeFromMenuItem, ccols - 3 + 1);
 				// None of the items on this context menu should be in a checked state
 				VerifyMenuItemTextAndChecked(itemPost.DropDownItems[0], m_logic.GetColumnLabel(0), false);
 				VerifyMenuItemTextAndChecked(itemPost.DropDownItems[1], m_logic.GetColumnLabel(1), false);
 				VerifyMenuItemTextAndChecked(itemPre.DropDownItems[0], m_logic.GetColumnLabel(3), false);
 				// a couple more here to check for 'Another clause...' in both Pre and Postposed menus.
-				AssertHasMenuWithText(itemPost.DropDownItems, ConstituentChartLogic.FTO_AnotherClause, 0);
-				AssertHasMenuWithText(itemPre.DropDownItems, ConstituentChartLogic.FTO_AnotherClause, 0);
+				AssertHasMenuWithText(itemPost.DropDownItems, LanguageExplorerResources.ksAdvancedDlgMenuItem, 0);
+				AssertHasMenuWithText(itemPre.DropDownItems, LanguageExplorerResources.ksAdvancedDlgMenuItem, 0);
 			}
 
 			// Test a boundary row's cell with words.
@@ -427,12 +425,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			{
 				// Prepose menu for row0 col 1 should have subitems for all subsequent columns including col2
 				// AND a checked item for 'Advanced...'.
-				var itemPre = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_PreposeFromMenuItem, ccols - 2 + 1);
-				VerifyMenuItemTextAndChecked(itemPre.DropDownItems[itemPre.DropDownItems.Count - 1],
-					ConstituentChartLogic.FTO_AnotherClause, true);
+				var itemPre = AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksPreposeFromMenuItem, ccols - 2 + 1);
+				VerifyMenuItemTextAndChecked(itemPre.DropDownItems[itemPre.DropDownItems.Count - 1], LanguageExplorerResources.ksAdvancedDlgMenuItem, true);
 
 				// Postpose menu in row0 col1 should only have 1 postposed (col0; plus 'Advanced...').
-				var itemPost = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_PostposeFromMenuItem, 2);
+				var itemPost = AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksPostposeFromMenuItem, 2);
 				VerifyMenuItemTextAndChecked(itemPost.DropDownItems[0], m_logic.GetColumnLabel(0), false);
 			}
 		}
@@ -448,28 +445,28 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_helper.MakeWordGroup(row0, ccols - 1, allParaOccurrences[2], allParaOccurrences[2]);
 
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 2)))
-				AssertHasNoMenuWithText(strip.Items, ConstituentChartLogic.FTO_MoveWordMenuItem);
+				AssertHasNoMenuWithText(strip.Items, LanguageExplorerResources.ksMoveWordMenuItem);
 
 			// Test a cell with words.
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 1)))
 			{
-				var itemMW = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_MoveWordMenuItem, 2);
-				AssertHasMenuWithText(itemMW.DropDownItems, ConstituentChartLogic.FTO_BackMenuItem, 0);
-				AssertHasMenuWithText(itemMW.DropDownItems, ConstituentChartLogic.FTO_ForwardMenuItem, 0);
+				var itemMW = AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksMoveWordMenuItem, 2);
+				AssertHasMenuWithText(itemMW.DropDownItems, LanguageExplorerResources.ksBackMenuItem, 0);
+				AssertHasMenuWithText(itemMW.DropDownItems, LanguageExplorerResources.ksForwardMenuItem, 0);
 			}
 
 			// Test cell in very first cell with words
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 0)))
 			{
-				var itemMW = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_MoveWordMenuItem, 1);
-				AssertHasMenuWithText(itemMW.DropDownItems, ConstituentChartLogic.FTO_ForwardMenuItem, 0);
+				var itemMW = AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksMoveWordMenuItem, 1);
+				AssertHasMenuWithText(itemMW.DropDownItems, LanguageExplorerResources.ksForwardMenuItem, 0);
 			}
 
 			// Test in very last cell with words
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, ccols - 1)))
 			{
-				var itemMW = AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_MoveWordMenuItem, 1);
-				AssertHasMenuWithText(itemMW.DropDownItems, ConstituentChartLogic.FTO_BackMenuItem, 0);
+				var itemMW = AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksMoveWordMenuItem, 1);
+				AssertHasMenuWithText(itemMW.DropDownItems, LanguageExplorerResources.ksBackMenuItem, 0);
 			}
 		}
 
@@ -481,7 +478,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
 			// Test a cell with words.
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 1)))
-				AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_InsertRowMenuItem, 0);
+				AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksInsertRowMenuItem, 0);
 		}
 
 		/// <summary>
@@ -515,16 +512,16 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				//		1i
 
 				// Check the moved text item and subitems
-				AssertExpectedMoveClauseSubItems(strip, 0, ConstituentChartLogic.FTO_MakeDepClauseMenuText);
+				AssertExpectedMoveClauseSubItems(strip, 0, LanguageExplorerResources.ksMakeDepClauseMenuItem);
 
 				// Similar check of speech item
-				AssertExpectedMoveClauseSubItems(strip, 1, ConstituentChartLogic.FTO_MakeSpeechClauseMenuItem);
+				AssertExpectedMoveClauseSubItems(strip, 1, LanguageExplorerResources.ksMakeSpeechClauseMenuItem);
 
 				// Similar check of song item
-				AssertExpectedMoveClauseSubItems(strip, 2, ConstituentChartLogic.FTO_MakeSongClauseMenuItem);
+				AssertExpectedMoveClauseSubItems(strip, 2, LanguageExplorerResources.ksMakeSongClauseMenuItem);
 
-				AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_RowEndsParaMenuItem, 0);
-				AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_RowEndsSentMenuItem, 0);
+				AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksRowEndsParaMenuItem, 0);
+				AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksRowEndsSentMenuItem, 0);
 			}
 		}
 
@@ -575,7 +572,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			int whereToInsert;
 			IConstChartWordGroup existingWordGroupToAppendTo;
 			var result = m_logic.FindWhereToAddWords(3, out whereToInsert, out existingWordGroupToAppendTo);
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
+			Assert.AreEqual(FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(1, whereToInsert, "should insert at end, after 1 existing wordform");
 			Assert.IsNull(existingWordGroupToAppendTo);
 		}
@@ -591,7 +588,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			int whereToInsert;
 			IConstChartWordGroup existingWordGroupToAppendTo;
 			var result = m_logic.FindWhereToAddWords(3, out whereToInsert, out existingWordGroupToAppendTo);
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
+			Assert.AreEqual(FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(2, whereToInsert, "should insert at end, after 2 existing wordforms");
 			Assert.IsNull(existingWordGroupToAppendTo);
 		}
@@ -610,7 +607,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			int whereToInsert;
 			IConstChartWordGroup existingWordGroupToAppendTo;
 			var result = m_logic.FindWhereToAddWords(0, out whereToInsert, out existingWordGroupToAppendTo);
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kMakeNewRow, result);
+			Assert.AreEqual(FindWhereToAddResult.kMakeNewRow, result);
 			Assert.AreEqual(0, whereToInsert, "should insert at start of new row");
 			Assert.IsNull(existingWordGroupToAppendTo);
 		}
@@ -626,7 +623,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			int whereToInsert;
 			IConstChartWordGroup existingWordGroupToAppendTo;
 			var result = m_logic.FindWhereToAddWords(4, out whereToInsert, out existingWordGroupToAppendTo);
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kMakeNewRow, result);
+			Assert.AreEqual(FindWhereToAddResult.kMakeNewRow, result);
 			Assert.AreEqual(0, whereToInsert, "should insert at start of new row");
 			Assert.IsNull(existingWordGroupToAppendTo);
 		}
@@ -642,7 +639,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			int whereToInsert;
 			IConstChartWordGroup existingWordGroupToAppendTo;
 			var result = m_logic.FindWhereToAddWords(5, out whereToInsert, out existingWordGroupToAppendTo);
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
+			Assert.AreEqual(FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(row0.CellsOS.Count, whereToInsert, "should insert at end of row");
 			Assert.IsNull(existingWordGroupToAppendTo);
 		}
@@ -658,7 +655,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			int whereToInsert;
 			IConstChartWordGroup existingWordGroupToAppendTo;
 			var result = m_logic.FindWhereToAddWords(5, out whereToInsert, out existingWordGroupToAppendTo);
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
+			Assert.AreEqual(FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(row0.CellsOS.Count, whereToInsert, "should insert at end of row");
 			Assert.IsNull(existingWordGroupToAppendTo);
 		}
@@ -674,7 +671,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			int whereToInsert;
 			IConstChartWordGroup existingWordGroupToAppendTo;
 			var result = m_logic.FindWhereToAddWords(0, out whereToInsert, out existingWordGroupToAppendTo);
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
+			Assert.AreEqual(FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(0, whereToInsert, "should insert at start of row");
 			Assert.IsNull(existingWordGroupToAppendTo);
 		}
@@ -903,32 +900,32 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 0)))
 			{
-				AssertMergeItem(strip, ConstituentChartLogic.FTO_MergeBeforeMenuItem, false, "nothing left of col zero");
-				AssertMergeItem(strip, ConstituentChartLogic.FTO_MergeAfterMenuItem, false, "col zero has blocking cell right");
+				AssertMergeItem(strip, LanguageExplorerResources.ksMergeBeforeMenuItem, false, "nothing left of col zero");
+				AssertMergeItem(strip, LanguageExplorerResources.ksMergeAfterMenuItem, false, "col zero has blocking cell right");
 			}
 
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 1)))
 			{
-				AssertMergeItem(strip, ConstituentChartLogic.FTO_MergeBeforeMenuItem, false, "col 1 is blocked left");
-				AssertMergeItem(strip, ConstituentChartLogic.FTO_MergeAfterMenuItem, true, "col 1 should allow merge right");
+				AssertMergeItem(strip, LanguageExplorerResources.ksMergeBeforeMenuItem, false, "col 1 is blocked left");
+				AssertMergeItem(strip, LanguageExplorerResources.ksMergeAfterMenuItem, true, "col 1 should allow merge right");
 			}
 
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 2)))
 			{
-				AssertMergeItem(strip, ConstituentChartLogic.FTO_MergeBeforeMenuItem, false, "col 2 is empty, can't merge left");
-				AssertMergeItem(strip, ConstituentChartLogic.FTO_MergeAfterMenuItem, false, "col 2 is empty, can't merge right");
+				AssertMergeItem(strip, LanguageExplorerResources.ksMergeBeforeMenuItem, false, "col 2 is empty, can't merge left");
+				AssertMergeItem(strip, LanguageExplorerResources.ksMergeAfterMenuItem, false, "col 2 is empty, can't merge right");
 			}
 
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 3)))
 			{
-				AssertMergeItem(strip, ConstituentChartLogic.FTO_MergeBeforeMenuItem, true, "col 3 should allow merge left");
-				AssertMergeItem(strip, ConstituentChartLogic.FTO_MergeAfterMenuItem, true, "col 3 should allow merge right");
+				AssertMergeItem(strip, LanguageExplorerResources.ksMergeBeforeMenuItem, true, "col 3 should allow merge left");
+				AssertMergeItem(strip, LanguageExplorerResources.ksMergeAfterMenuItem, true, "col 3 should allow merge right");
 			}
 
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 5)))
 			{
-				AssertMergeItem(strip, ConstituentChartLogic.FTO_MergeBeforeMenuItem, true, "col 5 should allow merge left");
-				AssertMergeItem(strip, ConstituentChartLogic.FTO_MergeAfterMenuItem, false, "nothing right of last col");
+				AssertMergeItem(strip, LanguageExplorerResources.ksMergeBeforeMenuItem, true, "col 5 should allow merge left");
+				AssertMergeItem(strip, LanguageExplorerResources.ksMergeAfterMenuItem, false, "nothing right of last col");
 			}
 		}
 
@@ -966,12 +963,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 				// Check the moved text item and subitems
 				var itemMT = strip.Items[1] as ToolStripMenuItem;
-				Assert.AreEqual(ConstituentChartLogic.FTO_MovedTextMenuText, itemMT.Text);
+				Assert.AreEqual(LanguageExplorerResources.ksMovedFromMenuItem, itemMT.Text);
 				Assert.AreEqual(m_allColumns.Count - 1, itemMT.DropDownItems.Count);
 				// can't move from itself
 				Assert.AreEqual(m_logic.GetColumnLabel(1), itemMT.DropDownItems[0].Text, "first label for col0 menu should be col1");
 				Assert.AreEqual(m_logic.GetColumnLabel(2), itemMT.DropDownItems[1].Text, "second label for col0 menu should different");
-				Assert.AreEqual(ConstituentChartLogic.FTO_InsertAsClauseMenuText, (strip.Items[0] as ToolStripMenuItem).Text);
+				Assert.AreEqual(LanguageExplorerResources.ksMoveHereInNewClause, (strip.Items[0] as ToolStripMenuItem).Text);
 			}
 		}
 

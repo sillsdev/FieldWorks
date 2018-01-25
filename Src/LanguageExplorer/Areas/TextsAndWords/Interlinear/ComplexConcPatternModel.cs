@@ -10,7 +10,6 @@ using System.Linq;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.Collections;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Machine.Annotations;
@@ -21,7 +20,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
 	public class ComplexConcPatternModel
 	{
-		private readonly ComplexConcPatternNode m_root;
 		private readonly ComplexConcPatternSda m_sda;
 		private readonly SpanFactory<ShapeNode> m_spanFactory;
 		private Matcher<ComplexConcParagraphData, ShapeNode> m_matcher;
@@ -36,25 +34,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public ComplexConcPatternModel(LcmCache cache, ComplexConcPatternNode root)
 		{
 			m_cache = cache;
-			m_root = root;
+			Root = root;
 			m_spanFactory = new ShapeSpanFactory();
-			m_sda = new ComplexConcPatternSda(cache.GetManagedSilDataAccess(), m_root);
+			m_sda = new ComplexConcPatternSda(cache.GetManagedSilDataAccess(), Root);
 		}
 
-		public ISilDataAccessManaged DataAccess
-		{
-			get { return m_sda; }
-		}
+		public ISilDataAccessManaged DataAccess => m_sda;
 
-		public ComplexConcPatternNode Root
-		{
-			get { return m_root; }
-		}
+		public ComplexConcPatternNode Root { get; }
 
-		public bool IsPatternEmpty
-		{
-			get { return m_root.IsLeaf || (m_root.Children.Count == 1 && m_root.Children[0] is ComplexConcWordBdryNode); }
-		}
+		public bool IsPatternEmpty => Root.IsLeaf || (Root.Children.Count == 1 && Root.Children[0] is ComplexConcWordBdryNode);
 
 		public ComplexConcPatternNode GetNode(int hvo)
 		{
@@ -75,14 +64,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						new FeatureSymbol("segBdry", "Segment"),
 						new FeatureSymbol("wordBdry", "Word"))
 				};
-			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			foreach (var ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
-				m_featSys.Add(new StringFeature(string.Format("entry-{0}", ws.Handle)) {Description = string.Format("Entry-{0}", ws.Abbreviation)});
-				m_featSys.Add(new StringFeature(string.Format("form-{0}", ws.Handle)) {Description = string.Format("Form-{0}", ws.Abbreviation)});
+				m_featSys.Add(new StringFeature($"entry-{ws.Handle}")
+				{
+					Description = $"Entry-{ws.Abbreviation}"
+				});
+				m_featSys.Add(new StringFeature($"form-{ws.Handle}")
+				{
+					Description = $"Form-{ws.Abbreviation}"
+				});
 			}
 
-			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
-				m_featSys.Add(new StringFeature(string.Format("gloss-{0}", ws.Handle)) {Description = string.Format("Gloss-{0}", ws.Abbreviation)});
+			foreach (var ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+			{
+				m_featSys.Add(new StringFeature($"gloss-{ws.Handle}")
+				{
+					Description = $"Gloss-{ws.Abbreviation}"
+				});
+			}
 
 			m_featSys.Add(new SymbolicFeature("cat", m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().AllInstances()
 				.Select(pos => new FeatureSymbol(pos.Hvo.ToString(CultureInfo.InvariantCulture), pos.Abbreviation.BestAnalysisAlternative.Text)))
@@ -97,7 +97,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				});
 
 			m_featSys.Add(new ComplexFeature("infl") {Description = "Infl", DefaultValue = FeatureStruct.New().Value});
-			foreach (IFsFeatDefn feature in m_cache.LangProject.MsFeatureSystemOA.FeaturesOC)
+			foreach (var feature in m_cache.LangProject.MsFeatureSystemOA.FeaturesOC)
 			{
 				var complexFeat = feature as IFsComplexFeature;
 				if (complexFeat != null)
@@ -118,51 +118,59 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 
 			var pattern = new Pattern<ComplexConcParagraphData, ShapeNode>();
-			pattern.Children.Add(m_root.GeneratePattern(m_featSys));
+			pattern.Children.Add(Root.GeneratePattern(m_featSys));
 			m_matcher = new Matcher<ComplexConcParagraphData, ShapeNode>(m_spanFactory, pattern, new MatcherSettings<ShapeNode> {UseDefaults = true});
 		}
 
 		public IEnumerable<IParaFragment> Search(IStText text)
 		{
 			if (IsPatternEmpty)
+			{
 				return Enumerable.Empty<IParaFragment>();
+			}
 
 			var matches = new List<IParaFragment>();
-			foreach (IStTxtPara para in text.ParagraphsOS.OfType<IStTxtPara>())
+			foreach (var para in text.ParagraphsOS.OfType<IStTxtPara>())
 			{
 				IParaFragment lastFragment = null;
 				var data = new ComplexConcParagraphData(m_spanFactory, m_featSys, para);
-				Match<ComplexConcParagraphData, ShapeNode> match = m_matcher.Match(data);
+				var match = m_matcher.Match(data);
 				while (match.Success)
 				{
-					if (match.Span.Start == match.Span.End
-						&& ((FeatureSymbol) match.Span.Start.Annotation.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
+					if (match.Span.Start == match.Span.End && ((FeatureSymbol) match.Span.Start.Annotation.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
 					{
 						match = match.NextMatch();
 						continue;
 					}
 
-					ShapeNode startNode = match.Span.Start;
+					var startNode = match.Span.Start;
 					if (((FeatureSymbol) startNode.Annotation.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
+					{
 						startNode = startNode.Next;
+					}
 
-					Annotation<ShapeNode> startAnn = startNode.Annotation;
+					var startAnn = startNode.Annotation;
 					if (((FeatureSymbol) startAnn.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "morph")
+					{
 						startAnn = startAnn.Parent;
+					}
 
-					var startAnalysis = (Tuple<IAnalysis, int, int>) startAnn.Data;
-
-					ShapeNode endNode = match.Span.End;
+					var startAnalysis = (Tuple<IAnalysis, int, int>)startAnn.Data;
+					var endNode = match.Span.End;
 					if (((FeatureSymbol) endNode.Annotation.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
+					{
 						endNode = endNode.Prev;
+					}
 
-					Annotation<ShapeNode> endAnn = endNode.Annotation;
+					var endAnn = endNode.Annotation;
 					if (((FeatureSymbol) endAnn.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "morph")
+					{
 						endAnn = endAnn.Parent;
+					}
 
 					Debug.Assert(startNode.CompareTo(endNode) <= 0);
 
-					var endAnalysis = (Tuple<IAnalysis, int, int>) endAnn.Data;
+					var endAnalysis = (Tuple<IAnalysis, int, int>)endAnn.Data;
 
 					if (lastFragment != null && lastFragment.GetMyBeginOffsetInPara() == startAnalysis.Item2 && lastFragment.GetMyEndOffsetInPara() == endAnalysis.Item3)
 					{
@@ -170,7 +178,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						continue;
 					}
 
-					ISegment seg = para.SegmentsOS.Last(s => s.BeginOffset <= startAnalysis.Item2);
+					var seg = para.SegmentsOS.Last(s => s.BeginOffset <= startAnalysis.Item2);
 					lastFragment = new ParaFragment(seg, startAnalysis.Item2, endAnalysis.Item3, startAnalysis.Item1);
 					matches.Add(lastFragment);
 
@@ -181,12 +189,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return matches;
 		}
 
-
 		private static Match<ComplexConcParagraphData, ShapeNode> GetNextMatch(Match<ComplexConcParagraphData, ShapeNode> match)
 		{
-			ShapeNode nextNode = match.Span.GetEnd(match.Matcher.Direction);
+			var nextNode = match.Span.GetEnd(match.Matcher.Direction);
 			if (((FeatureSymbol) nextNode.Annotation.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID != "bdry")
+			{
 				nextNode = nextNode.GetNext(match.Matcher.Direction);
+			}
 			return match.Matcher.Match(match.Input, nextNode);
 		}
 	}

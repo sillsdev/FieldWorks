@@ -55,20 +55,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// record list has no current object.
 		protected bool m_fSuppressAutoCreate;
 
-		/// <summary>
-		/// Numbers identifying the main tabs in the interlinear text.
-		/// </summary>
-		public enum TabPageSelection
-		{
-			Info = 0,
-			RawText = 1,
-			Gloss = 2,
-			Interlinearizer = 3,
-			TaggingView = 4,
-			PrintView = 5,
-			ConstituentChart = 6
-		}
-
 		// These constants allow us to use a switch statement in SaveBookMark()
 		const int ktpsInfo = (int)TabPageSelection.Info;
 		const int ktpsRawText = (int)TabPageSelection.RawText;
@@ -105,11 +91,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Something sometimes insists on giving the tab control focus when switching tabs.
 		/// This defeats ctrl-tab to move between tabs.
 		/// </summary>
-		void m_tabCtrl_GotFocus(object sender, EventArgs e)
+		private void m_tabCtrl_GotFocus(object sender, EventArgs e)
 		{
 			if (m_tabCtrl.SelectedTab == null)
+			{
 				return;
-			var child = (from Control c in m_tabCtrl.SelectedTab.Controls select c).FirstOrDefault();
+			}
+			var child = m_tabCtrl.SelectedTab.Controls.Cast<Control>().Select(c => c).FirstOrDefault();
 			child?.Focus();
 		}
 
@@ -145,19 +133,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected int GetWidth(string text, Font fnt)
 		{
 			int width;
-			using (Graphics g = Graphics.FromHwnd(Handle))
+			using (var g = Graphics.FromHwnd(Handle))
 			{
 				width = (int)g.MeasureString(text, fnt).Width + 1;
 			}
 			return width;
 		}
 
-		void SetStyleSheetFor(IStyleSheet site)
+		private void SetStyleSheetFor(IStyleSheet site)
 		{
 			if (m_styleSheet == null)
+			{
 				SetupStyleSheet();
+			}
+
 			if (site != null)
+			{
 				site.StyleSheet = m_styleSheet;
+			}
 		}
 
 		private IInterlinearTabControl CurrentInterlinearTabControl { get; set; }
@@ -174,7 +167,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (site is ISetupLineChoices)
 			{
 				var interlinearView = (ISetupLineChoices)site;
-				string lineChoicesKey = "InterlinConfig_" + (interlinearView.ForEditing ? "Edit" : "Doc") + "_" + InterlinearTab;
+				var lineChoicesKey = $"InterlinConfig_{(interlinearView.ForEditing ? "Edit" : "Doc")}_{InterlinearTab}";
 				var mode = GetLineMode();
 				interlinearView.SetupLineChoices(lineChoicesKey, mode);
 			}
@@ -190,17 +183,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		internal InterlinLineChoices.InterlinMode GetLineMode()
+		internal InterlinMode GetLineMode()
 		{
 			if (m_tabCtrl.SelectedIndex == (int)TabPageSelection.Gloss)
 			{
 				return PropertyTable.GetValue(InterlinDocForAnalysis.ksPropertyAddWordsToLexicon, false) ?
-					InterlinLineChoices.InterlinMode.GlossAddWordsToLexicon : InterlinLineChoices.InterlinMode.Gloss;
+					InterlinMode.GlossAddWordsToLexicon : InterlinMode.Gloss;
 			}
-			if (m_tabCtrl.SelectedIndex == (int)TabPageSelection.TaggingView ||
-				m_tabCtrl.SelectedIndex == (int)TabPageSelection.ConstituentChart)
-				return InterlinLineChoices.InterlinMode.Gloss;
-			return InterlinLineChoices.InterlinMode.Analyze;
+
+			if (m_tabCtrl.SelectedIndex == (int) TabPageSelection.TaggingView ||
+			    m_tabCtrl.SelectedIndex == (int) TabPageSelection.ConstituentChart)
+			{
+				return InterlinMode.Gloss;
+			}
+			return InterlinMode.Analyze;
 		}
 
 		protected override void OnHandleCreated(EventArgs e)
@@ -218,7 +214,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// re-select our annotation if we're in the raw text pane, since
 			// initialization subsequent to ShowRecord() loses our selection.
 			if (m_tabCtrl.SelectedIndex == ktpsRawText)
+			{
 				SelectAnnotation();
+			}
 		}
 
 		/// <summary>
@@ -234,7 +232,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			catch (ApplicationException)
 			{
-				//m_informationBar = new ImageHolder(); //something to show at design time
 			}
 		}
 
@@ -245,7 +242,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var sAltTitle = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "altTitleId");
 				if (!string.IsNullOrEmpty(sAltTitle))
 				{
-					string sTitle = StringTable.Table.GetString(sAltTitle, "AlternativeTitles");
+					var sTitle = StringTable.Table.GetString(sAltTitle, "AlternativeTitles");
 					if (!string.IsNullOrEmpty(sTitle))
 					{
 						((IPaneBar)m_informationBar).Text = sTitle;
@@ -281,7 +278,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			CheckDisposed();
 
 			if (m_tabCtrl.SelectedIndex == ktpsInfo || CurrentInterlinearTabControl == null)
+			{
 				return; // nothing to save...for now, don't overwrite existing one.
+			}
 
 			if (RootStText == null)
 			{
@@ -300,7 +299,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					break;
 				case ktpsCChart:
 					if (m_constChartPane == null) // Have added this to designer
+					{
 						return; // e.g., right after creating a new database, when previous one was open in chart pane.
+					}
 					// Call CChart.GetUnchartedWordForBookmark() by reflection to see where the chart
 					// thinks the bookmark should be.
 					var type = m_constChartPane.GetType();
@@ -310,12 +311,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					break;
 				case ktpsTagging:
 					if (m_taggingPane != null)
+					{
 						curAnalysis = m_taggingPane.OccurrenceContainingSelection();
+					}
 					break;
 
 				case ktpsPrint:
 					if (m_printViewPane != null)
+					{
 						curAnalysis = m_printViewPane.OccurrenceContainingSelection();
+					}
 					break;
 
 				case ktpsRawText:
@@ -323,32 +328,38 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					if (m_rtPane != null)
 					{
 						if (SaveBookmarkFromRootBox(m_rtPane.RootBox))
+						{
 							return;
+						}
 					}
 					break;
 				default:
 					Debug.Fail("Unhandled tab index.");
 					break;
 			}
+
 			if (curAnalysis == null || !curAnalysis.IsValid)
+			{
 				// This result means the Chart doesn't want to save a bookmark,
 				// or that something else went wrong (e.g., we couldn't make a bookmark because we just deleted the text).
 				return;
+			}
 
-			if (!fSaved)
+			if (fSaved)
 			{
-				InterAreaBookmark mark;
-				if(m_bookmarks.TryGetValue(new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid), out mark))
-				{
-					//We only want to persist the save if we are in the interlinear edit, not the concordance view
-					mark.Save(curAnalysis, MyRecordList.Id.Equals(TextAndWordsArea.InterlinearTexts), IndexOfTextRecord);
-				}
-				else
-				{
-					mark = new InterAreaBookmark(this, Cache, PropertyTable);
-					mark.Restore(IndexOfTextRecord);
-					m_bookmarks.Add(new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid), mark);
-				}
+				return;
+			}
+			InterAreaBookmark mark;
+			if(m_bookmarks.TryGetValue(new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid), out mark))
+			{
+				//We only want to persist the save if we are in the interlinear edit, not the concordance view
+				mark.Save(curAnalysis, MyRecordList.Id.Equals(TextAndWordsArea.InterlinearTexts), IndexOfTextRecord);
+			}
+			else
+			{
+				mark = new InterAreaBookmark(this, Cache, PropertyTable);
+				mark.Restore(IndexOfTextRecord);
+				m_bookmarks.Add(new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid), mark);
 			}
 		}
 
@@ -365,18 +376,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (m_rtPane != null) // Not the one, but the other? Odd.
 				{
 					if (SaveBookmarkFromRootBox(m_rtPane.RootBox))
+					{
 						return true;
+					}
 				}
 			}
 			else
+			{
 				curAnalysis = pane.OccurrenceContainingSelection();
+			}
 			return false;
 		}
 
 		private bool SaveBookmarkFromRootBox(IVwRootBox rb)
 		{
-			if (rb == null || rb.Selection == null)
+			if (rb?.Selection == null)
+			{
 				return false;
+			}
 			// There may be pictures in the text, and the selection may be on a picture or its
 			// caption.  Therefore, getting the TextSelInfo is not enough.  See LT-7906.
 			// Unfortunately, the bookmark for a picture or its caption can only put the user
@@ -390,7 +407,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var sliAnchor = helper.GetLevelInfo(SelectionHelper.SelLimitType.Anchor);
 			var sliEnd = helper.GetLevelInfo(SelectionHelper.SelLimitType.End);
 			if (sliAnchor.Length != sliEnd.Length)
+			{
 				ichEnd = ichAnchor;
+			}
 			for (var i = 0; i < sliAnchor.Length; ++i)
 			{
 				if (sliAnchor[i].tag == StTextTags.kflidParagraphs)
@@ -402,7 +421,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			for (var i = 0; i < sliEnd.Length; ++i)
 			{
 				if (sliEnd[i].tag != StTextTags.kflidParagraphs)
+				{
 					continue;
+				}
 				hvoParaEnd = sliEnd[i].hvo;
 				break;
 			}
@@ -413,11 +434,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					iPara = para.IndexInOwner;
 					if (hvoParaAnchor != hvoParaEnd)
+					{
 						ichEnd = ichAnchor;
+					}
+
 					if (ichAnchor == -1)
+					{
 						ichAnchor = 0;
+					}
+
 					if (ichEnd == -1)
+					{
 						ichEnd = 0;
+					}
 					if (iPara == ((IStText)para.Owner).ParagraphsOS.Count - 1 && ichAnchor == ichEnd && ichAnchor == para.Contents.Length)
 					{
 						// Special case, IP at the very end, we probably just typed it or pasted it, select the FIRST word of the text.
@@ -445,7 +474,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
 			if (m_styleSheet == null)
+			{
 				return;		// cannot display properly without style sheet, so don't try.
+			}
 
 			// LT-10995: the TitleContentsPane m_tcPane and the TabControl m_tabCtrl used to be
 			// docked (definition in InterlinMaster.resx). However, this led to problems if the
@@ -514,12 +545,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			get
 			{
 				CheckDisposed();
-				return RootStText != null ? RootStText.Hvo : 0;
+				return RootStText?.Hvo ?? 0;
 			}
 		}
 
 		/// <remarks>virtual for tests</remarks>
-		internal protected virtual IStText RootStText { get; private set; }
+		protected internal virtual IStText RootStText { get; private set; }
 
 		internal int TextListFlid
 		{
@@ -565,7 +596,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var currentTabControl = FindControls<IInterlinearTabControl>(m_tabCtrl.SelectedTab.Controls).FirstOrDefault();
 				SetCurrentInterlinearTabControl(currentTabControl as IInterlinearTabControl);
 				if (CurrentInterlinearTabControl == null)
+				{
 					return; // nothing to show.
+				}
 				switch (m_tabCtrl.SelectedIndex)
 				{
 					case ktpsRawText:
@@ -643,7 +676,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var constituentChart = new ConstituentChart(Cache);
 			m_constChartPane = constituentChart;
-			(m_constChartPane as IFlexComponent).InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+			((IFlexComponent)m_constChartPane).InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			constituentChart.FileMenu = m_printViewPane.FileMenu;
 			m_constChartPane.BackColor = SystemColors.Window;
 			m_constChartPane.Name = "m_constChartPane";
@@ -666,10 +699,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			foreach (Control c in controls)
 			{
 				if (c is TInterfaceMatch)
+				{
 					yield return c;
+				}
 
 				foreach (var c2 in FindControls<TInterfaceMatch>(c.Controls))
+				{
 					yield return c2;
+				}
 			}
 		}
 
@@ -678,9 +715,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// if we're in the context of a PaneBar, refresh the bar so the menu items will
 			// reflect the current tab.
 			var paneBarAsControl = MainPaneBar as UserControl;
-			if (paneBarAsControl == null) return;
-			var parentAsPaneBarContainer = paneBarAsControl.Parent as IPaneBarContainer;
-			if (parentAsPaneBarContainer == null) return;
+			var parentAsPaneBarContainer = paneBarAsControl?.Parent as IPaneBarContainer;
+			if (parentAsPaneBarContainer == null)
+			{
+				return;
+			}
 #if RANDYTODO
 			// TODO: This is the original code.
 			parentAsPaneBarContainer.RefreshPaneBar();
@@ -725,7 +764,9 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		public static void LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(IStText stText, bool forceParse)
 		{
 			if (stText == null)
+			{
 				return;
+			}
 
 			using (var pp = new ParagraphParser(stText.Cache))
 			{
@@ -785,7 +826,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			}
 			if (m_bookmarks != null && m_bookmarks.Count > 0)
 			{
-				foreach (InterAreaBookmark bookmark in m_bookmarks.Values)
+				foreach (var bookmark in m_bookmarks.Values)
 				{
 					bookmark.Init(this, Cache, PropertyTable);
 				}
@@ -827,17 +868,16 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		{
 			CheckDisposed();
 			SaveBookMark();
-			if (!SaveWorkInProgress()) return false;
-			return base.PrepareToGoAway();
+			return SaveWorkInProgress() && base.PrepareToGoAway();
 		}
 
 		private bool SaveWorkInProgress()
 		{
-			if (m_idcAnalyze != null && m_idcAnalyze.Visible &&  !m_idcAnalyze.PrepareToGoAway())
+			if (m_idcAnalyze != null && m_idcAnalyze.Visible && !m_idcAnalyze.PrepareToGoAway())
+			{
 				return false;
-			if (m_idcGloss != null && m_idcGloss.Visible && !m_idcGloss.PrepareToGoAway())
-				return false;
-			return true;
+			}
+			return m_idcGloss == null || !m_idcGloss.Visible || m_idcGloss.PrepareToGoAway();
 		}
 
 		public void PrepareToRefresh()
@@ -846,7 +886,9 @@ private void ReloadPaneBar(IPaneBar paneBar)
 
 			// flag that a refresh was triggered (unless we don't have a current record..see var comment).
 			if (RootStTextHvo != 0)
+			{
 				m_fRefreshOccurred = true;
+			}
 		}
 
 		protected override void SetupDataContext()
@@ -862,7 +904,9 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		private void InitializeInterlinearTabControl(IInterlinearTabControl site)
 		{
 			if (site == null)
+			{
 				return;
+			}
 
 			SetStyleSheetFor(site as IStyleSheet);
 			site.Cache = Cache;
@@ -886,7 +930,9 @@ private void ReloadPaneBar(IPaneBar paneBar)
 				if (MyRecordList.CurrentObjectHvo != 0 && Cache.ServiceLocator.IsValidObjectId(MyRecordList.CurrentObjectHvo))
 				{
 					if (MyRecordList.CurrentObject.ClassID == StTextTags.kClassId)
+					{
 						return MyRecordList.CurrentIndex;
+					}
 				}
 
 				return -1;
@@ -899,16 +945,13 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			{
 				CheckDisposed();
 
-				if (MyRecordList.CurrentObject != null)
+				var rootObj = MyRecordList.CurrentObject;
+				if (rootObj?.ClassID != TextTags.kClassId)
 				{
-					var rootObj = MyRecordList.CurrentObject;
-					if (rootObj.ClassID == TextTags.kClassId)
-					{
-						var text = rootObj as IText;
-						return text.Name.AnalysisDefaultWritingSystem.Text;
-					}
+					return string.Empty;
 				}
-				return string.Empty;
+				var text = rootObj as IText;
+				return text.Name.AnalysisDefaultWritingSystem.Text;
 			}
 		}
 
@@ -928,18 +971,18 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// <summary>
 		/// This is an attempt to improve scrolling by mouse wheel, by passing on focus when the interlin master gets it.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnGotFocus(EventArgs e)
 		{
 			if (m_tabCtrl.SelectedTab != null && m_tabCtrl.SelectedTab.Controls[0].CanFocus)
+			{
 				m_tabCtrl.SelectedTab.Controls[0].Focus();
+			}
 		}
 
 		/// <summary>
 		/// Save any intermediate analysis information on validation requests
 		/// note: this is triggered before a Send/Receive operation
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnValidating(System.ComponentModel.CancelEventArgs e)
 		{
 			base.OnValidating(e);
@@ -951,7 +994,9 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			SaveWorkInProgress();
 			base.ShowRecord();
 			if (MyRecordList.SuspendLoadingRecordUntilOnJumpToRecord)
+			{
 				return;
+			}
 			//This is our very first time trying to show a text, if possible we would like to show the stored text.
 			if (m_bookmarks == null)
 			{
@@ -1041,8 +1086,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 				}
 			}
 
-			if ((RootStText == null || RootStText.Hvo != hvoRoot) &&
-				Cache.ServiceLocator.IsValidObjectId(hvoRoot))
+			if ((RootStText == null || RootStText.Hvo != hvoRoot) && Cache.ServiceLocator.IsValidObjectId(hvoRoot))
 			{
 				SwitchText(hvoRoot); // sets RootStText
 			}
@@ -1051,13 +1095,11 @@ private void ReloadPaneBar(IPaneBar paneBar)
 				SelectAnnotation(); // select an annotation in the current text.
 			}
 
-			// This takes a lot of time, and the view is never visible by now, and it gets done
-			// again when made visible! So don't do it!
-			//m_idcPane.SetRoot(hvoRoot);
-
 			// If we're showing the raw text pane make sure it has a selection.
 			if (Controls.IndexOf(m_rtPane) >= 0 && m_rtPane.RootBox.Selection == null)
+			{
 				m_rtPane.RootBox.MakeSimpleSel(true, false, false, true);
+			}
 
 			UpdateContextHistory();
 			m_fRefreshOccurred = false;	// reset our flag that a refresh occurred.
@@ -1065,49 +1107,51 @@ private void ReloadPaneBar(IPaneBar paneBar)
 
 		private int SetConcordanceBookmarkAndReturnRoot(int hvoRoot)
 		{
-			if (!MyRecordList.Id.Equals(TextAndWordsArea.InterlinearTexts))
+			if (MyRecordList.Id.Equals(TextAndWordsArea.InterlinearTexts))
 			{
-				var occurrenceFromHvo = (MyRecordList).OccurrenceFromHvo(MyRecordList.CurrentObjectHvo);
-				var point = occurrenceFromHvo?.BestOccurrence;
-				if (point != null && point.IsValid)
-				{
-					var para = point.Segment.Paragraph;
-					hvoRoot = para.Owner.Hvo;
-				}
-				ICmObject text;
-				Cache.ServiceLocator.ObjectRepository.TryGetObject(hvoRoot, out text);
-				if (!m_fRefreshOccurred && m_bookmarks != null && text != null)
-				{
-					InterAreaBookmark mark;
-					if (!m_bookmarks.TryGetValue(new Tuple<string, Guid>(MyRecordList.Id, text.Guid), out mark))
-					{
-						mark = new InterAreaBookmark(this, Cache, PropertyTable);
-						m_bookmarks.Add(new Tuple<string, Guid>(MyRecordList.Id, text.Guid), mark);
-					}
-
-					mark.Save(point, false, IndexOfTextRecord);
-				}
+				return hvoRoot;
 			}
+			var occurrenceFromHvo = (MyRecordList).OccurrenceFromHvo(MyRecordList.CurrentObjectHvo);
+			var point = occurrenceFromHvo?.BestOccurrence;
+			if (point != null && point.IsValid)
+			{
+				var para = point.Segment.Paragraph;
+				hvoRoot = para.Owner.Hvo;
+			}
+			ICmObject text;
+			Cache.ServiceLocator.ObjectRepository.TryGetObject(hvoRoot, out text);
+			if (m_fRefreshOccurred || m_bookmarks == null || text == null)
+			{
+				return hvoRoot;
+			}
+			InterAreaBookmark mark;
+			if (!m_bookmarks.TryGetValue(new Tuple<string, Guid>(MyRecordList.Id, text.Guid), out mark))
+			{
+				mark = new InterAreaBookmark(this, Cache, PropertyTable);
+				m_bookmarks.Add(new Tuple<string, Guid>(MyRecordList.Id, text.Guid), mark);
+			}
+
+			mark.Save(point, false, IndexOfTextRecord);
 			return hvoRoot;
 		}
 
 		/// <summary>
 		/// Restore the bookmark, or create a new one, but only if we are in the correct area
 		/// </summary>
-		/// <param name="stText"></param>
 		private void CreateOrRestoreBookmark(IStText stText)
 		{
-			if (stText != null)
+			if (stText == null)
 			{
-				InterAreaBookmark mark;
-				if (m_bookmarks.TryGetValue(new Tuple<string, Guid>(MyRecordList.Id, stText.Guid), out mark))
-				{
-					mark.Restore(IndexOfTextRecord);
-				}
-				else
-				{
-					m_bookmarks.Add(new Tuple<string, Guid>(MyRecordList.Id, stText.Guid), new InterAreaBookmark(this, Cache, PropertyTable));
-				}
+				return;
+			}
+			InterAreaBookmark mark;
+			if (m_bookmarks.TryGetValue(new Tuple<string, Guid>(MyRecordList.Id, stText.Guid), out mark))
+			{
+				mark.Restore(IndexOfTextRecord);
+			}
+			else
+			{
+				m_bookmarks.Add(new Tuple<string, Guid>(MyRecordList.Id, stText.Guid), new InterAreaBookmark(this, Cache, PropertyTable));
 			}
 		}
 
@@ -1127,7 +1171,9 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			// pane, and if ShowTabView has not already cleared the current pane's knowledge of the deleted text,
 			// we can get a crash (e.g., second stack in LT-12401).
 			if (m_tcPane != null)
+			{
 				SetupInterlinearTabControlForStText(m_tcPane);
+			}
 		}
 
 		// If the record list's object is an annotation, select the corresponding thing in whatever pane
@@ -1135,7 +1181,9 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		private void SelectAnnotation()
 		{
 			if (MyRecordList.CurrentObjectHvo == 0 || MyRecordList.SuspendLoadingRecordUntilOnJumpToRecord)
+			{
 				return;
+			}
 			// Use a bookmark, if we've set one.
 			if (RootStText != null && m_bookmarks.ContainsKey(new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid)) &&
 			    m_bookmarks[new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid)].IndexOfParagraph >= 0)
@@ -1152,8 +1200,7 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// <returns></returns>
 		internal bool InterlinearTabPageIsSelected()
 		{
-			return m_tabCtrl.SelectedIndex == ktpsAnalyze ||
-					m_tabCtrl.SelectedIndex == ktpsGloss;
+			return m_tabCtrl.SelectedIndex == ktpsAnalyze || m_tabCtrl.SelectedIndex == ktpsGloss;
 		}
 
 		#region free translation stuff
@@ -1193,9 +1240,8 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		{
 			CheckDisposed();
 
-			IApp app = PropertyTable.GetValue<IApp>("App");
-			if (app != null)
-				app.ShowFindReplaceDialog(false, m_rtPane);
+			var app = PropertyTable.GetValue<IApp>("App");
+			app?.ShowFindReplaceDialog(false, m_rtPane);
 		}
 
 #if RANDYTODO
@@ -1212,9 +1258,8 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		{
 			CheckDisposed();
 
-			IApp app = PropertyTable.GetValue<IApp>("App");
-			if (app != null)
-				app.ShowFindReplaceDialog(true, m_rtPane);
+			var app = PropertyTable.GetValue<IApp>("App");
+			app?.ShowFindReplaceDialog(true, m_rtPane);
 		}
 
 #if RANDYTODO
@@ -1287,8 +1332,10 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			set
 			{
 				PropertyTable.SetProperty("InterlinearTab", value.ToString(), true, false);
-				if (m_tabCtrl.SelectedIndex != (int)InterlinearTab)
+				if (m_tabCtrl.SelectedIndex != (int) InterlinearTab)
+				{
 					ShowTabView();
+				}
 			}
 		}
 
@@ -1318,7 +1365,9 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		public bool OnConfigureInterlinear(object argument)
 		{
 			if (CurrentInterlinearTabControl != null && CurrentInterlinearTabControl is InterlinDocRootSiteBase)
+			{
 				(CurrentInterlinearTabControl as InterlinDocRootSiteBase).OnConfigureInterlinear(argument);
+			}
 
 			return true; // We handled this
 		}
@@ -1349,20 +1398,21 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		{
 			// are we the dominant pane? The thinking here is that if our record list is controlling
 			// the record tree bar, then we are.
-			if (MyRecordList.IsControllingTheRecordTreeBar)
+			if (!MyRecordList.IsControllingTheRecordTreeBar)
 			{
-				//add our current state to the history system
-				var guid = Guid.Empty;
-				if (MyRecordList.CurrentObject != null)
-				{
-					guid = MyRecordList.CurrentObject.Guid;
-				}
-				// Not sure what will happen with guid == Guid.Empty on the link...
-				var link = new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), guid, InterlinearTab.ToString());
-				link.LinkProperties.Add(new LinkProperty("InterlinearTab", InterlinearTab.ToString()));
-				MyRecordList.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
-				PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(link);
+				return;
 			}
+			//add our current state to the history system
+			var guid = Guid.Empty;
+			if (MyRecordList.CurrentObject != null)
+			{
+				guid = MyRecordList.CurrentObject.Guid;
+			}
+			// Not sure what will happen with guid == Guid.Empty on the link...
+			var link = new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), guid, InterlinearTab.ToString());
+			link.LinkProperties.Add(new LinkProperty("InterlinearTab", InterlinearTab.ToString()));
+			MyRecordList.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
+			PropertyTable.GetValue<LinkHandler>("LinkHandler").AddLinkToHistory(link);
 		}
 
 		/// <summary>
@@ -1439,21 +1489,23 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			InterlinearTab = (TabPageSelection)m_tabCtrl.SelectedIndex;
 
 			// If we're just starting up (setting it from saved state) we don't need to do anything to change it.
-			if (m_rtPane != null || m_infoPane != null || m_idcGloss != null || m_idcAnalyze != null
-				|| m_taggingPane != null || m_printViewPane != null || m_constChartPane != null)
+			if (m_rtPane == null && m_infoPane == null && m_idcGloss == null && m_idcAnalyze == null && m_taggingPane == null && m_printViewPane == null && m_constChartPane == null)
 			{
-				// In order to prevent crashes caused by PropChanges affecting non-visible tabs (e.g. Undo/Redo, LT-9078),
-				// dispose of any existing panes including interlinDoc child based controls,
-				// and recreate them as needed. Most of the time is spend Reconstructing a display,
-				// not initializing the controls.
-				// NOTE: (EricP) tried to dispose of the RawTextPane as well, but for some reason
-				// we'd lose our cursor when switching texts or from a different tab. Instead,
-				// just dispose of the interlinDocChild panes, since those are the ones that
-				// are likely to crash during an intermediate state during Undo/Redo.
+				return;
+			}
+			// In order to prevent crashes caused by PropChanges affecting non-visible tabs (e.g. Undo/Redo, LT-9078),
+			// dispose of any existing panes including interlinDoc child based controls,
+			// and recreate them as needed. Most of the time is spend Reconstructing a display,
+			// not initializing the controls.
+			// NOTE: (EricP) tried to dispose of the RawTextPane as well, but for some reason
+			// we'd lose our cursor when switching texts or from a different tab. Instead,
+			// just dispose of the interlinDocChild panes, since those are the ones that
+			// are likely to crash during an intermediate state during Undo/Redo.
 
-				// don't want to re-enter ShowTabView if we're changing the index from there.
-				if (!m_fInShowTabView)
-					ShowTabView();
+			// don't want to re-enter ShowTabView if we're changing the index from there.
+			if (!m_fInShowTabView)
+			{
+				ShowTabView();
 			}
 		}
 
@@ -1475,14 +1527,15 @@ private void ReloadPaneBar(IPaneBar paneBar)
 			// Is this where we need to hook in reparsing of segments/paras, etc. if RawTextPane is deselected?
 			// No. See DomainImpl.AnalysisAdjuster.
 
-			if (m_bookmarks != null) // This is out here to save bookmarks set in Chart, Print and Edit views too.
+			if (m_bookmarks == null)
 			{
-				//At this point m_tabCtrl.SelectedIndex is set to the value of the tabPage
-				//we are leaving.
-				if (RootStText != null && m_bookmarks.ContainsKey(new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid)))
-				{
-					SaveBookMark();
-				}
+				return;
+			}
+			//At this point m_tabCtrl.SelectedIndex is set to the value of the tabPage
+			//we are leaving.
+			if (RootStText != null && m_bookmarks.ContainsKey(new Tuple<string, Guid>(MyRecordList.Id, RootStText.Guid)))
+			{
+				SaveBookMark();
 			}
 		}
 
@@ -1492,25 +1545,5 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// doesn't do anything dangerous when it is not the focused pane of a multipane.
 		/// </summary>
 		public bool IsFocusedPane { get; set; }
-	}
-
-	public interface IHandleBookmark
-	{
-		/// <summary>
-		/// makes a selection in a view given the bookmark location.
-		/// </summary>
-		/// <param name="bookmark"></param>
-		void SelectBookmark(IStTextBookmark bookmark);
-	}
-
-
-	/// <summary>
-	/// indicates a position in an StText
-	/// </summary>
-	public interface IStTextBookmark
-	{
-		int IndexOfParagraph { get; }
-		int BeginCharOffset { get; }
-		int EndCharOffset { get; }
 	}
 }

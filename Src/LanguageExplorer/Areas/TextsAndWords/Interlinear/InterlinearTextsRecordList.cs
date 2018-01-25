@@ -44,15 +44,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// The current object in this view is either a WfiWordform or an StText, and if we can delete
 		/// an StText at all, we want to delete its owning Text.
 		/// </summary>
-		/// <param name="currentObject"></param>
-		/// <returns></returns>
 		protected override ICmObject GetObjectToDelete(ICmObject currentObject)
 		{
-			if (currentObject is IWfiWordform)
-			{
-				return currentObject;
-			}
-			return currentObject.Owner;
+			return currentObject is IWfiWordform ? currentObject : currentObject.Owner;
 		}
 
 		/// <summary>
@@ -66,26 +60,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return true;
 			}
 			return CurrentObject.Owner is IText;
-		}
-
-		public override void ReloadIfNeeded()
-		{
-			//// Push down to an overload of ConcordanceWordList
-			//if (this is ConcordanceWordList)
-			//{
-			//	((ConcordanceWordList)this).RequestRefresh();
-			//}
-			base.ReloadIfNeeded();
-		}
-
-		public override bool OnRefresh(object sender)
-		{
-			//// Push down to an overload of ConcordanceWordList
-			//if (this is ConcordanceWordList)
-			//{
-			//	((ConcordanceWordList)this).RequestRefresh();
-			//}
-			return base.OnRefresh(sender);
 		}
 
 		protected override void ReportCannotDelete()
@@ -127,11 +101,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			using (var dlg = new FilterTextsDialog(PropertyTable.GetValue<IApp>("App"), m_cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
-				if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) == DialogResult.OK)
+				if (dlg.ShowDialog(PropertyTable.GetValue<Form>("window")) != DialogResult.OK)
 				{
-					interestingTextsList.SetInterestingTexts(dlg.GetListOfIncludedTexts());
-					UpdateFilterStatusBarPanel();
+					return true;
 				}
+				interestingTextsList.SetInterestingTexts(dlg.GetListOfIncludedTexts());
+				UpdateFilterStatusBarPanel();
 			}
 
 			return true;
@@ -140,10 +115,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Get the list of currently selected Scripture section ids.
 		/// </summary>
-		/// <returns></returns>
 		internal List<int> GetScriptureIds()
 		{
-			return (from st in GetInterestingTextList().ScriptureTexts select st.Hvo).ToList();
+			return (GetInterestingTextList().ScriptureTexts.Select(st => st.Hvo)).ToList();
 		}
 
 		private InterestingTextList GetInterestingTextList()
@@ -157,15 +131,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// want to switch tools.
 		/// The argument should be the XmlNode for <parameters className="Text"/>.
 		/// </summary>
-		/// <param name="argument"></param>
-		/// <returns></returns>
 		public bool OnInsertInterlinText(object argument)
 		{
-			if (!IsActiveInGui)
-			{
-				return false;
-			}
-			return AddNewText(new UndoableCreateAndInsertStText(m_cache, this, ITextStrings.UndoInsertText, ITextStrings.RedoInsertText));
+			return IsActiveInGui && AddNewText(new UndoableCreateAndInsertStText(m_cache, this, ITextStrings.UndoInsertText, ITextStrings.RedoInsertText));
 		}
 
 		/// <summary>

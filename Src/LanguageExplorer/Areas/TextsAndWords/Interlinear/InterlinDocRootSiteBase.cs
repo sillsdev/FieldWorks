@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// <summary>
 	/// Ideally this would be an abstract class, but Designer does not handle abstract classes.
 	/// </summary>
-	public partial class InterlinDocRootSiteBase : RootSite, IInterlinearTabControl, IVwNotifyChange, IHandleBookmark, ISelectOccurrence, IStyleSheet, ISetupLineChoices
+	internal partial class InterlinDocRootSiteBase : RootSite, IInterlinearTabControl, IVwNotifyChange, IHandleBookmark, ISelectOccurrence, IStyleSheet, ISetupLineChoices
 	{
 		private ISilDataAccess m_sda;
 		/// <summary>
@@ -68,7 +68,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public override void MakeRoot()
 		{
 			if (m_cache == null || DesignMode)
+			{
 				return;
+			}
 
 			base.MakeRoot();
 			MakeRootInternal();
@@ -169,7 +171,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal virtual void CreateFocusBox()
 		{
-
 		}
 
 		/// <summary>
@@ -177,13 +178,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		protected virtual void MakeVc()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		private void EnsureVc()
 		{
 			if (m_vc == null)
+			{
 				MakeVc();
+			}
 		}
 
 		#region ISelectOccurrence
@@ -196,22 +199,26 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public virtual void SelectOccurrence(AnalysisOccurrence point)
 		{
 			if (point == null)
+			{
 				return;
-			Debug.Assert(point.HasWordform,
-				"Given annotation type should have wordform but was " + point + ".");
+			}
+			Debug.Assert(point.HasWordform, $"Given annotation type should have wordform but was {point}.");
 
 			// The following will select the occurrence, ... I hope!
 			// Scroll to selection into view
 			var sel = SelectOccurrenceInIText(point);
 			if (sel == null)
+			{
 				return;
-			//sel.Install();
+			}
 			m_rootb.Activate(VwSelectionState.vssEnabled);
 			// Don't steal the focus from another window.  See FWR-1795.
 			if (!Focused && ParentForm == Form.ActiveForm)
 			{
 				if (CanFocus)
+				{
 					Focus();
+				}
 				else
 				{
 					// For some reason as we switch to a tab containing this it isn't visible
@@ -226,28 +233,29 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected void FocusWhenVisible(object sender, EventArgs e)
 		{
-			if (CanFocus)
+			if (!CanFocus)
 			{
-				// It's possible that a focus box has been set up since we added this event handler.
-				// If so we prefer to focus that.
-				// But don't steal the focus from another window.  See FWR-1795.
-				if (ParentForm == Form.ActiveForm)
-				{
-					var focusBox = (from Control c in Controls where c is FocusBoxController select c).FirstOrDefault();
-					if (focusBox != null)
-						focusBox.Focus();
-					else
-						Focus();
-				}
-				VisibleChanged -= FocusWhenVisible;
+				return;
 			}
+			// It's possible that a focus box has been set up since we added this event handler.
+			// If so we prefer to focus that.
+			// But don't steal the focus from another window.  See FWR-1795.
+			if (ParentForm == Form.ActiveForm)
+			{
+				var focusBox = (Controls.Cast<Control>().Where(c => c is FocusBoxController)).FirstOrDefault();
+				if (focusBox != null)
+				{
+					focusBox.Focus();
+				}
+				else
+					Focus();
+			}
+			VisibleChanged -= FocusWhenVisible;
 		}
 
 		/// <summary>
 		/// Selects the specified AnalysisOccurrence in the interlinear text.
 		/// </summary>
-		/// <param name="point"></param>
-		/// <returns></returns>
 		protected internal IVwSelection SelectOccurrenceInIText(AnalysisOccurrence point)
 		{
 			Debug.Assert(point != null);
@@ -267,8 +275,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Get overridden for subclasses needing a Sandbox.
 		/// </summary>
-		/// <param name="rgvsli"></param>
-		/// <returns></returns>
 		protected virtual IVwSelection MakeWordformSelection(SelLevInfo[] rgvsli)
 		{
 			// top prop is atomic, leave index 0. Specifies displaying the contents of the Text.
@@ -277,8 +283,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				// InterlinPrintChild and InterlinTaggingChild have no Sandbox,
 				// so they need a "real" interlinear text selection.
-				sel = RootBox.MakeTextSelInObj(0, rgvsli.Length, rgvsli, 0, null,
-											   false, false, false, true, true);
+				sel = RootBox.MakeTextSelInObj(0, rgvsli.Length, rgvsli, 0, null, false, false, false, true, true);
 			}
 			catch (Exception e)
 			{
@@ -292,12 +297,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal virtual AnalysisOccurrence OccurrenceContainingSelection()
 		{
-			if (m_rootb == null)
-				return null;
-
 			// This works fine for non-Sandbox panes,
 			// Sandbox panes' selection may be in the Sandbox.
-			var sel = m_rootb.Selection;
+			var sel = m_rootb?.Selection;
 			return sel == null ? null : GetAnalysisFromSelection(sel);
 		}
 
@@ -323,39 +325,44 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						   out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
 						   out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
 
-			if (rgvsli.Length > 1)
+			if (rgvsli.Length <= 1)
 			{
-				// Need to loop backwards until we get down to index 1 or index produces a valid Segment.
-				var i = rgvsli.Length - 1;
-				ISegment seg = null;
-				for (; i > 0; i--)
+				return null;
+			}
+			// Need to loop backwards until we get down to index 1 or index produces a valid Segment.
+			var i = rgvsli.Length - 1;
+			ISegment seg = null;
+			for (; i > 0; i--)
+			{
+				// get the container for whatever is selected at this level.
+				ICmObject container;
+				if (!m_objRepo.TryGetObject(rgvsli[i].hvo, out container))
 				{
-					// get the container for whatever is selected at this level.
-					ICmObject container;
-					if (!m_objRepo.TryGetObject(rgvsli[i].hvo, out container))
-						return null; // may fail, e.g., trying to get bookmark for text just deleted.
+					return null; // may fail, e.g., trying to get bookmark for text just deleted.
+				}
 
-					seg = container as ISegment;
-					if (seg != null)
-						break;
-				}
-				if (seg != null && i > 0) // This checks the case where there is no Segment in the selection at all
+				seg = container as ISegment;
+				if (seg != null)
 				{
-					// Make a new AnalysisOccurrence
-					var selObject = m_objRepo.GetObject(rgvsli[i-1].hvo);
-					if (selObject is IAnalysis)
-					{
-						var indexInContainer = rgvsli[i-1].ihvo;
-						result = new AnalysisOccurrence(seg, indexInContainer);
-					}
-					if (result == null || !result.IsValid)
-						result = new AnalysisOccurrence(seg, 0);
+					break;
 				}
-				else
+			}
+			if (seg != null && i > 0) // This checks the case where there is no Segment in the selection at all
+			{
+				// Make a new AnalysisOccurrence
+				var selObject = m_objRepo.GetObject(rgvsli[i-1].hvo);
+				if (selObject is IAnalysis)
 				{
-					// TODO: other possibilities?!
-					Debug.Assert(false, "Reached 'other' situation in OccurrenceContainingSelection().");
+					var indexInContainer = rgvsli[i-1].ihvo;
+					result = new AnalysisOccurrence(seg, indexInContainer);
 				}
+				if (result == null || !result.IsValid)
+					result = new AnalysisOccurrence(seg, 0);
+			}
+			else
+			{
+				// TODO: other possibilities?!
+				Debug.Assert(false, "Reached 'other' situation in OccurrenceContainingSelection().");
 			}
 			return result;
 		}
@@ -363,9 +370,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
-			m_contextButton = new BlueCircleButton();
-			m_contextButton.ForeColor = BackColor;
-			m_contextButton.BackColor = BackColor;
+			m_contextButton = new BlueCircleButton
+			{
+				ForeColor = BackColor,
+				BackColor = BackColor
+			};
 			m_contextButton.Click += m_contextButton_Click;
 		}
 
@@ -397,18 +406,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// User clicked on interlinear labels, so I need to
 			// make a context menu and show it, if I'm not just closing one!
 			// This time test seems to be the only way to find out whether this click closed the last one.
-			if (DateTime.Now.Ticks - m_ticksWhenContextMenuClosed > 50000) // 5ms!
+			if (DateTime.Now.Ticks - m_ticksWhenContextMenuClosed <= 50000)
 			{
-				m_labelContextMenu = MakeContextMenu(ilineChoice);
-				m_labelContextMenu.Closed += m_labelContextMenu_Closed;
-				m_labelContextMenu.Show(this, menuLocation.X, menuLocation.Y);
+				// 5 ms
+				return;
 			}
+			m_labelContextMenu = MakeContextMenu(ilineChoice);
+			m_labelContextMenu.Closed += m_labelContextMenu_Closed;
+			m_labelContextMenu.Show(this, menuLocation.X, menuLocation.Y);
 		}
 
 		private void SetContextButtonPosition(IVwSelection sel, int ilineChoice)
 		{
 			Debug.Assert(sel != null || !sel.IsValid, "No selection!");
-			//sel.GrowToWord();
 			Rect rcPrimary;
 			Rectangle rcSrcRoot;
 			using (new HoldGraphics(this))
@@ -417,13 +427,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				bool fSplit, fEndBeforeAnchor;
 				Rectangle rcDstRoot;
 				GetCoordRects(out rcSrcRoot, out rcDstRoot);
-				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary,
-					out rcSec, out fSplit, out fEndBeforeAnchor);
+				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSec, out fSplit, out fEndBeforeAnchor);
 			}
 			CalculateHorizContextButtonPosition(rcPrimary, rcSrcRoot);
 			m_iLineChoice = ilineChoice;
 			if (!Controls.Contains(m_contextButton))
+			{
 				Controls.Add(m_contextButton);
+			}
 		}
 
 		private void CalculateHorizContextButtonPosition(Rect rcPrimary, Rect rcSrcRoot)
@@ -493,7 +504,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var helper = SelectionHelper.Create(selTest, this);
 			if (helper == null)
+			{
 				return -1;
+			}
 
 			var props = helper.SelProps;
 			int dummyvar;
@@ -502,7 +515,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#region Label Context Menu stuff
 
-		void m_contextButton_Click(object sender, EventArgs e)
+		private void m_contextButton_Click(object sender, EventArgs e)
 		{
 			Debug.Assert(m_iLineChoice > -1, "Why isn't this variable set?");
 			if (m_iLineChoice > -1)
@@ -523,29 +536,39 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// 5) Add Line > (submenu of currently hidden lines)
 			// 6) Configure Interlinear...
 
-			if (m_vc != null && m_vc.LineChoices != null) // just to be safe; shouldn't happen
+			if (m_vc?.LineChoices != null) // just to be safe; shouldn't happen
 			{
 				var curLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
 				if (curLineChoices == null)
+				{
 					return menu;
+				}
 
 				// 1) Hide [name of clicked line]
 				if (curLineChoices.OkToRemove(ilineChoice))
+				{
 					AddHideLineMenuItem(menu, curLineChoices, ilineChoice);
+				}
 
 				// 2) Add Writing System > (submenu of other wss for this line)
 				var addWsSubMenu = new ToolStripMenuItem(ITextStrings.ksAddWS);
 				AddAdditionalWsMenuItem(addWsSubMenu, curLineChoices, ilineChoice);
 				if (addWsSubMenu.DropDownItems.Count > 0)
+				{
 					menu.Items.Add(addWsSubMenu);
+				}
 
 				// 3) Move Up
 				if (curLineChoices.OkToMoveUp(ilineChoice))
+				{
 					AddMoveUpMenuItem(menu, ilineChoice);
+				}
 
 				// 4) Move Down
 				if (curLineChoices.OkToMoveDown(ilineChoice))
+				{
 					AddMoveDownMenuItem(menu, ilineChoice);
+				}
 
 				// Add menu separator here
 				menu.Items.Add(new ToolStripSeparator());
@@ -554,23 +577,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var addLineSubMenu = new ToolStripMenuItem(ITextStrings.ksAddLine);
 				AddNewLineMenuItem(addLineSubMenu, curLineChoices);
 				if (addLineSubMenu.DropDownItems.Count > 0)
+				{
 					menu.Items.Add(addLineSubMenu);
+				}
 			}
 
 			// 6) Last, but not least, add a link to the Configure Interlinear dialog
 			var configLink = new ToolStripMenuItem(ITextStrings.ksConfigureLinkText);
-			configLink.Click += new EventHandler(configLink_Click);
+			configLink.Click += configLink_Click;
 			menu.Items.Add(configLink);
 
 			return menu;
 		}
 
-		private void AddHideLineMenuItem(ContextMenuStrip menu,
-			InterlinLineChoices curLineChoices, int ilineChoice)
+		private void AddHideLineMenuItem(ContextMenuStrip menu, InterlinLineChoices curLineChoices, int ilineChoice)
 		{
 			var lineLabel = GetAppropriateLineLabel(curLineChoices, ilineChoice);
 			var hideItem = new ToolStripMenuItem(String.Format(ITextStrings.ksHideLine, lineLabel));
-			hideItem.Click += new EventHandler(hideItem_Click);
+			hideItem.Click += hideItem_Click;
 			hideItem.Tag = ilineChoice;
 			menu.Items.Add(hideItem);
 		}
@@ -580,29 +604,37 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var curSpec = curLineChoices[ilineChoice];
 			var result = curLineChoices.LabelFor(curSpec.Flid);
 			if (curLineChoices.RepetitionsOfFlid(curSpec.Flid) > 1)
+			{
 				result += "(" + curSpec.WsLabel(Cache).Text + ")";
+			}
 			return result;
 		}
 
-		private void AddAdditionalWsMenuItem(ToolStripMenuItem addSubMenu,
-			InterlinLineChoices curLineChoices, int ilineChoice)
+		private void AddAdditionalWsMenuItem(ToolStripMenuItem addSubMenu, InterlinLineChoices curLineChoices, int ilineChoice)
 		{
 			var curSpec = curLineChoices[ilineChoice];
 			var choices = GetWsComboItems(curSpec);
 			var curFlidDisplayedWss = curLineChoices.OtherWritingSystemsForFlid(curSpec.Flid, 0);
 			var curRealWs = GetRealWsFromSpec(curSpec);
 			if (!curFlidDisplayedWss.Contains(curRealWs))
+			{
 				curFlidDisplayedWss.Add(curRealWs);
+			}
 			var lgWsAcc = Cache.LanguageWritingSystemFactoryAccessor;
 			foreach (var item in choices)
 			{
 				var itemRealWs = lgWsAcc.GetWsFromStr(item.Id);
 				// Skip 'Magic' wss and ones that are already displayed
 				if (itemRealWs == 0 || curFlidDisplayedWss.Contains(itemRealWs))
+				{
 					continue;
-				var menuItem = new AddWritingSystemMenuItem(curSpec.Flid, itemRealWs);
-				menuItem.Text = item.ToString();
-				menuItem.Click += new EventHandler(addWsToFlidItem_Click);
+				}
+
+				var menuItem = new AddWritingSystemMenuItem(curSpec.Flid, itemRealWs)
+				{
+					Text = item.ToString()
+				};
+				menuItem.Click += addWsToFlidItem_Click;
 				addSubMenu.DropDownItems.Add(menuItem);
 			}
 		}
@@ -627,18 +659,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return spec.WritingSystem;
 			}
 			// special case, the only few we support so far (and only for a few fields).
-			if (spec.WritingSystem == WritingSystemServices.kwsFirstAnal)
-				return Cache.LangProject.DefaultAnalysisWritingSystem.Handle;
-			if (spec.WritingSystem == WritingSystemServices.kwsVernInParagraph)
-				return Cache.LangProject.DefaultVernacularWritingSystem.Handle;
-			int ws = -50;
+			switch (spec.WritingSystem)
+			{
+				case WritingSystemServices.kwsFirstAnal:
+					return Cache.LangProject.DefaultAnalysisWritingSystem.Handle;
+				case WritingSystemServices.kwsVernInParagraph:
+					return Cache.LangProject.DefaultVernacularWritingSystem.Handle;
+			}
+
+			var ws = -50;
 			try
 			{
 				ws = WritingSystemServices.InterpretWsLabel(Cache, spec.WsLabel(Cache).Text, null, 0, 0, null);
 			}
 			catch
 			{
-				Debug.Assert(ws != -50, "InterpretWsLabel was not able to interpret the Ws Label.  The most likely cause for this is that a magic ws was passed in.");
+				Debug.Assert(ws != -50, "InterpretWsLabel was not able to interpret the Ws Label. The most likely cause for this is that a magic ws was passed in.");
 			}
 			return ws;
 		}
@@ -672,10 +708,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private static IEnumerable<LineOption> GetUnusedSpecs(InterlinLineChoices curLineChoices)
 		{
 			var allOptions = curLineChoices.LineOptions();
-			var optionsUsed = curLineChoices.ItemsWithFlids(
-				allOptions.Select(lineOption => lineOption.Flid).ToArray());
-			return allOptions.Where(option => !optionsUsed.Any(
-				spec => spec.Flid == option.Flid)).ToList();
+			var optionsUsed = curLineChoices.ItemsWithFlids(allOptions.Select(lineOption => lineOption.Flid).ToArray());
+			return allOptions.Where(option => optionsUsed.All(spec => spec.Flid != option.Flid)).ToList();
 		}
 
 		#region Menu Event Handlers
@@ -696,7 +730,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var menuItem = sender as AddWritingSystemMenuItem;
 			if (menuItem == null)
+			{
 				return; // Impossible?
+			}
 
 			var flid = menuItem.Flid;
 			var wsToAdd = menuItem.Ws;
@@ -710,7 +746,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void moveUpItem_Click(object sender, EventArgs e)
 		{
-			var ilineToHide = (int)(((ToolStripMenuItem) sender).Tag);
+			var ilineToHide = (int)((ToolStripMenuItem)sender).Tag;
 			var newLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
 			if (newLineChoices != null)
 			{
@@ -734,7 +770,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var menuItem = sender as AddLineMenuItem;
 			if (menuItem == null)
+			{
 				return; // Impossible?
+			}
 
 			var flid = menuItem.Flid;
 			var newLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
@@ -771,12 +809,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private string ConfigPropName { get; set; }
 
-		/// <summary>
-		/// </summary>
+		/// <summary />
 		/// <param name="lineConfigPropName">the key used to store/restore line configuration settings.</param>
 		/// <param name="mode"></param>
 		/// <returns></returns>
-		public InterlinLineChoices SetupLineChoices(string lineConfigPropName, InterlinLineChoices.InterlinMode mode)
+		public InterlinLineChoices SetupLineChoices(string lineConfigPropName, InterlinMode mode)
 		{
 			ConfigPropName = lineConfigPropName;
 			InterlinLineChoices lineChoices;
@@ -784,19 +821,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				if (ForEditing)
 				{
-					lineChoices = EditableInterlinLineChoices.DefaultChoices(m_cache.LangProject,
-						WritingSystemServices.kwsVernInParagraph, WritingSystemServices.kwsAnal);
+					lineChoices = EditableInterlinLineChoices.DefaultChoices(m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, WritingSystemServices.kwsAnal);
 					lineChoices.Mode = mode;
-					if (mode == InterlinLineChoices.InterlinMode.Gloss ||
-						mode == InterlinLineChoices.InterlinMode.GlossAddWordsToLexicon)
+					if (mode == InterlinMode.Gloss ||
+					    mode == InterlinMode.GlossAddWordsToLexicon)
+					{
 						lineChoices.SetStandardGlossState();
+					}
 					else
+					{
 						lineChoices.SetStandardState();
+					}
 				}
 				else
 				{
-					lineChoices = InterlinLineChoices.DefaultChoices(m_cache.LangProject,
-						WritingSystemServices.kwsVernInParagraph, WritingSystemServices.kwsAnal, mode);
+					lineChoices = InterlinLineChoices.DefaultChoices(m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, WritingSystemServices.kwsAnal, mode);
 				}
 			}
 			else if (ForEditing)
@@ -816,8 +855,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Tries to restore the LineChoices saved in the ConfigPropName property in the property table.
 		/// </summary>
-		/// <param name="lineChoices"></param>
-		/// <returns></returns>
 		internal bool TryRestoreLineChoices(out InterlinLineChoices lineChoices)
 		{
 			lineChoices = null;
@@ -833,11 +870,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		///  Launch the Configure interlinear dialog and deal with the results
 		/// </summary>
-		/// <param name="argument"></param>
 		public bool OnConfigureInterlinear(object argument)
 		{
-			using (var dlg = new ConfigureInterlinDialog(m_cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
-				m_vc.LineChoices.Clone() as InterlinLineChoices))
+			using (var dlg = new ConfigureInterlinDialog(m_cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_vc.LineChoices.Clone() as InterlinLineChoices))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -852,7 +887,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Persist the new line choices and
 		/// Reconstruct the document based on the given newChoices for interlinear lines.
 		/// </summary>
-		/// <param name="newChoices"></param>
 		internal virtual void UpdateForNewLineChoices(InterlinLineChoices newChoices)
 		{
 			m_vc.LineChoices = newChoices;
@@ -863,9 +897,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal void PersistAndDisplayChangedLineChoices()
 		{
-			PropertyTable.SetProperty(ConfigPropName,
-				m_vc.LineChoices.Persist(m_cache.LanguageWritingSystemFactoryAccessor),
-				SettingsGroup.LocalSettings, true, true);
+			PropertyTable.SetProperty(ConfigPropName, m_vc.LineChoices.Persist(m_cache.LanguageWritingSystemFactoryAccessor), SettingsGroup.LocalSettings, true, true);
 			UpdateDisplayForNewLineChoices();
 		}
 
@@ -874,19 +906,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private void UpdateDisplayForNewLineChoices()
 		{
-			if (m_rootb == null)
-				return;
-			m_rootb.Reconstruct();
+			m_rootb?.Reconstruct();
 		}
-
-		/// <summary>
-		/// delegate for determining whether a paragraph should be updated according to occurrences based upon
-		/// the given wordforms.
-		/// </summary>
-		/// <param name="para"></param>
-		/// <param name="wordforms"></param>
-		/// <returns></returns>
-		internal delegate bool UpdateGuessesCondition(IStTxtPara para, HashSet<IWfiWordform> wordforms);
 
 		/// <summary>
 		/// Update any necessary guesses when the specified wordforms change.
@@ -902,12 +923,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// now update the guesses for the paragraphs.
 			var pdut = new ParaDataUpdateTracker(m_vc.GuessServices, m_vc.Decorator);
 			foreach (IStTxtPara para in RootStText.ParagraphsOS)
+			{
 				pdut.LoadAnalysisData(para, wordforms);
+			}
 			if (fUpdateDisplayWhereNeeded)
 			{
 				// now update the display with the affected annotations.
 				foreach (var changed in pdut.ChangedAnnotations)
+				{
 					UpdateDisplayForOccurrence(changed);
+				}
 			}
 		}
 
@@ -922,7 +947,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected void UpdateDisplayForOccurrence(AnalysisOccurrence occurrence)
 		{
 			if (occurrence == null)
+			{
 				return;
+			}
 
 			// Simluate replacing the wordform in the relevant segment with itself. This lets the VC Display method run again, this
 			// time possibly getting a different answer about whether hvoAnnotation is the current annotation, or about the
@@ -932,11 +959,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal InterlinMaster GetMaster()
 		{
-			for (Control parentControl = Parent; parentControl != null; parentControl = parentControl.Parent)
+			for (var parentControl = Parent; parentControl != null; parentControl = parentControl.Parent)
 			{
 				var master = parentControl as InterlinMaster;
 				if (master != null)
+				{
 					return master;
+				}
 			}
 			return null;
 		}
@@ -946,7 +975,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			EnsureVc();
 			if (LineChoices != null)
+			{
 				m_vc.LineChoices = LineChoices;
+			}
 
 			SetRootInternal(hvo);
 			AddDecorator();
@@ -956,7 +987,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Returns the rootbox of this object, or null if not applicable
 		/// </summary>
-		/// <returns></returns>
 		public IVwRootBox GetRootBox()
 		{
 			return RootBox;
@@ -970,7 +1000,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			// by default, just use the InterinVc decorator.
 			if (m_rootb != null)
+			{
 				m_rootb.DataAccess = m_vc.Decorator;
+			}
 		}
 
 		protected virtual void SetRootInternal(int hvo)
@@ -990,8 +1022,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// Enhance JohnT: The problem is that this can be slow! Especially when using this
 				// as a display view in a concordance. Should we detect that somehow, and in that
 				// case only parse paragraphs that need it?
-				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-						InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootStText, true));
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootStText, true));
 				// Sync Guesses data before we redraw anything.
 				UpdateGuessData();
 			}
@@ -1011,12 +1042,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			//If the RootStText is null we are either in a place that doesn't care about parser related updates
 			// or we are not yet completely displaying the text, so we should be fine, I hope? (LT-12493)
 			if (SuspendResettingAnalysisCache || RootStText == null)
+			{
 				return;
+			}
 
 			switch (tag)
 			{
 				case WfiAnalysisTags.kflidEvaluations:
-					IWfiAnalysis analysis = m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().GetObject(hvo);
+					var analysis = m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().GetObject(hvo);
 					if (analysis.HasWordform && RootStText.UniqueWordforms().Contains(analysis.Wordform))
 					{
 						m_wordformsToUpdate.Add(analysis.Wordform);
@@ -1026,7 +1059,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					break;
 				case WfiWordformTags.kflidAnalyses:
-					IWfiWordform wordform = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetObject(hvo);
+					var wordform = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetObject(hvo);
 					if (RootStText.UniqueWordforms().Contains(wordform))
 					{
 						m_wordformsToUpdate.Add(wordform);
@@ -1041,7 +1074,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private bool PostponedUpdateWordforms(object parameter)
 		{
 			if (IsDisposed)
+			{
 				return true;
+			}
 
 			m_vc.GuessServices.ClearGuessData();
 			UpdateWordforms(m_wordformsToUpdate);
@@ -1066,7 +1101,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			set;
 		}
 
-		static internal int GetParagraphIndexForAnalysis(AnalysisOccurrence point)
+		internal static int GetParagraphIndexForAnalysis(AnalysisOccurrence point)
 		{
 			return point.Segment.Paragraph.IndexInOwner;
 		}
@@ -1082,8 +1117,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Returns an AnalysisOccurrence at least close to the given bookmark.
 		/// If we can't, we return null.
 		/// </summary>
-		/// <param name="bookmark"></param>
-		/// <returns></returns>
 		internal AnalysisOccurrence ConvertBookmarkToAnalysis(IStTextBookmark bookmark)
 		{
 			bool fDummy;
@@ -1094,136 +1127,36 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Returns an AnalysisOccurrence at least close to the given bookmark.
 		/// If we can't, we return null. This version reports whether we found an exact match or not.
 		/// </summary>
-		/// <param name="bookmark"></param>
-		/// <param name="fExactMatch"></param>
-		/// <returns></returns>
 		internal AnalysisOccurrence ConvertBookmarkToAnalysis(IStTextBookmark bookmark, out bool fExactMatch)
 		{
 			fExactMatch = false;
-			if (RootStText == null || RootStText.ParagraphsOS.Count == 0
-				|| bookmark.IndexOfParagraph < 0 || bookmark.BeginCharOffset < 0 || bookmark.IndexOfParagraph >= RootStText.ParagraphsOS.Count)
+			if (RootStText == null || RootStText.ParagraphsOS.Count == 0 || bookmark.IndexOfParagraph < 0 ||
+			    bookmark.BeginCharOffset < 0 || bookmark.IndexOfParagraph >= RootStText.ParagraphsOS.Count)
+			{
 				return null;
+			}
 			var para = RootStText.ParagraphsOS[bookmark.IndexOfParagraph] as IStTxtPara;
 			if (para == null)
-				return null;
-
-			var point = SegmentServices.FindNearestAnalysis(para,
-				bookmark.BeginCharOffset, bookmark.EndCharOffset, out fExactMatch);
-			if (point != null && point.Analysis is IPunctuationForm)
 			{
-				// Don't want to return punctuation! Wordform or null!
-				fExactMatch = false;
-				if (point.Index > 0)
-					return point.PreviousWordform();
-				return point.NextWordform();
+				return null;
 			}
-			return point;
+
+			var point = SegmentServices.FindNearestAnalysis(para, bookmark.BeginCharOffset, bookmark.EndCharOffset, out fExactMatch);
+			if (point == null || !(point.Analysis is IPunctuationForm))
+			{
+				return point;
+			}
+			// Don't want to return punctuation! Wordform or null!
+			fExactMatch = false;
+			return point.Index > 0 ? point.PreviousWordform() : point.NextWordform();
 		}
 
 		#endregion
 	}
 
 	/// <summary>
-	/// Used for Interlinear context menu items to Add a new WritingSystem
-	/// for a flid that is already visible.
+	/// delegate for determining whether a paragraph should be updated according to occurrences based upon
+	/// the given wordforms.
 	/// </summary>
-	public class AddWritingSystemMenuItem : ToolStripMenuItem
-	{
-		private readonly int m_flid;
-		private readonly int m_ws;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="AddWritingSystemMenuItem"/> class
-		/// used for context (right-click) menus.
-		/// </summary>
-		/// <param name="flid">
-		/// 	The flid of the InterlinLineSpec we might add.
-		/// </param>
-		/// <param name="ws">
-		/// 	The writing system int id of the InterlinLineSpec we might add.
-		/// </param>
-		public AddWritingSystemMenuItem(int flid, int ws)
-		{
-			m_flid = flid;
-			m_ws = ws;
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
-			base.Dispose(disposing);
-		}
-
-		public int Flid
-		{
-			get { return m_flid; }
-		}
-
-		public int Ws
-		{
-			get { return m_ws; }
-		}
-	}
-
-	/// <summary>
-	/// Used for Interlinear context menu items to Add a new InterlinLineSpec
-	/// for a flid that is currently hidden.
-	/// </summary>
-	public class AddLineMenuItem : ToolStripMenuItem
-	{
-		private readonly int m_flid;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="AddLineMenuItem"/> class
-		/// used for context (right-click) menus.
-		/// </summary>
-		/// <param name="flid">
-		/// 	The flid of the InterlinLineSpec we might add.
-		/// </param>
-		public AddLineMenuItem(int flid)
-		{
-			m_flid = flid;
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
-			base.Dispose(disposing);
-		}
-
-		public int Flid
-		{
-			get { return m_flid; }
-		}
-	}
-
-	public interface ISelectOccurrence
-	{
-		void SelectOccurrence(AnalysisOccurrence occurrence);
-	}
-
-	public interface ISetupLineChoices
-	{
-		/// <summary>
-		/// True if we will be doing editing (display sandbox, restrict field order choices, etc.).
-		/// </summary>
-		bool ForEditing { get; set; }
-		InterlinLineChoices SetupLineChoices(string lineConfigPropName,
-			InterlinLineChoices.InterlinMode mode);
-	}
-
-	/// <summary>
-	/// This interface helps to identify a control that can be used in InterlinMaster tab pages.
-	/// In the future, we may not want to force any such control to implement all of these
-	/// interfaces, but for now, this works.
-	/// </summary>
-	public interface IInterlinearTabControl : IChangeRootObject
-	{
-		LcmCache Cache { get; set; }
-	}
-
-	public interface IStyleSheet
-	{
-		IVwStylesheet StyleSheet { get; set; }
-	}
+	internal delegate bool UpdateGuessesCondition(IStTxtPara para, HashSet<IWfiWordform> wordforms);
 }

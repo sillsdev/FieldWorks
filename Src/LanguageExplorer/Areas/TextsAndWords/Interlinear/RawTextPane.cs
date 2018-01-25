@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.LcmUi;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -28,8 +27,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </summary>
 	public class RawTextPane : RootSite, IInterlinearTabControl, IHandleBookmark
 	{
-		int m_hvoRoot; // The Text.
-		RawTextVc m_vc;
 		XmlNode m_configurationParameters;
 		private int m_lastFoundAnnotationHvo = 0;
 		private ShowSpaceDecorator m_showSpaceDa;
@@ -41,10 +38,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public RawTextPane() : base(null)
 		{
 			BackColor = Color.FromKnownColor(KnownColor.Window);
-			// EditingHelper.PasteFixTssEvent += new FwPasteFixTssEventHandler(OnPasteFixWs);
 			DoSpellCheck = true;
 			AcceptsTab = false;
 		}
+
+		internal int RootHvo { get; private set; }
+
+		internal RawTextVc Vc { get; private set; }
 
 		#region IDisposable override
 
@@ -73,7 +73,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			base.Dispose(disposing);
 
@@ -84,7 +86,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			MyRecordList = null;
-			m_vc = null;
+			Vc = null;
 			m_configurationParameters = null;
 		}
 
@@ -97,27 +99,30 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			CheckDisposed();
 
 
-			if (hvo != m_hvoRoot || m_vc == null)
+			if (hvo != RootHvo || Vc == null)
 			{
 				SetStyleSheet(hvo);
-				m_hvoRoot = hvo;
+				RootHvo = hvo;
 				SetupVc();
-				ChangeOrMakeRoot(m_hvoRoot, m_vc, (int)StTextFrags.kfrText, m_styleSheet);
+				ChangeOrMakeRoot(RootHvo, Vc, (int)StTextFrags.kfrText, m_styleSheet);
 			}
-			this.BringToFront();
-			if (m_hvoRoot == 0)
+			BringToFront();
+			if (RootHvo == 0)
+			{
 				return;
+			}
 			// if editable, parse the text to make sure annotations are in a valid initial state
 			// with respect to the text so AnnotatedTextEditingHelper can make the right changes
 			// to annotations effected by MonitorTextsEdits being true;
-			if (m_vc != null && m_vc.Editable)
+			if (Vc == null || !Vc.Editable)
 			{
-				if (InterlinMaster.HasParagraphNeedingParse(RootObject))
-				{
-					NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
-												   () =>
-													   { InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootObject, false); });
-				}
+				return;
+			}
+			if (InterlinMaster.HasParagraphNeedingParse(RootObject))
+			{
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
+					() =>
+					{ InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootObject, false); });
 			}
 		}
 
@@ -126,11 +131,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public override bool CanApplyStyle => base.CanApplyStyle && !ScriptureServices.ScriptureIsResponsibleFor(m_rootObj);
 
-
 		private void SetStyleSheet(int hvo)
 		{
 			var text = hvo == 0 ? null : (IStText)Cache.ServiceLocator.GetObject(hvo);
-
 			var wantedStylesheet = m_styleSheet;
 			if (ScriptureServices.ScriptureIsResponsibleFor(text))
 			{
@@ -148,20 +151,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				wantedStylesheet = m_flexStylesheet;
 			}
-			if (wantedStylesheet != m_styleSheet)
+
+			if (wantedStylesheet == m_styleSheet)
 			{
-				m_styleSheet = wantedStylesheet;
-				if (m_styleSheet == m_flexStylesheet)
-				{
-					// Only do it for Flex styles, since Scripture text styles cannot be used in Flex (cf. "CanApplyStyle" property, above).
-					// This will allow for character & paragraph styles to be in the combobox.
-					Publisher.Publish("ResetStyleSheet", m_styleSheet);
-				}
+				return;
+			}
+			m_styleSheet = wantedStylesheet;
+			if (m_styleSheet == m_flexStylesheet)
+			{
+				// Only do it for Flex styles, since Scripture text styles cannot be used in Flex (cf. "CanApplyStyle" property, above).
+				// This will allow for character & paragraph styles to be in the combobox.
+				Publisher.Publish("ResetStyleSheet", m_styleSheet);
 			}
 		}
 
 		#endregion
-
 
 		/// <summary>
 		/// This is the record list, if any, that determines the text for our control.
@@ -173,13 +177,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
-				if (m_rootObj == null || m_rootObj.Hvo != m_hvoRoot)
+				if (m_rootObj != null && m_rootObj.Hvo == RootHvo)
 				{
-					if (m_hvoRoot != 0)
-						m_rootObj = Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(m_hvoRoot);
-					else
-						m_rootObj = null;
+					return m_rootObj;
 				}
+				m_rootObj = RootHvo != 0 ? Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(RootHvo) : null;
 				return m_rootObj;
 			}
 		}
@@ -198,7 +200,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (ClickInvisibleSpace)
 			{
 				if (InsertInvisibleSpace(e))
+				{
 					return;
+				}
 			}
 			base.OnMouseDown(e);
 		}
@@ -208,25 +212,34 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var sel = GetSelectionAtViewPoint(e.Location, false);
 			if (sel == null)
+			{
 				return false;
+			}
 			if (e.Button == MouseButtons.Right || (ModifierKeys & Keys.Shift) == Keys.Shift)
+			{
 				return false; // don't interfere with right clicks or shifr-clicks.
+			}
 			var helper = SelectionHelper.Create(sel, this);
 			var text = helper.GetTss(SelectionHelper.SelLimitType.Anchor).Text;
 			if (string.IsNullOrEmpty(text))
+			{
 				return false;
+			}
 			// We test for space (rather than zwsp) because when in this mode, the option to make the ZWS's visible
 			// is always on, which means they are spaces in the string we retrieve.
 			// If we don't want to suppress inserting one next to a regular space, we'll need to check the chararacter properties
 			// to distinguish the magic spaces from regular ones.
-			int ich = helper.GetIch(SelectionHelper.SelLimitType.Anchor);
+			var ich = helper.GetIch(SelectionHelper.SelLimitType.Anchor);
 			if (ich > 0 && ich <= text.Length && text[ich - 1] == ' ')
+			{
 				return false; // don't insert second ZWS following existing one (or normal space).
+			}
 			if (ich < text.Length && text[ich] == ' ')
+			{
 				return false; // don't insert second ZWS before existing one (or normal space).
+			}
 			int nVar;
-			int ws = helper.GetSelProps(SelectionHelper.SelLimitType.Anchor).GetIntPropValues((int) FwTextPropType.ktptWs,
-				out nVar);
+			var ws = helper.GetSelProps(SelectionHelper.SelLimitType.Anchor).GetIntPropValues((int) FwTextPropType.ktptWs, out nVar);
 			if (ws != 0)
 			{
 				UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoInsertInvisibleSpace, ITextStrings.ksRedoInsertInvisibleSpace,
@@ -254,12 +267,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			base.OnMouseMove(e);
-			if (ClickInvisibleSpace)
+			if (!ClickInvisibleSpace)
 			{
-				if (m_invisibleSpaceCursor == null)
-					m_invisibleSpaceCursor = new Cursor(GetType(), "InvisibleSpaceCursor.cur");
-				Cursor = m_invisibleSpaceCursor;
+				return;
 			}
+
+			if (m_invisibleSpaceCursor == null)
+			{
+				m_invisibleSpaceCursor = new Cursor(GetType(), "InvisibleSpaceCursor.cur");
+			}
+			Cursor = m_invisibleSpaceCursor;
 		}
 
 		protected override void OnLostFocus(EventArgs e)
@@ -335,10 +352,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case "ClickInvisibleSpace":
 					newVal = ClickInvisibleSpace;
 					if (newVal == m_fClickInsertsZws)
+					{
 						return;
+					}
 					m_fClickInsertsZws = newVal;
 					if (newVal && !ShowInvisibleSpaces)
+					{
 						TurnOnShowInvisibleSpaces();
+					}
 					break;
 				default:
 					break;
@@ -392,12 +413,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void TurnOnShowInvisibleSpaces()
 		{
-			PropertyTable?.SetProperty("ShowInvisibleSpaces", true, true, true);
+			PropertyTable.SetProperty("ShowInvisibleSpaces", true, true, true);
 		}
 
 		private void TurnOffClickInvisibleSpace()
 		{
-			PropertyTable?.SetProperty("ClickInvisibleSpace", false, true, true);
+			PropertyTable.SetProperty("ClickInvisibleSpace", false, true, true);
 		}
 
 		private bool ShowInvisibleSpaces => PropertyTable.GetValue<bool>("ShowInvisibleSpaces");
@@ -405,22 +426,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private bool ClickInvisibleSpace => PropertyTable.GetValue<bool>("ClickInvisibleSpace");
 
 		#region Overrides of RootSite
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Make the root box.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public override void MakeRoot()
 		{
 			CheckDisposed();
 
-			if (m_cache == null || DesignMode || m_hvoRoot == 0)
+			if (m_cache == null || DesignMode || RootHvo == 0)
+			{
 				return;
+			}
 
 			base.MakeRoot();
 
-			int wsFirstPara = GetWsOfFirstWordOfFirstTextPara();
-			m_vc = new RawTextVc(m_rootb, m_cache, wsFirstPara);
+			var wsFirstPara = GetWsOfFirstWordOfFirstTextPara();
+			Vc = new RawTextVc(m_rootb, m_cache, wsFirstPara);
 			SetupVc();
 
 			m_showSpaceDa = new ShowSpaceDecorator(m_cache.GetManagedSilDataAccess())
@@ -429,21 +450,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			};
 			m_rootb.DataAccess = m_showSpaceDa;
 
-			m_rootb.SetRootObject(m_hvoRoot, m_vc, (int)StTextFrags.kfrText, m_styleSheet);
+			m_rootb.SetRootObject(RootHvo, Vc, (int)StTextFrags.kfrText, m_styleSheet);
 		}
 
 		/// <summary>
 		/// Returns WS of first character of first paragraph of m_hvoRoot text.
 		/// It defaults to DefaultVernacularWs in case of a problem.
 		/// </summary>
-		/// <returns></returns>
 		private int GetWsOfFirstWordOfFirstTextPara()
 		{
-			Debug.Assert(m_hvoRoot > 0, "No StText Hvo!");
-			int wsFirstPara = Cache.DefaultVernWs;
-			var txt = Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(m_hvoRoot);
+			Debug.Assert(RootHvo > 0, "No StText Hvo!");
+			var wsFirstPara = Cache.DefaultVernWs;
+			var txt = Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(RootHvo);
 			if (txt.ParagraphsOS == null || txt.ParagraphsOS.Count == 0)
+			{
 				return wsFirstPara;
+			}
 
 			var firstPara = ((IStTxtPara) txt.ParagraphsOS[0]);
 			return firstPara.Contents.get_WritingSystem(0);
@@ -451,24 +473,26 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void SetupVc()
 		{
-			if (m_vc == null || m_hvoRoot == 0)
+			if (Vc == null || RootHvo == 0)
+			{
 				return;
-			int wsFirstPara = -1;
-			wsFirstPara = GetWsOfFirstWordOfFirstTextPara();
+			}
+
+			var wsFirstPara = GetWsOfFirstWordOfFirstTextPara();
 			if (wsFirstPara == -1)
 			{
 				// The paragraph's first character has no valid writing system...this seems to be possible
 				// when it consists entirely of a picture. Rather than crashing, presume the default.
 				wsFirstPara = Cache.DefaultVernWs;
 			}
-			m_vc.SetupVernWsForText(wsFirstPara);
-			IStText stText = Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(m_hvoRoot);
-			if (m_configurationParameters != null)
+			Vc.SetupVernWsForText(wsFirstPara);
+			var stText = Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(RootHvo);
+			if (m_configurationParameters == null)
 			{
-				m_vc.Editable = XmlUtils.GetOptionalBooleanAttributeValue(
-					m_configurationParameters, "editable", true);
-				m_vc.Editable &= !ScriptureServices.ScriptureIsResponsibleFor(stText);
+				return;
 			}
+			Vc.Editable = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParameters, "editable", true);
+			Vc.Editable &= !ScriptureServices.ScriptureIsResponsibleFor(stText);
 		}
 
 		protected override void HandleSelectionChange(IVwRootBox rootb, IVwSelection vwselNew)
@@ -480,14 +504,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// JohnT: it's remotely possible that the base, in calling commit, made this
 			// selection no longer useable.
 			if (!vwselNew.IsValid)
+			{
 				return;
+			}
 
 			IWfiWordform wordform;
 			if (!GetSelectedWordform(vwselNew, out wordform))
+			{
 				wordform = null;
+			}
 			Publisher.Publish("TextSelectedWord", wordform);
 
-			SelectionHelper helper = SelectionHelper.Create(vwselNew, this);
+			var helper = SelectionHelper.Create(vwselNew, this);
 			if (helper != null && helper.GetTextPropId(SelectionHelper.SelLimitType.Anchor) == RawTextVc.kTagUserPrompt)
 			{
 				vwselNew.ExtendToStringBoundaries();
@@ -498,40 +526,37 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
 			if (Parent == null)
+			{
 				return; // width is meaningless, no point in doing extra work
+			}
 			// In a tab page this panel occupies the whole thing, so layout is wasted until
 			// our size is adjusted to match.
 			if (Parent is TabPage && (Parent.Width - Parent.Padding.Horizontal) != this.Width)
+			{
 				return;
+			}
 			base.OnLayout (levent);
 		}
 
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The user has attempted to delete something which the system does not inherently
 		/// know how to delete. The dpt argument indicates the type of problem.
 		/// </summary>
-		/// <param name="sel">The selection</param>
-		/// <param name="dpt">Problem type</param>
-		/// <returns>response value</returns>
-		/// ------------------------------------------------------------------------------------
-		public override VwDelProbResponse OnProblemDeletion(IVwSelection sel,
-			VwDelProbType dpt)
+		public override VwDelProbResponse OnProblemDeletion(IVwSelection sel, VwDelProbType dpt)
 		{
 			CheckDisposed();
 
 			switch (dpt)
 			{
-			case VwDelProbType.kdptBsAtStartPara:
-			case VwDelProbType.kdptDelAtEndPara:
-			case VwDelProbType.kdptNone:
-				return VwDelProbResponse.kdprDone;
-			case VwDelProbType.kdptBsReadOnly:
-			case VwDelProbType.kdptComplexRange:
-			case VwDelProbType.kdptDelReadOnly:
-			case VwDelProbType.kdptReadOnly:
-				return VwDelProbResponse.kdprFail;
+				case VwDelProbType.kdptBsAtStartPara:
+				case VwDelProbType.kdptDelAtEndPara:
+				case VwDelProbType.kdptNone:
+					return VwDelProbResponse.kdprDone;
+				case VwDelProbType.kdptBsReadOnly:
+				case VwDelProbType.kdptComplexRange:
+				case VwDelProbType.kdptDelReadOnly:
+				case VwDelProbType.kdptReadOnly:
+					return VwDelProbResponse.kdprFail;
 			}
 			return VwDelProbResponse.kdprAbort;
 		}
@@ -540,7 +565,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Draw to the given clip rectangle.  This is overridden to *NOT* write the
 		/// default message for an uninitialized rootsite.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void Draw(PaintEventArgs e)
 		{
 			if (m_rootb != null && (m_dxdLayoutWidth > 0) && !DesignMode)
@@ -555,33 +579,37 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public void HandleKeyDownAndKeyPress(Keys key)
 		{
-			KeyEventArgs kea = new KeyEventArgs(key);
+			var kea = new KeyEventArgs(key);
 			if (EditingHelper.HandleOnKeyDown(kea))
+			{
 				return;
+			}
 			OnKeyDown(kea);
 			// for some reason OnKeyPress does not handle Delete key
 			// In FLEX, OnKeyPress does not even get called for Delete key.
 			if (key != Keys.Delete)
+			{
 				OnKeyPress(new KeyPressEventArgs((char)kea.KeyValue));
+			}
 		}
 
 		/// <summary>
 		/// Handle a right mouse up, invoking an appropriate context menu.
 		/// </summary>
-		/// <param name="sel"></param>
-		/// <param name="pt"></param>
-		/// <param name="rcSrcRoot"></param>
-		/// <param name="rcDstRoot"></param>
 		/// <returns></returns>
 		protected override bool DoContextMenu(IVwSelection sel, Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
 			// Allow base method to handle spell check problems, if any.
 			if (base.DoContextMenu(sel, pt, rcSrcRoot, rcDstRoot))
+			{
 				return true;
+			}
 
 			var mainWind = ParentForm as IFwMainWnd;
 			if (mainWind == null || sel == null)
+			{
 				return false;
+			}
 			CmObjectUi ui = null;
 			try
 			{
@@ -605,29 +633,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		internal IRecordList ActiveRecordList => RecordList.ActiveRecordListRepository.ActiveRecordList;
-
-		/// <summary>
-		/// Currently detects whether we've inserted a paragraph break (with the Enter key)
-		/// and move annotations into the new paragraph.
-		/// </summary>
-		internal class AnnotationMoveHelper : ListUpdateHelper
-		{
-			RawTextPane m_rootSite;
-
-			internal AnnotationMoveHelper(RawTextPane site, KeyPressEventArgs e)
-				: base(new ListUpdateHelperParameterObject { MyRecordList = site.MyRecordList })
-			{
-				m_rootSite = site;
-				if (!CanEdit())
-					return;
-				SkipShowRecord = true;
-			}
-
-			internal bool CanEdit()
-			{
-				return m_rootSite.m_hvoRoot != 0 && m_rootSite != null && !m_rootSite.IsDisposed && !m_rootSite.ReadOnlyView && m_rootSite.m_vc.Editable;
-			}
-		}
 
 		#endregion Overrides of RootSite
 
@@ -654,7 +659,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					true); // install it
 				// Don't steal the focus from another window.  See FWR-1795.
 				if (ParentForm == Form.ActiveForm)
+				{
 					Focus();
+				}
 				// Scroll this selection into View.
 				var sel = RootBox.Selection;
 				ScrollSelectionIntoView(sel, VwScrollSelOpts.kssoDefault);
@@ -684,19 +691,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private IVwSelection SelectionBeginningGrowToWord(IVwSelection sel)
 		{
 			if (sel == null)
+			{
 				return null;
+			}
 			// REVISIT (EricP) Need to check if Ws is IsRightToLeft?
 			var sel2 = sel.EndBeforeAnchor ? sel.EndPoint(true) : sel.EndPoint(false);
-			if (sel2 == null)
-				return null;
-			var sel3 = sel2.GrowToWord();
+			var sel3 = sel2?.GrowToWord();
 			return sel3;
 		}
 
 		/// <summary>
 		/// Look up the selected wordform in the dictionary and display its lexical entry.
 		/// </summary>
-		/// <param name="argument"></param>
 		public bool OnLexiconLookup(object argument)
 		{
 			CheckDisposed();
@@ -717,16 +723,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// to the user if nothing else.  It would be nice if the processing could be minimized,
 		/// but this seems to be minimal. (GJM - 23 Feb 2012 Is that better? LT-12726)
 		/// </summary>
-		/// <returns>true</returns>
 		public bool LexiconLookupEnabled()
 		{
 			CheckDisposed();
 
-			if (m_rootb == null)
-				return false;
-			IVwSelection sel = m_rootb.Selection;
+			var sel = m_rootb?.Selection;
 			if (sel == null || !sel.IsValid)
+			{
 				return false;
+			}
 			// out variables for GetSelectedWordPos
 			int hvo, tag, ws, ichMin, ichLim;
 			// We just need to see if it's possible
@@ -735,7 +740,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private bool GetSelectedWordPos(IVwSelection sel, out int hvo, out int tag, out int ws, out int ichMin, out int ichLim)
 		{
-			IVwSelection wordsel = SelectionBeginningGrowToWord(sel);
+			var wordsel = SelectionBeginningGrowToWord(sel);
 			if (wordsel == null)
 			{
 				hvo = tag = ws = 0;
@@ -744,10 +749,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			ITsString tss;
 			bool fAssocPrev;
-			wordsel.TextSelInfo(false, out tss, out ichMin, out fAssocPrev, out hvo, out tag,
-				out ws);
-			wordsel.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag,
-				out ws);
+			wordsel.TextSelInfo(false, out tss, out ichMin, out fAssocPrev, out hvo, out tag, out ws);
+			wordsel.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
 			return ichLim > 0;
 		}
 
@@ -756,10 +759,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			wordform = null;
 			int ichMin, ichLim, hvo, tag, ws;
 			if (!GetSelectedWordPos(sel, out hvo, out tag, out ws, out ichMin, out ichLim))
+			{
 				return false;
+			}
 
 			if (tag != StTxtParaTags.kflidContents)
+			{
 				return false;
+			}
 
 			var para = m_cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
 			if (!para.ParseIsCurrent)
@@ -785,9 +792,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void ReparseParaInUowIfNeeded(IStTxtPara para)
 		{
 			if (Cache.ActionHandlerAccessor.CurrentDepth > 0)
+			{
 				ReparseParagraph(para);
+			}
 			else
+			{
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => ReparseParagraph(para));
+			}
 		}
 
 		private void ReparseParagraph(IStTxtPara para)
@@ -804,11 +815,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			foreach (var seg in para.SegmentsOS)
 			{
 				if (seg.BeginOffset > ichMin || seg.EndOffset < ichLim)
+				{
 					continue;
+				}
 				bool exact;
 				var occurrence = seg.FindWagform(ichMin - seg.BeginOffset, ichLim - seg.BeginOffset, out exact);
 				if (occurrence != null)
+				{
 					anal = occurrence.Analysis;
+				}
 				break;
 			}
 			return anal;
@@ -836,9 +851,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 #endif
 
-		void Swap(ref int first, ref int second)
+		private static void Swap(ref int first, ref int second)
 		{
-			int temp = first;
+			var temp = first;
 			first = second;
 			second = temp;
 		}
@@ -846,24 +861,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Guess where we can break words.
 		/// </summary>
-		/// <param name="argument"></param>
 		public void OnGuessWordBreaks(object argument)
 		{
 			CheckDisposed();
 
-			IVwSelection sel = RootBox.Selection;
+			var sel = RootBox.Selection;
 			ITsString tss;
 			int ichMin, hvoStart, ichLim, hvoEnd, tag, ws;
 			bool fAssocPrev;
-			sel.TextSelInfo(false, out tss, out ichMin, out fAssocPrev, out hvoStart,
-				out tag, out ws);
+			sel.TextSelInfo(false, out tss, out ichMin, out fAssocPrev, out hvoStart, out tag, out ws);
 			sel.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvoEnd, out tag, out ws);
 			if (sel.EndBeforeAnchor)
 			{
 				Swap(ref ichMin, ref ichLim);
 				Swap(ref hvoStart, ref hvoEnd);
 			}
-			WordBreakGuesser guesser = new WordBreakGuesser(m_cache, hvoStart);
+			var guesser = new WordBreakGuesser(m_cache, hvoStart);
 			if (hvoStart == hvoEnd)
 			{
 				if (ichMin == ichLim)
@@ -876,17 +889,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			else
 			{
 				guesser.Guess(ichMin, -1, hvoStart);
-				bool fProcessing = false;
-				ISilDataAccess sda = m_cache.MainCacheAccessor;
-				int hvoStText = m_hvoRoot;
-				int cpara = sda.get_VecSize(hvoStText, StTextTags.kflidParagraphs);
-				for (int i = 0; i < cpara; i++)
+				var fProcessing = false;
+				var sda = m_cache.MainCacheAccessor;
+				var hvoStText = RootHvo;
+				var cpara = sda.get_VecSize(hvoStText, StTextTags.kflidParagraphs);
+				for (var i = 0; i < cpara; i++)
 				{
-					int hvoPara = sda.get_VecItem(hvoStText, StTextTags.kflidParagraphs, i);
+					var hvoPara = sda.get_VecItem(hvoStText, StTextTags.kflidParagraphs, i);
 					if (hvoPara == hvoStart)
+					{
 						fProcessing = true;
+					}
 					else if (hvoPara == hvoEnd)
+					{
 						break;
+					}
 					else if (fProcessing)
 					{
 						guesser.Guess(0, -1, hvoPara);
@@ -910,181 +927,5 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		#endregion
-	}
-
-	// Raw text VC extracts displays the Contents of a Text using the regular StVc.
-	class RawTextVc : StVc
-	{
-		public const int kTagUserPrompt = 1000009879; // very large number prevents auto-load.
-
-		IVwRootBox m_rootb;
-
-		public RawTextVc(IVwRootBox rootb, LcmCache cache, int wsFirstPara) : base("Normal", wsFirstPara)
-		{
-			m_rootb = rootb;
-			Cache = cache;
-			// This is normally done in the Cache setter, but not if the default WS is already set.
-			// I'm not sure why not, but rather than mess with a shared base class, we'll just
-			// fix it here.
-			SetupVernWsForText(m_wsDefault);
-			this.Lazy = true;
-		}
-
-		internal void SetupVernWsForText(int wsVern)
-		{
-			m_wsDefault = wsVern;
-			CoreWritingSystemDefinition defWs = Cache.ServiceLocator.WritingSystemManager.Get(wsVern);
-			RightToLeft = defWs.RightToLeftScript;
-		}
-
-		// This evaluates a paragraph to find out whether to display a user prompt, and if so,
-		// inserts one.
-		protected override bool InsertParaContentsUserPrompt(IVwEnv vwenv, int paraHvo)
-		{
-			// The only easy solution for LT-1437 "Pasting in a text produces unequal results"
-			// is to not have the user prompt!
-			return false;
-			//ISilDataAccess sda = vwenv.DataAccess;
-			// If our hvo is not the first and only paragraph of an owning StText, it isn't
-			// interesting.
-			//int hvoOwner = sda.get_ObjectProp(hvo,
-			//	(int)CmObjectFields.kflidCmObject_Owner);
-			//if (sda.get_VecItem(hvoOwner, (int) StText.StTextTags.kflidParagraphs, 0) != hvo)
-			//	return false;
-			//if (sda.get_VecSize(hvoOwner, (int) StText.StTextTags.kflidParagraphs) > 1)
-			//	return false;
-			// Also if it isn't empty.
-			//if (sda.get_StringProp(hvo, (int)StTxtPara.StTxtParaTags.kflidContents).
-			//	Length > 0)
-			//{
-			//	return false;
-			//}
-			//vwenv.NoteDependency(new int[] { hvo},
-			//	new int[] { (int)StTxtPara.StTxtParaTags.kflidContents}, 1);
-			//vwenv.AddProp(kTagUserPrompt, this, 1);
-			//return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a value indicating whether to set the base WS and direction according to the
-		/// first run in the paragraph contents.
-		/// </summary>
-		/// <value>
-		/// 	<c>true</c> to base the direction on para contents; <c>false</c> to use the
-		/// 	default writing system of the view constructor.
-		/// </value>
-		/// ------------------------------------------------------------------------------------
-		public override bool BaseDirectionOnParaContents
-		{
-			get { return true; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Set the BaseWs and RightToLeft properties for the paragraph that is being laid out.
-		/// These are computed (if possible) from the current paragraph; otherwise, use the
-		/// default as set on the view contructor for the whole text. This override also sets
-		/// the alignment (which presumably overrides the alignment set in the stylesheet?).
-		/// </summary>
-		/// <param name="vwenv">The vwenv.</param>
-		/// <param name="paraHvo">The HVO of the paragraph.</param>
-		/// ------------------------------------------------------------------------------------
-		protected override void SetupWsAndDirectionForPara(IVwEnv vwenv, int paraHvo)
-		{
-			base.SetupWsAndDirectionForPara(vwenv, paraHvo);
-
-			vwenv.set_IntProperty((int)FwTextPropType.ktptAlign,
-				(int)FwTextPropVar.ktpvEnum,
-				RightToLeft ? (int)FwTextAlign.ktalRight : (int)FwTextAlign.ktalLeft);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override ITsString UpdateProp(IVwSelection vwsel, int hvo, int tag, int frag, ITsString tssVal)
-		{
-			Debug.Assert(tag == kTagUserPrompt, "Got an unexpected tag");
-
-			// Get information about current selection
-			int cvsli = vwsel.CLevels(false);
-			cvsli--; // CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
-			int ihvoRoot;
-			int tagTextProp;
-			int cpropPrevious;
-			int ichAnchor;
-			int ichEnd;
-			int ihvoEnd;
-			bool fAssocPrev;
-			int ws;
-			ITsTextProps ttp;
-			SelLevInfo[] rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli,
-				out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
-				out ws, out fAssocPrev, out ihvoEnd, out ttp);
-
-			// get para info
-			IStTxtPara para = Cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
-//			ITsTextProps props = StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs);
-//
-//			// set string info based on the para info
-//			ITsStrBldr bldr = (ITsStrBldr)tssVal.GetBldr();
-//			bldr.SetProperties(0, bldr.Length, props);
-//			tssVal = bldr.GetString();
-
-			// Add the text the user just typed to the paragraph - this destroys the selection
-			// because we replace the user prompt.
-			para.Contents = tssVal;
-
-			// now restore the selection
-			m_rootb.MakeTextSelection(ihvoRoot, cvsli, rgvsli,
-				StTxtParaTags.kflidContents, cpropPrevious, ichAnchor, ichEnd,
-				Cache.DefaultVernWs, fAssocPrev, ihvoEnd, null, true);
-
-			return tssVal;
-		}
-
-		/// <summary>
-		/// We only use this to generate our empty text prompt.
-		/// </summary>
-		/// <param name="vwenv"></param>
-		/// <param name="tag"></param>
-		/// <param name="frag"></param>
-		/// <returns></returns>
-		public override ITsString DisplayVariant(IVwEnv vwenv, int tag, int frag)
-		{
-			string userPrompt = ITextStrings.ksEnterOrPasteHere;
-
-			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
-			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor,
-				(int)FwTextPropVar.ktpvDefault, Color.LightGray.ToArgb());
-			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
-				(int)FwTextPropVar.ktpvDefault, Cache.DefaultUserWs);
-			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
-			bldr.Replace(0, 0, userPrompt, ttpBldr.GetTextProps());
-			// Begin the prompt with a zero-width space in the vernacular writing system (with
-			// no funny colors).  This ensures anything the user types (or pastes from a non-FW
-			// clipboard) is put in that WS.
-			// 200B == zero-width space.
-			ITsPropsBldr ttpBldr2 = TsStringUtils.MakePropsBldr();
-			ttpBldr2.SetIntPropValues((int)FwTextPropType.ktptWs,
-				(int)FwTextPropVar.ktpvDefault, Cache.DefaultVernWs);
-			bldr.Replace(0, 0, "\u200B", ttpBldr2.GetTextProps());
-			return bldr.GetString();
-		}
-
-		public override ITsTextProps CaptionProps
-		{
-			get
-			{
-				ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
-				bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Dictionary-Pictures");
-				bldr.SetIntPropValues((int)FwTextPropType.ktptEditable,
-					(int)FwTextPropVar.ktpvEnum,
-					(int)TptEditable.ktptNotEditable);
-				return bldr.GetTextProps();
-			}
-		}
 	}
 }

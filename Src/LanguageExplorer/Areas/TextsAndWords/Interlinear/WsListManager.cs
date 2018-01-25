@@ -1,9 +1,8 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -33,7 +32,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Create one starting from a language project.
 		/// </summary>
-		/// <param name="lp"></param>
 		public WsListManager(ILangProject lp)
 		{
 			m_lp = lp;
@@ -42,13 +40,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Create one starting from an LcmCache.
 		/// </summary>
-		/// <param name="cache"></param>
-		public WsListManager(LcmCache cache): this(cache.LangProject)
+		public WsListManager(LcmCache cache)
+			: this(cache.LangProject)
 		{
 		}
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -58,21 +55,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed = false;
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		public bool IsDisposed { get; private set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -127,8 +118,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -141,7 +134,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_labelBasis = null;
 			m_tssColon = null;
 			m_ttpLabelStyle = null;
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
@@ -158,18 +151,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary>
-		/// Returns the index of ws in AnalysisWsIds
+		/// Returns the index of ws in AnalysisWsIds, or -1 if not found.
 		/// </summary>
-		/// <param name="ws"></param>
-		/// <returns>-1 if not found</returns>
 		public int IndexOf(int ws)
 		{
 			CheckDisposed();
 
-			for (int index = 0; index < AnalysisWsIds.Length; index++)
+			for (var index = 0; index < AnalysisWsIds.Length; index++)
 			{
 				if (AnalysisWsIds[index] == ws)
+				{
 					return index;
+				}
 			}
 			return -1;
 		}
@@ -177,19 +170,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Return an array of writing systems given an array of their HVOs.
 		/// </summary>
-		/// <returns></returns>
 		private CoreWritingSystemDefinition[] WssFromHvos(int[] hvos)
 		{
-			var lgWss = new List<CoreWritingSystemDefinition>();
-			foreach (int ws in hvos)
-				lgWss.Add(m_lp.Services.WritingSystemManager.Get(ws));
-			return lgWss.ToArray();
+			return hvos.Select(ws => m_lp.Services.WritingSystemManager.Get(ws)).ToArray();
 		}
 		/// <summary>
 		/// Return an array of the analysis writing systems the user wants.
 		/// </summary>
-		/// <returns></returns>
-		public ILgWritingSystem[] AnalysisWss
+		public CoreWritingSystemDefinition[] AnalysisWss
 		{
 			get
 			{
@@ -202,11 +190,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private bool equalArrays(int[] v1, int[] v2)
 		{
 			if (v1.Length != v2.Length)
+			{
 				return false;
-			for (int i = 0; i < v1.Length; i++)
-				if (v1[i] != v2[i])
-					return false;
-			return true;
+			}
+
+			return !v1.Where((t, i) => t != v2[i]).Any();
 		}
 
 		/// <summary>
@@ -219,27 +207,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				CheckDisposed();
 
-				if (m_labels == null || ! equalArrays(m_labelBasis, AnalysisWsIds))
+				if (m_labels != null && equalArrays(m_labelBasis, AnalysisWsIds))
 				{
-					ITsTextProps ttp = LanguageCodeStyle;
-					var labels = new List<ITsString>();
-					foreach (CoreWritingSystemDefinition ws in AnalysisWss.Cast<CoreWritingSystemDefinition>())
-					{
-						string sAbbr = ws.Abbreviation;
-						labels.Add(TsStringUtils.MakeString(sAbbr, ttp));
-					}
-					m_labels = labels.ToArray();
-					m_labelBasis = AnalysisWsIds;
+					return m_labels;
 				}
+				var ttp = LanguageCodeStyle;
+				m_labels = AnalysisWss.Select(ws => ws.Abbreviation).Select(sAbbr => TsStringUtils.MakeString(sAbbr, ttp)).ToArray();
+				m_labelBasis = AnalysisWsIds;
 				return m_labels;
 			}
 		}
 
 		public static ITsString WsLabel(LcmCache cache, int ws)
 		{
-			CoreWritingSystemDefinition wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
-			ITsString abbr = TsStringUtils.MakeString(wsObj.Abbreviation, cache.DefaultUserWs, "Language Code");
-			ITsStrBldr tsb = abbr.GetBldr();
+			var wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
+			var abbr = TsStringUtils.MakeString(wsObj.Abbreviation, cache.DefaultUserWs, "Language Code");
+			var tsb = abbr.GetBldr();
 			tsb.SetProperties(0, tsb.Length, LanguageCodeTextProps(cache.DefaultUserWs));
 			return tsb.GetString();
 		}
@@ -248,8 +231,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Add to the current display (a paragraph should be open) a label followed by colon, in the standard style,
 		/// that identifies a particular writing system from the current list.
 		/// </summary>
-		/// <param name="vwenv"></param>
-		/// <param name="iws"></param>
 		public void AddWsLabel(IVwEnv vwenv, int iws)
 		{
 			CheckDisposed();
@@ -286,15 +267,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public static ITsTextProps LanguageCodeTextProps(int wsUser)
 		{
-			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
-			tpb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,
-				wsUser);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
-				BGR(47, 96, 255));
-			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint,
-				8000);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum,
-				(int)TptEditable.ktptNotEditable);
+			var tpb = TsStringUtils.MakePropsBldr();
+			tpb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, wsUser);
+			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, BGR(47, 96, 255));
+			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 8000);
+			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			tpb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, StyleServices.UiElementStylename);
 			return tpb.GetTextProps();
 		}
@@ -304,21 +281,27 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return red + (blue * 256 + green) * 256;
 		}
 
-		// Return a comma-separated list of the current analysis writing systems.
-		// Might be marginally faster to use a string builder, but remember that 9/10 times
-		// the for loop will execute zero times.
+		/// <summary>
+		/// Return a comma-separated list of the current analysis writing systems.
+		/// Might be marginally faster to use a string builder, but remember that 9/10 times
+		/// the for loop will execute zero times.
+		/// </summary>
 		internal string AnalysisWssIdsString
 		{
 			get
 			{
 				CheckDisposed();
 
-				int[] wssAnalysis = AnalysisWsIds;
+				var wssAnalysis = AnalysisWsIds;
 				if (wssAnalysis.Length == 0)
-					return ""; // best we can do, though may not work well.
-				string result = "" + wssAnalysis[0];
-				for (int i = 1; i < wssAnalysis.Length; ++i)
+				{
+					return string.Empty; // best we can do, though may not work well.
+				}
+				var result = string.Empty + wssAnalysis[0];
+				for (var i = 1; i < wssAnalysis.Length; ++i)
+				{
 					result += "," + wssAnalysis[i];
+				}
 				return result;
 			}
 

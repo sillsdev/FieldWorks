@@ -96,7 +96,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// An (undesired) side effect is to focus the box and put the selection at the end of it.
 		/// I cannot find any portable way to achieve the desired scrolling without doing this.
 		/// </summary>
-		/// <param name="textBox"></param>
 		private static void MakeEndOfTextVisibleAndFocus(TextBox textBox)
 		{
 			if (textBox.Text.Length == 0)
@@ -115,7 +114,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			textBox.ScrollToCaret();
 		}
 
-		private string GetDefaultOutputSettingsPath(string input)
+		private static string GetDefaultOutputSettingsPath(string input)
 		{
 			var pathWithoutExtension = input.Substring(0, input.Length - Path.GetExtension(input).Length);
 			return Path.ChangeExtension(pathWithoutExtension + "-import-settings", ".map");
@@ -143,7 +142,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var files = SplitPaths(currentFiles);
 				var dir = string.Empty;
 				var initialFileName = string.Empty;
-				openFileDialog.FileName = "";
+				openFileDialog.FileName = string.Empty;
 				if (files.Length > 0)
 				{
 					var firstFilePath = files[0].Trim();
@@ -175,29 +174,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						return currentFiles;
 					}
-					var badFiles = new List<string>();
-					foreach (var fileName in openFileDialog.FileNames)
+					var badFiles = openFileDialog.FileNames.Where(fileName => !new IsSfmFile(fileName).IsValid).ToList();
+					if (badFiles.Count <= 0)
 					{
-						if (!new IsSfmFile(fileName).IsValid)
-						{
-							badFiles.Add(fileName);
-						}
+						return JoinPaths(openFileDialog.FileNames);
 					}
-					if (badFiles.Count > 0)
+					var msg = string.Format(ITextStrings.ksInvalidInterlinearFiles, string.Join(", ", badFiles.ToArray()));
+					var dr = MessageBox.Show(this, msg, ITextStrings.ksPossibleInvalidFile, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+					if (dr == DialogResult.Yes)
 					{
-						var msg = string.Format(ITextStrings.ksInvalidInterlinearFiles, string.Join(", ", badFiles.ToArray()));
-						var dr = MessageBox.Show(this, msg, ITextStrings.ksPossibleInvalidFile, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-						if (dr == DialogResult.Yes)
-						{
-							return JoinPaths(openFileDialog.FileNames);
-						}
-						if (dr == DialogResult.No)
-						{
-							continue; // loop and show dialog again...hopefully same files selected.
-						}
-						break; // user must have chosen cancel, break out of loop
+						return JoinPaths(openFileDialog.FileNames);
 					}
-					return JoinPaths(openFileDialog.FileNames);
+					if (dr == DialogResult.No)
+					{
+						continue; // loop and show dialog again...hopefully same files selected.
+					}
+					break; // user must have chosen cancel, break out of loop
 				}
 				return currentFiles; // leave things unchanged.
 			}
@@ -223,7 +215,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var remaining = input;
 			for (;;)
 			{
-				int index = remaining.IndexOf('"');
+				var index = remaining.IndexOf('"');
 				if (index < 0)
 				{
 					AddSimpleItems(results, remaining);
@@ -231,7 +223,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				var piece = remaining.Substring(0, index);
 				AddSimpleItems(results, piece);
-				int nextQuote = remaining.IndexOf('"', index + 1);
+				var nextQuote = remaining.IndexOf('"', index + 1);
 				if (nextQuote <= 0)
 				{
 					// unmatched...ugh!
@@ -265,7 +257,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					// LT-6620 : putting in an invalid path was causing an exception in the openFileDialog.ShowDialog()
 					// Now we make sure parts are valid before setting the values in the openfile dialog.
-					string dir = string.Empty;
+					var dir = string.Empty;
 					try
 					{
 						dir = Path.GetDirectoryName(pathForInitialDirectory);
@@ -283,26 +275,26 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					else
 					{
-						openFileDialog.FileName = "";
+						openFileDialog.FileName = string.Empty;
 					}
 
 					openFileDialog.Title = title;
 					if (openFileDialog.ShowDialog() == DialogResult.OK)
 					{
-						if (!(isValidFile(openFileDialog.FileName)))
+						if (isValidFile(openFileDialog.FileName))
 						{
-							var msg = string.Format(ITextStrings.ksInvalidFileAreYouSure, openFileDialog.FileName);
-							var dr = MessageBox.Show(this, msg, ITextStrings.ksPossibleInvalidFile, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-							switch (dr)
-							{
-								case DialogResult.Yes:
-									return openFileDialog.FileName;
-								case DialogResult.No:
-									continue;
-							}
-							break;	// exit with current still
+							return openFileDialog.FileName;
 						}
-						return openFileDialog.FileName;
+						var msg = string.Format(ITextStrings.ksInvalidFileAreYouSure, openFileDialog.FileName);
+						var dr = MessageBox.Show(this, msg, ITextStrings.ksPossibleInvalidFile, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+						switch (dr)
+						{
+							case DialogResult.Yes:
+								return openFileDialog.FileName;
+							case DialogResult.No:
+								continue;
+						}
+						break;	// exit with current still
 					}
 					done = true;
 				}
@@ -312,119 +304,121 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected override void OnNextButton()
 		{
-			if (CurrentStepNumber == 0)
+			switch (CurrentStepNumber)
 			{
-				// Populate m_mappingsList based on the selected files.
-				var sfmcounts = new Dictionary<string, int>();
-				var sfmOrder = new Dictionary<int, string>(); // key is 100000*fileNum + orderInFile, value is a marker
-				var fileNum = 0;
-				foreach (var pathName in InputFiles)
-				{
-					var reader = new SfmFileReaderEx(pathName);
-					followedBy = reader.GetFollowedByInfo();
-					foreach (string marker in reader.SfmInfo)
+				case 0:
+					// Populate m_mappingsList based on the selected files.
+					var sfmcounts = new Dictionary<string, int>();
+					var sfmOrder = new Dictionary<int, string>(); // key is 100000*fileNum + orderInFile, value is a marker
+					var fileNum = 0;
+					foreach (var pathName in InputFiles)
 					{
-						int oldVal;
-						if (!sfmcounts.TryGetValue(marker, out oldVal))
+						var reader = new SfmFileReaderEx(pathName);
+						followedBy = reader.GetFollowedByInfo();
+						foreach (string marker in reader.SfmInfo)
 						{
-							// first time we've seen it: this file determines order;
-							sfmOrder[fileNum * 100000 + reader.GetSFMOrder(marker)] = marker;
-						}
-						sfmcounts[marker] = oldVal + reader.GetSFMCount(marker);
-					}
-					fileNum++;
-				}
-				// Read the map file (unless we've been to this pane before...then use the saved settings), integrate with the sfmcount info.
-				var savedMappings = new Dictionary<string, InterlinearMapping>();
-				m_oldMappings = m_firstTimeInMappingsPane ? LoadSettings() : new List<InterlinearMapping>((m_mappings));
-				m_firstTimeInMappingsPane = false;
-				foreach (var mapping in m_oldMappings)
-				{
-					savedMappings[mapping.Marker] = mapping;
-				}
-				m_mappings.Clear();
-				var keys = new List<int>(sfmOrder.Keys);
-				keys.Sort();
-				foreach (var key in keys)
-				{
-					var marker = sfmOrder[key];
-					InterlinearMapping mapping;
-					if (savedMappings.TryGetValue(marker, out mapping))
-					{
-						mapping = new InterlinearMapping(mapping);
-						if (string.IsNullOrEmpty(mapping.WritingSystem))
-						{
-							var ws = GetDefaultWs(mapping);
-							if (ws != 0)
+							int oldVal;
+							if (!sfmcounts.TryGetValue(marker, out oldVal))
 							{
-								mapping.WritingSystem = m_cache.WritingSystemFactory.GetStrFromWs(ws);
+								// first time we've seen it: this file determines order;
+								sfmOrder[fileNum * 100000 + reader.GetSFMOrder(marker)] = marker;
+							}
+							sfmcounts[marker] = oldVal + reader.GetSFMCount(marker);
+						}
+						fileNum++;
+					}
+					// Read the map file (unless we've been to this pane before...then use the saved settings), integrate with the sfmcount info.
+					var savedMappings = new Dictionary<string, InterlinearMapping>();
+					m_oldMappings = m_firstTimeInMappingsPane ? LoadSettings() : new List<InterlinearMapping>((m_mappings));
+					m_firstTimeInMappingsPane = false;
+					foreach (var mapping in m_oldMappings)
+					{
+						savedMappings[mapping.Marker] = mapping;
+					}
+					m_mappings.Clear();
+					var keys = new List<int>(sfmOrder.Keys);
+					keys.Sort();
+					foreach (var key in keys)
+					{
+						var marker = sfmOrder[key];
+						InterlinearMapping mapping;
+						if (savedMappings.TryGetValue(marker, out mapping))
+						{
+							mapping = new InterlinearMapping(mapping);
+							if (string.IsNullOrEmpty(mapping.WritingSystem))
+							{
+								var ws = GetDefaultWs(mapping);
+								if (ws != 0)
+								{
+									mapping.WritingSystem = m_cache.WritingSystemFactory.GetStrFromWs(ws);
+								}
+							}
+							else if (mapping.WritingSystem == "{vern}")
+							{
+								mapping.WritingSystem = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultVernWs);
 							}
 						}
-						else if (mapping.WritingSystem == "{vern}")
+						else
 						{
-							mapping.WritingSystem = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultVernWs);
+							mapping = new InterlinearMapping() {Marker = marker};
 						}
+						mapping.Count = sfmcounts[marker].ToString();
+						m_mappings.Add(mapping);
 					}
-					else
+					m_mappingsList.SuspendLayout();
+					m_mappingsList.Items.Clear();
+					foreach (var mapping in m_mappings)
 					{
-						mapping = new InterlinearMapping() {Marker = marker};
+						var item = new ListViewItem("\\" + mapping.Marker);
+						item.SubItems.Add(mapping.Count);
+						item.SubItems.Add(GetDestinationName(mapping.Destination));
+						item.SubItems.Add(mapping.WritingSystem != null ? GetWritingSystemName(mapping.WritingSystem) : "");
+						item.SubItems.Add(mapping.Converter ?? "");
+						m_mappingsList.Items.Add(item);
 					}
-					mapping.Count = sfmcounts[marker].ToString();
-					m_mappings.Add(mapping);
-				}
-				m_mappingsList.SuspendLayout();
-				m_mappingsList.Items.Clear();
-				foreach (var mapping in m_mappings)
-				{
-					var item = new ListViewItem("\\" + mapping.Marker);
-					item.SubItems.Add(mapping.Count);
-					item.SubItems.Add(GetDestinationName(mapping.Destination));
-					item.SubItems.Add(mapping.WritingSystem != null ? GetWritingSystemName(mapping.WritingSystem) : "");
-					item.SubItems.Add(mapping.Converter ?? "");
-					m_mappingsList.Items.Add(item);
-				}
-				if (m_mappingsList.Items.Count > 0)
-				{
-					m_mappingsList.SelectedIndices.Add(0);
-				}
-				m_mappingsList.ResumeLayout();
-			}
-			else if(CurrentStepNumber == 1)
-			{
-				var currentVernacWSs = m_cache.LanguageProject.VernacularWritingSystems;
-				var currentAnalysWSs = m_cache.LanguageProject.AnalysisWritingSystems;
-				var vernToAdd = new ArrayList();
-				var analysToAdd = new ArrayList();
-				var textCount = CalculateTextCount(m_mappings, followedBy);
-				foreach(var mapping in m_mappings)
-				{
-					if (mapping.Destination == InterlinDestination.Ignored)
+					if (m_mappingsList.Items.Count > 0)
 					{
-						continue; // may well have no WS, in any case, we don't care whether it's in our list.
+						m_mappingsList.SelectedIndices.Add(0);
 					}
-					var creationCancelled = false;
-					var ws = (CoreWritingSystemDefinition) m_cache.WritingSystemFactory.get_Engine(mapping.WritingSystem);
-					if (mapping.Destination == InterlinDestination.Baseline || mapping.Destination == InterlinDestination.Wordform)
+					m_mappingsList.ResumeLayout();
+					break;
+				case 1:
+					var currentVernacWSs = m_cache.LanguageProject.VernacularWritingSystems;
+					var currentAnalysWSs = m_cache.LanguageProject.AnalysisWritingSystems;
+					var vernToAdd = new ArrayList();
+					var analysToAdd = new ArrayList();
+					var textCount = CalculateTextCount(m_mappings, followedBy);
+					foreach(var mapping in m_mappings)
 					{
-						if (currentVernacWSs.Contains(ws) || vernToAdd.Contains(ws))
+						if (mapping.Destination == InterlinDestination.Ignored)
 						{
-							continue;
+							continue; // may well have no WS, in any case, we don't care whether it's in our list.
 						}
-						//Show creation dialog for Vernacular
-						var result = MessageBox.Show(this, string.Format(ITextStrings.ksImportSFMInterlinNewVernac, ws), string.Format(ITextStrings.ksImportSFMInterlinNewWSTitle, ws), MessageBoxButtons.YesNo);
-						if(result == DialogResult.Yes)
+						var creationCancelled = false;
+						var ws = (CoreWritingSystemDefinition)m_cache.WritingSystemFactory.get_Engine(mapping.WritingSystem);
+						if (mapping.Destination == InterlinDestination.Baseline || mapping.Destination == InterlinDestination.Wordform)
 						{
-							vernToAdd.Add(ws);
+							if (currentVernacWSs.Contains(ws) || vernToAdd.Contains(ws))
+							{
+								continue;
+							}
+							//Show creation dialog for Vernacular
+							var result = MessageBox.Show(this, string.Format(ITextStrings.ksImportSFMInterlinNewVernac, ws), string.Format(ITextStrings.ksImportSFMInterlinNewWSTitle, ws), MessageBoxButtons.YesNo);
+							if(result == DialogResult.Yes)
+							{
+								vernToAdd.Add(ws);
+							}
+							else //if they bail out we won't add any writing systems, they might change them all
+							{
+								return;
+							}
 						}
-						else //if they bail out we won't add any writing systems, they might change them all
+						else
 						{
-							return;
-						}
-					}
-					else
-					{
-						if(!currentAnalysWSs.Contains(ws) && !analysToAdd.Contains(ws))
-						{
+							if (currentAnalysWSs.Contains(ws) || analysToAdd.Contains(ws))
+							{
+								continue;
+							}
 							var result = MessageBox.Show(this, string.Format(ITextStrings.ksImportSFMInterlinNewAnalysis, ws), string.Format(ITextStrings.ksImportSFMInterlinNewWSTitle, ws), MessageBoxButtons.YesNo);
 							if (result == DialogResult.Yes)
 							{
@@ -436,8 +430,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							}
 						}
 					}
-				}
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor, () => //Add all the collected new languages into the project in their proper section.
+					NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor, () => //Add all the collected new languages into the project in their proper section.
 					{
 						foreach (CoreWritingSystemDefinition analysLang in analysToAdd)
 						{
@@ -448,15 +441,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							m_cache.LanguageProject.AddToCurrentVernacularWritingSystems(vernLang);
 						}
 					});
-				if(textCount > 1)
-				{
-					numberOfTextsLabel.Text = string.Format(ITextStrings.ksImportSFMInterlinTextCount, textCount);
-				}
-				else
-				{
-					numberOfTextsLabel.Text = string.Empty;
-				}
+					numberOfTextsLabel.Text = textCount > 1 ? string.Format(ITextStrings.ksImportSFMInterlinTextCount, textCount) : string.Empty;
+
+					break;
 			}
+
 			base.OnNextButton();
 		}
 
@@ -507,17 +496,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			foreach (var markerAndFollowing in dictionary)
 			{
 				//if the marker is a header
-				if(headers.Contains(markerAndFollowing.Key))
+				if (!headers.Contains(markerAndFollowing.Key))
 				{
-					//every time a header marker is followed by a non header it is the start of a text.
+					continue;
+				}
+				//every time a header marker is followed by a non header it is the start of a text.
 
-					//for every non header that follows a header marker add the occurence count to count.
-					foreach (var followingMarker in markerAndFollowing.Value)
+				//for every non header that follows a header marker add the occurence count to count.
+				foreach (var followingMarker in markerAndFollowing.Value)
+				{
+					if (!headers.Contains(followingMarker.Key))
 					{
-						if (!headers.Contains(followingMarker.Key))
-						{
-							count += followingMarker.Value;
-						}
+						count += followingMarker.Value;
 					}
 				}
 			}
@@ -556,20 +546,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected void OnKeyDown(object sender, KeyEventArgs e)
 		{
-			if(e.KeyCode == Keys.ShiftKey)
+			if (e.KeyCode != Keys.ShiftKey)
 			{
-				secretShiftText.Visible = true;
-				Refresh();
+				return;
 			}
+			secretShiftText.Visible = true;
+			Refresh();
 		}
 
 		protected void OnKeyUp(object sender, KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.ShiftKey)
+			if (e.KeyCode != Keys.ShiftKey)
 			{
-				secretShiftText.Visible = false;
-				Refresh();
+				return;
 			}
+			secretShiftText.Visible = false;
+			Refresh();
 		}
 
 		protected override void OnFinishButton()
@@ -783,14 +775,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return;
 			}
 			var result = MessageBox.Show(this, ITextStrings.ksAskSaveSettings, ITextStrings.ksSaveSettingsCaption, MessageBoxButtons.YesNoCancel);
-			if (result == DialogResult.Cancel)
+			switch (result)
 			{
-				DialogResult = DialogResult.None; // stop it closing.
-				return;
-			}
-			if (result == DialogResult.Yes)
-			{
-				SaveSettings();
+				case DialogResult.Cancel:
+					DialogResult = DialogResult.None; // stop it closing.
+					return;
+				case DialogResult.Yes:
+					SaveSettings();
+					break;
 			}
 		}
 

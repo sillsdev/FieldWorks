@@ -141,6 +141,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
+		#endregion
+
+		#region Implementation of IFlexComponent
+
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -221,13 +225,17 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			tvTarget.Font = new Font(MiscUtils.StandardSansSerif, 9);
 
 			var srcTnWf = new TreeNode();
-			var tarTnWf = new TreeNode();
-			tarTnWf.Text = srcTnWf.Text = TsStringUtils.NormalizeToNFC(LanguageExplorerResources.ksNoAnalysis);
-			tarTnWf.Tag = srcTnWf.Tag = _wordform;
+			var tarTnWf = new TreeNode
+			{
+				Text = srcTnWf.Text = TsStringUtils.NormalizeToNFC(LanguageExplorerResources.ksNoAnalysis),
+				Tag = srcTnWf.Tag = _wordform
+			};
 			tvSource.Nodes.Add(srcTnWf);
 			tvTarget.Nodes.Add(tarTnWf);
 			if (srcTnWf.Tag == _wordform)
+			{
 				tvSource.SelectedNode = srcTnWf;
+			}
 			var cnt = 0;
 			// Note: the left side source tree only has human approved analyses,
 			// since only those can have instances from text-land pointing at them.
@@ -236,31 +244,41 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				var srcTnAnal = new TreeNode();
 				var tarTnAnal = new TreeNode
 				{
-					Text = srcTnAnal.Text = TsStringUtils.NormalizeToNFC(
-												String.Format(LanguageExplorerResources.ksAnalysisX, (++cnt))),
+					Text = srcTnAnal.Text = TsStringUtils.NormalizeToNFC(string.Format(LanguageExplorerResources.ksAnalysisX, ++cnt)),
 					Tag = srcTnAnal.Tag = anal
 				};
 				srcTnWf.Nodes.Add(srcTnAnal);
 				tarTnWf.Nodes.Add(tarTnAnal);
 				if (srcTnAnal.Tag == _wordform)
+				{
 					tvSource.SelectedNode = srcTnAnal;
+				}
 				foreach (var gloss in anal.MeaningsOC)
 				{
-					var srcTnGloss = new TreeNode();
-					var tarTnGloss = new TreeNode();
 					var tss = gloss.Form.BestAnalysisAlternative;
+					var normalizedText = TsStringUtils.NormalizeToNFC(tss.Text);
 					var props = tss.get_PropertiesAt(0);
 					int nVar;
 					var ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
 					var fontname = _wordform.Cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName;
-					tarTnGloss.NodeFont = new Font(fontname, 9);
-					srcTnGloss.NodeFont = new Font(fontname, 9);
-					tarTnGloss.Text = srcTnGloss.Text = TsStringUtils.NormalizeToNFC(tss.Text);
-					tarTnGloss.Tag = srcTnGloss.Tag = gloss;
+					var srcTnGloss = new TreeNode
+					{
+						NodeFont = new Font(fontname, 9),
+						Text = normalizedText,
+						Tag = gloss
+					};
 					srcTnAnal.Nodes.Add(srcTnGloss);
+					var tarTnGloss = new TreeNode
+					{
+						NodeFont = new Font(fontname, 9),
+						Text = normalizedText,
+						Tag = gloss
+					};
 					tarTnAnal.Nodes.Add(tarTnGloss);
 					if (srcTnGloss.Tag == _wordform)
+					{
 						tvSource.SelectedNode = srcTnGloss;
+					}
 				}
 			}
 			tvSource.ExpandAll();
@@ -285,7 +303,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(string.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -295,7 +315,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
@@ -328,12 +350,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// This class provides access to the status strip's progress bar.
 		/// </summary>
-		private class ProgressReporting : IProgress
+		private sealed class ProgressReporting : IProgress
 		{
 			event CancelEventHandler IProgress.Canceling
 			{
-				add { throw new NotImplementedException(); }
-				remove { throw new NotImplementedException(); }
+				add { throw new NotSupportedException(); }
+				remove { throw new NotSupportedException(); }
 			}
 
 			private readonly ToolStripProgressBar _progressBar;
@@ -362,10 +384,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				set { _progressBar.Maximum = value; }
 			}
 
-			public bool Canceled
-			{
-				get { return false; }
-			}
+			public bool Canceled => false;
 
 			/// <summary>
 			/// Gets an object to be used for ensuring that required tasks are invoked on the main
@@ -376,21 +395,18 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				get { return _progressBar.Control; }
 			}
 
-			public Form Form
-			{
-				get { return _progressBar.Control.FindForm(); }
-			}
+			public Form Form => _progressBar.Control.FindForm();
 
 			public bool IsIndeterminate
 			{
-				get { throw new NotImplementedException(); }
-				set { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
+				set { throw new NotSupportedException(); }
 			}
 
 			public bool AllowCancel
 			{
-				get { throw new NotImplementedException(); }
-				set { throw new NotImplementedException(); }
+				get { throw new NotSupportedException(); }
+				set { throw new NotSupportedException(); }
 			}
 
 			public string Message
@@ -418,7 +434,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			public string Title
 			{
-				get { return String.Empty; }
+				get { return string.Empty; }
 				set { }
 			}
 			#endregion
@@ -623,7 +639,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					_currentBrowseView = null;
 				}
 
-				XmlNode configurationNode;
 				IRecordList recordList;
 				var selObj = (IAnalysis)tvSource.SelectedNode.Tag;
 				switch (selObj.ClassID)
@@ -631,15 +646,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					default:
 						throw new InvalidOperationException("Class not recognized.");
 					case WfiWordformTags.kClassId:
-						configurationNode = _configurationNodes[WfiWordformTags.kClassId];
 						recordList = _recordLists[WfiWordformTags.kClassId];
 						break;
 					case WfiAnalysisTags.kClassId:
-						configurationNode = _configurationNodes[WfiAnalysisTags.kClassId];
 						recordList = _recordLists[WfiAnalysisTags.kClassId];
 						break;
 					case WfiGlossTags.kClassId:
-						configurationNode = _configurationNodes[WfiGlossTags.kClassId];
 						recordList = _recordLists[WfiGlossTags.kClassId];
 						break;
 				}
@@ -687,13 +699,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 		}
 
-		void BrowseViewer_FilterChanged(object sender, FilterChangeEventArgs e)
+		private void BrowseViewer_FilterChanged(object sender, FilterChangeEventArgs e)
 		{
 			SetFilterStatus(e.Added != null);
 			SetRecordStatus();
 		}
 
-		void BrowseViewer_SelectionChanged(object sender, FwObjectSelectionEventArgs e)
+		private void BrowseViewer_SelectionChanged(object sender, FwObjectSelectionEventArgs e)
 		{
 			SetRecordStatus();
 		}
@@ -716,7 +728,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			var cobj = _currentBrowseView.MyRecordList.ListSize;
 			var idx = _currentBrowseView.BrowseViewer.SelectedIndex;
-			var sMsg = cobj == 0 ? LanguageExplorerResources.ksNoRecords : String.Format("{0}/{1}", idx + 1, cobj);
+			var sMsg = cobj == 0 ? LanguageExplorerResources.ksNoRecords : $"{idx + 1}/{cobj}";
 			_toolStripRecordStatusLabel.Text = sMsg;
 			_toolStripProgressBar.Value = _toolStripProgressBar.Minimum;	// clear the progress bar
 		}
@@ -746,7 +758,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					var concSda = ConcSda;
 					var originalValues = new Dictionary<int, IParaFragment>();
 					foreach (var originalHvo in concSda.VecProp(src.Hvo, _currentSourceMadeUpFieldIdentifier))
+					{
 						originalValues.Add(originalHvo, concSda.OccurrenceFromHvo(originalHvo));
+					}
 					foreach (var fakeHvo in checkedItems)
 					{
 						originalValues.Remove(fakeHvo);

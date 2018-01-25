@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,7 +10,6 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -38,8 +37,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		protected override void LoadWritingSystemCombo()
 		{
-			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			foreach (var ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			{
 				m_cbWritingSystems.Items.Add(ws);
+			}
 		}
 
 		#endregion Construction, Initialization, and Disposal
@@ -62,28 +63,28 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"WordformsBrowseView\"]/parameters");
 
-			SearchEngine searchEngine = SearchEngine.Get(PropertyTable, "WordformGoSearchEngine", () => new WordformGoSearchEngine(m_cache));
+			var searchEngine = SearchEngine.Get(PropertyTable, "WordformGoSearchEngine", () => new WordformGoSearchEngine(m_cache));
 
 			m_matchingObjectsBrowser.Initialize(m_cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine);
 
 			// start building index
 			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
-			if (wsObj != null)
+			if (wsObj == null)
 			{
-				ITsString tssForm = TsStringUtils.EmptyString(wsObj.Handle);
-				var field = new SearchField(WfiWordformTags.kflidForm, tssForm);
-				m_matchingObjectsBrowser.SearchAsync(new[] { field });
+				return;
 			}
+			var tssForm = TsStringUtils.EmptyString(wsObj.Handle);
+			var field = new SearchField(WfiWordformTags.kflidForm, tssForm);
+			m_matchingObjectsBrowser.SearchAsync(new[] { field });
 		}
 
 		/// <summary>
 		/// Reset the list of matching items.
 		/// </summary>
-		/// <param name="searchKey"></param>
 		protected override void ResetMatches(string searchKey)
 		{
 			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
-			int wsSelHvo = wsObj != null ? wsObj.Handle : 0;
+			var wsSelHvo = wsObj?.Handle ?? 0;
 
 			string form;
 			int vernWs;
@@ -91,12 +92,16 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				var ws = TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0);
 				if (!GetSearchKey(ws, searchKey, out form, out vernWs))
+				{
 					return;
+				}
 				wsSelHvo = ws;
 			}
 
 			if (m_oldSearchKey == searchKey && m_oldSearchWs == wsSelHvo)
+			{
 				return; // Nothing new to do, so skip it.
+			}
 
 			if (m_oldSearchKey != string.Empty || searchKey != string.Empty)
 				StartSearchAnimation();
@@ -105,10 +110,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_btnOK.Enabled = false;
 			m_oldSearchKey = searchKey;
 			m_oldSearchWs = wsSelHvo;
-
-			ITsString tssForm = TsStringUtils.MakeString(form ?? string.Empty, vernWs);
-			var field = new SearchField(WfiWordformTags.kflidForm, tssForm);
-			m_matchingObjectsBrowser.SearchAsync(new[] { field });
+			m_matchingObjectsBrowser.SearchAsync(new[] { new SearchField(WfiWordformTags.kflidForm, TsStringUtils.MakeString(form ?? string.Empty, vernWs)) });
 		}
 
 		private bool GetSearchKey(int ws, string searchKey, out string form, out int vernWs)

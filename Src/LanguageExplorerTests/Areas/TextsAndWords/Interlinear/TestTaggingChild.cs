@@ -28,8 +28,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public new List<AnalysisOccurrence> SelectedWordforms
 		{
-			get { return m_selectedWordforms; }
-			set { m_selectedWordforms = value; }
+			get { return base.SelectedWordforms; }
+			set { base.SelectedWordforms = value; }
 		}
 
 		#region Protected methods to test

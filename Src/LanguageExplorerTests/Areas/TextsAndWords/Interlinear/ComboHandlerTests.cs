@@ -88,8 +88,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var flexComponentParameterObject = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
 			// Make a sandbox and sut
 			InterlinLineChoices lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject,
-				Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze);
-			using (var sut = new SandboxBase.IhMissingEntry(null))
+				Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinMode.Analyze);
+			using (var sut = new IhMissingEntry(null))
 			{
 				using (var sandbox = new SandboxBase(Cache, null, lineChoices, wa.Hvo))
 				{
@@ -121,7 +121,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			var vwsel = MockRepository.GenerateMock<IVwSelection>();
 			vwsel.Stub(s => s.IsValid).Return(false);
-			Assert.That(() => SandboxBase.InterlinComboHandler.MakeCombo(null, vwsel, null, true), Throws.ArgumentException);
+			Assert.That(() => InterlinComboHandler.MakeCombo(null, vwsel, null, true), Throws.ArgumentException);
 		}
 	}
 }

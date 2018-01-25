@@ -20,7 +20,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// This class handles the functions of the combo box that is used to choose a
 	/// different existing analysis.
 	/// </summary>
-	internal class ChooseAnalysisHandler : IComboHandler, IDisposable
+	internal class ChooseAnalysisHandler : IComboHandler
 	{
 		int m_hvoAnalysis; // The current 'analysis', may be wordform, analysis, gloss.
 		int m_hvoSrc; // the object (CmAnnotation? or SbWordform) we're analyzing.
@@ -34,7 +34,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// this is something of a hack until we convert to using a style sheet
 		/// </summary>
-		static protected int s_baseFontSize = 12;
+		protected static int s_baseFontSize = 12;
 
 		/// <summary>
 		/// This fires when the user selects an item in the menu.
@@ -84,9 +84,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				CheckDisposed();
 
-				if (m_combo == null)
-					return null;
-				return m_combo.SelectedItem as HvoTssComboItem;
+				return m_combo?.SelectedItem as HvoTssComboItem;
 			}
 		}
 
@@ -96,9 +94,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				CheckDisposed();
 
-				if (m_combo != null)
-					return m_combo.StyleSheet;
-				return null;
+				return m_combo?.StyleSheet;
 			}
 		}
 
@@ -112,7 +108,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_cache = cache;
 			m_hvoSrc = hvoSrc;
 			m_hvoAnalysis = hvoAnalysis;
-			m_combo.SelectedIndexChanged += new EventHandler(m_combo_SelectedIndexChanged);
+			m_combo.SelectedIndexChanged += m_combo_SelectedIndexChanged;
 			m_combo.WritingSystemFactory = cache.LanguageWritingSystemFactoryAccessor;
 		}
 
@@ -127,21 +123,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed = false;
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		public bool IsDisposed { get; private set; } = false;
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -196,23 +186,26 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
 			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
 				// Dispose managed resources here.
 				if (m_combo != null)
 				{
-					m_combo.SelectedIndexChanged -= new EventHandler(m_combo_SelectedIndexChanged);
-					FwComboBox combo = m_combo as FwComboBox;
+					m_combo.SelectedIndexChanged -= m_combo_SelectedIndexChanged;
+					var combo = m_combo as FwComboBox;
 					if (combo != null && combo.Parent == null)
+					{
 						combo.Dispose();
+					}
 					else
 					{
-						ComboListBox clb = (m_combo as ComboListBox);
-						if (clb != null)
-							clb.Dispose();
+						var clb = (m_combo as ComboListBox);
+						clb?.Dispose();
 					}
 				}
 			}
@@ -221,7 +214,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_cache = null;
 			m_owner = null;
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
@@ -233,38 +226,29 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="text"></param>
 		/// <param name="fPossibleCurrent">generally true; false for items like "new analysis" that
 		/// can't possibly be the current item, though hvoAnalysis might match.</param>
-		void AddItem(ICmObject co, ITsString text, bool fPossibleCurrent)
-		{
-			AddItem(co, text, fPossibleCurrent, 0);
-		}
-
-		/// <summary>
-		/// Add an item to the combo box, but only if its text is non-empty.
-		/// </summary>
-		/// <param name="co"></param>
-		/// <param name="text"></param>
-		/// <param name="fPossibleCurrent">generally true; false for items like "new analysis" that
-		/// can't possibly be the current item, though hvoAnalysis might match.</param>
 		/// <param name="tag">tag to specify an otherwise ambigious item.</param>
-		void AddItem(ICmObject co, ITsString text, bool fPossibleCurrent, int tag)
+		private void AddItem(ICmObject co, ITsString text, bool fPossibleCurrent, int tag = 0)
 		{
 			if (text.Length == 0)
+			{
 				return;
-			int hvoObj = co != null ? co.Hvo : 0;
-			HvoTssComboItem newItem = new HvoTssComboItem(hvoObj, text, tag);
+			}
+			var hvoObj = co?.Hvo ?? 0;
+			var newItem = new HvoTssComboItem(hvoObj, text, tag);
 			m_combo.Items.Add(newItem);
 			if (fPossibleCurrent && hvoObj == m_hvoAnalysis)
+			{
 				m_combo.SelectedItem = newItem;
+			}
 		}
 
-		void AddSeparatorLine()
+		private void AddSeparatorLine()
 		{
 			//review
-			ITsStrBldr builder = TsStringUtils.MakeStrBldr();
+			var builder = TsStringUtils.MakeStrBldr();
 			builder.Replace(0,0,"-------", null);
-			builder.SetIntPropValues(0, builder.Length, (int)FwTextPropType.ktptWs,
-				(int)FwTextPropVar.ktpvDefault, m_cache.DefaultUserWs);
-			HvoTssComboItem newItem = new HvoTssComboItem(-1, builder.GetString()); //hack todo
+			builder.SetIntPropValues(0, builder.Length, (int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, m_cache.DefaultUserWs);
+			var newItem = new HvoTssComboItem(-1, builder.GetString()); //hack todo
 			m_combo.Items.Add(newItem);
 		}
 
@@ -281,8 +265,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Add the analyses, and recursively the other items.
 			foreach (var wa in wordform.AnalysesOC)
 			{
-				Opinions o = wa.GetAgentOpinion(
-					m_cache.LangProject.DefaultUserAgent);
+				var o = wa.GetAgentOpinion(m_cache.LangProject.DefaultUserAgent);
 				// skip any analysis the user has disapproved.
 				if (o != Opinions.disapproves)
 				{
@@ -302,28 +285,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Add the items for this WfiAnalysis (itself and ones it owns).
 		/// </summary>
-		void AddAnalysisItems(IWfiAnalysis wa)
+		private void AddAnalysisItems(IWfiAnalysis wa)
 		{
-			AddItem(wa,
-				MakeAnalysisStringRep(wa, m_cache, StyleSheet != null, (m_owner as SandboxBase).RawWordformWs), true);
+			AddItem(wa, MakeAnalysisStringRep(wa, m_cache, StyleSheet != null, (m_owner as SandboxBase).RawWordformWs), true);
 			foreach (var gloss in wa.MeaningsOC)
 			{
 				AddItem(gloss, MakeGlossStringRep(gloss, m_cache, StyleSheet != null), true);
 			}
 
 			//add the "new word gloss" option
-
 			AddItem(wa, MakeSimpleString(ITextStrings.ksNewWordGloss), false, WfiGlossTags.kClassId);
 		}
 
 		protected ITsString MakeSimpleString(String str)
 		{
-			ITsStrBldr builder = TsStringUtils.MakeStrBldr();
-			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
-			bldr.SetIntPropValues((int)FwTextPropType.ktptWs,
-				(int)FwTextPropVar.ktpvDefault, m_cache.DefaultUserWs);
-			bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize,
-				(int)FwTextPropVar.ktpvMilliPoint, s_baseFontSize * 800);
+			var builder = TsStringUtils.MakeStrBldr();
+			var bldr = TsStringUtils.MakePropsBldr();
+			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, m_cache.DefaultUserWs);
+			bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, s_baseFontSize * 800);
 			bldr.SetStrPropValue((int)FwTextStringProp.kstpFontFamily, MiscUtils.StandardSansSerif);
 			builder.Replace(0,0,str , bldr.GetTextProps());
 			return builder.GetString();
@@ -331,27 +310,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		// Generate a suitable string representation of a WfiGloss.
 		// Todo: finish implementing (add the gloss!)
-		static internal ITsString MakeGlossStringRep(IWfiGloss wg, LcmCache lcmCache, bool fUseStyleSheet)
+		internal static ITsString MakeGlossStringRep(IWfiGloss wg, LcmCache lcmCache, bool fUseStyleSheet)
 		{
-			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
+			var tsb = TsStringUtils.MakeStrBldr();
 			var wa = wg.Owner as IWfiAnalysis;
-
 			var category = wa.CategoryRA;
 			if (category != null)
 			{
-				ITsString tssPos = category.Abbreviation.get_String( lcmCache.DefaultAnalWs);
-				tsb.Replace(0, 0, tssPos.Text,
-					PartOfSpeechTextProperties(lcmCache,false, fUseStyleSheet));
+				var tssPos = category.Abbreviation.get_String( lcmCache.DefaultAnalWs);
+				tsb.Replace(0, 0, tssPos.Text, PartOfSpeechTextProperties(lcmCache,false, fUseStyleSheet));
 			}
 			else
 			{
-				tsb.Replace(0, 0, ksMissingString,
-					PartOfSpeechTextProperties(lcmCache,false, fUseStyleSheet));
+				tsb.Replace(0, 0, ksMissingString, PartOfSpeechTextProperties(lcmCache,false, fUseStyleSheet));
 			}
 			tsb.Replace(tsb.Length, tsb.Length, " ", null);
-			tsb.Replace(tsb.Length, tsb.Length,
-						wg.Form.get_String(lcmCache.DefaultAnalWs).Text,
-				GlossTextProperties(lcmCache, false, fUseStyleSheet));
+			tsb.Replace(tsb.Length, tsb.Length, wg.Form.get_String(lcmCache.DefaultAnalWs).Text, GlossTextProperties(lcmCache, false, fUseStyleSheet));
 
 			//indent
 			tsb.Replace(0,0, "    ", null);
@@ -359,27 +333,28 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		// Make a string representing a WfiAnalysis, suitable for use in a combo box item.
-		static internal ITsString MakeAnalysisStringRep(IWfiAnalysis wa, LcmCache lcmCache, bool fUseStyleSheet, int wsVern)
+		internal static ITsString MakeAnalysisStringRep(IWfiAnalysis wa, LcmCache lcmCache, bool fUseStyleSheet, int wsVern)
 		{
-			ITsTextProps posTextProperties = PartOfSpeechTextProperties(lcmCache, true, fUseStyleSheet);
-			ITsTextProps formTextProperties = FormTextProperties(lcmCache, fUseStyleSheet, wsVern);
-			ITsTextProps glossTextProperties = GlossTextProperties(lcmCache, true, fUseStyleSheet);
-			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
-			ISilDataAccess sda = lcmCache.MainCacheAccessor;
-			int cmorph = wa.MorphBundlesOS.Count;
+			var posTextProperties = PartOfSpeechTextProperties(lcmCache, true, fUseStyleSheet);
+			var formTextProperties = FormTextProperties(lcmCache, fUseStyleSheet, wsVern);
+			var glossTextProperties = GlossTextProperties(lcmCache, true, fUseStyleSheet);
+			var tsb = TsStringUtils.MakeStrBldr();
+			var cmorph = wa.MorphBundlesOS.Count;
 			if (cmorph == 0)
+			{
 				return TsStringUtils.MakeString(ITextStrings.ksNoMorphemes, lcmCache.DefaultUserWs);
-			bool fRtl = lcmCache.ServiceLocator.WritingSystemManager.Get(wsVern).RightToLeftScript;
-			int start = 0;
-			int lim = cmorph;
-			int increment = 1;
+			}
+			var fRtl = lcmCache.ServiceLocator.WritingSystemManager.Get(wsVern).RightToLeftScript;
+			var start = 0;
+			var lim = cmorph;
+			var increment = 1;
 			if (fRtl)
 			{
 				start = cmorph - 1;
 				lim = -1;
 				increment = -1;
 			}
-			for (int i = start; i != lim; i += increment)
+			for (var i = start; i != lim; i += increment)
 			{
 				var mb = wa.MorphBundlesOS[i];
 				var mf = mb.MorphRA;
@@ -407,26 +382,28 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					tssForm = mb.Form.get_String(wsVern);
 				}
-				int ichForm = tsb.Length;
+				var ichForm = tsb.Length;
 				tsb.ReplaceTsString(ichForm, ichForm, tssForm);
 				tsb.SetProperties(ichForm, tsb.Length,formTextProperties);
 
 				// add category (part of speech)
 				var msa = mb.MsaRA;
 				tsb.Replace(tsb.Length, tsb.Length, " ", null);
-				int ichMinMsa = tsb.Length;
-				string interlinName = ksMissingString;
+				var ichMinMsa = tsb.Length;
+				var interlinName = ksMissingString;
 				if (msa != null)
+				{
 					interlinName = msa.InterlinearAbbr;
+				}
 				tsb.Replace(ichMinMsa, ichMinMsa, interlinName, posTextProperties);
 
 				//add sense
 				var sense = mb.SenseRA;
 				tsb.Replace(tsb.Length, tsb.Length, " ", null);
-				int ichMinSense = tsb.Length;
+				var ichMinSense = tsb.Length;
 				if (sense != null)
 				{
-					ITsString tssGloss = sense.Gloss.get_String(lcmCache.DefaultAnalWs);
+					var tssGloss = sense.Gloss.get_String(lcmCache.DefaultAnalWs);
 					tsb.Replace(ichMinSense, ichMinSense, tssGloss.Text, glossTextProperties);
 				}
 				else
@@ -437,9 +414,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			// Delete the final separator. (Enhance JohnT: this needs to get smarter when we do
 			// real seps.)
-			int ichFrom = tsb.Length - ksPartSeparator.Length;
+			var ichFrom = tsb.Length - ksPartSeparator.Length;
 			if (ichFrom < 0)
+			{
 				ichFrom = 0;
+			}
 			tsb.Replace(ichFrom, tsb.Length, "", null);
 			return tsb.GetString();
 		}
@@ -447,22 +426,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary />
 		public static ITsTextProps FormTextProperties(LcmCache lcmCache, bool fUseStyleSheet, int wsVern)
 		{
-			int color =(int) CmObjectUi.RGB(Color.DarkBlue);
-			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
+			var color =(int) CmObjectUi.RGB(Color.DarkBlue);
+			var bldr = TsStringUtils.MakePropsBldr();
 			if (!fUseStyleSheet)
 			{
 				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, s_baseFontSize * 1000);
 			}
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, wsVern);
-			bldr.SetIntPropValues((int)FwTextPropType.ktptForeColor,
-				(int)FwTextPropVar.ktpvDefault, color);
+			bldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, color);
 			return bldr.GetTextProps();
 		}
 
 		public static ITsTextProps GlossTextProperties(LcmCache lcmCache, bool inAnalysisLine, bool fUseStyleSheet)
 		{
-			int color =(int) CmObjectUi.RGB(Color.DarkRed);
-			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
+			var color =(int) CmObjectUi.RGB(Color.DarkRed);
+			var bldr = TsStringUtils.MakePropsBldr();
 			if (!fUseStyleSheet)
 			{
 				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, s_baseFontSize * 1000);
@@ -474,35 +452,29 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				bldr.SetIntPropValues((int)FwTextPropType.ktptSuperscript, (int)FwTextPropVar.ktpvEnum, (int)FwSuperscriptVal.kssvSuper);
 			}
 
-			bldr.SetIntPropValues((int)FwTextPropType.ktptForeColor,
-				(int)FwTextPropVar.ktpvDefault, color);
+			bldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, color);
 			return bldr.GetTextProps();
 		}
 
 		/// <summary />
 		public static ITsTextProps PartOfSpeechTextProperties(LcmCache lcmCache, bool inAnalysisLine, bool fUseStyleSheet)
 		{
-			int color =(int) CmObjectUi.RGB(Color.Green);
-			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
+			var color =(int) CmObjectUi.RGB(Color.Green);
+			var bldr = TsStringUtils.MakePropsBldr();
 			if (!fUseStyleSheet)
 			{
-				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize ,
-					(int)FwTextPropVar.ktpvMilliPoint, (int)( s_baseFontSize * 1000* .8));
+				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, (int)( s_baseFontSize * 1000* .8));
 			}
-			bldr.SetIntPropValues((int)FwTextPropType.ktptWs,
-				(int)FwTextPropVar.ktpvDefault, lcmCache.DefaultAnalWs);
+			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, lcmCache.DefaultAnalWs);
 
 			if (inAnalysisLine)
 			{
-				bldr.SetIntPropValues((int)FwTextPropType.ktptSuperscript,
-					(int)FwTextPropVar.ktpvEnum,
-					(int)FwSuperscriptVal.kssvSub);
+				bldr.SetIntPropValues((int)FwTextPropType.ktptSuperscript, (int)FwTextPropVar.ktpvEnum, (int)FwSuperscriptVal.kssvSub);
 			}
 
 
 
-			bldr.SetIntPropValues((int)FwTextPropType.ktptForeColor,
-				(int)FwTextPropVar.ktpvDefault, color);
+			bldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, color);
 			return bldr.GetTextProps();
 		}
 
@@ -531,19 +503,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			CheckDisposed();
 
-			FwComboBox combo = m_combo as FwComboBox;
+			var combo = m_combo as FwComboBox;
 			if (combo != null)
 			{
 
-				combo.Location = new System.Drawing.Point(loc.left, loc.top);
+				combo.Location = new Point(loc.left, loc.top);
 				// 21 is the default height of a combo, the smallest reasonable size.
-				combo.Size = new System.Drawing.Size(Math.Max(loc.right - loc.left + 30, 200), Math.Max( loc.bottom - loc.top, 50));
+				combo.Size = new Size(Math.Max(loc.right - loc.left + 30, 200), Math.Max( loc.bottom - loc.top, 50));
 				if (!m_owner.Controls.Contains(combo))
+				{
 					m_owner.Controls.Add(combo);
+				}
 			}
 			else
 			{
-				ComboListBox c = (m_combo as ComboListBox);
+				var c = (m_combo as ComboListBox);
 				c.AdjustSize(500, 400); // these are maximums!
 				c.Launch(m_owner.RectangleToScreen(loc), Screen.GetWorkingArea(m_owner));
 			}
@@ -567,7 +541,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public void HandleSelectIfActive()
 		{
 			CheckDisposed();
-
 		}
 
 		/// <summary>
@@ -599,7 +572,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Implement required interface method; will never be called because editing not allowed.
 		/// </summary>
-		/// <returns></returns>
 		public virtual bool HandleReturnKey()
 		{
 			CheckDisposed();
@@ -614,12 +586,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			CheckDisposed();
 
-			FwComboBox combo = m_combo as FwComboBox;
+			var combo = m_combo as FwComboBox;
 			if (combo != null && m_owner.Controls.Contains(combo))
+			{
 				m_owner.Controls.Remove(combo);
-			ComboListBox clb = m_combo as ComboListBox;
-			if (clb != null)
-				clb.HideForm();
+			}
+			var clb = m_combo as ComboListBox;
+			clb?.HideForm();
 		}
 	}
 }

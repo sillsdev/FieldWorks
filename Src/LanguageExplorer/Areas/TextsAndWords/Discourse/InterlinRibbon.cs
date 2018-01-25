@@ -5,10 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
@@ -45,8 +42,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Make one.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="hvoRoot"></param>
 		public InterlinRibbon(LcmCache cache, int hvoRoot)
 		{
 			Cache = cache;
@@ -62,8 +57,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			if (disposing)
 			{
-				if (m_vc != null)
-					m_vc.Dispose();
+				m_vc?.Dispose();
 			}
 			m_vc = null;
 			base.Dispose(disposing);
@@ -73,20 +67,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		internal InterlinLineChoices LineChoices { get; set; }
 
-		public virtual int OccurenceListId
-		{
-			get { return m_occurenceListId; }
-		}
+		public virtual int OccurenceListId => m_occurenceListId;
 
-		public ISilDataAccessManaged Decorator
-		{
-			get
-			{
-				if (m_sda == null)
-					m_sda = new InterlinRibbonDecorator(Cache, HvoRoot, OccurenceListId);
-				return m_sda;
-			}
-		}
+		public ISilDataAccessManaged Decorator => m_sda ?? (m_sda = new InterlinRibbonDecorator(Cache, HvoRoot, OccurenceListId));
 
 		protected internal int HvoRoot { get; private set; }
 
@@ -118,7 +101,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void EmitPropChanged()
 		{
 			if (RootBox == null)
+			{
 				return;
+			}
 			var canns = Decorator.get_VecSize(HvoRoot, OccurenceListId);
 			RootBox.PropChanged(HvoRoot, OccurenceListId, 0, canns, canns); // Pretend all are replaced
 		}
@@ -132,7 +117,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				var myDeco = Decorator as InterlinRibbonDecorator;
 				if (RootBox.Selection == null || myDeco == null)
+				{
 					return new AnalysisOccurrence[0];
+				}
 				var info = new TextSelInfo(RootBox);
 				var anchor = info.ContainingObjectIndex(info.Levels(false) - 1, false);
 				var end = info.ContainingObjectIndex(info.Levels(true) - 1, true);
@@ -146,7 +133,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				first = Math.Min(first, cwordforms - 1);
 				last = Math.Min(last, cwordforms - 1);
 				if (first < 0 || last < 0)
+				{
 					return new AnalysisOccurrence[0];
+				}
 				var result = new AnalysisOccurrence[last - first + 1];
 				for (var i = first; i <= last; i++)
 				{
@@ -157,19 +146,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 		}
 
-		public bool IsRightToLeft
-		{
-			get
-			{
-				return m_vc != null && m_vc.RightToLeft;
-			}
-		}
+		public bool IsRightToLeft => m_vc != null && m_vc.RightToLeft;
 
 		protected override void GetScrollOffsets(out int dxd, out int dyd)
 		{
 			base.GetScrollOffsets(out dxd, out dyd);
 			if (IsRightToLeft)
+			{
 				dxd -= Width - RootBox.Width - 4; // 4 seems to be about right to keep the ribbon off the margin.
+			}
 		}
 
 		#endregion
@@ -178,7 +163,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Replaces cached ribbon words with input wordforms.
 		/// Handles PropChanged, as UOW won't emit PropChanged to private Ribbon Decorator items.
 		/// </summary>
-		/// <param name="wordForms"></param>
 		public void CacheRibbonItems(List<AnalysisOccurrence> wordForms)
 		{
 			var cwords = wordForms.Count;
@@ -192,8 +176,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var oldLim = Decorator.get_VecSize(HvoRoot, OccurenceListId);
 			Debug.Assert((Decorator as InterlinRibbonDecorator) != null, "No ribbon decorator!");
 			((InterlinRibbonDecorator) Decorator).CacheRibbonItems(fragList);
-			if (RootBox != null)
-				RootBox.PropChanged(HvoRoot, OccurenceListId, 0, cwords, oldLim);
+			RootBox?.PropChanged(HvoRoot, OccurenceListId, 0, cwords, oldLim);
 		}
 
 		/// <summary>
@@ -206,24 +189,31 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			CheckDisposed();
 
 			if (m_InSelectionChanged || RootBox.Selection == null)
+			{
 				return;
+			}
 
 			var info = new TextSelInfo(RootBox);
-			var end = Math.Max(info.ContainingObjectIndex(info.Levels(true) - 1, true),
-				info.ContainingObjectIndex(info.Levels(false) - 1, false));
+			var end = Math.Max(info.ContainingObjectIndex(info.Levels(true) - 1, true), info.ContainingObjectIndex(info.Levels(false) - 1, false));
 			SelectUpTo(end);
 		}
 
 		protected void SelectUpTo(int end1)
 		{
 			if (HvoRoot == 0 || RootBox == null)
+			{
 				return;
-			//Debug.Assert(RootBox != null, "Why is the chart ribbon's RootBox null?");
+			}
 			var end = Math.Min(end1, Decorator.get_VecSize(HvoRoot, OccurenceListId) - 1);
 			if (end < 0)
+			{
 				return;
+			}
+
 			if (EndSelLimitIndex > -1 && EndSelLimitIndex < end)
+			{
 				end = EndSelLimitIndex;
+			}
 			try
 			{
 				m_InSelectionChanged = true;
@@ -248,7 +238,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// when the base text changed.
 			HvoRoot = hvoStText;
 			if (RootBox == null)
+			{
 				return;
+			}
 			ChangeOrMakeRoot(HvoRoot, m_vc, kfragRibbonWordforms, StyleSheet);
 			MakeInitialSelection();
 		}
@@ -283,11 +275,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			MakeInitialSelection();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when the editing helper is created.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnEditingHelperCreated()
 		{
 			m_editingHelper.VwSelectionChanged += HandleSelectionChange;
@@ -297,8 +287,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Suppress wrapping by allowing it to be as wide as desired.
 		/// Todo: for RTL we will have to do something tricky about horizontal scrolling to see the actual text.
 		/// </summary>
-		/// <param name="prootb"></param>
-		/// <returns></returns>
 		public override int GetAvailWidth(IVwRootBox prootb)
 		{
 			// (See FWR-3254) Divide by 2 for fear of possible overflows generated by VwSelection::InvalidateSel()
@@ -319,146 +307,5 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		}
 
 		#endregion
-
-	}
-
-	internal class RibbonVc : InterlinVc
-	{
-		readonly InterlinRibbon m_ribbon;
-
-		public RibbonVc(InterlinRibbon ribbon)
-			: base(ribbon.Cache)
-		{
-			m_ribbon = ribbon;
-		}
-
-		public override void Display(IVwEnv vwenv, int hvo, int frag)
-		{
-			switch (frag)
-			{
-				case InterlinRibbon.kfragRibbonWordforms:
-					if (hvo == 0)
-						return;
-					if (m_ribbon.IsRightToLeft)
-					{
-						vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft,
-							(int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
-						vwenv.set_IntProperty((int)FwTextPropType.ktptAlign,
-							(int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalLeft);
-					}
-					vwenv.OpenParagraph();
-					vwenv.AddObjVecItems(m_ribbon.OccurenceListId, this, InterlinVc.kfragBundle);
-					vwenv.CloseParagraph();
-					break;
-				case kfragBundle:
-					// Review: will this lead to multiple spurious blue lines?
-					var realHvo = (m_ribbon.Decorator as InterlinRibbonDecorator).OccurrenceFromHvo(hvo).Analysis.Hvo;
-					if (m_ribbon.SelLimOccurrence != null && m_ribbon.SelLimOccurrence.Analysis.Hvo == realHvo)
-					{
-						vwenv.set_IntProperty((int)FwTextPropType.ktptPadTrailing,
-							(int)FwTextPropVar.ktpvMilliPoint, 5000);
-						vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTrailing,
-							(int)FwTextPropVar.ktpvMilliPoint, 2000);
-						vwenv.set_IntProperty((int)FwTextPropType.ktptBorderColor,
-							(int)FwTextPropVar.ktpvDefault,
-							(int)ColorUtil.ConvertColorToBGR(Color.Blue));
-					}
-					base.Display(vwenv, hvo, frag);
-					break;
-				default:
-					base.Display(vwenv, hvo, frag);
-					break;
-			}
-		}
-
-		/// <summary>
-		/// In this case, the 'hvo' is a dummy for the cached AnalysisOccurrence.
-		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="vwenv"></param>
-		protected override void AddWordBundleInternal(int hvo, IVwEnv vwenv)
-		{
-			SetupAndOpenInnerPile(vwenv);
-			var frag = (m_ribbon.Decorator as InterlinRibbonDecorator).OccurrenceFromHvo(hvo)
-				as LocatedAnalysisOccurrence;
-			DisplayAnalysisAndCloseInnerPile(vwenv, frag, false);
-		}
-
-		protected override void GetSegmentLevelTags(LcmCache cache)
-		{
-			// do nothing (we don't need tags above bundle level).
-		}
-	}
-
-	/// <summary>
-	/// Used to display interlinear text from a ConstChartWordGroup in a dialog.
-	/// </summary>
-	public class DialogInterlinRibbon : InterlinRibbon
-	{
-		// In this subclass, we set the root later.
-		public DialogInterlinRibbon(LcmCache cache) : base(cache, 0)
-		{
-			m_occurenceListId = -2012; // use a different flid for this subclass
-		}
-
-		public override int OccurenceListId
-		{
-			get
-			{
-				return m_occurenceListId;
-			}
-		}
-
-		public override void MakeInitialSelection()
-		{
-			SelectUpToEnd();
-		}
-
-		private void SelectUpToEnd()
-		{
-			SelectUpTo(Decorator.get_VecSize(HvoRoot, OccurenceListId) - 1);
-		}
-
-		/// <summary>
-		/// This override ensures that we always have whole objects selected.
-		/// Enhance: it may cause flicker during drag, in which case, we may change to only do it on mouse up,
-		/// or only IF the mouse is up.
-		/// </summary>
-		protected override void  HandleSelectionChange(object sender, VwSelectionArgs args)
-		{
-			if (m_InSelectionChanged || RootBox.Selection == null)
-				return;
-			TextSelInfo info = new TextSelInfo(RootBox);
-			int end = Math.Max(info.ContainingObjectIndex(info.Levels(true) - 1, true),
-				info.ContainingObjectIndex(info.Levels(false) - 1, false));
-			int begin = Math.Min(info.ContainingObjectIndex(info.Levels(true) - 1, true),
-				info.ContainingObjectIndex(info.Levels(false) - 1, false));
-			SelectRange(begin, end);
-		}
-
-		private void SelectRange(int begin1, int end1)
-		{
-			if (HvoRoot == 0)
-				return;
-			int end = Math.Min(end1, Decorator.get_VecSize(HvoRoot, OccurenceListId) - 1);
-			int begin = Math.Min(begin1, end);
-			if (end < 0 || begin < 0)
-				return;
-			try
-			{
-				m_InSelectionChanged = true;
-				SelLevInfo[] levelsA = new SelLevInfo[1];
-				levelsA[0].ihvo = begin;
-				levelsA[0].tag = OccurenceListId;
-				SelLevInfo[] levelsE = new SelLevInfo[1];
-				levelsE[0].ihvo = end;
-				levelsE[0].tag = OccurenceListId;
-				RootBox.MakeTextSelInObj(0, 1, levelsA, 1, levelsE, false, false, false, true, true);
-			}
-			finally
-			{
-				m_InSelectionChanged = false;
-			}
-		}
 	}
 }

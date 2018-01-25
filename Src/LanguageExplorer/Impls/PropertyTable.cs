@@ -590,7 +590,7 @@ namespace LanguageExplorer.Impls
 				"XMLViews.dll"
 			};
 			// Some old properties have stored old dlls that have been assimilated, as well as classes to construct that still have those old namespaces.
-			// We want to fix all of those to use the correct assembly (LanaugeExplorer) and new namespace.
+			// We want to fix all of those to use the correct assembly (LanuageExplorer) and new namespace.
 			var interestingTypeInfo = new Dictionary<string, string>();
 			foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
 			{

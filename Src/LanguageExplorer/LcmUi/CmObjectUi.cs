@@ -44,7 +44,7 @@ namespace LanguageExplorer.LcmUi
 		#region Properties
 
 		/// <summary>
-		/// Retrieve the CmObject we are providing UI functions for. If necessary create it.
+		/// Retrieve the CmObject we are providing UI functions for.
 		/// </summary>
 		public ICmObject Object
 		{
@@ -52,9 +52,7 @@ namespace LanguageExplorer.LcmUi
 			{
 				CheckDisposed();
 
-				if (m_obj == null)
-					m_obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvo);
-				return m_obj;
+				return m_obj ?? (m_obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvo));
 			}
 		}
 

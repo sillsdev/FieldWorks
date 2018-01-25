@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,26 +20,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
-				if (m_nodes == null)
+				if (m_nodes != null)
 				{
-					m_nodes = new ObservableCollection<ComplexConcPatternNode>();
-					m_nodes.CollectionChanged += ChildrenChanged;
+					return m_nodes;
 				}
+				m_nodes = new ObservableCollection<ComplexConcPatternNode>();
+				m_nodes.CollectionChanged += ChildrenChanged;
 				return m_nodes;
 			}
 		}
 
-		public override bool IsLeaf
-		{
-			get { return m_nodes == null || m_nodes.Count == 0; }
-		}
+		public override bool IsLeaf => m_nodes == null || m_nodes.Count == 0;
 
 		public override PatternNode<ComplexConcParagraphData, ShapeNode> GeneratePattern(FeatureSystem featSys)
 		{
 			var group = new Group<ComplexConcParagraphData, ShapeNode>();
 			Alternation<ComplexConcParagraphData, ShapeNode> alternation = null;
-			bool inAlternation = false;
-			foreach (ComplexConcPatternNode child in Children)
+			var inAlternation = false;
+			foreach (var child in Children)
 			{
 				if (child is ComplexConcOrNode)
 				{
@@ -58,7 +56,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						alternation = null;
 					}
 
-					PatternNode<ComplexConcParagraphData, ShapeNode> newNode = child.GeneratePattern(featSys);
+					var newNode = child.GeneratePattern(featSys);
 					if (inAlternation)
 					{
 						alternation.Children.Add(newNode);
@@ -101,14 +99,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void AddNodes(IEnumerable<ComplexConcPatternNode> nodes)
 		{
-			foreach (ComplexConcPatternNode node in nodes)
+			foreach (var node in nodes)
+			{
 				node.Parent = this;
+			}
 		}
 
 		private void RemoveNodes(IEnumerable<ComplexConcPatternNode> nodes)
 		{
-			foreach (ComplexConcPatternNode node in nodes)
+			foreach (var node in nodes)
+			{
 				node.Parent = null;
+			}
 		}
 	}
 }

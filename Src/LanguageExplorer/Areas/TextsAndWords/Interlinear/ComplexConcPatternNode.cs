@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,21 +19,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	{
 		private static int s_nextHvo = -1000;
 
-		private readonly int m_hvo;
 		private ComplexConcPatternNode m_parent;
 		private ComplexConcPatternSda m_sda;
 
 		protected ComplexConcPatternNode()
 		{
-			m_hvo = s_nextHvo--;
+			Hvo = s_nextHvo--;
 			Minimum = 1;
 			Maximum = 1;
 		}
 
-		public int Hvo
-		{
-			get { return m_hvo; }
-		}
+		public int Hvo { get; }
 
 		public ComplexConcPatternNode Parent
 		{
@@ -41,9 +37,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			set
 			{
 				if (value == null)
+				{
 					Sda = null;
+				}
 				else if (value.m_sda != null)
+				{
 					Sda = value.m_sda;
+				}
 				m_parent = value;
 			}
 		}
@@ -55,25 +55,33 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				if (value == null)
 				{
-					if (m_sda != null)
+					if (m_sda == null)
 					{
-						m_sda.Nodes.Remove(m_hvo);
-						m_sda = null;
-						if (!IsLeaf)
-						{
-							foreach (ComplexConcPatternNode child in Children)
-								child.Sda = null;
-						}
+						return;
+					}
+					m_sda.Nodes.Remove(Hvo);
+					m_sda = null;
+					if (IsLeaf)
+					{
+						return;
+					}
+					foreach (var child in Children)
+					{
+						child.Sda = null;
 					}
 				}
 				else
 				{
 					m_sda = value;
-					m_sda.Nodes[m_hvo] = this;
-					if (!IsLeaf)
+					m_sda.Nodes[Hvo] = this;
+					if (IsLeaf)
 					{
-						foreach (ComplexConcPatternNode child in Children)
-							child.Sda = value;
+						return;
+					}
+
+					foreach (var child in Children)
+					{
+						child.Sda = value;
 					}
 				}
 			}
@@ -95,17 +103,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected void AddStringValue(FeatureSystem featSys, FeatureStruct fs, ITsString tss, string id)
 		{
-			if (tss != null)
+			if (tss == null)
 			{
-				var feat = featSys.GetFeature<StringFeature>(string.Format("{0}-{1}", id, tss.get_WritingSystemAt(0).ToString(CultureInfo.InvariantCulture)));
-				fs.AddValue(feat, tss.Text);
+				return;
 			}
+			var feat = featSys.GetFeature<StringFeature>($"{id}-{tss.get_WritingSystemAt(0).ToString(CultureInfo.InvariantCulture)}");
+			fs.AddValue(feat, tss.Text);
 		}
 
 		protected FeatureStruct GetFeatureStruct(FeatureSystem featSys, IDictionary<IFsFeatDefn, object> values)
 		{
 			var fs = new FeatureStruct();
-			foreach (KeyValuePair<IFsFeatDefn, object> kvp in values)
+			foreach (var kvp in values)
 			{
 				if (kvp.Key is IFsComplexFeature)
 				{
@@ -117,7 +126,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					var value = (ClosedFeatureValue) kvp.Value;
 					var symFeat = featSys.GetFeature<SymbolicFeature>(kvp.Key.Hvo.ToString(CultureInfo.InvariantCulture));
 
-					FeatureSymbol symbol = symFeat.PossibleSymbols[value.Symbol.Hvo.ToString(CultureInfo.InvariantCulture)];
+					var symbol = symFeat.PossibleSymbols[value.Symbol.Hvo.ToString(CultureInfo.InvariantCulture)];
 					fs.AddValue(symFeat, value.Negate ? new SymbolicFeatureValue(symFeat.PossibleSymbols.Except(symbol.ToEnumerable())) : new SymbolicFeatureValue(symbol));
 				}
 			}

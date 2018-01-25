@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,11 +17,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	public class InterAreaBookmark : IStTextBookmark
 	{
 		private IPropertyTable m_propertyTable;
-		int m_iParagraph;
-		int m_BeginOffset;
-		int m_EndOffset;
 		private string m_bookmarkId;
-		private int m_textIndex;
 
 		internal InterAreaBookmark()
 		{
@@ -46,9 +42,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Saves the given AnalysisOccurrence in the InterlinMaster.
 		/// </summary>
-		/// <param name="point"></param>
-		/// <param name="fPersistNow">if true, this annotation will persist.</param>
-		/// <param name="index">The index of the selected text in the list</param>
 		public void Save(AnalysisOccurrence point, bool fPersistNow, int index)
 		{
 			if (point == null || !point.IsValid)
@@ -66,20 +59,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Saves the current selected annotation in the InterlinMaster.
 		/// </summary>
-		/// <param name="fPersistNow">if true, this annotation will persist.</param>
-		/// <param name="index"></param>
 		public void Save(bool fPersistNow, int index)
 		{
 			if (fPersistNow)
+			{
 				SavePersisted(index);
+			}
 		}
 
 		internal void Save(int textIndex, int paragraphIndex, int beginCharOffset, int endCharOffset, bool fPersistNow)
 		{
-			m_iParagraph = paragraphIndex;
-			m_BeginOffset = beginCharOffset;
-			m_EndOffset = endCharOffset;
-			m_textIndex = textIndex;
+			IndexOfParagraph = paragraphIndex;
+			BeginCharOffset = beginCharOffset;
+			EndCharOffset = endCharOffset;
+			TextIndex = textIndex;
 			Save(fPersistNow, textIndex);
 		}
 
@@ -92,13 +85,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		internal string RecordIndexBookmarkName
-		{
-			get
-			{
-				return BookmarkPropertyName("IndexOfRecord");
-			}
-		}
+		internal string RecordIndexBookmarkName => BookmarkPropertyName("IndexOfRecord");
 
 		private string BookmarkPropertyName(string attribute)
 		{
@@ -108,9 +95,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void SavePersisted(int recordIndex)
 		{
 			m_propertyTable.SetProperty(RecordIndexBookmarkName, recordIndex, SettingsGroup.LocalSettings, true, false);
-			m_propertyTable.SetProperty(BookmarkPropertyName("IndexOfParagraph"), m_iParagraph, SettingsGroup.LocalSettings, true, false);
-			m_propertyTable.SetProperty(BookmarkPropertyName("CharBeginOffset"), m_BeginOffset, SettingsGroup.LocalSettings, true, false);
-			m_propertyTable.SetProperty(BookmarkPropertyName("CharEndOffset"), m_EndOffset, SettingsGroup.LocalSettings, true, false);
+			m_propertyTable.SetProperty(BookmarkPropertyName("IndexOfParagraph"), IndexOfParagraph, SettingsGroup.LocalSettings, true, false);
+			m_propertyTable.SetProperty(BookmarkPropertyName("CharBeginOffset"), BeginCharOffset, SettingsGroup.LocalSettings, true, false);
+			m_propertyTable.SetProperty(BookmarkPropertyName("CharEndOffset"), EndCharOffset, SettingsGroup.LocalSettings, true, false);
 		}
 
 		/// <summary>
@@ -119,12 +106,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public void Restore(int index)
 		{
 			// verify we're restoring to the right text. Is there a better way to verify this?
-			int restoredRecordIndex = m_propertyTable.GetValue(RecordIndexBookmarkName, SettingsGroup.LocalSettings, -1);
+			var restoredRecordIndex = m_propertyTable.GetValue(RecordIndexBookmarkName, SettingsGroup.LocalSettings, -1);
 			if (index != restoredRecordIndex)
+			{
 				return;
-			m_iParagraph = m_propertyTable.GetValue(BookmarkPropertyName("IndexOfParagraph"), SettingsGroup.LocalSettings, 0);
-			m_BeginOffset = m_propertyTable.GetValue(BookmarkPropertyName("CharBeginOffset"), SettingsGroup.LocalSettings, 0);
-			m_EndOffset = m_propertyTable.GetValue(BookmarkPropertyName("CharEndOffset"), SettingsGroup.LocalSettings, 0);
+			}
+			IndexOfParagraph = m_propertyTable.GetValue(BookmarkPropertyName("IndexOfParagraph"), SettingsGroup.LocalSettings, 0);
+			BeginCharOffset = m_propertyTable.GetValue(BookmarkPropertyName("CharBeginOffset"), SettingsGroup.LocalSettings, 0);
+			EndCharOffset = m_propertyTable.GetValue(BookmarkPropertyName("CharEndOffset"), SettingsGroup.LocalSettings, 0);
 		}
 
 		/// <summary>
@@ -132,24 +121,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void Reset(int index)
 		{
-			m_iParagraph = 0;
-			m_BeginOffset = 0;
-			m_EndOffset = 0;
+			IndexOfParagraph = 0;
+			BeginCharOffset = 0;
+			EndCharOffset = 0;
 
 			SavePersisted(index);
 		}
 
 		#region IStTextBookmark
-		public int IndexOfParagraph { get { return m_iParagraph; } }
-		public int BeginCharOffset { get { return m_BeginOffset; } }
-		public int EndCharOffset { get { return m_EndOffset; } }
+		public int IndexOfParagraph { get; private set; }
 
-		public int TextIndex
-		{
-			get {
-				return m_textIndex;
-			}
-		}
+		public int BeginCharOffset { get; private set; }
+		public int EndCharOffset { get; private set; }
+
+		public int TextIndex { get; private set; }
 
 		#endregion
 	}

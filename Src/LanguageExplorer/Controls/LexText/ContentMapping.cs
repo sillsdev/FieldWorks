@@ -257,10 +257,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		public void DoAutoImportWork()
 		{
-			//m_clsFieldDescription = null;					// remove the custom version of this class
-			//m_clsFieldDescription = ClsFieldDescription;	// create a simple version for the auto import field
 			m_LexImportField = null;
 		}
-
 	}
 }

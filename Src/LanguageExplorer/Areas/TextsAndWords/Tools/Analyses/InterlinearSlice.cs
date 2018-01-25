@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -48,7 +48,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		{
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -77,8 +79,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <summary>
 		/// Override to give the height that the AnalysisInterlinearRs wants to be.
 		/// </summary>
-		/// <param name="rs"></param>
-		/// <returns></returns>
 		protected override int DesiredHeight(RootSite rs)
 		{
 			return ((AnalysisInterlinearRs)rs).DesiredSize.Height;
@@ -88,7 +88,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		{
 			var minWidth = ((AnalysisInterlinearRs)Control).DesiredSize.Width + SplitCont.SplitterDistance + SplitCont.SplitterWidth;
 			if (width < minWidth)
+			{
 				width = minWidth;
+			}
 			base.SetWidthForDataTreeLayout(width);
 		}
 	}

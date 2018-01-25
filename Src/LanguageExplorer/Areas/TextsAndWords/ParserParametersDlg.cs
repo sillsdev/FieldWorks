@@ -95,7 +95,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -106,7 +108,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -218,8 +222,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void btnOK_Click(object sender, EventArgs e)
 		{
-			XElement newParserParamsElem = XElement.Parse(m_dsParserParameters.GetXml());
-			XElement oldParserParamsElem = XElement.Parse(XmlRep);
+			var newParserParamsElem = XElement.Parse(m_dsParserParameters.GetXml());
+			var oldParserParamsElem = XElement.Parse(XmlRep);
 			newParserParamsElem.Add(oldParserParamsElem.Element("ActiveParser"));
 			XmlRep = newParserParamsElem.ToString();
 			ValidateValues(newParserParamsElem);
@@ -240,28 +244,29 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void EnforceValidValue(XElement elem, string parser, string item, int min, int max, bool useMinIfZero)
 		{
-			XElement valueElem = elem.Elements(parser).Elements(item).FirstOrDefault();
-			if (valueElem != null)
+			var valueElem = elem.Elements(parser).Elements(item).FirstOrDefault();
+			if (valueElem == null)
 			{
-				var val = (int) valueElem;
-				if (val < min || (useMinIfZero && val == 0))
-				{
-					valueElem.SetValue(min);
-					XmlRep = elem.ToString();
-					ReportChangeOfValue(item, val, min, min, max);
-				}
-				else if (val > max)
-				{
-					valueElem.SetValue(max);
-					XmlRep = elem.ToString();
-					ReportChangeOfValue(item, val, max, min, max);
-				}
+				return;
+			}
+			var val = (int) valueElem;
+			if (val < min || (useMinIfZero && val == 0))
+			{
+				valueElem.SetValue(min);
+				XmlRep = elem.ToString();
+				ReportChangeOfValue(item, val, min, min, max);
+			}
+			else if (val > max)
+			{
+				valueElem.SetValue(max);
+				XmlRep = elem.ToString();
+				ReportChangeOfValue(item, val, max, min, max);
 			}
 		}
 
 		private void ReportChangeOfValue(string item, int value, int newValue, int min, int max)
 		{
-			string sMessage = String.Format(ParserUIStrings.ksChangedValueReport, item, value, newValue, min, max);
+			var sMessage = string.Format(ParserUIStrings.ksChangedValueReport, item, value, newValue, min, max);
 			MessageBox.Show(sMessage, ParserUIStrings.ksChangeValueDialogTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 		}
 
@@ -277,9 +282,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			m_dsParserParameters = new DataSet { DataSetName = "ParserParameters" };
 
-			DataTable tblXAmple = CreateXAmpleDataTable();
+			var tblXAmple = CreateXAmpleDataTable();
 			m_dsParserParameters.Tables.Add(tblXAmple);
-			DataTable tblHC = CreateHCDataTable();
+			var tblHC = CreateHCDataTable();
 			m_dsParserParameters.Tables.Add(tblHC);
 
 			LoadParserData(m_dsParserParameters);
@@ -294,34 +299,50 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			var parserParamsElem = XElement.Parse(XmlRep);
 			// set default values for HC
-			XElement hcElem = parserParamsElem.Element(HC);
+			var hcElem = parserParamsElem.Element(HC);
 			if (hcElem == null)
 			{
 				hcElem = new XElement(HC);
 				parserParamsElem.Add(hcElem);
 			}
-			if (hcElem.Element(DelReapps) == null)
-				hcElem.Add(new XElement(DelReapps, 0));
-			if (hcElem.Element(NoDefaultCompounding) == null)
-				hcElem.Add(new XElement(NoDefaultCompounding, false));
-			if (hcElem.Element(NotOnClitics) == null)
-				hcElem.Add(new XElement(NotOnClitics, true));
-			if (hcElem.Element(AcceptUnspecifiedGraphemes) == null)
-				hcElem.Add(new XElement(AcceptUnspecifiedGraphemes, false));
 
-			using (XmlReader reader = parserParamsElem.CreateReader())
+			if (hcElem.Element(DelReapps) == null)
+			{
+				hcElem.Add(new XElement(DelReapps, 0));
+			}
+
+			if (hcElem.Element(NoDefaultCompounding) == null)
+			{
+				hcElem.Add(new XElement(NoDefaultCompounding, false));
+			}
+
+			if (hcElem.Element(NotOnClitics) == null)
+			{
+				hcElem.Add(new XElement(NotOnClitics, true));
+			}
+
+			if (hcElem.Element(AcceptUnspecifiedGraphemes) == null)
+			{
+				hcElem.Add(new XElement(AcceptUnspecifiedGraphemes, false));
+			}
+
+			using (var reader = parserParamsElem.CreateReader())
+			{
 				dsParserParameters.ReadXml(reader, XmlReadMode.IgnoreSchema);
+			}
 		}
 
 		private void PopulateDataGrid(DataGrid dataGrid, string parser)
 		{
 			dataGrid.SetDataBinding(m_dsParserParameters, parser);
 
-			DataView view = CreateDataView(m_dsParserParameters.Tables[parser]);
+			var view = CreateDataView(m_dsParserParameters.Tables[parser]);
 			dataGrid.DataSource = view;
 			dataGrid.TableStyles.Add(new DataGridTableStyle { MappingName = parser, RowHeadersVisible = false, AllowSorting = false });
-			foreach (DataGridBoolColumn col in dataGrid.TableStyles[0].GridColumnStyles.OfType<DataGridBoolColumn>())
+			foreach (var col in dataGrid.TableStyles[0].GridColumnStyles.OfType<DataGridBoolColumn>())
+			{
 				col.AllowNull = false;
+			}
 		}
 
 		private DataView CreateDataView(DataTable table)

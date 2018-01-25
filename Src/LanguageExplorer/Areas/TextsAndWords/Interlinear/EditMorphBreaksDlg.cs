@@ -75,7 +75,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			AccessibleName = GetType().Name;
 
 			if (!Application.RenderWithVisualStyles)
+			{
 				m_txtMorphs.BorderStyle = BorderStyle.FixedSingle;
+			}
 
 			m_helpProvider = new HelpProvider {HelpNamespace = helpTopicProvider.HelpFile};
 			m_helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(ksHelpTopic));
@@ -85,19 +87,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// This sets the original wordform and morph-broken word into the dialog.
 		/// </summary>
-		public void Initialize(ITsString tssWord, string sMorphs, ILgWritingSystemFactory wsf,
-			LcmCache cache, IVwStylesheet stylesheet)
+		public void Initialize(ITsString tssWord, string sMorphs, ILgWritingSystemFactory wsf, LcmCache cache, IVwStylesheet stylesheet)
 		{
 			CheckDisposed();
 
 			Debug.Assert(tssWord != null);
 			Debug.Assert(wsf != null);
-			ITsTextProps ttp = tssWord.get_Properties(0);
+			var ttp = tssWord.get_Properties(0);
 			Debug.Assert(ttp != null);
 			int var;
-			int ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+			var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
 			Debug.Assert(ws != 0);
-			ILgWritingSystem wsVern = wsf.get_EngineOrNull(ws);
+			var wsVern = wsf.get_EngineOrNull(ws);
 			Debug.Assert(wsVern != null);
 
 			m_txtMorphs.WritingSystemFactory = wsf;
@@ -116,18 +117,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			IMoMorphType mmtSimulfix;
 			IMoMorphType mmtSuprafix ;
 			var morphTypeRepo = cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
-			morphTypeRepo.GetMajorMorphTypes(out mmtStem, out mmtPrefix, out mmtSuffix, out mmtInfix,
-				out mmtBoundStem, out mmtProclitic, out mmtEnclitic, out mmtSimulfix, out mmtSuprafix);
+			morphTypeRepo.GetMajorMorphTypes(out mmtStem, out mmtPrefix, out mmtSuffix, out mmtInfix, out mmtBoundStem, out mmtProclitic, out mmtEnclitic, out mmtSimulfix, out mmtSuprafix);
 			// Format the labels according to the MoMorphType Prefix/Postfix values.
-			string sExample1 = StringTable.Table.GetString("EditMorphBreaks-Example1", "DialogStrings");
-			string sExample2 = StringTable.Table.GetString("EditMorphBreaks-Example2", "DialogStrings");
-			string sStemExample = StringTable.Table.GetString("EditMorphBreaks-stemExample", "DialogStrings");
-			string sAffixExample = StringTable.Table.GetString("EditMorphBreaks-affixExample", "DialogStrings");
-			m_lblHelp2Example1.Text = String.Format(sExample1, mmtStem.Prefix ?? "", mmtStem.Postfix ?? "");
-			m_lblHelp2Example2.Text = String.Format(sExample2, mmtSuffix.Prefix ?? "", mmtSuffix.Postfix ?? "");
-			m_lblBreakStemExample.Text = String.Format(sStemExample, mmtStem.Prefix ?? "", mmtStem.Postfix ?? "");
-			m_lblBreakBoundStemExample.Text = String.Format(sStemExample, mmtBoundStem.Prefix ?? "", mmtBoundStem.Postfix ?? "");
-			m_lblBreakPrefixExample.Text = String.Format(sAffixExample,
+			var sExample1 = StringTable.Table.GetString("EditMorphBreaks-Example1", "DialogStrings");
+			var sExample2 = StringTable.Table.GetString("EditMorphBreaks-Example2", "DialogStrings");
+			var sStemExample = StringTable.Table.GetString("EditMorphBreaks-stemExample", "DialogStrings");
+			var sAffixExample = StringTable.Table.GetString("EditMorphBreaks-affixExample", "DialogStrings");
+			m_lblHelp2Example1.Text = string.Format(sExample1, mmtStem.Prefix ?? "", mmtStem.Postfix ?? "");
+			m_lblHelp2Example2.Text = string.Format(sExample2, mmtSuffix.Prefix ?? "", mmtSuffix.Postfix ?? "");
+			m_lblBreakStemExample.Text = string.Format(sStemExample, mmtStem.Prefix ?? "", mmtStem.Postfix ?? "");
+			m_lblBreakBoundStemExample.Text = string.Format(sStemExample, mmtBoundStem.Prefix ?? "", mmtBoundStem.Postfix ?? "");
+			m_lblBreakPrefixExample.Text = string.Format(sAffixExample,
 				mmtPrefix.Prefix == null ? "" : " " + mmtPrefix.Prefix,
 				mmtPrefix.Postfix == null ? "" : mmtPrefix.Postfix + " ");
 			m_lblBreakSuffixExample.Text = String.Format(sAffixExample,
@@ -173,7 +173,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -184,14 +186,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
-				if(m_components != null)
-				{
-					m_components.Dispose();
-				}
+				m_components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}
@@ -446,7 +447,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 		#endregion
 
-		void MorphBreakHelperClick(object sender, EventArgs e)
+		private void MorphBreakHelperClick(object sender, EventArgs e)
 		{
 			m_morphBreakContextMenu.Show(m_morphBreakHelper, new System.Drawing.Point(m_morphBreakHelper.Width,0));
 		}

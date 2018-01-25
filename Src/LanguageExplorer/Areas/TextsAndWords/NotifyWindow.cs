@@ -113,7 +113,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 #region Implementation of IDisposable
@@ -125,7 +127,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 
 			if (IsDisposed)
+			{
 				return; // Only run once.
+}
 
 			base.Dispose(disposing);
 		}
@@ -183,8 +187,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			CheckDisposed();
 
-			if (Text == null || Text.Length < 1)
+			if (string.IsNullOrEmpty(Text))
+			{
 				throw new System.Exception("You must set NotifyWindow.Text before calling Notify()");
+			}
 
 			Width = ActualWidth;
 			rScreen = Screen.GetWorkingArea(Screen.PrimaryScreen.Bounds);
@@ -193,17 +199,27 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			Left = rScreen.Width - Width - 11;
 
 			if (HoverFont == null)
-				HoverFont = new Font(Font, Font.Style | FontStyle.Underline);
-			if (TitleFont == null)
-				TitleFont = Font;
-			if (TitleHoverFont == null)
-				TitleHoverFont = new Font(TitleFont, TitleFont.Style | FontStyle.Underline);
-			if (this.StringFormat == null)
 			{
-				this.StringFormat = new StringFormat();
-				this.StringFormat.Alignment = StringAlignment.Center;
-				this.StringFormat.LineAlignment = StringAlignment.Center;
-				this.StringFormat.Trimming = StringTrimming.EllipsisWord;
+				HoverFont = new Font(Font, Font.Style | FontStyle.Underline);
+			}
+
+			if (TitleFont == null)
+			{
+				TitleFont = Font;
+			}
+
+			if (TitleHoverFont == null)
+			{
+				TitleHoverFont = new Font(TitleFont, TitleFont.Style | FontStyle.Underline);
+			}
+			if (StringFormat == null)
+			{
+				StringFormat = new StringFormat
+				{
+					Alignment = StringAlignment.Center,
+					LineAlignment = StringAlignment.Center,
+					Trimming = StringTrimming.EllipsisWord
+				};
 			}
 
 			rDisplay = new Rectangle(0, 0, Width, ActualHeight);
@@ -212,9 +228,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			int offset;
 			if (Title != null)
 			{
-				using (Graphics fx = CreateGraphics())
+				using (var fx = CreateGraphics())
 				{
-					SizeF sz = fx.MeasureString(Title, TitleFont, ActualWidth - rClose.Width - 22, this.StringFormat);
+					var sz = fx.MeasureString(Title, TitleFont, ActualWidth - rClose.Width - 22, this.StringFormat);
 					rTitle = new Rectangle(11, 12, (int)Math.Ceiling(sz.Width), (int)Math.Ceiling(sz.Height));
 					offset = (int)Math.Max(Math.Ceiling(sz.Height + rTitle.Top + 2), rClose.Bottom + 5);
 				}
@@ -233,7 +249,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			rGlobText.Offset(Left, rScreen.Bottom - ActualHeight);
 			rGlobTitle = rTitle;
 			if (Title != null)
+			{
 				rGlobTitle.Offset(Left, rScreen.Bottom - ActualHeight);
+			}
 			rGlobDisplay = rDisplay;
 			rGlobDisplay.Offset(Left, rScreen.Bottom - ActualHeight);
 			rGlobClose = rClose;
@@ -246,8 +264,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			ShowWindow(Handle, SW_SHOWNOACTIVATE);
 			SetWindowPos(Handle, HWND_TOPMOST, rScreen.Width - ActualWidth - 11, rScreen.Bottom, ActualWidth, 0, SWP_NOACTIVATE);
 
-			viewClock = new System.Windows.Forms.Timer();
-			viewClock.Tick += new System.EventHandler(viewTimer);
+			viewClock = new Timer();
+			viewClock.Tick += viewTimer;
 			viewClock.Interval = 1;
 			viewClock.Start();
 
@@ -264,28 +282,20 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			Font useFont; Color useColor;
 			if (Title != null)
 			{
-				if (titleHot)
-					useFont = TitleHoverFont;
-				else
-					useFont = TitleFont;
-				if (titlePressed)
-					useColor = PressedColor;
-				else
-					useColor = TitleColor;
-				using (SolidBrush sb = new SolidBrush(useColor))
+				useFont = titleHot ? TitleHoverFont : TitleFont;
+				useColor = titlePressed ? PressedColor : TitleColor;
+				using (var sb = new SolidBrush(useColor))
+				{
 					e.Graphics.DrawString(Title, useFont, sb, rTitle, this.StringFormat);
+				}
 			}
 
-			if (textHot)
-				useFont = HoverFont;
-			else
-				useFont = Font;
-			if (textPressed)
-				useColor = PressedColor;
-			else
-				useColor = TextColor;
-			using (SolidBrush sb = new SolidBrush(useColor))
+			useFont = textHot ? HoverFont : Font;
+			useColor = textPressed ? PressedColor : TextColor;
+			using (var sb = new SolidBrush(useColor))
+			{
 				e.Graphics.DrawString(Text, useFont, sb, rText, this.StringFormat);
+			}
 		}
 
 		protected override void OnPaintBackground(System.Windows.Forms.PaintEventArgs e)
@@ -293,8 +303,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			// First paint the background
 			if (BackgroundStyle == BackgroundStyles.Solid)
 			{
-				using (SolidBrush sb = new SolidBrush(BackColor))
+				using (var sb = new SolidBrush(BackColor))
+				{
 					e.Graphics.FillRectangle(sb, rDisplay);
+				}
 			}
 			else
 			{
@@ -315,10 +327,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 						lgm = LinearGradientMode.Vertical;
 						break;
 				}
-				using (LinearGradientBrush lgb = new LinearGradientBrush(rDisplay, GradientColor, BackColor, lgm))
+				using (var lgb = new LinearGradientBrush(rDisplay, GradientColor, BackColor, lgm))
 				{
-					if (this.Blend != null)
-						lgb.Blend = this.Blend;
+					if (Blend != null)
+					{
+						lgb.Blend = Blend;
+					}
 					e.Graphics.FillRectangle(lgb, rDisplay);
 				}
 			}
@@ -357,9 +371,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		protected virtual void drawCloseButton(Graphics fx)
 		{
 			if (visualStylesEnabled())
+			{
 				drawThemeCloseButton(fx);
+			}
 			else
+			{
 				drawLegacyCloseButton(fx);
+			}
 		}
 
 		/// <summary>
@@ -375,14 +393,18 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 			int stateId;
 			if (closePressed)
+			{
 				stateId = CBS_PUSHED;
+			}
 			else if (closeHot)
+			{
 				stateId = CBS_HOT;
+			}
 			else
 				stateId = CBS_NORMAL;
-			RECT reClose = new RECT(rClose);
-			RECT reClip = reClose; // should fx.VisibleClipBounds be used here?
-			IntPtr hDC = fx.GetHdc();
+			var reClose = new RECT(rClose);
+			var reClip = reClose; // should fx.VisibleClipBounds be used here?
+			var hDC = fx.GetHdc();
 			DrawThemeBackground(hTheme, hDC, WP_CLOSEBUTTON, stateId, ref reClose, ref reClip);
 			fx.ReleaseHdc(hDC);
 			CloseThemeData(hTheme);
@@ -393,11 +415,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		protected void drawLegacyCloseButton(Graphics fx)
 		{
-			ButtonState bState;
-			if (closePressed)
-				bState = ButtonState.Pushed;
-			else // the Windows 95 theme doesn't have a "hot" button
-				bState = ButtonState.Normal;
+			var bState = closePressed ? ButtonState.Pushed : ButtonState.Normal;
 			ControlPaint.DrawCaptionButton(fx, rClose, CaptionButton.Close, bState);
 		}
 
@@ -408,12 +426,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			try
 			{
-				if (IsThemeActive() == 1)
-					return true;
-				else
-					return false;
+				return IsThemeActive() == 1;
 			}
-			catch (System.DllNotFoundException)  // pre-XP systems which don't have UxTheme.dll
+			catch (DllNotFoundException)  // pre-XP systems which don't have UxTheme.dll
 			{
 				return false;
 			}
@@ -540,8 +555,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					if (rGlobText.Contains(Cursor.Position))
 					{
 						Close();
-						if (TextClicked != null)
-							TextClicked(this, new System.EventArgs());
+						TextClicked?.Invoke(this, new System.EventArgs());
 					}
 				}
 				else if (titlePressed)
@@ -553,8 +567,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					if (rGlobTitle.Contains(Cursor.Position))
 					{
 						Close();
-						if (TitleClicked != null)
-							TitleClicked(this, new System.EventArgs());
+						TitleClicked?.Invoke(this, new System.EventArgs());
 					}
 				}
 			}

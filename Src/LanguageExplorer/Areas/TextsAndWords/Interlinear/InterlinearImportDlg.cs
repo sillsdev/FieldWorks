@@ -1,12 +1,12 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
@@ -89,8 +89,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					catch (WorkerThreadException ex)
 					{
-						System.Diagnostics.Debug.WriteLine("Error: " + ex.InnerException.Message);
 
+						Debug.WriteLine("Error: " + ex.InnerException.Message);
 						MessageBox.Show(string.Format(import.ErrorMessage, ex.InnerException.Message), ITextStrings.ksUnhandledError, MessageBoxButtons.OK, MessageBoxIcon.Error);
 						DialogResult = DialogResult.Cancel;	// only 'OK' if not exception
 						Close();
@@ -99,7 +99,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		void import_Error(object sender, string message, string caption)
+		private void import_Error(object sender, string message, string caption)
 		{
 			m_messages.AppendLine(caption + ": " + message);
 		}

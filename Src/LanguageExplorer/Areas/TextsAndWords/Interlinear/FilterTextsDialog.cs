@@ -34,15 +34,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#region Constructor/Destructor
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the ChooseScriptureDialog class.
 		/// </summary>
-		/// <param name="app"></param>
-		/// <param name="cache">The cache.</param>
-		/// <param name="objList">A list of texts and books to check as an array of hvos</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// ------------------------------------------------------------------------------------
 		public FilterTextsDialog(IApp app, LcmCache cache, IStText[] objList, IHelpTopicProvider helpTopicProvider) : base(app, cache, objList, helpTopicProvider)
 		{
 			m_helpTopicId = "khtpChooseTexts";
@@ -59,12 +53,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_treeTexts.LoadAllTexts();
 		}
 
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// controls the logic for enabling/disabling buttons on this dialog.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected override void UpdateButtonState()
 		{
 			m_btnOK.Enabled = true;
@@ -74,8 +65,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// OK event handler. Checks the text list and warns about situations
 		/// where no texts are selected.
 		/// </summary>
-		/// <param name="obj"></param>
-		/// <param name="e"></param>
 		protected void OnOk(object obj, EventArgs e)
 		{
 			DialogResult = DialogResult.OK;
@@ -112,21 +101,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns>true if not empty and all genres, false otherwise.</returns>
 		private static bool OnlyGenresChecked(List<TreeNode> checkedList)
 		{
-			if (checkedList.Count == 0) return false;
-			return checkedList.All(node => node.Name == "Genre");
+			return checkedList.Count != 0 && checkedList.All(node => node.Name == "Genre");
 		}
 
 		#endregion
 
 		#region Public Methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Remove all nodes that aren't in our list of interestingTexts from the tree (m_textsToShow).
 		/// Initially select the one specified (m_selectedText).
 		/// </summary>
 		/// <param name="interestingTexts">The list of texts to display in the dialog.</param>
 		/// <param name="selectedText">The text that should be initially checked in the dialog.</param>
-		/// ------------------------------------------------------------------------------------
 		public void PruneToInterestingTextsAndSelect(IEnumerable<IStText> interestingTexts, IStText selectedText)
 		{
 			m_textsToShow = interestingTexts;
@@ -134,15 +120,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// ToList() is absolutely necessary to keep from changing node collection while looping!
 			var unusedNodes = m_treeTexts.Nodes.Cast<TreeNode>().Where(PruneChild).ToList();
 			foreach (var treeNode in unusedNodes)
+			{
 				m_treeTexts.Nodes.Remove(treeNode);
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Prune all of this node's children, then return true if this node should be removed.
 		/// If this node is to be selected, set its CheckState properly, otherwise uncheck it.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private bool PruneChild(TreeNode node)
 		{
 			if (node.Nodes.Count > 0)
@@ -150,33 +136,43 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// ToList() is absolutely necessary to keep from changing node collection while looping!
 				var unused = node.Nodes.Cast<TreeNode>().Where(PruneChild).ToList();
 				foreach (var subTreeNode in unused)
+				{
 					node.Nodes.Remove(subTreeNode);
+				}
 			}
 			if (node.Tag != null)
 			{
 				if (node.Tag is IStText)
 				{
 					if (!m_textsToShow.Contains(node.Tag as IStText))
+					{
 						return true;
+					}
 					if (node.Tag == m_selectedText)
 					{
 						m_treeTexts.SelectedNode = node;
 						m_treeTexts.SetChecked(node, TriStateTreeView.CheckState.Checked);
 					}
 					else
+					{
 						m_treeTexts.SetChecked(node, TriStateTreeView.CheckState.Unchecked);
+					}
 				}
 				else
 				{
 					if (node.Nodes.Count == 0)
+					{
 						return true; // Delete Genres and Books with no texts
+					}
 				}
 			}
 			else
 			{
 				// Usually this condition means 'No Genre', but could also be Testament node
 				if (node.Nodes.Count == 0)
+				{
 					return true;
+				}
 			}
 			return false; // Keep this node!
 		}

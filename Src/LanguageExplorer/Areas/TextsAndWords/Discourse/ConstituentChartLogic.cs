@@ -9,10 +9,8 @@ using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgControls;
@@ -27,13 +25,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	/// </summary>
 	public class ConstituentChartLogic
 	{
-		protected int m_hvoStText;
-		protected IInterlinRibbon m_ribbon;
 		private IDsConstChart m_chart;
 		private ChartLocation m_lastMoveCell; // row and column of last Move operation
 		private IHelpTopicProvider m_helpTopicProvider;
-
-		// Various Factories and Repositories
 
 		#region Factories and Repositories
 
@@ -54,7 +48,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		#endregion
 
 		private ICmPossibility[] m_allMyColumns;
-		private ISet<int> m_indexGroupEnds; // indices of ends of column Groups (for LT-8104; setting apart Nucleus)
 		private int[] m_currHighlightCells; // Keeps track of highlighted cells when dealing with ChartOrphan insertion.
 
 		/// <summary>
@@ -76,14 +69,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		public ConstituentChartLogic(LcmCache cache, IDsConstChart chart, int hvoStText)
 			: this(cache)
 		{
-			m_hvoStText = hvoStText;
+			StTextHvo = hvoStText;
 			m_chart = chart;
 		}
 
 		/// <summary>
 		/// Make one and set the other stuff later.
 		/// </summary>
-		/// <param name="cache"></param>
 		public ConstituentChartLogic(LcmCache cache)
 		{
 			Cache = cache;
@@ -117,7 +109,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			get
 			{
 				if (Chart.BasedOnRA == null)
+				{
 					return false;
+				}
 				var defWs = Cache.ServiceLocator.WritingSystemManager.Get(Chart.BasedOnRA.MainWritingSystem);
 				return defWs.RightToLeftScript;
 			}
@@ -129,37 +123,28 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		internal int[] CurrHighlightCells
 		{
 			// Enhance GordonM: This really ought to use a pair of ChartLocation objects.
-			get
-			{
-				if (m_currHighlightCells == null)
-				{
-					m_currHighlightCells = new int[4] { -1, -1, -1, -1 };
-				}
-				return m_currHighlightCells;
-			}
+			get { return m_currHighlightCells ?? (m_currHighlightCells = new int[4] {-1, -1, -1, -1}); }
 			set
 			{
-				var irowOld = 0;
 				var crowOld = 0;
 				if (IsChOrphActive)
 				{
 					crowOld = 1;
-					irowOld = m_currHighlightCells[0];
+					var irowOld = m_currHighlightCells[0];
 					if (m_currHighlightCells[2] != irowOld)
+					{
 						crowOld++;
+					}
 				}
 				m_currHighlightCells = value;
-				if (m_hvoStText != 0 && IsChOrphActive)
+				if (StTextHvo != 0 && IsChOrphActive)
 				{
-					int crowNew = 1;
-					int irowNew = m_currHighlightCells[0];
+					var crowNew = 1;
+					var irowNew = m_currHighlightCells[0];
 					if (m_currHighlightCells[2] != irowNew)
+					{
 						crowNew++;
-					//Cache.PropChanged(m_chart.Hvo, kflidRows, irowNew, crowNew, crowNew);
-				}
-				if (m_hvoStText != 0 && crowOld > 0) // Some danger of repeating myself, but probably worth it.
-				{
-					//Cache.PropChanged(m_chart.Hvo, kflidRows, irowOld, crowOld, crowOld);
+					}
 				}
 			}
 		}
@@ -167,11 +152,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Returns true if CurrHighlightCells has been set (i.e. ChOrph input is set up and pending).
 		/// </summary>
-		/// <returns></returns>
-		internal bool IsChOrphActive
-		{
-			get { return CurrHighlightCells[0] > -1; }
-		}
+		internal bool IsChOrphActive => CurrHighlightCells[0] > -1;
 
 		/// <summary>
 		/// Repeat the most recent move (forward).
@@ -179,7 +160,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		public void RepeatLastMoveForward()
 		{
 			if (m_lastMoveCell != null && m_lastMoveCell.IsValidLocation)
+			{
 				MoveCellForward(m_lastMoveCell);
+			}
 		}
 
 		/// <summary>
@@ -188,58 +171,38 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		public void RepeatLastMoveBack()
 		{
 			if (m_lastMoveCell != null && m_lastMoveCell.IsValidLocation)
+			{
 				MoveCellBack(m_lastMoveCell);
+			}
 		}
 
-		public bool CanRepeatLastMove
-		{
-			get { return m_lastMoveCell != null && m_lastMoveCell.IsValidLocation; }
-		}
+		public bool CanRepeatLastMove => m_lastMoveCell != null && m_lastMoveCell.IsValidLocation;
 
 		public IDsConstChart Chart
 		{
 			get { return m_chart; }
-			set {
+			set
+			{
 				if (m_chart == null && value == null || (m_chart != null && m_chart.Equals(value)))
+				{
 					return; // no change.
+				}
 				m_chart = value;
 				m_currHighlightCells = null; // otherwise we try to clear the old ones when ribbon changed event happens!
 			}
 		}
 
-		public int StTextHvo
-		{
-			get { return m_hvoStText; }
-			set { m_hvoStText = value; }
-		}
+		public int StTextHvo { get; set; }
 
 		/// <summary>
 		/// Returns an array of all the columns(Hvos) for the template of the chart that this logic is initialized with.
 		/// </summary>
-		public ICmPossibility[] AllMyColumns
-		{
-			get
-			{
-				if (m_allMyColumns == null)
-					m_allMyColumns = AllColumns(m_chart.TemplateRA).ToArray();
-				return m_allMyColumns;
-			}
-		}
+		public ICmPossibility[] AllMyColumns => m_allMyColumns ?? (m_allMyColumns = AllColumns(m_chart.TemplateRA).ToArray());
 
 		/// <summary>
 		/// Returns an array of all the columns for the template of the chart that are the ends of column groups.
 		/// </summary>
-		public ISet<int> GroupEndIndices
-		{
-			get
-			{
-				return m_indexGroupEnds;
-			}
-			set
-			{
-				m_indexGroupEnds = value;
-			}
-		}
+		public ISet<int> GroupEndIndices { get; set; }
 
 		/// <summary>
 		/// Return true if the specified column has automatic 'missing' markers.
@@ -255,27 +218,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <returns></returns>
 		internal bool ColumnHasAutoMissingMarkers(int icol)
 		{
-			string engLabel = AllMyColumns[icol].Name.get_String(Cache.WritingSystemFactory.GetWsFromStr("en")).Text;
+			var engLabel = AllMyColumns[icol].Name.get_String(Cache.WritingSystemFactory.GetWsFromStr("en")).Text;
 			return (engLabel == "Subject" || engLabel == "Verb");
 		}
 
-		public IInterlinRibbon Ribbon
-		{
-			get { return m_ribbon; }
-			set { m_ribbon = value; }
-		}
+		public IInterlinRibbon Ribbon { get; set; }
 
 		/// <summary>
 		/// Returns true if there is no more uncharted text.
 		/// </summary>
-		public bool IsChartComplete
-		{
-			get
-			{
-				var result = NextUnchartedInput(1);
-				return (result.Length == 0);
-			}
-		}
+		public bool IsChartComplete => (NextUnchartedInput(1).Length == 0);
 
 		/// <summary>
 		/// This routine raises the ribbon changed event. It should get run whenever there is a PropChanged
@@ -283,41 +235,40 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		internal void RaiseRibbonChgEvent()
 		{
-			if (Ribbon_Changed != null)
-				Ribbon_Changed(this, new EventArgs()); // raise event that Ribbon has changed
+			Ribbon_Changed?.Invoke(this, new EventArgs()); // raise event that Ribbon has changed
 		}
 
 		/// <summary>
 		/// Return the next wordforms that have not yet been added to the chart (up to maxContext of them).
 		/// This overload assumes the current StText.
 		/// </summary>
-		/// <param name="maxContext"></param>
-		/// <returns></returns>
 		public AnalysisOccurrence[] NextUnchartedInput(int maxContext)
 		{
-			var txt = m_textRepo.GetObject(m_hvoStText);
-			return NextUnchartedInput(txt, maxContext);
+			return NextUnchartedInput(m_textRepo.GetObject(StTextHvo), maxContext);
 		}
 
 		/// <summary>
 		/// Return the next wordforms that have not yet been added to the chart (up to maxContext of them).
 		/// </summary>
-		/// <param name="curText"></param>
-		/// <param name="maxContext"></param>
-		/// <returns></returns>
 		public AnalysisOccurrence[] NextUnchartedInput(IStText curText, int maxContext)
 		{
 			if (m_chart == null || curText.Hvo < 1)
+			{
 				return new AnalysisOccurrence[0];
+			}
 			// Try brute force first. If too slow, maybe we'll have to implement a chartingCache
 			// that keeps track of all the Seg/Analysis index combinations and whether they're charted or not.
 			var myParas = curText.ParagraphsOS;
 			if (myParas == null || myParas.Count == 0)
+			{
 				return new AnalysisOccurrence[0];
+			}
 
 			var allSegments = new List<ISegment>();
 			foreach (var myPara in myParas.Cast<IStTxtPara>().Where(myPara => myPara != null))
+			{
 				allSegments.AddRange(myPara.SegmentsOS);
+			}
 
 			// Get a list (in order) of all wordforms in this text.
 			// But to save time, we'll just cache them as hvo and index tuples.
@@ -327,28 +278,31 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				for (var i = 0; i < seg.AnalysesRS.Count; i++)
 				{
 					if (seg.AnalysesRS[i].HasWordform)
+					{
 						wordformRefsInThisText.Add(new Tuple<int, int>(seg.Hvo, i));
+					}
 				}
 			}
 
 			// Get a set of all AnalysisOccurrence objects currently in the chart.
 			var chartedTargets = new HashSet<AnalysisOccurrence>();
-			foreach (var cellPart in m_chart.RowsOS.SelectMany(
-				row => row.CellsOS.OfType<IConstChartWordGroup>()))
+			foreach (var cellPart in m_chart.RowsOS.SelectMany(row => row.CellsOS.OfType<IConstChartWordGroup>()))
 			{
 				chartedTargets.UnionWith(cellPart.GetOccurrences());
 			}
 
 			// Figure out which words are NOT charted
-			foreach (var pointRef in chartedTargets.Select(point => new Tuple<int, int>(
-							point.Segment.Hvo, point.Index)).Where(wordformRefsInThisText.Contains))
+			foreach (var pointRef in chartedTargets.Select(point => new Tuple<int, int>(point.Segment.Hvo, point.Index))
+				.Where(wordformRefsInThisText.Contains))
+			{
 				wordformRefsInThisText.Remove(pointRef);
+			}
 			var resultLength = Math.Min(wordformRefsInThisText.Count, maxContext);
 			var result = new AnalysisOccurrence[resultLength];
 			for (var i = 0; i < resultLength; i++)
-				result[i] = new AnalysisOccurrence(
-					m_segRepo.GetObject(wordformRefsInThisText[i].Item1),
-					wordformRefsInThisText[i].Item2);
+			{
+				result[i] = new AnalysisOccurrence(m_segRepo.GetObject(wordformRefsInThisText[i].Item1), wordformRefsInThisText[i].Item2);
+			}
 			return result;
 		}
 
@@ -364,9 +318,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			iPara = -1;
 			offset = -1;
 			var nui = NextUnchartedInput(1);
-			if (nui.Length == 0)
-				return false;
-			return IsChOrph(nui[0], out iPara, out offset);
+			return nui.Length != 0 && IsChOrph(nui[0], out iPara, out offset);
 		}
 
 		protected bool IsChOrph(AnalysisOccurrence word)
@@ -389,17 +341,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			iPara = -1;
 			offset = -1;
 			if (word == null || !word.HasWordform)
-				throw new ArgumentOutOfRangeException("word", "is either null or is punctuation!");
+			{
+				throw new ArgumentOutOfRangeException(nameof(word), @"is either null or is punctuation!");
+			}
 			if (Chart == null || Chart.RowsOS.Count == 0)
+			{
 				return false; // No chart, therefore the whole text is ChOrphs! But that don't count.
+			}
 
 			// Get last charted wordform
 			var lastWordform = GetLastChartedWordform();
 			if (lastWordform == null)
+			{
 				return false; // This should mean the same as no charted text.
+			}
 
 			if (word.IsAfter(lastWordform))
+			{
 				return false; // the paragraph for which word is a part is not yet charted.
+			}
 
 			offset = word.GetMyBeginOffsetInPara();
 			iPara = word.Paragraph.IndexInOwner;
@@ -419,19 +379,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				}
 				latestRow = PreviousRow(latestRow);
 				if (latestRow == null)
+				{
 					return null;
+				}
 			}
 		}
 
 		/// <summary>
 		/// Find the index of the paragraph in the text of which the occurrence is a part.
 		/// </summary>
-		/// <param name="occurrence"></param>
-		/// <returns></returns>
 		protected int GetParagraphIndexForOccurrence(AnalysisOccurrence occurrence)
 		{
 			if (!occurrence.IsValid)
+			{
 				throw new ArgumentException("Invalid Analysis!");
+			}
 			return (occurrence.Segment.Owner as IStTxtPara).IndexInOwner;
 		}
 
@@ -443,17 +405,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <param name="offset">ChOrph input: offset into paragraph</param>
 		/// <param name="precCell">Result: ChartLocation of preceding WordGroup's cell</param>
 		/// <param name="follCell">Result: ChartLocation of following WordGroup's cell</param>
-		protected internal void GetWordGroupCellsBorderingChOrph(int iPara, int offset,
-			out ChartLocation precCell, out ChartLocation follCell)
+		protected internal void GetWordGroupCellsBorderingChOrph(int iPara, int offset, out ChartLocation precCell, out ChartLocation follCell)
 		{
-			Debug.Assert(iPara >= 0, String.Format("Bad ChOrph paragraph index = {0}!", iPara));
-			Debug.Assert(offset >= 0, String.Format("Bad ChOrph paragraph offset = {0}!", offset));
+			Debug.Assert(iPara >= 0, $"Bad ChOrph paragraph index = {iPara}!");
+			Debug.Assert(offset >= 0, $"Bad ChOrph paragraph offset = {offset}!");
 			Debug.Assert(m_chart != null && m_chart.RowsOS.Count > 0); // IsChOrph() should return false in these conditions
 
 			// Set 'out' variables for Chart Cell references
 			precCell = null;
 			follCell = null;
-
 			// Set temporary variables
 			var icolPrec = -1;
 			var icolFoll = -1;
@@ -466,7 +426,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				// Find the first WordGroup in each row
 				var wordGrp = FindFirstWordGroup(CellPartsInRow(row));
 				if (wordGrp == null)
+				{
 					continue; // No wordgroups in this chart row, look in next one.
+				}
 
 				// Found first WordGroup in this row!
 				// Compare its text-logical position with the input ChOrph's text-logical position.
@@ -498,9 +460,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					icolPrec = icolFoll; // Fixes at least part of LT-8380
 					// Set 'out' variables
 					if (rowFoll != null)
+					{
 						follCell = new ChartLocation(rowFoll, icolFoll);
+					}
+
 					if (rowPrec != null)
+					{
 						precCell = new ChartLocation(rowPrec, icolPrec);
+					}
 					return;
 				}
 			}
@@ -516,29 +483,33 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				// See if we can narrow the search backward
 				if (rowPrec.Hvo != rowFoll.Hvo)
 				{
-					ChartLocation temp = CheckFollowingRowPosition(iPara, offset, new ChartLocation(rowFoll, icolFoll));
+					var temp = CheckFollowingRowPosition(iPara, offset, new ChartLocation(rowFoll, icolFoll));
 					icolFoll = temp.ColIndex;
 					rowFoll = temp.Row;
 				}
+
 				if (rowPrec.Hvo == rowFoll.Hvo) // rowFoll might have been changed in CheckFollowingRowPosition()
+				{
 					icolFoll = NarrowSearchBackward(iPara, offset, new ChartLocation(rowPrec, icolPrec), icolFoll);
+				}
 			}
 			// By the time we get here, we should be able to return the right answer.
 			// Set 'out' variables
 			if (rowFoll != null)
+			{
 				follCell = new ChartLocation(rowFoll, icolFoll);
+			}
+
 			if (rowPrec != null)
+			{
 				precCell = new ChartLocation(rowPrec, icolPrec);
+			}
 		}
 
 		/// <summary>
 		/// Takes a cell location and tries to narrow the search forward for the last column in the
 		/// row that is still logically before the ChOrph. Returns the new column index.
 		/// </summary>
-		/// <param name="iPara"></param>
-		/// <param name="offset"></param>
-		/// <param name="cell"></param>
-		/// <returns></returns>
 		private int NarrowSearchForward(int iPara, int offset, ChartLocation cell)
 		{
 			Debug.Assert(cell != null && cell.IsValidLocation); // Shouldn't occur; tested in calling routine
@@ -550,9 +521,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				var wordGrpFound = FindFirstWordGroup(PartsInCell(new ChartLocation(cell.Row, icolNew)));
 				if (wordGrpFound == null)
+				{
 					continue;
+				}
+
 				if (!WordGroupStartsBeforeChOrph(iPara, offset, wordGrpFound))
+				{
 					break;
+				}
 				result = icolNew; // Keep incrementing our 'ref' index until we get past our logical position
 			}
 			return result;
@@ -588,7 +564,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					// Either we found a WordGroup that 'contains' our ChOrph's position
 					// or we've gone too many rows back and our 'ref' vars were already set right.
 					if (IsChOrphWithinWordGroup(iPara, offset, wordGrpFound))
+					{
 						result = new ChartLocation(rowNew, IndexOfColumnForCellPart(wordGrpFound.Hvo));
+					}
 					return result;
 				}
 				// Updating our 'temp' variables.
@@ -598,7 +576,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 			var temp = new ChartLocation(tempRow, tempColIndex);
 			if (!temp.IsSameLocation(cell))
-				 result = temp;
+			{
+				result = temp;
+			}
 			// We are now ready for NarrowSearchBackward().
 			return result;
 		}
@@ -612,19 +592,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			Debug.Assert(precCell != null && precCell.IsValidLocation);
 
-			int result = icolFoll;
-			for (int icolNew = icolFoll - 1; icolNew >= Math.Max(0, precCell.ColIndex); icolNew--)
+			var result = icolFoll;
+			for (var icolNew = icolFoll - 1; icolNew >= Math.Max(0, precCell.ColIndex); icolNew--)
 			{
 				var wordGrpFound = FindLastWordGroup(PartsInCell(new ChartLocation(precCell.Row, icolNew)));
 				if (wordGrpFound == null)
+				{
 					continue;
+				}
 				if (!WordGroupStartsBeforeChOrph(iPara, offset, wordGrpFound))
 				{
 					result = icolNew; // Keep decrementing our result index until we get past our logical position
 					continue;
 				}
+
 				if (IsChOrphWithinWordGroup(iPara, offset, wordGrpFound))
+				{
 					result = icolNew;
+				}
 				break;
 			}
 			return result;
@@ -650,7 +635,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var word = wordforms[0];
 			var imyPara = GetParagraphIndexForOccurrence(word);
 			if (imyPara < iPara)
+			{
 				return true;
+			}
 			return imyPara == iPara && word.GetMyBeginOffsetInPara() < offset;
 		}
 
@@ -671,12 +658,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 			var cAppliesTo = words.Count;
 			if (cAppliesTo == 1)
+			{
 				return false;
+			}
 
 			// Test first wordform in WordGroup, is ChOrph offset less?
 			var firstWord = words[0];
 			if (firstWord != null && offset < firstWord.GetMyBeginOffsetInPara())
+			{
 				return false;
+			}
 
 			// Test last wordform in wordGroup, is ChOrph offset greater? Need to check iPara first!
 			var lastWord = words[cAppliesTo - 1];
@@ -693,8 +684,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Figure out which cells are possibilities for inserting the present ChOrph.
 		/// Mark them to be highlighted. Return a boolean array corresponding to column possibilities.
 		/// </summary>
-		/// <param name="precCell"></param>
-		/// <param name="follCell"></param>
 		internal bool[] HighlightChOrphPossibles(ChartLocation precCell, ChartLocation follCell)
 		{
 			Debug.Assert(follCell != null && follCell.IsValidLocation, "No following row possibility.");
@@ -718,21 +707,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// This one makes it more easily testable.
 		/// </summary>
-		/// <param name="icolPrec"></param>
-		/// <param name="irowPrec"></param>
-		/// <param name="icolFoll"></param>
-		/// <param name="irowFoll"></param>
-		/// <returns></returns>
 		protected bool[] HighlightChOrphPossibles(int icolPrec, int irowPrec, int icolFoll, int irowFoll)
 		{
-			int ccols = AllMyColumns.Length;
-			bool[] goodCols = new bool[ccols]; // return array of flags to disable the right MoveHere buttons
+			var ccols = AllMyColumns.Length;
+			var goodCols = new bool[ccols]; // return array of flags to disable the right MoveHere buttons
 
-			int icurrCol = icolPrec;
-			int icurrRow = irowPrec;
+			var icurrCol = icolPrec;
+			var icurrRow = irowPrec;
 
 			// Set begin cell for highlighting
-			int[] currHighlightCells = new int[4];
+			var currHighlightCells = new int[4];
 			currHighlightCells[0] = icurrRow;
 			currHighlightCells[1] = icurrCol;
 
@@ -741,7 +725,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				goodCols[icurrCol] = true;
 				icurrCol++;
 				if (icurrRow == irowFoll && icurrCol > icolFoll)
+				{
 					break;
+				}
 				if (icurrCol == ccols) // Went past last column, start over at beginning of next row
 				{
 					icurrCol = 0;
@@ -791,8 +777,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		protected internal void ResetRibbonLimits()
 		{
-			m_ribbon.EndSelLimitIndex = -1;
-			m_ribbon.SelLimOccurrence = null;
+			Ribbon.EndSelLimitIndex = -1;
+			Ribbon.SelLimOccurrence = null;
 		}
 
 		/// <summary>
@@ -809,18 +795,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				int iPara, offset; // 'out' vars for IsChOrph() to be used later
 				if (!IsChOrph(nui[i], out iPara, out offset))
+				{
 					break; // No longer in any ChOrph group
+				}
 				// Prepare more 'out' vars for GetWordGroupCellsBorderingChOrph
 				// This time we don't care about the Preceding cell, only the Following cell; has it changed?
 				ChartLocation dummy, newFollCell;
 				GetWordGroupCellsBorderingChOrph(iPara, offset, out dummy, out newFollCell);
 				if (!newFollCell.IsSameLocation(follCell))
+				{
 					break; // No longer in same ChOrph group
+				}
 			}
 			i--;
-			m_ribbon.EndSelLimitIndex = i; // These emit PropChanged themselves now.
-			m_ribbon.SelLimOccurrence = nui[i];
-			m_ribbon.SelectFirstOccurence();
+			Ribbon.EndSelLimitIndex = i; // These emit PropChanged themselves now.
+			Ribbon.SelLimOccurrence = nui[i];
+			Ribbon.SelectFirstOccurence();
 		}
 
 		#endregion
@@ -832,12 +822,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// then it will return the nearest charted location. This should make the green
 		/// highlighting visible (FWR-3681).
 		/// </summary>
-		/// <param name="point"></param>
-		/// <returns></returns>
 		public ChartLocation FindChartLocOfWordform(AnalysisOccurrence point)
 		{
 			if (m_chart == null || Chart.RowsOS.Count < 1)
+			{
 				return null;
+			}
 			Debug.Assert(point != null);
 
 			ChartLocation arrayLoc;
@@ -849,7 +839,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				GetWordGroupCellsBorderingChOrph(iPara, offset, out arrayLoc, out dummy);
 			}
 			else
+			{
 				arrayLoc = FindChartLocOfWordformInternal(point);
+			}
 
 			return arrayLoc.IsValidLocation ? arrayLoc : null;
 		}
@@ -859,26 +851,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// What we know:
 			//    m_chart exists and has at least one Row
 
-			var result = from row in m_chart.RowsOS
-						 from wordGrp in m_wordGrpRepo.AllInstances()
-						 where row.CellsOS.Contains(wordGrp) &&
-							wordGrp.GetOccurrences().Contains(point)
-						 select new ChartLocation(row, IndexOfColumnForCellPart(wordGrp));
+			var result = m_chart.RowsOS.SelectMany(row => m_wordGrpRepo.AllInstances(), (row, wordGrp) => new {row, wordGrp})
+				.Where(@t => @t.row.CellsOS.Contains(@t.wordGrp) && @t.wordGrp.GetOccurrences().Contains(point))
+				.Select(@t => new ChartLocation(@t.row, IndexOfColumnForCellPart(@t.wordGrp))).ToList();
 
 			// Either return the valid result from LINQ or an invalid ChartLocation
-			return result.Count() > 0 ? result.First() : new ChartLocation(null, -1);
+			return result.Any() ? result.First() : new ChartLocation(null, -1);
 		}
 
 		/// <summary>
 		/// Get the WfiWordform closest to the bookmark.
 		/// </summary>
-		/// <param name="bookmark"></param>
-		/// <returns></returns>
 		internal AnalysisOccurrence FindWordformAtBookmark(InterAreaBookmark bookmark)
 		{
-			Debug.Assert(m_hvoStText > 0, "No text!");
+			Debug.Assert(StTextHvo > 0, "No text!");
 			Debug.Assert(bookmark != null && bookmark.IndexOfParagraph > -1, "Bad bookmark!");
-			var txt = m_textRepo.GetObject(m_hvoStText);
+			var txt = m_textRepo.GetObject(StTextHvo);
 			if (bookmark.IndexOfParagraph >= txt.ParagraphsOS.Count)
 			{
 				Debug.Fail("Bad bookmark paragraph index!");
@@ -890,7 +878,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var iend = bookmark.EndCharOffset;
 			var curSeg = FindSegmentContainingParaOffset(curPara, ibeg);
 			if (curSeg == null)
+			{
 				return null;
+			}
 			var segOffset = curSeg.BeginOffset;
 			bool fExactMatch;
 			return curSeg.FindWagform(ibeg - segOffset, iend - segOffset, out fExactMatch);
@@ -903,9 +893,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var icurSeg = 0;
 			var csegs = para.SegmentsOS.Count;
 			if (csegs == 0)
+			{
 				return null;
+			}
+
 			while (icurSeg < csegs && para.SegmentsOS[icurSeg].BeginOffset <= offset)
+			{
 				icurSeg++;
+			}
 			icurSeg--;
 
 			return para.SegmentsOS[icurSeg];
@@ -914,16 +909,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Gets all the 'leaf' nodes in a chart template, and also the ends of column groupings.
 		/// </summary>
-		/// <param name="template"></param>
-		/// <returns>List of int (hvos?)</returns>
 		public List<ICmPossibility> AllColumns(ICmPossibility template)
 		{
 			var result = new List<ICmPossibility>();
 			var groups = new HashSet<int>();
 			if (template == null || template.SubPossibilitiesOS.Count == 0)
+			{
 				return result; // template itself can't be a column even if no children.
+			}
 			CollectColumns(result, template, groups, 0);
-			m_indexGroupEnds = groups;
+			GroupEndIndices = groups;
 			return result;
 		}
 
@@ -931,11 +926,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Collect (in depth-first traversal) all the leaf columns in the template.
 		/// Also (LT-8104) collect the set of column indices that are the ends of top-level column groupings.
 		/// </summary>
-		/// <param name="result"></param>
-		/// <param name="template"></param>
-		/// <param name="groups"></param>
-		/// <param name="depth"></param>
-		private void CollectColumns(List<ICmPossibility> result, ICmPossibility template, HashSet<int> groups, int depth)
+		private static void CollectColumns(List<ICmPossibility> result, ICmPossibility template, HashSet<int> groups, int depth)
 		{
 			if (template.SubPossibilitiesOS.Count == 0)
 			{
@@ -943,15 +934,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				result.Add(template);
 				// We now collect this column index in our GroupEndsIndices even if it's a group of one.
 				if (depth == 1)
+				{
 					groups.Add(result.Count - 1);
+				}
 				return;
 			}
+
 			foreach (var child in template.SubPossibilitiesOS)
+			{
 				CollectColumns(result, child, groups, depth + 1);
+			}
 
 			// Collect this column index in our GroupEndsIndices if we're at the top-level.
 			if (depth == 1)
+			{
 				groups.Add(result.Count - 1);
+			}
 		}
 
 		#region actions for buttons
@@ -959,8 +957,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		internal void MoveToColumnInUOW(int icol)
 		{
 			IConstChartRow modifiedRow = null;
-			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMoveWordToColumn, LanguageExplorerResources.ksRedoMoveWordToColumn,
-				Cache.ActionHandlerAccessor, () => MoveToColumn(icol, out modifiedRow));
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMoveWordToColumn, LanguageExplorerResources.ksRedoMoveWordToColumn, Cache.ActionHandlerAccessor, () => MoveToColumn(icol, out modifiedRow));
 			FireRowModifiedEvent(modifiedRow);
 		}
 
@@ -984,9 +981,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		public string MoveToColumn(int icol, out IConstChartRow modifiedRow)
 		{
 			modifiedRow = null;
-			var selectedWordforms = m_ribbon.SelectedOccurrences;
+			var selectedWordforms = Ribbon.SelectedOccurrences;
 			if (selectedWordforms == null || selectedWordforms.Length == 0)
+			{
 				return LanguageExplorerResources.ksNoWordformsMsg;
+			}
 			Cache.ActionHandlerAccessor.AddAction(new UpdateRibbonAction(this, false));
 			int iPara, offset; // 'out' vars for IsChOrph()
 			var rowFinal = LastRow;
@@ -1002,7 +1001,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					var finalCell = new ChartLocation(rowFinal, icol);
 					MoveChOrphToColumn(iPara, offset, selectedWordforms, finalCell);
 				}
-				else return LanguageExplorerResources.ksChooseDifferentColumn;
+				else
+				{
+					return LanguageExplorerResources.ksChooseDifferentColumn;
+				}
 			}
 			else
 			{
@@ -1027,13 +1029,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 			// Remove wordforms from input and select next item.
 			NoteActionChangesRibbonItems(); // Fires Ribbon_Changed event
-			// LT-7620 row numbers in ConstChart also says to ignore baseline paragraph breaks. [GordonM]
-			//int[] nextWordforms = m_ribbon.SelectedOccurrences;
-			//if (nextWordforms.Length > 0 &&
-			//    GetPara(nextAnnotations[0]) != GetPara(selectedAnnotations[0]))
-			//{
-			//    SetFeature(m_cache.MainCacheAccessor, LastRow.Hvo, EndParaFeatureName, true);
-			//}
 			modifiedRow = rowFinal;
 			// FWR-3278: Try doing this later (after the UOW finishes) so that it gets valid selections.
 			//FireRowModifiedEvent(modifiedRow);
@@ -1045,7 +1040,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			if (RowModifiedEvent != null)
 			{
 				if (modifiedRow == null)
+				{
 					return;
+				}
 				RowModifiedEvent(this, new RowModifiedEventArgs(modifiedRow));
 			}
 		}
@@ -1054,8 +1051,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Extend the end point of a ConstChartWordGroup forward to a new contiguous point.
 		/// Caller is responsible to see that this doesn't overlap another word group's 'territory'.
 		/// </summary>
-		/// <param name="wordGrpToExtend"></param>
-		/// <param name="endPoint"></param>
 		private static void ExtendWordGroupForwardTo(IConstChartWordGroup wordGrpToExtend, AnalysisOccurrence endPoint)
 		{
 			wordGrpToExtend.EndSegmentRA = endPoint.Segment;
@@ -1066,10 +1061,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Returns the proper row to insert a ChOrph in the specified column (icol). If the desired column
 		/// is not a valid choice given the current chart configuration, returns null.
 		/// </summary>
-		/// <param name="precCell"></param>
-		/// <param name="follCell"></param>
-		/// <param name="icol">Desired column index to insert ChOrph into (user column choice).</param>
-		/// <returns></returns>
 		private IConstChartRow GetValidRowColumnForChOrph(ChartLocation precCell, ChartLocation follCell, int icol)
 		{
 			Debug.Assert(m_chart != null && m_chart.RowsOS.Count > 0);
@@ -1090,14 +1081,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			if (precCell.HvoRow == follCell.HvoRow)
 			{
 				if (icol < precCell.ColIndex || icol > follCell.ColIndex)
+				{
 					return null; // Not an acceptable column choice as things stand presently.
+				}
 				return precCell.Row;
 			}
 			if (icol < precCell.ColIndex)
 			{
 				var nextRow = NextRow(precCell.Row);
 				if (nextRow == follCell.Row && icol > follCell.ColIndex)
+				{
 					return null;
+				}
 				return nextRow; // so if there's a blank row between Prec/Foll, it goes there.
 			}
 			return precCell.Row;
@@ -1118,8 +1113,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// 2. Create a new CCWordGroup at this location with our selectedWords
 			int whereToInsert;
 			IConstChartWordGroup existingWordGroup;
-			var result = FindWhereToAddChOrph(finalCell,
-				iPara, offset, out whereToInsert, out existingWordGroup);
+			var result = FindWhereToAddChOrph(finalCell, iPara, offset, out whereToInsert, out existingWordGroup);
 			switch (result)
 			{
 				case FindWhereToAddResult.kInsertWordGrpInRow:
@@ -1134,21 +1128,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 		}
 
-		private static void ExpandWordGroupToInclude(IAnalysisReference existingWordGroup,
-			IList<AnalysisOccurrence> selectedWordforms, bool fforward)
+		private static void ExpandWordGroupToInclude(IAnalysisReference existingWordGroup, IList<AnalysisOccurrence> selectedWordforms, bool fforward)
 		{
 			AnalysisOccurrence expandTo;
 			if (fforward)
 			{
 				expandTo = selectedWordforms[selectedWordforms.Count - 1];
 				while (existingWordGroup.EndRef() != expandTo)
+				{
 					existingWordGroup.GrowFromEnd(true);
+				}
 			}
 			else
 			{
 				expandTo = selectedWordforms[0];
 				while (existingWordGroup.BegRef() != expandTo)
+				{
 					existingWordGroup.GrowFromBeginning(true);
+				}
 			}
 		}
 
@@ -1179,27 +1176,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			return result;
 		}
 
-		/// <summary>
-		/// Indicates how to interpret the other results of FindWhereToAddChOrph and FindWhereToAddWords,
-		/// namely, 'whereToInsert' and 'existingWordGroup'. A (different) set of 3 of these results apply to each of
-		/// the 2 'FindWhereToAddX' methods. 'FWTAWords' uses the first 3. 'FWTAChOrph' uses all but kMakeNewRow.
-		/// </summary>
-		public enum FindWhereToAddResult
-		{
-			kAppendToExisting,		// append (word or ChOrph) as last occurrence(s) of 'existingWordGroup'
-									// (ignore 'whereToInsert')
-
-			kInsertWordGrpInRow,	// 'whereToInsert' specifies the index in the row's CellsOS of the new WordGroup to be
-									// created (from Words or ChOrphs) in the (at this time, anyway) previously empty cell
-									// (ignore 'existingWordGroup')
-
-			kMakeNewRow,			// Make a new WordGroup in a new row. (ignore both 'whereToInsert and 'existingWordGroup')
-									// (Not used for FindWhereToAddChOrph)
-
-			kInsertChOrphInWordGrp	// Insert ChOrph word(s) into 'existingWordGroup'; whereToInsert is now index in WordGroup's
-									// list of occurrences (Not used for FindWhereToAddWords)
-		}
-
 		// Here's another couple of ways of describing the algorithm:
 		// if (last non-marker is in a later column)
 		//	(1)make a new row
@@ -1228,14 +1204,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		///<param name="whereToInsert">index in Row's Cells sequence, if new WordGroup</param>
 		///<param name="existingWordGrp"></param>
 		///<returns>enum result used in switch</returns>
-		public FindWhereToAddResult FindWhereToAddWords(int icol, out int whereToInsert,
-			out IConstChartWordGroup existingWordGrp)
+		internal FindWhereToAddResult FindWhereToAddWords(int icol, out int whereToInsert, out IConstChartWordGroup existingWordGrp)
 		{
 			existingWordGrp = null;
 			whereToInsert = 0;
 			var lastRow = LastRow;
 			if (lastRow == null)
+			{
 				return FindWhereToAddResult.kMakeNewRow;
+			}
 			if (lastRow.CellsOS.Count == 0)
 			{
 				// Probably the only way this happens is when inserting a moved text marker.
@@ -1324,13 +1301,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// or end of the WordGroup.</param>
 		/// <param name="existingWordGroup"></param>
 		/// <returns></returns>
-		public FindWhereToAddResult FindWhereToAddChOrph(ChartLocation curCell, int iChOrphPara, int beginChOrphOffset,
-			out int whereToInsert, out IConstChartWordGroup existingWordGroup)
+		internal FindWhereToAddResult FindWhereToAddChOrph(ChartLocation curCell, int iChOrphPara, int beginChOrphOffset, out int whereToInsert, out IConstChartWordGroup existingWordGroup)
 		{
 			// Enhance GordonM: This is an awfully long method. I need to break it down somehow.
 			existingWordGroup = null;
 			whereToInsert = 0;
-			int ccellPartsInRow = curCell.Row.CellsOS.Count;
+			var ccellPartsInRow = curCell.Row.CellsOS.Count;
 			if (ccellPartsInRow == 0)
 			{
 				return FindWhereToAddResult.kInsertWordGrpInRow; // whereToInsert == 0
@@ -1364,7 +1340,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				}
 				whereToInsert = wordList.Count - 1;
 				if (wordList[whereToInsert].IsAfter(locationOfChOrph))
+				{
 					return FindWhereToAddResult.kInsertChOrphInWordGrp; // i.e. Do nothing!
+				}
 
 				// If we fall through here, we either need to append to the WordGroup we've been looking at
 				// or there are multiple WordGroups in this cell and we need to look further.
@@ -1386,10 +1364,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			Debug.Assert(m_chart != null && m_chart.BasedOnRA != null);
 			var cpara = m_chart.BasedOnRA.ParagraphsOS.Count;
 			if (iChOrphPara >= cpara)
-				throw new ArgumentOutOfRangeException("iChOrphPara");
+			{
+				throw new ArgumentOutOfRangeException(nameof(iChOrphPara));
+			}
 			var para = m_chart.BasedOnRA.ParagraphsOS[iChOrphPara] as IStTxtPara;
 			if (para == null || para.SegmentsOS.Count == 0)
+			{
 				return null;
+			}
 			var mySeg = FindSegmentContainingParaOffset(para, beginChOrphOffset);
 			bool fExactMatch;
 			return mySeg.FindWagform(beginChOrphOffset, beginChOrphOffset, out fExactMatch);
@@ -1406,13 +1388,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				var currCellPart = row.CellsOS[iwhereToInsert];
 				var icurrCol = IndexOfColumnForCellPart(currCellPart);
 				if (icurrCol < icolDesired)
+				{
 					continue;
+				}
 				if (icurrCol > icolDesired)
+				{
 					break; // iwhereToInsert == 'the right spot' in sequence
+				}
 
 				// currCellPart is in the correct column
 				if (currCellPart is IConstChartMovedTextMarker && ((IConstChartMovedTextMarker)currCellPart).Preposed)
+				{
 					continue; // So far, we assume only preposed markers go before wordforms in a cell
+				}
 				// This is a clause marker or tag and should come after any wordforms in this cell
 				break;
 			}
@@ -1427,11 +1415,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Line label is calculated based on the previous row's label.
 		/// Caller deals with UOW.
 		/// </summary>
-		/// <param name="previousRow"></param>
 		public void InsertRow(IConstChartRow previousRow)
 		{
 			var index = previousRow.IndexInOwner;
-
 			var newRow = m_rowFact.Create();
 			m_chart.RowsOS.Insert(index + 1, newRow);
 			SetupCompDetailsForInsertRow(previousRow, newRow);
@@ -1445,21 +1431,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Inserting a new row will quite possibly remove special borders from the previous row.
 		/// But it shouldn't affect dependent/song/speech clause features! [LT-9587]
 		/// </summary>
-		/// <param name="previousRow"></param>
-		/// <param name="newRow"></param>
 		private static void SetupCompDetailsForInsertRow(IConstChartRow previousRow, IConstChartRow newRow)
 		{
 			SafelyToggleBottomBorder(previousRow);
 			var fEndSent = previousRow.EndSentence;
 			if (!fEndSent)
+			{
 				return; // don't set anything on new row
+			}
 
 			// delete prevRow Sentence feature, add newRow Sentence feature
 			previousRow.EndSentence = false;
 			newRow.EndSentence = true;
 			var fEndPara = previousRow.EndParagraph;
 			if (!fEndPara)
+			{
 				return;
+			}
 			// delete prevRow para feature, add newRow para feature
 			previousRow.EndParagraph = false;
 			newRow.EndParagraph = true;
@@ -1469,7 +1457,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Clears the chart from the given cell to the end of the chart.
 		/// Creates a UOW.
 		/// </summary>
-		/// <param name="cell"></param>
 		public void ClearChartFromHereOn(ChartLocation cell)
 		{
 			var rowIndex = cell.Row.IndexInOwner;
@@ -1486,7 +1473,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var ccells = row.CellsOS.Count;
 			var ccellsToDelete = ccells - icellPart;
 			if (ccellsToDelete == 0 && crowsToDelete == 0)
+			{
 				return;
+			}
 
 			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoClearChart, LanguageExplorerResources.ksRedoClearChart,
 										Cache.ActionHandlerAccessor, () =>
@@ -1499,15 +1488,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				if (crowsToDelete > 0)
 				{
 					//m_chart.RowsOS.Replace(ifirstRowToDelete, crowsToDelete, new ICmObject[0]);
-					for (int i = crowsToDelete + ifirstRowToDelete - 1; i >= ifirstRowToDelete; i--)
+					for (var i = crowsToDelete + ifirstRowToDelete - 1; i >= ifirstRowToDelete; i--)
 					{
 						m_chart.RowsOS.RemoveAt(i);
-						if (i < 0 || m_chart.Hvo == (int)SpecialHVOValues.kHvoObjectDeleted)
+						if (i < 0 || m_chart.Hvo == (int) SpecialHVOValues.kHvoObjectDeleted)
+						{
 							break;
+						}
 						var newCount = m_chart.RowsOS.Count;
 						// defend against side effect deleting earlier object
 						if (crows - 1 > newCount)
+						{
 							i--;
+						}
 						crows = newCount;
 					}
 				}
@@ -1521,15 +1514,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				if (ccellsToDelete > 0)
 				{
 					//row.CellsOS.Replace(icellPart, ccellsToDelete, new ICmObject[0]);
-					for (int i = ccellsToDelete + icellPart - 1; i >= icellPart; i--)
+					for (var i = ccellsToDelete + icellPart - 1; i >= icellPart; i--)
 					{
 						row.CellsOS.RemoveAt(i);
-						if (i < 0 || row.Hvo == (int)SpecialHVOValues.kHvoObjectDeleted)
+						if (i < 0 || row.Hvo == (int) SpecialHVOValues.kHvoObjectDeleted)
+						{
 							break;
+						}
 						var newCount = row.CellsOS.Count;
 						// defend against side effect deleting earlier object(s)
 						if (ccells - 1 > newCount)
+						{
 							i--;
+						}
 						ccells = newCount;
 					}
 				}
@@ -1549,16 +1546,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			var myAbnormalRows = m_chart.RowsOS.Where(row => row.ClauseType != ClauseTypes.Normal).ToList();
 			if (myAbnormalRows.Count == 0)
+			{
 				return;
+			}
 			var clsMrkrTargets = new HashSet<IConstChartRow>();
 			var myClsMrkrs = m_clauseMkrRepo.AllInstances().Where(mrkr =>
 				mrkr.Owner != null &&
 				mrkr.Owner.Owner != null &&
 				mrkr.Owner.Owner.Hvo == m_chart.Hvo);
 			foreach (var clsMrkr in myClsMrkrs)
+			{
 				clsMrkrTargets.UnionWith(clsMrkr.DependentClausesRS);
+			}
+
 			foreach (var row in myAbnormalRows.Where(row => !clsMrkrTargets.Contains(row)))
+			{
 				ResetDepClauseProps(row);
+			}
 		}
 
 		private static void ResetDepClauseProps(IConstChartRow row)
@@ -1576,14 +1580,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		protected IConstChartRow MakeNewRow()
 		{
 			var rowLabel = CreateNewRowLabel();
-
 			var newRow = GetNewRow(rowLabel);
-
 			// Inserting a new row will quite possibly remove the end-of-document thick underline from
 			// the previous line, so we need to force it to be redisplayed.
 			var prevRow = Chart.RowsOS[DecrementRowSafely(LastRow.IndexInOwner)];
 			if (newRow != prevRow)
+			{
 				SafelyToggleBottomBorder(prevRow);
+			}
 			return newRow;
 		}
 
@@ -1626,11 +1630,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			int rowNumber;
 			int clauseNumber;
 			string rowLabel; // our result string
-			bool prevWasEOS = false; // was the last row marked End of Sentence?
-
-			string prevRowLabel = LastRowNumber;
+			var prevWasEOS = false; // was the last row marked End of Sentence?
+			var prevRowLabel = LastRowNumber;
 			if (LastRow != null)
+			{
 				prevWasEOS = LastRow.EndSentence;
+			}
 			else
 			{
 				rowLabel = "1";
@@ -1638,9 +1643,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 			DecipherRowLabel(prevRowLabel, out rowNumber, out clauseNumber);
 			if (clauseNumber == 1 && !prevWasEOS)
+			{
 				// If the previous one had no clause number, we should add an 'a' to it.
 				// But only if the previous one wasn't the End of a Sentence.
 				AddLetterToNumberOnlyLabel(LastRow.IndexInOwner, rowNumber);
+			}
 			rowLabel = CalculateMyRowNums(ref rowNumber, ref clauseNumber, prevWasEOS, true);
 			return rowLabel;
 		}
@@ -1653,8 +1660,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <param name="rowNumber">The number of this row for the label.</param>
 		private void AddLetterToNumberOnlyLabel(int rowIndex, int rowNumber)
 		{
-			m_chart.RowsOS[rowIndex].Label =
-				TsStringUtils.MakeString(Convert.ToString(rowNumber) + 'a', WsLineNumber);
+			m_chart.RowsOS[rowIndex].Label = TsStringUtils.MakeString(Convert.ToString(rowNumber) + 'a', WsLineNumber);
 		}
 
 		/// <summary>
@@ -1663,41 +1669,29 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// when the first analysis or default user WS is changed (or is something that won't
 		/// render "1a" sensibly.
 		/// </summary>
-		public int WsLineNumber
-		{
-			get
-			{
-				// Note: if you change this, also fix RowMenuItem.ToString().
-				return Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("en");
-			}
-		}
+		public int WsLineNumber => Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("en");
 
 		/// <summary>
 		/// Pulls the row number and clause letter(a=1) from a string
 		/// </summary>
-		/// <param name="rowLabel1"></param>
-		/// <param name="row"></param>
-		/// <param name="clause"></param>
 		private static void DecipherRowLabel(string rowLabel1, out int row, out int clause)
 		{
-			var rowLabel = rowLabel1 == null ? "" : rowLabel1;
+			var rowLabel = rowLabel1 ?? string.Empty;
 			var posFirstLetter = 0;
 
 			for (var i = 1; i < rowLabel.Length; i++) // i=1 because never start with a letter
 			{
 				if (rowLabel[i] < 'a' || rowLabel[i] > 'z')
+				{
 					continue;
+				}
 				posFirstLetter = i;
 				break;
 			}
 			if (posFirstLetter == 0)
 			{
 				// Haven't yet found a letter! So this is only a number, no subclauses.
-				try
-				{
-					row = Convert.ToInt32(rowLabel);
-				}
-				catch (Exception)
+				if (!int.TryParse(rowLabel, out row))
 				{
 					row = 1; // arbitrary, may arise e.g. from empty string following change of first analysis WS.
 				}
@@ -1713,7 +1707,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					clause = Convert.ToInt32(rowLabel[posFirstLetter]) - Convert.ToInt32('a') + 1;
 				}
 				else
+				{
 					clause = Convert.ToInt32(rowLabel[posFirstLetter + 1]) - Convert.ToInt32('a') + 27;
+				}
 			}
 		}
 
@@ -1737,25 +1733,28 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 			// Iterate through all rows starting with the modified one
 			// and calculate row numbering to install in the Row label.
-			bool foneSentFinished = false; // LT-8488 On foneSentOnly we need to do 2 sentences for odd case.
+			var foneSentFinished = false; // LT-8488 On foneSentOnly we need to do 2 sentences for odd case.
 			while (irow < m_chart.RowsOS.Count)
 			{
 				// If this is the last row, assume EOS for numbering purposes,
 				// otherwise look it up.
-				if (m_chart.RowsOS.Count == irow + 1)
-					fIsThisRowEOS = true;
-				else
-					fIsThisRowEOS = m_chart.RowsOS[irow].EndSentence;
+				fIsThisRowEOS = m_chart.RowsOS.Count == irow + 1 || m_chart.RowsOS[irow].EndSentence;
 				// Calculate and deposit label (if changed)
 				var rowLabel = CalculateMyRowNums(ref csentence, ref cclause, fIsPrevRowEOS, fIsThisRowEOS);
 				if (m_chart.RowsOS[irow].Label.Text != rowLabel)
 				{
 					m_chart.RowsOS[irow].Label = TsStringUtils.MakeString(rowLabel, WsLineNumber);
 				}
+
 				if (fIsThisRowEOS && foneSentOnly && foneSentFinished)
+				{
 					break;
+				}
+
 				if (fIsThisRowEOS)
+				{
 					foneSentFinished = true;
+				}
 				fIsPrevRowEOS = fIsThisRowEOS;
 				irow++;
 			}
@@ -1769,8 +1768,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <param name="fSentBrkBefore">Is there a Sentence break between me and previous line?</param>
 		/// <param name="fSentBrkAfter">Is there a Sentence break between me and following line?</param>
 		/// <returns>A string label for this line of a chart.</returns>
-		private static string CalculateMyRowNums(ref int prevSentNum, ref int prevClauseNum,
-			bool fSentBrkBefore, bool fSentBrkAfter)
+		private static string CalculateMyRowNums(ref int prevSentNum, ref int prevClauseNum, bool fSentBrkBefore, bool fSentBrkAfter)
 		{
 			if (fSentBrkBefore)
 			{
@@ -1780,16 +1778,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			else prevClauseNum++;
 
 			// Make the string
-			string result;
-			if (prevClauseNum > 26)
-				result = Convert.ToString(prevSentNum) + "a" + Convert.ToChar(Convert.ToInt32('a')
-																			  + prevClauseNum - 27);
-			else
-				result = Convert.ToString(prevSentNum) + Convert.ToChar(Convert.ToInt32('a')
-																		+ prevClauseNum - 1);
+			var result = prevClauseNum > 26
+				? Convert.ToString(prevSentNum) + "a" + Convert.ToChar(Convert.ToInt32('a') + prevClauseNum - 27)
+				: Convert.ToString(prevSentNum) + Convert.ToChar(Convert.ToInt32('a') + prevClauseNum - 1);
 			if (fSentBrkAfter && fSentBrkBefore)
+			{
 				// Strip 'a' off of string.
 				result = result.Substring(0, result.Length - 1);
+			}
 			return result;
 		}
 
@@ -1804,14 +1800,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Note: the moved text marker (as opposed to the moved text itself) is not an obstacle to putting
 		/// more stuff on the same row.
 		/// </summary>
-		/// <param name="icolActual"></param>
-		/// <param name="icolMovedFrom"></param>
-		/// <returns>Null if successful, otherwise, an error message.</returns>
 		public string MakeMovedText(int icolActual, int icolMovedFrom)
 		{
-			var selectedWordforms = m_ribbon.SelectedOccurrences;
+			var selectedWordforms = Ribbon.SelectedOccurrences;
 			if (selectedWordforms == null || selectedWordforms.Length == 0)
+			{
 				return LanguageExplorerResources.ksNoWordformsMsg;
+			}
 			IConstChartRow rowModified = null;
 			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMakeMoved, LanguageExplorerResources.ksRedoMakeMoved,
 										Cache.ActionHandlerAccessor, () =>
@@ -1823,27 +1818,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			return null;
 		}
 
-		internal IConstChartRow LastRow
-		{
-			get
-			{
-				if (m_chart != null && m_chart.RowsOS.Count > 0)
-					return m_chart.RowsOS[m_chart.RowsOS.Count - 1];
-				return null;
-			}
-		}
+		internal IConstChartRow LastRow => m_chart != null && m_chart.RowsOS.Count > 0 ? m_chart.RowsOS[m_chart.RowsOS.Count - 1] : null;
 
 		string LastRowNumber
 		{
 			get
 			{
-				if (m_chart != null && m_chart.RowsOS.Count > 0)
+				if (m_chart == null || m_chart.RowsOS.Count <= 0)
 				{
-					var result = LastRow.Label.Text;
-					if (result != null)
-						return result;
+					return string.Empty;
 				}
-				return "";
+				var result = LastRow.Label.Text;
+				return result ?? string.Empty;
 			}
 		}
 
@@ -1851,21 +1837,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Answer true if actualCell contains a WordGroup and icolMovedFrom designates a column that contains
 		/// a moved-text marker pointing at it (same row).
 		/// </summary>
-		/// <param name="actualCell"></param>
-		/// <param name="icolMovedFrom"></param>
-		/// <returns></returns>
 		protected bool IsMarkedAsMovedFrom(ChartLocation actualCell, int icolMovedFrom)
 		{
-			return PartsInCell(new ChartLocation(actualCell.Row, icolMovedFrom)).Any(
-				mtm => IsMarkerOfMovedFrom(mtm, actualCell));
+			return PartsInCell(new ChartLocation(actualCell.Row, icolMovedFrom)).Any(mtm => IsMarkerOfMovedFrom(mtm, actualCell));
 		}
 
 		/// <summary>
 		/// Answer true if cellPart is a ConstChartMovedTextMarker pointing to a wordgroup in the specified cell (same row).
 		/// </summary>
-		/// <param name="cellPart"></param>
-		/// <param name="cellInSameRow"></param>
-		/// <returns></returns>
 		internal bool IsMarkerOfMovedFrom(IConstituentChartCellPart cellPart, ChartLocation cellInSameRow)
 		{
 			var mtm = cellPart as IConstChartMovedTextMarker;
@@ -1876,8 +1855,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Remove an existing moved text marker (that points at a WordGroup in actualCell).
 		/// This version starts already knowing the marker.
 		/// </summary>
-		/// <param name="actualCell"></param>
-		/// <param name="movedFromMarker"></param>
 		protected void RemoveMovedFrom(ChartLocation actualCell, IConstChartMovedTextMarker movedFromMarker)
 		{
 			new MakeMovedTextMethod(this, actualCell, movedFromMarker).RemoveMovedFrom();
@@ -1886,8 +1863,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Remove an existing moved text marker from movedFromCell (that points at a WordGroup in actualCell)
 		/// </summary>
-		/// <param name="actualCell"></param>
-		/// <param name="movedFromCell"></param>
 		protected void RemoveMovedFrom(ChartLocation actualCell, ChartLocation movedFromCell)
 		{
 			new MakeMovedTextMethod(this, actualCell, movedFromCell).RemoveMovedFrom();
@@ -1897,21 +1872,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// This is the most generic form. Only need these for setting up the MovedTextMarker.
 		/// Once set up, it knows if it's Preposed or not.
 		/// </summary>
-		/// <returns></returns>
 		internal bool IsPreposed(ChartLocation actualCell, ChartLocation movedFromCell)
 		{
-			if (actualCell.HvoRow == movedFromCell.HvoRow)
-				return IsPreposed(actualCell.ColIndex, movedFromCell.ColIndex);
-			return IsPreposed(actualCell.Row, movedFromCell.Row);
+			return actualCell.HvoRow == movedFromCell.HvoRow ? IsPreposed(actualCell.ColIndex, movedFromCell.ColIndex) : IsPreposed(actualCell.Row, movedFromCell.Row);
 		}
 
 		/// <summary>
 		/// Use this one if you have two columns in the same row to determine
 		/// if the marker is Preposed or Postposed.
 		/// </summary>
-		/// <param name="icolActual"></param>
-		/// <param name="icolMovedFrom"></param>
-		/// <returns></returns>
 		internal static bool IsPreposed(int icolActual, int icolMovedFrom)
 		{
 			return icolActual < icolMovedFrom;
@@ -1921,9 +1890,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Use this one if you have a marker and its target on different rows to determine
 		/// if the marker is Preposed or Postposed.
 		/// </summary>
-		/// <param name="rowActual"></param>
-		/// <param name="rowMovedFrom"></param>
-		/// <returns></returns>
 		internal bool IsPreposed(IConstChartRow rowActual, IConstChartRow rowMovedFrom)
 		{
 			return rowActual.IndexInOwner < rowMovedFrom.IndexInOwner;
@@ -1932,8 +1898,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Return true if cellPart is a MovedText marker and happens to mark Preposed text.
 		/// </summary>
-		/// <param name="cellPart"></param>
-		/// <returns></returns>
 		internal bool IsPreposedMarker(IConstituentChartCellPart cellPart)
 		{
 			// If it's a ConstChartMovedTextMarker, ask it if it's Preposed!
@@ -1945,8 +1909,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Make a marker indicating that what is in icolActual of the current last row
 		/// has been moved from the specified column. Assume there's a WordGroup in icolActual.
 		/// </summary>
-		/// <param name="icolActual"></param>
-		/// <param name="icolMovedFrom"></param>
 		private void MakeMovedFrom(int icolActual, int icolMovedFrom)
 		{
 			// Figure where to insert, and find the target.
@@ -1956,8 +1918,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Make a MovedText marker for moves (pre/postposed) involving two different rows.
 		/// </summary>
-		/// <param name="actual"></param>
-		/// <param name="movedFrom"></param>
 		protected void MakeMovedFrom(ChartLocation actual, ChartLocation movedFrom)
 		{
 			new MakeMovedTextMethod(this, actual, movedFrom).MakeMovedFrom();
@@ -1967,12 +1927,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Make a MovedText marker for moves (pre/postposed) involving two different rows and only part
 		/// of the source cell's text. Used by the 'Advanced' Pre/Postposed dialog. Most generic form.
 		/// </summary>
-		/// <param name="actual"></param>
-		/// <param name="movedFrom"></param>
-		/// <param name="begPoint"></param>
-		/// <param name="endPoint"></param>
-		protected void MakeMovedFrom(ChartLocation actual, ChartLocation movedFrom, AnalysisOccurrence begPoint,
-			AnalysisOccurrence endPoint)
+		protected void MakeMovedFrom(ChartLocation actual, ChartLocation movedFrom, AnalysisOccurrence begPoint, AnalysisOccurrence endPoint)
 		{
 			// what if some part of the source cell is already marked as moved?
 			// Enhance GordonM: Someday may need to handle case where list of wordforms is non-contiguous,
@@ -1983,8 +1938,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Make a marker indicating that something is missing in the specified column.
 		/// </summary>
-		/// <param name="cell"></param>
-		/// <param name="wasMarked"></param>
 		internal void ToggleMissingMarker(ChartLocation cell, bool wasMarked)
 		{
 			if (wasMarked)
@@ -1994,10 +1947,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				{
 					var tag = part as IConstChartTag;
 					if (tag == null)
-						continue;
-					if (tag.TagRA == null)
-						// This is the missing marker
 					{
+						continue;
+					}
+					if (tag.TagRA == null)
+					{
+						// This is the missing marker
 						UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksRedoMarkMissing, LanguageExplorerResources.ksUndoMarkMissing,
 								Cache.ActionHandlerAccessor, () => cell.Row.CellsOS.Remove(tag));
 						break;
@@ -2017,9 +1972,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Find the index in the row's Cells property of the first CellPart in (or after)
 		/// the specified column.
 		/// </summary>
-		/// <param name="targetCell"></param>
-		/// <returns></returns>
-		int FindIndexOfFirstCellPartInOrAfterColumn(ChartLocation targetCell)
+		private int FindIndexOfFirstCellPartInOrAfterColumn(ChartLocation targetCell)
 		{
 			var newTarget = new ChartLocation(targetCell.Row, targetCell.ColIndex - 1);
 			return FindIndexOfCellPartInLaterColumn(newTarget);
@@ -2028,12 +1981,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Find the index of the first CellPart that is in a column with index > targetCell's column index.
 		/// </summary>
-		/// <param name="targetCell"></param>
-		/// <returns></returns>
 		protected internal int FindIndexOfCellPartInLaterColumn(ChartLocation targetCell)
 		{
-			int icellPartInsertAt = targetCell.Row.CellsOS.Count; // insert at end unless we find something in a later column.
-			int icellPart = 0;
+			var icellPartInsertAt = targetCell.Row.CellsOS.Count; // insert at end unless we find something in a later column.
+			var icellPart = 0;
 			for (var icol = 0; icol < AllMyColumns.Length && icellPart < targetCell.Row.CellsOS.Count; )
 			{
 				var part = targetCell.Row.CellsOS[icellPart];
@@ -2063,8 +2014,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Return a list of all the cell parts in the specified cell.
 		/// (Doesn't test the parts for "WordGroup-ness".)
 		/// </summary>
-		/// <param name="cell"></param>
-		/// <returns></returns>
 		protected internal List<IConstituentChartCellPart> PartsInCell(ChartLocation cell)
 		{
 			int dummy;
@@ -2076,9 +2025,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// (Doesn't test the parts for "WordGroup-ness".)
 		/// If no occurences, returns empty list, but index should still be accurate.
 		/// </summary>
-		/// <param name="cell"></param>
-		/// <param name="index">index in row of first item in list</param>
-		/// <returns></returns>
 		protected internal List<IConstituentChartCellPart> CellPartsInCell(ChartLocation cell, out int index)
 		{
 			var col = AllMyColumns[cell.ColIndex];
@@ -2124,8 +2070,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <param name="depClauses"></param>
 		/// <param name="depType">A localizable string; currently one of 'dependent', 'speech', or 'song'.</param>
 		/// <returns></returns>
-		public IConstChartClauseMarker MakeDependentClauseMarker(ChartLocation cell, IConstChartRow[] depClauses,
-			ClauseTypes depType)
+		public IConstChartClauseMarker MakeDependentClauseMarker(ChartLocation cell, IConstChartRow[] depClauses, ClauseTypes depType)
 		{
 			IConstChartClauseMarker newClauseMrkr = null;
 
@@ -2147,20 +2092,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				}
 				depClauses[0].StartDependentClauseGroup = true;
 				depClauses[depClauses.Length - 1].EndDependentClauseGroup = true;
-				newClauseMrkr = m_clauseMkrFact.Create(cell.Row, FindIndexOfCellPartInLaterColumn(cell),
-					AllMyColumns[cell.ColIndex], depClauses);
+				newClauseMrkr = m_clauseMkrFact.Create(cell.Row, FindIndexOfCellPartInLaterColumn(cell), AllMyColumns[cell.ColIndex], depClauses);
 			});
 			return newClauseMrkr;
-		}
-
-		/// <summary>
-		/// Find the (first) CellPart in the specified column, or null if none.
-		/// </summary>
-		/// <param name="cell"></param>
-		/// <returns></returns>
-		private IConstituentChartCellPart FindCellPartInColumn(ChartLocation cell)
-		{
-			return FindCellPartInColumn(cell, false);
 		}
 
 		/// <summary>
@@ -2169,16 +2103,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <param name="cell"></param>
 		/// <param name="fWantWordGroup">If true, require result to be a WordGroup.</param>
 		/// <returns></returns>
-		internal IConstituentChartCellPart FindCellPartInColumn(ChartLocation cell, bool fWantWordGroup)
+		internal IConstituentChartCellPart FindCellPartInColumn(ChartLocation cell, bool fWantWordGroup = false)
 		{
-			return cell.Row.CellsOS.Where(cellPart => cellPart.ColumnRA == AllMyColumns[cell.ColIndex]).
-				FirstOrDefault(cellPart => !fWantWordGroup || cellPart is IConstChartWordGroup);
+			return cell.Row.CellsOS.Where(cellPart => cellPart.ColumnRA == AllMyColumns[cell.ColIndex]).FirstOrDefault(cellPart => !fWantWordGroup || cellPart is IConstChartWordGroup);
 		}
 
 		///<summary>
 		/// Answer true if this row of the chart is a dependent clause.
 		/// </summary>
-		/// <param name="row"></param>
 		public bool IsDepClause(IConstChartRow row)
 		{
 			return row.ClauseType != ClauseTypes.Normal;
@@ -2187,8 +2119,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		internal int IndexOfColumn(ICmPossibility col)
 		{
 			for (var i = 0; i < AllMyColumns.Length; i++)
+			{
 				if (AllMyColumns[i] == col)
+				{
 					return i;
+				}
+			}
 			return -1;
 		}
 
@@ -2247,10 +2183,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// specified CmPossibility (hvoListItem), in the cell's column, inserting it at
 		/// position icellPartInsertAt of the Cells sequence in the Row.
 		/// </summary>
-		/// <param name="cell"></param>
-		/// <param name="hvoListItem"></param>
-		/// <param name="icellPartInsertAt"></param>
-		/// <returns></returns>
 		private IConstChartTag MakeChartTag(ChartLocation cell, int hvoListItem, int icellPartInsertAt)
 		{
 			// N.B. The below note used to be true, but is no longer because LCM barfs if an
@@ -2270,9 +2202,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// specified CmPossibility (hvoListItem), in the cell's column, inserting it at
 		/// position icellPartInsertAt of the Cells sequence of the Row.
 		/// </summary>
-		/// <param name="cell"></param>
-		/// <param name="icellPartInsertAt"></param>
-		/// <returns></returns>
 		private IConstChartTag MakeMissingMarker(ChartLocation cell, int icellPartInsertAt)
 		{
 			var colPoss = AllMyColumns[cell.ColIndex];
@@ -2335,24 +2264,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			if (cellPart != null)
 			{
 				// non-empty, may have merge left/right capability
-				if (clickedCell.ColIndex > 0 &&
-					IsCellEmpty(new ChartLocation(clickedCell.Row, clickedCell.ColIndex - 1)))
+				if (clickedCell.ColIndex > 0 && IsCellEmpty(new ChartLocation(clickedCell.Row, clickedCell.ColIndex - 1)))
 				{
-					var itemMergeBefore = new RowColMenuItem(LanguageExplorerResources.ksMergeBeforeMenuItem,
-						clickedCell);
+					var itemMergeBefore = new RowColMenuItem(LanguageExplorerResources.ksMergeBeforeMenuItem, clickedCell);
 					itemMergeBefore.Click += itemMergeBefore_Click;
 					if (cellPart.MergesBefore)
+					{
 						itemMergeBefore.Checked = true;
+					}
 					menu.Items.Add(itemMergeBefore);
 				}
-				if (clickedCell.ColIndex < AllMyColumns.Length - 1
-					&& IsCellEmpty(new ChartLocation(clickedCell.Row, clickedCell.ColIndex + 1)))
+				if (clickedCell.ColIndex < AllMyColumns.Length - 1 && IsCellEmpty(new ChartLocation(clickedCell.Row, clickedCell.ColIndex + 1)))
 				{
-					var itemMergeAfter = new RowColMenuItem(LanguageExplorerResources.ksMergeAfterMenuItem,
-						clickedCell);
+					var itemMergeAfter = new RowColMenuItem(LanguageExplorerResources.ksMergeAfterMenuItem, clickedCell);
 					var cellPartLast = FindCellPartInColumn(clickedCell, false);
 					if (cellPartLast.MergesAfter)
+					{
 						itemMergeAfter.Checked = true;
+					}
 					menu.Items.Add(itemMergeAfter);
 					itemMergeAfter.Click += itemMergeAfter_Click;
 				}
@@ -2373,18 +2302,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			GeneratePlMenuItems(menu, chartMarkerList, ToggleMarker_Item_Click, clickedCell);
 
 			var mms = MissingState(clickedCell);
-			if (mms != MissingMarkerState.kmmsDoesNotApply)
+			if (mms == MissingMarkerState.kmmsDoesNotApply)
 			{
-				var itemMissingMarker = new RowColMenuItem(LanguageExplorerResources.ksMarkMissingItem, clickedCell);
-				itemMissingMarker.Click += itemMissingMarker_Click;
-				itemMissingMarker.Checked = (mms == MissingMarkerState.kmmsChecked);
-				menu.Items.Add(itemMissingMarker);
+				return menu;
 			}
+			var itemMissingMarker = new RowColMenuItem(LanguageExplorerResources.ksMarkMissingItem, clickedCell);
+			itemMissingMarker.Click += itemMissingMarker_Click;
+			itemMissingMarker.Checked = (mms == MissingMarkerState.kmmsChecked);
+			menu.Items.Add(itemMissingMarker);
 
 			return menu;
 		}
 
-		enum MissingMarkerState
+		private enum MissingMarkerState
 		{
 			kmmsDoesNotApply, // cell contains something else
 			kmmsChecked, // missing marker present
@@ -2395,10 +2325,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			// As per LT-8545, Possibility markers don't affect MissingMarkerState (they aren't 'content')
 			if (ColumnHasAutoMissingMarkers(cell.ColIndex))
+			{
 				return MissingMarkerState.kmmsDoesNotApply;
+			}
 			var cellPart = FindCellPartInColumn(cell);
 			if (cellPart == null)
+			{
 				return MissingMarkerState.kmmsUnchecked;
+			}
 			if (cellPart is IConstChartTag)
 			{
 				var chartTag = cellPart as IConstChartTag;
@@ -2411,24 +2345,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Currently an ConstChartTag is identified as a missing marker
 		/// by having a Tag property that doesn't point at anything.
 		/// </summary>
-		/// <param name="part"></param>
-		/// <returns></returns>
 		private static bool IsMissingMarker(IConstituentChartCellPart part)
 		{
-			if (part == null || !(part is IConstChartTag))
+			if (!(part is IConstChartTag))
+			{
 				return false;
-			return (part as IConstChartTag).TagRA == null;
+			}
+			return ((IConstChartTag)part).TagRA == null;
 		}
 
 		/// <summary>
 		/// If there's a missing marker in the specified cell get rid of it.
 		/// </summary>
-		/// <param name="cell"></param>
 		internal void RemoveMissingMarker(ChartLocation cell)
 		{
 			var cellPart = FindCellPartInColumn(cell);
 			if (!IsMissingMarker(cellPart))
+			{
 				return;
+			}
 			var row = cell.Row;
 			if (row.CellsOS.Count > 1 || row.Notes != null)
 			{
@@ -2455,19 +2390,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 			row.CellsOS.Remove(cellPart);
 			if (cell.HvoRow != (int) SpecialHVOValues.kHvoObjectDeleted)
+			{
 				return;
+			}
 			// Our row just disappeared on us due to deleting the last cell!
 			// But we're obviously about to put something in here, so recreate the row.
 			var newrow = m_rowFact.Create(Chart, irow, label);
 			newrow.EndSentence = endSent;
 			newrow.EndParagraph = endPara;
 			if (clauseType == ClauseTypes.Normal)
+			{
 				return;
+			}
 			newrow.ClauseType = clauseType;
 			newrow.StartDependentClauseGroup = startDepGrp;
 			newrow.EndDependentClauseGroup = endDepGrp;
 			foreach (var marker in markers)
+			{
 				marker.DependentClausesRS.Add(newrow);
+			}
 		}
 
 		private IConstChartClauseMarker[] FindMyClauseMarkers(IConstChartRow row)
@@ -2481,26 +2422,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			foreach (var part in PartsInCell(srcCell))
 			{
 				if (!(part is IConstChartClauseMarker))
+				{
 					continue;
+				}
 				var itemR = new RowColMenuItem(LanguageExplorerResources.ksRemoveDependentMarkerMenuItem, srcCell);
 				itemR.Click += itemR_Click;
 				menu.Items.Add(itemR);
 				return;
 			}
-			var itemMDC = MakeDepClauseItem(srcCell, irow, LanguageExplorerResources.ksMakeDepClauseMenuItem,
-				ClauseTypes.Dependent);
+			var itemMDC = MakeDepClauseItem(srcCell, irow, LanguageExplorerResources.ksMakeDepClauseMenuItem, ClauseTypes.Dependent);
 			menu.Items.Add(itemMDC);
 
-			var itemMSC = MakeDepClauseItem(srcCell, irow, LanguageExplorerResources.ksMakeSpeechClauseMenuItem,
-				ClauseTypes.Speech);
+			var itemMSC = MakeDepClauseItem(srcCell, irow, LanguageExplorerResources.ksMakeSpeechClauseMenuItem, ClauseTypes.Speech);
 			menu.Items.Add(itemMSC);
 
-			var itemMSoC = MakeDepClauseItem(srcCell, irow, LanguageExplorerResources.ksMakeSongClauseMenuItem,
-				ClauseTypes.Song);
+			var itemMSoC = MakeDepClauseItem(srcCell, irow, LanguageExplorerResources.ksMakeSongClauseMenuItem, ClauseTypes.Song);
 			menu.Items.Add(itemMSoC);
 		}
 
-		void itemR_Click(object sender, EventArgs e)
+		private void itemR_Click(object sender, EventArgs e)
 		{
 			var item = sender as RowColMenuItem;
 			RemoveDepClause(item.SrcCell);
@@ -2520,7 +2460,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				foreach (var clauseMarker in PartsInCell(cell).OfType<IConstChartClauseMarker>())
 				{
 					foreach (var depRow in clauseMarker.DependentClausesRS)
+					{
 						RemoveAllDepClauseMarkers(depRow);
+					}
 					cell.Row.CellsOS.Remove(clauseMarker);
 					break;
 				}
@@ -2534,18 +2476,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			depRow.EndDependentClauseGroup = false;
 		}
 
-		void itemCFH_Click(object sender, EventArgs e)
+		private void itemCFH_Click(object sender, EventArgs e)
 		{
 			var item = sender as RowColMenuItem;
 			var crowDel = m_chart.RowsOS.Count - item.SrcRow.IndexInOwner;
-			if (MessageBox.Show(String.Format(LanguageExplorerResources.ksDelRowWarning, crowDel),
-				LanguageExplorerResources.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+			if (MessageBox.Show(String.Format(LanguageExplorerResources.ksDelRowWarning, crowDel), LanguageExplorerResources.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
 			{
 				ClearChartFromHereOn(item.SrcCell);
 			}
 		}
 
-		void itemNewRow_Click(object sender, EventArgs e)
+		private void itemNewRow_Click(object sender, EventArgs e)
 		{
 			var item = sender as RowColMenuItem;
 			InsertRowInUOW(item.SrcRow);
@@ -2553,8 +2494,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		private void InsertRowInUOW(IConstChartRow prevRow)
 		{
-			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoInsertRow, LanguageExplorerResources.ksRedoInsertRow,
-							Cache.ActionHandlerAccessor, () => InsertRow(prevRow));
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoInsertRow, LanguageExplorerResources.ksRedoInsertRow, Cache.ActionHandlerAccessor, () => InsertRow(prevRow));
 		}
 
 		private bool CellContainsWordforms(ChartLocation cell)
@@ -2562,13 +2502,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			return FindFirstWordGroup(PartsInCell(cell)) != null;
 		}
 
-		private void MakeMoveItems(ChartLocation srcCell, ContextMenuStrip menu,
-			EventHandler forward, EventHandler backward, string mainLabel)
+		private void MakeMoveItems(ChartLocation srcCell, ContextMenuStrip menu, EventHandler forward, EventHandler backward, string mainLabel)
 		{
 			// If there's nothing in the cell we can't move it; and a missing marker doesn't count.
 			var part = FindCellPartInColumn(srcCell);
 			if (part == null || IsMissingMarker(part))
+			{
 				return;
+			}
 
 			var itemMove = new DisposableToolStripMenuItem(mainLabel);
 			if (TryGetNextCell(srcCell))
@@ -2591,9 +2532,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// Collect all WordGroups in the source cell
 			var wordGroups = CollectCellWordGroups(PartsInCell(srcCell));
 			if (wordGroups == null || wordGroups.Count == 0)
+			{
 				return; // can't do this without some real data in the cell.
+			}
 
-			ChartLocation markerCell; // Might eventually contain the location of the 'movedText' marker (MM=MovedMarker)
 			var fMMDifferentRow = false; // true if we find a marker in a different row pointing to this cell (either direction)
 			var fMMForward = false; // true if Preposed text has a marker in a different row
 			var fMMBackward = false; // true if Postposed text has a marker in a different row
@@ -2602,23 +2544,27 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				// Check to see if wordGrp is 'movedText' and if so, find its target
 				IConstChartMovedTextMarker movedMrkr;
 				if (!IsMovedText(wordGrp, out movedMrkr))
+				{
 					continue;
-				markerCell = new ChartLocation((IConstChartRow)movedMrkr.Owner, IndexOfColumn(movedMrkr.ColumnRA));
+				}
+				var markerCell = new ChartLocation((IConstChartRow)movedMrkr.Owner, IndexOfColumn(movedMrkr.ColumnRA)); // Might eventually contain the location of the 'movedText' marker (MM=MovedMarker)
 				if (srcCell.HvoRow == markerCell.HvoRow)
+				{
 					continue;
+				}
 				fMMDifferentRow = true;
 				if (movedMrkr.Preposed)
+				{
 					fMMForward = true;
+				}
 				else
+				{
 					fMMBackward = true;
+				}
 			}
 			int icol = srcCell.ColIndex;
-			MakePreposedOrPostPosedMenuItem(menu, srcCell, 0, icol,
-				LanguageExplorerResources.ksPostposeFromMenuItem,
-				fMMDifferentRow && fMMBackward); // True if a MT Marker is already out there.
-			MakePreposedOrPostPosedMenuItem(menu, srcCell, icol + 1, AllMyColumns.Length,
-				LanguageExplorerResources.ksPreposeFromMenuItem,
-				fMMDifferentRow && fMMForward);
+			MakePreposedOrPostPosedMenuItem(menu, srcCell, 0, icol, LanguageExplorerResources.ksPostposeFromMenuItem, fMMDifferentRow && fMMBackward); // True if a MT Marker is already out there.
+			MakePreposedOrPostPosedMenuItem(menu, srcCell, icol + 1, AllMyColumns.Length, LanguageExplorerResources.ksPreposeFromMenuItem, fMMDifferentRow && fMMForward);
 		}
 
 		/// <summary>
@@ -2626,24 +2572,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// make a menu item for Advanced... depending on boolean flags.
 		/// (If the flag is true, the Advanced... menu item will be checked.)
 		/// </summary>
-		/// <param name="menu"></param>
-		/// <param name="srcCell"></param>
-		/// <param name="icolStart"></param>
-		/// <param name="icolLim"></param>
-		/// <param name="text"></param>
-		/// <param name="fMarkerPresent">'true' if there is already a 'movedText' marker out there in another row in
-		/// the appropriate direction.</param>
-		private void MakePreposedOrPostPosedMenuItem(ContextMenuStrip menu, ChartLocation srcCell,
-			int icolStart, int icolLim, string text, bool fMarkerPresent)
+		private void MakePreposedOrPostPosedMenuItem(ContextMenuStrip menu, ChartLocation srcCell, int icolStart, int icolLim, string text, bool fMarkerPresent)
 		{
 			// If no subitems, don't make the parent.
 			// First check if another clause is possible?
-			bool fAnotherClausePossible = IsAnotherClausePossible(srcCell.Row, text == LanguageExplorerResources.ksPreposeFromMenuItem);
+			var fAnotherClausePossible = IsAnotherClausePossible(srcCell.Row, text == LanguageExplorerResources.ksPreposeFromMenuItem);
 			if ((icolStart >= icolLim) && !fMarkerPresent && !fAnotherClausePossible)
+			{
 				return;
+			}
 			var itemMTSubmenu = new DisposableToolStripMenuItem(text);
 			menu.Items.Add(itemMTSubmenu);
-			for (int i = icolStart; i < icolLim; i++)
+			for (var i = icolStart; i < icolLim; i++)
 			{
 				var itemCol = new TwoColumnMenuItem(GetColumnLabel(i), srcCell.ColIndex, i, srcCell.Row);
 				itemCol.Click += itemCol_Click;
@@ -2651,20 +2591,26 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				itemMTSubmenu.DropDownItems.Add(itemCol);
 			}
 			// We always need the "Advanced..." option if IsAnotherClausePossible is true, or there are available columns.
-			RowColMenuItem itemAdvanced = new RowColMenuItem(LanguageExplorerResources.ksAdvancedDlgMenuItem, srcCell);
+			var itemAdvanced = new RowColMenuItem(LanguageExplorerResources.ksAdvancedDlgMenuItem, srcCell);
 			itemMTSubmenu.DropDownItems.Add(itemAdvanced);
 			if (text == LanguageExplorerResources.ksPreposeFromMenuItem)
+			{
 				itemAdvanced.Click += itemAnotherPre_Click;
+			}
 			else
+			{
 				itemAdvanced.Click += itemAnotherPost_Click;
+			}
+
 			if (fMarkerPresent)
+			{
 				itemAdvanced.Checked = true;
+			}
 		}
 
 		private bool IsAnotherClausePossible(IConstChartRow rowSrc, bool fPrepose)
 		{
-			var eligibleRows = CollectRowsInSentence(rowSrc, fPrepose);
-			return (eligibleRows.Count > 1); // If there's more than the source row, then it's possible!
+			return (CollectRowsInSentence(rowSrc, fPrepose).Count > 1); // If there's more than the source row, then it's possible!
 		}
 
 		const int rowLimiter = 5;
@@ -2675,15 +2621,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Feature and limited (at this point) to 5 rows forward or backward.
 		/// Current row is now included.
 		/// </summary>
-		/// <param name="curRow"></param>
-		/// <param name="fForward">true is forward, false is backward.</param>
-		/// <returns></returns>
 		private List<IConstChartRow> CollectRowsInSentence(IConstChartRow curRow, bool fForward)
 		{
 			// Better check first to see if we're going forward and curRow has EOS feature
 			var result = new List<IConstChartRow> {curRow}; // include current row
 			if (fForward && curRow.EndSentence)
+			{
 				return result;
+			}
 			var testIndex = curRow.IndexInOwner;
 			var indexMax = Math.Min(m_chart.RowsOS.Count - 1, testIndex + rowLimiter);
 			var indexMin = Math.Max(0, testIndex - rowLimiter);
@@ -2692,31 +2637,42 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				// if fForward, are there rows after rowSrc?
 				// if not, are there rows before rowSrc?
 				if (fForward)
+				{
 					testIndex++;
+				}
 				else
+				{
 					testIndex--;
+				}
 				if (testIndex < indexMin || testIndex > indexMax)
+				{
 					break; // We went too far!
+				}
 				var tempRow = m_chart.RowsOS[testIndex];
 				if (tempRow.EndSentence)
 				{
 					if (fForward)
+					{
 						result.Add(tempRow); // going forward, include the EOS row
+					}
 					break;
 				}
 				result.Add(tempRow);
 			} while (true);
+
 			if (!fForward)
+			{
 				result.Reverse();
+			}
 			return result;
 		}
 
-		void itemAnotherPre_Click(object sender, EventArgs e)
+		private void itemAnotherPre_Click(object sender, EventArgs e)
 		{
 			itemAdvanced_Click(sender, e, true);
 		}
 
-		void itemAnotherPost_Click(object sender, EventArgs e)
+		private void itemAnotherPost_Click(object sender, EventArgs e)
 		{
 			itemAdvanced_Click(sender, e, false);
 		}
@@ -2731,7 +2687,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		void itemAdvanced_Click(object sender, EventArgs e, bool fPrepose)
 		{
 			if (m_chart.RowsOS.Count < 1)
+			{
 				return;
+			}
 
 			var item = sender as RowColMenuItem;
 			var srcCell = item.SrcCell;
@@ -2740,7 +2698,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			{
 				// Go find the marker that points to this cell and remove it.
 				var marker = FindMovedMarkerOtherRow(srcCell, fPrepose);
-				var markerCell = new ChartLocation((IConstChartRow)marker.Owner, IndexOfColumnForCellPart(marker));
 				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksRedoMakeMoved, LanguageExplorerResources.ksUndoMakeMoved,
 											Cache.ActionHandlerAccessor, () => RemoveMovedFrom(srcCell, marker));
 				return;
@@ -2751,39 +2708,51 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var eligibleRows = CollectEligibleRows(srcCell, fPrepose).ToArray();
 			if (eligibleRows.Length == 0) return; // Shouldn't happen!
 
-			var paramObject = new CChartSentenceElements(srcCell, eligibleRows, AllMyColumns);
 
 			// Enhance GordonM: We need to do something different if there are multiple WordGroups in the cell?!
 			// I did 'something different' alright, but I'm not done. [Or am I?]
 			// Maybe I need to make a temporary WordGroup that holds all the wordforms in the cell for dialog ribbon display purposes.
 
 			// Load all WordGroups in this cell into the parameter object's AffectedWordGroups.
-			paramObject.AffectedWordGroups = CollectAllWordGroups(PartsInCell(srcCell));
-			var dlg = new AdvancedMTDialog(Cache, fPrepose, paramObject, m_helpTopicProvider);
-
-			// Display dialog
-			if (dlg.ShowDialog() != DialogResult.OK)
-				return;
-			var fromRow = dlg.SelectedRow.Row;
-			var iColMovedFrom = IndexOfColumn(dlg.SelectedColumn.Column);
-
-			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMakeMoved, LanguageExplorerResources.ksRedoMakeMoved,
-				Cache.ActionHandlerAccessor, () =>
+			var paramObject = new CChartSentenceElements(srcCell, eligibleRows, AllMyColumns)
 			{
-				// LT-7668 If user chooses to make a movedText marker and one exists already for this cell
-				// we need to remove the first one before adding this one.
-				// Now we check all the WordGroups affected by our new MovedText item and remove any existing marker.
-				foreach (var wordGrp in paramObject.AffectedWordGroups)
+				AffectedWordGroups = CollectAllWordGroups(PartsInCell(srcCell))
+			};
+			var dlg = new AdvancedMTDialog(Cache, fPrepose, paramObject, m_helpTopicProvider);
+			try
+			{
+				// Display dialog
+				if (dlg.ShowDialog() != DialogResult.OK)
 				{
-					IConstChartMovedTextMarker marker;
-					if (!IsMovedText(wordGrp, out marker))
-						continue;
-					RemoveMovedFrom(srcCell, FindChartLocOfCellPart(marker));
+					return;
 				}
-				var movedFrom = new ChartLocation(fromRow, iColMovedFrom);
-				var cwords = dlg.SelectedOccurrences.Length;
-				MakeMovedFrom(srcCell, movedFrom, dlg.SelectedOccurrences[0], dlg.SelectedOccurrences[cwords - 1]);
-			});
+				var fromRow = dlg.SelectedRow.Row;
+				var iColMovedFrom = IndexOfColumn(dlg.SelectedColumn.Column);
+
+				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMakeMoved, LanguageExplorerResources.ksRedoMakeMoved,
+					Cache.ActionHandlerAccessor, () =>
+					{
+						// LT-7668 If user chooses to make a movedText marker and one exists already for this cell
+						// we need to remove the first one before adding this one.
+						// Now we check all the WordGroups affected by our new MovedText item and remove any existing marker.
+						foreach (var wordGrp in paramObject.AffectedWordGroups)
+						{
+							IConstChartMovedTextMarker marker;
+							if (!IsMovedText(wordGrp, out marker))
+							{
+								continue;
+							}
+							RemoveMovedFrom(srcCell, FindChartLocOfCellPart(marker));
+						}
+						var movedFrom = new ChartLocation(fromRow, iColMovedFrom);
+						var cwords = dlg.SelectedOccurrences.Length;
+						MakeMovedFrom(srcCell, movedFrom, dlg.SelectedOccurrences[0], dlg.SelectedOccurrences[cwords - 1]);
+					});
+			}
+			finally
+			{
+				dlg?.Dispose();
+			}
 		}
 
 		private ChartLocation FindChartLocOfCellPart(IConstituentChartCellPart cellPart)
@@ -2822,7 +2791,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 						// I don't trust 'crows' here because the chart contents could have been modified.
 						// See LT-11436 -- GJM 2011.08.09
 						if (m_chart.RowsOS.Count == 1)
+						{
 							m_chart.RowsOS[0].Delete();
+						}
 						continue;
 					}
 					// Under the new system, if a cellPart goes away and it's the last one, the row will go
@@ -2838,14 +2809,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					{
 						var curPart = curRow.CellsOS[ipart];
 						if (curPart is IConstChartTag)
+						{
 							continue;
+						}
 						if (curPart is IConstChartClauseMarker)
 						{
 							if (!((IConstChartClauseMarker)curPart).HasValidRefs)
 							{
-								if(!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
-									ref fReported, ref ipart, ref citems))
+								if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart, ref fReported, ref ipart, ref citems))
+								{
 									irow--;
+								}
 							}
 							continue;
 						}
@@ -2853,9 +2827,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 						{
 							if (!((IConstChartMovedTextMarker)curPart).HasValidRef)
 							{
-								if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
-									ref fReported, ref ipart, ref citems))
+								if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart, ref fReported, ref ipart, ref citems))
+								{
 									irow--;
+								}
 							}
 							continue;
 						}
@@ -2863,16 +2838,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 						var curWordGroup = curPart as IConstChartWordGroup;
 						if (!curWordGroup.IsValidRef || !WordGroupTextMatchesChartText(curWordGroup))
 						{
-							if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
-								ref fReported, ref ipart, ref citems))
+							if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart, ref fReported, ref ipart, ref citems))
+							{
 								irow--;
+							}
 							continue; // Skip to next.
 						}
 						try
 						{
 							var occurrences = curWordGroup.GetOccurrences(); // Checks references for Wordforms
 							if (occurrences.Count > 0)
+							{
 								continue;
+							}
 						}
 						catch (NullReferenceException)
 						{
@@ -2880,13 +2858,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 							// WfiGloss with no owner!
 						}
 						// CCWordGroup is now empty, take it out of row!
-						if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curWordGroup,
-							ref fReported, ref ipart, ref citems))
+						if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curWordGroup, ref fReported, ref ipart, ref citems))
+						{
 							irow--;
+						}
 					} // cellPart loop
 				} // row loop
 				if (fReported)
+				{
 					RenumberRows(0, false); // We don't know where the change occurred. Better to be safe.
+				}
 			});
 		}
 
@@ -2896,8 +2877,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// that this ConstChartWordGroup references. They'd better be the same!
 			var wgText = wg.BeginSegmentRA.Paragraph.Owner as IStText;
 			if (wgText == null || !wgText.IsValidObject)
+			{
 				return false;
-			//return wgText.Hvo == StTextHvo; // Actually StTextHvo isn't set to the new chart yet!
+			}
 			return wgText.Hvo == Chart.BasedOnRA.Hvo; // But Chart IS set now!
 		}
 
@@ -2906,14 +2888,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// deletes bad cell part, restarts cell loop. If this returns false, then
 		/// the row index needs to be decremented (before the auto loop increment).
 		/// </summary>
-		/// <param name="row"></param>
-		/// <param name="part"></param>
-		/// <param name="fReported"></param>
-		/// <param name="index"></param>
-		/// <param name="count"></param>
-		/// <returns></returns>
-		private bool ReportWarningAndUpdateCountsRemovingCellPart(IConstChartRow row,
-			IConstituentChartCellPart part, ref bool fReported, ref int index, ref int count)
+		private bool ReportWarningAndUpdateCountsRemovingCellPart(IConstChartRow row, IConstituentChartCellPart part, ref bool fReported, ref int index, ref int count)
 		{
 			//Debug.Assert(false, "About to delete cell part. Why!?");
 			row.CellsOS.Remove(part);
@@ -2935,22 +2910,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		protected virtual void DisplayWarning()
 		{
-			MessageBox.Show(LanguageExplorerResources.ksTextEditWarning, LanguageExplorerResources.ksWarning,
-							MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			MessageBox.Show(LanguageExplorerResources.ksTextEditWarning, LanguageExplorerResources.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 		}
 
 		/// <summary>
 		/// Returns a list of rows that should be eligible to choose from the Advanced... dialog row combo box.
 		/// </summary>
-		/// <param name="clickedCell"></param>
-		/// <param name="fPrepose"></param>
-		/// <returns></returns>
 		protected List<IConstChartRow> CollectEligibleRows(ChartLocation clickedCell, bool fPrepose)
 		{
 			// Collect all rows in the 'right' direction including the clicked one.
 			var result = CollectRowsInSentence(clickedCell.Row, fPrepose);
 			if (result.Count < 0)
+			{
 				return result;
+			}
 			// If we are marking Postposed from the first column, we don't want the last row to be eligible.
 			// If we are marking Preposed from the last column, we don't want the first row to be eligible.
 			if (fPrepose)
@@ -2958,12 +2931,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				//int icolLast = IndexOfColumn(AllMyColumns[AllMyColumns.Length - 1].Hvo);
 				var icolLast = AllMyColumns.Length - 1;
 				if (clickedCell.ColIndex == icolLast)
+				{
 					result.RemoveAt(0);
+				}
 			}
 			else
 			{
 				if (clickedCell.ColIndex == 0)
+				{
 					result.RemoveAt(result.Count - 1);
+				}
 			}
 			return result;
 		}
@@ -2973,36 +2950,31 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Caller knows there should be one because of the 'movedText' feature on the text and no markers
 		/// in the current row. Not limited to current sentence.
 		/// </summary>
-		/// <param name="srcCell"></param>
-		/// <param name="fPrepose"></param>
-		/// <returns>the movedText marker's ChartLocation</returns>
 		private IConstChartMovedTextMarker FindMovedMarkerOtherRow(ChartLocation srcCell, bool fPrepose)
 		{
 			// The following LINQ gets only MovedTextMarkers from this chart
 			//     that are pointing to WordGroups in srcCell's row
 			//     and that match the fPrepose parameter (are pointing the right direction)
-			var movedMkrList = m_movedTextRepo.AllInstances().Where(
-				marker => marker.Owner.Owner.Hvo == Chart.Hvo &&
+			var movedMkrList = m_movedTextRepo.AllInstances().Where(marker => marker.Owner.Owner.Hvo == Chart.Hvo &&
 						  marker.Preposed == fPrepose &&
 						  marker.WordGroupRA.Owner == srcCell.Row).ToList();
-			var column = AllMyColumns[srcCell.ColIndex];
-			return movedMkrList.FirstOrDefault(
-				movedTextMarker => movedTextMarker.WordGroupRA.ColumnRA == column);
+			return movedMkrList.FirstOrDefault(movedTextMarker => movedTextMarker.WordGroupRA.ColumnRA == AllMyColumns[srcCell.ColIndex]);
 		}
 
 		// Mark Moved Text from one cell to another(within a row).
-		void itemCol_Click(object sender, EventArgs e)
+		private void itemCol_Click(object sender, EventArgs e)
 		{
 			var item = sender as TwoColumnMenuItem;
 			var srcCell = new ChartLocation(item.Row, item.Source);
 			var dstCell = new ChartLocation(item.Row, item.Destination);
 			if (item.Checked)
+			{
 				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksRedoMakeMoved, LanguageExplorerResources.ksUndoMakeMoved,
 											Cache.ActionHandlerAccessor, () => RemoveMovedFrom(dstCell, srcCell));
+			}
 			else
 			{
 				var wordGrp = FindFirstWordGroup(PartsInCell(dstCell));
-
 				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMakeMoved, LanguageExplorerResources.ksRedoMakeMoved,
 											Cache.ActionHandlerAccessor, () =>
 				{
@@ -3017,12 +2989,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 		}
 
-		void itemMoveForward_Click(object sender, EventArgs e)
+		private void itemMoveForward_Click(object sender, EventArgs e)
 		{
 			var item = sender as RowColMenuItem;
 			MoveCellForward(item.SrcCell);
 		}
-		void itemMoveBack_Click(object sender, EventArgs e)
+
+		private void itemMoveBack_Click(object sender, EventArgs e)
 		{
 			var item = sender as RowColMenuItem;
 			MoveCellBack(item.SrcCell);
@@ -3032,27 +3005,27 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var item = sender as RowColMenuItem;
 			MoveWordForward(item.SrcCell);
 		}
-		void itemMoveWordBack_Click(object sender, EventArgs e)
+
+		private void itemMoveWordBack_Click(object sender, EventArgs e)
 		{
 			var item = sender as RowColMenuItem;
 			MoveWordBack(item.SrcCell);
 		}
 
-		void itemMergeAfter_Click(object sender, EventArgs e)
+		private void itemMergeAfter_Click(object sender, EventArgs e)
 		{
 			var item = sender as RowColMenuItem;
 			ToggleMergedCellFlag(item.SrcCell, true);
 		}
 
-		void itemMergeBefore_Click(object sender, EventArgs e)
+		private void itemMergeBefore_Click(object sender, EventArgs e)
 		{
 			var item = sender as RowColMenuItem;
 			ToggleMergedCellFlag(item.SrcCell, false);
 
 		}
 
-		private void GeneratePlMenuItems(ContextMenuStrip menu, ICmPossibilityList list,
-			EventHandler clickHandler, ChartLocation cell)
+		private void GeneratePlMenuItems(ContextMenuStrip menu, ICmPossibilityList list, EventHandler clickHandler, ChartLocation cell)
 		{
 			var markerRefs = SelectListItemReferences(PartsInCell(cell));
 			foreach (var poss in list.PossibilitiesOS)
@@ -3066,33 +3039,34 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// The leaves are the only really active choices. The item is checked if the specified cell
 		/// already contains a pointer to this possibility.
 		/// </summary>
-		/// <param name="clickHandler"></param>
-		/// <param name="cell"></param>
-		/// <param name="poss"></param>
-		/// <param name="markerRefs"></param>
-		/// <param name="format"></param>
-		/// <returns></returns>
-		private ToolStripMenuItem MakePlItem(EventHandler clickHandler, ChartLocation cell,
-			ICmPossibility poss, IEnumerable<IConstChartTag> markerRefs, string format)
+		private ToolStripMenuItem MakePlItem(EventHandler clickHandler, ChartLocation cell, ICmPossibility poss, IEnumerable<IConstChartTag> markerRefs, string format)
 		{
+			var markerRefsAsList = markerRefs.ToList();
 			var item = new RowColPossibilityMenuItem(cell, poss.Hvo);
-			var label = poss.Name.BestAnalysisAlternative.Text;
-			if (label == null)
-				label = "";
+			var label = poss.Name.BestAnalysisAlternative.Text ?? string.Empty;
 			if (poss.SubPossibilitiesOS.Count == 0)
 			{
-				string abbr = poss.Abbreviation.AnalysisDefaultWritingSystem.Text;
-				if (abbr != label && !String.IsNullOrEmpty(abbr))
+				var abbr = poss.Abbreviation.AnalysisDefaultWritingSystem.Text;
+				if (abbr != label && !string.IsNullOrEmpty(abbr))
+				{
 					label = label + " (" + abbr + ")";
+				}
 				item.Click += clickHandler; // can only select leaves.
-				if (ListRefersToMarker(markerRefs, poss.Hvo))
+				if (ListRefersToMarker(markerRefsAsList, poss.Hvo))
+				{
 					item.Checked = true;
+				}
 			}
+
 			if (format != null)
-				label = String.Format(format, label);
+			{
+				label = string.Format(format, label);
+			}
 			item.Text = label;
 			foreach (var poss2 in poss.SubPossibilitiesOS)
-				item.DropDownItems.Add(MakePlItem(clickHandler, cell, poss2, markerRefs, null));
+			{
+				item.DropDownItems.Add(MakePlItem(clickHandler, cell, poss2, markerRefsAsList, null));
+			}
 			return item;
 		}
 
@@ -3108,7 +3082,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			return list.Any(chartTag => chartTag.TagRA.Hvo == hvoMarker);
 		}
 
-		void ToggleMarker_Item_Click(object sender, EventArgs e)
+		private void ToggleMarker_Item_Click(object sender, EventArgs e)
 		{
 			var item = sender as RowColPossibilityMenuItem;
 
@@ -3130,9 +3104,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		private void RemoveListItemPart(ChartLocation srcCell, int hvoMarker)
 		{
-			foreach (var part in
-				PartsInCell(srcCell).Where(part => part is IConstChartTag &&
-					(part as IConstChartTag).TagRA.Hvo == hvoMarker))
+			foreach (var part in PartsInCell(srcCell).Where(part => part is IConstChartTag && ((IConstChartTag)part).TagRA.Hvo == hvoMarker))
 			{
 				srcCell.Row.CellsOS.Remove(part);
 				return;
@@ -3141,15 +3113,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		const int kdepClauseRowLimit = 5; // A limit to possible dependent clause menu rows.
 
-		private ToolStripMenuItem MakeDepClauseItem(ChartLocation srcCell, int irowSrc,
-			string mainLabel, ClauseTypes depType)
+		private ToolStripMenuItem MakeDepClauseItem(ChartLocation srcCell, int irowSrc, string mainLabel, ClauseTypes depType)
 		{
 			var itemMDC = new DisposableToolStripMenuItem(mainLabel);
 			if (irowSrc > 0)
 			{
 				// put in just one 'previous clause' item.
-				var item = new DepClauseMenuItem(LanguageExplorerResources.ksPreviousClauseMenuItem,
-					srcCell, new [] { m_chart.RowsOS[irowSrc - 1] });
+				var item = new DepClauseMenuItem(LanguageExplorerResources.ksPreviousClauseMenuItem, srcCell, new [] { m_chart.RowsOS[irowSrc - 1] });
 				item.Click += itemDC_Click;
 				item.DepType = depType;
 				itemMDC.DropDownItems.Add(item);
@@ -3179,10 +3149,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		}
 
 		// Generates a dialog with each row except the one clicked (within reason)
-		void itemOther_Click(object sender, EventArgs e)
+		private void itemOther_Click(object sender, EventArgs e)
 		{
 			if (m_chart.RowsOS.Count == 1)
+			{
 				return;
+			}
 			var item = sender as DepClauseMenuItem;
 			using (var dlg = new SelectClausesDialog())
 			{
@@ -3200,44 +3172,41 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				}
 				dlg.SetRows(items);
 				if (iSelect >= items.Count)
-					iSelect = items.Count - 1;
-				dlg.SelectedRow = items[iSelect];
-				if (dlg.ShowDialog() == DialogResult.OK)
 				{
-					var outer = dlg.SelectedRow.Row;
-					int index = outer.IndexInOwner;
-					int start = iSrc + 1;
-					int end = index;
-					if (index < iSrc)
-					{
-						start = index;
-						end = iSrc - 1;
-					}
-					var rows = new List<IConstChartRow>();
-					for (var i = start; i <= end; i++)
-						rows.Add(m_chart.RowsOS[i]);
-					MakeDependentClauseMarker(item.SrcCell, rows.ToArray(), item.DepType);
+					iSelect = items.Count - 1;
 				}
+				dlg.SelectedRow = items[iSelect];
+				if (dlg.ShowDialog() != DialogResult.OK)
+				{
+					return;
+				}
+				var outer = dlg.SelectedRow.Row;
+				var index = outer.IndexInOwner;
+				var start = iSrc + 1;
+				var end = index;
+				if (index < iSrc)
+				{
+					start = index;
+					end = iSrc - 1;
+				}
+				var rows = new List<IConstChartRow>();
+				for (var i = start; i <= end; i++)
+				{
+					rows.Add(m_chart.RowsOS[i]);
+				}
+				MakeDependentClauseMarker(item.SrcCell, rows.ToArray(), item.DepType);
 			}
 		}
 
-		static public string EndParaFeatureName
-		{
-			get { return "endPara"; }
-		}
+		public static string EndParaFeatureName => "endPara";
 
-		static public string EndSentFeatureName
-		{
-			get { return "endSent"; }
-		}
+		public static string EndSentFeatureName => "endSent";
 
 		/// <summary>
 		/// Invoked when the user chooses the "Row Ends Paragraph" menu item.
 		/// Sender is a OneValMenuItem indicating the row.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void itemREP_Click(object sender, EventArgs e)
+		private void itemREP_Click(object sender, EventArgs e)
 		{
 			var item = sender as OneValMenuItem;
 			bool fSentWasOn;
@@ -3246,8 +3215,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var irow = curRow.IndexInOwner;
 
 			if (curRow.EndParagraph)
+			{
 				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksRedoLastRowInPara, LanguageExplorerResources.ksUndoLastRowInPara,
 					Cache.ActionHandlerAccessor, () => curRow.EndParagraph = false);
+			}
 			else
 			{
 				// Save EOS state for determining if we need to renumber rows
@@ -3262,7 +3233,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 					// Turning on EOP only affects numbering if EOS was off before
 					if (!fSentWasOn)
+					{
 						RenumberRows(irow, false);
+					}
 				});
 			}
 		}
@@ -3271,12 +3244,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Invoked when the user chooses the "Row Ends Sentence" menu item.
 		/// Sender is a OneValMenuItem indicating the row.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void itemRES_Click(object sender, EventArgs e)
+		private void itemRES_Click(object sender, EventArgs e)
 		{
-			OneValMenuItem item = sender as OneValMenuItem;
-			int hvoRow = item.Source;
+			var item = (OneValMenuItem)sender;
+			var hvoRow = item.Source;
 			var curRow = m_rowRepo.GetObject(hvoRow);
 			var irow = curRow.IndexInOwner;
 
@@ -3290,10 +3261,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					curRow.EndParagraph = false;
 					// Now we need to renumber our row labels, unless we're on the last row.
 					if (irow != m_chart.RowsOS.Count - 1)
+					{
 						RenumberRows(irow, false);
+					}
 				});
 			}
 			else
+			{
 				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoLastRowInSent, LanguageExplorerResources.ksRedoLastRowInSent,
 											Cache.ActionHandlerAccessor, () =>
 				{
@@ -3302,14 +3276,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					if (irow != m_chart.RowsOS.Count - 1)
 						RenumberRows(irow, false);
 				});
+			}
 		}
 
 		/// <summary>
 		/// Invoked when the user clicks an item in add dependent/speech/song clause.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void itemDC_Click(object sender, EventArgs e)
+		private void itemDC_Click(object sender, EventArgs e)
 		{
 			var item = sender as DepClauseMenuItem;
 			Debug.Assert(item != null);
@@ -3324,9 +3297,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Not allowed on empty cells.
 		/// Can't have both left and right true; turn other off if new one turned on.
 		/// </summary>
-		/// <param name="srcCell"></param>
-		/// <param name="following"></param>
-		/// <returns></returns>
 		public string ToggleMergedCellFlag(ChartLocation srcCell, bool following)
 		{
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(LanguageExplorerResources.ksUndoMergeCells, LanguageExplorerResources.ksRedoMergeCells,
@@ -3359,8 +3329,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Creates the menu for a column's down arrow (context) button.
 		/// </summary>
-		/// <param name="icol">The icol.</param>
-		/// <returns></returns>
 		public ContextMenuStrip MakeContextMenu(int icol)
 		{
 			var menu = new ContextMenuStrip();
@@ -3370,10 +3338,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			menu.Items.Add(itemNewClause);
 
 			var itemMT = new DisposableToolStripMenuItem(LanguageExplorerResources.ksMovedFromMenuItem);
-			for (int ihvo = 0; ihvo < AllMyColumns.Length; ihvo++)
+			for (var ihvo = 0; ihvo < AllMyColumns.Length; ihvo++)
 			{
 				if (ihvo == icol)
+				{
 					continue;
+				}
 				var item = new TwoColumnMenuItem(GetColumnLabel(ihvo), icol, ihvo);
 				item.Click += InsertMovedText_Click;
 				itemMT.DropDownItems.Add(item);
@@ -3382,19 +3352,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			return menu;
 		}
 
-		void itemMissingMarker_Click(object sender, EventArgs e)
+		private void itemMissingMarker_Click(object sender, EventArgs e)
 		{
 			var item = sender as RowColMenuItem;
 			ToggleMissingMarker(item.SrcCell, item.Checked);
 		}
 
-		void itemNewClause_Click(object sender, EventArgs e)
+		private void itemNewClause_Click(object sender, EventArgs e)
 		{
 			var item = sender as OneValMenuItem;
 			MoveToHereInNewClause(item.Source);
 		}
 
-		void InsertMovedText_Click(object sender, EventArgs e)
+		private void InsertMovedText_Click(object sender, EventArgs e)
 		{
 			var item = sender as TwoColumnMenuItem;
 			MakeMovedText(item.Destination, item.Source);
@@ -3408,11 +3378,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// (However, with appropriate safeguards it is OK with a PropChanged on the
 		/// row's Cells sequence.
 		/// </summary>
-		/// <param name="partsToMove"></param>
-		/// <param name="newCol"></param>
-		/// <param name="row"></param>
-		public virtual void ChangeColumn(IConstituentChartCellPart[] partsToMove, ICmPossibility newCol,
-			IConstChartRow row)
+		public virtual void ChangeColumn(IConstituentChartCellPart[] partsToMove, ICmPossibility newCol, IConstChartRow row)
 		{
 			Debug.Assert(row.CellsOS.Contains(partsToMove[0]));
 			ChangeColumnInternal(partsToMove, newCol);
@@ -3423,30 +3389,29 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Can also be used as part of a move from end of one row to oppposite end of another.
 		/// protected virtual only for override in testing.
 		/// </summary>
-		/// <param name="partsToMove"></param>
-		/// <param name="newCol"></param>
 		protected internal virtual void ChangeColumnInternal(IConstituentChartCellPart[] partsToMove, ICmPossibility newCol)
 		{
 			foreach (var part in partsToMove)
+			{
 				part.ColumnRA = newCol;
+			}
 		}
 
 		/// <summary>
 		/// One of the basic move operations. Moves CellPart objects from one row to another. Caller is responsible
 		/// to ensure this is legitimate (i.e., will not make text out of order).
 		/// </summary>
-		/// <param name="partsToMove"></param>
-		/// <param name="rowSrc"></param>
-		/// <param name="rowDst"></param>
-		/// <param name="srcIndex">AppliesTo index</param>
-		/// <param name="dstIndex">AppliesTo index</param>
-		public virtual void ChangeRow(IConstituentChartCellPart[] partsToMove, IConstChartRow rowSrc, IConstChartRow rowDst,
-			int srcIndex, int dstIndex)
+		public virtual void ChangeRow(IConstituentChartCellPart[] partsToMove, IConstChartRow rowSrc, IConstChartRow rowDst, int srcIndex, int dstIndex)
 		{
 			if (rowSrc == null || rowSrc.CellsOS.Count <= srcIndex)
-				throw new ArgumentOutOfRangeException("srcIndex");
+			{
+				throw new ArgumentOutOfRangeException(nameof(srcIndex));
+			}
+
 			if (rowDst == null || rowDst.CellsOS.Count <= dstIndex)
-				throw new ArgumentOutOfRangeException("dstIndex");
+			{
+				throw new ArgumentOutOfRangeException(nameof(dstIndex));
+			}
 			Debug.Assert(rowSrc.CellsOS[srcIndex] == partsToMove[0]);
 
 			rowSrc.CellsOS.MoveTo(srcIndex, srcIndex + partsToMove.Length - 1, rowDst.CellsOS, dstIndex);
@@ -3459,10 +3424,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// N.B. Leaves source to be deleted by the caller, since the destination now
 		/// duplicates the source's coverage.
 		/// </summary>
-		/// <param name="srcWordGrp"></param>
-		/// <param name="dstWordGrp"></param>
-		public virtual void MoveAnalysesBetweenWordGroups(IConstChartWordGroup srcWordGrp,
-			IConstChartWordGroup dstWordGrp)
+		public virtual void MoveAnalysesBetweenWordGroups(IConstChartWordGroup srcWordGrp, IConstChartWordGroup dstWordGrp)
 		{
 			if (srcWordGrp.IsAfter(dstWordGrp))
 			{
@@ -3482,13 +3444,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Delete a specified group of CellParts (from the row and also from the database).
 		/// Mainly made a method for simplified testing of callers.
 		/// </summary>
-		/// <param name="row"></param>
-		/// <param name="ihvo">in AppliesTo</param>
-		/// <param name="chvo"></param>
 		public virtual void DeleteCellParts(IConstChartRow row, int ihvo, int chvo)
 		{
 			for (var i = 0; i < chvo; i++)
+			{
 				row.CellsOS.RemoveAt(ihvo);
+			}
 		}
 
 		/// <summary>
@@ -3496,9 +3457,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// otherwise at the end).
 		/// Caller deals with UOW.
 		/// </summary>
-		/// <param name="srcCell">Source cell</param>
-		/// <param name="dstCell">Destination cell</param>
-		/// <param name="forward">true if merging in forward direction (assuming LtoR, this is right).</param>
 		protected virtual void MergeCellContents(ChartLocation srcCell, ChartLocation dstCell, bool forward)
 		{
 			new MergeCellContentsMethod(this, srcCell, dstCell, forward).Run();
@@ -3510,8 +3468,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// a WordGroup. Since we are now going to have the possibility of more than one WordGroup per cell
 		/// we are trying a (faster?) different way of doing this.
 		/// </summary>
-		/// <param name="cellParts"></param>
-		/// <returns></returns>
 		protected internal static IConstChartWordGroup FindLastWordGroup(List<IConstituentChartCellPart> cellParts)
 		{
 			var temp = cellParts.GetRange(0, cellParts.Count); // Make a shallow copy to avoid side-effects.
@@ -3523,8 +3479,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Given a list of cellParts (typically in a single cell), find the first one (if any) that is actually
 		/// a WordGroup.
 		/// </summary>
-		/// <param name="cellParts"></param>
-		/// <returns></returns>
 		protected internal static IConstChartWordGroup FindFirstWordGroup(List<IConstituentChartCellPart> cellParts)
 		{
 			return cellParts.OfType<IConstChartWordGroup>().FirstOrDefault();
@@ -3534,8 +3488,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Given a list of cellparts (typically in a single cell), collect a list of all the ones
 		/// that are actually CCWordGroups.
 		/// </summary>
-		/// <param name="partsInCell"></param>
-		/// <returns></returns>
 		protected internal List<IConstChartWordGroup> CollectAllWordGroups(List<IConstituentChartCellPart> partsInCell)
 		{
 			return partsInCell.OfType<IConstChartWordGroup>().ToList();
@@ -3552,14 +3504,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <param name="indexFoundAt">The index of the next WordGroup, if found. Value will be -1, if not found.
 		/// Index is relative to list, NOT to row Cells!</param>
 		/// <returns></returns>
-		protected internal IConstChartWordGroup FindNextWordGroup(List<IConstituentChartCellPart> partsInCell, int iStartPart,
-			out int indexFoundAt)
+		protected internal IConstChartWordGroup FindNextWordGroup(List<IConstituentChartCellPart> partsInCell, int iStartPart, out int indexFoundAt)
 		{
 			indexFoundAt = -1;
 			for (var i = iStartPart + 1; i < partsInCell.Count; i++)
 			{
 				if (!(partsInCell[i] is IConstChartWordGroup))
+				{
 					continue;
+				}
 				indexFoundAt = i;
 				return (IConstChartWordGroup)partsInCell[i];
 			}
@@ -3573,9 +3526,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// (NOT within the row).
 		/// Returns null if no WordGroup is found.
 		/// </summary>
-		/// <param name="partsInCell"></param>
-		/// <param name="indexFoundAt"></param>
-		/// <returns></returns>
 		protected internal IConstChartWordGroup FindNextWordGroup(List<IConstituentChartCellPart> partsInCell, out int indexFoundAt)
 		{
 			return FindNextWordGroup(partsInCell, -1, out indexFoundAt);
@@ -3604,7 +3554,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// If the next cell is occupied, merge the contents. Wraps around in first column. Does nothing in
 		/// very first cell.
 		/// </summary>
-		/// <param name="srcCell"></param>
 		public void MoveCellBack(ChartLocation srcCell)
 		{
 			ChartLocation prevCell;
@@ -3614,7 +3563,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				var prevRow = PreviousRow(srcCell.Row);
 				// Enhance: If this is the first row, should we insert a row and then move the cell?
 				if (prevRow == null)
+				{
 					return; // can't go back further.
+				}
 				prevCell = new ChartLocation(prevRow, AllMyColumns.Length - 1);
 			}
 			else
@@ -3626,13 +3577,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 										Cache.ActionHandlerAccessor, () => MergeCellContents(srcCell, prevCell, false));
 		}
 
-		IConstChartRow PreviousRow(IConstChartRow row)
+		private IConstChartRow PreviousRow(IConstChartRow row)
 		{
 			var index = row.IndexInOwner;
 			return index == 0 ? null : Chart.RowsOS[index - 1];
 		}
 
-		IConstChartRow NextRow(IConstChartRow row)
+		private IConstChartRow NextRow(IConstChartRow row)
 		{
 			var index = row.IndexInOwner;
 			var maxRows = Chart.RowsOS.Count;
@@ -3644,7 +3595,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// If the next cell is occupied, merge the contents. Wraps around in last column. Does nothing in
 		/// very last cell.
 		/// </summary>
-		/// <param name="srcCell"></param>
 		public void MoveCellForward(ChartLocation srcCell)
 		{
 			ChartLocation dstCell;
@@ -3654,7 +3604,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				// Move to start of next row.
 				var nextRow = NextRow(srcCell.Row);
 				if (nextRow == null)
+				{
 					return; // can't move further.
+				}
 				dstCell = new ChartLocation(nextRow, 0);
 			}
 			else
@@ -3669,8 +3621,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Decrement a row index without going negative.
 		/// </summary>
-		/// <param name="irow"></param>
-		/// <returns></returns>
 		internal static int DecrementRowSafely(int irow)
 		{
 			return Math.Max(0, irow - 1);
@@ -3681,7 +3631,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// WordGroup there; otherwise, move it into the WordGroup in the cell right. In the first column,
 		/// moves to previous row. If there is only one word in the cell, merge everything into the destination.
 		/// </summary>
-		/// <param name="srcCell"></param>
 		public void MoveWordBack(ChartLocation srcCell)
 		{
 			ChartLocation dstCell;
@@ -3690,13 +3639,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			// Start looking at the beginning of the cell
 			var srcWordGroup = FindNextWordGroup(listOfPartsInSrc, out ipartInCell);
 			if (srcWordGroup == null)
+			{
 				return;
+			}
+
 			if (!TryGetPreviousCell(srcCell, out dstCell))
+			{
 				return;
+			}
 			// If there's only one wordform in the WordGroup and no other WordGroups, just merge the cell contents.
 			// N.B. If the first WordGroup is not the first cellPart in the cell, we can't use "1" below!!!!
-			if (srcWordGroup.GetOccurrences().Count() == 1 &&
-				(listOfPartsInSrc.Count == ipartInCell + 1 || FindFirstWordGroup(listOfPartsInSrc.GetRange(ipartInCell + 1, listOfPartsInSrc.Count - 1)) == null))
+			if (srcWordGroup.GetOccurrences().Count() == 1 && (listOfPartsInSrc.Count == ipartInCell + 1 || FindFirstWordGroup(listOfPartsInSrc.GetRange(ipartInCell + 1, listOfPartsInSrc.Count - 1)) == null))
 			{
 				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMoveWord, LanguageExplorerResources.ksRedoMoveWord,
 											Cache.ActionHandlerAccessor, () => MergeCellContents(srcCell, dstCell, false));
@@ -3725,8 +3678,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				}
 				// Enhance GordonM: If we eventually allow a marker to show that words within a cell are reversed in order,
 				// that marker may need deleting here.
-				if(!fKeepOldWordGroup)
+				if (!fKeepOldWordGroup)
+				{
 					DeleteCellPart(srcWordGroup);
+				}
 			});
 			m_lastMoveCell = dstCell;
 		}
@@ -3736,7 +3691,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// WordGroup there; otherwise, move it into the WordGroup in the cell right. In the last column, it moves to
 		/// the next row. If there is only one word in the cell, merge everything into the destination.
 		/// </summary>
-		/// <param name="srcCell"></param>
 		public void MoveWordForward(ChartLocation srcCell)
 		{
 			ChartLocation dstCell;
@@ -3744,12 +3698,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var ipartInCell = listOfPartsInSrc.Count; // start at end of cell and work backwards
 			var srcWordGroup = FindPreviousWordGroup(listOfPartsInSrc, ref ipartInCell);
 			if (srcWordGroup == null)
+			{
 				return;
-			if(!TryGetNextCell(srcCell, out dstCell))
+			}
+
+			if (!TryGetNextCell(srcCell, out dstCell))
+			{
 				return;
+			}
 			// If there's only one wordform in the WordGroup and no other WordGroups, just merge the cell contents.
-			if (srcWordGroup.GetOccurrences().Count == 1 &&
-				(listOfPartsInSrc.Count == 1 || (ipartInCell > 0 && FindLastWordGroup(listOfPartsInSrc.GetRange(0, ipartInCell - 1)) == null)))
+			if (srcWordGroup.GetOccurrences().Count == 1 && (listOfPartsInSrc.Count == 1 || (ipartInCell > 0 && FindLastWordGroup(listOfPartsInSrc.GetRange(0, ipartInCell - 1)) == null)))
 			{
 				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoMoveWord, LanguageExplorerResources.ksRedoMoveWord,
 											Cache.ActionHandlerAccessor, () => MergeCellContents(srcCell, dstCell, true));
@@ -3771,7 +3729,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					var iinsertAt = FindIndexOfFirstCellPartInOrAfterColumn(dstCell);
 					// If there is a preposed marker in the same column at this index, increment index.
 					if (partsInDestCell.Count > 0 && IsPreposedMarker(partsInDestCell[0]))
+					{
 						iinsertAt++;
+					}
 					// Make a new WordGroup and move one word
 					MakeWordGroup(dstCell, iinsertAt, new [] { wordToMove });
 					fKeepOldWordGroup = srcWordGroup.ShrinkFromEnd(true);
@@ -3784,7 +3744,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				// Enhance GordonM: If we eventually allow a marker to show that words within a cell are reversed in order,
 				// that marker may need deleting here.
 				if (!fKeepOldWordGroup)
+				{
 					DeleteCellPart(srcWordGroup);
+				}
 			});
 			m_lastMoveCell = dstCell;
 		}
@@ -3836,199 +3798,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		#endregion context menu
 
-		#region for test only
-		static public string FTO_MovedTextMenuText
-		{
-			get { return LanguageExplorerResources.ksMovedFromMenuItem; }
-		}
-		static public string FTO_InsertAsClauseMenuText
-		{
-			get { return LanguageExplorerResources.ksMoveHereInNewClause; }
-		}
-		static public string FTO_MovedTextBefore
-		{
-			get { return LanguageExplorerResources.ksMovedTextBefore; }
-		}
-		static public string FTO_MovedTextAfter
-		{
-			get { return LanguageExplorerResources.ksMovedTextAfter; }
-		}
-		static public string FTO_InsertMissingMenuText
-		{
-			get { return LanguageExplorerResources.ksMarkMissingItem; }
-		}
-		static public string FTO_MakeDepClauseMenuText
-		{
-			get { return LanguageExplorerResources.ksMakeDepClauseMenuItem; }
-		}
-		static public string FTO_MakeSpeechClauseMenuItem
-		{
-			get { return LanguageExplorerResources.ksMakeSpeechClauseMenuItem; }
-		}
-		static public string FTO_MakeSongClauseMenuItem
-		{
-			get { return LanguageExplorerResources.ksMakeSongClauseMenuItem; }
-		}
-		static public string FTO_PreviousClauseMenuItem
-		{
-			get { return LanguageExplorerResources.ksPreviousClauseMenuItem; }
-		}
-		static public string FTO_NextClauseMenuItem
-		{
-			get { return LanguageExplorerResources.ksNextClauseMenuItem; }
-		}
-		static public string FTO_NextTwoClausesMenuItem
-		{
-			get { return LanguageExplorerResources.ksNextTwoClausesMenuItem; }
-		}
-		static public string FTO_NextNClausesMenuItem
-		{
-			get { return LanguageExplorerResources.ksNextNClausesMenuItem; }
-		}
-		static public string FTO_RowEndsParaMenuItem
-		{
-			get { return LanguageExplorerResources.ksRowEndsParaMenuItem; }
-		}
-		static public string FTO_RowEndsSentMenuItem
-		{
-			get { return LanguageExplorerResources.ksRowEndsSentMenuItem; }
-		}
-		static public string FTO_MergeAfterMenuItem
-		{
-			get { return LanguageExplorerResources.ksMergeAfterMenuItem; }
-		}
-		static public string FTO_MergeBeforeMenuItem
-		{
-			get { return LanguageExplorerResources.ksMergeBeforeMenuItem; }
-		}
-		static public string FTO_UndoMoveCellForward
-		{
-			get { return LanguageExplorerResources.ksUndoMoveCellForward; }
-		}
-		static public string FTO_RedoMoveCellForward
-		{
-			get { return LanguageExplorerResources.ksRedoMoveCellForward; }
-		}
-		static public string FTO_MoveMenuItem
-		{
-			get { return LanguageExplorerResources.ksMoveMenuItem; }
-		}
-		static public string FTO_ForwardMenuItem
-		{
-			get { return LanguageExplorerResources.ksForwardMenuItem; }
-		}
-		static public string FTO_BackMenuItem
-		{
-			get { return LanguageExplorerResources.ksBackMenuItem; }
-		}
-		static public string FTO_UndoMoveCellBack
-		{
-			get { return LanguageExplorerResources.ksUndoMoveCellBack; }
-		}
-		static public string FTO_RedoMoveCellBack
-		{
-			get { return LanguageExplorerResources.ksRedoMoveCellBack; }
-		}
-
-		static public string FTO_PreposeFromMenuItem
-		{
-			get { return LanguageExplorerResources.ksPreposeFromMenuItem; }
-		}
-		static public string FTO_PostposeFromMenuItem
-		{
-			get { return LanguageExplorerResources.ksPostposeFromMenuItem; }
-		}
-		static public string FTO_AnotherClause
-		{
-			get { return LanguageExplorerResources.ksAdvancedDlgMenuItem; }
-		}
-		static public string FTO_UndoPreposeFrom
-		{
-			get { return LanguageExplorerResources.ksUndoPreposeFrom; }
-		}
-		static public string FTO_RedoPreposeFrom
-		{
-			get { return LanguageExplorerResources.ksRedoPreposeFrom; }
-		}
-		static public string FTO_UndoPostposeFrom
-		{
-			get { return LanguageExplorerResources.ksUndoPostposeFrom; }
-		}
-		static public string FTO_RedoPostposeFrom
-		{
-			get { return LanguageExplorerResources.ksRedoPostposeFrom; }
-		}
-		static public string FTO_UndoMoveWord
-		{
-			get { return LanguageExplorerResources.ksUndoMoveWord; }
-		}
-		static public string FTO_RedoMoveWord
-		{
-			get { return LanguageExplorerResources.ksRedoMoveWord; }
-		}
-		static public string FTO_MoveWordMenuItem
-		{
-			get { return LanguageExplorerResources.ksMoveWordMenuItem; }
-		}
-		static public string FTO_InsertRowMenuItem
-		{
-			get { return LanguageExplorerResources.ksInsertRowMenuItem; }
-		}
-		static public string FTO_UndoInsertRow
-		{
-			get { return LanguageExplorerResources.ksUndoInsertRow; }
-		}
-		static public string FTO_RedoInsertRow
-		{
-			get { return LanguageExplorerResources.ksRedoInsertRow; }
-		}
-		static public string FTO_UndoAddMarker
-		{
-			get { return LanguageExplorerResources.ksUndoAddMarker; }
-		}
-		static public string FTO_RedoAddMarker
-		{
-			get { return LanguageExplorerResources.ksRedoAddMarker; }
-		}
-		static public string FTO_ClearFromHereOnMenuItem
-		{
-			get { return LanguageExplorerResources.ksClearFromHereOnMenuItem; }
-		}
-		static public string FTO_UndoClearChart
-		{
-			get { return LanguageExplorerResources.ksUndoClearChart; }
-		}
-		static public string FTO_RedoClearChart
-		{
-			get { return LanguageExplorerResources.ksRedoClearChart; }
-		}
-		static public string FTO_OtherMenuItem
-		{
-			get { return LanguageExplorerResources.ksOtherMenuItem; }
-		}
-		static public string FTO_RedoRemoveClauseMarker
-		{
-			get { return LanguageExplorerResources.ksRedoRemoveClauseMarker; }
-		}
-		static public string FTO_UndoRemoveClauseMarker
-		{
-			get { return LanguageExplorerResources.ksUndoRemoveClauseMarker; }
-		}
-		static public string FTO_UndoMakeNewRow
-		{
-			get { return LanguageExplorerResources.ksUndoMakeNewRow; }
-		}
-		static public string FTO_RedoMakeNewRow
-		{
-			get { return LanguageExplorerResources.ksRedoMakeNewRow; }
-		}
-		#endregion for test only
-
 		internal static ListView MakeHeaderGroups()
 		{
-			ListView result = new ListView();
-
-			return result;
+			return new ListView();
 		}
 
 		internal void MakeMainHeaderCols(ListView view)
@@ -4057,8 +3829,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private static void MakeNotesColumnHeader(ListView view)
 		{
 			// Add one more column for notes.
-			var ch = new ColumnHeader();
-			ch.Text = LanguageExplorerResources.ksNotesColumnHeader;
+			var ch = new ColumnHeader
+			{
+				Text = LanguageExplorerResources.ksNotesColumnHeader
+			};
 			view.Columns.Add(ch);
 		}
 
@@ -4071,9 +3845,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					Text = col.Name.BestAnalysisAlternative.Text.Normalize()
 				};
 				if (ChartIsRtL)
+				{
 					view.Columns.Insert(1, ch); // should be safe because the Notes column will get added first.
+				}
 				else
+				{
 					view.Columns.Add(ch);
+				}
 			}
 		}
 
@@ -4091,9 +3869,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Given a set of column positions, return the one 'x' is in,
 		/// that is, the largest index in positions such that x is less than positions[i+1].
 		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="positions"></param>
-		/// <returns></returns>
 		public int GetColumnFromPosition(int x, int[] positions)
 		{
 			for (var i = 1; i < positions.Length; i++)
@@ -4112,21 +3887,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// clause or speech or song). This is determined by checking its class, then that it
 		/// references at least one ConstituentChartRow.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="hvoItem">the first clause</param>
-		/// <returns></returns>
 		internal bool IsClausePlaceholder(int hvo, out int hvoItem)
 		{
 			var part = m_cellPartRepo.GetObject(hvo);
 			hvoItem = (int)SpecialHVOValues.kHvoUninitializedObject;
-			if (part is IConstChartClauseMarker)
+			var clauses = (part as IConstChartClauseMarker)?.DependentClausesRS;
+			if (clauses?.Count > 0)
 			{
-				var clauses = (part as IConstChartClauseMarker).DependentClausesRS;
-				if (clauses.Count > 0)
-				{
-					hvoItem = clauses[0].Hvo;
-					return true;
-				}
+				hvoItem = clauses[0].Hvo;
+				return true;
 			}
 			return false;
 		}
@@ -4140,8 +3909,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Answer true if the HVO is a IConstChartWordGroup.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <returns></returns>
 		internal bool IsWordGroup(int hvo)
 		{
 			return m_cellPartRepo.GetObject(hvo) is IConstChartWordGroup;
@@ -4154,24 +3921,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		internal AnalysisOccurrence GetUnchartedWordForBookmark()
 		{
 			if (m_chart == null || !m_chart.IsValidObject || m_chart.RowsOS.Count == 0)
+			{
 				return null; // No chart! Don't want to change any bookmark that might already be set.
+			}
 
 			// If we aren't done charting the text yet, we need to set the bookmark
 			// to the first uncharted wordform in the ribbon
 			var analysisArray = NextUnchartedInput(1);
-			if (analysisArray.Length > 0)
-				return analysisArray[0]; // return hvo of wordform to bookmark
-			// Do nothing for now, since the chart has been fully charted.
-			// Enhance GordonM: Can we figure out what part of the chart is selected and save that?
-			return null;
+			return analysisArray.Length > 0 ? analysisArray[0] : null;
 		}
 
 		/// <summary>
 		/// Answer true if wordGrp is a moved text item, by looking at its back-refs.
 		/// </summary>
-		/// <param name="wordGrp"></param>
-		/// <returns></returns>
-		static internal bool IsMovedText(IConstituentChartCellPart wordGrp)
+		internal static bool IsMovedText(IConstituentChartCellPart wordGrp)
 		{
 			IConstChartMovedTextMarker dummy;
 			return IsMovedText(wordGrp, out dummy);
@@ -4183,14 +3946,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <param name="wordGrp"></param>
 		/// <param name="result">out param: MovedText Marker that references wordGrp</param>
 		/// <returns></returns>
-		static internal bool IsMovedText(IConstituentChartCellPart wordGrp, out IConstChartMovedTextMarker result)
+		internal static bool IsMovedText(IConstituentChartCellPart wordGrp, out IConstChartMovedTextMarker result)
 		{
 			// Enhance Gordon: Is there a better way!?
 			result = null;
 			if (!(wordGrp is IConstChartWordGroup))
+			{
 				return false;
-			result = wordGrp.ReferringObjects.Where(
-				target => target is IConstChartMovedTextMarker).Cast<IConstChartMovedTextMarker>().FirstOrDefault();
+			}
+			result = wordGrp.ReferringObjects.Where(target => target is IConstChartMovedTextMarker).Cast<IConstChartMovedTextMarker>().FirstOrDefault();
 			return result != null;
 		}
 
@@ -4198,16 +3962,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// Return a suitable style tag depending on whether hvo is the first or later
 		/// moved text item in its row.
 		/// </summary>
-		/// <param name="hvoTarget"></param>
-		/// <returns></returns>
 		internal string MovedTextTag(int hvoTarget)
 		{
-			if (HasPreviousMovedItemOnLine(m_chart, hvoTarget))
-				return "movedText2";
-			return "movedText";
+			return HasPreviousMovedItemOnLine(m_chart, hvoTarget) ? "movedText2" : "movedText";
 		}
 
-		static internal bool HasPreviousMovedItemOnLine(IDsConstChart chart, int hvoTarget)
+		internal static bool HasPreviousMovedItemOnLine(IDsConstChart chart, int hvoTarget)
 		{
 			foreach (var row in chart.RowsOS)
 			{
@@ -4215,9 +3975,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				foreach (var part in row.CellsOS)
 				{
 					if (part.Hvo == hvoTarget)
+					{
 						return cPrevMovedText != 0;
+					}
+
 					if (IsMovedText(part))
+					{
 						cPrevMovedText++;
+					}
 				}
 			}
 			return false; // desperation, never found it!
@@ -4226,1150 +3991,63 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Return true if the cell(irow, icol) should be highlighted to indicate a valid ChOrph insertion point.
 		/// </summary>
-		/// <param name="irow"></param>
-		/// <param name="icol"></param>
-		/// <returns></returns>
 		internal bool IsHighlightedCell(int irow, int icol)
 		{
-			if (IsChOrphActive)
+			if (!IsChOrphActive)
 			{
-				int irowPrec = CurrHighlightCells[0];
-				int irowFoll = CurrHighlightCells[2];
-				if (irowPrec <= irow && irow <= irowFoll)
-				{
-					int icolPrec = CurrHighlightCells[1];
-					int icolFoll = CurrHighlightCells[3];
-					if (irowPrec == irowFoll)
-						return (icolPrec <= icol && icol <= icolFoll);
-					if (irow == irowPrec && icol >= icolPrec)
-						return true;
-					if (irow == irowFoll && icol <= icolFoll)
-						return true;
-				}
+				return false;
 			}
-			return false;
+			var irowPrec = CurrHighlightCells[0];
+			var irowFoll = CurrHighlightCells[2];
+			if (irowPrec > irow || irow > irowFoll)
+			{
+				return false;
+			}
+			var icolPrec = CurrHighlightCells[1];
+			var icolFoll = CurrHighlightCells[3];
+			if (irowPrec == irowFoll)
+			{
+				return (icolPrec <= icol && icol <= icolFoll);
+			}
+
+			if (irow == irowPrec && icol >= icolPrec)
+			{
+				return true;
+			}
+			return irow == irowFoll && icol <= icolFoll;
 		}
 
 		/// <summary>
 		/// Makes a MovedText marker in a cell pointing to a WordGroup object.
 		/// </summary>
-		/// <param name="cell"></param>
-		/// <param name="wordGrp"></param>
-		/// <param name="iInsertMrkerHereInRow"></param>
-		/// <returns></returns>
-		internal IConstChartMovedTextMarker MakeMTMarker(ChartLocation cell, IConstChartWordGroup wordGrp,
-			int iInsertMrkerHereInRow)
+		internal IConstChartMovedTextMarker MakeMTMarker(ChartLocation cell, IConstChartWordGroup wordGrp, int iInsertMrkerHereInRow)
 		{
-			var fPreposed = IsPreposed(new ChartLocation((IConstChartRow) wordGrp.Owner,
-				IndexOfColumnForCellPart(wordGrp)), cell);
-			return MakeMTMarker(cell, wordGrp, iInsertMrkerHereInRow, fPreposed);
+			return MakeMTMarker(cell, wordGrp, iInsertMrkerHereInRow, IsPreposed(new ChartLocation((IConstChartRow)wordGrp.Owner, IndexOfColumnForCellPart(wordGrp)), cell));
 		}
 
 		/// <summary>
 		/// Most complete version.
 		/// </summary>
-		/// <param name="cell"></param>
-		/// <param name="wordGrp"></param>
-		/// <param name="iInsertMrkerHereInRow"></param>
-		/// <param name="fPreposed"></param>
-		/// <returns></returns>
-		internal IConstChartMovedTextMarker MakeMTMarker(ChartLocation cell, IConstChartWordGroup wordGrp,
-			int iInsertMrkerHereInRow, bool fPreposed)
+		internal IConstChartMovedTextMarker MakeMTMarker(ChartLocation cell, IConstChartWordGroup wordGrp, int iInsertMrkerHereInRow, bool fPreposed)
 		{
-			return m_movedTextFact.Create(cell.Row, iInsertMrkerHereInRow, AllMyColumns[cell.ColIndex],
-				fPreposed, wordGrp);
+			return m_movedTextFact.Create(cell.Row, iInsertMrkerHereInRow, AllMyColumns[cell.ColIndex], fPreposed, wordGrp);
 		}
-
-		//public int DisplayColumnIndexFromLogical(int icol)
-		//{
-		//    if (ChartIsRtL && icol > -1)
-		//        icol = ConvertColumnIndexToFromRtL(icol, AllMyColumns.Length - 1);
-		//    return icol;
-		//}
 
 		public int LogicalColumnIndexFromDisplay(int icol)
 		{
 			if (ChartIsRtL && icol > -1)
+			{
 				icol = ConvertColumnIndexToFromRtL(icol, AllMyColumns.Length - 1);
+			}
 			return icol;
 		}
 
 		internal int ConvertColumnIndexToFromRtL(int icol, int imaxCol)
 		{
 			// RTL chart 'logical' column indices are reverse from 'display' column indices.
-			var diff = ((Single) imaxCol)/2 - (Single)icol;
+			var diff = ((float)imaxCol)/2 - icol;
 			icol += (int)(diff * 2);
 			return icol;
-		}
-	}
-
-	/// <summary>
-	/// This is used for a slice to ask the data tree to display a context menu.
-	/// </summary>
-	public delegate void RowModifiedEventHandler (object sender, RowModifiedEventArgs e);
-
-	public class RowModifiedEventArgs : EventArgs
-	{
-		readonly IConstChartRow m_row;
-		public RowModifiedEventArgs(IConstChartRow row)
-		{
-			m_row = row;
-		}
-
-		public IConstChartRow Row
-		{
-			get { return m_row; }
-		}
-	}
-
-	internal class DepClauseMenuItem : DisposableToolStripMenuItem
-	{
-		readonly ChartLocation m_srcCell;
-		readonly IConstChartRow[] m_depClauses;
-		ClauseTypes m_depType;
-
-		public DepClauseMenuItem(string label, ChartLocation srcCell, IConstChartRow[] depClauses)
-			: base(label)
-		{
-			m_depClauses = depClauses;
-			m_srcCell = srcCell;
-		}
-
-		public IConstChartRow RowSource
-		{
-			get { return m_srcCell.Row; }
-		}
-
-		public int HvoRow
-		{
-			get { return m_srcCell.HvoRow; }
-		}
-
-		public IConstChartRow[] DepClauses
-		{
-			get { return m_depClauses; }
-		}
-
-		public int Column
-		{
-			get { return m_srcCell.ColIndex; }
-		}
-
-		public ChartLocation SrcCell
-		{
-			get { return m_srcCell; }
-		}
-
-		public ClauseTypes DepType
-		{
-			get { return m_depType; }
-			set { m_depType = value; }
-		}
-	}
-
-	internal class RowColMenuItem : DisposableToolStripMenuItem
-	{
-		readonly ChartLocation m_srcCell;
-
-		/// <summary>
-		/// Creates a ToolStripMenuItem for a chart cell carrying the row and column information.
-		/// Usually represents a cell that the user clicked.
-		/// </summary>
-		/// <param name="label"></param>
-		/// <param name="cloc">The chart cell location</param>
-		public RowColMenuItem(string label, ChartLocation cloc)
-			: base(label)
-		{
-			m_srcCell = cloc;
-		}
-
-		/// <summary>
-		/// The source (other) column index.
-		/// </summary>
-		public int SrcColIndex
-		{
-			get { return m_srcCell.ColIndex; }
-		}
-
-		/// <summary>
-		/// The ChartRow object.
-		/// </summary>
-		public IConstChartRow SrcRow
-		{
-			get { return m_srcCell.Row; }
-		}
-
-		/// <summary>
-		/// The cell that was clicked.
-		/// </summary>
-		public ChartLocation SrcCell
-		{
-			get { return m_srcCell; }
-		}
-	}
-
-	internal class OneValMenuItem : DisposableToolStripMenuItem
-	{
-		int m_colSrc;
-		public OneValMenuItem(string label, int colSrc)
-			: base(label)
-		{
-			m_colSrc = colSrc;
-		}
-
-		/// <summary>
-		/// The source (other) column.
-		/// </summary>
-		public int Source
-		{
-			get { return m_colSrc; }
-		}
-	}
-
-	internal class TwoColumnMenuItem : DisposableToolStripMenuItem
-	{
-		int m_colDst;
-		int m_colSrc;
-		IConstChartRow m_row;
-
-		/// <summary>
-		/// Make one that doesn't care about row.
-		/// </summary>
-		/// <param name="label"></param>
-		/// <param name="colDst"></param>
-		/// <param name="colSrc"></param>
-		public TwoColumnMenuItem(string label, int colDst, int colSrc)
-			: this(label, colDst, colSrc, null)
-		{
-		}
-
-		/// <summary>
-		/// Make one that knows about row.
-		/// </summary>
-		/// <param name="label"></param>
-		/// <param name="colDst"></param>
-		/// <param name="colSrc"></param>
-		/// <param name="row"></param>
-		public TwoColumnMenuItem(string label, int colDst, int colSrc, IConstChartRow row)
-			:base(label)
-		{
-			m_colDst = colDst;
-			m_colSrc = colSrc;
-			m_row = row;
-		}
-
-		/// <summary>
-		/// The source (other) column.
-		/// </summary>
-		public int Source
-		{
-			get { return m_colSrc; }
-		}
-
-		/// <summary>
-		/// The Destination column (where the action will occur; where the menu appears).
-		/// </summary>
-		public int Destination
-		{
-			get { return m_colDst; }
-		}
-
-		/// <summary>
-		/// The row in which everything takes place.
-		/// </summary>
-		public IConstChartRow Row
-		{
-			get { return m_row; }
-		}
-	}
-
-	#region MergeCellContentsMethod
-
-	/// <summary>
-	/// A Method Object used to merge the contents of chart cells
-	/// </summary>
-	class MergeCellContentsMethod
-	{
-		readonly ConstituentChartLogic m_logic;
-		private readonly IConstChartMovedTextMarkerRepository m_mtmRepo;
-		readonly ChartLocation m_srcCell;
-		readonly ChartLocation m_dstCell;
-		readonly bool m_forward;
-		List<IConstituentChartCellPart> m_cellPartsSrc;
-		List<IConstituentChartCellPart> m_cellPartsDest;
-		List<IConstChartWordGroup> m_wordGroupsSrc;
-		List<IConstChartWordGroup> m_wordGroupsDest;
-		IConstChartWordGroup m_wordGroupToMerge;
-		IConstChartWordGroup m_wordGroupToMergeWith;
-
-		public MergeCellContentsMethod(ConstituentChartLogic logic, ChartLocation srcCell, ChartLocation dstCell, bool forward)
-		{
-			m_logic = logic;
-			m_srcCell = srcCell;
-			m_dstCell = dstCell;
-			m_forward = forward;
-			m_mtmRepo = Cache.ServiceLocator.GetInstance<IConstChartMovedTextMarkerRepository>();
-		}
-
-		LcmCache Cache
-		{
-			get { return m_logic.Cache; }
-		}
-
-		IConstChartRow SrcRow
-		{
-			get { return m_srcCell.Row; }
-		}
-
-		int HvoSrcRow
-		{
-			get { return m_srcCell.HvoRow; }
-		}
-
-		int SrcColIndex
-		{
-			get { return m_srcCell.ColIndex; }
-		}
-
-		IConstChartRow DstRow
-		{
-			get { return m_dstCell.Row; }
-		}
-
-		int HvoDstRow
-		{
-			get { return m_dstCell.HvoRow; }
-		}
-
-		int DstColIndex
-		{
-			get { return m_dstCell.ColIndex; }
-		}
-
-		/// <summary>
-		/// Remove the word group from m_wordGroupsSrc (and its Row).
-		/// </summary>
-		/// <param name="part"></param>
-		/// <param name="indexDest">keeps track of Destination insertion point</param>
-		int RemoveSourceWordGroup(IConstChartWordGroup part, int indexDest)
-		{
-			var irow = SrcRow.IndexInOwner;
-			m_cellPartsSrc.Remove(part);
-			m_wordGroupsSrc.Remove(part);
-			SrcRow.CellsOS.Remove(part);
-			if (SrcRow.Hvo == (int)SpecialHVOValues.kHvoObjectDeleted)
-			{
-				RenumberRowsFromDeletedRow(irow);
-				return 0;
-			}
-			if ((HvoDstRow == HvoSrcRow) && m_forward)
-				indexDest--; // To compensate for lost item(WordGroup) in row.Cells
-			return indexDest;
-		}
-
-		private void RenumberRowsFromDeletedRow(int irow)
-		{
-			m_logic.RenumberRows(ConstituentChartLogic.DecrementRowSafely(irow), false);
-		}
-
-		/// <summary>
-		/// Remove the MovedTextMarker from wordGroupsToMergeWith (and its Row).
-		/// </summary>
-		/// <param name="mtm"></param>
-		/// <param name="indexDest">keeps track of Destination insertion point</param>
-		void RemoveRedundantMTMarker(IConstChartMovedTextMarker mtm, ref int indexDest)
-		{
-			m_cellPartsDest.Remove(mtm);
-			DstRow.CellsOS.Remove(mtm);
-			if ((HvoDstRow == HvoSrcRow) && m_forward)
-				indexDest--; // To compensate for lost item(WordGroup) in row.Cells; is a preposed marker
-		}
-
-		internal void Run()
-		{
-			// Get markers and WordGroups from source and verify that source cell has some data.
-			m_cellPartsSrc = m_logic.PartsInCell(m_srcCell);
-			m_wordGroupsSrc = ConstituentChartLogic.CollectCellWordGroups(m_cellPartsSrc);
-			if (m_wordGroupsSrc.Count == 0)
-				return; // no words to move!!
-
-			// If the destination contains a missing marker get rid of it! Don't try to 'merge' with it.
-			m_logic.RemoveMissingMarker(m_dstCell);
-
-			// Get markers and WordGroups from destination
-			int indexDest; // This will keep track of where we are in rowDst.CellsOS
-			m_cellPartsDest = m_logic.CellPartsInCell(m_dstCell, out indexDest);
-			// indexDest is now the index in the destination row's CellsOS of the first WordGroup in the destination cell.
-			m_wordGroupsDest = ConstituentChartLogic.CollectCellWordGroups(m_cellPartsDest);
-
-			// Here is where we need to check to see if the destination cell contains any movedText markers
-			// for text in the source cell. If it does, the marker goes away, the movedText feature goes away,
-			// and that MAY leave us ready to do a PreMerge in the source cell prior to merging the cells.
-			if (CheckForRedundantMTMarkers(ref indexDest))
-				indexDest = TryPreMerge(indexDest);
-
-			// The above check for MTMarkers may cause this 'if' to be true, but we may still need to delete objects
-			if (m_cellPartsDest.Count == 0)
-			{
-				// The destination is completely empty. Just move the m_wordGroupsSrc.
-				if (HvoSrcRow == HvoDstRow)
-				{
-					// This is where we worry about reordering SrcRow.CellsOS if other items (tags?) exist between
-					// the m_wordGroupsSrc and the destination (since non-data stuff doesn't move).
-					// Moving forward past a chart Tag.
-					if (m_wordGroupsSrc.Count != m_cellPartsSrc.Count && m_forward && m_wordGroupsSrc[0].Hvo == m_cellPartsSrc[0].Hvo)
-					{
-						MoveWordGroupsToEndOfCell(indexDest); // in preparation to moving data to next cell
-					}
-					// This is where we worry about reordering SrcRow.CellsOS if other items (MovedTextMrkr?) exist between
-					// the m_wordGroupsSrc and the destination (since non-data stuff doesn't move).
-					// Moving back past a MovedTextMarker.
-					if (m_wordGroupsSrc.Count != m_cellPartsSrc.Count && !m_forward && m_wordGroupsSrc[0].Hvo != m_cellPartsSrc[0].Hvo)
-					{
-						MoveWordGroupsToBeginningOfCell(indexDest); // in preparation to moving data to previous cell
-					}
-					m_logic.ChangeColumn(m_wordGroupsSrc.ToArray(), m_logic.AllMyColumns[DstColIndex],
-							SrcRow);
-				}
-				else
-				{
-					if (SrcColIndex != DstColIndex)
-						m_logic.ChangeColumnInternal(m_wordGroupsSrc.ToArray(), m_logic.AllMyColumns[DstColIndex]);
-
-					// Enhance GordonM: If we ever allow markers between WordGroups, this [& ChangeRow()] will need to change.
-					MoveCellPartsToDestRow(indexDest);
-				}
-				return;
-			}
-
-			if (m_logic.IsPreposedMarker(m_cellPartsDest[0]))
-				indexDest++; // Insertion point should be after preposed marker
-
-			// Set up possible coalescence of WordGroups.
-			PrepareForMerge();
-
-			// At this point 'm_wordGroupToMerge' and 'm_wordGroupToMergeWith' are the only WordGroups that might actually
-			// coalesce. Neither is guaranteed to be non-null (either one could be movedText, which is not mergeable).
-			// If either is null, there will be no coalescence.
-			// But there may well be other word groups in 'm_wordGroupsSrc' that will need to move.
-
-			if (m_wordGroupToMerge != null)
-			{
-				if (m_wordGroupToMergeWith != null)
-				{
-					// Merge the word groups and delete the empty one.
-					indexDest = MergeTwoWordGroups(indexDest);
-				}
-				else
-				{
-					// Move the one(s) we have. This is accomplished by just leaving it in
-					// the list (now m_wordGroupsSrc).
-					// Enhance JohnT: Possibly we may eventually have different rules about
-					// where in the destination cell to put it?
-				}
-			}
-
-			if (m_wordGroupsSrc.Count == 0)
-				return;
-
-			// Change column of any surviving items in m_wordGroupsSrc.
-			if (SrcColIndex != DstColIndex)
-				m_logic.ChangeColumnInternal(m_wordGroupsSrc.ToArray(), m_logic.AllMyColumns[DstColIndex]);
-
-			// If we're on the same row and there aren't any intervening markers, we're done.
-			if (SrcRow.Hvo == DstRow.Hvo &&
-				(indexDest == m_wordGroupsSrc[0].IndexInOwner + m_wordGroupsSrc.Count))
-				return;
-
-			indexDest = FindWhereToInsert(indexDest); // Needs an accurate 'm_wordGroupsDest'
-			MoveCellPartsToDestRow(indexDest);
-
-			// Review: what should we do about dependent clause markers pointing at the destination row?
-		}
-
-		/// <summary>
-		/// Merge the word groups and delete the empty one, maintaining an accurate index
-		/// in the destination.
-		/// </summary>
-		/// <param name="indexDest"></param>
-		/// <returns></returns>
-		private int MergeTwoWordGroups(int indexDest)
-		{
-			m_logic.MoveAnalysesBetweenWordGroups(m_wordGroupToMerge, m_wordGroupToMergeWith);
-
-			// remove WordGroup from source lists and delete, keeping accurate destination index
-			return RemoveSourceWordGroup(m_wordGroupToMerge, indexDest);
-		}
-
-		/// <summary>
-		/// Moves the WordGroups to the end of the source cell in preparation to move them to the next cell.
-		/// Solves confusion in row.Cells
-		/// Situation: moving forward in same row, nothing in destination cell.
-		/// </summary>
-		private void MoveWordGroupsToEndOfCell(int iDest)
-		{
-			var istart = m_wordGroupsSrc[0].IndexInOwner;
-			Debug.Assert(0 < iDest && iDest >= istart, "Bad destination index.");
-			// Does MoveTo work when the src and dest sequences are the same? Yes.
-			SrcRow.CellsOS.MoveTo(istart, istart + m_wordGroupsSrc.Count - 1, SrcRow.CellsOS, iDest);
-		}
-
-		/// <summary>
-		/// Moves the WordGroups to the beginning of the source cell in preparation to move them to the previous cell.
-		/// Solves confusion in row.Cells
-		/// Situation: moving back in same row, nothing in destination cell.
-		/// </summary>
-		private void MoveWordGroupsToBeginningOfCell(int iDest)
-		{
-			var istart = m_wordGroupsSrc[0].IndexInOwner;
-			Debug.Assert(-1 < iDest && iDest <= istart, "Bad destination index.");
-			// Does MoveTo work when going backwards? Yes.
-			SrcRow.CellsOS.MoveTo(istart, istart + m_wordGroupsSrc.Count - 1, SrcRow.CellsOS, iDest);
-		}
-
-		private int TryPreMerge(int indexDest)
-		{
-			// Look through source WordGroups to see if any can be merged now that we've removed
-			// a movedText feature prior to moving to a neighboring cell.
-			var flastWasNotMT = false;
-			for (var iSrc = 0; iSrc < m_wordGroupsSrc.Count; iSrc++)
-			{
-				var currWordGrp = m_wordGroupsSrc[iSrc];
-				if (ConstituentChartLogic.IsMovedText(currWordGrp))
-				{
-					flastWasNotMT = false;
-					continue;
-				}
-				if (flastWasNotMT)
-				{
-					// Merge this WordGroup with the last one and delete this one
-					var destWordGrp = m_wordGroupsSrc[iSrc - 1];
-					m_logic.MoveAnalysesBetweenWordGroups(currWordGrp, destWordGrp);
-					// mark WordGroup for delete and remove from source lists, keeping accurate destination index
-					indexDest = RemoveSourceWordGroup(currWordGrp, indexDest);
-					iSrc--;
-				}
-				flastWasNotMT = true;
-			}
-			return indexDest;
-		}
-
-		private bool CheckForRedundantMTMarkers(ref int indexDest)
-		{
-			var found = false;
-			for (var iDes = 0; iDes < m_cellPartsDest.Count; )
-			{
-				// Not foreach because we might delete from m_cellPartsDest
-				var part = m_cellPartsDest[iDes];
-
-				// The source cell part is still in its old row and column, so we can detect this directly.
-				if (IsMarkerForCell(part, m_srcCell))
-				{
-					var part1 = part as IConstChartMovedTextMarker;
-					// Turn off feature in source
-					//TurnOffMovedTextFeatureFromMarker(part1, SrcRow);
-					// Take out movedText marker, keep accurate destination index
-					RemoveRedundantMTMarker(part1, ref indexDest);
-					found = true;
-					continue;
-				}
-				iDes++; // only if we do NOT clobber it.
-			}
-			return found;
-		}
-
-		/// <summary>
-		/// Moves all WordGroups in m_wordGroupsSrc from SrcRow to DstRow.
-		/// </summary>
-		/// <param name="indexDest">Index in rowDst.Cells where insertion should occur.</param>
-		private void MoveCellPartsToDestRow(int indexDest)
-		{
-			var irow = SrcRow.IndexInOwner;
-			var istart = m_wordGroupsSrc[0].IndexInOwner;
-			var iend = m_wordGroupsSrc[m_wordGroupsSrc.Count - 1].IndexInOwner;
-			SrcRow.CellsOS.MoveTo(istart, iend, DstRow.CellsOS, indexDest);
-			if (SrcRow.Hvo == (int)SpecialHVOValues.kHvoObjectDeleted)
-				RenumberRowsFromDeletedRow(irow);
-		}
-
-		private void PrepareForMerge()
-		{
-			// Destination cell has something in it, but it might not be a WordGroup!
-			if (m_wordGroupsDest.Count == 0)
-				m_wordGroupToMergeWith = null;
-			else
-			{
-				if (m_forward)
-					m_wordGroupToMergeWith = m_wordGroupsDest[0];
-				else
-					m_wordGroupToMergeWith = m_wordGroupsDest[m_wordGroupsDest.Count - 1];
-
-				if (ConstituentChartLogic.IsMovedText(m_wordGroupToMergeWith))
-					// Can't merge with movedText, must append/insert merging WordGroup instead.
-					m_wordGroupToMergeWith = null;
-			}
-
-			if (m_forward)
-				m_wordGroupToMerge = m_wordGroupsSrc[m_wordGroupsSrc.Count - 1]; // Has to be something here.
-			else
-				m_wordGroupToMerge = m_wordGroupsSrc[0];
-
-			if (ConstituentChartLogic.IsMovedText(m_wordGroupToMerge))
-				// Can't merge with movedText, must append/insert merging WordGroup instead.
-				m_wordGroupToMerge = null;
-		}
-
-		/// <summary>
-		/// Return true if srcPart is a moved text marker with its destination in the specified cell.
-		/// </summary>
-		/// <param name="srcPart"></param>
-		/// <param name="cell"></param>
-		/// <returns></returns>
-		private bool IsMarkerForCell(IConstituentChartCellPart srcPart, ChartLocation cell)
-		{
-			// typically it is null if the thing we're testing isn't the right kind of CellPart.
-			if (srcPart == null || !(srcPart is IConstChartMovedTextMarker))
-				return false;
-			var target = (srcPart as IConstChartMovedTextMarker).WordGroupRA;
-			if (target == null || target.ColumnRA != m_logic.AllMyColumns[cell.ColIndex])
-				return false;
-			return cell.Row.CellsOS.Contains(target);
-		}
-
-		/// <summary>
-		/// If we find a moved text marker pointing at 'target', delete it.
-		/// </summary>
-		/// <param name="target"></param>
-		private void CleanUpMovedTextMarkerFor(IConstChartWordGroup target)
-		{
-			IConstChartRow row;
-			var marker = FindMovedTextMarkerFor(target, out row);
-			if (marker == null)
-				return;
-			row.CellsOS.Remove(marker);
-			//DeleteRowIfEmpty(row);
-		}
-
-		private IConstChartMovedTextMarker FindMovedTextMarkerFor(IConstChartWordGroup target, out IConstChartRow rowTarget)
-		{
-			// If we find a moved text marker pointing at 'target', return it and (through the 'out' var) its row.
-			// Enhance JohnT: it MIGHT be faster (in long texts) to use a back ref. Or we might limit the
-			// search to nearby rows...
-			var myMTM = m_mtmRepo.AllInstances().Where(mtm => mtm.WordGroupRA == target).FirstOrDefault();
-			if (myMTM != null)
-			{
-				rowTarget = myMTM.Owner as IConstChartRow;
-				return myMTM;
-			}
-			rowTarget = null;
-			return null;
-		}
-
-		/// <summary>
-		/// Returns index of where in destination row's Cells sequence we want to insert
-		/// remaining source WordGroups. Uses m_wordGroupsDest list. And m_forward and DstRow
-		/// and m_cellPartsDest and indexDest.
-		/// </summary>
-		/// <param name="indexDest">Enters as the index in row.Cells of the beginning of the destination cell.</param>
-		/// <returns></returns>
-		private int FindWhereToInsert(int indexDest)
-		{
-			Debug.Assert(0 <= indexDest && indexDest <= DstRow.CellsOS.Count);
-			if (m_cellPartsDest.Count == 0)
-				return indexDest; // If indexDest == Cells.Count, we should take this branch.
-
-			// Enhance GordonM: If we ever allow other markers before the first WordGroup or
-			// we allow markers between WordGroups, this will need to change.
-			if (m_forward)
-				return indexDest;
-			return indexDest + m_wordGroupsDest.Count;
-		}
-	}
-
-	#endregion // MergeCellContentsMethod
-
-	#region MakeMovedTextMethod
-
-	/// <summary>
-	/// Actually this class is used both to Make and Remove MovedText Markers/Features.
-	/// </summary>
-	class MakeMovedTextMethod
-	{
-		readonly ConstituentChartLogic m_logic;
-		readonly ChartLocation m_movedTextCell;
-		readonly ChartLocation m_markerCell;
-		readonly bool m_fPrepose;
-		readonly IAnalysis[] m_wordformsToMark;
-		private IConstChartMovedTextMarker m_existingMarker; // only used for RemoveMovedFrom()
-
-		public MakeMovedTextMethod(ConstituentChartLogic logic, ChartLocation movedTextCell,
-			ChartLocation markerCell, AnalysisOccurrence begPoint, AnalysisOccurrence endPoint)
-			: this(logic, movedTextCell, markerCell)
-		{
-			if (!begPoint.IsValid || !endPoint.IsValid)
-				throw new ArgumentException("Bad begin or end point.");
-			m_wordformsToMark = begPoint.GetAdvancingWordformsInclusiveOf(endPoint).ToArray();
-		}
-
-		public MakeMovedTextMethod(ConstituentChartLogic logic, ChartLocation movedTextCell,
-			IConstChartMovedTextMarker marker)
-		{
-			m_logic = logic;
-			m_movedTextCell = movedTextCell;
-			m_existingMarker = marker;
-			m_markerCell = new ChartLocation((IConstChartRow)marker.Owner, m_logic.IndexOfColumnForCellPart(marker));
-			m_fPrepose = marker.Preposed;
-		}
-
-		public MakeMovedTextMethod(ConstituentChartLogic logic, ChartLocation movedTextCell,
-			ChartLocation markerCell)
-		{
-			m_logic = logic;
-			m_movedTextCell = movedTextCell;
-			m_markerCell = markerCell;
-			m_fPrepose = m_logic.IsPreposed(movedTextCell, markerCell);
-		}
-
-		#region PropertiesAndConstants
-
-		LcmCache Cache
-		{
-			get { return m_logic.Cache; }
-		}
-
-		IConstChartRow MTRow
-		{
-			get { return m_movedTextCell.Row; }
-		}
-
-		IConstChartRow MarkerRow
-		{
-			get { return m_markerCell.Row; }
-		}
-
-		int MarkerColIndex
-		{
-			get { return m_markerCell.ColIndex; }
-		}
-
-		#endregion
-
-		#region Method Object methods
-
-		/// <summary>
-		/// One of two main entry points for this method object. The other is RemoveMovedFrom().
-		/// Perhaps this should be deprecated? Does it properly handle multiple WordGroups in a cell?
-		/// </summary>
-		/// <returns></returns>
-		internal IConstChartMovedTextMarker MakeMovedFrom()
-		{
-			// Making a MovedFrom marker creates a Feature on the Actual row that needs to be updated.
-			// Removed ExtraPropChangedInserter that caused a crash on Undo in certain contexts. (LT-9442)
-			// Not real sure why everything still works!
-			// Get rid of any empty marker in the cell where we will insert the marker.
-			m_logic.RemoveMissingMarker(m_markerCell);
-
-			if (m_wordformsToMark == null || m_wordformsToMark.Length == 0)
-				return MarkEntireCell();
-			return MarkPartialCell();
-		}
-
-		/// <summary>
-		/// This handles the situation where we mark only the user-selected words as moved.
-		/// m_hvosToMark member array contains the words to mark as moved
-		///		(for now they should be contiguous)
-		/// Deals with four cases:
-		///		Case 1: the new WordGroup is at the beginning of the old, create a new one to hold the remainder
-		///		Case 2: the new WordGroup is embedded within the old, create 2 new ones, first for the movedText
-		///			and second for the remainder
-		///		Case 3: the new WordGroup is at the end of the old, create a new one for the movedText
-		///		Case 4: the new WordGroup IS the old WordGroup, just set the feature and marker
-		///			(actually this last case should be handled by the dialog; it'll return no hvos)
-		/// </summary>
-		/// <returns></returns>
-		private IConstChartMovedTextMarker MarkPartialCell()
-		{
-			// find the first WordGroup in this cell
-			var cellContents = m_logic.PartsInCell(m_movedTextCell);
-			var movedTextWordGrp = ConstituentChartLogic.FindFirstWordGroup(cellContents);
-			Debug.Assert(movedTextWordGrp != null);
-
-			// Does this WordGroup contain all our hvos and are they "in order" (no skips or unorderliness)
-			int ilastHvo;
-			var ifirstHvo = CheckWordGroupContainsAllOccurrenceHvos(movedTextWordGrp, out ilastHvo);
-			if (ifirstHvo > -1)
-			{
-				var indexOfWordGrpInRow = movedTextWordGrp.IndexInOwner;
-				// At this point we need to deal with our four cases:
-				if (ifirstHvo == 0)
-				{
-					if (ilastHvo < movedTextWordGrp.GetOccurrences().Count - 1)
-					{
-						// Case 1: Add new WordGroup, put remainder of wordforms in it
-						PullOutRemainderWordformsToNewWordGroup(movedTextWordGrp, indexOfWordGrpInRow, ilastHvo + 1);
-					}
-					// Case 4: just drops through here, sets Marker
-				}
-				else
-				{
-					if (ilastHvo < movedTextWordGrp.GetOccurrences().Count - 1)
-					{
-						// Case 2: Take MT wordforms and remainder wordforms out of original,
-						// add new WordGroups for MT and for remainder
-
-						// For now, just take out remainder wordforms and add a WordGroup for them.
-						// The rest will be done when we drop through to Case 3
-						PullOutRemainderWordformsToNewWordGroup(movedTextWordGrp, indexOfWordGrpInRow, ilastHvo + 1);
-					}
-					// Case 3: Take MT wordforms out of original, add a new WordGroup for the MT
-					movedTextWordGrp = PullOutRemainderWordformsToNewWordGroup(movedTextWordGrp, indexOfWordGrpInRow, ifirstHvo);
-				}
-			}
-			else return null; // Bail out because of a problem in our array of hvos (misordered or non-contiguous)
-
-			// Now figure out where to insert the MTmarker
-			var imarkerInsertAt = FindWhereToInsertMTMarker();
-
-			// Insert the Marker
-			return m_logic.MakeMTMarker(m_markerCell, movedTextWordGrp, imarkerInsertAt, m_fPrepose);
-		}
-
-		/// <summary>
-		/// Pulls trailing wordforms out of a WordGroup and creates a new one for them.
-		/// Then we return the new WordGroup.
-		/// </summary>
-		/// <param name="srcMovedText">The original WordGroup from which we will remove the moved
-		/// 	text wordforms.</param>
-		/// <param name="indexInRow"></param>
-		/// <param name="ifirstWord"></param>
-		/// <returns>The new WordGroup that will now contain the moved text wordforms.</returns>
-		private IConstChartWordGroup PullOutRemainderWordformsToNewWordGroup(
-			IConstChartWordGroup srcMovedText, int indexInRow, int ifirstWord)
-		{
-			var srcWordforms = srcMovedText.GetOccurrences();
-			if (ifirstWord >= srcWordforms.Count)
-				throw new ArgumentOutOfRangeException("ifirstWord");
-
-			var oldSrcEnd = srcWordforms[srcWordforms.Count - 1]; // EndPoint of source becomes endPoint of new WordGroup
-			var dstBegin = srcWordforms[ifirstWord];
-			var newSrcEnd = dstBegin.PreviousWordform();
-			// Move source EndPoint up to Analysis previous to first destination Analysis
-			srcMovedText.EndSegmentRA = newSrcEnd.Segment;
-			srcMovedText.EndAnalysisIndex = newSrcEnd.Index;
-
-			return m_logic.MakeWordGroup(m_movedTextCell, indexInRow + 1, dstBegin, oldSrcEnd);
-		}
-
-		/// <summary>
-		/// Checks our array of hvos to see that all are referenced by this WordGroup and that
-		/// they are in order. For now they must be contigous too. Returns the index of the
-		/// first hvo within Begin/EndAnalysisIndex for this WordGroup or -1 if check fails.
-		/// The out variable returns the index of the last hvo to mark within this WordGroup.
-		/// </summary>
-		/// <param name="movedTextWordGrp"></param>
-		/// <param name="ilastHvo"></param>
-		/// <returns>ifirstHvo</returns>
-		private int CheckWordGroupContainsAllOccurrenceHvos(IAnalysisReference movedTextWordGrp, out int ilastHvo)
-		{
-			Debug.Assert(m_wordformsToMark.Length > 0, "No words to mark!");
-			Debug.Assert(movedTextWordGrp != null && movedTextWordGrp.IsValidRef, "No wordforms in this WordGroup!");
-			var movedTextWordformList = movedTextWordGrp.GetOccurrences();
-			Debug.Assert(movedTextWordformList != null, "No wordforms in this WordGroup!");
-			var cwordforms = movedTextWordformList.Count;
-			Debug.Assert(cwordforms > 0, "No wordforms in this WordGroup!");
-			var ifirstHvo = -1;
-			ilastHvo = -1;
-			var ihvosToMark = 0;
-			var chvosToMark = m_wordformsToMark.Length;
-			for (var iwordform = 0; iwordform < cwordforms; iwordform++)
-			{
-				// TODO: Check this! Does it work?!
-				if (movedTextWordformList[iwordform].Analysis == m_wordformsToMark[ihvosToMark])
-				{
-					// Found a live one!
-					if (ihvosToMark == 0)
-						ifirstHvo = iwordform; // found the first one!
-					ilastHvo = iwordform;
-					ihvosToMark++;
-
-					// If we've found them all, get out before we have an array subscript error!
-					if (ihvosToMark == chvosToMark)
-						return ifirstHvo;
-				}
-				else
-				{
-					if (ifirstHvo > -1 && ihvosToMark < chvosToMark)
-					{
-						// We had found some, but we aren't finding anymore
-						// and we haven't found all of them yet! Error!
-						return -1;
-					}
-				}
-			}
-			// The only way to really hit the end of the 'for' loop is by failing to finish finding
-			// all of the hvosToMark array, so this is an error too.
-			return -1;
-		}
-
-		private IConstChartMovedTextMarker MarkEntireCell()
-		{
-			// This handles the case where we mark the entire cell (CCWordGroup) as moved.
-			// Review: What happens if there is more than one WordGroup in the cell already?
-			// At this point, only the first will get marked as moved.
-			var wordGroupMovedText = (IConstChartWordGroup)m_logic.FindCellPartInColumn(m_movedTextCell, true);
-			Debug.Assert(wordGroupMovedText != null);
-
-			// Now figure out where to insert the MTmarker
-			var icellPartInsertAt = FindWhereToInsertMTMarker();
-
-			return m_logic.MakeMTMarker(m_markerCell, wordGroupMovedText, icellPartInsertAt);
-		}
-
-		/// <summary>
-		/// Insert BEFORE anything already in column, if Preposed; otherwise, after.
-		/// </summary>
-		/// <returns></returns>
-		private int FindWhereToInsertMTMarker()
-		{
-			var markerCell = new ChartLocation(MarkerRow, (m_fPrepose ? MarkerColIndex - 1: MarkerColIndex));
-			return m_logic.FindIndexOfCellPartInLaterColumn(markerCell);
-		}
-
-		internal void RemoveMovedFrom()
-		{
-			if (m_existingMarker == null)
-				FindMarkerAndDelete();
-			else
-				m_markerCell.Row.CellsOS.Remove(m_existingMarker);
-
-			// Handle cases where after removing, there are multiple WordGroups that can be merged.
-			// If the removed movedFeature was part of the cell,
-			// there could easily be 3 WordGroups to merge after removing.
-			CollapseRedundantWordGroups();
-		}
-
-		private void FindMarkerAndDelete()
-		{
-			foreach (var part in m_logic.PartsInCell(m_markerCell).Where(
-				cellPart => m_logic.IsMarkerOfMovedFrom(cellPart, m_movedTextCell)))
-			{
-				// Remove Marker from Row
-				MarkerRow.CellsOS.Remove(part);
-			}
-		}
-
-		private void CollapseRedundantWordGroups()
-		{
-			// Enhance GordonM: May need to do something different here if we can put markers between WordGroups.
-
-			// Get ALL the cellParts
-			var cellPartList = m_logic.PartsInCell(m_movedTextCell);
-
-			for (var icellPart = 0; icellPart < cellPartList.Count - 1; icellPart++)
-			{
-				var currCellPart = cellPartList[icellPart];
-				if (!(currCellPart is IConstChartWordGroup) || ConstituentChartLogic.IsMovedText(currCellPart))
-					continue;
-				while (icellPart < cellPartList.Count - 1) // Allows swallowing multiple WordGroups if conditions are right.
-				{
-					var nextCellPart = cellPartList[icellPart + 1];
-					if (!(nextCellPart is IConstChartWordGroup))
-						break;
-					if (ConstituentChartLogic.IsMovedText(nextCellPart))
-					{
-						icellPart++; // Skip current AND next, since next is MovedText
-						continue;
-					}
-					// Conditions are right! Swallow the next WordGroup into the current one!
-					SwallowRedundantWordGroup(cellPartList, icellPart);
-				}
-			}
-		}
-
-		private void SwallowRedundantWordGroup(List<IConstituentChartCellPart> cellPartList, int icellPart)
-		{
-			// Move all analyses from cellPartList[icellPart+1] to end of cellPartList[icellPart].
-			var srcWordGrp = cellPartList[icellPart+1] as IConstChartWordGroup;
-			var dstWordGrp = cellPartList[icellPart] as IConstChartWordGroup;
-			m_logic.MoveAnalysesBetweenWordGroups(srcWordGrp, dstWordGrp);
-
-			// Clean up
-			cellPartList.Remove(srcWordGrp); // remove swallowed WordGroup from list
-			MTRow.CellsOS.Remove(srcWordGrp); // remove swallowed WordGroup from row (& therefore delete it)
-		}
-
-		#endregion
-	}
-
-	#endregion // MakeMovedTextMethod
-
-	// used for user-defined markers
-	public class RowColPossibilityMenuItem : DisposableToolStripMenuItem
-	{
-		private readonly ChartLocation m_srcCell;
-		internal int m_hvoPoss;
-		public RowColPossibilityMenuItem(ChartLocation cloc, int hvoPoss)
-		{
-			m_srcCell = cloc;
-			m_hvoPoss = hvoPoss;
-		}
-
-		public ChartLocation SrcCell
-		{
-			get { return m_srcCell; }
-		}
-
-	}
-
-	/// <summary>
-	/// This interface defines the functionality that the logic needs from the ribbon.
-	/// Test code implements mock ribbons.
-	/// </summary>
-	public interface IInterlinRibbon
-	{
-		AnalysisOccurrence[] SelectedOccurrences { get; }
-		void CacheRibbonItems(List<AnalysisOccurrence> wordForms);
-		void MakeInitialSelection();
-		void SelectFirstOccurence();
-		int OccurenceListId { get; }
-		int EndSelLimitIndex { get; set; }
-		AnalysisOccurrence SelLimOccurrence { get; set;}
-		ISilDataAccessManaged Decorator { get; }
-	}
-
-	/// <summary>
-	/// Update the ribbon during Undo or Redo of annotating something.
-	/// Note that we create TWO of these, one that is the first action in the group, and one that is the last.
-	/// The first is for Undo, and updates the ribbon to the appropriate state for when the action is undone.
-	/// (It needs to be first so it will be the last thing undone.)
-	/// The last is for Redo, and updates the ribbon after the task is redone (needs to be last so it is the
-	/// last thing redone).
-	/// </summary>
-	public class UpdateRibbonAction : IUndoAction
-	{
-		readonly ConstituentChartLogic m_logic;
-		readonly bool m_fForRedo;
-
-		public UpdateRibbonAction(ConstituentChartLogic logic, bool fForRedo)
-		{
-			m_logic = logic;
-			m_fForRedo = fForRedo;
-		}
-
-		public void UpdateUnchartedWordforms()
-		{
-			var unchartedWordforms = m_logic.NextUnchartedInput(ConstituentChartLogic.kMaxRibbonContext);
-			m_logic.Ribbon.CacheRibbonItems(unchartedWordforms.ToList()); // now handles PropChanged???
-
-			m_logic.Ribbon.SelectFirstOccurence();
-		}
-
-		#region IUndoAction Members
-
-		public void Commit()
-		{
-		}
-
-		public bool IsDataChange
-		{
-			get { return false; } // no real data changes as a result of this.
-		}
-
-		public bool IsRedoable
-		{
-			get { return true; }
-		}
-
-		public bool Redo()
-		{
-			if (m_fForRedo)
-				UpdateUnchartedWordforms();
-			return true;
-		}
-
-		public bool SuppressNotification
-		{
-			set {  }
-		}
-
-		public bool Undo()
-		{
-			if (!m_fForRedo)
-				UpdateUnchartedWordforms();
-			return true;
-		}
-
-		#endregion
-	}
-
-	internal class OccurrenceSorter : IComparer<AnalysisOccurrence>
-	{
-
-		#region IComparer<AnalysisOccurrence> Members
-
-		/// <summary>
-		/// Compares two AnalysisOccurrences to determine which comes first in a text.
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <returns>Positive integer if y occurs prior to x in text.
-		/// Negative integer if x occurs prior to y in the text.</returns>
-		public int Compare(AnalysisOccurrence x, AnalysisOccurrence y)
-		{
-			if (x.Paragraph.Hvo == y.Paragraph.Hvo)
-			{
-				if (x.Segment.Hvo == y.Segment.Hvo)
-				{
-					return x.Index - y.Index;
-				}
-				return x.Segment.IndexInOwner - y.Segment.IndexInOwner;
-			}
-			return x.Paragraph.IndexInOwner - y.Paragraph.IndexInOwner;
-		}
-
-		#endregion
-
-	}
-
-	// Item used in row combo box.
-	internal class RowMenuItem
-	{
-		readonly IConstChartRow m_row;
-		internal RowMenuItem(IConstChartRow row)
-		{
-			m_row = row;
-		}
-
-		// Return the ChartRow's row label (1a, 1b, etc.) as a string
-		public override string ToString()
-		{
-			return m_row.Label.Text;
-		}
-
-		public IConstChartRow Row
-		{
-			get { return m_row; }
-		}
-	}
-
-	// Item used in column combo box.
-	internal class ColumnMenuItem
-	{
-		ICmPossibility m_column;
-
-		internal ColumnMenuItem(ICmPossibility column)
-		{
-			m_column = column;
-		}
-
-		public override string ToString()
-		{
-			return m_column.Name.BestAnalysisAlternative.Text;
-		}
-
-		public ICmPossibility Column
-		{
-			get { return m_column; }
 		}
 	}
 }

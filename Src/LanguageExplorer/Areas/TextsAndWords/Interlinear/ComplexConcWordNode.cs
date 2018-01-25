@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -31,10 +31,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public bool NegateCategory { get; set; }
 
-		public IDictionary<IFsFeatDefn, object> InflFeatures
-		{
-			get { return m_inflFeatures; }
-		}
+		public IDictionary<IFsFeatDefn, object> InflFeatures => m_inflFeatures;
 
 		public override PatternNode<ComplexConcParagraphData, ShapeNode> GeneratePattern(FeatureSystem featSys)
 		{
@@ -46,9 +43,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (Category != null)
 			{
 				var catFeat = featSys.GetFeature<SymbolicFeature>("cat");
-				IEnumerable<FeatureSymbol> symbols = Category.ReallyReallyAllPossibilities.Concat(Category).Select(pos => catFeat.PossibleSymbols[pos.Hvo.ToString(CultureInfo.InvariantCulture)]);
+				var symbols = Category.ReallyReallyAllPossibilities.Concat(Category).Select(pos => catFeat.PossibleSymbols[pos.Hvo.ToString(CultureInfo.InvariantCulture)]);
 				if (NegateCategory)
+				{
 					symbols = catFeat.PossibleSymbols.Except(symbols);
+				}
 				fs.AddValue(catFeat, symbols);
 			}
 			if (m_inflFeatures.Count > 0)
@@ -59,9 +58,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			var wordBdryFS = FeatureStruct.New(featSys).Symbol("bdry").Symbol("wordBdry").Value;
 			var group = new Group<ComplexConcParagraphData, ShapeNode>();
-			group.Children.Add(new Quantifier<ComplexConcParagraphData, ShapeNode>(0, 1, new Constraint<ComplexConcParagraphData, ShapeNode>(wordBdryFS)) {IsGreedy = false});
+			group.Children.Add(new Quantifier<ComplexConcParagraphData, ShapeNode>(0, 1, new Constraint<ComplexConcParagraphData, ShapeNode>(wordBdryFS))
+			{
+				IsGreedy = false
+			});
 			group.Children.Add(new Constraint<ComplexConcParagraphData, ShapeNode>(fs));
-			group.Children.Add(new Quantifier<ComplexConcParagraphData, ShapeNode>(0, 1, new Constraint<ComplexConcParagraphData, ShapeNode>(wordBdryFS)) {IsGreedy = false});
+			group.Children.Add(new Quantifier<ComplexConcParagraphData, ShapeNode>(0, 1, new Constraint<ComplexConcParagraphData, ShapeNode>(wordBdryFS))
+			{
+				IsGreedy = false
+			});
 
 			return AddQuantifier(group);
 		}

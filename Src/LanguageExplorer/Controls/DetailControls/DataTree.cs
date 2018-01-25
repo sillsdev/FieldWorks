@@ -3983,9 +3983,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				ScrollControlIntoView(previousSummary);
 			}
 			var lastChildIndex = CurrentSlice.IndexInContainer;
-			while (lastChildIndex < Slices.Count && Slice.StartsWith(((Slice) Slices[lastChildIndex]).Key, previousSummary.Key)
-			                                     && Slices[lastChildIndex].Bottom - previousSummary.Top <
-			                                     ClientRectangle.Height - 20)
+			while (lastChildIndex < Slices.Count && Slice.StartsWith(Slices[lastChildIndex].Key, previousSummary.Key)
+			                                     && Slices[lastChildIndex].Bottom - previousSummary.Top < ClientRectangle.Height - 20)
 			{
 				lastChildIndex++;
 			}

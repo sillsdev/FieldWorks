@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2015 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -29,13 +29,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			var x = (IManyOnePathSortItem)x1;
 			var y = (IManyOnePathSortItem)y1;
-			int hvoX = m_sda.get_ObjectProp(x.KeyObject, ConcDecorator.kflidTextObject);
-			int hvoY = m_sda.get_ObjectProp(y.KeyObject, ConcDecorator.kflidTextObject);
+			var hvoX = m_sda.get_ObjectProp(x.KeyObject, ConcDecorator.kflidTextObject);
+			var hvoY = m_sda.get_ObjectProp(y.KeyObject, ConcDecorator.kflidTextObject);
 			if (hvoX == hvoY)
 			{
 				// In the same text object, we can compare offsets.
-				int offsetX = m_sda.get_IntProp(x.KeyObject, ConcDecorator.kflidBeginOffset);
-				int offsetY = m_sda.get_IntProp(y.KeyObject, ConcDecorator.kflidBeginOffset);
+				var offsetX = m_sda.get_IntProp(x.KeyObject, ConcDecorator.kflidBeginOffset);
+				var offsetY = m_sda.get_IntProp(y.KeyObject, ConcDecorator.kflidBeginOffset);
 				return offsetX - offsetY;
 			}
 			hvoX = m_sda.get_ObjectProp(x.KeyObject, ConcDecorator.kflidParagraph);
@@ -43,8 +43,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			if (hvoX == hvoY)
 			{
 				// In the same paragraph (and not nested in the same caption), we can compare offsets.
-				int offsetX = m_sda.get_IntProp(x.KeyObject, ConcDecorator.kflidBeginOffset);
-				int offsetY = m_sda.get_IntProp(y.KeyObject, ConcDecorator.kflidBeginOffset);
+				var offsetX = m_sda.get_IntProp(x.KeyObject, ConcDecorator.kflidBeginOffset);
+				var offsetY = m_sda.get_IntProp(y.KeyObject, ConcDecorator.kflidBeginOffset);
 				return offsetX - offsetY;
 			}
 

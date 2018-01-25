@@ -1,9 +1,8 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -21,34 +20,6 @@ using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	internal struct LanguageMapping
-	{
-		/// <summary></summary>
-		public string LlCode;
-		/// <summary></summary>
-		public string LlName;
-		/// <summary></summary>
-		public string FwCode;
-		/// <summary></summary>
-		public string FwName;
-		/// <summary></summary>
-		public string EncodingConverter;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LanguageMapping"/> class.
-		/// </summary>
-		/// <param name="subItems">The sub items.</param>
-		public LanguageMapping(ListViewItem.ListViewSubItemCollection subItems)
-		{
-			Debug.Assert(subItems.Count == 5);
-			LlCode = subItems[LinguaLinksImportDlg.kLlCode].Text;
-			LlName = subItems[LinguaLinksImportDlg.kLlName].Text;
-			FwCode = subItems[LinguaLinksImportDlg.kFwCode].Text;
-			FwName = subItems[LinguaLinksImportDlg.kFwName].Text;
-			EncodingConverter = subItems[LinguaLinksImportDlg.kec].Text;
-		}
-	}
-
 	/// <summary>
 	/// Summary description for IFwImportDialog.
 	/// </summary>
@@ -94,51 +65,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private const string s_helpTopic = "khtpLinguaLinksImport";
 		private System.Windows.Forms.HelpProvider helpProvider;
 
-		// class to contain 'ws' information to be put in combo boxes
-		class WsInfo
-		{
-			private readonly string m_name;
-			private readonly string m_id;
-			private readonly string m_map;
-
-			public WsInfo()
-			{
-				m_name = ITextStrings.ksIgnore;
-			}
-
-			public WsInfo(string name, string id, string map)
-			{
-				m_name = name;
-				m_id = id;
-				m_map = map;
-			}
-
-			public string Name
-			{
-				get { return m_name; }
-			}
-
-			public string Id
-			{
-				get { return m_id; }
-			}
-
-			public string KEY
-			{
-				get { return Id; }
-			}
-
-			public string Map
-			{
-				get { return m_map; }
-			}
-
-			public override string ToString()
-			{
-				return Name;
-			}
-		}
-
 		public LinguaLinksImportDlg()
 		{
 			InitializeComponent();
@@ -148,31 +74,31 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Copied from the LexImportWizard dlg Init (LexImportWizard.cs)
 			// Ensure that we have the default encoding converter (to/from MS Windows Code Page
 			// for Western European languages)
-			SilEncConverters40.EncConverters encConv = new SilEncConverters40.EncConverters();
-			System.Collections.IDictionaryEnumerator de = encConv.GetEnumerator();
-			string sEncConvName = "Windows1252<>Unicode";	// REVIEW: SHOULD THIS NAME BE LOCALIZED?
-			bool fMustCreateEncCnv = true;
+			var encConv = new SilEncConverters40.EncConverters();
+			var de = encConv.GetEnumerator();
+			var sEncConvName = "Windows1252<>Unicode";	// REVIEW: SHOULD THIS NAME BE LOCALIZED?
+			var fMustCreateEncCnv = true;
 			while (de.MoveNext())
 			{
-				if ((string)de.Key != null && (string)de.Key == sEncConvName)
+				if ((string) de.Key == null || (string) de.Key != sEncConvName)
 				{
-					fMustCreateEncCnv = false;
-					break;
+					continue;
 				}
+				fMustCreateEncCnv = false;
+				break;
 			}
-			if (fMustCreateEncCnv)
+
+			if (!fMustCreateEncCnv)
 			{
-				try
-				{
-					encConv.AddConversionMap(sEncConvName, "1252",
-						ECInterfaces.ConvType.Legacy_to_from_Unicode, "cp", "", "",
-						ECInterfaces.ProcessTypeFlags.CodePageConversion);
-				}
-				catch (SilEncConverters40.ECException exception)
-				{
-					MessageBox.Show(exception.Message, ITextStrings.ksConvMapError,
-						MessageBoxButtons.OK);
-				}
+				return;
+			}
+			try
+			{
+				encConv.AddConversionMap(sEncConvName, "1252", ECInterfaces.ConvType.Legacy_to_from_Unicode, "cp", string.Empty, string.Empty, ECInterfaces.ProcessTypeFlags.CodePageConversion);
+			}
+			catch (SilEncConverters40.ECException exception)
+			{
+				MessageBox.Show(exception.Message, ITextStrings.ksConvMapError, MessageBoxButtons.OK);
 			}
 		}
 
@@ -201,15 +127,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_sLastXmlFileName = string.Empty;
 
 			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
-			if (helpTopicProvider != null)
+			if (helpTopicProvider == null)
 			{
-				helpProvider = new HelpProvider
-				{
-					HelpNamespace = helpTopicProvider.HelpFile
-				};
-				helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
-				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+				return;
 			}
+			helpProvider = new HelpProvider
+			{
+				HelpNamespace = helpTopicProvider.HelpFile
+			};
+			helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
+			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 		}
 
 		/// <summary>
@@ -220,7 +147,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(string.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -401,133 +330,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 		#endregion
 
-		#region Internal progress bar class
-		internal class ProgressReporter : ProgressState, IProgress
-		{
-			public ProgressReporter(StatusBarProgressPanel panel)
-				: base(panel)
-			{
-			}
-			#region IProgress Members
-			event CancelEventHandler IProgress.Canceling
-			{
-				add { throw new NotImplementedException(); }
-				remove { throw new NotImplementedException(); }
-			}
-
-			public void Step(int nStepAmt)
-			{
-				int nNewDone = PercentDone + nStepAmt;
-				if (nNewDone > 100)
-					nNewDone = nNewDone % 100;
-				PercentDone = nNewDone;
-				Breath();
-			}
-
-			/// <summary>
-			/// Get the title of the progress display window.
-			/// </summary>
-			/// <value>The title.</value>
-			public string Title
-			{
-				get { throw new NotImplementedException(); }
-				set { throw new NotImplementedException(); }
-			}
-
-			/// <summary>
-			/// Get the message within the progress display window.
-			/// </summary>
-			/// <value>The message.</value>
-			public string Message
-			{
-				get { throw new NotImplementedException(); }
-				set { throw new NotImplementedException(); }
-			}
-
-			/// <summary>
-			/// Gets or sets the current position of the progress bar. This should be within the limits set by
-			/// SetRange, or returned by GetRange.
-			/// </summary>
-			/// <value>The position.</value>
-			public int Position
-			{
-				get { throw new NotImplementedException(); }
-				set { throw new NotImplementedException(); }
-			}
-
-			/// <summary>
-			/// Gets or sets the size of the step increment used by Step.
-			/// </summary>
-			/// <value>The size of the step.</value>
-			public int StepSize
-			{
-				get { throw new NotImplementedException(); }
-				set { throw new NotImplementedException(); }
-			}
-
-			/// <summary>
-			/// Gets or sets the minimum value of the progress bar.
-			/// </summary>
-			/// <value>The minimum.</value>
-			public int Minimum
-			{
-				get { throw new NotImplementedException(); }
-				set { throw new NotImplementedException(); }
-			}
-
-			/// <summary>
-			/// Gets or sets the maximum value of the progress bar.
-			/// </summary>
-			/// <value>The maximum.</value>
-			public int Maximum
-			{
-				get { throw new NotImplementedException(); }
-				set { throw new NotImplementedException(); }
-			}
-
-			/// <summary>
-			/// Gets or sets a value indicating whether the task has been canceled.
-			/// </summary>
-			/// <value><c>true</c> if canceled; otherwise, <c>false</c>.</value>
-			public bool Canceled
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			/// <summary>
-			/// Gets an object to be used for ensuring that required tasks are invoked on the main
-			/// UI thread.
-			/// </summary>
-			/// <exception cref="System.NotImplementedException"></exception>
-			public ISynchronizeInvoke SynchronizeInvoke
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			/// <summary>
-			/// Gets the progress as a form (used for message box owners, etc).
-			/// </summary>
-			public Form Form
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			public bool IsIndeterminate
-			{
-				get { throw new NotImplementedException(); }
-				set { throw new NotImplementedException(); }
-			}
-
-			public bool AllowCancel
-			{
-				get { throw new NotImplementedException(); }
-				set { throw new NotImplementedException(); }
-			}
-			#endregion
-
-		}
-		#endregion
-
 		private void ShowFinishLabel()
 		{
 			if ((ModifierKeys & Keys.Shift) == Keys.Shift)
@@ -555,7 +357,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpLinguaLinksImportLink");
 		}
 
-		private string BaseName(string fullName)
+		private static string BaseName(string fullName)
 		{
 			var result = string.Empty;
 			var temp = fullName.ToUpperInvariant();
@@ -586,25 +388,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (m_nextInput.Length > 19)
 			{
 				var nameTest = m_nextInput.Substring(m_nextInput.Length - 19, 19);
-				if (nameTest == "\\LLPhase1Output.xml")
+				switch (nameTest)
 				{
-					m_startPhase = 2;
-				}
-				else if (nameTest == "\\LLPhase2Output.xml")
-				{
-					m_startPhase = 3;
-				}
-				else if (nameTest == "\\LLPhase3Output.xml")
-				{
-					m_startPhase = 4;
-				}
-				else if (nameTest == "\\LLPhase4Output.xml")
-				{
-					m_startPhase = 5;
-				}
-				else if (nameTest == "\\LLPhase5Output.xml")
-				{
-					m_startPhase = 6;
+					case "\\LLPhase1Output.xml":
+						m_startPhase = 2;
+						break;
+					case "\\LLPhase2Output.xml":
+						m_startPhase = 3;
+						break;
+					case "\\LLPhase3Output.xml":
+						m_startPhase = 4;
+						break;
+					case "\\LLPhase4Output.xml":
+						m_startPhase = 5;
+						break;
+					case "\\LLPhase5Output.xml":
+						m_startPhase = 6;
+						break;
 				}
 			}
 
@@ -620,7 +420,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					var wsLLCode = string.Empty;
 					var wsName = string.Empty;
 					//getting name for a writing system given the ICU code.
-					var wsInfo = m_cache.ServiceLocator.WritingSystemManager.WritingSystems.Select(ws => new WsInfo(ws.DisplayLabel, ws.Id, string.IsNullOrEmpty(ws.LegacyMapping) ? "Windows1252<>Unicode" : ws.LegacyMapping)).ToDictionary(wsi => wsi.KEY);
+					var wsInfo = m_cache.ServiceLocator.WritingSystemManager.WritingSystems.Select(ws => new WsInfo(ws.DisplayLabel, ws.Id, string.IsNullOrEmpty(ws.LegacyMapping) ? "Windows1252<>Unicode" : ws.LegacyMapping)).ToDictionary(wsi => wsi.Id);
 
 					while ((input = streamReader.ReadLine()) != null)
 					{
@@ -634,8 +434,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 								if (pos >= 0)
 								{
 									inWritingSystem = true;
-									wsLLCode = "";
-									wsName = "";
+									wsLLCode = string.Empty;
+									wsName = string.Empty;
 									input = input.Length >= pos + 21 ? input.Substring(pos + 21, input.Length - pos - 21) : input.Substring(pos + 16);
 								}
 
@@ -678,7 +478,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 											wsFWCode = TsStringUtils.NormalizeToNFC(wsi.Id);
 										}
 
-										if (wsFWName == "")
+										if (wsFWName == string.Empty)
 										{
 											foreach (var kvp in wsInfo)
 											{
@@ -794,11 +594,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void listViewMapping_SelectedIndexChanged()
 		{
-			ListView.SelectedIndexCollection selIndexes = listViewMapping.SelectedIndices;
-			if (selIndexes.Count > 0)
-				btnModifyMapping.Enabled = true;
-			else
-				btnModifyMapping.Enabled = false;
+			var selIndexes = listViewMapping.SelectedIndices;
+			btnModifyMapping.Enabled = selIndexes.Count > 0;
 		}
 
 		private void listViewMapping_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -828,7 +625,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// only support 1
 			var lvItem = listViewMapping.Items[selIndex];
 			var app = m_propertyTable.GetValue<IApp>("App");
-			using (LexImportWizardLanguage dlg = new LexImportWizardLanguage(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app))
+			using (var dlg = new LexImportWizardLanguage(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app))
 			{
 				var llName = lvItem.Text;
 				var fwName = lvItem.SubItems[1].Text;
@@ -874,20 +671,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void label2_Click(object sender, System.EventArgs e)
 		{
-
 		}
 
 		private void btnImport_Click(object sender, EventArgs e)
 		{
 			// if the shift key is down, then just build the phaseNoutput files
-			bool runToCompletion = ((ModifierKeys & Keys.Shift) != Keys.Shift);
+			var runToCompletion = ((ModifierKeys & Keys.Shift) != Keys.Shift);
 			using (var dlg = new ProgressDialogWithTask(this))
 			{
 				dlg.AllowCancel = true;
 
-				LanguageMapping[] languageMappings = new LanguageMapping[listViewMapping.Items.Count];
-				for (int i = 0; i < listViewMapping.Items.Count; i++)
+				var languageMappings = new LanguageMapping[listViewMapping.Items.Count];
+				for (var i = 0; i < listViewMapping.Items.Count; i++)
+				{
 					languageMappings[i] = new LanguageMapping(listViewMapping.Items[i].SubItems);
+				}
 
 				dlg.Minimum = 0;
 				dlg.Maximum = 500;
@@ -899,8 +697,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// is processed when run a second time...
 					m_nextInput = m_LinguaLinksXmlFileName.Text;
 
-					var import = new LinguaLinksImport(m_cache, m_sTempDir, m_sRootDir);
-					import.NextInput = m_nextInput;
+					var import = new LinguaLinksImport(m_cache, m_sTempDir, m_sRootDir)
+					{
+						NextInput = m_nextInput
+					};
 					import.Error += OnImportError;
 					Debug.Assert(m_nextInput == m_LinguaLinksXmlFileName.Text);
 					// Ensure the idle time processing for change record doesn't cause problems
@@ -990,6 +790,28 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), s_helpTopic);
+		}
+
+		// class to contain 'ws' information to be put in combo boxes
+		private sealed class WsInfo
+		{
+			public WsInfo(string name, string id, string map)
+			{
+				Name = name;
+				Id = id;
+				Map = map;
+			}
+
+			public string Name { get; }
+
+			public string Id { get; }
+
+			public string Map { get; }
+
+			public override string ToString()
+			{
+				return Name;
+			}
 		}
 	}
 }

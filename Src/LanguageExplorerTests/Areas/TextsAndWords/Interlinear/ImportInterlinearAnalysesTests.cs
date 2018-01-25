@@ -27,12 +27,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 	{
 		private MemoryStream m_Stream;
 
-		private LinguaLinksImport.ImportInterlinearOptions CreateImportInterlinearOptions(string xml)
+		private ImportInterlinearOptions CreateImportInterlinearOptions(string xml)
 		{
 			m_Stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray()));
-			return new LinguaLinksImport.ImportInterlinearOptions
+			return new ImportInterlinearOptions
 				{
-					AnalysesLevel = LinguaLinksImport.ImportAnalysesLevel.WordGloss,
+					AnalysesLevel = ImportAnalysesLevel.WordGloss,
 
 					BirdData = m_Stream,
 					Progress = new DummyProgressDlg(),
@@ -750,8 +750,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
-				LinguaLinksImport.ImportAnalysesLevel.WordGloss));
+				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 		}
 
 		[Test]
@@ -771,8 +770,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
-				LinguaLinksImport.ImportAnalysesLevel.WordGloss));
+				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 
 			var wordsRepo = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			var wff1 = wordsRepo.GetMatchingWordform(wsKal.Handle, "glossedonce");
@@ -805,13 +803,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			// First import
 			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
-				LinguaLinksImport.ImportAnalysesLevel.WordGloss));
+				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 
 			// Second Import
 			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
-				LinguaLinksImport.ImportAnalysesLevel.WordGloss));
+				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 
 			var wordsRepo = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			var wff1 = wordsRepo.GetMatchingWordform(wsKal.Handle, "glossedonce");
@@ -843,8 +839,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
-				LinguaLinksImport.ImportAnalysesLevel.WordGloss));
+				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 
 			var wordsRepo = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			var wff1 = wordsRepo.GetMatchingWordform(wsKal.Handle, "glossedtwice");
@@ -879,13 +874,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			// First import
 			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
-				LinguaLinksImport.ImportAnalysesLevel.WordGloss));
+				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 
 			// Second import
 			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
-				LinguaLinksImport.ImportAnalysesLevel.WordGloss));
+				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 
 			var wordsRepo = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			var wff1 = wordsRepo.GetMatchingWordform(wsKal.Handle, "glossedtwice");
@@ -918,8 +911,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
-				LinguaLinksImport.ImportAnalysesLevel.WordGloss));
+				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 
 			var wordsRepo = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			var wff1 = wordsRepo.GetMatchingWordform(wsKal.Handle, "support a phrase");
@@ -951,12 +943,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			// First Import
 			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
-				LinguaLinksImport.ImportAnalysesLevel.WordGloss));
+				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 			// Second Import
 			Assert.DoesNotThrow(() => li.ImportWordsFrag(
-				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())),
-				LinguaLinksImport.ImportAnalysesLevel.WordGloss));
+				() => new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())), ImportAnalysesLevel.WordGloss));
 
 			var wordsRepo = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			var wff1 = wordsRepo.GetMatchingWordform(wsKal.Handle, "support a phrase");

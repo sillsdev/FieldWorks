@@ -63,9 +63,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		#endregion Data members
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		public TryAWordDlg()
 		{
 			//
@@ -104,6 +102,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
+		#endregion
+
+		#region Implementation of IFlexComponent
+
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -125,16 +127,20 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_cache = PropertyTable.GetValue<LcmCache>("cache");
 			m_parserMenuManager = parserMenuManager;
 
-			Text = m_cache.ProjectId.UiName + " - " + Text;
+			Text = $@"{m_cache.ProjectId.UiName} - {Text}";
 			SetRootSite();
 			SetFontInfo();
 			// restore window location and size after setting up the form textbox, because it might adjust size of
 			// window causing the window to grow every time it is opened
 			m_persistProvider.RestoreWindowSettings(PersistProviderID, this);
 			if (wordform == null)
+			{
 				GetLastWordUsed();
+			}
 			else
+			{
 				SetWordToUse(wordform.Form.VernacularDefaultWritingSystem.Text);
+			}
 
 			m_webPageInteractor = new WebPageInteractor(m_htmlControl, Publisher, m_cache, m_wordformTextBox);
 
@@ -167,13 +173,17 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_sandboxPanel.Controls.Add(m_rootsite);
 			m_rootsite.SizeChanged += m_rootsite_SizeChanged;
 			if (m_sandboxPanel.Height != m_rootsite.Height)
+			{
 				m_sandboxPanel.Height = m_rootsite.Height;
+			}
 		}
 
 		private void m_rootsite_SizeChanged(object sender, EventArgs e)
 		{
 			if (m_sandboxPanel.Height != m_rootsite.Height)
+			{
 				m_sandboxPanel.Height = m_rootsite.Height;
+			}
 		}
 
 		private string GetString(string id)
@@ -184,11 +194,11 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private void InitHtmlControl()
 		{
 			m_htmlControl = new HtmlControl
-				{
-					Location = new Point(0, m_resultsLabel.Bottom + 1),
-					Size = new Size(m_resultsPanel.Width, m_resultsPanel.Height - (m_resultsLabel.Height + 1)),
-					Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right
-				};
+			{
+				Location = new Point(0, m_resultsLabel.Bottom + 1),
+				Size = new Size(m_resultsPanel.Width, m_resultsPanel.Height - (m_resultsLabel.Height + 1)),
+				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right
+			};
 			// Setting the Dock to fill doesn't work, as we lose the top of the HtmlControl to the
 			// label control at the top of the panel.  See LT-7446 for the worst case scenario (120dpi).
 			// So, set the location and size of the HTML control, and anchor it to all four sides of the
@@ -203,7 +213,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			// Set writing system factory and code for the two edit boxes.
 			m_wordformTextBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 			m_wordformTextBox.WritingSystemCode = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
-			m_wordformTextBox.Text = "";
+			m_wordformTextBox.Text = string.Empty;
 			m_wordformTextBox.AdjustForStyleSheet(this, m_wordPanel, PropertyTable);
 		}
 
@@ -211,7 +221,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			var word = PropertyTable.GetValue<string>("TryAWordDlg-lastWordToTry");
 			if (word != null)
+			{
 				SetWordToUse(word.Trim());
+			}
 		}
 
 		private void SetWordToUse(string word)
@@ -228,7 +240,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -239,7 +253,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -406,17 +422,20 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			// remember last word used, if possible
 			PropertyTable.SetProperty("TryAWordDlg-lastWordToTry", m_wordformTextBox.Text.Trim(), SettingsGroup.LocalSettings, true, false);
 			m_persistProvider.PersistWindowSettings(PersistProviderID, this);
-			if (m_parserMenuManager.Connection != null)
+			if (m_parserMenuManager.Connection == null)
 			{
-				m_parserMenuManager.Connection.TryAWordDialogIsRunning = false;
-				m_parserMenuManager.DisconnectFromParser();
+				return;
 			}
+			m_parserMenuManager.Connection.TryAWordDialogIsRunning = false;
+			m_parserMenuManager.DisconnectFromParser();
 		}
 
 		private void m_wordformTextBox_TextChanged(object sender, EventArgs e)
 		{
 			if (m_procesingTextChange)
+			{
 				return;
+			}
 			m_procesingTextChange = true;
 			try
 			{
@@ -433,29 +452,33 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private void UpdateSandboxWordform()
 		{
 			if (m_rootsite != null)
+			{
 				m_rootsite.WordForm = m_wordformTextBox.Tss;
+			}
 		}
 
 		private void m_tryItButton_Click(object sender, EventArgs e)
 		{
 			// get a connection, if one does not exist
-			if (m_parserMenuManager.ConnectToParser())
+			if (!m_parserMenuManager.ConnectToParser())
 			{
-				string sWord = CleanUpWord();
-				// check to see if limiting trace and, if so, if all morphs have msas
-				int[] selectedTraceMorphs;
-				if (GetSelectedTraceMorphs(out selectedTraceMorphs))
-				{
-					// Display a "processing" message (and include info on how to improve the results)
-					var uri = new Uri(Path.Combine(TransformPath, "WhileTracing.htm"));
-					m_htmlControl.URL = uri.AbsoluteUri;
-					sWord = sWord.Replace(' ', '.'); // LT-7334 to allow for phrases; do this at the last minute
-					m_parserMenuManager.Connection.TryAWordDialogIsRunning = true; // make sure this is set properly
-					m_tryAWordResult = m_parserMenuManager.Connection.BeginTryAWord(sWord, DoTrace, selectedTraceMorphs);
-					// waiting for result, so disable Try It button
-					m_tryItButton.Enabled = false;
-				}
+				return;
 			}
+			var sWord = CleanUpWord();
+			// check to see if limiting trace and, if so, if all morphs have msas
+			int[] selectedTraceMorphs;
+			if (!GetSelectedTraceMorphs(out selectedTraceMorphs))
+			{
+				return;
+			}
+			// Display a "processing" message (and include info on how to improve the results)
+			var uri = new Uri(Path.Combine(TransformPath, "WhileTracing.htm"));
+			m_htmlControl.URL = uri.AbsoluteUri;
+			sWord = sWord.Replace(' ', '.'); // LT-7334 to allow for phrases; do this at the last minute
+			m_parserMenuManager.Connection.TryAWordDialogIsRunning = true; // make sure this is set properly
+			m_tryAWordResult = m_parserMenuManager.Connection.BeginTryAWord(sWord, DoTrace, selectedTraceMorphs);
+			// waiting for result, so disable Try It button
+			m_tryItButton.Enabled = false;
 		}
 
 		private void CreateResultPage(XDocument result)
@@ -506,7 +529,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void TrimWord()
 		{
-			string sTemp = m_wordformTextBox.Text.Trim();
+			var sTemp = m_wordformTextBox.Text.Trim();
 			if (sTemp.Length != m_wordformTextBox.Text.Length)
 			{
 				m_wordformTextBox.Text = sTemp;
@@ -516,17 +539,17 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private bool GetSelectedTraceMorphs(out int[] selectedTraceMorphs)
 		{
 			selectedTraceMorphs = null;
-			if (DoTrace && DoManualParse)
+			if (!DoTrace || !DoManualParse)
 			{
-				selectedTraceMorphs = m_rootsite.MsaList.ToArray();
-				if (selectedTraceMorphs.Any(hvo => hvo == 0))
-				{
-					MessageBox.Show(GetString("NoLexInfoForMorphsMessage"), GetString("NoLexInfoForMorphsCaption"),
-						MessageBoxButtons.OK, MessageBoxIcon.Information);
-					return false;
-				}
+				return true;
 			}
-			return true;
+			selectedTraceMorphs = m_rootsite.MsaList.ToArray();
+			if (selectedTraceMorphs.All(hvo => hvo != 0))
+			{
+				return true;
+			}
+			MessageBox.Show(GetString("NoLexInfoForMorphsMessage"), GetString("NoLexInfoForMorphsCaption"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+			return false;
 		}
 
 		/// <summary>
@@ -536,8 +559,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		private void RemoveExtraDashes()
 		{
-			string s = m_wordformTextBox.Text;
-			int i = s.IndexOf("--");
+			var s = m_wordformTextBox.Text;
+			var i = s.IndexOf("--");
 			while (i > -1)
 			{
 				m_wordformTextBox.Text = s.Replace("--", "-");
@@ -550,7 +573,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private void m_timer_Tick(object sender, EventArgs e)
 		{
 			if (m_parserMenuManager == null)
+			{
 				return;
+			}
 
 			m_statusLabel.Text = m_parserMenuManager.ParserActivityString;
 
@@ -559,7 +584,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_statusLabel.Text = ParserStoppedMessage();
 				return;
 			}
-			Exception ex = m_parserMenuManager.Connection.UnhandledException;
+			var ex = m_parserMenuManager.Connection.UnhandledException;
 			if (ex != null)
 			{
 				m_parserMenuManager.DisconnectFromParser();
@@ -597,26 +622,19 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_tryItButton_Click(null, null);
 			}
 			else
-				base.OnKeyDown(e);
+			{
+				OnKeyDown(e);
+			}
 		}
 
-		private bool DoTrace
-		{
-			get { return m_doTraceCheckBox.Checked; }
-		}
+		private bool DoTrace => m_doTraceCheckBox.Checked;
 
-		private bool DoManualParse
-		{
-			get { return m_doSelectMorphsCheckBox.Checked; }
-		}
+		private bool DoManualParse => m_doSelectMorphsCheckBox.Checked;
 
 		/// <summary>
 		/// Path to transforms
 		/// </summary>
-		private static string TransformPath
-		{
-			get { return FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer/Configuration/Words/Analyses/TraceParse"); }
-		}
+		private static string TransformPath => FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer/Configuration/Words/Analyses/TraceParse");
 
 		private void m_buttonHelp_Click(object sender, EventArgs e)
 		{
@@ -672,11 +690,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <param name="e"></param>
 		protected override void OnLoad(EventArgs e)
 		{
-			Size szOld = Size;
+			var szOld = Size;
 			base.OnLoad(e);
 			if (Size != szOld)
+			{
 				Size = szOld;
+			}
 		}
 	}
-
 }

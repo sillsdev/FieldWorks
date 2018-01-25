@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -52,10 +52,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary />
 		public override bool Accept(IManyOnePathSortItem item)
 		{
-			int OccurrenceCount = m_sda.get_IntProp(item.RootObjectHvo, m_flid);
+			var OccurrenceCount = m_sda.get_IntProp(item.RootObjectHvo, m_flid);
 			if (OccurrenceCount != 0)
+			{
 				return true; // occurs in our corpus, we want to show it.
-			IWfiWordform wf = (IWfiWordform)item.RootObjectUsing(m_cache);
+			}
+			var wf = (IWfiWordform)item.RootObjectUsing(m_cache);
 			// Otherwise we want it only if it does NOT occur somewhere else.
 			return wf.FullConcordanceCount == 0;
 		}
