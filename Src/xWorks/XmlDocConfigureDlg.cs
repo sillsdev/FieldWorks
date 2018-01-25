@@ -1926,18 +1926,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 			ltn.ShowSingleGramInfoFirst = m_chkShowSingleGramInfoFirst.Checked;
 			// Set the information on the child grammatical info node as well.
-			foreach (TreeNode n in ltn.Nodes)
+			foreach (var tn in ltn.Nodes.Cast<LayoutTreeNode>().Where(n => n.ShowGramInfoConfig))
 			{
-				LayoutTreeNode tn = n as LayoutTreeNode;
-				if (tn != null && tn.ShowGramInfoConfig)
-				{
-					tn.ShowSingleGramInfoFirst = m_chkShowSingleGramInfoFirst.Checked;
-					break;
-				}
+				tn.ShowSingleGramInfoFirst = m_chkShowSingleGramInfoFirst.Checked;
 			}
 			ltn.ShowSenseAsPara = m_cfgSenses.DisplaySenseInPara;
 			ltn.SenseParaStyle = m_cfgSenses.SenseParaStyle;
-			//ltn.SingleSenseStyle = m_cfgSenses.SingleSenseStyle;
 		}
 
 		private void StoreGramInfoData(LayoutTreeNode ltn)

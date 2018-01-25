@@ -1904,7 +1904,7 @@ namespace SIL.FieldWorks.IText
 					try
 					{
 						m_caches.DataAccess.SetMultiStringAlt(hvoSbForm, ktagSbNamedObjName, ws,
-							ws >= 0 ? defFormReal.Form.get_String(ws) : WritingSystemServices.GetMagicStringAlt(Cache, ws, defFormReal.Hvo, MoFormTags.kflidForm));
+							WritingSystemServices.GetMagicStringAlt(Cache, ws, defFormReal.Hvo, MoFormTags.kflidForm));
 					}
 					catch (Exception e)
 					{
