@@ -1158,15 +1158,14 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static bool SafelyReportException(Exception error, IFwMainWnd parent, bool isLethal)
 		{
-				// Be very, very careful about changing stuff here. Code here MUST not throw exceptions,
-				// even when the application is in a crashed state. For example, error reporting failed
-				// before I added the static registry keys, because getting App.SettingsKey failed somehow.
-				RegistryKey appKey = FwRegistryHelper.FieldWorksRegistryKey;
-			if (parent != null && parent.App != null && parent.App == s_flexApp && s_flexAppKey != null)
-					appKey = s_flexAppKey;
-				return ErrorReporter.ReportException(error, appKey, SupportEmail,
-					parent as Form, isLethal);
-			}
+			// Be very, very careful about changing stuff here. Code here MUST not throw exceptions,
+			// even when the application is in a crashed state. For example, error reporting failed
+			// before I added the static registry keys, because getting App.SettingsKey failed somehow.
+			var appKey = FwRegistryHelper.FieldWorksRegistryKey;
+			if (parent?.App != null && parent.App == s_flexApp && s_flexAppKey != null)
+				appKey = s_flexAppKey;
+			return ErrorReporter.ReportException(error, appKey, SupportEmail, parent as Form, isLethal);
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

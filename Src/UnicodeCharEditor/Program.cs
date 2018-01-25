@@ -1,12 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Program.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Diagnostics;
@@ -14,8 +8,10 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
@@ -34,56 +30,86 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		[STAThread]
 		static void Main(string[] args)
 		{
-			// needed to access proper registry values
-			FwRegistryHelper.Initialize();
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
-			bool fBadArg = false;
-			bool fInstall = false;
-			for (int i = 0; i < args.Length; ++i)
+			Form window = null;
+			var fIsCleaningUp = false;
+			try
 			{
-				if (args[i] == "-i" || args[i] == "-install" || args[i] == "--install")
-					fInstall = true;
-				else if (args[i] == "--cleanup")
+				// needed to access proper registry values
+				FwRegistryHelper.Initialize();
+				Application.EnableVisualStyles();
+				Application.SetCompatibleTextRenderingDefault(false);
+				var fBadArg = false;
+				var fInstall = false;
+				for (int i = 0; i < args.Length; ++i)
 				{
-					if (i + 1 >= args.Length)
-						return;
-
-					var iterationCount = 0;
-					var pid = int.Parse(args[i + 1]);
-					while (Process.GetProcesses().Any(p => p.Id == pid) && iterationCount < 300)
+					if (args[i] == "-i" || args[i] == "-install" || args[i] == "--install")
+						fInstall = true;
+					else if (args[i] == "--cleanup")
 					{
-						// wait 1s then try again
-						Thread.Sleep(1000);
-						iterationCount++;
+						fIsCleaningUp = true;
+						if (i + 1 >= args.Length)
+							return;
+
+						var iterationCount = 0;
+						var pid = int.Parse(args[i + 1]);
+						while (Process.GetProcesses().Any(p => p.Id == pid) && iterationCount < 300)
+						{
+							// wait 1s then try again
+							Thread.Sleep(1000);
+							iterationCount++;
+						}
+
+						if (iterationCount < 300)
+							DeleteTemporaryFiles();
+						return;
 					}
-					if (iterationCount < 300)
-						DeleteTemporaryFiles();
-					return;
+					else
+						fBadArg = true;
+				}
+
+				if (fInstall)
+				{
+					PUAMigrator migrator = new PUAMigrator();
+					migrator.Run();
+				}
+				else if (fBadArg)
+				{
+					MessageBox.Show("Only one command line argument is recognized:" + Environment.NewLine +
+									"\t-i means to install the custom character definitions (as a command line program).",
+						"Unicode Character Editor");
 				}
 				else
-					fBadArg = true;
-			}
-			if (fInstall)
-			{
-				PUAMigrator migrator = new PUAMigrator();
-				migrator.Run();
-			}
-			else if (fBadArg)
-			{
-				MessageBox.Show("Only one command line argument is recognized:" + Environment.NewLine +
-					"\t-i means to install the custom character definitions (as a command line program).",
-					"Unicode Character Editor");
-			}
-			else
-			{
-				using (var window = new CharEditorWindow())
+				{
+					window = new CharEditorWindow();
 					Application.Run(window);
+				}
 			}
-
-			LogFile.Release();
-
-			StartCleanup();
+			catch (ApplicationException ex)
+			{
+				MessageBox.Show(ex.Message, "Unicode Character Properties Editor");
+			}
+			catch (Exception ex)
+			{
+				// Be very, very careful about changing stuff here. Code here MUST not throw exceptions,
+				// even when the application is in a crashed state.
+				try
+				{
+					ErrorReporter.ReportException(ex, null, null, window, true);
+				}
+				catch
+				{
+					MessageBox.Show(ex.Message, "Unicode Character Properties Editor");
+				}
+			}
+			finally
+			{
+				window?.Dispose();
+				LogFile.Release();
+				if (!fIsCleaningUp)
+				{
+					StartCleanup();
+				}
+			}
 		}
 
 		private static void StartCleanup()
