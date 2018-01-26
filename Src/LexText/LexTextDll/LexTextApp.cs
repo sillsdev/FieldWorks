@@ -334,15 +334,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 				case "CmdImportInterlinearSfm":
 				case "CmdImportWordsAndGlossesSfm":
 				case "CmdImportInterlinearData":
-					if (wndActive.PropTable.GetStringProperty("currentContentControl", null) == "concordance" || wndActive.PropTable.GetStringProperty("currentContentControl", null) == "concordance")
-
-					{
-						fEnabled = false;
-					}
-					else
-					{
-						fEnabled = area == "textsWords";
-					}
+					// LT-11998: importing texts in the Concordance tool can crash
+					fEnabled = area == "textsWords" && wndActive.PropTable.GetStringProperty("currentContentControl", null) != "concordance";
 					break;
 				case "CmdImportSFMNotebook":
 					fEnabled = area == "notebook";
