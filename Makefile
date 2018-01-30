@@ -190,6 +190,10 @@ clean: \
 	teckit-clean \
 	l10n-clean \
 	manpage-clean \
+	generated-clean
+
+generated-clean:
+	rm Build/FieldWorks.targets
 
 # IDLImp is a C# app, so there is no reason to re-create that during our build.
 # We should be able to just use the version in $(BUILD_ROOT)\Bin
