@@ -327,8 +327,10 @@
 				public static string ScriptMain()
 				{
 					// The types of these assemblies should stay public (as well as from the primary assembly FDO.dll)
-					var args = new[] { "$(dir-outputBase)/BasicUtils.dll", "$(dir-outputBase)/COMInterfaces.dll",
-						"$(dir-outputBase)/CoreImpl.dll" };
+					var args = new[] { "$(dir-outputBase)/BasicUtils.dll",
+						"$(dir-outputBase)/COMInterfaces.dll",
+						"$(dir-outputBase)/CoreImpl.dll",
+						"$(dir-outputBase)/Microsoft.Practices.ServiceLocation.dll" };
 					var filename = System.IO.Path.GetTempFileName();
 					using (var stream = new System.IO.StreamWriter(filename))
 					{
