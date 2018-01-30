@@ -42,8 +42,7 @@ namespace Paratext8Plugin
 
 		public IVerseRef MakeVerseRef(int bookNum, int i, int i1)
 		{
-			throw new NotImplementedException();
-			// return new PT8VerseRefWrapper(new VerseRef(bookNum, i, i1));
+			return new PT8VerseRefWrapper(new VerseRef(bookNum, i, i1));
 		}
 
 		public IScrText Get(string project)
@@ -59,8 +58,7 @@ namespace Paratext8Plugin
 		/// <summary/>
 		public ScriptureProvider.IScriptureProviderParserState GetParserState(IScrText ptProjectText, IVerseRef ptCurrBook)
 		{
-			throw new NotImplementedException();
-			//return new PT8ParserStateWrapper(new ScrParserState((ScrText)ptProjectText.CoreScrText, (VerseRef)ptCurrBook.CoreVerseRef));
+			return new PT8ParserStateWrapper(new ScrParserState((ScrText)ptProjectText.CoreScrText, (VerseRef)ptCurrBook.CoreVerseRef));
 		}
 
 		/// <summary/>
@@ -88,7 +86,7 @@ namespace Paratext8Plugin
 			ptParserState = scrParserState;
 		}
 
-		public IVerseRef VerseRef { get { throw new NotImplementedException(); /*return new PT8VerseRefWrapper(ptParserState.VerseRef);*/ } }
+		public IVerseRef VerseRef { get { return new PT8VerseRefWrapper(ptParserState.VerseRef); } }
 
 		public void UpdateState(List<IUsfmToken> ptBookTokens, int ptCurrentToken)
 		{

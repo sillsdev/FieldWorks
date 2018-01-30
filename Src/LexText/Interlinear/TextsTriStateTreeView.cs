@@ -54,7 +54,10 @@ namespace SIL.FieldWorks.IText
 				m_scr = m_cache.LanguageProject.TranslatedScriptureOA;
 				if (m_scr == null && m_associatedPtText != null)
 				{
-					m_scr = m_cache.ServiceLocator.GetInstance<IScriptureFactory>().Create();
+					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+					{
+						m_scr = m_cache.ServiceLocator.GetInstance<IScriptureFactory>().Create();
+					});
 				}
 				if (m_scr == null)
 				{
@@ -95,7 +98,8 @@ namespace SIL.FieldWorks.IText
 		/// ------------------------------------------------------------------------------------
 		private void LoadScriptureTexts()
 		{
-			if (!m_cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any())
+			if (!m_cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any() &&
+				!m_associatedPtText.AssociatedLexicalProject.ProjectId.Any())
 			{
 				return; // Noby home, so skip them.
 			}
@@ -647,6 +651,7 @@ namespace SIL.FieldWorks.IText
 			var haveSomethingToImport = NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
 				importSettings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, m_scriptureStylesheet, FwDirectoryFinder.TeStylesPath);
+				importSettings.RevertToSaved();
 				importSettings.ParatextScrProj = m_associatedPtText.Name;
 				importSettings.StartRef = new BCVRef(bookNum, 0, 0);
 				var chapter = m_associatedPtText.Versification.LastChapter(bookNum);
