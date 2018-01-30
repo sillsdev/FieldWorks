@@ -27,7 +27,6 @@ namespace LanguageExplorer.Areas.Lists
 		/// 'true' if we have made changes to an existing list's properties,
 		/// 'false' if no changes have been made.
 		/// </summary>
-		private bool m_fchangesMade;
 		private bool m_fnameChanged;
 		private bool m_fhierarchyChanged;
 		private bool m_fsortChanged;
@@ -45,7 +44,6 @@ namespace LanguageExplorer.Areas.Lists
 			: base(propertyTable, publisher, cache)
 		{
 			m_curList = possList;
-			m_fchangesMade = false;
 			Text = ListResources.ksConfigureList;
 			s_helpTopic = "khtpConfigureList";
 		}
@@ -71,7 +69,6 @@ namespace LanguageExplorer.Areas.Lists
 
 		private void ResetAllFlags()
 		{
-			m_fchangesMade = false;
 			m_fnameChanged = false;
 			m_fhierarchyChanged = false;
 			m_fsortChanged = false;
@@ -88,84 +85,56 @@ namespace LanguageExplorer.Areas.Lists
 			{
 				case WritingSystemServices.kwsAnal:
 				case WritingSystemServices.kwsAnals:
+				case WritingSystemServices.kwsLim:
 					SelectedWs = WritingSystemServices.kwsAnals;
 					break;
 				case WritingSystemServices.kwsVern:
 				case WritingSystemServices.kwsVerns:
 					SelectedWs = WritingSystemServices.kwsVerns;
 					break;
-				case WritingSystemServices.kwsLim:
-					SelectedWs = WritingSystemServices.kwsAnals;
-					break;
 				default:
-					SelectedWs = m_curList.WsSelector;
+					SelectedWs = curWs;
 					break;
 			}
 		}
 
 		protected override void m_chkBoxHierarchy_CheckedChanged(object sender, EventArgs e)
 		{
-			if (m_finSetup || m_curList == null)
-			{
-				return;
-			}
 			m_fhierarchyChanged = SupportsHierarchy != (m_curList.Depth > 1);
-			CheckFlags();
 		}
 
 		protected override void m_chkBoxSortBy_CheckedChanged(object sender, EventArgs e)
 		{
-			if (m_finSetup || m_curList == null)
-			{
-				return;
-			}
 			m_fsortChanged = SortByName != m_curList.IsSorted;
-			CheckFlags();
 		}
 
 		protected override void m_chkBoxDuplicate_CheckedChanged(object sender, EventArgs e)
 		{
-			if (m_finSetup || m_curList == null)
-			{
-				return;
-			}
 			m_fduplicateChanged = AllowDuplicate == m_curList.PreventDuplicates;
-			CheckFlags();
 		}
 
 		protected override void m_wsCombo_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (m_finSetup || m_curList == null)
-			{
-				return;
-			}
 			m_fwsChanged = SelectedWs != m_curList.WsSelector;
-			CheckFlags();
 		}
 
 		protected override void m_displayByCombo_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (m_finSetup || m_curList == null)
-			{
-				return;
-			}
 			m_fdisplayByChanged = ((int) DisplayBy) != m_curList.DisplayOption;
-			CheckFlags();
 		}
 
-		private void CheckFlags()
+		private bool WereChangesMade()
 		{
-			m_fchangesMade = m_fnameChanged | m_fhierarchyChanged | m_fsortChanged | m_fduplicateChanged
+			return m_fnameChanged | m_fhierarchyChanged | m_fsortChanged | m_fduplicateChanged
 							 | m_fwsChanged | m_fdisplayByChanged | m_fdescriptionChanged;
 		}
 
 		protected override void DoOKAction()
 		{
 			// LabeledMultiStringControls don't seem to have a valid TextChanged Event, so we have to simulate one.
-			m_fnameChanged = HasListNameChanged(m_curList);
-			m_fdescriptionChanged = HasDescriptionChanged(m_curList);
-			CheckFlags();
-			if (!m_fchangesMade)
+			m_fnameChanged = HasMsContentChanged(m_curList.Name, m_lmscListName);
+			m_fdescriptionChanged = HasMsContentChanged(m_curList.Description, m_lmscDescription);
+			if (!WereChangesMade())
 			{
 				return; // Nothing to do!
 			}
@@ -205,25 +174,13 @@ namespace LanguageExplorer.Areas.Lists
 					var curWs = m_lmscListName.Ws(i);
 					var emptyStr = TsStringUtils.EmptyString(curWs).Text;
 					var lmscName = m_lmscListName.Value(curWs).Text;
-					if (repo.AllInstances().Any(list => list != m_curList
-														&& list.Name.get_String(curWs).Text != emptyStr
-														&& list.Name.get_String(curWs).Text == lmscName))
+					if (lmscName != emptyStr && repo.AllInstances().Any(list => list != m_curList && list.Name.get_String(curWs).Text == lmscName))
 					{
 						return true;
 					}
 				}
 				return false;
 			}
-		}
-
-		private bool HasDescriptionChanged(ICmMajorObject list)
-		{
-			return HasMsContentChanged(list.Description, m_lmscDescription);
-		}
-
-		private bool HasListNameChanged(ICmMajorObject list)
-		{
-			return HasMsContentChanged(list.Name, m_lmscListName);
 		}
 
 		private static bool HasMsContentChanged(IMultiAccessorBase oldStrings, LabeledMultiStringControl msControl)

@@ -27,8 +27,6 @@ namespace LanguageExplorer.Areas.Lists
 		private HelpProvider m_helpProvider;
 		protected readonly IPropertyTable m_propertyTable;
 		protected readonly IPublisher m_publisher;
-		private LcmCache m_cache;
-		protected bool m_finSetup;
 		protected LabeledMultiStringControl m_lmscListName;
 		protected LabeledMultiStringControl m_lmscDescription;
 		private IVwStylesheet m_stylesheet;
@@ -43,12 +41,11 @@ namespace LanguageExplorer.Areas.Lists
 			Guard.AgainstNull(publisher, nameof(publisher));
 			Guard.AgainstNull(cache, nameof(cache));
 
-			m_finSetup = true;
 			InitializeComponent();
 			StartPosition = FormStartPosition.CenterParent;
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
-			m_cache = cache;
+			Cache = cache;
 			m_btnOK.Enabled = false;
 
 			InitializeWSCombo();
@@ -64,7 +61,13 @@ namespace LanguageExplorer.Areas.Lists
 			m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			InitializeMultiStringControls();
 			InitializeDialogFields();
-			m_finSetup = false;
+			// Register "changed" event handlers after loading so they don't fire as we populate the dialog
+			m_wsCombo.SelectedIndexChanged += m_wsCombo_SelectedIndexChanged;
+			m_displayByCombo.SelectedIndexChanged += m_displayByCombo_SelectedIndexChanged;
+			m_chkBoxHierarchy.CheckedChanged += m_chkBoxHierarchy_CheckedChanged;
+			m_chkBoxSortBy.CheckedChanged += m_chkBoxSortBy_CheckedChanged;
+			m_chkBoxDuplicate.CheckedChanged += m_chkBoxDuplicate_CheckedChanged;
+
 		}
 
 		protected virtual void InitializeDialogFields()
@@ -324,7 +327,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// <summary>
 		/// LCM cache.
 		/// </summary>
-		protected LcmCache Cache => m_cache;
+		protected LcmCache Cache { get; }
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
@@ -357,7 +360,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 			{
@@ -476,46 +479,26 @@ namespace LanguageExplorer.Areas.Lists
 
 		protected virtual void m_wsCombo_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (m_finSetup)
-			{
-				return;
-			}
 			// editing subclass needs to know if this changed.
 		}
 
 		protected virtual void m_displayByCombo_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (m_finSetup)
-			{
-				return;
-			}
 			// editing subclass needs to know if this changed.
 		}
 
 		protected virtual void m_chkBoxHierarchy_CheckedChanged(object sender, EventArgs e)
 		{
-			if (m_finSetup)
-			{
-				return;
-			}
 			// editing subclass needs to know if this changed.
 		}
 
 		protected virtual void m_chkBoxSortBy_CheckedChanged(object sender, EventArgs e)
 		{
-			if (m_finSetup)
-			{
-				return;
-			}
 			// editing subclass needs to know if this changed.
 		}
 
 		protected virtual void m_chkBoxDuplicate_CheckedChanged(object sender, EventArgs e)
 		{
-			if (m_finSetup)
-			{
-				return;
-			}
 			// editing subclass needs to know if this changed.
 		}
 

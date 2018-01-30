@@ -57,14 +57,12 @@ namespace LanguageExplorer.Areas.Lists
 			resources.ApplyResources(this.m_chkBoxHierarchy, "m_chkBoxHierarchy");
 			this.m_chkBoxHierarchy.Name = "m_chkBoxHierarchy";
 			this.m_chkBoxHierarchy.UseVisualStyleBackColor = true;
-			this.m_chkBoxHierarchy.CheckedChanged += new System.EventHandler(this.m_chkBoxHierarchy_CheckedChanged);
 			//
 			// m_chkBoxSortBy
 			//
 			resources.ApplyResources(this.m_chkBoxSortBy, "m_chkBoxSortBy");
 			this.m_chkBoxSortBy.Name = "m_chkBoxSortBy";
 			this.m_chkBoxSortBy.UseVisualStyleBackColor = true;
-			this.m_chkBoxSortBy.CheckedChanged += new System.EventHandler(this.m_chkBoxSortBy_CheckedChanged);
 			//
 			// m_chkBoxDuplicate
 			//
@@ -73,7 +71,6 @@ namespace LanguageExplorer.Areas.Lists
 			this.m_chkBoxDuplicate.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.m_chkBoxDuplicate.Name = "m_chkBoxDuplicate";
 			this.m_chkBoxDuplicate.UseVisualStyleBackColor = true;
-			this.m_chkBoxDuplicate.CheckedChanged += new System.EventHandler(this.m_chkBoxDuplicate_CheckedChanged);
 			//
 			// label3
 			//
@@ -86,7 +83,6 @@ namespace LanguageExplorer.Areas.Lists
 			resources.ApplyResources(this.m_wsCombo, "m_wsCombo");
 			this.m_wsCombo.FormattingEnabled = true;
 			this.m_wsCombo.Name = "m_wsCombo";
-			this.m_wsCombo.SelectedIndexChanged += new System.EventHandler(this.m_wsCombo_SelectedIndexChanged);
 			this.m_wsCombo.DropDownStyle = ComboBoxStyle.DropDownList;
 			//
 			// label4
@@ -100,7 +96,6 @@ namespace LanguageExplorer.Areas.Lists
 			resources.ApplyResources(this.m_displayByCombo, "m_displayByCombo");
 			this.m_displayByCombo.FormattingEnabled = true;
 			this.m_displayByCombo.Name = "m_displayByCombo";
-			this.m_displayByCombo.SelectedIndexChanged += new System.EventHandler(this.m_displayByCombo_SelectedIndexChanged);
 			this.m_displayByCombo.DropDownStyle = ComboBoxStyle.DropDownList;
 			//
 			// label5

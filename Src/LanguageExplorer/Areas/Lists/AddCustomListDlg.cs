@@ -13,8 +13,6 @@ namespace LanguageExplorer.Areas.Lists
 {
 	public class AddCustomListDlg : CustomListDlg
 	{
-		private ICmPossibilityList _newList;
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:AddCustomListDlg"/> class.
 		/// </summary>
@@ -22,24 +20,13 @@ namespace LanguageExplorer.Areas.Lists
 			: base(propertyTable, publisher, cache)
 		{
 			s_helpTopic = "khtpNewCustomList";
-			_newList = null;
+			NewList = null;
 		}
 
 		/// <summary>
 		/// Get the new list, if it was created, or null.
 		/// </summary>
-		public ICmPossibilityList NewList => _newList;
-
-		protected override void DoOKAction()
-		{
-			if (IsListNameEmpty)
-			{
-				MessageBox.Show(ListResources.ksProvideValidListName, ListResources.ksNoListName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				_newList = null;
-				return;
-			}
-			CreateList();
-		}
+		public ICmPossibilityList NewList { get; private set; }
 
 		protected override void InitializeDialogFields()
 		{
@@ -49,19 +36,17 @@ namespace LanguageExplorer.Areas.Lists
 			EnableOKButton(true);
 		}
 
-		/// <summary>
-		/// Creates the new Custom list.
-		/// </summary>
-		private void CreateList()
+		protected override void DoOKAction()
 		{
+			if (IsListNameEmpty)
+			{
+				MessageBox.Show(ListResources.ksProvideValidListName, ListResources.ksNoListName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				NewList = null;
+				return;
+			}
 			if (m_publisher == null || Cache == null)
 			{
 				throw new ArgumentException("Don't call this without a publisher and a cache.");
-			}
-			if (IsListNameEmpty)
-			{
-				// shouldn't ever get here because OK btn isn't enabled until name has a non-empty value
-				throw new ArgumentException("Please provide a valid list name.");
 			}
 
 			// This checks that we aren't creating a list with the same name as another list
@@ -77,18 +62,18 @@ namespace LanguageExplorer.Areas.Lists
 			{
 				var ws = Cache.DefaultUserWs; // get default ws
 				var listName = m_lmscListName.Value(ws);
-				_newList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned(listName.Text, ws);
-				SetAllMultiAlternatives(_newList.Name, m_lmscListName);
+				NewList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned(listName.Text, ws);
+				SetAllMultiAlternatives(NewList.Name, m_lmscListName);
 
 				// Set various properties of CmPossibilityList
-				_newList.DisplayOption = (int)DisplayBy;
-				_newList.PreventDuplicates = !AllowDuplicate;
-				_newList.IsSorted = SortByName;
+				NewList.DisplayOption = (int)DisplayBy;
+				NewList.PreventDuplicates = !AllowDuplicate;
+				NewList.IsSorted = SortByName;
 				var wss = SelectedWs;
-				_newList.WsSelector = wss;
-				_newList.IsVernacular = wss == WritingSystemServices.kwsVerns || wss == WritingSystemServices.kwsVernAnals;
-				_newList.Depth = SupportsHierarchy ? 127 : 1;
-				SetAllMultiAlternatives(_newList.Description, m_lmscDescription);
+				NewList.WsSelector = wss;
+				NewList.IsVernacular = wss == WritingSystemServices.kwsVerns || wss == WritingSystemServices.kwsVernAnals;
+				NewList.Depth = SupportsHierarchy ? 127 : 1;
+				SetAllMultiAlternatives(NewList.Description, m_lmscDescription);
 			});
 		}
 	}
