@@ -127,6 +127,7 @@
     <Compile Include="LocalizeFieldWorks.cs" />
     <Compile Include="FwBuildTasksTests\LocalizeFieldWorksTests.cs" />
     <Compile Include="Make.cs" />
+    <Compile Include="ParseVersionNumbers.cs" />
     <Compile Include="RegFree.cs" />
     <Compile Include="RegFreeCreator.cs" />
     <Compile Include="RegHelper.cs" />

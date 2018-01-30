@@ -54,6 +54,7 @@
   <Import Project="Windows.targets"/>
   <Import Project="FieldWorks.targets" Condition="Exists('FieldWorks.targets')"/>
   <Import Project="mkall.targets"/>
+  <Import Project="Installer.targets"/>
   <Import Project="Localize.targets"/>
   <Import Project="NuGet.targets"/>
 </Project>
