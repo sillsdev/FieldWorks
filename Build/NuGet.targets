@@ -4,9 +4,9 @@
 		<SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">$(MSBuildProjectDirectory)/../</SolutionDir>
 		<SolutionPath Condition="$(SolutionPath) == '' Or $(SolutionPath) == '*Undefined*'">$(SolutionDir)/$(Solution)</SolutionPath>
 		<NuGetUrl>https://nuget.org/NuGet.exe</NuGetUrl>
-
+		<NuGetToolsPath>$(MSBuildThisFileDirectory)</NuGetToolsPath>
 		<!-- NuGet command -->
-		<NuGetExePath>$(NuGetToolsPath)NuGet.exe</NuGetExePath>
+		<NuGetExePath Condition=" '$(NuGetExePath)' == '' ">$(NuGetToolsPath)/NuGet.exe</NuGetExePath>
 		<NuGetCommand Condition="'$(OS)' == 'Windows_NT'">"$(NuGetExePath)"</NuGetCommand>
 		<!--
 		NuGet has trouble when Ubuntu 16.04 pbuilder sets the home directory to /nonexistent, and
@@ -27,16 +27,7 @@
 	</ItemGroup>
 
 	<PropertyGroup>
-		<NuGetToolsPath>$(MSBuildThisFileDirectory)</NuGetToolsPath>
-		<PackagesConfig>$(ProjectDir)packages.config</PackagesConfig>
-
-		<!-- NuGet command -->
-		<NuGetExePath Condition=" '$(NuGetExePath)' == '' ">$(NuGetToolsPath)/NuGet.exe</NuGetExePath>
-
 		<PackageSources Condition=" $(PackageSources) == '' ">@(PackageSource)</PackageSources>
-
-		<NuGetCommand Condition=" '$(OS)' == 'Windows_NT'">"$(NuGetExePath)"</NuGetCommand>
-		<NuGetCommand Condition=" '$(OS)' != 'Windows_NT' ">mono --runtime=v4.0.30319 $(NuGetExePath)</NuGetCommand>
 	</PropertyGroup>
 
 	<Target Name="CheckPrerequisites">
