@@ -88,7 +88,7 @@ version="1.0">
   <xsl:template match="phrase">
 	  <text:p text:style-name="Interlin_Words">
 		<draw:frame text:anchor-type="as-char" draw:style-name="Interlin_Frame_Number" fo:min-width="0.1402in">
-			<xsl:attribute name="draw:name">Frame<xsl:number level="any"/></xsl:attribute>
+			<xsl:attribute name="draw:name">FrameN<xsl:number level="any"/></xsl:attribute>
 			<xsl:attribute name="draw:z-index"><xsl:number level="any" count="item"/></xsl:attribute>
 			<draw:text-box fo:min-height="0.1402in">
 			  <xsl:if test="item[@type='segnum']">
@@ -126,7 +126,7 @@ version="1.0">
 
   <xsl:template match="word">
 	<draw:frame text:anchor-type="as-char" draw:style-name="Interlin_Frame_Word" fo:min-width="0.1402in">
-		<xsl:attribute name="draw:name">Frame<xsl:number level="any"/></xsl:attribute>
+		<xsl:attribute name="draw:name">FrameW<xsl:number level="any"/></xsl:attribute>
 		<xsl:attribute name="draw:z-index">
 			<xsl:number level="any" count="item"/>
 		</xsl:attribute>
@@ -172,7 +172,7 @@ version="1.0">
 
 	<xsl:template match="morph">
 		<draw:frame text:anchor-type="as-char" draw:style-name="Interlin_Frame_Morpheme" fo:min-width="0.1402in">
-			<xsl:attribute name="draw:name">Frame<xsl:number level="any"/></xsl:attribute>
+			<xsl:attribute name="draw:name">FrameM<xsl:number level="any"/></xsl:attribute>
 			<xsl:attribute name="draw:z-index">
 				<xsl:number level="any" count="item"/>
 			</xsl:attribute>
