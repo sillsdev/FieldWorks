@@ -8,80 +8,73 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using Microsoft.Win32;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
+// ReSharper disable LocalizableElement -- Justification: we're cheap, and the messages in this file are displayed only in an error state.
+
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// The main program for UnicodeCharEditor.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	static class Program
 	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// The main entry point for the application.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary/>
 		[STAThread]
 		static void Main(string[] args)
 		{
 			Form window = null;
-			var fIsCleaningUp = false;
+			var needCleanup = true;
 			try
 			{
 				// needed to access proper registry values
 				FwRegistryHelper.Initialize();
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
-				var fBadArg = false;
-				var fInstall = false;
-				for (int i = 0; i < args.Length; ++i)
+				switch (args.FirstOrDefault())
 				{
-					if (args[i] == "-i" || args[i] == "-install" || args[i] == "--install")
-						fInstall = true;
-					else if (args[i] == "--cleanup")
-					{
-						fIsCleaningUp = true;
-						if (i + 1 >= args.Length)
-							return;
-
-						var iterationCount = 0;
-						var pid = int.Parse(args[i + 1]);
-						while (Process.GetProcesses().Any(p => p.Id == pid) && iterationCount < 300)
+					case "-i":
+					case "-install":
+					case "--install":
+						// If we have any custom character data, install it!
+						var customCharsFile = CharEditorWindow.CustomCharsFile;
+						if (File.Exists(customCharsFile))
 						{
-							// wait 1s then try again
-							Thread.Sleep(1000);
-							iterationCount++;
+							new PUAInstaller().InstallPUACharacters(customCharsFile);
 						}
+						break;
+					case "--cleanup":
+						// If the second argument is a Process ID (int), wait up to five minutes for the proces to exit and then clean up;
+						// otherwise, silently do nothing.
+						needCleanup = false;
+						int pid;
+						if (int.TryParse(args.LastOrDefault(), out pid))
+						{
+							var iterationCount = 0;
+							while (Process.GetProcesses().Any(p => p.Id == pid) && iterationCount < 300)
+							{
+								// wait 1s then try again
+								Thread.Sleep(1000);
+								iterationCount++;
+							}
 
-						if (iterationCount < 300)
-							DeleteTemporaryFiles();
-						return;
-					}
-					else
-						fBadArg = true;
-				}
-
-				if (fInstall)
-				{
-					PUAMigrator migrator = new PUAMigrator();
-					migrator.Run();
-				}
-				else if (fBadArg)
-				{
-					MessageBox.Show("Only one command line argument is recognized:" + Environment.NewLine +
-									"\t-i means to install the custom character definitions (as a command line program).",
-						"Unicode Character Editor");
-				}
-				else
-				{
-					window = new CharEditorWindow();
-					Application.Run(window);
+							if (iterationCount < 300)
+								DeleteTemporaryFiles();
+						}
+						break;
+					case null:
+						// There were no arguments (the program was double-clicked or opened through the Start menu); run the graphical interface
+						window = new CharEditorWindow();
+						Application.Run(window);
+						break;
+					default:
+						// An unrecognized argument was passed
+						MessageBox.Show("Only one command line argument is recognized:" + Environment.NewLine +
+										"\t-i means to install the custom character definitions (as a command line program).",
+							"Unicode Character Editor");
+						break;
 				}
 			}
 			catch (ApplicationException ex)
@@ -105,7 +98,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			{
 				window?.Dispose();
 				LogFile.Release();
-				if (!fIsCleaningUp)
+				if (needCleanup)
 				{
 					StartCleanup();
 				}
@@ -122,7 +115,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			{
 				p.StartInfo = new ProcessStartInfo
 				{
-					Arguments = string.Format("--cleanup {0}", currentProcess.Id),
+					Arguments = $"--cleanup {currentProcess.Id}",
 					CreateNoWindow = true,
 					FileName = typeof(Program).Assembly.Location,
 					UseShellExecute = false
@@ -133,11 +126,8 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		private static void DeleteTemporaryFiles()
 		{
-			// Delete the files we previously renamed. Couldn't do that before because
-			// they were locked.
-			var tempFilesToDelete = Path.Combine(Icu.DefaultDirectory,
-				string.Format("icudt{0}l", Icu.Version),
-				"TempFilesToDelete");
+			// Delete the files we previously renamed. Couldn't do that before because they were locked.
+			var tempFilesToDelete = Path.Combine(Icu.DefaultDirectory, $"icudt{Icu.Version}l", "TempFilesToDelete");
 
 			if (!File.Exists(tempFilesToDelete))
 				return;
