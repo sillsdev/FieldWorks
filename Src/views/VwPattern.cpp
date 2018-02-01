@@ -399,7 +399,8 @@ STDMETHODIMP VwPattern::get_ReplacementText(ITsString ** pptssText)
 		try
 		{
 			ITsIncStrBldrPtr qtisb;
-			qtisb.CreateInstance(CLSID_TsIncStrBldr);
+			m_qtssReplaceWith->GetIncBldr(&qtisb); // Get a TsIncStrBuilder from the TsString
+			qtisb->Clear(); // Clear it (it comes pre-filled with the string we got it from)
 			int ichLast = 0; // index of last character dealt with
 
 			for (int ich = 0; ich < cch - 1; )
