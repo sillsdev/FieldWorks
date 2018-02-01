@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
+		<NuGetUrl>https://nuget.org/NuGet.exe</NuGetUrl>
 		<NuGetToolsPath>$(MSBuildThisFileDirectory)</NuGetToolsPath>
 		<PackagesConfigSource Condition="'$(OS)'=='Windows_NT'">$(NuGetToolsPath)packages-windows.config</PackagesConfigSource>
 		<PackagesConfigSource Condition="'$(OS)'!='Windows_NT'">$(NuGetToolsPath)packages-linux.config</PackagesConfigSource>
 		<PackagesConfig>$(NuGetToolsPath)packages.config</PackagesConfig>
 
 		<!-- NuGet command -->
-		<NuGetExePath>$(NuGetToolsPath)NuGet.exe</NuGetExePath>
+		<NuGetExePath Condition=" '$(NuGetExePath)' == '' ">$(NuGetToolsPath)/NuGet.exe</NuGetExePath>
 		<NuGetCommand Condition="'$(OS)' == 'Windows_NT'">"$(NuGetExePath)"</NuGetCommand>
 		<!--
 		NuGet has trouble when Ubuntu 16.04 pbuilder sets the home directory to /nonexistent, and
@@ -24,11 +25,6 @@
 		<Copy SourceFiles="$(PackagesConfigSource)" DestinationFiles="$(PackagesConfig)"/>
 		<Exec Command='$(NuGetCommand) restore "$(PackagesConfig)" -NonInteractive -PackagesDirectory "$(fwrt)/packages"'/>
 	</Target>
-
-	<PropertyGroup>
-		<NuGetUrl Condition="'$(OS)' == 'Windows_NT'">https://nuget.org/NuGet.exe</NuGetUrl>
-		<NuGetUrl Condition="'$(OS)' != 'Windows_NT'">"https://drive.google.com/uc?export=download&amp;id=0BwTQrVjXe5wbQUhfcEFSbnktUzQ"</NuGetUrl>
-	</PropertyGroup>
 
 	<Target Name="CheckPrerequisites">
 		<!--
