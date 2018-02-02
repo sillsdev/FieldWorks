@@ -292,7 +292,8 @@ namespace SIL.FieldWorks
 
 				// e.g. the first time the user runs FW9, we need to copy a bunch of registry keys
 				// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/9 or
-				// from HKCU/Software/SIL/FieldWorks/8 -> FieldWorks/9
+				// from HKCU/Software/SIL/FieldWorks/8 -> FieldWorks/9 and
+				// from HKCU/Software/WOW6432Node/SIL/FieldWorks -> HKCU/Software/SIL/FieldWorks
 				FwRegistryHelper.UpgradeUserSettingsIfNeeded();
 
 				if (appArgs.ShowHelp)

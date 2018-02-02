@@ -147,13 +147,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-	<Reference Include="NAudio">
+    <Reference Include="NAudio">
       <HintPath>..\..\..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
     </Reference>
     <Reference Include="NAudio.Lame">
       <HintPath>..\..\..\packages\NAudio.Lame.1.0.4\lib\net20\NAudio.Lame.dll</HintPath>
     </Reference>
-	<Reference Include="SIL.Core.Desktop, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+    <Reference Include="SIL.Core.Desktop, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\SIL.Core.Desktop.dll</HintPath>
     </Reference>

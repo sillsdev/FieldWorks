@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Security;
 using Microsoft.Win32;
 using SIL.LCModel.Utils;
@@ -20,9 +21,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// ----------------------------------------------------------------------------------------
 	public static class FwRegistryHelper
 	{
-		/// <summary>
-		/// TE string
-		/// </summary>
+		/// <summary/>
 		public static readonly string TranslationEditor = "Translation Editor";
 		private static IFwRegistryHelper RegistryHelperImpl = new FwRegistryHelperImpl();
 
@@ -82,32 +81,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 			}
 
-			/// ------------------------------------------------------------------------------------
-			/// <summary>
-			/// Gets the read-only local machine Registry key for FieldWorks.
-			/// NOTE: This key is not opened for write access because it will fail on
-			/// non-administrator logins.
-			/// </summary>
-			/// ------------------------------------------------------------------------------------
-			public RegistryKey FieldWorksRegistryKeyLocalMachine
-			{
-				get
-				{
-					return RegistryHelper.SettingsKeyLocalMachine(FieldWorksRegistryKeyName);
-				}
-			}
+			/// <inheritdoc />
+			public RegistryKey FieldWorksRegistryKeyLocalMachine => RegistryHelper.SettingsKeyLocalMachine(FieldWorksRegistryKeyName);
 
-			/// <summary>
-			/// Get LocalMachine hive. (Overridable for unit tests.)
-			/// </summary>
-			public RegistryKey LocalMachineHive
-			{
-				get { return Registry.LocalMachine; }
-			}
+			/// <inheritdoc />
+			public RegistryKey LocalMachineHive => Registry.LocalMachine;
 
-			/// <summary>
-			/// Gets the read-only local machine Registry key for FieldWorksBridge.
-			/// </summary>
+			/// <inheritdoc />
 			/// <remarks>This key is not opened for write access because it will fail on
 			/// non-administrator logins. 32bit registry section on a 64bit machine is checked first
 			/// and then the 'normal' registry location.
@@ -116,66 +96,28 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				get
 				{
-					var flexBridgeKey = $@"SIL\\FLEx Bridge\\{FwUtils.SuiteVersion}";
-					return Registry.LocalMachine.OpenSubKey("Software\\WOW6432Node\\" + flexBridgeKey) ?? Registry.LocalMachine.OpenSubKey("Software\\" + flexBridgeKey);
+					var flexBridgeKey = $@"FLEx Bridge\{FwUtils.SuiteVersion}";
+					return RegistryHelper.CompanyKeyLocalMachine?.OpenSubKey(flexBridgeKey)
+						?? RegistryHelper.CompanyKeyLocalMachineOld32Bit.OpenSubKey(flexBridgeKey);
 				}
 			}
 
-			/// ------------------------------------------------------------------------------------
-			/// <summary>
-			/// Gets the local machine Registry key for FieldWorks.
-			/// NOTE: This will throw with non-administrative logons! Be ready for that.
-			/// </summary>
-			/// ------------------------------------------------------------------------------------
-			public RegistryKey FieldWorksRegistryKeyLocalMachineForWriting
-			{
-				get
-				{
-					return RegistryHelper.SettingsKeyLocalMachineForWriting(FieldWorksRegistryKeyName);
-				}
-			}
+			/// <inheritdoc />
+			public RegistryKey FieldWorksRegistryKeyLocalMachineForWriting => RegistryHelper.SettingsKeyLocalMachineForWriting(FieldWorksRegistryKeyName);
 
-			/// ------------------------------------------------------------------------------------
-			/// <summary>
-			/// Gets the default (current user) Registry key for FieldWorks.
-			/// </summary>
-			/// ------------------------------------------------------------------------------------
-			public RegistryKey FieldWorksRegistryKey
-			{
-				get { return RegistryHelper.SettingsKey(FieldWorksRegistryKeyName); }
-			}
+			/// <inheritdoc />
+			public RegistryKey FieldWorksRegistryKey => RegistryHelper.SettingsKey(FieldWorksRegistryKeyName);
 
-			/// ------------------------------------------------------------------------------------
-			/// <summary>
-			/// Gets the default (current user) Registry key for FieldWorks without the version number.
-			/// </summary>
-			/// ------------------------------------------------------------------------------------
-			public RegistryKey FieldWorksVersionlessRegistryKey
-			{
-				get { return RegistryHelper.SettingsKey(); }
-			}
+			/// <inheritdoc />
+			public RegistryKey FieldWorksVersionlessRegistryKey => RegistryHelper.SettingsKey();
 
-			/// <summary>
-			/// The value we look up in the FieldWorksRegistryKey to get(or set) the persisted user locale.
-			/// </summary>
-			public string UserLocaleValueName
-			{
-				get
-				{
-					return "UserWs";
-				}
-			}
+			/// <inheritdoc />
+			public RegistryKey FieldWorksVersionlessOld32BitRegistryKey => RegistryHelper.SettingsKeyOld32Bit();
 
-			/// ------------------------------------------------------------------------------------
-			/// <summary>
-			/// Determines the installation or absence of version 7 of the Paratext program by checking for the
-			/// existence of the registry key that that application uses to store its program files
-			/// directory in the local machine settings.
-			/// This is 'HKLM\Software\ScrChecks\1.0\Program_Files_Directory_Ptw7'
-			/// NOTE: This key is not opened for write access because it will fail on
-			/// non-administrator logins.
-			/// </summary>
-			/// ------------------------------------------------------------------------------------
+			/// <inheritdoc />
+			public string UserLocaleValueName => "UserWs";
+
+			/// <inheritdoc />
 			public bool Paratext7Installed()
 			{
 				using (var ParatextKey = Registry.LocalMachine.OpenSubKey("Software\\ScrChecks\\1.0"))
@@ -207,19 +149,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// non-administrator logins.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static RegistryKey FieldWorksRegistryKeyLocalMachine
-		{
-			get { return RegistryHelperImpl.FieldWorksRegistryKeyLocalMachine; }
-		}
-
+		public static RegistryKey FieldWorksRegistryKeyLocalMachine => RegistryHelperImpl.FieldWorksRegistryKeyLocalMachine;
 
 		/// <summary>
 		/// Get LocalMachine hive. (Overridable for unit tests.)
 		/// </summary>
-		public static RegistryKey LocalMachineHive
-		{
-			get { return RegistryHelperImpl.LocalMachineHive; }
-		}
+		public static RegistryKey LocalMachineHive => RegistryHelperImpl.LocalMachineHive;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -228,9 +163,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// non-administrator logins.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static RegistryKey FieldWorksBridgeRegistryKeyLocalMachine
+		public static RegistryKey FieldWorksBridgeRegistryKeyLocalMachine => RegistryHelperImpl.FieldWorksBridgeRegistryKeyLocalMachine;
+
+		/// <summary>
+		/// Returns a read-only subkey of HKLM\Software using the company name, the product name, and, if necessary, WOW6432Node.
+		/// </summary>
+		public static RegistryKey SettingsKeyLocalMachineForCurrentOr32BitApp(params string[] subkeys)
 		{
-			get { return RegistryHelperImpl.FieldWorksBridgeRegistryKeyLocalMachine; }
+			return RegistryHelper.SettingsKeyLocalMachine(subkeys) ??
+				Registry.LocalMachine.OpenSubKey($@"Software\WOW6432Node\{RegistryHelper.CompanyName}\{RegistryHelper.ProductName}\{string.Join("\\", subkeys)}");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -239,10 +180,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// NOTE: This will throw with non-administrative logons! Be ready for that.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static RegistryKey FieldWorksRegistryKeyLocalMachineForWriting
-		{
-			get { return RegistryHelperImpl.FieldWorksRegistryKeyLocalMachineForWriting; }
-		}
+		public static RegistryKey FieldWorksRegistryKeyLocalMachineForWriting => RegistryHelperImpl.FieldWorksRegistryKeyLocalMachineForWriting;
 
 		/// <summary>
 		/// Extension method to write a registry key to somewhere in HKLM hopfully with
@@ -252,7 +190,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static void SetValueAsAdmin(this RegistryKey key, string name, string value)
 		{
-			Debug.Assert(key.Name.Substring(0, key.Name.IndexOf("\\")) == "HKEY_LOCAL_MACHINE",
+			Debug.Assert(key.Name.Substring(0, key.Name.IndexOf("\\", StringComparison.Ordinal)) == "HKEY_LOCAL_MACHINE",
 				"SetValueAsAdmin should only be used for writing hklm values.");
 
 			if (MiscUtils.IsUnix)
@@ -261,7 +199,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return;
 			}
 
-			int startOfKey = key.Name.IndexOf("\\") + "\\".Length;
+			int startOfKey = key.Name.IndexOf("\\", StringComparison.Ordinal) + "\\".Length;
 			string location = key.Name.Substring(startOfKey, key.Name.Length - startOfKey);
 			location = location.Trim('\\');
 
@@ -280,7 +218,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// Have to show window to get UAC message to allow admin action.
 				//process.StartInfo.CreateNoWindow = true;
 				process.StartInfo.FileName = "WriteKey.exe";
-				process.StartInfo.Arguments = String.Format("LM \"{0}\" \"{1}\" \"{2}\"", location, name, path);
+				process.StartInfo.Arguments = $"LM \"{location}\" \"{name}\" \"{path}\"";
 				// NOTE: According to information I found, these last 2 values have to be set as they are
 				// (Verb='runas' and UseShellExecute=true) in order to get the UAC dialog to show.
 				// On Xp (Verb='runas' and UseShellExecute=true) causes crash.
@@ -303,33 +241,25 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the default (current user) Registry key for FieldWorks.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static RegistryKey FieldWorksRegistryKey
-		{
-			get { return RegistryHelperImpl.FieldWorksRegistryKey; }
-		}
+		public static RegistryKey FieldWorksRegistryKey => RegistryHelperImpl.FieldWorksRegistryKey;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the default (current user) Registry key for FieldWorks without the version number.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static RegistryKey FieldWorksVersionlessRegistryKey
-		{
-			get { return RegistryHelperImpl.FieldWorksVersionlessRegistryKey; }
-		}
+		public static RegistryKey FieldWorksVersionlessRegistryKey => RegistryHelperImpl.FieldWorksVersionlessRegistryKey;
+
+		/// <summary>
+		/// Gets the default (current user) Registry key for FieldWorks without the version number.
+		/// </summary>
+		public static RegistryKey FieldWorksVersionlessOld32BitRegistryKey => RegistryHelperImpl.FieldWorksVersionlessOld32BitRegistryKey;
 
 		/// <summary>
 		/// Gets the current SuiteVersion as a string
 		/// </summary>
-		public static string FieldWorksRegistryKeyName
-		{
-			get { return FwUtils.SuiteVersion.ToString(CultureInfo.InvariantCulture); }
-		}
+		public static string FieldWorksRegistryKeyName => FwUtils.SuiteVersion.ToString(CultureInfo.InvariantCulture);
 
 		/// <summary>
 		/// It's probably a good idea to keep around the name of the old versions' keys
@@ -346,11 +276,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// The value we look up in the FieldWorksRegistryKey to get(or set) the persisted user locale.
 		/// </summary>
-		public static string UserLocaleValueName
-		{
-			get { return RegistryHelperImpl.UserLocaleValueName; }
-		}
-
+		public static string UserLocaleValueName => RegistryHelperImpl.UserLocaleValueName;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -370,82 +296,56 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// E.g. the first time the user runs FW9, we need to copy a bunch of registry keys
 		/// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/9 or
-		/// from HKCU/Software/SIL/FieldWorks/8 -> FieldWorks/9.
+		/// from HKCU/Software/SIL/FieldWorks/8 -> FieldWorks/9 and
+		/// from HKCU/Software/WOW6432Node/SIL/FieldWorks -> HKCU/Software/SIL/FieldWorks
 		/// </summary>
 		/// <returns>'true' if upgrade was done from any earlier version, otherwise, 'false'.</returns>
 		public static bool UpgradeUserSettingsIfNeeded()
 		{
+			var migratedAnything = false;
 			try
 			{
-				using (var fieldWorksVersionlessRegistryKey = FieldWorksVersionlessRegistryKey)
+				// We could be migrating historic keys from the current or an older architecture
+				using (var fwCurrentArchKey = FieldWorksVersionlessRegistryKey)
+				using (var fwOld32BitKey = FieldWorksVersionlessOld32BitRegistryKey)
+				// Keys for versions 7 & 8 will be either 32-bit or 64-bit
+				using (var version7Key = fwCurrentArchKey.OpenSubKey(OldFieldWorksRegistryKeyNameVersion7)
+										?? fwOld32BitKey?.OpenSubKey(OldFieldWorksRegistryKeyNameVersion7))
+				using (var version8Key = fwCurrentArchKey.OpenSubKey(OldFieldWorksRegistryKeyNameVersion8, true)
+										?? fwOld32BitKey?.OpenSubKey(OldFieldWorksRegistryKeyNameVersion8, true))
+				// Keys for version 9 could be both 32-bit and 64-bit; our final target is the current architecture
+				using (var version9Old32Key = fwOld32BitKey?.OpenSubKey(FieldWorksRegistryKeyName, true))
+				using (var currentKey = fwCurrentArchKey.CreateSubKey(FieldWorksRegistryKeyName))
 				{
-					var v7Exists = RegistryHelper.KeyExists(fieldWorksVersionlessRegistryKey,
-						OldFieldWorksRegistryKeyNameVersion7);
-					var v8Exists = RegistryHelper.KeyExists(fieldWorksVersionlessRegistryKey,
-						OldFieldWorksRegistryKeyNameVersion8);
-
-					// With 'false' it won't throw an exception if the key doesn't exist.
-					fieldWorksVersionlessRegistryKey.DeleteSubKeyTree(TranslationEditor, false);
-					fieldWorksVersionlessRegistryKey.DeleteSubKeyTree(TranslationEditor.ToLowerInvariant(), false);
-
-					// Go from extant settings (7 and/or 8) to 9 settings.
-					if (v7Exists && v8Exists)
+					var allKeys = new[] { version7Key, version8Key, version9Old32Key, currentKey };
+					var oldestUnmigrated = allKeys.First(key => key != null);
+					foreach (var nextKey in allKeys)
 					{
-						// Both exist? How odd.
-						using (var version7Key = fieldWorksVersionlessRegistryKey.OpenSubKey(OldFieldWorksRegistryKeyNameVersion7))
-						using (var version8Key = fieldWorksVersionlessRegistryKey.OpenSubKey(OldFieldWorksRegistryKeyNameVersion8, true))
-						using (var version9Key = fieldWorksVersionlessRegistryKey.CreateSubKey(FieldWorksRegistryKeyName))
+						if (nextKey != null && nextKey != oldestUnmigrated)
 						{
-							// Copy over almost everything from 7.0 to 8 and then to 9.
-							CopyFilteredSubKeyTree(version7Key, version8Key);
-							CopyFilteredSubKeyTree(version8Key, version9Key);
+							CopyFilteredSubKeyTree(oldestUnmigrated, nextKey);
+							DeleteRegistryKeyFromCurentUser(oldestUnmigrated);
+							migratedAnything = true;
+							oldestUnmigrated = nextKey;
 						}
-						// After copying everything delete the old v7 & v8 keys.
-						fieldWorksVersionlessRegistryKey.DeleteSubKeyTree(OldFieldWorksRegistryKeyNameVersion7);
-						fieldWorksVersionlessRegistryKey.DeleteSubKeyTree(OldFieldWorksRegistryKeyNameVersion8);
-						return true;
 					}
-
-					if (v7Exists)
+					// Now that everything has been migrated, we are done with WOW6432Node\FieldWorks, if it exists
+					if (fwOld32BitKey != null)
 					{
-						// 7 exists, but not 8, so move from 7->9.
-						using (var version7Key = fieldWorksVersionlessRegistryKey.OpenSubKey(OldFieldWorksRegistryKeyNameVersion7))
-						using (var version9Key = fieldWorksVersionlessRegistryKey.CreateSubKey(FieldWorksRegistryKeyName))
-						{
-							// Copy over almost everything from 7.0 to 9
-							// Don't copy the "launches" key or keys starting with "NumberOf"
-							CopyFilteredSubKeyTree(version7Key, version9Key);
-						}
-						// After copying everything delete the old v7 key.
-						fieldWorksVersionlessRegistryKey.DeleteSubKeyTree(OldFieldWorksRegistryKeyNameVersion7);
-						return true; // Done, so quit.
+						DeleteRegistryKeyFromCurentUser(fwOld32BitKey);
 					}
-
-					if (v8Exists)
-					{
-						// 7 not present, but 8 is.
-						using (var version8Key = fieldWorksVersionlessRegistryKey.OpenSubKey(OldFieldWorksRegistryKeyNameVersion8))
-						using (var version9Key = fieldWorksVersionlessRegistryKey.CreateSubKey(FieldWorksRegistryKeyName))
-						{
-							// Copy over almost everything from 8 to 9
-							// Don't copy the "launches" key or keys starting with "NumberOf"
-							CopyFilteredSubKeyTree(version8Key, version9Key);
-						}
-						// After copying everything delete the old v8 key.
-						fieldWorksVersionlessRegistryKey.DeleteSubKeyTree(OldFieldWorksRegistryKeyNameVersion8);
-						return true;
-					}
+					fwCurrentArchKey.DeleteSubKeyTree(TranslationEditor, false);
 				}
 			}
 			catch (SecurityException se)
 			{
 				// What to do here? Punt!
 			}
-			return false;
+			return migratedAnything;
 		}
 
 		/// <summary>
-		/// Copies filtered list of keys and values from src to dest subKey recursively.
+		/// Copies filtered list of keys and values from src to dest subKey recursively. Does not overwrite existing values.
 		/// </summary>
 		private static void CopyFilteredSubKeyTree(RegistryKey srcSubKey, RegistryKey destSubKey)
 		{
@@ -466,6 +366,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					CopyFilteredSubKeyTree(srcKey, newDestKey);
 				}
+			}
+		}
+
+		/// <summary>
+		/// Deletes the specified registry key and its subkeys from its parent key
+		/// </summary>
+		private static void DeleteRegistryKeyFromCurentUser(RegistryKey goner)
+		{
+			var oldKeyName = goner.Name;
+			// +1 to first backslash so the backslash itself is excluded from the substring
+			var oldKeyFirstBackslash = oldKeyName.IndexOf(@"\", StringComparison.Ordinal) + 1;
+			var oldKeyLastBackslash = oldKeyName.LastIndexOf(@"\", StringComparison.Ordinal);
+			var oldKeyParentName = oldKeyName.Substring(oldKeyFirstBackslash, oldKeyLastBackslash - oldKeyFirstBackslash);
+			var oldKeyLastName = oldKeyName.Substring(oldKeyLastBackslash + 1);
+			using (var oldKeyParent = Registry.CurrentUser.OpenSubKey(oldKeyParentName, true))
+			{
+				oldKeyParent?.DeleteSubKeyTree(oldKeyLastName, false);
 			}
 		}
 
@@ -494,5 +411,4 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 	}
-
 }
