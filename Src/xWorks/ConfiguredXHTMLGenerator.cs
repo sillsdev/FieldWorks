@@ -1323,7 +1323,7 @@ namespace SIL.FieldWorks.XWorks
 					} while (File.Exists(destination) && !AreFilesIdentical(source, destination, isWavExport));
 					// converts audio files to correct format if necessary during Webonary export
 					if (!isWavExport)
-						FileUtils.Copy(source, destination);
+						File.Copy(source, destination, true); //If call two times, quicker than Windows updates the file system
 					else
 						WavConverter.WavToMp3(source, destination);
 					// Change the filepath to point to the copied file
