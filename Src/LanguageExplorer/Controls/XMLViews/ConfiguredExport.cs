@@ -32,10 +32,10 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public class ConfiguredExport : CollectorEnv, ICollectPicturePathsOnly
 	{
-		private TextWriter m_writer = null;
-		private LcmCache m_cache = null;
+		private TextWriter m_writer;
+		private LcmCache m_cache;
 		private LcmStyleSheet m_stylesheet;
-		private string m_sFormat = null;
+		private string m_sFormat;
 		private StringCollection m_rgElementTags = new StringCollection();
 		private StringCollection m_rgClassNames = new StringCollection();
 
@@ -47,7 +47,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			insideLink = 3,
 		};
 		private CurrentContext m_cc = CurrentContext.unknown;
-		private string m_sTimeField = null;
+		private string m_sTimeField;
 
 		Dictionary<int, string> m_dictWsStr = new Dictionary<int,string>();
 		/// <summary>The current lead (sort) character being written.</summary>
@@ -65,8 +65,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		Dictionary<string, ISet<string>> m_mapWsIgnorables = new Dictionary<string, ISet<string>>();
 
-		private string m_sWsVern = null;
-		private string m_sWsRevIdx = null;
+		private string m_sWsVern;
+		private string m_sWsRevIdx;
 		Dictionary<int, string> m_dictCustomUserLabels = new Dictionary<int, string>();
 		string m_sActiveParaStyle;
 		Dictionary<XElement, string> m_mapXnToCssClass = new Dictionary<XElement, string>();
@@ -1253,7 +1253,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				if (m_schCurrent.Length > 0)
 				{
 					m_writer.WriteLine("</div>");	// for letData
-}
+				}
 				m_xhtml.WriteXhtmlEnding();
 			}
 			else

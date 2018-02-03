@@ -213,7 +213,7 @@ namespace LCMBrowser
 		/// </summary>
 		private List<IInspectorObject> GetInspectorObjectsForMultiString(IMultiAccessorBase msa, IInspectorObject ioParent, int level)
 		{
-			var list = ObjectBrowser.m_virtualFlag == false ? GetMultiStringInspectorObjects(msa, ioParent, level) : BaseGetInspectorObjects(msa, level);
+			var list = ObjectBrowser.m_virtualFlag ? BaseGetInspectorObjects(msa, level) : GetMultiStringInspectorObjects(msa, ioParent, level);
 			var allStrings = new Dictionary<int, string>();
 			try
 			{

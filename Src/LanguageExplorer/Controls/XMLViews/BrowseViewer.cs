@@ -37,24 +37,6 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal class BrowseViewer : MainUserControl, ISnapSplitPosition, IMainContentControl, IPostLayoutInit, IRefreshableRoot
 	{
-		/// <summary>
-		/// Check state for items (check and uncheck only).
-		/// </summary>
-		protected internal enum CheckState
-		{
-			/// <summary>
-			///
-			/// </summary>
-			ToggleAll,
-			/// <summary>
-			///
-			/// </summary>
-			UncheckAll,
-			/// <summary>
-			///
-			/// </summary>
-			CheckAll
-		}
 		private readonly DisposableObjectsSet<RecordSorter> m_SortersToDispose = new DisposableObjectsSet<RecordSorter>();
 		private LcmCache m_cache;
 		private XElement m_configParamsElement;
@@ -809,9 +791,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				m_filterBar = new FilterBar(this, PropertyTable.GetValue<IApp>("App"));
 				m_filterBar.FilterChanged += FilterChangedHandler;
-				//m_filterBar.Dock = System.Windows.Forms.DockStyle.Top;
 				m_filterBar.Name = "FilterBar";
-				m_filterBar.AccessibleName = @"FilterBar";
+				m_filterBar.AccessibleName = "FilterBar";
 				m_lvHeader.TabIndex = 1;
 				AddControl(m_filterBar);
 			}
@@ -822,7 +803,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_bulkEditBar = CreateBulkEditBar(this, m_configParamsElement, PropertyTable, m_cache);
 				m_bulkEditBar.Dock = DockStyle.Bottom;
 				m_bulkEditBar.Name = "BulkEditBar";
-				m_bulkEditBar.AccessibleName = @"BulkEditBar";
+				m_bulkEditBar.AccessibleName = "BulkEditBar";
 				Controls.Add(m_bulkEditBar);
 				m_xbv.Vc.PreviewArrow = m_bulkEditBar.PreviewArrow;
 				// Enhance JohnT: if we ever allow editing within the browse part
@@ -896,7 +877,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// indicates the last class of items that the user selected something.
 		/// </summary>
-		protected int m_lastChangedSelectionListItemsClass = 0;
+		protected int m_lastChangedSelectionListItemsClass;
 
 		private XElement m_modifiedColumn;
 
@@ -3296,7 +3277,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void OnCheckAll(object sender, EventArgs e)
 		{
-			ResetAll(CheckState.CheckAll);
+			ResetAll(BrowseViewerCheckState.CheckAll);
 		}
 
 		/// <summary>
@@ -3304,7 +3285,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Toggles if value is -1
 		/// </summary>
 		/// <param name="newState">The new state.</param>
-		internal virtual void ResetAll(CheckState newState)
+		internal virtual void ResetAll(BrowseViewerCheckState newState)
 		{
 			var changedHvos = ResetAllCollectChangedHvos(newState);
 			ResetAllHandleBulkEditBar();
@@ -3321,7 +3302,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary />
-		protected List<int> ResetAllCollectChangedHvos(CheckState newState)
+		protected List<int> ResetAllCollectChangedHvos(BrowseViewerCheckState newState)
 		{
 			var chvo = SpecialCache.get_VecSize(RootObjectHvo, MainTag);
 			int[] contents;
@@ -3338,13 +3319,13 @@ namespace LanguageExplorer.Controls.XMLViews
 				var currentValue = GetCheckState(hvoItem);
 				switch (newState)
 				{
-					case CheckState.ToggleAll:
+					case BrowseViewerCheckState.ToggleAll:
 						newVal = (currentValue == 0) ? 1 : 0;
 						break;
-					case CheckState.CheckAll:
+					case BrowseViewerCheckState.CheckAll:
 						newVal = 1;
 						break;
-					case CheckState.UncheckAll:
+					case BrowseViewerCheckState.UncheckAll:
 						newVal = 0;
 						break;
 				}
@@ -3387,13 +3368,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		protected void OnUncheckAll(object sender, EventArgs e)
 		{
-			ResetAll(CheckState.UncheckAll);
+			ResetAll(BrowseViewerCheckState.UncheckAll);
 		}
 
 		/// <summary />
 		protected void OnToggleAll(object sender, EventArgs e)
 		{
-			ResetAll(CheckState.ToggleAll);
+			ResetAll(BrowseViewerCheckState.ToggleAll);
 		}
 
 		/// <summary />
@@ -3660,7 +3641,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_xbv = new XmlBrowseView();
 			}
 			m_xbv.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			m_xbv.AccessibleName = @"BrowseViewer";
+			m_xbv.AccessibleName = "BrowseViewer";
 
 			Subscriber.Subscribe("LinkFollowed", LinkFollowed_Handler);
 		}

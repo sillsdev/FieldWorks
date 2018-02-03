@@ -37,7 +37,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			Guard.AgainstNullOrEmptyString(hotlinksMenuId, nameof(hotlinksMenuId));
 			Guard.AgainstNull(hotlinksMenuCreatorMethod, nameof(hotlinksMenuCreatorMethod));
-			Guard.AssertThat(_hotLinksCreatorMethods.ContainsKey(hotlinksMenuId), $"The method to create '{nameof(hotlinksMenuId)}' has already been registered.");
+			Guard.AssertThat(!_hotLinksCreatorMethods.ContainsKey(hotlinksMenuId), $"The method to create '{nameof(hotlinksMenuId)}' has already been registered.");
 
 			_hotLinksCreatorMethods.Add(hotlinksMenuId, hotlinksMenuCreatorMethod);
 		}
@@ -63,7 +63,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			Guard.AgainstNullOrEmptyString(ordinaryMenuId, nameof(ordinaryMenuId));
 			Guard.AgainstNull(ordinaryMenuCreatorMethod, nameof(ordinaryMenuCreatorMethod));
-			Guard.AssertThat(_ordinaryMenuCreatorMethods.ContainsKey(ordinaryMenuId), $"The method to create '{nameof(ordinaryMenuId)}' has already been registered.");
+			Guard.AssertThat(!_ordinaryMenuCreatorMethods.ContainsKey(ordinaryMenuId), $"The method to create '{nameof(ordinaryMenuId)}' has already been registered.");
 
 			_ordinaryMenuCreatorMethods.Add(ordinaryMenuId, ordinaryMenuCreatorMethod);
 		}
@@ -87,7 +87,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			Guard.AgainstNullOrEmptyString(panelMenuId, nameof(panelMenuId));
 			Guard.AgainstNull(panelMenuCreatorMethod, nameof(panelMenuCreatorMethod));
-			Guard.AssertThat(_panelMenuCreatorMethods.ContainsKey(panelMenuId), $"The method to create '{nameof(panelMenuId)}' has already been registered.");
+			Guard.AssertThat(!_panelMenuCreatorMethods.ContainsKey(panelMenuId), $"The method to create '{nameof(panelMenuId)}' has already been registered.");
 
 			_panelMenuCreatorMethods.Add(panelMenuId, panelMenuCreatorMethod);
 		}

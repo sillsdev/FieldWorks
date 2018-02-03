@@ -38,6 +38,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				WritingSystemFactory = cache.WritingSystemFactory,
 				Font = new System.Drawing.Font(defAnalWs.DefaultFontName, 10),
 				WritingSystemCode = defAnalWs.Handle,
+				// We embed the tree combo in a layer of UserControl, so it can have a fixed width
+				// while the parent window control is, as usual, docked 'fill' to work with the splitter.
 				Dock = DockStyle.Left,
 				Width = 240,
 			};
@@ -45,17 +47,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				m_tree.HasBorder = false;
 			}
-
-			// We embed the tree combo in a layer of UserControl, so it can have a fixed width
-			// while the parent window control is, as usual, docked 'fill' to work with the splitter.
 			m_tree.DropDown += m_tree_DropDown;
-
 			Control.Controls.Add(m_tree);
 			m_tree.SizeChanged += m_tree_SizeChanged;
-
 			m_cache?.DomainDataByFlid.AddNotification(this);
 			m_treeBaseWidth = m_tree.Width;
-
 			// m_tree has sensible PreferredHeight once the text is set, UserControl does not.
 			//we need to set the Height after m_tree.Text has a value set to it.
 			Control.Height = m_tree.PreferredHeight;

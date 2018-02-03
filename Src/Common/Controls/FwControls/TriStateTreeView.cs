@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// The check state
 		/// </summary>
 		[Flags]
-		public enum CheckState
+		public enum TriStateTreeViewCheckState
 		{
 			/// <summary>Unchecked</summary>
 			Unchecked = 1,
@@ -140,7 +140,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 			}
 
-			int index = GetCheckImageIndex(CheckState.Unchecked);
+			int index = GetCheckImageIndex(TriStateTreeViewCheckState.Unchecked);
 			ImageList = m_TriStateImages;
 			ImageIndex = index;
 			SelectedImageIndex = index;
@@ -358,7 +358,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="state">The state.</param>
 		/// <returns><c>true</c> if this node was changed; <c>false</c> otherwise.</returns>
 		/// ------------------------------------------------------------------------------------
-		protected bool CheckNode(TreeNode node, CheckState state)
+		protected bool CheckNode(TreeNode node, TriStateTreeViewCheckState state)
 		{
 			if (!InternalSetChecked(node, state))
 				return false;
@@ -381,7 +381,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (node == null)
 				return;
 
-			CheckState state = GetChecked(node.FirstNode);
+			TriStateTreeViewCheckState state = GetChecked(node.FirstNode);
 			foreach (TreeNode child in node.Nodes)
 				state |= GetChecked(child);
 
@@ -401,9 +401,9 @@ namespace SIL.FieldWorks.Common.Controls
 			BeginUpdate();
 			try
 			{
-				CheckState currState = GetCheckStateFromImageIndex(node.ImageIndex);
-				CheckState newState = (currState == CheckState.Unchecked ?
-					CheckState.Checked : CheckState.Unchecked);
+				TriStateTreeViewCheckState currState = GetCheckStateFromImageIndex(node.ImageIndex);
+				TriStateTreeViewCheckState newState = (currState == TriStateTreeViewCheckState.Unchecked ?
+					TriStateTreeViewCheckState.Checked : TriStateTreeViewCheckState.Unchecked);
 
 				if (!CheckNode(node, newState))
 					return;
@@ -429,7 +429,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns><c>true</c> if checked state was set to the requested state, otherwise
 		/// <c>false</c>.</returns>
 		/// ------------------------------------------------------------------------------------
-		private bool InternalSetChecked(TreeNode node, CheckState state)
+		private bool InternalSetChecked(TreeNode node, TriStateTreeViewCheckState state)
 		{
 			TreeViewCancelEventArgs args =
 				new TreeViewCancelEventArgs(node, false, TreeViewAction.Unknown);
@@ -452,12 +452,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Gets the image index of the specified check state.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private int GetCheckImageIndex(CheckState state)
+		private int GetCheckImageIndex(TriStateTreeViewCheckState state)
 		{
 			switch (state)
 			{
-				case CheckState.Checked: return kCheckedImageIndex;
-				case CheckState.Unchecked: return kUncheckedImageIndex;
+				case TriStateTreeViewCheckState.Checked: return kCheckedImageIndex;
+				case TriStateTreeViewCheckState.Unchecked: return kUncheckedImageIndex;
 				default: return kGreyCheckImageIndex;
 			}
 		}
@@ -467,13 +467,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Gets the checks state for the specified image index.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private CheckState GetCheckStateFromImageIndex(int index)
+		private TriStateTreeViewCheckState GetCheckStateFromImageIndex(int index)
 		{
 			switch (index)
 			{
-				case kCheckedImageIndex: return CheckState.Checked;
-				case kGreyCheckImageIndex: return CheckState.GreyChecked;
-				default: return CheckState.Unchecked;
+				case kCheckedImageIndex: return TriStateTreeViewCheckState.Checked;
+				case kGreyCheckImageIndex: return TriStateTreeViewCheckState.GreyChecked;
+				default: return TriStateTreeViewCheckState.Unchecked;
 			}
 		}
 
@@ -486,7 +486,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		private void BuildTagDataList(TreeNode node, ArrayList list)
 		{
-			if (GetChecked(node) == CheckState.Checked && node.Tag != null)
+			if (GetChecked(node) == TriStateTreeViewCheckState.Checked && node.Tag != null)
 			{
 				list.Add(node.Tag);
 				FillInMissingChildren(node);
@@ -512,7 +512,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="tag"></param>
 		/// <param name="state"></param>
 		/// ------------------------------------------------------------------------------------
-		private void FindAndCheckNode(TreeNode node, object tag, CheckState state)
+		private void FindAndCheckNode(TreeNode node, object tag, TriStateTreeViewCheckState state)
 		{
 			if (node.Tag != null && node.Tag.Equals(tag))
 			{
@@ -533,7 +533,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="node">Node</param>
 		/// <returns>The checked state</returns>
 		/// ------------------------------------------------------------------------------------
-		public CheckState GetChecked(TreeNode node)
+		public TriStateTreeViewCheckState GetChecked(TreeNode node)
 		{
 			CheckDisposed();
 			return GetCheckStateFromImageIndex(node.ImageIndex);
@@ -546,7 +546,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="node">Node</param>
 		/// <param name="state">The new checked state</param>
 		/// ------------------------------------------------------------------------------------
-		public void SetChecked(TreeNode node, CheckState state)
+		public void SetChecked(TreeNode node, TriStateTreeViewCheckState state)
 		{
 			CheckDisposed();
 
@@ -559,7 +559,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Find a node in the tree that matches the given tag data and set its checked state
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void CheckNodeByTag(object tag, CheckState state)
+		public void CheckNodeByTag(object tag, TriStateTreeViewCheckState state)
 		{
 			CheckDisposed();
 
@@ -604,7 +604,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// is a Flags enum).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public TreeNode[] GetNodesWithState(CheckState state)
+		public TreeNode[] GetNodesWithState(TriStateTreeViewCheckState state)
 		{
 			CheckDisposed();
 
@@ -621,7 +621,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Build a list of all of the checked nodes.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void BuildCheckedNodeList(TreeNode node, CheckState state, List<TreeNode> list)
+		private void BuildCheckedNodeList(TreeNode node, TriStateTreeViewCheckState state, List<TreeNode> list)
 		{
 			// If we're seeking nodes having either state (i.e., GreyChecked), then add them to
 			// the list unconditionally. (Currently, this is only needed for a test and is not
@@ -634,9 +634,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Build a list of all of the checked nodes.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void BuildCheckedNodeList(TreeNode node, CheckState state, bool useGrey, List<TreeNode> list)
+		private void BuildCheckedNodeList(TreeNode node, TriStateTreeViewCheckState state, bool useGrey, List<TreeNode> list)
 		{
-			if ((useGrey && state == CheckState.GreyChecked) || GetChecked(node) == state)
+			if ((useGrey && state == TriStateTreeViewCheckState.GreyChecked) || GetChecked(node) == state)
 				list.Add(node);
 
 			foreach (TreeNode child in node.Nodes)
@@ -652,7 +652,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			var list = new List<TreeNode>();
 			foreach (TreeNode node in Nodes)
-				BuildCheckedNodeList(node, CheckState.Checked, false, list);
+				BuildCheckedNodeList(node, TriStateTreeViewCheckState.Checked, false, list);
 			return list;
 		}
 
@@ -662,7 +662,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// is a Flags enum).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public TreeNode[] GetNodesOfTypeWithState(Type nodeType, CheckState state)
+		public TreeNode[] GetNodesOfTypeWithState(Type nodeType, TriStateTreeViewCheckState state)
 		{
 			CheckDisposed();
 

@@ -123,7 +123,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </remarks>
 		protected override void Dispose(bool disposing)
 		{
-			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 			{

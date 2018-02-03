@@ -19,7 +19,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private IPublisher m_publisher;
 		int m_flid;
 		private bool m_fMultilingual;
-		int m_wsEn;
+		int m_wsEnOrDefaultUserWs;
 
 		public StringSliceVc()
 		{
@@ -28,9 +28,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Create one that is NOT multilingual.
 		/// </summary>
-		/// <param name="flid"></param>
-		/// <param name="cache"></param>
-		/// <param name="publisher"></param>
 		public StringSliceVc(int flid, LcmCache cache, IPublisher publisher)
 		{
 			m_flid = flid;
@@ -38,13 +35,16 @@ namespace LanguageExplorer.Controls.DetailControls
 			Cache = cache;
 			// ReSharper restore DoNotCallOverridableMethodsInConstructor
 			m_publisher = publisher;
-			m_wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
-			if (m_wsEn == 0)
+			m_wsEnOrDefaultUserWs = cache.WritingSystemFactory.GetWsFromStr("en");
+			if (m_wsEnOrDefaultUserWs == 0)
 			{
-				m_wsEn = cache.DefaultUserWs;
+				m_wsEnOrDefaultUserWs = cache.DefaultUserWs;
 			}
 		}
 
+		/// <summary>
+		/// Create one that IS multilingual.
+		/// </summary>
 		public StringSliceVc(int flid, int ws, LcmCache cache, IPublisher publisher)
 			: this(flid, cache, publisher)
 		{
@@ -67,8 +67,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					var tss = m_cache.DomainDataByFlid.get_StringProp(hvo, m_flid);
 					var ttp = tss.get_Properties(0);
-					int var;
-					var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+					int dummy;
+					var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out dummy);
 					if (ws == 0)
 					{
 						ws = m_wsDefault;
@@ -163,7 +163,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private ITsString NameOfWs(int ws)
 		{
-			WsLabel = ws;
+			MostRecentlyDisplayedWritingSystemHandle = ws;
 			var sWs = m_cache.WritingSystemFactory.GetStrFromWs(ws);
 			CoreWritingSystemDefinition wsys;
 			WritingSystemServices.FindOrCreateWritingSystem(m_cache, FwDirectoryFinder.TemplateDirectory, sWs, false, false, out wsys);
@@ -174,7 +174,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			var tsb = TsStringUtils.MakeStrBldr();
 			tsb.Replace(0, 0, result, WritingSystemServices.AbbreviationTextProperties);
-			tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptWs, 0, m_wsEn);
+			tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptWs, 0, m_wsEnOrDefaultUserWs);
 			return tsb.GetString();
 		}
 
@@ -211,7 +211,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Get the ws for the most recently displayed writing system label.
 		/// </summary>
-		internal int WsLabel { get; private set; }
+		internal int MostRecentlyDisplayedWritingSystemHandle { get; private set; }
 
 		/// <summary>
 		/// We may have a link embedded here.

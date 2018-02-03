@@ -686,6 +686,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				Debug.Assert(analysis != null, "What else could this do?");
 			}
+			// TODO: Add any morphemes to the thing.
+			// TODO: Jason says it is a feature request that didn't get in yet.
+			/*
+			if (word.morphemes != null && word.morphemes.morphs.Length > 0)
+			{
+				var bundle = newSegment.Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>().Create();
+				analysis.Analysis.MorphBundlesOS.Add(bundle);
+				foreach (var morpheme in word.morphemes)
+				{
+				    //create a morpheme
+				    foreach(item item in morpheme.items)
+				    {
+				        //fill in morpheme's stuff
+				    }
+				}
+			}*/
 			return analysis;
 		}
 

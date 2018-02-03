@@ -978,7 +978,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 
-			AccessibleName = @"XmlBrowseViewBase";
+			AccessibleName = "XmlBrowseViewBase";
 			BackColor = SystemColors.Window;
 		}
 
@@ -1059,7 +1059,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
-			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 			{

@@ -12,11 +12,14 @@ using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
+	/// <summary>
+	/// Handle BulkEditBar's "Transduce" tab action to either make a real change, or give a preview of a change.
+	/// </summary>
 	internal class TransduceMethod : DoItMethod
 	{
 		FieldReadWriter m_srcAccessor;
 		ECInterfaces.IEncConverter m_converter;
-		bool m_fFailed = false;
+		bool m_fFailed;
 		ITsString m_tssSep;
 		NonEmptyTargetOptions m_options;
 

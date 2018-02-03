@@ -1740,13 +1740,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal XElement GetPartFromParentNode(XElement parentNode, int rootObjClass)
 		{
-			XElement partNode;
 			var layout = XmlUtils.GetOptionalAttributeValue(parentNode, "layout");
-
-			partNode = layout != null ?
-				GetNodeForPart(layout, false, rootObjClass) // get the part from the layout.
-				: parentNode; // treat column node as containing its parts.
-			return partNode;
+			return layout != null ? GetNodeForPart(layout, false, rootObjClass) /* Get the part from the layout. */ : parentNode;
 		}
 
 		/// <summary>

@@ -108,7 +108,7 @@ namespace LCMBrowser
 			{
 				Name = "cmnuAddObject",
 				Size = new System.Drawing.Size(254, 22),
-				Text = @"Add New Object of type {0}..."
+				Text = "Add New Object of type {0}..."
 			};
 			m_cmnuAddObject.Click += CmnuAddObjectClick;
 			m_fmtAddObjectMenuText = m_cmnuAddObject.Text;
@@ -120,7 +120,7 @@ namespace LCMBrowser
 			{
 				Name = "cmnuDeleteObject",
 				Size = new System.Drawing.Size(254, 22),
-				Text = @"Delete the selected object."
+				Text = "Delete the selected object."
 			};
 			m_cmnuDeleteObject.Click += CmnuDeleteObjectClick;
 
@@ -130,7 +130,7 @@ namespace LCMBrowser
 			{
 				Name = "cmnuMoveObjectUp",
 				Size = new System.Drawing.Size(254, 22),
-				Text = @"Move Object Up"
+				Text = "Move Object Up"
 			};
 			m_cmnuMoveObjectUp.Click += CmnuMoveObjectUpClick;
 
@@ -138,7 +138,7 @@ namespace LCMBrowser
 			{
 				Name = "cmnuMoveObjectDown",
 				Size = new System.Drawing.Size(254, 22),
-				Text = @"Move Object Down"
+				Text = "Move Object Down"
 			};
 			m_cmnuMoveObjectDown.Click += CmnuMoveObjectDownClick;
 			m_cmnuGrid.Items.Add(new ToolStripSeparator());
@@ -149,7 +149,7 @@ namespace LCMBrowser
 			{
 				Name = "cmnuSelectProps",
 				Size = new System.Drawing.Size(254, 22),
-				Text = @"Select Displayed Properties for {0}..."
+				Text = "Select Displayed Properties for {0}..."
 			};
 			m_cmnuSelectProps.Click += CmnuSelectPropsClick;
 			m_fmtSelectPropsMenuText = m_cmnuSelectProps.Text;
@@ -169,7 +169,7 @@ namespace LCMBrowser
 				ImageTransparentColor = System.Drawing.Color.Magenta,
 				Name = "m_tsbShowCmObjectProps",
 				Size = new System.Drawing.Size(23, 22),
-				Text = @"Show CmObject Properties"
+				Text = "Show CmObject Properties"
 			};
 			m_tsbShowCmObjectProps.Click += MTsbShowCmObjectPropsClick;
 			var i = m_navigationToolStrip.Items.IndexOf(tsbShowObjInNewWnd);
@@ -192,14 +192,14 @@ namespace LCMBrowser
 				Alignment = ToolStripItemAlignment.Right,
 				Name = "tslblGuidSrch",
 				Size = new System.Drawing.Size(74, 22),
-				Text = @"GUID Search:"
+				Text = "GUID Search:"
 			};
 			m_navigationToolStrip.Items.Add(m_tslblGuidSrch);
 
 			#endregion
 
 			#region Menus
-			mnuOpenFile.Text = @"&Open Language Project...";
+			mnuOpenFile.Text = "&Open Language Project...";
 			//
 			// mnuSaveFileLCM
 			//
@@ -209,7 +209,7 @@ namespace LCMBrowser
 				Name = "mnuSaveFileLCM",
 				ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S))),
 				Size = new System.Drawing.Size(230, 22),
-				Text = @"&Save Current Language Project"
+				Text = "&Save Current Language Project"
 			};
 			m_mnuSaveFileLCM.Click += MnuSaveFileLcmClick;
 			//
@@ -219,7 +219,7 @@ namespace LCMBrowser
 			{
 				Name = "mnuToolsAllowEdit",
 				Size = new System.Drawing.Size(230, 22),
-				Text = @"&Allow Edits",
+				Text = "&Allow Edits",
 				Checked = true
 			};
 			m_mnuToolsAllowEdit.Click += MnuToolsAllowEditClick;
@@ -230,7 +230,7 @@ namespace LCMBrowser
 			{
 				Name = "mnuDisplayVirtual",
 				Size = new System.Drawing.Size(230, 22),
-				Text = @"Display &Virtual Properties"
+				Text = "Display &Virtual Properties"
 			};
 			m_mnuDisplayVirtual.Click += MnuDisplayVirtualClick;
 			m_mnuDisplayVirtual.Checked = false;
@@ -243,7 +243,7 @@ namespace LCMBrowser
 				Image = Properties.Resources.kimidLCMModel,
 				Name = "mnuViewLcmModel",
 				Size = new System.Drawing.Size(230, 22),
-				Text = @"&LCM Model"
+				Text = "&LCM Model"
 			};
 			m_mnuViewLcmModel.Click += MnuViewLcmModelClick;
 			//
@@ -253,7 +253,7 @@ namespace LCMBrowser
 			{
 				Name = "mnuViewLangProject",
 				Size = new System.Drawing.Size(230, 22),
-				Text = @"&Language Project"
+				Text = "&Language Project"
 			};
 			m_mnuViewLangProject.Click += MnuViewLangProjectClick;
 			//
@@ -263,7 +263,7 @@ namespace LCMBrowser
 			{
 				Name = "mnuViewRepositories",
 				Size = new System.Drawing.Size(230, 22),
-				Text = @"Language Project &Repositories"
+				Text = "Language Project &Repositories"
 			};
 			m_mnuViewRepositories.Click += MnuViewRepositoriesClick;
 			//
@@ -273,7 +273,7 @@ namespace LCMBrowser
 			{
 				Name = "mnuClassProperties",
 				Size = new System.Drawing.Size(230, 22),
-				Text = @"Class &Properties..."
+				Text = "Class &Properties..."
 			};
 			m_mnuClassProperties.Click += MnuClassPropertiesClick;
 			// mnuView
@@ -282,7 +282,7 @@ namespace LCMBrowser
 			{
 				Name = "mnuView",
 				Size = new System.Drawing.Size(44, 20),
-				Text = @"&View"
+				Text = "&View"
 			};
 			m_mnuView.DropDownOpening += MnuViewDropDownOpening;
 			m_mnuView.DropDownItems.Add(m_mnuViewLcmModel);
@@ -365,8 +365,7 @@ namespace LCMBrowser
 				{
 					using (var progressDlg = new ProgressDialogWithTask(this))
 					{
-						m_cache = LcmCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fileName), "en", ui,
-							FwDirectoryFinder.LcmDirectories, new LcmSettings(), progressDlg);
+						m_cache = LcmCache.CreateCacheFromExistingData(new BrowserProjectId(bepType, fileName), "en", ui, FwDirectoryFinder.LcmDirectories, new LcmSettings(), progressDlg);
 					}
 				}
 				CFields = GetCustomFields(m_cache);
@@ -535,8 +534,8 @@ namespace LCMBrowser
 		/// </summary>
 		private void MnuViewDropDownOpening(object sender, EventArgs e)
 		{
-			m_mnuViewLangProject.Enabled = (m_lp != null);
-			m_mnuViewRepositories.Enabled = (m_cache != null);
+			m_mnuViewLangProject.Enabled = m_lp != null;
+			m_mnuViewRepositories.Enabled = m_cache != null;
 		}
 
 		/// <summary>
@@ -569,7 +568,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Gets the custom fields defined in the project file.
 		/// </summary>
-		private List<CustomFields> GetCustomFields(LcmCache m_cache)
+		private static List<CustomFields> GetCustomFields(LcmCache m_cache)
 		{
 			var type = string.Empty;
 			var list = new List<CustomFields>();
@@ -603,7 +602,7 @@ namespace LCMBrowser
 							type = "WfiWordForm";
 							break;
 						default:
-							MessageBox.Show($@"In 'GetCustomFields, Type was unknown: {fd.Type.ToString()} ");
+							MessageBox.Show($"In 'GetCustomFields, Type was unknown: {fd.Type.ToString()} ");
 							break;
 					}
 
@@ -617,13 +616,10 @@ namespace LCMBrowser
 		/// <summary>
 		/// Handles the window menu item click.
 		/// </summary>
-		void HandleWindowMenuItemClick(object sender, EventArgs e)
+		private void HandleWindowMenuItemClick(object sender, EventArgs e)
 		{
 			var mnu = sender as ToolStripMenuItem;
-			if (mnu?.Tag is DockContent)
-			{
-				((DockContent)mnu.Tag).Show(m_dockPanel);
-			}
+			(mnu?.Tag as DockContent)?.Show(m_dockPanel);
 		}
 
 		#endregion Event handlers
@@ -633,7 +629,7 @@ namespace LCMBrowser
 		protected override string GetNewInspectorWndTitle(object obj)
 		{
 			var tss = obj as ITsString;
-			return (tss == null ? base.GetNewInspectorWndTitle(obj) : $"ITsString: '{tss.Text}'");
+			return tss == null ? base.GetNewInspectorWndTitle(obj) : $"ITsString: '{tss.Text}'";
 		}
 
 		/// <summary>
@@ -715,10 +711,7 @@ namespace LCMBrowser
 
 			foreach (var dc in m_dockPanel.DocumentsToArray())
 			{
-				if (dc is InspectorWnd)
-				{
-					((InspectorWnd)dc).RefreshView();
-				}
+				(dc as InspectorWnd)?.RefreshView();
 			}
 		}
 
@@ -735,14 +728,14 @@ namespace LCMBrowser
 				return;
 			}
 			var io = wnd.CurrentInspectorObject;
-			m_cmnuAddObject.Enabled = (io != null && AddObjectFromHere(io));
-			m_cmnuDeleteObject.Enabled = (io != null && io.Object is ICmObject);
-			m_cmnuMoveObjectUp.Enabled = (io != null && MoveObjectUpFromHere(io));
-			m_cmnuMoveObjectDown.Enabled = (io != null && MoveObjectDownFromHere(io));
-			var type = (io != null && io.Object is ICmObject ? io.Object.GetType().Name : "???");
-			if (io == null || (!io.DisplayName.EndsWith("OS") && !io.DisplayName.EndsWith("OC") &&
-							   !io.DisplayName.EndsWith("OA") && !io.DisplayName.EndsWith("RS") &&
-							   !io.DisplayName.EndsWith("RC") && !io.DisplayName.EndsWith("RA")))
+			m_cmnuAddObject.Enabled = io != null && AddObjectFromHere(io);
+			m_cmnuDeleteObject.Enabled = io?.Object is ICmObject;
+			m_cmnuMoveObjectUp.Enabled = io != null && MoveObjectUpFromHere(io);
+			m_cmnuMoveObjectDown.Enabled = io != null && MoveObjectDownFromHere(io);
+			var type = io?.Object is ICmObject ? io.Object.GetType().Name : "???";
+			if (io == null || !io.DisplayName.EndsWith("OS") && !io.DisplayName.EndsWith("OC") &&
+			    !io.DisplayName.EndsWith("OA") && !io.DisplayName.EndsWith("RS") &&
+			    !io.DisplayName.EndsWith("RC") && !io.DisplayName.EndsWith("RA"))
 			{
 				return;
 			}
@@ -767,7 +760,7 @@ namespace LCMBrowser
 			{
 				var dispFlag = io.DisplayName.EndsWith("RA") && io.Object != null;
 				type = GetTypeForRefObjs(flid, clid, dispFlag, ref saveClid);
-				m_cmnuAddObject.Text = $@"Add New Reference of type {type}...";
+				m_cmnuAddObject.Text = $"Add New Reference of type {type}...";
 				m_cmnuSelectProps.Text = string.Format(m_fmtSelectPropsMenuText, type);
 			}
 			else
@@ -793,7 +786,7 @@ namespace LCMBrowser
 						}
 						catch
 						{
-							MessageBox.Show(@"No class name for clid: " + clid);
+							MessageBox.Show("No class name for clid: " + clid);
 							return;
 						}
 						break;
@@ -860,7 +853,7 @@ namespace LCMBrowser
 						ord = 0;
 						break;
 					default:
-						MessageBox.Show(@"The parent of an added object must be OA, OC, or OS.  It's " + type);
+						MessageBox.Show("The parent of an added object must be OA, OC, or OS.  It's " + type);
 						break;
 				}
 			}
@@ -877,7 +870,7 @@ namespace LCMBrowser
 
 			if (currentObj == null)
 			{
-				MessageBox.Show(@"currentObj for add is null");
+				MessageBox.Show("currentObj for add is null");
 				return;
 			}
 
@@ -907,8 +900,7 @@ namespace LCMBrowser
 							case "RC":
 								var count = m_cache.DomainDataByFlid.get_VecSize(currentObj.Hvo, flid);
 								NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
-									m_cache.DomainDataByFlid.Replace(currentObj.Hvo, flid, count,
-									   count, new int[] {refTarget.Hvo}, 1)
+									m_cache.DomainDataByFlid.Replace(currentObj.Hvo, flid, count, count, new[] {refTarget.Hvo}, 1)
 								);
 								break;
 							case "RA":
@@ -936,7 +928,7 @@ namespace LCMBrowser
 							}
 							catch
 							{
-								MessageBox.Show($@"The creation of class id {clid} failed.");
+								MessageBox.Show($"The creation of class id {clid} failed.");
 								return;
 							}
 						});
@@ -946,10 +938,7 @@ namespace LCMBrowser
 			//Refresh the display
 			foreach (var dc in m_dockPanel.DocumentsToArray())
 			{
-				if (dc is InspectorWnd)
-				{
-					((InspectorWnd)dc).RefreshView("Add");
-				}
+				(dc as InspectorWnd)?.RefreshView("Add");
 			}
 		}
 
@@ -986,7 +975,7 @@ namespace LCMBrowser
 					{
 						return true;
 					}
-					MessageBox.Show(@"No clid for selected class: " + dlg.m_chosenClass);
+					MessageBox.Show("No clid for selected class: " + dlg.m_chosenClass);
 					return false;
 				}
 			}
@@ -1010,14 +999,14 @@ namespace LCMBrowser
 
 				if (type != "RA")
 				{
-					var count = 0;
+					int count;
 					try
 					{
 						count = m_cache.DomainDataByFlid.get_VecSize(currObject.Hvo, flid);
 					}
 					catch
 					{
-						MessageBox.Show(@"Can't get count for reference sequence or collection.");
+						MessageBox.Show("Can't get count for reference sequence or collection.");
 						goto Skip;
 					}
 
@@ -1063,7 +1052,7 @@ namespace LCMBrowser
 						{
 							hashList = hashList + mdc.GetClassName(de) + " ";
 						}
-						MessageBox.Show($@"No objects exist within the selected classes.  Try again.  Selected classes are: {hashList}");
+						MessageBox.Show($"No objects exist within the selected classes.  Try again.  Selected classes are: {hashList}");
 					}
 					else
 					{
@@ -1190,7 +1179,7 @@ namespace LCMBrowser
 								classList1.Add(mdc.GetClassId(dlg.m_chosenClass)); // get the clid for the selected class
 								if (mdc.GetClassId(dlg.m_chosenClass) == 0)
 								{
-									MessageBox.Show($@"No clid for selected class: {dlg.m_chosenClass}");
+									MessageBox.Show($"No clid for selected class: {dlg.m_chosenClass}");
 									return classList1;
 								}
 								return classList1;
@@ -1339,7 +1328,7 @@ namespace LCMBrowser
 										break;
 									if (mdc.GetClassId(dlg1.m_chosenClass) == 0)
 									{
-										MessageBox.Show($@"No clid for selected class: {dlg1.m_chosenClass}");
+										MessageBox.Show($"No clid for selected class: {dlg1.m_chosenClass}");
 										break;
 									}
 									saveClid = mdc.GetClassId(dlg1.m_chosenClass);
@@ -1407,7 +1396,7 @@ namespace LCMBrowser
 					var holdposs = owner as ICmPossibilityList;
 					if (holdposs == null)
 					{
-						MessageBox.Show(@"PossOwnedByPossList; holdposs is null");
+						MessageBox.Show("PossOwnedByPossList; holdposs is null");
 						return false;
 					}
 					clid = holdposs.ItemClsid;
@@ -1460,7 +1449,7 @@ namespace LCMBrowser
 			var objToMove = io.Object as ICmObject ?? io.OriginalObject as ICmObject;
 			if (objToMove == null) // we're on a field
 			{
-				MessageBox.Show(@"owner object couldn't be created.");
+				MessageBox.Show("owner object couldn't be created.");
 				return;
 			}
 
@@ -1468,7 +1457,7 @@ namespace LCMBrowser
 						io.ParentInspectorObject.OwningObject as ICmObject;
 			if (owner == null) // we're on a field
 			{
-				MessageBox.Show(@"owner object couldn't be created.");
+				MessageBox.Show("owner object couldn't be created.");
 				return;
 			}
 
@@ -1487,8 +1476,7 @@ namespace LCMBrowser
 				// index of object to move
 				inx = m_cache.DomainDataByFlid.GetObjIndex(owner.Hvo, flid, objToMove.Hvo);
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
-					m_cache.DomainDataByFlid.Replace(owner.Hvo, flid, inx - 1,
-					   inx - 1, new[] { objToMove.Hvo }, 1)
+					m_cache.DomainDataByFlid.Replace(owner.Hvo, flid, inx - 1, inx - 1, new[] { objToMove.Hvo }, 1)
 				);
 
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
@@ -1507,10 +1495,9 @@ namespace LCMBrowser
 		/// <summary>
 		/// Receives field.  Return field less OA, OC, OS, RA, RC, or RS if there.
 		///  </summary>
-		public static string StripOffTypeChars(String field)
+		public static string StripOffTypeChars(string field)
 		{
-			if (field.EndsWith("OS") || field.EndsWith("RS") || field.EndsWith("OC") || field.EndsWith("RC") ||
-				field.EndsWith("OA") || field.EndsWith("RA"))
+			if (field.EndsWith("OS") || field.EndsWith("RS") || field.EndsWith("OC") || field.EndsWith("RC") || field.EndsWith("OA") || field.EndsWith("RA"))
 			{
 				return field.Substring(0, field.Length - 2);
 			}
@@ -1537,7 +1524,7 @@ namespace LCMBrowser
 			var objToMove = io.Object as ICmObject ?? io.OriginalObject as ICmObject;
 			if (objToMove == null) // we're on a field
 			{
-				MessageBox.Show(@"object to move couldn't be created.");
+				MessageBox.Show("object to move couldn't be created.");
 				return;
 			}
 
@@ -1545,12 +1532,11 @@ namespace LCMBrowser
 						io.ParentInspectorObject.OwningObject as ICmObject;
 			if (owner == null) // we're on a field
 			{
-				MessageBox.Show(@"owner object couldn't be created.");
+				MessageBox.Show("owner object couldn't be created.");
 				return;
 			}
 
-			if (!io.ParentInspectorObject.DisplayName.EndsWith("OS") &&
-				!io.ParentInspectorObject.DisplayName.EndsWith("RS"))
+			if (!io.ParentInspectorObject.DisplayName.EndsWith("OS") && !io.ParentInspectorObject.DisplayName.EndsWith("RS"))
 			{
 				return;
 			}
@@ -1592,10 +1578,7 @@ namespace LCMBrowser
 			//Refresh the display
 			foreach (var dc in m_dockPanel.DocumentsToArray())
 			{
-				if (dc is InspectorWnd)
-				{
-					((InspectorWnd)dc).RefreshView("Down");
-				}
+				(dc as InspectorWnd)?.RefreshView("Down");
 			}
 		}
 
@@ -1619,10 +1602,7 @@ namespace LCMBrowser
 			//Refresh the display
 			foreach (var dc in m_dockPanel.DocumentsToArray())
 			{
-				if (dc is InspectorWnd)
-				{
-					((InspectorWnd)dc).RefreshView("Delete");
-				}
+				(dc as InspectorWnd)?.RefreshView("Delete");
 			}
 		}
 
@@ -1645,10 +1625,7 @@ namespace LCMBrowser
 			//Refresh the display
 			foreach (var dc in m_dockPanel.DocumentsToArray())
 			{
-				if (dc is InspectorWnd)
-				{
-					((InspectorWnd)dc).RefreshView();
-				}
+				(dc as InspectorWnd)?.RefreshView();
 			}
 
 			m_modelWnd.AfterSelectMethod();
@@ -1731,7 +1708,7 @@ namespace LCMBrowser
 					}
 					catch
 					{
-						MessageBox.Show($@"Value entered is not a valid integer: {sendObj.EditingControl.Text}");
+						MessageBox.Show($"Value entered is not a valid integer: {sendObj.EditingControl.Text}");
 						node.DisplayValue = node.DisplayValue;
 						return;
 					}
@@ -1740,11 +1717,11 @@ namespace LCMBrowser
 					{
 						if (ValidateGenDate(node, node.ParentInspectorObject, obj, pi, intNewVal, out genDate))
 						{
-							UpdateValues(node.ParentInspectorObject, obj, pi, "GenDate", "", intNewVal, genDate, dtNewVal, guidNewVal, false);
+							UpdateValues(node.ParentInspectorObject, obj, pi, "GenDate", string.Empty, intNewVal, genDate, dtNewVal, guidNewVal, false);
 							node.ParentInspectorObject.DisplayValue = genDate.ToLongString();
 							return;
 						}
-						MessageBox.Show(@"GenDate Format (Update Integer) is invalid.");
+						MessageBox.Show("GenDate Format (Update Integer) is invalid.");
 						return;
 					}
 
@@ -1753,7 +1730,7 @@ namespace LCMBrowser
 				case "System.Guid":
 					node.DisplayValue = sendObj.EditingControl.Text;
 					guidNewVal = new Guid(sendObj.EditingControl.Text);
-					UpdateValues(node, obj, pi, "Guid", "", 0, genDate, dtNewVal, guidNewVal, false);
+					UpdateValues(node, obj, pi, "Guid", string.Empty, 0, genDate, dtNewVal, guidNewVal, false);
 					break;
 				case "System.Boolean":
 					bool boolNewVal;
@@ -1764,7 +1741,7 @@ namespace LCMBrowser
 					}
 					catch
 					{
-						MessageBox.Show($@"Value entered is not a valid boolean: {sendObj.EditingControl.Text}");
+						MessageBox.Show($"Value entered is not a valid boolean: {sendObj.EditingControl.Text}");
 						node.DisplayValue = node.DisplayValue;
 						return;
 					}
@@ -1805,7 +1782,7 @@ namespace LCMBrowser
 								}
 								break;
 							default:
-								MessageBox.Show($@"GenDate boolean not IsAd or IsEmpty: {node.DisplayName}");
+								MessageBox.Show($"GenDate boolean not IsAd or IsEmpty: {node.DisplayName}");
 								return;
 						}
 
@@ -1822,7 +1799,7 @@ namespace LCMBrowser
 						{
 							if (ParentIsType(ref node, "TsString"))
 							{
-								MessageBox.Show(@"This type of string cannot be editted because it is under a TsString");
+								MessageBox.Show("This type of string cannot be editted because it is under a TsString");
 								return;
 							}
 						}
@@ -1835,11 +1812,11 @@ namespace LCMBrowser
 						if (DateTime.TryParse(sendObj.EditingControl.Text, out dtNewVal))
 						{
 							node.DisplayValue = sendObj.EditingControl.Text;
-							UpdateValues(node, obj, pi, "DateTime", "", 0, genDate, dtNewVal, guidNewVal, false);
+							UpdateValues(node, obj, pi, "DateTime", string.Empty, 0, genDate, dtNewVal, guidNewVal, false);
 
 							break;
 						}
-						MessageBox.Show(@"Date Format is invalid.");
+						MessageBox.Show("Date Format is invalid.");
 						node.DisplayValue = node.DisplayValue;
 						return;
 					case "SIL.FieldWorks.Common.FwUtils.GenDate.PrecisionType":
@@ -1860,7 +1837,7 @@ namespace LCMBrowser
 								newPreType = GenDate.PrecisionType.After;
 								break;
 							default:
-								MessageBox.Show(@"Precision must be: Before, After, Exact or Approximate.");
+								MessageBox.Show("Precision must be: Before, After, Exact or Approximate.");
 								node.DisplayValue = node.DisplayValue;
 								return;
 						}
@@ -1880,11 +1857,11 @@ namespace LCMBrowser
 						}
 						catch
 						{
-							MessageBox.Show(@"Gendate with new Precision is invalid.");
+							MessageBox.Show("Gendate with new Precision is invalid.");
 							return;
 						}
 						node.ParentInspectorObject.DisplayValue = genDate.ToLongString();
-						UpdateValues(node.ParentInspectorObject, obj, pi, "GenDate", "", 0, genDate, dtNewVal, guidNewVal, false);
+						UpdateValues(node.ParentInspectorObject, obj, pi, "GenDate", string.Empty, 0, genDate, dtNewVal, guidNewVal, false);
 						break;
 					default:
 						throw new ApplicationException("Illegal type");
@@ -2027,7 +2004,7 @@ namespace LCMBrowser
 					});
 				break;
 				default:
-					MessageBox.Show($@"Operation passed to UpdateValues is invalid: {operation}");
+					MessageBox.Show($"Operation passed to UpdateValues is invalid: {operation}");
 					break;
 			}
 		}
@@ -2059,7 +2036,7 @@ namespace LCMBrowser
 					}
 					catch
 					{
-						MessageBox.Show(@"GenDate day is invalid");
+						MessageBox.Show("GenDate day is invalid");
 						genDate = genDate1;
 						io.DisplayValue = genDate1.Day.ToString();
 						return false;
@@ -2073,7 +2050,7 @@ namespace LCMBrowser
 					}
 					catch
 					{
-						MessageBox.Show(@"GenDate month is invalid");
+						MessageBox.Show("GenDate month is invalid");
 						genDate = genDate1;
 						io.DisplayValue = genDate1.Month.ToString();
 						return false;
@@ -2087,13 +2064,13 @@ namespace LCMBrowser
 					}
 					catch
 					{
-						MessageBox.Show(@"GenDate year is invalid");
+						MessageBox.Show("GenDate year is invalid");
 						genDate = genDate1;
 						io.DisplayValue = genDate1.Year.ToString();
 						return false;
 					}
 				default:
-					MessageBox.Show($@"GenDate Integer passed is not Month, Day or Year: {io.DisplayName}");
+					MessageBox.Show($"GenDate Integer passed is not Month, Day or Year: {io.DisplayName}");
 					genDate = genDate1;
 					return false;
 			}
@@ -2184,7 +2161,7 @@ namespace LCMBrowser
 				}
 				if (l == 0)
 				{
-					MessageBox.Show($@"The hvo could not be created for {node.DisplayName}");
+					MessageBox.Show($"The hvo could not be created for {node.DisplayName}");
 					pi = null; obj = null; hvo = 0;
 					return false;
 				}
@@ -2193,7 +2170,7 @@ namespace LCMBrowser
 			obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 			if (obj == null)
 			{
-				MessageBox.Show(@"The LCM Object to update is null.");
+				MessageBox.Show("The LCM Object to update is null.");
 				pi = null;
 				return false;
 			}
@@ -2213,7 +2190,7 @@ namespace LCMBrowser
 									  BindingFlags.FlattenHierarchy);
 				if (pi == null)
 				{
-					MessageBox.Show(@"The PI Object to get property info from is null.");
+					MessageBox.Show("The PI Object to get property info from is null.");
 					return false;
 				}
 			}
@@ -2301,12 +2278,16 @@ namespace LCMBrowser
 		/// </summary>
 		public string GetHelpString(string sPropName)
 		{
+			if (string.IsNullOrWhiteSpace(sPropName))
+			{
+				return "NullStringID";
+			}
 			if (s_helpResources == null)
 			{
 				s_helpResources = new ResourceManager("LCMBrowser.Properties.Resources", Assembly.GetExecutingAssembly());
 			}
 
-			return sPropName == null ? "NullStringID" : s_helpResources.GetString(sPropName);
+			return s_helpResources.GetString(sPropName);
 		}
 
 		///<summary>

@@ -400,7 +400,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			foreach (TreeNode child in node.Nodes)
 			{
-				SetChecked(child, CheckState.Checked);
+				SetChecked(child, TriStateTreeViewCheckState.Checked);
 				CheckAllChildren(child);
 			}
 		}

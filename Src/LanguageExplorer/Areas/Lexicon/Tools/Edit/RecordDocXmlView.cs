@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.Controls;
@@ -56,7 +55,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </remarks>
 		protected override void Dispose(bool disposing)
 		{
-			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 			{

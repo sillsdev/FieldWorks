@@ -386,9 +386,14 @@ namespace LCMBrowser
 			m_lvModel.Items.Clear();
 			var sortAscending = (bool)m_lvModel.Columns[m_sortCol].Tag;
 
-			list.Sort((x, y) => sortAscending ?
-				x.SubItems[m_sortCol].Text.CompareTo(y.SubItems[m_sortCol].Text) :
-				y.SubItems[m_sortCol].Text.CompareTo(x.SubItems[m_sortCol].Text));
+			if (sortAscending)
+			{
+				list.Sort((x, y) => x.SubItems[m_sortCol].Text.CompareTo(y.SubItems[m_sortCol].Text));
+			}
+			else
+			{
+				list.Sort((x, y) => y.SubItems[m_sortCol].Text.CompareTo(x.SubItems[m_sortCol].Text));
+			}
 
 			m_lvModel.Items.AddRange(list.ToArray());
 			m_lvModel.ResumeLayout(true);

@@ -38,18 +38,18 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Toggles if value is -1
 		/// </summary>
 		/// <param name="newState">The new state.</param>
-		internal override void ResetAll(CheckState newState)
+		internal override void ResetAll(BrowseViewerCheckState newState)
 		{
 			var changedHvos = ResetAllCollectChangedHvos(newState);
 			ResetAllHandleBulkEditBar();
 			string undoMessage = XMLViewsStrings.ksUndoToggle;
 			string redoMessage = XMLViewsStrings.ksRedoToggle;
-			if (newState == CheckState.UncheckAll)
+			if (newState == BrowseViewerCheckState.UncheckAll)
 			{
 				undoMessage = XMLViewsStrings.ksUndoUncheckAll;
 				redoMessage = XMLViewsStrings.ksRedoUncheckAll;
 			}
-			else if (newState == CheckState.CheckAll)
+			else if (newState == BrowseViewerCheckState.CheckAll)
 			{
 				undoMessage = XMLViewsStrings.ksUndoCheckAll;
 				redoMessage = XMLViewsStrings.ksRedoCheckAll;

@@ -205,7 +205,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				sLabel = LanguageExplorerResources.ksStars;
 			}
-			var sXml = $"<slice label=\"{sLabel}\" field=\"Targets\"" + " editor=\"Custom\" assemblyPath=\"LanguageExplorer.dll\"";
+			var sXml = $"<slice label=\"{sLabel}\" field=\"Targets\" editor=\"Custom\" assemblyPath=\"LanguageExplorer.dll\"";
 			var sMenu = "mnuDataTree-DeleteAddLexReference";
 
 			// generate Xml for a specific slice matching this reference

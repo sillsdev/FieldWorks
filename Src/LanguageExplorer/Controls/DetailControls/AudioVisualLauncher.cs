@@ -21,7 +21,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	{
 		private AudioVisualView m_view;
 		private System.ComponentModel.IContainer components = null;
-		private System.Media.SoundPlayer m_player = null;
+		private System.Media.SoundPlayer m_player;
 
 		internal AudioVisualLauncher()
 		{
@@ -96,7 +96,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 			{

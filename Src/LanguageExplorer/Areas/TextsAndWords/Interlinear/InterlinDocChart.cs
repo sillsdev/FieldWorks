@@ -14,7 +14,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void InitializeComponent()
 		{
 			SuspendLayout();
-			AccessibleName = @"InterlinDocChart";
+			AccessibleName = "InterlinDocChart";
 			Name = "InterlinDocChart";
 			ResumeLayout(false);
 		}

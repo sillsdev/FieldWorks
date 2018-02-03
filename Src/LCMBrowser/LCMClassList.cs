@@ -85,11 +85,10 @@ namespace LCMBrowser
 					foreach (var name in AllLcmClassNames)
 					{
 						// Search the deserialized list for the class name.
-						var query = AllLcmClasses.Where(cls => cls.ClassName == name);
-						// If the class was not found in the deserialized list,
-						// then add it to the list.
-						if (!query.Any())
+						if (!AllLcmClasses.Any(cls => cls.ClassName == name))
 						{
+							// If the class was not found in the deserialized list,
+							// then add it to the list.
 							AllLcmClasses.Add(new LCMClass(GetLCMClassType(name)));
 						}
 					}

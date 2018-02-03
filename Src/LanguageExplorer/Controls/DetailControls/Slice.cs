@@ -436,7 +436,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_splitContainer = new SplitContainer
 			{
 				TabStop = false,
-				AccessibleName = @"Slice.SplitContainer",
+				AccessibleName = "Slice.SplitContainer",
 				// Do this once right away, mainly so child controls like check box that don't control
 				// their own height will get it right; then  after the controls get added to it, don't do it again
 				// until our own size is definitely established by SetWidthForDataTreeLayout.
@@ -760,12 +760,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			// prevents the controls of the new 'SplitContainer' being NAMELESS
 			if (m_splitContainer.Panel1.AccessibleName == null)
 			{
-				m_splitContainer.Panel1.AccessibleName = @"Panel1";
+				m_splitContainer.Panel1.AccessibleName = "Panel1";
 			}
 
 			if (m_splitContainer.Panel2.AccessibleName == null)
 			{
-				m_splitContainer.Panel2.AccessibleName = @"Panel2";
+				m_splitContainer.Panel2.AccessibleName = "Panel2";
 			}
 
 			SliceTreeNode treeNode;
@@ -781,7 +781,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				treeNode.SuspendLayout();
 				treeNode.Dock = DockStyle.Fill;
 				m_splitContainer.Panel1.Controls.Add(treeNode);
-				m_splitContainer.AccessibleName = @"SplitContainer";
+				m_splitContainer.AccessibleName = "SplitContainer";
 			}
 
 			if (!string.IsNullOrEmpty(Label))
@@ -1129,7 +1129,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						// It has children: decide whether to expand them.
 						// Old code does not expand by default, couple of ways to override.
 						var fExpand = XmlUtils.GetOptionalAttributeValue(node, "expansion") != "doNotExpand";
-						if (fUsePersistentExpansion && PropertyTable != null)
+						if (fUsePersistentExpansion)
 						{
 							Expansion = TreeItemState.ktisCollapsed; // Needs to be an expandable state to have ExpansionStateKey.
 							fExpand = PropertyTable.GetValue(ExpansionStateKey, fExpand);
@@ -1451,12 +1451,16 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private bool helpTopicIsValid(string helpStr)
 		{
-			if (PropertyTable == null)
+			if (string.IsNullOrEmpty(helpStr))
 			{
 				return false;
 			}
-			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
-			return (helpTopicProvider != null && !string.IsNullOrEmpty(helpStr)) && (helpTopicProvider.GetHelpString(helpStr) != null);
+			var actualHelpString = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(helpStr);
+			if (actualHelpString == "NullStringId")
+			{
+				actualHelpString = null;
+			}
+			return !string.IsNullOrEmpty(actualHelpString);
 		}
 
 		/// <summary></summary>
@@ -2026,7 +2030,7 @@ namespace LanguageExplorer.Controls.DetailControls
 #if RANDYTODO
 			// TODO: Can't Flex create a new object in a collection property?
 #endif
-			var mdcManaged = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
+			var mdcManaged = Cache.GetManagedMetaDataCache();
 			var owningSeqFields = mdcManaged.GetFields(Object.ClassID, true, (int)CellarPropertyType.OwningSequence).ToList();
 			if (!owningSeqFields.Contains(flid))
 			{

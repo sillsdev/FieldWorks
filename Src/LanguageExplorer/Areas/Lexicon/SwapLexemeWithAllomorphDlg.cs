@@ -101,7 +101,6 @@ namespace LanguageExplorer.Areas.Lexicon
 			m_cache = cache;
 			m_entry = entry;
 			m_fwTextBoxBottomMsg.WritingSystemFactory = m_cache.WritingSystemFactory;
-			//m_fwTextBoxBottomMsg.WritingSystemCode = 1; // What!? Why? No longer makes ANY sense!
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			// We want to do this BEFORE the text gets set, to avoid overriding its height properties.
 			// However, because of putting multiple lines in the box, we also need to do it AFTER we set the text
@@ -295,6 +294,7 @@ namespace LanguageExplorer.Areas.Lexicon
 				}
 				m_allomorph = (IMoForm)lvi.Tag;
 				SetBottomMessage();
+				break;
 			}
 			btnOK.Enabled = true;
 		}

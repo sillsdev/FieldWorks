@@ -18,7 +18,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		ICmObject m_obj;
 		readonly int m_hvoObj;
 		readonly int m_flid;
-		readonly int m_ws = -1; // -1 signifies not a multilingual property
+		readonly int m_ws; // -1 signifies not a multilingual property
 		IVwViewConstructor m_vc;
 
 		public StringSliceView(int hvo, int flid, int ws)
@@ -85,7 +85,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </remarks>
 		protected override void Dispose(bool disposing)
 		{
-			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 			{
@@ -294,7 +293,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				var ttp = tss.get_Properties(0);
 				int var;
 				var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
-				if (ws != 0 && m_vc is StringSliceVc && ws != ((StringSliceVc)m_vc).WsLabel)
+				if (ws != 0 && m_vc is StringSliceVc && ws != ((StringSliceVc)m_vc).MostRecentlyDisplayedWritingSystemHandle)
 				{
 					m_rootb.Reconstruct();
 					hlpr.SetSelection(true);

@@ -61,7 +61,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
-			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 			{
@@ -151,7 +150,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			CheckDisposed();
 
-			arg.Cancel = CleanupPendingEdits();
+			arg.Cancel = CleanupPendingEdits();  // NB: "CleanupPendingEdits" always returns false.
 			return arg.Cancel; // if we want to cancel, others don't need to be asked.
 		}
 
@@ -229,7 +228,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Cleanup any pending edits.
 		/// </summary>
-		/// <returns>Always retruns false.</returns>
+		/// <returns>Always returns false.</returns>
 		private bool CleanupPendingEdits()
 		{
 			const bool cancelClose = false;

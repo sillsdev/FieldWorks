@@ -19,7 +19,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal XmlBrowseView()
 		{
-			AccessibleName = @"XmlBrowseView";
+			AccessibleName = "XmlBrowseView";
 
 			// tab should move the cursor between cells in the table.
 			AcceptsTab = true;

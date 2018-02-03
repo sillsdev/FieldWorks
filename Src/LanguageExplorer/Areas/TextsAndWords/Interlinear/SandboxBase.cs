@@ -421,10 +421,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					Caches.DataAccess.VecProp(kSbWord, ktagSbWordMorphs, chvo, out chvo, arrayPtr);
 					var morphsHvoList = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 					var msas = new List<int>(morphsHvoList.Length);
-					msas.AddRange(morphsHvoList.Select((t, i) => (int) morphsHvoList.GetValue(i))
-						.Where(hvo => hvo != 0)
-						.Select(hvo => Caches.DataAccess.get_ObjectProp(hvo, ktagSbMorphPos))
-						.Select(msaSecHvo => Caches.RealHvo(msaSecHvo)));
+					msas.AddRange(morphsHvoList.Select((t, i) => (int) morphsHvoList.GetValue(i)).Where(hvo => hvo != 0)
+						.Select(hvo => Caches.DataAccess.get_ObjectProp(hvo, ktagSbMorphPos)).Select(msaSecHvo => Caches.RealHvo(msaSecHvo)));
 					return msas;
 				}
 			}

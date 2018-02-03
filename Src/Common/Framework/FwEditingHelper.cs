@@ -68,7 +68,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </remarks>
 		protected override void Dispose(bool disposing)
 		{
-			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;

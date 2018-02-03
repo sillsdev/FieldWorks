@@ -8,8 +8,8 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 namespace LanguageExplorer.Controls.XMLViews
 {
 	/// <summary>
-	/// this class contains the info used as a value in m_idToDisplayInfo
-	/// and as a key in m_displayInfoToId.
+	/// This class is used by XmlVc, which passes the buck to this class (and its subclasses)
+	/// to help display something.
 	/// </summary>
 	public abstract class DisplayCommand
 	{

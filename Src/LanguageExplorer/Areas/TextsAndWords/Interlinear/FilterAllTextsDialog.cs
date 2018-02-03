@@ -67,7 +67,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_objList = objList;
 			m_helpTopicProvider = helpTopicProvider;
 			m_treeTexts.AfterCheck += OnCheckedChanged;
-			AccessibleName = @"FilterAllTextsDialog";
+			AccessibleName = "FilterAllTextsDialog";
 		}
 
 		/// <summary/>
@@ -106,7 +106,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var prevSeqCount = m_cache.ActionHandlerAccessor.UndoableSequenceCount;
 			foreach (var obj in m_objList)
 			{
-				m_treeTexts.CheckNodeByTag(obj, TriStateTreeView.CheckState.Checked);
+				m_treeTexts.CheckNodeByTag(obj, TriStateTreeView.TriStateTreeViewCheckState.Checked);
 			}
 
 			if (prevSeqCount != m_cache.ActionHandlerAccessor.UndoableSequenceCount)

@@ -28,14 +28,14 @@ namespace LanguageExplorer.HelpTopics
 		/// <returns>The requested string</returns>
 		string IHelpTopicProvider.GetHelpString(string stid)
 		{
-			if (s_helpResources == null)
-			{
-				s_helpResources = new ResourceManager("LanguageExplorer.HelpTopics.HelpTopicPaths", Assembly.GetExecutingAssembly());
-			}
-
 			if (string.IsNullOrWhiteSpace(stid))
 			{
 				return "NullStringID";
+			}
+
+			if (s_helpResources == null)
+			{
+				s_helpResources = new ResourceManager("LanguageExplorer.HelpTopics.HelpTopicPaths", Assembly.GetExecutingAssembly());
 			}
 
 			// First try to find it in our resource file. If that doesn't work, try the more general one

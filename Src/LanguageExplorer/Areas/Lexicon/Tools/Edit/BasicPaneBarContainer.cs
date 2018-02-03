@@ -59,7 +59,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var pbAsControl = m_paneBar as Control;
 				if (pbAsControl != null && pbAsControl.AccessibleName == null)
 				{
-					pbAsControl.AccessibleName = @"LanguageExplorer.Controls.PaneBar";
+					pbAsControl.AccessibleName = "LanguageExplorer.Controls.PaneBar";
 				}
 			}
 		}

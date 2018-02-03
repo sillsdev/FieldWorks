@@ -66,22 +66,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				};
 			foreach (var ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
-				m_featSys.Add(new StringFeature($"entry-{ws.Handle}")
-				{
-					Description = $"Entry-{ws.Abbreviation}"
-				});
-				m_featSys.Add(new StringFeature($"form-{ws.Handle}")
-				{
-					Description = $"Form-{ws.Abbreviation}"
-				});
+				m_featSys.Add(new StringFeature($"entry-{ws.Handle}") { Description = $"Entry-{ws.Abbreviation}" });
+				m_featSys.Add(new StringFeature($"form-{ws.Handle}") { Description = $"Form-{ws.Abbreviation}" });
 			}
 
 			foreach (var ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 			{
-				m_featSys.Add(new StringFeature($"gloss-{ws.Handle}")
-				{
-					Description = $"Gloss-{ws.Abbreviation}"
-				});
+				m_featSys.Add(new StringFeature($"gloss-{ws.Handle}") { Description = $"Gloss-{ws.Abbreviation}" });
 			}
 
 			m_featSys.Add(new SymbolicFeature("cat", m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().AllInstances()

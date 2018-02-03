@@ -26,8 +26,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Create a slice. Note that callers that will further modify path should pass a Clone.
 		/// </summary>
-		public DummyObjectSlice(int indent, XElement node, ArrayList path, ICmObject obj, int flid, int ihvoMin,
-			string layoutName, string layoutChoiceField, XElement caller)
+		public DummyObjectSlice(int indent, XElement node, ArrayList path, ICmObject obj, int flid, int ihvoMin, string layoutName, string layoutChoiceField, XElement caller)
 		{
 			Indent = indent;
 			m_node = node;
@@ -65,7 +64,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </remarks>
 		protected override void Dispose(bool disposing)
 		{
-			//Debug.WriteLineIf(!disposing, "****************** " + GetType().Name + "(DummyObjectSlice) 'disposing' is false. ******************");
 			// Must not be run more than once.
 			if (IsDisposed)
 			{

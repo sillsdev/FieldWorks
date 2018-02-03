@@ -422,22 +422,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					vwenv.AddProp(ktagForm, this, kfragFeatureLine);
 				}
-
 				if (morphNode.Entry != null)
 				{
 					vwenv.AddProp(ktagEntry, this, kfragFeatureLine);
 				}
-
 				if (morphNode.Category != null)
 				{
 					vwenv.AddProp(ktagCategory, this, kfragFeatureLine);
 				}
-
 				if (morphNode.Gloss != null)
 				{
 					vwenv.AddProp(ktagGloss, this, kfragFeatureLine);
 				}
-
 				if (!morphNode.InflFeatures.Any())
 				{
 					return;
@@ -456,17 +452,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						vwenv.AddProp(ktagForm, this, kfragFeatureLine);
 					}
-
 					if (wordNode.Category != null)
 					{
 						vwenv.AddProp(ktagCategory, this, kfragFeatureLine);
 					}
-
 					if (wordNode.Gloss != null)
 					{
 						vwenv.AddProp(ktagGloss, this, kfragFeatureLine);
 					}
-
 					if (!wordNode.InflFeatures.Any())
 					{
 						return;

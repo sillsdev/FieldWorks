@@ -103,15 +103,9 @@ namespace LanguageExplorer.Areas
 		internal static MultiPane CreateInMainCollapsingSplitContainer(FlexComponentParameters flexComponentParameters, ICollapsingSplitContainer mainCollapsingSplitContainer, MultiPaneParameters multiPaneParameters)
 		{
 			var firstControl = multiPaneParameters.FirstControlParameters.Control;
-			if (firstControl is IFlexComponent)
-			{
-				((IFlexComponent)firstControl).InitializeFlexComponent(flexComponentParameters);
-			}
+			(firstControl as IFlexComponent)?.InitializeFlexComponent(flexComponentParameters);
 			var secondControl = multiPaneParameters.SecondControlParameters.Control;
-			if (secondControl is IFlexComponent)
-			{
-				((IFlexComponent)secondControl).InitializeFlexComponent(flexComponentParameters);
-			}
+			(secondControl as IFlexComponent)?.InitializeFlexComponent(flexComponentParameters);
 
 			// All tools with MultiPane as main second child of top level mainCollapsingSplitContainer
 			// have PaneBarContainer children, which then have other main children,
@@ -133,6 +127,16 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Create a new MultiPane instance where both main child controls are PaneBarContainer instances
 		/// </summary>
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		/// <param name="mainCollapsingSplitContainer">Parent control for the new MultiPane, which goes into its SecondControl</param>
+		/// <param name="multiPaneParameters"></param>
+		/// <param name="firstControl">Child control of new Left/Top PaneBarContainer instance</param>
+		/// <param name="firstlabel"></param>
+		/// <param name="firstPaneBar"></param>
+		/// <param name="secondControl">Child control of new Right/Bottom PaneBarContainer instance</param>
+		/// <param name="secondlabel"></param>
+		/// <param name="secondPaneBar"></param>
+		/// <returns>New instance of MultiPane that has PaneBarContainers as it two main controls.</returns>
 		internal static MultiPane CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(FlexComponentParameters flexComponentParameters, ICollapsingSplitContainer mainCollapsingSplitContainer, MultiPaneParameters multiPaneParameters, Control firstControl, string firstlabel, PaneBar firstPaneBar, Control secondControl, string secondlabel, PaneBar secondPaneBar)
 		{
 			var mainCollapsingSplitContainerAsControl = (Control)mainCollapsingSplitContainer;

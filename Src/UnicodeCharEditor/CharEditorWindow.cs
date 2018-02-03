@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,11 +19,9 @@ using SIL.Xml;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Main window for the UnicodeCharEditor program.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public partial class CharEditorWindow : Form, IHelpTopicProvider
 	{
 		private static ResourceManager s_helpResources;
@@ -42,41 +40,34 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				: base(GetListViewSubItemsArray(spec))
 			{
 				Tag = spec;
-				Int32.TryParse(spec.CodePoint, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out m_code);
+				int.TryParse(spec.CodePoint, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out m_code);
 			}
 
-			internal int Code
-			{
-				get { return m_code; }
-			}
+			internal int Code => m_code;
 		}
 
-		class PuaListItemComparer : IComparer
+		private sealed class PuaListItemComparer : IComparer
 		{
 			public int Compare(object x, object y)
 			{
 				var pli1 = x as PuaListItem;
 				var pli2 = y as PuaListItem;
-				if (pli1 == null || pli2 == null)
+				if (pli1 != null && pli2 != null)
 				{
-					int code1;
-					int code2;
-					if (Int32.TryParse(x.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code1) &&
-						Int32.TryParse(y.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code2))
-					{
-						return code1.CompareTo(code2);
-					}
-					return x.ToString().CompareTo(y.ToString());
+					return pli1.Code.CompareTo(pli2.Code);
 				}
-				return pli1.Code.CompareTo(pli2.Code);
+				int code1;
+				int code2;
+				if (int.TryParse(x.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code1) &&
+				    int.TryParse(y.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code2))
+				{
+					return code1.CompareTo(code2);
+				}
+				return x.ToString().CompareTo(y.ToString());
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Default c'tor
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public CharEditorWindow()
 		{
 			InitializeComponent();
@@ -88,7 +79,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <summary>
 		/// Add existing PUA characters to the table at load time.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
@@ -124,38 +114,55 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			var icuDir = Icu.DefaultDirectory;
 			if (string.IsNullOrEmpty(icuDir))
+			{
 				throw new Exception("An error occurred: ICU directory not found. Registry value for ICU not set?");
+			}
 			var unicodeDataFilename = Path.Combine(icuDir, "UnicodeDataOverrides.txt");
 			if (!File.Exists(unicodeDataFilename))
+			{
 				return;
+			}
 			using (var reader = File.OpenText(unicodeDataFilename))
 			{
 				while (reader.Peek() >= 0)
 				{
 					var sLine = ReadLineAndRemoveComment(reader);
-					if (String.IsNullOrEmpty(sLine))
+					if (string.IsNullOrEmpty(sLine))
+					{
 						continue;
+					}
 					var idx = sLine.IndexOf(';');
 					if (idx <= 0)
+					{
 						continue;
+					}
 					var sCode = sLine.Substring(0, idx).Trim();
-					if (String.IsNullOrEmpty(sCode))
+					if (string.IsNullOrEmpty(sCode))
+					{
 						continue;
+					}
 					var sProps = sLine.Substring(idx + 1).Trim();
 					if (sProps.StartsWith("<") && sProps.Contains("Private Use"))
+					{
 						continue;
+					}
 					int code;
 					int codeMax;
 					if (!ParseCodeField(sCode, out code, out codeMax))
+					{
 						continue;
+					}
+
 					if (code != codeMax)
+					{
 						continue;
-					string[] dataProperties = sProps.Split(';');
+					}
+					var dataProperties = sProps.Split(';');
 					if (dataProperties.Length == PUACharacter.ExectedPropCount + 1)
 					{
 						// One extra is OK...I think it comes from a comment in the SIL PUA properties.
 						// But the PUACharacter contsructor doesn't like it, so strip it off.
-						int ich = sProps.LastIndexOf(';');
+						var ich = sProps.LastIndexOf(';');
 						sProps = sProps.Substring(0, ich);
 					}
 					var charSpec = new PUACharacter(sCode, sProps);
@@ -168,30 +175,40 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			code = 0;
 			codeMax = 0;
-			if (String.IsNullOrEmpty(sCode))
+			if (string.IsNullOrEmpty(sCode))
+			{
 				return false;
+			}
 			sCode = sCode.Trim();
-			if (String.IsNullOrEmpty(sCode))
+			if (string.IsNullOrEmpty(sCode))
+			{
 				return false;
-			if (Int32.TryParse(sCode, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code))
+			}
+			if (int.TryParse(sCode, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code))
 			{
 				codeMax = code;
 				return true;
 			}
 			var rgsCode = sCode.Split(new[] { ".." }, StringSplitOptions.RemoveEmptyEntries);
 			if (rgsCode.Length != 2)
+			{
 				return false;
-			return Int32.TryParse(rgsCode[0], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code) &&
-				Int32.TryParse(rgsCode[1], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out codeMax);
+			}
+			return int.TryParse(rgsCode[0], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code) &&
+				int.TryParse(rgsCode[1], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out codeMax);
 		}
 
 		private static string ReadLineAndRemoveComment(TextReader reader)
 		{
 			if (reader == null)
-				throw new ArgumentNullException("reader");
+			{
+				throw new ArgumentNullException(nameof(reader));
+			}
 			var sLine = reader.ReadLine();
-			if (String.IsNullOrEmpty(sLine))
+			if (string.IsNullOrEmpty(sLine))
+			{
 				return sLine;
+			}
 			var idxComment = sLine.IndexOf('#');
 			if (idxComment >= 0)
 			{
@@ -219,7 +236,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			{
 				var dir = CustomCharsDirectory;
 				foreach (var sFile in Directory.GetFiles(dir, "*.xml"))
+				{
 					ReadCustomCharData(sFile);
+				}
 			}
 		}
 
@@ -229,14 +248,17 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			foreach (var xe in xd.Descendants("CharDef"))
 			{
 				var xaCode = xe.Attribute("code");
-				if (xaCode == null || String.IsNullOrEmpty(xaCode.Value))
+				if (string.IsNullOrEmpty(xaCode?.Value))
+				{
 					continue;
+				}
 				var xaData = xe.Attribute("data");
-				if (xaData == null || String.IsNullOrEmpty(xaData.Value))
+				if (string.IsNullOrEmpty(xaData?.Value))
+				{
 					continue;
+				}
 				int code;
-				if (Int32.TryParse(xaCode.Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code) &&
-					!m_dictCustomChars.ContainsKey(code))
+				if (int.TryParse(xaCode.Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code) && !m_dictCustomChars.ContainsKey(code))
 				{
 					var spec = new PUACharacter(xaCode.Value, xaData.Value);
 					m_dictCustomChars.Add(code, spec);
@@ -252,81 +274,89 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				dlg.Modify = false;
 				dlg.SetDialogProperties(this);
 				dlg.ParentDialog = this;
-				if (dlg.ShowDialog(this) == DialogResult.OK)
+				if (dlg.ShowDialog(this) != DialogResult.OK)
 				{
-					var lviNew = new PuaListItem(dlg.PUAChar);
-					if (m_dictCustomChars.ContainsKey(lviNew.Code))
-					{
-						m_dictCustomChars[lviNew.Code] = dlg.PUAChar;
-						PuaListItem lviOld = null;
-						foreach (var item in m_lvCharSpecs.Items)
-						{
-							var pli = item as PuaListItem;
-							if (pli != null && pli.Code == lviNew.Code)
-							{
-								lviOld = item as PuaListItem;
-								break;
-							}
-						}
-						if (lviOld != null)
-							m_lvCharSpecs.Items.Remove(lviOld);
-					}
-					else
-					{
-						m_dictCustomChars.Add(lviNew.Code, dlg.PUAChar);
-					}
-					m_lvCharSpecs.Items.Add(lviNew);
-					m_fDirty = true;
+					return;
 				}
+				var lviNew = new PuaListItem(dlg.PUAChar);
+				if (m_dictCustomChars.ContainsKey(lviNew.Code))
+				{
+					m_dictCustomChars[lviNew.Code] = dlg.PUAChar;
+					PuaListItem lviOld = null;
+					foreach (var item in m_lvCharSpecs.Items)
+					{
+						var pli = item as PuaListItem;
+						if (pli != null && pli.Code == lviNew.Code)
+						{
+							lviOld = item as PuaListItem;
+							break;
+						}
+					}
+
+					if (lviOld != null)
+					{
+						m_lvCharSpecs.Items.Remove(lviOld);
+					}
+				}
+				else
+				{
+					m_dictCustomChars.Add(lviNew.Code, dlg.PUAChar);
+				}
+				m_lvCharSpecs.Items.Add(lviNew);
+				m_fDirty = true;
 			}
 		}
 
 		private void m_btnEdit_Click(object sender, EventArgs e)
 		{
-			if (m_lvCharSpecs.SelectedItems.Count > 0)
+			if (m_lvCharSpecs.SelectedItems.Count <= 0)
 			{
-				var lvi = m_lvCharSpecs.SelectedItems[0];
-				var spec = lvi.Tag as PUACharacter;
-				if (spec != null)
+				return;
+			}
+			var lvi = m_lvCharSpecs.SelectedItems[0];
+			var spec = lvi.Tag as PUACharacter;
+			if (spec == null)
+			{
+				return;
+			}
+			using (var dlg = new CustomCharDlg())
+			{
+				dlg.PUAChar = spec;
+				dlg.Modify = true;
+				dlg.SetDialogProperties(this);
+				dlg.ParentDialog = this;
+				if (dlg.ShowDialog(this) != DialogResult.OK)
 				{
-					using (var dlg = new CustomCharDlg())
-					{
-						dlg.PUAChar = spec;
-						dlg.Modify = true;
-						dlg.SetDialogProperties(this);
-						dlg.ParentDialog = this;
-						if (dlg.ShowDialog(this) == DialogResult.OK)
-						{
-							m_lvCharSpecs.Items.Remove(lvi);
-							lvi = new PuaListItem(dlg.PUAChar);
-							m_lvCharSpecs.Items.Add(lvi);
-							m_fDirty = true;
-						}
-					}
+					return;
 				}
+				m_lvCharSpecs.Items.Remove(lvi);
+				lvi = new PuaListItem(dlg.PUAChar);
+				m_lvCharSpecs.Items.Add(lvi);
+				m_fDirty = true;
 			}
 		}
 
 		private void m_btnDelete_Click(object sender, EventArgs e)
 		{
-			if (m_lvCharSpecs.SelectedItems.Count > 0)
+			if (m_lvCharSpecs.SelectedItems.Count <= 0)
 			{
-				var lvi = m_lvCharSpecs.SelectedItems[0] as PuaListItem;
-				if (lvi == null)
-					return;
-				var spec = lvi.Tag as PUACharacter;
-				if (spec != null)
-				{
-					string msg = String.Format("Deleting the character definition for {0} cannot be undone.  Do you want to continue?", spec.CodePoint);
-					var ret = MessageBox.Show(msg, "Warning", MessageBoxButtons.YesNo);
-					if (ret == DialogResult.Yes)
-					{
-						m_dictCustomChars.Remove(lvi.Code);
-						m_lvCharSpecs.Items.Remove(lvi);
-						m_fDirty = true;
-					}
-				}
+				return;
 			}
+			var lvi = m_lvCharSpecs.SelectedItems[0] as PuaListItem;
+			var spec = lvi?.Tag as PUACharacter;
+			if (spec == null)
+			{
+				return;
+			}
+			var msg = $"Deleting the character definition for {spec.CodePoint} cannot be undone.  Do you want to continue?";
+			var ret = MessageBox.Show(msg, "Warning", MessageBoxButtons.YesNo);
+			if (ret != DialogResult.Yes)
+			{
+				return;
+			}
+			m_dictCustomChars.Remove(lvi.Code);
+			m_lvCharSpecs.Items.Remove(lvi);
+			m_fDirty = true;
 		}
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
@@ -339,16 +369,22 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			try
 			{
 				int code;
-				if (Int32.TryParse(sCode, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code))
+				if (int.TryParse(sCode, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code))
 				{
 					PUACharacter charSpec;
 					if (m_dictCustomChars.TryGetValue(code, out charSpec))
+					{
 						return charSpec;
+					}
 					if (m_dictModifiedChars.TryGetValue(code, out charSpec))
+					{
 						return charSpec;
+					}
 					charSpec = new PUACharacter(code);
 					if (charSpec.RefreshFromIcu(true))
+					{
 						return charSpec; // known character we have no overrides for
+					}
 				}
 			}
 			catch (COMException)
@@ -361,14 +397,10 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <summary>
 		/// Is this a character for which the user has already recorded a private override?
 		/// </summary>
-		/// <param name="sCode"></param>
-		/// <returns></returns>
 		internal bool IsCustomChar(string sCode)
 		{
 			int code;
-			if (Int32.TryParse(sCode, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code))
-				return m_dictCustomChars.ContainsKey(code);
-			return false;
+			return int.TryParse(sCode, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code) && m_dictCustomChars.ContainsKey(code);
 		}
 
 		private void m_lvCharSpecs_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -394,20 +426,26 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			{
 				var icuDir = Icu.DefaultDirectory;
 				if (string.IsNullOrEmpty(icuDir))
+				{
 					throw new Exception("An error occurred: ICU directory not found. Registry value for ICU not set?");
+				}
 				// Must handle registry setting with or without final \  LT-11766.
-				if (icuDir.LastIndexOf(Path.DirectorySeparatorChar) == icuDir.Length -1)
+				if (icuDir.LastIndexOf(Path.DirectorySeparatorChar) == icuDir.Length - 1)
+				{
 					icuDir = icuDir.Substring(0, icuDir.Length - 1);
+				}
 				return Path.GetDirectoryName(icuDir);	// strip the ICU specific subdirectory (FWR-2803)
 			}
 		}
 
-		bool m_fBakFileCreated = false;
+		bool m_fBakFileCreated;
 
 		private void m_btnSave_Click(object sender, EventArgs e)
 		{
 			if (m_dictCustomChars.Count == 0)
+			{
 				return;
+			}
 
 			var customCharsFile = CustomCharsFile;
 			string oldFile = null;
@@ -417,7 +455,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				if (!m_fBakFileCreated)
 				{
 					if (File.Exists(oldFile))
+					{
 						File.Delete(oldFile);
+					}
 					File.Move(customCharsFile, oldFile);
 					m_fBakFileCreated = true;
 				}
@@ -436,14 +476,18 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 							writer.Write("<CharDef code=\"");
 							writer.Write(spec.CodePoint);
 							writer.Write("\" data=\"");
-							for (int i = 0; i < spec.Data.Length; ++i)
+							for (var i = 0; i < spec.Data.Length; ++i)
 							{
-								if (!String.IsNullOrEmpty(spec.Data[i]))
+								if (!string.IsNullOrEmpty(spec.Data[i]))
+								{
 									writer.Write(XmlUtils.MakeSafeXmlAttribute(spec.Data[i]));
-								if (i + 1 < spec.Data.Length)
-									writer.Write(";");
-							}
+								}
 
+								if (i + 1 < spec.Data.Length)
+								{
+									writer.Write(";");
+								}
+							}
 							writer.WriteLine("\"/>");
 						}
 
@@ -452,25 +496,29 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 					var inst = new PUAInstaller();
 					inst.InstallPUACharacters(customCharsFile);
-					if (!String.IsNullOrEmpty(oldFile) && File.Exists(oldFile))
+					if (!string.IsNullOrEmpty(oldFile) && File.Exists(oldFile))
+					{
 						File.Delete(oldFile);
+					}
 					m_fBakFileCreated = false;
 					m_fDirty = false;
 					return;
 				}
 				catch (IcuLockedException)
 				{
-					var res = MessageBox.Show(Properties.Resources.ksErrorOccurredInstalling,
-						Properties.Resources.ksMsgHeader, MessageBoxButtons.RetryCancel);
+					var res = MessageBox.Show(Properties.Resources.ksErrorOccurredInstalling, Properties.Resources.ksMsgHeader, MessageBoxButtons.RetryCancel);
 					if (res == DialogResult.Cancel)
+					{
 						return;
+					}
 				}
 				catch (Exception ex)
 				{
-					var res = MessageBox.Show(ex.Message, Properties.Resources.ksMsgHeader,
-						MessageBoxButtons.RetryCancel);
+					var res = MessageBox.Show(ex.Message, Properties.Resources.ksMsgHeader, MessageBoxButtons.RetryCancel);
 					if (res == DialogResult.Cancel)
+					{
 						return;
+					}
 				}
 			}
 		}
@@ -486,20 +534,19 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
 		{
 			base.OnClosing(e);
-			if (m_fDirty)
+			if (!m_fDirty)
 			{
-				var res = MessageBox.Show(this,
-					Properties.Resources.ksDoYouWantToSave, Properties.Resources.ksConfirm,
-					MessageBoxButtons.YesNoCancel);
-				switch (res)
-				{
-					case DialogResult.Cancel:
-						e.Cancel = true;
-						return;
-					case DialogResult.Yes:
-						m_btnSave_Click(this, e);
-						break;
-				}
+				return;
+			}
+			var res = MessageBox.Show(this, Properties.Resources.ksDoYouWantToSave, Properties.Resources.ksConfirm, MessageBoxButtons.YesNoCancel);
+			switch (res)
+			{
+				case DialogResult.Cancel:
+					e.Cancel = true;
+					return;
+				case DialogResult.Yes:
+					m_btnSave_Click(this, e);
+					break;
 			}
 		}
 		#region IHelpTopicProvider Members
@@ -509,23 +556,21 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// </summary>
 		public string GetHelpString(string sPropName)
 		{
+			if (string.IsNullOrWhiteSpace(sPropName))
+			{
+				return "NullStringID";
+			}
 			if (s_helpResources == null)
 			{
-				s_helpResources = new ResourceManager(
-					"SIL.FieldWorks.UnicodeCharEditor.Properties.Resources", Assembly.GetExecutingAssembly());
+				s_helpResources = new ResourceManager("SIL.FieldWorks.UnicodeCharEditor.Properties.Resources", Assembly.GetExecutingAssembly());
 			}
-			if (sPropName == null)
-				return "NullStringID";
 			return s_helpResources.GetString(sPropName);
 		}
 
 		/// <summary>
 		/// Get the name of the help file.
 		/// </summary>
-		public string HelpFile
-		{
-			get { return Path.Combine(FwDirectoryFinder.CodeDirectory, GetHelpString("UserHelpFile")); }
-		}
+		public string HelpFile => Path.Combine(FwDirectoryFinder.CodeDirectory, GetHelpString("UserHelpFile"));
 
 		#endregion
 	}

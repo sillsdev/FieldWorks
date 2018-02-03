@@ -364,7 +364,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				Tuple<int, int> newAdjPageRange;
 				// Gecko xpath seems to be sensitive to namespaces, using * instead of span helps
 				var currentPageButton = GetTopCurrentPageButton(browserElement);
-				var adjacentPageButton = (GeckoHtmlElement) currentPageButton?.PreviousSibling;
+				var adjacentPageButton = (GeckoHtmlElement)currentPageButton?.PreviousSibling;
 				if (adjacentPageButton == null)
 				{
 					return;
@@ -613,7 +613,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			// In some cases (e.g where a user reset their local settings) the stored configuration may no longer
 			// exist on disk.
 			var validConfiguration = SetCurrentDictionaryPublicationLayout();
-			if (string.IsNullOrEmpty(PropertyTable.GetValue<string>("SuspendLoadingRecordUntilOnJumpToRecord", null)))
+			if (string.IsNullOrEmpty(PropertyTable.GetValue("SuspendLoadingRecordUntilOnJumpToRecord", string.Empty)))
 			{
 				UpdateContent(PublicationDecorator, validConfiguration);
 			}
@@ -1167,9 +1167,8 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				{
 					// look up the publication object
 
-					var pub = (Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Where(item =>
-						item.Name.UserDefaultWritingSystem.Text == pubName)).FirstOrDefault();
-					if(pub != null && pub != m_pubDecorator.Publication)
+					var pub = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.FirstOrDefault(item => item.Name.UserDefaultWritingSystem.Text == pubName);
+					if (pub != null && pub != m_pubDecorator.Publication)
 					{
 						// change the publication if it is different from the current one
 						m_pubDecorator.Publication = pub;
@@ -1184,7 +1183,9 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			var maxViewWidth = Width/2 - kSpaceForMenuButton;
 			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, m_configObjectName);
 			var currentConfig = GetCurrentConfiguration(false);
-			var curViewName = allConfigurations.ContainsValue(currentConfig) ? allConfigurations.First(item => item.Value == currentConfig).Key : allConfigurations.First().Key;
+			var curViewName = allConfigurations.ContainsValue(currentConfig)
+				? allConfigurations.First(item => item.Value == currentConfig).Key
+				: allConfigurations.First().Key;
 			// Limit length of View title to remaining available width
 			curViewName = TrimToMaxPixelWidth(Math.Max(2, maxViewWidth), curViewName);
 			var isReversalIndex = DictionaryConfigurationServices.GetDictionaryConfigurationType(PropertyTable) == LanguageExplorerResources.ReversalIndex;

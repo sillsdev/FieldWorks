@@ -635,6 +635,7 @@
     <Compile Include="Controls\XMLViews\BulkReplaceTabPageSettings.cs" />
     <Compile Include="Controls\XMLViews\CheckBoxActiveChangedEventArgs.cs" />
     <Compile Include="Controls\XMLViews\CheckBoxChangedEventArgs.cs" />
+    <Compile Include="Controls\XMLViews\BrowseViewerCheckState.cs" />
     <Compile Include="Controls\XMLViews\ClearMethod.cs" />
     <Compile Include="Controls\XMLViews\ClickCopyEventArgs.cs" />
     <Compile Include="Controls\XMLViews\ClickCopyTabPageSettings.cs" />

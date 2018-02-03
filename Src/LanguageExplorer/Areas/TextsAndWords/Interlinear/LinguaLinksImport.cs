@@ -475,7 +475,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				ILgWritingSystem wsEngine;
 				if (TryGetWsEngine(wsFactory, item.lang, out wsEngine))
 				{
-					wordBuilder.ReplaceTsString(0, 0, TsStringUtils.MakeString("" + space, wsEngine.Handle));
+					wordBuilder.ReplaceTsString(0, 0, TsStringUtils.MakeString(string.Empty + space, wsEngine.Handle));
 				}
 				wordString = wordBuilder.GetString();
 			}
@@ -493,7 +493,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				ILgWritingSystem wsEngine;
 				if (TryGetWsEngine(wsFactory, item.lang, out wsEngine))
 				{
-					wordBuilder.ReplaceTsString(wordBuilder.Length, wordBuilder.Length, TsStringUtils.MakeString("" + space, wsEngine.Handle));
+					wordBuilder.ReplaceTsString(wordBuilder.Length, wordBuilder.Length, TsStringUtils.MakeString(string.Empty + space, wsEngine.Handle));
 				}
 				wordString = wordBuilder.GetString();
 			}

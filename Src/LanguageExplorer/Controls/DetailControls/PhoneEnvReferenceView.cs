@@ -107,7 +107,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 			{
@@ -402,7 +401,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
-		/// InseRt a new environment and return its ID. We assign it an arbitrary class id.
+		/// Insert a new environment and return its ID. We assign it an arbitrary class id.
 		/// </summary>
 		private int InsertNewEnv(int ord)
 		{
@@ -883,12 +882,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			CheckDisposed();
 			string s;
-			if (!CanGetEnvironmentStringRep(out s))
-			{
-				return;
-			}
-
-			if (m_validator.Recognize(s))
+			if (!CanGetEnvironmentStringRep(out s) || m_validator.Recognize(s))
 			{
 				return;
 			}

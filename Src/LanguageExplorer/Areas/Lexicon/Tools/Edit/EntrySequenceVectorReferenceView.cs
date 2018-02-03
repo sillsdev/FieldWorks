@@ -39,7 +39,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					var complex = m_rootObj.Services.GetInstance<ILexEntryRepository>().GetObject(hvosOld[ihvo]);
 					// the selected object in the list is a complex entry which has this as one of its components.
 					// We want to remove this from its components.
-					var ler = (from item in complex.EntryRefsOS where item.RefType == LexEntryRefTags.krtComplexForm select item).First();
+					var ler = complex.EntryRefsOS.First(item => item.RefType == LexEntryRefTags.krtComplexForm);
 					ler.PrimaryLexemesRS.Remove(m_rootObj);
 					ler.ShowComplexFormsInRS.Remove(m_rootObj);
 					ler.ComponentLexemesRS.Remove(m_rootObj);
@@ -114,24 +114,25 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				}
 				else if (obj is ILexEntryRef)
 				{
-					ler = (ILexEntryRef) obj;
+					ler = (ILexEntryRef)obj;
 				}
 				else
 				{
 					return VwDelProbResponse.kdprAbort; // we don't know how to delete it.
 				}
 				var fieldName = m_cache.MetaDataCacheAccessor.GetFieldName(m_rootFlid);
-				if (fieldName == "Subentries")
+				switch (fieldName)
 				{
-					ler.PrimaryLexemesRS.Remove(m_rootObj);
-				}
-				else if (fieldName == "VisibleComplexFormEntries" || fieldName == "VisibleComplexFormBackRefs")
-				{
-					ler.ShowComplexFormsInRS.Remove(m_rootObj);
-				}
-				else if (fieldName == "VariantFormEntries")
-				{
-					ler.ComponentLexemesRS.Remove(m_rootObj);
+					case "Subentries":
+						ler.PrimaryLexemesRS.Remove(m_rootObj);
+						break;
+					case "VisibleComplexFormEntries":
+					case "VisibleComplexFormBackRefs":
+						ler.ShowComplexFormsInRS.Remove(m_rootObj);
+						break;
+					case "VariantFormEntries":
+						ler.ComponentLexemesRS.Remove(m_rootObj);
+						break;
 				}
 			}
 			else
@@ -142,8 +143,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				CheckViewSizeChanged(startHeight, m_rootb.Height);
 				// Redisplay (?) the vector property.
-				m_rootb.SetRootObject(m_rootObj.Hvo, m_VectorReferenceVc, kfragTargetVector,
-					m_rootb.Stylesheet);
+				m_rootb.SetRootObject(m_rootObj.Hvo, m_VectorReferenceVc, kfragTargetVector, m_rootb.Stylesheet);
 			}
 			return VwDelProbResponse.kdprDone;
 		}

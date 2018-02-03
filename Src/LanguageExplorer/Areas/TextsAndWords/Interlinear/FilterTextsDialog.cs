@@ -80,7 +80,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				showWarning = true;
 			}
 #endif
-			if (m_treeTexts.GetNodesWithState(TriStateTreeView.CheckState.Checked).Length == 0)
+			if (m_treeTexts.GetNodesWithState(TriStateTreeView.TriStateTreeViewCheckState.Checked).Length == 0)
 			{
 				showWarning = true;
 			}
@@ -151,11 +151,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					if (node.Tag == m_selectedText)
 					{
 						m_treeTexts.SelectedNode = node;
-						m_treeTexts.SetChecked(node, TriStateTreeView.CheckState.Checked);
+						m_treeTexts.SetChecked(node, TriStateTreeView.TriStateTreeViewCheckState.Checked);
 					}
 					else
 					{
-						m_treeTexts.SetChecked(node, TriStateTreeView.CheckState.Unchecked);
+						m_treeTexts.SetChecked(node, TriStateTreeView.TriStateTreeViewCheckState.Unchecked);
 					}
 				}
 				else

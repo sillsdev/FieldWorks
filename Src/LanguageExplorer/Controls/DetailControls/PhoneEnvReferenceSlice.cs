@@ -52,7 +52,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </remarks>
 		protected override void Dispose(bool disposing)
 		{
-			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 			{
@@ -62,13 +61,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				var rl = Control as PhoneEnvReferenceLauncher;
-				if (rl != null)
-				{
-					rl.ViewSizeChanged -= OnViewSizeChanged;
-					var view = (PhoneEnvReferenceView)rl.MainControl;
-					view.ViewSizeChanged -= OnViewSizeChanged;
-				}
+				var rl = (PhoneEnvReferenceLauncher)Control;
+				rl.ViewSizeChanged -= OnViewSizeChanged;
+				var view = (PhoneEnvReferenceView)rl.MainControl;
+				view.ViewSizeChanged -= OnViewSizeChanged;
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -83,12 +79,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected internal override bool UpdateDisplayIfNeeded(int hvo, int tag)
 		{
-			if (tag != Flid)
-			{
-				return base.UpdateDisplayIfNeeded(hvo, tag);
-			}
 			var rl = Control as PhoneEnvReferenceLauncher;
-			if (rl == null)
+			if (tag != Flid || rl == null)
 			{
 				return base.UpdateDisplayIfNeeded(hvo, tag);
 			}
@@ -116,7 +108,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		// Probably the private ViewSizeChanged event isn't really needed but I'm leaving it for now just in case.
 		private void view_LayoutSizeChanged(object sender, EventArgs e)
 		{
-			var rl = Control as PhoneEnvReferenceLauncher;
+			var rl = (PhoneEnvReferenceLauncher)Control;
 			var view = (PhoneEnvReferenceView)rl.MainControl;
 			OnViewSizeChanged(this, new FwViewSizeEventArgs(view.RootBox.Height, view.RootBox.Width));
 		}

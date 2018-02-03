@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// make sure their parent nodes are expanded.
 			foreach (TreeNode node in m_initiallyCheckedNodes)
 			{
-				SetChecked(node, CheckState.Checked);
+				SetChecked(node, TriStateTreeViewCheckState.Checked);
 				node.EnsureVisible();
 			}
 
@@ -153,8 +153,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		protected virtual bool IsNodeSelected(TreeNode node)
 		{
-			return (GetChecked(node) == CheckState.Checked &&
-				(node.Parent == null || GetChecked(node.Parent) != CheckState.Checked));
+			return (GetChecked(node) == TriStateTreeViewCheckState.Checked &&
+				(node.Parent == null || GetChecked(node.Parent) != TriStateTreeViewCheckState.Checked));
 		}
 
 		/// ------------------------------------------------------------------------------------

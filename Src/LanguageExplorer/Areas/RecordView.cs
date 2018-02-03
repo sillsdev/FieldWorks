@@ -94,7 +94,6 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 			{
@@ -145,8 +144,7 @@ namespace LanguageExplorer.Areas
 			//are we the dominant pane? The thinking here is that if our record list is controlling the record tree bar, then we are.
 			// The second condition prevents recording the intermediate record in the history when following a link
 			// causes us to change areas and then change records.
-			if (!MyRecordList.IsControllingTheRecordTreeBar ||
-				!string.IsNullOrEmpty(PropertyTable.GetValue<string>("SuspendLoadingRecordUntilOnJumpToRecord")))
+			if (!MyRecordList.IsControllingTheRecordTreeBar || !string.IsNullOrEmpty(PropertyTable.GetValue("SuspendLoadingRecordUntilOnJumpToRecord", string.Empty)))
 			{
 				return;
 			}

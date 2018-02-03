@@ -477,9 +477,9 @@ namespace LanguageExplorer.Areas
 		{
 			CheckDisposed();
 
-			if (!m_fullyInitialized || RecordNavigationInfo.GetSendingList(argument) != MyRecordList
-			) // Don't pretend to have handled it if it isn't our record list.
+			if (!m_fullyInitialized || RecordNavigationInfo.GetSendingList(argument) != MyRecordList)
 			{
+				// Don't pretend to have handled it if it is not fully initialzed, or isn't our record list.
 				return false;
 			}
 

@@ -35,23 +35,14 @@ namespace LanguageExplorer.Controls
 		/// <param name="e"></param>
 		protected virtual void OnHCBeforeNavigate(HtmlControlEventArgs e)
 		{
-			if (HCBeforeNavigate != null)
-			{
-				// Invokes the delegates.
-				HCBeforeNavigate(this, e);
-			}
+			// Invokes the delegates.
+			HCBeforeNavigate?.Invoke(this, e);
 		}
 
 		/// <summary>
 		/// Get the browser.
 		/// </summary>
-		public GeckoWebBrowser Browser
-		{
-			get
-			{
-				return m_browser;
-			}
-		}
+		public GeckoWebBrowser Browser => m_browser;
 
 		/// <summary>
 		/// Get/Set the URL for the control.
@@ -74,7 +65,9 @@ namespace LanguageExplorer.Controls
 				m_url = value ?? "about:blank";
 
 				if (m_browser.Handle == IntPtr.Zero)
+				{
 					return; // This should never happen.
+				}
 				m_browser.Navigate(m_url);
 			}
 		}
@@ -175,12 +168,10 @@ namespace LanguageExplorer.Controls
 		/// note: this old version of before navigate is being used because of a bug in the.net framework.
 		/// win this bug is fixed, we should look at switching to using BeforeNavigate2
 		/// </summary>
-		protected void OnBeforeNavigate(string url, int flags, string targetFrameName,
-				ref object postData, string headers, ref bool wasHandled)
+		protected void OnBeforeNavigate(string url, int flags, string targetFrameName, ref object postData, string headers, ref bool wasHandled)
 		{
 			// Let the owning class know
-			HtmlControlEventArgs e = new HtmlControlEventArgs(url);
-			OnHCBeforeNavigate(e);
+			OnHCBeforeNavigate(new HtmlControlEventArgs(url));
 		}
 
 		/// <summary>
@@ -233,7 +224,6 @@ namespace LanguageExplorer.Controls
 		/// </param>
 		protected override void Dispose( bool disposing )
 		{
-			//Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
