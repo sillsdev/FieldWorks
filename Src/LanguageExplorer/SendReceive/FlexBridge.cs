@@ -186,9 +186,11 @@ namespace LanguageExplorer.SendReceive
 		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// No need to run it more than once.
 			if (_isDisposed)
+			{
+				// No need to run it more than once.
 				return;
+			}
 
 			if (disposing)
 			{
@@ -239,7 +241,9 @@ namespace LanguageExplorer.SendReceive
 			ObtainedProjectType obtainedProjectType;
 			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(PropertyTable.GetValue<Form>("window"), FlexApp, out obtainedProjectType);
 			if (string.IsNullOrEmpty(newprojectPathname))
+			{
 				return; // We dealt with it.
+			}
 
 			PropertyTable.SetProperty(CommonBridgeServices.LastBridgeUsed, obtainedProjectType == ObtainedProjectType.Lift ? CommonBridgeServices.LiftBridge : CommonBridgeServices.FLExBridge, SettingsGroup.LocalSettings, true, false);
 
@@ -279,15 +283,15 @@ namespace LanguageExplorer.SendReceive
 		/// <summary>
 		/// This is only used for the main FW repo, so it excludes any notes in a lower level repo.
 		/// </summary>
-		/// <param name="projectFolder"></param>
-		/// <returns></returns>
 		private static Dictionary<string, long> PrepareToDetectMainConflicts(string projectFolder)
 		{
 			var result = new Dictionary<string, long>();
 			foreach (var file in Directory.GetFiles(projectFolder, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
 				if (file.Contains(LcmFileHelper.OtherRepositories))
+				{
 					continue; // Skip them, since they are part of some other repository.
+				}
 
 				result[file] = new FileInfo(file).Length;
 			}
@@ -302,7 +306,9 @@ namespace LanguageExplorer.SendReceive
 			var projectTempFolder = Path.Combine(projectFolder, "Temp");
 			var dictConfigSchemaTempPath = Path.Combine(projectTempFolder, dictConfigSchemaFileName);
 			if (!Directory.Exists(projectTempFolder))
+			{
 				Directory.CreateDirectory(projectTempFolder);
+			}
 			if (File.Exists(dictConfigSchemaTempPath))
 			{
 				// We've had difficulties in the past trying to delete this file while it's read-only. This may apply only to early testers' projects.

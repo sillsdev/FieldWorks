@@ -123,11 +123,15 @@ namespace LanguageExplorer.SendReceive
 
 			// Step 0. Try to move an extant lift repo from old location to new.
 			if (!MoveOldLiftRepoIfNeeded())
+			{
 				return;
+			}
 
 			// Step 1. If notifier exists, re-try import (brutal or merciful, depending on contents of it).
 			if (RepeatPriorFailedImportIfNeeded())
+			{
 				return;
+			}
 
 			// Step 2. Export lift file. If fails, then call into bridge with undo_export_lift and quit.
 			if (!ExportLiftLexicon())
@@ -247,9 +251,11 @@ namespace LanguageExplorer.SendReceive
 		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// No need to run it more than once.
 			if (_isDisposed)
+			{
+				// No need to run it more than once.
 				return;
+			}
 
 			if (disposing)
 			{
@@ -430,10 +436,14 @@ namespace LanguageExplorer.SendReceive
 		private bool RepeatPriorFailedImportIfNeeded()
 		{
 			if (!Directory.Exists(_liftProjectDir))
+			{
 				return false;
+			}
 
 			if (_liftPathname == null)
+			{
 				return false;
+			}
 
 			var previousImportStatus = LiftImportFailureServices.GetFailureStatus(_liftProjectDir);
 			switch (previousImportStatus)
@@ -649,8 +659,7 @@ namespace LanguageExplorer.SendReceive
 					{
 						var guid = matchId.Groups[1].Value;
 						var label = matchLabel.Groups[1].Value;
-						var output = string.Format(outputTemplate,
-							liftFileName, label, guid);
+						var output = string.Format(outputTemplate, liftFileName, label, guid);
 						writer.WriteLine(line.Replace(input, output));
 						continue;
 					}
@@ -734,8 +743,7 @@ namespace LanguageExplorer.SendReceive
 				{
 					_liftPathname = Path.Combine(_liftProjectDir, Cache.ProjectId.Name + ".lift");
 				}
-				progressDialog.Message = string.Format(ResourceHelper.GetResourceString("kstidExportingEntries"),
-					Cache.LangProject.LexDbOA.Entries.Count());
+				progressDialog.Message = string.Format(ResourceHelper.GetResourceString("kstidExportingEntries"), Cache.LangProject.LexDbOA.Entries.Count());
 				progressDialog.Minimum = 0;
 				progressDialog.Maximum = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().Count;
 				progressDialog.Position = 0;
@@ -782,7 +790,9 @@ namespace LanguageExplorer.SendReceive
 		private void OnDumperSetProgressMessage(object sender, ProgressMessageArgs e)
 		{
 			if (_progressDlg == null)
+			{
 				return;
+			}
 			var message = ResourceHelper.GetResourceString(e.MessageId);
 			if (!string.IsNullOrEmpty(message))
 			{
@@ -795,14 +805,20 @@ namespace LanguageExplorer.SendReceive
 		private void OnDumperUpdateProgress(object sender)
 		{
 			if (_progressDlg == null)
+			{
 				return;
+			}
 
 			var nMax = _progressDlg.Maximum;
 			if (_progressDlg.Position >= nMax)
+			{
 				_progressDlg.Position = 0;
+			}
 			_progressDlg.Step(1);
 			if (_progressDlg.Position > nMax)
+			{
 				_progressDlg.Position = _progressDlg.Position % nMax;
+			}
 		}
 
 		private bool DoMercilessLiftImport(bool dataChanged)
@@ -867,8 +883,6 @@ namespace LanguageExplorer.SendReceive
 		/// <summary>
 		/// This is only used for the Lift repo folder.
 		/// </summary>
-		/// <param name="liftPath"></param>
-		/// <returns></returns>
 		private static Dictionary<string, long> PrepareToDetectLiftConflicts(string liftPath)
 		{
 			var result = new Dictionary<string, long>();

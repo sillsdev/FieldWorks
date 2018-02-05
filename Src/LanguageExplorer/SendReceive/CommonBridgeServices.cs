@@ -95,12 +95,16 @@ namespace LanguageExplorer.SendReceive
 			{
 				// TODO: Test to see if one conflict tool can do both FLEx and LIFT conflicts.
 				if (file.Contains(LcmFileHelper.OtherRepositories))
+				{
 					continue; // Skip them, since they are part of some other repository.
+				}
 
 				long oldLength;
 				savedState.TryGetValue(file, out oldLength);
 				if (new FileInfo(file).Length == oldLength)
+				{
 					continue; // no new notes in this file.
+				}
 				return true; // Review JohnT: do we need to look in the file to see if what was added is a conflict?
 			}
 			return false; // no conflicts added.
@@ -149,26 +153,30 @@ namespace LanguageExplorer.SendReceive
 			if (checkForLiftNotes)
 			{
 				if (!Directory.Exists(liftFolder))
+				{
 					return false; // If the folder doesn't even exist, there can't be any lift notes.
+				}
 
 				// Switch to look for note files in the Lift repo.
 				folderToSearchIn = liftFolder;
 			}
 
 			if (!Directory.Exists(Path.Combine(folderToSearchIn, ".hg")))
-				return false; // No repo, so there can be no notes files.
-
-			foreach (string notesPathname in Directory.GetFiles(folderToSearchIn, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
-				if (!NotesFileHasContent(notesPathname))
+				return false; // No repo, so there can be no notes files.
+			}
+
+			foreach (var notesPathname in Directory.GetFiles(folderToSearchIn, "*.ChorusNotes", SearchOption.AllDirectories))
+			{
+				if (!NotesFileHasContent(notesPathname) || checkForLiftNotes)
+				{
 					continue; // Skip ones with no content.
+				}
 
-				if (checkForLiftNotes)
+				if (checkForLiftNotes  || !notesPathname.Contains(liftFolder)/* Skip any lift ones down in a nested repo. */)
+				{
 					return true;
-
-				if (!notesPathname.Contains(liftFolder)) // Skip any lift ones down in a nested repo.
-					return true;
-
+				}
 				// Must be a nested lift one to get here, so try another one.
 			}
 			return false;
@@ -181,7 +189,6 @@ namespace LanguageExplorer.SendReceive
 		}
 
 		/// <summary />
-		/// <returns></returns>
 		internal static string GetLiftRepositoryFolderFromFwProjectFolder(string projectFolder)
 		{
 			var otherDir = Path.Combine(projectFolder, LcmFileHelper.OtherRepositories);
@@ -190,7 +197,9 @@ namespace LanguageExplorer.SendReceive
 				var extantOtherFolders = Directory.GetDirectories(otherDir);
 				var extantLiftFolder = extantOtherFolders.FirstOrDefault(folder => folder.EndsWith("_LIFT"));
 				if (extantLiftFolder != null)
+				{
 					return extantLiftFolder; // Reuse the old one, no matter what the new project dir name is.
+				}
 			}
 
 			var flexProjName = Path.GetFileName(projectFolder);

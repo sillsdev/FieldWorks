@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012-2015 SIL International
+﻿// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,12 +21,13 @@ namespace LanguageExplorer.SendReceive
 		/// <summary>
 		/// Get the import failure status.
 		/// </summary>
-		/// <returns></returns>
 		internal static ImportFailureStatus GetFailureStatus(string baseLiftFolderDirectoryName)
 		{
 			var failurePathname = GetNoticePathname(baseLiftFolderDirectoryName);
 			if (!File.Exists(failurePathname))
+			{
 				return ImportFailureStatus.NoImportNeeded;
+			}
 
 			var fileContents = File.ReadAllText(failurePathname);
 			return fileContents.Contains(LanguageExplorerResources.kBasicFailureFileContents) ? ImportFailureStatus.BasicImportNeeded : ImportFailureStatus.StandardImportNeeded;
@@ -55,19 +56,15 @@ namespace LanguageExplorer.SendReceive
 		internal static void DisplayLiftFailureNoticeIfNecessary(Form parentWindow, string baseLiftFolderDirectory)
 		{
 			var noticeFilePath = GetNoticePathname(baseLiftFolderDirectory);
-			if(File.Exists(noticeFilePath))
+			if (!File.Exists(noticeFilePath))
 			{
-				var contents = File.ReadAllText(noticeFilePath);
-				if (contents.Contains(LanguageExplorerResources.kStandardFailureFileContents))
-				{
-					MessageBoxUtils.Show(parentWindow, LanguageExplorerResources.kFlexStandardImportFailureMessage,
-										 LanguageExplorerResources.kFlexImportFailureTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				}
-				else
-				{
-					MessageBoxUtils.Show(parentWindow, LanguageExplorerResources.kBasicImportFailureMessage, LanguageExplorerResources.kFlexImportFailureTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				}
+				return;
 			}
+			var contents = File.ReadAllText(noticeFilePath);
+			MessageBoxUtils.Show(parentWindow,
+				contents.Contains(LanguageExplorerResources.kStandardFailureFileContents)
+					? LanguageExplorerResources.kFlexStandardImportFailureMessage
+					: LanguageExplorerResources.kBasicImportFailureMessage, LanguageExplorerResources.kFlexImportFailureTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 		}
 
 		/// <summary>
@@ -94,22 +91,14 @@ namespace LanguageExplorer.SendReceive
 		{
 			var failurePathname = GetNoticePathname(baseLiftFolderDirectoryName);
 			if (File.Exists(failurePathname))
+			{
 				File.Delete(failurePathname);
+			}
 		}
 
 		private static string GetNoticePathname(string baseLiftFolderDirectoryName)
 		{
 			return Path.Combine(baseLiftFolderDirectoryName, FailureFilename);
 		}
-	}
-
-	/// <summary>
-	/// Enumeration of possible Lift import failure status.
-	/// </summary>
-	internal enum ImportFailureStatus
-	{
-		BasicImportNeeded,
-		StandardImportNeeded,
-		NoImportNeeded
 	}
 }

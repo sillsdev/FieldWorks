@@ -1001,6 +1001,7 @@
     <Compile Include="MGA\MGAImageKind.cs" />
     <Compile Include="MGA\MasterItemCitation.cs" />
     <Compile Include="RecordFilterParameterObject.cs" />
+    <Compile Include="SendReceive\ImportFailureStatus.cs" />
     <Compile Include="ToolbarServices.cs" />
     <Compile Include="VectorPropertyParameterObject.cs" />
     <Compile Include="DictionaryConfiguration\ConfigType.cs" />
