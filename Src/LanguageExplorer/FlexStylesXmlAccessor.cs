@@ -56,63 +56,39 @@ namespace LanguageExplorer
 			{
 				m_sourceStyles = LoadDoc(sourceDocument);
 				if (!string.IsNullOrEmpty(sourceDocument))
+				{
 					CreateStyles(new ConsoleProgress(), m_cache.LangProject.StylesOC, m_sourceStyles, false);
+				}
 			}
 		}
 
-		/// -------------------------------------------------------------------------------------
 		/// <summary>
 		/// Required implementation of abstract method gives relative path to configuration file
 		/// from the FieldWorks install folder.
 		/// </summary>
-		/// -------------------------------------------------------------------------------------
-		protected override string ResourceFilePathFromFwInstall
-		{
-			get { return Path.DirectorySeparatorChar + @"Language Explorer" + Path.DirectorySeparatorChar + ResourceFileName; }
-		}
+		protected override string ResourceFilePathFromFwInstall => Path.DirectorySeparatorChar + @"Language Explorer" + Path.DirectorySeparatorChar + ResourceFileName;
 
-		/// -------------------------------------------------------------------------------------
 		/// <summary>
 		/// Required implementation of abstract method gives name of the Flex styles sheet
 		/// resource
 		/// </summary>
-		/// -------------------------------------------------------------------------------------
-		protected override string ResourceName
-		{
-			get { return "FlexStyles"; }
-		}
+		protected override string ResourceName => "FlexStyles";
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the resource list in which the CmResources are owned.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected override ILcmOwningCollection<ICmResource> ResourceList
-		{
-			get { return m_lexicon.ResourcesOC; }
-		}
+		protected override ILcmOwningCollection<ICmResource> ResourceList => m_lexicon.ResourcesOC;
 
-		/// -------------------------------------------------------------------------------------
 		/// <summary>
 		/// Required implementation of abstract method gives style collection.
 		/// </summary>
-		/// -------------------------------------------------------------------------------------
-		protected override ILcmOwningCollection<IStStyle> StyleCollection
-		{
-			get { return m_cache.LangProject.StylesOC; }
-		}
+		protected override ILcmOwningCollection<IStStyle> StyleCollection => m_cache.LangProject.StylesOC;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the LcmCache
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected override LcmCache Cache
-		{
-			get { return m_lexicon.Cache; }
-		}
+		protected override LcmCache Cache => m_lexicon.Cache;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Special overridable method to allow application-specific overrides to allow a
 		/// particular style to be renamed.
@@ -121,7 +97,6 @@ namespace LanguageExplorer
 		/// <param name="replStyleName">Name of the replacement style.</param>
 		/// <returns>The default always returns <c>false</c>; but an application may
 		/// override this to return <c>true</c> for a specific pair of stylenames.</returns>
-		/// ------------------------------------------------------------------------------------
 		protected override bool StyleReplacementAllowed(string styleName, string replStyleName)
 		{
 			return (styleName == "External Link" && replStyleName == "Hyperlink") ||
@@ -129,14 +104,10 @@ namespace LanguageExplorer
 				(styleName == "Language Code" && replStyleName == "Writing System Abbreviation");
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// If the current stylesheet version in the Db doesn't match that of the current XML
 		/// file, update the DB.
 		/// </summary>
-		/// <param name="lp">The language project</param>
-		/// <param name="progressDlg">The progress dialog.</param>
-		/// ------------------------------------------------------------------------------------
 		internal static void EnsureCurrentStylesheet(ILangProject lp, IThreadedProgress progressDlg)
 		{
 			// We don't need to establish a NonUndoableUnitOfWork here because caller has already
@@ -145,26 +116,19 @@ namespace LanguageExplorer
 			acc.EnsureCurrentResource(progressDlg);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Complain if the context is not valid for the tool that is loading the styles.
 		/// Flex currently allows general styles and its own special one.
 		/// </summary>
-		/// <param name="context"></param>
-		/// <param name="styleName"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		protected override void ValidateContext(ContextValues context, string styleName)
 		{
-			if (context != ContextValues.InternalConfigureView &&
-				context != ContextValues.Internal &&
-				context != ContextValues.General)
-				ReportInvalidInstallation(String.Format(
-					"Style {0} is illegally defined with context '{1}' in {2}.",
-					styleName, context, ResourceFileName));
+			if (context != ContextValues.InternalConfigureView && context != ContextValues.Internal &&
+			    context != ContextValues.General)
+			{
+				ReportInvalidInstallation($"Style {styleName} is illegally defined with context '{context}' in {ResourceFileName}.");
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether the given style is (possibly) in use.
 		/// </summary>
@@ -174,7 +138,6 @@ namespace LanguageExplorer
 		/// <returns><c>true</c> if there is any reasonable chance the given style is in use
 		/// somewhere in the project data; <c>false</c> if the style has never been used and
 		/// there is no real possibility it could be in the data.</returns>
-		/// ------------------------------------------------------------------------------------
 		protected override bool StyleIsInUse(IStStyle style)
 		{
 			return (style.Name == "External Link" || base.StyleIsInUse(style));
@@ -188,12 +151,10 @@ namespace LanguageExplorer
 			ResetProps(styleInfo);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Loads the settings file and checks the DTD version.
 		/// </summary>
 		/// <returns>The root node</returns>
-		/// ------------------------------------------------------------------------------------
 		protected override XmlNode LoadDoc(string xmlLocation = null)
 		{
 			return base.LoadDoc(m_sourceDocumentPath);
@@ -223,7 +184,9 @@ namespace LanguageExplorer
 			foreach (var style in StyleCollection)
 			{
 				if (DictionaryConfigurationServices.UnsupportedStyles.Contains(style.Name))
+				{
 					continue;
+				}
 				var exportStyle = new ExportStyleInfo(style, style.Rules);
 				WriteStyleXml(exportStyle, writer);
 			}
@@ -267,8 +230,10 @@ namespace LanguageExplorer
 		private static string GetStyleContext(ExportStyleInfo style)
 		{
 			var contextString = style.Context.ToString();
-			if(string.IsNullOrEmpty(contextString))
+			if (string.IsNullOrEmpty(contextString))
+			{
 				throw new ArgumentException("The context in the style is invalid", "style");
+			}
 			return contextString.Substring(0, 1).ToLowerInvariant() + contextString.Substring(1);
 		}
 
@@ -293,7 +258,7 @@ namespace LanguageExplorer
 			}
 			// Generate the font info (the font element is required by the DTD even if it has no attributes)
 			writer.WriteStartElement("font");
-			IEnumerable<Tuple<string, string>> fontProps = CollectFontProps(style.FontInfoForWs(-1));
+			var fontProps = CollectFontProps(style.FontInfoForWs(-1));
 			if (fontProps.Any())
 			{
 				foreach (var prop in fontProps)
@@ -316,7 +281,7 @@ namespace LanguageExplorer
 				}
 			}
 			writer.WriteEndElement(); // font
-			IEnumerable<Tuple<string, string>> paragraphProps = CollectParagraphProps(style, basedOnStyle, nextStyle);
+			var paragraphProps = CollectParagraphProps(style, basedOnStyle, nextStyle);
 			if (paragraphProps.Any())
 			{
 				writer.WriteStartElement("paragraph");
@@ -328,17 +293,19 @@ namespace LanguageExplorer
 				//Bullet/Number FontInfo
 				try
 				{
-					IEnumerable<Tuple<string, string>> bulNumParaProperty = CollectBulletProps(style.BulletInfo);
+					var bulNumParaProperty = CollectBulletProps(style.BulletInfo);
 					foreach (var prop in bulNumParaProperty)
 					{
-						string propName = prop.Item1;
+						var propName = prop.Item1;
 						if (BulletPropertyMap.ContainsKey(propName.ToLower()))
+						{
 							propName = BulletPropertyMap[propName.ToLower()];
+						}
 						writer.WriteAttributeString(propName, prop.Item2);
 					}
 					// Generate the font info (the font element is required by the DTD even if it has no attributes)
 					writer.WriteStartElement("BulNumFontInfo");
-					IEnumerable<Tuple<string, string>> bulletFontInfoProperties = CollectFontProps(style.BulletInfo.FontInfo);
+					var bulletFontInfoProperties = CollectFontProps(style.BulletInfo.FontInfo);
 					if (bulletFontInfoProperties.Any())
 					{
 						foreach (var prop in bulletFontInfoProperties)
@@ -429,19 +396,14 @@ namespace LanguageExplorer
 			if (styleRules.HasFirstLineIndent)
 			{
 				// hanging and firstLine are stored in an overloaded property value, negative for hanging, positive for firstline
-				if (styleRules.FirstLineIndent < 0)
-				{
-					paragraphProps.Add(new Tuple<string, string>("hanging", -(styleRules.FirstLineIndent / 1000) + " pt"));
-				}
-				else
-				{
-					paragraphProps.Add(new Tuple<string, string>("firstLine", styleRules.FirstLineIndent / 1000 + " pt"));
-				}
+				paragraphProps.Add(styleRules.FirstLineIndent < 0
+					? new Tuple<string, string>("hanging", -(styleRules.FirstLineIndent / 1000) + " pt")
+					: new Tuple<string, string>("firstLine", styleRules.FirstLineIndent / 1000 + " pt"));
 			}
 			if (styleRules.HasAlignment)
 			{
 				var alignment = styleRules.Alignment;
-				string alignValue = "none";
+				var alignValue = "none";
 				switch (alignment)
 				{
 					case FwTextAlign.ktalCenter:
@@ -459,28 +421,30 @@ namespace LanguageExplorer
 				}
 				paragraphProps.Add(new Tuple<string, string>("alignment", alignValue));
 			}
-			if (styleRules.HasLineSpacing)
+
+			if (!styleRules.HasLineSpacing)
 			{
-				string lineSpaceType;
-				// relative is used for single, 1.5, double space
-				if (styleRules.LineSpacing.m_relative)
-				{
-					lineSpaceType = "rel";
-				}
-				else if (styleRules.LineSpacing.m_lineHeight <= 0)
-				{
-					// for historical reasons negative values mean exact, and positive mean at least
-					// (see: Framework\StylesXmlAccessor.cs SetParagraphProperties())
-					lineSpaceType = "exact";
-				}
-				else
-				{
-					lineSpaceType = "atleast";
-				}
-				var lineSpace = Math.Abs(styleRules.LineSpacing.m_lineHeight) / 1000 + " pt";
-				paragraphProps.Add(new Tuple<string, string>("lineSpacing", lineSpace));
-				paragraphProps.Add(new Tuple<string, string>("lineSpacingType", lineSpaceType));
+				return paragraphProps;
 			}
+			string lineSpaceType;
+			// relative is used for single, 1.5, double space
+			if (styleRules.LineSpacing.m_relative)
+			{
+				lineSpaceType = "rel";
+			}
+			else if (styleRules.LineSpacing.m_lineHeight <= 0)
+			{
+				// for historical reasons negative values mean exact, and positive mean at least
+				// (see: Framework\StylesXmlAccessor.cs SetParagraphProperties())
+				lineSpaceType = "exact";
+			}
+			else
+			{
+				lineSpaceType = "atleast";
+			}
+			var lineSpace = Math.Abs(styleRules.LineSpacing.m_lineHeight) / 1000 + " pt";
+			paragraphProps.Add(new Tuple<string, string>("lineSpacing", lineSpace));
+			paragraphProps.Add(new Tuple<string, string>("lineSpacingType", lineSpaceType));
 
 			return paragraphProps;
 		}
@@ -550,14 +514,15 @@ namespace LanguageExplorer
 		/// with the attribute name and value if this property is set in the style rules. This method assumes the property is
 		/// for a size value stored in millipoints.
 		/// </summary>
-		private static void GetPointPropAttribute(int property, string attributeName, ITsTextProps styleRules,
-			List<Tuple<string, string>> resultsList)
+		private static void GetPointPropAttribute(int property, string attributeName, ITsTextProps styleRules, List<Tuple<string, string>> resultsList)
 		{
 			if (styleRules == null)
+			{
 				return;
-			int propValue;
+			}
+
 			int hasProperty;
-			propValue = styleRules.GetIntPropValues(property, out hasProperty);
+			var propValue = styleRules.GetIntPropValues(property, out hasProperty);
 			if (hasProperty != -1)
 			{
 				resultsList.Add(new Tuple<string, string>(attributeName, propValue / 1000 + " pt"));
@@ -568,7 +533,7 @@ namespace LanguageExplorer
 		/// Takes the attribute name we want to use in the xml and uses the style prop for a point property and generates
 		/// a tuple with the attribute name and value if this property is set.
 		/// </summary>
-		private void GetPointPropAttribute(string attributeName, IStyleProp<int> sizeProp, List<Tuple<string, string>> resultsList)
+		private static void GetPointPropAttribute(string attributeName, IStyleProp<int> sizeProp, List<Tuple<string, string>> resultsList)
 		{
 			if (sizeProp.ValueIsSet)
 			{
@@ -581,18 +546,20 @@ namespace LanguageExplorer
 		/// with the attribute name and value if this property is set in the style rules. This method assumes the property
 		/// is for a color value.
 		/// </summary>
-		private static void GetColorValueAttribute(int property, string attributeName, ITsTextProps styleRules,
-			List<Tuple<string, string>> resultsList)
+		private static void GetColorValueAttribute(int property, string attributeName, ITsTextProps styleRules, List<Tuple<string, string>> resultsList)
 		{
 			if (styleRules == null)
+			{
 				return;
+			}
 			int hasColor;
 			var colorValueBGR = styleRules.GetIntPropValues(property, out hasColor);
-			if (hasColor != -1)
+			if (hasColor == -1)
 			{
-				var color = Color.FromArgb((int)ColorUtil.ConvertRGBtoBGR((uint)colorValueBGR)); // convert BGR to RGB
-				GetColorValueFromSystemColor(attributeName, resultsList, color);
+				return;
 			}
+			var color = Color.FromArgb((int)ColorUtil.ConvertRGBtoBGR((uint)colorValueBGR)); // convert BGR to RGB
+			GetColorValueFromSystemColor(attributeName, resultsList, color);
 		}
 
 		private void GetColorValueAttribute(string attributeName, IStyleProp<Color> fontColor, List<Tuple<string, string>> resultsList)
@@ -609,9 +576,7 @@ namespace LanguageExplorer
 		/// </summary>
 		private static void GetColorValueFromSystemColor(string attributeName, List<Tuple<string, string>> resultsList, Color color)
 		{
-			var colorString = color.IsKnownColor
-				? color.Name.ToLowerInvariant()
-				: string.Format("({0},{1},{2})", color.R, color.G, color.B);
+			var colorString = color.IsKnownColor ? color.Name.ToLowerInvariant() : $"({color.R},{color.G},{color.B})";
 			resultsList.Add(new Tuple<string, string>(attributeName, colorString));
 		}
 

@@ -16,22 +16,18 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Sorts the item at.
 		/// </summary>
-		/// <param name="index">The index.</param>
 		IManyOnePathSortItem SortItemAt(int index);
 		/// <summary>
 		/// Appends the items for.
 		/// </summary>
-		/// <param name="hvo">The hvo.</param>
 		int AppendItemsFor(int hvo);
 		/// <summary>
 		/// Removes the items for.
 		/// </summary>
-		/// <param name="hvo">The hvo.</param>
 		void RemoveItemsFor(int hvo);
 		/// <summary>
 		/// Get the index of the given object, or -1 if it's not in the list.
 		/// </summary>
-		/// <param name="hvo"></param>
 		int IndexOf(int hvo);
 		/// <summary>
 		/// Class of objects being displayed in this list.

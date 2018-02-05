@@ -9,9 +9,13 @@ namespace LanguageExplorer
 	/// </summary>
 	public enum Navigation
 	{
+		/// <summary>Move to the first item in a list.</summary>
 		First,
+		/// <summary>Move to the next item in a list.</summary>
 		Next,
+		/// <summary>Move to the previous item in a list.</summary>
 		Previous,
+		/// <summary>Move to the last item in a list.</summary>
 		Last
 	}
 }

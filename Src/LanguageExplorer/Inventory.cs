@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
@@ -96,8 +97,7 @@ namespace LanguageExplorer
 		/// suffix for a file name (e.g., '*.fwlayout' is a typical pattern).
 		/// </summary>
 		private string m_filePattern;
-		/// <summary />
-		private string m_sDatabase = null;
+
 		/// <summary />
 		private string m_projectPath;
 		/// <summary>
@@ -106,11 +106,7 @@ namespace LanguageExplorer
 		/// for example, '/LayoutInventory/*' or '/Parts/bin/*'.
 		/// </summary>
 		private string m_xpathElementsWanted;
-		/// <summary>
-		/// List of attribute names that must match for a node to be considered a replacement
-		/// of an existing node, keyed by element name.
-		/// </summary>
-		private Dictionary<string, string[]> m_keyAttrs;
+
 		/// <summary>
 		/// This table is used to implement the GetUnified method, which finds or creates
 		/// an element produced by unifying the children of two nodes. The key is a 'KeyValuePair'
@@ -121,16 +117,17 @@ namespace LanguageExplorer
 		private readonly Dictionary<GetElementKey, XElement> m_getElementTable = new Dictionary<GetElementKey, XElement>();
 		private static readonly Dictionary<string, Inventory> s_inventories = new Dictionary<string, Inventory>();
 		private List<KeyValuePair<string, DateTime>> m_fileInfo;
-		private int m_version = 0; // Version number passed to LoadUserOverrides.
-								   // This is used to store layout nodes that have an attribute tagForWs="true".  These are
-								   // used in displaying Reversal Indexes, and need have separate versions generated for each
-								   // reversal index writing system.
+		private int m_version; // Version number passed to LoadUserOverrides.
+		/// <summary>
+		/// This is used to store layout nodes that have an attribute tagForWs="true".  These are
+		/// used in displaying Reversal Indexes, and need have separate versions generated for each
+		/// reversal index writing system.
+		/// </summary>
 		private List<XElement> m_wsTaggedNodes = new List<XElement>();
 
 		// Tracing variable - used to control when and what is output to the debug and trace listeners
 		private TraceSwitch xmlInventorySwitch = new TraceSwitch("XML_Inventory", "", "Off");
 
-		private IOldVersionMerger m_merger; // client-supplied merger for old-version user overrides.
 		private string m_appName;
 		#endregion
 
@@ -160,23 +157,24 @@ namespace LanguageExplorer
 		internal Inventory(string[] customInventoryPaths, string filePattern, string xpath, Dictionary<string, string[]> keyAttrs, string appName, string projectPath)
 			:this (filePattern, xpath, keyAttrs, appName, projectPath)
 		{
-			int msStart = Environment.TickCount;
+			var msStart = Environment.TickCount;
 			m_inventoryPaths.Add(FwDirectoryFinder.GetCodeSubDirectory(@"Parts"));
 			if (customInventoryPaths != null)
 			{
-				foreach (string customInventoryPath in customInventoryPaths)
+				foreach (var customInventoryPath in customInventoryPaths)
+				{
 					m_inventoryPaths.Add(FwDirectoryFinder.GetCodeSubDirectory(customInventoryPath));
+				}
 			}
 			LoadElements();
 			if (xmlInventorySwitch.TraceInfo)
 			{
-				int msEnd = Environment.TickCount;
-				string sInventory = (customInventoryPaths == null || customInventoryPaths.Length > 1) ? filePattern : customInventoryPaths[0];
+				var msEnd = Environment.TickCount;
+				var sInventory = (customInventoryPaths == null || customInventoryPaths.Length > 1) ? filePattern : customInventoryPaths[0];
 				Debug.WriteLine("Initializing part inventory " + sInventory + " took " + (msEnd - msStart) + " ms", xmlInventorySwitch.DisplayName);
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Inventory"/> class, with no items.
 		/// Caller should call LoadElements(input) to initialize. This is used for tests.
@@ -186,12 +184,11 @@ namespace LanguageExplorer
 		/// <param name="xpath">Identifies the elements we want to load.</param>
 		/// <param name="appName"></param>
 		/// <param name="projectPath"></param>
-		/// -----------------------------------------------------------------------------------
 		internal Inventory(string filePattern, string xpath, Dictionary<string, string[]> keyAttrs, string appName, string projectPath)
 		{
 			m_inventoryPaths = new HashSet<string>();
 			m_filePattern = filePattern;
-			m_keyAttrs = keyAttrs;
+			KeyAttributes = keyAttrs;
 			m_xpathElementsWanted = xpath;
 			m_appName = appName;
 			m_projectPath = projectPath;
@@ -201,11 +198,8 @@ namespace LanguageExplorer
 		/// Provides a merge tool for safely creating valid current versions of user overrides
 		/// belonging to an older version.
 		/// </summary>
-		internal IOldVersionMerger Merger
-		{
-			get { return m_merger; }
-			set { m_merger = value; }
-		}
+		internal IOldVersionMerger Merger { get; set; }
+
 		/// <summary>
 		/// Load overrides from the user's private directory. If version number does not match, ignore.
 		/// </summary>
@@ -213,17 +207,13 @@ namespace LanguageExplorer
 		{
 			Debug.Assert(m_version == version || m_version == 0);
 			m_version = version; // remember for reloads; currently we only support one version.
-			Debug.Assert(m_sDatabase == null || m_sDatabase == sDatabase);
-			m_sDatabase = sDatabase;
-			string path = UserOverrideConfigurationSettingsPath;
+			Debug.Assert(DatabaseName == null || DatabaseName == sDatabase);
+			DatabaseName = sDatabase;
+			var path = UserOverrideConfigurationSettingsPath;
 			m_inventoryPaths.Add(path);
 			if (Directory.Exists(path))
 			{
-				string sPattern;
-				if (String.IsNullOrEmpty(sDatabase))
-					sPattern = String.Format("default$${0}", m_filePattern);
-				else
-					sPattern = m_filePattern;
+				var sPattern = string.IsNullOrEmpty(sDatabase) ? $"default$${m_filePattern}" : m_filePattern;
 				AddElementsFromFiles(DirectoryUtils.GetOrderedFiles(path, sPattern), version, true);
 			}
 		}
@@ -233,37 +223,33 @@ namespace LanguageExplorer
 		/// </summary>
 		internal void DeleteUserOverrides(string sDatabase)
 		{
-			Debug.Assert(m_sDatabase == null || m_sDatabase == sDatabase);
-			m_sDatabase = sDatabase;
-			string path = UserOverrideConfigurationSettingsPath;
-			if (Directory.Exists(path))
+			Debug.Assert(DatabaseName == null || DatabaseName == sDatabase);
+			DatabaseName = sDatabase;
+			var path = UserOverrideConfigurationSettingsPath;
+			if (!Directory.Exists(path))
 			{
-				string sPattern;
-				if (String.IsNullOrEmpty(sDatabase))
-					sPattern = String.Format("default$${0}", m_filePattern);
-				else
-					sPattern = m_filePattern;
-				string[] rgsFiles = DirectoryUtils.GetOrderedFiles(path, sPattern);
-				foreach (string sFilename in rgsFiles)
-				{
-					// LT-11193 Don't delete user overrides if they are new dictionary views
-					// (from the Manage Views dialog)
-					if(sFilename.Split(new[] {ksUnderscore}, StringSplitOptions.RemoveEmptyEntries).Length > 1)
-						continue;
+				return;
+			}
 
-					File.Delete(sFilename);
+			var sPattern = string.IsNullOrEmpty(sDatabase) ? $"default$${m_filePattern}" : m_filePattern;
+			var rgsFiles = DirectoryUtils.GetOrderedFiles(path, sPattern);
+			foreach (var sFilename in rgsFiles)
+			{
+				// LT-11193 Don't delete user overrides if they are new dictionary views
+				// (from the Manage Views dialog)
+				if (sFilename.Split(new[] {ksUnderscore}, StringSplitOptions.RemoveEmptyEntries).Length > 1)
+				{
+					continue;
 				}
+
+				File.Delete(sFilename);
 			}
 		}
 
 		/// <summary>
 		/// Get/set the name of the database associated with this Inventory.
 		/// </summary>
-		internal string DatabaseName
-		{
-			get { return m_sDatabase; }
-			set { m_sDatabase = value; }
-		}
+		internal string DatabaseName { get; set; } = null;
 
 		/// <summary>
 		/// Persist an override element by creating a file which LoadUserOverides will load.
@@ -287,12 +273,14 @@ namespace LanguageExplorer
 		/// </summary>
 		internal void PersistOverrideElement(XElement element)
 		{
-			string[] keyAttrs = m_keyAttrs[element.Name.LocalName];
+			var keyAttrs = KeyAttributes[element.Name.LocalName];
 			if (element.Name == "layout")
 			{
-				string sVersion = XmlUtils.GetOptionalAttributeValue(element, "version");
+				var sVersion = XmlUtils.GetOptionalAttributeValue(element, "version");
 				if (sVersion == null && m_version != 0)
+				{
 					XmlUtils.SetAttribute(element, "version", m_version.ToString());
+				}
 			}
 			string name = null;
 			var layoutName = XmlUtils.GetOptionalAttributeValue(element, "name", "");
@@ -303,9 +291,11 @@ namespace LanguageExplorer
 				var tag = layoutName.Substring(idxTag);
 				var idx = tag.IndexOf(LayoutKeyUtils.kcMarkNodeCopy);
 				if (idx > 0)
+				{
 					tag = tag.Remove(idx);
+				}
 				Debug.Assert(m_mainDoc != null);
-				XElement root = m_mainDoc.Root;
+				var root = m_mainDoc.Root;
 				Debug.Assert(root != null);
 				var nodes = root.Elements("layoutType");
 				if (nodes != null)
@@ -323,18 +313,21 @@ namespace LanguageExplorer
 					{
 						var label = XmlUtils.GetMandatoryAttributeValue(layoutType, "label");
 						var className = XmlUtils.GetOptionalAttributeValue(layoutType.Elements().First(), "class");
-						name = String.Format("{0}_{1}", label, className);
+						name = $"{label}_{className}";
 					}
 				}
 			}
-			if (String.IsNullOrEmpty(name))
+
+			if (string.IsNullOrEmpty(name))
+			{
 				name = XmlUtils.GetMandatoryAttributeValue(element, keyAttrs[0]);
-			string sDatabase = String.IsNullOrEmpty(m_sDatabase) ? "default$$" : "";
-			string fileName = sDatabase + name + m_filePattern.Substring(1); // strip off leading *
-			string path = Path.Combine(UserOverrideConfigurationSettingsPath, fileName);
+			}
+			var sDatabase = string.IsNullOrEmpty(DatabaseName) ? "default$$" : "";
+			var fileName = sDatabase + name + m_filePattern.Substring(1); // strip off leading *
+			var path = Path.Combine(UserOverrideConfigurationSettingsPath, fileName);
 			CreateDirectoryIfNonexistant(UserOverrideConfigurationSettingsPath);
 			XDocument doc = null;
-			string[] parentEltNames = GetParentElementNames();
+			var parentEltNames = GetParentElementNames();
 			XElement parent = null; // where we will put new element
 
 			// We expect to find or create a document that has one element
@@ -342,8 +335,8 @@ namespace LanguageExplorer
 			{
 				doc = XDocument.Load(path);
 				parent = doc.Root;
-				XElement current = parent;
-				foreach (string eltName in parentEltNames)
+				var current = parent;
+				foreach (var eltName in parentEltNames)
 				{
 					if (current.Name != eltName)
 					{
@@ -359,12 +352,13 @@ namespace LanguageExplorer
 					foreach (var child in parent.Elements())
 					{
 						if (child.Name != element.Name)
-							continue;
-						bool match = true;
-						foreach (string attrName in keyAttrs)
 						{
-							if (XmlUtils.GetOptionalAttributeValue(child, attrName) !=
-								XmlUtils.GetOptionalAttributeValue(element, attrName))
+							continue;
+						}
+						var match = true;
+						foreach (var attrName in keyAttrs)
+						{
+							if (XmlUtils.GetOptionalAttributeValue(child, attrName) != XmlUtils.GetOptionalAttributeValue(element, attrName))
 							{
 								match = false;
 								break;
@@ -383,9 +377,14 @@ namespace LanguageExplorer
 						foreach (var child in parent.Elements())
 						{
 							if (child.Name != layoutType.Name)
+							{
 								continue;
+							}
+
 							if (XmlUtils.GetOptionalAttributeValue(child, "layout") != layout)
+							{
 								continue;
+							}
 							child.Remove();
 							break;
 						}
@@ -399,9 +398,9 @@ namespace LanguageExplorer
 
 				doc.Add(new XElement(parentEltNames[0]));
 				parent = doc.Root;
-				for (int i = 1; i < parentEltNames.Length; i++)
+				for (var i = 1; i < parentEltNames.Length; i++)
 				{
-					XElement child = new XElement(parentEltNames[i]);
+					var child = new XElement(parentEltNames[i]);
 					parent.Add(child);
 					parent = child;
 				}
@@ -410,7 +409,9 @@ namespace LanguageExplorer
 			// that conflicts with the new one.
 			parent.Add(element);
 			if (layoutType != null)
+			{
 				parent.Add(layoutType);
+			}
 			// OK, the document now contains the desired content. Write it out.
 			doc.Save(path);
 			// Finally actually add it to the inventory, replacing any existing node of the same key.
@@ -420,7 +421,9 @@ namespace LanguageExplorer
 		private void CreateDirectoryIfNonexistant(string directory)
 		{
 			if (!Directory.Exists(directory))
+			{
 				Directory.CreateDirectory(directory);
+			}
 		}
 
 		/// <summary>
@@ -435,14 +438,14 @@ namespace LanguageExplorer
 			var layoutName = XmlUtils.GetMandatoryAttributeValue(layoutType, "layout");
 			var nodes = root.Elements("layoutType");
 			foreach (var xn in nodes)
+			{
+				var layoutOld = XmlUtils.GetMandatoryAttributeValue(xn, "layout");
+				if (layoutOld == layoutName)
 				{
-					var layoutOld = XmlUtils.GetMandatoryAttributeValue(xn, "layout");
-					if (layoutOld == layoutName)
-					{
 					xn.ReplaceWith(layoutType);
-						return;
-					}
+					return;
 				}
+			}
 			root.Add(layoutType);
 		}
 
@@ -461,7 +464,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Take the given node and add it to the parts/layouts inventory
 		/// </summary>
-		/// <param name="element"></param>
 		internal void AddNodeToInventory(XElement element)
 		{
 			AddNode(element, m_mainDoc.Root);
@@ -471,31 +473,24 @@ namespace LanguageExplorer
 		{
 			Debug.Assert(m_xpathElementsWanted[0] == '/');
 			Debug.Assert(m_xpathElementsWanted.Substring(m_xpathElementsWanted.Length - 2, 2) == "/*");
-			string[] result = m_xpathElementsWanted.Substring(1, m_xpathElementsWanted.Length - 3).Split('/');
+			var result = m_xpathElementsWanted.Substring(1, m_xpathElementsWanted.Length - 3).Split('/');
 			Debug.Assert(result.Length > 0);
 			Debug.Assert(result[0].Length > 0);
 			return result;
 		}
 
-		private string UserOverrideConfigurationSettingsPath
-		{
-			get { return LcmFileHelper.GetConfigSettingsDir(m_projectPath); }
-		}
+		private string UserOverrideConfigurationSettingsPath => LcmFileHelper.GetConfigSettingsDir(m_projectPath);
 
 		/// <summary>
 		/// Used to retrieve a shared inventory by name.
 		/// </summary>
 		internal static Inventory GetInventory(string key, string sDatabase)
 		{
-			string sKey;
-			if (!String.IsNullOrEmpty(sDatabase))
-				sKey = String.Format("{0}${1}", key, sDatabase);
-			else
-				sKey = key;
+			var sKey = !string.IsNullOrEmpty(sDatabase) ? $"{key}${sDatabase}" : key;
 			if (s_inventories.ContainsKey(sKey))
 			{
-				Inventory val = s_inventories[sKey];
-				Debug.Assert(val.m_sDatabase == sDatabase);
+				var val = s_inventories[sKey];
+				Debug.Assert(val.DatabaseName == sDatabase);
 				return val;
 			}
 			return null;
@@ -504,15 +499,9 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Used to remove a shared inventory by name.
 		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="sDatabase"></param>
 		internal static void RemoveInventory(string key, string sDatabase)
 		{
-			string sKey;
-			if (!String.IsNullOrEmpty(sDatabase))
-				sKey = String.Format("{0}${1}", key, sDatabase);
-			else
-				sKey = key;
+			var sKey = !string.IsNullOrEmpty(sDatabase) ? $"{key}${sDatabase}" : key;
 			if (s_inventories.ContainsKey(sKey))
 			{
 				s_inventories.Remove(sKey);
@@ -522,23 +511,18 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Used to set up a shared inventory.
 		/// </summary>
-		/// <param name="key">The key.</param>
-		/// <param name="sDatabase">The database.</param>
-		/// <param name="val">The val.</param>
 		internal static void SetInventory(string key, string sDatabase, Inventory val)
 		{
-			if (string.IsNullOrEmpty(key))
-				throw new ArgumentException("Invalid key argument.");
-			if (val == null)
-				throw new ArgumentNullException("val");
-			Debug.Assert(val.m_sDatabase == null || val.m_sDatabase == sDatabase);
-			if (val.m_sDatabase == null)
-				val.m_sDatabase = sDatabase;
-			string sKey;
-			if (!String.IsNullOrEmpty(sDatabase))
-				sKey = String.Format("{0}${1}", key, sDatabase);
-			else
-				sKey = key;
+			Guard.AgainstNullOrEmptyString(key, nameof(key));
+			Guard.AgainstNull(val, nameof(val));
+
+			Debug.Assert(val.DatabaseName == null || val.DatabaseName == sDatabase);
+			if (val.DatabaseName == null)
+			{
+				val.DatabaseName = sDatabase;
+			}
+
+			var sKey = !string.IsNullOrEmpty(sDatabase) ? $"{key}${sDatabase}" : key;
 			s_inventories[sKey] = val;
 		}
 
@@ -557,10 +541,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// List of attribute names that must match for a node to be considered a replacement
 		/// of an existing node.		/// </summary>
-		internal Dictionary<string, string[]> KeyAttributes
-		{
-			get { return m_keyAttrs;}
-		}
+		internal Dictionary<string, string[]> KeyAttributes { get; }
 
 		/// <summary>
 		/// Get the node (if any) that has the specified element name and the specified value
@@ -571,14 +552,13 @@ namespace LanguageExplorer
 		/// This is the main access point for clients wanting to USE a (possibly derived)
 		/// element with a particular key.
 		/// </summary>
-		/// <param name="elementName"></param>
-		/// <param name="attrvals"></param>
-		/// <returns></returns>
 		internal XElement GetElement(string elementName, string[] attrvals)
 		{
-			XElement node = GetEltFromDoc(elementName, attrvals, m_mainDoc);
+			var node = GetEltFromDoc(elementName, attrvals, m_mainDoc);
 			if (node != null)
+			{
 				return node;
+			}
 			// If not found, there might be an alteration node for which we have not yet computed the
 			// meaning. Do it now, and return the result.
 			// We postponed computing the effect of alterations for two reasons:
@@ -586,9 +566,7 @@ namespace LanguageExplorer
 			// 2. Ensures that an alteration based on an override gets based on the override,
 			// even if it is loaded before the override.
 			var alteration = GetEltFromDoc(elementName, attrvals, m_alterationsDoc);
-			if (alteration == null)
-				return null;
-			return ApplyAlteration(elementName, attrvals, alteration);
+			return alteration == null ? null : ApplyAlteration(elementName, attrvals, alteration);
 		}
 
 		/// <summary>
@@ -597,9 +575,9 @@ namespace LanguageExplorer
 		/// </summary>
 		private XElement ApplyAlteration(string elementName, string[] attrvals, XElement alteration)
 		{
-			string baseName = XmlUtils.GetMandatoryAttributeValue(alteration, "base");
-			string[] baseKey = (string[])attrvals.Clone();
-			int cKeys = baseKey.Length;
+			var baseName = XmlUtils.GetMandatoryAttributeValue(alteration, "base");
+			var baseKey = (string[])attrvals.Clone();
+			var cKeys = baseKey.Length;
 			baseKey[cKeys - 1] = baseName;
 			var baseNode = GetEltFromDoc(elementName, baseKey, m_mainDoc);
 			var result = Unify(alteration, baseNode);
@@ -636,11 +614,15 @@ namespace LanguageExplorer
 		{
 			// If we don't have a base node, make an exact copy of alteration.
 			if (baseNode == null)
+			{
 				return alteration;
+			}
 			// And, likewise, if we don't have an alteration, make an exact copy of base.
 			if (alteration == null)
+			{
 				return baseNode;
-			XElement unified = new XElement(alteration.Name, alteration.Attributes());
+			}
+			var unified = new XElement(alteration.Name, alteration.Attributes());
 			// Not done with child elements of alteration yet.
 			CopyAttributes(baseNode, unified, true);
 
@@ -686,7 +668,9 @@ namespace LanguageExplorer
 			foreach (var attr in source.Attributes())
 			{
 				if (fIfNotPresent && dest.Attribute(attr.Name) != null)
+				{
 					continue;
+				}
 				dest.Add(attr);
 			}
 		}
@@ -695,26 +679,34 @@ namespace LanguageExplorer
 		/// If there is a node in remainingOthers which 'matches' item (in name and
 		/// specified keys), remove and return it; otherwise return null.
 		/// </summary>
-		XElement MatchAndRemove(ICollection<XElement> remainingOthers, XElement target)
+		private XElement MatchAndRemove(ICollection<XElement> remainingOthers, XElement target)
 		{
 			var elementName = target.Name.LocalName;
 			string[] keyAttrs = null;
-			if (m_keyAttrs.ContainsKey(elementName))
-				keyAttrs = m_keyAttrs[elementName];
-			var ckeys = (keyAttrs == null ? 0 : keyAttrs.Length);
+			if (KeyAttributes.ContainsKey(elementName))
+			{
+				keyAttrs = KeyAttributes[elementName];
+			}
+			var ckeys = keyAttrs?.Length ?? 0;
 			var keyVals = new string[ckeys]; // keys to try to match for each item
 			for (var i = 0; i < ckeys; i++)
+			{
 				keyVals[i] = XmlUtils.GetOptionalAttributeValue(target, keyAttrs[i]);
+			}
 			foreach (var item in remainingOthers)
 			{
 				if (item.Name != elementName)
+				{
 					continue;
+				}
 				// See if all the keys match
-				int cMatchingAttrs = 0;
+				var cMatchingAttrs = 0;
 				for (; cMatchingAttrs < ckeys; cMatchingAttrs++)
 				{
 					if (XmlUtils.GetOptionalAttributeValue(item, keyAttrs[cMatchingAttrs]) != keyVals[cMatchingAttrs])
+					{
 						break;
+					}
 				}
 				if (cMatchingAttrs == ckeys)
 				{
@@ -729,8 +721,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// This routine just takes an xpath, and returns the matching elements.
 		/// </summary>
-		/// <param name="xpath">xpath string</param>
-		/// <returns></returns>
 		internal IEnumerable<XElement> GetElements(string xpath)
 		{
 			return m_mainDoc.Root.XPathSelectElements(xpath);
@@ -741,47 +731,52 @@ namespace LanguageExplorer
 		/// than GetElement, and returns all matching elements. Currently it is not guaranteed to
 		/// find alterations.
 		/// </summary>
-		/// <param name="elementName"></param>
-		/// <param name="attrvals"></param>
-		/// <returns></returns>
 		internal IEnumerable<XElement> GetElements(string elementName, string[] attrvals)
 		{
 			// Create an xpath that will select a node with the same name and key attributes
 			// (if any) as newNode. If some attributes are missing from newNode, they
 			// must be missing from the matched node as well.
 			string[] keyAttrs = null;
-			if (m_keyAttrs.ContainsKey(elementName))
-				keyAttrs = m_keyAttrs[elementName];
+			if (KeyAttributes.ContainsKey(elementName))
+			{
+				keyAttrs = KeyAttributes[elementName];
+			}
+
 			if (keyAttrs == null)
+			{
 				keyAttrs = new string[0];
+			}
 			var pathBldr = new StringBuilder(elementName);
 			var numAttrs = Math.Min(keyAttrs.Length, attrvals.Length);
-			if (numAttrs > 0)
+			if (numAttrs <= 0)
 			{
-				pathBldr.Append("[");
-				for (var i = 0; i < numAttrs; i++)
-				{
-					var attr = keyAttrs[i];
-					if (i != 0)
-						pathBldr.Append(" and ");
-					var val = attrvals[i];
-					if (val == null)
-					{
-						pathBldr.Append("not(@");
-						pathBldr.Append(attr);
-						pathBldr.Append(")");
-					}
-					else
-					{
-						pathBldr.Append("@");
-						pathBldr.Append(attr);
-						pathBldr.Append("='");
-						pathBldr.Append(val);
-						pathBldr.Append("'");
-					}
-				}
-				pathBldr.Append("]");
+				return m_mainDoc.Root.XPathSelectElements(pathBldr.ToString());
 			}
+			pathBldr.Append("[");
+			for (var i = 0; i < numAttrs; i++)
+			{
+				var attr = keyAttrs[i];
+				if (i != 0)
+				{
+					pathBldr.Append(" and ");
+				}
+				var val = attrvals[i];
+				if (val == null)
+				{
+					pathBldr.Append("not(@");
+					pathBldr.Append(attr);
+					pathBldr.Append(")");
+				}
+				else
+				{
+					pathBldr.Append("@");
+					pathBldr.Append(attr);
+					pathBldr.Append("='");
+					pathBldr.Append(val);
+					pathBldr.Append("'");
+				}
+			}
+			pathBldr.Append("]");
 
 			return m_mainDoc.Root.XPathSelectElements(pathBldr.ToString());
 		}
@@ -795,7 +790,7 @@ namespace LanguageExplorer
 			if (hasKey)
 			{
 				result = m_getElementTable[key]; // May be null, even with the key.
-}
+			}
 			if (result == null && !hasKey)
 			{
 				result = GetEltFromDoc1(elementName, attrvals, doc);
@@ -811,46 +806,54 @@ namespace LanguageExplorer
 			// (if any) as newNode. If some attributes are missing from newNode, they
 			// must be missing from the matched node as well.
 			string[] keyAttrs = null;
-			if (m_keyAttrs.ContainsKey(elementName))
-				keyAttrs = m_keyAttrs[elementName];
-			if (keyAttrs == null)
-				keyAttrs = new string[0];
-			var pathBldr = new StringBuilder(elementName);
-			if (keyAttrs.Length > 0)
+			if (KeyAttributes.ContainsKey(elementName))
 			{
-				pathBldr.Append("[");
-				for (var i = 0; i < keyAttrs.Length; i++)
+				keyAttrs = KeyAttributes[elementName];
+			}
+
+			if (keyAttrs == null)
+			{
+				keyAttrs = new string[0];
+			}
+			var pathBldr = new StringBuilder(elementName);
+			if (keyAttrs.Length == 0)
+			{
+				return doc.Root.XPathSelectElement(pathBldr.ToString());
+			}
+			pathBldr.Append("[");
+			for (var i = 0; i < keyAttrs.Length; i++)
+			{
+				var attr = keyAttrs[i];
+				if (i != 0)
 				{
-					var attr = keyAttrs[i];
-					if (i != 0)
-						pathBldr.Append(" and ");
-					var val = attrvals[i];
-					if (val == null)
+					pathBldr.Append(" and ");
+				}
+				var val = attrvals[i];
+				if (val == null)
+				{
+					pathBldr.Append("not(@");
+					pathBldr.Append(attr);
+					pathBldr.Append(")");
+				}
+				else
+				{
+					pathBldr.Append("@");
+					pathBldr.Append(attr);
+					if (val.Contains("'"))
 					{
-						pathBldr.Append("not(@");
-						pathBldr.Append(attr);
-						pathBldr.Append(")");
+						pathBldr.Append("=\"");
+						pathBldr.Append(val);
+						pathBldr.Append("\"");
 					}
 					else
 					{
-						pathBldr.Append("@");
-						pathBldr.Append(attr);
-						if (val.Contains("'"))
-						{
-							pathBldr.Append("=\"");
-							pathBldr.Append(val);
-							pathBldr.Append("\"");
-						}
-						else
-						{
-							pathBldr.Append("='");
-							pathBldr.Append(val);
-							pathBldr.Append("'");
-						}
+						pathBldr.Append("='");
+						pathBldr.Append(val);
+						pathBldr.Append("'");
 					}
 				}
-				pathBldr.Append("]");
 			}
+			pathBldr.Append("]");
 
 			return doc.Root.XPathSelectElement(pathBldr.ToString());
 		}
@@ -867,9 +870,6 @@ namespace LanguageExplorer
 		///
 		/// Review: possibly only things from the last directory loaded show up here?
 		/// </summary>
-		/// <param name="elementName"></param>
-		/// <param name="attrvals"></param>
-		/// <returns></returns>
 		internal XElement GetAlteration(string elementName, string[] attrvals)
 		{
 			return GetEltFromDoc(elementName, attrvals, m_alterationsDoc);
@@ -887,23 +887,25 @@ namespace LanguageExplorer
 		{
 			var alteration = GetAlteration(elementName, attrvals);
 			if (alteration == null)
+			{
 				return null;
+			}
 			var keyBase = (string[])attrvals.Clone();
 			keyBase[keyBase.Length - 1] = XmlUtils.GetMandatoryAttributeValue(alteration, "base");
 			// if the alteration is an override (key = id), the base node is saved in m_baseDoc,
 			// otherwise it is just in the normal main document.
-			var keyAttrs = m_keyAttrs[elementName];
+			var keyAttrs = KeyAttributes[elementName];
 			var id = XmlUtils.GetOptionalAttributeValue(alteration, keyAttrs[keyAttrs.Length - 1]);
 			if (id == keyBase[keyBase.Length - 1])
 			{
 				// An override, the base should already be saved in m_baseDoc
 				return GetEltFromDoc(elementName, keyBase, m_baseDoc);
 			}
-				// not an override, just an ordinary derived node.
-				// Possibly the base is another derived node, not yet computed, so we need
-				// to use the full GetElement to ensure that it gets created if needed.
-				return GetElement(elementName, keyBase);
-			}
+			// not an override, just an ordinary derived node.
+			// Possibly the base is another derived node, not yet computed, so we need
+			// to use the full GetElement to ensure that it gets created if needed.
+			return GetElement(elementName, keyBase);
+		}
 
 		/// <summary>
 		/// Load the templates again. Useful when you are working on template writing,
@@ -920,7 +922,9 @@ namespace LanguageExplorer
 		public void ReloadIfChanges()
 		{
 			if (NoFilesChanged())
+			{
 				return;
+			}
 			Reload();
 		}
 
@@ -940,8 +944,7 @@ namespace LanguageExplorer
 			}
 			catch(Exception error)
 			{
-				var x = string.Format(LanguageExplorerResources.ErrorReadingXMLFile0, inventoryFilePath);
-				throw new ApplicationException(x, error);
+				throw new ApplicationException(string.Format(LanguageExplorerResources.ErrorReadingXMLFile0, inventoryFilePath), error);
 
 			}
 			return xdoc.XPathSelectElements(m_xpathElementsWanted);
@@ -960,36 +963,35 @@ namespace LanguageExplorer
 			}
 			catch (Exception error)
 			{
-				var x = string.Format(LanguageExplorerResources.ErrorReadingXMLFile0, inventoryFilePath);
-				throw new ApplicationException(x, error);
+				throw new ApplicationException(string.Format(LanguageExplorerResources.ErrorReadingXMLFile0, inventoryFilePath), error);
 
 			}
 			var oldAndBusted = xdoc.XPathSelectElements(m_xpathElementsWanted).ToList();
-			if (oldAndBusted.Any())
+			if (!oldAndBusted.Any())
 			{
-				//get the parent of the nodes in the path
-				var root = oldAndBusted[0].Parent;
-				// In Mono, changing the root element invalidates the XmlNodeList iterator
-				// so that it quits the loop immediately after the first node is removed.
-				// See FWNX-1057.  This results in evergrowing fwlayout files stored with
-				// the project!  So we copy the list first into a form that won't be
-				// invalidated.
-				foreach (var match in new List<XElement>(oldAndBusted))
-				{
-					match.Remove();
-				}
-				foreach (var newItem in newData)
-				{
-					root.Add(newItem);
-				}
-				xdoc.Save(inventoryFilePath);
+				return;
 			}
+			//get the parent of the nodes in the path
+			var root = oldAndBusted[0].Parent;
+			// In Mono, changing the root element invalidates the XmlNodeList iterator
+			// so that it quits the loop immediately after the first node is removed.
+			// See FWNX-1057.  This results in evergrowing fwlayout files stored with
+			// the project!  So we copy the list first into a form that won't be
+			// invalidated.
+			foreach (var match in new List<XElement>(oldAndBusted))
+			{
+				match.Remove();
+			}
+			foreach (var newItem in newData)
+			{
+				root.Add(newItem);
+			}
+			xdoc.Save(inventoryFilePath);
 		}
 
 		/// <summary>
 		/// Add custom files after the main loading.
 		/// </summary>
-		/// <param name="filePaths"></param>
 		internal void AddCustomFiles(string[] filePaths)
 		{
 			for(var i = 0; i < filePaths.Length; ++i)
@@ -1033,7 +1035,9 @@ namespace LanguageExplorer
 			foreach(var path in filePaths)
 			{
 				if (path == null)
+				{
 					continue;
+				}
 				var nodeList = LoadOneInventoryFile(path);
 				bool wasMerged;
 				var cleanedNodes = MergeAndUpdateNodes(nodeList, version, out wasMerged, loadUserOverRides);
@@ -1048,9 +1052,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Take the collection of merged or retained nodes and insert them into our in memory document.
 		/// </summary>
-		/// <param name="elementList"></param>
-		/// <param name="version"></param>
-		/// <param name="root"></param>
 		private void LoadElementList(IEnumerable<XElement> elementList, int version, XElement root)
 		{
 			foreach (var element in elementList)
@@ -1100,7 +1101,7 @@ namespace LanguageExplorer
 				return first.ToString() == second.ToString();
 			}
 
-			/// <summary></summary>
+			/// <summary />
 			public int GetHashCode(XElement x)
 			{
 				return x.ToString().GetHashCode();
@@ -1134,8 +1135,7 @@ namespace LanguageExplorer
 				// as if they were in the default configuration files.  The loadUserOverRides boolean was added to ensure
 				// version number is added to the elements in the user configuration files.
 
-				var fileVersion = Int32.Parse(XmlUtils.GetOptionalAttributeValue(node, "version",
-																				 loadUserOverRides ? "0" : version.ToString()));
+				var fileVersion = int.Parse(XmlUtils.GetOptionalAttributeValue(node, "version", loadUserOverRides ? "0" : version.ToString()));
 
 				//The layoutType element in user config files (i.e. a copy of the root dictionary view)
 				//failed to include a version number, even though all the layout elements had one.
@@ -1148,7 +1148,7 @@ namespace LanguageExplorer
 						var versionedSibling = node.XPathSelectElement("../*[@version]");
 						// ReSharper disable PossibleNullReferenceException
 						// if we found a node, it has a version attribute.
-						fileVersion = Int32.Parse(versionedSibling != null ? versionedSibling.Attribute("version").Value : "0");
+						fileVersion = int.Parse(versionedSibling?.Attribute("version").Value ?? "0");
 						// ReSharper restore PossibleNullReferenceException
 					}
 				}
@@ -1159,7 +1159,9 @@ namespace LanguageExplorer
 					{
 						AddLayoutTypeToInventory(node);
 						if (loadUserOverRides)
+						{
 							XmlUtils.SetAttribute(node, "version", version.ToString(CultureInfo.InvariantCulture));
+						}
 						survivors.Add(node);
 						wasMerged = true;
 					}
@@ -1167,12 +1169,14 @@ namespace LanguageExplorer
 					{
 						string[] keyAttrs;
 						var key = GetKeyMain(node, out keyAttrs);
-					XElement current;
+						XElement current;
 						if (m_getElementTable.TryGetValue(key, out current))
 						{
-						XElement merged = Merger.Merge(current, node, m_mainDoc, string.Empty);
+							var merged = Merger.Merge(current, node, m_mainDoc, string.Empty);
 							if (loadUserOverRides)
+							{
 								XmlUtils.SetAttribute(merged, "version", version.ToString());
+							}
 							survivors.Add(merged);
 							wasMerged = true;
 						}
@@ -1181,20 +1185,19 @@ namespace LanguageExplorer
 							// May be part of a named view or a duplicated node. Look for the unmodified one to merge with.
 							string[] standardKeyVals;
 							var oldLayoutSuffix = LayoutKeyUtils.GetSuffixedPartOfNamedViewOrDuplicateNode(keyAttrs, key.KeyVals, out standardKeyVals);
-							if (!string.IsNullOrEmpty(oldLayoutSuffix))
+							if (string.IsNullOrEmpty(oldLayoutSuffix) || !m_getElementTable.TryGetValue(new GetElementKey(key.ElementName, standardKeyVals, m_mainDoc), out current))
 							{
-								var originalKey = new GetElementKey(key.ElementName, standardKeyVals, m_mainDoc);
-								if (m_getElementTable.TryGetValue(originalKey, out current))
-								{
-								var merged = Merger.Merge(current, node, m_mainDoc, oldLayoutSuffix);
-									// We'll do the below and a bunch of other mods inside of LayoutMerger from now on.
-									//XmlUtils.SetAttribute(merged, "name", originalKey[2]); // give it the name from before
-									if (loadUserOverRides)
-										XmlUtils.SetAttribute(merged, "version", version.ToString(CultureInfo.InvariantCulture));
-									survivors.Add(merged);
-									wasMerged = true;
-								}
+								continue;
 							}
+							var merged = Merger.Merge(current, node, m_mainDoc, oldLayoutSuffix);
+							// We'll do the below and a bunch of other mods inside of LayoutMerger from now on.
+							//XmlUtils.SetAttribute(merged, "name", originalKey[2]); // give it the name from before
+							if (loadUserOverRides)
+							{
+								XmlUtils.SetAttribute(merged, "version", version.ToString(CultureInfo.InvariantCulture));
+							}
+							survivors.Add(merged);
+							wasMerged = true;
 						}
 					}
 				}
@@ -1222,24 +1225,24 @@ namespace LanguageExplorer
 		/// Displaying Reversal Indexes requires expanding a variable number of writing
 		/// system specific layouts.  This method does that.
 		/// </summary>
-		/// <param name="sWsTag"></param>
 		internal void ExpandWsTaggedNodes(string sWsTag)
 		{
-			Debug.Assert(sWsTag != null && sWsTag.Length > 0);
+			Debug.Assert(!string.IsNullOrEmpty(sWsTag));
 			Debug.Assert(m_mainDoc != null);
-			XElement root = m_mainDoc.Root;
+			var root = m_mainDoc.Root;
 
 			foreach (var xn in m_wsTaggedNodes)
 			{
 				var sName = XmlUtils.GetMandatoryAttributeValue(xn, "name");
-				var sWsName = String.Format("{0}-{1}", sName, sWsTag);
+				var sWsName = $"{sName}-{sWsTag}";
 				var sClass = XmlUtils.GetMandatoryAttributeValue(xn, "class");
 				var sType = XmlUtils.GetMandatoryAttributeValue(xn, "type");
-				Debug.Assert(xn.Name == "layout" && sType == "jtview" &&
-					XmlUtils.GetOptionalBooleanAttributeValue(xn, "tagForWs", false));
+				Debug.Assert(xn.Name == "layout" && sType == "jtview" && XmlUtils.GetOptionalBooleanAttributeValue(xn, "tagForWs", false));
 				var layout = GetElement("layout", new[] { sClass, sType, sWsName, null });
 				if (layout != null)
+				{
 					continue;		// node has already been added.
+				}
 				var xnWs = xn.Clone();
 				xnWs.Attribute("name").Value = sWsName;
 				foreach (var xnChild in xnWs.Elements())
@@ -1247,13 +1250,15 @@ namespace LanguageExplorer
 					if (xnChild.Name == "sublayout")
 					{
 						var sSubName = XmlUtils.GetMandatoryAttributeValue(xnChild, "name");
-						xnChild.Attribute("name").Value = string.Format("{0}-{1}", sSubName, sWsTag);
+						xnChild.Attribute("name").Value = $"{sSubName}-{sWsTag}";
 					}
 					else if (xnChild.Name == "part")
 					{
 						var sParam = XmlUtils.GetOptionalAttributeValue(xnChild, "param", null);
 						if (!string.IsNullOrEmpty(sParam))
-							xnChild.Attribute("param").Value = string.Format("{0}-{1}", sParam, sWsTag);
+						{
+							xnChild.Attribute("param").Value = $"{sParam}-{sWsTag}";
+						}
 					}
 				}
 				AddNode(xnWs, root);
@@ -1264,18 +1269,18 @@ namespace LanguageExplorer
 		{
 			string[] keyAttrs;
 			var keyMain = GetKeyMain(node, out keyAttrs);
-			string[] keyVals = keyMain.KeyVals;
-			string elementName = keyMain.ElementName;
+			var keyVals = keyMain.KeyVals;
+			var elementName = keyMain.ElementName;
 
-			XElement extantNode = null;
+			XElement extantNode;
 			// Value may be null in the Dictionary, even if key is present.
 			m_getElementTable.TryGetValue(keyMain, out extantNode);
 
 			// Is the current node a derived node?
-			string baseName = XmlUtils.GetOptionalAttributeValue(node, "base");
+			var baseName = XmlUtils.GetOptionalAttributeValue(node, "base");
 			if (baseName != null)
 			{
-				string id = XmlUtils.GetMandatoryAttributeValue(node, keyAttrs[keyAttrs.Length - 1]);
+				var id = XmlUtils.GetMandatoryAttributeValue(node, keyAttrs[keyAttrs.Length - 1]);
 				if (id == baseName)
 				{
 					// it is an override.
@@ -1284,11 +1289,15 @@ namespace LanguageExplorer
 						// Possibly trying to override a derived element?
 						extantNode = GetElement(elementName, keyVals);
 						if (extantNode == null)
-							throw new Exception("no base found to override " + baseName);
+						{
+							throw new Exception($"no base found to override {baseName}");
+						}
 					}
 					var keyBase = new GetElementKey(elementName, keyVals, m_baseDoc);
 					if (m_getElementTable.ContainsKey(keyBase))
-						throw new Exception("only one level of override is allowed " + baseName);
+					{
+						throw new Exception($"only one level of override is allowed {baseName}");
+					}
 					// Save the base node for future use.
 					m_baseDoc.Root.Add(extantNode);
 					m_getElementTable[keyBase] = extantNode;
@@ -1301,18 +1310,17 @@ namespace LanguageExplorer
 				else
 				{
 					// it is a normal alteration node
-					if (extantNode != null)
-					{
-						// derived node displaces non-derived one.
-						extantNode.Remove();
-					}
+					// derived node displaces non-derived one.
+					extantNode?.Remove();
 				}
 				// alteration node goes into alterations doc (displacing any previous alteration
 				// with the same key).
 				var keyAlterations = new GetElementKey(elementName, keyVals, m_alterationsDoc);
 				extantNode = null;
 				if (m_getElementTable.ContainsKey(keyAlterations))
+				{
 					extantNode = m_getElementTable[keyAlterations]; // May still be null.
+				}
 				CopyNodeToDoc(node, extantNode, m_alterationsDoc, keyAlterations);
 			}
 			else // not an override, just save it, replacing existing node if needed
@@ -1325,17 +1333,22 @@ namespace LanguageExplorer
 		// appropriate to the element type.
 		private GetElementKey GetKeyMain(XElement node, out string[] keyAttrs)
 		{
-			string elementName = node.Name.LocalName;
+			var elementName = node.Name.LocalName;
 			keyAttrs = null;
-			if (m_keyAttrs.ContainsKey(elementName))
-				keyAttrs = m_keyAttrs[elementName];
-			if (keyAttrs == null)
-				keyAttrs = new string[0];
-			string[] keyVals = new string[keyAttrs.Length];
-			int i = 0;
-			foreach(string attr in keyAttrs)
+			if (KeyAttributes.ContainsKey(elementName))
 			{
-				string val = XmlUtils.GetOptionalAttributeValue(node, attr);
+				keyAttrs = KeyAttributes[elementName];
+			}
+
+			if (keyAttrs == null)
+			{
+				keyAttrs = new string[0];
+			}
+			var keyVals = new string[keyAttrs.Length];
+			var i = 0;
+			foreach(var attr in keyAttrs)
+			{
+				var val = XmlUtils.GetOptionalAttributeValue(node, attr);
 				keyVals[i++] = val;
 			}
 			return new GetElementKey(elementName, keyVals, m_mainDoc);
@@ -1357,8 +1370,11 @@ namespace LanguageExplorer
 			{
 				extantNode.ReplaceWith(newNode);
 			}
+
 			if (newNode.Name != "layoutType")
+			{
 				m_getElementTable[key] = newNode;
+			}
 		}
 
 		/// <summary>
@@ -1368,13 +1384,15 @@ namespace LanguageExplorer
 		{
 			BasicInit();
 
-			foreach(string inventoryPath in m_inventoryPaths)
+			foreach(var inventoryPath in m_inventoryPaths)
 			{
 				//jdh added dec 2003
-				string p = FwDirectoryFinder.GetCodeSubDirectory(inventoryPath);
+				var p = FwDirectoryFinder.GetCodeSubDirectory(inventoryPath);
 
 				if (Directory.Exists(p))
+				{
 					AddElementsFromFiles(DirectoryUtils.GetOrderedFiles(p, m_filePattern));
+				}
 			}
 		}
 
@@ -1389,8 +1407,8 @@ namespace LanguageExplorer
 			var root = m_mainDoc.Root;
 			var xdoc = XDocument.Parse(input);
 			var elementList = xdoc.XPathSelectElements(m_xpathElementsWanted);
-			bool wasMerged;
-			var cleanedNodes = MergeAndUpdateNodes(elementList, version, out wasMerged, false);
+			bool dummy;
+			var cleanedNodes = MergeAndUpdateNodes(elementList, version, out dummy, false);
 			LoadElementList(cleanedNodes, version, root);
 		}
 
@@ -1411,18 +1429,17 @@ namespace LanguageExplorer
 		/// <returns></returns>
 		private bool NoFilesChanged()
 		{
-			int ifile = 0;
-			foreach(string inventoryPath in m_inventoryPaths)
+			var ifile = 0;
+			foreach (var inventoryPath in m_inventoryPaths)
 			{
 				//jdh added dec 2003
-				string p = FwDirectoryFinder.GetCodeSubDirectory(inventoryPath);
+				var p = FwDirectoryFinder.GetCodeSubDirectory(inventoryPath);
 
 				if (Directory.Exists(p))
 				{
-					foreach (string path in DirectoryUtils.GetOrderedFiles(p, m_filePattern))
+					foreach (var path in DirectoryUtils.GetOrderedFiles(p, m_filePattern))
 					{
-						if (ifile >= m_fileInfo.Count || m_fileInfo[ifile].Key != path
-							|| m_fileInfo[ifile].Value != File.GetLastWriteTime(path))
+						if (ifile >= m_fileInfo.Count || m_fileInfo[ifile].Key != path || m_fileInfo[ifile].Value != File.GetLastWriteTime(path))
 						{
 							return false;
 						}
@@ -1443,13 +1460,14 @@ namespace LanguageExplorer
 		{
 			XElement result;
 			var key = new Tuple<XElement, XElement>(main, alteration);
-			if (!m_unifiedNodes.TryGetValue(key, out result))
+			if (m_unifiedNodes.TryGetValue(key, out result))
 			{
-				result = new XElement(main.Name);
-				CopyAttributes(main, result, false);
-				UnifyChildren(alteration, main, result);
-				m_unifiedNodes[key] = result;
+				return result; // It will not be null.
 			}
+			result = new XElement(main.Name);
+			CopyAttributes(main, result, false);
+			UnifyChildren(alteration, main, result);
+			m_unifiedNodes[key] = result;
 			return result; // It will not be null.
 		}
 
@@ -1458,13 +1476,11 @@ namespace LanguageExplorer
 		/// </summary>
 		private sealed class GetElementKey
 		{
-			readonly string m_elementName;
-			readonly string[] m_attrvals;
 			readonly XDocument m_doc;
 			internal GetElementKey(string elementName, string[] attrvals, XDocument doc)
 			{
-				m_elementName = elementName;
-				m_attrvals = attrvals.Select(attrval => (attrval == null ? null : attrval.ToLowerInvariant())).ToArray();
+				ElementName = elementName;
+				KeyVals = attrvals.Select(attrval => attrval?.ToLowerInvariant()).ToArray();
 
 				m_doc = doc;
 			}
@@ -1475,36 +1491,44 @@ namespace LanguageExplorer
 				var other = obj as GetElementKey;
 
 				if (other == null)
+				{
 					return false;
-				if (other.m_elementName != m_elementName)
+				}
+
+				if (other.ElementName != ElementName)
+				{
 					return false;
+				}
+
 				if (other.m_doc != m_doc)
+				{
 					return false;
-				if (other.m_attrvals.Length != m_attrvals.Length)
+				}
+
+				if (other.KeyVals.Length != KeyVals.Length)
+				{
 					return false;
-				for (int i = 0; i < m_attrvals.Length; i++)
-					if (other.m_attrvals[i] != m_attrvals[i])
-						return false;
-				return true;
+				}
+
+				return !KeyVals.Where((t, i) => other.KeyVals[i] != t).Any();
 			}
 
 			/// <summary />
-			public string ElementName { get { return m_elementName; } }
-			/// <summary />
-			public string[] KeyVals { get { return m_attrvals; } }
+			public string ElementName { get; }
 
-			static int HashZeroForNull(object obj)
+			/// <summary />
+			public string[] KeyVals { get; }
+
+			private static int HashZeroForNull(object obj)
 			{
-				if (obj == null)
-					return 0;
-				return obj.GetHashCode();
+				return obj?.GetHashCode() ?? 0;
 			}
 
 			/// <summary />
 			public override int GetHashCode()
 			{
-				int result = HashZeroForNull(m_doc) + HashZeroForNull(m_elementName);
-				foreach (string s in m_attrvals)
+				var result = HashZeroForNull(m_doc) + HashZeroForNull(ElementName);
+				foreach (var s in KeyVals)
 				{
 					result += HashZeroForNull(s);
 				}
@@ -1515,10 +1539,15 @@ namespace LanguageExplorer
 			public override string ToString()
 			{
 				var bldr = new StringBuilder();
-				if (!string.IsNullOrEmpty(m_elementName))
-					bldr.AppendFormat("{0}: ", m_elementName);
-				if (m_attrvals != null)
-					bldr.Append(string.Join("-", m_attrvals));
+				if (!string.IsNullOrEmpty(ElementName))
+				{
+					bldr.AppendFormat("{0}: ", ElementName);
+				}
+
+				if (KeyVals != null)
+				{
+					bldr.Append(string.Join("-", KeyVals));
+				}
 				return bldr.Length > 0 ? bldr.ToString() : base.ToString();
 			}
 		}
@@ -1526,11 +1555,8 @@ namespace LanguageExplorer
 		internal ISet<string> ExistingDuplicateKeys()
 		{
 			var set = new HashSet<string>();
-			foreach (var dupKey in
-				from key in m_getElementTable.Keys select key.ElementName into elemName
-				let idx = elemName.IndexOf('%') where idx >= 0
-				select elemName.Substring(idx + 1) into dupKey
-				where !String.IsNullOrEmpty(dupKey) && !set.Contains(dupKey) select dupKey)
+			foreach (var dupKey in m_getElementTable.Keys.Select(key => key.ElementName).Select(elemName => new {elemName, idx = elemName.IndexOf('%')})
+				.Where(@t => @t.idx >= 0).Select(@t => @t.elemName.Substring(@t.idx + 1)).Where(dupKey => !string.IsNullOrEmpty(dupKey) && !set.Contains(dupKey)))
 			{
 				set.Add(dupKey);
 			}
@@ -1543,11 +1569,6 @@ namespace LanguageExplorer
 		/// To do so, we build a modified version of that layout, which (for each part ref in path)
 		/// has a child node of that name. The final part ref should have the modified attribute.
 		/// </summary>
-		/// <param name="path">The path.</param>
-		/// <param name="attrName">Name of the attr.</param>
-		/// <param name="value">The value.</param>
-		/// <param name="version">The version.</param>
-		/// <param name="newPartRef">The new part ref.</param>
 		/// <returns></returns>
 		internal static XElement MakeOverride(object[] path, string attrName, string value, int version, out XElement newPartRef)
 		{
@@ -1559,7 +1580,9 @@ namespace LanguageExplorer
 			{
 				var node = path[i] as XElement;
 				if (node == null || node.Name != "sublayout")
+				{
 					continue;
+				}
 
 				i++;
 				break;
@@ -1573,10 +1596,14 @@ namespace LanguageExplorer
 			{
 				var node = path[i] as XElement;
 				if (node == null || node.Name != "part")
+				{
 					continue;
+				}
 				var partId = XmlUtils.GetOptionalAttributeValue(node, "ref");
 				if (partId == null)
+				{
 					continue; // a part node, but not a part ref.
+				}
 
 				// Handle the possibility that the parent of the part ref we want to override
 				// is not directly the containing part ref. For now we just handle the special case,
@@ -1586,15 +1613,7 @@ namespace LanguageExplorer
 				var parent = node.Parent;
 				if (parent != null && parent.Name == "indent")
 				{
-					XElement adjustParent = null;
-					foreach (var child in currentParent.Elements())
-					{
-						if (child.Name == parent.Name)
-						{
-							adjustParent = child;
-							break;
-						}
-					}
+					var adjustParent = currentParent.Elements().FirstOrDefault(child => child.Name == parent.Name);
 					if (adjustParent == null)
 					{
 						adjustParent = parent;
@@ -1606,12 +1625,10 @@ namespace LanguageExplorer
 				XElement currentChild = null;
 				foreach (var child in currentParent.Elements())
 				{
-					string partIdChild = XmlUtils.GetOptionalAttributeValue(child, "ref");
+					var partIdChild = XmlUtils.GetOptionalAttributeValue(child, "ref");
 					// For most children, one with the right part ID is enough, but for custom ones
 					// it must have the right param, as well.
-					if (partIdChild == partId &&
-						(partIdChild != "Custom" ||
-							XmlUtils.GetOptionalAttributeValue(node, "param") == XmlUtils.GetOptionalAttributeValue(child, "param")))
+					if (partIdChild == partId && (partIdChild != "Custom" || XmlUtils.GetOptionalAttributeValue(node, "param") == XmlUtils.GetOptionalAttributeValue(child, "param")))
 					{
 						currentChild = child;
 						break;
@@ -1631,7 +1648,9 @@ namespace LanguageExplorer
 						// before), we need to copy the param attribute.
 						var param = XmlUtils.GetOptionalAttributeValue(node, "param");
 						if (!string.IsNullOrEmpty(param))
+						{
 							XmlUtils.SetAttribute(currentChild, "param", param);
+						}
 					}
 				}
 

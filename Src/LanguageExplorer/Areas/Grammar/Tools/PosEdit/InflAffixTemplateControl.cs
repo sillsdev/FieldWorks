@@ -759,7 +759,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		{
 			get
 			{
-				return !m_template.PrefixSlotsRS.Any(slot => slot.Name.AnalysisDefaultWritingSystem.Text == m_sNewSlotName)
+				return m_template.PrefixSlotsRS.All(slot => slot.Name.AnalysisDefaultWritingSystem.Text != m_sNewSlotName)
 				       && m_template.SuffixSlotsRS.All(slot => slot.Name.AnalysisDefaultWritingSystem.Text != m_sNewSlotName);
 			}
 		}
@@ -915,12 +915,15 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		internal ITsString MenuLabelForInflAffixTemplateHelp(string sLabel)
 		{
 			CheckDisposed();
-			if (m_obj.ClassID != MoInflAffMsaTags.kClassId && m_obj.ClassID != MoInflAffixSlotTags.kClassId && m_obj.ClassID != MoInflAffixTemplateTags.kClassId)
+
+			var helptopic = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(m_ChooseInflectionalAffixHelpTopic);
+			if ((m_obj.ClassID != MoInflAffMsaTags.kClassId && m_obj.ClassID != MoInflAffixSlotTags.kClassId && m_obj.ClassID != MoInflAffixTemplateTags.kClassId)
+			    || helptopic == null)
 			{
 				return null;
 			}
 			// Display help only if there's a topic linked to the generated ID in the resource file.
-			return PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(m_ChooseInflectionalAffixHelpTopic) != null ? TsStringUtils.MakeString(sLabel, Cache.DefaultUserWs) : null;
+			return TsStringUtils.MakeString(sLabel, Cache.DefaultUserWs);
 		}
 
 		private bool SetEnabledIfFindSlotInSequence(ILcmReferenceSequence<IMoInflAffixSlot> slots, out bool fEnabled, bool bIsLeft)

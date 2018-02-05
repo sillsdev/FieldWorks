@@ -19,9 +19,6 @@ namespace LanguageExplorer
 	/// </remarks>
 	internal class FwViewSizeEventArgs : EventArgs
 	{
-		private int m_height;
-		private int m_width;
-
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -29,31 +26,19 @@ namespace LanguageExplorer
 		/// <param name="width">new width of the view</param>
 		internal FwViewSizeEventArgs(int height, int width)
 		{
-			m_height= height;
-			m_width = width;
+			Height= height;
+			Width = width;
 		}
 
 		/// <summary>
 		/// The height of the view.
 		/// </summary>
-		public int Height
-		{
-			get
-			{
-				return m_height;
-			}
-		}
+		public int Height { get; }
 
 		/// <summary>
 		/// The width of the view.
 		/// </summary>
-		public int Width
-		{
-			get
-			{
-				return m_width;
-			}
-		}
+		public int Width { get; }
 	}
 	#endregion // FwViewSizeEventArgs
 }

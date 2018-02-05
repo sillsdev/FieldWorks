@@ -613,7 +613,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			// In some cases (e.g where a user reset their local settings) the stored configuration may no longer
 			// exist on disk.
 			var validConfiguration = SetCurrentDictionaryPublicationLayout();
-			if (string.IsNullOrEmpty(PropertyTable.GetValue("SuspendLoadingRecordUntilOnJumpToRecord", string.Empty)))
+			if (string.IsNullOrEmpty(PropertyTable.GetValue<string>("SuspendLoadingRecordUntilOnJumpToRecord", null)))
 			{
 				UpdateContent(PublicationDecorator, validConfiguration);
 			}

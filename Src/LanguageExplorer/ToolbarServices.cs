@@ -26,7 +26,7 @@ namespace LanguageExplorer
 
 		internal static ToolStrip GetStandardToolStrip(ToolStripContainer toolStripContainer)
 		{
-			return GetToolStrip(toolStripContainer, $"toolStripStandard");
+			return GetToolStrip(toolStripContainer, "toolStripStandard");
 		}
 
 		internal static ToolStripItem GetStandardToolStripRefreshButton(ToolStripContainer toolStripContainer)
@@ -40,7 +40,7 @@ namespace LanguageExplorer
 
 		internal static ToolStrip GetViewToolStrip(ToolStripContainer toolStripContainer)
 		{
-			return GetToolStrip(toolStripContainer, $"toolStripView");
+			return GetToolStrip(toolStripContainer, "toolStripView");
 		}
 
 		#endregion View toolbar

@@ -43,7 +43,9 @@ namespace LanguageExplorer
 		{
 			int[] entries;
 			using (RecordListActivator.ActivateRecordListMatchingExportType(DictionaryType, _statusBar))
+			{
 				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entries, DictionaryType, Cache, MyRecordList);
+			}
 			return entries.Count(e => IsGenerated(Cache, config, e));
 		}
 
@@ -55,7 +57,9 @@ namespace LanguageExplorer
 		{
 			var entry = (ILexEntry)cache.ServiceLocator.GetObject(hvo);
 			if (ConfiguredXHTMLGenerator.IsMainEntry(entry, config))
+			{
 				return config.Parts[0].IsEnabled && (!entry.ComplexFormEntryRefs.Any() || ConfiguredXHTMLGenerator.IsListItemSelectedForExport(config.Parts[0], entry));
+			}
 			return entry.PublishAsMinorEntry && config.Parts.Skip(1).Any(part => ConfiguredXHTMLGenerator.IsListItemSelectedForExport(part, entry));
 		}
 
@@ -80,7 +84,9 @@ namespace LanguageExplorer
 		{
 			int[] entries;
 			using (ReversalIndexActivator.ActivateReversalIndex(ri.Guid, m_propertyTable, MyRecordList))
+			{
 				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entries, ReversalType, Cache, MyRecordList);
+			}
 			return entries.Length;
 		}
 
@@ -88,8 +94,7 @@ namespace LanguageExplorer
 		{
 			using (RecordListActivator.ActivateRecordListMatchingExportType(DictionaryType, _statusBar))
 			{
-				configuration = configuration ?? new DictionaryConfigurationModel(
-					DictionaryConfigurationServices.GetCurrentConfiguration(m_propertyTable, "Dictionary"), Cache);
+				configuration = configuration ?? new DictionaryConfigurationModel(DictionaryConfigurationServices.GetCurrentConfiguration(m_propertyTable, "Dictionary"), Cache);
 				ExportConfiguredXhtml(xhtmlPath, configuration, DictionaryType, progress);
 			}
 		}
@@ -110,7 +115,9 @@ namespace LanguageExplorer
 			int[] entriesToSave;
 			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, exportType, Cache, MyRecordList);
 			if (progress != null)
+			{
 				progress.Maximum = entriesToSave.Length;
+			}
 			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, Cache, MyRecordList, xhtmlPath, progress);
 		}
 
@@ -135,7 +142,7 @@ namespace LanguageExplorer
 
 			private void Dispose(bool disposing)
 			{
-				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
 
 				if (disposing)
 				{
@@ -175,7 +182,9 @@ namespace LanguageExplorer
 				var parameters = controlElement.XPathSelectElement(".//parameters[@clerk]");
 				var activeRecordList = RecordList.ActiveRecordListRepository.ActiveRecordList;
 				if (DoesRecordListMatchParams(activeRecordList, parameters))
+				{
 					return null; // No need to juggle record lists if the one we want is already active
+				}
 
 				var tempRecordList = isDictionary ? s_dictionaryRecordList : s_reversalIndexRecordList;
 				if (tempRecordList == null)
@@ -193,7 +202,9 @@ namespace LanguageExplorer
 			private static bool DoesRecordListMatchParams(IRecordList recordList, XElement parameters)
 			{
 				if (recordList == null || parameters == null)
+				{
 					return false;
+				}
 				var clerkAttr = parameters.Attribute("clerk");
 				return clerkAttr != null && clerkAttr.Value == recordList.Id;
 			}
@@ -220,10 +231,12 @@ namespace LanguageExplorer
 
 			private void Dispose(bool disposing)
 			{
-				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
-				string dummy;
-				if(disposing)
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if (disposing)
+				{
+					string dummy;
 					ActivateReversalIndexIfNeeded(m_sCurrentRevIdxGuid, m_propertyTable, m_recordList, out dummy);
+				}
 			}
 
 			~ReversalIndexActivator()
@@ -235,7 +248,9 @@ namespace LanguageExplorer
 			public static ReversalIndexActivator ActivateReversalIndex(string reversalWs, IPropertyTable propertyTable, LcmCache cache, IRecordList activeRecordList)
 			{
 				if (reversalWs == null)
+				{
 					return null;
+				}
 				var reversalGuid = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().First(revIdx => revIdx.WritingSystem == reversalWs).Guid;
 				return ActivateReversalIndex(reversalGuid, propertyTable, activeRecordList);
 			}
@@ -253,7 +268,9 @@ namespace LanguageExplorer
 			{
 				oldReversalGuid = propertyTable.GetValue<string>("ReversalIndexGuid", null);
 				if (newReversalGuid == null || newReversalGuid == oldReversalGuid)
+				{
 					return false;
+				}
 				// Set the reversal index guid property so that the right guid is found down in DictionaryPublicationDecorater.GetEntriesToPublish,
 				// and manually call OnPropertyChanged to cause LexEdDll ReversalListBase.ChangeOwningObject(guid) to be called. This causes the
 				// right reversal content to be exported, fixing LT-17011.

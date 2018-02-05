@@ -26,7 +26,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Write a line of text to the log (preceded by the current indent).
 		/// </summary>
-		/// <param name="value"></param>
 		void WriteLine(string value);
 
 		string Content { get; }

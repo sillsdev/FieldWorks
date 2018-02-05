@@ -129,7 +129,10 @@ namespace LanguageExplorer
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 
 			if (IsDisposed)
-				return; // Only run once.
+			{
+				// Only needs to run once.
+				return;
+			}
 
 			if (disposing)
 			{

@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
@@ -21,7 +20,6 @@ namespace LanguageExplorer
 		/// </summary>
 		/// <param name="propertyTable">The property table to use for persistence.</param>
 		/// <param name="context">The persistence context</param>
-		/// <returns></returns>
 		internal static IPersistenceProvider CreatePersistenceProvider(IPropertyTable propertyTable, string context)
 		{
 			return new PersistenceProvider(propertyTable, context);
@@ -31,7 +29,6 @@ namespace LanguageExplorer
 		/// Create an instance of IPersistenceProvider
 		/// </summary>
 		/// <param name="propertyTable">The property table to use for persistence.</param>
-		/// <returns></returns>
 		internal static IPersistenceProvider CreatePersistenceProvider(IPropertyTable propertyTable)
 		{
 			return CreatePersistenceProvider(propertyTable, AreaServices.Default);
@@ -63,8 +60,7 @@ namespace LanguageExplorer
 			{
 				var state = Get(id, "windowState");
 				//don't bother restoring the program to the minimized state.
-				if (state != null && ((FormWindowState)state) !=
-				    FormWindowState.Minimized)
+				if (state != null && ((FormWindowState)state) != FormWindowState.Minimized)
 				{
 					form.WindowState = (FormWindowState)state;
 				}
@@ -80,8 +76,11 @@ namespace LanguageExplorer
 					// changed when it is Show()n.
 					form.StartPosition = FormStartPosition.Manual;
 				}
+
 				if (size != null)
+				{
 					form.Size = (Size)size;
+				}
 
 				// Fix the stored position in case it is off the screen.  This can happen if the
 				// user has removed a second monitor, or changed the screen resolution downward,
@@ -93,18 +92,17 @@ namespace LanguageExplorer
 
 			private string GetPrefix(string id)
 			{
-				return m_contextString + "-" + id;
+				return $"{m_contextString}-{id}";
 			}
 
 			private object Get(string id, string label)
 			{
-				return m_propertyTable.GetValue<object>(GetPrefix(id) + "-" + label);
+				return m_propertyTable.GetValue<object>($"{GetPrefix(id)}-{label}");
 			}
 
 			private void Set(string id, string label, object value)
 			{
-				var propertyName = GetPrefix(id) + "-" + label;
-				m_propertyTable.SetProperty(propertyName, value, true, true);
+				m_propertyTable.SetProperty($"{GetPrefix(id)}-{label}", value, true, true);
 			}
 
 			void IPersistenceProvider.PersistWindowSettings(string id, Form form)
@@ -112,20 +110,24 @@ namespace LanguageExplorer
 				Set(id, "windowState", form.WindowState);
 
 				if (form.WindowState == FormWindowState.Normal)
+				{
 					Set(id, "windowSize", form.Size);
+				}
 
 				//don't bother storing the location if we are maximized or minimized.
 				//if we did, then when the user exits the application and then runs it again,
 				//	then switches to the normal state, we would be switching to 0,0 or something.
 				if (form.WindowState == FormWindowState.Normal)
+				{
 					Set(id, "windowLocation", form.Location);
+				}
 			}
 
 			object IPersistenceProvider.GetInfoObject(string id, object defaultValue)
 			{
-				return m_propertyTable.GetValue<object>(GetPrefix(id), defaultValue);
+				return m_propertyTable.GetValue(GetPrefix(id), defaultValue);
 			}
-			void IPersistenceProvider.SetInfoObject(string id, Object info)
+			void IPersistenceProvider.SetInfoObject(string id, object info)
 			{
 				m_propertyTable.SetProperty(GetPrefix(id), info, true, false);
 			}

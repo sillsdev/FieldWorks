@@ -31,7 +31,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// For logging nested structures, increments the current indent level.
 		/// </summary>
-		/// <exception cref="ObjectDisposedException">If called after being disposed</exception>
 		public void IncreaseIndent()
 		{
 			CheckDisposed();
@@ -41,7 +40,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// For logging nested structures, decrements the current indent level.
 		/// </summary>
-		/// <exception cref="ObjectDisposedException">If called after being disposed</exception>
 		public void DecreaseIndent()
 		{
 			CheckDisposed();
@@ -55,12 +53,13 @@ namespace LanguageExplorer
 		public void WriteLine(string text)
 		{
 			CheckDisposed();
-			for (int i = 0; i < m_indent; i++)
+			for (var i = 0; i < m_indent; i++)
+			{
 				m_writer.Write("    ");
+			}
 			m_writer.WriteLine(text);
 		}
 
-		/// <exception cref="ObjectDisposedException">If called after being disposed</exception>
 		public bool HasContent
 		{
 			get
@@ -75,7 +74,6 @@ namespace LanguageExplorer
 		/// Get the text that has been written to the stream.
 		/// Immediately disposes itself (a developer wishing to change this behavior in the future is welcome to).
 		/// </summary>
-		/// <exception cref="ObjectDisposedException">If called after being disposed (or more than once)</exception>
 		public string Content
 		{
 			get
@@ -115,7 +113,9 @@ namespace LanguageExplorer
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -128,7 +128,9 @@ namespace LanguageExplorer
 
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 			IsDisposed = true;
 
 			if (disposing)

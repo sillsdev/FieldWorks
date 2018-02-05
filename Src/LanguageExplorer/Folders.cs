@@ -1,16 +1,6 @@
-﻿// Copyright (c) 2009-2013 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// <author>Greg Trihus</author>
-// <email>greg_trihus@sil.org</email>
-// Last reviewed:
-//
-// <remarks>
-// Works with folder trees in file system.  Renamed from MyFolders to Folders when moved to
-// FwUtils.
-// </remarks>
-// --------------------------------------------------------------------------------------------
 
 using System;
 using System.Diagnostics;
@@ -26,7 +16,7 @@ namespace LanguageExplorer
 	public static class Folders
 	{
 		#region bool Copy(string src, string dst, string dirFilter)
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Copy source (src) to destination (dst) using filter (dirFilter)
 		/// </summary>
@@ -35,30 +25,35 @@ namespace LanguageExplorer
 		/// <param name="dirFilter">name format</param>
 		/// <param name="applicationName">Name of the application.</param>
 		/// <returns>true if successfully creating a new copy</returns>
-		/// ------------------------------------------------------------------------------------
 		public static bool Copy(string src, string dst, string dirFilter, string applicationName)
 		{
 			Debug.Assert(Directory.Exists(src));
 			Debug.Assert(!string.IsNullOrEmpty(dst));
 			if (!CreateDirectory(dst, applicationName))
-				return false;
-			DirectoryInfo di = new DirectoryInfo(src);
-			foreach (FileInfo fileInfo in di.GetFiles())
 			{
-				string dstFullName = Path.Combine(dst, fileInfo.Name);
+				return false;
+			}
+			var di = new DirectoryInfo(src);
+			foreach (var fileInfo in di.GetFiles())
+			{
+				var dstFullName = Path.Combine(dst, fileInfo.Name);
 				File.Copy(fileInfo.FullName, dstFullName, true);
 				File.SetAttributes(dstFullName, File.GetAttributes(fileInfo.FullName));
 			}
 
-			foreach (DirectoryInfo directoryInfo in di.GetDirectories())
+			foreach (var directoryInfo in di.GetDirectories())
 			{
 				if (directoryInfo.Name.Substring(0, 1) == ".")
+				{
 					continue;
+				}
 
 				if (directoryInfo.Name == dirFilter)
+				{
 					continue;
+				}
 
-				string dstFullName = Path.Combine(dst, directoryInfo.Name);
+				var dstFullName = Path.Combine(dst, directoryInfo.Name);
 				Copy(directoryInfo.FullName, dstFullName, dirFilter, applicationName);
 				Directory.SetCreationTime(dstFullName, Directory.GetCreationTime(directoryInfo.FullName));
 			}
@@ -77,11 +72,13 @@ namespace LanguageExplorer
 		{
 			Debug.Assert(Directory.Exists(directory));
 			Debug.Assert(!string.IsNullOrEmpty(name));
-			string filePath = Path.Combine(directory, name);
-			Match m = Regex.Match(name, "[0-9]*$");
+			var filePath = Path.Combine(directory, name);
+			var m = Regex.Match(name, "[0-9]*$");
 			if (m.Success)
+			{
 				name = name.Substring(0, name.Length - m.Value.Length);
-			int counter = m.Success ? int.Parse(m.Value) : 0;
+			}
+			var counter = m.Success ? int.Parse(m.Value) : 0;
 			while (Directory.Exists(filePath))
 			{
 				filePath = Path.Combine(directory, name + ++counter);
@@ -91,17 +88,16 @@ namespace LanguageExplorer
 		#endregion
 
 		#region bool CreateDirectory(string outPath)
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Creating the Directory with Checking the Access rights
 		/// </summary>
 		/// <param name="outPath">Directory to be created</param>
 		/// <param name="applicationName">Name of the application.</param>
 		/// <returns>True/False based on success</returns>
-		/// ------------------------------------------------------------------------------------
 		public static bool CreateDirectory(string outPath, string applicationName)
 		{
-			bool returnValue = true;
+			var returnValue = true;
 			try
 			{
 				if (!Directory.Exists(outPath))
@@ -111,8 +107,7 @@ namespace LanguageExplorer
 			}
 			catch (UnauthorizedAccessException)
 			{
-				MessageBox.Show("Sorry! You might not have permission to use this resource.",
-					applicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show("Sorry! You might not have permission to use this resource.", applicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				returnValue = false;
 			}
 			catch (Exception ex)

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013-2017 SIL International
+﻿// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,13 +11,11 @@ using SIL.Utils;
 
 namespace LanguageExplorer
 {
-	/// ------------------------------------------------------------------------------------
 	/// <summary>
 	/// This class allows for exceptions in Palaso dlls to be reported in FieldWorks
 	/// using the normal FieldWorks error handling system and reporting dialogs. When you
 	/// create a Palaso dialog, create an instance of this class, passing it the dialog.
 	/// </summary>
-	/// ------------------------------------------------------------------------------------
 	internal sealed class SILErrorReportingAdapter : IErrorReporter, IDisposable
 	{
 		private Form m_parentForm;
@@ -44,8 +42,7 @@ namespace LanguageExplorer
 		}
 
 		/// <summary />
-		public ErrorResult NotifyUserOfProblem(IRepeatNoticePolicy policy, string alternateButton1Label,
-			ErrorResult resultIfAlternateButtonPressed, string message)
+		public ErrorResult NotifyUserOfProblem(IRepeatNoticePolicy policy, string alternateButton1Label, ErrorResult resultIfAlternateButtonPressed, string message)
 		{
 			return policy.ShouldShowMessage(message) &&
 				ErrorReporter.ReportException(new Exception(message), m_registryKey, m_supportEmailAddress, m_parentForm, false) ?
@@ -56,28 +53,27 @@ namespace LanguageExplorer
 		public void ReportNonFatalException(Exception exception, IRepeatNoticePolicy policy)
 		{
 			if (policy.ShouldShowErrorReportDialog(exception))
+			{
 				ErrorReporter.ReportException(exception, m_registryKey, m_supportEmailAddress, m_parentForm, false);
+			}
 		}
 
 		/// <summary />
 		public void ReportNonFatalExceptionWithMessage(Exception error, string message, params object[] args)
 		{
-			ErrorReporter.ReportException(new Exception(string.Format(message, args), error),
-				m_registryKey, m_supportEmailAddress, m_parentForm, false);
+			ErrorReporter.ReportException(new Exception(string.Format(message, args), error), m_registryKey, m_supportEmailAddress, m_parentForm, false);
 		}
 
 		/// <summary />
 		public void ReportNonFatalMessageWithStackTrace(string message, params object[] args)
 		{
-			ErrorReporter.ReportException(new Exception(string.Format(message, args)), m_registryKey,
-				m_supportEmailAddress, m_parentForm, false);
+			ErrorReporter.ReportException(new Exception(string.Format(message, args)), m_registryKey, m_supportEmailAddress, m_parentForm, false);
 		}
 
 		/// <summary />
 		public void ReportFatalMessageWithStackTrace(string message, object[] args)
 		{
-			ErrorReporter.ReportException(new Exception(string.Format(message, args)), m_registryKey,
-				m_supportEmailAddress, m_parentForm, true);
+			ErrorReporter.ReportException(new Exception(string.Format(message, args)), m_registryKey, m_supportEmailAddress, m_parentForm, true);
 		}
 		#endregion
 
@@ -86,7 +82,9 @@ namespace LanguageExplorer
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(string.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		public bool IsDisposed { get; private set; }
@@ -104,9 +102,7 @@ namespace LanguageExplorer
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		/// <remarks>Must not be virtual.</remarks>
 		public void Dispose()
 		{
@@ -144,10 +140,14 @@ namespace LanguageExplorer
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
+			{
 				m_registryKey.Dispose();
+			}
 
 			m_parentForm = null;
 			m_registryKey = null;

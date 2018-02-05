@@ -31,53 +31,36 @@ namespace LanguageExplorer
 		/// <summary>
 		///  The list that broadcast the change.
 		/// </summary>
-		public IRecordList MyRecordList
-		{
-			get; private set;
-		}
+		public IRecordList MyRecordList { get; }
 
 		/// <summary>
 		/// Whether a change of record should result in a save (and discard of undo items).
 		/// This is suppressed if the change is caused by creating or deleting a record.
 		/// </summary>
-		public bool SuppressSaveOnChangeRecord
-		{
-			get; private set;
-		}
+		public bool SuppressSaveOnChangeRecord { get; }
 
 		/// <summary>
 		/// Indicates whether the this action should skip ShowRecord
 		/// (e.g. to avoid losing the context/pane where the user may be editing.)
 		/// </summary>
-		public bool SkipShowRecord
-		{
-			get; private set;
-		}
+		public bool SkipShowRecord { get; }
 
 		/// <summary>
 		/// HvoOfCurrentObjAtTimeOfNavigation is needed in Equals() for determining whether or not
 		/// RecordNavigationInfo has changed in the property table.
 		/// </summary>
-		public int HvoOfCurrentObjAtTimeOfNavigation
-		{
-			get; private set;
-		}
+		public int HvoOfCurrentObjAtTimeOfNavigation { get; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether to suppress focus changes.
 		/// </summary>
 		/// <value><c>true</c> if focus changes will be suppressed; otherwise, <c>false</c>.</value>
-		public bool SuppressFocusChange
-		{
-			get; private set;
-		}
+		public bool SuppressFocusChange { get; }
 
 		/// <summary>
 		/// Given an argument from OnRecordNavigation, expected to be a RecordNavigationInfo,
 		/// if it really is return it's record list. Otherwise return null.
 		/// </summary>
-		/// <param name="argument"></param>
-		/// <returns></returns>
 		public static IRecordList GetSendingList(object argument)
 		{
 			var info = argument as RecordNavigationInfo;
@@ -90,8 +73,6 @@ namespace LanguageExplorer
 		/// RecordNavigation info can be considered equivalent if
 		/// the CurrentObject hasn't changed.
 		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
 		public override bool Equals(object obj)
 		{
 			return CompareTo(obj) == 0;

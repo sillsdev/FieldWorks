@@ -1,9 +1,6 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ConsoleProgress.cs
-// Responsibility: mcconnel
 
 using System;
 using System.ComponentModel;
@@ -11,30 +8,24 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorer
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Utility class to provide progress reporting via console output instead of a dialog box.
 	/// This may be useful for command line utility programs that access DLLs that use IProgress
 	/// arguments for progress reporting.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	internal sealed class ConsoleProgress : IProgress
 	{
 		private readonly SingleThreadedSynchronizeInvoke m_sychronizeInvoke = new SingleThreadedSynchronizeInvoke();
 		int m_min;
 		int m_max = 100;
 		string m_message;
-		int m_pos;
 		int m_dots;
 		int m_grain = 1;
 
 		/// <summary>
 		/// Let the caller know whether we've written any dots out for progress reporting.
 		/// </summary>
-		public bool DotsWritten
-		{
-			get { return m_dots > 0; }
-		}
+		public bool DotsWritten => m_dots > 0;
 
 		#region IProgress Members
 
@@ -42,19 +33,13 @@ namespace LanguageExplorer
 		/// Gets an object to be used for ensuring that required tasks are invoked on the main
 		/// UI thread.
 		/// </summary>
-		public ISynchronizeInvoke SynchronizeInvoke
-		{
-			get { return m_sychronizeInvoke; }
-		}
+		public ISynchronizeInvoke SynchronizeInvoke => m_sychronizeInvoke;
 
 		/// <summary>
 		/// Gets the form displaying the progress (used for message box owners, etc). If the progress
 		/// is not associated with a visible Form, then this returns its owning form, if any.
 		/// </summary>
-		public System.Windows.Forms.Form Form
-		{
-			get { return null; }
-		}
+		public System.Windows.Forms.Form Form => null;
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this progress is indeterminate.
@@ -68,7 +53,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Gets or sets the maximum value of the progress bar.
 		/// </summary>
-		/// <value>The maximum.</value>
 		public int Maximum
 		{
 			get { return m_max; }
@@ -97,7 +81,9 @@ namespace LanguageExplorer
 			{
 				m_message = value;
 				if (DotsWritten)
+				{
 					Console.WriteLine();
+				}
 				Console.WriteLine(m_message);
 				m_dots = 0;
 			}
@@ -106,7 +92,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Gets or sets the minimum value of the progress bar.
 		/// </summary>
-		/// <value>The minimum.</value>
 		public int Minimum
 		{
 			get { return m_min; }
@@ -121,15 +106,7 @@ namespace LanguageExplorer
 		/// Gets or sets the current position of the progress bar. This should be within the limits set by
 		/// SetRange, or returned by GetRange.
 		/// </summary>
-		/// <value>The position.</value>
-		public int Position
-		{
-			get { return m_pos; }
-			set
-			{
-				m_pos = value;
-			}
-		}
+		public int Position { get; set; }
 
 		/// <summary>
 		/// Cause the progress indicator to advance by the specified amount.
@@ -137,8 +114,8 @@ namespace LanguageExplorer
 		/// <param name="amount">Amount of progress.</param>
 		public void Step(int amount)
 		{
-			++m_pos;
-			if ((m_pos % m_grain) == 0)
+			++Position;
+			if ((Position % m_grain) == 0)
 			{
 				Console.Write('.');
 				++m_dots;
@@ -163,10 +140,9 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Get the title of the progress display window.
 		/// </summary>
-		/// <value>The title.</value>
 		public string Title
 		{
-			get { return String.Empty; }
+			get { return string.Empty; }
 			set { }
 		}
 
@@ -183,7 +159,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Event handler for listening to whether or the cancel button is pressed.
 		/// </summary>
-		public event System.ComponentModel.CancelEventHandler Canceling;
+		public event CancelEventHandler Canceling;
 
 		#endregion
 	}

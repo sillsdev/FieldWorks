@@ -111,34 +111,35 @@ namespace LanguageExplorer
 
 		protected override void DisposeManagedResources()
 		{
-			if (m_recordList != null)
+			if (m_recordList == null)
 			{
-				var fHandledReload = false;
-				if (m_fTriggerPendingReloadOnDispose && m_recordList.RequestedLoadWhileSuppressed)
-				{
-					m_recordList.ListLoadingSuppressed = m_fOriginalListLoadingSuppressedState;
-					// if the requested while suppressed flag was reset, we handled it.
-					if (m_recordList.RequestedLoadWhileSuppressed == false)
-					{
-						fHandledReload = true;
-					}
-				}
-				else
-				{
-					m_recordList.ListLoadingSuppressedNoSideEffects = m_fOriginalListLoadingSuppressedState;
-				}
-				// if we didn't handle a pending reload, someone else needs to handle it.
-				if (!fHandledReload)
-				{
-					m_recordList.RequestedLoadWhileSuppressed |= m_fOriginalLoadRequestedWhileSuppressed;
-				}
-
-				m_recordList.UpdatingList = m_fOriginalUpdatingList;
-				// reset this after we possibly reload the list.
-				m_recordList.SkipShowRecord = m_fOriginalSkipRecordNavigationState;
-				m_recordList.SuppressSaveOnChangeRecord = m_fOriginalSuppressSaveOnChangeRecord;
-				((RecordList)m_recordList).UpdateHelper = m_originalUpdateHelper;
+				return;
 			}
+			var fHandledReload = false;
+			if (m_fTriggerPendingReloadOnDispose && m_recordList.RequestedLoadWhileSuppressed)
+			{
+				m_recordList.ListLoadingSuppressed = m_fOriginalListLoadingSuppressedState;
+				// if the requested while suppressed flag was reset, we handled it.
+				if (m_recordList.RequestedLoadWhileSuppressed == false)
+				{
+					fHandledReload = true;
+				}
+			}
+			else
+			{
+				m_recordList.ListLoadingSuppressedNoSideEffects = m_fOriginalListLoadingSuppressedState;
+			}
+			// if we didn't handle a pending reload, someone else needs to handle it.
+			if (!fHandledReload)
+			{
+				m_recordList.RequestedLoadWhileSuppressed |= m_fOriginalLoadRequestedWhileSuppressed;
+			}
+
+			m_recordList.UpdatingList = m_fOriginalUpdatingList;
+			// reset this after we possibly reload the list.
+			m_recordList.SkipShowRecord = m_fOriginalSkipRecordNavigationState;
+			m_recordList.SuppressSaveOnChangeRecord = m_fOriginalSuppressSaveOnChangeRecord;
+			((RecordList)m_recordList).UpdateHelper = m_originalUpdateHelper;
 		}
 
 		protected override void DisposeUnmanagedResources()

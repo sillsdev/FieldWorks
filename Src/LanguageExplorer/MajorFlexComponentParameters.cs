@@ -16,29 +16,29 @@ namespace LanguageExplorer
 	internal sealed class MajorFlexComponentParameters
 	{
 		/// <summary />
-		internal ICollapsingSplitContainer MainCollapsingSplitContainer { get; private set; }
+		internal ICollapsingSplitContainer MainCollapsingSplitContainer { get; }
 		/// <summary />
-		internal MenuStrip MenuStrip { get; private set; }
+		internal MenuStrip MenuStrip { get; }
 		/// <summary />
-		internal ToolStripContainer ToolStripContainer { get; private set; }
+		internal ToolStripContainer ToolStripContainer { get; }
 		/// <summary />
-		internal StatusBar Statusbar { get; private set; }
+		internal StatusBar Statusbar { get; }
 		/// <summary />
-		internal ParserMenuManager ParserMenuManager { get; private set; }
+		internal ParserMenuManager ParserMenuManager { get; }
 		/// <summary />
-		internal DataNavigationManager DataNavigationManager { get; private set; }
+		internal DataNavigationManager DataNavigationManager { get; }
 		/// <summary />
-		internal FlexComponentParameters FlexComponentParameters { get; private set; }
+		internal FlexComponentParameters FlexComponentParameters { get; }
 		/// <summary />
-		internal IRecordListRepositoryForTools RecordListRepositoryForTools { get; private set; }
+		internal IRecordListRepositoryForTools RecordListRepositoryForTools { get; }
 		/// <summary />
-		internal LcmCache LcmCache { get; private set; }
+		internal LcmCache LcmCache { get; }
 		/// <summary />
-		internal IFlexApp FlexApp { get; private set; }
+		internal IFlexApp FlexApp { get; }
 		/// <summary />
-		internal IFwMainWnd MainWindow { get; private set; }
+		internal IFwMainWnd MainWindow { get; }
 		/// <summary />
-		internal SidePane SidePane { get; private set; }
+		internal SidePane SidePane { get; }
 
 		internal MajorFlexComponentParameters(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar,
 			ParserMenuManager parserMenuManager, DataNavigationManager dataNavigationManager,

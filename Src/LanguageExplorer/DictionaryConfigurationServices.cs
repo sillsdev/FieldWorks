@@ -146,8 +146,7 @@ namespace LanguageExplorer
 
 		internal static string GetConfigDialogHelpTopic(IPropertyTable propertyTable)
 		{
-			return GetDictionaryConfigurationBaseType(propertyTable) == "Reversal Index"
-				? "khtpConfigureReversalIndex" : "khtpConfigureDictionary";
+			return GetDictionaryConfigurationBaseType(propertyTable) == "Reversal Index" ? "khtpConfigureReversalIndex" : "khtpConfigureDictionary";
 		}
 
 		/// <summary>
@@ -204,7 +203,7 @@ namespace LanguageExplorer
 		/// <remarks>Useful for querying about an area of FLEx that the user is not in.</remarks>
 		internal static string GetProjectConfigurationDirectory(LcmCache cache, string area)
 		{
-			return String.IsNullOrWhiteSpace(area) ? null : Path.Combine(LcmFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), area);
+			return string.IsNullOrWhiteSpace(area) ? null : Path.Combine(LcmFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), area);
 		}
 
 		/// <summary>
@@ -240,8 +239,10 @@ namespace LanguageExplorer
 		{
 			// Since this is used in the display of the title and XWorksViews sometimes tries to display the title
 			// before full initialization (if this view is the one being displayed on startup) test the propertyTable before continuing.
-			if(propertyTable == null)
+			if (propertyTable == null)
+			{
 				return null;
+			}
 			if (innerConfigDir == null)
 			{
 				innerConfigDir = GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(AreaServices.ToolChoice));
@@ -250,7 +251,7 @@ namespace LanguageExplorer
 			var pubLayoutPropName = isDictionary ? "DictionaryPublicationLayout" : "ReversalIndexPublicationLayout";
 			var currentConfig = propertyTable.GetValue(pubLayoutPropName, String.Empty);
 			var cache = propertyTable.GetValue<LcmCache>("cache");
-			if (!String.IsNullOrEmpty(currentConfig) && File.Exists(currentConfig))
+			if (!string.IsNullOrEmpty(currentConfig) && File.Exists(currentConfig))
 			{
 				SetConfigureHomographParameters(currentConfig, cache);
 				return currentConfig;
@@ -310,7 +311,7 @@ namespace LanguageExplorer
 		/// </summary>
 		internal static string MakeFilenameSafeForHtml(string name)
 		{
-			return name?.Replace('#', '-').Replace('?', '-').Replace(':', '-') ?? String.Empty;
+			return name?.Replace('#', '-').Replace('?', '-').Replace(':', '-') ?? string.Empty;
 		}
 
 		/// <summary>
@@ -329,7 +330,7 @@ namespace LanguageExplorer
 			for (; entryElement != null; entryElement = entryElement.ParentElement)
 			{
 				var className = entryElement.GetAttribute("class");
-				if (String.IsNullOrEmpty(className))
+				if (string.IsNullOrEmpty(className))
 				{
 					continue;
 				}
@@ -368,23 +369,35 @@ namespace LanguageExplorer
 				model.HomographConfiguration = new DictionaryHomographConfiguration(new HomographConfiguration());
 			}
 			model.HomographConfiguration.ExportToHomographConfiguration(cacheHc);
-			if (model.Parts.Count == 0) return;
+			if (model.Parts.Count == 0)
+			{
+				return;
+			}
 			var mainEntryNode = model.Parts[0];
 			//Sense Node
-			string senseType = (mainEntryNode.DisplayLabel == "Reversal Entry") ? "Referenced Senses" : "Senses";
+			var senseType = (mainEntryNode.DisplayLabel == "Reversal Entry") ? "Referenced Senses" : "Senses";
 			var senseNode = mainEntryNode.Children.FirstOrDefault(prop => prop.Label == senseType);
-			if (senseNode == null) return;
+			if (senseNode == null)
+			{
+				return;
+			}
 			var senseOptions = (DictionaryNodeSenseOptions)senseNode.DictionaryNodeOptions;
 			cacheHc.ksSenseNumberStyle = senseOptions.NumberingStyle;
 			//SubSense Node
 			var subSenseNode = senseNode.Children.FirstOrDefault(prop => prop.Label == "Subsenses");
-			if (subSenseNode == null) return;
+			if (subSenseNode == null)
+			{
+				return;
+			}
 			var subSenseOptions = (DictionaryNodeSenseOptions)subSenseNode.DictionaryNodeOptions;
 			cacheHc.ksSubSenseNumberStyle = subSenseOptions.NumberingStyle;
 			cacheHc.ksParentSenseNumberStyle = subSenseOptions.ParentSenseNumberingStyle;
 			//SubSubSense Node
 			var subSubSenseNode = subSenseNode.ReferencedOrDirectChildren.FirstOrDefault(prop => prop.Label == "Subsenses");
-			if (subSubSenseNode == null) return;
+			if (subSubSenseNode == null)
+			{
+				return;
+			}
 			var subSubSenseOptions = (DictionaryNodeSenseOptions)subSubSenseNode.DictionaryNodeOptions;
 			cacheHc.ksSubSubSenseNumberStyle = subSubSenseOptions.NumberingStyle;
 			cacheHc.ksParentSubSenseNumberStyle = subSubSenseOptions.ParentSenseNumberingStyle;
@@ -421,8 +434,8 @@ namespace LanguageExplorer
 			var displayName = cache.LangProject.DefaultAnalysisWritingSystem.DisplayLabel;
 			var fileList = Directory.EnumerateFiles(projectConfigDir);
 			var fileName = fileList.FirstOrDefault(fname => Path.GetFileNameWithoutExtension(fname) == displayName);
-			currentConfig = fileName ?? String.Empty;
-			return !String.IsNullOrEmpty(currentConfig);
+			currentConfig = fileName ?? string.Empty;
+			return !string.IsNullOrEmpty(currentConfig);
 		}
 
 		private static string GetInnerConfigDir(string configFilePath)
@@ -433,7 +446,9 @@ namespace LanguageExplorer
 		private static Guid GetGuidFromGeckoDomElement(GeckoElement element)
 		{
 			if (!element.HasAttribute("id"))
+			{
 				return Guid.Empty;
+			}
 
 			var idVal = element.GetAttribute("id");
 			return !idVal.StartsWith("g") ? Guid.Empty : new Guid(idVal.Substring(1));

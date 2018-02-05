@@ -105,14 +105,9 @@ namespace LanguageExplorer
 		}
 
 		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed;
-
-		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed => m_isDisposed;
+		public bool IsDisposed { get; private set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -167,7 +162,7 @@ namespace LanguageExplorer
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 
-			if (m_isDisposed)
+			if (IsDisposed)
 			{
 				// No need to run more than once.
 				return;
@@ -195,7 +190,7 @@ namespace LanguageExplorer
 			Publisher = null;
 			Subscriber = null;
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
@@ -215,16 +210,18 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Handle the specified link if it is local.
 		/// </summary>
-		/// <param name="source"></param>
-		/// <returns></returns>
 		public bool OnHandleLocalHotlink(object source)
 		{
-			LocalLinkArgs args = source as LocalLinkArgs;
+			var args = source as LocalLinkArgs;
 			if (args == null)
+			{
 				return true; // we can't handle it, but probably no one else can either. Maybe should crash?
+			}
 			var url = args.Link;
 			if(!url.StartsWith(FwLinkArgs.kFwUrlPrefix))
+			{
 				return true; // we can't handle it, but no other colleague can either. Needs to launch whatever can (see VwBaseVc.DoHotLinkAction).
+			}
 			try
 			{
 				var fwargs = new FwAppArgs(url);
@@ -311,10 +308,7 @@ namespace LanguageExplorer
 			ClipboardUtils.SetDataObject(args.ToString(), true);
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
+		/// <summary />
 		private void HistoryBack_Clicked(object sender, EventArgs e)
 		{
 			CheckDisposed();
@@ -332,10 +326,7 @@ namespace LanguageExplorer
 			FollowActiveLink();
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
+		/// <summary />
 		private void HistoryForward_Clicked(object sender, EventArgs e)
 		{
 			CheckDisposed();
@@ -353,7 +344,6 @@ namespace LanguageExplorer
 		/// NOTE: This will not handle link requests for other databases/applications. To handle other
 		/// databases or applications, pass a FwAppArgs to the IFieldWorksManager.HandleLinkRequest method.
 		/// </summary>
-		/// <returns></returns>
 		private void FollowLink_Handler(object lnk)
 		{
 			_followingLink = true;

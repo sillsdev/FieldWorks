@@ -8,8 +8,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 namespace LanguageExplorer.Controls.XMLViews
 {
 	/// <summary>
-	/// This class is used by XmlVc, which passes the buck to this class (and its subclasses)
-	/// to help display something.
+	/// XmlVc uses this class and its subclasses to help display things.
 	/// </summary>
 	public abstract class DisplayCommand
 	{

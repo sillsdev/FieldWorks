@@ -449,8 +449,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Get the nth item in the main list.
 		/// </summary>
-		/// <param name="index"></param>
-		/// <returns></returns>
 		public IManyOnePathSortItem SortItemAt(int index)
 		{
 			return SortedObjects.Count == 0 ? null : SortedObjects[index] as IManyOnePathSortItem;
@@ -460,7 +458,6 @@ namespace LanguageExplorer
 		/// An item is being added to your master list. Add the corresponding sort items to
 		/// your fake list.
 		/// </summary>
-		/// <param name="hvo"></param>
 		/// <returns>the number of items added.</returns>
 		public int AppendItemsFor(int hvo)
 		{
@@ -470,8 +467,10 @@ namespace LanguageExplorer
 			{
 				var newItems = new int[result];
 				for (var i = 0; i < result; i++)
+				{
 					newItems[i] = (SortedObjects[i + start] as IManyOnePathSortItem).RootObjectHvo;
-				(VirtualListPublisher as ObjectListPublisher).Replace(m_owningObject.Hvo, start, newItems, 0);
+				}
+				((ObjectListPublisher)VirtualListPublisher).Replace(m_owningObject.Hvo, start, newItems, 0);
 			}
 			return result;
 		}
@@ -479,7 +478,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Remove the corresponding list items. And issue propchanged.
 		/// </summary>
-		/// <param name="hvoToRemove"></param>
 		public void RemoveItemsFor(int hvoToRemove)
 		{
 			ReplaceListItem(null, hvoToRemove, false);
@@ -1363,46 +1361,47 @@ namespace LanguageExplorer
 
 		public void PersistListOn(string pathname)
 		{
-			if (IsPrimaryRecordList)
+			if (!IsPrimaryRecordList)
 			{
-				// Ensure that all the items in the sorted list are valid ICmObject references before
-				// actually persisting anything.
-				if (m_sortedObjects == null || m_sortedObjects.Count == 0)
+				return;
+			}
+			// Ensure that all the items in the sorted list are valid ICmObject references before
+			// actually persisting anything.
+			if (m_sortedObjects == null || m_sortedObjects.Count == 0)
+			{
+				return;
+			}
+			var repo = m_cache.ServiceLocator.ObjectRepository;
+			foreach (var obj in m_sortedObjects)
+			{
+				var item = obj as ManyOnePathSortItem;
+				if (item == null)
 				{
 					return;
 				}
-				var repo = m_cache.ServiceLocator.ObjectRepository;
-				foreach (var obj in m_sortedObjects)
+				// The object might have been deleted.  See LT-11169.
+				if (item.KeyObject <= 0 || item.RootObjectHvo <= 0 || !repo.IsValidObjectId(item.KeyObject) || !repo.IsValidObjectId(item.RootObjectHvo))
 				{
-					var item = obj as ManyOnePathSortItem;
-					if (item == null)
-					{
-						return;
-					}
-					// The object might have been deleted.  See LT-11169.
-					if (item.KeyObject <= 0 || item.RootObjectHvo <= 0 || !repo.IsValidObjectId(item.KeyObject) || !repo.IsValidObjectId(item.RootObjectHvo))
-					{
-						return;
-					}
+					return;
 				}
-				try
+			}
+			try
+			{
+				using (var stream = new StreamWriter(pathname))
 				{
-					using (var stream = new StreamWriter(pathname))
-					{
-						ManyOnePathSortItem.WriteItems(m_sortedObjects, stream, repo);
-						stream.Close();
-					}
+					ManyOnePathSortItem.WriteItems(m_sortedObjects, stream, repo);
+					stream.Close();
 				}
-				// LT-11395 and others: somehow the current list contains a deleted object.
-				// Writing out this file is just an optimization, so if we can't do it, just skip it.
-				catch (KeyNotFoundException)
-				{
-					TryToDelete(pathname);
-				}
-				catch (IOException)
-				{
-					TryToDelete(pathname);
-				}
+			}
+			// LT-11395 and others: somehow the current list contains a deleted object.
+			// Writing out this file is just an optimization, so if we can't do it, just skip it.
+			catch (KeyNotFoundException)
+			{
+				TryToDelete(pathname);
+			}
+			catch (IOException)
+			{
+				TryToDelete(pathname);
 			}
 		}
 
@@ -1699,8 +1698,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// verifies that the two classes match, if not, throws message.
 		/// </summary>
-		/// <param name="beExpectedListItemsClass"></param>
-		/// <param name="recordListExpectedListItemsClass"></param>
 		internal static void CheckExpectedListItemsClassInSync(int beExpectedListItemsClass, int recordListExpectedListItemsClass)
 		{
 			if (beExpectedListItemsClass != 0 && recordListExpectedListItemsClass != 0 && beExpectedListItemsClass != recordListExpectedListItemsClass)
@@ -1711,12 +1708,12 @@ namespace LanguageExplorer
 
 		internal static string RecordListSelectedObjectPropertyId(string recordListId)
 		{
-			return recordListId + "-selected";
+			return $"{recordListId}-selected";
 		}
 
 		internal static string GetCorrespondingPropertyName(string vectorName)
 		{
-			return "RecordList-" + vectorName;
+			return $"RecordList-{vectorName}";
 		}
 
 #if RANDYTODO
@@ -2113,23 +2110,26 @@ namespace LanguageExplorer
 		{
 			var mdc = VirtualListPublisher.MetaDataCache;
 			var fieldType = (CellarPropertyType)mdc.GetFieldType(tag);
-			if (fieldType == CellarPropertyType.OwningAtomic || fieldType == CellarPropertyType.OwningCollection || fieldType == CellarPropertyType.OwningSequence)
+			switch (fieldType)
 			{
-				return true;
-			}
-			// In addition to normal owning properties, we want to treat the master virtual for all
-			// lex entries as owning. I haven't actually made it owning, because we don't currently
-			// have any owning virtual properties, and I'm nervous about the consequences of a
-			// property which claims to be owning where the target objects don't record the source
-			// one as their owner. But RecordList does need to do the checks it does for deleted
-			// objects when when a LexEntry goes away.
-			if (fieldType == CellarPropertyType.ReferenceSequence)
-			{
-				var entriesTag = mdc.GetFieldId2(LexDbTags.kClassId, "Entries", false);
-				if (tag == entriesTag)
-				{
+				case CellarPropertyType.OwningAtomic:
+				case CellarPropertyType.OwningCollection:
+				case CellarPropertyType.OwningSequence:
 					return true;
-				}
+				case CellarPropertyType.ReferenceSequence:
+					// In addition to normal owning properties, we want to treat the master virtual for all
+					// lex entries as owning. I haven't actually made it owning, because we don't currently
+					// have any owning virtual properties, and I'm nervous about the consequences of a
+					// property which claims to be owning where the target objects don't record the source
+					// one as their owner. But RecordList does need to do the checks it does for deleted
+					// objects when when a LexEntry goes away.
+					var entriesTag = mdc.GetFieldId2(LexDbTags.kClassId, "Entries", false);
+					if (tag == entriesTag)
+					{
+						return true;
+					}
+
+					break;
 			}
 			return false;
 		}
@@ -2139,12 +2139,7 @@ namespace LanguageExplorer
 			return SortItemAt(index).RootObjectHvo;
 		}
 
-		private int[] IndicesOfSortItems(List<int> hvoTargets)
-		{
-			return IndicesOfSortItems(hvoTargets, false);
-		}
-
-		private int[] IndicesOfSortItems(List<int> hvoTargets, bool fStopAtFirstFound)
+		private int[] IndicesOfSortItems(List<int> hvoTargets, bool fStopAtFirstFound = false)
 		{
 			var indices = new List<int>();
 			if (hvoTargets == null || hvoTargets.Count <= 0)
@@ -2264,8 +2259,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// it's possible that we'll want to reload once we become the main active window (cf. LT-9251)
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		private void window_Activated(object sender, EventArgs e)
 		{
 			UninstallWindowActivated();
@@ -2304,8 +2297,6 @@ namespace LanguageExplorer
 		/// the last item the user was working on before closing Flex. The CurrentIndex was being set to zero. This method
 		/// will access the prersisted index but also make sure it does not use an index which is out of range.
 		/// </summary>
-		/// <param name="numberOfObjectsInList"></param>
-		/// <returns></returns>
 		private int GetPersistedCurrentIndex(int numberOfObjectsInList)
 		{
 			var persistedCurrentIndex = PropertyTable.GetValue(PersistedIndexProperty, SettingsGroup.LocalSettings, 0);
@@ -2507,8 +2498,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Find the index of hvoTarget in m_list; or, if it does not occur, the index of a child of hvoTarget.
 		/// </summary>
-		/// <param name="hvoTarget"></param>
-		/// <returns></returns>
 		private int IndexOfObjOrChildOrParent(int hvoTarget)
 		{
 			var index = IndexOf(hvoTarget);
@@ -2646,7 +2635,9 @@ namespace LanguageExplorer
 			if (cpiPath.Count == 2)
 			{
 				if (cpiPath[1].isVector)
+				{
 					throw new ArgumentException("We expect the second level to be an atomic property.");
+				}
 			}
 			if (!cpiPath[0].isVector)
 			{
@@ -2794,8 +2785,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// replace any matching items in our sort list.
 		/// </summary>
-		/// <param name="hvoReplaced"></param>
-		/// <param name="listChangeAction"></param>
 		private void ReplaceListItem(int hvoReplaced, ListChangedActions listChangeAction = ListChangedActions.Normal)
 		{
 			var fUpdatingListOrig = UpdatingList;
@@ -2909,9 +2898,7 @@ namespace LanguageExplorer
 			return true;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		/// <returns><c>true</c> if we changed or initialized a new sorter,
 		/// <c>false</c>if the one installed matches the one we had stored to persist.</returns>
 		protected virtual bool TryRestoreSorter()
@@ -2988,30 +2975,30 @@ namespace LanguageExplorer
 		/// </summary>
 		protected virtual void OnListChanged(int hvo = 0, ListChangedActions actions = ListChangedActions.Normal)
 		{
-			if (actions == ListChangedActions.SkipRecordNavigation || actions == ListChangedActions.UpdateListItemName)
+			switch (actions)
 			{
-				SelectedRecordChanged(false, true);
-			}
-			else if (actions == ListChangedActions.SuppressSaveOnChangeRecord)
-			{
-				var oldSuppressSaveChangeOnRecord = SuppressSaveOnChangeRecord;
-				SuppressSaveOnChangeRecord = true;
-				try
-				{
+				case ListChangedActions.SkipRecordNavigation:
+				case ListChangedActions.UpdateListItemName:
+					SelectedRecordChanged(false, true);
+					break;
+				case ListChangedActions.SuppressSaveOnChangeRecord:
+					var oldSuppressSaveChangeOnRecord = SuppressSaveOnChangeRecord;
+					SuppressSaveOnChangeRecord = true;
+					try
+					{
+						BroadcastChange(false);
+					}
+					finally
+					{
+						SuppressSaveOnChangeRecord = oldSuppressSaveChangeOnRecord;
+					}
+
+					break;
+				case ListChangedActions.Normal:
 					BroadcastChange(false);
-				}
-				finally
-				{
-					SuppressSaveOnChangeRecord = oldSuppressSaveChangeOnRecord;
-				}
-			}
-			else if (actions == ListChangedActions.Normal)
-			{
-				BroadcastChange(false);
-			}
-			else
-			{
-				throw new NotImplementedException("An enum choice for ListChangedEventArgs was selected that OnListChanged is not aware of.");
+					break;
+				default:
+					throw new NotImplementedException("An enum choice for ListChangedEventArgs was selected that OnListChanged is not aware of.");
 			}
 		}
 
@@ -3027,7 +3014,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Override this if there are special cases where you need more control over which objects can be deleted.
 		/// </summary>
-		/// <returns></returns>
 		protected virtual bool CanDelete()
 		{
 			return CurrentObject.CanDelete;
@@ -3082,7 +3068,9 @@ namespace LanguageExplorer
 		protected void UpdateFilterStatusBarPanel()
 		{
 			if (!IsControllingTheRecordTreeBar)
+			{
 				return; // none of our business!
+			}
 
 			var msg = FilterStatusContents(Filter != null && Filter.IsUserVisible);
 			if (IgnoreStatusPanel)
@@ -3134,7 +3122,6 @@ namespace LanguageExplorer
 		/// Gets or sets a flag indicating whether the list was already loaded in order and
 		/// does not need to be sorted further.
 		/// </summary>
-		/// <value>true if the list was loaded in order and doesn't need further sorting.</value>
 		protected virtual bool ListAlreadySorted => false;
 
 		protected virtual bool TryHandleUpdateOrMarkPendingReload(int hvo, int tag, int ivMin, int cvIns, int cvDel)
@@ -3201,15 +3188,6 @@ namespace LanguageExplorer
 
 		protected bool EntriesDependsUponProp(int tag)
 		{
-			// Disabled this as part of fix for LT-12092. This means we don't resort the list when
-			// the user edits a field that might affect the order.
-			//switch (tag / 1000)
-			//{
-			//    case LexEntryTags.kClassId:
-			//    case LexSenseTags.kClassId:
-			//    case MoFormTags.kClassId:
-			//        return true;
-			//}
 			return false;
 		}
 
@@ -3422,22 +3400,23 @@ namespace LanguageExplorer
 
 		protected void SortList(ArrayList newSortedObjects, ProgressState progress)
 		{
-			if (m_sorter != null && !ListAlreadySorted)
+			if (m_sorter == null || ListAlreadySorted)
 			{
-				m_sorter.DataAccess = m_objectListPublisher;
-				if (m_sorter is IReportsSortProgress)
-				{
-					// Uses the last 80% of the bar (first part used for building the list).
-					((IReportsSortProgress)m_sorter).SetPercentDone =
-						percent =>
-						{
-							progress.PercentDone = 20 + percent * 4 / 5;
-							progress.Breath();
-						};
-				}
-				m_sorter.Sort( /*ref*/ newSortedObjects); //YiSpeed 1 secs
-				m_sorter.SetPercentDone = DoNothing; // progress about to be disposed.
+				return;
 			}
+			m_sorter.DataAccess = m_objectListPublisher;
+			if (m_sorter is IReportsSortProgress)
+			{
+				// Uses the last 80% of the bar (first part used for building the list).
+				((IReportsSortProgress)m_sorter).SetPercentDone =
+					percent =>
+					{
+						progress.PercentDone = 20 + percent * 4 / 5;
+						progress.Breath();
+					};
+			}
+			m_sorter.Sort( /*ref*/ newSortedObjects); //YiSpeed 1 secs
+			m_sorter.SetPercentDone = DoNothing; // progress about to be disposed.
 		}
 
 		protected int MakeItemsFor(ArrayList sortedObjects, int hvo)
@@ -3511,7 +3490,7 @@ namespace LanguageExplorer
 				newCurrentIndex = -1;
 			}
 			CurrentIndex = newCurrentIndex;
-			(VirtualListPublisher as ObjectListPublisher).CacheVecProp(m_owningObject.Hvo, hvos);
+			((ObjectListPublisher)VirtualListPublisher).CacheVecProp(m_owningObject.Hvo, hvos);
 
 			m_oldLength = hvos.Length;
 
@@ -3613,8 +3592,9 @@ namespace LanguageExplorer
 				// that have possibly been deleted.
 				if (m_owningObject != null && SortedObjects.Count > 0 && ((UpdateHelper != null && UpdateHelper.ClearBrowseListUntilReload) || !IsActiveInGui))
 				{
-					m_indexToRestoreDuringReload = CurrentIndex;    // try to restore this index during reload.
-																	// clear everything for now, including the current index, but don't issue a RecordNavigation.
+					// try to restore this index during reload.
+					m_indexToRestoreDuringReload = CurrentIndex;
+					// clear everything for now, including the current index, but don't issue a RecordNavigation.
 					SendPropChangedOnListChange(-1, new ArrayList(), ListChangedActions.SkipRecordNavigation);
 				}
 				m_requestedLoadWhileSuppressed = true;
@@ -3733,10 +3713,7 @@ namespace LanguageExplorer
 				{
 					// We didn't even expect to find it, probably it's been deleted or sorted list has become empty.
 					// Keep the current position as far as possible.
-					newCurrentIndex = newCurrentIndex >= newSortedObjects.Count
-						? newSortedObjects.Count - 1
-						: GetPersistedCurrentIndex(newSortedObjects.Count);
-
+					newCurrentIndex = newCurrentIndex >= newSortedObjects.Count ? newSortedObjects.Count - 1 : GetPersistedCurrentIndex(newSortedObjects.Count);
 					actions = ListChangedActions.Normal; // We definitely changed records
 				}
 
@@ -3780,15 +3757,17 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Create an object of the specified class.
 		/// </summary>
-		/// <param name="className"></param>
 		/// <returns>true if successful (the class is known)</returns>
 		protected virtual bool CreateAndInsert(string className)
 		{
 			var cpi = GetMatchingClass(className);
 			Debug.Assert(cpi != null, "This object should not have been asked to insert an object of the class " + className + ".");
-			if (cpi != null)
+			if (cpi == null)
+
 			{
-				List<ClassAndPropInfo> cpiPath;
+				return false;
+			}
+			List<ClassAndPropInfo> cpiPath;
 #if NEEDED // If we need to be able to use this code path to insert into virtual properties, we will need to make them
 // Support writing, or do something similar to the old code which figured out a path of places to insert
 // the real object. As far as I (JohnT) can tell, though, we don't currently have any virtual properties
@@ -3807,14 +3786,12 @@ namespace LanguageExplorer
 					cpiPath = new List<ClassAndPropInfo>(new ClassAndPropInfo[] { cpi });
 				}
 #else
-				cpiPath = new List<ClassAndPropInfo>(new[] { cpi });
+			cpiPath = new List<ClassAndPropInfo>(new[] { cpi });
 #endif
-				var createAndInsertMethodObj = new CpiPathBasedCreateAndInsert(m_owningObject.Hvo, cpiPath, this);
-				var newObj = DoCreateAndInsert(createAndInsertMethodObj);
-				var hvoNew = newObj?.Hvo ?? 0;
-				return hvoNew != 0; // If we get zero, we couldn't do it for some reason.
-			}
-			return false;
+			var createAndInsertMethodObj = new CpiPathBasedCreateAndInsert(m_owningObject.Hvo, cpiPath, this);
+			var newObj = DoCreateAndInsert(createAndInsertMethodObj);
+			var hvoNew = newObj?.Hvo ?? 0;
+			return hvoNew != 0; // If we get zero, we couldn't do it for some reason.
 		}
 
 		/// <summary>
@@ -3868,9 +3845,6 @@ namespace LanguageExplorer
 		/// SuppressSaveOnChangeRecord will be true, to allow the user to Undo this action.
 		/// NOTE: the caller may want to call SaveOnChangeRecord() before calling this.
 		/// </summary>
-		/// <typeparam name="TObj"></typeparam>
-		/// <param name="createAndInsertMethodObj"></param>
-		/// <returns></returns>
 		protected TObj DoCreateAndInsert<TObj>(ICreateAndInsert<TObj> createAndInsertMethodObj)
 			where TObj : ICmObject
 		{
@@ -3922,7 +3896,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// get the index of an item in the list that has a root object that (directly or indirectly) owns hvo
 		/// </summary>
-		/// <param name="hvoTarget"></param>
 		/// <returns>-1 if the object is not in the list</returns>
 		protected int IndexOfParentOf(int hvoTarget)
 		{

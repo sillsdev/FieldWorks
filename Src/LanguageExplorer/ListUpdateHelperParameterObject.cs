@@ -23,8 +23,7 @@ namespace LanguageExplorer
 		/// to skip record navigations while such user actions are taking place.
 		/// </summary>
 		internal bool SkipShowRecord { get; set; }
-		/// <summary>
-		/// </summary>
+		/// <summary />
 		internal bool SuppressSaveOnChangeRecord { get; set; }
 		/// <summary>
 		/// Set to false if you don't want to automatically reload pending reload OnDispose.

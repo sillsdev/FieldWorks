@@ -127,12 +127,16 @@ namespace LanguageExplorer
 			if (m_fieldsToFilter.Contains(tag) || m_lexRefFieldsToFilter.Contains(tag) || m_lexEntryRefFieldsToFilter.Contains(tag))
 			{
 				foreach (var notifee in m_notifees)
+				{
 					notifee.PropChanged(hvo, tag, 0, get_VecSize(hvo, tag), 0);
+				}
 			}
 			else
 			{
 				foreach (var notifee in m_notifees)
+				{
 					notifee.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
+				}
 			}
 		}
 
@@ -144,7 +148,9 @@ namespace LanguageExplorer
 			foreach (var entry in Cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances())
 			{
 				if (m_excludedItems.Contains(entry.Hvo))
+				{
 					continue;
+				}
 				var key = entry.HomographForm + repo.HomographMorphOrder(Cache, entry.PrimaryMorphType);
 				SortedList<int, ILexEntry> collection;
 				if (!homographs.TryGetValue(key, out collection))
@@ -179,37 +185,35 @@ namespace LanguageExplorer
 				// (including the one and only one shown, if any).
 				if ((from item in list where !m_excludeAsMainEntry.Contains(item.Value.Hvo) select item).Count() <= 1)
 				{
-					foreach(var item in list)
+					foreach (var item in list)
+					{
 						m_homographNumbers[item.Value.Hvo] = 0;
+					}
 					continue;
 				}
 				// otherwise number them sequentially, starting at 1, but any that are not headwords are numbered zero
 				// and do not count.
-				int index = 1;
+				var index = 1;
 				foreach (var item in list.Values)
+				{
 					m_homographNumbers[item.Hvo] = (m_excludeAsMainEntry.Contains(item.Hvo) ? 0 : index++);
+				}
 			}
 		}
 
 		public override bool get_BooleanProp(int hvo, int tag)
 		{
-			if (tag == m_publishAsMinorEntryFlid)
-			{
-				return VecProp(hvo, LexEntryTags.kflidEntryRefs).Select(hvoLer => m_lerRepo.GetObject(hvoLer)).Any(ler => ler.HideMinorEntry == 0);
-			}
-			return base.get_BooleanProp(hvo, tag);
+			return tag == m_publishAsMinorEntryFlid ? VecProp(hvo, LexEntryTags.kflidEntryRefs).Select(hvoLer => m_lerRepo.GetObject(hvoLer)).Any(ler => ler.HideMinorEntry == 0) : base.get_BooleanProp(hvo, tag);
 		}
 
 		public override int get_IntProp(int hvo, int tag)
 		{
-			if (tag == LexEntryTags.kflidHomographNumber)
+			if (tag != LexEntryTags.kflidHomographNumber)
 			{
-				int result;
-				if (m_homographNumbers.TryGetValue(hvo, out result))
-					return result;
-				// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
+				return base.get_IntProp(hvo, tag);
 			}
-			return base.get_IntProp(hvo, tag);
+			int result;
+			return m_homographNumbers.TryGetValue(hvo, out result) ? result : base.get_IntProp(hvo, tag);
 		}
 
 		public override ITsString get_StringProp(int hvo, int tag)
@@ -234,8 +238,7 @@ namespace LanguageExplorer
 
 		private ITsString GetSenseNumberTss(ILexSense sense)
 		{
-			return TsStringUtils.MakeString(GetSenseNumber(sense),
-				Cache.DefaultUserWs);
+			return TsStringUtils.MakeString(GetSenseNumber(sense), Cache.DefaultUserWs);
 		}
 
 		private string GetSenseNumber(ILexSense sense)
@@ -250,9 +253,7 @@ namespace LanguageExplorer
 				int hn;
 				if (m_homographNumbers.TryGetValue(hvo, out hn))
 				{
-					var entry = m_entryRepo.GetObject(hvo);
-					return StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
-						HomographConfiguration.HeadwordVariant.Main);
+					return StringServices.HeadWordForWsAndHn(m_entryRepo.GetObject(hvo), ws, hn, string.Empty, HomographConfiguration.HeadwordVariant.Main);
 				}
 				// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
 			}
@@ -261,9 +262,7 @@ namespace LanguageExplorer
 				int hn;
 				if (m_homographNumbers.TryGetValue(hvo, out hn))
 				{
-					var entry = m_entryRepo.GetObject(hvo);
-					return StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
-						HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
+					return StringServices.HeadWordForWsAndHn(m_entryRepo.GetObject(hvo), ws, hn, string.Empty, HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
 				}
 				// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
 			}
@@ -272,23 +271,19 @@ namespace LanguageExplorer
 				int hn;
 				if (m_homographNumbers.TryGetValue(hvo, out hn))
 				{
-					var entry = m_entryRepo.GetObject(hvo);
-					return StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
-						HomographConfiguration.HeadwordVariant.ReversalCrossRef);
+					return StringServices.HeadWordForWsAndHn(m_entryRepo.GetObject(hvo), ws, hn, string.Empty, HomographConfiguration.HeadwordVariant.ReversalCrossRef);
 				}
 				// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
 			}
 			else if (tag == m_mlOwnerOutlineFlid)
 			{
 				// This adapts the logic of LexSense.OwnerOutlineNameForWs
-				var sense = m_senseRepo.GetObject(hvo);
-				return OwnerOutlineNameForWs(sense, ws, HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
+				return OwnerOutlineNameForWs(m_senseRepo.GetObject(hvo), ws, HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
 			}
 			else if (tag == m_reversalNameFlid)
 			{
 				// This adapts the logic of LexSense.OwnerOutlineNameForWs
-				var sense = m_senseRepo.GetObject(hvo);
-				return OwnerOutlineNameForWs(sense, ws, HomographConfiguration.HeadwordVariant.ReversalCrossRef);
+				return OwnerOutlineNameForWs(m_senseRepo.GetObject(hvo), ws, HomographConfiguration.HeadwordVariant.ReversalCrossRef);
 			}
 			return base.get_MultiStringAlt(hvo, tag, ws);
 		}
@@ -302,24 +297,24 @@ namespace LanguageExplorer
 			var entry = sense.Entry;
 			int hn;
 			if (!m_homographNumbers.TryGetValue(entry.Hvo, out hn))
+			{
 				hn = entry.HomographNumber; // unknown entry, use its own HN instead of our override
-			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
+			}
+			var tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(StringServices.HeadWordForWsAndHn(entry, wsVern, hn, "", hv));
 			var hc = sense.Services.GetInstance<HomographConfiguration>();
 			if (hc.ShowSenseNumber(hv) && HasMoreThanOneSense(entry))
 			{
 				// These int props may not be needed, but they're safe.
-				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0,
-									  Cache.DefaultAnalWs);
-				tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
-									  HomographConfiguration.ksSenseReferenceNumberStyle);
+				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, Cache.DefaultAnalWs);
+				tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, HomographConfiguration.ksSenseReferenceNumberStyle);
 				tisb.Append(" ");
 				tisb.Append(GetSenseNumber(sense));
 			}
 			return tisb.GetString();
 		}
 
-		bool HasMoreThanOneSense(ILexEntry entry)
+		private bool HasMoreThanOneSense(ILexEntry entry)
 		{
 			// We want
 			//     return SensesOS.Count > 1
@@ -327,11 +322,15 @@ namespace LanguageExplorer
 			// but must go through our own cache because some of them may be suppressed.
 			var senseCount = get_VecSize(entry.Hvo, LexEntryTags.kflidSenses);
 			if (senseCount > 1)
+			{
 				return true;
+			}
+
 			if (senseCount == 0)
+			{
 				return false;
-			int hvoSense = get_VecItem(entry.Hvo, LexEntryTags.kflidSenses, 0);
-			return get_VecSize(hvoSense, LexSenseTags.kflidSenses) > 0;
+			}
+			return get_VecSize(get_VecItem(entry.Hvo, LexEntryTags.kflidSenses, 0), LexSenseTags.kflidSenses) > 0;
 
 		}
 
@@ -346,17 +345,28 @@ namespace LanguageExplorer
 				//This class currently can not handle filtering atomic values, if we need to do so a refactor is required,
 				// At least override get_ObjectProp, also enhance PropChanged to not assume the property is a vector one.
 				// PropChanged also needs work if for any reason we put non-object properties in any of these field collections
-				if (mdc.GetFieldType(flid) != (int)CellarPropertyType.OwningAtomic && mdc.GetFieldType(flid) != (int)CellarPropertyType.ReferenceAtomic)
+				if (mdc.GetFieldType(flid) == (int) CellarPropertyType.OwningAtomic ||
+				    mdc.GetFieldType(flid) == (int) CellarPropertyType.ReferenceAtomic)
 				{
-					var dstCls = mdc.GetDstClsId(flid);
-					if (dstCls == LexEntryTags.kClassId || dstCls == LexSenseTags.kClassId || dstCls == LexExampleSentenceTags.kClassId)
+					continue;
+				}
+				var dstCls = mdc.GetDstClsId(flid);
+				switch (dstCls)
+				{
+					case LexEntryTags.kClassId:
+					case LexSenseTags.kClassId:
+					case LexExampleSentenceTags.kClassId:
 						m_fieldsToFilter.Add(flid);
-					else if (dstCls == LexReferenceTags.kClassId)
+						break;
+					case LexReferenceTags.kClassId:
 						m_lexRefFieldsToFilter.Add(flid);
-					else if (dstCls == LexEntryRefTags.kClassId)
+						break;
+					case LexEntryRefTags.kClassId:
 						m_lexEntryRefFieldsToFilter.Add(flid);
-					else if (dstCls == ReversalIndexEntryTags.kClassId)
+						break;
+					case ReversalIndexEntryTags.kClassId:
 						m_reversalEntryFieldsToFilter.Add(flid);
+						break;
 				}
 			}
 			m_fieldsToFilter.Add(LexEntryRefTags.kflidComponentLexemes);
@@ -375,26 +385,34 @@ namespace LanguageExplorer
 		{
 			m_excludedItems.Clear();
 			m_excludeAsMainEntry.Clear();
-			if (Publication != null)
+			if (Publication == null)
 			{
-				foreach (var obj in Publication.ReferringObjects)
+				return;
+			}
+			foreach (var obj in Publication.ReferringObjects)
+			{
+				var entry = obj as ILexEntry;
+				if (entry == null || entry.DoNotPublishInRC.Contains(Publication))
 				{
-					var entry = obj as ILexEntry;
-					if (entry == null || entry.DoNotPublishInRC.Contains(Publication))
+					m_excludedItems.Add(obj.Hvo);
+					if (obj is ILexEntry)
 					{
-						m_excludedItems.Add(obj.Hvo);
-						if (obj is ILexEntry)
-							foreach (var sense in ((ILexEntry)obj).SensesOS)
-								ExcludeSense(sense);
-						if (obj is ILexSense)
-							ExcludeSense((ILexSense)obj);
+						foreach (var sense in ((ILexEntry) obj).SensesOS)
+						{
+							ExcludeSense(sense);
+						}
 					}
-					else
+
+					if (obj is ILexSense)
 					{
-						// It's an entry, and the only other option is that it refers in DoNotShowAsMainEntry
-						Debug.Assert(entry.DoNotShowMainEntryInRC.Contains(Publication));
-						m_excludeAsMainEntry.Add(entry.Hvo);
+						ExcludeSense((ILexSense)obj);
 					}
+				}
+				else
+				{
+					// It's an entry, and the only other option is that it refers in DoNotShowAsMainEntry
+					Debug.Assert(entry.DoNotShowMainEntryInRC.Contains(Publication));
+					m_excludeAsMainEntry.Add(entry.Hvo);
 				}
 			}
 		}
@@ -403,7 +421,9 @@ namespace LanguageExplorer
 		{
 			m_excludedItems.Add(sense.Hvo);
 			foreach (var subsense in sense.SensesOS)
+			{
 				ExcludeSense(subsense);
+			}
 			// It is probably not necessary to exclude examples, since there is no access path to
 			// an example whose sense has been excluded.
 		}
@@ -449,7 +469,9 @@ namespace LanguageExplorer
 		{
 			var result = base.VecProp(hvo, tag);
 			if (result.Length == 0)
+			{
 				return result; // Not worth messing about if it's already empty!
+			}
 			if (tag == m_LexDbEntriesFlid)
 			{
 				return result.Where(hvoDest => !m_excludedItems.Contains(hvoDest) && !m_excludeAsMainEntry.Contains(hvoDest)).ToArray();
@@ -493,7 +515,7 @@ namespace LanguageExplorer
 		private bool IsMainReversalEntry(int hvo)
 		{
 			var entry = Cache.ServiceLocator.GetObject(hvo) as IReversalIndexEntry;
-			return entry != null && entry.Owner is IReversalIndex; // Subentries are owned by other Entries
+			return entry?.Owner is IReversalIndex; // Subentries are owned by other Entries
 		}
 
 		private bool IsPublishableReversalEntry(int hvo)
@@ -504,14 +526,7 @@ namespace LanguageExplorer
 		private bool IsPublishableReversalEntry(IReversalIndexEntry revEntry)
 		{
 			// We should still display reversal entries that have no senses
-			if (!revEntry.ReferringSenses.Any())
-				return true;
-			foreach (var sense in revEntry.ReferringSenses)
-			{
-				if (!m_excludedItems.Contains(sense.Hvo))
-					return true;	// At least one sense in one entry allows publication.
-			}
-			return false;	// nobody wants us.
+			return !revEntry.ReferringSenses.Any() || revEntry.ReferringSenses.Any(sense => !m_excludedItems.Contains(sense.Hvo));
 		}
 
 		/// <summary>
@@ -520,16 +535,19 @@ namespace LanguageExplorer
 		/// ONE item is present. However, such a 'relation' doesn't seem very useful, and a longer
 		/// one that is reduced to a single item by filtering is even less likely to be what the user wants.
 		/// </summary>
-		/// <param name="hvoRef"></param>
-		/// <returns></returns>
 		private bool IsPublishableLexRef(int hvoRef)
 		{
 			var publishableItems = VecProp(hvoRef, LexReferenceTags.kflidTargets);
-			int originalItemCount = BaseSda.get_VecSize(hvoRef, LexReferenceTags.kflidTargets);
+			var originalItemCount = BaseSda.get_VecSize(hvoRef, LexReferenceTags.kflidTargets);
 			if (originalItemCount == publishableItems.Length)
+			{
 				return true; // If filtering didn't change anything don't mess with it.
+			}
+
 			if (publishableItems.Length < 2)
+			{
 				return false;
+			}
 			// If at least two are publishable, it depends on the type.
 			// It can't be published if the first item, which represents the root of the tree, is not publishable.
 			var lexRef = m_lexRefRepo.GetObject(hvoRef);
@@ -547,10 +565,15 @@ namespace LanguageExplorer
 		{
 			ILexEntryRef ler;
 			ILexEntry refOwner = null;
-			if(m_lerRepo.TryGetObject(hvoRef, out ler))
+			if (m_lerRepo.TryGetObject(hvoRef, out ler))
+			{
 				refOwner = ler.Owner as ILexEntry;
+			}
+
 			if (refOwner == null || refOwner.Hvo == hvoSource)
+			{
 				return VecProp(hvoRef, LexEntryRefTags.kflidComponentLexemes).Length > 0;
+			}
 			return !refOwner.DoNotPublishInRC.Contains(Publication);
 		}
 
@@ -598,19 +621,22 @@ namespace LanguageExplorer
 		internal bool IsExcludedObject(ICmObject item)
 		{
 			if (item is IReversalIndexEntry)
+			{
 				return !IsPublishableReversalEntry((IReversalIndexEntry)item);
+			}
+
 			if (item is ILexEntryRef)
+			{
 				return !IsPublishableReference((ILexEntryRef) item);
+			}
 			return m_excludedItems.Contains(item.Hvo);
 		}
 
 		private bool IsPublishableReference(ILexEntryRef entryRef)
 		{
 			// A reference is not publishable if its owner is excluded
-			if (m_excludedItems.Contains(entryRef.Owner.Hvo))
-				return false;
 			// A reference is also not publishable if all of its PrimarySensesOrEntries are excluded
-			return entryRef.PrimarySensesOrEntries.Any(senseOrEntry => !m_excludedItems.Contains(senseOrEntry.Item.Hvo));
+			return !m_excludedItems.Contains(entryRef.Owner.Hvo) && entryRef.PrimarySensesOrEntries.Any(senseOrEntry => !m_excludedItems.Contains(senseOrEntry.Item.Hvo));
 		}
 	}
 }

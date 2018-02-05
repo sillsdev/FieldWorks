@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,7 +17,6 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Add arbitrary accessibility names to every control owned by the root.
 		/// </summary>
-		/// <param name="root"></param>
 		public static void AddNames(Control root)
 		{
 			AddNames(root, new Dictionary<string, int>());
@@ -40,8 +39,11 @@ namespace LanguageExplorer
 				root.AccessibleName = baseName + previous;
 				previousOccurrences[baseName] = previous;
 			}
+
 			foreach (Control control in root.Controls)
+			{
 				AddNames(control, previousOccurrences);
+			}
 		}
 	}
 }
