@@ -6,7 +6,7 @@ else
 fi
 XULRUNNER="${GECKOFX}/Firefox"
 LD_LIBRARY_PATH="${XULRUNNER}:${LD_LIBRARY_PATH}"
-if [ "$RUNMODE" != "PACKAGE" ]
+if [ "$RUNMODE" != "PACKAGING" ]
 then
 	LD_PRELOAD=libgeckofix.so
 fi

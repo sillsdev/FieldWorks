@@ -6,7 +6,7 @@
 
 # Possible values for RUNMODE:
 # - INSTALLED: when running an installed package
-# - PACKAGE: while building the package
+# - PACKAGING: while building the package
 
 BASE=$(pwd)
 COM=$(dirname "${BASE}")/libcom/COM
@@ -46,7 +46,7 @@ LD_LIBRARY_PATH="${MONO_SILPKGDIR}/lib:${ENC_CONVERTERS}:${LD_LIBRARY_PATH}"
 PKG_CONFIG_PATH="${MONO_SILPKGDIR}/lib/pkgconfig:/usr/lib/fieldworks/lib/pkgconfig:${PKG_CONFIG_PATH}"
 MONO_GAC_PREFIX="${MONO_SILPKGDIR}:${ENC_CONVERTERS}:/usr:${MONO_PREFIX}"
 
-if [ "$RUNMODE" != "PACKAGE" ]
+if [ "$RUNMODE" != "PACKAGING" ]
 then
 	# Make locally-built software (eg mono) visible
 	PATH="${MONO_PREFIX}/bin:${PATH}"
@@ -74,7 +74,7 @@ else
 	MONO_REGISTRY_PATH="${BASE}/Output_${ARCH}/registry"
 fi
 
-if [ "$RUNMODE" != "PACKAGE" -a "$RUNMODE" != "INSTALLED" ]
+if [ "$RUNMODE" != "PACKAGING" -a "$RUNMODE" != "INSTALLED" ]
 then
 	FW_CommonAppData=${BASE}/Output_${ARCH}/VarLibFieldworks
 	[ ! -d $FW_CommonAppData ] && mkdir -p $FW_CommonAppData
