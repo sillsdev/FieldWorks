@@ -21,7 +21,7 @@ namespace LanguageExplorer.MGA
 	public class MGADialog : Form
 	{
 		#region Member variables
-		private int m_panelBottomHeight = 0;
+		private int m_panelBottomHeight;
 		private readonly LcmCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private Button buttonInsert;
@@ -79,14 +79,9 @@ namespace LanguageExplorer.MGA
 		}
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MGADialog"/> class.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="helpTopicProvider"></param>
-		/// <param name="sMorphemeForm">The s morpheme form.</param>
-		/// ------------------------------------------------------------------------------------
 		public MGADialog(LcmCache cache, IHelpTopicProvider helpTopicProvider, string sMorphemeForm)
 		{
 			m_cache = cache;
@@ -135,10 +130,7 @@ namespace LanguageExplorer.MGA
 			{
 				var fRatio = graphics.DpiX / 96.0f; // try to adjust for screen resolution
 				// on start-up, ensure the selected gloss panel is wide enough for all the buttons
-				splitContainerVertical.SplitterDistance =
-					splitContainerVertical.Width - (buttonAcceptGloss.Width
-					+ buttonCancel.Width + buttonHelp.Width + (int)(16 * fRatio));
-
+				splitContainerVertical.SplitterDistance = splitContainerVertical.Width - (buttonAcceptGloss.Width + buttonCancel.Width + buttonHelp.Width + (int)(16 * fRatio));
 				Text += " " + m_cache.ProjectId.UiName;
 
 				ResumeLayout();
@@ -153,7 +145,9 @@ namespace LanguageExplorer.MGA
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -164,7 +158,9 @@ namespace LanguageExplorer.MGA
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,9 +22,6 @@ namespace LanguageExplorer.MGA
 		protected string m_def;
 		protected string m_defWs;
 		protected List<MasterItemCitation> m_citations;
-		protected XmlNode m_node;
-		protected bool m_fInDatabase = false;
-		protected IFsFeatDefn m_featDefn = null;
 
 		public MasterItem()
 		{
@@ -33,7 +30,7 @@ namespace LanguageExplorer.MGA
 
 		internal MasterItem(XmlNode node, MGAImageKind kind, string sTerm)
 		{
-			m_node = node;
+			Node = node;
 			m_eKind = kind;
 			m_term = sTerm;
 
@@ -64,7 +61,6 @@ namespace LanguageExplorer.MGA
 		/// <summary>
 		/// figure out if the feature represented by the node is already in the database
 		/// </summary>
-		/// <param name="cache">database cache</param>
 		public virtual void DetermineInDatabase(LcmCache cache)
 		{
 		}
@@ -82,11 +78,11 @@ namespace LanguageExplorer.MGA
 		{
 		}
 
-		public IFsFeatDefn FeatureDefn => m_featDefn;
+		public IFsFeatDefn FeatureDefn { get; protected set; } = null;
 
-		public XmlNode Node => m_node;
+		public XmlNode Node { get; }
 
-		public bool InDatabase => m_fInDatabase;
+		public bool InDatabase { get; protected set; } = false;
 
 		public bool IsChosen => (m_eKind == MGAImageKind.radioSelected || m_eKind == MGAImageKind.checkedBox);
 
@@ -100,14 +96,12 @@ namespace LanguageExplorer.MGA
 			rtbDescription.Clear();
 
 			var doubleNewLine = Environment.NewLine + Environment.NewLine;
-
 			var original = rtbDescription.SelectionFont;
 			var fntBold = new Font(original.FontFamily, original.Size, FontStyle.Bold);
 			var fntItalic = new Font(original.FontFamily, original.Size, FontStyle.Italic);
 			rtbDescription.SelectionFont = fntBold;
 			rtbDescription.AppendText(m_term);
 			rtbDescription.AppendText(doubleNewLine);
-
 			rtbDescription.SelectionFont = (string.IsNullOrEmpty(m_def)) ? fntItalic : original;
 			rtbDescription.AppendText((string.IsNullOrEmpty(m_def)) ? MGAStrings.ksNoDefinitionForItem : m_def);
 			rtbDescription.AppendText(doubleNewLine);

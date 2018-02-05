@@ -45,7 +45,9 @@ namespace LanguageExplorer.MGA
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		protected override void Dispose(bool disposing)
@@ -95,8 +97,8 @@ namespace LanguageExplorer.MGA
 		/// <param name="glbiNew">new item to be checked for</param>
 		/// <param name="glbiConflict"></param>
 		/// <returns>true if there is a conflict; false otherwise</returns>
-		/// <remarks>Is public for testing</remarks>
-		public bool NewItemConflictsWithExtantItem(GlossListBoxItem glbiNew, out GlossListBoxItem glbiConflict)
+		/// <remarks>Is internal for testing</remarks>
+		internal bool NewItemConflictsWithExtantItem(GlossListBoxItem glbiNew, out GlossListBoxItem glbiConflict)
 		{
 			CheckDisposed();
 

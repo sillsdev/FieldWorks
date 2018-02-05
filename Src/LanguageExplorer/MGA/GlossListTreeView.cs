@@ -28,7 +28,7 @@ namespace LanguageExplorer.MGA
 		protected string m_sWritingSystemAbbrev;
 		protected string m_sTermNodeXPath = "term[@ws='en']";
 		protected string m_sAbbrevNodeXPath = "abbrev[@ws='en']";
-		protected TreeNode m_lastSelectedTreeNode = null;
+		protected TreeNode m_lastSelectedTreeNode;
 		protected LcmCache m_cache;
 
 		/// <summary>
@@ -180,7 +180,7 @@ namespace LanguageExplorer.MGA
 
 		private XmlDocument CreateDomAndLoadXMLFile(string sXmlFile)
 		{
-			XmlDocument dom = new XmlDocument();
+			var dom = new XmlDocument();
 			dom.Load(sXmlFile);
 			return dom;
 		}
@@ -191,7 +191,6 @@ namespace LanguageExplorer.MGA
 			// get top node
 			var treeTop = dom.SelectSingleNode(m_sTopOfList);
 			// set CheckBoxes value
-			//string sAttr = XmlUtils.GetAttributeValue(treeTop, "checkBoxes");
 			CheckBoxes = XmlUtils.GetBooleanAttributeValue(treeTop, "checkBoxes");
 			// set complex name separator value
 			m_sAfterSeparator = XmlUtils.GetOptionalAttributeValue(treeTop, "afterSeparator");
@@ -203,20 +202,17 @@ namespace LanguageExplorer.MGA
 			return treeTop;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the writing system abbrev.
 		/// </summary>
-		/// <param name="sDefaultAnalysisWritingSystem">The s default analysis writing system.</param>
-		/// <param name="dom">The DOM.</param>
-		/// ------------------------------------------------------------------------------------
 		private void SetWritingSystemAbbrev(string sDefaultAnalysisWritingSystem, XmlDocument dom)
 		{
 			// assume the default is OK
 			m_sWritingSystemAbbrev = sDefaultAnalysisWritingSystem;
 			var xn = dom.SelectSingleNode("//item/term[@ws='" + m_sWritingSystemAbbrev + "']");
 			if (xn == null)
-			{	// default not found in the file; use English (and hope for the best)
+			{
+				// default not found in the file; use English (and hope for the best)
 				m_sWritingSystemAbbrev = "en";
 				xn = dom.SelectSingleNode("//item/term[@ws='" + m_sWritingSystemAbbrev + "']");
 			}
@@ -309,7 +305,7 @@ namespace LanguageExplorer.MGA
 
 		private static bool IsTerminalNode(TreeNode tn)
 		{
-			return (tn.Nodes.Count == 0);
+			return tn.Nodes.Count == 0;
 		}
 
 		private void UndoLastSelectedNode()
@@ -425,16 +421,17 @@ namespace LanguageExplorer.MGA
 		private void AddNode(XmlNode currentNode, TreeNode parentNode, XmlDocument dom)
 		{
 			var sStatus = XmlUtils.GetOptionalAttributeValue(currentNode, "status");
-			if (sStatus == "hidden")
+			switch (sStatus)
 			{
-				return;
+				case "hidden":
+					return;
+				case "proxy":
+					FleshOutProxy(currentNode, dom);
+					break;
 			}
-			if (sStatus == "proxy")
-			{
-				FleshOutProxy(currentNode, dom);
-			}
+
 			var nodes = currentNode.SelectNodes("item");
-			TreeNode newNode = null;
+			TreeNode newNode;
 			var sType = XmlUtils.GetOptionalAttributeValue(currentNode, "type");
 			if (sType == "fsType")
 			{

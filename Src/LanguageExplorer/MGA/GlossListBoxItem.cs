@@ -14,16 +14,7 @@ namespace LanguageExplorer.MGA
 	//     cannot inherit from it.
 	public class GlossListBoxItem
 	{
-		private string m_sAbbrev;
-		private string m_sTerm;
-		private string m_sAfterSeparator;
-		private string m_sComplexNameSeparator;
-		private bool m_fComplexNameFirst;
-		private bool m_fIsComplex;
-		private bool m_fIsValue;
 		private readonly LcmCache m_cache;
-		private XmlNode m_xmlNode;
-		private IMoGlossItem m_glossItem;
 
 		#region Construction
 		public GlossListBoxItem(LcmCache cache, XmlNode node, string sAfterSeparator, string sComplexNameSeparator, bool fComplexNameFirst)
@@ -31,59 +22,59 @@ namespace LanguageExplorer.MGA
 			Guard.AgainstNull(cache, nameof(cache));
 
 			m_cache = cache;
-			m_xmlNode = node;
+			XmlNode = node;
 			SetValues(node, sAfterSeparator, sComplexNameSeparator, fComplexNameFirst);
-			m_glossItem = m_cache.ServiceLocator.GetInstance<IMoGlossItemFactory>().Create();
+			MoGlossItem = m_cache.ServiceLocator.GetInstance<IMoGlossItemFactory>().Create();
 		}
 
 		private void SetValues(XmlNode node, string sAfterSeparator, string sComplexNameSeparator, bool fComplexNameFirst)
 		{
 			var xn = node.SelectSingleNode("term");
-			m_sTerm = xn?.InnerText ?? MGAStrings.ksUnknownTerm;
+			Term = xn?.InnerText ?? MGAStrings.ksUnknownTerm;
 			xn = node.SelectSingleNode("abbrev");
-			m_sAbbrev = xn?.InnerText ?? MGAStrings.ksUnknownTerm;
-			var attr = m_xmlNode.Attributes.GetNamedItem("afterSeparator");
-			m_sAfterSeparator = attr == null ? sAfterSeparator : attr.Value;
-			attr = m_xmlNode.Attributes.GetNamedItem("complexNameSeparator");
-			m_sComplexNameSeparator = attr == null ? sComplexNameSeparator : attr.Value;
-			attr = m_xmlNode.Attributes.GetNamedItem("complexNameFirst");
-			m_fComplexNameFirst = attr == null ? fComplexNameFirst : XmlUtils.GetBooleanAttributeValue(attr.Value);
+			Abbrev = xn?.InnerText ?? MGAStrings.ksUnknownTerm;
+			var attr = XmlNode.Attributes.GetNamedItem("afterSeparator");
+			AfterSeparator = attr == null ? sAfterSeparator : attr.Value;
+			attr = XmlNode.Attributes.GetNamedItem("complexNameSeparator");
+			ComplexNameSeparator = attr == null ? sComplexNameSeparator : attr.Value;
+			attr = XmlNode.Attributes.GetNamedItem("complexNameFirst");
+			ComplexNameFirst = attr == null ? fComplexNameFirst : XmlUtils.GetBooleanAttributeValue(attr.Value);
 			SetType();
 		}
 
 		private void SetType()
 		{
-			var attr = m_xmlNode.Attributes.GetNamedItem("type");
+			var attr = XmlNode.Attributes.GetNamedItem("type");
 			if (attr != null)
 			{
 				switch (attr.Value)
 				{
 					case "complex":
-						m_fIsComplex = true;
-						m_fIsValue = false;
+						IsComplex = true;
+						IsValue = false;
 						break;
 					case "value":
-						m_fIsComplex = false;
-						m_fIsValue = true;
+						IsComplex = false;
+						IsValue = true;
 						break;
 					default:
-						m_fIsComplex = false;
-						m_fIsValue = false;
+						IsComplex = false;
+						IsValue = false;
 						break;
 				}
 			}
 			else
 			{
-				var itemDaughter = m_xmlNode.SelectSingleNode("item");
+				var itemDaughter = XmlNode.SelectSingleNode("item");
 				if (itemDaughter == null)
 				{
-					m_fIsComplex = false;
-					m_fIsValue = true;
+					IsComplex = false;
+					IsValue = true;
 				}
 				else
 				{
-					m_fIsComplex = false;
-					m_fIsValue = false;
+					IsComplex = false;
+					IsValue = false;
 				}
 			}
 		}
@@ -92,61 +83,52 @@ namespace LanguageExplorer.MGA
 		/// <summary>
 		/// Gets the abbreviation of the item.
 		/// </summary>
-		public string Abbrev => m_sAbbrev;
+		public string Abbrev { get; private set; }
 
 		/// <summary>
 		/// Gets default after separator character for glossing.
 		/// </summary>
-		public string AfterSeparator => m_sAfterSeparator;
+		public string AfterSeparator { get; private set; }
 
 		/// <summary>
 		/// Gets flag whether the name of the complex item comes first or not.
 		/// </summary>
-		public bool ComplexNameFirst => m_fComplexNameFirst;
+		public bool ComplexNameFirst { get; private set; }
 
 		/// <summary>
 		/// Gets default separator character to occur after a complex name in glossing.
 		/// </summary>
-		public string ComplexNameSeparator => m_sComplexNameSeparator;
+		public string ComplexNameSeparator { get; private set; }
 
 		/// <summary>
 		/// Gets flag whether the item is complex or not.
 		/// </summary>
-		public bool IsComplex => m_fIsComplex;
+		public bool IsComplex { get; private set; }
 
 		/// <summary>
 		/// Gets flag whether the item is a feature value or not.
 		/// </summary>
-		public bool IsValue => m_fIsValue;
+		public bool IsValue { get; private set; }
 
 		/// <summary>
 		/// Gets the MoGlossItem of the item.
 		/// </summary>
-		public IMoGlossItem MoGlossItem => m_glossItem;
+		public IMoGlossItem MoGlossItem { get; }
 
 		/// <summary>
 		/// Gets the term definition of the item.
 		/// </summary>
-		public string Term => m_sTerm;
+		public string Term { get; private set; }
 
 		/// <summary>
 		/// Gets/sets the XmlNode of the item.
 		/// </summary>
-		public XmlNode XmlNode
-		{
-			get
-			{
-				return m_xmlNode;
-			}
-			set
-			{
-				m_xmlNode = value;
-			}
-		}
+		public XmlNode XmlNode { get; set; }
+
 		#endregion
 		public override string ToString()
 		{
-			return string.Format(MGAStrings.ksX_Y, m_sTerm, m_sAbbrev);
+			return string.Format(MGAStrings.ksX_Y, Term, Abbrev);
 		}
 #if UsingGlossSystem
 		/// <summary>

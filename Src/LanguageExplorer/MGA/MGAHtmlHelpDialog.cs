@@ -73,5 +73,24 @@ namespace LanguageExplorer.MGA
 			var uri = new Uri(tempfile);
 			m_browser.Navigate(uri.AbsoluteUri);
 		}
+
+		#region Overrides of MGADialog
+
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				m_browser.Dispose();
+			}
+
+			m_browser = null;
+
+			base.Dispose(disposing);
+		}
+
+		#endregion
 	}
 }

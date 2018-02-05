@@ -16,19 +16,17 @@ namespace LanguageExplorer.MGA
 	/// </summary>
 	public class GlossListEventArgs : EventArgs
 	{
-		private readonly GlossListBoxItem m_glossListBoxItem;
-
 		public GlossListEventArgs(GlossListBoxItem glbi)
 		{
-			m_glossListBoxItem = glbi;
+			GlossListBoxItem = glbi;
 		}
 		public GlossListEventArgs(LcmCache cache, XmlNode node, string sAfterSeparator, string sComplexNameSeparator, bool fComplexNameFirst)
 		{
-			m_glossListBoxItem = new GlossListBoxItem(cache, node, sAfterSeparator, sComplexNameSeparator, fComplexNameFirst);
+			GlossListBoxItem = new GlossListBoxItem(cache, node, sAfterSeparator, sComplexNameSeparator, fComplexNameFirst);
 		}
 		/// <summary>
 		/// Gets the item.
 		/// </summary>
-		public GlossListBoxItem GlossListBoxItem => m_glossListBoxItem;
+		public GlossListBoxItem GlossListBoxItem { get; }
 	}
 }

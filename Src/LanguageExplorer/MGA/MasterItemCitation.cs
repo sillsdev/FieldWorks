@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,22 +9,19 @@ namespace LanguageExplorer.MGA
 {
 	internal sealed class MasterItemCitation
 	{
-		private readonly string m_ws;
-		private readonly string m_citation;
+		internal string WS { get; }
 
-		internal string WS => m_ws;
-
-		internal string Citation => m_citation;
+		internal string Citation { get; }
 
 		internal MasterItemCitation(string ws, string citation)
 		{
-			m_ws = ws;
-			m_citation = citation;
+			WS = ws;
+			Citation = citation;
 		}
 
 		internal void ResetDescription(RichTextBox rtbDescription)
 		{
-			rtbDescription.AppendText(string.Format(MGAStrings.ksBullettedItem, m_citation, Environment.NewLine));
+			rtbDescription.AppendText(string.Format(MGAStrings.ksBullettedItem, Citation, Environment.NewLine));
 		}
 	}
 }
