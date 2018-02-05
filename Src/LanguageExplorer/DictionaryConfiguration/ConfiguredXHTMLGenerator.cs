@@ -1350,9 +1350,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 					} while (File.Exists(destination) && !AreFilesIdentical(source, destination, isWavExport));
 					// converts audio files to correct format if necessary during Webonary export
 					if (!isWavExport)
-						FileUtils.Copy(source, destination);
+					{
+						File.Copy(source, destination, true); //If call two times, quicker than Windows updates the file system
+					}
 					else
+					{
 						WavConverter.WavToMp3(source, destination);
+					}
 					// Change the filepath to point to the copied file
 					relativeDestination = string.IsNullOrEmpty(subFolder) ? newFileName : Path.Combine(subFolder, newFileName);
 				}
@@ -1363,10 +1367,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static bool AreFilesIdentical(string source, string destination, bool isWavExport)
 		{
 			if (!isWavExport)
+			{
 				return FileUtils.AreFilesIdentical(source, destination);
+			}
 			SaveFile exists = WavConverter.AlreadyExists(source, destination);
 			if (exists == SaveFile.IdenticalExists)
+			{
 				return true;
+			}
 			return false;
 		}
 

@@ -46,7 +46,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal const int kfragBundleMissingSense = 100015;
 		internal const int kfragAnalysisMissingPos = 100016;
 		internal const int kfragMsa = 100017;
-		internal const int kfragMissingAnalysis = 100019;
+		internal const int kfragMissingWholeAnalysis = 100019;
 		internal const int kfragAnalysisMissingGloss = 100021;
 		internal const int kfragWordformForm = 100022;
 		internal const int kfragWordGlossGuess = 100023;
@@ -87,7 +87,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal const int ktagBundleMissingSense = -53;
 		//internal const int ktagMissingGloss = -54;
 		internal const int ktagAnalysisMissingPos = -55;
-		internal const int ktagMissingAnalysis = -56;
+		internal const int ktagMissingWholeAnalysis = -56;
 		internal const int ktagAnalysisMissingGloss = -57;
 		// And constants used for the 'fake' properties that break paras into
 		// segments and provide defaults for wordforms
@@ -105,8 +105,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#region Data members
 
-		protected bool m_fShowDefaultSense; // Use false to not change prior behavior.
-		protected bool m_fHaveOpenedParagraph; // Use false to not change prior behavior.
+		protected bool m_fShowDefaultSense; // Use false to preserve prior behavior.
+		protected bool m_fHaveOpenedParagraph; // Use false to preserve prior behavior.
 		protected WritingSystemManager m_wsManager;
 		protected ISegmentRepository m_segRepository;
 		protected ICmObjectRepository m_coRepository;
@@ -117,33 +117,27 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected int m_wsAnalysis;
 		protected int m_wsUi;
 		internal WsListManager m_WsList;
-		ITsString m_tssMissingAnalysis; // The whole analysis is missing. This shows up on the morphs line.
-		ITsString m_tssMissingGloss; // A word gloss is missing.
-		ITsString m_tssMissingGlossPrepend;
-		ITsString m_tssMissingGlossAppend;
-		ITsString m_tssMissingSense;
-		ITsString m_tssMissingMsa;
-		ITsString m_tssMissingAnalysisPos;
-		ITsString m_tssMissingMorph; // Shown when an analysis has no morphs (on the morphs line).
-		ITsString m_tssEmptyAnalysis;  // Shown on analysis language lines when we want nothing at all to appear.
-		ITsString m_tssEmptyVern;
-		ITsString m_tssMissingEntry;
-		ITsString m_tssEmptyPara;
-		ITsString m_tssSpace;
-		ITsString m_tssCommaSpace;
-		ITsString m_tssPendingGlossAffix; // LexGloss line GlossAppend or GlossPrepend
-		int m_mpBundleHeight = 0; // millipoint height of interlinear bundle.
-		bool m_fShowMorphBundles = true;
-		bool m_fRtl;
-		IDictionary<ILgWritingSystem, ITsString> m_mapWsDirTss = new Dictionary<ILgWritingSystem, ITsString>();
+		private ITsString m_tssMissingVernacular; // A string in a Vernacular WS is missing
+		private ITsString m_tssMissingAnalysis; // A string in an Analysis WS is missing
+		private ITsString m_tssMissingGlossAppend;
+		private ITsString m_tssEmptyAnalysis;  // Shown on analysis language lines when we want nothing at all to appear.
+		private ITsString m_tssEmptyVern;
+		private ITsString m_tssEmptyPara;
+		private ITsString m_tssSpace;
+		private ITsString m_tssCommaSpace;
+		private ITsString m_tssPendingGlossAffix; // LexGloss line GlossAppend or GlossPrepend
+		private int m_mpBundleHeight; // millipoint height of interlinear bundle.
+		private bool m_fShowMorphBundles = true;
+		private bool m_fRtl;
+		private readonly IDictionary<ILgWritingSystem, ITsString> m_mapWsDirTss = new Dictionary<ILgWritingSystem, ITsString>();
 		// AnnotationDefns we need
-		int m_hvoAnnDefNote;
-		MsaVc m_msaVc;
-		InterlinLineChoices m_lineChoices;
+		private int m_hvoAnnDefNote;
+		private MsaVc m_msaVc;
+		private InterlinLineChoices m_lineChoices;
 		protected IVwStylesheet m_stylesheet;
-		IParaDataLoader m_loader;
-		private HashSet<int> m_vernWss; // all vernacular writing systems
-		private int m_selfFlid;
+		private IParaDataLoader m_loader;
+		private readonly HashSet<int> m_vernWss; // all vernacular writing systems
+		private readonly int m_selfFlid;
 		private int m_leftPadding;
 
 		#endregion Data members
@@ -170,13 +164,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Decorator = new InterlinViewDataCache(m_cache);
 			PreferredVernWs = cache.DefaultVernWs;
 			m_selfFlid = m_cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
-			m_tssMissingGloss = TsStringUtils.MakeString(ITextStrings.ksStars, m_wsAnalysis);
-			m_tssMissingGlossPrepend = TsStringUtils.MakeString(ITextStrings.ksStars + MorphServices.kDefaultSeparatorLexEntryInflTypeGlossAffix, m_wsAnalysis);
+			m_tssMissingAnalysis = TsStringUtils.MakeString(ITextStrings.ksStars, m_wsAnalysis);
 			m_tssMissingGlossAppend = TsStringUtils.MakeString(MorphServices.kDefaultSeparatorLexEntryInflTypeGlossAffix + ITextStrings.ksStars, m_wsAnalysis);
-			m_tssMissingSense = m_tssMissingGloss;
-			m_tssMissingMsa = m_tssMissingGloss;
-			m_tssMissingAnalysisPos = m_tssMissingGloss;
 			m_tssEmptyAnalysis = TsStringUtils.EmptyString(m_wsAnalysis);
+			m_tssMissingVernacular = TsStringUtils.MakeString(ITextStrings.ksStars, cache.DefaultVernWs);
 			m_WsList = new WsListManager(m_cache);
 			m_tssEmptyPara = TsStringUtils.MakeString(ITextStrings.ksEmptyPara, m_wsAnalysis);
 			m_tssSpace = TsStringUtils.MakeString(" ", m_wsAnalysis);
@@ -211,41 +202,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary>
-		/// setups up the display to work with the given wsVern.
-		/// </summary>
-		private void SetupRealVernWsForDisplay(int wsVern)
-		{
-			if (wsVern <= 0)
-			{
-				throw new ArgumentException($"Expected a real vernacular ws (got {wsVern}).");
-			}
-			if (m_wsVernForDisplay == wsVern)
-			{
-				return;	// already setup
-			}
-			m_wsVernForDisplay = wsVern;
-			m_tssEmptyVern = TsStringUtils.EmptyString(wsVern);
-			m_fRtl = m_wsManager.Get(wsVern).RightToLeftScript;
-			m_tssMissingAnalysis = TsStringUtils.MakeString(ITextStrings.ksStars, wsVern);
-			m_tssMissingMorph = m_tssMissingAnalysis;
-			m_tssMissingEntry = m_tssMissingAnalysis;
-		}
-
-		/// <summary>
 		/// Answer true if the specified word can be analyzed. This is a further check after
 		/// ensuring it has an InstanceOf. It is equivalent to the check made in case kfragBundle of
 		/// Display(), but that already has access to the writing system of the Wordform.
-		/// GJM - Jan 19,'10 Added check to see if this occurrence is actually Punctuation.
-		/// Punctuation cannot be analyzed.
+		/// GJM - Jan 19,'10 Added check to see if this occurrence is Punctuation: Punctuation cannot be analyzed.
 		/// </summary>
 		internal bool CanBeAnalyzed(AnalysisOccurrence occurrence)
 		{
-			var occurrenceWs = occurrence.BaselineWs;
-			if (occurrence.Analysis is IPunctuationForm)
-			{
-				return false;
-			}
-			return occurrenceWs == m_wsVernForDisplay || m_vernWss.Contains(occurrenceWs);
+			return !(occurrence.Analysis is IPunctuationForm) && m_vernWss.Contains(occurrence.BaselineWs);
 		}
 
 		internal IVwStylesheet StyleSheet
@@ -285,7 +249,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary/>
 		public bool IsDisposed { get; private set; }
 
-		/// <summary/>
+		/// <inheritdoc />
 		public void Dispose()
 		{
 			Dispose(true);
@@ -305,20 +269,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				// Dispose managed resources here.
 				m_WsList?.Dispose();
-				;
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_msaVc = null;
 			m_cache = null;
 
-			m_tssMissingMorph = null; // Same as m_tssMissingAnalysis.
-			m_tssMissingSense = null; // Same as m_tssMissingGloss.
-			m_tssMissingMsa = null; // Same as m_tssMissingGloss.
-			m_tssMissingAnalysisPos = null; // Same as m_tssMissingGloss.
-			m_tssMissingEntry = null; // Same as m_tssEmptyAnalysis.
+			m_tssMissingVernacular = null;
 			m_tssMissingAnalysis = null;
-			m_tssMissingGloss = null;
+			m_tssMissingGlossAppend = null;
 			m_tssEmptyAnalysis = null;
 			m_tssEmptyVern = null;
 			m_tssEmptyPara = null;
@@ -458,10 +417,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				CheckDisposed();
 				return m_wsVernForDisplay;
 			}
-			set
+			private set
 			{
-				CheckDisposed();
-				SetupRealVernWsForDisplay(value);
+				if (value <= 0)
+				{
+					throw new ArgumentException($"Expected a real vernacular ws (got {value}).");
+				}
+				if (m_wsVernForDisplay == value)
+				{
+					return; // already set up
+				}
+				m_wsVernForDisplay = value;
+				m_tssEmptyVern = TsStringUtils.EmptyString(value);
+				m_fRtl = m_wsManager.Get(value).RightToLeftScript;
+				m_tssMissingVernacular = TsStringUtils.MakeString(ITextStrings.ksStars, value);
 			}
 		}
 
@@ -572,19 +541,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			switch (frag)
 			{
 				case kfragStText:   // new root object for InterlinDocChild.
-					SetupRealVernWsForDisplay(WritingSystemServices.ActualWs(m_cache, WritingSystemServices.kwsVernInParagraph, hvo, StTextTags.kflidParagraphs));
+					PreferredVernWs = WritingSystemServices.ActualWs(m_cache, WritingSystemServices.kwsVernInParagraph, hvo, StTextTags.kflidParagraphs);
 					vwenv.AddLazyVecItems(StTextTags.kflidParagraphs, this, kfragInterlinPara);
 					break;
 				case kfragInterlinPara: // Whole StTxtPara. This can be the root fragment in DE view.
 					if (vwenv.DataAccess.get_VecSize(hvo, StTxtParaTags.kflidSegments) == 0)
 					{
-						vwenv.NoteDependency(new int[] { hvo }, new int[] { StTxtParaTags.kflidSegments }, 1);
+						vwenv.NoteDependency(new[] { hvo }, new[] { StTxtParaTags.kflidSegments }, 1);
 						vwenv.AddString(m_tssEmptyPara);
 					}
 					else
 					{
-						PreferredVernWs = WritingSystemServices.ActualWs(m_cache, WritingSystemServices.kwsVernInParagraph, hvo, StTxtParaTags.kflidSegments);
-						// Include the plain text version of the paragraph?
+						// no need to calculate wsVernInParagraph at the paragraph level; we must recalculate for each word.
 						vwenv.AddLazyVecItems(StTxtParaTags.kflidSegments, this, kfragParaSegment);
 					}
 					break;
@@ -615,7 +583,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// The interlinear bundles are not editable.
 					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
 						(int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
-					if (m_fRtl)
+					if (RightToLeft)
 					{
 						vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalRight);
@@ -741,14 +709,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					vwenv.CloseParagraph();
 					vwenv.CloseDiv();
 					break;
-				case kfragWordformForm: // The form of a WviWordform.
-					vwenv.AddStringAltMember(WfiWordformTags.kflidForm, m_wsVernForDisplay, this);
+				case kfragWordformForm: // The form of a WfiWordform.
+					vwenv.AddStringAltMember(WfiWordformTags.kflidForm, PreferredVernWs, this);
 					break;
 				case kfragPrefix:
-					vwenv.AddUnicodeProp(MoMorphTypeTags.kflidPrefix, m_wsVernForDisplay, this);
+					vwenv.AddUnicodeProp(MoMorphTypeTags.kflidPrefix, PreferredVernWs, this);
 					break;
 				case kfragPostfix:
-					vwenv.AddUnicodeProp(MoMorphTypeTags.kflidPostfix, m_wsVernForDisplay, this);
+					vwenv.AddUnicodeProp(MoMorphTypeTags.kflidPostfix, PreferredVernWs, this);
 					break;
 				case kfragSenseName: // The name (gloss) of a LexSense.
 					foreach (var wsId in m_WsList.AnalysisWsIds)
@@ -773,7 +741,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					else if (frag >= kfragLineChoices && frag < kfragLineChoices + m_lineChoices.Count)
 					{
 						var spec = m_lineChoices[frag - kfragLineChoices];
-						vwenv.AddStringAltMember(spec.StringFlid, GetRealWsOrBestWsForContext(hvo, spec), this);
+						vwenv.AddStringAltMember(spec.StringFlid, GetRealWsOrBestWsForContext(hvo, spec)/* can be vernacular or analysis */, this);
 					}
 					else if (frag >= kfragAnalysisCategoryChoices && frag < kfragAnalysisCategoryChoices + m_lineChoices.Count)
 					{
@@ -908,7 +876,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				vwenv.get_StringWidth(tssLabel, null, out labelWidth, out labelHeight);
 			}
-			if (IsWsRtl(wssAnalysis[0]) != m_fRtl)
+			var wsVernPara = GetWsForSeg(hvoSeg);
+			if (IsWsRtl(wssAnalysis[0]) != IsWsRtl(wsVernPara))
 			{
 				var bldr = tssLabel.GetBldr();
 				bldr.Replace(bldr.Length - 1, bldr.Length, null, null);
@@ -920,23 +889,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (wssAnalysis.Length != 1)
 				{
 					// Insert WS label for first line
-					AddTssDirForVernWs(vwenv);
+					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
-					AddTssDirForVernWs(vwenv);
+					AddTssDirForWs(vwenv, wsVernPara);
 					SetNoteLabelProps(vwenv);
 					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[0]));
 				}
-				AddTssDirForVernWs(vwenv);
+				AddTssDirForWs(vwenv, wsVernPara);
 				vwenv.AddString(m_tssSpace);
-				AddTssDirForVernWs(vwenv);
+				AddTssDirForWs(vwenv, wsVernPara);
 				vwenv.AddString(tssLabelNoSpace);
-				AddTssDirForVernWs(vwenv);
+				AddTssDirForWs(vwenv, wsVernPara);
 			}
 			else
 			{
-				AddTssDirForVernWs(vwenv);
+				AddTssDirForWs(vwenv, wsVernPara);
 				vwenv.AddString(tssLabel);
-				AddTssDirForVernWs(vwenv);
+				AddTssDirForWs(vwenv, wsVernPara);
 				if (wssAnalysis.Length == 1)
 				{
 					AddTssDirForWs(vwenv, wssAnalysis[0]);
@@ -946,10 +915,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					SetNoteLabelProps(vwenv);
 					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[0]));
-					AddTssDirForVernWs(vwenv);
+					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
 					// label width unfortunately does not include trailing space.
-					AddTssDirForVernWs(vwenv);
+					AddTssDirForWs(vwenv, wsVernPara);
 					AddTssDirForWs(vwenv, wssAnalysis[0]);
 					AddFreeformComment(vwenv, hvoSeg, wssAnalysis[0], flid);
 				}
@@ -959,7 +928,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				vwenv.CloseParagraph();
 				// Indent subsequent paragraphs by the width of the main label.
-				if (IsWsRtl(wssAnalysis[i]) != m_fRtl)
+				if (IsWsRtl(wssAnalysis[i]) != IsWsRtl(wsVernPara))
 				{
 					vwenv.set_IntProperty((int)FwTextPropType.ktptTrailingIndent, (int)FwTextPropVar.ktpvMilliPoint, labelWidth);
 				}
@@ -969,32 +938,32 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				SetParaDirectionAndAlignment(vwenv, wssAnalysis[i]);
 				vwenv.OpenParagraph();
-				if (IsWsRtl(wssAnalysis[i]) != m_fRtl)
+				if (IsWsRtl(wssAnalysis[i]) != IsWsRtl(wsVernPara))
 				{
 					// upstream...reverse everything.
 					AddTssDirForWs(vwenv, wssAnalysis[i]);
 					AddFreeformComment(vwenv, hvoSeg, wssAnalysis[i], flid);
 					AddTssDirForWs(vwenv, wssAnalysis[i]);
-					AddTssDirForVernWs(vwenv);
+					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
-					AddTssDirForVernWs(vwenv);
-					AddTssDirForVernWs(vwenv);
+					AddTssDirForWs(vwenv, wsVernPara); // REVIEW (Hasso) 2018.01: two in a row RTL flags seems redundant.
+					AddTssDirForWs(vwenv, wsVernPara);
 					SetNoteLabelProps(vwenv);
 					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[i]));
-					AddTssDirForVernWs(vwenv);
+					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
-					AddTssDirForVernWs(vwenv);
+					AddTssDirForWs(vwenv, wsVernPara);
 				}
 				else
 				{
-					AddTssDirForVernWs(vwenv);
+					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
-					AddTssDirForVernWs(vwenv);
+					AddTssDirForWs(vwenv, wsVernPara);
 					SetNoteLabelProps(vwenv);
 					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[i]));
-					AddTssDirForVernWs(vwenv);
+					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
-					AddTssDirForVernWs(vwenv);
+					AddTssDirForWs(vwenv, wsVernPara);
 					AddTssDirForWs(vwenv, wssAnalysis[i]);
 					AddFreeformComment(vwenv, hvoSeg, wssAnalysis[i], flid);
 				}
@@ -1005,13 +974,37 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			vwenv.CloseDiv();
 		}
 
+		/// <summary/>
+		private int GetWsForSeg(int hvoSeg)
+		{
+			var wsSeg = PreferredVernWs;
+			var seg = Cache.ServiceLocator.GetObject(hvoSeg);
+			switch (seg.ClassID)
+			{
+				case CmBaseAnnotationTags.kClassId:
+					var ann = (ICmBaseAnnotation)Cache.ServiceLocator.GetObject(hvoSeg);
+					wsSeg = TsStringUtils.GetWsAtOffset(((IStTxtPara)ann.BeginObjectRA).Contents, ann.BeginOffset);
+					break;
+				case NoteTags.kClassId:
+					seg = seg.Owner; // a note is owned by a segment
+					goto case SegmentTags.kClassId;
+				case SegmentTags.kClassId:
+					wsSeg = TsStringUtils.GetWsAtOffset(((ISegment)seg).BaselineText, 0);
+					break;
+				default:
+					Debug.Fail($"Unable to handle {seg.ClassName} ({seg.ClassID})");
+					break;
+			}
+			return wsSeg;
+		}
+
 		/// <summary>
 		/// Set the paragraph direction to match wsAnalysis and the paragraph alignment to match the overall
 		/// direction of the text.
 		/// </summary>
 		private void SetParaDirectionAndAlignment(IVwEnv vwenv, int wsAnalysis)
 		{
-			if (m_fRtl)
+			if (RightToLeft)
 			{
 				vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalRight);
 			}
@@ -1038,7 +1031,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			// The interlinear bundle is not editable.
 			vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
-			if (m_fRtl)
+			if (RightToLeft)
 			{
 				// This must not be on the outer paragraph or we get infinite width.
 				vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
@@ -1083,11 +1076,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_mapWsDirTss.Add(wsObj, tssDirWs);
 			}
 			vwenv.AddString(tssDirWs);
-		}
-
-		private void AddTssDirForVernWs(IVwEnv vwenv)
-		{
-			AddTssDirForWs(vwenv, m_wsVernForDisplay);
 		}
 
 		/// <summary>
@@ -1170,33 +1158,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			vwenv.AddProp(SimpleRootSite.kTagUserPrompt, this, ws);
 		}
 
-		/// <summary>
-		/// Check whether we're looking at vernacular data.
-		/// </summary>
-		private bool IsVernWs(int ws, int wsSpec)
-		{
-			switch (wsSpec)
-			{
-				case WritingSystemServices.kwsVern:
-				case WritingSystemServices.kwsVerns:
-				case WritingSystemServices.kwsFirstVern:
-				case WritingSystemServices.kwsVernInParagraph:
-					return true;
-				case WritingSystemServices.kwsAnal:
-				case WritingSystemServices.kwsAnals:
-				case WritingSystemServices.kwsFirstAnal:
-				case WritingSystemServices.kwsFirstPronunciation:
-				case WritingSystemServices.kwsAllReversalIndex:
-				case WritingSystemServices.kwsPronunciation:
-				case WritingSystemServices.kwsPronunciations:
-				case WritingSystemServices.kwsReversalIndex:
-					return false;
-			}
-			var wsObj = m_wsManager.Get(ws);
-			return m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(wsObj) &&
-			       !m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Contains(wsObj);
-		}
-
 		internal bool IsAddingSegmentReference { get; private set; } = false;
 
 		/// <summary>
@@ -1262,32 +1223,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary>
-		/// try to get the ws specified by spec.WritingSystem, otherwise
-		/// get the default vernacular ws for the display (e.g. ws of paragraph).
+		/// try to get the ws specified by spec.WritingSystem.
+		/// If Baseline (VernInParagraph), return the cached PreferredVernWs.
 		/// </summary>
 		internal int GetRealWsOrBestWsForContext(int hvo, InterlinLineSpec spec)
 		{
-			if (spec != null && !spec.IsMagicWritingSystem && spec.WritingSystem > 0)
-			{
-				return GetRealWs(m_cache, hvo, spec, spec.WritingSystem);
-			}
-			return GetRealWs(m_cache, hvo, spec, m_wsVernForDisplay);
-		}
-
-		private static int GetRealWs(LcmCache cache, int hvo, InterlinLineSpec spec, int wsPreferred)
-		{
-			var ws = 0;
-			switch (spec.WritingSystem)
-			{
-				case WritingSystemServices.kwsVernInParagraph:
-					// we want to display the wordform using its own ws.
-					ws = wsPreferred;
-					break;
-				default:
-					ws = spec.GetActualWs(cache, hvo, wsPreferred);
-					break;
-			}
-			return ws;
+			return spec.WritingSystem == WritingSystemServices.kwsVernInParagraph
+				? PreferredVernWs
+				: spec.GetActualWs(Cache, hvo, spec.WritingSystem);
 		}
 
 		/// <summary>
@@ -1324,24 +1267,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					case InterlinLineChoices.kflidMorphemes:
 						if (wmb == null)
 						{
-							vwenv.AddString(m_tssMissingMorph);
+							vwenv.AddString(m_tssMissingVernacular);
 						}
 						else if (mf == null)
 						{
-							// displaying morphemes should be
-							var ws = 0;
-							if (wmb.MorphRA != null)
-							{
-								Debug.Assert(spec.StringFlid == MoFormTags.kflidForm);
-								ws = GetRealWsOrBestWsForContext(wmb.MorphRA.Hvo, spec);
-							}
-							// If no morph, use the form of the morph bundle (and the entry is of
-							// course missing)
-							if (ws == 0)
-							{
-								ws = WritingSystemServices.ActualWs(m_cache, spec.WritingSystem, wmb.Hvo, WfiMorphBundleTags.kflidForm);
-							}
-							vwenv.AddStringAltMember(WfiMorphBundleTags.kflidForm, ws, this);
+							// If no morph, use the form of the morph bundle (and the entry is of course missing)
+							vwenv.AddStringAltMember(WfiMorphBundleTags.kflidForm, GetRealWsOrBestWsForContext(wmb.Hvo, spec), this);
 						}
 						else
 						{
@@ -1357,20 +1288,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							{
 								vwenv.NoteDependency(new int[] { hvo }, new int[] { WfiMorphBundleTags.kflidMorph }, 1);
 							}
-							vwenv.AddString(m_tssMissingEntry);
+							vwenv.AddString(m_tssMissingVernacular);
 						}
 						else
 						{
 							var ws = GetRealWsOrBestWsForContext(mf.Hvo, spec);
-							if (ws == 0)
-							{
-								ws = spec.WritingSystem;
-							}
-
-							var vcEntry = new LexEntryVc(m_cache)
-							{
-								WritingSystemCode = ws
-							};
+							var vcEntry = new LexEntryVc(m_cache) { WritingSystemCode = ws };
 							vwenv.AddObj(hvo, vcEntry, LexEntryVc.kfragEntryAndVariant);
 						}
 						break;
@@ -1401,7 +1324,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 						if (flid == 0)
 						{
-							vwenv.AddString(m_tssMissingSense);
+							vwenv.AddString(m_tssMissingAnalysis);
 						}
 						else
 						{
@@ -1422,7 +1345,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							{
 								vwenv.NoteDependency(new[] { hvo }, new[] { WfiMorphBundleTags.kflidMsa }, 1);
 							}
-							vwenv.AddString(m_tssMissingMsa);
+							vwenv.AddString(m_tssMissingAnalysis);
 						}
 						else
 						{
@@ -1448,7 +1371,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			using (var vcLexGlossFrag = new InterlinVc(possibleVariant.Cache))
 			{
 				vcLexGlossFrag.LineChoices = lineChoices;
-				vcLexGlossFrag.PreferredVernWs = vernWsContext;
 
 				result = null;
 				var collector = new TsStringCollectorEnv(null, vcLexGlossFrag.Cache.MainCacheAccessor, possibleVariant.Hvo)
@@ -1477,10 +1399,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return false;
 			}
-			var wsPreferred = GetRealWsOrBestWsForContext(sense.Hvo, spec);
-			var wsGloss = Cache.ServiceLocator.WritingSystemManager.Get(wsPreferred);
+			var wsGloss = spec.GetActualWs(Cache, sense.Hvo, m_wsAnalysis);
+			var wsDefinitionGloss = Cache.ServiceLocator.WritingSystemManager.Get(wsGloss);
 			var wsUser = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
-			var testGloss = sense.Gloss.get_String(wsPreferred);
+			var testGloss = sense.Gloss.get_String(wsGloss);
 			// don't bother adding anything for an empty gloss.
 			if (testGloss.Text == null || testGloss.Text.Length < 0)
 			{
@@ -1500,13 +1422,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				ITsString tssPrepend = null;
 				if (inflType != null)
 				{
-					tssPrepend = MorphServices.AddTssGlossAffix(null, inflType.GlossPrepend, wsGloss, wsUser);
+					tssPrepend = MorphServices.AddTssGlossAffix(null, inflType.GlossPrepend, wsDefinitionGloss, wsUser);
 				}
 				else
 				{
 					ITsIncStrBldr sbPrepend;
 					ITsIncStrBldr sbAppend;
-					JoinGlossAffixesOfInflVariantTypes(ler, wsPreferred, out sbPrepend, out sbAppend);
+					JoinGlossAffixesOfInflVariantTypes(ler, wsGloss, out sbPrepend, out sbAppend);
 					if (sbPrepend.Text != null)
 					{
 						tssPrepend = sbPrepend.GetString();
@@ -1537,30 +1459,28 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				ITsString tssAppend = null;
 				if (inflType != null)
 				{
-					tssAppend = MorphServices.AddTssGlossAffix(null, inflType.GlossAppend, wsGloss, wsUser);
+					tssAppend = MorphServices.AddTssGlossAffix(null, inflType.GlossAppend, wsDefinitionGloss, wsUser);
 				}
 				else
 				{
 					ITsIncStrBldr sbPrepend;
 					ITsIncStrBldr sbAppend;
-					JoinGlossAffixesOfInflVariantTypes(ler, wsPreferred, out sbPrepend, out sbAppend);
+					JoinGlossAffixesOfInflVariantTypes(ler, wsGloss, out sbPrepend, out sbAppend);
 					if (sbAppend.Text != null)
 					{
 						tssAppend = sbAppend.GetString();
 					}
 				}
+				// Use AddProp/DisplayVariant to store GlossAppend with m_tssPendingGlossAffix
+				// this allows InterlinearExporter to know to export a glsAppend item
+				try
 				{
-					// Use AddProp/DisplayVariant to store GlossAppend with m_tssPendingGlossAffix
-					// this allows InterlinearExporter to know to export a glsAppend item
-					try
-					{
-						m_tssPendingGlossAffix = tssAppend ?? m_tssMissingGlossAppend;
-						vwenv.AddProp(ktagGlossAppend, this, 0);
-					}
-					finally
-					{
-						m_tssPendingGlossAffix = null;
-					}
+					m_tssPendingGlossAffix = tssAppend ?? m_tssMissingGlossAppend;
+					vwenv.AddProp(ktagGlossAppend, this, 0);
+				}
+				finally
+				{
+					m_tssPendingGlossAffix = null;
 				}
 				vwenv.CloseParagraph();
 				vwenv.CloseInnerPile();
@@ -1678,7 +1598,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				m_fshowMultipleAnalyses = showMultipleAnalyses;
 				var coRepository = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
-				var wag = coRepository.GetObject(m_hvoWordBundleAnalysis) as IAnalysis;
+				var wag = (IAnalysis)coRepository.GetObject(m_hvoWordBundleAnalysis);
 				switch (wag.ClassID)
 				{
 				case WfiWordformTags.kClassId:
@@ -1720,7 +1640,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						switch(spec.Flid)
 						{
 						case InterlinLineChoices.kflidWord:
-								DisplayWord(spec, i, wag);
+								DisplayWord(i, wag);
 								break;
 						case InterlinLineChoices.kflidWordGloss:
 								DisplayWordGloss(spec, i);
@@ -1735,31 +1655,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_this.CurrentLine = 0;
 			}
 
-			/// <summary>
-			/// If we are displaying the baseline, and should display a substitute string rather than
-			/// the requested WS of the wordform, return the substitute string. Otherwise return null.
-			/// </summary>
-			private ITsString GetRealForm(int ws, int choiceIndex)
+			private void DisplayWord(int choiceIndex, IAnalysis wag)
 			{
-				if (choiceIndex != 0)
-				{
-					return null; // only ever correct the baselin
-				}
-				if (ws != m_this.m_wsVernForDisplay)
-				{
-					return null; // only ever correct for the default vernacular WS.
-				}
-				return m_analysisOccurrence != null ? m_analysisOccurrence.BaselineText : null;
-			}
-
-
-			private void DisplayWord(InterlinLineSpec spec, int choiceIndex, IAnalysis wag)
-			{
-				var wsActual = m_this.GetRealWsOrBestWsForContext(m_hvoWordform, spec);
-				var tssRealForm = GetRealForm(wsActual, choiceIndex);
+				var tssRealForm = choiceIndex != 0 ? null : m_analysisOccurrence?.BaselineText;
 				if (tssRealForm != null && tssRealForm.Length > 0)
 				{
 					m_this.IsDoingRealWordForm = true;
+					m_this.PreferredVernWs = TsStringUtils.GetWsAtOffset(tssRealForm, 0); // Cache the baseline WS for display of other specs
 					// LT-12203 Text chart doesn't want multiple analyses highlighting
 					if (m_fshowMultipleAnalyses)
 					{
@@ -1837,7 +1739,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 				case WfiWordformTags.kClassId:
 					m_this.SetColor(m_vwenv, m_this.LabelRGBFor(choiceIndex)); // looks like missing word gloss.
-					m_vwenv.AddString(m_this.m_tssMissingGloss);
+					m_vwenv.AddString(m_this.m_tssMissingAnalysis);
 					break;
 				case WfiAnalysisTags.kClassId:
 					if (m_hvoDefault != m_hvoWordBundleAnalysis)
@@ -1853,7 +1755,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						// There's no gloss, display something indicating it is missing.
 						m_this.SetColor(m_vwenv, m_this.LabelRGBFor(choiceIndex));
-						m_vwenv.AddString(m_this.m_tssMissingGloss);
+						m_vwenv.AddString(m_this.m_tssMissingAnalysis);
 					}
 					else
 					{
@@ -1866,7 +1768,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						var wsActual = spec.WritingSystem;
 						if (spec.IsMagicWritingSystem)
 						{
-							wsActual = GetRealWs(m_cache, m_hvoWordBundleAnalysis, spec, m_this.m_wsAnalysis);
+							wsActual = spec.GetActualWs(m_cache, m_hvoWordBundleAnalysis, m_this.m_wsAnalysis);
 						}
 						// We're displaying properties of the current object, can do
 						// straightforwardly
@@ -1891,7 +1793,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 				case WfiWordformTags.kClassId:
 					m_this.SetColor(m_vwenv, m_this.LabelRGBFor(choiceIndex)); // looks like missing word POS.
-					m_vwenv.AddString(m_this.m_tssMissingAnalysisPos);
+					m_vwenv.AddString(m_this.m_tssMissingAnalysis);
 					break;
 				case WfiAnalysisTags.kClassId:
 					if (m_hvoDefault != m_hvoWordBundleAnalysis)
@@ -2011,13 +1913,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var labelBldr = tssLabel.GetBldr();
 			AddLineIndexProperty(labelBldr, lineChoiceIndex);
 			tssLabel = labelBldr.GetString();
-			if (wssAnalysis.Length > 1)
-			{
-				int labelWidth; // unused
-				int labelHeight; // unused
-				vwenv.get_StringWidth(tssLabel, null, out labelWidth, out labelHeight);
-			}
-			if (IsWsRtl(wssAnalysis[0]) != m_fRtl)
+			var wsVernPara = TsStringUtils.GetWsAtOffset(((ISegment)Cache.ServiceLocator.GetObject(hvoSeg)).BaselineText, 0);
+			if (IsWsRtl(wssAnalysis[0]) != IsWsRtl(wsVernPara))
 			{
 				var bldr = tssLabel.GetBldr();
 				bldr.Replace(bldr.Length - 1, bldr.Length, null, null);
@@ -2029,23 +1926,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (wssAnalysis.Length != 1)
 				{
 					// Insert WS label for first line
-					AddTssDirForVernWs(vwenv);
+					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
-					AddTssDirForVernWs(vwenv);
+					AddTssDirForWs(vwenv, wsVernPara);
 					SetNoteLabelProps(vwenv);
 					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[0]));
 				}
-				AddTssDirForVernWs(vwenv);
+				AddTssDirForWs(vwenv, wsVernPara);
 				vwenv.AddString(m_tssSpace);
-				AddTssDirForVernWs(vwenv);
+				AddTssDirForWs(vwenv, wsVernPara);
 				vwenv.AddString(tssLabelNoSpace);
-				AddTssDirForVernWs(vwenv);
+				AddTssDirForWs(vwenv, wsVernPara);
 			}
 			else
 			{
-				AddTssDirForVernWs(vwenv);
+				AddTssDirForWs(vwenv, wsVernPara);
 				vwenv.AddString(tssLabel);
-				AddTssDirForVernWs(vwenv);
+				AddTssDirForWs(vwenv, wsVernPara);
 				if (wssAnalysis.Length == 1)
 				{
 					AddTssDirForWs(vwenv, wssAnalysis[0]);
@@ -2055,12 +1952,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					SetNoteLabelProps(vwenv);
 					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[0]));
-					AddTssDirForVernWs(vwenv);
+					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
 					// label width unfortunately does not include trailing space.
-					AddTssDirForVernWs(vwenv);
+					AddTssDirForWs(vwenv, wsVernPara);
 					AddTssDirForWs(vwenv, wssAnalysis[0]);
-					//AddFreeformComment(vwenv, hvoSeg, wssAnalysis[0], flid);
 					vwenv.AddStringProp(customCommentFlid, this);
 				}
 			}
@@ -2112,13 +2008,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			switch (frag)
 			{
 				case kfragAnalysisMissingGloss:
-					return m_tssMissingGloss;
 				case kfragBundleMissingSense:
-					return m_tssMissingSense;
 				case kfragAnalysisMissingPos:
-					return m_tssMissingAnalysisPos;
-				case kfragMissingAnalysis:
 					return m_tssMissingAnalysis;
+				case kfragMissingWholeAnalysis:
+					return m_tssMissingVernacular;
 				default:
 					return null;
 			}
@@ -2332,7 +2226,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				vwenv.OpenParagraph();
 				vwenv.NoteDependency(new int[] {hvoAnalysis}, new[] {WfiAnalysisTags.kflidCategory}, 1);
-				vwenv.AddString(m_tssMissingAnalysisPos);
+				vwenv.AddString(m_tssMissingAnalysis);
 				vwenv.CloseParagraph();
 			}
 			else if (choiceIndex < 0)

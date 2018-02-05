@@ -132,7 +132,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidLexPos); //5
 
 			m_rootb.DataAccess = m_cache.MainCacheAccessor;
-			FixWs(); // AFTER setting DA!
 
 			if (m_wordform != null)
 			{
@@ -168,19 +167,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_tryAWordSandbox = null;
 		}
 
-		private void FixWs()
-		{
-			if (m_wordform == null || m_vc == null || m_rootb == null)
-			{
-				return;
-			}
-
-			int wsPreferred;
-			if (m_wordform.Form.TryWs(WritingSystemServices.kwsFirstVern, out wsPreferred))
-			{
-				m_vc.PreferredVernWs = wsPreferred;
-			}
-		}
 		// Set the size of the sandbox on the VC...if it exists yet.
 		private void SetSandboxSize()
 		{

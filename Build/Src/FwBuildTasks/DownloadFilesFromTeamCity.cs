@@ -104,7 +104,7 @@ namespace FwBuildTasks
 			if (availableTags.Any())
 			{
 				Dictionary<string, string> versionParts;
-				if (!string.IsNullOrEmpty(VersionInfo) && Substitute.ParseSymbolFile(VersionInfo, Log, out versionParts))
+				if (!string.IsNullOrEmpty(VersionInfo) && BuildUtils.ParseSymbolFile(VersionInfo, Log, out versionParts))
 				{
 					var tempTag = string.Format("fw-{0}.{1}.{2}~{3}",
 						versionParts["FWMAJOR"], versionParts["FWMINOR"], versionParts["FWREVISION"], versionParts["FWBETAVERSION"]);

@@ -144,7 +144,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			m_vc.LineChoices.Add(InterlinLineChoices.kflidLexPos); //4
 
 			m_rootb.DataAccess = m_cache.MainCacheAccessor;
-			FixWs(); // AFTER setting DA!
 
 			const int selectorId = InterlinVc.kfragSingleInterlinearAnalysisWithLabelsLeftAlign;
 			m_rootb.SetRootObject(m_wfiAnalysis.Hvo, m_vc, selectorId, m_styleSheet);
@@ -432,20 +431,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		#endregion
 
 		#region Other methods
-
-		private void FixWs()
-		{
-			if (m_wordform == null || m_vc == null || m_rootb == null)
-			{
-				return;
-			}
-
-			int wsPreferred;
-			if (m_wordform.Form.TryWs(WritingSystemServices.kwsFirstVern, out wsPreferred))
-			{
-				m_vc.PreferredVernWs = wsPreferred;
-			}
-		}
 
 		// Set the size of the sandbox on the VC...if it exists yet.
 		private void SetSandboxSize()

@@ -80,24 +80,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public bool IsMagicWritingSystem => WritingSystem < 0;
 
 		/// <summary>
-		/// Get the actual ws of the WritingSystem based on the given hvo.
-		/// If the WritingSystem is not magic, it'll just return WritingSystem.
+		/// Get the actual ws of the WritingSystem based on the given hvo, if it refers to a non-empty alternative;
+		/// otherwise, get the actual ws for wsFallback
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="hvo"></param>
-		/// <param name="wsPreferred">the ws to prefer over the standard sequence in current writing systems list. also used as a default
-		/// if no alternative ws can be found.</param>
-		/// <returns></returns>
-		public int GetActualWs(LcmCache cache, int hvo, int wsPreferred)
+		public int GetActualWs(LcmCache cache, int hvo, int wsFallback)
 		{
 			if (StringFlid == -1)
 			{
 				// we depend upon someone else to determine the ws.
 				return 0;
 			}
-			ITsString tssActual;
 			int wsActual;
-			return WritingSystemServices.TryWs(cache, WritingSystem, wsPreferred, hvo, StringFlid, out wsActual, out tssActual) ? wsActual : wsPreferred;
+			ITsString dummy;
+			WritingSystemServices.TryWs(cache, WritingSystem, wsFallback, hvo, StringFlid, out wsActual, out dummy);
+			return wsActual;
 		}
 
 		public bool LexEntryLevel => MorphemeLevel && Flid != InterlinLineChoices.kflidMorphemes;

@@ -33,8 +33,6 @@ namespace LanguageExplorer.Controls.LexText
 	/// </summary>
 	public partial class FlexLiftMerger : ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>
 	{
-
-		//===========================================================================
 		#region Constructors and other initialization methods
 		private void InitializePossibilityMaps()
 		{
@@ -1498,14 +1496,7 @@ namespace LanguageExplorer.Controls.LexText
 		#endregion // Storing LIFT import residue...
 
 		#region Methods for processing LIFT header elements
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="sName"></param>
-		/// <param name="lmtDesc">lmtDesc is safe-XML</param>
-		/// <param name="clid"></param>
-		/// <param name="possListGuid"></param>
-		/// <returns></returns>
+		/// <summary />
 		private int FindOrCreateCustomField(string sName, LiftMultiText lmtDesc, int clid, out Guid possListGuid)
 		{
 			var sClass = m_cache.MetaDataCacheAccessor.GetClassName(clid);
@@ -1590,9 +1581,9 @@ namespace LanguageExplorer.Controls.LexText
 				case CellarPropertyType.Image:
 				case CellarPropertyType.GenDate:
 				case CellarPropertyType.Binary:
+				case CellarPropertyType.String:
 					clidDst = -1;
 					break;
-				case CellarPropertyType.String:
 				case CellarPropertyType.Unicode:
 				case CellarPropertyType.MultiString:
 				case CellarPropertyType.MultiUnicode:

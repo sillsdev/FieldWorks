@@ -143,8 +143,8 @@ namespace SIL.FieldWorks
 				if (!string.IsNullOrEmpty(dir))
 				{
 					Environment.SetEnvironmentVariable("ICU_DATA", dir);
-				}
 			}
+		}
 		}
 
 		/// <summary>
@@ -302,7 +302,8 @@ namespace SIL.FieldWorks
 
 				// e.g. the first time the user runs FW9, we need to copy a bunch of registry keys
 				// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/9 or
-				// from HKCU/Software/SIL/FieldWorks/8 -> FieldWorks/9
+				// from HKCU/Software/SIL/FieldWorks/8 -> FieldWorks/9 and
+				// from HKCU/Software/WOW6432Node/SIL/FieldWorks -> HKCU/Software/SIL/FieldWorks
 				FwRegistryHelper.UpgradeUserSettingsIfNeeded();
 
 				if (appArgs.ShowHelp)
@@ -527,7 +528,7 @@ namespace SIL.FieldWorks
 				if (locale.StartsWith("en-"))
 				{
 					locale = "en";
-				}
+			}
 			}
 			// If that doesn't exist, just use English ("en").
 			if (string.IsNullOrEmpty(locale))
@@ -708,7 +709,7 @@ namespace SIL.FieldWorks
 				if (fAddQuotes)
 				{
 					bldr.Append("\"");
-				}
+			}
 			}
 			try
 			{
@@ -759,17 +760,17 @@ namespace SIL.FieldWorks
 			get
 			{
 				var projects = new List<string>
-				{
+		{
 					Cache.ProjectId.UiName // be sure to include myself!
 				};
-				RunOnRemoteClients(kFwRemoteRequest, requestor =>
-				{
-					projects.Add(requestor.ProjectName);
-					return false;
-				});
+			RunOnRemoteClients(kFwRemoteRequest, requestor =>
+			{
+				projects.Add(requestor.ProjectName);
+				return false;
+			});
 
-				return projects;
-			}
+			return projects;
+		}
 		}
 
 		#region Cache Creation and Handling
@@ -812,9 +813,9 @@ namespace SIL.FieldWorks
 				{
 					continue;
 				}
-				ws.DefaultCollation = new IcuRulesCollationDefinition("standard");
-				nullCollationWs.Append(ws.DisplayLabel + ",");
-			}
+					ws.DefaultCollation = new IcuRulesCollationDefinition("standard");
+					nullCollationWs.Append(ws.DisplayLabel + ",");
+				}
 			if (nullCollationWs.Length > 0)
 			{
 				nullCollationWs = nullCollationWs.Remove(nullCollationWs.Length - 1, 1);
@@ -853,21 +854,21 @@ namespace SIL.FieldWorks
 				return;
 			}
 			MessageBox.Show(string.Format(Properties.Resources.ksInvalidLinkedFilesFolder, linkedFilesFolder), Properties.Resources.ksErrorCaption);
-			using (var folderBrowserDlg = new FolderBrowserDialogAdapter())
-			{
-				folderBrowserDlg.Description = Properties.Resources.ksLinkedFilesFolder;
-				folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
-				folderBrowserDlg.SelectedPath = Directory.Exists(defaultFolder) ? defaultFolder : cache.ProjectId.ProjectFolder;
-				if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
+				using (var folderBrowserDlg = new FolderBrowserDialogAdapter())
 				{
-					linkedFilesFolder = folderBrowserDlg.SelectedPath;
-				}
-				else
+					folderBrowserDlg.Description = Properties.Resources.ksLinkedFilesFolder;
+					folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
+					folderBrowserDlg.SelectedPath = Directory.Exists(defaultFolder) ? defaultFolder : cache.ProjectId.ProjectFolder;
+					if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
 				{
-					FileUtils.EnsureDirectoryExists(defaultFolder);
-					linkedFilesFolder = defaultFolder;
+						linkedFilesFolder = folderBrowserDlg.SelectedPath;
 				}
-			}
+					else
+					{
+						FileUtils.EnsureDirectoryExists(defaultFolder);
+						linkedFilesFolder = defaultFolder;
+					}
+				}
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(cache.ActionHandlerAccessor, () => { cache.LangProject.LinkedFilesRootDir = linkedFilesFolder; });
 		}
 
@@ -880,7 +881,7 @@ namespace SIL.FieldWorks
 			if (linkedFilesFolder == defaultLinkedFilesFolder)
 			{
 				FileUtils.EnsureDirectoryExists(defaultLinkedFilesFolder);
-			}
+		}
 		}
 
 		/// <summary>
@@ -933,7 +934,7 @@ namespace SIL.FieldWorks
 					// needed after doing a save.
 					Thread.Sleep(2000);
 					s_renameSuccessful = Cache.RenameDatabase(s_renameNewName);
-				}
+			}
 			}
 			finally
 			{
@@ -1003,8 +1004,8 @@ namespace SIL.FieldWorks
 				using (var process = Process.GetCurrentProcess())
 				{
 					process.Kill();
-				}
 			}
+		}
 		}
 
 		/// <summary>
@@ -1022,10 +1023,10 @@ namespace SIL.FieldWorks
 			}
 
 			ThreadHelper.Invoke(!fTerminating, () => DisplayError(exception, s_activeMainWnd));
-			// We got called from a different thread, maybe the Finalizer thread. Anyways,
-			// it's never ok to exit the app in this case so we return fTerminating.
-			return fTerminating;
-		}
+				// We got called from a different thread, maybe the Finalizer thread. Anyways,
+				// it's never ok to exit the app in this case so we return fTerminating.
+				return fTerminating;
+			}
 
 		/// <summary>
 		/// Displays the error.
@@ -1047,11 +1048,11 @@ namespace SIL.FieldWorks
 					{
 						return false;
 					}
-					// User chose to exit the application. Make sure that the program can be
-					// properly shut down after displaying the exception. (FWR-3179)
-					ResetStateForForcedShutdown();
-					return true;
-				}
+						// User chose to exit the application. Make sure that the program can be
+						// properly shut down after displaying the exception. (FWR-3179)
+						ResetStateForForcedShutdown();
+						return true;
+					}
 
 				// Make sure that the program can be properly shut down after displaying the exception. (FWR-3179)
 				ResetStateForForcedShutdown();
@@ -1114,16 +1115,16 @@ namespace SIL.FieldWorks
 		/// false otherise</returns>
 		private static bool SafelyReportException(Exception error, IFwMainWnd parent, bool isLethal)
 		{
-			// Be very, very careful about changing stuff here. Code here MUST not throw exceptions,
-			// even when the application is in a crashed state. For example, error reporting failed
-			// before I added the static registry keys, because getting App.SettingsKey failed somehow.
-			var appKey = FwRegistryHelper.FieldWorksRegistryKey;
-			if (parent != null && s_flexApp != null)
+				// Be very, very careful about changing stuff here. Code here MUST not throw exceptions,
+				// even when the application is in a crashed state. For example, error reporting failed
+				// before I added the static registry keys, because getting App.SettingsKey failed somehow.
+				var appKey = FwRegistryHelper.FieldWorksRegistryKey;
+			if (parent != null  && s_flexApp != null)
 			{
-				appKey = s_flexAppKey;
+					appKey = s_flexAppKey;
 			}
-			return ErrorReporter.ReportException(error, appKey, SupportEmail, parent as Form, isLethal);
-		}
+				return ErrorReporter.ReportException(error, appKey, SupportEmail, parent as Form, isLethal);
+			}
 
 		/// <summary>
 		/// Gets the setting for displaying error message boxes. The value is retrieved from
@@ -1144,7 +1145,7 @@ namespace SIL.FieldWorks
 					if (!string.IsNullOrEmpty(sShowUI))
 					{
 						return Convert.ToBoolean(sShowUI);
-					}
+				}
 				}
 				catch
 				{
@@ -1179,10 +1180,10 @@ namespace SIL.FieldWorks
 			{
 				return;
 			}
-			s_splashScreen.Close();
-			s_splashScreen.Dispose();
-			s_splashScreen = null;
-		}
+				s_splashScreen.Close();
+				s_splashScreen.Dispose();
+				s_splashScreen = null;
+			}
 
 		/// <summary>
 		/// Write to the splash screen
@@ -1194,10 +1195,10 @@ namespace SIL.FieldWorks
 			{
 				return;
 			}
-			// Set the splash screen message
-			s_splashScreen.Message = msg;
-			s_splashScreen.Refresh();
-		}
+				// Set the splash screen message
+				s_splashScreen.Message = msg;
+				s_splashScreen.Refresh();
+			}
 
 		#endregion
 
@@ -1578,12 +1579,12 @@ namespace SIL.FieldWorks
 						else
 						{
 							dlg.ShowErrorLabelHideLink();
-						}
+					}
 					}
 					var gotAutoOpenSetting = false;
 					if (startingApp.RegistrySettings != null) // may be null if disposed after canceled restore.
 					{
-						dlg.OpenLastProjectCheckboxIsChecked = GetAutoOpenRegistrySetting(startingApp);
+					dlg.OpenLastProjectCheckboxIsChecked = GetAutoOpenRegistrySetting(startingApp);
 						gotAutoOpenSetting = true;
 					}
 					dlg.StartPosition = FormStartPosition.CenterScreen;
@@ -1593,7 +1594,7 @@ namespace SIL.FieldWorks
 					var app = GetOrCreateApplication(args);
 					if (gotAutoOpenSetting)
 					{
-						app.RegistrySettings.AutoOpenLastEditedProject = dlg.OpenLastProjectCheckboxIsChecked;
+					app.RegistrySettings.AutoOpenLastEditedProject = dlg.OpenLastProjectCheckboxIsChecked;
 					}
 					switch (dlg.DlgResult)
 					{
@@ -1657,24 +1658,24 @@ namespace SIL.FieldWorks
 							projectToTry = CreateNewProject();
 							if (projectToTry != null)
 							{
-								var projectLaunched = LaunchProject(args, ref projectToTry);
+							var projectLaunched = LaunchProject(args, ref projectToTry);
 								if (projectLaunched)
-								{
-									s_projectId = projectToTry; // Window is open on this project, we must not try to initialize it again.
-									var mainWindow = Form.ActiveForm;
+							{
+								s_projectId = projectToTry; // Window is open on this project, we must not try to initialize it again.
+								var mainWindow = Form.ActiveForm;
 									if (mainWindow is IFwMainWnd)
-									{
+								{
 										((IFwMainWnd)mainWindow).Publisher.Publish("SFMImport", null);
-									}
-									else
-									{
-										return null;
-									}
 								}
 								else
 								{
 									return null;
 								}
+							}
+							else
+							{
+								return null;
+							}
 							}
 							break;
 					}
@@ -1730,12 +1731,12 @@ namespace SIL.FieldWorks
 				{
 					return null;
 				}
-				var projId = new ProjectId(dlg.Project);
-				if (IsSharedXmlBackendNeeded(projId))
+					var projId = new ProjectId(dlg.Project);
+					if (IsSharedXmlBackendNeeded(projId))
 				{
-					projId.Type = BackendProviderType.kSharedXML;
+						projId.Type = BackendProviderType.kSharedXML;
 				}
-				return projId;
+					return projId;
 			}
 		}
 
@@ -1871,9 +1872,9 @@ namespace SIL.FieldWorks
 		{
 			using (var dlg = new ProjectLocationDlg(app, cache))
 			{
-				if (dlg.ShowDialog(dialogOwner) != DialogResult.OK)
+			if (dlg.ShowDialog(dialogOwner) != DialogResult.OK)
 				{
-					return;
+				return;
 				}
 				var projectPath = cache.ProjectId.Path;
 				var parentDirectory = Path.GetDirectoryName(cache.ProjectId.ProjectFolder);
@@ -1888,8 +1889,8 @@ namespace SIL.FieldWorks
 				}
 
 				UpdateProjectsLocation(dlg.ProjectsFolder, app, projectPath);
+				}
 			}
-		}
 
 		/// <summary>
 		/// Updates the projects default directory.
@@ -1900,7 +1901,7 @@ namespace SIL.FieldWorks
 		private static void UpdateProjectsLocation(string newFolderForProjects, IApp app, string projectPath)
 		{
 			if (newFolderForProjects == null || newFolderForProjects == FwDirectoryFinder.ProjectsDirectory || !FileUtils.EnsureDirectoryExists(newFolderForProjects))
-			{
+		{
 				return;
 			}
 
@@ -1923,9 +1924,9 @@ namespace SIL.FieldWorks
 			{
 				return;
 			}
-			var oldProjectId = (ProjectId)Cache.ProjectId;
-			ExecuteWithAllFwProcessesShutDown(() => MoveProjectFolders(oldFolderForProjects, newFolderForProjects, projectPath, oldProjectId));
-		}
+				var oldProjectId = (ProjectId)Cache.ProjectId;
+				ExecuteWithAllFwProcessesShutDown(() => MoveProjectFolders(oldFolderForProjects, newFolderForProjects, projectPath, oldProjectId));
+			}
 
 		/// <summary>
 		/// Check whether we must copy the project folders and files because the new Projects
@@ -1966,7 +1967,7 @@ namespace SIL.FieldWorks
 				if (oldRoot != null && newRoot != null)
 				{
 					return oldRoot != newRoot;
-				}
+			}
 			}
 			return true;	// shouldn't ever get here, but be safe if we do.
 		}
@@ -2136,17 +2137,17 @@ namespace SIL.FieldWorks
 				{
 					return oldProjectId;
 				}
-				// This is perhaps a temporary workaround.  On Linux, FwDirectoryFinder.ProjectsDirectory
-				// isn't returning the updated value, but rather the original value.  This seems to
-				// last for the duration of the program, but if you exit and restart the program, it
-				// gets the correct (updated) value!?
-				// (On the other hand, I somewhat prefer this code which is fairly straightforward and
+					// This is perhaps a temporary workaround.  On Linux, FwDirectoryFinder.ProjectsDirectory
+					// isn't returning the updated value, but rather the original value.  This seems to
+					// last for the duration of the program, but if you exit and restart the program, it
+					// gets the correct (updated) value!?
+					// (On the other hand, I somewhat prefer this code which is fairly straightforward and
 				// obvious to depending on calling some static method hidden in the depths of LCM.)
 				var projFileName = Path.GetFileName(projectPath);
 				var projName = Path.GetFileNameWithoutExtension(projectPath);
 				var path = Path.Combine(Path.Combine(newFolderForProjects, projName), projFileName);
-				return new ProjectId(path);
-			}
+					return new ProjectId(path);
+				}
 			return projectPath.StartsWith(oldFolderForProjects, StringComparison.InvariantCultureIgnoreCase) ? new ProjectId(projectPath) : oldProjectId;
 		}
 
@@ -2213,30 +2214,30 @@ namespace SIL.FieldWorks
 			{
 				return true;
 			}
-			try
-			{
-				// TODO (TimS): We should probably put FW into single process mode for these
-				// migrations. It would probably be very bad to have two processes attempting to
-				// do migrations at the same time.
+				try
+				{
+					// TODO (TimS): We should probably put FW into single process mode for these
+					// migrations. It would probably be very bad to have two processes attempting to
+					// do migrations at the same time.
 				var info = new ProcessStartInfo(FwDirectoryFinder.MigrateSqlDbsExe)
 				{
 					UseShellExecute = false
 				};
 				using (var proc = Process.Start(info))
-				{
-					proc.WaitForExit();
-					if (proc.ExitCode < 0)
 					{
-						throw new Exception(Properties.Resources.ksMigratingProjectsFailed);
+						proc.WaitForExit();
+						if (proc.ExitCode < 0)
+					{
+							throw new Exception(Properties.Resources.ksMigratingProjectsFailed);
 					}
-					if (proc.ExitCode > 0)
+						if (proc.ExitCode > 0)
 					{
 						throw new Exception(string.Format(Properties.Resources.ksProjectsFailedToMigrate, proc.ExitCode));
 					}
+					}
 				}
-			}
-			catch (Exception ex)
-			{
+				catch (Exception ex)
+				{
 				MessageBox.Show(Properties.Resources.ksErrorMigratingProjects + Environment.NewLine + ex.Message);
 			}
 			return true;
@@ -2365,7 +2366,7 @@ namespace SIL.FieldWorks
 			using (var progressDlg = new ProgressDialogWithTask(ThreadHelper))
 			{
 				restoreService.RestoreProject(progressDlg);
-			}
+		}
 		}
 
 		/// <summary>
@@ -2403,8 +2404,8 @@ namespace SIL.FieldWorks
 						    DialogResult.Yes)
 						{
 							File.Delete(backupFile);
-						}
 					}
+				}
 				}
 				catch (FwBackupException e)
 				{
@@ -2422,8 +2423,8 @@ namespace SIL.FieldWorks
 					if (existingCache == null) // We created a new cache so we need to dispose of it
 					{
 						cache.Dispose();
-					}
 				}
+			}
 			}
 			return true;
 		}
@@ -2509,9 +2510,9 @@ namespace SIL.FieldWorks
 			}
 			var app = s_flexApp;
 			Debug.Assert(app != null && app.HasBeenFullyInitialized, "KickOffAppFromOtherProcess should create the application needed");
-			// Let the application handle the link
-			app.HandleIncomingLink(link);
-		}
+				// Let the application handle the link
+				app.HandleIncomingLink(link);
+			}
 
 		/// <summary>
 		/// Attempts to find another FieldWorks process that can handle the specified link.
@@ -2576,12 +2577,12 @@ namespace SIL.FieldWorks
 				{
 					return;
 				}
-				// TODO-Linux: Help is not implemented in Mono
+					// TODO-Linux: Help is not implemented in Mono
 				var res = MessageBox.Show(Properties.Resources.ksProjectLinksStillOld,
-					Properties.Resources.ksReviewLocationOfLinkedFiles,
-					MessageBoxButtons.YesNo, MessageBoxIcon.None,
-					MessageBoxDefaultButton.Button1, 0, app.HelpFile,
-					"/User_Interface/Menus/File/Project_Properties/Review_the_location_of_Linked_Files.htm");
+						Properties.Resources.ksReviewLocationOfLinkedFiles,
+						MessageBoxButtons.YesNo, MessageBoxIcon.None,
+						MessageBoxDefaultButton.Button1, 0, app.HelpFile,
+						"/User_Interface/Menus/File/Project_Properties/Review_the_location_of_Linked_Files.htm");
 				if (res != DialogResult.Yes)
 				{
 					return;
@@ -2630,12 +2631,12 @@ namespace SIL.FieldWorks
 			{
 				return;
 			}
-			// Remember the settings, so that, if we end up saving some changes
-			// related to it, we can record the last saved project.
+				// Remember the settings, so that, if we end up saving some changes
+				// related to it, we can record the last saved project.
 			s_settingsForLastClosedWindow = s_flexApp.RegistrySettings;
-			// Make sure the closing main window is not considered the active main window
-			s_activeMainWnd = null;
-		}
+				// Make sure the closing main window is not considered the active main window
+				s_activeMainWnd = null;
+			}
 #endregion
 
 #region Window Handling Methods
@@ -2753,7 +2754,7 @@ namespace SIL.FieldWorks
 						if (args.HasLinkInformation)
 						{
 							app.HandleIncomingLink(args);
-						}
+					}
 					}
 					return;
 				}
@@ -2762,10 +2763,10 @@ namespace SIL.FieldWorks
 				{
 					return;
 				}
-				// Make sure the cache is initialized for the application.
+					// Make sure the cache is initialized for the application.
 				using (var dlg = new ProgressDialogWithTask(ThreadHelper))
 				{
-					InitializeApp(app, dlg);
+						InitializeApp(app, dlg);
 				}
 			});
 		}
@@ -2780,12 +2781,12 @@ namespace SIL.FieldWorks
 		{
 			if (s_flexApp != null)
 			{
-				return s_flexApp;
-			}
+			return s_flexApp;
+		}
 			s_flexApp = s_compositionContainer.GetExportedValue<IFlexApp>();
 			s_flexApp.FwAppArgs = args;
 			s_flexAppKey = s_flexApp.SettingsKey;
-			return s_flexApp;
+				return s_flexApp;
 		}
 
 		/// <summary>
@@ -2879,14 +2880,14 @@ namespace SIL.FieldWorks
 					if (!app.InitCacheForApp(progressDlg))
 					{
 						throw new StartupException(Properties.Resources.kstidCacheInitFailure);
-					}
+				}
 				}
 				catch (Exception e)
 				{
 					if (e is StartupException)
-					{
-						throw;
-					}
+				{
+					throw;
+				}
 					throw new StartupException(Properties.Resources.kstidCacheInitFailure, e, true);
 				}
 				undoHelper.RollBack = false;
@@ -2903,7 +2904,7 @@ namespace SIL.FieldWorks
 				if (progressDlg != null)
 				{
 					progressDlg.IsIndeterminate = false;
-				}
+			}
 			}
 
 			return CreateAndInitNewMainWindow(s_activeMainWnd, true);
@@ -3023,7 +3024,7 @@ namespace SIL.FieldWorks
 					if (!ar.AsyncWaitHandle.WaitOne(9000, false))
 					{
 						return false; // Just continue on
-					}
+				}
 				}
 				// We can now ask for the answer.
 				if (invoker.EndInvoke(ar))
@@ -3132,7 +3133,7 @@ namespace SIL.FieldWorks
 			if (!fFoundAvailablePort)
 			{
 				throw new RemotingException("Could not find any available port for listening.", lastException);
-			}
+		}
 		}
 
 		/// <summary>

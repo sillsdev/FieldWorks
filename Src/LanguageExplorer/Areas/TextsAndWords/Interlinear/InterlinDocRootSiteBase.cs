@@ -664,7 +664,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case WritingSystemServices.kwsFirstAnal:
 					return Cache.LangProject.DefaultAnalysisWritingSystem.Handle;
 				case WritingSystemServices.kwsVernInParagraph:
-					return Cache.LangProject.DefaultVernacularWritingSystem.Handle;
+					return Cache.LangProject.DefaultVernacularWritingSystem.Handle;  // REVIEW (Hasso) 2018.01: this is frequently the case, but not always
 			}
 
 			var ws = -50;

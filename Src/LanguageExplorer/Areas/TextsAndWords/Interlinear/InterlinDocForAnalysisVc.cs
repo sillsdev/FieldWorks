@@ -8,6 +8,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -67,8 +68,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// first line of text) an appropriate distance from the top of the Sandbox. This aligns it's
 					// top line of text properly.
 					// Enhance JohnT: 90% of font height is not always exactly right, but it's the closest
-					// I can get wihtout a new API to get the exact ascent of the font.
-					var dympBaseline = FontHeightAdjuster.GetFontHeightForStyle("Normal", m_stylesheet, m_wsVernForDisplay, m_cache.LanguageWritingSystemFactoryAccessor) * 9 / 10;
+					// I can get without a new API to get the exact ascent of the font.
+					var wsSeg = TsStringUtils.GetWsAtOffset(FocusBoxOccurrence.Segment.BaselineText, 0);
+					var dympBaseline = FontHeightAdjuster.GetFontHeightForStyle("Normal", m_stylesheet, wsSeg, m_cache.LanguageWritingSystemFactoryAccessor) * 9 / 10;
 					var transparent = 0xC0000000; // FwTextColor.kclrTransparent won't convert to uint
 					vwenv.AddSimpleRect((int)transparent, FocusBoxSize.Width, FocusBoxSize.Height, - (FocusBoxSize.Height - dympBaseline));
 					return;

@@ -572,7 +572,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary>
-		/// Answer an array list of integers, the writing systems we care about for the view.
+		/// A list of integers representing the writing systems we care about for the view.
 		/// </summary>
 		public List<int> WritingSystems
 		{
@@ -606,10 +606,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			for (var i = first; i < lim; i++)
 			{
 				var wsId = this[i].WritingSystem;
-				var magicWsName = WritingSystemServices.GetMagicWsNameFromId(wsId);
-				if (!string.IsNullOrEmpty(magicWsName))
+				if (wsId < 0)  // if this is a magic writing system
 				{
-					wsId = WritingSystemServices.ActualWs(m_cache, magicWsName, hvo, this[i].Flid);
+					wsId = WritingSystemServices.ActualWs(m_cache, wsId, hvo, this[i].Flid);
 				}
 				result[i - first] = wsId;
 			}

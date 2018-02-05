@@ -4077,9 +4077,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.That(css, Contains.Substring("border-right-width:" + trailing / 1000 + "pt"));
 		}
 
-		// ReSharper disable UnusedParameter.Local -- these parameters are very important.
 		private static void VerifyRegex(string input, string pattern, string message = null, RegexOptions options = RegexOptions.Singleline)
-		// ReSharper restore UnusedParameter.Local
 		{
 			Assert.IsTrue(Regex.Match(input, pattern, options).Success,
 				string.Format("{3}Expected{0}{1}{0}but got{0}{2}", Environment.NewLine, pattern, input,

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,6 +11,8 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Xml.Xsl;
 using System.Text;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 
 namespace FwBuildTasks
 {
@@ -170,6 +172,37 @@ namespace FwBuildTasks
 			var writer = new StreamWriter(outputFile, false, Encoding.UTF8);
 			transform.Transform(inputFile, arguments, writer);
 			writer.Close();
+		}
+
+		/// <returns>true if substitutions were successfully parsed from the symbol file</returns>
+		public static bool ParseSymbolFile(string symbolFile, TaskLoggingHelper log, out Dictionary<string, string> substitutions)
+		{
+			substitutions = new Dictionary<string, string>();
+			if (String.IsNullOrEmpty(symbolFile))
+				return true;
+			if (!File.Exists(symbolFile))
+			{
+				log.LogMessage(MessageImportance.High, "Symbol file " + symbolFile + " not found");
+				return false;
+			}
+			var reader = new StreamReader(symbolFile);
+			var lineNumber = 0;
+			while (!reader.EndOfStream)
+			{
+				var line = reader.ReadLine();
+				lineNumber++;
+				// Ignore empty lines, comments, or if we somehow get a null at the end.
+				if (String.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
+					continue;
+				var items = line.Split('=');
+				if (items.Length != 2 || items[0].Trim().Length == 0)
+				{
+					log.LogMessage(MessageImportance.High, "Invalid symbol file: '{0}' line {1} should be Name=Value", symbolFile, lineNumber);
+					return false;
+				}
+				substitutions[items[0].Trim()] = items[1].Trim();
+			}
+			return true;
 		}
 	}
 }

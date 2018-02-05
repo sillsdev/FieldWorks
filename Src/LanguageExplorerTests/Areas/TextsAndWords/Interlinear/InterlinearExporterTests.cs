@@ -29,6 +29,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		protected IText m_text1;
 		internal InterlinLineChoices m_choices;
 		private XmlDocument m_textsDefn;
+		private const string QaaXKal = "qaa-x-kal";
 		private bool _didIInitSLDR;
 
 		[TestFixtureSetUp]
@@ -141,7 +142,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			public void BeforeEachTest()
 			{
 				CoreWritingSystemDefinition wsXkal;
-				Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsXkal);
+				Cache.ServiceLocator.WritingSystemManager.GetOrSet(QaaXKal, out wsXkal);
 				var wsEng = Cache.ServiceLocator.WritingSystemManager.Get("en");
 				m_text1 = SetupDataForText1();
 				m_choices = new InterlinLineChoices(Cache.LanguageProject, wsXkal.Handle, wsEng.Handle);
@@ -191,18 +192,18 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
 				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
 				pa.ReparseParagraph();
-				XmlDocument exportedDoc = ExportToXml();
+				ExportToXml();
 
 				string formLexEntry = "went";
-				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "go.PST", null);
-				pa.BreakIntoMorphs(0, 1, new ArrayList{ leGo.LexemeFormOA });
+				pa.BreakIntoMorphs(0, 1, new ArrayList { leGo.LexemeFormOA });
 				pa.SetMorphSense(0, 1, 0, leGo.SensesOS[0]);
 				pa.ReparseParagraph();
-				exportedDoc = ExportToXml();
+				var exportedDoc = ExportToXml();
 
 				//validate export xml against schema
 				ValidateInterlinearXml(exportedDoc);
@@ -213,6 +214,45 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph[item[@type='gls']='go.PST']", 1);
 
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//morph/item[@type='variantTypes']", 0);
+			}
+
+			[Test]
+			public void ExportBasicInformation_FormSansMorph()
+			{
+				m_choices.Add(InterlinLineChoices.kflidWord);
+				m_choices.Add(InterlinLineChoices.kflidMorphemes, WritingSystemServices.kwsVernInParagraph);
+				m_choices.Add(InterlinLineChoices.kflidLexEntries);
+				m_choices.Add(InterlinLineChoices.kflidLexGloss);
+				m_choices.Add(InterlinLineChoices.kflidLexPos);
+
+				var para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
+				var pa = new ParagraphAnnotator(para1);
+				pa.ReparseParagraph();
+				ExportToXml();
+
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
+				var formGo = "go";
+				var formEn = "en";
+				var tssGoForm = TsStringUtils.MakeString(formGo, wsXkal.Handle);
+				var tssEnForm = TsStringUtils.MakeString(formEn, wsXkal.Handle);
+				int clsidForm;
+				var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
+					MorphServices.FindMorphType(Cache, ref formGo, out clsidForm), tssGoForm, "go", null);
+				var leEn = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
+					MorphServices.FindMorphType(Cache, ref formEn, out clsidForm), tssEnForm, ".PP", null);
+				pa.BreakIntoMorphs(0, 2, new ArrayList{ leGo.LexemeFormOA, tssEnForm });
+				pa.SetMorphSense(0, 2, 0, leGo.SensesOS[0]);
+				pa.SetMorphSense(0, 2, 1, leEn.SensesOS[0]);
+				pa.ReparseParagraph();
+				var exportedDoc = ExportToXml();
+
+				//validate export xml against schema
+				ValidateInterlinearXml(exportedDoc);
+
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath($@"//word[item[@type='txt' and @lang='{QaaXKal}']='gone']", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath($@"//morph[item[@type='txt' and @lang='{QaaXKal}']]", 2);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath($@"//morph[item[@type='txt' and @lang='{QaaXKal}']='go']", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath($@"//morph[item[@type='txt' and @lang='{QaaXKal}']='en']", 1);
 			}
 
 			/// <summary>
@@ -314,7 +354,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				XmlDocument exportedDoc = ExportToXml();
 
 				string formLexEntry = "went";
-				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
@@ -338,7 +378,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			[Test]
 			public void ExportBasicInformation_multipleWss()
 			{
-				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 				var wsEs = Cache.ServiceLocator.WritingSystemManager.Get("es");
 				m_choices.Add(InterlinLineChoices.kflidWord);
 				m_choices.Add(InterlinLineChoices.kflidMorphemes);
@@ -407,7 +447,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				AssertThatXmlIn.Dom(exportedDoc).HasNoMatchForXpath("//morph/item[@type=\"cf\"]");
 				string formLexEntry = "go";
 
-				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
@@ -432,7 +472,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			[Test]
 			public void ExportVariantTypeInformation_LT9374_xml2html_multipleWss()
 			{
-				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 				var wsEs = Cache.ServiceLocator.WritingSystemManager.Get("es");
 				m_choices.Add(InterlinLineChoices.kflidWord);
 				m_choices.Add(InterlinLineChoices.kflidMorphemes);
@@ -489,7 +529,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			[Test]
 			public void ExportVariantTypeInformation_LT9374_xml2OO_multipleWss()
 			{
-				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 				var wsEs = Cache.ServiceLocator.WritingSystemManager.Get("es");
 				m_choices.Add(InterlinLineChoices.kflidWord);
 				m_choices.Add(InterlinLineChoices.kflidMorphemes);
@@ -555,7 +595,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 				string formLexEntry = "go";
 
-				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
@@ -603,7 +643,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 				string formLexEntry = "go";
 
-				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
@@ -646,7 +686,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 				string formLexEntry = "go";
 
-				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
@@ -702,7 +742,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 				string formLexEntry = "go";
 
-				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
@@ -748,7 +788,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			[Test]
 			public void ExportIrrInflVariantTypeInformation_LT7581_glsAppend_varianttypes_xml2Word_multipleWss()
 			{
-				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 				var wsEs = Cache.ServiceLocator.WritingSystemManager.Get("es");
 				var wsfr = Cache.ServiceLocator.WritingSystemManager.Get("fr");
 				var wsEn = Cache.ServiceLocator.WritingSystemManager.Get("en");
@@ -809,7 +849,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			[Test]
 			public void ExportIrrInflVariantTypeInformation_LT7581_glsAppend_varianttypes_xml2Word2007_multipleWss()
 			{
-				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 				var wsEs = Cache.ServiceLocator.WritingSystemManager.Get("es");
 				var wsfr = Cache.ServiceLocator.WritingSystemManager.Get("fr");
 				var wsEn = Cache.ServiceLocator.WritingSystemManager.Get("en");
@@ -865,7 +905,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			[Ignore("This is a bug that might need to be fixed if users notice it. low priority since the user could just not display lines with same ws")]
 			public void ExportIrrInflVariantTypeInformation_LT7581_gls_multiEngWss()
 			{
-				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 				var wsEn = Cache.ServiceLocator.WritingSystemManager.Get("en");
 				m_choices.Add(InterlinLineChoices.kflidWord);
 				m_choices.Add(InterlinLineChoices.kflidMorphemes);

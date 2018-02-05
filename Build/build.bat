@@ -12,7 +12,7 @@ if not "%OS%"=="" setlocal
 REM Add Bin and DistFiles to the PATH:
 pushd %~dp0
 cd ..
-set PATH=%cd%\DistFiles;%cd%\Bin;%PATH%
+set PATH=%cd%\DistFiles;%cd%\Bin;%WIX%\bin;%PATH%
 popd
 
 Set RegQry=HKLM\Hardware\Description\System\CentralProcessor\0
