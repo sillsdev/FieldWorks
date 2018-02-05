@@ -24,7 +24,6 @@ namespace LanguageExplorer.UtilityTools
 		/// <summary>
 		/// Override method to return the Label property.
 		/// </summary>
-		/// <returns></returns>
 		public override string ToString()
 		{
 			return Label;

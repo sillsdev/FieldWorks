@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,9 +19,6 @@ namespace LanguageExplorer.UtilityTools
 	/// </summary>
 	public class UtilityDlg : Form, IFlexComponent
 	{
-		private string m_whenDescription;
-		private string m_whatDescription;
-		private string m_redoDescription;
 		private CheckedListBox m_clbUtilities;
 		private RichTextBox m_rtbDescription;
 		private ProgressBar m_progressBar;
@@ -159,35 +156,17 @@ namespace LanguageExplorer.UtilityTools
 		/// <summary>
 		/// Set the When Description substring.
 		/// </summary>
-		public string WhenDescription
-		{
-			set
-			{
-				m_whenDescription = value;
-			}
-		}
+		public string WhenDescription { get; set; }
 
 		/// <summary>
 		/// Set the What Description substring.
 		/// </summary>
-		public string WhatDescription
-		{
-			set
-			{
-				m_whatDescription = value;
-			}
-		}
+		public string WhatDescription { get; set; }
 
 		/// <summary>
 		/// Set the "Cautions" substring. (Keeping the legacy API)
 		/// </summary>
-		public string RedoDescription
-		{
-			set
-			{
-				m_redoDescription = value;
-			}
-		}
+		public string RedoDescription { get; set; }
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -201,7 +180,7 @@ namespace LanguageExplorer.UtilityTools
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 				components?.Dispose();
 				m_helpProvider.ResetShowHelp(this);
@@ -214,7 +193,7 @@ namespace LanguageExplorer.UtilityTools
 			m_helpProvider = null;
 			m_helpTopicProvider = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code
@@ -324,11 +303,11 @@ namespace LanguageExplorer.UtilityTools
 			// font.
 			var boldFont = currentFont;
 #else
-			var boldFontStyle = FontStyle.Bold;
+			const FontStyle boldFontStyle = FontStyle.Bold;
 			using (var boldFont = new Font(currentFont.FontFamily, currentFont.Size, boldFontStyle))
 #endif
 			{
-				m_whatDescription = m_whenDescription = m_redoDescription = null;
+				WhatDescription = WhenDescription = RedoDescription = null;
 				((IUtility)m_clbUtilities.SelectedItem).OnSelection();
 				m_rtbDescription.Clear();
 				// What
@@ -336,10 +315,7 @@ namespace LanguageExplorer.UtilityTools
 				m_rtbDescription.AppendText(LanguageExplorerResources.ksWhatItDoes);
 				m_rtbDescription.AppendText(Environment.NewLine);
 				m_rtbDescription.SelectionFont = currentFont;
-				if (string.IsNullOrEmpty(m_whatDescription))
-					m_rtbDescription.AppendText(LanguageExplorerResources.ksQuestions);
-				else
-					m_rtbDescription.AppendText(m_whatDescription);
+				m_rtbDescription.AppendText(string.IsNullOrEmpty(WhatDescription) ? LanguageExplorerResources.ksQuestions : WhatDescription);
 				m_rtbDescription.AppendText(string.Format("{0}{0}", Environment.NewLine));
 
 				// When
@@ -347,10 +323,7 @@ namespace LanguageExplorer.UtilityTools
 				m_rtbDescription.AppendText(LanguageExplorerResources.ksWhenToUse);
 				m_rtbDescription.AppendText(Environment.NewLine);
 				m_rtbDescription.SelectionFont = currentFont;
-				if (string.IsNullOrEmpty(m_whenDescription))
-					m_rtbDescription.AppendText(LanguageExplorerResources.ksQuestions);
-				else
-					m_rtbDescription.AppendText(m_whenDescription);
+				m_rtbDescription.AppendText(string.IsNullOrEmpty(WhenDescription) ? LanguageExplorerResources.ksQuestions : WhenDescription);
 				m_rtbDescription.AppendText(string.Format("{0}{0}", Environment.NewLine));
 
 				// Cautions
@@ -358,10 +331,7 @@ namespace LanguageExplorer.UtilityTools
 				m_rtbDescription.AppendText(LanguageExplorerResources.ksCautions);
 				m_rtbDescription.AppendText(Environment.NewLine);
 				m_rtbDescription.SelectionFont = currentFont;
-				if (string.IsNullOrEmpty(m_redoDescription))
-					m_rtbDescription.AppendText(LanguageExplorerResources.ksQuestions);
-				else
-					m_rtbDescription.AppendText(m_redoDescription);
+				m_rtbDescription.AppendText(string.IsNullOrEmpty(RedoDescription) ? LanguageExplorerResources.ksQuestions : RedoDescription);
 #if __MonoCS__
 				// If we don't have a selection explicitly set, we will crash deep in the Mono
 				// code (RichTextBox.cs:618, property SelectionFont:get) shortly.
@@ -384,19 +354,16 @@ namespace LanguageExplorer.UtilityTools
 				var checkedItems = new HashSet<IUtility>();
 				foreach (IUtility util in m_clbUtilities.CheckedItems)
 				{
-					//m_lSteps.SuspendLayout();
-					//m_lSteps.Text = String.Format("Step {0} of {1}", ++currentStep, totalSteps);
-					//m_lSteps.ResumeLayout(true);
 					util.Process();
 					m_progressBar.Value = 0;
 					checkedItems.Add(util);
 				}
 
 				// Uncheck each one that was done.
-				foreach (IUtility checkedUtil in checkedItems)
+				foreach (var checkedUtil in checkedItems)
+				{
 					m_clbUtilities.SetItemChecked(m_clbUtilities.Items.IndexOf(checkedUtil), false);
-
-				//m_lSteps.Text = String.Empty;
+				}
 			}
 		}
 
@@ -407,7 +374,7 @@ namespace LanguageExplorer.UtilityTools
 
 		private void m_clbUtilities_ItemCheck(object sender, ItemCheckEventArgs e)
 		{
-			int cnt = m_clbUtilities.CheckedItems.Count;
+			var cnt = m_clbUtilities.CheckedItems.Count;
 			cnt = (e.NewValue == CheckState.Checked) ? cnt + 1 : cnt - 1;
 			m_btnRunUtils.Enabled = cnt > 0;
 		}

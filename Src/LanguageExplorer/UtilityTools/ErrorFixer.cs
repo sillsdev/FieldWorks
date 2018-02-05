@@ -112,7 +112,7 @@ namespace LanguageExplorer.UtilityTools
 		}
 
 		private List<string> _errors = new List<string>();
-		private int _errorsFixed = 0;
+		private int _errorsFixed;
 		private void LogErrors(string message, bool errorFixed)
 		{
 			_errors.Add(message);

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -99,7 +99,7 @@ namespace LanguageExplorer.UtilityTools
 				m_dlg.ProgressBar.Step=1;
 				var locale = InvokePython("-icu"); //ask the python script for the icu local
 				locale = locale.Trim();
-				int ws = cache.WritingSystemFactory.GetWsFromStr(locale);
+				var ws = cache.WritingSystemFactory.GetWsFromStr(locale);
 
 				if (ws == 0)
 				{
