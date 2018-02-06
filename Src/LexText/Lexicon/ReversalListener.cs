@@ -423,6 +423,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				m_propertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
 				m_mediator.SendMessage("ClerkOwningObjChanged", this);
 			}
+			m_mediator.SendMessage("MasterRefresh", null);
 		}
 
 		/// <summary>
