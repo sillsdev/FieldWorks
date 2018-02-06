@@ -46,7 +46,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private void OnGotFocus(object sender, EventArgs eventArgs)
 		{
 			if (configurationsListView.Items.Count < 1)
+			{
 				return;
+			}
 			var nonBoldFont = new Font(configurationsListView.Items[0].Font, FontStyle.Regular);
 			configurationsListView.Items.Cast<ListViewItem>().ForEach(item => item.Font = nonBoldFont);
 		}
@@ -54,7 +56,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private void OnLostFocus(object sender, EventArgs eventArgs)
 		{
 			if (configurationsListView.Items.Count < 1)
+			{
 				return;
+			}
 			var boldFont = new Font(configurationsListView.Items[0].Font, FontStyle.Bold);
 			configurationsListView.SelectedItems.Cast<ListViewItem>().ForEach(item => { item.Font = boldFont; });
 
@@ -65,7 +69,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			// Match Windows Explorer behaviour: allow renaming from the keyboard by pressing F2 or through the
 			// "context menu" (since there is no context menu, go straight to rename from the "Application" key)
 			if ((e.KeyCode == Keys.F2 || e.KeyCode == Keys.Apps) && configurationsListView.SelectedItems.Count == 1)
+			{
 				configurationsListView.SelectedItems[0].BeginEdit();
+			}
 		}
 
 		internal string HelpTopic
@@ -74,7 +80,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			set
 			{
 				if (string.IsNullOrEmpty(value))
+				{
 					return;
+				}
 				m_helpTopic = value;
 				m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
 			}

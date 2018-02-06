@@ -55,7 +55,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public DictionaryDetailsController(IDictionaryDetailsView view, IPropertyTable propertyTable)
 		{
-			// one-time setup
 			m_propertyTable = propertyTable;
 			m_cache = propertyTable.GetValue<LcmCache>("cache");
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
@@ -174,8 +173,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					{
 						PanelContents = optionsView,
 						LabelText = DictionaryConfigurationStrings.ThisConfigurationIsShared,
-						LabelToolTip = string.Format(DictionaryConfigurationStrings.SeeAffectedNodesUnder,
-							DictionaryConfigurationServices.BuildPathStringFromNode(masterParent, false))
+						LabelToolTip = string.Format(DictionaryConfigurationStrings.SeeAffectedNodesUnder, DictionaryConfigurationServices.BuildPathStringFromNode(masterParent, false))
 					};
 				}
 			}
@@ -192,22 +190,33 @@ namespace LanguageExplorer.DictionaryConfiguration
 			View.ResumeLayout();
 		}
 
-		internal static IEnumerable<ConfigurableDictionaryNode> FindNodes(
-			List<ConfigurableDictionaryNode> nodes, Func<ConfigurableDictionaryNode, bool> match)
+		internal static IEnumerable<ConfigurableDictionaryNode> FindNodes(List<ConfigurableDictionaryNode> nodes, Func<ConfigurableDictionaryNode, bool> match)
 		{
 			if (nodes == null)
+			{
 				throw new ArgumentNullException();
+			}
 
 			foreach (var node in nodes)
 			{
 				if (match(node))
+				{
 					yield return node;
+				}
 				if (node.IsMasterParent)
+				{
 					foreach (var child in FindNodes(node.ReferencedOrDirectChildren, match))
+					{
 						yield return child;
+					}
+				}
 				else if (node.Children != null)
+				{
 					foreach (var child in FindNodes(node.Children, match))
+					{
 						yield return child;
+					}
+				}
 			}
 		}
 
@@ -274,7 +283,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			wsOptionsView.Load += WritingSystemEventHandlerAdder(wsOptionsView, wsOptions);
 
 			if (!m_node.IsHeadWord)
+			{
 				return wsOptionsView;
+			}
 			// show the Configure Headword Numbers... button
 			var optionsView = new ButtonOverPanel { PanelContents = wsOptionsView };
 			optionsView.ButtonClicked += (o, e) => HandleHeadwordNumbersButton();
@@ -307,7 +318,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			wsapOptionsView.Load += WritingSystemAndParaEventHandlerAdder(wsapOptionsView, wsapoptions);
 
 			if (!m_node.IsHeadWord)
+			{
 				return wsapOptionsView;
+			}
 			// show the Configure Headword Numbers... button
 			var optionsView = new ButtonOverPanel { PanelContents = wsapOptionsView };
 			optionsView.ButtonClicked += (o, e) => HandleHeadwordNumbersButton();
@@ -323,8 +336,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			};
 		}
 
-		private void DisplayInParaChecked(IDictionaryListOptionsView wsapOptionsView,
-			DictionaryNodeWritingSystemAndParaOptions wsapOptions)
+		private void DisplayInParaChecked(IDictionaryListOptionsView wsapOptionsView, DictionaryNodeWritingSystemAndParaOptions wsapOptions)
 		{
 			wsapOptions.DisplayEachInAParagraph = wsapOptionsView.DisplayOptionCheckBox2Checked;
 			m_node.Style = ParagraphStyleForSubentries(wsapOptions.DisplayEachInAParagraph, m_node.FieldDescription);
@@ -336,10 +348,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			return (o, args) =>
 			{
-				wsOptionsView.UpClicked += (sender, e) =>
-					Reorder(wsOptionsView.AvailableItems.First(item => item.Selected), Direction.Up);
-				wsOptionsView.DownClicked += (sender, e) =>
-					Reorder(wsOptionsView.AvailableItems.First(item => item.Selected), Direction.Down);
+				wsOptionsView.UpClicked += (sender, e) => Reorder(wsOptionsView.AvailableItems.First(item => item.Selected), Direction.Up);
+				wsOptionsView.DownClicked += (sender, e) => Reorder(wsOptionsView.AvailableItems.First(item => item.Selected), Direction.Down);
 				wsOptionsView.ListItemSelectionChanged += (sender, e) => ListViewSelectionChanged(wsOptionsView, e);
 				wsOptionsView.ListItemCheckBoxChanged += (sender, e) => ListItemCheckedChanged(wsOptionsView, wsOptions, e);
 				wsOptionsView.DisplayOptionCheckBoxChanged += (sender, e) =>
@@ -359,7 +369,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			// initialize SenseOptionsView
 			//For senses disallow the 1 1.2 1.2.3 option, that is now handled in subsenses
-			var disallowedNumberingStyles = "%O";
+			const string disallowedNumberingStyles = "%O";
 			var senseOptionsView = new SenseOptionsView(isSubsense)
 			{
 				BeforeText = senseOptions.BeforeNumber,
@@ -460,7 +470,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				listOptionsView.ListViewLabel = label;
 
 				// Insert saved items in their saved order, with their saved check-state
-				int insertionIdx = 0;
+				var insertionIdx = 0;
 				foreach (var optn in listOptions.Options)
 				{
 					var savedItem = availableOptions.FirstOrDefault(item => optn.Id.Equals((item.Tag)));
@@ -479,17 +489,18 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			listOptionsView.DisplayOptionCheckBoxLabel = DictionaryConfigurationStrings.ksDisplayComplexFormsInParagraphs;
 
-			if (m_node.FieldDescription == "Subentries" || m_node.FieldDescription == "SubentriesOS")
+			switch (m_node.FieldDescription)
 			{
-				listOptionsView.DisplayOptionCheckBoxLabel = DictionaryConfigurationStrings.ksDisplaySubentriesInParagraphs;
-			}
-			else if (m_node.FieldDescription == "ExamplesOS")
-			{
-				listOptionsView.DisplayOptionCheckBoxLabel = DictionaryConfigurationStrings.ksDisplayExamplesInParagraphs;
-			}
-			else if (m_node.FieldDescription == "ExtendedNoteOS")
-			{
-				listOptionsView.DisplayOptionCheckBoxLabel = DictionaryConfigurationStrings.ksDisplayExtendedNoteInParagraphs;
+				case "Subentries":
+				case "SubentriesOS":
+					listOptionsView.DisplayOptionCheckBoxLabel = DictionaryConfigurationStrings.ksDisplaySubentriesInParagraphs;
+					break;
+				case "ExamplesOS":
+					listOptionsView.DisplayOptionCheckBoxLabel = DictionaryConfigurationStrings.ksDisplayExamplesInParagraphs;
+					break;
+				case "ExtendedNoteOS":
+					listOptionsView.DisplayOptionCheckBoxLabel = DictionaryConfigurationStrings.ksDisplayExtendedNoteInParagraphs;
+					break;
 			}
 			listOptionsView.DisplayOptionCheckBoxChecked = listAndParaOptions.DisplayEachInAParagraph;
 			ToggleViewForShowInPara(listAndParaOptions.DisplayEachInAParagraph);
@@ -501,10 +512,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				if (listOptions.ListId != ListIds.None)
 				{
-					listOptionsView.UpClicked += (sender, e) =>
-						Reorder(listOptionsView.AvailableItems.First(item => item.Selected), Direction.Up);
-					listOptionsView.DownClicked += (sender, e) =>
-						Reorder(listOptionsView.AvailableItems.First(item => item.Selected), Direction.Down);
+					listOptionsView.UpClicked += (sender, e) => Reorder(listOptionsView.AvailableItems.First(item => item.Selected), Direction.Up);
+					listOptionsView.DownClicked += (sender, e) => Reorder(listOptionsView.AvailableItems.First(item => item.Selected), Direction.Down);
 					listOptionsView.ListItemSelectionChanged += (sender, e) => ListViewSelectionChanged(listOptionsView, e);
 					listOptionsView.ListItemCheckBoxChanged += (sender, e) => ListItemCheckedChanged(listOptionsView, null, e);
 				}
@@ -558,17 +567,26 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private static string ParagraphStyleForSubentries(bool showInParagraph, string field)
 		{
-			string styleName = null;
-			if (showInParagraph)
+			if (!showInParagraph)
 			{
-				if (field == "SubentriesOS") // only Reversal Subentries use SubentriesOS
-					styleName = "Reversal-Subentry";
-				else if (field == "ExamplesOS" || DictionaryConfigurationModel.NoteInParaStyles.Contains(field))
-					styleName = "Bulleted List";
-				else if (field == "ExtendedNoteOS" || field == "SensesOS")
-					styleName = "Dictionary-Sense";
-				else
-					styleName = "Dictionary-Subentry";
+				return null;
+			}
+			string styleName;
+			if (field == "SubentriesOS") // only Reversal Subentries use SubentriesOS
+			{
+				styleName = "Reversal-Subentry";
+			}
+			else if (field == "ExamplesOS" || DictionaryConfigurationModel.NoteInParaStyles.Contains(field))
+			{
+				styleName = "Bulleted List";
+			}
+			else if (field == "ExtendedNoteOS" || field == "SensesOS")
+			{
+				styleName = "Dictionary-Sense";
+			}
+			else
+			{
+				styleName = "Dictionary-Subentry";
 			}
 			return styleName;
 		}
@@ -601,22 +619,35 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private void LoadStylesLists()
 		{
 			if (m_charStyles == null)
+			{
 				m_charStyles = new List<StyleComboItem>();
+			}
 			else
+			{
 				m_charStyles.Clear();
+			}
+
 			if (m_paraStyles == null)
+			{
 				m_paraStyles = new List<StyleComboItem>();
+			}
 			else
+			{
 				m_paraStyles.Clear();
+			}
 
 			m_charStyles.Add(new StyleComboItem(null));
 			// Per LT-10950, we don't want 'none' as an option for paragraph style, so don't add null to ParaStyles
 			foreach (var style in m_styleSheet.Styles)
 			{
 				if (style.IsCharacterStyle)
+				{
 					m_charStyles.Add(new StyleComboItem(style));
+				}
 				else if (style.IsParagraphStyle)
+				{
 					m_paraStyles.Add(new StyleComboItem(style));
+				}
 			}
 
 			m_charStyles.Sort();
@@ -634,8 +665,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				RefreshStylesAndPreview();
 				if (!repopulate)
+				{
 					return;
-			LoadStylesLists();
+				}
+				LoadStylesLists();
 				var isPara = m_node.StyleType == StyleTypes.Paragraph;
 				View.SetStyles(isPara ? m_paraStyles : m_charStyles, m_node.Style, isPara);
 			};
@@ -810,16 +843,22 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static int ComparePossibilitiesByName(ICmPossibility x, ICmPossibility y)
 		{
 			if (x == null)
+			{
 				return y == null ? 0 : -1;
+			}
+
 			if (y == null)
+			{
 				return 1;
+			}
 			var xName = x.Name.BestAnalysisVernacularAlternative.Text;
 			var yName = y.Name.BestAnalysisVernacularAlternative.Text;
 			if (xName == null)
+			{
 				return yName == null ? 0 : -1;
-			if (yName == null)
-				return 1;
-			return string.Compare(xName, yName, StringComparison.InvariantCulture);
+			}
+
+			return yName == null ? 1 : string.Compare(xName, yName, StringComparison.InvariantCulture);
 		}
 		#endregion Load more-static parts
 		#endregion LoadModel
@@ -827,8 +866,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		#region HandleChanges
 		private void RefreshPreview()
 		{
-			if (DetailsModelChanged != null)
-				DetailsModelChanged(m_node, new EventArgs());
+			DetailsModelChanged?.Invoke(m_node, new EventArgs());
 		}
 
 		private void RefreshStylesAndPreview()
@@ -847,7 +885,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 				dlg.SetStyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 				//dlg.StartPosition = FormStartPosition.CenterScreen;
 				if (dlg.ShowDialog(View.TopLevelControl) != DialogResult.OK)
+				{
 					return;
+				}
 				controller.Save();
 				RefreshPreview();
 			}
@@ -897,9 +937,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// Called when an item in the ListView is checked or unchecked.  Validates the new set of checked items (preventing if invalid),
 		/// serializes, and refreshes the preview
 		/// </summary>
-		/// <param name="listOptionsView"></param>
-		/// <param name="wsOptions">Null if the list doesn't represent writing systems</param>
-		/// <param name="e"></param>
 		private void ListItemCheckedChanged(IDictionaryListOptionsView listOptionsView, DictionaryNodeWritingSystemOptions wsOptions, ItemCheckedEventArgs e)
 		{
 			var items = e.Item.ListView.Items;
@@ -917,12 +954,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 			else if (e.Item.Tag is int) // int represents a Default WS; all others must be deselected
 			{
 				foreach (var item in items.Cast<ListViewItem>().Where(item => item != e.Item))
+				{
 					item.Checked = false;
+				}
 			}
 			else // A specific WS was selected; deselect defaults
 			{
 				foreach (var item in items.Cast<ListViewItem>().Where(item => item.Tag is int))
+				{
 					item.Checked = false;
+				}
 			}
 
 			if (wsOptions != null)
@@ -930,8 +971,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				// Displaying WS Abbreviations is available only when multiple WS's are selected.
 				listOptionsView.DisplayOptionCheckBoxEnabled = (items.Cast<ListViewItem>().Count(item => item.Checked) >= 2);
 				// Don't clear the checkbox while users are working, but don't persist an invalid value.
-				wsOptions.DisplayWritingSystemAbbreviations = listOptionsView.DisplayOptionCheckBoxEnabled &&
-															  listOptionsView.DisplayOptionCheckBoxChecked;
+				wsOptions.DisplayWritingSystemAbbreviations = listOptionsView.DisplayOptionCheckBoxEnabled && listOptionsView.DisplayOptionCheckBoxChecked;
 			}
 
 			SerializeListOptionsAndRefreshPreview(items);
@@ -947,11 +987,17 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}).ToList();
 
 			if (Options is DictionaryNodeWritingSystemOptions)
+			{
 				((DictionaryNodeWritingSystemOptions) Options).Options = options;
+			}
 			else if (Options is DictionaryNodeListOptions)
+			{
 				((DictionaryNodeListOptions) Options).Options = options;
+			}
 			else
+			{
 				throw new InvalidCastException("Options could not be cast to WS- or ListOptions type.");
+			}
 
 			RefreshPreview();
 		}
@@ -983,14 +1029,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal void Reorder(ListViewItem item, Direction direction)
 		{
 			if (!CanReorder(item, direction))
+			{
 				throw new ArgumentOutOfRangeException();
+			}
 
-			int newIdx;
-			if (direction == Direction.Up)
-				newIdx = item.Index - 1;
-			else
-				newIdx = item.Index + 1;
-
+			var newIdx = direction == Direction.Up ? item.Index - 1 : item.Index + 1;
 			var items = item.ListView.Items;
 			items.RemoveAt(item.Index);
 			items.Insert(newIdx, item);
@@ -1004,11 +1047,17 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
 			if (isSubSubsense)
+			{
 				hc.ksSubSubSenseNumberStyle = senseOptionsView.NumberingStyle;
+			}
 			else if (isSubsense)
+			{
 				hc.ksSubSenseNumberStyle = senseOptionsView.NumberingStyle;
+			}
 			else
+			{
 				hc.ksSenseNumberStyle = senseOptionsView.NumberingStyle;
+			}
 			senseOptions.NumberingStyle = senseOptionsView.NumberingStyle;
 			senseOptionsView.NumberMetaConfigEnabled = !string.IsNullOrEmpty(senseOptions.NumberingStyle);
 			RefreshPreview();
@@ -1018,9 +1067,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
 			if (isSubSubsense)
+			{
 				hc.ksParentSubSenseNumberStyle = senseOptionsView.ParentSenseNumberingStyle;
+			}
 			else if (isSubsense)
+			{
 				hc.ksParentSenseNumberStyle = senseOptionsView.ParentSenseNumberingStyle;
+			}
 			senseOptions.ParentSenseNumberingStyle = senseOptionsView.ParentSenseNumberingStyle;
 			RefreshPreview();
 		}

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -87,21 +87,25 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		internal IFlexMacro[] AssignMacrosToSlots(List<IFlexMacro> macroImplementors)
 		{
-			IFlexMacro[] macros = new IFlexMacro[MacroCount];
+			var macros = new IFlexMacro[MacroCount];
 			var conflicts = new List<IFlexMacro>();
 			// Put each at its preferred key if possible
 			foreach (var macro in macroImplementors)
 			{
-				int index = GetMacroIndex(macro.PreferredFunctionKey);
+				var index = GetMacroIndex(macro.PreferredFunctionKey);
 				if (macros[index] == null)
+				{
 					macros[index] = macro;
+				}
 				else
+				{
 					conflicts.Add(macro);
+				}
 			}
 			// Put any conflicts in remaining slots; if too many, arbitrary ones will be left out.
 			foreach (var macro in conflicts)
 			{
-				for (int index = 0; index < MacroCount; index++)
+				for (var index = 0; index < MacroCount; index++)
 				{
 					if (macros[index] == null)
 					{
@@ -115,32 +119,25 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private int GetMacroIndex(Keys key)
 		{
-			int result = key - Keys.F2;
+			var result = key - Keys.F2;
 			if (result < 0 || result >= MacroCount)
+			{
 				throw new ArgumentException("Key assigned to macro must currently be between F2 and F12");
+			}
 			return result;
 		}
 
 		/// <summary>
 		/// Get the active selection in the mediator's main window. This determines what we will apply the command to.
 		/// </summary>
-		/// <returns></returns>
 		private IVwSelection GetSelection()
 		{
-			var window = PropertyTable.GetValue<IFwMainWnd>("window");
-			if (window == null || !(window.ActiveView is IVwRootSite))
-				return null;
-			var rootBox = ((IVwRootSite) window.ActiveView).RootBox;
-			if (rootBox == null)
-				return null; // paranoia
-			return rootBox.Selection;
+			return (PropertyTable.GetValue<IFwMainWnd>("window")?.ActiveView as IVwRootSite)?.RootBox?.Selection;
 		}
 
 		/// <summary>
 		/// Invoked by reflection when the appropriate menu command is executed. Which one is indicated by the paramters node.
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <returns>true (always) to indicate that we handled this command</returns>
 		public bool OnMacro(object commandObject)
 		{
 			return DoMacro(commandObject, GetSelection());
@@ -151,19 +148,23 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			var macro = GetMacro(commandObject);
 			if (macro == null)
+			{
 				return true; // Paranoia, it should be disabled.
+			}
 
 			int ichA, hvoA, flid, ws, ichE, start, length;
 			ICmObject obj;
-			if (!SafeToDoMacro(sel, out obj, out flid, out ws, out start, out length) || !macro.Enabled(obj, flid, ws, start, length))
+			if (!SafeToDoMacro(sel, out obj, out flid, out ws, out start, out length) ||
+			    !macro.Enabled(obj, flid, ws, start, length))
+			{
 				return true;
-			string commandName = macro.CommandName;
+			}
+			var commandName = macro.CommandName;
 			// We normally let undo and redo be localized independently, but we compromise in the interests of making macros
 			// easier to create.
-			string undo = string.Format(DictionaryConfigurationStrings.ksUndoMacro, commandName);
-			string redo = string.Format(DictionaryConfigurationStrings.ksRedoMacro, commandName);
-			UndoableUnitOfWorkHelper.Do(undo, redo, obj.Cache.ActionHandlerAccessor,
-				() => macro.RunMacro(obj, flid, ws, start, length));
+			var undo = string.Format(DictionaryConfigurationStrings.ksUndoMacro, commandName);
+			var redo = string.Format(DictionaryConfigurationStrings.ksRedoMacro, commandName);
+			UndoableUnitOfWorkHelper.Do(undo, redo, obj.Cache.ActionHandlerAccessor, () => macro.RunMacro(obj, flid, ws, start, length));
 			return true;
 		}
 
@@ -171,8 +172,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			start = flid = ws = length = 0; // defaults so we can return early.
 			obj = null;
-			if (sel == null || !(sel.SelType == VwSelType.kstText))
+			if (sel == null || sel.SelType != VwSelType.kstText)
+			{
 				return false;
+			}
 			ITsString dummy;
 			int hvoA, hvoE, flidE, ichA, ichE, wsE;
 			bool fAssocPrev;
@@ -180,7 +183,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			sel.TextSelInfo(true, out dummy, out ichE, out fAssocPrev, out hvoE, out flidE, out wsE);
 			// for safety require selection to be in a single property.
 			if (hvoA != hvoE || flid != flidE || ws != wsE)
+			{
 				return false;
+			}
 			var cache = PropertyTable.GetValue<LcmCache>("cache");
 			obj = cache.ServiceLocator.ObjectRepository.GetObject(hvoA);
 			start = Math.Min(ichA, ichE);

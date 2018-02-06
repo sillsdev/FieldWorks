@@ -20,6 +20,7 @@ using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
+using SIL.Code;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {
@@ -161,10 +162,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 			ConfigurableDictionaryNode topVisibleNode = null;
 			if (tree.TopNode != null)
+			{
 				topVisibleNode = tree.TopNode.Tag as ConfigurableDictionaryNode;
+			}
 
 			if (nodeToSelect == null && tree.SelectedNode != null)
+			{
 				nodeToSelect = tree.SelectedNode.Tag as ConfigurableDictionaryNode;
+			}
 
 			// Rebuild view from model
 			tree.Nodes.Clear();
@@ -177,22 +182,26 @@ namespace LanguageExplorer.DictionaryConfiguration
 				//If an expanded node is removed it is added to the expanedNodes list before
 				//the tree is rebuilt. Therefore when tree is rebuilt FindTreeNode returns null since
 				//it cannot find that node anymore.
-				var node = FindTreeNode(expandedNode, tree.Nodes);
-				if (node != null)
-					node.Expand();
+				FindTreeNode(expandedNode, tree.Nodes)?.Expand();
 			}
 
 			if (nodeToSelect != null)
+			{
 				tree.SelectedNode = FindTreeNode(nodeToSelect, tree.Nodes);
+			}
 			// Fallback to selecting first root, trying to make sure there is always a selection for the buttons to be enabled or disabled with respect to.
 			if (tree.SelectedNode == null && tree.Nodes.Count > 0)
+			{
 				tree.SelectedNode = tree.Nodes[0];
+			}
 
 			// Try to prevent scrolling away from what the user was seeing in the tree. But if necessary, scroll so the selected node is visible.
 			if (topVisibleNode != null)
+			{
 				tree.TopNode = FindTreeNode(topVisibleNode, tree.Nodes);
-			if (tree.SelectedNode != null)
-				tree.SelectedNode.EnsureVisible();
+			}
+
+			tree.SelectedNode?.EnsureVisible();
 			RefreshPreview();
 			DisplayPublicationTypes();
 		}
@@ -200,16 +209,24 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>Refresh the Preview without reloading the entire configuration tree</summary>
 		private void RefreshPreview(bool isChangeInDictionaryModel = true)
 		{
-			//PropertyTable should be null only for unit tests which don't need styles
-			if (PropertyTable == null || _previewEntry == null || !_previewEntry.IsValidObject)
+			if (_previewEntry == null || !_previewEntry.IsValidObject)
+			{
 				return;
+			}
+
 			if (isChangeInDictionaryModel)
+			{
 				m_isDirty = true;
+			}
 			else
+			{
 				MasterRefreshRequired = true;
+			}
 			View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _allEntriesPublicationDecorator, PropertyTable, Cache);
-			if(_isHighlighted)
+			if (_isHighlighted)
+			{
 				View.HighlightContent(View.TreeControl.Tree.SelectedNode.Tag as ConfigurableDictionaryNode, Cache.GetManagedMetaDataCache());
+			}
 		}
 
 		/// <summary>
@@ -220,7 +237,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			foreach (TreeNode treenode in treenodes)
 			{
 				if (treenode.IsExpanded)
+				{
 					expandedNodes.Add(treenode.Tag as ConfigurableDictionaryNode);
+				}
 				FindExpandedNodes(treenode.Nodes, ref expandedNodes);
 			}
 		}
@@ -234,14 +253,18 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal void CreateTreeOfTreeNodes(ConfigurableDictionaryNode parent, List<ConfigurableDictionaryNode> nodes)
 		{
 			if (nodes == null)
-				throw new ArgumentNullException();
+			{
+				throw new ArgumentNullException(nameof(nodes));
+			}
 
 			foreach(var node in nodes)
 			{
 				CreateAndAddTreeNodeForNode(parent, node);
 				// Configure shared nodes exactly once: under their master parent
 				if (!node.IsSubordinateParent && node.ReferencedOrDirectChildren != null)
+				{
 					CreateTreeOfTreeNodes(node, node.ReferencedOrDirectChildren);
+				}
 			}
 		}
 
@@ -250,12 +273,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// TreeView parented by the TreeNode corresponding to parentNode.
 		/// If parentNode is null, node is considered to be at the root.
 		/// </summary>
-		/// <param name="parentNode"></param>
-		/// <param name="node"></param>
 		internal void CreateAndAddTreeNodeForNode(ConfigurableDictionaryNode parentNode, ConfigurableDictionaryNode node)
 		{
 			if (node == null)
-				throw new ArgumentNullException();
+			{
+				throw new ArgumentNullException(nameof(node));
+			}
 
 			node.StringTable = StringTable.Table;	// for localization
 			var newTreeNode = new TreeNode(node.DisplayLabel) { Tag = node, Checked = node.IsEnabled };
@@ -269,25 +292,17 @@ namespace LanguageExplorer.DictionaryConfiguration
 				return;
 			}
 
-			var parentTreeNode = FindTreeNode(parentNode, treeView.Nodes);
-			if (parentTreeNode != null)
-			{
-				parentTreeNode.Nodes.Add(newTreeNode);
-			}
+			FindTreeNode(parentNode, treeView.Nodes)?.Nodes.Add(newTreeNode);
 		}
 
 		/// <summary>
 		/// FindTreeNode returns the treenode which has the tag that matches nodeToMatch, or null
 		/// </summary>
-		/// <param name="nodeToMatch"></param>
-		/// <param name="treeNodeCollection"></param>
-		/// <returns></returns>
 		internal static TreeNode FindTreeNode(ConfigurableDictionaryNode nodeToMatch, TreeNodeCollection treeNodeCollection)
 		{
-			if(nodeToMatch == null || treeNodeCollection == null)
-			{
-				throw new ArgumentNullException();
-			}
+			Guard.AgainstNull(nodeToMatch, nameof(nodeToMatch));
+			Guard.AgainstNull(treeNodeCollection, nameof(treeNodeCollection));
+
 			foreach(TreeNode treeNode in treeNodeCollection)
 			{
 				if(nodeToMatch.Equals(treeNode.Tag))
@@ -356,8 +371,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					var entryRepo = serviceLocator.GetInstance<IReversalIndexEntryRepository>().AllInstances().ToList(); // TODO pH 2015.07: filter by WS
 					// try to find the first entry with a headword not equal to "???"; otherwise, any entry will have to do.
-					return entryRepo.FirstOrDefault(
-									entry => StringServices.DefaultHomographString() != entry.ReversalForm.BestAnalysisAlternative.Text)
+					return entryRepo.FirstOrDefault(entry => StringServices.DefaultHomographString() != entry.ReversalForm.BestAnalysisAlternative.Text)
 						?? entryRepo.FirstOrDefault() ?? serviceLocator.GetInstance<IReversalIndexEntryFactory>().Create();
 				}
 				default:
@@ -377,7 +391,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private void SaveModelHandler(object sender, EventArgs e)
 		{
 			if (m_isDirty)
-			SaveModel();
+			{
+				SaveModel();
+			}
 		}
 
 		internal void SaveModel()
@@ -422,7 +438,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					var nodeToSelect = sender as ConfigurableDictionaryNode;
 					if (nodeToSelect != null)
+					{
 						View.TreeControl.Tree.SelectedNode = FindTreeNode(nodeToSelect, View.TreeControl.Tree.Nodes);
+					}
 				};
 			}
 			DetailsController.LoadNode(_model, node);
@@ -434,22 +452,22 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		public static bool CanReorder(ConfigurableDictionaryNode node, Direction direction)
 		{
-			if (node == null)
-				throw new ArgumentNullException();
+			Guard.AgainstNull(node, nameof(node));
 
 			var parent = node.Parent;
 			// Root nodes can't be moved
 			if (parent == null)
+			{
 				return false;
+			}
 
 			var nodeIndex = parent.Children.IndexOf(node);
 			if (direction == Direction.Up && nodeIndex == 0 && !(parent.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
+			{
 				return false;
+			}
 			var lastSiblingIndex = parent.Children.Count - 1;
-			if (direction == Direction.Down && nodeIndex == lastSiblingIndex && !(parent.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
-				return false;
-
-			return true;
+			return direction != Direction.Down || nodeIndex != lastSiblingIndex || parent.DictionaryNodeOptions is DictionaryNodeGroupingOptions;
 		}
 
 		/// <summary>
@@ -505,9 +523,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 		public void Reorder(ConfigurableDictionaryNode node, Direction direction)
 		{
 			if (node == null)
-				throw new ArgumentNullException();
+			{
+				throw new ArgumentNullException(nameof(node));
+			}
+
 			if (!CanReorder(node, direction))
+			{
 				throw new ArgumentOutOfRangeException();
+			}
 			var parent = node.Parent;
 			var nodeIndex = parent.Children.IndexOf(node);
 
@@ -515,10 +538,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var newNodeIndex = nodeIndex - 1;
 			// or Down
 			if (direction == Direction.Down)
+			{
 				newNodeIndex = nodeIndex + 1;
+			}
 
-			var movingOutOfGroup = (newNodeIndex == -1 || newNodeIndex >= parent.Children.Count) &&
-				parent.DictionaryNodeOptions is DictionaryNodeGroupingOptions;
+			var movingOutOfGroup = (newNodeIndex == -1 || newNodeIndex >= parent.Children.Count) && parent.DictionaryNodeOptions is DictionaryNodeGroupingOptions;
 			if (movingOutOfGroup)
 			{
 				MoveNodeOutOfGroup(node, direction, parent, nodeIndex);
@@ -542,7 +566,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var targetGroupNode = parent.Children[newNodeIndex];
 			parent.Children.RemoveAt(nodeIndex);
 			if (targetGroupNode.Children == null)
+			{
 				targetGroupNode.Children = new List<ConfigurableDictionaryNode>();
+			}
 			if (direction == Direction.Up)
 			{
 				targetGroupNode.Children.Add(node);
@@ -554,8 +580,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			node.Parent = targetGroupNode;
 		}
 
-		private static void MoveNodeOutOfGroup(ConfigurableDictionaryNode node, Direction direction,
-			ConfigurableDictionaryNode parent, int nodeIndex)
+		private static void MoveNodeOutOfGroup(ConfigurableDictionaryNode node, Direction direction, ConfigurableDictionaryNode parent, int nodeIndex)
 		{
 			parent.Children.RemoveAt(nodeIndex);
 			var indexOfParentGroup = parent.Parent.Children.IndexOf(parent);
@@ -575,15 +600,17 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		public static bool LinkReferencedNode(List<ConfigurableDictionaryNode> sharedItems, ConfigurableDictionaryNode node, string referenceItem)
 		{
-			node.ReferencedNode = sharedItems.FirstOrDefault(
-				si => si.Label == referenceItem && si.FieldDescription == node.FieldDescription && si.SubField == node.SubField);
+			node.ReferencedNode = sharedItems.FirstOrDefault(si => si.Label == referenceItem && si.FieldDescription == node.FieldDescription && si.SubField == node.SubField);
 			if (node.ReferencedNode == null)
-				throw new KeyNotFoundException(String.Format("Could not find Referenced Node named {0} for field {1}.{2}",
-					referenceItem, node.FieldDescription, node.SubField));
+			{
+				throw new KeyNotFoundException($"Could not find Referenced Node named {referenceItem} for field {node.FieldDescription}.{node.SubField}");
+			}
 			node.ReferenceItem = referenceItem;
 			node.ReferencedNode.IsEnabled = true;
 			if (node.ReferencedNode.Parent != null)
+			{
 				return false;
+			}
 			node.ReferencedNode.Parent = node;
 			return true;
 		}
@@ -594,9 +621,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 		public static void ShareNodeAsReference(List<ConfigurableDictionaryNode> sharedItems, ConfigurableDictionaryNode node, string cssClass = null)
 		{
 			if (node.ReferencedNode != null)
+			{
 				throw new InvalidOperationException($"Node {DictionaryConfigurationServices.BuildPathStringFromNode(node)} is already shared as {node.ReferenceItem ?? node.ReferencedNode.Label}");
+			}
 			if (node.Children == null || !node.Children.Any())
+			{
 				return; // no point sharing Children there aren't any
+			}
 			var dupItem = sharedItems.FirstOrDefault(item => item.FieldDescription == node.FieldDescription && item.SubField == node.SubField);
 			if (dupItem != null)
 			{
@@ -641,17 +672,23 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			var complexTypes = new HashSet<Guid>();
 			foreach (var pos in cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities)
+			{
 				complexTypes.Add(pos.Guid);
+			}
 			complexTypes.Add(XmlViewsUtils.GetGuidForUnspecifiedComplexFormType());
 			var variantTypes = new HashSet<Guid>();
 			foreach (var pos in cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities)
+			{
 				variantTypes.Add(pos.Guid);
+			}
 			variantTypes.Add(XmlViewsUtils.GetGuidForUnspecifiedVariantType());
 			var referenceTypes = new HashSet<Guid>();
 			if (cache.LangProject.LexDbOA.ReferencesOA != null)
 			{
 				foreach (var pos in cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS)
+				{
 					referenceTypes.Add(pos.Guid);
+				}
 			}
 			var noteTypes = new HashSet<Guid>();
 			if (cache.LangProject.LexDbOA.ExtendedNoteTypesOA != null)
@@ -708,7 +745,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			if (node.Children != null)
 			{
 				foreach (var child in node.Children)
+				{
 					FixTypeListOnNode(child, complexTypes, variantTypes, referenceTypes, noteTypes, isHybrid, cache);
+				}
 			}
 		}
 
@@ -716,9 +755,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static bool IsFilteringInflectionalVariantTypes(ConfigurableDictionaryNode node, bool isHybrid)
 		{
 			if (!isHybrid)
+			{
 				return false;
+			}
+
 			if (node.IsDuplicate)
+			{
 				return true;
+			}
 			var siblings = node.ReallyReallyAllSiblings;
 			// check whether this node has a duplicate, most likely "Variants (Inflectional Variants)"
 			return siblings != null && siblings.Any(sib => sib.FieldDescription == node.FieldDescription);
@@ -732,8 +776,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 			foreach (var opt in options)
 			{
 				Guid guid;
-				if (Guid.TryParse(opt.Id, out guid))	// can be empty string
+				if (Guid.TryParse(opt.Id, out guid)) // can be empty string
+				{
 					currentGuids.Add(guid);
+				}
 			}
 
 			if (filterInflectionalVariantTypes)
@@ -756,8 +802,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			else
 			{
 				// add types that do not exist already
-				options.AddRange(possibilities.Where(type => !currentGuids.Contains(type))
-					.Select(type => new DictionaryNodeOption { Id = type.ToString(), IsEnabled = !isDuplicate }));
+				options.AddRange(possibilities.Where(type => !currentGuids.Contains(type)).Select(type => new DictionaryNodeOption { Id = type.ToString(), IsEnabled = !isDuplicate }));
 			}
 
 			// remove options that no longer exist
@@ -767,7 +812,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 				// Truncate any :r or :f from the end of the guid
 				var isValidGuid = Guid.TryParse(options[i].Id.Substring(0, Math.Min(options[i].Id.Length, 36)), out guid);
 				if (!isValidGuid || !possibilities.Contains(guid))
+				{
 					options.RemoveAt(i); //Guid was invalid, or not present in the current possibilities
+				}
 			}
 		}
 
@@ -777,7 +824,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			foreach (var part in model.PartsAndSharedItems)
 			{
 				if (part.IsMainEntry && String.IsNullOrEmpty(part.Style))
+				{
 					part.Style = "Dictionary-Normal";
+				}
 				EnsureValidStylesInConfigNodes(part, styles);
 			}
 		}
@@ -805,13 +854,19 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static void UpdateWritingSystemInConfigNodes(ConfigurableDictionaryNode node, LcmCache cache)
 		{
 			if (node.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
+			{
 				UpdateWsOptions((DictionaryNodeWritingSystemOptions)node.DictionaryNodeOptions, cache);
+			}
 
 			if (node.Children == null)
+			{
 				return;
+			}
 
 			foreach (var child in node.Children)
+			{
 				UpdateWritingSystemInConfigNodes(child, cache);
+			}
 		}
 
 		public static string GetWsDefaultName(string wsType)
@@ -890,7 +945,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 			// If we still haven't checked one, check the first default (the previously-checked WS was removed)
 			if (!atLeastOneWsChecked)
+			{
 				availableWSs[0].Checked = true;
+			}
 			return availableWSs;
 		}
 
@@ -904,15 +961,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 			// Remove any WS's that are no longer available in the project
 			for (var i = wsOptions.Options.Count - 1; i >= 0; --i)
 			{
-				if (availableWSs.All(opt => opt.Id != wsOptions.Options[i].Id) &&
-					WritingSystemServices.GetMagicWsIdFromName(wsOptions.Options[i].Id) == 0)
+				if (availableWSs.All(opt => opt.Id != wsOptions.Options[i].Id) && WritingSystemServices.GetMagicWsIdFromName(wsOptions.Options[i].Id) == 0)
 				{
 					wsOptions.Options.RemoveAt(i);
 				}
 			}
 			// ensure at least one is enabled (default to the first, which is always Magic)
 			if (wsOptions.Options.All(o => !o.IsEnabled))
+			{
 				wsOptions.Options[0].IsEnabled = true;
+			}
 			return availableWSs;
 		}
 
@@ -926,31 +984,25 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				case WritingSystemType.Vernacular:
 					wsList.Add(new DictionaryNodeOption { Id = WritingSystemServices.kwsVern.ToString() });
-					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(
-							ws => new DictionaryNodeOption { Id = ws.Id }));
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(ws => new DictionaryNodeOption { Id = ws.Id }));
 					break;
 				case WritingSystemType.Analysis:
 					wsList.Add(new DictionaryNodeOption { Id = WritingSystemServices.kwsAnal.ToString() });
-					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
-							ws => new DictionaryNodeOption { Id = ws.Id }));
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(ws => new DictionaryNodeOption { Id = ws.Id }));
 					break;
 				case WritingSystemType.Both:
 					wsList.Add(new DictionaryNodeOption { Id = WritingSystemServices.kwsVern.ToString() });
 					wsList.Add(new DictionaryNodeOption { Id = WritingSystemServices.kwsAnal.ToString() });
-					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(
-							ws => new DictionaryNodeOption { Id = ws.Id }));
-					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
-							ws => new DictionaryNodeOption { Id = ws.Id }));
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(ws => new DictionaryNodeOption { Id = ws.Id }));
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(ws => new DictionaryNodeOption { Id = ws.Id }));
 					break;
 				case WritingSystemType.Pronunciation:
 					wsList.Add(new DictionaryNodeOption { Id = WritingSystemServices.kwsPronunciation.ToString() });
-					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Select(
-							ws => new DictionaryNodeOption { Id = ws.Id }));
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Select(ws => new DictionaryNodeOption { Id = ws.Id }));
 					break;
 				case WritingSystemType.Reversal:
 					wsList.Add(new DictionaryNodeOption { Id = WritingSystemServices.kwsReversalIndex.ToString() });
-					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
-							ws => new DictionaryNodeOption { Id = ws.Id }));
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(ws => new DictionaryNodeOption { Id = ws.Id }));
 					break;
 			}
 			return wsList;
@@ -958,14 +1010,25 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private static void EnsureValidStylesInConfigNodes(ConfigurableDictionaryNode node, Dictionary<string, IStStyle> styles)
 		{
-			if (!String.IsNullOrEmpty(node.Style) && !styles.ContainsKey(node.Style))
+			if (!string.IsNullOrEmpty(node.Style) && !styles.ContainsKey(node.Style))
+			{
 				node.Style = null;
+			}
+
 			if (node.DictionaryNodeOptions != null)
+			{
 				EnsureValidStylesInNodeOptions(node, styles);
+			}
+
 			if (node.Children == null)
+			{
 				return;
+			}
+
 			foreach (var child in node.Children)
+			{
 				EnsureValidStylesInConfigNodes(child, styles);
+			}
 		}
 
 		private static void EnsureValidStylesInNodeOptions(ConfigurableDictionaryNode node, Dictionary<string, IStStyle> styles)
@@ -974,13 +1037,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var senseOptions = options as DictionaryNodeSenseOptions;
 			if (senseOptions != null)
 			{
-				if (!String.IsNullOrEmpty(senseOptions.NumberStyle) && !styles.ContainsKey(senseOptions.NumberStyle))
+				if (!string.IsNullOrEmpty(senseOptions.NumberStyle) && !styles.ContainsKey(senseOptions.NumberStyle))
+				{
 					senseOptions.NumberStyle = null;
+				}
 				return;
 			}
 			var paraOptions = options as IParaOption;
 			var nodeStyle = node.Style;
-			if (paraOptions != null && !String.IsNullOrEmpty(nodeStyle))
+			if (paraOptions != null && !string.IsNullOrEmpty(nodeStyle))
 			{
 				// Everywhere else we're deleting styles from nodes if the styles dictionary doesn't contain it.
 				// Do the same here.
@@ -993,21 +1058,24 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					node.StyleType = StyleTypes.Paragraph;
 					if (!IsParagraphStyle(nodeStyle, styles))
+					{
 						node.Style = null;
+					}
 				}
 				else
 				{
 					node.StyleType = StyleTypes.Character;
 					if (IsParagraphStyle(nodeStyle, styles))
+					{
 						node.Style = null;
+					}
 				}
 			}
 		}
 
 		private static bool IsParagraphStyle(string styleName, Dictionary<string, IStStyle> styles)
 		{
-			var style = styles[styleName];
-			return style.Type == StyleType.kstParagraph;
+			return styles[styleName].Type == StyleType.kstParagraph;
 		}
 
 		public static List<string> GetAllPublications(LcmCache cache)
@@ -1018,12 +1086,18 @@ namespace LanguageExplorer.DictionaryConfiguration
 		public static void FilterInvalidPublicationsFromModel(DictionaryConfigurationModel model, LcmCache cache)
 		{
 			if (model.Publications == null || !model.Publications.Any())
+			{
 				return;
+			}
 			var allPossibilities = cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.ToList();
 			var allPossiblePublicationsInAllWs = new HashSet<string>();
 			foreach (var possibility in allPossibilities)
+			{
 				foreach (var ws in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Handles())
+				{
 					allPossiblePublicationsInAllWs.Add(possibility.Name.get_String(ws).Text);
+				}
+			}
 			model.Publications = model.Publications.Where(allPossiblePublicationsInAllWs.Contains).ToList();
 		}
 
@@ -1034,9 +1108,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var badPart = model.Parts.FirstOrDefault(part => part.FieldDescription == null);
 			if (badPart != null)
 			{
-				throw new ApplicationException(String.Format(
-					"{0} is corrupt. {1} has no FieldDescription. Deleting this configuration file may fix the problem.",
-					model.FilePath, badPart.Label));
+				throw new ApplicationException($"{model.FilePath} is corrupt. {badPart.Label} has no FieldDescription. Deleting this configuration file may fix the problem.");
 			}
 			MergeCustomFieldsIntoDictionaryModel(cache, model.PartsAndSharedItems);
 		}
@@ -1047,15 +1119,17 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		private static void MergeCustomFieldsIntoDictionaryModel(LcmCache cache, IEnumerable<ConfigurableDictionaryNode> configurationList)
 		{
-			if(configurationList == null)
+			if (configurationList == null)
+			{
 				return;
+			}
 			// Gather up the custom fields and map them by type name
 			var classToCustomFields = BuildCustomFieldMap(cache);
 			// Custom fields don't need to have their children merged; skip those
 			foreach(var configNode in configurationList.Where(node => !node.IsCustomField))
 			{
 				var lookupClass = GetLookupClassForCustomFieldParent(configNode, cache);
-				if(lookupClass != null)
+				if (lookupClass != null)
 				{
 					var fieldsForType = GetCustomFieldsForType(cache, lookupClass, classToCustomFields);
 					MergeCustomFieldLists(configNode, fieldsForType);
@@ -1072,9 +1146,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var lookupClass = ConfiguredXHTMLGenerator.GetTypeForConfigurationNode(parent, cache.GetManagedMetaDataCache(), out unneeded);
 			// If the node describes a collection we may want to add the custom field node if the collection is of
 			// the type that the field is added to. (e.g. Senses, ExampleSentences)
-			if(ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(parent, cache.GetManagedMetaDataCache()) == PropertyType.CollectionType)
+			if (ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(parent, cache.GetManagedMetaDataCache()) == PropertyType.CollectionType)
 			{
-				if(lookupClass.IsGenericType)
+				if (lookupClass.IsGenericType)
 				{
 					lookupClass = lookupClass.GetGenericArguments()[0];
 				}
@@ -1099,21 +1173,33 @@ namespace LanguageExplorer.DictionaryConfiguration
 				var cfOwnerInterfaceName = cfOwnerClassName.Insert(0, "I");
 				// Map the class name and then the interface name to the custom field id list
 				if (classToCustomFields.ContainsKey(cfOwnerClassName))
+				{
 					classToCustomFields[cfOwnerClassName].Add(customFieldId);
+				}
 				else
 				{
 					classToCustomFields[cfOwnerInterfaceName] = classToCustomFields[cfOwnerClassName] = new List<int> { customFieldId };
 					if (cfOwnerClassName == "LexEntry")
+					{
 						classToCustomFields["ILexEntryRef"] = classToCustomFields["LexEntryRef"] = classToCustomFields["LexEntry"];
+					}
 				}
 			}
 			var senseOrEntryFields = new List<int>();
 			if (classToCustomFields.ContainsKey("LexSense"))
+			{
 				senseOrEntryFields.AddRange(classToCustomFields["LexSense"]);
+			}
+
 			if (classToCustomFields.ContainsKey("LexEntry"))
+			{
 				senseOrEntryFields.AddRange(classToCustomFields["LexEntry"]);
+			}
+
 			if (senseOrEntryFields.Any())
+			{
 				classToCustomFields["SenseOrEntry"] = classToCustomFields["ISenseOrEntry"] = senseOrEntryFields;
+			}
 			return classToCustomFields;
 		}
 
@@ -1122,15 +1208,20 @@ namespace LanguageExplorer.DictionaryConfiguration
 			// If parent has Referenced Children, return; fields will be merged under the Shared Item.
 			// If the node is set to hide the custom fields then we will not merge the nodes (but we continue to recurse to its children)
 			if (parent.ReferenceItem != null || parent.HideCustomFields)
+			{
 				return;
+			}
 
 			// Set the parent on the customFieldNodes (needed for Contains and to make any new fields valid when added)
 			foreach(var customField in customFieldNodes)
 			{
 				customField.Parent = parent;
 			}
+
 			if (parent.Children == null)
+			{
 				parent.Children = new List<ConfigurableDictionaryNode>();
+			}
 			else
 			{
 				MergeCustomFieldLists(parent.Children, customFieldNodes);
@@ -1138,13 +1229,17 @@ namespace LanguageExplorer.DictionaryConfiguration
 				foreach (var group in parent.Children.Where(child => child.DictionaryNodeOptions is DictionaryNodeGroupingOptions && child.Children != null))
 				{
 					// Set the parent on the customFieldNodes (for Contains)
-					foreach(var customField in customFieldNodes)
+					foreach (var customField in customFieldNodes)
+					{
 						customField.Parent = group;
+					}
 					MergeCustomFieldLists(group.Children, customFieldNodes);
 				}
 				// Set the parent back on the customFieldNodes (for when new fields are added)
-				foreach(var customField in customFieldNodes)
+				foreach (var customField in customFieldNodes)
+				{
 					customField.Parent = parent;
+				}
 			}
 
 			// Add any custom fields that didn't already exist in the children (at the end).
@@ -1158,7 +1253,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				var configNode = existingNodes[i];
 				if (!configNode.IsCustomField)
+				{
 					continue;
+				}
 				if (!customFieldNodes.Contains(configNode))
 				{
 					existingNodes.Remove(configNode); // field no longer exists
@@ -1173,15 +1270,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Generate a list of ConfigurableDictionaryNode objects to represent each custom field of the given type.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="className"></param>
-		/// <param name="customFieldMap">existing custom field map for performance, method will build one if none given</param>
-		public static List<ConfigurableDictionaryNode> GetCustomFieldsForType(LcmCache cache, string className,
-			Dictionary<string, List<int>> customFieldMap = null)
+		public static List<ConfigurableDictionaryNode> GetCustomFieldsForType(LcmCache cache, string className, Dictionary<string, List<int>> customFieldMap = null)
 		{
 			customFieldMap = customFieldMap ?? BuildCustomFieldMap(cache);
 			if (!customFieldMap.ContainsKey(className))
+			{
 				return new List<ConfigurableDictionaryNode>();
+			}
 
 			var customFieldList = new List<ConfigurableDictionaryNode>();
 			var metaDataCache = cache.GetManagedMetaDataCache();
@@ -1284,10 +1379,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private static void SetIsEnabledForSubTree(ConfigurableDictionaryNode node, bool isEnabled)
 		{
-			if(node == null)
+			if (node == null)
+			{
 				return;
+			}
 			node.IsEnabled = isEnabled;
-			if(node.Children != null)
+			if (node.Children != null)
 			{
 				foreach(var child in node.Children)
 				{
@@ -1305,40 +1402,44 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal void SetStartingNode(List<string> classList)
 		{
 			if (classList == null || classList.Count == 0)
-				return;
-			if (View != null &&
-				View.TreeControl != null &&
-				View.TreeControl.Tree != null)
 			{
-				ConfigurableDictionaryNode topNode = null;
-				// Search through the configuration trees associated with each toplevel TreeNode to find
-				// the best match.  If no match is found, give up.
-				foreach (TreeNode node in View.TreeControl.Tree.Nodes)
+				return;
+			}
+
+			if (View?.TreeControl?.Tree == null)
+			{
+				return;
+			}
+			ConfigurableDictionaryNode topNode = null;
+			// Search through the configuration trees associated with each toplevel TreeNode to find
+			// the best match.  If no match is found, give up.
+			foreach (TreeNode node in View.TreeControl.Tree.Nodes)
+			{
+				var configNode = node.Tag as ConfigurableDictionaryNode;
+				if (configNode == null)
 				{
-					var configNode = node.Tag as ConfigurableDictionaryNode;
-					if (configNode == null)
-						continue;
-					var cssClass = CssGenerator.GetClassAttributeForConfig(configNode);
-					if (classList[0].Split(' ').Contains(cssClass))
-					{
-						topNode = configNode;
-						break;
-					}
+					continue;
 				}
-				if (topNode == null)
-					return;
-				// We have a match, so search through the TreeNode tree to find the TreeNode tagged
-				// with the given configuration node.  If found, set that as the SelectedNode.
-				classList.RemoveAt(0);
-				var startingConfigNode = FindConfigNode(topNode, classList);
-				foreach (TreeNode node in View.TreeControl.Tree.Nodes)
+				var cssClass = CssGenerator.GetClassAttributeForConfig(configNode);
+				if (classList[0].Split(' ').Contains(cssClass))
 				{
-					var startingTreeNode = FindMatchingTreeNode(node, startingConfigNode);
-					if (startingTreeNode != null)
-					{
-						View.TreeControl.Tree.SelectedNode = startingTreeNode;
-						break;
-					}
+					topNode = configNode;
+					break;
+				}
+			}
+			if (topNode == null)
+				return;
+			// We have a match, so search through the TreeNode tree to find the TreeNode tagged
+			// with the given configuration node.  If found, set that as the SelectedNode.
+			classList.RemoveAt(0);
+			var startingConfigNode = FindConfigNode(topNode, classList);
+			foreach (TreeNode node in View.TreeControl.Tree.Nodes)
+			{
+				var startingTreeNode = FindMatchingTreeNode(node, startingConfigNode);
+				if (startingTreeNode != null)
+				{
+					View.TreeControl.Tree.SelectedNode = startingTreeNode;
+					break;
 				}
 			}
 		}
@@ -1351,7 +1452,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <remarks>LT-17213 Now 'internal static' so DictionaryConfigurationDlg can use it.</remarks>
 		internal static ConfigurableDictionaryNode FindConfigNode(ConfigurableDictionaryNode topNode, List<string> classPath)
 		{
-			if (classPath.Count == 0)
+			if (!classPath.Any())
 			{
 				return topNode; // what we have already is the best we can find.
 			}
@@ -1383,7 +1484,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			// node.  There are classes in the XHTML that aren't represented in the configuration nodes.  ("sensecontent"
 			// and "sense" among others)
 			if (matchingNode == null)
+			{
 				matchingNode = topNode;
+			}
 			classPath.RemoveAt(0);
 			return FindConfigNode(matchingNode, classPath);
 		}
@@ -1395,12 +1498,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static TreeNode FindMatchingTreeNode(TreeNode topNode, ConfigurableDictionaryNode configNode)
 		{
 			if (ReferenceEquals(topNode.Tag as ConfigurableDictionaryNode, configNode))
+			{
 				return topNode;
+			}
 			foreach (TreeNode child in topNode.Nodes)
 			{
 				var start = FindMatchingTreeNode(child, configNode);
 				if (start != null)
+				{
 					return start;
+				}
 			}
 			return null;
 		}
@@ -1423,7 +1530,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				case "vernoranal": return WritingSystemType.Both;
 				case "pronunciation": return WritingSystemType.Pronunciation;
 				case "reversal": return WritingSystemType.Reversal;
-				default: throw new ArgumentException($"Unknown writing system type {wsType}", wsType);
+				default: throw new ArgumentException($"Unknown writing system type {wsType}", nameof(wsType));
 			}
 		}
 
@@ -1446,7 +1553,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// Get the ISubscriber.
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
+		#endregion
 
+		#region Implementation of IFlexComponent
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -1495,7 +1604,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 				}
 				// if the manager has not updated anything then we don't need to make any adustments
 				if (!managerMadeChanges)
+				{
 					return;
+				}
 				// Update our Views
 				View.SetChoices(_dictionaryConfigurations);
 				SaveModel();

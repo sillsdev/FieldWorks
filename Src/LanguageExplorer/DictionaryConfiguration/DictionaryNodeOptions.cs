@@ -36,8 +36,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var properties = GetType().GetProperties();
 			foreach (var property in properties.Where(prop => prop.CanWrite)) // Skip any read-only properties
 			{
-				var originalValue = property.GetValue(this, null);
-				property.SetValue(target, originalValue, null);
+				property.SetValue(target, property.GetValue(this, null), null);
 			}
 			return target;
 		}

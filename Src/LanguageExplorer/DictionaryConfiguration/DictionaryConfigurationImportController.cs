@@ -50,12 +50,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Path to the config that we are preparing to import.
 		/// </summary>
-		internal string _temporaryImportConfigLocation = null;
+		internal string _temporaryImportConfigLocation;
 
 		/// <summary>
 		/// New publications that will be added by the import.
 		/// </summary>
-		internal IEnumerable<string> _newPublications = null;
+		internal IEnumerable<string> _newPublications;
 
 		/// <summary>
 		/// The custom fields found in the lift file which will be added if they aren't present in the project
@@ -91,8 +91,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private bool _isInvalidConfigFile;
 
 		/// <summary/>
-		public DictionaryConfigurationImportController(LcmCache cache, string projectConfigDir,
-			List<DictionaryConfigurationModel> configurations)
+		public DictionaryConfigurationImportController(LcmCache cache, string projectConfigDir, List<DictionaryConfigurationModel> configurations)
 		{
 			_cache = cache;
 			_projectConfigDir = projectConfigDir;
@@ -110,8 +109,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 			// If the configuration to import has the same label as an existing configuration in the project folder
 			// then overwrite the existing configuration.
-			var existingConfigurationInTheWay = _configurations.FirstOrDefault(config => config.Label == NewConfigToImport.Label &&
-				Path.GetDirectoryName(config.FilePath) == _projectConfigDir);
+			var existingConfigurationInTheWay = _configurations.FirstOrDefault(config => config.Label == NewConfigToImport.Label
+				&& Path.GetDirectoryName(config.FilePath) == _projectConfigDir);
 
 			NewConfigToImport.Publications.ForEach(
 				publication =>
@@ -167,9 +166,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					? DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName
 					: DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
 			var isCustomizedOriginal = DictionaryConfigurationManagerController.IsConfigurationACustomizedOriginal(NewConfigToImport, configDir, _cache);
-			UsageReporter.SendEvent("DictionaryConfigurationImport", "Import", "Import Config",
-				string.Format("Import of [{0}{1}]:{2}",
-					configType, isCustomizedOriginal ? string.Empty : "-Custom", ImportHappened ? "succeeded" : "failed"), 0);
+			UsageReporter.SendEvent("DictionaryConfigurationImport", "Import", "Import Config", $"Import of [{configType}{(isCustomizedOriginal ? string.Empty : "-Custom")}]:{(ImportHappened ? "succeeded" : "failed")}", 0);
 		}
 
 		private void ImportStyles(string importStylesLocation)
@@ -221,14 +218,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private void ImportCustomFields(string liftPathname)
 		{
 			if (string.IsNullOrEmpty(liftPathname))
+			{
 				return;
+			}
 			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
 			{
 				string sFilename;
 				var fMigrationNeeded = Migrator.IsMigrationNeeded(liftPathname);
 				if (fMigrationNeeded)
 				{
-					var sOldVersion = SIL.Lift.Validation.Validator.GetLiftVersion(liftPathname);
 					sFilename = Migrator.MigrateToLatestVersion(liftPathname);
 				}
 				else
@@ -253,9 +251,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		private static void AddPublicationTypeIfNotPresent(string name, LcmCache cache)
 		{
-			if (cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS
-				.Select(pub => pub.Name.get_String(cache.DefaultAnalWs).Text).Contains(name))
+			if (cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(pub => pub.Name.get_String(cache.DefaultAnalWs).Text).Contains(name))
+			{
 				return;
+			}
 			AddPublicationType(name, cache);
 		}
 
@@ -336,8 +335,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			// Reset flag
 			ImportHappened = false;
 
-			_newPublications =
-				DictionaryConfigurationModel.PublicationsInXml(_temporaryImportConfigLocation).Except(NewConfigToImport.Publications);
+			_newPublications = DictionaryConfigurationModel.PublicationsInXml(_temporaryImportConfigLocation).Except(NewConfigToImport.Publications);
 
 			_customFieldsToImport = CustomFieldsInLiftFile(_importLiftLocation);
 			// Use the full list of publications in the XML file, even ones that don't exist in the project.
@@ -380,7 +378,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Connect to and show a view for the user to perform an import.
 		/// </summary>
-		/// <param name="dialog"></param>
 		public void DisplayView(DictionaryConfigurationImportDlg dialog)
 		{
 			_view = dialog;
@@ -390,9 +387,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 			_view.doOverwriteRadioOption.CheckedChanged += (a, b) =>
 			{
 				if (_view.doOverwriteRadioOption.Checked)
+				{
 					UserRequestsOverwrite();
+				}
 				else
+				{
 					UserRequestsNotOverwrite();
+				}
 				RefreshStatusDisplay();
 			};
 			_view.overwriteGroupBox.Visible = false;
@@ -430,7 +431,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 			if (NewConfigToImport == null)
 			{
-				string invalidConfigFileMsg = string.Empty;
+				var invalidConfigFileMsg = string.Empty;
 				if (_isInvalidConfigFile)
 				{
 					var configType = Path.GetFileName(_projectConfigDir) == DictionaryConfigurationServices.DictionaryConfigurationDirectoryName
@@ -449,8 +450,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				mainStatus = string.Format(NewConfigToImport.Label == _proposedNewConfigLabel
 						? DictionaryConfigurationStrings.kstidImportingConfigNewName
-						: DictionaryConfigurationStrings.kstidImportingAndOverwritingConfiguration,
-					NewConfigToImport.Label);
+						: DictionaryConfigurationStrings.kstidImportingAndOverwritingConfiguration, NewConfigToImport.Label);
 			}
 
 			if (_newPublications != null && _newPublications.Any())

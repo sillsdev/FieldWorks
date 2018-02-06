@@ -41,17 +41,21 @@ namespace LanguageExplorer.DictionaryConfiguration
 			foreach (var xnLayoutType in layoutTypes)
 			{
 				if (xnLayoutType.Name.LocalName != "layoutType")
+				{
 					continue;
+				}
 				var sLabel = XmlUtils.GetOptionalAttributeValue(xnLayoutType, "label");
 				if (sLabel == "$wsName") // if the label for the layout matches $wsName then this is a reversal index layout
 				{
-					string sLayout = XmlUtils.GetOptionalAttributeValue(xnLayoutType, "layout");
+					var sLayout = XmlUtils.GetOptionalAttributeValue(xnLayoutType, "layout");
 					Debug.Assert(sLayout.EndsWith("-$ws"));
-					bool fReversalIndex = true;
+					var fReversalIndex = true;
 					foreach (var config in xnLayoutType.Elements())
 					{
 						if (config.Name.LocalName != "configure")
+						{
 							continue;
+						}
 						var sClass = XmlUtils.GetOptionalAttributeValue(config, "class");
 						if (sClass != "ReversalIndexEntry")
 						{
@@ -59,8 +63,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 							break;
 						}
 					}
+
 					if (!fReversalIndex)
+					{
 						continue;
+					}
 					foreach(var ri in converter.Cache.LangProject.LexDbOA.CurrentReversalIndices)
 					{
 						var ws = converter.Cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
@@ -76,27 +83,33 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					var rgltnStyle = BuildLayoutTree(xnLayoutType, converter);
 					if (rgltnStyle.Count > 0)
+					{
 						converter.AddDictionaryTypeItem(xnLayoutType, rgltnStyle);
+					}
 				}
 			}
 		}
 
-		private static XElement CreateWsSpecficLayoutType(XElement xnLayoutType, string sWsLabel,
-																		 string sWsLayout, string sWsTag)
+		private static XElement CreateWsSpecficLayoutType(XElement xnLayoutType, string sWsLabel, string sWsLayout, string sWsTag)
 		{
 			var xnRealLayout = xnLayoutType.Clone();
-			if (xnRealLayout.HasAttributes)
+			if (!xnRealLayout.HasAttributes)
 			{
-				xnRealLayout.Attribute("label").Value = sWsLabel;
-				xnRealLayout.Attribute("layout").Value = sWsLayout;
-				foreach (var config in xnRealLayout.Elements())
+				return xnRealLayout;
+			}
+			xnRealLayout.Attribute("label").Value = sWsLabel;
+			xnRealLayout.Attribute("layout").Value = sWsLayout;
+			foreach (var config in xnRealLayout.Elements())
+			{
+				if (config.Name.LocalName != "configure")
 				{
-					if (config.Name.LocalName != "configure")
-						continue;
-					var sInternalLayout = XmlUtils.GetOptionalAttributeValue(config, "layout");
-					Debug.Assert(sInternalLayout.EndsWith("-$ws"));
-					if (config.HasAttributes)
-						config.Attribute("layout").Value = sInternalLayout.Replace("$ws", sWsTag);
+					continue;
+				}
+				var sInternalLayout = XmlUtils.GetOptionalAttributeValue(config, "layout");
+				Debug.Assert(sInternalLayout.EndsWith("-$ws"));
+				if (config.HasAttributes)
+				{
+					config.Attribute("layout").Value = sInternalLayout.Replace("$ws", sWsTag);
 				}
 			}
 			return xnRealLayout;
@@ -112,14 +125,20 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				// expects a configure element
 				if (config.Name.LocalName != "configure")
+				{
 					continue;
+				}
 				var ltn = BuildMainLayout(config, converter);
 				if (ltn != null)
 				{
 					if (XmlUtils.GetOptionalBooleanAttributeValue(config, "hideConfig", false))
-						treeNodeList.AddRange(Enumerable.Cast<LayoutTreeNode>(ltn.Nodes));
+					{
+						treeNodeList.AddRange(ltn.Nodes.Cast<LayoutTreeNode>());
+					}
 					else
+					{
 						treeNodeList.Add(ltn);
+					}
 				}
 			}
 			return treeNodeList;
@@ -137,12 +156,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var layout = converter.GetLayoutElement(className, layoutName);
 			if (layout == null)
 			{
-				var msg = String.Format("Cannot configure layout {0} of class {1} because it does not exist",layoutName, className);
+				var msg = $"Cannot configure layout {layoutName} of class {className} because it does not exist";
 				converter.LogConversionError(msg);
 				return null;
 			}
 			mainLayoutNode.ParentLayout = layout;	// not really the parent layout, but the parent of this node's children
-			string sVisible = XmlUtils.GetOptionalAttributeValue(layout, "visibility");
+			var sVisible = XmlUtils.GetOptionalAttributeValue(layout, "visibility");
 			mainLayoutNode.Checked = sVisible != "never";
 			AddChildNodes(layout, mainLayoutNode, mainLayoutNode.Nodes.Count, converter);
 			mainLayoutNode.OriginalNumberOfSubnodes = mainLayoutNode.Nodes.Count;
@@ -151,8 +170,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		internal static void AddChildNodes(XElement layout, LayoutTreeNode ltnParent, int iStart, ILayoutConverter converter)
 		{
-			bool fMerging = iStart < ltnParent.Nodes.Count;
-			string className = XmlUtils.GetMandatoryAttributeValue(layout, "class");
+			var fMerging = iStart < ltnParent.Nodes.Count;
+			var className = XmlUtils.GetMandatoryAttributeValue(layout, "class");
 			var nodes = PartGenerator.GetGeneratedChildren(layout, converter.Cache,
 																						new[] { "ref", "label" });
 			foreach (var node in nodes)
@@ -160,18 +179,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 				if (node.Name.LocalName == "sublayout")
 				{
 					Debug.Assert(!fMerging);
-					string subLayoutName = XmlUtils.GetOptionalAttributeValue(node, "name", null);
-					XElement subLayout;
-					if (subLayoutName == null)
-					{
-						subLayout = node; // a sublayout lacking a name contains the part refs directly.
-					}
-					else
-					{
-						subLayout = converter.GetLayoutElement(className, subLayoutName);
-					}
+					var subLayoutName = XmlUtils.GetOptionalAttributeValue(node, "name", null);
+					var subLayout = subLayoutName == null ? node : converter.GetLayoutElement(className, subLayoutName);
 					if (subLayout != null)
+					{
 						AddChildNodes(subLayout, ltnParent, ltnParent.Nodes.Count, converter);
+					}
 				}
 				else if (node.Name == "part")
 				{
@@ -179,11 +192,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 					// it if it's already there!
 					var ltnOld = FindMatchingNode(ltnParent, node);
 					if (ltnOld != null)
+					{
 						continue;
+					}
 					var sRef = XmlUtils.GetMandatoryAttributeValue(node, "ref");
 					var part = converter.GetPartElement(className, sRef);
 					if (part == null && sRef != "$child")
+					{
 						continue;
+					}
 					var fHide = XmlUtils.GetOptionalBooleanAttributeValue(node, "hideConfig", false);
 					LayoutTreeNode ltn;
 					var cOrig = 0;
@@ -196,13 +213,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 								HiddenNode = converter.LayoutLevels.HiddenPartRef,
 								HiddenNodeLayout = converter.LayoutLevels.HiddenLayout
 							};
-						if (!String.IsNullOrEmpty(ltn.LexRelType))
+						if (!string.IsNullOrEmpty(ltn.LexRelType))
+						{
 							converter.BuildRelationTypeList(ltn);
-						if (!String.IsNullOrEmpty(ltn.EntryType))
+						}
+
+						if (!string.IsNullOrEmpty(ltn.EntryType))
+						{
 							converter.BuildEntryTypeList(ltn, ltnParent.LayoutName);
-						//if (fMerging)
-						//((LayoutTreeNode)ltnParent.Nodes[iNode]).MergedNodes.Add(ltn);
-						//else
+						}
 						ltnParent.Nodes.Add(ltn);
 					}
 					else
@@ -222,17 +241,20 @@ namespace LanguageExplorer.DictionaryConfiguration
 						var fOldAdding = ltn.AddingSubnodes;
 						ltn.AddingSubnodes = true;
 						if (part != null)
+						{
 							ProcessChildNodes(part.Elements(), className, ltn, converter);
+						}
 						ltn.OriginalNumberOfSubnodes = ltn.Nodes.Count;
 						ltn.AddingSubnodes = fOldAdding;
-						if (fHide)
+						if (!fHide)
 						{
-							var cNew = ltn.Nodes.Count - cOrig;
-							if(cNew > 1)
-							{
-								var msg = $"{cNew} nodes for a hidden PartRef ({node.GetOuterXml()})!";
-								converter.LogConversionError(msg);
-							}
+							continue;
+						}
+						var cNew = ltn.Nodes.Count - cOrig;
+						if(cNew > 1)
+						{
+							var msg = $"{cNew} nodes for a hidden PartRef ({node.GetOuterXml()})!";
+							converter.LogConversionError(msg);
 						}
 					}
 					finally
@@ -264,13 +286,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private static void StoreChildNodeInfo(XElement xn, string className, LayoutTreeNode ltn, ILayoutConverter converter)
 		{
-			var sField = XmlUtils.GetMandatoryAttributeValue(xn, "field");
-			var xnCaller = converter.LayoutLevels.PartRef;
-			if (xnCaller == null)
-				xnCaller = ltn.Configuration;
+			var xnCaller = converter.LayoutLevels.PartRef ?? ltn.Configuration;
 			var hideConfig = xnCaller != null && XmlUtils.GetOptionalBooleanAttributeValue(xnCaller, "hideConfig", false);
 			// Insert any special configuration appropriate for this property...unless the caller is hidden, in which case,
 			// we don't want to configure it at all.
+			var sField = XmlUtils.GetMandatoryAttributeValue(xn, "field");
 			if (!ltn.IsTopLevel && !hideConfig)
 			{
 				if (sField == "Senses" && (ltn.ClassName == "LexEntry" || ltn.ClassName == "LexSense"))
@@ -311,7 +331,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 				// the property PhoneEnv inside an if that checks that the MoForm is one of the subclasses that has
 				// the PhoneEnv property. MoForm itself does not.
 				if (!converter.Cache.GetManagedMetaDataCache().FieldExists(className, sField, true))
+				{
 					return;
+				}
 				var flid = converter.Cache.DomainDataByFlid.MetaDataCache.GetFieldId(className, sField, true);
 				var type = (CellarPropertyType)converter.Cache.DomainDataByFlid.MetaDataCache.GetFieldType(flid);
 				Debug.Assert(type >= CellarPropertyType.MinObj);
@@ -320,15 +342,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 					var mdc = converter.Cache.MetaDataCacheAccessor;
 					sTargetClasses = XmlUtils.GetOptionalAttributeValue(xn, "targetclasses");
 					clidDst = mdc.GetDstClsId(flid);
-					if (clidDst == 0)
-						sClass = XmlUtils.GetOptionalAttributeValue(xn, "targetclass");
-					else
-						sClass = mdc.GetClassName(clidDst);
+					sClass = clidDst == 0 ? XmlUtils.GetOptionalAttributeValue(xn, "targetclass") : mdc.GetClassName(clidDst);
 					if (clidDst == StParaTags.kClassId)
 					{
 						var sClassT = XmlUtils.GetOptionalAttributeValue(xn, "targetclass");
-						if (!String.IsNullOrEmpty(sClassT))
+						if (!string.IsNullOrEmpty(sClassT))
+						{
 							sClass = sClassT;
+						}
 					}
 				}
 			}
@@ -337,16 +358,25 @@ namespace LanguageExplorer.DictionaryConfiguration
 				return;
 			}
 			if (clidDst == MoFormTags.kClassId && !sLayout.StartsWith("publi"))
+			{
 				return;	// ignore the layouts used by the LexEntry-Jt-Headword part.
-			if (String.IsNullOrEmpty(sLayout) || String.IsNullOrEmpty(sClass))
+			}
+
+			if (string.IsNullOrEmpty(sLayout) || String.IsNullOrEmpty(sClass))
+			{
 				return;
+			}
+
 			if (sTargetClasses == null)
+			{
 				sTargetClasses = sClass;
-			string[] rgsClasses = sTargetClasses.Split(new[] { ',', ' ' },
-																	 StringSplitOptions.RemoveEmptyEntries);
+			}
+			var rgsClasses = sTargetClasses.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
 			XElement subLayout = null;
 			if (rgsClasses.Length > 0)
+			{
 				subLayout = converter.GetLayoutElement(rgsClasses[0], sLayout);
+			}
 
 			if (subLayout != null)
 			{
@@ -356,7 +386,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 				var fRepeatedConfig = XmlUtils.GetOptionalBooleanAttributeValue(xn, "repeatedConfig", false);
 				if (fRepeatedConfig)
+				{
 					return;		// repeats an earlier part element (probably as a result of <if>s)
+				}
 				for (var i = 1; i < rgsClasses.Length; i++)
 				{
 					var mergedLayout = converter.GetLayoutElement(rgsClasses[i], sLayout);
@@ -375,8 +407,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					// Complain if we can't find either a layout or a part, and the name isn't tagged
 					// for a writing system.  (We check only for English, being lazy.)
-					var msg = String.Format("Missing jtview layout for class=\"{0}\" name=\"{1}\"",
-													rgsClasses[0], sLayout);
+					var msg = $"Missing jtview layout for class=\"{rgsClasses[0]}\" name=\"{sLayout}\"";
 					converter.LogConversionError(msg);
 				}
 			}
@@ -385,11 +416,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static LayoutTreeNode FindMatchingNode(LayoutTreeNode ltn, XElement node)
 		{
 			if (ltn == null || node == null)
+			{
 				return null;
+			}
 			foreach (LayoutTreeNode ltnSub in ltn.Nodes)
 			{
 				if (NodesMatch(ltnSub.Configuration, node))
+				{
 					return ltnSub;
+				}
 			}
 			return FindMatchingNode(ltn.Parent as LayoutTreeNode, node);
 		}
@@ -397,9 +432,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static bool NodesMatch(XElement first, XElement second)
 		{
 			if (first.Name != second.Name)
+			{
 				return false;
-			if((!first.HasAttributes) && (second.HasAttributes))
+			}
+
+			if (!first.HasAttributes && (second.HasAttributes))
+			{
 				return false;
+			}
 			if(!first.HasAttributes)
 			{
 				return ChildNodesMatch(first.Elements().ToList(), second.Elements().ToList());
@@ -423,8 +463,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				for(;firstIter.MoveNext() && secondIter.MoveNext();)
 				{
-					if(!firstIter.Current.Equals(secondIter.Current))
+					if (!firstIter.Current.Equals(secondIter.Current))
+					{
 						return false;
+					}
 				}
 				return true;
 			}
@@ -433,13 +475,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// This method should sort the node lists and call NodesMatch with each pair.
 		/// </summary>
-		/// <param name="firstNodeList"></param>
-		/// <param name="secondNodeList"></param>
-		/// <returns></returns>
 		private static bool ChildNodesMatch(IList<XElement> firstNodeList, IList<XElement> secondNodeList)
 		{
 			if (firstNodeList.Count != secondNodeList.Count)
+			{
 				return false;
+			}
 			var firstAtSet = new SortedList<string, XElement>();
 			var secondAtSet = new SortedList<string, XElement>();
 			for (var i = 0; i < firstNodeList.Count; ++i)
@@ -453,7 +494,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 				for (; firstIter.MoveNext() && secondIter.MoveNext(); )
 				{
 					if (!NodesMatch(firstIter.Current.Value, secondIter.Current.Value))
+					{
 						return false;
+					}
 				}
 				return true;
 			}

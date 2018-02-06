@@ -23,8 +23,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public HeadwordNumbersController(IHeadwordNumbersView view, DictionaryConfigurationModel model, LcmCache cache)
 		{
-			if(view == null || model == null || cache == null)
+			if (view == null || model == null || cache == null)
+			{
 				throw new ArgumentNullException();
+			}
+
 			_view = view;
 			_model = model;
 			_cache = cache;
@@ -50,15 +53,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 			_view.ShowHomograph = _homographConfig.ShowHwNumber;
 			_view.ShowHomographOnCrossRef = _model.IsReversal ? _homographConfig.ShowHwNumInReversalCrossRef : _homographConfig.ShowHwNumInCrossRef;
 			_view.ShowSenseNumber = _model.IsReversal ? _homographConfig.ShowSenseNumberReversal : _homographConfig.ShowSenseNumber;
-			_view.OkButtonEnabled = _homographConfig.CustomHomographNumberList == null
-				|| !_homographConfig.CustomHomographNumberList.Any() || _homographConfig.CustomHomographNumberList.Count == 10;
+			_view.OkButtonEnabled = _homographConfig.CustomHomographNumberList == null || !_homographConfig.CustomHomographNumberList.Any() || _homographConfig.CustomHomographNumberList.Count == 10;
 			_view.CustomDigitsChanged += OnViewCustomDigitsChanged;
 		}
 
 		private void OnViewCustomDigitsChanged(object sender, EventArgs eventArgs)
 		{
-			_view.OkButtonEnabled = !_view.CustomDigits.Any()
-				|| _view.CustomDigits.Count(digit => !string.IsNullOrWhiteSpace(digit)) == 10;
+			_view.OkButtonEnabled = !_view.CustomDigits.Any() || _view.CustomDigits.Count(digit => !string.IsNullOrWhiteSpace(digit)) == 10;
 		}
 
 		/// <summary>
@@ -66,11 +67,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		private DictionaryHomographConfiguration GetHeadwordConfiguration()
 		{
-			if (_model.HomographConfiguration != null)
-			{
-				return _model.HomographConfiguration;
-			}
-			return new DictionaryHomographConfiguration(new HomographConfiguration());
+			return _model.HomographConfiguration ?? new DictionaryHomographConfiguration(new HomographConfiguration());
 		}
 
 		/// <summary>

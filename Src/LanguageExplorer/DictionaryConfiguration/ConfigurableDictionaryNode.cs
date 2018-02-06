@@ -319,7 +319,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 			// Deep-clone DictionaryNodeOptions
 			if (DictionaryNodeOptions != null)
+			{
 				clone.DictionaryNodeOptions = DictionaryNodeOptions.DeepClone();
+			}
 
 			return clone;
 		}
@@ -346,11 +348,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		private static bool CheckParents(ConfigurableDictionaryNode first, ConfigurableDictionaryNode second)
 		{
-			if(first == null && second == null)
+			if (first == null && second == null)
 			{
 				return true;
 			}
-			if((first == null ^ second == null) || (first.Parent == null ^ second.Parent == null)) // ^ is XOR
+			if (first == null ^ second == null || first.Parent == null ^ second.Parent == null) // ^ is XOR
 			{
 				return false;
 			}

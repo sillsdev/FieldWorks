@@ -97,11 +97,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 			get
 			{
 				if (!string.IsNullOrEmpty(WritingSystem))
+				{
 					return true;
+				}
 
 				// Fallback for migration
 				if (string.IsNullOrEmpty(FilePath))
+				{
 					return false; // easiest way to avoid a crash; assume something that may not be true!
+				}
 				var directory = Path.GetFileName(Path.GetDirectoryName(FilePath));
 				return DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName.Equals(directory);
 			}
@@ -120,12 +124,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 			get
 			{
 				if (IsReversal)
+				{
 					return ConfigType.Reversal;
+				}
+
 				if (IsRootBased)
+				{
 					return ConfigType.Root;
-				if (IsHybrid)
-					return ConfigType.Hybrid;
-				return ConfigType.Lexeme;
+				}
+				return IsHybrid ? ConfigType.Hybrid : ConfigType.Lexeme;
 			}
 		}
 
@@ -135,12 +142,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 		[XmlIgnore]
 		public IEnumerable<ConfigurableDictionaryNode> PartsAndSharedItems => Parts.Concat(SharedItems);
 
-		/// <summary></summary>
+		/// <summary />
 		public void Save()
 		{
 			// Don't save model unless the DictionaryConfigurationController has modified the FilePath first.
 			if (FilePath.StartsWith(FwDirectoryFinder.DefaultConfigurations))
+			{
 				return;
+			}
 			LastModified = DateTime.Now;
 			var serializer = new XmlSerializer(typeof(DictionaryConfigurationModel));
 			var settings = new XmlWriterSettings { Indent = true };
@@ -161,21 +170,28 @@ namespace LanguageExplorer.DictionaryConfiguration
 				var model = (DictionaryConfigurationModel)serializer.Deserialize(reader);
 				model.FilePath = FilePath; // this doesn't get [de]serialized
 				foreach (var property in typeof(DictionaryConfigurationModel).GetProperties().Where(prop => prop.CanWrite))
+				{
 					property.SetValue(this, property.GetValue(model, null), null);
+				}
 			}
 			SharedItems = SharedItems ?? new List<ConfigurableDictionaryNode>();
 			if (cache == null)
+			{
 				return;
+			}
 			SpecifyParentsAndReferences(Parts, SharedItems);
 			if (AllPublications)
+			{
 				Publications = DictionaryConfigurationController.GetAllPublications(cache);
+			}
 			else
+			{
 				DictionaryConfigurationController.FilterInvalidPublicationsFromModel(this, cache);
+			}
 			// Update LCM's homograph configuration from the loaded dictionary configuration homograph settings
 			if (HomographConfiguration != null)
 			{
-				var wsTtype = WritingSystemType.Both;
-				var availableWSs = DictionaryConfigurationController.GetCurrentWritingSystems(wsTtype, cache);
+				var availableWSs = DictionaryConfigurationController.GetCurrentWritingSystems(WritingSystemType.Both, cache);
 				if (availableWSs.Any(x => x.Id == HomographConfiguration.HomographWritingSystem))
 				{
 					HomographConfiguration.ExportToHomographConfiguration(cache.ServiceLocator.GetInstance<HomographConfiguration>());
@@ -274,7 +290,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal static void SpecifyParentsAndReferences(List<ConfigurableDictionaryNode> nodes, List<ConfigurableDictionaryNode> sharedItems = null)
 		{
 			if (nodes == null)
+			{
 				throw new ArgumentNullException();
+			}
 
 			var rollingNodes = new List<ConfigurableDictionaryNode>(nodes);
 
@@ -283,16 +301,26 @@ namespace LanguageExplorer.DictionaryConfiguration
 				var node = rollingNodes[0];
 				rollingNodes.RemoveAt(0);
 				if (!string.IsNullOrEmpty(node.ReferenceItem))
+				{
 					DictionaryConfigurationController.LinkReferencedNode(sharedItems, node, node.ReferenceItem);
+				}
+
 				if (node.Children == null)
+				{
 					continue;
+				}
+
 				foreach (var child in node.Children)
+				{
 					child.Parent = node;
+				}
 				rollingNodes.AddRange(node.Children);
 			}
 
 			if (sharedItems != null && !ReferenceEquals(nodes, sharedItems))
+			{
 				SpecifyParentsAndReferences(sharedItems, sharedItems);
+			}
 		}
 
 		public override string ToString()

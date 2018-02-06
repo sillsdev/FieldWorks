@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,7 +26,9 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 			textBoxAfter.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
 
 			if (!isSubsense)
+			{
 				return;
+			}
 			groupBoxSenseNumber.Text = DictionaryConfigurationStrings.ksSubsenseNumberConfig;
 			checkBoxNumberSingleSense.Text = DictionaryConfigurationStrings.ksNumberSingleSubsense;
 			checkBoxShowGrammarFirst.Text = DictionaryConfigurationStrings.ksHideGramInfoIfSameAsParent;
@@ -71,7 +73,7 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 					dropDownNumberingStyle.SelectedIndex = 0;
 					return;
 				}
-				for (int i = 0; i < dropDownNumberingStyle.Items.Count; i++)
+				for (var i = 0; i < dropDownNumberingStyle.Items.Count; i++)
 				{
 					if (((NumberingStyleComboItem)dropDownNumberingStyle.Items[i]).FormatString.Equals(value))
 					{
@@ -103,7 +105,7 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 					dropDownParentSenseNumberStyle.SelectedIndex = 0;
 					return;
 				}
-				for (int i = 0; i < dropDownParentSenseNumberStyle.Items.Count; i++)
+				for (var i = 0; i < dropDownParentSenseNumberStyle.Items.Count; i++)
 				{
 					if (((NumberingStyleComboItem)dropDownParentSenseNumberStyle.Items[i]).FormatString.Equals(value))
 					{
@@ -138,23 +140,9 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 			}
 		}
 
-		public string NumberStyle
-		{
-			get
-			{
-				var style = ((StyleComboItem)dropDownStyle.SelectedItem).Style;
-				return style != null ? style.Name : null;
-			}
-		}
+		public string NumberStyle => ((StyleComboItem)dropDownStyle.SelectedItem).Style?.Name;
 
-		public string ParentSenseNumberStyle
-		{
-			get
-			{
-				var style = ((StyleComboItem)dropDownStyle.SelectedItem).Style;
-				return style != null ? style.Name : null;
-			}
-		}
+		public string ParentSenseNumberStyle => ((StyleComboItem)dropDownStyle.SelectedItem).Style?.Name;
 
 		public bool NumberSingleSense
 		{
@@ -191,15 +179,9 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 			set { checkBoxFirstSenseInline.Visible = checkBoxFirstSenseInline.Enabled = value; }
 		}
 
-		internal ComboBox.ObjectCollection DropdownNumberingStyles
-		{
-			get { return dropDownNumberingStyle.Items; }
-		}
+		internal ComboBox.ObjectCollection DropdownNumberingStyles => dropDownNumberingStyle.Items;
 
-		internal ComboBox.ObjectCollection DropDownParentSenseNumberStyle
-		{
-			get { return dropDownParentSenseNumberStyle.Items; }
-		}
+		internal ComboBox.ObjectCollection DropDownParentSenseNumberStyle => dropDownParentSenseNumberStyle.Items;
 
 		#region EventHandlers
 		public event EventHandler BeforeTextChanged

@@ -189,7 +189,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				m_writingSystemCombo.SelectedIndex = m_writingSystemCombo.FindString(value);
 				if (m_writingSystemCombo.SelectedIndex < 0)
+				{
 					m_writingSystemCombo.SelectedIndex = 0;
+				}
 			}
 		}
 
@@ -224,9 +226,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				var digitsArray = value.ToArray();
 				if (digitsArray.Length == 0)
+				{
 					return;
+				}
+
 				if (digitsArray.Length != 10)
+				{
 					return;
+				}
 				for (var i = 0; i < 10; ++i)
 				{
 					_digitBoxes[i].Text = digitsArray[i];

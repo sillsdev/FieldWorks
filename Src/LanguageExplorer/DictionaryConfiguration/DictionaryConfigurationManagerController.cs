@@ -26,7 +26,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 	/// Handles manipulation of the set of dictionary configurations ("views"), and their associations to dictionary publications.
 	/// Controller for the DictionaryConfigurationManagerDlg View.
 	/// </summary>
-	class DictionaryConfigurationManagerController : IFlexComponent
+	internal class DictionaryConfigurationManagerController : IFlexComponent
 	{
 		private readonly DictionaryConfigurationManagerDlg _view;
 		private LcmCache _cache;
@@ -82,10 +82,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 			Guard.AgainstNull(publication, nameof(publication));
 			Guard.AgainstNull(configuration, nameof(configuration));
 			if (!_publications.Contains(publication))
+			{
 				throw new ArgumentOutOfRangeException();
+			}
 
 			if (!configuration.Publications.Contains(publication))
+			{
 				configuration.Publications.Add(publication);
+			}
 		}
 
 		/// <summary>Disassociate a publication from a dictionary configuration.</summary>
@@ -94,7 +98,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			Guard.AgainstNull(publication, nameof(publication));
 			Guard.AgainstNull(configuration, nameof(configuration));
 			if (!_publications.Contains(publication))
+			{
 				throw new ArgumentOutOfRangeException();
+			}
 
 			configuration.Publications.Remove(publication);
 		}
@@ -130,8 +136,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			_configurations.Sort((lhs, rhs) => string.Compare(lhs.Label, rhs.Label));
 			_view.configurationsListView.Items.Clear();
-			_view.configurationsListView.Items.AddRange(
-				_configurations.Select(configuration => new ListViewItem { Tag = configuration, Text = configuration.Label }).ToArray());
+			_view.configurationsListView.Items.AddRange(_configurations.Select(configuration => new ListViewItem { Tag = configuration, Text = configuration.Label }).ToArray());
 		}
 
 		/// <summary>
@@ -164,16 +169,22 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 			_view.Closing += (sndr, e) =>
 			{
-				if (SelectedConfiguration != null && Finished != null)
-					Finished(SelectedConfiguration);
+				if (SelectedConfiguration != null)
+				{
+					Finished?.Invoke(SelectedConfiguration);
+				}
 			};
 
 			// Select the correct configuration
 			var selectedConfigIdx = _configurations.FindIndex(config => config == _initialConfig);
-			if(selectedConfigIdx >= 0)
+			if (selectedConfigIdx >= 0)
+			{
 				_view.configurationsListView.Items[selectedConfigIdx].Selected = true;
+			}
 			else
+			{
 				_view.configurationsListView.Items[0].Selected = true;
+			}
 
 			IsDirty = false;
 		}
@@ -229,7 +240,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				// Don't try processing the all-pubs item and get into a muddle.
 				if (publicationItem == _allPublicationsItem)
+				{
 					continue;
+				}
 				publicationItem.Checked = associatedPublications.Contains(publicationItem.Text);
 			}
 			_allPublicationsItem.Checked = SelectedConfiguration.AllPublications;
@@ -238,7 +251,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private void OnCheckPublication(object sender, ItemCheckedEventArgs itemCheckedEventArgs)
 		{
 			if (SelectedConfiguration == null)
+			{
 				return;
+			}
 
 			var publicationItem = itemCheckedEventArgs.Item;
 
@@ -247,12 +262,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 				SelectedConfiguration.AllPublications = publicationItem.Checked;
 				// If "All publications" was checked, check all the publications.
 				if (_allPublicationsItem.Checked)
+				{
 					_view.publicationsListView.Items.Cast<ListViewItem>().ForEach(item => item.Checked = true);
+				}
 			}
 			else // "normal" item, not AllPublications
 			{
 				if (publicationItem.Checked)
+				{
 					AssociatePublication(publicationItem.Text, SelectedConfiguration);
+				}
 				else
 				{
 					DisassociatePublication(publicationItem.Text, SelectedConfiguration);
@@ -316,7 +335,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 			// At this point, the user has chosen a unique name.  See if we should generate the filename.
 			if (!File.Exists(selectedConfig.FilePath))
+			{
 				GenerateFilePath(_projectConfigDir, _configurations, selectedConfig);
+			}
 
 			return true;
 		}
@@ -326,10 +347,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal static void GenerateFilePath(string projectConfigDir, List<DictionaryConfigurationModel> existingConfigurations, DictionaryConfigurationModel config)
 		{
 			var filePath = FormatFilePath(projectConfigDir, config.Label);
-			int i = 1;
+			var i = 1;
 			while (existingConfigurations.Any(conf => Path.GetFileName(filePath).Equals(Path.GetFileName(conf.FilePath))) || FileUtils.FileExists(Path.Combine(projectConfigDir,filePath)))
 			{
-				filePath = FormatFilePath(projectConfigDir, string.Format("{0}_{1}", config.Label, i++));
+				filePath = FormatFilePath(projectConfigDir, $"{config.Label}_{i++}");
 			}
 			config.FilePath = filePath;
 		}
@@ -337,14 +358,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>Removes illegal characters, appends project config path and extension</summary>
 		internal static string FormatFilePath(string projectConfigDir, string label)
 		{
-			return Path.Combine(projectConfigDir,
-				MiscUtils.FilterForFileName(label, MiscUtils.FilenameFilterStrength.kFilterBackup) + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
+			return Path.Combine(projectConfigDir, MiscUtils.FilterForFileName(label, MiscUtils.FilenameFilterStrength.kFilterBackup) + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 		}
 
 		private void OnCopyConfiguration(object sender, EventArgs e)
 		{
 			if (SelectedConfiguration == null)
+			{
 				return;
+			}
 
 			var newConfig = CopyConfiguration(SelectedConfiguration);
 
@@ -365,10 +387,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 			// generate a unique name (starting i=2 mimicks old behaviour)
 			var newName = "Copy of " + newConfig.Label;
-			int i = 2;
+			var i = 2;
 			while (_configurations.Any(conf => conf.Label == newName))
 			{
-				newName = String.Format("Copy of {0} ({1})", newConfig.Label, i++);
+				newName = $"Copy of {newConfig.Label} ({i++})";
 			}
 			newConfig.Label = newName;
 			newConfig.FilePath = null; // this will be set on the next rename, which will occur immediately
@@ -387,7 +409,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal void DeleteConfiguration(DictionaryConfigurationModel configurationToDelete)
 		{
 			if (configurationToDelete == null)
-				throw new ArgumentNullException("configurationToDelete");
+			{
+				throw new ArgumentNullException(nameof(configurationToDelete));
+			}
 
 			if (IsConfigurationACustomizedOriginal(configurationToDelete))
 			{
@@ -406,13 +430,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 		}
 
 		private void ResetConfigurationContents(DictionaryConfigurationModel configurationToDelete)
-			{
-				var origFilePath = configurationToDelete.FilePath;
-				var filenameOfFilePath = Path.GetFileName(origFilePath);
+		{
+			var origFilePath = configurationToDelete.FilePath;
+			var filenameOfFilePath = Path.GetFileName(origFilePath);
 			var origReversalLabel = configurationToDelete.Label;
 			var origReversalWs = configurationToDelete.WritingSystem;
 
-			var allReversalsFileName = "AllReversalIndexes" + LanguageExplorerConstants.DictionaryConfigurationFileExtension;
+			const string allReversalsFileName = "AllReversalIndexes" + LanguageExplorerConstants.DictionaryConfigurationFileExtension;
 			var resettingReversal = IsConfigurationAnOriginalReversal(configurationToDelete, _cache);
 			// The reversals will be reset to what the user has configured under All Reversal Indexes. This makes it useful to actually change that.
 			// If the user resets "AllReversalIndexes" it will reset to the shipping version.
@@ -432,28 +456,28 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 
 			configurationToDelete.FilePath = pathToDefaultFile;
-				// Recreate from shipped XML file.
-				configurationToDelete.Load(_cache);
-				configurationToDelete.FilePath = origFilePath;
+			// Recreate from shipped XML file.
+			configurationToDelete.Load(_cache);
+			configurationToDelete.FilePath = origFilePath;
 			if (resettingReversal)
 			{
 				configurationToDelete.Label = origReversalLabel;
 				configurationToDelete.WritingSystem = origReversalWs;
 			}
-			}
+		}
 
 		private static bool IsAllReversalIndexConfig(DictionaryConfigurationModel configurationToDelete)
 		{
-			if (Path.GetFileNameWithoutExtension(configurationToDelete.FilePath) == "AllReversalIndexes")
-				return true;
-			return false;
+			return Path.GetFileNameWithoutExtension(configurationToDelete.FilePath) == "AllReversalIndexes";
 		}
 
 		private void OnDeleteConfiguration(object sender, EventArgs eventArgs) // REVIEW (Hasso) 2017.01: this should be two methods, since there are two buttons.
 		{
 			var configurationToDelete = SelectedConfiguration;
 			if (configurationToDelete == null)
+			{
 				return;
+			}
 
 			using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IFlexApp>("App")))
 			{
@@ -463,17 +487,18 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 				if (IsConfigurationACustomizedOriginal(configurationToDelete))
 				{
-					if (IsConfigurationAnOriginalReversal(configurationToDelete, _cache) && !IsAllReversalIndexConfig(configurationToDelete))
-						dlg.TopMessage = DictionaryConfigurationStrings.YouAreResettingReversal;
-					else
-					dlg.TopMessage = DictionaryConfigurationStrings.YouAreResetting;
+					dlg.TopMessage =
+						IsConfigurationAnOriginalReversal(configurationToDelete, _cache) &&
+						!IsAllReversalIndexConfig(configurationToDelete) ? DictionaryConfigurationStrings.YouAreResettingReversal : DictionaryConfigurationStrings.YouAreResetting;
 					dlg.BottomQuestion = DictionaryConfigurationStrings.WantContinue;
 					dlg.DeleteButtonText = DictionaryConfigurationStrings.Reset;
 					dlg.WindowTitle = DictionaryConfigurationStrings.Confirm + " " + DictionaryConfigurationStrings.Reset;
 				}
 
 				if (dlg.ShowDialog() != DialogResult.Yes)
+				{
 					return;
+				}
 			}
 
 			DeleteConfiguration(configurationToDelete);
@@ -504,11 +529,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 
 			if (string.IsNullOrEmpty(SelectedConfiguration.FilePath))
+			{
 				throw new ArgumentNullException("The configuration selected for export has an empty file path.");
+			}
 			if (Path.GetDirectoryName(SelectedConfiguration.FilePath) == _defaultConfigDir)
 			{
-				SelectedConfiguration.FilePath = Path.Combine(_projectConfigDir,
-					Path.GetFileName(SelectedConfiguration.FilePath));
+				SelectedConfiguration.FilePath = Path.Combine(_projectConfigDir, Path.GetFileName(SelectedConfiguration.FilePath));
 				SelectedConfiguration.Save();
 			}
 
@@ -524,13 +550,17 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 				var result = saveDialog.ShowDialog(_view);
 				if (result != DialogResult.OK)
+				{
 					return;
+				}
 				outputPath = saveDialog.FileName;
 			}
 
 			// Append ".zip" if user entered something like "foo.gif", which loses the hidden ".zip" extension.
 			if (!outputPath.EndsWith(".zip", StringComparison.InvariantCultureIgnoreCase))
+			{
 				outputPath += ".zip";
+			}
 
 			ExportConfiguration(SelectedConfiguration, outputPath, _cache);
 		}
@@ -541,11 +571,19 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal static void ExportConfiguration(DictionaryConfigurationModel configurationToExport, string destinationZipPath, LcmCache cache)
 		{
 			if (configurationToExport == null)
+			{
 				throw new ArgumentNullException(nameof(configurationToExport));
+			}
+
 			if (string.IsNullOrWhiteSpace(destinationZipPath))
+			{
 				throw new ArgumentNullException(nameof(destinationZipPath));
+			}
+
 			if (cache == null)
+			{
 				throw new ArgumentNullException(nameof(cache));
+			}
 
 			using (var zip = new ZipFile())
 			{
@@ -616,15 +654,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 
 			if (!importController.ImportHappened)
+			{
 				return;
+			}
 			CloseDialogAndRefreshProject();
 		}
 
 		private void CloseDialogAndRefreshProject()
 		{
 			_view.Close();
-			if(ConfigurationViewImported != null)
-				ConfigurationViewImported();
+			ConfigurationViewImported?.Invoke();
 
 			PropertyTable.GetValue<IFwMainWnd>("window").RefreshAllViews();
 		}
@@ -646,7 +685,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		public static bool IsConfigurationACustomizedShippedDefault(DictionaryConfigurationModel configuration, string defaultConfigDir)
 		{
 			if (configuration.FilePath == null)
+			{
 				return false;
+			}
 
 			var defaultConfigurationFiles = FileUtils.GetFilesInDirectory(defaultConfigDir).Select(Path.GetFileName);
 
@@ -660,7 +701,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		public static bool IsConfigurationAnOriginalReversal(DictionaryConfigurationModel configuration, LcmCache cache)
 		{
 			if (configuration.FilePath == null)
+			{
 				return false;
+			}
 			// No configuration.WritingSystem means it is not a reversal, or that it is the AllReversalIndexes which doesn't act any different from a default config
 			if (!string.IsNullOrWhiteSpace(configuration.WritingSystem) && IetfLanguageTag.IsValid(configuration.WritingSystem))
 			{
@@ -690,6 +733,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// Get the ISubscriber.
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
+		#endregion
+
+		#region Implementation of IFlexComponent
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.

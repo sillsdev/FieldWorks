@@ -55,7 +55,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// Show the publications for the current dictionary configuration.
 		/// </summary>
 		/// <param name="publications"></param>
-		void ShowPublicationsForConfiguration(String publications);
+		void ShowPublicationsForConfiguration(string publications);
 
 		/// <summary>
 		/// Select current dictionary configuration in the combo box

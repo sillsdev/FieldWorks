@@ -65,10 +65,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Tree of TreeNodes.
 		/// </summary>
-		public TreeView Tree
-		{
-			get { return tree; }
-		}
+		public TreeView Tree => tree;
 
 		/// <summary>
 		/// Set whether button is enabled.
@@ -114,38 +111,32 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 			moveUp.Click += (sender, args) =>
 			{
-				if (MoveUp != null)
-					MoveUp(tree.SelectedNode);
+				MoveUp?.Invoke(tree.SelectedNode);
 			};
 
 			moveDown.Click += (sender, args) =>
 			{
-				if (MoveDown != null)
-					MoveDown(tree.SelectedNode);
+				MoveDown?.Invoke(tree.SelectedNode);
 			};
 
 			duplicate.Click += (sender, args) =>
 			{
-				if (Duplicate != null)
-					Duplicate(tree.SelectedNode);
+				Duplicate?.Invoke(tree.SelectedNode);
 			};
 
 			remove.Click += (sender, args) =>
 			{
-				if (Remove != null)
-					Remove(tree.SelectedNode);
+				Remove?.Invoke(tree.SelectedNode);
 			};
 
 			rename.Click += (sender, args) =>
 			{
-				if (Rename != null)
-					Rename(tree.SelectedNode);
+				Rename?.Invoke(tree.SelectedNode);
 			};
 
 			highlight.Click += (sender, args) =>
 			{
-				if (Highlight != null)
-					Highlight(tree.SelectedNode, highlight, m_toolTip);
+				Highlight?.Invoke(tree.SelectedNode, highlight, m_toolTip);
 			};
 
 			// Create the ContextMenuStrip.
@@ -166,14 +157,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 			m_CtrlRightClickMenu.ItemClicked += (menu, args) =>
 			{
 				var selectedNode = (TreeNode)m_CtrlRightClickMenu.Tag;
-				if(args.ClickedItem.Text == DictionaryConfigurationStrings.ConfigurationTreeControl_SelectAllChildren &&
-						CheckAll != null)
+				if(args.ClickedItem.Text == DictionaryConfigurationStrings.ConfigurationTreeControl_SelectAllChildren && CheckAll != null)
 				{
 					tree.SelectedNode = selectedNode;
 					CheckAll(selectedNode);
 				}
-				if(args.ClickedItem.Text == DictionaryConfigurationStrings.ConfigurationTreeControl_ClearAllChildren &&
-						UnCheckAll != null)
+				if (args.ClickedItem.Text == DictionaryConfigurationStrings.ConfigurationTreeControl_ClearAllChildren && UnCheckAll != null)
 				{
 					tree.SelectedNode = selectedNode;
 					UnCheckAll(selectedNode);
@@ -184,19 +173,18 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private void TreeClick(object sender, System.EventArgs e)
 		{
 			var buttonArgs = e as MouseEventArgs;
-			if(buttonArgs == null)
-				return;
-			if(buttonArgs.Button == MouseButtons.Right && (ModifierKeys & Keys.Control) == Keys.Control)
+			if (buttonArgs?.Button != MouseButtons.Right || (ModifierKeys & Keys.Control) != Keys.Control)
 			{
-				// store the node under the mouse click
-				var selectedNode = tree.GetNodeAt(buttonArgs.X, buttonArgs.Y);
-				if(selectedNode != null)
-				{
-					// pass the node under the mouse click through the menu item
-					m_CtrlRightClickMenu.Tag = selectedNode;
-					// show the menu
-					m_CtrlRightClickMenu.Show(tree, buttonArgs.Location);
-				}
+				return;
+			}
+			// store the node under the mouse click
+			var selectedNode = tree.GetNodeAt(buttonArgs.X, buttonArgs.Y);
+			if(selectedNode != null)
+			{
+				// pass the node under the mouse click through the menu item
+				m_CtrlRightClickMenu.Tag = selectedNode;
+				// show the menu
+				m_CtrlRightClickMenu.Show(tree, buttonArgs.Location);
 			}
 		}
 	}

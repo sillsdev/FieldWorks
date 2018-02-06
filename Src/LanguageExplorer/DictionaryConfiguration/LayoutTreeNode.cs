@@ -22,16 +22,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 		// These are basic values that we need to know for every node.
 		// **Important Note**: In most cases, adding a member variable here means you need to add it to
 		// CopyValuesTo() also, so that a duplicate node will end up with the right values.
-		XElement m_xnConfig;
-		string m_sLayoutName;
 		string m_sPartName;
-		string m_sClassName;
 		string m_sLabel;
 		string m_sVisibility;
-		bool m_fUseParentConfig;
-		bool m_fShowSenseConfig;
 
-		string m_sFlowType;
 		// These values depend on the particular node, and affect what is displayed in the
 		// details pane.  If a string value is null, then the corresponding control (and
 		// label) is not shown.
@@ -52,22 +46,21 @@ namespace LanguageExplorer.DictionaryConfiguration
 		XElement m_xnHiddenChild;
 
 		bool m_fStyleFromHiddenChild;
-		readonly List<LayoutTreeNode> m_rgltnMerged = new List<LayoutTreeNode>();
 
 		internal LayoutTreeNode(XElement config, ILayoutConverter converter, string classParent)
 		{
-			m_xnConfig = config;
+			Configuration = config;
 			m_sLabel = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(config, "label", null));
 			if (config.Name == "configure")
 			{
-				m_sClassName = XmlUtils.GetMandatoryAttributeValue(config, "class");
-				m_sLayoutName = XmlUtils.GetMandatoryAttributeValue(config, "layout");
-				m_sPartName = String.Empty;
+				ClassName = XmlUtils.GetMandatoryAttributeValue(config, "class");
+				LayoutName = XmlUtils.GetMandatoryAttributeValue(config, "layout");
+				m_sPartName = string.Empty;
 				m_sVisibility = "required";
 			}
 			else if (config.Name == "part")
 			{
-				m_sClassName = classParent;
+				ClassName = classParent;
 				var sRef = XmlUtils.GetMandatoryAttributeValue(config, "ref");
 				if (m_sLabel == null && converter.UseStringTable)
 				{
@@ -75,11 +68,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 				}
 				if (config.Parent != null && config.Parent.Name.LocalName == "layout")
 				{
-					m_sLayoutName = XmlUtils.GetMandatoryAttributeValue(config.Parent, "name");
+					LayoutName = XmlUtils.GetMandatoryAttributeValue(config.Parent, "name");
 				}
 				else
 				{
-					m_sLayoutName = string.Empty;
+					LayoutName = string.Empty;
 				}
 				m_sPartName = $"{classParent}-Jt-{sRef}";
 				m_sVisibility = XmlUtils.GetOptionalAttributeValue(config, "visibility", "always");
@@ -155,8 +148,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 				After = XmlUtils.GetOptionalAttributeValue(config, "after", " ");
 
 				StyleName = XmlUtils.GetOptionalAttributeValue(config, "style");
-				m_sFlowType = XmlUtils.GetOptionalAttributeValue(config, "flowType", "span");
-				if (m_sFlowType == "span")
+				FlowType = XmlUtils.GetOptionalAttributeValue(config, "flowType", "span");
+				if (FlowType == "span")
 				{
 					AllowCharStyle = !XmlUtils.GetOptionalBooleanAttributeValue(config, "disallowCharStyle", false);
 					if (Before == null)
@@ -169,9 +162,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 					}
 				}
 				// Special handling for div flow elements, which can contain a sequence of paragraphs.
-				else if (m_sFlowType == "div")
+				else if (FlowType == "div")
 				{
-					AllowParaStyle = m_sClassName == "StText";
+					AllowParaStyle = ClassName == "StText";
 					AllowDivParaStyle = false;
 					if (AllowParaStyle)
 					{
@@ -190,11 +183,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 					// which enables the empty control.
 					Before = XmlUtils.GetOptionalAttributeValue(config, "before");
 				}
-				else if (m_sFlowType == "para")
+				else if (FlowType == "para")
 				{
 					AllowParaStyle = !string.IsNullOrEmpty(StyleName);
 				}
-				else if (m_sFlowType == "divInPara")
+				else if (FlowType == "divInPara")
 				{
 					Before = After = Between = null; // suppress the whole separators group since each item is a para
 					StyleName = XmlUtils.GetOptionalAttributeValue(config, "parastyle");
@@ -206,7 +199,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				NumberSingleSense = XmlUtils.GetOptionalBooleanAttributeValue(config, "numsingle", false);
 				NumFont = XmlUtils.GetOptionalAttributeValue(config, "numfont");
 				ShowSingleGramInfoFirst = XmlUtils.GetOptionalBooleanAttributeValue(config, "singlegraminfofirst", false);
-				ShowSenseAsPara = m_sFlowType == "divInPara" && Param != null && Param.EndsWith("_AsPara");
+				ShowSenseAsPara = FlowType == "divInPara" && Param != null && Param.EndsWith("_AsPara");
 
 				PreventNullStyle = XmlUtils.GetOptionalBooleanAttributeValue(config, "preventnullstyle", false);
 				m_fShowComplexFormPara = XmlUtils.GetOptionalBooleanAttributeValue(config, "showasindentedpara", false);
@@ -233,7 +226,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			Checked = m_sVisibility.ToLowerInvariant() != "never";
 			Text = m_sLabel;
-			Name = $"{m_sClassName}/{m_sLayoutName}/{m_sPartName}";
+			Name = $"{ClassName}/{LayoutName}/{m_sPartName}";
 		}
 
 		public LayoutTreeNode()
@@ -274,20 +267,20 @@ namespace LanguageExplorer.DictionaryConfiguration
 			ltn.m_fShowComplexFormPara = m_fShowComplexFormPara;
 			ltn.ShowComplexFormParaConfig = ShowComplexFormParaConfig;
 			ltn.ShowGramInfoConfig = ShowGramInfoConfig;
-			ltn.m_fShowSenseConfig = m_fShowSenseConfig;
+			ltn.ShowSenseConfig = ShowSenseConfig;
 			ltn.ShowWsLabels = ShowWsLabels;
 			ltn.ShowSingleGramInfoFirst = ShowSingleGramInfoFirst;
 			ltn.m_fStyleFromHiddenChild = m_fStyleFromHiddenChild;
-			ltn.m_fUseParentConfig = m_fUseParentConfig;
+			ltn.UseParentConfig = UseParentConfig;
 			ltn.m_idxOrig = m_idxOrig;
 			ltn.After = After;
 			ltn.Before = Before;
 			ltn.BeforeStyleName = BeforeStyleName;
-			ltn.m_sClassName = m_sClassName;
+			ltn.ClassName = ClassName;
 			ltn.m_sDup = m_sDup;
-			ltn.m_sFlowType = m_sFlowType;
+			ltn.FlowType = FlowType;
 			ltn.m_sLabel = m_sLabel;
-			ltn.m_sLayoutName = m_sLayoutName;
+			ltn.LayoutName = LayoutName;
 			ltn.Number = Number;
 			ltn.NumFont = NumFont;
 			ltn.NumStyle = NumStyle;
@@ -300,7 +293,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			ltn.m_sWsLabel = m_sWsLabel;
 			ltn.WsType = WsType;
 			ltn.m_xnCallingLayout = m_xnCallingLayout;
-			ltn.m_xnConfig = m_xnConfig;
+			ltn.Configuration = Configuration;
 			ltn.m_xnHiddenChild = m_xnHiddenChild;
 			ltn.HiddenChildLayout = HiddenChildLayout;
 			ltn.HiddenNode = HiddenNode;
@@ -316,7 +309,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			var ltn = new LayoutTreeNode();
 			CopyValuesTo(ltn);
-			ltn.m_xnConfig = m_xnConfig.Clone();
+			ltn.Configuration = Configuration.Clone();
 			ltn.IsDuplicate = true;
 			ltn.m_cSubnodes = 0;
 			if (ltn.RelTypeList != null && ltn.RelTypeList.Count > 0)
@@ -361,21 +354,17 @@ namespace LanguageExplorer.DictionaryConfiguration
 			return false;
 		}
 
-		public bool IsTopLevel => m_xnConfig.Name == "configure" && Level == 0;
+		public bool IsTopLevel => Configuration.Name == "configure" && Level == 0;
 
-		public XElement Configuration => m_xnConfig;
+		public XElement Configuration { get; private set; }
 
-		public string LayoutName => m_sLayoutName;
+		public string LayoutName { get; private set; }
 
 		public virtual string PartName => m_sPartName;
 
-		public string ClassName
-		{
-			get { return m_sClassName; }
-			internal set { m_sClassName = value; }
-		}
+		public string ClassName { get; internal set; }
 
-		public string FlowType => m_sFlowType;
+		public string FlowType { get; private set; }
 
 		public string Label
 		{
@@ -387,17 +376,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 		}
 
-		public bool UseParentConfig
-		{
-			get { return m_fUseParentConfig; }
-			set { m_fUseParentConfig = value; }
-		}
+		public bool UseParentConfig { get; set; }
 
-		public bool ShowSenseConfig
-		{
-			get { return m_fShowSenseConfig; }
-			set { m_fShowSenseConfig = value; }
-		}
+		public bool ShowSenseConfig { get; set; }
 
 		public string LexRelType { get; internal set; }
 		public List<LexReferenceInfo> RelTypeList { get; internal set; }
@@ -480,8 +461,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private static bool NewValueIsCompatibleWithMagic(string possibleMagicLabel, string newValue)
 		{
-			if (string.IsNullOrEmpty(possibleMagicLabel) || String.IsNullOrEmpty(newValue))
+			if (string.IsNullOrEmpty(possibleMagicLabel) || string.IsNullOrEmpty(newValue))
+			{
 				return false;
+			}
 
 			var magicId = WritingSystemServices.GetMagicWsIdFromName(possibleMagicLabel);
 			if (magicId == 0)
@@ -621,145 +604,150 @@ namespace LanguageExplorer.DictionaryConfiguration
 			if (!IsTopLevel)
 			{
 				// Now, compare our member variables to the content of m_xnConfig.
-				if (m_xnConfig.Name == "part")
+				if (Configuration.Name != "part")
 				{
-					var fContentVisible = m_sVisibility != "never";
-					ContentVisible = Checked; // in case (un)checked in treeview, but node never selected.
-					if (fContentVisible != ContentVisible)
+					return false;
+				}
+				var fContentVisible = m_sVisibility != "never";
+				ContentVisible = Checked; // in case (un)checked in treeview, but node never selected.
+				if (fContentVisible != ContentVisible)
+				{
+					return true;
+				}
+				var sBeforeStyleName = XmlUtils.GetOptionalAttributeValue(Configuration, "beforeStyle");
+				if (StringsDiffer(sBeforeStyleName, BeforeStyleName))
+				{
+					return true;
+				}
+				var sBefore = XmlUtils.GetOptionalAttributeValue(Configuration, "before");
+				if (StringsDiffer(sBefore, Before))
+				{
+					return true;
+				}
+				var sAfter = XmlUtils.GetOptionalAttributeValue(Configuration, "after");
+				if (StringsDiffer(sAfter, After))
+				{
+					if (sAfter == null)
 					{
-						return true;
-					}
-					var sBeforeStyleName = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "beforeStyle");
-					if (StringsDiffer(sBeforeStyleName, BeforeStyleName))
-					{
-						return true;
-					}
-					var sBefore = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "before");
-					if (StringsDiffer(sBefore, Before))
-					{
-						return true;
-					}
-					var sAfter = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "after");
-					if (StringsDiffer(sAfter, After))
-					{
-						if (sAfter == null)
-						{
-							if (StringsDiffer(" ", After))
-								return true;
-						}
-						else
-						{
-							return true;
-						}
-					}
-					var sSep = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "sep");
-					if (StringsDiffer(sSep, Between))
-					{
-						if (sSep == null)
-						{
-							string sSepDefault = null;
-							if (!string.IsNullOrEmpty(m_sWsLabel) || !string.IsNullOrEmpty(WsType))
-							{
-								sSepDefault = " ";
-							}
-							if (StringsDiffer(sSepDefault, Between))
-							{
-								return true;
-							}
-						}
-						else
-						{
-							return true;
-						}
-					}
-					var sWsLabel = StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(m_xnConfig, "ws"));
-					if (StringsDiffer(sWsLabel, m_sWsLabel))
-					{
-						return true;
-					}
-					if (m_fStyleFromHiddenChild)
-					{
-						var sStyleName = XmlUtils.GetOptionalAttributeValue(m_xnHiddenChild, "style");
-						HiddenChildDirty = StringsDiffer(sStyleName, StyleName);
-						if (HiddenChildDirty)
+						if (StringsDiffer(" ", After))
 						{
 							return true;
 						}
 					}
 					else
 					{
-						var sStyleName = XmlUtils.GetOptionalAttributeValue(m_xnConfig, AllowDivParaStyle ? "parastyle" : "style");
-						if (StringsDiffer(sStyleName, StyleName))
+						return true;
+					}
+				}
+				var sSep = XmlUtils.GetOptionalAttributeValue(Configuration, "sep");
+				if (StringsDiffer(sSep, Between))
+				{
+					if (sSep == null)
+					{
+						string sSepDefault = null;
+						if (!string.IsNullOrEmpty(m_sWsLabel) || !string.IsNullOrEmpty(WsType))
+						{
+							sSepDefault = " ";
+						}
+						if (StringsDiffer(sSepDefault, Between))
 						{
 							return true;
 						}
 					}
-					var sNumber = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "number");
-					if (StringsDiffer(sNumber, Number))
+					else
 					{
 						return true;
 					}
-					var sNumStyle = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "numstyle");
-					if (StringsDiffer(sNumStyle, NumStyle))
+				}
+				var sWsLabel = StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(Configuration, "ws"));
+				if (StringsDiffer(sWsLabel, m_sWsLabel))
+				{
+					return true;
+				}
+				if (m_fStyleFromHiddenChild)
+				{
+					var sStyleName = XmlUtils.GetOptionalAttributeValue(m_xnHiddenChild, "style");
+					HiddenChildDirty = StringsDiffer(sStyleName, StyleName);
+					if (HiddenChildDirty)
 					{
 						return true;
 					}
-					var fNumSingle = XmlUtils.GetOptionalBooleanAttributeValue(m_xnConfig, "numsingle", false);
-					if (fNumSingle != NumberSingleSense)
+				}
+				else
+				{
+					var sStyleName = XmlUtils.GetOptionalAttributeValue(Configuration, AllowDivParaStyle ? "parastyle" : "style");
+					if (StringsDiffer(sStyleName, StyleName))
 					{
 						return true;
 					}
-					var sNumFont = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "numfont");
-					if (StringsDiffer(sNumFont, NumFont))
+				}
+				var sNumber = XmlUtils.GetOptionalAttributeValue(Configuration, "number");
+				if (StringsDiffer(sNumber, Number))
+				{
+					return true;
+				}
+				var sNumStyle = XmlUtils.GetOptionalAttributeValue(Configuration, "numstyle");
+				if (StringsDiffer(sNumStyle, NumStyle))
+				{
+					return true;
+				}
+				var fNumSingle = XmlUtils.GetOptionalBooleanAttributeValue(Configuration, "numsingle", false);
+				if (fNumSingle != NumberSingleSense)
+				{
+					return true;
+				}
+				var sNumFont = XmlUtils.GetOptionalAttributeValue(Configuration, "numfont");
+				if (StringsDiffer(sNumFont, NumFont))
+				{
+					return true;
+				}
+				var fSingleGramInfoFirst = XmlUtils.GetOptionalBooleanAttributeValue(Configuration, "singlegraminfofirst", false);
+				if (fSingleGramInfoFirst != ShowSingleGramInfoFirst)
+				{
+					return true;
+				}
+				var fShowComplexFormPara = XmlUtils.GetOptionalBooleanAttributeValue(Configuration, "showasindentedpara", false);
+				if (fShowComplexFormPara != m_fShowComplexFormPara)
+				{
+					return true;
+				}
+				var fShowWsLabels = XmlUtils.GetOptionalBooleanAttributeValue(Configuration, "showLabels", false);
+				if (fShowWsLabels != ShowWsLabels)
+				{
+					return true;
+				}
+				var sDuplicate = XmlUtils.GetOptionalAttributeValue(Configuration, "dup");
+				if (StringsDiffer(sDuplicate, m_sDup))
+				{
+					return true;
+				}
+				if (ShowSenseConfig)
+				{
+					var fSenseIsPara = Param != null && Param.EndsWith("_AsPara");
+					if (fSenseIsPara != ShowSenseAsPara)
 					{
 						return true;
 					}
-					var fSingleGramInfoFirst = XmlUtils.GetOptionalBooleanAttributeValue(m_xnConfig, "singlegraminfofirst", false);
-					if (fSingleGramInfoFirst != ShowSingleGramInfoFirst)
+					var sSenseParaStyle = XmlUtils.GetOptionalAttributeValue(Configuration, "parastyle");
+					if (sSenseParaStyle != SenseParaStyle)
 					{
 						return true;
 					}
-					var fShowComplexFormPara = XmlUtils.GetOptionalBooleanAttributeValue(m_xnConfig, "showasindentedpara", false);
-					if (fShowComplexFormPara != m_fShowComplexFormPara)
+				}
+				if (!string.IsNullOrEmpty(LexRelType))
+				{
+					var sRefTypeSequence = XmlUtils.GetOptionalAttributeValue(Configuration, "reltypeseq");
+					if (sRefTypeSequence != LexRelTypeSequence)
 					{
 						return true;
 					}
-					var fShowWsLabels = XmlUtils.GetOptionalBooleanAttributeValue(m_xnConfig, "showLabels", false);
-					if (fShowWsLabels != ShowWsLabels)
+				}
+				if (!string.IsNullOrEmpty(EntryType))
+				{
+					var sEntryTypeSeq = XmlUtils.GetOptionalAttributeValue(Configuration, "entrytypeseq");
+					if (sEntryTypeSeq != EntryTypeSequence)
 					{
 						return true;
-					}
-					var sDuplicate = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "dup");
-					if (StringsDiffer(sDuplicate, m_sDup))
-					{
-						return true;
-					}
-					if (ShowSenseConfig)
-					{
-						var fSenseIsPara = Param != null && Param.EndsWith("_AsPara");
-						if (fSenseIsPara != ShowSenseAsPara)
-						{
-							return true;
-						}
-						var sSenseParaStyle = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "parastyle");
-						if (sSenseParaStyle != SenseParaStyle)
-						{
-							return true;
-						}
-					}
-					if (!String.IsNullOrEmpty(LexRelType))
-					{
-						var sRefTypeSequence = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "reltypeseq");
-						if (sRefTypeSequence != LexRelTypeSequence)
-							return true;
-					}
-					if (!string.IsNullOrEmpty(EntryType))
-					{
-						var sEntryTypeSeq = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "entrytypeseq");
-						if (sEntryTypeSeq != EntryTypeSequence)
-						{
-							return true;
-						}
 					}
 				}
 			}
@@ -780,7 +768,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private static bool StringsDiffer(string s1, string s2)
 		{
-			return (s1 != s2 && !(string.IsNullOrEmpty(s1) && string.IsNullOrEmpty(s2)));
+			return s1 != s2 && !(string.IsNullOrEmpty(s1) && string.IsNullOrEmpty(s2));
 		}
 
 		// LT-10472 says that nothing is really required.
@@ -801,7 +789,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			set
 			{
 				m_xnHiddenChild = value;
-				if (m_sClassName == "StText" && AllowParaStyle && String.IsNullOrEmpty(StyleName))
+				if (ClassName == "StText" && AllowParaStyle && string.IsNullOrEmpty(StyleName))
 				{
 					m_fStyleFromHiddenChild = true;
 					StyleName = XmlUtils.GetOptionalAttributeValue(value, "style");
@@ -817,30 +805,31 @@ namespace LanguageExplorer.DictionaryConfiguration
 			for (var i = 0; i < Nodes.Count; ++i)
 			{
 				var ltn = (LayoutTreeNode)Nodes[i];
-				if (ltn.GetModifiedLayouts(elements, topNodes))
+				if (!ltn.GetModifiedLayouts(elements, topNodes))
 				{
-					var xn = ltn.ParentLayout;
+					continue;
+				}
+				var xn = ltn.ParentLayout;
+				if (xn != null && !dirtyLayouts.Contains(xn))
+				{
+					dirtyLayouts.Add(xn);
+				}
+				xn = ltn.HiddenChildLayout;
+				if (xn != null && ltn.HiddenChildDirty && !dirtyLayouts.Contains(xn))
+				{
+					dirtyLayouts.Add(xn);
+				}
+				xn = ltn.HiddenNodeLayout;
+				if (xn != null && ltn.HasMoved && !dirtyLayouts.Contains(xn))
+				{
+					dirtyLayouts.Add(xn);
+				}
+				foreach (var ltnMerged in ltn.MergedNodes)
+				{
+					xn = ltnMerged.ParentLayout;
 					if (xn != null && !dirtyLayouts.Contains(xn))
 					{
 						dirtyLayouts.Add(xn);
-					}
-					xn = ltn.HiddenChildLayout;
-					if (xn != null && ltn.HiddenChildDirty && !dirtyLayouts.Contains(xn))
-					{
-						dirtyLayouts.Add(xn);
-					}
-					xn = ltn.HiddenNodeLayout;
-					if (xn != null && ltn.HasMoved && !dirtyLayouts.Contains(xn))
-					{
-						dirtyLayouts.Add(xn);
-					}
-					foreach (var ltnMerged in ltn.MergedNodes)
-					{
-						xn = ltnMerged.ParentLayout;
-						if (xn != null && !dirtyLayouts.Contains(xn))
-						{
-							dirtyLayouts.Add(xn);
-						}
 					}
 				}
 			}
@@ -883,9 +872,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 						}
 					}
 					xnLayout.RemoveAll();
-					for (var i = 0; i < rgxa.Length; ++i)
+					foreach (var srcAttr in rgxa)
 					{
-						var srcAttr = rgxa[i];
 						var attr = xnLayout.Attribute(srcAttr.Name);
 						if (attr == null)
 						{
@@ -901,9 +889,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 						foreach (var ltn in topNodes)
 						{
 							if (ltn.IsTopLevel || ltn.ParentLayout != xnDirtyLayout)
+							{
 								continue;
+							}
+
 							if (fDirty && ltn == this)
+							{
 								ltn.StoreUpdatedValuesInConfiguration();
+							}
 							xnLayout.Add(ltn.Configuration.Clone());
 						}
 					}
@@ -918,8 +911,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 							}
 							else if (ltn.HiddenNodeLayout == xnDirtyLayout)
 							{
-								var xpathString = "/" + ltn.HiddenNode.Name + "[" +
-								                  BuildXPathFromAttributes(ltn.HiddenNode.Attributes()) + "]";
+								var xpathString = "/" + ltn.HiddenNode.Name + "[" + BuildXPathFromAttributes(ltn.HiddenNode.Attributes()) + "]";
 								if (xnLayout.XPathSelectElement(xpathString) == null)
 								{
 									xnLayout.Add(ltn.HiddenNode.Clone());
@@ -935,9 +927,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 							}
 							else
 							{
-								for (var itn = 0; itn < ltn.MergedNodes.Count; itn++)
+								foreach (var ltnMerged in ltn.MergedNodes)
 								{
-									var ltnMerged = ltn.MergedNodes[itn];
 									if (ltnMerged.ParentLayout == xnDirtyLayout)
 									{
 										xnLayout.Add(ltnMerged.Configuration.Clone());
@@ -972,8 +963,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return UpdateLayoutVisibilityIfChanged();
 			}
+
 			if (Level > 0 && fDirty)
+			{
 				StoreUpdatedValuesInConfiguration();
+			}
 			return fDirty || HasMoved || IsNew;
 		}
 
@@ -1041,17 +1035,17 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private void StoreUpdatedValuesInConfiguration()
 		{
-			if (m_xnConfig.Name != "part")
+			if (Configuration.Name != "part")
 			{
 				return;
 			}
-			var sDuplicate = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "dup");
+			var sDuplicate = XmlUtils.GetOptionalAttributeValue(Configuration, "dup");
 			if (StringsDiffer(sDuplicate, m_sDup))
 			{
 				// Copy Part Node
-				m_xnConfig = m_xnConfig.Clone();
-				UpdateAttribute(m_xnConfig, "label", m_sLabel);
-				UpdateAttribute(m_xnConfig, "dup", m_sDup);
+				Configuration = Configuration.Clone();
+				UpdateAttribute(Configuration, "label", m_sLabel);
+				UpdateAttribute(Configuration, "dup", m_sDup);
 				if (HiddenNode != null)
 				{
 					var sNewName = $"{XmlUtils.GetMandatoryAttributeValue(ParentLayout, "name")}_{m_sDup}";
@@ -1062,17 +1056,17 @@ namespace LanguageExplorer.DictionaryConfiguration
 					ParentLayout = ParentLayout.Clone();
 					UpdateAttribute(ParentLayout, "name", sNewName);
 				}
-				foreach (var ltn in m_rgltnMerged)
+				foreach (var ltn in MergedNodes)
 				{
-					ltn.m_xnConfig = ltn.m_xnConfig.Clone();
-					UpdateAttribute(ltn.m_xnConfig, "label", m_sLabel);
-					UpdateAttribute(ltn.m_xnConfig, "dup", m_sDup);
+					ltn.Configuration = ltn.Configuration.Clone();
+					UpdateAttribute(ltn.Configuration, "label", m_sLabel);
+					UpdateAttribute(ltn.Configuration, "dup", m_sDup);
 				}
 			}
-			CopyPartAttributes(m_xnConfig);
-			foreach (var ltn in m_rgltnMerged)
+			CopyPartAttributes(Configuration);
+			foreach (var ltn in MergedNodes)
 			{
-				CopyPartAttributes(ltn.m_xnConfig);
+				CopyPartAttributes(ltn.Configuration);
 			}
 		}
 
@@ -1114,7 +1108,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				UpdateAttribute(xn, "numsingle", NumberSingleSense.ToString());
 			}
 			UpdateAttributeIfDirty(xn, "numfont", NumFont);
-			var fSingleGramInfoFirst = XmlUtils.GetOptionalBooleanAttributeValue(m_xnConfig, "singlegraminfofirst", false);
+			var fSingleGramInfoFirst = XmlUtils.GetOptionalBooleanAttributeValue(Configuration, "singlegraminfofirst", false);
 			if (fSingleGramInfoFirst != ShowSingleGramInfoFirst)
 			{
 				UpdateAttribute(xn, "singlegraminfofirst", ShowSingleGramInfoFirst.ToString());
@@ -1135,23 +1129,25 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					var ltn = Parent as LayoutTreeNode;
 					if (ltn != null && ltn.ShowSenseConfig)
+					{
 						ltnOther = ltn;
+					}
 				}
 				if (ltnOther != null)
 				{
-					UpdateAttribute(ltnOther.m_xnConfig, "singlegraminfofirst", ShowSingleGramInfoFirst.ToString());
+					UpdateAttribute(ltnOther.Configuration, "singlegraminfofirst", ShowSingleGramInfoFirst.ToString());
 				}
 			}
 			if (ShowSenseConfig)
 			{
 				var fSenseIsPara = Param != null && Param.EndsWith("_AsPara");
-				var sSenseParaStyle = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "parastyle");
+				var sSenseParaStyle = XmlUtils.GetOptionalAttributeValue(Configuration, "parastyle");
 				if (fSenseIsPara != ShowSenseAsPara || sSenseParaStyle != SenseParaStyle)
 				{
 					UpdateSenseConfig(xn);
 				}
 			}
-			var fShowComplexFormPara = XmlUtils.GetOptionalBooleanAttributeValue(m_xnConfig, "showasindentedpara", false);
+			var fShowComplexFormPara = XmlUtils.GetOptionalBooleanAttributeValue(Configuration, "showasindentedpara", false);
 			if (fShowComplexFormPara != m_fShowComplexFormPara)
 			{
 				UpdateAttribute(xn, "showasindentedpara", m_fShowComplexFormPara.ToString());
@@ -1163,7 +1159,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			if (!string.IsNullOrEmpty(LexRelType))
 			{
-				var sOrigRefTypeSeq = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "reltypeseq");
+				var sOrigRefTypeSeq = XmlUtils.GetOptionalAttributeValue(Configuration, "reltypeseq");
 				var sNewRefTypeSeq = LexRelTypeSequence;
 				if (sOrigRefTypeSeq != sNewRefTypeSeq)
 				{
@@ -1172,7 +1168,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			if (!string.IsNullOrEmpty(EntryType))
 			{
-				var sOrigEntryTypeSeq = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "entrytypeseq");
+				var sOrigEntryTypeSeq = XmlUtils.GetOptionalAttributeValue(Configuration, "entrytypeseq");
 				var sNewEntryTypeSeq = EntryTypeSequence;
 				if (sOrigEntryTypeSeq != sNewEntryTypeSeq)
 				{
@@ -1231,82 +1227,83 @@ namespace LanguageExplorer.DictionaryConfiguration
 			foreach (TreeNode tn in Nodes)
 			{
 				var ltn = tn as LayoutTreeNode;
-				if (ltn != null)
+				if (ltn == null)
 				{
-					ltn.MakeSenseNumberFormatConsistent(); // recurse first, in case it has children needing to be fixed.
-					if (!ShowSenseConfig || !ltn.ShowSenseConfig)
-					{
-						continue;
-					}
+					continue;
+				}
+				ltn.MakeSenseNumberFormatConsistent(); // recurse first, in case it has children needing to be fixed.
+				if (!ShowSenseConfig || !ltn.ShowSenseConfig)
+				{
+					continue;
+				}
 
-					// Update numerals and punctuation
-					var sNumber = Number;
-					var sNumberChild = ltn.Number;
-					if (sNumber != sNumberChild)
+				// Update numerals and punctuation
+				var sNumber = Number;
+				var sNumberChild = ltn.Number;
+				if (sNumber != sNumberChild)
+				{
+					var sNumberOld = XmlUtils.GetOptionalAttributeValue(Configuration, "number");
+					var sNumberChildOld = XmlUtils.GetOptionalAttributeValue(ltn.Configuration, "number");
+					if (sNumber != sNumberOld)
 					{
-						var sNumberOld = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "number");
-						var sNumberChildOld = XmlUtils.GetOptionalAttributeValue(ltn.m_xnConfig, "number");
-						if (sNumber != sNumberOld)
-						{
-							// parent changed; make child consistent
-							ltn.Number = sNumber;
-						}
-						else if (sNumberChild != sNumberChildOld)
-						{
-							// child changed; make parent consistent
-							Number = sNumberChild;
-						}
+						// parent changed; make child consistent
+						ltn.Number = sNumber;
 					}
-
-					// Update style
-					var sStyle = NumStyle;
-					var sStyleChild = ltn.NumStyle;
-					if (sStyle != sStyleChild)
+					else if (sNumberChild != sNumberChildOld)
 					{
-						var sStyleOld = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "numstyle");
-						var sStyleChildOld = XmlUtils.GetOptionalAttributeValue(ltn.m_xnConfig, "numstyle");
-						if (sStyle != sStyleOld)
-						{
-							ltn.NumStyle = sStyle;
-						}
-						else if (sStyleChild != sStyleChildOld)
-						{
-							NumStyle = sStyleChild;
-						}
+						// child changed; make parent consistent
+						Number = sNumberChild;
 					}
+				}
 
-					// Update font
-					var sFont = NumFont;
-					var sFontChild = ltn.NumFont;
-					if (sFont != sFontChild)
+				// Update style
+				var sStyle = NumStyle;
+				var sStyleChild = ltn.NumStyle;
+				if (sStyle != sStyleChild)
+				{
+					var sStyleOld = XmlUtils.GetOptionalAttributeValue(Configuration, "numstyle");
+					var sStyleChildOld = XmlUtils.GetOptionalAttributeValue(ltn.Configuration, "numstyle");
+					if (sStyle != sStyleOld)
 					{
-						var sFontOld = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "numfont");
-						var sFontChildOld = XmlUtils.GetOptionalAttributeValue(ltn.m_xnConfig, "numfont");
-						if (sFont != sFontOld)
-						{
-							ltn.NumFont = sFont;
-						}
-						else if (sFontChild != sFontChildOld)
-						{
-							NumFont = sFontChild;
-						}
+						ltn.NumStyle = sStyle;
 					}
-
-					// Update whether a single sense is numbered
-					var bNumSingle = NumberSingleSense;
-					var bNumSingleChild = ltn.NumberSingleSense;
-					if (bNumSingle != bNumSingleChild)
+					else if (sStyleChild != sStyleChildOld)
 					{
-						var bNumSingleOld = XmlUtils.GetBooleanAttributeValue(m_xnConfig, "numsingle");
-						var bNumSingleChildOld = XmlUtils.GetBooleanAttributeValue(ltn.m_xnConfig, "numsingle");
-						if (bNumSingle != bNumSingleOld)
-						{
-							ltn.NumberSingleSense = bNumSingle;
-						}
-						else if (bNumSingleChild != bNumSingleChildOld)
-						{
-							NumberSingleSense = bNumSingleChild;
-						}
+						NumStyle = sStyleChild;
+					}
+				}
+
+				// Update font
+				var sFont = NumFont;
+				var sFontChild = ltn.NumFont;
+				if (sFont != sFontChild)
+				{
+					var sFontOld = XmlUtils.GetOptionalAttributeValue(Configuration, "numfont");
+					var sFontChildOld = XmlUtils.GetOptionalAttributeValue(ltn.Configuration, "numfont");
+					if (sFont != sFontOld)
+					{
+						ltn.NumFont = sFont;
+					}
+					else if (sFontChild != sFontChildOld)
+					{
+						NumFont = sFontChild;
+					}
+				}
+
+				// Update whether a single sense is numbered
+				var bNumSingle = NumberSingleSense;
+				var bNumSingleChild = ltn.NumberSingleSense;
+				if (bNumSingle != bNumSingleChild)
+				{
+					var bNumSingleOld = XmlUtils.GetBooleanAttributeValue(Configuration, "numsingle");
+					var bNumSingleChildOld = XmlUtils.GetBooleanAttributeValue(ltn.Configuration, "numsingle");
+					if (bNumSingle != bNumSingleOld)
+					{
+						ltn.NumberSingleSense = bNumSingle;
+					}
+					else if (bNumSingleChild != bNumSingleChildOld)
+					{
+						NumberSingleSense = bNumSingleChild;
 					}
 				}
 				// TODO: before, sep, after, param, parastyle, flowType, others? (these can wait until the refactor)
@@ -1323,31 +1320,33 @@ namespace LanguageExplorer.DictionaryConfiguration
 			sBefore = string.Empty;
 			sMark = "%O";
 			sAfter = ") ";
-			if (!string.IsNullOrEmpty(sNumber))
+			if (string.IsNullOrEmpty(sNumber))
 			{
-				var ich = sNumber.IndexOf('%');
-				if (ich < 0)
-				{
-					ich = sNumber.Length;
-				}
-				sBefore = sNumber.Substring(0, ich);
-				if (ich < sNumber.Length)
-				{
-					if (ich == sNumber.Length - 1)
-					{
-						sMark = "%O";
-						ich += 1;
-					}
-					else
-					{
-						sMark = sNumber.Substring(ich, 2);
-						ich += 2;
-					}
-					sAfter = sNumber.Substring(ich);
-				}
+				return;
 			}
+			var ich = sNumber.IndexOf('%');
+			if (ich < 0)
+			{
+				ich = sNumber.Length;
+			}
+			sBefore = sNumber.Substring(0, ich);
+			if (ich >= sNumber.Length)
+			{
+				return;
+			}
+			if (ich == sNumber.Length - 1)
+			{
+				sMark = "%O";
+				ich += 1;
+			}
+			else
+			{
+				sMark = sNumber.Substring(ich, 2);
+				ich += 2;
+			}
+			sAfter = sNumber.Substring(ich);
 		}
 
-		public List<LayoutTreeNode> MergedNodes => m_rgltnMerged;
+		public List<LayoutTreeNode> MergedNodes { get; } = new List<LayoutTreeNode>();
 	}
 }

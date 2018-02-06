@@ -21,18 +21,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				foreach(IDisposable menuItem in m_CtrlRightClickMenu.Items)
-					menuItem.Dispose();
+				for (int i = m_CtrlRightClickMenu.Items.Count - 1; i >= 0; i--)
+				{
+					m_CtrlRightClickMenu.Items[i].Dispose();
+				}
 				m_CtrlRightClickMenu.Dispose();
-				components.Dispose();
+				components?.Dispose();
 			}
-			for (int i = m_CtrlRightClickMenu.Items.Count - 1; i >= 0; i--)
-			{
-				m_CtrlRightClickMenu.Items[i].Dispose();
-			}
-			m_CtrlRightClickMenu.Dispose();
 			base.Dispose(disposing);
 		}
 

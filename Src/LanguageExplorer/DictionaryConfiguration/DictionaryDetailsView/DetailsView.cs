@@ -68,14 +68,7 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 			set { textBoxAfter.Text = value; }
 		}
 
-		public string Style
-		{
-			get
-			{
-				var style = ((StyleComboItem)dropDownStyle.SelectedItem).Style;
-				return style != null ? style.Name : null;
-			}
-		}
+		public string Style => ((StyleComboItem)dropDownStyle.SelectedItem).Style?.Name;
 
 		//
 		// View setup properties
@@ -144,8 +137,7 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 		private void SwapComboBoxAsSenderForButtonClickEvent(object sender, EventArgs e)
 		{
 			// If we have a ButtonStylesOnClick handler event call it passing the dropDownStyle ComboBox as the sender
-			if(StyleButtonClick != null)
-				StyleButtonClick(dropDownStyle, e);
+			StyleButtonClick?.Invoke(dropDownStyle, e);
 		}
 
 		/// <summary>Fired when the Styles... button is clicked. Object sender is swapped with the Style ComboBox so it can be updated by clients</summary>
@@ -176,10 +168,9 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 			dropDownStyle.Items.Clear();
 			dropDownStyle.Items.AddRange(styles.ToArray());
 			dropDownStyle.SelectedIndex = 0; // default so we don't have a null item selected.  If there are 0 items, we have other problems.
-			for (int i = 0; i < styles.Count; ++i)
+			for (var i = 0; i < styles.Count; ++i)
 			{
-				if (styles[i].Style != null &&
-					styles[i].Style.Name == selectedStyle)
+				if (styles[i].Style != null && styles[i].Style.Name == selectedStyle)
 				{
 					dropDownStyle.SelectedIndex = i;
 					break;
@@ -201,28 +192,30 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 			base.OnResize(e);
 			// We can't know our initial size until we have a parent.  Without this check, the bottom of the edit
 			// boxes was being cut off sometimes on Linux due to premature relocation.
-			if (this.Parent == null)
+			if (Parent == null)
+			{
 				return;
-			var desiredY = this.Height - m_deltaStyleLabel;
+			}
+			var desiredY = Height - m_deltaStyleLabel;
 			if (labelStyle.Location.Y != desiredY)
 			{
 				labelStyle.Location = new Point(labelStyle.Location.X, desiredY);
 				SetPanelOptionsSize();
 			}
-			desiredY = this.Height - m_deltaStyleCombo;
+			desiredY = Height - m_deltaStyleCombo;
 			if (dropDownStyle.Location.Y != desiredY)
 			{
 				dropDownStyle.Location = new Point(dropDownStyle.Location.X, desiredY);
 				buttonStyles.Location = new Point(buttonStyles.Location.X, desiredY);
 			}
-			desiredY = this.Height - m_deltaTextBoxLabel;
+			desiredY = Height - m_deltaTextBoxLabel;
 			if (labelAfter.Location.Y != desiredY)
 			{
 				labelBefore.Location = new Point(labelBefore.Location.X, desiredY);
 				labelBetween.Location = new Point(labelBetween.Location.X, desiredY);
 				labelAfter.Location = new Point(labelAfter.Location.X, desiredY);
 			}
-			desiredY = this.Height - m_deltaTextBox;
+			desiredY = Height - m_deltaTextBox;
 			if (textBoxAfter.Location.Y != desiredY)
 			{
 				textBoxBefore.Location = new Point(textBoxBefore.Location.X, desiredY);

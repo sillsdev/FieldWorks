@@ -79,8 +79,5 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		/// <summary>EventHandler for the single "display option2" checkbox below the list</summary>
 		event EventHandler DisplayOptionCheckBox2Changed;
-
-
-
 	}
 }

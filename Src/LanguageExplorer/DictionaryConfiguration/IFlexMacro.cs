@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -31,12 +31,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// something obvious, like the wrong kind of object selected or an empty selection.
 		/// Arguments are the same as for RunMacro.
 		/// </summary>
-		/// <param name="target"></param>
-		/// <param name="targetField"></param>
-		/// <param name="wsId"></param>
-		/// <param name="start"></param>
-		/// <param name="length"></param>
-		/// <returns></returns>
 		bool Enabled(ICmObject target, int targetField, int wsId, int start, int length);
 
 		/// <summary>
@@ -49,11 +43,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// In particular target.Services.GetInstance (with a type parameter) will get you things
 		/// like ILexEntryRepository and ILexEntryFactory which can be used to find and create objects.
 		/// </summary>
-		/// <param name="target"></param>
-		/// <param name="targetField"> </param>
-		/// <param name="wsId"> </param>
-		/// <param name="start"> </param>
-		/// <param name="length"> </param>
 		void RunMacro(ICmObject target, int targetField, int wsId, int startOffset, int length);
 
 		/// <summary>

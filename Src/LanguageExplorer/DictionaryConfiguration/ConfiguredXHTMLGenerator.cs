@@ -121,7 +121,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			xhtmlWriter.WriteStartElement("html", "http://www.w3.org/1999/xhtml");
 			xhtmlWriter.WriteAttributeString("lang", "utf-8");
 			if (exportSettings.RightToLeft)
+			{
 				xhtmlWriter.WriteAttributeString("dir", "rtl");
+			}
 			xhtmlWriter.WriteStartElement("head");
 			CreateLinkElement(cssPath, xhtmlWriter, exportSettings.ExportPath);
 			CreateLinkElement(custCssFile, xhtmlWriter, exportSettings.ExportPath);
@@ -142,19 +144,25 @@ namespace LanguageExplorer.DictionaryConfiguration
 			xhtmlWriter.WriteEndElement(); //</head>
 			xhtmlWriter.WriteStartElement("body");
 			if (exportSettings.RightToLeft)
+			{
 				xhtmlWriter.WriteAttributeString("dir", "rtl");
+			}
 			xhtmlWriter.WriteWhitespace(Environment.NewLine);
 		}
 
 		private static void CreateLinkElement(string cssFilePath, XmlWriter xhtmlWriter, string exportPath)
 		{
 			if (string.IsNullOrEmpty(cssFilePath) || !File.Exists(cssFilePath))
+			{
 				return;
+			}
 
 			var hrefValue = Path.GetFileName(cssFilePath);
 			if (exportPath == null)
+			{
 				//In some previews exportPath is null then we should use the full path for the link
 				hrefValue = "file:///" + cssFilePath;
+			}
 
 			xhtmlWriter.WriteStartElement("link");
 			xhtmlWriter.WriteAttributeString("href", hrefValue);
@@ -203,9 +211,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		/// <returns>The path to the XHTML file</returns>
 		internal static string SavePreviewHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, IPropertyTable propertyTable,
-			LcmCache cache,
-			IRecordList activeRecordList,
-			IThreadedProgress progress = null, int entriesPerPage = EntriesPerPage)
+			LcmCache cache, IRecordList activeRecordList, IThreadedProgress progress = null, int entriesPerPage = EntriesPerPage)
 		{
 			var preferredPath = GetPreferredPreviewPath(configuration, cache, entryHvos.Length == 1);
 			var xhtmlPath = Path.ChangeExtension(preferredPath, "xhtml");
@@ -255,9 +261,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		internal static void SavePublishedHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, int entriesPerPage,
 			DictionaryConfigurationModel configuration, IPropertyTable propertyTable,
-			LcmCache cache,
-			IRecordList activeRecordList,
-			string xhtmlPath, IThreadedProgress progress = null)
+			LcmCache cache, IRecordList activeRecordList, string xhtmlPath, IThreadedProgress progress = null)
 		{
 			var entryCount = entryHvos.Length;
 			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
@@ -357,10 +361,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static string CopyCustomCssToTempFolder(string projectPath, string xhtmlPath, string custCssFileName)
 		{
 			if (xhtmlPath == null || projectPath == null)
+			{
 				return string.Empty;
+			}
 			var custCssProjectPath = Path.Combine(projectPath, custCssFileName);
 			if (!File.Exists(custCssProjectPath))
+			{
 				return string.Empty;
+			}
 			var custCssTempPath = Path.Combine(Path.GetDirectoryName(xhtmlPath), custCssFileName);
 			File.Copy(custCssProjectPath, custCssTempPath, true);
 			return custCssTempPath;
@@ -392,17 +400,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 			string currentConfigPath, GeneratorSettings settings, Tuple<int, int> oldCurrentPageRange, Tuple<int, int> oldAdjacentPageRange,
 			int entriesToAddCount, out Tuple<int, int> currentPage, out Tuple<int, int> adjacentPage)
 		{
-			GenerateAdjustedPageButtons(entryHvos, settings, oldCurrentPageRange, oldAdjacentPageRange,
-				entriesToAddCount, out currentPage, out adjacentPage);
+			GenerateAdjustedPageButtons(entryHvos, settings, oldCurrentPageRange, oldAdjacentPageRange, entriesToAddCount, out currentPage, out adjacentPage);
 			var entries = new List<string>();
-			DictionaryConfigurationModel currentConfig = new DictionaryConfigurationModel(currentConfigPath, settings.Cache);
+			var currentConfig = new DictionaryConfigurationModel(currentConfigPath, settings.Cache);
 			if (oldCurrentPageRange.Item1 > oldAdjacentPageRange.Item1)
 			{
 				var firstEntry = Math.Max(0, oldCurrentPageRange.Item1 - entriesToAddCount);
 				for (var i = firstEntry; i < oldCurrentPageRange.Item1; ++i)
 				{
-					entries.Add(GenerateXHTMLForEntry(settings.Cache.ServiceLocator.ObjectRepository.GetObject(entryHvos[i]),
-						currentConfig, publicationDecorator, settings));
+					entries.Add(GenerateXHTMLForEntry(settings.Cache.ServiceLocator.ObjectRepository.GetObject(entryHvos[i]), currentConfig, publicationDecorator, settings));
 				}
 			}
 			else
@@ -410,8 +416,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				var lastEntry = Math.Min(oldAdjacentPageRange.Item2, oldCurrentPageRange.Item2 + entriesToAddCount);
 				for (var i = oldCurrentPageRange.Item2 + 1; i <= lastEntry; ++i)
 				{
-					entries.Add(GenerateXHTMLForEntry(settings.Cache.ServiceLocator.ObjectRepository.GetObject(entryHvos[i]),
-						currentConfig, publicationDecorator, settings));
+					entries.Add(GenerateXHTMLForEntry(settings.Cache.ServiceLocator.ObjectRepository.GetObject(entryHvos[i]), currentConfig, publicationDecorator, settings));
 				}
 			}
 			return entries;
@@ -477,15 +482,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 			xhtmlWriter.WriteEndElement();
 		}
 
-		private static void GeneratePageButton(GeneratorSettings settings, int[] entryHvos, List<Tuple<int, int>> pageRanges,
-			Tuple<int, int> currentPageBounds, XmlWriter xhtmlWriter, Tuple<int, int> page)
+		private static void GeneratePageButton(GeneratorSettings settings, int[] entryHvos, List<Tuple<int, int>> pageRanges, Tuple<int, int> currentPageBounds, XmlWriter xhtmlWriter, Tuple<int, int> page)
 		{
 			xhtmlWriter.WriteStartElement("span");
 			xhtmlWriter.WriteAttributeString("class", "pagebutton");
 			xhtmlWriter.WriteAttributeString("startIndex", page.Item1.ToString());
 			xhtmlWriter.WriteAttributeString("endIndex", page.Item2.ToString());
-			xhtmlWriter.WriteAttributeString("firstEntryGuid",
-				settings.Cache.ServiceLocator.ObjectRepository.GetObject(entryHvos[page.Item1]).Guid.ToString());
+			xhtmlWriter.WriteAttributeString("firstEntryGuid", settings.Cache.ServiceLocator.ObjectRepository.GetObject(entryHvos[page.Item1]).Guid.ToString());
 			if (page.Equals(currentPageBounds))
 			{
 				xhtmlWriter.WriteAttributeString("id", "currentPageButton");
@@ -517,7 +520,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			if (currentEntryHvo != 0)
 			{
 				var currentEntryIndex = Array.IndexOf(entryHvos, currentEntryHvo);
-				foreach (Tuple<int, int> page in pages)
+				foreach (var page in pages)
 				{
 					if (currentEntryIndex >= page.Item1 && currentEntryIndex < page.Item2)
 					{
@@ -534,16 +537,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static string GetIndexLettersOfHeadword(string headWord, bool justFirstLetter = false)
 		{
 			// I don't know if we can have an empty headword. If we can then return empty string instead of crashing.
-			if (headWord.Length == 0)
-				return string.Empty;
-			return TsStringUtils.Compose(headWord.Substring(0, headWord.Length <= 1 || justFirstLetter ? 1 : 2));
+			return headWord.Length == 0 ? string.Empty : TsStringUtils.Compose(headWord.Substring(0, headWord.Length <= 1 || justFirstLetter ? 1 : 2));
 		}
 
 		private static List<Tuple<int, int>> GetPageRanges(int[] entryHvos, int entriesPerPage)
 		{
 			if (entriesPerPage <= 0)
 			{
-				throw new ArgumentException(@"Bad page size", "entriesPerPage");
+				throw new ArgumentException(@"Bad page size", nameof(entriesPerPage));
 			}
 
 			// Rather than complicate the logic below, handle the special cases of no entries and single entry first
@@ -564,8 +565,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				else
 				{
 					// Generate the page with the last entries
-					pageRanges.Add(new Tuple<int, int>(Math.Max(entryHvos.Length - entryHvos.Length % entriesPerPage, 0),
-						entryHvos.Length - 1));
+					pageRanges.Add(new Tuple<int, int>(Math.Max(entryHvos.Length - entryHvos.Length % entriesPerPage, 0), entryHvos.Length - 1));
 				}
 			}
 			else
@@ -632,7 +632,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 				// Throwing the exception out here avoids hanging up the Green screen AND the progress dialog.
 				// The only downside is we see only one exception. See LT-17244.
 				if (exceptionThrown != null)
+				{
 					throw new WorkerThreadException("Exception generating Configured XHTML", exceptionThrown);
+				}
 			}
 		}
 
@@ -645,35 +647,39 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var cache = settings.Cache;
 			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
 			if (entry is IReversalIndexEntry)
-				wsString = ((IReversalIndexEntry)entry).SortKeyWs;
-			var firstLetter = ConfiguredExport.GetLeadChar(GetHeadwordForLetterHead(entry), wsString, dummyOne, dummyTwo, dummyThree,
-				cache);
-			if (firstLetter != lastHeader && !string.IsNullOrEmpty(firstLetter))
 			{
-				var headerTextBuilder = new StringBuilder();
-				var upperCase = Icu.ToTitle(firstLetter, wsString);
-				var lowerCase = firstLetter.Normalize();
-				headerTextBuilder.Append(upperCase);
-				if (lowerCase != upperCase)
-				{
-					headerTextBuilder.Append(' ');
-					headerTextBuilder.Append(lowerCase);
-				}
-				xhtmlWriter.WriteStartElement("div");
-				xhtmlWriter.WriteAttributeString("class", "letHead");
-				xhtmlWriter.WriteStartElement("span");
-				xhtmlWriter.WriteAttributeString("class", "letter");
-				xhtmlWriter.WriteAttributeString("lang", wsString);
-				var wsRightToLeft = cache.WritingSystemFactory.get_Engine(wsString).RightToLeftScript;
-				if (wsRightToLeft != settings.RightToLeft)
-					xhtmlWriter.WriteAttributeString("dir", wsRightToLeft ? "rtl" : "ltr");
-				xhtmlWriter.WriteString(TsStringUtils.Compose(headerTextBuilder.ToString()));
-				xhtmlWriter.WriteEndElement();
-				xhtmlWriter.WriteEndElement();
-				xhtmlWriter.WriteWhitespace(Environment.NewLine);
-
-				lastHeader = firstLetter;
+				wsString = ((IReversalIndexEntry)entry).SortKeyWs;
 			}
+			var firstLetter = ConfiguredExport.GetLeadChar(GetHeadwordForLetterHead(entry), wsString, dummyOne, dummyTwo, dummyThree, cache);
+			if (firstLetter == lastHeader || string.IsNullOrEmpty(firstLetter))
+			{
+				return;
+			}
+			var headerTextBuilder = new StringBuilder();
+			var upperCase = Icu.ToTitle(firstLetter, wsString);
+			var lowerCase = firstLetter.Normalize();
+			headerTextBuilder.Append(upperCase);
+			if (lowerCase != upperCase)
+			{
+				headerTextBuilder.Append(' ');
+				headerTextBuilder.Append(lowerCase);
+			}
+			xhtmlWriter.WriteStartElement("div");
+			xhtmlWriter.WriteAttributeString("class", "letHead");
+			xhtmlWriter.WriteStartElement("span");
+			xhtmlWriter.WriteAttributeString("class", "letter");
+			xhtmlWriter.WriteAttributeString("lang", wsString);
+			var wsRightToLeft = cache.WritingSystemFactory.get_Engine(wsString).RightToLeftScript;
+			if (wsRightToLeft != settings.RightToLeft)
+			{
+				xhtmlWriter.WriteAttributeString("dir", wsRightToLeft ? "rtl" : "ltr");
+			}
+			xhtmlWriter.WriteString(TsStringUtils.Compose(headerTextBuilder.ToString()));
+			xhtmlWriter.WriteEndElement();
+			xhtmlWriter.WriteEndElement();
+			xhtmlWriter.WriteWhitespace(Environment.NewLine);
+
+			lastHeader = firstLetter;
 		}
 
 		/// <summary>
@@ -686,8 +692,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var lexEntry = entry as ILexEntry;
 			if (lexEntry == null)
 			{
-				var revEntry = entry as IReversalIndexEntry;
-				return revEntry != null ? revEntry.ReversalForm.BestAnalysisAlternative.Text.TrimStart() : string.Empty;
+				return (entry as IReversalIndexEntry)?.ReversalForm.BestAnalysisAlternative.Text.TrimStart() ?? string.Empty;
 			}
 			return lexEntry.HomographForm.TrimStart();
 		}
@@ -702,7 +707,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
 			if (IsMainEntry(entryObj, configuration))
+			{
 				return GenerateXHTMLForMainEntry(entryObj, configuration.Parts[0], publicationDecorator, settings);
+			}
 
 			var entry = (ILexEntry)entryObj;
 			return entry.PublishAsMinorEntry
@@ -713,8 +720,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 		public static string GenerateXHTMLForMainEntry(ICmObject entry, ConfigurableDictionaryNode configuration,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-			if (configuration.DictionaryNodeOptions != null && ((ILexEntry)entry).ComplexFormEntryRefs.Any() && !IsListItemSelectedForExport(configuration, entry))
+			if (configuration.DictionaryNodeOptions != null && ((ILexEntry) entry).ComplexFormEntryRefs.Any() &&
+			    !IsListItemSelectedForExport(configuration, entry))
+			{
 				return string.Empty;
+			}
 			return GenerateXHTMLForEntry(entry, configuration, publicationDecorator, settings);
 		}
 
@@ -734,11 +744,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal static bool IsMainEntry(ICmObject entry, DictionaryConfigurationModel config)
 		{
 			var lexEntry = entry as ILexEntry;
-			if (lexEntry == null // only LexEntries can be Minor; others (ReversalIndex, etc) are always Main.
-				|| !lexEntry.EntryRefsOS.Any()) // owning an ILexEntryRef denotes Complex Forms or Variants (not owning any denotes Main Entries)
+			if (lexEntry == null /* only LexEntries can be Minor; others (ReversalIndex, etc) are always Main.*/ || !lexEntry.EntryRefsOS.Any())
+			{
+				// owning an ILexEntryRef denotes Complex Forms or Variants (not owning any denotes Main Entries)
 				return true;
+			}
+
 			if (config.IsRootBased) // Root-based configs consider all Complex Forms and Variants to be Minor Entries
+			{
 				return false;
+			}
 			// Lexeme-Based and Hybrid configs consider Complex Forms to be Main Entries (Variants are still Minor Entries)
 			return lexEntry.EntryRefsOS.Any(ler => ler.RefType == LexEntryRefTags.krtComplexForm);
 		}
@@ -766,11 +781,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 				return string.Empty;
 			}
 
-			var pieces = configuration.ReferencedOrDirectChildren
-				.Select(config => GenerateXHTMLForFieldByReflection(entry, config, publicationDecorator, settings))
+			var pieces = configuration.ReferencedOrDirectChildren.Select(config => GenerateXHTMLForFieldByReflection(entry, config, publicationDecorator, settings))
 				.Where(content => !string.IsNullOrEmpty(content)).ToList();
 			if (pieces.Count == 0)
+			{
 				return string.Empty;
+			}
 			var bldr = new StringBuilder();
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 			{
@@ -879,18 +895,22 @@ namespace LanguageExplorer.DictionaryConfiguration
 				}
 				// If the property value is null there is nothing to generate
 				if (propertyValue == null)
+				{
 					return string.Empty;
+				}
 			}
 			ICmFile fileProperty;
 			ICmObject fileOwner;
 			var typeForNode = config.IsCustomField
-										? GetPropertyTypeFromReflectedTypes(propertyValue.GetType(), null)
-										: GetPropertyTypeForConfigurationNode(config, propertyValue.GetType(), cache.GetManagedMetaDataCache());
+				? GetPropertyTypeFromReflectedTypes(propertyValue.GetType(), null)
+				: GetPropertyTypeForConfigurationNode(config, propertyValue.GetType(), cache.GetManagedMetaDataCache());
 			switch (typeForNode)
 			{
 				case PropertyType.CollectionType:
 					if (!IsCollectionEmpty(propertyValue))
+					{
 						return GenerateXHTMLForCollection(propertyValue, config, publicationDecorator, field, settings, info);
+					}
 					return string.Empty;
 
 				case PropertyType.MoFormType:
@@ -921,11 +941,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 					if(!string.IsNullOrEmpty(internalPath))
 						internalPath = fileProperty.InternalPath.Replace('\\', '/');
 #endif
-						if (fileProperty != null && !string.IsNullOrEmpty(internalPath))
+					if (fileProperty != null && !string.IsNullOrEmpty(internalPath))
 					{
 						var srcAttr = GenerateSrcAttributeForMediaFromFilePath(internalPath, "AudioVisual", settings);
 						if (IsVideo(fileProperty.InternalPath))
+						{
 							return GenerateXHTMLForVideoFile(fileProperty.ClassName, srcAttr, MovieCamera);
+						}
 						fileOwner = field as ICmObject;
 						if (fileOwner != null)
 						{
@@ -950,29 +972,31 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static string GenerateXHTMLForGroupingNode(object field, ConfigurableDictionaryNode config,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-			if (config.ReferencedOrDirectChildren != null && config.ReferencedOrDirectChildren.Any(child => child.IsEnabled))
+			if (config.ReferencedOrDirectChildren == null || !config.ReferencedOrDirectChildren.Any(child => child.IsEnabled))
 			{
-				var bldr = new StringBuilder();
-				using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
-				{
-					xw.WriteStartElement("span");
-					xw.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(config));
-
-					var innerBuilder = new StringBuilder();
-					foreach (var child in config.ReferencedOrDirectChildren)
-					{
-						innerBuilder.Append(GenerateXHTMLForFieldByReflection(field, child, publicationDecorator, settings));
-					}
-					var innerContents = innerBuilder.ToString();
-					if (string.IsNullOrEmpty(innerContents))
-						return string.Empty;
-					xw.WriteRaw(innerContents);
-					xw.WriteEndElement(); // </span>
-					xw.Flush();
-				}
-				return bldr.ToString();
+				return string.Empty;
 			}
-			return string.Empty;
+			var bldr = new StringBuilder();
+			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
+			{
+				xw.WriteStartElement("span");
+				xw.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(config));
+
+				var innerBuilder = new StringBuilder();
+				foreach (var child in config.ReferencedOrDirectChildren)
+				{
+					innerBuilder.Append(GenerateXHTMLForFieldByReflection(field, child, publicationDecorator, settings));
+				}
+				var innerContents = innerBuilder.ToString();
+				if (string.IsNullOrEmpty(innerContents))
+				{
+					return string.Empty;
+				}
+				xw.WriteRaw(innerContents);
+				xw.WriteEndElement(); // </span>
+				xw.Flush();
+			}
+			return bldr.ToString();
 		}
 
 		/// <summary>
@@ -983,82 +1007,82 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static bool GetPropValueForCustomField(object fieldOwner, ConfigurableDictionaryNode config,
 			LcmCache cache, string customFieldOwnerClassName, string customFieldName, ref object propertyValue)
 		{
-			int customFieldFlid = GetCustomFieldFlid(config, cache.GetManagedMetaDataCache(), customFieldOwnerClassName, customFieldName);
-			if (customFieldFlid != 0)
+			var customFieldFlid = GetCustomFieldFlid(config, cache.GetManagedMetaDataCache(), customFieldOwnerClassName, customFieldName);
+			if (customFieldFlid == 0)
 			{
-				var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
-				ICmObject specificObject;
-				if (fieldOwner is ISenseOrEntry)
+				return true;
+			}
+			var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
+			ICmObject specificObject;
+			if (fieldOwner is ISenseOrEntry)
+			{
+				specificObject = ((ISenseOrEntry)fieldOwner).Item;
+				if (!cache.GetManagedMetaDataCache().GetFields(specificObject.ClassID, true, (int)CellarPropertyTypeFilter.All).Contains(customFieldFlid))
 				{
-					specificObject = ((ISenseOrEntry)fieldOwner).Item;
-					if (!cache.GetManagedMetaDataCache().GetFields(specificObject.ClassID,
-						true, (int)CellarPropertyTypeFilter.All).Contains(customFieldFlid))
-					{
-						return false;
-					}
+					return false;
 				}
-				else
+			}
+			else
+			{
+				specificObject = (ICmObject)fieldOwner;
+			}
+
+			switch (customFieldType)
+			{
+				case (int)CellarPropertyType.ReferenceCollection:
+				case (int)CellarPropertyType.OwningCollection:
+				// Collections are stored essentially the same as sequences.
+				case (int)CellarPropertyType.ReferenceSequence:
+				case (int)CellarPropertyType.OwningSequence:
 				{
-					specificObject = (ICmObject)fieldOwner;
+					var sda = cache.MainCacheAccessor;
+					// This method returns the hvo of the object pointed to
+					var chvo = sda.get_VecSize(specificObject.Hvo, customFieldFlid);
+					int[] contents;
+					using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
+					{
+						sda.VecProp(specificObject.Hvo, customFieldFlid, chvo, out chvo, arrayPtr);
+						contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
+					}
+					// if the hvo is invalid set propertyValue to null otherwise get the object
+					propertyValue = contents.Select(id => cache.LangProject.Services.GetObject(id));
+					break;
+				}
+				case (int)CellarPropertyType.ReferenceAtomic:
+				case (int)CellarPropertyType.OwningAtomic:
+				{
+					// This method returns the hvo of the object pointed to
+					propertyValue = cache.MainCacheAccessor.get_ObjectProp(specificObject.Hvo, customFieldFlid);
+					// if the hvo is invalid set propertyValue to null otherwise get the object
+					propertyValue = (int)propertyValue > 0 ? cache.LangProject.Services.GetObject((int)propertyValue) : null;
+					break;
+				}
+				case (int)CellarPropertyType.GenDate:
+				{
+					propertyValue = new GenDate(cache.MainCacheAccessor.get_IntProp(specificObject.Hvo, customFieldFlid));
+					break;
 				}
 
-				switch (customFieldType)
+				case (int)CellarPropertyType.Time:
 				{
-					case (int)CellarPropertyType.ReferenceCollection:
-					case (int)CellarPropertyType.OwningCollection:
-					// Collections are stored essentially the same as sequences.
-					case (int)CellarPropertyType.ReferenceSequence:
-					case (int)CellarPropertyType.OwningSequence:
-					{
-						var sda = cache.MainCacheAccessor;
-						// This method returns the hvo of the object pointed to
-						var chvo = sda.get_VecSize(specificObject.Hvo, customFieldFlid);
-						int[] contents;
-						using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
-						{
-							sda.VecProp(specificObject.Hvo, customFieldFlid, chvo, out chvo, arrayPtr);
-							contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
-						}
-						// if the hvo is invalid set propertyValue to null otherwise get the object
-						propertyValue = contents.Select(id => cache.LangProject.Services.GetObject(id));
-						break;
-					}
-					case (int)CellarPropertyType.ReferenceAtomic:
-					case (int)CellarPropertyType.OwningAtomic:
-					{
-						// This method returns the hvo of the object pointed to
-						propertyValue = cache.MainCacheAccessor.get_ObjectProp(specificObject.Hvo, customFieldFlid);
-						// if the hvo is invalid set propertyValue to null otherwise get the object
-							propertyValue = (int)propertyValue > 0 ? cache.LangProject.Services.GetObject((int)propertyValue) : null;
-						break;
-					}
-					case (int)CellarPropertyType.GenDate:
-					{
-						propertyValue = new GenDate(cache.MainCacheAccessor.get_IntProp(specificObject.Hvo, customFieldFlid));
-						break;
-					}
-
-					case (int)CellarPropertyType.Time:
-					{
-						propertyValue = SilTime.ConvertFromSilTime(cache.MainCacheAccessor.get_TimeProp(specificObject.Hvo, customFieldFlid));
-						break;
-					}
-					case (int)CellarPropertyType.MultiUnicode:
-					case (int)CellarPropertyType.MultiString:
-					{
-						propertyValue = cache.MainCacheAccessor.get_MultiStringProp(specificObject.Hvo, customFieldFlid);
-						break;
-					}
-					case (int)CellarPropertyType.String:
-					{
-						propertyValue = cache.MainCacheAccessor.get_StringProp(specificObject.Hvo, customFieldFlid);
-						break;
-					}
-					case (int)CellarPropertyType.Integer:
-					{
-						propertyValue = cache.MainCacheAccessor.get_IntProp(specificObject.Hvo, customFieldFlid);
-						break;
-					}
+					propertyValue = SilTime.ConvertFromSilTime(cache.MainCacheAccessor.get_TimeProp(specificObject.Hvo, customFieldFlid));
+					break;
+				}
+				case (int)CellarPropertyType.MultiUnicode:
+				case (int)CellarPropertyType.MultiString:
+				{
+					propertyValue = cache.MainCacheAccessor.get_MultiStringProp(specificObject.Hvo, customFieldFlid);
+					break;
+				}
+				case (int)CellarPropertyType.String:
+				{
+					propertyValue = cache.MainCacheAccessor.get_StringProp(specificObject.Hvo, customFieldFlid);
+					break;
+				}
+				case (int)CellarPropertyType.Integer:
+				{
+					propertyValue = cache.MainCacheAccessor.get_IntProp(specificObject.Hvo, customFieldFlid);
+					break;
 				}
 			}
 			return true;
@@ -1066,8 +1090,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private static string GenerateXHTMLForVideoFile(string className, string srcAttribute, string caption)
 		{
-			if (String.IsNullOrEmpty(srcAttribute) && String.IsNullOrEmpty(caption))
-				return String.Empty;
+			if (string.IsNullOrEmpty(srcAttribute) && string.IsNullOrEmpty(caption))
+			{
+				return string.Empty;
+			}
 			var bldr = new StringBuilder();
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 			{
@@ -1076,10 +1102,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 				xw.WriteStartElement("a");
 				xw.WriteAttributeString("class", className);
 				xw.WriteAttributeString("href", srcAttribute);
-				if (!String.IsNullOrEmpty(caption))
+				if (!string.IsNullOrEmpty(caption))
+				{
 					xw.WriteString(caption);
+				}
 				else
+				{
 					xw.WriteRaw("");
+				}
 				xw.WriteFullEndElement();
 				xw.Flush();
 				return bldr.ToString();
@@ -1113,7 +1143,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				Debug.WriteLine(msg);
 				if (s_reportedNodes.Contains(config))
+				{
 					return;
+				}
 				s_reportedNodes.Add(config);
 				while (config != null)
 				{
@@ -1129,14 +1161,18 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var options = config.DictionaryNodeOptions as DictionaryNodeListOptions;
 			var unsortedReferences = propertyValue as IEnumerable<ILexReference>;
 			if (options == null || unsortedReferences == null || !unsortedReferences.Any())
+			{
 				return;
+			}
 			// Calculate and store the ids for each of the references once for efficiency.
 			var refsAndIds = new List<Tuple<ILexReference, string>>();
 			foreach (var reference in unsortedReferences)
 			{
 				var id = reference.OwnerType.Guid.ToString();
-				if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType))
+				if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes) reference.OwnerType.MappingType))
+				{
 					id = id + LexRefDirection(reference, parent);
+				}
 				refsAndIds.Add(new Tuple<ILexReference, string>(reference, id));
 			}
 			// LT-17384: LexReferences are not ordered (they are put in some order each time FLEx starts), but we want to have a consistent order each
@@ -1216,36 +1252,29 @@ namespace LanguageExplorer.DictionaryConfiguration
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
 			if (config.ReferencedOrDirectChildren == null || !config.ReferencedOrDirectChildren.Any(node => node.IsEnabled))
+			{
 				return string.Empty;
+			}
 			var bldr = new StringBuilder();
 			foreach (var child in config.ReferencedOrDirectChildren)
 			{
 				var content = GenerateXHTMLForFieldByReflection(propertyValue, child, publicationDecorator, settings);
 				bldr.Append(content);
 			}
-			if (bldr.Length > 0)
-				return WriteRawElementContents("span", bldr.ToString(), config);
-			return string.Empty;
+			return bldr.Length > 0 ? WriteRawElementContents("span", bldr.ToString(), config) : string.Empty;
 		}
 
 		private static string GenerateXHTMLForPictureCaption(object propertyValue, ConfigurableDictionaryNode config, GeneratorSettings settings)
 		{
 			// todo: get sense numbers and captions into the same div and get rid of this if else
-			string content;
-			if (config.DictionaryNodeOptions != null)
-				content = GenerateXHTMLForStrings(propertyValue as IMultiString, config, settings);
-			else
-				content = GenerateXHTMLForString(propertyValue as ITsString, config, settings);
-			if (!String.IsNullOrEmpty(content))
-				return WriteRawElementContents("div", content, config);
-			return String.Empty;
+			var content = config.DictionaryNodeOptions != null ? GenerateXHTMLForStrings(propertyValue as IMultiString, config, settings) : GenerateXHTMLForString(propertyValue as ITsString, config, settings);
+			return !string.IsNullOrEmpty(content) ? WriteRawElementContents("div", content, config) : string.Empty;
 		}
 
-		private static string GenerateXHTMLForPicture(ICmFile pictureFile, ConfigurableDictionaryNode config, ICmObject owner,
-			GeneratorSettings settings)
+		private static string GenerateXHTMLForPicture(ICmFile pictureFile, ConfigurableDictionaryNode config, ICmObject owner, GeneratorSettings settings)
 		{
 			var srcAttribute = GenerateSrcAttributeFromFilePath(pictureFile, settings.UseRelativePaths ? "pictures" : null, settings);
-			if (!String.IsNullOrEmpty(srcAttribute))
+			if (!string.IsNullOrEmpty(srcAttribute))
 			{
 				var bldr = new StringBuilder();
 				using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
@@ -1261,7 +1290,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					return bldr.ToString();
 				}
 			}
-			return String.Empty;
+			return string.Empty;
 		}
 
 		/// <summary>
@@ -1311,10 +1340,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static string CopyFileSafely(GeneratorSettings settings, string source, string relativeDestination)
 		{
 			if (!File.Exists(source))
+			{
 				return relativeDestination;
-			bool isWavExport = settings.IsWebExport && Path.GetExtension(relativeDestination).Equals(".wav");
+			}
+			var isWavExport = settings.IsWebExport && Path.GetExtension(relativeDestination).Equals(".wav");
 			if (isWavExport)
+			{
 				relativeDestination = Path.ChangeExtension(relativeDestination, ".mp3");
+			}
 			var destination = Path.Combine(settings.ExportPath, relativeDestination);
 			var subFolder = Path.GetDirectoryName(relativeDestination);
 			FileUtils.EnsureDirectoryExists(Path.GetDirectoryName(destination));
@@ -1343,7 +1376,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					do
 					{
 						++copyNumber;
-						newFileName = string.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension);
+						newFileName = $"{fileWithoutExtension}{copyNumber}{fileExtension}";
 						destination = string.IsNullOrEmpty(subFolder)
 							? Path.Combine(settings.ExportPath, newFileName)
 							: Path.Combine(settings.ExportPath, subFolder, newFileName);
@@ -1370,12 +1403,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return FileUtils.AreFilesIdentical(source, destination);
 			}
-			SaveFile exists = WavConverter.AlreadyExists(source, destination);
-			if (exists == SaveFile.IdenticalExists)
-			{
-				return true;
-			}
-			return false;
+			var exists = WavConverter.AlreadyExists(source, destination);
+			return exists == SaveFile.IdenticalExists;
 		}
 
 		private static string MakeSafeFilePath(string filePath)
@@ -1385,11 +1414,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				// Flex keeps the filename as NFD in memory because it is unicode. We need NFC to actually link to the file
 				filePath = Icu.Normalize(filePath, Icu.UNormalizationMode.UNORM_NFC);
 			}
-			if (!FileUtils.IsFilePathValid(filePath))
-			{
-				return "__INVALID_FILE_NAME__";
-			}
-			return filePath;
+			return !FileUtils.IsFilePathValid(filePath) ? "__INVALID_FILE_NAME__" : filePath;
 		}
 
 		private static Dictionary<ConfigurableDictionaryNode, PropertyType> _configNodeToTypeMap = new Dictionary<ConfigurableDictionaryNode, PropertyType>();
@@ -1483,7 +1508,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 				next = next.Parent;
 				// Grouping nodes are skipped because they do not represent properties of the model and break type finding
 				if (!(next.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
+				{
 					lineage.Push(next);
+				}
 			}
 			// pop off the root configuration and read the FieldDescription property to get our starting point
 			var assembly = GetAssemblyForFile(AssemblyFile);
@@ -1539,48 +1566,48 @@ namespace LanguageExplorer.DictionaryConfiguration
 			// LCM doesn't work with interfaces, just concrete classes so chop the I off any interface types
 			var customFieldOwnerClassName = lookupType.Name.TrimStart('I');
 			var customFieldFlid = GetCustomFieldFlid(config, metaDataCacheAccessor, customFieldOwnerClassName);
-			if (customFieldFlid != 0)
+			if (customFieldFlid == 0)
 			{
-				var customFieldType = metaDataCacheAccessor.GetFieldType(customFieldFlid);
-				switch (customFieldType)
-				{
-					case (int)CellarPropertyType.ReferenceSequence:
-					case (int)CellarPropertyType.OwningSequence:
-					case (int)CellarPropertyType.ReferenceCollection:
-						{
-							return typeof(ILcmVector);
-						}
-					case (int)CellarPropertyType.ReferenceAtomic:
-					case (int)CellarPropertyType.OwningAtomic:
-					{
-						var destClassId = metaDataCacheAccessor.GetDstClsId(customFieldFlid);
-						if (destClassId == StTextTags.kClassId)
-						{
-								return typeof(IStText);
-						}
-						return typeof(ICmObject);
-					}
-					case (int)CellarPropertyType.Time:
-						{
-							return typeof(DateTime);
-						}
-					case (int)CellarPropertyType.MultiUnicode:
-						{
-							return typeof(IMultiUnicode);
-						}
-					case (int)CellarPropertyType.MultiString:
-						{
-							return typeof(IMultiString);
-						}
-					case (int)CellarPropertyType.String:
-						{
-							return typeof(string);
-						}
-					default:
-						return null;
-				}
+				return null;
 			}
-			return null;
+			var customFieldType = metaDataCacheAccessor.GetFieldType(customFieldFlid);
+			switch (customFieldType)
+			{
+				case (int)CellarPropertyType.ReferenceSequence:
+				case (int)CellarPropertyType.OwningSequence:
+				case (int)CellarPropertyType.ReferenceCollection:
+				{
+					return typeof(ILcmVector);
+				}
+				case (int)CellarPropertyType.ReferenceAtomic:
+				case (int)CellarPropertyType.OwningAtomic:
+				{
+					var destClassId = metaDataCacheAccessor.GetDstClsId(customFieldFlid);
+					if (destClassId == StTextTags.kClassId)
+					{
+						return typeof(IStText);
+					}
+					return typeof(ICmObject);
+				}
+				case (int)CellarPropertyType.Time:
+				{
+					return typeof(DateTime);
+				}
+				case (int)CellarPropertyType.MultiUnicode:
+				{
+					return typeof(IMultiUnicode);
+				}
+				case (int)CellarPropertyType.MultiString:
+				{
+					return typeof(IMultiString);
+				}
+				case (int)CellarPropertyType.String:
+				{
+					return typeof(string);
+				}
+				default:
+					return null;
+			}
 		}
 
 		/// <summary>
@@ -1600,19 +1627,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// Return the property info from a given class and node. Will check interface heirarchy for the property
 		/// if <code>lookupType</code> is an interface.
 		/// </summary>
-		/// <param name="lookupType"></param>
-		/// <param name="node"></param>
-		/// <returns></returns>
 		private static PropertyInfo GetProperty(Type lookupType, ConfigurableDictionaryNode node)
 		{
-			string propertyOfInterest;
 			PropertyInfo propInfo;
 			var typesToCheck = new Stack<Type>();
 			typesToCheck.Push(lookupType);
 			do
 			{
 				var current = typesToCheck.Pop();
-				propertyOfInterest = node.FieldDescription;
+				var propertyOfInterest = node.FieldDescription;
 				// if there is a SubField we need to use the type of the FieldDescription
 				// for the rest of this method so set current to the FieldDescription type.
 				if (node.SubField != null)
@@ -1640,7 +1663,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			// Don't export if there is no such data
 			if (moForm == null)
+			{
 				return string.Empty;
+			}
 			if (config.ReferencedOrDirectChildren != null && config.ReferencedOrDirectChildren.Any())
 			{
 				throw new NotImplementedException("Children for MoForm types not yet supported.");
@@ -1695,22 +1720,24 @@ namespace LanguageExplorer.DictionaryConfiguration
 					if (lexEntryTypeNode.IsEnabled && lexEntryTypeNode.ReferencedOrDirectChildren != null
 						&& lexEntryTypeNode.ReferencedOrDirectChildren.Any(y => y.IsEnabled))
 					{
-						Debug.Assert(config.DictionaryNodeOptions == null,
-							"double calls to GenerateXHTMLForILexEntryRefsByType don't play nicely with ListOptions. Everything will be generated twice (if it doesn't crash)");
+						Debug.Assert(config.DictionaryNodeOptions == null, "double calls to GenerateXHTMLForILexEntryRefsByType don't play nicely with ListOptions. Everything will be generated twice (if it doesn't crash)");
 						// Display typeless refs
-						foreach (var entry in lerCollection.Where(item => !item.ComplexEntryTypesRS.Any() && !item.VariantEntryTypesRS.Any()))
+						foreach (var entry in lerCollection.Where(item =>
+							!item.ComplexEntryTypesRS.Any() && !item.VariantEntryTypesRS.Any()))
+						{
 							bldr.Append(GenerateCollectionItemContent(config, pubDecorator, entry, collectionOwner, settings, lexEntryTypeNode));
+						}
 						// Display refs of each type
-						GenerateXHTMLForILexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, bldr, lexEntryTypeNode,
-							true); // complex
-						GenerateXHTMLForILexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, bldr, lexEntryTypeNode,
-							false); // variants
+						GenerateXHTMLForILexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, bldr, lexEntryTypeNode, true); // complex
+						GenerateXHTMLForILexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, bldr, lexEntryTypeNode, false); // variants
 					}
 					else
 					{
 						Debug.WriteLine("Unable to group " + config.FieldDescription + " by LexRefType; generating sequentially");
 						foreach (var item in lerCollection)
+						{
 							bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings));
+						}
 					}
 				}
 				else if (config.FieldDescription.StartsWith("Subentries"))
@@ -1724,19 +1751,18 @@ namespace LanguageExplorer.DictionaryConfiguration
 				else
 				{
 					foreach (var item in collection)
+					{
 						bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings));
+					}
 				}
 			}
-			if (bldr.Length > 0)
-				return WriteRawElementContents("span", bldr.ToString(), config);
-			return string.Empty;
+			return bldr.Length > 0 ? WriteRawElementContents("span", bldr.ToString(), config) : string.Empty;
 		}
 
 		private static bool IsLexReferenceCollection(ConfigurableDictionaryNode config)
 		{
 			var opt = config.DictionaryNodeOptions as DictionaryNodeListOptions;
-			return opt != null && (opt.ListId == ListIds.Entry ||
-				opt.ListId == ListIds.Sense);
+			return opt != null && (opt.ListId == ListIds.Entry || opt.ListId == ListIds.Sense);
 		}
 
 		internal static bool IsFactoredReference(ConfigurableDictionaryNode node, out ConfigurableDictionaryNode typeChild)
@@ -1810,8 +1836,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 			if (typeNode.IsEnabled && typeNode.ReferencedOrDirectChildren != null && typeNode.ReferencedOrDirectChildren.Any(y => y.IsEnabled))
 			{
 				// Display typeless refs
-				foreach (var entry in lerCollection.Where(item => !item.ComplexEntryTypesRS.Any() && !item.VariantEntryTypesRS.Any()))
+				foreach (var entry in lerCollection.Where(
+					item => !item.ComplexEntryTypesRS.Any() && !item.VariantEntryTypesRS.Any()))
+				{
 					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, entry, collectionOwner, settings, typeNode));
+				}
 				// Display refs of each type
 				GenerateXHTMLForILexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, bldr, typeNode, isComplex);
 			}
@@ -1819,7 +1848,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				Debug.WriteLine("Unable to group " + config.FieldDescription + " by LexRefType; generating sequentially");
 				foreach (var item in lerCollection)
+				{
 					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings));
+				}
 			}
 			return bldr.ToString();
 		}
@@ -1838,7 +1869,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			// Don't factor out Types when displaying in a paragraph
 			var paraOptions = config.DictionaryNodeOptions as IParaOption;
 			if (paraOptions != null && paraOptions.DisplayEachInAParagraph)
+			{
 				typeNode = null;
+			}
 			// Generate XHTML by Type
 			foreach (var typeGuid in lexEntryTypesFiltered)
 			{
@@ -1854,9 +1887,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				if (innerBldr.Length > 0 && typeNode != null)
 				{
 					var lexEntryType = lexEntryTypes.First(t => t.Guid.Equals(typeGuid));
-					bldr.Append(WriteRawElementContents("span",
-						GenerateCollectionItemContent(typeNode, pubDecorator, lexEntryType,
-							lexEntryType.Owner, settings), typeNode));
+					bldr.Append(WriteRawElementContents("span", GenerateCollectionItemContent(typeNode, pubDecorator, lexEntryType, lexEntryType.Owner, settings), typeNode));
 				}
 				bldr.Append(innerBldr);
 			}
@@ -1872,8 +1903,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				// Get a list of Subentries including their relevant ILexEntryRefs. We will remove each Subentry from the list as it is
 				// generated to prevent multiple generations on the odd chance that a Subentry has multiple Complex Form Types
-				var subentries = collection.Cast<ILexEntry>()
-					.Select(le => new Tuple<ILexEntryRef, ILexEntry>(EntryRefForSubentry(le, collectionOwner), le)).ToList();
+				var subentries = collection.Cast<ILexEntry>().Select(le => new Tuple<ILexEntryRef, ILexEntry>(EntryRefForSubentry(le, collectionOwner), le)).ToList();
 
 				// Generate any Subentries with no ComplexFormType
 				for (var i = 0; i < subentries.Count; i++)
@@ -1901,7 +1931,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				Debug.WriteLine("Unable to group " + config.FieldDescription + " by LexRefType; generating sequentially");
 				foreach (var item in collection)
+				{
 					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings));
+				}
 			}
 		}
 
@@ -1916,18 +1948,28 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				var cmCollection = collection.Cast<ICmObject>();
 				if (decorator != null)
+				{
 					cmCollection = cmCollection.Where(item => !decorator.IsExcludedObject(item));
+				}
+
 				if (IsCollectionInNeedOfSorting(fieldDescr))
+				{
 					cmCollection = cmCollection.OrderBy(x => x.SortKey2);
+				}
 				collection = cmCollection;
 			}
 			else if (collection is IEnumerable<ISenseOrEntry>)
 			{
 				var seCollection = collection.Cast<ISenseOrEntry>();
 				if (decorator != null)
+				{
 					seCollection = seCollection.Where(item => !decorator.IsExcludedObject(item.Item));
+				}
+
 				if (IsCollectionInNeedOfSorting(fieldDescr))
+				{
 					seCollection = seCollection.OrderBy(x => x.Item.SortKey2);
+				}
 				collection = seCollection;
 			}
 		}
@@ -1951,11 +1993,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				Debug.Assert(item != null);
 				if (publicationDecorator != null && publicationDecorator.IsExcludedObject(item))
+				{
 					continue;
+				}
 				filteredSenseCollection.Add(item);
 			}
+
 			if (filteredSenseCollection.Count == 0)
+			{
 				return string.Empty;
+			}
 			var bldr = new StringBuilder();
 			var isSubsense = config.Parent != null && config.FieldDescription == config.Parent.FieldDescription;
 			string lastGrammaticalInfo, langId;
@@ -1970,7 +2017,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			info.SenseCounter = 0; // This ticker is more efficient than computing the index for each sense individually
 			var senseNode = (DictionaryNodeSenseOptions)config.DictionaryNodeOptions;
 			if (senseNode != null)
+			{
 				info.ParentSenseNumberingStyle = senseNode.ParentSenseNumberingStyle;
+			}
 
 			// Calculating isThisSenseNumbered may make sense to do for each item in the foreach loop below, but because of how the answer
 			// is determined, the answer for all sibling senses is the same as for the first sense in the collection.
@@ -2001,21 +2050,25 @@ namespace LanguageExplorer.DictionaryConfiguration
 		///  - No? Don't number.
 		///  - Yes? Number it.
 		/// </summary>
-		internal static bool ShouldThisSenseBeNumbered(ILexSense sense, ConfigurableDictionaryNode senseConfiguration,
-			IEnumerable<ILexSense> siblingSenses)
+		internal static bool ShouldThisSenseBeNumbered(ILexSense sense, ConfigurableDictionaryNode senseConfiguration, IEnumerable<ILexSense> siblingSenses)
 		{
 			var senseOptions = senseConfiguration.DictionaryNodeOptions as DictionaryNodeSenseOptions;
 			if (string.IsNullOrEmpty(senseOptions.NumberingStyle))
+			{
 				return false;
+			}
+
 			if (siblingSenses.Count() > 1)
+			{
 				return true;
+			}
+
 			if (senseOptions.NumberEvenASingleSense)
+			{
 				return true;
-			if (sense.SensesOS.Count == 0)
-				return false;
-			if (!AreThereEnabledSubsensesWithNumberingStyle(senseConfiguration))
-				return false;
-			return true;
+			}
+
+			return sense.SensesOS.Any() && AreThereEnabledSubsensesWithNumberingStyle(senseConfiguration);
 		}
 
 		/// <summary>
@@ -2025,7 +2078,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal static bool AreThereEnabledSubsensesWithNumberingStyle(ConfigurableDictionaryNode senseNode)
 		{
 			if (senseNode == null)
+			{
 				return false;
+			}
 			return senseNode.Children.Any(child =>
 				child.DictionaryNodeOptions is DictionaryNodeSenseOptions &&
 				child.IsEnabled &&
@@ -2037,7 +2092,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			var content = GenerateXHTMLForFieldByReflection(item, gramInfoNode, publicationDecorator, settings);
 			if (string.IsNullOrEmpty(content))
+			{
 				return string.Empty;
+			}
 			var bldr = new StringBuilder();
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 			{
@@ -2053,14 +2110,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static bool IsAllGramInfoTheSame(ConfigurableDictionaryNode config, IEnumerable<ILexSense> collection, bool isSubsense,
 			out string lastGrammaticalInfo, out string langId)
 		{
-			lastGrammaticalInfo = String.Empty;
-			langId = String.Empty;
+			lastGrammaticalInfo = string.Empty;
+			langId = string.Empty;
 			var isSameGrammaticalInfo = false;
 			if (config.FieldDescription == "SensesOS" || config.FieldDescription == "ReferringSenses")
 			{
 				var senseNode = (DictionaryNodeSenseOptions)config.DictionaryNodeOptions;
 				if (senseNode == null)
+				{
 					return false;
+				}
 				if (senseNode.ShowSharedGrammarInfoFirst)
 				{
 					if (isSubsense)
@@ -2069,15 +2128,22 @@ namespace LanguageExplorer.DictionaryConfiguration
 						var objs = new List<ILexSense>();
 						objs.AddRange(collection);
 						if (objs.Count == 0 || !(objs[0].Owner is ILexSense))
+						{
 							return false;
+						}
 						objs.Add((ILexSense)objs[0].Owner);
 						if (!CheckIfAllGramInfoTheSame(config, objs, ref isSameGrammaticalInfo, ref lastGrammaticalInfo, ref langId))
+						{
 							return false;
+						}
 					}
 					else
 					{
-						if (!CheckIfAllGramInfoTheSame(config, collection, ref isSameGrammaticalInfo, ref lastGrammaticalInfo, ref langId))
+						if (!CheckIfAllGramInfoTheSame(config, collection, ref isSameGrammaticalInfo, ref lastGrammaticalInfo,
+							ref langId))
+						{
 							return false;
+						}
 					}
 				}
 			}
@@ -2096,28 +2162,36 @@ namespace LanguageExplorer.DictionaryConfiguration
 				var entryType = item.GetType();
 				var grammaticalInfo = config.ReferencedOrDirectChildren.FirstOrDefault(e => e.FieldDescription == "MorphoSyntaxAnalysisRA" && e.IsEnabled);
 				if (grammaticalInfo == null)
+				{
 					return false;
+				}
 				var property = entryType.GetProperty(grammaticalInfo.FieldDescription);
 				var propertyValue = property.GetValue(item, new object[] { });
 				if (propertyValue == null)
+				{
 					return false;
+				}
 				var child = grammaticalInfo.ReferencedOrDirectChildren.FirstOrDefault(e => e.IsEnabled && e.ReferencedOrDirectChildren.Count == 0);
 				if (child == null)
+				{
 					return false;
+				}
 				entryType = propertyValue.GetType();
 				property = entryType.GetProperty(child.FieldDescription);
 				propertyValue = property.GetValue(propertyValue, new object[] { });
 				if (propertyValue is ITsString)
 				{
-					ITsString fieldValue = (ITsString)propertyValue;
+					var fieldValue = (ITsString)propertyValue;
 					requestedString = fieldValue.Text;
 				}
 				else
 				{
-					IMultiAccessorBase fieldValue = (IMultiAccessorBase)propertyValue;
+					var fieldValue = (IMultiAccessorBase)propertyValue;
 					var bestStringValue = fieldValue.BestAnalysisAlternative.Text;
 					if (bestStringValue != fieldValue.NotFoundTss.Text)
+					{
 						requestedString = bestStringValue;
+					}
 				}
 				if (string.IsNullOrEmpty(lastGrammaticalInfo))
 				{
@@ -2147,8 +2221,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 					}
 				}
 			}
+
 			if (bldr.Length == 0)
+			{
 				return string.Empty;
+			}
 			var senseContent = bldr.ToString();
 			bldr.Clear();
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
@@ -2210,10 +2287,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 			object item, object collectionOwner, GeneratorSettings settings, ConfigurableDictionaryNode factoredTypeField = null)
 		{
 			if (item is IMultiStringAccessor)
+			{
 				return GenerateXHTMLForStrings((IMultiStringAccessor)item, config, settings);
-			if ((config.DictionaryNodeOptions is DictionaryNodeListOptions && !IsListItemSelectedForExport(config, item, collectionOwner))
-				|| config.ReferencedOrDirectChildren == null)
+			}
+
+			if (config.DictionaryNodeOptions is DictionaryNodeListOptions && !IsListItemSelectedForExport(config, item, collectionOwner) || config.ReferencedOrDirectChildren == null)
+			{
 				return string.Empty;
+			}
 
 			var bldr = new StringBuilder();
 			var listOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
@@ -2238,8 +2319,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 					bldr.Append(GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings));
 				}
 			}
+
 			if (bldr.Length == 0)
+			{
 				return string.Empty;
+			}
 			var collectionContent = bldr.ToString();
 			bldr.Clear();
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
@@ -2278,14 +2362,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 			foreach (var lexReference in collection)
 			{
 				var type = new Tuple<ILexRefType, string>(lexReference.OwnerType, LexRefDirection(lexReference, cmOwner));
-				if (!type.Item1.Equals(curType.Item1)
-					|| (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)type.Item1.MappingType) && !type.Item2.Equals(curType.Item2)))
+				if (!type.Item1.Equals(curType.Item1) || (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)type.Item1.MappingType) && !type.Item2.Equals(curType.Item2)))
 				{
 					MoveTargetsToMasterList(cmOwner, curType.Item1, config, allTargetsForType, orderedTargets);
 				}
 				curType = type;
-				if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)curType.Item1.MappingType) &&
-					LexRefDirection(lexReference, cmOwner) == ":r" && lexReference.ConfigTargets.Any())
+				if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)curType.Item1.MappingType) && LexRefDirection(lexReference, cmOwner) == ":r" && lexReference.ConfigTargets.Any())
 				{
 					// In the reverse direction of an asymmetric lexical reference, we want only the first item.
 					// See https://jira.sil.org/browse/LT-16427.
@@ -2293,8 +2375,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				}
 				else
 				{
-					allTargetsForType.AddRange(lexReference.ConfigTargets
-						.Select(target => new Tuple<ISenseOrEntry, ILexReference>(target, lexReference)));
+					allTargetsForType.AddRange(lexReference.ConfigTargets.Select(target => new Tuple<ISenseOrEntry, ILexReference>(target, lexReference)));
 				}
 			}
 			MoveTargetsToMasterList(cmOwner, curType.Item1, config, allTargetsForType, orderedTargets);
@@ -2333,8 +2414,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			return target.Item.Guid.Equals(owner.Guid);
 		}
 
-		private static int CompareLexRefTargets(Tuple<ISenseOrEntry, ILexReference> lhs,
-			Tuple<ISenseOrEntry, ILexReference> rhs)
+		private static int CompareLexRefTargets(Tuple<ISenseOrEntry, ILexReference> lhs, Tuple<ISenseOrEntry, ILexReference> rhs)
 		{
 			return string.Compare(lhs.Item1.HeadWord.Text, rhs.Item1.HeadWord.Text, StringComparison.CurrentCultureIgnoreCase);
 		}
@@ -2705,9 +2785,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Returns true if the given collection is empty (type determined at runtime)
 		/// </summary>
-		/// <param name="collection"></param>
-		/// <exception cref="ArgumentException">if the object given is null, or not a handled collection</exception>
-		/// <returns></returns>
 		private static bool IsCollectionEmpty(object collection)
 		{
 			if (collection == null)
@@ -2965,24 +3042,22 @@ namespace LanguageExplorer.DictionaryConfiguration
 				var requestedString = multiStringAccessor.get_String(wsId);
 				bldr.Append(GenerateWsPrefixAndString(config, settings, wsOptions, wsId, requestedString, guid));
 			}
-			if (bldr.Length > 0)
-			{
-				return WriteRawElementContents("span", bldr.ToString(), config);
-			}
-			return String.Empty;
+			return bldr.Length > 0 ? WriteRawElementContents("span", bldr.ToString(), config) : string.Empty;
 		}
 
 		private static string GenerateWsPrefixAndString(ConfigurableDictionaryNode config, GeneratorSettings settings,
 			DictionaryNodeWritingSystemOptions wsOptions, int wsId, ITsString requestedString, Guid guid)
 		{
-			if (String.IsNullOrEmpty(requestedString.Text))
+			if (string.IsNullOrEmpty(requestedString.Text))
 			{
-				return String.Empty;
+				return string.Empty;
 			}
 			var wsName = settings.Cache.WritingSystemFactory.get_EngineOrNull(wsId).Id;
 			var content = GenerateXHTMLForString(requestedString, config, settings, guid, wsName);
-			if (String.IsNullOrEmpty(content))
-				return String.Empty;
+			if (string.IsNullOrEmpty(content))
+			{
+				return string.Empty;
+			}
 			var bldr = new StringBuilder();
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 			{
@@ -3010,7 +3085,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			GeneratorSettings settings, Guid linkTarget, string writingSystem = null)
 		{
 			if (TsStringUtils.IsNullOrEmpty(fieldValue))
+			{
 				return string.Empty;
+			}
 			if (writingSystem != null && writingSystem.Contains("audio"))
 			{
 				var fieldText = fieldValue.Text;
@@ -3020,7 +3097,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 					var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fieldText, "AudioVisual", settings);
 					var content = GenerateXHTMLForAudioFile(writingSystem, audioId, srcAttr, string.Empty, settings);
 					if (!string.IsNullOrEmpty(content))
+					{
 						return WriteRawElementContents("span", content, null);
+					}
 				}
 			}
 			else
@@ -3044,7 +3123,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 							xw.WriteAttributeString("dir", rightToLeft ? "rtl" : "ltr");
 						}
 					}
-					for (int i = 0; i < fieldValue.RunCount; i++)
+					for (var i = 0; i < fieldValue.RunCount; i++)
 					{
 						var text = fieldValue.get_RunText(i);
 						var props = fieldValue.get_Properties(i);
@@ -3055,7 +3134,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 					if (fieldValue.RunCount > 1)
 					{
 						if (rightToLeft != settings.RightToLeft)
+						{
 							xw.WriteEndElement(); // </span> (dir)
+						}
 						xw.WriteEndElement(); // </span> (lang)
 					}
 					xw.Flush();
@@ -3095,11 +3176,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 			if (text.Contains(txtlineSplit))
 			{
 				var txtContents = text.Split(txtlineSplit);
-				for (int i = 0; i < txtContents.Count(); i++)
+				for (var i = 0; i < txtContents.Count(); i++)
 				{
 					writer.WriteString(txtContents[i]);
 					if (i == txtContents.Count() - 1)
+					{
 						break;
+					}
 					writer.WriteStartElement("br");
 					writer.WriteEndElement();
 				}
@@ -3131,8 +3214,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static string GenerateXHTMLForAudioFile(string classname,
 			string audioId, string srcAttribute, string caption, GeneratorSettings settings)
 		{
-			if (String.IsNullOrEmpty(audioId) && String.IsNullOrEmpty(srcAttribute) && String.IsNullOrEmpty(caption))
-				return String.Empty;
+			if (string.IsNullOrEmpty(audioId) && string.IsNullOrEmpty(srcAttribute) && string.IsNullOrEmpty(caption))
+			{
+				return string.Empty;
+			}
 			var safeAudioId = GetSafeXHTMLId(audioId);
 			var bldr = new StringBuilder();
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
@@ -3148,10 +3233,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 				xw.WriteAttributeString("class", classname);
 				xw.WriteAttributeString("href", "#" + safeAudioId);
 				xw.WriteAttributeString("onclick", "document.getElementById('" + safeAudioId + "').play()");
-				if (!String.IsNullOrEmpty(caption))
+				if (!string.IsNullOrEmpty(caption))
+				{
 					xw.WriteString(caption);
+				}
 				else
+				{
 					xw.WriteRaw("");
+				}
 				xw.WriteFullEndElement();
 				xw.Flush();
 				return bldr.ToString();
@@ -3168,8 +3257,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// This method is intended to produce the xhtml element that we want for given configuration objects.
 		/// </summary>
-		/// <param name="config"></param>
-		/// <returns></returns>
 		private static string GetElementNameForProperty(ConfigurableDictionaryNode config)
 		{
 			//TODO: Improve this logic to deal with subentries if necessary
@@ -3183,14 +3270,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// This method returns the lang attribute value from the first selected writing system in the given options.
 		/// </summary>
-		/// <param name="wsOptions"></param>
-		/// <param name="cache"></param>
-		/// <returns></returns>
 		private static string GetLanguageFromFirstOption(DictionaryNodeWritingSystemOptions wsOptions, LcmCache cache)
 		{
 			const string defaultLang = "en";
 			if (wsOptions == null)
+			{
 				return defaultLang;
+			}
 			foreach (var option in wsOptions.Options)
 			{
 				if (option.IsEnabled)
@@ -3220,16 +3306,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 				throw new ArgumentException(@"No record list", nameof(activeRecordList));
 			}
 
-			ICmPossibility currentPublication;
 			var currentPublicationString = propertyTable.GetValue("SelectedPublication", LanguageExplorerResources.AllEntriesPublication);
-			if (currentPublicationString == LanguageExplorerResources.AllEntriesPublication)
-			{
-				currentPublication = null;
-			}
-			else
-			{
-				currentPublication = (cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Where(item => item.Name.UserDefaultWritingSystem.Text == currentPublicationString)).FirstOrDefault();
-			}
+			var currentPublication = currentPublicationString == LanguageExplorerResources.AllEntriesPublication ? null : (cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Where(item => item.Name.UserDefaultWritingSystem.Text == currentPublicationString)).FirstOrDefault();
 			var decorator = new DictionaryPublicationDecorator(cache, activeRecordList.VirtualListPublisher, activeRecordList.VirtualFlid, currentPublication);
 			entriesToSave = decorator.GetEntriesToPublish(propertyTable, activeRecordList.VirtualFlid, dictionaryType);
 			return decorator;

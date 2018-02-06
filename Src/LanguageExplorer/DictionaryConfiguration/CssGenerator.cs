@@ -48,11 +48,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Generate all the css rules necessary to represent every enabled portion of the given configuration
 		/// </summary>
-		/// <returns></returns>
 		public static string GenerateCssFromConfiguration(DictionaryConfigurationModel model, LcmCache cache, LcmStyleSheet fwStyleSheet)
 		{
-			if(model == null)
+			if (model == null)
+			{
 				throw new ArgumentNullException(nameof(model));
+			}
+
 			var styleSheet = new StyleSheet();
 			LoadBulletUnicodes();
 			LoadNumberingStyles();
@@ -72,13 +74,19 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static void GenerateCssForDefaultStyles(LcmCache cache, LcmStyleSheet fwStyleSheet, StyleSheet styleSheet, DictionaryConfigurationModel model)
 		{
 			if (fwStyleSheet == null)
+			{
 				return;
+			}
 
 			if (fwStyleSheet.Styles.Contains("Normal"))
+			{
 				GenerateCssForWsSpanWithNormalStyle(styleSheet, cache, fwStyleSheet);
+			}
 
 			if (fwStyleSheet.Styles.Contains(DictionaryNormal))
+			{
 				GenerateDictionaryNormalParagraphCss(styleSheet, cache, fwStyleSheet);
+			}
 
 			if (fwStyleSheet.Styles.Contains(LetterHeadingStyleName))
 			{
@@ -91,7 +99,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static void MakeLinksLookLikePlainText(StyleSheet styleSheet)
 		{
 			var rule = new StyleRule { Value = "a" };
-			rule.Declarations.Properties.AddRange(new [] {
+			rule.Declarations.Properties.AddRange(new []
+			{
 				new Property("text-decoration") { Term = new PrimitiveTerm(UnitType.Attribute, "inherit") },
 				new Property("color") { Term = new PrimitiveTerm(UnitType.Attribute, "inherit") }
 			});
@@ -145,20 +154,21 @@ namespace LanguageExplorer.DictionaryConfiguration
 			for (var i = 1; i < model.Parts.Count; ++i)
 			{
 				var minorEntryNode = model.Parts[i];
-				if (minorEntryNode.IsEnabled)
+				if (!minorEntryNode.IsEnabled)
 				{
-					var styleName = minorEntryNode.Style;
-					if (string.IsNullOrEmpty(styleName))
-					{
-						styleName = DictionaryMinor;
-					}
-					var dictionaryMinorStyle = GenerateCssStyleFromLcmStyleSheet(styleName, 0, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(0));
-					var minorRule = new StyleRule { Value = $"div.{GetClassAttributeForConfig(minorEntryNode)}"};
-					minorRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictionaryMinorStyle));
-					styleSheet.Rules.Add(minorRule);
-					// Then generate the rules for all the writing system overrides
-					GenerateCssForWritingSystems($"div.{GetClassAttributeForConfig(minorEntryNode)} span", styleName, styleSheet, cache, fwStyleSheet);
+					continue;
 				}
+				var styleName = minorEntryNode.Style;
+				if (string.IsNullOrEmpty(styleName))
+				{
+					styleName = DictionaryMinor;
+				}
+				var dictionaryMinorStyle = GenerateCssStyleFromLcmStyleSheet(styleName, 0, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(0));
+				var minorRule = new StyleRule { Value = $"div.{GetClassAttributeForConfig(minorEntryNode)}"};
+				minorRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictionaryMinorStyle));
+				styleSheet.Rules.Add(minorRule);
+				// Then generate the rules for all the writing system overrides
+				GenerateCssForWritingSystems($"div.{GetClassAttributeForConfig(minorEntryNode)} span", styleName, styleSheet, cache, fwStyleSheet);
 			}
 		}
 
@@ -180,21 +190,22 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
-				if (aws.LanguageTag.Contains("audio"))
+				if (!aws.LanguageTag.Contains("audio"))
 				{
-					var wsaudioRule = new StyleRule {Value = $"a.{aws.LanguageTag}:after"};
-					wsaudioRule.Declarations.Properties.Add(new Property("content")
-					{
-						Term = new PrimitiveTerm(UnitType.String, ConfiguredXHTMLGenerator.LoudSpeaker)
-					});
-					styleSheet.Rules.Add(wsaudioRule);
-					wsaudioRule = new StyleRule {Value = $"a.{aws.LanguageTag}"};
-					wsaudioRule.Declarations.Properties.Add(new Property("text-decoration")
-					{
-						Term = new PrimitiveTerm(UnitType.Attribute, "none")
-					});
-					styleSheet.Rules.Add(wsaudioRule);
+					continue;
 				}
+				var wsaudioRule = new StyleRule {Value = $"a.{aws.LanguageTag}:after"};
+				wsaudioRule.Declarations.Properties.Add(new Property("content")
+				{
+					Term = new PrimitiveTerm(UnitType.String, ConfiguredXHTMLGenerator.LoudSpeaker)
+				});
+				styleSheet.Rules.Add(wsaudioRule);
+				wsaudioRule = new StyleRule {Value = $"a.{aws.LanguageTag}"};
+				wsaudioRule.Declarations.Properties.Add(new Property("text-decoration")
+				{
+					Term = new PrimitiveTerm(UnitType.Attribute, "none")
+				});
+				styleSheet.Rules.Add(wsaudioRule);
 			}
 		}
 
@@ -257,8 +268,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 				if (!IsEmptyRule(rule))
 				styleSheet.Rules.Add(rule);
 			}
-			if(configNode.Children == null)
+
+			if (configNode.Children == null)
+			{
 				return;
+			}
 			//Recurse into each child
 			foreach(var child in configNode.Children.Where(x => x.IsEnabled))
 			{
@@ -310,7 +324,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			if (!IsEmptyRule(senseNumberRule))
 			styleSheet.Rules.Add(senseNumberRule);
-			if(!string.IsNullOrEmpty(senseOptions.BeforeNumber))
+			if (!string.IsNullOrEmpty(senseOptions.BeforeNumber))
 			{
 				var beforeDeclaration = new StyleDeclaration
 				{
@@ -318,10 +332,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 				};
 				styleSheet.Rules.Add(new StyleRule(beforeDeclaration) { Value = senseNumberSelector + ":before" });
 			}
-			if(!string.IsNullOrEmpty(senseOptions.AfterNumber))
+			if (!string.IsNullOrEmpty(senseOptions.AfterNumber))
 			{
-				var afterDeclaration = new StyleDeclaration();
-				afterDeclaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, senseOptions.AfterNumber) });
+				var afterDeclaration = new StyleDeclaration
+				{
+					new Property("content") {Term = new PrimitiveTerm(UnitType.String, senseOptions.AfterNumber)}
+				};
 				var afterRule = new StyleRule(afterDeclaration) { Value = senseNumberSelector + ":after" };
 				styleSheet.Rules.Add(afterRule);
 			}
@@ -338,7 +354,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 					Value = baseSelection
 				};
 				if (!IsEmptyRule(senseCharRule))
+				{
 					styleSheet.Rules.Add(senseCharRule);
+				}
 
 				var senseParaDeclaration = GetOnlyParagraphStyle(styleDeclaration);
 				senseParaDeclaration.Add(new Property("display")
@@ -397,7 +415,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				var senseSufixRule = senseOptions != null && senseOptions.DisplayFirstSenseInline ? ":not(:first-child):before" : ":before";
 				var bulletRule = new StyleRule { Value = bulletSelector + senseSufixRule };
 				bulletRule.Declarations.Properties.AddRange(GetOnlyBulletContent(styleDeclaration));
-				BaseStyleInfo projectStyle = fwStyleSheet.Styles[configNode.Style];
+				var projectStyle = fwStyleSheet.Styles[configNode.Style];
 				var exportStyleInfo = new ExportStyleInfo(projectStyle);
 				if (exportStyleInfo.NumberScheme != 0)
 				{
@@ -433,7 +451,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			else
 			{
-				var wsId = 0;
+				const int wsId = 0;
 				blockDeclarations = GenerateCssStyleFromLcmStyleSheet(configNode.Style, wsId, configNode, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId), true);
 				GenerateCssForWritingSystems(baseSelection + " span", configNode.Style, styleSheet, cache, fwStyleSheet);
 			}
@@ -470,7 +488,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 						Value = baseSelection
 					};
 					if (!IsEmptyRule(complexContentRule))
+					{
 						styleSheet.Rules.Add(complexContentRule);
+					}
 				}
 				styleSheet.Rules.AddRange(styleRules);
 			}
@@ -492,18 +512,21 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static void GenerateCssForCounterReset(StyleSheet styleSheet, string baseSelection, StyleDeclaration declaration, bool isSplitBySpace)
 		{
 			var resetSection = GetOnlyCounterResetContent(declaration);
-			if (!string.IsNullOrEmpty(resetSection))
+			if (string.IsNullOrEmpty(resetSection))
 			{
-				string bulletParentSelector = baseSelection.Substring(0, baseSelection.LastIndexOf('>') - 1);
-				if (isSplitBySpace)
-					bulletParentSelector = baseSelection.Substring(0, baseSelection.LastIndexOf(' '));
-				var resetRule = new StyleRule {Value = bulletParentSelector};
-				resetRule.Declarations.Add(new Property("counter-reset")
-				{
-					Term = new PrimitiveTerm(UnitType.Attribute, resetSection)
-				});
-				styleSheet.Rules.Add(resetRule);
+				return;
 			}
+			var bulletParentSelector = baseSelection.Substring(0, baseSelection.LastIndexOf('>') - 1);
+			if (isSplitBySpace)
+			{
+				bulletParentSelector = baseSelection.Substring(0, baseSelection.LastIndexOf(' '));
+			}
+			var resetRule = new StyleRule {Value = bulletParentSelector};
+			resetRule.Declarations.Add(new Property("counter-reset")
+			{
+				Term = new PrimitiveTerm(UnitType.Attribute, resetSection)
+			});
+			styleSheet.Rules.Add(resetRule);
 		}
 
 		/// <summary>
@@ -515,28 +538,33 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </remarks>
 		private static StyleRule AdjustRuleIfParagraphNumberScheme(StyleRule rule, ConfigurableDictionaryNode configNode, LcmStyleSheet fwStyleSheet)
 		{
-			if (!string.IsNullOrEmpty(configNode.Style))
+			if (string.IsNullOrEmpty(configNode.Style))
 			{
-				var projectStyle = fwStyleSheet.Styles[configNode.Style];
-				var exportStyleInfo = new ExportStyleInfo(projectStyle);
-				if (exportStyleInfo.NumberScheme != 0)
+				return rule;
+			}
+			var projectStyle = fwStyleSheet.Styles[configNode.Style];
+			var exportStyleInfo = new ExportStyleInfo(projectStyle);
+			if (exportStyleInfo.NumberScheme != 0)
+			{
+				// Create a rule to add the bullet content before based off the given rule
+				var bulletRule = new StyleRule { Value = rule.Value + ":before" };
+				bulletRule.Declarations.Properties.AddRange(GetOnlyBulletContent(rule.Declarations));
+				var wsFontInfo = exportStyleInfo.BulletInfo.FontInfo;
+				bulletRule.Declarations.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(wsFontInfo.FontSize.Value)) });
+				bulletRule.Declarations.Add(new Property("color") { Term = new PrimitiveTerm(UnitType.RGB, wsFontInfo.FontColor.Value.Name) });
+				// remove the bullet content if present in the base rule
+				var contentInRule = rule.Declarations.FirstOrDefault(p => p.Name == "content");
+				if (contentInRule != null)
 				{
-					// Create a rule to add the bullet content before based off the given rule
-					var bulletRule = new StyleRule { Value = rule.Value + ":before" };
-					bulletRule.Declarations.Properties.AddRange(GetOnlyBulletContent(rule.Declarations));
-					var wsFontInfo = exportStyleInfo.BulletInfo.FontInfo;
-					bulletRule.Declarations.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(wsFontInfo.FontSize.Value)) });
-					bulletRule.Declarations.Add(new Property("color") { Term = new PrimitiveTerm(UnitType.RGB, wsFontInfo.FontColor.Value.Name) });
-					// remove the bullet content if present in the base rule
-					var contentInRule = rule.Declarations.FirstOrDefault(p => p.Name == "content");
-					if (contentInRule != null)
-						rule.Declarations.Remove(contentInRule);
-					// remove the bullet counter-increment if present in the base rule
-					var counterIncrement = rule.Declarations.FirstOrDefault(p => p.Name == "counter-increment");
-					if (counterIncrement != null)
-						rule.Declarations.Remove(counterIncrement);
-					return bulletRule;
+					rule.Declarations.Remove(contentInRule);
 				}
+				// remove the bullet counter-increment if present in the base rule
+				var counterIncrement = rule.Declarations.FirstOrDefault(p => p.Name == "counter-increment");
+				if (counterIncrement != null)
+				{
+					rule.Declarations.Remove(counterIncrement);
+				}
+				return bulletRule;
 			}
 			return rule;
 		}
@@ -590,8 +618,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			});
 			styleSheet.Rules.Add(pictureAndCaptionRule);
 
-			var pictureRule = new StyleRule();
-			pictureRule.Value = pictureAndCaptionRule.Value + " img";
+			var pictureRule = new StyleRule {Value = pictureAndCaptionRule.Value + " img"};
 			if(pictureOptions.MinimumHeight > 0)
 			{
 				pictureRule.Declarations.Properties.Add(new Property("min-height")
@@ -726,15 +753,19 @@ namespace LanguageExplorer.DictionaryConfiguration
 					simpleSelector = parentSelector + "> " + SelectBareClassName(configNode, metaDataCacheAccessor);
 				}
 			}
-			if(!String.IsNullOrEmpty(configNode.Before))
+			if(!string.IsNullOrEmpty(configNode.Before))
 			{
 				var dec = new StyleDeclaration();
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, SpecialCharacterHandling.MakeSafeCss(configNode.Before)) });
 				if (fwStyleSheet != null && fwStyleSheet.Styles.Contains(BeforeAfterBetweenStyleName))
+				{
 					dec.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, analWsId, fwStyleSheet, wsEngine));
+				}
 				var selectorBase = simpleSelector;
 				if (configNode.FieldDescription == "PicturesOfSenses")
+				{
 					selectorBase += "> div:first-child";
+				}
 				var beforeRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(selectorBase, ":before") };
 				rules.Add(beforeRule);
 			}
@@ -762,12 +793,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		private static string GetParentForFactoredReference(string parentSelector, ConfigurableDictionaryNode configNode)
 		{
-			if(!IsFactoredReferenceType(configNode))
+			if (!IsFactoredReferenceType(configNode))
+			{
 				return parentSelector;
+			}
 
 			var parentPlural = GetClassAttributeForConfig(configNode.Parent);
 			var parentSingular = GetClassAttributeForCollectionItem(configNode.Parent);
-			return parentSelector.Replace(string.Format(".{0} .{1}", parentPlural, parentSingular), '.' + parentPlural);
+			return parentSelector.Replace($".{parentPlural} .{parentSingular}", '.' + parentPlural);
 		}
 
 		private static bool IsFactoredReferenceType(ConfigurableDictionaryNode configNode)
@@ -786,10 +819,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <returns></returns>
 		private static string GetBaseSelectionWithSelectors(string baseSelection, string selector)
 		{
-			string baseSelectionValue = baseSelection;
+			var baseSelectionValue = baseSelection;
 			if (baseSelection.LastIndexOf("span", StringComparison.Ordinal) != baseSelection.Length - 4)
+			{
 				return baseSelectionValue + selector;
-			string firstOrLastChild = selector == ":before" ? ":first-child" : ":last-child";
+			}
+			var firstOrLastChild = selector == ":before" ? ":first-child" : ":last-child";
 			baseSelectionValue = baseSelectionValue + firstOrLastChild + selector;
 			return baseSelectionValue;
 		}
@@ -806,9 +841,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// Generates a selector for a class name that matches xhtml that is generated for the configNode.
 		/// e.g. '.entry' or '.sense'
 		/// </summary>
-		/// <param name="configNode"></param>
-		/// <param name="cache">defaults to null, necessary for generating correct css for custom field nodes</param>
-		/// <returns></returns>
 		private static string SelectClassName(ConfigurableDictionaryNode configNode, LcmCache cache = null)
 		{
 			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, cache?.GetManagedMetaDataCache());
@@ -822,7 +854,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				case PropertyType.CollectionType:
 				{
 					// for collections we generate a css selector to match each item e.g '.senses .sense'
-					return string.Format(".{0} .{1}", GetClassAttributeForConfig(configNode), GetClassAttributeForCollectionItem(configNode));
+					return $".{GetClassAttributeForConfig(configNode)} .{GetClassAttributeForCollectionItem(configNode)}";
 				}
 				case PropertyType.CmPictureType:
 				{
@@ -834,7 +866,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					// for multi-lingual strings each language's string will have the contents generated in a span
 					if(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
 					{
-						string spanStyle = string.Empty;
+						var spanStyle = string.Empty;
 						if (!DictionaryConfigurationModel.NoteInParaStyles.Contains(configNode.FieldDescription))
 						{
 							spanStyle = "> span";
@@ -856,14 +888,22 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			var classNameBase = GetClassAttributeBase(configNode).ToLower();
 			string singularBase;
-			if(classNameBase.EndsWith("ies"))
+			if (classNameBase.EndsWith("ies"))
+			{
 				singularBase = classNameBase.Remove(classNameBase.Length - 3) + "y";
+			}
 			else if (classNameBase.EndsWith("analyses"))
+			{
 				singularBase = classNameBase.Remove(classNameBase.Length - 2) + "is";
+			}
 			else if (classNameBase.EndsWith("sses"))
+			{
 				singularBase = classNameBase.Remove(classNameBase.Length - 2);
+			}
 			else
+			{
 				singularBase = classNameBase.Remove(classNameBase.Length - 1);
+			}
 			return Icu.Normalize(singularBase + GetClassAttributeDupSuffix(configNode).ToLower(), Icu.UNormalizationMode.UNORM_NFC);
 		}
 
@@ -892,11 +932,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		internal static string GetClassAttributeForConfig(ConfigurableDictionaryNode configNode)
 		{
-			string classAtt = Icu.Normalize((GetClassAttributeBase(configNode) + GetClassAttributeDupSuffix(configNode)).ToLower(),
-				Icu.UNormalizationMode.UNORM_NFC);
+			var classAtt = Icu.Normalize((GetClassAttributeBase(configNode) + GetClassAttributeDupSuffix(configNode)).ToLower(), Icu.UNormalizationMode.UNORM_NFC);
 			// Custom field names might begin with a digit which would cause invalid css, so we prepend 'cf' to those class names.
-			classAtt = Char.IsDigit(Convert.ToChar(classAtt.Substring(0, 1))) ? "cf" + classAtt : classAtt;
-			return classAtt;
+			return char.IsDigit(Convert.ToChar(classAtt.Substring(0, 1))) ? "cf" + classAtt : classAtt;
 		}
 
 		private static string GetClassAttributeBase(ConfigurableDictionaryNode configNode)
@@ -911,8 +949,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					classAttribute += "grouping_";
 				}
-				classAttribute += configNode.FieldDescription.Replace(' ', '-') +
-					(string.IsNullOrEmpty(configNode.SubField) ? "" : "_" + configNode.SubField);
+				classAttribute += configNode.FieldDescription.Replace(' ', '-') + (string.IsNullOrEmpty(configNode.SubField) ? "" : "_" + configNode.SubField);
 				return classAttribute;
 			}
 			return configNode.CSSClassNameOverride;
@@ -965,11 +1002,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// Generates a css StyleDeclaration for the requested FieldWorks style.
 		/// <remarks>internal to facilitate separate unit testing.</remarks>
 		/// </summary>
-		/// <param name="styleName"></param>
-		/// <param name="wsId">writing system id</param>
-		/// <param name="styleSheet"></param>
-		/// <param name="lgWritingSysytem"></param>
-		/// <returns></returns>
 		internal static StyleDeclaration GenerateCssStyleFromLcmStyleSheet(string styleName, int wsId, LcmStyleSheet styleSheet, ILgWritingSystem lgWritingSysytem)
 		{
 			return GenerateCssStyleFromLcmStyleSheet(styleName, wsId, null, styleSheet, lgWritingSysytem);
@@ -1016,11 +1048,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				if(exportStyleInfo.HasBorderColor)
 				{
-					var borderColor = new Property("border-color");
-					borderColor.Term = new HtmlColor(exportStyleInfo.BorderColor.A,
-																exportStyleInfo.BorderColor.R,
-																exportStyleInfo.BorderColor.G,
-																exportStyleInfo.BorderColor.B);
+					var borderColor = new Property("border-color")
+					{
+						Term = new HtmlColor(exportStyleInfo.BorderColor.A,
+							exportStyleInfo.BorderColor.R,
+							exportStyleInfo.BorderColor.G,
+							exportStyleInfo.BorderColor.B)
+					};
 					declaration.Add(borderColor);
 				}
 				var borderLeft = new Property("border-left-width");
@@ -1059,18 +1093,22 @@ namespace LanguageExplorer.DictionaryConfiguration
 			if(exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f || ancestorIndents.TextIndent < 0.0f)
 			{
 				var leadingIndent = CalculateMarginLeft(exportStyleInfo, ancestorIndents, hangingIndent);
-				string marginDirection = "margin-left";
+				var marginDirection = "margin-left";
 				if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
+				{
 					marginDirection = "margin-right";
+				}
 				declaration.Add(new Property(marginDirection) { Term = new PrimitiveTerm(UnitType.Point, leadingIndent) });
 			}
 			if(exportStyleInfo.HasLineSpacing)
 			{
 				var lineHeight = new Property("line-height");
 				if (!exportStyleInfo.LineSpacing.m_relative && exportStyleInfo.LineSpacing.m_lineHeight >= 0)
+				{
 					lineHeight = new Property("flex-line-height");
+				}
 				//m_relative means single, 1.5 or double line spacing was chosen. The CSS should be a number
-				if(exportStyleInfo.LineSpacing.m_relative)
+				if (exportStyleInfo.LineSpacing.m_relative)
 				{
 					// The relative value is stored internally multiplied by 10000.  (FieldWorks code generally hates floating point.)
 					// CSS expects to see the actual floating point value.  See https://jira.sil.org/browse/LT-16735.
@@ -1092,9 +1130,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			if(exportStyleInfo.HasTrailingIndent)
 			{
-				string paddingDirection = "padding-right";
+				var paddingDirection = "padding-right";
 				if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
+				{
 					paddingDirection = "padding-left";
+				}
 				declaration.Add(new Property(paddingDirection) { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.TrailingIndent)) });
 			}
 
@@ -1105,21 +1145,21 @@ namespace LanguageExplorer.DictionaryConfiguration
 				var numScheme = exportStyleInfo.NumberScheme.ToString();
 				if (!string.IsNullOrEmpty(exportStyleInfo.BulletInfo.m_bulletCustom))
 				{
-					string customBullet = exportStyleInfo.BulletInfo.m_bulletCustom;
+					var customBullet = exportStyleInfo.BulletInfo.m_bulletCustom;
 					declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, customBullet) });
 				}
 				else if (BulletSymbolsCollection.ContainsKey(exportStyleInfo.NumberScheme.ToString()))
 				{
-					string selectedBullet = BulletSymbolsCollection[numScheme];
+					var selectedBullet = BulletSymbolsCollection[numScheme];
 					declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, selectedBullet) });
 				}
 				else if (NumberingStylesCollection.ContainsKey(exportStyleInfo.NumberScheme.ToString()))
 				{
 					if (node != null)
 					{
-						string selectedNumStyle = NumberingStylesCollection[numScheme];
+						var selectedNumStyle = NumberingStylesCollection[numScheme];
 						declaration.Add(new Property("counter-increment") { Term = new PrimitiveTerm(UnitType.Attribute, " " + node.Label.ToLower()) });
-						declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.Attribute, string.Format(" counter({0}, {1}) {2}", node.Label.ToLower(), selectedNumStyle, @"' '")) });
+						declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.Attribute, $" counter({node.Label.ToLower()}, {selectedNumStyle}) {@"' '"}") });
 					}
 				}
 			}
@@ -1132,9 +1172,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 					ancestorIndents = CalculateParagraphIndentsFromAncestors(ancestorIndents.Ancestor, styleSheet, new AncestorIndents(0f, 0f));
 					var marginLeft = CalculateMarginLeft(exportStyleInfo, ancestorIndents, hangingIndent);
 					var firstSenseStyle = new StyleDeclaration();
-					string marginDirection = "margin-left";
+					var marginDirection = "margin-left";
 					if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
+					{
 						marginDirection = "margin-right";
+					}
 					firstSenseStyle.Properties.AddRange(declaration.Where(p => p.Name != marginDirection));
 					firstSenseStyle.Properties.Add(new Property(marginDirection) { Term = new PrimitiveTerm(UnitType.Point, marginLeft) });
 					styleList.Insert(0, firstSenseStyle);
@@ -1154,8 +1196,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			return styleList;
 		}
 
-		private static float CalculateMarginLeft(ExportStyleInfo exportStyleInfo, AncestorIndents ancestorIndents,
-			float hangingIndent)
+		private static float CalculateMarginLeft(ExportStyleInfo exportStyleInfo, AncestorIndents ancestorIndents, float hangingIndent)
 		{
 			var leadingIndent = 0.0f;
 			if (exportStyleInfo.HasLeadingIndent)
@@ -1168,15 +1209,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 			return (float)Math.Round(leadingIndent, 3);
 		}
 
-		private static AncestorIndents CalculateParagraphIndentsFromAncestors(ConfigurableDictionaryNode currentNode,
-			LcmStyleSheet styleSheet, AncestorIndents ancestorIndents)
+		private static AncestorIndents CalculateParagraphIndentsFromAncestors(ConfigurableDictionaryNode currentNode, LcmStyleSheet styleSheet, AncestorIndents ancestorIndents)
 		{
 			var parentNode = currentNode;
 			do
 			{
 				parentNode = parentNode.Parent;
 				if (parentNode == null)
+				{
 					return ancestorIndents;
+				}
 			} while (!IsParagraphStyle(parentNode, styleSheet));
 
 			var projectStyle = styleSheet.Styles[parentNode.Style];
@@ -1188,8 +1230,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static float GetHangingIndentIfAny(ExportStyleInfo exportStyleInfo)
 		{
 			// Handles both first-line and hanging indent: hanging indent represented as a negative first-line indent value
-			return exportStyleInfo.HasFirstLineIndent && exportStyleInfo.FirstLineIndent < 0 ?
-				MilliPtToPt(exportStyleInfo.FirstLineIndent) : 0.0f;
+			return exportStyleInfo.HasFirstLineIndent && exportStyleInfo.FirstLineIndent < 0 ? MilliPtToPt(exportStyleInfo.FirstLineIndent) : 0.0f;
 		}
 
 		private static float GetLeadingIndent(ExportStyleInfo exportStyleInfo)
@@ -1200,7 +1241,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static bool IsParagraphStyle(ConfigurableDictionaryNode node, LcmStyleSheet styleSheet)
 		{
 			if (node.StyleType == StyleTypes.Character)
+			{
 				return false;
+			}
 			var style = node.Style;
 			return !string.IsNullOrEmpty(style) && styleSheet.Styles.Contains(style) && styleSheet.Styles[style].IsParagraphStyle;
 		}
@@ -1211,7 +1254,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static void LoadBulletUnicodes()
 		{
 			if (BulletSymbolsCollection.Count > 0)
+			{
 				return;
+			}
 
 			BulletSymbolsCollection.Add("kvbnBulletBase", "\\00B7");
 			BulletSymbolsCollection.Add("101", "\\2022");
@@ -1246,7 +1291,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static void LoadNumberingStyles()
 		{
 			if (NumberingStylesCollection.Count > 0)
+			{
 				return;
+			}
 
 			NumberingStylesCollection.Add("kvbnNumberBase", "decimal");
 			NumberingStylesCollection.Add("kvbnArabic", "decimal");
@@ -1313,19 +1360,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Generates css from boolean style values using writing system overrides where appropriate
 		/// </summary>
-		/// <param name="wsFontInfo"></param>
-		/// <param name="defaultFontInfo"></param>
-		/// <param name="propName"></param>
-		/// <param name="trueValue"></param>
-		/// <param name="falseValue"></param>
-		/// <param name="declaration"></param>
 		private static void AddInfoFromWsOrDefaultValue(InheritableStyleProp<bool> wsFontInfo, IStyleProp<bool> defaultFontInfo,
 														string propName, string trueValue, string falseValue,
 														StyleDeclaration declaration)
 		{
 			bool fontValue;
-			if(!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
+			if (!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
+			{
 				return;
+			}
 			var fontProp = new Property(propName);
 			fontProp.Term = new PrimitiveTerm(UnitType.Ident, fontValue ? trueValue : falseValue);
 			declaration.Add(fontProp);
@@ -1334,16 +1377,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Generates css from Color style values using writing system overrides where appropriate
 		/// </summary>
-		/// <param name="wsFontInfo"></param>
-		/// <param name="defaultFontInfo"></param>
-		/// <param name="propName"></param>
-		/// <param name="declaration"></param>
 		private static void AddInfoFromWsOrDefaultValue(InheritableStyleProp<Color> wsFontInfo, IStyleProp<Color> defaultFontInfo,
 														string propName, StyleDeclaration declaration)
 		{
 			Color fontValue;
-			if(!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
+			if (!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
+			{
 				return;
+			}
 			var fontProp = new Property(propName);
 			fontProp.Term = new PrimitiveTerm(UnitType.RGB,
 														 HtmlColor.FromRgba(fontValue.R, fontValue.G, fontValue.B,
@@ -1354,17 +1395,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Generates css from integer style values using writing system overrides where appropriate
 		/// </summary>
-		/// <param name="wsFontInfo"></param>
-		/// <param name="defaultFontInfo"></param>
-		/// <param name="propName"></param>
-		/// <param name="termType"></param>
-		/// <param name="declaration"></param>
 		private static void AddInfoFromWsOrDefaultValue(InheritableStyleProp<int> wsFontInfo, IStyleProp<int> defaultFontInfo,
 														string propName, UnitType termType, StyleDeclaration declaration)
 		{
 			int fontValue;
-			if(!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
+			if (!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
+			{
 				return;
+			}
 			var fontProp = new Property(propName);
 			fontProp.Term = new PrimitiveTerm(termType, MilliPtToPt(fontValue));
 			declaration.Add(fontProp);
@@ -1373,15 +1411,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Generates css from SuperSub style values using writing system overrides where appropriate
 		/// </summary>
-		/// <param name="wsFontInfo"></param>
-		/// <param name="defaultFontInfo"></param>
-		/// <param name="declaration"></param>
 		private static void AddInfoFromWsOrDefaultValue(InheritableStyleProp<FwSuperscriptVal> wsFontInfo,
 														IStyleProp<FwSuperscriptVal> defaultFontInfo, StyleDeclaration declaration)
 		{
 			FwSuperscriptVal fontValue;
-			if(!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
+			if (!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
+			{
 				return;
+			}
 			var sizeProp = new Property("font-size");
 			sizeProp.Term = new PrimitiveTerm(UnitType.Ident, "58%"); //58% is what OpenOffice does
 			declaration.Add(sizeProp);
@@ -1391,10 +1428,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				var position = new Property("position");
 				position.Term = new PrimitiveTerm(UnitType.Ident, "relative");
 				var top = new Property("top");
-				if (fontValue == FwSuperscriptVal.kssvSub)
-					top.Term = new PrimitiveTerm(UnitType.Pixel, "0.3em");
-				else
-					top.Term = new PrimitiveTerm(UnitType.Pixel, "-0.6em");
+				top.Term = fontValue == FwSuperscriptVal.kssvSub ? new PrimitiveTerm(UnitType.Pixel, "0.3em") : new PrimitiveTerm(UnitType.Pixel, "-0.6em");
 				declaration.Add(position);
 				declaration.Add(top);
 			}
@@ -1403,8 +1437,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static void AddInfoForUnderline(FontInfo wsFont, ICharacterStyleInfo defaultFont, StyleDeclaration declaration)
 		{
 			FwUnderlineType underlineType;
-			if(!GetFontValue(wsFont.m_underline, defaultFont.Underline, out underlineType))
+			if (!GetFontValue(wsFont.m_underline, defaultFont.Underline, out underlineType))
+			{
 				return;
+			}
 			switch(underlineType)
 			{
 				case(FwUnderlineType.kuntDouble):
@@ -1453,8 +1489,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					var termList = new TermList();
 					termList.AddTerm(new PrimitiveTerm(UnitType.Pixel, 1));
 					termList.AddSeparator(TermList.TermSeparator.Space);
-					termList.AddTerm(new PrimitiveTerm(UnitType.Ident,
-																  underlineType == FwUnderlineType.kuntDashed ? "dashed" : "dotted"));
+					termList.AddTerm(new PrimitiveTerm(UnitType.Ident, underlineType == FwUnderlineType.kuntDashed ? "dashed" : "dotted"));
 					fontProp.Term = termList;
 					declaration.Add(fontProp);
 
@@ -1475,25 +1510,28 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <param name="defaultFontInfo">default font info</param>
 		/// <param name="fontValue">the value retrieved from the given font infos</param>
 		/// <returns>true if fontValue was defined in one of the info objects</returns>
-		private static bool GetFontValue<T>(InheritableStyleProp<T> wsFontInfo, IStyleProp<T> defaultFontInfo,
-													out T fontValue)
+		private static bool GetFontValue<T>(InheritableStyleProp<T> wsFontInfo, IStyleProp<T> defaultFontInfo, out T fontValue)
 		{
 			fontValue = default(T);
-			if(wsFontInfo.ValueIsSet)
+			if (wsFontInfo.ValueIsSet)
+			{
 				fontValue = wsFontInfo.Value;
-			else if(defaultFontInfo.ValueIsSet)
+			}
+			else if (defaultFontInfo.ValueIsSet)
+			{
 				fontValue = defaultFontInfo.Value;
+			}
 			else
+			{
 				return false;
+			}
 			return true;
 		}
 
 		/// <summary>
 		/// Extension method to provide a css string conversion from an FwTextAlign enum value
 		/// </summary>
-		/// <param name="align"></param>
-		/// <returns></returns>
-		public static String AsCssString(this FwTextAlign align)
+		public static string AsCssString(this FwTextAlign align)
 		{
 			switch(align)
 			{
@@ -1592,8 +1630,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var selectedEntry = new StyleRule { Value = "." + DictionaryConfigurationServices.CurrentSelectedEntryClass };
 			selectedEntry.Declarations.Properties.Add(new Property("background")
 			{
-				Term = new PrimitiveTerm(UnitType.Ident,
-					"linear-gradient(to bottom " + directionOfRule + ", transparent, rgb(200,238,252) 1em, rgb(200,238,252), rgb(200,238,252), transparent)")
+				Term = new PrimitiveTerm(UnitType.Ident, "linear-gradient(to bottom " + directionOfRule + ", transparent, rgb(200,238,252) 1em, rgb(200,238,252), rgb(200,238,252), transparent)")
 			});
 			var screenRule = new MediaRule { Condition = "screen", RuleSets = { selectedEntryBefore, selectedEntry } };
 			return screenRule.ToString(true) + Environment.NewLine;
@@ -1629,9 +1666,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 				TextIndent = textIndent;
 			}
 
-			internal float Margin { get; private set; }
-			internal float TextIndent { get; private set; }
-			internal ConfigurableDictionaryNode Ancestor { get; private set; }
+			internal float Margin { get; }
+			internal float TextIndent { get; }
+			internal ConfigurableDictionaryNode Ancestor { get; }
 		}
 	}
 }

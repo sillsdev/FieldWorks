@@ -56,7 +56,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 					// Get the root xml element to grab the "name" value
 					var configName = reader["name"];
 					if (configName == null)
-						throw new InvalidDataException(String.Format("{0} is an invalid configuration file", configFile));
+					{
+						throw new InvalidDataException($"{configFile} is an invalid configuration file");
+					}
 					configurations[configName] = configFile;
 				}
 			}
@@ -74,7 +76,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			var reversalIndexConfiguration = propertyTable.GetValue("ReversalIndexPublicationLayout", string.Empty);
 			if (string.IsNullOrEmpty(reversalIndexConfiguration))
+			{
 				return;
+			}
 
 			var model = new DictionaryConfigurationModel(reversalIndexConfiguration, cache);
 			var reversalIndexConfigWritingSystemLanguage = model.WritingSystem;
@@ -82,7 +86,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var currentAnalysisWsList = cache.LanguageProject.AnalysisWritingSystems;
 			var wsObj = currentAnalysisWsList.FirstOrDefault(ws => ws.Id == reversalIndexConfigWritingSystemLanguage);
 			if (wsObj == null || wsObj.DisplayLabel.ToLower().Contains("audio"))
+			{
 				return;
+			}
 			var riRepo = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
 			var mHvoRevIdx = riRepo.FindOrCreateIndexForWs(wsObj.Handle).Hvo;
 			var revGuid = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(mHvoRevIdx).Guid;

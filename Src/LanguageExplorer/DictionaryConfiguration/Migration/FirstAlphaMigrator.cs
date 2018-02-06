@@ -46,8 +46,11 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		internal void MigrateFrom83Alpha(DictionaryConfigurationModel alphaModel)
 		{
 			// original migration neglected to update the version number; -1 (Pre83) is the same as 1 (Alpha1)
-			if (alphaModel.Version == PreHistoricMigrator.VersionPre83 || alphaModel.Version == PreHistoricMigrator.VersionAlpha1)
+			if (alphaModel.Version == PreHistoricMigrator.VersionPre83 ||
+			    alphaModel.Version == PreHistoricMigrator.VersionAlpha1)
+			{
 				RemoveNonLoadableData(alphaModel.PartsAndSharedItems);
+			}
 			// now that it's safe to specify them, it would be helpful to have parents in certain steps:
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(alphaModel.Parts, alphaModel.SharedItems);
 			switch (alphaModel.Version)
@@ -74,7 +77,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				case 7:
 					var fileName = Path.GetFileNameWithoutExtension(alphaModel.FilePath);
 					if (!alphaModel.IsRootBased)
+					{
 						alphaModel.IsRootBased = fileName == DictionaryConfigurationServices.RootFileName;
+					}
 					break;
 				default:
 					m_logger.WriteLine($"Unable to migrate {alphaModel.Label}: no migration instructions for version {alphaModel.Version}");
@@ -140,7 +145,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		private static void AddSubsubNodeIfNeeded(ConfigurableDictionaryNode subNode)
 		{
 			if (subNode.Children.Any(n => n.FieldDescription == subNode.FieldDescription))
+			{
 				return;
+			}
 			switch (subNode.FieldDescription)
 			{
 				case "SensesOS":
@@ -173,6 +180,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			}
 		}
 
+		/// <summary />
 		/// <param name="model"></param>
 		/// <param name="ancestors">Fields in the desired node's ancestry, included the desired node's field, but not including Main Entry</param>
 		/// <remarks>Currently ignores nodes' subfields</remarks>
@@ -183,7 +191,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			foreach (var ancestor in ancestors)
 			{
 				if (nextNode == null)
+				{
 					break;
+				}
 				failureMessage += DictionaryConfigurationServices.NodePathSeparator + ancestor;
 				nextNode = nextNode.Children.Find(n => n.FieldDescription == ancestor && string.IsNullOrEmpty(n.LabelSuffix));
 			}
@@ -289,7 +299,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 					{
 						if (n.FieldDescription == null)
 						{
-							logger.WriteLine(string.Format("Warning: '{0}' reached the Alpha2 migration with a null FieldDescription.", DictionaryConfigurationServices.BuildPathStringFromNode(n)));
+							logger.WriteLine($"Warning: '{DictionaryConfigurationServices.BuildPathStringFromNode(n)}' reached the Alpha2 migration with a null FieldDescription.");
 							return;
 						}
 						if (n.FieldDescription == "VisibleVariantEntryRefs" && n.Label == "Variant Of")
@@ -385,9 +395,14 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		private static void UpdatePicturesChildren(ConfigurableDictionaryNode node)
 		{
 			if (node == null)
+			{
 				return;
+			}
+
 			if (node.Label != "Pictures")
+			{
 				return;
+			}
 
 			node.Children.RemoveAll(child => child.Label == "Sense Number");
 
@@ -437,11 +452,19 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		private static void SwapOutNodeLabelAndField(ConfigurableDictionaryNode node, string label, string fieldDescription)
 		{
 			if (node == null)
+			{
 				return;
+			}
+
 			if (!string.IsNullOrEmpty(label))
+			{
 				node.Label = label;
+			}
+
 			if (!string.IsNullOrEmpty(fieldDescription))
+			{
 				node.FieldDescription = fieldDescription;
+			}
 		}
 
 		private const string Abbr = "Abbreviation"; // good for label and field

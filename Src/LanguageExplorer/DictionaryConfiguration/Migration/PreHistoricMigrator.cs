@@ -80,24 +80,25 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			m_layoutInventory = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
 			m_partInventory = Inventory.GetInventory("parts", Cache.ProjectId.Name);
 
-			if (ConfigsNeedMigratingFromPre83())
+			if (!ConfigsNeedMigratingFromPre83())
 			{
-				m_logger.WriteLine($"{AppVersion}: Old configurations were found in need of migration. - {DateTime.Now:yyyy MMM d h:mm:ss}");
-				var projectPath = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
-
-				m_logger.WriteLine("Migrating dictionary configurations");
-				m_configDirSuffixBeingMigrated = DictionaryConfigurationServices.DictionaryConfigurationDirectoryName;
-				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
-				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-					"Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations",
-					Cache.ActionHandlerAccessor, PerformMigrationUOW);
-				m_logger.WriteLine($"Migrating Reversal Index configurations, if any - {DateTime.Now:h:mm:ss}");
-				m_configDirSuffixBeingMigrated = DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName;
-				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
-				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-					"Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations",
-					Cache.ActionHandlerAccessor, PerformMigrationUOW);
+				return;
 			}
+			m_logger.WriteLine($"{AppVersion}: Old configurations were found in need of migration. - {DateTime.Now:yyyy MMM d h:mm:ss}");
+			var projectPath = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
+
+			m_logger.WriteLine("Migrating dictionary configurations");
+			m_configDirSuffixBeingMigrated = DictionaryConfigurationServices.DictionaryConfigurationDirectoryName;
+			Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
+				"Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations",
+				Cache.ActionHandlerAccessor, PerformMigrationUOW);
+			m_logger.WriteLine($"Migrating Reversal Index configurations, if any - {DateTime.Now:h:mm:ss}");
+			m_configDirSuffixBeingMigrated = DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName;
+			Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
+				"Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations",
+				Cache.ActionHandlerAccessor, PerformMigrationUOW);
 		}
 
 		/// <summary>Perform the migration for Dictionary or Reversal (depending on m_configDirSuffixBeingMigrated.</summary>
@@ -177,7 +178,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		internal void CopyNewDefaultsIntoConvertedModel(string layout, DictionaryConfigurationModel convertedModel)
 		{
 			if (convertedModel.Version != VersionPre83)
+			{
 				return;
+			}
 			DictionaryConfigurationModel alpha83DefaultModel;
 			const string extension = LanguageExplorerConstants.DictionaryConfigurationFileExtension;
 			var projectPath = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), m_configDirSuffixBeingMigrated);
@@ -243,7 +246,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 								? layout.Substring(languageSuffixIndex, customSuffixIndex - languageSuffixIndex)
 								: layout.Substring(languageSuffixIndex);
 							reversalIndex = Cache.ServiceLocator.WritingSystemManager.Get(languageCode).Id;
-							}
+						}
 						else
 						{
 							reversalIndex = "AllReversalIndexes";
@@ -346,7 +349,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				// Attempt to find a matching node from the current default model from which to copy defaults
 				ConfigurableDictionaryNode matchFromBase;
 				if (TryGetMatchingNode(child.Label, currentDefaultChildren, matchedChildren, out matchFromBase))
+				{
 					CopyDefaultsIntoConfigNode(convertedModel, child, matchFromBase);
+				}
 				else
 				{
 					// This node does not match anything in the shipping defaults; it may be a custom field, or it may
@@ -364,7 +369,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 						{
 							m_logger.WriteLine($"Could not match '{pathStringToNode}' in defaults, but it actually exists in the model.");
 							if (child.FieldDescription == null)
+							{
 								child.FieldDescription = child.Label;
+							}
 						}
 					}
 					else
@@ -379,8 +386,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			currentDefaultChildren.RemoveAll(matchedChildren.Contains);
 			foreach (var newChild in currentDefaultChildren)
 			{
-				m_logger.WriteLine(
-					$"'{DictionaryConfigurationServices.BuildPathStringFromNode(convertedNode)}{DictionaryConfigurationServices.NodePathSeparator}{newChild}' was not in the old version; adding from default config.");
+				m_logger.WriteLine($"'{DictionaryConfigurationServices.BuildPathStringFromNode(convertedNode)}{DictionaryConfigurationServices.NodePathSeparator}{newChild}' was not in the old version; adding from default config.");
 				convertedNode.Children.Add(newChild);
 			}
 		}
@@ -411,10 +417,10 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			// LT-17356 Converting the Label in HandleChildNodeRenaming() requires more info than we have there.
 			// ReSharper disable LocalizableElement - Justification: node.Parent.Text should not be localized during migration.
 			if (node.Label == "Bibliography" && node.Parent.Text == "Referenced Senses")
-				// ReSharper restore LocalizableElement
 			{
 				convertedNode.Label = node.ClassName == "LexEntry" ? "Bibliography (Entry)" : "Bibliography (Sense)";
 			}
+			// ReSharper restore LocalizableElement
 
 			// ConfigurableDictionaryNode.Label properties don't include the suffix like XmlDocConfigureDlg.LayoutTreeNode.Label properties do.
 			if (convertedNode.IsDuplicate)
@@ -423,8 +429,10 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				// in the DupString property, separated by hyphens. The last one is what we want.
 				var i = convertedNode.LabelSuffix.LastIndexOf("-", StringComparison.Ordinal);
 				if (i >= 0)
+				{
 					convertedNode.LabelSuffix = convertedNode.LabelSuffix.Substring(i + 1);
-				var suffixNotation = String.Format(" ({0})", convertedNode.LabelSuffix);
+				}
+				var suffixNotation = $" ({convertedNode.LabelSuffix})";
 				if (convertedNode.Label.EndsWith(suffixNotation))
 				{
 					convertedNode.Label = convertedNode.Label.Remove(convertedNode.Label.Length - suffixNotation.Length);
@@ -450,7 +458,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 
 		private static string BuildPathStringFromNode(LayoutTreeNode child)
 		{
-			var path = String.Format("{0} ({1})", child.Label, child.DupString);
+			var path = $"{child.Label} ({child.DupString})";
 			var node = child;
 			while (node.Parent != null // If 'Minor Entry' is duplicated, both copies get a new, common parent 'Minor Entry', which does not affect migration
 				// apart from making log entries about 'Minor Entry > Minor Entry (1) > and so on'
@@ -465,7 +473,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		private DictionaryNodeOptions CreateOptionsFromLayoutTreeNode(LayoutTreeNode node)
 		{
 			DictionaryNodeOptions options = null;
-			if (!String.IsNullOrEmpty(node.WsType))
+			if (!string.IsNullOrEmpty(node.WsType))
 			{
 				options = new DictionaryNodeWritingSystemOptions
 				{
@@ -477,7 +485,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			if (node.ShowSenseConfig)
 			{
 				string before = null, style = null, after = null;
-				if (!String.IsNullOrEmpty(node.Number))
+				if (!string.IsNullOrEmpty(node.Number))
 				{
 					node.SplitNumberFormat(out before, out style, out after);
 				}
@@ -492,12 +500,12 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 					NumberStyle = GenerateNumberStyleFromLayoutTreeNode(node)
 				};
 			}
-			if (!String.IsNullOrEmpty(node.LexRelType))
+			if (!string.IsNullOrEmpty(node.LexRelType))
 			{
 				options = new DictionaryNodeListOptions();
 				SetListOptionsProperties(node.LexRelType, node.LexRelTypeSequence, (DictionaryNodeListOptions)options);
 			}
-			if (!String.IsNullOrEmpty(node.EntryType))
+			if (!string.IsNullOrEmpty(node.EntryType))
 			{
 				// Root-based Minor Entry - Components should not have a display-each-in-paragraph checkbox. See LT-15834.
 				if (node.EntryType == "complex" && node.PartName != "LexEntry-Jt-StemMinorComponentsConfig")
@@ -587,8 +595,10 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			convertedNode.SubField = currentDefaultNode.SubField;
 			convertedNode.ReferenceItem = currentDefaultNode.ReferenceItem;
 			if (convertedNode.DictionaryNodeOptions == null)
+			{
 				convertedNode.DictionaryNodeOptions = currentDefaultNode.DictionaryNodeOptions;
-			if (String.IsNullOrEmpty(convertedNode.Style))
+			}
+			if (string.IsNullOrEmpty(convertedNode.Style))
 			{
 				convertedNode.StyleType = currentDefaultNode.StyleType;
 				convertedNode.Style = currentDefaultNode.Style;
@@ -603,7 +613,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 
 			// top-level nodes (Main, Minor, and Reversal Index Entry) don't need Surrounding Characters (Before, Between, After)
 			if (convertedNode.Parent == null)
+			{
 				convertedNode.After = convertedNode.Between = convertedNode.Before = null;
+			}
 
 			if (convertedNode.Children == null || !convertedNode.Children.Any())
 			{
@@ -665,10 +677,10 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			var oldSummaryNode = convertedNode.Children.First(child => child.Label == "Summary Definition");
 			var oldGlossNode = convertedNode.Children.FirstOrDefault(child => child.Label == "Gloss") ?? new ConfigurableDictionaryNode();
 			newGloss.IsEnabled = oldSummaryNode.IsEnabled || oldGlossNode.IsEnabled;
-			newGloss.Before = !String.IsNullOrEmpty(oldGlossNode.Before) ? oldGlossNode.Before : oldSummaryNode.Before;
-			newGloss.Between = !String.IsNullOrEmpty(oldGlossNode.Between) ? oldGlossNode.Between : oldSummaryNode.Between;
-			newGloss.After = !String.IsNullOrEmpty(oldGlossNode.After) ? oldGlossNode.After : oldSummaryNode.After;
-			newGloss.Style = !String.IsNullOrEmpty(oldGlossNode.Style) ? oldGlossNode.Style : oldSummaryNode.Style;
+			newGloss.Before = !string.IsNullOrEmpty(oldGlossNode.Before) ? oldGlossNode.Before : oldSummaryNode.Before;
+			newGloss.Between = !string.IsNullOrEmpty(oldGlossNode.Between) ? oldGlossNode.Between : oldSummaryNode.Between;
+			newGloss.After = !string.IsNullOrEmpty(oldGlossNode.After) ? oldGlossNode.After : oldSummaryNode.After;
+			newGloss.Style = !string.IsNullOrEmpty(oldGlossNode.Style) ? oldGlossNode.Style : oldSummaryNode.Style;
 			// Set the new gloss options based off the old summary definition (or old gloss) settings
 			oldOptions = oldSummaryNode.DictionaryNodeOptions ?? oldGlossNode.DictionaryNodeOptions;
 			if (oldHeadwordNode.DictionaryNodeOptions != null)
@@ -710,19 +722,27 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		{
 			isCustom = false;
 			if (type == null)
+			{
 				return false;
+			}
 			try
 			{
 				// Convert an interface type name to a class type name if necessary.
 				if (type.StartsWith("I") && Char.IsUpper(type[1]))
+				{
 					type = type.Substring(1);
+				}
 				var metaDataCache = Cache.MetaDataCacheAccessor;
 				var clsid = metaDataCache.GetClassId(type);
 				if (clsid == 0)
+				{
 					return false;
+				}
 				var flid = metaDataCache.GetFieldId2(clsid, field, true);
 				if (flid == 0)
+				{
 					return false;
+				}
 				isCustom = Cache.GetIsCustomField(flid);
 			}
 			catch
@@ -752,7 +772,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			{
 				case "Components":
 					if (child.Parent.Label == "Component References")
+					{
 						return "Referenced Entries";
+					}
 					break;
 				case "Abbreviation":
 					// Don't rename Components -> Complex Form Type -> Abbreviation,
@@ -766,18 +788,26 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 						return "Inflection Features";
 					break;
 				case "Form":
-					if (child.Parent.Label == "Reversal Entry")
-						return "Reversal Form";
-					if (child.Parent.Label == "Subentry Under Reference")
-						return "Referenced Headword";
+					switch (child.Parent.Label)
+					{
+						case "Reversal Entry":
+							return "Reversal Form";
+						case "Subentry Under Reference":
+							return "Referenced Headword";
+					}
+
 					break;
 				case "Category":
 					if (child.Parent.Label == "Reversal Entry")
+					{
 						return "Reversal Category";
+					}
 					break;
 				case "Type":
 					if (child.Parent.Label == "Variants (of Entry)")
+					{
 						return "Variant Type";
+					}
 					break;
 				case "Homograph Number":
 					return "Secondary Homograph Number";
@@ -789,7 +819,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		private void SetupCustomFieldNameDictionaries()
 		{
 			if (m_classToCustomFieldsLabelToName != null)
+			{
 				return;
+			}
 			m_classToCustomFieldsLabelToName = new Dictionary<string, Dictionary<string, string>>();
 			var metaDataCache = Cache.MetaDataCacheAccessor;
 
@@ -803,6 +835,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			}
 		}
 
+		/// <summary />
 		/// <param name="node">the node that has been identified as a Custom Field</param>
 		/// <param name="labelToName">a Dictionary of possible Custom Field Names, keyed by Label</param>
 		private void SetupCustomField(ConfigurableDictionaryNode node, IDictionary<string, string> labelToName)
@@ -811,7 +844,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			string nodeName;
 			if (labelToName != null && labelToName.TryGetValue(node.Label, out nodeName))
 			{
-				m_logger.WriteLine(String.Format("Found name '{0}' for Custom Field labeled '{1}'; using.", nodeName, node.Label));
+				m_logger.WriteLine($"Found name '{nodeName}' for Custom Field labeled '{node.Label}'; using.");
 				node.FieldDescription = nodeName;
 			}
 			else
@@ -838,7 +871,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				{
 					var listId = metaDataCache.GetFieldListRoot(field);
 					if (listId != Guid.Empty)
+					{
 						DictionaryConfigurationController.AddFieldsForPossibilityList(node);
+					}
 					var type = metaDataCache.GetFieldType(field);
 					// Create the proper node options object.
 					switch (type)
@@ -846,7 +881,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 						case (int)CellarPropertyType.ReferenceCollection:
 						case (int)CellarPropertyType.ReferenceSequence:
 							if (listId != Guid.Empty)
+							{
 								node.DictionaryNodeOptions = new DictionaryNodeListOptions();
+							}
 							break;
 						case (int)CellarPropertyType.OwningCollection:
 						case (int)CellarPropertyType.OwningSequence:
@@ -857,7 +894,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 							break;
 						case (int)CellarPropertyType.ReferenceAtomic:
 							if (listId != Guid.Empty)
+							{
 								node.DictionaryNodeOptions = new DictionaryNodeListOptions();
+							}
 							break;
 						case (int)CellarPropertyType.OwningAtomic:
 							break;
@@ -877,7 +916,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			{
 				var parentType = DictionaryConfigurationController.GetLookupClassForCustomFieldParent(node.Parent, Cache);
 				if (parentType == null)
+				{
 					return 0;
+				}
 				var flid = metaDataCache.GetFieldId(parentType, node.FieldDescription, false);
 				return flid;
 			}
@@ -931,7 +972,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 					senseNumberStyle.IsBuiltIn = false;
 					var propsBldr = TsStringUtils.MakePropsBldr();
 					propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, node.NumFont);
-					if (!String.IsNullOrEmpty(node.NumStyle))
+					if (!string.IsNullOrEmpty(node.NumStyle))
 					{
 						if (node.NumStyle.Contains("-bold"))
 						{
@@ -961,7 +1002,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				}
 				else
 				{
-					senseNumberStyleName = String.Format("{0}-{1}", senseNumberStyleBase, ++styleNumberSuffix);
+					senseNumberStyleName = $"{senseNumberStyleBase}-{++styleNumberSuffix}";
 				}
 			} while (!matchedOrCreated);
 			return senseNumberStyleName;
@@ -976,12 +1017,12 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			}
 			var fontInfo = style.DefaultCharacterStyleInfo;
 			// if nothing about bold or italic are in the node but there is information in the style
-			if (String.IsNullOrEmpty(node.NumStyle) && (fontInfo.Bold.ValueIsSet || fontInfo.Italic.ValueIsSet))
+			if (string.IsNullOrEmpty(node.NumStyle) && (fontInfo.Bold.ValueIsSet || fontInfo.Italic.ValueIsSet))
 			{
 				return false;
 			}
 			// if we have bold or italic info in the node but it doesn't match the style
-			if (!String.IsNullOrEmpty(node.NumStyle) && ((node.NumStyle.Contains("-bold") && fontInfo.Bold.ValueIsSet && fontInfo.Bold.Value) ||
+			if (!string.IsNullOrEmpty(node.NumStyle) && ((node.NumStyle.Contains("-bold") && fontInfo.Bold.ValueIsSet && fontInfo.Bold.Value) ||
 				(!node.NumStyle.Contains("-bold") && node.NumStyle.Contains("bold") && fontInfo.Bold.ValueIsSet && !fontInfo.Bold.Value) ||
 				(node.NumStyle.Contains("bold") && !fontInfo.Bold.ValueIsSet) || (!node.NumStyle.Contains("bold") && fontInfo.Bold.ValueIsSet) ||
 				(node.NumStyle.Contains("-italic") && fontInfo.Italic.ValueIsSet && fontInfo.Italic.Value) ||
@@ -991,9 +1032,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				return false;
 			}
 			// if the font doesn't match
-			if (String.IsNullOrEmpty(node.NumFont) && fontInfo.FontName.ValueIsSet || // node value is empty but fontInfo isn't
-				!String.IsNullOrEmpty(node.NumFont) && !fontInfo.FontName.ValueIsSet || // fontinfo is empty but node value isn't
-				(fontInfo.FontName.ValueIsSet && String.Compare(node.NumFont, fontInfo.FontName.Value, StringComparison.Ordinal) != 0))
+			if (string.IsNullOrEmpty(node.NumFont) && fontInfo.FontName.ValueIsSet || // node value is empty but fontInfo isn't
+				!string.IsNullOrEmpty(node.NumFont) && !fontInfo.FontName.ValueIsSet || // fontinfo is empty but node value isn't
+				fontInfo.FontName.ValueIsSet && string.Compare(node.NumFont, fontInfo.FontName.Value, StringComparison.Ordinal) != 0)
 			{
 				// node value was empty but fontInfo isn't or
 				// fontInfo was empty but node value wasn't or
@@ -1026,8 +1067,8 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		}
 
 		public string AppVersion { get; }
-		public LcmCache Cache { get; private set; }
-		public bool UseStringTable { get { return false; } }
+		public LcmCache Cache { get; }
+		public bool UseStringTable => false;
 		public LayoutLevels LayoutLevels { get; private set; }
 
 		public void ExpandWsTaggedNodes(string sWsTag)
@@ -1104,7 +1145,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		{
 			var matchingPart = newDefaultList.FirstOrDefault(m => m.Label == oldDefaultNode.Label && m.LabelSuffix == oldDefaultNode.LabelSuffix && m.FieldDescription == oldDefaultNode.FieldDescription);
 			if (matchingPart == null)
+			{
 				return;
+			}
 			oldDefaultNode.After = matchingPart.After;
 			oldDefaultNode.Before = matchingPart.Before;
 			oldDefaultNode.Between = matchingPart.Between;

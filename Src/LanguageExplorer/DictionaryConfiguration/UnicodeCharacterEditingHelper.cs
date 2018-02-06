@@ -25,14 +25,18 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal static string ConvertFinalDigitsToCharacter(string input)
 		{
 			if (string.IsNullOrEmpty(input))
+			{
 				return input;
+			}
 
 			// Matches 1 to 4 hex digits at the end of input, and replaces them with the result of the lambda.
 			// U+ or u+ is optional, and will be omitted from the output.
 			return Regex.Replace(input, @"(?:[Uu]\+)?([0-9A-Fa-f]{1,4})$", (match) =>
 			{
 				if (!match.Success)
+				{
 					return match.Value;
+				}
 
 				var hexdigits = match.Groups[1].Value;
 
@@ -46,9 +50,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				// Converting to a char should not overflow since hexdigits is never more than 4 digits.
 				var character = Convert.ToChar(codepoint);
 
-				if (char.IsSurrogate(character))
-					return match.Value;
-				return character.ToString();
+				return char.IsSurrogate(character) ? match.Value : character.ToString();
 			});
 		}
 
@@ -59,12 +61,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal static string ConvertFinalCharacterToCodepoint(string input)
 		{
 			if (string.IsNullOrEmpty(input))
+			{
 				return input;
+			}
 
 			var lastCharacter = input.Last();
 
 			if (char.IsSurrogate(lastCharacter))
+			{
 				return input;
+			}
 
 			var hexCodepoint = ((int)lastCharacter).ToString("X4");
 			return input.Remove(input.Length - 1) + hexCodepoint;
@@ -76,9 +82,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		public static string ConvertFinal(string input)
 		{
 			// Does input end in a hex digit?
-			if (Regex.IsMatch(input, "[0-9A-Fa-f]$"))
-				return ConvertFinalDigitsToCharacter(input);
-			return ConvertFinalCharacterToCodepoint(input);
+			return Regex.IsMatch(input, "[0-9A-Fa-f]$") ? ConvertFinalDigitsToCharacter(input) : ConvertFinalCharacterToCodepoint(input);
 		}
 
 		/// <summary>
@@ -90,25 +94,24 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		public static void HandleKeyDown(object sender, KeyEventArgs keyEventArgs)
 		{
-			if (keyEventArgs.Alt && keyEventArgs.KeyCode == Keys.X)
+			if (!keyEventArgs.Alt || keyEventArgs.KeyCode != Keys.X)
 			{
-				var textbox = ((TextBoxBase)sender);
-				var insertionPointLocation = textbox.SelectionStart;
-				var originalSelectionLength = textbox.SelectionLength;
-				var beginningText = textbox.Text.Substring(0, insertionPointLocation);
-				var endingText = textbox.Text.Substring(insertionPointLocation);
-				beginningText = SpecialCharacterHandling.VisibleToInvisibleCharacters(beginningText);
-
-				beginningText = ConvertFinal(beginningText);
-
-				//This assignment is done to handle situations where there are side effects impacting
-				//where the position of the cursor should end up.
-				textbox.Text = beginningText;
-				var newSelectionStart = textbox.Text.Length;
-				textbox.SelectionLength = originalSelectionLength;
-				textbox.Text = textbox.Text + endingText;
-				textbox.SelectionStart = newSelectionStart;
+				return;
 			}
+			var textbox = ((TextBoxBase)sender);
+			var insertionPointLocation = textbox.SelectionStart;
+			var originalSelectionLength = textbox.SelectionLength;
+			var beginningText = textbox.Text.Substring(0, insertionPointLocation);
+			var endingText = textbox.Text.Substring(insertionPointLocation);
+			beginningText = SpecialCharacterHandling.VisibleToInvisibleCharacters(beginningText);
+			beginningText = ConvertFinal(beginningText);
+			//This assignment is done to handle situations where there are side effects impacting
+			//where the position of the cursor should end up.
+			textbox.Text = beginningText;
+			var newSelectionStart = textbox.Text.Length;
+			textbox.SelectionLength = originalSelectionLength;
+			textbox.Text = textbox.Text + endingText;
+			textbox.SelectionStart = newSelectionStart;
 		}
 	}
 }

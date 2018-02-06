@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2016 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,8 +32,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private bool m_masterRefreshRequired;
 
-		public void SetupDialog(HomographConfiguration hc, LcmCache cache, LcmStyleSheet stylesheet, IFlexApp app,
-			IHelpTopicProvider helpTopicProvider)
+		public void SetupDialog(HomographConfiguration hc, LcmCache cache, LcmStyleSheet stylesheet, IFlexApp app, IHelpTopicProvider helpTopicProvider)
 		{
 			SetHelpTopic("khtpConfigureHeadwordNumbers"); // Default help topic ID
 			m_helpProvider = new HelpProvider();
@@ -65,8 +64,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				m_radioAfter.Checked = false;
 				m_chkShowSenseNumInReversal.Checked = false;
 			}
-			m_chkShowHomographNumInReversal.Checked =
-				hc.ShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef);
+			m_chkShowHomographNumInReversal.Checked = hc.ShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef);
 			EnableControls();
 		}
 
@@ -85,7 +83,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			base.OnClosing(e);
 			if (m_masterRefreshRequired)
+			{
 				DialogResult = DialogResult.OK; // let the client know that something has changed
+			}
 		}
 
 		private void m_radioBefore_CheckedChanged(object sender, EventArgs e)
@@ -98,7 +98,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			EnableControls();
 		}
 
-		void EnableControls()
+		private void EnableControls()
 		{
 			m_chkShowHomographNumInReversal.Enabled = !m_radioHide.Checked;
 			m_chkShowSenseNumInReversal.Enabled = !m_radioHide.Checked;
@@ -153,7 +153,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				if (dlg.ShowDialog(this) == DialogResult.OK && dlg.ChangeType != StyleChangeType.None)
 				{
 					m_app.Synchronize(SyncMsg.ksyncStyle);
-					LcmStyleSheet stylesheet = new LcmStyleSheet();
+					var stylesheet = new LcmStyleSheet();
 					stylesheet.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 					m_stylesheet = stylesheet;
 					m_masterRefreshRequired = true;
@@ -167,8 +167,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		public void SetHelpTopic(string helpTopic)
 		{
-			//CheckDisposed();
-
 			m_helpTopic = helpTopic;
 			if (m_helpTopicProvider != null)
 			{
@@ -186,13 +184,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			RunStyleDialog(HomographConfiguration.ksSenseReferenceNumberStyle);
 		}
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Display help for this dialog.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected void m_btnHelp_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, m_helpTopic);

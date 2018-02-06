@@ -26,7 +26,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private readonly string m_objType;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:DictionaryConfigMgrDlg"/> class.
+		/// Initializes a new instance of the class.
 		/// </summary>
 		public DictionaryConfigMgrDlg(IPropertyTable propertyTable, string objType, List<XElement> configViews, XElement current)
 		{
@@ -51,7 +51,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Generates a possible help topic id from an identifying string, but does NOT check it for validity!
 		/// </summary>
-		/// <returns></returns>
 		private static string generateChooserHelpTopicID(string fromStr)
 		{
 			var candidateID = "khtpManage";
@@ -112,7 +111,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private void SetSelectedItem(string code)
 		{
 			if (m_listView.Items.Count < 1)
+			{
 				return; // Just in case.
+			}
 
 			// find code in list, select that index
 			var idx = -1;
@@ -137,8 +138,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		public string CurrentSelectedCode => CurrentSelectedItem.Code;
 
-		private static void CheckForValidSelectedItem(IEnumerable<VisibleListItem> itemList,
-			string selectedItem)
+		private static void CheckForValidSelectedItem(IEnumerable<VisibleListItem> itemList, string selectedItem)
 		{
 			var result = itemList.FirstOrDefault(item => item.Code == selectedItem);
 			Debug.Assert(result != null, "Selected item does not exist in list.");
@@ -238,7 +238,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			Presenter.FinalConfigurationView = newSelection.Code;
 		}
 
-		private class VisibleListItem : ListViewItem
+		private sealed class VisibleListItem : ListViewItem
 		{
 			internal VisibleListItem(string code, string name)
 			{
@@ -247,7 +247,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				Text = name;
 			}
 
-			internal string Code => Tag as string;
+			internal string Code => (string)Tag;
 		}
 	}
 }

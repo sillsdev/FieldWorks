@@ -19,8 +19,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 	/// </summary>
 	internal class DictionaryConfigManager : IDictConfigPresenter, IDictConfigManager
 	{
-		private readonly IDictConfigViewer m_viewer;
-
 		private Inventory m_layouts;
 		private Inventory m_parts;
 		protected Dictionary<string, DictConfigItem> m_configList;
@@ -34,10 +32,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Create the Manager for stored dictionary configurations.
 		/// </summary>
-		public DictionaryConfigManager(IDictConfigViewer viewer, List<XElement> configViews,
-			XElement current)
+		public DictionaryConfigManager(IDictConfigViewer viewer, List<XElement> configViews, XElement current)
 		{
-			m_viewer = viewer;
+			Viewer = viewer;
 			m_originalViewConfigNodes = configViews;
 
 			m_configList = new Dictionary<string, DictConfigItem>();
@@ -71,7 +68,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			m_currentView = m_originalView;
 
 			if (m_configList.Count == 0)
+			{
 				return;
+			}
 
 			// Now set up the actual dialog's contents
 			RefreshView();
@@ -94,7 +93,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				DictConfigItem item;
 				if (m_configList.TryGetValue(code, out item))
 				{
-					Debug.Assert(false, String.Format("The 'configList' code {0} is NOT unique!", code));
+					Debug.Assert(false, $"The 'configList' code {code} is NOT unique!");
 					// ReSharper disable HeuristicUnreachableCode
 					continue;
 					// ReSharper restore HeuristicUnreachableCode
@@ -109,7 +108,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			DictConfigItem item;
 			if (!m_configList.TryGetValue(curSelCode, out item))
 			{
-				Debug.Assert(false, String.Format("Non-existent configuration code {0}", curSelCode));
+				Debug.Assert(false, $"Non-existent configuration code {curSelCode}");
 				// ReSharper disable HeuristicUnreachableCode
 				return;
 				// ReSharper restore HeuristicUnreachableCode
@@ -122,7 +121,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			DictConfigItem item;
 			if (!m_configList.TryGetValue(curSelCode, out item))
 			{
-				Debug.Assert(false, String.Format("Non-existent configuration code {0}", curSelCode));
+				Debug.Assert(false, $"Non-existent configuration code {curSelCode}");
 				// ReSharper disable HeuristicUnreachableCode
 				return true;
 				// ReSharper restore HeuristicUnreachableCode
@@ -130,17 +129,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 			return item.UserMarkedDelete;
 		}
 
-		private bool CurViewHasChanged
-		{
-			get { return m_originalView != m_currentView; }
-		}
+		private bool CurViewHasChanged => m_originalView != m_currentView;
 
 		#region IDictConfigPresenter Members
 
-		public IDictConfigViewer Viewer
-		{
-			get { return m_viewer; }
-		}
+		public IDictConfigViewer Viewer { get; }
 
 		/// <summary>
 		/// Get the DictConfigItem associated with this code and mark it for deletion.
@@ -152,25 +145,34 @@ namespace LanguageExplorer.DictionaryConfiguration
 			DictConfigItem item;
 			if (!m_configList.TryGetValue(code, out item))
 			{
-				Debug.Assert(false, String.Format("Code {0} not found.", code));
+				Debug.Assert(false, $"Code {code} not found.");
 				// ReSharper disable HeuristicUnreachableCode
 				return true; // At least its not there, so deleting it is successful!
 				// ReSharper restore HeuristicUnreachableCode
 			}
+
 			if (item.IsProtected)
+			{
 				return false;
+			}
 			item.UserMarkedDelete = true;
 			if (item.UniqueCode == m_currentView)
 			{
 				if (!CurViewHasChanged || (CurViewHasChanged && IsViewDeleted(m_originalView)))
+				{
 					UpdateViewToFirstProtected();
+				}
 				else
+				{
 					UpdateCurrentView(m_originalView);
+				}
 			}
 			// If this entry is newly created since opening the dialog,
 			// there's no point in keeping it around anymore.
 			if (item.IsNew)
+			{
 				m_configList.Remove(item.UniqueCode);
+			}
 			RefreshView();
 			return true;
 		}
@@ -189,13 +191,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// Get the DictConfigItem associated with this code and make a copy of it.
 		/// The new item's display name will be "Copy of X", where X is the source item's name.
 		/// </summary>
-		/// <param name="sourceCode"></param>
 		public void CopyConfigItem(string sourceCode)
 		{
 			// For now dis-allow copying a recent copy (since opening the dialog)
 			DictConfigItem item;
 			if (IsConfigNew(sourceCode, out item))
+			{
 				return;
+			}
 
 			// Copy item
 			InternalCopyConfigItem(item);
@@ -214,7 +217,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private void EnsureUniqueLabel(DictConfigItem newItem)
 		{
 			var counter = 1;
-			while ((from item in m_configList where item.Value.DispName == newItem.DispName select item).Count() > 0)
+			while ((m_configList.Where(item => item.Value.DispName == newItem.DispName)).Any())
 			{
 				counter++;
 				// change DispName on newItem using ksDictConfigMultiCopyOf
@@ -229,14 +232,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// Get the DictConfigItem associated with this code and rename its display name
 		/// to the value in newName.
 		/// </summary>
-		/// <param name="code"></param>
-		/// <param name="newName"></param>
 		public void RenameConfigItem(string code, string newName)
 		{
 			DictConfigItem item;
 			if (!m_configList.TryGetValue(code, out item))
 			{
-				Debug.Assert(false, String.Format("Code {0} not found.", code));
+				Debug.Assert(false, $"Code {code} not found.");
 				// ReSharper disable HeuristicUnreachableCode
 				return; // Should get here if we didn't have a valid item selected!
 				// ReSharper restore HeuristicUnreachableCode
@@ -288,7 +289,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			DictConfigItem item;
 			if (!m_configList.TryGetValue(code, out item))
 			{
-				Debug.Assert(false, String.Format("Code {0} not found.", code));
+				Debug.Assert(false, $"Code {code} not found.");
 				// ReSharper disable HeuristicUnreachableCode
 				return true; // Should get here if we didn't have a valid item selected!
 				// ReSharper restore HeuristicUnreachableCode
@@ -306,7 +307,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			if (!m_configList.TryGetValue(code, out item))
 			{
-				Debug.Assert(false, String.Format("Code {0} not found.", code));
+				Debug.Assert(false, $"Code {code} not found.");
 				// ReSharper disable HeuristicUnreachableCode
 				return true; // Should get here if we didn't have a valid item selected!
 				// ReSharper restore HeuristicUnreachableCode
@@ -334,11 +335,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 			get
 			{
 				if (!m_fPersisted || m_configList.Count == 0)
+				{
 					return null;
-				var result = m_configList.Values.Where(item => item.IsNew).Select(
-					configItem => new Tuple<string, string, string>(
-						configItem.UniqueCode, configItem.CopyOf, configItem.DispName)).ToList();
-				return result.Count > 0 ? result : null;
+				}
+				var result = m_configList.Values.Where(item => item.IsNew).Select(configItem => new Tuple<string, string, string>(configItem.UniqueCode, configItem.CopyOf, configItem.DispName)).ToList();
+				return result.Any() ? result : null;
 			}
 		}
 
@@ -353,11 +354,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 			get
 			{
 				if (!m_fPersisted || m_configList.Count == 0)
+				{
 					return null;
+				}
 				var result = new List<string>();
-				result.AddRange(m_configList.Values.Where(
-					item => !item.IsNew && item.UserMarkedDelete).Select(item => item.UniqueCode));
-				return result.Count > 0 ? result : null;
+				result.AddRange(m_configList.Values.Where(item => !item.IsNew && item.UserMarkedDelete).Select(item => item.UniqueCode));
+				return result.Any() ? result : null;
 			}
 		}
 
@@ -372,11 +374,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 			get
 			{
 				if (!m_fPersisted || m_configList.Count == 0)
+				{
 					return null;
-				var result = m_configList.Values.Where(item => item.IsRenamed).Select(
-					configItem => new Tuple<string, string>(
-						configItem.UniqueCode, configItem.DispName)).ToList();
-				return result.Count > 0 ? result : null;
+				}
+				var result = m_configList.Values.Where(item => item.IsRenamed).Select(configItem => new Tuple<string, string>(configItem.UniqueCode, configItem.DispName)).ToList();
+				return result.Any() ? result : null;
 			}
 		}
 
@@ -386,6 +388,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// Item to be managed by the DictionaryConfigManager. Represents a user-configurable
 		/// Dictionary view layout.
 		/// </summary>
+		/// <remarks>This needs to be internal, because tests use it. Otherwise, it would be private</remarks>
 		internal class DictConfigItem
 		{
 			private readonly string m_initialName;
@@ -422,7 +425,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			/// Constructor for config items created by the Manager as copies of
 			/// an existing item.
 			/// </summary>
-			/// <param name="source"></param>
 			public DictConfigItem(DictConfigItem source)
 			{
 				UniqueCode = CreateUniqueIdCode(source.DispName);
@@ -441,7 +443,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				return result.Substring(0, 5) + num;
 			}
 
-			public bool IsNew => (!string.IsNullOrEmpty(CopyOf));
+			public bool IsNew => !string.IsNullOrEmpty(CopyOf);
 
 			public bool IsRenamed => !IsNew && !UserMarkedDelete && m_initialName != DispName;
 		}
