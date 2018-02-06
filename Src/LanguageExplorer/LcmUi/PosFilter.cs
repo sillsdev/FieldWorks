@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -24,15 +24,14 @@ namespace LanguageExplorer.LcmUi
 		{
 		}
 
-		protected override string BeSpec
-		{
-			get { return "external"; }
-		}
+		protected override string BeSpec => "external";
 
 		public override bool CompatibleFilter(XElement colSpec)
 		{
 			if (!base.CompatibleFilter(colSpec))
+			{
 				return false;
+			}
 			var typeForLoaderNode = DynamicLoader.TypeForLoaderNode(colSpec);
 			// Naturally we are compatible with ourself, and BulkPosEditor has a FilterType which causes
 			// a filter of this type to be created, too.
@@ -42,7 +41,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Return the HVO of the list from which choices can be made.
 		/// </summary>
-		static public int List(LcmCache cache)
+		public static int List(LcmCache cache)
 		{
 			return cache.LanguageProject.PartsOfSpeechOA.Hvo;
 		}
@@ -50,9 +49,6 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// This is a filter for an atomic property, and the "all" and "only" options should not be presented.
 		/// </summary>
-		public static bool Atomic
-		{
-			get { return true; }
-		}
+		public static bool Atomic => true;
 	}
 }

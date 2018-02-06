@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -105,9 +105,7 @@ namespace LanguageExplorer.LcmUi
 			{
 				CheckDisposed();
 
-				if (m_vc == null)
-					m_vc = new CmObjectVc(m_cache);
-				return m_vc;
+				return m_vc ?? (m_vc = new CmObjectVc(m_cache));
 			}
 		}
 
@@ -190,11 +188,9 @@ namespace LanguageExplorer.LcmUi
 		/// This is the main class factory that makes a corresponding CmObjectUi for any given
 		/// CmObject.
 		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
 		public static CmObjectUi MakeUi(ICmObject obj)
 		{
-			CmObjectUi result = MakeUi(obj.Cache, obj.Hvo, obj.ClassID);
+			var result = MakeUi(obj.Cache, obj.Hvo, obj.ClassID);
 			result.m_obj = obj;
 			return result;
 		}
@@ -203,9 +199,6 @@ namespace LanguageExplorer.LcmUi
 		/// In many cases we don't really need the LCM object, which can be relatively expensive
 		/// to create. This version saves the information, and creates it when needed.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="hvo"></param>
-		/// <returns></returns>
 		public static CmObjectUi MakeUi(LcmCache cache, int hvo)
 		{
 			return MakeUi(cache, hvo, cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo).ClassID);
@@ -213,12 +206,12 @@ namespace LanguageExplorer.LcmUi
 
 		private static CmObjectUi MakeUi(LcmCache cache, int hvo, int clsid)
 		{
-			IFwMetaDataCache mdc = cache.DomainDataByFlid.MetaDataCache;
+			var mdc = cache.DomainDataByFlid.MetaDataCache;
 			// If we've encountered an object with this Clsid before, and this clsid isn't in
 			// the switch below, the dictioanry will give us the appropriate clsid that IS in the
 			// map, so the loop below will have only one iteration. Otherwise, we start the
 			// search with the clsid of the object itself.
-			int realClsid = m_subclasses.ContainsKey(clsid) ? m_subclasses[clsid] : clsid;
+			var realClsid = m_subclasses.ContainsKey(clsid) ? m_subclasses[clsid] : clsid;
 			// Each iteration investigates whether we have a CmObjectUi subclass that
 			// corresponds to realClsid. If not, we move on to the base class of realClsid.
 			// In this way, the CmObjectUi subclass we return is the one designed for the
@@ -280,19 +273,14 @@ namespace LanguageExplorer.LcmUi
 						break;
 					default:
 						realClsid = mdc.GetBaseClsId(realClsid);
-						// This isn't needed because CmObject.kClassId IS 0.
-						//					if (realClsid == 0)
-						//					{
-						//						// Somehow the class doesn't have CmObject in its inheritance path!
-						//						Debug.Assert(false);
-						//						// this may help make us more robust if this somehow happens.
-						//						realClsid = (uint)CmObject.kClassId;
-						//					}
 						break;
 				}
 			}
+
 			if (realClsid != clsid)
+			{
 				m_subclasses[clsid] = realClsid;
+			}
 
 			result.m_hvo = hvo;
 			result.m_cache = cache;
@@ -328,7 +316,7 @@ namespace LanguageExplorer.LcmUi
 			CmObjectUi newUiObj = null;
 			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoInsert, LcmUiStrings.ksRedoInsert, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 			{
-				int newHvo = cache.DomainDataByFlid.MakeNewObject(classId, hvoOwner, flid, insertionPosition);
+				var newHvo = cache.DomainDataByFlid.MakeNewObject(classId, hvoOwner, flid, insertionPosition);
 				newUiObj = MakeUi(cache, newHvo, classId);
 			});
 			return newUiObj;
@@ -347,21 +335,15 @@ namespace LanguageExplorer.LcmUi
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed;
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		public bool IsDisposed { get; private set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -416,18 +398,16 @@ namespace LanguageExplorer.LcmUi
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
 				// Dispose managed resources here.
 				var disposableVC = m_vc as IDisposable;
-				if (disposableVC != null)
-					disposableVC.Dispose();
-				// Leave this static alone.
-				//if (m_subclasses != null)
-				//	m_subclasses.Clear();
+				disposableVC?.Dispose();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -441,7 +421,7 @@ namespace LanguageExplorer.LcmUi
 			Publisher = null;
 			Subscriber = null;
 
-			m_isDisposed = true;
+			IsDisposed = true;
 
 			// Keep this from being collected, since it got removed from the static.
 			GC.KeepAlive(this);
@@ -459,12 +439,16 @@ namespace LanguageExplorer.LcmUi
 		public static ICmObject GetSelfOrParentOfClass(ICmObject cmo, int classIdToSearchFor)
 		{
 			if (cmo == null)
+			{
 				return null;
-			IFwMetaDataCache mdc = cmo.Cache.DomainDataByFlid.MetaDataCache;
+			}
+			var mdc = cmo.Cache.DomainDataByFlid.MetaDataCache;
 			for (; cmo != null; cmo = cmo.Owner)
 			{
 				if ((DomainObjectServices.IsSameOrSubclassOf(mdc, cmo.ClassID, classIdToSearchFor)))
+				{
 					return cmo;
+				}
 			}
 			return null;
 		}
@@ -561,7 +545,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			if (toolCurrent == toolTarget)
 			{
-				ICmObject obj = GetCurrentCmObject();
+				var obj = GetCurrentCmObject();
 				// Disable if target is the current object, or target is owned directly by the target object.
 				if (obj != null && (obj.Hvo == m_hvo || m_cache.ServiceLocator.GetObject(m_hvo).Owner == obj))
 				{
@@ -587,9 +571,11 @@ namespace LanguageExplorer.LcmUi
 				// XmlBrowseViewBase.FireSelectionChanged)
 				// To get around this, we must use the CurrentObject
 				// directly from the Browse view.
-				int hvoCurrentObject = (m_hostControl as XmlBrowseViewBase).SelectedObject;
+				var hvoCurrentObject = (m_hostControl as XmlBrowseViewBase).SelectedObject;
 				if (hvoCurrentObject != 0)
+				{
 					obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoCurrentObject);
+				}
 			}
 			else
 			{
@@ -601,13 +587,14 @@ namespace LanguageExplorer.LcmUi
 		protected virtual bool ShouldDisplayMenuForClass(int specifiedClsid)
 		{
 			if (specifiedClsid == 0)
+			{
 				return false; // a special magic class id, only enabled explicitly.
+			}
 			if (Object.ClassID == specifiedClsid)
+			{
 				return true;
-				int baseClsid = m_cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(Object.ClassID);
-				if (baseClsid == specifiedClsid) //handle one level of subclassing
-					return true;
-					return false;
+			}
+			return m_cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(Object.ClassID) == specifiedClsid;
 		}
 
 		/// <summary>
@@ -625,9 +612,6 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Handle a right click by popping up the implied context menu.
 		/// </summary>
-		/// <param name="hostControl"></param>
-		/// <param name="shouldDisposeThisWhenClosed">True, if the menu handler is to dispose of the CmObjectUi after menu closing</param>
-		/// <returns></returns>
 		public bool HandleRightClick(Control hostControl, bool shouldDisposeThisWhenClosed)
 		{
 			CheckDisposed();
@@ -638,10 +622,6 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Handle a right click by popping up the implied context menu.
 		/// </summary>
-		/// <param name="hostControl"></param>
-		/// <param name="shouldDisposeThisWhenClosed">True, if the menu handler is to dispose of the CmObjectUi after menu closing</param>
-		/// <param name="adjustMenu"></param>
-		/// <returns></returns>
 		public bool HandleRightClick(Control hostControl, bool shouldDisposeThisWhenClosed, Action<ContextMenuStrip> adjustMenu)
 		{
 			CheckDisposed();
@@ -676,8 +656,6 @@ namespace LanguageExplorer.LcmUi
 		/// Handle a control-click by invoking the first active JumpToTool menu item.
 		/// Note that the item selected here should be the same one that is selected by Mark
 		/// </summary>
-		/// <param name="hostControl"></param>
-		/// <returns></returns>
 		public bool HandleCtrlClick(Control hostControl)
 		{
 #if RANDYTODO
@@ -717,10 +695,6 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Handle the right click by popping up an explicit context menu id.
 		/// </summary>
-		/// <param name="hostControl"></param>
-		/// <param name="shouldDisposeThisWhenClosed">True, if the menu handler is to dispose of the CmObjectUi after menu closing</param>
-		/// <param name="sMenuId"></param>
-		/// <returns></returns>
 		public bool HandleRightClick(Control hostControl, bool shouldDisposeThisWhenClosed, string sMenuId)
 		{
 			return HandleRightClick(hostControl, shouldDisposeThisWhenClosed, sMenuId, null);
@@ -729,19 +703,14 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Handle the right click by popping up an explicit context menu id.
 		/// </summary>
-		/// <param name="hostControl"></param>
-		/// <param name="shouldDisposeThisWhenClosed">True, if the menu handler is to dispose of the CmObjectUi after menu closing</param>
-		/// <param name="sMenuId"></param>
-		/// <param name="adjustMenu"></param>
-		/// <returns></returns>
 		public bool HandleRightClick(Control hostControl, bool shouldDisposeThisWhenClosed, string sMenuId, Action<ContextMenuStrip> adjustMenu)
 		{
 			CheckDisposed();
 
 			m_hostControl = hostControl;
 
-			string sHostType = m_hostControl.GetType().Name;
-			string sType = Object.GetType().Name;
+			var sHostType = m_hostControl.GetType().Name;
+			var sType = Object.GetType().Name;
 
 			if (sHostType == "XmlBrowseView" && sType == "CmBaseAnnotation")
 			{
@@ -813,20 +782,21 @@ namespace LanguageExplorer.LcmUi
 				{
 					return poss.ItemTypeName();
 				}
-				string typeName = Object.GetType().Name;
-				string className = StringTable.Table.GetString(typeName, "ClassNames");
+				var typeName = Object.GetType().Name;
+				var className = StringTable.Table.GetString(typeName, "ClassNames");
 				if (className == "*" + typeName + "*")
+				{
 					className = typeName;
+				}
 
 				string altName;
 				var featsys = Object.OwnerOfClass(FsFeatureSystemTags.kClassId) as IFsFeatureSystem;
-				if (featsys != null)
+				if (featsys?.OwningFlid == LangProjectTags.kflidPhFeatureSystem)
 				{
-					if (featsys.OwningFlid == LangProjectTags.kflidPhFeatureSystem)
+					altName = StringTable.Table.GetString(className + "-Phonological", "AlternativeTypeNames");
+					if (altName != "*" + className + "-Phonological*")
 					{
-						altName = StringTable.Table.GetString(className + "-Phonological", "AlternativeTypeNames");
-						if (altName != "*" + className + "-Phonological*")
-							return altName;
+						return altName;
 					}
 				}
 				switch (Object.OwningFlid)
@@ -834,7 +804,9 @@ namespace LanguageExplorer.LcmUi
 					case MoStemNameTags.kflidRegions:
 						altName = StringTable.Table.GetString(className + "-MoStemName", "AlternativeTypeNames");
 						if (altName != "*" + className + "-MoStemName*")
+						{
 							return altName;
+						}
 						break;
 				}
 				return className;
@@ -894,7 +866,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			CheckDisposed();
 
-			ICmObject cmo = GetCurrentCmObject();
+			var cmo = GetCurrentCmObject();
 			if (cmo != null && m_obj != null && cmo.Hvo == m_obj.Hvo)
 			{
 				Publisher.Publish("DeleteRecord", this);
@@ -956,17 +928,21 @@ namespace LanguageExplorer.LcmUi
 		public static bool ConsiderDeletingRelatedFile(ICmFile file, IPropertyTable propertyTable)
 		{
 			if (file == null)
+			{
 				return false;
+			}
 			var refs = file.ReferringObjects;
 			if (refs.Count > 1)
+			{
 				return false; // exactly one if only this CmPicture uses it.
+			}
 			var path = file.InternalPath;
 			if (Path.IsPathRooted(path))
+			{
 				return false; // don't delete external file
-			string msg = String.Format(LcmUiStrings.ksDeleteFileAlso, path);
-			if (MessageBox.Show(Form.ActiveForm, msg, LcmUiStrings.ksDeleteFileCaption, MessageBoxButtons.YesNo,
-				MessageBoxIcon.Question)
-				!= DialogResult.Yes)
+			}
+			var msg = string.Format(LcmUiStrings.ksDeleteFileAlso, path);
+			if (MessageBox.Show(Form.ActiveForm, msg, LcmUiStrings.ksDeleteFileCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
 			{
 				return false;
 			}
@@ -1017,7 +993,6 @@ namespace LanguageExplorer.LcmUi
 		/// strings and owned atomic objects; otherwise, we don't change any that aren't null
 		/// to begin with.
 		/// </summary>
-		/// <param name="fLoseNoTextData"></param>
 		public void MergeUnderlyingObject(bool fLoseNoTextData)
 		{
 			CheckDisposed();
@@ -1031,11 +1006,13 @@ namespace LanguageExplorer.LcmUi
 					var wp = new WindowParams();
 					var mergeCandidates = new List<DummyCmObject>();
 					string guiControl, helpTopic;
-					DummyCmObject dObj = GetMergeinfo(wp, mergeCandidates, out guiControl, out helpTopic);
+					var dObj = GetMergeinfo(wp, mergeCandidates, out guiControl, out helpTopic);
 					mergeCandidates.Sort();
 					dlg.SetDlgInfo(m_cache, wp, dObj, mergeCandidates, guiControl, helpTopic);
 					if (DialogResult.OK == dlg.ShowDialog(mainWindow))
+					{
 						ReallyMergeUnderlyingObject(dlg.Hvo, fLoseNoTextData);
+					}
 				}
 			}
 		}
@@ -1048,7 +1025,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		protected virtual void ReallyMergeUnderlyingObject(int survivorHvo, bool fLoseNoTextData)
 		{
-			ICmObject survivor = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(survivorHvo);
+			var survivor = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(survivorHvo);
 			Logger.WriteEvent("Merging '" + Object.ShortName + "' into '" + survivor.ShortName + "'.");
 			var ah = m_cache.ServiceLocator.GetInstance<IActionHandler>();
 			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoMerge, LcmUiStrings.ksRedoMerge, ah, () => survivor.MergeObject(Object, fLoseNoTextData));
@@ -1064,9 +1041,7 @@ namespace LanguageExplorer.LcmUi
 			return null;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		public virtual void MoveUnderlyingObjectToCopyOfOwner()
 		{
 			CheckDisposed();
@@ -1084,11 +1059,13 @@ namespace LanguageExplorer.LcmUi
 			CheckDisposed();
 
 			if (!Object.IsValidObject)
+			{
 				return LcmUiStrings.ksDeletedObject;
+			}
 			DateTime dt;
-			string created = "";
-			string modified = "";
-			System.Reflection.PropertyInfo pi = Object.GetType().GetProperty("DateCreated");
+			var created = string.Empty;
+			var modified = string.Empty;
+			var pi = Object.GetType().GetProperty("DateCreated");
 			if (pi != null)
 			{
 				dt = (DateTime)pi.GetValue(Object, null);
@@ -1100,14 +1077,12 @@ namespace LanguageExplorer.LcmUi
 				dt = (DateTime)pi.GetValue(Object, null);
 				modified = dt.ToString("dd/MMM/yyyy", System.Globalization.DateTimeFormatInfo.InvariantInfo);
 			}
-			return String.Format("{0} {1}", created, modified);
+			return $"{created} {modified}";
 		}
 
 		/// <summary>
 		///  Convert a .NET color to the type understood by Views code and other Win32 stuff.
 		/// </summary>
-		/// <param name="c"></param>
-		/// <returns></returns>
 		public static uint RGB(Color c)
 		{
 			return RGB(c.R, c.G, c.B);
@@ -1116,13 +1091,9 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Make a standard Win32 color from three components.
 		/// </summary>
-		/// <param name="r"></param>
-		/// <param name="g"></param>
-		/// <param name="b"></param>
-		/// <returns></returns>
 		public static uint RGB(int r, int g, int b)
 		{
-			return ((uint)(((byte)(r) | ((byte)(g) << 8)) | ((byte)(b) << 16)));
+			return (uint)((byte)r | ((byte)(g) << 8) | ((byte)b << 16));
 
 		}
 
@@ -1166,10 +1137,6 @@ namespace LanguageExplorer.LcmUi
 		}
 
 #endregion Other methods
-
-#region Embedded View Constructor classes
-
-#endregion Embedded View Constructor classes
 
 #region Implementation of IPropertyTableProvider
 

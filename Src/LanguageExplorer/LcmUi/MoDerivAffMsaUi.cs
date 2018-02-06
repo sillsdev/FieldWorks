@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,7 +16,6 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Create one.
 		/// </summary>
-		/// <param name="obj"></param>
 		public MoDerivAffMsaUi(ICmObject obj)
 			: base(obj)
 		{
@@ -30,18 +29,14 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// gives the hvo of the object to use in the URL we construct when doing a jump
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <returns></returns>
 		public override Guid GuidForJumping(object commandObject)
 		{
 			//todo: for now, this will just always send us to the "from" part of speech
 			//	we could get at the "to" part of speech using a separate menu command
 			//	or else, if this ends up being drawn by a view constructor rather than a string which combines both are from and the to,
 			// then we will know which item of the user clicked on and can open the appropriate one.
-			var msa = (IMoDerivAffMsa) Object;
-			if (msa.FromPartOfSpeechRA == null)
-				return Guid.Empty;
-			return msa.FromPartOfSpeechRA.Guid;
+			var msa = (IMoDerivAffMsa)Object;
+			return msa.FromPartOfSpeechRA?.Guid ?? Guid.Empty;
 		}
 	}
 }

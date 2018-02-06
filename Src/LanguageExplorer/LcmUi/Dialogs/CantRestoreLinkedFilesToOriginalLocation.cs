@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,41 +15,29 @@ namespace LanguageExplorer.LcmUi.Dialogs
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		public CantRestoreLinkedFilesToOriginalLocation(IHelpTopicProvider helpTopicProvider)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			InitializeComponent();
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		public bool fRestoreLinkedFilesToProjectFolder
-		{
-			get { return radio_Thanks.Checked; }
-		}
+		/// <summary />
+		public bool RestoreLinkedFilesToProjectFolder => radio_Thanks.Checked;
 
-		/// <summary>
-		///
-		/// </summary>
-		public bool fDoNotRestoreLinkedFiles
-		{
-			get { return radio_NoThanks.Checked; }
-		}
+		/// <summary />
+		public bool DoNotRestoreLinkedFiles => radio_NoThanks.Checked;
 
 		private void button_OK_Click(object sender, EventArgs e)
 		{
-			this.DialogResult = DialogResult.OK;
+			DialogResult = DialogResult.OK;
 			Close();
 
 		}
 
 		private void button_Cancel_Click(object sender, EventArgs e)
 		{
-			this.DialogResult = DialogResult.Cancel;
+			DialogResult = DialogResult.Cancel;
 			Close();
 		}
 

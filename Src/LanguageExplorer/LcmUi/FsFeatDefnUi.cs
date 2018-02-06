@@ -1,11 +1,11 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.LexText;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
@@ -21,7 +21,6 @@ namespace LanguageExplorer.LcmUi
 		/// Note that declaring it to be forces us to just do a cast in every case of MakeUi, which is
 		/// passed an obj anyway.
 		/// </summary>
-		/// <param name="obj"></param>
 		public FsFeatDefnUi(ICmObject obj) : base(obj)
 		{
 			Debug.Assert(obj is IFsFeatDefn);
@@ -34,14 +33,15 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public static FsFeatDefnUi CreateNewUiObject(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
-			if (cache == null)
-				throw new ArgumentNullException(nameof(cache));
+			Guard.AgainstNull(cache, nameof(cache));
 
 			FsFeatDefnUi ffdUi = null;
-			string className = "FsClosedFeature";
+			var className = "FsClosedFeature";
 			if (classId == FsComplexFeatureTags.kClassId)
+			{
 				className = "FsComplexFeature";
-			using (MasterInflectionFeatureListDlg dlg = new MasterInflectionFeatureListDlg(className))
+			}
+			using (var dlg = new MasterInflectionFeatureListDlg(className))
 			{
 				dlg.SetDlginfo(cache.LanguageProject.MsFeatureSystemOA, propertyTable, true);
 				switch (dlg.ShowDialog(propertyTable.GetValue<Form>("window")))

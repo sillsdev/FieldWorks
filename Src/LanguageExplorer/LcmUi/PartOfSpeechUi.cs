@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,7 +21,6 @@ namespace LanguageExplorer.LcmUi
 		/// Note that declaring it to be forces us to just do a cast in every case of MakeUi, which is
 		/// passed an obj anyway.
 		/// </summary>
-		/// <param name="obj"></param>
 		public PartOfSpeechUi(ICmObject obj) : base(obj)
 		{
 			Debug.Assert(obj is IPartOfSpeech);
@@ -35,10 +34,12 @@ namespace LanguageExplorer.LcmUi
 		public static PartOfSpeechUi CreateNewUiObject(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			if (cache == null)
+			{
 				throw new ArgumentNullException(nameof(cache));
+			}
 
 			PartOfSpeechUi posUi = null;
-			using (MasterCategoryListDlg dlg = new MasterCategoryListDlg())
+			using (var dlg = new MasterCategoryListDlg())
 			{
 				var newOwner = cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoOwner);
 				dlg.SetDlginfo(newOwner.OwningList, propertyTable, true, newOwner);

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,39 +8,30 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.LcmUi.Dialogs
 {
-	/// <summary>
-	///
-	/// </summary>
+	/// <summary />
 	public partial class RestoreLinkedFilesToProjectsFolder : Form
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		public RestoreLinkedFilesToProjectsFolder(IHelpTopicProvider helpTopicProvider)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			InitializeComponent();
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		public bool fRestoreLinkedFilesToProjectFolder
-		{
-			get { return radio_Yes.Checked; }
-		}
+		/// <summary />
+		public bool RestoreLinkedFilesToProjectFolder => radio_Yes.Checked;
 
 		private void button_OK_Click(object sender, EventArgs e)
 		{
-			this.DialogResult = DialogResult.OK;
+			DialogResult = DialogResult.OK;
 			Close();
 		}
 
 		private void button_Cancel_Click(object sender, EventArgs e)
 		{
-			this.DialogResult = DialogResult.Cancel;
+			DialogResult = DialogResult.Cancel;
 			Close();
 		}
 

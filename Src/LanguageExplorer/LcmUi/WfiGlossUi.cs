@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,7 +18,6 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Create one.
 		/// </summary>
-		/// <param name="obj"></param>
 		public WfiGlossUi(ICmObject obj)
 			: base(obj)
 		{
@@ -44,21 +43,17 @@ namespace LanguageExplorer.LcmUi
 			int ws;
 			foreach (var gloss in anal.MeaningsOC)
 			{
-				if (gloss.Hvo != Object.Hvo)
+				if (gloss.Hvo == Object.Hvo)
 				{
-					tss = gloss.ShortNameTSS;
-					ws = tss.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
-					mergeCandidates.Add(
-						new DummyCmObject(
-							gloss.Hvo,
-							tss.Text,
-							ws));
+					continue;
 				}
+				tss = gloss.ShortNameTSS;
+				ws = tss.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
+				mergeCandidates.Add(new DummyCmObject(gloss.Hvo, tss.Text, ws));
 			}
 
 			guiControl = "MergeWordGlossList";
 			helpTopic = "khtpMergeWordGloss";
-
 			var me = (IWfiGloss) Object;
 			tss = me.ShortNameTSS;
 			ws = tss.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,9 +23,11 @@ namespace LanguageExplorer.LcmUi
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
 			if (hvo == 0)
+			{
 				return;
+			}
 
-			int wsAnal = DefaultWs;
+			var wsAnal = DefaultWs;
 			ICmObject co;
 			switch (frag)
 			{

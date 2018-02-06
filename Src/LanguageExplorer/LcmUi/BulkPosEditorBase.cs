@@ -1,9 +1,10 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.LexText;
@@ -40,11 +41,11 @@ namespace LanguageExplorer.LcmUi
 
 		#region Construction
 
-		public BulkPosEditorBase()
+		protected BulkPosEditorBase()
 		{
 			m_pOSPopupTreeManager = null;
 			m_tree = new TreeCombo();
-			m_tree.TreeLoad += new EventHandler(m_tree_TreeLoad);
+			m_tree.TreeLoad += m_tree_TreeLoad;
 			//	Handle AfterSelect event in m_tree_TreeLoad() through m_pOSPopupTreeManager
 		}
 
@@ -56,13 +57,15 @@ namespace LanguageExplorer.LcmUi
 		{
 			if (m_pOSPopupTreeManager == null)
 			{
-				string oldText = m_tree.Text;
+				var oldText = m_tree.Text;
 				m_tree_TreeLoad(this, new EventArgs());
 				m_tree.Text = oldText; // Load clears it.
 			}
-			TreeNode[] nodes = m_tree.Nodes.Find(m_tree.Text, true);
+			var nodes = m_tree.Nodes.Find(m_tree.Text, true);
 			if (nodes.Length == 0)
-				m_tree.Text = "";
+			{
+				m_tree.Text = string.Empty;
+			}
 			else
 			{
 				m_tree.SelectedNode = nodes[0];
@@ -86,21 +89,15 @@ namespace LanguageExplorer.LcmUi
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed = false;
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		public bool IsDisposed { get; private set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -115,10 +112,7 @@ namespace LanguageExplorer.LcmUi
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
+		/// <summary />
 		public void Dispose()
 		{
 			Dispose(true);
@@ -153,22 +147,24 @@ namespace LanguageExplorer.LcmUi
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
 				// Dispose managed resources here.
 				if (m_tree != null)
 				{
-					m_tree.Load -= new EventHandler(m_tree_TreeLoad);
+					m_tree.Load -= m_tree_TreeLoad;
 					m_tree.Dispose();
 				}
 				if (m_pOSPopupTreeManager != null)
 				{
-					m_pOSPopupTreeManager.AfterSelect -= new TreeViewEventHandler(m_pOSPopupTreeManager_AfterSelect);
+					m_pOSPopupTreeManager.AfterSelect -= m_pOSPopupTreeManager_AfterSelect;
 					m_pOSPopupTreeManager.Dispose();
 				}
 			}
@@ -182,7 +178,7 @@ namespace LanguageExplorer.LcmUi
 			Publisher = null;
 			Subscriber = null;
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
@@ -221,7 +217,9 @@ namespace LanguageExplorer.LcmUi
 			get
 			{
 				if (m_sda == null)
+				{
 					throw new InvalidOperationException("Must set the special cache of a BulkEditSpecControl");
+				}
 				return m_sda;
 			}
 			set { m_sda = value; }
@@ -270,19 +268,19 @@ namespace LanguageExplorer.LcmUi
 			// Todo: user selected a part of speech.
 			// Arrange to turn all relevant items blue.
 			SelectNode(e.Node);
-			if (ControlActivated != null)
-				ControlActivated(this, new EventArgs());
+			ControlActivated?.Invoke(this, new EventArgs());
 
 			// Tell the parent control that we may have changed the selected item so it can
 			// enable or disable the Apply and Preview buttons based on the selection.
-			if (ValueChanged != null)
+			if (ValueChanged == null)
 			{
-				// the user may have selected "<Not Sure>", which has a 0 hvo value
-				// but that's a valid thing to allow the user to Apply/Preview.
-				// So, we also pass in an index to resolve ambiguity.
-				int index = m_tree.SelectedNode.Index;
-				ValueChanged(sender, new FwObjectSelectionEventArgs(m_selectedHvo, index));
+				return;
 			}
+			// the user may have selected "<Not Sure>", which has a 0 hvo value
+			// but that's a valid thing to allow the user to Apply/Preview.
+			// So, we also pass in an index to resolve ambiguity.
+			var index = m_tree.SelectedNode.Index;
+			ValueChanged(sender, new FwObjectSelectionEventArgs(m_selectedHvo, index));
 		}
 
 		// Do the core data-affecting tasks associated with selecting a node.
@@ -292,7 +290,7 @@ namespace LanguageExplorer.LcmUi
 			if (node == null)
 			{
 				m_selectedHvo = 0;
-				m_selectedLabel = "";
+				m_selectedLabel = string.Empty;
 			}
 			else
 			{
@@ -308,7 +306,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Returns the Suggest button if our target is Semantic Domains, otherwise null.
 		/// </summary>
-		public Button SuggestButton { get { return null; } }
+		public Button SuggestButton => null;
 
 		public abstract void DoIt(IEnumerable<int> itemsToChange, ProgressState state);
 
@@ -316,11 +314,11 @@ namespace LanguageExplorer.LcmUi
 		{
 			CheckDisposed();
 
-			ITsString tss = TsStringUtils.MakeString(m_selectedLabel, m_cache.DefaultAnalWs);
-			int i = 0;
+			var tss = TsStringUtils.MakeString(m_selectedLabel, m_cache.DefaultAnalWs);
+			var i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
-			foreach (int hvo in itemsToChange)
+			var interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
+			foreach (var hvo in itemsToChange)
 			{
 				i++;
 				if (i % interval == 0)
@@ -328,9 +326,11 @@ namespace LanguageExplorer.LcmUi
 					state.PercentDone = i * 100 / itemsToChange.Count();
 					state.Breath();
 				}
-				bool fEnable = CanFakeIt(hvo);
+				var fEnable = CanFakeIt(hvo);
 				if (fEnable)
+				{
 					m_sda.SetString(hvo, tagMadeUpFieldIdentifier, tss);
+				}
 				m_sda.SetInt(hvo, tagEnable, (fEnable ? 1 : 0));
 			}
 		}
@@ -373,10 +373,7 @@ namespace LanguageExplorer.LcmUi
 			throw new NotImplementedException();
 		}
 
-		public virtual List<int> FieldPath
-		{
-			get { return null;  }
-		}
+		public virtual List<int> FieldPath => null;
 
 		#endregion IBulkEditSpecControl implementation
 

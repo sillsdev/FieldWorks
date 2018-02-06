@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -27,16 +27,15 @@ namespace LanguageExplorer.LcmUi
 		{
 		}
 
-		protected override string BeSpec
-		{
-			get { return "external"; }
-		}
+		protected override string BeSpec => "external";
 
 		public override bool CompatibleFilter(XElement colSpec)
 		{
 			if (!base.CompatibleFilter(colSpec))
+			{
 				return false;
-			return DynamicLoader.TypeForLoaderNode(colSpec) == this.GetType();
+			}
+			return DynamicLoader.TypeForLoaderNode(colSpec) == GetType();
 		}
 
 		const int kflidMsas = LexEntryTags.kflidMorphoSyntaxAnalyses;
@@ -45,41 +44,30 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Get the items to be compared against the filter.
 		/// </summary>
-		/// <param name="item"></param>
-		/// <returns></returns>
 		protected override int[] GetItems(IManyOnePathSortItem item)
 		{
-			ISilDataAccess sda = m_cache.DomainDataByFlid;
-			List<int> results = new List<int>();
+			var sda = m_cache.DomainDataByFlid;
+			var results = new List<int>();
 			if (item.PathLength > 0 && item.PathFlid(0) == kflidMsas)
 			{
 				// sorted by MSA, match just the one MSA.
 				// I don't think this path can occur with the current XML spec where this is used.
-				int hvoMsa;
-				if (item.PathLength > 1)
-					hvoMsa = item.PathObject(1);
-				else
-					hvoMsa = item.KeyObject;
+				var hvoMsa = item.PathLength > 1 ? item.PathObject(1) : item.KeyObject;
 				GetItemsForMsaType(sda, ref results, hvoMsa);
 			}
 			else if (item.PathLength >= 1 && item.PathFlid(0) == kflidEntrySenses)
 			{
 				// sorted in a way that shows one sense per row, test that sense's MSA.
-				int hvoSense;
-				if (item.PathLength > 1)
-					hvoSense = item.PathObject(1);
-				else
-					hvoSense = item.KeyObject;
-				int hvoMsa = sda.get_ObjectProp(hvoSense, LexSenseTags.kflidMorphoSyntaxAnalysis);
-				GetItemsForMsaType(sda, ref results, hvoMsa);
+				var hvoSense = item.PathLength > 1 ? item.PathObject(1) : item.KeyObject;
+				GetItemsForMsaType(sda, ref results, sda.get_ObjectProp(hvoSense, LexSenseTags.kflidMorphoSyntaxAnalysis));
 			}
 			else
 			{
-				int hvoEntry = item.RootObjectHvo;
-				int cmsa = sda.get_VecSize(hvoEntry, kflidMsas);
-				for (int imsa = 0; imsa < cmsa; imsa++)
+				var hvoEntry = item.RootObjectHvo;
+				var cmsa = sda.get_VecSize(hvoEntry, kflidMsas);
+				for (var imsa = 0; imsa < cmsa; imsa++)
 				{
-					int hvoMsa = sda.get_VecItem(hvoEntry, kflidMsas, imsa);
+					var hvoMsa = sda.get_VecItem(hvoEntry, kflidMsas, imsa);
 					GetItemsForMsaType(sda, ref results, hvoMsa);
 				}
 			}
@@ -89,8 +77,10 @@ namespace LanguageExplorer.LcmUi
 		private void GetItemsForMsaType(ISilDataAccess sda, ref List<int> results, int hvoMsa)
 		{
 			if (hvoMsa == 0)
+			{
 				return;
-			int kclsid = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoMsa).ClassID;
+			}
+			var kclsid = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoMsa).ClassID;
 			switch (kclsid)
 			{
 				case MoStemMsaTags.kClassId:
@@ -114,13 +104,15 @@ namespace LanguageExplorer.LcmUi
 			int hvoPOS;
 			hvoPOS = sda.get_ObjectProp(hvoMsa, flidPos);
 			if (hvoPOS != 0)
+			{
 				results.Add(hvoPOS);
+			}
 		}
 
 		/// <summary>
 		/// Return the HVO of the list from which choices can be made.
 		/// </summary>
-		static public int List(LcmCache cache)
+		public static int List(LcmCache cache)
 		{
 			return cache.LanguageProject.PartsOfSpeechOA.Hvo;
 		}

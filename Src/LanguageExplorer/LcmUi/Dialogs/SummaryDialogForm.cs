@@ -42,15 +42,15 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		private IPropertyTable m_propertyTable;
 		private IHelpTopicProvider m_helpProvider;
 		private string m_helpFileKey;
-		private System.Windows.Forms.Button btnOther;
-		private System.Windows.Forms.Button btnLexicon;
-		private System.Windows.Forms.Button btnClose;
-		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.Button btnHelp;
+		private Button btnOther;
+		private Button btnLexicon;
+		private Button btnClose;
+		private Panel panel1;
+		private Button btnHelp;
 
 		private System.ComponentModel.Container components = null;
 		private const string s_helpTopicKey = "khtpFindInDictionary";
-		private System.Windows.Forms.HelpProvider helpProvider;
+		private HelpProvider helpProvider;
 		private bool m_fShouldLink; // set true by btnLexicon_Click, caller should call LinkToLexicon after dialog closes.
 		private bool m_fOtherClicked;	// set true by btnOther_Click, caller should call OtherButtonClicked after dialog closes.
 		#endregion
@@ -59,10 +59,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// <summary>
 		/// Constructor for a single LexEntry object.
 		/// </summary>
-		/// <param name="leui">The lex entry ui.</param>
-		/// <param name="helpProvider">The help provider.</param>
-		/// <param name="helpFileKey">string key to get the help file name</param>
-		/// <param name="styleSheet">The stylesheet.</param>
 		internal SummaryDialogForm(LexEntryUi leui, IHelpTopicProvider helpProvider, string helpFileKey, IVwStylesheet styleSheet)
 			: this(new List<int>(leui.Object.Hvo), helpProvider, helpFileKey, styleSheet, leui.Object.Cache, leui.PropertyTable)
 		{
@@ -71,14 +67,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// <summary>
 		/// Constructor for multiple matching LexEntry objects.
 		/// </summary>
-		/// <param name="rghvo">The rghvo.</param>
-		/// <param name="helpProvider">The help provider.</param>
-		/// <param name="helpFileKey">The help file key.</param>
-		/// <param name="styleSheet">The stylesheet.</param>
-		/// <param name="cache">The cache.</param>
-		/// <param name="propertyTable"></param>
-		internal SummaryDialogForm(List<int> rghvo, IHelpTopicProvider helpProvider,
-			string helpFileKey, IVwStylesheet styleSheet, LcmCache cache, IPropertyTable propertyTable)
+		internal SummaryDialogForm(List<int> rghvo, IHelpTopicProvider helpProvider, string helpFileKey, IVwStylesheet styleSheet, LcmCache cache, IPropertyTable propertyTable)
 		{
 			InitializeComponent();
 			AccessibleName = GetType().Name;
@@ -93,9 +82,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// <summary>
 		/// Common initialization shared by the constructors.
 		/// </summary>
-		/// <param name="helpProvider">The help provider.</param>
-		/// <param name="helpFileKey">The help file key.</param>
-		/// <param name="styleSheet">The stylesheet.</param>
 		private void Initialize(IHelpTopicProvider helpProvider, string helpFileKey, IVwStylesheet styleSheet)
 		{
 			m_helpProvider = helpProvider;
@@ -133,21 +119,22 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
-		/// resources; <c>false</c> to release only unmanaged resources.
-		/// </param>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
@@ -236,23 +223,19 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// <summary>
 		/// Create a view with multiple LexEntry objects.
 		/// </summary>
-		/// <param name="rghvoEntries"></param>
-		/// <param name="cache"></param>
-		/// <param name="styleSheet"></param>
-		/// <returns></returns>
 		private XmlView CreateSummaryView(List<int> rghvoEntries, LcmCache cache, IVwStylesheet styleSheet)
 		{
 			// Make a decorator to publish the list of entries as a fake property of the LexDb.
-			int kflidEntriesFound = 8999950; // some arbitrary number not conflicting with real flids.
+			const int kflidEntriesFound = 8999950; // some arbitrary number not conflicting with real flids.
 			var sda = new ObjectListPublisher(cache.DomainDataByFlid as ISilDataAccessManaged, kflidEntriesFound);
-			int hvoRoot = RootHvo;
+			var hvoRoot = RootHvo;
 			sda.CacheVecProp(hvoRoot, rghvoEntries.ToArray());
 			//TODO: Make this method return a GeckoBrowser control, and generate the content here.
 			// The name of this property must match the property used by the publishFound layout.
-			sda.SetOwningPropInfo(LexDbTags.kflidClass, "LexDb", "EntriesFound");
+			sda.SetOwningPropInfo(CmObjectTags.kflidClass, "LexDb", "EntriesFound");
 
 			// Make an XmlView which displays that object using the specified layout.
-			XmlView xv = new XmlView(hvoRoot, "publishFound", false, sda)
+			var xv = new XmlView(hvoRoot, "publishFound", false, sda)
 			{
 				Cache = cache,
 				StyleSheet = styleSheet
@@ -282,74 +265,66 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// Adjust the height of the embedded XmlView to display as much as possible, up to a
 		/// maximum dialog height of 400px.  (See LT-8392.)
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
-			if (m_xv.Height < m_xv.ScrollMinSize.Height && this.Height < 400)
+			if (m_xv.Height >= m_xv.ScrollMinSize.Height || Height >= 400)
 			{
-				int maxViewHeight = 400 - (this.Height - m_xv.Height);
-				int delta = Math.Min(m_xv.ScrollMinSize.Height, maxViewHeight) - m_xv.Height;
-				this.Height += delta;
+				return;
 			}
+			var maxViewHeight = 400 - (Height - m_xv.Height);
+			var delta = Math.Min(m_xv.ScrollMinSize.Height, maxViewHeight) - m_xv.Height;
+			Height += delta;
 		}
 
 		/// <summary>
 		/// Protect against recursing into the selection changed handler, as it changes the selection itself.
 		/// </summary>
-		private bool m_fInSelChange = false;
+		private bool m_fInSelChange;
 		/// <summary>
 		/// Event handler to grow selection if it's not a range when the selection changes.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void m_xv_VwSelectionChanged(object sender, VwSelectionArgs e)
+		private void m_xv_VwSelectionChanged(object sender, VwSelectionArgs e)
 		{
 			Debug.Assert(e.RootBox == m_xv.RootBox);
-			if (!m_fInSelChange)
+			if (m_fInSelChange)
 			{
-				m_fInSelChange = true;
-				try
-				{
-					// Expand the selection to cover the entire LexEntry object.
-					int cvsli = e.Selection.CLevels(false) - 1;
-					int ihvoRoot;
-					int tagTextProp;
-					int cpropPrev;
-					int ichAnchor;
-					int ichEnd;
-					int ws;
-					bool fAssocPrev;
-					int ihvoEnd;
-					ITsTextProps ttp;
-					SelLevInfo[] rgvsli = SelLevInfo.AllTextSelInfo(e.Selection, cvsli,
-						out ihvoRoot, out tagTextProp, out cpropPrev, out ichAnchor, out ichEnd,
-						out ws, out fAssocPrev, out ihvoEnd, out ttp);
-					// The selection should cover the outermost object (which should be a LexEntry).
-					SelLevInfo[] rgvsliOuter = new SelLevInfo[1];
-					rgvsliOuter[0] = rgvsli[cvsli - 1];
-					e.RootBox.MakeTextSelInObj(ihvoRoot, 1, rgvsliOuter, 0, null,
-						false, false, false, true, true);
-					// Save the selected object for possible use later.
-					m_hvoSelected = rgvsliOuter[0].hvo;
-					Debug.Assert(m_rghvo.Contains(m_hvoSelected));
-					// Make the "Open Lexicon" button the default action after making a selection.
-					this.AcceptButton = btnLexicon;
-				}
-				finally
-				{
-					m_fInSelChange = false;
-				}
+				return;
+			}
+			m_fInSelChange = true;
+			try
+			{
+				// Expand the selection to cover the entire LexEntry object.
+				var cvsli = e.Selection.CLevels(false) - 1;
+				int ihvoRoot;
+				int tagTextProp;
+				int cpropPrev;
+				int ichAnchor;
+				int ichEnd;
+				int ws;
+				bool fAssocPrev;
+				int ihvoEnd;
+				ITsTextProps ttp;
+				var rgvsli = SelLevInfo.AllTextSelInfo(e.Selection, cvsli,
+					out ihvoRoot, out tagTextProp, out cpropPrev, out ichAnchor, out ichEnd,
+					out ws, out fAssocPrev, out ihvoEnd, out ttp);
+				// The selection should cover the outermost object (which should be a LexEntry).
+				var rgvsliOuter = new SelLevInfo[1];
+				rgvsliOuter[0] = rgvsli[cvsli - 1];
+				e.RootBox.MakeTextSelInObj(ihvoRoot, 1, rgvsliOuter, 0, null, false, false, false, true, true);
+				// Save the selected object for possible use later.
+				m_hvoSelected = rgvsliOuter[0].hvo;
+				Debug.Assert(m_rghvo.Contains(m_hvoSelected));
+				// Make the "Open Lexicon" button the default action after making a selection.
+				AcceptButton = btnLexicon;
+			}
+			finally
+			{
+				m_fInSelChange = false;
 			}
 		}
 
-		int RootHvo
-		{
-			get
-			{
-				return m_cache.LangProject.LexDbOA.Hvo;
-			}
-		}
+		private int RootHvo => m_cache.LangProject.LexDbOA.Hvo;
 
 		#region Event handlers
 
@@ -358,9 +333,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// and if it is true, invoke a "find entry" dialog and loop back to display another
 		/// SummaryDialogForm.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void btnOther_Click(object sender, System.EventArgs e)
+		private void btnOther_Click(object sender, EventArgs e)
 		{
 			m_fOtherClicked = true;
 			Close();
@@ -369,9 +342,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// <summary>
 		/// Gets or sets a value indicating whether the <see cref="SummaryDialogForm"/> Other button was clicked.
 		/// </summary>
-		/// <value>
-		/// <c>true</c> if Other button clicked; otherwise, <c>false</c>.
-		/// </value>
 		internal bool OtherButtonClicked
 		{
 			get
@@ -389,7 +359,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// TE will jump back in front of Flex even before Flex has finished jumping to the entry.
 		/// See LT-3461.
 		/// </summary>
-		private void btnLexicon_Click(object sender, System.EventArgs e)
+		private void btnLexicon_Click(object sender, EventArgs e)
 		{
 			m_fShouldLink = true;
 			Close();
@@ -401,15 +371,19 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		internal void LinkToLexicon()
 		{
 			CheckDisposed();
-			int hvo = m_hvoSelected;
+			var hvo = m_hvoSelected;
 			if (hvo == 0 && m_rghvo != null && m_rghvo.Count > 0)
+			{
 				hvo = m_rghvo[0];
+			}
 			// REVIEW: THIS SHOULD NEVER HAPPEN, BUT IF IT DOES, SHOULD WE TELL THE USER ANYTHING?
 			if (hvo == 0)
+			{
 				return;
-			ICmObject cmo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-			FwAppArgs link = new FwAppArgs(m_cache.ProjectId.Handle, AreaServices.LexiconEditMachineName, cmo.Guid);
-			IApp app = m_propertyTable.GetValue<IApp>("App");
+			}
+			var cmo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+			var link = new FwAppArgs(m_cache.ProjectId.Handle, AreaServices.LexiconEditMachineName, cmo.Guid);
+			var app = m_propertyTable.GetValue<IApp>("App");
 			app.HandleOutgoingLink(link);
 		}
 

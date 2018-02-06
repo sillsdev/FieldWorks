@@ -20,13 +20,12 @@ namespace LanguageExplorer.LcmUi
 	public class FwLcmUI : ILcmUI
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-		private readonly ISynchronizeInvoke m_synchronizeInvoke;
 		private readonly UserActivityMonitor m_activityMonitor;
 
 		public FwLcmUI(IHelpTopicProvider helpTopicProvider, ISynchronizeInvoke synchronizeInvoke)
 		{
 			m_helpTopicProvider = helpTopicProvider;
-			m_synchronizeInvoke = synchronizeInvoke;
+			SynchronizeInvoke = synchronizeInvoke;
 			m_activityMonitor = new UserActivityMonitor();
 			m_activityMonitor.StartMonitoring();
 		}
@@ -34,10 +33,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Gets the object that is used to invoke methods on the main UI thread.
 		/// </summary>
-		public ISynchronizeInvoke SynchronizeInvoke
-		{
-			get { return m_synchronizeInvoke; }
-		}
+		public ISynchronizeInvoke SynchronizeInvoke { get; }
 
 		/// <summary>
 		/// Check with user regarding conflicting changes
@@ -47,7 +43,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			using (var dlg = new ConflictingSaveDlg())
 			{
-				DialogResult result = dlg.ShowDialog();
+				var result = dlg.ShowDialog();
 				return result != DialogResult.OK;
 			}
 		}
@@ -62,11 +58,11 @@ namespace LanguageExplorer.LcmUi
 			{
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
-					if (dlg.fKeepFilesThatAreNewer)
+					if (dlg.KeepFilesThatAreNewer)
 					{
 						return FileSelection.OkKeepNewer;
 					}
-					if (dlg.fOverWriteThatAreNewer)
+					if (dlg.OverWriteThatAreNewer)
 					{
 						return FileSelection.OkUseOlder;
 					}
@@ -83,7 +79,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			using (var dlg = new RestoreLinkedFilesToProjectsFolder(m_helpTopicProvider))
 			{
-				return dlg.ShowDialog() == DialogResult.OK && dlg.fRestoreLinkedFilesToProjectFolder;
+				return dlg.ShowDialog() == DialogResult.OK && dlg.RestoreLinkedFilesToProjectFolder;
 			}
 		}
 
@@ -98,11 +94,11 @@ namespace LanguageExplorer.LcmUi
 			{
 				if (dlgCantWriteFiles.ShowDialog() == DialogResult.OK)
 				{
-					if (dlgCantWriteFiles.fRestoreLinkedFilesToProjectFolder)
+					if (dlgCantWriteFiles.RestoreLinkedFilesToProjectFolder)
 					{
 						return YesNoCancel.OkYes;
 					}
-					if (dlgCantWriteFiles.fDoNotRestoreLinkedFiles)
+					if (dlgCantWriteFiles.DoNotRestoreLinkedFiles)
 					{
 						return YesNoCancel.OkNo;
 					}
@@ -114,10 +110,6 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Displays the message.
 		/// </summary>
-		/// <param name="type">The type.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="caption">The caption.</param>
-		/// <param name="helpTopic">The help topic.</param>
 		public void DisplayMessage(MessageType type, string message, string caption, string helpTopic)
 		{
 			var icon = MessageBoxIcon.Information;
@@ -133,7 +125,7 @@ namespace LanguageExplorer.LcmUi
 					icon = MessageBoxIcon.Warning;
 					break;
 			}
-			m_synchronizeInvoke.Invoke(() =>
+			SynchronizeInvoke.Invoke(() =>
 				{
 #if __MonoCS__
 					// Mono doesn't support Help
@@ -153,46 +145,35 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public void DisplayCircularRefBreakerReport(string report, string caption)
 		{
-			var icon = MessageBoxIcon.Information;
-			m_synchronizeInvoke.Invoke(() => MessageBox.Show(report, caption, MessageBoxButtons.OK, icon));
+			const MessageBoxIcon icon = MessageBoxIcon.Information;
+			SynchronizeInvoke.Invoke(() => MessageBox.Show(report, caption, MessageBoxButtons.OK, icon));
 		}
 
 		/// <summary>
 		/// show a dialog or output to the error log, as appropriate.
 		/// </summary>
-		/// <param name="error">the exception you want to report</param>
-		/// <param name="isLethal">set to <c>true</c> if the error is lethal, otherwise
-		/// <c>false</c>.</param>
 		public void ReportException(Exception error, bool isLethal)
 		{
-			m_synchronizeInvoke.Invoke(() => ErrorReporter.ReportException(error, null, null, null, isLethal));
+			SynchronizeInvoke.Invoke(() => ErrorReporter.ReportException(error, null, null, null, isLethal));
 		}
 
-		public DateTime LastActivityTime
-		{
-			get { return m_activityMonitor.LastActivityTime; }
-		}
+		public DateTime LastActivityTime => m_activityMonitor.LastActivityTime;
 
 		/// <summary>
 		/// Reports duplicate guids to the user
 		/// </summary>
-		/// <param name="errorText">The error text.</param>
 		public void ReportDuplicateGuids(string errorText)
 		{
-			m_synchronizeInvoke.Invoke(() => ErrorReporter.ReportDuplicateGuids(FwRegistryHelper.FieldWorksRegistryKey, "FLExErrors@sil.org", null, errorText));
+			SynchronizeInvoke.Invoke(() => ErrorReporter.ReportDuplicateGuids(FwRegistryHelper.FieldWorksRegistryKey, "FLExErrors@sil.org", null, errorText));
 		}
 
 		/// <summary>
 		/// Ask user if they wish to restore an XML project from a backup project file.
 		/// </summary>
-		/// <param name="projectPath">The project path.</param>
-		/// <param name="backupPath">The backup path.</param>
-		/// <returns></returns>
-		/// <exception cref="System.NotImplementedException"></exception>
 		public bool OfferToRestore(string projectPath, string backupPath)
 		{
-			return m_synchronizeInvoke.Invoke(() => MessageBox.Show(
-				String.Format(LcmUiStrings.kstidOfferToRestore, projectPath, File.GetLastWriteTime(projectPath),
+			return SynchronizeInvoke.Invoke(() => MessageBox.Show(
+				string.Format(LcmUiStrings.kstidOfferToRestore, projectPath, File.GetLastWriteTime(projectPath),
 				backupPath, File.GetLastWriteTime(backupPath)),
 				LcmUiStrings.kstidProblemOpeningFile, MessageBoxButtons.YesNo,
 				MessageBoxIcon.Error) == DialogResult.Yes);
@@ -201,13 +182,10 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Present a message to the user and allow the options to Retry or Cancel
 		/// </summary>
-		/// <param name="msg">The message.</param>
-		/// <param name="caption">The caption.</param>
 		/// <returns>True to retry.  False otherwise</returns>
 		public bool Retry(string msg, string caption)
 		{
-			return m_synchronizeInvoke.Invoke(() => MessageBox.Show(msg, caption,
-				MessageBoxButtons.RetryCancel, MessageBoxIcon.None) == DialogResult.Retry);
+			return SynchronizeInvoke.Invoke(() => MessageBox.Show(msg, caption, MessageBoxButtons.RetryCancel, MessageBoxIcon.None) == DialogResult.Retry);
 		}
 	}
 }

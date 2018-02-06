@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,40 +15,28 @@ namespace LanguageExplorer.LcmUi.Dialogs
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		public FilesToRestoreAreOlder(IHelpTopicProvider helpTopicProvider)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			InitializeComponent();
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		public bool fKeepFilesThatAreNewer
-		{
-			get { return radio_Keep.Checked; }
-		}
+		/// <summary />
+		public bool KeepFilesThatAreNewer => radio_Keep.Checked;
 
-		/// <summary>
-		///
-		/// </summary>
-		public bool fOverWriteThatAreNewer
-		{
-			get { return radio_Overwrite.Checked; }
-		}
+		/// <summary />
+		public bool OverWriteThatAreNewer => radio_Overwrite.Checked;
 
 		private void button_OK_Click(object sender, EventArgs e)
 		{
-			this.DialogResult = DialogResult.OK;
+			DialogResult = DialogResult.OK;
 			Close();
 		}
 
 		private void button_Cancel_Click(object sender, EventArgs e)
 		{
-			this.DialogResult = DialogResult.Cancel;
+			DialogResult = DialogResult.Cancel;
 			Close();
 		}
 

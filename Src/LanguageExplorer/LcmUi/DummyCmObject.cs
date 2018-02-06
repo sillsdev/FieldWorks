@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,37 +11,26 @@ namespace LanguageExplorer.LcmUi
 	/// </summary>
 	public class DummyCmObject : IComparable
 	{
-		private int m_hvo;
 		private string m_displayName;
-		private int m_ws;
 
 		/// <summary>
 		/// Get the HVO for the dummy object.
 		/// </summary>
-		public int Hvo
-		{
-			get { return m_hvo; }
-		}
+		public int Hvo { get; }
 
 		/// <summary>
 		/// Get the writing system integer.
 		/// </summary>
-		public int WS
-		{
-			get { return m_ws; }
-		}
+		public int WS { get; }
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="displayName"></param>
-		/// <param name="ws"></param>
 		public DummyCmObject(int hvo, string displayName, int ws)
 		{
-			m_hvo = hvo;
+			Hvo = hvo;
 			m_displayName = displayName ?? " ";
-			m_ws = ws;
+			WS = ws;
 		}
 
 		/// <summary>
@@ -58,9 +47,7 @@ namespace LanguageExplorer.LcmUi
 		public int CompareTo(object obj)
 		{
 			var that = obj as DummyCmObject;
-			if (that == null)
-				return -1;
-			return m_displayName.CompareTo(that.m_displayName);
+			return that == null ? -1 : m_displayName.CompareTo(that.m_displayName);
 		}
 
 		#endregion

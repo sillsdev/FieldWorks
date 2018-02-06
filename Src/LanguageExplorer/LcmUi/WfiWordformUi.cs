@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,7 +19,6 @@ namespace LanguageExplorer.LcmUi
 		/// Note that declaring it to be forces us to just do a cast in every case of MakeUi, which is
 		/// passed an obj anyway.
 		/// </summary>
-		/// <param name="obj"></param>
 		public WfiWordformUi(ICmObject obj) : base(obj)
 		{
 			Debug.Assert(obj is IWfiWordform);
@@ -31,11 +30,6 @@ namespace LanguageExplorer.LcmUi
 		/// This will recache some information related to a wordform and its analyses,
 		/// and call PropChanged to get the display to refresh.
 		/// </summary>
-		/// <param name="curDisplayedWfId"></param>
-		/// <param name="updateUserCount"></param>
-		/// <param name="updateUserStatusIcon"></param>
-		/// <param name="updateParserCount"></param>
-		/// <param name="updateParserStatusIcon"></param>
 		/// <remarks>
 		/// It makes no sense to call this method if the active area isn't the Words area,
 		/// and the tool isn't Analyses.
@@ -50,7 +44,6 @@ namespace LanguageExplorer.LcmUi
 			// based on side effect and PropChanged handlers.
 			// Perfect updating is probably too expensive.
 			// Nothing useful we can currently do here, anyway.
-
 		}
 
 		/// <summary>
@@ -60,24 +53,27 @@ namespace LanguageExplorer.LcmUi
 		protected bool OnFindInDictionary(object args)
 		{
 			LexEntryUi.DisplayEntries(m_cache, Form.ActiveForm, PropertyTable, Publisher, Subscriber, null, null,
-				((IWfiWordform) Object).Form.get_String(m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle), null);
+				((IWfiWordform)Object).Form.get_String(m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle), null);
 			return true;
 		}
 
 		protected override bool IsAcceptableContextToJump(string toolCurrent, string toolTarget)
 		{
 			if (toolCurrent == AreaServices.WordListConcordanceMachineName && toolTarget == AreaServices.ConcordanceMachineName)
+			{
 				return false;
+			}
 			return base.IsAcceptableContextToJump(toolCurrent, toolTarget);
 		}
 
 		public override bool CanDelete(out string cannotDeleteMsg)
 		{
 			if (base.CanDelete(out cannotDeleteMsg))
+			{
 				return true;
+			}
 			cannotDeleteMsg = LcmUiStrings.ksCannotDeleteWordform;
 			return false;
 		}
-
 	}
 }

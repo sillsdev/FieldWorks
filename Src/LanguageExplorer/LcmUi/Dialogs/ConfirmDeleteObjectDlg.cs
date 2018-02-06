@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -45,49 +45,45 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			InitializeComponent();
 			AccessibleName = "ConfirmDeleteObjectDlg";
 
-			this.pictureBox1.Image = System.Drawing.SystemIcons.Exclamation.ToBitmap();
+			pictureBox1.Image = System.Drawing.SystemIcons.Exclamation.ToBitmap();
 
-			//
-			// m_descriptionBox3
-			//
-			this.m_descriptionBox3 = new FwTextBox();
-			this.m_descriptionBox3.AdjustStringHeight = true;
-			this.m_descriptionBox3.WordWrap = true;
-			this.m_descriptionBox3.controlID = null;
-			this.m_descriptionBox3.Name = "m_descriptionBox3";
-			this.m_descriptionBox3.Enabled = false;
-			this.m_descriptionBox3.TabStop = false;
-			this.m_descriptionBox3.AccessibleName = "FwTextBox";
-			this.m_descriptionBox3.BackColor = System.Drawing.SystemColors.Control; // not implemented: System.Drawing.Color.Transparent;
-			this.m_descriptionBox3.HasBorder = false;
-			this.m_descriptionBox3.Location = new System.Drawing.Point(5, 5);
-			this.m_descriptionBox3.Size = new System.Drawing.Size(304, 184);
-			this.m_descriptionBox3.TabIndex = 0;
-			this.m_descriptionBox3.TabStop = false;
-			this.m_descriptionBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.m_descriptionBox3.Visible = true;
+			m_descriptionBox3 = new FwTextBox
+			{
+				AdjustStringHeight = true,
+				WordWrap = true,
+				controlID = null,
+				Name = "m_descriptionBox3",
+				Enabled = false,
+				TabStop = false,
+				AccessibleName = "FwTextBox",
+				BackColor = System.Drawing.SystemColors.Control,
+				HasBorder = false,
+				Location = new System.Drawing.Point(5, 5),
+				Size = new System.Drawing.Size(304, 184),
+				TabIndex = 0,
+				Dock = DockStyle.Fill,
+				Visible = true
+			};
 
 			panel1.Controls.Add(m_descriptionBox3);
 
-			//
-			// m_descriptionBox3
-			//
-			this.m_descriptionBox4 = new FwTextBox();
-			this.m_descriptionBox4.AdjustStringHeight = true;
-			this.m_descriptionBox4.WordWrap = true;
-			this.m_descriptionBox4.controlID = null;
-			this.m_descriptionBox4.Name = "m_descriptionBox4";
-			this.m_descriptionBox4.Enabled = false;
-			this.m_descriptionBox4.TabStop = false;
-			this.m_descriptionBox4.AccessibleName = "FwTextBox";
-			this.m_descriptionBox4.BackColor = System.Drawing.SystemColors.Control; // not implemented: System.Drawing.Color.Transparent;
-			this.m_descriptionBox4.HasBorder = false;
-			this.m_descriptionBox4.Location = new System.Drawing.Point(16,56);
-			this.m_descriptionBox4.Size = new System.Drawing.Size(304, 184);
-			this.m_descriptionBox4.TabIndex = 0;
-			this.m_descriptionBox4.TabStop = false;
-			this.m_descriptionBox4.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.m_descriptionBox4.Visible = true;
+			m_descriptionBox4 = new FwTextBox
+			{
+				AdjustStringHeight = true,
+				WordWrap = true,
+				controlID = null,
+				Name = "m_descriptionBox4",
+				Enabled = false,
+				TabStop = false,
+				AccessibleName = "FwTextBox",
+				BackColor = System.Drawing.SystemColors.Control,
+				HasBorder = false,
+				Location = new System.Drawing.Point(16, 56),
+				Size = new System.Drawing.Size(304, 184),
+				TabIndex = 0,
+				Dock = DockStyle.Fill,
+				Visible = true
+			};
 
 			panel2.Controls.Add(m_descriptionBox4);
 		}
@@ -105,7 +101,9 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -113,17 +111,16 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}
@@ -154,7 +151,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			Debug.Assert(obj != null);
 			Debug.Assert(obj.Object != null);
 
-			Text = String.Format(LcmUiStrings.ksDeleteX, obj.DisplayNameOfClass);
+			Text = string.Format(LcmUiStrings.ksDeleteX, obj.DisplayNameOfClass);
 
 			// Set the s_helpTopic based on the window title and rearrange the buttons if neccesary
 			switch (obj.ClassName)
@@ -167,8 +164,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			{
 				buttonHelp.Visible = true;
 				buttonHelp.Enabled = true;
-				helpProvider = new HelpProvider();
-				helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
+				helpProvider = new HelpProvider {HelpNamespace = m_helpTopicProvider.HelpFile};
 				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
@@ -180,21 +176,21 @@ namespace LanguageExplorer.LcmUi.Dialogs
 
 			//Use an FWTextBox so that strings of different writing systems will
 			//be displayed with the correct stylesheet settings.
-			int defUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
+			var defUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
 			m_descriptionBox3.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_descriptionBox3.WritingSystemCode = defUserWs;
 			m_descriptionBox3.StyleSheet = stylesheet;
-			ITsIncStrBldr tisb3 = TsStringUtils.MakeIncStrBldr();
+			var tisb3 = TsStringUtils.MakeIncStrBldr();
 			tisb3.AppendTsString(obj.Object.DeletionTextTSS);
 			m_descriptionBox3.Tss = tisb3.GetString();
 			// Adjust the dialog size if needed to display the message (FWNX-857).
-			int deltaY = GrowTextBox(panel1, m_descriptionBox3);
+			var deltaY = GrowTextBox(panel1, m_descriptionBox3);
 			panel2.Top += deltaY;
 
 			m_descriptionBox4.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_descriptionBox4.WritingSystemCode = defUserWs;
 			m_descriptionBox4.StyleSheet = stylesheet;
-			ITsIncStrBldr tisb4 = TsStringUtils.MakeIncStrBldr();
+			var tisb4 = TsStringUtils.MakeIncStrBldr();
 			tisb4.AppendTsString(tssNote); //this is the default for m_descriptionBox4
 			m_descriptionBox4.Tss = tisb4.GetString();
 			GrowTextBox(panel2, m_descriptionBox4);
@@ -205,7 +201,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 
 		private int GrowTextBox(Panel panel, FwTextBox textBox)
 		{
-			int deltaY = textBox.PreferredHeight - textBox.Height;
+			var deltaY = textBox.PreferredHeight - textBox.Height;
 			if (deltaY > 0)
 			{
 				panel.Height += deltaY;
@@ -226,12 +222,12 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			get
 			{
 				CheckDisposed();
-				return this.label1.Text;
+				return label1.Text;
 			}
 			set
 			{
 				CheckDisposed();
-				this.label1.Text = value;
+				label1.Text = value;
 			}
 		}
 
@@ -244,12 +240,12 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			get
 			{
 				CheckDisposed();
-				return this.label2.Text;
+				return label2.Text;
 			}
 			set
 			{
 				CheckDisposed();
-				this.label2.Text = value;
+				label2.Text = value;
 			}
 		}
 
@@ -261,12 +257,12 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			get
 			{
 				CheckDisposed();
-				return this.m_descriptionBox3.Text;
+				return m_descriptionBox3.Text;
 			}
 			set
 			{
 				CheckDisposed();
-				this.m_descriptionBox3.Text = value;
+				m_descriptionBox3.Text = value;
 			}
 		}
 
@@ -278,12 +274,12 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			get
 			{
 				CheckDisposed();
-				return this.m_descriptionBox4.Text;
+				return m_descriptionBox4.Text;
 			}
 			set
 			{
 				CheckDisposed();
-				this.m_descriptionBox4.Text = value;
+				m_descriptionBox4.Text = value;
 			}
 		}
 
@@ -295,12 +291,12 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			get
 			{
 				CheckDisposed();
-				return this.Text;
+				return Text;
 			}
 			set
 			{
 				CheckDisposed();
-				this.Text = value;
+				Text = value;
 			}
 		}
 

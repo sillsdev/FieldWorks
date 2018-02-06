@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -34,12 +34,16 @@ namespace LanguageExplorer.LcmUi
 			Debug.Assert(_lcmRefSeq != null);
 			Debug.Assert(m_hvoTarget > 0);
 			if (_lcmRefSeq == null || m_hvoTarget <= 0)
+			{
 				return -1;
-			int[] hvos = _lcmRefSeq.ToHvoArray();
-			for (int i = 0; i < hvos.Length; i++)
+			}
+			var hvos = _lcmRefSeq.ToHvoArray();
+			for (var i = 0; i < hvos.Length; i++)
 			{
 				if (hvos[i] == m_hvoTarget)
+				{
 					return i;
+				}
 			}
 			return -1;
 		}
@@ -95,14 +99,14 @@ namespace LanguageExplorer.LcmUi
 			CheckDisposed();
 
 			if (m_obj == null || m_iCurrent < 0)
+			{
 				return;
+			}
 			// Move currently selected object to the next location
-			int iNew = m_iCurrent + 1;
+			var iNew = m_iCurrent + 1;
 			Debug.Assert(iNew < _lcmRefSeq.Count);
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo move down/right/later in sequence",
-				"Redo move down/right/later in sequence",
-				m_cache.ActionHandlerAccessor,
-				() =>
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo move down/right/later in sequence", "Redo move down/right/later in sequence",
+				m_cache.ActionHandlerAccessor, () =>
 				{
 					_lcmRefSeq.RemoveAt(m_iCurrent);
 					_lcmRefSeq.Insert(iNew, m_hvoTarget);
@@ -114,14 +118,14 @@ namespace LanguageExplorer.LcmUi
 			CheckDisposed();
 
 			if (m_obj == null || m_iCurrent < 0)
+			{
 				return;
+			}
 			// Move currently selected object to the previous location
-			int iNew = m_iCurrent - 1;
+			var iNew = m_iCurrent - 1;
 			Debug.Assert(iNew >= 0);
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo move up/left/earlier in sequence",
-				"Redo move up/left/earlier in sequence",
-				m_cache.ActionHandlerAccessor,
-				() =>
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo move up/left/earlier in sequence", "Redo move up/left/earlier in sequence",
+				m_cache.ActionHandlerAccessor, () =>
 				{
 					_lcmRefSeq.RemoveAt(m_iCurrent);
 					_lcmRefSeq.Insert(iNew, m_hvoTarget);
@@ -145,18 +149,12 @@ namespace LanguageExplorer.LcmUi
 				m_flid = flid;
 			}
 
-			internal int Count
-			{
-				get
-				{
-					return m_cache.DomainDataByFlid.get_VecSize(m_hvo, m_flid);
-				}
-			}
+			internal int Count => m_cache.DomainDataByFlid.get_VecSize(m_hvo, m_flid);
 
 			internal int[] ToHvoArray()
 			{
-				int chvo = Count;
-				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
+				var chvo = Count;
+				using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 				{
 					m_cache.DomainDataByFlid.VecProp(m_hvo, m_flid, chvo, out chvo, arrayPtr);
 					return MarshalEx.NativeToArray<int>(arrayPtr, chvo);

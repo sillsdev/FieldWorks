@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,18 +22,20 @@ namespace LanguageExplorer.LcmUi
 			m_flidRef = flidRef;
 		}
 
-		// If the expected reference property is null, insert "??" and return false;
-		// otherwise return true.
+		/// <summary>
+		/// If the expected reference property is null, insert "??" and return false;
+		/// otherwise return true.
+		/// </summary>
 		private bool HandleObjMissing(IVwEnv vwenv, int hvo)
 		{
-			if (m_cache.DomainDataByFlid.get_ObjectProp(hvo, m_flidRef) == 0)
+			if (m_cache.DomainDataByFlid.get_ObjectProp(hvo, m_flidRef) != 0)
 			{
-				int wsUi = vwenv.DataAccess.WritingSystemFactory.UserWs;
-				vwenv.AddString(TsStringUtils.MakeString(LcmUiStrings.ksQuestions, wsUi));  // was "??", not "???"
-				vwenv.NoteDependency(new[] { hvo }, new[] { m_flidRef }, 1);
-				return false;
+				return true;
 			}
-			return true;
+			var wsUi = vwenv.DataAccess.WritingSystemFactory.UserWs;
+			vwenv.AddString(TsStringUtils.MakeString(LcmUiStrings.ksQuestions, wsUi));  // was "??", not "???"
+			vwenv.NoteDependency(new[] { hvo }, new[] { m_flidRef }, 1);
+			return false;
 		}
 
 		public override void Display(IVwEnv vwenv, int hvo, int frag)

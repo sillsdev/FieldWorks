@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,9 +32,9 @@ namespace LanguageExplorer.LcmUi
 		private IPublisher m_publisher;
 		protected XMLViewsDataCache m_sda;
 		InflectionClassPopupTreeManager m_InflectionClassTreeManager;
-		int m_selectedHvo = 0;
+		int m_selectedHvo;
 		string m_selectedLabel;
-		private int m_displayWs = 0;
+		private int m_displayWs;
 		public event EventHandler ControlActivated;
 		public event FwSelectionChangedEventHandler ValueChanged;
 
@@ -42,7 +42,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			m_InflectionClassTreeManager = null;
 			m_tree = new TreeCombo();
-			m_tree.TreeLoad += new EventHandler(m_tree_TreeLoad);
+			m_tree.TreeLoad += m_tree_TreeLoad;
 			//	Handle AfterSelect event in m_tree_TreeLoad() through m_pOSPopupTreeManager
 		}
 
@@ -50,7 +50,7 @@ namespace LanguageExplorer.LcmUi
 			: this()
 		{
 			m_publisher = publisher;
-			string displayWs = XmlUtils.GetOptionalAttributeValue(configurationNode, "displayWs", "best analorvern");
+			var displayWs = XmlUtils.GetOptionalAttributeValue(configurationNode, "displayWs", "best analorvern");
 			m_displayWs = WritingSystemServices.GetMagicWsIdFromName(displayWs);
 		}
 
@@ -65,21 +65,13 @@ namespace LanguageExplorer.LcmUi
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed = false;
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		public bool IsDisposed { get; private set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -94,10 +86,7 @@ namespace LanguageExplorer.LcmUi
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
+		/// <summary />
 		public void Dispose()
 		{
 			Dispose(true);
@@ -134,20 +123,22 @@ namespace LanguageExplorer.LcmUi
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
 				// Dispose managed resources here.
 				if (m_tree != null)
 				{
-					m_tree.Load -= new EventHandler(m_tree_TreeLoad);
+					m_tree.Load -= m_tree_TreeLoad;
 					m_tree.Dispose();
 				}
 				if (m_InflectionClassTreeManager != null)
 				{
-					m_InflectionClassTreeManager.AfterSelect -= new TreeViewEventHandler(m_pOSPopupTreeManager_AfterSelect);
+					m_InflectionClassTreeManager.AfterSelect -= m_pOSPopupTreeManager_AfterSelect;
 					m_InflectionClassTreeManager.Dispose();
 				}
 			}
@@ -158,7 +149,7 @@ namespace LanguageExplorer.LcmUi
 			m_InflectionClassTreeManager = null;
 			m_cache = null;
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
@@ -183,7 +174,9 @@ namespace LanguageExplorer.LcmUi
 				CheckDisposed();
 				m_cache = value;
 				if (m_cache != null && m_tree != null)
+				{
 					m_tree.WritingSystemFactory = m_cache.WritingSystemFactory;
+				}
 			}
 		}
 		/// <summary>
@@ -194,7 +187,9 @@ namespace LanguageExplorer.LcmUi
 			get
 			{
 				if (m_sda == null)
+				{
 					throw new InvalidOperationException("Must set the special cache of a BulkEditSpecControl");
+				}
 				return m_sda;
 			}
 			set { m_sda = value; }
@@ -240,21 +235,20 @@ namespace LanguageExplorer.LcmUi
 				{
 					m_tree.SelectedItem = null;
 					m_selectedHvo = 0;
-					m_selectedLabel = String.Empty;
+					m_selectedLabel = string.Empty;
 				}
 			}
 			else
 			{
 				m_selectedHvo = 0;
-				m_selectedLabel = String.Empty;
+				m_selectedLabel = string.Empty;
 			}
-			if (ControlActivated != null)
-				ControlActivated(this, new EventArgs());
+
+			ControlActivated?.Invoke(this, new EventArgs());
 
 			// Tell the parent control that we may have changed the selected item so it can
 			// enable or disable the Apply and Preview buttons based on the selection.
-			if (ValueChanged != null)
-				ValueChanged(this, new FwObjectSelectionEventArgs(m_selectedHvo));
+			ValueChanged?.Invoke(this, new FwObjectSelectionEventArgs(m_selectedHvo));
 		}
 
 		/// <summary>
@@ -268,7 +262,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Returns the Suggest button if our target is Semantic Domains, otherwise null.
 		/// </summary>
-		public Button SuggestButton { get { return null; } }
+		public Button SuggestButton => null;
 
 		/// <summary>
 		/// Execute the change requested by the current selection in the combo.
@@ -292,15 +286,14 @@ namespace LanguageExplorer.LcmUi
 		{
 			CheckDisposed();
 
-			var pos = GetPOS();
 			// A Set of eligible parts of speech to use in filtering.
-			HashSet<int> possiblePOS = GetPossiblePartsOfSpeech();
+			var possiblePOS = GetPossiblePartsOfSpeech();
 			// Make a Dictionary from HVO of entry to list of modified senses.
 			var sensesByEntryAndPos = new Dictionary<Tuple<ILexEntry, IPartOfSpeech>, List<ILexSense>>();
-			int i = 0;
+			var i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
-			foreach(int hvoSense in itemsToChange)
+			var interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
+			foreach(var hvoSense in itemsToChange)
 			{
 				i++;
 				if (i % interval == 0)
@@ -308,14 +301,19 @@ namespace LanguageExplorer.LcmUi
 					state.PercentDone = i * 20 / itemsToChange.Count();
 					state.Breath();
 				}
+
 				if (!IsItemEligible(m_cache.DomainDataByFlid, hvoSense, possiblePOS))
+				{
 					continue;
+				}
 				var ls = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
 				var msa = (IMoStemMsa)ls.MorphoSyntaxAnalysisRA;
 				var entry1 = ls.Entry;
 				var key = new Tuple<ILexEntry, IPartOfSpeech>(entry1, msa.PartOfSpeechRA);
 				if (!sensesByEntryAndPos.ContainsKey(key))
+				{
 					sensesByEntryAndPos[key] = new List<ILexSense>();
+				}
 				sensesByEntryAndPos[key].Add(ls);
 			}
 			m_cache.DomainDataByFlid.BeginUndoTask(LcmUiStrings.ksUndoBEInflClass, LcmUiStrings.ksRedoBEInflClass);
@@ -335,7 +333,7 @@ namespace LanguageExplorer.LcmUi
 				foreach (var msa in entry.MorphoSyntaxAnalysesOC)
 				{
 					var msm = msa as IMoStemMsa;
-					if (msm != null && msm.InflectionClassRA != null && msm.InflectionClassRA.Hvo == m_selectedHvo)
+					if (msm?.InflectionClassRA != null && msm.InflectionClassRA.Hvo == m_selectedHvo)
 					{
 						// Can reuse this one!
 						msmTarget = msm;
@@ -350,15 +348,21 @@ namespace LanguageExplorer.LcmUi
 					if (entry.SensesOS.Count != sensesToChange.Count)
 					{
 						foreach (var ls in entry.SensesOS)
+						{
 							if (!sensesToChange.Contains(ls))
+							{
 								otherSenses.Add(ls);
+							}
+						}
 					}
 					foreach (var msa in entry.MorphoSyntaxAnalysesOC)
 					{
 						var msm = msa as IMoStemMsa;
 						if (msm == null)
+						{
 							continue;
-						bool fOk = true;
+						}
+						var fOk = true;
 						foreach (var ls in otherSenses)
 						{
 							if (ls.MorphoSyntaxAnalysisRA == msm)
@@ -398,16 +402,14 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Add to possiblePOS all the children (recursively) of hvoPos
 		/// </summary>
-		/// <param name="sda"></param>
-		/// <param name="hvoPos"></param>
-		/// <param name="possiblePOS"></param>
-		void AddChildPos(ISilDataAccess sda, int hvoPos, HashSet<int> possiblePOS)
+		private static void AddChildPos(ISilDataAccess sda, int hvoPos, HashSet<int> possiblePOS)
 		{
 			possiblePOS.Add(hvoPos);
-			int chvo = sda.get_VecSize(hvoPos, CmPossibilityTags.kflidSubPossibilities);
-			for (int i = 0; i < chvo; i++)
-				AddChildPos(sda, sda.get_VecItem(hvoPos,
-					CmPossibilityTags.kflidSubPossibilities, i), possiblePOS);
+			var chvo = sda.get_VecSize(hvoPos, CmPossibilityTags.kflidSubPossibilities);
+			for (var i = 0; i < chvo; i++)
+			{
+				AddChildPos(sda, sda.get_VecItem(hvoPos, CmPossibilityTags.kflidSubPossibilities, i), possiblePOS);
+			}
 		}
 
 		/// <summary>
@@ -418,14 +420,13 @@ namespace LanguageExplorer.LcmUi
 		{
 			CheckDisposed();
 
-			ITsString tss = TsStringUtils.MakeString(m_selectedLabel, m_cache.DefaultAnalWs);
+			var tss = TsStringUtils.MakeString(m_selectedLabel, m_cache.DefaultAnalWs);
 			// Build a Set of parts of speech that can take this class.
-			HashSet<int> possiblePOS = GetPossiblePartsOfSpeech();
-
-			int i = 0;
+			var possiblePOS = GetPossiblePartsOfSpeech();
+			var i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
-			foreach (int hvo in itemsToChange)
+			var interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
+			foreach (var hvo in itemsToChange)
 			{
 				i++;
 				if (i % interval == 0)
@@ -433,9 +434,11 @@ namespace LanguageExplorer.LcmUi
 					state.PercentDone = i * 100 / itemsToChange.Count();
 					state.Breath();
 				}
-				bool fEnable = IsItemEligible(m_sda, hvo, possiblePOS);
+				var fEnable = IsItemEligible(m_sda, hvo, possiblePOS);
 				if (fEnable)
+				{
 					m_sda.SetString(hvo, tagMadeUpFieldIdentifier, tss);
+				}
 				m_sda.SetInt(hvo, tagEnable, (fEnable ? 1 : 0));
 			}
 		}
@@ -465,28 +468,18 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public void SetClearField()
 		{
-			CheckDisposed();
-
 			throw new NotSupportedException();
 		}
 
-		public List<int> FieldPath
-		{
-			get
-			{
-				return new List<int>(new[]{LexSenseTags.kflidMorphoSyntaxAnalysis,
-					MoStemMsaTags.kflidPartOfSpeech,
-					MoStemMsaTags.kflidInflectionClass});
-			}
-		}
+		public List<int> FieldPath => new List<int>(new[]{LexSenseTags.kflidMorphoSyntaxAnalysis, MoStemMsaTags.kflidPartOfSpeech, MoStemMsaTags.kflidInflectionClass});
 
 		private bool IsItemEligible(ISilDataAccess sda, int hvo, HashSet<int> possiblePOS)
 		{
-			bool fEnable = false;
+			var fEnable = false;
 			var ls = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvo);
-			if (ls.MorphoSyntaxAnalysisRA != null && ls.MorphoSyntaxAnalysisRA is IMoStemMsa)
+			if (ls.MorphoSyntaxAnalysisRA is IMoStemMsa)
 			{
-				var msa = ls.MorphoSyntaxAnalysisRA as IMoStemMsa;
+				var msa = (IMoStemMsa)ls.MorphoSyntaxAnalysisRA;
 				var pos = msa.PartOfSpeechRA;
 				if (pos != null && possiblePOS.Contains(pos.Hvo))
 				{
@@ -499,12 +492,13 @@ namespace LanguageExplorer.LcmUi
 
 		private IPartOfSpeech GetPOS()
 		{
-			ISilDataAccess sda = m_cache.DomainDataByFlid;
 			if (m_selectedHvo != 0)
 			{
 				var owner = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_selectedHvo).Owner;
-				while (owner != null && owner is IMoInflClass)
+				while (owner is IMoInflClass)
+				{
 					owner = owner.Owner;
+				}
 				return owner as IPartOfSpeech;
 			}
 			return null;
@@ -512,16 +506,20 @@ namespace LanguageExplorer.LcmUi
 
 		private HashSet<int> GetPossiblePartsOfSpeech()
 		{
-			ISilDataAccess sda = m_cache.DomainDataByFlid;
+			var sda = m_cache.DomainDataByFlid;
 			var possiblePOS = new HashSet<int>();
 			if (m_selectedHvo != 0)
 			{
 				var rootPos = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_selectedHvo);
 				while (rootPos != null && rootPos.ClassID == MoInflClassTags.kClassId)
+				{
 					rootPos = rootPos.Owner;
+				}
 
 				if (rootPos != null)
+				{
 					AddChildPos(sda, rootPos.Hvo, possiblePOS);
+				}
 			}
 			return possiblePOS;
 		}
@@ -549,15 +547,14 @@ namespace LanguageExplorer.LcmUi
 			{
 			}
 
-			protected override string BeSpec
-			{
-				get { return "external"; }
-			}
+			protected override string BeSpec => "external";
 
 			public override bool CompatibleFilter(XElement colSpec)
 			{
 				if (!base.CompatibleFilter(colSpec))
+				{
 					return false;
+				}
 				return DynamicLoader.TypeForLoaderNode(colSpec) == typeof(InflectionClassEditor);
 			}
 
@@ -566,7 +563,7 @@ namespace LanguageExplorer.LcmUi
 			/// Critical TODO JohnT: this isn't right; need to get the simple list chooser populated with the
 			/// items we put in the chooser; but how??
 			/// </summary>
-			static public int List(LcmCache cache)
+			public static int List(LcmCache cache)
 			{
 				return cache.LanguageProject.PartsOfSpeechOA.Hvo;
 			}
@@ -575,19 +572,13 @@ namespace LanguageExplorer.LcmUi
 			/// This is a filter for an atomic property, and the "all" and "only" options should not be presented.
 			/// Review JOhnT: is this true?
 			/// </summary>
-			public static bool Atomic
-			{
-				get { return true; }
-			}
+			public static bool Atomic => true;
 
 			/// <summary>
 			/// The items for this filter are the leaves of the tree formed by the possibilities in the list,
 			/// by following the InflectionClasses property of each PartOfSpeech.
 			/// </summary>
-			public static int LeafFlid
-			{
-				get { return PartOfSpeechTags.kflidInflectionClasses; }
-			}
+			public static int LeafFlid => PartOfSpeechTags.kflidInflectionClasses;
 		}
 	}
 }

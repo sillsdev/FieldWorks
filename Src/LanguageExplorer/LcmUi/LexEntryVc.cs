@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -30,12 +30,9 @@ namespace LanguageExplorer.LcmUi
 		public const int kfragVariantTypes = 9545;
 
 		int m_ws;
-		int m_wsActual = 0;
+		int m_wsActual;
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="cache"></param>
+		/// <summary />
 		public LexEntryVc(LcmCache cache)
 			: base(cache)
 		{
@@ -51,9 +48,6 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Display a view of the LexEntry (or fragment thereof).
 		/// </summary>
-		/// <param name="vwenv"></param>
-		/// <param name="hvo"></param>
-		/// <param name="frag"></param>
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
 			switch (frag)
@@ -93,18 +87,17 @@ namespace LanguageExplorer.LcmUi
 					break;
 				case kfragVariantTypes:
 					ler = m_cache.ServiceLocator.GetInstance<ILexEntryRefRepository>().GetObject(hvo);
-					bool fNeedInitialPlus = true;
+					var fNeedInitialPlus = true;
 					vwenv.OpenParagraph();
 					foreach (var let in ler.VariantEntryTypesRS.Where(let => let.ClassID == LexEntryTypeTags.kClassId))
 					{
 						// just concatenate them together separated by comma.
-						ITsString tssVariantTypeRevAbbr = let.ReverseAbbr.BestAnalysisAlternative;
+						var tssVariantTypeRevAbbr = let.ReverseAbbr.BestAnalysisAlternative;
 						if (tssVariantTypeRevAbbr != null && tssVariantTypeRevAbbr.Length > 0)
 						{
-							if (fNeedInitialPlus)
-								vwenv.AddString(TsStringUtils.MakeString("+", m_cache.DefaultUserWs));
-							else
-								vwenv.AddString(TsStringUtils.MakeString(",", m_cache.DefaultUserWs));
+							vwenv.AddString(fNeedInitialPlus
+								? TsStringUtils.MakeString("+", m_cache.DefaultUserWs)
+								: TsStringUtils.MakeString(",", m_cache.DefaultUserWs));
 							vwenv.AddString(tssVariantTypeRevAbbr);
 							fNeedInitialPlus = false;
 						}
@@ -122,14 +115,12 @@ namespace LanguageExplorer.LcmUi
 
 		private void AddHeadwordWithHomograph(IVwEnv vwenv, int hvo)
 		{
-			ISilDataAccess sda = vwenv.DataAccess;
-			int hvoLf = sda.get_ObjectProp(hvo,
-				LexEntryTags.kflidLexemeForm);
-			int hvoType = 0;
+			var sda = vwenv.DataAccess;
+			var hvoLf = sda.get_ObjectProp(hvo, LexEntryTags.kflidLexemeForm);
+			var hvoType = 0;
 			if (hvoLf != 0)
 			{
-				hvoType = sda.get_ObjectProp(hvoLf,
-					MoFormTags.kflidMorphType);
+				hvoType = sda.get_ObjectProp(hvoLf, MoFormTags.kflidMorphType);
 			}
 
 			// If we have a type of morpheme, show the appropriate prefix that indicates it.
@@ -144,16 +135,18 @@ namespace LanguageExplorer.LcmUi
 			}
 
 			// Show homograph number if non-zero.
-			int defUserWs = m_cache.WritingSystemFactory.UserWs;
-			int nHomograph = sda.get_IntProp(hvo, LexEntryTags.kflidHomographNumber);
+			var defUserWs = m_cache.WritingSystemFactory.UserWs;
+			var nHomograph = sda.get_IntProp(hvo, LexEntryTags.kflidHomographNumber);
 			var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
 			//Insert HomographNumber when position is Before
 			if (hc.HomographNumberBefore)
+			{
 				InsertHomographNumber(vwenv, hc, nHomograph, defUserWs);
+			}
 
 			// LexEntry.ShortName1; basically tries for form of the lexeme form, then the citation form.
-			bool fGotLabel = false;
-			int wsActual = 0;
+			var fGotLabel = false;
+			var wsActual = 0;
 			if (hvoLf != 0)
 			{
 				// if we have a lexeme form and its label is non-empty, use it.
@@ -162,7 +155,9 @@ namespace LanguageExplorer.LcmUi
 					m_wsActual = wsActual;
 					fGotLabel = true;
 					if (sPrefix != null)
+					{
 						vwenv.AddString(TsStringUtils.MakeString(sPrefix, wsActual));
+					}
 					vwenv.AddObjProp(LexEntryTags.kflidLexemeForm, this, kfragFormForm);
 				}
 			}
@@ -173,7 +168,9 @@ namespace LanguageExplorer.LcmUi
 				{
 					m_wsActual = wsActual;
 					if (sPrefix != null)
+					{
 						vwenv.AddString(TsStringUtils.MakeString(sPrefix, wsActual));
+					}
 					vwenv.AddStringAltMember(LexEntryTags.kflidCitationForm, wsActual, this);
 					fGotLabel = true;
 				}
@@ -183,21 +180,24 @@ namespace LanguageExplorer.LcmUi
 			{
 				// If that fails just show two questions marks.
 				if (sPrefix != null)
+				{
 					vwenv.AddString(TsStringUtils.MakeString(sPrefix, wsActual));
+				}
 				vwenv.AddString(TsStringUtils.MakeString(LcmUiStrings.ksQuestions, defUserWs));	// was "??", not "???"
 			}
 
 			// If we have a lexeme form type show the appropriate postfix.
 			if (hvoType != 0)
 			{
-				vwenv.AddString(TsStringUtils.MakeString(
-					sda.get_UnicodeProp(hvoType, MoMorphTypeTags.kflidPostfix), wsActual));
+				vwenv.AddString(TsStringUtils.MakeString(sda.get_UnicodeProp(hvoType, MoMorphTypeTags.kflidPostfix), wsActual));
 			}
 
 			vwenv.NoteDependency(new[] {hvo}, new[] {LexEntryTags.kflidHomographNumber}, 1);
 			//Insert HomographNumber when position is After
 			if (!hc.HomographNumberBefore)
+			{
 				InsertHomographNumber(vwenv, hc, nHomograph, defUserWs);
+			}
 		}
 
 		/// <summary>
@@ -212,60 +212,46 @@ namespace LanguageExplorer.LcmUi
 			// this allows our TsStringCollectorEnv to properly encode the superscript.
 			// ideally, TsStringCollectorEnv could be made smarter to handle SetIntPropValues
 			// since AppendTss treats the given Tss as atomic.
-			ITsIncStrBldr tsBldr = TsStringUtils.MakeIncStrBldr();
-			tsBldr.SetIntPropValues((int) FwTextPropType.ktptSuperscript,
-				(int) FwTextPropVar.ktpvEnum,
-				(int) FwSuperscriptVal.kssvSub);
-			tsBldr.SetIntPropValues((int) FwTextPropType.ktptBold,
-				(int) FwTextPropVar.ktpvEnum,
-				(int) FwTextToggleVal.kttvForceOn);
-			tsBldr.SetIntPropValues((int) FwTextPropType.ktptWs,
-				(int) FwTextPropVar.ktpvDefault, defUserWs);
+			var tsBldr = TsStringUtils.MakeIncStrBldr();
+			tsBldr.SetIntPropValues((int) FwTextPropType.ktptSuperscript, (int) FwTextPropVar.ktpvEnum, (int) FwSuperscriptVal.kssvSub);
+			tsBldr.SetIntPropValues((int) FwTextPropType.ktptBold, (int) FwTextPropVar.ktpvEnum, (int) FwTextToggleVal.kttvForceOn);
+			tsBldr.SetIntPropValues((int) FwTextPropType.ktptWs, (int) FwTextPropVar.ktpvDefault, defUserWs);
 			StringServices.InsertHomographNumber(tsBldr, nHomograph, hc, HomographConfiguration.HeadwordVariant.Main, m_cache);
 			vwenv.AddString(tsBldr.GetString());
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="hvoEntryToDisplay"></param>
-		/// <param name="wsVern"></param>
-		/// <param name="ler"></param>
-		/// <returns></returns>
+		/// <summary />
 		public static ITsString GetLexEntryTss(LcmCache cache, int hvoEntryToDisplay, int wsVern, ILexEntryRef ler)
 		{
-			LexEntryVc vcEntry = new LexEntryVc(cache);
-			vcEntry.WritingSystemCode = wsVern;
-			TsStringCollectorEnv collector = new TsStringCollectorEnv(null, cache.MainCacheAccessor, hvoEntryToDisplay);
-			collector.RequestAppendSpaceForFirstWordInNewParagraph = false;
+			var vcEntry = new LexEntryVc(cache) {WritingSystemCode = wsVern};
+			var collector = new TsStringCollectorEnv(null, cache.MainCacheAccessor, hvoEntryToDisplay)
+			{
+				RequestAppendSpaceForFirstWordInNewParagraph = false
+			};
 			vcEntry.Display(collector, hvoEntryToDisplay, (int)VcFrags.kfragHeadWord);
 			if (ler != null)
+			{
 				vcEntry.Display(collector, ler.Hvo, LexEntryVc.kfragVariantTypes);
+			}
 			return collector.Result;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="morphBundle"></param>
-		/// <param name="wsVern"></param>
-		/// <returns></returns>
+		/// <summary />
 		public static ITsString GetLexEntryTss(IWfiMorphBundle morphBundle, int wsVern)
 		{
-			LcmCache cache = morphBundle.Cache;
-			LexEntryVc vcEntry = new LexEntryVc(cache);
-			vcEntry.WritingSystemCode = wsVern;
-			TsStringCollectorEnv collector = new TsStringCollectorEnv(null, cache.MainCacheAccessor, morphBundle.Hvo);
-			collector.RequestAppendSpaceForFirstWordInNewParagraph = false;
+			var cache = morphBundle.Cache;
+			var vcEntry = new LexEntryVc(cache) {WritingSystemCode = wsVern};
+			var collector = new TsStringCollectorEnv(null, cache.MainCacheAccessor, morphBundle.Hvo)
+			{
+				RequestAppendSpaceForFirstWordInNewParagraph = false
+			};
 			vcEntry.Display(collector, morphBundle.Hvo, (int)LexEntryVc.kfragEntryAndVariant);
 			return collector.Result;
 		}
 
 		private bool TryMultiStringAlt(ISilDataAccess sda, int hvo, int flid, out int wsActual)
 		{
-			ITsString tss = WritingSystemServices.GetMagicStringAlt(m_cache, m_ws, hvo, flid, true, out wsActual);
-			return (tss != null);
+			return WritingSystemServices.GetMagicStringAlt(m_cache, m_ws, hvo, flid, true, out wsActual) != null;
 		}
 	}
 }

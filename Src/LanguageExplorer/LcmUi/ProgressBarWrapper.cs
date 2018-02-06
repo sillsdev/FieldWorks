@@ -18,14 +18,10 @@ namespace LanguageExplorer.LcmUi
 	/// </summary>
 	public class ProgressBarWrapper : IProgress
 	{
-		private readonly ProgressBar m_progressBar;
 		/// <summary>
 		/// Gets the wrapped ProgressBar
 		/// </summary>
-		public ProgressBar ProgressBar
-		{
-			get { return m_progressBar; }
-		}
+		public ProgressBar ProgressBar { get; }
 
 		/// <summary>
 		/// Constructor which passes in the progressBar to wrap
@@ -33,7 +29,7 @@ namespace LanguageExplorer.LcmUi
 		/// <param name="progressBar"></param>
 		public ProgressBarWrapper(ProgressBar progressBar)
 		{
-			m_progressBar = progressBar;
+			ProgressBar = progressBar;
 		}
 
 		#region IProgress implementation
@@ -50,7 +46,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			int stepSizeHold = StepSize;
 			StepSize = amount;
-			m_progressBar.PerformStep();
+			ProgressBar.PerformStep();
 			StepSize = stepSizeHold;
 
 			if (Canceling != null)
@@ -61,65 +57,56 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		/// <summary>
-		/// Get the title of the progress display window.
+		/// Get/Set the title of the progress display window.
 		/// </summary>
-		/// <value>The title.</value>
-		public string Title { get; set; }  //ProgressBar.Text?
+		public string Title { get; set; }
 
 		/// <summary>
-		/// Get the message within the progress display window.
+		/// Get/Set the message within the progress display window.
 		/// </summary>
-		/// <value>The message.</value>
-		public string Message { get; set; } //ProgressBar.Text?
+		public string Message { get; set; }
 
 		/// <summary>
 		/// Gets or sets the current position of the progress bar. This should be within the limits set by
 		/// SetRange, or returned by GetRange.
 		/// </summary>
-		/// <value>The position.</value>
 		public int Position
 		{
-			get { return m_progressBar.Value; }
-			set { m_progressBar.Value = value; }
+			get { return ProgressBar.Value; }
+			set { ProgressBar.Value = value; }
 		}
 
 		/// <summary>
 		/// Gets or sets the size of the step increment used by Step.
 		/// </summary>
-		/// <value>The size of the step.</value>
 		public int StepSize
 		{
-			get { return m_progressBar.Step; }
-			set { m_progressBar.Step = value; }
+			get { return ProgressBar.Step; }
+			set { ProgressBar.Step = value; }
 		}
 
 		/// <summary>
 		/// Gets or sets the minimum value of the progress bar.
 		/// </summary>
-		/// <value>The minimum.</value>
 		public int Minimum
 		{
-			get { return m_progressBar.Minimum; }
-			set { m_progressBar.Minimum = value; }
+			get { return ProgressBar.Minimum; }
+			set { ProgressBar.Minimum = value; }
 		}
 		/// <summary>
 		/// Gets or sets the maximum value of the progress bar.
 		/// </summary>
-		/// <value>The maximum.</value>
 		public int Maximum
 		{
-			get { return m_progressBar.Maximum; }
-			set { m_progressBar.Maximum = value; }
+			get { return ProgressBar.Maximum; }
+			set { ProgressBar.Maximum = value; }
 		}
 
 		/// <summary>
 		/// Gets an object to be used for ensuring that required tasks are invoked on the main
 		/// UI thread.
 		/// </summary>
-		public ISynchronizeInvoke SynchronizeInvoke
-		{
-			get { return m_progressBar; }
-		}
+		public ISynchronizeInvoke SynchronizeInvoke => ProgressBar;
 
 		/// <summary>
 		/// Gets the form displaying the progress (used for message box owners, etc). If the progress
@@ -132,8 +119,8 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public bool IsIndeterminate
 		{
-			get { return m_progressBar.Style == ProgressBarStyle.Marquee; }
-			set { m_progressBar.Style = value ? ProgressBarStyle.Marquee : ProgressBarStyle.Continuous; }
+			get { return ProgressBar.Style == ProgressBarStyle.Marquee; }
+			set { ProgressBar.Style = value ? ProgressBarStyle.Marquee : ProgressBarStyle.Continuous; }
 		}
 
 		/// <summary>

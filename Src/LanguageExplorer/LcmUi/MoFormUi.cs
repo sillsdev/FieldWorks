@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,7 +18,6 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Create one.
 		/// </summary>
-		/// <param name="obj"></param>
 		public MoFormUi(ICmObject obj)
 			: base(obj)
 		{
@@ -30,8 +29,6 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// gives the hvo of the object to use in the URL we construct when doing a jump
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <returns></returns>
 		public override Guid GuidForJumping(object commandObject)
 		{
 #if RANDYTODO
@@ -59,29 +56,21 @@ namespace LanguageExplorer.LcmUi
 		{
 			wp.m_title = LcmUiStrings.ksMergeAllomorph;
 			wp.m_label = LcmUiStrings.ksAlternateForms;
-			int defVernWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
+			var defVernWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 
 			var le = (ILexEntry) Object.Owner;
 			foreach (var allo in le.AlternateFormsOS)
 			{
 				if (allo.Hvo != Object.Hvo && allo.ClassID == Object.ClassID)
 				{
-					mergeCandidates.Add(
-						new DummyCmObject(
-							allo.Hvo,
-							allo.Form.VernacularDefaultWritingSystem.Text,
-							defVernWs));
+					mergeCandidates.Add(new DummyCmObject(allo.Hvo, allo.Form.VernacularDefaultWritingSystem.Text, defVernWs));
 				}
 			}
 
 			if (le.LexemeFormOA.ClassID == Object.ClassID)
 			{
 				// Add the lexeme form.
-				mergeCandidates.Add(
-					new DummyCmObject(
-						le.LexemeFormOA.Hvo,
-						le.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text,
-						defVernWs));
+				mergeCandidates.Add(new DummyCmObject(le.LexemeFormOA.Hvo, le.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, defVernWs));
 			}
 
 			guiControl = "MergeAllomorphList";

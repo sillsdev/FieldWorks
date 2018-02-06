@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -27,19 +27,19 @@ namespace LanguageExplorer.LcmUi.Dialogs
 	/// </summary>
 	public class MergeObjectDlg : Form, IFlexComponent
 	{
-		private SIL.FieldWorks.Common.Widgets.FwTextBox m_fwTextBoxBottomMsg;
+		private FwTextBox m_fwTextBoxBottomMsg;
 		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
-		private DummyCmObject m_mainObj = null;
+		private DummyCmObject m_mainObj;
 		private DummyCmObject m_obj;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.PictureBox pictureBox1;
-		private System.Windows.Forms.Button btnOK;
-		private System.Windows.Forms.Button btnClose;
-		private System.Windows.Forms.Panel m_bvPanel;
-		private BrowseViewer m_bvMergeOptions = null;
-		private System.Windows.Forms.ColumnHeader m_chItems;
-		private System.Windows.Forms.Button buttonHelp;
+		private Label label2;
+		private PictureBox pictureBox1;
+		private Button btnOK;
+		private Button btnClose;
+		private Panel m_bvPanel;
+		private BrowseViewer m_bvMergeOptions;
+		private ColumnHeader m_chItems;
+		private Button buttonHelp;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -66,7 +66,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			InitializeComponent();
 			AccessibleName = "MergeObjectDlg";
 
-			Icon infoIcon = System.Drawing.SystemIcons.Information;
+			var infoIcon = SystemIcons.Information;
 			pictureBox1.Image = infoIcon.ToBitmap();
 			pictureBox1.Size = infoIcon.Size;
 
@@ -84,8 +84,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates,
-			string guiControl, string helpTopic)
+		public void SetDlgInfo(LcmCache cache, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates, string guiControl, string helpTopic)
 		{
 			CheckDisposed();
 
@@ -106,8 +105,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 
 			if(m_helpTopic != null && m_helpTopicProvider != null) // m_helpTopicProvider could be null for testing
 			{
-				helpProvider = new HelpProvider();
-				helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
+				helpProvider = new HelpProvider {HelpNamespace = m_helpTopicProvider.HelpFile};
 				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_helpTopic));
 				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
@@ -118,21 +116,21 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		private void MoveWindowToPreviousPosition()
 		{
 			// Get location to the stored values, if any.
-			object locWnd = PropertyTable.GetValue<object>("mergeDlgLocation");
+			var locWnd = PropertyTable.GetValue<object>("mergeDlgLocation");
 			// JohnT: this dialog can't be resized. So it doesn't make sense to
 			// remember a size. If we do, we need to override OnLoad (as in SimpleListChooser)
 			// to prevent the dialog growing every time at 120 dpi. But such an override
 			// makes it too small to show all the controls at the default size.
 			// It's better just to use the default size until it's resizeable for some reason.
-			//PropertyTable.GetValue("msaCreatorDlgSize");
-			object szWnd = Size;
-			if (locWnd != null && szWnd != null)
+			if (locWnd == null)
 			{
-				Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
-				ScreenHelper.EnsureVisibleRect(ref rect);
-				DesktopBounds = rect;
-				StartPosition = FormStartPosition.Manual;
+				return;
 			}
+			var szWnd = Size;
+			var rect = new Rectangle((Point)locWnd, szWnd);
+			ScreenHelper.EnsureVisibleRect(ref rect);
+			DesktopBounds = rect;
+			StartPosition = FormStartPosition.Manual;
 		}
 
 		private void InitBrowseView(string guiControl, List<DummyCmObject> mergeCandidates)
@@ -141,11 +139,13 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			var toolNode = configurationParameters.XPathSelectElement("controls/parameters/guicontrol[@id='" + guiControl + "']/parameters");
 
 			const int kMadeUpFieldIdentifier = 8999958;
-			ObjectListPublisher sda = new ObjectListPublisher(m_cache.GetManagedSilDataAccess(), kMadeUpFieldIdentifier);
+			var sda = new ObjectListPublisher(m_cache.GetManagedSilDataAccess(), kMadeUpFieldIdentifier);
 
-			int[] hvos = (from obj in mergeCandidates select obj.Hvo).ToArray();
-			for (int i = 0; i < mergeCandidates.Count; i++)
-				m_candidates[mergeCandidates[i].Hvo] = mergeCandidates[i];
+			var hvos = (mergeCandidates.Select(obj => obj.Hvo)).ToArray();
+			foreach (var mergeCandidate in mergeCandidates)
+			{
+				m_candidates[mergeCandidate.Hvo] = mergeCandidate;
+			}
 			sda.SetOwningPropInfo(WfiWordformTags.kClassId, "LangProject", "Options");
 			sda.SetOwningPropValue(hvos);
 #if RANDYTODO
@@ -169,7 +169,9 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -180,14 +182,13 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			m_cache = null;
 			m_fwTextBoxBottomMsg = null;
@@ -202,43 +203,33 @@ namespace LanguageExplorer.LcmUi.Dialogs
 
 		private void SetBottomMessage()
 		{
-			int userWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
-			string sBase;
-			if (m_obj != null && m_obj.Hvo > 0)
-				sBase = LcmUiStrings.ksMergeXIntoY;
-			else
-				sBase = LcmUiStrings.ksMergeXIntoSelection;
-			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
+			var userWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
+			var sBase = m_obj != null && m_obj.Hvo > 0 ? LcmUiStrings.ksMergeXIntoY : LcmUiStrings.ksMergeXIntoSelection;
+			var tsb = TsStringUtils.MakeStrBldr();
 			tsb.ReplaceTsString(0, tsb.Length, TsStringUtils.MakeString(sBase, userWs));
 			// Replace every "{0}" with the headword we'll be merging, and make it bold.
-			ITsString tssFrom = TsStringUtils.MakeString(m_mainObj.ToString(), m_mainObj.WS);
-			string sTmp = tsb.Text;
-			int ich = sTmp.IndexOf("{0}", StringComparison.Ordinal);
-			int cch = tssFrom.Length;
+			var tssFrom = TsStringUtils.MakeString(m_mainObj.ToString(), m_mainObj.WS);
+			var sTmp = tsb.Text;
+			var ich = sTmp.IndexOf("{0}", StringComparison.Ordinal);
+			var cch = tssFrom.Length;
 			while (ich >= 0 && cch > 0)
 			{
 				tsb.ReplaceTsString(ich, ich + 3, tssFrom);
-				tsb.SetIntPropValues(ich, ich + cch,
-					(int)FwTextPropType.ktptBold,
-					(int)FwTextPropVar.ktpvEnum,
-					(int)FwTextToggleVal.kttvForceOn);
+				tsb.SetIntPropValues(ich, ich + cch, (int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 				sTmp = tsb.Text;
 				ich = sTmp.IndexOf("{0}", StringComparison.Ordinal);	// in case localization needs more than one.
 			}
-			int cLines = 1;
+			var cLines = 1;
 			if (m_obj != null && m_obj.Hvo > 0)
 			{
 				// Replace every "{1}" with the headword we'll be merging into.
-				ITsString tssTo = TsStringUtils.MakeString(m_obj.ToString(), m_obj.WS);
+				var tssTo = TsStringUtils.MakeString(m_obj.ToString(), m_obj.WS);
 				ich = sTmp.IndexOf("{1}", StringComparison.Ordinal);
 				cch = tssTo.Length;
 				while (ich >= 0 && cch > 0)
 				{
 					tsb.ReplaceTsString(ich, ich + 3, tssTo);
-					tsb.SetIntPropValues(ich, ich + cch,
-						(int)FwTextPropType.ktptBold,
-						(int)FwTextPropVar.ktpvEnum,
-						(int)FwTextToggleVal.kttvForceOn);
+					tsb.SetIntPropValues(ich, ich + cch, (int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 					sTmp = tsb.Text;
 					ich = sTmp.IndexOf("{1}", StringComparison.Ordinal);
 				}
@@ -265,16 +256,18 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				}
 			}
 			m_fwTextBoxBottomMsg.Tss = tsb.GetString();
-			int oldHeight = m_fwTextBoxBottomMsg.Height;
-			int newHeight = m_fwTextBoxBottomMsg.PreferredHeight;
+			var oldHeight = m_fwTextBoxBottomMsg.Height;
+			var newHeight = m_fwTextBoxBottomMsg.PreferredHeight;
 			// Having newlines in the middle of the string messes up the height calculation.
 			// See FWR-2308.  The adjustment may not be perfect, but is better than just showing
 			// the text before the first newline.
 			if (newHeight < 30)
+			{
 				newHeight *= cLines;
+			}
 			if (newHeight != m_fwTextBoxBottomMsg.Height)
 			{
-				int delta = newHeight - oldHeight;
+				var delta = newHeight - oldHeight;
 				Size = MinimumSize;
 				FontHeightAdjuster.GrowDialogAndAdjustControls(this, delta, m_fwTextBoxBottomMsg);
 				m_fwTextBoxBottomMsg.Height = newHeight;
@@ -386,7 +379,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 
 		private void SetSelectedObject()
 		{
-			int hvo = m_bvMergeOptions.AllItems[m_bvMergeOptions.SelectedIndex];
+			var hvo = m_bvMergeOptions.AllItems[m_bvMergeOptions.SelectedIndex];
 			m_obj = m_candidates[hvo];
 			SetBottomMessage();
 			btnOK.Enabled = true;
@@ -394,11 +387,8 @@ namespace LanguageExplorer.LcmUi.Dialogs
 
 		private void MergeObjectDlg_Closed(object sender, EventArgs e)
 		{
-			if (PropertyTable != null)
-			{
-				PropertyTable.SetProperty("mergeDlgLocation", Location, true, true);
-				PropertyTable.SetProperty("mergeDlgSize", Size, true, true);
-			}
+			PropertyTable.SetProperty("mergeDlgLocation", Location, true, true);
+			PropertyTable.SetProperty("mergeDlgSize", Size, true, true);
 		}
 
 		private void buttonHelp_Click(object sender, EventArgs e)

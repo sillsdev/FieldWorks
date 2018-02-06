@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using LanguageExplorer.Controls.LexText;
+using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -22,7 +23,6 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Create one.
 		/// </summary>
-		/// <param name="obj"></param>
 		public LexSenseUi(ICmObject obj)
 			: base(obj)
 		{
@@ -34,8 +34,6 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// gives the hvo of the object to use in the URL we construct when doing a jump
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <returns></returns>
 		public override Guid GuidForJumping(object commandObject)
 		{
 #if RANDYTODO
@@ -44,8 +42,8 @@ namespace LanguageExplorer.LcmUi
 			if (className == "LexSense")
 				return Object.Guid;
 #endif
-			ICmObject cmo = GetSelfOrParentOfClass(Object, LexEntryTags.kClassId);
-			return (cmo == null) ? Guid.Empty : cmo.Guid;
+			var cmo = GetSelfOrParentOfClass(Object, LexEntryTags.kClassId);
+			return cmo?.Guid ?? Guid.Empty;
 		}
 
 #if RANDYTODO
@@ -74,31 +72,28 @@ namespace LanguageExplorer.LcmUi
 		{
 			wp.m_title = LcmUiStrings.ksMergeSense;
 			wp.m_label = LcmUiStrings.ksSenses;
-			int defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-
 			var sense = (ILexSense) Object;
 			var le = sense.Entry;
 			// Exclude subsenses of the chosen sense.  See LT-6107.
 			var rghvoExclude = new List<int>();
 			foreach (var ls in sense.AllSenses)
+			{
 				rghvoExclude.Add(ls.Hvo);
+			}
 			foreach (var senseInner in le.AllSenses)
 			{
-				if (senseInner != Object && !rghvoExclude.Contains(senseInner.Hvo))
+				if (senseInner == Object || rghvoExclude.Contains(senseInner.Hvo))
 				{
-					// Make sure we get the actual WS used (best analysis would be the
-					// descriptive term) for the ShortName.  See FWR-2812.
-					ITsString tssName = senseInner.ShortNameTSS;
-					mergeCandidates.Add(
-						new DummyCmObject(
-							senseInner.Hvo,
-							tssName.Text,
-							TsStringUtils.GetWsAtOffset(tssName, 0)));
+					continue;
 				}
+				// Make sure we get the actual WS used (best analysis would be the
+				// descriptive term) for the ShortName.  See FWR-2812.
+				var tssName = senseInner.ShortNameTSS;
+				mergeCandidates.Add(new DummyCmObject(senseInner.Hvo, tssName.Text, TsStringUtils.GetWsAtOffset(tssName, 0)));
 			}
 			guiControl = "MergeSenseList";
 			helpTopic = "khtpMergeSense";
-			ITsString tss = Object.ShortNameTSS;
+			var tss = Object.ShortNameTSS;
 			return new DummyCmObject(m_hvo, tss.Text, TsStringUtils.GetWsAtOffset(tss, 0));
 		}
 
@@ -107,7 +102,7 @@ namespace LanguageExplorer.LcmUi
 			CheckDisposed();
 
 			var obj = Object.Owner;
-			int clid = obj.ClassID;
+			var clid = obj.ClassID;
 			while (clid != LexEntryTags.kClassId)
 			{
 				obj = obj.Owner;
@@ -124,8 +119,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public static LexSenseUi CreateNewUiObject(LcmCache cache, int hvoOwner, int insertionPosition = int.MaxValue)
 		{
-			if (cache == null)
-				throw new ArgumentNullException(nameof(cache));
+			Guard.AgainstNull(cache, nameof(cache));
 
 			var owner = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoOwner);
 			if (owner is ILexEntry)
@@ -263,9 +257,6 @@ namespace LanguageExplorer.LcmUi
 		/// This method will get an MSA which the senses MorphoSyntaxAnalysisRA points to.
 		/// If it is null it will try and find an appropriate one in the owning Entries list, if that fails it will make one and put it there.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="sense">LexSense whose MSA we will use/change</param>
-		/// <returns></returns>
 		private static IMoMorphSynAnalysis GetSafeMsa(LcmCache cache, ILexSense sense)
 		{
 			if (sense.MorphoSyntaxAnalysisRA != null)
@@ -295,7 +286,7 @@ namespace LanguageExplorer.LcmUi
 				return sense.MorphoSyntaxAnalysisRA;
 			}
 			var safeMsa = isAffixType
-				? (IMoMorphSynAnalysis)cache.ServiceLocator.GetInstance<IMoUnclassifiedAffixMsaFactory>().Create()
+				? cache.ServiceLocator.GetInstance<IMoUnclassifiedAffixMsaFactory>().Create()
 				: (IMoMorphSynAnalysis)cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
 			sense.Entry.MorphoSyntaxAnalysesOC.Add(safeMsa);
 			sense.MorphoSyntaxAnalysisRA = safeMsa;

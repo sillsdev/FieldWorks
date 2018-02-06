@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,7 +17,6 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Create one.
 		/// </summary>
-		/// <param name="obj"></param>
 		public MoMorphSynAnalysisUi(ICmObject obj)
 			: base(obj)
 		{
@@ -30,7 +29,7 @@ namespace LanguageExplorer.LcmUi
 
 		protected override bool ShouldDisplayMenuForClass(int specifiedClsid)
 		{
-			return (PartOfSpeechTags.kClassId == specifiedClsid) && (GuidForJumping(null) != Guid.Empty);
+			return (PartOfSpeechTags.kClassId == specifiedClsid) && GuidForJumping(null) != Guid.Empty;
 		}
 
 		/// <summary>
@@ -43,7 +42,9 @@ namespace LanguageExplorer.LcmUi
 				CheckDisposed();
 
 				if (m_vc == null)
+				{
 					m_vc = new MsaVc(m_cache);
+				}
 				return base.Vc;
 			}
 		}

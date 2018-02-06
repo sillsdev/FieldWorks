@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -35,19 +35,18 @@ namespace LanguageExplorer.LcmUi
 		/// This is the ReferenceUi factory.
 		/// We currently exclude ReferenceSequenceUi (see that class for reason).
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="rootObj"></param>
-		/// <param name="referenceFlid"></param>
-		/// <param name="targetHvo"></param>
-		/// <returns></returns>
-		public static ReferenceBaseUi MakeUi(LcmCache cache, ICmObject rootObj,
-			int referenceFlid, int targetHvo)
+		public static ReferenceBaseUi MakeUi(LcmCache cache, ICmObject rootObj, int referenceFlid, int targetHvo)
 		{
 			var iType = (CellarPropertyType)cache.DomainDataByFlid.MetaDataCache.GetFieldType(referenceFlid);
-			if (iType == CellarPropertyType.ReferenceSequence || iType == CellarPropertyType.ReferenceCollection)
-				return new VectorReferenceUi(cache, rootObj, referenceFlid, targetHvo);
-			if (iType == CellarPropertyType.ReferenceAtomic)
-				return new ReferenceBaseUi(cache, rootObj, referenceFlid, targetHvo);
+			switch (iType)
+			{
+				case CellarPropertyType.ReferenceSequence:
+				case CellarPropertyType.ReferenceCollection:
+					return new VectorReferenceUi(cache, rootObj, referenceFlid, targetHvo);
+				case CellarPropertyType.ReferenceAtomic:
+					return new ReferenceBaseUi(cache, rootObj, referenceFlid, targetHvo);
+			}
+
 			return null;
 		}
 
