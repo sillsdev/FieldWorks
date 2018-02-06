@@ -694,6 +694,7 @@
     <Compile Include="Controls\XMLViews\TypeSubClass.cs" />
     <Compile Include="Controls\XMLViews\XmlSeqSelectionRestorer.cs" />
     <Compile Include="Controls\XMLViews\XmlViewsMetaDataCacheDecorator.cs" />
+    <Compile Include="Impls\WebonaryException.cs" />
     <Compile Include="IMultiListSortItemProvider.cs" />
     <Compile Include="Controls\XMLViews\IntChooserBEditControl.cs" />
     <Compile Include="Controls\XMLViews\IntComboItem.cs" />

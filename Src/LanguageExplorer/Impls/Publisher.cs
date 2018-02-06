@@ -26,7 +26,6 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Constructor for tests only!
 		/// </summary>
-		/// <param name="subscriber"></param>
 		internal Publisher(ISubscriber subscriber) : this()
 		{
 			_subscriber = subscriber;

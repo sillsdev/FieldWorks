@@ -73,14 +73,9 @@ namespace LanguageExplorer.Impls
 		}
 
 		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool _isDisposed;
-
-		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed => _isDisposed;
+		public bool IsDisposed { get; private set; }
 
 		~CombinedStylesListHandler()
 		{
@@ -90,7 +85,6 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Clean up everything that we've been using.
 		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
 		public void Dispose()
 		{
 			Dispose(true);
@@ -126,7 +120,7 @@ namespace LanguageExplorer.Impls
 		private void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (_isDisposed)
+			if (IsDisposed)
 			{
 				// No need to run it more than once.
 				return;
@@ -152,7 +146,7 @@ namespace LanguageExplorer.Impls
 			_sortedAllStyleInformation = null;
 			_subscriber = null;
 
-			_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		#endregion

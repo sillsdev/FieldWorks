@@ -42,7 +42,9 @@ namespace LanguageExplorer.Impls
 			InitializeComponent();
 
 			if (MiscUtils.IsUnix)
+			{
 				MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height + m_additionalMinimumHeightForMono);
+			}
 
 			m_controller = controller;
 			Model = model;
@@ -53,18 +55,17 @@ namespace LanguageExplorer.Impls
 			// When a link is clicked, open a web page to the URL.
 			explanationLabel.LinkClicked += (sender, args) =>
 			{
-				using (Process.Start(((LinkLabel) sender).Text.Substring(args.Link.Start, args.Link.Length)))
-				{}
+				Process.Start(((LinkLabel) sender).Text.Substring(args.Link.Start, args.Link.Length));
 			};
 
 			// Restore the location and size from last time we called this dialog.
 			if (PropertyTable != null)
 			{
-				object locWnd = PropertyTable.GetValue<object>("UploadToWebonaryDlg_Location");
-				object szWnd = PropertyTable.GetValue<object>("UploadToWebonaryDlg_Size");
+				var locWnd = PropertyTable.GetValue<object>("UploadToWebonaryDlg_Location");
+				var szWnd = PropertyTable.GetValue<object>("UploadToWebonaryDlg_Size");
 				if (locWnd != null && szWnd != null)
 				{
-					Rectangle rect = new Rectangle((Point) locWnd, (Size) szWnd);
+					var rect = new Rectangle((Point) locWnd, (Size) szWnd);
 					ScreenHelper.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
@@ -74,7 +75,7 @@ namespace LanguageExplorer.Impls
 			// Start with output log area not shown by default
 			// When a user clicks Publish, it is revealed. This is done within the context of having a resizable table of controls, and having
 			// the output log area be the vertically growing control when a user increases the height of the dialog.
-			this.Shown += (sender, args) => { this.Height = this.Height - outputLogTextbox.Height; };
+			Shown += (sender, args) => { Height = Height - outputLogTextbox.Height; };
 
 			// Handle localizable explanation area with link.
 			var explanationText = LanguageExplorerResources.toApplyForWebonaryAccountExplanation;
@@ -110,8 +111,7 @@ namespace LanguageExplorer.Impls
 				{
 					if (reversalIndex == reversalCounts.Keys.First())
 					{
-						middle += string.Format(LanguageExplorerResources.ReversalEntries_Only, reversalCounts[reversalIndex],
-							reversalIndex);
+						middle += string.Format(LanguageExplorerResources.ReversalEntries_Only, reversalCounts[reversalIndex], reversalIndex);
 					}
 					else
 					{
@@ -157,17 +157,21 @@ namespace LanguageExplorer.Impls
 		private void PopulateConfigurationsListByPublication(string publication)
 		{
 			var selectedConfiguration = (configurationBox.SelectedItem ?? string.Empty).ToString();
-			var availableConfigurations = Model.Configurations.Where(prop => prop.Value.Publications.Contains(publication))
-				.Select(prop => prop.Value.Label).ToList();
+			var availableConfigurations = Model.Configurations.Where(prop => prop.Value.Publications.Contains(publication)).Select(prop => prop.Value.Label).ToList();
 			configurationBox.Items.Clear();
 			foreach (var config in availableConfigurations)
 			{
 				configurationBox.Items.Add(config);
 			}
+
 			if (availableConfigurations.Contains(selectedConfiguration))
+			{
 				configurationBox.SelectedItem = selectedConfiguration;
-			else if (availableConfigurations.Count > 0)
+			}
+			else if (availableConfigurations.Any())
+			{
 				configurationBox.SelectedIndex = 0;
+			}
 		}
 
 		private void PopulateReversalsCheckboxListByPublication(string publication)
@@ -178,7 +182,9 @@ namespace LanguageExplorer.Impls
 				&& !string.IsNullOrEmpty(prop.Value.WritingSystem)).Select(prop => prop.Value.Label).ToList();
 			reversalsCheckedListBox.Items.Clear();
 			foreach (var reversal in availableReversals)
+			{
 				reversalsCheckedListBox.Items.Add(reversal);
+			}
 			SetSelectedReversals(selectedReversals);
 		}
 
@@ -186,37 +192,38 @@ namespace LanguageExplorer.Impls
 
 		private void LoadFromModel()
 		{
-			if(Model != null)
+			if (Model == null)
 			{
-				// Load the contents of the drop down and checkbox list controls
-				PopulatePublicationsList();
-				if(Model.RememberPassword)
-				{
-					rememberPasswordCheckbox.Checked = true;
-					webonaryPasswordTextbox.Text = Model.Password;
-				}
-				webonaryUsernameTextbox.Text = Model.UserName;
-				webonarySiteNameTextbox.Text = Model.SiteName;
-				if (!String.IsNullOrEmpty(Model.SelectedPublication))
-				{
-					publicationBox.SelectedItem = Model.SelectedPublication;
-				}
-				else
-				{
-					publicationBox.SelectedIndex = 0;
-				}
-				PopulateReversalsCheckboxListByPublication(publicationBox.SelectedItem.ToString());
-				SetSelectedReversals(Model.SelectedReversals);
-				if(!String.IsNullOrEmpty(Model.SelectedConfiguration))
-				{
-					configurationBox.SelectedItem = Model.SelectedConfiguration;
-				}
-				else
-				{
-					configurationBox.SelectedIndex = 0;
-				}
-				UpdateEntriesToBePublishedLabel();
+				return;
 			}
+			// Load the contents of the drop down and checkbox list controls
+			PopulatePublicationsList();
+			if(Model.RememberPassword)
+			{
+				rememberPasswordCheckbox.Checked = true;
+				webonaryPasswordTextbox.Text = Model.Password;
+			}
+			webonaryUsernameTextbox.Text = Model.UserName;
+			webonarySiteNameTextbox.Text = Model.SiteName;
+			if (!string.IsNullOrEmpty(Model.SelectedPublication))
+			{
+				publicationBox.SelectedItem = Model.SelectedPublication;
+			}
+			else
+			{
+				publicationBox.SelectedIndex = 0;
+			}
+			PopulateReversalsCheckboxListByPublication(publicationBox.SelectedItem.ToString());
+			SetSelectedReversals(Model.SelectedReversals);
+			if(!string.IsNullOrEmpty(Model.SelectedConfiguration))
+			{
+				configurationBox.SelectedItem = Model.SelectedConfiguration;
+			}
+			else
+			{
+				configurationBox.SelectedIndex = 0;
+			}
+			UpdateEntriesToBePublishedLabel();
 		}
 
 		private void SaveToModel()
@@ -239,8 +246,10 @@ namespace LanguageExplorer.Impls
 
 		private void SetSelectedReversals(ICollection<string> selectedReversals)
 		{
-			if(selectedReversals == null)
+			if (selectedReversals == null)
+			{
 				return;
+			}
 			//Check every reversal in the list that was in the given list (e.g. from settings)
 			for(var i = 0; i < reversalsCheckedListBox.Items.Count; ++i)
 			{
@@ -258,9 +267,7 @@ namespace LanguageExplorer.Impls
 
 		private DictionaryConfigurationModel GetSelectedDictionaryModel()
 		{
-			return configurationBox.SelectedItem == null
-				? null
-				: Model.Configurations[configurationBox.SelectedItem.ToString()];
+			return configurationBox.SelectedItem == null ? null : Model.Configurations[configurationBox.SelectedItem.ToString()];
 		}
 
 		private void publishButton_Click(object sender, EventArgs e)
@@ -272,12 +279,14 @@ namespace LanguageExplorer.Impls
 			// or maximized the form, and later reduces the height or unmaximizes the form
 			// after clicking Publish.
 
-			var allButTheLogRowHeight = this.tableLayoutPanel.GetRowHeights().Sum() - this.tableLayoutPanel.GetRowHeights().Last();
-			var fudge = this.Height - this.tableLayoutPanel.Height;
-			var minimumFormHeightToShowLog = allButTheLogRowHeight + this.outputLogTextbox.MinimumSize.Height + fudge;
+			var allButTheLogRowHeight = tableLayoutPanel.GetRowHeights().Sum() - tableLayoutPanel.GetRowHeights().Last();
+			var fudge = Height - tableLayoutPanel.Height;
+			var minimumFormHeightToShowLog = allButTheLogRowHeight + outputLogTextbox.MinimumSize.Height + fudge;
 			if (MiscUtils.IsUnix)
+			{
 				minimumFormHeightToShowLog += m_additionalMinimumHeightForMono;
-			this.MinimumSize = new Size(this.MinimumSize.Width, minimumFormHeightToShowLog);
+			}
+			MinimumSize = new Size(MinimumSize.Width, minimumFormHeightToShowLog);
 
 			m_controller.UploadToWebonary(Model, this);
 		}
@@ -308,16 +317,16 @@ namespace LanguageExplorer.Impls
 			{
 				case WebonaryStatusCondition.Success:
 					// Green
-					newColor = System.Drawing.ColorTranslator.FromHtml("#b8ffaa");
+					newColor = ColorTranslator.FromHtml("#b8ffaa");
 					break;
 				case WebonaryStatusCondition.Error:
 					// Red
-					newColor = System.Drawing.ColorTranslator.FromHtml("#ffaaaa");
+					newColor = ColorTranslator.FromHtml("#ffaaaa");
 					break;
 				case WebonaryStatusCondition.None:
 				default:
 					// Grey
-					newColor = System.Drawing.ColorTranslator.FromHtml("#dcdad5");
+					newColor = ColorTranslator.FromHtml("#dcdad5");
 					break;
 			}
 			outputLogTextbox.BackColor = newColor;
@@ -348,7 +357,9 @@ namespace LanguageExplorer.Impls
 			// On Linux, when reducing the height of the dialog, the output log doesn't shrink with it.
 			// Set its height back to something smaller to keep the whole control visible. It will expand as appropriate.
 			if (MiscUtils.IsUnix)
+			{
 				outputLogTextbox.Size = new Size(outputLogTextbox.Size.Width, outputLogTextbox.MinimumSize.Height);
+			}
 		}
 	}
 }

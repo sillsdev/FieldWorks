@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -46,14 +47,9 @@ namespace LanguageExplorer.Impls
 		/// </exception>
 		void IRecordListRepository.AddRecordList(IRecordList recordList)
 		{
-			if (recordList == null)
-			{
-				throw new ArgumentNullException(nameof(recordList));
-			}
-			if (_recordLists.ContainsKey(recordList.Id))
-			{
-				throw new InvalidOperationException($"The record list with an '{recordList.Id}' is already in the repository.");
-			}
+			Guard.AgainstNull(recordList, nameof(recordList));
+			Guard.AssertThat(!_recordLists.ContainsKey(recordList.Id), $"The record list with an '{recordList.Id}' is already in the repository.");
+
 			_recordLists.Add(recordList.Id, recordList);
 		}
 
@@ -77,21 +73,22 @@ namespace LanguageExplorer.Impls
 			Guard.AgainstNull(recordList, nameof(recordList));
 
 			IRecordList goner;
-			if (_recordLists.TryGetValue(recordList.Id, out goner))
+			if (!_recordLists.TryGetValue(recordList.Id, out goner))
 			{
-				if (!ReferenceEquals(recordList, goner))
-				{
-					// Hmm. An imposter in our midst.
-					throw new InvalidOperationException($"The two record lists have the same Id '{recordList.Id}', but they are not the same identical record list.");
-				}
-				if (AsRecordListRepository.ActiveRecordList == recordList)
-				{
-					// This will call its BecomeInactive() method.
-					AsRecordListRepository.ActiveRecordList = null;
-				}
-				_recordLists.Remove(recordList.Id);
-				recordList.Dispose();
+				return;
 			}
+			if (!ReferenceEquals(recordList, goner))
+			{
+				// Hmm. An imposter in our midst.
+				throw new InvalidOperationException($"The two record lists have the same Id '{recordList.Id}', but they are not the same identical record list.");
+			}
+			if (AsRecordListRepository.ActiveRecordList == recordList)
+			{
+				// This will call its BecomeInactive() method.
+				AsRecordListRepository.ActiveRecordList = null;
+			}
+			_recordLists.Remove(recordList.Id);
+			recordList.Dispose();
 		}
 
 		/// <summary>
@@ -101,8 +98,7 @@ namespace LanguageExplorer.Impls
 		/// <returns>The record list with the given <paramref name="recordListId"/>, or null if not found.</returns>
 		IRecordList IRecordListRepository.GetRecordList(string recordListId)
 		{
-			if (string.IsNullOrWhiteSpace(recordListId))
-				throw new ArgumentNullException(nameof(recordListId));
+			Guard.AgainstNullOrEmptyString(recordListId, nameof(recordListId));
 
 			IRecordList recordListToGet;
 			_recordLists.TryGetValue(recordListId, out recordListToGet);
@@ -209,10 +205,12 @@ namespace LanguageExplorer.Impls
 
 		private void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (_isDisposed)
+			{
+				// No need to run more than once.
 				return;
+			}
 
 			if (disposing)
 			{

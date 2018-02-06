@@ -55,10 +55,7 @@ namespace LanguageExplorer.Impls
 		[Import]
 		private IHelpTopicProvider m_helpTopicProvider;
 		private bool m_fInitialized;
-		/// <summary>
-		/// One of m_rgMainWindows, the one most recently activated.
-		/// </summary>
-		private Form m_activeMainWindow;
+
 		/// <summary></summary>
 		private int m_nEnableLevel;
 		/// <summary>
@@ -66,7 +63,7 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		[Import]
 		private IFieldWorksManager m_fwManager;
-		/// <summary></summary>
+		/// <summary />
 		private FwFindReplaceDlg m_findReplaceDlg;
 		private SuppressedCacheInfo m_suppressedCacheInfo;
 		/// <summary>
@@ -132,7 +129,9 @@ namespace LanguageExplorer.Impls
 			get
 			{
 				if (m_findReplaceDlg != null && m_findReplaceDlg.IsDisposed)
+				{
 					RemoveFindReplaceDialog(); // This is a HACK for TE-5974!!!
+				}
 
 				return m_findReplaceDlg;
 			}
@@ -206,8 +205,10 @@ namespace LanguageExplorer.Impls
 		/// </returns>
 		public bool PreFilterMessage(ref Message m)
 		{
-			if (m.Msg != (int)Win32.WinMsgs.WM_KEYDOWN && m.Msg != (int)Win32.WinMsgs.WM_KEYUP)
+			if (m.Msg != (int) Win32.WinMsgs.WM_KEYDOWN && m.Msg != (int) Win32.WinMsgs.WM_KEYUP)
+			{
 				return false;
+			}
 
 			var key = ((Keys)(int)m.WParam & Keys.KeyCode);
 			// There is a known issue in older versions of Keyman (< 7.1.268) where the KMTip addin sends a 0x88 keystroke
@@ -219,7 +220,9 @@ namespace LanguageExplorer.Impls
 			{
 				var c = Control.FromHandle(m.HWnd);
 				if (c is ButtonBase)
+				{
 					return true;
+				}
 			}
 
 			return false;
@@ -302,7 +305,9 @@ namespace LanguageExplorer.Impls
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 #region Dispose support
@@ -343,10 +348,12 @@ namespace LanguageExplorer.Impls
 		/// </remarks>
 		private void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed || BeingDisposed)
+			{
 				return;
+			}
 
 			BeingDisposed = true;
 
@@ -392,7 +399,7 @@ namespace LanguageExplorer.Impls
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			_windows = null;
-			m_activeMainWindow = null;
+			ActiveMainWindow = null;
 			RegistrySettings = null;
 			m_findPattern = null;
 			m_findReplaceDlg = null;
@@ -445,8 +452,6 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Return a string from a resource ID
 		/// </summary>
-		/// <param name="stid">String resource id</param>
-		/// <returns>string</returns>
 		public string ResourceString(string stid)
 		{
 			CheckDisposed();
@@ -461,7 +466,7 @@ namespace LanguageExplorer.Impls
 			{
 				if (!m_fResourceFailed)
 				{
-					MessageBox.Show(m_activeMainWindow, string.Format(LanguageExplorerResources.ksErrorLoadingResourceStrings, e.Message), LanguageExplorerResources.ksError);
+					MessageBox.Show(ActiveMainWindow, string.Format(LanguageExplorerResources.ksErrorLoadingResourceStrings, e.Message), LanguageExplorerResources.ksError);
 					m_fResourceFailed = true;
 				}
 				return (stid == null) ? "NullStringID" : null;
@@ -484,7 +489,7 @@ namespace LanguageExplorer.Impls
 		/// which should be something that has a taskbar icon. It is often useful as the
 		/// appropriate parent window for a dialog that otherwise doesn't have one.
 		/// </summary>
-		public Form ActiveMainWindow => m_activeMainWindow;
+		public Form ActiveMainWindow { get; private set; }
 
 		/// <summary>
 		/// Gets the name of the application.
@@ -550,8 +555,11 @@ namespace LanguageExplorer.Impls
 					wnd.PrepareToRefresh();
 					rgxw.Add(wnd);
 				}
+
 				if (activeWnd != null)
+				{
 					rgxw.Remove(activeWnd);
+				}
 
 				foreach (var xwnd in rgxw)
 				{
@@ -578,7 +586,9 @@ namespace LanguageExplorer.Impls
 			{
 				var messages = m_suppressedCacheInfo.Queue;
 				if (!messages.Contains(sync))
+				{
 					messages.Enqueue(sync);
+				}
 				return true;
 			}
 
@@ -604,7 +614,7 @@ namespace LanguageExplorer.Impls
 			}
 
 			if (MainWindows.All(wnd => wnd.Synchronize(sync)))
-		{
+			{
 				return true;
 			}
 			RefreshAllViews();
@@ -617,7 +627,7 @@ namespace LanguageExplorer.Impls
 		public Guid SyncGuid
 		{
 			get
-		{
+			{
 				CheckDisposed();
 				return AppGuid;
 			}
@@ -650,7 +660,9 @@ namespace LanguageExplorer.Impls
 			foreach (var fwMainWnd in MainWindows)
 			{
 				if (fwMainWnd is Form)
+				{
 					((Form)fwMainWnd).Enabled = fEnable;
+				}
 			}
 		}
 
@@ -681,14 +693,18 @@ namespace LanguageExplorer.Impls
 			CheckDisposed();
 
 			if (rootsite?.RootBox == null)
+			{
 				return false;
+			}
 
 			int hvoRoot, frag;
 			IVwViewConstructor vc;
 			IVwStylesheet ss;
 			rootsite.RootBox.GetRootObject(out hvoRoot, out vc, out frag, out ss);
 			if (hvoRoot == 0)
+			{
 				return false;
+			}
 
 			if (FindReplaceDialog == null)
 			{
@@ -697,8 +713,7 @@ namespace LanguageExplorer.Impls
 
 			var fOverlay = (rootsite.RootBox.Overlay != null);
 
-			if (m_findReplaceDlg.SetDialogValues(rootsite.Cache, FindPattern,
-				rootsite, fReplace, fOverlay, rootsite.FindForm(), this, this))
+			if (m_findReplaceDlg.SetDialogValues(rootsite.Cache, FindPattern, rootsite, fReplace, fOverlay, rootsite.FindForm(), this, this))
 			{
 				m_findReplaceDlg.Show();
 				return true;
@@ -711,7 +726,6 @@ namespace LanguageExplorer.Impls
 		/// project has been activated.
 		/// See the class comment on FwLinkArgs for details on how all the parts of hyperlinking work.
 		/// </summary>
-		/// <param name="link">The link.</param>
 		public void HandleIncomingLink(FwLinkArgs link)
 		{
 			CheckDisposed();
@@ -719,7 +733,7 @@ namespace LanguageExplorer.Impls
 			// Get window that uses the given DB.
 			var fwxwnd = _windows.Any() ? _windows[0].Item1 : null;
 			if (fwxwnd == null)
-		{
+			{
 				return;
 			}
 			var commands = new List<string>
@@ -743,7 +757,6 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Handles an outgoing link request from this application.
 		/// </summary>
-		/// <param name="link">The link.</param>
 		public void HandleOutgoingLink(FwAppArgs link)
 		{
 			m_fwManager.HandleLinkRequest(link);
@@ -758,115 +771,139 @@ namespace LanguageExplorer.Impls
 		/// "best place".</remarks>
 		public bool UpdateExternalLinks(string oldLinkedFilesRootDir)
 		{
-			ILangProject lp = Cache.LanguageProject;
-			string sNewLinkedFilesRootDir = lp.LinkedFilesRootDir;
-			if (!FileUtils.PathsAreEqual(sNewLinkedFilesRootDir, oldLinkedFilesRootDir))
+			var lp = Cache.LanguageProject;
+			var sNewLinkedFilesRootDir = lp.LinkedFilesRootDir;
+			if (FileUtils.PathsAreEqual(sNewLinkedFilesRootDir, oldLinkedFilesRootDir))
 			{
-				List<string> rgFilesToMove = new List<string>();
-				// TODO: offer to move or copy existing files.
-				foreach (ICmFolder cf in lp.MediaOC)
-					CollectMovableFilesFromFolder(cf, rgFilesToMove, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
-				foreach (ICmFolder cf in lp.PicturesOC)
-					CollectMovableFilesFromFolder(cf, rgFilesToMove, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
-				//Get the files which are pointed to by links in TsStrings
-				CollectMovableFilesFromFolder(lp.FilePathsInTsStringsOA, rgFilesToMove, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
+				return false;
+			}
+			var rgFilesToMove = new List<string>();
+			// TODO: offer to move or copy existing files.
+			foreach (var cf in lp.MediaOC)
+			{
+				CollectMovableFilesFromFolder(cf, rgFilesToMove, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
+			}
 
-				var hyperlinks = StringServices.GetHyperlinksInFolder(Cache, oldLinkedFilesRootDir);
-				foreach (var linkInfo in hyperlinks)
+			foreach (var cf in lp.PicturesOC)
+			{
+				CollectMovableFilesFromFolder(cf, rgFilesToMove, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
+			}
+			//Get the files which are pointed to by links in TsStrings
+			CollectMovableFilesFromFolder(lp.FilePathsInTsStringsOA, rgFilesToMove, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
+
+			var hyperlinks = StringServices.GetHyperlinksInFolder(Cache, oldLinkedFilesRootDir);
+			foreach (var linkInfo in hyperlinks)
+			{
+				if (!rgFilesToMove.Contains(linkInfo.RelativePath) && FileUtils.SimilarFileExists(Path.Combine(oldLinkedFilesRootDir, linkInfo.RelativePath)) &&
+				    !FileUtils.SimilarFileExists(Path.Combine(sNewLinkedFilesRootDir, linkInfo.RelativePath)))
 				{
-					if (!rgFilesToMove.Contains(linkInfo.RelativePath) &&
-						FileUtils.SimilarFileExists(Path.Combine(oldLinkedFilesRootDir, linkInfo.RelativePath)) &&
-						!FileUtils.SimilarFileExists(Path.Combine(sNewLinkedFilesRootDir, linkInfo.RelativePath)))
-					{
-						rgFilesToMove.Add(linkInfo.RelativePath);
-					}
-				}
-				if (rgFilesToMove.Count > 0)
-				{
-					FileLocationChoice action;
-					using (MoveOrCopyFilesDlg dlg = new MoveOrCopyFilesDlg()) // REVIEW (Hasso) 2015.08: should this go in MoveOrCopyFilesController?
-					{
-						dlg.Initialize(rgFilesToMove.Count, oldLinkedFilesRootDir, sNewLinkedFilesRootDir, this);
-						DialogResult res = dlg.ShowDialog();
-						Debug.Assert(res == DialogResult.OK);
-						if (res != DialogResult.OK)
-							return false;   // should never happen!
-						action = dlg.Choice;
-					}
-					if (action == FileLocationChoice.Leave) // Expand path
-					{
-						NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
-							() =>
-							{
-								foreach (ICmFolder cf in lp.MediaOC)
-									ExpandToFullPath(cf, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
-								foreach (ICmFolder cf in lp.PicturesOC)
-									ExpandToFullPath(cf, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
-							});
-						// Hyperlinks are always already full paths.
-						return false;
-					}
-					List<string> rgLockedFiles = new List<string>();
-					foreach (string sFile in rgFilesToMove)
-					{
-						string sOldPathname = Path.Combine(oldLinkedFilesRootDir, sFile);
-						string sNewPathname = Path.Combine(sNewLinkedFilesRootDir, sFile);
-						string sNewDir = Path.GetDirectoryName(sNewPathname);
-						if (!Directory.Exists(sNewDir))
-							Directory.CreateDirectory(sNewDir);
-						Debug.Assert(FileUtils.TrySimilarFileExists(sOldPathname, out sOldPathname));
-						if (FileUtils.TrySimilarFileExists(sNewPathname, out sNewPathname))
-							File.Delete(sNewPathname);
-						try
-						{
-							if (action == FileLocationChoice.Move)
-							{
-								//LT-13343 do copy followed by delete to ensure the file gets put in the new location.
-								//If the current FLEX record has a picture displayed the File.Delete will fail.
-								File.Copy(sOldPathname, sNewPathname);
-								File.Delete(sOldPathname);
-							}
-
-							else
-								File.Copy(sOldPathname, sNewPathname);
-						}
-						catch (Exception ex)
-						{
-							Debug.WriteLine(String.Format("{0}: {1}", ex.Message, sOldPathname));
-							rgLockedFiles.Add(sFile);
-						}
-					}
-					NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
-						() => StringServices.FixHyperlinkFolder(hyperlinks, oldLinkedFilesRootDir, sNewLinkedFilesRootDir));
-
-					// If any files failed to be moved or copied above, try again now that we've
-					// opened a new window and had more time elapse (and more demand to reuse
-					// memory) since the failure.
-					if (rgLockedFiles.Count > 0)
-					{
-						GC.Collect();   // make sure the window is disposed!
-						Thread.Sleep(1000);
-						foreach (string sFile in rgLockedFiles)
-						{
-							string sOldPathname = Path.Combine(oldLinkedFilesRootDir, sFile);
-							string sNewPathname = Path.Combine(sNewLinkedFilesRootDir, sFile);
-							try
-							{
-								if (action == FileLocationChoice.Move)
-									FileUtils.Move(sOldPathname, sNewPathname);
-								else
-									File.Copy(sOldPathname, sNewPathname);
-							}
-							catch (Exception ex)
-							{
-								Debug.WriteLine(String.Format("{0}: {1} (SECOND ATTEMPT)", ex.Message, sOldPathname));
-							}
-						}
-					}
-					return true;
+					rgFilesToMove.Add(linkInfo.RelativePath);
 				}
 			}
-			return false;
+
+			if (!rgFilesToMove.Any())
+			{
+				return false;
+			}
+			FileLocationChoice action;
+			using (var dlg = new MoveOrCopyFilesDlg()) // REVIEW (Hasso) 2015.08: should this go in MoveOrCopyFilesController?
+			{
+				dlg.Initialize(rgFilesToMove.Count, oldLinkedFilesRootDir, sNewLinkedFilesRootDir, this);
+				var res = dlg.ShowDialog();
+				Debug.Assert(res == DialogResult.OK);
+				if (res != DialogResult.OK)
+				{
+					return false;   // should never happen!
+				}
+				action = dlg.Choice;
+			}
+			if (action == FileLocationChoice.Leave) // Expand path
+			{
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
+					() =>
+					{
+						foreach (var cf in lp.MediaOC)
+						{
+							ExpandToFullPath(cf, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
+						}
+
+						foreach (var cf in lp.PicturesOC)
+						{
+							ExpandToFullPath(cf, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
+						}
+					});
+				// Hyperlinks are always already full paths.
+				return false;
+			}
+			var rgLockedFiles = new List<string>();
+			foreach (var sFile in rgFilesToMove)
+			{
+				var sOldPathname = Path.Combine(oldLinkedFilesRootDir, sFile);
+				var sNewPathname = Path.Combine(sNewLinkedFilesRootDir, sFile);
+				var sNewDir = Path.GetDirectoryName(sNewPathname);
+				if (!Directory.Exists(sNewDir))
+				{
+					Directory.CreateDirectory(sNewDir);
+				}
+				Debug.Assert(FileUtils.TrySimilarFileExists(sOldPathname, out sOldPathname));
+				if (FileUtils.TrySimilarFileExists(sNewPathname, out sNewPathname))
+				{
+					File.Delete(sNewPathname);
+				}
+				try
+				{
+					if (action == FileLocationChoice.Move)
+					{
+						//LT-13343 do copy followed by delete to ensure the file gets put in the new location.
+						//If the current FLEX record has a picture displayed the File.Delete will fail.
+						File.Copy(sOldPathname, sNewPathname);
+						File.Delete(sOldPathname);
+					}
+
+					else
+					{
+						File.Copy(sOldPathname, sNewPathname);
+					}
+				}
+				catch (Exception ex)
+				{
+					Debug.WriteLine($"{ex.Message}: {sOldPathname}");
+					rgLockedFiles.Add(sFile);
+				}
+			}
+			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
+				() => StringServices.FixHyperlinkFolder(hyperlinks, oldLinkedFilesRootDir, sNewLinkedFilesRootDir));
+
+			// If any files failed to be moved or copied above, try again now that we've
+			// opened a new window and had more time elapse (and more demand to reuse
+			// memory) since the failure.
+			if (!rgLockedFiles.Any())
+			{
+				return true;
+			}
+			GC.Collect();   // make sure the window is disposed!
+			Thread.Sleep(1000);
+			foreach (var sFile in rgLockedFiles)
+			{
+				var sOldPathname = Path.Combine(oldLinkedFilesRootDir, sFile);
+				var sNewPathname = Path.Combine(sNewLinkedFilesRootDir, sFile);
+				try
+				{
+					if (action == FileLocationChoice.Move)
+					{
+						FileUtils.Move(sOldPathname, sNewPathname);
+					}
+					else
+					{
+						File.Copy(sOldPathname, sNewPathname);
+					}
+				}
+				catch (Exception ex)
+				{
+					Debug.WriteLine($"{ex.Message}: {sOldPathname} (SECOND ATTEMPT)");
+				}
+			}
+			return true;
 		}
 
 #endregion IApp interface implementation
@@ -898,15 +935,14 @@ namespace LanguageExplorer.Impls
 			var wnd = (Form)MainWindows[iMainWnd];
 			wnd.Activate();
 			if (wnd.WindowState == FormWindowState.Minimized)
+			{
 				wnd.WindowState = FormWindowState.Normal;
+			}
 		}
 
 		/// <summary>
 		/// Creates and opens a main FLEx window.
 		/// </summary>
-		/// <param name="progressDlg">The progress DLG.</param>
-		/// <param name="isNewCache">if set to <c>true</c> [is new cache].</param>
-		/// <param name="wndCopyFrom">The WND copy from.</param>
 		public Form NewMainAppWnd(IProgress progressDlg, bool isNewCache, IFwMainWnd wndCopyFrom = null)
 		{
 			if (progressDlg != null)
@@ -935,7 +971,7 @@ namespace LanguageExplorer.Impls
 				factoryMadeIFwMainWndAsForm.Activated += fwMainWindow_Activated;
 				if (factoryMadeIFwMainWnd == Form.ActiveForm)
 				{
-					m_activeMainWindow = factoryMadeIFwMainWndAsForm;
+					ActiveMainWindow = factoryMadeIFwMainWndAsForm;
 				}
 				factoryMadeIFwMainWndAsForm.HandleDestroyed += fwMainWindow_HandleDestroyed;
 				factoryMadeIFwMainWndAsForm.FormClosing += FwMainWindowOnFormClosing;
@@ -976,7 +1012,7 @@ namespace LanguageExplorer.Impls
 			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, ApplicationName, fLoadUserOverrides, Cache.ProjectId.ProjectFolder);
 
 			var currentReversalIndices = Cache.LanguageProject.LexDbOA.CurrentReversalIndices;
-			if (currentReversalIndices.Count == 0)
+			if (!currentReversalIndices.Any())
 			{
 				currentReversalIndices = new List<IReversalIndex>(Cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToArray());
 			}
@@ -989,9 +1025,9 @@ namespace LanguageExplorer.Impls
 
 		private void FwMainWindowOnFormClosing(object sender, FormClosingEventArgs formClosingEventArgs)
 		{
-			if (m_activeMainWindow == sender && sender is IFwMainWnd)
-		{
-				((IFwMainWnd)sender).SaveSettings();
+			if (ActiveMainWindow == sender)
+			{
+				(sender as IFwMainWnd)?.SaveSettings();
 			}
 		}
 
@@ -1010,12 +1046,13 @@ namespace LanguageExplorer.Impls
 		/// Use this for slow operations that should happen during the splash screen instead of
 		/// during app construction
 		/// </summary>
-		/// <param name="progressDlg">The progress dialog to use.</param>
 		public void DoApplicationInitialization(IProgress progressDlg)
 		{
 			InitializeMessageDialogs(progressDlg);
 			if (progressDlg != null)
+			{
 				progressDlg.Message = LanguageExplorerResources.ksLoading_;
+			}
 		}
 
 		/// <summary>
@@ -1063,7 +1100,6 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		///	App-specific initialization of the cache.
 		/// </summary>
-		/// <param name="progressDlg">The progress dialog.</param>
 		/// <returns>True if the initialize was successful, false otherwise</returns>
 		public bool InitCacheForApp(IThreadedProgress progressDlg)
 		{
@@ -1078,8 +1114,7 @@ namespace LanguageExplorer.Impls
 			}
 			catch (WorkerThreadException e)
 			{
-				MessageBox.Show(Form.ActiveForm, e.InnerException.Message,
-					ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show(Form.ActiveForm, e.InnerException.Message, ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return false;
 			}
 
@@ -1101,7 +1136,6 @@ namespace LanguageExplorer.Impls
 		/// the application and the count of main windows is zero, then this method will also
 		/// shut down the application.
 		/// </summary>
-		/// <param name="fwMainWindow">The IFwMainWnd to remove</param>
 		public void RemoveWindow(IFwMainWnd fwMainWindow)
 		{
 			if (IsDisposed || BeingDisposed)
@@ -1130,9 +1164,9 @@ namespace LanguageExplorer.Impls
 				gonerTuple.Item2.Dispose(); // Disposing the factory also disposes the IFwMainWnd it created.
 			}
 
-			if (m_activeMainWindow == fwMainWindow)
+			if (ActiveMainWindow == fwMainWindow)
 			{
-				m_activeMainWindow = null; // Just in case
+				ActiveMainWindow = null; // Just in case
 			}
 
 			if (!_windows.Any())
@@ -1170,7 +1204,9 @@ namespace LanguageExplorer.Impls
 		{
 			var str = ResourceString(stid);
 			if (string.IsNullOrEmpty(str))
+			{
 				str = ResourceHelper.GetResourceString(stid);
+			}
 
 			return str;
 		}
@@ -1189,7 +1225,9 @@ namespace LanguageExplorer.Impls
 			var rootSite = root as RootSite;
 			rootSite?.RestartSpellChecking();
 			foreach (Control c in root.Controls)
+			{
 				RestartSpellChecking(c);
+			}
 		}
 
 		/// <summary>
@@ -1199,22 +1237,14 @@ namespace LanguageExplorer.Impls
 		private static void InitializeMessageDialogs(IProgress progressDlg)
 		{
 			if (progressDlg != null)
+			{
 				progressDlg.Message = LanguageExplorerResources.ksInitializingMessageDialogs_;
-			MessageBoxExManager.DefineMessageBox("TextChartNewFeature",
-				LanguageExplorerResources.ksInformation,
-				LanguageExplorerResources.ksChartTemplateWarning, true, "info");
-			MessageBoxExManager.DefineMessageBox("CategorizedEntry-Intro",
-				LanguageExplorerResources.ksInformation,
-				LanguageExplorerResources.ksUsedForSemanticBasedEntry, true, "info");
-			MessageBoxExManager.DefineMessageBox("CreateNewFromGrammaticalCategoryCatalog",
-				LanguageExplorerResources.ksInformation,
-				LanguageExplorerResources.ksCreatingCustomGramCategory, true, "info");
-			MessageBoxExManager.DefineMessageBox("CreateNewLexicalReferenceType",
-				LanguageExplorerResources.ksInformation,
-				LanguageExplorerResources.ksCreatingCustomLexRefType, true, "info");
-			MessageBoxExManager.DefineMessageBox("ClassifiedDictionary-Intro",
-				LanguageExplorerResources.ksInformation,
-				LanguageExplorerResources.ksShowingSemanticClassification, true, "info");
+			}
+			MessageBoxExManager.DefineMessageBox("TextChartNewFeature", LanguageExplorerResources.ksInformation, LanguageExplorerResources.ksChartTemplateWarning, true, "info");
+			MessageBoxExManager.DefineMessageBox("CategorizedEntry-Intro", LanguageExplorerResources.ksInformation, LanguageExplorerResources.ksUsedForSemanticBasedEntry, true, "info");
+			MessageBoxExManager.DefineMessageBox("CreateNewFromGrammaticalCategoryCatalog", LanguageExplorerResources.ksInformation, LanguageExplorerResources.ksCreatingCustomGramCategory, true, "info");
+			MessageBoxExManager.DefineMessageBox("CreateNewLexicalReferenceType", LanguageExplorerResources.ksInformation, LanguageExplorerResources.ksCreatingCustomLexRefType, true, "info");
+			MessageBoxExManager.DefineMessageBox("ClassifiedDictionary-Intro", LanguageExplorerResources.ksInformation, LanguageExplorerResources.ksShowingSemanticClassification, true, "info");
 
 			MessageBoxExManager.ReadSettingsFile();
 			if (progressDlg != null)
@@ -1226,10 +1256,7 @@ namespace LanguageExplorer.Impls
 		private void CloseOldWindow(object sender, EventArgs e)
 		{
 			Application.Idle -= CloseOldWindow;
-			if (m_windowToCloseOnIdle != null)
-			{
-				m_windowToCloseOnIdle.Close();
-			}
+			m_windowToCloseOnIdle?.Close();
 			m_windowToCloseOnIdle = null;
 		}
 
@@ -1251,15 +1278,11 @@ namespace LanguageExplorer.Impls
 			{
 				if (MiscUtils.IsUnix && (path.EndsWith(".html") || path.EndsWith(".htm")))
 				{
-					using (Process.Start(webBrowserProgramLinux, Enquote(path)))
-					{
-					}
+					Process.Start(webBrowserProgramLinux, Enquote(path));
 				}
 				else
 				{
-					using (Process.Start(path))
-					{
-					}
+					Process.Start(path);
 				}
 			}
 			catch (T e)
@@ -1284,10 +1307,6 @@ namespace LanguageExplorer.Impls
 				// Here we subtract twice the caption height, which with the offset below insets it all around.
 				rcNewWnd.Width -= SystemInformation.CaptionHeight * 2;
 				rcNewWnd.Height -= SystemInformation.CaptionHeight * 2;
-				// JohnT: this old approach fails if the old window's position has never been
-				// persisted. NormalStateDesktopBounds crashes, not finding anything in the
-				// property table.
-				//				rcNewWnd = ((IFwMainWnd)wndCopyFrom).NormalStateDesktopBounds;
 			}
 
 			//Offset right and down
@@ -1352,11 +1371,8 @@ namespace LanguageExplorer.Impls
 				return;
 			}
 
-			if (ctrl is ISettings)
-				((ISettings)ctrl).SaveSettingsNow();
-
-			if (ctrl is IRootSite)
-				((IRootSite)ctrl).CloseRootBox();
+			(ctrl as ISettings)?.SaveSettingsNow();
+			(ctrl as IRootSite)?.CloseRootBox();
 
 			foreach (Control childControl in ctrl.Controls)
 			{
@@ -1386,8 +1402,7 @@ namespace LanguageExplorer.Impls
 				{
 					continue;
 				}
-				m_findReplaceDlg.SetOwner(fwWnd.ActiveView.CastAsIVwRootSite(),
-					(Form)fwWnd, FindPattern);
+				m_findReplaceDlg.SetOwner(fwWnd.ActiveView.CastAsIVwRootSite(), (Form)fwWnd, FindPattern);
 				return;
 			}
 			// This should never happen, but, just in case a new owner for
@@ -1401,7 +1416,7 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private void fwMainWindow_Activated(object sender, EventArgs e)
 		{
-			m_activeMainWindow = (Form)sender;
+			ActiveMainWindow = (Form)sender;
 		}
 
 		/// <summary>
@@ -1409,8 +1424,10 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private void fwMainWindow_HandleDestroyed(object sender, EventArgs e)
 		{
-			if (m_activeMainWindow == sender)
-				m_activeMainWindow = null;
+			if (ActiveMainWindow == sender)
+			{
+				ActiveMainWindow = null;
+			}
 		}
 
 		/// <summary>
@@ -1424,7 +1441,9 @@ namespace LanguageExplorer.Impls
 		{
 			var retSize = (screenSize * 2) / 3;
 			if (retSize < minSize)
+			{
 				retSize = minSize;
+			}
 			return retSize;
 		}
 
@@ -1432,27 +1451,25 @@ namespace LanguageExplorer.Impls
 		/// Cascade the windows from top left and resize them to fill 2/3 of the screen area (or
 		/// the minimum allowable size).
 		/// </summary>
-		/// <param name="wndCurr">Current Window (i.e. window whose menu was used to issue the Cascade command.</param>
-		private void CascadeWindows(Form wndCurr)
+		private void CascadeWindows(Form currentWindow)
 		{
 			// Get the screen in which to cascade.
-			var scrn = Screen.FromControl(wndCurr);
-
+			var scrn = Screen.FromControl(currentWindow);
 			var rcScrnAdjusted = ScreenHelper.AdjustedWorkingArea(scrn);
 			var rcUpperLeft = rcScrnAdjusted;
-			rcUpperLeft.Width = CascadeSize(rcUpperLeft.Width, wndCurr.MinimumSize.Width);
-			rcUpperLeft.Height = CascadeSize(rcUpperLeft.Height, wndCurr.MinimumSize.Height);
+			rcUpperLeft.Width = CascadeSize(rcUpperLeft.Width, currentWindow.MinimumSize.Width);
+			rcUpperLeft.Height = CascadeSize(rcUpperLeft.Height, currentWindow.MinimumSize.Height);
 			var rc = rcUpperLeft;
 
 			foreach (Form wnd in MainWindows)
 			{
 				// Ignore windows that are on other screens or which are minimized.
-				if (scrn.WorkingArea == Screen.FromControl(wnd).WorkingArea &&
-					wnd != wndCurr &&
-					wnd.WindowState != FormWindowState.Minimized)
+				if (scrn.WorkingArea == Screen.FromControl(wnd).WorkingArea && wnd != currentWindow && wnd.WindowState != FormWindowState.Minimized)
 				{
 					if (wnd.WindowState == FormWindowState.Maximized)
+					{
 						wnd.WindowState = FormWindowState.Normal;
+					}
 
 					wnd.DesktopBounds = rc;
 					wnd.Activate();
@@ -1465,10 +1482,12 @@ namespace LanguageExplorer.Impls
 			}
 
 			// Make the active window the last one and activate it.
-			if (wndCurr.WindowState == FormWindowState.Maximized)
-				wndCurr.WindowState = FormWindowState.Normal;
-			wndCurr.DesktopBounds = rc;
-			wndCurr.Activate();
+			if (currentWindow.WindowState == FormWindowState.Maximized)
+			{
+				currentWindow.WindowState = FormWindowState.Normal;
+			}
+			currentWindow.DesktopBounds = rc;
+			currentWindow.Activate();
 		}
 
 		/// <summary>
@@ -1490,8 +1509,7 @@ namespace LanguageExplorer.Impls
 		/// of each tiled window. If there is only one window, this is undefined.</param>
 		private void CalcTileSizeAndSpacing(Screen scrn, int screenDimension, int minWindowDimension, out int desiredWindowDimension, out int windowSpacing)
 		{
-			CalcTileSizeAndSpacing(scrn, MainWindows, screenDimension, minWindowDimension,
-				out desiredWindowDimension, out windowSpacing);
+			CalcTileSizeAndSpacing(scrn, MainWindows, screenDimension, minWindowDimension, out desiredWindowDimension, out windowSpacing);
 		}
 
 		/// <summary>
@@ -1522,9 +1540,10 @@ namespace LanguageExplorer.Impls
 			// Don't count windows if they're minimized.
 			foreach (Form wnd in windowsToTile)
 			{
-				if (wnd.WindowState == FormWindowState.Minimized ||
-					Screen.FromControl(wnd).WorkingArea != scrn.WorkingArea)
+				if (wnd.WindowState == FormWindowState.Minimized || Screen.FromControl(wnd).WorkingArea != scrn.WorkingArea)
+				{
 					windowCount--;
+				}
 			}
 
 			desiredWindowDimension = windowSpacing = screenDimension / windowCount;
@@ -1566,9 +1585,7 @@ namespace LanguageExplorer.Impls
 		{
 			// Get the screen in which to tile.
 			var scrn = Screen.FromControl(wndCurr);
-
 			int desiredDimension, windowSpacing;
-
 			// At this point, assume the entire screen's working area is the desired size
 			// and location for tiled windows, even though it's highly likely this will
 			// change below.
@@ -1578,14 +1595,12 @@ namespace LanguageExplorer.Impls
 			// as they are tiled.
 			if (orientation == WindowTiling.Stacked)
 			{
-				CalcTileSizeAndSpacing(scrn, windowsToTile, scrn.WorkingArea.Height,
-					wndCurr.MinimumSize.Height, out desiredDimension, out windowSpacing);
+				CalcTileSizeAndSpacing(scrn, windowsToTile, scrn.WorkingArea.Height, wndCurr.MinimumSize.Height, out desiredDimension, out windowSpacing);
 				rcDesired.Height = desiredDimension;
 			}
 			else
 			{
-				CalcTileSizeAndSpacing(scrn, windowsToTile, scrn.WorkingArea.Width,
-					wndCurr.MinimumSize.Width, out desiredDimension, out windowSpacing);
+				CalcTileSizeAndSpacing(scrn, windowsToTile, scrn.WorkingArea.Width, wndCurr.MinimumSize.Width, out desiredDimension, out windowSpacing);
 				rcDesired.Width = desiredDimension;
 			}
 
@@ -1604,15 +1619,20 @@ namespace LanguageExplorer.Impls
 			foreach (Form wnd in windowsToTile)
 			{
 				if (wnd.WindowState == FormWindowState.Maximized)
+				{
 					wnd.WindowState = FormWindowState.Normal;
+				}
 
-				if (wnd != wndCurr && wnd.WindowState != FormWindowState.Minimized &&
-					Screen.FromControl(wnd).WorkingArea == scrn.WorkingArea)
+				if (wnd != wndCurr && wnd.WindowState != FormWindowState.Minimized && Screen.FromControl(wnd).WorkingArea == scrn.WorkingArea)
 				{
 					if (orientation == WindowTiling.Stacked)
+					{
 						rcDesired.Y += windowSpacing;
+					}
 					else
+					{
 						rcDesired.X += windowSpacing;
+					}
 
 					wnd.DesktopBounds = rcDesired;
 				}
@@ -1627,8 +1647,7 @@ namespace LanguageExplorer.Impls
 				{
 					var currentToTile = windowsToTile[i];
 					var currentWindowToTile = (Form)currentToTile;
-					if (currentToTile != wndCurr &&
-						currentWindowToTile.WindowState != FormWindowState.Minimized &&
+					if (currentToTile != wndCurr && currentWindowToTile.WindowState != FormWindowState.Minimized &&
 						Screen.FromControl(currentWindowToTile).WorkingArea == scrn.WorkingArea)
 					{
 						currentWindowToTile.Activate();
@@ -1646,9 +1665,13 @@ namespace LanguageExplorer.Impls
 		private void SuppressSynchronize()
 		{
 			if (m_suppressedCacheInfo != null)
+			{
 				m_suppressedCacheInfo.Count++; // Nested call
+			}
 			else
+			{
 				m_suppressedCacheInfo = new SuppressedCacheInfo();
+			}
 		}
 
 		/// <summary>
@@ -1658,11 +1681,15 @@ namespace LanguageExplorer.Impls
 		private void ResumeSynchronize()
 		{
 			if (m_suppressedCacheInfo == null)
+			{
 				return; // Nothing to do
+			}
 
 			m_suppressedCacheInfo.Count--;
 			if (m_suppressedCacheInfo.Count > 0)
+			{
 				return; // Still nested
+			}
 
 			BeginUpdate();
 			var messages = m_suppressedCacheInfo.Queue;
@@ -1686,8 +1713,11 @@ namespace LanguageExplorer.Impls
 					break; // One resulted in Refresh everything, ignore other synch msgs.
 				}
 			}
+
 			if (fProcessUndoRedoAfter)
+			{
 				Synchronize(savedUndoRedo);
+			}
 
 			// NOTE: This code may present a race condition, because there is a slight
 			// possibility that a sync message can come to the App at
@@ -1719,7 +1749,9 @@ namespace LanguageExplorer.Impls
 			var needRefresh = DeclareRefreshInterest == RefreshInterest.SupressingRefreshAndWantRefresh;
 			DeclareRefreshInterest = RefreshInterest.NotSupressingRefresh; // Make sure we don't try suppress the following RefreshAllViews()
 			if (needRefresh)
+			{
 				RefreshAllViews();
+			}
 		}
 
 		/// <summary>
@@ -1731,14 +1763,12 @@ namespace LanguageExplorer.Impls
 			foreach (var file in folder.FilesOC)
 			{
 				var sFilepath = file.InternalPath;
-				//only select files which have relative paths so they are in the LinkedFilesRootDir
-				if (Path.IsPathRooted(sFilepath))
+				// only select files which have relative paths so they are in the LinkedFilesRootDir
+				// or, don't put the same file in more than once!
+				if (Path.IsPathRooted(sFilepath) || rgFilesToMove.Contains(sFilepath))
 				{
 					continue;
 				}
-				// Don't put the same file in more than once!
-				if (rgFilesToMove.Contains(sFilepath))
-					continue;
 				var sOldFilePath = Path.Combine(sOldRootDir, sFilepath);
 				if (!FileUtils.TrySimilarFileExists(sOldFilePath, out sOldFilePath))
 				{
@@ -1752,7 +1782,9 @@ namespace LanguageExplorer.Impls
 					var dateTimeOfFileSourceFile = File.GetLastWriteTime(sOldFilePath);
 					var dateTimeOfFileDestinationFile = File.GetLastWriteTime(sNewFilePath);
 					if (dateTimeOfFileSourceFile > dateTimeOfFileDestinationFile)
+					{
 						rgFilesToMove.Add(sFilepath);
+					}
 				}
 				else
 				{
@@ -1923,7 +1955,7 @@ namespace LanguageExplorer.Impls
 		/// Helper class that contains queued SyncMsgs and a reference count for
 		/// Suppress/ResumeSynchronize.
 		/// </summary>
-		private class SuppressedCacheInfo
+		private sealed class SuppressedCacheInfo
 		{
 			/// <summary>Reference count</summary>
 			public int Count = 1;

@@ -1,4 +1,4 @@
-// Copyright (c) 2016 SIL International
+// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,7 +32,6 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Wraps the UploadFile from WebClient to provide status accessor and allow mocking returns for the unit tests.
 		/// </summary>
-		/// <exception cref="WebonaryException"></exception>
 		public byte[] UploadFileToWebonary(string address, string fileName)
 		{
 			try
@@ -41,8 +40,10 @@ namespace LanguageExplorer.Impls
 			}
 			catch (WebException ex)
 			{
-				if(ex.Response == null)
+				if (ex.Response == null)
+				{
 					throw new WebonaryException("WebException with null response stream.", ex);
+				}
 				using (var stream = ex.Response.GetResponseStream())
 				using (var reader = new StreamReader(stream))
 				{
@@ -69,30 +70,6 @@ namespace LanguageExplorer.Impls
 		{
 			ResponseStatusCode = response.StatusCode;
 			return response;
-		}
-
-		public class WebonaryException : Exception
-		{
-			public WebException WebException { get; private set; }
-			public HttpStatusCode StatusCode { get; internal set; }
-			/// <summary>
-			/// The full response returned by the server. Useful for debugging connection issues.
-			/// </summary>
-			public string FullResponse { get; set; }
-
-			public WebonaryException(WebException webException) : this(null, webException)
-			{
-			}
-
-			internal WebonaryException(string fullResponse, WebException webException)
-			{
-				FullResponse = fullResponse;
-				WebException = webException;
-				if (webException.Response != null)
-				{
-					StatusCode = ((HttpWebResponse)webException.Response).StatusCode;
-				}
-			}
 		}
 	}
 }

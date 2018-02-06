@@ -166,9 +166,7 @@ namespace LanguageExplorer.Impls
 		/// and will start without using the saved settings.
 		/// </summary>
 		private static string CrashOnStartupDetectorPathName => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-			"SIL",
-			"FieldWorks",
-			"CrashOnStartupDetector.tmp");
+			"SIL", "FieldWorks", "CrashOnStartupDetector.tmp");
 
 		private void RestoreWindowSettings(bool wasCrashDuringPreviousStartup)
 		{
@@ -186,18 +184,15 @@ namespace LanguageExplorer.Impls
 					ShowInTaskbar = true;
 					var activeForm = ActiveForm;
 					if (activeForm == null)
+					{
 						useExtantPrefs = (MessageBox.Show(ActiveForm, LanguageExplorerResources.SomethingWentWrongLastTime,
-							id,
-							MessageBoxButtons.YesNo,
-							MessageBoxIcon.Question) != DialogResult.Yes);
+							id, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes);
+					}
 					else
 					{
 						// Make sure as far as possible it comes up in front of any active window, including the splash screen.
-						activeForm.Invoke((Action)(() =>
-							useExtantPrefs = (MessageBox.Show(LanguageExplorerResources.SomethingWentWrongLastTime,
-								id,
-								MessageBoxButtons.YesNo,
-								MessageBoxIcon.Question) != DialogResult.Yes)));
+						activeForm.Invoke((Action)(() => useExtantPrefs = (MessageBox.Show(LanguageExplorerResources.SomethingWentWrongLastTime,
+								id, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)));
 					}
 				}
 			}
@@ -245,7 +240,9 @@ namespace LanguageExplorer.Impls
 		private void SaveWindowSettings()
 		{
 			if (!_persistWindowSize)
+			{
 				return;
+			}
 			// Don't bother storing anything if we are maximized or minimized.
 			// if we did, then when the user exits the application and then runs it again,
 			//then switches to the normal state, we would be switching to 0,0 or something.
@@ -524,7 +521,9 @@ namespace LanguageExplorer.Impls
 			base.OnResize(e);
 
 			if (!_persistWindowSize)
+			{
 				return;
+			}
 
 			// Don't bother storing the size if we are maximized or minimized.
 			// If we did, then when the user exits the application and then runs it again,
@@ -540,7 +539,9 @@ namespace LanguageExplorer.Impls
 			base.OnMove(e);
 
 			if (!_persistWindowSize)
+			{
 				return;
+			}
 			// Don't bother storing the location if we are maximized or minimized.
 			// if we did, then when the user exits the application and then runs it again,
 			//then switches to the normal state, we would be switching to 0,0 or something.
@@ -663,14 +664,13 @@ namespace LanguageExplorer.Impls
 			SetupPropertyTable();
 			RegisterSubscriptions();
 
-			_dataNavigationManager = new DataNavigationManager(
-				new Dictionary<Navigation, Tuple<ToolStripMenuItem, ToolStripButton>>
-				{
-					{Navigation.First, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_First, _tsbFirst)},
-					{Navigation.Previous, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Previous, _tsbPrevious)},
-					{Navigation.Next, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Next, _tsbNext)},
-					{Navigation.Last, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Last, _tsbLast)}
-				});
+			_dataNavigationManager = new DataNavigationManager(new Dictionary<Navigation, Tuple<ToolStripMenuItem, ToolStripButton>>
+			{
+				{Navigation.First, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_First, _tsbFirst)},
+				{Navigation.Previous, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Previous, _tsbPrevious)},
+				{Navigation.Next, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Next, _tsbNext)},
+				{Navigation.Last, new Tuple<ToolStripMenuItem, ToolStripButton>(_data_Last, _tsbLast)}
+			});
 
 			RestoreWindowSettings(wasCrashDuringPreviousStartup);
 			var restoreSize = Size;
@@ -681,19 +681,9 @@ namespace LanguageExplorer.Impls
 
 			SetupParserMenuItems();
 
-			_majorFlexComponentParameters = new MajorFlexComponentParameters(
-				mainContainer,
-				_menuStrip,
-				toolStripContainer,
-				_statusbar,
-				_parserMenuManager,
-				_dataNavigationManager,
-				_recordListRepositoryForTools,
-				flexComponentParameters,
-				Cache,
-				_flexApp,
-				this,
-				_sidePane);
+			_majorFlexComponentParameters = new MajorFlexComponentParameters(mainContainer, _menuStrip, toolStripContainer, _statusbar,
+				_parserMenuManager, _dataNavigationManager, _recordListRepositoryForTools, flexComponentParameters,
+				Cache, _flexApp, this, _sidePane);
 
 			RecordListServices.Setup(_majorFlexComponentParameters);
 
@@ -733,7 +723,6 @@ namespace LanguageExplorer.Impls
 		/// Called just before a window syncronizes it's views with DB changes (e.g. when an
 		/// undo or redo command is issued).
 		/// </summary>
-		/// <param name="sync">syncronization message</param>
 		public void PreSynchronize(SyncMsg sync)
 		{
 			throw new NotImplementedException();
@@ -743,7 +732,6 @@ namespace LanguageExplorer.Impls
 		/// Called when a window syncronizes it's views with DB changes (e.g. when an undo or
 		/// redo command is issued).
 		/// </summary>
-		/// <param name="sync">syncronization message</param>
 		/// <returns>true if successful; false results in RefreshAllWindows.</returns>
 		public bool Synchronize(SyncMsg sync)
 		{
@@ -758,8 +746,6 @@ namespace LanguageExplorer.Impls
 		/// </returns>
 		public bool OnFinishedInit()
 		{
-			CheckDisposed();
-
 			if (_startupLink == null)
 			{
 				return true;
@@ -783,8 +769,6 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Handle the Find menu command.
 		/// </summary>
-		/// <param name="args">Arguments</param>
-		/// <returns><c>true</c> if message handled, otherwise <c>false</c>.</returns>
 		public bool OnEditFind(object args)
 		{
 			throw new NotImplementedException();
@@ -858,8 +842,6 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public void SuspendIdleProcessing()
 		{
-			CheckDisposed();
-
 			_countSuspendIdleProcessing++;
 		}
 
@@ -868,8 +850,6 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public void ResumeIdleProcessing()
 		{
-			CheckDisposed();
-
 			if (_countSuspendIdleProcessing > 0)
 			{
 				_countSuspendIdleProcessing--;
@@ -958,7 +938,7 @@ namespace LanguageExplorer.Impls
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 
 			if (IsDisposed)
 			{
@@ -1045,20 +1025,6 @@ namespace LanguageExplorer.Impls
 			GC.SuppressFinalize(this);
 		}
 
-		/// <summary>
-		/// This method throws an ObjectDisposedException if IsDisposed returns
-		/// true.  This is the case where a method or property in an object is being
-		/// used but the object itself is no longer valid.
-		///
-		/// This method should be added to all public properties and methods of this
-		/// object and all other objects derived from it (extensive).
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-		}
-
 		#endregion
 
 		/// <summary>
@@ -1113,8 +1079,7 @@ namespace LanguageExplorer.Impls
 			}
 			catch (Exception)
 			{
-				MessageBox.Show(this, string.Format(LanguageExplorerResources.ksCannotLaunchX, helpFile),
-					LanguageExplorerResources.ksError);
+				MessageBox.Show(this, string.Format(LanguageExplorerResources.ksCannotLaunchX, helpFile), LanguageExplorerResources.ksError);
 			}
 		}
 
@@ -1133,9 +1098,7 @@ namespace LanguageExplorer.Impls
 		{
 			try
 			{
-				var pathMovies = string.Format(FwDirectoryFinder.CodeDirectory +
-					"{0}Language Explorer{0}Movies{0}Demo Movies.html",
-					Path.DirectorySeparatorChar);
+				var pathMovies = string.Format(FwDirectoryFinder.CodeDirectory + "{0}Language Explorer{0}Movies{0}Demo Movies.html", Path.DirectorySeparatorChar);
 
 				OpenDocument<Win32Exception>(pathMovies, win32err =>
 				{
@@ -1150,9 +1113,7 @@ namespace LanguageExplorer.Impls
 					else
 					{
 						// User probably does not have movies. Try to launch the "no movies" web page:
-						var pathNoMovies = string.Format(FwDirectoryFinder.CodeDirectory +
-							"{0}Language Explorer{0}Movies{0}notfound.html",
-							Path.DirectorySeparatorChar);
+						var pathNoMovies = string.Format(FwDirectoryFinder.CodeDirectory + "{0}Language Explorer{0}Movies{0}notfound.html", Path.DirectorySeparatorChar);
 
 						OpenDocument<Win32Exception>(pathNoMovies, win32err2 =>
 						{
@@ -1160,12 +1121,12 @@ namespace LanguageExplorer.Impls
 							{
 								// The user does not have a file association for .html files.
 								// Try to launch Internet Explorer directly:
-								using (Process.Start("IExplore.exe", pathNoMovies))
-								{
-								}
+								Process.Start("IExplore.exe", pathNoMovies);
 							}
 							else
+							{
 								throw win32err2;
+							}
 						});
 					}
 				});
@@ -1183,9 +1144,9 @@ namespace LanguageExplorer.Impls
 		/// surrounds the path in double quotes and opens it with a web browser.
 		/// </summary>
 		/// <param name="path"></param>
-		/// <param name="exceptionHandler"/>
+		/// <param name="exceptionHandler">
 		/// Delegate to run if an exception is thrown. Takes the exception as an argument.
-
+		/// </param>
 		private void OpenDocument(string path, Action<Exception> exceptionHandler)
 		{
 			OpenDocument<Exception>(path, exceptionHandler);
@@ -1200,15 +1161,11 @@ namespace LanguageExplorer.Impls
 			{
 				if (MiscUtils.IsUnix && (path.EndsWith(".html") || path.EndsWith(".htm")))
 				{
-					using (Process.Start(_webBrowserProgramLinux, Enquote(path)))
-					{
-					}
+					Process.Start(_webBrowserProgramLinux, Enquote(path));
 				}
 				else
 				{
-					using (Process.Start(path))
-					{
-					}
+					Process.Start(path);
 				}
 			}
 			catch (T e)
@@ -1234,8 +1191,7 @@ namespace LanguageExplorer.Impls
 
 			OpenDocument(path, err =>
 			{
-				MessageBox.Show(null, string.Format(LanguageExplorerResources.ksCannotLaunchX, path),
-					LanguageExplorerResources.ksError);
+				MessageBox.Show(null, string.Format(LanguageExplorerResources.ksCannotLaunchX, path), LanguageExplorerResources.ksError);
 			});
 		}
 
@@ -1261,7 +1217,9 @@ namespace LanguageExplorer.Impls
 		private void File_New_FieldWorks_Project(object sender, EventArgs e)
 		{
 			if (_flexApp.ActiveMainWindow != this)
+			{
 				throw new InvalidOperationException("Unexpected active window for app.");
+			}
 			_flexApp.FwManager.CreateNewProject();
 		}
 
@@ -1280,12 +1238,13 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Launches the proj properties DLG.
 		/// </summary>
-		/// <param name="startOnWSPage">if set to <c>true</c> [start on WS page].</param>
 		private void LaunchProjPropertiesDlg(bool startOnWSPage)
 		{
 			var cache = _flexApp.Cache;
 			if (!SharedBackendServicesHelper.WarnOnOpeningSingleUserDialog(cache))
+			{
 				return;
+			}
 
 			var fDbRenamed = false;
 			var sProject = cache.ProjectId.Name;
@@ -1387,9 +1346,7 @@ namespace LanguageExplorer.Impls
 			}
 
 			var applicationArguments = "-" + FwAppArgs.kProject + " \"" + _flexApp.Cache.ProjectId.Handle + "\"";
-			var description = ResourceHelper.FormatResourceString(
-				"kstidCreateShortcutLinkDescription", _flexApp.Cache.ProjectId.UiName,
-				_flexApp.ApplicationName);
+			var description = ResourceHelper.FormatResourceString("kstidCreateShortcutLinkDescription", _flexApp.Cache.ProjectId.UiName, _flexApp.ApplicationName);
 
 			if (MiscUtils.IsUnix)
 			{
@@ -1438,11 +1395,8 @@ namespace LanguageExplorer.Impls
 				var link = (IWshShortcut)shell.CreateShortcut(linkPath);
 				if (link.FullName != linkPath)
 				{
-					var msg = string.Format(FrameworkStrings.ksCannotCreateShortcut,
-						_flexApp.ProductExecutableFile + " " + applicationArguments);
-					MessageBox.Show(ActiveForm, msg,
-						FrameworkStrings.ksCannotCreateShortcutCaption, MessageBoxButtons.OK,
-						MessageBoxIcon.Asterisk);
+					var msg = string.Format(FrameworkStrings.ksCannotCreateShortcut, _flexApp.ProductExecutableFile + " " + applicationArguments);
+					MessageBox.Show(ActiveForm, msg, FrameworkStrings.ksCannotCreateShortcutCaption, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 					return;
 				}
 				link.TargetPath = _flexApp.ProductExecutableFile;
@@ -1524,17 +1478,16 @@ namespace LanguageExplorer.Impls
 			}
 			using (new WaitCursor(form, true))
 			{
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
-					() =>
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor, () =>
+				{
+					using (var dlg = new ProgressDialogWithTask(this))
 					{
-						using (var dlg = new ProgressDialogWithTask(this))
-						{
-							dlg.AllowCancel = true;
-							dlg.Maximum = 200;
-							dlg.Message = filename;
-							dlg.RunTask(true, LcmCache.ImportTranslatedLists, filename, Cache);
-						}
-					});
+						dlg.AllowCancel = true;
+						dlg.Maximum = 200;
+						dlg.Message = filename;
+						dlg.RunTask(true, LcmCache.ImportTranslatedLists, filename, Cache);
+					}
+				});
 			}
 		}
 
@@ -1967,8 +1920,6 @@ very simple minor adjustments. ;)"
 			SimpleRootSite rootsite = null;
 			try
 			{
-				string paraStyleName = null;
-				string charStyleName = null;
 				rootsite = ActiveView as SimpleRootSite;
 				if (rootsite != null)
 				{
@@ -1976,11 +1927,10 @@ very simple minor adjustments. ;)"
 				}
 
 				var sel = _viewHelper.ActiveView.EditingHelper.CurrentSelection.Selection;
-				if (paraStyleName == null && charStyleName == null)
-				{
-					// Try to get the style names from the selection.
-					GetStyleNames(rootsite, sel, ref paraStyleName, ref charStyleName);
-				}
+				// Try to get the style names from the selection.
+				string paraStyleName = null;
+				string charStyleName = null;
+				GetStyleNames(rootsite, sel, ref paraStyleName, ref charStyleName);
 				int hvoRoot, frag;
 				IVwViewConstructor vc;
 				IVwStylesheet ss;
@@ -2007,7 +1957,9 @@ very simple minor adjustments. ;)"
 			finally
 			{
 				if (rootsite != null)
+				{
 					rootsite.ShowRangeSelAfterLostFocus = false;
+				}
 			}
 		}
 

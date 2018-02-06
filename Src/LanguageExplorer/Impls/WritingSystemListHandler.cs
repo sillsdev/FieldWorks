@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -60,18 +60,15 @@ namespace LanguageExplorer.Impls
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool _isDisposed;
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed => _isDisposed;
+		public bool IsDisposed { get; private set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -125,7 +122,7 @@ namespace LanguageExplorer.Impls
 		private void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (_isDisposed)
+			if (IsDisposed)
 			{
 				// No need to run it more than once.
 				return;
@@ -151,7 +148,7 @@ namespace LanguageExplorer.Impls
 			_writingSystemToolStripMenuItem = null;
 			_allWritingSystemDefinitions = null;
 
-			_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation

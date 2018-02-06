@@ -30,10 +30,6 @@ namespace LanguageExplorer.Impls
 		private IPublisher Publisher { get; set; }
 
 		private ConcurrentDictionary<string, Property> m_properties;
-		/// <summary>
-		/// Control how much output we send to the application's listeners (e.g. visual studio output window)
-		/// </summary>
-		private TraceSwitch m_traceSwitch = new TraceSwitch("PropertyTable", string.Empty);
 		private string m_localSettingsId;
 		private string m_userSettingDirectory = string.Empty;
 		/// <summary>
@@ -58,18 +54,6 @@ namespace LanguageExplorer.Impls
 		}
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-		}
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -89,10 +73,7 @@ namespace LanguageExplorer.Impls
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
+		/// <summary />
 		public void Dispose()
 		{
 			Dispose(true);
@@ -128,9 +109,11 @@ namespace LanguageExplorer.Impls
 		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
 			if (IsDisposed)
+			{
+				// No need to run more than once.
 				return;
+			}
 
 			if (disposing)
 			{
@@ -157,7 +140,6 @@ namespace LanguageExplorer.Impls
 			m_localSettingsId = null;
 			m_userSettingDirectory = null;
 			m_properties = null;
-			m_traceSwitch = null;
 			Publisher = null;
 
 			IsDisposed = true;
@@ -174,8 +156,6 @@ namespace LanguageExplorer.Impls
 		/// <param name="settingsGroup">The group to remove the property from.</param>
 		public void RemoveProperty(string name, SettingsGroup settingsGroup)
 		{
-			CheckDisposed();
-
 			var key = GetPropertyKeyFromSettingsGroup(name, settingsGroup);
 			Property goner;
 			if (m_properties.TryRemove(key, out goner))
@@ -212,7 +192,7 @@ namespace LanguageExplorer.Impls
 			switch (settingsGroup)
 			{
 				default:
-					throw new NotImplementedException($"{settingsGroup} is not yet supported. Developers need to add support for it.");
+					throw new NotSupportedException($"{settingsGroup} is not yet supported. Developers need to add support for it.");
 				case SettingsGroup.BestSettings:
 				{
 					var key = FormatPropertyNameForLocalSettings(name);
@@ -230,52 +210,32 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Test whether a property exists, tries local first and then global.
 		/// </summary>
-		/// <param name="name"></param>
-		/// <returns></returns>
 		public bool PropertyExists(string name)
 		{
-			CheckDisposed();
-
 			return PropertyExists(name, SettingsGroup.BestSettings);
 		}
 
 		/// <summary>
 		/// Test whether a property exist in the specified group.
 		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="settingsGroup"></param>
-		/// <returns></returns>
 		public bool PropertyExists(string name, SettingsGroup settingsGroup)
 		{
-			CheckDisposed();
-
 			return GetProperty(GetPropertyKeyFromSettingsGroup(name, settingsGroup)) != null;
 		}
 
 		/// <summary>
 		/// Test whether a property exists in the specified group. Gives any value found.
 		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="propertyValue">null, if it didn't find the property.</param>
-		/// <returns></returns>
 		public bool TryGetValue<T>(string name, out T propertyValue)
 		{
-			CheckDisposed();
-
 			return TryGetValue(name, SettingsGroup.BestSettings, out propertyValue);
 		}
 
 		/// <summary>
 		/// Test whether a property exists in the specified group. Gives any value found.
 		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="settingsGroup"></param>
-		/// <param name="propertyValue">null, if it didn't find the property.</param>
-		/// <returns></returns>
 		public bool TryGetValue<T>(string name, SettingsGroup settingsGroup, out T propertyValue)
 		{
-			CheckDisposed();
-
 			propertyValue = default(T);
 			var prop = GetProperty(GetPropertyKeyFromSettingsGroup(name, settingsGroup));
 			var basicValue = prop?.value;
@@ -302,25 +262,17 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// get the value of the best property (i.e. tries local first, then global).
 		/// </summary>
-		/// <param name="name"></param>
 		/// <returns>returns null if the property is not found</returns>
 		public T GetValue<T>(string name)
 		{
-			CheckDisposed();
-
 			return GetValue<T>(name, SettingsGroup.BestSettings);
 		}
 
 		/// <summary>
 		/// Get the value of the property of the specified settingsGroup.
 		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="settingsGroup"></param>
-		/// <returns></returns>
 		public T GetValue<T>(string name, SettingsGroup settingsGroup)
 		{
-			CheckDisposed();
-
 			return GetValueInternal<T>(GetPropertyKeyFromSettingsGroup(name, settingsGroup));
 		}
 
@@ -330,11 +282,9 @@ namespace LanguageExplorer.Impls
 		/// <typeparam name="T">Type of property to return</typeparam>
 		/// <param name="name">Name of property to return</param>
 		/// <param name="defaultValue">Default value of property, if it isn't in the table.</param>
-		/// <returns>The stroed property of type "T", or the defualt value, if not stored.</returns>
+		/// <returns>The stored property of type "T", or the defualt value, if not stored.</returns>
 		public T GetValue<T>(string name, T defaultValue)
 		{
-			CheckDisposed();
-
 			return GetValue(name, SettingsGroup.BestSettings, defaultValue);
 		}
 
@@ -342,14 +292,8 @@ namespace LanguageExplorer.Impls
 		/// Get the value of the property in the specified settingsGroup.
 		/// Sets the defaultValue if the property doesn't exist.
 		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="settingsGroup"></param>
-		/// <param name="defaultValue"></param>
-		/// <returns></returns>
 		public T GetValue<T>(string name, SettingsGroup settingsGroup, T defaultValue)
 		{
-			CheckDisposed();
-
 			return GetValueInternal(GetPropertyKeyFromSettingsGroup(name, settingsGroup), defaultValue);
 		}
 
@@ -361,26 +305,22 @@ namespace LanguageExplorer.Impls
 		/// <exception cref="ArgumentException">Thrown if the property value is not type "T".</exception>
 		private T GetValueInternal<T>(string key)
 		{
-			var result = default(T);
+			var defaultValue = default(T);
 			Property prop;
-			if (m_properties.TryGetValue(key, out prop))
+			if (!m_properties.TryGetValue(key, out prop))
 			{
-				var basicValue = prop.value;
-				if (basicValue == null)
-				{
-					return result;
-				}
-				if (basicValue is T)
-				{
-					result = (T)basicValue;
-				}
-				else
-				{
-					throw new ArgumentException("Mismatched data type.");
-				}
+				return defaultValue;
 			}
-
-			return result;
+			var basicValue = prop.value;
+			if (basicValue == null)
+			{
+				return defaultValue;
+			}
+			if (basicValue is T)
+			{
+				return (T)basicValue;
+			}
+			throw new ArgumentException("Mismatched data type.");
 		}
 
 		/// <summary>
@@ -388,37 +328,26 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		/// <param name="key">Encoded name for local or global lookup</param>
 		/// <param name="defaultValue"></param>
-		/// <returns></returns>
 		private T GetValueInternal<T>(string key, T defaultValue)
 		{
 			T result;
 			var prop = GetProperty(key);
 			if (prop == null)
 			{
-				result = defaultValue;
 				SetPropertyInternal(key, defaultValue, false, false);
+				return defaultValue;
 			}
-			else
+			if (prop.value == null)
 			{
-				if (prop.value == null)
-				{
-					// Gutless wonder (prop exists, but has no value).
-					prop.value = defaultValue;
-					result = defaultValue;
-				}
-				else
-				{
-					if (prop.value is T)
-					{
-						result = (T)prop.value;
-					}
-					else
-					{
-						throw new ArgumentException("Mismatched data type.");
-					}
-				}
+				// Gutless wonder (prop exists, but has no value).
+				prop.value = defaultValue;
+				return defaultValue;
 			}
-			return result;
+			if (prop.value is T)
+			{
+				return (T)prop.value;
+			}
+			throw new ArgumentException("Mismatched data type.");
 		}
 
 		/// <summary>
@@ -436,8 +365,6 @@ namespace LanguageExplorer.Impls
 		/// </param>
 		public void SetDefault(string name, object defaultValue, SettingsGroup settingsGroup, bool persistProperty, bool doBroadcastIfChanged)
 		{
-			CheckDisposed();
-
 			SetDefaultInternal(GetPropertyKeyFromSettingsGroup(name, settingsGroup), defaultValue, persistProperty, doBroadcastIfChanged);
 		}
 
@@ -474,8 +401,6 @@ namespace LanguageExplorer.Impls
 		/// </param>
 		public void SetProperty(string name, object newValue, SettingsGroup settingsGroup, bool persistProperty, bool doBroadcastIfChanged)
 		{
-			CheckDisposed();
-
 			SetPropertyInternal(GetPropertyKeyFromSettingsGroup(name, settingsGroup), newValue, persistProperty, doBroadcastIfChanged);
 		}
 
@@ -492,7 +417,6 @@ namespace LanguageExplorer.Impls
 		/// </param>
 		public void SetProperty(string name, object newValue, bool persistProperty, bool doBroadcastIfChanged)
 		{
-			CheckDisposed();
 			SetProperty(name, newValue, SettingsGroup.BestSettings, persistProperty, doBroadcastIfChanged);
 		}
 
@@ -508,8 +432,6 @@ namespace LanguageExplorer.Impls
 		/// </param>
 		private void SetPropertyInternal(string key, object newValue, bool persistProperty, bool doBroadcastIfChanged)
 		{
-			CheckDisposed();
-
 			var didChange = true;
 			if (m_properties.ContainsKey(key))
 			{
@@ -644,7 +566,6 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public void SetPropertyDispose(string name, bool doDispose)
 		{
-			CheckDisposed();
 			SetPropertyDispose(name, doDispose, SettingsGroup.BestSettings);
 		}
 
@@ -653,8 +574,6 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public void SetPropertyDispose(string name, bool doDispose, SettingsGroup settingsGroup)
 		{
-			CheckDisposed();
-
 			SetPropertyDisposeInternal(GetPropertyKeyFromSettingsGroup(name, settingsGroup), doDispose);
 		}
 
@@ -662,7 +581,9 @@ namespace LanguageExplorer.Impls
 		{
 			var property = m_properties[key];
 			if (!(property.value is IDisposable))
+			{
 				throw new ArgumentException($"The property named: {key} is not valid for disposing.");
+			}
 			property.doDispose = doDispose;
 		}
 		#endregion
@@ -674,7 +595,6 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public void SaveGlobalSettings()
 		{
-			CheckDisposed();
 			// first save global settings, ignoring database specific ones.
 			// The empty string '""' in the first parameter means the global settings.
 			// The array in the second parameter means to 'exclude me'.
@@ -687,7 +607,6 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public void SaveLocalSettings()
 		{
-			CheckDisposed();
 			// now save database specific settings.
 			Save(LocalSettingsId, new string[0]);
 		}
@@ -699,7 +618,6 @@ namespace LanguageExplorer.Impls
 		/// <param name="omitSettingIds">skip settings starting with any of these.</param>
 		private void Save(string settingsId, string[] omitSettingIds)
 		{
-			CheckDisposed();
 			try
 			{
 				var szr = new XmlSerializer(typeof (Property[]));
@@ -738,7 +656,6 @@ namespace LanguageExplorer.Impls
 		/// <returns></returns>
 		private string SettingsPath(string settingsId)
 		{
-			CheckDisposed();
 			var pathPrefix = GetPathPrefixForSettingsId(settingsId);
 			return Path.Combine(UserSettingDirectory, pathPrefix + "Settings.xml");
 		}
@@ -761,12 +678,10 @@ namespace LanguageExplorer.Impls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_localSettingsId ?? GlobalSettingsId;
 			}
 			set
 			{
-				CheckDisposed();
 				m_localSettingsId = value;
 			}
 		}
@@ -774,14 +689,7 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Establishes a current group id for saving to property tables/files with SettingsGroup.GlobalSettings.
 		/// </summary>
-		public string GlobalSettingsId
-		{
-			get
-			{
-				CheckDisposed();
-				return string.Empty;
-			}
-		}
+		public string GlobalSettingsId => string.Empty;
 
 		/// <summary>
 		/// Gets/sets folder where user settings are saved
@@ -790,17 +698,14 @@ namespace LanguageExplorer.Impls
 		{
 			get
 			{
-				CheckDisposed();
 				Debug.Assert(!string.IsNullOrEmpty(m_userSettingDirectory));
 				return m_userSettingDirectory;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (string.IsNullOrEmpty(value))
 				{
-					throw new ArgumentNullException("value", @"Cannot set 'UserSettingDirectory' to null or empty string.");
+					throw new ArgumentNullException(nameof(value), @"Cannot set 'UserSettingDirectory' to null or empty string.");
 				}
 
 				m_userSettingDirectory = value;
@@ -809,13 +714,12 @@ namespace LanguageExplorer.Impls
 
 		/// <summary>
 		/// load with properties stored
-		///  in the settings file, if that file is found.
+		/// in the settings file, if that file is found.
 		/// </summary>
 		/// <param name="settingsId">e.g. "itinerary"</param>
 		/// <returns></returns>
 		public void RestoreFromFile(string settingsId)
 		{
-			CheckDisposed();
 			var path = SettingsPath(settingsId);
 
 			if (!File.Exists(path))
@@ -880,24 +784,15 @@ namespace LanguageExplorer.Impls
 			foreach (var kvp in m_properties)
 			{
 				var property = kvp.Value;
-				if (!property.doPersist)
-					continue;
-				if (property.value == null)
-					continue;
-				if (!property.name.StartsWith(GetPathPrefixForSettingsId(settingsId)))
-					continue;
-
-				bool fIncludeThis = true;
-				foreach (string omitSettingsId in omitSettingIds)
+				if (!property.doPersist || property.value == null || !property.name.StartsWith(GetPathPrefixForSettingsId(settingsId)))
 				{
-					if (property.name.StartsWith(GetPathPrefixForSettingsId(omitSettingsId)))
-					{
-						fIncludeThis = false;
-						break;
-					}
+					continue;
 				}
+				var fIncludeThis = omitSettingIds.All(omitSettingsId => !property.name.StartsWith(GetPathPrefixForSettingsId(omitSettingsId)));
 				if (fIncludeThis)
+				{
 					list.Add(property);
+				}
 			}
 
 			return list.ToArray();

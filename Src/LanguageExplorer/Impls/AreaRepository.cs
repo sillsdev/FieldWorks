@@ -34,7 +34,6 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Get the IArea that has the machine friendly "Name" for <paramref name="machineName"/>.
 		/// </summary>
-		/// <param name="machineName"></param>
 		/// <returns>The IArea for the given Name, or null if not in the system.</returns>
 		public IArea GetArea(string machineName)
 		{

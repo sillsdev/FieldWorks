@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Ionic.Zip;
@@ -13,6 +14,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using LanguageExplorer.DictionaryConfiguration;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 
@@ -24,7 +26,6 @@ namespace LanguageExplorer.Impls
 	public class UploadToWebonaryController : IDisposable
 	{
 		private readonly LcmCache m_cache;
-		private readonly IPropertyTable m_propertyTable;
 		private readonly DictionaryExportService m_exportService;
 		private PublicationActivator m_publicationActivator;
 		/// <summary>
@@ -32,12 +33,12 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		protected Func<IWebonaryClient> CreateWebClient = () => new WebonaryClient();
 
-		public IPropertyTable PropertyTable { private get; set; }
+		public IPropertyTable PropertyTable { get; }
 
 		public UploadToWebonaryController(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, StatusBar statusBar)
 		{
 			m_cache = cache;
-			m_propertyTable = propertyTable;
+			PropertyTable = propertyTable;
 			m_exportService = new DictionaryExportService(cache, RecordList.ActiveRecordListRepository.ActiveRecordList, propertyTable, publisher, statusBar);
 			m_publicationActivator = new PublicationActivator(propertyTable);
 		}
@@ -45,9 +46,12 @@ namespace LanguageExplorer.Impls
 		#region Disposal
 		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing && m_publicationActivator != null)
-				m_publicationActivator.Dispose();
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+
+			if (disposing)
+			{
+				m_publicationActivator?.Dispose();
+			}
 			m_publicationActivator = null;
 		}
 
@@ -160,34 +164,31 @@ namespace LanguageExplorer.Impls
 			// To do local testing set the WEBONARYSERVER environment variable to something like 192.168.33.10
 			var server = Environment.GetEnvironmentVariable("WEBONARYSERVER");
 			server = string.IsNullOrEmpty(server) ? "webonary.org" : server;
-			return string.Format("https://{0}.{1}/wp-json/webonary/import", siteName, server);
+			return $"https://{siteName}.{server}/wp-json/webonary/import";
 		}
 
 		internal void UploadToWebonary(string zipFileToUpload, UploadToWebonaryModel model, IUploadToWebonaryView view)
 		{
-			if (zipFileToUpload == null)
-				throw new ArgumentNullException("zipFileToUpload");
-			if(model == null)
-				throw new ArgumentNullException("model");
-			if (view == null)
-				throw new ArgumentNullException("view");
+			Guard.AgainstNull(zipFileToUpload, nameof(zipFileToUpload));
+			Guard.AgainstNull(model, nameof(model));
+			Guard.AgainstNull(view, nameof(view));
 
 			view.UpdateStatus("Connecting to Webonary.");
 			var targetURI = DestinationURI(model.SiteName);
 
 			using (var client = CreateWebClient())
 			{
-				var credentials = string.Format("{0}:{1}", model.UserName, model.Password);
+				var credentials = $"{model.UserName}:{model.Password}";
 				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes(credentials)));
-				client.Headers.Add("user-agent", string.Format("FieldWorks Language Explorer v.{0}", Assembly.GetExecutingAssembly().GetName().Version));
+				client.Headers.Add("user-agent", $"FieldWorks Language Explorer v.{Assembly.GetExecutingAssembly().GetName().Version}");
 				client.Headers[HttpRequestHeader.Accept] = "*/*";
 
-				byte[] response = null;
+				byte[] response;
 				try
 				{
 					response = client.UploadFileToWebonary(targetURI, zipFileToUpload);
 				}
-				catch (WebonaryClient.WebonaryException e)
+				catch (WebonaryException e)
 				{
 					if (e.StatusCode == HttpStatusCode.Redirect)
 					{
@@ -196,8 +197,7 @@ namespace LanguageExplorer.Impls
 					else
 					{
 						const string errorMessage = "Unable to connect to Webonary.  Please check your username and password and your Internet connection.";
-						view.UpdateStatus(string.Format("An error occurred uploading your data: {0}{1}{2}:{3}",
-							errorMessage, Environment.NewLine, e.StatusCode, e.Message));
+						view.UpdateStatus($"An error occurred uploading your data: {errorMessage}{Environment.NewLine}{e.StatusCode}:{e.Message}");
 					}
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
 					return;
@@ -239,8 +239,7 @@ namespace LanguageExplorer.Impls
 				}
 				else // Unknown error, display the server response, but cut it off at 100 characters
 				{
-					view.UpdateStatus(string.Format("Response from server:{0}{1}{0}", Environment.NewLine,
-						responseText.Substring(0, Math.Min(100, responseText.Length))));
+					view.UpdateStatus(string.Format("Response from server:{0}{1}{0}", Environment.NewLine, responseText.Substring(0, Math.Min(100, responseText.Length))));
 				}
 			}
 		}
@@ -294,7 +293,9 @@ namespace LanguageExplorer.Impls
 			var tempDirectoryToCompress = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 			var zipBasename = UploadFilename(model, view);
 			if (zipBasename == null)
+			{
 				return;
+			}
 			var zipFileToUpload = Path.Combine(Path.GetTempPath(), zipBasename);
 			Directory.CreateDirectory(tempDirectoryToCompress);
 			ExportDictionaryContent(tempDirectoryToCompress, model, view);
@@ -310,10 +311,11 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		internal static string UploadFilename(UploadToWebonaryModel basedOnModel, IUploadToWebonaryView view)
 		{
-			if (basedOnModel == null)
-				throw new ArgumentNullException("basedOnModel");
+			Guard.AgainstNull(basedOnModel, nameof(basedOnModel));
 			if (string.IsNullOrEmpty(basedOnModel.SiteName))
+			{
 				throw new ArgumentException("basedOnModel");
+			}
 			var disallowedCharacters = MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterProjName) + "_ $.%";
 			if (basedOnModel.SiteName.IndexOfAny(disallowedCharacters.ToCharArray()) >= 0)
 			{
@@ -357,9 +359,14 @@ namespace LanguageExplorer.Impls
 
 			private void Dispose(bool disposing)
 			{
-				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
-				if (disposing && !string.IsNullOrEmpty(m_currentPublication))
-					m_propertyTable.SetProperty("SelectedPublication", m_currentPublication, false, true);
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if (disposing)
+				{
+					if (!string.IsNullOrEmpty(m_currentPublication))
+					{
+						m_propertyTable.SetProperty("SelectedPublication", m_currentPublication, false, true);
+					}
+				}
 			}
 
 			~PublicationActivator()

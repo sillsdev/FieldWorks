@@ -8,6 +8,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using LanguageExplorer.DictionaryConfiguration;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Impls
@@ -25,8 +26,6 @@ namespace LanguageExplorer.Impls
 		//  Unicode line break to insert between reversals
 		private const string ReversalSeperator = "\u2028";
 
-		private string m_selectedPublication;
-
 		private string m_selectedConfiguration;
 
 		public string SiteName { get; set; }
@@ -37,22 +36,20 @@ namespace LanguageExplorer.Impls
 
 		public bool RememberPassword { get; set; }
 
-		public string SelectedPublication // REVIEW (Hasso) 2014.11: should this have a default?
-		{
-			get { return m_selectedPublication; }
-			set { m_selectedPublication = value; }
-		}
+		// REVIEW (Hasso) 2014.11: should this have a default?
+		public string SelectedPublication { get; set; }
 
 		public string SelectedConfiguration
 		{
 			get
 			{
 				if (!string.IsNullOrEmpty(m_selectedConfiguration))
+				{
 					return m_selectedConfiguration;
-				var pathToCurrentConfiguration = DictionaryConfigurationServices.GetCurrentConfiguration(PropertyTable,
-					DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
+				}
+				var pathToCurrentConfiguration = DictionaryConfigurationServices.GetCurrentConfiguration(PropertyTable, DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
 				var curConfig =  Configurations.Values.FirstOrDefault(config => pathToCurrentConfiguration.Equals(config.FilePath));
-				return curConfig == null ? null : curConfig.Label;
+				return curConfig?.Label;
 			}
 			set { m_selectedConfiguration = value; }
 		}
@@ -65,51 +62,40 @@ namespace LanguageExplorer.Impls
 		public Dictionary<string, DictionaryConfigurationModel> Configurations { get; set; }
 		public Dictionary<string, DictionaryConfigurationModel> Reversals { get; set; }
 
-		private IPropertyTable PropertyTable { get; set; }
+		private IPropertyTable PropertyTable { get; }
 
 		public UploadToWebonaryModel(IPropertyTable propertyTable)
 		{
+			Guard.AgainstNull(propertyTable, nameof(propertyTable));
+
 			PropertyTable = propertyTable;
 			LoadFromSettings();
 		}
 
 		internal static string EncryptPassword(string encryptMe)
 		{
-			if(!String.IsNullOrEmpty(encryptMe))
-			{
-				byte[] encryptedData = ProtectedData.Protect(Encoding.Unicode.GetBytes(encryptMe), Encoding.Unicode.GetBytes(EntropyValue), DataProtectionScope.CurrentUser);
-				return Convert.ToBase64String(encryptedData);
-			}
-			return encryptMe;
+			return string.IsNullOrEmpty(encryptMe) ? encryptMe : Convert.ToBase64String(ProtectedData.Protect(Encoding.Unicode.GetBytes(encryptMe), Encoding.Unicode.GetBytes(EntropyValue), DataProtectionScope.CurrentUser));
 		}
 
 		internal static string DecryptPassword(string decryptMe)
 		{
-			if(!String.IsNullOrEmpty(decryptMe))
-			{
-				byte[] decryptedData = ProtectedData.Unprotect(Convert.FromBase64String(decryptMe), Encoding.Unicode.GetBytes(EntropyValue), DataProtectionScope.CurrentUser);
-				return Encoding.Unicode.GetString(decryptedData);
-			}
-			return decryptMe;
+			return !string.IsNullOrEmpty(decryptMe) ? Encoding.Unicode.GetString(ProtectedData.Unprotect(Convert.FromBase64String(decryptMe), Encoding.Unicode.GetBytes(EntropyValue), DataProtectionScope.CurrentUser)) : decryptMe;
 		}
 
 		private void LoadFromSettings()
 		{
-			if (PropertyTable != null)
+			var appSettings = PropertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
+			if (!string.IsNullOrEmpty(appSettings.WebonaryPass))
 			{
-				var appSettings = PropertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
-				if (!string.IsNullOrEmpty(appSettings.WebonaryPass))
-				{
-					RememberPassword = true;
-					Password = DecryptPassword(appSettings.WebonaryPass);
-				}
-				UserName = appSettings.WebonaryUser;
-
-				SiteName = PropertyTable.GetValue<string>(WebonarySite, null);
-				SelectedPublication = PropertyTable.GetValue<string>(WebonaryPublication, null);
-				SelectedConfiguration = PropertyTable.GetValue<string>(WebonaryConfiguration, null);
-				SelectedReversals = SplitReversalSettingString(PropertyTable.GetValue<string>(WebonaryReversals, null));
+				RememberPassword = true;
+				Password = DecryptPassword(appSettings.WebonaryPass);
 			}
+			UserName = appSettings.WebonaryUser;
+
+			SiteName = PropertyTable.GetValue<string>(WebonarySite, null);
+			SelectedPublication = PropertyTable.GetValue<string>(WebonaryPublication, null);
+			SelectedConfiguration = PropertyTable.GetValue<string>(WebonaryConfiguration, null);
+			SelectedReversals = SplitReversalSettingString(PropertyTable.GetValue<string>(WebonaryReversals, null));
 		}
 
 		internal void SaveToSettings()
@@ -125,9 +111,9 @@ namespace LanguageExplorer.Impls
 			{
 				PropertyTable.SetProperty(WebonaryConfiguration, m_selectedConfiguration, true, false);
 			}
-			if (m_selectedPublication != null)
+			if (SelectedPublication != null)
 			{
-				PropertyTable.SetProperty(WebonaryPublication, m_selectedPublication, true, false);
+				PropertyTable.SetProperty(WebonaryPublication, SelectedPublication, true, false);
 			}
 			PropertyTable.SaveGlobalSettings();
 			appSettings.Save();
@@ -139,7 +125,7 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private string CombineReversalSettingStrings(IEnumerable<string> selectedReversals)
 		{
-			return String.Join<string>(ReversalSeperator, selectedReversals);
+			return string.Join<string>(ReversalSeperator, selectedReversals);
 		}
 
 		/// <summary>
@@ -147,11 +133,7 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private static ICollection<string> SplitReversalSettingString(string savedReversalList)
 		{
-			if(!string.IsNullOrEmpty(savedReversalList))
-			{
-				return savedReversalList.Split(new[] { ReversalSeperator }, StringSplitOptions.RemoveEmptyEntries);
-			}
-			return null;
+			return !string.IsNullOrEmpty(savedReversalList) ? savedReversalList.Split(new[] { ReversalSeperator }, StringSplitOptions.RemoveEmptyEntries) : null;
 		}
 	}
 }
