@@ -17,7 +17,6 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="mainUserControl"></param>
 		public FwAccessibleObject(IMainUserControl mainUserControl)
 			: base((Control)mainUserControl)
 		{

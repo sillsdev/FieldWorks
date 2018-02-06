@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
 
@@ -35,7 +36,9 @@ namespace LanguageExplorer.Controls
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(string.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		#region Accessibility functionality for MainUserControl derived objects
@@ -48,20 +51,11 @@ namespace LanguageExplorer.Controls
 		{
 			return new FwAccessibleObject(this);
 		}
-		/// <summary>
-		/// Override this property to change the default name for a control if none of the looked
-		/// up fields are in the configuration parameters.
-		/// </summary>
-		///
-		private string m_accNameDefault = "MainUserControl";
+
 		/// <summary>
 		/// Set/Set the default accessible name.
 		/// </summary>
-		protected string AccNameDefault
-		{
-			get { return m_accNameDefault; }
-			set { m_accNameDefault = value; }
-		}
+		protected string AccNameDefault { get; set; } = "MainUserControl";
 
 		#region IMainUserControl implementation
 
@@ -89,22 +83,19 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Dispose the object.
 		/// </summary>
-		/// <param name="disposing"></param>
 		protected override void Dispose( bool disposing )
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
-//				if(components != null)
-//				{
-//					components.Dispose();
-//				}
 			}
-			m_accNameDefault = null;
+			AccNameDefault = null;
 
 			base.Dispose( disposing );
 		}
@@ -120,7 +111,9 @@ namespace LanguageExplorer.Controls
 		protected void TriggerMessageBoxIfAppropriate()
 		{
 			if (!string.IsNullOrWhiteSpace(MessageBoxTrigger))
+			{
 				MessageBoxExManager.Trigger(MessageBoxTrigger);
+			}
 		}
 	}
 }

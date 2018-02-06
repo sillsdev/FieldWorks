@@ -22,7 +22,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.Container components = null;
+		private Container components = null;
 
 		/// <summary>
 		/// Allow owning class to check on the url
@@ -32,7 +32,6 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Handle message "HCBeforeNavigate".
 		/// </summary>
-		/// <param name="e"></param>
 		protected virtual void OnHCBeforeNavigate(HtmlControlEventArgs e)
 		{
 			// Invokes the delegates.
@@ -115,15 +114,6 @@ namespace LanguageExplorer.Controls
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-#if Old
-			//link up to before navigate so that we know when the user clicked on something
-			//note: this old version of before navigate is being used because of a bug in the.net framework.
-			//win this bug is fixed, we should look at switching to using BeforeNavigate2
-
-			//need to get hold of the ActiveX object and then grab this old interface:
-			SHDocVw.WebBrowser_V1 axDocumentV1 = m_browser.GetOcx() as SHDocVw.WebBrowser_V1;
-			axDocumentV1.BeforeNavigate += new SHDocVw.DWebBrowserEvents_BeforeNavigateEventHandler(OnBeforeNavigate);
-#endif
 			AccNameDefault = "HtmlControl";	// default accessibility name
 			// no right-click context menu needed
 			m_browser.NoDefaultContextMenu = true;
@@ -208,7 +198,9 @@ namespace LanguageExplorer.Controls
 					case (uint) Keys.End:
 					case (uint) Keys.Home:
 						if (GetAsyncKeyState(VK_CONTROL) < 0)
+						{
 							throw new COMException("", 1); // returns HRESULT = S_FALSE
+						}
 						break;
 					default:
 						break; // do nothing
@@ -226,23 +218,14 @@ namespace LanguageExplorer.Controls
 		{
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
-				if (m_browser != null)
-				{
-#if Old
-					SHDocVw.WebBrowser_V1 axDocumentV1 = m_browser.GetOcx() as SHDocVw.WebBrowser_V1;
-					if (axDocumentV1 != null)
-						axDocumentV1.BeforeNavigate -= new SHDocVw.DWebBrowserEvents_BeforeNavigateEventHandler(OnBeforeNavigate);
-#endif
-					m_browser.Dispose();
-				}
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				m_browser?.Dispose();
+				components?.Dispose();
 			}
 			m_url = null;
 			m_browser = null;

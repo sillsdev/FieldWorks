@@ -31,7 +31,6 @@ namespace LanguageExplorer.Controls
 		#region Data Members
 
 		private XmlNode m_configurationParameters;
-		private Control m_mainControl;
 		private Size m_parentSizeHint;
 		private int instanceID;
 
@@ -50,7 +49,7 @@ namespace LanguageExplorer.Controls
 			: this()
 		{
 			//SuspendLayout();
-			m_mainControl = mainControl;
+			MainControl = mainControl;
 			PaneBar = paneBar;
 			paneBar.Dock = DockStyle.Top;
 
@@ -62,9 +61,7 @@ namespace LanguageExplorer.Controls
 			Dock = DockStyle.Fill;
 			mainControl.Dock = DockStyle.Fill;
 			Controls.Add(paneBar);
-			Controls.Add(m_mainControl);
-			//ResumeLayout(false);
-			//m_mainControl.BringToFront();
+			Controls.Add(MainControl);
 		}
 
 		/// <summary />
@@ -115,7 +112,7 @@ namespace LanguageExplorer.Controls
 		internal string DefaultPrintPaneId { get; set; } = string.Empty;
 
 		/// <summary />
-		internal Control MainControl => m_mainControl;
+		internal Control MainControl { get; }
 
 		#endregion Properties
 
@@ -127,7 +124,9 @@ namespace LanguageExplorer.Controls
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		#region IMainUserControl implementation
@@ -157,7 +156,7 @@ namespace LanguageExplorer.Controls
 		{
 			CheckDisposed();
 
-			return (m_mainControl as IMainContentControl).PrepareToGoAway();
+			return ((IMainContentControl)MainControl).PrepareToGoAway();
 		}
 
 		/// <summary />
@@ -166,7 +165,7 @@ namespace LanguageExplorer.Controls
 			get
 			{
 				CheckDisposed();
-				return (m_mainControl as IMainContentControl).AreaName;
+				return ((IMainContentControl)MainControl).AreaName;
 			}
 		}
 
@@ -178,18 +177,16 @@ namespace LanguageExplorer.Controls
 		public Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
 			if (targetCandidates == null)
+			{
 				throw new ArgumentNullException(nameof(targetCandidates));
+			}
 
 			// Don't bother with the IPaneBar.
 			// Just check out the main control.
-			return (m_mainControl as ICtrlTabProvider).PopulateCtrlTabTargetCandidateList(targetCandidates);
+			return ((ICtrlTabProvider)MainControl).PopulateCtrlTabTargetCandidateList(targetCandidates);
 		}
 
 		#endregion  ICtrlTabProvider implementation
-
-		#region Other messages
-
-		#endregion Other messages
 
 		/// <summary />
 		public void PostLayoutInit()
@@ -222,6 +219,10 @@ namespace LanguageExplorer.Controls
 		/// Get the ISubscriber.
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
+
+		#endregion
+
+		#region Implementation of IFlexComponent
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.

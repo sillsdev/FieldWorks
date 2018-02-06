@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace LanguageExplorer.Controls
@@ -50,9 +51,14 @@ namespace LanguageExplorer.Controls
 		public SearchTimer(Control owningControl, int interval, Searcher searcher)
 		{
 			if (owningControl == null)
-				throw new ArgumentNullException("owningControl");
+			{
+				throw new ArgumentNullException(nameof(owningControl));
+			}
+
 			if (searcher == null)
-				throw new ArgumentNullException("searcher");
+			{
+				throw new ArgumentNullException(nameof(searcher));
+			}
 
 			m_timer = new Timer();
 			m_owningControl = owningControl;
@@ -80,10 +86,15 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary/>
-		protected virtual void Dispose(bool fDisposing)
+		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
-			if (fDisposing && !IsDisposed)
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". *******");
+			if (IsDisposed)
+			{
+				// No need to do it more than once.
+				return;
+			}
+			if (disposing)
 			{
 				// dispose managed and unmanaged objects
 				m_timer.Dispose();
@@ -95,8 +106,6 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// When the timer interval elapses, this method runs the search function.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
 		protected virtual void TimerEventProcessor(object sender, EventArgs eventArgs)
 		{
 			var oldCursor = m_owningControl.Cursor;
@@ -117,19 +126,25 @@ namespace LanguageExplorer.Controls
 
 		private void EnableControls()
 		{
-			if (m_controlsToDisable != null)
+			if (m_controlsToDisable == null)
 			{
-				foreach (var control in m_controlsToDisable)
-					control.Enabled = true;
+				return;
+			}
+			foreach (var control in m_controlsToDisable)
+			{
+				control.Enabled = true;
 			}
 		}
 
 		private void DisableControls()
 		{
-			if (m_controlsToDisable != null)
+			if (m_controlsToDisable == null)
 			{
-				foreach (var control in m_controlsToDisable)
-					control.Enabled = false;
+				return;
+			}
+			foreach (var control in m_controlsToDisable)
+			{
+				control.Enabled = false;
 			}
 		}
 
@@ -138,8 +153,6 @@ namespace LanguageExplorer.Controls
 		/// When the user types in the text box, this arranges to call the original
 		/// delegate method (from the constructor) that does the searching.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		public void OnSearchTextChanged(object sender, EventArgs e)
 		{
 			if (m_fTimerTickSet == false)
@@ -148,7 +161,7 @@ namespace LanguageExplorer.Controls
 				m_timer.Interval = m_interval;
 				m_timer.Start();
 				m_fTimerTickSet = true;
-				m_timer.Tick += new EventHandler(TimerEventProcessor);
+				m_timer.Tick += TimerEventProcessor;
 			}
 			else
 			{

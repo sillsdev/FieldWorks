@@ -11,24 +11,18 @@ namespace LanguageExplorer.Controls
 	/// </summary>
 	public class HtmlControlEventArgs : EventArgs
 	{
-		private readonly string m_sUrl;
-
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="sUrl"></param>
 		public HtmlControlEventArgs(string sUrl)
 		{
-			m_sUrl = sUrl;
+			URL = sUrl;
 		}
 
 		/// <summary>
 		/// Get the event's URL.
 		/// </summary>
-		public string URL
-		{
-			get { return m_sUrl;}
-		}
+		public string URL { get; }
 	}
 
 	/// <summary>
