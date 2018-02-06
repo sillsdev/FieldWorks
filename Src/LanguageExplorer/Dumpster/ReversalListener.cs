@@ -1,9 +1,10 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
 using LanguageExplorer.LcmUi;
@@ -41,7 +42,6 @@ namespace LanguageExplorer.Dumpster
 	internal sealed class ReversalListener : IFlexComponent, IDisposable
 	{
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -51,23 +51,17 @@ namespace LanguageExplorer.Dumpster
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed;
 
 		private int instanceID = 0x00000F0;
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		public bool IsDisposed { get; private set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -122,8 +116,10 @@ namespace LanguageExplorer.Dumpster
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -135,7 +131,7 @@ namespace LanguageExplorer.Dumpster
 			Publisher = null;
 			Subscriber = null;
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
@@ -165,6 +161,10 @@ namespace LanguageExplorer.Dumpster
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
 
+		#endregion
+
+		#region Implementation of IFlexComponent
+
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -181,15 +181,17 @@ namespace LanguageExplorer.Dumpster
 			var wsMgr = cache.ServiceLocator.WritingSystemManager;
 			cache.DomainDataByFlid.BeginNonUndoableTask();
 			var usedWses = new List<CoreWritingSystemDefinition>();
-			foreach (IReversalIndex rev in cache.LanguageProject.LexDbOA.ReversalIndexesOC)
+			foreach (var rev in cache.LanguageProject.LexDbOA.ReversalIndexesOC)
 			{
 				usedWses.Add(wsMgr.Get(rev.WritingSystem));
 				if (rev.PartsOfSpeechOA == null)
+				{
 					rev.PartsOfSpeechOA = cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				}
 				rev.PartsOfSpeechOA.ItemClsid = PartOfSpeechTags.kClassId;
 			}
-			List<IReversalIndex> corruptReversalIndices = new List<IReversalIndex>();
-			foreach (IReversalIndex rev in cache.LanguageProject.LexDbOA.ReversalIndexesOC)
+			var corruptReversalIndices = new List<IReversalIndex>();
+			foreach (var rev in cache.LanguageProject.LexDbOA.ReversalIndexesOC)
 			{
 				// Make sure each index has a name, if it is available from the writing system.
 				if (string.IsNullOrEmpty(rev.WritingSystem))
@@ -216,12 +218,16 @@ namespace LanguageExplorer.Dumpster
 			if (reversalIndexGuid == Guid.Empty)
 			{
 				// We haven't established the reversal index yet.  Choose the first one available.
-				Guid firstGuid = Guid.Empty;
-				List<IReversalIndex> reversalIds = cache.LanguageProject.LexDbOA.CurrentReversalIndices;
-				if (reversalIds.Count > 0)
+				var firstGuid = Guid.Empty;
+				var reversalIds = cache.LanguageProject.LexDbOA.CurrentReversalIndices;
+				if (reversalIds.Any())
+				{
 					firstGuid = reversalIds[0].Guid;
+				}
 				else if (cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count > 0)
+				{
 					firstGuid = cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToGuidArray()[0];
+				}
 				if (firstGuid != Guid.Empty)
 				{
 					SetReversalIndexGuid(firstGuid);

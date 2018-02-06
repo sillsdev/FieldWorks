@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.TextsAndWords;
@@ -75,7 +76,9 @@ namespace LanguageExplorer.Dumpster
 			m_wordformRepos = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			Cache.DomainDataByFlid.AddNotification(this);
 			if (IsVernacularSpellingEnabled())
+			{
 				OnEnableVernacularSpelling();
+			}
 		}
 
 		#endregion
@@ -91,21 +94,15 @@ namespace LanguageExplorer.Dumpster
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed = false;
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		public bool IsDisposed { get; private set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -125,23 +122,21 @@ namespace LanguageExplorer.Dumpster
 		/// </summary>
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			if (tag == WfiWordformTags.kflidSpellingStatus)
+			if (tag != WfiWordformTags.kflidSpellingStatus)
 			{
-				RestartSpellChecking();
-				// This keeps the spelling dictionary in sync with the WFI.
-				// Arguably this should be done in LCM. However the spelling dictionary is used to
-				// keep the UI showing squiggles, so it's also arguable that it is a UI function.
-				// In any case it's easier to do it in PropChanged (which also fires in Undo/Redo)
-				// than in a data-change method which does not.
-				var wf = m_wordformRepos.GetObject(hvo);
-				string text = wf.Form.VernacularDefaultWritingSystem.Text;
-				if (!string.IsNullOrEmpty(text))
-				{
-					SpellingHelper.SetSpellingStatus(text, Cache.DefaultVernWs,
-													Cache.LanguageWritingSystemFactoryAccessor,
-													wf.SpellingStatus == (int)SpellingStatusStates.correct);
-				}
-
+				return;
+			}
+			RestartSpellChecking();
+			// This keeps the spelling dictionary in sync with the WFI.
+			// Arguably this should be done in LCM. However the spelling dictionary is used to
+			// keep the UI showing squiggles, so it's also arguable that it is a UI function.
+			// In any case it's easier to do it in PropChanged (which also fires in Undo/Redo)
+			// than in a data-change method which does not.
+			var wf = m_wordformRepos.GetObject(hvo);
+			var text = wf.Form.VernacularDefaultWritingSystem.Text;
+			if (!string.IsNullOrEmpty(text))
+			{
+				SpellingHelper.SetSpellingStatus(text, Cache.DefaultVernWs, Cache.LanguageWritingSystemFactoryAccessor, wf.SpellingStatus == (int)SpellingStatusStates.correct);
 			}
 		}
 
@@ -185,14 +180,18 @@ namespace LanguageExplorer.Dumpster
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				if (Cache != null && !Cache.IsDisposed && Cache.DomainDataByFlid != null)
-					Cache.DomainDataByFlid.RemoveNotification(this);
+				if (Cache != null && !Cache.IsDisposed)
+				{
+					Cache.DomainDataByFlid?.RemoveNotification(this);
+				}
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -200,7 +199,7 @@ namespace LanguageExplorer.Dumpster
 			Publisher = null;
 			Subscriber = null;
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
@@ -257,11 +256,15 @@ namespace LanguageExplorer.Dumpster
 
 		public bool OnUseVernSpellingDictionary(object argument)
 		{
-			bool checking = !IsVernacularSpellingEnabled();
+			var checking = !IsVernacularSpellingEnabled();
 			if (checking)
+			{
 				OnEnableVernacularSpelling();
+			}
 			else
+			{
 				WfiWordformServices.DisableVernacularSpellingDictionary(Cache);
+			}
 			PropertyTable.SetProperty("UseVernSpellingDictionary", checking, true, true);
 			RestartSpellChecking();
 			return true;
@@ -274,25 +277,22 @@ namespace LanguageExplorer.Dumpster
 
 		private void RestartSpellChecking()
 		{
-			IApp app = PropertyTable.GetValue<IApp>("App");
-			if (app != null)
-			{
-				app.RestartSpellChecking();
-			}
+			var app = PropertyTable.GetValue<IApp>("App");
+			app?.RestartSpellChecking();
 		}
 
 		/// <summary>
 		/// Implement the add words to spelling dictionary command. (May be called by reflection,
 		/// though I don't think there is a current explicit menu item.)
 		/// </summary>
-		/// <param name="argument"></param>
-		/// <returns></returns>
 		public bool OnAddWordsToSpellDict(object argument)
 		{
 			CheckDisposed();
 
 			if (Cache == null)
+			{
 				return false; // impossible?
+			}
 			WfiWordformServices.ConformSpellingDictToWordforms(Cache);
 			return true; // handled
 		}
@@ -302,13 +302,12 @@ namespace LanguageExplorer.Dumpster
 		/// <summary>
 		/// Enable vernacular spelling.
 		/// </summary>
-		void OnEnableVernacularSpelling()
+		private void OnEnableVernacularSpelling()
 		{
 			// Enable all vernacular spelling dictionaries by changing those that are set to <None>
 			// to point to the appropriate Locale ID. Do this BEFORE updating the spelling dictionaries,
 			// otherwise, the update won't see that there is any dictionary set to update.
-			var cache = Cache;
-			foreach (CoreWritingSystemDefinition wsObj in cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			foreach (var wsObj in Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
 				// This allows it to try to find a dictionary, but doesn't force one to exist.
 				if (string.IsNullOrEmpty(wsObj.SpellCheckingId) || wsObj.SpellCheckingId == "<None>") // LT-13556 new langs were null here
@@ -326,24 +325,24 @@ namespace LanguageExplorer.Dumpster
 		/// <returns></returns>
 		private static Guid ActiveWordform(IWfiWordformRepository wordformRepos, IPropertyTable propertyTable)
 		{
-			IApp app = propertyTable.GetValue<IApp>("App");
-			if (app == null)
-				return Guid.Empty;
-			IFwMainWnd window = app.ActiveMainWindow as IFwMainWnd;
-			if (window == null)
-				return Guid.Empty;
-			IRootSite activeView = window.ActiveView;
+			var app = propertyTable.GetValue<IApp>("App");
+			var window = app?.ActiveMainWindow as IFwMainWnd;
+			var activeView = window?.ActiveView;
 			if (activeView == null)
+			{
 				return Guid.Empty;
-			List<IVwRootBox> roots = activeView.AllRootBoxes();
-			if (roots.Count < 1)
+			}
+			var roots = activeView.AllRootBoxes();
+			if (!roots.Any())
+			{
 				return Guid.Empty;
-			SelectionHelper helper = SelectionHelper.Create(roots[0].Site);
-			if (helper == null)
-				return Guid.Empty;
-			ITsString word = helper.SelectedWord;
+			}
+			var helper = SelectionHelper.Create(roots[0].Site);
+			var word = helper?.SelectedWord;
 			if (word == null || word.Length == 0)
+			{
 				return Guid.Empty;
+			}
 			IWfiWordform wordform;
 			return wordformRepos.TryGetObject(word, out wordform) ? wordform.Guid : Guid.Empty;
 		}
@@ -360,8 +359,6 @@ namespace LanguageExplorer.Dumpster
 		/// <summary>
 		/// Called by reflection to implement the command.
 		/// </summary>
-		/// <param name="argument"></param>
-		/// <returns></returns>
 		public bool OnEditSpellingStatus(object argument)
 		{
 			// Without checking both the SpellingStatus and (virtual) FullConcordanceCount
@@ -372,15 +369,15 @@ namespace LanguageExplorer.Dumpster
 			additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new LinkProperty("LinkSetupInfo", "ReviewUndecidedSpelling"));
 			var commands = new List<string>
-										{
-											"AboutToFollowLink",
-											"FollowLink"
-										};
+			{
+				"AboutToFollowLink",
+				"FollowLink"
+			};
 			var parms = new List<object>
-										{
-											null,
-											link
-										};
+			{
+				null,
+				link
+			};
 			Publisher.Publish(commands, parms);
 			return true;
 		}
@@ -401,15 +398,15 @@ namespace LanguageExplorer.Dumpster
 			additionalProps.Add(new LinkProperty("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new LinkProperty("LinkSetupInfo", "CorrectSpelling"));
 			var commands = new List<string>
-										{
-											"AboutToFollowLink",
-											"FollowLink"
-										};
+			{
+				"AboutToFollowLink",
+				"FollowLink"
+			};
 			var parms = new List<object>
-										{
-											null,
-											link
-										};
+			{
+				null,
+				link
+			};
 			Publisher.Publish(commands, parms);
 			return true;
 		}
@@ -468,13 +465,7 @@ namespace LanguageExplorer.Dumpster
 		/// the problem on how to control we are CommandSet are handled by listeners are
 		/// visible.
 		/// </remarks>
-		private bool InFriendlyArea
-		{
-			get
-			{
-				return (PropertyTable.GetValue<string>(AreaServices.AreaChoice) == AreaServices.TextAndWordsAreaMachineName);
-			}
-		}
+		private bool InFriendlyArea => PropertyTable.GetValue<string>(AreaServices.AreaChoice) == AreaServices.TextAndWordsAreaMachineName;
 
 		/// <summary>
 		/// Handle enabled menu items for jumping to another tool, or another location in the
@@ -485,7 +476,9 @@ namespace LanguageExplorer.Dumpster
 			CheckDisposed();
 
 			if (!InFriendlyArea)
+			{
 				return false;
+			}
 #if RANDYTODO
 			var command = (Command)commandObject;
 			if (command.TargetId != Guid.Empty)

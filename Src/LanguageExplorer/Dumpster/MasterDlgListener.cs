@@ -23,10 +23,7 @@ namespace LanguageExplorer.Dumpster
 
 		#region Properties
 
-		protected virtual string PersistentLabel
-		{
-			get { return "InsertSomeClassObject"; }
-		}
+		protected virtual string PersistentLabel => "InsertSomeClassObject";
 
 		#endregion Properties
 
@@ -52,21 +49,15 @@ namespace LanguageExplorer.Dumpster
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed = false;
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		public bool IsDisposed { get; private set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -121,8 +112,10 @@ namespace LanguageExplorer.Dumpster
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -135,7 +128,7 @@ namespace LanguageExplorer.Dumpster
 			Publisher = null;
 			Subscriber = null;
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
