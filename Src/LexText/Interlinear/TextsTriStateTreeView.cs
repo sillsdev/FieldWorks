@@ -98,8 +98,8 @@ namespace SIL.FieldWorks.IText
 		/// ------------------------------------------------------------------------------------
 		private void LoadScriptureTexts()
 		{
-			if (!m_cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any() &&
-				!m_associatedPtText.AssociatedLexicalProject.ProjectId.Any())
+			if (!m_cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any() ||
+				(m_associatedPtText != null && !m_associatedPtText.AssociatedLexicalProject.ProjectId.Any()))
 			{
 				return; // Noby home, so skip them.
 			}
