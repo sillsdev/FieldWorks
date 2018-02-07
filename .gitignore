@@ -123,6 +123,7 @@ Lib/linux/Debug/libgraphite2.a
 Lib/linux/Release/libgraphite2.a
 
 Lib/icu*.lib
+DistFiles/Icu*/data
 DistFiles/Icu*/icudt*l
 DistFiles/Icu*/*.*
 Bin/NUnit/
