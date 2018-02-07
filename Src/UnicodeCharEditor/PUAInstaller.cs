@@ -9,42 +9,30 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.LCModel.Utils;
 using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary/>
 	public class PUAInstaller
 	{
-		/// <summary>
-		/// The index of the bidi information in the unicode data, zero based.
-		/// </summary>
-		private const int kiBidi = 3;
-
-		private List<PUACharacter> m_chars;
 		private readonly Dictionary<int, PUACharacter> m_dictCustomChars = new Dictionary<int, PUACharacter>();
-		private string m_comment;
-		string m_icuDir;
-		string m_icuDataDir;
+		private string m_icuDir;
+		private string m_icuDataDir;
 
 		private string IcuDir
 		{
 			get
 			{
-				if (String.IsNullOrEmpty(m_icuDir))
+				if (string.IsNullOrEmpty(m_icuDir))
 				{
 					m_icuDir = Icu.DefaultDirectory;
-					if (String.IsNullOrEmpty(m_icuDir))
-						throw new Exception("ICU directory not found. Registry value for ICU not set?");
+					if (string.IsNullOrEmpty(m_icuDir))
+						throw new DirectoryNotFoundException("ICU directory not found. Registry value for ICU not set?");
 					if (!Directory.Exists(m_icuDir))
-						throw new Exception("ICU directory does not exit.  Registry value for ICU set incorrectly?");
+						throw new DirectoryNotFoundException($"ICU directory does not exist at {m_icuDir}. Registry value for ICU set incorrectly?");
 				}
 				return m_icuDir;
 			}
@@ -54,13 +42,11 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			get
 			{
-				if (String.IsNullOrEmpty(m_icuDataDir))
+				if (string.IsNullOrEmpty(m_icuDataDir))
 				{
-					m_icuDataDir = Icu.DefaultDataDirectory;
-					if (String.IsNullOrEmpty(m_icuDataDir))
-						throw new Exception("ICU data directory not found. Registry value for ICU not set?");
+					m_icuDataDir = Path.Combine(IcuDir, "data");
 					if (!Directory.Exists(m_icuDataDir))
-						throw new Exception("ICU data directory does not exit.  Registry value for ICU set incorrectly?");
+						throw new DirectoryNotFoundException($"ICU data directory does not exist at {m_icuDataDir}.");
 				}
 				return m_icuDataDir;
 			}
@@ -87,135 +73,129 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				// 0. Intro: Prepare files
 
 				// 0.1: File names
-				var unidataDir = Path.Combine(IcuDir, "data");
-				var unicodeDataFilename = Path.Combine(IcuDir, "UnicodeDataOverrides.txt");
-				var originalUnicodeDataFilename = Path.Combine(unidataDir, "UnicodeDataOverrides.txt");
+				var outputUnicodeDataFilename = Path.Combine(IcuDir, "UnicodeDataOverrides.txt");
+				var originalUnicodeDataFilename = Path.Combine(IcuDataDir, "UnicodeDataOverrides.txt");
 				var nfcOverridesFileName = Path.Combine(IcuDir, "nfcOverrides.txt"); // Intermediate we will generate
 				var nfkcOverridesFileName = Path.Combine(IcuDir, "nfkcOverrides.txt"); // Intermediate we will generate
 
-				// 0.2: Create a one-time backup that will not be over written if the file exists
-				BackupOrig(unicodeDataFilename);
+				// 0.2: Create a one-time backup that will not be overwritten if the file exists
+				BackupOrig(outputUnicodeDataFilename);
 
 				// 0.3: Create a stack of files to restore if we encounter and error
 				//			This allows us to work with the original files
 				// If we are successful we call this.RemoveBackupFiles() to clean up
 				// If we are not we call this.RestoreFiles() to restore the original files
 				//		and delete the backups
-				var unicodeDataBackup = CreateBackupFile(unicodeDataFilename);
-				AddUndoFileFrame(unicodeDataFilename, unicodeDataBackup);
+				var unicodeDataBackup = CreateBackupFile(outputUnicodeDataFilename);
+				AddUndoFileFrame(outputUnicodeDataFilename, unicodeDataBackup);
 
 				//Initialize and populate the parser if necessary
 				// 1. Maps our XML file to a list of PUACharacter objects.
-				ParseCustomCharsFile(filename);
+				string comment;
+				var chars = ParseCustomCharsFile(filename, out comment);
 
 				// (Step 1 has been moved before the "intro")
 				// 2. Sort the PUA characters
-				m_chars.Sort();
+				chars.Sort();
 
 				// 3. Open the file for reading and writing
 				// 4. Insert the PUA via their codepoints
-				InsertCharacters(m_chars.ToArray(), originalUnicodeDataFilename, unicodeDataFilename);
+				InsertCharacters(chars, comment, originalUnicodeDataFilename, outputUnicodeDataFilename);
 
 				// 5. Generate the modified normalization file inputs.
-				using (var reader = new StreamReader(unicodeDataFilename, Encoding.ASCII))
+				using (var reader = new StreamReader(outputUnicodeDataFilename, Encoding.ASCII))
 				{
 					using (var writeNfc = new StreamWriter(nfcOverridesFileName, false, Encoding.ASCII))
 					using (var writeNfkc = new StreamWriter(nfkcOverridesFileName, false, Encoding.ASCII))
 					{
-						reader.Peek(); // force autodetection of encoding.
-						try
+						// ReSharper disable ReturnValueOfPureMethodIsNotUsed -- Justification: force autodetection of encoding.
+						reader.Peek();
+						// ReSharper restore ReturnValueOfPureMethodIsNotUsed
+						string line;
+						while ((line = reader.ReadLine()) != null)
 						{
-							string line;
-							while ((line = reader.ReadLine()) != null)
+							if (line.StartsWith("Code") || line.StartsWith("block")) // header line or special instruction
+								continue;
+							// Extract the first, fourth, and sixth fields.
+							var match = new Regex("^([^;]*);[^;]*;[^;]*;([^;]*);[^;]*;([^;]*);").Match(line);
+							if (!match.Success)
+								continue;
+							var codePoint = match.Groups[1].Value.Trim();
+							var combiningClass = match.Groups[2].Value.Trim();
+							var decomp = match.Groups[3].Value.Trim();
+							if (!string.IsNullOrEmpty(combiningClass) && combiningClass != "0")
 							{
-								if (line.StartsWith("Code") || line.StartsWith("block")) // header line or special instruction
-									continue;
-								// Extract the first, fourth, and sixth fields.
-								var match = new Regex("^([^;]*);[^;]*;[^;]*;([^;]*);[^;]*;([^;]*);").Match(line);
-								if (!match.Success)
-									continue;
-								string codePoint = match.Groups[1].Value.Trim();
-								string combiningClass = match.Groups[2].Value.Trim();
-								string decomp = match.Groups[3].Value.Trim();
-								if (!string.IsNullOrEmpty(combiningClass) && combiningClass != "0")
-								{
-									writeNfc.WriteLine(codePoint + ":" + combiningClass);
-								}
-								if (!string.IsNullOrEmpty(decomp))
-								{
-									if (decomp.StartsWith("<"))
-									{
-										int index = decomp.IndexOf(">", StringComparison.InvariantCulture);
-										if (index < 0)
-											continue; // badly formed, ignore it.
-										decomp = decomp.Substring(index + 1).Trim();
-									}
-									// otherwise we should arguably write to nfc.txt
-									// If exactly two code points write codePoint=decomp
-									// otherwise write codePoint>decomp
-									// However, we should not be modifying standard normalization.
-									// For now treat them all as compatibility only.
-									writeNfkc.WriteLine(codePoint + ">" + decomp);
-								}
+								writeNfc.WriteLine(codePoint + ":" + combiningClass);
 							}
-
-						}
-						finally
-						{
-							writeNfc.Close();
-							writeNfkc.Close();
-							reader.Close();
+							if (!string.IsNullOrEmpty(decomp))
+							{
+								if (decomp.StartsWith("<"))
+								{
+									var index = decomp.IndexOf(">", StringComparison.InvariantCulture);
+									if (index < 0)
+										continue; // badly formed, ignore it.
+									decomp = decomp.Substring(index + 1).Trim();
+								}
+								// otherwise we should arguably write to nfc.txt
+								// If exactly two code points write codePoint=decomp
+								// otherwise write codePoint>decomp
+								// However, we should not be modifying standard normalization.
+								// For now treat them all as compatibility only.
+								writeNfkc.WriteLine(codePoint + ">" + decomp);
+							}
 						}
 					}
 				}
 
 
 				// 6. Run the "gennorm2" commands to write the actual files
-				RunICUTools(unidataDir, nfcOverridesFileName, nfkcOverridesFileName);
+				RunICUTools(IcuDataDir, nfcOverridesFileName, nfkcOverridesFileName);
 
 				RemoveBackupFiles();
 			}
 			catch (Exception)
 			{
-				RestoreFiles();
+				try
+				{
+					RestoreFiles();
+				}
+				catch
+				{
+					// don't mask the original exception with an exception thrown during cleanup
+				}
 				throw;
-			}
-			finally
-			{
-				RemoveTempFiles();
 			}
 		}
 
-		private void ParseCustomCharsFile(string filename)
+		private List<PUACharacter> ParseCustomCharsFile(string filename, out string comment)
 		{
 			var ci = CultureInfo.CreateSpecificCulture("en-US");
-			m_comment = String.Format("[SIL-Corp] {0} User Added {1}", filename, DateTime.Now.ToString("F", ci));
-			m_chars = new List<PUACharacter>();
+			comment = $"[SIL-Corp] {filename} User Added {DateTime.Now.ToString("F", ci)}";
+			var chars = new List<PUACharacter>();
 			var xd = XDocument.Load(filename, LoadOptions.None);
 			foreach (var xe in xd.Descendants("CharDef"))
 			{
 				var xaCode = xe.Attribute("code");
-				if (xaCode == null || String.IsNullOrEmpty(xaCode.Value))
+				if (string.IsNullOrEmpty(xaCode?.Value))
 					continue;
 				var xaData = xe.Attribute("data");
-				if (xaData == null || String.IsNullOrEmpty(xaData.Value))
+				if (string.IsNullOrEmpty(xaData?.Value))
 					continue;
 				int code;
-				if (Int32.TryParse(xaCode.Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code) &&
+				if (int.TryParse(xaCode.Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code) &&
 					!m_dictCustomChars.ContainsKey(code))
 				{
 					var spec = new PUACharacter(xaCode.Value, xaData.Value);
 					m_dictCustomChars.Add(code, spec);
-					m_chars.Add(spec);
+					chars.Add(spec);
 				}
 			}
-
+			return chars;
 		}
 
 		#region Undo File Stack
 
-		///<summary>
-		///</summary>
+		///<summary/>
 		public struct UndoFiles
 		{
 			///<summary></summary>
@@ -286,7 +266,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// DerivedBidiClass.txt, as well as other *.txt files in unidata to
 		/// create <i>icuprefix/</i>uprops.icu and other binary data files.
 		/// </summary>
-		public void RunICUTools(string unidataDir, string nfcOverridesFileName, string nfkcOverridesFileName)
+		public void RunICUTools(string icuDataDir, string nfcOverridesFileName, string nfkcOverridesFileName)
 		{
 			// run commands similar to the following (with full paths in quotes)
 			//
@@ -296,13 +276,13 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			// Note: this compiles the input files to produce the two output files, which ICU loads to customize normalization.
 
 			// Get the icu directory information
-			var nfcTxtFileName = Path.Combine(unidataDir, "nfc.txt"); // Original from ICU, installed
-			var nfcHebrewFileName = Path.Combine(unidataDir, "nfcHebrew.txt"); // Original from ICU, installed
-			var nfkcTxtFileName = Path.Combine(unidataDir, "nfkc.txt"); // Original from ICU, installed
+			var nfcTxtFileName = Path.Combine(icuDataDir, "nfc.txt"); // Original from ICU, installed
+			var nfcHebrewFileName = Path.Combine(icuDataDir, "nfcHebrew.txt"); // Original from ICU, installed
+			var nfkcTxtFileName = Path.Combine(icuDataDir, "nfkc.txt"); // Original from ICU, installed
 
 			// The exact name of this directory is built into ICU and can't be changed. It must be this subdirectory
 			// relative to the IcuDir (which is the IcuDataDirectory passed to ICU).
-			var uniBinaryDataDir = Path.Combine(IcuDir, string.Format("icudt{0}l", Icu.Version));
+			var uniBinaryDataDir = Path.Combine(IcuDir, $"icudt{Icu.Version}l");
 			var nfcBinaryFileName = Path.Combine(uniBinaryDataDir, "nfc_fw.nrm"); // Binary file generated by gennorm2
 			var nfkcBinaryFileName = Path.Combine(uniBinaryDataDir, "nfkc_fw.nrm"); // Binary file generated by gennorm2
 
@@ -311,8 +291,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			var nfkcBackupFileName = CreateBackupFile(nfkcBinaryFileName);
 			AddUndoFileFrame(nfcBinaryFileName, nfcBackupFileName);
 			AddUndoFileFrame(nfkcBinaryFileName, nfkcBackupFileName);
-			// Move existing files out of the way in case they are locked and can't be
-			// overwritten.
+			// Move existing files out of the way in case they are locked and can't be overwritten.
 			RemoveFile(nfcBinaryFileName);
 			RemoveFile(nfkcBinaryFileName);
 
@@ -322,13 +301,11 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			var genNorm2 = GetIcuExecutable("gennorm2");
 
 			// run it to generate the canonical binary data.
-			var args = String.Format(" -o \"{0}\" \"{1}\" \"{2}\" \"{3}\"",
-				nfcBinaryFileName, nfcTxtFileName, nfcHebrewFileName, nfcOverridesFileName);
+			var args = $@" -o ""{nfcBinaryFileName}"" ""{nfcTxtFileName}"" ""{nfcHebrewFileName}"" ""{nfcOverridesFileName}""";
 			RunProcess(genNorm2, args);
 
 			// run it again to generate the non-canonical binary data.
-			args = String.Format(" -o \"{0}\" \"{1}\" \"{2}\" \"{3}\" \"{4}\" \"{5}\"",
-				nfkcBinaryFileName, nfcTxtFileName, nfkcTxtFileName, nfcHebrewFileName, nfcOverridesFileName, nfkcOverridesFileName);
+			args = $@" -o ""{nfkcBinaryFileName}"" ""{nfcTxtFileName}"" ""{nfkcTxtFileName}"" ""{nfcHebrewFileName}"" ""{nfcOverridesFileName}"" ""{nfkcOverridesFileName}""";
 			RunProcess(genNorm2, args);
 		}
 
@@ -369,17 +346,17 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 						LogFile.AddErrorLine(stdError);
 					}
 					if (ret == (int) IcuErrorCodes.FILE_ACCESS_ERROR)
-						throw new IcuLockedException(ErrorCodes.Gennorm);
+						throw new IcuLockedException(ErrorCodes.Gennorm, stdError);
 					throw new PuaException(ErrorCodes.Gennorm, stdError);
 				}
 			}
 		}
 
-		private string GetIcuExecutable(string exeName)
+		private static string GetIcuExecutable(string exeName)
 		{
 #if !__MonoCS__
-			string codeBaseUri = typeof(PUAInstaller).Assembly.CodeBase;
-			string path = Path.GetDirectoryName(FileUtils.StripFilePrefix(codeBaseUri));
+			var codeBaseUri = typeof(PUAInstaller).Assembly.CodeBase;
+			var path = Path.GetDirectoryName(FileUtils.StripFilePrefix(codeBaseUri));
 
 			return Path.Combine(path, exeName + ".exe");
 #else
@@ -388,240 +365,131 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 #endif
 		}
 
-		/// <summary>
-		/// Inserts the given PUADefinitions (any Unicode character) into the UnicodeData.txt file.
+		///  <summary>
+		///  Inserts the given PUADefinitions (any Unicode character) into the UnicodeData.txt file.
 		///
-		/// This accounts for all the cases of inserting into the "first/last" blocks.  That
-		/// is, it will split the blocks into two or move the first and last tags to allow a
-		/// codepoint to be inserted correctly.
+		///  This accounts for all the cases of inserting into the "first/last" blocks.  That
+		///  is, it will split the blocks into two or move the first and last tags to allow a
+		///  codepoint to be inserted correctly.
 		///
-		/// Also, this accounts for Hexadecimal strings that are within the unicode range, not
-		/// just four digit unicode files.
+		///  Also, this accounts for Hexadecimal strings that are within the unicode range, not
+		///  just four digit unicode files.
 		///
-		/// <list type="number">
-		/// <listheader>Assumptions made about the format</listheader>
-		/// <item>The codepoints are in order</item>
-		/// <item>There first last block will always have no space between the word first and
-		/// the following ">"</item>
-		/// <item>No other data entries contain the word first followed by a ">"</item>
-		/// <item>There will always be a "last" on the line directly after a "first".</item>
-		/// </list>
+		///  <list type="number">
+		///  <listheader>Assumptions made about the format</listheader>
+		///  <item>The codepoints are in order</item>
+		///  <item>There first last block will always have no space between the word first and the following ">"</item>
+		///  <item>No other data entries contain the word first followed by a ">"</item>
+		///  <item>There will always be a "last" on the line directly after a "first".</item>
+		///  </list>
 		///
-		/// </summary>
-		/// <remarks>
-		/// Pseudocode for inserting lines:
-		///	if the unicodePoint	is a first tag
-		///		Get	first and last uncodePoint range
-		///		Stick into array all the xmlPoints that fit within the uncodePoint range
-		///			Look at the next xmlPoint
-		///			if there are any
-		///				call WriteCodepointBlock subroutine
-		///	else if the unicodePoint is greater than the last point but less than or equal to "the xmlPoint"
-		///		insert the missing line or replace	the	line
-		///		look at	the	next xmlPoint
-		///	else
-		///		do nothing except write	the	line
-		///</remarks>
-		/// <param name="puaDefinitions">An array of PUADefinitions to insert into UnicodeDataOverrides.txt.</param>
+		///  </summary>
+		///  <remarks>
+		///  Pseudocode for inserting lines:
+		/// 	if the unicodePoint	is a first tag
+		/// 		Get	first and last uncodePoint range
+		/// 		Stick into array all the xmlPoints that fit within the uncodePoint range
+		/// 			Look at the next xmlPoint
+		/// 			if there are any
+		/// 				call WriteCodepointBlock subroutine
+		/// 	else if the unicodePoint is greater than the last point but less than or equal to "the xmlPoint"
+		/// 		insert the missing line or replace	the	line
+		/// 		look at	the	next xmlPoint
+		/// 	else
+		/// 		do nothing except write	the	line
+		/// </remarks>
+		///  <param name="puaDefinitions">A list of PUADefinitions to insert into UnicodeDataOverrides.txt.</param>
+		/// <param name="comment"></param>
 		/// <param name="originalOverrides">original to merge into</param>
-		/// <param name="customOverrides">where to write output</param>
-		private void InsertCharacters(IPuaCharacter[] puaDefinitions, string originalOverrides, string customOverrides)
+		///  <param name="outputOverrides">where to write output</param>
+		private static void InsertCharacters(IReadOnlyList<IPuaCharacter> puaDefinitions, string comment, string originalOverrides, string outputOverrides)
 		{
 			// Open the file for reading and writing
 			LogFile.AddVerboseLine("StreamReader on <" + originalOverrides + ">");
 			using (var reader = new StreamReader(originalOverrides, Encoding.ASCII))
 			{
-				reader.Peek();	// force autodetection of encoding.
-				using (var writer = new StreamWriter(customOverrides, false, Encoding.ASCII))
+				// ReSharper disable ReturnValueOfPureMethodIsNotUsed -- Justification: force autodetection of encoding.
+				reader.Peek();
+				// ReSharper restore ReturnValueOfPureMethodIsNotUsed
+				using (var writer = new StreamWriter(outputOverrides, false, Encoding.ASCII))
 				{
-					try
+					// Insert the PUA via their codepoints
+
+					string line;
+					var lastCode = 0;
+					// Start looking at the first codepoint
+					var codeIndex = 0;
+					var newCode = Convert.ToInt32(puaDefinitions[codeIndex].CodePoint, 16);
+
+					//While there is a line to be read in the file
+					while ((line = reader.ReadLine()) != null)
 					{
-						// Insert the PUA via their codepoints
-
-						string line;
-						var lastCode = 0;
-						// Start looking at the first codepoint
-						var codeIndex = 0;
-						var newCode = Convert.ToInt32(puaDefinitions[codeIndex].CodePoint, 16);
-
-						// Used to find the type for casting ArrayLists to IPuaCharacter[]
-						//var factory = new PuaCharacterFactory();
-						//var puaCharForType = factory.Create("");
-						//var puaCharType = puaCharForType.GetType();
-
-						//While there is a line to be read in the file
-						while ((line = reader.ReadLine()) != null)
+						// skip entirely blank lines
+						if (line.Length <= 0)
+							continue;
+						if (line.StartsWith("Code") || line.StartsWith("block")) // header line or special instruction
 						{
-							// skip entirely blank lines
-							if (line.Length <= 0)
-								continue;
-							if (line.StartsWith("Code") || line.StartsWith("block")) // header line or special instruction
-							{
-								writer.WriteLine(line);
-								continue;
-							}
+							writer.WriteLine(line);
+							continue;
+						}
 
-							//Grab codepoint
-							var strFileCode = line.Substring(0, line.IndexOf(';')).Trim(); // current code in file
-							var fileCode = Convert.ToInt32(strFileCode, 16);
+						//Grab codepoint
+						var strFileCode = line.Substring(0, line.IndexOf(';')).Trim(); // current code in file
+						var fileCode = Convert.ToInt32(strFileCode, 16);
 
-							// If the new codepoint is greater than the last one processed in the file, but
-							// less than or equal to the current codepoint in the file.
-							if (newCode > lastCode && newCode <= fileCode)
+						// If the new codepoint is greater than the last one processed in the file, but
+						// less than or equal to the current codepoint in the file.
+						if (newCode > lastCode && newCode <= fileCode)
+						{
+							while (newCode <= fileCode)
 							{
-								while (newCode <= fileCode)
+								LogCodepoint(puaDefinitions[codeIndex].CodePoint);
+
+								// Replace the line with the new PuaDefinition
+								writer.WriteLine("{0} #{1}", puaDefinitions[codeIndex], comment);
+								lastCode = newCode;
+
+								// Look for the next PUA codepoint that we wish to insert, we are done
+								// with this one If we are all done, push through the rest of the file.
+								if (++codeIndex >= puaDefinitions.Count)
 								{
-									LogCodepoint(puaDefinitions[codeIndex].CodePoint);
-
-									// Replace the line with the new PuaDefinition
-									writer.WriteLine("{0} #{1}", puaDefinitions[codeIndex], m_comment);
-									lastCode = newCode;
-
-									// Look for the next PUA codepoint that we wish to insert, we are done
-									// with this one If we are all done, push through the rest of the file.
-									if (++codeIndex >= puaDefinitions.Length)
+									// Write out the original top of the section if it hasn't been replaced.
+									if (fileCode != lastCode)
 									{
-										// Write out the original top of the section if it hasn't been replaced.
-										if (fileCode != lastCode)
-										{
-											writer.WriteLine(line);
-										}
-										while ((line = reader.ReadLine()) != null)
-											writer.WriteLine(line);
-										break;
+										writer.WriteLine(line);
 									}
-									newCode = Convert.ToInt32(puaDefinitions[codeIndex].CodePoint, 16);
-								}
-								if (codeIndex >= puaDefinitions.Length)
+									while ((line = reader.ReadLine()) != null)
+										writer.WriteLine(line);
 									break;
-								// Write out the original top of the section if it hasn't been replaced.
-								if (fileCode != lastCode)
-								{
-									writer.WriteLine(line);
 								}
+								newCode = Convert.ToInt32(puaDefinitions[codeIndex].CodePoint, 16);
 							}
-							//if it's not a first tag and the codepoints don't match
-							else
+							if (codeIndex >= puaDefinitions.Count)
+								break;
+							// Write out the original top of the section if it hasn't been replaced.
+							if (fileCode != lastCode)
 							{
 								writer.WriteLine(line);
 							}
-							lastCode = fileCode;
 						}
-						// Output any codepoints after the old end
-						while (codeIndex < puaDefinitions.Length)
+						//if it's not a first tag and the codepoints don't match
+						else
 						{
-							LogCodepoint(puaDefinitions[codeIndex].CodePoint);
-
-							// Add a line with the new PuaDefinition
-							writer.WriteLine("{0} #{1}", puaDefinitions[codeIndex], m_comment);
-							codeIndex++;
+							writer.WriteLine(line);
 						}
+						lastCode = fileCode;
 					}
-					finally
+					// Output any codepoints after the old end
+					while (codeIndex < puaDefinitions.Count)
 					{
-						writer.Flush();
-						writer.Close();
-						reader.Close();
+						LogCodepoint(puaDefinitions[codeIndex].CodePoint);
+
+						// Add a line with the new PuaDefinition
+						writer.WriteLine("{0} #{1}", puaDefinitions[codeIndex], comment);
+						codeIndex++;
 					}
 				}
 			}
-		}
-
-		#region Temporary file processing
-
-		private readonly List<string> m_tempFiles = new List<string>();
-
-		/// <summary>
-		/// Add a file to the list of temporary files.
-		/// </summary>
-		private void AddTempFile(string strFile)
-		{
-			LogFile.AddVerboseLine("Adding Temp File: <" + strFile + ">");
-			m_tempFiles.Add(strFile);
-		}
-
-		/// <summary>
-		/// Delete all files in the list of temporary files.
-		/// </summary>
-		private void RemoveTempFiles()
-		{
-			LogFile.AddVerboseLine("Removing Temp Files --- Start");
-			foreach (var str in m_tempFiles)
-				DeleteFile(str);
-			LogFile.AddVerboseLine("Removing Temp Files --- Finish");
-		}
-
-		#endregion
-
-		/// <summary>
-		/// Checks whether the IPuaCharacter needs to be added to the lists, and adds if necessary.
-		/// </summary>
-		/// <param name="line">The line of the UnicodeData.txt that will be replaced.
-		///		If a property matches, the value will not be added to the lists.</param>
-		/// <param name="puaDefinition">The puaCharacter that is being inserted.</param>
-		/// <param name="addToBidi"></param>
-		/// <param name="addToNorm"></param>
-		/// <param name="removeFromBidi"></param>
-		/// <param name="removeFromNorm"></param>
-		private static void AddToLists(string line, IPuaCharacter puaDefinition,
-			List<IUcdCharacter> addToBidi, List<IUcdCharacter> removeFromBidi, List<IUcdCharacter> addToNorm,
-			List<IUcdCharacter> removeFromNorm)
-		{
-#if DEBUGGING_SOMETHING
-			int temp = line.IndexOf("F16F");	// junk for a debugging breakpoint...
-			temp++;
-#endif
-
-			// If the bidi type doesn't match add it to the lists to replace
-			var bidi = GetField(line, kiBidi + 1);
-			if (!puaDefinition.Bidi.Equals(bidi))
-			{
-				var factory = new BidiCharacterFactory();
-				removeFromBidi.Add(new BidiCharacter(line));
-				addToBidi.Add(factory.Create(puaDefinition));
-			}
-			// If the new character doesn't match the decomposition, add it to the lists
-			string decomposition = GetField(line, 5);
-			string puaRawDecomp = puaDefinition.Data[5 - 1];
-			if (decomposition != puaRawDecomp)
-			{
-				var factory = new NormalizationCharacterFactory();
-				// Perform a quick attempt to remove basic decompositions
-				// TODO: Extend this to actually remove more complicated entries?
-				// Currently this will remove anything that we have added.
-				if (decomposition.Trim() != string.Empty)
-				{
-					// If there is a '>' character in the decomposition field
-					// then it is a compatability decomposition
-					if (decomposition.IndexOf(">") != -1)
-						removeFromNorm.Add(factory.Create(line, "NFKD_QC; N"));
-					removeFromNorm.Add(factory.Create(line, "NFD_QC; N"));
-				}
-				// Add the normalization to the lists, if necessary.
-				if (puaDefinition.Decomposition != string.Empty)
-				{
-					// Add a canonical decomposition if necessary
-					if (puaDefinition.DecompositionType == string.Empty)
-						addToNorm.Add(factory.Create(puaDefinition, "NFD_QC; N"));
-					// Add a compatability decomposition always
-					// (Apparently canonical decompositions are compatability decompositions,
-					//		but not vise-versa
-					addToNorm.Add(factory.Create(puaDefinition, "NFKD_QC; N"));
-				}
-			}
-		}
-
-
-		/// <summary>
-		/// Retrieves the given field from the given UnicodeData.txt line
-		/// </summary>
-		/// <param name="line">A line in the format of the UnicodeData.txt file</param>
-		/// <param name="field">The field index</param>
-		/// <returns>The value of the field</returns>
-		static string GetField(string line, int field)
-		{
-			// Find the bidi field
-			return line.Split(new[] { ';' })[field];
 		}
 
 		/*
@@ -695,7 +563,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 
 
-		*/
 		/// <summary>
 		/// Write a codepoint block, inserting the necessary codepoints properly.
 		/// </summary>
@@ -757,720 +624,23 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			WriteRange(writer, beginning, end, blockName, data);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Adds a number to a hex string
-		/// </summary>
-		/// <param name="hex">The hex string you want to add</param>
-		/// <param name="num">The number you want to add to the string</param>
-		/// <returns>the hex string sum</returns>
-		/// ------------------------------------------------------------------------------------
-		public static string AddHex(string hex, int num)
-		{
-			//A long because that's the return type required for ToString
-			long sum = Convert.ToInt64(hex, 16) + num;
-			return Convert.ToString(sum, 16).ToUpper();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Subtracts two hex numbers and returns an integer value of their difference.
-		/// i.e. returns an int representing hex-hex2
-		/// </summary>
-		/// <param name="hex">A string value representing a hexadecimal number</param>
-		/// <param name="hex2">A string value representing a hexadecimal number</param>
-		/// <returns>The difference between the two values.</returns>
-		/// ------------------------------------------------------------------------------------
-		private static int SubHex(string hex, string hex2)
-		{
-			return (int)(Convert.ToInt64(hex, 16) - Convert.ToInt64(hex2, 16));
-		}
-
-		/// <summary>
-		/// Writes a UnicodeData.txt style line including comments.
-		/// </summary>
-		/// <param name="puaChar">The character to write</param>
-		/// <param name="tw">The writer to write it to.</param>
-		private void WriteUnicodeDataLine(IPuaCharacter puaChar, TextWriter tw)
-		{
-			tw.WriteLine("{0} #{1}", puaChar, m_comment);
-		}
-
-		/// <summary>
-		/// Updates a UCD style file as necessary.
-		/// so that the entries match the ones we just inserted into UnicodeData.txt.
-		/// </summary>
-		/// <remarks>
-		/// A UCD file is a "Unicode Character Database" text file.
-		/// The specific documentation can be found at:
-		/// http://www.unicode.org/Public/UNIDATA/UCD.html#UCD_File_Format
-		/// </remarks>
-		private void UpdateUCDFile(List<IUcdCharacter> addToUCD, List<IUcdCharacter> removeFromUCD)
-		{
-			string ucdFilenameWithoutPath;
-
-			// Get the file name we want to modify.
-			if (addToUCD.Count == 0)
-			{
-				if (removeFromUCD.Count == 0)
-					// If we aren't supposed to change anything, we are done.
-					return;
-				ucdFilenameWithoutPath = (removeFromUCD[0]).FileName;
-			}
-			else
-				ucdFilenameWithoutPath = (addToUCD[0]).FileName;
-
-			// Create a temporary file to write to and backup the original
-			var unidataDir = Path.Combine(Path.Combine(IcuDir, "data"), "unidata");
-			var ucdFilename = Path.Combine(unidataDir, ucdFilenameWithoutPath);
-			var ucdFileTemp = CreateTempFile(ucdFilename);
-			// Add the temp file to a list of files to be deleted when we are done.
-			AddTempFile(ucdFileTemp);
-
-			//All the streams necessary to read and write for the Bidi text file
-			LogFile.AddVerboseLine("StreamReader on <" + ucdFilename + ">");
-			using (var reader = new StreamReader(ucdFilename, Encoding.ASCII))
-			{
-				//These 2 streams are used to allow us to pass through the file twice w/out writing to the hard disk
-				using (var stringWriter = new StringWriter())
-				{
-					//Writes out the final file (to a temp file that will be copied upon success)
-					using (var writer = new StreamWriter(ucdFileTemp, false, Encoding.ASCII))
-					{
-						//Does our first pass through of the file, removing necessary lines
-						ModifyUCDFile(reader, stringWriter, removeFromUCD, false);
-
-						using (var stringReader = new StringReader(stringWriter.ToString()))
-						{
-							// Does the second pass through the file, adding necessary lines
-							ModifyUCDFile(stringReader, writer, addToUCD, true);
-
-							// write file
-							writer.Flush();
-						}
-					}
-				}
-			}
-
-			// If we get this far without an exception, copy the file over the original
-			FileCopyWithLogging(ucdFileTemp, ucdFilename, true);
-		}
-
-		/// <summary>
-		/// Makes three debug files for the DerivedBidiClass.txt:
-		///
-		/// A: Saves the "in-between" state (after deleting, before adding)
-		/// B: Saves a list of what we are adding and deleting.
-		/// C: Saves an actual file that doesn't add or delete anything.
-		///		This will update the numbers, but won't do anything else
-		///
-		/// </summary>
-		/// <param name="stringWriter">Used to get the file after deleting.</param>
-		///<param name="addToBidi"></param>
-		///<param name="removeFromBidi"></param>
-		private void MakeDebugBidifiles(StringWriter stringWriter, IEnumerable<IUcdCharacter> addToBidi, IEnumerable<IUcdCharacter> removeFromBidi)
-		{
-			// TODO: Do we need to keep this debug test code?
-			// This region makes some debug files
-
-			// A: Saves the "in-between" state (after deleting, before adding)
-			var unidataDir = Path.Combine(Path.Combine(IcuDir, "data"), "unidata");
-			using (var middle = new StreamWriter(Path.Combine(unidataDir, "DerivedBidiClassMID.txt"),
-				false, Encoding.ASCII))
-			{
-				middle.WriteLine(stringWriter.ToString());
-				middle.Close();
-			}
-
-			// B: Saves a list of what we are adding and deleting.
-			using (var lists = new StreamWriter(Path.Combine(unidataDir, "LISTS.txt"),
-				false, Encoding.ASCII))
-			{
-				lists.WriteLine("Add:");
-				foreach (var ch in addToBidi)
-				{
-					lists.WriteLine(ch.ToBidiString());
-				}
-				lists.WriteLine("Remove:");
-				foreach (var ch in removeFromBidi)
-				{
-					lists.WriteLine(ch.ToBidiString());
-				}
-				lists.Close();
-			}
-
-			// C: Saves an actual file that doesn't add or delete anything.
-			//This will update the numbers, but won't do anything else
-			LogFile.AddVerboseLine("StreamReader on <" + "DerivedBidiClass.txt" + ">");
-			using (var countReader = new StreamReader(Path.Combine(unidataDir, "DerivedBidiClass.txt"), true))
-			{
-				using (var countWriter = new StreamWriter(Path.Combine(unidataDir, "DerivedBidiClassCOUNT.txt"),
-					false, Encoding.ASCII))
-				{
-					ModifyUCDFile(countReader, countWriter, new List<IUcdCharacter>(), true);
-				}
-			}
-			// End of making debug files
-		}
-
-		/// <summary>
-		/// This function will add or remove the given PUA characters from the given
-		/// DerivedBidiClass.txt file by either inserting or not inserting them as necessary
-		/// as it reads through the file in a single pass from <code>tr</code> to <code>tw</code>.
-		/// </summary>
-		/// <remarks>
-		/// <list type="number">
-		/// <listheader><description>Assumptions</description></listheader>
-		/// <item><description>The like Bidi values are grouped together</description></item>
-		/// </list>
-		///
-		/// <list type="number">Non Assumptions:
-		/// <item><description>That comments add any information to the file.  We don't use comments for parsing.</description></item>
-		/// <item><description>That "blank" lines appear only between different bidi value sections.</description></item>
-		/// <item><description>That the comments should be in the format:
-		///		# field2 [length of range]  Name_of_First_Character..Name_of_Last_Charachter
-		///		(If it is not, we'll just ignore.</description></item>
-		/// </list>
-		/// </remarks>
-		/// <param name="tr">A reader with information DerivedBidiData.txt</param>
-		/// <param name="tw">A writer with information to write to DerivedBidiData.txt</param>
-		/// <param name="ucdCharacters">A list of PUACharacters to either add or remove from the file</param>
-		/// <param name="add">Whether to add or remove the given characters</param>
-		private void ModifyUCDFile(TextReader tr, TextWriter tw,
-			List<IUcdCharacter> ucdCharacters, bool add)
-		{
-			if (ucdCharacters.Count == 0)
-			{
-				// There is no point in processing this file if we aren't going to do anything to it.
-				tw.Write(tr.ReadToEnd());
-				// Allows us to know that there will be at least on ucdCharacter that we can access to get some properties
-				return;
-			}
-
-			//contains our current line
-			// not null so that we get into the while loop
-			var line = "unused value";
-			//Bidi class value from the previous line
-			var lastProperty = "blank";
-			//Bidi class value from the current line
-
-			// the index of the IPuaCharacter the we are currently trying to insert
-			// Note, the initial value will never be used, because there will be no
-			//		bidi class value called "blank" in the file, thus it will be initialized before it is every used
-			//		but VS requires an initialization value "just in case"
-			int codeIndex = -1;
-			// If we have read in the line already we want to use this line for the loop, set this to be true.
-			bool dontRead = false;
-
-			//Count the number of characters in each range
-			int rangeCount = 0;
-
-			//While there is a line to be read in the file
-
-			while ((dontRead && line != null) || (line = tr.ReadLine()) != null)
-			{
-				dontRead = false;
-				if (HasBidiData(line))
-				{
-					// We found another valid codepoint, increment the count
-					IncrementCount(ref rangeCount, line);
-
-					var currentProperty = GetProperty(line);
-
-					// If this is a new section of bidi class values
-					if (!ucdCharacters[0].SameRegion(currentProperty, lastProperty))
-					{
-						lastProperty = currentProperty;
-						// Find one of the ucdCharacters in this range in the list of ucdCharacters to add.
-						var fFound = false;
-						for (codeIndex = 0; codeIndex < ucdCharacters.Count; codeIndex++)
-						{
-							var ch = ucdCharacters[codeIndex];
-							if (ch != null && ch.CompareTo(currentProperty) == 0)
-							{
-								fFound = true;
-								break;
-							}
-						}
-
-						// if we don't have any characters to put in this section
-						if (!fFound)
-						{
-							tw.WriteLine(line);
-							line = ReadToEndOfSection(tr, tw, lastProperty, rangeCount, ucdCharacters[0]);
-							rangeCount = 0;
-							dontRead = true;
-							continue;
-						}
-					}
-
-					#region insert_the_PUACharacter
-					//Grab codepoint
-					string code = line.Substring(0, line.IndexOf(';')).Trim();
-
-					//If it's a range of codepoints
-					if (code.IndexOf('.') != -1)
-					{
-						#region if_range
-						//Grabs the end codepoint
-						string endCode = code.Substring(code.IndexOf("..") + 2).Trim();
-						code = code.Substring(0, code.IndexOf("..")).Trim();
-
-						//A dynamic array that contains our range of codepoints and the properties to go with it
-						var codepointsWithinRange = new List<IUcdCharacter>();
-
-						// If the IPuaCharacter we want to insert is before the range
-						while (
-							//If this is the last one stop looking for more
-							StillInRange(codeIndex, ucdCharacters, currentProperty) &&
-							// For every character before the given value
-							(ucdCharacters[codeIndex]).CompareCodePoint(code) < 0
-							)
-						{
-							//Insert characters before the code
-							AddUCDLine(tw, ucdCharacters[codeIndex], add);
-							codeIndex++;
-						}
-						while (
-							//If this is the last one stop looking for more
-							StillInRange(codeIndex, ucdCharacters, currentProperty) &&
-							// While our xmlCodepoint satisfies: code <= xmlCodepoint <= endCode
-							(ucdCharacters[codeIndex]).CompareCodePoint(endCode) < 1
-							)
-						{
-							//Adds the puaCharacter to the list of codepoints that are in range
-							codepointsWithinRange.Add(ucdCharacters[codeIndex]);
-							codeIndex++;
-						}
-						//If we found any codepoints in the range to insert
-						if (codepointsWithinRange.Count > 0)
-						{
-							#region parse_comments
-							//Do lots of smart stuff to insert the PUA characters into the block
-							string generalCategory = "";
-							//Contains the beginning and ending range names
-							string firstName = "";
-							string lastName = "";
-
-							//If a comment exists on the line in the proper format
-							// e.g.   ---  # --- [ --- ] --- ... ---
-							if (line.IndexOf('#') != -1 && line.IndexOf('[') != -1
-								&& (line.IndexOf('#') <= line.IndexOf('[')))
-							{
-								//Grabs the general category
-								generalCategory = line.Substring(line.IndexOf('#') + 1, line.IndexOf('[') - line.IndexOf('#') - 1).Trim();
-							}
-							//find the index of the second ".." in the line
-							int indexDotDot = line.Substring(line.IndexOf(']')).IndexOf("..");
-							if (indexDotDot != -1)
-								indexDotDot += line.IndexOf(']');
-
-							//int cat = line.IndexOf(']') ;
-
-							if (line.IndexOf('#') != -1 && line.IndexOf('[') != -1 && line.IndexOf(']') != -1 && indexDotDot != -1
-								&& (line.IndexOf('#') < line.IndexOf('['))
-								&& (line.IndexOf('[') < line.IndexOf(']'))
-								&& (line.IndexOf(']') < indexDotDot)
-								)
-							{
-								//Grab the name of the first character in the range
-								firstName = line.Substring(line.IndexOf(']') + 1, indexDotDot - line.IndexOf(']') - 1).Trim();
-								//Grab the name of the last character in the range
-								lastName = line.Substring(indexDotDot + 2).Trim();
-							}
-							#endregion
-							WriteBidiCodepointBlock(tw, code, endCode, codepointsWithinRange,
-								generalCategory, firstName, lastName, add);
-						}
-						else
-						{
-							tw.WriteLine(line);
-						}
-						#endregion
-					}
-					//if the codepoint in the file is equal to the codepoint that we want to insert
-					else
-					{
-						if (MiscUtils.CompareHex(code, ucdCharacters[codeIndex].CodePoint) > 0)
-						{
-							// Insert the new PuaDefinition before the line (as well as any others that might be)
-							while (
-								//If this is the last one stop looking for more
-								StillInRange(codeIndex, ucdCharacters, currentProperty) &&
-								// For every character before the given value
-								ucdCharacters[codeIndex].CompareCodePoint(code) < 0
-								)
-							{
-								//Insert characters before the code
-								AddUCDLine(tw, ucdCharacters[codeIndex], add);
-								codeIndex++;
-							}
-						}
-						//if the codepoint in the file is equal to the codepoint that we want to insert
-						if (StillInRange(codeIndex, ucdCharacters, currentProperty) &&
-							(code == ucdCharacters[codeIndex].CodePoint))
-						{
-							// Replace the line with the new PuaDefinition
-							AddUCDLine(tw, ucdCharacters[codeIndex], add);
-							// Look for the next PUA codepoint that we wish to insert
-							codeIndex++;
-						}
-						//if it's not a first tag and the codepoints don't match
-						else
-						{
-							tw.WriteLine(line);
-						}
-					}
-
-					//If we have no more codepoints to insert in this section, then just finish writing this section
-					if (!StillInRange(codeIndex, ucdCharacters, currentProperty))
-					{
-						line = ReadToEndOfSection(tr, tw, lastProperty, rangeCount, ucdCharacters[0]);
-						rangeCount = 0;
-						dontRead = true;
-						continue;
-					}
-					#endregion
-				}
-				//If it's a comment, simply write it out
-				else
-				{
-					// find the total count comment and replace it with the current count.
-					if (line.ToLowerInvariant().IndexOf("total code points") != -1)
-					{
-						line = "# Total code points:" + rangeCount;
-						rangeCount = 0;
-					}
-					tw.WriteLine(line);
-				}
-			}
-		}
-
-		#region ModifyUCDFile_helper_methods
-
-		/// <summary>
-		/// Read to the end of a given section of matching bidi class values.
-		/// Passes everything read through to the writer.
-		/// If this finds a section count comment, it will replace it with the current count.
-		/// </summary>
-		/// <param name="reader">The reader to read through.</param>
-		///<param name="writer"></param>
-		///<param name="lastProperty">The section we need to reed to the end of.</param>
-		/// <param name="currentCount">The count of characters found before reading to the end of the section.</param>
-		/// <param name="ucdCharacter">UCD Character used to know what kind of UCD file we are parsing.
-		///		The actual contencts of the UCD Character are ignored.</param>
-		/// <returns>The first line of the next section.</returns>
-		private static string ReadToEndOfSection(TextReader reader, TextWriter writer, string lastProperty, int currentCount, IUcdCharacter ucdCharacter)
-		{
-			string line;
-			while ((line = reader.ReadLine()) != null)
-			{
-				// if there is a bidi class value to read
-				if (HasBidiData(line))
-				{
-					// increments the current count of codepoints found so far.
-					IncrementCount(ref currentCount, line);
-
-					// read the bidi value from the line
-					var currentProperty = GetProperty(line);
-
-					// if it isn't in the current section we are done with section.
-					if (!ucdCharacter.SameRegion(currentProperty, lastProperty))
-						break;
-				}
-				// if its a comment, find the total count comment and replace it with the current count.
-				else if (line.ToLowerInvariant().IndexOf("total code points") != -1)
-				{
-					line = "# Total code points: " + currentCount;
-					currentCount = 0;
-				}
-				// Write through all lines except the first line of the next section
-				writer.WriteLine(line);
-			}
-
-			// Return the last line that we read
-			// This is the first line of the next section, so someone will probably want to parse it.
-			return line;
-		}
-
-
+		*/
 
 		/// <summary>
 		/// Prints a message to the console when storing a Unicode character.
 		/// </summary>
-		static void LogCodepoint(string code)
+		private static void LogCodepoint(string code)
 		{
 			if (LogFile.IsLogging())
 				LogFile.AddErrorLine("Storing definition for Unicode character: " + code);
 		}
 
-		/// <summary>
-		/// Given a line containing a valid code or code range, increments the count to include the code or code range.
-		/// Uses XXXX..YYYY style range.
-		/// </summary>
-		/// <param name="currentCount">The current count to increment</param>
-		/// <param name="line">The DerivedBidiClass.txt style line to use to increment.</param>
-		/// <returns></returns>
-		private static void IncrementCount(ref int currentCount, string line)
-		{
-			//Grab codepoint
-			var code = line.Substring(0, line.IndexOf(';')).Trim();
-			if (code.IndexOf('.') != -1)
-			{
-				//Grabs the end codepoint
-				var endCode = code.Substring(code.IndexOf("..") + 2).Trim();
-				code = code.Substring(0, code.IndexOf("..")).Trim();
-				// Add all the characters in the range.
-				currentCount += SubHex(endCode, code) + 1;
-			}
-			// we found another valid codepoint
-			else
-				currentCount++;
-		}
-
-		/// <summary>		returns true if the line is not just a comment
-		/// i.e if it is of either of the following forms
-		/// ------- ; ------ # ------
-		/// ------- ; -------
-		/// NOT ----- # ----- ; ------
-		/// </summary>
-		/// <param name="line"></param>
-		/// <returns></returns>
-		private static bool HasBidiData(string line)
-		{
-			return (line.IndexOf('#') > line.IndexOf(';') && line.IndexOf('#') != -1 && line.IndexOf(';') != -1) ||
-				(line.IndexOf('#') == -1 && line.IndexOf(';') != -1);
-		}
-		/// <summary>
-		/// Reads the Property value from the given line of a UCD text file.
-		/// (For example, if the text file is DerivedBidiClass.txt,
-		///		this reads the bidi class value from the given line of a DerivedBidiClass.txt file.)
-		/// </summary>
-		/// <param name="line">A line from a UCD file in the following format:
-		///		<code>code;Property[; other] [ # other]</code></param>
-		/// <returns>The bidi class value, or bidi class value range </returns>
-		public static string GetProperty(string line)
-		{
-			// (Note, by doing it in two steps, we are assured that even in strange cases like:
-			//	code ; property # comment ; comment
-			// it will stll work
-
-			// Grab from the ; to the #, or the end of the line
-			//If a comment is not on the line
-			var propertyWithValue = line.IndexOf('#') == -1 ?
-				line.Substring(line.IndexOf(';') + 1).Trim() :
-				line.Substring(line.IndexOf(';') + 1, line.IndexOf('#') - line.IndexOf(';') - 1).Trim();
-
-			// Return only from the first ';' to the second ';'
-			return propertyWithValue.IndexOf(';') != -1 ?
-				propertyWithValue.Substring(0, propertyWithValue.IndexOf(';')).Trim() :
-				propertyWithValue;
-		}
-
-		/// <summary>
-		/// Adds/"deletes" a given puaCharacter to the given TextWriter
-		/// Will write a DerivedBidiClass.txt style line.
-		/// </summary>
-		/// <param name="writer"></param>
-		/// <param name="ucdCharacter">The character to add or delete</param>
-		/// <param name="add"></param>
-		public void AddUCDLine(TextWriter writer, IUcdCharacter ucdCharacter, bool add)
-		{
-			if (add)
-				writer.WriteLine(ucdCharacter + " " + m_comment);
-			// Uncomment this line to replace lines with a comment indicating that the line was removed.
-			//			else
-			//				writer.WriteLine("# DELETED LINE: {0}",puaCharacter.ToBidiString());
-		}
-		/// <summary>
-		/// Checks to make sure the given codeIndex is within the current bidi section.
-		/// Performs bounds checking as well.
-		/// </summary>
-		/// <param name="codeIndex">The index of a PUA character in puaCharacters</param>
-		/// <param name="ucdCharacters">The list of PUA characters</param>
-		/// <param name="currentBidiClass">The current bidi class value.  If puaCharacters[codeIndex] doesn't match this we aren't in range.</param>
-		/// <returns></returns>
-		public bool StillInRange(int codeIndex, List<IUcdCharacter> ucdCharacters, string currentBidiClass)
-		{
-			return codeIndex < ucdCharacters.Count && ucdCharacters[codeIndex].SameRegion(currentBidiClass);
-		}
 		#endregion
 
-		/// <summary>
-		/// Write a codepoint block, inserting the necessary codepoints properly.
-		/// </summary>
-		/// <param name="writer">DerivedBidiClass.txt file to write lines to.</param>
-		/// <param name="originalBeginningCode">First codepoint in the block</param>
-		/// <param name="originalEndCode">Last codepoint in the free block</param>
-		/// <param name="codepointsWithinRange">An array of codepoints within the block, including the ends.
-		///		DO NOT pass in points external to the free block.</param>
-		///	<param name="generalCategory">The field that appears directly after the name in UnicodeData.txt.
-		///		This will appear as the first element in a comment.</param>
-		///	<param name="firstName">The name of the first letter in the range, for the comment</param>
-		///	<param name="lastName">The name of the last letter in the range, for the comment</param>
-		///	<param name="add"><code>true</code> for add <code>false</code> for delete.</param>
-		private void WriteBidiCodepointBlock(TextWriter writer, string originalBeginningCode, string originalEndCode,
-			List<IUcdCharacter> codepointsWithinRange,
-			string generalCategory, string firstName, string lastName, bool add)
-		{
-			//Allows us to store the original end and beginning code points while looping
-			//through them
-			var beginningCode = originalBeginningCode;
-			var endCode = originalEndCode;
+		private const string ksOriginal = "_ORIGINAL";
+		private const string ksBackupFileSuffix = "_BAK";
 
-			//Write each entry
-			foreach (var ucdCharacter in codepointsWithinRange)
-			{
-				//If the current xmlCodepoint is the same as the beginning codepoint
-				if (ucdCharacter.CompareTo(beginningCode) == 0)
-				{
-					//Shift the beginning down one
-					beginningCode = AddHex(beginningCode, 1);
-					//Add or delete the character
-					AddUCDLine(writer, ucdCharacter, add);
-				}
-				//If the current xmlCodepoint is between the beginning and end
-				else if (ucdCharacter.CompareTo(endCode) != 0)
-				{
-					if (originalBeginningCode == beginningCode)
-					{
-						//We're writing a range block below the current xmlCodepoint
-						WriteBidiRange(writer, beginningCode,
-							AddHex(ucdCharacter.CodePoint, -1),
-							generalCategory, firstName, "???", ucdCharacter.Property);
-					}
-					else
-					{
-						//We're writing a range block below the current xmlCodepoint
-						WriteBidiRange(writer, beginningCode,
-							AddHex(ucdCharacter.CodePoint, -1),
-							generalCategory, "???", "???", ucdCharacter.Property);
-					}
-					AddUCDLine(writer, ucdCharacter, add);
-					//Set the beginning code to be right after the ucdCharacterthat we just added
-					beginningCode = AddHex(ucdCharacter.CodePoint, 1);
-				}
-				//If the current xmlCodepoint is the same as the end codepoint
-				else
-				{
-					//Moves the end down a codepoint address
-					endCode = AddHex(endCode, -1);
-					//Write our range of data
-					WriteBidiRange(writer, beginningCode, endCode, generalCategory, "???", "???",
-						ucdCharacter.Property);
-					//Writes the current line
-					AddUCDLine(writer, ucdCharacter, add);
-					return;
-				}
-			}
-			//Write our range of data
-			WriteBidiRange(writer, beginningCode, endCode, generalCategory, "???", lastName,
-				codepointsWithinRange[0].Property);
-		}
-
-		/// <summary>
-		/// Writes a block representing a range given first and last.
-		/// If first is not before last, it will do the appropriate printing.
-		/// </summary>
-		/// <example>
-		/// <code>
-		/// ( { } are &lt; &gt; because this will interpret them as flags )
-		///	E000;{Private Use, First};Co;0;L;;;;;N;;;;;
-		/// F12F;{Private Use, Last};Co;0;L;;;;;N;;;;;   # [SIL-Corp] Added Feb 2004
-		/// </code>
-		/// -or-
-		/// <code>
-		///	E000;{Private Use};Co;0;L;;;;;N;;;;;
-		/// </code>
-		/// -or-
-		/// <i>Nothing, since last was before beginning.</i>
-		/// </example>
-		///<param name="writer">The StreamWriter to print to</param>
-		///<param name="beginning">A string hexadecimal representing the beginning.</param>
-		///<param name="end">A string hexadecimal representing the end.</param>
-		///<param name="generalCategory"></param>
-		///<param name="firstName"></param>
-		///<param name="lastName"></param>
-		///<param name="bidiValue"></param>
-		private static void WriteBidiRange(TextWriter writer, string beginning, string end, string generalCategory, string firstName, string lastName, string bidiValue)
-		{
-			if (firstName == "")
-				firstName = "???";
-			if (lastName == "")
-				lastName = "???";
-
-			int codeRangeCount = SubHex(end, beginning) + 1;
-
-			switch (MiscUtils.CompareHex(end, beginning))
-			{
-				case -1:
-					break;
-				case 0:
-					writer.WriteLine("{0,-14}; {1} # {2,-8} {3} OR {4}",
-						beginning, bidiValue, generalCategory, firstName, lastName);
-					break;
-				case 1:
-					string range = beginning + ".." + end;
-					string codeCount = "[" + codeRangeCount + "]";
-					writer.WriteLine("{0,-14}; {1} # {2} {3,5} {4}..{5}",
-						range, bidiValue, generalCategory, codeCount, firstName, lastName);
-					break;
-			}
-			return;
-		}
-		/// <summary>
-		/// Writes a block representing a range given first and last.
-		/// If first is not before last, it will do the appropriate printing.
-		/// </summary>
-		/// <example>
-		/// <code>
-		///	E000;{Private Use, First};Co;0;L;;;;;N;;;;;
-		/// F12F;{Private Use, Last};Co;0;L;;;;;N;;;;;   # [SIL-Corp] Added Feb 2004
-		/// </code>
-		/// -or-
-		/// <code>
-		///	E000;{Private Use};Co;0;L;;;;;N;;;;;
-		/// </code>
-		/// -or-
-		/// <i>Nothing, since last was before beginning.</i>
-		/// </example>
-		/// <param name="writer">The StreamWriter to print to</param>
-		/// <param name="beginning">A string hexadecimal representing the beginning.</param>
-		/// <param name="end">A string hexadecimal representing the end.</param>
-		/// <param name="name">The name of the block, e.g. "Private Use"</param>
-		/// <param name="data">The data to write after the block, e.g. ;Co;0;L;;;;;N;;;;;</param>
-		private static void WriteRange(StreamWriter writer, string beginning, string end, string name, string data)
-		{
-			switch (MiscUtils.CompareHex(end, beginning))
-			{
-				case -1:
-					break;
-				case 0:
-					writer.WriteLine("{0};<{1}>{2}", beginning, name, data);
-					break;
-				case 1:
-					writer.WriteLine("{0};<{1}, First>{2}", beginning, name, data);
-					writer.WriteLine("{0};<{1}, Last>{2}", end, name, data);
-					break;
-			}
-		}
-		#endregion
-
-
-		const string ksOriginal = "_ORIGINAL";
-		const string ksTempFileSuffix = "_TEMP";
-		const string ksBackupFileSuffix = "_BAK";
-
-		/*
-				enum State { ReadingXMLFile, ICUFiles };
-		*/
-
-
-		///<summary>
-		///</summary>
-		///<param name="inName"></param>
-		///<param name="outName"></param>
-		///<param name="overwrite"></param>
+		///<summary/>
 		public static void SafeFileCopyWithLogging(string inName, string outName, bool overwrite)
 		{
 			try
@@ -1479,16 +649,11 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			}
 			catch
 			{
-				LogFile.AddVerboseLine("ERROR  : unable to copy <" + inName + "> to <" + outName +
-					"> <" + overwrite + ">");
+				LogFile.AddVerboseLine($"ERROR  : unable to copy <{inName}> to <{outName}> <{overwrite}>");
 			}
 		}
 
-		///<summary>
-		///</summary>
-		///<param name="inName"></param>
-		///<param name="outName"></param>
-		///<param name="overwrite"></param>
+		///<summary/>
 		public static void FileCopyWithLogging(string inName, string outName, bool overwrite)
 		{
 			var fi = new FileInfo(inName);
@@ -1496,165 +661,46 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			{
 				if (LogFile.IsLogging())
 				{
-					LogFile.AddVerboseLine("Copying: <" + inName + "> to <" + outName +
-						"> <" + overwrite + ">");
+					LogFile.AddVerboseLine($"Copying: <{inName}> to <{outName}> <{overwrite}>");
 				}
 				File.Copy(inName, outName, overwrite);
 			}
 			else
 			{
-				LogFile.AddVerboseLine("Not Copying (Zero size): <" + inName + "> to <" + outName +
-					"> <" + overwrite + ">");
+				LogFile.AddVerboseLine($"Not Copying (Zero size): <{inName}> to <{outName}> <{overwrite}>");
 			}
 		}
 
 
-		/// <summary>
-		/// Create the "original" (backup) copy of the file to be modified,
-		/// if it doesn't already exist.
-		/// </summary>
-		/// <param name="inputFilespec">This is the file to make a copy of.</param>
-		public static string BackupOrig(string inputFilespec)
-		{
-			if (!File.Exists(inputFilespec))
-			{
-				LogFile.AddVerboseLine("No Orig to back up: <" + inputFilespec);
-				return null;
-			}
 
-			string outputFilespec = CreateNewFileName(inputFilespec, ksOriginal);
-			if (!File.Exists(outputFilespec))
-			{
-				try
-				{
-					FileCopyWithLogging(inputFilespec, outputFilespec, true);
-				}
-				catch (Exception)
-				{
-					LogFile.AddErrorLine("Error creating " + ksOriginal + " copy: " + inputFilespec);
-					throw;
-				}
-			}
-			return outputFilespec;
-		}
-
-
-		///<summary>
-		///</summary>
-		///<param name="file"></param>
-		///<returns></returns>
+		///<returns>whether the file was found and successfully deleted</returns>
 		public static bool SafeDeleteFile(string file)
 		{
 			try
 			{
 				return DeleteFile(file);
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
-				LogFile.AddVerboseLine("ERROR: Unable to remove file: <" + file + ">");
+				LogFile.AddVerboseLine($"ERROR: Unable to remove file: <{file}>: {e.Message}");
 				return false;
 			}
 		}
 
-		/// <summary>
-		/// </summary>
+		///<returns>whether the file was found and successfully deleted</returns>
 		public static bool DeleteFile(string file)
 		{
-			bool rval = false;
-			if (File.Exists(file))
-			{
-				File.SetAttributes(file, FileAttributes.Normal);
-				File.Delete(file);
-				rval = true;
-				if (LogFile.IsLogging())
-					LogFile.AddVerboseLine("Removed file:<" + file + ">");
-			}
-			else
+			if (!File.Exists(file))
 			{
 				if (LogFile.IsLogging())
-					LogFile.AddVerboseLine("Tried to delete file that didn't exist:<" + file + ">");
+					LogFile.AddVerboseLine($"Tried to delete file that didn't exist:<{file}>");
+				return false;
 			}
-			return rval;
-		}
-
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Given a regular file name, this method returns the file name that is used for
-		/// storing the 'origional' version of the file.
-		/// </summary>
-		/// <param name="inputFilespec"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public static string MakeOrigFileName(string inputFilespec)
-		{
-			return CreateNewFileName(inputFilespec, ksOriginal);
-		}
-
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="savedName"></param>
-		/// <param name="backupPortion"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public static string UndoCreateNewFileName(string savedName, string backupPortion)
-		{
-			string oldName = savedName;
-			int index = savedName.LastIndexOf(backupPortion);
-			if (index != -1)
-			{
-				oldName = savedName.Substring(0, index);
-				oldName += savedName.Substring(index + backupPortion.Length);
-			}
-			return oldName;
-		}
-
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="directoryName"></param>
-		/// <param name="extension"></param>
-		/// <param name="removeOrig"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public static int RestoreOrigFiles(string directoryName, string extension, bool removeOrig)
-		{
-			int numCopied = 0;
-			var di = new DirectoryInfo(directoryName);
-			string origPattern = CreateNewFileName("*" + extension, ksOriginal);
-			FileInfo[] fi = di.GetFiles(origPattern);
-
-			LogFile.AddLine("RestoreOrigFiles: " + directoryName + origPattern);
-
-			foreach (FileInfo f in fi)
-			{
-				string savedName = f.FullName;
-				string defName = UndoCreateNewFileName(savedName, ksOriginal);
-				try
-				{
-					FileCopyWithLogging(savedName, defName, true);
-					if (removeOrig)
-					{
-						// delete the orig file here...
-						DeleteFile(savedName);
-					}
-					numCopied++;
-				}
-				catch
-				{
-					LogFile.AddErrorLine("Error restoring " + ksOriginal + " file: " + f.FullName);
-					throw;
-				}
-			}
-			if (numCopied == 0)
-				LogFile.AddLine("RestoreOrigFiles: No files copied.");
-
-			return numCopied;
+			File.SetAttributes(file, FileAttributes.Normal);
+			File.Delete(file);
+			if (LogFile.IsLogging())
+				LogFile.AddVerboseLine($"Removed file:<{file}>");
+			return true;
 		}
 
 		/// <summary>
@@ -1669,81 +715,69 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			try
 			{
 				File.Delete(inputFilespec);
-				return;
 			}
 			catch
 			{
-				// ignore any exception
-			}
+				var dir = Path.GetDirectoryName(inputFilespec);
+				var outputFilespec = Path.Combine(dir, Path.GetRandomFileName());
 
-			var dir = Path.GetDirectoryName(inputFilespec);
-			var outputFilespec = Path.Combine(dir, Path.GetRandomFileName());
+				try
+				{
+					File.Move(inputFilespec, outputFilespec);
+				}
+				catch
+				{
+					LogFile.AddErrorLine($"Error renaming file {inputFilespec} to {outputFilespec}");
+					throw;
+				}
 
-			try
-			{
-				File.Move(inputFilespec, outputFilespec);
+				// Register outputFilespec for later deletion
+				File.AppendAllText(Path.Combine(dir, "TempFilesToDelete"), outputFilespec);
 			}
-			catch
-			{
-				LogFile.AddErrorLine(string.Format("Error renaming file {0} to {1}", inputFilespec, outputFilespec));
-				throw;
-			}
-
-			// Register outputFilespec for later deletion
-			File.AppendAllText(Path.Combine(dir, "TempFilesToDelete"), outputFilespec);
 		}
 
 		/// <summary>
-		/// This method will create the temporary work file copy of the original input file.
+		/// This method will create a copy of the input file with the specified suffix.
 		/// </summary>
-		/// <param name="inputFilespec">This is the file to make a copy of.</param>
-		/// <param name="suffix"></param>
 		private static string CreateXxFile(string inputFilespec, string suffix)
 		{
-			string outputFilespec = CreateNewFileName(inputFilespec, suffix);
-			try
+			if (!File.Exists(inputFilespec))
 			{
-				if (!File.Exists(inputFilespec))
-				{
-					// Have to save the handle in an object so that we can close it!
-					using (FileStream fs = File.Create(outputFilespec))
-						fs.Close();
-				}
-				else
+				LogFile.AddVerboseLine($"No Orig to back up: <{inputFilespec}>");
+				return null;
+			}
+
+			var outputFilespec = CreateNewFileName(inputFilespec, suffix);
+			if (!File.Exists(outputFilespec))
+			{
+				try
 				{
 					FileCopyWithLogging(inputFilespec, outputFilespec, true);
 				}
-			}
-			catch
-			{
-				LogFile.AddErrorLine("Error creating file with suffix: " + suffix + " from: " + inputFilespec);
-				throw;
+				catch
+				{
+					LogFile.AddErrorLine($"Error creating {suffix} copy: {inputFilespec}");
+					throw;
+				}
 			}
 			return outputFilespec;
 		}
 
-
 		/// <summary>
-		/// This method will create the temporary work file copy of the original input file.
+		/// This method will create the "bak" backup of the original input file.
 		/// </summary>
-		/// <param name="inputFilespec">This is the file to make a copy of.</param>
-		/// <returns>new file name</returns>
-		public static string CreateTempFile(string inputFilespec)
-		{
-			return CreateXxFile(inputFilespec, ksTempFileSuffix);
-		}
-
-
-		/// <summary>
-		/// This method will create the backup of the original input file.
-		/// </summary>
-		/// <param name="inputFilespec">This is the file to make a backup of.</param>
-		/// <returns>new file name</returns>
 		public static string CreateBackupFile(string inputFilespec)
 		{
 			return CreateXxFile(inputFilespec, ksBackupFileSuffix);
 		}
 
+		/// <summary>
+		/// Create the "original" (backup) copy of the file to be modified,  if it doesn't already exist.
+		/// </summary>
+		public static string BackupOrig(string inputFilespec)
+		{
+			return CreateXxFile(inputFilespec, ksOriginal);
+		}
 
 		/// <summary>This method appends 'nameSplice' to a file 'inputFilespec'.</summary>
 		/// <param name="inputFilespec">Input file name to modify.</param>
@@ -1752,7 +786,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <returns>The new file name.</returns>
 		public static string CreateNewFileName(string inputFilespec, string nameSplice)
 		{
-			int index = inputFilespec.LastIndexOf('.');
+			var index = inputFilespec.LastIndexOf('.');
 			string newName;
 
 			if (index == -1)
@@ -1766,117 +800,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				newName += inputFilespec.Substring(index);
 			}
 			return newName;
-		}
-
-
-		/// <summary>Replace the file extension with 'newExtension'.</summary>
-		/// <param name="inputFilespec">Input file name to modify.</param>
-		/// <param name="newExtension">The new file Extension.</param>
-		/// <returns>The new file name.</returns>
-		public static string ChangeFileExtension(string inputFilespec, string newExtension)
-		{
-			int index = inputFilespec.LastIndexOf('.');
-			string newName;
-
-			if (index == -1)
-			{
-				newName = inputFilespec + "." + newExtension;
-			}
-			else
-			{
-				newName = inputFilespec.Substring(0, index);
-				newName += "." + newExtension;
-			}
-			return newName;
-		}
-
-
-		///<summary>
-		///</summary>
-		public enum CallingID
-		{
-			///<summary></summary>
-			CID_RESTORE,
-			///<summary></summary>
-			CID_REMOVE,
-			///<summary></summary>
-			CID_INSTALL,
-			///<summary></summary>
-			CID_UPDATE,
-			///<summary></summary>
-			CID_NEW,
-			///<summary></summary>
-			CID_UNKNOWN
-		};
-
-		/// <summary>
-		/// Check for locked ICU files and return
-		/// </summary>
-		/// <param name="inputLocale">the locale being modified. May just be the ICULocale name, or
-		/// may be a fully specified path name to the language xml file, or null.</param>
-		/// <param name="runSilent">Boolean set to true if we don't want to ask the user for info.</param>
-		/// <param name="caller"></param>
-		/// <returns>true if ok to continue, or false if files are locked</returns>
-		internal static bool CheckForIcuLocked(string inputLocale, bool runSilent, CallingID caller)
-		{
-			bool fOk;
-			string locale = null;
-			if (inputLocale != null)
-			{
-				int icuName = inputLocale.LastIndexOf(Path.DirectorySeparatorChar);
-				string icuPortion = inputLocale.Substring(icuName + 1);
-				int iLocale = icuPortion.LastIndexOf(".");
-				if (iLocale < 0)
-					iLocale = icuPortion.Length;
-				locale = icuPortion.Substring(0, iLocale);
-			}
-			do
-			{
-				fOk = true;
-				var lockedFile = Icu.CheckIcuLocked(locale);
-				if (lockedFile != null)
-				{
-					LogFile.AddLine(String.Format(" File Access Error: {0}. Asking user to Retry or Cancel. Caller={1}", lockedFile, caller));
-					if (runSilent)
-					{
-						LogFile.AddLine(" Silently cancelled operation.");
-						Console.WriteLine(@"Silently cancelled operation.");
-						return false;
-					}
-					string message;	// for now
-					var nl = Environment.NewLine;
-					switch (caller)
-					{
-						case CallingID.CID_RESTORE:
-							message = String.Format(Properties.Resources.ksCloseFieldWorksForRestore,
-								lockedFile);
-							break;
-						case CallingID.CID_NEW:
-							message = String.Format(Properties.Resources.ksCloseFieldWorksToInstall,
-								lockedFile);
-							break;
-						default:
-							message = String.Format(Properties.Resources.ksCannotCompleteChanges,
-								lockedFile);
-							break;
-					}
-					message = message + nl + nl + "Close Clipboard Converter" + nl + nl + "Close This FW App";
-
-					var caption = Properties.Resources.ksMsgHeader;
-					const MessageBoxButtons buttons = MessageBoxButtons.RetryCancel;
-					const MessageBoxIcon icon = MessageBoxIcon.Exclamation;
-					const MessageBoxDefaultButton defButton = MessageBoxDefaultButton.Button1;
-					var result = MessageBox.Show(message, caption, buttons, icon, defButton);
-					if (result == DialogResult.Cancel)
-					{
-						LogFile.AddLine(" User cancelled operation.");
-						Console.WriteLine(@"User cancelled operation.");
-						return false;
-					}
-					fOk = false;
-				}
-			} while (fOk == false);
-			return true;
 		}
 	}
 }

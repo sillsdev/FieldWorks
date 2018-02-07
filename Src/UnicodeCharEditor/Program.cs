@@ -39,6 +39,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 					case "-install":
 					case "--install":
 						// If we have any custom character data, install it!
+						Icu.InitIcuDataDir();
 						var customCharsFile = CharEditorWindow.CustomCharsFile;
 						if (File.Exists(customCharsFile))
 						{
@@ -66,6 +67,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 						break;
 					case null:
 						// There were no arguments (the program was double-clicked or opened through the Start menu); run the graphical interface
+						Icu.InitIcuDataDir();
 						window = new CharEditorWindow();
 						Application.Run(window);
 						break;
