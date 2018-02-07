@@ -383,10 +383,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// SUT
 				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 
-				// Didn't make it into 9.
-				AssertRegistrySubkeyNotPresent(version9Key, FwRegistryHelper.TranslationEditor);
-				AssertRegistryValueNotPresent(version9Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Crashes);
-				AssertRegistryValueNotPresent(version9Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Launches);
+				using (var newVersion9Key = m_helper.SetupVersion9Settings())
+				{
+					// Didn't make it into 9.
+					AssertRegistrySubkeyNotPresent(newVersion9Key, FwRegistryHelper.TranslationEditor);
+					AssertRegistryValueNotPresent(newVersion9Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Crashes);
+					AssertRegistryValueNotPresent(newVersion9Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Launches);
+				}
 			}
 		}
 
@@ -409,10 +412,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// SUT
 				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 
-				// Didn't make it into 9.
-				AssertRegistrySubkeyNotPresent(version9Key, FwRegistryHelper.TranslationEditor);
-				AssertRegistryValueNotPresent(version9Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Crashes);
-				AssertRegistryValueNotPresent(version9Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Launches);
+				using (var newVersion9Key = m_helper.SetupVersion9Settings())
+				{
+					// Didn't make it into 9.
+					AssertRegistrySubkeyNotPresent(newVersion9Key, FwRegistryHelper.TranslationEditor);
+					AssertRegistryValueNotPresent(newVersion9Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Crashes);
+					AssertRegistryValueNotPresent(newVersion9Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Launches);
+				}
 			}
 		}
 
@@ -439,10 +445,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// SUT
 				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 
-				// Didn't make it into 9.
-				AssertRegistrySubkeyNotPresent(version9Key, FwRegistryHelper.TranslationEditor);
-				AssertRegistryValueNotPresent(version9Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Crashes);
-				AssertRegistryValueNotPresent(version9Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Launches);
+				using (var newVersion9Key = m_helper.FieldWorksRegistryKey)
+				{
+					// Didn't make it into 9.
+					AssertRegistrySubkeyNotPresent(newVersion9Key, FwRegistryHelper.TranslationEditor);
+					AssertRegistryValueNotPresent(newVersion9Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Crashes);
+					AssertRegistryValueNotPresent(newVersion9Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Launches);
+				}
 			}
 		}
 

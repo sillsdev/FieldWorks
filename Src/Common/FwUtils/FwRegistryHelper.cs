@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					var flexBridgeKey = $@"FLEx Bridge\{FwUtils.SuiteVersion}";
 					return RegistryHelper.CompanyKeyLocalMachine?.OpenSubKey(flexBridgeKey)
-						?? RegistryHelper.CompanyKeyLocalMachineOld32Bit.OpenSubKey(flexBridgeKey);
+						?? RegistryHelper.CompanyKeyLocalMachineOld32Bit?.OpenSubKey(flexBridgeKey);
 				}
 			}
 
