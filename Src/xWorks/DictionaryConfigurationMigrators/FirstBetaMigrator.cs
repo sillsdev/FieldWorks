@@ -191,11 +191,29 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					goto case 18;
 				case 18:
 					RemoveReferencedHeadwordSubField(oldConfigPart);
+					goto case 19;
+				case 19:
+					ChangeReferringsensesToSenses(oldConfigPart);
 					break;
 				default:
 					logger.WriteLine(string.Format(
 						"Unable to migrate {0}: no migration instructions for version {1}", oldConfigPart.Label, oldVersion));
 					break;
+			}
+		}
+
+		/// <summary>LT-18920: Change Referringsenses to Senses for all the reversal index configurations.</summary>
+		private static void ChangeReferringsensesToSenses(ConfigurableDictionaryNode part)
+		{
+			if (part.FieldDescription == "ReversalIndexEntry")
+			{
+				DCM.PerformActionOnNodes(part.Children, node =>
+				{
+					if (node.FieldDescription == "ReferringSenses")
+					{
+						node.FieldDescription = "Senses";
+					}
+				});
 			}
 		}
 

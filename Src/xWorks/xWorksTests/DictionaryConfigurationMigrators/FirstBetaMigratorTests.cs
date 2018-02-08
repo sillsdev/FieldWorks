@@ -1066,6 +1066,33 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			Assert.IsNull(etymologyNode.DictionaryNodeOptions, "Improper options added to etymology sequence node.");
 		}
 
+		[Test]
+		public void MigrateFrom83AlphaToBeta10_UpdatesReversalReferringsenses()
+		{
+
+			var referencedSensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Senses",
+				FieldDescription = "ReferringSenses"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "ReversalIndexEntry",
+				Children = new List<ConfigurableDictionaryNode> { referencedSensesNode }
+			};
+			var alphaModel = new DictionaryConfigurationModel
+			{
+				Version = FirstAlphaMigrator.VersionAlpha3,
+				WritingSystem = "en",
+				FilePath = string.Empty,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			var betaModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel);
+			Assert.AreEqual("Senses", referencedSensesNode.FieldDescription, "Should have changed 'ReferringSenses' field for reversal to 'Senses'");
+		}
+
 		/// <summary>Referenced Complex Forms that are siblings of Subentries should become Other Referenced Complex Forms</summary>
 		[Test]
 		public void MigrateFrom83Alpha_SelectsProperReferencedComplexForms()
