@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.LexText.Controls
 							yield return dffn;
 					}
 					break;
-
+/*
 				case LexSenseTags.kflidReversalEntries:
 					foreach (ILexSense sense in entry.SensesOS)
 					{
@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						}
 					}
 					break;
-
+					*/
 				default:
 					throw new ArgumentException("Unrecognized field.", "field");
 			}
@@ -113,7 +113,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				case LexSenseTags.kflidSenses:
 				case LexSenseTags.kflidGloss:
 				case LexSenseTags.kflidDefinition:
-				case LexSenseTags.kflidReversalEntries:
+//				case LexSenseTags.kflidReversalEntries:
 				case ReversalIndexEntryTags.kflidReversalForm:
 					return true;
 			}
@@ -129,7 +129,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				case LexEntryTags.kflidAlternateForms:
 				case LexSenseTags.kflidGloss:
 				case LexSenseTags.kflidDefinition:
-				case LexSenseTags.kflidReversalEntries:
+//				case LexSenseTags.kflidReversalEntries:
 					return true;
 			}
 

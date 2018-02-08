@@ -177,8 +177,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				if (m_matchingObjectsBrowser.IsVisibleColumn("Glosses"))
 					yield return new SearchField(LexSenseTags.kflidGloss, tssKey);
-				if (m_matchingObjectsBrowser.IsVisibleColumn("Reversals"))
-					yield return new SearchField(LexSenseTags.kflidReversalEntries, tssKey);
+/*				if (m_matchingObjectsBrowser.IsVisibleColumn("Reversals"))
+					yield return new SearchField(LexSenseTags.kflidReversalEntries, tssKey);*/
 				if (m_matchingObjectsBrowser.IsVisibleColumn("Definitions"))
 					yield return new SearchField(LexSenseTags.kflidDefinition, tssKey);
 			}

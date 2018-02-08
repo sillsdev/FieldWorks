@@ -19,6 +19,7 @@ using System.ComponentModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainImpl;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -45,7 +46,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		/// <param name="obj"></param>
 		public ReversalIndexEntrySlice(ICmObject obj) :
-			base(new ReversalIndexEntrySliceView(obj.Hvo), obj, LexSenseTags.kflidReversalEntries)
+			base(new ReversalIndexEntrySliceView(obj.Hvo), obj, obj.Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs)
 		{
 		}
 
@@ -138,7 +139,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 
-			if (hvo == m_obj.Hvo && tag == LexSenseTags.kflidReversalEntries)
+			if (hvo == m_obj.Hvo && tag == Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs)
 			{
 				ReversalIndexEntrySliceView ctrl = Control as ReversalIndexEntrySliceView;
 				ctrl.ResetEntries();
@@ -369,9 +370,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				// Reset the sense's ref. property to all the ids in the currentEntries array.
 				currentEntries.Reverse();
 				int[] ids = currentEntries.ToArray();
+				var removedEntries = new List<int>();
 				if (!m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().IsValidObjectId(m_sense.Hvo))
 					return 0; // our object has been deleted while we weren't looking!
-				int countEntries = m_cache.DomainDataByFlid.get_VecSize(m_sense.Hvo, LexSenseTags.kflidReversalEntries);
+				int countEntries = m_cache.DomainDataByFlid.get_VecSize(m_sense.Hvo, Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs);
 				// Check the current state and don't save (or create an Undo stack item) if
 				// nothing has changed.
 				bool fChanged = true;
@@ -380,7 +382,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					fChanged = false;
 					for (int i = 0; i < countEntries; ++i)
 					{
-						int id = m_cache.DomainDataByFlid.get_VecItem(m_sense.Hvo, LexSenseTags.kflidReversalEntries, i);
+						int id = m_cache.DomainDataByFlid.get_VecItem(m_sense.Hvo, Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs, i);
 						if (id != ids[i])
 						{
 							fChanged = true;
@@ -390,9 +392,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 				if (fChanged)
 				{
-					m_cache.DomainDataByFlid.BeginUndoTask(LexEdStrings.ksUndoSetRevEntries,
-						LexEdStrings.ksRedoSetRevEntries);
-					m_sdaRev.Replace(m_sense.Hvo, LexSenseTags.kflidReversalEntries, 0, countEntries, ids, ids.Length);
+					m_cache.DomainDataByFlid.BeginUndoTask(LexEdStrings.ksUndoSetRevEntries, LexEdStrings.ksRedoSetRevEntries);
+					foreach (var id in ids)
+					{
+#if JASONTODO
+						Still need to handle removal here This code is buggy
+#endif
+						Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(id).SensesRS.Add(m_sense);
+					}
 					m_cache.DomainDataByFlid.EndUndoTask();
 				}
 				return hvoReal;
@@ -628,7 +635,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 				// Display the reversal indexes for the current set of analysis writing systems.
 				List<IReversalIndexEntry> entries = new List<IReversalIndexEntry>();
-				foreach (IReversalIndexEntry ide in m_sense.ReversalEntriesRC)
+				foreach (IReversalIndexEntry ide in m_sense.ReferringReversalIndexEntries)
 					entries.Add(ide);
 
 				foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
@@ -684,7 +691,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				m_sdaRev.CacheVecProp(m_sense.Hvo, kFlidIndices, rIds, rIds.Length);
 
 				// Cache the strings for each entry in the vector.
-				foreach (IReversalIndexEntry ent in m_sense.ReversalEntriesRC)
+				foreach (IReversalIndexEntry ent in m_sense.ReferringReversalIndexEntries)
 				{
 					int cform = ent.ReversalForm.StringCount;
 					for (int i = 0; i < cform; ++i)
@@ -849,9 +856,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		#endregion RootSite class
+#endregion RootSite class
 
-		#region View constructor class
+#region View constructor class
 
 		public class ReversalIndexEntryVc : FwBaseVc, IDisposable
 		{
@@ -865,14 +872,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				m_ttpLabel = WritingSystemServices.AbbreviationTextProperties;
 			}
 
-			#region Disposable stuff
-			#if DEBUG
+#region Disposable stuff
+#if DEBUG
 			/// <summary/>
 			~ReversalIndexEntryVc()
 			{
 				Dispose(false);
 			}
-			#endif
+#endif
 
 			/// <summary>
 			/// Throw if the IsDisposed property is true
@@ -910,7 +917,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				m_ttpLabel = null;
 				IsDisposed = true;
 			}
-			#endregion
+#endregion
 
 			public override void Display(IVwEnv vwenv, int hvo, int frag)
 			{
@@ -1159,9 +1166,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 			}
 		}
-		#endregion View constructor class
+#endregion View constructor class
 
-		#region ISilDataAccess decorator class
+#region ISilDataAccess decorator class
 		/// <summary>
 		/// Decorated ISilDataAccess for accessing temporary, interactively edit reversal index
 		/// entry (forms).
@@ -1191,7 +1198,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 			}
 
-			#region ISilDataAccess overrides
+#region ISilDataAccess overrides
 
 			public override int get_VecSize(int hvo, int tag)
 			{
@@ -1330,9 +1337,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					base.PropChanged(_nchng, _ct, hvo, tag, ivMin, cvIns, cvDel);
 				}
 			}
-			#endregion
+#endregion
 
-			#region IVwCacheDa Members
+#region IVwCacheDa Members
 
 			public void CacheBinaryProp(int obj, int tag, byte[] _rgb, int cb)
 			{
@@ -1496,8 +1503,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				throw new NotImplementedException();
 			}
 
-			#endregion
+#endregion
 		}
-		#endregion //ISilDataAccess decorator class
+#endregion //ISilDataAccess decorator class
 	}
 }

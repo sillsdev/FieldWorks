@@ -694,8 +694,8 @@ namespace SIL.FieldWorks.XWorks
 			entry2.SensesOS.First().MorphoSyntaxAnalysisRA = msa2;
 
 			var testEntry = revIndex.FindOrCreateReversalEntry("first");
-			entry1.SensesOS.First().ReversalEntriesRC.Add(testEntry);
-			entry2.SensesOS.First().ReversalEntriesRC.Add(testEntry);
+			testEntry.SensesRS.Add(entry1.SensesOS.First());
+			testEntry.SensesRS.Add(entry2.SensesOS.First());
 
 			var xhtml = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 			// check that the sense gram info appears once before the rest of the sense information.
@@ -730,7 +730,7 @@ namespace SIL.FieldWorks.XWorks
 			var entry = CXGTests.CreateInterestingLexEntry(Cache);
 			var revIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(m_wsFr);
 			var riEntry = revIndex.FindOrCreateReversalEntry("intéressant");
-			entry.SensesOS.First().ReversalEntriesRC.Add(riEntry);
+			riEntry.SensesRS.Add(entry.SensesOS.First());
 			return riEntry;
 		}
 
@@ -740,7 +740,7 @@ namespace SIL.FieldWorks.XWorks
 			var entry = CXGTests.CreateInterestingLexEntry(Cache, vernacularHeadword, analysisGloss);
 			var revIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(m_wsEn);
 			var riEntry = revIndex.FindOrCreateReversalEntry(reversalForm);
-			entry.SensesOS.First().ReversalEntriesRC.Add(riEntry);
+			riEntry.SensesRS.Add(entry.SensesOS.First());
 			return riEntry;
 		}
 
@@ -757,7 +757,7 @@ namespace SIL.FieldWorks.XWorks
 		private static void AddSenseToReversaEntry(IReversalIndexEntry riEntry, string gloss, int wsId, LcmCache cache)
 		{
 			var entry = CXGTests.CreateInterestingLexEntry(cache);
-			entry.SensesOS.First().ReversalEntriesRC.Add(riEntry);
+			riEntry.SensesRS.Add(entry.SensesOS.First());
 			entry.SensesOS[0].Gloss.set_String(wsId, gloss);
 		}
 
@@ -772,7 +772,7 @@ namespace SIL.FieldWorks.XWorks
 			var subGloss = "subgloss ";
 			subSensesOne.Gloss.set_String(wsId, TsStringUtils.MakeString(subGloss + "1.1", wsId));
 			entry.SensesOS[0].SensesOS[0].Gloss.set_String(wsId, subGloss);
-			entry.SensesOS.First().SensesOS[0].ReversalEntriesRC.Add(riEntry);
+			riEntry.SensesRS.Add(entry.SensesOS.First().SensesOS[0]);
 		}
 
 		private static void CreateSubsenseModel()

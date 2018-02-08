@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.PaObjects
 			xRestrictions = PaMultiString.Create(lxSense.Restrictions, svcloc);
 			xSemanticsNote = PaMultiString.Create(lxSense.SemanticsNote, svcloc);
 			xSociolinguisticsNote = PaMultiString.Create(lxSense.SocioLinguisticsNote, svcloc);
-			xReversalEntries = lxSense.ReversalEntriesRC.Select(x => PaMultiString.Create(x.ReversalForm, svcloc)).ToList();
+			xReversalEntries = lxSense.ReferringReversalIndexEntries.Select(x => PaMultiString.Create(x.ReversalForm, svcloc)).ToList();
 			xGuid = lxSense.Guid;
 
 			ImportResidue = lxSense.ImportResidue.Text;

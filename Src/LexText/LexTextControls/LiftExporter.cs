@@ -805,7 +805,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				WriteTrait(w, RangeNames.sDbDialectLabelsOA, dialect.Name, m_wsBestVernAnal);
 			foreach (var dom in sense.DomainTypesRC)
 				WriteTrait(w, RangeNames.sDbDomainTypesOA, dom.Name, m_wsBestAnalVern);
-			foreach (var reversal in sense.ReversalEntriesRC)
+			foreach (var reversal in sense.ReferringReversalIndexEntries)
 				WriteReversal(w, reversal);
 			if (sense.SenseTypeRA != null)
 				WriteTrait(w, RangeNames.sDbSenseTypesOA, sense.SenseTypeRA.Name, m_wsBestAnalVern);

@@ -2997,7 +2997,7 @@ namespace SIL.FieldWorks.LexText.Controls
 										TypeName = typeName,
 										BadValue = newItem is ILexEntry
 													? ((ILexEntry) newItem).HeadWordForWs(m_cache.DefaultVernWs).Text
-													: ((ILexEntry) (((ILexSense) newItem).Owner)).HeadWordForWs(m_cache.DefaultVernWs).Text
+													: ((ILexSense) newItem).OwnerOfClass<ILexEntry>().HeadWordForWs(m_cache.DefaultVernWs).Text
 									};
 						m_combinedCollections.Add(col);
 					}
