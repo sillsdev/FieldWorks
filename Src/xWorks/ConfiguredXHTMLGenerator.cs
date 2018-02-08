@@ -2035,7 +2035,7 @@ namespace SIL.FieldWorks.XWorks
 			lastGrammaticalInfo = String.Empty;
 			langId = String.Empty;
 			var isSameGrammaticalInfo = false;
-			if (config.FieldDescription == "SensesOS" || config.FieldDescription == "ReferringSenses")
+			if (config.FieldDescription == "SensesOS" || config.FieldDescription == "SensesRS")
 			{
 				var senseNode = (DictionaryNodeSenseOptions)config.DictionaryNodeOptions;
 				if (senseNode == null)
