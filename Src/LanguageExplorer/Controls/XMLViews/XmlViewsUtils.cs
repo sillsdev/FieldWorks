@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -52,9 +52,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// looks up plural form alternative first for given flid, secondly for its destination class.
 		/// </summary>
-		/// <param name="mdc"></param>
-		/// <param name="owningFlid"></param>
-		/// <param name="titleStr">*{dstClass}* if couldn't find result.</param>
 		/// <returns>true if we found an alternate form. false if titleStr is null or in *{key}* format.</returns>
 		public static bool TryFindPluralFormFromFlid(IFwMetaDataCache mdc, int owningFlid, out string titleStr)
 		{
@@ -73,9 +70,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary />
-		/// <param name="mdc"></param>
-		/// <param name="clsId"></param>
-		/// <param name="titleStr">*{dstClass}* if couldn't find result.</param>
 		/// <returns>true if we found an alternate form. false if titleStr is null or in *{ClassName}* format.</returns>
 		public static bool TryFindPluralFormFromClassId(IFwMetaDataCache mdc, int clsId, out string titleStr)
 		{
@@ -328,95 +322,95 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Main (recursive) part of CollectBrowseItems. Given that hvo is to be displayed using node,
 		/// figure what objects to put in the list.
 		/// </summary>
-		static void CollectBrowseItems(int hvo, XElement node, ArrayList collector, IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, XElement caller, int[] hvos, int[] flids)
+		private static void CollectBrowseItems(int hvo, XElement node, ArrayList collector, IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, XElement caller, int[] hvos, int[] flids)
 		{
-			switch(node.Name.LocalName)
+			switch (node.Name.LocalName)
 			{
-			case "obj":
-			{
-				var clsid = sda.get_IntProp(hvo, CmObjectTags.kflidClass);
-				var flid = mdc.GetFieldId2(clsid, XmlUtils.GetMandatoryAttributeValue(node, "field"), true);
-				var hvoDst = sda.get_ObjectProp(hvo, flid);
-				if (hvoDst == 0)
-				{
-					// We want a row, even though it's blank for this column.
-					collector.Add(new ManyOnePathSortItem(hvo, hvos, flids));
-					return;
-				}
-				// At this point we have to mimic the process that XmlVc uses to come up with the
-				// node that will be used to process the destination item.
-				var dstNode = GetNodeForRelatedObject(hvoDst, caller, node, layouts, sda);
-				if (dstNode == null)
-				{
-					// maybe an old-style "frag" element? Anyway, we can't do anything smart,
-					// so just insert the original object.
-					collector.Add(new ManyOnePathSortItem(hvo, hvos, flids));
-					return;
-				}
-				CollectBrowseItems(hvoDst, dstNode, collector, mdc, sda, layouts, null, AppendInt(hvos, hvo), AppendInt(flids, flid));
-			}
-				break;
-			case "seq":
-			{
-				// very like "obj" except for the loop. How could we capture this?
-				var clsid = sda.get_IntProp(hvo, CmObjectTags.kflidClass);
-				var flid = mdc.GetFieldId2(clsid, XmlUtils.GetMandatoryAttributeValue(node, "field"), true);
-				var chvo = sda.get_VecSize(hvo, flid);
-				if (chvo == 0)
-				{
-					// We want a row, even though it's blank for this column.
-					collector.Add(new ManyOnePathSortItem(hvo, hvos, flids));
-					return;
-				}
-				for (var ihvo = 0; ihvo < chvo; ihvo++)
-				{
-					var hvoDst = sda.get_VecItem(hvo, flid, ihvo);
-					// At this point we have to mimic the process that XmlVc uses to come up with the
-					// node that will be used to process the destination item.
-					var dstNode = GetNodeForRelatedObject(hvoDst, caller, node, layouts, sda);
-					if (dstNode == null)
+				case "obj":
 					{
-						if (ihvo == 0)
+						var clsid = sda.get_IntProp(hvo, CmObjectTags.kflidClass);
+						var flid = mdc.GetFieldId2(clsid, XmlUtils.GetMandatoryAttributeValue(node, "field"), true);
+						var hvoDst = sda.get_ObjectProp(hvo, flid);
+						if (hvoDst == 0)
+						{
+							// We want a row, even though it's blank for this column.
+							collector.Add(new ManyOnePathSortItem(hvo, hvos, flids));
+							return;
+						}
+						// At this point we have to mimic the process that XmlVc uses to come up with the
+						// node that will be used to process the destination item.
+						var dstNode = GetNodeForRelatedObject(hvoDst, caller, node, layouts, sda);
+						if (dstNode == null)
 						{
 							// maybe an old-style "frag" element? Anyway, we can't do anything smart,
 							// so just insert the original object.
 							collector.Add(new ManyOnePathSortItem(hvo, hvos, flids));
 							return;
 						}
-						// if this happens and it's not the first object, we have a funny mixture of modes.
-						// As a fall-back, skip this object.
-						continue;
+						CollectBrowseItems(hvoDst, dstNode, collector, mdc, sda, layouts, null, AppendInt(hvos, hvo), AppendInt(flids, flid));
 					}
-					CollectBrowseItems(hvoDst, dstNode, collector, mdc, sda, layouts, null, AppendInt(hvos, hvo), AppendInt(flids, flid));
-				}
-			}
-				break;
-			case "span":
-			case "para":
-			case "div":
-			case "concpara":
-			case "innerpile":
-			case "column":
+					break;
+				case "seq":
+					{
+						// very like "obj" except for the loop. How could we capture this?
+						var clsid = sda.get_IntProp(hvo, CmObjectTags.kflidClass);
+						var flid = mdc.GetFieldId2(clsid, XmlUtils.GetMandatoryAttributeValue(node, "field"), true);
+						var chvo = sda.get_VecSize(hvo, flid);
+						if (chvo == 0)
+						{
+							// We want a row, even though it's blank for this column.
+							collector.Add(new ManyOnePathSortItem(hvo, hvos, flids));
+							return;
+						}
+						for (var ihvo = 0; ihvo < chvo; ihvo++)
+						{
+							var hvoDst = sda.get_VecItem(hvo, flid, ihvo);
+							// At this point we have to mimic the process that XmlVc uses to come up with the
+							// node that will be used to process the destination item.
+							var dstNode = GetNodeForRelatedObject(hvoDst, caller, node, layouts, sda);
+							if (dstNode == null)
+							{
+								if (ihvo == 0)
+								{
+									// maybe an old-style "frag" element? Anyway, we can't do anything smart,
+									// so just insert the original object.
+									collector.Add(new ManyOnePathSortItem(hvo, hvos, flids));
+									return;
+								}
+								// if this happens and it's not the first object, we have a funny mixture of modes.
+								// As a fall-back, skip this object.
+								continue;
+							}
+							CollectBrowseItems(hvoDst, dstNode, collector, mdc, sda, layouts, null, AppendInt(hvos, hvo), AppendInt(flids, flid));
+						}
+					}
+					break;
+				case "span":
+				case "para":
+				case "div":
+				case "concpara":
+				case "innerpile":
+				case "column":
 				// Review JohnT: In XmlVc, "part" is the one thing that calls ProcessChildren with non-null caller.
 				// this should make some difference here, but I can't figure what yet, or come up with a test that fails.
-			case "part":
-			case "layout":
-				// These are grouping nodes. In general this terminates things. However, if there is only
-				// one thing embedded apart from comments and properties, we can proceed.
-				var mainChild = FindMainChild(node);
-				if (mainChild == null)
-				{
-					// no single non-trivial child, keep our current object
-					collector.Add(new ManyOnePathSortItem(hvo, hvos, flids));
-					return;
-				}
-				// Recurse with same object, but process the 'main child'.
-				CollectBrowseItems(hvo, mainChild, collector, mdc, sda, layouts, caller, hvos, flids);
-				break;
+				case "part":
+				case "layout":
+					// These are grouping nodes. In general this terminates things. However, if there is only
+					// one thing embedded apart from comments and properties, we can proceed.
+					var mainChild = FindMainChild(node);
+					if (mainChild == null)
+					{
+						// no single non-trivial child, keep our current object
+						collector.Add(new ManyOnePathSortItem(hvo, hvos, flids));
+						return;
+					}
+					// Recurse with same object, but process the 'main child'.
+					CollectBrowseItems(hvo, mainChild, collector, mdc, sda, layouts, caller, hvos, flids);
+					break;
 
-			default:
-				collector.Add(new ManyOnePathSortItem(hvo, hvos, flids));
-				break;
+				default:
+					collector.Add(new ManyOnePathSortItem(hvo, hvos, flids));
+					break;
 			}
 		}
 
@@ -448,7 +442,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Apply the same logic used by XmlVc to determine the node that will be used
 		/// to display the destination object hvoDst
 		/// </summary>
-		static XElement GetNodeForRelatedObject(int hvoDst, XElement caller, XElement node, LayoutCache layouts, ISilDataAccess sda)
+		private static XElement GetNodeForRelatedObject(int hvoDst, XElement caller, XElement node, LayoutCache layouts, ISilDataAccess sda)
 		{
 			if (XmlUtils.GetOptionalAttributeValue(node, "frag") != null)
 			{
@@ -461,7 +455,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			return XmlVc.GetDisplayNodeForChild(layoutNode, node, layouts);
 		}
 
-		static int[] AppendInt(int[] sofar, int add)
+		private static int[] AppendInt(int[] sofar, int add)
 		{
 			if (sofar == null)
 			{
@@ -563,9 +557,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		// Utility function to get length of an array variable which might be null (return 0 if so).
 		static int GetArrayLength(string[] items)
 		{
-			if (items == null)
-				return 0;
-			return items.Length;
+			return items?.Length ?? 0;
 		}
 
 		internal static string DisplayWsLabel(CoreWritingSystemDefinition ws, LcmCache cache)
@@ -656,15 +648,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Returns an array of string values (keys) for the objects under this layout node.
 		/// </summary>
-		/// <param name="lcmCache">The LCM cache.</param>
-		/// <param name="sda">The sda.</param>
-		/// <param name="layout">The layout.</param>
-		/// <param name="hvo">The hvo.</param>
-		/// <param name="layoutCache">The layout cache.</param>
-		/// <param name="caller">where layout is a component of a 'part' element, caller
-		/// is the 'part ref' that invoked it.</param>
-		/// <param name="wsForce">if non-zero, "string" elements are forced to use that writing system for multistrings.</param>
-		/// <returns></returns>
 		public static string[] StringsFor(LcmCache lcmCache, ISilDataAccess sda, XElement layout, int hvo, LayoutCache layoutCache, XElement caller, int wsForce)
 		{
 			// Some nodes are known to be uninteresting.
@@ -917,9 +900,9 @@ namespace LanguageExplorer.Controls.XMLViews
 					s_sMultiSep = XmlUtils.GetOptionalAttributeValue(frag, "sep");
 				}
 				s_fMultiFirst = true;
-				foreach (var WSId in wsIds)
+				foreach (var wsId in wsIds)
 				{
-					s_qwsCurrent = lcmCache.ServiceLocator.WritingSystemManager.Get(WSId);
+					s_qwsCurrent = lcmCache.ServiceLocator.WritingSystemManager.Get(wsId);
 					result = Concatenate(result, ChildKeys(lcmCache, sda, frag, hvo, layoutCache, caller, wsForce));
 				}
 			}

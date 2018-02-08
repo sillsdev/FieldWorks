@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,7 +17,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public class LabelNode : TreeNode
 	{
-		/// <summary></summary>
+		/// <summary />
 		protected IVwStylesheet m_stylesheet;
 
 		private bool m_displayUsage;
@@ -32,9 +32,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LabelNode"/> class.
 		/// </summary>
-		/// <param name="label">The label.</param>
-		/// <param name="stylesheet">The stylesheet.</param>
-		/// <param name="displayUsage"><c>true</c> if usage statistics will be displayed; otherwise, <c>false</c>.</param>
 		public LabelNode(ObjectLabel label, IVwStylesheet stylesheet, bool displayUsage)
 		{
 			Tag = label;
@@ -60,7 +57,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets or sets a value indicating whether to display the usage statistics.
 		/// </summary>
-		/// <value><c>true</c> if usage statistics will be displayed; otherwise, <c>false</c>.</value>
 		public bool DisplayUsage
 		{
 			get
@@ -154,8 +150,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the label.
 		/// </summary>
-		/// <value>The label.</value>
-		public ObjectLabel Label => (ObjectLabel) Tag;
+		public ObjectLabel Label => (ObjectLabel)Tag;
 
 		/// <summary>
 		/// Add the children nodes of a particular node in the tree. Do this recursively if
@@ -240,7 +235,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// we can expand. Therefore finding one of those, or finding more or less than one
 			// node, is evidence that we haven't previously computed the real children of this,
 			// and should do so.
-			var fExpanded = Nodes.Count != 1 || (Nodes[0] as LabelNode) != null;
+			var fExpanded = Nodes.Count != 1 || Nodes[0] as LabelNode != null;
 			if (!fExpanded)
 			{
 				Nodes.Clear();
@@ -305,8 +300,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Checks for selection.
 		/// </summary>
-		protected virtual LabelNode CheckForSelection(ObjectLabel label, ICmObject objToSelect,
-			LabelNode node, LabelNode nodeRepresentingCurrentChoice)
+		protected virtual LabelNode CheckForSelection(ObjectLabel label, ICmObject objToSelect, LabelNode node, LabelNode nodeRepresentingCurrentChoice)
 		{
 			if (label.Object == objToSelect)		//make it look selected
 			{

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -35,7 +35,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		string m_displayNameProperty; // name of method to get what to display for each item.
 		string m_displayWs; // key recognized by ObjectLabelCollection
 		List<ICmObject> m_chosenObjs = new List<ICmObject>(0);
-		bool m_fReplace; // true to replace rather than appending.
 		bool m_fRemove; // true to remove selected items rather than append or replace
 		private GhostParentHelper m_ghostParentHelper;
 
@@ -62,8 +61,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			return original.Substring(original.Length - numberCharacters);
 		}
 
-		public ComplexListChooserBEditControl(int flid, int hvoList, string displayNameProperty,
-			string fieldName, string displayWs, GhostParentHelper gph)
+		public ComplexListChooserBEditControl(int flid, int hvoList, string displayNameProperty, string fieldName, string displayWs, GhostParentHelper gph)
 		{
 			m_hvoList = hvoList;
 			m_flid = flid;
@@ -110,7 +108,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						return;
 					}
 					m_chosenObjs = chooser.ChosenObjects.ToList();
-					m_fReplace = chooser.ReplaceMode;
+					ReplaceMode = chooser.ReplaceMode;
 					m_fRemove = chooser.RemoveMode;
 
 					// Tell the parent control that we may have changed the selected item so it can
@@ -193,11 +191,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary />
-		internal bool ReplaceMode
-		{
-			get { return m_fReplace; }
-			set { m_fReplace = value; }
-		}
+		internal bool ReplaceMode { get; set; }
 
 		/// <summary>
 		/// required interface member not currently used.
@@ -309,8 +303,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// want the user to change variant types for complex entry refs (or vice-versa),
 		/// we need some way to filter out items in the list based upon the selected column.
 		/// </summary>
-		/// <param name="hvoItem"></param>
-		/// <returns></returns>
 		protected virtual bool DisableItem(int hvoItem)
 		{
 			// by default we don't want to automatically exclude selected items from
@@ -373,7 +365,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					newVal = newValues;
 				}
 			}
-			else if (!m_fReplace && oldVals.Count != 0)
+			else if (!ReplaceMode && oldVals.Count != 0)
 			{
 				// Need to handle as append.
 				if (Atomic)
@@ -453,7 +445,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			m_chosenObjs = new List<ICmObject>(0);
 			m_fRemove = false;
-			m_fReplace = true;
+			ReplaceMode = true;
 		}
 
 		public List<int> FieldPath => new List<int>(new[] { m_flid });

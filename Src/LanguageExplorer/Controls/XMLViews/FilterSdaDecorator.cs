@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -31,8 +31,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			m_mainFlid = mainFlid;
 			m_hvoRoot = hvoRoot;
-			int chvoReal = BaseSda.get_VecSize(m_hvoRoot, m_mainFlid);
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoReal))
+			var chvoReal = BaseSda.get_VecSize(m_hvoRoot, m_mainFlid);
+			using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvoReal))
 			{
 				BaseSda.VecProp(m_hvoRoot, m_mainFlid, chvoReal, out chvoReal, arrayPtr);
 				m_validHvos = new HashSet<int>(MarshalEx.NativeToArray<int>(arrayPtr, chvoReal));

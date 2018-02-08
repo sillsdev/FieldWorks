@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,12 +12,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Initializes a new instance of the <see cref="WsComboItem"/> class.
 		/// </summary>
-		/// <param name="name">The name.</param>
-		/// <param name="id">The writing system ID.</param>
-		public WsComboItem(string name, string id)
+		public WsComboItem(string name, string writingSystemId)
 		{
 			m_name = name;
-			Id = id;
+			Id = writingSystemId;
 		}
 		/// <summary>
 		/// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
@@ -29,7 +27,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the writing system identifier.
 		/// </summary>
-		/// <value>The writing system identifier.</value>
 		public string Id { get; }
 	}
 }

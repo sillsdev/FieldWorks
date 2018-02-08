@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -121,8 +121,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			var oldMode = ListMatchOptions.Any;
 			if (m_fsi.Filter is ListChoiceFilter)
 			{
-				oldTargets = (m_fsi.Filter as ListChoiceFilter).Targets;
-				oldMode = (m_fsi.Filter as ListChoiceFilter).Mode;
+				oldTargets = ((ListChoiceFilter)m_fsi.Filter).Targets;
+				oldMode = ((ListChoiceFilter)m_fsi.Filter).Mode;
 			}
 			using (var chooser = MakeChooser(labels, oldTargets))
 			{
@@ -156,12 +156,12 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				if (m_filterType.IsSubclassOf(typeof(ColumnSpecFilter)))
 				{
-					var ci = m_filterType.GetConstructor(new Type[] { typeof(LcmCache), typeof(ListMatchOptions), typeof(int[]), typeof(XElement)});
+					var ci = m_filterType.GetConstructor(new[] { typeof(LcmCache), typeof(ListMatchOptions), typeof(int[]), typeof(XElement)});
 					filter = (ListChoiceFilter)ci.Invoke(new object[] { m_cache, matchMode, chosenHvos, m_fsi.Spec});
 				}
 				else
 				{
-					var ci = m_filterType.GetConstructor(new Type[] { typeof(LcmCache), typeof(ListMatchOptions), typeof(int[]) });
+					var ci = m_filterType.GetConstructor(new[] { typeof(LcmCache), typeof(ListMatchOptions), typeof(int[]) });
 					filter = (ListChoiceFilter)ci.Invoke(new object[] { m_cache, matchMode, chosenHvos });
 				}
 			}
@@ -182,11 +182,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="matchMode"></param>
-		/// <param name="chosenLabels"></param>
+		/// <summary />
 		public void InvokeWithColumnSpecFilter(ListMatchOptions matchMode, List<string> chosenLabels)
 		{
 			if (m_fsi.Spec == null)

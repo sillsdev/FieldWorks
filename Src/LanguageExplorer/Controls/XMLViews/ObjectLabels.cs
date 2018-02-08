@@ -1,17 +1,9 @@
 // Copyright (c) 2003-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ObjectLabels.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
@@ -30,26 +22,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected IEnumerable<int> m_writingSystemIds;
 
 		/// <summary>
-		///
-		/// </summary>
-		protected ICmObject m_obj;
-
-		/// <summary>
-		///
-		/// </summary>
-		protected LcmCache m_cache;
-
-		/// <summary>
 		/// controls which property of the object will be used for the name to display.
 		/// </summary>
 		protected string m_displayNameProperty;
-		/// <summary>
-		///
-		/// </summary>
+
+		/// <summary />
 		protected string m_displayWs;
-		/// <summary>
-		///
-		/// </summary>
+
+		/// <summary />
 		protected string m_bestWs;
 
 		/// <summary>
@@ -57,11 +37,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// even if the class is some kind of CmPossibility,
 		/// as long as its hvo is not 0.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="obj">The obj.</param>
-		/// <param name="displayNameProperty">The display name property.</param>
-		/// <param name="displayWs">The display ws.</param>
-		/// <returns></returns>
 		public static ObjectLabel CreateObjectLabelOnly(LcmCache cache, ICmObject obj, string displayNameProperty, string displayWs)
 		{
 			return obj == null ? new NullObjectLabel(cache) : new ObjectLabel(cache, obj, displayNameProperty, displayWs);
@@ -74,7 +49,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		public static ObjectLabel CreateObjectLabel(LcmCache cache, ICmObject obj, string displayNameProperty, string displayWs)
 		{
 			if (obj == null)
+			{
 				return new NullObjectLabel(cache);
+			}
 
 			var classId = obj.ClassID;
 			return cache.ClassIsOrInheritsFrom(classId, CmPossibilityTags.kClassId)
@@ -88,10 +65,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// a  factory method for creating the correct type of object label, depending on the
 		/// class of the object
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="obj">The obj.</param>
-		/// <param name="displayNameProperty">The display name property.</param>
-		/// <returns></returns>
 		public static ObjectLabel CreateObjectLabel(LcmCache cache, ICmObject obj, string displayNameProperty)
 		{
 			return CreateObjectLabel(cache, obj, displayNameProperty, null);
@@ -100,37 +73,23 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Get a list of hvos, create a collection of labels for them.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="objs">The objs.</param>
-		/// <param name="displayNameProperty">The display name property.</param>
-		/// <param name="displayWs">The display ws.</param>
-		/// <param name="fIncludeNone">if set to <c>true</c> [f include none].</param>
-		/// <returns>
-		/// A list of ObjectLabel structs.
-		/// </returns>
-		public static IEnumerable<ObjectLabel> CreateObjectLabels(LcmCache cache, IEnumerable<ICmObject> objs,
-			string displayNameProperty, string displayWs, bool fIncludeNone)
+		public static IEnumerable<ObjectLabel> CreateObjectLabels(LcmCache cache, IEnumerable<ICmObject> objs, string displayNameProperty, string displayWs, bool fIncludeNone)
 		{
 			foreach(var obj in objs)
 			{
-				yield return CreateObjectLabel(cache, obj, displayNameProperty,
-					displayWs);
+				yield return CreateObjectLabel(cache, obj, displayNameProperty, displayWs);
 			}
 			// You get a pretty green dialog box if this is inserted first!?
 			if (fIncludeNone)
+			{
 				yield return new NullObjectLabel(cache);
+			}
 		}
 
 		/// <summary>
 		/// Get a list of objects, create a collection of labels for them.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="objs">The objs.</param>
-		/// <param name="displayNameProperty">The display name property.</param>
-		/// <param name="displayWs">The display ws.</param>
-		/// <returns>A list of ObjectLabel structs.</returns>
-		public static IEnumerable<ObjectLabel> CreateObjectLabels(LcmCache cache, IEnumerable<ICmObject> objs,
-			string displayNameProperty, string displayWs)
+		public static IEnumerable<ObjectLabel> CreateObjectLabels(LcmCache cache, IEnumerable<ICmObject> objs, string displayNameProperty, string displayWs)
 		{
 			return CreateObjectLabels(cache, objs, displayNameProperty, displayWs, false);
 		}
@@ -139,14 +98,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Get a list of objects, create a collection of labels for them using the best available
 		/// writing system property.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="objs">The objs.</param>
-		/// <param name="displayNameProperty">The display name property.</param>
-		/// <returns>
-		/// A list of ObjectLabel structs.
-		/// </returns>
-		public static IEnumerable<ObjectLabel> CreateObjectLabels(LcmCache cache, IEnumerable<ICmObject> objs,
-			string displayNameProperty)
+		public static IEnumerable<ObjectLabel> CreateObjectLabels(LcmCache cache, IEnumerable<ICmObject> objs, string displayNameProperty)
 		{
 			return CreateObjectLabels(cache, objs, displayNameProperty, "best analorvern");
 		}
@@ -155,11 +107,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Given a list of objects, create a collection of labels for them using the default
 		/// display name and writing system properties.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="objs">The objs.</param>
-		/// <returns>
-		/// A list of ObjectLabel structs.
-		/// </returns>
 		public static IEnumerable<ObjectLabel> CreateObjectLabels(LcmCache cache, IEnumerable<ICmObject> objs)
 		{
 			return CreateObjectLabels(cache, objs, null, null);
@@ -168,9 +115,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="obj">The obj.</param>
-		/// <param name="displayNameProperty">the property to use to get the label.</param>
 		protected ObjectLabel(LcmCache cache, ICmObject obj, string displayNameProperty)
 			: this(cache, obj, displayNameProperty, "analysis")
 		{
@@ -179,47 +123,28 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="obj">The obj.</param>
-		/// <param name="displayNameProperty">the property to use to get the label.</param>
-		/// <param name="sDisplayWs">the ws to use to get the label.</param>
 		protected ObjectLabel(LcmCache cache, ICmObject obj, string displayNameProperty, string sDisplayWs)
 		{
-			m_cache = cache;
+			Cache = cache;
 			m_displayNameProperty = displayNameProperty;
 			m_displayWs = string.IsNullOrEmpty(sDisplayWs) ? "best analorvern" : sDisplayWs;
-			m_obj = obj; // This must be done before the EstablishWritingSystemsToTry call, which relies on the hvo having been set
+			Object = obj; // This must be done before the EstablishWritingSystemsToTry call, which relies on the hvo having been set
 			EstablishWritingSystemsToTry(m_displayWs);
 			if (m_displayWs.StartsWith("best"))
+			{
 				m_bestWs = m_displayWs;
+			}
 		}
 
 		/// <summary>
 		/// the object
 		/// </summary>
-		public ICmObject Object
-		{
-			get
-			{
-				return m_obj;
-			}
-			set
-			{
-				m_obj = value;
-			}
-		}
+		public ICmObject Object { get; set; }
 
 		/// <summary>
 		/// Gets the cache.
 		/// </summary>
-		/// <value>The cache.</value>
-		public LcmCache Cache
-		{
-			get
-			{
-				return m_cache;
-			}
-		}
+		public LcmCache Cache { get; }
 
 		/// <summary>
 		/// What would be shown, say, in a combobox
@@ -229,7 +154,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			set
 			{
 				//just for subclasses
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 
 			get
@@ -241,7 +166,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Override the method to return the right string.
 		/// </summary>
-		/// <returns>A display string</returns>
 		public override string ToString()
 		{
 			return DisplayName;
@@ -250,14 +174,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// are there any sub items for this item?
 		/// </summary>
-		/// <returns></returns>
-		public virtual bool HaveSubItems
-		{
-			get
-			{
-				return false;	//only sub-classes may have children
-			}
-		}
+		public virtual bool HaveSubItems => false;
 
 		/// <summary>
 		/// the labels of the sub items of this object.
@@ -275,12 +192,16 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected void EstablishWritingSystemsToTry(string sDisplayWs)
 		{
-			if (m_writingSystemIds != null || m_cache == null || m_obj == null)
+			if (m_writingSystemIds != null || Cache == null || Object == null)
+			{
 				return;
+			}
 
 			if (string.IsNullOrEmpty(sDisplayWs))
+			{
 				sDisplayWs = "analysis vernacular";		// very general default.
-			int flid = 0;
+			}
+			const int flid = 0;
 			if (!string.IsNullOrEmpty(m_displayNameProperty))
 			{
 #if WANTPORT //  (FWR-2786 to investigate this)(FLEx) Needs replacement for virtual property handler
@@ -291,10 +212,10 @@ namespace LanguageExplorer.Controls.XMLViews
 					flid = vh.Tag;
 #endif
 			}
-			m_writingSystemIds = WritingSystemServices.GetWritingSystemIdsFromLabel(m_cache,
+			m_writingSystemIds = WritingSystemServices.GetWritingSystemIdsFromLabel(Cache,
 				sDisplayWs,
-				m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem,
-				m_obj.Hvo,
+				Cache.ServiceLocator.WritingSystemManager.UserWritingSystem,
+				Object.Hvo,
 				flid,
 				null);
 		}
@@ -312,9 +233,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				// is available.
 				if (m_displayNameProperty != null)
 				{
-					if (m_obj is IMoMorphSynAnalysis)
+					if (Object is IMoMorphSynAnalysis)
 					{
-						var msa = m_obj as IMoMorphSynAnalysis;
+						var msa = Object as IMoMorphSynAnalysis;
 						switch (m_displayNameProperty)
 						{
 							case "InterlinearName": // Fall through.
@@ -322,9 +243,7 @@ namespace LanguageExplorer.Controls.XMLViews
 								return msa.InterlinearNameTSS;
 							case "LongName":
 							{
-								return TsStringUtils.MakeString(
-									msa.LongName,
-									m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle);
+								return TsStringUtils.MakeString(msa.LongName, Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle);
 							}
 							case "LongNameTs":
 							{
@@ -336,329 +255,35 @@ namespace LanguageExplorer.Controls.XMLViews
 							}
 						}
 					}
-					else if (m_displayNameProperty == "LongNameTSS" && m_obj is ILexSense)
+					else if (m_displayNameProperty == "LongNameTSS" && Object is ILexSense)
 					{
-						return (m_obj as ILexSense).LongNameTSS;
+						return ((ILexSense)Object).LongNameTSS;
 					}
-					else if (m_displayNameProperty == "LongName" && m_obj is IFsFeatStruc)
+					else if (m_displayNameProperty == "LongName" && Object is IFsFeatStruc)
 					{
-						return (m_obj as IFsFeatStruc).LongNameTSS;
+						return ((IFsFeatStruc)Object).LongNameTSS;
 					}
 					else if (m_displayNameProperty == "ObjectIdName")
 					{
-						return m_obj.ObjectIdName;
+						return Object.ObjectIdName;
 					}
 					else
 					{
-						var prop = m_obj.GetType().GetProperty(m_displayNameProperty);
+						var prop = Object.GetType().GetProperty(m_displayNameProperty);
 						if (prop != null)
 						{
-							var val = prop.GetValue(m_obj, null);
+							var val = prop.GetValue(Object, null);
 							if (val is ITsString)
+							{
 								return val as ITsString;
+							}
 						}
 					}
 				}
-				return m_obj.ShortNameTSS;
+				return Object.ShortNameTSS;
 			}
 		}
 
 		#endregion ITssValue Implementation
-	}
-
-	/// <summary>
-	/// Structure used when returning a list of objects for a UI Widgit that wants to list them.
-	/// </summary>
-	public class NullObjectLabel : ObjectLabel
-	{
-		private string m_label = XMLViewsStrings.ksEmptyLC;
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public NullObjectLabel()
-			: base(null, null, null)
-		{
-		}
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public NullObjectLabel(LcmCache cache)
-			: base(cache, null, null)
-		{
-		}
-
-		/// <summary>
-		/// What would be shown, say, in a combobox
-		/// </summary>
-		public override string DisplayName
-		{
-			get
-			{
-				return m_label;
-			}
-			set
-			{
-				m_label = value;
-			}
-		}
-
-		#region ITssValue Implementation
-
-		/// <summary>
-		/// Get an ITsString representation.
-		/// </summary>
-		public override ITsString AsTss
-		{
-			get
-			{
-				return TsStringUtils.MakeString(
-					DisplayName,
-					m_cache.WritingSystemFactory.UserWs);
-			}
-		}
-
-		#endregion ITssValue Implementation
-	}
-
-	/// <summary>
-	/// Structure used when returning a list of objects for a UI Widgit that wants to list them.
-	/// </summary>
-	public class CmPossibilityLabel : ObjectLabel
-	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="cache">LCM Cache object.</param>
-		/// <param name="pos">The possibility.</param>
-		/// <param name="displayNameProperty">property name to display</param>
-		/// <param name="displayWs">writing system to display</param>
-		public CmPossibilityLabel(LcmCache cache, ICmPossibility pos, string displayNameProperty,
-			string displayWs)
-			: base(cache, pos, displayNameProperty, displayWs)
-		{
-		}
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="cache">LCM Cache object.</param>
-		/// <param name="pos">The possibility.</param>
-		/// <param name="displayNameProperty">property name to display</param>
-		public CmPossibilityLabel(LcmCache cache, ICmPossibility pos, string displayNameProperty)
-			: base(cache, pos, displayNameProperty)
-		{
-		}
-
-		/// <summary>
-		/// Gets the possibility.
-		/// </summary>
-		/// <value>The possibility.</value>
-		public ICmPossibility Possibility
-		{
-			get
-			{
-				return m_obj as ICmPossibility;
-			}
-		}
-
-		#region ITssValue Implementation
-
-		/// <summary>
-		/// Get an ITsString representation.
-		/// </summary>
-		public override ITsString AsTss
-		{
-			get
-			{
-				var cp = Possibility;
-				var muaName = cp.Name;
-				Debug.Assert(muaName != null);
-				var muaAbbr = cp.Abbreviation;
-				Debug.Assert(muaAbbr != null);
-				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
-				var userWs = m_cache.WritingSystemFactory.UserWs;
-				if (m_bestWs != null)
-				{
-					ITsString tssAbbr = null;
-					switch (m_bestWs)
-					{
-						case "best analysis":
-							tssAbbr = muaAbbr.BestAnalysisAlternative;
-							break;
-						case "best vernacular":
-							tssAbbr = muaAbbr.BestVernacularAlternative;
-							break;
-						case "best analorvern":
-							tssAbbr = muaAbbr.BestAnalysisVernacularAlternative;
-							break;
-						case "best vernoranal":
-							tssAbbr = muaAbbr.BestVernacularAnalysisAlternative;
-							break;
-					}
-					if (m_displayNameProperty != null)
-					{
-						if(m_displayNameProperty == "LongName" || m_displayNameProperty == "AbbrAndNameTSS")
-						{
-							tisb.AppendTsString(tssAbbr);
-							tisb.AppendTsString(TsStringUtils.MakeString(" - ", userWs));
-						}
-						else if (m_displayNameProperty == "BestAbbreviation")
-						{
-							tisb.AppendTsString(tssAbbr);
-							return tisb.GetString(); // don't want any more than this
-						}
-					}
-					switch (m_bestWs)
-					{
-						case "best analysis":
-							tisb.AppendTsString(muaName.BestAnalysisAlternative);
-							break;
-						case "best vernacular":
-							tisb.AppendTsString(muaName.BestVernacularAlternative);
-							break;
-						case "best analorvern":
-							tisb.AppendTsString(muaName.BestAnalysisVernacularAlternative);
-							break;
-						case "best vernoranal":
-							tisb.AppendTsString(muaName.BestVernacularAnalysisAlternative);
-							break;
-					}
-				}
-				else
-				{
-					string name = null;
-					var nameWs = 0;
-					string abbr = null;
-					var abbrWs = 0;
-					foreach (var ws in m_writingSystemIds)
-					{
-						var alt = muaAbbr.get_String(ws).Text;
-						if (abbrWs == 0 && !string.IsNullOrEmpty(alt))
-						{
-							// Save abbr and ws
-							abbrWs = ws;
-							abbr = alt;
-						}
-						alt = muaName.get_String(ws).Text;
-						if (nameWs == 0 && !string.IsNullOrEmpty(alt))
-						{
-							// Save name and ws
-							nameWs = ws;
-							name = alt;
-						}
-					}
-					if (string.IsNullOrEmpty(name))
-					{
-						name = XMLViewsStrings.ksQuestionMarks;
-						nameWs = userWs;
-					}
-					if (string.IsNullOrEmpty(abbr))
-					{
-						abbr = XMLViewsStrings.ksQuestionMarks;
-						abbrWs = userWs;
-					}
-					if ((m_displayNameProperty != null)
-						&& (m_displayNameProperty == "LongName"))
-					{
-						Debug.Assert(!string.IsNullOrEmpty(abbr));
-						tisb.AppendTsString(TsStringUtils.MakeString(abbr, abbrWs));
-						tisb.AppendTsString(TsStringUtils.MakeString(" - ", userWs));
-					}
-					Debug.Assert(!string.IsNullOrEmpty(name));
-					tisb.AppendTsString(TsStringUtils.MakeString(name, nameWs));
-				}
-
-				return tisb.GetString();
-			}
-		}
-
-		#endregion ITssValue Implementation
-
-		/// <summary>
-		/// the sub items of the possibility
-		/// </summary>
-		public override IEnumerable<ObjectLabel> SubItems
-		{
-			get
-			{
-				return CreateObjectLabels(m_cache, Possibility.SubPossibilitiesOS, m_displayNameProperty, m_displayWs);
-			}
-		}
-
-		/// <summary>
-		/// are there any sub items for this item?
-		/// </summary>
-		/// <returns></returns>
-		public override bool HaveSubItems
-		{
-			get
-			{
-				return Possibility.SubPossibilitiesOS.Count > 0;
-			}
-		}
-	}
-	/// <summary>
-	/// Structure used when returning a list of objects for a UI Widgit that wants to list them.
-	/// </summary>
-	public class MoInflClassLabel : ObjectLabel
-	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="cache">LCM Cache object.</param>
-		/// <param name="inflClass">The inflection class.</param>
-		/// <param name="displayNameProperty">property name to display</param>
-		/// <param name="displayWs">writing system to display</param>
-		public MoInflClassLabel(LcmCache cache, IMoInflClass inflClass, string displayNameProperty,
-			string displayWs)
-			: base(cache, inflClass, displayNameProperty, displayWs)
-		{
-		}
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="cache">LCM Cache object.</param>
-		/// <param name="inflClass">The inflection class.</param>
-		/// <param name="displayNameProperty">property name to display</param>
-		public MoInflClassLabel(LcmCache cache, IMoInflClass inflClass, string displayNameProperty)
-			: base(cache, inflClass, displayNameProperty)
-		{
-		}
-
-		/// <summary>
-		/// Gets the inflection class.
-		/// </summary>
-		/// <value>The inflection class.</value>
-		public IMoInflClass InflectionClass
-		{
-			get
-			{
-				return m_obj as IMoInflClass;
-			}
-		}
-
-		/// <summary>
-		/// the sub items of the possibility
-		/// </summary>
-		public override IEnumerable<ObjectLabel> SubItems
-		{
-			get
-			{
-				return CreateObjectLabels(m_cache, InflectionClass.SubclassesOC, m_displayNameProperty, m_displayWs);
-			}
-		}
-
-		/// <summary>
-		/// are there any sub items for this item?
-		/// </summary>
-		/// <returns></returns>
-		public override bool HaveSubItems
-		{
-			get
-			{
-				return InflectionClass.SubclassesOC.Count > 0;
-			}
-		}
 	}
 }

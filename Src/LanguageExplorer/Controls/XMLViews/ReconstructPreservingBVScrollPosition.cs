@@ -22,11 +22,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Ctor saves BrowseViewer Scroll Position. Dispose(true) does RootBox.Reconstruct() and restores scroll position.
 		/// </summary>
-		/// <param name="bv"></param>
 		public ReconstructPreservingBVScrollPosition(BrowseViewer bv)
 		{
 			m_bv = bv;
-
 			// Store location for restore after Reconstruct. (LT-8336)
 			m_bv.BrowseView.SaveScrollPosition(null);
 
@@ -34,34 +32,35 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_irow = m_bv.SelectedIndex;
 			m_fHiliteWasVisible = false;
 			if (m_irow < 0)
+			{
 				return;
-			IVwSelection sel = MakeTestRowSelection(m_irow);
+			}
+			var sel = MakeTestRowSelection(m_irow);
 			if (sel == null)
+			{
 				return;
+			}
+
 			if (m_bv.BrowseView.IsSelectionVisible(sel))
+			{
 				m_fHiliteWasVisible = true;
+			}
 		}
 
 		private IVwSelection MakeTestRowSelection(int iselRow)
 		{
-			SelLevInfo[] rgvsli = new SelLevInfo[1];
+			var rgvsli = new SelLevInfo[1];
 			rgvsli[0].ihvo = iselRow;
 			rgvsli[0].tag = m_bv.MainTag;
 			return m_bv.BrowseView.RootBox.MakeTextSelInObj(0, 1, rgvsli, 0, null, false, false, false, true, false);
 		}
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed;
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed => m_isDisposed;
+		public bool IsDisposed { get; private set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -76,10 +75,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
+		/// <summary />
 		public void Dispose()
 		{
 			Dispose(true);
@@ -116,8 +112,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -144,7 +142,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		/// <summary>
@@ -153,7 +151,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException(ToString(), "This object is being used after it has been disposed: this is an Error.");
+			}
 		}
 
 		#endregion IDisposable & Co. implementation

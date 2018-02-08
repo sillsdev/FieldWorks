@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -61,26 +61,11 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private SearchEngine m_searchEngine;
 
-		private ICmObject m_selObject;
-
-		private ICmObject m_startingObject;
-
 		private string[] m_visibleColumns;
 
 		#endregion Data members
 
 		#region Disposal methods
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -90,7 +75,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -108,40 +95,18 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the selected object.
 		/// </summary>
-		/// <value>The selected object.</value>
-		public ICmObject SelectedObject
-		{
-			get
-			{
-				return m_selObject;
-			}
-		}
+		public ICmObject SelectedObject { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the starting object.
 		/// </summary>
-		public ICmObject StartingObject
-		{
-			get
-			{
-				CheckDisposed();
-				return m_startingObject;
-			}
-
-			set
-			{
-				CheckDisposed();
-				m_startingObject = value;
-			}
-		}
+		public ICmObject StartingObject { get; set; }
 
 		/// <summary>
 		/// Used by a Find dialog's SearchEngine to determine whether to search on a particular field or not
 		/// </summary>
 		public bool IsVisibleColumn(string keyString)
 		{
-			CheckDisposed();
-
 			return m_visibleColumns.Any(columnLayoutName => columnLayoutName.Contains(keyString));
 		}
 
@@ -152,10 +117,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Initialize the control, creating the BrowseViewer among other things.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="stylesheet">The stylesheet.</param>
-		/// <param name="configParamsElement">The configuration parameters element.</param>
-		/// <param name="searchEngine">The search engine.</param>
 		public void Initialize(LcmCache cache, IVwStylesheet stylesheet, XElement configParamsElement, SearchEngine searchEngine)
 		{
 			Initialize(cache, stylesheet, configParamsElement, searchEngine, null);
@@ -164,15 +125,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Initialize the control, creating the BrowseViewer among other things.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="stylesheet">The stylesheet.</param>
-		/// <param name="configParamsElement">The configuration parameters element.</param>
-		/// <param name="searchEngine">The search engine.</param>
-		/// <param name="reversalWs">The reversal writing system.</param>
 		public void Initialize(LcmCache cache, IVwStylesheet stylesheet, XElement configParamsElement, SearchEngine searchEngine, CoreWritingSystemDefinition reversalWs)
 		{
-			CheckDisposed();
-
 			m_cache = cache;
 			m_stylesheet = stylesheet;
 			m_searchEngine = searchEngine;
@@ -188,14 +142,15 @@ namespace LanguageExplorer.Controls.XMLViews
 			UpdateResults(e.Fields.FirstOrDefault(), e.Results);
 			// On the completion of a new search set the selection to the first result without stealing the focus
 			// from any other controls.
-			if(m_bvMatches.BrowseView.IsHandleCreated) // hotfix paranoia test
+			if (!m_bvMatches.BrowseView.IsHandleCreated)
 			{
-				var oldEnabledState = m_bvMatches.Enabled;
-				m_bvMatches.Enabled = false;
-				// disable the control before changing the selection so that the focus won't change
-				m_bvMatches.SelectedIndex = m_bvMatches.AllItems.Count > 0 ? 0 : -1;
-				m_bvMatches.Enabled = oldEnabledState; // restore the control to it's previous enabled state
+				return;
 			}
+			var oldEnabledState = m_bvMatches.Enabled;
+			m_bvMatches.Enabled = false;
+			// disable the control before changing the selection so that the focus won't change
+			m_bvMatches.SelectedIndex = m_bvMatches.AllItems.Count > 0 ? 0 : -1;
+			m_bvMatches.Enabled = oldEnabledState; // restore the control to it's previous enabled state
 		}
 
 		/// <summary>
@@ -212,9 +167,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void SelectNext()
 		{
-			int i = m_bvMatches.SelectedIndex;
+			var i = m_bvMatches.SelectedIndex;
 			if (i != -1 && i + 1 < m_bvMatches.AllItems.Count)
+			{
 				m_bvMatches.SelectedIndex = i + 1;
+			}
 		}
 
 		/// <summary>
@@ -222,9 +179,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void SelectPrevious()
 		{
-			int i = m_bvMatches.SelectedIndex;
+			var i = m_bvMatches.SelectedIndex;
 			if (i > 0)
+			{
 				m_bvMatches.SelectedIndex = i - 1;
+			}
 		}
 
 		#endregion
@@ -234,39 +193,33 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// This comes from a single click on a row in the browse view.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		void m_bvMatches_SelectionChanged(object sender, FwObjectSelectionEventArgs e)
 		{
-			m_selObject = m_cache.ServiceLocator.GetObject(e.Hvo);
+			SelectedObject = m_cache.ServiceLocator.GetObject(e.Hvo);
 			FireSelectionChanged();
 		}
 
 		/// <summary>
 		/// This comes from a double click on a row in the browse view.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		void m_bvMatches_SelectionMade(object sender, FwObjectSelectionEventArgs e)
 		{
-			m_selObject = m_cache.ServiceLocator.GetObject(e.Hvo);
+			SelectedObject = m_cache.ServiceLocator.GetObject(e.Hvo);
 			FireSelectionMade();
 		}
 
 		/// <summary>
 		/// This comes from modifying the browse view columns
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		void m_bvMatches_ColumnsChanged(object sender, EventArgs e)
 		{
 			if (e is ColumnWidthChangedEventArgs)
+			{
 				return; // don't want to know about this kind
+			}
 
 			UpdateVisibleColumns();
-			if (ColumnsChanged != null)
-				// Find dialogs can subscribe to this to know when to check for new search fields
-				ColumnsChanged(this, new EventArgs());
+			ColumnsChanged?.Invoke(this, new EventArgs());
 		}
 
 #if __MonoCS__
@@ -276,7 +229,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Raises the <see cref="E:System.Windows.Forms.Control.Enter"/> event.
 		/// </summary>
-		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data.</param>
 		protected override void OnEnter(EventArgs e)
 		{
 #if __MonoCS__
@@ -297,7 +249,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Raises the <see cref="E:System.Windows.Forms.Control.Leave"/> event.
 		/// </summary>
-		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data.</param>
 		protected override void OnLeave(EventArgs e)
 		{
 			base.OnLeave(e);
@@ -353,12 +304,12 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void UpdateResults(SearchField firstField, IEnumerable<int> results)
 		{
-			ITsString firstSearchStr = firstField.String;
+			var firstSearchStr = firstField.String;
 			// if the firstSearchStr is null we can't get its writing system
 			RecordSorter sorter = null;
 			if (firstSearchStr != null)
 			{
-				int ws = firstSearchStr.get_WritingSystemAt(0);
+				var ws = firstSearchStr.get_WritingSystemAt(0);
 				sorter = CreateFindResultSorter(firstSearchStr, ws);
 			}
 			int[] hvos;
@@ -367,8 +318,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				// Convert each ICmObject in results to a IManyOnePathSortItem, and sort
 				// using the sorter.
 				var records = new ArrayList();
-				foreach (int hvo in results.Where(hvo => StartingObject == null || StartingObject.Hvo != hvo))
+				foreach (var hvo in results.Where(hvo => StartingObject == null || StartingObject.Hvo != hvo))
+				{
 					records.Add(new ManyOnePathSortItem(hvo, null, null));
+				}
 				sorter.Sort(records);
 				hvos = records.Cast<IManyOnePathSortItem>().Select(i => i.KeyObject).ToArray();
 			}
@@ -377,9 +330,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				hvos = results.Where(hvo => StartingObject == null || StartingObject.Hvo != hvo).ToArray();
 			}
 
-			int count = hvos.Length;
-			int prevIndex = m_bvMatches.SelectedIndex;
-			int prevHvo = prevIndex == -1 ? 0 : m_bvMatches.AllItems[prevIndex];
+			var count = hvos.Length;
+			var prevIndex = m_bvMatches.SelectedIndex;
+			var prevHvo = prevIndex == -1 ? 0 : m_bvMatches.AllItems[prevIndex];
 			m_listPublisher.CacheVecProp(m_cache.LanguageProject.LexDbOA.Hvo, hvos);
 			TabStop = count > 0;
 			// Disable the list so that it doesn't steal the focus (LT-9481)
@@ -390,14 +343,16 @@ namespace LanguageExplorer.Controls.XMLViews
 				if (count == 0)
 				{
 					if (m_bvMatches.BrowseView.IsHandleCreated)
+					{
 						m_bvMatches.SelectedIndex = -1;
-					m_selObject = null;
+					}
+					SelectedObject = null;
 				}
 				else
 				{
-					int newIndex = 0;
+					var newIndex = 0;
 					var allItems = m_bvMatches.AllItems; // This is an important optimization; each call marshals the whole list!
-					for (int i = 0; i < allItems.Count; i++)
+					for (var i = 0; i < allItems.Count; i++)
 					{
 						if (allItems[i] == prevHvo)
 						{
@@ -405,9 +360,12 @@ namespace LanguageExplorer.Controls.XMLViews
 							break;
 						}
 					}
+
 					if (m_bvMatches.BrowseView.IsHandleCreated)
+					{
 						m_bvMatches.SelectedIndex = newIndex;
-					m_selObject = m_cache.ServiceLocator.GetObject(allItems[newIndex]);
+					}
+					SelectedObject = m_cache.ServiceLocator.GetObject(allItems[newIndex]);
 					FireSelectionChanged();
 				}
 			}
@@ -416,8 +374,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_bvMatches.Enabled = true;
 			}
 
-			if (!m_searchEngine.IsBusy && SearchCompleted != null)
-				SearchCompleted(this, new EventArgs());
+			if (!m_searchEngine.IsBusy)
+			{
+				SearchCompleted?.Invoke(this, new EventArgs());
+			}
 		}
 
 		private FindResultSorter CreateFindResultSorter(ITsString firstSearchStr, int ws)
@@ -429,14 +389,12 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void FireSelectionChanged()
 		{
-			if (SelectionChanged != null)
-				SelectionChanged(this, new FwObjectSelectionEventArgs(m_selObject.Hvo));
+			SelectionChanged?.Invoke(this, new FwObjectSelectionEventArgs(SelectedObject.Hvo));
 		}
 
 		private void FireSelectionMade()
 		{
-			if (SelectionMade != null)
-				SelectionMade(this, new FwObjectSelectionEventArgs(m_selObject.Hvo));
+			SelectionMade?.Invoke(this, new FwObjectSelectionEventArgs(SelectedObject.Hvo));
 		}
 
 		#endregion Other methods

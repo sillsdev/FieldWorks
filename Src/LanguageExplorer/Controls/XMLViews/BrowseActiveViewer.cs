@@ -1,3 +1,7 @@
+// Copyright (c) 2012-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
@@ -37,22 +41,22 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Actually checks if val is 1, unchecks if val is 0.
 		/// Toggles if value is -1
 		/// </summary>
-		/// <param name="newState">The new state.</param>
 		internal override void ResetAll(BrowseViewerCheckState newState)
 		{
 			var changedHvos = ResetAllCollectChangedHvos(newState);
 			ResetAllHandleBulkEditBar();
-			string undoMessage = XMLViewsStrings.ksUndoToggle;
-			string redoMessage = XMLViewsStrings.ksRedoToggle;
-			if (newState == BrowseViewerCheckState.UncheckAll)
+			var undoMessage = XMLViewsStrings.ksUndoToggle;
+			var redoMessage = XMLViewsStrings.ksRedoToggle;
+			switch (newState)
 			{
-				undoMessage = XMLViewsStrings.ksUndoUncheckAll;
-				redoMessage = XMLViewsStrings.ksRedoUncheckAll;
-			}
-			else if (newState == BrowseViewerCheckState.CheckAll)
-			{
-				undoMessage = XMLViewsStrings.ksUndoCheckAll;
-				redoMessage = XMLViewsStrings.ksRedoCheckAll;
+				case BrowseViewerCheckState.UncheckAll:
+					undoMessage = XMLViewsStrings.ksUndoUncheckAll;
+					redoMessage = XMLViewsStrings.ksRedoUncheckAll;
+					break;
+				case BrowseViewerCheckState.CheckAll:
+					undoMessage = XMLViewsStrings.ksUndoCheckAll;
+					redoMessage = XMLViewsStrings.ksRedoCheckAll;
+					break;
 			}
 			OnCheckBoxActiveChanged(changedHvos.ToArray(), undoMessage, redoMessage);
 			ResetAllHandleReconstruct();
@@ -64,7 +68,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			try
 			{
 				if (CheckBoxActiveChanged == null)
+				{
 					return;
+				}
 				CheckBoxActiveChanged(this, new CheckBoxActiveChangedEventArgs(hvosChanged, undoMessage, redoMessage));
 			}
 			finally
@@ -86,28 +92,28 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			CheckDisposed();
 
-			int dpiX = GetDpiX();
-			int selColWidth = m_xbv.Vc.SelectColumnWidth * dpiX / 72000;
-			if (m_xbv.Vc.HasSelectColumn && e.X < selColWidth)
+			var dpiX = GetDpiX();
+			var selColWidth = BrowseView.Vc.SelectColumnWidth * dpiX / 72000;
+			if (BrowseView.Vc.HasSelectColumn && e.X < selColWidth)
 			{
-				int[] hvosChanged = new[] { m_xbv.SelectedObject };
+				var hvosChanged = new[] { BrowseView.SelectedObject };
 				// we've changed the state of a check box.
 				OnCheckBoxActiveChanged(hvosChanged, XMLViewsStrings.ksUndoToggle, XMLViewsStrings.ksRedoToggle);
 			}
 
-			if (m_bulkEditBar != null && m_bulkEditBar.Visible)
-				m_bulkEditBar.UpdateEnableItems(m_xbv.SelectedObject);
+			if (BulkEditBar != null && BulkEditBar.Visible)
+			{
+				BulkEditBar.UpdateEnableItems(BrowseView.SelectedObject);
+			}
 		}
 
 		/// <summary>
 		/// Determine whether the specified item is currently considered to be checked.
 		/// </summary>
-		/// <param name="hvoItem"></param>
-		/// <returns></returns>
 		internal override int GetCheckState(int hvoItem)
 		{
-			bool fDisabled = false;
-			ICmObject obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoItem);
+			var fDisabled = false;
+			var obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoItem);
 			switch (obj.ClassID)
 			{
 				case PhRegularRuleTags.kClassId: // fall through
@@ -119,7 +125,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					fDisabled = SpecialCache.get_BooleanProp(hvoItem, MoCompoundRuleTags.kflidDisabled);
 					break;
 			}
-			return (fDisabled ? 0 : 1);
+			return fDisabled ? 0 : 1;
 		}
 
 		/// <summary>
@@ -129,7 +135,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -150,18 +158,17 @@ namespace LanguageExplorer.Controls.XMLViews
 			base.InitializeFlexComponent(flexComponentParameters);
 
 			// Set the initial value
-			int chvo = SpecialCache.get_VecSize(RootObjectHvo, MainTag);
+			var chvo = SpecialCache.get_VecSize(RootObjectHvo, MainTag);
 			int[] contents;
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
+			using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 			{
 				SpecialCache.VecProp(RootObjectHvo, MainTag, chvo, out chvo, arrayPtr);
 				contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 			}
 
-			foreach (int hvoItem in contents)
+			foreach (var hvoItem in contents)
 			{
-				int currentValue = GetCheckState(hvoItem);
-				SetItemCheckedState(hvoItem, currentValue, false);
+				SetItemCheckedState(hvoItem, GetCheckState(hvoItem), false);
 			}
 			using (new ReconstructPreservingBVScrollPosition(this))
 			{
@@ -176,11 +183,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			if (tag == PhSegmentRuleTags.kflidDisabled || tag == MoCompoundRuleTags.kflidDisabled)
+			if (tag != PhSegmentRuleTags.kflidDisabled && tag != MoCompoundRuleTags.kflidDisabled)
 			{
-				int currentValue = GetCheckState(hvo);
-				SetItemCheckedState(hvo, currentValue, false);
+				return;
 			}
+			var currentValue = GetCheckState(hvo);
+			SetItemCheckedState(hvo, currentValue, false);
 		}
 
 		#endregion

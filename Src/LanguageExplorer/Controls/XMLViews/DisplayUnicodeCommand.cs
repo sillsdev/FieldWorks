@@ -12,8 +12,9 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal class DisplayUnicodeCommand : DisplayCommand
 	{
-		int m_ws;
-		int m_tag;
+		readonly int m_ws;
+		readonly int m_tag;
+
 		public DisplayUnicodeCommand(int tag, int ws)
 		{
 			m_tag = tag;

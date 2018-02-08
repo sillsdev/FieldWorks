@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,18 +12,16 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal class OptionListItem
 	{
-		private readonly XElement m_item;
 		public OptionListItem(XElement item)
 		{
-			m_item = item;
+			Item = item;
 		}
 
-		public XElement Item => m_item;
+		public XElement Item { get; }
 
 		public override string ToString()
 		{
-			return XmlUtils.GetMandatoryAttributeValue(m_item, "label");
+			return XmlUtils.GetMandatoryAttributeValue(Item, "label");
 		}
-
 	}
 }

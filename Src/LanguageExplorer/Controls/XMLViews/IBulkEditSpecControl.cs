@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -42,10 +42,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// modified. For ones that can, it should set the string property tagMadeUpFieldIdentifier
 		/// to the value to show in the 'modified' fields.
 		/// </summary>
-		/// <param name="itemsToChange">The items to change.</param>
-		/// <param name="tagMadeUpFieldIdentifier">The tag fake flid.</param>
-		/// <param name="tagEnabled">The tag enabled.</param>
-		/// <param name="state">The state.</param>
 		void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state);
 
 		/// <summary>
@@ -73,10 +69,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Tells SemanticDomainChooserBEditControl to make suggestions and then call FakeDoIt
 		/// </summary>
-		/// <param name="itemsToChange">The items to change.</param>
-		/// <param name="tagMadeUpFieldIdentifier">The tag fake flid.</param>
-		/// <param name="tagEnabled">The tag enabled.</param>
-		/// <param name="state">The state.</param>
 		void MakeSuggestions(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state);
 	}
 }

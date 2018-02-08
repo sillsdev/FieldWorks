@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,16 +14,14 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal abstract class FlidChoiceFilter : ListChoiceFilter
 	{
-		int m_flid;
-
 		protected FlidChoiceFilter(LcmCache cache, ListMatchOptions mode, int flid, int[] targets)
 			: base(cache, mode, targets)
 		{
-			m_flid = flid;
+			Flid = flid;
 		}
 		internal FlidChoiceFilter() { } // default for persistence.
 
-		internal int Flid => m_flid;
+		internal int Flid { get; private set; }
 
 		/// <summary>
 		/// Checks if we are sorted by column of the given flid, and if so returns the hvo for that item.
@@ -45,18 +43,18 @@ namespace LanguageExplorer.Controls.XMLViews
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			XmlUtils.SetAttribute(node, "flid", m_flid.ToString());
+			XmlUtils.SetAttribute(node, "flid", Flid.ToString());
 		}
 
 		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
-			m_flid = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flid");
+			Flid = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flid");
 		}
 
 		public override bool CompatibleFilter(XElement colSpec)
 		{
-			return base.CompatibleFilter(colSpec) && m_flid == BulkEditBar.GetFlidFromClassDotName(m_cache, colSpec, "field");
+			return base.CompatibleFilter(colSpec) && Flid == BulkEditBar.GetFlidFromClassDotName(m_cache, colSpec, "field");
 		}
 	}
 }

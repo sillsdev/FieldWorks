@@ -1,9 +1,10 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls.XMLViews
@@ -15,11 +16,11 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public class NonEmptyTargetControl : UserControl
 	{
-		private System.Windows.Forms.GroupBox NonBlankTargetGroup;
-		private System.Windows.Forms.RadioButton appendRadio;
-		private System.Windows.Forms.RadioButton overwriteRadio;
-		private System.Windows.Forms.RadioButton doNothingRadio;
-		private SIL.FieldWorks.Common.Widgets.FwTextBox sepBox;
+		private GroupBox NonBlankTargetGroup;
+		private RadioButton appendRadio;
+		private RadioButton overwriteRadio;
+		private RadioButton doNothingRadio;
+		private FwTextBox sepBox;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -35,7 +36,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Prevent problems caused by assigning a bogus value of 1 to the
 			// writing system code in InitializeComponent() -- a bug inserted
 			// for free by the Windows.Forms Form Designer!
-			this.sepBox.WritingSystemCode = 0;
+			sepBox.WritingSystemCode = 0;
 		}
 
 		/// <summary>
@@ -46,7 +47,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -55,14 +58,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected override void Dispose(bool disposing )
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			if( disposing )
+			if (disposing)
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		/// <summary>
@@ -75,28 +75,28 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				CheckDisposed();
 
-				if (this.overwriteRadio.Checked)
+				if (overwriteRadio.Checked)
+				{
 					return NonEmptyTargetOptions.Overwrite;
-				else if (this.appendRadio.Checked)
-					return NonEmptyTargetOptions.Append;
-				else
-					return NonEmptyTargetOptions.DoNothing;
+				}
+
+				return appendRadio.Checked ? NonEmptyTargetOptions.Append : NonEmptyTargetOptions.DoNothing;
 			}
 
 			set
 			{
-				RadioButton checkedButton = null;
+				RadioButton checkedButton;
 				switch (value)
 				{
 					case NonEmptyTargetOptions.Append:
-						checkedButton = this.appendRadio;
+						checkedButton = appendRadio;
 						break;
 					case NonEmptyTargetOptions.Overwrite:
 						checkedButton = this.overwriteRadio;
 						break;
 					case NonEmptyTargetOptions.DoNothing:
 					default:
-						checkedButton = this.doNothingRadio;
+						checkedButton = doNothingRadio;
 						break;
 				}
 				checkedButton.Checked = true;
@@ -155,12 +155,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the separator.
 		/// </summary>
-		/// <value>The separator.</value>
-		/// ------------------------------------------------------------------------------------
 		public string Separator
 		{
 			get
@@ -240,24 +237,5 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		}
 		#endregion
-	}
-
-	/// <summary>
-	/// Options for dealing with non-empty targets.
-	/// </summary>
-	public enum NonEmptyTargetOptions
-	{
-		/// <summary>
-		/// Leave the non-empty value alone.
-		/// </summary>
-		DoNothing,
-		/// <summary>
-		/// Overwrite the non-empty target with the computed/copied value
-		/// </summary>
-		Overwrite,
-		/// <summary>
-		/// Append the computed/copied value to the non-empty target.
-		/// </summary>
-		Append
 	}
 }

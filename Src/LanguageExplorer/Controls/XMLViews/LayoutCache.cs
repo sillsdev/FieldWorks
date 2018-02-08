@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,7 +22,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		readonly Dictionary<Tuple<int, string, bool>, XElement> m_map = new Dictionary<Tuple<int, string, bool>, XElement>();
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="LayoutCache"/> class.
+		/// Initializes a new instance of the class.
 		/// </summary>
 		/// <remarks>TESTS ONLY.</remarks>
 		public LayoutCache(IFwMetaDataCache mdc, Inventory layouts, Inventory parts)
@@ -33,7 +33,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="LayoutCache"/> class.
+		/// Initializes a new instance of the class.
 		/// </summary>
 		public LayoutCache(IFwMetaDataCache mdc, string sDatabase, string applicationName, string projectPath)
 		{
@@ -189,7 +189,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the layout inventory.
 		/// </summary>
-		/// <value>The layout inventory.</value>
 		public Inventory LayoutInventory { get; }
 	}
 }

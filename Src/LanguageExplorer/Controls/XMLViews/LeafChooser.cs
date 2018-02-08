@@ -24,16 +24,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LeafChooser"/> class.
 		/// </summary>
-		/// <param name="persistProvider">The persist provider.</param>
-		/// <param name="labels">The labels.</param>
-		/// <param name="fieldName">Name of the field.</param>
-		/// <param name="cache">The cache.</param>
-		/// <param name="chosenObjs">The chosen objects.</param>
-		/// <param name="leafFlid">The leaf flid.</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		public LeafChooser(IPersistenceProvider persistProvider,
-			IEnumerable<ObjectLabel> labels, string fieldName, LcmCache cache,
-			IEnumerable<ICmObject> chosenObjs, int leafFlid, IHelpTopicProvider helpTopicProvider)
+		public LeafChooser(IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, string fieldName, LcmCache cache, IEnumerable<ICmObject> chosenObjs, int leafFlid, IHelpTopicProvider helpTopicProvider)
 			: base (persistProvider, fieldName, cache, chosenObjs, helpTopicProvider)
 		{
 			m_leafFlid = leafFlid;
@@ -83,17 +74,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary />
-		protected class LeafLabelNode : LabelNode
+		private sealed class LeafLabelNode : LabelNode
 		{
 			private readonly int m_leafFlid;
 
 			/// <summary>
 			/// Initializes a new instance of the <see cref="LeafLabelNode"/> class.
 			/// </summary>
-			/// <param name="label">The label.</param>
-			/// <param name="stylesheet">The stylesheet.</param>
-			/// <param name="displayUsage"><c>true</c> if usage statistics will be displayed; otherwise, <c>false</c>.</param>
-			/// <param name="leafFlid">The leaf flid.</param>
 			public LeafLabelNode(ObjectLabel label, IVwStylesheet stylesheet, bool displayUsage, int leafFlid)
 				: base(label, stylesheet, displayUsage)
 			{
@@ -113,24 +100,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// and return the one whose hvo is hvoToSelect, or nodeRepresentingCurrentChoice
 			/// if none match.
 			/// </summary>
-			/// <param name="node">node to be added</param>
-			/// <param name="nodes">where to add it</param>
-			/// <param name="nodeRepresentingCurrentChoice">The node representing current choice.</param>
-			/// <param name="objToSelect">The obj to select.</param>
-			/// <param name="ownershipStack">The ownership stack.</param>
-			/// <param name="chosenObjs">The chosen objects.</param>
-			/// <returns></returns>
-			public override LabelNode AddSecondaryNodesAndLookForSelected(LabelNode node, TreeNodeCollection nodes,
-				LabelNode nodeRepresentingCurrentChoice, ICmObject objToSelect, Stack<ICmObject> ownershipStack, IEnumerable<ICmObject> chosenObjs)
+			public override LabelNode AddSecondaryNodesAndLookForSelected(LabelNode node, TreeNodeCollection nodes, LabelNode nodeRepresentingCurrentChoice, ICmObject objToSelect, Stack<ICmObject> ownershipStack, IEnumerable<ICmObject> chosenObjs)
 			{
-				LabelNode result = nodeRepresentingCurrentChoice; // result unless we match hvoToSelect
+				var result = nodeRepresentingCurrentChoice; // result unless we match hvoToSelect
 				var label = (ObjectLabel) Tag;
 				var sda = label.Cache.GetManagedSilDataAccess();
-				var objs = from hvo in sda.VecProp(label.Object.Hvo, m_leafFlid)
-					select label.Cache.ServiceLocator.GetObject((int) hvo);
-				var secLabels = ObjectLabel.CreateObjectLabels(label.Cache, objs,
-					"ShortNameTSS", "analysis vernacular"); // Enhance JohnT: may want to make these configurable one day...
-				foreach (ObjectLabel secLabel in secLabels)
+				var objs = sda.VecProp(label.Object.Hvo, m_leafFlid).Select(hvo => label.Cache.ServiceLocator.GetObject(hvo));
+				var secLabels = ObjectLabel.CreateObjectLabels(label.Cache, objs, "ShortNameTSS", "analysis vernacular"); // Enhance JohnT: may want to make these configurable one day...
+				foreach (var secLabel in secLabels)
 				{
 					// Perversely, we do NOT want a LeafLabelNode for the leaves, because their HVOS are the leaf type,
 					// and therefore objects that do NOT possess the leaf property!

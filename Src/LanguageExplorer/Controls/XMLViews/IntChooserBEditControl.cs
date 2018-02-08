@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,13 +23,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		#region IBulkEditSpecControl Members
 		protected int m_flid;
 		protected ComboBox m_combo;
-		Dictionary<int, int> m_replacedObjects = new Dictionary<int, int>();
 
 		/// <summary>
 		/// Initialized with a string like "0:no;1:yes".
 		/// </summary>
-		/// <param name="itemList">The item list.</param>
-		/// <param name="flid">The flid.</param>
 		public IntChooserBEditControl(string itemList, int flid)
 		{
 			m_flid = flid;
@@ -97,15 +94,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		public override void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
 			var itemsToChangeAsList = new List<int>(itemsToChange);
-			m_cache.DomainDataByFlid.BeginUndoTask(XMLViewsStrings.ksUndoBulkEdit, XMLViewsStrings.ksRedoBulkEdit);
-			var sda = m_cache.DomainDataByFlid;
-			m_replacedObjects.Clear();
+			Cache.DomainDataByFlid.BeginUndoTask(XMLViewsStrings.ksUndoBulkEdit, XMLViewsStrings.ksRedoBulkEdit);
+			var sda = Cache.DomainDataByFlid;
+			ReplacedObjects.Clear();
 
 			var val = (m_combo.SelectedItem as IntComboItem).Value;
 			var i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
 			var interval = Math.Min(100, Math.Max(itemsToChangeAsList.Count / 50, 1));
-			var mdcManaged = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
+			var mdcManaged = Cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
 			foreach (var hvoItem in itemsToChangeAsList)
 			{
 				i++;
@@ -138,9 +135,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			// status. That code will find it is already correct and not write the exc file.)
 			if (m_flid == WfiWordformTags.kflidSpellingStatus)
 			{
-				WfiWordformServices.ConformOneSpellingDictToWordforms(m_cache.DefaultVernWs, m_cache);
+				WfiWordformServices.ConformOneSpellingDictToWordforms(Cache.DefaultVernWs, Cache);
 			}
-			m_cache.DomainDataByFlid.EndUndoTask();
+			Cache.DomainDataByFlid.EndUndoTask();
 		}
 
 		protected override void UpdateListItemToNewValue(ISilDataAccess sda, int hvoItem, int newVal, int oldVal)
@@ -170,25 +167,25 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void FixSpellingStatus(int hvoItem, int val)
 		{
-			var defVernWS = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
-			var tss = m_cache.DomainDataByFlid.get_MultiStringAlt(hvoItem, WfiWordformTags.kflidForm, defVernWS);
+			var defVernWS = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
+			var tss = Cache.DomainDataByFlid.get_MultiStringAlt(hvoItem, WfiWordformTags.kflidForm, defVernWS);
 			if (tss == null || tss.Length == 0)
 			{
 				return; // probably can't happen?
 			}
-			SpellingHelper.SetSpellingStatus(tss.Text, defVernWS, m_cache.WritingSystemFactory, (val == (int)SpellingStatusStates.correct));
+			SpellingHelper.SetSpellingStatus(tss.Text, defVernWS, Cache.WritingSystemFactory, (val == (int)SpellingStatusStates.correct));
 		}
 
 		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
 		{
 			var itemsToChangeAsList = new List<int>(itemsToChange);
 			var val = ((IntComboItem) m_combo.SelectedItem).Value;
-			var tssVal = TsStringUtils.MakeString(m_combo.SelectedItem.ToString(), m_cache.ServiceLocator.WritingSystemManager.UserWs);
+			var tssVal = TsStringUtils.MakeString(m_combo.SelectedItem.ToString(), Cache.ServiceLocator.WritingSystemManager.UserWs);
 			var i = 0;
 			// Report progress 50 times or every 100 items, whichever is more
 			// (but no more than once per item!)
 			var interval = Math.Min(100, Math.Max(itemsToChangeAsList.Count / 50, 1));
-			var mdcManaged = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
+			var mdcManaged = Cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
 			var type = m_sda.MetaDataCache.GetFieldType(m_flid);
 			foreach (var hvoItem in itemsToChangeAsList)
 			{
@@ -267,7 +264,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Objects get replaced here when dummies are changed to real.
 		/// </summary>
-		public Dictionary<int, int> ReplacedObjects => m_replacedObjects;
+		public Dictionary<int, int> ReplacedObjects { get; } = new Dictionary<int, int>();
 
 		#endregion
 	}

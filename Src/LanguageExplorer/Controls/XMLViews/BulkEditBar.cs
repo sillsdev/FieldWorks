@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Linq;
 using System.Xml.Linq;
+using ECInterfaces;
 using LanguageExplorer.Areas;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -51,7 +52,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private TabPage m_transduceTab;
 		private TabPage m_findReplaceTab;
 		private Label label2;
-		/// <summary> </summary>
+		/// <summary />
 		protected FwOverrideComboBox m_listChoiceTargetCombo;
 		internal FwOverrideComboBox ListChoiceTargetCombo => m_listChoiceTargetCombo;
 		private Label label3;
@@ -68,25 +69,21 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal Control ListChoiceControl => m_listChoiceControl;
 		private System.ComponentModel.IContainer components;
 
-		IPropertyTable m_propertyTable;
 		XElement m_configurationNode;
 		internal XElement ConfigurationNode => m_configurationNode;
 		/// <summary>
 		/// Browse viewer
 		/// </summary>
 		protected BrowseViewer m_bv;
-		/// <summary/>
+		/// <summary />
 		protected BulkEditItem[] m_beItems;
 		LcmCache m_cache;
-		const int m_colOffset = 1;
 		// object selected in browse view and possibly being edited; we track this
 		// so we can commit changes to it when the current index changes.
 		int m_hvoSelected;
 
 		private ImageList m_imageList16x14;
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		protected int m_itemIndex = -1;
 		/// <summary>
 		/// lets clients know when the target combo has changed (eg. so they
@@ -112,9 +109,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private Label label8;
 		private Label label9;
 		private Label label12;
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		protected TabPage m_deleteTab;
 		private Label label13;
 		private FwOverrideComboBox m_bulkCopySourceCombo;
@@ -195,15 +190,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Create one
 		/// </summary>
-		/// <param name="bv">The BrowseViewer that it is part of.</param>
-		/// <param name="spec">The parameters element of the BV, containing the
-		/// 'columns' elements that specify the BE bar (among other things).</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="cache">The cache.</param>
 		public BulkEditBar(BrowseViewer bv, XElement spec, IPropertyTable propertyTable, LcmCache cache)
 			: this()
 		{
-			m_propertyTable = propertyTable;
+			PropertyTable = propertyTable;
 			m_bv = bv;
 			m_bv.FilterChanged += BrowseViewFilterChanged;
 			m_bv.RefreshCompleted += BrowseViewSorterChanged;
@@ -214,7 +204,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var bulkEditListItemsClasses = bulkEditListItemsClassesValue.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 			foreach (var className in bulkEditListItemsClasses)
 			{
-				int classId = cache.MetaDataCacheAccessor.GetClassId(className);
+				var classId = cache.MetaDataCacheAccessor.GetClassId(className);
 				m_bulkEditListItemsClasses.Add((int)classId);
 			}
 			// get any fields that have ghosts we may want to edit (see also "ghostListField" in columnSpecs)
@@ -222,7 +212,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (!string.IsNullOrEmpty(bulkEditListItemsGhostFieldsValue))
 			{
 				var bulkEditListItemsGhostFields = bulkEditListItemsGhostFieldsValue.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-				foreach (string classAndField in bulkEditListItemsGhostFields)
+				foreach (var classAndField in bulkEditListItemsGhostFields)
 				{
 					m_bulkEditListItemsGhostFields.Add(GhostParentHelper.Create(m_cache.ServiceLocator, classAndField));
 				}
@@ -321,14 +311,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			// try to save the settings from the currently selected tab before switching contexts.
 			SaveSettings();
-			if (m_operationsTabControl.SelectedTab == m_clickCopyTab)
+			if (m_operationsTabControl.SelectedTab != m_clickCopyTab)
 			{
-				// switching from click copy, so commit any pending changes.
-				CommitClickChanges(this, EventArgs.Empty);
-				SetEditColumn(-1);
+				return;
+			}
+			// switching from click copy, so commit any pending changes.
+			CommitClickChanges(this, EventArgs.Empty);
+			SetEditColumn(-1);
 			// ClickCopy will setup this up again.
-			(m_bv.BrowseView as XmlBrowseView).ClickCopy -= xbv_ClickCopy;
-		}
+			((XmlBrowseView)m_bv.BrowseView).ClickCopy -= xbv_ClickCopy;
 		}
 
 		/// <summary>
@@ -372,7 +363,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -383,7 +376,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
-			{ return;}
+			{
+				return;
+			}
 
 			if ( disposing )
 			{
@@ -559,12 +554,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary />
-		/// <param name="node"></param>
-		/// <param name="attrName"></param>
-		/// <param name="defaultOwningClass">if only the property is specified,
-		/// we'll use this as the default class for that property.</param>
-		/// <param name="owningClass"></param>
-		/// <param name="property"></param>
 		private static void GetPathInfoFromColumnSpec(XElement node, string attrName, string defaultOwningClass,
 			out string owningClass, out string property)
 		{
@@ -586,7 +575,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		ICmPossibilityList GetNamedList(XElement node, string attrName)
+		private ICmPossibilityList GetNamedList(XElement node, string attrName)
 		{
 			return GetNamedList(m_cache, node, attrName);
 		}
@@ -596,7 +585,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// this will return zero.
 		/// </summary>
 		/// <returns>Hvo or 0</returns>
-		int GetNamedListHvo(XElement node, string attrName)
+		private int GetNamedListHvo(XElement node, string attrName)
 		{
 			var possList = GetNamedList(node, attrName);
 			return possList?.Hvo ?? 0;
@@ -708,7 +697,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					var list = (ICmPossibilityList)m_cache.ServiceLocator.GetObject(hvoList);
 					if (RequiresDialogChooser(list))
 					{
-						besc = new ComplexListChooserBEditControl(m_cache, m_propertyTable, colSpec);
+						besc = new ComplexListChooserBEditControl(m_cache, PropertyTable, colSpec);
 						break;
 					}
 					ws = WritingSystemServices.GetWritingSystem(m_cache, FwUtils.ConvertElement(colSpec), null, WritingSystemServices.kwsAnal).Handle;
@@ -722,11 +711,11 @@ namespace LanguageExplorer.Controls.XMLViews
 					besc = new MorphTypeChooserBEditControl(flid, flidSub, hvoList, ws, m_bv);
 					break;
 				case "variantConditionListItem":
-					besc = new VariantEntryTypesChooserBEditControl(m_cache, m_propertyTable, colSpec);
+					besc = new VariantEntryTypesChooserBEditControl(m_cache, PropertyTable, colSpec);
 					break;
 				case "integer":
 					flid = GetFlidFromClassDotName(colSpec, "field");
-					string[] stringList = m_bv.BrowseView.GetStringList(colSpec);
+					var stringList = m_bv.BrowseView.GetStringList(colSpec);
 					if (stringList != null)
 					besc = new IntChooserBEditControl(stringList, flid, XmlUtils.GetOptionalIntegerValue(colSpec, "defaultBulkEditChoice", 0));
 					else
@@ -753,16 +742,16 @@ namespace LanguageExplorer.Controls.XMLViews
 					besc = new BooleanChooserBEditControl(items, flid);
 					break;
 				case "complexListMultiple":
-					besc = new ComplexListChooserBEditControl(m_cache, m_propertyTable, colSpec);
+					besc = new ComplexListChooserBEditControl(m_cache, PropertyTable, colSpec);
 					break;
 				case "semanticDomainListMultiple":
-					besc = new SemanticDomainChooserBEditControl(m_cache, m_propertyTable, this, colSpec);
+					besc = new SemanticDomainChooserBEditControl(m_cache, PropertyTable, this, colSpec);
 					break;
 				case "variantEntryTypes":
-					besc = new VariantEntryTypesChooserBEditControl(m_cache, m_propertyTable, colSpec);
+					besc = new VariantEntryTypesChooserBEditControl(m_cache, PropertyTable, colSpec);
 					break;
 				case "complexEntryTypes":
-					besc = new ComplexListChooserBEditControl(m_cache, m_propertyTable, colSpec);
+					besc = new ComplexListChooserBEditControl(m_cache, PropertyTable, colSpec);
 					break;
 				default:
 					return null;
@@ -770,9 +759,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			besc.Cache = m_bv.Cache;
 			besc.DataAccess = m_bv.SpecialCache;
 			besc.Stylesheet = m_bv.StyleSheet;
-			if (besc.PropertyTable != m_propertyTable)
+			if (besc.PropertyTable != PropertyTable)
 			{
-				besc.PropertyTable = m_propertyTable;
+				besc.PropertyTable = PropertyTable;
 			}
 			(besc as IGhostable)?.InitForGhostItems(besc.Cache, colSpec);
 			besc.ValueChanged += besc_ValueChanged;
@@ -789,11 +778,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private bool RequiresDialogChooser(ICmPossibilityList list)
 		{
-			if (list.PossibilitiesOS.Count > 25)
-			{
-				return true;
-			}
-			return list.PossibilitiesOS.Any(item => item.SubPossibilitiesOS.Count > 0);
+			return list.PossibilitiesOS.Count > 25 || list.PossibilitiesOS.Any(item => item.SubPossibilitiesOS.Any());
 		}
 
 		/// <summary>
@@ -1246,7 +1231,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 #endregion
 
-		bool DeleteRowsItemSelected
+		private bool DeleteRowsItemSelected
 		{
 			get
 			{
@@ -1258,7 +1243,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		List<ListClassTargetFieldItem> ListItemsClassesInfo(HashSet<int> classes)
+		private List<ListClassTargetFieldItem> ListItemsClassesInfo(HashSet<int> classes)
 		{
 			var targetClasses = new List<ListClassTargetFieldItem>();
 			foreach (var classId in classes)
@@ -1324,31 +1309,28 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void SetEnabledForAllItems()
 		{
 			m_items = ItemsToChangeSet(false);
-			// No.
-			// IVwCacheDa cda = m_cache.VwCacheDaAccessor;
 			UpdateCurrentGhostParentHelper(); // needed for AllowDeleteItem()
 			foreach (var hvoItem in m_items)
 			{
-				//cda.CacheIntProp(hvoItem, XMLViewsDataCache.ktagItemEnabled, AllowDeleteItem(hvoItem));
-				// Use special SDA instead.
+				// Use special SDA.
 				m_bv.SpecialCache.SetInt(hvoItem, XMLViewsDataCache.ktagItemEnabled, AllowDeleteItem(hvoItem));
 			}
 		}
 
 		internal void UpdateCheckedItems()
 		{
-			if (m_bv.BrowseView.Vc.ShowEnabled && (m_items == null || m_items.Count == 0))
+			if (!m_bv.BrowseView.Vc.ShowEnabled || m_items != null && m_items.Any())
 			{
-				// it's about time to try to load these items and their checked state.
-				SetEnabledForAllItems();
-				m_bv.BrowseView.RootBox?.Reconstruct();
+				return;
 			}
+			// it's about time to try to load these items and their checked state.
+			SetEnabledForAllItems();
+			m_bv.BrowseView.RootBox?.Reconstruct();
 		}
 
 		/// <summary>
 		/// The selected state of the specified item may be changing, update enable values as appropriate.
 		/// </summary>
-		/// <param name="hvoItem"></param>
 		internal void UpdateEnableItems(int hvoItem)
 		{
 			CheckDisposed();
@@ -1372,8 +1354,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return; // subsenses are always OK to delete, change can't have any effect.
 			}
-			ISilDataAccess sda = m_bv.SpecialCache;
-			var chvo = sda.get_VecSize(hvoOwner, LexEntryTags.kflidSenses);
+			var chvo = m_bv.SpecialCache.get_VecSize(hvoOwner, LexEntryTags.kflidSenses);
 			if (chvo == 1)
 			{
 				return; // only sense, nothing can have changed.
@@ -1465,7 +1446,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// needed for AllowDeleteItem().
 		/// </summary>
-		/// <returns></returns>
 		private GhostParentHelper UpdateCurrentGhostParentHelper()
 		{
 			m_ghostParentHelper = null;
@@ -1485,7 +1465,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var helpTopic = string.Empty;
 
-			switch (m_propertyTable.GetValue<string>(AreaServices.ToolChoice))
+			switch (PropertyTable.GetValue<string>(AreaServices.ToolChoice))
 			{
 				case AreaServices.BulkEditEntriesOrSensesMachineName:
 					helpTopic = "khtpBulkEditBarEntriesOrSenses";
@@ -1503,7 +1483,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			if (helpTopic != string.Empty)
 			{
-				ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), helpTopic);
+				ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), helpTopic);
 			}
 		}
 
@@ -1548,7 +1528,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void MakeSuggestions(ProgressState state)
 		{
-			BulkEditItem bei = m_beItems[m_itemIndex];
+			var bei = m_beItems[m_itemIndex];
 			bei.BulkEditControl.MakeSuggestions(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue, XMLViewsDataCache.ktagItemEnabled, state);
 		}
 
@@ -1593,15 +1573,16 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void CheckForAndSetupSuggestButton(BulkEditItem bei)
 		{
 			var button = bei.BulkEditControl.SuggestButton;
-			if (button != null)
+			if (button == null)
 			{
-				m_suggestButton = button;
-				m_listChoiceTab.Controls.Add(m_suggestButton);
-				m_suggestButton.Location = new Point(m_listChoiceControl.Location.X, m_listChoiceControl.Location.Y + SUGGEST_BTN_YOFFSET);
-				m_suggestButton.Size = m_listChoiceControl.Size;
-				m_suggestButton.Click += m_suggestButton_Click;
-				m_suggestButton.Visible = true;
+				return;
 			}
+			m_suggestButton = button;
+			m_listChoiceTab.Controls.Add(m_suggestButton);
+			m_suggestButton.Location = new Point(m_listChoiceControl.Location.X, m_listChoiceControl.Location.Y + SUGGEST_BTN_YOFFSET);
+			m_suggestButton.Size = m_listChoiceControl.Size;
+			m_suggestButton.Click += m_suggestButton_Click;
+			m_suggestButton.Visible = true;
 		}
 
 		/// <summary>
@@ -1646,8 +1627,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Handles a click on the Preview (or Clear [Preview]) button
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		protected internal void m_previewButton_Click(object sender, EventArgs e)
 		{
 			if (PreviewOn)
@@ -1783,8 +1762,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Make a ReplaceWithMethod (used in preview and apply click methods for Replace tab).
 		/// </summary>
-		/// <param name="newCol">obtains the index of the active column.</param>
-		/// <returns></returns>
 		ReplaceWithMethod MakeReplaceWithMethod(out int newCol)
 		{
 			newCol = 0;  // in case we fail.
@@ -1802,8 +1779,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Make a ClearMethod (used in preview and apply click methods for Delete tab for fields).
 		/// </summary>
-		/// <param name="newCol">obtains the index of the active column.</param>
-		/// <returns></returns>
 		private ClearMethod MakeClearMethod(out int newCol)
 		{
 			newCol = 0;  // in case we fail.
@@ -1821,8 +1796,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Make a TransduceMethod (used in preview and apply click methods for Transduce tab).
 		/// </summary>
-		/// <param name="newCol">obtains the index of the active column.</param>
-		/// <returns></returns>
 		private TransduceMethod MakeTransduceMethod(out int newCol)
 		{
 			newCol = 0;  // in case we fail.
@@ -1846,14 +1819,14 @@ namespace LanguageExplorer.Controls.XMLViews
 				return null;
 			}
 
-			ECInterfaces.IEncConverters encConverters = null;
+			IEncConverters encConverters;
 			try
 			{
 				encConverters = new EncConverters();
 			}
 			catch (Exception e)
 			{
-				MessageBox.Show(String.Format(XMLViewsStrings.ksCannotAccessEC, e.Message));
+				MessageBox.Show(string.Format(XMLViewsStrings.ksCannotAccessEC, e.Message));
 				return null;
 			}
 			var converter = encConverters[convName];
@@ -1866,8 +1839,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Make a BulkCopyMethod (used in preview and apply click methods for Bulk Copy tab).
 		/// </summary>
-		/// <param name="newCol">obtains the index of the active column.</param>
-		/// <returns></returns>
 		private BulkCopyMethod MakeBulkCopyMethod(out int newCol)
 		{
 			newCol = 0;  // in case we fail.
@@ -1961,16 +1932,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// because this project can't reference XWorks.
 		/// Possibly all of them could be moved to the project that defines StatusBarProgressPanel?
 		/// </summary>
-		/// <returns></returns>
-		ProgressState CreateSimpleProgressState()
+		private ProgressState CreateSimpleProgressState()
 		{
-			var panel = m_propertyTable.GetValue<StatusBarProgressPanel>("ProgressBar");
-			if (panel == null)
-			{
-				return new NullProgressState();//not ready to be doing progress bars
-			}
-
-			return new ProgressState(panel);
+			var panel = PropertyTable.GetValue<StatusBarProgressPanel>("ProgressBar");
+			return panel == null ? new NullProgressState() : new ProgressState(panel);
 		}
 
 		/// <summary>
@@ -2146,37 +2111,34 @@ namespace LanguageExplorer.Controls.XMLViews
 				state.PercentDone = 10;
 				state.Breath();
 				m_bv.SetListModificationInProgress(true);
-				var total = idsToDelete.Count;
 				var interval = Math.Min(100, Math.Max(idsToDelete.Count / 90, 1));
 				var i = 0;
-				UndoableUnitOfWorkHelper.Do(XMLViewsStrings.ksUndoBulkDelete, XMLViewsStrings.ksRedoBulkDelete,
-											m_cache.ActionHandlerAccessor,
-											() =>
-												{
-													foreach (var hvo in idsToDelete)
-													{
-														if ((i + 1) % interval == 0)
-														{
-															state.PercentDone = i * 90 / idsToDelete.Count + 10;
-															state.Breath();
-														}
-														i++;
-														ICmObject obj;
-														if (m_cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out obj))
-														{
-															m_bv.SpecialCache.DeleteObj(hvo);
-														}
-													}
-													if (m_expectedListItemsClassId == LexEntryTags.kClassId || m_expectedListItemsClassId == LexSenseTags.kClassId)
-													{
+				UndoableUnitOfWorkHelper.Do(XMLViewsStrings.ksUndoBulkDelete, XMLViewsStrings.ksRedoBulkDelete, m_cache.ActionHandlerAccessor,  () =>
+				{
+					foreach (var hvo in idsToDelete)
+					{
+						if ((i + 1) % interval == 0)
+						{
+							state.PercentDone = i * 90 / idsToDelete.Count + 10;
+							state.Breath();
+						}
+						i++;
+						ICmObject obj;
+						if (m_cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out obj))
+						{
+							m_bv.SpecialCache.DeleteObj(hvo);
+						}
+					}
+					if (m_expectedListItemsClassId == LexEntryTags.kClassId || m_expectedListItemsClassId == LexSenseTags.kClassId)
+					{
 #if RANDYTODO
-	// TODO: Really??? It hasn't been working since FW 7.06 was released. I wonder if there is a bug report on it?
+// TODO: Really??? It hasn't been working since FW 7.06 was released. I wonder if there is a bug report on it?
 #if WANTPPORT
-														CmObject.DeleteOrphanedObjects(m_cache, fUndo, state);
+						CmObject.DeleteOrphanedObjects(m_cache, fUndo, state);
 #endif
 #endif
-													}
-												});
+					}
+				});
 				m_bv.SetListModificationInProgress(false);
 				ResumeRecordListRowChanges(); // need to show the updated list of rows!
 				state.PercentDone = 100;
@@ -2212,14 +2174,13 @@ namespace LanguageExplorer.Controls.XMLViews
 				fUndo = iNextGroup == idsToDelete.Count;
 #endif
 			}
-			string sMsg = XMLViewsStrings.ksConfirmDeleteMultiMsg;
-			string sTitle = XMLViewsStrings.ksConfirmDeleteMulti;
+			var sMsg = XMLViewsStrings.ksConfirmDeleteMultiMsg;
+			var sTitle = XMLViewsStrings.ksConfirmDeleteMulti;
 			if (!fUndo)
 			{
 				sMsg = XMLViewsStrings.ksCannotUndoTooManyDeleted;
 			}
-			return MessageBox.Show(this, sMsg, sTitle, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning)
-					== DialogResult.OK;
+			return MessageBox.Show(this, sMsg, sTitle, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK;
 		}
 
 		private bool VerifyRowDeleteAllowable(int hvo)
@@ -2267,7 +2228,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				using (var list = new ImageList())
 				{
-					System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BulkEditBar));
+					var resources = new System.ComponentModel.ComponentResourceManager(typeof(BulkEditBar));
 					list.ImageStream = (ImageListStreamer)(resources.GetObject("m_imageList16x14.ImageStream"));
 					list.TransparentColor = Color.Magenta;
 					list.Images.SetKeyName(0, "");
@@ -2378,7 +2339,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			// Otherwise we can do it unless both are empty.
 			var tssPattern = Pattern.Pattern;
-			return (tssPattern != null && tssPattern.Length != 0) || (m_tssReplace != null && m_tssReplace.Length != 0);
+			return tssPattern != null && tssPattern.Length != 0 || m_tssReplace != null && m_tssReplace.Length != 0;
 		}
 
 		internal void InitBulkCopyTab()
@@ -2459,7 +2420,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			// since it may be invalid/out-of-range (thus crash),
 			// pending OnRecordNavigation changes from ReloadList
 			// triggered by the m_clickCopyTargetCombo_SelectedIndexChanged().
-			//m_hvoSelected = m_bv.BrowseView.SelectedObject;
 
 			m_ApplyButton.Enabled = enabled;
 			m_previewButton.Enabled = enabled;
@@ -2738,9 +2698,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				//Change the Title from "Find and Replace" to "Bulk Replace Setup"
 				findDlg.Text = string.Format(XMLViewsStrings.khtpBulkReplaceTitle);
-				var app = m_propertyTable.GetValue<IApp>("App");
-				findDlg.SetDialogValues(m_cache, Pattern, m_bv.BrowseView.StyleSheet, FindForm(), m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app);
-				findDlg.RestoreAndPersistSettingsIn(m_propertyTable);
+				var app = PropertyTable.GetValue<IApp>("App");
+				findDlg.SetDialogValues(m_cache, Pattern, m_bv.BrowseView.StyleSheet, FindForm(), PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app);
+				findDlg.RestoreAndPersistSettingsIn(PropertyTable);
 				// Set this AFTER it has the correct WSF!
 				findDlg.ReplaceText = m_tssReplace;
 
@@ -2837,8 +2797,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// If not select the first item if any.
 		/// If none set the Text to 'no choices'.
 		/// </summary>
-		/// <param name="combo">The combo.</param>
-		/// <param name="fIsSourceCombo">if set to <c>true</c> [f is source combo].</param>
 		protected void InitStringCombo(FwOverrideComboBox combo, bool fIsSourceCombo)
 		{
 			var selectedItem = combo.SelectedItem as FieldComboItem;
@@ -2863,7 +2821,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					if (fIsSourceCombo)
 					{
-						accessor = new ManyOnePathSortItemReadWriter(m_cache, node, m_bv, m_propertyTable.GetValue<IApp>("App"));
+						accessor = new ManyOnePathSortItemReadWriter(m_cache, node, m_bv, PropertyTable.GetValue<IApp>("App"));
 					}
 					else if(!IsColumnWsBothVernacularAndAnalysis(node))
 					{
@@ -2974,16 +2932,11 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void m_transduceSetupButton_Click(object sender, System.EventArgs e)
 		{
-#pragma warning disable 219
-			var selItem = m_transduceProcessorCombo.SelectedItem;
-			var selName = selItem?.ToString() ?? string.Empty;
-#pragma warning restore 219
-
 			try
 			{
 				var prevEC = m_transduceProcessorCombo.Text;
-				var app = m_propertyTable.GetValue<IApp>("App");
-				using (var dlg = new AddCnvtrDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, null, m_transduceProcessorCombo.Text, null, true))
+				var app = PropertyTable.GetValue<IApp>("App");
+				using (var dlg = new AddCnvtrDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, null, m_transduceProcessorCombo.Text, null, true))
 				{
 					dlg.ShowDialog();
 
@@ -3035,7 +2988,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			SetEditColumn(column);
 		}
 
-		int m_expectedListItemsClassId = 0;
+		int m_expectedListItemsClassId;
 		/// <summary>
 		/// the expected record list's list items class id according to the
 		/// selected target combo field. <c>0</c> if one hasn't been determined (yet).
@@ -3143,8 +3096,8 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private int GetExpectedListItemsClassFromSelectedItem(FieldComboItem selectedItem)
 		{
-			int field;
-			return GetExpectedListItemsClassAndTargetFieldFromSelectedItem(selectedItem, out field);
+			int dummy;
+			return GetExpectedListItemsClassAndTargetFieldFromSelectedItem(selectedItem, out dummy);
 		}
 
 		private int GetExpectedListItemsClassAndTargetFieldFromSelectedItem(FieldComboItem selectedItem, out int field)
@@ -3164,9 +3117,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				// figure out the class of the expected list items for the corresponding bulk edit item
 				// and make that our target class.
-				if (selectedItem is TargetFieldItem && (selectedItem as TargetFieldItem).ExpectedListItemsClass != 0)
+				if (selectedItem is TargetFieldItem && ((TargetFieldItem)selectedItem).ExpectedListItemsClass != 0)
 				{
-					var targetFieldItem = selectedItem as TargetFieldItem;
+					var targetFieldItem = (TargetFieldItem)selectedItem;
 					listItemsClassId = targetFieldItem.ExpectedListItemsClass;
 					field = targetFieldItem.TargetFlid;
 				}
@@ -3183,7 +3136,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						var beItem = m_beItems[selectedItem.ColumnIndex];
 						field = beItem.BulkEditControl.FieldPath[0];
 					}
-					listItemsClassId = (int)m_cache.DomainDataByFlid.MetaDataCache.GetOwnClsId((int)field);
+					listItemsClassId = m_cache.DomainDataByFlid.MetaDataCache.GetOwnClsId(field);
 				}
 			}
 			return listItemsClassId;
@@ -3240,24 +3193,27 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_hvoSelected = m_bv.BrowseView.SelectedObject;
 		}
 
-		// Commit changes for the current hvo if it has a commit changes handler specified.
+		/// <summary>
+		/// Commit changes for the current hvo if it has a commit changes handler specified.
+		/// </summary>
 		internal static void CommitChanges(int hvo, string commitChanges, LcmCache cache, int ws)
 		{
-			if (!string.IsNullOrEmpty(commitChanges) && cache.ActionHandlerAccessor != null && !cache.ActionHandlerAccessor.IsUndoOrRedoInProgress)
+			if (string.IsNullOrEmpty(commitChanges) || cache.ActionHandlerAccessor == null || cache.ActionHandlerAccessor.IsUndoOrRedoInProgress)
 			{
-				var cmo = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-				var mi = cmo.GetType().GetMethod(commitChanges, new[] {typeof(int)});
-				if (mi == null)
-				{
-					throw new FwConfigurationException("Method " +commitChanges + " not found on class " + cmo.GetType().Name);
-				}
-				mi.Invoke(cmo, new object[] {ws});
+				return;
 			}
+			var cmo = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+			var mi = cmo.GetType().GetMethod(commitChanges, new[] {typeof(int)});
+			if (mi == null)
+			{
+				throw new FwConfigurationException("Method " +commitChanges + " not found on class " + cmo.GetType().Name);
+			}
+			mi.Invoke(cmo, new object[] {ws});
 		}
 
 		internal void m_bulkCopyTargetCombo_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			var fci = m_bulkCopyTargetCombo.SelectedItem as FieldComboItem;
+			var fci = (FieldComboItem)m_bulkCopyTargetCombo.SelectedItem;
 			if (fci.Accessor.WritingSystem != m_bcNonEmptyTargetControl.WritingSystemCode)
 			{
 				m_bcNonEmptyTargetControl.WritingSystemCode = fci.Accessor.WritingSystem;
@@ -3269,7 +3225,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal void m_transduceTargetCombo_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			var fci = m_transduceTargetCombo.SelectedItem as FieldComboItem;
+			var fci = (FieldComboItem)m_transduceTargetCombo.SelectedItem;
 			if (fci.Accessor.WritingSystem != m_trdNonEmptyTargetControl.WritingSystemCode)
 			{
 				m_trdNonEmptyTargetControl.WritingSystemCode = fci.Accessor.WritingSystem;
@@ -3344,7 +3300,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
-		public IPropertyTable PropertyTable => m_propertyTable;
+		public IPropertyTable PropertyTable { get; }
 
 		#endregion
 	}

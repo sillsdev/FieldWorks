@@ -10,11 +10,11 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public enum LinkType
 	{
-		/// <summary></summary>
+		/// <summary />
 		kSimpleLink = -1,
-		/// <summary></summary>
+		/// <summary />
 		kGotoLink = 0,
-		/// <summary></summary>
+		/// <summary />
 		kDialogLink = 1
 	}
 }

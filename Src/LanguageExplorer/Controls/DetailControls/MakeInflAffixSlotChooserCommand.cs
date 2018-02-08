@@ -30,21 +30,21 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override ObjectLabel Execute()
 		{
-			var slot = m_cache.ServiceLocator.GetInstance<IMoInflAffixSlotFactory>().Create();
-			var pos = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(m_posHvo);
+			var slot = Cache.ServiceLocator.GetInstance<IMoInflAffixSlotFactory>().Create();
+			var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(m_posHvo);
 			UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoCreateSlot, DetailControlsStrings.ksRedoCreateSlot,
 				Cache.ActionHandlerAccessor,
 				() =>
 				{
 					pos.AffixSlotsOC.Add(slot);
 					var sNewSlotName = StringTable.Table.GetString("NewSlotName", "Linguistics/Morphology/TemplateTable");
-					var defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+					var defAnalWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
 					slot.Name.set_String(defAnalWs, TsStringUtils.MakeString(sNewSlotName, defAnalWs));
 					slot.Optional = m_fOptional;
 				});
 			// Enhance JohnT: usually the newly created slot will also get inserted into a template.
 			// Ideally we would make both part of the same UOW. However the code is in two distinct DLLs (see MorphologyEditor.dll).
-			return ObjectLabel.CreateObjectLabel(m_cache, slot, "");
+			return ObjectLabel.CreateObjectLabel(Cache, slot, "");
 		}
 	}
 }

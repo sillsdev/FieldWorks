@@ -53,13 +53,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		// REVIEW (Hasso) 2014.05: The only places StorageString is used are in the Configuration Dialogs
 		// (DictionaryDetailsController and XmlDocConfigureDlg). Since the newer dialog stores whether an item is enabled as its own property,
 		// we may soon no longer need the leading + or -. (At which point we may no longer need this class)
-		public override string StorageString
-		{
-			get
-			{
-				return $"{(Enabled ? "+" : "-")}{ItemGuid}{SubClassAsString}";
-			}
-		}
+		public override string StorageString => $"{(Enabled ? "+" : "-")}{ItemGuid}{SubClassAsString}";
 
 		private string SubClassAsString
 		{

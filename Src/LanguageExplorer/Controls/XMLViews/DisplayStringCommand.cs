@@ -11,7 +11,8 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal class DisplayStringCommand : DisplayCommand
 	{
-		int m_tag;
+		readonly int m_tag;
+
 		public DisplayStringCommand(int tag)
 		{
 			m_tag = tag;

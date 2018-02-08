@@ -12,9 +12,8 @@ namespace LanguageExplorer.Controls.XMLViews
 	public class CheckBoxChangedEventArgs : EventArgs
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see><cref>T:CheckBoxChangedEventArgs</cref></see> class.
+		/// Initializes a new instance of the class.
 		/// </summary>
-		/// <param name="hvosChanged">The hvos changed.</param>
 		public CheckBoxChangedEventArgs(int[] hvosChanged)
 		{
 			HvosChanged = hvosChanged;
@@ -23,7 +22,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the hvos changed.
 		/// </summary>
-		/// <value>The hvos changed.</value>
 		public int[] HvosChanged { get; }
 	}
 

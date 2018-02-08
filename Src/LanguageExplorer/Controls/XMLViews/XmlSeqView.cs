@@ -104,22 +104,22 @@ namespace LanguageExplorer.Controls.XMLViews
 
 	internal class XmlSeqView : RootSite
 	{
-		/// <summary></summary>
+		/// <summary />
 		protected string m_sXmlSpec;
-		/// <summary></summary>
+		/// <summary />
 		protected int m_hvoRoot;
-		/// <summary></summary>
+		/// <summary />
 		protected int m_mainFlid;
 		/// <summary>
 		/// The data access that can interpret m_mainFlid of m_hvoRoot, typically a RecordListPublisher.
 		/// The SDA mainly used in the view is a further decoration of this.
 		/// </summary>
 		protected ISilDataAccessManaged m_sdaSource;
-		/// <summary></summary>
+		/// <summary />
 		protected XElement m_specElement;
-		/// <summary></summary>
+		/// <summary />
 		protected XmlVc m_xmlVc;
-		/// <summary></summary>
+		/// <summary />
 		protected IFwMetaDataCache m_mdc;
 		bool m_fShowFailingItems; // display items that fail the condition specified in the view.
 		private IFlexApp m_app;
@@ -155,7 +155,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Resets the tables.
 		/// </summary>
-		/// <param name="sLayoutName">Name of the s layout.</param>
 		public void ResetTables(string sLayoutName)
 		{
 			CheckDisposed();
@@ -319,13 +318,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private ISilDataAccess GetSda()
 		{
-			// This kind of filtering is no longer wanted now we have the publication view. See LT-10260.
-			//XmlNode filterNode = m_xnSpec.SelectSingleNode("filterProps");
-			//if (filterNode == null || String.IsNullOrEmpty(filterNode.InnerText))
 			return m_sdaSource;
-			//var fsda = new FilterSdaDecorator(m_sdaSource, m_mainFlid, m_hvoRoot);
-			//fsda.SetFilterFlids(filterNode.InnerText);
-			//return fsda;
 		}
 
 		private XElement ItemDisplayCondition => m_specElement.Element("elementDisplayCondition");

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -40,18 +40,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 
-		private XmlBrowseViewBaseVc Vc
-		{
-			get
-			{
-				if (m_vc == null)
-				{
-					m_vc = new XmlBrowseViewBaseVc(m_cache, m_sda);
-					m_vc.SuppressPictures = true; // we won't dispose of it, so it mustn't make pictures (which we don't need)
-				}
-				return m_vc;
-			}
-		}
+		private XmlBrowseViewBaseVc Vc => m_vc ?? (m_vc = new XmlBrowseViewBaseVc(m_cache, m_sda) {SuppressPictures = true});
 
 		/// <summary>
 		/// eg. persist the column specification
@@ -84,7 +73,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected override int[] GetItems(IManyOnePathSortItem rowItem)
 		{
 			var hvoRootObj = rowItem.RootObjectHvo;
-			var collector = new ItemsCollectorEnv(null, m_cache, m_sda, hvoRootObj);
+			var collector = new ItemsCollectorEnv(null, m_sda, hvoRootObj);
 			if (Vc != null && m_colSpec != null)
 			{
 				Vc.DisplayCell(rowItem, m_colSpec, hvoRootObj, collector);

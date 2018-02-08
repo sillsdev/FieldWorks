@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,7 +23,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected int m_flidParent;
 		BrowseViewer m_containingViewer;
 
-		//int flidAtomicProp, int hvoList, int ws, bool useAbbr
 		public MorphTypeChooserBEditControl(int flid, int subflid, int hvoList, int ws, BrowseViewer viewer)
 			: base(subflid, hvoList, ws, false)
 		{
@@ -45,10 +44,10 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		public override void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
-			UndoableUnitOfWorkHelper.Do(XMLViewsStrings.ksUndoBulkEdit, XMLViewsStrings.ksRedoBulkEdit, m_cache.ActionHandlerAccessor,
+			UndoableUnitOfWorkHelper.Do(XMLViewsStrings.ksUndoBulkEdit, XMLViewsStrings.ksRedoBulkEdit, Cache.ActionHandlerAccessor,
 				() =>
 				{
-					var sda = m_cache.DomainDataByFlid;
+					var sda = Cache.DomainDataByFlid;
 					var item = m_combo.SelectedItem as HvoTssComboItem;
 					if (item == null)
 					{
@@ -58,11 +57,11 @@ namespace LanguageExplorer.Controls.XMLViews
 					var fSelAffix = false;
 					if (hvoSelMorphType != 0)
 					{
-						fSelAffix = MorphServices.IsAffixType(m_cache, hvoSelMorphType);
+						fSelAffix = MorphServices.IsAffixType(Cache, hvoSelMorphType);
 					}
 					var fAnyFundamentalChanges = false;
 					// Preliminary check and warning if changing fundamental type.
-					foreach (int hvoLexEntry in itemsToChange)
+					foreach (var hvoLexEntry in itemsToChange)
 					{
 						var hvoLexemeForm = sda.get_ObjectProp(hvoLexEntry, m_flidParent);
 						if (hvoLexemeForm == 0)
@@ -74,17 +73,13 @@ namespace LanguageExplorer.Controls.XMLViews
 						{
 							continue;
 						}
-						var fAffix = MorphServices.IsAffixType(m_cache, hvoMorphType);
+						var fAffix = MorphServices.IsAffixType(Cache, hvoMorphType);
 						if (fAffix == fSelAffix || hvoSelMorphType == 0)
 						{
 							continue;
 						}
-						var msg = string.Format(XMLViewsStrings.ksMorphTypeChangesSlow,
-							(fAffix ? XMLViewsStrings.ksAffixes : XMLViewsStrings.ksStems),
-							(fAffix ? XMLViewsStrings.ksStems : XMLViewsStrings.ksAffixes));
-						if (MessageBox.Show(m_combo, msg, XMLViewsStrings.ksChangingMorphType,
-							    MessageBoxButtons.OKCancel,
-							    MessageBoxIcon.Warning) != DialogResult.OK)
+						var msg = string.Format(XMLViewsStrings.ksMorphTypeChangesSlow, fAffix ? XMLViewsStrings.ksAffixes : XMLViewsStrings.ksStems, fAffix ? XMLViewsStrings.ksStems : XMLViewsStrings.ksAffixes);
+						if (MessageBox.Show(m_combo, msg, XMLViewsStrings.ksChangingMorphType, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
 						{
 							return;
 						}
@@ -124,9 +119,9 @@ namespace LanguageExplorer.Controls.XMLViews
 							{
 								continue;
 							}
-							var fAffix = MorphServices.IsAffixType(m_cache, hvoMorphType);
-							var stemAlloFactory = m_cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
-							var afxAlloFactory = m_cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>();
+							var fAffix = MorphServices.IsAffixType(Cache, hvoMorphType);
+							var stemAlloFactory = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
+							var afxAlloFactory = Cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>();
 							if (fAffix == fSelAffix)
 							{
 								// Not changing C# type of allomorph object, just set the morph type.
@@ -138,8 +133,8 @@ namespace LanguageExplorer.Controls.XMLViews
 							else if (fAffix)
 							{
 								// Changing from affix to stem, need a new allomorph object.
-								var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoLexEntry);
-								var affix = m_cache.ServiceLocator.GetInstance<IMoAffixAllomorphRepository>().GetObject(hvoLexemeForm);
+								var entry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoLexEntry);
+								var affix = Cache.ServiceLocator.GetInstance<IMoAffixAllomorphRepository>().GetObject(hvoLexemeForm);
 								var stem = stemAlloFactory.Create();
 								rgmsaOld.Clear();
 								foreach (var msa in entry.MorphoSyntaxAnalysesOC)
@@ -160,8 +155,8 @@ namespace LanguageExplorer.Controls.XMLViews
 							else
 							{
 								// Changing from stem to affix, need a new allomorph object.
-								var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoLexEntry);
-								var stem = m_cache.ServiceLocator.GetInstance<IMoStemAllomorphRepository>().GetObject(hvoLexemeForm);
+								var entry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoLexEntry);
+								var stem = Cache.ServiceLocator.GetInstance<IMoStemAllomorphRepository>().GetObject(hvoLexemeForm);
 								var affix = afxAlloFactory.Create();
 								rgmsaOld.Clear();
 								foreach (var msa in entry.MorphoSyntaxAnalysesOC)
@@ -182,7 +177,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						}
 						if (fAnyFundamentalChanges)
 						{
-							foreach (int hvo in idsToDel)
+							foreach (var hvo in idsToDel)
 							{
 								sda.DeleteObj(hvo);
 							}
@@ -215,13 +210,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			var muaOrigForm = origForm.Form;
 			var muaNewForm = newForm.Form;
 			muaNewForm.MergeAlternatives(muaOrigForm);
-			newForm.MorphTypeRA = m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(typeHvo);
+			newForm.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(typeHvo);
 			idsToDel.Add(origForm.Hvo);
 		}
 
 		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
 		{
-			var sda = m_cache.DomainDataByFlid;
+			var sda = Cache.DomainDataByFlid;
 			var item = m_combo.SelectedItem as HvoTssComboItem;
 			if (item == null)
 			{
@@ -233,7 +228,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// (but no more than once per item!)
 			var interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 			var i = 0;
-			foreach (int hvoLexEntry in itemsToChange)
+			foreach (var hvoLexEntry in itemsToChange)
 			{
 				if ((i + 1) % interval == 0)
 				{

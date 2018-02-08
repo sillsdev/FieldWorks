@@ -32,7 +32,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private System.ComponentModel.IContainer components = null;
 
-		private bool fInDoMerges = false; // used to ignore recursive calls to DoMerges.
+		private bool fInDoMerges; // used to ignore recursive calls to DoMerges.
 
 		#endregion Data members
 
@@ -108,7 +108,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 				if (m_xbvvc == null)
 				{
-					m_xbvvc = new XmlRDEBrowseViewVc(m_nodeSpec, m_madeUpFieldIdentifier, this);
+					m_xbvvc = new XmlRDEBrowseViewVc(m_nodeSpec, MainTag, this);
 				}
 				return base.Vc;
 			}
@@ -117,7 +117,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the RDE vc.
 		/// </summary>
-		protected XmlRDEBrowseViewVc RDEVc => m_xbvvc as XmlRDEBrowseViewVc;
+		protected XmlRDEBrowseViewVc RDEVc => (XmlRDEBrowseViewVc)m_xbvvc;
 
 		/// <summary>
 		/// True if we are running the read-only version of the view that is primarily used for
@@ -312,8 +312,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var sda = m_bv.SpecialCache;
 			var columns = m_xbvvc.ColumnSpecs;
-			// Conceptual model class.
-			var sCmClass = ((XmlRDEBrowseViewVc)m_xbvvc).EditRowModelClass;
 			// Reset the new item row so that the cells are all empty.
 			for (var i = 1; i <= columns.Count; ++i)
 			{
@@ -335,7 +333,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// check whether we need to handle the key press, and do so if so.  The keys we handle
 		/// are TAB ('\t') and ENTER/RETURN ('\r').
 		/// </summary>
-		/// <param name="keyPressed">key press data</param>
 		/// <returns>true if the key press has been handled, otherwise false.</returns>
 		private bool ProcessRDEKeyPress(char keyPressed)
 		{
@@ -411,7 +408,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private bool CanAdvanceToNewRow(IVwSelection vwsel, out ITsString[] rgtss)
 		{
 			rgtss = null;
-			int iLevel;
+			int dummyLevel;
 			int iBox;
 			int iTableBox;
 			int cTableBoxes;
@@ -419,28 +416,12 @@ namespace LanguageExplorer.Controls.XMLViews
 			int iCellBox;
 			int cCellBoxes;
 			int iCellLevel;
-			GetCurrentTableCellInfo(vwsel, out iLevel, out iBox, out iTableBox, out cTableBoxes, out iTableLevel, out iCellBox, out cCellBoxes, out iCellLevel);
+			GetCurrentTableCellInfo(vwsel, out dummyLevel, out iBox, out iTableBox, out cTableBoxes, out iTableLevel, out iCellBox, out cCellBoxes, out iCellLevel);
 			var fBackTab = (ModifierKeys & Keys.Shift) == Keys.Shift;
-			iLevel = iCellLevel;
 			if (m_xbvvc.ShowColumnsRTL)
 			{
 				if (fBackTab)
 				{
-					// BackTab: move Left-to-Right, Bottom-to-Top
-					iBox = iCellBox + 1;
-					if (iBox >= cCellBoxes)
-					{
-						//fPrevRow = true;
-						if (iTableBox > 0)
-						{
-							iLevel = iTableLevel;
-							iBox = iTableBox - 1;
-						}
-						else
-						{
-							iBox = 0;
-						}
-					}
 				}
 				else
 				{
@@ -449,24 +430,10 @@ namespace LanguageExplorer.Controls.XMLViews
 					if (iBox < 0)
 					{
 						++iTableBox;
-						if (iTableBox < cTableBoxes)
+						if (iTableBox >= cTableBoxes && CanGotoNextRow(out rgtss))
 						{
-							iLevel = iTableLevel;
-							iBox = iTableBox;
-							//fNextRowRTL = true;
-						}
-						else
-						{
-							if (CanGotoNextRow(out rgtss))
-							{
-								// Treat the same as Enter in the last column.
-								return true;	// needed for HandleEnterKey.
-							}
-							else
-							{
-								// We need this information -- make it easy to enter it.
-								iBox = 0;
-							}
+							// Treat the same as Enter in the last column.
+							return true; // needed for HandleEnterKey.
 						}
 					}
 				}
@@ -476,20 +443,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				// BackTab: move Right-to-Left, Bottom-to-Top
 				if (fBackTab)
 				{
-					iBox = iCellBox - 1;
-					if (iBox < 0)
-					{
-						//fPrevRow = true;
-						if (iTableBox > 0)
-						{
-							iLevel = iTableLevel;
-							iBox = iTableBox - 1;
-						}
-						else
-						{
-							iBox = 0;
-						}
-					}
 				}
 				else
 				{
@@ -498,23 +451,10 @@ namespace LanguageExplorer.Controls.XMLViews
 					if (iBox >= cCellBoxes)
 					{
 						++iTableBox;
-						if (iTableBox < cTableBoxes)
+						if (iTableBox >= cTableBoxes && CanGotoNextRow(out rgtss))
 						{
-							iLevel = iTableLevel;
-							iBox = iTableBox;
-						}
-						else
-						{
-							if (CanGotoNextRow(out rgtss))
-							{
-								// Treat the same as Enter in the last column.
-								return true;	// needed for HandleEnterKey.
-							}
-							else
-							{
-								// We need this information -- make it easy to enter it.
-								iBox = 0;
-							}
+							// Treat the same as Enter in the last column.
+							return true; // needed for HandleEnterKey.
 						}
 					}
 				}
@@ -776,7 +716,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				try
 				{
 					RDEVc.EditableObjectsRemoveInvalidObjects();
-
 					var idsClone = RDEVc.EditableObjectsClone();
 					fInDoMerges = true;
 					var targetType = ReflectionHelper.GetType(RDEVc.EditRowAssembly, RDEVc.EditRowClass);
@@ -797,12 +736,12 @@ namespace LanguageExplorer.Controls.XMLViews
 							{
 								// The sense was deleted as a duplicate; get rid of it from our madeUpFieldIdentifier, too.
 								ISilDataAccessManaged sda = m_bv.SpecialCache;
-								var oldList = sda.VecProp(m_hvoRoot, m_madeUpFieldIdentifier);
+								var oldList = sda.VecProp(m_hvoRoot, MainTag);
 								for (var i = 0; i < oldList.Length; i++)
 								{
 									if (oldList[i] == hvoSense)
 									{
-										m_bv.SpecialCache.Replace(m_hvoRoot, m_madeUpFieldIdentifier, i, i+1, new int[0], 0);
+										m_bv.SpecialCache.Replace(m_hvoRoot, MainTag, i, i+1, new int[0], 0);
 									}
 								}
 							}
@@ -814,7 +753,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							//     Msg: Tried to create an LCM object based on db object(hvo=39434class=0),
 							//     but that class is not fit in this signature (LexSense)
 							Debug.WriteLine("mi.Invoke failed in XmlBrowseRDEView: " + e.InnerException.Message);
-							throw e;
+							throw;
 						}
 					}
 				}
@@ -823,8 +762,8 @@ namespace LanguageExplorer.Controls.XMLViews
 					throw new RuntimeConfigurationException($"XmlBrowseRDEView.DoMerges() could not invoke the static {RDEVc.EditRowMergeMethod} method of the class {RDEVc.EditRowClass}", error);
 				}
 				RDEVc.EditableObjectsClear();
-				var cobj = m_bv.SpecialCache.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
-				m_bv.BrowseView.RootBox.PropChanged(m_hvoRoot, m_madeUpFieldIdentifier, 0, cobj, cobj);
+				var cobj = m_bv.SpecialCache.get_VecSize(m_hvoRoot, MainTag);
+				m_bv.BrowseView.RootBox.PropChanged(m_hvoRoot, MainTag, 0, cobj, cobj);
 			}
 			finally
 			{
@@ -853,7 +792,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
 			}
-			var hvo = m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, index);
+			var hvo = SpecialCache.get_VecItem(m_hvoRoot, MainTag, index);
 			// It would sometimes work to jump to one of the editable objects.
 			// But sometimes one of them will get destroyed when we switch away from this view
 			// (e.g., because there is already a similar sense to which we can just add this semantic domain).
@@ -879,15 +818,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void JumpToToolFor(ICmObject target)
 		{
 			var commands = new List<string>
-											{
-												"AboutToFollowLink",
-												"FollowLink"
-											};
+			{
+				"AboutToFollowLink",
+				"FollowLink"
+			};
 			var parms = new List<object>
-											{
-												null,
-												new FwLinkArgs(AreaServices.LexiconEditMachineName, target.Guid)
-											};
+			{
+				null,
+				new FwLinkArgs(AreaServices.LexiconEditMachineName, target.Guid)
+			};
 			Publisher.Publish(commands, parms);
 		}
 
@@ -1008,7 +947,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var columns = m_xbvvc.ColumnSpecs;
 			if (columns == null || columns.Count == 0)
 			{
-				return false;		// Something is broken!
+				return false; // Something is broken!
 			}
 
 			var tsi = new TextSelInfo(m_rootb.Selection);

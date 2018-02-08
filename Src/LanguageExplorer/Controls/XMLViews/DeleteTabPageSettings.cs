@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2008-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,9 +15,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		protected override int ExpectedTab => (int) BulkEditBarTabs.Delete;
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		protected override FwOverrideComboBox TargetComboForTab => m_bulkEditBar.DeleteWhatCombo;
 
 		/// <summary>
@@ -29,10 +27,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_bulkEditBar.m_deleteWhatCombo_SelectedIndexChanged(this, EventArgs.Empty);
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="bulkEditBar"></param>
+		/// <summary />
 		protected override void SetupBulkEditBarTab(BulkEditBar bulkEditBar)
 		{
 			bulkEditBar.InitDeleteTab();

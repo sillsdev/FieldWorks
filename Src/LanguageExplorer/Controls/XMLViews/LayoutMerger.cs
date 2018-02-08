@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -29,7 +29,6 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public class LayoutMerger : IOldVersionMerger
 	{
-		private XDocument m_dest;
 		private XElement m_newMaster;
 		private XElement m_oldConfigured;
 		private XElement m_output;
@@ -82,7 +81,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			// were brought inside of the Merge.
 			m_newMaster = newMaster;
 			m_oldConfigured = oldConfigured;
-			m_dest = dest;
 			m_insertedMissing = new HashSet<XElement>();
 			m_output = new XElement(newMaster.Name);
 			m_layoutParamAttrSuffix = oldLayoutSuffix;
@@ -138,7 +136,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void FixUpPartRefParamAttrForDupNode(XElement partRefNode, string dupKey)
 		{
 			if (string.IsNullOrEmpty(XmlUtils.GetOptionalAttributeValue(partRefNode, ParamAttr, string.Empty)))
+			{
 				return; // nothing to do
+			}
 
 			var xaParam = partRefNode.Attribute(ParamAttr);
 			string suffix;
@@ -151,7 +151,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void FixUpPartRefLabelAttrForDupNode(XElement partRefNode, string dupKey)
 		{
 			if (string.IsNullOrEmpty(XmlUtils.GetOptionalAttributeValue(partRefNode, LabelAttr, string.Empty)))
+			{
 				return; // nothing to do
+			}
 
 			var xaLabel = partRefNode.Attribute(LabelAttr);
 			string suffix;
@@ -173,7 +175,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var key = XmlUtils.GetOptionalAttributeValue(node, RefAttr, string.Empty);
 			if (key == ChildStr)
+			{
 				key = XmlUtils.GetOptionalAttributeValue(node, LabelAttr, ChildStr);
+			}
 			return key;
 		}
 
@@ -184,27 +188,31 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// This allows us to compare different oldConfigured nodes with the relevant newMaster node to see
 		/// if this one is a duplicate node.
 		/// </summary>
-		/// <param name="node">XmlNode from old configured parts Dictionary</param>
-		/// <param name="isInitializing">When building the parts dictionary this should be true</param>
-		/// <returns>Key with dup value</returns>
 		private string GetKeyWithDup(XElement node, bool isInitializing)
 		{
 			var key = XmlUtils.GetOptionalAttributeValue(node, RefAttr, string.Empty);
 			if (key == ChildStr)
-				key = XmlUtils.GetOptionalAttributeValue(node, LabelAttr, ChildStr);
-			var dup = XmlUtils.GetOptionalAttributeValue(node, DupAttr, string.Empty);
-			if (isInitializing && m_labelAttrSuffix.ContainsKey(key + dup))
 			{
-				if (!dup.Contains(".")) return key + dup;
-				//numIncr value are getting from the label attribute text which are between the paranthesis
-				var labelKey = XmlUtils.GetOptionalAttributeValue(node, LabelAttr, ChildStr);
-				var numIncr = Regex.Match(labelKey, @"\(([^)]*)\)").Groups[1].Value;
-				dup = String.Join(".", dup + "-" + numIncr);
-				//Updating dup value in node attribute
-				if (node.Attributes().Any())
-				{
-					node.Attribute("dup").SetValue(dup);
-				}
+				key = XmlUtils.GetOptionalAttributeValue(node, LabelAttr, ChildStr);
+			}
+			var dup = XmlUtils.GetOptionalAttributeValue(node, DupAttr, string.Empty);
+			if (!isInitializing || !m_labelAttrSuffix.ContainsKey(key + dup))
+			{
+				return key + dup;
+			}
+
+			if (!dup.Contains("."))
+			{
+				return key + dup;
+			}
+			//numIncr value are getting from the label attribute text which are between the paranthesis
+			var labelKey = XmlUtils.GetOptionalAttributeValue(node, LabelAttr, ChildStr);
+			var numIncr = Regex.Match(labelKey, @"\(([^)]*)\)").Groups[1].Value;
+			dup = string.Join(".", dup + "-" + numIncr);
+			//Updating dup value in node attribute
+			if (node.Attributes().Any())
+			{
+				node.Attribute("dup").SetValue(dup);
 			}
 			return key + dup;
 		}
@@ -217,12 +225,16 @@ namespace LanguageExplorer.Controls.XMLViews
 			foreach (var child in m_oldConfigured.Elements())
 			{
 				if (!IsMergeableNode(child))
+				{
 					continue;
+				}
 				var baseKey = GetKey(child);
 				m_oldPartsFound[baseKey] = false;
 				var dupKey = GetKeyWithDup(child, true);
 				if (dupKey == baseKey)
+				{
 					continue;
+				}
 				// Due to an old bug some configurations have bad data with indistinguishable duplicate nodes. Just drop the extra ones.
 				if (!m_labelAttrSuffix.ContainsKey(dupKey))
 				{
@@ -234,17 +246,23 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		// Answer true if we want to insert a copy of an output node even though there isn't a match in the current
 		// input range. Currently this requires both that it has a ref of $child and the key doesn't match ANY part node in the input.
-		bool WantToCopyMissingItem(XElement node)
+		private bool WantToCopyMissingItem(XElement node)
 		{
 			if (XmlUtils.GetOptionalAttributeValue(node, RefAttr, string.Empty) != ChildStr)
+			{
 				return false;
+			}
 			var key = GetKey(node);
 			if (m_insertedMissing.Contains(node))
+			{
 				return false; // don't insert twice!
+			}
 			foreach (var child in m_newMaster.Elements())
 			{
 				if (IsMergeableNode(child) && GetKey(child) == key)
+				{
 					return false;
+				}
 			}
 			return true;
 		}
@@ -252,7 +270,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void CopyParts(int startIndex, int limIndex)
 		{
 			// Copy initial items not in oldConfigured
-			int indexOfFirstNodeWanted = CopyNodesNotInOldConfigured(startIndex, limIndex);
+			var indexOfFirstNodeWanted = CopyNodesNotInOldConfigured(startIndex, limIndex);
 			foreach (var oldNode in m_oldConfigured.Elements())
 			{
 				CopyStuffWantedForNewNode(oldNode, indexOfFirstNodeWanted, limIndex);
@@ -270,27 +288,28 @@ namespace LanguageExplorer.Controls.XMLViews
 			for (var index = indexOfFirstNodeWanted; index < limIndex; index++)
 			{
 				var child = newMasterChildElements[index];
-				if (GetKey(child) == key)
+				if (GetKey(child) != key)
 				{
-					var copy = CopyToOutput(child);
-					CopySafeAttrs(copy, oldNode);
-					var dupKey = GetKeyWithDup(oldNode, false);
-					if (dupKey != key)
-					{
-						// This duplicate may have suffixes to attach
-						ReattachDupSuffixes(copy, dupKey);
-					}
-					else
-					{
-						CheckForAndReattachLayoutParamSuffix(copy);
-					}
-					if (!m_oldPartsFound[key])
-					{
-						m_oldPartsFound[key] = true; // copy new following nodes only once, not for duplicates.
-						CopyNodesNotInOldConfigured(index + 1, limIndex);
-					}
-					return;
+					continue;
 				}
+				var copy = CopyToOutput(child);
+				CopySafeAttrs(copy, oldNode);
+				var dupKey = GetKeyWithDup(oldNode, false);
+				if (dupKey != key)
+				{
+					// This duplicate may have suffixes to attach
+					ReattachDupSuffixes(copy, dupKey);
+				}
+				else
+				{
+					CheckForAndReattachLayoutParamSuffix(copy);
+				}
+				if (!m_oldPartsFound[key])
+				{
+					m_oldPartsFound[key] = true; // copy new following nodes only once, not for duplicates.
+					CopyNodesNotInOldConfigured(index + 1, limIndex);
+				}
+				return;
 			}
 			if (WantToCopyMissingItem(oldNode))
 			{
@@ -301,9 +320,10 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void CheckForAndReattachLayoutParamSuffix(XElement workingNode)
 		{
-			if (string.IsNullOrEmpty(m_layoutParamAttrSuffix) ||
-				string.IsNullOrEmpty(XmlUtils.GetOptionalAttributeValue(workingNode, ParamAttr, string.Empty)))
+			if (string.IsNullOrEmpty(m_layoutParamAttrSuffix) || string.IsNullOrEmpty(XmlUtils.GetOptionalAttributeValue(workingNode, ParamAttr, string.Empty)))
+			{
 				return; // nothing to do
+			}
 
 			var xaParam = workingNode.Attribute(ParamAttr);
 			xaParam.Value = xaParam.Value + m_layoutParamAttrSuffix;
@@ -346,9 +366,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// that has a key in m_oldPartsFound. Return the index of the next (uncopied) node,
 		/// either limIndex or the index of the node with a key we still want.
 		/// </summary>
-		/// <param name="index"></param>
-		/// <param name="limIndex"></param>
-		/// <returns></returns>
 		private int CopyNodesNotInOldConfigured(int index, int limIndex)
 		{
 			var newMasterChildElements = m_newMaster.Elements().ToList();

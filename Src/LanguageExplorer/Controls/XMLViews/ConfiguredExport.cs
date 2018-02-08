@@ -51,7 +51,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		Dictionary<int, string> m_dictWsStr = new Dictionary<int,string>();
 		/// <summary>The current lead (sort) character being written.</summary>
-		private string m_schCurrent = String.Empty;
+		private string m_schCurrent = string.Empty;
 		/// <summary>
 		/// Map from a writing system to its set of digraphs (or multigraphs) used in sorting.
 		/// </summary>
@@ -280,11 +280,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				var style = tss.get_StringProperty(irun, (int) FwTextPropType.ktptNamedStyle);
 				var wsRun = tss.get_WritingSystem(irun);
-				switch (style)
+				if (style == "Sense-Reference-Number")
 				{
-					case "Sense-Reference-Number":
-						m_xhtml?.MapCssToLang("xsensexrefnumber", m_cache.ServiceLocator.WritingSystemManager.Get(wsRun).Id);
-						break;
+					m_xhtml?.MapCssToLang("xsensexrefnumber", m_cache.ServiceLocator.WritingSystemManager.Get(wsRun).Id);
 				}
 			}
 
@@ -297,7 +295,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		public override void AddIntProp(int tag)
 		{
 			var ccOld = WriteFieldStartTag(tag);
-
 			var n = m_cache.DomainDataByFlid.get_IntProp(CurrentObject(), tag);
 			IndentLine();
 			m_writer.WriteLine("<Integer val=\"{0}\"/>", n);
@@ -388,10 +385,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override void OpenParagraph()
 		{
-			if (String.IsNullOrEmpty(m_stylePara))
+			if (string.IsNullOrEmpty(m_stylePara))
+			{
 				m_writer.WriteLine("<Paragraph>");
+			}
 			else
+			{
 				m_writer.WriteLine("<Paragraph style=\"{0}\">", XmlUtils.MakeSafeXmlAttribute(m_stylePara));
+			}
 		}
 
 		private string m_stylePara;
@@ -438,9 +439,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		private int TabsToIndent()
 		{
 			var cTabs = 0;
-			for (var i = 0; i < m_rgElementTags.Count; ++i)
+			foreach (var s in m_rgElementTags)
 			{
-				var s = m_rgElementTags[i];
 				if (!string.IsNullOrEmpty(s))
 				{
 					++cTabs;
@@ -452,7 +452,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void IndentLine()
 		{
 			var cTabs = TabsToIndent();
-			for (int i = 0; i < cTabs; ++i)
+			for (var i = 0; i < cTabs; ++i)
 			{
 				m_writer.Write("    ");
 			}
@@ -480,7 +480,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					// This has two advantages: first, the user can see the whole entry, rather than part of it
 					// being scrolled off the top of the screen;
 					// Secondly, some senses (e.g., of variants) may not be shown in the HTML at all, resulting in bad links (LT-11099)
-					targetItem = ((ILexSense) obj).Entry.Hvo;
+					targetItem = ((ILexSense)obj).Entry.Hvo;
 				}
 				m_writer.WriteLine("<{0} target=\"hvo{1}\">", sClass, targetItem);
 			}
@@ -1144,8 +1144,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// http://www.w3.org/TR/REC-xml/#NT-Name. I have left out the range [#x10000-#xEFFFF] as this involves
 		/// surrogate pairs and I'm not sure how this RE handles them. Characters in this range will be converted.
 		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
 		private string MakeStringValidXmlElement(string input)
 		{
 			// Anything followed by one illegal character followed by anything; must match whole string.
@@ -1165,7 +1163,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		private string MakeValueForXmlElement(Char c)
+		private static string MakeValueForXmlElement(char c)
 		{
 			return c == ' ' ? "_" : $"{Convert.ToInt32(c):x}";
 		}
@@ -1434,7 +1432,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Make this string safe to place inside an XML comment.
 		/// </summary>
-		private string CommentProtect(string str)
+		private static string CommentProtect(string str)
 		{
 			return str.Replace("-", "\\-");
 		}
@@ -1509,9 +1507,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Write a Cascading Style Sheet file based on the accumulated layouts
 		/// and the given stylesheet.
 		/// </summary>
-		/// <param name="sOutputFile"></param>
-		/// <param name="allowDictionaryParagraphIndent">See comments on this property of XhtmlHelper</param>
-		/// <param name="vss"></param>
 		public void WriteCssFile(string sOutputFile, IVwStylesheet vss, bool allowDictionaryParagraphIndent)
 		{
 			m_xhtml.AllowDictionaryParagraphIndent = allowDictionaryParagraphIndent;

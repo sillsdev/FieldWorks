@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -31,9 +31,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Returns GPHs for the four properties we currently know about.
 		/// </summary>
-		/// <param name="services"></param>
-		/// <param name="classDotMethod"></param>
-		/// <returns></returns>
 		public static GhostParentHelper Create(ILcmServiceLocator services, string classDotMethod)
 		{
 			var result = CreateIfPossible(services, classDotMethod);
@@ -82,35 +79,37 @@ namespace LanguageExplorer.Controls.XMLViews
 		public static int GetBulkEditDestinationClass(LcmCache cache, int listFlid)
 		{
 			var destClass = cache.GetDestinationClass(listFlid);
-			if (destClass == 0)
+			if (destClass != 0)
 			{
-				// May be a special "ghost" property used for bulk edit operations which primarily contains,
-				// say, example sentences, but also contains senses and entries so we can bulk edit to senses
-				// with no examples and entries with no senses.
-				// We don't want to lie to the MDC, but here, we need to treat these properties as having the
-				// primary destination class.
-				switch (cache.MetaDataCacheAccessor.GetFieldName(listFlid))
-				{
-					case "AllExampleSentenceTargets":
-						return LexExampleSentenceTags.kClassId;
-					case "AllPossiblePronunciations":
-						return LexPronunciationTags.kClassId;
-					case "AllPossibleEtymologies":
-						return LexEtymologyTags.kClassId;
-					case "AllPossibleAllomorphs":
-						return MoFormTags.kClassId;
-					case "AllExampleTranslationTargets":
-						return CmTranslationTags.kClassId;
-					case "AllComplexEntryRefPropertyTargets":
-					case "AllVariantEntryRefPropertyTargets":
-						return LexEntryRefTags.kClassId;
-					case "AllExtendedNoteTargets":
-						return LexExtendedNoteTags.kClassId;
-					case "AllPossiblePictures":
-						return CmPictureTags.kClassId;
-				}
+				return destClass;
 			}
-			return destClass;
+			// May be a special "ghost" property used for bulk edit operations which primarily contains,
+			// say, example sentences, but also contains senses and entries so we can bulk edit to senses
+			// with no examples and entries with no senses.
+			// We don't want to lie to the MDC, but here, we need to treat these properties as having the
+			// primary destination class.
+			switch (cache.MetaDataCacheAccessor.GetFieldName(listFlid))
+			{
+				case "AllExampleSentenceTargets":
+					return LexExampleSentenceTags.kClassId;
+				case "AllPossiblePronunciations":
+					return LexPronunciationTags.kClassId;
+				case "AllPossibleEtymologies":
+					return LexEtymologyTags.kClassId;
+				case "AllPossibleAllomorphs":
+					return MoFormTags.kClassId;
+				case "AllExampleTranslationTargets":
+					return CmTranslationTags.kClassId;
+				case "AllComplexEntryRefPropertyTargets":
+				case "AllVariantEntryRefPropertyTargets":
+					return LexEntryRefTags.kClassId;
+				case "AllExtendedNoteTargets":
+					return LexExtendedNoteTags.kClassId;
+				case "AllPossiblePictures":
+					return CmPictureTags.kClassId;
+				default:
+					return destClass;
+			}
 		}
 
 		/// <summary>
@@ -176,7 +175,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal virtual int ClassToCreate(int hvoItem, int flidBasicProp)
 		{
 			var mdc = m_services.GetInstance<IFwMetaDataCacheManaged>();
-			return mdc.GetOwnClsId((int)flidBasicProp);
+			return mdc.GetOwnClsId(flidBasicProp);
 		}
 
 		/// <summary>

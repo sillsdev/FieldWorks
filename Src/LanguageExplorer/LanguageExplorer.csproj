@@ -636,10 +636,12 @@
     <Compile Include="Controls\XMLViews\CheckBoxActiveChangedEventArgs.cs" />
     <Compile Include="Controls\XMLViews\CheckBoxChangedEventArgs.cs" />
     <Compile Include="Controls\XMLViews\BrowseViewerCheckState.cs" />
+    <Compile Include="Controls\XMLViews\ChildPartGenerator.cs" />
     <Compile Include="Controls\XMLViews\ClearMethod.cs" />
     <Compile Include="Controls\XMLViews\ClickCopyEventArgs.cs" />
     <Compile Include="Controls\XMLViews\ClickCopyTabPageSettings.cs" />
     <Compile Include="Controls\XMLViews\CmObjectComparer.cs" />
+    <Compile Include="Controls\XMLViews\CmPossibilityLabel.cs" />
     <Compile Include="Controls\XMLViews\ColumnDragDropReorderedEventArgs.cs" />
     <Compile Include="Controls\XMLViews\ColumnRightClickEventArgs.cs" />
     <Compile Include="Controls\XMLViews\ColumnSpecFilter.cs" />
@@ -669,6 +671,7 @@
     <Compile Include="Controls\XMLViews\IClearValues.cs" />
     <Compile Include="Controls\XMLViews\IGetReplacedObjects.cs" />
     <Compile Include="Controls\XMLViews\IGhostable.cs" />
+    <Compile Include="Controls\XMLViews\IntCompareFinder.cs" />
     <Compile Include="Controls\XMLViews\ItemsCollectorEnv.cs" />
     <Compile Include="Controls\XMLViews\ItemTypeInfo.cs" />
     <Compile Include="Controls\XMLViews\LeafChooser.cs">
@@ -678,8 +681,12 @@
     <Compile Include="Controls\XMLViews\LinkType.cs" />
     <Compile Include="Controls\XMLViews\MainCallerDisplayCommand.cs" />
     <Compile Include="Controls\XMLViews\MainCallerDisplayCommandSeq.cs" />
+    <Compile Include="Controls\XMLViews\MoInflClassLabel.cs" />
     <Compile Include="Controls\XMLViews\NodeChildrenDisplayCommand.cs" />
     <Compile Include="Controls\XMLViews\NodeDisplayCommand.cs" />
+    <Compile Include="Controls\XMLViews\NonEmptyTargetOptions.cs" />
+    <Compile Include="Controls\XMLViews\NullObjectLabel.cs" />
+    <Compile Include="Controls\XMLViews\ObjectValuePartGenerator.cs" />
     <Compile Include="Controls\XMLViews\ObjLocalCommand.cs" />
     <Compile Include="Controls\XMLViews\PartOwnershipTree.cs" />
     <Compile Include="Controls\XMLViews\PropWs.cs" />
@@ -688,10 +695,13 @@
     <Compile Include="Controls\XMLViews\ReplaceParamDefault.cs" />
     <Compile Include="Controls\XMLViews\ReplaceParamWithDefault.cs" />
     <Compile Include="Controls\XMLViews\RootDisplayCommand.cs" />
+    <Compile Include="Controls\XMLViews\SearchField.cs" />
     <Compile Include="Controls\XMLViews\SelectionHighlighting.cs" />
+    <Compile Include="Controls\XMLViews\SortCollectorEnv.cs" />
     <Compile Include="Controls\XMLViews\SortMethodFinder.cs" />
     <Compile Include="Controls\XMLViews\TestForParameter.cs" />
     <Compile Include="Controls\XMLViews\TypeSubClass.cs" />
+    <Compile Include="Controls\XMLViews\VirtualNeededPropertyInfo.cs" />
     <Compile Include="Controls\XMLViews\XmlSeqSelectionRestorer.cs" />
     <Compile Include="Controls\XMLViews\XmlViewsMetaDataCacheDecorator.cs" />
     <Compile Include="Impls\WebonaryException.cs" />

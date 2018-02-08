@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,10 +17,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		FwComboBox m_combo;
 		int m_ws;
 		private IHelpTopicProvider m_helpTopicProvider;
-		bool m_fGenDate = false;
+		bool m_fGenDate;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:RestrictDateComboItem"/> class.
+		/// Initializes a new instance of the class.
 		/// </summary>
 		public RestrictDateComboItem(ITsString tssName, IHelpTopicProvider helpTopicProvider, FilterSortItem fsi, int ws, bool fGenDate, FwComboBox combo) : base(tssName, null, fsi)
 		{
@@ -105,8 +105,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// If so, return the string that should be displayed as the value of the combo box
 		/// when this matcher is active. Otherwise return null.
 		/// </summary>
-		/// <param name="matcher"></param>
-		/// <returns></returns>
 		internal override ITsString SetFromMatcher(IMatcher matcher)
 		{
 			CheckDisposed();

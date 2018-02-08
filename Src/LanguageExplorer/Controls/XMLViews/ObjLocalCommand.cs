@@ -14,8 +14,9 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal class ObjLocalCommand : DisplayCommand
 	{
-		XElement m_objLocal;
-		XElement m_caller;
+		readonly XElement m_objLocal;
+		readonly XElement m_caller;
+
 		public ObjLocalCommand(XElement objLocal, XElement caller)
 		{
 			m_objLocal = objLocal;

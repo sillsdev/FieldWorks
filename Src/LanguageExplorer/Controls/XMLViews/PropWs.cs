@@ -4,7 +4,7 @@
 
 namespace LanguageExplorer.Controls.XMLViews
 {
-	/// <summary/>
+	/// <summary />
 	public class PropWs
 	{
 		/// <summary>
@@ -12,13 +12,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public PropWs(int xflid, int xws)
 		{
-			flid = xflid;
-			ws = xws;
+			Flid = xflid;
+			Ws = xws;
 		}
-		/// <summary></summary>
-		public int flid;
+
+		/// <summary />
+		public int Flid;
 		/// <summary>0 if not applicable</summary>
-		public int ws;
+		public int Ws;
 
 		/// <summary>
 		/// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
@@ -35,7 +36,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return false;
 			}
-			return other.flid == this.flid && other.ws == this.ws;
+			return other.Flid == Flid && other.Ws == Ws;
 		}
 
 		/// <summary>
@@ -43,7 +44,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override int GetHashCode()
 		{
-			return flid * (ws + 11);
+			return Flid * (Ws + 11);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,7 +13,6 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// <summary />
 	internal class FindComboItem : FilterComboItem
 	{
-		int m_ws;
 		FwComboBox m_combo;
 		BrowseViewer m_bv;
 
@@ -23,7 +22,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public FindComboItem(ITsString tssName, FilterSortItem fsi, int ws, FwComboBox combo, BrowseViewer bv)
 			: base(tssName, null, fsi)
 		{
-			m_ws = ws;
+			Ws = ws;
 			m_combo = combo;
 			m_bv = bv;
 		}
@@ -36,7 +35,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			CheckDisposed();
 
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_bv.PropertyTable);
-			using (var dlg = new SimpleMatchDlg(m_combo.WritingSystemFactory, m_bv.PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_ws, stylesheet, m_bv.Cache))
+			using (var dlg = new SimpleMatchDlg(m_combo.WritingSystemFactory, m_bv.PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), Ws, stylesheet, m_bv.Cache))
 			{
 				dlg.SetDlgValues(m_matcher, stylesheet);
 				if (dlg.ShowDialog() != DialogResult.OK || dlg.Pattern.Length == 0)
@@ -68,7 +67,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			return m_combo.Tss;
 		}
 
-		internal int Ws => m_ws;
+		internal int Ws { get; }
 
 		/// <summary>
 		/// Executes in two distinct scenarios.
@@ -110,8 +109,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// If so, return the string that should be displayed as the value of the combo box
 		/// when this matcher is active. Otherwise return null.
 		/// </summary>
-		/// <param name="matcher"></param>
-		/// <returns></returns>
 		internal override ITsString SetFromMatcher(IMatcher matcher)
 		{
 			CheckDisposed();
@@ -122,7 +119,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets or sets the matcher.
 		/// </summary>
-		/// <value>The matcher.</value>
 		public IMatcher Matcher
 		{
 			get

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,23 +9,15 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
-
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public partial class SimpleDateMatchDlg : Form
 	{
 		private const string s_helpTopic = "khtpFilterRestrict";
 		private IHelpTopicProvider m_helpTopicProvider;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:SimpleDateMatchDlg"/> class.
 		/// </summary>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// ------------------------------------------------------------------------------------
 		public SimpleDateMatchDlg(IHelpTopicProvider helpTopicProvider)
 		{
 			InitializeComponent();
@@ -51,12 +43,12 @@ namespace LanguageExplorer.Controls.XMLViews
 			base.OnLoad(e);
 			if (!HandleGenDate)
 			{
-				int xWidth = m_chkStartBC.Location.X;
+				var xWidth = m_chkStartBC.Location.X;
 				m_chkStartBC.Visible = false;
-				this.Width = xWidth;
-				int yDelta = m_cancelButton.Location.Y - m_chkUnspecific.Location.Y;
+				Width = xWidth;
+				var yDelta = m_cancelButton.Location.Y - m_chkUnspecific.Location.Y;
 				m_chkUnspecific.Visible = false;
-				this.Height = this.Height - yDelta;
+				Height = Height - yDelta;
 			}
 			m_chkEndBC.Visible = false;
 		}
@@ -68,25 +60,21 @@ namespace LanguageExplorer.Controls.XMLViews
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the selection start.
 		/// </summary>
-		/// <value>The selection start.</value>
-		/// ------------------------------------------------------------------------------------
 		public DateTime SelectionStart
 		{
 			get
 			{
 				CheckDisposed();
 
-				if (ShowingTimes)
-					return m_startPicker.Value;
-				else
-					return m_startPicker.Value.Date;
+				return ShowingTimes ? m_startPicker.Value : m_startPicker.Value.Date;
 			}
 			set
 			{
@@ -95,17 +83,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		bool ShowingTimes
-		{
-			get { return m_typeCombo.SelectedIndex == 4; }
-		}
+		private bool ShowingTimes => m_typeCombo.SelectedIndex == 4;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the selection end.
 		/// </summary>
-		/// <value>The selection end.</value>
-		/// ------------------------------------------------------------------------------------
 		public DateTime SelectionEnd
 		{
 			get
@@ -113,12 +95,14 @@ namespace LanguageExplorer.Controls.XMLViews
 				CheckDisposed();
 
 				if (ShowingTimes)
+				{
 					return m_endPicker.Value;
+				}
 				// If not showing times we want the range to extend to the very end of the day.
 				// Also, currently, not showing times corresponds to not showing the second
 				// control, so we take the end value as well as the beginning from the START
 				// control.
-				DateTime end = m_startPicker.Value.Date; // YES, YES, really, truly the start picker!!
+				var end = m_startPicker.Value.Date; // YES, YES, really, truly the start picker!!
 				end = end.AddHours(23);
 				end = end.AddSeconds(3599.999);
 				return end;
@@ -137,10 +121,12 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_andLabel.Visible = true;
 				m_endPicker.Visible = true;
 				if (HandleGenDate)
+				{
 					m_chkEndBC.Visible = true;
+				}
 				//System.Globalization.CultureInfo.CurrentUICulture.DateTimeFormat.FullDateTimePattern
 				// = dddd, MMMM dd, yyyy h:mm:ss tt
-				string dateTimeFormat = "ddd, MMM dd, yyyy h:mm:ss tt";
+				const string dateTimeFormat = "ddd, MMM dd, yyyy h:mm:ss tt";
 				m_startPicker.Format = DateTimePickerFormat.Custom;
 				m_startPicker.CustomFormat = dateTimeFormat;
 				m_endPicker.Format = DateTimePickerFormat.Custom;
@@ -155,26 +141,23 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the resulting matcher.
 		/// </summary>
-		/// <value>The resulting matcher.</value>
-		/// ------------------------------------------------------------------------------------
 		public IMatcher ResultingMatcher
 		{
 			get
 			{
 				CheckDisposed();
 
-				DateTimeMatcher val = new DateTimeMatcher(SelectionStart, SelectionEnd, CompareType);
-				val.HandleGenDate = HandleGenDate;
-				if (HandleGenDate)
+				var val = new DateTimeMatcher(SelectionStart, SelectionEnd, CompareType) {HandleGenDate = HandleGenDate};
+				if (!HandleGenDate)
 				{
-					val.IsStartAD = !m_chkStartBC.Checked;
-					val.IsEndAD = ShowingTimes ? !m_chkEndBC.Checked : !m_chkStartBC.Checked;
-					val.UnspecificMatching = m_chkUnspecific.Checked;
+					return val;
 				}
+				val.IsStartAD = !m_chkStartBC.Checked;
+				val.IsEndAD = ShowingTimes ? !m_chkEndBC.Checked : !m_chkStartBC.Checked;
+				val.UnspecificMatching = m_chkUnspecific.Checked;
 				return val;
 			}
 		}
@@ -199,6 +182,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 			}
 		}
+
 		/// <summary>
 		/// A representation of the condition.
 		/// </summary>
@@ -213,32 +197,30 @@ namespace LanguageExplorer.Controls.XMLViews
 					case DateTimeMatcher.DateMatchType.On:
 						return SelectionStart.ToShortDateString();
 					case DateTimeMatcher.DateMatchType.NotRange:
-						return String.Format(XMLViewsStrings.ksNotX, SelectionStart.ToShortDateString());
+						return string.Format(XMLViewsStrings.ksNotX, SelectionStart.ToShortDateString());
 					case DateTimeMatcher.DateMatchType.Before:
-						return String.Format(XMLViewsStrings.ksLessEqX, SelectionStart.ToShortDateString());
+						return string.Format(XMLViewsStrings.ksLessEqX, SelectionStart.ToShortDateString());
 					case DateTimeMatcher.DateMatchType.After:
-						return String.Format(XMLViewsStrings.ksGreaterEqX, SelectionEnd.ToShortDateString());
+						return string.Format(XMLViewsStrings.ksGreaterEqX, SelectionEnd.ToShortDateString());
 					case DateTimeMatcher.DateMatchType.Range:
-						return String.Format(XMLViewsStrings.ksRangeXY,
-							SelectionStart.ToString("g"), SelectionEnd.ToString("g"));
+						return string.Format(XMLViewsStrings.ksRangeXY, SelectionStart.ToString("g"), SelectionEnd.ToString("g"));
 				}
-				return "";
+				return string.Empty;
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initialize the dialog, based on the old matcher, if any, and if recognized.
 		/// </summary>
-		/// <param name="matcher1">The matcher1.</param>
-		/// ------------------------------------------------------------------------------------
 		public void SetDlgValues(IMatcher matcher1)
 		{
 			CheckDisposed();
 
-			DateTimeMatcher matcher = matcher1 as DateTimeMatcher;
+			var matcher = matcher1 as DateTimeMatcher;
 			if (matcher == null)
+			{
 				return;
+			}
 			switch (matcher.MatchType)
 			{
 				case DateTimeMatcher.DateMatchType.On:
@@ -267,7 +249,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_chkUnspecific.Checked = matcher.UnspecificMatching;
 		}
 
-		void m_typeCombo_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void m_typeCombo_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			UpdateCalendarOptions();
 		}
@@ -280,7 +262,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				SelectionStart = SelectionEnd;
 		}
 
-		void m_startPicker_ValueChanged(object sender, System.EventArgs e)
+		private void m_startPicker_ValueChanged(object sender, System.EventArgs e)
 		{
 			if (m_typeCombo.SelectedIndex != 4)
 			{

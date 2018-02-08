@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -37,7 +37,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			var tssOld = OldValue(hvo);
 			if (m_options == NonEmptyTargetOptions.DoNothing && tssOld != null && tssOld.Length != 0)
 			{
-				return false;		// Don't want to modify existing data.
+				// Don't want to modify existing data.
+				return false;
 			}
 			string sOld = null;
 			if (tssOld != null)
@@ -52,7 +53,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			if (string.IsNullOrEmpty(sOld) && string.IsNullOrEmpty(sNew))
 			{
-				return false;		// They're really the same, regardless of properties.
+				// They're really the same, regardless of properties.
+				return false;
 			}
 			if (sOld != sNew)
 			{

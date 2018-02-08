@@ -43,7 +43,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 				if (m_xbvvc == null)
 				{
-					m_xbvvc = new XmlBrowseViewVc(m_nodeSpec, m_madeUpFieldIdentifier, this);
+					m_xbvvc = new XmlBrowseViewVc(m_nodeSpec, MainTag, this);
 				}
 				return base.Vc;
 			}
@@ -126,7 +126,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			base.OnKeyDown(e);
 			if (ReadOnlySelect && !e.Handled && m_selectedIndex != -1)
 			{
-				var cobj = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
+				var cobj = SpecialCache.get_VecSize(m_hvoRoot, MainTag);
 				switch (e.KeyCode)
 				{
 					case Keys.Down:
@@ -171,10 +171,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					return; // Can't do much in an empty list, so quit.
 				}
 				m_fHandlingMouseUp = true;
-#pragma warning disable 219
-				var oldSelectedIndex = m_selectedIndex;
-#pragma warning restore 219
-
 				// Note all the stuff we might want to know about what was clicked that we will
 				// use later. We want to get this now before anything changes, because there can
 				// be scrolling effects from converting dummy objects to real.
@@ -204,7 +200,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							{
 								vwSelWord.GetSelectionString(out tssWord, " ");
 								tssWord = StripTrailingNewLine(tssWord);
-								hvoNewSelRow = m_sda.get_VecItem(m_hvoRoot, m_madeUpFieldIdentifier, newSelectedIndex);
+								hvoNewSelRow = SpecialCache.get_VecItem(m_hvoRoot, MainTag, newSelectedIndex);
 								int hvoObj, tag, ws;
 								bool fAssocPrev;
 								vwSelWord.TextSelInfo(false, out tssSource, out ichStart, out fAssocPrev, out hvoObj, out tag, out ws);
@@ -238,24 +234,26 @@ namespace LanguageExplorer.Controls.XMLViews
 					// Do this AFTER other actions which may change the current line.
 					ClickCopy(this, new ClickCopyEventArgs(tssWord, hvoNewSelRow, tssSource, ichStart));
 				}
-				if (clickSel != null)
+
+				if (clickSel == null)
 				{
-					IVwSelection finalSel = null;
-					// There seem to be some cases where the selection helper can't restore the selection.
-					// One that came up in FWR-3666 was clicking on a check box.
-					// If we can't re-establish an editiable selection just let the default behavior continue.
-					try
-					{
-						finalSel = clickSel.MakeRangeSelection(RootBox, false);
-					}
-					catch (Exception)
-					{
-					}
-					if (finalSel != null && SelectionHelper.IsEditable(finalSel))
-					{
-						finalSel.Install();
-						FocusMe();
-					}
+					return;
+				}
+				IVwSelection finalSel = null;
+				// There seem to be some cases where the selection helper can't restore the selection.
+				// One that came up in FWR-3666 was clicking on a check box.
+				// If we can't re-establish an editiable selection just let the default behavior continue.
+				try
+				{
+					finalSel = clickSel.MakeRangeSelection(RootBox, false);
+				}
+				catch (Exception)
+				{
+				}
+				if (finalSel != null && SelectionHelper.IsEditable(finalSel))
+				{
+					finalSel.Install();
+					FocusMe();
 				}
 			}
 			finally
@@ -268,7 +266,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void FocusMe()
 		{
 			if (!IsDisposed)
+			{
 				Focus();
+			}
 			// Typically we get one idle event before the one in which the DataTree tries to focus its first
 			// possible slice. We need to do it one more time for it to stick.
 			// Try five times to really get the focus!
@@ -326,8 +326,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// the slaves, but the master is not updated. Thus the view is not scrolled as the
 		/// groups scroll position only scrolls the master's selection into view. (TE-3380)
 		/// </summary>
-		/// <param name="rootb">The rootbox whose selection changed</param>
-		/// <param name="vwselNew">The new selection</param>
 		protected override void HandleSelectionChange(IVwRootBox rootb, IVwSelection vwselNew)
 		{
 			CheckDisposed();
@@ -365,16 +363,15 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_wantScrollIntoView = false; // It should already be visible here.
 
 				// Collect all the information we can about the selection.
-				var ihvoRoot = 0;
-				var tagTextProp = 0;
-				var cpropPrevious = 0;
-				var ichAnchor = 0;
-				var ichEnd = 0;
-				var ws = 0;
-				var fAssocPrev = false;
-				var ihvoEnd = 0;
-				ITsTextProps ttpBogus = null;
-				var rgvsli = new SelLevInfo[0];
+				int ihvoRoot;
+				int tagTextProp;
+				int cpropPrevious;
+				int ichAnchor;
+				int ichEnd;
+				int ws;
+				bool fAssocPrev;
+				int ihvoEnd;
+				ITsTextProps ttpBogus;
 				var cvsli = vwselNew.CLevels(false) - 1;
 				if (cvsli < 0)
 				{
@@ -382,7 +379,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 
 				// Main array of information retrived from sel that made combo.
-				rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli,
+				var rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli,
 					out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
 					out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
 
@@ -429,7 +426,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			if (oldIndex >= 0 && oldIndex != m_selectedIndex && m_hvoRoot > 0 && oldHvoRoot == m_hvoRoot)
 			{
-				var newCount = m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier);
+				var newCount = SpecialCache.get_VecSize(m_hvoRoot, MainTag);
 				if (oldIndex < newCount)
 				{
 					SelectedIndex = oldIndex;

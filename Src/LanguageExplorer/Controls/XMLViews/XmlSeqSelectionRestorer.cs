@@ -29,7 +29,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected override void Dispose(bool fDisposing)
 		{
 			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+
 			base.Dispose(fDisposing);
+
 			if (!fDisposing || IsDisposed || m_savedSelection == null || m_rootSite.RootBox.Height <= 0)
 			{
 				return;
@@ -37,7 +39,6 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			var wasRange = m_savedSelection.IsRange; // may change during RestoreSelection (ugh!)
 			var oldLevels = m_savedSelection.GetLevelInfo(SelectionHelper.SelLimitType.Anchor);
-
 			var originalRestore = RestoreSelection();
 			if (originalRestore != null && IsGoodRestore(originalRestore, wasRange))
 			{
@@ -71,10 +72,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						if (sda.get_VecItem(rootHvo, rootLevelInfo.tag, i) == root.Hvo)
 						{
 							vsliTarget[0].ihvo = i; // do NOT modify rootLevelInfo instead; it is a struct, so that would not change vsliTarget
-							var newSel = m_savedSelection.RootSite.RootBox.MakeTextSelInObj(
-								m_savedSelection.IhvoRoot,
-								1,
-								vsliTarget, 1, vsliTarget, true, false, true, true, true);
+							var newSel = m_savedSelection.RootSite.RootBox.MakeTextSelInObj(m_savedSelection.IhvoRoot, 1, vsliTarget, 1, vsliTarget, true, false, true, true, true);
 							if (newSel != null)
 							{
 								return;
@@ -88,10 +86,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			for (var i = rootLevelInfo.ihvo; i < chvo; i++)
 			{
 				vsliTarget[0].ihvo = i; // do NOT modify rootLevelInfo instead; it is a struct, so that would not change vsliTarget
-				var newSel = m_savedSelection.RootSite.RootBox.MakeTextSelInObj(
-					m_savedSelection.IhvoRoot,
-					1,
-					vsliTarget, 1, vsliTarget, true, false, true, true, true);
+				var newSel = m_savedSelection.RootSite.RootBox.MakeTextSelInObj(m_savedSelection.IhvoRoot, 1, vsliTarget, 1, vsliTarget, true, false, true, true, true);
 				if (newSel != null)
 				{
 					return;
@@ -100,10 +95,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			for (var i = rootLevelInfo.ihvo - 1; i > 0; i--)
 			{
 				vsliTarget[0].ihvo = i; // do NOT modify rootLevelInfo instead; it is a struct, so that would not change vsliTarget
-				var newSel = m_savedSelection.RootSite.RootBox.MakeTextSelInObj(
-					m_savedSelection.IhvoRoot,
-					1,
-					vsliTarget, 1, vsliTarget, true, false, true, true, true);
+				var newSel = m_savedSelection.RootSite.RootBox.MakeTextSelInObj(m_savedSelection.IhvoRoot, 1, vsliTarget, 1, vsliTarget, true, false, true, true, true);
 				if (newSel != null)
 				{
 					return;
@@ -116,9 +108,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Typically any selection derived from it is good, but if we started with a range and ended with an IP,
 		/// and the view is read-only, that's no so good. It will disappear in a read-only view.
 		/// </summary>
-		/// <param name="restored"></param>
-		/// <param name="wasRange">True if original selection was a range.</param>
-		/// <returns></returns>
 		private bool IsGoodRestore(IVwSelection restored, bool wasRange)
 		{
 			if (restored.IsRange)

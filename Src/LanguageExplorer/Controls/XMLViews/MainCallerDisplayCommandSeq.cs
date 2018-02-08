@@ -16,7 +16,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal class MainCallerDisplayCommandSeq : MainCallerDisplayCommand
 	{
-		private XElement[] m_stackPartRef;
+		private readonly XElement[] m_stackPartRef;
 
 		internal MainCallerDisplayCommandSeq(XElement mainElement, XElement caller, bool fUserMainAsFrag, int wsForce, List<XElement> stackPartRef)
 			: base(mainElement, caller, fUserMainAsFrag, wsForce)

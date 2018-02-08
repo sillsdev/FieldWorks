@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,9 +22,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			_bulkEditSpecControl = bulkEditSpecControl;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		public IBulkEditSpecControl BulkEditControl
 		{
 			get
@@ -45,18 +43,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed;
 
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed => m_isDisposed;
+		public bool IsDisposed { get; private set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -111,7 +106,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
 			{
 				return;
 			}
@@ -125,7 +120,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			_bulkEditSpecControl = null;
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation

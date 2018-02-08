@@ -1,9 +1,10 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -25,7 +26,6 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal class FlatListChooserBEditControl : IBulkEditSpecControl, IGhostable, IDisposable
 	{
-		protected LcmCache m_cache;
 		protected XMLViewsDataCache m_sda;
 		protected FwComboBox m_combo;
 		protected int m_ws;
@@ -66,17 +66,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		public LcmCache Cache
-		{
-			get
-			{
-				return m_cache;
-			}
-			set
-			{
-				m_cache = value;
-			}
-		}
+		public LcmCache Cache { get; set; }
 
 		/// <summary>
 		/// The special cache that can handle the preview and check-box properties.
@@ -108,17 +98,16 @@ namespace LanguageExplorer.Controls.XMLViews
 		public virtual void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
 			UndoableUnitOfWorkHelper.Do(XMLViewsStrings.ksUndoBulkEdit, XMLViewsStrings.ksRedoBulkEdit,
-				m_cache.ActionHandlerAccessor, () =>
+				Cache.ActionHandlerAccessor, () =>
 				{
-					var sda = m_cache.DomainDataByFlid;
-
+					var sda = Cache.DomainDataByFlid;
 					var item = m_combo.SelectedItem as HvoTssComboItem;
 					if (item == null)
 					{
 						return;
 					}
 					var hvoSel = item.Hvo;
-					var mdcManaged = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
+					var mdcManaged = Cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
 					var i = 0;
 					// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
 					var interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
@@ -170,20 +159,16 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// modified. For ones that can, it should set the string property tagMadeUpFieldIdentifier
 		/// to the value to show in the 'modified' fields.
 		/// </summary>
-		/// <param name="itemsToChange">The items to change.</param>
-		/// <param name="tagMadeUpFieldIdentifier">The tag made up field identifier.</param>
-		/// <param name="tagEnabled">The tag enabled.</param>
-		/// <param name="state">The state.</param>
 		public virtual void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
 		{
-			var sda = m_cache.DomainDataByFlid;
+			var sda = Cache.DomainDataByFlid;
 			var item = m_combo.SelectedItem as HvoTssComboItem;
 			if (item == null)
 			{
 				return;
 			}
 			var hvoSel = item.Hvo;
-			var mdcManaged = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
+			var mdcManaged = Cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
 			var i = 0;
 			// Report progress 50 times or every 100 items, whichever is more
 			// (but no more than once per item!)
@@ -244,43 +229,40 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_combo = new FwComboBox
 			{
 				DropDownStyle = ComboBoxStyle.DropDownList,
-				WritingSystemFactory = m_cache.WritingSystemFactory,
+				WritingSystemFactory = Cache.WritingSystemFactory,
 				WritingSystemCode = m_ws,
 				StyleSheet = m_stylesheet
 			};
-			var al = GetLabeledList();
+			var labeledList = GetLabeledList();
 			// if the possibilities list IsSorted (misnomer: needs to be sorted), do that now.
-			if (al.Count > 1) // could be zero if list non-existant, if 1 don't need to sort either!
+			if (labeledList.Count > 1) // could be zero if list non-existant, if 1 don't need to sort either!
 			{
-				if (m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().GetObject(m_hvoList).IsSorted)
+				if (Cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().GetObject(m_hvoList).IsSorted)
 				{
-					al.Sort();
+					labeledList.Sort();
 				}
 			}
 			// now add list to combo box in that order.
-			for (var i = 0; i < al.Count; ++i)
+			foreach (var labelItem in labeledList)
 			{
-				var hli = al[i];
-				m_combo.Items.Add(new HvoTssComboItem(hli.Hvo, hli.TssLabel));
+				m_combo.Items.Add(new HvoTssComboItem(labelItem.Hvo, labelItem.TssLabel));
 			}
 			// Don't allow <Not Sure> for MorphType selection.  See FWR-1632.
-			if (m_hvoList != m_cache.LangProject.LexDbOA.MorphTypesOA.Hvo)
+			if (m_hvoList != Cache.LangProject.LexDbOA.MorphTypesOA.Hvo)
 			{
-				m_combo.Items.Add(new HvoTssComboItem(0, TsStringUtils.MakeString(XMLViewsStrings.ksNotSure, m_cache.WritingSystemFactory.UserWs)));
+				m_combo.Items.Add(new HvoTssComboItem(0, TsStringUtils.MakeString(XMLViewsStrings.ksNotSure, Cache.WritingSystemFactory.UserWs)));
 			}
 			m_combo.SelectedIndexChanged += m_combo_SelectedIndexChanged;
 		}
 
 		private List<HvoLabelItem> GetLabeledList()
 		{
-			var tagName = m_useAbbr ?
-				CmPossibilityTags.kflidAbbreviation :
-				CmPossibilityTags.kflidName;
-			var chvo = m_hvoList > 0 ? m_cache.DomainDataByFlid.get_VecSize(m_hvoList, CmPossibilityListTags.kflidPossibilities) : 0;
+			var tagName = m_useAbbr ? CmPossibilityTags.kflidAbbreviation : CmPossibilityTags.kflidName;
+			var chvo = m_hvoList > 0 ? Cache.DomainDataByFlid.get_VecSize(m_hvoList, CmPossibilityListTags.kflidPossibilities) : 0;
 			var al = new List<HvoLabelItem>(chvo);
 			for (var i = 0; i < chvo; i++)
 			{
-				var hvoChild = m_cache.DomainDataByFlid.get_VecItem(m_hvoList, CmPossibilityListTags.kflidPossibilities, i);
+				var hvoChild = Cache.DomainDataByFlid.get_VecItem(m_hvoList, CmPossibilityListTags.kflidPossibilities, i);
 				al.Add(new HvoLabelItem(hvoChild, GetItemLabel(hvoChild, tagName)));
 			}
 			return al;
@@ -289,25 +271,22 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the item label.
 		/// </summary>
-		/// <param name="hvoChild">The hvo child.</param>
-		/// <param name="tagName">Name of the tag.</param>
-		/// <returns></returns>
 		internal ITsString GetItemLabel(int hvoChild, int tagName)
 		{
 			// Try getting the label with the user writing system.
-			var tssLabel = m_cache.DomainDataByFlid.get_MultiStringAlt(hvoChild, tagName, m_ws);
+			var tssLabel = Cache.DomainDataByFlid.get_MultiStringAlt(hvoChild, tagName, m_ws);
 
 			// If that doesn't work, try using the default user writing system.
 			if (string.IsNullOrEmpty(tssLabel?.Text))
 			{
-				tssLabel = m_cache.DomainDataByFlid.get_MultiStringAlt(hvoChild, tagName, m_cache.ServiceLocator.WritingSystemManager.UserWs);
+				tssLabel = Cache.DomainDataByFlid.get_MultiStringAlt(hvoChild, tagName, Cache.ServiceLocator.WritingSystemManager.UserWs);
 			}
 
 			// If that doesn't work, then fallback to the whatever the cache considers
 			// to be the fallback writing system (probably english).
 			if (string.IsNullOrEmpty(tssLabel?.Text))
 			{
-				tssLabel = m_cache.DomainDataByFlid.get_MultiStringAlt(hvoChild, tagName, WritingSystemServices.FallbackUserWs(m_cache));
+				tssLabel = Cache.DomainDataByFlid.get_MultiStringAlt(hvoChild, tagName, WritingSystemServices.FallbackUserWs(Cache));
 			}
 
 			return tssLabel;
@@ -316,8 +295,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Handles the SelectedIndexChanged event of the m_combo control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
 		protected void m_combo_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			// Tell the parent control that we may have changed the selected item so it can
@@ -360,20 +337,25 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 #endif
 
-		/// <summary/>
+		/// <summary />
 		public bool IsDisposed { get; private set; }
 
-		/// <summary/>
+		/// <summary />
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		/// <summary/>
+		/// <summary />
 		protected virtual void Dispose(bool fDisposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
 			if (fDisposing && !IsDisposed)
 			{
 				// dispose managed and unmanaged objects

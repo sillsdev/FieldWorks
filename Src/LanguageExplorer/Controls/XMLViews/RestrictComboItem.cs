@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -101,8 +101,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// If so, return the string that should be displayed as the value of the combo box
 		/// when this matcher is active. Otherwise return null.
 		/// </summary>
-		/// <param name="matcher"></param>
-		/// <returns></returns>
 		internal override ITsString SetFromMatcher(IMatcher matcher)
 		{
 			CheckDisposed();

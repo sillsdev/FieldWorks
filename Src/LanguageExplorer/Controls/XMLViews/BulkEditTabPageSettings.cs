@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,9 +26,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		#endregion Member variables
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		protected BulkEditTabPageSettings()
 		{
 		}
@@ -58,9 +56,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			return m_bulkEditBar != null && m_bulkEditBar.OperationsTabControl.SelectedIndex == ExpectedTab;
 		}
 
-		private bool AreLoaded => GetType().Name != typeof(BulkEditTabPageSettings).Name &&
-		                          m_bulkEditBar != null &&
-		                          TabPageName.Length > 0;
+		private bool AreLoaded => GetType().Name != typeof(BulkEditTabPageSettings).Name && m_bulkEditBar != null && TabPageName.Length > 0;
 
 		#region BulkEditBar helper methods
 
@@ -147,8 +143,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Try to restore settings for selected tab, otherwise use defaults.
 		/// </summary>
-		/// <param name="bulkEditBar"></param>
-		/// <returns></returns>
 		internal static void InitializeSelectedTab(BulkEditBar bulkEditBar)
 		{
 			BulkEditTabPageSettings tabPageSettings;
@@ -378,7 +372,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected static string GetCurrentTabPageName(BulkEditBar bulkEditBar)
 		{
 			var selectedTabIndex = bulkEditBar.OperationsTabControl.SelectedIndex;
-			var tab = (BulkEditBarTabs) Enum.Parse(typeof(BulkEditBarTabs), selectedTabIndex.ToString());
+			var tab = (BulkEditBarTabs)Enum.Parse(typeof(BulkEditBarTabs), selectedTabIndex.ToString());
 			return tab.ToString();
 		}
 

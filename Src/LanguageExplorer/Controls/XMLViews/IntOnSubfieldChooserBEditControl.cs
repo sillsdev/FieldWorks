@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2008-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,9 +18,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Initialized with a string like "0:no;1:yes".
 		/// </summary>
-		/// <param name="itemList"></param>
-		/// <param name="flid">main field</param>
-		/// <param name="flidSub">subfield</param>
 		public IntOnSubfieldChooserBEditControl(string itemList, int flid, int flidSub)
 			: base(itemList, flid)
 		{
@@ -33,7 +30,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				if (m_flidSub == LexEntryRefTags.kflidHideMinorEntry)
 				{
-					return new List<int>(new int[] { m_flidSub });
+					return new List<int>(new[] { m_flidSub });
 				}
 				var fieldPath = base.FieldPath;
 				fieldPath.Add(m_flidSub);
@@ -46,7 +43,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var itemsToChangeAsList = new List<int>(itemsToChange);
 			var val = (m_combo.SelectedItem as IntComboItem).Value;
-			var tssVal = TsStringUtils.MakeString(m_combo.SelectedItem.ToString(), m_cache.DefaultUserWs);
+			var tssVal = TsStringUtils.MakeString(m_combo.SelectedItem.ToString(), Cache.DefaultUserWs);
 			var i = 0;
 			// Report progress 50 times or every 100 items, whichever is more
 			// (but no more than once per item!)
@@ -107,8 +104,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		public override void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
 			var itemsToChangeAsList = new List<int>(itemsToChange);
-			m_cache.DomainDataByFlid.BeginUndoTask(XMLViewsStrings.ksUndoBulkEdit, XMLViewsStrings.ksRedoBulkEdit);
-			var sda = m_cache.DomainDataByFlid;
+			Cache.DomainDataByFlid.BeginUndoTask(XMLViewsStrings.ksUndoBulkEdit, XMLViewsStrings.ksRedoBulkEdit);
+			var sda = Cache.DomainDataByFlid;
 			var val = (m_combo.SelectedItem as IntComboItem).Value;
 			var i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
@@ -156,7 +153,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					SetValueOfField(sda, hvoField, val);
 				}
 			}
-			m_cache.DomainDataByFlid.EndUndoTask();
+			Cache.DomainDataByFlid.EndUndoTask();
 		}
 
 		internal virtual void SetValueOfField(ISilDataAccess sda, int hvoField, int val)

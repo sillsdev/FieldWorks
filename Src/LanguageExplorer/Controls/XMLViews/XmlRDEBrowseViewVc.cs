@@ -355,10 +355,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void AddEditRow(IVwEnv vwenv, int hvo)
 		{
 			// set the border color to gray
-			vwenv.set_IntProperty((int )FwTextPropType.ktptBorderColor,
-				(int)FwTextPropVar.ktpvDefault,
-				(int)RGB(BorderColor));	//SystemColors.ControlDark));
-
+			vwenv.set_IntProperty((int )FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)RGB(BorderColor));
 			// Make a table
 			var rglength = m_xbv.GetColWidthInfo();
 			var colCount = m_columns.Count;

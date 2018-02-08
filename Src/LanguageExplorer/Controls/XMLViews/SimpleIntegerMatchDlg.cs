@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -41,11 +41,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:SimpleIntegerMatchDlg"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private SimpleIntegerMatchDlg()
 		{
 			//
@@ -55,16 +53,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_comboMatchType.SelectedIndex = 0;
 
 			// Set the max and min values for the NumericUpDown controls
-			m_nudVal1.Maximum = m_nudVal2.Maximum = Int32.MaxValue;
-			m_nudVal1.Minimum = m_nudVal2.Minimum = Int32.MinValue;
+			m_nudVal1.Maximum = m_nudVal2.Maximum = int.MaxValue;
+			m_nudVal1.Minimum = m_nudVal2.Minimum = int.MinValue;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SimpleIntegerMatchDlg"/> class.
 		/// </summary>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// ------------------------------------------------------------------------------------
 		public SimpleIntegerMatchDlg(IHelpTopicProvider helpTopicProvider) : this()
 		{
 			m_helpTopicProvider = helpTopicProvider;
@@ -73,48 +68,45 @@ namespace LanguageExplorer.Controls.XMLViews
 			helpProvider1.SetHelpNavigator(this, HelpNavigator.Topic);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the resulting matcher.
 		/// </summary>
-		/// <value>The resulting matcher.</value>
-		/// ------------------------------------------------------------------------------------
 		public IMatcher ResultingMatcher
 		{
 			get
 			{
 				CheckDisposed();
 
-				int val = (int)m_nudVal1.Value;	// validating handled in the use of the numeric up down control
-				int index = m_comboMatchType.SelectedIndex;
-				switch(index)
+				var val = (int)m_nudVal1.Value;	// validating handled in the use of the numeric up down control
+				var index = m_comboMatchType.SelectedIndex;
+				switch (index)
 				{
-				case EqualTo:				//	equal to
-					return new RangeIntMatcher(val, val);
-				case NotEqualTo:			//	not equal to
-					return new NotEqualIntMatcher(val);
-				case LessThan:				//	less than
-					return new RangeIntMatcher(Int32.MinValue, val - 1);
-				case GreaterThan:			//	greater than
-					return new RangeIntMatcher(val + 1, Int32.MaxValue);
-				case LessThanOREqualTo:		//	less than or equal to
-					return new RangeIntMatcher(Int32.MinValue, val);
-				case GreaterThanOREqualTo:	//	greater than or equal to
-					return new RangeIntMatcher(val, Int32.MaxValue);
-				case Between:				//	between
-					int val2 = (int)m_nudVal2.Value;
-					// Swap the values if val is > val2 : the UI allows ranges
-					// to be entered in any order small to large and large to small,
-					// but the processing expects val to be smaller than val2.
-					if (val > val2)
-					{
-						int temp = val;
-						val = val2;
-						val2 = temp;
-					}
-					return new RangeIntMatcher(val, val2);
-				default:
-					throw new Exception("internal error...bad combo index in SimpleIntegerMatchDlg.ResultingMatcher");
+					case EqualTo: //	equal to
+						return new RangeIntMatcher(val, val);
+					case NotEqualTo: //	not equal to
+						return new NotEqualIntMatcher(val);
+					case LessThan: //	less than
+						return new RangeIntMatcher(int.MinValue, val - 1);
+					case GreaterThan: //	greater than
+						return new RangeIntMatcher(val + 1, int.MaxValue);
+					case LessThanOREqualTo: //	less than or equal to
+						return new RangeIntMatcher(int.MinValue, val);
+					case GreaterThanOREqualTo: //	greater than or equal to
+						return new RangeIntMatcher(val, int.MaxValue);
+					case Between: //	between
+						var val2 = (int)m_nudVal2.Value;
+						// Swap the values if val is > val2 : the UI allows ranges
+						// to be entered in any order small to large and large to small,
+						// but the processing expects val to be smaller than val2.
+						if (val > val2)
+						{
+							var temp = val;
+							val = val2;
+							val2 = temp;
+						}
+						return new RangeIntMatcher(val, val2);
+					default:
+						throw new Exception("internal error...bad combo index in SimpleIntegerMatchDlg.ResultingMatcher");
 				}
 			}
 		}
@@ -127,35 +119,35 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				CheckDisposed();
 
-				int index = m_comboMatchType.SelectedIndex;
-				string sval = m_nudVal1.Value.ToString();
-				switch(index)
+				var index = m_comboMatchType.SelectedIndex;
+				var sval = m_nudVal1.Value.ToString();
+				switch (index)
 				{
-				case EqualTo:				//	equal to
-					return sval;
-				case NotEqualTo:			//	not equal to
-					return String.Format(XMLViewsStrings.ksNotX, sval);
-				case LessThan:				//	less than
-					return String.Format(XMLViewsStrings.ksLessX, sval);
-				case GreaterThan:			//	greater than
-					return String.Format(XMLViewsStrings.ksGreaterX, sval);
-				case LessThanOREqualTo:		//	less than or equal to
-					return String.Format(XMLViewsStrings.ksLessEqX, sval);
-				case GreaterThanOREqualTo:	//	greater than or equal to
-					return String.Format(XMLViewsStrings.ksGreaterEqX, sval);
-				case Between:				//	between
-					// Swap the values if val is > val2 : the UI allows ranges
-					// to be entered in any order small to large and large to small,
-					// but the processing expects val to be smaller than val2.
-					string sval2 = m_nudVal2.Value.ToString();
-					if (m_nudVal1.Value > m_nudVal2.Value)
-					{
-						sval = m_nudVal2.Value.ToString();
-						sval2 = m_nudVal1.Value.ToString();
-					}
-					return String.Format(XMLViewsStrings.ksRangeXY, sval, sval2);
-				default:
-					throw new Exception("internal error...bad combo index in SimpleIntegerMatchDlg.Pattern");
+					case EqualTo: //	equal to
+						return sval;
+					case NotEqualTo: //	not equal to
+						return string.Format(XMLViewsStrings.ksNotX, sval);
+					case LessThan: //	less than
+						return string.Format(XMLViewsStrings.ksLessX, sval);
+					case GreaterThan://	greater than
+						return string.Format(XMLViewsStrings.ksGreaterX, sval);
+					case LessThanOREqualTo://	less than or equal to
+						return string.Format(XMLViewsStrings.ksLessEqX, sval);
+					case GreaterThanOREqualTo://	greater than or equal to
+						return string.Format(XMLViewsStrings.ksGreaterEqX, sval);
+					case Between: //	between
+						// Swap the values if val is > val2 : the UI allows ranges
+						// to be entered in any order small to large and large to small,
+						// but the processing expects val to be smaller than val2.
+						var sval2 = m_nudVal2.Value.ToString();
+						if (m_nudVal1.Value > m_nudVal2.Value)
+						{
+							sval = m_nudVal2.Value.ToString();
+							sval2 = m_nudVal1.Value.ToString();
+						}
+						return string.Format(XMLViewsStrings.ksRangeXY, sval, sval2);
+					default:
+						throw new Exception("internal error...bad combo index in SimpleIntegerMatchDlg.Pattern");
 				}
 			}
 		}
@@ -168,7 +160,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -179,14 +173,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}
@@ -288,9 +281,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void m_comboMatchType_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void m_comboMatchType_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			bool fBetween = m_comboMatchType.SelectedIndex == m_comboMatchType.Items.Count - 1;
+			var fBetween = m_comboMatchType.SelectedIndex == m_comboMatchType.Items.Count - 1;
 			m_labelAnd.Visible = fBetween;
 			m_nudVal2.Visible = fBetween;
 		}
@@ -302,8 +295,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			long val;
 			if (matcher is RangeIntMatcher)
 			{
-				RangeIntMatcher rm = matcher as RangeIntMatcher;
-				if (rm.Min == Int32.MinValue)
+				var rm = (RangeIntMatcher)matcher;
+				if (rm.Min == int.MinValue)
 				{
 					m_comboMatchType.SelectedIndex = LessThan; // less than
 					val = rm.Max + 1;
@@ -313,7 +306,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					m_comboMatchType.SelectedIndex = EqualTo; // equal to
 					val = rm.Min;
 				}
-				else if (rm.Max == Int32.MaxValue)
+				else if (rm.Max == int.MaxValue)
 				{
 					m_comboMatchType.SelectedIndex = GreaterThan; // greater than
 					val = rm.Min - 1;
@@ -330,7 +323,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			else if (matcher is NotEqualIntMatcher)
 			{
 				m_comboMatchType.SelectedIndex = NotEqualTo; // not equal
-				val = (matcher as NotEqualIntMatcher).NotEqualValue;
+				val = ((NotEqualIntMatcher)matcher).NotEqualValue;
 			}
 			else
 				return; // old matcher is for some other combo item, use defaults.

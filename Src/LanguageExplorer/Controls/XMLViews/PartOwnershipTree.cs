@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -44,9 +44,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			Cousin
 		}
 
-		LcmCache m_cache = null;
-		XElement m_classOwnershipTree = null;
-		XElement m_parentToChildrenSpecs = null;
+		XElement m_classOwnershipTree;
+		XElement m_parentToChildrenSpecs;
 
 		/// <summary>
 		/// Factory for returning a PartOwnershipTree
@@ -60,7 +59,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private PartOwnershipTree(LcmCache cache, IMultiListSortItemProvider sortItemProvider, bool fReturnFirstDecendentOnly)
 		{
 			var partOwnershipTreeSpec = sortItemProvider.PartOwnershipTreeSpec;
-			m_cache = cache;
+			Cache = cache;
 			m_classOwnershipTree = partOwnershipTreeSpec.Element("ClassOwnershipTree");
 			var parentClassPathsToChildren = partOwnershipTreeSpec.Element("ParentClassPathsToChildren");
 			m_parentToChildrenSpecs = parentClassPathsToChildren.Clone();
@@ -79,15 +78,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		private LcmCache Cache => m_cache;
+		private LcmCache Cache { get; set; }
 
 		#region DisposableBase overrides
-		/// <summary>
-		///
-		/// </summary>
+
+		/// <summary />
 		protected override void DisposeUnmanagedResources()
 		{
-			m_cache = null;
+			Cache = null;
 			m_classOwnershipTree = null;
 			m_parentToChildrenSpecs = null;
 		}
@@ -100,7 +98,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public string GetSourceFieldName(int targetClsId, int targetFieldId)
 		{
-			var targetClassName = m_cache.DomainDataByFlid.MetaDataCache.GetClassName(targetClsId);
+			var targetClassName = Cache.DomainDataByFlid.MetaDataCache.GetClassName(targetClsId);
 			var classNode = m_classOwnershipTree.Descendants(targetClassName).First();
 			var flidName = XmlUtils.GetMandatoryAttributeValue(classNode, "sourceField");
 			if (targetFieldId == 0)
@@ -112,7 +110,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return flidName;
 			}
-			var targetFieldName = m_cache.MetaDataCacheAccessor.GetFieldName(targetFieldId);
+			var targetFieldName = Cache.MetaDataCacheAccessor.GetFieldName(targetFieldId);
 			foreach (var option in altSourceField.Split(';'))
 			{
 				var parts = option.Split(':');
@@ -244,9 +242,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			// get the part spec that gives us the path from obsolete current (parent) list item object
 			// to the new one.
-			var vc = new XmlBrowseViewBaseVc(m_cache, null);
+			var vc = new XmlBrowseViewBaseVc(Cache, null);
 			var parentItem = new ManyOnePathSortItem(hvoCommonAncestor, null, null);
-			var collector = new ItemsCollectorEnv(null, m_cache, hvoCommonAncestor);
+			var collector = new ItemsCollectorEnv(null, Cache.MainCacheAccessor, hvoCommonAncestor);
 			var doc = XDocument.Load(pathSpec.ToString());
 			vc.DisplayCell(parentItem, doc.Root.Elements().First(), hvoCommonAncestor, collector);
 			if (collector.HvosCollectedInCell != null && collector.HvosCollectedInCell.Count > 0)
@@ -308,7 +306,9 @@ namespace LanguageExplorer.Controls.XMLViews
 					var commonAncestor = ancestorOfPrev;
 					var classCommonAncestor = Cache.MetaDataCacheAccessor.GetClassId(commonAncestor.Name.ToString());
 					if (DomainObjectServices.IsSameOrSubclassOf(Cache.DomainDataByFlid.MetaDataCache, classOfHvoBeforeListChange, classCommonAncestor))
+					{
 						hvoCommonAncestor = hvoBeforeListChange;
+					}
 					else
 					{
 						var obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoBeforeListChange);

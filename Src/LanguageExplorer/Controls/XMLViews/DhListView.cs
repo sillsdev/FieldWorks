@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,7 +21,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	{
 		private BrowseViewer m_bv;
 		private ImageList m_imgList;
-		private bool m_fInAdjustWidth = false; // used to ignore recursive calls to AdjustWidth.
+		private bool m_fInAdjustWidth; // used to ignore recursive calls to AdjustWidth.
 		private bool m_fColumnDropped = false;	// set this after we've drag and dropped a column
 		private ToolTip m_tooltip;
 
@@ -33,14 +33,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			private bool m_fIgnoreNextClick = false;
 #endif
 
-		/// <summary></summary>
+		/// <summary />
 		public event ColumnRightClickEventHandler ColumnRightClick;
-#if __MonoCS__	// FWNX-224
+#if __MonoCS__   // FWNX-224
 		/// <summary>event for 'left click'</summary>
 		public event ColumnClickEventHandler ColumnLeftClick;
 #endif
 
-		/// <summary></summary>
+		/// <summary />
 		public event ColumnDragDropReorderedHandler ColumnDragDropReordered;
 
 		internal bool AdjustingWidth
@@ -227,8 +227,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			switch (m.Msg)
 			{
 				case WM_CONTEXTMENU:
-					Point pointClicked = PointToClient(MousePosition);
-					int index = GetColumnIndexFromMousePosition(pointClicked);
+					var pointClicked = PointToClient(MousePosition);
+					var index = GetColumnIndexFromMousePosition(pointClicked);
 					if (index >= 0)
 					{
 						OnColumnRightClick(index, pointClicked);
@@ -304,15 +304,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.ListView"/> and optionally releases the managed resources.
 		/// </summary>
-		/// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
-		/// ------------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
@@ -339,7 +338,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// If there is a checkbox column
 		/// </summary>
-		public virtual bool HasCheckBoxColumn => m_bv.m_xbv.Vc.HasSelectColumn;
+		public virtual bool HasCheckBoxColumn => m_bv.BrowseView.Vc.HasSelectColumn;
 
 		/// <summary>
 		/// May be used to suppress the normal behavior of adjusting things and saving column widths
@@ -381,29 +380,31 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_timer = null;
 				Invalidate(true);
 				m_hotRectangle = Rectangle.Empty;
-				if (m_tooltip != null)
+				if (m_tooltip == null)
 				{
-					m_tooltip.Dispose();
-					m_tooltip = null;
-					m_lastTooltipText = null;
+					return;
 				}
+				m_tooltip.Dispose();
+				m_tooltip = null;
+				m_lastTooltipText = null;
 				return;
 			}
 			m_cTicks++;
-			if (m_cTicks == 10 && m_lastTooltipText != m_tooltipText)
+			if (m_cTicks != 10 || m_lastTooltipText == m_tooltipText)
 			{
-				m_lastTooltipText = m_tooltipText;
-				if (m_tooltip == null)
-				{
-					m_tooltip = new ToolTip
-					{
-						InitialDelay = 10,
-						ReshowDelay = 10
-					};
-					m_tooltip.SetToolTip(this, m_tooltipText);
-				}
-				m_tooltip.Show(m_tooltipText, this, cursorLocation.X, cursorLocation.Y, 2000);
+				return;
 			}
+			m_lastTooltipText = m_tooltipText;
+			if (m_tooltip == null)
+			{
+				m_tooltip = new ToolTip
+				{
+					InitialDelay = 10,
+					ReshowDelay = 10
+				};
+				m_tooltip.SetToolTip(this, m_tooltipText);
+			}
+			m_tooltip.Show(m_tooltipText, this, cursorLocation.X, cursorLocation.Y, 2000);
 		}
 
 		private void DhListView_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
@@ -510,7 +511,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		private void ListView_ColumnWidthChanged(Object sender, ColumnWidthChangedEventArgs e)
+		private void ListView_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
 		{
 			// These two tests seem to suppress all the cases where we are changing the width during setup
 			// and while making secondary adjustments, and allow us only to make a new call to AdjustColumns
@@ -607,17 +608,18 @@ namespace LanguageExplorer.Controls.XMLViews
 				gfx.FillRectangle(new SolidBrush(Color.FromKnownColor(KnownColor.ControlLight)), 0, 0, kHalfArrowSize * 2, kHalfArrowSize * 2);
 
 				Point[] points;
-				if (type == ArrowType.Ascending)
+				switch (type)
 				{
-					points = new[] { new Point(kHalfArrowSize, offset), new Point(kHalfArrowSize * 2 - 1 - offset, kHalfArrowSize * 2 - 1 - offset), new Point(offset,kHalfArrowSize * 2 - 1 - offset)};
-					gfx.FillPolygon(brush, points);
-					gfx.DrawPolygon(pen, points);
-				}
-				else if(type == ArrowType.Descending)
-				{
-					points = new[] { new Point(offset,offset), new Point(kHalfArrowSize * 2 - 1 - offset, offset), new Point(kHalfArrowSize,kHalfArrowSize * 2 - 1 - offset)};
-					gfx.FillPolygon(brush, points);
-					gfx.DrawPolygon(pen, points);
+					case ArrowType.Ascending:
+						points = new[] { new Point(kHalfArrowSize, offset), new Point(kHalfArrowSize * 2 - 1 - offset, kHalfArrowSize * 2 - 1 - offset), new Point(offset,kHalfArrowSize * 2 - 1 - offset)};
+						gfx.FillPolygon(brush, points);
+						gfx.DrawPolygon(pen, points);
+						break;
+					case ArrowType.Descending:
+						points = new[] { new Point(offset,offset), new Point(kHalfArrowSize * 2 - 1 - offset, offset), new Point(kHalfArrowSize,kHalfArrowSize * 2 - 1 - offset)};
+						gfx.FillPolygon(brush, points);
+						gfx.DrawPolygon(pen, points);
+						break;
 				}
 			}
 

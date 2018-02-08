@@ -53,7 +53,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			using (var dlg = new EntryGoDlg())
 			{
 				dlg.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
-				dlg.SetDlgInfo(m_cache, null);
+				dlg.SetDlgInfo(Cache, null);
 				dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense"); // TODO: When LT-11318 is fixed, use its help topic ID.
 				dlg.SetOkButtonText(LanguageExplorerResources.ksMakeComponentOf);
 				if (dlg.ShowDialog(m_parentWindow) != DialogResult.OK)

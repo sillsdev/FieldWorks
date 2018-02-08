@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,26 +16,6 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
-	/// <summary>Struct pairing a field ID with a TsString</summary>
-	public struct SearchField
-	{
-		private readonly int m_flid;
-		private readonly ITsString m_tss;
-
-		/// <summary/>
-		public SearchField(int flid, ITsString tss)
-		{
-			m_flid = flid;
-			m_tss = tss;
-		}
-
-		/// <summary/>
-		public int Flid { get { return m_flid; } }
-
-		/// <summary/>
-		public ITsString String { get { return m_tss; } }
-	}
-
 	/// <summary>
 	/// An abstract class for performing indexing and searching asynchronously.
 	/// </summary>
@@ -59,7 +39,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			return searchEngine;
 		}
 
-		private readonly LcmCache m_cache;
 		private readonly StringSearcher<int> m_searcher;
 
 		private IList<ICmObject> m_searchableObjs;
@@ -78,14 +57,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected SearchEngine(LcmCache cache, SearchType type)
 		{
-			m_cache = cache;
-			m_searcher = new StringSearcher<int>(type, m_cache.ServiceLocator.WritingSystemManager);
+			Cache = cache;
+			m_searcher = new StringSearcher<int>(type, Cache.ServiceLocator.WritingSystemManager);
 			m_thread = new ConsumerThread<int, SearchField[]>(HandleWork);
 			m_synchronizationContext = SynchronizationContext.Current;
 			m_syncRoot = new object();
 			m_indexObjPos = new Dictionary<Tuple<int, int>, int>();
 
-			m_cache.DomainDataByFlid.AddNotification(this);
+			Cache.DomainDataByFlid.AddNotification(this);
 
 			m_thread.Start();
 		}
@@ -95,7 +74,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected override void DisposeManagedResources()
 		{
-			m_cache.DomainDataByFlid.RemoveNotification(this);
+			Cache.DomainDataByFlid.RemoveNotification(this);
 
 			m_thread.Stop();
 			m_thread.Dispose();
@@ -124,10 +103,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the cache.
 		/// </summary>
-		protected LcmCache Cache
-		{
-			get { return m_cache; }
-		}
+		protected LcmCache Cache { get; }
 
 		/// <summary>
 		/// Searches the specified fields asynchronously.
@@ -149,10 +125,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets a value indicating whether the search engine is searching.
 		/// </summary>
-		public bool IsBusy
-		{
-			get { return !m_thread.IsIdle; }
-		}
+		public bool IsBusy => !m_thread.IsIdle;
 
 		/// <summary>
 		/// Builds the search index.
@@ -160,14 +133,20 @@ namespace LanguageExplorer.Controls.XMLViews
 		private int BuildIndex(int i, SearchField field, Func<bool> isSearchCanceled)
 		{
 			if (m_searchableObjs == null)
+			{
 				m_searchableObjs = GetSearchableObjects();
+			}
 
 			for (; i < m_searchableObjs.Count; i++)
 			{
 				if (isSearchCanceled())
+				{
 					break;
-				foreach (ITsString tss in GetStrings(field, m_searchableObjs[i]))
+				}
+				foreach (var tss in GetStrings(field, m_searchableObjs[i]))
+				{
 					m_searcher.Add(m_searchableObjs[i].Hvo, field.Flid, tss);
+				}
 			}
 			return i;
 		}
@@ -179,15 +158,19 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void HandleWork(IQueueAccessor<int, SearchField[]> queue)
 		{
-			SearchField[] work = queue.GetAllWorkItems().Last();
+			var work = queue.GetAllWorkItems().Last();
 
 			if (IsSearchCanceled(queue))
+			{
 				return;
+			}
 
-			IEnumerable<int> results = PerformSearch(work, () => IsSearchCanceled(queue));
+			var results = PerformSearch(work, () => IsSearchCanceled(queue));
 
 			if (results == null || IsSearchCanceled(queue))
+			{
 				return;
+			}
 
 			m_synchronizationContext.Post(OnSearchCompleted, new SearchCompletedEventArgs(work, FilterResults(results)));
 		}
@@ -206,12 +189,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			var results = new HashSet<int>();
 			lock (m_syncRoot)
 			{
-				foreach (SearchField field in fields)
+				foreach (var field in fields)
 				{
 					if (isSearchCanceled())
+					{
 						return null;
+					}
 
-					Tuple<int, int> key = IsFieldMultiString(field) ? Tuple.Create(field.Flid, field.String.get_WritingSystemAt(0)) : Tuple.Create(field.Flid, 0);
+					var key = IsFieldMultiString(field) ? Tuple.Create(field.Flid, field.String.get_WritingSystemAt(0)) : Tuple.Create(field.Flid, 0);
 					int pos;
 					if (!m_indexObjPos.TryGetValue(key, out pos))
 					{
@@ -227,7 +212,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						}
 						else
 						{
-							using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
+							using (new WorkerThreadReadHelper(Cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 								pos = BuildIndex(pos, field, isSearchCanceled);
 						}
 						m_indexObjPos[key] = pos;
@@ -235,37 +220,36 @@ namespace LanguageExplorer.Controls.XMLViews
 
 				}
 
-				foreach (SearchField field in fields)
+				foreach (var field in fields)
 				{
 					if (isSearchCanceled())
+					{
 						return null;
+					}
 					results.UnionWith(m_searcher.Search(field.Flid, field.String));
 				}
 			}
 
-			if (isSearchCanceled())
-				return null;
-
-			return results;
+			return isSearchCanceled() ? null : results;
 		}
 
 		void IVwNotifyChange.PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			if (IsIndexResetRequired(hvo, tag))
+			if (!IsIndexResetRequired(hvo, tag))
 			{
-				lock (m_syncRoot)
-				{
-					m_searcher.Clear();
-					m_indexObjPos.Clear();
-					m_searchableObjs = null;
-				}
+				return;
+			}
+			lock (m_syncRoot)
+			{
+				m_searcher.Clear();
+				m_indexObjPos.Clear();
+				m_searchableObjs = null;
 			}
 		}
 
 		private void OnSearchCompleted(object e)
 		{
-			if (SearchCompleted != null)
-				SearchCompleted(this, (SearchCompletedEventArgs) e);
+			SearchCompleted?.Invoke(this, (SearchCompletedEventArgs) e);
 		}
 	}
 }

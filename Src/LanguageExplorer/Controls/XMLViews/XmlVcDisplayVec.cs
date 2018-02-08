@@ -312,42 +312,44 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private ITsString SetBeforeString(XElement specialAttrsNode, XElement listDelimitNode)
 		{
-			ITsString tssBefore = null;
 			var sBefore = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(listDelimitNode, "before", null));
-			if (!string.IsNullOrEmpty(sBefore) || DelayedNumberExists)
+			if (string.IsNullOrEmpty(sBefore) && !DelayedNumberExists)
 			{
-				if (sBefore == null)
-				{
-					sBefore = string.Empty;
-				}
-				tssBefore = TsStringUtils.MakeString(sBefore, m_cache.WritingSystemFactory.UserWs);
-				tssBefore = ApplyStyleToBeforeString(listDelimitNode, tssBefore);
-				tssBefore = ApplyDelayedNumber(specialAttrsNode, tssBefore);
+				return null;
 			}
+			if (sBefore == null)
+			{
+				sBefore = string.Empty;
+			}
+			var tssBefore = TsStringUtils.MakeString(sBefore, m_cache.WritingSystemFactory.UserWs);
+			tssBefore = ApplyStyleToBeforeString(listDelimitNode, tssBefore);
+			tssBefore = ApplyDelayedNumber(specialAttrsNode, tssBefore);
 			return tssBefore;
 		}
 
 		private static ITsString ApplyStyleToBeforeString(XElement listDelimitNode, ITsString tssBefore)
 		{
 			var sStyle = XmlUtils.GetOptionalAttributeValue(listDelimitNode, "beforeStyle");
-			if (!string.IsNullOrEmpty(sStyle))
+			if (string.IsNullOrEmpty(sStyle))
 			{
-				var bldr = tssBefore.GetBldr();
-				bldr.SetStrPropValue(0, bldr.Length, (int) FwTextPropType.ktptNamedStyle, sStyle);
-				tssBefore = bldr.GetString();
+				return tssBefore;
 			}
+			var bldr = tssBefore.GetBldr();
+			bldr.SetStrPropValue(0, bldr.Length, (int) FwTextPropType.ktptNamedStyle, sStyle);
+			tssBefore = bldr.GetString();
 			return tssBefore;
 		}
 
 		private ITsString ApplyDelayedNumber(XElement specialAttrsNode, ITsString tssBefore)
 		{
 			var tssNumber = m_viewConstructor.GetDelayedNumber(specialAttrsNode, m_vwEnv is TestCollectorEnv);
-			if (tssNumber != null)
+			if (tssNumber == null)
 			{
-				var tsb = tssBefore.GetBldr();
-				tsb.Replace(0, 0, tssNumber.Text, null);
-				tssBefore = tsb.GetString();
+				return tssBefore;
 			}
+			var tsb = tssBefore.GetBldr();
+			tsb.Replace(0, 0, tssNumber.Text, null);
+			tssBefore = tsb.GetString();
 			return tssBefore;
 		}
 
@@ -491,27 +493,19 @@ namespace LanguageExplorer.Controls.XMLViews
 			// that style could be "italic -bold" or "-italic bold" or "-italic -bold".
 			if (style.IndexOf("-bold") >= 0)
 			{
-				tpb.SetIntPropValues((int) FwTextPropType.ktptBold,
-									 (int) FwTextPropVar.ktpvEnum,
-									 (int) FwTextToggleVal.kttvOff);
+				tpb.SetIntPropValues((int) FwTextPropType.ktptBold, (int) FwTextPropVar.ktpvEnum, (int) FwTextToggleVal.kttvOff);
 			}
 			else if (style.IndexOf("bold") >= 0)
 			{
-				tpb.SetIntPropValues((int) FwTextPropType.ktptBold,
-									 (int) FwTextPropVar.ktpvEnum,
-									 (int) FwTextToggleVal.kttvForceOn);
+				tpb.SetIntPropValues((int) FwTextPropType.ktptBold, (int) FwTextPropVar.ktpvEnum, (int) FwTextToggleVal.kttvForceOn);
 			}
 			if (style.IndexOf("-italic") >= 0)
 			{
-				tpb.SetIntPropValues((int) FwTextPropType.ktptItalic,
-									 (int) FwTextPropVar.ktpvEnum,
-									 (int) FwTextToggleVal.kttvOff);
+				tpb.SetIntPropValues((int) FwTextPropType.ktptItalic, (int) FwTextPropVar.ktpvEnum, (int) FwTextToggleVal.kttvOff);
 			}
 			else if (style.IndexOf("italic") >= 0)
 			{
-				tpb.SetIntPropValues((int) FwTextPropType.ktptItalic,
-									 (int) FwTextPropVar.ktpvEnum,
-									 (int) FwTextToggleVal.kttvForceOn);
+				tpb.SetIntPropValues((int) FwTextPropType.ktptItalic, (int) FwTextPropVar.ktpvEnum, (int) FwTextToggleVal.kttvForceOn);
 			}
 		}
 
@@ -611,7 +605,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			// sNum is the ordinate that will replace the 2-letter code.
 			if (sNum.Length != 0)
-				sTag = (sTag.Remove(ich - 1, 2)).Insert(ich - 1, sNum);
+			{
+				sTag = sTag.Remove(ich - 1, 2).Insert(ich - 1, sNum);
+			}
 			return sTag;
 		}
 
@@ -726,7 +722,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			if (vwenv is ConfiguredExport)
 			{
-				((ConfiguredExport) vwenv).OutputItemNumber(tssNumber, m_numberPartRef);
+				((ConfiguredExport)vwenv).OutputItemNumber(tssNumber, m_numberPartRef);
 			}
 			else
 			{

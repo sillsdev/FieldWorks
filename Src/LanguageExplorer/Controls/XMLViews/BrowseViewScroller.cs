@@ -65,7 +65,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary />
@@ -83,7 +85,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			m_bv = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 	}
 }

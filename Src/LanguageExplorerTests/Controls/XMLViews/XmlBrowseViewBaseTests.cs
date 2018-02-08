@@ -30,8 +30,8 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			// and adds m_scrollContainer to Controls. Model this so the .Dispose methods can behave the same way when
 			// testing as when running FieldWorks.
 			Controls.Add(m_scrollContainer);
-			m_xbv = new FakeXmlBrowseViewBase(this);
-			AddControl(m_xbv);
+			BrowseView = new FakeXmlBrowseViewBase(this);
+			AddControl(BrowseView);
 		}
 	}
 
@@ -523,7 +523,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			var bv = new FakeBrowseViewer();
 			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
 			bv.InitializeFlexComponent(flexComponentParameters);
-			m_view = bv.m_xbv as FakeXmlBrowseViewBase;
+			m_view = bv.BrowseView as FakeXmlBrowseViewBase;
 
 			ConfigureScrollBars();
 		}

@@ -25,7 +25,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// The value of wsForce for the vc when the MainCallerDisplayCommand was needed (restored
 		/// for the duration of building its parts).
 		/// </summary>
-		private int m_wsForce;
+		private readonly int m_wsForce;
 
 		internal MainCallerDisplayCommand(XElement mainElement, XElement caller, bool fUserMainAsFrag, int wsForce)
 		{
@@ -163,7 +163,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			finally
 			{
 				if (vc.WsForce != oldWsForce) // important because some VCs don't allow setting this.
+				{
 					vc.WsForce = oldWsForce; // restore.
+				}
 			}
 			logStream?.DecreaseIndent();
 		}

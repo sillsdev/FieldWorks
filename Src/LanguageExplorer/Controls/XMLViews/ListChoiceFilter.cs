@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,9 +21,9 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public abstract class ListChoiceFilter : RecordFilter
 	{
-		private bool m_fIsUserVisible = false;
-		ListMatchOptions m_mode;
-		/// <summary></summary>
+		private bool m_fIsUserVisible;
+
+		/// <summary />
 		protected LcmCache m_cache;
 		/// <summary>
 		/// May be derived from cache or set separately.
@@ -38,7 +38,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected ListChoiceFilter(LcmCache cache, ListMatchOptions mode, int[] targets)
 		{
 			m_cache = cache;
-			m_mode = mode;
+			Mode = mode;
 			Targets = targets;
 		}
 
@@ -58,17 +58,15 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_targets = new HashSet<int>(value);
 			}
 		}
-		internal ListMatchOptions Mode => m_mode;
+		internal ListMatchOptions Mode { get; private set; }
 
 		/// <summary>
 		/// decide whether this object should be included
 		/// </summary>
-		/// <param name="item">The item.</param>
-		/// <returns>true if the object should be included</returns>
 		public override bool Accept(IManyOnePathSortItem item)
 		{
 			var values = GetItems(item);
-			if (m_mode == ListMatchOptions.All || m_mode == ListMatchOptions.Exact)
+			if (Mode == ListMatchOptions.All || Mode == ListMatchOptions.Exact)
 			{
 				var matches = new HashSet<int>();
 				foreach (var hvo in values)
@@ -76,12 +74,12 @@ namespace LanguageExplorer.Controls.XMLViews
 					if (m_targets.Contains(hvo))
 					{
 						matches.Add(hvo);
-						if (m_mode == ListMatchOptions.All && matches.Count == m_targets.Count)
+						if (Mode == ListMatchOptions.All && matches.Count == m_targets.Count)
 						{
 							return true;
 						}
 					}
-					else if (m_mode == ListMatchOptions.Exact)
+					else if (Mode == ListMatchOptions.Exact)
 					{
 						return false; // found one that isn't present.
 					}
@@ -94,11 +92,11 @@ namespace LanguageExplorer.Controls.XMLViews
 				if (m_targets.Contains(hvo))
 				{
 					// If we wanted any, finding one is a success; if we wanted none, finding any is a failure.
-					return m_mode == ListMatchOptions.Any;
+					return Mode == ListMatchOptions.Any;
 				}
 			}
 			// If we wanted any, not finding any is failure; if we wanted none, not finding any is success.
-			return m_mode != ListMatchOptions.Any;
+			return Mode != ListMatchOptions.Any;
 		}
 
 		/// <summary>
@@ -137,7 +135,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			XmlUtils.SetAttribute(node, "mode", ((int)m_mode).ToString());
+			XmlUtils.SetAttribute(node, "mode", ((int)Mode).ToString());
 			XmlUtils.SetAttribute(node, "targets", XmlUtils.MakeIntegerListValue(m_originalTargets));
 			if (m_fIsUserVisible)
 			{
@@ -151,7 +149,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
-			m_mode = (ListMatchOptions)XmlUtils.GetMandatoryIntegerAttributeValue(node, "mode");
+			Mode = (ListMatchOptions)XmlUtils.GetMandatoryIntegerAttributeValue(node, "mode");
 			Targets = XmlUtils.GetMandatoryIntegerListAttributeValue(node, "targets");
 			m_fIsUserVisible = XmlUtils.GetBooleanAttributeValue(node, "visible");
 		}
@@ -200,15 +198,13 @@ namespace LanguageExplorer.Controls.XMLViews
 				// We don't want to crash if we haven't been properly initialized!  See LT-9731.
 				// And this  filter probably isn't valid anyway.
 				if (m_cache == null)
+				{
 					return false;
+				}
 				foreach (var hvo in m_targets)
 				{
-					try
-					{
-						// Bogus hvos will not be found, and an exception will be thrown.
-						var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-					}
-					catch
+					ICmObject dummy;
+					if (!m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(hvo, out dummy))
 					{
 						return false;
 					}

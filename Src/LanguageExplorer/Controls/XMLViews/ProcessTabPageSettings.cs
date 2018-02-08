@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2008-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,14 +17,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		protected override int ExpectedTab => (int) BulkEditBarTabs.Process;
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		protected override FwOverrideComboBox SourceCombo => m_bulkEditBar.TransduceSourceCombo;
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		protected override NonEmptyTargetControl NonEmptyTargetControl => m_bulkEditBar.TrdNonEmptyTargetControl;
 
 		/// <summary>
@@ -45,9 +41,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		protected override void SetupBulkEditBarTab(BulkEditBar bulkEditBar)
 		{
 			base.SetupBulkEditBarTab(bulkEditBar);
@@ -68,10 +62,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_bulkEditBar.m_transduceTargetCombo_SelectedIndexChanged(this, EventArgs.Empty);
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="bulkEditBar"></param>
+		/// <summary />
 		protected override void InitizializeTab(BulkEditBar bulkEditBar)
 		{
 			bulkEditBar.InitTransduce();

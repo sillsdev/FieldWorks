@@ -41,7 +41,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		public override void SetNewValue(int hvo, ITsString tss)
 		{
-			var firstSeqObj = 0;
+			int firstSeqObj;
 			var fHadOwningItem = m_sda.get_VecSize(hvo, m_flidObj) > 0;
 			if (fHadOwningItem)
 			{

@@ -41,7 +41,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				dlg.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 				// assume the owner is the entry (e.g. owner of LexEntryRef)
 				var le = m_lexEntryRef.OwnerOfClass<ILexEntry>();
-				dlg.SetDlgInfo(m_cache, le);
+				dlg.SetDlgInfo(Cache, le);
 				dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense");
 				if (dlg.ShowDialog(m_parentWindow) == DialogResult.OK)
 				{

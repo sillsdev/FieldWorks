@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -57,12 +57,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected virtual void Dispose(bool fDisposing)
 		{
 			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
-			if (fDisposing && !IsDisposed)
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+			if (fDisposing)
 			{
 				// dispose managed and unmanaged objects
-				var disposable = m_finder as IDisposable;
-				if (disposable != null)
-					disposable.Dispose();
+				(m_finder as IDisposable)?.Dispose();
 			}
 			m_finder = null;
 			m_cache = null;
@@ -89,8 +92,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Get's the string associated with the given hvo for a particular column.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <returns></returns>
 		public override ITsString CurrentValue(int hvo)
 		{
 			return m_finder.Key(GetManyOnePathSortItem(hvo));

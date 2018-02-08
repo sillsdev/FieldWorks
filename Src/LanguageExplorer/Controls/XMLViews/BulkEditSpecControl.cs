@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,7 +15,6 @@ namespace LanguageExplorer.Controls.XMLViews
 {
 	internal abstract class BulkEditSpecControl : IBulkEditSpecControl, IGhostable
 	{
-		protected LcmCache m_cache;
 		protected XMLViewsDataCache m_sda;
 		protected GhostParentHelper m_ghostParentHelper;
 		public event FwSelectionChangedEventHandler ValueChanged;
@@ -27,11 +26,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public IPropertyTable PropertyTable { get; set; }
 
-		public LcmCache Cache
-		{
-			get { return m_cache; }
-			set { m_cache = value; }
-		}
+		public LcmCache Cache { get; set; }
 
 		/// <summary>
 		/// The special cache that can handle the preview and check-box properties.

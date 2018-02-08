@@ -13,9 +13,10 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal class DisplayStringAltCommand : DisplayCommand
 	{
-		int m_ws;
-		int m_tag;
-		private XElement m_caller;
+		readonly int m_ws;
+		readonly int m_tag;
+		private readonly XElement m_caller;
+
 		public DisplayStringAltCommand(int tag, int ws, XElement caller)
 		{
 			m_tag = tag;

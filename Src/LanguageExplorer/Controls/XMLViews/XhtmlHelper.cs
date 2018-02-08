@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2008-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -61,7 +61,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_fRTL = ws.RightToLeftScript;
 		}
 
-		// Test-only
+		/// <summary>
+		/// Test-only constructor.
+		/// </summary>
 		internal XhtmlHelper()
 		{
 		}
@@ -230,15 +232,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_writer.WriteLine("    counter-increment: page;");
 				if (pub != null)
 				{
-					//pub.BaseFontSize;
-					//pub.BaseLineSpacing;
-					//pub.BindingEdge;
-					//pub.GutterLoc;
-					//pub.GutterMargin;
-					//pub.PageHeight;
-					//pub.PageWidth;
-					//pub.SheetLayout;
-					//pub.SheetsPerSig;
 					if (pub.PaperHeight != 0 && pub.PaperWidth != 0)
 					{
 						m_writer.WriteLine("    height: {0}pt;", ConvertMptToPt(pub.PaperHeight));
@@ -273,9 +266,6 @@ namespace LanguageExplorer.Controls.XMLViews
 						WriteHeaderFooterBlock("bottom-" + sInside, pub.DivisionsOS[0].HFSetOA.DefaultFooterOA.InsideAlignedText);
 						WriteHeaderFooterBlock("bottom-center", pub.DivisionsOS[0].HFSetOA.DefaultFooterOA.CenteredText);
 						WriteHeaderFooterBlock("bottom-"+sOutside, pub.DivisionsOS[0].HFSetOA.DefaultFooterOA.OutsideAlignedText);
-						//pub.DivisionsOS[0].PageLayoutOA.PosFooter;
-						//pub.DivisionsOS[0].PageLayoutOA.PosHeader;
-						//pub.DivisionsOS[0].StartAt;
 						WriteFootnotesBlock(type);
 						if (pub.DivisionsOS[0].DifferentEvenHF)
 						{
@@ -1036,18 +1026,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			m_writer.WriteLine(".xhomographnumber {");
 			WriteFontInfoToCss(m_cache.DefaultAnalWs, "Homograph-Number", "xhomographnumber");
-			// This is the info we originally had to set xhomographnumber explicitly.
-			//m_writer.WriteLine("    font-weight: bold;");
-			//m_writer.WriteLine("    font-size: 55%;");
-			//m_writer.WriteLine("    vertical-align: sub;");
-			//BaseStyleInfo bsi;
-			//if (m_styleTable.TryGetValue("Dictionary-Normal", out bsi))
-			//{
-			//    ExportStyleInfo esi = bsi as ExportStyleInfo;
-			//    WriteFontAttr(m_cache.DefaultAnalWs, "font-family", esi, null, true);
-			//    //WriteFontAttr(m_cache.DefaultAnalWs, "color", esi, null, true);
-			//    //WriteFontAttr(m_cache.DefaultAnalWs, "background-color", esi, null, true);
-			//}
 			m_writer.WriteLine("}");
 		}
 
@@ -1057,18 +1035,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			m_writer.WriteLine(".homographnumberrev {");
 			WriteFontInfoToCss(m_cache.DefaultAnalWs, "Homograph-Number", "homographnumberrev");
-			// This is the info we originally had to set xhomographnumber explicitly.
-			//m_writer.WriteLine("    font-weight: bold;");
-			//m_writer.WriteLine("    font-size: 55%;");
-			//m_writer.WriteLine("    vertical-align: sub;");
-			//BaseStyleInfo bsi;
-			//if (m_styleTable.TryGetValue("Dictionary-Normal", out bsi))
-			//{
-			//    ExportStyleInfo esi = bsi as ExportStyleInfo;
-			//    WriteFontAttr(m_cache.DefaultAnalWs, "font-family", esi, null, true);
-			//    //WriteFontAttr(m_cache.DefaultAnalWs, "color", esi, null, true);
-			//    //WriteFontAttr(m_cache.DefaultAnalWs, "background-color", esi, null, true);
-			//}
 			m_writer.WriteLine("}");
 		}
 		private void WriteCssSense()
@@ -1107,9 +1073,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_writer.WriteLine(".xitem {");
 			m_writer.WriteLine("    /* placeholder for adding list separators */");
 			m_writer.WriteLine("}");
-			foreach (string sLang in rgsLangs)
+			foreach (var sLang in rgsLangs)
 			{
-				int ws = m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(sLang);
+				var ws = m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(sLang);
 				if (ws != m_cache.DefaultAnalWs && ws != m_cache.DefaultVernWs)
 				{
 					m_writer.WriteLine(".xitem[lang='{0}'] {{", sLang);
@@ -1286,8 +1252,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				sBaseClass = sClass;
 			}
-			//string sBefore = XmlUtils.GetOptionalAttributeValue(xn, "before");
-			//string sAfter = XmlUtils.GetOptionalAttributeValue(xn, "after");
 			var sSep = XmlUtils.GetOptionalAttributeValue(xn, "sep");
 			var sStyle = XmlUtils.GetOptionalAttributeValue(xn, "style");
 			var fShowAsIndentedPara = XmlUtils.GetOptionalBooleanAttributeValue(xn, "showasindentedpara", false);
@@ -1414,12 +1378,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_writer.WriteLine("}");
 			if (!fShowAsIndentedPara)
 			{
-				//if (!String.IsNullOrEmpty(sBefore))
-				//    m_writer.WriteLine(".{0}:before {{ content: \"{1}\" }}",
-				//                       sClass, EscapeCharsForCss(sBefore));
-				//if (!String.IsNullOrEmpty(sAfter))
-				//    m_writer.WriteLine(".{0}:after {{ content: \"{1}\" }}",
-				//                       sClass, EscapeCharsForCss(sAfter));
 				if (!string.IsNullOrEmpty(sSep))
 				{
 					switch (sClass)
@@ -1507,7 +1465,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				case VwBulNum.kvbnBulletBase + 24: bullet = "\\2713"; break;	// CHECK MARK
 				default:
 					if (scheme >= VwBulNum.kvbnBulletBase && scheme <= VwBulNum.kvbnBulletMax)
+					{
 						bullet = "*";
+					}
 					break;
 			}
 			m_writer.WriteLine(".{0}:before {{", sClass.Replace(' ', '_'));
@@ -1689,11 +1649,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						//however, if it is explicitly set we need to include it.
 						if (fi.m_backColor.Value != Color.White || fi.m_fontColor.IsExplicit)
 						{
-							m_writer.WriteLine("    background-color: rgb({0},{1},{2});{3}",
-											   fi.m_backColor.Value.R,
-											   fi.m_backColor.Value.G,
-											   fi.m_backColor.Value.B,
-											   sInheritance);
+							m_writer.WriteLine("    background-color: rgb({0},{1},{2});{3}", fi.m_backColor.Value.R, fi.m_backColor.Value.G, fi.m_backColor.Value.B, sInheritance);
 						}
 					return true;
 					}
@@ -1860,8 +1816,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_writer.WriteLine("    orphans: {0};", esi.WidowOrphanControl ? "2" : "1");
 				m_writer.WriteLine("    widows: {0};", esi.WidowOrphanControl ? "2" : "1");
 			}
-			// esi.KeepTogether;
-			// esi.KeepWithNext;
 		}
 
 		private void WriteHorizontalPaddingValues(ExportStyleInfo esi, bool hangingIndent, out string sLeading, out string sTrailing)
@@ -1933,7 +1887,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			m_writer.WriteLine();
 			var xnDummy = new XElement("dummy", new XAttribute("style", string.Empty));
-			foreach (string sClass in m_dictClassData.Keys)
+			foreach (var sClass in m_dictClassData.Keys)
 			{
 				// Check for actual FW style names (possibly munged) that appear in the
 				// exported data, but aren't mapped to an XmlNode containing necessary
@@ -2272,17 +2226,32 @@ namespace LanguageExplorer.Controls.XMLViews
 		private static string ExtractText(string str, int fromHere, string label, string delimiter)
 		{
 			var horizon = 30;
-			if (fromHere > str.Length - 1) return null; // nothing to look for
-			if (fromHere + horizon > str.Length - 1) horizon = str.Length - fromHere - 1;
+			if (fromHere > str.Length - 1)
+			{
+				// nothing to look for
+				return null;
+			}
+			if (fromHere + horizon > str.Length - 1)
+			{
+				horizon = str.Length - fromHere - 1;
+			}
 			var start = str.IndexOf(label, fromHere, horizon, StringComparison.Ordinal);
-			if (start < 0) return null; // no label found
+			if (start < 0)
+			{
+				// no label found
+				return null;
+			}
 			start += label.Length; // one char past label
 			var delim = str.IndexOf(delimiter, start, StringComparison.Ordinal); // pos of 1st delimiter
-			if (delim < 0) return null; // no text between delimiters
+			if (delim < 0)
+			{
+				// no text between delimiters
+				return null;
+			}
+
 			start = delim + delimiter.Length; // start of text between delimiters
 			var end = str.IndexOf(delimiter, start, StringComparison.Ordinal);
-			if (end < 0) return null; // no end delimiter on this line - should have used an xml parser ;-)
-			return str.Substring(start, end - start);
+			return end < 0 ? null : str.Substring(start, end - start);
 		}
 	}
 }

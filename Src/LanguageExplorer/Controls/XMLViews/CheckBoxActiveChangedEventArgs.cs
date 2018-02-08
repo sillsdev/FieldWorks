@@ -12,9 +12,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Initializes a new instance of the <see><cref>T:CheckBoxChangedEventArgs</cref></see> class.
 		/// </summary>
-		/// <param name="hvosChanged">The hvos changed.</param>
-		/// <param name="undoMessage">The message to use in any undo message</param>
-		/// <param name="redoMessage">The message to use in any redo message</param>
 		public CheckBoxActiveChangedEventArgs(int[] hvosChanged, string undoMessage, string redoMessage)
 			: base(hvosChanged)
 		{

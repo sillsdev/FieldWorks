@@ -1,7 +1,7 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-// --------------------------------------------------------------------------------------------
+
 using System.Collections.Generic;
 using System.Diagnostics;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -26,69 +26,55 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// the class of objects at this property info level (destination of m_flidSource).
 		/// </summary>
-		protected int m_targetClass = 0;
+		protected int m_targetClass;
 		// the property from which the objects whose properties we want come.
-		private int m_flidSource;
-		private List<PropWs> m_atomicFlids = new List<PropWs>(); // atomic properties of target objects
-		private List<NeededPropertyInfo> m_sequenceInfo = new List<NeededPropertyInfo>();
-		private NeededPropertyInfo m_parent; // if it is in a list of child properties, note of which object.
-		private bool m_fSeq; // whether m_flidSource is a sequence property.
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:NeededPropertyInfo"/> class.
 		/// </summary>
 		/// <param name="listItemsClass">the class of objects at the root parent of the NeedPropertyInfo tree.
 		/// Typically the destination class of flidSource</param>
-		/// ------------------------------------------------------------------------------------
 		public NeededPropertyInfo(int listItemsClass)
 		{
 			m_targetClass = listItemsClass;
-			m_flidSource = 0;	// don't really how we got to the root parent class.
-			m_parent = null;
-			m_fSeq = true;
+			Source = 0;	// don't really how we got to the root parent class.
+			Parent = null;
+			IsSequence = true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:NeededPropertyInfo"/> class.
 		/// </summary>
-		/// <param name="flidSource">The flid source.</param>
-		/// <param name="parent">The parent.</param>
-		/// <param name="fSeq">if set to <c>true</c> [f seq].</param>
-		/// ------------------------------------------------------------------------------------
 		protected NeededPropertyInfo(int flidSource, NeededPropertyInfo parent, bool fSeq)
 		{
-			m_flidSource = flidSource;
-			m_parent = parent;
-			m_fSeq = fSeq;
+			Source = flidSource;
+			Parent = parent;
+			IsSequence = fSeq;
 		}
 
 		/// <summary>
 		/// The source property containing the objects about which we want info.
 		/// </summary>
-		public int Source
-		{
-			get { return m_flidSource; }
-		}
+		public int Source { get; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether this instance has atomic fields.
 		/// </summary>
-		/// <value>
-		/// 	<c>true</c> if this instance has atomic fields; otherwise, <c>false</c>.
-		/// </value>
-		/// ------------------------------------------------------------------------------------
 		public bool HasAtomicFields
 		{
 			get
 			{
-				if (m_atomicFlids.Count > 0)
+				if (AtomicFields.Count > 0)
+				{
 					return true;
-				foreach (NeededPropertyInfo info in m_sequenceInfo)
-					if (!info.m_fSeq)
+				}
+				foreach (var info in SeqFields)
+				{
+					if (!info.IsSequence)
+					{
 						return true;
+					}
+				}
 				return false;
 			}
 		}
@@ -98,65 +84,50 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// By default this is the destination class of the field that contains them.
 		/// We override this in a subclass for certain virtual and phony properties.
 		/// </summary>
-		/// <param name="vc"></param>
-		/// <returns></returns>
 		internal int TargetClass(XmlVc vc)
 		{
 			return TargetClass(vc.DataAccess);
 		}
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Answer the class of objects for which we are collecting fields.
 		/// By default this is the destination class of the field that contains them.
 		/// If needed, override this in a subclass for certain virtual and phony properties.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public virtual int TargetClass(ISilDataAccess sda)
 		{
 			if (m_targetClass == 0 && Source != 0)
+			{
 				m_targetClass = sda.MetaDataCache.GetDstClsId(this.Source);
+			}
 			return m_targetClass;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether this instance is sequence.
 		/// </summary>
-		/// <value>
-		/// 	<c>true</c> if this instance is sequence; otherwise, <c>false</c>.
-		/// </value>
-		/// ------------------------------------------------------------------------------------
-		public bool IsSequence
-		{
-			get { return m_fSeq; }
-		}
-		/// ------------------------------------------------------------------------------------
+		public bool IsSequence { get; }
+
 		/// <summary>
 		/// Gets the parent.
 		/// </summary>
-		/// <value>The parent.</value>
-		/// ------------------------------------------------------------------------------------
-		public NeededPropertyInfo Parent
-		{
-			get { return m_parent; }
-		}
+		public NeededPropertyInfo Parent { get; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the seq depth.
 		/// </summary>
-		/// <value>The seq depth.</value>
-		/// ------------------------------------------------------------------------------------
 		public int SeqDepth
 		{
 			get
 			{
-				int depth = 0;
-				NeededPropertyInfo info = this;
+				var depth = 0;
+				var info = this;
 				while (info != null)
 				{
-					if (info.m_fSeq)
+					if (info.IsSequence)
+					{
 						depth++;
+					}
 					info = info.Parent;
 				}
 				return depth;
@@ -170,8 +141,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				int depth = 0;
-				NeededPropertyInfo info = m_parent;
+				var depth = 0;
+				var info = Parent;
 				while (info != null)
 				{
 					depth++;
@@ -184,54 +155,36 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Atomic properties of objects that can occur in the source field.
 		/// </summary>
-		public List<PropWs> AtomicFields
-		{
-			get { return m_atomicFlids; }
-		}
+		public List<PropWs> AtomicFields { get; } = new List<PropWs>();
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Add an atomic flid.
 		/// </summary>
-		/// <param name="flid">The flid.</param>
-		/// <param name="ws">The ws.</param>
-		/// ------------------------------------------------------------------------------------
 		public void AddAtomicField(int flid, int ws)
 		{
-			PropWs pw = new PropWs(flid, ws);
-			if (m_atomicFlids.Contains(pw))
+			var pw = new PropWs(flid, ws);
+			if (AtomicFields.Contains(pw))
+			{
 				return;
-			m_atomicFlids.Add(pw);
+			}
+			AtomicFields.Add(pw);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sequence properties of objects that can occur in the source field.
 		/// </summary>
-		/// <value>The seq fields.</value>
-		/// ------------------------------------------------------------------------------------
-		public List<NeededPropertyInfo> SeqFields
-		{
-			get { return m_sequenceInfo; }
-		}
+		public List<NeededPropertyInfo> SeqFields { get; } = new List<NeededPropertyInfo>();
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Add (or retrieve) info about a object (atomic or seq) flid. May include virtuals.
 		/// </summary>
-		/// <param name="flid">The flid.</param>
-		/// <param name="fSeq">if set to <c>true</c> [f seq].</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public NeededPropertyInfo AddObjField(int flid, bool fSeq)
 		{
-			NeededPropertyInfo info =
-				m_sequenceInfo.Find(delegate(NeededPropertyInfo item)
-					{ return item.Source == flid; });
+			var info = SeqFields.Find(item => item.Source == flid);
 			if (info == null)
 			{
 				info = new NeededPropertyInfo(flid, this, fSeq);
-				m_sequenceInfo.Add(info);
+				SeqFields.Add(info);
 			}
 			return info;
 		}
@@ -239,73 +192,58 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Add (or retrieve) info about a virtual object flid.
 		/// </summary>
-		/// <param name="flid"></param>
-		/// <param name="fSeq"></param>
-		/// <param name="dstClass"></param>
-		/// <returns></returns>
 		public NeededPropertyInfo AddVirtualObjField(int flid, bool fSeq, int dstClass)
 		{
-			VirtualNeededPropertyInfo info =
-				m_sequenceInfo.Find(delegate(NeededPropertyInfo item)
-					{ return item.Source == flid; }) as VirtualNeededPropertyInfo;
+			var info = SeqFields.Find(item => item.Source == flid) as VirtualNeededPropertyInfo;
 			if (info == null)
 			{
 				info = new VirtualNeededPropertyInfo(flid, this, fSeq, dstClass);
-				m_sequenceInfo.Add(info);
+				SeqFields.Add(info);
 			}
 			return info;
 		}
 
 		internal void DumpFieldInfo(IFwMetaDataCache mdc)
 		{
-			if (this.Depth == 0)
-				Debug.WriteLine("");
-			for (int i = 0; i < this.Depth; ++i)
+			if (Depth == 0)
+			{
+				Debug.WriteLine(string.Empty);
+			}
+
+			for (var i = 0; i < Depth; ++i)
+			{
 				Debug.Write("    ");
+			}
 			if (Source != 0)
 			{
-				Debug.WriteLine("[" + this.Depth + "]info.Source = " + this.Source + " = " +
-				GetFancyFieldName(this.Source, mdc));
+				Debug.WriteLine("[" + Depth + "]info.Source = " + Source + " = " +
+				GetFancyFieldName(Source, mdc));
 			}
 			else
 			{
 				Debug.WriteLine("Root (target) class: " + mdc.GetClassName(m_targetClass));
 			}
 
-			for (int i = 0; i < this.AtomicFields.Count; ++i)
+			for (var i = 0; i < AtomicFields.Count; ++i)
 			{
-				for (int j = 0; j < this.Depth; ++j)
+				for (var j = 0; j < Depth; ++j)
+				{
 					Debug.Write("    ");
-				Debug.WriteLine("    Atomic[" + i + "] flid = " + this.AtomicFields[i].flid + "(" +
-					GetFancyFieldName(this.AtomicFields[i].flid, mdc) + "); ws = " + this.AtomicFields[i].ws);
+				}
+				Debug.WriteLine("    Atomic[" + i + "] flid = " + AtomicFields[i].Flid + "(" + GetFancyFieldName(AtomicFields[i].Flid, mdc) + "); ws = " + AtomicFields[i].Ws);
 			}
-			for (int i = 0; i < this.SeqFields.Count; ++i)
-				this.SeqFields[i].DumpFieldInfo(mdc);
+
+			foreach (var propertyInfo in SeqFields)
+			{
+				propertyInfo.DumpFieldInfo(mdc);
+			}
 		}
 
-		private string GetFancyFieldName(int flid, IFwMetaDataCache mdc)
+		private static string GetFancyFieldName(int flid, IFwMetaDataCache mdc)
 		{
-			string f = mdc.GetFieldName(flid);
-			string c = mdc.GetOwnClsName(flid);
+			var f = mdc.GetFieldName(flid);
+			var c = mdc.GetOwnClsName(flid);
 			return c + '_' + f;
 		}
 	}
-
-	internal class VirtualNeededPropertyInfo : NeededPropertyInfo
-	{
-		public VirtualNeededPropertyInfo(int flidSource, NeededPropertyInfo parent, bool fSeq, int dstClsId)
-			: base(flidSource, parent, fSeq)
-		{
-			m_targetClass = dstClsId;
-		}
-
-		/// <summary>
-		/// Override: this class knows the appropriate destination class.
-		/// </summary>
-		public override int TargetClass(ISilDataAccess sda)
-		{
-			return m_targetClass;
-		}
-	}
-
 }

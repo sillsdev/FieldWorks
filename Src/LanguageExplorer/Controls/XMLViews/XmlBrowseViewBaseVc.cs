@@ -56,7 +56,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected List<XElement> m_columns = new List<XElement>();
 
 		/// <summary>Top-level fake property for list of objects.</summary>
-		protected int m_madeUpFieldIdentifier = 0;
+		protected int m_madeUpFieldIdentifier;
 
 		/// <summary />
 		protected IPicture m_UncheckedCheckPic;
@@ -74,7 +74,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected ISortItemProvider m_sortItemProvider;
 		IPicture m_PreviewArrowPic;
 		IPicture m_PreviewRTLArrowPic;
-		int m_icolOverrideAllowEdit = -1; // index of column to force allow editing in.
 
 		// A writing system we wish to force to be used when a <string> element displays a multilingual property.
 		// Todo JohnT: Get rid of this!! It is set in a <column> element and used within the display of nested
@@ -106,8 +105,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// This contructor is used by SortMethodFinder to make a braindead VC.
 		/// </summary>
-		internal XmlBrowseViewBaseVc()
-			: base() // We don't have a string table.
+		internal XmlBrowseViewBaseVc() // We don't have a string table.
 		{
 			m_madeUpFieldIdentifier = 0;
 		}
@@ -128,7 +126,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Avoid using this constructor if possible.
 		/// </summary>
 		internal XmlBrowseViewBaseVc(LcmCache cache)
-			: base()
 		{
 			XmlBrowseViewBaseVcInit(cache, null);
 		}
@@ -136,7 +133,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// This contructor is used by FilterBar and LayoutCache to make a partly braindead VC.
 		/// </summary>
 		internal XmlBrowseViewBaseVc(LcmCache cache, ISilDataAccess sda)
-			: base()
 		{
 			XmlBrowseViewBaseVcInit(cache, sda);
 		}
@@ -491,7 +487,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			return PossibleColumnSpecs;
 		}
 
-		int m_listItemsClass = 0;
+		int m_listItemsClass;
 		/// <summary>
 		/// the class (or base class) of the items in SortItemProvider
 		/// </summary>
@@ -582,7 +578,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			if (propWs != null)
 			{
-				XmlUtils.SetAttribute(node, "originalLabel", GetNewLabelFromMatchingCustomField(possibleColumns, propWs.flid));
+				XmlUtils.SetAttribute(node, "originalLabel", GetNewLabelFromMatchingCustomField(possibleColumns, propWs.Flid));
 				ColumnConfigureDialog.GenerateColumnLabel(node, m_cache);
 			}
 			else
@@ -605,7 +601,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				if (TryColumnForCustomField(possibleColumn, ListItemsClass, out columnForCustomField, out propWs))
 				{
 					// the flid of the updated custom field node matches the given flid of the old node.
-					if (propWs != null && propWs.flid == flid)
+					if (propWs != null && propWs.Flid == flid)
 					{
 						var label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(possibleColumn, "label", null));
 						return label;
@@ -618,7 +614,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Check for an invalid reversal index.  (Reversal indexes can be deleted.)
 		/// </summary>
-		/// <param name="node"></param>
 		/// <returns>true if this node refers to a nonexistent reversal index.</returns>
 		private bool CheckForBadReversalIndex(XElement node)
 		{
@@ -655,17 +650,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets or sets the override allow edit column.
 		/// </summary>
-		public int OverrideAllowEditColumn
-		{
-			get
-			{
-				return m_icolOverrideAllowEdit;
-			}
-			set
-			{
-				m_icolOverrideAllowEdit = value;
-			}
-		}
+		public int OverrideAllowEditColumn { get; set; } = -1;
 
 		/// <summary>
 		/// Gets a value indicating whether this instance has select column.
@@ -675,20 +660,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Specifies the default state of check boxes
 		/// </summary>
-		public bool DefaultChecked
-		{
-			get
-			{
-				if (m_sda is XMLViewsDataCache)
-				{
-					return (m_sda as XMLViewsDataCache).DefaultSelected;
-				}
-				// pretty arbitrary, probably something else will crash if using this without
-				// the proper kind of cache, but it makes more sense than the other, since it
-				// is our general default.
-				return true;
-			}
-		}
+		public bool DefaultChecked => !(m_sda is XMLViewsDataCache) || ((XMLViewsDataCache)m_sda).DefaultSelected;
 
 		/// <summary>
 		/// Gets the width of the select column.
@@ -753,30 +725,17 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Make a standard Win32 color from three components.
 		/// </summary>
-		static public uint RGB(int r, int g, int b)
+		public static uint RGB(int r, int g, int b)
 		{
-			return ((uint)(((byte)(r)|((short)((byte)(g))<<8))|(((short)(byte)(b))<<16)));
+			return (uint)((byte)r|((byte)g << 8) | ((byte)b << 16));
 		}
-
-		/// <summary>Border color to use</summary>
-		private Color m_BorderColor = SystemColors.Control;	// System.Drawing.Color.LightGray;
 
 		/// <summary>
 		/// Gets or sets the color of the border.
 		/// </summary>
-		public Color BorderColor
-		{
-			get
-			{
-				return m_BorderColor;
-			}
-			set
-			{
-				m_BorderColor = value;
-			}
-		}
+		public Color BorderColor { get; set; } = SystemColors.Control;
 
-		const int kclrBackgroundSelRow = (int)0xFFE6D7;
+		const int kclrBackgroundSelRow = 0xFFE6D7;
 
 		internal virtual int SelectedRowBackgroundColor(int hvo)
 		{
@@ -789,7 +748,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected virtual void AddTableRow(IVwEnv vwenv, int hvo, int frag)
 		{
 			// set the border color
-			vwenv.set_IntProperty((int )FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)RGB(m_BorderColor));
+			vwenv.set_IntProperty((int )FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)RGB(BorderColor));
 
 			// If we're using this special mode where just one column is editable, we need to make
 			// sure as far as possible that everything else is not.
@@ -1010,14 +969,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			// </Paragraph>
 			//
 
-			vwenv.OpenParagraph();			// <Paragraph>
+			vwenv.OpenParagraph(); // <Paragraph>
 			var multiPara = XmlUtils.GetOptionalBooleanAttributeValue(node, "multipara", false);
-			vwenv.OpenInnerPile();			//		<InnerPile>
+			vwenv.OpenInnerPile(); // <InnerPile>
 			// if the multi-para attribute is not specified, create a paragraph to wrap the cell contents.
 			var fParaOpened = false;
 			if (!multiPara)
 			{
-				vwenv.OpenParagraph();		//			<paragraph>
+				vwenv.OpenParagraph(); // <paragraph>
 				fParaOpened = true;
 			}
 
@@ -1047,21 +1006,21 @@ namespace LanguageExplorer.Controls.XMLViews
 				var item = m_sortItemProvider.SortItemAt(ihvo);
 				if (item != null)
 				{
-					DisplayCell(item, node, hvo, vwenv);	// (Original) cell contents
+					DisplayCell(item, node, hvo, vwenv); // (Original) cell contents
 				}
 			}
 
 			if (fParaOpened)
 			{
-				vwenv.CloseParagraph();		//			   (Original) cell contents </paragraph>
+				vwenv.CloseParagraph(); // (Original) cell contents </paragraph>
 				fParaOpened = false;
 			}
-			vwenv.CloseInnerPile();			//		</InnerPile>
+			vwenv.CloseInnerPile(); // </InnerPile>
 			if (fIsCellActive)
 			{
 				AddPreviewPiles(vwenv, node, icol);
 			}
-			vwenv.CloseParagraph();			// </Paragraph>
+			vwenv.CloseParagraph(); // </Paragraph>
 			vwenv.CloseTableCell();
 			m_wsBest = 0;
 		}
@@ -1149,26 +1108,20 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			if (fEditable)
 			{
-				vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum,
-									  (int)TptEditable.ktptIsEditable);
-				vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor,
-									  (int)FwTextPropVar.ktpvDefault,
-									  (int)RGB(Color.FromKnownColor(KnownColor.Window)));
+				vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptIsEditable);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, (int)RGB(Color.FromKnownColor(KnownColor.Window)));
 			}
 			else
 			{
-				vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum,
-									  (int)TptEditable.ktptNotEditable);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			}
 		}
 
 		private void AddPreviewPiles(IVwEnv vwenv, XElement node, int icol)
 		{
 			// add padding to separate PreviewArrow from other cell contents.
-			vwenv.set_IntProperty((int)FwTextPropType.ktptPadTrailing,
-								  (int)FwTextPropVar.ktpvMilliPoint, 2500);
-			vwenv.set_IntProperty((int)FwTextPropType.ktptPadLeading,
-								  (int)FwTextPropVar.ktpvMilliPoint, 2500);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptPadTrailing, (int)FwTextPropVar.ktpvMilliPoint, 2500);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptPadLeading, (int)FwTextPropVar.ktpvMilliPoint, 2500);
 			vwenv.OpenInnerPile();
 			{
 				AddPreviewArrow(vwenv, node);
@@ -1208,32 +1161,20 @@ namespace LanguageExplorer.Controls.XMLViews
 			vwenv.OpenTableCell(1, 1);
 
 			// Put a pixel of light grey pad around the check box itself.
-			vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor,
-				(int)FwTextPropVar.ktpvDefault,
-				(int)RGB(System.Drawing.Color.LightGray));
-			vwenv.set_IntProperty((int)FwTextPropType.ktptPadLeading,
-				(int)FwTextPropVar.ktpvMilliPoint,
-				(m_dxmpCheckBorderWidth));
-			vwenv.set_IntProperty((int)FwTextPropType.ktptPadTrailing,
-				(int)FwTextPropVar.ktpvMilliPoint,
-				(m_dxmpCheckBorderWidth));
-			vwenv.set_IntProperty((int)FwTextPropType.ktptPadTop,
-				(int)FwTextPropVar.ktpvMilliPoint,
-				(m_dxmpCheckBorderWidth));
-			vwenv.set_IntProperty((int)FwTextPropType.ktptPadBottom,
-				(int)FwTextPropVar.ktpvMilliPoint,
-				(m_dxmpCheckBorderWidth));
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, (int)RGB(Color.LightGray));
+			vwenv.set_IntProperty((int)FwTextPropType.ktptPadLeading, (int)FwTextPropVar.ktpvMilliPoint, (m_dxmpCheckBorderWidth));
+			vwenv.set_IntProperty((int)FwTextPropType.ktptPadTrailing, (int)FwTextPropVar.ktpvMilliPoint, (m_dxmpCheckBorderWidth));
+			vwenv.set_IntProperty((int)FwTextPropType.ktptPadTop, (int)FwTextPropVar.ktpvMilliPoint, (m_dxmpCheckBorderWidth));
+			vwenv.set_IntProperty((int)FwTextPropType.ktptPadBottom, (int)FwTextPropVar.ktpvMilliPoint, m_dxmpCheckBorderWidth);
 			if (ShowEnabled)
 			{
 				var enabled = vwenv.DataAccess.get_IntProp(hvo, XMLViewsDataCache.ktagItemEnabled);
-				vwenv.NoteDependency(new int[] { hvo }, new int[] { XMLViewsDataCache.ktagItemEnabled }, 1);
+				vwenv.NoteDependency(new[] { hvo }, new[] { XMLViewsDataCache.ktagItemEnabled }, 1);
 				if (enabled != 0)
 				{
 					// Even if the view as a whole does not allow editing, presumably a check box
 					// does!
-					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
-						(int)FwTextPropVar.ktpvEnum,
-						(int)TptEditable.ktptIsEditable);
+					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptIsEditable);
 					vwenv.AddIntPropPic(XMLViewsDataCache.ktagItemSelected, this, kfragCheck, 0, 1);
 				}
 				else
@@ -1244,9 +1185,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			else
 			{
 				// Unconditionally show the selected property.
-				vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
-					(int)FwTextPropVar.ktpvEnum,
-					(int)TptEditable.ktptIsEditable);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptIsEditable);
 				vwenv.AddIntPropPic(XMLViewsDataCache.ktagItemSelected, this, kfragCheck, 0, 1);
 			}
 
@@ -1267,8 +1206,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				vwenv.NoteDependency(new[] {hvo, hvo}, new[] {XMLViewsDataCache.ktagItemSelected, XMLViewsDataCache.ktagItemEnabled}, 2);
 				// Explicitly insert the preview here, if enabled etc.
-				if (vwenv.DataAccess.get_IntProp(hvo, XMLViewsDataCache.ktagItemSelected) != 0 &&
-				    vwenv.DataAccess.get_IntProp(hvo, XMLViewsDataCache.ktagItemEnabled) != 0)
+				if (vwenv.DataAccess.get_IntProp(hvo, XMLViewsDataCache.ktagItemSelected) != 0 && vwenv.DataAccess.get_IntProp(hvo, XMLViewsDataCache.ktagItemEnabled) != 0)
 				{
 					if (!HasPreviewArrow)
 					{
@@ -1354,9 +1292,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			// click copy target...we may eventually change this, but it somewhat complex to catch
 			// all the times it might need to be called, and sometimes doing it too often could
 			// be a nuisance).
-			if (m_icolOverrideAllowEdit > 0)
+			if (OverrideAllowEditColumn > 0)
 			{
-				fAllowEdit = icol == m_icolOverrideAllowEdit + 1;
+				fAllowEdit = icol == OverrideAllowEditColumn + 1;
 			}
 			else
 			{
@@ -1390,7 +1328,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							var sWs = StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(node, "ws"));
 							if (sWs != null)
 							{
-								var ws = (sWs == "reversal") ? ReversalWs : XmlViewsUtils.GetWsFromString(sWs, m_cache);
+								var ws = sWs == "reversal" ? ReversalWs : XmlViewsUtils.GetWsFromString(sWs, m_cache);
 								if (ws != 0)
 								{
 									var o = mi.Invoke(co, new object[] { ws });
@@ -1582,9 +1520,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// to estimate how much vertical space is needed to display this item in the available
 		/// width.
 		/// </summary>
-		/// <param name="hvo">id of object for which estimate is to be done</param>
-		/// <param name="frag">fragment of data</param>
-		/// <param name="dxpAvailWidth">Width of data layout area in points</param>
 		public override int EstimateHeight(int hvo, int frag, int dxpAvailWidth)
 		{
 			return 17; // Assume a browse view line is about 17 points high.
@@ -1610,15 +1545,15 @@ namespace LanguageExplorer.Controls.XMLViews
 					if (url.StartsWith(FwLinkArgs.kFwUrlPrefix))
 					{
 						var commands = new List<string>
-											{
-												"AboutToFollowLink",
-												"FollowLink"
-											};
+						{
+							"AboutToFollowLink",
+							"FollowLink"
+						};
 						var parms = new List<object>
-											{
-												null,
-												new FwLinkArgs(url)
-											};
+						{
+							null,
+							new FwLinkArgs(url)
+						};
 						m_xbv.Publisher.Publish(commands, parms);
 						return;
 					}

@@ -26,11 +26,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		ISilDataAccess m_sda;
 		LcmCache m_cache;
 		XElement m_nodeSpec; // specification node for the column
-
-		string m_sEditIf = null;
-		bool m_fEditIfNot = false;
-		MethodInfo m_miEditIf = null;
-		int m_wsEditIf = 0;
+		string m_sEditIf;
+		bool m_fEditIfNot;
+		MethodInfo m_miEditIf;
+		int m_wsEditIf;
 
 		protected DoItMethod(LcmCache cache, ISilDataAccessManaged sda, FieldReadWriter accessor, XElement spec)
 		{
@@ -77,10 +76,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Fake doing the change by setting the specified property to the appropriate value
 		/// for each item in the set. Disable items that can't be set.
 		/// </summary>
-		/// <param name="itemsToChange">The items to change.</param>
-		/// <param name="tagMadeUpFieldIdentifier">The tag made up field identifier.</param>
-		/// <param name="tagEnable">The tag enable.</param>
-		/// <param name="state">The state.</param>
 		public void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnable, ProgressState state)
 		{
 			var i = 0;
@@ -127,7 +122,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Make the change. Usually you can just override NewValue and/or OkToChange.
 		/// </summary>
-		/// <param name="hvo"></param>
 		public virtual void Doit(int hvo)
 		{
 			if (OkToChange(hvo))

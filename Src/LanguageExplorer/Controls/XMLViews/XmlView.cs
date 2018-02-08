@@ -88,7 +88,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.Container components = null;
+		private System.ComponentModel.Container components;
 		/// <summary />
 		protected int m_hvoRoot;
 		/// <summary />
@@ -313,9 +313,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					cvsli = sel.CLevels(false) - 1;
 					// Main array of information retrived from sel that made combo.
-					rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli,
-						out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
-						out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
+					rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
 					for (var i = 0; i < cvsli; i++)
 					{
 						newSelectedObjects.Add(rgvsli[i].hvo);

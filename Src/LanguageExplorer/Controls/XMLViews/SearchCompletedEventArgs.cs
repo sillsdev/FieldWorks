@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -29,17 +29,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the fields.
 		/// </summary>
-		public IEnumerable<SearchField> Fields
-		{
-			get { return m_fields; }
-		}
+		public IEnumerable<SearchField> Fields => m_fields;
 
 		/// <summary>
 		/// Gets the results.
 		/// </summary>
-		public IEnumerable<int> Results
-		{
-			get { return m_results; }
-		}
+		public IEnumerable<int> Results => m_results;
 	}
 }

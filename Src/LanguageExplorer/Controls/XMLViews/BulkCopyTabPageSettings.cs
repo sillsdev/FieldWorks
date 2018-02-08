@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2008-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,9 +14,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		string m_nonEmptyTargetMode = string.Empty;
 		string m_nonEmptyTargetSeparator = string.Empty;
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		protected override int ExpectedTab => (int) BulkEditBarTabs.BulkCopy;
 
 		/// <summary />

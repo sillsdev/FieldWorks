@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -48,18 +48,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		private IVwPattern m_ivwpattern;
 		private LcmCache m_cache;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:SimpleMatchDlg"/> class.
 		/// </summary>
-		/// <param name="wsf">The WSF.</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// <param name="ws">The ws.</param>
-		/// <param name="ss">The ss.</param>
-		/// <param name="cache"></param>
-		/// ------------------------------------------------------------------------------------
-		public SimpleMatchDlg(ILgWritingSystemFactory wsf, IHelpTopicProvider helpTopicProvider,
-			int ws, IVwStylesheet ss, LcmCache cache)
+		public SimpleMatchDlg(ILgWritingSystemFactory wsf, IHelpTopicProvider helpTopicProvider, int ws, IVwStylesheet ss, LcmCache cache)
 		{
 			//
 			// Required for Windows Form Designer support
@@ -71,16 +63,20 @@ namespace LanguageExplorer.Controls.XMLViews
 			// We do this outside the designer-controlled code because it does funny things
 			// to FwTextBoxes, owing to the need for a writing system factory, and some
 			// properties it should not persist but I can't persuade it not to.
-			this.m_textBox = new FwTextBox();
-			this.m_textBox.WritingSystemFactory = wsf; // set ASAP.
-			this.m_textBox.WritingSystemCode = ws;
-			this.m_textBox.StyleSheet = ss; // before setting text, otherwise it gets confused about height needed.
-			this.m_textBox.Location = new System.Drawing.Point(8, 24);
-			this.m_textBox.Name = "m_textBox";
-			this.m_textBox.Size = new System.Drawing.Size(450, 32);
-			this.m_textBox.TabIndex = 0;
-			this.m_textBox.Text = "";
-			this.Controls.Add(this.m_textBox);
+			m_textBox = new FwTextBox
+			{
+				WritingSystemFactory = wsf,
+				WritingSystemCode = ws,
+				StyleSheet = ss,
+				Location = new System.Drawing.Point(8, 24),
+				Name = "m_textBox",
+				Size = new System.Drawing.Size(450, 32),
+				TabIndex = 0,
+				Text = ""
+			};
+			// set ASAP.
+			// before setting text, otherwise it gets confused about height needed.
+			Controls.Add(m_textBox);
 			AccessibleName = "SimpleMatchDlg";
 			m_helpTopicProvider = helpTopicProvider;
 
@@ -88,26 +84,23 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			m_ivwpattern = VwPatternClass.Create();
 
-			helpProvider = new HelpProvider();
-			helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
+			helpProvider = new HelpProvider {HelpNamespace = m_helpTopicProvider.HelpFile};
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			foreach (Control control in Controls)
-				control.Click += new EventHandler(control_Click);
+			{
+				control.Click += control_Click;
+			}
 		}
 
-		void control_Click(object sender, EventArgs e)
+		private void control_Click(object sender, EventArgs e)
 		{
 			m_textBox.Select();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initialize the dialog, based on the old matcher, if any, and if recognized.
 		/// </summary>
-		/// <param name="matcher">The matcher.</param>
-		/// <param name="stylesheet">The stylesheet.</param>
-		/// ------------------------------------------------------------------------------------
 		public void SetDlgValues(IMatcher matcher, IVwStylesheet stylesheet)
 		{
 			CheckDisposed();
@@ -137,7 +130,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Now get the attributes
 			if (matcher is SimpleStringMatcher)
 			{
-				SimpleStringMatcher ssMatcher = (matcher as SimpleStringMatcher);
+				var ssMatcher = (SimpleStringMatcher)matcher;
 				m_textBox.Tss = ssMatcher.Pattern.Pattern;
 				m_MatchCasecheckBox.Checked = ssMatcher.Pattern.MatchCase;
 				m_MatchDiacriticscheckBox.Checked = ssMatcher.Pattern.MatchDiacritics;
@@ -145,22 +138,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_textBox.AdjustForStyleSheet(this, null, stylesheet);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the resulting matcher.
 		/// </summary>
-		/// <value>The resulting matcher.</value>
-		/// ------------------------------------------------------------------------------------
 		public IMatcher ResultingMatcher
 		{
 			get
 			{
 				CheckDisposed();
-
-				// The text we're matching will be normalized. We get more consistent results
-				// if the pattern is too. For example, matching a character with a diacritic
-				// at the end of a string doesn't work unless we do.
-				//string pattern = SIL.FieldWorks.Common.FwUtils.StringUtils.NormalizeNfd(m_textBox.Text);
 
 				m_ivwpattern.Pattern = m_textBox.Tss;
 				m_ivwpattern.MatchCase = m_MatchCasecheckBox.Checked;
@@ -174,15 +159,25 @@ namespace LanguageExplorer.Controls.XMLViews
 				SimpleStringMatcher.SetupPatternCollating(m_ivwpattern, m_cache);
 
 				if (m_anywhereButton.Checked)
+				{
 					return new AnywhereMatcher(m_ivwpattern);
-				else if (m_atEndButton.Checked)
+				}
+
+				if (m_atEndButton.Checked)
+				{
 					return new EndMatcher(m_ivwpattern);
-				else if (m_atStartButton.Checked)
+				}
+
+				if (m_atStartButton.Checked)
+				{
 					return new BeginMatcher(m_ivwpattern);
-				else if (m_regExButton.Checked)
+				}
+
+				if (m_regExButton.Checked)
+				{
 					return new RegExpMatcher(m_ivwpattern);
-				else
-					return new ExactMatcher(m_ivwpattern);
+				}
+				return new ExactMatcher(m_ivwpattern);
 			}
 		}
 
@@ -192,22 +187,21 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// and allow it to continue, otherwise show the errormessage associated with the
 		/// error and don't allow it to be selected.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void m_okButton_Click(object sender, System.EventArgs e)
+		private void m_okButton_Click(object sender, EventArgs e)
 		{
-			IMatcher testMatcher = ResultingMatcher;
+			var testMatcher = ResultingMatcher;
 			if (testMatcher.IsValid())
 			{
-				DialogResult = System.Windows.Forms.DialogResult.OK;
+				DialogResult = DialogResult.OK;
 				return;
 			}
-			string errMsg = String.Format(XMLViewsStrings.ksFilterErrorMsg, testMatcher.ErrorMessage());
-			MessageBox.Show(this, errMsg, XMLViewsStrings.ksFilterError,
-				MessageBoxButtons.OK, MessageBoxIcon.Error);
+			var errMsg = string.Format(XMLViewsStrings.ksFilterErrorMsg, testMatcher.ErrorMessage());
+			MessageBox.Show(this, errMsg, XMLViewsStrings.ksFilterError, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			// If the matcher can make the search text valid - let it
 			if (testMatcher.CanMakeValid())
-				this.m_textBox.Tss = testMatcher.MakeValid();
+			{
+				m_textBox.Tss = testMatcher.MakeValid();
+			}
 		}
 
 		/// <summary>
@@ -219,19 +213,31 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				CheckDisposed();
 
-				if (m_textBox.Text.Length == 0)	// case where nothing was entered
+				if (m_textBox.Text.Length == 0) // case where nothing was entered
+				{
 					return "";					// return an empty string
-				string pattern = m_textBox.Text;
+				}
+				var pattern = m_textBox.Text;
 				if (m_anywhereButton.Checked)
+				{
 					return pattern;
-				else if (m_atEndButton.Checked)
+				}
+
+				if (m_atEndButton.Checked)
+				{
 					return pattern + "#";
-				else if (m_atStartButton.Checked)
+				}
+
+				if (m_atStartButton.Checked)
+				{
 					return "#" + pattern;
-				else if (m_regExButton.Checked)
+				}
+
+				if (m_regExButton.Checked)
+				{
 					return "/" + pattern + "/";
-				else
-					return "#" + pattern + "#";
+				}
+				return "#" + pattern + "#";
 			}
 		}
 
@@ -243,7 +249,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -254,14 +262,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}
@@ -388,10 +395,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void m_regExButton_CheckedChanged(object sender, EventArgs e)
 		{
-			if(m_regExButton.Checked)
-				regexHelper.Enabled = true;
-			else
-				regexHelper.Enabled = false;
+			regexHelper.Enabled = m_regExButton.Checked;
 		}
 
 		private void regexHelper_Click(object sender, EventArgs e)

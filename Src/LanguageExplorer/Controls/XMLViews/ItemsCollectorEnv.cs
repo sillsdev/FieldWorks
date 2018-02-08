@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,25 +17,14 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public class ItemsCollectorEnv : CollectorEnv
 	{
-#pragma warning disable 414
-		LcmCache m_cache;
-#pragma warning restore 414
 		private readonly HashSet<int> m_hvosInCell = new HashSet<int>();
-
-		/// <summary />
-		public ItemsCollectorEnv(IVwEnv env, LcmCache cache, int hvoRoot)
-			: base(env, cache.MainCacheAccessor, hvoRoot)
-		{
-			m_cache = cache;
-		}
 
 		/// <summary>
 		/// This constructor should be used if you want to provide a seperate cache decorator.
 		/// </summary>
-		public ItemsCollectorEnv(IVwEnv env, LcmCache cache, ISilDataAccess sda, int hvoRoot)
+		public ItemsCollectorEnv(IVwEnv env, ISilDataAccess sda, int hvoRoot)
 			: base(env, sda, hvoRoot)
 		{
-			m_cache = cache;
 		}
 
 		/// <summary>

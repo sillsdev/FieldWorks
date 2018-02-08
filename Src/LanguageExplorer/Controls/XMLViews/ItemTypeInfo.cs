@@ -58,10 +58,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Get the string representation used in the part ref attributes.
 		/// </summary>
-		public virtual string StorageString
-		{
-			get { return $"{(Enabled ? "+" : "-")}{ItemGuid}"; }
-		}
+		public virtual string StorageString => $"{(Enabled ? "+" : "-")}{ItemGuid}";
 
 		/// <summary>
 		/// Create a list of these objects from a string representation.

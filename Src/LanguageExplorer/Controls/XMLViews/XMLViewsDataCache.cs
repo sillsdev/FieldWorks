@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2008-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -113,9 +113,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Override to support fake integer properties.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="tag"></param>
-		/// <returns></returns>
 		public override int get_IntProp(int hvo, int tag)
 		{
 			switch (tag)
@@ -293,41 +290,41 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override ITsString get_StringProp(int hvo, int tag)
 		{
-			if ((tag == ktagAlternateValue) || (tag >= ktagAlternateValueMultiBase && tag < ktagAlternateValueMultiBaseLim))
+			if (tag != ktagAlternateValue && (tag < ktagAlternateValueMultiBase || tag >= ktagAlternateValueMultiBaseLim))
 			{
-				ITsString result;
-				if (m_stringCache.TryGetValue(new HvoFlidKey(hvo, tag), out result))
-				{
-					return result;
-				}
-				// Try to find a sensible WS from existing data, avoiding a crash if possible.
-				// See FWR-3598.
-				ITsString tss = null;
-				foreach (var x in m_stringCache.Keys)
-				{
-					tss = m_stringCache[x];
-					if (x.Flid == tag)
-					{
-						break;
-					}
-				}
-				if (tss == null)
-				{
-					foreach (var x in m_mlStringCache.Keys)
-					{
-						return TsStringUtils.EmptyString(x.Ws);
-					}
-				}
-				if (tss != null)
-				{
-					var ws = TsStringUtils.GetWsOfRun(tss, 0);
-					return TsStringUtils.EmptyString(ws);
-				}
-				// Enhance JohnT: might be desirable to return empty string rather than crashing,
-				// but as things stand, we don't know what would be a sensible WS.
-				throw new InvalidOperationException("trying to read a preview value not previously cached");
+				return base.get_StringProp(hvo, tag);
 			}
-			return base.get_StringProp(hvo, tag);
+			ITsString result;
+			if (m_stringCache.TryGetValue(new HvoFlidKey(hvo, tag), out result))
+			{
+				return result;
+			}
+			// Try to find a sensible WS from existing data, avoiding a crash if possible.
+			// See FWR-3598.
+			ITsString tss = null;
+			foreach (var x in m_stringCache.Keys)
+			{
+				tss = m_stringCache[x];
+				if (x.Flid == tag)
+				{
+					break;
+				}
+			}
+			if (tss == null)
+			{
+				foreach (var x in m_mlStringCache.Keys)
+				{
+					return TsStringUtils.EmptyString(x.Ws);
+				}
+			}
+			if (tss != null)
+			{
+				var ws = TsStringUtils.GetWsOfRun(tss, 0);
+				return TsStringUtils.EmptyString(ws);
+			}
+			// Enhance JohnT: might be desirable to return empty string rather than crashing,
+			// but as things stand, we don't know what would be a sensible WS.
+			throw new InvalidOperationException("trying to read a preview value not previously cached");
 		}
 
 		/// <summary>

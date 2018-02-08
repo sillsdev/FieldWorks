@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -48,7 +48,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -69,10 +71,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
+		/// <summary />
 		public void Dispose()
 		{
 			Dispose(true);
@@ -124,10 +123,8 @@ namespace LanguageExplorer.Controls.XMLViews
 
 				// At least in the tests these get created for us; we're the only one using them,
 				// so we should dispose them.
-				var disposable = Finder as IDisposable;
-				disposable?.Dispose();
-				disposable = Sorter as IDisposable;
-				disposable?.Dispose();
+				(Finder as IDisposable)?.Dispose();
+				(Sorter as IDisposable)?.Dispose();
 				m_FiltersToDispose.Dispose();
 				m_combo?.Dispose();
 			}
@@ -148,7 +145,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets or sets the spec.
 		/// </summary>
-		/// <value>The spec.</value>
 		public XElement Spec
 		{
 			get
@@ -166,7 +162,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets or sets the finder.
 		/// </summary>
-		/// <value>The finder.</value>
 		/// <remarks>A Finder assigned here will be disposed by FilterSortItem.Dispose.</remarks>
 		public IStringFinder Finder
 		{
@@ -178,8 +173,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			set
 			{
 				CheckDisposed();
-				var disposable = m_finder as IDisposable;
-				disposable?.Dispose();
+				(m_finder as IDisposable)?.Dispose();
 
 				m_finder = value;
 			}
@@ -199,8 +193,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			set
 			{
 				CheckDisposed();
-				var disposable = m_combo as IDisposable;
-				disposable?.Dispose();
+				(m_combo as IDisposable)?.Dispose();
 				m_combo = value;
 			}
 		}
@@ -208,7 +201,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets or sets the matcher.
 		/// </summary>
-		/// <value>The matcher.</value>
 		public IMatcher Matcher
 		{
 			get
@@ -231,7 +223,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets or sets the sorter.
 		/// </summary>
-		/// <value>The sorter.</value>
 		/// <remarks>A Sorter assigned here will be disposed by FilterSortItem.Dispose.</remarks>
 		public RecordSorter Sorter
 		{
@@ -243,8 +234,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			set
 			{
 				CheckDisposed();
-				var disposable = m_sorter as IDisposable;
-				disposable?.Dispose();
+				(m_sorter as IDisposable)?.Dispose();
 				m_sorter = value;
 			}
 		}

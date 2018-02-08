@@ -33,11 +33,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Make it work sensibly as a hash key. Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
 		/// </summary>
-		/// <param name="obj">The <see cref="T:System.Object"/> to compare with the current <see cref="T:System.Object"/>.</param>
-		/// <returns>
-		/// true if the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>; otherwise, false.
-		/// </returns>
-		/// <exception cref="T:System.NullReferenceException">The <paramref name="obj"/> parameter is null.</exception>
 		public override bool Equals(object obj)
 		{
 			return base.Equals(obj) && obj is NodeChildrenDisplayCommand;

@@ -38,7 +38,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				dlg.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 				var morphType = GetMorphType();
-				dlg.SetDlgInfo(m_cache, morphType, MsaType.kInfl, m_slot, m_fPrefix ? MorphTypeFilterType.Prefix : MorphTypeFilterType.Suffix);
+				dlg.SetDlgInfo(Cache, morphType, MsaType.kInfl, m_slot, m_fPrefix ? MorphTypeFilterType.Prefix : MorphTypeFilterType.Suffix);
 				dlg.DisableAffixTypeMainPosAndSlot();
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
@@ -56,16 +56,16 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(DetailControlsStrings.ksUndoCreatingInflectionalAffixCategoryItem,
 							DetailControlsStrings.ksRedoCreatingInflectionalAffixCategoryItem,
-							m_cache.ActionHandlerAccessor,
+							Cache.ActionHandlerAccessor,
 							() => {
-								var newby = m_cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
+								var newby = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
 								entry.MorphoSyntaxAnalysesOC.Add(newby);
 							});
 					}
 
 					if (entry.MorphoSyntaxAnalysesOC.Count > 0)
 					{
-						result = ObjectLabel.CreateObjectLabel(m_cache, entry.MorphoSyntaxAnalysesOC.First(), string.Empty);
+						result = ObjectLabel.CreateObjectLabel(Cache, entry.MorphoSyntaxAnalysesOC.First(), string.Empty);
 					}
 				}
 			}
@@ -76,8 +76,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			IMoMorphType morphType = null;
 			var sMorphTypeName = (m_fPrefix ? "prefix" : "suffix");
-			var iEnglishWs = WritingSystemServices.FallbackUserWs(m_cache);
-			foreach (var type in m_cache.LanguageProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities)
+			var iEnglishWs = WritingSystemServices.FallbackUserWs(Cache);
+			foreach (var type in Cache.LanguageProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities)
 			{
 				if (sMorphTypeName == type.Name.get_String(iEnglishWs).Text)
 				{

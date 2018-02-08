@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,12 +6,10 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Xml.Linq;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -33,24 +31,17 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal LcmCache m_cache;
 		internal LayoutCache m_layouts;
 		internal XElement m_colSpec;
-		/// <summary/>
+		/// <summary />
 		protected XmlBrowseViewBaseVc m_vc;
-		/// <summary/>
+		/// <summary />
 		protected bool m_fDisposeVc;
 		private IApp m_app;
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// normal constructor.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="layoutName">Name of the layout.</param>
-		/// <param name="colSpec">The col spec.</param>
-		/// <param name="app">The application.</param>
-		/// ------------------------------------------------------------------------------------
-		internal LayoutFinder(LcmCache cache, string layoutName, XElement colSpec,
-			IApp app): this()
+		internal LayoutFinder(LcmCache cache, string layoutName, XElement colSpec, IApp app): this()
 		{
 			m_layoutName = layoutName;
 			m_colSpec = colSpec;
@@ -65,21 +56,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Make a finder appropriate to the given column specification
 		/// </summary>
-		/// <param name="cache">LcmCache</param>
-		/// <param name="colSpec">column specification</param>
-		/// <param name="vc">The vc.</param>
-		/// <param name="app">The application.</param>
-		/// <returns>finder for colSpec</returns>
-		/// ------------------------------------------------------------------------------------
 		internal static IStringFinder CreateFinder(LcmCache cache, XElement colSpec, XmlBrowseViewBaseVc vc, IApp app)
 		{
-			string layoutName = XmlUtils.GetOptionalAttributeValue(colSpec, "layout");
-			string sSortMethod = XmlUtils.GetOptionalAttributeValue(colSpec, "sortmethod");
-			string sortType = XmlUtils.GetOptionalAttributeValue(colSpec, "sortType", null);
+			var layoutName = XmlUtils.GetOptionalAttributeValue(colSpec, "layout");
+			var sSortMethod = XmlUtils.GetOptionalAttributeValue(colSpec, "sortmethod");
+			var sortType = XmlUtils.GetOptionalAttributeValue(colSpec, "sortType", null);
 			LayoutFinder result;
 			if (sSortMethod != null)
 			{
@@ -139,58 +123,31 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-//		/// ------------------------------------------------------------------------------------
-//		/// <summary>
-//		/// Given a spec that might be some sort of element, or might be something wrapping a flow object
-//		/// around that element, return the element. Or, it might be a "frag" element wrapping all of that.
-//		/// </summary>
-//		/// <param name="viewSpec">The view spec.</param>
-//		/// <returns></returns>
-//		/// ------------------------------------------------------------------------------------
-		//		XElement ExtractFromFlow(XElement viewSpec)
-//		{
-//			if (viewSpec == null)
-//				return null;
-//			if (viewSpec.Name == "frag")
-//				viewSpec = viewSpec.FirstChild;
-//			if (viewSpec.Name == "para" || viewSpec.Name == "div")
-//		{
-//				if (viewSpec.ChildNodes.Count == 2 && viewSpec.FirstChild.Name == "properties")
-//					return viewSpec.ChildNodes[1];
-//				else if (viewSpec.ChildNodes.Count == 1)
-//					return viewSpec.FirstChild;
-//		}
-//			return viewSpec; // None of the special flow object cases, use the node itself.
-//		}
-
 		#region StringFinder Members
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Strings the specified hvo.
 		/// </summary>
-		/// <param name="hvo">The hvo.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public string[] Strings(int hvo)
 		{
 			try
 			{
 				string[] result = null;
 				if (m_layoutName == null)
+				{
 					result = StringsFor(hvo, m_colSpec, m_vc.WsForce);
+				}
 				if (result == null)
 				{
 					var layout = XmlVc.GetNodeForPart(hvo, m_layoutName, true, m_sda, m_layouts);
 					if (layout == null)
+					{
 						return new string[0]; // cell will be empty.
+					}
 					result = StringsFor(hvo, layout, m_vc.WsForce);
 				}
 
-				if (result == null)
-					return new string[0];
-				else
-					return result;
+				return result ?? new string[0];
 			}
 			catch (Exception e)
 			{
@@ -198,63 +155,46 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Figure the node and hvo that correspond to the particular sort item,
 		/// and generate its key. This figures out the XML needed for the particular
 		/// key object, and interprets it to make a key.
 		/// </summary>
-		/// <param name="item">The item.</param>
-		/// <param name="sortedFromEnd"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public string[] Strings(IManyOnePathSortItem item, bool sortedFromEnd)
 		{
-			string result = Key(item, true).Text;
+			var result = Key(item, true).Text;
 			if (result == null)
-				return new string[0];
-			else
 			{
-				if (sortedFromEnd)
-					result = TsStringUtils.ReverseString(result);
-
-				return new string[] { result };
+				return new string[0];
 			}
+
+			if (sortedFromEnd)
+			{
+				result = TsStringUtils.ReverseString(result);
+			}
+
+			return new[] { result };
 		}
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Keys the specified item.
 		/// </summary>
-		/// <param name="item">The item.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public ITsString Key(IManyOnePathSortItem item)
 		{
 			return Key(item, false);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Keys the specified item.
 		/// </summary>
-		/// <param name="item">The item.</param>
-		/// <param name="fForSorting">if set to <c>true</c> [f for sorting].</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public ITsString Key(IManyOnePathSortItem item, bool fForSorting)
 		{
 			if (m_cache == null)
+			{
 				throw new ApplicationException("There's no way the browse VC (m_vc) can get a string in its current state.");
-			int hvo = item.RootObjectHvo;
-			TsStringCollectorEnv collector;
-			if (fForSorting)
-			{
-				collector = new SortCollectorEnv(null, m_sda, hvo);
 			}
-			else
-			{
-				collector = new TsStringCollectorEnv(null, m_sda, hvo);
-			}
+			var hvo = item.RootObjectHvo;
+			var collector = fForSorting ? new SortCollectorEnv(null, m_sda, hvo) : new TsStringCollectorEnv(null, m_sda, hvo);
 
 			// This will check to see if the VC is either null or disposed.  The disposed check is neccesary because
 			// there are several instances where we can have a reference to an instance that was disposed, which will
@@ -264,33 +204,37 @@ namespace LanguageExplorer.Controls.XMLViews
 			// every time the tool is changed
 			if (m_vc == null)
 			{
-				m_vc = new XmlBrowseViewBaseVc(m_cache);
-				m_vc.SuppressPictures = true; // we won't dispose of it, so it mustn't make pictures (which we don't need)
-				m_vc.DataAccess = m_sda;
+				m_vc = new XmlBrowseViewBaseVc(m_cache)
+				{
+					// we won't dispose of it, so it mustn't make pictures (which we don't need)
+					SuppressPictures = true,
+					DataAccess = m_sda
+				};
 			}
 			else
 			{
 				if (m_vc.Cache == null)
+				{
 					m_vc.Cache = m_cache;
+				}
+
 				if (m_vc.Cache == null)
+				{
 					throw new ApplicationException("There's no way the browse VC (m_vc) can get a string in its current state.");
+				}
 			}
 			m_vc.DisplayCell(item, m_colSpec, hvo, collector);
 			return collector.Result;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// For most of these we want to return the same thing.
 		/// </summary>
-		/// <param name="item">The item.</param>
-		/// <param name="sortedFromEnd">if set to <c>true</c> [sorted from end].</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public virtual string[] SortStrings(IManyOnePathSortItem item, bool sortedFromEnd)
 		{
 			return Strings(item, sortedFromEnd);
 		}
+
 		/// <summary>
 		/// Add to collector the ManyOnePathSortItems which this sorter derives from
 		/// the specified object. This implementation follows object and sequence properties,
@@ -299,7 +243,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void CollectItems(int hvo, ArrayList collector)
 		{
-			int start = collector.Count;
 			XmlViewsUtils.CollectBrowseItems(hvo, m_colSpec, collector, m_mdc, m_sda, m_layouts);
 		}
 
@@ -308,44 +251,44 @@ namespace LanguageExplorer.Controls.XMLViews
 			return XmlViewsUtils.StringsFor(m_cache, m_cache.DomainDataByFlid, layout, hvo, m_layouts, null, wsForce);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Answer true if they are the 'same' finder (will find the same strings).
 		/// </summary>
-		/// <param name="other">The other.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public virtual bool SameFinder(IStringFinder other)
 		{
 			var otherLf = other as LayoutFinder;
 			if (otherLf == null)
+			{
 				return false;
+			}
 			return SameLayoutName(otherLf)
 				&& SameData(otherLf)
 				&& SameConfiguration(otherLf);
 		}
 
-		bool SameLayoutName(LayoutFinder otherLf)
+		private bool SameLayoutName(LayoutFinder otherLf)
 		{
-			return otherLf.m_layoutName == m_layoutName ||
-				(String.IsNullOrEmpty(otherLf.m_layoutName) && String.IsNullOrEmpty(m_layoutName));
+			return otherLf.m_layoutName == m_layoutName || (string.IsNullOrEmpty(otherLf.m_layoutName) && string.IsNullOrEmpty(m_layoutName));
 		}
 
 		private bool SameData(LayoutFinder otherLf)
 		{
 			if (otherLf.m_sda == m_sda)
+			{
 				return true;
-			ISilDataAccessManaged first = RootSdaOf(m_sda);
-			ISilDataAccessManaged second = RootSdaOf(otherLf.m_sda);
+			}
+			var first = RootSdaOf(m_sda);
+			var second = RootSdaOf(otherLf.m_sda);
 			return (first == second && first != null);
 		}
 
 		private static ISilDataAccessManaged RootSdaOf(ISilDataAccess sda)
 		{
 			if (sda is DomainDataByFlidDecoratorBase)
+			{
 				return RootSdaOf((sda as DomainDataByFlidDecoratorBase).BaseSda);
-			else
-				return sda as ISilDataAccessManaged;
+			}
+			return sda as ISilDataAccessManaged;
 		}
 
 		private bool SameConfiguration(LayoutFinder otherLf)
@@ -355,14 +298,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			// lose the sort arrow when switching between tools sharing common columns (LT-2858).
 			// For now, just assume that columns with the same label will display the same value.
 			// If this proves too loose for a particular column, try implementing a sortmethod instead.
-			string colSpecLabel = XmlUtils.GetMandatoryAttributeValue(m_colSpec, "label");
-			string otherLfLabel = XmlUtils.GetMandatoryAttributeValue(otherLf.m_colSpec, "label");
-			string colSpecLabel2 = XmlUtils.GetOptionalAttributeValue(m_colSpec, "headerlabel");
-			string otherLfLabel2 = XmlUtils.GetOptionalAttributeValue(otherLf.m_colSpec, "headerlabel");
-			return (colSpecLabel == otherLfLabel ||
-					colSpecLabel == otherLfLabel2 ||
-					colSpecLabel2 == otherLfLabel ||
-					(colSpecLabel2 == otherLfLabel2 && otherLfLabel2 != null));
+			var colSpecLabel = XmlUtils.GetMandatoryAttributeValue(m_colSpec, "label");
+			var otherLfLabel = XmlUtils.GetMandatoryAttributeValue(otherLf.m_colSpec, "label");
+			var colSpecLabel2 = XmlUtils.GetOptionalAttributeValue(m_colSpec, "headerlabel");
+			var otherLfLabel2 = XmlUtils.GetOptionalAttributeValue(otherLf.m_colSpec, "headerlabel");
+			return colSpecLabel == otherLfLabel ||
+			       colSpecLabel == otherLfLabel2 ||
+			       colSpecLabel2 == otherLfLabel ||
+			       (colSpecLabel2 == otherLfLabel2 && otherLfLabel2 != null);
 		}
 
 		/// <summary>
@@ -373,26 +316,33 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void Preload(object rootObj)
 		{
-			if (m_vc != null)
-				m_vc.SetReversalWritingSystemFromRootObject(rootObj);
-			string preload = XmlUtils.GetOptionalAttributeValue(m_colSpec, "preload", null);
-			if (String.IsNullOrEmpty(preload))
+			m_vc?.SetReversalWritingSystemFromRootObject(rootObj);
+			var preload = XmlUtils.GetOptionalAttributeValue(m_colSpec, "preload", null);
+			if (string.IsNullOrEmpty(preload))
+			{
 				return;
-			string[] splits = preload.Split('.');
+			}
+			var splits = preload.Split('.');
 			if (splits.Length != 2)
+			{
 				return; // ignore faulty ones
-			string className = splits[0];
-			string methodName = splits[1];
+			}
+			var className = splits[0];
+			var methodName = splits[1];
 			// Get the directory where our DLLs live
-			string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 			// For now we assume an LCM class.
-			Assembly lcmAssembly = Assembly.LoadFrom(Path.Combine(baseDir, "SIL.LCModel.dll"));
-			Type targetType = lcmAssembly.GetType("SIL.LCModel." + className);
+			var lcmAssembly = Assembly.LoadFrom(Path.Combine(baseDir, "SIL.LCModel.dll"));
+			var targetType = lcmAssembly.GetType("SIL.LCModel." + className);
 			if (targetType == null)
+			{
 				return;
-			MethodInfo info = targetType.GetMethod(methodName, BindingFlags.Static | BindingFlags.Public);
+			}
+			var info = targetType.GetMethod(methodName, BindingFlags.Static | BindingFlags.Public);
 			if (info == null)
+			{
 				return;
+			}
 			info.Invoke(null, new object[] { m_cache });
 		}
 
@@ -400,24 +350,18 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		#region IPersistAsXml Members
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public virtual void PersistAsXml(XElement node)
 		{
 			XmlUtils.SetAttribute(node, "layout", m_layoutName ?? string.Empty);
 			node.Add(m_colSpec);
-			}
+		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public virtual void InitXml(XElement node)
 		{
 			m_layoutName = XmlUtils.GetMandatoryAttributeValue(node, "layout");
@@ -436,7 +380,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			set
 			{
 				if (m_cache == value)
+				{
 					return;
+				}
 
 				m_sda = value.DomainDataByFlid;
 				m_cache = value;
@@ -447,139 +393,11 @@ namespace LanguageExplorer.Controls.XMLViews
 				// When the VC is created by restoring a persisted layout finder, the cache
 				// is set later, and needs to be copied to the VC.
 				if (m_vc != null)
-					m_vc.Cache = value;
-			}
-		}
-		#endregion
-	}
-
-	/// <summary>
-	/// IntCompareFinder is an implementation of StringFinder that modifies the sort
-	/// string by adding leading zeros to pad it to ten digits.
-	/// </summary>
-	internal class IntCompareFinder : LayoutFinder
-	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// normal constructor.
-		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="layoutName">Name of the layout.</param>
-		/// <param name="colSpec">The col spec.</param>
-		/// <param name="app">The application</param>
-		/// ------------------------------------------------------------------------------------
-		public IntCompareFinder(LcmCache cache, string layoutName, XElement colSpec, IApp app)
-			: base(cache, layoutName, colSpec, app)
-		{
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Default constructor for persistence.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public IntCompareFinder()
-		{
-		}
-
-		#region StringFinder Members
-
-		const int maxDigits = 10; // Int32.MaxValue.ToString().Length;, but that is not 'const'!
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Get a key from the item for sorting. Add enough leading zeros so string comparison
-		/// works.
-		///
-		/// Collator sorting generally ignores the minus sign as being a hyphen.  So we have
-		/// to be tricky handling negative numbers.  Nine's complement with an inverted sign
-		/// digit should do the trick...
-		/// </summary>
-		/// <param name="item">The item.</param>
-		/// <param name="sortedFromEnd">if set to <c>true</c> [sorted from end].</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public override string[] SortStrings(IManyOnePathSortItem item, bool sortedFromEnd)
-		{
-			string[] baseResult = base.SortStrings(item, sortedFromEnd);
-			if (sortedFromEnd)
-				return baseResult; // what on earth would it mean??
-			if (baseResult.Length != 1)
-				return baseResult;
-			string sVal = baseResult[0];
-			if (sVal.Length == 0)
-				return new string[] { "9" + new String('0', maxDigits) };
-			string prefix;
-			char chFiller;
-			if (sVal[0] == '-')
-			{
-				sVal = NinesComplement(sVal.Substring(1));
-				prefix = "0";	// negative numbers come first.
-				chFiller = '9';
-			}
-			else
-			{
-				prefix = "9";	// positive numbers come later.
-				chFiller = '0';
-			}
-			if (sVal.Length == maxDigits)
-				return new string[] { prefix + sVal };
-			else
-				return new string[] { prefix + new String(chFiller, maxDigits - sVal.Length) + sVal };
-		}
-
-		private string NinesComplement(string sNumber)
-		{
-			StringBuilder bldr = new StringBuilder();
-			while (sNumber.Length > 0)
-			{
-				switch (sNumber[0])
 				{
-					case '0': bldr.Append('9'); break;
-					case '1': bldr.Append('8'); break;
-					case '2': bldr.Append('7'); break;
-					case '3': bldr.Append('6'); break;
-					case '4': bldr.Append('5'); break;
-					case '5': bldr.Append('4'); break;
-					case '6': bldr.Append('3'); break;
-					case '7': bldr.Append('2'); break;
-					case '8': bldr.Append('1'); break;
-					case '9': bldr.Append('0'); break;
-					default:
-						throw new Exception("Invalid character found in supposed integer string!");
+					m_vc.Cache = value;
 				}
-				sNumber = sNumber.Substring(1);
-			}
-			return bldr.ToString();
-		}
-
-		/// <summary>
-		/// Answer true if they are the 'same' finder (will find the same strings).
-		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
-		public override bool SameFinder(IStringFinder other)
-		{
-			if (other is IntCompareFinder)
-			{
-				return base.SameFinder(other);
-			}
-			else
-			{
-				return false;
 			}
 		}
-
 		#endregion
-	}
-
-	/// <summary>
-	/// This is a marker class used when building a sort key.
-	/// </summary>
-	class SortCollectorEnv : TsStringCollectorEnv
-	{
-		public SortCollectorEnv(IVwEnv baseEnv, ISilDataAccess sda, int hvoRoot)
-			: base(baseEnv, sda, hvoRoot)
-		{ }
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,7 +13,6 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using SIL.WritingSystems;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
@@ -39,12 +38,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		private Label label3;
 		internal ListView currentList;
 		List<XElement> m_possibleColumns;
-		List<XElement> m_currentColumns;
 		readonly LcmCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-		bool m_fUpdatingWsCombo = false; // true during UpdateWsCombo
+		bool m_fUpdatingWsCombo; // true during UpdateWsCombo
 		WsComboContent m_wccCurrent = WsComboContent.kwccNone;
-		private int m_hvoRootObj = 0;
 		internal ListView optionsList;
 		private HelpProvider helpProvider;
 		private IContainer components;
@@ -53,20 +50,17 @@ namespace LanguageExplorer.Controls.XMLViews
 		private Label blkEditText;
 		private ImageList imageList1;
 		private ImageList imageList2;
-		private bool showBulkEditIcons = false;
+		private bool showBulkEditIcons;
 
 		/// <summary>
 		/// Construct a column configure dialog. It is passed a list of XmlNodes that
 		/// specify the possible columns, and another list, a subset of the first,
 		/// of the ones currently displayed.
 		/// </summary>
-		/// <param name="possibleColumns">The possible columns.</param>
-		/// <param name="currentColumns">The current columns.</param>
-		/// <param name="propertyTable"></param>
 		public ColumnConfigureDialog(List<XElement> possibleColumns, List<XElement> currentColumns, IPropertyTable propertyTable)
 		{
 			m_possibleColumns = possibleColumns;
-			m_currentColumns = currentColumns;
+			CurrentSpecs = currentColumns;
 			m_cache = propertyTable.GetValue<LcmCache>("cache");
 			//
 			// Required for Windows Form Designer support
@@ -103,15 +97,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the current specs.
 		/// </summary>
-		/// <value>The current specs.</value>
-		public List<XElement> CurrentSpecs
-		{
-			get
-			{
-				CheckDisposed();
-				return m_currentColumns;
-			}
-		}
+		public List<XElement> CurrentSpecs { get; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether [show bulk edit icons].
@@ -139,28 +125,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets or sets the root object hvo.
 		/// </summary>
-		/// <value>The root object hvo.</value>
-		public int RootObjectHvo
-		{
-			get
-			{
-				CheckDisposed();
-				return m_hvoRootObj;
-			}
-			set
-			{
-				CheckDisposed();
-				m_hvoRootObj = value;
-			}
-		}
+		public int RootObjectHvo { get; set; }
 
-		private void InitWsCombo(WsComboContent contentToDisplay)
-		{
-			// Default to an empty string, which will prevent anything from being selected
-			InitWsCombo(contentToDisplay, "");
-		}
-
-		private void InitWsCombo(WsComboContent contentToDisplay, string wsLabel)
+		private void InitWsCombo(WsComboContent contentToDisplay, string wsLabel = "")
 		{
 			if (m_wccCurrent == contentToDisplay)
 			{
@@ -178,23 +145,24 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void SelectWsLabel(string wsLabel)
 		{
-			if (wsLabel != string.Empty)
+			if (wsLabel == string.Empty)
 			{
-				var itemToSelect = wsLabel;
-				switch (wsLabel)
+				return;
+			}
+			var itemToSelect = wsLabel;
+			switch (wsLabel)
+			{
+				case "analysis vernacular":
+				case "vernacular analysis":
+					itemToSelect = wsLabel.Split(' ')[0];
+					break;
+			}
+			foreach (WsComboItem item in wsCombo.Items)
+			{
+				if (item.Id == itemToSelect)
 				{
-					case "analysis vernacular":
-					case "vernacular analysis":
-						itemToSelect = wsLabel.Split(' ')[0];
-						break;
-				}
-				foreach (WsComboItem item in wsCombo.Items)
-				{
-					if (item.Id == itemToSelect)
-					{
-						wsCombo.SelectedItem = item;
-						break;
-					}
+					wsCombo.SelectedItem = item;
+					break;
 				}
 			}
 		}
@@ -255,10 +223,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 
 			wsCombo.Items.Clear();
-			var ri = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(m_hvoRootObj);
+			var ri = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(RootObjectHvo);
 			var sLang = m_cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem).Language;
 			var fSort = wsCombo.Sorted;
-			foreach (CoreWritingSystemDefinition ws in WritingSystemServices.GetReversalIndexWritingSystems(m_cache, ri.Hvo, false))
+			foreach (var ws in WritingSystemServices.GetReversalIndexWritingSystems(m_cache, ri.Hvo, false))
 			{
 				if (ws.Language == sLang)
 				{
@@ -463,9 +431,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					AddWritingSystemsToCombo(cache, items, cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems);
 					break;
 				default:
-					throw new NotImplementedException(
-						"AddWritingSystemsToCombo does not know how to add " +
-						contentToAdd + " content.");
+					throw new NotImplementedException($"AddWritingSystemsToCombo does not know how to add {contentToAdd} content.");
 			}
 		}
 
@@ -485,9 +451,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			// LT-12253 It's just possible that AddCurrentItem() will delete a column
 			// (e.g. if the user previously deleted a ws that it references).
 			// So don't use foreach here!
-			for (var i = 0; i < m_currentColumns.Count; i++)
+			for (var i = 0; i < CurrentSpecs.Count; i++)
 			{
-				var node = m_currentColumns[i];
+				var node = CurrentSpecs[i];
 				var item = AddCurrentItem(node);
 				if (item == null)
 				{
@@ -499,7 +465,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Creates the ListViewItem for the current Xml node.
 		/// </summary>
-		/// <param name="node"></param>
 		/// <returns>The ListViewItem or null. If null is returned, the caller should delete this
 		/// column from the current list.</returns>
 		private ListViewItem MakeCurrentItem(XElement node)
@@ -581,10 +546,10 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						// Get the language for this reversal index.
 						string sWsName = null;
-						if (m_hvoRootObj > 0)
+						if (RootObjectHvo > 0)
 						{
 							var servLoc = m_cache.ServiceLocator;
-							var ri = servLoc.GetInstance<IReversalIndexRepository>().GetObject(m_hvoRootObj);
+							var ri = servLoc.GetInstance<IReversalIndexRepository>().GetObject(RootObjectHvo);
 							//var ws = servLoc.WritingSystemManager.Get(ri.WritingSystem);
 							//sWsName = ws.DisplayLabel;
 							sWsName = ri.ShortName;
@@ -674,7 +639,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			// Search through m_currentColumns for one that has the same label attribute
 			// and original writing system.
-			foreach (var col in m_currentColumns)
+			foreach (var col in CurrentSpecs)
 			{
 				var colLabel = XmlUtils.GetOptionalAttributeValue(col, "label");
 				if (label != colLabel)
@@ -710,15 +675,15 @@ namespace LanguageExplorer.Controls.XMLViews
 			return null;
 		}
 
-		ListViewItem AddCurrentItem(XElement node)
+		private ListViewItem AddCurrentItem(XElement node)
 		{
 			var item = MakeCurrentItem(node);
 			// Should only occur if user deleted this ws
 			if (item == null)
 			{
-				if (m_currentColumns.Contains(node))
+				if (CurrentSpecs.Contains(node))
 				{
-					m_currentColumns.Remove(node);
+					CurrentSpecs.Remove(node);
 				}
 			}
 			else
@@ -993,7 +958,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 		#endregion
 
-		void ColumnConfigureDialog_FormClosing(object sender, FormClosingEventArgs e)
+		private void ColumnConfigureDialog_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			// We only need to validate the choices if the user clicked OK
 			if (DialogResult != DialogResult.OK)
@@ -1011,9 +976,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void ShowDuplicatesWarning(List<string> duplicateColumnLabels)
 		{
 			var duplicates = string.Join(", ", duplicateColumnLabels.ToArray());
-			MessageBox.Show(string.Format(XMLViewsStrings.ksDuplicateColumnMsg, duplicates),
-							XMLViewsStrings.ksDuplicateColumn,
-							MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			MessageBox.Show(string.Format(XMLViewsStrings.ksDuplicateColumnMsg, duplicates), XMLViewsStrings.ksDuplicateColumn, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 		}
 
 		private bool HasDuplicateColumns()
@@ -1100,7 +1063,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void addButton_Click(object sender, System.EventArgs e)
 		{
 			var columnBeingAdded = m_possibleColumns[optionsList.SelectedIndices[0]];
-			m_currentColumns.Add(columnBeingAdded);
+			CurrentSpecs.Add(columnBeingAdded);
 
 			var index = CurrentListIndex;
 			if (index >= 0)
@@ -1156,7 +1119,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				return;
 			}
 			currentList.Items.RemoveAt(index);
-			m_currentColumns.RemoveAt(index);
+			CurrentSpecs.RemoveAt(index);
 
 			// Select the next logical item
 			if (index < currentList.Items.Count)
@@ -1176,10 +1139,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (index <= 0)
 			{
 				return; // should be disabled, but play safe.
-}
-			var itemMove = m_currentColumns[index];
-			m_currentColumns[index] = m_currentColumns[index - 1];
-			m_currentColumns[index - 1] = itemMove;
+			}
+			var itemMove = CurrentSpecs[index];
+			CurrentSpecs[index] = CurrentSpecs[index - 1];
+			CurrentSpecs[index - 1] = itemMove;
 			var listItemMove = currentList.Items[index];
 			currentList.Items.RemoveAt(index);
 			currentList.Items.Insert(index - 1, listItemMove);
@@ -1189,13 +1152,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void moveDownButton_Click(object sender, EventArgs e)
 		{
 			var index = CurrentListIndex;
-			if (index < 0 || index >= m_currentColumns.Count - 1)
+			if (index < 0 || index >= CurrentSpecs.Count - 1)
 			{
 				return; // should be disabled, but play safe.
 			}
-			var itemMove = m_currentColumns[index];
-			m_currentColumns[index] = m_currentColumns[index + 1];
-			m_currentColumns[index + 1] = itemMove;
+			var itemMove = CurrentSpecs[index];
+			CurrentSpecs[index] = CurrentSpecs[index + 1];
+			CurrentSpecs[index + 1] = itemMove;
 			var listItemMove = currentList.Items[index];
 			currentList.Items.RemoveAt(index);
 			currentList.Items.Insert(index + 1, listItemMove);
@@ -1236,11 +1199,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				m_fUpdatingWsCombo = true;
 				var index = CurrentListIndex;
-				if (index < 0 || index >= m_currentColumns.Count)
+				if (index < 0 || index >= CurrentSpecs.Count)
 				{
 					return;
 				}
-				var node = m_currentColumns[index];
+				var node = CurrentSpecs[index];
 				var wsLabel = XmlViewsUtils.FindWsParam(node);
 				if (wsLabel == string.Empty)
 				{
@@ -1249,61 +1212,62 @@ namespace LanguageExplorer.Controls.XMLViews
 					wsLabel = XmlUtils.GetOptionalAttributeValue(node, "ws");
 				}
 
-				if (!string.IsNullOrEmpty(wsLabel))
+				if (string.IsNullOrEmpty(wsLabel))
 				{
-					var wsForOptions = XmlUtils.GetOptionalAttributeValue(node, "originalWs", wsLabel);
-					switch (wsForOptions)
-					{
-						case "reversal":
-							Debug.Assert(m_hvoRootObj != 0);
-							var clid = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoRootObj).ClassID;
-							switch (clid)
-							{
-								case ReversalIndexTags.kClassId:
-									InitWsComboForReversalIndex();
-									break;
-								default:
-									InitWsComboForReversalIndexes();
-									break;
-							}
-							break;
-						case "vern in para":
-							InitWsCombo(WsComboContent.kwccVernacularInParagraph, wsLabel);
-							break;
-						case "analysis":
-							InitWsCombo(WsComboContent.kwccAnalysis, wsLabel);
-							break;
-						case "vernacular":
-							InitWsCombo(WsComboContent.kwccVernacular, wsLabel);
-							break;
-						case "pronunciation":
-							InitWsCombo(WsComboContent.kwccPronunciation, wsLabel);
-							break;
-						case "best vernoranal":
-							InitWsCombo(WsComboContent.kwccBestVernOrAnal, wsLabel);
-							break;
-						case "best analorvern":
-							InitWsCombo(WsComboContent.kwccBestAnalOrVern, wsLabel);
-							break;
-						case "best analysis":
-							InitWsCombo(WsComboContent.kwccBestAnalysis, wsLabel);
-							break;
-						case "best vernacular":
-							InitWsCombo(WsComboContent.kwccBestVernacular, wsLabel);
-							break;
-						case "analysis vernacular":
-							InitWsCombo(WsComboContent.kwccAnalAndVern, wsLabel);
-							break;
-						case "vernacular analysis":
-							InitWsCombo(WsComboContent.kwccVernAndAnal, wsLabel);
-							break;
-						default:
-							// There something going on that we don't know how to handle.
-							// As a last ditch option, we show all vernacular and analysis systems.
-							Debug.Assert(false, "A writing system was specified in the column spec that this method does not understand.");
-							InitWsCombo(WsComboContent.kwccVernAndAnal, wsLabel);
-							break;
-					}
+					return;
+				}
+				var wsForOptions = XmlUtils.GetOptionalAttributeValue(node, "originalWs", wsLabel);
+				switch (wsForOptions)
+				{
+					case "reversal":
+						Debug.Assert(RootObjectHvo != 0);
+						var clid = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(RootObjectHvo).ClassID;
+						switch (clid)
+						{
+							case ReversalIndexTags.kClassId:
+								InitWsComboForReversalIndex();
+								break;
+							default:
+								InitWsComboForReversalIndexes();
+								break;
+						}
+						break;
+					case "vern in para":
+						InitWsCombo(WsComboContent.kwccVernacularInParagraph, wsLabel);
+						break;
+					case "analysis":
+						InitWsCombo(WsComboContent.kwccAnalysis, wsLabel);
+						break;
+					case "vernacular":
+						InitWsCombo(WsComboContent.kwccVernacular, wsLabel);
+						break;
+					case "pronunciation":
+						InitWsCombo(WsComboContent.kwccPronunciation, wsLabel);
+						break;
+					case "best vernoranal":
+						InitWsCombo(WsComboContent.kwccBestVernOrAnal, wsLabel);
+						break;
+					case "best analorvern":
+						InitWsCombo(WsComboContent.kwccBestAnalOrVern, wsLabel);
+						break;
+					case "best analysis":
+						InitWsCombo(WsComboContent.kwccBestAnalysis, wsLabel);
+						break;
+					case "best vernacular":
+						InitWsCombo(WsComboContent.kwccBestVernacular, wsLabel);
+						break;
+					case "analysis vernacular":
+						InitWsCombo(WsComboContent.kwccAnalAndVern, wsLabel);
+						break;
+					case "vernacular analysis":
+						InitWsCombo(WsComboContent.kwccVernAndAnal, wsLabel);
+						break;
+					default:
+						// There something going on that we don't know how to handle.
+						// As a last ditch option, we show all vernacular and analysis systems.
+						Debug.Assert(false, "A writing system was specified in the column spec that this method does not understand.");
+						InitWsCombo(WsComboContent.kwccVernAndAnal, wsLabel);
+						break;
 				}
 			}
 			finally
@@ -1386,7 +1350,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				return;
 			}
 			var wsId = ((WsComboItem) wsCombo.SelectedItem).Id;
-			var current = m_currentColumns[index];
+			var current = CurrentSpecs[index];
 			var sWsOrig = XmlViewsUtils.FindWsParam(current);
 			if (string.IsNullOrEmpty(sWsOrig))
 			{
@@ -1415,7 +1379,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				currentList.Items.RemoveAt(index);
 				return;
 			}
-			m_currentColumns[index] = replacement;
+			CurrentSpecs[index] = replacement;
 			currentList.Items.RemoveAt(index);
 			currentList.Items.Insert(index, listItem);
 			currentList.Items[index].Selected = true;
@@ -1428,8 +1392,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// method assumes that both the originalWs and the ws attributes have been set on the
 		/// column already.
 		/// </summary>
-		/// <param name="colSpec">The XML node of the column specification</param>
-		/// <param name="cache">The LcmCache</param>
 		public static void GenerateColumnLabel(XElement colSpec, LcmCache cache)
 		{
 			var newWs = XmlViewsUtils.FindWsParam(colSpec);
@@ -1456,7 +1418,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// case, then it means that the ws was never changed, so we don't need to put the new ws in the label
 			if (!string.IsNullOrEmpty(originalWs) && (newWs != originalWs))
 			{
-				string extra = string.Empty;
+				var extra = string.Empty;
 				switch (newWs)
 				{
 					case "vernacular":

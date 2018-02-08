@@ -1,4 +1,4 @@
-﻿// Copyright (c) 201502018 SIL International
+﻿// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -25,8 +25,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override bool IsGhostOwnerChildless(int hvoItem)
 		{
-			var le = m_services.GetInstance<ILexEntryRepository>().GetObject(hvoItem);
-			return !le.EntryRefsOS.Where(ler => ler.RefType == LexEntryRefTags.krtComplexForm).Take(1).Any();
+			return !m_services.GetInstance<ILexEntryRepository>().GetObject(hvoItem).EntryRefsOS.Where(ler => ler.RefType == LexEntryRefTags.krtComplexForm).Take(1).Any();
 		}
 
 		/// <summary>
@@ -34,8 +33,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal override int GetFirstChildFromParent(int hvoParent)
 		{
-			var le = m_services.GetInstance<ILexEntryRepository>().GetObject(hvoParent);
-			return le.EntryRefsOS.First(ler => ler.RefType == LexEntryRefTags.krtComplexForm).Hvo;
+			return m_services.GetInstance<ILexEntryRepository>().GetObject(hvoParent).EntryRefsOS.First(ler => ler.RefType == LexEntryRefTags.krtComplexForm).Hvo;
 		}
 
 		/// <summary>
