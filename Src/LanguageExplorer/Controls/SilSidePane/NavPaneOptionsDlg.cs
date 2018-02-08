@@ -1,4 +1,4 @@
-// SilSidePane, Copyright 2009 SIL International. All rights reserved.
+// SilSidePane, Copyright 2009-2018 SIL International. All rights reserved.
 // SilSidePane is licensed under the Code Project Open License (CPOL), <http://www.codeproject.com/info/cpol10.aspx>.
 // Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
@@ -24,10 +24,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// <summary>
 		/// Tab collection used by client sidepane, which this dialog will manipulate
 		/// </summary>
-		private OutlookBarButtonCollection Tabs
-		{
-			get; set;
-		}
+		private OutlookBarButtonCollection Tabs { get; }
 
 		/// <summary>
 		/// Create a navpane options dialog. This zero-argument constructor is not useful normally,
@@ -48,7 +45,9 @@ namespace LanguageExplorer.Controls.SilSidePane
 			foreach (OutlookBarButton b in Tabs)
 			{
 				if (b.Allowed)
+				{
 					tabListBox.Items.Add(b, b.Visible);
+				}
 			}
 		}
 
@@ -68,7 +67,9 @@ namespace LanguageExplorer.Controls.SilSidePane
 			tabListBox.ItemCheck += HandleTabListBoxItemCheck;
 
 			if (tabs == null)
+			{
 				return;
+			}
 
 			Tabs = tabs;
 
@@ -113,7 +114,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 			{
 				b.Visible = false;
 			}
-			for (int i = 0; i <= tabListBox.CheckedItems.Count - 1; i++)
+			for (var i = 0; i <= tabListBox.CheckedItems.Count - 1; i++)
 			{
 				((OutlookBarButton)tabListBox.CheckedItems[i]).Visible = true;
 			}
@@ -125,7 +126,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// </summary>
 		private void btn_Up_Click(object sender, System.EventArgs e)
 		{
-			int newIndex = tabListBox.SelectedIndex - 1;
+			var newIndex = tabListBox.SelectedIndex - 1;
 			Tabs.Insert(newIndex, tabListBox.SelectedItem as OutlookBarButton);
 			Tabs.RemoveAt(newIndex + 2);
 			FillList();
@@ -138,7 +139,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		private void btn_Down_Click(object sender, System.EventArgs e)
 		{
 			var selectedTab = tabListBox.SelectedItem as OutlookBarButton;
-			int newIndex = tabListBox.SelectedIndex + 2;
+			var newIndex = tabListBox.SelectedIndex + 2;
 			Tabs.Insert(newIndex, selectedTab);
 			Tabs.Remove(selectedTab);
 			FillList();
@@ -147,22 +148,8 @@ namespace LanguageExplorer.Controls.SilSidePane
 
 		private void tabListBox_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
-			if (tabListBox.SelectedIndex == 0)
-			{
-				btn_Up.Enabled = false;
-			}
-			else
-			{
-				btn_Up.Enabled = true;
-			}
-			if (tabListBox.SelectedIndex == tabListBox.Items.Count - 1)
-			{
-				btn_Down.Enabled = false;
-			}
-			else
-			{
-				btn_Down.Enabled = true;
-			}
+			btn_Up.Enabled = tabListBox.SelectedIndex != 0;
+			btn_Down.Enabled = tabListBox.SelectedIndex != tabListBox.Items.Count - 1;
 			if (tabListBox.Items.Count == 1)
 			{
 				btn_Down.Enabled = false;

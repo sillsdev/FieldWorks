@@ -1,4 +1,4 @@
-// SilSidePane, Copyright 2010 SIL International. All rights reserved.
+// SilSidePane, Copyright 2010-2018 SIL International. All rights reserved.
 // SilSidePane is licensed under the Code Project Open License (CPOL), <http://www.codeproject.com/info/cpol10.aspx>.
 // Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
@@ -18,14 +18,11 @@ namespace LanguageExplorer.Controls.SilSidePane
 	/// </summary>
 	internal class OutlookButtonPanelItemArea : OutlookButtonPanel, IItemArea
 	{
-		private List<Item> _items = new List<Item>();
-		private Item _currentItem = null;
-
 		#region IItemArea Members
-		/// <summary></summary>
+		/// <summary />
 		public new event ItemAreaItemClickedEventHandler ItemClicked;
 
-		/// <summary></summary>
+		/// <summary />
 		public virtual void Add(Item item)
 		{
 			var widget = new ToolStripButton
@@ -41,29 +38,19 @@ namespace LanguageExplorer.Controls.SilSidePane
 			item.UnderlyingWidget = widget;
 
 			base.Items.Add(widget);
-			_items.Add(item);
+			Items.Add(item);
 		}
 
-		/// <summary></summary>
-		public new List<Item> Items
-		{
-			get { return _items; }
-		}
+		/// <summary />
+		public new List<Item> Items { get; } = new List<Item>();
 
-		/// <summary></summary>
-		public Item CurrentItem
-		{
-			get { return _currentItem; }
-		}
+		/// <summary />
+		public Item CurrentItem { get; private set; } = null;
 
-		/// <summary></summary>
+		/// <summary />
 		public void SelectItem(Item item)
 		{
-			var widget = item.UnderlyingWidget as ToolStripButton;
-			Debug.Assert(widget != null, "item.UnderlyingWidget as ToolStripButton is null");
-			if (widget == null)
-				return;
-
+			var widget = (ToolStripButton)item.UnderlyingWidget;
 			widget.PerformClick();
 #if __MonoCS__
 			// We need to explicitly uncheck the previous selection.  See FWNX-661.
@@ -76,7 +63,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 #endif
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public Control AsControl()
 		{
 			return this;
@@ -86,15 +73,17 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// <summary>
 		/// Handles when a widget (ToolStripButton) in this item area is clicked.
 		/// </summary>
-		void HandleWidgetClick(object sender, EventArgs e)
+		private void HandleWidgetClick(object sender, EventArgs e)
 		{
 			var widget = sender as ToolStripButton;
 			if (widget == null)
+			{
 				return;
+			}
 
-			Item item = widget.Tag as Item;
+			var item = widget.Tag as Item;
 
-			_currentItem = item;
+			CurrentItem = item;
 			ItemClicked(item);
 		}
 	}

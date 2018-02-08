@@ -616,6 +616,9 @@
     <Compile Include="Controls\LexText\Sfm2FlexTextMappingBase.cs" />
     <Compile Include="Controls\LexText\Sfm2FlexTextWordsFrag.cs" />
     <Compile Include="Controls\MorphTypeFilterType.cs" />
+    <Compile Include="Controls\SilSidePane\ButtonState.cs" />
+    <Compile Include="Controls\SilSidePane\OutlookBarPanelRenderer.cs" />
+    <Compile Include="Controls\SilSidePane\Renderer.cs" />
     <Compile Include="Controls\XMLViews\AccumulateParameters.cs" />
     <Compile Include="Controls\XMLViews\ArrowSize.cs" />
     <Compile Include="Controls\XMLViews\ArrowType.cs" />

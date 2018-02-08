@@ -1,4 +1,4 @@
-// SilSidePane, Copyright 2009 SIL International. All rights reserved.
+// SilSidePane, Copyright 2009-2018 SIL International. All rights reserved.
 // SilSidePane is licensed under the Code Project Open License (CPOL), <http://www.codeproject.com/info/cpol10.aspx>.
 // Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
@@ -9,22 +9,22 @@ using System.Drawing;
 
 namespace LanguageExplorer.Controls.SilSidePane
 {
-	/// <summary></summary>
+	/// <summary />
 	[DesignTimeVisible(false), DefaultProperty("Text")]
 	internal class OutlookBarButton : IDisposable
 	{
 		private OutlookBar _owner;
 		private bool _disposeOwner;
-		/// <summary></summary>
+		/// <summary />
 		internal ButtonState State = ButtonState.Passive;
-		private string _Text;
+
 		private bool _Visible = true;
 		private bool _Allowed = true;
 		private Image _Image;
 		private bool _disposeImage;
-		/// <summary></summary>
+		/// <summary />
 		internal Rectangle Rectangle;
-		/// <summary></summary>
+		/// <summary />
 		internal bool isLarge; // If tab is expanded with text and not collapsed as an icon to the bottom
 		private bool _Selected;
 
@@ -32,21 +32,21 @@ namespace LanguageExplorer.Controls.SilSidePane
 
 		//Includes a constructor without parameters so the control can be configured during design-time.
 
-		/// <summary></summary>
+		/// <summary />
 		public OutlookBarButton()
 		{
 			_owner = new OutlookBar();
 			_disposeOwner = true;
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public OutlookBarButton(string text, Image image): this()
 		{
 			Text = text;
 			Image = image;
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		internal OutlookBarButton(OutlookBar owner)
 		{
 			_owner = owner;
@@ -64,7 +64,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 
 		//The ButtonClass is not inheriting from Control, so I need this destructor...
 
-		/// <summary></summary>
+		/// <summary />
 		public bool IsDisposed { get; private set; }
 
 		// IDisposable
@@ -73,15 +73,22 @@ namespace LanguageExplorer.Controls.SilSidePane
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
 				// free managed and unmanaged resources when explicitly called
-				if (_disposeOwner && _owner != null)
-					_owner.Dispose();
-				if (_disposeImage && _Image != null)
-					_Image.Dispose();
+				if (_disposeOwner)
+				{
+					_owner?.Dispose();
+				}
+
+				if (_disposeImage)
+				{
+					_Image?.Dispose();
+				}
 			}
 
 			// free unmanaged resources
@@ -92,7 +99,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		}
 
 		#region " IDisposable Support "
-		/// <summary></summary>
+		/// <summary />
 		public void Dispose()
 		{
 			Dispose(true);
@@ -103,27 +110,25 @@ namespace LanguageExplorer.Controls.SilSidePane
 		#endregion
 
 		//This field lets us react with the parent control.
-		/// <summary></summary>
+		/// <summary />
 		internal OutlookBar Owner
 		{
 			get { return _owner; }
 			set
 			{
-				if (_disposeOwner && _owner != null)
-					_owner.Dispose();
+				if (_disposeOwner)
+				{
+					_owner?.Dispose();
+				}
 				_disposeOwner = false;
 				_owner = value;
 			}
 		}
 
-		/// <summary></summary>
-		public string Text
-		{
-			get { return _Text; }
-			set { _Text = value; }
-		}
+		/// <summary />
+		public string Text { get; set; }
 
-		/// <summary></summary>
+		/// <summary />
 		[DefaultValue(typeof(bool), "True")]
 		public bool Visible
 		{
@@ -132,11 +137,13 @@ namespace LanguageExplorer.Controls.SilSidePane
 			{
 				_Visible = value;
 				if (!value)
+				{
 					Rectangle = Rectangle.Empty;
+				}
 			}
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[DefaultValue(typeof(bool), "False"), Browsable(false)]
 		public bool Selected
 		{
@@ -147,17 +154,17 @@ namespace LanguageExplorer.Controls.SilSidePane
 				switch (value)
 				{
 					case true:
-						Owner.m_selectedButton = this;
+						Owner.SelectedButton = this;
 						break;
 					case false:
-						Owner.m_selectedButton = null;
+						Owner.SelectedButton = null;
 						break;
 				}
 				Owner.SetSelectionChanged(this);
 			}
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[DefaultValue(typeof(bool), "True")]
 		public bool Allowed
 		{
@@ -166,11 +173,13 @@ namespace LanguageExplorer.Controls.SilSidePane
 			{
 				_Allowed = value;
 				if (!value)
+				{
 					Visible = false;
+				}
 			}
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public Image Image
 		{
@@ -194,7 +203,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 			}
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		[DefaultValue(typeof(bool), "True")]
 		public bool Enabled { get; set; }
 
@@ -203,10 +212,10 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// </summary>
 		public object Tag { get; set; }
 
-		/// <summary></summary>
+		/// <summary />
 		public string Name { get; set; }
 
-		/// <summary></summary>
+		/// <summary />
 		public override string ToString()
 		{
 			return Text;

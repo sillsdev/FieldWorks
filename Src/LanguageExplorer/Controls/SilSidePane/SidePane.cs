@@ -69,11 +69,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// <summary>
 		/// Style of the item area
 		/// </summary>
-		internal SidePaneItemAreaStyle ItemAreaStyle
-		{
-			get;
-			set;
-		}
+		internal SidePaneItemAreaStyle ItemAreaStyle { get; set; }
 
 		/// <summary>
 		/// Default Constructor.
@@ -89,7 +85,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "******* Missing Dispose() call for " + GetType() + ". *******");
 			if (disposing)
 			{
-
 			}
 			base.Dispose(disposing);
 		}
@@ -109,18 +104,18 @@ namespace LanguageExplorer.Controls.SilSidePane
 				};
 
 			_itemAreaContainer = new Panel
-				{
-					Dock = DockStyle.Fill,
-				};
+			{
+				Dock = DockStyle.Fill,
+			};
 
 			_itemAreas = new Dictionary<Tab, IItemArea>();
 
 			_tabArea = new OutlookBar
-				{
-					Dock = DockStyle.Bottom,
-					Font = new System.Drawing.Font("Tahoma", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.World),
-					Name = "outlookBar",
-				};
+			{
+				Dock = DockStyle.Bottom,
+				Font = new System.Drawing.Font("Tahoma", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.World),
+				Name = "outlookBar",
+			};
 			_tabArea.Size = _tabArea.MinimumSize;
 			_tabArea.ButtonClicked += HandleTabAreaButtonClicked;
 
@@ -148,7 +143,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 			}
 			// Upon changing tab, the active item is also changed (to an item in the
 			// now-current item area). Tell client about this.
-
 			var currentItem = _itemAreas[tab].CurrentItem;
 
 			// If user clicks a tab that doesn't have a previously-selected item,
@@ -288,7 +282,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 			Guard.AgainstNull(item, nameof(item));
 			if (!_itemAreas.ContainsKey(targetTab))
 			{
-				throw new ArgumentOutOfRangeException(nameof(targetTab), targetTab, @"targetTab is not a tab on this SidePane");
+				throw new ArgumentOutOfRangeException(nameof(targetTab), targetTab, "targetTab is not a tab on this SidePane");
 			}
 			if (TabContainsItem(targetTab, item))
 			{
@@ -311,7 +305,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 			Guard.AgainstNull(itemTag, nameof(itemTag));
 			if (!_itemAreas.ContainsKey(targetTab))
 			{
-				throw new ArgumentOutOfRangeException(nameof(targetTab), targetTab, @"targetTab is not a tab on this SidePane");
+				throw new ArgumentOutOfRangeException(nameof(targetTab), targetTab, "targetTab is not a tab on this SidePane");
 			}
 
 			var itemArea = _itemAreas[targetTab];
@@ -334,7 +328,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 			Guard.AgainstNull(itemTag, nameof(itemTag));
 			if (!_itemAreas.ContainsKey(targetTab))
 			{
-				throw new ArgumentOutOfRangeException(nameof(targetTab), targetTab, @"targetTab is not a tab on this SidePane");
+				throw new ArgumentOutOfRangeException(nameof(targetTab), targetTab, "targetTab is not a tab on this SidePane");
 			}
 
 			var itemArea = _itemAreas[targetTab];
@@ -367,7 +361,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 			Guard.AgainstNull(tab, nameof(tab));
 			if (!ContainsTab(tab))
 			{
-				throw new ArgumentOutOfRangeException(nameof(tab), tab, @"sidepane does not contain tab");
+				throw new ArgumentOutOfRangeException(nameof(tab), tab, "sidepane does not contain tab");
 			}
 			if (tab.Enabled == false)
 			{
@@ -393,7 +387,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 
 			if (!ContainsTab(tab))
 			{
-				throw new ArgumentOutOfRangeException(nameof(tab), tab, @"sidepane does not contain tab");
+				throw new ArgumentOutOfRangeException(nameof(tab), tab, "sidepane does not contain tab");
 			}
 
 			SelectTab(tab, false); // Switch to tab, but don't let it auto-select an item on that tab
@@ -443,7 +437,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 			Guard.AgainstNull(item, nameof(item));
 			if (!ContainsTab(tab))
 			{
-				throw new ArgumentOutOfRangeException(nameof(tab), tab, @"tab is not a tab in this sidepane.");
+				throw new ArgumentOutOfRangeException(nameof(tab), tab, "tab is not a tab in this sidepane.");
 			}
 
 			return _itemAreas[tab].Items.Contains(item);
@@ -456,7 +450,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 			Guard.AgainstNull(itemName, nameof(itemName));
 			if (!ContainsTab(tab))
 			{
-				throw new ArgumentOutOfRangeException(nameof(tab), tab, @"tab is not a tab in this sidepane.");
+				throw new ArgumentOutOfRangeException(nameof(tab), tab, "tab is not a tab in this sidepane.");
 			}
 
 			return _itemAreas[tab].Items.Find(item => item.Name == itemName) != null;
