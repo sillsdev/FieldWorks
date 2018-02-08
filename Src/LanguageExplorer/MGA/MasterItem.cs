@@ -78,11 +78,11 @@ namespace LanguageExplorer.MGA
 		{
 		}
 
-		public IFsFeatDefn FeatureDefn { get; protected set; } = null;
+		public IFsFeatDefn FeatureDefn { get; protected set; }
 
 		public XmlNode Node { get; }
 
-		public bool InDatabase { get; protected set; } = false;
+		public bool InDatabase { get; protected set; }
 
 		public bool IsChosen => (m_eKind == MGAImageKind.radioSelected || m_eKind == MGAImageKind.checkedBox);
 

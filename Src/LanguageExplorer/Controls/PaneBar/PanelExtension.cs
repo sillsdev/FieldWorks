@@ -1,8 +1,9 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace LanguageExplorer.Controls.PaneBar
 	/// </summary>
 	internal class PanelExtension : Panel
 	{
-		private int? m_widthOfLeftDockedControls = null;
+		private int? m_widthOfLeftDockedControls;
 
 		/// <summary>
 		/// Constructor.
@@ -38,16 +39,13 @@ namespace LanguageExplorer.Controls.PaneBar
 		{
 			m_widthOfLeftDockedControls = 0;
 
-			foreach (var control in Controls.Cast<Control>()
-					.Where(c => (c.Dock & DockStyle.Left) != 0)
-					.Where(c => m_widthOfLeftDockedControls < c.Left + c.Width))
+			foreach (var control in Controls.Cast<Control>().Where(c => (c.Dock & DockStyle.Left) != 0).Where(c => m_widthOfLeftDockedControls < c.Left + c.Width))
 			{
 				m_widthOfLeftDockedControls = control.Left + control.Width;
 			}
 		}
 
 		/// <summary />
-		/// <param name="e"></param>
 		protected override void OnPaintBackground(PaintEventArgs e)
 		{
 			base.OnPaintBackground (e);
@@ -82,7 +80,6 @@ namespace LanguageExplorer.Controls.PaneBar
 		}
 
 		/// <summary />
-		/// <param name="e"></param>
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
@@ -90,16 +87,14 @@ namespace LanguageExplorer.Controls.PaneBar
 		}
 
 		/// <summary />
-		/// <param name="e"></param>
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			using(var brush = new SolidBrush(Color.White))
+			using (var brush = new SolidBrush(Color.White))
 			{
 				if (m_widthOfLeftDockedControls == null)
 				{
 					CalculateWidthOfLeftDockedControls();
 				}
-
 				e.Graphics.DrawString(Text, Font, brush, (int)m_widthOfLeftDockedControls + 2, 0);
 				base.OnPaint(e);
 			}
@@ -111,7 +106,7 @@ namespace LanguageExplorer.Controls.PaneBar
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 
 			if (disposing)
 			{

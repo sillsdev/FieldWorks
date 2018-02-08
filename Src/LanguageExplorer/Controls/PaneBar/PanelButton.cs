@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,7 +13,6 @@ namespace LanguageExplorer.Controls.PaneBar
 	internal class PanelButton : PanelExtension
 	{
 		private bool _mouseOverControl;
-		private DataTree _dataTree;
 		private readonly IPropertyTable _propertyTable;
 		private readonly Image _image;
 		private readonly string _property;
@@ -58,10 +57,7 @@ namespace LanguageExplorer.Controls.PaneBar
 		/// <summary>
 		/// Set the DataTree.
 		/// </summary>
-		public DataTree DatTree
-		{
-			set { _dataTree = value; }
-		}
+		public DataTree DatTree { get; set; }
 
 		private void SetLabel()
 		{
@@ -76,9 +72,13 @@ namespace LanguageExplorer.Controls.PaneBar
 
 			// Simulate a mouse enter or leave event to get the correct highlighting
 			if (_mouseOverControl)
+			{
 				panelButton_MouseEnter(null, null);
+			}
 			else
+			{
 				panelButton_MouseLeave(null, null);
+			}
 
 			// Unwire event handlers
 			foreach (Control control in Controls)
@@ -106,7 +106,7 @@ namespace LanguageExplorer.Controls.PaneBar
 			// Add in a checkbox that reflects the "checked" status of the button
 			var checkBox = new CheckBox
 			{
-				Name = @"CheckBox",
+				Name = "CheckBox",
 				Checked = _isChecked,
 				Location = new Point(0, 0),
 				Anchor = AnchorStyles.Left,
@@ -129,7 +129,7 @@ namespace LanguageExplorer.Controls.PaneBar
 #endif
 				var p = new PanelExtension
 				{
-					Name = @"PanelExtension",
+					Name = "PanelExtension",
 					BackgroundImage = _image,
 					BackgroundImageLayout = ImageLayout.Center,
 					Location = new Point(checkBox.Width, 0),
@@ -147,9 +147,7 @@ namespace LanguageExplorer.Controls.PaneBar
 			Refresh();
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		public void UpdateDisplay()
 		{
 			SetLabel();
@@ -162,7 +160,7 @@ namespace LanguageExplorer.Controls.PaneBar
 				var cb = (CheckBox)Controls.Find("CheckBox", false)[0];
 				_isChecked = cb.Checked;
 				_propertyTable.SetProperty(_property, _isChecked, SettingsGroup.LocalSettings, true, false);
-				_dataTree.ShowHiddenFields(_isChecked);
+				DatTree.ShowHiddenFields(_isChecked);
 			}
 		}
 
@@ -172,7 +170,7 @@ namespace LanguageExplorer.Controls.PaneBar
 			{
 				_isChecked = !_isChecked;
 				_propertyTable.SetProperty(_property, _isChecked, SettingsGroup.LocalSettings, true, false);
-				_dataTree.ShowHiddenFields(_isChecked);
+				DatTree.ShowHiddenFields(_isChecked);
 			}
 		}
 
