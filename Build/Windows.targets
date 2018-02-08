@@ -21,13 +21,14 @@
 	</Target>
 	<!-- Define Encoding Converters files needed for building and running tests -->
 	<PropertyGroup>
-		<ECNugetVersion>0.0.4</ECNugetVersion>
+		<ECNugetVersion>0.0.6</ECNugetVersion>
 		<ECArch Condition="'$(arch)'!='x64'">Win32</ECArch>
 		<ECArch Condition="'$(arch)'=='x64'">x64</ECArch>
 	</PropertyGroup>
 	<ItemGroup>
 		<ECWindowsFiles Include="CcEC.dll" />
-		<ECWindowsFiles Include="CC32.dll" />
+		<ECWindowsFiles Include="CC32.dll" Condition="'$(arch)'!='x64'"/>
+		<ECWindowsFiles Include="Cc64.dll" Condition="'$(arch)'=='x64'"/>
 		<ECWindowsFiles Include="ECInterfaces.dll" />
 		<ECWindowsFiles Include="ECInterfaces.tlb" />
 		<ECWindowsFiles Include="EncConvertersAppDataMover40.exe" />

@@ -1,23 +1,19 @@
-// Copyright (c) 2017 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
 	/// <summary>
-	/// Exception that gets thrown if we can't write a file, probably because it is locked
+	/// Exception that gets thrown if we can't write a file, probably because it is locked or does not exist
 	/// </summary>
 	public class IcuLockedException: UceException
 	{
-		/// <summary>
-		/// Default c'tor
-		/// </summary>
+		/// <inheritdoc />
 		public IcuLockedException(ErrorCodes errorCode): base(errorCode, null)
 		{
 		}
 
-		///<summary>
-		/// Constructor with a message.
-		///</summary>
+		/// <inheritdoc />
 		public IcuLockedException(ErrorCodes errorCode, string msg): base(errorCode, msg)
 		{
 		}

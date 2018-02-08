@@ -408,7 +408,12 @@
 		<LcmTemplatesFiles Include="Templates/POS.xml" />
 		<LcmTemplatesFiles Include="Templates/SemDom.xml" />
 
-		<LcmIcuDataFiles Include="IcuData/UnicodeDataOverrides.txt" />
+		<LcmIcuDataFiles Include="IcuData/data/nfc.txt" />
+		<LcmIcuDataFiles Include="IcuData/data/nfcHebrew.txt" />
+		<LcmIcuDataFiles Include="IcuData/data/nfcOverrides.txt" />
+		<LcmIcuDataFiles Include="IcuData/data/nfkc.txt" />
+		<LcmIcuDataFiles Include="IcuData/data/nfkcOverrides.txt" />
+		<LcmIcuDataFiles Include="IcuData/data/UnicodeDataOverrides.txt" />
 
 		<LcmIcuNrmFiles Include="IcuData/icudt$(IcuVersion)l/nfc_fw.nrm" />
 		<LcmIcuNrmFiles Include="IcuData/icudt$(IcuVersion)l/nfkc_fw.nrm" />
@@ -528,7 +533,7 @@
 		<Copy SourceFiles="@(LcmFwKernelFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/Src/Kernel" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(LcmDistFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(LcmTemplatesFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles/Templates" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="@(LcmIcuDataFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmIcuDataFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)/data" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(LcmIcuNrmFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 
 		<!-- Copy the downloaded artifacts -->

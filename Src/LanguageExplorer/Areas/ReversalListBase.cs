@@ -368,6 +368,7 @@ namespace LanguageExplorer.Areas
 			OwningObject = newOwningObj; // This automatically reloads (and sorts) the list
 			PropertyTable.SetProperty("ActiveListOwningObject", newOwningObj, false, true);
 			Publisher.Publish("RecordListOwningObjChanged", this);
+			Publisher.Publish("MasterRefresh", null);
 		}
 
 		/// <summary />
