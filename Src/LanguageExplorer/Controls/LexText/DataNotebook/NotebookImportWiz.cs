@@ -8,11 +8,11 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using LanguageExplorer.Areas;
+using Sfm2Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.RootSites;
@@ -58,115 +58,37 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private IStTxtParaFactory m_factPara;
 		private ICmPossibilityListRepository m_repoList;
 
-		private bool m_fCanceling = false;
-		private bool m_fDirtySettings = false;
+		private bool m_fCanceling;
 		private OpenFileDialogAdapter openFileDialog;
 
 		private CmPossibilityCreator m_factPossibility;
-		public CmPossibilityCreator PossibilityCreator
-		{
-			get
-			{
-				if (m_factPossibility == null)
-					m_factPossibility = new CmPossibilityCreator(m_cache.ServiceLocator.GetInstance<ICmPossibilityFactory>());
-				return m_factPossibility;
-			}
-		}
+		public CmPossibilityCreator PossibilityCreator => m_factPossibility ?? (m_factPossibility = new CmPossibilityCreator(m_cache.ServiceLocator.GetInstance<ICmPossibilityFactory>()));
 
 		private CmAnthroItemCreator m_factAnthroItem;
-		public CmAnthroItemCreator AnthroItemCreator
-		{
-			get
-			{
-				if (m_factAnthroItem == null)
-					m_factAnthroItem = new CmAnthroItemCreator(m_cache.ServiceLocator.GetInstance<ICmAnthroItemFactory>());
-				return m_factAnthroItem;
-			}
-		}
+		public CmAnthroItemCreator AnthroItemCreator => m_factAnthroItem ?? (m_factAnthroItem = new CmAnthroItemCreator(m_cache.ServiceLocator.GetInstance<ICmAnthroItemFactory>()));
 
 		private CmLocationCreator m_factLocation;
-		public CmLocationCreator LocationCreator
-		{
-			get
-			{
-				if (m_factLocation == null)
-					m_factLocation = new CmLocationCreator(m_cache.ServiceLocator.GetInstance<ICmLocationFactory>());
-				return m_factLocation;
-			}
-		}
+		public CmLocationCreator LocationCreator => m_factLocation ?? (m_factLocation = new CmLocationCreator(m_cache.ServiceLocator.GetInstance<ICmLocationFactory>()));
 
 		private CmPersonCreator m_factPerson;
-		public CmPersonCreator PersonCreator
-		{
-			get
-			{
-				if (m_factPerson == null)
-					m_factPerson = new CmPersonCreator(m_cache.ServiceLocator.GetInstance<ICmPersonFactory>());
-				return m_factPerson;
-			}
-		}
+		public CmPersonCreator PersonCreator => m_factPerson ?? (m_factPerson = new CmPersonCreator(m_cache.ServiceLocator.GetInstance<ICmPersonFactory>()));
 
 		private CmCustomItemCreator m_factCustomItem;
-		public CmCustomItemCreator CustomItemCreator
-		{
-			get
-			{
-				if (m_factCustomItem == null)
-					m_factCustomItem = new CmCustomItemCreator(m_cache.ServiceLocator.GetInstance<ICmCustomItemFactory>());
-				return m_factCustomItem;
-			}
-		}
+		public CmCustomItemCreator CustomItemCreator => m_factCustomItem ?? (m_factCustomItem = new CmCustomItemCreator(m_cache.ServiceLocator.GetInstance<ICmCustomItemFactory>()));
 
 		private CmSemanticDomainCreator m_factSemanticDomain;
-		public CmSemanticDomainCreator SemanticDomainCreator
-		{
-			get
-			{
-				if (m_factSemanticDomain == null)
-					m_factSemanticDomain = new CmSemanticDomainCreator(m_cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>());
-				return m_factSemanticDomain;
-			}
-		}
+		public CmSemanticDomainCreator SemanticDomainCreator => m_factSemanticDomain ?? (m_factSemanticDomain = new CmSemanticDomainCreator(m_cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>()));
 		private MoMorphTypeCreator m_factMorphType;
-		public MoMorphTypeCreator MorphTypeCreator
-		{
-			get
-			{
-				if (m_factMorphType == null)
-					m_factMorphType = new MoMorphTypeCreator(m_cache.ServiceLocator.GetInstance<IMoMorphTypeFactory>());
-				return m_factMorphType;
-			}
-		}
+		public MoMorphTypeCreator MorphTypeCreator => m_factMorphType ?? (m_factMorphType = new MoMorphTypeCreator(m_cache.ServiceLocator.GetInstance<IMoMorphTypeFactory>()));
 		private PartOfSpeechCreator m_factPartOfSpeech;
-		public PartOfSpeechCreator NewPartOfSpeechCreator
-		{
-			get
-			{
-				if (m_factPartOfSpeech == null)
-					m_factPartOfSpeech = new PartOfSpeechCreator(m_cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>());
-				return m_factPartOfSpeech;
-			}
-		}
+		public PartOfSpeechCreator NewPartOfSpeechCreator => m_factPartOfSpeech ?? (m_factPartOfSpeech = new PartOfSpeechCreator(m_cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>()));
 		private LexEntryTypeCreator m_factLexEntryType;
-		public LexEntryTypeCreator NewLexEntryTypeCreator
-		{
-			get
-			{
-				if (m_factLexEntryType == null)
-					m_factLexEntryType = new LexEntryTypeCreator(m_cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>());
-				return m_factLexEntryType;
-			}
-		}
+		public LexEntryTypeCreator NewLexEntryTypeCreator => m_factLexEntryType ?? (m_factLexEntryType = new LexEntryTypeCreator(m_cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>()));
 		private LexRefTypeCreator m_factLexRefType;
-		public LexRefTypeCreator NewLexRefTypeCreator
-		{
-			get
-			{
-				if (m_factLexRefType == null)
-					m_factLexRefType = new LexRefTypeCreator(m_cache.ServiceLocator.GetInstance<ILexRefTypeFactory>());
-				return m_factLexRefType;
-			}
-		}
+		public LexRefTypeCreator NewLexRefTypeCreator => m_factLexRefType ?? (m_factLexRefType = new LexRefTypeCreator(m_cache.ServiceLocator.GetInstance<ILexRefTypeFactory>()));
+
+		public bool DirtySettings { get; set; }
+
 		readonly List<PendingLink> m_pendingLinks = new List<PendingLink>();
 
 		Dictionary<string, ICmPossibility> m_mapAnthroCode = new Dictionary<string, ICmPossibility>();
@@ -192,22 +114,22 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		Dictionary<Guid, List<ICmPossibility>> m_mapNewPossibilities = new Dictionary<Guid, List<ICmPossibility>>();
 
 		private string m_sStdImportMap;
-		private bool m_QuickFinish = false;
-		private int m_lastQuickFinishTab = 0;
+		private bool m_QuickFinish;
+		private int m_lastQuickFinishTab;
 		private string m_sFmtEncCnvLabel;
 
 		DateTime m_dtStart;
 		DateTime m_dtEnd;
-		int m_cRecordsRead = 0;
-		int m_cRecordsDeleted = 0;
+		int m_cRecordsRead;
+		int m_cRecordsDeleted;
 
 		private Dictionary<int, string> m_mapFlidName = new Dictionary<int, string>();
 		private Sfm2Xml.SfmFile m_SfmFile;
 
-		private string m_recMkr = null;
-		private string m_sInputMapFile = null;
-		private string m_sSfmDataFile = null;
-		private string m_sProjectFile = null;
+		private string m_recMkr;
+		private string m_sInputMapFile;
+		private string m_sSfmDataFile;
+		private string m_sProjectFile;
 
 		private List<ImportMessage> m_rgMessages = new List<ImportMessage>();
 
@@ -234,19 +156,13 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// </summary>
 		int m_OriginalCancelButtonLeft;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public NotebookImportWiz()
 		{
 			InitializeComponent();
 
 			openFileDialog = new OpenFileDialogAdapter();
-
-			m_sStdImportMap = String.Format(FwDirectoryFinder.CodeDirectory +
-				"{0}Language Explorer{0}Import{0}NotesImport.map", Path.DirectorySeparatorChar);
+			m_sStdImportMap = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Import", "NotesImport.map");
 			m_ExtraButtonLeft = m_btnBack.Left - (m_btnCancel.Width + kdxpCancelHelpButtonGap);
 			m_OriginalCancelButtonLeft = m_btnCancel.Left;
 			m_btnQuickFinish.Visible = false;
@@ -255,7 +171,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			m_sFmtEncCnvLabel = lblMappingLanguagesInstructions.Text;
 
 			// Need to align SaveMapFile and QuickFinish to top of other dialog buttons (FWNX-833)
-			int normalDialogButtonTop = m_btnHelp.Top;
+			var normalDialogButtonTop = m_btnHelp.Top;
 			m_btnQuickFinish.Top = normalDialogButtonTop;
 			m_btnSaveMapFile.Top = normalDialogButtonTop;
 
@@ -285,33 +201,25 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			m_publisher = publisher;
 			m_mdc = cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
 			m_wsManager = m_cache.ServiceLocator.WritingSystemManager;
-			lblMappingLanguagesInstructions.Text = String.Format(m_sFmtEncCnvLabel, cache.ProjectId.Name);
+			lblMappingLanguagesInstructions.Text = string.Format(m_sFmtEncCnvLabel, cache.ProjectId.Name);
 
-			m_tbDatabaseFileName.Text = m_propertyTable.GetValue("DataNotebookImportDb", String.Empty);
-			m_tbProjectFileName.Text = m_propertyTable.GetValue("DataNotebookImportPrj", String.Empty);
-			m_tbSettingsFileName.Text = m_propertyTable.GetValue("DataNotebookImportMap", String.Empty);
-			if (String.IsNullOrEmpty(m_tbSettingsFileName.Text) || m_tbSettingsFileName.Text == m_sStdImportMap)
+			m_tbDatabaseFileName.Text = m_propertyTable.GetValue("DataNotebookImportDb", string.Empty);
+			m_tbProjectFileName.Text = m_propertyTable.GetValue("DataNotebookImportPrj", string.Empty);
+			m_tbSettingsFileName.Text = m_propertyTable.GetValue("DataNotebookImportMap", string.Empty);
+			if (string.IsNullOrEmpty(m_tbSettingsFileName.Text) || m_tbSettingsFileName.Text == m_sStdImportMap)
 			{
 				m_tbSettingsFileName.Text = m_sStdImportMap;
-				if (!String.IsNullOrEmpty(m_tbDatabaseFileName.Text))
-
+				if (!string.IsNullOrEmpty(m_tbDatabaseFileName.Text))
 				{
-					m_tbSaveAsFileName.Text = Path.Combine(Path.GetDirectoryName(m_tbDatabaseFileName.Text),
-						Path.GetFileNameWithoutExtension(m_tbDatabaseFileName.Text) + "-import-settings.map");
+					m_tbSaveAsFileName.Text = Path.Combine(Path.GetDirectoryName(m_tbDatabaseFileName.Text), Path.GetFileNameWithoutExtension(m_tbDatabaseFileName.Text) + "-import-settings.map");
 				}
 			}
 			else
 			{
 				m_tbSaveAsFileName.Text = m_tbSettingsFileName.Text;
-				m_fDirtySettings = false;
+				DirtySettings = false;
 			}
-			m_stylesheet = AnthroStyleSheetFromPropertyTable(m_propertyTable);
-			if (m_stylesheet == null)
-			{
-				LcmStyleSheet styles = new LcmStyleSheet();
-				styles.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles);
-				m_stylesheet = styles;
-			}
+			m_stylesheet = m_propertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet");
 			ShowSaveButtonOrNot();
 		}
 
@@ -349,101 +257,90 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					break;
 			}
 
-			if (helpTopic != null)
-				ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), helpTopic);
 		}
 
 		protected override void OnCancelButton()
 		{
 			if (m_fCanceling)
+			{
 				return;
+			}
 			m_fCanceling = true;
 			base.OnCancelButton();
 			if (CurrentStepNumber == 0)
+			{
 				return;
+			}
 
-			this.DialogResult = DialogResult.Cancel;
+			DialogResult = DialogResult.Cancel;
 
 			// if it's known to be dirty OR the shift key is down - ask to save the settings file
-			if (m_fDirtySettings || (Control.ModifierKeys & Keys.Shift) == Keys.Shift)
+			if (DirtySettings || (ModifierKeys & Keys.Shift) == Keys.Shift)
 			{
 				// LT-7057: if no settings file, don't ask to save
 				if (UsesInvalidFileNames(true))
-					return;	// finsih with out prompting to save...
+				{
+					return;	// finish without prompting to save...
+				}
 
 				// ask to save the settings
-				DialogResult result = MessageBox.Show(this,
+				var result = MessageBox.Show(this,
 					LexTextControls.ksAskRememberImportSettings,
 					LexTextControls.ksSaveSettings_,
 					MessageBoxButtons.YesNoCancel,
 					MessageBoxIcon.Question,
 					MessageBoxDefaultButton.Button3);
 
-				if (result == DialogResult.Yes)
+				switch (result)
 				{
-					// before saving we need to make sure all the data structures are populated
-					while (CurrentStepNumber <= 6)
-					{
-						EnableNextButton();
-						m_CurrentStepNumber++;
-					}
-					SaveSettings();
-				}
-				else if (result == DialogResult.Cancel)
-				{
-					// This is how do we stop the cancel process...
-					this.DialogResult = DialogResult.None;
-					m_fCanceling = false;
+					case DialogResult.Yes:
+						// before saving we need to make sure all the data structures are populated
+						while (CurrentStepNumber <= 6)
+						{
+							EnableNextButton();
+							m_CurrentStepNumber++;
+						}
+						SaveSettings();
+						break;
+					case DialogResult.Cancel:
+						// This is how do we stop the cancel process...
+						DialogResult = DialogResult.None;
+						m_fCanceling = false;
+						break;
 				}
 			}
-		}
-
-		public static IVwStylesheet AnthroStyleSheetFromPropertyTable(IPropertyTable propertyTable)
-		{
-			Form mainWindow = propertyTable.GetValue<Form>("window");
-			PropertyInfo pi = null;
-			if (mainWindow != null)
-				pi = mainWindow.GetType().GetProperty("AnthroStyleSheet");
-			if (pi != null)
-			{
-				return pi.GetValue(mainWindow, null) as LcmStyleSheet;
-			}
-			return propertyTable.GetValue<LcmStyleSheet>("AnthroStyleSheet");
 		}
 
 		private void FillLanguageMappingView()
 		{
 			m_lvMappingLanguages.Items.Clear();
 			var wss = new HashSet<CoreWritingSystemDefinition>();
-			foreach (string sWs in m_mapWsEncConv.Keys)
+			foreach (var sWs in m_mapWsEncConv.Keys)
 			{
-				EncConverterChoice ecc = m_mapWsEncConv[sWs];
+				var ecc = m_mapWsEncConv[sWs];
 				wss.Add(ecc.WritingSystem);
 				m_lvMappingLanguages.Items.Add(new ListViewItem(new[] { ecc.Name, ecc.ConverterName }) {Tag = ecc});
 			}
-			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			foreach (var ws in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				if (wss.Contains(ws))
+				{
 					continue;
+				}
 				wss.Add(ws);
-				ListViewItem lvi = CreateListViewItemForWS(ws);
+				var lvi = CreateListViewItemForWS(ws);
 				m_lvMappingLanguages.Items.Add(lvi);
-				m_fDirtySettings = true;
+				DirtySettings = true;
 			}
 			m_lvMappingLanguages.Sort();
-			IApp app = m_propertyTable.GetValue<IApp>("App");
+			var app = m_propertyTable.GetValue<IApp>("App");
 			m_btnAddWritingSystem.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, wss);
 		}
 
 		private ListViewItem CreateListViewItemForWS(CoreWritingSystemDefinition ws)
 		{
-			string sName = ws.DisplayLabel;
-			string sEncCnv;
-			if (String.IsNullOrEmpty(ws.LegacyMapping))
-				sEncCnv = Sfm2Xml.STATICS.AlreadyInUnicode;
-			else
-				sEncCnv = ws.LegacyMapping;
-
+			var sEncCnv = string.IsNullOrEmpty(ws.LegacyMapping) ? Sfm2Xml.STATICS.AlreadyInUnicode : ws.LegacyMapping;
 			EncConverterChoice ecc;
 			if (m_mapWsEncConv.TryGetValue(ws.Id, out ecc))
 			{
@@ -454,13 +351,15 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				ecc = new EncConverterChoice(ws.Id, sEncCnv, m_wsManager);
 				m_mapWsEncConv.Add(ecc.WritingSystem.Id, ecc);
 			}
-			return new ListViewItem(new[] { sName, sEncCnv }) {Tag = ecc};
+			return new ListViewItem(new[] { ws.DisplayLabel, sEncCnv }) {Tag = ecc};
 		}
 
 		private void btnBackup_Click(object sender, EventArgs e)
 		{
 			using (var dlg = new BackupProjectDlg(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			{
 				dlg.ShowDialog(this);
+			}
 		}
 
 		private void btnDatabaseBrowse_Click(object sender, EventArgs e)
@@ -488,23 +387,19 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			switch (fileType)
 			{
 				case OFType.Database:
-					openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.ShoeboxAnthropologyDatabase,
-						FileFilterType.AllFiles);
+					openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.ShoeboxAnthropologyDatabase, FileFilterType.AllFiles);
 					openFileDialog.Title = LexTextControls.ksSelectAnthropologyStdFmtFile;
 					break;
 				case OFType.Project:
-					openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.ShoeboxProjectFiles,
-						FileFilterType.AllFiles);
+					openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.ShoeboxProjectFiles, FileFilterType.AllFiles);
 					openFileDialog.Title = LexTextControls.ksSelectShoeboxProjectFile;
 					break;
 				case OFType.Settings:
-					openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.ImportMapping,
-						FileFilterType.AllFiles);
+					openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.ImportMapping, FileFilterType.AllFiles);
 					openFileDialog.Title = LexTextControls.ksSelectLoadImportSettingsFile;
 					break;
 				case OFType.SaveAs:
-					openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.ImportMapping,
-						FileFilterType.AllFiles);
+					openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.ImportMapping, FileFilterType.AllFiles);
 					openFileDialog.Title = LexTextControls.ksSelectSaveImportSettingsFile;
 					break;
 			}
@@ -513,71 +408,77 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			openFileDialog.CheckFileExists = (fileType != OFType.SaveAs);
 			openFileDialog.Multiselect = false;
 
-			bool done = false;
+			var done = false;
 			while (!done)
 			{
 				// LT-6620 : putting in an invalid path was causing an exception in the openFileDialog.ShowDialog()
 				// Now we make sure parts are valid before setting the values in the openfile dialog.
-				string dir = string.Empty;
+				var dir = string.Empty;
 				try
 				{
 					dir = Path.GetDirectoryName(currentFile);
 				}
 				catch { }
+
 				if (Directory.Exists(dir))
+				{
 					openFileDialog.InitialDirectory = dir;
+				}
 				// if we don't set it to something, it remembers the last file it saw. This can be
 				// a very poor default if we just opened a valuable data file and are now choosing
 				// a place to save settings (LT-8126)
 				if (File.Exists(currentFile) || (fileType == OFType.SaveAs && Directory.Exists(dir)))
+				{
 					openFileDialog.FileName = currentFile;
+				}
 				else
-					openFileDialog.FileName = "";
+				{
+					openFileDialog.FileName = string.Empty;
+				}
 
 				if (openFileDialog.ShowDialog(this) == DialogResult.OK)
 				{
-					bool isValid = false;
+					bool isValid;
 					string sFileType;
-					if (fileType == OFType.Database)
+					switch (fileType)
 					{
-						sFileType = LexTextControls.ksStandardFormat;
-						isValid = IsValidSfmFile(openFileDialog.FileName);
-					}
-					else if (fileType == OFType.Project)
-					{
-						sFileType = LanguageExplorer.Controls.LexText.LexTextControls.ksShoeboxProject;
-						Sfm2Xml.IsSfmFile validFile = new Sfm2Xml.IsSfmFile(openFileDialog.FileName);
-						isValid = validFile.IsValid;
-					}
-					else if (fileType == OFType.SaveAs)
-					{
-						sFileType = LexTextControls.ksXmlSettings;
-						isValid = true;		// no requirements since the file will be overridden
-					}
-					else
-					{
-						sFileType = LexTextControls.ksXmlSettings;
-						isValid = IsValidMapFile(openFileDialog.FileName);
+						case OFType.Database:
+							sFileType = LexTextControls.ksStandardFormat;
+							isValid = IsValidSfmFile(openFileDialog.FileName);
+							break;
+						case OFType.Project:
+							sFileType = LexTextControls.ksShoeboxProject;
+							var validFile = new Sfm2Xml.IsSfmFile(openFileDialog.FileName);
+							isValid = validFile.IsValid;
+							break;
+						case OFType.SaveAs:
+							sFileType = LexTextControls.ksXmlSettings;
+							isValid = true;		// no requirements since the file will be overridden
+							break;
+						default:
+							sFileType = LexTextControls.ksXmlSettings;
+							isValid = IsValidMapFile(openFileDialog.FileName);
+							break;
 					}
 
 					if (!isValid)
 					{
-						string msg = String.Format(LexTextControls.ksSelectedFileXInvalidY,
-							openFileDialog.FileName, sFileType, System.Environment.NewLine);
-						DialogResult dr = MessageBox.Show(this, msg,
-							LexTextControls.ksPossibleInvalidFile,
-							MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+						var msg = string.Format(LexTextControls.ksSelectedFileXInvalidY, openFileDialog.FileName, sFileType, System.Environment.NewLine);
+						var dr = MessageBox.Show(this, msg, LexTextControls.ksPossibleInvalidFile, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 						if (dr == DialogResult.Yes)
+						{
 							return openFileDialog.FileName;
-						else if (dr == DialogResult.No)
+						}
+
+						if (dr == DialogResult.No)
+						{
 							continue;
-						else
-							break;	// exit with current still
+						}
+						break;	// exit with current still
 					}
 					return openFileDialog.FileName;
 				}
-				else
-					done = true;
+				done = true;
 			}
 			return currentFile;
 		}
@@ -588,8 +489,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			// The wizard base class redraws the controls, so move the cancel button after it's
 			// done ...
 			m_OriginalCancelButtonLeft = m_btnHelp.Left - (m_btnCancel.Width + kdxpCancelHelpButtonGap);
-			if (m_btnQuickFinish != null && m_btnBack != null && m_btnCancel != null &&
-				m_OriginalCancelButtonLeft != 0)
+			if (m_btnQuickFinish != null && m_btnBack != null && m_btnCancel != null && m_OriginalCancelButtonLeft != 0)
 			{
 				m_ExtraButtonLeft = m_btnBack.Left - (m_btnCancel.Width + kdxpCancelHelpButtonGap);
 				if (m_btnQuickFinish.Visible)
@@ -598,30 +498,33 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					m_btnCancel.Left = m_ExtraButtonLeft;
 				}
 				else
+				{
 					m_btnCancel.Left = m_OriginalCancelButtonLeft;
+				}
 			}
 		}
 
 		private void btnModifyMappingLanguage_Click(object sender, EventArgs e)
 		{
 			if (m_lvMappingLanguages.SelectedItems.Count == 0)
-				return;
-			using (ImportEncCvtrDlg dlg = new ImportEncCvtrDlg())
 			{
-				ListViewItem lvi = m_lvMappingLanguages.SelectedItems[0];
-				string sName = lvi.SubItems[0].Text;
-				string sEncCnv = lvi.SubItems[1].Text;
-				IApp app = m_propertyTable.GetValue<IApp>("App");
+				return;
+			}
+			using (var dlg = new ImportEncCvtrDlg())
+			{
+				var lvi = m_lvMappingLanguages.SelectedItems[0];
+				var sName = lvi.SubItems[0].Text;
+				var sEncCnv = lvi.SubItems[1].Text;
+				var app = m_propertyTable.GetValue<IApp>("App");
 				dlg.Initialize(sName, sEncCnv, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
-					string sNewEncCnv = dlg.EncodingConverter;
+					var sNewEncCnv = dlg.EncodingConverter;
 					if (sNewEncCnv != sEncCnv)
 					{
 						lvi.SubItems[1].Text = sNewEncCnv;
-						EncConverterChoice ecc = lvi.Tag as EncConverterChoice;
-						ecc.ConverterName = sNewEncCnv;
-						m_fDirtySettings = true;
+						((EncConverterChoice)lvi.Tag).ConverterName = sNewEncCnv;
+						DirtySettings = true;
 					}
 				}
 			}
@@ -646,22 +549,19 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				rsfm = dlg.Results;
 				lvi.SubItems[3].Text = rsfm.m_sName;
 				lvi.Tag = rsfm;
-				m_fDirtySettings = true;
+				DirtySettings = true;
 			}
 		}
 
 		private void cbRecordMarker_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			string sRecMkr = m_cbRecordMarker.SelectedItem as string;
+			var sRecMkr = m_cbRecordMarker.SelectedItem as string;
 			Debug.Assert(sRecMkr != null);
-			string sRecMkrBase = sRecMkr.Substring(1);
-			foreach (string sMkr in m_mapMkrRsf.Keys)
+			var sRecMkrBase = sRecMkr.Substring(1);
+			foreach (var sMkr in m_mapMkrRsf.Keys)
 			{
-				RnSfMarker rsf = m_mapMkrRsf[sMkr];
-				if (rsf.m_sMkr == sRecMkrBase)
-					rsf.m_nLevel = 1;
-				else
-					rsf.m_nLevel = 0;
+				var rsf = m_mapMkrRsf[sMkr];
+				rsf.m_nLevel = rsf.m_sMkr == sRecMkrBase ? 1 : 0;
 			}
 		}
 
@@ -685,23 +585,25 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void btnAddCharMapping_Click(object sender, EventArgs e)
 		{
-			using (ImportCharMappingDlg dlg = new ImportCharMappingDlg())
+			using (var dlg = new ImportCharMappingDlg())
 			{
-				IApp app = m_propertyTable.GetValue<IApp>("App");
+				var app = m_propertyTable.GetValue<IApp>("App");
 				dlg.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, m_stylesheet, null);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
-					CharMapping cmNew = new CharMapping();
-					cmNew.BeginMarker = dlg.BeginMarker;
-					cmNew.EndMarker = dlg.EndMarker;
-					cmNew.EndWithWord = dlg.EndWithWord;
-					cmNew.DestinationWritingSystemId = dlg.WritingSystemId;
-					cmNew.DestinationStyle = dlg.StyleName;
-					cmNew.IgnoreMarkerOnImport = dlg.IgnoreOnImport;
+					var cmNew = new CharMapping
+					{
+						BeginMarker = dlg.BeginMarker,
+						EndMarker = dlg.EndMarker,
+						EndWithWord = dlg.EndWithWord,
+						DestinationWritingSystemId = dlg.WritingSystemId,
+						DestinationStyle = dlg.StyleName,
+						IgnoreMarkerOnImport = dlg.IgnoreOnImport
+					};
 					m_rgcm.Add(cmNew);
-					ListViewItem lvi = CreateListItemForCharMapping(cmNew);
+					var lvi = CreateListItemForCharMapping(cmNew);
 					m_lvCharMappings.Items.Add(lvi);
-					m_fDirtySettings = true;
+					DirtySettings = true;
 				}
 			}
 		}
@@ -709,12 +611,14 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private void btnModifyCharMapping_Click(object sender, EventArgs e)
 		{
 			if (m_lvCharMappings.SelectedItems.Count == 0)
-				return;
-			ListViewItem lvi = m_lvCharMappings.SelectedItems[0];
-			using (ImportCharMappingDlg dlg = new ImportCharMappingDlg())
 			{
-				CharMapping cm = lvi.Tag as CharMapping;
-				IApp app = m_propertyTable.GetValue<IApp>("App");
+				return;
+			}
+			var lvi = m_lvCharMappings.SelectedItems[0];
+			using (var dlg = new ImportCharMappingDlg())
+			{
+				var cm = lvi.Tag as CharMapping;
+				var app = m_propertyTable.GetValue<IApp>("App");
 				dlg.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, m_stylesheet, cm);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -724,12 +628,12 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					cm.DestinationWritingSystemId = dlg.WritingSystemId;
 					cm.DestinationStyle = dlg.StyleName;
 					cm.IgnoreMarkerOnImport = dlg.IgnoreOnImport;
-					ListViewItem lviNew = CreateListItemForCharMapping(cm);
+					var lviNew = CreateListItemForCharMapping(cm);
 					lvi.SubItems[0].Text = lviNew.SubItems[0].Text;
 					lvi.SubItems[1].Text = lviNew.SubItems[1].Text;
 					lvi.SubItems[2].Text = lviNew.SubItems[2].Text;
 					lvi.SubItems[3].Text = lviNew.SubItems[3].Text;
-					m_fDirtySettings = true;
+					DirtySettings = true;
 				}
 			}
 		}
@@ -737,24 +641,30 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private void btnDeleteCharMapping_Click(object sender, EventArgs e)
 		{
 			if (m_lvCharMappings.SelectedItems.Count == 0)
+			{
 				return;
-			ListViewItem lvi = m_lvCharMappings.SelectedItems[0];
-			CharMapping cm = lvi.Tag as CharMapping;
+			}
+			var lvi = m_lvCharMappings.SelectedItems[0];
+			var cm = lvi.Tag as CharMapping;
 			m_lvCharMappings.Items.Remove(lvi);
 			m_rgcm.Remove(cm);
-			m_fDirtySettings = true;
+			DirtySettings = true;
 		}
 
 		private void rbReplaceAllEntries_CheckedChanged(object sender, EventArgs e)
 		{
 			if (m_rbReplaceAllEntries.Checked)
+			{
 				m_rbAddEntries.Checked = false;
+			}
 		}
 
 		private void rbAddEntries_CheckedChanged(object sender, EventArgs e)
 		{
 			if (m_rbAddEntries.Checked)
+			{
 				m_rbReplaceAllEntries.Checked = false;
+			}
 		}
 
 		private void btnSaveMapFile_Click(object sender, EventArgs e)
@@ -767,15 +677,15 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			m_propertyTable.SetProperty("DataNotebookImportDb", m_tbDatabaseFileName.Text, true, true);
 			m_propertyTable.SetProperty("DataNotebookImportPrj", m_tbProjectFileName.Text, true, true);
 			m_propertyTable.SetProperty("DataNotebookImportMap", m_tbSaveAsFileName.Text, true, true);
-			using (TextWriter tw = FileUtils.OpenFileForWrite(m_tbSaveAsFileName.Text, Encoding.UTF8))
+			using (var tw = FileUtils.OpenFileForWrite(m_tbSaveAsFileName.Text, Encoding.UTF8))
 			{
 				try
 				{
-					string sRecMkr = m_cbRecordMarker.SelectedItem as string;
-					string sRecMkrBase = String.Empty;
-					if (String.IsNullOrEmpty(sRecMkr))
+					var sRecMkr = m_cbRecordMarker.SelectedItem as string;
+					var sRecMkrBase = string.Empty;
+					if (string.IsNullOrEmpty(sRecMkr))
 					{
-						foreach (RnSfMarker rsf in m_mapMkrRsf.Values)
+						foreach (var rsf in m_mapMkrRsf.Values)
 						{
 							if (rsf.m_nLevel == 1)
 							{
@@ -789,57 +699,62 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						sRecMkrBase = sRecMkr.Substring(1);
 						// strip leading backslash
 					}
-					using (XmlWriter xw = XmlWriter.Create(tw))
+					using (var xw = XmlWriter.Create(tw))
 					{
 						xw.WriteStartDocument();
 						xw.WriteWhitespace(Environment.NewLine);
-						string sDontEditEnglish = " DO NOT EDIT THIS FILE!  YOU HAVE BEEN WARNED! ";
+						const string sDontEditEnglish = " DO NOT EDIT THIS FILE!  YOU HAVE BEEN WARNED! ";
 						xw.WriteComment(sDontEditEnglish);
 						xw.WriteWhitespace(Environment.NewLine);
-						string sAutoEnglish = " The Fieldworks import process automatically maintains this file. ";
+						const string sAutoEnglish = " The Fieldworks import process automatically maintains this file. ";
 						xw.WriteComment(sAutoEnglish);
 						xw.WriteWhitespace(Environment.NewLine);
-						string sDontEdit = LexTextControls.ksDONOTEDIT;
+						var sDontEdit = LexTextControls.ksDONOTEDIT;
 						if (sDontEdit != sDontEditEnglish)
 						{
 							xw.WriteComment(sDontEdit);
 							xw.WriteWhitespace(Environment.NewLine);
 						}
-						string sAuto = LexTextControls.ksAutomaticallyMaintains;
+						var sAuto = LexTextControls.ksAutomaticallyMaintains;
 						if (sAuto != sAutoEnglish)
 						{
 							xw.WriteComment(sAuto);
 							xw.WriteWhitespace(Environment.NewLine);
 						}
 						xw.WriteStartElement("ShoeboxImportSettings");
-						foreach (string sWs in m_mapWsEncConv.Keys)
+						foreach (var sWs in m_mapWsEncConv.Keys)
 						{
-							EncConverterChoice ecc = m_mapWsEncConv[sWs];
+							var ecc = m_mapWsEncConv[sWs];
 							xw.WriteWhitespace(Environment.NewLine);
 							xw.WriteStartElement("EncodingConverter");
 							xw.WriteAttributeString("ws", ecc.WritingSystem.Id);
-							if (!String.IsNullOrEmpty(ecc.ConverterName) && ecc.ConverterName != Sfm2Xml.STATICS.AlreadyInUnicode)
+							if (!string.IsNullOrEmpty(ecc.ConverterName) && ecc.ConverterName != Sfm2Xml.STATICS.AlreadyInUnicode)
+							{
 								xw.WriteAttributeString("converter", ecc.ConverterName);
+							}
 							xw.WriteEndElement();	// EncodingConverter
 						}
 						foreach (string sMkr in m_mapMkrRsf.Keys)
 						{
-							RnSfMarker rsf = m_mapMkrRsf[sMkr];
+							var rsf = m_mapMkrRsf[sMkr];
 							xw.WriteWhitespace(Environment.NewLine);
 							xw.WriteStartElement("Marker");
 							xw.WriteAttributeString("tag", rsf.m_sMkr);
 							xw.WriteAttributeString("flid", rsf.m_flid.ToString());
-							if (!String.IsNullOrEmpty(rsf.m_sMkrOverThis))
+							if (!string.IsNullOrEmpty(rsf.m_sMkrOverThis))
+							{
 								xw.WriteAttributeString("owner", rsf.m_sMkrOverThis);
-							else if (rsf.m_nLevel == 0 && !String.IsNullOrEmpty(sRecMkrBase))
+							}
+							else if (rsf.m_nLevel == 0 && !string.IsNullOrEmpty(sRecMkrBase))
+							{
 								xw.WriteAttributeString("owner", sRecMkrBase);
+							}
 							WriteMarkerContents(xw, rsf);
 							xw.WriteWhitespace(Environment.NewLine);
 							xw.WriteEndElement();	// Marker
 						}
-						for (int i = 0; i < m_rgcm.Count; ++i)
+						foreach (var cm in m_rgcm)
 						{
-							CharMapping cm = m_rgcm[i];
 							xw.WriteWhitespace(Environment.NewLine);
 							xw.WriteStartElement("CharMapping");
 							xw.WriteAttributeString("begin", cm.BeginMarker);
@@ -850,10 +765,15 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 							}
 							else
 							{
-								if (!String.IsNullOrEmpty(cm.DestinationStyle))
+								if (!string.IsNullOrEmpty(cm.DestinationStyle))
+								{
 									xw.WriteAttributeString("style", cm.DestinationStyle);
-								if (!String.IsNullOrEmpty(cm.DestinationWritingSystemId))
+								}
+
+								if (!string.IsNullOrEmpty(cm.DestinationWritingSystemId))
+								{
 									xw.WriteAttributeString("ws", cm.DestinationWritingSystemId);
+								}
 							}
 							xw.WriteEndElement();
 						}
@@ -876,7 +796,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						xw.WriteWhitespace(Environment.NewLine);
 						xw.Flush();
 						xw.Close();
-						m_fDirtySettings = false;
+						DirtySettings = false;
 					}
 				}
 				catch (XmlException)
@@ -890,7 +810,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			switch (FieldType(rsf.m_flid))
 			{
 				case SfFieldType.DateTime:
-					foreach (string sFmt in rsf.m_dto.m_rgsFmt)
+					foreach (var sFmt in rsf.m_dto.m_rgsFmt)
 					{
 						xw.WriteWhitespace(Environment.NewLine);
 						xw.WriteStartElement("DateFormat");
@@ -899,7 +819,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 					break;
 				case SfFieldType.ListRef:
-					if (!String.IsNullOrEmpty(rsf.m_tlo.m_sEmptyDefault))
+					if (!string.IsNullOrEmpty(rsf.m_tlo.m_sEmptyDefault))
 					{
 						xw.WriteWhitespace(Environment.NewLine);
 						xw.WriteStartElement(AreaServices.Default);
@@ -908,8 +828,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 					xw.WriteWhitespace(Environment.NewLine);
 					xw.WriteStartElement("Match");
-					xw.WriteAttributeString("value",
-						rsf.m_tlo.m_pnt == PossNameType.kpntName ? "name" : "abbr");
+					xw.WriteAttributeString("value", rsf.m_tlo.m_pnt == PossNameType.kpntName ? "name" : "abbr");
 					xw.WriteEndElement();
 					if (rsf.m_tlo.m_fHaveMulti)
 					{
@@ -948,7 +867,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						xw.WriteEndElement();
 					}
 					Debug.Assert(rsf.m_tlo.m_rgsMatch.Count == rsf.m_tlo.m_rgsReplace.Count);
-					for (int j = 0; j < rsf.m_tlo.m_rgsMatch.Count; ++j)
+					for (var j = 0; j < rsf.m_tlo.m_rgsMatch.Count; ++j)
 					{
 						xw.WriteWhitespace(Environment.NewLine);
 						xw.WriteStartElement("MatchReplaceChoice");
@@ -956,7 +875,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						xw.WriteAttributeString("replace", rsf.m_tlo.m_rgsReplace[j]);
 						xw.WriteEndElement();
 					}
-					if (!String.IsNullOrEmpty(rsf.m_tlo.m_wsId))
+					if (!string.IsNullOrEmpty(rsf.m_tlo.m_wsId))
 					{
 						xw.WriteWhitespace(Environment.NewLine);
 						xw.WriteStartElement("ItemWrtSys");
@@ -971,7 +890,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					xw.WriteEndElement();
 					break;
 				case SfFieldType.Text:
-					if (!String.IsNullOrEmpty(rsf.m_txo.m_sStyle))
+					if (!string.IsNullOrEmpty(rsf.m_txo.m_sStyle))
 					{
 						xw.WriteWhitespace(Environment.NewLine);
 						xw.WriteStartElement("TextStyle");
@@ -981,18 +900,26 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					xw.WriteWhitespace(Environment.NewLine);
 					xw.WriteStartElement("StartPara");
 					if (rsf.m_txo.m_fStartParaBlankLine)
+					{
 						xw.WriteAttributeString("afterBlankLine", "true");
+					}
+
 					if (rsf.m_txo.m_fStartParaIndented)
+					{
 						xw.WriteAttributeString("forIndentedLine", "true");
+					}
+
 					if (rsf.m_txo.m_fStartParaNewLine)
+					{
 						xw.WriteAttributeString("forEachLine", "true");
+					}
 					if (rsf.m_txo.m_fStartParaShortLine)
 					{
 						xw.WriteAttributeString("afterShortLine", "true");
 						xw.WriteAttributeString("shortLineLim", rsf.m_txo.m_cchShortLim.ToString());
 					}
 					xw.WriteEndElement();
-					if (!String.IsNullOrEmpty(rsf.m_txo.m_wsId))
+					if (!string.IsNullOrEmpty(rsf.m_txo.m_wsId))
 					{
 						xw.WriteWhitespace(Environment.NewLine);
 						xw.WriteStartElement("DefaultParaWrtSys");
@@ -1011,10 +938,12 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		public SfFieldType FieldType(int flid)
 		{
 			if (flid == 0)
+			{
 				return SfFieldType.Discard;
+			}
 
-			CellarPropertyType cpt = (CellarPropertyType)m_mdc.GetFieldType(flid);
-			int clidDst = -1;
+			var cpt = (CellarPropertyType)m_mdc.GetFieldType(flid);
+			int clidDst;
 			switch (cpt)
 			{
 				case CellarPropertyType.ReferenceAtomic:
@@ -1029,13 +958,12 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						case ReminderTags.kClassId:
 							return SfFieldType.Invalid;
 						default:
-							int clidBase = clidDst;
+							var clidBase = clidDst;
 							while (clidBase != 0 && clidBase != CmPossibilityTags.kClassId)
+							{
 								clidBase = m_mdc.GetBaseClsId(clidBase);
-							if (clidBase == CmPossibilityTags.kClassId)
-								return SfFieldType.ListRef;
-							else
-								return SfFieldType.Invalid;
+							}
+							return clidBase == CmPossibilityTags.kClassId ? SfFieldType.ListRef : SfFieldType.Invalid;
 					}
 				case CellarPropertyType.OwningAtomic:
 				case CellarPropertyType.OwningCollection:
@@ -1079,9 +1007,11 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// <returns>true if valid</returns>
 		private static bool IsValidMapFile(string mapFile)
 		{
-			if (String.IsNullOrEmpty(mapFile) || !File.Exists(mapFile))
+			if (string.IsNullOrEmpty(mapFile) || !File.Exists(mapFile))
+			{
 				return false;
-			XmlDocument xmlMap = new System.Xml.XmlDocument();
+			}
+			var xmlMap = new XmlDocument();
 			try
 			{
 				xmlMap.Load(mapFile);
@@ -1089,20 +1019,26 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				XmlNode root = xmlMap.DocumentElement;
 				// make sure it has a root node of ShoeboxImportSettings
 				if (root.Name != "ShoeboxImportSettings")
+				{
 					return false;
+				}
 				// make sure the top-level child nodes are all valid.
 				foreach (XmlNode node in root.ChildNodes)
 				{
-					if (node.Name == "EncodingConverter")
-						continue;
-					if (node.Name == "Marker")
-						continue;
-					if (node.Name == "CharMapping")
-						continue;
-					if (node.Name == "ReplaceAll")
-						continue;
-					if (node.Name == "ShowLog")
-						continue;
+					switch (node.Name)
+					{
+						case "EncodingConverter":
+							continue;
+						case "Marker":
+							continue;
+						case "CharMapping":
+							continue;
+						case "ReplaceAll":
+							continue;
+						case "ShowLog":
+							continue;
+					}
+
 					return false;
 				}
 			}
@@ -1115,9 +1051,11 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private static bool IsValidSfmFile(string sFilename)
 		{
-			if (String.IsNullOrEmpty(sFilename) || !File.Exists(sFilename))
+			if (string.IsNullOrEmpty(sFilename) || !File.Exists(sFilename))
+			{
 				return false;
-			Sfm2Xml.IsSfmFile validFile = new Sfm2Xml.IsSfmFile(sFilename);
+			}
+			var validFile = new IsSfmFile(sFilename);
 			return validFile.IsValid;
 		}
 
@@ -1154,7 +1092,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			switch (nCurrent)
 			{
 				case kstepFileAndSettings:
-					bool fStayHere = UsesInvalidFileNames(false);
+					var fStayHere = UsesInvalidFileNames(false);
 					if (fStayHere)
 					{
 						// Don't go anywhere, stay right here by going to the previous page.
@@ -1205,22 +1143,24 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			if (m_sSfmDataFile != m_tbDatabaseFileName.Text)
 			{
 				m_sSfmDataFile = m_tbDatabaseFileName.Text;
-				m_SfmFile = new Sfm2Xml.SfmFile(m_sSfmDataFile);
+				m_SfmFile = new SfmFile(m_sSfmDataFile);
 			}
 			if (m_mapMkrRsf.Count == 0)
 			{
 				foreach (string sfm in m_SfmFile.SfmInfo)
 				{
 					if (sfm.StartsWith("_"))
+					{
 						continue;
-					RnSfMarker rsf = FindOrCreateRnSfMarker(sfm);
+					}
+					var rsf = FindOrCreateRnSfMarker(sfm);
 					m_mapMkrRsf.Add(rsf.m_sMkr, rsf);
 				}
 				m_lvContentMapping.Items.Clear();
-				foreach (string sMkr in m_mapMkrRsf.Keys)
+				foreach (var sMkr in m_mapMkrRsf.Keys)
 				{
-					RnSfMarker rsf = m_mapMkrRsf[sMkr];
-					ListViewItem lvi = new ListViewItem(new string[] {
+					var rsf = m_mapMkrRsf[sMkr];
+					var lvi = new ListViewItem(new[] {
 						"\\" + rsf.m_sMkr,
 						m_SfmFile.GetSFMCount(rsf.m_sMkr).ToString(),
 						m_SfmFile.GetSFMWithDataCount(rsf.m_sMkr).ToString(),
@@ -1240,27 +1180,28 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private void ReadProjectFile()
 		{
 			if (!IsValidSfmFile(m_tbProjectFileName.Text))
+			{
 				return;
-			Sfm2Xml.ByteReader prjRdr = new Sfm2Xml.ByteReader(m_tbProjectFileName.Text);
+			}
+			var prjRdr = new ByteReader(m_tbProjectFileName.Text);
 			string sMkr;
 			byte[] sfmData;
 			byte[] badSfmData;
-			string sDataFile = Path.GetFileName(m_tbDatabaseFileName.Text).ToLowerInvariant();
-			bool fInDataDefs = false;
+			var sDataFile = Path.GetFileName(m_tbDatabaseFileName.Text).ToLowerInvariant();
+			var fInDataDefs = false;
 			while (prjRdr.GetNextSfmMarkerAndData(out sMkr, out sfmData, out badSfmData))
 			{
-				Sfm2Xml.Converter.MultiToWideError mwError;
+				Converter.MultiToWideError mwError;
 				byte[] badData;
 				switch (sMkr)
 				{
 					case "+db":
 						if (sfmData.Length > 0)
 						{
-							string sData = Sfm2Xml.Converter.MultiToWideWithERROR(sfmData, 0,
-								sfmData.Length - 1, Encoding.UTF8, out mwError, out badData);
-							if (mwError == Sfm2Xml.Converter.MultiToWideError.None)
+							var sData = Converter.MultiToWideWithERROR(sfmData, 0, sfmData.Length - 1, Encoding.UTF8, out mwError, out badData);
+							if (mwError == Converter.MultiToWideError.None)
 							{
-								string sFile = Path.GetFileName(sData.Trim());
+								var sFile = Path.GetFileName(sData.Trim());
 								fInDataDefs = sFile.ToLowerInvariant() == sDataFile;
 							}
 						}
@@ -1271,10 +1212,11 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					case "mkrPriKey":
 						if (fInDataDefs && sfmData.Length > 0)
 						{
-							string sData = Sfm2Xml.Converter.MultiToWideWithERROR(sfmData, 0,
-								sfmData.Length - 1, Encoding.UTF8, out mwError, out badData);
+							var sData = Converter.MultiToWideWithERROR(sfmData, 0, sfmData.Length - 1, Encoding.UTF8, out mwError, out badData);
 							if (mwError == Sfm2Xml.Converter.MultiToWideError.None)
+							{
 								m_recMkr = sData.Trim();
+							}
 						}
 						break;
 				}
@@ -1285,11 +1227,16 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			RnSfMarker rsf;
 			if (m_mapMkrRsfFromFile.TryGetValue(mkr, out rsf))
+			{
 				return rsf;
-			RnSfMarker rsfNew = new RnSfMarker();
-			rsfNew.m_sMkr = mkr;
-			rsfNew.m_flid = 0;
-			rsfNew.m_sName = LexTextControls.ksDoNotImport;
+			}
+
+			var rsfNew = new RnSfMarker
+			{
+				m_sMkr = mkr,
+				m_flid = 0,
+				m_sName = LexTextControls.ksDoNotImport
+			};
 			return rsfNew;
 		}
 
@@ -1297,30 +1244,38 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			if (m_cbRecordMarker.Items.Count == 0)
 			{
-				Dictionary<int, string> mapOrderMarker = new Dictionary<int,string>();
-				int select = -1;
+				var mapOrderMarker = new Dictionary<int,string>();
+				var select = -1;
 				foreach (string sfm in m_SfmFile.SfmInfo)
 				{
-					int order = m_SfmFile.GetSFMOrder(sfm);
+					var order = m_SfmFile.GetSFMOrder(sfm);
 					mapOrderMarker[order] = sfm;
 					if (sfm == m_recMkr)
+					{
 						select = order;
+					}
 				}
-				for (int i = 1; i <= mapOrderMarker.Count; ++i)
+				for (var i = 1; i <= mapOrderMarker.Count; ++i)
 				{
 					string sMkr;
 					if (mapOrderMarker.TryGetValue(i, out sMkr))
 					{
 						if (sMkr.StartsWith("_"))
+						{
 							continue;
-						string sShow = "\\" + sMkr;
+						}
+						var sShow = "\\" + sMkr;
 						m_cbRecordMarker.Items.Add(sShow);
 						if (i == select)
+						{
 							m_cbRecordMarker.Text = sShow;
+						}
 					}
 				}
 				if (select == -1)
+				{
 					m_cbRecordMarker.SelectedIndex = 0;
+				}
 			}
 		}
 
@@ -1328,9 +1283,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			if (m_lvCharMappings.Items.Count == 0)
 			{
-				foreach (CharMapping cm in m_rgcm)
+				foreach (var cm in m_rgcm)
 				{
-					ListViewItem lvi = CreateListItemForCharMapping(cm);
+					var lvi = CreateListItemForCharMapping(cm);
 					m_lvCharMappings.Items.Add(lvi);
 				}
 			}
@@ -1338,8 +1293,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private ListViewItem CreateListItemForCharMapping(CharMapping cm)
 		{
-			string sWsName = String.Empty;
-			string sWs = cm.DestinationWritingSystemId;
+			var sWsName = string.Empty;
+			var sWs = cm.DestinationWritingSystemId;
 			if (!string.IsNullOrEmpty(sWs))
 			{
 				CoreWritingSystemDefinition ws;
@@ -1347,37 +1302,26 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				Debug.Assert(ws != null);
 				sWsName = ws.DisplayLabel;
 			}
-			string sStyle = cm.DestinationStyle;
-			if (sStyle == null)
-				sStyle = String.Empty;
-			string sBegin = cm.BeginMarker;
-			if (sBegin == null)
-				sBegin = String.Empty;
-			string sEnd = cm.EndMarker;
-			if (sEnd == null)
-				sEnd = String.Empty;
+			var sStyle = cm.DestinationStyle ?? string.Empty;
+			var sBegin = cm.BeginMarker ?? string.Empty;
+			var sEnd = cm.EndMarker ?? string.Empty;
 			return new ListViewItem(new[] { sBegin, sEnd, sWsName, sStyle }) {Tag = cm};
 		}
 
 		private void ShowSaveButtonOrNot()
 		{
-			if (!string.IsNullOrEmpty(m_tbSaveAsFileName.Text))
-				m_btnSaveMapFile.Visible = true;
-			else
-				m_btnSaveMapFile.Visible = false;
+			m_btnSaveMapFile.Visible = !string.IsNullOrEmpty(m_tbSaveAsFileName.Text);
 		}
 
 		private bool UsesInvalidFileNames(bool runSilent)
 		{
-			bool fStayHere = false;
+			var fStayHere = false;
 			if (!IsValidMapFile(m_tbSettingsFileName.Text))
 			{
 				if (!runSilent)
 				{
-					string msg = String.Format(LexTextControls.ksInvalidSettingsFileX,
-						m_tbSettingsFileName.Text);
-					MessageBox.Show(this, msg, LexTextControls.ksInvalidFile,
-						MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					var msg = string.Format(LexTextControls.ksInvalidSettingsFileX, m_tbSettingsFileName.Text);
+					MessageBox.Show(this, msg, LexTextControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 				fStayHere = true;
 				m_tbSettingsFileName.Focus();
@@ -1386,9 +1330,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			{
 				if (!runSilent)
 				{
-					string msg = LexTextControls.ksUndefinedSettingsSaveFile;
-					MessageBox.Show(this, msg, LexTextControls.ksInvalidFile,
-						MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					var msg = LexTextControls.ksUndefinedSettingsSaveFile;
+					MessageBox.Show(this, msg, LexTextControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 				fStayHere = true;
 				m_tbSaveAsFileName.Focus();
@@ -1397,12 +1340,14 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			{
 				try
 				{
-					System.IO.FileInfo fi = new System.IO.FileInfo(m_tbSaveAsFileName.Text);
+					var fi = new FileInfo(m_tbSaveAsFileName.Text);
 					if (!fi.Exists)
 					{
 						// make sure we can create the file for future use
 						using (var s2 = new FileStream(m_tbSaveAsFileName.Text, FileMode.Create))
+						{
 							s2.Close();
+						}
 						fi.Delete();
 					}
 				}
@@ -1410,9 +1355,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				{
 					if (!runSilent)
 					{
-						string msg = String.Format(LexTextControls.ksInvalidSettingsSaveFileX, m_tbSaveAsFileName.Text);
-						MessageBox.Show(this, msg, LexTextControls.ksInvalidFile,
-							MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						var msg = string.Format(LexTextControls.ksInvalidSettingsSaveFileX, m_tbSaveAsFileName.Text);
+						MessageBox.Show(this, msg, LexTextControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					}
 					fStayHere = true;
 					m_tbSaveAsFileName.Focus();
@@ -1423,10 +1367,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				// We don't want to overwrite the database with the settings!  See LT-8126.
 				if (!runSilent)
 				{
-					string msg = String.Format(LexTextControls.ksSettingsSaveFileSameAsDatabaseFile,
-						m_tbSaveAsFileName.Text, m_tbDatabaseFileName.Text);
-					MessageBox.Show(this, msg, LexTextControls.ksInvalidFile,
-						MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					var msg = string.Format(LexTextControls.ksSettingsSaveFileSameAsDatabaseFile, m_tbSaveAsFileName.Text, m_tbDatabaseFileName.Text);
+					MessageBox.Show(this, msg, LexTextControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 				fStayHere = true;
 			}
@@ -1436,7 +1378,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private bool EnableNextButton()
 		{
 			//AllowQuickFinishButton();	// this should be done at least before each step
-			bool rval = false;
+			var rval = false;
 			using (new WaitCursor(this))
 			{
 				switch (CurrentStepNumber)
@@ -1454,8 +1396,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						// make sure there is a value for the 'Save as:' entry
 						if (m_tbSaveAsFileName.Text.Length <= 0)
 						{
-							m_tbSaveAsFileName.Text = Path.Combine(Path.GetDirectoryName(m_tbDatabaseFileName.Text),
-								Path.GetFileNameWithoutExtension(m_tbDatabaseFileName.Text) + "-import-settings.map");
+							m_tbSaveAsFileName.Text = Path.Combine(Path.GetDirectoryName(m_tbDatabaseFileName.Text), Path.GetFileNameWithoutExtension(m_tbDatabaseFileName.Text) + "-import-settings.map");
 						}
 						rval = true;
 						break;
@@ -1487,9 +1428,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private bool AllowQuickFinishButton()
 		{
 			// if we're in an early tab and we have a dict file and a map file, allow it
-			if (m_CurrentStepNumber < 6 &&
-				IsValidSfmFile(m_tbDatabaseFileName.Text) &&
-				IsValidMapFile(m_tbSettingsFileName.Text))
+			if (m_CurrentStepNumber < 6 && IsValidSfmFile(m_tbDatabaseFileName.Text) && IsValidMapFile(m_tbSettingsFileName.Text))
 			{
 				if (!m_btnQuickFinish.Visible)
 				{
@@ -1512,7 +1451,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			// don't continue if there are invalid file names / paths
 			if (UsesInvalidFileNames(false))
+			{
 				return;
+			}
 
 			if (AllowQuickFinishButton())
 			{
@@ -1549,13 +1490,14 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// </summary>
 		private void m_DatabaseFileName_TextChanged(object sender, EventArgs e)
 		{
-			if (String.IsNullOrEmpty(m_tbSaveAsFileName.Text) &&
-				IsValidSfmFile(m_tbDatabaseFileName.Text))
+			if (string.IsNullOrEmpty(m_tbSaveAsFileName.Text) && IsValidSfmFile(m_tbDatabaseFileName.Text))
 			{
-				string sDatabase = m_tbDatabaseFileName.Text;
-				string sSaveAs = Path.ChangeExtension(sDatabase, "map");
+				var sDatabase = m_tbDatabaseFileName.Text;
+				var sSaveAs = Path.ChangeExtension(sDatabase, "map");
 				if (sSaveAs.ToLowerInvariant() != sDatabase.ToLowerInvariant())
+				{
 					m_tbSaveAsFileName.Text = sSaveAs;
+				}
 			}
 			NextButtonEnabled = EnableNextButton();
 		}
@@ -1567,7 +1509,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// </summary>
 		private void m_SettingsFileName_TextChanged(object sender, EventArgs e)
 		{
-			if (String.IsNullOrEmpty(m_tbSaveAsFileName.Text) &&
+			if (string.IsNullOrEmpty(m_tbSaveAsFileName.Text) &&
 				IsValidMapFile(m_tbSettingsFileName.Text) &&
 				m_tbSettingsFileName.Text.ToLowerInvariant() != m_sStdImportMap.ToLowerInvariant())
 			{
@@ -1579,9 +1521,11 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private void LoadSettingsFile()
 		{
 			if (m_mapFlidName.Count == 0)
+			{
 				FillFlidNameMap();
+			}
 
-			XmlDocument xmlMap = new System.Xml.XmlDocument();
+			var xmlMap = new XmlDocument();
 			try
 			{
 				xmlMap.Load(m_tbSettingsFileName.Text);
@@ -1601,14 +1545,18 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 								ReadMarkerSetting(xn);
 								break;
 							case "CharMapping":
-								ReadCharMapping(xn);
+								AddCharMapping(xn);
 								break;
 							case "ReplaceAll":
-								bool fReplaceAll = XmlUtils.GetOptionalBooleanAttributeValue(xn, "value", false);
+								var fReplaceAll = XmlUtils.GetOptionalBooleanAttributeValue(xn, "value", false);
 								if (fReplaceAll)
+								{
 									m_rbReplaceAllEntries.Checked = true;
+								}
 								else
+								{
 									m_rbAddEntries.Checked = true;
+								}
 								break;
 							case "ShowLog":
 								m_chkDisplayImportReport.Checked = XmlUtils.GetOptionalBooleanAttributeValue(xn, "value", false);
@@ -1635,10 +1583,12 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			try
 			{
-				RnSfMarker sfm = new RnSfMarker();
-				sfm.m_sMkr = XmlUtils.GetMandatoryAttributeValue(xnMarker, "tag");
-				sfm.m_flid = XmlUtils.GetMandatoryIntegerAttributeValue(xnMarker, "flid");
-				sfm.m_sMkrOverThis = XmlUtils.GetOptionalAttributeValue(xnMarker, "owner");
+				var sfm = new RnSfMarker
+				{
+					m_sMkr = XmlUtils.GetMandatoryAttributeValue(xnMarker, "tag"),
+					m_flid = XmlUtils.GetMandatoryIntegerAttributeValue(xnMarker, "flid"),
+					m_sMkrOverThis = XmlUtils.GetOptionalAttributeValue(xnMarker, "owner")
+				};
 				if (sfm.m_flid == 0)
 				{
 					sfm.m_sName = LexTextControls.ksDoNotImport;
@@ -1646,14 +1596,14 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				else
 				{
 					sfm.m_sName = m_mapFlidName[sfm.m_flid];
-					int clidDest = 0;
+					int clidDest;
 					switch ((CellarPropertyType)m_mdc.GetFieldType(sfm.m_flid))
 					{
 						case CellarPropertyType.Time:
 						case CellarPropertyType.GenDate:
 							foreach (XmlNode xn in xnMarker.SelectNodes("./DateFormat"))
 							{
-								string sFormat = XmlUtils.GetMandatoryAttributeValue(xn, "value");
+								var sFormat = XmlUtils.GetMandatoryAttributeValue(xn, "value");
 								sfm.m_dto.m_rgsFmt.Add(sFormat);
 							}
 							break;
@@ -1723,13 +1673,20 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					foreach (XmlNode xn in xnMarker.ChildNodes)
 					{
 						if (xn.Name == "Record")
+						{
 							sfm.m_nLevel = XmlUtils.GetMandatoryIntegerAttributeValue(xn, "level");
+						}
 					}
 				}
+
 				if (m_mapMkrRsfFromFile.ContainsKey(sfm.m_sMkr))
+				{
 					m_mapMkrRsfFromFile[sfm.m_sMkr] = sfm;
+				}
 				else
+				{
 					m_mapMkrRsfFromFile.Add(sfm.m_sMkr, sfm);
+				}
 			}
 			catch
 			{
@@ -1743,7 +1700,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				switch (xn.Name)
 				{
 					case "Match":
-						string sMatch = XmlUtils.GetMandatoryAttributeValue(xn, "value");
+						var sMatch = XmlUtils.GetMandatoryAttributeValue(xn, "value");
 						switch (sMatch)
 						{
 							case "abbr":
@@ -1836,10 +1793,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			}
 		}
 
-		private void ReadCharMapping(XmlNode xn)
+		private void AddCharMapping(XmlNode xn)
 		{
-			CharMapping cm = new CharMapping(xn);
-			m_rgcm.Add(cm);
+			m_rgcm.Add(new CharMapping(xn));
 		}
 
 		private void FillFlidNameMap()
@@ -1850,56 +1806,51 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			// or less fair game as an import target (unless it no longer exists).
 			// Except that Reminders and CrossReferences have never been handled in the UI,
 			// we want to skip them as well.
-			int[] flidMissing = new int[] {
+			var flidsMissing = new[]
+			{
 				RnGenericRecTags.kflidSubRecords,
 				RnGenericRecTags.kflidCrossReferences,
 				RnGenericRecTags.kflidReminders,
 				4004028			// was kflidWeather at one time.
 			};
 
-			for (int flid = flidMin; flid <= flidMax; ++flid)
+			for (var flid = flidMin; flid <= flidMax; ++flid)
 			{
-				bool fSkip = false;
-				for (int i = 0; i < flidMissing.Length; ++i)
+				var fSkip = false;
+				foreach (var flidMissing in flidsMissing)
 				{
-					if (flid == flidMissing[i])
+					if (flid == flidMissing)
 					{
 						fSkip = true;
 						break;
 					}
 				}
+
 				if (fSkip)
+				{
 					continue;
-				string stid = "kstid" + m_mdc.GetFieldName(flid);
-				string sName = ResourceHelper.GetResourceString(stid);
+				}
+				var stid = "kstid" + m_mdc.GetFieldName(flid);
+				var sName = ResourceHelper.GetResourceString(stid);
 				m_mapFlidName.Add(flid, sName);
 			}
 			// Look for custom fields belonging to RnGenericRec.
-			foreach (int flid in m_mdc.GetFieldIds())
+			foreach (var flid in m_mdc.GetFieldIds())
 			{
-				if (flid >= (RnGenericRecTags.kClassId * 1000 + 500) &&
-					flid <= (RnGenericRecTags.kClassId * 1000 + 999))
+				if (flid >= (RnGenericRecTags.kClassId * 1000 + 500) && flid <= (RnGenericRecTags.kClassId * 1000 + 999))
 				{
-					string sName = m_mdc.GetFieldLabel(flid);
+					var sName = m_mdc.GetFieldLabel(flid);
 					m_mapFlidName.Add(flid, sName);
 				}
 			}
 		}
 
-		Process m_viewProcess = null;
+		Process m_viewProcess;
 		private void btnViewFile_Click(object sender, EventArgs e)
 		{
 			if (m_viewProcess == null || m_viewProcess.HasExited)
 			{
-				if (MiscUtils.IsUnix)
-					// Open SFM file from users default text editor (FWNX-834)
-					m_viewProcess = Process.Start(
-						"xdg-open",
-						m_sSfmDataFile);
-				else
-					m_viewProcess = Process.Start(
-						Path.Combine(FwDirectoryFinder.CodeDirectory, "ZEdit.exe"),
-						m_sSfmDataFile);
+				m_viewProcess = Process.Start(MiscUtils.IsUnix ? "xdg-open" : Path.Combine(FwDirectoryFinder.CodeDirectory, "ZEdit.exe"), m_sSfmDataFile);
 			}
 		}
 
@@ -1935,14 +1886,14 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void m_btnAddWritingSystem_WritingSystemAdded(object sender, EventArgs e)
 		{
-			CoreWritingSystemDefinition ws = m_btnAddWritingSystem.NewWritingSystem;
+			var ws = m_btnAddWritingSystem.NewWritingSystem;
 			if (ws != null)
 			{
-				ListViewItem lvi = CreateListViewItemForWS(ws);
+				var lvi = CreateListViewItemForWS(ws);
 				m_lvMappingLanguages.Items.Add(lvi);
 				m_lvMappingLanguages.Sort();
 				lvi.Selected = true;
-				m_fDirtySettings = true;
+				DirtySettings = true;
 			}
 		}
 
@@ -1962,26 +1913,12 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void listViewMappingLanguages_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (m_lvMappingLanguages.SelectedItems.Count == 0)
-			{
-				m_btnModifyMappingLanguage.Enabled = false;
-			}
-			else
-			{
-				m_btnModifyMappingLanguage.Enabled = true;
-			}
+			m_btnModifyMappingLanguage.Enabled = m_lvMappingLanguages.SelectedItems.Count != 0;
 		}
 
 		private void listViewContentMapping_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (m_lvContentMapping.SelectedItems.Count == 0)
-			{
-				m_btnModifyContentMapping.Enabled = false;
-			}
-			else
-			{
-				m_btnModifyContentMapping.Enabled = true;
-			}
+			m_btnModifyContentMapping.Enabled = m_lvContentMapping.SelectedItems.Count != 0;
 		}
 
 		private void listViewHierarchy_SelectedIndexChanged(object sender, EventArgs e)
@@ -1998,7 +1935,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			}
 		}
 
-		string m_sLogFile = null;
+		string m_sLogFile;
 
 		private void DoImport()
 		{
@@ -2011,8 +1948,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					progressDlg.AllowCancel = true;
 					progressDlg.Restartable = true;
 					progressDlg.Title = String.Format(LexTextControls.ksImportingFrom0, m_sSfmDataFile);
-					m_sLogFile = (string)progressDlg.RunTask(true, ImportStdFmtFile,
-						m_sSfmDataFile);
+					m_sLogFile = (string)progressDlg.RunTask(true, ImportStdFmtFile, m_sSfmDataFile);
 					if (m_chkDisplayImportReport.Checked && !String.IsNullOrEmpty(m_sLogFile))
 					{
 						using (Process.Start(m_sLogFile))
@@ -2028,17 +1964,17 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// </summary>
 		private object ImportStdFmtFile(IThreadedProgress progressDlg, object[] parameters)
 		{
-			int lineNumber = 0;
+			var lineNumber = 0;
 			using (var uowHelper = new NonUndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor))
 			{
 				try
 				{
 					m_dtStart = DateTime.Now;
 					FixSettingsForThisDatabase();
-					int cLines = m_SfmFile.Lines.Count;
-					progressDlg.Title = String.Format(LexTextControls.ksImportingFrom0, Path.GetFileName(m_sSfmDataFile));
+					var cLines = m_SfmFile.Lines.Count;
+					progressDlg.Title = string.Format(LexTextControls.ksImportingFrom0, Path.GetFileName(m_sSfmDataFile));
 					progressDlg.StepSize = 1;
-					int cExistingRecords = m_cache.LangProject.ResearchNotebookOA.RecordsOC.Count;
+					var cExistingRecords = m_cache.LangProject.ResearchNotebookOA.RecordsOC.Count;
 					if (m_rbReplaceAllEntries.Checked && cExistingRecords > 0)
 					{
 						progressDlg.Minimum = 0;
@@ -2057,13 +1993,11 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						progressDlg.Maximum = cLines;
 					}
 					progressDlg.Message = LexTextControls.ksImportingNewRecords;
-					IRnGenericRec recPrev = null;
 					IRnGenericRec rec = null;
-					IRnGenericRecFactory factRec = m_cache.ServiceLocator.GetInstance<IRnGenericRecFactory>();
-					IRnGenericRecRepository repoRec = m_cache.ServiceLocator.GetInstance<IRnGenericRecRepository>();
-					ICmPossibilityRepository repoPoss = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>();
-					ICmPossibility defaultType = repoPoss.GetObject(RnResearchNbkTags.kguidRecObservation);
-					for (int i = 0; i < cLines; ++i)
+					var factRec = m_cache.ServiceLocator.GetInstance<IRnGenericRecFactory>();
+					var repoPoss = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>();
+					var defaultType = repoPoss.GetObject(RnResearchNbkTags.kguidRecObservation);
+					for (var i = 0; i < cLines; ++i)
 					{
 						progressDlg.Step(1);
 						if (progressDlg.Canceled)
@@ -2071,10 +2005,12 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 							LogMessage(LexTextControls.ksImportCanceledByUser, lineNumber);
 							break;
 						}
-						Sfm2Xml.SfmField field = m_SfmFile.Lines[i];
+						var field = m_SfmFile.Lines[i];
 						lineNumber = field.LineNumber;
 						if (field.Marker.StartsWith("_"))
+						{
 							continue;
+						}
 						RnSfMarker rsf;
 						if (!m_mapMkrRsf.TryGetValue(field.Marker, out rsf))
 						{
@@ -2083,7 +2019,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						}
 						if (rsf.m_nLevel == 1)
 						{
-							recPrev = rec;
 							rec = factRec.Create();
 							m_cache.LangProject.ResearchNotebookOA.RecordsOC.Add(rec);
 							rec.TypeRA = defaultType;
@@ -2093,9 +2028,12 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						{
 							// we don't handle this yet!
 						}
+
 						if (rsf.m_flid == 0)
+						{
 							continue;
-						CellarPropertyType cpt = (CellarPropertyType) m_mdc.GetFieldType(rsf.m_flid);
+						}
+						var cpt = (CellarPropertyType) m_mdc.GetFieldType(rsf.m_flid);
 						int clidDst;
 						switch (cpt)
 						{
@@ -2113,11 +2051,15 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 										// we don't handle these yet
 										break;
 									default:
-										int clidBase = clidDst;
+										var clidBase = clidDst;
 										while (clidBase != 0 && clidBase != CmPossibilityTags.kClassId)
+										{
 											clidBase = m_mdc.GetBaseClsId(clidBase);
+										}
 										if (clidBase == CmPossibilityTags.kClassId)
+										{
 											SetListReference(rec, rsf, field);
+										}
 										break;
 								}
 								break;
@@ -2169,10 +2111,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				}
 				catch (Exception e)
 				{
-					string sMsg = String.Format(LexTextControls.ksProblemImportingFrom,
-												m_tbDatabaseFileName.Text, e.Message);
+					var sMsg = string.Format(LexTextControls.ksProblemImportingFrom, m_tbDatabaseFileName.Text, e.Message);
 					LogMessage(sMsg, lineNumber);
-					System.Windows.Forms.MessageBox.Show(this, sMsg);
+					MessageBox.Show(this, sMsg);
 				}
 			}
 			m_dtEnd = DateTime.Now;
@@ -2187,28 +2128,31 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private string CreateImportReport()
 		{
-			string sHtmlFile = Path.Combine(Path.GetTempPath(), "FwNotebookImportLog.htm");
-			using (StreamWriter sw = File.CreateText(sHtmlFile))
+			var sHtmlFile = Path.Combine(Path.GetTempPath(), "FwNotebookImportLog.htm");
+			using (var sw = File.CreateText(sHtmlFile))
 			{
 				sw.WriteLine("<html>");
 				sw.WriteLine("<head>");
-				string sHeadInfo = String.Format(LexTextControls.ksImportLogForX, m_sSfmDataFile);
-				sw.WriteLine(String.Format("  <title>{0}</title>", sHeadInfo));
+				var sHeadInfo = string.Format(LexTextControls.ksImportLogForX, m_sSfmDataFile);
+				sw.WriteLine($"  <title>{sHeadInfo}</title>");
 				WriteHtmlJavaScript(sw);	// add the script
 				sw.WriteLine("</head>");
 				sw.WriteLine("<body>");
-				sw.WriteLine(String.Format("<h2>{0}</h2>", sHeadInfo));
-				long deltaTicks = m_dtEnd.Ticks - m_dtStart.Ticks;	// number of 100-nanosecond intervals
-				int deltaMsec = (int)((deltaTicks + 5000L) / 10000L);	// round off to milliseconds
-				int deltaSec = deltaMsec / 1000;
-				string sDeltaTime = String.Format(LexTextControls.ksImportingTookTime,
-					System.IO.Path.GetFileName(m_sSfmDataFile), deltaSec, deltaMsec % 1000);
+				sw.WriteLine($"<h2>{sHeadInfo}</h2>");
+				var deltaTicks = m_dtEnd.Ticks - m_dtStart.Ticks;	// number of 100-nanosecond intervals
+				var deltaMsec = (int)((deltaTicks + 5000L) / 10000L);	// round off to milliseconds
+				var deltaSec = deltaMsec / 1000;
+				var sDeltaTime = string.Format(LexTextControls.ksImportingTookTime, Path.GetFileName(m_sSfmDataFile), deltaSec, deltaMsec % 1000);
 				sw.WriteLine("<p>{0}</p>", sDeltaTime);
 				sw.Write("<h3>");
 				if (m_cRecordsDeleted == 0)
+				{
 					sw.Write(LexTextControls.ksRecordsCreatedByImport, m_cRecordsRead);
+				}
 				else
+				{
 					sw.Write(LexTextControls.ksRecordsDeletedAndCreated, m_cRecordsDeleted, m_cRecordsRead);
+				}
 				sw.WriteLine("</h3>");
 				WriteMessageLines(sw);
 				ListNewPossibilities(sw, LexTextControls.ksNewAnthropologyListItems, m_rgNewAnthroItem, AreaServices.AnthroEditMachineName);
@@ -2221,11 +2165,11 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				ListNewPossibilities(sw, LexTextControls.ksNewStatusListItems, m_rgNewStatus, AreaServices.StatusEditMachineName);
 				ListNewPossibilities(sw, LexTextControls.ksNewTimeOfDayListItems, m_rgNewTimeOfDay, string.Empty);
 				// now for custom lists...
-				foreach (Guid key in m_mapNewPossibilities.Keys)
+				foreach (var key in m_mapNewPossibilities.Keys)
 				{
-					ICmPossibilityList list = m_repoList.GetObject(key);
-					string name = list.Name.BestAnalysisVernacularAlternative.Text;
-					string message = String.Format(LexTextControls.ksNewCustomListItems, name);
+					var list = m_repoList.GetObject(key);
+					var name = list.Name.BestAnalysisVernacularAlternative.Text;
+					var message = string.Format(LexTextControls.ksNewCustomListItems, name);
 					ListNewPossibilities(sw, message, m_mapNewPossibilities[key], "");
 				}
 				sw.WriteLine("</body>");
@@ -2237,9 +2181,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void WriteHtmlJavaScript(StreamWriter sw)
 		{
-			string sError = LexTextControls.ksErrorCaughtTryingOpenFile;
-			string sCannot = String.Format(LexTextControls.ksNoFileHyperlinkThisBrowser,
-				m_sSfmDataFile.Replace("\\", "\\\\"));
+			var sError = LexTextControls.ksErrorCaughtTryingOpenFile;
+			var sCannot = string.Format(LexTextControls.ksNoFileHyperlinkThisBrowser, m_sSfmDataFile.Replace("\\", "\\\\"));
 			sCannot = sCannot.Replace(Environment.NewLine, "\\n");
 			sw.WriteLine("<script type=\"text/javascript\">");
 			sw.WriteLine("var isIE = typeof window != 'undefined' && typeof window.ActiveXObject != 'undefined';");
@@ -2288,56 +2231,55 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private void WriteMessageLines(StreamWriter sw)
 		{
 			if (m_rgMessages.Count == 0)
+			{
 				return;
-			sw.WriteLine(String.Format("<h2>{0}</h2>", LexTextControls.ksMessagesFromAnthropologyImport));
+			}
+			sw.WriteLine($"<h2>{LexTextControls.ksMessagesFromAnthropologyImport}</h2>");
 			m_rgMessages.Sort();
 			string currentMessage = null;
-			string sEscapedDataFile = m_sSfmDataFile.Replace("\\", "\\\\");
-			for (int i = 0; i < m_rgMessages.Count; ++i)
+			var sEscapedDataFile = m_sSfmDataFile.Replace("\\", "\\\\");
+			foreach (var importMessage in m_rgMessages)
 			{
-				if (m_rgMessages[i].Message != currentMessage)
+				if (importMessage.Message != currentMessage)
 				{
-					currentMessage = m_rgMessages[i].Message;
+					currentMessage = importMessage.Message;
 					// Need to quote any occurrences of <, >, or & in the message text.
-					string sMsg = currentMessage.Replace("&", "&amp;");
+					var sMsg = currentMessage.Replace("&", "&amp;");
 					sMsg = sMsg.Replace("<", "&lt;");
 					sMsg = sMsg.Replace(">", "&gt;");
-					sw.WriteLine(String.Format("<h3>{0}</h3>", sMsg));
+					sw.WriteLine($"<h3>{sMsg}</h3>");
 				}
 				sw.Write("<ul><li>");
-				if (m_rgMessages[i].LineNumber <= 0)
+				if (importMessage.LineNumber <= 0)
 				{
 					sw.Write(LexTextControls.ksNoLineNumberInFile, m_sSfmDataFile);
 				}
 				else
 				{
-					string sLineLink = String.Format(
-						"<a HREF=\"javascript: void 0\" ONCLICK=\"zedit('{0}', '{1}'); return false\">{1}</a>",
-						sEscapedDataFile, m_rgMessages[i].LineNumber);
+					var sLineLink = string.Format("<a HREF=\"javascript: void 0\" ONCLICK=\"zedit('{0}', '{1}'); return false\">{1}</a>", sEscapedDataFile, importMessage.LineNumber);
 					sw.Write(LexTextControls.ksOnOrBeforeLine, m_sSfmDataFile, sLineLink);
 				}
 				sw.WriteLine("</li></ul>");
 			}
 		}
 
-		private static void ListNewPossibilities(StreamWriter writer, string sMsg,
-			List<ICmPossibility> list, string tool)
+		private static void ListNewPossibilities(StreamWriter writer, string sMsg, List<ICmPossibility> list, string tool)
 		{
-			if (list.Count > 0)
+			if (list.Any())
 			{
 				tool = null;		// FIXME when FwLink starts working again...
-				writer.WriteLine("<h3>{0}</h3>", String.Format(sMsg, list.Count));
+				writer.WriteLine("<h3>{0}</h3>", string.Format(sMsg, list.Count));
 				writer.WriteLine("<ul>");
-				foreach (ICmPossibility poss in list)
+				foreach (var poss in list)
 				{
-					if (String.IsNullOrEmpty(tool))
+					if (string.IsNullOrEmpty(tool))
 					{
 						writer.WriteLine("<li>{0}</li>", poss.AbbrAndName);
 					}
 					else
 					{
-						FwLinkArgs link = new FwLinkArgs(tool, poss.Guid);
-						string href = link.ToString();
+						var link = new FwLinkArgs(tool, poss.Guid);
+						var href = link.ToString();
 						writer.WriteLine("<li><a href=\"{0}\">{1}</a></li>", href, poss.AbbrAndName);
 					}
 				}
@@ -2354,9 +2296,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private void FixSettingsForThisDatabase()
 		{
 			ECInterfaces.IEncConverters encConverters = new EncConverters();
-			foreach (EncConverterChoice ecc in m_mapWsEncConv.Values)
+			foreach (var ecc in m_mapWsEncConv.Values)
 			{
-				if (!String.IsNullOrEmpty(ecc.ConverterName) && ecc.ConverterName != Sfm2Xml.STATICS.AlreadyInUnicode)
+				if (!string.IsNullOrEmpty(ecc.ConverterName) && ecc.ConverterName != STATICS.AlreadyInUnicode)
 				{
 					foreach (string convName in encConverters.Keys)
 					{
@@ -2368,7 +2310,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 				}
 			}
-			foreach (RnSfMarker rsf in m_mapMkrRsf.Values)
+			foreach (var rsf in m_mapMkrRsf.Values)
 			{
 				switch (FieldType(rsf.m_flid))
 				{
@@ -2377,46 +2319,71 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						break;
 					case SfFieldType.ListRef:
 						SetDefaultForListRef(rsf);
-						char[] rgchSplit = new char[1] { ' ' };
-						if (!String.IsNullOrEmpty(rsf.m_tlo.m_sDelimMulti))
+						var rgchSplit = new[] { ' ' };
+						if (!string.IsNullOrEmpty(rsf.m_tlo.m_sDelimMulti))
+						{
 							rsf.m_tlo.m_rgsDelimMulti = rsf.m_tlo.m_sDelimMulti.Split(rgchSplit, StringSplitOptions.RemoveEmptyEntries);
-						if (!String.IsNullOrEmpty(rsf.m_tlo.m_sDelimSub))
+						}
+
+						if (!string.IsNullOrEmpty(rsf.m_tlo.m_sDelimSub))
+						{
 							rsf.m_tlo.m_rgsDelimSub = rsf.m_tlo.m_sDelimSub.Split(rgchSplit, StringSplitOptions.RemoveEmptyEntries);
-						if (!String.IsNullOrEmpty(rsf.m_tlo.m_sMarkStart))
+						}
+
+						if (!string.IsNullOrEmpty(rsf.m_tlo.m_sMarkStart))
+						{
 							rsf.m_tlo.m_rgsMarkStart = rsf.m_tlo.m_sMarkStart.Split(rgchSplit, StringSplitOptions.RemoveEmptyEntries);
-						if (!String.IsNullOrEmpty(rsf.m_tlo.m_sMarkEnd))
+						}
+
+						if (!string.IsNullOrEmpty(rsf.m_tlo.m_sMarkEnd))
+						{
 							rsf.m_tlo.m_rgsMarkEnd = rsf.m_tlo.m_sMarkEnd.Split(rgchSplit, StringSplitOptions.RemoveEmptyEntries);
-						if (!String.IsNullOrEmpty(rsf.m_tlo.m_sBefore))
+						}
+
+						if (!string.IsNullOrEmpty(rsf.m_tlo.m_sBefore))
+						{
 							rsf.m_tlo.m_rgsBefore = rsf.m_tlo.m_sBefore.Split(rgchSplit, StringSplitOptions.RemoveEmptyEntries);
-						if (String.IsNullOrEmpty(rsf.m_tlo.m_wsId))
+						}
+
+						if (string.IsNullOrEmpty(rsf.m_tlo.m_wsId))
+						{
 							rsf.m_tlo.m_ws = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+						}
 						else
+						{
 							m_cache.ServiceLocator.WritingSystemManager.GetOrSet(rsf.m_tlo.m_wsId, out rsf.m_tlo.m_ws);
+						}
 						break;
 					case SfFieldType.String:
-						if (String.IsNullOrEmpty(rsf.m_sto.m_wsId))
+						if (string.IsNullOrEmpty(rsf.m_sto.m_wsId))
+						{
 							rsf.m_sto.m_ws = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+						}
 						else
 							m_cache.ServiceLocator.WritingSystemManager.GetOrSet(rsf.m_sto.m_wsId, out rsf.m_sto.m_ws);
 						break;
 					case SfFieldType.Text:
-						if (String.IsNullOrEmpty(rsf.m_txo.m_wsId))
+						if (string.IsNullOrEmpty(rsf.m_txo.m_wsId))
+						{
 							rsf.m_txo.m_ws = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+						}
 						else
+						{
 							m_cache.ServiceLocator.WritingSystemManager.GetOrSet(rsf.m_txo.m_wsId, out rsf.m_txo.m_ws);
+						}
 						break;
 				}
 			}
-			foreach (CharMapping cm in m_rgcm)
+			foreach (var cm in m_rgcm)
 			{
-				if (!String.IsNullOrEmpty(cm.DestinationWritingSystemId))
+				if (!string.IsNullOrEmpty(cm.DestinationWritingSystemId))
 				{
 					CoreWritingSystemDefinition ws;
 					m_cache.ServiceLocator.WritingSystemManager.GetOrSet(cm.DestinationWritingSystemId, out ws);
 					cm.DestinationWritingSystem = ws;
 				}
 			}
-			DateTimeFormatInfo dtfi = DateTimeFormatInfo.CurrentInfo;
+			var dtfi = DateTimeFormatInfo.CurrentInfo;
 			m_rgsDayAbbr = dtfi.AbbreviatedDayNames;
 			m_rgsDayName = dtfi.DayNames;
 			m_rgsMonthAbbr = dtfi.AbbreviatedMonthNames;
@@ -2425,12 +2392,16 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void SetDefaultForListRef(RnSfMarker rsf)
 		{
-			string sDefault = rsf.m_tlo.m_sEmptyDefault;
+			var sDefault = rsf.m_tlo.m_sEmptyDefault;
 			if (sDefault == null)
+			{
 				return;
+			}
 			sDefault = sDefault.Trim();
 			if (sDefault.Length == 0)
+			{
 				return;
+			}
 			List<string> rgsHier;
 			if (rsf.m_tlo.m_fHaveSub)
 			{
@@ -2443,79 +2414,121 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			}
 			rgsHier = PruneEmptyStrings(rgsHier);
 			if (rgsHier.Count == 0)
+			{
 				return;
+			}
 			switch (rsf.m_flid)
 			{
 				case RnGenericRecTags.kflidAnthroCodes:
 					if (m_mapAnthroCode.Count == 0)
+					{
 						FillPossibilityMap(rsf, m_cache.LangProject.AnthroListOA.PossibilitiesOS, m_mapAnthroCode);
+					}
 					rsf.m_tlo.m_default = FindPossibilityOrNull(rgsHier, m_mapAnthroCode);
 					if (rsf.m_tlo.m_default == null && !rsf.m_tlo.m_fIgnoreNewStuff)
+					{
 						rsf.m_tlo.m_default = CreateNewAnthroItem(rgsHier);
+					}
 					break;
 				case RnGenericRecTags.kflidConfidence:
 					if (m_mapConfidence.Count == 0)
+					{
 						FillPossibilityMap(rsf, m_cache.LangProject.ConfidenceLevelsOA.PossibilitiesOS, m_mapConfidence);
+					}
 					rsf.m_tlo.m_default = FindPossibilityOrNull(rgsHier, m_mapConfidence);
 					if (rsf.m_tlo.m_default == null && !rsf.m_tlo.m_fIgnoreNewStuff)
+					{
 						rsf.m_tlo.m_default = CreateNewConfidenceItem(rgsHier);
+					}
 					break;
 				case RnGenericRecTags.kflidLocations:
 					if (m_mapLocation.Count == 0)
+					{
 						FillPossibilityMap(rsf, m_cache.LangProject.LocationsOA.PossibilitiesOS, m_mapLocation);
+					}
 					rsf.m_tlo.m_default = FindPossibilityOrNull(rgsHier, m_mapLocation);
 					if (rsf.m_tlo.m_default == null && !rsf.m_tlo.m_fIgnoreNewStuff)
+					{
 						rsf.m_tlo.m_default = CreateNewLocation(rgsHier);
+					}
 					break;
 				case RnGenericRecTags.kflidPhraseTags:
 					if (m_mapPhraseTag.Count == 0)
+					{
 						FillPossibilityMap(rsf, m_cache.LangProject.TextMarkupTagsOA.PossibilitiesOS, m_mapPhraseTag);
+					}
 					rsf.m_tlo.m_default = FindPossibilityOrNull(rgsHier, m_mapPhraseTag);
 					if (rsf.m_tlo.m_default == null && !rsf.m_tlo.m_fIgnoreNewStuff)
+					{
 						rsf.m_tlo.m_default = CreateNewPhraseTag(rgsHier);
+					}
 					break;
 				case RnGenericRecTags.kflidResearchers:
 				case RnGenericRecTags.kflidSources:
 					if (m_mapPeople.Count == 0)
+					{
 						FillPossibilityMap(rsf, m_cache.LangProject.PeopleOA.PossibilitiesOS, m_mapPeople);
+					}
 					rsf.m_tlo.m_default = FindPossibilityOrNull(rgsHier, m_mapPeople);
 					if (rsf.m_tlo.m_default == null && !rsf.m_tlo.m_fIgnoreNewStuff)
+					{
 						rsf.m_tlo.m_default = CreateNewPerson(rgsHier);
+					}
 					break;
 				case RnGenericRecTags.kflidRestrictions:
 					if (m_mapRestriction.Count == 0)
+					{
 						FillPossibilityMap(rsf, m_cache.LangProject.RestrictionsOA.PossibilitiesOS, m_mapRestriction);
+					}
 					rsf.m_tlo.m_default = FindPossibilityOrNull(rgsHier, m_mapRestriction);
 					if (rsf.m_tlo.m_default == null && !rsf.m_tlo.m_fIgnoreNewStuff)
+					{
 						rsf.m_tlo.m_default = CreateNewRestriction(rgsHier);
+					}
 					break;
 				case RnGenericRecTags.kflidStatus:
 					if (m_mapStatus.Count == 0)
+					{
 						FillPossibilityMap(rsf, m_cache.LangProject.StatusOA.PossibilitiesOS, m_mapStatus);
+					}
 					rsf.m_tlo.m_default = FindPossibilityOrNull(rgsHier, m_mapStatus);
 					if (rsf.m_tlo.m_default == null && !rsf.m_tlo.m_fIgnoreNewStuff)
+					{
 						rsf.m_tlo.m_default = CreateNewStatus(rgsHier);
+					}
 					break;
 				case RnGenericRecTags.kflidTimeOfEvent:
 					if (m_mapTimeOfDay.Count == 0)
+					{
 						FillPossibilityMap(rsf, m_cache.LangProject.TimeOfDayOA.PossibilitiesOS, m_mapTimeOfDay);
+					}
 					rsf.m_tlo.m_default = FindPossibilityOrNull(rgsHier, m_mapTimeOfDay);
 					if (rsf.m_tlo.m_default == null && !rsf.m_tlo.m_fIgnoreNewStuff)
+					{
 						rsf.m_tlo.m_default = CreateNewTimeOfDay(rgsHier);
+					}
 					break;
 				case RnGenericRecTags.kflidType:
 					if (m_mapRecType.Count == 0)
+					{
 						FillPossibilityMap(rsf, m_cache.LangProject.ResearchNotebookOA.RecTypesOA.PossibilitiesOS, m_mapRecType);
+					}
 					rsf.m_tlo.m_default = FindPossibilityOrNull(rgsHier, m_mapRecType);
 					if (rsf.m_tlo.m_default == null && !rsf.m_tlo.m_fIgnoreNewStuff)
+					{
 						rsf.m_tlo.m_default = CreateNewRecType(rgsHier);
+					}
 					break;
 				case RnGenericRecTags.kflidParticipants:
 					if (m_mapPeople.Count == 0)
+					{
 						FillPossibilityMap(rsf, m_cache.LangProject.PeopleOA.PossibilitiesOS, m_mapPeople);
+					}
 					rsf.m_tlo.m_default = FindPossibilityOrNull(rgsHier, m_mapPeople);
 					if (rsf.m_tlo.m_default == null && !rsf.m_tlo.m_fIgnoreNewStuff)
+					{
 						rsf.m_tlo.m_default = CreateNewPerson(rgsHier);
+					}
 					break;
 				default:
 					// must be a custom field.
@@ -2527,15 +2540,14 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private List<string> PruneEmptyStrings(List<string> rgsData)
 		{
-			List<string> rgsOut = new List<string>();
-			for (int i = 0; i < rgsData.Count; ++i)
+			var rgsOut = new List<string>();
+			foreach (var sT in rgsData)
 			{
-				string sT = rgsData[i];
-				if (sT == null)
-					continue;
-				string sOut = sT.Trim();
-				if (sOut.Length > 0)
+				var sOut = sT?.Trim();
+				if (sOut?.Length > 0)
+				{
 					rgsOut.Add(sOut);
+				}
 			}
 			return rgsOut;
 		}
@@ -2548,63 +2560,86 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			// REVIEW: SHOULD WE WORRY ABOUT EMBEDDED CHAR MAPPINGS THAT CHANGE THE WRITING SYSTEM
 			// WHEN IT COMES TO ENCODING CONVERSION???
 			ReconvertEncodedDataIfNeeded(field, rsf.m_txo.m_wsId);
-			List<string> rgsParas = SplitIntoParagraphs(rsf, field);
+			var rgsParas = SplitIntoParagraphs(rsf, field);
 			if (rgsParas.Count == 0)
+			{
 				return;
+			}
+
 			if (m_factStText == null)
+			{
 				m_factStText = m_cache.ServiceLocator.GetInstance<IStTextFactory>();
+			}
 			switch (rsf.m_flid)
 			{
 				case RnGenericRecTags.kflidConclusions:
 					if (rec.ConclusionsOA == null)
+					{
 						rec.ConclusionsOA = m_factStText.Create();
+					}
 					StoreTextData(rec.ConclusionsOA, rsf, rgsParas);
 					break;
 				case RnGenericRecTags.kflidDescription:
 					if (rec.DescriptionOA == null)
+					{
 						rec.DescriptionOA = m_factStText.Create();
+					}
 					StoreTextData(rec.DescriptionOA, rsf, rgsParas);
 					break;
 				case RnGenericRecTags.kflidDiscussion:
 					if (rec.DiscussionOA == null)
+					{
 						rec.DiscussionOA = m_factStText.Create();
+					}
 					StoreTextData(rec.DiscussionOA, rsf, rgsParas);
 					break;
 				case RnGenericRecTags.kflidExternalMaterials:
 					if (rec.ExternalMaterialsOA == null)
+					{
 						rec.ExternalMaterialsOA = m_factStText.Create();
+					}
 					StoreTextData(rec.ExternalMaterialsOA, rsf, rgsParas);
 					break;
 				case RnGenericRecTags.kflidFurtherQuestions:
 					if (rec.FurtherQuestionsOA == null)
+					{
 						rec.FurtherQuestionsOA = m_factStText.Create();
+					}
 					StoreTextData(rec.FurtherQuestionsOA, rsf, rgsParas);
 					break;
 				case RnGenericRecTags.kflidHypothesis:
 					if (rec.HypothesisOA == null)
+					{
 						rec.HypothesisOA = m_factStText.Create();
+					}
 					StoreTextData(rec.HypothesisOA, rsf, rgsParas);
 					break;
 				case RnGenericRecTags.kflidPersonalNotes:
 					if (rec.PersonalNotesOA == null)
+					{
 						rec.PersonalNotesOA = m_factStText.Create();
+					}
 					StoreTextData(rec.PersonalNotesOA, rsf, rgsParas);
 					break;
 				case RnGenericRecTags.kflidResearchPlan:
 					if (rec.ResearchPlanOA == null)
+					{
 						rec.ResearchPlanOA = m_factStText.Create();
+					}
 					StoreTextData(rec.ResearchPlanOA, rsf, rgsParas);
 					break;
 				case RnGenericRecTags.kflidVersionHistory:
 					if (rec.VersionHistoryOA == null)
+					{
 						rec.VersionHistoryOA = m_factStText.Create();
+					}
 					StoreTextData(rec.VersionHistoryOA, rsf, rgsParas);
 					break;
 				default:
 					// Handle custom field (don't think any can exist yet, but...)
 					Debug.Assert(rsf.m_flid >= (RnGenericRecTags.kClassId * 1000) + 500);
 					IStText text;
-					int hvo = m_cache.DomainDataByFlid.get_ObjectProp(rec.Hvo, rsf.m_flid);
+					var hvo = m_cache.DomainDataByFlid.get_ObjectProp(rec.Hvo, rsf.m_flid);
 					if (hvo == 0)
 					{
 						text = m_factStText.Create();
@@ -2613,7 +2648,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					else
 					{
 						if (m_repoStText == null)
+						{
 							m_repoStText = m_cache.ServiceLocator.GetInstance<IStTextRepository>();
+						}
 						text = m_repoStText.GetObject(hvo);
 					}
 					StoreTextData(text, rsf, rgsParas);
@@ -2624,50 +2661,59 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private void StoreTextData(IStText text, RnSfMarker rsf, List<string> rgsParas)
 		{
 			if (m_factPara == null)
+			{
 				m_factPara = m_cache.ServiceLocator.GetInstance<IStTxtParaFactory>();
+			}
 			if (rgsParas.Count == 0)
 			{
-				IStTxtPara para = m_factPara.Create();
+				var para = m_factPara.Create();
 				text.ParagraphsOS.Add(para);
-				if (!String.IsNullOrEmpty(rsf.m_txo.m_sStyle))
+				if (!string.IsNullOrEmpty(rsf.m_txo.m_sStyle))
+				{
 					para.StyleName = rsf.m_txo.m_sStyle;
-				para.Contents = MakeTsString(String.Empty, rsf.m_txo.m_ws.Handle);
+				}
+				para.Contents = MakeTsString(string.Empty, rsf.m_txo.m_ws.Handle);
 			}
 			else
 			{
-				for (int i = 0; i < rgsParas.Count; ++i)
+				foreach (var paragraphText in rgsParas)
 				{
-					IStTxtPara para = m_factPara.Create();
+					var para = m_factPara.Create();
 					text.ParagraphsOS.Add(para);
-					if (!String.IsNullOrEmpty(rsf.m_txo.m_sStyle))
+					if (!string.IsNullOrEmpty(rsf.m_txo.m_sStyle))
+					{
 						para.StyleName = rsf.m_txo.m_sStyle;
-					para.Contents = MakeTsString(rgsParas[i], rsf.m_txo.m_ws.Handle);
+					}
+					para.Contents = MakeTsString(paragraphText, rsf.m_txo.m_ws.Handle);
 				}
 			}
 		}
 
-		private List<string> SplitIntoParagraphs(RnSfMarker rsf, Sfm2Xml.SfmField field)
+		private List<string> SplitIntoParagraphs(RnSfMarker rsf, SfmField field)
 		{
-			List<string> rgsParas = new List<string>();
-			List<string> rgsLines = SplitIntoLines(field.Data);
-			StringBuilder sbPara = new StringBuilder();
-			for (int i = 0; i < rgsLines.Count; ++i)
+			var rgsParas = new List<string>();
+			var rgsLines = SplitIntoLines(field.Data);
+			var sbPara = new StringBuilder();
+			foreach (var line in rgsLines)
 			{
-				bool fIndented = false;
-				string sLine = rgsLines[i];
-				if (sLine.Length > 0)
-					fIndented = Char.IsWhiteSpace(sLine[0]);
-				sLine = sLine.TrimStart();
+				var fIndented = false;
+				var lineCopy = line;
+				if (lineCopy.Length > 0)
+				{
+					fIndented = char.IsWhiteSpace(lineCopy[0]);
+				}
+				lineCopy = lineCopy.TrimStart();
 				if (rsf.m_txo.m_fStartParaNewLine)
 				{
-					if (sLine.Length > 0)
-						rgsParas.Add(sLine);
+					if (lineCopy.Length > 0)
+					{
+						rgsParas.Add(lineCopy);
+					}
 					continue;
 				}
-				if (sLine.Length == 0)
+				if (lineCopy.Length == 0)
 				{
-					if (sbPara.Length > 0 &&
-						(rsf.m_txo.m_fStartParaBlankLine || rsf.m_txo.m_fStartParaShortLine))
+					if (sbPara.Length > 0 && (rsf.m_txo.m_fStartParaBlankLine || rsf.m_txo.m_fStartParaShortLine))
 					{
 						rgsParas.Add(sbPara.ToString());
 						sbPara.Remove(0, sbPara.Length);
@@ -2681,21 +2727,26 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						rgsParas.Add(sbPara.ToString());
 						sbPara.Remove(0, sbPara.Length);
 					}
-					sbPara.Append(sLine);
+					sbPara.Append(lineCopy);
 					continue;
 				}
-				if (rsf.m_txo.m_fStartParaShortLine && sLine.Length < rsf.m_txo.m_cchShortLim)
+				if (rsf.m_txo.m_fStartParaShortLine && lineCopy.Length < rsf.m_txo.m_cchShortLim)
 				{
 					if (sbPara.Length > 0)
+					{
 						sbPara.Append(" ");
-					sbPara.Append(sLine);
+					}
+					sbPara.Append(lineCopy);
 					rgsParas.Add(sbPara.ToString());
 					sbPara.Remove(0, sbPara.Length);
 					continue;
 				}
+
 				if (sbPara.Length > 0)
+				{
 					sbPara.Append(" ");
-				sbPara.Append(sLine);
+				}
+				sbPara.Append(lineCopy);
 			}
 			if (sbPara.Length > 0)
 			{
@@ -2707,20 +2758,23 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private List<string> SplitIntoLines(string sData)
 		{
-			List<string> rgsLines = SplitString(sData, Environment.NewLine);
-			for (int i = 0; i < rgsLines.Count; ++i)
+			var rgsLines = SplitString(sData, Environment.NewLine);
+			for (var i = 0; i < rgsLines.Count; ++i)
+			{
 				rgsLines[i] = TrimLineData(rgsLines[i]);
+			}
 			return rgsLines;
 		}
 
 		private string TrimLineData(string sData)
 		{
-			string sLine = sData;
-			int idx;
+			var sLine = sData;
 			// The following 4 lines of code shouldn't be needed, but ...
 			// Erase any leading newline type characters, then convert any others to spaces.
-			while ((idx = sLine.IndexOfAny(new char[] { '\n', '\r' })) == 0)
+			while (sLine.IndexOfAny(new[] { '\n', '\r' }) == 0)
+			{
 				sLine = sLine.Substring(1);
+			}
 			sLine = sLine.Replace('\n', ' ');
 			sLine = sLine.Replace('\r', ' ');
 			// Leave leading whitespace -- it may indicate the start of a new paragraph.
@@ -2730,13 +2784,12 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// <summary>
 		/// Store a value for either a simple formatted string or a multilingual string.
 		/// </summary>
-		private void SetStringValue(IRnGenericRec rec, RnSfMarker rsf, Sfm2Xml.SfmField field,
-			CellarPropertyType cpt)
+		private void SetStringValue(IRnGenericRec rec, RnSfMarker rsf, SfmField field, CellarPropertyType cpt)
 		{
 			// REVIEW: SHOULD WE WORRY ABOUT EMBEDDED CHAR MAPPINGS THAT CHANGE THE WRITING SYSTEM
 			// WHEN IT COMES TO ENCODING CONVERSION???
 			ReconvertEncodedDataIfNeeded(field, rsf.m_sto.m_wsId);
-			ITsString tss = MakeTsString(field.Data, rsf.m_sto.m_ws.Handle);
+			var tss = MakeTsString(field.Data, rsf.m_sto.m_ws.Handle);
 			switch (rsf.m_flid)
 			{
 				case RnGenericRecTags.kflidTitle:
@@ -2759,35 +2812,37 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			}
 		}
 
-		private void ReconvertEncodedDataIfNeeded(Sfm2Xml.SfmField field, string sWs)
+		private void ReconvertEncodedDataIfNeeded(SfmField field, string sWs)
 		{
-			if (String.IsNullOrEmpty(sWs))
+			if (string.IsNullOrEmpty(sWs))
+			{
 				sWs = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultAnalWs);
-			if (!String.IsNullOrEmpty(sWs))
+			}
+			if (!string.IsNullOrEmpty(sWs))
 			{
 				EncConverterChoice ecc;
 				if (m_mapWsEncConv.TryGetValue(sWs, out ecc))
 				{
 					if (ecc.Converter != null)
+					{
 						field.Data = ecc.Converter.ConvertToUnicode(field.RawData);
+					}
 				}
 			}
 			if (field.ErrorConvertingData)
 			{
-				LogMessage(
-					String.Format(LexTextControls.ksEncodingConversionProblem, field.Marker),
-					field.LineNumber);
+				LogMessage(string.Format(LexTextControls.ksEncodingConversionProblem, field.Marker), field.LineNumber);
 			}
 		}
 
 		private ITsString MakeTsString(string sRaw, int ws)
 		{
-			List<string> rgsText = new List<string>();
-			List<CharMapping> rgcmText = new List<CharMapping>();
-			while (!String.IsNullOrEmpty(sRaw))
+			var rgsText = new List<string>();
+			var rgcmText = new List<CharMapping>();
+			while (!string.IsNullOrEmpty(sRaw))
 			{
 				CharMapping cmText;
-				int idx = IndexOfFirstCharMappingMarker(sRaw, out cmText);
+				var idx = IndexOfFirstCharMappingMarker(sRaw, out cmText);
 				if (idx == -1)
 				{
 					rgsText.Add(sRaw);		// save trailing text
@@ -2808,7 +2863,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						// TODO: Generalized search for whitespace?
 						idx = sRaw.IndexOfAny(new char[] { ' ', '\t', '\r', '\n' });
 						if (idx == -1)
+						{
 							idx = sRaw.Length;
+						}
 					}
 					else
 					{
@@ -2816,29 +2873,24 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					}
 				}
 				rgsText.Add(sRaw.Substring(0, idx));
-				if (cmText.IgnoreMarkerOnImport)
-					rgcmText.Add(null);
-				else
-					rgcmText.Add(cmText);
+				rgcmText.Add(cmText.IgnoreMarkerOnImport ? null : cmText);
 				sRaw = sRaw.Substring(idx);
 			}
 			if (rgsText.Count == 0)
 			{
-				rgsText.Add(String.Empty);
+				rgsText.Add(string.Empty);
 				rgcmText.Add(null);
 			}
-			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
-			for (int i = 0; i < rgsText.Count; ++i)
+			var tisb = TsStringUtils.MakeIncStrBldr();
+			for (var i = 0; i < rgsText.Count; ++i)
 			{
-				string sRun = rgsText[i];
-				CharMapping cmRun = rgcmText[i];
-				if (cmRun != null && cmRun.DestinationWritingSystem != null)
-					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,
-						cmRun.DestinationWritingSystem.Handle);
-				else
-					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, ws);
-				if (cmRun != null && !String.IsNullOrEmpty(cmRun.DestinationStyle))
+				var sRun = rgsText[i];
+				var cmRun = rgcmText[i];
+				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, cmRun?.DestinationWritingSystem?.Handle ?? ws);
+				if (!string.IsNullOrEmpty(cmRun?.DestinationStyle))
+				{
 					tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, cmRun.DestinationStyle);
+				}
 				tisb.Append(sRun);
 			}
 			return tisb.GetString();
@@ -2849,13 +2901,15 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// </summary>
 		private int IndexOfFirstCharMappingMarker(string sText, out CharMapping cmText)
 		{
-			int idx = -1;
+			var idx = -1;
 			cmText = null;
-			foreach (CharMapping cm in m_rgcm)
+			foreach (var cm in m_rgcm)
 			{
 				if (cm.BeginMarker.Length == 0)
+				{
 					continue;
-				int idxT = sText.IndexOf(cm.BeginMarker);
+				}
+				var idxT = sText.IndexOf(cm.BeginMarker);
 				if (idxT != -1)
 				{
 					if (idx == -1 || idxT < idx)
@@ -2875,14 +2929,15 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// </summary>
 		private void SetGenDateValue(IRnGenericRec rec, RnSfMarker rsf, Sfm2Xml.SfmField field)
 		{
-			string sData = field.Data.Trim();
+			var sData = field.Data.Trim();
 			if (sData.Length == 0)
+			{
 				return;		// nothing we can do without data!
+			}
 			GenDate gdt;
 			if (!TryParseGenDate(sData, rsf.m_dto.m_rgsFmt, out gdt))
 			{
-				LogMessage(String.Format(LexTextControls.ksCannotParseGenericDate, sData, field.Marker),
-					field.LineNumber);
+				LogMessage(string.Format(LexTextControls.ksCannotParseGenericDate, sData, field.Marker), field.LineNumber);
 				return;
 			}
 			switch (rsf.m_flid)
@@ -2900,29 +2955,29 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private bool TryParseGenDate(string sData, List<string> rgsFmt, out GenDate gdt)
 		{
-			GenDate.PrecisionType prec = GenDate.PrecisionType.Exact;
-			if (sData[0] == '~')
+			var prec = GenDate.PrecisionType.Exact;
+			switch (sData[0])
 			{
-				prec = GenDate.PrecisionType.Approximate;
-				sData = sData.Substring(1).Trim();
-			}
-			else if (sData[0] == '<')
-			{
-				prec = GenDate.PrecisionType.Before;
-				sData = sData.Substring(1).Trim();
-			}
-			else if (sData[0] == '>')
-			{
-				prec = GenDate.PrecisionType.After;
-				sData = sData.Substring(1).Trim();
+				case '~':
+					prec = GenDate.PrecisionType.Approximate;
+					sData = sData.Substring(1).Trim();
+					break;
+				case '<':
+					prec = GenDate.PrecisionType.Before;
+					sData = sData.Substring(1).Trim();
+					break;
+				case '>':
+					prec = GenDate.PrecisionType.After;
+					sData = sData.Substring(1).Trim();
+					break;
 			}
 			if (sData.Length == 0)
 			{
 				gdt = new GenDate();
 				return false;
 			}
-			int year = 0;
-			bool fAD = true;
+			int year;
+			var fAD = true;
 			DateTime dt;
 			if (DateTime.TryParseExact(sData, rgsFmt.ToArray(), null, DateTimeStyles.None, out dt))
 			{
@@ -2941,16 +2996,13 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			foreach (string sFmt in rgsFmt)
 			{
 				GenDateInfo gdi;
-				string sResidue = ParseFormattedDate(sData, sFmt, out gdi);
+				var sResidue = ParseFormattedDate(sData, sFmt, out gdi);
 				if (!gdi.error)
 				{
 					year = gdi.year;
 					if (prec == GenDate.PrecisionType.Exact)
 					{
-						if (sResidue.Trim().StartsWith("?"))
-							prec = GenDate.PrecisionType.Approximate;
-						else
-							prec = gdi.prec;
+						prec = sResidue.Trim().StartsWith("?") ? GenDate.PrecisionType.Approximate : gdi.prec;
 					}
 					if (year < 0)
 					{
@@ -2967,35 +3019,39 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		string ParseFormattedDate(string sDateString, string sFmt, out GenDateInfo gdi)
 		{
-			gdi = new GenDateInfo();
-			gdi.error = true;		// just in case...
-			gdi.prec = GenDate.PrecisionType.Exact;
-			char ch;
-			int i;
+			gdi = new GenDateInfo
+			{
+				error = true,
+				prec = GenDate.PrecisionType.Exact
+			};
 			int cch;
-			bool fError;
-			bool fDayPresent = false;
-			bool fMonthPresent = false;
-			bool fYearPresent = false;
-			string sDate = sDateString.Trim();
+			var fDayPresent = false;
+			var fMonthPresent = false;
+			var fYearPresent = false;
+			var sDate = sDateString.Trim();
 			for (; sFmt.Length > 0; sFmt = sFmt.Substring(cch))
 			{
-				ch = sFmt[0];
+				var ch = sFmt[0];
+				int i;
 				for (i = 1; i < sFmt.Length; ++i)
 				{
 					if (sFmt[i] != ch)
+					{
 						break;
+					}
 				}
 				cch = i;
+				bool fError;
 				switch (ch)
 				{
 					case 'd':
 						if (CheckForQuestionMarks(ref gdi, ref sDate))
 						{
 							if (sDate.Length == 0)
-								return String.Empty;
-							else
-								break;
+							{
+								return string.Empty;
+							}
+							break;
 						}
 						switch (cch)
 						{
@@ -3004,17 +3060,23 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 								fDayPresent = true;
 								fError = !TryParseLeadingNumber(ref sDate, out gdi.mday);
 								if (fError || gdi.mday > 31)
+								{
 									return sDate;
+								}
 								break;
 							case 3:	// ddd - Abbreviated day of week
 								fError = !TryMatchAgainstNameList(ref sDate, m_rgsDayAbbr, out gdi.wday);
 								if (fError)
+								{
 									return sDate;
+								}
 								break;
 							case 4:	// dddd - Unabbreviated day of the week
 								fError = !TryMatchAgainstNameList(ref sDate, m_rgsDayName, out gdi.wday);
 								if (fError)
+								{
 									return sDate;
+								}
 								break;
 							default:
 								return sDate;
@@ -3025,9 +3087,10 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						if (CheckForQuestionMarks(ref gdi, ref sDate))
 						{
 							if (sDate.Length == 0)
-								return String.Empty;
-							else
-								break;
+							{
+								return string.Empty;
+							}
+							break;
 						}
 						fMonthPresent = true;
 						switch (cch)
@@ -3036,17 +3099,23 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 							case 2:	// MM
 								fError = !TryParseLeadingNumber(ref sDate, out gdi.ymon);
 								if (fError || gdi.ymon > 12)
+								{
 									return sDate;
+								}
 								break;
 							case 3: // MMM - Abbreviated month name
 								fError = !TryMatchAgainstNameList(ref sDate, m_rgsMonthAbbr, out gdi.ymon);
 								if (fError)
+								{
 									return sDate;
+								}
 								break;
 							case 4:	// MMMM - Unabbreviated month name
 								fError = !TryMatchAgainstNameList(ref sDate, m_rgsMonthName, out gdi.ymon);
 								if (fError)
+								{
 									return sDate;
+								}
 								break;
 							default:
 								return sDate;
@@ -3061,29 +3130,39 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						}
 						fYearPresent = true;
 						int year;
-						int thisyear = DateTime.Now.Year;
+						var thisyear = DateTime.Now.Year;
 						switch (cch)
 						{
 							case 1:
 								fError = !TryParseLeadingNumber(ref sDate, out year);
 								if (fError || year > 9)
+								{
 									return sDate;
+								}
 								gdi.year = 2000 + year;
 								if (gdi.year > thisyear)
+								{
 									gdi.year -= 100;
+								}
 								break;
 							case 2:
 								fError = !TryParseLeadingNumber(ref sDate, out year);
 								if (fError || year > 99)
+								{
 									return sDate;
+								}
 								gdi.year = 2000 + year;
 								if (gdi.year > thisyear)
+								{
 									gdi.year -= 100;
+								}
 								break;
 							case 4:
 								fError = !TryParseLeadingNumber(ref sDate, out year);
 								if (fError)
+								{
 									return sDate;
+								}
 								break;
 							default:
 								return sDate;
@@ -3095,9 +3174,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						return sDate;
 
 					case '\'': // quoted text
-						//cch = ParseFmtQuotedText (sFmt, sDate);
-						//if (cch < 0)
-						//    return 0; // text not found
 						break;
 
 					case ' ':
@@ -3107,18 +3183,19 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					default:
 						// Check for matching separators.
 						sDate = sDate.Trim();
-						for (int j = 0; j < cch; ++j)
+						for (var j = 0; j < cch; ++j)
 						{
 							if (j >= sDate.Length || sDate[j] != ch)
+							{
 								return sDate;
+							}
 						}
 						sDate = sDate.Substring(cch);
 						sDate = sDate.Trim();
 						break;
 				}
 			}
-			gdi.error = !ValidateDate(fYearPresent ? gdi.year : 2000, fMonthPresent ? gdi.ymon : 1,
-				fDayPresent ? gdi.mday : 1);
+			gdi.error = !ValidateDate(fYearPresent ? gdi.year : 2000, fMonthPresent ? gdi.ymon : 1, fDayPresent ? gdi.mday : 1);
 			return sDate;
 		}
 
@@ -3127,21 +3204,22 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			if (sDate.StartsWith("?"))
 			{
 				while (sDate.StartsWith("?"))
+				{
 					sDate = sDate.Substring(1);
+				}
 				gdi.prec = GenDate.PrecisionType.Approximate;
 				if (sDate.Length == 0)
+				{
 					gdi.error = gdi.year == 0;	// ok if we already have a year.
+				}
 				return true;
 			}
-			else
-			{
-				return false;
-			}
+			return false;
 		}
 
 		private static bool TryMatchAgainstNameList(ref string sDate, string[] rgsToMatch, out int val)
 		{
-			for (int j = 0; j < rgsToMatch.Length; ++j)
+			for (var j = 0; j < rgsToMatch.Length; ++j)
 			{
 				if (sDate.StartsWith(rgsToMatch[j]))
 				{
@@ -3158,10 +3236,15 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private static bool ValidateDate(int year, int month, int day)
 		{
 			if (year < -9999 || year > 9999 || year == 0)
+			{
 				return false;
+			}
+
 			if (month < 1 || month > 12)
+			{
 				return false;
-			int days_in_month = 31;	// most common value
+			}
+			var days_in_month = 31;	// most common value
 			if (year == 1752 && month == 9)
 			{
 				days_in_month = 19; // the month the calendar was changed
@@ -3170,8 +3253,14 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			{
 				switch (month)
 				{
-					case 2:		// February
-						days_in_month = (((year%4) == 0 && (year%100) != 0) || (year%1000) == 0) ? 29 : 28;
+					case 2:     // February
+						// Note to unknown future developer: This is wrong,
+						// in that it leaves out handling 400 years, which is a leap year.
+						// I suspect that part about 1000 had to do with the year 2000,
+						// which was a leap year, but that was because
+						// it was divisible by 400, not because it was divisible by 100.
+						// For instance, the upcoming year 3000 will not be a leap year, as this code claims.
+						days_in_month = year%4 == 0 && year%100 != 0 || year%1000 == 0 ? 29 : 28;
 						break;
 					case 4:		// April
 					case 6:		// June
@@ -3181,8 +3270,11 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						break;
 				}
 			}
+
 			if (day < 1 || day > days_in_month)
+			{
 				return false;
+			}
 			return true;
 		}
 
@@ -3192,14 +3284,19 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			int cchUsed;
 			for (cchUsed = 0; cchUsed < sDate.Length; ++cchUsed)
 			{
-				if (!Char.IsDigit(sDate[cchUsed]))
+				if (!char.IsDigit(sDate[cchUsed]))
+				{
 					break;
+				}
 			}
+
 			if (cchUsed < 1)
+			{
 				return false;
-			string sNum = sDate.Substring(0, cchUsed);
+			}
+			var sNum = sDate.Substring(0, cchUsed);
 			sDate = sDate.Substring(cchUsed);
-			return Int32.TryParse(sNum, out val);
+			return int.TryParse(sNum, out val);
 		}
 
 		/// <summary>
@@ -3209,14 +3306,15 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// </summary>
 		private void SetDateTimeValue(IRnGenericRec rec, RnSfMarker rsf, Sfm2Xml.SfmField field)
 		{
-			string sData = field.Data.Trim();
+			var sData = field.Data.Trim();
 			if (sData.Length == 0)
+			{
 				return;		// nothing we can do without data!
+			}
 			DateTime dt;
 			if (!DateTime.TryParseExact(sData, rsf.m_dto.m_rgsFmt.ToArray(), null, DateTimeStyles.None, out dt))
 			{
-				LogMessage(String.Format(LexTextControls.ksCannotParseDateTime, field.Data, field.Marker),
-					field.LineNumber);
+				LogMessage(string.Format(LexTextControls.ksCannotParseDateTime, field.Data, field.Marker), field.LineNumber);
 				return;
 			}
 			switch (rsf.m_flid)
@@ -3241,8 +3339,10 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// </summary>
 		private void StoreLinkData(IRnGenericRec rec, RnSfMarker rsf, Sfm2Xml.SfmField field)
 		{
-			if (String.IsNullOrEmpty(field.Data))
+			if (string.IsNullOrEmpty(field.Data))
+			{
 				return;
+			}
 			var pend = new PendingLink { Marker = rsf, Field = field, Record = rec };
 			m_pendingLinks.Add(pend);
 		}
@@ -3250,7 +3350,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private void ProcessStoredLinkData()
 		{
 			if (m_pendingLinks.Count == 0)
+			{
 				return;
+			}
 			// 1. Get the titles and map them onto their records.
 			// 2. Try to match link data against titles
 			// 3. If successful, set link.
@@ -3259,10 +3361,15 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			foreach (var rec in m_cache.ServiceLocator.GetInstance<IRnGenericRecRepository>().AllInstances())
 			{
 				var sTitle = rec.Title.Text;
-				if (String.IsNullOrEmpty(sTitle))
+				if (string.IsNullOrEmpty(sTitle))
+				{
 					continue;
+				}
+
 				if (!mapTitleRec.ContainsKey(sTitle))
+				{
 					mapTitleRec.Add(sTitle, rec);
+				}
 			}
 			foreach (var pend in m_pendingLinks)
 			{
@@ -3271,7 +3378,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				if (mapTitleRec.TryGetValue(sData, out rec))
 				{
 					if (SetLink(pend, rec))
+					{
 						continue;
+					}
 				}
 				else
 				{
@@ -3284,15 +3393,14 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						if (mapTitleRec.TryGetValue(sTitle, out rec))
 						{
 							if (SetLink(pend, rec))
+							{
 								continue;
+							}
 						}
 					}
 				}
 				// log an error.
-				LogMessage(
-					String.Format(LanguageExplorer.Controls.LexText.LexTextControls.ksCannotMakeDesiredLink,
-						pend.Field.Marker, pend.Field.Data),
-					pend.Field.LineNumber);
+				LogMessage(string.Format(LexTextControls.ksCannotMakeDesiredLink, pend.Field.Marker, pend.Field.Data), pend.Field.LineNumber);
 
 			}
 		}
@@ -3324,9 +3432,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private void SetListReference(IRnGenericRec rec, RnSfMarker rsf, Sfm2Xml.SfmField field)
 		{
 			ReconvertEncodedDataIfNeeded(field, rsf.m_tlo.m_wsId);
-			string sData = field.Data;
-			if (sData == null)
-				sData = String.Empty;
+			var sData = field.Data ?? string.Empty;
 			sData = ApplyChanges(rsf, sData);
 			sData = sData.Trim();
 			List<string> rgsData = null;
@@ -3346,22 +3452,31 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			{
 				return;
 			}
+
 			if (rgsData == null)
+			{
 				rgsData = new List<string>();
+			}
 			rgsData = ApplyBeforeAndBetween(rsf, rgsData);
 			if (rgsData.Count == 0)
-				rgsData.Add(String.Empty);
+			{
+				rgsData.Add(string.Empty);
+			}
 			foreach (var sItem in rgsData)
 			{
 				switch (rsf.m_flid)
 				{
 					case RnGenericRecTags.kflidAnthroCodes:
 						if (!StoreAnthroCode(rec, rsf, sItem))
+						{
 							LogCannotFindListItem(sItem, field);
+						}
 						break;
 					case RnGenericRecTags.kflidConfidence:
 						if (!StoreConfidence(rec, rsf, sItem))
+						{
 							LogCannotFindListItem(sItem, field);
+						}
 						break;
 					case RnGenericRecTags.kflidLocations:
 						if (!StoreLocation(rec, rsf, sItem))
@@ -3369,7 +3484,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						break;
 					case RnGenericRecTags.kflidPhraseTags:
 						if (!StorePhraseTag(rec, rsf, sItem))
+						{
 							LogCannotFindListItem(sItem, field);
+						}
 						break;
 					case RnGenericRecTags.kflidResearchers:
 						if (!StoreResearcher(rec, rsf, sItem))
@@ -3377,47 +3494,61 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						break;
 					case RnGenericRecTags.kflidRestrictions:
 						if (!StoreRestriction(rec, rsf, sItem))
+						{
 							LogCannotFindListItem(sItem, field);
+						}
 						break;
 					case RnGenericRecTags.kflidSources:
 						if (!StoreSource(rec, rsf, sItem))
+						{
 							LogCannotFindListItem(sItem, field);
+						}
 						break;
 					case RnGenericRecTags.kflidStatus:
 						if (!StoreStatus(rec, rsf, sItem))
+						{
 							LogCannotFindListItem(sItem, field);
+						}
 						break;
 					case RnGenericRecTags.kflidTimeOfEvent:
 						if (!StoreTimeOfEvent(rec, rsf, sItem))
+						{
 							LogCannotFindListItem(sItem, field);
+						}
 						break;
 					case RnGenericRecTags.kflidType:
 						if (!StoreRecType(rec, rsf, sItem))
+						{
 							LogCannotFindListItem(sItem, field);
+						}
 						break;
 					case RnGenericRecTags.kflidParticipants:
 						if (!StoreParticipant(rec, rsf, sItem))
+						{
 							LogCannotFindListItem(sItem, field);
+						}
 						break;
 					default:
 						// must be a custom field.
 						Debug.Assert(rsf.m_flid >= (RnGenericRecTags.kClassId * 1000) + 500);
-						Guid guidList = m_mdc.GetFieldListRoot(rsf.m_flid);
+						var guidList = m_mdc.GetFieldListRoot(rsf.m_flid);
 						if (guidList != Guid.Empty)
 						{
 							if (m_repoList == null)
+							{
 								m_repoList = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
-							ICmPossibilityList list = m_repoList.GetObject(guidList);
+							}
+							var list = m_repoList.GetObject(guidList);
 							if (list != null)
 							{
 								if (!StoreCustomListRefItem(rec, rsf, sItem, list))
+								{
 									LogCannotFindListItem(sItem, field);
+								}
 								break;
 							}
 						}
-						LogMessage(
-							String.Format(LexTextControls.ksCannotFindPossibilityList, field.Marker),
-							field.LineNumber);
+						LogMessage(string.Format(LexTextControls.ksCannotFindPossibilityList, field.Marker), field.LineNumber);
 						return;
 				}
 			}
@@ -3425,9 +3556,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void LogCannotFindListItem(string sItem, Sfm2Xml.SfmField field)
 		{
-			LogMessage(
-				String.Format(LexTextControls.ksCannotFindMatchingListItem, sItem, field.Marker),
-				field.LineNumber);
+			LogMessage(string.Format(LexTextControls.ksCannotFindMatchingListItem, sItem, field.Marker), field.LineNumber);
 		}
 
 		/// <summary>
@@ -3437,46 +3566,49 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// </summary>
 		private static List<string> ApplyBeforeAndBetween(RnSfMarker rsf, List<string> rgsData)
 		{
-			List<string> rgsData2 = new List<string>();
-			foreach (string sItem in rgsData)
+			var rgsData2 = new List<string>();
+			foreach (var sItem in rgsData)
 			{
-				string sT = sItem;
-				if (rsf.m_tlo.m_fHaveBefore &&
-					rsf.m_tlo.m_rgsBefore != null && sItem.Length > 0)
+				var sT = sItem;
+				if (rsf.m_tlo.m_fHaveBefore && rsf.m_tlo.m_rgsBefore != null && sItem.Length > 0)
 				{
-					foreach (string sBefore in rsf.m_tlo.m_rgsBefore)
+					foreach (var sBefore in rsf.m_tlo.m_rgsBefore)
 					{
-						int idx = sItem.IndexOf(sBefore);
+						var idx = sItem.IndexOf(sBefore);
 						if (idx > 0)
 						{
 							sT = sItem.Substring(0, idx).Trim();
 						}
 						else if (idx == 0)
 						{
-							sT = String.Empty;
+							sT = string.Empty;
 						}
+
 						if (sT.Length == 0)
+						{
 							break;
+						}
 					}
 				}
-				if (sT.Length > 0 && rsf.m_tlo.m_fHaveBetween &&
-					rsf.m_tlo.m_rgsMarkStart != null && rsf.m_tlo.m_rgsMarkEnd != null)
+				if (sT.Length > 0 && rsf.m_tlo.m_fHaveBetween && rsf.m_tlo.m_rgsMarkStart != null && rsf.m_tlo.m_rgsMarkEnd != null)
 				{
 					// Ensure safe length even if the two lengths differ.
 					// REVIEW: Should we complain if the lengths differ?
-					int clen = rsf.m_tlo.m_rgsMarkEnd.Length;
+					var clen = rsf.m_tlo.m_rgsMarkEnd.Length;
 					if (rsf.m_tlo.m_rgsMarkStart.Length < rsf.m_tlo.m_rgsMarkEnd.Length)
+					{
 						clen = rsf.m_tlo.m_rgsMarkStart.Length;
+					}
 					if (clen > 0)
 					{
-						string sT2 = String.Empty;
-						for (int i = 0; i < clen; ++i)
+						var sT2 = string.Empty;
+						for (var i = 0; i < clen; ++i)
 						{
-							int idx = sT.IndexOf(rsf.m_tlo.m_rgsMarkStart[i]);
+							var idx = sT.IndexOf(rsf.m_tlo.m_rgsMarkStart[i]);
 							if (idx >= 0)
 							{
 								++idx;
-								int idxEnd = sT.IndexOf(rsf.m_tlo.m_rgsMarkEnd[i], idx);
+								var idxEnd = sT.IndexOf(rsf.m_tlo.m_rgsMarkEnd[i], idx);
 								if (idxEnd >= 0)
 								{
 									sT2 = sT.Substring(idx, idxEnd - idx);
@@ -3487,8 +3619,10 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						sT = sT2;
 					}
 				}
-				if (!String.IsNullOrEmpty(sT))
+				if (!string.IsNullOrEmpty(sT))
+				{
 					rgsData2.Add(sT);
+				}
 			}
 			return rgsData2;
 		}
@@ -3496,21 +3630,27 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private string ApplyChanges(RnSfMarker rsf, string sData)
 		{
 			if (rsf.m_tlo.m_rgsMatch == null || rsf.m_tlo.m_rgsReplace == null)
+			{
 				return sData;
-			int count = rsf.m_tlo.m_rgsMatch.Count;
+			}
+			var count = rsf.m_tlo.m_rgsMatch.Count;
 			if (rsf.m_tlo.m_rgsReplace.Count < rsf.m_tlo.m_rgsMatch.Count)
+			{
 				count = rsf.m_tlo.m_rgsReplace.Count;
-			for (int i = 0; i < count; ++i)
+			}
+			for (var i = 0; i < count; ++i)
+			{
 				sData = sData.Replace(rsf.m_tlo.m_rgsMatch[i], rsf.m_tlo.m_rgsReplace[i]);
+			}
 			return sData;
 		}
 
 		private List<string> SplitString(string sItem, string sDel)
 		{
-			List<string> rgsSplit = new List<string>();
-			if (String.IsNullOrEmpty(sItem))
+			var rgsSplit = new List<string>();
+			if (string.IsNullOrEmpty(sItem))
 			{
-				rgsSplit.Add(String.Empty);
+				rgsSplit.Add(string.Empty);
 				return rgsSplit;
 			}
 			int idx;
@@ -3520,30 +3660,36 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				sItem = sItem.Substring(idx + sDel.Length);
 			}
 			if (sItem.Length > 0)
+			{
 				rgsSplit.Add(sItem);
+			}
 			return rgsSplit;
 		}
 
 		private List<string> SplitString(string sData, string[] rgsDelims)
 		{
-			List<string> rgsData = new List<string>();
+			var rgsData = new List<string>();
 			rgsData.Add(sData);
 			if (rgsDelims != null && rgsDelims.Length > 0)
 			{
-				foreach (string sDel in rgsDelims)
+				foreach (var sDel in rgsDelims)
 				{
-					List<string> rgsSplit = new List<string>();
-					foreach (string sItem in rgsData)
+					var rgsSplit = new List<string>();
+					foreach (var sItem in rgsData)
 					{
-						string s1 = sItem.Trim();
+						var s1 = sItem.Trim();
 						if (s1.Length == 0)
-							continue;
-						List<string> rgsT = SplitString(s1, sDel);
-						foreach (string s2 in rgsT)
 						{
-							string s3 = s2.Trim();
+							continue;
+						}
+						var rgsT = SplitString(s1, sDel);
+						foreach (var s2 in rgsT)
+						{
+							var s3 = s2.Trim();
 							if (s3.Length > 0)
+							{
 								rgsSplit.Add(s3);
+							}
 						}
 					}
 					rgsData = rgsSplit;
@@ -3552,17 +3698,21 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			return rgsData;
 		}
 
-		private ICmPossibility FindPossibilityOrNull(List<string> rgsHier,
-			Dictionary<string, ICmPossibility> map)
+		private ICmPossibility FindPossibilityOrNull(List<string> rgsHier, Dictionary<string, ICmPossibility> map)
 		{
 			ICmPossibility possParent = null;
 			ICmPossibility poss = null;
-			for (int i = 0; i < rgsHier.Count; ++i)
+			for (var i = 0; i < rgsHier.Count; ++i)
 			{
 				if (!map.TryGetValue(rgsHier[i].ToLowerInvariant(), out poss))
+				{
 					return null;
+				}
+
 				if (i > 0 && poss.Owner != possParent)
+				{
 					return null;
+				}
 				possParent = poss;
 			}
 			return poss;
@@ -3570,224 +3720,244 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private bool StoreAnthroCode(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
-			List<string> rgsHier = SplitForSubitems(rsf, sData);
+			var rgsHier = SplitForSubitems(rsf, sData);
 			if (rgsHier == null || rgsHier.Count == 0)
 			{
-				ICmAnthroItem def = rsf.m_tlo.m_default as ICmAnthroItem;
+				var def = rsf.m_tlo.m_default as ICmAnthroItem;
 				if (def != null && !rec.AnthroCodesRC.Contains(def))
+				{
 					rec.AnthroCodesRC.Add(def);
+				}
 				return true;
 			}
+
 			if (m_mapAnthroCode.Count == 0)
+			{
 				FillPossibilityMap(rsf, m_cache.LangProject.AnthroListOA.PossibilitiesOS, m_mapAnthroCode);
-			ICmPossibility poss = FindPossibilityOrNull(rgsHier, m_mapAnthroCode);
+			}
+			var poss = FindPossibilityOrNull(rgsHier, m_mapAnthroCode);
 			if (poss != null)
 			{
 				if (!rec.AnthroCodesRC.Contains(poss as ICmAnthroItem))
+				{
 					rec.AnthroCodesRC.Add(poss as ICmAnthroItem);
+				}
 				return true;
 			}
-			else if (rsf.m_tlo.m_fIgnoreNewStuff)
+			if (rsf.m_tlo.m_fIgnoreNewStuff)
 			{
 				return false;
 			}
-			else
+			var item = CreateNewAnthroItem(rgsHier);
+			if (item != null)
 			{
-				ICmAnthroItem item = CreateNewAnthroItem(rgsHier);
-				if (item != null)
-					rec.AnthroCodesRC.Add(item);
-				return true;
+				rec.AnthroCodesRC.Add(item);
 			}
+			return true;
 		}
 
 		private ICmAnthroItem CreateNewAnthroItem(List<string> rgsHier)
 		{
-			return (ICmAnthroItem)CreateNewPossibility(rgsHier, AnthroItemCreator,
-				m_cache.LangProject.AnthroListOA.PossibilitiesOS,
-				m_mapAnthroCode, m_rgNewAnthroItem);
+			return (ICmAnthroItem)CreateNewPossibility(rgsHier, AnthroItemCreator, m_cache.LangProject.AnthroListOA.PossibilitiesOS, m_mapAnthroCode, m_rgNewAnthroItem);
 		}
 
 		private bool StoreConfidence(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
-			List<string> rgsHier = SplitForSubitems(rsf, sData);
+			var rgsHier = SplitForSubitems(rsf, sData);
 			if (rgsHier == null || rgsHier.Count == 0)
 			{
 				rec.ConfidenceRA = rsf.m_tlo.m_default;
 				return true;
 			}
+
 			if (m_mapConfidence.Count == 0)
+			{
 				FillPossibilityMap(rsf, m_cache.LangProject.ConfidenceLevelsOA.PossibilitiesOS, m_mapConfidence);
-			ICmPossibility poss = FindPossibilityOrNull(rgsHier, m_mapConfidence);
+			}
+			var poss = FindPossibilityOrNull(rgsHier, m_mapConfidence);
 			if (poss != null)
 			{
 				rec.ConfidenceRA = poss;
 				return true;
 			}
-			else if (rsf.m_tlo.m_fIgnoreNewStuff)
+			if (rsf.m_tlo.m_fIgnoreNewStuff)
 			{
 				return false;
 			}
-			else
-			{
-				ICmPossibility item = CreateNewConfidenceItem(rgsHier);
-				rec.ConfidenceRA = item;
-				return true;
-			}
+			var item = CreateNewConfidenceItem(rgsHier);
+			rec.ConfidenceRA = item;
+			return true;
 		}
 
 		private ICmPossibility CreateNewConfidenceItem(List<string> rgsHier)
 		{
-			return CreateNewPossibility(rgsHier, PossibilityCreator,
-				m_cache.LangProject.ConfidenceLevelsOA.PossibilitiesOS,
-				m_mapConfidence, m_rgNewConfidence);
+			return CreateNewPossibility(rgsHier, PossibilityCreator, m_cache.LangProject.ConfidenceLevelsOA.PossibilitiesOS, m_mapConfidence, m_rgNewConfidence);
 		}
 
 		private bool StoreLocation(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
-			List<string> rgsHier = SplitForSubitems(rsf, sData);
+			var rgsHier = SplitForSubitems(rsf, sData);
 			if (rgsHier == null || rgsHier.Count == 0)
 			{
-				ICmLocation def = rsf.m_tlo.m_default as ICmLocation;
+				var def = rsf.m_tlo.m_default as ICmLocation;
 				if (def != null && !rec.LocationsRC.Contains(def))
+				{
 					rec.LocationsRC.Add(def);
+				}
 				return true;
 			}
+
 			if (m_mapLocation.Count == 0)
+			{
 				FillPossibilityMap(rsf, m_cache.LangProject.LocationsOA.PossibilitiesOS, m_mapLocation);
-			ICmPossibility poss = FindPossibilityOrNull(rgsHier, m_mapLocation);
+			}
+			var poss = FindPossibilityOrNull(rgsHier, m_mapLocation);
 			if (poss != null)
 			{
 				if (!rec.LocationsRC.Contains(poss as ICmLocation))
+				{
 					rec.LocationsRC.Add(poss as ICmLocation);
+				}
 				return true;
 			}
-			else if (rsf.m_tlo.m_fIgnoreNewStuff)
+			if (rsf.m_tlo.m_fIgnoreNewStuff)
 			{
 				return false;
 			}
-			else
+			var item = CreateNewLocation(rgsHier);
+			if (item != null)
 			{
-				ICmLocation item = CreateNewLocation(rgsHier);
-				if (item != null)
-					rec.LocationsRC.Add(item);
-				return true;
+				rec.LocationsRC.Add(item);
 			}
+			return true;
 		}
 
 		private ICmLocation CreateNewLocation(List<string> rgsHier)
 		{
-			return (ICmLocation)CreateNewPossibility(rgsHier, LocationCreator,
-				m_cache.LangProject.LocationsOA.PossibilitiesOS,
-				m_mapLocation, m_rgNewLocation);
+			return (ICmLocation)CreateNewPossibility(rgsHier, LocationCreator, m_cache.LangProject.LocationsOA.PossibilitiesOS, m_mapLocation, m_rgNewLocation);
 		}
 
 		private bool StorePhraseTag(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
-			List<string> rgsHier = SplitForSubitems(rsf, sData);
+			var rgsHier = SplitForSubitems(rsf, sData);
 			if (rgsHier == null || rgsHier.Count == 0)
 			{
 				if (rsf.m_tlo.m_default != null && !rec.PhraseTagsRC.Contains(rsf.m_tlo.m_default))
+				{
 					rec.PhraseTagsRC.Add(rsf.m_tlo.m_default);
+				}
 				return true;
 			}
+
 			if (m_mapPhraseTag.Count == 0)
+			{
 				FillPossibilityMap(rsf, m_cache.LangProject.TextMarkupTagsOA.PossibilitiesOS, m_mapPhraseTag);
-			ICmPossibility poss = FindPossibilityOrNull(rgsHier, m_mapPhraseTag);
+			}
+			var poss = FindPossibilityOrNull(rgsHier, m_mapPhraseTag);
 			if (poss != null)
 			{
 				if (!rec.PhraseTagsRC.Contains(poss))
+				{
 					rec.PhraseTagsRC.Add(poss);
+				}
 				return true;
 			}
-			else if (rsf.m_tlo.m_fIgnoreNewStuff)
+			if (rsf.m_tlo.m_fIgnoreNewStuff)
 			{
 				return false;
 			}
-			else
+			var item = CreateNewPhraseTag(rgsHier);
+			if (item != null)
 			{
-				ICmPossibility item = CreateNewPhraseTag(rgsHier);
-				if (item != null)
-					rec.PhraseTagsRC.Add(item);
-				return true;
+				rec.PhraseTagsRC.Add(item);
 			}
+			return true;
 		}
 
 		private ICmPossibility CreateNewPhraseTag(List<string> rgsHier)
 		{
-			return CreateNewPossibility(rgsHier, PossibilityCreator,
-				m_cache.LangProject.TextMarkupTagsOA.PossibilitiesOS,
-				m_mapPhraseTag, m_rgNewPhraseTag);
+			return CreateNewPossibility(rgsHier, PossibilityCreator, m_cache.LangProject.TextMarkupTagsOA.PossibilitiesOS, m_mapPhraseTag, m_rgNewPhraseTag);
 		}
 
 		private bool StoreResearcher(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
-			List<string> rgsHier = SplitForSubitems(rsf, sData);
+			var rgsHier = SplitForSubitems(rsf, sData);
 			if (rgsHier == null || rgsHier.Count == 0)
 			{
-				ICmPerson def = rsf.m_tlo.m_default as ICmPerson;
+				var def = rsf.m_tlo.m_default as ICmPerson;
 				if (!rec.ResearchersRC.Contains(def))
+				{
 					rec.ResearchersRC.Add(def);
+				}
 				return true;
 			}
+
 			if (m_mapPeople.Count == 0)
+			{
 				FillPossibilityMap(rsf, m_cache.LangProject.PeopleOA.PossibilitiesOS, m_mapPeople);
-			ICmPossibility poss = FindPossibilityOrNull(rgsHier, m_mapPeople);
+			}
+			var poss = FindPossibilityOrNull(rgsHier, m_mapPeople);
 			if (poss != null)
 			{
 				if (!rec.ResearchersRC.Contains(poss as ICmPerson))
+				{
 					rec.ResearchersRC.Add(poss as ICmPerson);
+				}
 				return true;
 			}
-			else if (rsf.m_tlo.m_fIgnoreNewStuff)
+			if (rsf.m_tlo.m_fIgnoreNewStuff)
 			{
 				return false;
 			}
-			else
+			var item = CreateNewPerson(rgsHier);
+			if (item != null)
 			{
-				ICmPerson item = CreateNewPerson(rgsHier);
-				if (item != null)
-					rec.ResearchersRC.Add(item);
-				return true;
+				rec.ResearchersRC.Add(item);
 			}
+			return true;
 		}
 
 		private ICmPerson CreateNewPerson(List<string> rgsHier)
 		{
-			return (ICmPerson)CreateNewPossibility(rgsHier, PersonCreator,
-				m_cache.LangProject.PeopleOA.PossibilitiesOS,
-				m_mapPeople, m_rgNewPeople);
+			return (ICmPerson)CreateNewPossibility(rgsHier, PersonCreator, m_cache.LangProject.PeopleOA.PossibilitiesOS, m_mapPeople, m_rgNewPeople);
 		}
 
 		private bool StoreSource(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
-			List<string> rgsHier = SplitForSubitems(rsf, sData);
+			var rgsHier = SplitForSubitems(rsf, sData);
 			if (rgsHier == null || rgsHier.Count == 0)
 			{
-				ICmPerson def = rsf.m_tlo.m_default as ICmPerson;
+				var def = rsf.m_tlo.m_default as ICmPerson;
 				if (def != null && !rec.SourcesRC.Contains(def))
+				{
 					rec.SourcesRC.Add(def);
+				}
 				return true;
 			}
+
 			if (m_mapPeople.Count == 0)
+			{
 				FillPossibilityMap(rsf, m_cache.LangProject.PeopleOA.PossibilitiesOS, m_mapPeople);
-			ICmPossibility poss = FindPossibilityOrNull(rgsHier, m_mapPeople);
+			}
+			var poss = FindPossibilityOrNull(rgsHier, m_mapPeople);
 			if (poss != null)
 			{
 				if (!rec.SourcesRC.Contains(poss as ICmPerson))
+				{
 					rec.SourcesRC.Add(poss as ICmPerson);
+				}
 				return true;
 			}
-			else if (rsf.m_tlo.m_fIgnoreNewStuff)
+			if (rsf.m_tlo.m_fIgnoreNewStuff)
 			{
 				return false;
 			}
-			else
+			var item = CreateNewPerson(rgsHier);
+			if (item != null)
 			{
-				ICmPerson item = CreateNewPerson(rgsHier);
-				if (item != null)
-					rec.SourcesRC.Add(item);
-				return true;
+				rec.SourcesRC.Add(item);
 			}
+			return true;
 		}
 
 		private List<string> SplitForSubitems(RnSfMarker rsf, string sData)
@@ -3811,148 +3981,152 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private bool StoreRestriction(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
-			List<string> rgsHier = SplitForSubitems(rsf, sData);
+			var rgsHier = SplitForSubitems(rsf, sData);
 			if (rgsHier == null || rgsHier.Count == 0)
 			{
 				if (rsf.m_tlo.m_default != null && !rec.RestrictionsRC.Contains(rsf.m_tlo.m_default))
+				{
 					rec.RestrictionsRC.Add(rsf.m_tlo.m_default);
+				}
 				return true;
 			}
+
 			if (m_mapRestriction.Count == 0)
+			{
 				FillPossibilityMap(rsf, m_cache.LangProject.RestrictionsOA.PossibilitiesOS, m_mapRestriction);
-			ICmPossibility poss = FindPossibilityOrNull(rgsHier, m_mapRestriction);
+			}
+			var poss = FindPossibilityOrNull(rgsHier, m_mapRestriction);
 			if (poss != null)
 			{
 				if (!rec.RestrictionsRC.Contains(poss))
+				{
 					rec.RestrictionsRC.Add(poss);
+				}
 				return true;
 			}
-			else if (rsf.m_tlo.m_fIgnoreNewStuff)
+			if (rsf.m_tlo.m_fIgnoreNewStuff)
 			{
 				return false;
 			}
-			else
+			var item = CreateNewRestriction(rgsHier);
+			if (item != null)
 			{
-				ICmPossibility item = CreateNewRestriction(rgsHier);
-				if (item != null)
-					rec.RestrictionsRC.Add(item);
-				return true;
+				rec.RestrictionsRC.Add(item);
 			}
+			return true;
 		}
 
 		private ICmPossibility CreateNewRestriction(List<string> rgsHier)
 		{
-			return CreateNewPossibility(rgsHier, PossibilityCreator,
-				m_cache.LangProject.RestrictionsOA.PossibilitiesOS,
-				m_mapRestriction, m_rgNewRestriction);
+			return CreateNewPossibility(rgsHier, PossibilityCreator, m_cache.LangProject.RestrictionsOA.PossibilitiesOS, m_mapRestriction, m_rgNewRestriction);
 		}
 
 		private bool StoreStatus(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
-			List<string> rgsHier = SplitForSubitems(rsf, sData);
+			var rgsHier = SplitForSubitems(rsf, sData);
 			if (rgsHier == null || rgsHier.Count == 0)
 			{
 				rec.StatusRA = rsf.m_tlo.m_default;
 				return true;
 			}
+
 			if (m_mapStatus.Count == 0)
+			{
 				FillPossibilityMap(rsf, m_cache.LangProject.StatusOA.PossibilitiesOS, m_mapStatus);
-			ICmPossibility poss = FindPossibilityOrNull(rgsHier, m_mapStatus);
+			}
+			var poss = FindPossibilityOrNull(rgsHier, m_mapStatus);
 			if (poss != null)
 			{
 				rec.StatusRA = poss;
 				return true;
 			}
-			else if (rsf.m_tlo.m_fIgnoreNewStuff)
+			if (rsf.m_tlo.m_fIgnoreNewStuff)
 			{
 				return false;
 			}
-			else
-			{
-				ICmPossibility item = CreateNewStatus(rgsHier);
-				rec.StatusRA = item;
-				return true;
-			}
+			var item = CreateNewStatus(rgsHier);
+			rec.StatusRA = item;
+			return true;
 		}
 
 		private ICmPossibility CreateNewStatus(List<string> rgsHier)
 		{
-			return CreateNewPossibility(rgsHier, PossibilityCreator,
-				m_cache.LangProject.StatusOA.PossibilitiesOS,
-				m_mapStatus, m_rgNewStatus);
+			return CreateNewPossibility(rgsHier, PossibilityCreator, m_cache.LangProject.StatusOA.PossibilitiesOS, m_mapStatus, m_rgNewStatus);
 		}
 
 		private bool StoreTimeOfEvent(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
-			List<string> rgsHier = SplitForSubitems(rsf, sData);
+			var rgsHier = SplitForSubitems(rsf, sData);
 			if (rgsHier == null || rgsHier.Count == 0)
 			{
 				if (rsf.m_tlo.m_default != null && !rec.TimeOfEventRC.Contains(rsf.m_tlo.m_default))
+				{
 					rec.TimeOfEventRC.Add(rsf.m_tlo.m_default);
+				}
 				return true;
 			}
+
 			if (m_mapTimeOfDay.Count == 0)
+			{
 				FillPossibilityMap(rsf, m_cache.LangProject.TimeOfDayOA.PossibilitiesOS, m_mapTimeOfDay);
-			ICmPossibility poss = FindPossibilityOrNull(rgsHier, m_mapTimeOfDay);
+			}
+			var poss = FindPossibilityOrNull(rgsHier, m_mapTimeOfDay);
 			if (poss != null)
 			{
 				if (!rec.TimeOfEventRC.Contains(poss))
+				{
 					rec.TimeOfEventRC.Add(poss);
+				}
 				return true;
 			}
-			else if (rsf.m_tlo.m_fIgnoreNewStuff)
+			if (rsf.m_tlo.m_fIgnoreNewStuff)
 			{
 				return false;
 			}
-			else
+			var item = CreateNewTimeOfDay(rgsHier);
+			if (item != null)
 			{
-				ICmPossibility item = CreateNewTimeOfDay(rgsHier);
-				if (item != null)
-					rec.TimeOfEventRC.Add(item);
-				return true;
+				rec.TimeOfEventRC.Add(item);
 			}
+			return true;
 		}
 
 		private ICmPossibility CreateNewTimeOfDay(List<string> rgsHier)
 		{
-			return CreateNewPossibility(rgsHier, PossibilityCreator,
-				m_cache.LangProject.TimeOfDayOA.PossibilitiesOS,
-				m_mapTimeOfDay, m_rgNewTimeOfDay);
+			return CreateNewPossibility(rgsHier, PossibilityCreator, m_cache.LangProject.TimeOfDayOA.PossibilitiesOS, m_mapTimeOfDay, m_rgNewTimeOfDay);
 		}
 
 		private bool StoreRecType(IRnGenericRec rec, RnSfMarker rsf, string sData)
 		{
-			List<string> rgsHier = SplitForSubitems(rsf, sData);
+			var rgsHier = SplitForSubitems(rsf, sData);
 			if (rgsHier == null || rgsHier.Count == 0)
 			{
 				rec.TypeRA = rsf.m_tlo.m_default;
 				return true;
 			}
+
 			if (m_mapRecType.Count == 0)
+			{
 				FillPossibilityMap(rsf, m_cache.LangProject.ResearchNotebookOA.RecTypesOA.PossibilitiesOS, m_mapRecType);
-			ICmPossibility poss = FindPossibilityOrNull(rgsHier, m_mapRecType);
+			}
+			var poss = FindPossibilityOrNull(rgsHier, m_mapRecType);
 			if (poss != null)
 			{
 				rec.TypeRA = poss;
 				return true;
 			}
-			else if (rsf.m_tlo.m_fIgnoreNewStuff)
+			if (rsf.m_tlo.m_fIgnoreNewStuff)
 			{
 				return false;
 			}
-			else
-			{
-				ICmPossibility item = CreateNewRecType(rgsHier);
-				rec.TypeRA = item;
-				return true;
-			}
+			var item = CreateNewRecType(rgsHier);
+			rec.TypeRA = item;
+			return true;
 		}
 
 		private ICmPossibility CreateNewRecType(List<string> rgsHier)
 		{
-			return CreateNewPossibility(rgsHier, PossibilityCreator,
-				m_cache.LangProject.ResearchNotebookOA.RecTypesOA.PossibilitiesOS,
-				m_mapRecType, m_rgNewRecType);
+			return CreateNewPossibility(rgsHier, PossibilityCreator, m_cache.LangProject.ResearchNotebookOA.RecTypesOA.PossibilitiesOS, m_mapRecType, m_rgNewRecType);
 		}
 
 		private bool StoreParticipant(IRnGenericRec rec, RnSfMarker rsf, string sData)
@@ -3968,16 +4142,23 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			{
 				var def = rsf.m_tlo.m_default as ICmPerson;
 				if (def != null && !partic.ParticipantsRC.Contains(def))
+				{
 					partic.ParticipantsRC.Add(def);
+				}
 				return true;
 			}
+
 			if (m_mapPeople.Count == 0)
+			{
 				FillPossibilityMap(rsf, m_cache.LangProject.PeopleOA.PossibilitiesOS, m_mapPeople);
+			}
 			var poss = FindPossibilityOrNull(rgsHier, m_mapPeople);
 			if (poss != null)
 			{
 				if (!partic.ParticipantsRC.Contains(poss as ICmPerson))
+				{
 					partic.ParticipantsRC.Add(poss as ICmPerson);
+				}
 				return true;
 			}
 			if (!rsf.m_tlo.m_fIgnoreNewStuff)
@@ -3992,27 +4173,25 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			return false;
 		}
 
-		private bool StoreCustomListRefItem(IRnGenericRec rec, RnSfMarker rsf, string sData,
-			ICmPossibilityList list)
+		private bool StoreCustomListRefItem(IRnGenericRec rec, RnSfMarker rsf, string sData, ICmPossibilityList list)
 		{
 			// First, get the existing data so we can check whether the new item is needed,
 			// and so that we know where to insert it (at the end) if it is.
-			int chvo = m_cache.DomainDataByFlid.get_VecSize(rec.Hvo, rsf.m_flid);
+			var chvo = m_cache.DomainDataByFlid.get_VecSize(rec.Hvo, rsf.m_flid);
 			int[] hvosField;
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
+			using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 			{
 				m_cache.DomainDataByFlid.VecProp(rec.Hvo, rsf.m_flid, chvo, out chvo, arrayPtr);
 				hvosField = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 			}
 			ICmPossibility poss;
-			List<string> rgsHier = SplitForSubitems(rsf, sData);
+			var rgsHier = SplitForSubitems(rsf, sData);
 			if (rgsHier == null || rgsHier.Count == 0)
 			{
 				poss = rsf.m_tlo.m_default;
 				if (poss != null && !hvosField.Contains(poss.Hvo) && poss.ClassID == list.ItemClsid)
 				{
-					m_cache.DomainDataByFlid.Replace(rec.Hvo, rsf.m_flid, chvo, chvo,
-						new int[] { poss.Hvo }, 1);
+					m_cache.DomainDataByFlid.Replace(rec.Hvo, rsf.m_flid, chvo, chvo, new[] { poss.Hvo }, 1);
 				}
 				return true;
 			}
@@ -4020,66 +4199,102 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			{
 				case LangProjectTags.kflidAnthroList:
 					if (m_mapAnthroCode.Count == 0)
+					{
 						FillPossibilityMap(rsf, m_cache.LangProject.AnthroListOA.PossibilitiesOS, m_mapAnthroCode);
+					}
 					poss = FindPossibilityOrNull(rgsHier, m_mapAnthroCode);
 					if (poss == null && !rsf.m_tlo.m_fIgnoreNewStuff)
+					{
 						poss = CreateNewAnthroItem(rgsHier);
+					}
 					break;
 				case LangProjectTags.kflidConfidenceLevels:
 					if (m_mapConfidence.Count == 0)
+					{
 						FillPossibilityMap(rsf, m_cache.LangProject.ConfidenceLevelsOA.PossibilitiesOS, m_mapConfidence);
+					}
 					poss = FindPossibilityOrNull(rgsHier, m_mapConfidence);
 					if (poss == null && !rsf.m_tlo.m_fIgnoreNewStuff)
+					{
 						poss = CreateNewConfidenceItem(rgsHier);
+					}
 					break;
 				case LangProjectTags.kflidLocations:
 					if (m_mapLocation.Count == 0)
+					{
 						FillPossibilityMap(rsf, m_cache.LangProject.LocationsOA.PossibilitiesOS, m_mapLocation);
+					}
 					poss = FindPossibilityOrNull(rgsHier, m_mapLocation);
 					if (poss == null && !rsf.m_tlo.m_fIgnoreNewStuff)
+					{
 						poss = CreateNewLocation(rgsHier);
+					}
 					break;
 				case RnResearchNbkTags.kflidRecTypes:
 					if (m_mapRecType.Count == 0)
+					{
 						FillPossibilityMap(rsf, m_cache.LangProject.ResearchNotebookOA.RecTypesOA.PossibilitiesOS, m_mapRecType);
+					}
 					poss = FindPossibilityOrNull(rgsHier, m_mapRecType);
 					if (poss == null && !rsf.m_tlo.m_fIgnoreNewStuff)
+					{
 						poss = CreateNewRecType(rgsHier);
+					}
 					break;
 				case LangProjectTags.kflidTextMarkupTags:
 					if (m_mapPhraseTag.Count == 0)
+					{
 						FillPossibilityMap(rsf, m_cache.LangProject.TextMarkupTagsOA.PossibilitiesOS, m_mapPhraseTag);
+					}
 					poss = FindPossibilityOrNull(rgsHier, m_mapPhraseTag);
 					if (poss == null && !rsf.m_tlo.m_fIgnoreNewStuff)
+					{
 						poss = CreateNewPhraseTag(rgsHier);
+					}
 					break;
 				case LangProjectTags.kflidPeople:
 					if (m_mapPeople.Count == 0)
+					{
 						FillPossibilityMap(rsf, m_cache.LangProject.PeopleOA.PossibilitiesOS, m_mapPeople);
+					}
 					poss = FindPossibilityOrNull(rgsHier, m_mapPeople);
 					if (poss == null && !rsf.m_tlo.m_fIgnoreNewStuff)
+					{
 						poss = CreateNewPerson(rgsHier);
+					}
 					break;
 				case LangProjectTags.kflidRestrictions:
 					if (m_mapRestriction.Count == 0)
+					{
 						FillPossibilityMap(rsf, m_cache.LangProject.RestrictionsOA.PossibilitiesOS, m_mapRestriction);
+					}
 					poss = FindPossibilityOrNull(rgsHier, m_mapRestriction);
 					if (poss == null && !rsf.m_tlo.m_fIgnoreNewStuff)
+					{
 						poss = CreateNewRestriction(rgsHier);
+					}
 					break;
 				case LangProjectTags.kflidStatus:
 					if (m_mapStatus.Count == 0)
+					{
 						FillPossibilityMap(rsf, m_cache.LangProject.StatusOA.PossibilitiesOS, m_mapStatus);
+					}
 					poss = FindPossibilityOrNull(rgsHier, m_mapStatus);
 					if (poss == null && !rsf.m_tlo.m_fIgnoreNewStuff)
+					{
 						poss = CreateNewStatus(rgsHier);
+					}
 					break;
 				case LangProjectTags.kflidTimeOfDay:
 					if (m_mapTimeOfDay.Count == 0)
+					{
 						FillPossibilityMap(rsf, m_cache.LangProject.TimeOfDayOA.PossibilitiesOS, m_mapTimeOfDay);
+					}
 					poss = FindPossibilityOrNull(rgsHier, m_mapTimeOfDay);
 					if (poss == null && !rsf.m_tlo.m_fIgnoreNewStuff)
+					{
 						poss = CreateNewTimeOfDay(rgsHier);
+					}
 					break;
 				default:
 					Dictionary<string, ICmPossibility> map;
@@ -4133,49 +4348,47 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 								creator = NewLexRefTypeCreator;
 								break;
 						}
+
 						if (creator != null)
+						{
 							poss =  CreateNewPossibility(rgsHier, creator, list.PossibilitiesOS, map, rgNew);
+						}
 					}
 					break;
 			}
 			if (poss != null && !hvosField.Contains(poss.Hvo) && poss.ClassID == list.ItemClsid)
 			{
-				m_cache.DomainDataByFlid.Replace(rec.Hvo, rsf.m_flid, chvo, chvo,
-					new int[] { poss.Hvo }, 1);
+				m_cache.DomainDataByFlid.Replace(rec.Hvo, rsf.m_flid, chvo, chvo, new[] { poss.Hvo }, 1);
 				return true;
 			}
-			else
-			{
-				return !rsf.m_tlo.m_fIgnoreNewStuff;
-			}
+			return !rsf.m_tlo.m_fIgnoreNewStuff;
 		}
 
-		private static void FillPossibilityMap(RnSfMarker rsf, ILcmOwningSequence<ICmPossibility> seq,
-			Dictionary<string, ICmPossibility> map)
+		private static void FillPossibilityMap(RnSfMarker rsf, ILcmOwningSequence<ICmPossibility> seq, Dictionary<string, ICmPossibility> map)
 		{
 			if (seq == null || seq.Count == 0)
+			{
 				return;
-			bool fAbbrev = rsf.m_tlo.m_pnt == PossNameType.kpntAbbreviation;
+			}
+			var fAbbrev = rsf.m_tlo.m_pnt == PossNameType.kpntAbbreviation;
 			foreach (ICmPossibility poss in seq)
 			{
-				string sKey = fAbbrev ?
-					poss.Abbreviation.AnalysisDefaultWritingSystem.Text :
-					poss.Name.AnalysisDefaultWritingSystem.Text;
-				if (String.IsNullOrEmpty(sKey))
+				var sKey = fAbbrev ? poss.Abbreviation.AnalysisDefaultWritingSystem.Text : poss.Name.AnalysisDefaultWritingSystem.Text;
+				if (string.IsNullOrEmpty(sKey))
+				{
 					continue;
+				}
 				sKey = sKey.ToLowerInvariant();
 				if (map.ContainsKey(sKey))
+				{
 					continue;
+				}
 				map.Add(sKey, poss);
 				FillPossibilityMap(rsf, poss.SubPossibilitiesOS, map);
 			}
 		}
 
-		private ICmPossibility CreateNewPossibility(List<string> rgsHier,
-			CmPossibilityCreator factory,
-			ILcmOwningSequence<ICmPossibility> possList,
-			Dictionary<string, ICmPossibility> map,
-			List<ICmPossibility> rgNew)
+		private ICmPossibility CreateNewPossibility(List<string> rgsHier, CmPossibilityCreator factory, ILcmOwningSequence<ICmPossibility> possList, Dictionary<string, ICmPossibility> map, List<ICmPossibility> rgNew)
 		{
 			ICmPossibility possParent = null;
 			ICmPossibility poss = null;
@@ -4183,9 +4396,14 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			for (i = 0; i < rgsHier.Count; ++i)
 			{
 				if (!map.TryGetValue(rgsHier[i].ToLowerInvariant(), out poss))
+				{
 					break;
+				}
+
 				if (i > 0 && poss.Owner != possParent)
+				{
 					break;
+				}
 				possParent = poss;
 			}
 			if (i == rgsHier.Count)
@@ -4206,10 +4424,14 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			{
 				item = factory.Create();
 				if (itemParent == null)
+				{
 					possList.Add(item);
+				}
 				else
+				{
 					itemParent.SubPossibilitiesOS.Add(item);
-				ITsString tss = TsStringUtils.MakeString(rgsHier[i], m_cache.DefaultAnalWs);
+				}
+				var tss = TsStringUtils.MakeString(rgsHier[i], m_cache.DefaultAnalWs);
 				item.Name.AnalysisDefaultWritingSystem = tss;
 				item.Abbreviation.AnalysisDefaultWritingSystem = tss;
 				map.Add(rgsHier[i].ToLowerInvariant(), item);
@@ -4221,15 +4443,16 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		public static bool InitializeWritingSystemCombo(string sWs, LcmCache cache, ComboBox cbWritingSystem)
 		{
-			return InitializeWritingSystemCombo(sWs, cache, cbWritingSystem,
-				cache.ServiceLocator.WritingSystems.AllWritingSystems.ToArray());
+			return InitializeWritingSystemCombo(sWs, cache, cbWritingSystem, cache.ServiceLocator.WritingSystems.AllWritingSystems.ToArray());
 		}
 
 
 		public static bool InitializeWritingSystemCombo(string sWs, LcmCache cache, ComboBox cbWritingSystem, CoreWritingSystemDefinition[] writingSystems)
 		{
-			if (String.IsNullOrEmpty(sWs))
+			if (string.IsNullOrEmpty(sWs))
+			{
 				sWs = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultAnalWs);
+			}
 			cbWritingSystem.Items.Clear();
 			cbWritingSystem.Sorted = true;
 			cbWritingSystem.Items.AddRange(writingSystems);
@@ -4246,7 +4469,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void m_tbSaveAsFileName_TextChanged(object sender, EventArgs e)
 		{
-			m_fDirtySettings = true;
+			DirtySettings = true;
 		}
 		private enum OFType { Database, Project, Settings, SaveAs } // openfile type
 	}

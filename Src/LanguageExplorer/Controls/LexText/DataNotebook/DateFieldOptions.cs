@@ -13,11 +13,10 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 	/// <summary />
 	public partial class DateFieldOptions : UserControl
 	{
-		LcmCache m_cache;
 		IHelpTopicProvider m_helpTopicProvider;
 		// This example DateTime value must match that found in ImportDateFormatDlg.cs!
 		DateTime m_dtExample = new DateTime(1999, 3, 29, 15, 30, 45);
-		bool m_fGenDate = false;
+		bool m_fGenDate;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:DateFieldOptions"/> class.
@@ -29,14 +28,17 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void m_btnAddFormat_Click(object sender, EventArgs e)
 		{
-			using (ImportDateFormatDlg dlg = new ImportDateFormatDlg())
+			using (var dlg = new ImportDateFormatDlg())
 			{
-				dlg.Initialize(String.Empty, m_helpTopicProvider, m_fGenDate);
+				dlg.Initialize(string.Empty, m_helpTopicProvider, m_fGenDate);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
-					string sFmt = dlg.Format;
-					string sDate = m_dtExample.ToString(sFmt);
-					ListViewItem lvi = new ListViewItem(new string[] { sFmt, sDate });
+					var sFmt = dlg.Format;
+					var lvi = new ListViewItem(new[]
+					{
+						sFmt,
+						m_dtExample.ToString(sFmt)
+					});
 					m_lvDateFormats.Items.Add(lvi);
 				}
 			}
@@ -46,16 +48,15 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			if (m_lvDateFormats.SelectedItems.Count > 0)
 			{
-				ListViewItem lvi = m_lvDateFormats.SelectedItems[0];
-				using (ImportDateFormatDlg dlg = new ImportDateFormatDlg())
+				var lvi = m_lvDateFormats.SelectedItems[0];
+				using (var dlg = new ImportDateFormatDlg())
 				{
 					dlg.Initialize(lvi.SubItems[0].Text, m_helpTopicProvider, m_fGenDate);
 					if (dlg.ShowDialog(this) == DialogResult.OK)
 					{
-						string sFmt = dlg.Format;
-						string sDate = m_dtExample.ToString(sFmt);
+						var sFmt = dlg.Format;
 						lvi.SubItems[0].Text = sFmt;
-						lvi.SubItems[1].Text = sDate;
+						lvi.SubItems[1].Text = m_dtExample.ToString(sFmt);
 					}
 				}
 
@@ -66,25 +67,21 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			if (m_lvDateFormats.SelectedIndices.Count > 0)
 			{
-				int idx = m_lvDateFormats.SelectedIndices[0];
+				var idx = m_lvDateFormats.SelectedIndices[0];
 				m_lvDateFormats.Items.RemoveAt(idx);
 			}
 		}
 
 
-		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider,
-			RnSfMarker rsfm, bool fGenDate)
+		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, RnSfMarker rsfm, bool fGenDate)
 		{
-			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 			m_fGenDate = fGenDate;
 
 			m_lvDateFormats.Items.Clear();
-			for (int i = 0; i < rsfm.m_dto.m_rgsFmt.Count; ++i)
+			foreach (var sFmt in rsfm.m_dto.m_rgsFmt)
 			{
-				string sFmt = rsfm.m_dto.m_rgsFmt[i];
-				string sDate = m_dtExample.ToString(sFmt);
-				ListViewItem lvi = new ListViewItem(new string[] { sFmt, sDate });
+				var lvi = new ListViewItem(new[] { sFmt, m_dtExample.ToString(sFmt) });
 				m_lvDateFormats.Items.Add(lvi);
 			}
 		}
@@ -93,12 +90,11 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			get
 			{
-				List<string> rgsFmt = new List<string>();
-				for (int i = 0; i < m_lvDateFormats.Items.Count; ++i)
+				var rgsFmt = new List<string>();
+				for (var i = 0; i < m_lvDateFormats.Items.Count; ++i)
 				{
-					ListViewItem lvi = m_lvDateFormats.Items[i];
-					string sFmt = lvi.SubItems[0].Text;
-					rgsFmt.Add(sFmt);
+					var lvi = m_lvDateFormats.Items[i];
+					rgsFmt.Add(lvi.SubItems[0].Text);
 				}
 				return rgsFmt;
 			}

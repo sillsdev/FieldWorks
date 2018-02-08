@@ -39,12 +39,14 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
 			LoadEncodingConverters();
-			int index = 0;
-			if (m_sEncConverter != null && m_sEncConverter != "")
+			var index = 0;
+			if (!string.IsNullOrEmpty(m_sEncConverter))
 			{
 				index = m_cbEC.FindStringExact(m_sEncConverter);
 				if (index < 0)
+				{
 					index = 0;
+				}
 			}
 			m_cbEC.SelectedIndex = index;
 		}
@@ -53,9 +55,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			try
 			{
-				string prevEC = m_cbEC.Text;
-				using (AddCnvtrDlg dlg = new AddCnvtrDlg(m_helpTopicProvider, m_app, null,
-					m_cbEC.Text, null, false))
+				var prevEC = m_cbEC.Text;
+				using (var dlg = new AddCnvtrDlg(m_helpTopicProvider, m_app, null, m_cbEC.Text, null, false))
 				{
 					dlg.ShowDialog(this);
 
@@ -63,10 +64,14 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 					LoadEncodingConverters();
 
 					// Either select the new one or select the old one
-					if (dlg.DialogResult == DialogResult.OK && !String.IsNullOrEmpty(dlg.SelectedConverter))
+					if (dlg.DialogResult == DialogResult.OK && !string.IsNullOrEmpty(dlg.SelectedConverter))
+					{
 						m_cbEC.SelectedItem = dlg.SelectedConverter;
+					}
 					else if (m_cbEC.Items.Count > 0)
+					{
 						m_cbEC.SelectedItem = prevEC; // preserve selection if possible
+					}
 				}
 			}
 			catch (Exception ex)
@@ -80,16 +85,21 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			// Added to make the list of encoding converters match the list that is given when
 			// the add new converter option is selected. (LT-2955)
-			EncConverters encConv = new EncConverters();
-			System.Collections.IDictionaryEnumerator de = encConv.GetEnumerator();
+#if RANDYTODO
+			// TODO: 'encConv' never has any data, but is used in loop, below.
+#endif
+			var encConv = new EncConverters();
+			var de = encConv.GetEnumerator();
 			m_cbEC.BeginUpdate();
 			m_cbEC.Items.Clear();
 			m_cbEC.Sorted = true;
 			while (de.MoveNext())
 			{
-				string name = de.Key as string;
+				var name = de.Key as string;
 				if (name != null)
+				{
 					m_cbEC.Items.Add(name);
+				}
 			}
 			m_cbEC.Sorted = false;
 			m_cbEC.Items.Insert(0, m_sBlankEC);
@@ -98,22 +108,19 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
-			this.DialogResult = DialogResult.OK;
+			DialogResult = DialogResult.OK;
 		}
 
 		private void m_btnCancel_Click(object sender, EventArgs e)
 		{
-			this.DialogResult = DialogResult.Cancel;
+			DialogResult = DialogResult.Cancel;
 		}
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			SIL.FieldWorks.Common.FwUtils.ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpDataNotebookImportWizStep3");
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpDataNotebookImportWizStep3");
 		}
 
-		public string EncodingConverter
-		{
-			get { return m_cbEC.SelectedItem.ToString(); }
-		}
+		public string EncodingConverter => m_cbEC.SelectedItem.ToString();
 	}
 }

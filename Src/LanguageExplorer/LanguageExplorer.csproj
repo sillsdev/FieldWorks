@@ -590,6 +590,7 @@
     <Compile Include="Controls\LexText\DataNotebook\SfFieldType.cs" />
     <Compile Include="Controls\LexText\DataNotebook\StringOptions.cs" />
     <Compile Include="Controls\LexText\DataNotebook\TextOptions.cs" />
+    <Compile Include="Controls\LexText\DataNotebook\TopicsListOptions.cs" />
     <Compile Include="Controls\LexText\FeatureSystemInflectionFeatureListDlg.cs">
       <SubType>Form</SubType>
     </Compile>

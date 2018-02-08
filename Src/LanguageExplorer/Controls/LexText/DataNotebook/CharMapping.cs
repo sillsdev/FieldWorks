@@ -10,68 +10,32 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 {
 	public class CharMapping
 	{
-		private string m_sBeginMkr;
-		private string m_sEndMkr;
-		private bool m_fEndWithWord;
-		private string m_sDestWsId;
-		private CoreWritingSystemDefinition m_ws;
-		private string m_sDestStyle;
-		private bool m_fIgnoreMarker;
-
 		public CharMapping()
 		{
 		}
 
 		public CharMapping(XmlNode xn)
 		{
-			m_sBeginMkr = XmlUtils.GetMandatoryAttributeValue(xn, "begin");
-			m_sEndMkr = XmlUtils.GetMandatoryAttributeValue(xn, "end");
-			m_fEndWithWord = XmlUtils.GetOptionalBooleanAttributeValue(xn, "endWithWord", false);
-			m_fIgnoreMarker = XmlUtils.GetOptionalBooleanAttributeValue(xn, "ignore", false);
-			m_sDestStyle = XmlUtils.GetOptionalAttributeValue(xn, "style", null);
-			m_sDestWsId = XmlUtils.GetOptionalAttributeValue(xn, "ws", null);
+			BeginMarker = XmlUtils.GetMandatoryAttributeValue(xn, "begin");
+			EndMarker = XmlUtils.GetMandatoryAttributeValue(xn, "end");
+			EndWithWord = XmlUtils.GetOptionalBooleanAttributeValue(xn, "endWithWord", false);
+			IgnoreMarkerOnImport = XmlUtils.GetOptionalBooleanAttributeValue(xn, "ignore", false);
+			DestinationStyle = XmlUtils.GetOptionalAttributeValue(xn, "style", null);
+			DestinationWritingSystemId = XmlUtils.GetOptionalAttributeValue(xn, "ws", null);
 		}
 
-		public string BeginMarker
-		{
-			get { return m_sBeginMkr; }
-			set { m_sBeginMkr = value; }
-		}
+		public string BeginMarker { get; set; }
 
-		public string EndMarker
-		{
-			get { return m_sEndMkr; }
-			set { m_sEndMkr = value; }
-		}
+		public string EndMarker { get; set; }
 
-		public bool EndWithWord
-		{
-			get { return m_fEndWithWord; }
-			set { m_fEndWithWord = value; }
-		}
+		public bool EndWithWord { get; set; }
 
-		public string DestinationWritingSystemId
-		{
-			get { return m_sDestWsId; }
-			set { m_sDestWsId = value; }
-		}
+		public string DestinationWritingSystemId { get; set; }
 
-		public CoreWritingSystemDefinition DestinationWritingSystem
-		{
-			get { return m_ws; }
-			set { m_ws = value; }
-		}
+		public CoreWritingSystemDefinition DestinationWritingSystem { get; set; }
 
-		public string DestinationStyle
-		{
-			get { return m_sDestStyle; }
-			set { m_sDestStyle = value; }
-		}
+		public string DestinationStyle { get; set; }
 
-		public bool IgnoreMarkerOnImport
-		{
-			get { return m_fIgnoreMarker; }
-			set { m_fIgnoreMarker = value; }
-		}
+		public bool IgnoreMarkerOnImport { get; set; }
 	}
 }

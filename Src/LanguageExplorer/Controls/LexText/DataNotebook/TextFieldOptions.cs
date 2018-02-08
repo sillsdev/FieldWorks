@@ -39,8 +39,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			MessageBox.Show(this, "This is not yet implemented.", "Please be patient");
 		}
 
-		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet,
-			RnSfMarker rsfm)
+		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet, RnSfMarker rsfm)
 		{
 			m_cache = cache;
 			m_stylesheet = stylesheet;
@@ -52,8 +51,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			m_tbShortLength.Enabled = rsfm.m_txo.m_fStartParaShortLine;
 
 			m_btnAddWritingSystem.Initialize(m_cache, helpTopicProvider, app);
-			NotebookImportWiz.InitializeWritingSystemCombo(rsfm.m_txo.m_wsId, m_cache,
-				m_cbWritingSystem);
+			NotebookImportWiz.InitializeWritingSystemCombo(rsfm.m_txo.m_wsId, m_cache, m_cbWritingSystem);
 			InitializeStylesCombo(rsfm.m_txo.m_sStyle);
 		}
 
@@ -61,12 +59,14 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			m_cbStyles.Items.Clear();
 			m_cbStyles.Sorted = true;
-			for (int i = 0; i < m_stylesheet.CStyles; ++i)
+			for (var i = 0; i < m_stylesheet.CStyles; ++i)
 			{
-				int hvo = m_stylesheet.get_NthStyle(i);
-				IStStyle sty = m_cache.ServiceLocator.GetInstance<IStStyleRepository>().GetObject(hvo);
+				var hvo = m_stylesheet.get_NthStyle(i);
+				var sty = m_cache.ServiceLocator.GetInstance<IStStyleRepository>().GetObject(hvo);
 				if (sty.Type == StyleType.kstParagraph)
+				{
 					m_cbStyles.Items.Add(sty);
+				}
 			}
 			foreach (IStStyle sty in m_cbStyles.Items)
 			{
@@ -78,66 +78,34 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			}
 		}
 
-		public bool ParaForEachLine
-		{
-			get { return m_chkForEachLine.Checked; }
-		}
+		public bool ParaForEachLine => m_chkForEachLine.Checked;
 
-		public bool ParaAfterBlankLine
-		{
-			get { return m_chkAfterBlankLine.Checked; }
-		}
+		public bool ParaAfterBlankLine => m_chkAfterBlankLine.Checked;
 
-		public bool ParaWhenIndented
-		{
-			get { return m_chkWhenIndented.Checked; }
-		}
+		public bool ParaWhenIndented => m_chkWhenIndented.Checked;
 
-		public bool ParaAfterShortLine
-		{
-			get { return m_chkAfterShortLine.Checked; }
-		}
+		public bool ParaAfterShortLine => m_chkAfterShortLine.Checked;
 
 		public int ShortLineLimit
 		{
 			get
 			{
-				if (String.IsNullOrEmpty(m_tbShortLength.Text))
+				if (string.IsNullOrEmpty(m_tbShortLength.Text))
 				{
 					return 0;
 				}
-				else
-				{
-					int cch;
-					if (Int32.TryParse(m_tbShortLength.Text, out cch))
-						return cch;
-					else
-						return 0;
-				}
+				int cch;
+				return int.TryParse(m_tbShortLength.Text, out cch) ? cch : 0;
 			}
 		}
 
-		public string WritingSystem
-		{
-			get
-			{
-				var ws = m_cbWritingSystem.SelectedItem as CoreWritingSystemDefinition;
-				if (ws != null)
-					return ws.Id;
-				else
-					return null;
-			}
-		}
+		public string WritingSystem => (m_cbWritingSystem.SelectedItem as CoreWritingSystemDefinition)?.Id;
 
 		public string Style
 		{
 			get
 			{
-				IStStyle style = m_cbStyles.SelectedItem as IStStyle;
-				if (style != null)
-					return style.Name;
-				else
-					return null;
+				return (m_cbStyles.SelectedItem as IStStyle)?.Name;
 			}
 		}
 
@@ -147,27 +115,31 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private void m_tbShortLength_TextChanged(object sender, EventArgs e)
 		{
 			if (m_fHandlingTextChanged)
+			{
 				return;
+			}
 			try
 			{
 				m_fHandlingTextChanged = true;
-				if (String.IsNullOrEmpty(m_tbShortLength.Text))
+				if (string.IsNullOrEmpty(m_tbShortLength.Text))
 				{
 					m_sValidShortLim = m_tbShortLength.Text;
 				}
 				else
 				{
 					int cch;
-					if (Int32.TryParse(m_tbShortLength.Text, out cch))
+					if (int.TryParse(m_tbShortLength.Text, out cch))
 					{
 						m_sValidShortLim = m_tbShortLength.Text;
 					}
 					else
 					{
-						int ichSel = m_tbShortLength.SelectionStart;
+						var ichSel = m_tbShortLength.SelectionStart;
 						m_tbShortLength.Text = m_sValidShortLim;
 						if (ichSel > 0)
+						{
 							m_tbShortLength.SelectionStart = ichSel - 1;
+						}
 					}
 				}
 			}
@@ -179,10 +151,11 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void m_btnAddWritingSystem_WritingSystemAdded(object sender, EventArgs e)
 		{
-			CoreWritingSystemDefinition ws = m_btnAddWritingSystem.NewWritingSystem;
+			var ws = m_btnAddWritingSystem.NewWritingSystem;
 			if (ws != null)
-				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache,
-					m_cbWritingSystem);
+			{
+				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache, m_cbWritingSystem);
+			}
 		}
 	}
 }

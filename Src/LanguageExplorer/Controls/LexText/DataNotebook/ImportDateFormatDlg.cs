@@ -12,7 +12,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 	public partial class ImportDateFormatDlg : Form
 	{
 		private IHelpTopicProvider m_helpTopicProvider;
-		bool m_fGenDate;
 		// This example DateTime value must match that found in DateFieldOptions.cs!
 		DateTime m_dtExample = new DateTime(1999, 3, 29, 15, 30, 45);
 
@@ -28,7 +27,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			m_tbFormat.Text = sFormat;
 			m_helpTopicProvider = helpTopicProvider;
-			m_fGenDate = fGenDate;
 			ApplyFormat();
 		}
 
@@ -41,10 +39,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			try
 			{
-				if (String.IsNullOrEmpty(m_tbFormat.Text))
-					m_tbExample.Text = String.Empty;
-				else
-					m_tbExample.Text = m_dtExample.ToString(m_tbFormat.Text);
+				m_tbExample.Text = string.IsNullOrEmpty(m_tbFormat.Text) ? string.Empty : m_dtExample.ToString(m_tbFormat.Text);
 			}
 			catch
 			{
@@ -54,22 +49,19 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
-			this.DialogResult = DialogResult.OK;
+			DialogResult = DialogResult.OK;
 		}
 
 		private void m_btnCancel_Click(object sender, EventArgs e)
 		{
-			this.DialogResult = DialogResult.Cancel;
+			DialogResult = DialogResult.Cancel;
 		}
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			SIL.FieldWorks.Common.FwUtils.ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpDataNotebookImportDateFormatDlg");
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpDataNotebookImportDateFormatDlg");
 		}
 
-		public string Format
-		{
-			get { return m_tbFormat.Text; }
-		}
+		public string Format => m_tbFormat.Text;
 	}
 }

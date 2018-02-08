@@ -43,9 +43,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		string m_sContentsGroupFmt;
 		string m_sContentsLabelFmt;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary></summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public AnthroFieldMappingDlg()
 		{
 			InitializeComponent();
@@ -84,13 +82,17 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			m_cbDestination.Items.Clear();
 			m_cbDestination.Sorted = true;
-			foreach (int flid in m_mapFlidName.Keys)
+			foreach (var flid in m_mapFlidName.Keys)
+			{
 				m_cbDestination.Items.Add(new DestinationField(flid, m_mapFlidName[flid]));
+			}
 			m_cbDestination.Sorted = false;
 			m_cbDestination.Items.Insert(0, new DestinationField(0, LexTextControls.ksDoNotImport));
-			int idx = m_cbDestination.Items.IndexOf(new DestinationField(m_rsfm.m_flid, m_rsfm.m_sName));
+			var idx = m_cbDestination.Items.IndexOf(new DestinationField(m_rsfm.m_flid, m_rsfm.m_sName));
 			if (idx > -1)
+			{
 				m_cbDestination.SelectedIndex = idx;
+			}
 		}
 
 		private void FillInContentsPane(RnSfMarker rsf, Sfm2Xml.SfmFile sfmFile)
@@ -98,15 +100,14 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			m_groupContents.Text = String.Format(m_sContentsGroupFmt, rsf.m_sMkr);
 			m_lvContents.Items.Clear();
 			var setContents = new HashSet<string>();
-			foreach (Sfm2Xml.SfmField field in m_sfmFile.Lines)
+			foreach (var field in m_sfmFile.Lines)
 			{
 				if (field.Marker == rsf.m_sMkr)
 				{
 					if (!setContents.Contains(field.Data))
 					{
 						setContents.Add(field.Data);
-						ListViewItem lvi = new ListViewItem(String.Format("\\{0} {1}", field.Marker,
-							String.IsNullOrEmpty(field.Data) ? String.Empty : field.Data));
+						var lvi = new ListViewItem($"\\{field.Marker} {(string.IsNullOrEmpty(field.Data) ? string.Empty : field.Data)}");
 						m_lvContents.Items.Add(lvi);
 					}
 				}
@@ -125,8 +126,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				m_discardOpt.Location = m_locSubCtrl;
 				return;
 			}
-			CellarPropertyType cpt = (CellarPropertyType)m_mdc.GetFieldType(m_rsfm.m_flid);
-			int clidDst = -1;
+			var cpt = (CellarPropertyType)m_mdc.GetFieldType(m_rsfm.m_flid);
+			int clidDst;
 			switch (cpt)
 			{
 				case CellarPropertyType.ReferenceAtomic:
@@ -144,9 +145,11 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 						case ReminderTags.kClassId:
 							throw new NotImplementedException(LexTextControls.ksUnimplementedField);
 						default:
-							int clidBase = clidDst;
+							var clidBase = clidDst;
 							while (clidBase != 0 && clidBase != CmPossibilityTags.kClassId)
+							{
 								clidBase = m_mdc.GetBaseClsId(clidBase);
+							}
 							if (clidBase == CmPossibilityTags.kClassId)
 							{
 								m_groupOptions.Text = LexTextControls.ksListRefImportOptions;
@@ -222,7 +225,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void m_cbDestination_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			DestinationField dest = m_cbDestination.SelectedItem as DestinationField;
+			var dest = m_cbDestination.SelectedItem as DestinationField;
 			m_rsfm.m_flid = dest.Flid;
 			m_rsfm.m_sName = dest.Name;
 			SetSubControl();
@@ -257,11 +260,11 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
-			DestinationField dest =  m_cbDestination.SelectedItem as DestinationField;
+			var dest =  m_cbDestination.SelectedItem as DestinationField;
 			m_rsfm.m_flid = dest.Flid;
 			m_rsfm.m_sName = dest.Name;
 			Debug.Assert(m_groupOptions.Controls.Count == 1);
-			Control ctrl = m_groupOptions.Controls[0];
+			var ctrl = m_groupOptions.Controls[0];
 			if (ctrl == m_listOpt)
 			{
 				m_rsfm.m_tlo.m_sEmptyDefault = m_listOpt.DefaultValue;
@@ -321,7 +324,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			SIL.FieldWorks.Common.FwUtils.ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpDataNotebookImportContMapSet");
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpDataNotebookImportContMapSet");
 		}
 
 		private void m_lvContents_SizeChanged(object sender, EventArgs e)
@@ -332,76 +335,72 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// <summary>
 		/// This provides the results after the dialog has closed.
 		/// </summary>
-		public RnSfMarker Results
+		public RnSfMarker Results => new RnSfMarker
 		{
-			get
+			m_flid = m_rsfm.m_flid,
+			m_nLevel = m_rsfm.m_nLevel,
+			m_sMkr = m_rsfm.m_sMkr,
+			m_sMkrOverThis = m_rsfm.m_sMkrOverThis,
+			m_sName = m_rsfm.m_sName,
+			m_dto = { m_rgsFmt = m_rsfm.m_dto.m_rgsFmt },
+			m_sto =
 			{
-				RnSfMarker rsf = new RnSfMarker();
-				rsf.m_flid = m_rsfm.m_flid;
-				rsf.m_nLevel = m_rsfm.m_nLevel;
-				rsf.m_sMkr = m_rsfm.m_sMkr;
-				rsf.m_sMkrOverThis = m_rsfm.m_sMkrOverThis;
-				rsf.m_sName = m_rsfm.m_sName;
-
-				rsf.m_dto.m_rgsFmt = m_rsfm.m_dto.m_rgsFmt;
-
-				rsf.m_sto.m_wsId = m_rsfm.m_sto.m_wsId;
-				rsf.m_sto.m_ws = m_rsfm.m_sto.m_ws;
-
-				rsf.m_txo.m_fStartParaBlankLine = m_rsfm.m_txo.m_fStartParaBlankLine;
-				rsf.m_txo.m_fStartParaIndented = m_rsfm.m_txo.m_fStartParaIndented;
-				rsf.m_txo.m_fStartParaNewLine = m_rsfm.m_txo.m_fStartParaNewLine;
-				rsf.m_txo.m_fStartParaShortLine = m_rsfm.m_txo.m_fStartParaShortLine;
-				rsf.m_txo.m_cchShortLim = m_rsfm.m_txo.m_cchShortLim;
-				rsf.m_txo.m_sStyle = m_rsfm.m_txo.m_sStyle;
-				rsf.m_txo.m_wsId = m_rsfm.m_txo.m_wsId;
-				rsf.m_txo.m_ws = m_rsfm.m_txo.m_ws;
-
-				rsf.m_tlo.m_fIgnoreNewStuff = m_rsfm.m_tlo.m_fIgnoreNewStuff;
-				rsf.m_tlo.m_sEmptyDefault = m_rsfm.m_tlo.m_sEmptyDefault;
-				rsf.m_tlo.m_default = m_rsfm.m_tlo.m_default;
-				rsf.m_tlo.m_fHaveBefore = m_rsfm.m_tlo.m_fHaveBefore;
-				rsf.m_tlo.m_sBefore = m_rsfm.m_tlo.m_sBefore;
-				rsf.m_tlo.m_rgsBefore = m_rsfm.m_tlo.m_rgsBefore;
-				rsf.m_tlo.m_fHaveBetween = m_rsfm.m_tlo.m_fHaveBetween;
-				rsf.m_tlo.m_sMarkStart = m_rsfm.m_tlo.m_sMarkStart;
-				rsf.m_tlo.m_sMarkEnd = m_rsfm.m_tlo.m_sMarkEnd;
-				rsf.m_tlo.m_rgsMarkStart = m_rsfm.m_tlo.m_rgsMarkStart;
-				rsf.m_tlo.m_rgsMarkEnd = m_rsfm.m_tlo.m_rgsMarkEnd;
-				rsf.m_tlo.m_fHaveMulti = m_rsfm.m_tlo.m_fHaveMulti;
-				rsf.m_tlo.m_sDelimMulti = m_rsfm.m_tlo.m_sDelimMulti;
-				rsf.m_tlo.m_rgsDelimMulti = m_rsfm.m_tlo.m_rgsDelimMulti;
-				rsf.m_tlo.m_fHaveSub = m_rsfm.m_tlo.m_fHaveSub;
-				rsf.m_tlo.m_sDelimSub = m_rsfm.m_tlo.m_sDelimSub;
-				rsf.m_tlo.m_rgsDelimSub = m_rsfm.m_tlo.m_rgsDelimSub;
-				rsf.m_tlo.m_pnt = m_rsfm.m_tlo.m_pnt;
-				rsf.m_tlo.m_rgsMatch = m_rsfm.m_tlo.m_rgsMatch;
-				rsf.m_tlo.m_rgsReplace = m_rsfm.m_tlo.m_rgsReplace;
-				rsf.m_tlo.m_wsId = m_rsfm.m_tlo.m_wsId;
-				rsf.m_tlo.m_ws = m_rsfm.m_tlo.m_ws;
-
-				return rsf;
+				m_wsId = m_rsfm.m_sto.m_wsId,
+				m_ws = m_rsfm.m_sto.m_ws
+			},
+			m_txo =
+			{
+				m_fStartParaBlankLine = m_rsfm.m_txo.m_fStartParaBlankLine,
+				m_fStartParaIndented = m_rsfm.m_txo.m_fStartParaIndented,
+				m_fStartParaNewLine = m_rsfm.m_txo.m_fStartParaNewLine,
+				m_fStartParaShortLine = m_rsfm.m_txo.m_fStartParaShortLine,
+				m_cchShortLim = m_rsfm.m_txo.m_cchShortLim,
+				m_sStyle = m_rsfm.m_txo.m_sStyle,
+				m_wsId = m_rsfm.m_txo.m_wsId,
+				m_ws = m_rsfm.m_txo.m_ws
+			},
+			m_tlo =
+			{
+				m_fIgnoreNewStuff = m_rsfm.m_tlo.m_fIgnoreNewStuff,
+				m_sEmptyDefault = m_rsfm.m_tlo.m_sEmptyDefault,
+				m_default = m_rsfm.m_tlo.m_default,
+				m_fHaveBefore = m_rsfm.m_tlo.m_fHaveBefore,
+				m_sBefore = m_rsfm.m_tlo.m_sBefore,
+				m_rgsBefore = m_rsfm.m_tlo.m_rgsBefore,
+				m_fHaveBetween = m_rsfm.m_tlo.m_fHaveBetween,
+				m_sMarkStart = m_rsfm.m_tlo.m_sMarkStart,
+				m_sMarkEnd = m_rsfm.m_tlo.m_sMarkEnd,
+				m_rgsMarkStart = m_rsfm.m_tlo.m_rgsMarkStart,
+				m_rgsMarkEnd = m_rsfm.m_tlo.m_rgsMarkEnd,
+				m_fHaveMulti = m_rsfm.m_tlo.m_fHaveMulti,
+				m_sDelimMulti = m_rsfm.m_tlo.m_sDelimMulti,
+				m_rgsDelimMulti = m_rsfm.m_tlo.m_rgsDelimMulti,
+				m_fHaveSub = m_rsfm.m_tlo.m_fHaveSub,
+				m_sDelimSub = m_rsfm.m_tlo.m_sDelimSub,
+				m_rgsDelimSub = m_rsfm.m_tlo.m_rgsDelimSub,
+				m_pnt = m_rsfm.m_tlo.m_pnt,
+				m_rgsMatch = m_rsfm.m_tlo.m_rgsMatch,
+				m_rgsReplace = m_rsfm.m_tlo.m_rgsReplace,
+				m_wsId = m_rsfm.m_tlo.m_wsId,
+				m_ws = m_rsfm.m_tlo.m_ws
 			}
-		}
+		};
 
-		private class DestinationField
+		private sealed class DestinationField
 		{
-			private int m_flid;
-			private string m_name;
-
 			internal DestinationField(int flid, string name)
 			{
-				m_flid = flid;
-				m_name = name;
+				Flid = flid;
+				Name = name;
 			}
 
-			internal int Flid => m_flid;
+			internal int Flid { get; }
 
-			internal string Name => m_name;
+			internal string Name { get; }
 
 			public override string ToString()
 			{
-				return m_name;
+				return Name;
 			}
 
 			public override bool Equals(object obj)
@@ -411,12 +410,12 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 				{
 					return false;
 				}
-				return m_flid == that.m_flid && m_name == that.m_name;
+				return Flid == that.Flid && Name == that.Name;
 			}
 
 			public override int GetHashCode()
 			{
-				return m_flid.GetHashCode() + m_name.GetHashCode();
+				return Flid.GetHashCode() + Name.GetHashCode();
 			}
 		}
 	}

@@ -7,7 +7,7 @@ using SIL.LCModel.Core.WritingSystems;
 namespace LanguageExplorer.Controls.LexText.DataNotebook
 {
 	/// <summary>
-	/// This struct stores the options data associated with a structured text destination.
+	/// This class stores the options data associated with a structured text destination.
 	/// </summary>
 	internal class TextOptions
 	{

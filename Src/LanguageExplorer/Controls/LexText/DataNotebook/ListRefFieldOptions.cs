@@ -69,7 +69,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			if (m_lvSubstitutions.SelectedItems.Count > 0)
 			{
-				ListViewItem lvi = m_lvSubstitutions.SelectedItems[0];
+				var lvi = m_lvSubstitutions.SelectedItems[0];
 				using (var dlg = new ImportMatchReplaceDlg())
 				{
 					dlg.Initialize(m_helpTopicProvider, lvi.SubItems[0].Text, lvi.SubItems[1].Text);
@@ -87,7 +87,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			if (m_lvSubstitutions.SelectedItems.Count > 0)
 			{
-				ListViewItem lvi = m_lvSubstitutions.SelectedItems[0];
+				var lvi = m_lvSubstitutions.SelectedItems[0];
 				m_lvSubstitutions.Items.Remove(lvi);
 			}
 		}
@@ -95,25 +95,26 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		private void m_rbMatchAbbr_CheckedChanged(object sender, EventArgs e)
 		{
 			if (m_rbMatchAbbr.Checked)
+			{
 				m_rbMatchName.Checked = false;
+			}
 		}
 
 		private void m_rbMatchName_CheckedChanged(object sender, EventArgs e)
 		{
 			if (m_rbMatchName.Checked)
+			{
 				m_rbMatchAbbr.Checked = false;
+			}
 		}
 
-		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app, RnSfMarker rsfm,
-			CellarPropertyType cpt)
+		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app, RnSfMarker rsfm, CellarPropertyType cpt)
 		{
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 			m_btnAddWritingSystem.Initialize(m_cache, helpTopicProvider, app);
-			NotebookImportWiz.InitializeWritingSystemCombo(rsfm.m_tlo.m_wsId, cache,
-				m_cbWritingSystem);
-
-			bool fNotAtomic = (cpt != CellarPropertyType.ReferenceAtomic);
+			NotebookImportWiz.InitializeWritingSystemCombo(rsfm.m_tlo.m_wsId, cache, m_cbWritingSystem);
+			var fNotAtomic = (cpt != CellarPropertyType.ReferenceAtomic);
 			m_tbDefaultValue.Text = rsfm.m_tlo.m_sEmptyDefault;
 
 			m_chkDelimMultiEnable.Checked = rsfm.m_tlo.m_fHaveMulti && fNotAtomic;
@@ -142,93 +143,48 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 
 			Debug.Assert(rsfm.m_tlo.m_rgsMatch.Count == rsfm.m_tlo.m_rgsReplace.Count);
 			m_lvSubstitutions.Items.Clear();
-			for (int i = 0; i < rsfm.m_tlo.m_rgsMatch.Count; ++i)
+			for (var i = 0; i < rsfm.m_tlo.m_rgsMatch.Count; ++i)
 			{
 				var lvi = new ListViewItem(new[] { rsfm.m_tlo.m_rgsMatch[i], rsfm.m_tlo.m_rgsReplace[i] });
 				m_lvSubstitutions.Items.Add(lvi);
 			}
 		}
 
-		public string DefaultValue
-		{
-			get { return m_tbDefaultValue.Text; }
-		}
+		public string DefaultValue => m_tbDefaultValue.Text;
 
-		public bool HaveMultiple
-		{
-			get { return m_chkDelimMultiEnable.Checked; }
-		}
+		public bool HaveMultiple => m_chkDelimMultiEnable.Checked;
 
-		public string DelimForMultiple
-		{
-			get { return m_tbDelimMulti.Text; }
-		}
+		public string DelimForMultiple => m_tbDelimMulti.Text;
 
-		public bool HaveHierarchy
-		{
-			get { return m_chkDelimSubEnable.Checked; }
-		}
+		public bool HaveHierarchy => m_chkDelimSubEnable.Checked;
 
-		public string DelimForHierarchy
-		{
-			get { return m_tbDelimSub.Text; }
-		}
+		public string DelimForHierarchy => m_tbDelimSub.Text;
 
-		public bool HaveBetweenMarkers
-		{
-			get { return m_chkBetweenEnable.Checked; }
-		}
+		public bool HaveBetweenMarkers => m_chkBetweenEnable.Checked;
 
-		public string LeadingBetweenMarkers
-		{
-			get { return m_tbBetweenAfter.Text; }
-		}
+		public string LeadingBetweenMarkers => m_tbBetweenAfter.Text;
 
-		public string TrailingBetweenMarkers
-		{
-			get { return m_tbBetweenBefore.Text; }
-		}
+		public string TrailingBetweenMarkers => m_tbBetweenBefore.Text;
 
-		public bool HaveCommentMarker
-		{
-			get { return m_chkOnlyBeforeEnable.Checked; }
-		}
+		public bool HaveCommentMarker => m_chkOnlyBeforeEnable.Checked;
 
-		public string CommentMarkers
-		{
-			get { return m_tbOnlyBefore.Text; }
-		}
+		public string CommentMarkers => m_tbOnlyBefore.Text;
 
-		public bool DiscardNewStuff
-		{
-			get { return m_chkDiscardNewStuff.Checked; }
-		}
+		public bool DiscardNewStuff => m_chkDiscardNewStuff.Checked;
 
-		public PossNameType MatchAgainst
-		{
-			get
-			{
-				if (m_rbMatchName.Checked)
-					return PossNameType.kpntName;
-				else
-					return PossNameType.kpntAbbreviation;
-			}
-		}
+		public PossNameType MatchAgainst => m_rbMatchName.Checked ? PossNameType.kpntName : PossNameType.kpntAbbreviation;
 
-		public int MatchReplaceCount
-		{
-			get { return m_lvSubstitutions.Items.Count; }
-		}
+		public int MatchReplaceCount => m_lvSubstitutions.Items.Count;
 
 		public List<string> Matches
 		{
 			get
 			{
-				List<string> rgsMatch = new List<string>();
-				for (int i = 0; i < m_lvSubstitutions.Items.Count; ++i)
+				var rgsMatch = new List<string>();
+				for (var i = 0; i < m_lvSubstitutions.Items.Count; ++i)
 				{
-					ListViewItem lvi = m_lvSubstitutions.Items[i];
-					string s = lvi.SubItems[0].Text;
+					var lvi = m_lvSubstitutions.Items[i];
+					var s = lvi.SubItems[0].Text;
 					rgsMatch.Add(s);
 				}
 				return rgsMatch;
@@ -239,11 +195,11 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		{
 			get
 			{
-				List<string> rgsReplace = new List<string>();
-				for (int i = 0; i < m_lvSubstitutions.Items.Count; ++i)
+				var rgsReplace = new List<string>();
+				for (var i = 0; i < m_lvSubstitutions.Items.Count; ++i)
 				{
-					ListViewItem lvi = m_lvSubstitutions.Items[i];
-					string s = lvi.SubItems[1].Text;
+					var lvi = m_lvSubstitutions.Items[i];
+					var s = lvi.SubItems[1].Text;
 					rgsReplace.Add(s);
 				}
 				return rgsReplace;
@@ -255,19 +211,17 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			get
 			{
 				var ws = m_cbWritingSystem.SelectedItem as CoreWritingSystemDefinition;
-				if (ws == null)
-					return null;
-				else
-					return ws.Id;
+				return ws?.Id;
 			}
 		}
 
 		private void m_btnAddWritingSystem_WritingSystemAdded(object sender, EventArgs e)
 		{
-			CoreWritingSystemDefinition ws = m_btnAddWritingSystem.NewWritingSystem;
+			var ws = m_btnAddWritingSystem.NewWritingSystem;
 			if (ws != null)
-				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache,
-					m_cbWritingSystem);
+			{
+				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache, m_cbWritingSystem);
+			}
 		}
 	}
 }

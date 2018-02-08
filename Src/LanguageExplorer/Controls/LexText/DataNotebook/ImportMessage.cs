@@ -11,35 +11,25 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 	/// </summary>
 	public class ImportMessage : IComparable
 	{
-		private string m_sMsg;
-		private int m_lineNumber;
-
 		public ImportMessage(string sMsg, int lineNumber)
 		{
-			m_sMsg = sMsg;
-			m_lineNumber = lineNumber;
+			Message = sMsg;
+			LineNumber = lineNumber;
 		}
 
-		public string Message
-		{
-			get { return m_sMsg; }
-		}
+		public string Message { get; }
 
-		public int LineNumber
-		{
-			get { return m_lineNumber; }
-		}
+		public int LineNumber { get; }
 
 		#region IComparable Members
 		public int CompareTo(object obj)
 		{
-			ImportMessage that = obj as ImportMessage;
+			var that = obj as ImportMessage;
 			if (that == null)
+			{
 				return 1;
-			if (this.Message == that.Message)
-				return this.LineNumber.CompareTo(that.LineNumber);
-			else
-				return this.Message.CompareTo(that.Message);
+			}
+			return Message == that.Message ? LineNumber.CompareTo(that.LineNumber) : Message.CompareTo(that.Message);
 		}
 		#endregion
 	}

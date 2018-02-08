@@ -24,33 +24,22 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			InitializeComponent();
 		}
 
-		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app,
-			RnSfMarker rsfm)
+		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app, RnSfMarker rsfm)
 		{
 			m_cache = cache;
 			m_btnAddWritingSystem.Initialize(cache, helpTopicProvider, app);
-			NotebookImportWiz.InitializeWritingSystemCombo(rsfm.m_sto.m_wsId, cache,
-				m_cbWritingSystem);
+			NotebookImportWiz.InitializeWritingSystemCombo(rsfm.m_sto.m_wsId, cache, m_cbWritingSystem);
 		}
 
-		public string WritingSystem
-		{
-			get
-			{
-				var ws = m_cbWritingSystem.SelectedItem as CoreWritingSystemDefinition;
-				if (ws == null)
-					return null;
-				else
-					return ws.Id;
-			}
-		}
+		public string WritingSystem => (m_cbWritingSystem.SelectedItem as CoreWritingSystemDefinition)?.Id;
 
 		private void m_btnAddWritingSystem_WritingSystemAdded(object sender, EventArgs e)
 		{
-			CoreWritingSystemDefinition ws = m_btnAddWritingSystem.NewWritingSystem;
+			var ws = m_btnAddWritingSystem.NewWritingSystem;
 			if (ws != null)
-				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache,
-					m_cbWritingSystem);
+			{
+				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache, m_cbWritingSystem);
+			}
 		}
 	}
 }

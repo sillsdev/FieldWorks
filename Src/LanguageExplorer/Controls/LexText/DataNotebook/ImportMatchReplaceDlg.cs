@@ -24,8 +24,8 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		public void Initialize(IHelpTopicProvider helpTopicProvider, string sMatch, string sReplace)
 		{
 			m_helpTopicProvider = helpTopicProvider;
-			m_tbMatch.Text = sMatch == null ? String.Empty : sMatch;
-			m_tbReplace.Text = sReplace == null ? String.Empty : sReplace;
+			m_tbMatch.Text = sMatch ?? string.Empty;
+			m_tbReplace.Text = sReplace ?? string.Empty;
 		}
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
@@ -33,15 +33,9 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpDataNotebookImportMatchReplace");
 		}
 
-		public string Match
-		{
-			get { return m_tbMatch.Text; }
-		}
+		public string Match => m_tbMatch.Text;
 
-		public string Replace
-		{
-			get { return m_tbReplace.Text; }
-		}
+		public string Replace => m_tbReplace.Text;
 
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
