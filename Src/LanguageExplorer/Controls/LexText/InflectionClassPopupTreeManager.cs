@@ -1,10 +1,9 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Windows.Forms;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
@@ -16,18 +15,6 @@ namespace LanguageExplorer.Controls.LexText
 	/// </summary>
 	public class InflectionClassPopupTreeManager : PopupTreeManager
 	{
-		private const int kEmpty = 0;
-		private const int kLine = -1;
-		private const int kMore = -2;
-
-		#region Data members
-
-		#endregion Data members
-
-		#region Events
-
-		#endregion Events
-
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -48,17 +35,16 @@ namespace LanguageExplorer.Controls.LexText
 		/// <param name="flidName">multistring prop to get name of item from</param>
 		/// <param name="wsName">multistring writing system to get name of item from</param>
 		/// <param name="collector">Add for each item an HvoTreeNode with the name and id of the item.</param>
-		internal static void GatherPartsOfSpeech(LcmCache cache,
-			int rootHvo, int rootFlid, int subFlid, int itemFlid, int flidName, int wsName, List<HvoTreeNode> collector)
+		internal static void GatherPartsOfSpeech(LcmCache cache, int rootHvo, int rootFlid, int subFlid, int itemFlid, int flidName, int wsName, List<HvoTreeNode> collector)
 		{
-			ISilDataAccess sda = cache.MainCacheAccessor;
-			int chvo = sda.get_VecSize(rootHvo, rootFlid);
-			for (int ihvo = 0; ihvo < chvo; ihvo++)
+			var sda = cache.MainCacheAccessor;
+			var chvo = sda.get_VecSize(rootHvo, rootFlid);
+			for (var ihvo = 0; ihvo < chvo; ihvo++)
 			{
-				int hvoItem = sda.get_VecItem(rootHvo, rootFlid, ihvo);
+				var hvoItem = sda.get_VecItem(rootHvo, rootFlid, ihvo);
 				if (sda.get_VecSize(hvoItem, itemFlid) > 0)
 				{
-					ITsString tssLabel = GetTssLabel(cache, hvoItem, flidName, wsName);
+					var tssLabel = GetTssLabel(cache, hvoItem, flidName, wsName);
 					collector.Add(new HvoTreeNode(tssLabel, hvoItem));
 				}
 				GatherPartsOfSpeech(cache, hvoItem, subFlid, subFlid, itemFlid, flidName, wsName, collector);
@@ -67,31 +53,20 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected override TreeNode MakeMenuItems(PopupTree popupTree, int hvoTarget)
 		{
-			int tagNamePOS = UseAbbr ?
-				CmPossibilityTags.kflidAbbreviation :
-				CmPossibilityTags.kflidName;
-
-
-			List<HvoTreeNode> relevantPartsOfSpeech = new List<HvoTreeNode>();
-			GatherPartsOfSpeech(Cache, List.Hvo, CmPossibilityListTags.kflidPossibilities,
-				CmPossibilityTags.kflidSubPossibilities,
-				PartOfSpeechTags.kflidInflectionClasses,
-				tagNamePOS, WritingSystem,
-				relevantPartsOfSpeech);
+			var tagNamePOS = UseAbbr ? CmPossibilityTags.kflidAbbreviation : CmPossibilityTags.kflidName;
+			var relevantPartsOfSpeech = new List<HvoTreeNode>();
+			GatherPartsOfSpeech(Cache, List.Hvo, CmPossibilityListTags.kflidPossibilities, CmPossibilityTags.kflidSubPossibilities, PartOfSpeechTags.kflidInflectionClasses, tagNamePOS, WritingSystem, relevantPartsOfSpeech);
 			relevantPartsOfSpeech.Sort();
-			int tagNameClass = UseAbbr ?
-				MoInflClassTags.kflidAbbreviation :
-				MoInflClassTags.kflidName;
+			var tagNameClass = UseAbbr ? MoInflClassTags.kflidAbbreviation : MoInflClassTags.kflidName;
 			TreeNode match = null;
-			foreach(HvoTreeNode item in relevantPartsOfSpeech)
+			foreach(var item in relevantPartsOfSpeech)
 			{
 				popupTree.Nodes.Add(item);
-				TreeNode match1 = AddNodes(item.Nodes, item.Hvo,
-					PartOfSpeechTags.kflidInflectionClasses,
-					MoInflClassTags.kflidSubclasses,
-					hvoTarget, tagNameClass);
+				var match1 = AddNodes(item.Nodes, item.Hvo, PartOfSpeechTags.kflidInflectionClasses, MoInflClassTags.kflidSubclasses, hvoTarget, tagNameClass);
 				if (match1 != null)
+				{
 					match = match1;
+				}
 			}
 			return match;
 		}

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -31,11 +31,9 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="LexReferenceDetailsDlg"/> class.
+		/// Initializes a new instance of the class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private LexReferenceDetailsDlg()
 		{
 			//
@@ -45,12 +43,9 @@ namespace LanguageExplorer.Controls.LexText
 			AccessibleName = GetType().Name;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LexReferenceDetailsDlg"/> class.
 		/// </summary>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// ------------------------------------------------------------------------------------
 		public LexReferenceDetailsDlg(IHelpTopicProvider helpTopicProvider) : this()
 		{
 			m_helpTopicProvider = helpTopicProvider;
@@ -96,7 +91,9 @@ namespace LanguageExplorer.Controls.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -107,14 +104,13 @@ namespace LanguageExplorer.Controls.LexText
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}

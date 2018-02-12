@@ -10,20 +10,14 @@ namespace LanguageExplorer.Controls.LexText
 	/// </summary>
 	internal abstract class LObject
 	{
-		protected int m_hvo;
-
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="hvo">Database ID of the object.</param>
 		internal LObject(int hvo)
 		{
-			m_hvo = hvo;
+			HVO = hvo;
 		}
 
-		public int HVO
-		{
-			get { return m_hvo; }
-		}
+		public int HVO { get; }
 	}
 }

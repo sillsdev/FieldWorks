@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,31 +23,30 @@ namespace LanguageExplorer.Controls.LexText
 	public class MasterCategoryListDlg : Form
 	{
 		private ICmPossibilityList m_posList;
-		private bool m_launchedFromInsertMenu = false;
+		private bool m_launchedFromInsertMenu;
 		private IPropertyTable m_propertyTable;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private LcmCache m_cache;
 		private List<TreeNode> m_nodes = new List<TreeNode>();
-		private IPartOfSpeech m_selPOS;
-		private bool m_skipEvents = false;
+		private bool m_skipEvents;
 		private IPartOfSpeech m_subItemOwner;
 
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.TreeView m_tvMasterList;
-		private System.Windows.Forms.RichTextBox m_rtbDescription;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Button m_btnOK;
-		private System.Windows.Forms.Button m_btnCancel;
-		private System.Windows.Forms.Button m_bnHelp;
-		private System.Windows.Forms.PictureBox pictureBox1;
-		private System.Windows.Forms.LinkLabel linkLabel1;
-		private System.Windows.Forms.ImageList m_imageList;
-		private System.Windows.Forms.ImageList m_imageListPictures;
+		private Label label1;
+		private Label label2;
+		private TreeView m_tvMasterList;
+		private RichTextBox m_rtbDescription;
+		private Label label3;
+		private Button m_btnOK;
+		private Button m_btnCancel;
+		private Button m_bnHelp;
+		private PictureBox pictureBox1;
+		private LinkLabel linkLabel1;
+		private ImageList m_imageList;
+		private ImageList m_imageListPictures;
 		private System.ComponentModel.IContainer components;
 
 		private const string s_helpTopic = "khtpAddFromCatalog";
-		private System.Windows.Forms.HelpProvider helpProvider;
+		private HelpProvider helpProvider;
 
 		public MasterCategoryListDlg()
 		{
@@ -56,8 +55,8 @@ namespace LanguageExplorer.Controls.LexText
 			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-			string sCat = LexTextControls.kscategory;
-			linkLabel1.Text = String.Format(LexTextControls.ksLinkText, sCat, sCat);
+			var sCat = LexTextControls.kscategory;
+			linkLabel1.Text = string.Format(LexTextControls.ksLinkText, sCat, sCat);
 
 			pictureBox1.Image = m_imageListPictures.Images[0];
 			m_btnOK.Enabled = false; // Disable until we are able to support interaction with the DB list of POSes.
@@ -72,7 +71,9 @@ namespace LanguageExplorer.Controls.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -83,41 +84,26 @@ namespace LanguageExplorer.Controls.LexText
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-				if (m_nodes != null)
-					m_nodes.Clear();
+				components?.Dispose();
+				m_nodes?.Clear();
 			}
 			m_posList = null;
 			m_cache = null;
-			m_selPOS = null;
+			SelectedPOS = null;
 			m_nodes = null;
 
 			base.Dispose( disposing );
 		}
 
-		public IPartOfSpeech SelectedPOS
-		{
-			get
-			{
-				CheckDisposed();
-				return m_selPOS;
-			}
-		}
+		public IPartOfSpeech SelectedPOS { get; private set; }
 
-		///  <summary>
-		///
-		///  </summary>
-		///  <param name="posList"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="launchedFromInsertMenu"></param>
-		///  <param name="subItemOwner"></param>
+		///  <summary />
 		public void SetDlginfo(ICmPossibilityList posList, IPropertyTable propertyTable, bool launchedFromInsertMenu, IPartOfSpeech subItemOwner)
 		{
 			CheckDisposed();
@@ -132,10 +118,9 @@ namespace LanguageExplorer.Controls.LexText
 				// Get location to the stored values, if any.
 				Point dlgLocation;
 				Size dlgSize;
-				if (m_propertyTable.TryGetValue("masterCatListDlgLocation", out dlgLocation) &&
-					m_propertyTable.TryGetValue("masterCatListDlgSize", out dlgSize))
+				if (m_propertyTable.TryGetValue("masterCatListDlgLocation", out dlgLocation) && m_propertyTable.TryGetValue("masterCatListDlgSize", out dlgSize))
 				{
-					Rectangle rect = new Rectangle(dlgLocation, dlgSize);
+					var rect = new Rectangle(dlgLocation, dlgSize);
 					ScreenHelper.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
@@ -143,8 +128,7 @@ namespace LanguageExplorer.Controls.LexText
 				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 				if (m_helpTopicProvider != null)
 				{
-					helpProvider = new HelpProvider();
-					helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
+					helpProvider = new HelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
 					helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 					helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 				}
@@ -155,15 +139,17 @@ namespace LanguageExplorer.Controls.LexText
 			m_cache = posList.Cache;
 			var posSet = new HashSet<IPartOfSpeech>();
 			foreach (IPartOfSpeech pos in posList.ReallyReallyAllPossibilities)
+			{
 				posSet.Add(pos);
+			}
 			LoadMasterCategories(posSet);
 		}
 
 		private void LoadMasterCategories(HashSet<IPartOfSpeech> posSet)
 		{
-			XmlDocument doc = new XmlDocument();
+			var doc = new XmlDocument();
 			doc.Load(Path.Combine(FwDirectoryFinder.TemplateDirectory, "GOLDEtic.xml"));
-			XmlElement root = doc.DocumentElement;
+			var root = doc.DocumentElement;
 			AddNodes(posSet, root.SelectNodes("/eticPOSList/item"), m_tvMasterList.Nodes, m_cache);
 
 			// The expand/collapse cycle is to ensure that all the folder icons get set
@@ -171,27 +157,33 @@ namespace LanguageExplorer.Controls.LexText
 			m_tvMasterList.CollapseAll();
 
 			// Select the first node in the list
-			TreeNode node = m_tvMasterList.Nodes[0];
+			var node = m_tvMasterList.Nodes[0];
 			m_tvMasterList.SelectedNode = node;
 			// Then try to find a root-level node that is not yet installed and select it if we
 			// can, without moving the scrollbar (see LT-7441).
 			do
 			{
 				if (!(node.Tag is MasterCategory))
+				{
 					continue;
-				if (!(node.Tag as MasterCategory).InDatabase)
+				}
+
+				if (!((MasterCategory)node.Tag).InDatabase)
+				{
 					break;
+				}
 				// DownArrow moves the selection without affecting the scroll position (unless
 				// the selection was at the bottom).
-				Win32.SendMessage(m_tvMasterList.Handle, Win32.WinMsgs.WM_KEYDOWN,
-					(int)Keys.Down, 0);
+				Win32.SendMessage(m_tvMasterList.Handle, Win32.WinMsgs.WM_KEYDOWN, (int)Keys.Down, 0);
 			} while ((node = node.NextNode) != null);
 		}
 
 		private void AddNodes(HashSet<IPartOfSpeech> posSet, XmlNodeList nodeList, TreeNodeCollection treeNodes, LcmCache cache)
 		{
 			foreach (XmlNode node in nodeList)
+			{
 				AddNode(posSet, node, treeNodes, cache);
+			}
 		}
 
 		private void AddNode(HashSet<IPartOfSpeech> posSet, XmlNode node, TreeNodeCollection treeNodes, LcmCache cache)
@@ -201,10 +193,12 @@ namespace LanguageExplorer.Controls.LexText
 				AddNodes(posSet, node.SelectNodes("item"), treeNodes, cache);
 				return; // Skip the top level node.
 			}
-			MasterCategory mc = MasterCategory.Create(posSet, node, cache);
-			TreeNode tn = new TreeNode();
-			tn.Tag = mc;
-			tn.Text = TsStringUtils.NormalizeToNFC(mc.ToString());
+			var mc = MasterCategory.Create(posSet, node, cache);
+			var tn = new TreeNode
+			{
+				Tag = mc,
+				Text = TsStringUtils.NormalizeToNFC(mc.ToString())
+			};
 			if (mc.InDatabase)
 			{
 				try
@@ -221,9 +215,11 @@ namespace LanguageExplorer.Controls.LexText
 
 			treeNodes.Add(tn);
 			m_nodes.Add(tn);
-			XmlNodeList list = node.SelectNodes("item");
+			var list = node.SelectNodes("item");
 			if (list.Count > 0)
+			{
 				AddNodes(posSet, list, tn.Nodes, cache);
+			}
 		}
 
 		#region Windows Form Designer generated code
@@ -367,45 +363,43 @@ namespace LanguageExplorer.Controls.LexText
 		/// <param name="e"></param>
 		protected override void OnLoad(EventArgs e)
 		{
-			Size size = this.Size;
+			var size = Size;
 			base.OnLoad (e);
-			if (this.Size != size)
-				this.Size = size;
+			if (Size != size)
+			{
+				Size = size;
+			}
 		}
 
 		private void m_tvMasterList_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
 		{
-			MasterCategory mc = e.Node.Tag as MasterCategory;
-			mc.ResetDescription(m_rtbDescription);
+			((MasterCategory)e.Node.Tag).ResetDescription(m_rtbDescription);
 			ResetOKBtnEnable();
 		}
 
-		private void m_tvMasterList_DoubleClick(object sender, System.EventArgs e)
+		private void m_tvMasterList_DoubleClick(object sender, EventArgs e)
 		{
-			TreeNode tn = m_tvMasterList.GetNodeAt(m_tvMasterList.PointToClient(Cursor.Position));
+			var tn = m_tvMasterList.GetNodeAt(m_tvMasterList.PointToClient(Cursor.Position));
 			m_tvMasterList.SelectedNode = tn;
-			MasterCategory mc = tn.Tag as MasterCategory;
-			if (!mc.InDatabase)
+			if (!((MasterCategory)tn.Tag).InDatabase)
 			{
 				DialogResult = DialogResult.OK;
 				Close();
 			}
 		}
 
-		private void m_tvMasterList_AfterExpand(object sender, System.Windows.Forms.TreeViewEventArgs e)
+		private void m_tvMasterList_AfterExpand(object sender, TreeViewEventArgs e)
 		{
-			MasterCategory selMC = e.Node.Tag as MasterCategory;
-			if (selMC.IsGroup)
+			if (((MasterCategory)e.Node.Tag).IsGroup)
 			{
 				e.Node.ImageIndex = 1;
 				e.Node.SelectedImageIndex = 1;
 			}
 		}
 
-		private void m_tvMasterList_AfterCollapse(object sender, System.Windows.Forms.TreeViewEventArgs e)
+		private void m_tvMasterList_AfterCollapse(object sender, TreeViewEventArgs e)
 		{
-			MasterCategory selMC = e.Node.Tag as MasterCategory;
-			if (selMC.IsGroup)
+			if (((MasterCategory)e.Node.Tag).IsGroup)
 			{
 				e.Node.ImageIndex = 0;
 				e.Node.SelectedImageIndex = 0;
@@ -417,27 +411,30 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void m_tvMasterList_BeforeCheck(object sender, System.Windows.Forms.TreeViewCancelEventArgs e)
+		private void m_tvMasterList_BeforeCheck(object sender, TreeViewCancelEventArgs e)
 		{
 			if (m_skipEvents)
+			{
 				return;
+			}
 
-			MasterCategory selMC = e.Node.Tag as MasterCategory;
-			e.Cancel = selMC.InDatabase;
+			e.Cancel = ((MasterCategory)e.Node.Tag).InDatabase;
 		}
 
-		private void m_tvMasterList_AfterCheck(object sender, System.Windows.Forms.TreeViewEventArgs e)
+		private void m_tvMasterList_AfterCheck(object sender, TreeViewEventArgs e)
 		{
 			if (m_skipEvents)
+			{
 				return;
+			}
 
 			ResetOKBtnEnable();
 		}
 
 		private void ResetOKBtnEnable()
 		{
-			bool haveCheckeditems = false;
-			foreach (TreeNode node in m_nodes)
+			var haveCheckeditems = false;
+			foreach (var node in m_nodes)
 			{
 				if (node.Checked)
 				{
@@ -445,45 +442,35 @@ namespace LanguageExplorer.Controls.LexText
 					break;
 				}
 			}
-			TreeNode selNode = m_tvMasterList.SelectedNode;
-			m_btnOK.Enabled = haveCheckeditems
-				|| (selNode != null
-						&& !(selNode.Tag as MasterCategory).InDatabase);
+			var selNode = m_tvMasterList.SelectedNode;
+			m_btnOK.Enabled = haveCheckeditems || (selNode != null && !((MasterCategory)selNode.Tag).InDatabase);
 		}
 
 		/// <summary>
 		/// If OK, then add relevant POSes to DB.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		private void MasterCategoryListDlg_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			switch (DialogResult)
 			{
 				default:
-					m_selPOS = null;
+					SelectedPOS = null;
 					break;
 				case DialogResult.OK:
 				{
 					// Closing with normal selection(s).
-					foreach (TreeNode tn in m_nodes)
+					foreach (var tn in m_nodes)
 					{
-						MasterCategory mc = tn.Tag as MasterCategory;
-						Debug.Assert(mc != null);
-						if ((tn.Checked || (tn == m_tvMasterList.SelectedNode))
-							&& !mc.InDatabase)
+						var mc = (MasterCategory)tn.Tag;
+						if ((tn.Checked || tn == m_tvMasterList.SelectedNode) && !mc.InDatabase)
 						{
 							// if this.m_subItemOwner != null, it indicates where to put the newly chosed POS
-							mc.AddToDatabase(m_cache,
-								m_posList,
-								(tn.Parent == null) ? null : tn.Parent.Tag as MasterCategory,
-								m_subItemOwner);
+							mc.AddToDatabase(m_cache, m_posList, tn.Parent?.Tag as MasterCategory, m_subItemOwner);
 						}
 					}
-					MasterCategory mc2 = m_tvMasterList.SelectedNode.Tag as MasterCategory;
-					Debug.Assert(mc2 != null);
-					m_selPOS = mc2.POS;
-					Debug.Assert(m_selPOS != null);
+					var mc2 = (MasterCategory)m_tvMasterList.SelectedNode.Tag;
+					SelectedPOS = mc2.POS;
+					Debug.Assert(SelectedPOS != null);
 					break;
 				}
 				case DialogResult.Yes:
@@ -504,19 +491,20 @@ namespace LanguageExplorer.Controls.LexText
 		private void linkLabel1_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
 		{
 			if (!m_launchedFromInsertMenu)
+			{
 				MessageBoxExManager.Trigger("CreateNewFromGrammaticalCategoryCatalog");
-			m_cache.DomainDataByFlid.BeginUndoTask(LexTextControls.ksUndoInsertCategory,
-				LexTextControls.ksRedoInsertCategory);
+			}
+			m_cache.DomainDataByFlid.BeginUndoTask(LexTextControls.ksUndoInsertCategory, LexTextControls.ksRedoInsertCategory);
 			var posFactory = m_cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>();
 			if (m_subItemOwner != null)
 			{
-				m_selPOS = posFactory.Create();
-				m_subItemOwner.SubPossibilitiesOS.Add(m_selPOS);
+				SelectedPOS = posFactory.Create();
+				m_subItemOwner.SubPossibilitiesOS.Add(SelectedPOS);
 			}
 			else
 			{
-				m_selPOS = posFactory.Create();
-				m_posList.PossibilitiesOS.Add(m_selPOS);
+				SelectedPOS = posFactory.Create();
+				m_posList.PossibilitiesOS.Add(SelectedPOS);
 			}
 			m_cache.DomainDataByFlid.EndUndoTask();
 			DialogResult = DialogResult.Yes;

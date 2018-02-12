@@ -569,6 +569,14 @@
     <Compile Include="Controls\DetailControls\VectorReferenceVc.cs" />
     <Compile Include="Controls\HtmlControlEventArgs.cs" />
     <Compile Include="Controls\LexText\CFChanges.cs" />
+    <Compile Include="Controls\LexText\CmLiftEtymology.cs" />
+    <Compile Include="Controls\LexText\CmLiftExample.cs" />
+    <Compile Include="Controls\LexText\CmLiftNote.cs" />
+    <Compile Include="Controls\LexText\CmLiftPhonetic.cs" />
+    <Compile Include="Controls\LexText\CmLiftRelation.cs" />
+    <Compile Include="Controls\LexText\CmLiftReversal.cs" />
+    <Compile Include="Controls\LexText\CmLiftSense.cs" />
+    <Compile Include="Controls\LexText\CmLiftVariant.cs" />
     <Compile Include="Controls\LexText\ContentMapping.cs" />
     <Compile Include="Controls\LexText\DataNotebook\CharMapping.cs" />
     <Compile Include="Controls\LexText\DataNotebook\CmAnthroItemCreator.cs" />
@@ -597,8 +605,13 @@
     <Compile Include="Controls\LexText\FeatureTreeNode.cs" />
     <Compile Include="Controls\LexText\FeatureTreeNodeInfo.cs" />
     <Compile Include="Controls\LexText\FlexConverter.cs" />
+    <Compile Include="Controls\LexText\ICmLiftObject.cs" />
     <Compile Include="Controls\LexText\IFMReader.cs" />
+    <Compile Include="Controls\LexText\InsertVariantDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Controls\LexText\InterlinearMapping.cs" />
+    <Compile Include="Controls\LexText\LdmlFileBackup.cs" />
     <Compile Include="Controls\LexText\LexTextImageKind.cs" />
     <Compile Include="Controls\LexText\InsertEventArgs.cs" />
     <Compile Include="Controls\LexText\LAllomorph.cs" />
@@ -611,8 +624,12 @@
     <Compile Include="Controls\LexText\MasterCategory.cs" />
     <Compile Include="Controls\LexText\MasterCategoryCitation.cs" />
     <Compile Include="Controls\LexText\MasterCategoryListChooserLauncher.cs" />
+    <Compile Include="Controls\LexText\FeatureTreeNodeKind.cs" />
+    <Compile Include="Controls\LexText\MergeStyle.cs" />
     <Compile Include="Controls\LexText\OptionConverter.cs" />
+    <Compile Include="Controls\LexText\ParaData.cs" />
     <Compile Include="Controls\LexText\PossibilityListPopupTreeManager.cs" />
+    <Compile Include="Controls\LexText\RangeNames.cs" />
     <Compile Include="Controls\LexText\Sfm2FlexTextBase.cs" />
     <Compile Include="Controls\LexText\Sfm2FlexTextMappingBase.cs" />
     <Compile Include="Controls\LexText\Sfm2FlexTextWordsFrag.cs" />
@@ -1157,9 +1174,8 @@
     <Compile Include="Controls\LexText\LiftImportDlg.Designer.cs">
       <DependentUpon>LiftImportDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LexText\LiftMerger.cs" />
-    <Compile Include="Controls\LexText\LiftMergerRanges.cs" />
-    <Compile Include="Controls\LexText\LiftMergerSupportCodeAndClasses.cs" />
+    <Compile Include="Controls\LexText\FlexLiftMerger.cs" />
+    <Compile Include="Controls\LexText\CmLiftEntry.cs" />
     <Compile Include="Controls\LexText\LinkAllomorphDlg.cs">
       <SubType>Form</SubType>
     </Compile>

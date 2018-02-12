@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,42 +28,46 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected override IEnumerable<ITsString> GetStrings(SearchField field, ICmObject obj)
 		{
-			var entry = (ILexEntry) obj;
-
-			int ws = field.String.get_WritingSystemAt(0);
+			var entry = (ILexEntry)obj;
+			var ws = field.String.get_WritingSystemAt(0);
 			switch (field.Flid)
 			{
 				case LexEntryTags.kflidCitationForm:
 					var cf = entry.CitationForm.StringOrNull(ws);
 					if (cf != null && cf.Length > 0)
+					{
 						yield return cf;
+					}
 					break;
 
 				case LexEntryTags.kflidLexemeForm:
 					var lexemeForm = entry.LexemeFormOA;
-					if (lexemeForm != null)
+					var formOfLexemeForm = lexemeForm?.Form.StringOrNull(ws);
+					if (formOfLexemeForm != null && formOfLexemeForm.Length > 0)
 					{
-						var formOfLexemeForm = lexemeForm.Form.StringOrNull(ws);
-						if (formOfLexemeForm != null && formOfLexemeForm.Length > 0)
-							yield return formOfLexemeForm;
+						yield return formOfLexemeForm;
 					}
 					break;
 
 				case LexEntryTags.kflidAlternateForms:
-					foreach (IMoForm form in entry.AlternateFormsOS)
+					foreach (var form in entry.AlternateFormsOS)
 					{
 						var af = form.Form.StringOrNull(ws);
 						if (af != null && af.Length > 0)
+						{
 							yield return af;
+						}
 					}
 					break;
 
 				case LexSenseTags.kflidGloss:
-					foreach (ILexSense sense in entry.SensesOS)
+					foreach (var sense in entry.SensesOS)
 					{
 						var gloss = sense.Gloss.StringOrNull(ws);
 						if (gloss != null && gloss.Length > 0)
+						{
 							yield return gloss;
+						}
 					}
 					break;
 
@@ -80,7 +84,9 @@ namespace LanguageExplorer.Controls.LexText
 		protected override bool IsIndexResetRequired(int hvo, int flid)
 		{
 			if (flid == m_virtuals.LexDbEntries)
+			{
 				return true;
+			}
 
 			switch (flid)
 			{

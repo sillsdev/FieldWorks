@@ -10,8 +10,6 @@ namespace LanguageExplorer.Controls.LexText
 	/// </summary>
 	public class WindowParams
 	{
-		#region Data members
-
 		/// <summary>
 		/// Window title.
 		/// </summary>
@@ -24,7 +22,5 @@ namespace LanguageExplorer.Controls.LexText
 		/// Text on OK button.
 		/// </summary>
 		public string m_btnText;
-
-		#endregion Data members
 	}
 }

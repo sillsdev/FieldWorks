@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,22 +22,13 @@ namespace LanguageExplorer.Controls.LexText
 
 		#region Properties
 
-		protected override WindowParams DefaultWindowParams
+		protected override WindowParams DefaultWindowParams => new WindowParams
 		{
-			get
-			{
-				return new WindowParams
-				{
-					m_title = LexTextControls.ksChooseMorphAndGramInfo,
-					m_btnText = LexTextControls.ks_OK
-				};
-			}
-		}
+			m_title = LexTextControls.ksChooseMorphAndGramInfo,
+			m_btnText = LexTextControls.ks_OK
+		};
 
-		protected override string PersistenceLabel
-		{
-			get { return "LinkMSA"; }
-		}
+		protected override string PersistenceLabel => "LinkMSA";
 
 		/// <summary>
 		/// Gets the database id of the selected object.
@@ -70,7 +61,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			// Must not be run more than once.
 			if (IsDisposed)
@@ -78,10 +69,10 @@ namespace LanguageExplorer.Controls.LexText
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		/// <summary>
@@ -94,14 +85,13 @@ namespace LanguageExplorer.Controls.LexText
 			Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
 
-			SetDlgInfo(cache, null);
+			SetDlgInfo(cache, (WindowParams)null);
 			SetComboWritingSystemFactory(cache);
 		}
 
 		/// <summary>
 		/// Common and needed code for the setup of the dlg
 		/// </summary>
-		/// <param name="cache"></param>
 		private void SetComboWritingSystemFactory(LcmCache cache)
 		{
 			m_fwcbFunctions.WritingSystemFactory = cache.WritingSystemFactory;
@@ -127,12 +117,18 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			m_fwcbFunctions.Items.Clear();
 			if (m_selObject == null)
+			{
 				return;
+			}
 			m_fwcbFunctions.SuspendLayout();
 			foreach (var msa in ((ILexEntry)m_selObject).MorphoSyntaxAnalysesOC)
+			{
 				m_fwcbFunctions.Items.Add(new LMsa(msa));
+			}
 			if (m_fwcbFunctions.Items.Count > 0)
+			{
 				m_fwcbFunctions.SelectedItem = m_fwcbFunctions.Items[0];
+			}
 			m_btnOK.Enabled = m_fwcbFunctions.Items.Count > 0;
 			m_fwcbFunctions.ResumeLayout();
 		}

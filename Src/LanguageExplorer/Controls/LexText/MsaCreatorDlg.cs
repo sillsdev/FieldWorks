@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -78,15 +78,12 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Initialize the dialog before showing it.
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, IPersistenceProvider persistProvider,
-			IPropertyTable propertyTable, IPublisher publisher, ILexEntry entry, SandboxGenericMSA sandboxMsa, int hvoOriginalMsa,
+		public void SetDlgInfo(LcmCache cache, IPersistenceProvider persistProvider, IPropertyTable propertyTable, IPublisher publisher, ILexEntry entry, SandboxGenericMSA sandboxMsa, int hvoOriginalMsa,
 			bool useForEdit, string titleForEdit)
 		{
 			CheckDisposed();
 
 			Debug.Assert(m_cache == null);
-			MsaType msaType = sandboxMsa.MsaType;
-
 			m_cache = cache;
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
@@ -104,8 +101,8 @@ namespace LanguageExplorer.Controls.LexText
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 
 			// Set font, writing system factory, and code for the edit box.
-			float fntSize = label1.Font.Size * 2.0F;
-			CoreWritingSystemDefinition defVernWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			var fntSize = label1.Font.Size * 2.0F;
+			var defVernWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			m_fwtbCitationForm.Font = new Font(defVernWs.DefaultFontName, fntSize);
 			m_fwtbCitationForm.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwtbCitationForm.WritingSystemCode = defVernWs.Handle;
@@ -120,7 +117,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_fwtbSenses.AdjustForStyleSheet(this, null, m_propertyTable);
 			m_fwtbSenses.AdjustStringHeight = false;
 
-			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
+			var tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
 			var msaRepository = m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>();
 			if (hvoOriginalMsa != 0)
@@ -132,7 +129,9 @@ namespace LanguageExplorer.Controls.LexText
 						if (sense.MorphoSyntaxAnalysisRA == msaRepository.GetObject(hvoOriginalMsa))
 						{
 							if (tisb.Text != null)
+							{
 								tisb.Append(", ");	// REVIEW: IS LOCALIZATION NEEDED FOR BUILDING THIS LIST?
+							}
 							tisb.AppendTsString(sense.ShortNameTSS);
 						}
 					}
@@ -142,9 +141,9 @@ namespace LanguageExplorer.Controls.LexText
 			m_fwtbSenses.HasBorder = false;
 
 			m_msaGroupBox.Initialize(m_cache, m_propertyTable, m_publisher, this, sandboxMsa);
-			int oldHeight = m_msaGroupBox.Height;
-			int newHeight = Math.Max(oldHeight, m_msaGroupBox.PreferredHeight);
-			int delta = newHeight - oldHeight;
+			var oldHeight = m_msaGroupBox.Height;
+			var newHeight = Math.Max(oldHeight, m_msaGroupBox.PreferredHeight);
+			var delta = newHeight - oldHeight;
 			if (delta > 0)
 			{
 				m_msaGroupBox.AdjustInternalControlsAndGrow();
@@ -163,7 +162,7 @@ namespace LanguageExplorer.Controls.LexText
 				// makes it too small to show all the controls at the default size.
 				// It's better just to use the default size until it's resizeable for some reason.
 				//var dlgSize = m_propertyTable.GetValue<Size>("msaCreatorDlgSize");
-				Rectangle rect = new Rectangle(dlgLocation, Size);
+				var rect = new Rectangle(dlgLocation, Size);
 				ScreenHelper.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
@@ -178,25 +177,26 @@ namespace LanguageExplorer.Controls.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			m_cache = null;
 
@@ -310,11 +310,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void MsaCreatorDlg_Closed(object sender, System.EventArgs e)
 		{
-			if (m_propertyTable != null)
-			{
-				m_propertyTable.SetProperty("msaCreatorDlgLocation", Location, true, true);
-				//No need, since the dlg isn't resizable. m_propertyTable.SetProperty("msaCreatorDlgSize", Size, true, true);
-			}
+			m_propertyTable?.SetProperty("msaCreatorDlgLocation", Location, true, true);
 		}
 
 		private void btnHelp_Click(object sender, EventArgs e)

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -50,9 +50,13 @@ namespace LanguageExplorer.Controls.LexText
 					sz = TextRenderer.MeasureText(Text, Font, sz, TextFormatFlags.WordBreak);
 					// The mono implementation chops off the bottom line of the display (FWNX-752).
 					if (MiscUtils.IsMono)
+					{
 						Height = sz.Height + 7;
+					}
 					else
+					{
 						Height = sz.Height;
+					}
 				}
 				finally
 				{
@@ -119,7 +123,9 @@ namespace LanguageExplorer.Controls.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -130,7 +136,9 @@ namespace LanguageExplorer.Controls.LexText
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -145,8 +153,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// Adds an insertion option. A predicate can be provided to determine in what contexts
 		/// this insertion option can be displayed.
 		/// </summary>
-		/// <param name="option"></param>
-		/// <param name="shouldDisplay">The should display predicate.</param>
 		public void AddOption(object option, Func<object, bool> shouldDisplay)
 		{
 			CheckDisposed();
@@ -157,9 +163,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Adds an index option. A predicate can be provided to determine what indices to display.
 		/// </summary>
-		/// <param name="option"></param>
-		/// <param name="shouldDisplay">The should display predicate.</param>
-		/// <param name="displaySuboptions"></param>
 		public void AddMultiOption(object option, Func<object, bool> shouldDisplay, Func<IEnumerable<object>> displaySuboptions)
 		{
 			CheckDisposed();
@@ -176,10 +179,12 @@ namespace LanguageExplorer.Controls.LexText
 
 			m_insertPanel.SuspendLayout();
 			SuspendLayout();
-			foreach (Control c in m_insertPanel.Controls.Cast<Control>().ToArray())
+			foreach (var c in m_insertPanel.Controls.Cast<Control>().ToArray())
+			{
 				c.Dispose();
-			bool displayingOpts = false;
-			foreach (Tuple<object, Func<object, bool>, Func<IEnumerable<object>>> opt in m_options)
+			}
+			var displayingOpts = false;
+			foreach (var opt in m_options)
 			{
 				if (opt.Item2 == null || opt.Item2(opt.Item1))
 				{
@@ -187,22 +192,24 @@ namespace LanguageExplorer.Controls.LexText
 					linkLabel.LinkClicked += link_LinkClicked;
 					if (opt.Item3 != null)
 					{
-						object[] options = opt.Item3().ToArray();
+						var options = opt.Item3().ToArray();
 						var sb = new StringBuilder();
-						for (int i = 0; i < options.Length; i++)
+						for (var i = 0; i < options.Length; i++)
 						{
 							sb.Append(options[i]);
 							if (i < options.Length - 1)
+							{
 								sb.Append(" ");
+							}
 						}
 						linkLabel.Text = sb.ToString();
 
 						linkLabel.Links.Clear();
-						int start = 0;
+						var start = 0;
 						foreach (int option in options)
 						{
-							int len = Convert.ToString(option).Length;
-							LinkLabel.Link link = linkLabel.Links.Add(start, len, opt.Item1);
+							var len = Convert.ToString(option).Length;
+							var link = linkLabel.Links.Add(start, len, opt.Item1);
 							// use the tag property to store the index for this link
 							link.Tag = option;
 							start += len + 1;
@@ -221,7 +228,7 @@ namespace LanguageExplorer.Controls.LexText
 
 			if (!displayingOpts && m_noOptsMsg != null)
 			{
-				string text = m_noOptsMsg();
+				var text = m_noOptsMsg();
 				if (text != null)
 				{
 					m_msgLabel = new GrowLabel {Font = new Font(MiscUtils.StandardSansSerif, 10), Text = text, Width = m_insertPanel.ClientSize.Width};
@@ -245,7 +252,9 @@ namespace LanguageExplorer.Controls.LexText
 			if (m_prevWidth != Width)
 			{
 				if (m_msgLabel != null)
+				{
 					m_msgLabel.Width = m_insertPanel.ClientSize.Width;
+				}
 				Height = m_insertPanel.PreferredSize.Height;
 				m_prevWidth = Width;
 			}

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -24,33 +24,17 @@ namespace LanguageExplorer.Controls.LexText
 #endif
 	public class MergeEntryDlg : EntryGoDlg
 	{
-		#region Data members
-
 		private PictureBox m_pictureBox;
 		private XElement m_parametersElement;
 
-		#endregion Data members
 
-		#region Properties
-
-		protected override WindowParams DefaultWindowParams
+		protected override WindowParams DefaultWindowParams => new WindowParams
 		{
-			get
-			{
-				return new WindowParams
-				{
-					m_title = LexTextControls.ksMergeEntry,
-					m_btnText = LexTextControls.ks_Merge
-				};
-			}
-		}
+			m_title = LexTextControls.ksMergeEntry,
+			m_btnText = LexTextControls.ks_Merge
+		};
 
-		protected override string PersistenceLabel
-		{
-			get { return "MergeEntry"; }
-		}
-
-		#endregion Properties
+		protected override string PersistenceLabel => "MergeEntry";
 
 		#region	Construction and Destruction
 
@@ -60,7 +44,7 @@ namespace LanguageExplorer.Controls.LexText
 			InitializeComponent();
 			ShowControlsBasedOnPanel1Position();	// used for sizing and display of some controls
 
-			Icon infoIcon = SystemIcons.Information;
+			var infoIcon = SystemIcons.Information;
 			m_pictureBox.Image = infoIcon.ToBitmap();
 			m_pictureBox.Size = infoIcon.Size;
 		}
@@ -68,7 +52,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			// Must not be run more than once.
 			if (IsDisposed)
@@ -79,7 +63,7 @@ namespace LanguageExplorer.Controls.LexText
 			if( disposing )
 			{
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		/// <summary>
@@ -100,7 +84,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_btnOK.Text = okbuttonlabel;
 
 			// Relocate remaining three buttons.
-			Point pt = m_btnHelp.Location;
+			var pt = m_btnHelp.Location;
 			// Make the Help btn 20 off the right edge of the dlg
 			pt.X = Width - m_btnHelp.Width - 20;
 			m_btnHelp.Location = pt;
@@ -130,42 +114,32 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected override void SetBottomMessage()
 		{
-			int userWs = m_cache.WritingSystemFactory.UserWs;
-			string sBase;
-			if (m_selObject != null)
-				sBase = LexTextControls.ksEntryXMergedIntoY;
-			else
-				sBase = LexTextControls.ksEntryXMergedIntoSel;
-			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
+			var userWs = m_cache.WritingSystemFactory.UserWs;
+			var sBase = m_selObject != null ? LexTextControls.ksEntryXMergedIntoY : LexTextControls.ksEntryXMergedIntoSel;
+			var tsb = TsStringUtils.MakeStrBldr();
 			tsb.ReplaceTsString(0, tsb.Length, TsStringUtils.MakeString(sBase, userWs));
 			// Replace every "{0}" with the headword we'll be merging, and make it bold.
-			ITsString tssFrom = m_startingEntry.HeadWord;
-			string sTmp = tsb.Text;
-			int ich = sTmp.IndexOf("{0}", StringComparison.Ordinal);
-			int cch = tssFrom.Length;
+			var tssFrom = m_startingEntry.HeadWord;
+			var sTmp = tsb.Text;
+			var ich = sTmp.IndexOf("{0}", StringComparison.Ordinal);
+			var cch = tssFrom.Length;
 			while (ich >= 0 && cch > 0)
 			{
 				tsb.ReplaceTsString(ich, ich + 3, tssFrom);
-				tsb.SetIntPropValues(ich, ich + cch,
-					(int)FwTextPropType.ktptBold,
-					(int)FwTextPropVar.ktpvEnum,
-					(int)FwTextToggleVal.kttvForceOn);
+				tsb.SetIntPropValues(ich, ich + cch, (int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 				sTmp = tsb.Text;
 				ich = sTmp.IndexOf("{0}", StringComparison.Ordinal);	// in case localization needs more than one.
 			}
 			if (m_selObject != null)
 			{
 				// Replace every "{1}" with the headword we'll be merging into.
-				ITsString tssTo = ((ILexEntry)m_selObject).HeadWord;
+				var tssTo = ((ILexEntry)m_selObject).HeadWord;
 				ich = sTmp.IndexOf("{1}", StringComparison.Ordinal);
 				cch = tssTo.Length;
 				while (ich >= 0 && cch > 0)
 				{
 					tsb.ReplaceTsString(ich, ich + 3, tssTo);
-					tsb.SetIntPropValues(ich, ich + cch,
-						(int)FwTextPropType.ktptBold,
-						(int)FwTextPropVar.ktpvEnum,
-						(int)FwTextToggleVal.kttvForceOn);
+					tsb.SetIntPropValues(ich, ich + cch, (int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 					sTmp = tsb.Text;
 					ich = sTmp.IndexOf("{0}", StringComparison.Ordinal);
 				}
@@ -197,19 +171,20 @@ namespace LanguageExplorer.Controls.LexText
 			var searchEngine = (MergeEntrySearchEngine)SearchEngine.Get(PropertyTable, "MergeEntrySearchEngine", () => new MergeEntrySearchEngine(m_cache));
 			searchEngine.CurrentEntryHvo = m_startingEntry.Hvo;
 
-			m_matchingObjectsBrowser.Initialize(m_cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), m_parametersElement,
-				searchEngine);
+			m_matchingObjectsBrowser.Initialize(m_cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), m_parametersElement, searchEngine);
 
 			// start building index
-			var selectedWs = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
-			if(selectedWs != null)
+			var selectedWs = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;
+			if (selectedWs != null)
+			{
 				m_matchingObjectsBrowser.SearchAsync(GetFields(string.Empty, selectedWs.Handle));
+			}
 		}
 
 		/// <summary>
 		/// A search engine that excludes the current entry (you can't merge an entry with its self
 		/// </summary>
-		private class MergeEntrySearchEngine : EntryGoSearchEngine
+		private sealed class MergeEntrySearchEngine : EntryGoSearchEngine
 		{
 			public int CurrentEntryHvo { private get; set; }
 
@@ -219,7 +194,7 @@ namespace LanguageExplorer.Controls.LexText
 
 			protected override IEnumerable<int>  FilterResults(IEnumerable<int> results)
 			{
-				return results == null ? null : results.Where(hvo => hvo != CurrentEntryHvo);
+				return results?.Where(hvo => hvo != CurrentEntryHvo);
 			}
 		}
 		#endregion	Other methods

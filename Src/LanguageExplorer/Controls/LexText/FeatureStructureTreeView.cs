@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Windows.Forms;
 using SIL.LCModel;
 
@@ -15,7 +14,7 @@ namespace LanguageExplorer.Controls.LexText
 	/// </summary>
 	public class FeatureStructureTreeView : TreeView
 	{
-		private System.Windows.Forms.ImageList imageList1;
+		private ImageList imageList1;
 		private System.ComponentModel.IContainer components;
 
 		public FeatureStructureTreeView(System.ComponentModel.IContainer container)
@@ -34,8 +33,8 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			InitializeComponent();
 
-			MouseUp += new MouseEventHandler(OnMouseUp);
-			KeyUp += new KeyEventHandler(OnKeyUp);
+			MouseUp += OnMouseUp;
+			KeyUp += OnKeyUp;
 		}
 
 		public void PopulateTreeFromInflectableFeats(IEnumerable<IFsFeatDefn> defns)
@@ -67,15 +66,19 @@ namespace LanguageExplorer.Controls.LexText
 			CheckDisposed();
 
 			if (Nodes.Count > 0)
+			{
 				Sort(Nodes);
+			}
 		}
 		public void Sort(TreeNodeCollection col)
 		{
 			CheckDisposed();
 
 			if (col.Count == 0)
+			{
 				return;
-			List<FeatureTreeNode> list = new List<FeatureTreeNode>(col.Count);
+			}
+			var list = new List<FeatureTreeNode>(col.Count);
 			foreach (FeatureTreeNode childNode in col)
 			{
 				list.Add(childNode);
@@ -84,20 +87,20 @@ namespace LanguageExplorer.Controls.LexText
 
 			BeginUpdate();
 			col.Clear();
-			foreach (FeatureTreeNode childNode in list)
+			foreach (var childNode in list)
 			{
 				col.Add(childNode);
 				if (childNode.Nodes.Count > 0)
 				{
 					if (childNode.Nodes[0].Nodes.Count > 0)
+					{
 						Sort(childNode.Nodes); // sort all but terminal nodes
+					}
 					else
-					{ // append "none of the above" node to terminal nodes
-						FeatureTreeNode noneOfTheAboveNode = new FeatureTreeNode(
-							// REVIEW: SHOULD THIS STRING BE LOCALIZED?
-							LexTextControls.ksNoneOfTheAbove,
-							(int)LexTextImageKind.radio, (int)LexTextImageKind.radio, 0,
-							FeatureTreeNodeInfo.NodeKind.Other);
+					{
+						// append "none of the above" node to terminal nodes
+						// REVIEW: SHOULD THIS STRING BE LOCALIZED?
+						var noneOfTheAboveNode = new FeatureTreeNode(LexTextControls.ksNoneOfTheAbove, (int)LexTextImageKind.radio, (int)LexTextImageKind.radio, 0, FeatureTreeNodeKind.Other);
 						InsertNode(noneOfTheAboveNode, childNode);
 					}
 				}
@@ -119,10 +122,9 @@ namespace LanguageExplorer.Controls.LexText
 			if (closed != null)
 			{
 				if (!AlreadyInTree(closed.Hvo, parentNode))
-				{ // avoid duplicates
-					FeatureTreeNode newNode = new FeatureTreeNode(closed.Name.AnalysisDefaultWritingSystem.Text,
-																	  (int)LexTextImageKind.feature, (int)LexTextImageKind.feature,
-																	  closed.Hvo, FeatureTreeNodeInfo.NodeKind.Closed);
+				{
+					// avoid duplicates
+					var newNode = new FeatureTreeNode(closed.Name.AnalysisDefaultWritingSystem.Text, (int)LexTextImageKind.feature, (int)LexTextImageKind.feature, closed.Hvo, FeatureTreeNodeKind.Closed);
 					InsertNode(newNode, parentNode);
 
 					foreach (var val in closed.ValuesSorted)
@@ -135,52 +137,48 @@ namespace LanguageExplorer.Controls.LexText
 			if (complex != null)
 			{
 				if (!AlreadyInTree(complex.Hvo, parentNode))
-				{ // avoid infinite loop if a complex feature's type is the same as other features.
-					FeatureTreeNode newNode = new FeatureTreeNode(complex.Name.BestAnalysisAlternative.Text,
-						(int)LexTextImageKind.complex, (int)LexTextImageKind.complex, complex.Hvo, FeatureTreeNodeInfo.NodeKind.Complex);
+				{
+					// avoid infinite loop if a complex feature's type is the same as other features.
+					var newNode = new FeatureTreeNode(complex.Name.BestAnalysisAlternative.Text, (int)LexTextImageKind.complex, (int)LexTextImageKind.complex, complex.Hvo, FeatureTreeNodeKind.Complex);
 					InsertNode(newNode, parentNode);
 					var type = complex.TypeRA;
 					foreach (var defn2 in type.FeaturesRS)
+					{
 						AddNode(defn2, newNode);
+					}
 				}
 			}
 		}
 
 		private void AddNode(IFsSymFeatVal val, FeatureTreeNode parentNode)
 		{
-			FeatureTreeNode newNode = new FeatureTreeNode(val.Name.BestAnalysisAlternative.Text,
-				(int)LexTextImageKind.radio, (int)LexTextImageKind.radio, val.Hvo, FeatureTreeNodeInfo.NodeKind.SymFeatValue);
+			var newNode = new FeatureTreeNode(val.Name.BestAnalysisAlternative.Text, (int)LexTextImageKind.radio, (int)LexTextImageKind.radio, val.Hvo, FeatureTreeNodeKind.SymFeatValue);
 			InsertNode(newNode, parentNode);
 		}
 
 		private void AddNode(IFsFeatureSpecification spec, FeatureTreeNode parentNode)
 		{
 			var defn = spec.FeatureRA;
-			TreeNodeCollection col;
-			if (parentNode == null)
-				col = Nodes;
-			else
-				col = parentNode.Nodes;
+			var col = parentNode?.Nodes ?? Nodes;
 			var closed = spec as IFsClosedValue;
 			if (closed != null)
 			{
 				foreach (FeatureTreeNode node in col)
 				{
 					if (defn.Hvo == node.Hvo)
-					{ // already there (which is to be expected); see if its value is, too
+					{
+						// already there (which is to be expected); see if its value is, too
 						AddNodeFromFS(closed.ValueRA, node);
 						return;
 					}
 				}
 				// did not find the node, so add it and its value (not to be expected, but we'd better deal with it)
-				FeatureTreeNode newNode = new FeatureTreeNode(defn.Name.AnalysisDefaultWritingSystem.Text,
-					(int)LexTextImageKind.feature, (int)LexTextImageKind.feature, defn.Hvo, FeatureTreeNodeInfo.NodeKind.Closed);
+				var newNode = new FeatureTreeNode(defn.Name.AnalysisDefaultWritingSystem.Text, (int)LexTextImageKind.feature, (int)LexTextImageKind.feature, defn.Hvo, FeatureTreeNodeKind.Closed);
 				InsertNode(newNode, parentNode);
 				var val = closed.ValueRA;
 				if (val != null)
 				{
-					FeatureTreeNode newValueNode = new FeatureTreeNode(val.Name.AnalysisDefaultWritingSystem.Text,
-						(int)LexTextImageKind.radioSelected, (int)LexTextImageKind.radioSelected, val.Hvo, FeatureTreeNodeInfo.NodeKind.SymFeatValue);
+					var newValueNode = new FeatureTreeNode(val.Name.AnalysisDefaultWritingSystem.Text, (int)LexTextImageKind.radioSelected, (int)LexTextImageKind.radioSelected, val.Hvo, FeatureTreeNodeKind.SymFeatValue);
 					newValueNode.Chosen = true;
 					InsertNode(newValueNode, newNode);
 				}
@@ -191,32 +189,31 @@ namespace LanguageExplorer.Controls.LexText
 				foreach (FeatureTreeNode node in col)
 				{
 					if (defn.Hvo == node.Hvo)
-					{ // already there (which is to be expected); see if its value is, too
+					{
+						// already there (which is to be expected); see if its value is, too
 						AddNode((IFsFeatStruc)complex.ValueOA, node);
 						return;
 					}
 				}
 				// did not find the node, so add it and its value (not to be expected, but we'd better deal with it)
-				FeatureTreeNode newNode = new FeatureTreeNode(defn.Name.AnalysisDefaultWritingSystem.Text,
-					(int)LexTextImageKind.complex, (int)LexTextImageKind.complex, defn.Hvo, FeatureTreeNodeInfo.NodeKind.Complex);
+				var newNode = new FeatureTreeNode(defn.Name.AnalysisDefaultWritingSystem.Text, (int)LexTextImageKind.complex, (int)LexTextImageKind.complex, defn.Hvo, FeatureTreeNodeKind.Complex);
 				InsertNode(newNode, parentNode);
 				AddNode((IFsFeatStruc)complex.ValueOA, newNode);
 			}
 		}
 		private void AddNodeFromFS(IFsSymFeatVal val, FeatureTreeNode parentNode)
 		{
-			TreeNodeCollection col;
-			if (parentNode == null)
-				col = Nodes;
-			else
-				col = parentNode.Nodes;
+			var col = parentNode?.Nodes ?? Nodes;
 			if (val == null)
+			{
 				return; // can't select it!
-			int hvoVal = val.Hvo;
+			}
+			var hvoVal = val.Hvo;
 			foreach (FeatureTreeNode node in col)
 			{
 				if (hvoVal == node.Hvo)
-				{ // already there (which is to be expected); mark it as selected
+				{
+					// already there (which is to be expected); mark it as selected
 					node.ImageIndex = (int)LexTextImageKind.radioSelected;
 					node.SelectedImageIndex = (int)LexTextImageKind.radioSelected;
 					node.Chosen = true;
@@ -224,32 +221,40 @@ namespace LanguageExplorer.Controls.LexText
 				}
 			}
 			// did not find the node, so add it (not to be expected, but we'd better deal with it)
-			FeatureTreeNode newNode = new FeatureTreeNode(val.Name.AnalysisDefaultWritingSystem.Text,
-				(int)LexTextImageKind.radio, (int)LexTextImageKind.radio, val.Hvo, FeatureTreeNodeInfo.NodeKind.SymFeatValue);
+			var newNode = new FeatureTreeNode(val.Name.AnalysisDefaultWritingSystem.Text, (int)LexTextImageKind.radio, (int)LexTextImageKind.radio, val.Hvo, FeatureTreeNodeKind.SymFeatValue);
 			InsertNode(newNode, parentNode);
 			newNode.Chosen = true;
 		}
 		private void InsertNode(FeatureTreeNode newNode, FeatureTreeNode parentNode)
 		{
 			if (parentNode == null)
+			{
 				Nodes.Add(newNode);
+			}
 			else
+			{
 				parentNode.Nodes.Add(newNode);
+			}
 		}
 		private bool AlreadyInTree(int iTag, FeatureTreeNode node)
 		{
 			if (node == null)
-			{ // at the top level
+			{
+				// at the top level
 				foreach (FeatureTreeNode treeNode in Nodes)
 				{
 					if (iTag == treeNode.Hvo)
+					{
 						return true;
+					}
 				}
 			}
 			while (node != null)
 			{
 				if (iTag == node.Hvo)
+				{
 					return true;
+				}
 				node = (FeatureTreeNode)node.Parent;
 			}
 			return false;
@@ -258,25 +263,24 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			if (mea.Button == MouseButtons.Left)
 			{
-				TreeView tv = (TreeView) obj;
-				FeatureTreeNode tn = (FeatureTreeNode)tv.GetNodeAt(mea.X, mea.Y);
+				var tv = (TreeView)obj;
+				var tn = (FeatureTreeNode)tv.GetNodeAt(mea.X, mea.Y);
 				if (tn != null)
 				{
-					Rectangle rec = tn.Bounds;
-					rec.X += -18;       // include the image bitmap (16 pixels plus 2 pixels between the image and the text)
+					var rec = tn.Bounds;
+					rec.X += -18; // include the image bitmap (16 pixels plus 2 pixels between the image and the text)
 					rec.Width += 18;
 					if (rec.Contains(mea.X, mea.Y))
 					{
 						HandleCheckBoxNodes(tv, tn);
-						//int i = tn.ImageIndex;
 					}
 				}
 			}
 		}
 		private void OnKeyUp(object obj, KeyEventArgs kea)
 		{
-			TreeView tv = (TreeView) obj;
-			FeatureTreeNode tn = (FeatureTreeNode)tv.SelectedNode;
+			var tv = (TreeView) obj;
+			var tn = (FeatureTreeNode)tv.SelectedNode;
 			if (kea.KeyCode == Keys.Space && tn != null)
 			{
 				HandleCheckBoxNodes(tv, tn);
@@ -284,42 +288,31 @@ namespace LanguageExplorer.Controls.LexText
 		}
 		private bool IsTerminalNode(TreeNode tn)
 		{
-			return (tn.Nodes.Count == 0);
+			return tn.Nodes.Count == 0;
 		}
-//		private void UndoLastSelectedNode()
-//		{
-//			if (m_lastSelectedTreeNode != null)
-//			{
-//				if (IsTerminalNode(m_lastSelectedTreeNode))
-//				{
-//					m_lastSelectedTreeNode.Chosen = false;
-//					m_lastSelectedTreeNode.ImageIndex = m_lastSelectedTreeNode.SelectedImageIndex = (int)ImageKind.radio;
-//				}
-//			}
-//		}
+
 		private void HandleCheckBoxNodes(TreeView tv, FeatureTreeNode tn)
 		{
-			//UndoLastSelectedNode();
-			if (IsTerminalNode(tn))
+			if (!IsTerminalNode(tn))
 			{
-				tn.Chosen = true;
-				tn.ImageIndex = tn.SelectedImageIndex = (int)LexTextImageKind.radioSelected;
-				if (tn.Parent != null)
-				{
-					FeatureTreeNode sibling = (FeatureTreeNode)tn.Parent.FirstNode;
-					while (sibling != null)
-					{
-						if (IsTerminalNode(sibling) && sibling != tn)
-						{
-							sibling.Chosen = false;
-							sibling.ImageIndex = sibling.SelectedImageIndex = (int)LexTextImageKind.radio;
-						}
-						sibling = (FeatureTreeNode)sibling.NextNode;
-					}
-				}
-				tv.Invalidate();
+				return;
 			}
-//			m_lastSelectedTreeNode = tn;
+			tn.Chosen = true;
+			tn.ImageIndex = tn.SelectedImageIndex = (int)LexTextImageKind.radioSelected;
+			if (tn.Parent != null)
+			{
+				var sibling = (FeatureTreeNode)tn.Parent.FirstNode;
+				while (sibling != null)
+				{
+					if (IsTerminalNode(sibling) && sibling != tn)
+					{
+						sibling.Chosen = false;
+						sibling.ImageIndex = sibling.SelectedImageIndex = (int)LexTextImageKind.radio;
+					}
+					sibling = (FeatureTreeNode)sibling.NextNode;
+				}
+			}
+			tv.Invalidate();
 		}
 
 		/// <summary>
@@ -330,7 +323,9 @@ namespace LanguageExplorer.Controls.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -341,10 +336,7 @@ namespace LanguageExplorer.Controls.LexText
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}

@@ -13,45 +13,30 @@ namespace LanguageExplorer.Controls.LexText
 	internal class LAllomorph : LObject, ITssValue
 	{
 		#region Data members
-
-		private int m_type;
-		private ITsString m_form;
-
 		#endregion Data members
 
-		#region Properties
-
-		public int Type
-		{
-			get { return m_type; }
-		}
-
-		#endregion Properties
+		public int Type { get; }
 
 		#region Construction & initialization
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="hvo">Database ID of the object.</param>
-		/// <param name="type"></param>
+		/// <summary />
 		public LAllomorph(int hvo, int type) : base(hvo)
 		{
-			m_type = type;
-			m_form = null;
+			Type = type;
+			AsTss = null;
 		}
 
 		public LAllomorph(IMoForm allo) : base(allo.Hvo)
 		{
-			m_type = allo.ClassID;
-			m_form = allo.Form.BestVernacularAlternative;
+			Type = allo.ClassID;
+			AsTss = allo.Form.BestVernacularAlternative;
 		}
 
 		#endregion Construction & initialization
 
 		public override string ToString()
 		{
-			return (m_form == null || m_form.Text == null) ? m_hvo.ToString() : m_form.Text;
+			return AsTss?.Text ?? HVO.ToString();
 		}
 
 		#region ITssValue Members
@@ -59,11 +44,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Implementing this allows the fw combo box to do a better job of displaying items.
 		/// </summary>
-		public ITsString AsTss
-		{
-			get { return m_form; }
-		}
-
+		public ITsString AsTss { get; }
 		#endregion
 	}
 }

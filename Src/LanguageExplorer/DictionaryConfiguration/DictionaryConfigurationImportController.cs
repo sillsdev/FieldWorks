@@ -233,7 +233,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					sFilename = liftPathname;
 				}
-				var flexImporter = new FlexLiftMerger(_cache, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, true);
+				var flexImporter = new FlexLiftMerger(_cache, MergeStyle.MsKeepOnlyNew, true);
 				var parser = new LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>(flexImporter);
 				flexImporter.LiftFile = liftPathname;
 				var liftRangesFile = liftPathname + "-ranges";

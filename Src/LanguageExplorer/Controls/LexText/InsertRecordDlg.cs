@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,7 +22,6 @@ namespace LanguageExplorer.Controls.LexText
 		private Button m_btnOK;
 		private HelpProvider m_helpProvider;
 		private TreeCombo m_typeCombo;
-
 		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private PossibilityListPopupTreeManager m_typePopupTreeManager;
@@ -39,7 +38,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Gets or sets the help topic.
 		/// </summary>
-		/// <value>The help topic.</value>
 		public string HelpTopic
 		{
 			get
@@ -69,7 +67,9 @@ namespace LanguageExplorer.Controls.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(string.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		protected override void Dispose(bool disposing)
@@ -77,7 +77,9 @@ namespace LanguageExplorer.Controls.LexText
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if(disposing)
 			{
@@ -120,9 +122,8 @@ namespace LanguageExplorer.Controls.LexText
 			m_typeCombo.WritingSystemCode = m_cache.DefaultAnalWs;
 			AdjustControlAndDialogHeight(m_typeCombo, m_typeCombo.PreferredHeight);
 
-			ICmPossibilityList recTypes = m_cache.LanguageProject.ResearchNotebookOA.RecTypesOA;
-			m_typePopupTreeManager = new PossibilityListPopupTreeManager(m_typeCombo, m_cache, PropertyTable, Publisher,
-				recTypes, cache.DefaultAnalWs, false, this);
+			var recTypes = m_cache.LanguageProject.ResearchNotebookOA.RecTypesOA;
+			m_typePopupTreeManager = new PossibilityListPopupTreeManager(m_typeCombo, m_cache, PropertyTable, Publisher, recTypes, cache.DefaultAnalWs, false, this);
 			m_typePopupTreeManager.LoadPopupTree(m_cache.ServiceLocator.GetObject(RnResearchNbkTags.kguidRecObservation).Hvo);
 			// Ensure that we start out focused in the Title text box.  See FWR-2731.
 			m_titleTextBox.Select();
@@ -136,7 +137,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void AdjustControlAndDialogHeight(Control control, int preferredHeight)
 		{
-			int tbNewHeight = Math.Max(preferredHeight, control.Height);
+			var tbNewHeight = Math.Max(preferredHeight, control.Height);
 			FontHeightAdjuster.GrowDialogAndAdjustControls(this, tbNewHeight - control.Height, control);
 			control.Height = tbNewHeight;
 		}
@@ -148,8 +149,7 @@ namespace LanguageExplorer.Controls.LexText
 				if (string.IsNullOrEmpty(m_titleTextBox.Text))
 				{
 					e.Cancel = true;
-					MessageBox.Show(this, LexTextControls.ksFillInTitle, LexTextControls.ksMissingInformation,
-						MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBox.Show(this, LexTextControls.ksFillInTitle, LexTextControls.ksMissingInformation, MessageBoxButtons.OK, MessageBoxIcon.Information);
 					return;
 				}
 
@@ -158,8 +158,8 @@ namespace LanguageExplorer.Controls.LexText
 					UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoCreateRecord, LexTextControls.ksRedoCreateRecord, m_cache.ActionHandlerAccessor, () =>
 					{
 						var recFactory = m_cache.ServiceLocator.GetInstance<IRnGenericRecFactory>();
-						int posHvo = ((HvoTreeNode) m_typeCombo.SelectedNode).Hvo;
-						ICmPossibility type = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(posHvo);
+						var posHvo = ((HvoTreeNode) m_typeCombo.SelectedNode).Hvo;
+						var type = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(posHvo);
 						switch (m_owner.ClassID)
 						{
 							case RnResearchNbkTags.kClassId:
@@ -286,6 +286,9 @@ namespace LanguageExplorer.Controls.LexText
 		/// Get the ISubscriber.
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
+		#endregion
+
+		#region Implementation of IFlexComponent
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.

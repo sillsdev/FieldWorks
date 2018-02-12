@@ -33,16 +33,14 @@ namespace LanguageExplorer.Controls.LexText
 		private IThreadedProgress m_progressDlg;
 		string m_sLogFile;		// name of HTML log file (if successful).
 		private OpenFileDialogAdapter openFileDialog1;
-
-		private FlexLiftMerger.MergeStyle m_msImport = FlexLiftMerger.MergeStyle.MsKeepOld;
+		private MergeStyle m_msImport = MergeStyle.MsKeepOld;
 
 		public LiftImportDlg()
 		{
 			openFileDialog1 = new OpenFileDialogAdapter();
 			InitializeComponent();
 			openFileDialog1.Title = LexTextControls.openFileDialog1_Title;
-			openFileDialog1.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(
-				LexTextControls.openFileDialog1_Filter);
+			openFileDialog1.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(LexTextControls.openFileDialog1_Filter);
 		}
 
 		/// <summary>
@@ -52,25 +50,25 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			m_cache = cache;
 			m_propertyTable = propertyTable;
-			string sPrevFile = m_propertyTable.GetValue<string>(FilePropertyName);
-			if (!String.IsNullOrEmpty(sPrevFile))
+			var sPrevFile = m_propertyTable.GetValue<string>(FilePropertyName);
+			if (!string.IsNullOrEmpty(sPrevFile))
 			{
 				tbPath.Text = sPrevFile;
 				UpdateButtons();
 			}
-			string sMergeStyle = m_propertyTable.GetValue<string>(MergeStylePropertyName);
-			if (!String.IsNullOrEmpty(sMergeStyle))
+			var sMergeStyle = m_propertyTable.GetValue<string>(MergeStylePropertyName);
+			if (!string.IsNullOrEmpty(sMergeStyle))
 			{
-				m_msImport = (FlexLiftMerger.MergeStyle)Enum.Parse(typeof(FlexLiftMerger.MergeStyle), sMergeStyle, true);
+				m_msImport = (MergeStyle)Enum.Parse(typeof(MergeStyle), sMergeStyle, true);
 				switch (m_msImport)
 				{
-					case FlexLiftMerger.MergeStyle.MsKeepOld:
+					case MergeStyle.MsKeepOld:
 						m_rbKeepCurrent.Checked = true;
 						break;
-					case FlexLiftMerger.MergeStyle.MsKeepNew:
+					case MergeStyle.MsKeepNew:
 						m_rbKeepNew.Checked = true;
 						break;
-					case FlexLiftMerger.MergeStyle.MsKeepBoth:
+					case MergeStyle.MsKeepBoth:
 						m_rbKeepBoth.Checked = true;
 						break;
 					default:
@@ -80,56 +78,55 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		private string FilePropertyName
-		{
-			get { return "LIFT-ImportFile"; }
-		}
+		private static string FilePropertyName => "LIFT-ImportFile";
 
-		private string MergeStylePropertyName
-		{
-			get { return "LIFT-MergeStyle"; }
-		}
+		private static string MergeStylePropertyName => "LIFT-MergeStyle";
 
 		/// <summary>
 		/// (IFwImportDialog)Shows the dialog as a modal dialog
 		/// </summary>
-		/// <returns>A DialogResult value</returns>
 		public new DialogResult Show(IWin32Window owner)
 		{
-			return this.ShowDialog(owner);
+			return ShowDialog(owner);
 		}
 
 		private void btnOK_Click(object sender, EventArgs e)
 		{
 			UpdateButtons();
 			if (!btnOK.Enabled)
+			{
 				return;
+			}
 			DoImport();
-			this.DialogResult = DialogResult.OK;
-			if (!String.IsNullOrEmpty(m_sLogFile))
+			DialogResult = DialogResult.OK;
+			if (!string.IsNullOrEmpty(m_sLogFile))
 			{
 				using (Process.Start(m_sLogFile)) // display log file.
 				{
 				}
 			}
-			this.Close();
+			Close();
 		}
 
 		private void btnBackup_Click(object sender, EventArgs e)
 		{
 			using (var dlg = new BackupProjectDlg(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			{
 				dlg.ShowDialog(this);
+			}
 		}
 
 		private void btnCancel_Click(object sender, EventArgs e)
 		{
-			this.Close();
+			Close();
 		}
 
 		private void btnBrowse_Click(object sender, EventArgs e)
 		{
 			if (DialogResult.OK != openFileDialog1.ShowDialog())
+			{
 				return;
+			}
 
 			tbPath.Text = openFileDialog1.FileName;
 			UpdateButtons();
@@ -141,8 +138,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void UpdateButtons()
 		{
-			btnOK.Enabled = tbPath.Text.Length > 0 &&
-				File.Exists(tbPath.Text);
+			btnOK.Enabled = tbPath.Text.Length > 0 && File.Exists(tbPath.Text);
 		}
 
 		private void DoImport()
@@ -155,7 +151,7 @@ namespace LanguageExplorer.Controls.LexText
 					progressDlg.Maximum = 100;
 					progressDlg.AllowCancel = true;
 					progressDlg.Restartable = true;
-					progressDlg.Title = String.Format(LexTextControls.ksImportingFrom0, tbPath.Text);
+					progressDlg.Title = string.Format(LexTextControls.ksImportingFrom0, tbPath.Text);
 					try
 					{
 						m_cache.DomainDataByFlid.BeginNonUndoableTask();
@@ -175,14 +171,11 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Import from a LIFT file.
 		/// </summary>
-		/// <param name="progressDlg">The progress dialog.</param>
-		/// <param name="parameters">The parameters: 1) filename</param>
-		/// <returns></returns>
 		private object ImportLIFT(IThreadedProgress progressDlg, params object[] parameters)
 		{
 			m_progressDlg = progressDlg;
 			Debug.Assert(parameters.Length == 1);
-			string sOrigFile = (string)parameters[0];
+			var sOrigFile = (string)parameters[0];
 			try
 			{
 				// Create a temporary directory %temp%\TempForLIFTImport. Migrate as necessary and import from this
@@ -190,31 +183,36 @@ namespace LanguageExplorer.Controls.LexText
 				// if it exists.
 				var sLIFTfolder = Path.GetDirectoryName(sOrigFile);
 				var sLIFTtempFolder = Path.Combine(Path.GetTempPath(), "TempForLIFTImport");
-				if (Directory.Exists(sLIFTtempFolder) == true)
+				if (Directory.Exists(sLIFTtempFolder))
+				{
 					Directory.Delete(sLIFTtempFolder, true);
+				}
 				LdmlFileBackup.CopyDirectory(sLIFTfolder, sLIFTtempFolder);
 				// Older LIFT files had ldml files in root directory. If found, move them to WritingSystem folder.
 				if (Directory.GetFiles(sLIFTtempFolder, "*.ldml").Length > 0)
 				{
 					var sWritingSystems = Path.Combine(sLIFTtempFolder, "WritingSystems");
 					if (Directory.Exists(sWritingSystems) == false)
-						Directory.CreateDirectory(sWritingSystems);
-					foreach (string filePath in Directory.GetFiles(sLIFTtempFolder, "*.ldml"))
 					{
-						string file = Path.GetFileName(filePath);
+						Directory.CreateDirectory(sWritingSystems);
+					}
+					foreach (var filePath in Directory.GetFiles(sLIFTtempFolder, "*.ldml"))
+					{
+						var file = Path.GetFileName(filePath);
 						if (!File.Exists(Path.Combine(sWritingSystems, file)))
+						{
 							File.Move(filePath, Path.Combine(sWritingSystems, file));
+						}
 					}
 				}
 				var sTempOrigFile = Path.Combine(sLIFTtempFolder, sOrigFile.Substring(sLIFTfolder.Length + 1));
 				string sFilename;
 				//Do a LIFT Migration to the current version of LIFT if it is needed.
-				bool fMigrationNeeded = Migrator.IsMigrationNeeded(sTempOrigFile);
+				var fMigrationNeeded = Migrator.IsMigrationNeeded(sTempOrigFile);
 				if (fMigrationNeeded)
 				{
-					string sOldVersion = Validator.GetLiftVersion(sTempOrigFile);
-					m_progressDlg.Message = String.Format(LexTextControls.ksMigratingLiftFile,
-						sOldVersion, Validator.LiftVersion);
+					var sOldVersion = Validator.GetLiftVersion(sTempOrigFile);
+					m_progressDlg.Message = string.Format(LexTextControls.ksMigratingLiftFile, sOldVersion, Validator.LiftVersion);
 					sFilename = Migrator.MigrateToLatestVersion(sTempOrigFile);
 				}
 				else
@@ -223,7 +221,9 @@ namespace LanguageExplorer.Controls.LexText
 				}
 				//Validate the LIFT file.
 				if (!Validate(sFilename, sTempOrigFile))
+				{
 					return null;
+				}
 
 				//Import the LIFT file and ranges file.
 				m_progressDlg.Message = LexTextControls.ksLoadingVariousLists;
@@ -240,16 +240,17 @@ namespace LanguageExplorer.Controls.LexText
 				//Import the Ranges file.
 				flexImporter.LoadLiftRanges(sTempOrigFile + "-ranges");	// temporary (?) fix for FWR-3869.
 				//Import the LIFT data file.
-				int cEntries = parser.ReadLiftFile(sFilename);
+				var cEntries = parser.ReadLiftFile(sFilename);
 
 				if (fMigrationNeeded)
 				{
 					// Try to move the migrated file to the temp directory, even if a copy of it
 					// already exists there.
-					string sTempMigrated = Path.Combine(Path.GetTempPath(),
-						Path.ChangeExtension(Path.GetFileName(sFilename), "." + Validator.LiftVersion + FwFileExtensions.ksLexiconInterchangeFormat));
+					var sTempMigrated = Path.Combine(Path.GetTempPath(), Path.ChangeExtension(Path.GetFileName(sFilename), "." + Validator.LiftVersion + FwFileExtensions.ksLexiconInterchangeFormat));
 					if (File.Exists(sTempMigrated))
+					{
 						File.Delete(sTempMigrated);
+					}
 					File.Move(sFilename, sTempMigrated);
 				}
 				flexImporter.ProcessPendingRelations(m_progressDlg);
@@ -257,30 +258,31 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			catch (Exception error)
 			{
-				string sMsg = String.Format(LexTextControls.ksLIFTImportProblem,
-					sOrigFile, error.Message);
+				var sMsg = string.Format(LexTextControls.ksLIFTImportProblem, sOrigFile, error.Message);
 				try
 				{
-					StringBuilder bldr = new StringBuilder();
+					var bldr = new StringBuilder();
 					// leave in English for programmer's sake...
-					bldr.AppendFormat("Something went wrong while FieldWorks was attempting to import {0}.",
-						sOrigFile);
+					bldr.AppendFormat("Something went wrong while FieldWorks was attempting to import {0}.", sOrigFile);
 					bldr.AppendLine();
 					bldr.AppendLine(error.Message);
 					bldr.AppendLine();
 					bldr.AppendLine(error.StackTrace);
 
 					if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+					{
 						ClipboardUtils.SetDataObject(bldr.ToString(), true);
+					}
 					else
+					{
 						progressDlg.SynchronizeInvoke.Invoke(() => ClipboardUtils.SetDataObject(bldr.ToString(), true));
-						Logger.WriteEvent(bldr.ToString());
+					}
+					Logger.WriteEvent(bldr.ToString());
 				}
 				catch
 				{
 				}
-				MessageBox.Show(sMsg, LexTextControls.ksProblemImporting,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(sMsg, LexTextControls.ksProblemImporting, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return null;
 			}
 		}
@@ -295,44 +297,38 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			catch (LiftFormatException lfe)
 			{
-				string sProducer = GetLiftProducer(sOrigFile);
+				var sProducer = GetLiftProducer(sOrigFile);
 				string sMsg;
 				if (sProducer == null)
 				{
-					sMsg = String.Format(LexTextControls.ksFileNotALIFTFile, sOrigFile);
+					sMsg = string.Format(LexTextControls.ksFileNotALIFTFile, sOrigFile);
 				}
 				else if (sFilename == sOrigFile)
 				{
-					sMsg = String.Format(LexTextControls.ksInvalidLiftFile, sOrigFile, sProducer);
+					sMsg = string.Format(LexTextControls.ksInvalidLiftFile, sOrigFile, sProducer);
 				}
 				else
 				{
-					sMsg = String.Format(LexTextControls.ksInvalidMigratedLiftFile, sOrigFile, sProducer);
+					sMsg = string.Format(LexTextControls.ksInvalidMigratedLiftFile, sOrigFile, sProducer);
 				}
 				// Show the pretty yellow semi-crash dialog box, with instructions for the
 				// user to report the bug.  Then ask the user whether to continue.
-				IApp app = m_propertyTable.GetValue<IApp>("App");
-				ErrorReporter.ReportException(new Exception(sMsg, lfe), app.SettingsKey,
-					app.SupportEmailAddress, this, false);
-				return MessageBox.Show(LexTextControls.ksContinueLiftImportQuestion,
-					LexTextControls.ksProblemImporting,
-					MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
+				var app = m_propertyTable.GetValue<IApp>("App");
+				ErrorReporter.ReportException(new Exception(sMsg, lfe), app.SettingsKey, app.SupportEmailAddress, this, false);
+				return MessageBox.Show(LexTextControls.ksContinueLiftImportQuestion, LexTextControls.ksProblemImporting, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
 			}
 		}
 
-		private string GetLiftProducer(string sOrigFile)
+		private static string GetLiftProducer(string sOrigFile)
 		{
 			try
 			{
-				using (XmlReader xrdr = XmlReader.Create(sOrigFile))
+				using (var xrdr = XmlReader.Create(sOrigFile))
 				{
 					if (xrdr.IsStartElement() && xrdr.Name == "lift")
 					{
-						string sProducer = xrdr.GetAttribute("producer");
-						if (String.IsNullOrEmpty(sProducer))
-							return "Unknown LIFT Producer";
-						else
-							return sProducer;
+						var sProducer = xrdr.GetAttribute("producer");
+						return string.IsNullOrEmpty(sProducer) ? "Unknown LIFT Producer" : sProducer;
 					}
 				}
 			}
@@ -345,7 +341,9 @@ namespace LanguageExplorer.Controls.LexText
 		void parser_SetProgressMessage(object sender, LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.MessageArgs e)
 		{
 			if (m_progressDlg != null)
+			{
 				m_progressDlg.Message = e.Message;
+			}
 		}
 
 		void parser_SetTotalNumberSteps(object sender, LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.StepsArgs e)
@@ -361,12 +359,14 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			if (m_progressDlg != null)
 			{
-				int nMin = m_progressDlg.Minimum;
-				int nMax = m_progressDlg.Maximum;
+				var nMin = m_progressDlg.Minimum;
+				var nMax = m_progressDlg.Maximum;
 				Debug.Assert(nMin < nMax);
 				if (nMin >= nMax)
+				{
 					nMax = nMin + 1;
-				int n = e.Progress;
+				}
+				var n = e.Progress;
 				if (n < nMin)
 				{
 					n = nMin;
@@ -374,7 +374,9 @@ namespace LanguageExplorer.Controls.LexText
 				if (n > nMax)
 				{
 					while (n > nMax)
+					{
 						n = nMin + (n - nMax);
+					}
 				}
 				m_progressDlg.Position = n;
 				e.Cancel = m_progressDlg.Canceled;
@@ -392,7 +394,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				m_rbKeepNew.Checked = false;
 				m_rbKeepBoth.Checked = false;
-				SetMergeStyle(FlexLiftMerger.MergeStyle.MsKeepOld);
+				SetMergeStyle(MergeStyle.MsKeepOld);
 			}
 		}
 
@@ -402,7 +404,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				m_rbKeepCurrent.Checked = false;
 				m_rbKeepBoth.Checked = false;
-				SetMergeStyle(FlexLiftMerger.MergeStyle.MsKeepNew);
+				SetMergeStyle(MergeStyle.MsKeepNew);
 			}
 		}
 
@@ -412,16 +414,14 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				m_rbKeepCurrent.Checked = false;
 				m_rbKeepNew.Checked = false;
-				SetMergeStyle(FlexLiftMerger.MergeStyle.MsKeepBoth);
+				SetMergeStyle(MergeStyle.MsKeepBoth);
 			}
 		}
 
-		private void SetMergeStyle(FlexLiftMerger.MergeStyle ms)
+		private void SetMergeStyle(MergeStyle ms)
 		{
 			m_msImport = ms;
-			m_propertyTable.SetProperty(MergeStylePropertyName,
-				Enum.GetName(typeof(FlexLiftMerger.MergeStyle), m_msImport),
-				true, true);
+			m_propertyTable.SetProperty(MergeStylePropertyName, Enum.GetName(typeof(MergeStyle), m_msImport), true, true);
 		}
 
 		private void btnHelp_Click(object sender, EventArgs e)

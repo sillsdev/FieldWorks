@@ -36,7 +36,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// We have to set the checkbox here because the mediator (needed to get the App)
 		/// is not set yet in the dialog's constructor.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);

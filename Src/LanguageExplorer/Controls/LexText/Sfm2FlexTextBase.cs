@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -42,7 +42,9 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					WriteStartElement("document");
 					foreach (var mapping in mappings)
+					{
 						m_mappings[mapping.Marker] = mapping;
+					}
 					string marker;
 					byte[] data;
 					byte[] badData;
@@ -50,17 +52,18 @@ namespace LanguageExplorer.Controls.LexText
 					{
 						TMapping mapping;
 						if (!m_mappings.TryGetValue(marker, out mapping))
+						{
 							continue; // ignore any markers we don't know.
+						}
 						WriteToDocElement(data, mapping);
 					}
 					m_writer.Close();
 				}
 				var result = output.ToArray();
-				if (Form.ActiveForm != null && (Form.ModifierKeys & Keys.Shift) == Keys.Shift)
+				if (Form.ActiveForm != null && (Control.ModifierKeys & Keys.Shift) == Keys.Shift)
 				{
 					// write out the intermediate file
-					var intermediatePath = Path.Combine(Path.GetDirectoryName(reader.FileName),
-						Path.GetFileNameWithoutExtension(reader.FileName) + "-intermediate.xml");
+					var intermediatePath = Path.Combine(Path.GetDirectoryName(reader.FileName), Path.GetFileNameWithoutExtension(reader.FileName) + "-intermediate.xml");
 					using (var stream = File.Create(intermediatePath))
 					{
 						stream.Write(result, 0, result.Length);
@@ -113,13 +116,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// If a phrase is open and already has this type of element, ignore this one.
 		/// Set phraseHasElement to indicate that now it does.
 		/// </summary>
-		/// <param name="mapping"></param>
-		/// <param name="data"></param>
-		/// <param name="itemType"></param>
-		/// <param name="parentMarker"></param>
-		/// <param name="itemsInThisParent"></param>
-		protected virtual void MakeRepeatableItem(TMapping mapping, byte[] data, string itemType, string parentMarker,
-			HashSet<Tuple<InterlinDestination, string>> itemsInThisParent)
+		protected virtual void MakeRepeatableItem(TMapping mapping, byte[] data, string itemType, string parentMarker, HashSet<Tuple<InterlinDestination, string>> itemsInThisParent)
 		{
 			var text = GetString(data, mapping).Trim();
 			byte[] moreData;
@@ -127,13 +124,16 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				var moreText = GetString(moreData, mapping).Trim();
 				if (string.IsNullOrEmpty(text))
+				{
 					text = moreText;
+				}
 				else
-					text = text + " " + moreText;
+				{
+					text += " " + moreText;
+				}
 			}
 			var key = new Tuple<InterlinDestination, string>(mapping.Destination, mapping.WritingSystem);
-			if (itemsInThisParent.Contains(key)
-			    && ParentElementIsOpen(parentMarker))
+			if (itemsInThisParent.Contains(key) && ParentElementIsOpen(parentMarker))
 			{
 				return;
 			}
@@ -145,13 +145,18 @@ namespace LanguageExplorer.Controls.LexText
 		/// Read one more marker and data from the input. If it is the continuation marker, return true and the data;
 		/// otherwise save the data to be read later and return false.
 		/// </summary>
-		bool GetMoreData(string marker, out byte[] data)
+		private bool GetMoreData(string marker, out byte[] data)
 		{
 			string nextMarker;
 			if (!GetRawData(out nextMarker, out data))
+			{
 				return false;
+			}
+
 			if (nextMarker == marker)
+			{
 				return true;
+			}
 			m_pendingData = data;
 			m_pendingMarker = nextMarker;
 			data = null;
@@ -175,7 +180,9 @@ namespace LanguageExplorer.Controls.LexText
 			WriteStartElementIn("item", parentMarker);
 			m_writer.WriteAttributeString("type", itemType);
 			if (!string.IsNullOrEmpty(mapping.WritingSystem))
+			{
 				m_writer.WriteAttributeString("lang", mapping.WritingSystem);
+			}
 			m_writer.WriteString(text);
 			WriteEndElement();
 		}
@@ -189,9 +196,14 @@ namespace LanguageExplorer.Controls.LexText
 		protected string GetString(byte[] data, TMapping mapping)
 		{
 			if (string.IsNullOrEmpty(mapping.Converter))
+			{
 				return Encoding.UTF8.GetString(data); // todo: use encoding converter if present in mapping
+			}
+
 			if (m_encConverters == null)
+			{
 				m_encConverters = new EncConverters();
+			}
 			var converter = m_encConverters[mapping.Converter];
 			return converter.ConvertToUnicode(data);
 		}
@@ -204,24 +216,22 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		private void AdjustDepth(string parentMarker)
 		{
-			int depth = m_docStructure.IndexOf(parentMarker) + 1;
+			var depth = m_docStructure.IndexOf(parentMarker) + 1;
 			while (m_openElements.Count > depth)
+			{
 				WriteEndElement();
+			}
+
 			while (m_openElements.Count < depth)
+			{
 				WriteStartElement(m_docStructure[m_openElements.Count]);
+			}
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="mapping"></param>
-		/// <param name="data"></param>
-		/// <param name="itemType"></param>
+		/// <summary />
 		protected virtual void MakeRootItem(TMapping mapping, byte[] data, string itemType)
 		{
 			// override
 		}
-
-
 	}
 }

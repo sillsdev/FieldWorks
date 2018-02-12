@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -25,8 +25,7 @@ namespace LanguageExplorer.Controls.LexText
 		private readonly IPublisher m_publisher;
 		private readonly string m_field;
 
-		public MasterCategoryListChooserLauncher(Form popupMgrParent, IPropertyTable propertyTable, IPublisher publisher,
-			ICmPossibilityList possibilityList, string fieldName, ILexSense sense)
+		public MasterCategoryListChooserLauncher(Form popupMgrParent, IPropertyTable propertyTable, IPublisher publisher, ICmPossibilityList possibilityList, string fieldName, ILexSense sense)
 		{
 			m_parentOfPopupMgr = popupMgrParent;
 			m_propertyTable = propertyTable;
@@ -36,19 +35,19 @@ namespace LanguageExplorer.Controls.LexText
 			FieldName = fieldName;
 			Cache = m_sense.Cache;
 
-			Application.Idle += new EventHandler(LaunchChooseFromMasterCategoryListOnIdle);
+			Application.Idle += LaunchChooseFromMasterCategoryListOnIdle;
 		}
 
-		public ICmPossibilityList CategoryList { get; private set; }
-		public string FieldName { get; private set; }
-		public LcmCache Cache { get; private set; }
+		public ICmPossibilityList CategoryList { get; }
+		public string FieldName { get; }
+		public LcmCache Cache { get; }
 
-		void LaunchChooseFromMasterCategoryListOnIdle(object sender, EventArgs e)
+		private void LaunchChooseFromMasterCategoryListOnIdle(object sender, EventArgs e)
 		{
 			Application.Idle -= LaunchChooseFromMasterCategoryListOnIdle; // now being handled
 
 			// now launch the dialog
-			using (MasterCategoryListDlg dlg = new MasterCategoryListDlg())
+			using (var dlg = new MasterCategoryListDlg())
 			{
 				dlg.SetDlginfo(CategoryList, m_propertyTable, false, null);
 				switch (dlg.ShowDialog(m_parentOfPopupMgr))
@@ -57,15 +56,10 @@ namespace LanguageExplorer.Controls.LexText
 						var sandboxMsa = new SandboxGenericMSA();
 						sandboxMsa.MainPOS = dlg.SelectedPOS;
 						sandboxMsa.MsaType = m_sense.GetDesiredMsaType();
-						UndoableUnitOfWorkHelper.Do(String.Format(LexTextControls.ksUndoSetX, FieldName),
-							String.Format(LexTextControls.ksRedoSetX, FieldName), m_sense, () =>
+						UndoableUnitOfWorkHelper.Do(string.Format(LexTextControls.ksUndoSetX, FieldName), string.Format(LexTextControls.ksRedoSetX, FieldName), m_sense, () =>
 							{
 								m_sense.SandboxMSA = sandboxMsa;
 							});
-						// Under certain circumstances (LT-11548) 'this' was disposed during the EndUndotask above!
-						// That's why we're now launching this on idle.
-						// Here's hoping we can get away without doing this! (It doesn't seem to make a difference.)
-						//LoadPopupTree(m_sense.MorphoSyntaxAnalysisRA.Hvo);
 						// everything should be setup with new node selected, so return.
 						break;
 					case DialogResult.Yes:

@@ -76,10 +76,10 @@ namespace LanguageExplorer.Controls.LexText
 			Cache = cache;
 			m_propertyTable = propertyTable;
 
-			int userWs = m_cache.DefaultUserWs;
-			int maxFontSize = Cache.ServiceLocator.WritingSystems.AllWritingSystems.Select(ws => GetFontHeight(ws.Handle)).Max();
+			var userWs = m_cache.DefaultUserWs;
+			var maxFontSize = Cache.ServiceLocator.WritingSystems.AllWritingSystems.Select(ws => GetFontHeight(ws.Handle)).Max();
 
-			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
+			var tpb = TsStringUtils.MakePropsBldr();
 			// specify the writing system, so that font info for a specific WS in the normal style does not override these props
 			tpb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
 			// use Charis SIL because it supports the special characters that are needed for
@@ -207,10 +207,10 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected void AddExtraLines(int numLines, int tag, IVwEnv vwenv)
 		{
-			for (int i = 0; i < numLines; i++)
+			for (var i = 0; i < numLines; i++)
 			{
 				vwenv.Props = m_bracketProps;
-				vwenv.set_IntProperty((int) FwTextPropType.ktptEditable, (int) FwTextPropVar.ktpvEnum, (int) TptEditable.ktptNotEditable);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 				vwenv.OpenParagraph();
 				vwenv.AddProp(tag, this, kfragEmpty);
 				vwenv.CloseParagraph();
@@ -256,9 +256,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		protected int GetFontHeight(int ws)
 		{
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
-			return FontHeightAdjuster.GetFontHeightForStyle("Normal", stylesheet,
-				ws, m_cache.LanguageWritingSystemFactoryAccessor);
+			return FontHeightAdjuster.GetFontHeightForStyle("Normal", FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), ws, m_cache.LanguageWritingSystemFactoryAccessor);
 		}
 	}
 }

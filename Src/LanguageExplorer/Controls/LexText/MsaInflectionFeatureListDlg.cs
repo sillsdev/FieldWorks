@@ -1,8 +1,7 @@
-// Copyright (c) 2017-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-// This really needs to be refactored with MasterCategoryListDlg.cs
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -27,12 +26,10 @@ namespace LanguageExplorer.Controls.LexText
 		protected LcmCache m_cache;
 		// The dialog can be initialized with an existing feature structure,
 		// or just with an owning object and flid in which to create one.
-		private IFsFeatStruc m_fs;
 		// Where to put a new feature structure if needed. Owning flid may be atomic
 		// or collection. Used only if m_fs is initially null.
 		int m_hvoOwner;
 		int m_owningFlid;
-		private IPartOfSpeech m_highestPOS;
 		private Dictionary<int, IPartOfSpeech> m_poses = new Dictionary<int, IPartOfSpeech>();
 		private Button m_btnOK;
 		private Button m_btnCancel;
@@ -66,13 +63,14 @@ namespace LanguageExplorer.Controls.LexText
 		/// If we defeat it, it may look a bit small the first time at high resolution,
 		/// but at least it will stay the size the user sets.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnLoad(EventArgs e)
 		{
-			Size size = this.Size;
+			var size = Size;
 			base.OnLoad (e);
-			if (this.Size != size)
-				this.Size = size;
+			if (Size != size)
+			{
+				Size = size;
+			}
 		}
 		#endregion
 
@@ -84,7 +82,9 @@ namespace LanguageExplorer.Controls.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -95,21 +95,18 @@ namespace LanguageExplorer.Controls.LexText
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
-
-				if (helpProvider != null)
-					helpProvider.Dispose();
+				components?.Dispose();
+				helpProvider?.Dispose();
 			}
 			m_cache = null;
-			m_fs = null;
-			m_highestPOS = null;
+			FS = null;
+			HighestPOS = null;
 			m_poses = null;
 			m_cache = null;
 			helpProvider = null;
@@ -126,7 +123,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			CheckDisposed();
 
-			m_fs = fs;
+			FS = fs;
 			m_propertyTable = propertyTable;
 			SetPropertyTableSideEffects();
 			m_cache = cache;
@@ -141,8 +138,7 @@ namespace LanguageExplorer.Controls.LexText
 			// Get location to the stored values, if any.
 			Point dlgLocation;
 			Size dlgSize;
-			if (m_propertyTable.TryGetValue("msaInflFeatListDlgLocation", out dlgLocation)
-				&& m_propertyTable.TryGetValue("msaInflFeatListDlgSize", out dlgSize))
+			if (m_propertyTable.TryGetValue("msaInflFeatListDlgLocation", out dlgLocation) && m_propertyTable.TryGetValue("msaInflFeatListDlgSize", out dlgSize))
 			{
 				var rect = new Rectangle(dlgLocation, dlgSize);
 				ScreenHelper.EnsureVisibleRect(ref rect);
@@ -165,7 +161,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			CheckDisposed();
 
-			m_fs = null;
+			FS = null;
 			m_owningFlid = owningFlid;
 			m_hvoOwner = cobj.Hvo;
 			m_propertyTable = propertyTable;
@@ -188,12 +184,11 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected virtual void EnableLink()
 		{
-			linkLabel1.Enabled = m_highestPOS != null;
+			linkLabel1.Enabled = HighestPOS != null;
 		}
 		/// <summary>
 		/// Load the tree items if the starting point is a feature structure.
 		/// </summary>
-		/// <param name="fs"></param>
 		protected virtual void LoadInflFeats(IFsFeatStruc fs)
 		{
 			var cobj = fs.Owner;
@@ -215,8 +210,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Load the tree items if the starting point is an owning MSA and flid.
 		/// </summary>
-		/// <param name="cobj"></param>
-		/// <param name="owningFlid"></param>
 		protected virtual void LoadInflFeats(ICmObject cobj, int owningFlid)
 		{
 			switch(cobj.ClassID)
@@ -238,7 +231,9 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			var entry = cobj.Owner as ILexEntry;
 			if (entry == null)
+			{
 				return;
+			}
 			foreach (var msa in entry.MorphoSyntaxAnalysesOC)
 			{
 				var pos = GetPosFromCmObjectAndFlid(msa, MoDerivAffMsaTags.kflidFromMsFeatures);
@@ -254,7 +249,9 @@ namespace LanguageExplorer.Controls.LexText
 			m_tvMsaFeatureList.ExpandAll();
 			m_tvMsaFeatureList.Sort();
 			if (m_tvMsaFeatureList.Nodes.Count > 0)
+			{
 				m_tvMsaFeatureList.SelectedNode = m_tvMsaFeatureList.Nodes[0]; // have it show first one initially
+			}
 		}
 
 		private void PopulateTreeFromPos(IPartOfSpeech pos)
@@ -263,12 +260,12 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				m_poses.Add(pos.Hvo, pos);
 			}
-			m_highestPOS = pos;
+			HighestPOS = pos;
 			while (pos != null)
 			{
 				m_tvMsaFeatureList.PopulateTreeFromInflectableFeats(pos.InflectableFeatsRC);
 				var cobj = pos.Owner;
-				m_highestPOS = pos;
+				HighestPOS = pos;
 				pos = cobj as IPartOfSpeech;
 			}
 		}
@@ -282,10 +279,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// Given a (potentially) owning object, and the flid in which is does/will own
 		/// the feature structure, find the relevant POS.
 		/// </summary>
-		/// <param name="cobj"></param>
-		/// <param name="owningFlid"></param>
-		/// <returns></returns>
-		private IPartOfSpeech GetPosFromCmObjectAndFlid(ICmObject cobj, int owningFlid)
+		private static IPartOfSpeech GetPosFromCmObjectAndFlid(ICmObject cobj, int owningFlid)
 		{
 			switch (cobj.ClassID)
 			{
@@ -294,10 +288,14 @@ namespace LanguageExplorer.Controls.LexText
 					return infl.PartOfSpeechRA;
 				case MoDerivAffMsaTags.kClassId:
 					var deriv = (IMoDerivAffMsa) cobj;
-					if (owningFlid == MoDerivAffMsaTags.kflidFromMsFeatures)
-						return deriv.FromPartOfSpeechRA;
-					if (owningFlid == MoDerivAffMsaTags.kflidToMsFeatures)
-						return deriv.ToPartOfSpeechRA;
+					switch (owningFlid)
+					{
+						case MoDerivAffMsaTags.kflidFromMsFeatures:
+							return deriv.FromPartOfSpeechRA;
+						case MoDerivAffMsaTags.kflidToMsFeatures:
+							return deriv.ToPartOfSpeechRA;
+					}
+
 					break;
 				case MoStemMsaTags.kClassId:
 					var stem = (IMoStemMsa) cobj;
@@ -308,11 +306,11 @@ namespace LanguageExplorer.Controls.LexText
 				case MoAffixAllomorphTags.kClassId:
 					// get entry of the allomorph and then get the msa of first sense and return its (from) POS
 					var entry = cobj.Owner as ILexEntry;
-					if (entry == null)
-						return null;
-					var sense = entry.SensesOS[0];
+					var sense = entry?.SensesOS[0];
 					if (sense == null)
+					{
 						return null;
+					}
 					var msa = sense.MorphoSyntaxAnalysisRA;
 					return GetPosFromCmObjectAndFlid(msa, MoDerivAffMsaTags.kflidFromMsFeatures);
 			}
@@ -322,27 +320,13 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Get Feature Structure resulting from dialog operation
 		/// </summary>
-		public IFsFeatStruc FS
-		{
-			get
-			{
-				CheckDisposed();
+		public IFsFeatStruc FS { get; private set; }
 
-				return m_fs;
-			}
-		}
 		/// <summary>
 		/// Get highest level POS of msa
 		/// </summary>
-		public IPartOfSpeech HighestPOS
-		{
-			get
-			{
-				CheckDisposed();
+		public IPartOfSpeech HighestPOS { get; private set; }
 
-				return m_highestPOS;
-			}
-		}
 		/// <summary>
 		/// Get/Set prompt text
 		/// </summary>
@@ -358,25 +342,29 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				CheckDisposed();
 
-				string s1 = value ?? LexTextControls.ksFeaturesForX;
+				var s1 = value ?? LexTextControls.ksFeaturesForX;
 				string s2;
 				if (m_poses.Count == 0)
+				{
 					s2 = LexTextControls.ksUnknownCategory;
+				}
 				else
 				{
 					var sb = new StringBuilder();
-					Dictionary<int, IPartOfSpeech>.ValueCollection poses = m_poses.Values;
-					bool fFirst = true;
+					var poses = m_poses.Values;
+					var fFirst = true;
 					foreach (var pos in poses)
 					{
 						if (!fFirst)
+						{
 							sb.Append(", ");
+						}
 						sb.Append(pos.Name.BestAnalysisAlternative.Text);
 						fFirst = false;
 					}
 					s2 = sb.ToString();
 				}
-				labelPrompt.Text = String.Format(s1, s2);
+				labelPrompt.Text = string.Format(s1, s2);
 			}
 		}
 		/// <summary>
@@ -412,9 +400,9 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				CheckDisposed();
 
-				string s1 = value ?? LexTextControls.ksAddFeaturesToX;
-				string s2 = m_highestPOS == null ? LexTextControls.ksUnknownCategory : m_highestPOS.Name.AnalysisDefaultWritingSystem.Text;
-				linkLabel1.Text = String.Format(s1, s2);
+				var s1 = value ?? LexTextControls.ksAddFeaturesToX;
+				var s2 = HighestPOS == null ? LexTextControls.ksUnknownCategory : HighestPOS.Name.AnalysisDefaultWritingSystem.Text;
+				linkLabel1.Text = string.Format(s1, s2);
 			}
 		}
 
@@ -541,66 +529,68 @@ namespace LanguageExplorer.Controls.LexText
 		/// for the combo should not be separately persisted as model data, but it should be persisted
 		/// somehow...
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		private void MsaInflectionFeatureListDlg_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			if (DialogResult == DialogResult.OK)
 			{
 				// making and maybe then deleting the new item for the combo is not undoable
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor,
-					() =>
+				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+				{
+					if (FS == null)
+					{
+						// Didn't have one to begin with. See whether we want to create one.
+						if (CheckFeatureStructure(m_tvMsaFeatureList.Nodes))
 						{
-							if (m_fs == null)
+							var repo = m_cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>();
+							// FsFeatStruc may be owned atomically or in a colllection. See which fake insertion index we need.
+							var where = m_cache.MetaDataCacheAccessor.GetFieldType(m_owningFlid) == (int)CellarPropertyType.OwningAtomic ? -2 : -1;
+							var hvoNew = m_cache.DomainDataByFlid.MakeNewObject(FsFeatStrucTags.kClassId, m_hvoOwner, m_owningFlid, where);
+							FS = repo.GetObject(hvoNew);
+						}
+						else
+						{
+							return; // leave it null.
+						}
+					}
+					// clean out any extant features in the feature structure
+					foreach (var spec in FS.FeatureSpecsOC)
+					{
+						FS.FeatureSpecsOC.Remove(spec);
+					}
+					UpdateFeatureStructure(m_tvMsaFeatureList.Nodes);
+					// The (usually) newly created one may be a duplicate. If we find a duplicate
+					// delete the one we just made (or were passed) and return the duplicate.
+					var cpt = m_cache.MetaDataCacheAccessor.GetFieldType(m_owningFlid);
+					if (m_hvoOwner != 0 && cpt != (int)CellarPropertyType.OwningAtomic)
+					{
+						var chvo = m_cache.DomainDataByFlid.get_VecSize(m_hvoOwner, m_owningFlid);
+						for (var ihvo = 0; ihvo < chvo; ihvo++)
+						{
+							var hvo = m_cache.DomainDataByFlid.get_VecItem(m_hvoOwner, m_owningFlid, ihvo);
+							if (hvo == FS.Hvo)
 							{
-								// Didn't have one to begin with. See whether we want to create one.
-								if (CheckFeatureStructure(m_tvMsaFeatureList.Nodes))
-								{
-									var repo = m_cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>();
-									// FsFeatStruc may be owned atomically or in a colllection. See which fake insertion index we need.
-									int where = m_cache.MetaDataCacheAccessor.GetFieldType(m_owningFlid) == (int) CellarPropertyType.OwningAtomic ? -2: -1;
-									int hvoNew = m_cache.DomainDataByFlid.MakeNewObject(FsFeatStrucTags.kClassId, m_hvoOwner,
-										m_owningFlid, where);
-									m_fs = repo.GetObject(hvoNew);
-								}
-								else
-								{
-									return; // leave it null.
-								}
+								continue;
 							}
-							// clean out any extant features in the feature structure
-							foreach (var spec in m_fs.FeatureSpecsOC)
-								m_fs.FeatureSpecsOC.Remove(spec);
-							UpdateFeatureStructure(m_tvMsaFeatureList.Nodes);
-							// The (usually) newly created one may be a duplicate. If we find a duplicate
-							// delete the one we just made (or were passed) and return the duplicate.
-							int cpt = m_cache.MetaDataCacheAccessor.GetFieldType(m_owningFlid);
-							if (m_hvoOwner != 0 && cpt != (int) CellarPropertyType.OwningAtomic)
+							var fs = m_cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>().GetObject(hvo);
+							if (DomainObjectServices.AreEquivalent(fs, FS))
 							{
-								int chvo = m_cache.DomainDataByFlid.get_VecSize(m_hvoOwner, m_owningFlid);
-								for (int ihvo = 0; ihvo < chvo; ihvo++)
-								{
-									int hvo = m_cache.DomainDataByFlid.get_VecItem(m_hvoOwner, m_owningFlid, ihvo);
-									if (hvo == m_fs.Hvo)
-										continue;
-									IFsFeatStruc fs = m_cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>().GetObject(hvo);
-									if (DomainObjectServices.AreEquivalent(fs, m_fs))
-									{
-										m_cache.DomainDataByFlid.DeleteObj(m_fs.Hvo);
-										m_fs = fs;
-										break;
-									}
-								}
+								m_cache.DomainDataByFlid.DeleteObj(FS.Hvo);
+								FS = fs;
+								break;
 							}
-							// If the user emptied all the FeatureSpecs (i.e. chose "None of the above" in each area),
-							// then we need to delete the FsFeatStruc. (LT-13596)
-							if (FS.FeatureSpecsOC.Count == 0)
-							{
-								if (m_fs.CanDelete)
-									m_fs.Delete();
-								m_fs = null;
-							}
-						});
+						}
+					}
+					// If the user emptied all the FeatureSpecs (i.e. chose "None of the above" in each area),
+					// then we need to delete the FsFeatStruc. (LT-13596)
+					if (FS.FeatureSpecsOC.Count == 0)
+					{
+						if (FS.CanDelete)
+						{
+							FS.Delete();
+						}
+						FS = null;
+					}
+				});
 			}
 
 			if (m_propertyTable != null)
@@ -614,16 +604,16 @@ namespace LanguageExplorer.Controls.LexText
 		/// Answer true if the tree node collection, passed to UpdateFeatureStructure,
 		/// will produce a non-empty feature structure.
 		/// </summary>
-		/// <param name="col"></param>
-		/// <returns></returns>
-		private bool CheckFeatureStructure(TreeNodeCollection col)
+		private static bool CheckFeatureStructure(TreeNodeCollection col)
 		{
 			foreach (FeatureTreeNode tn in col)
 			{
 				if (tn.Nodes.Count > 0)
 				{
 					if (CheckFeatureStructure(tn.Nodes))
+					{
 						return true;
+					}
 				}
 				else if (tn.Chosen && (0 != tn.Hvo))
 				{
@@ -636,8 +626,8 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Makes the feature structure reflect the values chosen in the treeview
 		/// </summary>
-		/// <remarks>Is public for Unit Testing</remarks>
 		/// <param name="col">collection of nodes at this level</param>
+		/// <remarks>Is public for Unit Testing</remarks>
 		public void UpdateFeatureStructure(TreeNodeCollection col)
 		{
 			CheckDisposed();
@@ -645,10 +635,12 @@ namespace LanguageExplorer.Controls.LexText
 			foreach (FeatureTreeNode tn in col)
 			{
 				if (tn.Nodes.Count > 0)
+				{
 					UpdateFeatureStructure(tn.Nodes);
+				}
 				else if (tn.Chosen && (0 != tn.Hvo))
 				{
-					var fs = m_fs;
+					var fs = FS;
 					IFsFeatureSpecification val = null;
 					// add any terminal nodes to db
 					BuildFeatureStructure(tn, ref fs, ref val);
@@ -661,23 +653,23 @@ namespace LanguageExplorer.Controls.LexText
 		/// It recurses back up the treeview node path to the top and then builds the feature structure
 		/// as it goes back down.
 		/// </summary>
-		/// <param name="node"></param>
-		/// <param name="fs"></param>
-		/// <param name="val"></param>
-		/// <returns></returns>
 		private void BuildFeatureStructure(FeatureTreeNode node, ref IFsFeatStruc fs, ref IFsFeatureSpecification val)
 		{
 			if (node.Parent != null)
+			{
 				BuildFeatureStructure((FeatureTreeNode)node.Parent, ref fs, ref val);
+			}
 			switch (node.Kind)
 			{
-				case FeatureTreeNodeInfo.NodeKind.Complex:
+				case FeatureTreeNodeKind.Complex:
 					var complexFeat = m_cache.ServiceLocator.GetInstance<IFsComplexFeatureRepository>().GetObject(node.Hvo);
 					var complex = fs.GetOrCreateValue(complexFeat);
 					val = complex;
 					val.FeatureRA = complexFeat;
 					if (fs.TypeRA == null)
+					{
 						fs.TypeRA = m_cache.LanguageProject.MsFeatureSystemOA.TypesOC.SingleOrDefault(type => type.FeaturesRS.Contains(complexFeat));
+					}
 					fs = (IFsFeatStruc)complex.ValueOA;
 					if (fs.TypeRA == null)
 					{
@@ -689,7 +681,7 @@ namespace LanguageExplorer.Controls.LexText
 						}
 					}
 					break;
-				case FeatureTreeNodeInfo.NodeKind.Closed:
+				case FeatureTreeNodeKind.Closed:
 					var closedFeat = m_cache.ServiceLocator.GetInstance<IFsClosedFeatureRepository>().GetObject(node.Hvo);
 					val = fs.GetOrCreateValue(closedFeat);
 					val.FeatureRA = closedFeat;
@@ -699,17 +691,21 @@ namespace LanguageExplorer.Controls.LexText
 						fs.TypeRA = m_cache.LanguageProject.MsFeatureSystemOA.TypesOC.FirstOrDefault(type => type.FeaturesRS.Contains(closedFeat));
 					}
 					break;
-				case FeatureTreeNodeInfo.NodeKind.SymFeatValue:
+				case FeatureTreeNodeKind.SymFeatValue:
 					var closed = val as IFsClosedValue;
 					if (closed != null)
+					{
 						closed.ValueRA = m_cache.ServiceLocator.GetInstance<IFsSymFeatValRepository>().GetObject(node.Hvo);
+					}
 					break;
 			}
 		}
 		protected virtual void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			if (m_highestPOS == null)
+			if (HighestPOS == null)
+			{
 				return;  // nowhere to go
+			}
 			// code in the launcher handles the jump
 			DialogResult = DialogResult.Yes;
 			Close();

@@ -70,11 +70,13 @@ namespace LanguageExplorer.Controls.LexText
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 
-			m_valuesCombo = new FwComboBox();
-			m_valuesCombo.DropDownStyle = ComboBoxStyle.DropDownList;
-			m_valuesCombo.AdjustStringHeight = false;
-			m_valuesCombo.BackColor = SystemColors.Window;
-			m_valuesCombo.Padding = new Padding(0, 1, 0, 0);
+			m_valuesCombo = new FwComboBox
+			{
+				DropDownStyle = ComboBoxStyle.DropDownList,
+				AdjustStringHeight = false,
+				BackColor = SystemColors.Window,
+				Padding = new Padding(0, 1, 0, 0)
+			};
 			m_valuesCombo.SelectedIndexChanged += m_valuesCombo_SelectedIndexChanged;
 
 			Resize += PhonologicalFeatureChooserDlg_Resize;
@@ -85,7 +87,6 @@ namespace LanguageExplorer.Controls.LexText
 			PositionValuesCombo();
 		}
 
-		#region OnLoad
 		/// <summary>
 		/// Overridden to defeat the standard .NET behavior of adjusting size by
 		/// screen resolution. That is bad for this dialog because we remember the size,
@@ -93,18 +94,17 @@ namespace LanguageExplorer.Controls.LexText
 		/// If we defeat it, it may look a bit small the first time at high resolution,
 		/// but at least it will stay the size the user sets.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnLoad(EventArgs e)
 		{
-			Size size = Size;
+			var size = Size;
 			base.OnLoad(e);
 			if (Size != size)
+			{
 				Size = size;
+			}
 			PopulateValuesCombo();
 			PositionValuesCombo();
 		}
-
-		#endregion
 
 		/// <summary>
 		/// Updates the feature constraints in the context.
@@ -113,23 +113,25 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			CheckDisposed();
 
-			List<int> featureHvos = m_bvList.AllItems;
-			foreach (int hvoClosedFeature in featureHvos)
+			var featureHvos = m_bvList.AllItems;
+			foreach (var hvoClosedFeature in featureHvos)
 			{
 				var feat = m_cache.ServiceLocator.GetInstance<IFsFeatDefnRepository>().GetObject(hvoClosedFeature);
-				string str = m_sda.get_UnicodeProp(feat.Hvo, PhonologicalFeaturePublisher.PolarityFlid);
-				if (String.IsNullOrEmpty(str))
+				var str = m_sda.get_UnicodeProp(feat.Hvo, PhonologicalFeaturePublisher.PolarityFlid);
+				if (string.IsNullOrEmpty(str))
 				{
-					IPhFeatureConstraint removedConstr = RemoveFeatureConstraint(m_ctxt.PlusConstrRS, feat) ?? RemoveFeatureConstraint(m_ctxt.MinusConstrRS, feat);
+					var removedConstr = RemoveFeatureConstraint(m_ctxt.PlusConstrRS, feat) ?? RemoveFeatureConstraint(m_ctxt.MinusConstrRS, feat);
 					if (removedConstr != null)
 					{
 						if (!m_rule.FeatureConstraints.Contains(removedConstr))
+						{
 							m_cache.LangProject.PhonologicalDataOA.FeatConstraintsOS.Remove(removedConstr);
+						}
 					}
 				}
 				else
 				{
-					IPhFeatureConstraint var = GetFeatureConstraint(m_rule.FeatureConstraints, feat);
+					var var = GetFeatureConstraint(m_rule.FeatureConstraints, feat);
 					if (var == null)
 					{
 						var = m_cache.ServiceLocator.GetInstance<IPhFeatureConstraintFactory>().Create();
@@ -161,18 +163,15 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			var constrToRemove = GetFeatureConstraint(featConstrs, feat);
 			if (constrToRemove != null)
+			{
 				featConstrs.Remove(constrToRemove);
+			}
 			return constrToRemove;
 		}
 
 		private IPhFeatureConstraint GetFeatureConstraint(IEnumerable<IPhFeatureConstraint> featConstrs, IFsFeatDefn feat)
 		{
-			foreach (var curConstr in featConstrs)
-			{
-				if (curConstr.FeatureRA == feat)
-					return curConstr;
-			}
-			return null;
+			return featConstrs.FirstOrDefault(curConstr => curConstr.FeatureRA == feat);
 		}
 
 		/// <summary>
@@ -183,7 +182,9 @@ namespace LanguageExplorer.Controls.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -194,12 +195,13 @@ namespace LanguageExplorer.Controls.LexText
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
-				if (m_helpProvider != null)
-					m_helpProvider.Dispose();
+				m_helpProvider?.Dispose();
 			}
 			m_cache = null;
 			m_fs = null;
@@ -218,8 +220,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			CheckDisposed();
 
-			IFsFeatStruc fs = ((IPhNCFeatures) ctxt.FeatureStructureRA).FeaturesOA;
-			SetDlgInfo(cache, propertyTable, publisher, ctxt.FeatureStructureRA.Hvo, PhNCFeaturesTags.kflidFeatures, fs, rule, ctxt);
+			SetDlgInfo(cache, propertyTable, publisher, ctxt.FeatureStructureRA.Hvo, PhNCFeaturesTags.kflidFeatures, ((IPhNCFeatures)ctxt.FeatureStructureRA).FeaturesOA, rule, ctxt);
 		}
 
 		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, IPhRegularRule rule)
@@ -269,8 +270,7 @@ namespace LanguageExplorer.Controls.LexText
 				// Get location to the stored values, if any.
 				Point dlgLocation;
 				Size dlgSize;
-				if (m_propertyTable.TryGetValue("phonFeatListDlgLocation", out dlgLocation)
-					&& m_propertyTable.TryGetValue("phonFeatListDlgSize", out dlgSize))
+				if (m_propertyTable.TryGetValue("phonFeatListDlgLocation", out dlgLocation) && m_propertyTable.TryGetValue("phonFeatListDlgSize", out dlgSize))
 				{
 					var rect = new Rectangle(dlgLocation, dlgSize);
 					ScreenHelper.EnsureVisibleRect(ref rect);
@@ -296,12 +296,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private bool ContainsFeature(IEnumerable<IPhFeatureConstraint> vars, IFsFeatDefn feat)
 		{
-			foreach (IPhFeatureConstraint var in vars)
-			{
-				if (var.FeatureRA == feat)
-					return true;
-			}
-			return false;
+			return vars.Any(var => var.FeatureRA == feat);
 		}
 
 		/// <summary>
@@ -325,10 +320,10 @@ namespace LanguageExplorer.Controls.LexText
 										"FollowLink"
 									};
 				var parms = new List<object>
-									{
-										null,
-										m_link
-									};
+				{
+					"AboutToFollowLink",
+					"FollowLink"
+				};
 				m_publisher.Publish(commands, parms);
 			}
 		}
@@ -342,15 +337,18 @@ namespace LanguageExplorer.Controls.LexText
 		private void PositionValuesCombo()
 		{
 			if (m_bvList == null)
+			{
 				return;
-			HScrollProperties hprops = m_bvList.Scroller.HorizontalScroll;
-			int iValueLocationHorizontalOffset = hprops.Value;
-			Rectangle valueLocation = m_bvList.LocationOfCellInSelectedRow("Value");
-			m_valuesCombo.Location = new Point(valueLocation.Left + m_listPanel.Left + 2 - iValueLocationHorizontalOffset,
-											   valueLocation.Top + m_listPanel.Top - 3);
+			}
+			var hprops = m_bvList.Scroller.HorizontalScroll;
+			var iValueLocationHorizontalOffset = hprops.Value;
+			var valueLocation = m_bvList.LocationOfCellInSelectedRow("Value");
+			m_valuesCombo.Location = new Point(valueLocation.Left + m_listPanel.Left + 2 - iValueLocationHorizontalOffset, valueLocation.Top + m_listPanel.Top - 3);
 			m_valuesCombo.Size = new Size(valueLocation.Width + 1, valueLocation.Height + 4);
 			if (!Controls.Contains(m_valuesCombo))
+			{
 				Controls.Add(m_valuesCombo);
+			}
 			if (IsValuesComboBoxVisible(hprops))
 			{
 				m_valuesCombo.Visible = true;
@@ -364,43 +362,49 @@ namespace LanguageExplorer.Controls.LexText
 		}
 		private bool IsValuesComboBoxVisible(HScrollProperties hprops)
 		{
-			int iVerticalScrollBarWidth = (m_bvList.ScrollBar.Visible) ? SystemInformation.VerticalScrollBarWidth : 0;
-			int iHorizontalScrollBarHeight = (hprops.Visible) ? SystemInformation.HorizontalScrollBarHeight : 0;
+			var iVerticalScrollBarWidth = (m_bvList.ScrollBar.Visible) ? SystemInformation.VerticalScrollBarWidth : 0;
+			var iHorizontalScrollBarHeight = (hprops.Visible) ? SystemInformation.HorizontalScrollBarHeight : 0;
 
 			if (m_valuesCombo.Top < (m_listPanel.Top + m_bvList.BrowseView.Top))
+			{
 				return false;  // too high
+			}
 			if (m_valuesCombo.Bottom > (m_listPanel.Bottom - iHorizontalScrollBarHeight))
+			{
 				return false; // too low
+			}
 			if (m_valuesCombo.Right > (m_listPanel.Right - iVerticalScrollBarWidth + 1))
+			{
 				return false; // too far to the right
-			if (m_valuesCombo.Left < m_listPanel.Left)
-				return false; // too far to the left
-			return true;
+			}
+			return m_valuesCombo.Left >= m_listPanel.Left;
 		}
 		private void PopulateValuesCombo()
 		{
-			int selIndex = m_bvList.SelectedIndex;
+			var selIndex = m_bvList.SelectedIndex;
 			if (selIndex < 0)
 			{
 				if (Controls.Contains(m_valuesCombo))
+				{
 					Controls.Remove(m_valuesCombo);
+				}
 				return;
 			}
-			int hvoSel = m_bvList.AllItems[selIndex];
+			var hvoSel = m_bvList.AllItems[selIndex];
 			var feat = m_cache.ServiceLocator.GetInstance<IFsClosedFeatureRepository>().GetObject(hvoSel);
 			m_valuesCombo.Items.Clear();
 			var valHvo = m_sda.get_ObjectProp(hvoSel, PhonologicalFeaturePublisher.ValueFlid);
-			int comboSelectedIndex = -1;
-			int index = 0;
-			var sortedVaues = from v in feat.ValuesOC
-							  orderby v.Abbreviation.BestAnalysisAlternative.Text
-							  select v;
+			var comboSelectedIndex = -1;
+			var index = 0;
+			var sortedVaues = feat.ValuesOC.OrderBy(v => v.Abbreviation.BestAnalysisAlternative.Text);
 			foreach (var val in sortedVaues)
 			{
 				m_valuesCombo.Items.Add(val.Abbreviation.BestAnalysisAlternative);
 				// try to set the selected item
 				if (valHvo == val.Hvo)
+				{
 					comboSelectedIndex = index;
+				}
 				++index;
 			}
 			if (ShowFeatureConstraintValues)
@@ -410,11 +414,11 @@ namespace LanguageExplorer.Controls.LexText
 				m_valuesCombo.Items.Add(LexTextControls.ksFeatConstrDisagree);
 				index++;
 
-				string str = m_sda.get_UnicodeProp(hvoSel, PhonologicalFeaturePublisher.PolarityFlid);
-				for (int i = feat.ValuesOC.Count; i < m_valuesCombo.Items.Count; i++)
+				var str = m_sda.get_UnicodeProp(hvoSel, PhonologicalFeaturePublisher.PolarityFlid);
+				for (var i = feat.ValuesOC.Count; i < m_valuesCombo.Items.Count; i++)
 				{
 					var comboStr = m_valuesCombo.Items[i] as string;
-					if (str == comboStr || (String.IsNullOrEmpty(str) && comboStr == LexTextControls.ks_DontCare_))
+					if (str == comboStr || (string.IsNullOrEmpty(str) && comboStr == LexTextControls.ks_DontCare_))
 					{
 						comboSelectedIndex = i;
 						break;
@@ -429,22 +433,27 @@ namespace LanguageExplorer.Controls.LexText
 			m_valuesCombo.Items.Add(ShowIgnoreInsteadOfDontCare ? LexTextControls.ks_Ignore_ : LexTextControls.ks_DontCare_);
 			m_valuesCombo.SelectedIndex = comboSelectedIndex;
 			if (!Controls.Contains(m_valuesCombo))
+			{
 				Controls.Add(m_valuesCombo);
+			}
 		}
 
 		void m_valuesCombo_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (m_valuesCombo.SelectedIndex == -1)
+			{
 				return;
+			}
 
 			// make sure the dummy value reflects the selected value
-			int selectedRowIndex = m_bvList.SelectedIndex;
-			int hvoSel = m_bvList.AllItems[selectedRowIndex];
+			var selectedRowIndex = m_bvList.SelectedIndex;
+			var hvoSel = m_bvList.AllItems[selectedRowIndex];
 			var feat = m_cache.ServiceLocator.GetInstance<IFsClosedFeatureRepository>().GetObject(hvoSel);
-			int selectedValueIndex = m_valuesCombo.SelectedIndex;
+			var selectedValueIndex = m_valuesCombo.SelectedIndex;
 			// values[selectedValueIndex] is the selected value
 			if (selectedValueIndex >= feat.ValuesOC.Count)
-			{ // is unspecified or is a feature constraint
+			{
+				// is unspecified or is a feature constraint
 				if (ShowFeatureConstraintValues)
 				{
 					// make sure the dummy value reflects the selected value
@@ -452,7 +461,9 @@ namespace LanguageExplorer.Controls.LexText
 					if (str != null)
 					{
 						if (str == LexTextControls.ks_DontCare_)
-							str = "";
+						{
+							str = string.Empty;
+						}
 
 						m_sda.SetUnicode(hvoSel, PhonologicalFeaturePublisher.PolarityFlid, str, str.Length);
 					}
@@ -461,10 +472,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			else
 			{
-				var sortedVaues = from v in feat.ValuesOC
-								  orderby v.Abbreviation.BestAnalysisAlternative.Text
-								  select v;
-				//var val = feat.ValuesOC.Skip(selectedValueIndex).First();
+				var sortedVaues = feat.ValuesOC.OrderBy(v => v.Abbreviation.BestAnalysisAlternative.Text);
 				var val = sortedVaues.ElementAt(selectedValueIndex);
 				m_sda.SetObjProp(feat.Hvo, PhonologicalFeaturePublisher.ValueFlid, val.Hvo);
 			}
@@ -473,14 +481,11 @@ namespace LanguageExplorer.Controls.LexText
 		private void BuildInitialBrowseView()
 		{
 			var configurationParameters = m_propertyTable.GetValue<XElement>("WindowConfiguration");
-			var toolNode = configurationParameters.XPathSelectElement(
-				"controls/parameters/guicontrol[@id='PhonologicalFeaturesFlatList']/parameters");
+			var toolNode = configurationParameters.XPathSelectElement("controls/parameters/guicontrol[@id='PhonologicalFeaturesFlatList']/parameters");
 
 			m_listPanel.SuspendLayout();
-			var sortedFeatureHvos = from s in m_cache.LangProject.PhFeatureSystemOA.FeaturesOC
-								 orderby s.Name.BestAnalysisAlternative.Text
-								 select s.Hvo;
-			int[] featureHvos = sortedFeatureHvos.ToArray();
+			var sortedFeatureHvos = m_cache.LangProject.PhFeatureSystemOA.FeaturesOC.OrderBy(s => s.Name.BestAnalysisAlternative.Text).Select(s => s.Hvo);
+			var featureHvos = sortedFeatureHvos.ToArray();
 			m_sda.CacheVecProp(m_cache.LangProject.Hvo, featureHvos);
 #if RANDYTODO
 			// TODO: call Init Flex Comp after creating BrowseViewer.
@@ -500,22 +505,22 @@ namespace LanguageExplorer.Controls.LexText
 			m_listPanel.ResumeLayout(false);
 		}
 
-		void ScrollBar_Scroll(object sender, ScrollEventArgs e)
+		private void ScrollBar_Scroll(object sender, ScrollEventArgs e)
 		{
 			PositionValuesCombo();
 		}
 
-		void BrowseViewer_ColumnsChanged(object sender, EventArgs e)
+		private void BrowseViewer_ColumnsChanged(object sender, EventArgs e)
 		{
 			PositionValuesCombo();
 		}
 
-		void ScrollBar_ValueChanged(object sender, EventArgs e)
+		private void ScrollBar_ValueChanged(object sender, EventArgs e)
 		{
 			PositionValuesCombo();
 		}
 
-		void m_bvList_Resize(object sender, EventArgs e)
+		private void m_bvList_Resize(object sender, EventArgs e)
 		{
 			PositionValuesCombo();
 		}
@@ -523,10 +528,9 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Load the tree items if the starting point is a feature structure.
 		/// </summary>
-		/// <param name="fs"></param>
 		private void LoadPhonFeats(IFsFeatStruc fs)
 		{
-			m_sda = new PhonologicalFeaturePublisher(m_cache.DomainDataByFlid as ISilDataAccessManaged, m_cache);
+			m_sda = new PhonologicalFeaturePublisher(m_cache.GetManagedSilDataAccess(), m_cache);
 			foreach (IFsClosedFeature feat in m_cache.LangProject.PhFeatureSystemOA.FeaturesOC)
 			{
 				if (fs != null)
@@ -542,11 +546,17 @@ namespace LanguageExplorer.Controls.LexText
 						{
 							string str;
 							if (ContainsFeature(m_ctxt.PlusConstrRS, feat))
+							{
 								str = LexTextControls.ksFeatConstrAgree;
+							}
 							else if (ContainsFeature(m_ctxt.MinusConstrRS, feat))
+							{
 								str = LexTextControls.ksFeatConstrDisagree;
+							}
 							else
-								str = "";
+							{
+								str = string.Empty;
+							}
 							if (!string.IsNullOrEmpty(str))
 							{
 								m_sda.SetUnicode(feat.Hvo, PhonologicalFeaturePublisher.PolarityFlid, str, str.Length);
@@ -582,7 +592,7 @@ namespace LanguageExplorer.Controls.LexText
 				CheckDisposed();
 
 				m_ctxt = value;
-				m_fs = ((IPhNCFeatures) m_ctxt.FeatureStructureRA).FeaturesOA;
+				m_fs = ((IPhNCFeatures)m_ctxt.FeatureStructureRA).FeaturesOA;
 			}
 		}
 
@@ -623,7 +633,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				CheckDisposed();
 
-				string s1 = value ?? LexTextControls.ksPhonologicalFeatures;
+				var s1 = value ?? LexTextControls.ksPhonologicalFeatures;
 				labelPrompt.Text = s1;
 			}
 		}
@@ -760,8 +770,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// If OK, then make FS have the selected feature value(s).
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		private void PhonologicalFeatureChooserDlg_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			if (DialogResult == DialogResult.OK)
@@ -803,15 +811,16 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Answer true if there is some feature with a real value.
 		/// </summary>
-		/// <returns></returns>
 		private bool CheckFeatureStructure()
 		{
-			List<int> featureHvos = m_bvList.AllItems;
-			foreach (int hvoClosedFeature in featureHvos)
+			var featureHvos = m_bvList.AllItems;
+			foreach (var hvoClosedFeature in featureHvos)
 			{
-				int valHvo = m_sda.get_ObjectProp(hvoClosedFeature, PhonologicalFeaturePublisher.ValueFlid);
+				var valHvo = m_sda.get_ObjectProp(hvoClosedFeature, PhonologicalFeaturePublisher.ValueFlid);
 				if (valHvo > 0)
+				{
 					return true;
+				}
 			}
 			return false;
 		}
@@ -819,15 +828,15 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Makes the feature structure reflect the values chosen
 		/// </summary>
-		/// <remarks>Is public for Unit Testing</remarks>
-		public void UpdateFeatureStructure()
+		/// <remarks>Is internal for Unit Testing</remarks>
+		internal void UpdateFeatureStructure()
 		{
 			CheckDisposed();
 
-			List<int> featureHvos = m_bvList.AllItems;
-			foreach (int hvoClosedFeature in featureHvos)
+			var featureHvos = m_bvList.AllItems;
+			foreach (var hvoClosedFeature in featureHvos)
 			{
-				int valHvo = m_sda.get_ObjectProp(hvoClosedFeature, PhonologicalFeaturePublisher.ValueFlid);
+				var valHvo = m_sda.get_ObjectProp(hvoClosedFeature, PhonologicalFeaturePublisher.ValueFlid);
 				if (valHvo > 0)
 				{
 					var feat = m_cache.ServiceLocator.GetInstance<IFsClosedFeatureRepository>().GetObject(hvoClosedFeature);
@@ -839,12 +848,14 @@ namespace LanguageExplorer.Controls.LexText
 			}
 
 			if (ShowFeatureConstraintValues)
+			{
 				UpdateFeatureConstraints();
+			}
 		}
 
 		private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			Guid guid = m_cache.LangProject.PhFeatureSystemOA.Guid;
+			var guid = m_cache.LangProject.PhFeatureSystemOA.Guid;
 			m_link = new FwLinkArgs(AreaServices.PhonologicalFeaturesAdvancedEditMachineName, guid);
 			m_btnCancel.PerformClick();
 			DialogResult = DialogResult.Ignore;
@@ -853,13 +864,15 @@ namespace LanguageExplorer.Controls.LexText
 		private void m_bnHelp_Click(object sender, EventArgs e)
 		{
 			if (m_propertyTable.GetValue<string>(AreaServices.ToolChoice).Substring(0, 7) == "natural")
+			{
 				m_helpTopic = "khtpChoose-Phonemes";
+			}
 			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
 		}
 
-		private class PhonologicalFeaturePublisher : ObjectListPublisher
+		private sealed class PhonologicalFeaturePublisher : ObjectListPublisher
 		{
-			public const int ListFlid = 89999988;
+			private const int ListFlid = 89999988;
 			public const int ValueFlid = 89999977;
 			public const int PolarityFlid = 89999966;
 
@@ -883,21 +896,24 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					int valHvo;
 					if (!m_objProps.TryGetValue(hvo, out valHvo))
+					{
 						valHvo = 0;
+					}
 					return valHvo;
 				}
-				else
-				{
-					return base.get_ObjectProp(hvo, tag);
-				}
+				return base.get_ObjectProp(hvo, tag);
 			}
 
 			public override void SetObjProp(int hvo, int tag, int hvoObj)
 			{
 				if (tag == ValueFlid)
+				{
 					m_objProps[hvo] = hvoObj;
+				}
 				else
+				{
 					base.SetObjProp(hvo, tag, hvoObj);
+				}
 			}
 			public override string get_UnicodeProp(int hvo, int tag)
 			{
@@ -905,46 +921,43 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					string str;
 					if (!m_unicodeProps.TryGetValue(hvo, out str))
-						str = "";
+					{
+						str = string.Empty;
+					}
 					return str;
 				}
-				else
-				{
-					return base.get_UnicodeProp(hvo, tag);
-				}
+				return base.get_UnicodeProp(hvo, tag);
 			}
 			/// <summary>
 			/// Called when processing the where clause of the area configuration XML
 			/// </summary>
-			/// <param name="hvo"></param>
-			/// <param name="tag"></param>
-			/// <returns></returns>
 			public override ITsString get_StringProp(int hvo, int tag)
 			{
 				if (tag == PolarityFlid)
 				{
 					string str;
 					if (!m_unicodeProps.TryGetValue(hvo, out str))
-						str = "";
-					var tssString = TsStringUtils.MakeString(str, m_cache.DefaultUserWs);
+					{
+						str = string.Empty;
+					}
+					return TsStringUtils.MakeString(str, m_cache.DefaultUserWs);
+				}
+				return base.get_StringProp(hvo, tag);
+			}
 
-					return tssString;
+			public override void SetUnicode(int hvo, int tag, string rgch, int cch)
+			{
+				if (tag == PolarityFlid)
+				{
+					m_unicodeProps[hvo] = rgch.Substring(0, cch);
 				}
 				else
 				{
-					return base.get_StringProp(hvo, tag);
+					base.SetUnicode(hvo, tag, rgch, cch);
 				}
 			}
 
-			public override void SetUnicode(int hvo, int tag, string _rgch, int cch)
-			{
-				if (tag == PolarityFlid)
-					m_unicodeProps[hvo] = _rgch.Substring(0, cch);
-				else
-					base.SetUnicode(hvo, tag, _rgch, cch);
-			}
-
-			private class PhonologicalFeatureMdc : LcmMetaDataCacheDecoratorBase
+			private sealed class PhonologicalFeatureMdc : LcmMetaDataCacheDecoratorBase
 			{
 				public PhonologicalFeatureMdc(IFwMetaDataCacheManaged mdc)
 					: base(mdc)
@@ -953,22 +966,26 @@ namespace LanguageExplorer.Controls.LexText
 
 				public override void AddVirtualProp(string bstrClass, string bstrField, int luFlid, int type)
 				{
-					throw new NotImplementedException();
+					throw new NotSupportedException();
 				}
 
 				public override int GetFieldId(string bstrClassName, string bstrFieldName, bool fIncludeBaseClasses)
 				{
 					if (bstrClassName == "FsClosedFeature" && bstrFieldName == "DummyPolarity")
+					{
 						return PolarityFlid;
+					}
+
 					if (bstrClassName == "FsClosedFeature" && bstrFieldName == "DummyValue")
+					{
 						return ValueFlid;
+					}
 					return base.GetFieldId(bstrClassName, bstrFieldName, fIncludeBaseClasses);
 				}
 				public override int GetFieldType(int luFlid)
 				{
 					return luFlid == PolarityFlid ? (int)CellarPropertyType.Unicode : base.GetFieldType(luFlid);
 				}
-
 			}
 		}
 	}

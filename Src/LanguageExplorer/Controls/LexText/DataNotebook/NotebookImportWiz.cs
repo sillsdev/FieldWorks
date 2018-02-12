@@ -1003,8 +1003,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 		/// <summary>
 		/// See if the passed in file is a valid XML mapping file.
 		/// </summary>
-		/// <param name="mapFile">file name to check</param>
-		/// <returns>true if valid</returns>
 		private static bool IsValidMapFile(string mapFile)
 		{
 			if (string.IsNullOrEmpty(mapFile) || !File.Exists(mapFile))
@@ -3244,7 +3242,7 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			{
 				return false;
 			}
-			var days_in_month = 31;	// most common value
+			int days_in_month;
 			if (year == 1752 && month == 9)
 			{
 				days_in_month = 19; // the month the calendar was changed
@@ -3253,20 +3251,39 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			{
 				switch (month)
 				{
-					case 2:     // February
-						// Note to unknown future developer: This is wrong,
-						// in that it leaves out handling 400 years, which is a leap year.
-						// I suspect that part about 1000 had to do with the year 2000,
-						// which was a leap year, but that was because
-						// it was divisible by 400, not because it was divisible by 100.
-						// For instance, the upcoming year 3000 will not be a leap year, as this code claims.
-						days_in_month = year%4 == 0 && year%100 != 0 || year%1000 == 0 ? 29 : 28;
-						break;
+					case 2: // February
+						if (year % 400 == 0)
+						{
+							// Every evenly divided 400 years: IS a leap year.
+							days_in_month = 29;
+							break;
+						}
+						if (year % 100 == 0)
+						{
+							// Remaining evenly divided 100 years: IS NOT a leap year.
+							days_in_month = 28;
+							break;
+						}
+						if (year % 4 == 0)
+						{
+							// Remaining evenly divided 4: IS a leap year.
+							days_in_month = 29;
+							break;
+						}
+						else
+						{
+							// Remaining years: NOT a leap year.
+							days_in_month = 28;
+							break;
+						}
 					case 4:		// April
 					case 6:		// June
 					case 9:		// September
 					case 11:	// November
 						days_in_month = 30;
+						break;
+					default:
+						days_in_month = 31;
 						break;
 				}
 			}

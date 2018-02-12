@@ -347,7 +347,7 @@ namespace LanguageExplorer.SendReceive
 				return;
 			}
 			// Do merciful import.
-			ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth);
+			ImportLiftCommon(MergeStyle.MsKeepBoth);
 			PropertyTable.SetProperty(CommonBridgeServices.LastBridgeUsed, CommonBridgeServices.LiftBridge, SettingsGroup.LocalSettings, true, false);
 			Publisher.Publish("MasterRefresh", null);
 		}
@@ -449,9 +449,9 @@ namespace LanguageExplorer.SendReceive
 			switch (previousImportStatus)
 			{
 				case ImportFailureStatus.BasicImportNeeded:
-					return !ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth);
+					return !ImportLiftCommon(MergeStyle.MsKeepBoth);
 				case ImportFailureStatus.StandardImportNeeded:
-					return !ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepOnlyNew);
+					return !ImportLiftCommon(MergeStyle.MsKeepOnlyNew);
 				case ImportFailureStatus.NoImportNeeded:
 					// Nothing to do. :-)
 					break;
@@ -475,7 +475,7 @@ namespace LanguageExplorer.SendReceive
 		/// </summary>
 		/// <param name="mergeStyle">FlexLiftMerger.MergeStyle.MsKeepNew or FlexLiftMerger.MergeStyle.MsKeepOnlyNew</param>
 		/// <returns>'true' if the import succeeded, otherwise 'false'.</returns>
-		private bool ImportLiftCommon(FlexLiftMerger.MergeStyle mergeStyle)
+		private bool ImportLiftCommon(MergeStyle mergeStyle)
 		{
 			using (new WaitCursor(ParentForm))
 			using (var progressDlg = new ProgressDialogWithTask(ParentForm))
@@ -483,7 +483,7 @@ namespace LanguageExplorer.SendReceive
 				_progressDlg = progressDlg;
 				try
 				{
-					if (mergeStyle == FlexLiftMerger.MergeStyle.MsKeepBoth)
+					if (mergeStyle == MergeStyle.MsKeepBoth)
 					{
 						LiftImportFailureServices.RegisterBasicImportFailure(Path.GetDirectoryName(_liftPathname));
 					}
@@ -526,9 +526,9 @@ namespace LanguageExplorer.SendReceive
 		private object ImportLiftLexicon(IProgress progressDialog, params object[] parameters)
 		{
 			var liftPathname = parameters[0].ToString();
-			var mergeStyle = (FlexLiftMerger.MergeStyle)parameters[1];
+			var mergeStyle = (MergeStyle)parameters[1];
 			// If we use true while importing changes from repo it will fail to copy any pix/aud files that have changed.
-			var fTrustModTimes = mergeStyle != FlexLiftMerger.MergeStyle.MsKeepOnlyNew;
+			var fTrustModTimes = mergeStyle != MergeStyle.MsKeepOnlyNew;
 			if (_progressDlg == null)
 			{
 				_progressDlg = progressDialog;
@@ -827,7 +827,7 @@ namespace LanguageExplorer.SendReceive
 			{
 				return true;
 			}
-			if (!ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepOnlyNew))
+			if (!ImportLiftCommon(MergeStyle.MsKeepOnlyNew))
 			{
 				return false;
 			}
@@ -906,7 +906,7 @@ namespace LanguageExplorer.SendReceive
 		{
 			using (var liftBridge = new LiftBridge(cache, liftPath, parentForm))
 			{
-				return liftBridge.ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth); // should be a new project
+				return liftBridge.ImportLiftCommon(MergeStyle.MsKeepBoth); // should be a new project
 			}
 		}
 	}

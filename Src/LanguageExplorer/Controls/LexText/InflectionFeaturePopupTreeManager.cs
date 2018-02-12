@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -31,46 +31,37 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected override TreeNode MakeMenuItems(PopupTree popupTree, int hvoTarget)
 		{
-			int tagNamePOS = UseAbbr ?
-				CmPossibilityTags.kflidAbbreviation :
-				CmPossibilityTags.kflidName;
-
-			List<HvoTreeNode> relevantPartsOfSpeech = new List<HvoTreeNode>();
-			InflectionClassPopupTreeManager.GatherPartsOfSpeech(Cache, List.Hvo,
-				CmPossibilityListTags.kflidPossibilities,
-				CmPossibilityTags.kflidSubPossibilities,
-				PartOfSpeechTags.kflidInflectableFeats,
-				tagNamePOS, WritingSystem,
-				relevantPartsOfSpeech);
+			var tagNamePOS = UseAbbr ? CmPossibilityTags.kflidAbbreviation : CmPossibilityTags.kflidName;
+			var relevantPartsOfSpeech = new List<HvoTreeNode>();
+			InflectionClassPopupTreeManager.GatherPartsOfSpeech(Cache, List.Hvo, CmPossibilityListTags.kflidPossibilities, CmPossibilityTags.kflidSubPossibilities, PartOfSpeechTags.kflidInflectableFeats, tagNamePOS, WritingSystem, relevantPartsOfSpeech);
 			relevantPartsOfSpeech.Sort();
 			TreeNode match = null;
-			foreach(HvoTreeNode item in relevantPartsOfSpeech)
+			foreach(var item in relevantPartsOfSpeech)
 			{
 				popupTree.Nodes.Add(item);
 				var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(item.Hvo);
-				foreach(IFsFeatStruc fs in pos.ReferenceFormsOC)
+				foreach(var fs in pos.ReferenceFormsOC)
 				{
 					// Note: beware of using fs.ShortName. That can be
 					// absolutely EMPTY (if the user has turned off the 'Show Abbreviation as its label'
 					// field for both the feature category and value).
 					// ChooserName shows the short name if it is non-empty, otherwise the long name.
-					HvoTreeNode node = new HvoTreeNode(fs.ChooserNameTS, fs.Hvo);
+					var node = new HvoTreeNode(fs.ChooserNameTS, fs.Hvo);
 					item.Nodes.Add(node);
 					if (fs.Hvo == hvoTarget)
+					{
 						match = node;
+					}
 				}
-				item.Nodes.Add(new HvoTreeNode(
-					TsStringUtils.MakeString(LexTextControls.ksChooseInflFeats, Cache.WritingSystemFactory.UserWs),
-					kMore));
+				item.Nodes.Add(new HvoTreeNode(TsStringUtils.MakeString(LexTextControls.ksChooseInflFeats, Cache.WritingSystemFactory.UserWs), kMore));
 			}
 			return match;
 		}
 
 		protected override void m_treeCombo_AfterSelect(object sender, TreeViewEventArgs e)
 		{
-			HvoTreeNode selectedNode = e.Node as HvoTreeNode;
-			PopupTree pt = GetPopupTree();
-
+			var selectedNode = e.Node as HvoTreeNode;
+			var pt = GetPopupTree();
 			switch (selectedNode.Hvo)
 			{
 				case kMore:
@@ -82,19 +73,21 @@ namespace LanguageExplorer.Controls.LexText
 					// Whatever happens below, we don't want to actually leave the "More..." node selected!
 					// This is at least required if the user selects "Cancel" from the dialog below.
 					pt.Hide();
-					using (MsaInflectionFeatureListDlg dlg = new MsaInflectionFeatureListDlg())
+					using (var dlg = new MsaInflectionFeatureListDlg())
 					{
-						HvoTreeNode parentNode = selectedNode.Parent as HvoTreeNode;
-						int hvoPos = parentNode.Hvo;
+						var parentNode = selectedNode.Parent as HvoTreeNode;
+						var hvoPos = parentNode.Hvo;
 						var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoPos);
 						dlg.SetDlgInfo(Cache, m_propertyTable, pos);
 						switch (dlg.ShowDialog(ParentForm))
 						{
 							case DialogResult.OK:
 							{
-								int hvoFs = 0;
+								var hvoFs = 0;
 								if (dlg.FS != null)
+								{
 									hvoFs = dlg.FS.Hvo;
+								}
 								LoadPopupTree(hvoFs);
 								// In the course of loading the popup tree, we will have selected the hvoFs item, and triggered an AfterSelect.
 								// But, it will have had an Unknown action, and thus will not trigger some effects we want.
@@ -111,15 +104,15 @@ namespace LanguageExplorer.Controls.LexText
 							{
 								// go to m_highestPOS in editor
 								var commands = new List<string>
-									{
-										"AboutToFollowLink",
-										"FollowLink"
-									};
-											var parms = new List<object>
-									{
-										null,
-										new FwLinkArgs(AreaServices.PosEditMachineName, dlg.HighestPOS.Guid)
-									};
+								{
+									"AboutToFollowLink",
+									"FollowLink"
+								};
+								var parms = new List<object>
+								{
+									null,
+									new FwLinkArgs(AreaServices.PosEditMachineName, dlg.HighestPOS.Guid)
+								};
 								m_publisher.Publish(commands, parms);
 								if (ParentForm != null && ParentForm.Modal)
 								{
@@ -146,7 +139,9 @@ namespace LanguageExplorer.Controls.LexText
 			// FWR-3432 - If we get here and we still haven't got a valid Hvo, don't continue
 			// on to the base method. It'll crash.
 			if (selectedNode.Hvo == kMore)
+			{
 				return;
+			}
 			base.m_treeCombo_AfterSelect(sender, e);
 		}
 	}

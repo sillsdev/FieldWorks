@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,11 +26,11 @@ namespace LanguageExplorer.Controls.LexText
 
 		#region Data members
 
-		private bool m_skipCheck = false;
+		private bool m_skipCheck;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private LcmCache m_cache;
 		private ILexEntry m_le;
-		private int m_newSenseID = 0;
+		private int m_newSenseID;
 
 
 		private System.Windows.Forms.Label label1;
@@ -57,7 +57,9 @@ namespace LanguageExplorer.Controls.LexText
 		private void BasicInit()
 		{
 			if (m_fwtbCitationForm != null)
+			{
 				return;
+			}
 			//
 			// Required for Windows Form Designer support
 			//
@@ -86,7 +88,9 @@ namespace LanguageExplorer.Controls.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -94,17 +98,16 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		protected override void Dispose(bool disposing )
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 
 			}
 			m_le = null;
@@ -116,10 +119,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// This sets the original citation form into the dialog.
 		/// </summary>
-		/// <param name="tssCitationForm"></param>
-		/// <param name="le"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
 		public void SetDlgInfo(ITsString tssCitationForm, ILexEntry le, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			CheckDisposed();
@@ -130,9 +129,9 @@ namespace LanguageExplorer.Controls.LexText
 			m_le = le;
 			m_cache = le.Cache;
 
-			IWritingSystemContainer wsContainer = m_cache.ServiceLocator.WritingSystems;
-			CoreWritingSystemDefinition defVernWs = wsContainer.DefaultVernacularWritingSystem;
-			CoreWritingSystemDefinition defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
+			var wsContainer = m_cache.ServiceLocator.WritingSystems;
+			var defVernWs = wsContainer.DefaultVernacularWritingSystem;
+			var defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
 			m_fwtbCitationForm.Font = new Font(defVernWs.DefaultFontName, 10);
 			m_fwtbGloss.Font = new Font(defAnalWs.DefaultFontName, 10);
 			var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
@@ -146,16 +145,15 @@ namespace LanguageExplorer.Controls.LexText
 			m_fwtbGloss.StyleSheet = stylesheet;
 			m_fwtbGloss.AdjustStringHeight = false;
 			m_fwtbCitationForm.Tss = tssCitationForm;
-			m_fwtbGloss.Text = String.Empty;
+			m_fwtbGloss.Text = string.Empty;
 			m_fwtbCitationForm.HasBorder = false;
 
 			m_msaGroupBox.Initialize(m_cache, propertyTable, publisher, this, new SandboxGenericMSA());
 
 			// get the current morph type from the lexical entry.
-			IMoMorphType mmt;
 			foreach (var mf in le.AlternateFormsOS)
 			{
-				mmt = mf.MorphTypeRA;
+				var mmt = mf.MorphTypeRA;
 				if (mmt != null)
 				{
 					m_msaGroupBox.MorphTypePreference = mmt;
@@ -175,9 +173,9 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void AdjustHeightAndPositions(FwTextBox fwtb)
 		{
-			int oldHeight = fwtb.Height;
-			int newHeight = Math.Max(oldHeight, fwtb.PreferredHeight);
-			int delta = newHeight - oldHeight;
+			var oldHeight = fwtb.Height;
+			var newHeight = Math.Max(oldHeight, fwtb.PreferredHeight);
+			var delta = newHeight - oldHeight;
 			if (delta > 0)
 			{
 				fwtb.Height = newHeight;
@@ -187,9 +185,9 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void AdjustHeightAndPositions(MSAGroupBox msagb)
 		{
-			int oldHeight = msagb.Height;
-			int newHeight = Math.Max(oldHeight, msagb.PreferredHeight);
-			int delta = newHeight - oldHeight;
+			var oldHeight = msagb.Height;
+			var newHeight = Math.Max(oldHeight, msagb.PreferredHeight);
+			var delta = newHeight - oldHeight;
 			if (delta > 0)
 			{
 				msagb.AdjustInternalControlsAndGrow();
@@ -333,20 +331,17 @@ namespace LanguageExplorer.Controls.LexText
 					if (m_fwtbGloss.Text == String.Empty)
 					{
 						e.Cancel = true;
-						MessageBox.Show(this, LexTextControls.ksFillInGloss,
-							LexTextControls.ksMissingInformation,
-							MessageBoxButtons.OK, MessageBoxIcon.Information);
+						MessageBox.Show(this, LexTextControls.ksFillInGloss, LexTextControls.ksMissingInformation, MessageBoxButtons.OK, MessageBoxIcon.Information);
 						return;
 					}
 
 					using (new WaitCursor(this))
 					{
-						m_cache.DomainDataByFlid.BeginUndoTask(LexTextControls.ksUndoCreateNewSense,
-							LexTextControls.ksRedoCreateNewSense);
+						m_cache.DomainDataByFlid.BeginUndoTask(LexTextControls.ksUndoCreateNewSense, LexTextControls.ksRedoCreateNewSense);
 
 						var lsNew = m_cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 						m_le.SensesOS.Add(lsNew);
-						int defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+						var defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
 						lsNew.Gloss.set_String(defAnalWs, TsStringUtils.MakeString(m_fwtbGloss.Text, defAnalWs));
 
 						lsNew.SandboxMSA = m_msaGroupBox.SandboxMSA;

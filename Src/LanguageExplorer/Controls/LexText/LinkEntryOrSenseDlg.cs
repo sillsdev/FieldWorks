@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -49,22 +49,13 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		protected override WindowParams DefaultWindowParams
+		protected override WindowParams DefaultWindowParams => new WindowParams
 		{
-			get
-			{
-				return new WindowParams
-				{
-					m_title = LexTextControls.ksChooseLexEntryOrSense,
-					m_btnText = LexTextControls.ks_OK
-				};
-			}
-		}
+			m_title = LexTextControls.ksChooseLexEntryOrSense,
+			m_btnText = LexTextControls.ks_OK
+		};
 
-		protected override string PersistenceLabel
-		{
-			get { return "LinkEntryOrSense"; }
-		}
+		protected override string PersistenceLabel => "LinkEntryOrSense";
 
 		/// <summary>
 		/// Gets the database id of the selected object.
@@ -76,15 +67,21 @@ namespace LanguageExplorer.Controls.LexText
 				CheckDisposed();
 
 				if (m_rbEntry.Checked)
+				{
 					return m_selObject;
+				}
 				if (m_fNewlyCreated)
+				{
 					return m_newSense;
+				}
 				if (m_fwcbSenses.SelectedIndex == -1)
 				{
 					if (m_selObject != null)
 					{
 						if (!(m_selObject is ILexEntry) || ((ILexEntry)m_selObject).SensesOS.Count == 0)
+						{
 							return null; // We want a sense here, and there isn't one.
+						}
 						// Just select the first sense, since the user used a similar entry in the Create dlg,
 						// and the code doesn't then let them choose another sense, before closing.
 						// Another option would be to populate the senses list, and let the user select one,
@@ -126,16 +123,18 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
-			if( disposing )
+			if (disposing)
 			{
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		/// <summary>
@@ -148,7 +147,7 @@ namespace LanguageExplorer.Controls.LexText
 			//Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
 
-			SetDlgInfo(cache, null);
+			SetDlgInfo(cache, (WindowParams)null);
 		}
 
 		///  <summary />
@@ -164,7 +163,7 @@ namespace LanguageExplorer.Controls.LexText
 
 			//Set the senses control so that it conforms to the size of the
 			//DefaultAnalysisWritingSystem
-			CoreWritingSystemDefinition defAnalWs = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			var defAnalWs = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			m_fwcbSenses.WritingSystemCode = defAnalWs.Handle;
 			// the default font is set to size 100, so that when adding strings to the control
 			// this becomes a limit.
@@ -191,11 +190,11 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			// Clear out senses combo box, no matter how the dlg is being used.
 			m_fwcbSenses.Items.Clear();
-			m_fwcbSenses.Text = String.Empty;
+			m_fwcbSenses.Text = string.Empty;
 			m_senses.Clear();
 
-			bool okBtnEnabled = false;
-			bool senseControlsEnabled = false;
+			var okBtnEnabled = false;
+			var senseControlsEnabled = false;
 			if (m_selObject != null)
 			{
 				if (m_rbSense.Checked)
@@ -386,6 +385,5 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 		#endregion Event handlers
-
 	}
 }

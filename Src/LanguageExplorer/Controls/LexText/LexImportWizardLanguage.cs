@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -39,43 +39,27 @@ namespace LanguageExplorer.Controls.LexText
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 		// class to contain 'ws' information to be put in combo boxes
-		class WsInfo
+		private sealed class WsInfo
 		{
-			private readonly string m_name;
-			private readonly string m_id;
-			private readonly string m_map;
-
 			public WsInfo()
 			{
-				m_name = LexTextControls.ksIgnore;
+				Name = LexTextControls.ksIgnore;
 			}
 
 			public WsInfo(string name, string id, string map)
 			{
-				m_name = name;
-				m_id = id;
-				m_map = map;
+				Name = name;
+				Id = id;
+				Map = map;
 			}
 
-			public string Name
-			{
-				get { return m_name; }
-			}
+			private string Name { get; }
 
-			public string Id
-			{
-				get { return m_id; }
-			}
+			public string Id { get; }
 
-			public string KEY
-			{
-				get { return Id; }
-			}
+			public string Key => Id;
 
-			public string Map
-			{
-				get { return m_map; }
-			}
+			public string Map { get; }
 
 			public override string ToString()
 			{
@@ -85,8 +69,6 @@ namespace LanguageExplorer.Controls.LexText
 
 		private readonly Dictionary<string, WsInfo> m_wsInfo;	// hash of wsInfo
 		private string m_blankEC = Sfm2Xml.STATICS.AlreadyInUnicode;
-//		private WsInfo m_wsiDefault;
-
 		private string m_LangDesc;
 		private string m_wsName;
 		private string m_encConverter;
@@ -94,16 +76,13 @@ namespace LanguageExplorer.Controls.LexText
 		private bool m_LinguaLinksImport;
 		private Button buttonHelp; // (Bev) marks when a LL import is in progress
 		private Hashtable m_existingLangDescriptors;
-
 		private string m_helpTopic;
 		private AddWritingSystemButton btnAddWS;
 		private HelpProvider helpProvider;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LexImportWizardLanguage"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private LexImportWizardLanguage()
 		{
 			//
@@ -118,16 +97,9 @@ namespace LanguageExplorer.Controls.LexText
 			btnOK.Enabled = false;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LexImportWizardLanguage"/> class.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="existingLangDesc">The existing lang descriptors with currently
-		/// defined values.</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// <param name="app">The app.</param>
-		/// ------------------------------------------------------------------------------------
 		public LexImportWizardLanguage(LcmCache cache, Hashtable existingLangDesc,
 			IHelpTopicProvider helpTopicProvider, IApp app) : this()
 		{
@@ -138,16 +110,10 @@ namespace LanguageExplorer.Controls.LexText
 			setupHelp(helpTopicProvider);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LexImportWizardLanguage"/> class.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// <param name="app">The app.</param>
-		/// ------------------------------------------------------------------------------------
-		public LexImportWizardLanguage(LcmCache cache, IHelpTopicProvider helpTopicProvider,
-			IApp app) : this(cache, new Hashtable(), helpTopicProvider, app)
+		public LexImportWizardLanguage(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app) : this(cache, new Hashtable(), helpTopicProvider, app)
 		{
 			m_LinguaLinksImport = true;
 			tbLangDesc.ReadOnly = true; // don't let them change the language name
@@ -186,8 +152,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_AddUsage = false;	// modify case
 		}
 
-		public void GetCurrentLangInfo(out string langDescriptor, out string wsName,
-			out string encConverter, out string wsId)
+		public void GetCurrentLangInfo(out string langDescriptor, out string wsName, out string encConverter, out string wsId)
 		{
 			CheckDisposed();
 
@@ -205,7 +170,9 @@ namespace LanguageExplorer.Controls.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -216,14 +183,13 @@ namespace LanguageExplorer.Controls.LexText
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}
@@ -372,10 +338,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			else
 			{
-				if (m_AddUsage)
-					Text = LexTextControls.ksAddLangMapping;
-				else
-					Text = LexTextControls.ksModifyLangMapping;
+				Text = m_AddUsage ? LexTextControls.ksAddLangMapping : LexTextControls.ksModifyLangMapping;
 			}
 
 			tbLangDesc.Text = m_LangDesc;
@@ -384,7 +347,7 @@ namespace LanguageExplorer.Controls.LexText
 			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystemManager.WritingSystems)
 			{
 				var wsi = new WsInfo(ws.DisplayLabel, ws.Id, ws.LegacyMapping);
-				m_wsInfo.Add(wsi.KEY, wsi);
+				m_wsInfo.Add(wsi.Key, wsi);
 				cbWS.Items.Add(wsi);
 			}
 
@@ -394,12 +357,14 @@ namespace LanguageExplorer.Controls.LexText
 			btnAddWS.Initialize(m_cache, m_helpTopicProvider, m_app, m_cache.ServiceLocator.WritingSystemManager.WritingSystems);
 
 			// select the proper index if there is a valid writing system
-			int index = 0;
+			var index = 0;
 			if (!string.IsNullOrEmpty(m_wsName))
 			{
 				index = cbWS.FindStringExact(m_wsName);
 				if (index < 0)
+				{
 					index = 0;
+				}
 			}
 			cbWS.SelectedIndex = index;
 
@@ -410,7 +375,9 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				index = cbEC.FindStringExact(m_encConverter);
 				if (index < 0)
+				{
 					index = 0;
+				}
 			}
 			cbEC.SelectedIndex = index;
 		}
@@ -422,16 +389,18 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			// Added to make the list of encoding converters match the list that is given when
 			// the add new converter option is selected. (LT-2955)
-			EncConverters encConv = new EncConverters();
-			System.Collections.IDictionaryEnumerator de = encConv.GetEnumerator();
+			var encConv = new EncConverters();
+			var de = encConv.GetEnumerator();
 			cbEC.BeginUpdate();
 			cbEC.Items.Clear();
 			cbEC.Sorted = true;
 			while (de.MoveNext())
 			{
-				string name = de.Key as string;
+				var name = de.Key as string;
 				if (name != null)
+				{
 					cbEC.Items.Add(name);
+				}
 			}
 			cbEC.Sorted = false;
 			cbEC.Items.Insert(0, m_blankEC);
@@ -440,22 +409,19 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void btnAddWS_WritingSystemAdded(object sender, EventArgs e)
 		{
-			CoreWritingSystemDefinition ws = btnAddWS.NewWritingSystem;
+			var ws = btnAddWS.NewWritingSystem;
 			if (ws != null)
 			{
-				string mapName = ws.LegacyMapping;
+				var mapName = ws.LegacyMapping;
 				var wsi = new WsInfo(ws.DisplayLabel, ws.Id, mapName);
-				m_wsInfo.Add(wsi.KEY, wsi);
+				m_wsInfo.Add(wsi.Key, wsi);
 
 				// now select it for the ws combo box
-				int index = cbWS.Items.Add(wsi);
+				var index = cbWS.Items.Add(wsi);
 				cbWS.SelectedIndex = index;
 
 				// now if there's an encoding converter for the ws, select it
-				if (String.IsNullOrEmpty(mapName))
-					index = cbEC.FindStringExact(m_blankEC);
-				else
-					index = cbEC.Items.Add(mapName);
+				index = string.IsNullOrEmpty(mapName) ? cbEC.FindStringExact(m_blankEC) : cbEC.Items.Add(mapName);
 				cbEC.SelectedIndex = index;
 			}
 		}
@@ -464,9 +430,8 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			try
 			{
-				string prevEC = cbEC.Text;
-				using (AddCnvtrDlg dlg = new AddCnvtrDlg(m_helpTopicProvider, m_app, null,
-					cbEC.Text, null, false))
+				var prevEC = cbEC.Text;
+				using (AddCnvtrDlg dlg = new AddCnvtrDlg(m_helpTopicProvider, m_app, null, cbEC.Text, null, false))
 				{
 					dlg.ShowDialog();
 
@@ -475,30 +440,37 @@ namespace LanguageExplorer.Controls.LexText
 
 					// Either select the new one or select the old one
 					if (dlg.DialogResult == DialogResult.OK && !String.IsNullOrEmpty(dlg.SelectedConverter))
+					{
 						cbEC.SelectedItem = dlg.SelectedConverter;
+					}
 					else if (cbEC.Items.Count > 0)
+					{
 						cbEC.SelectedItem = prevEC; // preserve selection if possible
+					}
 				}
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(String.Format(LexTextControls.ksErrorAccessingEncodingConverters, ex.Message));
-				return;
+				MessageBox.Show(string.Format(LexTextControls.ksErrorAccessingEncodingConverters, ex.Message));
 			}
 		}
 
 		private void tbLangDesc_TextChanged(object sender, System.EventArgs e)
 		{
-			bool enableOK = false;	// default to false
-			string currentDesc = tbLangDesc.Text;
+			var enableOK = false;
+			var currentDesc = tbLangDesc.Text;
 			if (currentDesc.Length > 0)
 			{
 				if (!m_existingLangDescriptors.ContainsKey(currentDesc))
+				{
 					enableOK = true;
+				}
 				else if (m_AddUsage == false)	// modify case
 				{
-					if (currentDesc == m_LangDesc)	// can be original value
+					if (currentDesc == m_LangDesc) // can be original value
+					{
 						enableOK = true;
+					}
 				}
 			}
 			btnOK.Enabled = enableOK;
@@ -510,7 +482,7 @@ namespace LanguageExplorer.Controls.LexText
 			if (m_wsInfo != null)
 			{
 				// (Bev) pick up the current writing system
-				WsInfo wsi = cbWS.SelectedItem as WsInfo;
+				var wsi = cbWS.SelectedItem as WsInfo;
 				if (wsi != null)
 				{
 					if (wsi.Map != null)
@@ -522,7 +494,7 @@ namespace LanguageExplorer.Controls.LexText
 					{
 						// (Bev) defaults if the writing system is not associated with an encoding converter
 						// REVIEW: SHOULD THIS NAME BE LOCALIZED?
-						cbEC.Text = (m_LinguaLinksImport == true) ? "Windows1252<>Unicode" : m_blankEC;
+						cbEC.Text = m_LinguaLinksImport ? "Windows1252<>Unicode" : m_blankEC;
 					}
 				}
 			}

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,7 +28,9 @@ namespace LanguageExplorer.Controls.LexText
 			InitializeComponent();
 
 			if (paren)
+			{
 				m_bracketLabel.Text = ")";
+			}
 
 			AccessibleName = GetType().Name;
 
@@ -83,7 +85,9 @@ namespace LanguageExplorer.Controls.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -94,7 +98,9 @@ namespace LanguageExplorer.Controls.LexText
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -217,9 +223,13 @@ namespace LanguageExplorer.Controls.LexText
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
 			if (Maximum == -1 || Minimum <= Maximum)
+			{
 				DialogResult = DialogResult.OK;
+			}
 			else
+			{
 				MessageBox.Show(LexTextControls.ksContextOccurrenceDlgError);
+			}
 		}
 
 		private void m_btnCancel_Click(object sender, EventArgs e)

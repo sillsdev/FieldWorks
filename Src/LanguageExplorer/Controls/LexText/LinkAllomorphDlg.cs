@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,22 +22,13 @@ namespace LanguageExplorer.Controls.LexText
 
 		#region Properties
 
-		protected override WindowParams DefaultWindowParams
+		protected override WindowParams DefaultWindowParams => new WindowParams
 		{
-			get
-			{
-				return new WindowParams
-				{
-					m_title = LexTextControls.ksChooseAllomorph,
-					m_btnText = LexTextControls.ks_OK
-				};
-			}
-		}
+			m_title = LexTextControls.ksChooseAllomorph,
+			m_btnText = LexTextControls.ks_OK
+		};
 
-		protected override string PersistenceLabel
-		{
-			get { return "LinkAllomorph"; }
-		}
+		protected override string PersistenceLabel => "LinkAllomorph";
 
 		/// <summary>
 		/// Gets the database id of the selected object.
@@ -58,8 +49,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// the allomorphs combo box is made empty.
 		/// (This is a refinement of the dlg to act 'more correctly'.)
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		protected void Form_TextChanged(object sender, EventArgs e)
 		{
 			if (m_tbForm.Text.Length == 0)
@@ -68,7 +57,6 @@ namespace LanguageExplorer.Controls.LexText
 				m_fwcbAllomorphs.Items.Clear();	// clear the drop down list box
 			}
 		}
-
 
 		#region	Construction and Destruction
 
@@ -90,7 +78,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			// Must not be run more than once.
 			if (IsDisposed)
@@ -98,10 +86,10 @@ namespace LanguageExplorer.Controls.LexText
 				return;
 			}
 
-			if( disposing )
+			if (disposing)
 			{
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		/// <summary>
@@ -114,7 +102,7 @@ namespace LanguageExplorer.Controls.LexText
 			Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
 
-			SetDlgInfo(cache, null);
+			SetDlgInfo(cache, (WindowParams)null);
 		}
 
 		/// <summary>
@@ -132,7 +120,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_fwcbAllomorphs.WritingSystemCode = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 			// For a resizeable dialog, we don't want AdjustForStylesheet to really change its size,
 			// because then it ends up growing every time it launches!
-			int oldHeight = Height;
+			var oldHeight = Height;
 			m_fwcbAllomorphs.AdjustForStyleSheet(this, grplbl, PropertyTable);
 			Height = oldHeight;
 		}
@@ -144,9 +132,11 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void HandleMatchingSelectionChanged()
 		{
 			m_fwcbAllomorphs.Items.Clear();
-			m_fwcbAllomorphs.Text = String.Empty;
+			m_fwcbAllomorphs.Text = string.Empty;
 			if (m_selObject == null)
+			{
 				return;
+			}
 			m_fwcbAllomorphs.SuspendLayout();
 			/* NB: We remove abstract MoForms, because the adhoc allo coprohibiton object wants them removed.
 			 * If any other client of this dlg comes along that wants them,
@@ -156,19 +146,25 @@ namespace LanguageExplorer.Controls.LexText
 			var entry = (ILexEntry)m_selObject;
 			var lf = entry.LexemeFormOA;
 			if (lf != null && !lf.IsAbstract)
+			{
 				m_fwcbAllomorphs.Items.Add(new LAllomorph(entry.LexemeFormOA));
+			}
 			foreach (var allo in entry.AlternateFormsOS)
 			{
 				if (!allo.IsAbstract)
+				{
 					m_fwcbAllomorphs.Items.Add(new LAllomorph(allo));
+				}
 			}
 			if (m_fwcbAllomorphs.Items.Count > 0)
+			{
 				m_fwcbAllomorphs.SelectedItem = m_fwcbAllomorphs.Items[0];
+			}
 			m_btnOK.Enabled = m_fwcbAllomorphs.Items.Count > 0;
 			m_fwcbAllomorphs.ResumeLayout();
 			// For a resizeable dialog, we don't want AdjustForStylesheet to really change its size,
 			// because then it ends up growing every time it launches!
-			int oldHeight = Height;
+			var oldHeight = Height;
 			m_fwcbAllomorphs.AdjustForStyleSheet(this, grplbl, PropertyTable);
 			Height = oldHeight;
 		}

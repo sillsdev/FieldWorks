@@ -29,7 +29,6 @@ namespace LanguageExplorer.Controls.LexText
 			var tss = mmt.Name.GetAlternativeOrBestTss(m_wsEn, out ws);
 			sMorphTypeWs = ws == m_wsEn ? "en" : m_cache.WritingSystemFactory.GetStrFromWs(ws);
 			return tss.Text;
-
 		}
 	}
 }

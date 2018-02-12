@@ -87,11 +87,10 @@ namespace LanguageExplorer.Controls.LexText
 		/// If we defeat it, it may look a bit small the first time at high resolution,
 		/// but at least it will stay the size the user sets.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnLoad(EventArgs e)
 		{
 			var size = Size;
-			base.OnLoad (e);
+			base.OnLoad(e);
 			if (Size != size)
 			{
 				Size = size;
@@ -106,7 +105,9 @@ namespace LanguageExplorer.Controls.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -117,7 +118,9 @@ namespace LanguageExplorer.Controls.LexText
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
@@ -141,12 +144,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		///  <summary>
-		///
-		///  </summary>
-		///  <param name="featSys"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="launchedFromInsertMenu"></param>
+		///  <summary />
 		public void SetDlginfo(IFsFeatureSystem featSys, IPropertyTable propertyTable, bool launchedFromInsertMenu)
 		{
 			// default to inflection features
@@ -154,14 +152,7 @@ namespace LanguageExplorer.Controls.LexText
 			SetDlginfo(featSys, propertyTable, launchedFromInsertMenu, "masterInflFeatListDlg", sXmlFile);
 		}
 
-		///  <summary>
-		///
-		///  </summary>
-		///  <param name="featSys"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="launchedFromInsertMenu"></param>
-		///  <param name="sWindowKey">used to store location and size of dialog window</param>
-		///  <param name="sXmlFile">file containing the XML form of the gloss list</param>
+		///  <summary />
 		public void SetDlginfo(IFsFeatureSystem featSys, IPropertyTable propertyTable, bool launchedFromInsertMenu, string sWindowKey, string sXmlFile)
 		{
 			CheckDisposed();
@@ -195,8 +186,7 @@ namespace LanguageExplorer.Controls.LexText
 			// Get location to the stored values, if any.
 			Point dlgLocation;
 			Size dlgSize;
-			if (!m_propertyTable.TryGetValue(m_sWindowKeyLocation, out dlgLocation) ||
-			    !m_propertyTable.TryGetValue(m_sWindowKeySize, out dlgSize))
+			if (!m_propertyTable.TryGetValue(m_sWindowKeyLocation, out dlgLocation) || !m_propertyTable.TryGetValue(m_sWindowKeySize, out dlgSize))
 			{
 				return;
 			}
@@ -399,8 +389,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Cancel, if it is already in the database.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		protected void m_tvMasterList_BeforeCheck(object sender, System.Windows.Forms.TreeViewCancelEventArgs e)
 		{
 			if (m_skipEvents)
@@ -460,8 +448,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// If OK, then add relevant inflection features to DB.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		private void MasterListDlg_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			switch (DialogResult)

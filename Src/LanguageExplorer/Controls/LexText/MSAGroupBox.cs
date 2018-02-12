@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,6 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Collections.Generic;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -66,8 +65,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				CheckDisposed();
 
-				SandboxGenericMSA sandoxMSA = new SandboxGenericMSA();
-				sandoxMSA.MsaType = MSAType;
+				var sandoxMSA = new SandboxGenericMSA { MsaType = MSAType };
 				switch (MSAType)
 				{
 					case MsaType.kRoot: // Fall through
@@ -80,7 +78,9 @@ namespace LanguageExplorer.Controls.LexText
 					{
 						sandoxMSA.MainPOS = MainPOS;
 						if (Slot != null && SlotIsValidForPos)
+						{
 							sandoxMSA.Slot = Slot;
+						}
 						break;
 					}
 					case MsaType.kDeriv:
@@ -99,15 +99,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		public IPartOfSpeech MainPOS
-		{
-			get
-			{
-				CheckDisposed();
-				return m_selectedMainPOS;
-			}
-		}
-
+		public IPartOfSpeech MainPOS => m_selectedMainPOS;
 
 		public IPartOfSpeech StemPOS
 		{
@@ -121,24 +113,21 @@ namespace LanguageExplorer.Controls.LexText
 				// Basically, it's an error to try to set it to zero, unless it already is.
 				Debug.Assert(value != null || m_selectedMainPOS == null);
 				if (value == null)
+				{
 					return; // Can't set it zero, no matter what, until PopupTree supports it.
+				}
 
 				m_selectedMainPOS = value;
 				if (MSAType != MsaType.kStem)
+				{
 					MSAType = MsaType.kStem;
+				}
 				// In order to select the node, we must have loaded the tree.
 				TrySelectNode(m_tcMainPOS, m_selectedMainPOS.Hvo);
 			}
 		}
 
-		public IPartOfSpeech SecondaryPOS
-		{
-			get
-			{
-				CheckDisposed();
-				return m_selectedSecondaryPOS;
-			}
-		}
+		public IPartOfSpeech SecondaryPOS => m_selectedSecondaryPOS;
 
 		/// <summary>
 		/// Is the current slot valid? It might not be, in the bizarre case that the user
@@ -168,11 +157,15 @@ namespace LanguageExplorer.Controls.LexText
 
 				// Setting it to zero is supported, as it sets the selected index to -1.
 				if (value == null)
+				{
 					m_fwcbSlots.SelectedIndex = -1;
+				}
 				else
 				{
 					if (MSAType != MsaType.kInfl)
+					{
 						MSAType = MsaType.kInfl;
+					}
 
 					m_selectedSlot = value;
 					if (m_fwcbSlots.Items.Count == 0)
@@ -190,25 +183,22 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		bool TrySelectNode(TreeCombo treeCombo, int hvoTarget)
+		private bool TrySelectNode(TreeCombo treeCombo, int hvoTarget)
 		{
 			if (treeCombo.Tree.Nodes.Count == 0)
 			{
 				m_mainPOSPopupTreeManager.LoadPopupTree(hvoTarget);
 				return true;
 			}
-			else
+			foreach (HvoTreeNode node in treeCombo.Tree.Nodes)
 			{
-				foreach (HvoTreeNode node in treeCombo.Tree.Nodes)
+				var htn = node.NodeWithHvo(hvoTarget);
+				if (htn != null)
 				{
-					HvoTreeNode htn = node.NodeWithHvo(hvoTarget);
-					if (htn != null)
-					{
-						// Selecting the POS here should then fire
-						// the event which wil reset the slot combo.
-						treeCombo.SelectedNode = htn;
-						return true;
-					}
+					// Selecting the POS here should then fire
+					// the event which wil reset the slot combo.
+					treeCombo.SelectedNode = htn;
+					return true;
 				}
 			}
 			return false;
@@ -238,10 +228,14 @@ namespace LanguageExplorer.Controls.LexText
 				CheckDisposed();
 
 				if (value == m_msaType)
+				{
 					return; // Nothing else to do.
+				}
 				m_msaType = value;
 				if (m_ctrlAssistant != null)
+				{
 					m_ctrlAssistant.Enabled = ((value == MsaType.kInfl)/*See LT-7278. || (value == MsaType.kDeriv)*/);
+				}
 				try
 				{
 					m_skipEvents = true;
@@ -359,9 +353,11 @@ namespace LanguageExplorer.Controls.LexText
 				}
 				m_morphType = value;
 				if (MSAType == MsaType.kInfl)
+				{
 					ResetSlotCombo();
-				string sGuid = m_morphType.Guid.ToString();
-				Debug.Assert(sGuid != null && sGuid != String.Empty);
+				}
+				var sGuid = m_morphType.Guid.ToString();
+				Debug.Assert(!string.IsNullOrEmpty(sGuid));
 				switch (sGuid)
 				{
 					case MoMorphTypeTags.kMorphStem:
@@ -393,7 +389,9 @@ namespace LanguageExplorer.Controls.LexText
 						// It may already be set to a better type than MsaType.kUnclassified,
 						// so leave it alone, if it is.
 						if (MSAType == MsaType.kRoot || MSAType == MsaType.kStem)
+						{
 							MSAType = MsaType.kUnclassified;
+						}
 						break;
 				}
 			}
@@ -407,17 +405,22 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				int nHeight = this.Height;
-				int delta = m_fwcbAffixTypes.PreferredHeight - m_fwcbAffixTypes.Height;
+				var nHeight = Height;
+				var delta = m_fwcbAffixTypes.PreferredHeight - m_fwcbAffixTypes.Height;
 				if (delta > 0)
+				{
 					nHeight += delta;
+				}
 				delta = m_tcMainPOS.PreferredHeight - m_tcMainPOS.Height;
 				if (delta > 0)
+				{
 					nHeight += delta;
-				delta = Math.Max(m_fwcbSlots.PreferredHeight - m_fwcbSlots.Height,
-					m_tcSecondaryPOS.PreferredHeight - m_tcSecondaryPOS.Height);
+				}
+				delta = Math.Max(m_fwcbSlots.PreferredHeight - m_fwcbSlots.Height, m_tcSecondaryPOS.PreferredHeight - m_tcSecondaryPOS.Height);
 				if (delta > 0)
+				{
 					nHeight += delta;
+				}
 				return nHeight;
 			}
 		}
@@ -443,7 +446,9 @@ namespace LanguageExplorer.Controls.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -454,25 +459,24 @@ namespace LanguageExplorer.Controls.LexText
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
 				if (m_mainPOSPopupTreeManager != null)
 				{
-					m_mainPOSPopupTreeManager.AfterSelect -= new TreeViewEventHandler(m_mainPOSPopupTreeManager_AfterSelect);
+					m_mainPOSPopupTreeManager.AfterSelect -= m_mainPOSPopupTreeManager_AfterSelect;
 					m_mainPOSPopupTreeManager.Dispose();
 				}
 				m_mainPOSPopupTreeManager = null;
 				if (m_secPOSPopupTreeManager != null)
 				{
-					m_secPOSPopupTreeManager.AfterSelect -= new TreeViewEventHandler(m_secPOSPopupTreeManager_AfterSelect);
+					m_secPOSPopupTreeManager.AfterSelect -= m_secPOSPopupTreeManager_AfterSelect;
 					m_secPOSPopupTreeManager.Dispose();
 				}
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			m_parentForm = null;
 			m_secPOSPopupTreeManager = null;
@@ -511,9 +515,9 @@ namespace LanguageExplorer.Controls.LexText
 			m_publisher = publisher;
 
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
-			int defUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
-			CoreWritingSystemDefinition defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
-			string defAnalWsFont = defAnalWs.DefaultFontName;
+			var defUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
+			var defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			var defAnalWsFont = defAnalWs.DefaultFontName;
 
 			m_fwcbAffixTypes.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwcbAffixTypes.WritingSystemCode = defAnalWs.Handle;
@@ -544,26 +548,20 @@ namespace LanguageExplorer.Controls.LexText
 			m_selectedMainPOS = sandboxMSA.MainPOS;
 			m_fwcbAffixTypes.SelectedIndex = 0;
 			m_fwcbAffixTypes.SelectedIndexChanged += HandleComboMSATypesChange;
-			m_mainPOSPopupTreeManager = new POSPopupTreeManager(m_tcMainPOS, m_cache,
-				m_cache.LanguageProject.PartsOfSpeechOA,
-				defAnalWs.Handle, false, m_propertyTable, m_publisher,
-				m_parentForm)
+			m_mainPOSPopupTreeManager = new POSPopupTreeManager(m_tcMainPOS, m_cache, m_cache.LanguageProject.PartsOfSpeechOA, defAnalWs.Handle, false, m_propertyTable, m_publisher, m_parentForm)
 			{
 				NotSureIsAny = true
 			};
-			m_mainPOSPopupTreeManager.LoadPopupTree(m_selectedMainPOS != null ? m_selectedMainPOS.Hvo : 0);
+			m_mainPOSPopupTreeManager.LoadPopupTree(m_selectedMainPOS?.Hvo ?? 0);
 			m_mainPOSPopupTreeManager.AfterSelect += m_mainPOSPopupTreeManager_AfterSelect;
 			m_fwcbSlots.SelectedIndexChanged += HandleComboSlotChange;
-			m_secPOSPopupTreeManager = new POSPopupTreeManager(m_tcSecondaryPOS, m_cache,
-				m_cache.LanguageProject.PartsOfSpeechOA,
-				defAnalWs.Handle, false, m_propertyTable, m_publisher,
-				m_parentForm)
+			m_secPOSPopupTreeManager = new POSPopupTreeManager(m_tcSecondaryPOS, m_cache, m_cache.LanguageProject.PartsOfSpeechOA, defAnalWs.Handle, false, m_propertyTable, m_publisher, m_parentForm)
 			{
 				NotSureIsAny = true
 			};
 			// only used for affixes.
 			m_selectedSecondaryPOS = sandboxMSA.SecondaryPOS;
-			m_secPOSPopupTreeManager.LoadPopupTree(m_selectedSecondaryPOS != null ? m_selectedSecondaryPOS.Hvo : 0);
+			m_secPOSPopupTreeManager.LoadPopupTree(m_selectedSecondaryPOS?.Hvo ?? 0);
 			m_secPOSPopupTreeManager.AfterSelect += m_secPOSPopupTreeManager_AfterSelect;
 
 			// Relocate the m_tcSecondaryPOS control to overlay the m_fwcbSlots.
@@ -694,21 +692,22 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			m_fwcbSlots.SuspendLayout();
 			m_fwcbSlots.Items.Clear();
-			int matchIdx = -1;
+			var matchIdx = -1;
 			if (m_selectedMainPOS != null)
 			{
 				// Cache items to add, which prevents prop changed being called for each add. (Fixes FWR-3083)
-				List<HvoTssComboItem> itemsToAdd = new List<HvoTssComboItem>();
+				var itemsToAdd = new List<HvoTssComboItem>();
 				foreach (var slot in GetSlots())
 				{
-					string name = slot.Name.BestAnalysisAlternative.Text;
-					if (name != null && name.Length > 0) // Don't add empty strings.
+					var name = slot.Name.BestAnalysisAlternative.Text;
+					if (!string.IsNullOrEmpty(name)) // Don't add empty strings.
 					{
-						HvoTssComboItem newItem = new HvoTssComboItem(slot.Hvo,
-							TsStringUtils.MakeString(name, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle));
+						var newItem = new HvoTssComboItem(slot.Hvo, TsStringUtils.MakeString(name, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle));
 						itemsToAdd.Add(newItem);
 						if (m_selectedSlot != null && m_selectedSlot.Hvo == newItem.Hvo)
+						{
 							matchIdx = itemsToAdd.Count - 1;
+						}
 					}
 				}
 				m_fwcbSlots.Items.AddRange(itemsToAdd.ToArray());
@@ -745,28 +744,27 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					return DomainObjectServices.GetSlots(m_cache, lex, m_selectedMainPOS);
 				}
-
-					return m_selectedMainPOS.AllAffixSlots;
+				return m_selectedMainPOS.AllAffixSlots;
 			}
 
 			// Called by InsertEntryDlg so we know the morphtype
-				bool fIsPrefixal = MorphServices.IsPrefixishType(m_cache, m_morphType.Hvo);
-				bool fIsSuffixal = MorphServices.IsSuffixishType(m_cache, m_morphType.Hvo);
-				if (fIsPrefixal && fIsSuffixal)
+			var fIsPrefixal = MorphServices.IsPrefixishType(m_cache, m_morphType.Hvo);
+			var fIsSuffixal = MorphServices.IsSuffixishType(m_cache, m_morphType.Hvo);
+			if (fIsPrefixal && fIsSuffixal)
 			{
-					return m_selectedMainPOS.AllAffixSlots;
+				return m_selectedMainPOS.AllAffixSlots;
 			}
 
-					return DomainObjectServices.GetSomeSlots(m_cache, m_selectedMainPOS.AllAffixSlots, fIsPrefixal);
-			}
+			return DomainObjectServices.GetSomeSlots(m_cache, m_selectedMainPOS.AllAffixSlots, fIsPrefixal);
+		}
 
 		public void AdjustInternalControlsAndGrow()
 		{
-			int nHeightWanted = m_fwcbAffixTypes.PreferredHeight;
-			int delta = nHeightWanted - m_fwcbAffixTypes.Height;
+			var nHeightWanted = m_fwcbAffixTypes.PreferredHeight;
+			var delta = nHeightWanted - m_fwcbAffixTypes.Height;
 			if (delta > 0)
 			{
-				this.Height += delta;
+				Height += delta;
 				m_fwcbAffixTypes.Height = nHeightWanted;
 				FontHeightAdjuster.GrowDialogAndAdjustControls(m_groupBox, delta, m_fwcbAffixTypes);
 			}
@@ -775,25 +773,33 @@ namespace LanguageExplorer.Controls.LexText
 			if (delta > 0)
 			{
 				m_tcMainPOS.Height = nHeightWanted;
-				this.Height += delta;
+				Height += delta;
 				FontHeightAdjuster.GrowDialogAndAdjustControls(m_groupBox, delta, m_tcMainPOS);
 			}
-			int nWanted1 = m_fwcbSlots.PreferredHeight;
-			int delta1 = nWanted1 - m_fwcbSlots.Height;
-			int nWanted2 = m_tcSecondaryPOS.PreferredHeight;
-			int delta2 = nWanted2 - m_tcSecondaryPOS.Height;
+			var nWanted1 = m_fwcbSlots.PreferredHeight;
+			var delta1 = nWanted1 - m_fwcbSlots.Height;
+			var nWanted2 = m_tcSecondaryPOS.PreferredHeight;
+			var delta2 = nWanted2 - m_tcSecondaryPOS.Height;
 			delta = Math.Max(delta1, delta2);
 			if (delta > 0)
 			{
 				if (delta1 > 0)
+				{
 					m_fwcbSlots.Height = nWanted1;
+				}
 				if (delta2 > 0)
+				{
 					m_tcSecondaryPOS.Height = nWanted2;
-				this.Height += delta;
+				}
+				Height += delta;
 				if (delta1 == delta)
+				{
 					FontHeightAdjuster.GrowDialogAndAdjustControls(m_groupBox, delta, m_fwcbSlots);
+				}
 				else
+				{
 					FontHeightAdjuster.GrowDialogAndAdjustControls(m_groupBox, delta, m_tcSecondaryPOS);
+				}
 			}
 		}
 		#endregion Other methods
@@ -803,19 +809,27 @@ namespace LanguageExplorer.Controls.LexText
 		#region MSA Types combo box
 
 		// Handles a change in the item selected in the MSA Types combo box.
-		void HandleComboMSATypesChange(object sender, EventArgs ea)
+		private void HandleComboMSATypesChange(object sender, EventArgs ea)
 		{
 			if (m_skipEvents)
+			{
 				return;
-			FwComboBox combo = sender as FwComboBox;
-			ITsString selTss = combo.SelectedItem as ITsString;
-			string label = selTss.Text;
+			}
+			var combo = (FwComboBox)sender;
+			var selTss = (ITsString)combo.SelectedItem;
+			var label = selTss.Text;
 			if (label == LexTextControls.ksNotSure)
+			{
 				MSAType = MsaType.kUnclassified;
+			}
 			else if (label == LexTextControls.ksInflectional)
+			{
 				MSAType = MsaType.kInfl;
+			}
 			else if (label == LexTextControls.ksDerivational)
+			{
 				MSAType = MsaType.kDeriv;
+			}
 			Debug.WriteLine(label);
 		}
 
@@ -823,13 +837,14 @@ namespace LanguageExplorer.Controls.LexText
 
 		#region Affix slots combo box
 		// Handles a change in the item selected in the affix slot combo box.
-		void HandleComboSlotChange(object sender, EventArgs ea)
+		private void HandleComboSlotChange(object sender, EventArgs ea)
 		{
 			if (m_skipEvents)
+			{
 				return;
-
-			FwComboBox combo = sender as FwComboBox;
-			HvoTssComboItem selItem = combo.SelectedItem as HvoTssComboItem;
+			}
+			var combo = sender as FwComboBox;
+			var selItem = combo.SelectedItem as HvoTssComboItem;
 			m_selectedSlot = (selItem == null) ? null : m_cache.ServiceLocator.GetInstance<IMoInflAffixSlotRepository>().GetObject(selItem.Hvo);
 		}
 		#endregion Affix slots combo box
@@ -841,14 +856,21 @@ namespace LanguageExplorer.Controls.LexText
 			m_selectedMainPOS = null;
 			var repo = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>();
 			if (e.Node is HvoTreeNode)
-				repo.TryGetObject((e.Node as HvoTreeNode).Hvo, out m_selectedMainPOS);
+			{
+				repo.TryGetObject(((HvoTreeNode)e.Node).Hvo, out m_selectedMainPOS);
+			}
 
 			// If this is an inflectional affix MSA,
 			// then populate slot list (FwComboBox m_fwcbSlots).
 			if (MSAType == MsaType.kInfl)
+			{
 				ResetSlotCombo();
+			}
+
 			if (m_tcMainPOS.Text != e.Node.Text)
+			{
 				m_tcMainPOS.Text = e.Node.Text;
+			}
 		}
 
 		private void m_secPOSPopupTreeManager_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
@@ -856,7 +878,9 @@ namespace LanguageExplorer.Controls.LexText
 			m_selectedSecondaryPOS = null;
 			var repo = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>();
 			if (e.Node is HvoTreeNode)
+			{
 				repo.TryGetObject((e.Node as HvoTreeNode).Hvo, out m_selectedSecondaryPOS);
+			}
 		}
 
 		#endregion TreeCombo handing

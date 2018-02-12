@@ -1,8 +1,7 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
@@ -22,12 +21,12 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				xmlMap.Load(mapFile);
 				ReadOptions(xmlMap);
-				return base.GetOptions;
+				return GetOptions;
 			}
 			catch
 			{
 				var xmlFile = mapFile.Split('\\');
-				MessageBox.Show(String.Format("Xml file {0} is invalid.", xmlFile[xmlFile.Length - 1]));
+				MessageBox.Show($"Xml file {xmlFile[xmlFile.Length - 1]} is invalid.");
 			}
 			return null;
 		}

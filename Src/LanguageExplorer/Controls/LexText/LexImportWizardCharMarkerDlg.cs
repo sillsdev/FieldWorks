@@ -5,7 +5,9 @@
 using System;
 using System.Drawing;
 using System.Collections;
+using System.Diagnostics;
 using System.Windows.Forms;
+using Sfm2Xml;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -38,7 +40,7 @@ namespace LanguageExplorer.Controls.LexText
 		private Label label4;
 		private Label label5;
 
-		private Sfm2Xml.ClsInFieldMarker m_inlineMarker;
+		private ClsInFieldMarker m_inlineMarker;
 		private Hashtable m_uiLangs;
 		private Button btnOK;
 		private Button btnCancel;
@@ -48,33 +50,28 @@ namespace LanguageExplorer.Controls.LexText
 		private IVwStylesheet m_stylesheet;
 		private Hashtable m_existingBeginMarkers;
 		private Hashtable m_existingEndMarkers;
-//		private Hashtable m_existingElementNames;
-
 		private bool isValidEndMarker;
 		private bool isValidBeginMarker;
 		private Button buttonHelp;
-		//private bool isValidElementName;
-
 		private const string s_helpTopic = "khtpImportCharacterMapping";
 		private RadioButton radioEndWithField;
 		private RadioButton radioEndWithWord;
 		private Label lblEndRadio;
 		private HelpProvider helpProvider;
 
-		private char[] delim = new char[] { ' ' };
+		private char[] delim = { ' ' };
 
 		private LexImportWizardCharMarkerDlg()
 		{
 			isValidEndMarker = false;
 			isValidBeginMarker = false;
-			//isValidElementName = false;
 			//
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 
-			m_inlineMarker = new Sfm2Xml.ClsInFieldMarker();
+			m_inlineMarker = new ClsInFieldMarker();
 			HideOKBtn();	// see if it needs to be visible or not
 
 		}
@@ -82,26 +79,20 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LexImportWizardCharMarkerDlg"/> class.
 		/// </summary>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// <param name="app">The app.</param>
-		/// <param name="stylesheet">The stylesheet.</param>
 		public LexImportWizardCharMarkerDlg(IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet) : this()
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
 			m_stylesheet = stylesheet;
-			helpProvider = new HelpProvider();
-			helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
+			helpProvider = new HelpProvider
+			{
+				HelpNamespace = m_helpTopicProvider.HelpFile
+			};
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetShowHelp(this, true);
 		}
 
-//		private void InitWithIFM( Sfm2Xml.ClsInFieldMarker ifm)
-//		{
-//			HideOKBtn();	// see if it needs to be visible or not
-//			m_inlineMarker = ifm;
-//		}
 		public string NoChange
 		{
 			get
@@ -127,9 +118,10 @@ namespace LanguageExplorer.Controls.LexText
 
 		public void SetExistingElementNames(Hashtable names)
 		{
+#if RANDYTODO
+			// TODO: Not sure the 2 callers are getting their money's worth out of the call.
+#endif
 			CheckDisposed();
-
-//			m_existingElementNames = names;
 		}
 
 		public void Init(Sfm2Xml.ClsInFieldMarker ifm, Hashtable uiLangsHT, LcmCache cache)
@@ -137,29 +129,31 @@ namespace LanguageExplorer.Controls.LexText
 			CheckDisposed();
 
 			if (ifm == null)
-				ifm = new Sfm2Xml.ClsInFieldMarker();
+			{
+				ifm = new ClsInFieldMarker();
+			}
 
 			m_inlineMarker = ifm;
 			m_uiLangs = uiLangsHT;
 			m_cache = cache;
 
-			// ====================================================================
 			// Set the language descriptor combo box.  This is a DropList so that
 			// the entered text can't be different from the contents of the list.
 			// If the user wants a new language descriptor they have to add one.
-
 			cbLangDesc.Items.Add(NoChange);
 			cbLangDesc.SelectedItem = NoChange;
 
 			foreach (DictionaryEntry lang in m_uiLangs)
 			{
-				Sfm2Xml.LanguageInfoUI langInfo = lang.Value as Sfm2Xml.LanguageInfoUI;
+				LanguageInfoUI langInfo = lang.Value as Sfm2Xml.LanguageInfoUI;
 				// make sure there is only one entry for each writing system (especially 'ignore')
 				if (cbLangDesc.FindStringExact(langInfo.ToString()) < 0)
 				{
 					cbLangDesc.Items.Add(langInfo);
 					if (langInfo.FwName == m_inlineMarker.Language)
+					{
 						cbLangDesc.SelectedItem = langInfo;
+					}
 				}
 			}
 
@@ -170,7 +164,6 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void InitializeStylesComboBox()
 		{
-			// ====================================================================
 			// Set the Style combo box.  This one can have a style that isn't defined
 			// yet.  If so, it will show in a different color.
 			// (This list only shows the Character styles.)
@@ -181,13 +174,15 @@ namespace LanguageExplorer.Controls.LexText
 
 			var oc = m_cache.LanguageProject.StylesOC;
 			if (oc == null || oc.Count < 1)
-				System.Diagnostics.Debug.WriteLine("No style info retrieved from the cache.");
+			{
+				Debug.WriteLine("No style info retrieved from the cache.");
+			}
 
 			foreach (var style in oc)
 			{
 				if (StyleType.kstCharacter == style.Type)
 				{
-					int pos = cbStyle.Items.Add(style.Name);
+					var pos = cbStyle.Items.Add(style.Name);
 					if (style.Name == m_inlineMarker.Style)
 					{
 						cbStyle.SelectedIndex = pos;
@@ -203,7 +198,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			else
 			{
-				int foundPos = cbStyle.FindStringExact(m_inlineMarker.Style);
+				var foundPos = cbStyle.FindStringExact(m_inlineMarker.Style);
 				if (foundPos >= 0)
 				{
 					// select the item in the combo that matches
@@ -213,7 +208,7 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					// just put it in the text box and set the color
 					cbStyle.Text = m_inlineMarker.Style;
-					cbStyle.ForeColor = System.Drawing.Color.Blue;
+					cbStyle.ForeColor = Color.Blue;
 				}
 				if (cbStyle.Text.Trim().Length == 0)
 				{
@@ -227,40 +222,43 @@ namespace LanguageExplorer.Controls.LexText
 		/// Use the hash function of each object to see if the passed in marker
 		/// is different from the current dlg values.
 		/// </summary>
-		/// <returns></returns>
 		public bool IFMChanged()
 		{
 			CheckDisposed();
 
-			Sfm2Xml.ClsInFieldMarker current = IFM();
+			ClsInFieldMarker current = IFM();
 			return current.GetHashCode() == m_inlineMarker.GetHashCode();
 		}
 
-		public Sfm2Xml.ClsInFieldMarker IFM()
+		public ClsInFieldMarker IFM()
 		{
 			CheckDisposed();
 
-			string style = cbStyle.Text;
+			var style = cbStyle.Text;
 			if (style == NoChange)
-				style = "";	// use empty string, not the "<No Change>" text
+			{
+				style = string.Empty;	// use empty string, not the "<No Change>" text
+			}
 
-			string lang = cbLangDesc.Text;
+			var lang = cbLangDesc.Text;
 			if (lang == NoChange)
-				lang = "";	// use empty string, not the "<No Change>" text
+			{
+				lang = string.Empty;	// use empty string, not the "<No Change>" text
+			}
 
-			bool fHaveEndMarker = tbEndMarker.Text.Trim().Length > 0;
-			bool fIgnore = lang.Length + style.Length == 0;
+			var fHaveEndMarker = tbEndMarker.Text.Trim().Length > 0;
+			var fIgnore = lang.Length + style.Length == 0;
 
 			// get the xmlLang value
-			string xmlLangValue = "Unknown";
-			Sfm2Xml.LanguageInfoUI langUI = m_uiLangs[lang] as Sfm2Xml.LanguageInfoUI;
+			var xmlLangValue = "Unknown";
+			var langUI = m_uiLangs[lang] as LanguageInfoUI;
 			if (langUI != null)
+			{
 				xmlLangValue = langUI.ClsLanguage.XmlLang;
+			}
 
-			return new Sfm2Xml.ClsInFieldMarker(tbBeginMarker.Text.Trim(),
-				tbEndMarker.Text.Trim(), radioEndWithWord.Checked && !fHaveEndMarker,
-				radioEndWithField.Checked && !fHaveEndMarker,
-				lang, xmlLangValue, style, fIgnore);
+			return new ClsInFieldMarker(tbBeginMarker.Text.Trim(), tbEndMarker.Text.Trim(), radioEndWithWord.Checked
+									&& !fHaveEndMarker, radioEndWithField.Checked && !fHaveEndMarker, lang, xmlLangValue, style, fIgnore);
 		}
 
 		/// <summary>
@@ -271,7 +269,9 @@ namespace LanguageExplorer.Controls.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -279,18 +279,15 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose( disposing );
 		}
 
-		#region Windows Form Designer generated code
+#region Windows Form Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
@@ -469,18 +466,18 @@ namespace LanguageExplorer.Controls.LexText
 			this.PerformLayout();
 
 		}
-		#endregion
+#endregion
 
 		private void LexImportWizardCharMarkerDlg_Load(object sender, EventArgs e)
 		{
 			tbBeginMarker.Text = m_inlineMarker.Begin;
 			if (m_inlineMarker.End.Count > 0)
+			{
 				tbEndMarker.Text = m_inlineMarker.EndListToString();
+			}
 			radioEndWithField.Checked = m_inlineMarker.EndWithField;
 			radioEndWithWord.Checked = m_inlineMarker.EndWithWord;
-			if (m_inlineMarker.End.Count == 0 &&
-				!m_inlineMarker.EndWithField &&
-				!m_inlineMarker.EndWithWord)
+			if (m_inlineMarker.End.Count == 0 && !m_inlineMarker.EndWithField && !m_inlineMarker.EndWithWord)
 			{
 				// Susanna wants this as the default, and .NET 2005 insists on checking
 				// the other one without being asked.
@@ -489,7 +486,9 @@ namespace LanguageExplorer.Controls.LexText
 			cbLangDesc.Text = m_inlineMarker.Language;
 			cbStyle.Text = m_inlineMarker.Style;
 			if (cbStyle.Text.Trim().Length == 0)
+			{
 				cbStyle.Text = NoChange;	// needed for Style, but not for LangDesc.
+			}
 		}
 
 		private void EnableRadioEndButtons()
@@ -522,7 +521,7 @@ namespace LanguageExplorer.Controls.LexText
 					if (LexImportWizard.Wizard().AddLanguage(langDesc, ws, ec, wsId))
 					{
 						// this was added to the list of languages, so add it to the dlg and select it
-						var langInfo = new Sfm2Xml.LanguageInfoUI(langDesc, ws, ec, wsId);
+						var langInfo = new LanguageInfoUI(langDesc, ws, ec, wsId);
 						if (cbLangDesc.FindStringExact(langInfo.ToString()) < 0)
 						{
 							cbLangDesc.Items.Add(langInfo);
@@ -536,33 +535,28 @@ namespace LanguageExplorer.Controls.LexText
 		private void btnStyles_Click(object sender, EventArgs e)
 		{
 			IPropertyTable propertyTable = null;
-			LexImportWizard wiz = LexImportWizard.Wizard();
+			var wiz = LexImportWizard.Wizard();
 			if (wiz != null)
 			{
-				propertyTable = wiz.PropTable;
+				propertyTable = wiz.PropertyTable;
 			}
 			if (propertyTable == null)
 			{
 				// See LT-9100 and LT-9266.  Apparently this condition can happen.
-				MessageBox.Show(LexTextControls.ksCannotSoTryAgain, LexTextControls.ksInternalProblem,
-					MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show(LexTextControls.ksCannotSoTryAgain, LexTextControls.ksInternalProblem, MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
 			}
-			FwStylesDlg.RunStylesDialogForCombo(cbStyle, InitializeStylesComboBox, "", m_stylesheet as LcmStyleSheet,
+			FwStylesDlg.RunStylesDialogForCombo(cbStyle, InitializeStylesComboBox, string.Empty, m_stylesheet as LcmStyleSheet,
 				0, 0, m_cache, this, propertyTable.GetValue<IApp>("App"), m_helpTopicProvider, null);
 		}
-
-		//private void tbElementName_TextChanged(object sender, EventArgs e)
-		//{
-		//    ValidateElementName();
-		//    HideOKBtn();
-		//}
 
 		private void tbBeginMarker_TextChanged(object sender, EventArgs e)
 		{
 			ValidateBeginMarkerText();
 			if (isValidBeginMarker)
-				ValidateEndMarkers();		// make sure the end markers are still valid with this change
+			{
+				ValidateEndMarkers();
+			}
 
 			HideOKBtn();
 		}
@@ -577,32 +571,25 @@ namespace LanguageExplorer.Controls.LexText
 		private void cbStyle_SelectionChangeCommitted(object sender, EventArgs e)
 		{
 			// if a selection is made from the list, go back to regular color
-			System.Drawing.Color sysTextColor = cbLangDesc.ForeColor;
+			var sysTextColor = cbLangDesc.ForeColor;
 			if (cbStyle.ForeColor != sysTextColor)
+			{
 				cbStyle.ForeColor = sysTextColor;
+			}
 		}
 
-		#region Data validation helper routines
+#region Data validation helper routines
 
-		//private bool ValidateElementName()
-		//{
-		//    // can't be the same as any current element names
-		//    isValidElementName = true;
-		//    if (m_existingElementNames == null)
-		//        return isValidBeginMarker;
-
-		//    string name = tbElementName.Text;
-		//    isValidElementName = !(name.Length == 0 || m_existingElementNames.ContainsKey(name));
-		//    return isValidElementName;
-		//}
 		private bool ValidateBeginMarkerText()
 		{
 			// can't be the same as any current begin or end markers
 			isValidBeginMarker = true;
 			if (m_existingBeginMarkers == null || m_existingEndMarkers == null)
+			{
 				return isValidBeginMarker;
+			}
 
-			string marker = tbBeginMarker.Text;
+			var marker = tbBeginMarker.Text;
 			isValidBeginMarker = !(marker.Length == 0 || m_existingBeginMarkers.ContainsKey(marker) || m_existingEndMarkers.ContainsKey(marker));
 			return isValidBeginMarker;
 		}
@@ -612,7 +599,9 @@ namespace LanguageExplorer.Controls.LexText
 			isValidEndMarker = true;
 
 			if (m_existingBeginMarkers == null)
+			{
 				return isValidEndMarker;
+			}
 
 			if (tbEndMarker.Text.Trim().Length == 0)
 			{
@@ -620,8 +609,8 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			else
 			{
-				ArrayList list = new ArrayList();
-				Sfm2Xml.STATICS.SplitString(tbEndMarker.Text.Trim(), delim, ref list);
+				var list = new ArrayList();
+				STATICS.SplitString(tbEndMarker.Text.Trim(), delim, ref list);
 				foreach (string s in list)
 				{
 					if (m_existingBeginMarkers.ContainsKey(s) || tbBeginMarker.Text == s)
@@ -641,10 +630,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		private bool HasValidEndMarker()
 		{
-			if (tbEndMarker.Text.Trim().Length > 0)
-				return isValidEndMarker;
-			else
-				return radioEndWithWord.Checked || radioEndWithField.Checked;
+			return tbEndMarker.Text.Trim().Length > 0 ? isValidEndMarker : radioEndWithWord.Checked || radioEndWithField.Checked;
 		}
 
 		private bool HasValidData()
@@ -652,39 +638,20 @@ namespace LanguageExplorer.Controls.LexText
 			return HasValidBeginMarker() && HasValidEndMarker();
 		}
 
-		#endregion
+#endregion
 
-		#region Helper methods for GUI details: color, enabling, ...
+#region Helper methods for GUI details: color, enabling, ...
 
 		private void HideOKBtn()
 		{
-			Color highlightColor = Color.Red;
-			bool hide = !HasValidData();
+			var hide = !HasValidData();
 			if (btnOK.Enabled == hide)
 			{
 				btnOK.Enabled = !hide;
-//				msgAlreadyUsed.Visible = hide;
 			}
-
-			UpdateControlColor(lblBeginMarker, isValidBeginMarker, highlightColor);
-			UpdateControlColor(lblEndMarker, HasValidEndMarker(), highlightColor);
-		}
-		private void UpdateControlColor(Control ctrl, bool valid, Color errColor)
-		{
-			// Susanna didn't like the colors.  :-) :-(
-			//if (valid == false)
-			//{
-			//    if (ctrl.ForeColor != errColor)
-			//        ctrl.ForeColor = errColor;
-			//}
-			//else
-			//{
-			//    if (ctrl.ForeColor != SystemColors.ControlText)
-			//        ctrl.ForeColor = SystemColors.ControlText;
-			//}
 		}
 
-		#endregion
+#endregion
 
 		private void buttonHelp_Click(object sender, EventArgs e)
 		{

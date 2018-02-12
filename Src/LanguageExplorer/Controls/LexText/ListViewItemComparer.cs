@@ -1,8 +1,7 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections;
 using System.Windows.Forms;
 
@@ -14,36 +13,38 @@ namespace LanguageExplorer.Controls.LexText
 	/// </summary>
 	public class ListViewItemComparer : IComparer
 	{
-		private int col;
-		private bool ascendingOrder;
+		private int _col;
+		private bool _ascendingOrder;
 		public ListViewItemComparer(int column, bool order)
 		{
-			col = column;
-			ascendingOrder = order;
+			_col = column;
+			_ascendingOrder = order;
 		}
 		public int Compare(object x, object y)
 		{
-			ContentMapping a, b;
-			a = ((ListViewItem)x).Tag as ContentMapping;
-			b = ((ListViewItem)y).Tag as ContentMapping;
+			var a = ((ListViewItem)x).Tag as ContentMapping;
+			var b = ((ListViewItem)y).Tag as ContentMapping;
 
-			if (col == 1)   // source order case
+			switch (_col)
 			{
-				if (ascendingOrder)
-					return b.Order - a.Order;
-				return a.Order - b.Order;
-			}
-			else if (col == 2)  // count case
-			{
-				if (ascendingOrder)
-					return b.Count - a.Count;
-				return a.Count - b.Count;
+				case 1:
+					if (_ascendingOrder)
+					{
+						return b.Order - a.Order;
+					}
+					return a.Order - b.Order;
+				case 2:
+					if (_ascendingOrder)
+					{
+						return b.Count - a.Count;
+					}
+					return a.Count - b.Count;
 			}
 
-			string aText = "";
-			string bText = "";
+			var aText = string.Empty;
+			var bText = string.Empty;
 
-			switch (col)
+			switch (_col)
 			{
 				case 0:
 					aText = a.Marker;
@@ -65,9 +66,7 @@ namespace LanguageExplorer.Controls.LexText
 					break;
 			}
 
-			if (ascendingOrder)
-				return String.Compare(aText, bText);
-			return String.Compare(bText, aText);
+			return _ascendingOrder ? string.Compare(aText, bText) : string.Compare(bText, aText);
 		}
 	}
 }

@@ -12,61 +12,29 @@ namespace LanguageExplorer.Controls.LexText
 	internal class LEntry : LObject
 	{
 		#region Data members
-
-		private string m_displayName;
-		private int m_refProperty;
-		private List<LAllomorph> m_alAlternateForms;
-		private List<LSense> m_alSenses;
-		private int m_type;
-
 		#endregion Data members
 
 		#region Properties
 
-		public int Type
-		{
-			get { return m_type; }
-			set { m_type = value; }
-		}
+		public int Type { get; set; }
 
-		public int ReferenceProperty
-		{
-			get { return m_refProperty; }
-			set { m_refProperty = value; }
-		}
+		public int ReferenceProperty { get; set; }
 
-		public string DisplayName
-		{
-			get
-			{
-				return m_displayName;
-			}
-		}
+		public string DisplayName { get; }
 
-		public List<LSense> Senses
-		{
-			get { return m_alSenses; }
-		}
+		public List<LSense> Senses { get; }
 
-		public List<LAllomorph> AlternateForms
-		{
-			get { return m_alAlternateForms; }
-		}
-
+		public List<LAllomorph> AlternateForms { get; }
 		#endregion Properties
 
 		#region Construction & initialization
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="hvo">Database ID of the entry.</param>
-		/// <param name="displayName">Display string of the entry.</param>
+		/// <summary />
 		public LEntry(int hvo, string displayName) : base(hvo)
 		{
-			m_displayName = displayName;
-			m_alAlternateForms = new List<LAllomorph>();
-			m_alSenses = new List<LSense>();
+			DisplayName = displayName;
+			AlternateForms = new List<LAllomorph>();
+			Senses = new List<LSense>();
 		}
 		#endregion Construction & initialization
 
@@ -74,17 +42,17 @@ namespace LanguageExplorer.Controls.LexText
 
 		public void AddAllomorph(LAllomorph allomorph)
 		{
-			m_alAlternateForms.Add(allomorph);
+			AlternateForms.Add(allomorph);
 		}
 
 		public void AddSense(LSense sense)
 		{
-			m_alSenses.Add(sense);
+			Senses.Add(sense);
 		}
 
 		public override string ToString()
 		{
-			return m_displayName;
+			return DisplayName;
 		}
 
 		#endregion  Other methods

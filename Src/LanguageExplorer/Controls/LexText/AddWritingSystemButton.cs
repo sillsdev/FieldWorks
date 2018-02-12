@@ -24,7 +24,6 @@ namespace LanguageExplorer.Controls.LexText
 		LcmCache m_cache;
 		private HashSet<string> m_existingWsIds;
 		public event EventHandler WritingSystemAdded;
-		CoreWritingSystemDefinition m_wsNew;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 
@@ -53,18 +52,15 @@ namespace LanguageExplorer.Controls.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
 		/// Initialize for adding new writing systems during import.
 		/// </summary>
-		/// <param name="cache">primary LCM data cache</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// <param name="app">The app.</param>
-		/// <param name="wss">The writing systems already displayed.</param>
-		public void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app,
-			 IEnumerable<CoreWritingSystemDefinition> wss)
+		public void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app, IEnumerable<CoreWritingSystemDefinition> wss)
 		{
 			CheckDisposed();
 			m_cache = cache;
@@ -88,8 +84,8 @@ namespace LanguageExplorer.Controls.LexText
 			// add the 'drop down' arrow to the text
 			using (var p = new Pen(SystemColors.ControlText, 1))
 			{
-				int x = Width - 14; // 7 wide at top, and 7 in from right boundry
-				int y = Height / 2 - 2; // up 2 past the mid point
+				var x = Width - 14; // 7 wide at top, and 7 in from right boundry
+				var y = Height / 2 - 2; // up 2 past the mid point
 				// 4 lines: len 7, len 5, len 3 and len 1
 				e.Graphics.DrawLine(p, x, y, x + 7, y);
 				e.Graphics.DrawLine(p, x + 1, y + 1, x + 1 + 5, y + 1);
@@ -102,39 +98,38 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			base.OnClick(e);
 
-			m_wsNew = null;
+			NewWritingSystem = null;
 
 			// show the menu to select which type of writing system to create
 			var mnuAddWs = components.ContextMenu("mnuAddWs");
 
-				// look like the "Add" button on the WS properties dlg
-				List<CoreWritingSystemDefinition> xmlWs = GetOtherWritingSystems();
-				var xmlWsV = new MenuItem[xmlWs.Count + 2]; // one for Vernacular
-				var xmlWsA = new MenuItem[xmlWs.Count + 2]; // one for Analysis
-				for (int i = 0; i < xmlWs.Count; i++)
-				{
-					CoreWritingSystemDefinition ws = xmlWs[i];
-					xmlWsV[i] = new MenuItem(ws.DisplayLabel, mnuAddWS_Vern);
-					xmlWsA[i] = new MenuItem(ws.DisplayLabel, mnuAddWS_Anal);
-					xmlWsV[i].Tag = ws;
-					xmlWsA[i].Tag = ws;
-				}
-				xmlWsV[xmlWs.Count] = new MenuItem("-");
-				xmlWsV[xmlWs.Count + 1] = new MenuItem(LexTextControls.ks_DefineNew_, mnuAddWS_Vern);
-				xmlWsA[xmlWs.Count] = new MenuItem("-");
-				xmlWsA[xmlWs.Count + 1] = new MenuItem(LexTextControls.ks_DefineNew_, mnuAddWS_Anal);
-
-				// have to have separate lists
-				mnuAddWs.MenuItems.Add(LexTextControls.ks_VernacularWS, xmlWsV);
-				mnuAddWs.MenuItems.Add(LexTextControls.ks_AnalysisWS, xmlWsA);
-
-				mnuAddWs.Show(this, new Point(0, Height));
+			// look like the "Add" button on the WS properties dlg
+			var xmlWs = GetOtherWritingSystems();
+			var xmlWsV = new MenuItem[xmlWs.Count + 2]; // one for Vernacular
+			var xmlWsA = new MenuItem[xmlWs.Count + 2]; // one for Analysis
+			for (var i = 0; i < xmlWs.Count; i++)
+			{
+				var ws = xmlWs[i];
+				xmlWsV[i] = new MenuItem(ws.DisplayLabel, mnuAddWS_Vern);
+				xmlWsA[i] = new MenuItem(ws.DisplayLabel, mnuAddWS_Anal);
+				xmlWsV[i].Tag = ws;
+				xmlWsA[i].Tag = ws;
 			}
+			xmlWsV[xmlWs.Count] = new MenuItem("-");
+			xmlWsV[xmlWs.Count + 1] = new MenuItem(LexTextControls.ks_DefineNew_, mnuAddWS_Vern);
+			xmlWsA[xmlWs.Count] = new MenuItem("-");
+			xmlWsA[xmlWs.Count + 1] = new MenuItem(LexTextControls.ks_DefineNew_, mnuAddWS_Anal);
+
+			// have to have separate lists
+			mnuAddWs.MenuItems.Add(LexTextControls.ks_VernacularWS, xmlWsV);
+			mnuAddWs.MenuItems.Add(LexTextControls.ks_AnalysisWS, xmlWsA);
+
+			mnuAddWs.Show(this, new Point(0, Height));
+		}
 
 		private List<CoreWritingSystemDefinition> GetOtherWritingSystems()
 		{
-			return m_cache.ServiceLocator.WritingSystemManager.OtherWritingSystems.
-				Where(ws => !m_existingWsIds.Contains(ws.Id)).OrderBy(ws => ws.DisplayLabel).ToList();
+			return m_cache.ServiceLocator.WritingSystemManager.OtherWritingSystems.Where(ws => !m_existingWsIds.Contains(ws.Id)).OrderBy(ws => ws.DisplayLabel).ToList();
 		}
 
 		private void mnuAddWS_Vern(object sender, EventArgs e)
@@ -155,8 +150,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				IEnumerable<CoreWritingSystemDefinition> newWritingSystems;
 				if (WritingSystemPropertiesDialog.ShowNewDialog(FindForm(), m_cache, m_cache.ServiceLocator.WritingSystemManager,
-					m_cache.ServiceLocator.WritingSystems, m_helpTopicProvider, m_app, true, null,
-					out newWritingSystems))
+					m_cache.ServiceLocator.WritingSystems, m_helpTopicProvider, m_app, true, null, out newWritingSystems))
 				{
 					ws = newWritingSystems.First();
 				}
@@ -168,43 +162,41 @@ namespace LanguageExplorer.Controls.LexText
 
 			if (ws != null)
 			{
-				m_wsNew = ws;
+				NewWritingSystem = ws;
 				// now add the ws to the LCM list for it
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 				{
 					// Add a global writing system to the local writing system store.  (Replace
 					// does this if there's nothing to replace.)
-					if (m_wsNew.Handle == 0)
-						m_cache.ServiceLocator.WritingSystemManager.Replace(m_wsNew);
+					if (NewWritingSystem.Handle == 0)
+					{
+						m_cache.ServiceLocator.WritingSystemManager.Replace(NewWritingSystem);
+					}
 					if (isAnalysis)
 					{
-						m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Add(m_wsNew);
-						if (!m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Contains(m_wsNew))
-							m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Add(m_wsNew);
+						m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Add(NewWritingSystem);
+						if (!m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Contains(NewWritingSystem))
+						{
+							m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Add(NewWritingSystem);
+						}
 					}
 					else
 					{
-						m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Add(m_wsNew);
-						if (!m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Contains(m_wsNew))
-							m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Add(m_wsNew);
+						m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Add(NewWritingSystem);
+						if (!m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Contains(NewWritingSystem))
+						{
+							m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Add(NewWritingSystem);
+						}
 					}
-					ProgressDialogWithTask.ImportTranslatedListsForWs(this.FindForm(), m_cache, m_wsNew.IcuLocale);
+					ProgressDialogWithTask.ImportTranslatedListsForWs(this.FindForm(), m_cache, NewWritingSystem.IcuLocale);
 				});
-				if (WritingSystemAdded != null)
-					WritingSystemAdded(this, new EventArgs());
+				WritingSystemAdded?.Invoke(this, new EventArgs());
 			}
 		}
 
 		/// <summary>
 		/// Get the new writing system added by clicking this button and following the popup menus.
 		/// </summary>
-		public CoreWritingSystemDefinition NewWritingSystem
-		{
-			get
-			{
-				CheckDisposed();
-				return m_wsNew;
-			}
-		}
+		public CoreWritingSystemDefinition NewWritingSystem { get; private set; }
 	}
 }

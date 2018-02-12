@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,17 +14,14 @@ namespace LanguageExplorer.Controls.LexText
 	/// </summary>
 	public class PossibilityListPopupTreeManager : PopupTreeManager
 	{
-		public PossibilityListPopupTreeManager(TreeCombo treeCombo, LcmCache cache,
-			IPropertyTable propertyTable, IPublisher publisher, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
+		public PossibilityListPopupTreeManager(TreeCombo treeCombo, LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
 			: base(treeCombo, cache, propertyTable, publisher, list, ws, useAbbr, parent)
 		{
 		}
 
 		protected override TreeNode MakeMenuItems(PopupTree popupTree, int hvoTarget)
 		{
-			TreeNode match1 = AddPossibilityListItems(popupTree, hvoTarget);
-			TreeNode match2 = AppendAdditionalItems(popupTree, hvoTarget);
-			return match1 ?? match2;
+			return AddPossibilityListItems(popupTree, hvoTarget) ?? AppendAdditionalItems(popupTree, hvoTarget);
 		}
 	}
 }

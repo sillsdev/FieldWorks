@@ -1,9 +1,6 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LiftExporter.cs
-// Responsibility: mcconnel
 
 using System;
 using System.Collections.Generic;
@@ -29,11 +26,9 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.LexText
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Export the lexicon as a LIFT file.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class LiftExporter
 	{
 		/// <summary></summary>
@@ -75,7 +70,9 @@ namespace LanguageExplorer.Controls.LexText
 
 			m_wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
 			if (m_wsEn == 0)
+			{
 				m_wsEn = cache.DefaultUserWs;
+			}
 			m_wsManager = cache.ServiceLocator.WritingSystemManager;
 			m_wsBestAnalVern = (int)SpecialWritingSystemCodes.BestAnalysisOrVernacular;
 			m_wsBestVernAnal = (int)SpecialWritingSystemCodes.BestVernacularOrAnalysis;
@@ -95,7 +92,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Export without pictures (mainly for testing).
 		/// </summary>
-		/// <param name="w"></param>
 		public void ExportLift(TextWriter w)
 		{
 			ExportPicturesAndMedia = false;
@@ -122,8 +118,10 @@ namespace LanguageExplorer.Controls.LexText
 
 			// pre-emtively delete the audio folder so files of deleted/changed references
 			// won't be orphaned
-			if (Directory.Exists(Path.Combine(FolderPath,"audio")))
+			if (Directory.Exists(Path.Combine(FolderPath, "audio")))
+			{
 				Directory.Delete(Path.Combine(FolderPath, "audio"), true);
+			}
 
 			w.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
 			w.WriteLine("<!-- See https://github.com/sillsdev/lift-standard for more information on the format used here. -->");
@@ -140,8 +138,7 @@ namespace LanguageExplorer.Controls.LexText
 			foreach (var entry in entries)
 			{
 				WriteLiftEntry(w, entry);
-				if (UpdateProgress != null)
-					UpdateProgress(this);
+				UpdateProgress?.Invoke(this);
 			}
 			w.WriteLine("</lift>");
 			w.Flush();
@@ -178,20 +175,25 @@ namespace LanguageExplorer.Controls.LexText
 			var sethvoT = new HashSet<int>();
 			var rglex = new List<ILexEntry>();
 			var repo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
-			for (var ihvo = 0; ihvo < rghvo.Count; ++ihvo)
+			foreach (var hvo in rghvo)
 			{
-				var hvoT = rghvo[ihvo];
+				var hvoT = hvo;
 				var obj = repo.GetObject(hvoT);
 				if (obj.ClassID != LexEntryTags.kClassId)
 				{
 					var objT = obj.OwnerOfClass(LexEntryTags.kClassId);
 					if (objT == null)
+					{
 						continue;
+					}
 					obj = objT;
 					hvoT = obj.Hvo;
 				}
+
 				if (sethvoT.Contains(hvoT))
+				{
 					continue;
+				}
 				sethvoT.Add(hvoT);
 				Debug.Assert(obj is ILexEntry);
 				rglex.Add(obj as ILexEntry);
@@ -202,12 +204,12 @@ namespace LanguageExplorer.Controls.LexText
 		private void ExportWsAsLdml(string sDirectory)
 		{
 			if (!Directory.Exists(sDirectory))
+			{
 				Directory.CreateDirectory(sDirectory);
+			}
 
 			var wss = new HashSet<CoreWritingSystemDefinition>(m_cache.ServiceLocator.WritingSystems.AllWritingSystems);
-			wss.UnionWith(from index in m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
-						  where !String.IsNullOrEmpty(index.WritingSystem)
-						  select m_cache.ServiceLocator.WritingSystemManager.Get(index.WritingSystem));
+			wss.UnionWith(m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().Where(index => !String.IsNullOrEmpty(index.WritingSystem)).Select(index => m_cache.ServiceLocator.WritingSystemManager.Get(index.WritingSystem)));
 
 			var writerSettings = new XmlWriterSettings
 			{
@@ -233,19 +235,19 @@ namespace LanguageExplorer.Controls.LexText
 			var sId = MakeSafeAndNormalizedAttribute(entry.LIFTid);
 			if (entry.HomographNumber != 0)
 			{
-				w.WriteLine("<entry dateCreated=\"{0}\" dateModified=\"{1}\" id=\"{2}\" guid=\"{3}\" order=\"{4}\">",
-					dateCreated, dateModified, sId, sGuid, entry.HomographNumber);
+				w.WriteLine("<entry dateCreated=\"{0}\" dateModified=\"{1}\" id=\"{2}\" guid=\"{3}\" order=\"{4}\">", dateCreated, dateModified, sId, sGuid, entry.HomographNumber);
 			}
 			else
 			{
-				w.WriteLine("<entry dateCreated=\"{0}\" dateModified=\"{1}\" id=\"{2}\" guid=\"{3}\">",
-					dateCreated, dateModified, sId, sGuid);
+				w.WriteLine("<entry dateCreated=\"{0}\" dateModified=\"{1}\" id=\"{2}\" guid=\"{3}\">", dateCreated, dateModified, sId, sGuid);
 			}
 			if (entry.LexemeFormOA != null)
 			{
 				WriteAllFormsWithMarkers(w, "lexical-unit", null, "form", entry.LexemeFormOA);
 				if (entry.LexemeFormOA.MorphTypeRA != null)
+				{
 					WriteTrait(w, RangeNames.sDbMorphTypesOA, entry.LexemeFormOA.MorphTypeRA.Name, m_wsEn);
+				}
 			}
 			WriteAllForms(w, "citation", null, "form", entry.CitationForm);
 			WriteAllForms(w, "note", "type=\"bibliography\"", "form", entry.Bibliography);
@@ -255,26 +257,50 @@ namespace LanguageExplorer.Controls.LexText
 			WriteAllForms(w, "field", "type=\"summary-definition\"", "form", entry.SummaryDefinition);
 			WriteString(w, "field", "type=\"import-residue\"", "form", entry.ImportResidue);
 			foreach (var alt in entry.AlternateFormsOS)
+			{
 				WriteAlternateForm(w, alt);
+			}
+
 			foreach (var etym in entry.EtymologyOS)
+			{
 				WriteEtymology(w, etym);
+			}
+
 			foreach (var dialect in entry.DialectLabelsRS)
+			{
 				WriteTrait(w, RangeNames.sDbDialectLabelsOA, dialect.Name, m_wsBestVernAnal);
+			}
+
 			foreach (var er in entry.EntryRefsOS)
+			{
 				WriteLexEntryRef(w, er);
+			}
+
 			foreach (var ler in entry.LexEntryReferences)
+			{
 				WriteLexReference(w, ler, entry);
+			}
+
 			if (entry.DoNotUseForParsing)
+			{
 				w.WriteLine("<trait name=\"DoNotUseForParsing\" value=\"true\"/>");
+			}
 			//<booleanElement name="ExcludeAsHeadword" simpleProperty="ExcludeAsHeadword" optional="true" writeAsTrait="true"/>
 			foreach (var pron in entry.PronunciationsOS)
+			{
 				WritePronunciation(w, pron);
+			}
+
 			foreach (var publication in entry.DoNotPublishInRC)
+			{
 				WritePossibilityLiftTrait(RangeNames.sDbPublicationTypesOA, w, publication.Hvo);
+			}
 			WriteCustomFields(w, entry);
 			WriteLiftResidue(w, entry);
 			foreach (var sense in entry.SensesOS)
+			{
 				WriteLexSense(w, sense, entry.SensesOS.Count > 1);
+			}
 			w.WriteLine("</entry>");
 		}
 
@@ -286,12 +312,14 @@ namespace LanguageExplorer.Controls.LexText
 			foreach (var flid in m_mdc.GetFields(obj.ClassID, true, (int)CellarPropertyTypeFilter.All))
 			{
 				if (!m_mdc.IsCustom(flid))
+				{
 					continue;
+				}
 				var fieldName = m_mdc.GetFieldName(flid);
 				var type = (CellarPropertyType)m_mdc.GetFieldType(flid);
 				int ws;
 				ITsString tssString;
-				String sLang;
+				string sLang;
 				switch (type)
 				{
 					case CellarPropertyType.MultiUnicode:
@@ -312,11 +340,11 @@ namespace LanguageExplorer.Controls.LexText
 									// The alternative contains a file path. We need to adjust and export and copy the file.
 									var internalPath = tssString.Text;
 									// usually this will be unchanged, but it is pathologically possible that the file name conflicts.
-									var exportedForm = ExportFile(internalPath,
-										Path.Combine(LcmFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
-										"audio");
+									var exportedForm = ExportFile(internalPath, Path.Combine(LcmFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath), "audio");
 									if (internalPath != exportedForm)
+									{
 										tssString = TsStringUtils.MakeString(exportedForm, ws);
+									}
 								}
 								WriteFormElement(w, ws, tssString);
 							}
@@ -346,7 +374,7 @@ namespace LanguageExplorer.Controls.LexText
 						//</form>
 						//</field>
 						tssString = m_cache.DomainDataByFlid.get_StringProp(obj.Hvo, flid);
-						if (!String.IsNullOrEmpty(tssString.Text))
+						if (!string.IsNullOrEmpty(tssString.Text))
 						{
 							w.WriteLine("<field type=\"{0}\">", MakeSafeAndNormalizedAttribute(fieldName));
 							ws = tssString.get_WritingSystem(0);
@@ -362,8 +390,7 @@ namespace LanguageExplorer.Controls.LexText
 						var intVal = m_cache.DomainDataByFlid.get_IntProp(obj.Hvo, flid);
 						if (intVal != 0)
 						{
-							var str = String.Format("<trait name=\"{0}\" value=\"{1}\"/>", MakeSafeAndNormalizedAttribute(fieldName),
-												MakeSafeAndNormalizedAttribute(intVal.ToString()));
+							var str = $"<trait name=\"{MakeSafeAndNormalizedAttribute(fieldName)}\" value=\"{MakeSafeAndNormalizedAttribute(intVal.ToString())}\"/>";
 							w.WriteLine(str);
 						}
 
@@ -395,19 +422,15 @@ namespace LanguageExplorer.Controls.LexText
 			//If there are no paragraphs then do nothing.
 			var para1 = paras.OfType<IStTxtPara>().FirstOrDefault();
 			if (para1 == null)
-				return;
-			//We don't want to output anything if the paragraphs have no content.
-			var allParasAreEmpty = true;
-			foreach (var para in paras.OfType<IStTxtPara>())
 			{
-				if (para.Contents.Text != null)
-				{
-					allParasAreEmpty = false;
-					break;
-				}
-			}
-			if (allParasAreEmpty)
 				return;
+			}
+			//We don't want to output anything if the paragraphs have no content.
+			var allParasAreEmpty = paras.OfType<IStTxtPara>().All(para => para.Contents.Text == null);
+			if (allParasAreEmpty)
+			{
+				return;
+			}
 			w.WriteLine("<field type=\"{0}\">", MakeSafeAndNormalizedAttribute(fieldName));
 			var ws = TsStringUtils.GetWsOfRun(para1.Contents, 0);
 			var sLang = m_cache.WritingSystemFactory.GetStrFromWs(ws);
@@ -416,14 +439,22 @@ namespace LanguageExplorer.Controls.LexText
 			foreach (var para in paras.OfType<IStTxtPara>())
 			{
 				if (fFirstPara)
+				{
 					fFirstPara = false;
+				}
 				else
+				{
 					w.Write("\u2029");	// flag end of preceding paragraph with 'Paragraph Separator'.
-				if (!String.IsNullOrEmpty(para.StyleName))
+				}
+				if (!string.IsNullOrEmpty(para.StyleName))
+				{
 					w.Write("<span class=\"{0}\">", MakeSafeAndNormalizedAttribute(para.StyleName));
+				}
 				WriteTsStringContent(w, para.Contents);
-				if (!String.IsNullOrEmpty(para.StyleName))
+				if (!string.IsNullOrEmpty(para.StyleName))
+				{
 					w.Write("</span>");
+				}
 			}
 			w.WriteLine("</text></form>");
 			w.WriteLine("</field>");
@@ -439,8 +470,10 @@ namespace LanguageExplorer.Controls.LexText
 				var sLang = m_cache.WritingSystemFactory.GetStrFromWs(ws);
 				var style = ttp.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 				w.Write("<span lang=\"{0}\"", MakeSafeAndNormalizedAttribute(sLang));
-				if (!String.IsNullOrEmpty(style))
+				if (!string.IsNullOrEmpty(style))
+				{
 					w.Write(" class=\"{0}\"", MakeSafeAndNormalizedAttribute(style));
+				}
 				w.Write(">{0}</span>", MakeSafeAndNormalizedXml(tss.get_RunText(irun)));
 			}
 		}
@@ -448,17 +481,17 @@ namespace LanguageExplorer.Controls.LexText
 		private void WritePossibilityLiftTrait(string labelName, TextWriter w, int possibilityHvo)
 		{
 			if (possibilityHvo == 0)
+			{
 				return;
+			}
 			var tss = GetPossibilityBestAlternative(possibilityHvo, m_cache);
-			var str = String.Format("<trait name=\"{0}\" value=\"{1}\"/>", MakeSafeAndNormalizedAttribute(labelName),
-									MakeSafeAndNormalizedAttribute(tss));
+			var str = $"<trait name=\"{MakeSafeAndNormalizedAttribute(labelName)}\" value=\"{MakeSafeAndNormalizedAttribute(tss)}\"/>";
 			w.WriteLine(str);
 		}
 
-		public static String GetPossibilityBestAlternative(int possibilityHvo, LcmCache cache)
+		public static string GetPossibilityBestAlternative(int possibilityHvo, LcmCache cache)
 		{
-			ITsMultiString tsm =
-				cache.DomainDataByFlid.get_MultiStringProp(possibilityHvo, CmPossibilityTags.kflidName);
+			var tsm = cache.DomainDataByFlid.get_MultiStringProp(possibilityHvo, CmPossibilityTags.kflidName);
 			var str = BestAlternative(tsm as IMultiAccessorBase, cache.DefaultUserWs);
 			return str;
 		}
@@ -469,11 +502,7 @@ namespace LanguageExplorer.Controls.LexText
 			if (!genDate.IsEmpty)
 			{
 				var genDateAttr = GetGenDateAttribute(genDate);
-				var str =
-					String.Format(
-						"<trait name=\"{0}\" value=\"{1}\"/>",
-						MakeSafeAndNormalizedAttribute(fieldName),
-						XmlUtils.MakeSafeXmlAttribute(genDateAttr));
+				var str = $"<trait name=\"{MakeSafeAndNormalizedAttribute(fieldName)}\" value=\"{XmlUtils.MakeSafeXmlAttribute(genDateAttr)}\"/>";
 				w.WriteLine(str);
 			}
 		}
@@ -483,8 +512,7 @@ namespace LanguageExplorer.Controls.LexText
 			var genDateStr = "0";
 			if (!dataProperty.IsEmpty)
 			{
-				genDateStr = String.Format("{0}{1:0000}{2:00}{3:00}{4}", dataProperty.IsAD ? "" : "-", dataProperty.Year,
-					dataProperty.Month, dataProperty.Day, (int)dataProperty.Precision);
+				genDateStr = $"{(dataProperty.IsAD ? "" : "-")}{dataProperty.Year:0000}{dataProperty.Month:00}{dataProperty.Day:00}{(int)dataProperty.Precision}";
 			}
 			return genDateStr;
 		}
@@ -512,8 +540,7 @@ namespace LanguageExplorer.Controls.LexText
 		private void WriteFormElement(TextWriter w, int ws, ITsString tss)
 		{
 			var sLang = m_cache.WritingSystemFactory.GetStrFromWs(ws);
-			w.WriteLine("<form lang=\"{0}\"><text>{1}</text></form>",
-						MakeSafeAndNormalizedAttribute(sLang), ConvertTsStringToLiftXml(tss, ws));
+			w.WriteLine("<form lang=\"{0}\"><text>{1}</text></form>", MakeSafeAndNormalizedAttribute(sLang), ConvertTsStringToLiftXml(tss, ws));
 		}
 
 		private void WritePronunciation(TextWriter w, ILexPronunciation pron)
@@ -523,12 +550,15 @@ namespace LanguageExplorer.Controls.LexText
 			w.WriteLine(">");
 			WriteAllForms(w, null, null, "form", pron.Form);
 			foreach (var file in pron.MediaFilesOS)
+			{
 				WriteMediaFile(w, file);
+			}
 			WriteString(w, "field", "type=\"cv-pattern\"", "form", pron.CVPattern);
 			WriteString(w, "field", "type=\"tone\"", "form", pron.Tone);
 			if (pron.LocationRA != null)
-				w.WriteLine("<trait name=\"{0}\" value=\"{1}\"/>",
-					RangeNames.sLocationsOA, MakeSafeAndNormalizedAttribute(pron.LocationRA.Name.BestAnalysisVernacularAlternative.Text));
+			{
+				w.WriteLine("<trait name=\"{0}\" value=\"{1}\"/>", RangeNames.sLocationsOA, MakeSafeAndNormalizedAttribute(pron.LocationRA.Name.BestAnalysisVernacularAlternative.Text));
+			}
 			WriteLiftResidue(w, pron);
 			w.WriteLine("</pronunciation>");
 		}
@@ -537,12 +567,11 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			//LT-13681
 			if (file == null || file.MediaFileRA == null)
+			{
 				return;
+			}
 			w.Write("<media href=\"");
-			ExportFile(w, file.MediaFileRA.InternalPath, file.MediaFileRA.AbsoluteInternalPath, "audio",
-				LcmFileHelper.ksMediaDir);
-			//if (file.MediaFileRA != null)
-			//    w.Write(XmlUtils.MakeSafeXmlAttribute(Path.GetFileName(file.MediaFileRA.InternalPath)));
+			ExportFile(w, file.MediaFileRA.InternalPath, file.MediaFileRA.AbsoluteInternalPath, "audio", LcmFileHelper.ksMediaDir);
 			w.WriteLine("\">");
 			WriteAllForms(w, "label", null, "form", file.Label);
 			w.Write("</media>");
@@ -553,9 +582,8 @@ namespace LanguageExplorer.Controls.LexText
 			var slr = new SingleLexReference(lref, lref.TargetsRS[0].Hvo);
 			var nMappingType = slr.MappingType;
 			var hvoOpen = lexItem.Hvo;
-			for (var i = 0; i < lref.TargetsRS.Count; i++)
+			foreach (var target in lref.TargetsRS)
 			{
-				var target = lref.TargetsRS[i];
 				// If the LexReference vector element is the currently open object, ignore
 				// it unless it's a sequence type relation.
 				if (nMappingType != (int)LexRefTypeTags.MappingTypes.kmtSenseSequence &&
@@ -563,7 +591,9 @@ namespace LanguageExplorer.Controls.LexText
 					nMappingType != (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence)
 				{
 					if (target.Hvo == hvoOpen)
+					{
 						continue;
+					}
 				}
 				// If this is a unidirectional type relation, only show elements if the
 				//  first element is the currently open object.
@@ -572,7 +602,9 @@ namespace LanguageExplorer.Controls.LexText
 					nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional)
 				{
 					if (hvoOpen != lref.TargetsRS[0].Hvo)
+					{
 						break;
+					}
 				}
 				slr.CrossRefHvo = target.Hvo;
 				w.Write("<relation");
@@ -581,10 +613,12 @@ namespace LanguageExplorer.Controls.LexText
 				w.Write(" type=\"{0}\"", MakeSafeAndNormalizedAttribute(typeName));
 				w.Write(" ref=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(slr.RefLIFTid));
 				var refOrder = slr.RefOrder;
-				if (!String.IsNullOrEmpty(refOrder))
+				if (!string.IsNullOrEmpty(refOrder))
+				{
 					w.Write(" order=\"{0}\"", refOrder);
+				}
 				var residue = slr.LiftResidueContent;
-				if (String.IsNullOrEmpty(residue))
+				if (string.IsNullOrEmpty(residue))
 				{
 					w.WriteLine("/>");
 				}
@@ -602,7 +636,9 @@ namespace LanguageExplorer.Controls.LexText
 					nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree)
 				{
 					if (hvoOpen != lref.TargetsRS[0].Hvo)
+					{
 						break;
+					}
 				}
 			}
 		}
@@ -610,7 +646,9 @@ namespace LanguageExplorer.Controls.LexText
 		private static string MakeSafeAndNormalizedXml(string inputString)
 		{
 			if (string.IsNullOrEmpty(inputString))
+			{
 				return inputString;
+			}
 			var normalizedString = Icu.Normalize(inputString, Icu.UNormalizationMode.UNORM_NFC);
 			return XmlUtils.MakeSafeXml(normalizedString);
 		}
@@ -618,7 +656,9 @@ namespace LanguageExplorer.Controls.LexText
 		private static string MakeSafeAndNormalizedAttribute(string inputString)
 		{
 			if (string.IsNullOrEmpty(inputString))
+			{
 				return inputString;
+			}
 			var normalizedString = Icu.Normalize(inputString, Icu.UNormalizationMode.UNORM_NFC);
 			return XmlUtils.MakeSafeXmlAttribute(normalizedString);
 		}
@@ -627,15 +667,19 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			var typeString = "_component-lexeme";
 			// special case to export the BaseForm complex form type as expected by WeSay.
-			if (ler.ComplexEntryTypesRS.Count == 1 && ler.ComplexEntryTypesRS[0].Name.get_String(m_cache.WritingSystemFactory.GetWsFromStr("en")).Text == "BaseForm")
+			if (ler.ComplexEntryTypesRS.Count == 1 &&
+				ler.ComplexEntryTypesRS[0].Name.get_String(m_cache.WritingSystemFactory.GetWsFromStr("en")).Text == "BaseForm")
+			{
 				typeString = "BaseForm";
-			int order = 0;
+			}
+			var order = 0;
 			foreach (var obj in ler.ComponentLexemesRS)
 			{
-				w.WriteLine("<relation type=\"" + typeString + "\" ref=\"{0}\" order=\"{1}\">",
-					MakeSafeAndNormalizedAttribute(GetProperty(obj, "LIFTid").ToString()), order);
+				w.WriteLine("<relation type=\"" + typeString + "\" ref=\"{0}\" order=\"{1}\">", MakeSafeAndNormalizedAttribute(GetProperty(obj, "LIFTid").ToString()), order);
 				if (ler.PrimaryLexemesRS.Contains(obj))
+				{
 					w.WriteLine("<trait name=\"is-primary\" value=\"true\"/>");
+				}
 				WriteLexEntryRefBasics(w, ler);
 				w.WriteLine("</relation>");
 				++order;
@@ -651,9 +695,14 @@ namespace LanguageExplorer.Controls.LexText
 		private void WriteLexEntryRefBasics(TextWriter w, ILexEntryRef ler)
 		{
 			foreach (var type in ler.ComplexEntryTypesRS)
+			{
 				WriteTrait(w, "complex-form-type", type.Name, m_wsBestAnalVern);
+			}
+
 			foreach (var type in ler.VariantEntryTypesRS)
+			{
 				WriteTrait(w, "variant-type", type.Name, m_wsBestAnalVern);
+			}
 			if (ler.ComplexEntryTypesRS.Count == 0 && ler.VariantEntryTypesRS.Count == 0)
 			{
 				switch (ler.RefType)
@@ -667,7 +716,9 @@ namespace LanguageExplorer.Controls.LexText
 				}
 			}
 			if (ler.HideMinorEntry != 0)
+			{
 				w.WriteLine("<trait name=\"hide-minor-entry\" value=\"{0}\"/>", ler.HideMinorEntry);
+			}
 			WriteAllForms(w, "field", "type=\"summary\"", "form", ler.Summary);
 		}
 
@@ -683,7 +734,9 @@ namespace LanguageExplorer.Controls.LexText
 			WriteAllForms(w, "field", "type=\"comment\"", "form", ety.Comment);
 			WriteAllForms(w, "field", "type=\"preccomment\"", "form", ety.PrecComment);
 			foreach (var lang in ety.LanguageRS)
+			{
 				WritePossibilityLiftTrait(RangeNames.sDbLanguagesOA, w, lang.Hvo);
+			}
 			WriteAllForms(w, "field", "type=\"note\"", "form", ety.Note);
 			WriteAllForms(w, "field", "type=\"bibliography\"", "form", ety.Bibliography);
 			WriteAllForms(w, "field", "type=\"languagenotes\"", "form", ety.LanguageNotes);
@@ -702,12 +755,16 @@ namespace LanguageExplorer.Controls.LexText
 						var stemAllo = alt as IMoStemAllomorph;
 						Debug.Assert(stemAllo != null);
 						var refer = GetProperty(alt, "LiftRefAttribute") as string;
-						if (!String.IsNullOrEmpty(refer))
+						if (!string.IsNullOrEmpty(refer))
+						{
 							w.Write(" ref=\"{0}\"", MakeSafeAndNormalizedAttribute(refer));
+						}
 						w.WriteLine(">");
 						WriteAllFormsWithMarkers(w, null, null, "form", alt);
 						foreach (var env in stemAllo.PhoneEnvRC)
+						{
 							WritePhEnvironment(w, env);
+						}
 					}
 					break;
 				case MoAffixAllomorphTags.kClassId:
@@ -715,12 +772,16 @@ namespace LanguageExplorer.Controls.LexText
 						var affixAllo = alt as IMoAffixAllomorph;
 						Debug.Assert(affixAllo != null);
 						var refer = GetProperty(alt, "LiftRefAttribute") as string;
-						if (!String.IsNullOrEmpty(refer))
+						if (!string.IsNullOrEmpty(refer))
+						{
 							w.Write(" ref=\"{0}\"", MakeSafeAndNormalizedAttribute(refer));
+						}
 						w.WriteLine(">");
 						WriteAllFormsWithMarkers(w, null, null, "form", alt);
 						foreach (var env in affixAllo.PhoneEnvRC)
+						{
 							WritePhEnvironment(w, env);
+						}
 					}
 					break;
 				case MoAffixProcessTags.kClassId:
@@ -731,7 +792,9 @@ namespace LanguageExplorer.Controls.LexText
 					break;
 			}
 			if (alt.MorphTypeRA != null)
+			{
 				WriteTrait(w, RangeNames.sDbMorphTypesOA, alt.MorphTypeRA.Name, m_wsEn);
+			}
 			WriteCustomFields(w, alt);
 			WriteLiftResidue(w, alt);
 			w.WriteLine("</variant>");
@@ -741,18 +804,19 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			var repr = env.StringRepresentation.Text;
 			if (repr != null)
+			{
 				w.WriteLine("<trait name =\"environment\" value=\"{0}\"/>", XmlUtils.MakeSafeXmlAttribute(repr));
+			}
 		}
 
 		private void WriteLexSense(TextWriter w, ILexSense sense, bool fOrder)
 		{
-			if (sense.Owner is ILexEntry)
-				w.Write("<sense id=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(sense.LIFTid));
-			else
-				w.Write("<subsense id=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(sense.LIFTid));
+			w.Write(sense.Owner is ILexEntry ? "<sense id=\"{0}\"" : "<subsense id=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(sense.LIFTid));
 			WriteLiftDates(w, sense);
 			if (fOrder)
+			{
 				w.Write(" order=\"{0}\"", sense.IndexInOwner);
+			}
 			w.WriteLine(">");
 			if (sense.MorphoSyntaxAnalysisRA != null)
 			{
@@ -778,9 +842,14 @@ namespace LanguageExplorer.Controls.LexText
 			WriteAllForms(w, null, null, "gloss", sense.Gloss);
 			WriteAllForms(w, "definition", null, "form", sense.Definition);
 			foreach (var publication in sense.DoNotPublishInRC)
+			{
 				WritePossibilityLiftTrait(RangeNames.sDbPublicationTypesOA, w, publication.Hvo);
+			}
+
 			foreach (var example in sense.ExamplesOS)
+			{
 				WriteExampleSentence(w, example);
+			}
 			foreach (var sem in sense.SemanticDomainsRC)
 			{
 				var val = GetProperty(sem, "LiftAbbrAndName") as string;
@@ -800,31 +869,48 @@ namespace LanguageExplorer.Controls.LexText
 			WriteAllForms(w, "note", "type=\"sociolinguistics\"", "form", sense.SocioLinguisticsNote);
 			WriteString(w, "note", "type=\"source\"", "form", sense.Source);
 			foreach (var anthro in sense.AnthroCodesRC)
+			{
 				WriteTrait(w, RangeNames.sAnthroListOA, anthro.Abbreviation, m_wsBestAnalVern);
+			}
 			foreach (var dialect in sense.DialectLabelsRS)
+			{
 				WriteTrait(w, RangeNames.sDbDialectLabelsOA, dialect.Name, m_wsBestVernAnal);
+			}
 			foreach (var dom in sense.DomainTypesRC)
+			{
 				WriteTrait(w, RangeNames.sDbDomainTypesOA, dom.Name, m_wsBestAnalVern);
+			}
 			foreach (var reversal in sense.ReversalEntriesRC)
+			{
 				WriteReversal(w, reversal);
+			}
 			if (sense.SenseTypeRA != null)
+			{
 				WriteTrait(w, RangeNames.sDbSenseTypesOA, sense.SenseTypeRA.Name, m_wsBestAnalVern);
+			}
 			if (sense.StatusRA != null)
+			{
 				WriteTrait(w, RangeNames.sStatusOA, sense.StatusRA.Name, m_wsBestAnalVern);
+			}
 			foreach (var usage in sense.UsageTypesRC)
+			{
 				WriteTrait(w, RangeNames.sDbUsageTypesOA, usage.Name, m_wsBestAnalVern);
+			}
 			foreach (var picture in sense.PicturesOS)
+			{
 				WriteCmPicture(w, picture);
+			}
 			foreach (var lref in sense.LexSenseReferences)
+			{
 				WriteLexReference(w, lref, sense);
+			}
 			WriteCustomFields(w, sense);
 			WriteLiftResidue(w, sense);
 			foreach (var subsense in sense.SensesOS)
+			{
 				WriteLexSense(w, subsense, subsense.SensesOS.Count > 1);
-			if (sense.Owner is ILexEntry)
-				w.WriteLine("</sense>");
-			else
-				w.WriteLine("</subsense>");
+			}
+			w.WriteLine(sense.Owner is ILexEntry ? "</sense>" : "</subsense>");
 		}
 
 		private void WriteCmPicture(TextWriter w, ICmPicture picture)
@@ -832,8 +918,7 @@ namespace LanguageExplorer.Controls.LexText
 			w.Write("<illustration href=\"");
 			if (picture.PictureFileRA != null)
 			{
-				ExportFile(w, picture.PictureFileRA.InternalPath, picture.PictureFileRA.AbsoluteInternalPath,
-					"pictures", LcmFileHelper.ksPicturesDir);
+				ExportFile(w, picture.PictureFileRA.InternalPath, picture.PictureFileRA.AbsoluteInternalPath, "pictures", LcmFileHelper.ksPicturesDir);
 			}
 			w.WriteLine("\">");
 			WriteAllForms(w, "label", null, "form", picture.Caption);
@@ -846,21 +931,27 @@ namespace LanguageExplorer.Controls.LexText
 
 		private string ExportFile(string internalPath, string actualPath, string liftFolderName, string expectRootFolder)
 		{
-			if (String.IsNullOrEmpty(internalPath))
+			if (string.IsNullOrEmpty(internalPath))
+			{
 				return null;
+			}
 			// Typically internalPath is something like "Pictures\MyFile.jpg".
 			// If it starts with the expected folder, we want to make the LIFT path omit that element.
 			var writePath = Path.GetFileName(internalPath); // the path to store in the lift file (by default).
-			if (writePath == null)
-				return null; // not sure how this can happen, but Resharper is worried.
 			// Try a few ways stripping off the expected root folder. I'm not sure what separator we actually store,
 			// especially if the FW project has lived on both Linux and Windows.
 			if (internalPath.StartsWith(expectRootFolder + Path.PathSeparator))
+			{
 				writePath = internalPath.Substring((expectRootFolder + Path.PathSeparator).Length);
+			}
 			else if (internalPath.StartsWith(expectRootFolder + "\\"))
+			{
 				writePath = internalPath.Substring((expectRootFolder + "\\").Length);
+			}
 			else if (internalPath.StartsWith(expectRootFolder + "/"))
+			{
 				writePath = internalPath.Substring((expectRootFolder + "/").Length);
+			}
 			// Otherwise, it's in some non-standard position, and we'll have to just put it directly in the target folder.
 			writePath = ExportFile(writePath, actualPath, liftFolderName);
 			return writePath;
@@ -870,10 +961,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// This simpler overload is useful when we already know the exact path we will write in the destination folder
 		/// (unless it exists already).
 		/// </summary>
-		/// <param name="writePath"></param>
-		/// <param name="actualPath"></param>
-		/// <param name="liftFolderName"></param>
-		/// <returns></returns>
 		private string ExportFile(string writePath, string actualPath, string liftFolderName)
 		{
 			//If the source file is the same and we already wrote it, there is no reason to make a copy with a mangled name
@@ -890,7 +977,7 @@ namespace LanguageExplorer.Controls.LexText
 				var destFolder = Path.Combine(FolderPath, liftFolderName);
 				Directory.CreateDirectory(destFolder);
 				var destFilePath = Path.Combine(destFolder, safeWritePath);
-				int affix = 1;
+				var affix = 1;
 				var pathWithoutExt = Path.Combine(Path.GetDirectoryName(safeWritePath), Path.GetFileNameWithoutExtension(safeWritePath));
 				var ext = Path.GetExtension(safeWritePath) ?? "";
 				while(m_filesCreated.Values.Any(i => i.Item1 == destFilePath))
@@ -919,9 +1006,13 @@ namespace LanguageExplorer.Controls.LexText
 			w.Write("<reversal type=\"{0}\">", MakeSafeAndNormalizedAttribute(reversal.ReversalIndex.WritingSystem));
 			WriteAllForms(w, null, null, "form", reversal.ReversalForm);
 			if (reversal.PartOfSpeechRA != null)
+			{
 				w.WriteLine("<grammatical-info value=\"{0}\"/>", BestAlternative(reversal.PartOfSpeechRA.Name, m_wsEn));
+			}
 			if (reversal.OwningEntry != null)
+			{
 				WriteOwningReversal(w, reversal.OwningEntry);
+			}
 			w.WriteLine("</reversal>");
 		}
 
@@ -930,9 +1021,13 @@ namespace LanguageExplorer.Controls.LexText
 			w.WriteLine("<main>");
 			WriteAllForms(w, null, null, "form", reversal.ReversalForm);
 			if (reversal.PartOfSpeechRA != null)
+			{
 				w.WriteLine("<grammatical-info value=\"{0}\"/>", BestAlternative(reversal.PartOfSpeechRA.Name, m_wsEn));
+			}
 			if (reversal.OwningEntry != null)
+			{
 				WriteOwningReversal(w, reversal.OwningEntry);
+			}
 			w.WriteLine("</main>");
 		}
 
@@ -949,14 +1044,20 @@ namespace LanguageExplorer.Controls.LexText
 			w.Write("<example");
 			WriteLiftDates(w, example);
 			if (example.Reference != null && example.Reference.Length > 0)
+			{
 				w.Write(" source=\"{0}\"", MakeSafeAndNormalizedAttribute(example.Reference.Text));
+			}
 			w.WriteLine(">");
 			WriteAllForms(w, null, null, "form", example.Example);
 			foreach (var trans in example.TranslationsOC)
+			{
 				WriteTranslation(w, trans);
+			}
 			WriteString(w, "note", "type=\"reference\"", "form", example.Reference);
 			foreach (var publication in example.DoNotPublishInRC)
+			{
 				WritePossibilityLiftTrait(RangeNames.sDbPublicationTypesOA, w, publication.Hvo);
+			}
 			WriteCustomFields(w, example);
 			WriteLiftResidue(w, example);
 			w.WriteLine("</example>");
@@ -965,9 +1066,13 @@ namespace LanguageExplorer.Controls.LexText
 		private void WriteTranslation(TextWriter w, ICmTranslation trans)
 		{
 			if (trans.TypeRA == null)
+			{
 				w.WriteLine("<translation>");
+			}
 			else
+			{
 				w.WriteLine("<translation type=\"{0}\">", BestAlternative(trans.TypeRA.Name, m_wsEn));
+			}
 			WriteAllForms(w, null, null, "form", trans.Translation);
 			w.WriteLine("</translation>");
 		}
@@ -978,25 +1083,37 @@ namespace LanguageExplorer.Controls.LexText
 		private void WriteMoStemMsa(TextWriter w, IMoStemMsa msa)
 		{
 			if (m_flidMoStemMsaIsEmpty == 0)
+			{
 				m_flidMoStemMsaIsEmpty = m_cache.MetaDataCacheAccessor.GetFieldId("MoStemMsa", "IsEmpty", false);
+			}
 			if (m_cache.DomainDataByFlid.get_BooleanProp(msa.Hvo, m_flidMoStemMsaIsEmpty))
+			{
 				return;
-			if (String.IsNullOrEmpty(msa.PosFieldName))
+			}
+			if (string.IsNullOrEmpty(msa.PosFieldName))
+			{
 				w.WriteLine("<grammatical-info value=\"\">");
+			}
 			else
+			{
 				w.WriteLine("<grammatical-info value=\"{0}\">", MakeSafeAndNormalizedAttribute(msa.PosFieldName));
+			}
 			if (msa.InflectionClassRA != null)
 			{
-				w.Write("<trait name=\"{0}-infl-class\" value=\"{1}\"/>",
-					MakeSafeAndNormalizedAttribute(msa.InflectionClassRA.Owner.ShortName),
-					BestAlternative(msa.InflectionClassRA.Name, m_wsEn));
+				w.Write("<trait name=\"{0}-infl-class\" value=\"{1}\"/>", MakeSafeAndNormalizedAttribute(msa.InflectionClassRA.Owner.ShortName), BestAlternative(msa.InflectionClassRA.Name, m_wsEn));
 			}
 			foreach (var pos in msa.FromPartsOfSpeechRC)
+			{
 				WriteTrait(w, RangeNames.sPartsOfSpeechOAold1, pos.Name, m_wsBestAnalVern);
+			}
 			if (msa.MsFeaturesOA != null && !msa.MsFeaturesOA.IsEmpty)
+			{
 				w.WriteLine("<trait name=\"{0}\" value=\"{1}\"/>", RangeNames.sMSAinflectionFeature, MakeSafeAndNormalizedAttribute(msa.MsFeaturesOA.LiftName));
+			}
 			foreach (var restrict in msa.ProdRestrictRC)
+			{
 				WriteTrait(w, RangeNames.sProdRestrictOA, restrict.Name, m_wsBestAnalVern);
+			}
 			WriteLiftResidue(w, msa);
 			w.WriteLine("</grammatical-info>");
 		}
@@ -1005,11 +1122,17 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			m_flidUnclAffixIsEmpty = m_cache.MetaDataCacheAccessor.GetFieldId("MoUnclassifiedAffixMsa", "IsEmpty", false);
 			if (m_cache.DomainDataByFlid.get_BooleanProp(msa.Hvo, m_flidUnclAffixIsEmpty))
+			{
 				return;
-			if (String.IsNullOrEmpty(msa.PosFieldName))
+			}
+			if (string.IsNullOrEmpty(msa.PosFieldName))
+			{
 				w.WriteLine("<grammatical-info value=\"\">");
+			}
 			else
+			{
 				w.WriteLine("<grammatical-info value=\"{0}\">", MakeSafeAndNormalizedAttribute(msa.PosFieldName));
+			}
 			w.WriteLine("<trait name=\"type\" value=\"affix\"/>");
 			WriteLiftResidue(w, msa);
 			w.WriteLine("</grammatical-info>");
@@ -1017,30 +1140,42 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void WriteMoInflAffMsa(TextWriter w, IMoInflAffMsa msa)
 		{
-			if (String.IsNullOrEmpty(msa.PosFieldName))
+			if (string.IsNullOrEmpty(msa.PosFieldName))
+			{
 				w.WriteLine("<grammatical-info value=\"\">");
+			}
 			else
+			{
 				w.WriteLine("<grammatical-info value=\"{0}\">", MakeSafeAndNormalizedAttribute(msa.PosFieldName));
+			}
 			w.WriteLine("<trait name=\"type\" value=\"inflAffix\"/>");
 			foreach (var slot in msa.SlotsRC)
 			{
-				w.Write("<trait name=\"{0}-slot\" value=\"{1}\"/>",
-					MakeSafeAndNormalizedAttribute(slot.Owner.ShortName), BestAlternative(slot.Name, m_wsEn));
+				w.Write("<trait name=\"{0}-slot\" value=\"{1}\"/>", MakeSafeAndNormalizedAttribute(slot.Owner.ShortName), BestAlternative(slot.Name, m_wsEn));
 			}
+
 			if (msa.InflFeatsOA != null && !msa.InflFeatsOA.IsEmpty)
+			{
 				w.WriteLine("<trait name=\"{0}\" value=\"{1}\"/>", RangeNames.sMSAinflectionFeature, MakeSafeAndNormalizedAttribute(msa.InflFeatsOA.LiftName));
+			}
 			foreach (var restrict in msa.FromProdRestrictRC)
+			{
 				WriteTrait(w, RangeNames.sProdRestrictOA, restrict.Name, m_wsBestAnalVern);
+			}
 			WriteLiftResidue(w, msa);
 			w.WriteLine("</grammatical-info>");
 		}
 
 		private void WriteMoDerivAffMsa(TextWriter w, IMoDerivAffMsa msa)
 		{
-			if (String.IsNullOrEmpty(msa.PosFieldName))
+			if (string.IsNullOrEmpty(msa.PosFieldName))
+			{
 				w.WriteLine("<grammatical-info value=\"\">");
+			}
 			else
+			{
 				w.WriteLine("<grammatical-info value=\"{0}\">", MakeSafeAndNormalizedAttribute(msa.PosFieldName));
+			}
 			w.WriteLine("<trait name=\"type\" value=\"derivAffix\"/>");
 			if (msa.FromPartOfSpeechRA != null)
 			{
@@ -1048,9 +1183,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			if (msa.FromInflectionClassRA != null)
 			{
-				w.WriteLine("<trait name=\"from-{0}-infl-class\" value=\"{1}\"/>",
-							MakeSafeAndNormalizedAttribute(msa.FromInflectionClassRA.Owner.ShortName),
-							BestAlternative(msa.FromInflectionClassRA.Name, m_wsEn));
+				w.WriteLine("<trait name=\"from-{0}-infl-class\" value=\"{1}\"/>", MakeSafeAndNormalizedAttribute(msa.FromInflectionClassRA.Owner.ShortName), BestAlternative(msa.FromInflectionClassRA.Name, m_wsEn));
 			}
 			foreach (var restrict in msa.FromProdRestrictRC)
 			{
@@ -1058,8 +1191,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			if (msa.FromMsFeaturesOA != null && !msa.FromMsFeaturesOA.IsEmpty)
 			{
-				w.WriteLine("<trait name=\"from-inflection-feature\" value=\"{0}\"/>",
-							MakeSafeAndNormalizedAttribute(msa.FromMsFeaturesOA.LiftName));
+				w.WriteLine("<trait name=\"from-inflection-feature\" value=\"{0}\"/>", MakeSafeAndNormalizedAttribute(msa.FromMsFeaturesOA.LiftName));
 			}
 			if (msa.FromStemNameRA != null)
 			{
@@ -1067,9 +1199,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			if (msa.ToInflectionClassRA != null)
 			{
-				w.WriteLine("<trait name=\"{0}-infl-class\" value=\"{1}\"/>",
-							MakeSafeAndNormalizedAttribute(msa.ToInflectionClassRA.Owner.ShortName),
-							BestAlternative(msa.ToInflectionClassRA.Name, m_wsEn));
+				w.WriteLine("<trait name=\"{0}-infl-class\" value=\"{1}\"/>", MakeSafeAndNormalizedAttribute(msa.ToInflectionClassRA.Owner.ShortName), BestAlternative(msa.ToInflectionClassRA.Name, m_wsEn));
 			}
 			foreach (var restrict in msa.ToProdRestrictRC)
 			{
@@ -1077,8 +1207,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			if (msa.ToMsFeaturesOA != null && !msa.ToMsFeaturesOA.IsEmpty)
 			{
-				w.WriteLine("<trait name=\"{0}\" value=\"{1}\"/>", RangeNames.sMSAinflectionFeature,
-							MakeSafeAndNormalizedAttribute(msa.ToMsFeaturesOA.LiftName));
+				w.WriteLine("<trait name=\"{0}\" value=\"{1}\"/>", RangeNames.sMSAinflectionFeature, MakeSafeAndNormalizedAttribute(msa.ToMsFeaturesOA.LiftName));
 			}
 			WriteLiftResidue(w, msa);
 			w.WriteLine("</grammatical-info>");
@@ -1086,10 +1215,14 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void WriteMoDerivStepMsa(TextWriter w, IMoDerivStepMsa msa)
 		{
-			if (String.IsNullOrEmpty(msa.PosFieldName))
+			if (string.IsNullOrEmpty(msa.PosFieldName))
+			{
 				w.WriteLine("<grammatical-info value=\"\">");
+			}
 			else
+			{
 				w.WriteLine("<grammatical-info value=\"{0}\">", MakeSafeAndNormalizedAttribute(msa.PosFieldName));
+			}
 			w.WriteLine("<trait name=\"type\" value=\"derivStepAffix\"/>");
 			WriteLiftResidue(w, msa);
 			w.WriteLine("</grammatical-info>");
@@ -1115,9 +1248,11 @@ namespace LanguageExplorer.Controls.LexText
 			var sOutputFilePath = "DUMMYFILENAME.lift";
 			if (w is StreamWriter)
 			{
-				var sw = w as StreamWriter;
+				var sw = (StreamWriter)w;
 				if (sw.BaseStream is FileStream)
+				{
 					sOutputFilePath = ((FileStream)sw.BaseStream).Name;
+				}
 			}
 			var sRangesFile = Path.ChangeExtension(sOutputFilePath.Replace('\\', '/'), ".lift-ranges");
 			sRangesFile = XmlUtils.MakeSafeXmlAttribute(sRangesFile);
@@ -1142,13 +1277,21 @@ namespace LanguageExplorer.Controls.LexText
 			w.WriteLine("<range id=\"{0}\" href=\"file://{1}\"/>", RangeNames.sMSAinflectionFeature, sRangesFile);
 			w.WriteLine("<range id=\"{0}\" href=\"file://{1}\"/>", RangeNames.sMSAinflectionFeatureType, sRangesFile);
 			if (m_cache.LangProject.MsFeatureSystemOA != null)
+			{
 				WriteRangeRefsForMsFeatureSystem(w, sRangesFile);
+			}
 			foreach (var pos in m_cache.LangProject.AllPartsOfSpeech)
+			{
 				WriteRangeRefsForSlots(w, sRangesFile, pos);
+			}
 			foreach (var pos in m_cache.LangProject.AllPartsOfSpeech)
+			{
 				WriteRangeRefForInflectionClasses(w, sRangesFile, pos);
+			}
 			foreach (var pos in m_cache.LangProject.AllPartsOfSpeech)
+			{
 				WriteRangeRefsForStemNames(w, sRangesFile, pos);
+			}
 			WriteRangeRefsForListsReferencedByFields(w, sRangesFile);
 			w.WriteLine("</ranges>");
 		}
@@ -1158,16 +1301,14 @@ namespace LanguageExplorer.Controls.LexText
 		/// This is writing out the reference to the range in the main LIFT file.
 		/// The range is actually written to a different file.
 		/// </summary>
-		/// <param name="w"></param>
-		/// <param name="sRangesFile"></param>
 		private void WriteRangeRefsForListsReferencedByFields(TextWriter w, string sRangesFile)
 		{
 			foreach (var posList in m_CmPossListsReferencedOrCustom)
 			{
 				//We actually want to export any range which is referenced by a Custom field and is not already output.
 				//not just Custom ranges.
-				String rangeName;
-				var haveValue = m_CmPossListsReferencedOrCustom.TryGetValue(posList.Key, out rangeName);
+				string rangeName;
+				m_CmPossListsReferencedOrCustom.TryGetValue(posList.Key, out rangeName);
 				w.WriteLine("<range id=\"{0}\" href=\"file://{1}\"/>",
 				MakeSafeAndNormalizedAttribute(rangeName), sRangesFile);
 			}
@@ -1177,9 +1318,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			if (pos.InflectionClassesOC.Count > 0)
 			{
-				w.WriteLine("<range id=\"{0}-infl-class\" href=\"file://{1}\"/>",
-					MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text),
-					sRangesFile);
+				w.WriteLine("<range id=\"{0}-infl-class\" href=\"file://{1}\"/>", MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text), sRangesFile);
 			}
 		}
 
@@ -1187,9 +1326,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			if (pos.StemNamesOC.Count > 0)
 			{
-				w.WriteLine("<range id=\"{0}-stem-name\" href=\"file://{1}\"/>",
-					MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text),
-					sRangesFile);
+				w.WriteLine("<range id=\"{0}-stem-name\" href=\"file://{1}\"/>", MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text), sRangesFile);
 			}
 		}
 
@@ -1197,9 +1334,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			if (pos.AffixSlotsOC.Count > 0)
 			{
-				w.WriteLine("<range id=\"{0}-slot\" href=\"file://{1}\"/>",
-					MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text),
-					sRangesFile);
+				w.WriteLine("<range id=\"{0}-slot\" href=\"file://{1}\"/>", MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text), sRangesFile);
 			}
 		}
 
@@ -1209,9 +1344,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				if (featDefn.ValuesOC.Count > 0)
 				{
-					w.WriteLine("<range id=\"{0}-feature-value\" href=\"file://{1}\"/>",
-						MakeSafeAndNormalizedAttribute(featDefn.Abbreviation.BestAnalysisVernacularAlternative.Text),
-						sRangesFile);
+					w.WriteLine("<range id=\"{0}-feature-value\" href=\"file://{1}\"/>", MakeSafeAndNormalizedAttribute(featDefn.Abbreviation.BestAnalysisVernacularAlternative.Text), sRangesFile);
 				}
 			}
 		}
@@ -1260,7 +1393,9 @@ namespace LanguageExplorer.Controls.LexText
 			foreach (var flid in m_mdc.GetFields(clid, true, (int)CellarPropertyTypeFilter.All))
 			{
 				if (!m_mdc.IsCustom(flid))
+				{
 					continue;
+				}
 				// LT-13202. Need to use fieldName since that matches custom data.
 				var fieldName = m_mdc.GetFieldName(flid);
 				var sHelp = m_mdc.GetFieldHelp(flid);
@@ -1277,8 +1412,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// does not return the desired strings for LIFT export.
 		/// Must be consistent with FlexLiftMerger.GetLiftExportMagicWsIdFromName
 		/// </summary>
-		/// <param name="ws">This should be between -1 and -6.</param>
-		/// <returns></returns>
 		private string GetLiftExportMagicWsNameFromId(int ws)
 		{
 			switch (ws)
@@ -1296,7 +1429,7 @@ namespace LanguageExplorer.Controls.LexText
 				case WritingSystemServices.kwsVernAnals:
 					return "kwsVernAnals";
 			}
-			return "";
+			return string.Empty;
 		}
 
 		/// <summary>
@@ -1313,19 +1446,22 @@ namespace LanguageExplorer.Controls.LexText
 			if (ws < 0)
 			{
 				var wsInternalName = GetLiftExportMagicWsNameFromId(ws);
-				Debug.Assert(!String.IsNullOrEmpty(wsInternalName), "There is an invalid magic writing system value being exported. It should be between -1 and -6. ");
+				Debug.Assert(!string.IsNullOrEmpty(wsInternalName), "There is an invalid magic writing system value being exported. It should be between -1 and -6. ");
 				sb.AppendFormat("; WsSelector={0}", wsInternalName);
 			}
 			else if (ws > 0)
+			{
 				sb.AppendFormat("; WsSelector={0}", m_cache.WritingSystemFactory.GetStrFromWs(ws));
+			}
 			var clidDst = m_mdc.GetDstClsId(flid);
 			if (clidDst > 0)
+			{
 				sb.AppendFormat("; DstCls={0}", m_mdc.GetClassName(clidDst));
-			if (cpt == CellarPropertyType.ReferenceAtomic || cpt == CellarPropertyType.ReferenceCollection ||
-				cpt == CellarPropertyType.ReferenceSequence)
+			}
+			if (cpt == CellarPropertyType.ReferenceAtomic || cpt == CellarPropertyType.ReferenceCollection || cpt == CellarPropertyType.ReferenceSequence)
 			{
 				var listGuid = m_mdc.GetFieldListRoot(flid);
-				String listName;
+				string listName;
 				var haveValue = m_ListsGuidToRangeName.TryGetValue(listGuid, out listName);
 				Debug.Assert(haveValue, "We have a problem of having a Custom List which is not accounted for.");
 				sb.AppendFormat("; range={0}", listName);
@@ -1341,33 +1477,40 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				// Set the application version text
 				var attributes = assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false);
-				sVersion = (attributes.Length > 0) ?
-					((AssemblyFileVersionAttribute)attributes[0]).Version :
-					Application.ProductVersion;
+				sVersion = (attributes.Length > 0) ? ((AssemblyFileVersionAttribute)attributes[0]).Version : Application.ProductVersion;
 			}
-			if (String.IsNullOrEmpty(sVersion))
+			if (string.IsNullOrEmpty(sVersion))
+			{
 				sVersion = "???";
+			}
 			return XmlUtils.MakeSafeXmlAttribute(sVersion);
 		}
 
-		private void WriteAllForms(TextWriter w, string wrappingElementName, string attrs,
-			string elementName, IMultiUnicode multi)
+		private void WriteAllForms(TextWriter w, string wrappingElementName, string attrs, string elementName, IMultiUnicode multi)
 		{
 			if (multi == null || multi.StringCount == 0)
-				return;
-			if (!String.IsNullOrEmpty(wrappingElementName))
 			{
-				if (String.IsNullOrEmpty(attrs))
+				return;
+			}
+			if (!string.IsNullOrEmpty(wrappingElementName))
+			{
+				if (string.IsNullOrEmpty(attrs))
+				{
 					w.WriteLine("<{0}>", wrappingElementName);
+				}
 				else
+				{
 					w.WriteLine("<{0} {1}>", wrappingElementName, attrs);
+				}
 			}
 			for (var i = 0; i < multi.StringCount; ++i)
 			{
 				int ws;
 				var sForm = multi.GetStringFromIndex(i, out ws).Text;
-				if (String.IsNullOrEmpty(sForm))
+				if (string.IsNullOrEmpty(sForm))
+				{
 					continue;
+				}
 
 				var sLang = m_cache.WritingSystemFactory.GetStrFromWs(ws);
 				if (IsVoiceWritingSystem(ws))
@@ -1375,30 +1518,33 @@ namespace LanguageExplorer.Controls.LexText
 					// The alternative contains a file path. We need to adjust and export and copy the file.
 					var internalPath = sForm;
 					// usually this will be unchanged, but it is pathologically possible that the file name conflicts.
-					sForm = ExportFile(internalPath,
-						Path.Combine(LcmFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
-						"audio");
+					sForm = ExportFile(internalPath, Path.Combine(LcmFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath), "audio");
 				}
-				w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName,
-					MakeSafeAndNormalizedAttribute(sLang),
-					sForm != null ? MakeSafeAndNormalizedXml(sForm.Replace("\x2028", Environment.NewLine)) : string.Empty);
+				w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName, MakeSafeAndNormalizedAttribute(sLang), sForm != null ? MakeSafeAndNormalizedXml(sForm.Replace("\x2028", Environment.NewLine)) : string.Empty);
 			}
-			if (!String.IsNullOrEmpty(wrappingElementName))
+			if (!string.IsNullOrEmpty(wrappingElementName))
+			{
 				w.WriteLine("</{0}>", wrappingElementName);
+			}
 		}
 
 
-		private void WriteAllFormsWithMarkers(TextWriter w, string wrappingElementName, string attrs,
-			string elementName, IMoForm alt)
+		private void WriteAllFormsWithMarkers(TextWriter w, string wrappingElementName, string attrs, string elementName, IMoForm alt)
 		{
-			if (alt == null || alt.Form == null || alt.Form.StringCount == 0)
-				return;
-			if (!String.IsNullOrEmpty(wrappingElementName))
+			if (alt?.Form == null || alt.Form.StringCount == 0)
 			{
-				if (String.IsNullOrEmpty(attrs))
+				return;
+			}
+			if (!string.IsNullOrEmpty(wrappingElementName))
+			{
+				if (string.IsNullOrEmpty(attrs))
+				{
 					w.WriteLine("<{0}>", wrappingElementName);
+				}
 				else
+				{
 					w.WriteLine("<{0} {1}>", wrappingElementName, attrs);
+				}
 			}
 			for (var i = 0; i < alt.Form.StringCount; ++i)
 			{
@@ -1409,12 +1555,15 @@ namespace LanguageExplorer.Controls.LexText
 				// a deleted audio link can leave an empty string - it's the file path
 				// Chorus sometimes tells users "Report this problem to the developers" when missing this element
 				// Users should refresh and try to send/receive again.
-				if (!String.IsNullOrEmpty(internalPath))
-					w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName,
-						MakeSafeAndNormalizedAttribute(sLang), MakeSafeAndNormalizedXml(GetFormWithMarkers(alt, ws)));
+				if (!string.IsNullOrEmpty(internalPath))
+				{
+					w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName, MakeSafeAndNormalizedAttribute(sLang), MakeSafeAndNormalizedXml(GetFormWithMarkers(alt, ws)));
+				}
 			}
-			if (!String.IsNullOrEmpty(wrappingElementName))
+			if (!string.IsNullOrEmpty(wrappingElementName))
+			{
 				w.WriteLine("</{0}>", wrappingElementName);
+			}
 		}
 
 		private string GetFormWithMarkers(IMoForm alt, int ws)
@@ -1426,58 +1575,66 @@ namespace LanguageExplorer.Controls.LexText
 				// Form is MultiUnicode, so we don't need to check for a single run.
 				var internalPath = alt.Form.get_String(ws).Text;
 				// usually this will be unchanged, but it is pathologically possible that the file name conflicts.
-				var writePath = ExportFile(internalPath,
-					Path.Combine(LcmFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
-					"audio");
+				var writePath = ExportFile(internalPath, Path.Combine(LcmFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath), "audio");
 				return writePath;
 			}
 			return alt.GetFormWithMarkers(ws);
 		}
 
-		private void WriteAllForms(TextWriter w, string wrappingElementName, string attrs,
-			string elementName, IMultiString multi)
+		private void WriteAllForms(TextWriter w, string wrappingElementName, string attrs, string elementName, IMultiString multi)
 		{
 			if (multi == null || multi.StringCount == 0)
-				return;
-			if (!String.IsNullOrEmpty(wrappingElementName))
 			{
-				if (String.IsNullOrEmpty(attrs))
+				return;
+			}
+			if (!string.IsNullOrEmpty(wrappingElementName))
+			{
+				if (string.IsNullOrEmpty(attrs))
+				{
 					w.WriteLine("<{0}>", wrappingElementName);
+				}
 				else
+				{
 					w.WriteLine("<{0} {1}>", wrappingElementName, attrs);
+				}
 			}
 			for (var i = 0; i < multi.StringCount; ++i)
 			{
 				int ws;
 				var tssForm = multi.GetStringFromIndex(i, out ws);
 				var sLang = m_cache.WritingSystemFactory.GetStrFromWs(ws);
-				w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName,
-					MakeSafeAndNormalizedAttribute(sLang),
-					ConvertTsStringToLiftXml(tssForm, ws));
+				w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName, MakeSafeAndNormalizedAttribute(sLang), ConvertTsStringToLiftXml(tssForm, ws));
 			}
-			if (!String.IsNullOrEmpty(wrappingElementName))
+			if (!string.IsNullOrEmpty(wrappingElementName))
+			{
 				w.WriteLine("</{0}>", wrappingElementName);
+			}
 		}
 
-		private void WriteString(TextWriter w, string wrappingElementName, string attrs,
-			string elementName, ITsString tssForm)
+		private void WriteString(TextWriter w, string wrappingElementName, string attrs, string elementName, ITsString tssForm)
 		{
 			if (tssForm == null || tssForm.Length == 0)
-				return;
-			if (!String.IsNullOrEmpty(wrappingElementName))
 			{
-				if (String.IsNullOrEmpty(attrs))
+				return;
+			}
+			if (!string.IsNullOrEmpty(wrappingElementName))
+			{
+				if (string.IsNullOrEmpty(attrs))
+				{
 					w.WriteLine("<{0}>", wrappingElementName);
+				}
 				else
+				{
 					w.WriteLine("<{0} {1}>", wrappingElementName, attrs);
+				}
 			}
 			var ws = TsStringUtils.GetWsAtOffset(tssForm, 0);
 			var sLang = m_cache.WritingSystemFactory.GetStrFromWs(ws);
-			w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName,
-				MakeSafeAndNormalizedAttribute(sLang),
-				ConvertTsStringToLiftXml(tssForm, ws));
-			if (!String.IsNullOrEmpty(wrappingElementName))
+			w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName, MakeSafeAndNormalizedAttribute(sLang), ConvertTsStringToLiftXml(tssForm, ws));
+			if (!string.IsNullOrEmpty(wrappingElementName))
+			{
 				w.WriteLine("</{0}>", wrappingElementName);
+			}
 		}
 
 		private string ConvertTsStringToLiftXml(ITsString tssVal, int wsString)
@@ -1491,11 +1648,9 @@ namespace LanguageExplorer.Controls.LexText
 					// The alternative contains a file path or null. We need to adjust and export and copy the file.
 					// The whole content of the representation of the TsString will be the adjusted file name,
 					// since these WS alternatives never contain formatted data.
-					var internalPath = tssVal.Text == null ? "" : tssVal.Text;
+					var internalPath = tssVal.Text ?? string.Empty;
 					// usually this will be unchanged, but it is pathologically possible that the file name conflicts.
-					var writePath = ExportFile(internalPath,
-						Path.Combine(LcmFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
-						"audio");
+					var writePath = ExportFile(internalPath, Path.Combine(LcmFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath), "audio");
 					return XmlUtils.MakeSafeXml(writePath);
 				}
 			}
@@ -1510,7 +1665,9 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					nProp = ttp.GetIntProp(0, out tpt, out nVar);
 					if (tpt == (int)FwTextPropType.ktptWs && nProp == wsString)
+					{
 						fSpan = false;
+					}
 				}
 				if (fSpan)
 				{
@@ -1547,14 +1704,16 @@ namespace LanguageExplorer.Controls.LexText
 					bldr.Append(MakeSafeAndNormalizedXml(sRun.Replace("\x2028", Environment.NewLine)));
 				}
 				if (fSpan)
+				{
 					bldr.Append("</span>");
+				}
 			}
 			return bldr.ToString();
 		}
 
 		private void AddObjPropData(StringBuilder bldr, string sProp)
 		{
-			if (!String.IsNullOrEmpty(sProp) && sProp[0] == Convert.ToChar((int)FwObjDataTypes.kodtExternalPathName))
+			if (!string.IsNullOrEmpty(sProp) && sProp[0] == Convert.ToChar((int)FwObjDataTypes.kodtExternalPathName))
 			{
 				var destination = sProp.Substring(1);
 				if (destination.IndexOf(':') <= 1)
@@ -1564,7 +1723,9 @@ namespace LanguageExplorer.Controls.LexText
 					// but I don't see any good way to avoid it.
 					var absPath = destination;
 					if (!Path.IsPathRooted(destination))
+					{
 						absPath = Path.Combine(m_cache.LangProject.LinkedFilesRootDir, destination);
+					}
 					var writePath = ExportFile(destination, absPath, "others", LcmFileHelper.ksOtherLinkedFilesDir);
 					// We force the file to be in the "others" directory, but in this case we include "others" in the URL,
 					// so it will actually work as a URL relative to the LIFT file.
@@ -1574,8 +1735,10 @@ namespace LanguageExplorer.Controls.LexText
 			}
 
 			var sRef = TsStringUtils.GetURL(sProp);
-			if (!String.IsNullOrEmpty(sRef))
+			if (!string.IsNullOrEmpty(sRef))
+			{
 				bldr.AppendFormat(" href=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(sRef));
+			}
 		}
 
 		private bool IsVoiceWritingSystem(int wsString)
@@ -1588,11 +1751,17 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			string sValue = null;
 			if (wsWant > 0)
+			{
 				sValue = multi.get_String(wsWant).Text;
-			if (String.IsNullOrEmpty(sValue))
+			}
+			if (string.IsNullOrEmpty(sValue))
+			{
 				sValue = multi.BestAnalysisVernacularAlternative.Text;
+			}
 			if (sValue == "***" && wsWant <= 0)
+			{
 				sValue = multi.get_String(m_wsEn).Text;
+			}
 			WriteTrait(w, sName, sValue);
 		}
 
@@ -1604,24 +1773,30 @@ namespace LanguageExplorer.Controls.LexText
 		private void WriteLiftDates(TextWriter w, ICmObject obj)
 		{
 			var dateCreated = GetProperty(obj, "LiftDateCreated") as string;
-			if (!String.IsNullOrEmpty(dateCreated))
+			if (!string.IsNullOrEmpty(dateCreated))
+			{
 				w.Write(" dateCreated=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(dateCreated));
+			}
 			var dateModified = GetProperty(obj, "LiftDateModified") as string;
-			if (!String.IsNullOrEmpty(dateModified))
+			if (!string.IsNullOrEmpty(dateModified))
+			{
 				w.Write(" dateModified=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(dateModified));
+			}
 		}
 
 		private void WriteLiftResidue(TextWriter w, ICmObject obj)
 		{
 			var residue = GetProperty(obj, "LiftResidueContent") as string;
-			if (!String.IsNullOrEmpty(residue))
+			if (!string.IsNullOrEmpty(residue))
+			{
 				w.Write(residue);
+			}
 		}
 
 		protected object GetProperty(ICmObject target, string property)
 		{
 			if (target == null)
-				return null;
+			{ return null;}
 
 			var fWantHvo = false;
 			var type = target.GetType();
@@ -1632,8 +1807,11 @@ namespace LanguageExplorer.Controls.LexText
 				var realprop = property.Substring(0, property.Length - 4);
 				info = type.GetProperty(realprop, BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
 			}
+
 			if (info == null)
+			{
 				throw new FwConfigurationException("There is no public property named '" + property + "' in " + type + ". Remember, properties often end in a two-character suffix such as OA,OS,RA, or RS.");
+			}
 
 			object result;
 			try
@@ -1643,13 +1821,15 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					var hvo = 0;
 					if (result != null)
+					{
 						hvo = ((ICmObject)result).Hvo;
+					}
 					return hvo > 0 ? hvo.ToString() : "0";
 				}
 			}
 			catch (Exception error)
 			{
-				throw new ApplicationException(String.Format("There was an error while trying to get the property {0}. One thing that has caused this in the past has been a database which was not migrated properly.", property), error);
+				throw new ApplicationException($"There was an error while trying to get the property {property}. One thing that has caused this in the past has been a database which was not migrated properly.", error);
 			}
 			return result;
 		}
@@ -1696,7 +1876,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				//We actually want to export any range which is referenced by a Custom field and is not already output.
 				//not just Custom ranges.
-				String rangeName;
+				string rangeName;
 				var gotRangeName = m_CmPossListsReferencedOrCustom.TryGetValue(possList.Key, out rangeName);
 				var customPossList = m_repoCmPossibilityLists.GetObject(possList.Key);
 				w.WriteLine("<!-- This is a custom list or other list which is not output by default but if referenced in the data of a field.  -->");
@@ -1723,7 +1903,9 @@ namespace LanguageExplorer.Controls.LexText
 			w.WriteLine("<range id=\"{0}\">", RangeNames.sPartsOfSpeechOA);
 			w.WriteLine("<!-- These are all the parts of speech in the FLEx db, used or unused.  These are used as the basic grammatical-info values. -->");
 			foreach (var pos in m_cache.LangProject.AllPartsOfSpeech)
+			{
 				WritePartOfSpeechRangeElement(w, pos);
+			}
 			w.WriteLine("</range>");
 		}
 
@@ -1733,22 +1915,20 @@ namespace LanguageExplorer.Controls.LexText
 			if (pos.Owner is IPartOfSpeech)
 			{
 				var liftIdOwner = ((IPartOfSpeech)(pos.Owner)).Name.BestAnalysisVernacularAlternative.Text;
-				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\" parent=\"{2}\">",
-					XmlUtils.MakeSafeXmlAttribute(liftId), pos.Guid,
-					MakeSafeAndNormalizedAttribute(liftIdOwner));
+				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\" parent=\"{2}\">", XmlUtils.MakeSafeXmlAttribute(liftId), pos.Guid, MakeSafeAndNormalizedAttribute(liftIdOwner));
 			}
 			else
 			{
-				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">",
-					XmlUtils.MakeSafeXmlAttribute(liftId), pos.Guid);
+				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">", XmlUtils.MakeSafeXmlAttribute(liftId), pos.Guid);
 			}
 			WriteAllForms(w, "label", null, "form", pos.Name);
 			WriteAllForms(w, "abbrev", null, "form", pos.Abbreviation);
 			WriteAllForms(w, "description", null, "form", pos.Description);
 			foreach (var inflFeat in pos.InflectableFeatsRC)
+			{
 				WriteTrait(w, "inflectable-feat", inflFeat.Abbreviation, m_wsBestAnalVern);
-			w.WriteLine("<trait name=\"catalog-source-id\" value=\"{0}\"/>",
-											 MakeSafeAndNormalizedAttribute(pos.CatalogSourceId));
+			}
+			w.WriteLine("<trait name=\"catalog-source-id\" value=\"{0}\"/>", MakeSafeAndNormalizedAttribute(pos.CatalogSourceId));
 			w.WriteLine("</range-element>");
 		}
 
@@ -1759,7 +1939,9 @@ namespace LanguageExplorer.Controls.LexText
 			if (m_cache.LangProject.LexDbOA.ReferencesOA != null)
 			{
 				foreach (var refer in m_cache.LangProject.LexDbOA.ReferencesOA.ReallyReallyAllPossibilities.OfType<ILexRefType>())
+				{
 					WriteLexRefType(w, refer);
+				}
 			}
 			w.WriteLine("</range>");
 		}
@@ -1770,14 +1952,11 @@ namespace LanguageExplorer.Controls.LexText
 			if (refer.Owner is ILexRefType)
 			{
 				var liftIdOwner = ((ILexRefType)refer.Owner).Name.BestAnalysisVernacularAlternative.Text;
-				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\" parent=\"{2}\">",
-					XmlUtils.MakeSafeXmlAttribute(liftId), refer.Guid,
-					MakeSafeAndNormalizedAttribute(liftIdOwner));
+				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\" parent=\"{2}\">", XmlUtils.MakeSafeXmlAttribute(liftId), refer.Guid, MakeSafeAndNormalizedAttribute(liftIdOwner));
 			}
 			else
 			{
-				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">",
-					XmlUtils.MakeSafeXmlAttribute(liftId), refer.Guid);
+				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">", XmlUtils.MakeSafeXmlAttribute(liftId), refer.Guid);
 			}
 			WriteAllForms(w, "label", null, "form", refer.Name);
 			WriteAllForms(w, "abbrev", null, "form", refer.Abbreviation);
@@ -1939,10 +2118,12 @@ namespace LanguageExplorer.Controls.LexText
 			w.WriteLine("</range>");
 		}
 
-		void WriteReversalTypeRange(TextWriter w)
+		private void WriteReversalTypeRange(TextWriter w)
 		{
 			if (m_cache.LangProject.LexDbOA.ReversalIndexesOC.Count == 0)
+			{
 				return;
+			}
 			w.WriteLine("<range id=\"{0}\">", RangeNames.sReversalType);
 			foreach (var index in m_cache.LangProject.LexDbOA.ReversalIndexesOC)
 			{
@@ -1954,17 +2135,21 @@ namespace LanguageExplorer.Controls.LexText
 			w.WriteLine("</range>");
 		}
 
-		void WriteSemanticDomainRange(TextWriter w)
+		private void WriteSemanticDomainRange(TextWriter w)
 		{
 			if (m_cache.LangProject.SemanticDomainListOA == null || m_cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Count == 0)
+			{
 				return;
+			}
 			w.WriteLine("<range id=\"{0}\">", RangeNames.sSemanticDomainListOA);
 			foreach (var sem in m_cache.LangProject.SemanticDomainListOA.ReallyReallyAllPossibilities)
 			{
 				var liftId = GetProperty(sem, "LiftAbbrAndName") as string;
 				string liftIdOwner = null;
 				if (sem.OwningFlid == CmPossibilityTags.kflidSubPossibilities)
+				{
 					liftIdOwner = GetProperty(sem.Owner, "LiftAbbrAndName") as string;
+				}
 				WritePossibilityRangeElement(w, sem, liftId, liftIdOwner);
 			}
 			w.WriteLine("</range>");
@@ -1973,17 +2158,26 @@ namespace LanguageExplorer.Controls.LexText
 		private void WritePossibilityListAsRange(TextWriter w, string rangeId, ICmPossibilityList list, string guid)
 		{
 			if (list.PossibilitiesOS.Count == 0)
+			{
 				return;
-			if (String.IsNullOrEmpty(guid))					//only output the guid for custom lists
+			}
+
+			if (string.IsNullOrEmpty(guid)) //only output the guid for custom lists
+			{
 				w.WriteLine("<range id=\"{0}\">", rangeId);
+			}
 			else
+			{
 				w.WriteLine("<range id=\"{0}\" guid=\"{1}\">", rangeId, MakeSafeAndNormalizedAttribute(guid));
+			}
 			foreach (var poss in list.ReallyReallyAllPossibilities)
 			{
 				var liftId = poss.Name.BestAnalysisVernacularAlternative.Text;
 				string liftIdParent = null;
 				if (poss.OwningFlid == CmPossibilityTags.kflidSubPossibilities)
+				{
 					liftIdParent = ((ICmPossibility)(poss.Owner)).Name.BestAnalysisVernacularAlternative.Text;
+				}
 				WritePossibilityRangeElement(w, poss, liftId, liftIdParent);
 			}
 			w.WriteLine("</range>");
@@ -1993,14 +2187,11 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			if (poss.OwningFlid == CmPossibilityTags.kflidSubPossibilities)
 			{
-				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\" parent=\"{2}\">",
-					MakeSafeAndNormalizedAttribute(liftId), poss.Guid,
-					MakeSafeAndNormalizedAttribute(liftIdParent));
+				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\" parent=\"{2}\">", MakeSafeAndNormalizedAttribute(liftId), poss.Guid, MakeSafeAndNormalizedAttribute(liftIdParent));
 			}
 			else
 			{
-				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">",
-					MakeSafeAndNormalizedAttribute(liftId), poss.Guid);
+				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">", MakeSafeAndNormalizedAttribute(liftId), poss.Guid);
 			}
 			WriteAllForms(w, "label", null, "form", poss.Name);
 			WriteAllForms(w, "abbrev", null, "form", poss.Abbreviation);
@@ -2008,17 +2199,21 @@ namespace LanguageExplorer.Controls.LexText
 			w.WriteLine("</range-element>");
 		}
 
-		void WriteStatusRange(TextWriter w)
+		private void WriteStatusRange(TextWriter w)
 		{
 			if (m_cache.LangProject.StatusOA == null)
+			{
 				return;
+			}
 			WritePossibilityListAsRange(w, RangeNames.sStatusOA, m_cache.LangProject.StatusOA, null);
 		}
 
-		void WriteUsersRange(TextWriter w)
+		private void WriteUsersRange(TextWriter w)
 		{
 			if (m_cache.LangProject.PeopleOA == null || m_cache.LangProject.PeopleOA.PossibilitiesOS.Count == 0)
+			{
 				return;
+			}
 			w.WriteLine("<range id=\"{0}\">", RangeNames.sPeopleOA);
 			foreach (var person in m_cache.LangProject.PeopleOA.ReallyReallyAllPossibilities.OfType<ICmPerson>())
 			{
@@ -2028,66 +2223,77 @@ namespace LanguageExplorer.Controls.LexText
 				var liftId = person.Name.BestAnalysisVernacularAlternative.Text;
 				string liftIdParent = null;
 				if (person.OwningFlid == CmPossibilityTags.kflidSubPossibilities)
+				{
 					liftIdParent = ((ICmPossibility)(person.Owner)).Name.BestAnalysisVernacularAlternative.Text;
+				}
 				WritePossibilityRangeElement(w, person, liftId, liftIdParent);
 			}
 			w.WriteLine("</range>");
 		}
 
-		void WriteLocationRange(TextWriter w)
+		private void WriteLocationRange(TextWriter w)
 		{
 			if (m_cache.LangProject.LocationsOA == null)
+			{
 				return;
+			}
 			WritePossibilityListAsRange(w, RangeNames.sLocationsOA, m_cache.LangProject.LocationsOA, null);
 		}
 
-		void WriteAnthroCodeRange(TextWriter w)
+		private void WriteAnthroCodeRange(TextWriter w)
 		{
 			if (m_cache.LangProject.AnthroListOA == null || m_cache.LangProject.AnthroListOA.PossibilitiesOS.Count == 0)
+			{
 				return;
+			}
 			w.WriteLine("<range id=\"{0}\">", RangeNames.sAnthroListOA);
 			foreach (var poss in m_cache.LangProject.AnthroListOA.ReallyReallyAllPossibilities)
 			{
 				var liftId = poss.Abbreviation.BestAnalysisVernacularAlternative.Text;
 				string liftIdParent = null;
 				if (poss.OwningFlid == CmPossibilityTags.kflidSubPossibilities)
+				{
 					liftIdParent = ((ICmPossibility)(poss.Owner)).Abbreviation.BestAnalysisVernacularAlternative.Text;
+				}
 				WritePossibilityRangeElement(w, poss, liftId, liftIdParent);
 			}
 			w.WriteLine("</range>");
 		}
 
-		void WriteTranslationTypeRange(TextWriter w)
+		private void WriteTranslationTypeRange(TextWriter w)
 		{
 			if (m_cache.LangProject.TranslationTagsOA == null)
+			{
 				return;
+			}
 			WritePossibilityListAsRange(w, RangeNames.sTranslationTagsOA, m_cache.LangProject.TranslationTagsOA, null);
 		}
 
-		void WriteExceptionFeatureRange(TextWriter w)
+		private void WriteExceptionFeatureRange(TextWriter w)
 		{
 			if (m_cache.LangProject.MorphologicalDataOA == null || m_cache.LangProject.MorphologicalDataOA.ProdRestrictOA == null)
+			{
 				return;
+			}
 			WritePossibilityListAsRange(w, RangeNames.sProdRestrictOA, m_cache.LangProject.MorphologicalDataOA.ProdRestrictOA, null);
 		}
 
-		void WriteInflectionFeatureRange(TextWriter w)
+		private void WriteInflectionFeatureRange(TextWriter w)
 		{
 			if (m_cache.LangProject.MsFeatureSystemOA == null || m_cache.LangProject.MsFeatureSystemOA.FeaturesOC.Count == 0)
+			{
 				return;
+			}
 			w.WriteLine("<range id=\"{0}\">", RangeNames.sMSAinflectionFeature);
 			foreach (var featDefn in m_cache.LangProject.MsFeatureSystemOA.FeaturesOC)
 			{
-				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">",
-					MakeSafeAndNormalizedAttribute(featDefn.Abbreviation.BestAnalysisVernacularAlternative.Text),
-					featDefn.Guid);
+				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">", MakeSafeAndNormalizedAttribute(featDefn.Abbreviation.BestAnalysisVernacularAlternative.Text), featDefn.Guid);
 				WriteAllForms(w, "label", null, "form", featDefn.Name);
 				WriteAllForms(w, "abbrev", null, "form", featDefn.Abbreviation);
 				WriteAllForms(w, "description", null, "form", featDefn.Description);
 				WriteAllForms(w, "field", "type=\"gloss-abbreviation\"", "form", featDefn.GlossAbbreviation);
 				WriteAllForms(w, "field", "type=\"right-gloss-sep\"", "form", featDefn.RightGlossSep);
-				w.WriteLine("<trait name=\"catalog-source-id\" value=\"{0}\"/>",
-					MakeSafeAndNormalizedAttribute(featDefn.CatalogSourceId));
+				w.WriteLine("<trait name=\"catalog-source-id\" value=\"{0}\"/>", MakeSafeAndNormalizedAttribute(featDefn.CatalogSourceId));
 				w.WriteLine("<trait name=\"display-to-right\" value=\"{0}\"/>", featDefn.DisplayToRightOfValues);
 				w.WriteLine("<trait name=\"show-in-gloss\" value=\"{0}\"/>", featDefn.ShowInGloss);
 				switch (featDefn.ClassID)
@@ -2096,8 +2302,7 @@ namespace LanguageExplorer.Controls.LexText
 						var closed = (IFsClosedFeature)featDefn;
 						foreach (var value in closed.ValuesOC)
 						{
-							var name = String.Format("{0}-feature-value",
-								closed.Abbreviation.BestAnalysisVernacularAlternative.Text);
+							var name = $"{closed.Abbreviation.BestAnalysisVernacularAlternative.Text}-feature-value";
 							WriteTrait(w, name, value.Abbreviation, m_wsBestAnalVern);
 						}
 						w.WriteLine("<trait name=\"feature-definition-type\" value=\"closed\"/>");
@@ -2105,16 +2310,21 @@ namespace LanguageExplorer.Controls.LexText
 					case FsComplexFeatureTags.kClassId:
 						var complex = (IFsComplexFeature)featDefn;
 						if (complex.TypeRA != null)
+						{
 							WriteTrait(w, "type", complex.TypeRA.Abbreviation, m_wsBestAnalVern);
+						}
 						w.WriteLine("<trait name=\"feature-definition-type\" value=\"complex\"/>");
 						break;
 					case FsOpenFeatureTags.kClassId:
 						var open = (IFsOpenFeature)featDefn;
 						if (open.WsSelector != 0)
+						{
 							w.WriteLine("<trait name=\"ws-selector\" value=\"{0}\"/>", open.WsSelector);
-						if (!String.IsNullOrEmpty(open.WritingSystem))
-							w.WriteLine("<trait name=\"writing-system\" value=\"{0}\"/>",
-								XmlUtils.MakeSafeXmlAttribute(open.WritingSystem));
+						}
+						if (!string.IsNullOrEmpty(open.WritingSystem))
+						{
+							w.WriteLine("<trait name=\"writing-system\" value=\"{0}\"/>", XmlUtils.MakeSafeXmlAttribute(open.WritingSystem));
+						}
 						w.WriteLine("<trait name=\"feature-definition-type\" value=\"open\"/>");
 						break;
 				}
@@ -2123,90 +2333,89 @@ namespace LanguageExplorer.Controls.LexText
 			w.WriteLine("</range>");
 		}
 
-		void WriteInflectionFeatureTypeRange(TextWriter w)
+		private void WriteInflectionFeatureTypeRange(TextWriter w)
 		{
 			if (m_cache.LangProject.MsFeatureSystemOA == null || m_cache.LangProject.MsFeatureSystemOA.TypesOC.Count == 0)
+			{
 				return;
+			}
 			w.WriteLine("<range id=\"{0}\">", RangeNames.sMSAinflectionFeatureType);
 			foreach (var type in m_cache.LangProject.MsFeatureSystemOA.TypesOC)
 			{
-				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">",
-					MakeSafeAndNormalizedAttribute(type.Abbreviation.BestAnalysisVernacularAlternative.Text),
-					type.Guid);
+				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">", MakeSafeAndNormalizedAttribute(type.Abbreviation.BestAnalysisVernacularAlternative.Text), type.Guid);
 				WriteAllForms(w, "label", null, "form", type.Name);
 				WriteAllForms(w, "abbrev", null, "form", type.Abbreviation);
 				WriteAllForms(w, "description", null, "form", type.Description);
-				w.WriteLine("<trait name=\"catalog-source-id\" value=\"{0}\"/>",
-					MakeSafeAndNormalizedAttribute(type.CatalogSourceId));
+				w.WriteLine("<trait name=\"catalog-source-id\" value=\"{0}\"/>", MakeSafeAndNormalizedAttribute(type.CatalogSourceId));
 				foreach (var feat in type.FeaturesRS)
 				{
-					w.WriteLine("<trait name=\"feature\" value=\"{0}\"/>",
-						MakeSafeAndNormalizedAttribute(feat.Abbreviation.BestAnalysisVernacularAlternative.Text));
+					w.WriteLine("<trait name=\"feature\" value=\"{0}\"/>", MakeSafeAndNormalizedAttribute(feat.Abbreviation.BestAnalysisVernacularAlternative.Text));
 				}
 				w.WriteLine("</range-element>");
 			}
 			w.WriteLine("</range>");
 		}
 
-		void WriteFromPartsOfSpeechRange(TextWriter w)
+		private void WriteFromPartsOfSpeechRange(TextWriter w)
 		{
 			w.WriteLine("<!-- The parts of speech are duplicated in another range because derivational affixes require a \"From\" PartOfSpeech as well as a \"To\" PartOfSpeech. -->");
 			w.WriteLine("<range id=\"from-part-of-speech\">");
 			foreach (var pos in m_cache.LangProject.AllPartsOfSpeech)
+			{
 				WritePartOfSpeechRangeElement(w, pos);
+			}
 			w.WriteLine("</range>");
 		}
 
-		void WriteMorphTypeRange(TextWriter w)
+		private void WriteMorphTypeRange(TextWriter w)
 		{
 			w.WriteLine("<range id=\"morph-type\">");
 			foreach (var type in m_cache.LangProject.LexDbOA.MorphTypesOA.PossibilitiesOS.OfType<IMoMorphType>())
 			{
 				var liftId = type.Name.get_String(m_wsEn).Text;
-				if (String.IsNullOrEmpty(liftId))
+				if (string.IsNullOrEmpty(liftId))
+				{
 					liftId = type.Name.BestAnalysisVernacularAlternative.Text;
+				}
 				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">", liftId, type.Guid);
 				WriteAllForms(w, "label", null, "form", type.Name);
 				WriteAllForms(w, "abbrev", null, "form", type.Abbreviation);
 				WriteAllForms(w, "description", null, "form", type.Description);
 				if (type.Prefix != null)
 				{
-					w.WriteLine("<trait name=\"leading-symbol\" value=\"{0}\"/>",
-						XmlUtils.MakeSafeXmlAttribute(type.Prefix));
+					w.WriteLine("<trait name=\"leading-symbol\" value=\"{0}\"/>", XmlUtils.MakeSafeXmlAttribute(type.Prefix));
 				}
 				if (type.Postfix != null)
 				{
-					w.WriteLine("<trait name=\"trailing-symbol\" value=\"{0}\"/>",
-						XmlUtils.MakeSafeXmlAttribute(type.Postfix));
+					w.WriteLine("<trait name=\"trailing-symbol\" value=\"{0}\"/>", XmlUtils.MakeSafeXmlAttribute(type.Postfix));
 				}
 				w.WriteLine("</range-element>");
 			}
 			w.WriteLine("</range>");
 		}
 
-		void WriteFeatureValueRanges(TextWriter w)
+		private void WriteFeatureValueRanges(TextWriter w)
 		{
 			if (m_cache.LangProject.MsFeatureSystemOA == null)
+			{
 				return;
+			}
 			foreach (var feat in m_cache.LangProject.MsFeatureSystemOA.FeaturesOC.OfType<IFsClosedFeature>())
 			{
 				if (feat.ValuesOC.Count == 0)
+				{
 					continue;
-				w.WriteLine("<range id=\"{0}-feature-value\" guid=\"{1}\">",
-					MakeSafeAndNormalizedAttribute(feat.Abbreviation.BestAnalysisVernacularAlternative.Text),
-					feat.Guid);
+				}
+				w.WriteLine("<range id=\"{0}-feature-value\" guid=\"{1}\">", MakeSafeAndNormalizedAttribute(feat.Abbreviation.BestAnalysisVernacularAlternative.Text), feat.Guid);
 				foreach (var value in feat.ValuesOC)
 				{
-					w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">",
-						MakeSafeAndNormalizedAttribute(value.Abbreviation.BestAnalysisVernacularAlternative.Text),
-						value.Guid);
+					w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">", MakeSafeAndNormalizedAttribute(value.Abbreviation.BestAnalysisVernacularAlternative.Text), value.Guid);
 					WriteAllForms(w, "label", null, "form", value.Name);
 					WriteAllForms(w, "abbrev", null, "form", value.Abbreviation);
 					WriteAllForms(w, "description", null, "form", value.Description);
 					WriteAllForms(w, "field", "type=\"gloss-abbrev\"", "form", value.GlossAbbreviation);
 					WriteAllForms(w, "field", "type=\"right-gloss-sep\"", "form", value.RightGlossSep);
-					w.WriteLine("<trait name=\"catalog-source-id\" value=\"{0}\"/>",
-						MakeSafeAndNormalizedAttribute(value.CatalogSourceId));
+					w.WriteLine("<trait name=\"catalog-source-id\" value=\"{0}\"/>", MakeSafeAndNormalizedAttribute(value.CatalogSourceId));
 					w.WriteLine("<trait name=\"show-in-gloss\" value=\"{0}\"/>", value.ShowInGloss);
 					w.WriteLine("</range-element>");
 				}
@@ -2214,50 +2423,50 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		void WriteAffixSlotRanges(TextWriter w)
+		private void WriteAffixSlotRanges(TextWriter w)
 		{
 			foreach (var pos in m_cache.LangProject.AllPartsOfSpeech)
 			{
 				if (pos.AffixSlotsOC.Count == 0)
+				{
 					continue;
-				w.WriteLine("<range id=\"{0}-slot\" guid=\"{1}\">",
-					MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text), pos.Guid);
+				}
+				w.WriteLine("<range id=\"{0}-slot\" guid=\"{1}\">", MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text), pos.Guid);
 				foreach (var slot in pos.AffixSlotsOC)
 				{
-					w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">",
-						MakeSafeAndNormalizedAttribute(slot.Name.BestAnalysisVernacularAlternative.Text), slot.Guid);
+					w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">", MakeSafeAndNormalizedAttribute(slot.Name.BestAnalysisVernacularAlternative.Text), slot.Guid);
 					WriteAllForms(w, "label", null, "form", slot.Name);
 					WriteAllForms(w, "description", null, "form", slot.Description);
 					if (slot.Optional)
+					{
 						w.WriteLine("<trait name=\"optional\" value=\"{0}\"/>", slot.Optional);
+					}
 					w.WriteLine("</range-element>");
 				}
 				w.WriteLine("</range>");
 			}
 		}
 
-		void WriteInflectionClassRanges(TextWriter w)
+		private void WriteInflectionClassRanges(TextWriter w)
 		{
 			foreach (var pos in m_cache.LangProject.AllPartsOfSpeech)
 			{
 				if (pos.InflectionClassesOC.Count == 0)
+				{
 					continue;
-				w.WriteLine("<range id=\"{0}-infl-class\" guid=\"{1}\">",
-					MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text), pos.Guid);
+				}
+				w.WriteLine("<range id=\"{0}-infl-class\" guid=\"{1}\">", MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text), pos.Guid);
 				foreach (var inflClass in pos.InflectionClassesOC)
 				{
 					var liftId = inflClass.Name.BestAnalysisVernacularAlternative.Text;
 					if (inflClass.OwningFlid == MoInflClassTags.kflidSubclasses)
 					{
 						var liftIdParent = ((IMoInflClass)(inflClass.Owner)).Name.BestAnalysisVernacularAlternative.Text;
-						w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\" parent=\"{2}\">",
-							MakeSafeAndNormalizedAttribute(liftId), inflClass.Guid,
-							MakeSafeAndNormalizedAttribute(liftIdParent));
+						w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\" parent=\"{2}\">", MakeSafeAndNormalizedAttribute(liftId), inflClass.Guid, MakeSafeAndNormalizedAttribute(liftIdParent));
 					}
 					else
 					{
-						w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">",
-							MakeSafeAndNormalizedAttribute(liftId), inflClass.Guid);
+						w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">", MakeSafeAndNormalizedAttribute(liftId), inflClass.Guid);
 					}
 					WriteAllForms(w, "label", null, "form", inflClass.Name);
 					WriteAllForms(w, "abbrev", null, "form", inflClass.Abbreviation);
@@ -2268,25 +2477,24 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		void WriteStemNameRanges(TextWriter w)
+		private void WriteStemNameRanges(TextWriter w)
 		{
 			foreach (var pos in m_cache.LangProject.AllPartsOfSpeech)
 			{
 				if (pos.StemNamesOC.Count == 0)
+				{
 					continue;
-				w.WriteLine("<range id=\"{0}-stem-name\" guid=\"{1}\">",
-							MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text), pos.Guid);
+				}
+				w.WriteLine("<range id=\"{0}-stem-name\" guid=\"{1}\">", MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text), pos.Guid);
 				foreach (var stem in pos.StemNamesOC)
 				{
-					w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">",
-						MakeSafeAndNormalizedAttribute(stem.Name.BestAnalysisVernacularAlternative.Text), stem.Guid);
+					w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">", MakeSafeAndNormalizedAttribute(stem.Name.BestAnalysisVernacularAlternative.Text), stem.Guid);
 					WriteAllForms(w, "label", null, "form", stem.Name);
 					WriteAllForms(w, "abbrev", null, "form", stem.Abbreviation);
 					WriteAllForms(w, "description", null, "form", stem.Description);
 					foreach (var region in stem.RegionsOC)
 					{
-						w.WriteLine("<trait name=\"feature-set\" value=\"{0}\"/>",
-							XmlUtils.MakeSafeXmlAttribute(region.LiftName));
+						w.WriteLine("<trait name=\"feature-set\" value=\"{0}\"/>", XmlUtils.MakeSafeXmlAttribute(region.LiftName));
 					}
 					w.WriteLine("</range-element>");
 				}
@@ -2327,7 +2535,9 @@ namespace LanguageExplorer.Controls.LexText
 			foreach (var flid in m_mdc.GetFieldIds())
 			{
 				if (!m_mdc.IsCustom(flid))
+				{
 					continue;
+				}
 				var flidType = (CellarPropertyType)m_mdc.GetFieldType(flid);
 				switch (flidType)
 				{
@@ -2336,13 +2546,17 @@ namespace LanguageExplorer.Controls.LexText
 					case CellarPropertyType.ReferenceSequence:
 						var listGuid = m_mdc.GetFieldListRoot(flid);
 						if (listsToBeExported.ContainsKey(listGuid))
+						{
 							continue;
+						}
 						ICmPossibilityList possList;
 						if (possListRepo.TryGetObject(listGuid, out possList))
 						{
 							var rangeName = RangeNames.GetRangeNameForLiftExport(m_mdc, possList);
 							if (!listsToBeExported.ContainsKey(possList.Guid))
+							{
 								listsToBeExported.Add(possList.Guid, MakeSafeAndNormalizedXml(rangeName));
+							}
 						}
 						break;
 					default:
@@ -2392,9 +2606,7 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					var fieldDstClsName = m_mdc.GetDstClsName(flid);
 
-					if (fieldDstClsName.Equals("CmPossibility") ||
-						 fieldDstClsName.Equals("CmSemanticDomain") ||
-						 fieldDstClsName.Equals("CmAnthroItem"))
+					if (fieldDstClsName.Equals("CmPossibility") || fieldDstClsName.Equals("CmSemanticDomain") || fieldDstClsName.Equals("CmAnthroItem"))
 					{
 						switch (type)
 						{
@@ -2476,309 +2688,10 @@ namespace LanguageExplorer.Controls.LexText
 		private void MapGuidToRange(ICmPossibilityList possList, string rangeName)
 		{
 			if (possList == null || m_ListsGuidToRangeName.ContainsKey(possList.Guid))
+			{
 				return;
+			}
 			m_ListsGuidToRangeName.Add(possList.Guid, rangeName);
-		}
-	}
-
-	public static class RangeNames
-	{
-		/// <summary> </summary>
-		public const string sAffixCategoriesOA = "affix-categories";
-
-		/// <summary> </summary>
-		public const string sAnnotationDefsOA = "annotation-definitions";
-
-		/// <summary> </summary>
-		public const string sAnthroListOAold1 = "anthro_codes";
-		/// <summary> </summary>
-		public const string sAnthroListOA = "anthro-code";
-
-		/// <summary> </summary>
-		public const string sConfidenceLevelsOA = "confidence-levels";
-
-		/// <summary> </summary>
-		public const string sEducationOA = "education";
-
-		/// <summary> </summary>
-		public const string sGenreListOA = "genres";
-
-		/// <summary> </summary>
-		public const string sLocationsOA = "location";
-
-		/// <summary> </summary>
-		public const string sPartsOfSpeechOA = "grammatical-info";
-
-		/// <summary> </summary>
-		public const string sPartsOfSpeechOAold2 = "FromPartOfSpeech";
-		/// <summary> </summary>
-		public const string sPartsOfSpeechOAold1 = "from-part-of-speech";
-
-		/// <summary> </summary>
-		public const string sPeopleOA = "users";
-
-		/// <summary> </summary>
-		public const string sPositionsOA = "positions";
-
-		/// <summary> </summary>
-		public const string sRestrictionsOA = "restrictions";
-
-		/// <summary> </summary>
-		public const string sRolesOA = "roles";
-
-		/// <summary> </summary>
-		public const string sSemanticDomainListOAold1 = "semanticdomainddp4";
-		/// <summary> </summary>
-		public const string sSemanticDomainListOAold2 = "semantic_domain";
-		/// <summary> </summary>
-		public const string sSemanticDomainListOAold3 = "semantic-domain";
-		/// <summary> </summary>
-		public const string sSemanticDomainListOA = "semantic-domain-ddp4";
-
-		/// <summary> </summary>
-		public const string sStatusOA = "status";
-
-		/// <summary> </summary>
-		public const string sThesaurusRA = "thesaurus";
-
-		/// <summary> </summary>
-		public const string sTranslationTagsOAold1 = "translation-types";
-		/// <summary> </summary>
-		public const string sTranslationTagsOA = "translation-type";
-
-		//=========================================================================================
-		/// <summary> </summary>
-		public const string sProdRestrictOA = "exception-feature";
-		/// <summary> </summary>
-		public const string sProdRestrictOAfrom = "from-exception-feature";
-
-		//=========================================================================================
-		//lists under m_cache.LangProject.LexDbOA
-		/// <summary> </summary>
-		public const string sDbComplexEntryTypesOA = "complex-form-types";
-
-		/// <summary> </summary>
-		public const string sDbDialectLabelsOA = "dialect-labels";
-
-		/// <summary> </summary>
-		public const string sDbDomainTypesOA = "domain-type";
-		/// <summary> </summary>
-		public const string sDbDomainTypesOAold1 = "domaintype";
-
-		/// <summary> </summary>
-		public const string sDbLanguagesOA = "languages";
-
-		/// <summary> </summary>
-		public const string sDbMorphTypesOAold = "MorphType";
-		/// <summary> </summary>
-		public const string sDbMorphTypesOA = "morph-type";
-
-		/// <summary> </summary>
-		public const string sDbPublicationTypesOA = "do-not-publish-in";
-		/// <summary> </summary>
-		public const string sDbPublicationTypesOAold = "publishin";
-
-		/// <summary> </summary>
-		public const string sDbReferencesOAold = "lexical-relations";
-		/// <summary> </summary>
-		public const string sDbReferencesOA = "lexical-relation";
-
-		/// <summary> </summary>
-		public const string sDbSenseTypesOA = "sense-type";
-		/// <summary> </summary>
-		public const string sDbSenseTypesOAold1 = "sensetype";
-
-		/// <summary> </summary>
-		public const string sDbUsageTypesOAold = "usagetype";
-		/// <summary> </summary>
-		public const string sDbUsageTypesOA = "usage-type";
-
-		/// <summary> </summary>
-		public const string sDbVariantEntryTypesOA = "variant-types";
-
-
-		//=====================EXTRA RANGES NOT  CmPossibilityLists============================
-		/// <summary> </summary>
-		public const string sMSAinflectionFeature = "inflection-feature";
-		/// <summary> </summary>
-		public const string sMSAfromInflectionFeature = "from-inflection-feature";
-		/// <summary> </summary>
-		public const string sMSAinflectionFeatureType = "inflection-feature-type";
-
-		/// <summary> </summary>
-		public const string sReversalType = "reversal-type";
-
-
-		/// <summary>
-		/// Return the LIFT range name for a given cmPossibilityList. Get the fieldName
-		/// of the owning field and use that to get the range name.
-		/// </summary>
-		/// <returns></returns>
-		public static string GetRangeNameForLiftExport(IFwMetaDataCacheManaged mdc, ICmPossibilityList list)
-		{
-			string rangeName = null;
-			if (list.OwningFlid == 0)
-			{
-				rangeName = list.Name.BestAnalysisVernacularAlternative.Text;
-			}
-			else
-			{
-				var fieldName = mdc.GetFieldName(list.OwningFlid);
-				rangeName = GetRangeName(fieldName);
-			}
-			return rangeName;
-		}
-
-		/// <summary>
-		/// Return the LIFT range name for a given fieldName in Flex
-		/// </summary>
-		/// <param name="fieldName"></param>
-		/// <returns></returns>
-		public static string GetRangeName(string fieldName)
-		{
-			string rangeName = null;
-
-			switch (fieldName)
-			{
-				case "AffixCategories": rangeName = sAffixCategoriesOA; break;
-				case "AnnotationDefs": rangeName = sAnnotationDefsOA; break;
-
-				case "AnthroList": rangeName = sAnthroListOA; break;
-
-				case "ConfidenceLevels": rangeName = sConfidenceLevelsOA; break;
-
-				case "Education": rangeName = sEducationOA; break;
-
-				case "GenreList": rangeName = sGenreListOA; break;
-
-				case "Locations": rangeName = sLocationsOA; break;
-
-				case "PartsOfSpeech": rangeName = sPartsOfSpeechOA; break;
-
-				case "People": rangeName = sPeopleOA; break;
-
-				case "Positions": rangeName = sPositionsOA; break;
-
-				case "Restrictions": rangeName = sRestrictionsOA; break;
-
-				case "Roles": rangeName = sRolesOA; break;
-
-				case "SemanticDomainList": rangeName = sSemanticDomainListOA; break;
-
-				case "Status": rangeName = sStatusOA; break;
-
-				case "Thesaurus": rangeName = sThesaurusRA; break;
-
-				case "TranslationTags": rangeName = sTranslationTagsOA; break;
-
-				////=========================================================================================
-				//case  "": rangeName = sProdRestrictOA = "exception-feature"; break;
-				//case  "": rangeName = sProdRestrictOAfrom = "from-exception-feature"; break;
-
-				////=========================================================================================
-				////lists under m_cache.LangProject.LexDbOA
-
-				case "ComplexEntryTypes": rangeName = sDbComplexEntryTypesOA; break;
-
-				case "DialectLabels": rangeName = sDbDialectLabelsOA; break;
-
-				case "DomainTypes": rangeName = sDbDomainTypesOA; break;
-
-				case "Languages": rangeName = sDbLanguagesOA; break;
-
-				case "MorphTypes": rangeName = sDbMorphTypesOA; break;
-
-				case "PublicationTypes": rangeName = sDbPublicationTypesOA; break;
-
-				case "References": rangeName = sDbReferencesOA; break;
-
-				case "SenseTypes": rangeName = sDbSenseTypesOA; break;
-
-				case "UsageTypes": rangeName = sDbUsageTypesOA; break;
-
-				case "VariantEntryTypes": rangeName = sDbVariantEntryTypesOA; break;
-
-				////=====================EXTRA RANGES NOT  CmPossibilityLists============================
-				//case  "": rangeName = sMSAinflectionFeature = "inflection-feature"; break;
-				//case  "": rangeName = sMSAinflectionFeatureType = "inflection-feature-type"; break;
-				//case  "": rangeName = sReversalType = "reversal-type"; break;
-
-				//============================================================================================
-				default:
-					rangeName = fieldName.ToLowerInvariant();
-					break;
-			}
-			return rangeName;
-		}
-
-		public static bool RangeNameIsCustomList(string range)
-		{
-			switch (range)
-			{
-				case sAffixCategoriesOA:
-				case sAnnotationDefsOA:
-				case sAnthroListOAold1:
-				case sAnthroListOA:
-				case sConfidenceLevelsOA:
-				case sEducationOA:
-				case sGenreListOA:
-				case sLocationsOA:
-				case sPartsOfSpeechOA:
-				case sPartsOfSpeechOAold2:
-				case sPartsOfSpeechOAold1:
-				case sPeopleOA:
-				case sPositionsOA:
-				case sRestrictionsOA:
-				case sRolesOA:
-				case sSemanticDomainListOAold1:
-				case sSemanticDomainListOAold2:
-				case sSemanticDomainListOAold3:
-				case sSemanticDomainListOA:
-				case sStatusOA:
-				case sThesaurusRA:
-				case sTranslationTagsOAold1:
-				case sTranslationTagsOA:
-				//=========================================================================================
-				case sProdRestrictOA:
-				case sProdRestrictOAfrom:
-				//=========================================================================================
-				//lists under m_cache.LangProject.LexDbOA
-				case sDbComplexEntryTypesOA:
-				case sDbDialectLabelsOA:
-				case sDbDomainTypesOA:
-				case sDbDomainTypesOAold1:
-				case sDbLanguagesOA:
-				case sDbMorphTypesOAold:
-				case sDbMorphTypesOA:
-				case sDbPublicationTypesOA:
-				case sDbPublicationTypesOAold:
-				case sDbReferencesOAold:
-				case sDbReferencesOA:
-				case sDbSenseTypesOA:
-				case sDbSenseTypesOAold1:
-				case sDbUsageTypesOAold:
-				case sDbUsageTypesOA:
-				case sDbVariantEntryTypesOA:
-				//=====================EXTRA RANGES NOT  CmPossibilityLists============================
-				case sMSAinflectionFeature:
-				case sMSAfromInflectionFeature:
-				case sMSAinflectionFeatureType:
-				case sReversalType:
-				case "dialect":
-				case "etymology":
-				case "note-type":
-				case "paradigm":
-				case "Publications":
-					return false;
-				default:
-					if (range.EndsWith("-slot") || range.EndsWith("-Slots") ||
-						range.EndsWith("-infl-class") || range.EndsWith("-InflClasses") ||
-						range.EndsWith("-feature-value") || range.EndsWith("-stem-name"))
-					{
-						return false;
-					}
-					return true;
-			}
 		}
 	}
 }

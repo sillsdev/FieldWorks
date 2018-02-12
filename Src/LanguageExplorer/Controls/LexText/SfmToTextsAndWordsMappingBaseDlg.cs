@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -38,9 +38,11 @@ namespace LanguageExplorer.Controls.LexText
 
 		void SfmInterlinearMappingDlg_WritingSystemAdded(object sender, EventArgs e)
 		{
-			CoreWritingSystemDefinition ws = ((AddWritingSystemButton)m_addWritingSystemButton).NewWritingSystem;
+			var ws = ((AddWritingSystemButton)m_addWritingSystemButton).NewWritingSystem;
 			if (ws != null)
+			{
 				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache, m_writingSystemCombo);
+			}
 		}
 
 		public void SetupDlg(IHelpTopicProvider helpTopicProvider, IApp app, LcmCache cache,  Sfm2FlexTextMappingBase mappingToModify, IEnumerable<InterlinDestination> destinationsToDisplay)
@@ -80,13 +82,11 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected virtual void OnDestinationListBox_SelectedIndexChanged()
 		{
-			string oldWs = GetOldWs();
-			if (m_destinationsListBox.SelectedItem is DestinationItem &&
-				((DestinationItem)m_destinationsListBox.SelectedItem).Dest == InterlinDestination.Baseline)
+			var oldWs = GetOldWs();
+			if (m_destinationsListBox.SelectedItem is DestinationItem && ((DestinationItem)m_destinationsListBox.SelectedItem).Dest == InterlinDestination.Baseline)
 			{
 				// Baseline can only use vernacular writing systems.
-				if (!NotebookImportWiz.InitializeWritingSystemCombo(oldWs, m_cache, m_writingSystemCombo,
-					m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.ToArray()))
+				if (!NotebookImportWiz.InitializeWritingSystemCombo(oldWs, m_cache, m_writingSystemCombo, m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.ToArray()))
 				{
 					m_writingSystemCombo.SelectedIndex = 0; // if old one is not in list, pick one that is.
 				}
@@ -102,11 +102,13 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			var oldWs = m_mapping.WritingSystem;
 			if (m_writingSystemCombo.SelectedItem is CoreWritingSystemDefinition)
+			{
 				oldWs = ((CoreWritingSystemDefinition) m_writingSystemCombo.SelectedItem).Id;
+			}
 			return oldWs;
 		}
 
-		private class DestinationItem
+		private sealed class DestinationItem
 		{
 			public string Name;
 			public InterlinDestination Dest;
@@ -142,19 +144,21 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				m_destinationsListBox.Items.Add(item);
 			}
-			m_destinationsListBox.SelectedItem = items.Where(item => item.Dest == m_mapping.Destination).First();
+			m_destinationsListBox.SelectedItem = items.First(item => item.Dest == m_mapping.Destination);
 			m_destinationsListBox.EndUpdate();
 		}
 
 		private void LoadConverters(string converter)
 		{
 			LoadEncodingConverters();
-			int index = 0;
+			var index = 0;
 			if (!string.IsNullOrEmpty(converter))
 			{
 				index = m_converterCombo.FindStringExact(converter);
 				if (index < 0)
+				{
 					index = 0;
+				}
 			}
 			m_converterCombo.SelectedIndex = index;
 		}
@@ -164,16 +168,18 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		private void LoadEncodingConverters()
 		{
-			EncConverters encConv = new EncConverters();
+			var encConv = new EncConverters();
 			System.Collections.IDictionaryEnumerator de = encConv.GetEnumerator();
 			m_converterCombo.BeginUpdate();
 			m_converterCombo.Items.Clear();
 			m_converterCombo.Sorted = true;
 			while (de.MoveNext())
 			{
-				string name = de.Key as string;
+				var name = de.Key as string;
 				if (name != null)
+				{
 					m_converterCombo.Items.Add(name);
+				}
 			}
 			m_converterCombo.Sorted = false;
 			m_converterCombo.Items.Insert(0, m_blankEC);
@@ -184,9 +190,8 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			try
 			{
-				string prevEC = m_converterCombo.Text;
-				using (AddCnvtrDlg dlg = new AddCnvtrDlg(m_helpTopicProvider, m_app, null,
-					m_converterCombo.Text, null, false))
+				var prevEC = m_converterCombo.Text;
+				using (var dlg = new AddCnvtrDlg(m_helpTopicProvider, m_app, null, m_converterCombo.Text, null, false))
 				{
 					dlg.ShowDialog();
 
@@ -195,32 +200,32 @@ namespace LanguageExplorer.Controls.LexText
 
 					// Either select the new one or select the old one
 					if (dlg.DialogResult == DialogResult.OK && !String.IsNullOrEmpty(dlg.SelectedConverter))
+					{
 						m_converterCombo.SelectedItem = dlg.SelectedConverter;
+					}
 					else if (m_converterCombo.Items.Count > 0)
+					{
 						m_converterCombo.SelectedItem = prevEC; // preserve selection if possible
+					}
 				}
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(String.Format(LexTextControls.ksErrorAccessingEncodingConverters, ex.Message));
-				return;
+				MessageBox.Show(string.Format(LexTextControls.ksErrorAccessingEncodingConverters, ex.Message));
 			}
-
 		}
 
 		private void m_okButton_Click(object sender, EventArgs e)
 		{
-			var dest = ((DestinationItem) m_destinationsListBox.SelectedItem).Dest;
-			m_mapping.WritingSystem = dest == InterlinDestination.Ignored ? null : ((CoreWritingSystemDefinition) m_writingSystemCombo.SelectedItem).Id;
-			m_mapping.Converter = m_converterCombo.SelectedIndex <= 0 ? "" : m_converterCombo.Text;
+			var dest = ((DestinationItem)m_destinationsListBox.SelectedItem).Dest;
+			m_mapping.WritingSystem = dest == InterlinDestination.Ignored ? null : ((CoreWritingSystemDefinition)m_writingSystemCombo.SelectedItem).Id;
+			m_mapping.Converter = m_converterCombo.SelectedIndex <= 0 ? string.Empty : m_converterCombo.Text;
 			m_mapping.Destination = dest;
 		}
 
 		private void m_helpButton_Click(object sender, EventArgs e)
 		{
-			{
-				ShowHelp.ShowHelpTopic(m_helpTopicProvider, m_helpTopicID);
-			}
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, m_helpTopicID);
 		}
 	}
 }

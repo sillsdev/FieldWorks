@@ -19,12 +19,14 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			linkLabel1.Enabled = true;
 		}
+
 		protected override void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			// code in the launcher handles the jump
 			DialogResult = DialogResult.Yes;
 			Close();
 		}
+
 		/// <summary>
 		/// Get/Set prompt text
 		/// </summary>
@@ -65,7 +67,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Load the tree items if the starting point is a feature structure.
 		/// </summary>
-		/// <param name="fs"></param>
 		protected override void LoadInflFeats(IFsFeatStruc fs)
 		{
 			PopulateTreeFromFeatureSystem();
@@ -76,8 +77,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Load the tree items if the starting point is an owning MSA and flid.
 		/// </summary>
-		/// <param name="cobj"></param>
-		/// <param name="owningFlid"></param>
 		protected override void LoadInflFeats(ICmObject cobj, int owningFlid)
 		{
 			PopulateTreeFromFeatureSystem();
@@ -92,25 +91,20 @@ namespace LanguageExplorer.Controls.LexText
 		private void PopulateTreeFromFeatureSystem()
 		{
 			var featureSystem = m_cache.LangProject.MsFeatureSystemOA;
-			var topLevelComplexFeatureDefinitions =
-				featureSystem.FeaturesOC.Where(fd => fd.ClassID == FsComplexFeatureTags.kClassId);
+			var topLevelComplexFeatureDefinitions = featureSystem.FeaturesOC.Where(fd => fd.ClassID == FsComplexFeatureTags.kClassId);
 			m_tvMsaFeatureList.PopulateTreeFromInflectableFeats(topLevelComplexFeatureDefinitions);
-			var topLevelClosedFeatureDefinitions =
-				featureSystem.FeaturesOC.Where(fd => fd.ClassID == FsClosedFeatureTags.kClassId);
+			var topLevelClosedFeatureDefinitions = featureSystem.FeaturesOC.Where(fd => fd.ClassID == FsClosedFeatureTags.kClassId);
 			foreach (var closedFeatureDefinition in topLevelClosedFeatureDefinitions)
 			{
-				var typeUsedByComplexFormForThisClosedFeature =
-					topLevelComplexFeatureDefinitions.Cast<IFsComplexFeature>().Select(cx => cx.TypeRA).Where(
-						t => t.FeaturesRS.Contains(closedFeatureDefinition));
+				var typeUsedByComplexFormForThisClosedFeature = topLevelComplexFeatureDefinitions.Cast<IFsComplexFeature>()
+					.Select(cx => cx.TypeRA).Where(t => t.FeaturesRS.Contains(closedFeatureDefinition));
 				if (!typeUsedByComplexFormForThisClosedFeature.Any())
+				{
 					m_tvMsaFeatureList.PopulateTreeFromInflectableFeat(closedFeatureDefinition);
+				}
 			}
 		}
 
-		public FeatureStructureTreeView TreeView
-		{
-			get { return m_tvMsaFeatureList; }
-		}
-
+		public FeatureStructureTreeView TreeView => m_tvMsaFeatureList;
 	}
 }

@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Linq;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -25,9 +26,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			var owningFieldName = me.Cache.DomainDataByFlid.MetaDataCache.GetFieldName(owningList.OwningFlid);
 			var itemsTypeName = owningList.ItemsTypeName();
-			return itemsTypeName != "*" + owningFieldName + "*"
-				? itemsTypeName
-				: stringTableName;
+			return itemsTypeName != "*" + owningFieldName + "*" ? itemsTypeName : stringTableName;
 		}
 
 		public static string ItemsTypeName(this ICmPossibilityList me)
@@ -38,7 +37,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var itemsTypeName = StringTable.Table.GetString(listName, "PossibilityListItemTypeNames");
 			return itemsTypeName != "*" + listName + "*"
 				? itemsTypeName
-				: (me.PossibilitiesOS.Count > 0
+				: (me.PossibilitiesOS.Any()
 					? StringTable.Table.GetString(me.PossibilitiesOS[0].GetType().Name, "ClassNames")
 					: itemsTypeName);
 		}
@@ -78,13 +77,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		public static IFwMetaDataCacheManaged GetManagedMetaDataCache(this ISilDataAccess me)
 		{
-			// Thoeretically it could be null.
+			// Theoretically it could be null.
 			return me.MetaDataCache as IFwMetaDataCacheManaged;
 		}
 
 		public static IFwMetaDataCacheManaged GetManagedMetaDataCache(this IFwMetaDataCache me)
 		{
-			// Thoeretically it could be null.
+			// Theoretically it could be null.
 			return me as IFwMetaDataCacheManaged;
 		}
 

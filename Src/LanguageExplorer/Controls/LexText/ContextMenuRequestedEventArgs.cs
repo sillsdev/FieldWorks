@@ -9,17 +9,12 @@ namespace LanguageExplorer.Controls.LexText
 {
 	public class ContextMenuRequestedEventArgs : EventArgs
 	{
-		private readonly IVwSelection m_selection;
-
 		public ContextMenuRequestedEventArgs(IVwSelection selection)
 		{
-			m_selection = selection;
+			Selection = selection;
 		}
 
-		public IVwSelection Selection
-		{
-			get { return m_selection; }
-		}
+		public IVwSelection Selection { get; }
 
 		public bool Handled { get; set; }
 	}

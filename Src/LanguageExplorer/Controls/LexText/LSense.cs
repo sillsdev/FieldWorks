@@ -12,62 +12,25 @@ namespace LanguageExplorer.Controls.LexText
 	internal class LSense : LObject
 	{
 		#region Data members
-
-		private string m_senseNum;
-		private int m_status;
-		private int m_senseType;
-		private List<int> m_anthroCodes;
-		private List<int> m_domainTypes;
-		private List<int> m_usageTypes;
-		private List<int> m_thesaurusItems;
-		private List<int> m_semanticDomains;
-
 		#endregion Data members
 
 		#region Properties
 
-		public string SenseNumber
-		{
-			get { return m_senseNum; }
-		}
+		public string SenseNumber { get; }
 
-		public int SenseType
-		{
-			get { return m_senseType; }
-			set { m_senseType = value; }
-		}
+		public int SenseType { get; set; }
 
-		public int Status
-		{
-			get { return m_status; }
-			set { m_status = value; }
-		}
+		public int Status { get; set; }
 
-		public List<int> AnthroCodes
-		{
-			get { return m_anthroCodes; }
-		}
+		public List<int> AnthroCodes { get; }
 
-		public List<int> DomainTypes
-		{
-			get { return m_domainTypes; }
-		}
+		public List<int> DomainTypes { get; }
 
-		public List<int> UsageTypes
-		{
-			get { return m_usageTypes; }
-		}
+		public List<int> UsageTypes { get; }
 
-		public List<int> ThesaurusItems
-		{
-			get { return m_thesaurusItems; }
-		}
+		public List<int> ThesaurusItems { get; }
 
-		public List<int> SemanticDomains
-		{
-			get { return m_semanticDomains; }
-		}
-
+		public List<int> SemanticDomains { get; }
 		#endregion Properties
 
 		#region Construction & initialization
@@ -75,16 +38,14 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="hvo">Database ID of the object.</param>
-		/// <param name="senseNum">Sense number.</param>
 		public LSense(int hvo, string senseNum) : base(hvo)
 		{
-			m_senseNum = senseNum;
-			m_anthroCodes = new List<int>();
-			m_domainTypes = new List<int>();
-			m_usageTypes = new List<int>();
-			m_thesaurusItems = new List<int>();
-			m_semanticDomains = new List<int>();
+			SenseNumber = senseNum;
+			AnthroCodes = new List<int>();
+			DomainTypes = new List<int>();
+			UsageTypes = new List<int>();
+			ThesaurusItems = new List<int>();
+			SemanticDomains = new List<int>();
 		}
 
 		#endregion Construction & initialization

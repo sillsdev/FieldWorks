@@ -28,8 +28,8 @@ namespace LanguageExplorer.Controls.LexText
 			label1.Text = LexTextControls.ksPhonologicalFeatureCatalogPrompt;
 			label2.Text = LexTextControls.ksPhonologicalFeatureCatalogTreeLabel;
 			label3.Text = LexTextControls.ksPhonologicalFeatureCatalogDescriptionLabel;
-			string sPhonoFeat = LexTextControls.ksPhonologicalFeature;
-			linkLabel1.Text = String.Format(LexTextControls.ksLinkText, sPhonoFeat, sPhonoFeat);
+			var sPhonoFeat = LexTextControls.ksPhonologicalFeature;
+			linkLabel1.Text = string.Format(LexTextControls.ksLinkText, sPhonoFeat, sPhonoFeat);
 			s_helpTopic = "khtpInsertPhonologicalFeature";
 		}
 
@@ -40,7 +40,9 @@ namespace LanguageExplorer.Controls.LexText
 		private void CheckMeIfAllDaughtersAreChecked(TreeNode node)
 		{
 			if (node.Nodes.Count == 0)
+			{
 				return; // nothing to do
+			}
 			foreach (TreeNode daughterNode in node.Nodes)
 			{
 				CheckMeIfAllDaughtersAreChecked(daughterNode);
@@ -55,11 +57,15 @@ namespace LanguageExplorer.Controls.LexText
 		private bool AllDaughtersAreChecked(TreeNode node)
 		{
 			if (node.Nodes.Count == 0)
+			{
 				return false;  // no daughters, so they are not checked
+			}
 			foreach (TreeNode daughterNode in node.Nodes)
 			{
 				if (!daughterNode.Checked)
+				{
 					return false;
+				}
 			}
 			return true;
 		}
@@ -71,7 +77,6 @@ namespace LanguageExplorer.Controls.LexText
 				m_selFeatDefn = m_cache.ServiceLocator.GetInstance<IFsClosedFeatureFactory>().Create();
 				m_cache.LangProject.PhFeatureSystemOA.FeaturesOC.Add(m_selFeatDefn);
 
-				// create the two default feature values
 				IFsSymFeatVal symFV;
 				var closed = m_selFeatDefn as IFsClosedFeature;
 				if (closed != null)
@@ -84,7 +89,6 @@ namespace LanguageExplorer.Controls.LexText
 					closed.ValuesOC.Add(symFV);
 					symFV.SimpleInit("-", "negative");
 				}
-				// end create
 			});
 
 			DialogResult = DialogResult.Yes;

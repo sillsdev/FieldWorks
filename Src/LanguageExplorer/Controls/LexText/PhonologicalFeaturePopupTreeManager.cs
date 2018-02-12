@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -24,28 +24,22 @@ namespace LanguageExplorer.Controls.LexText
 		public const int kRemoveThisFeature = -2;
 		private const int kChoosePhonologicaFeatures = -3;
 		private List<ICmBaseAnnotation> m_annotations = new List<ICmBaseAnnotation>();
-		private readonly IFsClosedFeature m_closedFeature;
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		public PhonologicalFeaturePopupTreeManager(TreeCombo treeCombo, LcmCache cache, bool useAbbr, IPropertyTable propertyTable, IPublisher publisher, Form parent, int wsDisplay, IFsClosedFeature closedFeature)
 			: base(treeCombo, cache, propertyTable, publisher, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
 		{
-			m_closedFeature = closedFeature;
+			ClosedFeature = closedFeature;
 		}
 
 		/// <summary>
 		/// The target feature (the one that the user selects in the "Target Field" dropdown combo box)
 		/// </summary>
-		public IFsClosedFeature ClosedFeature
-		{
-			get { return m_closedFeature; }
-		}
+		public IFsClosedFeature ClosedFeature { get; }
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="obj"></param>
+		/// <summary />
 		/// <returns></returns>
 		/// <remarks>These annotations and their feature structure objects are private to this control.
 		/// They are deleted when this control is disposed.
@@ -63,56 +57,61 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected override TreeNode MakeMenuItems(PopupTree popupTree, int hvoTarget)
 		{
-
 			TreeNode match = null;
 
 			// We need a way to store feature structures the user has chosen during this session.
 			// We use an annotation to do this.
-			foreach (ICmBaseAnnotation cba in m_annotations)
+			foreach (var cba in m_annotations)
 			{
-				IFsFeatStruc fs = cba.FeaturesOA;
+				var fs = cba.FeaturesOA;
 				if (fs == null || fs.IsEmpty)
+				{
 					continue;
+				}
 				if (cba.BeginObjectRA != null)
+				{
 					continue;  // is not one of the feature structures created via the phon feat chooser
-				HvoTreeNode node = new HvoTreeNode(fs.LongNameTSS, fs.Hvo);
+				}
+				var node = new HvoTreeNode(fs.LongNameTSS, fs.Hvo);
 				popupTree.Nodes.Add(node);
 				if (fs.Hvo == hvoTarget)
+				{
 					match = node;
+				}
 			}
 
 			if (ClosedFeature != null)
 			{
-				var sortedVaues = from v in ClosedFeature.ValuesOC
-								  orderby v.Abbreviation.BestAnalysisAlternative.Text
-								  select v;
+				var sortedVaues = ClosedFeature.ValuesOC.OrderBy(v => v.Abbreviation.BestAnalysisAlternative.Text);
 				foreach (var closedValue in sortedVaues)
 				{
-					HvoTreeNode node = new HvoTreeNode(closedValue.Abbreviation.BestAnalysisAlternative, closedValue.Hvo);
+					var node = new HvoTreeNode(closedValue.Abbreviation.BestAnalysisAlternative, closedValue.Hvo);
 					popupTree.Nodes.Add(node);
 					if (closedValue.Hvo == hvoTarget)
+					{
 						match = node;
+					}
 				}
 			}
 
-			popupTree.Nodes.Add(new HvoTreeNode(
-					TsStringUtils.MakeString(LexTextControls.ksRemoveThisFeature, Cache.WritingSystemFactory.UserWs),
-					kRemoveThisFeature));
+			popupTree.Nodes.Add(new HvoTreeNode(TsStringUtils.MakeString(LexTextControls.ksRemoveThisFeature, Cache.WritingSystemFactory.UserWs), kRemoveThisFeature));
 
 			return match;
 		}
 
 		protected override void m_treeCombo_AfterSelect(object sender, TreeViewEventArgs e)
 		{
-			HvoTreeNode selectedNode = e.Node as HvoTreeNode;
-			PopupTree pt = GetPopupTree();
+			var selectedNode = e.Node as HvoTreeNode;
+			var pt = GetPopupTree();
 
 			switch (selectedNode.Hvo)
 			{
 				case kChoosePhonologicaFeatures:
 					// Only launch the dialog by a mouse click (or simulated mouse click).
 					if (e.Action != TreeViewAction.ByMouse)
+					{
 						break;
+					}
 					// Force the PopupTree to Hide() to trigger popupTree_PopupTreeClosed().
 					// This will effectively revert the list selection to a previous confirmed state.
 					// Whatever happens below, we don't want to actually leave the "Choose phonological features" node selected!
@@ -120,7 +119,7 @@ namespace LanguageExplorer.Controls.LexText
 					// N.B. the above does not seem to be true; therefore we check for cancel and an empty result
 					// and force the combo text to be what it should be.
 					pt.Hide();
-					using (PhonologicalFeatureChooserDlg dlg = new PhonologicalFeatureChooserDlg())
+					using (var dlg = new PhonologicalFeatureChooserDlg())
 					{
 						Cache.DomainDataByFlid.BeginUndoTask(LexTextControls.ksUndoInsertPhonologicalFeature, LexTextControls.ksRedoInsertPhonologicalFeature);
 						var fs = CreateEmptyFeatureStructureInAnnotation(null);
@@ -128,7 +127,7 @@ namespace LanguageExplorer.Controls.LexText
 						dlg.ShowIgnoreInsteadOfDontCare = true;
 						dlg.SetHelpTopic("khtptoolBulkEditPhonemesChooserDlg");
 
-						DialogResult result = dlg.ShowDialog(ParentForm);
+						var result = dlg.ShowDialog(ParentForm);
 						if (result == DialogResult.OK)
 						{
 							if (dlg.FS != null)
@@ -169,9 +168,8 @@ namespace LanguageExplorer.Controls.LexText
 				return;
 			base.m_treeCombo_AfterSelect(sender, e);
 		}
-		#region IDisposable & Co. implementation
-		// Region last reviewed: never
 
+		#region IDisposable & Co. implementation
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -211,15 +209,16 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
 				if (m_annotations != null)
 				{
-					Cache.DomainDataByFlid.BeginUndoTask(LexTextControls.ksUndoInsertPhonologicalFeature,
-									 LexTextControls.ksRedoInsertPhonologicalFeature);
+					Cache.DomainDataByFlid.BeginUndoTask(LexTextControls.ksUndoInsertPhonologicalFeature, LexTextControls.ksRedoInsertPhonologicalFeature);
 					foreach (var cmBaseAnnotation in m_annotations)
 					{
 						cmBaseAnnotation.Delete();

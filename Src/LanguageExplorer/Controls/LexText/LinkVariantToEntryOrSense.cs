@@ -1,16 +1,14 @@
-// Copyright (c) 2014 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.LCModel.Utils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -47,10 +45,8 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
-				if (m_tcManager != null && !m_tcManager.IsDisposed)
-					m_tcManager.Dispose();
+				components?.Dispose();
+				m_tcManager?.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -58,8 +54,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Sets the DLG info.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="tssVariantLexemeForm">The variant lexeme form.</param>
 		public void SetDlgInfo(LcmCache cache, ITsString tssVariantLexemeForm)
 		{
 			m_tssVariantLexemeForm = tssVariantLexemeForm;
@@ -72,8 +66,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// constructor is used to indicate that m_startingEntry is a componentLexeme
 		/// rather than the variant
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="componentLexeme">the entry we wish to find or create a variant for.</param>
 		protected void SetDlgInfoForComponentLexeme(LcmCache cache, IVariantComponentLexeme componentLexeme)
 		{
 			m_fBackRefToVariant = true;
@@ -107,8 +99,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected override void SetDlgInfo(LcmCache cache, WindowParams wp, int ws)
 		{
-			WritingSystemAndStylesheetHelper.SetupWritingSystemAndStylesheetInfo(PropertyTable, tcVariantTypes,
-				cache, cache.DefaultUserWs);
+			WritingSystemAndStylesheetHelper.SetupWritingSystemAndStylesheetInfo(PropertyTable, tcVariantTypes, cache, cache.DefaultUserWs);
 			base.SetDlgInfo(cache, wp, ws);
 			// load the variant type possibilities.
 			LoadVariantTypes();
@@ -117,20 +108,14 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// return null to use visual studio designer's settings.
 		/// </summary>
-		protected override WindowParams DefaultWindowParams
-		{
-			get { return null; }
-		}
+		protected override WindowParams DefaultWindowParams => null;
 
-		protected override string PersistenceLabel
-		{
-			get { return "LinkVariantToEntryOrSense"; }
-		}
+		protected override string PersistenceLabel => "LinkVariantToEntryOrSense";
 
 		private void LoadVariantTypes()
 		{
 			// by default, select the first variant type.
-			int hvoTarget = m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0].Hvo;
+			var hvoTarget = m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0].Hvo;
 			LoadVariantTypesAndSelectTarget(hvoTarget);
 		}
 
@@ -138,9 +123,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			if (m_tcManager == null)
 			{
-				m_tcManager = new PossibilityListPopupTreeManager(tcVariantTypes, m_cache,
-					PropertyTable, Publisher, m_cache.LangProject.LexDbOA.VariantEntryTypesOA, m_cache.DefaultUserWs,
-					false, this);
+				m_tcManager = new PossibilityListPopupTreeManager(tcVariantTypes, m_cache, PropertyTable, Publisher, m_cache.LangProject.LexDbOA.VariantEntryTypesOA, m_cache.DefaultUserWs, false, this);
 			}
 			m_tcManager.LoadPopupTree(hvoTarget);
 		}
@@ -158,32 +141,24 @@ namespace LanguageExplorer.Controls.LexText
 			get
 			{
 				if (!m_fGetVariantEntryTypeFromTreeCombo)
+				{
 					return 0;
-				TreeNode selectedNode = tcVariantTypes.SelectedNode;
-				if (selectedNode == null || !(selectedNode is HvoTreeNode))
-					return 0;
-				return (selectedNode as HvoTreeNode).Hvo;
+				}
+				var selectedNode = tcVariantTypes.SelectedNode;
+				return (selectedNode as HvoTreeNode)?.Hvo ?? 0;
 			}
 		}
 
-		ILexEntryRef m_variantEntryRefResult;
 		/// <summary>
 		/// the variant LexEntryRef, that was created or found by the state of the dialog
 		/// after user clicks the OK button.
 		/// </summary>
-		public ILexEntryRef VariantEntryRefResult
-		{
-			get { return m_variantEntryRefResult; }
-		}
+		public ILexEntryRef VariantEntryRefResult { get; private set; }
 
-		bool m_fNewlyCreatedVariantEntryRef;
 		/// <summary>
 		/// indicates whether VariantEntryRefResult is new.
 		/// </summary>
-		public bool NewlyCreatedVariantEntryRefResult
-		{
-			get { return m_fNewlyCreatedVariantEntryRef; }
-		}
+		public bool NewlyCreatedVariantEntryRefResult { get; private set; }
 
 		/// <summary>
 		/// If we get here without passing through btnOK_Click, and we're not canceling the
@@ -191,52 +166,53 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		protected override void OnClosing(CancelEventArgs e)
 		{
-			if (DialogResult != DialogResult.Cancel && !e.Cancel && m_variantEntryRefResult == null)
+			if (DialogResult != DialogResult.Cancel && !e.Cancel && VariantEntryRefResult == null)
+			{
 				btnOK_Click(null, null);
+			}
 			base.OnClosing(e);
 		}
 
 		private void btnOK_Click(object sender, EventArgs e)
 		{
 			if (SelectedObject == null)
+			{
 				return; // odd. nothing more to do.
+			}
 
 			ILexEntry variant;
 			IVariantComponentLexeme componentLexeme;
 			ILexEntryType selectedEntryType;
 			GetVariantAndComponentAndSelectedEntryType(out variant, out componentLexeme, out selectedEntryType);
 
-			ILexEntryRef matchingEntryRef = FindMatchingEntryRef(variant, componentLexeme, selectedEntryType);
+			var matchingEntryRef = FindMatchingEntryRef(variant, componentLexeme, selectedEntryType);
 			try
 			{
-				UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoAddVariant, LexTextControls.ksRedoAddVariant,
-					m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoAddVariant, LexTextControls.ksRedoAddVariant, m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
 					if (matchingEntryRef != null)
 					{
 						// we found a matching ComponentLexeme. See if we can find the selected type.
 						// if the selected type does not yet exist, add it.
-						if (selectedEntryType != null &&
-							!matchingEntryRef.VariantEntryTypesRS.Contains(selectedEntryType))
+						if (selectedEntryType != null && !matchingEntryRef.VariantEntryTypesRS.Contains(selectedEntryType))
 						{
 							matchingEntryRef.VariantEntryTypesRS.Add(selectedEntryType);
 						}
 
-						m_variantEntryRefResult = matchingEntryRef;
-						m_fNewlyCreatedVariantEntryRef = false;
+						VariantEntryRefResult = matchingEntryRef;
+						NewlyCreatedVariantEntryRefResult = false;
 					}
 					else
 					{
 						// otherwise we need to create a new LexEntryRef.
-						m_fNewlyCreatedVariantEntryRef = true;
+						NewlyCreatedVariantEntryRefResult = true;
 						if (variant != null)
 						{
-							m_variantEntryRefResult = variant.MakeVariantOf(componentLexeme, selectedEntryType);
+							VariantEntryRefResult = variant.MakeVariantOf(componentLexeme, selectedEntryType);
 						}
 						else
 						{
-							m_variantEntryRefResult = componentLexeme.CreateVariantEntryAndBackRef(selectedEntryType,
-								m_tssVariantLexemeForm);
+							VariantEntryRefResult = componentLexeme.CreateVariantEntryAndBackRef(selectedEntryType, m_tssVariantLexemeForm);
 						}
 					}
 				});
@@ -251,9 +227,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// extracts the variant and component from the dialog, depending upon whether we're
 		/// called from an "Insert Variant" or "Variant Of..." context.
 		/// </summary>
-		/// <param name="variant">The variant.</param>
-		/// <param name="componentLexeme">The component lexeme.</param>
-		/// <param name="selectedEntryType">Type of the selected entry.</param>
 		private void GetVariantAndComponentAndSelectedEntryType(out ILexEntry variant, out IVariantComponentLexeme componentLexeme, out ILexEntryType selectedEntryType)
 		{
 			if (m_fBackRefToVariant)
@@ -270,32 +243,20 @@ namespace LanguageExplorer.Controls.LexText
 				variant = m_startingEntry;
 				componentLexeme = SelectedObject as IVariantComponentLexeme;
 			}
-			selectedEntryType = m_fGetVariantEntryTypeFromTreeCombo
-				? m_cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(SelectedVariantEntryTypeHvo) : null;
+			selectedEntryType = m_fGetVariantEntryTypeFromTreeCombo ? m_cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(SelectedVariantEntryTypeHvo) : null;
 		}
 
 		private ILexEntryRef FindMatchingEntryRef(ILexEntry variant, IVariantComponentLexeme componentLexeme, ILexEntryType selectedEntryType)
 		{
-			ILexEntryRef matchingEntryRef;
-			if (variant != null)
-			{
-				// see if the starting entry has the SelectedID already as a ComponentLexeme
-				matchingEntryRef = variant.FindMatchingVariantEntryRef(componentLexeme,
-					selectedEntryType);
-			}
-			else
-			{
-				// determine whether the selected entry or sense is already
-				// linked to an existing variant with the given lexeme form.
-				matchingEntryRef = componentLexeme.FindMatchingVariantEntryBackRef(selectedEntryType, m_tssVariantLexemeForm);
-			}
+			var matchingEntryRef = variant != null
+				? variant.FindMatchingVariantEntryRef(componentLexeme, selectedEntryType)
+				: componentLexeme.FindMatchingVariantEntryBackRef(selectedEntryType, m_tssVariantLexemeForm);
 			return matchingEntryRef;
 		}
 
 		/// <summary>
 		/// update the buttons when the state of the dialog changes.
 		/// </summary>
-		/// <param name="searchKey"></param>
 		protected override void ResetMatches(string searchKey)
 		{
 			base.ResetMatches(searchKey);
@@ -322,7 +283,7 @@ namespace LanguageExplorer.Controls.LexText
 				IVariantComponentLexeme componentLexeme;
 				ILexEntryType selectedEntryType;
 				GetVariantAndComponentAndSelectedEntryType(out variant, out componentLexeme, out selectedEntryType);
-				ILexEntryRef matchingEntryRef = FindMatchingEntryRef(variant, componentLexeme, selectedEntryType);
+				var matchingEntryRef = FindMatchingEntryRef(variant, componentLexeme, selectedEntryType);
 				if (matchingEntryRef != null)
 				{
 					// Indicate to the user that the SelectedID matches an existing EntryRef relationship.
@@ -330,7 +291,7 @@ namespace LanguageExplorer.Controls.LexText
 					// if the VariantTypes combo is visible, select the last appended type of the matching relationship.
 					if (tcVariantTypes.Visible && matchingEntryRef.VariantEntryTypesRS.Count > 0)
 					{
-						int hvoLastAppendedType = matchingEntryRef.VariantEntryTypesRS[matchingEntryRef.VariantEntryTypesRS.Count - 1].Hvo;
+						var hvoLastAppendedType = matchingEntryRef.VariantEntryTypesRS[matchingEntryRef.VariantEntryTypesRS.Count - 1].Hvo;
 						LoadVariantTypesAndSelectTarget(hvoLastAppendedType);
 					}
 				}
@@ -343,7 +304,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				// enable the "Create Entry" button if we can make a current vernacular string
 				// from the Find text box and the Writing Systems combo box.
-				ITsString tssNewVariantLexemeForm = CreateVariantTss();
+				var tssNewVariantLexemeForm = CreateVariantTss();
 				// enable the button if we didn't find an existing one.
 				m_btnInsert.Enabled = (tssNewVariantLexemeForm != null);
 			}
@@ -352,21 +313,25 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void m_btnInsert_Click(object sender, EventArgs e)
 		{
 			if (!m_fBackRefToVariant)
+			{
 				base.m_btnInsert_Click(sender, e);
+			}
 
 			// the user wants to try to create a variant with a lexeme form
 			// built from the current state of our Find text box and WritingSystem combo.
-			ITsString tssNewVariantLexemeForm = CreateVariantTss();
+			var tssNewVariantLexemeForm = CreateVariantTss();
 			if (tssNewVariantLexemeForm == null)
+			{
 				return;
+			}
 
 			// we need to create the new LexEntryRef and its variant from the starting entry.
 			UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoCreateVarEntry, LexTextControls.ksRedoCreateVarEntry, m_startingEntry, () =>
 			{
-				m_variantEntryRefResult = m_startingEntry.CreateVariantEntryAndBackRef(null, tssNewVariantLexemeForm);
+				VariantEntryRefResult = m_startingEntry.CreateVariantEntryAndBackRef(null, tssNewVariantLexemeForm);
 			});
-			m_fNewlyCreatedVariantEntryRef = true;
-			m_selObject = m_variantEntryRefResult.Owner as ILexEntry;
+			NewlyCreatedVariantEntryRefResult = true;
+			m_selObject = VariantEntryRefResult.Owner as ILexEntry;
 			m_fNewlyCreated = true;
 			DialogResult = DialogResult.OK;
 			Close();
@@ -376,11 +341,11 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				if (m_fBackRefToVariant && m_fNewlyCreated && m_variantEntryRefResult != null)
+				if (m_fBackRefToVariant && m_fNewlyCreated && VariantEntryRefResult != null)
 				{
 					// we inserted a new variant and linked it to m_startingEntry,
 					// return the owner of the variant ref to get the new variant.
-					return m_variantEntryRefResult.Owner;
+					return VariantEntryRefResult.Owner;
 				}
 
 				return base.SelectedObject;
@@ -396,114 +361,20 @@ namespace LanguageExplorer.Controls.LexText
 			// only create a variant tss when we're calling the dialog up from an entry
 			// upon which we want to add a variant.
 			if (!m_fBackRefToVariant || m_tbForm.Text == null)
+			{
 				return null;
+			}
 			ITsString tssNewVariantLexemeForm = null;
-			string trimmed = m_tbForm.Text.Trim();
+			var trimmed = m_tbForm.Text.Trim();
 			if (trimmed.Length > 0 && m_cbWritingSystems.SelectedItem != null)
 			{
 				var ws = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 				if (m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Contains(ws))
+				{
 					tssNewVariantLexemeForm = TsStringUtils.MakeString(trimmed, ws.Handle);
+				}
 			}
 			return tssNewVariantLexemeForm;
-		}
-
-	}
-
-	/// <summary>
-	/// (LT-9283)
-	/// "Insert Variant" should look like the GoDlg layout, but we still want some
-	/// of the extra logic in LinkVariantToEntryOrSense, (e.g. determine whether
-	/// we've already inserted the selected variant.)
-	///
-	/// TODO: refactor with LinkVariantToEntryOrSense to put all m_fBackRefToVariant logic here,
-	/// else allow GoDlg to support additional Variant matching logic.
-	/// </summary>
-	public class InsertVariantDlg : LinkVariantToEntryOrSense
-	{
-		public InsertVariantDlg()
-		{
-			// inherit some layout controls from GoDlg
-			InitializeSomeComponentsLikeGoDlg();
-		}
-
-		private void InitializeSomeComponentsLikeGoDlg()
-		{
-			SuspendLayout();
-			// first reapply some BaseGoDlg settings
-			var resources = new ComponentResourceManager(typeof(BaseGoDlg));
-			ApplySomeResources(resources);
-			ResumeLayout(false);
-			PerformLayout();
-		}
-
-	   private void ApplySomeResources(ComponentResourceManager resources)
-		{
-			//
-			// m_btnClose
-			//
-			resources.ApplyResources(m_btnClose, "m_btnClose");
-			//
-			// m_btnOK
-			//
-			resources.ApplyResources(m_btnOK, "m_btnOK");
-			//
-			// m_btnInsert
-			//
-			resources.ApplyResources(m_btnInsert, "m_btnInsert");
-			//
-			// m_btnHelp
-			//
-			resources.ApplyResources(m_btnHelp, "m_btnHelp");
-			//
-			// m_matchingObjectsBrowser
-			//
-			resources.ApplyResources(m_matchingObjectsBrowser, "m_matchingObjectsBrowser");
-			////
-			//// GoDlg
-			////
-			resources.ApplyResources(this, "$this");
-
-			if (MiscUtils.IsUnix)
-			{
-				// Mono doesn't handle anchoring coming in through these resources for adjusting
-				// initial locations and sizes, so let's set those manually.  See FWNX-546.
-				var bounds = this.ClientSize;
-				var deltaX = bounds.Width - (m_matchingObjectsBrowser.Location.X + m_matchingObjectsBrowser.Width + 12);
-				FixButtonLocation(m_btnClose, bounds, deltaX);
-				FixButtonLocation(m_btnOK, bounds, deltaX);
-				FixButtonLocation(m_btnInsert, bounds, deltaX);
-				FixButtonLocation(m_btnHelp, bounds, deltaX);
-				if (deltaX > 0)
-					m_matchingObjectsBrowser.Width = m_matchingObjectsBrowser.Width + deltaX;
-				var desiredBottom = Math.Min(m_btnClose.Location.Y, m_btnOK.Location.Y);
-				desiredBottom = Math.Min(desiredBottom, m_btnInsert.Location.Y);
-				desiredBottom = Math.Min(desiredBottom, m_btnHelp.Location.Y);
-				desiredBottom -= 30;
-				var deltaY = desiredBottom - (m_matchingObjectsBrowser.Location.Y + m_matchingObjectsBrowser.Height);
-				if (deltaY > 0)
-					m_matchingObjectsBrowser.Height = m_matchingObjectsBrowser.Height + deltaY;
-			}
-		}
-
-		private static void FixButtonLocation(Button button, Size bounds, int deltaX)
-		{
-			var xloc = button.Location.X;
-			if (deltaX > 0)
-				xloc += deltaX;
-			var yloc = button.Location.Y;
-			var desiredY = bounds.Height - (button.Height + 12);
-			var deltaY = desiredY - button.Location.Y;
-			if (deltaY > 0)
-				yloc = desiredY;
-			if (xloc != button.Location.X || yloc != button.Location.Y)
-				button.Location = new Point(xloc, yloc);;
-		}
-
-		/// <summary />
-		public void SetDlgInfo(LcmCache cache, IVariantComponentLexeme componentLexeme)
-		{
-			SetDlgInfoForComponentLexeme(cache, componentLexeme);
 		}
 	}
 }

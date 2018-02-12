@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -25,7 +25,7 @@ using TreeView = System.Windows.Forms.TreeView;
 
 namespace LanguageExplorer.Controls.LexText
 {
-	/// <summary></summary>
+	/// <summary />
 	public class LexImportWizardMarker : Form
 	{
 		private Label lblMarker;
@@ -76,7 +76,7 @@ namespace LanguageExplorer.Controls.LexText
 		private XmlDocument m_xmlShowInfoDoc;
 		private string m_sHelpHtm = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Import", "Help.htm");
 		private int m_panelBottomHeight;
-		private HelpProvider helpProvider;
+		private HelpProvider _helpProvider;
 
 		private void EnableLangDesc(bool enable)
 		{
@@ -91,9 +91,9 @@ namespace LanguageExplorer.Controls.LexText
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
-			helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
-			helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
-			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+			_helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
+			_helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
+			_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 
 			// The following call is needed to 'correct' the current behavior of the FwOverrideComboBox control.
 			// As the control is currently, it will not allow the space character to be passed to the base
@@ -109,7 +109,7 @@ namespace LanguageExplorer.Controls.LexText
 			// - add CFS that are in the list and not in the TV
 			// - handle the case where the current marker is a CF and it's no longer in the list (just throw for now)
 			bool customFieldsChanged;
-			m_customFields = LexImportWizard.Wizard().ReadCustomFieldsFromDB(out customFieldsChanged);
+			CustomFields = LexImportWizard.Wizard().ReadCustomFieldsFromDB(out customFieldsChanged);
 
 			// Init will only be called the first time, so here we don't have to remove an nodes
 
@@ -117,10 +117,12 @@ namespace LanguageExplorer.Controls.LexText
 			foreach (TreeNode classNameNode in tvDestination.Nodes)
 			{
 				var className = classNameNode.Text.Trim('(', ')');
-				if (m_customFields.FieldsForClass(className) == null)
+				if (CustomFields.FieldsForClass(className) == null)
+				{
 					continue;
+				}
 
-				foreach (LexImportField field in m_customFields.FieldsForClass(className))
+				foreach (LexImportField field in CustomFields.FieldsForClass(className))
 				{
 					var cnode = new TreeNode(field.UIName + " (Custom Field)")
 					{
@@ -130,7 +132,6 @@ namespace LanguageExplorer.Controls.LexText
 				}
 			}
 			tvDestination.EndUpdate();
-
 			// end of CFS processing
 
 			// set the correct marker and number of times it is used
@@ -151,7 +152,9 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				if (currentMarker.ClsFieldDescription is ClsCustomFieldDescription &&
 					currentMarker.DestinationClass != classNode.Text.Trim('(', ')'))
+				{
 					continue;
+				}
 
 				foreach (TreeNode fieldNode in classNode.Nodes)
 				{
@@ -162,11 +165,17 @@ namespace LanguageExplorer.Controls.LexText
 						break;
 					}
 				}
+
 				if (found)
+				{
 					break;
+				}
 			}
-			if (!found && tvDestination.Nodes.Count > 0)	// make first entry topmost and visible
+
+			if (!found && tvDestination.Nodes.Count > 0) // make first entry topmost and visible
+			{
 				tvDestination.Nodes[0].EnsureVisible();
+			}
 
 			// set the writing system combo box
 			foreach (DictionaryEntry lang in m_uiLangs)
@@ -177,7 +186,9 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					cbLangDesc.Items.Add(langInfo);
 					if (langInfo.FwName == currentMarker.WritingSystem)
+					{
 						cbLangDesc.SelectedItem = langInfo;
+					}
 				}
 			}
 			if (cbLangDesc.SelectedIndex < 0)
@@ -230,11 +241,10 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				// set the proper radio button
 				if (currentMarker.ClsFieldDescription.IsAbbr)
+				{
 					rbAbbrAbbr.Checked = true;
+				}
 			}
-
-			// LT-4722
-			// btnAddCustomField.Visible = false;
 		}
 
 		// result methods to be used if the dialog result is OK
@@ -356,8 +366,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		private ILexImportFields m_customFields = new LexImportFields();
-		public ILexImportFields CustomFields => m_customFields;
+		public ILexImportFields CustomFields { get; private set; } = new LexImportFields();
 
 		public LexImportWizardMarker(ILexImportFields fwFields)
 		{
@@ -388,7 +397,7 @@ namespace LanguageExplorer.Controls.LexText
 			tvDestination.ExpandAll();
 			tvDestination.EndUpdate();
 
-			helpProvider = new HelpProvider();
+			_helpProvider = new HelpProvider();
 		}
 
 		/// <summary>
@@ -399,7 +408,9 @@ namespace LanguageExplorer.Controls.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
+			{
 				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -410,7 +421,9 @@ namespace LanguageExplorer.Controls.LexText
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if( disposing )
 			{
@@ -649,17 +662,25 @@ namespace LanguageExplorer.Controls.LexText
 					return;
 				}
 				var parent = tvDestination.SelectedNode.Parent;
-				if (parent.Index < e.Node.Index)	// going down
+				if (parent.Index < e.Node.Index) // going down
+				{
 					tvDestination.SelectedNode = parent.NextNode.FirstNode;
-				else if (e.Node.Index > 0)			// going up
+				}
+				else if (e.Node.Index > 0) // going up
+				{
 					tvDestination.SelectedNode = parent.PrevNode.LastNode;
-				else						// at to Top
+				}
+				else                        // at to Top
+				{
 					e.Node.EnsureVisible();	// show the class for the selected item
+				}
 			}
 			else
 			{
 				if (e.Node == e.Node.Parent.FirstNode)
+				{
 					e.Node.Parent.EnsureVisible();	// make sure class is visible if first
+				}
 			}
 		}
 
@@ -701,17 +722,23 @@ namespace LanguageExplorer.Controls.LexText
 			// see if the abbr controls should be enabled or not
 			var enable = false;
 			if (field != null)
+			{
 				enable = field.IsAbbrField;
+			}
 			lblAbbr.Enabled = enable;
 			rbAbbrName.Enabled = enable;
 			rbAbbrAbbr.Enabled = enable;
 			// see if the function controls should be enabled
 			if (field != null)
+			{
 				enable = field.IsRef;
+			}
 			lblFunction.Enabled = enable;
 			cbFunction.Enabled = enable;
 			if (lblFunction.Enabled == false)
-				lblFunction.Text = @"Not An Active Field :";
+			{
+				lblFunction.Text = "Not An Active Field :";
+			}
 		}
 
 		LexImportField m_LastSelectedField;
@@ -721,7 +748,9 @@ namespace LanguageExplorer.Controls.LexText
 			UpdateOKButtonState();
 			var field = e.Node.Tag as LexImportField;
 			if (field == null)
+			{
 				return;
+			}
 
 			EnableControlsFromField(field);
 			FillLexicalRefTypesCombo(field);
@@ -796,7 +825,9 @@ namespace LanguageExplorer.Controls.LexText
 		private void FillLexicalRefTypesCombo(LexImportField field)
 		{
 			if (m_LastSelectedField == field)
+			{
 				return;		// don't change
+			}
 			m_LastSelectedField = field;
 
 			// fill the combo box with current values in the DB
@@ -883,7 +914,9 @@ namespace LanguageExplorer.Controls.LexText
 				// now select the one with the correct abbreviation
 				var pos = -1;
 				if (m_refFuncString.Length > 0)
+				{
 					pos = cbFunction.FindString(m_refFuncString);
+				}
 
 				cbFunction.SelectedIndex = pos >= 0 ? pos : 0;
 				cbFunction.Text = cbFunction.SelectedItem as string;
@@ -915,7 +948,9 @@ namespace LanguageExplorer.Controls.LexText
 		private void cbFunction_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (cbFunction.SelectedIndex >= 0)
+			{
 				m_refFuncString = cbFunction.SelectedItem as string;
+			}
 		}
 
 		private void buttonHelp_Click(object sender, EventArgs e)
@@ -998,12 +1033,14 @@ namespace LanguageExplorer.Controls.LexText
 			// recalculate the customfields and populate the TVcontrol based on the currently
 			// defined custom fields.
 
-			bool customFieldsChanged = false;
-			m_customFields = wiz.ReadCustomFieldsFromDB(out customFieldsChanged);
+			bool customFieldsChanged;
+			CustomFields = wiz.ReadCustomFieldsFromDB(out customFieldsChanged);
 
 			// if the custom fields have changed any, then update the display with the changes
 			if (customFieldsChanged)
+			{
 				AddCustomFieldsToPossibleFields();
+			}
 		}
 
 		private void AddCustomFieldsToPossibleFields()
@@ -1021,15 +1058,19 @@ namespace LanguageExplorer.Controls.LexText
 				foreach (var leafNode in leaves)
 				{
 					if (leafNode.Tag is LexImportCustomField)
+					{
 						classNameNode.Nodes.Remove(leafNode);
+					}
 				}
 
 				// Now add any custom fields for this class
 				var className = classNameNode.Text.Trim('(', ')');
-				if (m_customFields.FieldsForClass(className) == null)
+				if (CustomFields.FieldsForClass(className) == null)
+				{
 					continue;
+				}
 
-				foreach (LexImportField field in m_customFields.FieldsForClass(className))
+				foreach (LexImportField field in CustomFields.FieldsForClass(className))
 				{
 					var cnode = new TreeNode(field.UIName + " (Custom Field)")
 					{

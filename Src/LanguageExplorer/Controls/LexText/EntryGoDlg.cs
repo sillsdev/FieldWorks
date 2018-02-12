@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -10,7 +11,6 @@ using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -30,18 +30,9 @@ namespace LanguageExplorer.Controls.LexText
 
 		#region Properties
 
-		protected override WindowParams DefaultWindowParams
-		{
-			get
-			{
-				return new WindowParams {m_title = LexTextControls.ksFindLexEntry};
-			}
-		}
+		protected override WindowParams DefaultWindowParams => new WindowParams {m_title = LexTextControls.ksFindLexEntry};
 
-		protected override string PersistenceLabel
-		{
-			get { return "EntryGo"; }
-		}
+		protected override string PersistenceLabel => "EntryGo";
 
 		/// <summary>
 		/// Get/Set the starting entry object.  This will not be displayed in the list of
@@ -52,7 +43,7 @@ namespace LanguageExplorer.Controls.LexText
 			get
 			{
 				CheckDisposed();
-				return (ILexEntry) m_matchingObjectsBrowser.StartingObject;
+				return (ILexEntry)m_matchingObjectsBrowser.StartingObject;
 			}
 			set
 			{
@@ -73,9 +64,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		#region	Construction and Destruction
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+		/// <summary />
 		public EntryGoDlg()
 		{
 			SetHelpTopic("khtpFindInDictionary"); // Default help topic ID
@@ -104,14 +93,13 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Reset the list of matching items.
 		/// </summary>
-		/// <param name="searchKey"></param>
 		protected override void ResetMatches(string searchKey)
 		{
 			string sAdjusted;
 			var mmt = MorphServices.GetTypeIfMatchesPrefix(m_cache, searchKey, out sAdjusted);
 			if (mmt != null)
 			{
-				searchKey = String.Empty;
+				searchKey = string.Empty;
 				m_btnInsert.Enabled = false;
 			}
 			else if (searchKey.Length > 0)
@@ -127,8 +115,7 @@ namespace LanguageExplorer.Controls.LexText
 				catch (Exception ex)
 				{
 					Cursor = Cursors.Default;
-					MessageBox.Show(ex.Message, LexTextControls.ksInvalidForm,
-						MessageBoxButtons.OK);
+					MessageBox.Show(ex.Message, LexTextControls.ksInvalidForm, MessageBoxButtons.OK);
 					m_btnInsert.Enabled = false;
 					return;
 				}
@@ -137,21 +124,27 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				m_btnInsert.Enabled = false;
 			}
-			var selectedWs = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
-			int wsSelHvo = selectedWs != null ? selectedWs.Handle : 0;
+			var selectedWs = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;
+			var wsSelHvo = selectedWs?.Handle ?? 0;
 
 			if (!m_vernHvos.Contains(wsSelHvo) && !m_analHvos.Contains(wsSelHvo))
 			{
 				wsSelHvo = TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0);
 				if (!m_vernHvos.Contains(wsSelHvo) && !m_analHvos.Contains(wsSelHvo))
+				{
 					return;
+				}
 			}
 
 			if (m_oldSearchKey == searchKey && m_oldSearchWs == wsSelHvo)
+			{
 				return; // Nothing new to do, so skip it.
+			}
 
 			if (m_oldSearchKey != string.Empty || searchKey != string.Empty)
+			{
 				StartSearchAnimation();
+			}
 
 			// disable Go button until we rebuild our match list.
 			m_btnOK.Enabled = false;
@@ -167,20 +160,36 @@ namespace LanguageExplorer.Controls.LexText
 			if (m_vernHvos.Contains(ws))
 			{
 				if (m_matchingObjectsBrowser.IsVisibleColumn("EntryHeadword") || m_matchingObjectsBrowser.IsVisibleColumn("CitationForm"))
+				{
 					yield return new SearchField(LexEntryTags.kflidCitationForm, tssKey);
+				}
+
 				if (m_matchingObjectsBrowser.IsVisibleColumn("EntryHeadword") || m_matchingObjectsBrowser.IsVisibleColumn("LexemeForm"))
+				{
 					yield return new SearchField(LexEntryTags.kflidLexemeForm, tssKey);
+				}
+
 				if (m_matchingObjectsBrowser.IsVisibleColumn("Allomorphs"))
+				{
 					yield return new SearchField(LexEntryTags.kflidAlternateForms, tssKey);
+				}
 			}
 			if (m_analHvos.Contains(ws))
 			{
 				if (m_matchingObjectsBrowser.IsVisibleColumn("Glosses"))
+				{
 					yield return new SearchField(LexSenseTags.kflidGloss, tssKey);
+				}
+
 				if (m_matchingObjectsBrowser.IsVisibleColumn("Reversals"))
+				{
 					yield return new SearchField(LexSenseTags.kflidReversalEntries, tssKey);
+				}
+
 				if (m_matchingObjectsBrowser.IsVisibleColumn("Definitions"))
+				{
 					yield return new SearchField(LexSenseTags.kflidDefinition, tssKey);
+				}
 			}
 		}
 
@@ -200,12 +209,14 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected override string AdjustText(out int addToSelection)
 		{
-			bool selWasAtEnd = m_tbForm.SelectionStart + m_tbForm.SelectionLength == m_tbForm.Text.Length;
-			string fixedText = base.AdjustText(out addToSelection);
+			var selWasAtEnd = m_tbForm.SelectionStart + m_tbForm.SelectionLength == m_tbForm.Text.Length;
+			var fixedText = base.AdjustText(out addToSelection);
 			// Only do the morpheme marker trick if the selection is at the end, a good sign the user just
 			// typed it. This avoids the situation where it is impossible to delete one of a pair of tildes.
 			if (!selWasAtEnd)
+			{
 				return fixedText;
+			}
 			// Check whether we need to handle partial marking of a morphtype (suprafix in the
 			// default case: see LT-6082).
 			string sAdjusted;
@@ -225,8 +236,8 @@ namespace LanguageExplorer.Controls.LexText
 			using (var dlg = new InsertEntryDlg())
 			{
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				string form = m_tbForm.Text.Trim();
-				ITsString tssFormTrimmed = TsStringUtils.MakeString(form, TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0));
+				var form = m_tbForm.Text.Trim();
+				var tssFormTrimmed = TsStringUtils.MakeString(form, TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0));
 				dlg.SetDlgInfo(m_cache, tssFormTrimmed);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -234,18 +245,21 @@ namespace LanguageExplorer.Controls.LexText
 					dlg.GetDialogInfo(out entry, out m_fNewlyCreated);
 					m_selObject = entry;
 					if (m_fNewlyCreated)
+					{
 						m_newSense = entry.SensesOS[0];
+					}
 					// If we ever decide not to simulate the btnOK click at this point, then
 					// the new sense id will need to be handled by a subclass differently (ie,
 					// being added to the list of senses maintained by LinkEntryOrSenseDlg,
 					// the selected index into that list also being changed).
 					HandleMatchingSelectionChanged();
 					if (m_btnOK.Enabled)
+					{
 						m_btnOK.PerformClick();
+					}
 				}
 			}
 		}
-
 #endregion  // Event handlers
 	}
 }

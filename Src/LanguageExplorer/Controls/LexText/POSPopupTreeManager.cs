@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,15 +21,7 @@ namespace LanguageExplorer.Controls.LexText
 		private const int kLine = -1;
 		private const int kMore = -2;
 
-		#region Data members
-
 		private bool m_fNotSureIsAny;
-
-		#endregion Data members
-
-		#region Events
-
-		#endregion Events
 
 		/// <summary>
 		/// Tries to find the tool to jump to, based on the owner of the POS list.
@@ -54,14 +46,13 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected override TreeNode MakeMenuItems(PopupTree popupTree, int hvoTarget)
 		{
-			int tagName = UseAbbr ?
-				CmPossibilityTags.kflidAbbreviation :
-				CmPossibilityTags.kflidName;
+			var tagName = UseAbbr ? CmPossibilityTags.kflidAbbreviation : CmPossibilityTags.kflidName;
 			popupTree.Sorted = true;
 			TreeNode match = null;
 			if (List != null)
-				match = AddNodes(popupTree.Nodes, List.Hvo,
-								 CmPossibilityListTags.kflidPossibilities, hvoTarget, tagName);
+			{
+				match = AddNodes(popupTree.Nodes, List.Hvo, CmPossibilityListTags.kflidPossibilities, hvoTarget, tagName);
+			}
 			popupTree.Sorted = false;
 			// Add two special nodes used to:
 			//	1. Set the value to 'empty', or
@@ -69,7 +60,9 @@ namespace LanguageExplorer.Controls.LexText
 			AddTimberLine(popupTree);
 			var empty = m_fNotSureIsAny ? AddAnyItem(popupTree) : AddNotSureItem(popupTree);
 			if (hvoTarget == 0)
+			{
 				match = empty;
+			}
 			AddMoreItem(popupTree);
 			return match;
 		}
@@ -99,9 +92,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <returns></returns>
 		protected TreeNode AddAnyItem(PopupTree popupTree)
 		{
-			HvoTreeNode empty = new HvoTreeNode(
-				TsStringUtils.MakeString(LexTextControls.ksAny, Cache.WritingSystemFactory.UserWs),
-				kEmpty);
+			var empty = new HvoTreeNode(TsStringUtils.MakeString(LexTextControls.ksAny, Cache.WritingSystemFactory.UserWs), kEmpty);
 			popupTree.Nodes.Add(empty);
 			m_kEmptyNode = empty;
 			return empty;
@@ -109,28 +100,23 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected override void m_treeCombo_AfterSelect(object sender, TreeViewEventArgs e)
 		{
-			HvoTreeNode selectedNode = e.Node as HvoTreeNode;
+			var selectedNode = e.Node as HvoTreeNode;
 
 			if (selectedNode != null && selectedNode.Hvo == kMore && e.Action == TreeViewAction.ByMouse)
 			{
-				// Only launch the dialog by a mouse click (or simulated mouse click).
-				//PopupTree pt = GetPopupTree();
-				//// Force the PopupTree to Hide() to trigger popupTree_PopupTreeClosed().
-				//// This will effectively revert the list selection to a previous confirmed state.
-				//// Whatever happens below, we don't want to actually leave the "More..." node selected!
-				//// This is at least required if the user selects "Cancel" from the dialog below.
-				//pt.Hide();
 				if (TreeCombo != null)
+				{
 					TreeCombo.SelectedNode = m_selPrior;
+				}
 				else
+				{
 					GetPopupTree().SelectedNode = m_selPrior;
-
+				}
 				// If we wait to hide it until after we show the dialog, hiding it activates the disabled main
 				// window which owns it, with weird results. Since we're going to launch another window,
 				// we don't want to activate the parent at all.
 				GetPopupTree().HideForm(false);
-
-				using (MasterCategoryListDlg dlg = new MasterCategoryListDlg())
+				using (var dlg = new MasterCategoryListDlg())
 				{
 					dlg.SetDlginfo(List, m_propertyTable, false, null);
 					switch (dlg.ShowDialog(ParentForm))
@@ -149,16 +135,16 @@ namespace LanguageExplorer.Controls.LexText
 							// NOTE: We use PostMessage here, rather than SendMessage which
 							// disposes of the PopupTree before we and/or our parents might
 							// be finished using it (cf. LT-2563).
-							var commands = new List<string>()
-									{
-										"AboutToFollowLink",
-										"FollowLink"
-									};
+							var commands = new List<string>
+							{
+								"AboutToFollowLink",
+								"FollowLink"
+							};
 							var parms = new List<object>
-									{
-										null,
-										new FwLinkArgs(JumpToToolNamed, dlg.SelectedPOS.Guid)
-									};
+							{
+								null,
+								new FwLinkArgs(JumpToToolNamed, dlg.SelectedPOS.Guid)
+							};
 							m_publisher.Publish(commands, parms);
 							if (ParentForm != null && ParentForm.Modal)
 							{

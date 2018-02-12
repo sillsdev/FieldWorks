@@ -34,10 +34,8 @@ namespace LanguageExplorer.Controls.LexText
 		protected bool m_skipCheck;
 		protected bool m_hasBeenActivated;
 		protected string m_oldSearchKey;
-
 		protected HelpProvider m_helpProvider;
-		protected string m_helpTopic = ""; // Default help topic ID
-
+		protected string m_helpTopic = string.Empty; // Default help topic ID
 		protected SearchingAnimation m_searchAnimation;
 		/// <summary>
 		/// Remember how much we adjusted the height for the lexical form text box.
@@ -65,18 +63,9 @@ namespace LanguageExplorer.Controls.LexText
 
 		#region Properties
 
-		protected virtual WindowParams DefaultWindowParams
-		{
-			get
-			{
-				return null;
-			}
-		}
+		protected virtual WindowParams DefaultWindowParams => null;
 
-		protected virtual string PersistenceLabel
-		{
-			get { return null; }
-		}
+		protected virtual string PersistenceLabel => null;
 
 		protected virtual string Form
 		{
@@ -134,9 +123,8 @@ namespace LanguageExplorer.Controls.LexText
 			m_vernHvos = new HashSet<int>();
 			m_analHvos = new HashSet<int>();
 
-			// NB: Don't set this here, because the fake writing system factory
+			// NB: Don't set "m_tbForm.Text" here, because the fake writing system factory
 			// will cause an assert down in VwPropertyStore.
-			//m_tbForm.Text = "";
 			m_tbForm.TextChanged += m_tbForm_TextChanged;
 
 			m_tbForm.KeyDown += m_tbForm_KeyDown;
@@ -158,8 +146,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// translate up and down arrow keys in the Find textbox into moving the selection in
 		/// the matching entries list view.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		protected virtual void m_tbForm_KeyDown(object sender, KeyEventArgs e)
 		{
 			switch (e.KeyCode)
@@ -185,7 +171,9 @@ namespace LanguageExplorer.Controls.LexText
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+			{
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+			}
 		}
 
 		/// <summary>
@@ -196,7 +184,9 @@ namespace LanguageExplorer.Controls.LexText
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -209,8 +199,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		/// <param name="cache">LCM cache.</param>
-		/// <param name="wp">Strings used for various items in this dialog.</param>
 		public virtual void SetDlgInfo(LcmCache cache, WindowParams wp)
 		{
 			SetDlgInfo(cache, wp, cache.DefaultVernWs);
@@ -227,18 +215,18 @@ namespace LanguageExplorer.Controls.LexText
 			// Get location to the stored values, if any.
 			Point dlgLocation;
 			Size dlgSize;
-			if (PropertyTable.TryGetValue(PersistenceLabel + "DlgLocation", out dlgLocation)
-			    && PropertyTable.TryGetValue(PersistenceLabel + "DlgSize", out dlgSize))
+			if (PropertyTable.TryGetValue(PersistenceLabel + "DlgLocation", out dlgLocation) && PropertyTable.TryGetValue(PersistenceLabel + "DlgSize", out dlgSize))
 			{
 				var rect = new Rectangle(dlgLocation, dlgSize);
-
 				//grow it if it's too small.  This will happen when we add new controls to the dialog box.
 				if (rect.Width < m_btnHelp.Left + m_btnHelp.Width + 30)
+				{
 					rect.Width = m_btnHelp.Left + m_btnHelp.Width + 30;
-
+				}
 				if (rect.Height < m_btnHelp.Top + m_btnHelp.Height + 50)
+				{
 					rect.Height = m_btnHelp.Top + m_btnHelp.Height + 50;
-
+				}
 				ScreenHelper.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
@@ -271,14 +259,14 @@ namespace LanguageExplorer.Controls.LexText
 			m_fwTextBoxBottomMsg.BorderStyle = BorderStyle.None;
 
 			m_analHvos.UnionWith(m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(wsObj => wsObj.Handle));
-			List<int> vernList = m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(wsObj => wsObj.Handle).ToList();
+			var vernList = m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(wsObj => wsObj.Handle).ToList();
 			m_vernHvos.UnionWith(vernList);
 			LoadWritingSystemCombo();
-			int iWs = vernList.IndexOf(ws);
+			var iWs = vernList.IndexOf(ws);
 			CoreWritingSystemDefinition currentWs;
 			if (iWs < 0)
 			{
-				List<int> analList = m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(wsObj => wsObj.Handle).ToList();
+				var analList = m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(wsObj => wsObj.Handle).ToList();
 				iWs = analList.IndexOf(ws);
 				if (iWs < 0)
 				{
@@ -309,9 +297,9 @@ namespace LanguageExplorer.Controls.LexText
 			InitializeMatchingObjects();
 
 			// Adjust things if the form box needs to grow to accommodate its style.
-			int oldHeight = m_tbForm.Height;
-			int newHeight = Math.Max(oldHeight, m_tbForm.PreferredHeight);
-			int delta = newHeight - oldHeight;
+			var oldHeight = m_tbForm.Height;
+			var newHeight = Math.Max(oldHeight, m_tbForm.PreferredHeight);
+			var delta = newHeight - oldHeight;
 			if (delta != 0)
 			{
 				m_tbForm.Height = newHeight;
@@ -336,15 +324,21 @@ namespace LanguageExplorer.Controls.LexText
 				}
 			}
 			if (wp.m_title != null)
+			{
 				Text = wp.m_title;
+			}
 			if (wp.m_label != null)
+			{
 				m_formLabel.Text = wp.m_label;
+			}
 			if (wp.m_btnText != null)
+			{
 				m_btnOK.Text = wp.m_btnText;
+			}
 			// The text may be too wide for the button.  See LT-6215.
 			if (m_btnOK.PreferredSize.Width > m_btnOK.Size.Width)
 			{
-				int delta = m_btnOK.PreferredSize.Width - m_btnOK.Size.Width;
+				var delta = m_btnOK.PreferredSize.Width - m_btnOK.Size.Width;
 				m_btnOK.Location = new Point(m_btnOK.Location.X - delta, m_btnOK.Location.Y);
 				m_btnOK.Width += delta;
 			}
@@ -357,15 +351,17 @@ namespace LanguageExplorer.Controls.LexText
 		// Adjust things to line up.
 		private void AdjustControlsToTextResize()
 		{
-			int align = Math.Max(m_cbWritingSystems.Left, m_panel1.Left + m_tbForm.Left);
+			var align = Math.Max(m_cbWritingSystems.Left, m_panel1.Left + m_tbForm.Left);
 			m_cbWritingSystems.Left = align;
 			if (m_panel1.Left + m_tbForm.Left != align)
+			{
 				m_panel1.Left = align - m_tbForm.Left;
+			}
 			if (m_wsLabel.Right != m_panel1.Left + m_formLabel.Right)
 			{
-				int width = m_wsLabel.Width;
-				int right = m_panel1.Left + m_formLabel.Right;
-				int left = right - width;
+				var width = m_wsLabel.Width;
+				var right = m_panel1.Left + m_formLabel.Right;
+				var left = right - width;
 				m_wsLabel.Left = left;
 			}
 		}
@@ -380,13 +376,17 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected virtual void LoadWritingSystemCombo()
 		{
-			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+			foreach (var ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+			{
 				m_cbWritingSystems.Items.Add(ws);
+			}
 
-			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			foreach (var ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
 				if (!m_cbWritingSystems.Items.Contains(ws))
+				{
 					m_cbWritingSystems.Items.Add(ws);
+				}
 			}
 			SetCbWritingSystemsSize();
 		}
@@ -397,23 +397,27 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		protected virtual void SetCbWritingSystemsSize()
 		{
-			int requiredWidth = m_cbWritingSystems.Width;
-			int approxDropdownArrowWidth = m_cbWritingSystems.Height;
-			using (Graphics g = Graphics.FromHwnd(m_cbWritingSystems.Handle))
+			var requiredWidth = m_cbWritingSystems.Width;
+			var approxDropdownArrowWidth = m_cbWritingSystems.Height;
+			using (var g = Graphics.FromHwnd(m_cbWritingSystems.Handle))
 			{
 				foreach (var item in m_cbWritingSystems.Items)
 				{
 					var stringSize = g.MeasureString(item.ToString(), m_cbWritingSystems.Font);
-					int textwidth = (int)stringSize.Width;
+					var textwidth = (int)stringSize.Width;
 					if (requiredWidth < textwidth + approxDropdownArrowWidth)
+					{
 						requiredWidth = textwidth + approxDropdownArrowWidth;
+					}
 				}
 				// Allow at most one extra inch beyond m_tbForms's width.  This keeps the new
 				// width within reasonable bounds, and should be ample to display a unique
 				// name even with breaking between words like Mono's implementation does.
-				int width = Math.Min(requiredWidth, m_tbForm.Width + (int)g.DpiX);
+				var width = Math.Min(requiredWidth, m_tbForm.Width + (int)g.DpiX);
 				if (width != m_cbWritingSystems.Width)
+				{
 					m_cbWritingSystems.Width = width;
+				}
 			}
 		}
 
@@ -425,7 +429,9 @@ namespace LanguageExplorer.Controls.LexText
 		private void GrowDialogAndAdjustControls(int delta, Control grower)
 		{
 			if (delta == 0)
+			{
 				return;
+			}
 			m_delta += delta;
 			FontHeightAdjuster.GrowDialogAndAdjustControls(this, delta, grower);
 		}
@@ -439,10 +445,9 @@ namespace LanguageExplorer.Controls.LexText
 		/// This also ensures that m_tbForm has the focus when the dialog box first
 		/// comes up, even for 120dpi fonts.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnLoad(EventArgs e)
 		{
-			Size size = Size;
+			var size = Size;
 			base.OnLoad(e);
 			Size = size;
 			// The following is needed for 120dpi fonts, which cause BaseGoDlg_Activated
@@ -459,9 +464,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		/// <param name="cache">LCM cache.</param>
-		/// <param name="wp">Strings used for various items in this dialog.</param>
-		/// <param name="form">Form to use in main text edit box.</param>
 		public virtual void SetDlgInfo(LcmCache cache, WindowParams wp, string form)
 		{
 			CheckDisposed();
@@ -499,7 +501,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <returns>DefaultUserWritingSystem integer</returns>
 		protected int SetupBottomMsg()
 		{
-			CoreWritingSystemDefinition userWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+			var userWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 			m_fwTextBoxBottomMsg.Font = new Font(userWs.DefaultFontName, 10);
 			m_fwTextBoxBottomMsg.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwTextBoxBottomMsg.WritingSystemCode = userWs.Handle;
@@ -564,13 +566,11 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			// Adjust the controls in the panel1 control if needed (make sure they don't overlap)
 			if (m_formLabel.Right >= m_tbForm.Left)
+			{
 				m_tbForm.Left = m_formLabel.Right + 1;	// seperate the controls by at least 1 empty pixel
-
-			//
-			// m_cbWritingSystems
-			//
-			int ypos = m_panel1.Bottom + 5;
-			int xpos = m_matchingObjectsBrowser.Left;
+			}
+			var ypos = m_panel1.Bottom + 5;
+			var xpos = m_matchingObjectsBrowser.Left;
 
 			m_cbWritingSystems.Location = new Point(m_panel1.Left + m_tbForm.Left, ypos);
 			m_wsLabel.Location = new Point(m_wsLabel.Left, ypos);
@@ -732,11 +732,13 @@ namespace LanguageExplorer.Controls.LexText
 		protected void m_tbForm_TextChanged(object sender, EventArgs e)
 		{
 			if (m_skipCheck)
+			{
 				return;
-			int selStart = m_tbForm.SelectionStart;
-			int selLen = m_tbForm.SelectionLength;
+			}
+			var selStart = m_tbForm.SelectionStart;
+			var selLen = m_tbForm.SelectionLength;
 			int addToSelection;
-			string fixedText = AdjustText(out addToSelection);
+			var fixedText = AdjustText(out addToSelection);
 
 			ResetMatches(fixedText);
 			// Even if AdjustText didn't move the selection, it may have changed the text,
@@ -744,9 +746,13 @@ namespace LanguageExplorer.Controls.LexText
 			// so reset the selection to what it ought to be.
 			selStart = Math.Min(Math.Max(selStart + addToSelection, 0), fixedText.Length);
 			if (selLen + selStart > fixedText.Length)
+			{
 				selLen = fixedText.Length - selStart;
+			}
 			if (m_tbForm.SelectionStart != selStart || m_tbForm.SelectionLength != selLen)
+			{
 				m_tbForm.Select(selStart, selLen);
+			}
 		}
 
 		protected virtual string AdjustText(out int addToSelection)
@@ -758,7 +764,7 @@ namespace LanguageExplorer.Controls.LexText
 			//		3. If it is a wordforming character, then modify the 'matching entries'
 			//			list box, and select the first item in the list.
 			var oldText = m_tbForm.Text;
-			string fixedText = oldText.Trim();
+			var fixedText = oldText.Trim();
 			addToSelection = 0;
 			if (fixedText != oldText)
 			{
@@ -773,7 +779,7 @@ namespace LanguageExplorer.Controls.LexText
 				m_skipCheck = true;
 				m_tbForm.Text = fixedText;
 				m_skipCheck = false;
-				int loc = oldText.IndexOf(fixedText);
+				var loc = oldText.IndexOf(fixedText);
 				Debug.Assert(loc >= 0);
 				addToSelection = -loc; // move selection back by the amount we removed at the start.
 			}
@@ -785,13 +791,9 @@ namespace LanguageExplorer.Controls.LexText
 			// override
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Display help for this dialog.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected void m_btnHelp_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, m_helpTopic);
@@ -813,7 +815,9 @@ namespace LanguageExplorer.Controls.LexText
 		private void m_matchingObjects_SelectionChanged(object sender, FwObjectSelectionEventArgs e)
 		{
 			if (m_skipCheck)
+			{
 				return;
+			}
 
 			m_selObject = m_cache.ServiceLocator.GetObject(e.Hvo);
 
@@ -829,7 +833,9 @@ namespace LanguageExplorer.Controls.LexText
 		private void m_matchingObjectsBrowser_SearchCompleted(object sender, EventArgs e)
 		{
 			if (Controls.Contains(m_searchAnimation))
+			{
 				Controls.Remove(m_searchAnimation);
+			}
 		}
 
 		private bool m_fTbFormHasBeenFocused;
@@ -840,10 +846,12 @@ namespace LanguageExplorer.Controls.LexText
 		/// we would like to. Do it (once) as soon as we can. Not more than that, lest
 		/// we move the focus back here from somewhere else the user put it.
 		/// </summary>
-		void FocusTbFormTheFirstTime()
+		private void FocusTbFormTheFirstTime()
 		{
-			if (m_fTbFormHasBeenFocused || ! m_tbForm.CanFocus)
+			if (m_fTbFormHasBeenFocused || !m_tbForm.CanFocus)
+			{
 				return;
+			}
 			m_tbForm.Select();
 			m_fTbFormHasBeenFocused = true;
 		}
@@ -852,9 +860,10 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			FocusTbFormTheFirstTime();
 			if (m_hasBeenActivated)
+			{
 				return; // Only do this once.
-
-			string form = Form.Trim();
+			}
+			var form = Form.Trim();
 			if (!string.IsNullOrEmpty(form))
 			{
 				m_tbForm.Select(form.Length, 0);
@@ -869,14 +878,13 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected virtual void m_cbWritingSystems_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			int start = m_tbForm.SelectionStart;
-			int length = m_tbForm.SelectionLength;
+			var start = m_tbForm.SelectionStart;
+			var length = m_tbForm.SelectionLength;
 			m_tbForm.WritingSystemCode = ((ILgWritingSystem)m_cbWritingSystems.SelectedItem).Handle;
 			// Change the writing system inside the ITsString.
-			ITsStrBldr tsb = m_tbForm.Tss.GetBldr();
-			int cch = tsb.Length;
-			tsb.SetIntPropValues(0, cch, (int)FwTextPropType.ktptWs, 0,
-				m_tbForm.WritingSystemCode);
+			var tsb = m_tbForm.Tss.GetBldr();
+			var cch = tsb.Length;
+			tsb.SetIntPropValues(0, cch, (int)FwTextPropType.ktptWs, 0, m_tbForm.WritingSystemCode);
 			m_tbForm.Tss = tsb.GetString();
 			//we need to adjust the size of the box based on the changed writing system
 			m_tbForm.AdjustForStyleSheet(this, m_panel1, m_tbForm.StyleSheet);
@@ -908,6 +916,9 @@ namespace LanguageExplorer.Controls.LexText
 		/// Get the ISubscriber.
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
+		#endregion
+
+		#region Implementation of IFlexComponent
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.

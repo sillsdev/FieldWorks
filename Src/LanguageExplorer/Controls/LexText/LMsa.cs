@@ -11,17 +11,7 @@ namespace LanguageExplorer.Controls.LexText
 	/// </summary>
 	internal class LMsa : LObject
 	{
-		#region Data members
-
 		private readonly string m_name;
-
-		#endregion Data members
-
-		#region Properties
-
-		#endregion Properties
-
-		#region Construction & initialization
 
 		public LMsa(IMoMorphSynAnalysis msa) : base(msa.Hvo)
 		{
@@ -30,9 +20,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		public override string ToString()
 		{
-			return m_name ?? m_hvo.ToString();
+			return m_name ?? HVO.ToString();
 		}
-
-		#endregion Construction & initialization
 	}
 }

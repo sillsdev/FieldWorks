@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -24,10 +24,7 @@ namespace LanguageExplorer.Controls.LexText
 			InitializeComponent();
 		}
 
-		protected override string PersistenceLabel
-		{
-			get { return "RecordGo"; }
-		}
+		protected override string PersistenceLabel => "RecordGo";
 
 		public override void SetDlgInfo(LcmCache cache, WindowParams wp)
 		{
@@ -43,16 +40,13 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingRecords\"]/parameters");
-
-			SearchEngine searchEngine = SearchEngine.Get(PropertyTable, "RecordGoSearchEngine", () => new RecordGoSearchEngine(m_cache));
-
+			var searchEngine = SearchEngine.Get(PropertyTable, "RecordGoSearchEngine", () => new RecordGoSearchEngine(m_cache));
 			m_matchingObjectsBrowser.Initialize(m_cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine);
-
 			// start building index
 			var ws = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if (ws != null)
 			{
-				ITsString tss = TsStringUtils.MakeString(string.Empty, ws.Handle);
+				var tss = TsStringUtils.MakeString(string.Empty, ws.Handle);
 				var field = new SearchField(RnGenericRecTags.kflidTitle, tss);
 				m_matchingObjectsBrowser.SearchAsync(new[] { field });
 			}
@@ -61,25 +55,29 @@ namespace LanguageExplorer.Controls.LexText
 		protected override void ResetMatches(string searchKey)
 		{
 			if (m_oldSearchKey == searchKey)
+			{
 				return; // Nothing new to do, so skip it.
+			}
 
 			// disable Go button until we rebuild our match list.
 			m_btnOK.Enabled = false;
 			m_oldSearchKey = searchKey;
 
 			var ws = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
-			int wsSelHvo = ws != null ? ws.Handle : 0;
+			var wsSelHvo = ws?.Handle ?? 0;
 			if (wsSelHvo == 0)
 			{
 				wsSelHvo = TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0);
 				if (wsSelHvo == 0)
+				{
 					return;
+				}
 			}
-
 			if (m_oldSearchKey != string.Empty || searchKey != string.Empty)
+			{
 				StartSearchAnimation();
-
-			ITsString tss = TsStringUtils.MakeString(searchKey, wsSelHvo);
+			}
+			var tss = TsStringUtils.MakeString(searchKey, wsSelHvo);
 			var field = new SearchField(RnGenericRecTags.kflidTitle, tss);
 			m_matchingObjectsBrowser.SearchAsync(new[] { field });
 		}
@@ -89,15 +87,17 @@ namespace LanguageExplorer.Controls.LexText
 			using (var dlg = new InsertRecordDlg())
 			{
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				string title = m_tbForm.Text.Trim();
-				ITsString titleTrimmed = TsStringUtils.MakeString(title, TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0));
+				var title = m_tbForm.Text.Trim();
+				var titleTrimmed = TsStringUtils.MakeString(title, TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0));
 				dlg.SetDlgInfo(m_cache, m_cache.LanguageProject.ResearchNotebookOA, titleTrimmed);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
 					m_selObject = dlg.NewRecord;
 					HandleMatchingSelectionChanged();
 					if (m_btnOK.Enabled)
+					{
 						m_btnOK.PerformClick();
+					}
 				}
 			}
 		}

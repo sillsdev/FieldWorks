@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,10 +16,6 @@ namespace LanguageExplorer.Controls.LexText
 		protected bool m_fInconsistentType; // see comment on property.
 		protected bool m_fMatchingForm;
 
-		#region	Designer data members
-
-		#endregion	Designer data members
-
 		#endregion	Data members
 
 		#region Properties
@@ -29,19 +25,16 @@ namespace LanguageExplorer.Controls.LexText
 			get
 			{
 				var wp = new WindowParams
-							{
-								m_title = LexTextControls.ksFindEntryToAddAllomorph,
-								m_label = LexTextControls.ksGo_To_,
-								m_btnText = LexTextControls.ksAddAllomorph_
-							};
+				{
+					m_title = LexTextControls.ksFindEntryToAddAllomorph,
+					m_label = LexTextControls.ksGo_To_,
+					m_btnText = LexTextControls.ksAddAllomorph_
+				};
 				return wp;
 			}
 		}
 
-		protected override string PersistenceLabel
-		{
-			get { return "AddAllomorph"; }
-		}
+		protected override string PersistenceLabel => "AddAllomorph";
 
 		/// <summary>
 		/// This flag is set when the dialog is used to add an allomorph and the
@@ -105,10 +98,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		/// <param name="cache">LCM cache.</param>
-		/// <param name="wp">Strings used for various items in this dialog.</param>
-		/// <param name="tssform">The form.</param>
-		/// <param name="hvoType">The HVO of the type.</param>
 		public void SetDlgInfo(LcmCache cache, WindowParams wp, ITsString tssform, int hvoType)
 		{
 			CheckDisposed();
@@ -117,11 +106,7 @@ namespace LanguageExplorer.Controls.LexText
 
 			m_formOrig = m_tbForm.Text;
 			m_hvoType = hvoType;
-
-			// JohnT: a prior call to SetForm should have established whether this button
-			// is enabled...and it should NOT be, if there are no entries selected,
-			// typically because none at all match the form.
-			//btnOK.Enabled = true;
+			// "m_btnOK" enabling is handled elsewhere.
 			m_btnOK.Width += 30;
 			m_btnOK.Left += 90;
 			m_btnClose.Width += 30;		// for balance...
@@ -141,15 +126,19 @@ namespace LanguageExplorer.Controls.LexText
 				// Make sure that none of the allomorphs of this entry match the original
 				// form before we can enable btnOK.
 				// true if current list of MoForms contains one with matching form text.
-				bool fMatchingForm = false;
+				var fMatchingForm = false;
 				// true if current list of MoForms contains one of correct type
-				bool fMatchingType = false;
+				var fMatchingType = false;
 				// If we don't know a morpheme type, don't restrict by type.
 				IMoMorphType mtOrig = null;
 				if (m_hvoType == 0)
+				{
 					fMatchingType = true;
+				}
 				else
+				{
 					mtOrig = m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(m_hvoType);
+				}
 				foreach (var mf in ((ILexEntry)m_selObject).AllAllomorphs)
 				{
 					if (mf.Form.VernacularDefaultWritingSystem.Text == m_formOrig)
@@ -160,21 +149,26 @@ namespace LanguageExplorer.Controls.LexText
 					// To prevent confusion, allow any type that is ambiguous with the
 					// current type (or, of course, if it is the SAME type, which for some
 					// reason is NOT considered ambiguous).
-					if (mtOrig != null && mf.MorphTypeRA != null &&
-						(m_hvoType == mf.MorphTypeRA.Hvo ||
-						 mtOrig.IsAmbiguousWith(mf.MorphTypeRA)))
+					if (mtOrig != null && mf.MorphTypeRA != null && (m_hvoType == mf.MorphTypeRA.Hvo || mtOrig.IsAmbiguousWith(mf.MorphTypeRA)))
 					{
 						fMatchingType = true;
 					}
+
 					if (fMatchingForm)
+					{
 						break;
+					}
 				}
 				m_fInconsistentType = !fMatchingType;
 				m_fMatchingForm = fMatchingForm;
 				if (fMatchingForm && fMatchingType)
+				{
 					m_btnOK.Text = LexTextControls.ksUseAllomorph;
+				}
 				else
+				{
 					m_btnOK.Text = LexTextControls.ksAddAllomorph_;
+				}
 				m_btnOK.Enabled = true;
 			}
 			else
