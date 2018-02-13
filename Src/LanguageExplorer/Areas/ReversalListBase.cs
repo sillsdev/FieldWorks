@@ -126,8 +126,6 @@ namespace LanguageExplorer.Areas
 /// <returns></returns>
 		public virtual bool OnDisplayInsertReversalIndex(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			if (Cache == null)
 			{
 				display.Enabled = false;
@@ -215,8 +213,6 @@ namespace LanguageExplorer.Areas
 	/// <returns></returns>
 		public virtual bool OnDisplayDeleteReversalIndex(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			if (Cache == null)
 			{
 				display.Enabled = false;

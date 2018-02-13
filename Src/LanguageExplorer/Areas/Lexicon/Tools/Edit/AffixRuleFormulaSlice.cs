@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,14 +18,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		public override void FinishInit()
 		{
-			CheckDisposed();
 			Control = new AffixRuleFormulaControl(ConfigurationNode);
 		}
 
 #if RANDYTODO
 		public bool OnDisplayMappingSetFeatures(object commandObject, ref XCore.UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			bool enable = AffixRuleFormulaControl.IsIndexCurrent;
 			display.Enabled = enable;
 			display.Visible = enable;
@@ -35,7 +33,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		public bool OnMappingSetFeatures(object args)
 		{
-			CheckDisposed();
 			AffixRuleFormulaControl.SetMappingFeatures();
 			return true;
 		}
@@ -43,7 +40,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 #if RANDYTODO
 		public bool OnDisplayMappingSetNaturalClass(object commandObject, ref XCore.UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			bool enable = AffixRuleFormulaControl.IsIndexCurrent;
 			display.Enabled = enable;
 			display.Visible = enable;
@@ -53,7 +49,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		public bool OnMappingSetNaturalClass(object args)
 		{
-			CheckDisposed();
 			AffixRuleFormulaControl.SetMappingNaturalClass();
 			return true;
 		}
@@ -61,7 +56,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 #if RANDYTODO
 		public bool OnDisplayMappingJumpToNaturalClass(object commandObject, ref XCore.UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			bool enable = AffixRuleFormulaControl.IsNCIndexCurrent;
 			display.Enabled = enable;
 			display.Visible = enable;
@@ -71,7 +65,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		public bool OnMappingJumpToNaturalClass(object args)
 		{
-			CheckDisposed();
 			var mapping = (IMoModifyFromInput)RuleFormulaControl.CurrentObject;
 			var commands = new List<string>
 			{
@@ -90,7 +83,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 #if RANDYTODO
 		public virtual bool OnDisplayMappingJumpToPhoneme(object commandObject, ref XCore.UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			bool enable = AffixRuleFormulaControl.IsPhonemeCurrent;
 			display.Enabled = enable;
 			display.Visible = enable;
@@ -100,7 +92,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		public bool OnMappingJumpToPhoneme(object args)
 		{
-			CheckDisposed();
 			var mapping = (IMoInsertPhones)RuleFormulaControl.CurrentObject;
 			var commands = new List<string>
 			{

@@ -1,8 +1,7 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -72,16 +71,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 			m_isDisposed = true;
 		}
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -92,8 +81,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			set
 			{
-				CheckDisposed();
-
 				//// This was disposing a system brush, so the next time it was used it was invalid.
 				//// Using the reflector tool we could see that the static Brush Yellow method is
 				//// returning a Brush that exists in a Thread context and disposing that doesn't
@@ -135,8 +122,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			set
 			{
-				CheckDisposed();
-
 				m_text = value;
 				// But we still need to set the Text property to get autosizing to work.
 				this.Text = m_text;

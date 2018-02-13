@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2018 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		public override void FinishInit()
 		{
-			var btnLauncher = new GhostLexRefLauncher(m_obj, ConfigurationNode);
+			var btnLauncher = new GhostLexRefLauncher(Object, ConfigurationNode);
 			btnLauncher.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			Control = btnLauncher;
 
@@ -39,7 +39,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// asks to Create a new lex entry from inside the first dialog (LT-9679).
 			// We'd pass 0 and null for flid and fieldname, but there are Asserts to prevent this.
 			var btnLauncher = (ButtonLauncher)Control;
-			btnLauncher.Initialize(m_cache, m_obj, 1, "nonsence", null, null, null);
+			btnLauncher.Initialize(Cache, Object, 1, "nonsence", null, null, null);
 			base.Install(parentDataTree);
 		}
 	}

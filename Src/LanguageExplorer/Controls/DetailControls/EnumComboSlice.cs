@@ -103,7 +103,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 				}
 
-				m_cache?.DomainDataByFlid?.RemoveNotification(this);
+				Cache?.DomainDataByFlid?.RemoveNotification(this);
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -158,7 +158,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void UpdateDisplayFromDatabase()
 		{
-			var currentValue = m_cache.DomainDataByFlid.get_IntProp(Object.Hvo, m_flid);
+			var currentValue = Cache.DomainDataByFlid.get_IntProp(Object.Hvo, m_flid);
 
 			//nb: we are assuming that an enumerations start with 0
 			m_combo.SelectedIndex = currentValue;
@@ -174,15 +174,15 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return; // don't want to update things while the user is manipulating the list. (See FWR-1728.)
 			}
-			var oldValue = m_cache.DomainDataByFlid.get_IntProp(Object.Hvo, m_flid);
+			var oldValue = Cache.DomainDataByFlid.get_IntProp(Object.Hvo, m_flid);
 			var newValue = m_combo.SelectedIndex;
 			if (oldValue == newValue)
 			{
 				// No sense in setting it to the same value.
 				return;
 			}
-			m_cache.DomainDataByFlid.BeginUndoTask(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName), string.Format(DetailControlsStrings.ksRedoSet, m_fieldName));
-			m_cache.DomainDataByFlid.SetInt(Object.Hvo, m_flid, newValue);
+			Cache.DomainDataByFlid.BeginUndoTask(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName), string.Format(DetailControlsStrings.ksRedoSet, m_fieldName));
+			Cache.DomainDataByFlid.SetInt(Object.Hvo, m_flid, newValue);
 			var sideEffectMethod = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "sideEffect", null);
 			if (!string.IsNullOrEmpty(sideEffectMethod))
 			{
@@ -192,7 +192,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					info.Invoke(Object, new object[] { oldValue, newValue });
 				}
 			}
-			m_cache.DomainDataByFlid.EndUndoTask();
+			Cache.DomainDataByFlid.EndUndoTask();
 			// The changing value may affect the datatree display.  See LT-6539.
 			var fRefresh = XmlUtils.GetOptionalBooleanAttributeValue(ConfigurationNode, "refreshDataTreeOnChange", false);
 			if (fRefresh)

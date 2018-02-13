@@ -228,17 +228,6 @@ namespace LanguageExplorer.Areas
 		}
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose( bool disposing )
@@ -996,7 +985,6 @@ namespace LanguageExplorer.Areas
 		{
 			get
 			{
-				CheckDisposed();
 				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey)
 				{
 					return regKey.CreateSubKey("ExportInterlinearDialog");

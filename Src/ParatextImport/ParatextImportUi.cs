@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2017 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -95,22 +95,6 @@ namespace ParatextImport
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this before doing anything else.
-		/// </summary>
-		/// <remarks>This method is thread safe.</remarks>
-		/// ------------------------------------------------------------------------------------
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException(
-					string.Format("'{0}' in use after being disposed.", GetType().Name));
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		///
 		/// </summary>
 		/// <param name="disposing"></param>
@@ -143,7 +127,6 @@ namespace ParatextImport
 		{
 			set
 			{
-				CheckDisposed();
 				if (m_ctrl.InvokeRequired)
 				{
 					SetParatextImporterInvoker method = delegate(ParatextSfmImporter imp) { m_importer = imp; };
@@ -178,12 +161,10 @@ namespace ParatextImport
 		{
 			get
 			{
-				CheckDisposed();
 				return m_progressDialog.AllowCancel;
 			}
 			set
 			{
-				CheckDisposed();
 				m_progressDialog.AllowCancel = value;
 			}
 		}
@@ -197,12 +178,10 @@ namespace ParatextImport
 		{
 			get
 			{
-				CheckDisposed();
 				return m_progressDialog.Message;
 			}
 			set
 			{
-				CheckDisposed();
 				m_progressDialog.Message = value;
 			}
 		}
@@ -217,12 +196,10 @@ namespace ParatextImport
 		{
 			get
 			{
-				CheckDisposed();
 				return m_progressDialog.Maximum;
 			}
 			set
 			{
-				CheckDisposed();
 				m_progressDialog.Maximum = value;
 			}
 		}
@@ -235,7 +212,6 @@ namespace ParatextImport
 		{
 			set
 			{
-				CheckDisposed();
 				m_progressDialog.Position = value;
 			}
 		}
@@ -246,11 +222,7 @@ namespace ParatextImport
 		/// </summary>
 		/// <value>always <c>true</c>.</value>
 		/// ------------------------------------------------------------------------------------
-		public virtual bool IsDisplayingUi
-		{
-			get { return true; }
-		}
-
+		public virtual bool IsDisplayingUi => true;
 		#endregion
 
 		#region Public methods
@@ -261,7 +233,6 @@ namespace ParatextImport
 		/// ------------------------------------------------------------------------------------
 		public virtual void Step(int cSteps)
 		{
-			CheckDisposed();
 			m_progressDialog.Step(cSteps);
 		}
 
@@ -273,8 +244,6 @@ namespace ParatextImport
 		/// ------------------------------------------------------------------------------------
 		public virtual void ErrorMessage(EncodingConverterException e)
 		{
-			CheckDisposed();
-
 			if (m_ctrl.InvokeRequired)
 			{
 				m_ctrl.Invoke(new ExceptionErrorMessageInvoker(ErrorMessage), e);
@@ -297,8 +266,6 @@ namespace ParatextImport
 		/// ------------------------------------------------------------------------------------
 		public virtual void ErrorMessage(string message)
 		{
-			CheckDisposed();
-
 			if (m_ctrl.InvokeRequired)
 			{
 				m_ctrl.Invoke(new StringErrorMessageInvoker(ErrorMessage), message);
@@ -319,7 +286,6 @@ namespace ParatextImport
 		/// ------------------------------------------------------------------------------------
 		private void OnCancelPressed(object sender, CancelEventArgs e)
 		{
-			CheckDisposed();
 			Debug.Assert(!m_ctrl.InvokeRequired);
 
 			try

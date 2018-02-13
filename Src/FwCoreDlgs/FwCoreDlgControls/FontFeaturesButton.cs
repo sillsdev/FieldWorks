@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -79,18 +79,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			base.Dispose(disposing);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
 		#endregion
 
 		#region Class HoldDummyGraphics
@@ -214,12 +202,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_wsf;
 			}
 			set
 			{
-				CheckDisposed();
 				m_wsf = value;
 			}
 		}
@@ -249,12 +235,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fontName;
 			}
 			set
 			{
-				CheckDisposed();
 				if (m_fontName == value)
 					return;
 				m_fontName = value;
@@ -272,12 +256,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fontFeatures;
 			}
 			set
 			{
-				CheckDisposed();
 				m_fontFeatures = value;
 			}
 		}
@@ -292,8 +274,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_isGraphiteFont;
 			}
 		}
@@ -305,8 +285,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public void SetupFontFeatures()
 		{
-			CheckDisposed();
-
 			if (string.IsNullOrEmpty(m_fontName))
 			{
 				Enabled = false;

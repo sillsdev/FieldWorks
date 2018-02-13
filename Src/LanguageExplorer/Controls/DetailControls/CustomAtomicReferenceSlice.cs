@@ -21,7 +21,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void FinishInit()
 		{
-			CheckDisposed();
 			SetFieldFromConfig();
 			base.FinishInit();
 		}

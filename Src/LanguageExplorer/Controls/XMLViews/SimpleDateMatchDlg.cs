@@ -52,18 +52,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			m_chkEndBC.Visible = false;
 		}
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
 
 		/// <summary>
 		/// Gets or sets the selection start.
@@ -72,13 +60,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
-
 				return ShowingTimes ? m_startPicker.Value : m_startPicker.Value.Date;
 			}
 			set
 			{
-				CheckDisposed();
 				m_startPicker.Value = value;
 			}
 		}
@@ -92,8 +77,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (ShowingTimes)
 				{
 					return m_endPicker.Value;
@@ -109,7 +92,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			set
 			{
-				CheckDisposed();
 				m_endPicker.Value = value;
 			}
 		}
@@ -148,8 +130,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
-
 				var val = new DateTimeMatcher(SelectionStart, SelectionEnd, CompareType) {HandleGenDate = HandleGenDate};
 				if (!HandleGenDate)
 				{
@@ -190,8 +170,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
-
 				switch (CompareType)
 				{
 					case DateTimeMatcher.DateMatchType.On:
@@ -214,8 +192,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void SetDlgValues(IMatcher matcher1)
 		{
-			CheckDisposed();
-
 			var matcher = matcher1 as DateTimeMatcher;
 			if (matcher == null)
 			{

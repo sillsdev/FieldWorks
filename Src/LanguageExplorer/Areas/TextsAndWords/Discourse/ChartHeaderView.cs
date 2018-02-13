@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -24,19 +23,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		public ChartHeaderView(ConstituentChart chart)
 		{
 			m_chart = chart;
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
 		}
 
 		/// <summary>

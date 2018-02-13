@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -46,19 +46,6 @@ namespace LanguageExplorer.Areas
 		}
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// Get the TreeView control.
 		/// </summary>
 		public TreeView TreeView => m_treeView;
@@ -75,8 +62,6 @@ namespace LanguageExplorer.Areas
 		{
 			set
 			{
-				CheckDisposed();
-
 				if (value)
 				{
 					m_treeView.Visible = false;
@@ -101,8 +86,6 @@ namespace LanguageExplorer.Areas
 		/// <param name="c">An optional header control.</param>
 		public void AddHeaderControl(Control c)
 		{
-			CheckDisposed();
-
 			if (c == null || HasHeaderControl)
 			{
 				return;
@@ -129,8 +112,6 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public void Clear()
 		{
-			CheckDisposed();
-
 			m_treeView.AfterSelect -= OnTreeBarAfterSelect;
 			m_treeView.Nodes.Clear();
 			m_treeView.AfterSelect += OnTreeBarAfterSelect;

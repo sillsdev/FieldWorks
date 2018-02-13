@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2017 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -117,7 +117,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			set
 			{
-				CheckDisposed();
 				m_helpTopicKey = value;
 			}
 		}
@@ -125,18 +124,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Disposal
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -266,8 +253,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public bool GetPossibilities(ILcmReferenceSequence<ICmPossibility> listToUpdate)
 		{
-			CheckDisposed();
-
 			Debug.Assert(listToUpdate != null);
 			Guid[] origGuids = listToUpdate.ToGuidArray();
 
@@ -331,7 +316,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public virtual void SaveSettingsNow()
 		{
-			CheckDisposed();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -343,7 +327,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				using (var regKey = m_projSettingsKey.ProjectSpecificSettingsKey)
 				{
 					return regKey.CreateSubKey(@"List Chooser");
@@ -367,8 +350,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public ICmPossibility GetPossibility(ICmPossibilityList list, ICmPossibility initialSelected)
 		{
-			//CheckDisposed();
-
 			//m_initiallySelectedHvos = new List<int>(1);
 			//m_initiallySelectedHvos.Add(hvoPoss);
 

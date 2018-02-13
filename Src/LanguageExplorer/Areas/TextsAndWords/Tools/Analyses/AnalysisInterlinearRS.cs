@@ -107,8 +107,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// </summary>
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode || m_wfiAnalysis == null)
 			{
 				return;
@@ -252,7 +250,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		{
 			set
 			{
-				CheckDisposed();
 				m_fSliceIsCurrent = value;
 
 				if (value)
@@ -325,8 +322,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 
 		public void HandleSandboxSizeChanged(object sender, EventArgs ea)
 		{
-			CheckDisposed();
-
 			SetPadding();
 		}
 

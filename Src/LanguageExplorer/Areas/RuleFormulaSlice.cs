@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,20 +19,12 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	internal class RuleFormulaSlice : ViewSlice
 	{
-		public override RootSite RootSite
-		{
-			get
-			{
-				CheckDisposed();
-				return RuleFormulaControl.RootSite;
-			}
-		}
+		public override RootSite RootSite => RuleFormulaControl.RootSite;
 
 		public RuleFormulaControl RuleFormulaControl
 		{
 			get
 			{
-				CheckDisposed();
 				var retval = (RuleFormulaControl)Control;
 				if (retval.PropertyTable == null)
 				{
@@ -151,7 +143,6 @@ namespace LanguageExplorer.Areas
 #if RANDYTODO
 		public bool OnDisplayContextSetFeatures(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			bool enable = RuleFormulaControl.IsFeatsNCContextCurrent;
 			display.Enabled = enable;
 			display.Visible = enable;
@@ -161,7 +152,6 @@ namespace LanguageExplorer.Areas
 
 		public bool OnContextSetFeatures(object args)
 		{
-			CheckDisposed();
 			RuleFormulaControl.SetContextFeatures();
 			return true;
 		}
@@ -169,7 +159,6 @@ namespace LanguageExplorer.Areas
 #if RANDYTODO
 		public bool OnDisplayContextJumpToNaturalClass(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			bool enable = RuleFormulaControl.IsNCContextCurrent;
 			display.Enabled = enable;
 			display.Visible = enable;
@@ -179,8 +168,6 @@ namespace LanguageExplorer.Areas
 
 		public bool OnContextJumpToNaturalClass(object args)
 		{
-			CheckDisposed();
-			var ctxt = RuleFormulaControl.CurrentContext as IPhSimpleContextNC;
 			var commands = new List<string>
 			{
 				"AboutToFollowLink",
@@ -189,7 +176,7 @@ namespace LanguageExplorer.Areas
 			var parms = new List<object>
 			{
 				null,
-				new FwLinkArgs(AreaServices.NaturalClassEditMachineName, ctxt.FeatureStructureRA.Guid)
+				new FwLinkArgs(AreaServices.NaturalClassEditMachineName, ((IPhSimpleContextNC)RuleFormulaControl.CurrentContext).FeatureStructureRA.Guid)
 			};
 			Publisher.Publish(commands, parms);
 			return true;
@@ -198,7 +185,6 @@ namespace LanguageExplorer.Areas
 #if RANDYTODO
 		public virtual bool OnDisplayContextJumpToPhoneme(object commandObject, ref XCore.UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			bool enable = RuleFormulaControl.IsPhonemeContextCurrent;
 			display.Enabled = enable;
 			display.Visible = enable;
@@ -208,8 +194,7 @@ namespace LanguageExplorer.Areas
 
 		public virtual bool OnContextJumpToPhoneme(object args)
 		{
-			CheckDisposed();
-			IPhSimpleContextSeg ctxt = RuleFormulaControl.CurrentContext as IPhSimpleContextSeg;
+			var ctxt = RuleFormulaControl.CurrentContext as IPhSimpleContextSeg;
 			var commands = new List<string>
 			{
 				"AboutToFollowLink",

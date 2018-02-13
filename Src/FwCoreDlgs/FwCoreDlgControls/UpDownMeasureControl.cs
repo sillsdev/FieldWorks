@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 SIL International
+// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -41,17 +41,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		}
 		#endregion
 
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
 		/// <summary/>
 		protected override void Dispose(bool disposing)
 		{
@@ -69,12 +58,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_mptMax;
 			}
 			set
 			{
-				CheckDisposed();
 				m_mptMax = value;
 				if (m_mptMin > m_mptMax)
 					m_mptMin = m_mptMax;
@@ -92,12 +79,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_mptMin;
 			}
 			set
 			{
-				CheckDisposed();
 				m_mptMin = value;
 				if (m_mptMax < m_mptMin)
 					m_mptMax = m_mptMin;
@@ -115,12 +100,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
 				return (int)Math.Round(m_mptValue);
 			}
 			set
 			{
-				CheckDisposed();
 				SetMsrValue(value);
 			}
 		}
@@ -134,13 +117,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_measureType;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_measureType = value;
 				UpdateEditText();
 			}
@@ -158,10 +138,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public bool DisplayAbsoluteValues
 		{
-			get { CheckDisposed(); return m_fDisplayAbsoluteValues; }
+			get { return m_fDisplayAbsoluteValues; }
 			set
 			{
-				CheckDisposed();
 				m_fDisplayAbsoluteValues = value;
 				UpdateEditText();
 			}
@@ -177,10 +156,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public uint MeasureIncrementFactor
 		{
-			get { CheckDisposed(); return m_measureIncrementFactor; }
+			get { return m_measureIncrementFactor; }
 			set
 			{
-				CheckDisposed();
 				if (value == 0)
 					throw new ArgumentOutOfRangeException("MeasureIncrementFactor", "Value can not be 0.");
 				m_measureIncrementFactor = value;
@@ -196,10 +174,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public bool UseVariablePrecision
 		{
-			get { CheckDisposed(); return m_useVariablePrecision; }
+			get { return m_useVariablePrecision; }
 			set
 			{
-				CheckDisposed();
 				m_useVariablePrecision = value;
 				UpdateEditText();
 			}
@@ -214,7 +191,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public override void DownButton()
 		{
-			CheckDisposed();
 			NudgeValue(-1);
 		}
 
@@ -225,7 +201,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public override void UpButton()
 		{
-			CheckDisposed();
 			NudgeValue(+1);
 		}
 

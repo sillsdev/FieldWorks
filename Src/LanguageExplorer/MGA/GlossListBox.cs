@@ -19,7 +19,6 @@ namespace LanguageExplorer.MGA
 			get { return m_MGAForm; }
 			set
 			{
-				CheckDisposed();
 				if (m_MGAForm != null)
 				{
 					Detach();
@@ -34,19 +33,6 @@ namespace LanguageExplorer.MGA
 				m_MGAForm.RemoveMGAGlossListItem += OnRemoveItem;
 				m_MGAForm.MoveDownMGAGlossListItem += OnMoveDownItem;
 				m_MGAForm.MoveUpMGAGlossListItem += OnMoveUpItem;
-			}
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 			}
 		}
 
@@ -81,8 +67,6 @@ namespace LanguageExplorer.MGA
 		}
 		public void Detach()
 		{
-			CheckDisposed();
-
 			// Detach the events and delete the form
 			m_MGAForm.InsertMGAGlossListItem -= OnInsertItem;
 			m_MGAForm.RemoveMGAGlossListItem -= OnRemoveItem;
@@ -100,8 +84,6 @@ namespace LanguageExplorer.MGA
 		/// <remarks>Is internal for testing</remarks>
 		internal bool NewItemConflictsWithExtantItem(GlossListBoxItem glbiNew, out GlossListBoxItem glbiConflict)
 		{
-			CheckDisposed();
-
 			glbiConflict = null;
 			if (!glbiNew.IsValue)
 			{

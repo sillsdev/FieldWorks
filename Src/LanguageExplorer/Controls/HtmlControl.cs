@@ -52,14 +52,10 @@ namespace LanguageExplorer.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_url ?? "about:blank";
 			}
 			set
 			{
-				CheckDisposed();
-
 				// Review (Hasso): is there a case in which we would *want* to set m_url to null specifically (not about:blank)?
 				m_url = value ?? "about:blank";
 
@@ -78,15 +74,7 @@ namespace LanguageExplorer.Controls
 		/// Used for allowing a web page/JavaScript to interact with C# code.
 		/// (See Src\LexText\ParserUI\ParseWordDlg.cs for an example)
 		/// </remarks>
-		public object Document
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_browser.Document;
-			}
-		}
+		public object Document => m_browser.Document;
 
 		/// <summary>
 		/// The HTML text of the document currently loaded in the browser
@@ -125,8 +113,6 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public void Back()
 		{
-			CheckDisposed();
-
 			try
 			{
 				m_browser.GoBack();
@@ -142,8 +128,6 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public void Forward()
 		{
-			CheckDisposed();
-
 			try
 			{
 				m_browser.GoForward();
@@ -178,8 +162,6 @@ namespace LanguageExplorer.Controls
 		/// <param name="lpmsg">the message/key combination</param>
 		public void AllowKeysForIDocHostUIHandler(tagMSG lpmsg)
 		{
-			CheckDisposed();
-
 			const int WM_KEYDOWN = 0x0100;
 			const int VK_CONTROL = 0x11;
 			if (lpmsg.message == WM_KEYDOWN)

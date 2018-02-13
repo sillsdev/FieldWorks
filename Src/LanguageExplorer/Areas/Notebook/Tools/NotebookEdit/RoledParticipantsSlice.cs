@@ -1,10 +1,9 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -46,21 +45,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			base.Dispose(disposing);
 		}
 
-		private IRnGenericRec Record => (IRnGenericRec)m_obj;
-
-		/// <summary />
-		public override void FinishInit()
-		{
-			CheckDisposed();
-
-			base.FinishInit();
-		}
+		private IRnGenericRec Record => (IRnGenericRec)Object;
 
 		/// <summary />
 		protected override void InitLauncher()
 		{
-			CheckDisposed();
-
 			var defaultRoledPartic = Record.DefaultRoledParticipants;
 			Func<ICmObject> defaultRoleCreator = null;
 			if (defaultRoledPartic == null)
@@ -69,7 +58,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				defaultRoleCreator = () =>
 					{
 						// create a default roled participants object if it does not already exist
-						NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor,
+						NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
 							() =>
 								{
 									defaultRoledPartic = Record.MakeDefaultRoledParticipant();
@@ -84,7 +73,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				vrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			}
-			vrl.Initialize(m_cache, defaultRoledPartic, RnRoledParticTags.kflidParticipants, m_fieldName, m_persistenceProvider,
+			vrl.Initialize(Cache, defaultRoledPartic, RnRoledParticTags.kflidParticipants, m_fieldName, PersistenceProvider,
 				DisplayNameProperty,
 				BestWsName); // TODO: Get better default 'best ws'.
 			vrl.ObjectCreator = defaultRoleCreator;
@@ -101,12 +90,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		}
 
 		/// <summary />
-		public override void GenerateChildren(XElement node, XElement caller, ICmObject obj, int indent, ref int insPos,
-			ArrayList path, ObjSeqHashMap reuseMap, bool fUsePersistentExpansion)
+		public override void GenerateChildren(XElement node, XElement caller, ICmObject obj, int indent, ref int insPos, ArrayList path, ObjSeqHashMap reuseMap, bool fUsePersistentExpansion)
 		{
-			CheckDisposed();
-
-			foreach (IRnRoledPartic roledPartic in Record.ParticipantsOC)
+			foreach (var roledPartic in Record.ParticipantsOC)
 			{
 				if (roledPartic.RoleRA != null)
 				{
@@ -116,8 +102,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			Expansion = Record.ParticipantsOC.Count == 0 ? TreeItemState.ktisCollapsedEmpty : TreeItemState.ktisExpanded;
 		}
 
-		private void GenerateChildNode(IRnRoledPartic roledPartic, XElement node, XElement caller, int indent,
-			ref int insPos, ArrayList path, ObjSeqHashMap reuseMap)
+		private void GenerateChildNode(IRnRoledPartic roledPartic, XElement node, XElement caller, int indent, ref int insPos, ArrayList path, ObjSeqHashMap reuseMap)
 		{
 			var sliceElem = new XElement("slice",
 				new XAttribute("label", roledPartic.RoleRA.Name.BestAnalysisAlternative.Text),
@@ -136,9 +121,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// <summary>
 		/// Determine if the object really has data to be shown in the slice
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// <param name="obj">object to check</param>
-		/// <returns>true if the slice contains data, otherwise false</returns>
 		public static bool ShowSliceForVisibleIfData(XElement node, ICmObject obj)
 		{
 			// this slice does not have data if the only roled participants object
@@ -156,7 +138,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// <summary />
 		public override bool HandleMouseDown(Point p)
 		{
-			CheckDisposed();
 			DisposeContextMenu(this, new EventArgs());
 			m_contextMenuStrip = CreateContextMenu();
 			m_contextMenuStrip.Closed += contextMenuStrip_Closed; // dispose when no longer needed (but not sooner! needed after this returns)
@@ -185,7 +166,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		{
 			var contextMenuStrip = new ContextMenuStrip();
 			var existingRoles = Record.Roles;
-			foreach (var role in m_cache.LanguageProject.RolesOA.PossibilitiesOS)
+			foreach (var role in Cache.LanguageProject.RolesOA.PossibilitiesOS)
 			{
 				// only display add menu options for roles that have not been added yet
 				if (!existingRoles.Contains(role))
@@ -234,12 +215,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			{
 				displayWs = XmlUtils.GetOptionalAttributeValue(node, "ws", "analysis vernacular").ToLower();
 			}
-			var labels = ObjectLabel.CreateObjectLabels(m_cache, m_cache.LanguageProject.PeopleOA.PossibilitiesOS, DisplayNameProperty, displayWs);
+			var labels = ObjectLabel.CreateObjectLabels(Cache, Cache.LanguageProject.PeopleOA.PossibilitiesOS, DisplayNameProperty, displayWs);
 
-			using (var chooser = new SimpleListChooser(m_persistenceProvider, labels, m_fieldName,
-				m_cache, null, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			using (var chooser = new SimpleListChooser(PersistenceProvider, labels, m_fieldName,
+				Cache, null, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
-				chooser.TextParamHvo = m_cache.LanguageProject.PeopleOA.Hvo;
+				chooser.TextParamHvo = Cache.LanguageProject.PeopleOA.Hvo;
 				chooser.SetHelpTopic(GetChooserHelpTopicID());
 				if (ConfigurationNode != null)
 				{
@@ -264,7 +245,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.ksUndoAddParticipants, roleName),
 					string.Format(LanguageExplorerResources.ksRedoAddParticipants, roleName), role, () =>
 					{
-						roledPartic = m_cache.ServiceLocator.GetInstance<IRnRoledParticFactory>().Create();
+						roledPartic = Cache.ServiceLocator.GetInstance<IRnRoledParticFactory>().Create();
 						Record.ParticipantsOC.Add(roledPartic);
 						roledPartic.RoleRA = role;
 						foreach (ICmPerson person in chooser.ChosenObjects)
@@ -278,25 +259,21 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 		private void ShowFieldAlwaysVisible(object sender, EventArgs e)
 		{
-			CheckDisposed();
 			SetFieldVisibility("always");
 		}
 
 		private void ShowFieldIfData(object sender, EventArgs e)
 		{
-			CheckDisposed();
 			SetFieldVisibility("ifdata");
 		}
 
 		private void ShowFieldNormallyHidden(object sender, EventArgs e)
 		{
-			CheckDisposed();
 			SetFieldVisibility("never");
 		}
 
 		private void ShowHelpTopic(object sender, EventArgs e)
 		{
-			CheckDisposed();
 			var areaName = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
 			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 				areaName == AreaServices.TextAndWordsAreaMachineName
@@ -307,8 +284,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 #if RANDYTODO
 		public virtual bool OnDisplayDeleteParticipants(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			display.Enabled = true;
 			display.Visible = true;
 			return true;
@@ -318,8 +293,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// <summary />
 		public bool OnDeleteParticipants(object args)
 		{
-			CheckDisposed();
-
 			var slice = ContainingDataTree.CurrentSlice;
 			var roledPartic = slice.Object as IRnRoledPartic;
 			if (roledPartic != null)
@@ -337,8 +310,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// </summary>
 		protected internal override bool UpdateDisplayIfNeeded(int hvo, int tag)
 		{
-			CheckDisposed();
-
 			// Can't check hvo since it may have been deleted by an undo operation already.
 			if (Record.Hvo == hvo && tag == RnGenericRecTags.kflidParticipants)
 			{
@@ -375,10 +346,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// <summary>
 		/// Expand this node, which is at position iSlice in its parent.
 		/// </summary>
-		/// <param name="iSlice"></param>
 		public override void Expand(int iSlice)
 		{
-			CheckDisposed();
 			try
 			{
 				ContainingDataTree.DeepSuspendLayout();
@@ -388,7 +357,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 					caller = Key[Key.Length - 2] as XElement;
 				}
 				var insPos = iSlice + 1;
-				GenerateChildren(ConfigurationNode, caller, m_obj, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), false);
+				GenerateChildren(ConfigurationNode, caller, Object, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), false);
 				Expansion = TreeItemState.ktisExpanded;
 			}
 			finally
@@ -400,21 +369,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// <summary />
 		public override void AboutToDiscard()
 		{
-			CheckDisposed();
 			if (Record != null && Record.IsValidObject)
 			{
-				var rgDel = new List<IRnRoledPartic>();
-				foreach (var roledPartic in Record.ParticipantsOC)
-				{
-					if (roledPartic.RoleRA != null && roledPartic.ParticipantsRC.Count == 0)
-					{
-						rgDel.Add(roledPartic);
-					}
-				}
-				if (rgDel.Count > 0)
+				var rgDel = Record.ParticipantsOC.Where(roledPartic => roledPartic.RoleRA != null && !roledPartic.ParticipantsRC.Any()).ToList();
+				if (rgDel.Any())
 				{
 					// remove all empty roled participants when we leave this record
-					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+					NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 					{
 						foreach (var roledPartic in rgDel)
 						{

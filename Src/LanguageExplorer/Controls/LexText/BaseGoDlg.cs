@@ -80,27 +80,12 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Answer whether the OK button is currently enabled.
 		/// </summary>
-		public bool IsOkEnabled
-		{
-			get
-			{
-				CheckDisposed();
-				return m_btnOK.Enabled;
-			}
-		}
+		public bool IsOkEnabled => m_btnOK.Enabled;
 
 		/// <summary>
 		/// Gets the database id of the selected object.
 		/// </summary>
-		public virtual ICmObject SelectedObject
-		{
-			get
-			{
-				CheckDisposed();
-				return m_selObject;
-			}
-		}
-
+		public virtual ICmObject SelectedObject => m_selObject;
 		#endregion Properties
 
 		#region	Construction and Destruction
@@ -164,19 +149,6 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose(bool disposing)
@@ -206,8 +178,6 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected virtual void SetDlgInfo(LcmCache cache, WindowParams wp, int ws)
 		{
-			CheckDisposed();
-
 			Debug.Assert(cache != null);
 			m_cache = cache;
 
@@ -466,7 +436,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public virtual void SetDlgInfo(LcmCache cache, WindowParams wp, string form)
 		{
-			CheckDisposed();
 			SetDlgInfo(cache, wp, cache.DefaultVernWs);
 		}
 
@@ -479,7 +448,6 @@ namespace LanguageExplorer.Controls.LexText
 		///  <summary />
 		public void SetDlgInfo(LcmCache cache, WindowParams wp, ITsString tssform)
 		{
-			CheckDisposed();
 			SetDlgInfo(cache, wp, tssform.Text, TsStringUtils.GetWsAtOffset(tssform, 0));
 		}
 
@@ -513,8 +481,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetHelpTopic(string helpTopic)
 		{
-			CheckDisposed();
-
 			m_helpTopic = helpTopic;
 			if (m_helpTopicProvider != null)
 			{

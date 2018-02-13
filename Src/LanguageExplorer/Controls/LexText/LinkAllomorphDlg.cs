@@ -33,15 +33,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Gets the database id of the selected object.
 		/// </summary>
-		public override ICmObject SelectedObject
-		{
-			get
-			{
-				CheckDisposed();
-				return m_cache.ServiceLocator.GetInstance<IMoFormRepository>().GetObject(((LAllomorph)m_fwcbAllomorphs.SelectedItem).HVO);
-			}
-		}
-
+		public override ICmObject SelectedObject => m_cache.ServiceLocator.GetInstance<IMoFormRepository>().GetObject(((LAllomorph)m_fwcbAllomorphs.SelectedItem).HVO);
 		#endregion Properties
 
 		/// <summary>
@@ -97,8 +89,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetDlgInfo(LcmCache cache, ILexEntry startingEntry)
 		{
-			CheckDisposed();
-
 			Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
 
@@ -110,8 +100,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public override void SetDlgInfo(LcmCache cache, WindowParams wp)
 		{
-			CheckDisposed();
-
 			base.SetDlgInfo(cache, wp);
 			// This is needed to make the replacement MatchingEntriesBrowser visible:
 			Controls.SetChildIndex(m_matchingObjectsBrowser, 0);

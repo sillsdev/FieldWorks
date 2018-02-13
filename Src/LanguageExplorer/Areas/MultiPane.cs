@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -36,12 +36,10 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	internal class MultiPane : CollapsingSplitContainer, IMainContentControl
 	{
-		private readonly string m_areaMachineName;
 		private readonly string m_id;
 		// When its superclass gets switched to the new SplitContainer class. it has to implement IMainUserControl itself.
 		private IContainer components;
 		private Size m_parentSizeHint;
-		private string m_defaultPrintPaneId;
 		private readonly string m_defaultFocusControl;
 		private readonly string m_defaultFixedPaneSizePoints;
 		private readonly string m_persistContext;
@@ -66,10 +64,10 @@ namespace LanguageExplorer.Areas
 		internal MultiPane(MultiPaneParameters parameters)
 			: this()
 		{
-			m_areaMachineName = parameters.Area.MachineName;
+			AreaName = parameters.Area.MachineName;
 			m_id = parameters.Id ?? "NOID";
 			m_defaultFixedPaneSizePoints = parameters.DefaultFixedPaneSizePoints ?? "50%";
-			m_defaultPrintPaneId = parameters.DefaultPrintPane ?? string.Empty;
+			PrintPane = parameters.DefaultPrintPane ?? string.Empty;
 			m_defaultFocusControl = parameters.DefaultFocusControl ?? string.Empty;
 			m_persistContext = parameters.PersistContext;
 			m_label = parameters.Label;
@@ -91,14 +89,7 @@ namespace LanguageExplorer.Areas
 		}
 
 		/// <summary />
-		internal string PrintPane
-		{
-			get
-			{
-				CheckDisposed();
-				return m_defaultPrintPaneId;
-			}
-		}
+		internal string PrintPane { get; private set; }
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -141,8 +132,6 @@ namespace LanguageExplorer.Areas
 		{
 			get
 			{
-				CheckDisposed();
-
 				var name = m_persistContext;
 				if (string.IsNullOrEmpty(name))
 				{
@@ -174,29 +163,23 @@ namespace LanguageExplorer.Areas
 		/// <summary />
 		public bool PrepareToGoAway()
 		{
-			CheckDisposed();
-
 			//we are ready to go away if our two controls are ready to go away
-			bool firstControlReady = true;
+			var firstControlReady = true;
 			if (FirstControl != null)
+			{
 				firstControlReady = ((IMainContentControl)FirstControl).PrepareToGoAway();
-			bool secondControlReady = true;
+			}
+			var secondControlReady = true;
 			if (SecondControl != null)
+			{
 				secondControlReady = ((IMainContentControl)SecondControl).PrepareToGoAway();
+			}
 
 			return firstControlReady && secondControlReady;
 		}
 
 		/// <summary />
-		public string AreaName
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_areaMachineName;
-			}
-		}
+		public string AreaName { get; }
 
 		#endregion // IMainContentControl implementation
 
@@ -252,8 +235,8 @@ namespace LanguageExplorer.Areas
 		/// <summary />
 		internal string DefaultPrintPaneId
 		{
-			get { return m_defaultPrintPaneId; }
-			set { m_defaultPrintPaneId = value; }
+			get { return PrintPane; }
+			set { PrintPane = value; }
 		}
 
 		/// <summary>
@@ -276,7 +259,7 @@ namespace LanguageExplorer.Areas
 			SetSplitterDistance();
 		}
 
-		private string SplitterDistancePropertyName => $"MultiPaneSplitterDistance_{m_areaMachineName}_{PropertyTable.GetValue<string>(AreaServices.ToolChoice)}_{m_id}";
+		private string SplitterDistancePropertyName => $"MultiPaneSplitterDistance_{AreaName}_{PropertyTable.GetValue<string>(AreaServices.ToolChoice)}_{m_id}";
 
 		/// <summary />
 		protected override void OnSplitterMoved(object sender, SplitterEventArgs e)
@@ -312,13 +295,12 @@ namespace LanguageExplorer.Areas
 			// Find 'total', which will be the height or width,
 			// depending on the orientation of the multi pane.
 			var proportional = m_defaultFixedPaneSizePoints.EndsWith("%");
-			int total;
 			var size = Size;
 			if (m_parentSizeHint.Width != 0 && !proportional)
 			{
 				size = m_parentSizeHint;
 			}
-			total = Orientation == Orientation.Vertical ? size.Width : size.Height;
+			var total = Orientation == Orientation.Vertical ? size.Width : size.Height;
 
 			if (proportional)
 			{

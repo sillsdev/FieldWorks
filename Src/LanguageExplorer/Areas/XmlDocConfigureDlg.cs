@@ -201,7 +201,6 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public void SetConfigDlgInfo(XElement configurationParameters, LcmCache cache, LcmStyleSheet styleSheet, IFwMainWnd mainWindow, IPropertyTable propertyTable, IPublisher publisher, string sLayoutPropertyName)
 		{
-			CheckDisposed();
 			m_configurationParameters = configurationParameters;
 			var labelKey = XmlUtils.GetOptionalAttributeValue(configurationParameters, "viewTypeLabelKey");
 			if (!string.IsNullOrEmpty(labelKey))
@@ -3019,14 +3018,6 @@ namespace LanguageExplorer.Areas
 
 
 		#endregion // Misc internal functions
-
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
 
 		private void XmlDocConfigureDlg_FormClosed(object sender, FormClosedEventArgs e)
 		{

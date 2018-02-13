@@ -74,14 +74,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return (int) (m_acumulatedFractionOfTotal * 100);
 			}
 			set
 			{
-				CheckDisposed();
-
 				throw new NotImplementedException();
 			}
 		}
@@ -93,8 +89,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="newStatus"></param>
 		public override void SetMilestone(string newStatus)
 		{
-			CheckDisposed();
-
 			SetMilestoneInternal();
 			base.SetMilestone(newStatus);
 		}
@@ -105,8 +99,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public override void SetMilestone()
 		{
-			CheckDisposed();
-
 			SetMilestoneInternal();
 		}
 
@@ -258,8 +250,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public override void Breath()
 		{
-			CheckDisposed();
-
 			//++m_actualTickCount;
 			//System.Diagnostics.Debug.Write("/");
 			if( /*m_bFirstLaunch == false && */ m_acumulatedFractionOfTotal < (m_acumulatedFractionOfTotal+m_currentStepExpectedFractionOfTotal ))

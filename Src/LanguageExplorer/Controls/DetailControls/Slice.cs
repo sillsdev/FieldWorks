@@ -62,40 +62,20 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected bool m_isHighlighted = false;
 		protected Font m_fontLabel = new Font(MiscUtils.StandardSansSerif, 10);
 		protected Point m_location;
-		protected ICmObject m_obj; // The object that will be the context if our children are expanded, or for figuring
+
 		// what things can be inserted here.
-		protected object[] m_key; // Key indicates path of nodes and objects used to construct this.
-		protected LcmCache m_cache;
 		// Indicates the 'weight' of object that starts at the top of this slice.
 		// By default a slice is just considered to be a field (of the same object as the one before).
-		protected ObjectWeight m_weight = ObjectWeight.field;
 		protected bool m_widthHasBeenSetByDataTree;
-		protected IPersistenceProvider m_persistenceProvider;
 		private Dictionary<string, ToolStripMenuItem> m_visibilityMenus = new Dictionary<string, ToolStripMenuItem>();
-		private SplitContainer m_splitContainer;
-
-#endregion Data members
+		#endregion Data members
 
 #region Properties
 
 		/// <summary>
 		/// The weight of object that starts at the beginning of this slice.
 		/// </summary>
-		public ObjectWeight Weight
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_weight;
-			}
-			set
-			{
-				CheckDisposed();
-
-				m_weight = value;
-			}
-		}
+		public ObjectWeight Weight { get; set; } = ObjectWeight.field;
 
 		internal string HotlinksMenuId => XmlUtils.GetOptionalAttributeValue(CallerNode ?? ConfigurationNode, Hotlinks, string.Empty);
 
@@ -187,102 +167,24 @@ namespace LanguageExplorer.Controls.DetailControls
 		{ /* Nothing to do here either. Suclasses can override and add more, if desired. */ }
 
 		/// <summary />
-		public object[] Key
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_key;
-			}
-			set
-			{
-				CheckDisposed();
-
-				m_key = value;
-			}
-		}
+		public object[] Key { get; set; }
 
 		/// <summary />
-		public IPersistenceProvider PersistenceProvider
-		{
-			get
-			{
-				CheckDisposed();
-				return m_persistenceProvider;
-			}
-
-			set
-			{
-				CheckDisposed();
-				m_persistenceProvider = value;
-			}
-		}
+		public IPersistenceProvider PersistenceProvider { get; set; }
 
 		/// <summary />
-		public DataTree ContainingDataTree
-		{
-			get
-			{
-				CheckDisposed();
+		public DataTree ContainingDataTree => (DataTree)Parent;
 
-				return Parent as DataTree;
-			}
-		}
-		protected internal SplitContainer SplitCont
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_splitContainer;
-			}
-		}
+		protected internal SplitContainer SplitCont { get; }
 
 		/// <summary />
-		public SliceTreeNode TreeNode
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_splitContainer.Panel1.Controls[0] as SliceTreeNode;
-			}
-		}
+		public SliceTreeNode TreeNode => SplitCont.Panel1.Controls[0] as SliceTreeNode;
 
 		/// <summary />
-		public LcmCache Cache
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_cache;
-			}
-			set
-			{
-				CheckDisposed();
-
-				m_cache = value;
-			}
-		}
+		public LcmCache Cache { get; set; }
 
 		/// <summary />
-		public ICmObject Object
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_obj;
-			}
-			set
-			{
-				CheckDisposed();
-
-				m_obj = value;
-			}
-		}
+		public ICmObject Object { get; set; }
 
 		/// <summary>
 		/// the XmlNode that was used to construct this slice
@@ -300,24 +202,20 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
+				Debug.Assert(SplitCont.Panel2.Controls.Count == 0 || SplitCont.Panel2.Controls.Count == 1);
 
-				Debug.Assert(m_splitContainer.Panel2.Controls.Count == 0 || m_splitContainer.Panel2.Controls.Count == 1);
-
-				return m_splitContainer.Panel2.Controls.Count == 1 ? m_splitContainer.Panel2.Controls[0] : null;
+				return SplitCont.Panel2.Controls.Count == 1 ? SplitCont.Panel2.Controls[0] : null;
 			}
 			set
 			{
-				CheckDisposed();
-
-				Debug.Assert(m_splitContainer.Panel2.Controls.Count == 0);
+				Debug.Assert(SplitCont.Panel2.Controls.Count == 0);
 
 				if (value == null)
 				{
 					return;
 				}
 
-				m_splitContainer.Panel2.Controls.Add(value);
+				SplitCont.Panel2.Controls.Add(value);
 			}
 		}
 
@@ -332,15 +230,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Another example. LexVariant owns an atomic LexPronunciation in a Pronunciation field. If we set
 		/// wrapsAtomic for the Pronunciation field, then this returns true, allowing an Insert Pronunciation
 		/// menu to activate.</example>
-		public bool WrapsAtomic
-		{
-			get
-			{
-				CheckDisposed();
-
-				return XmlUtils.GetOptionalBooleanAttributeValue(ConfigurationNode, "wrapsAtomic", false);
-			}
-		}
+		public bool WrapsAtomic => XmlUtils.GetOptionalBooleanAttributeValue(ConfigurationNode, "wrapsAtomic", false);
 
 		/// <summary>
 		/// is this node representing a property which is an (ordered) sequence?
@@ -349,8 +239,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
-
 				var node = ConfigurationNode?.Element("seq");
 				if (node == null)
 				{
@@ -363,7 +251,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					return false;
 				}
 
-				Debug.Assert(m_obj != null, "JH Made a false assumption!");
+				Debug.Assert(Object != null, "JH Made a false assumption!");
 				var flid = GetFlid(field);
 				Debug.Assert(flid != 0); // current field should have ID!
 				//at this point we are not even thinking about showing reference sequences in the DataTree
@@ -379,8 +267,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (ConfigurationNode == null)
 				{
 					return false;
@@ -392,15 +278,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// is this node a header?
 		/// </summary>
-		public bool IsHeaderNode
-		{
-			get
-			{
-				CheckDisposed();
-
-				return XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "header") == "true";
-			}
-		}
+		public bool IsHeaderNode => XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "header") == "true";
 
 		/// <summary>
 		/// whether the label should be highlighted or not
@@ -409,16 +287,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			set
 			{
-				CheckDisposed();
-
 				var current = m_isHighlighted;
 				m_isHighlighted = value;
 				// See LT-5415 for how to get here with TreeNode == null, possibly while this
-				// slice is being disposed in the call to the base class Dispose method.
-
-				// If TreeNode is null, then this object has been disposed.
-				// Since we now throw an exception, in the CheckDisposed method if it is disposed,
-				// there is now no reason to ask if it is null.
+				// slice is being disposed in the call to the base class Dispose method
 				if (current != m_isHighlighted)
 				{
 					Refresh();
@@ -434,7 +306,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public Slice()
 		{
 			// Create a SplitContainer to hold the two (or one control.
-			m_splitContainer = new SplitContainer
+			SplitCont = new SplitContainer
 			{
 				TabStop = false,
 				AccessibleName = "Slice.SplitContainer",
@@ -443,7 +315,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// until our own size is definitely established by SetWidthForDataTreeLayout.
 				Size = Size
 			};
-			Controls.Add(m_splitContainer);
+			Controls.Add(SplitCont);
 			// This is really important. Since some slices are invisible, all must be,
 			// or Show() will reorder them.
 			Visible = false;
@@ -467,13 +339,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual void FinishInit()
 		{
-			CheckDisposed();
 		}
 
 		protected override void OnEnter(EventArgs e)
 		{
-			CheckDisposed();
-
 			base.OnEnter(e);
 
 			if (ContainingDataTree == null || ContainingDataTree.ConstructingSlices) // FWNX-423, FWR-2508
@@ -493,8 +362,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary />
 		public virtual void RegisterWithContextHelper()
 		{
-			CheckDisposed();
-
 			if (Control != null)//grouping nodes do not have a control
 			{
 				//It's OK to send null as an id
@@ -509,16 +376,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		protected virtual string HelpId
-		{
-			get
-			{
-				CheckDisposed();
-
-				//if the idea has not been added, try using the "field" attribute as the key
-				return XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "id") ?? XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "field");
-			}
-		}
+		protected virtual string HelpId => XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "id") ?? XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "field");
 
 		/// <summary>
 		/// This is passed the color that the XDE specified, if any, otherwise null.
@@ -527,10 +385,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// override this method, but normally should use the specified color if not
 		/// null.
 		/// </summary>
-		public virtual void OverrideBackColor(String backColorName)
+		public virtual void OverrideBackColor(string backColorName)
 		{
-			CheckDisposed();
-
 			if (Control == null)
 			{
 				return;
@@ -549,7 +405,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual void ShowSubControls()
 		{
-			CheckDisposed();
 		}
 
 		#endregion Miscellaneous UI methods
@@ -559,16 +414,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary />
 		public void OnTreeNodeClick(object sender, EventArgs args)
 		{
-			CheckDisposed();
-
 			TakeFocus();
 		}
 
 		/// <summary />
 		public void TakeFocus()
 		{
-			CheckDisposed();
-
 			TakeFocus(true);
 		}
 
@@ -581,8 +432,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool TakeFocus(bool fOkToFocusTreeNode)
 		{
-			CheckDisposed();
-
 			var ctrl = Control;
 			if (!Visible)
 			{
@@ -621,7 +470,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void OnGotFocus(EventArgs e)
 		{
-			CheckDisposed();
 			if (Disposing)
 			{
 				return;
@@ -646,15 +494,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// same dummy slice into many locations, and they are progressively
 		/// replaced with real ones.
 		/// </summary>
-		public virtual bool IsRealSlice
-		{
-			get
-			{
-				CheckDisposed();
-
-				return true;
-			}
-		}
+		public virtual bool IsRealSlice => true;
 
 		/// <summary>
 		/// In some contexts, we use a "ghost" slice to represent data that
@@ -664,15 +504,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// may claim to have an object, because it needs such information to
 		/// create the data once the user decides to type something...
 		/// </summary>
-		public virtual bool IsGhostSlice
-		{
-			get
-			{
-				CheckDisposed();
-
-				return false;
-			}
-		}
+		public virtual bool IsGhostSlice => false;
 
 		/// <summary>
 		/// Some 'unreal' slices can become 'real' (ready to actually display) without
@@ -683,8 +515,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual bool BecomeRealInPlace()
 		{
-			CheckDisposed();
-
 			return false;
 		}
 
@@ -693,8 +523,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual Slice BecomeReal(int index)
 		{
-			CheckDisposed();
-
 			return this;
 		}
 
@@ -712,19 +540,15 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public virtual bool ShowContextMenuIconInTreeNode()
 		{
-			CheckDisposed();
-
 			return this == ContainingDataTree.CurrentSlice;
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public virtual void SetCurrentState(bool isCurrent)
 		{
-			CheckDisposed();
-
 			if (Control is INotifyControlInCurrentSlice && !BeingDiscarded)
 			{
 				((INotifyControlInCurrentSlice)Control).SliceIsCurrent = isCurrent;
@@ -747,8 +571,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary />
 		public virtual void Install(DataTree parentDataTree)
 		{
-			CheckDisposed();
-
 			if (parentDataTree == null)
 			{
 				throw new InvalidOperationException("The slice '" + GetType().Name + "' must be placed in the Parent.Controls property before installing it.");
@@ -756,23 +578,23 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			SliceContextMenuFactory = parentDataTree.SliceContextMenuFactory;
 
-			m_splitContainer.SuspendLayout();
+			SplitCont.SuspendLayout();
 			// prevents the controls of the new 'SplitContainer' being NAMELESS
-			if (m_splitContainer.Panel1.AccessibleName == null)
+			if (SplitCont.Panel1.AccessibleName == null)
 			{
-				m_splitContainer.Panel1.AccessibleName = "Panel1";
+				SplitCont.Panel1.AccessibleName = "Panel1";
 			}
 
-			if (m_splitContainer.Panel2.AccessibleName == null)
+			if (SplitCont.Panel2.AccessibleName == null)
 			{
-				m_splitContainer.Panel2.AccessibleName = "Panel2";
+				SplitCont.Panel2.AccessibleName = "Panel2";
 			}
 
 			SliceTreeNode treeNode;
-			var isBeingReused = m_splitContainer.Panel1.Controls.Count > 0;
+			var isBeingReused = SplitCont.Panel1.Controls.Count > 0;
 			if (isBeingReused)
 			{
-				treeNode = (SliceTreeNode)m_splitContainer.Panel1.Controls[0];
+				treeNode = (SliceTreeNode)SplitCont.Panel1.Controls[0];
 			}
 			else
 			{
@@ -780,8 +602,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				treeNode = new SliceTreeNode(this, SliceContextMenuFactory, XmlUtils.GetOptionalAttributeValue(CallerNode ?? ConfigurationNode, "menu", string.Empty));
 				treeNode.SuspendLayout();
 				treeNode.Dock = DockStyle.Fill;
-				m_splitContainer.Panel1.Controls.Add(treeNode);
-				m_splitContainer.AccessibleName = "SplitContainer";
+				SplitCont.Panel1.Controls.Add(treeNode);
+				SplitCont.AccessibleName = "SplitContainer";
 			}
 
 			if (!string.IsNullOrEmpty(Label))
@@ -794,14 +616,14 @@ namespace LanguageExplorer.Controls.DetailControls
 				// manually draw a thin line to give the user a que as to where the splitter bar is.
 				// Then, if it gets to be visible, we will probably need to add a bit of padding between
 				// the line and the main slice content, or its text will be connected to the line.
-				m_splitContainer.SplitterWidth = 5;
+				SplitCont.SplitterWidth = 5;
 
 				// It was hard-coded to 40, but it isn't right for indented slices,
 				// as they then can be shrunk so narrow as to completely cover up their label.
-				m_splitContainer.Panel1MinSize = (20 * (Indent + 1)) + 20;
-				m_splitContainer.Panel2MinSize = 0; // min size of right pane
+				SplitCont.Panel1MinSize = (20 * (Indent + 1)) + 20;
+				SplitCont.Panel2MinSize = 0; // min size of right pane
 				// This makes the splitter essentially invisible.
-				m_splitContainer.BackColor = Color.FromKnownColor(KnownColor.Window); //to make it invisible
+				SplitCont.BackColor = Color.FromKnownColor(KnownColor.Window); //to make it invisible
 				treeNode.MouseEnter += TreeNodeMouseEnter;
 				treeNode.MouseLeave += TreeNodeMouseLeave;
 				treeNode.MouseHover += TreeNodeMouseEnter;
@@ -810,10 +632,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				// SummarySlice is one of these kinds of Slices.
 				//Debug.WriteLine("Slice gets no usable splitter: " + GetType().Name);
-				m_splitContainer.SplitterWidth = 1;
-				m_splitContainer.Panel1MinSize = LabelIndent();
-				m_splitContainer.SplitterDistance = LabelIndent();
-				m_splitContainer.IsSplitterFixed = true;
+				SplitCont.SplitterWidth = 1;
+				SplitCont.Panel1MinSize = LabelIndent();
+				SplitCont.SplitterDistance = LabelIndent();
+				SplitCont.IsSplitterFixed = true;
 				// Just in case it was previously installed with a different label.
 				treeNode.MouseEnter -= TreeNodeMouseEnter;
 				treeNode.MouseLeave -= TreeNodeMouseLeave;
@@ -830,14 +652,14 @@ namespace LanguageExplorer.Controls.DetailControls
 				mainControl.AccessibleName = string.IsNullOrEmpty(Label) ? "Slice_unknown" : Label;
 				newHeight = Math.Max(mainControl.Height, LabelHeight);
 				mainControl.Dock = DockStyle.Fill;
-				m_splitContainer.FixedPanel = FixedPanel.Panel1;
+				SplitCont.FixedPanel = FixedPanel.Panel1;
 			}
 			else
 			{
 				// Has SliceTreeNode but no Control.
 				newHeight = LabelHeight;
-				m_splitContainer.Panel2Collapsed = true;
-				m_splitContainer.FixedPanel = FixedPanel.Panel2;
+				SplitCont.Panel2Collapsed = true;
+				SplitCont.FixedPanel = FixedPanel.Panel2;
 			}
 
 			if (!isBeingReused)
@@ -860,7 +682,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				Height = newHeight;
 			}
 			treeNode.ResumeLayout(false);
-			m_splitContainer.ResumeLayout();
+			SplitCont.ResumeLayout();
 		}
 
 		private void TreeNodeMouseLeave(object sender, EventArgs e)
@@ -882,26 +704,24 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal void SetSplitPosition()
 		{
-			Debug.Assert(m_splitContainer != null, "LT-13912 -- Need to determine why the SplitContainer is null here.");
-			if (m_splitContainer == null || m_splitContainer.IsSplitterFixed) // LT-13912 apparently sc comes out null sometimes.
+			Debug.Assert(SplitCont != null, "LT-13912 -- Need to determine why the SplitContainer is null here.");
+			if (SplitCont == null || SplitCont.IsSplitterFixed) // LT-13912 apparently sc comes out null sometimes.
 			{
 				return;
 			}
 
 			var valueSansLabelindent = ContainingDataTree.SliceSplitPositionBase;
 			var correctSplitPosition = valueSansLabelindent + LabelIndent();
-			if (m_splitContainer.SplitterDistance == correctSplitPosition)
+			if (SplitCont.SplitterDistance == correctSplitPosition)
 			{
 				return;
 			}
-			m_splitContainer.SplitterDistance = correctSplitPosition;
+			SplitCont.SplitterDistance = correctSplitPosition;
 			TreeNode.Invalidate();
 		}
 
 		protected override void OnSizeChanged(EventArgs e)
 		{
-			CheckDisposed();
-
 			// Skip handling this, if the DataTree hasn't
 			// set the official width using SetWidthForDataTreeLayout
 			if (!m_widthHasBeenSetByDataTree)
@@ -919,10 +739,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				scrollChanged = true;
 			}
-			int verticalAdjustment = Size.Height - m_splitContainer.Size.Height;
+			int verticalAdjustment = Size.Height - SplitCont.Size.Height;
 			// This should be done by setting DockStyle to Fill but that somehow doesn't always fix the
 			// height of the splitter's panels.
-			m_splitContainer.Size = Size;
+			SplitCont.Size = Size;
 			if (scrollChanged)
 			{
 				var verticalScrollChangedCorrectly = ContainingDataTree.AutoScrollPosition.Y - oldPoint.Y == -verticalAdjustment;
@@ -941,7 +761,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// (since this can get called from OnSizeChanged of a child window, I think) and it only
 			// works to layout the splitter afterwards? Anyway this seems to work...test carefully if you
 			// think of taking it out.
-			if (m_splitContainer.Panel2.Height != Height)
+			if (SplitCont.Panel2.Height != Height)
 			{
 				Application.Idle += LayoutSplitter;
 			}
@@ -950,9 +770,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void LayoutSplitter(object sender, EventArgs e)
 		{
 			Application.Idle -= LayoutSplitter;
-			if (m_splitContainer != null && !IsDisposed)
+			if (SplitCont != null && !IsDisposed)
 			{
-				m_splitContainer.PerformLayout();
+				SplitCont.PerformLayout();
 			}
 		}
 
@@ -962,9 +782,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
-			CheckDisposed();
-
-			if (m_splitContainer.Panel2Collapsed)
+			if (SplitCont.Panel2Collapsed)
 			{
 				TreeNode.Width = LabelIndent();
 			}
@@ -982,26 +800,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return false;
 			}
 			set
 			{
-				CheckDisposed();
 			}
 		}
 
 		#region IDisposable override
-
-		/// <summary />
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException(ToString() + GetHashCode(), "Trying to use object that has been disposed.");
-			}
-		}
 
 		/// <summary>
 		/// Executes in two distinct scenarios.
@@ -1042,7 +848,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				parent?.RemoveDisposedSlice(this);
 
 				// Dispose managed resources here.
-				m_splitContainer.SplitterMoved -= mySplitterMoved;
+				SplitCont.SplitterMoved -= mySplitterMoved;
 				// If anyone but the owning DataTree called this to be disposed,
 				// then it will still hold a referecne to this slice in an event handler.
 				// We could take care of it here by asking the DT to remove it,
@@ -1053,9 +859,9 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_fontLabel = null;
-			m_cache = null;
-			m_key = null;
-			m_obj = null;
+			Cache = null;
+			Key = null;
+			Object = null;
 			CallerNode = null;
 			ConfigurationNode = null;
 			m_configurationParameters = null;
@@ -1083,12 +889,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			return XmlUtils.GetOptionalBooleanAttributeValue(indentNode, "indent", false) ? 1 : 0;
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public virtual void GenerateChildren(XElement node, XElement caller, ICmObject obj, int indent,
 			ref int insPos, ArrayList path, ObjSeqHashMap reuseMap, bool fUsePersistentExpansion)
 		{
-			CheckDisposed();
-
 			// If node has children, figure what to do with them...
 			// XmlNodeList children = node.ChildNodes; // unused variable
 			NodeTestResult ntr;
@@ -1162,8 +966,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary />
 		public virtual void CreateIndentedNodes(XElement caller, ICmObject obj, int indent, ref int insPos, ArrayList path, ObjSeqHashMap reuseMap, XElement node)
 		{
-			CheckDisposed();
-
 			string parameter = null;
 			if (caller != null)
 			{
@@ -1185,20 +987,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-#endregion Tree management
+		#endregion Tree management
 
-#region Tree Display
+		#region Tree Display
 
-		// Delegation methods (mainly or entirely duplicate similar methods on embedded control).
-		/// <summary></summary>
-		public virtual int LabelHeight
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fontLabel.Height;
-			}
-		}
+		/// <summary />
+		public virtual int LabelHeight => m_fontLabel.Height;
 
 		/// <summary>
 		/// Determines how deeply indented this item is in the tree diagram. 0 means no indent.
@@ -1219,14 +1013,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_strLabel;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_strLabel = value;
 			}
 		}
@@ -1236,14 +1026,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_strAbbr;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_strAbbr = value;
 				if (string.IsNullOrEmpty(m_strAbbr) && m_strLabel != null)
 				{
@@ -1257,41 +1043,17 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Text to display as tooltip for label (SliceTreeNode).
 		/// Defaults to Label.
 		/// </summary>
-		public string ToolTip
-		{
-			get
-			{
-				CheckDisposed();
-
-				return StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "tooltip", Label));
-			}
-		}
+		public string ToolTip => StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "tooltip", Label));
 
 		/// <summary>
 		/// Help Topic ID for the slice
 		/// </summary>
-		public string HelpTopicID
-		{
-			get
-			{
-				CheckDisposed();
-
-				return XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "helpTopicID");
-			}
-		}
+		public string HelpTopicID => XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "helpTopicID");
 
 		/// <summary>
 		/// Help Topic ID for the slice
 		/// </summary>
-		public string ChooserDlgHelpTopicID
-		{
-			get
-			{
-				CheckDisposed();
-
-				return XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "chooserDlgHelpTopicID");
-			}
-		}
+		public string ChooserDlgHelpTopicID => XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "chooserDlgHelpTopicID");
 
 		/// <summary />
 		public string GetSliceHelpTopicID()
@@ -1334,7 +1096,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (tempfieldName == "Targets" && parentHvo != 0)
 			{
 				// Cross Reference (entry level) or lexical relation (sense level) subitems
-				var repo = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+				var repo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 				ILexEntry lex;
 				repo.TryGetObject(parentHvo, out lex);
 
@@ -1473,8 +1235,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary />
 		private void DrawLabel(int x, int y, Graphics gr, int clipWidth)
 		{
-			CheckDisposed();
-
 			Image image = null;
 			if (IsSequenceNode)
 			{
@@ -1498,7 +1258,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			using (Brush brush = new SolidBrush(Color.FromKnownColor(KnownColor.ControlDarkDark)))
 			{
 				var label = Label;
-				if (m_splitContainer.SplitterDistance <= MaxAbbrevWidth)
+				if (SplitCont.SplitterDistance <= MaxAbbrevWidth)
 				{
 					label = Abbreviation;
 				}
@@ -1513,29 +1273,17 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual int GetBranchHeight()
 		{
-			CheckDisposed();
-
 			return Convert.ToInt32((m_fontLabel.GetHeight() + 1.0) / 2.0);
 		}
 
 		/// <summary />
 		public void Expand()
 		{
-			CheckDisposed();
-
 			Expand(IndexInContainer);
 		}
 
 		/// <summary />
-		public int IndexInContainer
-		{
-			get
-			{
-				CheckDisposed();
-
-				return ContainingDataTree.Slices.IndexOf(this);
-			}
-		}
+		public int IndexInContainer => ContainingDataTree.Slices.IndexOf(this);
 
 		/// <summary>
 		/// Get a key suitable to use in the PropertyTable to specify whether this slice should be
@@ -1567,8 +1315,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// and the caller often has the info already, especially in loops expanding many children.</remarks>
 		public virtual void Expand(int iSlice)
 		{
-			CheckDisposed();
-
 			try
 			{
 				ContainingDataTree.DeepSuspendLayout();
@@ -1578,7 +1324,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					caller = Key[Key.Length - 2] as XElement;
 				}
 				var insPos = iSlice + 1;
-				CreateIndentedNodes(caller, m_obj, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), ConfigurationNode);
+				CreateIndentedNodes(caller, Object, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), ConfigurationNode);
 
 				Expansion = TreeItemState.ktisExpanded;
 				PropertyTable.SetProperty(ExpansionStateKey, true, true, true);
@@ -1607,8 +1353,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary />
 		public void Collapse()
 		{
-			CheckDisposed();
-
 			Collapse(IndexInContainer);
 		}
 
@@ -1617,8 +1361,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual void Collapse(int iSlice)
 		{
-			CheckDisposed();
-
 			var iNextSliceNotChild = iSlice + 1;
 			while (iNextSliceNotChild < ContainingDataTree.Slices.Count && IsDescendant(ContainingDataTree.FieldOrDummyAt(iNextSliceNotChild)))
 			{
@@ -1648,11 +1390,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public Slice ParentSlice { get; set; }
 
-		/// <summary></summary>
+		/// <summary />
 		public virtual bool HandleMouseDown(Point p)
 		{
-			CheckDisposed();
-
 			ContainingDataTree.CurrentSlice = this;
 			return true;
 		}
@@ -1660,8 +1400,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary />
 		public virtual int LabelIndent()
 		{
-			CheckDisposed();
-
 			return SliceTreeNode.kdxpLeftMargin + (Indent + 1) * SliceTreeNode.kdxpIndDist;
 		}
 
@@ -1672,28 +1410,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal void DrawLabel(int y, Graphics gr, int clipWidth)
 		{
-			CheckDisposed();
-
 			DrawLabel(LabelIndent(), y, gr, clipWidth);
 		}
 
-		/// <summary></summary>
-		public bool IsObjectNode
-		{
-			get
-			{
-				CheckDisposed();
-
-				var sClassName = Object.ClassName;
-				return
-					(ConfigurationNode.Element("node") != null || ("PhCode" == sClassName))	// todo: this should tell if the attr (not the nested one) is to a basic type or a cmobject
-					&& ConfigurationNode.Element("seq") == null &&
-					//MoAlloAdhocProhib.adjacency is the top-level node, but it's not really an object that you should be able to delete
-					Object != ContainingDataTree.Root;
-			}
-		}
-
-#endregion Tree Display
+		public bool IsObjectNode => (ConfigurationNode.Element("node") != null || ("PhCode" == Object.ClassName))	// todo: this should tell if the attr (not the nested one) is to a basic type or a cmobject
+									&& ConfigurationNode.Element("seq") == null &&
+									//MoAlloAdhocProhib.adjacency is the top-level node, but it's not really an object that you should be able to delete
+									Object != ContainingDataTree.Root;
+		#endregion Tree Display
 
 #region Miscellaneous data methods
 
@@ -1711,13 +1435,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>true if this slice is part of an owning sequence property.</returns>
 		public bool GetSeqContext(out int hvoOwner, out int flid, out int ihvoPosition)
 		{
-			CheckDisposed();
-
 			hvoOwner = 0; // compiler insists it be assigned.
 			flid = 0;
 			ihvoPosition = 0;
 
-			if (m_key == null)
+			if (Key == null)
 			{
 				return false;
 			}
@@ -1725,9 +1447,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			var cache = ContainingDataTree.Cache;
 			var mdc = cache.DomainDataByFlid.MetaDataCache as IFwMetaDataCacheManaged;
 			var repo = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
-			for (var inode = m_key.Length; --inode >= 0; )
+			for (var inode = Key.Length; --inode >= 0; )
 			{
-				var objNode = m_key[inode];
+				var objNode = Key[inode];
 				var element = objNode as XElement;
 				if (element == null || element.Name != "seq")
 				{
@@ -1737,7 +1459,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				int clsid;
 				// if this is the last index, we don't have an hvo of anything to edit.
 				// But it may be ghost slice that we can use.  (See FWR-556.)
-				if (inode == m_key.Length - 1)
+				if (inode == Key.Length - 1)
 				{
 					if (Object == null || element.Attribute("ghost") == null)
 					{
@@ -1757,7 +1479,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// got it!
 				// The next thing we push into key right after the "seq" node is always the
 				// HVO of the particular item we're editing.
-				var hvoItem = (int)(m_key[inode + 1]);
+				var hvoItem = (int)(Key[inode + 1]);
 				var obj = repo.GetObject(hvoItem);
 				clsid = obj.Owner.ClassID;
 				flid = ContainingDataTree.GetFlidIfPossible(clsid, attrName, mdc);
@@ -1783,19 +1505,17 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>true if this slice is part of an owning atomic property.</returns>
 		public bool GetAtomicContext(out int hvoOwner, out int flid)
 		{
-			CheckDisposed();
-
 			// Compiler requires values to be set, but these are meaningless.
 			hvoOwner = 0;
 			flid = 0;
-			if (m_key == null)
+			if (Key == null)
 			{
 				return false;
 			}
 
-			for (var inode = m_key.Length; --inode >= 0; )
+			for (var inode = Key.Length; --inode >= 0; )
 			{
-				var objNode = m_key[inode];
+				var objNode = Key[inode];
 				var element = objNode as XElement;
 				if (element == null || element.Name != "atomic")
 				{
@@ -1804,7 +1524,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// got it!
 				// The next thing we push into key right after the "atomic" node is always the
 				// HVO of the particular item we're editing.
-				var hvoItem = (int)(m_key[inode + 1]);
+				var hvoItem = (int)(Key[inode + 1]);
 				var attrName = element.Attribute("field").Value;
 				var cache = ContainingDataTree.Cache;
 				flid = cache.DomainDataByFlid.MetaDataCache.GetFieldId2(cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoItem).Owner.ClassID, attrName, true);
@@ -1819,16 +1539,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected int GetFlid(string fieldName)
 		{
-			CheckDisposed();
-
-			return ContainingDataTree.GetFlidIfPossible(m_obj.ClassID, fieldName, m_cache.DomainDataByFlid.MetaDataCache as IFwMetaDataCacheManaged);
+			return ContainingDataTree.GetFlidIfPossible(Object.ClassID, fieldName, Cache.DomainDataByFlid.MetaDataCache as IFwMetaDataCacheManaged);
 		}
 
 		protected int GetFieldType(int flid)
 		{
-			CheckDisposed();
-
-			return m_cache.DomainDataByFlid.MetaDataCache.GetFieldType(flid);
+			return Cache.DomainDataByFlid.MetaDataCache.GetFieldType(flid);
 		}
 
 #endregion Miscellaneous data methods
@@ -1842,8 +1558,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private bool IsOrInheritsFrom(int clidTest, int clidSig)
 		{
-			CheckDisposed();
-
 			return Cache.ClassIsOrInheritsFrom(clidTest, clidSig);
 		}
 
@@ -1859,9 +1573,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <remarks> called by the containing environment in response to a user command.</remarks>
 		internal void HandleInsertCommand(string fieldName, string className, string ownerClassName)
 		{
-			CheckDisposed();
-
-			var newObjectClassId = m_cache.DomainDataByFlid.MetaDataCache.GetClassId(className);
+			var newObjectClassId = Cache.DomainDataByFlid.MetaDataCache.GetClassId(className);
 			if (newObjectClassId == 0)
 			{
 				throw new ArgumentException($"There does not appear to be a database class named '{className}'.");
@@ -1946,7 +1658,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			// Found a suitable slice. Do the insertion.
 			int insertionPosition;		// causes return false if not changed.
-			if (m_cache.IsReferenceProperty(flid))
+			if (Cache.IsReferenceProperty(flid))
 			{
 				insertionPosition = InsertObjectIntoVirtualBackref(Cache, slice.Object.Hvo, newObjectClassId, flid);
 			}
@@ -2001,9 +1713,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// otherwise, index of new object (0 if collection)</returns>
 		private int InsertObject(int flid, int newObjectClassId)
 		{
-			CheckDisposed();
-
-			var fAbstract = m_cache.DomainDataByFlid.MetaDataCache.GetAbstract(newObjectClassId);
+			var fAbstract = Cache.DomainDataByFlid.MetaDataCache.GetAbstract(newObjectClassId);
 			if (fAbstract)
 			{
 				// We've been handed an abstract class to insert.  Try to determine the desired
@@ -2040,7 +1750,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if (ContainingDataTree.CurrentSlice != null)
 			{
-				var sda = m_cache.DomainDataByFlid;
+				var sda = Cache.DomainDataByFlid;
 				var chvo = insertionPosition;
 				// See if the current slice in any way indicates a position in that property.
 				var key = ContainingDataTree.CurrentSlice.Key;
@@ -2068,7 +1778,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			try
 			{
 				dtContainer.SetCurrentObjectFlids(hvoOwner, flid);
-				var fieldType = (CellarPropertyType) m_cache.MetaDataCacheAccessor.GetFieldType(flid);
+				var fieldType = (CellarPropertyType) Cache.MetaDataCacheAccessor.GetFieldType(flid);
 				switch (fieldType)
 				{
 					case CellarPropertyType.OwningCollection:
@@ -2107,7 +1817,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						case CellarPropertyType.OwningCollection:
 							// order is not fully predicatable, figure where it DID show up.
-							insertionPosition = m_cache.DomainDataByFlid.GetObjIndex(hvoOwner, flid, uiObj.Object.Hvo);
+							insertionPosition = Cache.DomainDataByFlid.GetObjIndex(hvoOwner, flid, uiObj.Object.Hvo);
 							break;
 
 						case CellarPropertyType.OwningAtomic:
@@ -2138,8 +1848,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>Slice for subitem, or null</returns>
 		public Slice ExpandSubItem(int hvo)
 		{
-			CheckDisposed();
-
 			var cslice = ContainingDataTree.Slices.Count;
 			for (var islice = IndexInContainer + 1; islice < cslice; ++islice)
 			{
@@ -2190,8 +1898,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public Slice FocusSliceOrChild()
 		{
-			CheckDisposed();
-
 			// Make sure that preceding slices are real and visible.  Otherwise, the
 			// inserted slice can be shown in the wrong place.  See LT-6306.
 			var iLastRealVisible = 0;
@@ -2252,8 +1958,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal bool HandleDeleteCommand()
 		{
-			CheckDisposed();
-
 			var obj = GetObjectForMenusToOperateOn();
 			// Build a list of neighboring slices, ordered by proximity (max of 40 either way...don't want to build too much
 			// of a lazy view).
@@ -2267,7 +1971,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			try
 			{
 				dataTree.SetCurrentObjectFlids(obj.Hvo, 0);
-				using (var ui = CmObjectUi.MakeUi(m_cache, obj.Hvo))
+				using (var ui = CmObjectUi.MakeUi(Cache, obj.Hvo))
 				{
 					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 					result = ui.DeleteUnderlyingObject();
@@ -2321,7 +2025,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual bool CanDeleteReferenceNow(Command cmd)
 		{
-			CheckDisposed();
 			return FromVariantBackRefField;
 		}
 
@@ -2331,7 +2034,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual void HandleDeleteReferenceCommand(Command cmd)
 		{
-			CheckDisposed();
 			if (NextSlice != null && NextSlice.Object != null)
 			{
 				var ler = NextSlice.Object as ILexEntryRef;
@@ -2355,8 +2057,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>Return null if this slice is supposed to operate on an atomic field which is currently empty.</returns>
 		public ICmObject GetObjectForMenusToOperateOn()
 		{
-			CheckDisposed();
-
 			if (WrapsAtomic)
 			{
 				var nodes = ConfigurationNode.Elements("atomic").ToList();
@@ -2367,10 +2067,10 @@ namespace LanguageExplorer.Controls.DetailControls
 				var field = XmlUtils.GetMandatoryAttributeValue(nodes[0], "field");
 				var flid = GetFlid(field);
 				Debug.Assert(flid != 0);
-				var hvo = m_cache.DomainDataByFlid.get_ObjectProp(m_obj.Hvo, flid);
-				return hvo != 0 ? m_cache.ServiceLocator.GetObject(hvo) : null;
+				var hvo = Cache.DomainDataByFlid.get_ObjectProp(Object.Hvo, flid);
+				return hvo != 0 ? Cache.ServiceLocator.GetObject(hvo) : null;
 			}
-			return FromVariantBackRefField ? BackRefObject : m_obj;
+			return FromVariantBackRefField ? BackRefObject : Object;
 		}
 
 		/// <summary>
@@ -2380,7 +2080,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				if (ConfigurationNode == null || m_obj == null)
+				if (ConfigurationNode == null || Object == null)
 				{
 					return 0;
 				}
@@ -2431,8 +2131,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool GetCanDeleteNow()
 		{
-			CheckDisposed();
-
 			var obj = GetObjectForMenusToOperateOn();
 			if (obj == null)
 			{
@@ -2467,8 +2165,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool GetCanMergeNow()
 		{
-			CheckDisposed();
-
 			var obj = GetObjectForMenusToOperateOn();
 			if (obj == null)
 			{
@@ -2517,7 +2213,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			foreach (var hvoInner in contents)
 			{
-				var innerObj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoInner);
+				var innerObj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoInner);
 				if (innerObj != obj && clsid == innerObj.ClassID)
 				{
 					return true;
@@ -2530,15 +2226,13 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary />
 		public virtual void HandleMergeCommand(bool fLoseNoTextData)
 		{
-			CheckDisposed();
-
 			var obj = GetObjectForMenusToOperateOn();
 			if (obj == null)
 			{
 				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be merged.", ConfigurationNode);
 			}
 
-			using (var ui = CmObjectUi.MakeUi(m_cache, obj.Hvo))
+			using (var ui = CmObjectUi.MakeUi(Cache, obj.Hvo))
 			{
 				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				ui.MergeUnderlyingObject(fLoseNoTextData);
@@ -2553,8 +2247,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool GetCanSplitNow()
 		{
-			CheckDisposed();
-
 			var obj = GetObjectForMenusToOperateOn();
 			if (obj == null)
 			{
@@ -2588,18 +2280,16 @@ namespace LanguageExplorer.Controls.DetailControls
 			OnLostFocus(new EventArgs());
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public virtual void HandleSplitCommand()
 		{
-			CheckDisposed();
-
 			var obj = GetObjectForMenusToOperateOn();
 			if (obj == null)
 			{
 				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be moved to a copy of its owner.", ConfigurationNode);
 			}
 
-			using (var ui = CmObjectUi.MakeUi(m_cache, obj.Hvo))
+			using (var ui = CmObjectUi.MakeUi(Cache, obj.Hvo))
 			{
 				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				ui.MoveUnderlyingObjectToCopyOfOwner();
@@ -2609,11 +2299,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			GC.KeepAlive(this);
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public virtual void HandleCopyCommand(Slice newSlice, string label)
 		{
-			CheckDisposed();
-
 			var origObj = GetObjectForMenusToOperateOn();
 			if (origObj == null)
 			{
@@ -2630,7 +2318,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				var undoMsg = $"Undo {label}";
 				var redoMsg = $"Redo {label}";
-				UndoableUnitOfWorkHelper.Do(undoMsg, redoMsg, m_cache.ActionHandlerAccessor, () => { ((ICloneableCmObject)origObj).SetCloneProperties(newObj); });
+				UndoableUnitOfWorkHelper.Do(undoMsg, redoMsg, Cache.ActionHandlerAccessor, () => { ((ICloneableCmObject)origObj).SetCloneProperties(newObj); });
 			}
 			else
 			{
@@ -2641,7 +2329,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary />
 		public virtual void HandleEditCommand()
 		{
-			CheckDisposed();
 		}
 
 		/// <summary>
@@ -2650,16 +2337,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual void HandleLaunchChooser()
 		{
-			CheckDisposed();
-
 			// Implemented as needed by subclasses.
 		}
 
 		/// <summary />
 		public virtual bool GetCanEditNow()
 		{
-			CheckDisposed();
-
 			return true;
 		}
 
@@ -2671,15 +2354,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>true, if it the slice updated its display</returns>
 		protected internal virtual bool UpdateDisplayIfNeeded(int hvo, int tag)
 		{
-			CheckDisposed();
-
 			return false;
 		}
 
 		protected void SetFieldVisibility(string visibility)
 		{
-			CheckDisposed();
-
 			if (IsVisibilityItemChecked(visibility))
 			{
 				return; // No change, so skip a lot of trauma.
@@ -2705,7 +2384,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			XElement newPartref;
 			var newLayout = Inventory.MakeOverride(Key, attr, attrValueNew, LayoutCache.LayoutVersionNumber, out newPartref);
-			Inventory.GetInventory("layouts", m_cache.ProjectId.Name).PersistOverrideElement(newLayout);
+			Inventory.GetInventory("layouts", Cache.ProjectId.Name).PersistOverrideElement(newLayout);
 			var dataTree = ContainingDataTree;
 			var rootKey = Key[0] as XElement;
 			// The first item in the key is always the root XML node for the whole display. This has now changed,
@@ -2780,8 +2459,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected bool IsVisibilityItemChecked(string visibility)
 		{
-			CheckDisposed();
-
 			XElement lastPartRef = null;
 			foreach (var obj in Key)
 			{
@@ -2802,19 +2479,17 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected internal virtual void SetWidthForDataTreeLayout(int width)
 		{
-			CheckDisposed();
-
 			if (Width != width)
 			{
 				Width = width;
 			}
 
 			m_widthHasBeenSetByDataTree = true;
-			m_splitContainer.Size = Size;
-			m_splitContainer.SplitterMoved -= mySplitterMoved;
-			if (!m_splitContainer.IsSplitterFixed)
+			SplitCont.Size = Size;
+			SplitCont.SplitterMoved -= mySplitterMoved;
+			if (!SplitCont.IsSplitterFixed)
 			{
-				m_splitContainer.SplitterMoved += mySplitterMoved;
+				SplitCont.SplitterMoved += mySplitterMoved;
 			}
 		}
 
@@ -2825,7 +2500,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private void mySplitterMoved(object sender, SplitterEventArgs e)
 		{
-			if (!m_splitContainer.Panel1Collapsed)
+			if (!SplitCont.Panel1Collapsed)
 			{
 				TreeNode.Invalidate();
 			}
@@ -2834,15 +2509,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Most slices are small, this keeps initial estimates more reasonable.
 		/// </summary>
-		protected override Size DefaultSize
-		{
-			get
-			{
-				CheckDisposed();
-
-				return new Size(400, 20);
-			}
-		}
+		protected override Size DefaultSize => new Size(400, 20);
 
 		/// <summary>
 		/// This is called when clearing the slice collection, or otherwise about to remove a slice
@@ -2852,7 +2519,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual void AboutToDiscard()
 		{
-			CheckDisposed();
 			BeingDiscarded = true;	// Remember that we're going away in case we need to know this for subsequent method calls.
 		}
 

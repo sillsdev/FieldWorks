@@ -21,15 +21,15 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		/// <summary/>
 		public FakeBrowseViewer()
 		{
-			m_scrollBar = new VScrollBar();
+			ScrollBar = new VScrollBar();
 			m_configureButton = new Button();
 			m_lvHeader = new DhListView(this);
-			m_scrollContainer = new BrowseViewScroller(this);
+			Scroller = new BrowseViewScroller(this);
 
 			// When running FieldWorks, the constructor eventually creates an XmlBrowseView and calls AddControl() with it,
 			// and adds m_scrollContainer to Controls. Model this so the .Dispose methods can behave the same way when
 			// testing as when running FieldWorks.
-			Controls.Add(m_scrollContainer);
+			Controls.Add(Scroller);
 			BrowseView = new FakeXmlBrowseViewBase(this);
 			AddControl(BrowseView);
 		}

@@ -121,14 +121,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override bool RefreshDisplay()
 		{
-			CheckDisposed();
 			return false;
 		}
 
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode)
 			{
 				return;
@@ -174,7 +171,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void HandleSelectionChange(IVwRootBox prootb, IVwSelection vwselNew)
 		{
-			CheckDisposed();
 			ITsString tssTyped;
 			int ich, hvo, tag, ws;
 			bool fAssocPrev;

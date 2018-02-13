@@ -68,8 +68,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode)
 			{
 				return;

@@ -85,7 +85,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			get
 			{
-				CheckDisposed();
 				return m_parseFiler;
 			}
 		}
@@ -98,8 +97,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <param name="sSelectTraceMorphs">list of msa hvos to limit trace to </param>
 		public void TryAWord(string sForm, bool fDoTrace, int[] sSelectTraceMorphs)
 		{
-			CheckDisposed();
-
 			if (sForm == null)
 				throw new ArgumentNullException("sForm", "TryAWord cannot trace a Null string.");
 			if (sForm == String.Empty)
@@ -115,8 +112,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public bool UpdateWordform(IWfiWordform wordform, ParserPriority priority)
 		{
-			CheckDisposed();
-
 			int wordformHash = 0;
 			ITsString form = null;
 			int hvo = 0;
@@ -152,8 +147,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public void ReloadGrammarAndLexicon()
 		{
-			CheckDisposed();
-
 			m_parser.Reset();
 			CheckNeedsUpdate();
 		}

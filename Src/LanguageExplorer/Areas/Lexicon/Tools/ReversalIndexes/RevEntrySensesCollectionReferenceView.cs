@@ -65,8 +65,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <summary />
 		protected override void HandleSelectionChange(IVwRootBox rootb, IVwSelection vwselNew)
 		{
-			CheckDisposed();
-
 			if (m_handlingSelectionChanged)
 			{
 				return;

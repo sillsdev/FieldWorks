@@ -90,8 +90,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal override void BrowseViewMouseUp(MouseEventArgs e)
 		{
-			CheckDisposed();
-
 			var dpiX = GetDpiX();
 			var selColWidth = BrowseView.Vc.SelectColumnWidth * dpiX / 72000;
 			if (BrowseView.Vc.HasSelectColumn && e.X < selColWidth)

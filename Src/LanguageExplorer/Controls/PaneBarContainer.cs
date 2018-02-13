@@ -116,30 +116,10 @@ namespace LanguageExplorer.Controls
 
 		#endregion Properties
 
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
 		#region IMainUserControl implementation
 
 		/// <summary />
-		public string AccName
-		{
-			get
-			{
-				CheckDisposed();
-				return "PaneBarContainer";
-			}
-		}
+		public string AccName => "PaneBarContainer";
 
 		/// <summary>
 		/// Get/set string that will trigger a message box to show.
@@ -154,20 +134,11 @@ namespace LanguageExplorer.Controls
 		/// <summary />
 		public bool PrepareToGoAway()
 		{
-			CheckDisposed();
-
 			return ((IMainContentControl)MainControl).PrepareToGoAway();
 		}
 
 		/// <summary />
-		public string AreaName
-		{
-			get
-			{
-				CheckDisposed();
-				return ((IMainContentControl)MainControl).AreaName;
-			}
-		}
+		public string AreaName => ((IMainContentControl)MainControl).AreaName;
 
 		#endregion IMainContentControl implementation
 

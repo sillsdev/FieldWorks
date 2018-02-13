@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Windows.Forms;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -74,11 +73,11 @@ namespace LanguageExplorer.Controls.LexText
 			UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoInsertPhonologicalFeature, LexTextControls.ksRedoInsertPhonologicalFeature,
 				m_cache.ActionHandlerAccessor, () =>
 			{
-				m_selFeatDefn = m_cache.ServiceLocator.GetInstance<IFsClosedFeatureFactory>().Create();
-				m_cache.LangProject.PhFeatureSystemOA.FeaturesOC.Add(m_selFeatDefn);
+				SelectedFeatDefn = m_cache.ServiceLocator.GetInstance<IFsClosedFeatureFactory>().Create();
+				m_cache.LangProject.PhFeatureSystemOA.FeaturesOC.Add(SelectedFeatDefn);
 
 				IFsSymFeatVal symFV;
-				var closed = m_selFeatDefn as IFsClosedFeature;
+				var closed = SelectedFeatDefn as IFsClosedFeature;
 				if (closed != null)
 				{
 					var symFeatFactory = m_cache.ServiceLocator.GetInstance<IFsSymFeatValFactory>();

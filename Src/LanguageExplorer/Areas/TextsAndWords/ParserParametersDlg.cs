@@ -7,7 +7,6 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -19,13 +18,11 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	internal sealed class ParserParametersDlg : Form
 	{
 		private const string HelpTopic = "khtpParserParamters";
-
 		private const string HC = "HC";
 		private const string DelReapps = "DelReapps";
 		private const string NotOnClitics = "NotOnClitics";
 		private const string NoDefaultCompounding = "NoDefaultCompounding";
 		private const string AcceptUnspecifiedGraphemes = "AcceptUnspecifiedGraphemes";
-
 		private const string XAmple = "XAmple";
 		private const string MaxNulls = "MaxNulls";
 		private const string MaxPrefixes = "MaxPrefixes";
@@ -36,12 +33,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private const string MaxAnalysesToReturn = "MaxAnalysesToReturn";
 
 		#region Data members
-
-		/// <summary>
-		/// member strings
-		/// </summary>
-		private string m_sXmlParameters;
-
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private Label m_label1;
 		private Label m_label2;
@@ -71,34 +62,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		///Get or set the parser parameters XML text
 		///</summary>
-		public string XmlRep
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_sXmlParameters;
-			}
-			set
-			{
-				CheckDisposed();
-
-				m_sXmlParameters = value;
-			}
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
+		public string XmlRep { get; set; }
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -275,8 +239,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public void SetDlgInfo(string title, string parserParameters)
 		{
-			CheckDisposed();
-
 			XmlRep = parserParameters;
 			Text = title;
 

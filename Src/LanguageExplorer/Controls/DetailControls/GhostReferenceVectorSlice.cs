@@ -35,7 +35,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.FinishInit();
 
 			// I (RBR) used to call InitializeFlexComponent here, but that was a second call for the slice, so it failed the checks that don't like repeat calls.
-			((GhostReferenceVectorLauncher)Control).Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, DisplayNameProperty, BestWsName);
+			((GhostReferenceVectorLauncher)Control).Initialize(Cache, Object, m_flid, m_fieldName, PersistenceProvider, DisplayNameProperty, BestWsName);
 		}
 
 		// Copied from ReferenceVectorSlice for initializing GhostReferenceVectorLauncher...may not be used.

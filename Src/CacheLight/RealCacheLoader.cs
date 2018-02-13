@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -34,18 +34,6 @@ namespace SIL.FieldWorks.CacheLight
 		}
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
 
 		/// <summary>
 		/// True, if the object has been disposed.
@@ -153,8 +141,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <returns></returns>
 		public ISilDataAccess LoadCache(string metadataPathname, string realDataPathname, Dictionary<int, int> objects)
 		{
-			CheckDisposed();
-
 			m_realDataCache = new RealDataCache {CheckWithMDC = false, TsStrFactory = TsStringUtils.TsStrFactory};
 
 			try

@@ -51,8 +51,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		private void AddItem(ICmObject newObj)
 		{
-			CheckDisposed();
-
 			var fForVariant = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationNode, "forVariant", false);
 			string sUndo, sRedo;
 			if (fForVariant)

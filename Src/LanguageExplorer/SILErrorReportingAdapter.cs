@@ -79,14 +79,6 @@ namespace LanguageExplorer
 
 		#region IDisposable
 
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
 		public bool IsDisposed { get; private set; }
 
 		/// <summary>

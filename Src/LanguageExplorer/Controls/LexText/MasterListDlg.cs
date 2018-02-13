@@ -23,7 +23,6 @@ namespace LanguageExplorer.Controls.LexText
 		protected IPropertyTable m_propertyTable;
 		protected LcmCache m_cache;
 		protected IHelpTopicProvider m_helpTopicProvider;
-		protected IFsFeatDefn m_selFeatDefn;
 		protected IFsFeatureSystem m_featureSystem;
 		protected bool m_skipEvents;
 		protected string m_sClassName;
@@ -98,19 +97,6 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose( bool disposing )
@@ -128,21 +114,14 @@ namespace LanguageExplorer.Controls.LexText
 				m_tvMasterList?.Dispose();
 			}
 			m_cache = null;
-			m_selFeatDefn = null;
+			SelectedFeatDefn = null;
 			m_featureList = null;
 			m_tvMasterList = null;
 
 			base.Dispose( disposing );
 		}
 
-		public IFsFeatDefn SelectedFeatDefn
-		{
-			get
-			{
-				CheckDisposed();
-				return m_selFeatDefn;
-			}
-		}
+		public IFsFeatDefn SelectedFeatDefn { get; protected set; }
 
 		///  <summary />
 		public void SetDlginfo(IFsFeatureSystem featSys, IPropertyTable propertyTable, bool launchedFromInsertMenu)
@@ -155,8 +134,6 @@ namespace LanguageExplorer.Controls.LexText
 		///  <summary />
 		public void SetDlginfo(IFsFeatureSystem featSys, IPropertyTable propertyTable, bool launchedFromInsertMenu, string sWindowKey, string sXmlFile)
 		{
-			CheckDisposed();
-
 			m_featureSystem = featSys;
 			m_featureList = featSys.FeaturesOC;
 			m_launchedFromInsertMenu = launchedFromInsertMenu;
@@ -453,7 +430,7 @@ namespace LanguageExplorer.Controls.LexText
 			switch (DialogResult)
 			{
 				default:
-					m_selFeatDefn = null;
+					SelectedFeatDefn = null;
 					break;
 				case DialogResult.OK:
 				{
@@ -469,7 +446,7 @@ namespace LanguageExplorer.Controls.LexText
 							if (mi != null)
 							{
 								mi.AddToDatabase(m_cache);
-								m_selFeatDefn = mi.FeatureDefn;
+								SelectedFeatDefn = mi.FeatureDefn;
 							}
 						}
 					}
@@ -510,7 +487,7 @@ namespace LanguageExplorer.Controls.LexText
 						continue;
 					}
 					mi.AddToDatabase(m_cache);
-					m_selFeatDefn = mi.FeatureDefn;
+					SelectedFeatDefn = mi.FeatureDefn;
 				}
 			}
 		}

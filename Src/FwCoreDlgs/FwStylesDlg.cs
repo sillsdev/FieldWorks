@@ -306,21 +306,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_styleTable.ConnectStyles();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException(
-					string.Format("'{0}' in use after being disposed.", GetType().Name));
-			}
-		}
 		#endregion
 
 		#region Public properties
@@ -385,8 +370,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public int DisplayDialog()
 		{
-			CheckDisposed();
-
 			return (int)this.ShowDialog();
 		}
 
@@ -398,7 +381,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public StyleChangeType ChangeType
 		{
-			get { CheckDisposed(); return m_changeType; }
+			get { return m_changeType; }
 		}
 		#endregion
 

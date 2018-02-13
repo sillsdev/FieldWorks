@@ -120,8 +120,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		internal bool ExportPhase1(out DiscourseExporter exporter, string fileName)
 		{
-			CheckDisposed();
-
 			using (var writer = new XmlTextWriter(fileName, System.Text.Encoding.UTF8))
 			{
 				writer.WriteStartDocument();

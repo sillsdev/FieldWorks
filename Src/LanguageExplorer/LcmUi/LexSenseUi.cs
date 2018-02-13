@@ -99,8 +99,6 @@ namespace LanguageExplorer.LcmUi
 
 		public override void MoveUnderlyingObjectToCopyOfOwner()
 		{
-			CheckDisposed();
-
 			var obj = Object.Owner;
 			var clid = obj.ClassID;
 			while (clid != LexEntryTags.kClassId)

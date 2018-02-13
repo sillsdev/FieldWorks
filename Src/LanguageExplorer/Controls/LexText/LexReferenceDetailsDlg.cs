@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -59,12 +58,10 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				CheckDisposed();
 				return m_tbName.Text;
 			}
 			set
 			{
-				CheckDisposed();
 				m_tbName.Text = value;
 			}
 		}
@@ -73,26 +70,11 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				CheckDisposed();
 				return m_tbComment.Text;
 			}
 			set
 			{
-				CheckDisposed();
 				m_tbComment.Text = value;
-			}
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 			}
 		}
 

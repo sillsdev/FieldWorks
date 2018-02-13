@@ -26,7 +26,6 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </remarks>
 	public class FilterSortItem : IDisposable
 	{
-		private XElement m_viewSpec;
 		private IStringFinder m_finder;
 		private FwComboBox m_combo;
 		private IMatcher m_matcher;
@@ -38,20 +37,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		public event FilterChangeHandler FilterChanged;
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -130,7 +115,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_viewSpec = null;
+			Spec = null;
 			m_combo = null;
 			m_finder = null;
 			m_sorter = null;
@@ -145,19 +130,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets or sets the spec.
 		/// </summary>
-		public XElement Spec
-		{
-			get
-			{
-				CheckDisposed();
-				return m_viewSpec;
-			}
-			set
-			{
-				CheckDisposed();
-				m_viewSpec = value;
-			}
-		}
+		public XElement Spec { get; set; }
 
 		/// <summary>
 		/// Gets or sets the finder.
@@ -167,12 +140,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				return m_finder;
 			}
 			set
 			{
-				CheckDisposed();
 				(m_finder as IDisposable)?.Dispose();
 
 				m_finder = value;
@@ -187,12 +158,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				return m_combo;
 			}
 			set
 			{
-				CheckDisposed();
 				(m_combo as IDisposable)?.Dispose();
 				m_combo = value;
 			}
@@ -205,13 +174,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				return m_matcher;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_matcher = value;
 				if (m_matcher != null && m_matcher.WritingSystemFactory == null && m_combo != null)
 				{
@@ -228,12 +194,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				return m_sorter;
 			}
 			set
 			{
-				CheckDisposed();
 				(m_sorter as IDisposable)?.Dispose();
 				m_sorter = value;
 			}
@@ -248,13 +212,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				return m_filter;
 			}
 			set
 			{
-				CheckDisposed();
-
 				var old = m_filter;
 				m_filter = value;
 				m_FiltersToDispose.Add(value);
@@ -273,8 +234,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public bool SetFromFilter(RecordFilter filter)
 		{
-			CheckDisposed();
-
 			// Need to set even if set previously. Otherwise it doesn't refresh properly.
 			//if (filter == m_filter)
 			//	return true;  // we're already set.

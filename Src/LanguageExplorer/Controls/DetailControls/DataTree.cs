@@ -69,14 +69,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// in the mananged section, as when disposing was done by the Finalizer.
 		/// </summary>
 		private ISilDataAccess m_sda;
-		/// <summary />
-		protected LcmCache m_cache;
-		/// <summary>the descendent object that is being displayed</summary>
-		protected ICmObject m_descendant;
+
 		/// <summary>allows us to interpret class and field names and trace superclasses.</summary>
 		protected IFwMetaDataCache m_mdc;
-		/// <summary />
-		protected ICmObject m_root;
+
 		/// <summary />
 		protected Slice m_currentSlice;
 		/// <summary>used to restore current slice during RefreshList()</summary>
@@ -91,8 +87,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private string m_sPartNameProperty;
 		/// <summary>used to restore current slice during RefreshList()</summary>
 		private string m_sObjGuidProperty;
-		/// <summary />
-		protected string m_rootLayoutName = "default";
+
 		/// <summary />
 		protected string m_layoutChoiceField;
 		/// <summary>This is the position a splitter would be if we had a single one, the actual
@@ -106,15 +101,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected Inventory m_partInventory;
 		/// <summary />
 		protected internal bool m_fHasSplitter;
-		/// <summary />
-		protected SliceFilter m_sliceFilter;
+
 		/// <summary>Set of KeyValuePair objects (hvo, flid), properties for which we must refresh if altered.</summary>
 		protected HashSet<Tuple<int, int>> m_monitoredProps = new HashSet<Tuple<int, int>>();
 		/// <summary>Number of times DeepSuspendLayout has been called without matching DeepResumeLayout.</summary>
 		protected int m_cDeepSuspendLayoutCount;
-		protected IPersistenceProvider m_persistenceProvider;
+
 		protected LcmStyleSheet m_styleSheet;
-		protected bool m_fShowAllFields;
+
 		/// <summary>
 		/// used for slice tree nodes. All tooltips are cleared when we switch records!
 		/// </summary>
@@ -128,7 +122,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected IRecordListUpdater m_rlu;
 		protected string m_listName;
 		bool m_fDisposing;
-		bool m_fRefreshListNeeded;
+
 		/// <summary>
 		/// this helps DataTree delay from setting focus in a slice, until we're all setup to do so.
 		/// </summary>
@@ -185,15 +179,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#region Slice collection manipulation methods
 
-		private ToolTip ToolTip
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_tooltip ?? (m_tooltip = new ToolTip {ShowAlways = true});
-			}
-		}
+		private ToolTip ToolTip => m_tooltip ?? (m_tooltip = new ToolTip {ShowAlways = true});
 
 		private void InsertSliceAndRegisterWithContextHelp(int index, Slice slice)
 		{
@@ -325,8 +311,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal void RawSetSlice(int index, Slice slice)
 		{
-			CheckDisposed();
-
 			Debug.Assert(slice != Slices[index], "Can't replace the slice with itself.");
 
 			RemoveSliceAt(index);
@@ -446,16 +430,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Get the root layout name.
 		/// </summary>
-		public string RootLayoutName
-		{
-			// NB: The DataTree has not been written to handle swapping layouts,
-			// so no 'Setter' is provided.
-			get
-			{
-				CheckDisposed();
-				return m_rootLayoutName;
-			}
-		}
+		public string RootLayoutName { get; protected set; } = "default";
 
 		/// <summary>
 		/// Get/Set a stylesheet suitable for use in views.
@@ -470,18 +445,16 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
-				if (m_styleSheet == null && m_cache != null)
+				if (m_styleSheet == null && Cache != null)
 				{
 					m_styleSheet = new LcmStyleSheet();
-					m_styleSheet.Init(m_cache, m_cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
+					m_styleSheet.Init(Cache, Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
 				}
 				return m_styleSheet;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_styleSheet = value;
 			}
 
@@ -489,26 +462,17 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			CheckDisposed();
-			// No, since it can only be null, if 'this' has been disposed.
-			// That probably means the corresponding RemoveNotication was not done.
-			// The current Dispose method has done this Remove call for quite a while now,
-			// so if we still get here with it being null, something else is really broken.
-			// We'll go with throwing a disposed exception for now, to see whomight still be
-			// mis-behaving.
-			//if (m_monitoredProps == null)
-			//	return;
 			if (m_monitoredProps.Contains(Tuple.Create(hvo, tag)))
 			{
 				RefreshList(false);
 				OnFocusFirstPossibleSlice(null);
 			}
 			// Note, in LinguaLinks import we don't have an action handler when we hit this.
-			else if (m_cache.DomainDataByFlid.GetActionHandler() != null && m_cache.DomainDataByFlid.GetActionHandler().IsUndoOrRedoInProgress)
+			else if (Cache.DomainDataByFlid.GetActionHandler() != null && Cache.DomainDataByFlid.GetActionHandler().IsUndoOrRedoInProgress)
 			{
 				// Redoing an Add or Undoing a Delete may not have an existing slice to work with, so just force
 				// a list refresh.  See LT-6033.
-				if (m_root != null && hvo == m_root.Hvo)
+				if (Root != null && hvo == Root.Hvo)
 				{
 					var type = (CellarPropertyType)m_mdc.GetFieldType(tag);
 					if (type == CellarPropertyType.OwningCollection ||
@@ -531,14 +495,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Tells whether we are showing all fields, or just the ones requested.
 		/// </summary>
-		public bool ShowingAllFields
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fShowAllFields;
-			}
-		}
+		public bool ShowingAllFields { get; protected set; }
 
 		/// <summary>
 		/// Return the slice which should receive commands.
@@ -559,14 +516,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				// Trap this before the throw to give the debugger a chance to analyze.
 				Debug.Assert(m_currentSlice == null || !m_currentSlice.IsDisposed, "CurrentSlice is already disposed??");
-				CheckDisposed();
 
 				return m_currentSlice;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (value == null)
 				{
 					throw new ArgumentException("CurrentSlice on DataTree cannot be set to null. Set the underlying data member to null, if you really want it to be null.");
@@ -623,7 +577,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				Invalidate();	// .Refresh();
 
 				// update the current descendant
-				m_descendant = DescendantForSlice(m_currentSlice);
+				Descendant = DescendantForSlice(m_currentSlice);
 
 				CurrentSliceChanged?.Invoke(this, new EventArgs());
 			}
@@ -642,7 +596,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// if there is not parent slice, we must be on a root slice
 				if (loopSlice.ParentSlice == null)
 				{
-					return m_root;
+					return Root;
 				}
 				// if we are on a header slice, the slice's object is the descendant
 				if (loopSlice.IsHeaderNode)
@@ -654,7 +608,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// The following (along with the Disposed check above) prevents
 			// LT-11455 Crash if we delete the last compound rule.
 			// And LT-11463 Crash if Lexeme Form is filtered to Blanks.
-			return m_root.IsValidObject ? m_root : null;
+			return Root.IsValidObject ? Root : null;
 		}
 
 		/// <summary>
@@ -664,8 +618,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
-
 				// Start at the end of the list, since we usually put SubPossibilities there.
 				var i = Slices.Count - 1;
 				for (; i >= 0; --i)
@@ -699,27 +651,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		public ICmObject Root
-		{
-			get
-			{
-				CheckDisposed();
-				return m_root;
-			}
-		}
+		public ICmObject Root { get; protected set; }
 
-		public ICmObject Descendant
-		{
-			get
-			{
-				CheckDisposed();
-				return m_descendant;
-			}
-		}
+		public ICmObject Descendant { get; protected set; }
 
 		public void Reset()
 		{
-			CheckDisposed();
 			var savedLayoutState = m_layoutState;
 			m_layoutState = LayoutStates.klsClearingAll;
 			try
@@ -742,7 +679,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// A tooltip doesn't always exist: see LT-11441, LT-11442, and LT-11444.
 				m_tooltip?.RemoveAll();
 
-				m_root = null;
+				Root = null;
 			}
 			finally
 			{
@@ -776,16 +713,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_sliceSplitPositionBase;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (value == m_sliceSplitPositionBase)
+				{
 					return;
+				}
 
 				m_sliceSplitPositionBase = value;
 				PersistPreferences();
@@ -808,33 +743,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// a look up table for getting the correct version of strings that the user will see.
 		/// </summary>
-		public SliceFilter SliceFilter
-		{
-			get
-			{
-				CheckDisposed();
-				return m_sliceFilter;
-			}
-			set
-			{
-				CheckDisposed();
-				m_sliceFilter = value;
-			}
-		}
+		public SliceFilter SliceFilter { get; set; }
 
-		public IPersistenceProvider PersistenceProvder
-		{
-			set
-			{
-				CheckDisposed();
-				m_persistenceProvider= value;
-			}
-			get
-			{
-				CheckDisposed();
-				return m_persistenceProvider;
-			}
-		}
+		public IPersistenceProvider PersistenceProvder { get; set; }
 
 		private void MonoIgnoreUpdates()
 		{
@@ -861,17 +772,15 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual void ShowObject(ICmObject root, string layoutName, string layoutChoiceField, ICmObject descendant, bool suppressFocusChange)
 		{
-			CheckDisposed();
-
-			if (m_root == root && layoutName == m_rootLayoutName && layoutChoiceField == m_layoutChoiceField && m_descendant == descendant)
+			if (Root == root && layoutName == RootLayoutName && layoutChoiceField == m_layoutChoiceField && Descendant == descendant)
 			{
 				return;
 			}
 
 			var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 			// Initialize our internal state with the state of the PropertyTable
-			m_fShowAllFields = PropertyTable.GetValue("ShowHiddenFields-" + toolChoice, SettingsGroup.LocalSettings, false);
-			PropertyTable.SetDefault("ShowHiddenFields", m_fShowAllFields, SettingsGroup.LocalSettings, true, false);
+			ShowingAllFields = PropertyTable.GetValue("ShowHiddenFields-" + toolChoice, SettingsGroup.LocalSettings, false);
+			PropertyTable.SetDefault("ShowHiddenFields", ShowingAllFields, SettingsGroup.LocalSettings, true, false);
 			SetCurrentSlicePropertyNames();
 			m_currentSlicePartName = PropertyTable.GetValue<string>(m_sPartNameProperty, SettingsGroup.LocalSettings);
 			m_currentSliceObjGuid = PropertyTable.GetValue(m_sObjGuidProperty, SettingsGroup.LocalSettings, Guid.Empty);
@@ -885,20 +794,20 @@ namespace LanguageExplorer.Controls.DetailControls
 			DeepSuspendLayout();
 			try
 			{
-				m_rootLayoutName = layoutName;
+				RootLayoutName = layoutName;
 				m_layoutChoiceField = layoutChoiceField;
-				Debug.Assert(m_cache != null, "You need to call Initialize() first.");
+				Debug.Assert(Cache != null, "You need to call Initialize() first.");
 
-				if (m_root != root)
+				if (Root != root)
 				{
-					m_root = root;
+					Root = root;
 					if (m_rch != null)
 					{
 						// We need to refresh the record list if homograph numbers change.
 						// Do it for the old object.
 						m_rch.Fixup(true);
 						// Root has changed, so reset the handler.
-						m_rch.Setup(m_root, m_rlu, Cache);
+						m_rch.Setup(Root, m_rlu, Cache);
 					}
 					Invalidate(); // clears any lines left over behind slices.
 					CreateSlices(true);
@@ -909,7 +818,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						SetCurrentSliceNewFromObject(descendant);
 					}
 				}
-				else if (m_descendant != descendant)
+				else if (Descendant != descendant)
 				{
 					// we are on the same root, but different descendant
 					if (root != descendant)
@@ -922,7 +831,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					RefreshList(false);  // This could be optimized more, too, but it isn't the common case.
 				}
 
-				m_descendant = descendant;
+				Descendant = descendant;
 				AutoScrollPosition = new Point(0, 0); // start new object at top (unless first focusable slice changes it).
 #if RANDYTODO
 				// We can't focus yet because the data tree slices haven't finished displaying.
@@ -1008,15 +917,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#region Sequential message processing enforcement
 
-		private IFwMainWnd ContainingWindow
-		{
-			get
-			{
-				CheckDisposed();
-
-				return PropertyTable.GetValue<IFwMainWnd>("window");
-			}
-		}
+		private IFwMainWnd ContainingWindow => PropertyTable.GetValue<IFwMainWnd>("window");
 
 		/// <summary>
 		/// Begin a block of code which, even though it is not itself a message handler,
@@ -1028,8 +929,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns></returns>
 		private void BeginSequentialBlock()
 		{
-			CheckDisposed();
-
 			var mainWindow = ContainingWindow;
 			mainWindow?.SuspendIdleProcessing();
 		}
@@ -1039,8 +938,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private void EndSequentialBlock()
 		{
-			CheckDisposed();
-
 			var mainWindow = ContainingWindow;
 			mainWindow?.ResumeIdleProcessing();
 		}
@@ -1053,8 +950,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal void DeepSuspendLayout()
 		{
-			CheckDisposed();
-
 			Debug.Assert(m_cDeepSuspendLayoutCount >= 0);
 
 			if (m_cDeepSuspendLayoutCount == 0)
@@ -1071,8 +966,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal void DeepResumeLayout()
 		{
-			CheckDisposed();
-
 			Debug.Assert(m_cDeepSuspendLayoutCount > 0);
 
 			m_cDeepSuspendLayoutCount--;
@@ -1093,7 +986,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// (Otherwise we would normally do this in initializeComponent.)
 			m_fHasSplitter = fHasSplitter;
 			m_mdc = cache.DomainDataByFlid.MetaDataCache;
-			m_cache = cache;
+			Cache = cache;
 		}
 
 		/// <summary>
@@ -1101,7 +994,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void Initialize(LcmCache cache, bool fHasSplitter, Inventory layouts, Inventory parts)
 		{
-			CheckDisposed();
 			m_layoutInventory = layouts;
 			m_partInventory = parts;
 			InitializeBasic(cache, fHasSplitter);
@@ -1111,7 +1003,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected void InitializeComponentBasic()
 		{
 			// Set up property change notification.
-			m_sda = m_cache.DomainDataByFlid;
+			m_sda = Cache.DomainDataByFlid;
 			m_sda.AddNotification(this);
 
 			// Currently we inherit from UserControl, which doesn't have a border. If we
@@ -1128,9 +1020,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				DeepSuspendLayout();
 				// NB: The ArrayList created here can hold disparate objects, such as XmlNodes and ints.
-				if (m_root != null)
+				if (Root != null)
 				{
-					CreateSlicesFor(m_root, null, null, null, 0, 0, new ArrayList(20), new ObjSeqHashMap(), null);
+					CreateSlicesFor(Root, null, null, null, 0, 0, new ArrayList(20), new ObjSeqHashMap(), null);
 				}
 			}
 			finally
@@ -1191,16 +1083,16 @@ namespace LanguageExplorer.Controls.DetailControls
 			SliceContextMenuFactory = null;
 			m_sda = null;
 			m_currentSlice = null;
-			m_root = null;
-			m_cache = null;
+			Root = null;
+			Cache = null;
 			m_mdc = null;
 			m_rch = null;
-			m_rootLayoutName = null;
+			RootLayoutName = null;
 			m_layoutInventory = null;
 			m_partInventory = null;
-			m_sliceFilter = null;
+			SliceFilter = null;
 			m_monitoredProps = null;
-			m_persistenceProvider = null;
+			PersistenceProvder = null;
 			m_styleSheet = null; // We may have made it, or been given it.
 			m_tooltip = null;
 			m_rlu = null;
@@ -1212,27 +1104,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
-		/// Throw if the IsDisposed property is true
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException("DataTree", "This object is being used after it has been disposed: this is an Error.");
-			}
-		}
-
-		/// <summary>
 		/// width of labels. Todo: this should be variable, and controlled by splitters in slices.
 		/// </summary>
-		public int LabelWidth
-		{
-			get
-			{
-				CheckDisposed();
-				return 40;
-			}
-		}
+		public int LabelWidth => 40;
 
 		private void PersistPreferences()
 		{
@@ -1265,19 +1139,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Let's us know that we should do a RefreshList() to update all our non-reusable slices.
 		/// </summary>
-		internal bool RefreshListNeeded
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fRefreshListNeeded;
-			}
-			set
-			{
-				CheckDisposed();
-				m_fRefreshListNeeded = value;
-			}
-		}
+		internal bool RefreshListNeeded { get; set; }
 
 		/// <summary>
 		/// This flags whether to prevent the data tree from being "refreshed".  When going from
@@ -1287,12 +1149,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fDoNotRefresh;
 			}
 			set
 			{
-				CheckDisposed();
 				var fOldValue = m_fDoNotRefresh;
 				m_fDoNotRefresh = value;
 				if (m_fDoNotRefresh || !fOldValue || !RefreshListNeeded)
@@ -1319,7 +1179,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </remarks>
 		public virtual void RefreshList(bool differentObject)
 		{
-			CheckDisposed();
 			if (m_fDoNotRefresh)
 			{
 				RefreshListNeeded = true;
@@ -1361,13 +1220,13 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 
 					// Make sure we invalidate the root object if it's been deleted.
-					if (m_root != null && !m_root.IsValidObject)
+					if (Root != null && !Root.IsValidObject)
 					{
 						Reset();
 					}
 
 					// Make a new root object...just in case it changed class.
-					m_root = m_root?.Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_root.Hvo);
+					Root = Root?.Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(Root.Hvo);
 
 					Invalidate(true); // forces all children to invalidate also
 					CreateSlices(differentObject);
@@ -1475,7 +1334,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					RemoveSlice(slice);
 				}
 				previousSlices.ClearUnwantedPart(differentObject);
-				CreateSlicesFor(m_root, null, m_rootLayoutName, m_layoutChoiceField, 0, 0, new ArrayList(20), previousSlices, null);
+				CreateSlicesFor(Root, null, RootLayoutName, m_layoutChoiceField, 0, 0, new ArrayList(20), previousSlices, null);
 				// Clear out any slices NOT reused. RemoveSlice both
 				// removes them from the DataTree's controls collection and disposes them.
 				foreach (var gonner in previousSlices.Values)
@@ -1515,8 +1374,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual bool RefreshDisplay()
 		{
-			CheckDisposed();
-
 			RefreshList(true);
 			return true;
 		}
@@ -1631,24 +1488,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// This is the main DataTreeDiagram if not using a splitter, and the extra right-
 		/// hand pane if using one.
 		/// </summary>
-		public UserControl SliceControlContainer
-		{
-			get
-			{
-				CheckDisposed();
-				return this;
-			}
-		}
+		public UserControl SliceControlContainer => this;
 
 		/// <summary />
-		public LcmCache Cache
-		{
-			get
-			{
-				CheckDisposed();
-				return m_cache;
-			}
-		}
+		public LcmCache Cache { get; protected set; }
 
 		/// <summary>
 		/// Create slices for the specified object by finding a relevant template in the spec.
@@ -1659,8 +1502,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		public virtual int CreateSlicesFor(ICmObject obj, Slice parentSlice, string layoutName, string layoutChoiceField, int indent,
 			int insertPosition, ArrayList path, ObjSeqHashMap reuseMap, XElement unifyWith)
 		{
-			CheckDisposed();
-
 			// NB: 'path' can hold either ints or XmlNodes, so a generic can't be used for it.
 			if (obj == null)
 			{
@@ -1688,12 +1529,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			string choiceGuidStr = null;
 			if (!string.IsNullOrEmpty(layoutChoiceField))
 			{
-				var flid = m_cache.MetaDataCacheAccessor.GetFieldId2(obj.ClassID, layoutChoiceField, true);
+				var flid = Cache.MetaDataCacheAccessor.GetFieldId2(obj.ClassID, layoutChoiceField, true);
 				m_monitoredProps.Add(Tuple.Create(obj.Hvo, flid));
-				var hvo = m_cache.DomainDataByFlid.get_ObjectProp(obj.Hvo, flid);
+				var hvo = Cache.DomainDataByFlid.get_ObjectProp(obj.Hvo, flid);
 				if (hvo != 0)
 				{
-					choiceGuidStr = m_cache.ServiceLocator.GetObject(hvo).Guid.ToString();
+					choiceGuidStr = Cache.ServiceLocator.GetObject(hvo).Guid.ToString();
 				}
 			}
 
@@ -1814,7 +1655,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </returns>
 		public int ApplyLayout(ICmObject obj, Slice parentSlice, XElement template, int indent, int insertPosition, ArrayList path, ObjSeqHashMap reuseMap)
 		{
-			CheckDisposed();
 			NodeTestResult ntr;
 			return ApplyLayout(obj, parentSlice, template, indent, insertPosition, path, reuseMap, false, out ntr);
 		}
@@ -1928,7 +1768,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						}
 					}
 					var visibility = "always";
-					if (!m_fShowAllFields)
+					if (!ShowingAllFields)
 					{
 						visibility = XmlUtils.GetOptionalAttributeValue(partRef, "visibility", "always");
 						if (visibility == "never")
@@ -1972,7 +1812,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal NodeTestResult ProcessPartChildren(XElement part, ArrayList path, ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice, int indent, ref int insPos, bool isTestOnly, string parameter, bool fVisIfData, XElement caller)
 		{
-			CheckDisposed();
 			// The children of the part element must now be processed. Often there is only one.
 			foreach (var node in part.Elements())
 			{
@@ -2001,7 +1840,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				clsid = obj.Cache.MetaDataCacheAccessor.GetBaseClsId(clsid);
 			}
 			//for each custom field, we need to construct or reuse the kind of element that would normally be found in the XDE file
-			foreach (var field in FieldDescription.FieldDescriptors(m_cache))
+			foreach (var field in FieldDescription.FieldDescriptors(Cache))
 			{
 				if (!field.IsCustomField || !interestingClasses.Contains(field.Class))
 				{
@@ -2087,7 +1926,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				editor = editor?.ToLower();
 				var flid = GetFlidFromNode(node, obj);
 
-				if (m_sliceFilter != null && flid != 0 && !m_sliceFilter.IncludeSlice(node, obj, flid, m_monitoredProps))
+				if (SliceFilter != null && flid != 0 && !SliceFilter.IncludeSlice(node, obj, flid, m_monitoredProps))
 				{
 					return NodeTestResult.kntrNothing;
 				}
@@ -2110,7 +1949,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						fVisIfData, caller);
 
 					case "if":
-						if (XmlVc.ConditionPasses(node, obj.Hvo, m_cache))
+						if (XmlVc.ConditionPasses(node, obj.Hvo, Cache))
 						{
 							var ntr = ProcessPartChildren(node, path, reuseMap, obj, parentSlice, indent, ref insertPosition, fTestOnly, parameter, fVisIfData, caller);
 							if (fTestOnly && ntr != NodeTestResult.kntrNothing)
@@ -2121,7 +1960,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						break;
 
 					case "ifnot":
-						if (!XmlVc.ConditionPasses(node, obj.Hvo, m_cache))
+						if (!XmlVc.ConditionPasses(node, obj.Hvo, Cache))
 						{
 							var ntr = ProcessPartChildren(node, path, reuseMap, obj, parentSlice, indent, ref insertPosition, fTestOnly, parameter, fVisIfData, caller);
 							if (fTestOnly && ntr != NodeTestResult.kntrNothing)
@@ -2136,7 +1975,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						{
 							if (clause.Name == "where")
 							{
-								if (!XmlVc.ConditionPasses(clause, obj.Hvo, m_cache))
+								if (!XmlVc.ConditionPasses(clause, obj.Hvo, Cache))
 								{
 									continue;
 								}
@@ -2254,7 +2093,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				throw new ApplicationException($"field attribute required for atomic properties {node.GetOuterXml()}");
 			}
-			var innerObj = m_cache.GetAtomicPropObject(m_cache.DomainDataByFlid.get_ObjectProp(obj.Hvo, flid));
+			var innerObj = Cache.GetAtomicPropObject(Cache.DomainDataByFlid.get_ObjectProp(obj.Hvo, flid));
 			m_monitoredProps.Add(Tuple.Create(obj.Hvo, flid));
 			if (fVisIfData && innerObj == null)
 			{
@@ -2299,7 +2138,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var slice = GetMatchingSlice(path, reuseMap);
 			if (slice == null)
 			{
-				slice = new GhostStringSlice(obj, flidEmptyProp, node, m_cache);
+				slice = new GhostStringSlice(obj, flidEmptyProp, node, Cache);
 				slice.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				// Set the label and abbreviation (in that order...abbr defaults to label if not given.
 				// Note that we don't have a "caller" here, so we pass 'node' as both arguments...
@@ -2310,7 +2149,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Install new item at appropriate position and level.
 				slice.Indent = indent;
 				slice.Object = obj;
-				slice.Cache = m_cache;
+				slice.Cache = Cache;
 
 				// We need a copy since we continue to modify path, so make it as compact as possible.
 				slice.Key = path.ToArray();
@@ -2349,9 +2188,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				m_currentObjectFlids.Add(flidOwning);
 			}
-			for (var hvo = hvoOwner; hvo != 0; hvo = m_cache.ServiceLocator.GetObject(hvo).Owner == null ? 0 : m_cache.ServiceLocator.GetObject(hvo).Owner.Hvo)
+			for (var hvo = hvoOwner; hvo != 0; hvo = Cache.ServiceLocator.GetObject(hvo).Owner == null ? 0 : Cache.ServiceLocator.GetObject(hvo).Owner.Hvo)
 			{
-				var flid = m_cache.ServiceLocator.GetObject(hvo).OwningFlid;
+				var flid = Cache.ServiceLocator.GetObject(hvo).OwningFlid;
 				if (flid != 0)
 				{
 					m_currentObjectFlids.Add(flid);
@@ -2385,7 +2224,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				throw new ApplicationException($"field attribute required for seq properties {node.GetOuterXml()}");
 			}
-			var cobj = m_cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
+			var cobj = Cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
 			// monitor it even if we're testing: result may change.
 			m_monitoredProps.Add(Tuple.Create(obj.Hvo, flid));
 			if (fVisIfData && cobj == 0)
@@ -2420,7 +2259,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				foreach (var hvo in contents)
 				{
 					path.Add(hvo);
-					insertPosition = CreateSlicesFor(m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo), parentSlice, layoutOverride, layoutChoiceField, indent, insertPosition, path, reuseMap, caller);
+					insertPosition = CreateSlicesFor(Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo), parentSlice, layoutOverride, layoutChoiceField, indent, insertPosition, path, reuseMap, caller);
 					path.RemoveAt(path.Count - 1);
 				}
 			}
@@ -2433,7 +2272,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				var contents = SetupContents(flid, obj);
 				foreach (var hvo in contents)
 				{
-					var dos = new DummyObjectSlice(indent, node, (ArrayList)(path.Clone()), obj, flid, cnt, layoutOverride, layoutChoiceField, caller) {Cache = m_cache, ParentSlice = parentSlice};
+					var dos = new DummyObjectSlice(indent, node, (ArrayList)(path.Clone()), obj, flid, cnt, layoutOverride, layoutChoiceField, caller) {Cache = Cache, ParentSlice = parentSlice};
 					path.Add(hvo);
 					// This is really important. Since some slices are invisible, all must be,
 					// or Show() will reorder them.
@@ -2450,10 +2289,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		private int[] SetupContents(int flid, ICmObject obj)
 		{
 			int[] contents;
-			var chvoMax = m_cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
+			var chvoMax = Cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
 			using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
 			{
-				m_cache.DomainDataByFlid.VecProp(obj.Hvo, flid, chvoMax, out chvoMax, arrayPtr);
+				Cache.DomainDataByFlid.VecProp(obj.Hvo, flid, chvoMax, out chvoMax, arrayPtr);
 				contents = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
 			}
 			return contents;
@@ -2491,7 +2330,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal string InterpretLabelAttribute(string label, ICmObject obj)
 		{
-			CheckDisposed();
 			if (label == null || label.Length <= 7 || label.Substring(0, 7).ToLower() != "$owner.")
 			{
 				return label;
@@ -2535,12 +2373,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		private NodeTestResult AddSimpleNode(ArrayList path, XElement node, ObjSeqHashMap reuseMap, string editor,
 			int flid, ICmObject obj, Slice parentSlice, int indent, ref int insPos, bool fTestOnly, bool fVisIfData, XElement caller)
 		{
-			var realSda = m_cache.DomainDataByFlid;
+			var realSda = Cache.DomainDataByFlid;
 			if (parentSlice != null)
 			{
 				Debug.Assert(!parentSlice.IsDisposed, "AddSimpleNode parameter 'parentSlice' is Disposed!");
 			}
-			var wsContainer = m_cache.ServiceLocator.WritingSystems;
+			var wsContainer = Cache.ServiceLocator.WritingSystems;
 			if (fVisIfData) // Contains the tests to see if usable data is inside the field (for all types of fields)
 			{
 				if (editor != null && editor == "custom")
@@ -2609,7 +2447,7 @@ namespace LanguageExplorer.Controls.DetailControls
 										// not recognized, treat as visible
 										break;
 									}
-									var rgws = WritingSystemServices.GetWritingSystemList(m_cache, wsMagic, false).ToArray();
+									var rgws = WritingSystemServices.GetWritingSystemList(Cache, wsMagic, false).ToArray();
 									var anyNonEmpty = false;
 									foreach (var wsInst in rgws)
 									{
@@ -2651,7 +2489,7 @@ namespace LanguageExplorer.Controls.DetailControls
 							{
 								return NodeTestResult.kntrNothing;
 							}
-							var objt = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoT);
+							var objt = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoT);
 							if (objt.ClassID == StTextTags.kClassId) // if clid is an sttext clid
 							{
 								var txt = (IStText) objt;
@@ -2732,7 +2570,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var slice = GetMatchingSlice(path, reuseMap);
 			if (slice == null)
 			{
-				slice = SliceFactory.Create(m_cache, editor, flid, node, obj, PersistenceProvder, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), caller, reuseMap);
+				slice = SliceFactory.Create(Cache, editor, flid, node, obj, PersistenceProvder, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), caller, reuseMap);
 				if (slice == null)
 				{
 					// One way this can happen in TestLangProj is with a part ref for a custom field that
@@ -2750,7 +2588,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Install new item at appropriate position and level.
 				slice.Indent = indent;
 				slice.Object = obj;
-				slice.Cache = m_cache;
+				slice.Cache = Cache;
 				slice.PersistenceProvider = PersistenceProvder;
 
 				// We need a copy since we continue to modify path, so make it as compact as possible.
@@ -2859,7 +2697,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public int ApplyChildren(ICmObject obj, Slice parentSlice, XElement template, int indent, int insertPosition, ArrayList path, ObjSeqHashMap reuseMap)
 		{
-			CheckDisposed();
 			var insertPos = insertPosition;
 			foreach (var node in template.Elements())
 			{
@@ -2876,14 +2713,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		// this is called to create it.
 		public virtual Slice MakeEditorAt(int i)
 		{
-			CheckDisposed();
 			return null; // todo JohnT: return false;
 		}
 
 		// Get or create the real slice at index i.
 		public Slice FieldAt(int i)
 		{
-			CheckDisposed();
 			var slice = FieldOrDummyAt(i);
 			// Keep trying until we get a real slice. It's possible, for example, that the first object
 			// in a sequence expands into an embedded lazy sequence, which in turn needs to have its
@@ -2933,8 +2768,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public Slice FieldOrDummyAt(int i)
 		{
-			CheckDisposed();
-
 			var slice = Slices[i];
 			// This cannot ever be null now that we dont; have the special SliceCollection class.
 			if (slice == null)
@@ -2951,7 +2784,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal void AboutToCreateField()
 		{
-			CheckDisposed();
 			if (m_layoutState != LayoutStates.klsChecking)
 			{
 				return;
@@ -2962,8 +2794,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public bool PrepareToGoAway()
 		{
-			CheckDisposed();
-
 			string sCurrentPartName = null;
 			var guidCurrentObj = Guid.Empty;
 			if (m_currentSlice != null)
@@ -3244,7 +3074,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public int GetMinFieldHeight()
 		{
-			CheckDisposed();
 			return 18; // Enhance Johnt: base on default font height
 		}
 
@@ -3259,9 +3088,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>The index of the next field or 0 if none.</returns>
 		public int NextFieldAtIndent(int nInd, int iStart)
 		{
-			CheckDisposed();
 			var cItem = Slices.Count;
-
 			// Start at the next editor and work down, skipping more nested editors.
 			for (var i =iStart + 1; i < cItem; ++i)
 			{
@@ -3290,7 +3117,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>The index of the desired field or 0 if none.</returns>
 		public int PrevFieldAtIndent(int nInd, int iStart)
 		{
-			CheckDisposed();
 			// Start at the next editor and work down, skipping more nested editors.
 			for (var i =iStart - 1; i >= 0; --i)
 			{
@@ -3330,7 +3156,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>Index of requested slice (or -1 if after last slice)</returns>
 		public int IndexOfSliceAtY(int yp)
 		{
-			CheckDisposed();
 			var ypTopOfNextField = 0;
 			for (var iSlice = 0; iSlice < Slices.Count; iSlice++)
 			{
@@ -3396,8 +3221,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			set
 			{
-				CheckDisposed();
-
 				if (base.ActiveControl == value)
 				{
 					return;
@@ -3421,26 +3244,16 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void GotoFirstSlice()
 		{
-			CheckDisposed();
 			GotoNextSliceAfterIndex(-1);
 		}
 
-		public Slice LastSlice
-		{
-			get
-			{
-				CheckDisposed();
-				return Slices.Any() ? Slices.Last() : null;
-			}
-		}
+		public Slice LastSlice => Slices.Any() ? Slices.Last() : null;
 
 		/// <summary>
 		/// Moves the focus to the next visible slice in the tree
 		/// </summary>
 		public void GotoNextSlice()
 		{
-			CheckDisposed();
-
 			if (m_currentSlice != null)
 			{
 				GotoNextSliceAfterIndex(Slices.IndexOf(m_currentSlice));
@@ -3449,7 +3262,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal bool GotoNextSliceAfterIndex(int index)
 		{
-			CheckDisposed();
 			++index;
 			while (index >= 0 && index < Slices.Count)
 			{
@@ -3473,7 +3285,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool GotoPreviousSliceBeforeIndex(int index)
 		{
-			CheckDisposed();
 			--index;
 			while (index >= 0 && index < Slices.Count)
 			{
@@ -3505,7 +3316,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns></returns>
 		public virtual bool OnDisplayShowHiddenFields(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			bool fAllow = PropertyTable.GetValue("AllowShowNormalFields", true);
 			display.Enabled = display.Visible = fAllow;
 
@@ -3540,8 +3350,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private bool DisplayJumpToToolAndFilterAnthroItem(UIItemDisplayProperties display, object commandObject, string cmd)
 		{
-			CheckDisposed();
-
 			if (display.Group != null && display.Group.IsContextMenu &&
 				!String.IsNullOrEmpty(display.Group.Id) &&
 				!display.Group.Id.StartsWith("mnuReferenceChoices"))
@@ -3575,7 +3383,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns></returns>
 		public virtual bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			string tool;
 			if (display.Group != null && display.Group.IsContextMenu &&
 				!String.IsNullOrEmpty(display.Group.Id) &&
@@ -3599,7 +3406,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual bool OnJumpToTool(object commandObject)
 		{
-			CheckDisposed();
 			string tool;
 			Guid guid = GetGuidForJumpToTool((Command) commandObject, false, out tool);
 			if (guid != Guid.Empty)
@@ -3813,8 +3619,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void OnPropertyChanged(string name)
 		{
-			CheckDisposed();
-
 			if (name == "ShowHiddenFields")
 			{
 				// The only place this occurs is when the status is changed from the "View" menu.
@@ -3866,7 +3670,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void HandleShowHiddenFields(bool newShowValue)
 		{
-			if (newShowValue == m_fShowAllFields)
+			if (newShowValue == ShowingAllFields)
 			{
 				return;
 			}
@@ -3875,7 +3679,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			try
 			{
 				var closeSlices = CurrentSlice?.GetNearbySlices();
-				m_fShowAllFields = newShowValue;
+				ShowingAllFields = newShowValue;
 				RefreshList(false);
 				if (closeSlices != null)
 				{
@@ -3985,7 +3789,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void OnDelayedRefreshList(object sentValue)
 		{
-			CheckDisposed();
 			DoNotRefresh = (bool)sentValue;
 		}
 
@@ -4066,10 +3869,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			// If we have a descendant that isn't the root, try to focus one of its slices.
 			// Otherwise, focusing a slice that doesn't belong to it will switch the browse view
 			// to a different record. See FWR-2006.
-			if (m_descendant != null && m_descendant != m_root)
+			if (Descendant != null && Descendant != Root)
 			{
 				var owners = new HashSet<ICmObject>();
-				for (var obj = m_descendant; obj != null; obj = obj.Owner)
+				for (var obj = Descendant; obj != null; obj = obj.Owner)
 				{
 					owners.Add(obj);
 				}
@@ -4083,7 +3886,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						cslice = Slices.Count;
 					}
 
-					if (m_descendant != DescendantForSlice(slice))
+					if (Descendant != DescendantForSlice(slice))
 					{
 						continue;
 					}
@@ -4115,8 +3918,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool OnDisplayInsertItemViaBackrefVector(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			// We may be in transition: if so, disable without crashing.  See LT-9698.
 			if (m_cache == null || m_root == null)
 				return display.Enabled = false;
@@ -4136,8 +3937,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>true if successful (the class is known)</returns>
 		public bool OnInsertItemViaBackrefVector(object argument)
 		{
-			CheckDisposed();
-
 			var command = (Command)argument;
 			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			if (className != m_root.ClassName)
@@ -4159,8 +3958,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool OnDisplayDemoteItemInVector(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			var command = (Command)commandObject;
 			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			bool fIsValid = false;
@@ -4182,8 +3979,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool OnDemoteItemInVector(object argument)
 		{
-			CheckDisposed();
-
 			var rec = Root as IRnGenericRec;
 			if (rec == null)
 			{
@@ -4224,7 +4019,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			const string helpTopic = "khtpDataNotebook-ChooseOwnerOfDemotedRecord";
 			var persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
-			var labels = ObjectLabel.CreateObjectLabels(m_cache, records, "ShortName", m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultAnalWs));
+			var labels = ObjectLabel.CreateObjectLabels(Cache, records, "ShortName", Cache.WritingSystemFactory.GetStrFromWs(Cache.DefaultAnalWs));
 			using (var dlg = new ReallySimpleListChooser(persistProvider, labels, string.Empty, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				dlg.Text = sTitle;

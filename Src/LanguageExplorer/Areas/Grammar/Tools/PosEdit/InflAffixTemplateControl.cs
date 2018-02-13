@@ -82,8 +82,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		public void SetStringTableValues()
 		{
-			CheckDisposed();
-
 			m_sStem = StringTable.Table.GetString("Stem", "Linguistics/Morphology/TemplateTable");
 
 			m_sSlotChooserTitle = StringTable.Table.GetString("SlotChooserTitle", "Linguistics/Morphology/TemplateTable");
@@ -199,8 +197,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <param name="handler"></param>
 		public void SetContextMenuHandler(InflAffixTemplateEventHandler handler)
 		{
-			CheckDisposed();
-
 			//note the = instead of += we do not want more than 1 handler trying to open the context menu!
 			//you could try changing this if we wanted to have a fall back handler, and if there
 			//was some way to get the first handler to be able to say "don't pass on this message"
@@ -212,8 +208,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// </summary>
 		public void ShowSliceContextMenu(object sender, InflAffixTemplateEventArgs e)
 		{
-			CheckDisposed();
-
 			//just pass this onto, for example, the XWorks View that owns us,
 			//assuming that it has subscribed to this event on this object.
 			//If it has not, then this will still point to the "auto menu handler"
@@ -222,15 +216,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		}
 		public bool OnInflTemplateInsertSlotBefore(object cmd)
 		{
-			CheckDisposed();
-
 			HandleInsert(true);
 			return true;	//we handled this.
 		}
 		public bool OnInflTemplateInsertSlotAfter(object cmd)
 		{
-			CheckDisposed();
-
 			HandleInsert(false);
 			return true;	//we handled this.
 		}
@@ -238,8 +228,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 #if RANDYTODO
 		public bool OnInflTemplateMoveSlotLeft(object cmd)
 		{
-			CheckDisposed();
-
 			HandleMove((Command)cmd, true);
 			return true;	//we handled this.
 		}
@@ -261,8 +249,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		public bool OnInflTemplateMoveSlotRight(object cmd)
 		{
-			CheckDisposed();
-
 			HandleMove((Command)cmd, false);
 			return true;	//we handled this.
 		}
@@ -270,8 +256,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		public bool OnInflTemplateToggleSlotOptionality(object cmd)
 		{
-			CheckDisposed();
-
 			var slot = m_obj as IMoInflAffixSlot;
 			if (slot == null)
 			{
@@ -290,8 +274,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		}
 		public bool OnInflTemplateRemoveSlot(object cmd)
 		{
-			CheckDisposed();
-
 			ILcmReferenceSequence<IMoInflAffixSlot> seq;
 			int index;
 			GetAffixSequenceContainingSlot(m_obj as IMoInflAffixSlot, out seq, out index);
@@ -308,8 +290,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 #if RANDYTODO
 		public bool OnJumpToTool(object commandObject)
 		{
-			CheckDisposed();
-
 			Command command = (XCore.Command)commandObject;
 			string tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 			var inflMsa = m_obj as IMoInflAffMsa;
@@ -330,8 +310,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		public bool OnInflTemplateRemoveInflAffixMsa(object cmd)
 		{
-			CheckDisposed();
-
 			// the user says to remove this affix (msa) from the slot;
 			// if there are other infl affix msas in the entry, we delete the MoInflAffMsa completely;
 			// otherwise, we remove the slot info.
@@ -382,8 +360,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		public bool OnInflTemplateAddInflAffixMsa(object cmd)
 		{
-			CheckDisposed();
-
 #if RANDYTODO
 			using (var chooser = MakeChooserWithExtantMsas(m_slot, cmd as XCore.Command))
 			{
@@ -735,8 +711,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		public bool OnInflAffixTemplateHelp(object cmd)
 		{
-			CheckDisposed();
-
 			ShowHelp.ShowHelpTopic(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_ChooseInflectionalAffixHelpTopic);
 			return true;
 		}
@@ -843,7 +817,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <summary />
 		internal ITsString MenuLabelForInflTemplateAddInflAffixMsa(string sLabel)
 		{
-			CheckDisposed();
 			switch (m_obj.ClassID)
 			{
 				case MoInflAffMsaTags.kClassId:
@@ -859,7 +832,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <summary />
 		internal ITsString DetermineSlotContextMenuItemLabel(string sLabel)
 		{
-			CheckDisposed();
 			switch (m_obj.ClassID)
 			{
 				case MoInflAffixSlotTags.kClassId:
@@ -875,7 +847,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <summary />
 		internal ITsString MenuLabelForInflTemplateMoveSlot(string sLabel, bool fMoveLeft, out bool fEnabled)
 		{
-			CheckDisposed();
 			var tssLabel = DetermineSlotContextMenuItemLabel(sLabel);
 			if (m_obj.ClassID != MoInflAffixSlotTags.kClassId)
 			{
@@ -891,7 +862,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <summary />
 		internal ITsString MenuLabelForInflTemplateAffixSlotOperation(string sLabel, out bool fEnabled)
 		{
-			CheckDisposed();
 			var tssLabel = DetermineSlotContextMenuItemLabel(sLabel);
 			fEnabled = m_obj.ClassID == MoInflAffixSlotTags.kClassId;
 			return tssLabel;
@@ -900,22 +870,18 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <summary />
 		internal ITsString MenuLabelForInflTemplateRemoveInflAffixMsa(string sLabel)
 		{
-			CheckDisposed();
 			return m_obj.ClassID == MoInflAffMsaTags.kClassId ? DetermineMsaContextMenuItemLabel(sLabel) : null;
 		}
 
 		/// <summary />
 		internal ITsString MenuLabelForJumpToTool(string sLabel)
 		{
-			CheckDisposed();
 			return m_obj.ClassID == MoInflAffMsaTags.kClassId ? TsStringUtils.MakeString(sLabel, Cache.DefaultUserWs) : null;
 		}
 
 		/// <summary />
 		internal ITsString MenuLabelForInflAffixTemplateHelp(string sLabel)
 		{
-			CheckDisposed();
-
 			var helptopic = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(m_ChooseInflectionalAffixHelpTopic);
 			if ((m_obj.ClassID != MoInflAffMsaTags.kClassId && m_obj.ClassID != MoInflAffixSlotTags.kClassId && m_obj.ClassID != MoInflAffixTemplateTags.kClassId)
 			    || helptopic == null)

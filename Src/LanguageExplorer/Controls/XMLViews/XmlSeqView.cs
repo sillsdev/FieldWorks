@@ -117,8 +117,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected ISilDataAccessManaged m_sdaSource;
 		/// <summary />
 		protected XElement m_specElement;
-		/// <summary />
-		protected XmlVc m_xmlVc;
+
 		/// <summary />
 		protected IFwMetaDataCache m_mdc;
 		bool m_fShowFailingItems; // display items that fail the condition specified in the view.
@@ -145,10 +144,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void ResetTables()
 		{
-			CheckDisposed();
-
 			// Don't crash if we don't have any view content yet.  See LT-7244.
-			m_xmlVc?.ResetTables();
+			Vc?.ResetTables();
 			RootBox?.Reconstruct();
 		}
 
@@ -157,10 +154,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void ResetTables(string sLayoutName)
 		{
-			CheckDisposed();
-
 			// Don't crash if we don't have any view content yet.  See LT-7244.
-			m_xmlVc?.ResetTables(sLayoutName);
+			Vc?.ResetTables(sLayoutName);
 			RootBox?.Reconstruct();
 		}
 
@@ -192,14 +187,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the vc.
 		/// </summary>
-		internal XmlVc Vc
-		{
-			get
-			{
-				CheckDisposed();
-				return m_xmlVc;
-			}
-		}
+		protected internal XmlVc Vc { get; protected set; }
 
 		private void InitXmlViewRootSpec(int hvoRoot, int flid, XElement element, ISilDataAccessManaged sda)
 		{
@@ -231,7 +219,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			base.Dispose(disposing);
 
-			m_xmlVc = null;
+			Vc = null;
 			m_mdc = null;
 			m_sXmlSpec = null;
 			m_specElement = null;
@@ -247,24 +235,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void ResetRoot(int hvoRoot)
 		{
-			CheckDisposed();
-
 			m_hvoRoot = hvoRoot;
-			m_rootb.SetRootObject(m_hvoRoot, m_xmlVc, RootFrag, m_styleSheet);
+			m_rootb.SetRootObject(m_hvoRoot, Vc, RootFrag, m_styleSheet);
 			m_rootb.Reconstruct();
 		}
 
 		/// <summary>
 		/// Magic number ALWAYS used for root fragment in this type of view.
 		/// </summary>
-		public int RootFrag
-		{
-			get
-			{
-				CheckDisposed();
-				return 2;
-			}
-		}
+		public int RootFrag => 2;
 
 		#region overrides
 		/// <summary>
@@ -274,8 +253,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode)
 			{
 				return;
@@ -301,19 +278,19 @@ namespace LanguageExplorer.Controls.XMLViews
 				sLayout = XmlUtils.GetMandatoryAttributeValue(m_specElement, "layout");
 			}
 			var sda = GetSda();
-			m_xmlVc = new XmlVc(sLayout, fEditable, this, m_app, m_fShowFailingItems ? null : ItemDisplayCondition, sda) {IdentifySource = true};
+			Vc = new XmlVc(sLayout, fEditable, this, m_app, m_fShowFailingItems ? null : ItemDisplayCondition, sda) {IdentifySource = true};
 			ReadOnlyView = !fEditable;
 			if (!fEditable)
 			{
 				m_rootb.MaxParasToScan = 0;
 			}
-			m_xmlVc.Cache = m_cache;
-			m_xmlVc.MainSeqFlid = m_mainFlid;
+			Vc.Cache = m_cache;
+			Vc.MainSeqFlid = m_mainFlid;
 
 			m_rootb.DataAccess = sda;
-			m_xmlVc.DataAccess = sda;
+			Vc.DataAccess = sda;
 
-			m_rootb.SetRootObject(m_hvoRoot, m_xmlVc, RootFrag, m_styleSheet);
+			m_rootb.SetRootObject(m_hvoRoot, Vc, RootFrag, m_styleSheet);
 		}
 
 		private ISilDataAccess GetSda()
@@ -330,7 +307,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public bool OnJumpToRecord(object argument)
 		{
-			CheckDisposed();
 			Publisher.Publish("CheckJump", argument);
 			return false; // I don't want to be seen as handling this!
 		}
@@ -356,7 +332,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				return;
 			}
 			m_fShowFailingItems = fShowFailingItems;
-			m_xmlVc.MakeRootCommand(this, m_fShowFailingItems ? null : ItemDisplayCondition);
+			Vc.MakeRootCommand(this, m_fShowFailingItems ? null : ItemDisplayCondition);
 			try
 			{
 				EditingHelper.DefaultCursor = Cursors.WaitCursor;
@@ -378,8 +354,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected override void HandleSelectionChange(IVwRootBox prootb, IVwSelection vwselNew)
 		{
-			CheckDisposed();
-
 			base.HandleSelectionChange(prootb, vwselNew);
 			if (vwselNew == null)
 			{
@@ -419,15 +393,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the object count.
 		/// </summary>
-		public int ObjectCount
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_sdaSource.get_VecSize(m_hvoRoot, m_mainFlid);
-			}
-		}
+		public int ObjectCount => m_sdaSource.get_VecSize(m_hvoRoot, m_mainFlid);
 
 		#region printing
 		/// <summary>
@@ -446,8 +412,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		///</summary>
 		public void PrintFromDetail(PrintDocument printDoc, int mainObjHvo)
 		{
-			CheckDisposed();
-
 			var oldSda = RootBox.DataAccess;
 			RootBox.DataAccess = CachePrintDecorator(m_sdaSource, m_hvoRoot, m_mainFlid, new[] {mainObjHvo});
 			base.Print(printDoc);
@@ -459,8 +423,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override void Print(PrintDocument printDoc)
 		{
-			CheckDisposed();
-
 			ISilDataAccess oldSda = null;
 			var fPrintSelection = (printDoc.PrinterSettings.PrintRange == PrintRange.Selection);
 			if (fPrintSelection)

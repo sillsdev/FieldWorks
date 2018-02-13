@@ -28,14 +28,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// True if property allows duplicates, otherwise false.
 		/// </summary>
-		public virtual bool AllowsDuplicates
-		{
-			get
-			{
-				CheckDisposed();
-				return (CellarPropertyType)m_cache.DomainDataByFlid.MetaDataCache.GetFieldType(m_flid) == CellarPropertyType.ReferenceSequence;
-			}
-		}
+		public virtual bool AllowsDuplicates => (CellarPropertyType)m_cache.DomainDataByFlid.MetaDataCache.GetFieldType(m_flid) == CellarPropertyType.ReferenceSequence;
 
 		/// <summary>
 		/// Flag whether we can modify the slice contents.
@@ -195,7 +188,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public virtual void UpdateDisplayFromDatabase()
 		{
-			CheckDisposed();
 		}
 	}
 }

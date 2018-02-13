@@ -39,8 +39,6 @@ namespace LanguageExplorer.LcmUi
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_vc == null)
 				{
 					m_vc = new MsaVc(m_cache);

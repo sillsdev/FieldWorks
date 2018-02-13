@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,7 +14,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		}
 		public override void FinishInit()
 		{
-			CheckDisposed();
 			base.FinishInit();
 			var arl = (VectorReferenceLauncher)Control;
 			var view = (VectorReferenceView)arl.MainControl;

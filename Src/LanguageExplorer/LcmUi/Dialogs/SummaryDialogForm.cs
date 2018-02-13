@@ -51,8 +51,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		private System.ComponentModel.Container components = null;
 		private const string s_helpTopicKey = "khtpFindInDictionary";
 		private HelpProvider helpProvider;
-		private bool m_fShouldLink; // set true by btnLexicon_Click, caller should call LinkToLexicon after dialog closes.
-		private bool m_fOtherClicked;	// set true by btnOther_Click, caller should call OtherButtonClicked after dialog closes.
 		#endregion
 
 		#region Constructor/destructor
@@ -105,23 +103,10 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			m_xv.TabIndex = 0;
 			Controls.Add(m_xv);
 			m_xv.Height = panel1.Location.Y - m_xv.Location.Y;
-			m_xv.Width = this.Width - 15; // Changed from magic to more magic on 8/8/2014
+			m_xv.Width = Width - 15; // Changed from magic to more magic on 8/8/2014
 			m_xv.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			m_xv.EditingHelper.DefaultCursor = Cursors.Arrow;
-			m_xv.EditingHelper.VwSelectionChanged += new EventHandler<VwSelectionArgs>(m_xv_VwSelectionChanged);
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
+			m_xv.EditingHelper.VwSelectionChanged += m_xv_VwSelectionChanged;
 		}
 
 		/// <summary>
@@ -252,14 +237,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// TE will jump back in front of Flex even before Flex has finished jumping to the entry.
 		/// See LT-3461.
 		/// </summary>
-		internal bool ShouldLink
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fShouldLink;
-			}
-		}
+		internal bool ShouldLink { get; private set; }
 
 		/// <summary>
 		/// Adjust the height of the embedded XmlView to display as much as possible, up to a
@@ -335,21 +313,14 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// </summary>
 		private void btnOther_Click(object sender, EventArgs e)
 		{
-			m_fOtherClicked = true;
+			OtherButtonClicked = true;
 			Close();
 		}
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the <see cref="SummaryDialogForm"/> Other button was clicked.
 		/// </summary>
-		internal bool OtherButtonClicked
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fOtherClicked;
-			}
-		}
+		internal bool OtherButtonClicked { get; private set; }
 
 		/// <summary>
 		/// NOTE: after calling ShowDialog, clients should test the ShouldLink property, and if it
@@ -361,7 +332,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// </summary>
 		private void btnLexicon_Click(object sender, EventArgs e)
 		{
-			m_fShouldLink = true;
+			ShouldLink = true;
 			Close();
 		}
 
@@ -370,7 +341,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// </summary>
 		internal void LinkToLexicon()
 		{
-			CheckDisposed();
 			var hvo = m_hvoSelected;
 			if (hvo == 0 && m_rghvo != null && m_rghvo.Count > 0)
 			{

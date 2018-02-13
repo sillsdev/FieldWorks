@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,7 +20,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 	/// <summary/>
 	internal sealed class ReversalEntryGoDlg : BaseGoDlg
 	{
-		private IReversalIndex m_reveralIndex;
 		private readonly HashSet<int> m_FilteredReversalEntryHvos = new HashSet<int>();
 
 		/// <summary />
@@ -34,30 +33,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// Gets or sets the reversal index.
 		/// </summary>
 		/// <value>The reversal index.</value>
-		public IReversalIndex ReversalIndex
-		{
-			get
-			{
-				CheckDisposed();
-				return m_reveralIndex;
-			}
-
-			set
-			{
-				CheckDisposed();
-				m_reveralIndex = value;
-			}
-		}
+		public IReversalIndex ReversalIndex { get; set; }
 
 		/// <summary />
-		public ICollection<int> FilteredReversalEntryHvos
-		{
-			get
-			{
-				CheckDisposed();
-				return m_FilteredReversalEntryHvos;
-			}
-		}
+		public ICollection<int> FilteredReversalEntryHvos => m_FilteredReversalEntryHvos;
 
 		/// <summary />
 		protected override string PersistenceLabel => "ReversalEntryGo";
@@ -68,11 +47,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingReversalEntries\"]/parameters");
 
-			var searchEngine = (ReversalEntrySearchEngine)SearchEngine.Get(PropertyTable, "ReversalEntrySearchEngine-" + m_reveralIndex.Hvo,
-				() => new ReversalEntrySearchEngine(m_cache, m_reveralIndex));
+			var searchEngine = (ReversalEntrySearchEngine)SearchEngine.Get(PropertyTable, "ReversalEntrySearchEngine-" + ReversalIndex.Hvo,
+				() => new ReversalEntrySearchEngine(m_cache, ReversalIndex));
 			searchEngine.FilteredEntryHvos = m_FilteredReversalEntryHvos;
 
-			m_matchingObjectsBrowser.Initialize(m_cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine, m_cache.ServiceLocator.WritingSystemManager.Get(m_reveralIndex.WritingSystem));
+			m_matchingObjectsBrowser.Initialize(m_cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine, m_cache.ServiceLocator.WritingSystemManager.Get(ReversalIndex.WritingSystem));
 
 			// start building index
 			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
@@ -87,19 +66,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <summary />
 		protected override void LoadWritingSystemCombo()
 		{
-			m_cbWritingSystems.Items.Add(m_cache.ServiceLocator.WritingSystemManager.Get(m_reveralIndex.WritingSystem));
+			m_cbWritingSystems.Items.Add(m_cache.ServiceLocator.WritingSystemManager.Get(ReversalIndex.WritingSystem));
 		}
 
 		/// <summary />
 		public override void SetDlgInfo(LcmCache cache, WindowParams wp)
 		{
-			SetDlgInfo(cache, wp, cache.ServiceLocator.WritingSystemManager.GetWsFromStr(m_reveralIndex.WritingSystem));
+			SetDlgInfo(cache, wp, cache.ServiceLocator.WritingSystemManager.GetWsFromStr(ReversalIndex.WritingSystem));
 		}
 
 		/// <summary />
 		public override void SetDlgInfo(LcmCache cache, WindowParams wp, string form)
 		{
-			SetDlgInfo(cache, wp, form, cache.ServiceLocator.WritingSystemManager.GetWsFromStr(m_reveralIndex.WritingSystem));
+			SetDlgInfo(cache, wp, form, cache.ServiceLocator.WritingSystemManager.GetWsFromStr(ReversalIndex.WritingSystem));
 		}
 
 		/// <summary />

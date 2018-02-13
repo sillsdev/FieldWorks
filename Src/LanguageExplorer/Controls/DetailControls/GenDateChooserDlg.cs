@@ -75,19 +75,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose(bool disposing)
@@ -114,13 +101,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_helpTopic;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_helpTopic = value;
 				m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(value));
 			}
@@ -158,8 +143,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_precisionComboBox.SelectedIndex == PRECISION_NO_DATE)
 				{
 					return new GenDate();
@@ -175,8 +158,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			set
 			{
-				CheckDisposed();
-
 				if (value.IsEmpty)
 				{
 					m_precisionComboBox.SelectedIndex = PRECISION_NO_DATE;

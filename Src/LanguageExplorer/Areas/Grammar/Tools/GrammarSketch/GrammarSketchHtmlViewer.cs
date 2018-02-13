@@ -257,19 +257,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 			base.Dispose(disposing);
 		}
 
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
 		#endregion // Construction, Initialization, and disposal
 
 		#region Message Handlers
@@ -397,8 +384,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// <summary />
 		public void OnBeforeNavigate(object sender, HtmlControlEventArgs e)
 		{
-			CheckDisposed();
-
 			m_iURLCounter++;
 			m_iMaxURLCount = Math.Max(m_iMaxURLCount, m_iURLCounter);
 			SetBackButtonEnabledState();
@@ -457,8 +442,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// <summary />
 		public void PerformRetrieval(out string outputPath, ProgressDialogWorkingOn dlg)
 		{
-			CheckDisposed();
-
 			UpdateProgress("Preparing data", dlg);
 
 			outputPath = Path.Combine(m_outputDirectory, Cache.ProjectId.Name + "RetrieverResult.xml");
@@ -598,22 +581,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// <returns>true if ok to go away</returns>
 		public bool PrepareToGoAway()
 		{
-			CheckDisposed();
-
 			return true;
 		}
 
 		/// <summary />
-		public string AreaName
-		{
-			get
-			{
-				CheckDisposed();
-
-				return AreaServices.GrammarAreaMachineName;
-			}
-		}
-
+		public string AreaName => AreaServices.GrammarAreaMachineName;
 		#endregion // IMainContentControl implementation
 
 		/// <summary />
@@ -635,8 +607,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		{
 			get
 			{
-				CheckDisposed();
-
 				return "GeneratedHtmlViewer";
 			}
 			set { }

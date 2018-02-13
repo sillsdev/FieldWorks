@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -381,15 +381,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_isDisposed = true;
 		}
 
-		/// <summary>
-		/// Throw if the IsDisposed property is true
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
 		#endregion IDisposable & Co. implementation
 
 		#region Writing system methods
@@ -403,7 +394,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public List<int> GetWsList(out ILgWritingSystemFactory wsf)
 		{
-			CheckDisposed();
 			// Get the writing system factory associated with the root box.
 			wsf = WritingSystemFactory;
 			int cws = wsf.NumberOfWs;
@@ -430,7 +420,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public List<int> GetWsListCurrentFirst(IVwSelection vwsel,
 			out ILgWritingSystemFactory wsf)
 		{
-			CheckDisposed();
 			List<int> writingSystems = GetWsList(out wsf);
 			if (writingSystems != null)
 			{
@@ -457,7 +446,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public void ApplyWritingSystem(int hvoWsNew)
 		{
-			CheckDisposed();
 			if(Callbacks == null || Callbacks.EditedRootBox == null)
 				return;
 
@@ -558,8 +546,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual void OnKeyPress(KeyPressEventArgs e, Keys modifiers)
 		{
-			CheckDisposed();
-
 			if (!IsIgnoredKey(e, modifiers) && CanEdit()) // Only process keys that aren't ignored
 				HandleKeyPress(e.KeyChar, modifiers);
 		}
@@ -638,7 +624,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual bool OnKeyDown(KeyEventArgs e)
 		{
-			CheckDisposed();
 			if (Callbacks == null || Callbacks.EditedRootBox == null)
 				return true;
 
@@ -771,7 +756,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public void HandleKeyPress(char keyChar, Keys modifiers)
 		{
-			CheckDisposed();
 			// REVIEW (EberhardB): .NETs Unicode character type is 16bit, whereas AppCore used
 			// 32bit (int), so how do we handle this?
 
@@ -1182,7 +1166,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				int hvoRoot, frag;
 				IVwViewConstructor vc;
 				IVwStylesheet ss;
@@ -1214,7 +1197,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				if (IsCurrentSelectionOutOfDate)
 				{
 					if (Callbacks == null || Callbacks.EditedRootBox == null || Callbacks.EditedRootBox.Site == null)
@@ -1256,7 +1238,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return (Callbacks != null && Callbacks.EditedRootBox != null) ?
 					Callbacks.EditedRootBox.Selection : null;
 			}
@@ -1270,8 +1251,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public bool Editable
 		{
-			get { CheckDisposed(); return m_fEditable; }
-			set { CheckDisposed(); m_fEditable = value; }
+			get { return m_fEditable; }
+			set { m_fEditable = value; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1281,7 +1262,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public IVwRootBox EditedRootBox
 		{
-			get { CheckDisposed(); return m_callbacks.EditedRootBox; }
+			get { return m_callbacks.EditedRootBox; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1310,7 +1291,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public IEditingCallbacks Callbacks
 		{
-			get { CheckDisposed(); return m_callbacks; }
+			get { return m_callbacks; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1320,7 +1301,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public UserControl Control
 		{
-			get { CheckDisposed(); return m_control; }
+			get { return m_control; }
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -1334,10 +1315,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual Cursor DefaultCursor
 		{
-			get { CheckDisposed(); return m_defaultCursor; }
+			get { return m_defaultCursor; }
 			set
 			{
-				CheckDisposed();
 				m_defaultCursor = value;
 				// set the cursor shown in the current control.
 				Control.Cursor = m_defaultCursor ?? GetCursor(false, false, FwObjDataTypes.kodtContextString);
@@ -1349,8 +1329,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public Cursor ReadOnlyTextCursor
 		{
-			get { CheckDisposed(); return m_readOnlyCursor; }
-			set { CheckDisposed(); m_readOnlyCursor = value; }
+			get { return m_readOnlyCursor; }
+			set { m_readOnlyCursor = value; }
 		}
 		#endregion
 
@@ -1434,7 +1414,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public void SetCursor(Point mousePos, IVwRootBox rootb)
 		{
-			CheckDisposed();
 			if (rootb == null)
 				return;
 			if (DefaultCursor != null)
@@ -1596,7 +1575,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual int GetStyleNameFromSelection(out string styleName)
 		{
-			CheckDisposed();
 			try
 			{
 				IVwSelection vwsel = null;
@@ -1632,7 +1610,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public string GetParaStyleNameFromSelection()
 		{
-			CheckDisposed();
 			string styleName = string.Empty;
 			ITsTextProps[] vttp = null;
 			try
@@ -1722,7 +1699,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			out int flidParaOwner, out IVwPropertyStore[] vqvps, out int ihvoFirst,
 			out int ihvoLast, out ITsTextProps[] vqttp)
 		{
-			CheckDisposed();
 			ihvoFirst = 0;
 			ihvoLast = 0;
 			vqttp = null;
@@ -1787,7 +1763,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public string GetCharStyleNameFromSelection()
 		{
-			CheckDisposed();
 			IVwSelection sel = RootBoxSelection;
 			return (sel == null) ? string.Empty : GetCharStyleNameFromSelection(sel);
 		}
@@ -1914,7 +1889,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public bool IsParagraphProps(out IVwSelection vwsel, out int hvoText,
 			out int tagText, out IVwPropertyStore[] vqvps, out int ihvoAnchor, out int ihvoEnd)
 		{
-			CheckDisposed();
 			hvoText = 0;
 			tagText = 0;
 			vqvps = null;
@@ -2089,7 +2063,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public bool GetCharacterProps(out IVwSelection vwsel, out ITsTextProps[] vttp,
 			out IVwPropertyStore[] vvps)
 		{
-			CheckDisposed();
 			IVwRootBox rootbox = null;
 			if(Callbacks != null)
 			{
@@ -2109,7 +2082,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual void ApplyStyle(string sStyleToApply)
 		{
-			CheckDisposed();
 			IVwSelection vwsel;
 			IVwPropertyStore[] vvpsPara;
 			IVwPropertyStore[] vvpsChar;
@@ -2139,7 +2111,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public virtual void ApplyStyle(string sStyleToApply, IVwSelection vwsel,
 			ITsTextProps[] vttpPara, ITsTextProps[] vttpChar)
 		{
-			CheckDisposed();
 			if(Callbacks == null || Callbacks.EditedRootBox == null ||
 				Callbacks.EditedRootBox.DataAccess == null)
 				return;
@@ -2200,7 +2171,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual bool ApplyParagraphStyle(string strNewVal)
 		{
-			CheckDisposed();
 			IVwSelection vwsel;
 			int hvoText;
 			int tagText;
@@ -2256,7 +2226,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public void RemoveCharFormatting()
 		{
-			CheckDisposed();
 			RemoveCharFormatting(false);
 		}
 
@@ -2268,7 +2237,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual void RemoveCharFormatting(bool removeAllStyles)
 		{
-			CheckDisposed();
 			IVwSelection vwsel;
 			ITsTextProps[] vttp;
 			IVwPropertyStore[] vvps;
@@ -2292,7 +2260,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual bool SpecialSemanticsCharacterStyle(string name)
 		{
-			CheckDisposed();
 			return false;
 		}
 
@@ -2309,7 +2276,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void RemoveCharFormatting(IVwSelection vwsel, ref ITsTextProps[] vttp,
 			string sStyle)
 		{
-			CheckDisposed();
 			RemoveCharFormatting(vwsel, ref vttp, sStyle, false);
 		}
 
@@ -2330,7 +2296,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void RemoveCharFormatting(IVwSelection vwsel, ref ITsTextProps[] vttp,
 			string sStyle, bool removeAllStyles)
 		{
-			CheckDisposed();
 			bool fPropsModified = false;
 			Debug.Assert(vttp != null, "This shouldn't happen. Please look at TE-6499.");
 			if (vttp == null)
@@ -2769,8 +2734,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual void HandleSelectionChange(IVwRootBox rootb, IVwSelection vwselNew)
 		{
-			CheckDisposed();
-
 			// Allow containing forms, etc. to do special handling when the selection changes.
 			if (VwSelectionChanged != null)
 				VwSelectionChanged.Invoke(this, new VwSelectionArgs(rootb, vwselNew));
@@ -2894,7 +2857,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public void SetKeyboardForSelection(IVwSelection vwsel)
 		{
-			CheckDisposed();
 			if (vwsel == null || Callbacks == null || !Callbacks.GotCacheOrWs)
 				return;			// Can't do anything useful, so let's not do anything at all.
 
@@ -2986,8 +2948,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public void LostFocus(Control newFocusedControl, bool fIsChildWindow)
 		{
-			CheckDisposed();
-
 			// Switch back to the UI keyboard so edit boxes in dialogs, toolbar controls, etc.
 			// won't be using the UI of the current run in this view. But only if the current
 			// focus pane is not another view...switching the input language AFTER another view
@@ -3030,8 +2990,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public bool HandleOnKeyDown(KeyEventArgs e)
 		{
-			CheckDisposed();
-
 			if (m_control == null || !m_control.Visible)
 				return false;
 
@@ -3072,7 +3030,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public bool CopySelection()
 		{
-			CheckDisposed();
 			if (!CanCopy())
 				return false;
 
@@ -3191,7 +3148,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public bool CutSelection()
 		{
-			CheckDisposed();
 			try
 			{
 				if (!m_fEditable || !CopySelection())
@@ -3220,8 +3176,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public void DeleteSelection()
 		{
-			CheckDisposed();
-
 			if (m_control == null || m_callbacks == null || m_callbacks.EditedRootBox == null ||
 				!m_callbacks.GotCacheOrWs)
 			{
@@ -3274,7 +3228,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public bool IsSelectionInOneEditableProp()
 		{
-			CheckDisposed();
 			if (m_callbacks == null || m_callbacks.EditedRootBox == null)
 				return false;
 			return IsSelectionInOneEditableProp(m_callbacks.EditedRootBox.Selection);
@@ -3289,7 +3242,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public bool IsSelectionInOneFormattableProp()
 		{
-			CheckDisposed();
 			if (!IsSelectionInOneEditableProp())
 				return false;
 			if(m_callbacks == null || m_callbacks.EditedRootBox == null)
@@ -3330,7 +3282,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public string GetClipboardAsString()
 		{
-			CheckDisposed();
 			try
 			{
 				IDataObject dobj = ClipboardUtils.GetDataObject();
@@ -3350,7 +3301,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual bool PasteClipboard()
 		{
-			CheckDisposed();
 			// Do nothing if command is not enabled. Needed for Ctrl-V keypress.
 			if (!CanPaste() || Callbacks == null || Callbacks.EditedRootBox == null ||
 				!Callbacks.GotCacheOrWs  || CurrentSelection == null)
@@ -3496,7 +3446,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual bool CanDelete()
 		{
-			CheckDisposed();
 			if (Callbacks != null && Callbacks.EditedRootBox != null && m_fEditable)
 			{
 				IVwSelection vwsel = Callbacks.EditedRootBox.Selection;
@@ -3518,7 +3467,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual bool CanCut()
 		{
-			CheckDisposed();
 			if (Callbacks != null && Callbacks.GotCacheOrWs && Callbacks.EditedRootBox != null && m_fEditable)
 			{
 				IVwSelection vwsel = Callbacks.EditedRootBox.Selection;
@@ -3537,7 +3485,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual bool CanCopy()
 		{
-			CheckDisposed();
 			if (Callbacks != null && Callbacks.GotCacheOrWs && Callbacks.EditedRootBox != null)
 			{
 				IVwSelection vwsel = Callbacks.EditedRootBox.Selection;
@@ -3562,7 +3509,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual bool CanEdit()
 		{
-			CheckDisposed();
 			if (Callbacks != null && Callbacks.EditedRootBox != null)
 			{
 				return CanEdit(Callbacks.EditedRootBox.Selection);
@@ -3579,7 +3525,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual bool CanEdit(IVwSelection vwsel)
 		{
-			CheckDisposed();
 			if (m_fEditable)
 			{
 				// CanFormatChar is true only if the selected text is editable.
@@ -3610,7 +3555,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public bool ClipboardContainsString()
 		{
-			CheckDisposed();
 			try
 			{
 				// Get the type of object on the clipboard, and check whether it is compatible
@@ -3635,7 +3579,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual bool CanPaste()
 		{
-			CheckDisposed();
 			if (m_callbacks != null && m_callbacks.EditedRootBox != null && m_fEditable &&
 				CurrentSelection != null && m_control != null && m_control.Visible)
 			{
@@ -3654,7 +3597,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public void SelectAll()
 		{
-			CheckDisposed();
 			if (m_callbacks == null || m_callbacks.EditedRootBox == null ||
 				!m_callbacks.GotCacheOrWs || m_control == null)
 			{

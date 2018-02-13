@@ -20,29 +20,11 @@ namespace LanguageExplorer.MGA
 	/// </summary>
 	internal class GlossListTreeView : TreeView
 	{
-		protected bool m_fTerminalsUseCheckBoxes;
 		protected string m_sTopOfList = "eticGlossList";
-		protected string m_sAfterSeparator;
-		protected string m_sComplexNameSeparator;
-		protected bool m_fComplexNameFirst;
-		protected string m_sWritingSystemAbbrev;
 		protected string m_sTermNodeXPath = "term[@ws='en']";
 		protected string m_sAbbrevNodeXPath = "abbrev[@ws='en']";
 		protected TreeNode m_lastSelectedTreeNode;
 		protected LcmCache m_cache;
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -70,15 +52,8 @@ namespace LanguageExplorer.MGA
 		/// <summary>
 		/// Gets default after separator character for glossing.
 		/// </summary>
-		public string AfterSeparator
-		{
-			get
-			{
-				CheckDisposed();
+		public string AfterSeparator { get; protected set; }
 
-				return m_sAfterSeparator;
-			}
-		}
 		/// <summary>
 		/// Sets LCM cache
 		/// </summary>
@@ -89,57 +64,22 @@ namespace LanguageExplorer.MGA
 		/// <summary>
 		/// Gets flag whether the name of the complex item comes first or not.
 		/// </summary>
-		public bool ComplexNameFirst
-		{
-			get
-			{
-				CheckDisposed();
+		public bool ComplexNameFirst { get; protected set; }
 
-				return m_fComplexNameFirst;
-			}
-		}
 		/// <summary>
 		/// Gets default separator character to occur after a complex name in glossing.
 		/// </summary>
-		public string ComplexNameSeparator
-		{
-			get
-			{
-				CheckDisposed();
+		public string ComplexNameSeparator { get; protected set; }
 
-				return m_sComplexNameSeparator;
-			}
-		}
 		/// <summary>
 		/// Gets/sets tree view to show checks boxes (true) or radio buttons (false) for terminal nodes.
 		/// </summary>
-		public bool TerminalsUseCheckBoxes
-		{
-			get
-			{
-				CheckDisposed();
+		public bool TerminalsUseCheckBoxes { get; set; }
 
-				return m_fTerminalsUseCheckBoxes;
-			}
-			set
-			{
-				CheckDisposed();
-
-				m_fTerminalsUseCheckBoxes = value;
-			}
-		}
 		/// <summary>
 		/// Gets default writing system abbreviation.
 		/// </summary>
-		public string WritingSystemAbbrev
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_sWritingSystemAbbrev;
-			}
-		}
+		public string WritingSystemAbbrev { get; protected set; }
 		#endregion
 		#region construction
 		public GlossListTreeView()
@@ -149,14 +89,12 @@ namespace LanguageExplorer.MGA
 		public GlossListTreeView(bool bUseCheckBoxesInTerminals)
 		{
 			CommonInit();
-			m_fTerminalsUseCheckBoxes = bUseCheckBoxesInTerminals;
+			TerminalsUseCheckBoxes = bUseCheckBoxesInTerminals;
 		}
 		#endregion
 		#region public methods
 		public void LoadGlossListTreeFromXml(string sXmlFile, string sDefaultAnalysisWritingSystem)
 		{
-			CheckDisposed();
-
 			try
 			{
 				// SECTION 1. Create a DOM Document and load the XML data into it.
@@ -193,10 +131,10 @@ namespace LanguageExplorer.MGA
 			// set CheckBoxes value
 			CheckBoxes = XmlUtils.GetBooleanAttributeValue(treeTop, "checkBoxes");
 			// set complex name separator value
-			m_sAfterSeparator = XmlUtils.GetOptionalAttributeValue(treeTop, "afterSeparator");
-			m_sComplexNameSeparator = XmlUtils.GetOptionalAttributeValue(treeTop, "complexNameSeparator");
+			AfterSeparator = XmlUtils.GetOptionalAttributeValue(treeTop, "afterSeparator");
+			ComplexNameSeparator = XmlUtils.GetOptionalAttributeValue(treeTop, "complexNameSeparator");
 			// set complex name first value
-			m_fComplexNameFirst = XmlUtils.GetBooleanAttributeValue(treeTop, "complexNameFirst");
+			ComplexNameFirst = XmlUtils.GetBooleanAttributeValue(treeTop, "complexNameFirst");
 			// set writing system abbreviation value
 			SetWritingSystemAbbrev(sDefaultAnalysisWritingSystem, dom);
 			return treeTop;
@@ -208,24 +146,24 @@ namespace LanguageExplorer.MGA
 		private void SetWritingSystemAbbrev(string sDefaultAnalysisWritingSystem, XmlDocument dom)
 		{
 			// assume the default is OK
-			m_sWritingSystemAbbrev = sDefaultAnalysisWritingSystem;
-			var xn = dom.SelectSingleNode("//item/term[@ws='" + m_sWritingSystemAbbrev + "']");
+			WritingSystemAbbrev = sDefaultAnalysisWritingSystem;
+			var xn = dom.SelectSingleNode("//item/term[@ws='" + WritingSystemAbbrev + "']");
 			if (xn == null)
 			{
 				// default not found in the file; use English (and hope for the best)
-				m_sWritingSystemAbbrev = "en";
-				xn = dom.SelectSingleNode("//item/term[@ws='" + m_sWritingSystemAbbrev + "']");
+				WritingSystemAbbrev = "en";
+				xn = dom.SelectSingleNode("//item/term[@ws='" + WritingSystemAbbrev + "']");
 			}
 			if (xn == null)
 			{
 				// The default analysis WS and english WS failed to be found, therefore,
 				// try the cache's fallback locale. REVIEW: Should we check this one before
 				// checking english?
-				m_sWritingSystemAbbrev = WritingSystemServices.FallbackUserWsId;
+				WritingSystemAbbrev = WritingSystemServices.FallbackUserWsId;
 			}
 
-			m_sTermNodeXPath = "term[@ws='" + m_sWritingSystemAbbrev + "']";
-			m_sAbbrevNodeXPath = "abbrev[@ws='" + m_sWritingSystemAbbrev + "']";
+			m_sTermNodeXPath = "term[@ws='" + WritingSystemAbbrev + "']";
+			m_sAbbrevNodeXPath = "abbrev[@ws='" + WritingSystemAbbrev + "']";
 		}
 
 		private void PopulateTreeView(XmlDocument dom, XmlNode treeTop)
@@ -315,7 +253,7 @@ namespace LanguageExplorer.MGA
 				return;
 			}
 			m_lastSelectedTreeNode.Checked = false;
-			if (m_fTerminalsUseCheckBoxes)
+			if (TerminalsUseCheckBoxes)
 			{
 				m_lastSelectedTreeNode.ImageIndex = m_lastSelectedTreeNode.SelectedImageIndex = (int) MGAImageKind.checkBox;
 			}
@@ -327,7 +265,7 @@ namespace LanguageExplorer.MGA
 		protected virtual void HandleCheckBoxNodes(TreeView tv, TreeNode tn)
 		{
 			UndoLastSelectedNode();
-			if (m_fTerminalsUseCheckBoxes)
+			if (TerminalsUseCheckBoxes)
 			{
 				if (!IsTerminalNode(tn))
 				{

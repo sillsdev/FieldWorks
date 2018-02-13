@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -61,8 +61,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <returns>A DialogResult value</returns>
 		public int ShowDialog(CoreWritingSystemDefinition ws)
 		{
-			CheckDisposed();
-
 			SetupDialog(ws, true);
 			SwitchTab(kWsSorting); // force setup of the Sorting tab
 			return (int)DialogResult.OK;
@@ -73,8 +71,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		internal void PressOk()
 		{
-			CheckDisposed();
-
 			if (!CheckOkToChangeContext())
 				return;
 
@@ -89,7 +85,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		internal void PressCancel()
 		{
-			CheckDisposed();
 			m_fHasClosed = true;
 			DialogResult = DialogResult.Cancel;
 		}
@@ -101,7 +96,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_listBoxRelatedWSs;
 			}
 		}

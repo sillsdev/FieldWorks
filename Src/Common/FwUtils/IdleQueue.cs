@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -232,20 +232,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get; private set;
 		}
 
-		/// <summary>
-		/// This method throws an ObjectDisposedException if IsDisposed returns
-		/// true.  This is the case where a method or property in an object is being
-		/// used but the object itself is no longer valid.
-		///
-		/// This method should be added to all public properties and methods of this
-		/// object and all other objects derived from it (extensive).
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException("IdleQueue", "This object is being used after it has been disposed: this is an Error.");
-		}
-
 		#endregion
 
 		/// <summary>
@@ -269,13 +255,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				CheckDisposed();
 				return m_paused;
 			}
 
 			set
 			{
-				CheckDisposed();
 				if (value && !m_paused)
 					Application.Idle -= Application_Idle;
 				else if (!value && m_paused)
@@ -295,7 +279,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// delegate that are in the queue will be updated instead of a new task being added</param>
 		public void Add(IdleQueuePriority priority, Func<object, bool> del, object parameter, bool update)
 		{
-			CheckDisposed();
 			lock (SyncRoot)
 				m_queue.Enqueue(priority, new IdleQueueTask(priority, del, parameter), update);
 		}
@@ -310,7 +293,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="parameter">The parameter.</param>
 		public void Add(IdleQueuePriority priority, Func<object, bool> del, object parameter)
 		{
-			CheckDisposed();
 			Add(priority, del, parameter, true);
 		}
 
@@ -324,7 +306,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// delegate that are in the queue will be updated instead of a new task being added</param>
 		public void Add(IdleQueuePriority priority, Func<object, bool> del, bool update)
 		{
-			CheckDisposed();
 			Add(priority, del, null, update);
 		}
 
@@ -337,7 +318,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="del">The delegate.</param>
 		public void Add(IdleQueuePriority priority, Func<object, bool> del)
 		{
-			CheckDisposed();
 			Add(priority, del, null);
 		}
 
@@ -347,7 +327,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="del">The delegate.</param>
 		public bool Remove(Func<object, bool> del)
 		{
-			CheckDisposed();
 			lock (SyncRoot)
 				return m_queue.Remove(new IdleQueueTask(del));
 		}
@@ -361,7 +340,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="del">The delegate.</param>
 		public bool Contains(Func<object, bool> del)
 		{
-			CheckDisposed();
 			lock (SyncRoot)
 				return m_queue.Contains(new IdleQueueTask(del));
 		}
@@ -434,7 +412,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <filterpriority>1</filterpriority>
 		public IEnumerator<IdleQueueTask> GetEnumerator()
 		{
-			CheckDisposed();
 			IdleQueueTask[] tasks;
 			lock (SyncRoot)
 				tasks = m_queue.ToArray();
@@ -458,7 +435,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="task">The task.</param>
 		public void Add(IdleQueueTask task)
 		{
-			CheckDisposed();
 			lock (SyncRoot)
 				m_queue.Enqueue(task.Priority, task);
 		}
@@ -468,7 +444,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public void Clear()
 		{
-			CheckDisposed();
 			lock (SyncRoot)
 				m_queue.Clear();
 		}
@@ -482,7 +457,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="task">The task.</param>
 		public bool Contains(IdleQueueTask task)
 		{
-			CheckDisposed();
 			lock (SyncRoot)
 				return m_queue.Contains(task);
 		}
@@ -502,7 +476,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </exception>
 		public void CopyTo(IdleQueueTask[] array, int arrayIndex)
 		{
-			CheckDisposed();
 			lock (SyncRoot)
 				m_queue.CopyTo(array, arrayIndex);
 		}
@@ -516,7 +489,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="task">The task.</param>
 		public bool Remove(IdleQueueTask task)
 		{
-			CheckDisposed();
 			lock (SyncRoot)
 				return m_queue.Remove(task);
 		}
@@ -531,7 +503,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				CheckDisposed();
 				lock (SyncRoot)
 					return m_queue.Count;
 			}
@@ -547,7 +518,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				CheckDisposed();
 				return false;
 			}
 		}

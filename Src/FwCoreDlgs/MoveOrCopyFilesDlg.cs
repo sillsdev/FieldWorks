@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -117,7 +117,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void Initialize(int cFiles, string sOldDir, string sNewDir, IHelpTopicProvider helpTopicProvider)
 		{
-			CheckDisposed();
 			ControlBox = false;	// don't show Cancel button in the titlebar
 			m_msgText.Text = string.Format(FwCoreDlgs.ksMoveOrCopyToNewDir, cFiles);
 			m_msgOldDir.Text = string.Format(FwCoreDlgs.ksPreviousFolder, ShortenMyDocsPath(sOldDir));
@@ -135,7 +134,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void Initialize2(string sRootDir, IHelpTopicProvider helpTopicProvider)
 		{
-			CheckDisposed();
 			m_msgText.Text = string.Format(FwCoreDlgs.ksMoveOrCopyFilesToLinkedFilesDir);
 			m_msgOldDir.Text = string.Format(FwCoreDlgs.ksLinkedFilesFolder, ShortenMyDocsPath(sRootDir));
 
@@ -197,18 +195,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public FileLocationChoice Choice
 		{
-			get { CheckDisposed(); return m_choice; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Check whether this dialog has already been disposed.  If so, throw a fit.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(string.Format("'{0}' in use after being disposed.", GetType().Name));
+			get { return m_choice; }
 		}
 
 		/// ------------------------------------------------------------------------------------

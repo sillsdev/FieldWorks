@@ -23,7 +23,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				var list = (ICmPossibilityList) m_obj.ReferenceTargetOwner(m_flid);
+				var list = (ICmPossibilityList) Object.ReferenceTargetOwner(m_flid);
 				var parameters = ConfigurationNode.Element("deParams");
 				if (parameters == null)
 				{
@@ -39,7 +39,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override void FinishInit()
 		{
-			CheckDisposed();
 			// REVIEW (DamienD): do we need to do this?
 			SetFieldFromConfig();
 			base.FinishInit();

@@ -7,7 +7,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -81,19 +80,6 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose(bool disposing )
@@ -121,8 +107,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetDlgInfo(ITsString tssCitationForm, ILexEntry le, IPropertyTable propertyTable, IPublisher publisher)
 		{
-			CheckDisposed();
-
 			Debug.Assert(tssCitationForm != null);
 			Debug.Assert(le != null);
 
@@ -308,8 +292,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void GetDlgInfo(out int newSenseID)
 		{
-			CheckDisposed();
-
 			newSenseID = m_newSenseID;
 		}
 

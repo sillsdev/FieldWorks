@@ -186,8 +186,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		protected virtual void HandleSelectionChange(object sender, VwSelectionArgs args)
 		{
-			CheckDisposed();
-
 			if (m_InSelectionChanged || RootBox.Selection == null)
 			{
 				return;
@@ -247,8 +245,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			base.MakeRoot();
 
 			m_vc = new RibbonVc(this);

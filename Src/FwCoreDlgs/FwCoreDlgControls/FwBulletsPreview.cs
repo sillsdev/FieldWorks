@@ -151,15 +151,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_WritingSystem == 0)
 					m_WritingSystem = WritingSystemFactory.UserWs;
 				return m_WritingSystem;
 			}
 			set
 			{
-				CheckDisposed();
 				m_WritingSystem = value;
 			}
 		}
@@ -177,8 +174,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (base.WritingSystemFactory == null)
 				{
 					CreateTempWritingSystemFactory();
@@ -187,8 +182,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (base.WritingSystemFactory != value)
 				{
 					ShutDownTempWsFactory();
@@ -232,8 +225,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public override int GetAvailWidth(IVwRootBox prootb)
 		{
-			CheckDisposed();
-
 			return ClientRectangle.Width - (HorizMargin * 2);
 		}
 
@@ -245,8 +236,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			//if (DesignMode)
 			//    return;
 			base.MakeRoot();

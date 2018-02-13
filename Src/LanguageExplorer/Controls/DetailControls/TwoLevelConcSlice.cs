@@ -17,7 +17,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override void Expand(int iSlice)
 		{
-			CheckDisposed();
 			ToggleExpansion();
 		}
 		/// <summary>
@@ -25,7 +24,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override void Collapse(int iSlice)
 		{
-			CheckDisposed();
 			ToggleExpansion();
 		}
 

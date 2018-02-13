@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.LCModel;
@@ -106,8 +105,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetEmptyLabel(string label)
 		{
-			CheckDisposed();
-
 			if (m_kEmptyNode != null)
 			{
 				m_kEmptyNode.Tss = TsStringUtils.MakeString(label, Cache.WritingSystemFactory.UserWs);
@@ -119,19 +116,6 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 		#region IDisposable & Co. implementation
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -314,8 +298,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void LoadPopupTree(int hvoSpecifiedTarget)
 		{
-			CheckDisposed();
-
 			if (m_fLoadingPopupTree)
 			{
 				if (m_hvoPendingTarget != hvoSpecifiedTarget)
@@ -446,8 +428,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		protected void SelectChosenItem(TreeNode item, PopupTree popupTree)
 		{
-			CheckDisposed();
-
 			if (item != null)
 			{
 				// We do NOT want to simulate a mouse click because that will cause the

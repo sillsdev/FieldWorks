@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -30,7 +30,6 @@ namespace LanguageExplorer
 		private ToolStripMenuItem _copyLocationAsHyperlinkToolStripMenuItem;
 		private LinkedList<FwLinkArgs> _backStack;
 		private LinkedList<FwLinkArgs> _forwardStack;
-		private FwLinkArgs _currentContext;
 		private bool _followingLink;
 		private int _backStackOrig;
 		private FwLinkArgs _linkActive;
@@ -61,7 +60,7 @@ namespace LanguageExplorer
 
 			_backStack = new LinkedList<FwLinkArgs>();
 			_forwardStack = new LinkedList<FwLinkArgs>();
-			_currentContext = null;
+			CurrentContext = null;
 
 			Application.Idle += Application_Idle;
 		}
@@ -89,20 +88,6 @@ namespace LanguageExplorer
 		}
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -184,7 +169,7 @@ namespace LanguageExplorer
 			_copyLocationAsHyperlinkToolStripMenuItem = null;
 			_backStack = null;
 			_forwardStack = null;
-			_currentContext = null;
+			CurrentContext = null;
 			_linkActive = null;
 			PropertyTable = null;
 			Publisher = null;
@@ -198,14 +183,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Return the current link.
 		/// </summary>
-		public FwLinkArgs CurrentContext
-		{
-			get
-			{
-				CheckDisposed();
-				return _currentContext;
-			}
-		}
+		public FwLinkArgs CurrentContext { get; private set; }
 
 		/// <summary>
 		/// Handle the specified link if it is local.
@@ -251,15 +229,13 @@ namespace LanguageExplorer
 		/// </summary>
 		internal void AddLinkToHistory(FwLinkArgs newHistoryLink)
 		{
-			CheckDisposed();
-
-			if (newHistoryLink.EssentiallyEquals(_currentContext))
+			if (newHistoryLink.EssentiallyEquals(CurrentContext))
 			{
 				return;
 			}
-			if (_currentContext != null && (!_forwardStack.Any() || !_currentContext.EssentiallyEquals(_forwardStack.Last.Value)))
+			if (CurrentContext != null && (!_forwardStack.Any() || !CurrentContext.EssentiallyEquals(_forwardStack.Last.Value)))
 			{
-				Push(_backStack, _currentContext);
+				Push(_backStack, CurrentContext);
 			}
 			// Try to omit intermediate targets which are added to the stack when switching
 			// tools.  This doesn't work in OnFollowLink() because the behavior of following
@@ -291,7 +267,7 @@ namespace LanguageExplorer
 			{
 				_forwardStack.Clear();
 			}
-			_currentContext = newHistoryLink;
+			CurrentContext = newHistoryLink;
 		}
 
 		/// <summary>
@@ -299,27 +275,24 @@ namespace LanguageExplorer
 		/// </summary>
 		private void CopyLocationAsHyperlink_Clicked(object sender, EventArgs e)
 		{
-			CheckDisposed();
-			if (_currentContext == null)
+			if (CurrentContext == null)
 			{
 				return;
 			}
-			var args = new FwAppArgs(_cache.ProjectId.Handle, _currentContext.ToolName, _currentContext.TargetGuid);
+			var args = new FwAppArgs(_cache.ProjectId.Handle, CurrentContext.ToolName, CurrentContext.TargetGuid);
 			ClipboardUtils.SetDataObject(args.ToString(), true);
 		}
 
 		/// <summary />
 		private void HistoryBack_Clicked(object sender, EventArgs e)
 		{
-			CheckDisposed();
-
 			if (!_backStack.Any())
 			{
 				return;
 			}
-			if (_currentContext!= null)
+			if (CurrentContext!= null)
 			{
-				Push(_forwardStack, _currentContext);
+				Push(_forwardStack, CurrentContext);
 			}
 			_usingHistory = true;
 			_linkActive = Pop(_backStack);
@@ -329,8 +302,6 @@ namespace LanguageExplorer
 		/// <summary />
 		private void HistoryForward_Clicked(object sender, EventArgs e)
 		{
-			CheckDisposed();
-
 			if (!_forwardStack.Any())
 			{
 				return;

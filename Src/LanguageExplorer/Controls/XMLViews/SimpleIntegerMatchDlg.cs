@@ -75,8 +75,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
-
 				var val = (int)m_nudVal1.Value;	// validating handled in the use of the numeric up down control
 				var index = m_comboMatchType.SelectedIndex;
 				switch (index)
@@ -117,8 +115,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
-
 				var index = m_comboMatchType.SelectedIndex;
 				var sval = m_nudVal1.Value.ToString();
 				switch (index)
@@ -149,19 +145,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					default:
 						throw new Exception("internal error...bad combo index in SimpleIntegerMatchDlg.Pattern");
 				}
-			}
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 			}
 		}
 
@@ -290,8 +273,6 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal void SetDlgValues(IMatcher matcher)
 		{
-			CheckDisposed();
-
 			long val;
 			if (matcher is RangeIntMatcher)
 			{

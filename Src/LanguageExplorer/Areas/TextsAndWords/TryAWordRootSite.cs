@@ -107,8 +107,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode)
 			{
 				return;
@@ -156,8 +154,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void DisposeTryAWordSandbox()
 		{
-			CheckDisposed();
-
 			if (m_tryAWordSandbox == null)
 			{
 				return;

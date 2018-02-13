@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -42,7 +42,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_btnOK;
 			}
 		}
@@ -56,7 +55,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_lstVernWs;
 			}
 		}
@@ -70,7 +68,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_lstAnalWs;
 			}
 		}
@@ -84,7 +81,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_btnVernMoveDown;
 			}
 		}
@@ -98,7 +94,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_btnVernMoveUp;
 			}
 		}
@@ -112,7 +107,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_btnDelVernWs;
 			}
 		}
@@ -126,7 +120,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_btnModifyVernWs;
 			}
 		}
@@ -140,7 +133,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_btnAnalMoveDown;
 			}
 		}
@@ -154,7 +146,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_btnAnalMoveUp;
 			}
 		}
@@ -168,7 +159,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_btnDelAnalWs;
 			}
 		}
@@ -182,7 +172,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_btnModifyAnalWs;
 			}
 		}
@@ -196,8 +185,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void SimulateOKButtonPress()
 		{
-			CheckDisposed();
-
 			SaveInternal();
 		}
 
@@ -208,8 +195,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void SimulateVernDownButtonPress()
 		{
-			CheckDisposed();
-
 			m_btnVernMoveDown_Click(null, null);
 		}
 
@@ -220,8 +205,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void SimulateVernUpButtonPress()
 		{
-			CheckDisposed();
-
 			m_btnVernMoveUp_Click(null, null);
 		}
 
@@ -232,8 +215,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void SimulateAnalDownButtonPress()
 		{
-			CheckDisposed();
-
 			m_btnAnalMoveDown_Click(null, null);
 		}
 
@@ -244,8 +225,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void SimulateAnalUpButtonPress()
 		{
-			CheckDisposed();
-
 			m_btnAnalMoveUp_Click(null, null);
 		}
 
@@ -256,8 +235,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void SimulateAnalDeletePress()
 		{
-			CheckDisposed();
-
 			m_btnDelAnalWs_Click(null, null);
 		}
 
@@ -268,8 +245,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void SimulateVernDeletePress()
 		{
-			CheckDisposed();
-
 			m_btnDelVernWs_Click(null, null);
 		}
 		#endregion
@@ -282,8 +257,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void SimulateAnalAddingWs(CoreWritingSystemDefinition ws)
 		{
-			CheckDisposed();
-
 			AddWsToList(ws, m_lstAnalWs);
 			UpdateButtons(m_lstAnalWs);
 		}
@@ -295,8 +268,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void SimulateVernAddingWs(CoreWritingSystemDefinition ws)
 		{
-			CheckDisposed();
-
 			AddWsToList(ws, m_lstVernWs);
 			UpdateButtons(m_lstVernWs);
 		}

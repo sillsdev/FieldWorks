@@ -90,8 +90,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		public bool OnConsideringClosing(object argument, System.ComponentModel.CancelEventArgs args)
 		{
-			CheckDisposed();
-
 			args.Cancel = !PrepareToGoAway();
 			return args.Cancel; // if we want to cancel, others don't need to be asked.
 		}

@@ -158,8 +158,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void ResetTables()
 		{
-			CheckDisposed();
-
 			// Don't crash if we don't have any view content yet.  See LT-7244.
 			m_xmlVc?.ResetTables();
 			RootBox?.Reconstruct();
@@ -176,8 +174,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void ResetTables(string sNewLayout)
 		{
-			CheckDisposed();
-
 			// Don't crash if we don't have any view content yet.  See LT-7244.
 			if (m_xmlVc != null)
 			{
@@ -237,8 +233,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode)
 			{
 				return;
@@ -271,8 +265,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			set
 			{
-				CheckDisposed();
-
 				m_hvoRoot = value;
 				m_rootb.SetRootObject(m_hvoRoot, m_xmlVc, 1 /* magic number ALWAYS used for root fragment in this type of view. */, m_styleSheet);
 			}
@@ -283,8 +275,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected override void HandleSelectionChange(IVwRootBox prootb, IVwSelection sel)
 		{
-			CheckDisposed();
-
 			if (m_fInChangeSelectedObjects)
 			{
 				return;

@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2017 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -143,23 +143,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		/// <remarks>This method is thread safe.</remarks>
-		/// ------------------------------------------------------------------------------------
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException(
-					string.Format("'{0}' in use after being disposed.", GetType().Name));
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		///
 		/// </summary>
 		/// <param name="disposing"></param>
@@ -201,8 +184,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public virtual void Step(int cSteps)
 		{
-			CheckDisposed();
-
 			if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 			{
 				m_synchronizeInvoke.Invoke((Action<int>)Step, new object[] {cSteps});
@@ -219,16 +200,12 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 					return (string)m_synchronizeInvoke.Invoke((Func<string>)(() => m_progressDialog.Title), null);
 				return m_progressDialog.Title;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 					m_synchronizeInvoke.Invoke((Action<string>)(s => m_progressDialog.Title = s), new [] {value});
 				else
@@ -244,16 +221,12 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 					return (string)m_synchronizeInvoke.Invoke((Func<string>)(() => m_progressDialog.Message), null);
 				return m_progressDialog.Message;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 					m_synchronizeInvoke.Invoke((Action<string>)(s => m_progressDialog.Message = s), new [] {value});
 				else
@@ -269,16 +242,12 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 					return (int)m_synchronizeInvoke.Invoke((Func<int>)(() => m_progressDialog.Position), null);
 				return m_progressDialog.Position;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 					m_synchronizeInvoke.Invoke((Action<int>)(i => m_progressDialog.Position = i), new object[] {value});
 				else
@@ -294,16 +263,12 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 					return (int)m_synchronizeInvoke.Invoke((Func<int>)(() => m_progressDialog.StepSize), null);
 				return m_progressDialog.StepSize;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 					m_synchronizeInvoke.Invoke((Action<int>)(i => m_progressDialog.StepSize = i), new object[] {value});
 				else
@@ -340,16 +305,12 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 					return (int)m_synchronizeInvoke.Invoke((Func<int>)(() => m_progressDialog.Minimum), null);
 				return m_progressDialog.Minimum;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 					m_synchronizeInvoke.Invoke((Action<int>)(i => m_progressDialog.Minimum = i), new object[] {value});
 				else
@@ -367,16 +328,12 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 					return (int)m_synchronizeInvoke.Invoke((Func<int>) (() => m_progressDialog.Maximum), null);
 				return m_progressDialog.Maximum;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 					m_synchronizeInvoke.Invoke((Action<int>) (i => m_progressDialog.Maximum = i), new object[] {value});
 				else
@@ -395,16 +352,12 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_synchronizeInvoke.InvokeRequired)
 					return (string)m_synchronizeInvoke.Invoke((Func<string>)(() => ((ProgressDialogImpl)m_progressDialog).CancelButtonText), null);
 				return ((ProgressDialogImpl)m_progressDialog).CancelButtonText;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_synchronizeInvoke.InvokeRequired)
 					m_synchronizeInvoke.Invoke((Action<string>)(s => ((ProgressDialogImpl)m_progressDialog).CancelButtonText = s), new object[] {value});
 				else
@@ -420,16 +373,12 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_synchronizeInvoke.InvokeRequired)
 					return (string)m_synchronizeInvoke.Invoke((Func<string>)(() => ((ProgressDialogImpl)m_progressDialog).CancelLabelText), null);
 				return ((ProgressDialogImpl)m_progressDialog).CancelLabelText;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_synchronizeInvoke.InvokeRequired)
 					m_synchronizeInvoke.Invoke((Action<string>)(s => ((ProgressDialogImpl)m_progressDialog).CancelLabelText = s), new object[] {value});
 				else
@@ -447,14 +396,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_progressDialog.Restartable;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_progressDialog.Restartable = value;
 			}
 		}
@@ -482,16 +427,12 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 					return (bool)m_synchronizeInvoke.Invoke((Func<bool>)(() => m_progressDialog.AllowCancel), null);
 				return m_progressDialog.AllowCancel;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 					m_synchronizeInvoke.Invoke((Action<bool>)(f => m_progressDialog.AllowCancel = f), new object[] {value});
 				else

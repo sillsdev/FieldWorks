@@ -319,8 +319,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		public override void AddItem(ICmObject obj)
 		{
-			CheckDisposed();
-
 			var lexemes = new HashSet<ICmObject>();
 			var ler = m_obj as ILexEntryRef;
 			switch (m_flid)

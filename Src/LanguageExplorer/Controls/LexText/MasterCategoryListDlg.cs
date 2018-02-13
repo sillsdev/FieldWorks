@@ -64,19 +64,6 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose( bool disposing )
@@ -106,8 +93,6 @@ namespace LanguageExplorer.Controls.LexText
 		///  <summary />
 		public void SetDlginfo(ICmPossibilityList posList, IPropertyTable propertyTable, bool launchedFromInsertMenu, IPartOfSpeech subItemOwner)
 		{
-			CheckDisposed();
-
 			m_subItemOwner = subItemOwner; // May be null, which is fine.
 			m_posList = posList;
 			m_launchedFromInsertMenu = launchedFromInsertMenu;

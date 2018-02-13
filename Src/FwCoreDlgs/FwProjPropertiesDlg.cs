@@ -252,8 +252,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void StartWithWSPage()
 		{
-			CheckDisposed();
-
 			m_tabControl.SelectedIndex = kWritingSystemTab;
 		}
 		#endregion
@@ -272,17 +270,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			Dispose(false);
 			// The base class finalizer is called automatically.
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -867,8 +854,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public int ShowDlg()
 		{
-			CheckDisposed();
-
 			return (int)ShowDialog();
 		}
 
@@ -878,8 +863,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <returns></returns>
 		public bool WritingSystemsChanged()
 		{
-			CheckDisposed();
-
 			return m_fWsChanged;
 		}
 
@@ -889,8 +872,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <returns></returns>
 		public bool ProjectNameChanged()
 		{
-			CheckDisposed();
-
 			return m_fProjNameChanged;
 		}
 
@@ -901,8 +882,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_txtProjName.Text;
 			}
 		}
@@ -913,8 +892,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <returns></returns>
 		public bool LinkedFilesChanged()
 		{
-			CheckDisposed();
-
 			return m_fLinkedFilesChanged;
 		}
 
@@ -923,8 +900,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public void DisposeDialog()
 		{
-			CheckDisposed();
-
 			Dispose(true);
 		}
 		#endregion
@@ -1421,7 +1396,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void WarnOnNonDefaultLinkedFilesChange()
 		{
-			CheckDisposed();
 			if (!m_defaultLinkedFilesFolder.Equals(txtExtLnkEdit.Text))
 			{
 				using (var dlg = new WarningNotUsingDefaultLinkedFilesLocation(m_helpTopicProvider))

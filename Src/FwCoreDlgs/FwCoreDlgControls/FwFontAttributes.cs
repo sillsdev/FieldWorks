@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2017 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -43,19 +43,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		}
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
 		#region Public properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -64,7 +51,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public ILgWritingSystemFactory WritingSystemFactory
 		{
-			set { CheckDisposed(); m_btnFontFeatures.WritingSystemFactory = value; }
+			set { m_btnFontFeatures.WritingSystemFactory = value; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -480,8 +467,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public void UpdateForStyle(FontInfo fontInfo)
 		{
-			CheckDisposed();
-
 			// Initialize controls based on whether or not this style inherits from another style.
 			InitControlBehavior(ShowingInheritedProperties);
 

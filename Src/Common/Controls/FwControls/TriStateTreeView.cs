@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2017 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -176,17 +176,6 @@ namespace SIL.FieldWorks.Common.Controls
 			base.Dispose( disposing );
 		}
 
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
 		#endregion
 
 		#region Component Designer generated code
@@ -226,12 +215,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return base.CheckBoxes;
 			}
 			set
 			{
-				CheckDisposed();
 				base.CheckBoxes = value;
 			}
 		}
@@ -246,12 +233,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return base.ImageIndex;
 			}
 			set
 			{
-				CheckDisposed();
 				base.ImageIndex = value;
 			}
 		}
@@ -266,12 +251,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return base.ImageList;
 			}
 			set
 			{
-				CheckDisposed();
 				base.ImageList = value;
 			}
 		}
@@ -286,12 +269,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return base.SelectedImageIndex;
 			}
 			set
 			{
-				CheckDisposed();
 				base.SelectedImageIndex = value;
 			}
 		}
@@ -535,7 +516,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public TriStateTreeViewCheckState GetChecked(TreeNode node)
 		{
-			CheckDisposed();
 			return GetCheckStateFromImageIndex(node.ImageIndex);
 		}
 
@@ -548,8 +528,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public void SetChecked(TreeNode node, TriStateTreeViewCheckState state)
 		{
-			CheckDisposed();
-
 			if (CheckNode(node, state))
 				ChangeParent(node.Parent);
 		}
@@ -561,8 +539,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public void CheckNodeByTag(object tag, TriStateTreeViewCheckState state)
 		{
-			CheckDisposed();
-
 			if (tag == null)
 				return;
 
@@ -589,7 +565,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public ArrayList GetCheckedTagData()
 		{
-			CheckDisposed();
 			ArrayList list = new ArrayList();
 
 			foreach (TreeNode node in Nodes)
@@ -606,8 +581,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public TreeNode[] GetNodesWithState(TriStateTreeViewCheckState state)
 		{
-			CheckDisposed();
-
 			List<TreeNode> list = new List<TreeNode>();
 
 			foreach (TreeNode node in Nodes)
@@ -664,8 +637,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public TreeNode[] GetNodesOfTypeWithState(Type nodeType, TriStateTreeViewCheckState state)
 		{
-			CheckDisposed();
-
 			List<TreeNode> list = new List<TreeNode>(GetNodesWithState(state));
 
 			for (int i = list.Count - 1; i >= 0; i--)

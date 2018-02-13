@@ -68,7 +68,7 @@ namespace LanguageExplorer.Controls.LexText
 					}
 				}
 				type.FeaturesRS.Add(fd);
-				m_selFeatDefn = fd;
+				SelectedFeatDefn = fd;
 
 				undoHelper.RollBack = false;
 			}

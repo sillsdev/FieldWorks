@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2017 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -85,18 +85,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			base.Dispose(disposing);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
 		#endregion
 
 		#region Properties
@@ -110,13 +98,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_ws;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_ws = value;
 				SetSelectedFonts();
 			}
@@ -131,12 +116,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_defaultFontComboBox.Text;
 			}
 			set
 			{
-				CheckDisposed();
 				m_defaultFontComboBox.Text = value;
 			}
 		}
@@ -145,7 +128,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_defaultFontComboBox;
 			}
 		}

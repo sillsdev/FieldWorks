@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -54,8 +54,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			/// -----------------------------------------------------------------------------------
 			public override bool CanPaste()
 			{
-				CheckDisposed();
-
 				bool fVisible = Control.Visible;
 				Control.Visible = true;
 				bool fReturn = base.CanPaste();
@@ -98,7 +96,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				get
 				{
-					CheckDisposed();
 					ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 					bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Figure caption");
 					return bldr.GetTextProps();
@@ -204,8 +201,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual void ActivateView()
 		{
-			CheckDisposed();
-
 			PerformLayout();
 			Show();
 			Focus();
@@ -218,8 +213,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public override void ScrollToEnd()
 		{
-			CheckDisposed();
-
 			base.ScrollToEnd();
 			m_rootb.MakeSimpleSel(false, true, false, true);
 			PerformLayout();
@@ -232,8 +225,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public override void ScrollToTop()
 		{
-			CheckDisposed();
-
 			base.ScrollToTop();
 			// The actual DraftView code for handling Ctrl-Home doesn't contain this method call.
 			// The call to CallOnExtendedKey() in OnKeyDown() handles setting the IP.
@@ -305,8 +296,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual void CallLayout()
 		{
-			CheckDisposed();
-
 			OnLayout(new LayoutEventArgs(this, string.Empty));
 		}
 
@@ -317,8 +306,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public void MakeEnglishParagraphs()
 		{
-			CheckDisposed();
-
 			ILgWritingSystemFactory wsf = m_cache.WritingSystemFactory;
 			int wsEng = wsf.GetWsFromStr("en");
 			AddParagraphsToLangProj(wsEng, kFirstParaEng, kSecondParaEng);
@@ -360,8 +347,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public void KillFocus(Control newWindow)
 		{
-			CheckDisposed();
-
 			OnKillFocus(newWindow, true);
 		}
 
@@ -377,15 +362,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
-
 				return (m_group == null || this == m_group.ScrollingController ?
 					m_scrollPosition : m_group.ScrollingController.ScrollPosition);
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_group == null || this == m_group.ScrollingController)
 					m_scrollPosition = new Point(-value.X, -value.Y);
 				else
@@ -414,8 +395,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public void MakeRoot(int hvoRoot, int flid)
 		{
-			CheckDisposed();
-
 			MakeRoot(hvoRoot, flid, 1);
 		}
 
@@ -429,8 +408,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public void MakeRoot(int hvoRoot, int flid, int frag)
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode)
 				return;
 
@@ -479,8 +456,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			MakeRoot(m_hvoRoot, m_flid); //, DummyBasicViewVc.kflidTestDummy);
 		}
 
@@ -505,12 +480,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_displayType;
 			}
 			set
 			{
-				CheckDisposed();
 				m_displayType = value;
 			}
 		}
@@ -524,7 +497,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_SelectionHelper;
 			}
 		}
@@ -538,12 +510,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fSkipLayout;
 			}
 			set
 			{
-				CheckDisposed();
 				m_fSkipLayout = value;
 			}
 		}
@@ -557,7 +527,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_basicViewVc;
 			}
 		}
@@ -572,8 +541,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public void CallRootSiteOnKeyDown(KeyEventArgs e)
 		{
-			CheckDisposed();
-
 			this.OnKeyDown(e);
 		}
 
@@ -593,8 +560,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public bool IsParagraphProps(out IVwSelection vwsel, out int hvoText,
 			out int tagText, out IVwPropertyStore[] vqvps, out int ihvoAnchor, out int ihvoEnd)
 		{
-			CheckDisposed();
-
 			vwsel = null;
 			hvoText = 0;
 			tagText = 0;
@@ -624,7 +589,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			out int tagText, out IVwPropertyStore[] vqvps, out int ihvoFirst, out int ihvoLast,
 			out ITsTextProps[] vqttp)
 		{
-			CheckDisposed();
 			return EditingHelper.GetParagraphProps(out vwsel, out hvoText, out tagText,
 				out vqvps, out ihvoFirst, out ihvoLast, out vqttp);
 		}
@@ -637,8 +601,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public void HandleKeyPress(char keyChar)
 		{
-			CheckDisposed();
-
 			using (new HoldGraphics(this))
 			{
 				EditingHelper.HandleKeyPress(keyChar, ModifierKeys);
@@ -654,8 +616,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public new void GetCoordRects(out Rectangle rcSrcRoot, out Rectangle rcDstRoot)
 		{
-			CheckDisposed();
-
 			rcSrcRoot = Rectangle.Empty;
 			rcDstRoot = Rectangle.Empty;
 			base.GetCoordRects(out rcSrcRoot, out rcDstRoot);
@@ -674,8 +634,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public bool AdjustScrollRange(int dxdSize, int dxdPosition, int dydSize,
 			int dydPosition)
 		{
-			CheckDisposed();
-
 			return base.AdjustScrollRange1(dxdSize, dxdPosition, dydSize, dydPosition);
 		}
 
@@ -688,12 +646,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return base.VScroll;
 			}
 			set
 			{
-				CheckDisposed();
 				base.VScroll = value;
 			}
 		}
@@ -707,12 +663,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return base.HScroll;
 			}
 			set
 			{
-				CheckDisposed();
 				base.HScroll = value;
 			}
 		}
@@ -726,8 +680,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
-
 				int nLineHeight = 0;
 				using(new HoldGraphics(this))
 				{
@@ -761,8 +713,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
-
 				int nSelWidth = 0;
 				using(new HoldGraphics(this))
 				{
@@ -795,8 +745,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public void ApplyStyle(string sStyleToApply)
 		{
-			CheckDisposed();
-
 			EditingHelper.ApplyStyle(sStyleToApply);
 		}
 
@@ -808,8 +756,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public void CallOnMouseDown(MouseEventArgs e)
 		{
-			CheckDisposed();
-
 			base.OnMouseDown(e);
 		}
 
@@ -821,8 +767,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public void CallOnMouseUp(MouseEventArgs e)
 		{
-			CheckDisposed();
-
 			base.OnMouseUp(e);
 		}
 
@@ -834,8 +778,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public void SetRootBox(IVwRootBox rootb)
 		{
-			CheckDisposed();
-
 			m_rootb = rootb;
 		}
 	}

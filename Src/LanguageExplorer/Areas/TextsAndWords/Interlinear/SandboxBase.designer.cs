@@ -41,21 +41,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_vc?.Dispose();
 				Caches?.Dispose();
 				DisposeComboHandler();
-				if (m_caHandler != null)
+				if (FirstLineHandler != null)
 				{
-					m_caHandler.AnalysisChosen -= new EventHandler(Handle_AnalysisChosen);
-					m_caHandler.Dispose();
+					FirstLineHandler.AnalysisChosen -= new EventHandler(Handle_AnalysisChosen);
+					FirstLineHandler.Dispose();
 				}
 			}
 			m_stylesheet = null;
 			Caches = null;
 			// StringCaseStatus m_case; // Enum, which is a value type, and value types can't be set to null.
 			m_ComboHandler = null; // handles most kinds of combo box.
-			m_caHandler = null; // handles the one on the base line.
+			FirstLineHandler = null; // handles the one on the base line.
 			EditMonitor = null;
 			m_vc = null;
 			m_rawWordform = null;
-			m_tssWordform = null;
+			FormOfWordform = null;
 		}
 
 		#region Component Designer generated code

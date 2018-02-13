@@ -475,8 +475,6 @@ namespace LanguageExplorer.Areas
 
 		public virtual bool OnRecordNavigation(object argument)
 		{
-			CheckDisposed();
-
 			if (!m_fullyInitialized || RecordNavigationInfo.GetSendingList(argument) != MyRecordList)
 			{
 				// Don't pretend to have handled it if it is not fully initialzed, or isn't our record list.
@@ -1088,8 +1086,6 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public void OnSelectionChanged(object sender, FwObjectSelectionEventArgs e)
 		{
-			CheckDisposed();
-
 			// paranoid sanity check.
 			Debug.Assert(e.Hvo != 0);
 			if (e.Hvo == 0)
@@ -1111,8 +1107,6 @@ namespace LanguageExplorer.Areas
 		/// <returns></returns>
 		public virtual bool OnDisplayConfigureXmlDocView(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			if (string.IsNullOrEmpty(m_configObjectName))
 			{
 				display.Enabled = display.Visible = false;
@@ -1134,8 +1128,6 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public bool OnConfigureXmlDocView(object commandObject)
 		{
-			CheckDisposed();
-
 			RunConfigureDialog(string.Empty);
 			return true; // we handled it
 		}
@@ -1249,8 +1241,6 @@ namespace LanguageExplorer.Areas
 		public bool OnDisplayDeleteRecord(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			display.Enabled = false;
 			// Don't claim to have handled it if the record list is holding reversal entries.
 			return MyRecordList.Id != "reversalEntries";
@@ -1299,8 +1289,6 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public bool OnDeleteRecord(object commandObject)
 		{
-			CheckDisposed();
-
 			if (MyRecordList.Id == "reversalEntries")
 			{
 				return false; // Let the record list do it.

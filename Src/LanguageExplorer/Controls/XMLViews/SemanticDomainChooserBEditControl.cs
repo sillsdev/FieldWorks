@@ -46,17 +46,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_searchCache = new SemDomSearchCache(cache);
 		}
 
-		public override Button SuggestButton
-		{
-			get
-			{
-				CheckDisposed();
-				return m_suggestButton;
-			}
-		}
+		public override Button SuggestButton => m_suggestButton;
 
-		protected override void ComputeValue(List<ICmObject> chosenObjs, int hvoItem, out List<ICmObject> oldVals,
-			out List<ICmObject> newVal)
+		protected override void ComputeValue(List<ICmObject> chosenObjs, int hvoItem, out List<ICmObject> oldVals, out List<ICmObject> newVal)
 		{
 			if (!m_doingSuggest)
 			{
@@ -145,19 +137,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void LaunchPreview()
 		{
 			m_bar.LaunchPreview();
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
 		}
 
 		public bool IsDisposed { get; private set; }

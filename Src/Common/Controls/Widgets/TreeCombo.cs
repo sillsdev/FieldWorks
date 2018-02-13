@@ -116,13 +116,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return ComboBoxStyle.DropDownList;
 			}
 
 			set
 			{
-				CheckDisposed();
 				// do nothing
 			}
 		}
@@ -135,7 +133,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return Tree.Nodes;
 			}
 		}
@@ -149,7 +146,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_dropDownBox as PopupTree;
 			}
 		}
@@ -233,13 +229,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return Tree.SelectedNode;
 			}
 			set
 			{
-				CheckDisposed();
-
 				Tree.SelectedNode = value;
 				SetComboText(value);
 			}
@@ -254,13 +247,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return SelectedNode;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (value is TreeNode || value == null)
 					SelectedNode = value as TreeNode;
 			}

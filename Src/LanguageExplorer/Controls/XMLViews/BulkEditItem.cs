@@ -14,39 +14,16 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public class BulkEditItem : IDisposable
 	{
-		IBulkEditSpecControl _bulkEditSpecControl;
-
 		/// <summary />
 		public BulkEditItem(IBulkEditSpecControl bulkEditSpecControl)
 		{
-			_bulkEditSpecControl = bulkEditSpecControl;
+			BulkEditControl = bulkEditSpecControl;
 		}
 
 		/// <summary />
-		public IBulkEditSpecControl BulkEditControl
-		{
-			get
-			{
-				CheckDisposed();
-				return _bulkEditSpecControl;
-			}
-		}
+		public IBulkEditSpecControl BulkEditControl { get; private set; }
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: RandyR: Oct. 16, 2005.
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -114,11 +91,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				(_bulkEditSpecControl as IDisposable)?.Dispose();
+				(BulkEditControl as IDisposable)?.Dispose();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			_bulkEditSpecControl = null;
+			BulkEditControl = null;
 
 			IsDisposed = true;
 		}

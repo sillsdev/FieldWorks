@@ -341,21 +341,6 @@ namespace LanguageExplorer.Areas.Lists
 		#region Implementation of IDisposable
 
 		/// <summary>
-		/// This method throws an ObjectDisposedException if IsDisposed returns true.
-		/// This is the case where a method or property in an object is being used but
-		/// the object itself is no longer valid.
-		/// This method should be added to all public properties and methods of this
-		/// object and all other objects derived from it (extensive).
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose(bool disposing)

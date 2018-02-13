@@ -41,10 +41,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			Debug.Assert(cache != null);
 			Debug.Assert(obj != null);
-			m_cache = cache;
+			Cache = cache;
 			Object = obj;
 			m_flid = flid;
-			m_fieldName = m_cache.DomainDataByFlid.MetaDataCache.GetFieldName(m_flid);
+			m_fieldName = Cache.DomainDataByFlid.MetaDataCache.GetFieldName(m_flid);
 		}
 
 		/// <summary>
@@ -62,7 +62,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected internal override bool UpdateDisplayIfNeeded(int hvo, int tag)
 		{
-			CheckDisposed();
 			if (tag == Flid)
 			{
 				UpdateDisplayFromDatabase();
@@ -85,12 +84,12 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected void SetFieldFromConfig()
 		{
-			Debug.Assert(m_cache != null);
+			Debug.Assert(Cache != null);
 			Debug.Assert(ConfigurationNode != null);
 
-			var className = m_cache.DomainDataByFlid.MetaDataCache.GetClassName(m_obj.ClassID);
+			var className = Cache.DomainDataByFlid.MetaDataCache.GetClassName(Object.ClassID);
 			m_fieldName = XmlUtils.GetMandatoryAttributeValue(ConfigurationNode, "field");
-			var mdc = m_cache.DomainDataByFlid.MetaDataCache;
+			var mdc = Cache.DomainDataByFlid.MetaDataCache;
 			m_flid = mdc.GetFieldId2(mdc.GetClassId(className), m_fieldName, true);
 		}
 	}

@@ -238,7 +238,6 @@ namespace LanguageExplorer.Impls
 		{
 			get
 			{
-				CheckDisposed();
 				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey)
 				{
 					return regKey.CreateSubKey(SettingsKeyName);
@@ -296,21 +295,6 @@ namespace LanguageExplorer.Impls
 		/// See if the object has been disposed.
 		/// </summary>
 		public bool IsDisposed { get; private set; }
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-#region Dispose support
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
@@ -430,8 +414,6 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-#endregion Dispose support
-
 		/// <summary>
 		/// Dispose the object.
 		/// </summary>
@@ -454,8 +436,6 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public string ResourceString(string stid)
 		{
-			CheckDisposed();
-
 			try
 			{
 				// No need to allocate a different ResourceManager than the one the generated code
@@ -506,8 +486,6 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public void RefreshAllViews()
 		{
-			CheckDisposed();
-
 			if (DeclareRefreshInterest != RefreshInterest.NotSupressingRefresh)
 			{
 				DeclareRefreshInterest = RefreshInterest.SupressingRefreshAndWantRefresh;
@@ -541,8 +519,6 @@ namespace LanguageExplorer.Impls
 		/// processing of subsequent sync messages. </returns>
 		public bool Synchronize(SyncMsg sync)
 		{
-			CheckDisposed();
-
 			if (sync == SyncMsg.ksyncUndoRedo || sync == SyncMsg.ksyncFullRefresh)
 			{
 				// Susanna asked that refresh affect only the currently active project, which is
@@ -624,14 +600,7 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// This application processes DB sync records.
 		/// </summary>
-		public Guid SyncGuid
-		{
-			get
-			{
-				CheckDisposed();
-				return AppGuid;
-			}
-		}
+		public Guid SyncGuid { get; } = AppGuid;
 
 		/// <summary>
 		/// Enable or disable all top-level windows. This allows nesting. In other words,
@@ -644,8 +613,6 @@ namespace LanguageExplorer.Impls
 		/// <param name="fEnable">Enable (true) or disable (false).</param>
 		public void EnableMainWindows(bool fEnable)
 		{
-			CheckDisposed();
-
 			if (!fEnable)
 			{
 				m_nEnableLevel--;
@@ -690,8 +657,6 @@ namespace LanguageExplorer.Impls
 		/// <returns><c>true</c> if the dialog is successfully displayed</returns>
 		public bool ShowFindReplaceDialog(bool fReplace, RootSite rootsite)
 		{
-			CheckDisposed();
-
 			if (rootsite?.RootBox == null)
 			{
 				return false;
@@ -728,8 +693,6 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public void HandleIncomingLink(FwLinkArgs link)
 		{
-			CheckDisposed();
-
 			// Get window that uses the given DB.
 			var fwxwnd = _windows.Any() ? _windows[0].Item1 : null;
 			if (fwxwnd == null)
@@ -917,14 +880,7 @@ namespace LanguageExplorer.Impls
 		/// each one (e.g., AreAllWndsOkToChange, SaveAllWndsEdits, etc.).
 		/// In C++, was GetMainWindows()
 		/// </summary>
-		public List<IFwMainWnd> MainWindows
-		{
-			get
-			{
-				CheckDisposed();
-				return new List<IFwMainWnd>(_windows.Select(tuple => tuple.Item1));
-			}
-		}
+		public List<IFwMainWnd> MainWindows => new List<IFwMainWnd>(_windows.Select(tuple => tuple.Item1));
 
 		/// <summary>
 		/// Activate the given window.
@@ -1731,8 +1687,6 @@ namespace LanguageExplorer.Impls
 		/// <remarks>Used by <see cref="T:ResumeSynchronize"/> to do only one refresh of the view.</remarks>
 		private void BeginUpdate()
 		{
-			CheckDisposed();
-
 			Debug.Assert(DeclareRefreshInterest == RefreshInterest.NotSupressingRefresh, "Nested BeginUpdate");
 			DeclareRefreshInterest = RefreshInterest.SupressingRefreshButDoNotWantRefresh;
 		}
@@ -1742,10 +1696,7 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private void EndUpdate()
 		{
-			CheckDisposed();
-
 			Debug.Assert(DeclareRefreshInterest != RefreshInterest.NotSupressingRefresh, "EndUpdate called without BeginUpdate");
-
 			var needRefresh = DeclareRefreshInterest == RefreshInterest.SupressingRefreshAndWantRefresh;
 			DeclareRefreshInterest = RefreshInterest.NotSupressingRefresh; // Make sure we don't try suppress the following RefreshAllViews()
 			if (needRefresh)
@@ -1825,9 +1776,7 @@ namespace LanguageExplorer.Impls
 
 #if RANDYTODO //Old Mediator stuff
 		public bool OnRestoreDefaultLayouts(object commandObject)
-					{
-			CheckDisposed();
-
+		{
 			Form formActive = ActiveForm;
 			IFwMainWnd wndActive = formActive as IFwMainWnd;
 			if (wndActive != null)
@@ -1845,9 +1794,7 @@ namespace LanguageExplorer.Impls
 				}
 
 		public bool OnHelpNotesLinguaLinksDatabaseImport(object sender)
-					{
-			CheckDisposed();
-
+		{
 			string path = String.Format(FwDirectoryFinder.CodeDirectory +
 				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on LinguaLinks Database Import.pdf",
 				Path.DirectorySeparatorChar);
@@ -1860,9 +1807,7 @@ namespace LanguageExplorer.Impls
 		}
 
 		public bool OnHelpNotesInterlinearImport(object sender)
-						{
-			CheckDisposed();
-
+		{
 			string path = String.Format(FwDirectoryFinder.CodeDirectory +
 				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on Interlinear Import.pdf",
 				Path.DirectorySeparatorChar);
@@ -1875,9 +1820,7 @@ namespace LanguageExplorer.Impls
 						}
 
 		public bool OnHelpNotesSFMDatabaseImport(object sender)
-						{
-			CheckDisposed();
-
+		{
 			string path = String.Format(FwDirectoryFinder.CodeDirectory +
 				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on SFM Database Import.pdf",
 				Path.DirectorySeparatorChar);
@@ -1896,8 +1839,6 @@ namespace LanguageExplorer.Impls
 		/// <returns></returns>
 		public bool OnHelpLexicographyIntro(object commandObject)
 		{
-			CheckDisposed();
-
 			XCore.Command command = (XCore.Command)commandObject;
 			string fileName = SIL.Utils.XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "file");
 			fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
@@ -1918,8 +1859,6 @@ namespace LanguageExplorer.Impls
 		/// <returns></returns>
 		public bool OnHelpHelpsFile(object commandObject)
 		{
-			CheckDisposed();
-
 			XCore.Command command = (XCore.Command)commandObject;
 			string fileName = SIL.Utils.XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "file");
 			fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
@@ -1935,8 +1874,6 @@ namespace LanguageExplorer.Impls
 
 		public bool OnHelpMorphologyIntro(object sender)
 		{
-			CheckDisposed();
-
 			string path = String.Format(FwDirectoryFinder.CodeDirectory +
 				"{0}Helps{0}WW-ConceptualIntro{0}ConceptualIntroduction.htm",
 				Path.DirectorySeparatorChar);

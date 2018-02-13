@@ -179,12 +179,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			get
 			{
-				CheckDisposed();
 				return m_tryAWordDialogRunning;
 			}
 			set
 			{
-				CheckDisposed();
 				m_tryAWordDialogRunning = value;
 				if (!value)
 					// wake up the thread so that it can process any queued wordforms
@@ -216,8 +214,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// </summary>
 		public void ReloadGrammarAndLexicon()
 		{
-			CheckDisposed();
-
 			m_thread.EnqueueWork(ParserPriority.ReloadGrammarAndLexicon, new ReloadGrammarAndLexiconWork(this));
 		}
 
@@ -233,8 +229,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// </summary>
 		public int GetQueueSize(ParserPriority priority)
 		{
-			CheckDisposed();
-
 			lock (SyncRoot)
 				return m_queueCounts[(int) priority];
 		}
@@ -275,22 +269,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <param name="sSelectTraceMorphs">list of msa hvos to limit trace to </param>
 		public void ScheduleOneWordformForTryAWord(string form, bool fDoTrace, int[] sSelectTraceMorphs)
 		{
-			CheckDisposed();
-
 			m_thread.EnqueueWork(ParserPriority.TryAWord, new TryAWordWork(this, form, fDoTrace, sSelectTraceMorphs));
 		}
 
 		public void ScheduleOneWordformForUpdate(IWfiWordform wordform, ParserPriority priority)
 		{
-			CheckDisposed();
-
 			m_thread.EnqueueWork(priority, new UpdateWordformWork(this, priority, wordform));
 		}
 
 		public void ScheduleWordformsForUpdate(IEnumerable<IWfiWordform> wordforms, ParserPriority priority)
 		{
-			CheckDisposed();
-
 			foreach (var wordform in wordforms)
 				ScheduleOneWordformForUpdate(wordform, priority);
 		}

@@ -96,8 +96,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void FinishInit()
 		{
-			CheckDisposed();
-
 			base.FinishInit();
 
 			InitLauncher();
@@ -105,10 +103,8 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected virtual void InitLauncher()
 		{
-			CheckDisposed();
-
 			var vrl = (VectorReferenceLauncher)Control;
-			vrl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, DisplayNameProperty, BestWsName); // TODO: Get better default 'best ws'.
+			vrl.Initialize(Cache, Object, m_flid, m_fieldName, PersistenceProvider, DisplayNameProperty, BestWsName); // TODO: Get better default 'best ws'.
 			vrl.ConfigurationNode = ConfigurationNode;
 			vrl.ViewSizeChanged += OnViewSizeChanged;
 			var view = (VectorReferenceView)vrl.MainControl;
@@ -192,7 +188,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void ShowSubControls()
 		{
-			CheckDisposed();
 			base.ShowSubControls ();
 			Control.Visible = true;
 		}
@@ -232,7 +227,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void RegisterWithContextHelper ()
 		{
-			CheckDisposed();
 			if (Control == null)
 			{
 				return;

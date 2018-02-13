@@ -34,12 +34,8 @@ namespace LanguageExplorer.LcmUi
 		/// It makes no sense to call this method if the active area isn't the Words area,
 		/// and the tool isn't Analyses.
 		/// </remarks>
-		public void UpdateWordsToolDisplay(
-			int curDisplayedWfId,
-			bool updateUserCount, bool updateUserStatusIcon,
-			bool updateParserCount, bool updateParserStatusIcon)
+		public void UpdateWordsToolDisplay(int curDisplayedWfId, bool updateUserCount, bool updateUserStatusIcon, bool updateParserCount, bool updateParserStatusIcon)
 		{
-			CheckDisposed();
 			// JohnT: hopefully we have code in LCM or in various decorators to update stuff as much as we choose,
 			// based on side effect and PropChanged handlers.
 			// Perfect updating is probably too expensive.

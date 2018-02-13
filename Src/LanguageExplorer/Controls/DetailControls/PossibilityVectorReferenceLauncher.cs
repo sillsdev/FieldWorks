@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
@@ -39,7 +38,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
-			CheckDisposed();
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 
 			m_autoComplete = new PossibilityAutoComplete(cache, PropertyTable, (ICmPossibilityList) obj.ReferenceTargetOwner(flid), m_vectorRefView, displayNameProperty, displayWs);

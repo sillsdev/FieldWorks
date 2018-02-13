@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -263,15 +263,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#region IMainUserControl Members
 
-		public override string AccName
-		{
-			get
-			{
-				CheckDisposed();
-				return "LanguageExplorer.Areas.TextsAndWords.Interlinear.ConcordanceControl";
-			}
-		}
-
+		public override string AccName => "LanguageExplorer.Areas.TextsAndWords.Interlinear.ConcordanceControl";
 		#endregion
 
 		#region IMainContentControl Members
@@ -1609,7 +1601,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public bool OnJumpToRecord(object argument)
 		{
-			CheckDisposed();
 			// Check if we're the right tool, and that we have a valid object id.
 			var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 			var areaChoice = PropertyTable.GetValue<string>(AreaServices.AreaChoice);

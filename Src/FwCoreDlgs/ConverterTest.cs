@@ -1,8 +1,7 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
@@ -67,28 +66,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Button saveFileButton;
 		private System.ComponentModel.IContainer components;
 
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
 		/// <summary></summary>
 		public EncConverters Converters
 		{
 			get
 			{
-				CheckDisposed();
 				return m_encConverters;
 			}
 			set
 			{
-				CheckDisposed();
 				m_encConverters = value;
 			}
 		}
@@ -272,8 +258,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary></summary>
 		public void SelectMapping(string mapname)
 		{
-			CheckDisposed();
-
 			m_mapname = mapname;
 			InputArgsChanged();
 		}
@@ -357,8 +341,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// -----------------------------------------------------------------------------------
 		public void DoFileConvert(IEncConverter ec, string inputFilename)
 		{
-			CheckDisposed();
-
 			// start hour glass
 			using (new WaitCursor(this))
 			{
@@ -591,13 +573,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fontName;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_fontName = value;
 				m_svc.FontName = value;
 				if (Enabled)
@@ -610,12 +589,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_hvoRoot;
 			}
 			set
 			{
-				CheckDisposed();
 				m_hvoRoot = value;
 			}
 		}
@@ -625,8 +602,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public void Clear(bool fReconstruct)
 		{
-			CheckDisposed();
-
 			if (m_sda == null)
 			{
 				var cda = VwCacheDaClass.Create();
@@ -652,8 +627,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="tss"></param>
 		public void AddPara(ITsString tss)
 		{
-			CheckDisposed();
-
 			int hvoPara = m_hvoNextPara++;
 			m_cd.CacheStringProp(hvoPara, (int)SampleTags.ktagParaContents, tss);
 		}
@@ -665,8 +638,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="para"></param>
 		public void AddPara(string para)
 		{
-			CheckDisposed();
-
 			AddPara(TsStringUtils.MakeString(para, WritingSystemFactory.UserWs));
 		}
 
@@ -676,8 +647,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public void CompleteSetText()
 		{
-			CheckDisposed();
-
 			int[] rghvo = new int[m_hvoNextPara - khvoFirstPara];
 			for (int i = 0; i < rghvo.Length; ++i)
 				rghvo[i] = i + khvoFirstPara;
@@ -694,8 +663,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (!GotCacheOrWs || DesignMode)
 				return;
 

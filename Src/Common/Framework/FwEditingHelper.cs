@@ -96,8 +96,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// -----------------------------------------------------------------------------------
 		public override void HandleSelectionChange(IVwRootBox prootb, IVwSelection vwselNew)
 		{
-			CheckDisposed();
-
 			if (s_fIgnoreSelectionChanges)
 				return;
 			try
@@ -121,8 +119,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		public void InsertPicture(string srcFilename, ITsString captionTss, string sFolder)
 		{
-			CheckDisposed();
-
 			// Create the picture and add the ORC to the text at the insertion point.
 			InsertPicture(m_cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(
 				srcFilename, captionTss, sFolder));
@@ -264,7 +260,6 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			get
 			{
-				CheckDisposed();
 				SelectionHelper helper = CurrentSelection;
 				ICmPicture picture = null;
 				if (helper != null && helper.LevelInfo.Length > 0)
@@ -294,8 +289,6 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			get
 			{
-				CheckDisposed();
-
 				//note: IsPictureSelected() checks that CurrentSelection in not null
 				return IsPictureSelected && CurrentSelection.Selection.SelType ==
 					VwSelType.kstPicture;
@@ -312,12 +305,10 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			get
 			{
-				CheckDisposed();
 				return m_internalContext;
 			}
 			set
 			{
-				CheckDisposed();
 				m_internalContext = value;
 			}
 		}
@@ -350,7 +341,6 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			get
 			{
-				CheckDisposed();
 				return false;
 			}
 		}

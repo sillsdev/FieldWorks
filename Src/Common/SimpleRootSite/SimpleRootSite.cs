@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2017 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -501,15 +501,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_fDisposed = true;
 		}
 
-		/// <summary>
-		/// Throw if the IsDisposed property is true
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (m_fDisposed)
-				throw new ObjectDisposedException(ToString(), "This object is being used after it has been disposed: this is an Error.");
-		}
-
 		#region Component Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
@@ -582,12 +573,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fShowRangeSelAfterLostFocus;
 			}
 			set
 			{
-				CheckDisposed();
 				m_fShowRangeSelAfterLostFocus = value;
 				if (!Focused && m_rootb != null)
 					UpdateSelectionEnabledState(null);
@@ -601,12 +590,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fIsTextBox;
 			}
 			set
 			{
-				CheckDisposed();
 				m_fIsTextBox = value;
 				if (!Focused && m_rootb != null)
 					UpdateSelectionEnabledState(null);
@@ -625,12 +612,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_nHorizMargin;
 			}
 			set
 			{
-				CheckDisposed();
 				m_nHorizMargin = value;
 			}
 		}
@@ -646,7 +631,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				if (DesignMode)
 					return string.Empty;
 
@@ -665,12 +649,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fAllowLayout;
 			}
 			set
 			{
-				CheckDisposed();
 				m_fAllowLayout = value;
 				if (m_fAllowLayout)
 					PerformLayout();
@@ -731,7 +713,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_rootb;
 			}
 		}
@@ -747,12 +728,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_styleSheet;
 			}
 			set
 			{
-				CheckDisposed();
 				if (m_styleSheet == value)
 					return;
 				if (m_styleSheet != null && Marshal.IsComObject(m_styleSheet))
@@ -784,7 +763,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				Point pt = Point.Empty;
 
 				if (m_rootb != null && !DesignMode)
@@ -829,13 +807,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return !EditingHelper.Editable;
 			}
 			set
 			{
-				CheckDisposed();
-
 				// check if this property will actually change
 				if (EditingHelper.Editable == !value)
 					return;
@@ -883,12 +858,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_Zoom;
 			}
 			set
 			{
-				CheckDisposed();
 				m_Zoom = value;
 				RefreshDisplay();
 			}
@@ -936,7 +909,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				if (m_editingHelper == null)
 				{
 					m_editingHelper = CreateEditingHelper();
@@ -1003,7 +975,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public bool AdjustScrollRange(IVwRootBox prootb, int dxdSize, int dxdPosition,
 			int dydSize, int dydPosition)
 		{
-			CheckDisposed();
 			return AdjustScrollRange1(dxdSize, dxdPosition, dydSize, dydPosition);
 		}
 
@@ -1018,7 +989,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual void DoUpdates(IVwRootBox prootb)
 		{
-			CheckDisposed();
 			//	Console.WriteLine("DoUpdates");
 
 			//Removed PerformLayout to reduce flashing
@@ -1045,7 +1015,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual int GetAvailWidth(IVwRootBox prootb)
 		{
-			CheckDisposed();
 			// The default -4 allows two pixels right and left to keep data clear of the margins.
 			return m_orientationManager.GetAvailWidth() - HorizMargin * 2;
 		}
@@ -1063,7 +1032,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public virtual void InvalidateRect(IVwRootBox root, int xsLeft, int ysTop, int xsWidth,
 			int ysHeight)
 		{
-			CheckDisposed();
 			if (xsWidth <= 0 || ysHeight <= 0)
 				return; // empty rectangle, may not produce paint.
 			// REVIEW: We found that InvalidateRect was being called twice with the same rectangle for
@@ -1108,7 +1076,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public virtual void GetGraphics(IVwRootBox prootb, out IVwGraphics pvg, out Rect rcSrcRoot,
 			out Rect rcDstRoot)
 		{
-			CheckDisposed();
 			InitGraphics();
 			pvg = m_graphicsManager.VwGraphics;
 
@@ -1130,7 +1097,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		IVwGraphics IVwRootSite.get_LayoutGraphics(IVwRootBox prootb)
 		{
-			CheckDisposed();
 			InitGraphics();
 			return m_graphicsManager.VwGraphics;
 		}
@@ -1148,7 +1114,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void GetTransformAtDst(IVwRootBox root, Point pt, out Rect rcSrcRoot,
 			out Rect rcDstRoot)
 		{
-			CheckDisposed();
 			using (new HoldGraphics(this))
 			{
 				Rectangle rcSrc, rcDst;
@@ -1172,7 +1137,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void GetTransformAtSrc(IVwRootBox root, Point pt, out Rect rcSrcRoot,
 			out Rect rcDstRoot)
 		{
-			CheckDisposed();
 			GetTransformAtDst(root, pt, out rcSrcRoot, out rcDstRoot);
 		}
 
@@ -1185,7 +1149,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public IVwGraphics get_ScreenGraphics(IVwRootBox _Root)
 		{
-			CheckDisposed();
 			InitGraphics();
 			return m_graphicsManager.VwGraphics;
 		}
@@ -1204,7 +1167,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual void ReleaseGraphics(IVwRootBox prootb, IVwGraphics pvg)
 		{
-			CheckDisposed();
 			Debug.Assert(pvg == m_graphicsManager.VwGraphics);
 			UninitGraphics();
 		}
@@ -1219,8 +1181,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public void SelectionChanged(IVwRootBox rootb, IVwSelection vwselNew)
 		{
-			CheckDisposed();
-
 			Debug.Assert(rootb == EditingHelper.EditedRootBox);
 			Debug.Assert(vwselNew == rootb.Selection);
 
@@ -1241,7 +1201,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual void RootBoxSizeChanged(IVwRootBox prootb)
 		{
-			CheckDisposed();
 			if (!AllowLayout)
 				return;
 			UpdateScrollRange();
@@ -1273,7 +1232,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual void OverlayChanged(IVwRootBox prootb, IVwOverlay vo)
 		{
-			CheckDisposed();
 			// do nothing
 		}
 
@@ -1286,7 +1244,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual bool get_SemiTagging(IVwRootBox prootb)
 		{
-			CheckDisposed();
 			return false;
 		}
 
@@ -1299,7 +1256,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual void ScreenToClient(IVwRootBox prootb, ref System.Drawing.Point pt)
 		{
-			CheckDisposed();
 			pt = PointToClient(pt);
 		}
 
@@ -1312,7 +1268,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual void ClientToScreen(IVwRootBox prootb, ref System.Drawing.Point pt)
 		{
-			CheckDisposed();
 			pt = PointToScreen(pt);
 		}
 
@@ -1326,7 +1281,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual int GetAndClearPendingWs(IVwRootBox prootb)
 		{
-			CheckDisposed();
 			int ws = m_wsPending;
 			m_wsPending = -1;
 			return ws;
@@ -1345,7 +1299,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual bool IsOkToMakeLazy(IVwRootBox prootb, int ydTop, int ydBottom)
 		{
-			CheckDisposed();
 			return false; // Todo JohnT or TE team: make similar to AfVwWnd impl.
 		}
 
@@ -1361,7 +1314,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public virtual VwDelProbResponse OnProblemDeletion(IVwSelection sel,
 			VwDelProbType dpt)
 		{
-			CheckDisposed();
 			return VwDelProbResponse.kdprFail; // give up quietly.
 			// Review team (JohnT): a previous version threw NotImplementedException. This seems
 			// overly drastic.
@@ -1383,7 +1335,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			ITsTextProps ttpDest, int cPara, ITsTextProps[] ttpSrc, ITsString[] tssParas,
 			ITsString tssTrailing)
 		{
-			CheckDisposed();
 			return VwInsertDiffParaResponse.kidprDefault;
 		}
 
@@ -1392,7 +1343,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			ITsTextProps ttpDest, ITsTextProps ttpSrc, ITsString tssParas,
 			ITsString tssTrailing)
 		{
-			CheckDisposed();
 			return VwInsertDiffParaResponse.kidprDefault;
 		}
 
@@ -1406,7 +1356,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual string get_TextRepOfObj(ref Guid guid)
 		{
-			CheckDisposed();
 			Debug.Fail("This should never get called for a simple rootsite.");
 			return string.Empty;
 		}
@@ -1427,7 +1376,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual Guid get_MakeObjFromText(string bstrText, IVwSelection _selDst, out int kodt)
 		{
-			CheckDisposed();
 			kodt = -1;
 			return Guid.Empty;
 		}
@@ -1444,7 +1392,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public virtual bool ScrollSelectionIntoView(IVwSelection sel,
 			VwScrollSelOpts scrollOption)
 		{
-			CheckDisposed();
 			switch (scrollOption)
 			{
 				case VwScrollSelOpts.kssoDefault:
@@ -1470,7 +1417,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_rootb;
 			}
 		}
@@ -1485,7 +1431,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return (uint)this.Handle;
 			}
 		}
@@ -1502,12 +1447,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return AutoScrollPosition;
 			}
 			set
 			{
-				CheckDisposed();
 				Point newPos = value;
 				if (this.AutoScroll)
 				{
@@ -1541,12 +1484,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return AutoScrollMinSize;
 			}
 			set
 			{
-				CheckDisposed();
 #if !__MonoCS__
 				AutoScrollMinSize = value;
 #else
@@ -1597,12 +1538,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return false;
 			}
 			set
 			{
-				CheckDisposed();
 			}
 		}
 
@@ -1616,7 +1555,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return ClientRectangle.Height;
 			}
 		}
@@ -1632,7 +1570,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return ClientRectangle;
 			}
 		}
@@ -1650,12 +1587,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_wsPending;
 			}
 			set
 			{
-				CheckDisposed();
 				m_wsPending = value;
 			}
 		}
@@ -1666,7 +1601,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual void ScrollToTop()
 		{
-			CheckDisposed();
 			if (DoingScrolling)
 				ScrollPosition = new Point(0, 0);
 		}
@@ -1680,7 +1614,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual void ScrollToEnd()
 		{
-			CheckDisposed();
 			if (DoingScrolling && !DesignMode)
 			{
 				// dy gets added to the scroll offset. This means a positive dy causes there to be more
@@ -1745,7 +1678,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual void ShowContextMenuAtIp(IVwRootBox rootb)
 		{
-			CheckDisposed();
 			if (ContextMenu != null)
 				ContextMenu.Show(this, IPLocation);
 		}
@@ -1763,7 +1695,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				// use Math.Ceiling to make sure sure the height doesn't round down inappropriately
 				return (int)(14 * Math.Ceiling(Dpi.Y / (float)72)); // 14 points is typically about a line. 72 points/inch.
 			}
@@ -1792,7 +1723,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public virtual EditingHelper.CkBehavior ComplexKeyBehavior(int chw,
 			VwShiftStatus ss)
 		{
-			CheckDisposed();
 			return EditingHelper.CkBehavior.Logical;
 		}
 
@@ -1805,7 +1735,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_rootb;
 			}
 		}
@@ -1820,7 +1749,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_wsf != null;
 			}
 		}
@@ -1835,7 +1763,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual int GetWritingSystemForHvo(int hvo)
 		{
-			CheckDisposed();
 			throw new NotImplementedException();
 		}
 
@@ -1847,7 +1774,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual void PrePasteProcessing()
 		{
-			CheckDisposed();
 		}
 		#endregion
 
@@ -1857,7 +1783,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual bool RefreshDisplay()
 		{
-			CheckDisposed();
 			if (m_rootb?.Site == null)
 				return false;
 
@@ -1905,7 +1830,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual IVwRootSite CastAsIVwRootSite()
 		{
-			CheckDisposed();
 			return this;
 		}
 
@@ -1914,7 +1838,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual List<IVwRootBox> AllRootBoxes()
 		{
-			CheckDisposed();
 			List<IVwRootBox> result = new List<IVwRootBox>();
 			if (m_rootb != null)
 				result.Add(m_rootb);
@@ -1932,12 +1855,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return (m_nAllowPaint == 0);
 			}
 			set
 			{
-				CheckDisposed();
 				// we use WM_SETREDRAW to prevent the scrollbar from jumping around when we are
 				// in the middle of a Reconstruct. The m_nAllowPaint flag takes care of (not)
 				// painting the view.
@@ -2031,7 +1952,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="dlg"></param>
 		protected virtual void AdjustPrintDialog(PrintDialog dlg)
 		{
-			CheckDisposed();
 		}
 
 		/// <summary>
@@ -2042,7 +1962,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="dlg"></param>
 		protected virtual void SetupPrintHelp(PrintDialog dlg)
 		{
-			CheckDisposed();
 			dlg.ShowHelp = false;
 		}
 
@@ -2067,7 +1986,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual void Print(PrintDocument printDoc)
 		{
-			CheckDisposed();
 			if (m_rootb == null || DataAccess == null)
 			{
 				return;
@@ -2108,7 +2026,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public int IPDistanceFromWindowTop(IVwSelection sel)
 		{
-			CheckDisposed();
 			if (sel == null && m_rootb != null)
 				sel = m_rootb.Selection;
 
@@ -2141,7 +2058,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual void InvalidateForLazyFix()
 		{
-			CheckDisposed();
 			Invalidate();
 		}
 
@@ -2156,7 +2072,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected internal virtual void ScrollDown(int dy)
 		{
-			CheckDisposed();
 			int xd, yd;
 			GetScrollOffsets(out xd, out yd);
 			int ydNew = yd + dy;
@@ -2177,7 +2092,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public void GoToEnd()
 		{
-			CheckDisposed();
 			ScrollToEnd();
 			// The code for handling Ctrl-End doesn't do it this way:
 			RootBox.MakeSimpleSel(false, IsEditable, false, true);
@@ -2707,7 +2621,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public bool ScrollSelectionToLocation(IVwSelection sel, int dyPos)
 		{
-			CheckDisposed();
 			if (m_rootb == null)
 				return false;
 
@@ -2818,7 +2731,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public void SetAccessibleName(string name)
 		{
-			CheckDisposed();
 			IAccessible acc = AccessibleRootObject as IAccessible;
 			if (acc != null)
 				acc.set_accName(null, name);
@@ -2841,7 +2753,6 @@ namespace SIL.FieldWorks.Common.RootSites
 #if __MonoCS__
 				return null; // TODO-Linux IOleServiceProvider not listed in QueryInterface issue.
 #else
-				CheckDisposed();
 				Guid guid = Marshal.GenerateGuidForType(typeof(IOleServiceProvider));
 				if (m_rootb == null)
 				{
@@ -2880,8 +2791,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		protected override void WndProc(ref Message m)
 		{
-			CheckDisposed();
-
 			m_messageSequencer.SequenceWndProc(ref m);
 		}
 
@@ -2897,8 +2806,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected override void OnVisibleChanged(EventArgs e)
 		{
-			CheckDisposed();
-
 			base.OnVisibleChanged(e);
 			if (Visible && m_fRootboxMade && m_rootb != null && m_fRefreshPending)
 				RefreshDisplay();
@@ -2922,7 +2829,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return IsEditable;
 			}
 		}
@@ -2935,8 +2841,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		protected override void OnLoad(EventArgs e)
 		{
-			CheckDisposed();
-
 			base.OnLoad(e);
 
 			if (m_fRootboxMade && m_rootb != null && m_fAllowLayout)
@@ -2965,8 +2869,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			CheckDisposed();
-
 			base.OnHandleCreated(e);
 
 			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime && !AllowPaintingInDesigner)
@@ -3001,8 +2903,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected override void OnHandleDestroyed(EventArgs e)
 		{
-			CheckDisposed();
-
 			base.OnHandleDestroyed(e);
 
 			if (DesignMode)
@@ -3091,8 +2991,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected override void OnGotFocus(EventArgs e)
 		{
-			CheckDisposed();
-
 			if (m_printMenu != null)
 			{
 				m_printMenu.Enabled = true;
@@ -3221,8 +3119,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
-			CheckDisposed();
-
 			base.OnMouseMove(e);
 
 			if (DataUpdateMonitor.IsUpdateInProgress() || MouseMoveSuppressed)
@@ -3383,8 +3279,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			CheckDisposed();
-
 			if (!AllowPainting)
 				return;
 
@@ -3448,8 +3342,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected override void OnPaintBackground(PaintEventArgs e)
 		{
-			CheckDisposed();
-
 #pragma warning disable 219
 			Form parent = FindForm();
 #pragma warning restore 219
@@ -3466,8 +3358,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
-			CheckDisposed();
-
 			if ((!DesignMode || AllowPaintingInDesigner) && m_fRootboxMade && m_fAllowLayout &&
 				IsHandleCreated && !m_fInLayout)
 			{
@@ -3541,8 +3431,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
-			CheckDisposed();
-
 			base.OnMouseDown(e);
 
 			if (m_rootb == null || DataUpdateMonitor.IsUpdateInProgress())
@@ -3773,8 +3661,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected override void OnDoubleClick(EventArgs e)
 		{
-			CheckDisposed();
-
 			base.OnDoubleClick(e);
 
 			// Convert to box coords and pass to root box (if any).
@@ -3802,8 +3688,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
-			CheckDisposed();
-
 			base.OnMouseUp(e);
 			if (DataUpdateMonitor.IsUpdateInProgress())
 				return;
@@ -3835,8 +3719,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="e"></param>
 		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
-			CheckDisposed();
-
 			base.OnKeyPress(e);
 			if (!e.Handled)
 			{
@@ -3889,13 +3771,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_acceptsTab;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_acceptsTab = value;
 			}
 		}
@@ -3908,13 +3788,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_acceptsReturn;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_acceptsReturn = value;
 			}
 		}
@@ -3927,8 +3805,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected override void OnKeyUp(KeyEventArgs e)
 		{
-			CheckDisposed();
-
 			if (DataUpdateMonitor.IsUpdateInProgress())
 				return; //throw this event away
 
@@ -3943,8 +3819,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			CheckDisposed();
-
 			if (DataUpdateMonitor.IsUpdateInProgress())
 				return; //throw this event away
 
@@ -3996,8 +3870,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		protected override bool IsInputKey(Keys keyData)
 		{
-			CheckDisposed();
-
 			if ((keyData & Keys.Alt) != Keys.Alt)
 			{
 				switch (keyData & Keys.KeyCode)
@@ -4032,8 +3904,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		protected override bool IsInputChar(char charCode)
 		{
-			CheckDisposed();
-
 			return true;
 			//return base.IsInputChar (charCode);
 		}
@@ -4063,8 +3933,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		protected override void OnSizeChanged(EventArgs e)
 		{
-			CheckDisposed();
-
 			// Ignore if our size didn't really change, also if we're in the middle of a paint.
 			// (But, don't ignore if not previously laid out successfully...this can suppress
 			// a necessary Layout after the root box is made.)
@@ -4180,12 +4048,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_wsf;
 			}
 			set
 			{
-				CheckDisposed();
 				m_wsf = value;
 			}
 		}
@@ -4373,7 +4239,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual void MakeRoot()
 		{
-			CheckDisposed();
 			if (!GotCacheOrWs || (DesignMode && !AllowPaintingInDesigner))
 				return;
 
@@ -4400,7 +4265,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public virtual void CloseRootBox()
 		{
-			CheckDisposed();
 			if (DesignMode || m_rootb == null)
 				return;
 
@@ -4638,7 +4502,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="wsMatch">Writing system determined from keyboard change</param>
 		public virtual void HandleKeyboardChange(IVwSelection vwsel, int wsMatch)
 		{
-			CheckDisposed();
 			// Get the writing system factory associated with the root box.
 			if (m_rootb == null || !GotCacheOrWs)
 				return; // For paranoia.
@@ -4782,7 +4645,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void ChangeOrMakeRoot(int hvoRoot, IVwViewConstructor vc, int frag,
 			IVwStylesheet styleSheet)
 		{
-			CheckDisposed();
 			if (RootBox == null)
 			{
 				MakeRoot();
@@ -4805,7 +4667,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public void AboutToDiscard()
 		{
-			CheckDisposed();
 			AllowLayout = false;
 			m_fMakeRootWhenHandleIsCreated = false;
 		}
@@ -4817,7 +4678,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public void SelectAll()
 		{
-			CheckDisposed();
 			EditingHelper.SelectAll();
 		}
 		/// ------------------------------------------------------------------------------------
@@ -4866,7 +4726,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected internal void GetCoordRects(out Rectangle rcSrcRoot, out Rectangle rcDstRoot)
 		{
-			CheckDisposed();
 			m_orientationManager.GetCoordRects(out rcSrcRoot, out rcDstRoot);
 		}
 
@@ -4963,7 +4822,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return AutoScroll;
 			}
 		}
@@ -5442,7 +5300,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public void ModifyOverlay(bool fApplyTag, IVwOverlay pvo, int itag)
 		{
-			CheckDisposed();
 			if (m_rootb == null)
 				return;
 
@@ -5574,7 +5431,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public bool IsSelectionVisible(IVwSelection sel)
 		{
-			CheckDisposed();
 			return IsSelectionVisible(sel, false);
 		}
 
@@ -5584,7 +5440,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public bool IsSelectionVisible(IVwSelection sel, bool fWantOneLineSpace)
 		{
-			CheckDisposed();
 			if (m_rootb == null)
 				return false; // For paranoia.
 			IVwSelection vwsel = (sel == null ? SelectionToMakeVisible : sel);
@@ -5818,7 +5673,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_messageSequencer;
 			}
 		}
@@ -5846,7 +5700,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual void OriginalWndProc(ref Message msg)
 		{
-			CheckDisposed();
 			switch (msg.Msg)
 			{
 #if !__MonoCS__ // Disable use of UIAutomationProvider.dll on Linux
@@ -5917,7 +5770,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="e"></param>
 		public void OriginalOnPaint(PaintEventArgs e)
 		{
-			CheckDisposed();
 			Debug.Assert(false);
 		}
 
@@ -5952,7 +5804,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns></returns>
 		public void BeginSequentialBlock()
 		{
-			CheckDisposed();
 #if RANDYTODO
 			// TODO: mainWindow is really IFwMainWnd, but as of this writing, that interface
 			// TODO: isn't available in this assembly, so use Reflection until
@@ -5981,7 +5832,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public void EndSequentialBlock()
 		{
-			CheckDisposed();
 			Sequencer.EndSequentialBlock();
 #if RANDYTODO
 			// TODO: mainWindow is really IFwMainWnd, but as of this writing, that interface
@@ -6024,8 +5874,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public bool PreFilterMessage(ref Message m)
 		{
-			CheckDisposed();  // OK now that the filter is being removed in the Dispose method
-
 			switch (m.Msg)
 			{
 				case (int)Win32.WinMsgs.WM_KEYUP:
@@ -6252,15 +6100,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_parent = null;
 
 			m_isDisposed = true;
-		}
-
-		/// <summary>
-		/// Throw if the IsDisposed property is true
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException("SuspendDrawing", "This object is being used after it has been disposed: this is an Error.");
 		}
 
 		#endregion IDisposable & Co. implementation

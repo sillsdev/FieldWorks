@@ -63,8 +63,6 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				CheckDisposed();
-
 				var sandoxMSA = new SandboxGenericMSA { MsaType = MSAType };
 				switch (MSAType)
 				{
@@ -105,8 +103,6 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			set
 			{
-				CheckDisposed();
-
 				// We don't really have a way of setting it to nothing, because that behavior
 				// isn't implemented in the PopupTree. We haven't needed this yet, but this
 				// Assert should catch a new situation where it is.
@@ -134,27 +130,16 @@ namespace LanguageExplorer.Controls.LexText
 		/// requests to make a new inflectional affix for a slot, but gives it a POS that
 		/// doesn't have that slot.
 		/// </summary>
-		public bool SlotIsValidForPos
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fwcbSlots.SelectedIndex >= 0;
-			}
-		}
+		public bool SlotIsValidForPos => m_fwcbSlots.SelectedIndex >= 0;
 
 		public IMoInflAffixSlot Slot
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_selectedSlot;
 			}
 			set
 			{
-				CheckDisposed();
-
 				// Setting it to zero is supported, as it sets the selected index to -1.
 				if (value == null)
 				{
@@ -209,8 +194,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void DisableAffixTypeMainPosAndSlot()
 		{
-			CheckDisposed();
-
 			m_tcMainPOS.Enabled = false;
 			m_fwcbSlots.Enabled = false;
 			m_fwcbAffixTypes.Enabled = false;
@@ -220,13 +203,10 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				CheckDisposed();
 				return m_msaType;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (value == m_msaType)
 				{
 					return; // Nothing else to do.
@@ -342,8 +322,6 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			set
 			{
-				CheckDisposed();
-
 				if (value == null)
 				{
 					// Someone could may try and set it to null,
@@ -439,19 +417,6 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose( bool disposing )
@@ -495,8 +460,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void Initialize(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, Control ctrlAssistant, Form parentForm)
 		{
-			CheckDisposed();
-
 			Debug.Assert(ctrlAssistant != null);
 			m_ctrlAssistant = ctrlAssistant;
 			Initialize(cache, propertyTable, publisher, parentForm, new SandboxGenericMSA());
@@ -507,8 +470,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void Initialize(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, Form parentForm, SandboxGenericMSA sandboxMSA)
 		{
-			CheckDisposed();
-
 			m_parentForm = parentForm;
 			m_cache = cache;
 			m_propertyTable = propertyTable;

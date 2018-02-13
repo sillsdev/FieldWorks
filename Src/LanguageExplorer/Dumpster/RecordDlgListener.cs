@@ -48,8 +48,6 @@ namespace LanguageExplorer.Dumpster
 		/// <returns>true, if we handled the message, otherwise false, if there was an unsupported 'classname' parameter</returns>
 		public bool OnDialogInsertItemInVector(object argument)
 		{
-			CheckDisposed();
-
 #if RANDYTODO
 			var command = (Command) argument;
 			string className = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "className");
@@ -127,8 +125,6 @@ namespace LanguageExplorer.Dumpster
 		/// <returns>true</returns>
 		public bool OnGotoRecord(object argument)
 		{
-			CheckDisposed();
-
 			using (var dlg = new RecordGoDlg())
 			{
 				var cache = PropertyTable.GetValue<LcmCache>("cache");
@@ -145,8 +141,6 @@ namespace LanguageExplorer.Dumpster
 #if RANDYTODO
 		public virtual bool OnDisplayGotoRecord(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			display.Enabled = display.Visible = InFriendlyArea;
 			return true; //we've handled this
 		}

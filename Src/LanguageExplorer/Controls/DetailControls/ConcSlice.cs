@@ -12,20 +12,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_cv = cv;
 		}
 
-		public IConcSliceInfo SliceInfo
-		{
-			get
-			{
-				CheckDisposed();
-				return m_cv.SliceInfo;
-			}
-		}
+		public IConcSliceInfo SliceInfo => m_cv.SliceInfo;
+
 		/// <summary>
 		/// Expand this node, which is at position iSlice in its parent.
 		/// </summary>
 		public override void Expand(int iSlice)
 		{
-			CheckDisposed();
 			((MultiLevelConc)ContainingDataTree).InsertDummies(this, iSlice + 1, SliceInfo.Count);
 			Expansion = TreeItemState.ktisExpanded;
 			PerformLayout();

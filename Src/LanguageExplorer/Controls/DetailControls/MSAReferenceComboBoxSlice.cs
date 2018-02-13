@@ -29,7 +29,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public MSAReferenceComboBoxSlice(LcmCache cache, ICmObject obj, int flid, IPersistenceProvider persistenceProvider)
 			: base(new UserControl(), cache, obj, flid)
 		{
-			var defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			var defAnalWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			m_persistProvider = persistenceProvider;
 			m_tree = new TreeCombo
 			{
@@ -48,7 +48,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_tree.DropDown += m_tree_DropDown;
 			Control.Controls.Add(m_tree);
 			m_tree.SizeChanged += m_tree_SizeChanged;
-			m_cache?.DomainDataByFlid.AddNotification(this);
+			Cache?.DomainDataByFlid.AddNotification(this);
 			m_treeBaseWidth = m_tree.Width;
 			// m_tree has sensible PreferredHeight once the text is set, UserControl does not.
 			//we need to set the Height after m_tree.Text has a value set to it.
@@ -68,11 +68,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			//Set the stylesheet so that the font size for the...
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 			m_tree.StyleSheet = stylesheet;
-			var list = m_cache.LanguageProject.PartsOfSpeechOA;
+			var list = Cache.LanguageProject.PartsOfSpeechOA;
 
-			m_MSAPopupTreeManager = new MSAPopupTreeManager(m_tree, m_cache, list, m_tree.WritingSystemCode, true, PropertyTable, Publisher, PropertyTable.GetValue<Form>("window"));
+			m_MSAPopupTreeManager = new MSAPopupTreeManager(m_tree, Cache, list, m_tree.WritingSystemCode, true, PropertyTable, Publisher, PropertyTable.GetValue<Form>("window"));
 			m_MSAPopupTreeManager.AfterSelect += m_MSAPopupTreeManager_AfterSelect;
-			m_MSAPopupTreeManager.Sense = m_obj as ILexSense;
+			m_MSAPopupTreeManager.Sense = Object as ILexSense;
 			m_MSAPopupTreeManager.PersistenceProvider = m_persistProvider;
 
 			try
@@ -137,7 +137,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					SplitCont.Panel2.SizeChanged -= SplitContPanel2_SizeChanged;
 				}
 				// Dispose managed resources here.
-				m_cache?.DomainDataByFlid.RemoveNotification(this);
+				Cache?.DomainDataByFlid.RemoveNotification(this);
 
 				if (m_tree != null && m_tree.Parent == null)
 				{
@@ -165,7 +165,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected internal override bool UpdateDisplayIfNeeded(int hvo, int tag)
 		{
-			CheckDisposed();
 			if (tag != Flid)
 			{
 				return false;
@@ -173,7 +172,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_handlingMessage = true;
 			try
 			{
-				var sense = m_obj as ILexSense;
+				var sense = Object as ILexSense;
 				if (sense.MorphoSyntaxAnalysisRA != null)
 				{
 					m_MSAPopupTreeManager.LoadPopupTree(sense.MorphoSyntaxAnalysisRA.Hvo);
@@ -207,7 +206,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 
 			// Don't try changing values on a deleted object!  See LT-8656 and LT-9119.
-			if (!m_obj.IsValidObject)
+			if (!Object.IsValidObject)
 			{
 				return;
 			}
@@ -220,7 +219,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				ContainingDataTree.RefreshList(false);
 				return;
 			}
-			var sense = m_obj as ILexSense;
+			var sense = Object as ILexSense;
 			// Setting sense.DummyMSA can cause the DataTree to want to refresh.  Don't
 			// let this happen until after we're through!  See LT-9713 and LT-9714.
 			var fOldDoNotRefresh = ContainingDataTree.DoNotRefresh;
@@ -231,7 +230,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return;
 				}
-				var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoSel);
+				var obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoSel);
 				if (obj.ClassID == PartOfSpeechTags.kClassId)
 				{
 					ContainingDataTree.DoNotRefresh = true;
@@ -277,9 +276,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			CheckDisposed();
-
-			var sense = m_obj as ILexSense;
+			var sense = Object as ILexSense;
 			if (sense.MorphoSyntaxAnalysisRA != null)
 			{
 				if (sense.MorphoSyntaxAnalysisRA.Hvo == hvo)

@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2017 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -168,13 +168,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_hasBorder;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_hasBorder = value;
 				if (Application.RenderWithVisualStyles)
 					SetPadding();
@@ -230,13 +228,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_textPadding;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_textPadding = value;
 				SetPadding();
 			}
@@ -249,31 +245,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get { return m_innerFwTextBox.SuppressEnter; }
 			set { m_innerFwTextBox.SuppressEnter = value; }
-		}
-
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets the font of the text displayed by the control.
-		/// </summary>
-		/// <value></value>
-		/// <returns>The <see cref="T:System.Drawing.Font"></see> to apply to the text displayed by the control. The default is the value of the <see cref="P:System.Windows.Forms.Control.DefaultFont"></see> property.</returns>
-		/// <PermissionSet><IPermission class="System.Security.Permissions.EnvironmentPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/><IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/><IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="UnmanagedCode, ControlEvidence"/><IPermission class="System.Diagnostics.PerformanceCounterPermission, System, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/></PermissionSet>
-		/// ------------------------------------------------------------------------------------
-		public override Font Font
-		{
-			get
-			{
-				CheckDisposed();
-
-				return base.Font;
-			}
-			set
-			{
-				CheckDisposed();
-
-				base.Font = value;
-			}
 		}
 
 		/// <summary>
@@ -317,7 +288,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				int borderHeight = 0;
 				switch (BorderStyle)
 				{
@@ -343,7 +313,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				if (DesignMode)
 					return -1;
 				return m_innerFwTextBox.TextHeight;
@@ -360,7 +329,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				int borderWidth = 0;
 				switch (BorderStyle)
 				{
@@ -386,12 +354,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_innerFwTextBox.AdjustStringHeight;
 			}
 			set
 			{
-				CheckDisposed();
 				m_innerFwTextBox.AdjustStringHeight = value;
 			}
 		}
@@ -491,17 +457,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		#region IDisposable override
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
-		/// <summary>
 		/// Executes in two distinct scenarios.
 		///
 		/// 1. If disposing is true, the method has been called directly
@@ -567,8 +522,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public void ApplyStyle(string sStyle)
 		{
-			CheckDisposed();
-
 			m_innerFwTextBox.EditingHelper.ApplyStyle(sStyle);
 			if (m_innerFwTextBox.Tss.Length == 0)
 			{
@@ -589,8 +542,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public void ApplyWS(int hvoWs)
 		{
-			CheckDisposed();
-
 			m_innerFwTextBox.ApplyWS(hvoWs);
 			if (m_innerFwTextBox.Tss.Length == 0)
 			{
@@ -610,8 +561,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="propertyTable"></param>
 		public void AdjustForStyleSheet(Form parent, Control grower, IPropertyTable propertyTable)
 		{
-			CheckDisposed();
-
 			AdjustForStyleSheet(parent, grower, FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable));
 		}
 		/// ------------------------------------------------------------------------------------
@@ -631,8 +580,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public void AdjustForStyleSheet(Form parent, Control grower, IVwStylesheet stylesheet)
 		{
-			CheckDisposed();
-
 			if (StyleSheet == null)
 				StyleSheet = stylesheet;
 			int oldHeight = Height;
@@ -694,8 +641,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public void Select(int start, int length)
 		{
-			CheckDisposed();
-
 			m_innerFwTextBox.Select(start, length);
 		}
 
@@ -706,8 +651,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public void SelectAll()
 		{
-			CheckDisposed();
-
 			m_innerFwTextBox.SelectAll();
 		}
 
@@ -735,7 +678,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_innerFwTextBox.EditingHelper.GetCharStyleNameFromSelection();
 			}
 		}
@@ -767,13 +709,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_innerFwTextBox.WordWrap;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_innerFwTextBox.WordWrap = value;
 			}
 		}
@@ -788,13 +728,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_innerFwTextBox.AcceptsReturn;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_innerFwTextBox.AcceptsReturn = value;
 			}
 		}
@@ -810,7 +748,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_innerFwTextBox.RootBox.Selection;
 			}
 		}
@@ -824,14 +761,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_innerFwTextBox.SelectionStart;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_innerFwTextBox.SelectionStart = value;
 			}
 		}
@@ -845,14 +778,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_innerFwTextBox.SelectionLength;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_innerFwTextBox.SelectionLength = Math.Min(value, m_innerFwTextBox.Text.Length);
 			}
 		}
@@ -867,13 +796,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_innerFwTextBox.SelectedText;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_innerFwTextBox.SelectedText = value;
 			}
 		}
@@ -888,13 +815,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_innerFwTextBox.SelectedTss;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_innerFwTextBox.SelectedTss = value;
 			}
 		}
@@ -908,14 +833,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_innerFwTextBox.m_controlID;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_innerFwTextBox.m_controlID = value;
 			}
 		}
@@ -929,14 +850,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return base.BackColor;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_innerFwTextBox.BackColor = value;
 				base.BackColor = value;
 			}
@@ -951,14 +868,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return base.ForeColor;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_innerFwTextBox.ForeColor = value;
 				base.ForeColor = value;
 			}
@@ -977,8 +890,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_innerFwTextBox == null)
 					return String.Empty; // happens somewhere during OnHandleDestroyed sometimes.
 
@@ -986,8 +897,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 			set
 			{
-				CheckDisposed();
-
 				// set the text, if it changed (or it hasn't already been set).
 				// Note: in order to get an initial cursor in an empty textbox,
 				// we must compare m_innerFwTextBox.Tss.Text (which will be null) to the value
@@ -1013,8 +922,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_innerFwTextBox == null)
 					return null;
 
@@ -1022,8 +929,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_innerFwTextBox.Tss = value;
 			}
 		}
@@ -1037,7 +942,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_innerFwTextBox.Focused;
 			}
 		}
@@ -1053,14 +957,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_innerFwTextBox.WritingSystemCode;
 			}
 			set
 			{
-				CheckDisposed();
-
 				Debug.Assert(value != 1, "This is most likely an inappropriate value!");
 				m_innerFwTextBox.WritingSystemCode = value;
 			}
@@ -1077,14 +977,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_innerFwTextBox.StyleSheet;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_innerFwTextBox.StyleSheet = value;
 			}
 		}
@@ -1100,14 +996,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_innerFwTextBox.WritingSystemFactory;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_innerFwTextBox.WritingSystemFactory = value;
 			}
 		}
@@ -1134,8 +1026,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public void RemoveSelection()
 		{
-			CheckDisposed();
-
 			m_innerFwTextBox.RootBox.Activate(VwSelectionState.vssDisabled);
 		}
 
@@ -1146,7 +1036,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public void ScrollSelectionIntoView()
 		{
-			CheckDisposed();
 			if (m_innerFwTextBox.RootBox != null)
 			{
 				m_innerFwTextBox.ScrollSelectionIntoView(m_innerFwTextBox.RootBox.Selection,
@@ -1200,7 +1089,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			CheckDisposed();
 			if (m_innerFwTextBox.NotificationsDisabled)
 				return; // inner box is adjusting size, not a real change to the text.
 
@@ -1218,8 +1106,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public virtual void BeginInit()
 		{
-			CheckDisposed();
-
 			// This is a no-op, baby!
 		}
 
@@ -1230,7 +1116,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public virtual void EndInit()
 		{
-			CheckDisposed();
 		}
 		#endregion ISupportInitialize implementation
 
@@ -1350,8 +1235,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public override void ApplyStyle(string sStyle)
 		{
-			CheckDisposed();
-
 			base.ApplyStyle(sStyle);
 
 			// Give text box a chance to adjust height of text to fit box.
@@ -1793,14 +1676,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_fAdjustStringHeight;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_fAdjustStringHeight = value;
 			}
 		}
@@ -1843,13 +1722,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_wordWrap;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_wordWrap = value;
 			}
 		}
@@ -1866,8 +1743,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (base.WritingSystemFactory == null)
 				{
 					CreateTempWritingSystemFactory();
@@ -1876,8 +1751,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (base.WritingSystemFactory != value)
 				{
 					ShutDownTempWsFactory();
@@ -1908,16 +1781,12 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_WritingSystem == 0)
 					m_WritingSystem = WritingSystemFactory.UserWs;
 				return m_WritingSystem;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_WritingSystem = value;
 				m_vc.setWsfAndWs(WritingSystemFactory, value);
 				// If the contents is currently empty, make sure inital typing will occur in this WS.
@@ -1938,44 +1807,16 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return base.StyleSheet;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (base.StyleSheet != value)
 				{
 					base.StyleSheet = value;
 					if (m_rootb != null)
 						m_rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, value);
 				}
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets the font of the text displayed by the control.
-		/// </summary>
-		/// <value></value>
-		/// <returns>The <see cref="T:System.Drawing.Font"></see> to apply to the text displayed by the control. The default is the value of the <see cref="P:System.Windows.Forms.Control.DefaultFont"></see> property.</returns>
-		/// <PermissionSet><IPermission class="System.Security.Permissions.EnvironmentPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/><IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/><IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="UnmanagedCode, ControlEvidence"/><IPermission class="System.Diagnostics.PerformanceCounterPermission, System, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/></PermissionSet>
-		/// ------------------------------------------------------------------------------------
-		public override Font Font
-		{
-			get
-			{
-				CheckDisposed();
-
-				return base.Font;
-			}
-			set
-			{
-				CheckDisposed();
-
-				base.Font = value;
 			}
 		}
 
@@ -1989,8 +1830,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_DataAccess == null || InDesigner)
 					return null;
 
@@ -2004,7 +1843,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 			set
 			{
-				CheckDisposed();
 				// replace new lines with line breaks
 				ITsString tss = ReplaceAll(value, Environment.NewLine, LineBreak);
 
@@ -2057,14 +1895,12 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				if (AutoScroll)
 					return base.ScrollPosition;
 				return m_ScrollPosition;
 			}
 			set
 			{
-				CheckDisposed();
 				if (AutoScroll)
 					base.ScrollPosition = value;
 
@@ -2101,8 +1937,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_fIsDisposing)
 					return string.Empty;
 
@@ -2115,7 +1949,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 			set
 			{
-				CheckDisposed();
 				Tss = TsStringUtils.MakeString(value, WritingSystemCode);
 			}
 		}
@@ -2129,7 +1962,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_DataAccess;
 			}
 		}
@@ -2151,8 +1983,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (RootBox == null || InDesigner)
 					return 0;
 				IVwSelection sel = RootBox.Selection;
@@ -2172,8 +2002,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (value < 0)
 					throw new ArgumentException("The value cannot be less than zero.");
 				Select(value, SelectionLength);
@@ -2197,8 +2025,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (RootBox == null || InDesigner)
 					return 0;
 				IVwSelection sel = RootBox.Selection;
@@ -2218,8 +2044,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (value < 0)
 					throw new ArgumentException("The value cannot be less than zero.");
 				Select(SelectionStart, value);
@@ -2240,7 +2064,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				ITsString tss = SelectedTss;
 				if (tss == null)
 					return string.Empty;
@@ -2252,7 +2075,6 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			set
 			{
-				CheckDisposed();
 				SelectedTss = TsStringUtils.MakeString(value, WritingSystemCode);
 			}
 		}
@@ -2266,7 +2088,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				ITsString tss = Tss;
 				if (tss == null)
 					return null;
@@ -2275,7 +2096,6 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			set
 			{
-				CheckDisposed();
 				int selStart = SelectionStart;
 				Tss = Tss.Replace(selStart, SelectionLength, value);
 				Select(selStart + value.Length, 0);
@@ -2303,8 +2123,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public override int GetAvailWidth(IVwRootBox prootb)
 		{
-			CheckDisposed();
-
 			if (m_wordWrap)
 				return base.GetAvailWidth(prootb);
 
@@ -2322,8 +2140,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (InDesigner)
 				return;
 
@@ -2346,7 +2162,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return true;
 			}
 		}
@@ -2485,14 +2300,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return base.BackColor;
 			}
 			set
 			{
-				CheckDisposed();
-
 				base.BackColor = value;
 				if (m_rootb != null)
 					m_rootb.Reconstruct();
@@ -2512,12 +2323,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return base.ForeColor;
 			}
 			set
 			{
-				CheckDisposed();
 				base.ForeColor = value;
 				if (m_rootb != null)
 					m_rootb.Reconstruct();
@@ -2579,8 +2388,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </exception>
 		public void Select(int start, int length)
 		{
-			CheckDisposed();
-
 			if (start < 0)
 				throw new ArgumentException("Starting position is less than zero.", "start");
 			if (length < 0)
@@ -2641,7 +2448,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				if (m_wsf == null)
 					throw new Exception("A text box is being asked for its height, but its writing system factory has not been set.");
 
@@ -2695,7 +2501,6 @@ namespace SIL.FieldWorks.Common.Widgets
 					if (RootBox != null)
 						return GetAvailWidth(RootBox) + 4;
 				}
-				CheckDisposed();
 				bool fOldSaveSize = m_vc.SaveSize;
 				try
 				{
@@ -2748,7 +2553,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fAdjustStringHeight && WritingSystemFactory != null && !AutoScroll;
 			}
 		}
@@ -2760,8 +2564,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		internal bool AdjustHeight()
 		{
-			CheckDisposed();
-
 			if (!DoAdjustHeight || m_DataAccess == null || Tss == null)
 				return false;
 
@@ -2868,8 +2670,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public void ApplyWS(int hvoWs)
 		{
-			CheckDisposed();
-
 			EditingHelper.ApplyWritingSystem(hvoWs);
 
 			AdjustHeight();

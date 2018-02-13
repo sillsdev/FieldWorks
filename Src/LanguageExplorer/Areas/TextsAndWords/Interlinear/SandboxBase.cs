@@ -159,18 +159,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// This flag controls behavior that depends on whether the word being analyzed should be treated
 		// as at the start of a sentence. Currently this affects the behavior for words with initial
 		// capitalization only.
-		private bool m_fTreatAsSentenceInitial = true;
 		// Indicates the case status of the wordform.
-		private StringCaseStatus m_case;
 		// If m_hvoWordform is set to zero, this should be set to the actual text that should be
 		// assigned to the new Wordform that will be created if GetRealAnalysis is called.
-		private ITsString m_tssWordform;
 		// The original Gloss we started with. ReviewP: Can we get rid of this?
 
 		private bool m_fSuppressShowCombo = true; // set to prevent SelectionChanged displaying combo.
 
 		internal IComboHandler m_ComboHandler; // handles most kinds of combo box.
-		private ChooseAnalysisHandler m_caHandler; // handles the one on the base line.
 		protected SandboxVc m_vc;
 		private Point m_LastMouseMovePos;
 		// Rectangle containing last selection passed to ShowComboForSelection.
@@ -397,15 +393,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Return the count of morphemes.
 		/// </summary>
-		public int MorphCount
-		{
-			get
-			{
-				CheckDisposed();
+		public int MorphCount => Caches.DataAccess.get_VecSize(kSbWord, ktagSbWordMorphs);
 
-				return Caches.DataAccess.get_VecSize(kSbWord, ktagSbWordMorphs);
-			}
-		}
 		/// <summary>
 		/// Return the list of msas as hvos
 		/// </summary>
@@ -413,8 +402,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
-				CheckDisposed();
-
 				var chvo = MorphCount;
 				using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 				{
@@ -434,7 +421,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
-				CheckDisposed();
 				if (m_rawWordform != null && m_rawWordform.Length != 0)
 				{
 					return m_rawWordform;
@@ -445,7 +431,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			set
 			{
-				CheckDisposed();
 				m_rawWordform = value;
 				// we want RawWordformWs to be set to the ws of the new RawWordform.
 				m_wsRawWordform = 0;
@@ -457,19 +442,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// as at the start of a sentence. Currently this affects the behavior for words with initial
 		/// capitalization only.
 		/// </summary>
-		public bool TreatAsSentenceInitial
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fTreatAsSentenceInitial;
-			}
-			set
-			{
-				CheckDisposed();
-				m_fTreatAsSentenceInitial = value;
-			}
-		}
+		public bool TreatAsSentenceInitial { get; set; } = true;
 
 		/// <summary>
 		/// This property holds the color to use for any display that indicates multiple
@@ -518,13 +491,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fShowMorphBundles;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_fShowMorphBundles = value;
 				if (m_vc != null)
 				{
@@ -538,14 +508,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal virtual InterlinDocForAnalysis InterlinDoc => null;
 
-		internal int RootWordHvo
-		{
-			get
-			{
-				CheckDisposed();
-				return kSbWord;
-			}
-		}
+		internal int RootWordHvo => kSbWord;
 
 		/// <summary>
 		/// True if the combo on the Wordform line is wanted (there are known analyses).
@@ -556,53 +519,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// The index of the word we're editing among the context words we're showing.
 		/// Currently this is also it's index in the list of root objects.
 		/// </summary>
-		internal int IndexOfCurrentItem
-		{
-			get
-			{
-				CheckDisposed();
-				return 0;
-			}
-		}
+		internal int IndexOfCurrentItem => 0;
 
-		internal SandboxEditMonitor SandboxEditMonitor
-		{
-			get
-			{
-				CheckDisposed();
-				return EditMonitor;
-			}
-		}
+		internal SandboxEditMonitor SandboxEditMonitor => EditMonitor;
 
 		public bool SizeToContent
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fSizeToContent;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_fSizeToContent = value;
 				// If we are changing the window size to match the content, we don't want to autoscroll.
 				AutoScroll = !m_fSizeToContent;
 			}
 		}
-		internal ChooseAnalysisHandler FirstLineHandler
-		{
-			get
-			{
-				CheckDisposed();
-				return m_caHandler;
-			}
-			set
-			{
-				CheckDisposed();
-				m_caHandler = value;
-			}
-		}
+		internal ChooseAnalysisHandler FirstLineHandler { get; set; }
 
 		/// <summary>
 		/// Triggered to tell clients that the Sandbox has changed (e.g. been edited from
@@ -654,14 +588,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Indicates the case of the Wordform we're dealing with.
 		/// </summary>
-		public StringCaseStatus CaseStatus
-		{
-			get
-			{
-				CheckDisposed();
-				return m_case;
-			}
-		}
+		public StringCaseStatus CaseStatus { get; private set; }
 
 		/// <summary>
 		/// The analysis object (in the real cache) that we started out looking at.
@@ -670,7 +597,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
-				CheckDisposed();
 				if (CurrentAnalysisTree == null || CurrentAnalysisTree.Analysis == null)
 				{
 					return 0;
@@ -684,14 +610,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// that will be created if an alternate-case wordform that does not already exist is confirmed.
 		/// Also used as the first menu item in the morphemes menu when m_hvoWordform is zero.
 		/// </summary>
-		internal ITsString FormOfWordform
-		{
-			get
-			{
-				CheckDisposed();
-				return m_tssWordform;
-			}
-		}
+		internal ITsString FormOfWordform { get; private set; }
 
 		/// <summary>
 		/// This is the WordGloss that the Sandbox was initialized with, either from the initial WAG or
@@ -966,7 +885,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// This probably paranoid, but it's safe.
 				Debug.WriteLine("loading Sandbox for missing analysis");
 				m_wordformOriginal = null;
-				m_case = StringCaseStatus.allLower;
+				CaseStatus = StringCaseStatus.allLower;
 				return;
 			}
 
@@ -974,7 +893,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			using (new SandboxEditMonitorHelper(EditMonitor, true))
 			{
 				UsingGuess = LoadRealDataIntoSec1(kSbWord, fLookForDefaults, fAdjustCase);
-				Debug.Assert(CurrentAnalysisTree.Wordform != null || m_tssWordform != null);
+				Debug.Assert(CurrentAnalysisTree.Wordform != null || FormOfWordform != null);
 
 				// At this point the only reason to force the current displayed analysis
 				// to be returned instead of the original is if we're guessing.
@@ -1016,7 +935,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var sdaMain = Caches.MainCache.MainCacheAccessor;
 			CopyStringsToSecondary(InterlinLineChoices.kflidWord, sdaMain, CurrentAnalysisTree.Wordform.Hvo, WfiWordformTags.kflidForm, cda, hvoSbWord, ktagSbWordForm);
 			var cf = VernCaseFuncs(RawWordform);
-			m_case = cf.StringCase(RawWordform.Text);
+			CaseStatus = cf.StringCase(RawWordform.Text);
 			// empty it in case we're redoing after choose from combo.
 			cda.CacheVecProp(hvoSbWord, ktagSbWordMorphs, new int[0], 0);
 			if (gloss == null || analysis == null) // If gloss is null, analysis will be, too, but it doesn't hurt to check.
@@ -1260,7 +1179,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (fAdjustCase && CaseStatus == StringCaseStatus.title && tssForm != null && tssForm.Length > 0)
 				{
 					tssForm = TsStringUtils.MakeString(cf.ToLower(tssForm.Text), RawWordformWs);
-					m_tssWordform = tssForm; // need this to be set in case hvoWordformRef set to zero.
+					FormOfWordform = tssForm; // need this to be set in case hvoWordformRef set to zero.
 					// If we adjust the case of the form, we must adjust the hvo as well,
 					// or any analyses created will go to the wrong WfiWordform.
 					CurrentAnalysisTree.Analysis = GetWordform(tssForm);
@@ -1323,8 +1242,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void SetSelectedEntry(ILexEntry entryReal)
 		{
-			CheckDisposed();
-
 			if (entryReal.Hvo == m_hvoLastSelEntry)
 			{
 				return;
@@ -1350,14 +1267,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return tsb.GetString();
 		}
 
-		private void CopyStringsToSecondary(IList<int> writingSystems, ISilDataAccess sdaMain, int hvoMain,
-			int flidMain, IVwCacheDa cda, int hvoSec, int flidSec)
+		private void CopyStringsToSecondary(IList<int> writingSystems, ISilDataAccess sdaMain, int hvoMain, int flidMain, IVwCacheDa cda, int hvoSec, int flidSec)
 		{
-			CheckDisposed();
 			foreach (var ws in writingSystems)
 			{
 				var wsActual = 0;
-				ITsString tss;
 				if (ws > 0)
 				{
 					wsActual = ws;
@@ -1385,7 +1299,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					throw new ArgumentException($"magic ws {ws} not yet supported.");
 				}
 
-				tss = hvoMain == 0 ? TsStringUtils.EmptyString(wsActual) : sdaMain.get_MultiStringAlt(hvoMain, flidMain, wsActual);
+				var tss = hvoMain == 0 ? TsStringUtils.EmptyString(wsActual) : sdaMain.get_MultiStringAlt(hvoMain, flidMain, wsActual);
 				cda.CacheStringAlt(hvoSec, flidSec, wsActual, tss);
 			}
 		}
@@ -1686,7 +1600,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal void EstablishDefaultEntry(int hvoMorph, string form, IMoMorphType mmt, bool fMonoMorphemic)
 		{
-			CheckDisposed();
 			var hvoFormSec = Caches.DataAccess.get_ObjectProp(hvoMorph, ktagSbMorphForm);
 			// remove any existing mapping for this morph form, which might exist
 			// from a previous analysis
@@ -1748,7 +1661,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal IMoForm DefaultMorph(string form, IMoMorphType mmt)
 		{
-			CheckDisposed();
 			// Find all the matching morphs and count how often used in WfiAnalyses
 			var ws = RawWordformWs;
 			// Fix FWR-2098 GJM: The definition of 'IsAmbiguousWith' seems not to include 'IsSameAs'.
@@ -1786,8 +1698,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns>default (real) sense if we found one, null otherwise.</returns>
 		internal ILexSense EstablishDefaultSense(int hvoMorph, ILexEntry entryReal, ILexSense senseReal, ILexEntryInflType inflType)
 		{
-			CheckDisposed();
-
 			ILexSense variantSense = null;
 			// If the entry has no sense we can't do anything.
 			if (entryReal.SensesOS.Count == 0)
@@ -2073,8 +1983,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public void OnOpenCombo()
 		{
-			CheckDisposed();
-
 			var selOrig = RootBox.Selection;
 			if (selOrig == null)
 			{
@@ -2228,8 +2136,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="fShift">If true, reverse sequence.</param>
 		internal void HandleTab(bool fShift)
 		{
-			CheckDisposed();
-
 			int startLineIndex;
 			int currentLineIndex;
 			int increment;
@@ -2260,8 +2166,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void GetLineOfCurrentSelectionAndNextTabStop(bool fShift, out int currentLineIndex, out int startLineIndex, out int increment, out bool fSkipIcon, out int iNextMorphIndex)
 		{
-			CheckDisposed();
-
 			startLineIndex = -1;
 			currentLineIndex = -1;
 			increment = fShift ? -1 : 1;
@@ -2615,8 +2519,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void FinishUpOk()
 		{
-			CheckDisposed();
-
 			HideCombos();
 		}
 
@@ -2633,8 +2535,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void MakeDefaultSelection()
 		{
-			CheckDisposed();
-
 			if (IsInGlossMode())
 			{
 				// since we're in the gloss tab first try to select the text of the word gloss,
@@ -2971,8 +2871,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal void MakeFirstMorph()
 		{
-			CheckDisposed();
-
 			var sda = Caches.DataAccess;
 			var cda = (IVwCacheDa)sda;
 			var hvoSbMorph = sda.MakeNewObject(kclsidSbMorph, kSbWord, ktagSbWordMorphs, 0);
@@ -3148,7 +3046,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns>This will return 0 if the analysis is on the wordform.</returns>
 		internal IWfiAnalysis GetWfiAnalysisOfAnalysis()
 		{
-			CheckDisposed();
 			return CurrentAnalysisTree.WfiAnalysis;
 		}
 
@@ -3158,7 +3055,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal IWfiAnalysis GetWfiAnalysisInUse()
 		{
-			CheckDisposed();
 			var wa = GetWfiAnalysisOfAnalysis();
 			if (wa != null)
 			{
@@ -3176,8 +3072,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns>This will return 0 if the analysis is on the wordform.</returns>
 		internal IWfiAnalysis GetWfiAnalysisOfAnalysisObject(ICmObject analysisValueObject)
 		{
-			CheckDisposed();
-
 			if (analysisValueObject == null || !analysisValueObject.IsValidObject)
 			{
 				return null;
@@ -3206,7 +3100,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns></returns>
 		internal IWfiWordform GetWordformOfAnalysis()
 		{
-			CheckDisposed();
 			return CurrentAnalysisTree.Wordform;
 		}
 
@@ -3251,8 +3144,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal void Handle_AnalysisChosen(object sender, EventArgs e)
 		{
-			CheckDisposed();
-
 			var handler = (ChooseAnalysisHandler)sender;
 			var chosenAnalysis = handler.GetAnalysisTree();
 			CurrentAnalysisTree = chosenAnalysis;
@@ -3301,7 +3192,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// to Activate.
 		internal void ShowCombo()
 		{
-			CheckDisposed();
 		}
 
 		/// <summary>
@@ -3310,8 +3200,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal ITsString FindAFullWordForm(IWfiWordform realWordform)
 		{
-			CheckDisposed();
-
 			return realWordform == null ? FormOfWordform : realWordform.Form.get_String(RawWordformWs);
 		}
 
@@ -3338,14 +3226,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal void SetWordform(ITsString form, bool fLookForDefaults)
 		{
-			CheckDisposed();
 			// stop monitoring edits
 			using (new SandboxEditMonitorHelper(EditMonitor, true))
 			{
 				m_fSetWordformInProgress = true;
 				try
 				{
-					m_tssWordform = form;
+					FormOfWordform = form;
 					CurrentAnalysisTree.Analysis = GetWordform(form);
 					var sda = Caches.DataAccess;
 					var cda = (IVwCacheDa)Caches.DataAccess;
@@ -3359,7 +3246,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						var hvoMorph0 = sda.MakeNewObject(kclsidSbMorph, kSbWord, ktagSbWordMorphs, 0); // make just one new morpheme.
 						var hvoNewForm = sda.MakeNewObject(kclsidSbNamedObj, kSbWord, ktagSbWordDummy, 0);
 						// make the object to be the form of the morpheme
-						sda.SetMultiStringAlt(hvoNewForm, ktagSbNamedObjName, RawWordformWs, m_tssWordform);
+						sda.SetMultiStringAlt(hvoNewForm, ktagSbNamedObjName, RawWordformWs, FormOfWordform);
 						// set its text
 						sda.PropChanged(null, (int) PropChangeType.kpctNotifyAll, hvoNewForm, ktagSbNamedObjName, 0, 1, 1);
 						sda.SetObjProp(hvoMorph0, ktagSbMorphForm, hvoNewForm); // and set the reference.
@@ -3371,7 +3258,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					else
 					{
 						// Set the DataAccess.IsDirty() to true, so this will affect the real analysis when switching words.
-						sda.SetMultiStringAlt(kSbWord, ktagSbWordForm, RawWordformWs, m_tssWordform);
+						sda.SetMultiStringAlt(kSbWord, ktagSbWordForm, RawWordformWs, FormOfWordform);
 						sda.PropChanged(null, (int) PropChangeType.kpctNotifyAll, kSbWord, ktagSbWordForm, 0, 1, 1);
 						// Just pretend the alternate wordform is our starting point.
 						CurrentAnalysisTree.Analysis = CurrentAnalysisTree.Wordform;
@@ -3399,8 +3286,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal int CurrentLexEntriesAnalysis(int hvoMorph)
 		{
-			CheckDisposed();
-
 			// Return LexSense if found
 			var hvoMorphSense = Caches.DataAccess.get_ObjectProp(hvoMorph, ktagSbMorphGloss);
 			if (hvoMorphSense > 0)
@@ -3453,8 +3338,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// Erase all word level annotations.
 		internal void ClearAllGlosses()
 		{
-			CheckDisposed();
-
 			var cda = (IVwCacheDa)Caches.DataAccess;
 			foreach (var wsId in InterlinLineChoices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss, true))
 			{
@@ -3474,8 +3357,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary />
 		public AnalysisTree GetRealAnalysis(bool fSaveGuess, out IWfiAnalysis obsoleteAna)
 		{
-			CheckDisposed();
-
 			obsoleteAna = null;
 			if (!ShouldSave(fSaveGuess))
 			{
@@ -3511,14 +3392,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return new GetRealAnalysisMethod(
 				PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), this, Caches,
 				kSbWord, CurrentAnalysisTree, GetWfiAnalysisOfAnalysis(), existingGloss,
-				InterlinLineChoices, m_tssWordform, fWantOnlyWfiAnalysis);
+				InterlinLineChoices, FormOfWordform, fWantOnlyWfiAnalysis);
 		}
 
 		protected virtual void LoadForWordBundleAnalysis(int hvoWag)
 		{
 			CurrentAnalysisTree.Analysis = (IAnalysis)Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoWag);
 			LoadRealDataIntoSec(true, TreatAsSentenceInitial);
-			Debug.Assert(CurrentAnalysisTree.Wordform != null || m_tssWordform != null);
+			Debug.Assert(CurrentAnalysisTree.Wordform != null || FormOfWordform != null);
 			m_wordformOriginal = CurrentAnalysisTree.Wordform;
 			m_hvoInitialWag = hvoWag; // if we reset the focus box, this value we were passed is what we should reset it to.
 		}
@@ -3531,8 +3412,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (Caches.MainCache == null || DesignMode)
 			{
 				return;
@@ -3579,8 +3458,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public override void RootBoxSizeChanged(IVwRootBox prootb)
 		{
-			CheckDisposed();
-
 			if (!m_fSizeToContent)
 			{
 				base.RootBoxSizeChanged(prootb);
@@ -3609,8 +3486,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public override VwDelProbResponse OnProblemDeletion(IVwSelection sel, VwDelProbType dpt)
 		{
-			CheckDisposed();
-
 			ITsString tss;
 			bool fAssocPrev;
 			int ichSel;
@@ -3638,8 +3513,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// Handles a change in the view selection.
 		protected override void HandleSelectionChange(IVwRootBox rootb, IVwSelection vwselNew)
 		{
-			CheckDisposed();
-
 			base.HandleSelectionChange(rootb, vwselNew);
 			if (!vwselNew.IsValid)
 			{
@@ -4249,7 +4122,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public override bool RefreshDisplay()
 		{
-			CheckDisposed();
 			return false;
 		}
 
@@ -4386,7 +4258,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override int GetAvailWidth(IVwRootBox prootb)
 		{
-			CheckDisposed();
 			// Displaying Right-To-Left Graphite behaves badly if available width gets up to
 			// one billion (10**9) or so.  See LT-6077.  One million (10**6) should be ample
 			// for simulating infinite width.
@@ -4396,7 +4267,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// We absolutely don't ever want the Sandbox to scroll.
 		public override bool ScrollSelectionIntoView(IVwSelection sel, VwScrollSelOpts scrollOption)
 		{
-			CheckDisposed();
 			return false;
 		}
 

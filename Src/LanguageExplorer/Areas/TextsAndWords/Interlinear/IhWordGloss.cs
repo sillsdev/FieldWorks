@@ -25,8 +25,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override void HandleSelect(int index)
 		{
-			CheckDisposed();
-
 			var fGuessingOld = m_caches.DataAccess.get_IntProp(m_hvoSbWord, SandboxBase.ktagSbWordGlossGuess);
 			var item = ComboList.SelectedItem as HvoTssComboItem;
 			if (item == null)
@@ -56,8 +54,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// the proper writing system factory, writing system, and TsString.
 		public override void SetupCombo()
 		{
-			CheckDisposed();
-
 			base.SetupCombo();
 			var hvoEmptyGloss = 0;
 			var tsb = TsStringUtils.MakeStrBldr();

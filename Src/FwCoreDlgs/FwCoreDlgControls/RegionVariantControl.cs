@@ -226,18 +226,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		}
 		#endregion
 
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
 		/// <summary>
 		/// The larger component using this control must supply a writing system
 		/// which this control will help to edit.
@@ -246,13 +234,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_ws;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_ws = value;
 				LoadControlsFromWritingSystem();
 			}
@@ -283,8 +268,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
-
 				ScriptSubtag subtag = null;
 				if (m_scriptAbbrev.Enabled)
 				{
@@ -305,8 +288,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			set
 			{
-				CheckDisposed();
-
 				if (value == null)
 				{
 					m_scriptAbbrev.Text = "";
@@ -315,7 +296,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				}
 				else
 				{
-
 					bool wasEnabled = m_scriptName.Enabled; //be a good neighbor
 					m_scriptName.Enabled = true; // somehow necessary to allow it to be changed??
 					ScriptName = value.Name;
@@ -339,8 +319,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
-
 				RegionSubtag subtag = null;
 				if (m_regionAbbrev.Enabled)
 				{
@@ -357,8 +335,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			set
 			{
-				CheckDisposed();
-
 				if (value == null)
 				{
 					m_regionAbbrev.Text = "";
@@ -397,8 +373,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_variantAbbrev.Enabled)
 				{
 					string code = m_variantAbbrev.Text.Trim();
@@ -423,8 +397,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			set
 			{
-				CheckDisposed();
-
 				VariantSubtag[] variantSubtags = value.ToArray();
 				if (variantSubtags.Length == 0)
 				{
@@ -481,13 +453,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_scriptNameString;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_scriptNameString = value;
 				m_scriptName.SelectedIndex = m_scriptName.FindStringExact(value);
 			}
@@ -501,13 +471,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_regionNameString;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_regionNameString = value;
 				m_regionName.SelectedIndex = m_regionName.FindStringExact(value);
 			}
@@ -521,14 +489,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_variantNameString;
 			}
 
 			set
 			{
-				CheckDisposed();
-
 				m_variantNameString = value;
 				m_variantName.SelectedIndex = m_variantName.FindStringExact(value);
 			}
@@ -594,8 +559,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// </summary>
 		public bool CheckValid()
 		{
-			CheckDisposed();
-
 			string caption = FwCoreDlgControls.kstidError;
 
 			ScriptSubtag scriptSubtag = ScriptSubtag;

@@ -82,7 +82,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void HandleSelectionChange(IVwRootBox prootb, IVwSelection vwselNew)
 		{
-			CheckDisposed();
 			m_vc.TasVc.SelectionChanged(prootb, vwselNew);
 			base.HandleSelectionChange(prootb, vwselNew);
 		}
@@ -102,8 +101,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode)
 			{
 				return;

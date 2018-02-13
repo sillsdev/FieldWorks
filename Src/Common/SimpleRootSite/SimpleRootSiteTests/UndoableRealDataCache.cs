@@ -1,4 +1,4 @@
-// Copyright (c) 2013 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -1444,16 +1444,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public string GetOutlineNumber(int hvo, int flid, bool fFinPer)
 		{
 			return m_cache.GetOutlineNumber(hvo, flid, fFinPer);
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		///             All public Properties and Methods should call this
-		///             before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			m_cache.CheckDisposed();
 		}
 
 		/// <remarks>

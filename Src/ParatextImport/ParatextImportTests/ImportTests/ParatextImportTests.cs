@@ -257,12 +257,10 @@ namespace ParatextImport.ImportTests
 		{
 			get
 			{
-				CheckDisposed();
 				return m_importDomain;
 			}
 			set
 			{
-				CheckDisposed();
 				m_importDomain = value;
 			}
 		}
@@ -272,14 +270,7 @@ namespace ParatextImport.ImportTests
 		/// Exposes the <see cref="ParatextSfmImporter.m_CurrParaFootnotes"/> variable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public List<FootnoteInfo> CurrParaFootnotes
-		{
-			get
-			{
-				CheckDisposed();
-				return m_CurrParaFootnotes;
-			}
-		}
+		public List<FootnoteInfo> CurrParaFootnotes => m_CurrParaFootnotes;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -290,12 +281,10 @@ namespace ParatextImport.ImportTests
 		{
 			get
 			{
-				CheckDisposed();
 				return m_currSection;
 			}
 			set
 			{
-				CheckDisposed();
 				m_currSection = value;
 			}
 		}
@@ -307,8 +296,6 @@ namespace ParatextImport.ImportTests
 		/// ------------------------------------------------------------------------------------
 		public new string GetVerseRefAsString(int wsBt)
 		{
-			CheckDisposed();
-
 			return base.GetVerseRefAsString(wsBt);
 		}
 
@@ -321,7 +308,6 @@ namespace ParatextImport.ImportTests
 		{
 			get
 			{
-				CheckDisposed();
 				return m_settings;
 			}
 		}
@@ -335,12 +321,10 @@ namespace ParatextImport.ImportTests
 		{
 			get
 			{
-				CheckDisposed();
 				return m_nBookNumber;
 			}
 			set
 			{
-				CheckDisposed();
 				m_nBookNumber = value;
 			}
 		}
@@ -350,29 +334,14 @@ namespace ParatextImport.ImportTests
 		/// Exposes the <see cref="ParatextSfmImporter.m_nChapter"/> variable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public int Chapter
-		{
-			get
-			{
-				CheckDisposed();
-				return m_nChapter;
-			}
-		}
+		public int Chapter => m_nChapter;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the length of the <see cref="NormalParaStrBldr"/>.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public int ParaBldrLength
-		{
-			get
-			{
-				CheckDisposed();
-
-				return NormalParaStrBldr.Length;
-			}
-		}
+		public int ParaBldrLength => NormalParaStrBldr.Length;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -384,8 +353,6 @@ namespace ParatextImport.ImportTests
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_fInFootnote)
 					return m_SavedParaBldr.StringBuilder;
 				else
@@ -403,8 +370,6 @@ namespace ParatextImport.ImportTests
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_fInFootnote)
 					return m_ParaBldr.StringBuilder;
 				else
@@ -422,8 +387,6 @@ namespace ParatextImport.ImportTests
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_BTStrBldrs;
 			}
 		}
@@ -433,14 +396,7 @@ namespace ParatextImport.ImportTests
 		/// Exposes the <see cref="ParatextSfmImporter.m_CurrFootnote"/> variable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IScrFootnote CurrentFootnote
-		{
-			get
-			{
-				CheckDisposed();
-				return m_CurrFootnote;
-			}
-		}
+		public IScrFootnote CurrentFootnote => m_CurrFootnote;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -448,14 +404,7 @@ namespace ParatextImport.ImportTests
 		/// This is used by tests that need to set scReference values for the current segment.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ISCTextSegment TextSegment
-		{
-			get
-			{
-				CheckDisposed();
-				return ((DummyScrObjWrapper)m_SOWrapper).TextSegment;
-			}
-		}
+		public ISCTextSegment TextSegment => ((DummyScrObjWrapper)m_SOWrapper).TextSegment;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -466,12 +415,10 @@ namespace ParatextImport.ImportTests
 		{
 			get
 			{
-				CheckDisposed();
 				return CurrentBook;
 			}
 			set
 			{
-				CheckDisposed();
 				CurrentBook = value;
 			}
 		}
@@ -481,71 +428,35 @@ namespace ParatextImport.ImportTests
 		/// Exposes the book title.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public int HvoTitle
-		{
-			get
-			{
-				CheckDisposed();
-				return CurrentBook.TitleOA.Hvo;
-			}
-		}
+		public int HvoTitle => CurrentBook.TitleOA.Hvo;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Exposes the section heading.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IStText SectionHeading
-		{
-			get
-			{
-				CheckDisposed();
-				return m_currSection.HeadingOA;
-			}
-		}
+		public IStText SectionHeading => m_currSection.HeadingOA;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Exposes the section content.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IStText SectionContent
-		{
-			get
-			{
-				CheckDisposed();
-				return m_currSection.ContentOA;
-			}
-		}
+		public IStText SectionContent => m_currSection.ContentOA;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Exposes the <see cref="ParatextSfmImporter.m_styleProxies"/> variable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public Dictionary<string, ImportStyleProxy> HtStyleProxy
-		{
-			get
-			{
-				CheckDisposed();
-				return m_styleProxies;
-			}
-		}
+		public Dictionary<string, ImportStyleProxy> HtStyleProxy => m_styleProxies;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Exposes the <see cref="ParatextSfmImporter.m_undoManager"/> variable.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public UndoImportManager UndoInfo
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_undoManager;
-			}
-		}
+		public UndoImportManager UndoInfo => m_undoManager;
 		#endregion
 
 		#region Methods
@@ -648,8 +559,6 @@ namespace ParatextImport.ImportTests
 		public IStTxtPara FindCorrespondingVernParaForSegment(IStStyle style,
 			BCVRef targetRef, int iPara)
 		{
-			CheckDisposed();
-
 			m_iNextBtPara = iPara;
 			bool fDummy;
 			return base.FindCorrespondingVernParaForSegment(style, targetRef, out fDummy);
@@ -663,8 +572,6 @@ namespace ParatextImport.ImportTests
 		/// ------------------------------------------------------------------------------------
 		public IStFootnote GetFootnote(int iFootnoteIndex)
 		{
-			CheckDisposed();
-
 			ILcmOwningSequence<IScrFootnote> footnotes = ScrBook.FootnotesOS;
 			Assert.IsTrue(iFootnoteIndex < footnotes.Count, "iFootnoteIndex is out of range");
 			return footnotes[iFootnoteIndex];
@@ -677,8 +584,6 @@ namespace ParatextImport.ImportTests
 		/// ------------------------------------------------------------------------------------
 		public new void Initialize()
 		{
-			CheckDisposed();
-
 			base.Initialize();
 		}
 
@@ -689,8 +594,6 @@ namespace ParatextImport.ImportTests
 		/// ------------------------------------------------------------------------------------
 		public new void Import()
 		{
-			CheckDisposed();
-
 			base.Import();
 		}
 
@@ -705,8 +608,6 @@ namespace ParatextImport.ImportTests
 		/// ------------------------------------------------------------------------------------
 		public IScrFootnote FindCorrespondingFootnote(int ws, string styleId)
 		{
-			CheckDisposed();
-
 			base.m_wsCurrBtPara = ws;
 			return base.FindCorrespondingFootnote(styleId);
 		}
@@ -720,8 +621,6 @@ namespace ParatextImport.ImportTests
 		/// ------------------------------------------------------------------------------------
 		public void ProcessSegment(string sText, string sMarker)
 		{
-			CheckDisposed();
-
 			m_sSegmentText = sText;
 			m_sMarker = sMarker;
 			base.ProcessSegment();
@@ -734,8 +633,6 @@ namespace ParatextImport.ImportTests
 		/// ------------------------------------------------------------------------------------
 		public new void FinalizeImport()
 		{
-			CheckDisposed();
-
 			base.FinalizeImport();
 		}
 
@@ -749,8 +646,6 @@ namespace ParatextImport.ImportTests
 		/// ------------------------------------------------------------------------------------
 		public new void AddTextToPara(string sText, ITsTextProps pttpProps)
 		{
-			CheckDisposed();
-
 			base.AddTextToPara(sText, pttpProps);
 		}
 
@@ -764,8 +659,6 @@ namespace ParatextImport.ImportTests
 		public new void AddImportStyleProxyForMapping(ImportMappingInfo mapping,
 			Dictionary<string, ImportStyleProxy> styleProxies)
 		{
-			CheckDisposed();
-
 			base.AddImportStyleProxyForMapping(mapping, styleProxies);
 		}
 
@@ -792,7 +685,6 @@ namespace ParatextImport.ImportTests
 		{
 			get
 			{
-				CheckDisposed();
 				return (DummyScrObjWrapper)SOWrapper;
 			}
 		}

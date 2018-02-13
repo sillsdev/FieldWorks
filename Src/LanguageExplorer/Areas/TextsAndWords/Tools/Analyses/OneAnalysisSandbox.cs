@@ -42,8 +42,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <returns>'true', if anything changed, otherwise 'false'.</returns>
 		public bool UpdateAnalysis(IWfiAnalysis anal)
 		{
-			CheckDisposed();
-
 			var uram = new UpdateRealAnalysisMethod(this, Caches, InterlinLineChoices, anal);
 			var result = uram.UpdateRealAnalysis();
 			Caches.DataAccess.ClearDirty();

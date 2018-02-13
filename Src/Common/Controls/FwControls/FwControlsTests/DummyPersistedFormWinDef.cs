@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,17 +32,6 @@ namespace SIL.FieldWorks.Common.Controls
 			InitializeComponent();
 		}
 
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns the Persistence object for testing the persistence properties
@@ -52,7 +41,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_persistence;
 			}
 		}

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -113,7 +113,6 @@ namespace SIL.FieldWorks.CacheLight
 		{
 			get
 			{
-				CheckDisposed();
 				return m_nextHvo++;
 			}
 		}
@@ -127,12 +126,10 @@ namespace SIL.FieldWorks.CacheLight
 		{
 			set
 			{
-				CheckDisposed();
 				m_checkWithMDC = value;
 			}
 			get
 			{
-				CheckDisposed();
 				return m_checkWithMDC;
 			}
 		}
@@ -349,8 +346,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>IVwCacheDa method</remarks>
 		public void CacheObjProp(int obj, int tag, int val)
 		{
-			CheckDisposed();
-
 			AddToIntCache(obj, tag, val, false);
 		}
 
@@ -361,8 +356,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public void SetObjProp(int hvo, int tag, int hvoObj)
 		{
-			CheckDisposed();
-
 			CacheObjProp(hvo, tag, hvoObj);
 			MakeDirty(hvo);
 		}
@@ -374,8 +367,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public int get_ObjectProp(int hvo, int tag)
 		{
-			CheckDisposed();
-
 			return GetFromIntCache(hvo, tag);
 		}
 		#endregion Object Prop methods
@@ -393,8 +384,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// ------------------------------------------------------------------------------------
 		public void CacheBooleanProp(int hvo, int tag, bool value)
 		{
-			CheckDisposed();
-
 			CheckBasics(hvo);
 
 			// Make sure the hvo has the given tag.
@@ -419,8 +408,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// ------------------------------------------------------------------------------------
 		public void SetBoolean(int hvo, int tag, bool n)
 		{
-			CheckDisposed();
-
 			CacheBooleanProp(hvo, tag, n);
 			MakeDirty(hvo);
 		}
@@ -436,8 +423,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// ------------------------------------------------------------------------------------
 		public bool get_BooleanProp(int hvo, int tag)
 		{
-			CheckDisposed();
-
 			CheckBasics(hvo);
 
 			var key = new HvoFlidKey(hvo, tag);
@@ -461,8 +446,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>IVwCacheDa method</remarks>
 		public void CacheGuidProp(int obj, int tag, Guid uid)
 		{
-			CheckDisposed();
-
 			CheckBasics(obj);
 			switch (tag)
 			{
@@ -490,8 +473,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public void SetGuid(int hvo, int tag, Guid uid)
 		{
-			CheckDisposed();
-
 			CacheGuidProp(hvo, tag, uid);
 			MakeDirty(hvo);
 		}
@@ -503,8 +484,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public Guid get_GuidProp(int hvo, int tag)
 		{
-			CheckDisposed();
-
 			CheckBasics(hvo);
 
 			var key = new HvoFlidKey(hvo, tag);
@@ -523,8 +502,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public int get_ObjFromGuid(Guid uid)
 		{
-			CheckDisposed();
-
 			return m_guidToHvo[uid];
 		}
 
@@ -539,8 +516,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>IVwCacheDa method</remarks>
 		public void CacheIntProp(int obj, int tag, int val)
 		{
-			CheckDisposed();
-
 			AddToIntCache(obj, tag, val, true);
 		}
 
@@ -551,8 +526,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public void SetInt(int hvo, int tag, int n)
 		{
-			CheckDisposed();
-
 			CacheIntProp(hvo, tag, n);
 			MakeDirty(hvo);
 		}
@@ -564,8 +537,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public int get_IntProp(int hvo, int tag)
 		{
-			CheckDisposed();
-
 			return GetFromIntCache(hvo, tag);
 		}
 
@@ -584,8 +555,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>IVwCacheDa method</remarks>
 		public int get_CachedIntProp(int obj, int tag, out bool isInCache)
 		{
-			CheckDisposed();
-
 			var val = 0;
 			isInCache = true;
 			try
@@ -613,8 +582,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>IVwCacheDa method</remarks>
 		public void CacheUnicodeProp(int obj, int tag, string val, int cch)
 		{
-			CheckDisposed();
-
 			CheckBasics(obj);
 			if (val.Length != cch)
 				throw new ArgumentException("Input string not the right length.");
@@ -635,8 +602,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public void SetUnicode(int hvo, int tag, string rgch, int cch)
 		{
-			CheckDisposed();
-
 			CacheUnicodeProp(hvo, tag, rgch, cch);
 			MakeDirty(hvo);
 		}
@@ -648,8 +613,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public void set_UnicodeProp(int obj, int tag, string bstr)
 		{
-			CheckDisposed();
-
 			SetUnicode(obj, tag, bstr, bstr.Length);
 		}
 
@@ -660,8 +623,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public string get_UnicodeProp(int obj, int tag)
 		{
-			CheckDisposed();
-
 			CheckBasics(obj);
 
 			var key = new HvoFlidKey(obj, tag);
@@ -683,8 +644,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public void UnicodePropRgch(int obj, int tag, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(ArrayPtrMarshaler), SizeParamIndex = 3)] ArrayPtr/*OLECHAR[]*/ rgch, int cchMax, out int cch)
 		{
-			CheckDisposed();
-
 			CheckBasics(obj);
 
 			var str = get_UnicodeProp(obj, tag);
@@ -708,8 +667,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>IVwCacheDa method</remarks>
 		public void CacheTimeProp(int hvo, int tag, long val)
 		{
-			CheckDisposed();
-
 			AddToLongCache(hvo, tag, val, CellarPropertyType.Time);
 		}
 
@@ -720,8 +677,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public void SetTime(int hvo, int tag, long lln)
 		{
-			CheckDisposed();
-
 			CacheTimeProp(hvo, tag, lln);
 			MakeDirty(hvo);
 		}
@@ -733,8 +688,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public long get_TimeProp(int hvo, int tag)
 		{
-			CheckDisposed();
-
 			return GetFromLongCache(hvo, tag);
 		}
 
@@ -749,8 +702,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>IVwCacheDa method</remarks>
 		public void CacheInt64Prop(int obj, int tag, long val)
 		{
-			CheckDisposed();
-
 			AddToLongCache(obj, tag, val, CellarPropertyType.GenDate);
 		}
 
@@ -761,8 +712,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public void SetInt64(int hvo, int tag, long lln)
 		{
-			CheckDisposed();
-
 			CacheInt64Prop(hvo, tag, lln);
 			MakeDirty(hvo);
 		}
@@ -774,8 +723,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public long get_Int64Prop(int hvo, int tag)
 		{
-			CheckDisposed();
-
 			return GetFromLongCache(hvo, tag);
 		}
 
@@ -790,8 +737,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>IVwCacheDa method</remarks>
 		public void CacheUnknown(int obj, int tag, [MarshalAs(UnmanagedType.IUnknown)] object unk)
 		{
-			CheckDisposed();
-
 			if (!(unk is ITsTextProps))
 				throw new ArgumentException("Only ITsTextProps COM interfaces are supported in the cache.");
 
@@ -812,8 +757,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public void SetUnknown(int hvo, int tag, [MarshalAs(UnmanagedType.IUnknown)] object unk)
 		{
-			CheckDisposed();
-
 			CacheUnknown(hvo, tag, unk);
 			MakeDirty(hvo);
 		}
@@ -826,8 +769,6 @@ namespace SIL.FieldWorks.CacheLight
 		[return: MarshalAs(UnmanagedType.IUnknown)]
 		public object get_UnknownProp(int hvo, int tag)
 		{
-			CheckDisposed();
-
 			CheckBasics(hvo);
 
 			var key = new HvoFlidKey(hvo, tag);
@@ -852,8 +793,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>IVwCacheDa method</remarks>
 		public void CacheBinaryProp(int obj, int tag, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 3)] Byte[] rgb, int cb)
 		{
-			CheckDisposed();
-
 			CheckBasics(obj);
 			if (rgb.Length != cb)
 				throw new ArgumentException("Binary input not the right length.");
@@ -875,8 +814,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public void SetBinary(int hvo, int tag, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 3)] Byte[] rgb, int cb)
 		{
-			CheckDisposed();
-
 			CacheBinaryProp(hvo, tag, rgb, cb);
 			MakeDirty(hvo);
 		}
@@ -890,8 +827,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public void BinaryPropRgb(int obj, int tag, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(ArrayPtrMarshaler), SizeParamIndex = 3)] ArrayPtr/*byte[]*/ rgb, int cbMax, out int cb)
 		{
-			CheckDisposed();
-
 			CheckBasics(obj);
 
 			var key = new HvoFlidKey(obj, tag);
@@ -921,8 +856,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>IVwCacheDa method</remarks>
 		public void CacheStringProp(int obj, int tag, ITsString tss)
 		{
-			CheckDisposed();
-
 			CheckBasics(obj);
 			CheckHvoTagMatch(obj, tag);
 			// Make sure Unicode is legal for the given tag.
@@ -940,8 +873,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public void SetString(int hvo, int tag, ITsString tss)
 		{
-			CheckDisposed();
-
 			CacheStringProp(hvo, tag, tss);
 			MakeDirty(hvo);
 		}
@@ -953,8 +884,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public ITsString get_StringProp(int hvo, int tag)
 		{
-			CheckDisposed();
-
 			CheckBasics(hvo);
 
 			var key = new HvoFlidKey(hvo, tag);
@@ -979,8 +908,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>IVwCacheDa method</remarks>
 		public void CacheStringAlt(int obj, int tag, int ws, ITsString tss)
 		{
-			CheckDisposed();
-
 			CheckBasics(obj);
 			// Make sure ws is not for a magic ws.
 			// Magic WSes are all negative
@@ -1011,8 +938,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public void SetMultiStringAlt(int hvo, int tag, int ws, ITsString tss)
 		{
-			CheckDisposed();
-
 			CacheStringAlt(hvo, tag, ws, tss);
 			MakeDirty(hvo);
 		}
@@ -1025,8 +950,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public ITsString get_MultiStringAlt(int hvo, int tag, int ws)
 		{
-			CheckDisposed();
-
 			CheckBasics(hvo);
 
 			var key = new HvoFlidWSKey(hvo, tag, ws);
@@ -1055,8 +978,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>ISilDataAccess method</remarks>
 		public ITsMultiString get_MultiStringProp(int hvo, int tag)
 		{
-			CheckDisposed();
-
 			var tsms = new TsMultiString();
 			foreach (var key in m_extendedKeyCache.Keys)
 			{
@@ -1077,8 +998,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='chvo'>chvo</param>
 		public void CacheVecProp(int obj, int tag, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 3)] int[] rghvo, int chvo)
 		{
-			CheckDisposed();
-
 			if (rghvo.Length != chvo)
 				throw new ArgumentException("Lengths are not the same in the parameters: rghvo and chvo.");
 			if (m_checkWithMDC)
@@ -1116,8 +1035,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='rghvo'>rghvo</param>
 		public void VecProp(int hvo, int tag, int chvoMax, out int chvo, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(ArrayPtrMarshaler), SizeParamIndex = 2)] ArrayPtr/*long[]*/ rghvo)
 		{
-			CheckDisposed();
-
 			CheckBasics(hvo);
 			chvo = 0;
 
@@ -1142,8 +1059,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <returns>A System.Int32</returns>
 		public int get_VecItem(int hvo, int tag, int index)
 		{
-			CheckDisposed();
-
 			var key = new HvoFlidKey(hvo, tag);
 			var val = m_vectorCache[key];
 			return val[index];
@@ -1155,8 +1070,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <returns>A System.Int32</returns>
 		public int get_VecSize(int hvo, int tag)
 		{
-			CheckDisposed();
-
 			var key = new HvoFlidKey(hvo, tag);
 			List<int> collection;
 			return m_vectorCache.TryGetValue(key, out collection) ? collection.Count : 0;
@@ -1168,8 +1081,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <returns>A System.Int32</returns>
 		public int get_VecSizeAssumeCached(int hvo, int tag)
 		{
-			CheckDisposed();
-
 			return get_VecSize(hvo, tag);
 		}
 
@@ -1181,8 +1092,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>IVwCacheDa method</remarks>
 		public int GetObjIndex(int hvoOwn, int flid, int hvo)
 		{
-			CheckDisposed();
-
 			var key = new HvoFlidKey(hvoOwn, flid);
 			var val = m_vectorCache[key];
 			return val.IndexOf(hvo);
@@ -1200,8 +1109,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <remarks>IVwCacheDa method</remarks>
 		public void CacheReplace(int hvoObj, int tag, int ihvoMin, int ihvoLim, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 5)] int[] rghvo, int chvo)
 		{
-			CheckDisposed();
-
 			// Just leave this one unimplemented, since it purports to not intend to modify extant data.
 			// Since the method is, in fact, intended to make a change to whatever is stored,
 			// the client will just have to use a real 'setter method'.
@@ -1218,8 +1125,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='ihvoDstStart'>ihvoDstStart</param>
 		public void MoveOwnSeq(int hvoSrcOwner, int tagSrc, int ihvoStart, int ihvoEnd, int hvoDstOwner, int tagDst, int ihvoDstStart)
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'MoveOwnSeq' not implemented yet.");
 		}
 
@@ -1232,8 +1137,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='ihvoDstStart'>ihvoDstStart</param>
 		public void MoveOwn(int hvoSrcOwner, int tagSrc, int hvo, int hvoDstOwner, int tagDst, int ihvoDstStart)
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'MoveOwn' not implemented yet.");
 		}
 
@@ -1246,8 +1149,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='chvo'>chvo</param>
 		public void Replace(int hvoObj, int tag, int ihvoMin, int ihvoLim, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 5)] int[] rghvo, int chvo)
 		{
-			CheckDisposed();
-
 			List<int> list;
 			HvoFlidKey key = new HvoFlidKey(hvoObj, tag);
 			if (m_vectorCache.TryGetValue(key, out list))
@@ -1309,16 +1210,12 @@ namespace SIL.FieldWorks.CacheLight
 		/// <summary>Member BeginNonUndoableTask</summary>
 		public void BeginNonUndoableTask()
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'BeginNonUndoableTask' not implemented yet.");
 		}
 
 		/// <summary>Member EndNonUndoableTask</summary>
 		public void EndNonUndoableTask()
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'EndNonUndoableTask' not implemented yet.");
 		}
 
@@ -1327,32 +1224,24 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='bstrRedo'>bstrRedo</param>
 		public void BeginUndoTask(string bstrUndo, string bstrRedo)
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'BeginUndoTask' not implemented yet.");
 		}
 
 		/// <summary>Member EndUndoTask</summary>
 		public void EndUndoTask()
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'EndUndoTask' not implemented yet.");
 		}
 
 		/// <summary>Member ContinueUndoTask</summary>
 		public void ContinueUndoTask()
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'ContinueUndoTask' not implemented yet.");
 		}
 
 		/// <summary>Member EndOuterUndoTask</summary>
 		public void EndOuterUndoTask()
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'EndOuterUndoTask' not implemented yet.");
 		}
 
@@ -1361,16 +1250,12 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='bstrRedo'>bstrRedo</param>
 		public void BreakUndoTask(string bstrUndo, string bstrRedo)
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'BreakUndoTask' not implemented yet.");
 		}
 
 		/// <summary>Member Rollback</summary>
 		public void Rollback()
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'Rollback' not implemented yet.");
 		}
 
@@ -1382,8 +1267,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <returns>A IActionHandler</returns>
 		public IActionHandler GetActionHandler()
 		{
-			CheckDisposed();
-
 			return m_actionhandler;
 		}
 
@@ -1391,8 +1274,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='actionhandler'>action handler</param>
 		public void SetActionHandler(IActionHandler actionhandler)
 		{
-			CheckDisposed();
-
 			m_actionhandler = actionhandler;
 		}
 
@@ -1408,8 +1289,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='bstrExtra'>bstrExtra</param>
 		public void InsertRelExtra(int hvoSrc, int tag, int ihvo, int hvoDst, string bstrExtra)
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'InsertRelExtra' not implemented yet.");
 		}
 
@@ -1420,8 +1299,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='bstrExtra'>bstrExtra</param>
 		public void UpdateRelExtra(int hvoSrc, int tag, int ihvo, string bstrExtra)
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'UpdateRelExtra' not implemented yet.");
 		}
 
@@ -1432,8 +1309,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <returns>A System.String</returns>
 		public string GetRelExtra(int hvoSrc, int tag, int ihvo)
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'GetRelExtra' not implemented yet.");
 		}
 		#endregion Custom Field (Extra) methods
@@ -1446,8 +1321,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <returns>A System.Object</returns>
 		public object get_Prop(int hvo, int tag)
 		{
-			CheckDisposed();
-
 			object result = null;
 			var fieldType = MetaDataCache.GetFieldType(tag);
 			if (get_IsPropInCache(hvo, tag, fieldType, 0))
@@ -1520,8 +1393,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <returns>A System.Boolean</returns>
 		public bool get_IsPropInCache(int hvo, int tag, int cpt, int ws)
 		{
-			CheckDisposed();
-
 			var key = new HvoFlidKey(hvo, tag);
 			var keyWs = new HvoFlidWSKey(hvo, tag, ws);
 			switch ((CellarPropertyType)cpt)
@@ -1574,8 +1445,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='hvoObj'>hvoObj</param>
 		public void DeleteObj(int hvoObj)
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'DeleteObj' not implemented yet.");
 		}
 
@@ -1586,8 +1455,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='ihvo'>ihvo</param>
 		public void DeleteObjOwner(int hvoOwner, int hvoObj, int tag, int ihvo)
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'DeleteObjOwner' not implemented yet.");
 		}
 
@@ -1599,8 +1466,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='_ss'>_ss</param>
 		public void InsertNew(int hvoObj, int tag, int ihvo, int chvo, IVwStylesheet _ss)
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'InsertNew' not implemented yet.");
 		}
 
@@ -1612,7 +1477,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <returns>A System.Int32</returns>
 		public int MakeNewObject(int clid, int hvoOwner, int tag, int ord)
 		{
-			CheckDisposed();
 			int hvoNew = NextHvo;
 
 			CacheIntProp(hvoNew, (int)CmObjectFields.kflidCmObject_Class, clid);
@@ -1645,8 +1509,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <returns>A System.Boolean</returns>
 		public bool get_IsValidObject(int hvo)
 		{
-			CheckDisposed();
-
 			if (hvo == 0)
 				throw new ArgumentException("'hvo' cannot be 0.");
 
@@ -1659,8 +1521,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <returns>A System.Boolean</returns>
 		public bool get_IsDummyId(int hvo)
 		{
-			CheckDisposed();
-
 			if (hvo == 0)
 				throw new ArgumentException("'hvo' cannot be 0.");
 
@@ -1671,8 +1531,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='hvo'>hvo</param>
 		public void RemoveObjRefs(int hvo)
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'RemoveObjRefs' not implemented yet.");
 		}
 
@@ -1684,7 +1542,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='_nchng'>_nchng</param>
 		public void AddNotification(IVwNotifyChange _nchng)
 		{
-			CheckDisposed();
 			// No-op
 		}
 
@@ -1698,8 +1555,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='cvDel'>cvDel</param>
 		public void PropChanged(IVwNotifyChange _nchng, int _ct, int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'PropChanged' not implemented yet.");
 		}
 
@@ -1707,7 +1562,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='_nchng'>_nchng</param>
 		public void RemoveNotification(IVwNotifyChange _nchng)
 		{
-			CheckDisposed();
 			// No-op
 		}
 
@@ -1718,7 +1572,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <returns>A System.Int32</returns>
 		public int GetDisplayIndex(int hvoOwn, int flid, int ihvo)
 		{
-			CheckDisposed();
 			// default implementation: display index = real index
 			return ihvo;
 		}
@@ -1742,14 +1595,10 @@ namespace SIL.FieldWorks.CacheLight
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_lgWritingSystemFactory;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_lgWritingSystemFactory = value;
 			}
 		}
@@ -1760,8 +1609,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <returns>Return the actual number. If there is not enough room, throw an invalid argument exception.</returns>
 		public int get_WritingSystemsOfInterest(int cwsMax, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(ArrayPtrMarshaler), SizeParamIndex = 0)] ArrayPtr/*int[]*/ _ws)
 		{
-			CheckDisposed();
-
 			// See MDC->GetFields for example of thorwing when too small.
 			// CustViewDa::get_WritingSystemsOfInterest for details on code to port.
 			// This depends on the vector methods being implemented
@@ -1773,16 +1620,12 @@ namespace SIL.FieldWorks.CacheLight
 		/// <returns>A System.Boolean</returns>
 		public bool IsDirty()
 		{
-			CheckDisposed();
-
 			return m_isDirty;
 		}
 
 		/// <summary>Member ClearDirty</summary>
 		public void ClearDirty()
 		{
-			CheckDisposed();
-
 			m_isDirty = false;
 		}
 
@@ -1792,14 +1635,10 @@ namespace SIL.FieldWorks.CacheLight
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_metaDataCache;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (value != null && !(value is MetaDataCache))
 					throw new ApplicationException("This cache only accepts the light version of a meta data cache.");
 				if (m_metaDataCache != value)
@@ -1822,8 +1661,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='vh'>vh</param>
 		public void InstallVirtual(IVwVirtualHandler vh)
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'InstallVirtual' not implemented yet.");
 		}
 
@@ -1832,8 +1669,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <returns>A IVwVirtualHandler</returns>
 		public IVwVirtualHandler GetVirtualHandlerId(int tag)
 		{
-			CheckDisposed();
-
 			// Needs help, but it gets an unrelated test to pass.
 			return null;
 		}
@@ -1844,16 +1679,12 @@ namespace SIL.FieldWorks.CacheLight
 		/// <returns>A IVwVirtualHandler</returns>
 		public IVwVirtualHandler GetVirtualHandlerName(string bstrClass, string bstrField)
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'GetVirtualHandlerName' not implemented yet.");
 		}
 
 		/// <summary>Member ClearVirtualProperties</summary>
 		public void ClearVirtualProperties()
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'ClearVirtualProperties' not implemented yet.");
 		}
 
@@ -1866,8 +1697,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='cia'>cia</param>
 		public void ClearInfoAbout(int hvo, VwClearInfoAction cia)
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'ClearInfoAbout' not implemented yet.");
 		}
 		/// <summary>Member ClearInfoAbout</summary>
@@ -1876,16 +1705,12 @@ namespace SIL.FieldWorks.CacheLight
 		/// <param name='cia'>cia</param>
 		public void ClearInfoAboutAll(int[] rghvo, int chvo, VwClearInfoAction cia)
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'ClearInfoAboutAll' not implemented yet.");
 		}
 
 		/// <summary>Member ClearAllData</summary>
 		public void ClearAllData()
 		{
-			CheckDisposed();
-
 			// Hastables
 			m_basicObjectCache.Clear();
 
@@ -1914,26 +1739,12 @@ namespace SIL.FieldWorks.CacheLight
 		/// <returns>A System.String</returns>
 		public string GetOutlineNumber(int hvo, int flid, bool fFinPer)
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("'GetOutlineNumber' not implemented yet.");
 		}
 
 		#endregion IVwCacheDa implementation (Except Caching methods)
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
 
 		/// <summary>
 		/// True, if the object has been disposed.

@@ -40,7 +40,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		int m_userWs;
 		int m_stdFontHeight; // Keep track of this font height for calculating FilterBar heights
 		IVwStylesheet m_stylesheet;
-		int m_colOffset; // 0 if no select column, 1 if there is.
+
 		// True during UpdateActiveItems to suppress side-effects of setting text of combo.
 		bool m_fInUpdateActive;
 		private IApp m_app;
@@ -75,19 +75,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			BackColor = Color.FromKnownColor(KnownColor.ControlLight);
 			MakeItems();
 			AccessibilityObject.Name = "FilterBar";
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
 		}
 
 		/// <summary>
@@ -164,33 +151,17 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// An array of info about all columns (except the extra check box column, if present).
 		/// </summary>
-		internal FilterSortItem[] ColumnInfo
-		{
-			get
-			{
-				CheckDisposed();
-				return m_items.ToArray();
-			}
-		}
+		internal FilterSortItem[] ColumnInfo => m_items.ToArray();
 
 		// Offset to add to real column index to get corresponding index into ColumnInfo.
 		// Current 1 if check boxes present, otherwise zero.
-		internal int ColumnOffset
-		{
-			get
-			{
-				CheckDisposed();
-				return m_colOffset;
-			}
-		}
+		internal int ColumnOffset { get; private set; }
 
 		/// <summary>
 		/// Updates the column list. User has changed list of columns. Rework everything.
 		/// </summary>
 		public void UpdateColumnList()
 		{
-			CheckDisposed();
-
 			m_columns = m_bv.ColumnSpecs;
 			SuspendLayout();
 			foreach (var fsi in m_items)
@@ -210,8 +181,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void MakeItems()
 		{
-			CheckDisposed();
-
 			if (m_items != null)
 			{
 				return; // already made.
@@ -229,7 +198,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return; // too soon.
 			}
-			m_colOffset = m_bv.BrowseView.Vc.HasSelectColumn ? 1 : 0;
+			ColumnOffset = m_bv.BrowseView.Vc.HasSelectColumn ? 1 : 0;
 			var oldItems = m_items ?? new FilterSortItems();
 			m_items = new FilterSortItems();
 			// Here we figure which columns we can filter on.
@@ -261,8 +230,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void UpdateActiveItems(RecordFilter currentFilter)
 		{
-			CheckDisposed();
-
 			try
 			{
 				m_fInUpdateActive = true;
@@ -297,8 +264,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private void AdjustBarHeights()
 		{
-			CheckDisposed();
-
 			var maxComboHeight = GetMaxComboHeight();
 			SetBarHeight(maxComboHeight); // Set height of FilterBar and its ComboBoxes
 		}
@@ -335,8 +300,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <returns>true, if the column node spec can use the filter.</returns>
 		public bool CanActivateFilter(RecordFilter filter, XElement colSpec)
 		{
-			CheckDisposed();
-
 			if (filter is AndFilter)
 			{
 				var filters = ((AndFilter)filter).Filters;
@@ -367,33 +330,31 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void SetColWidths(int[] widths)
 		{
-			CheckDisposed();
-
 			// We can only do this meaningfully if given the right number of lengths.
 			// If this is wrong (which for example can happen if this routine gets
 			// called during UpdateColumnList of the browse view before UpdateColumnList
 			// has been called on the filter bar), ignore it, and hope we get adjusted
 			// again after everything has the right number of items.
-			if (widths.Length - m_colOffset != m_items.Count)
+			if (widths.Length - ColumnOffset != m_items.Count)
 			{
 				return;
 			}
 			var x = 0;
-			if (m_colOffset > 0)
+			if (ColumnOffset > 0)
 			{
 				x = widths[0];
 			}
 			// not sure how to get the correct value for this, but it looks like column headers
 			// are offset by a small value, so we shift the filter bar to line up properly
 			x += 2;
-			for (var i = 0; i < widths.Length - m_colOffset; ++i)
+			for (var i = 0; i < widths.Length - ColumnOffset; ++i)
 			{
 				if (m_items[i] != null)
 				{
 					m_items[i].Combo.Left = x;
-					m_items[i].Combo.Width = widths[i + m_colOffset];
+					m_items[i].Combo.Width = widths[i + ColumnOffset];
 				}
-				x += widths[i + m_colOffset];
+				x += widths[i + ColumnOffset];
 			}
 		}
 
@@ -880,8 +841,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void RemoveAllFilters()
 		{
-			CheckDisposed();
-
 			if (m_items == null)
 			{
 				return;
@@ -903,8 +862,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal void SetStyleSheet(IVwStylesheet stylesheet)
 		{
-			CheckDisposed();
-
 			m_stylesheet = stylesheet;
 
 			// Also apply stylesheet to each ComboBox.

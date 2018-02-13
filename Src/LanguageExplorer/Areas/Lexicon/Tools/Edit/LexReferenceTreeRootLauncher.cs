@@ -124,8 +124,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		internal void LaunchChooser()
 		{
-			CheckDisposed();
-
 			HandleChooser();
 		}
 

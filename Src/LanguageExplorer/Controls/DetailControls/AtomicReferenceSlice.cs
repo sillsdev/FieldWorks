@@ -39,7 +39,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected AtomicReferenceSlice(Control control, LcmCache cache, ICmObject obj, int flid)
 			: base(control, cache, obj, flid)
 		{
-			m_sda = m_cache.MainCacheAccessor;
+			m_sda = Cache.MainCacheAccessor;
 			m_sda.AddNotification(this);
 		}
 
@@ -108,7 +108,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.FinishInit();
 
 			var arl = (AtomicReferenceLauncher)Control;
-			arl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, DisplayNameProperty, BestWsName); // TODO: Get better default 'best ws'.
+			arl.Initialize(Cache, Object, m_flid, m_fieldName, PersistenceProvider, DisplayNameProperty, BestWsName); // TODO: Get better default 'best ws'.
 			arl.ConfigurationNode = ConfigurationNode;
 			var deParams = ConfigurationNode.Element("deParams");
 			if (XmlUtils.GetOptionalBooleanAttributeValue(deParams, "changeRequiresRefresh", false))
@@ -130,13 +130,11 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected void RefreshTree(object sender, EventArgs args)
 		{
-			CheckDisposed();
 			ContainingDataTree.RefreshList(false);
 		}
 
 		public override void ShowSubControls()
 		{
-			CheckDisposed();
 			base.ShowSubControls();
 			Control.Visible = true;
 		}
@@ -196,8 +194,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 		public override void RegisterWithContextHelper()
 		{
-			CheckDisposed();
-
 			if (Control == null)
 			{
 				return;
@@ -220,7 +216,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			if (m_flid != PartOfSpeechTags.kflidDefaultInflectionClass || cvIns != 0 || cvDel <= 0 ||
 			    (tag != PartOfSpeechTags.kflidInflectionClasses && tag != MoInflClassTags.kflidSubclasses) ||
-			    ((IPartOfSpeech) m_obj).DefaultInflectionClassRA != null)
+			    ((IPartOfSpeech) Object).DefaultInflectionClassRA != null)
 			{
 				return;
 			}

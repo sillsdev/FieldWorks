@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -84,19 +84,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Sets the application.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -114,12 +101,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_encConverters;
 			}
 			set
 			{
-				CheckDisposed();
 				m_encConverters = value;
 			}
 		}
@@ -133,7 +118,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return txtName.Text;
 			}
 		}
@@ -171,13 +155,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fOnlyUnicode;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_fOnlyUnicode = value;
 				CnvtrPropertiesCtrl_Load(null, null);
 			}
@@ -574,8 +555,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void CnvtrPropertiesCtrl_Load(object sender, System.EventArgs e)
 		{
-			CheckDisposed();
-
 			// This is a fall-back if the creator does not have a converters object.
 			// It is generally preferable for the creator to make one and pass it in.
 			// Multiple EncConverters objects are problematical because they don't all get
@@ -716,8 +695,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void SelectMapping(string mapname)
 		{
-			CheckDisposed();
-
 			m_selectingMapping = true;
 
 			txtName.Text = mapname;

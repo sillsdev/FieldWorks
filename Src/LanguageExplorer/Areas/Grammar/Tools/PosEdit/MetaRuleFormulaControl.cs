@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -31,9 +31,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		{
 			set
 			{
-				CheckDisposed();
 				if (value)
+				{
 					m_view.Select();
+				}
 			}
 		}
 
@@ -41,17 +42,16 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
-			CheckDisposed();
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 
 			m_view.Init(obj.Hvo, this, new MetaRuleFormulaVc(cache, PropertyTable), MetaRuleFormulaVc.kfragRule, cache.MainCacheAccessor);
 
-			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
-			m_insertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
-			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Features), DisplayOption);
-			m_insertionControl.AddOption(new InsertOption(RuleInsertType.WordBoundary), DisplayOption);
-			m_insertionControl.AddOption(new InsertOption(RuleInsertType.MorphemeBoundary), DisplayOption);
-			m_insertionControl.NoOptionsMessage = DisplayNoOptsMsg;
+			InsertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
+			InsertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
+			InsertionControl.AddOption(new InsertOption(RuleInsertType.Features), DisplayOption);
+			InsertionControl.AddOption(new InsertOption(RuleInsertType.WordBoundary), DisplayOption);
+			InsertionControl.AddOption(new InsertOption(RuleInsertType.MorphemeBoundary), DisplayOption);
+			InsertionControl.NoOptionsMessage = DisplayNoOptsMsg;
 		}
 
 		private bool DisplayOption(object option)

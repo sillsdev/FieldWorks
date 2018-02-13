@@ -145,17 +145,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			IsDisposed = true;
 		}
 
-		/// <summary>
-		/// Throw if the IsDisposed property is true
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException(ToString(), "This object is being used after it has been disposed: this is an Error.");
-			}
-		}
-
 		#endregion IDisposable & Co. implementation
 	}
 }

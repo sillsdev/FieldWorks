@@ -74,7 +74,6 @@ namespace LanguageExplorer.Controls.LexText
 
 		public void Init(int hvo, IPatternControl patternControl, PatternVcBase vc, int rootFrag, ISilDataAccess sda)
 		{
-			CheckDisposed();
 			m_patternControl = patternControl;
 			Cache = PropertyTable.GetValue<LcmCache>("cache");
 			m_hvo = hvo;
@@ -94,8 +93,6 @@ namespace LanguageExplorer.Controls.LexText
 
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode)
 			{
 				return;
@@ -141,7 +138,6 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected override void HandleSelectionChange(IVwRootBox prootb, IVwSelection vwselNew)
 		{
-			CheckDisposed();
 			UpdateSelection(vwselNew);
 			SelectionChanged?.Invoke(this, EventArgs.Empty);
 		}
@@ -151,7 +147,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		private void UpdateSelection(IVwSelection vwselNew)
 		{
-			CheckDisposed();
 			var sel = SelectionHelper.Create(vwselNew, this);
 			if (sel != null)
 			{

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 
@@ -37,8 +36,6 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			set
 			{
-				CheckDisposed();
-
 				if (value)
 				{
 					m_rbSense.Checked = true;
@@ -64,8 +61,6 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_rbEntry.Checked)
 				{
 					return m_selObject;
@@ -142,19 +137,13 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetDlgInfo(LcmCache cache, ILexEntry startingEntry)
 		{
-			CheckDisposed();
-
-			//Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
-
 			SetDlgInfo(cache, (WindowParams)null);
 		}
 
 		///  <summary />
 		public override void SetDlgInfo(LcmCache cache, WindowParams wp)
 		{
-			CheckDisposed();
-
 			m_fwcbSenses.WritingSystemFactory = cache.LanguageWritingSystemFactoryAccessor;
 
 			base.SetDlgInfo(cache, wp);

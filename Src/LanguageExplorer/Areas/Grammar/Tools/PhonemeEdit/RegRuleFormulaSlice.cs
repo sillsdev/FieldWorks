@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,7 +17,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 	{
 		public override void FinishInit()
 		{
-			CheckDisposed();
 			Control = new RegRuleFormulaControl(ConfigurationNode);
 		}
 
@@ -26,7 +25,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 #if RANDYTODO
 		public bool OnDisplayContextSetOccurrence(object commandObject, ref XCore.UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			bool enable = RegRuleFormulaControl.CanModifyContextOccurrence;
 			display.Enabled = enable;
 			display.Visible = enable;
@@ -35,8 +33,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 
 		public bool OnContextSetOccurrence(object args)
 		{
-			CheckDisposed();
-
 			var cmd = (XCore.Command) args;
 			if (cmd.Parameters.Count > 0)
 			{
@@ -61,7 +57,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 
 		public bool OnDisplayContextSetVariables(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			bool enable = RuleFormulaControl.IsFeatsNCContextCurrent;
 			display.Enabled = enable;
 			display.Visible = enable;

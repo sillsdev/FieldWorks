@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -144,17 +144,6 @@ namespace SIL.FieldWorks.Common.Controls
 			m_ButtonSize = Size;
 		}
 
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
 		//*******************************************************************************************
 		/// <summary>
 		/// Clean up any resources being used.
@@ -197,8 +186,6 @@ namespace SIL.FieldWorks.Common.Controls
 		//*******************************************************************************************
 		public void PressButton(bool fPressed)
 		{
-			CheckDisposed();
-
 			if (m_fButtonToggles && m_fButtonLockedDown != fPressed)
 			{
 				m_fButtonLockedDown = fPressed;
@@ -237,14 +224,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_Style;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_Style = value;
 				m_dpBorderWidth = (m_Style == ButtonStyles.Standard ? 2 : 1);
 				this.Invalidate();
@@ -266,14 +249,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_ButtonAlign;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_ButtonAlign = value;
 			}
 		}
@@ -296,14 +275,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_SunkenAppearance;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_SunkenAppearance = value;
 				this.Invalidate();
 			}
@@ -326,14 +301,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_fTextInButton;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_fTextInButton = value;
 				this.Invalidate();
 			}
@@ -350,14 +321,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_BorderDrawingObj.BorderDarkestColor;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_BorderDrawingObj.BorderDarkestColor = value;
 				this.Invalidate();
 			}
@@ -374,14 +341,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_BorderDrawingObj.BorderDarkColor;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_BorderDrawingObj.BorderDarkColor = value;
 				this.Invalidate();
 			}
@@ -398,14 +361,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_BorderDrawingObj.BorderLightestColor;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_BorderDrawingObj.BorderLightestColor = value;
 				this.Invalidate();
 			}
@@ -422,14 +381,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_BorderDrawingObj.BorderLightColor;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_BorderDrawingObj.BorderLightColor = value;
 				this.Invalidate();
 			}
@@ -454,14 +409,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_fButtonToggles;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_fButtonToggles = value;
 			}
 		}
@@ -476,8 +427,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return (m_fButtonToggles && m_fButtonLockedDown ?
 					 ButtonToggleStates.Pushed : ButtonToggleStates.Unpushed);
 			}
@@ -502,14 +451,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_ButtonSize;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_ButtonSize = value;
 				this.Invalidate();
 			}
@@ -538,14 +483,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_fButtonFillsControl;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_fButtonFillsControl = value;
 				this.Invalidate();
 			}
@@ -568,14 +509,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_TextPosition;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_TextPosition = value;
 			}
 		}
@@ -593,14 +530,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_TextTrimming;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_TextTrimming = value;
 			}
 		}
@@ -615,8 +548,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_fButtonLockedDown;
 			}
 		}

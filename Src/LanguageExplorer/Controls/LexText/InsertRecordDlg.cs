@@ -25,7 +25,6 @@ namespace LanguageExplorer.Controls.LexText
 		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private PossibilityListPopupTreeManager m_typePopupTreeManager;
-		private IRnGenericRec m_newRecord;
 		private ICmObject m_owner;
 		private string m_helpTopic = "khtpNoHelpTopic";
 
@@ -42,35 +41,19 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				CheckDisposed();
 				return m_helpTopic;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_helpTopic = value;
 				m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(value));
 			}
 		}
 
-		public IRnGenericRec NewRecord
-		{
-			get
-			{
-				CheckDisposed();
-				return m_newRecord;
-			}
-		}
+		public IRnGenericRec NewRecord { get; private set; }
 
 		#region Dispose
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
 
 		protected override void Dispose(bool disposing)
 		{
@@ -96,8 +79,6 @@ namespace LanguageExplorer.Controls.LexText
 
 		public void SetDlgInfo(LcmCache cache, ICmObject owner)
 		{
-			CheckDisposed();
-
 			m_cache = cache;
 			m_owner = owner;
 
@@ -163,11 +144,11 @@ namespace LanguageExplorer.Controls.LexText
 						switch (m_owner.ClassID)
 						{
 							case RnResearchNbkTags.kClassId:
-								m_newRecord = recFactory.Create((IRnResearchNbk) m_owner, m_titleTextBox.Tss, type);
+								NewRecord = recFactory.Create((IRnResearchNbk) m_owner, m_titleTextBox.Tss, type);
 								break;
 
 							case RnGenericRecTags.kClassId:
-								m_newRecord = recFactory.Create((IRnGenericRec) m_owner, m_titleTextBox.Tss, type);
+								NewRecord = recFactory.Create((IRnGenericRec) m_owner, m_titleTextBox.Tss, type);
 								break;
 						}
 					});

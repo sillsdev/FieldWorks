@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -39,7 +39,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected InfoPane m_infoPane; // Parent is m_tpInfo.
 
 		internal static Dictionary<Tuple<string, Guid>, InterAreaBookmark> m_bookmarks;
-		private bool m_fParsedTextDuringSave;
 		private ToolStripMenuItem m_printMenu;
 
 		// This flag is normally set during a Refresh. When it is set, we suppress switching the focus box
@@ -110,19 +109,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_tabCtrl_GotFocus(sender, new EventArgs());
 		}
 
-		internal bool ParsedDuringSave
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fParsedTextDuringSave;
-			}
-			set
-			{
-				CheckDisposed();
-				m_fParsedTextDuringSave = value;
-			}
-		}
+		internal bool ParsedDuringSave { get; set; }
 
 		internal TitleContentsPane TitleContentsPane
 		{
@@ -275,8 +262,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal void SaveBookMark()
 		{
-			CheckDisposed();
-
 			if (m_tabCtrl.SelectedIndex == ktpsInfo || CurrentInterlinearTabControl == null)
 			{
 				return; // nothing to save...for now, don't overwrite existing one.
@@ -522,8 +507,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public bool OnDisplayLexiconLookup(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			display.Visible = true;
 			if (m_tabCtrl.SelectedIndex != ktpsRawText)
 				display.Enabled = false;
@@ -540,35 +523,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 #endif
 
-		private int RootStTextHvo
-		{
-			get
-			{
-				CheckDisposed();
-				return RootStText?.Hvo ?? 0;
-			}
-		}
+		private int RootStTextHvo => RootStText?.Hvo ?? 0;
 
 		/// <remarks>virtual for tests</remarks>
 		protected internal virtual IStText RootStText { get; private set; }
 
-		internal int TextListFlid
-		{
-			get
-			{
-				CheckDisposed();
-				return MyRecordList.VirtualFlid;
-			}
-		}
+		internal int TextListFlid => MyRecordList.VirtualFlid;
 
-		internal int TextListIndex
-		{
-			get
-			{
-				CheckDisposed();
-				return MyRecordList.CurrentIndex;
-			}
-		}
+		internal int TextListIndex => MyRecordList.CurrentIndex;
 
 		bool m_fInShowTabView;
 		protected void ShowTabView()
@@ -866,7 +828,6 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// <returns>true if ok to go away</returns>
 		public override bool PrepareToGoAway()
 		{
-			CheckDisposed();
 			SaveBookMark();
 			return SaveWorkInProgress() && base.PrepareToGoAway();
 		}
@@ -882,8 +843,6 @@ private void ReloadPaneBar(IPaneBar paneBar)
 
 		public void PrepareToRefresh()
 		{
-			CheckDisposed();
-
 			// flag that a refresh was triggered (unless we don't have a current record..see var comment).
 			if (RootStTextHvo != 0)
 			{
@@ -925,8 +884,6 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (MyRecordList.CurrentObjectHvo != 0 && Cache.ServiceLocator.IsValidObjectId(MyRecordList.CurrentObjectHvo))
 				{
 					if (MyRecordList.CurrentObject.ClassID == StTextTags.kClassId)
@@ -943,8 +900,6 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		{
 			get
 			{
-				CheckDisposed();
-
 				var rootObj = MyRecordList.CurrentObject;
 				if (rootObj?.ClassID != TextTags.kClassId)
 				{
@@ -1209,8 +1164,6 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		public bool OnDisplayFindAndReplaceText(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			string toolChoice = m_propertyTable.GetValue<string>(AreaServices.ToolChoice);
 			bool fVisible = m_rtPane != null && (m_tabCtrl.SelectedIndex == (int)TabPageSelection.RawText) && InFriendlyArea && toolChoice != AreaServices.WordListConcordanceMachineName;
 			display.Visible = fVisible;
@@ -1238,8 +1191,6 @@ private void ReloadPaneBar(IPaneBar paneBar)
 
 		public void OnFindAndReplaceText(object argument)
 		{
-			CheckDisposed();
-
 			var app = PropertyTable.GetValue<IApp>("App");
 			app?.ShowFindReplaceDialog(false, m_rtPane);
 		}
@@ -1256,8 +1207,6 @@ private void ReloadPaneBar(IPaneBar paneBar)
 
 		public void OnReplaceText(object argument)
 		{
-			CheckDisposed();
-
 			var app = PropertyTable.GetValue<IApp>("App");
 			app?.ShowFindReplaceDialog(true, m_rtPane);
 		}
@@ -1271,8 +1220,6 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// <returns></returns>
 		public bool OnDisplayAddNote(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			display.Enabled = display.Visible = InterlinearTabPageIsSelected();
 			return true;
 		}
@@ -1284,13 +1231,16 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// <param name="argument"></param>
 		public void OnAddNote(object argument)
 		{
-			CheckDisposed();
 #if RANDYTODO
 			var command = argument as Command;
 			if (m_idcAnalyze != null && m_idcAnalyze.Visible)
+			{
 				m_idcAnalyze.AddNote(command);
+			}
 			else if (m_idcGloss != null && m_idcGloss.Visible)
+			{
 				m_idcGloss.AddNote(command);
+			}
 #endif
 		}
 
@@ -1440,7 +1390,6 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		public bool OnDisplayITexts_AddWordsToLexicon(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			var fCanDisplayAddWordsToLexiconPanelBarButton = InterlinearTab == TabPageSelection.Gloss;
 			display.Visible = fCanDisplayAddWordsToLexiconPanelBarButton;
 			display.Enabled = fCanDisplayAddWordsToLexiconPanelBarButton;
@@ -1462,7 +1411,6 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		public bool OnDisplayShowHiddenFields_interlinearEdit(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			var fCanDisplayAddWordsToLexiconPanelBarButton = InterlinearTab == TabPageSelection.Info;
 			display.Visible = fCanDisplayAddWordsToLexiconPanelBarButton;
 			display.Enabled = fCanDisplayAddWordsToLexiconPanelBarButton;
@@ -1477,8 +1425,6 @@ private void ReloadPaneBar(IPaneBar paneBar)
 		/// <returns></returns>
 		public virtual bool OnDisplayShowMorphBundles(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			display.Enabled = display.Visible = InFriendlyArea && InFriendlyTool(AreaServices.InterlinearEditMachineName);
 			return true; //we've handled this
 		}

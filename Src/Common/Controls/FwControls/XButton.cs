@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -50,17 +50,6 @@ namespace SIL.FieldWorks.Common.Controls
 			Size = new Size(16, 16);
 		}
 
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
 		/// <summary/>
 		protected override void Dispose(bool disposing)
 		{
@@ -78,14 +67,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_canBeChecked;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_canBeChecked = value;
 			}
 		}
@@ -99,14 +84,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_checked;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_canBeChecked)
 				{
 					m_checked = value;
@@ -128,14 +109,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_drawEmpty;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_drawEmpty = value;
 			}
 		}
@@ -149,14 +126,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return base.Image;
 			}
 			set
 			{
-				CheckDisposed();
-
 				base.Image = value;
 				m_disabledImage = (value == null ?
 					null : ColorHelper.MakeDisabledImage(value, SystemColors.Control));
@@ -181,14 +154,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_drawLeftArrowButton;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_drawLeftArrowButton = value;
 				if (value)
 				{
@@ -208,14 +177,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_drawRightArrowButton;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_drawRightArrowButton = value;
 				if (value)
 				{

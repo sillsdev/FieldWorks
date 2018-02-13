@@ -54,7 +54,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal MorphItem CreateCoreMorphItemBasedOnSandboxCurrentState()
 		{
-			var hvoWmb = m_hvoMorph;
+			var hvoWmb = SelectedMorphHvo;
 			var hvoMorphSense = m_caches.DataAccess.get_ObjectProp(hvoWmb, SandboxBase.ktagSbMorphGloss);
 			var hvoInflType = m_caches.DataAccess.get_ObjectProp(hvoWmb, SandboxBase.ktagSbNamedObjInflType);
 			ILexEntryInflType inflType = null;
@@ -180,10 +180,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal void LoadMorphItems()
 		{
 			var sda = m_caches.DataAccess;
-			var hvoForm = sda.get_ObjectProp(m_hvoMorph, SandboxBase.ktagSbMorphForm);
+			var hvoForm = sda.get_ObjectProp(SelectedMorphHvo, SandboxBase.ktagSbMorphForm);
 			var tssMorphForm = sda.get_MultiStringAlt(hvoForm, SandboxBase.ktagSbNamedObjName, m_sandbox.RawWordformWs);
-			var sPrefix = StrFromTss(sda.get_StringProp(m_hvoMorph, SandboxBase.ktagSbMorphPrefix));
-			var sPostfix = StrFromTss(sda.get_StringProp(m_hvoMorph, SandboxBase.ktagSbMorphPostfix));
+			var sPrefix = StrFromTss(sda.get_StringProp(SelectedMorphHvo, SandboxBase.ktagSbMorphPrefix));
+			var sPostfix = StrFromTss(sda.get_StringProp(SelectedMorphHvo, SandboxBase.ktagSbMorphPostfix));
 			var morphs = MorphServices.GetMatchingMorphs(m_caches.MainCache, sPrefix, tssMorphForm, sPostfix);
 			m_tssMorphForm = tssMorphForm;
 			MorphItems.Clear();
@@ -321,8 +321,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary />
 		public override void SetupCombo()
 		{
-			CheckDisposed();
-
 			base.SetupCombo();
 
 			LoadMorphItems();
@@ -476,7 +474,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				// See if we can find the real hvo corresponding to the LexEntry/Sense currently
 				// selected in the Sandbox.
-				var sbHvo = m_sandbox.CurrentLexEntriesAnalysis(m_hvoMorph);
+				var sbHvo = m_sandbox.CurrentLexEntriesAnalysis(SelectedMorphHvo);
 				var realHvo = m_sandbox.Caches.RealHvo(sbHvo);
 				if (realHvo <= 0)
 				{
@@ -552,8 +550,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// ktagMorphEntry property before the user made a selection in the menu.
 		internal virtual int WasReal()
 		{
-			CheckDisposed();
-
 			return 0;
 		}
 
@@ -570,13 +566,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal void CreateNewEntry(bool fCreateNow, out ILexEntry le, out IMoForm allomorph, out ILexSense sense)
 		{
-			CheckDisposed();
-
 			le = null;
 			allomorph = null;
 			sense = null;
 			var mainCache = m_caches.MainCache;
-			var hvoMorph = m_caches.DataAccess.get_ObjectProp(m_hvoMorph, SandboxBase.ktagSbMorphForm);
+			var hvoMorph = m_caches.DataAccess.get_ObjectProp(SelectedMorphHvo, SandboxBase.ktagSbMorphForm);
 			var tssForm = m_caches.DataAccess.get_MultiStringAlt(hvoMorph, SandboxBase.ktagSbNamedObjName, m_sandbox.RawWordformWs);
 			// If we don't have a form or it isn't in a current vernacular writing system, give up.
 			if (tssForm == null || tssForm.Length == 0 || !WritingSystemServices.GetAllWritingSystems(m_caches.MainCache, "all vernacular", null, 0, 0).Contains(TsStringUtils.GetWsOfRun(tssForm, 0)))
@@ -596,7 +590,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				using (var dlg = InsertEntryNow.CreateInsertEntryDlg(false))
 				{
 					dlg.InitializeFlexComponent(new FlexComponentParameters(m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.Subscriber));
-					dlg.SetDlgInfo(mainCache, m_sandbox.GetFullMorphForm(m_hvoMorph));
+					dlg.SetDlgInfo(mainCache, m_sandbox.GetFullMorphForm(SelectedMorphHvo));
 					dlg.TssGloss = entryComponents.GlossAlternatives.FirstOrDefault();
 					foreach (var tss in entryComponents.GlossAlternatives.Skip(1))
 					{
@@ -668,8 +662,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private LexEntryComponents BuildEntryComponents()
 		{
-			var entryComponents = MorphServices.BuildEntryComponents(m_caches.MainCache, TsStringUtils.GetCleanSingleRunTsString(m_sandbox.GetFullMorphForm(m_hvoMorph)));
-			var hvoMorph = m_caches.DataAccess.get_ObjectProp(m_hvoMorph, SandboxBase.ktagSbMorphForm);
+			var entryComponents = MorphServices.BuildEntryComponents(m_caches.MainCache, TsStringUtils.GetCleanSingleRunTsString(m_sandbox.GetFullMorphForm(SelectedMorphHvo)));
+			var hvoMorph = m_caches.DataAccess.get_ObjectProp(SelectedMorphHvo, SandboxBase.ktagSbMorphForm);
 			var intermediateTssForm = m_caches.DataAccess.get_MultiStringAlt(hvoMorph, SandboxBase.ktagSbNamedObjName, m_sandbox.RawWordformWs);
 			var tssForm = TsStringUtils.GetCleanSingleRunTsString(intermediateTssForm);
 			if (entryComponents.LexemeFormAlternatives.Count > 0 && !entryComponents.LexemeFormAlternatives[0].Equals(tssForm))
@@ -704,8 +698,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal void RunAddNewAllomorphDlg()
 		{
-			CheckDisposed();
-
 			ITsString tssForm;
 			ITsString tssFullForm;
 			IMoMorphType morphType;
@@ -861,14 +853,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void GetMorphInfo(out ITsString tssForm, out ITsString tssFullForm, out IMoForm morphReal, out IMoMorphType morphType)
 		{
 			morphReal = null;
-			var hvoMorph = m_caches.DataAccess.get_ObjectProp(m_hvoMorph, SandboxBase.ktagSbMorphForm);
+			var hvoMorph = m_caches.DataAccess.get_ObjectProp(SelectedMorphHvo, SandboxBase.ktagSbMorphForm);
 			var hvoMorphReal = m_caches.RealHvo(hvoMorph);
 			if (hvoMorphReal != 0)
 			{
 				morphReal = m_caches.MainCache.ServiceLocator.GetInstance<IMoFormRepository>().GetObject(hvoMorphReal);
 			}
 			tssForm = m_caches.DataAccess.get_MultiStringAlt(hvoMorph, SandboxBase.ktagSbNamedObjName, m_sandbox.RawWordformWs);
-			tssFullForm = m_sandbox.GetFullMorphForm(m_hvoMorph);
+			tssFullForm = m_sandbox.GetFullMorphForm(SelectedMorphHvo);
 			var fullForm = tssFullForm.Text;
 			morphType = null;
 			if (morphReal != null)
@@ -890,11 +882,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal int RunAddNewSenseDlg(ITsString tssForm, ILexEntry le)
 		{
-			CheckDisposed();
-
 			if (tssForm == null)
 			{
-				var hvoForm = m_caches.DataAccess.get_ObjectProp(m_hvoMorph, SandboxBase.ktagSbMorphForm);
+				var hvoForm = m_caches.DataAccess.get_ObjectProp(SelectedMorphHvo, SandboxBase.ktagSbMorphForm);
 				tssForm = m_caches.DataAccess.get_MultiStringAlt(hvoForm, SandboxBase.ktagSbNamedObjName, m_sandbox.RawWordformWs);
 			}
 			int newSenseID = 0;
@@ -926,8 +916,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// set m_fHideCombo (to false) for those items that user tried to select.
 		internal override void HandleComboSelChange(object sender, EventArgs ea)
 		{
-			CheckDisposed();
-
 			if (m_fUnderConstruction)
 			{
 				return;
@@ -957,7 +945,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// If we return true the dialog can be launched twice.
 				return false;
 			}
-			var sbHvo = m_sandbox.CurrentLexEntriesAnalysis(m_hvoMorph);
+			var sbHvo = m_sandbox.CurrentLexEntriesAnalysis(SelectedMorphHvo);
 			var realObject = m_sandbox.Caches.RealObject(sbHvo);
 			if (realObject == null)
 			{
@@ -975,13 +963,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			// sense MSA has been set since analysis created, need to update it (LT-14574)
 			// Review JohnT: are there any other cases where we should do it anyway?
-			return m_sandbox.CurrentPos(m_hvoMorph) == 0;
+			return m_sandbox.CurrentPos(SelectedMorphHvo) == 0;
 		}
 
 		internal override void HandleComboSelSame(object sender, EventArgs ea)
 		{
-			CheckDisposed();
-
 			// Just close the ComboBox, since nothing changed...unless we selected a sense item and all we
 			// had was an entry or msa, or some similar special case.
 			if (NeedSelectSame())
@@ -993,7 +979,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override void HandleSelect(int index)
 		{
-			CheckDisposed();
 			if (index < 0 || index >= ComboList.Items.Count)
 			{
 				return;
@@ -1026,7 +1011,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var cmorphs = sda.get_VecSize(m_hvoSbWord, SandboxBase.ktagSbWordMorphs);
 			for (; morphIndex < cmorphs; morphIndex++)
 			{
-				if (sda.get_VecItem(m_hvoSbWord, SandboxBase.ktagSbWordMorphs, morphIndex) == m_hvoMorph)
+				if (sda.get_VecItem(m_hvoSbWord, SandboxBase.ktagSbWordMorphs, morphIndex) == SelectedMorphHvo)
 				{
 					break;
 				}
@@ -1132,9 +1117,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var sda = m_caches.DataAccess;
 			var cda = (IVwCacheDa)m_caches.DataAccess;
-			cda.CacheObjProp(m_hvoMorph, SandboxBase.ktagSbMorphEntry, 0);
-			cda.CacheObjProp(m_hvoMorph, SandboxBase.ktagSbMorphGloss, 0);
-			cda.CacheObjProp(m_hvoMorph, SandboxBase.ktagSbMorphPos, 0);
+			cda.CacheObjProp(SelectedMorphHvo, SandboxBase.ktagSbMorphEntry, 0);
+			cda.CacheObjProp(SelectedMorphHvo, SandboxBase.ktagSbMorphGloss, 0);
+			cda.CacheObjProp(SelectedMorphHvo, SandboxBase.ktagSbMorphPos, 0);
 			// Forget we had an existing wordform; otherwise, the program considers
 			// all changes to be editing the wordform, and since it belongs to the
 			// old analysis, the old analysis gets resurrected.
@@ -1144,13 +1129,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// trying to dissociate from. If we leave it that way, it will resurrect
 			// the LexEntry connection when we update the real cache.
 			// Instead make a new named object for the form.
-			var tssForm = sda.get_MultiStringAlt(sda.get_ObjectProp(m_hvoMorph, SandboxBase.ktagSbMorphForm), SandboxBase.ktagSbNamedObjName, m_sandbox.RawWordformWs);
-			var hvoNewForm = sda.MakeNewObject(SandboxBase.kclsidSbNamedObj, m_hvoMorph, SandboxBase.ktagSbMorphForm, -2);
+			var tssForm = sda.get_MultiStringAlt(sda.get_ObjectProp(SelectedMorphHvo, SandboxBase.ktagSbMorphForm), SandboxBase.ktagSbNamedObjName, m_sandbox.RawWordformWs);
+			var hvoNewForm = sda.MakeNewObject(SandboxBase.kclsidSbNamedObj, SelectedMorphHvo, SandboxBase.ktagSbMorphForm, -2);
 			sda.SetMultiStringAlt(hvoNewForm, SandboxBase.ktagSbNamedObjName, m_sandbox.RawWordformWs, tssForm);
 			// Send notifiers for each of these deleted items.
-			sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoMorph, SandboxBase.ktagSbMorphEntry, 0, 0, 1);
-			sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoMorph, SandboxBase.ktagSbMorphGloss, 0, 0, 1);
-			sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoMorph, SandboxBase.ktagSbMorphPos, 0, 0, 1);
+			sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, SelectedMorphHvo, SandboxBase.ktagSbMorphEntry, 0, 0, 1);
+			sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, SelectedMorphHvo, SandboxBase.ktagSbMorphGloss, 0, 0, 1);
+			sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, SelectedMorphHvo, SandboxBase.ktagSbMorphPos, 0, 0, 1);
 		}
 
 		private void OnSelectVariantOf(object sender, EventArgs args)
@@ -1227,30 +1212,28 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal void UpdateMorphEntry(IMoForm moFormReal, ILexEntry entryReal, ILexSense senseReal, ILexEntryInflType inflType = null)
 		{
-			CheckDisposed();
-
 			var fDirty = m_sandbox.Caches.DataAccess.IsDirty();
 			var fApproved = !m_sandbox.UsingGuess;
 			var fHasApprovedWordGloss = m_sandbox.HasWordGloss() && (fDirty || fApproved);
 			var fHasApprovedWordCat = m_sandbox.HasWordCat && (fDirty || fApproved);
-			var undoAction = new UpdateMorphEntryAction(m_sandbox, m_hvoMorph); // before changes.
+			var undoAction = new UpdateMorphEntryAction(m_sandbox, SelectedMorphHvo); // before changes.
 
 			// Make a new morph, if one does not already exist, corresponding to the
 			// selected item.  Its form must match what is already displayed.  Store it as
 			// the new value.
 			var hvoMorph = m_sandbox.CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidMorphemes, moFormReal.Hvo, MoFormTags.kflidForm);
-			m_caches.DataAccess.SetObjProp(m_hvoMorph, SandboxBase.ktagSbMorphForm, hvoMorph);
-			m_caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll, m_hvoMorph, SandboxBase.ktagSbMorphForm, 0, 1, 1);
+			m_caches.DataAccess.SetObjProp(SelectedMorphHvo, SandboxBase.ktagSbMorphForm, hvoMorph);
+			m_caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll, SelectedMorphHvo, SandboxBase.ktagSbMorphForm, 0, 1, 1);
 
 			// Try to establish the sense.  Call this before SetSelectedEntry and LoadSecDataForEntry.
 			// reset cached gloss, since we should establish the sense according to the real sense or real entry.
-			m_caches.DataAccess.SetObjProp(m_hvoMorph, SandboxBase.ktagSbMorphGloss, 0);
+			m_caches.DataAccess.SetObjProp(SelectedMorphHvo, SandboxBase.ktagSbMorphGloss, 0);
 			var morphEntry = moFormReal.Owner as ILexEntry;
-			var realDefaultSense = m_sandbox.EstablishDefaultSense(m_hvoMorph, morphEntry, senseReal, inflType);
+			var realDefaultSense = m_sandbox.EstablishDefaultSense(SelectedMorphHvo, morphEntry, senseReal, inflType);
 			// Make and install a secondary object to correspond to the real LexEntry.
 			// (The zero says we are not guessing any more, since the user selected this entry.)
-			m_sandbox.LoadSecDataForEntry(morphEntry, senseReal ?? realDefaultSense, m_hvoSbWord, m_caches.DataAccess as IVwCacheDa, m_wsVern, m_hvoMorph, 0, m_caches.MainCache.MainCacheAccessor);
-			m_caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll, m_hvoMorph, SandboxBase.ktagSbMorphEntry, 0, 1, WasReal());
+			m_sandbox.LoadSecDataForEntry(morphEntry, senseReal ?? realDefaultSense, m_hvoSbWord, m_caches.DataAccess as IVwCacheDa, m_wsVern, SelectedMorphHvo, 0, m_caches.MainCache.MainCacheAccessor);
+			m_caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll, SelectedMorphHvo, SandboxBase.ktagSbMorphEntry, 0, 1, WasReal());
 
 			// Notify any delegates that the selected Entry changed.
 			m_sandbox.SetSelectedEntry(entryReal);

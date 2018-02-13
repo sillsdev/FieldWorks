@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2017 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -60,19 +60,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			InitializeComponent();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
 		#region Public properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -81,7 +68,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public ILgWritingSystemFactory WritingSystemFactory
 		{
-			set { CheckDisposed(); m_FontAttributes.WritingSystemFactory = value; }
+			set { m_FontAttributes.WritingSystemFactory = value; }
 		}
 		#endregion
 
@@ -236,8 +223,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public void FillFontInfo(LcmCache cache)
 		{
-			CheckDisposed();
-
 			// Fill in the writing systems. Fill in the Tag with the WS HVO.
 			ListViewItem item = new ListViewItem(FwCoreDlgControls.kstidDefaultSettings);
 			item.Tag = -1;
@@ -261,8 +246,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public void UpdateForStyle(StyleInfo styleInfo)
 		{
-			CheckDisposed();
-
 			UpdateForStyle(styleInfo, m_currentWs);
 		}
 
@@ -276,8 +259,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public void UpdateForStyle(StyleInfo styleInfo, int ws)
 		{
-			CheckDisposed();
-
 			if (styleInfo == null)
 				return;
 
@@ -337,8 +318,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public void SaveToInfo(StyleInfo styleInfo)
 		{
-			CheckDisposed();
-
 			FontInfo fontInfo = styleInfo.FontInfoForWs(m_currentWs);
 			// Font name
 			bool newInherit = IsInherited(m_cboFontNames);
@@ -406,7 +385,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_cboFontNames;
 			}
 		}

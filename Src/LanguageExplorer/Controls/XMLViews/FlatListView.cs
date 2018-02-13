@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -52,10 +51,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Create and initialize the browse view, storing the data it will display.
 		/// </summary>
-		public void Initialize(LcmCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable,
-			XElement xnConfig, IEnumerable<ICmObject> objs)
+		public void Initialize(LcmCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable, XElement xnConfig, IEnumerable<ICmObject> objs)
 		{
-			CheckDisposed();
 			m_cache = cache;
 			m_stylesheet = stylesheet;
 			m_propertyTable = propertyTable;
@@ -93,25 +90,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 		#endregion
 
-		#region IDisposable Members
-
-		/// <summary>
-		/// This method throws an ObjectDisposedException if IsDisposed returns
-		/// true.  This is the case where a method or property in an object is being
-		/// used but the object itself is no longer valid.
-		/// This method should be added to all public properties and methods of this
-		/// object and all other objects derived from it (extensive).
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		#endregion
-
 		#region Other methods
 
 		private void m_bvList_SelectionChanged(object sender, FwObjectSelectionEventArgs e)
@@ -124,8 +102,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void SetCheckedItems(IEnumerable<ICmObject> objs)
 		{
-			CheckDisposed();
-
 			m_bvList.SetCheckedItems(objs.Select(obj => obj.Hvo).ToArray());
 		}
 
@@ -134,7 +110,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public IEnumerable<ICmObject> GetCheckedItems()
 		{
-			CheckDisposed();
 			return m_bvList.CheckedItems.Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
 		}
 

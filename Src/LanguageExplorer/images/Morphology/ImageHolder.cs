@@ -2,9 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Windows.Forms;
-using SIL.Utils;
 
 namespace LanguageExplorer.images.Morphology
 {
@@ -16,10 +14,10 @@ namespace LanguageExplorer.images.Morphology
 	/// </summary>
 	public class ImageHolder : UserControl
 	{
-		public System.Windows.Forms.ImageList largeImages;
-		public System.Windows.Forms.ImageList smallImages;
-		public System.Windows.Forms.ImageList smallCommandImages;
-		private System.Windows.Forms.Button button1;
+		public ImageList largeImages;
+		public ImageList smallImages;
+		public ImageList smallCommandImages;
+		private Button button1;
 		private System.ComponentModel.IContainer components;
 
 		/// -----------------------------------------------------------------------------------
@@ -34,17 +32,6 @@ namespace LanguageExplorer.images.Morphology
 
 			// TODO: Add any initialization after the InitForm call
 
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
 		/// -----------------------------------------------------------------------------------

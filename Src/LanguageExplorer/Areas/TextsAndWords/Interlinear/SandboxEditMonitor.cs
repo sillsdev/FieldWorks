@@ -47,7 +47,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		ISilDataAccess m_sda;
 		int m_hvoSbWord;
 		int m_hvoMorph;
-		bool m_fNeedMorphemeUpdate; // Set true if a property we care about changes.
 
 		// The following two variables are used to overcome an infelicity of interacting with TSF
 		// on Windows for keyboard input.
@@ -64,24 +63,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_sda.AddNotification(this);
 		}
 
-		internal bool NeedMorphemeUpdate
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fNeedMorphemeUpdate;
-			}
-			set
-			{
-				CheckDisposed();
-				m_fNeedMorphemeUpdate = value;
-			}
-		}
+		internal bool NeedMorphemeUpdate { get; set; }
 
 		internal string BuildCurrentMorphsString()
 		{
-			CheckDisposed();
-
 			return BuildCurrentMorphsString(null);
 		}
 
@@ -95,8 +80,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal string BuildCurrentMorphsString(IVwSelection sel)
 		{
-			CheckDisposed();
-
 			var ichSel = -1;
 			var hvoObj = 0;
 			var tag = 0;
@@ -184,8 +167,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public bool HandleBackspace()
 		{
-			CheckDisposed();
-
 			var currentMorphemes = BuildCurrentMorphsString(m_sandbox.RootBox.Selection);
 			if (m_ichSel <= 0)
 			{
@@ -204,8 +185,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public bool HandleDelete()
 		{
-			CheckDisposed();
-
 			var currentMorphemes = BuildCurrentMorphsString(m_sandbox.RootBox.Selection);
 			if (m_ichSel < 0 || m_ichSel >= currentMorphemes.Length)
 			{
@@ -228,7 +207,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			CheckDisposed();
 			if (!IsMonitoring)
 			{
 				m_propChangesOccurredWhileNotMonitoring = true;
@@ -236,7 +214,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			if (IsPropMorphBreak(hvo, tag, ivMin))
 			{
-				m_fNeedMorphemeUpdate = true;
+				NeedMorphemeUpdate = true;
 			}
 			// notify the parent sandbox that something has changed its cache.
 			m_sandbox.OnUpdateEdited();
@@ -244,16 +222,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public void DoPendingMorphemeUpdates()
 		{
-			CheckDisposed();
-
-			if (!m_fNeedMorphemeUpdate)
+			if (!NeedMorphemeUpdate)
 			{
 				return; // Nothing we care about has changed.
 			}
 			// This needs to be set BEFORE we call UpdateMorphemes...otherwise, UpdateMorphemes eventually
 			// changes the selection, which triggers another call, making an infinite loop until the
 			// stack overflows.
-			m_fNeedMorphemeUpdate = false;
+			NeedMorphemeUpdate = false;
 			try
 			{
 				if (m_hvoMorph != 0)
@@ -274,7 +250,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// We also do this as a way of making quite sure that it doesn't get set again
 				// as a side effect of UpdateMorphemes...another way we could get an infinite
 				// loop.
-				m_fNeedMorphemeUpdate = false;
+				NeedMorphemeUpdate = false;
 			}
 
 		}
@@ -284,8 +260,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public bool IsPropMorphBreak(int hvo, int tag, int ws)
 		{
-			CheckDisposed();
-
 			switch (tag)
 			{
 				case SandboxBase.ktagSbMorphPostfix:
@@ -343,7 +317,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					IchSel = m_ichSel
 				};
 				mb.Run();
-				m_fNeedMorphemeUpdate = false;
+				NeedMorphemeUpdate = false;
 				m_sandbox.RootBox.Reconstruct(); // Everything changed, more or less.
 				mb.MakeSel();
 				m_infoDelayed = null;

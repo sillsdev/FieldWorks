@@ -66,7 +66,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void SetReferenceVc()
 		{
-			CheckDisposed();
 			m_atomicReferenceVc = new PossibilityAtomicReferenceVc(m_cache, m_rootFlid, m_displayNameProperty);
 		}
 

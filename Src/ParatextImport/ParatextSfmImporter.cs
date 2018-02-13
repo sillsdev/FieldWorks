@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -4253,19 +4253,6 @@ namespace ParatextImport
 			// and prevent finalization code for this object
 			// from executing a second time.
 			GC.SuppressFinalize(this);
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		internal void CheckDisposed()
-		{
-			if (m_isDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
 		}
 
 		/// <summary>

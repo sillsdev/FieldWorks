@@ -30,7 +30,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		public void SetRoot(int hvo)
 		{
-			CheckDisposed();
 			if (m_hvoRoot == hvo)
 			{
 				return; // OnRecordNavigation is often called repeatedly wit the same HVO, we don't need to recompute every time.

@@ -356,19 +356,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose( bool disposing )
@@ -440,8 +427,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void UpdateColumnList()
 		{
-			CheckDisposed();
-
 			// ClickCopy.ClickCopyTabPageSettings/SaveSettings()/CommitClickChanges()
 			// could possibly change m_hvoSelected when we're not ready, so save current.
 			// see comment on LT-4768 below.
@@ -467,8 +452,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		private void populateListChoiceTargetCombo()
 		{
-			CheckDisposed();
-
 			m_listChoiceTargetCombo.ClearItems();
 			m_listChoiceTargetCombo.Text = "";
 
@@ -491,8 +474,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void MakeItems()
 		{
-			CheckDisposed();
-
 			if (m_beItems != null)
 			{
 				return; // already made.
@@ -1296,8 +1277,6 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal void SetEnabledIfShowing()
 		{
-			CheckDisposed();
-
 			if (!m_bv.BrowseView.Vc.ShowEnabled)
 			{
 				return;
@@ -1333,8 +1312,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal void UpdateEnableItems(int hvoItem)
 		{
-			CheckDisposed();
-
 			// Only relevant for the delete rows function.
 			if (!DeleteRowsItemSelected)
 			{
@@ -1920,8 +1897,6 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal ISet<int> ItemsToChangeSet(bool fOnlyIfSelected)
 		{
-			CheckDisposed();
-
 			return new HashSet<int>(fOnlyIfSelected ? m_bv.CheckedItems : m_bv.AllItems);
 		}
 
@@ -2209,14 +2184,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Gets an image of the blue arrow we use to separate actual cell contents from
 		/// bulk edit preview.
 		/// </summary>
-		public Image PreviewArrow
-		{
-			get
-			{
-				CheckDisposed();
-				return m_imageList16x14.Images[0];
-			}
-		}
+		public Image PreviewArrow => m_imageList16x14.Images[0];
 
 		/// <summary>
 		/// Gets the preview arrow static.

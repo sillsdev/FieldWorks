@@ -105,8 +105,6 @@ namespace LanguageExplorer.Dumpster
 		public virtual bool OnDisplayLaunchRespellerDlg(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			display.Visible = InFriendlyArea;		// See LT-8641.
 			display.Enabled = display.Visible && ActiveWord() != null;
 			return true; //we've handled this
@@ -120,7 +118,6 @@ namespace LanguageExplorer.Dumpster
 		/// <returns>true</returns>
 		public bool OnLaunchRespellerDlg(object argument)
 		{
-			CheckDisposed();
 			if (!InFriendliestTool)		// See LT-8641.
 			{
 				LaunchRespellerDlgOnWord(ActiveWord());

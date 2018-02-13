@@ -20,33 +20,18 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary></summary>
 		protected IMatcher m_matcher;
 		internal FilterSortItem m_fsi;
-		private ITsString m_tssName;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:FilterComboItem"/> class.
 		/// </summary>
 		public FilterComboItem(ITsString tssName, IMatcher matcher, FilterSortItem fsi)
 		{
-			m_tssName = tssName;
+			AsTss = tssName;
 			m_matcher = matcher;
 			m_fsi = fsi;
 		}
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -118,7 +103,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_matcher = null;
 			m_fsi = null; // Disposed elesewhere.
-			m_tssName = null;
+			AsTss = null;
 
 			IsDisposed = true;
 		}
@@ -130,8 +115,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public virtual bool Invoke()
 		{
-			CheckDisposed();
-
 			InvokeWithInstalledMatcher();
 			return true;
 		}
@@ -156,7 +139,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		protected virtual ITsString GetLabelForMatcher()
 		{
-			return m_tssName;
+			return AsTss;
 		}
 
 		/// <summary>
@@ -167,8 +150,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public virtual ITsString SetFromFilter(RecordFilter recordFilter, FilterSortItem item)
 		{
-			CheckDisposed();
-
 			var filter = recordFilter as FilterBarCellFilter;
 			if (filter == null)
 			{
@@ -192,11 +173,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal virtual ITsString SetFromMatcher(IMatcher matcher)
 		{
-			CheckDisposed();
-
 			if (m_matcher != null && m_matcher.SameMatcher(matcher))
 			{
-				return m_tssName;
+				return AsTss;
 			}
 			return null;
 		}
@@ -206,14 +185,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Get a TsString representation of the object.
 		/// </summary>
-		public ITsString AsTss
-		{
-			get
-			{
-				CheckDisposed();
-				return m_tssName;
-			}
-		}
+		public ITsString AsTss { get; private set; }
 
 		#endregion ITssValue implementation
 	}

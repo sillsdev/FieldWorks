@@ -117,7 +117,6 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				CheckDisposed();
 				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey)
 				{
 					return regKey.CreateSubKey("LingCmnDlgs");
@@ -162,12 +161,10 @@ namespace LanguageExplorer.Controls.LexText
 			// REVIEW: trim?
 			get
 			{
-				CheckDisposed();
 				return msLexicalForm == null ? m_tbLexicalForm.Tss : msLexicalForm.Value(m_cache.DefaultVernWs);
 			}
 			set
 			{
-				CheckDisposed();
 				if (msLexicalForm == null)
 				{
 					m_tbLexicalForm.Tss = value;
@@ -317,12 +314,10 @@ namespace LanguageExplorer.Controls.LexText
 			// REVIEW: trim?
 			get
 			{
-				CheckDisposed();
 				return msGloss == null ? m_tbGloss.Tss : msGloss.Value(m_cache.DefaultAnalWs);
 			}
 			set
 			{
-				CheckDisposed();
 				if (msGloss == null)
 				{
 					m_tbGloss.Tss = value;
@@ -360,7 +355,6 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			set
 			{
-				CheckDisposed();
 				m_msaGroupBox.StemPOS = value;
 			}
 		}
@@ -369,14 +363,10 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_msaGroupBox?.MSAType ?? MsaType.kStem;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_msaGroupBox != null)
 				{
 					m_msaGroupBox.MSAType = value;
@@ -387,14 +377,10 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_msaGroupBox?.Slot;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_msaGroupBox != null)
 				{
 					m_msaGroupBox.Slot = value;
@@ -769,8 +755,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetDlgInfo(LcmCache cache, ITsString tssForm)
 		{
-			CheckDisposed();
-
 			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			if (helpTopicProvider != null)
 			{
@@ -813,8 +797,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetDlgInfo(LcmCache cache, IPersistenceProvider persistProvider)
 		{
-			CheckDisposed();
-
 			Debug.Assert(persistProvider != null);
 
 			SetDlgInfo(cache);
@@ -825,8 +807,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetDlgInfo(LcmCache cache, IMoMorphType morphType, MsaType msaType, IMoInflAffixSlot slot, MorphTypeFilterType filter)
 		{
-			CheckDisposed();
-
 			SetDlgInfo(cache, morphType, 0, filter);
 			m_msaGroupBox.MSAType = msaType;
 			Slot = slot;
@@ -845,22 +825,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void DisableAffixTypeMainPosAndSlot()
 		{
-			CheckDisposed();
-
 			m_msaGroupBox.DisableAffixTypeMainPosAndSlot();
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
 		}
 
 		/// <summary>
@@ -893,8 +858,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void GetDialogInfo(out ILexEntry entry, out bool newlyCreated)
 		{
-			CheckDisposed();
-
 			entry = m_entry;
 			newlyCreated = m_fNewlyCreated;
 		}
@@ -982,8 +945,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetHelpTopic(string helpTopic)
 		{
-			CheckDisposed();
-
 			s_helpTopic = helpTopic;
 			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			if (helpTopicProvider != null)

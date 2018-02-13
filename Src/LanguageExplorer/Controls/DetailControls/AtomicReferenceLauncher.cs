@@ -59,8 +59,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
-			CheckDisposed();
-
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 			m_atomicRefView.Initialize(obj, flid, fieldName, cache, displayNameProperty, displayWs);
 		}
@@ -99,7 +97,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected void AddItem(ICmObject obj, string undoText, string redoText)
 		{
-			CheckDisposed();
 			var h1 = m_atomicRefView.RootBox.Height;
 			UndoableUnitOfWorkHelper.Do(undoText, redoText, m_obj, () =>
 			{
@@ -108,7 +105,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			// it is possible that the previous update has caused the data tree to refresh
 			if (!IsDisposed)
 			{
-				//m_atomicRefView.SetObject(obj);
 				UpdateDisplayFromDatabase();
 				ReferenceChanged?.Invoke(this, new FwObjectSelectionEventArgs(obj.Hvo));
 				var h2 = m_atomicRefView.RootBox.Height;
@@ -135,7 +131,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void UpdateDisplayFromDatabase()
 		{
-			CheckDisposed();
 			m_atomicRefView.SetObject(m_obj);
 		}
 

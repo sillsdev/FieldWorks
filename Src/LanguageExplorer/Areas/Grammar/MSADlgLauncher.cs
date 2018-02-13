@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -31,8 +31,6 @@ namespace LanguageExplorer.Areas.Grammar
 		/// </summary>
 		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
-			CheckDisposed();
-
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 			m_msaDlglauncherView.Init(PropertyTable.GetValue<LcmCache>("cache"), obj as IMoMorphSynAnalysis);
 		}

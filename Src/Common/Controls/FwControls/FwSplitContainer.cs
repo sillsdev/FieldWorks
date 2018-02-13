@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2017 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -57,26 +57,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#endregion
 
-		#region Disposed stuff
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this before doing anything else.
-		/// </summary>
-		/// <remarks>This method is thread safe.</remarks>
-		/// ------------------------------------------------------------------------------------
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException(
-					string.Format("'{0}' in use after being disposed.", GetType().Name));
-			}
-		}
-
-		// Dispose method is in FwSplitContainer.Designer.cs
-		#endregion
-
 		#region Properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -93,12 +73,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_desiredFirstPanePercentage;
 			}
 			set
 			{
-				CheckDisposed();
 				m_desiredFirstPanePercentage = value;
 			}
 		}
@@ -112,12 +90,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_maxFirstPanePercentage;
 			}
 			set
 			{
-				CheckDisposed();
 				m_maxFirstPanePercentage = value;
 			}
 		}
@@ -132,12 +108,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_panelToActivate;
 			}
 			set
 			{
-				CheckDisposed();
 				m_panelToActivate = value;
 			}
 		}
@@ -261,7 +235,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public void SaveSettingsNow()
 		{
-			CheckDisposed();
 			if (m_persistence != null)
 			{
 				m_persistence.SaveSettingsNow(this);
@@ -311,7 +284,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		protected virtual void OnSaveSettings(RegistryKey key)
 		{
-			CheckDisposed();
 			if (m_desiredFirstPanePercentage > 0)
 			{
 				m_firstPanePct.Value = SplitterDistance /
@@ -327,7 +299,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public virtual void OnLoadSettings(RegistryKey key)
 		{
-			CheckDisposed();
 			m_firstPanePct = new RegistryFloatSetting(SettingsKey,
 					Name + "FirstPanePercentage", m_desiredFirstPanePercentage);
 

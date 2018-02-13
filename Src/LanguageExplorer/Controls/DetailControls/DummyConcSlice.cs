@@ -17,18 +17,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			Indent = m_csParent.Indent + 1;
 		}
 
-		public override bool IsRealSlice
-		{
-			get
-			{
-				CheckDisposed();
-				return false;
-			}
-		}
+		public override bool IsRealSlice => false;
 
 		public override Slice BecomeReal(int index)
 		{
-			CheckDisposed();
 			// Figure position relative to parent node
 			var parentIndex = index - 1;
 			while (ContainingDataTree.Slices[parentIndex] != m_csParent)

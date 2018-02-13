@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2017 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -100,19 +100,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
@@ -176,12 +163,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return base.Font;
 			}
 			set
 			{
-				CheckDisposed();
 				if (base.Font != value)
 				{
 					base.Font = value;
@@ -203,7 +188,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_cellWidth;
 			}
 		}
@@ -217,7 +201,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_cellHeight;
 			}
 		}
@@ -235,12 +218,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_loadCharactersFromFont;
 			}
 			set
 			{
-				CheckDisposed();
 				m_loadCharactersFromFont = value;
 			}
 		}
@@ -256,13 +237,11 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				int index = GetListIndexFromCellAddress();
 				return (index >= 0 && index < Chars.Count ? Chars[index] : string.Empty);
 			}
 			set
 			{
-				CheckDisposed();
 				for (int i = 0; i < Chars.Count; i++)
 				{
 					if (value == Chars[i])
@@ -291,7 +270,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return Chars.Count;
 			}
 		}
@@ -307,7 +285,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return (int)Math.Floor((double)UsableWidth / m_cellWidth);
 			}
 		}
@@ -324,7 +301,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				int rows = (int)Math.Ceiling((double)NumberOfChars / NumberOfColumns);
 				return (rows > 0 ? rows : 0);
 			}
@@ -341,7 +317,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return ClientSize.Width; // -SystemInformation.VerticalScrollBarWidth - 1;
 			}
 		}
@@ -357,7 +332,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public void AddCharacters(IEnumerable<string> value)
 		{
-			CheckDisposed();
 			Debug.Assert(!m_loadCharactersFromFont);
 
 			foreach (string ch in value)
@@ -950,7 +924,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				EnsureCharsListCreated();
 				return m_chars;
 			}

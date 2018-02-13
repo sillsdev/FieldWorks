@@ -32,8 +32,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override bool Invoke()
 		{
-			CheckDisposed();
-
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_bv.PropertyTable);
 			using (var dlg = new SimpleMatchDlg(m_combo.WritingSystemFactory, m_bv.PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), Ws, stylesheet, m_bv.Cache))
 			{
@@ -111,8 +109,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal override ITsString SetFromMatcher(IMatcher matcher)
 		{
-			CheckDisposed();
-
 			return matcher is SimpleStringMatcher ? matcher.Label : null;
 		}
 
@@ -123,12 +119,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				return m_matcher;
 			}
 			set
 			{
-				CheckDisposed();
 				m_matcher = value;
 			}
 		}

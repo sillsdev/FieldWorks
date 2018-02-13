@@ -96,7 +96,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var rl = (PhoneEnvReferenceLauncher)Control;
 			// Don't even 'think' of calling "rl.InitializeFlexComponent" at this point.
 			// I (RBR) have done it, and long since repented.
-			rl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, null, null);
+			rl.Initialize(Cache, Object, m_flid, m_fieldName, PersistenceProvider, null, null);
 			rl.ConfigurationNode = ConfigurationNode;
 			rl.ViewSizeChanged += OnViewSizeChanged;
 			var view = (PhoneEnvReferenceView)rl.MainControl;
@@ -135,8 +135,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void RegisterWithContextHelper()
 		{
-			CheckDisposed();
-
 			var caption = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "label", String.Empty));
 
 			var launcher = (PhoneEnvReferenceLauncher)Control;
@@ -202,7 +200,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool OnDisplayShowEnvironmentError(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			PhoneEnvReferenceLauncher rl = (PhoneEnvReferenceLauncher)this.Control;
 			PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
 			display.Enabled = view.CanShowEnvironmentError();
@@ -212,10 +209,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public bool OnShowEnvironmentError(object args)
 		{
-			CheckDisposed();
-			var rl = (PhoneEnvReferenceLauncher)Control;
-			var view = (PhoneEnvReferenceView)rl.MainControl;
-			view.ShowEnvironmentError();
+			MainControlOfMyControl.ShowEnvironmentError();
 			return true;
 		}
 
@@ -229,7 +223,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool OnDisplayInsertSlash(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			PhoneEnvReferenceLauncher rl = (PhoneEnvReferenceLauncher)this.Control;
 			PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
 			display.Enabled = view.CanInsertSlash();
@@ -239,10 +232,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public bool OnInsertSlash(object args)
 		{
-			CheckDisposed();
-
-			var view = (PhoneEnvReferenceView)((PhoneEnvReferenceLauncher)Control).MainControl;
-			view.RootBox.OnChar('/');
+			MainControlOfMyControl.RootBox.OnChar('/');
 			return true;
 		}
 
@@ -257,7 +247,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool OnDisplayInsertEnvironmentBar(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			PhoneEnvReferenceLauncher rl = (PhoneEnvReferenceLauncher)this.Control;
 			PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
 			display.Enabled = view.CanInsertEnvBar();
@@ -267,9 +256,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public bool OnInsertEnvironmentBar(object args)
 		{
-			CheckDisposed();
-			var view = (PhoneEnvReferenceView)((PhoneEnvReferenceLauncher)Control).MainControl;
-			view.RootBox.OnChar('_');
+			MainControlOfMyControl.RootBox.OnChar('_');
 			return true;
 		}
 
@@ -283,7 +270,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool OnDisplayInsertNaturalClass(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			PhoneEnvReferenceLauncher rl = (PhoneEnvReferenceLauncher)this.Control;
 			PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
 			display.Enabled = view.CanInsertItem();
@@ -293,10 +279,10 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public bool OnInsertNaturalClass(object args)
 		{
-			CheckDisposed();
-			var view = (PhoneEnvReferenceView)((PhoneEnvReferenceLauncher)Control).MainControl;
-			return ReallySimpleListChooser.ChooseNaturalClass(view.RootBox, m_cache, m_persistenceProvider, PropertyTable, Publisher);
+			return ReallySimpleListChooser.ChooseNaturalClass(MainControlOfMyControl.RootBox, Cache, PersistenceProvider, PropertyTable, Publisher);
 		}
+
+		private PhoneEnvReferenceView MainControlOfMyControl => (PhoneEnvReferenceView)((PhoneEnvReferenceLauncher)Control).MainControl;
 
 #if RANDYTODO
 		/// <summary>
@@ -308,7 +294,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool OnDisplayInsertOptionalItem(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			PhoneEnvReferenceLauncher rl = (PhoneEnvReferenceLauncher)this.Control;
 			PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
 			display.Enabled = view.CanInsertItem();
@@ -318,10 +303,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public bool OnInsertOptionalItem(object args)
 		{
-			CheckDisposed();
-			var view = (PhoneEnvReferenceView)((PhoneEnvReferenceLauncher)Control).MainControl;
-			var rootb = view.RootBox;
-			InsertOptionalItem(rootb);
+			InsertOptionalItem(MainControlOfMyControl.RootBox);
 			return true;
 		}
 
@@ -365,7 +347,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool OnDisplayInsertHashMark(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			PhoneEnvReferenceLauncher rl = (PhoneEnvReferenceLauncher)this.Control;
 			PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
 			display.Enabled = view.CanInsertHashMark();
@@ -375,10 +356,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public bool OnInsertHashMark(object args)
 		{
-			CheckDisposed();
-
-			var view = (PhoneEnvReferenceView)((PhoneEnvReferenceLauncher)Control).MainControl;
-			view.RootBox.OnChar('#');
+			MainControlOfMyControl.RootBox.OnChar('#');
 			return true;
 		}
 #endregion

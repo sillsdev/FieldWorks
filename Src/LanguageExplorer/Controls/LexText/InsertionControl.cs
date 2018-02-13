@@ -85,7 +85,6 @@ namespace LanguageExplorer.Controls.LexText
 		private Label m_insertLabel;
 
 		private List<Tuple<object, Func<object, bool>, Func<IEnumerable<object>>>> m_options;
-		private Func<string> m_noOptsMsg;
 		private int m_prevWidth;
 		private Label m_msgLabel;
 
@@ -100,33 +99,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// message.
 		/// </summary>
 		/// <value>The no options message delegate.</value>
-		public Func<string> NoOptionsMessage
-		{
-			get
-			{
-				CheckDisposed();
-				return m_noOptsMsg;
-			}
-
-			set
-			{
-				CheckDisposed();
-				m_noOptsMsg = value;
-			}
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
+		public Func<string> NoOptionsMessage { get; set; }
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -155,8 +128,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void AddOption(object option, Func<object, bool> shouldDisplay)
 		{
-			CheckDisposed();
-
 			m_options.Add(Tuple.Create(option, shouldDisplay, (Func<IEnumerable<object>>) null));
 		}
 
@@ -165,8 +136,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void AddMultiOption(object option, Func<object, bool> shouldDisplay, Func<IEnumerable<object>> displaySuboptions)
 		{
-			CheckDisposed();
-
 			m_options.Add(Tuple.Create(option, shouldDisplay, displaySuboptions));
 		}
 
@@ -175,8 +144,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void UpdateOptionsDisplay()
 		{
-			CheckDisposed();
-
 			m_insertPanel.SuspendLayout();
 			SuspendLayout();
 			foreach (var c in m_insertPanel.Controls.Cast<Control>().ToArray())
@@ -226,9 +193,9 @@ namespace LanguageExplorer.Controls.LexText
 				}
 			}
 
-			if (!displayingOpts && m_noOptsMsg != null)
+			if (!displayingOpts && NoOptionsMessage != null)
 			{
-				var text = m_noOptsMsg();
+				var text = NoOptionsMessage();
 				if (text != null)
 				{
 					m_msgLabel = new GrowLabel {Font = new Font(MiscUtils.StandardSansSerif, 10), Text = text, Width = m_insertPanel.ClientSize.Width};

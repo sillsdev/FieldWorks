@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -78,14 +78,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 
 			var ctrl = (PhonologicalFeatureListDlgLauncher)Control;
 
-			m_flid = GetFlid(ConfigurationNode, m_obj);
+			m_flid = GetFlid(ConfigurationNode, Object);
 			if (m_flid != 0)
 			{
-				m_fs = GetFeatureStructureFromOwner(m_obj, m_flid);
+				m_fs = GetFeatureStructureFromOwner(Object, m_flid);
 			}
 			else
 			{
-				m_fs = m_obj as IFsFeatStruc;
+				m_fs = Object as IFsFeatStruc;
 				m_flid = FsFeatStrucTags.kflidFeatureSpecs;
 			}
 
@@ -94,7 +94,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 				m_fs,
 				m_flid,
 				"Name",
-				m_persistenceProvider,
+				PersistenceProvider,
 				"Name",
 				XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
 		}
@@ -107,18 +107,18 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 
 		private void RemoveFeatureStructureFromOwner()
 		{
-			if (m_obj != null)
+			if (Object != null)
 			{
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				{
-					switch (m_obj.ClassID)
+					switch (Object.ClassID)
 					{
 						case PhPhonemeTags.kClassId:
-							var phoneme = (IPhPhoneme)m_obj;
+							var phoneme = (IPhPhoneme)Object;
 							phoneme.FeaturesOA = null;
 							break;
 						case PhNCFeaturesTags.kClassId:
-							var features = (IPhNCFeatures)m_obj;
+							var features = (IPhNCFeatures)Object;
 							features.FeaturesOA = null;
 							break;
 					}
@@ -153,7 +153,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		/// </summary>
 		public override void FinishInit()
 		{
-			CheckDisposed();
 			Control = new PhonologicalFeatureListDlgLauncher();
 		}
 		/// <summary>
@@ -173,13 +172,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 		}
 
 		/// <summary />
-		public override int Flid
-		{
-			get
-			{
-				CheckDisposed();
-				return m_flid;
-			}
-		}
+		public override int Flid => m_flid;
 	}
 }

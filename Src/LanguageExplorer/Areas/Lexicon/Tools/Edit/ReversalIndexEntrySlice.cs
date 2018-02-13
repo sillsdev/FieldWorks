@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -87,7 +87,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public override void FinishInit()
 		{
-			CheckDisposed();
 			var ctrl = new ReversalIndexEntrySliceView(Object.Hvo)
 			{
 				Cache = PropertyTable.GetValue<LcmCache>("cache")
@@ -112,12 +111,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			CheckDisposed();
-
-			if (hvo == m_obj.Hvo && tag == LexSenseTags.kflidReversalEntries)
+			if (hvo == Object.Hvo && tag == LexSenseTags.kflidReversalEntries)
 			{
-				ReversalIndexEntrySliceView ctrl = Control as ReversalIndexEntrySliceView;
-				ctrl.ResetEntries();
+				((ReversalIndexEntrySliceView)Control).ResetEntries();
 			}
 		}
 

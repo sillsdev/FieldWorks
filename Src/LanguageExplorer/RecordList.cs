@@ -1720,8 +1720,6 @@ namespace LanguageExplorer
 		// TODO: I think this may be a bad merge.
 		public virtual void Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
 		{
-			CheckDisposed();
-
 			BaseInit(cache, mediator, propertyTable, recordListNode);
 			string owner = XmlUtils.GetOptionalAttributeValue(recordListNode, "owner");
 			bool analysis = XmlUtils.GetOptionalBooleanAttributeValue(recordListNode, "analysisWs", false);
@@ -1984,8 +1982,6 @@ namespace LanguageExplorer
 		/// <param name="display"></param>
 		public virtual void AdjustInsertCommandName(Command command, UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 		}
 #endif
 

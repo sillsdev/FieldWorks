@@ -103,8 +103,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void SetDlgValues(IMatcher matcher, IVwStylesheet stylesheet)
 		{
-			CheckDisposed();
-
 			// Figure out which kind to check
 			if (matcher is AnywhereMatcher)
 			{
@@ -145,8 +143,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
-
 				m_ivwpattern.Pattern = m_textBox.Tss;
 				m_ivwpattern.MatchCase = m_MatchCasecheckBox.Checked;
 				m_ivwpattern.MatchDiacritics = m_MatchDiacriticscheckBox.Checked;
@@ -211,8 +207,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_textBox.Text.Length == 0) // case where nothing was entered
 				{
 					return "";					// return an empty string
@@ -238,19 +232,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					return "/" + pattern + "/";
 				}
 				return "#" + pattern + "#";
-			}
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 			}
 		}
 

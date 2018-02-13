@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,7 +14,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 	/// <summary />
 	internal sealed class RevEntrySensesCollectionReferenceLauncher : VectorReferenceLauncher
 	{
-		private System.ComponentModel.IContainer components = null;
+		private System.ComponentModel.IContainer components;
 
 		/// <summary />
 		public RevEntrySensesCollectionReferenceLauncher()
@@ -74,16 +74,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <summary />
 		public override void AddItem(ICmObject obj)
 		{
-			CheckDisposed();
-
-			var selectedSense = obj as ILexSense;
-			var col = selectedSense.ReversalEntriesRC;
+			var col = ((ILexSense)obj).ReversalEntriesRC;
 			if (col.Contains(m_obj as IReversalIndexEntry))
 			{
 				return;
 			}
 			var h1 = m_vectorRefView.RootBox.Height;
-			using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, LanguageExplorerResources.ksUndoAddRevToSense, LanguageExplorerResources.ksRedoAddRevToSense))
+			using (var helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, LanguageExplorerResources.ksUndoAddRevToSense, LanguageExplorerResources.ksRedoAddRevToSense))
 			{
 				col.Add(m_obj as IReversalIndexEntry);
 				helper.RollBack = false;

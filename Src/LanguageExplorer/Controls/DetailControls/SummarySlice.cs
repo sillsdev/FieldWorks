@@ -65,7 +65,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				m_layout = XmlUtils.GetOptionalAttributeValue(CallerNode, "param") ?? XmlUtils.GetMandatoryAttributeValue(ConfigurationNode, "layout");
 				m_collapsedLayout = XmlUtils.GetOptionalAttributeValue(CallerNode, "collapsedLayout") ?? XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "collapsedLayout");
-				m_view = new SummaryXmlView(m_obj.Hvo, m_layout, this);
+				m_view = new SummaryXmlView(Object.Hvo, m_layout, this);
 			}
 
 			var panel = new Panel
@@ -196,14 +196,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fActive;
 			}
 			set
 			{
-				CheckDisposed();
 				if (m_fActive == value)
+				{
 					return;
+				}
 				m_fActive = value;
 				TreeNode?.Invalidate();
 				if (m_commandControl == null)
@@ -226,12 +226,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_strLabel;
 			}
 			set
 			{
-				CheckDisposed();
 				// For LiteralString Summary slices we don't want to set the label since
 				// it's already been set in m_view and setting it here would double labels.
 				if (m_layout != null)
@@ -244,14 +242,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// This class's root site is NOT its control.
 		/// </summary>
-		public override RootSite RootSite
-		{
-			get
-			{
-				CheckDisposed();
-				return m_view;
-			}
-		}
+		public override RootSite RootSite => m_view;
 
 		/// <summary>
 		/// We display the context menu icon on the right in a summary slice whenever we show
@@ -259,7 +250,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override bool ShowContextMenuIconInTreeNode()
 		{
-			CheckDisposed();
 			return Active;
 		}
 
@@ -303,8 +293,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool OnDisplayMoveItemUpInVector(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			var command = (Command)commandObject;
 			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			bool fIsValid = false;
@@ -327,8 +315,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool OnMoveItemUpInVector(object argument)
 		{
-			CheckDisposed();
-
 			var rec = Object as IRnGenericRec;
 			var recOwner = rec?.Owner as IRnGenericRec;
 			if (recOwner == null)
@@ -355,8 +341,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool OnDisplayMoveItemDownInVector(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			var command = (Command)commandObject;
 			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			bool fIsValid = false;
@@ -382,8 +366,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool OnMoveItemDownInVector(object argument)
 		{
-			CheckDisposed();
-
 			var rec = Object as IRnGenericRec;
 			var recOwner = rec?.Owner as IRnGenericRec;
 			if (recOwner == null)
@@ -411,8 +393,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool OnDisplayPromoteSubitemInVector(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			var command = (Command)commandObject;
 			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			bool fIsValid = false;
@@ -431,8 +411,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool OnPromoteSubitemInVector(object argument)
 		{
-			CheckDisposed();
-
 			var rec = Object as IRnGenericRec;
 			var recOwner = rec?.Owner as IRnGenericRec;
 			if (recOwner == null)
@@ -470,8 +448,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool OnDisplayDemoteSubitemInVector(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			var command = (Command)commandObject;
 			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			bool fIsValid = false;
@@ -493,8 +469,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool OnDemoteSubitemInVector(object argument)
 		{
-			CheckDisposed();
-
 			var rec = Object as IRnGenericRec;
 			if (rec == null)
 			{

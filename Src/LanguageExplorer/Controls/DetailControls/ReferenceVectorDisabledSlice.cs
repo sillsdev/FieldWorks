@@ -14,7 +14,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 		public override void FinishInit()
 		{
-			CheckDisposed();
 			base.FinishInit();
 			var view = (VectorReferenceView)((VectorReferenceLauncher)Control).MainControl;
 			view.FinishInit(ConfigurationNode);

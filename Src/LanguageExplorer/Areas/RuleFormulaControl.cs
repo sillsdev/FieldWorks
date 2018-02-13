@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -33,7 +33,6 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	internal class RuleFormulaControl : ButtonLauncher, IPatternControl
 	{
-		protected InsertionControl m_insertionControl;
 		protected PatternView m_view;
 
 		public RuleFormulaControl()
@@ -47,32 +46,19 @@ namespace LanguageExplorer.Areas
 			InitializeComponent();
 		}
 
-		public RootSite RootSite
-		{
-			get
-			{
-				CheckDisposed();
-				return m_view;
-			}
-		}
+		public RootSite RootSite => m_view;
 
-		public InsertionControl InsertionControl
-		{
-			get
-			{
-				CheckDisposed();
-				return m_insertionControl;
-			}
-		}
+		public InsertionControl InsertionControl { get; protected set; }
 
 		public override bool SliceIsCurrent
 		{
 			set
 			{
-				CheckDisposed();
 				base.SliceIsCurrent = value;
 				if (value)
+				{
 					m_view.Select();
+				}
 			}
 		}
 
@@ -83,7 +69,6 @@ namespace LanguageExplorer.Areas
 		{
 			get
 			{
-				CheckDisposed();
 				var ctxt = CurrentContext;
 				if (ctxt  != null && ctxt.ClassID == PhSimpleContextNCTags.kClassId)
 				{
@@ -104,7 +89,6 @@ namespace LanguageExplorer.Areas
 		{
 			get
 			{
-				CheckDisposed();
 				var ctxt = CurrentContext;
 				if (ctxt == null || ctxt.ClassID != PhSimpleContextNCTags.kClassId)
 				{
@@ -122,7 +106,6 @@ namespace LanguageExplorer.Areas
 		{
 			get
 			{
-				CheckDisposed();
 				var ctxt = CurrentContext;
 				if (ctxt == null || ctxt.ClassID != PhSimpleContextSegTags.kClassId)
 				{
@@ -141,7 +124,6 @@ namespace LanguageExplorer.Areas
 		{
 			get
 			{
-				CheckDisposed();
 				var obj = CurrentObject;
 				if (obj == null)
 				{
@@ -161,7 +143,6 @@ namespace LanguageExplorer.Areas
 		{
 			get
 			{
-				CheckDisposed();
 				var sel = SelectionHelper.Create(m_view);
 				var obj = GetCmObject(sel, SelectionHelper.SelLimitType.Anchor);
 				var endObj = GetCmObject(sel, SelectionHelper.SelLimitType.End);
@@ -173,11 +154,8 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName,
-			IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
-			CheckDisposed();
-
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 
 			m_mainControl = m_view;
@@ -186,7 +164,7 @@ namespace LanguageExplorer.Areas
 			m_view.RemoveItemsRequested += RemoveItemsRequested;
 			m_view.ContextMenuRequested += ContextMenuRequested;
 
-			m_insertionControl.Insert += m_insertionControl_Insert;
+			InsertionControl.Insert += m_insertionControl_Insert;
 		}
 
 		private static int ToCellId(object ctxt)
@@ -969,7 +947,7 @@ namespace LanguageExplorer.Areas
 		private void SelectionChanged(object sender, EventArgs eventArgs)
 		{
 			// since the context has changed update the display options on the insertion control
-			m_insertionControl.UpdateOptionsDisplay();
+			InsertionControl.UpdateOptionsDisplay();
 		}
 
 		/// <summary>
@@ -1007,7 +985,7 @@ namespace LanguageExplorer.Areas
 		private void InitializeComponent()
 		{
 			this.m_view = new LanguageExplorer.Controls.LexText.PatternView();
-			this.m_insertionControl = new InsertionControl();
+			this.InsertionControl = new InsertionControl();
 			this.m_panel.SuspendLayout();
 			this.SuspendLayout();
 			//
@@ -1043,19 +1021,19 @@ namespace LanguageExplorer.Areas
 			//
 			// m_insertionControl
 			//
-			this.m_insertionControl.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.m_insertionControl.Location = new System.Drawing.Point(0, 20);
-			this.m_insertionControl.Name = "m_insertionControl";
-			this.m_insertionControl.Size = new System.Drawing.Size(247, 23);
-			this.m_insertionControl.TabIndex = 2;
+			this.InsertionControl.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.InsertionControl.Location = new System.Drawing.Point(0, 20);
+			this.InsertionControl.Name = "InsertionControl";
+			this.InsertionControl.Size = new System.Drawing.Size(247, 23);
+			this.InsertionControl.TabIndex = 2;
 			//
 			// RuleFormulaControl
 			//
 			this.Controls.Add(this.m_view);
-			this.Controls.Add(this.m_insertionControl);
+			this.Controls.Add(this.InsertionControl);
 			this.Name = "RuleFormulaControl";
 			this.Size = new System.Drawing.Size(247, 43);
-			this.Controls.SetChildIndex(this.m_insertionControl, 0);
+			this.Controls.SetChildIndex(this.InsertionControl, 0);
 			this.Controls.SetChildIndex(this.m_view, 0);
 			this.Controls.SetChildIndex(this.m_panel, 0);
 			this.m_panel.ResumeLayout(false);

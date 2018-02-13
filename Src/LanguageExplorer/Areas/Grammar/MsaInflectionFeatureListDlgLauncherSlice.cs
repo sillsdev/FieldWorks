@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -78,14 +78,14 @@ namespace LanguageExplorer.Areas.Grammar
 
 			var ctrl = (MsaInflectionFeatureListDlgLauncher)Control;
 
-			m_flid = GetFlid(ConfigurationNode, m_obj);
+			m_flid = GetFlid(ConfigurationNode, Object);
 			if (m_flid != 0)
 			{
-				m_fs = GetFeatureStructureFromMSA(m_obj, m_flid);
+				m_fs = GetFeatureStructureFromMSA(Object, m_flid);
 			}
 			else
 			{
-				m_fs = m_obj as IFsFeatStruc;
+				m_fs = Object as IFsFeatStruc;
 				m_flid = FsFeatStrucTags.kflidFeatureSpecs;
 			}
 
@@ -101,22 +101,22 @@ namespace LanguageExplorer.Areas.Grammar
 
 		private void RemoveFeatureStructureFromMSA()
 		{
-			if (m_obj != null)
+			if (Object != null)
 			{
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
-					switch (m_obj.ClassID)
+					switch (Object.ClassID)
 					{
 						case MoStemMsaTags.kClassId:
-							var stem = (IMoStemMsa)m_obj;
+							var stem = (IMoStemMsa)Object;
 							stem.MsFeaturesOA = null;
 							break;
 						case MoInflAffMsaTags.kClassId:
-							var infl = (IMoInflAffMsa)m_obj;
+							var infl = (IMoInflAffMsa)Object;
 							infl.InflFeatsOA = null;
 							break;
 						case MoDerivAffMsaTags.kClassId:
-							var derv = (IMoDerivAffMsa) m_obj;
+							var derv = (IMoDerivAffMsa) Object;
 							if (m_flid == MoDerivAffMsaTags.kflidFromMsFeatures)
 							{
 								derv.FromMsFeaturesOA = null;
@@ -158,7 +158,6 @@ namespace LanguageExplorer.Areas.Grammar
 		/// </summary>
 		public override void FinishInit()
 		{
-			CheckDisposed();
 			Control = new MsaInflectionFeatureListDlgLauncher();
 		}
 
@@ -176,13 +175,6 @@ namespace LanguageExplorer.Areas.Grammar
 		}
 
 		/// <summary />
-		public override int Flid
-		{
-			get
-			{
-				CheckDisposed();
-				return m_flid;
-			}
-		}
+		public override int Flid => m_flid;
 	}
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -77,14 +77,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			InitializeComponent();
 		}
 
-		public override string AccName
-		{
-			get
-			{
-				CheckDisposed();
-				return "LanguageExplorer.Areas.TextsAndWords.Interlinear.ComplexConcControl";
-			}
-		}
+		public override string AccName => "LanguageExplorer.Areas.TextsAndWords.Interlinear.ComplexConcControl";
 
 		#region Overrides of ConcordanceControlBase
 
@@ -288,7 +281,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
-				CheckDisposed();
 				var sel = SelectionHelper.Create(m_view);
 				var anchorNode = GetNode(sel, SelectionHelper.SelLimitType.Anchor);
 				var endNode = GetNode(sel, SelectionHelper.SelLimitType.End);
@@ -661,7 +653,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 #if RANDYTODO
 		public bool OnDisplayPatternNodeGroup(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			ComplexConcPatternNode[] nodes = CurrentNodes;
 			bool enable = nodes.Length > 1 && !(nodes[0] is ComplexConcOrNode) && !(nodes[nodes.Length - 1] is ComplexConcOrNode);
 			display.Enabled = enable;
@@ -672,7 +663,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public bool OnPatternNodeGroup(object args)
 		{
-			CheckDisposed();
 			var nodes = CurrentNodes;
 			var group = GroupNodes(nodes);
 			ReconstructView(group, false);
@@ -682,7 +672,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 #if RANDYTODO
 		public bool OnDisplayPatternNodeSetOccurrence(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			SelectionHelper sel = SelectionHelper.Create(m_view);
 			ComplexConcPatternNode[] nodes = CurrentNodes;
 			bool enable = sel.IsRange && !(nodes[0] is ComplexConcOrNode) && !(nodes[nodes.Length - 1] is ComplexConcOrNode);
@@ -694,10 +683,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public bool OnPatternNodeSetOccurrence(object args)
 		{
-			CheckDisposed();
-
 			var nodes = CurrentNodes;
-
 			int min, max;
 #if RANDYTODO
 			var cmd = (Command) args;
@@ -763,7 +749,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 #if RANDYTODO
 		public bool OnDisplayPatternNodeSetCriteria(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			SelectionHelper sel = SelectionHelper.Create(m_view);
 			ComplexConcPatternNode[] nodes = CurrentNodes;
 			bool enable = sel.IsRange && nodes.Length == 1 && (nodes[0] is ComplexConcWordNode || nodes[0] is ComplexConcMorphNode || nodes[0] is ComplexConcTagNode);
@@ -775,9 +760,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public bool OnPatternNodeSetCriteria(object args)
 		{
-			CheckDisposed();
 			var nodes = CurrentNodes;
-
 			var wordNode = nodes[0] as ComplexConcWordNode;
 			var fwMainWnd = PropertyTable.GetValue<Form>("window");
 			if (wordNode != null)

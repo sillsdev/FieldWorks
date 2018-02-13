@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -95,8 +95,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			Guard.AgainstNull(targetCandidates, nameof(targetCandidates));
 
-			CheckDisposed();
-
 			targetCandidates.Add(this);
 			return ContainsFocus ? this : null;
 		}
@@ -112,26 +110,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public bool PrepareToGoAway()
 		{
-			CheckDisposed();
 			return true;
 		}
 
-		public string AreaName
-		{
-			get
-			{
-				CheckDisposed();
-				return AreaServices.TextAndWordsAreaMachineName;
-			}
-		}
-
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
+		public string AreaName => AreaServices.TextAndWordsAreaMachineName;
 
 		/// <summary>
 		/// Clean up any resources being used.

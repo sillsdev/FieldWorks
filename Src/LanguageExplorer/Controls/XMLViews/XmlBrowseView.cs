@@ -39,8 +39,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_xbvvc == null)
 				{
 					m_xbvvc = new XmlBrowseViewVc(m_nodeSpec, MainTag, this);
@@ -328,8 +326,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected override void HandleSelectionChange(IVwRootBox rootb, IVwSelection vwselNew)
 		{
-			CheckDisposed();
-
 			// Guard against recursive calls, typically caused by the MakeTextSelection call below.
 			if (m_fInSelectionChanged)
 			{
@@ -417,8 +413,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </remarks>
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			CheckDisposed();
-
 			var oldIndex = m_selectedIndex;
 			var oldHvoRoot = m_hvoRoot;
 

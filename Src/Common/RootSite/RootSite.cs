@@ -209,7 +209,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return EditingHelper as RootSiteEditingHelper;
 			}
 		}
@@ -260,7 +259,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return kdypBaselineParagraphHeight;
 			}
 		}
@@ -275,8 +273,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_wsf == null && m_cache != null)
 					return m_cache.WritingSystemFactory;
 				return m_wsf;
@@ -295,7 +291,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_cache != null;
 			}
 		}
@@ -309,8 +304,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public override string get_TextRepOfObj(ref Guid _guid)
 		{
-			CheckDisposed();
-
 			return RootSiteEditingHelper.TextRepOfObj(m_cache, _guid);
 		}
 
@@ -524,13 +517,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_cache;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_cache = value;
 				if (m_cache != null)
 				{
@@ -549,13 +539,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_group;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_group = value;
 				base.AutoScroll = (m_group != null) ? (m_group.ScrollingController == this) : false;
 			}
@@ -572,13 +559,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return base.AutoScroll;
 			}
 			set
 			{
-				CheckDisposed();
-
 				// should only be set if we are the scrolling controller
 				if (m_group == null || m_group.ScrollingController == this)
 					base.AutoScroll = value;
@@ -594,13 +578,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return base.Zoom;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_group == null || m_group.Slaves.Count == 0)
 					base.Zoom = value;
 				else
@@ -631,15 +612,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
-
 				return (m_group == null || this == m_group.ScrollingController ?
 					base.ScrollPosition : m_group.ScrollingController.ScrollPosition);
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_group == null || this == m_group.ScrollingController)
 					base.ScrollPosition = value;
 				else
@@ -676,15 +653,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
-
 				return (m_group == null || this == m_group.ScrollingController ?
 					base.ScrollMinSize : m_group.ScrollingController.ScrollMinSize);
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_group == null || this == m_group.ScrollingController)
 					base.ScrollMinSize = value;
 				else
@@ -911,8 +884,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		private void HandleSelectionChange(object sender, VwSelectionArgs args)
 		{
-			CheckDisposed();
-
 			IVwRootBox rootb = args.RootBox;
 			IVwSelection vwselNew = args.Selection;
 			Debug.Assert(vwselNew != null);
@@ -960,8 +931,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public override Guid get_MakeObjFromText(string bstrText, IVwSelection _selDst,
 			out int kodt)
 		{
-			CheckDisposed();
-
 			return RootSiteEditingHelper.MakeObjFromText(m_cache, bstrText, _selDst, out kodt);
 		}
 
@@ -1053,8 +1022,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public override void InvalidateForLazyFix()
 		{
-			CheckDisposed();
-
 			if (m_group != null)
 				m_group.InvalidateForLazyFix();
 			else
@@ -1068,8 +1035,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public override void ScrollToTop()
 		{
-			CheckDisposed();
-
 			if (m_group != null && this != m_group.ScrollingController)
 				m_group.ScrollingController.ScrollToTop();
 			else
@@ -1083,8 +1048,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public override void ScrollToEnd()
 		{
-			CheckDisposed();
-
 			if (m_group != null && this != m_group.ScrollingController)
 			{
 				m_group.ScrollingController.ScrollToEnd();
@@ -1104,8 +1067,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public override int GetWritingSystemForHvo(int hvo)
 		{
-			CheckDisposed();
-
 			return m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 		}
 		#endregion
@@ -1126,8 +1087,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual int EstimateHeight(int hvo, int frag, int availableWidth)
 		{
-			CheckDisposed();
-
 			return (int)(10 * Zoom);
 		}
 		#endregion
@@ -1259,17 +1218,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			base.Dispose(disposing);
 		}
 
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
 		#endregion IDisposable override
 
 		#region Methods
@@ -1300,8 +1248,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual void Synchronize(IVwRootBox rootb)
 		{
-			CheckDisposed();
-
 			Synchronizer.AddRoot(rootb);
 		}
 
@@ -1315,8 +1261,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public void AddToSyncGroup(IRootSiteSlave rootsite)
 		{
-			CheckDisposed();
-
 			if (rootsite == null)
 				return;
 			m_slaves.Add(rootsite);
@@ -1330,8 +1274,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public void InvalidateForLazyFix()
 		{
-			CheckDisposed();
-
 			foreach (RootSite rootsite in m_slaves)
 				rootsite.Invalidate();
 		}
@@ -1347,7 +1289,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_slaves;
 			}
 		}
@@ -1362,13 +1303,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_scrollingController;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_scrollingController != null)
 				{
 					m_scrollingController.VerticalScrollPositionChanged -=
@@ -1395,12 +1333,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fSuppressSizeChangedEffects;
 			}
 			set
 			{
-				CheckDisposed();
 				m_fSuppressSizeChangedEffects = value;
 			}
 		}
@@ -1415,8 +1351,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_activeViewHelper == null)
 					m_activeViewHelper = new ActiveViewHelper(this);
 
@@ -1439,7 +1373,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return m_sync;
 			}
 		}
@@ -1474,8 +1407,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public bool ScrollSelectionToLocation(IVwSelection sel, int dyPos)
 		{
-			CheckDisposed();
-
 			throw new NotImplementedException("ScrollSelectionToLocation is not implemented for RootSiteGroup");
 		}
 
@@ -1486,8 +1417,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual bool RefreshDisplay()
 		{
-			CheckDisposed();
-
 			Debug.Assert(ScrollingController != null);
 			// RefreshDisplay now happens through all sync'd views in the Views code.
 			ScrollingController.RefreshDisplay();
@@ -1502,8 +1431,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual void CloseRootBox()
 		{
-			CheckDisposed();
-
 			for (int i = 0; i < m_slaves.Count; i++)
 			{
 				if (m_slaves[i] is IRootSite)
@@ -1520,8 +1447,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual IVwRootSite CastAsIVwRootSite()
 		{
-			CheckDisposed();
-
 			IRootSite rootSite = FocusedRootSite;
 			// If we didn't find the focused rootsite then find the first slave that is an
 			// IRootSite.
@@ -1550,7 +1475,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return (FocusedRootSite == null ? null : FocusedRootSite.EditingHelper);
 			}
 		}
@@ -1563,8 +1487,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual List<IVwRootBox> AllRootBoxes()
 		{
-			CheckDisposed();
-
 			List<IVwRootBox> rootboxes = new List<IVwRootBox>();
 			for (int i = 0; i < m_slaves.Count; i++)
 			{
@@ -1587,12 +1509,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				return true;
 			}
 			set
 			{
-				CheckDisposed();
 			}
 		}
 
@@ -1647,8 +1567,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public int EstimateHeight(int hvo, int frag, int availableWidth)
 		{
-			CheckDisposed();
-
 			// Find maximum height of all rootsite slaves in view
 			int maxHeight = 0;
 			int paraHeight;

@@ -1,8 +1,7 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Windows.Forms;
 using System.Diagnostics;
 
@@ -32,7 +31,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			set
 			{
-				CheckDisposed();
 				m_lblMessage1_Warning.Text = value;
 			}
 		}
@@ -44,7 +42,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			set
 			{
-				CheckDisposed();
 				m_lblMessage2_Question.Text = value;
 			}
 		}
@@ -60,19 +57,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			//
 			// TODO: Add any constructor code after InitializeComponent call
 			//
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
 		}
 
 		/// <summary>

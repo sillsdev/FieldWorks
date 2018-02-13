@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -372,8 +372,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			m_rootb = null;
 
 			if (m_cache == null || DesignMode)
@@ -406,7 +404,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return GetWritingSystemOptions(true);
 			}
 		}
@@ -451,8 +448,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary></summary>
 		internal void TriggerDisplay(IVwEnv vwenv)
 		{
-			CheckDisposed();
-
 			if (Display != null)
 				Display(this, new VwEnvEventArgs(vwenv));
 		}
@@ -462,8 +457,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		public void SelectAt(int ws, int ich)
 		{
-			CheckDisposed();
-
 			var cpropPrevious = 0;
 			if (ws != m_rgws[0].Handle)
 			{

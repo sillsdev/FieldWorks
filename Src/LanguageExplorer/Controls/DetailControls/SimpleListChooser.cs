@@ -88,17 +88,17 @@ namespace LanguageExplorer.Controls.DetailControls
 						var sTopPOS = DetailControlsStrings.ksQuestionable;
 						if (sTarget == null || sTarget.ToLower() == "owner")
 						{
-							hvoPos = m_hvoTextParam;
+							hvoPos = TextParamHvo;
 							sTopPOS = TextParam;
 						}
 						else if (sTarget.ToLower() == "toppos")
 						{
-							hvoPos = GetHvoOfHighestPOS(m_hvoTextParam, out sTopPOS);
+							hvoPos = GetHvoOfHighestPOS(TextParamHvo, out sTopPOS);
 						}
 						sLabel = string.Format(sLabel, sTopPOS);
 						var fOptional = XmlUtils.GetOptionalBooleanAttributeValue(node, "optional", false);
 						var sTitle = StringTable.Table.GetString(fOptional ? "OptionalSlot" : "ObligatorySlot", "Linguistics/Morphology/TemplateTable");
-						AddLink(sLabel, LinkType.kSimpleLink, new MakeInflAffixSlotChooserCommand(m_cache, true, sTitle, hvoPos, fOptional, m_propertyTable, m_publisher, m_subscriber));
+						AddLink(sLabel, LinkType.kSimpleLink, new MakeInflAffixSlotChooserCommand(Cache, true, sTitle, hvoPos, fOptional, m_propertyTable, m_publisher, m_subscriber));
 					}
 					break;
 				default:

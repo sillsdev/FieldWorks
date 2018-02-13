@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -387,17 +387,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			LoadSortLanguageComboBox();
 		}
 
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
 		/// <summary/>
 		protected override void Dispose(bool disposing)
 		{
@@ -451,8 +440,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="displayRelatedWss">if set to <c>true</c> related writing systems will be displayed.</param>
 		public void SetupDialog(CoreWritingSystemDefinition selectedWs, bool displayRelatedWss)
 		{
-			CheckDisposed();
-
 			SetupDialog(m_wsManager.CreateFrom(selectedWs), selectedWs, displayRelatedWss);
 		}
 
@@ -464,8 +451,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="displayRelatedWss">if set to <c>true</c> related writing systems will be displayed.</param>
 		public void SetupDialog(string languageTag, string languageName, bool displayRelatedWss)
 		{
-			CheckDisposed();
-
 			LanguageSubtag languageSubtag;
 			ScriptSubtag scriptSubtag;
 			RegionSubtag regionSubtag;
@@ -847,8 +832,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_tempWritingSystems.Keys.Where(IsNew);
 			}
 		}
@@ -863,7 +846,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fChanged;
 			}
 		}
@@ -1889,8 +1871,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public void AddNewWsForLanguage()
 		{
-			CheckDisposed();
-
 			// Definitely copy China region for new zh ws. Probably not a bad idea to copy other regions as well if selected.
 			CoreWritingSystemDefinition tempWs = m_wsManager.Create(CurrentWritingSystem.Language, null, CurrentWritingSystem.Region, Enumerable.Empty<VariantSubtag>());
 
@@ -2277,8 +2257,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="index">The index.</param>
 		public virtual void SwitchTab(int index)
 		{
-			CheckDisposed();
-
 			tabControl.SelectedIndex = index;
 			switch(index)
 			{

@@ -79,20 +79,6 @@ namespace LanguageExplorer.LcmUi
 		#endregion Construction
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -192,12 +178,10 @@ namespace LanguageExplorer.LcmUi
 		{
 			get
 			{
-				CheckDisposed();
 				return m_cache;
 			}
 			set
 			{
-				CheckDisposed();
 				m_cache = value;
 				// The following fixes LT-6298: when a control needs a writing system factory,
 				// it needs a *VALID* writing system factory!
@@ -228,14 +212,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Get the actual tree control.
 		/// </summary>
-		public Control Control
-		{
-			get
-			{
-				CheckDisposed();
-				return m_tree;
-			}
-		}
+		public Control Control => m_tree;
 
 		protected abstract ICmPossibilityList List
 		{
@@ -312,8 +289,6 @@ namespace LanguageExplorer.LcmUi
 
 		public void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnable, ProgressState state)
 		{
-			CheckDisposed();
-
 			var tss = TsStringUtils.MakeString(m_selectedLabel, m_cache.DefaultAnalWs);
 			var i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
@@ -354,23 +329,14 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Subclasses may override if they can clear the field value.
 		/// </summary>
-		public virtual bool CanClearField
-		{
-			get
-			{
-				CheckDisposed();
-				return false;
-			}
-		}
+		public virtual bool CanClearField => false;
 
 		/// <summary>
 		/// Subclasses should override if they override CanClearField to return true.
 		/// </summary>
 		public virtual void SetClearField()
 		{
-			CheckDisposed();
-
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public virtual List<int> FieldPath => null;

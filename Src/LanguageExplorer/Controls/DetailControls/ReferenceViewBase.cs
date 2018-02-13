@@ -51,7 +51,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, LcmCache cache, string displayNameProperty)
 		{
-			CheckDisposed();
 			// We can reinitialize in some cases but should not reuse with a different cache.
 			Debug.Assert(cache != null && (m_cache == null || m_cache == cache));
 			m_displayNameProperty = displayNameProperty;

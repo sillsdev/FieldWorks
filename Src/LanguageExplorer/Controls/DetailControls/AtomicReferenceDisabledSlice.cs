@@ -14,7 +14,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 		public override void FinishInit()
 		{
-			CheckDisposed();
 			base.FinishInit();
 			var arl = (AtomicReferenceLauncher)Control;
 			var view = (AtomicReferenceView)arl.MainControl;

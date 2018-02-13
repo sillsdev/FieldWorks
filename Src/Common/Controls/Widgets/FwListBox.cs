@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -108,12 +108,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fTracking;
 			}
 			set
 			{
-				CheckDisposed();
 				m_fTracking = value;
 			}
 		}
@@ -128,7 +126,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_innerFwListBox;
 			}
 		}
@@ -143,12 +140,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_innerFwListBox.StyleSheet;
 			}
 			set
 			{
-				CheckDisposed();
 				m_innerFwListBox.StyleSheet = value;
 			}
 		}
@@ -162,12 +157,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_tabStopControl;
 			}
 			set
 			{
-				CheckDisposed();
 				m_tabStopControl = value;
 			}
 		}
@@ -195,19 +188,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			BackColor = SystemColors.Window;
 			m_selectedIndex = -1; // initially nothing selected.
 			m_highlightedIndex = -1; // nor highlighted.
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
 		/// <summary>
@@ -251,7 +231,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_items;
 			}
 		}
@@ -290,8 +269,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public void FocusAndCapture()
 		{
-			CheckDisposed();
-
 			m_innerFwListBox.Focus();
 		}
 
@@ -308,14 +285,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return base.BackColor;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_innerFwListBox.BackColor = value;
 				base.BackColor = value;
 			}
@@ -330,14 +303,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return base.ForeColor;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_innerFwListBox.ForeColor = value;
 				base.ForeColor = value;
 			}
@@ -352,14 +321,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_selectedIndex;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (value < -1 || value >= m_items.Count)
 					throw new ArgumentOutOfRangeException("value", value, "index out of range");
 				if (m_selectedIndex != value)
@@ -389,14 +354,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_highlightedIndex;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (value < -1 || value >= m_items.Count)
 					throw new ArgumentOutOfRangeException("value", value, "index out of range");
 				if (m_highlightedIndex != value)
@@ -430,8 +391,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		internal void EnsureRoot()
 		{
-			CheckDisposed();
-
 			if (m_innerFwListBox.RootBox == null)
 				m_innerFwListBox.MakeRoot();
 		}
@@ -446,14 +405,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return GetItem(m_selectedIndex);
 			}
 			set
 			{
-				CheckDisposed();
-
 				int tmpIndex;
 				SetItem(value, out tmpIndex);
 				// reset the initial highlighted item to this.
@@ -471,14 +426,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return GetItem(HighlightedIndex);
 			}
 			set
 			{
-				CheckDisposed();
-
 				int tmpIndex;
 				SetItem(value, out tmpIndex);
 				HighlightedIndex = tmpIndex;
@@ -574,16 +525,12 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_selectedIndex < 0)
 					return null;
 				return TextOfItem(m_items[m_selectedIndex]);
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (value == null)
 					SelectedIndex = -1;
 				int newsel = FindIndexOfTss(value);
@@ -628,8 +575,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public int FindStringExact(string str)
 		{
-			CheckDisposed();
-
 			if (str == null || str == "")
 				return -1;
 			for (int i = 0; i < m_items.Count; ++i)
@@ -657,14 +602,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_innerFwListBox.WritingSystemCode;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_innerFwListBox.WritingSystemCode = value;
 			}
 		}
@@ -680,14 +621,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_innerFwListBox.WritingSystemFactory;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_innerFwListBox.WritingSystemFactory = value;
 				if (m_innerFwListBox != null)
 					m_innerFwListBox.WritingSystemFactory = value;
@@ -705,8 +642,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="cvDel"></param>
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			CheckDisposed();
-
 			// Nothing to do with this yet...maybe we will find something.
 		}
 
@@ -715,8 +650,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		internal void RaiseSelectedIndexChanged()
 		{
-			CheckDisposed();
-
 			if (SelectedIndexChanged != null ) SelectedIndexChanged(this, EventArgs.Empty);
 		}
 
@@ -725,8 +658,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		internal void RaiseSameItemSelected()
 		{
-			CheckDisposed();
-
 			if (SameItemSelected != null )
 			{
 				SameItemSelected(this, EventArgs.Empty);
@@ -751,8 +682,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public virtual ITsString TextOfItem(object item)
 		{
-			CheckDisposed();
-
 			// Enhance JohnT: use ValueItem and reflection to retrieve specified property.
 			ITsString result = item as ITsString;
 			if (result != null)
@@ -803,18 +732,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 
 			#region IDisposable & Co. implementation
-			// Region last reviewed: never
-
-			/// <summary>
-			/// Check to see if the object has been disposed.
-			/// All public Properties and Methods should call this
-			/// before doing anything else.
-			/// </summary>
-			public void CheckDisposed()
-			{
-				if (IsDisposed)
-					throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-			}
 
 			/// <summary>
 			/// True, if the object has been disposed.
@@ -904,7 +821,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				get
 				{
-					CheckDisposed();
 					return false;
 				}
 			}
@@ -913,7 +829,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				get
 				{
-					CheckDisposed();
 					return m_list.Count;
 				}
 			}
@@ -922,7 +837,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				get
 				{
-					CheckDisposed();
 					return false;
 				}
 			}
@@ -933,13 +847,10 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				get
 				{
-					CheckDisposed();
 					return m_list[index];
 				}
 				set
 				{
-					CheckDisposed();
-
 					ITsString oldText = m_owner.TextOfItem(m_list[index]);
 					m_list[index] = value;
 					ITsString newText = m_owner.TextOfItem(m_list[index]);
@@ -969,8 +880,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			/// ------------------------------------------------------------------------------------
 			public int Add(object item)
 			{
-				CheckDisposed();
-
 				int index = m_list.Count; // nb index is count BEFORE Add.
 				m_list.Add(item);
 				InsertItemAtIndex(index, item);
@@ -985,8 +894,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			/// ------------------------------------------------------------------------------------
 			public void AddRange(IEnumerable items)
 			{
-				CheckDisposed();
-
 				int index = m_list.Count; // nb index is count BEFORE Add.
 				int i = 0;
 				foreach (object item in items)
@@ -1018,8 +925,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			/// ------------------------------------------------------------------------------------
 			public virtual void Clear()
 			{
-				CheckDisposed();
-
 				int citems = m_list.Count;
 				ClearAllItems();
 				var cda = m_owner.DataAccess as IVwCacheDa;
@@ -1060,8 +965,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			/// ------------------------------------------------------------------------------------
 			public virtual bool Contains(object item)
 			{
-				CheckDisposed();
-
 				return m_list.Contains(item);
 			}
 
@@ -1074,8 +977,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			/// ------------------------------------------------------------------------------------
 			void ICollection.CopyTo(Array dest, int arrayIndex)
 			{
-				CheckDisposed();
-
 				m_list.CopyTo(dest, arrayIndex);
 			}
 
@@ -1088,7 +989,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				get
 				{
-					CheckDisposed();
 					return this;
 				}
 			}
@@ -1102,7 +1002,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				get
 				{
-					CheckDisposed();
 					return false;
 				}
 			}
@@ -1115,7 +1014,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			/// ------------------------------------------------------------------------------------
 			public virtual IEnumerator GetEnumerator()
 			{
-				CheckDisposed();
 				return m_list.GetEnumerator();
 			}
 
@@ -1128,7 +1026,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			/// ------------------------------------------------------------------------------------
 			public virtual int IndexOf(object item)
 			{
-				CheckDisposed();
 				return m_list.IndexOf(item);
 			}
 
@@ -1141,8 +1038,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			/// ------------------------------------------------------------------------------------
 			public virtual void Insert(int index, object item)
 			{
-				CheckDisposed();
-
 				m_list.Insert(index, item);
 				InsertItemAtIndex(index, item);
 			}
@@ -1183,8 +1078,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			/// --------------------------------------------------------------------------------
 			public virtual void Remove(object item)
 			{
-				CheckDisposed();
-
 				int index = m_list.IndexOf(item);
 				if (index >= 0)
 					RemoveAt(index);
@@ -1198,8 +1091,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			/// --------------------------------------------------------------------------------
 			public virtual void RemoveAt(int index)
 			{
-				CheckDisposed();
-
 				m_list.RemoveAt(index);
 				int hvoObj = m_owner.DataAccess.get_VecItem(
 					InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems, index);
@@ -1295,8 +1186,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_dataAccess;
 			}
 		}
@@ -1313,16 +1202,12 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_writingSystem == 0)
 					m_writingSystem = WritingSystemFactory.UserWs;
 				return m_writingSystem;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_writingSystem = value;
 			}
 		}
@@ -1342,14 +1227,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_fShowHighlight;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (value == m_fShowHighlight)
 					return;
 				m_fShowHighlight = value;
@@ -1361,8 +1242,6 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		public override int GetAvailWidth(IVwRootBox prootb)
 		{
-			CheckDisposed();
-
 			// Simulate infinite width. I (JohnT) think the / 2 is a good idea to prevent overflow
 			// if the view code at some point adds a little bit to it.
 			// return Int32.MaxValue / 2;
@@ -1383,16 +1262,12 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_wsf == null)
 					m_wsf = FwUtils.FwUtils.CreateWritingSystemManager();
 				return base.WritingSystemFactory;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_wsf != value)
 				{
 					base.WritingSystemFactory = value;
@@ -1413,8 +1288,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_owner;
 			}
 		}
@@ -1424,8 +1297,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (DesignMode)
 				return;
 

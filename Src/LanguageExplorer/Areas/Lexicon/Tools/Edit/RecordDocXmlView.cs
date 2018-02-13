@@ -145,8 +145,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 /// <returns></returns>
 		public virtual bool OnDisplayConfigureXmlDocView(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			if (string.IsNullOrEmpty(m_configObjectName))
 			{
 				display.Enabled = display.Visible = false;
@@ -170,7 +168,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <returns></returns>
 		public bool OnConfigureXmlDocView(object commandObject)
 		{
-			CheckDisposed();
 			var sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "layoutProperty");
 			if (string.IsNullOrEmpty(sProp))
 			{

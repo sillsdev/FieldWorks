@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -184,18 +184,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Dispose
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -557,8 +545,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void RefreshListBox()
 		{
-			CheckDisposed();
-
 			if (m_outsideDlgChangedCnvtrs)
 			{
 				// after the dialog is closed, we have to "reboot" the list
@@ -690,7 +676,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			get // used by Writing System Properties Dlg
 			{
-				CheckDisposed();
 				return availableCnvtrsListBox.Text;
 			}
 		}
@@ -953,8 +938,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void RemoveConverter(string converterToRemove)
 		{
-			CheckDisposed();
-
 			// if the converter doesn't exist in the list of installed converters
 			if (!m_encConverters.ContainsKey(converterToRemove))
 			{
@@ -993,8 +976,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public bool AutoSave()
 		{
-			CheckDisposed();
-
 			if (m_suppressAutosave ||
 				(CnvtrTypeComboItem)m_cnvtrPropertiesCtrl.cboConverter.SelectedItem == null)
 			{
@@ -1107,8 +1088,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void InitWSInUse(ISet<string> wsInUse)
 		{
-			CheckDisposed();
-
 			m_WSInUse = wsInUse;
 		}
 
@@ -1152,8 +1131,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public bool InstallConverter()
 		{
-			CheckDisposed();
-
 			if (String.IsNullOrEmpty(ConverterName))
 				return false; // do not add a null converter, even if the warning has been suppressed
 

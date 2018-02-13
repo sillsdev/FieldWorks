@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2017 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -83,8 +83,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public LocationInfo FindNext(LocationInfo startLocation)
 		{
-			CheckDisposed();
-
 			m_StartLocation = startLocation;
 			m_LocationFound = null;
 			m_fHitLimit = false;
@@ -161,8 +159,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public override void AddString(ITsString tss)
 		{
-			CheckDisposed();
-
 			base.AddString(tss);
 
 			if (!m_fGotNonPropInfo)
@@ -183,8 +179,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public override void AddStringProp(int tag, IVwViewConstructor vwvc)
 		{
-			CheckDisposed();
-
 			if (Finished)
 				return;
 
@@ -209,8 +203,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public override void AddStringAltMember(int tag, int ws, IVwViewConstructor vwvc)
 		{
-			CheckDisposed();
-
 			if (Finished)
 				return;
 
@@ -258,7 +250,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return (m_LocationFound != null);
 			}
 		}
@@ -272,7 +263,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fHitLimit;
 			}
 		}
@@ -286,12 +276,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			set
 			{
-				CheckDisposed();
 				m_fHaveWrapped = value;
 			}
 			get
 			{
-				CheckDisposed();
 				return m_fHaveWrapped;
 			}
 		}
@@ -525,20 +513,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public bool IsDisposed
 		{
 			get; private set;
-		}
-
-		/// <summary>
-		/// This method throws an ObjectDisposedException if IsDisposed returns
-		/// true.  This is the case where a method or property in an object is being
-		/// used but the object itself is no longer valid.
-		///
-		/// This method should be added to all public properties and methods of this
-		/// object and all other objects derived from it (extensive).
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException("FindCollectorEnv", "This object is being used after it has been disposed: this is an Error.");
 		}
 
 		#endregion

@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2017 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -125,24 +125,6 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This method throws an ObjectDisposedException if IsDisposed returns
-		/// true.  This is the case where a method or property in an object is being
-		/// used but the object itself is no longer valid.
-		/// This method should be added to all public properties and methods of this
-		/// object and all other objects derived from it (extensive).
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException(string.Format("'{0}' in use after being disposed.",
-					GetType().Name));
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Executes in two distinct scenarios.
 		/// 1. If disposing is true, the method has been called directly
 		/// or indirectly by a user's code via the Dispose method.
@@ -208,8 +190,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			CheckDisposed();
-
 			// The only property that can change is the string, so report TextChanged.
 			OnTextChanged(new EventArgs());
 		}
@@ -225,8 +205,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public void ApplyStyle(string sStyle)
 		{
-			CheckDisposed();
-
 			m_innerFwTextBox.EditingHelper.ApplyStyle(sStyle);
 			m_innerFwTextBox.RefreshDisplay();
 		}
@@ -239,8 +217,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public void ApplyWS(int hvoWs)
 		{
-			CheckDisposed();
-
 			m_innerFwTextBox.ApplyWS(hvoWs);
 		}
 
@@ -284,14 +260,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_innerFwTextBox.m_controlID;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_innerFwTextBox.m_controlID = value;
 			}
 		}
@@ -305,14 +277,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return base.BackColor;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_innerFwTextBox.BackColor = value;
 				base.BackColor = value;
 			}
@@ -327,14 +295,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return base.ForeColor;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_innerFwTextBox.ForeColor = value;
 				base.ForeColor = value;
 			}
@@ -353,16 +317,12 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_innerFwTextBox == null)
 					return ""; // happens somewhere during OnHandleDestroyed sometimes.
 				return m_innerFwTextBox.Text;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_innerFwTextBox.Text = value;
 				OnTextChanged(EventArgs.Empty);
 			}
@@ -378,14 +338,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_innerFwTextBox.Tss;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_tssOrig = value;
 				m_innerFwTextBox.Tss = value;
 				OnTextChanged(EventArgs.Empty);
@@ -420,7 +376,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_innerFwTextBox.Focused;
 			}
 		}
@@ -436,14 +391,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_innerFwTextBox.WritingSystemCode;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_innerFwTextBox.WritingSystemCode = value;
 			}
 		}
@@ -459,14 +410,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_innerFwTextBox.StyleSheet;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_innerFwTextBox.StyleSheet = value;
 			}
 		}
@@ -482,14 +429,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_innerFwTextBox.WritingSystemFactory;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_innerFwTextBox.WritingSystemFactory = value;
 			}
 		}
@@ -584,7 +527,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public void BeginInit()
 		{
-			CheckDisposed();
 			// nothing to do
 		}
 
@@ -595,7 +537,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public void EndInit()
 		{
-			CheckDisposed();
 			if (FindForm() != null)
 				FindForm().Shown += new EventHandler(OnContainingFormShown);
 		}

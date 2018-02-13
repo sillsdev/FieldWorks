@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -33,8 +33,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// ------------------------------------------------------------------------------------
 		public ITsString CallGetTextFromClipboard()
 		{
-			CheckDisposed();
-
 			return GetTextFromClipboard(null, false, TsStringUtils.MakeProps("bla", 1));
 		}
 

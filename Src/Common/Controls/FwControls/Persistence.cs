@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -154,17 +154,6 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
-		/// <summary>
 		///
 		/// </summary>
 		public bool IsDisposed
@@ -218,8 +207,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				RegistryKey key = null;
 				if (Parent is ISettings)
 					key = ((ISettings)Parent).SettingsKey;
@@ -238,14 +225,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_parent;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_parent = value;
 
 				if (m_parent != null)
@@ -275,14 +258,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_fSaveWindowSettings;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_fSaveWindowSettings = value;
 			}
 		}
@@ -298,8 +277,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return new Rectangle(m_normalLeft, m_normalTop, m_normalWidth,
 					m_normalHeight);
 			}
@@ -315,8 +292,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (Parent == null)
 					return true;
 
@@ -452,7 +427,6 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_fHaveLoadedPosition)
 				return;
 			m_fHaveLoadedPosition = true;
-			CheckDisposed();
 
 			RegistryKey key = SettingsKey;
 
@@ -509,8 +483,6 @@ namespace SIL.FieldWorks.Common.Controls
 		///***********************************************************************************
 		public void SaveWindowPosition(RegistryKey key)
 		{
-			CheckDisposed();
-
 			if ((m_normalWidth == 0 || m_normalHeight == 0) && Parent != null)
 			{
 				// make sure that we have a width and height set
@@ -543,8 +515,6 @@ namespace SIL.FieldWorks.Common.Controls
 		///***********************************************************************************
 		public void SaveWindowState(RegistryKey key)
 		{
-			CheckDisposed();
-
 			if(Parent.FindForm().WindowState == FormWindowState.Minimized)
 				key.SetValue(Parent.GetType().Name + sWindowState, (int)FormWindowState.Normal);
 			else
@@ -565,8 +535,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// -----------------------------------------------------------------------------------
 		public void SaveSettingsNow(Control ctrl)
 		{
-			CheckDisposed();
-
 			OnSaveSettings(ctrl, null);
 
 			foreach (Control control in ctrl.Controls)
@@ -619,8 +587,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public virtual void BeginInit()
 		{
-			CheckDisposed();
-
 			m_fInInit = true;
 		}
 
@@ -632,8 +598,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public virtual void EndInit()
 		{
-			CheckDisposed();
-
 			m_fInInit = false;
 			if (m_fLoadSettingsPending)
 				OnLoadSettings(Parent, EventArgs.Empty);

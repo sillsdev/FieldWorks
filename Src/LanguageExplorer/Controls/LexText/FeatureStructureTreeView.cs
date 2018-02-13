@@ -1,8 +1,7 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.LCModel;
@@ -39,8 +38,6 @@ namespace LanguageExplorer.Controls.LexText
 
 		public void PopulateTreeFromInflectableFeats(IEnumerable<IFsFeatDefn> defns)
 		{
-			CheckDisposed();
-
 			foreach (var defn in defns)
 			{
 				AddNode(defn, null);
@@ -49,22 +46,16 @@ namespace LanguageExplorer.Controls.LexText
 
 		public void PopulateTreeFromInflectableFeat(IFsFeatDefn defn)
 		{
-			CheckDisposed();
-
 			AddNode(defn, null);
 		}
 
 		public void PopulateTreeFromFeatureStructure(IFsFeatStruc fs)
 		{
-			CheckDisposed();
-
 			AddNode(fs, null);
 		}
 
 		public new void Sort()
 		{
-			CheckDisposed();
-
 			if (Nodes.Count > 0)
 			{
 				Sort(Nodes);
@@ -72,8 +63,6 @@ namespace LanguageExplorer.Controls.LexText
 		}
 		public void Sort(TreeNodeCollection col)
 		{
-			CheckDisposed();
-
 			if (col.Count == 0)
 			{
 				return;
@@ -313,19 +302,6 @@ namespace LanguageExplorer.Controls.LexText
 				}
 			}
 			tv.Invalidate();
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
 		}
 
 		/// <summary>

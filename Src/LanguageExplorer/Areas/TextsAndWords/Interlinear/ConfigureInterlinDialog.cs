@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -50,9 +50,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private IHelpTopicProvider m_helpTopicProvider;
 		private ImageList imageList1;
 
-		InterlinLineChoices m_choices;
-
-
 		public ConfigureInterlinDialog(LcmCache cache, IHelpTopicProvider helpTopicProvider, InterlinLineChoices choices)
 		{
 			//
@@ -72,7 +69,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_cachedComboBoxes = new Dictionary<WsComboContent, ComboBox.ObjectCollection>();
 
 			m_cache = cache;
-			m_choices = choices;
+			Choices = choices;
 
 			InitPossibilitiesList();
 
@@ -83,19 +80,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			currentList.SelectedIndexChanged += currentList_SelectedIndexChanged;
 			optionsList.SelectedIndexChanged += optionsList_SelectedIndexChanged;
 			EnableControls();
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
 		}
 
 		/// <summary>
@@ -276,26 +260,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 		#endregion
 
-		public InterlinLineChoices Choices
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_choices;
-			}
-		}
+		public InterlinLineChoices Choices { get; }
 
 		// Initialize the list of possible lines.
 		void InitPossibilitiesList()
 		{
-			optionsList.Items.AddRange(m_choices.LineOptions());
+			optionsList.Items.AddRange(Choices.LineOptions());
 		}
 
 		// Init the list and select specified item
 		void InitCurrentList(InterlinLineSpec spec)
 		{
-			InitCurrentList(m_choices.IndexOf(spec));
+			InitCurrentList(Choices.IndexOf(spec));
 		}
 
 		/// <summary>
@@ -306,11 +282,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			currentList.SuspendLayout();
 			currentList.Items.Clear();
-			foreach (InterlinLineSpec ls in m_choices)
+			foreach (InterlinLineSpec ls in Choices)
 			{
 				var cols = new string[2];
 
-				cols[0] = TsStringUtils.NormalizeToNFC(m_choices.LabelFor(ls.Flid));
+				cols[0] = TsStringUtils.NormalizeToNFC(Choices.LabelFor(ls.Flid));
 
 				var wsName = string.Empty;
 				// This tries to find a matching ws from the combo box that would be displayed for this item
@@ -418,10 +394,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// if there is some reason not to.
 			var listIndex = CurrentListIndex;
 			removeButton.Enabled = listIndex >= 0; //Enhance: && m_choices.OkToRemove(listIndex);
-			moveDownButton.Enabled = listIndex >= 0 && m_choices.OkToMoveDown(listIndex);
-			moveUpButton.Enabled = listIndex >= 0 && m_choices.OkToMoveUp(listIndex);
+			moveDownButton.Enabled = listIndex >= 0 && Choices.OkToMoveDown(listIndex);
+			moveUpButton.Enabled = listIndex >= 0 && Choices.OkToMoveUp(listIndex);
 			UpdateWsComboValue();
-			wsCombo.Enabled = listIndex >= 0 && m_choices.OkToChangeWritingSystem(listIndex);
+			wsCombo.Enabled = listIndex >= 0 && Choices.OkToChangeWritingSystem(listIndex);
 		}
 
 		void UpdateWsComboValue()
@@ -430,13 +406,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				m_fUpdatingWsCombo = true;
 				var index = CurrentListIndex;
-				if (index < 0 || index >= m_choices.Count)
+				if (index < 0 || index >= Choices.Count)
 				{
 					wsCombo.SelectedIndex = -1;
 					wsCombo.Enabled = false;
 					return;
 				}
-				var spec = m_choices[index];
+				var spec = Choices[index];
 
 				var comboObjects = WsComboItems(spec.ComboContent);
 				var choices = new object[comboObjects.Count];
@@ -512,7 +488,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return;
 			}
 
-			var spec = m_choices[listIndex];
+			var spec = Choices[listIndex];
 			spec.WritingSystem = getWsFromId(((WsComboItem)wsCombo.SelectedItem).Id);
 
 			InitCurrentList(listIndex);
@@ -526,15 +502,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			var flid = ((LineOption)optionsList.SelectedItem).Flid;
 			var ws = 0;
-			if (m_choices.IndexOf(flid) != -1) // i.e., if m_choices contains flid.
+			if (Choices.IndexOf(flid) != -1) // i.e., if m_choices contains flid.
 			{
-				var existingSpec = m_choices[m_choices.IndexOf(flid)];
+				var existingSpec = Choices[Choices.IndexOf(flid)];
 				var prevWs = existingSpec.WritingSystem;
 
 				foreach (WsComboItem item in WsComboItems(existingSpec.ComboContent))
 				{
 					var newWs = getWsFromId(item.Id);
-					if (newWs != prevWs && m_choices.IndexOf(flid, newWs, true) == -1)
+					if (newWs != prevWs && Choices.IndexOf(flid, newWs, true) == -1)
 					{
 						ws = newWs;
 						break;
@@ -542,7 +518,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 			}
 
-			var index = m_choices.Add(flid, ws);
+			var index = Choices.Add(flid, ws);
 			InitCurrentList(index);
 
 		}
@@ -555,8 +531,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return;
 			}
 			string message;
-			var spec = m_choices[index];
-			if (!m_choices.OkToRemove(spec, out message))
+			var spec = Choices[index];
+			if (!Choices.OkToRemove(spec, out message))
 			{
 				MessageBox.Show(this, message, ITextStrings.ksCannotHideField);
 				return;
@@ -567,29 +543,29 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			m_choices.Remove(spec);
+			Choices.Remove(spec);
 			InitCurrentList(index);
 		}
 
 		private void moveUpButton_Click(object sender, System.EventArgs e)
 		{
-			if (CurrentListIndex < 0 || !m_choices.OkToMoveUp(CurrentListIndex))
+			if (CurrentListIndex < 0 || !Choices.OkToMoveUp(CurrentListIndex))
 			{
 				return;
 			}
-			var spec = m_choices[CurrentListIndex];
-			m_choices.MoveUp(CurrentListIndex);
+			var spec = Choices[CurrentListIndex];
+			Choices.MoveUp(CurrentListIndex);
 			InitCurrentList(spec);
 		}
 
 		private void moveDownButton_Click(object sender, System.EventArgs e)
 		{
-			if (CurrentListIndex < 0 || !m_choices.OkToMoveDown(CurrentListIndex))
+			if (CurrentListIndex < 0 || !Choices.OkToMoveDown(CurrentListIndex))
 			{
 				return;
 			}
-			var spec = m_choices[CurrentListIndex];
-			m_choices.MoveDown(CurrentListIndex);
+			var spec = Choices[CurrentListIndex];
+			Choices.MoveDown(CurrentListIndex);
 			InitCurrentList(spec);
 		}
 
@@ -611,7 +587,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void optionsList_DrawItem(object sender, System.Windows.Forms.DrawItemEventArgs e)
 		{
 			var option = optionsList.Items[e.Index] as LineOption;
-			var spec = m_choices.CreateSpec(option.Flid, 0);
+			var spec = Choices.CreateSpec(option.Flid, 0);
 			DrawItem(e, spec);
 		}
 
@@ -636,7 +612,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void currentList_DrawItem(object sender, DrawListViewItemEventArgs e)
 		{
-			var spec = m_choices[e.ItemIndex] as InterlinLineSpec;
+			var spec = Choices[e.ItemIndex] as InterlinLineSpec;
 			DrawItem(e, spec);
 		}
 
@@ -651,7 +627,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private Brush GetBrush(InterlinLineSpec spec, bool selected)
 		{
-			return selected ? SystemBrushes.HighlightText : new SolidBrush(m_choices.LabelColorFor(spec));
+			return selected ? SystemBrushes.HighlightText : new SolidBrush(Choices.LabelColorFor(spec));
 		}
 
 		private void DrawItem(System.Windows.Forms.DrawListViewItemEventArgs e, InterlinLineSpec spec)

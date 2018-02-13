@@ -68,7 +68,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				// Dispose managed resources here.
 				Control.GotFocus -= Control_GotFocus;
-				m_cache?.DomainDataByFlid?.RemoveNotification(this);
+				Cache?.DomainDataByFlid?.RemoveNotification(this);
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -81,7 +81,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void UpdateDisplayFromDatabase()
 		{
 			var rtb = (RichTextBox)Control;
-			var dt = SilTime.GetTimeProperty(m_cache.DomainDataByFlid, Object.Hvo, m_flid);
+			var dt = SilTime.GetTimeProperty(Cache.DomainDataByFlid, Object.Hvo, m_flid);
 			rtb.Text = dt == DateTime.MinValue ? "Date/Time not set" : string.Format(DetailControlsStrings.ksDateAndTime, dt.ToLongDateString(), dt.ToShortTimeString());
 		}
 

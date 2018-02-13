@@ -77,7 +77,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void SwitchWord(AnalysisOccurrence selected)
 		{
-			CheckDisposed();
 			m_occurrenceSelected = selected;
 			RawWordformWs = 0;
 			TreatAsSentenceInitial = m_occurrenceSelected.Index == 0;

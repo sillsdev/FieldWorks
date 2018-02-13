@@ -21,8 +21,6 @@ namespace LanguageExplorer.Controls.LexText
 		private const int kLine = -1;
 		private const int kMore = -2;
 
-		private bool m_fNotSureIsAny;
-
 		/// <summary>
 		/// Tries to find the tool to jump to, based on the owner of the POS list.
 		/// </summary>
@@ -58,7 +56,7 @@ namespace LanguageExplorer.Controls.LexText
 			//	1. Set the value to 'empty', or
 			//	2. Launch the new Grammatical Category Catalog dlg.
 			AddTimberLine(popupTree);
-			var empty = m_fNotSureIsAny ? AddAnyItem(popupTree) : AddNotSureItem(popupTree);
+			var empty = NotSureIsAny ? AddAnyItem(popupTree) : AddNotSureItem(popupTree);
 			if (hvoTarget == 0)
 			{
 				match = empty;
@@ -70,19 +68,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Set this (before MakeMenuItems is called) to have an 'Any' menu item instead of 'Not sure'.
 		/// </summary>
-		public bool NotSureIsAny
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fNotSureIsAny;
-			}
-			set
-			{
-				CheckDisposed();
-				m_fNotSureIsAny = value;
-			}
-		}
+		public bool NotSureIsAny { get; set; }
 
 		/// <summary>
 		/// Add an 'Any' item to the menu. If the current target is zero, it will be selected.

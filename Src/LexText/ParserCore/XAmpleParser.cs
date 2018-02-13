@@ -76,8 +76,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public void Update()
 		{
-			CheckDisposed();
-
 			if (m_changeListener.Reset() || m_forceUpdate)
 			{
 				XDocument model, template;
@@ -115,15 +113,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public void Reset()
 		{
-			CheckDisposed();
-
 			m_forceUpdate = true;
 		}
 
 		public ParseResult ParseWord(string word)
 		{
-			CheckDisposed();
-
 			var results = new StringBuilder(m_xample.ParseWord(word));
 			results = results.Replace("DB_REF_HERE", "'0'");
 			results = results.Replace("<...>", "[...]");
@@ -260,8 +254,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public XDocument ParseWordXml(string word)
 		{
-			CheckDisposed();
-
 			var sb = new StringBuilder(m_xample.ParseWord(word));
 			sb.Replace("DB_REF_HERE", "'0'");
 			sb.Replace("<...>", "[...]");
@@ -298,8 +290,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public XDocument TraceWordXml(string word, IEnumerable<int> selectTraceMorphs)
 		{
-			CheckDisposed();
-
 			var sb = new StringBuilder(m_xample.TraceWord(word, selectTraceMorphs == null ? null : string.Join(" ", selectTraceMorphs)));
 			sb.Remove(0, 47);
 			sb.Replace("&rsqb;", "]");

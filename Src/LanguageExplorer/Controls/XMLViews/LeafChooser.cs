@@ -48,8 +48,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override bool WantNodeForLabel(ObjectLabel label)
 		{
-			CheckDisposed();
-
 			if (!base.WantNodeForLabel(label)) // currently does nothing, but just in case...
 			{
 				return false;

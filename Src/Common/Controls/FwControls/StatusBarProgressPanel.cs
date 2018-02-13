@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -136,17 +136,6 @@ namespace SIL.FieldWorks.Common.Controls
 			get { return m_isDisposed; }
 		}
 
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
 		private bool m_isDisposed = false;
 		/// <summary>
 		/// Clean up any resources being used.
@@ -218,8 +207,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="state"></param>
 		public void SetStateProvider(ProgressState state)
 		{
-			CheckDisposed();
-
 			m_stateProvider = state;
 			this.Reset();
 		}
@@ -229,8 +216,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public void ClearStateProvider()
 		{
-			CheckDisposed();
-
 			m_stateProvider = null;
 			this.Reset();
 		}
@@ -241,8 +226,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="stateInfo"></param>
 		public void Tick(Object stateInfo)
 		{
-			CheckDisposed();
-
 			if (m_stateProvider == null)
 				return;
 			RefreshSafely();
@@ -282,14 +265,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return _animationStyle;
 			}
 			set
 			{
-				CheckDisposed();
-
 				_animationStyle = value;
 			}
 		}
@@ -302,14 +281,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return _animationTick;
 			}
 			set
 			{
-				CheckDisposed();
-
 				_animationTick = value;
 			}
 		}
@@ -322,14 +297,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return _stepSize;
 			}
 			set
 			{
-				CheckDisposed();
-
 				_stepSize = value;
 			}
 		}
@@ -342,14 +313,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return _startPoint;
 			}
 			set
 			{
-				CheckDisposed();
-
 				_startPoint = value;
 			}
 		}
@@ -362,14 +329,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return _endPoint;
 			}
 			set
 			{
-				CheckDisposed();
-
 				_endPoint = value;
 			}
 		}
@@ -381,8 +344,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				if(m_stateProvider ==null)
 					return 0;
 				int x= m_stateProvider.PercentDone;// ProgressPosition;
@@ -401,14 +362,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return _progressBrush;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (_progressBrush != null)
 					_progressBrush.Dispose();
 				_progressBrush = value;
@@ -423,14 +380,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return _textBrush;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (_textBrush != null)
 					_textBrush.Dispose();
 				_textBrush = value;
@@ -445,14 +398,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return _textFont;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (_textFont != null)
 					_textFont.Dispose();
 				_textFont = value;
@@ -467,14 +416,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return _showText;
 			}
 			set
 			{
-				CheckDisposed();
-
 				_showText = value;
 			}
 		}
@@ -627,8 +572,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public void Refresh()
 		{
-			CheckDisposed();
-
 			//this.Parent.Refresh();
 			RefreshSafely();
 		}
@@ -642,8 +585,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public void Reset()
 		{
-			CheckDisposed();
-
 			m_drawPosition = 0;
 //			StopAnimation();
 			//ProgressPosition = _startPoint;

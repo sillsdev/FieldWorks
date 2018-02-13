@@ -155,8 +155,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		#region IVwNotifyChange methods
 		public virtual void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			CheckDisposed();
-
 			if (tag == MoInflAffixSlotTags.kflidOptional)
 			{
 				UpdateDisplayFromDatabase();
@@ -169,7 +167,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_cb.CheckedChanged -= OnChanged;
 			m_cb.GotFocus -= m_cb_GotFocus;
 
-			m_cb.Checked = IntBoolPropertyConverter.GetBoolean(m_cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), Object.Hvo, m_flid);
+			m_cb.Checked = IntBoolPropertyConverter.GetBoolean(Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), Object.Hvo, m_flid);
 			if (m_fToggleValue)
 			{
 				m_cb.Checked = !m_cb.Checked;
@@ -190,7 +188,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void OnChanged(object obj, EventArgs args)
 		{
-			CheckDisposed();
 			if (!Object.IsValidObject)
 			{
 				return;
@@ -203,7 +200,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					fValue = !fValue;
 				}
-				IntBoolPropertyConverter.SetValueFromBoolean(m_cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), Object.Hvo, m_flid, fValue);
+				IntBoolPropertyConverter.SetValueFromBoolean(Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), Object.Hvo, m_flid, fValue);
 			});
 		}
 

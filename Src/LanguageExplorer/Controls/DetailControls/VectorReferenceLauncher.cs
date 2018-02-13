@@ -66,7 +66,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
-			CheckDisposed();
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 			m_vectorRefView.Initialize(obj, flid, fieldName, cache, displayNameProperty, displayWs);
 		}
@@ -210,7 +209,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected void SetItems(IEnumerable<ICmObject> chosenObjs, string undoText, string redoText)
 		{
-			CheckDisposed();
 			// null indicates that we cancelled out of the chooser dialog -- we shouldn't get
 			// here with that value, but just in case...
 			if (chosenObjs == null)

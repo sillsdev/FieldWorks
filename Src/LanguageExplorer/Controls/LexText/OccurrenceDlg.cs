@@ -48,8 +48,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetHelpTopic(string helpTopic)
 		{
-			CheckDisposed();
-
 			s_helpTopic = helpTopic;
 			InitHelpTopic();
 		}
@@ -59,36 +57,9 @@ namespace LanguageExplorer.Controls.LexText
 			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 		}
 
-		public int Minimum
-		{
-			get
-			{
-				CheckDisposed();
-				return m_cboMin.SelectedIndex;
-			}
-		}
+		public int Minimum => m_cboMin.SelectedIndex;
 
-		public int Maximum
-		{
-			get
-			{
-				CheckDisposed();
-				return m_cboMax.SelectedIndex == 0 ? -1 : m_cboMax.SelectedIndex;
-			}
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
+		public int Maximum => m_cboMax.SelectedIndex == 0 ? -1 : m_cboMax.SelectedIndex;
 
 		/// <summary>
 		/// Clean up any resources being used.

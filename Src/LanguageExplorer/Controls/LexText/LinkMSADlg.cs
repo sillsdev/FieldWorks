@@ -33,15 +33,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Gets the database id of the selected object.
 		/// </summary>
-		public override ICmObject SelectedObject
-		{
-			get
-			{
-				CheckDisposed();
-				return m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().GetObject(((LMsa)m_fwcbFunctions.SelectedItem).HVO);
-			}
-		}
-
+		public override ICmObject SelectedObject => m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().GetObject(((LMsa)m_fwcbFunctions.SelectedItem).HVO);
 		#endregion Properties
 
 		#region	Construction and Destruction
@@ -80,8 +72,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetDlgInfo(LcmCache cache, ILexEntry startingEntry)
 		{
-			CheckDisposed();
-
 			Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
 

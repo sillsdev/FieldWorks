@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2008-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,7 +23,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		private FwTextBox m_fwTextBoxBottomMsg;
 		private LcmCache m_cache;
 		private ILexEntry m_entry;
-		private IMoForm m_allomorph;
 		private IPropertyTable m_propertyTable;
 		private Label label2;
 		private PictureBox pictureBox1;
@@ -41,14 +40,8 @@ namespace LanguageExplorer.Areas.Lexicon
 		private HelpProvider helpProvider;
 
 		/// <summary />
-		public IMoForm SelectedAllomorph
-		{
-			get
-			{
-				CheckDisposed();
-				return m_allomorph;
-			}
-		}
+		public IMoForm SelectedAllomorph { get; private set; }
+
 		public SwapLexemeWithAllomorphDlg()
 		{
 			//
@@ -93,8 +86,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, ILexEntry entry)
 		{
-			CheckDisposed();
-
 			Debug.Assert(cache != null);
 
 			m_propertyTable = propertyTable;
@@ -136,19 +127,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		}
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose(bool disposing)
@@ -182,7 +160,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			// Treat null value as empty string.  This fixes LT-5889, LT-5891, and LT-5914.
 			var sLexVal = m_entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text ?? string.Empty;
 			var sFmt = LanguageExplorerResources.ksSwapXWithY;
-			var sWithVal = m_allomorph.Form.VernacularDefaultWritingSystem.Text ?? string.Empty;
+			var sWithVal = SelectedAllomorph.Form.VernacularDefaultWritingSystem.Text ?? string.Empty;
 			var tss = TsStringUtils.MakeString(string.Format(sFmt, sLexVal, sWithVal, StringUtils.kChHardLB), userWs);
 			m_fwTextBoxBottomMsg.Tss = tss;
 		}
@@ -292,7 +270,7 @@ namespace LanguageExplorer.Areas.Lexicon
 				{
 					continue;
 				}
-				m_allomorph = (IMoForm)lvi.Tag;
+				SelectedAllomorph = (IMoForm)lvi.Tag;
 				SetBottomMessage();
 				break;
 			}

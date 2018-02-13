@@ -216,8 +216,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void SelectAt(int ws, int ich)
 		{
-			CheckDisposed();
-			((LabeledMultiStringView) Control).SelectAt(ws, ich);
+			((LabeledMultiStringView)Control).SelectAt(ws, ich);
 		}
 
 		/// <summary>
@@ -372,15 +371,15 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private void UpdatePronunciationWritingSystems(IReadOnlyList<CoreWritingSystemDefinition> wssToDisplay)
 		{
-			if (wssToDisplay.Count != m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Count
-				|| !m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.SequenceEqual(wssToDisplay))
+			if (wssToDisplay.Count != Cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Count
+				|| !Cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.SequenceEqual(wssToDisplay))
 			{
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
-					m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Clear();
+					Cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Clear();
 					foreach (var ws in wssToDisplay)
 					{
-						m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Add(ws);
+						Cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Add(ws);
 					}
 				});
 			}

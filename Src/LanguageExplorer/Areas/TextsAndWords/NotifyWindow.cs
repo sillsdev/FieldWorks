@@ -105,19 +105,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		protected System.Windows.Forms.Timer viewClock;
 #endregion
 
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
 #region Implementation of IDisposable
 
 		/// <summary>Disposes of the resources (other than memory) used by the <see cref="T:System.Windows.Forms.Form" />.</summary>
@@ -174,8 +161,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public void SetDimensions(int width, int height)
 		{
-			CheckDisposed();
-
 			ActualWidth = width;
 			ActualHeight = height;
 		}
@@ -185,11 +170,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public void Notify()
 		{
-			CheckDisposed();
-
 			if (string.IsNullOrEmpty(Text))
 			{
-				throw new System.Exception("You must set NotifyWindow.Text before calling Notify()");
+				throw new Exception("You must set NotifyWindow.Text before calling Notify()");
 			}
 
 			Width = ActualWidth;

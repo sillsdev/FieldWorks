@@ -54,14 +54,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_showAllTypesCheckBox.Visible;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_showAllTypesCheckBox.Visible = value;
 			}
 		}
@@ -80,7 +76,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				candidates = m_obj.ReferenceTargetCandidates(m_flid);
 			}
-			LoadTree(ObjectLabel.CreateObjectLabels(m_cache, candidates, m_displayNameProperty, "best analorvern"), null, false);
+			LoadTree(ObjectLabel.CreateObjectLabels(Cache, candidates, m_displayNameProperty, "best analorvern"), null, false);
 			MakeSelection(selected);
 		}
 	}

@@ -9,21 +9,15 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	public class ConcView : RootSiteControl
 	{
-		IConcSliceInfo m_info;
 		IVwViewConstructor m_vc;
 		public ConcView(IConcSliceInfo info)
 		{
-			m_info = info;
+			SliceInfo = info;
 		}
-		public IConcSliceInfo SliceInfo
-		{
-			get { CheckDisposed(); return m_info; }
-		}
+		public IConcSliceInfo SliceInfo { get; }
 
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode)
 			{
 				return;
@@ -33,16 +27,16 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			m_rootb.DataAccess = m_cache.DomainDataByFlid;
 
-			m_vc = m_info.Vc;
+			m_vc = SliceInfo.Vc;
 			if (m_vc == null)
 			{
-				if (m_info.DisplayAsContext)
+				if (SliceInfo.DisplayAsContext)
 				{
-					m_vc = new ContextVc(m_info);
+					m_vc = new ContextVc(SliceInfo);
 				}
 				else
 				{
-					m_vc = new SummaryVc(m_info);
+					m_vc = new SummaryVc(SliceInfo);
 				}
 			}
 
@@ -50,7 +44,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// If it doesn't give us one the vc will obtain a key string from the policy
 			// directly. The frag argument is arbitrary. Note that we have to use a non-zero
 			// HVO, even when it doesn't mean anything, to avoid triggering an Assert in the Views code.
-			m_rootb.SetRootObject(m_info.Hvo == 0 ? 1 : m_info.Hvo, m_vc, 1, m_styleSheet);
+			m_rootb.SetRootObject(SliceInfo.Hvo == 0 ? 1 : SliceInfo.Hvo, m_vc, 1, m_styleSheet);
 		}
 	}
 }

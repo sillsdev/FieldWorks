@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -164,17 +164,6 @@ namespace SIL.FieldWorks.Common.Controls
 			base.Dispose( disposing );
 		}
 
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
 		#endregion
 
 		#region Windows Form Designer generated code
@@ -286,14 +275,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return panSteps.Width;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (value > 0 && value < this.Width)
 				{
 					panSteps.Width = value;
@@ -314,14 +299,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_StepsFont;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_StepsFont = value;
 				panSteps.Invalidate();
 			}
@@ -338,14 +319,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_StepTextColor;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_StepTextColor = value;
 				panSteps.Invalidate();
 			}
@@ -361,8 +338,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_CurrentStepNumber;
 			}
 		}
@@ -377,8 +352,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_LastStepNumber;
 			}
 		}
@@ -395,14 +368,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return tabSteps.TabCount;
 			}
 			set
 			{
-				CheckDisposed();
-
 				// Make sure there are never fewer pages than there are steps.
 				if (m_StepNames != null && value < m_StepNames.Length)
 					value = m_StepNames.Length;
@@ -463,14 +432,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_StepNames;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_StepNames = value;
 				m_LastStepNumber = (m_StepNames == null ? -1 : m_StepNames.Length - 1);
 				UpdateStepLabel();

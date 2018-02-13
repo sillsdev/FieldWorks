@@ -198,8 +198,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		void IFwExtension.Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
-			CheckDisposed();
-
 			m_wizard = this;
 			m_cache = cache;
 			PropertyTable = propertyTable;
@@ -590,8 +588,6 @@ namespace LanguageExplorer.Controls.LexText
 		// TODO need way to get language info out of UI for use in the marker step of wizard
 		private Hashtable GetUILanguages()
 		{
-			CheckDisposed();
-
 			var langs = new Hashtable();
 			foreach(ListViewItem lvItem in listViewMappingLanguages.Items)
 			{
@@ -733,8 +729,6 @@ namespace LanguageExplorer.Controls.LexText
 
 		private bool AddInLineMarker(ClsInFieldMarker marker, bool makeSelected)
 		{
-			CheckDisposed();
-
 			// now put the info into the list view
 			string[] columns = {marker.Begin, marker.EndListToString(), marker.Language, marker.Style};
 			var lvItem = new ListViewItem(columns)
@@ -781,8 +775,6 @@ namespace LanguageExplorer.Controls.LexText
 
 		internal bool AddLanguage(string langDesc, string ws, string ec, string wsId)
 		{
-			CheckDisposed();
-
 			// now put the lang info into the language list view
 			var lvItem = CreateLanguageMappingItem(langDesc, ws, ec, wsId);
 			listViewMappingLanguages.Items.Add(lvItem);

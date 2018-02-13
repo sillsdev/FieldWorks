@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -168,14 +168,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			Subscriber = null;
 		}
 
-		/// <summary>
-		/// Throw if the IsDisposed property is true
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException("LabeledMultiStringView", "This object is being used after it has been disposed: this is an Error.");
-		}
 		#endregion IDisposable override
 
 		/// <summary>
@@ -186,7 +178,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_innerView.WritingSystemOptions;
 			}
 		}
@@ -198,7 +189,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// if true, includes unchecked active wss.</param>
 		public List<CoreWritingSystemDefinition> GetWritingSystemOptions(bool fIncludeUncheckedActiveWss)
 		{
-			CheckDisposed();
 			return m_innerView.GetWritingSystemOptions(fIncludeUncheckedActiveWss);
 		}
 
@@ -216,7 +206,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary></summary>
 		internal void TriggerDisplay(IVwEnv vwenv)
 		{
-			CheckDisposed();
 			m_innerView.TriggerDisplay(vwenv);
 		}
 
@@ -226,7 +215,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		public void SelectAt(int ws, int ich)
 		{
-			CheckDisposed();
 			m_innerView.SelectAt(ws, ich);
 		}
 

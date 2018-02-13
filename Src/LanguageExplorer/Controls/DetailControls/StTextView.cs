@@ -24,13 +24,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_text;
 			}
 
 			set
 			{
-				CheckDisposed();
 				var oldText = m_text;
 				m_text = value;
 				if (m_rootb != null && m_text != null && oldText != m_text)
@@ -61,7 +59,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void Init(int ws)
 		{
-			CheckDisposed();
 			Cache = PropertyTable.GetValue<LcmCache>("cache");
 			StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
 			m_vc = new StVc("Normal", ws)
@@ -127,8 +124,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode)
 			{
 				return;

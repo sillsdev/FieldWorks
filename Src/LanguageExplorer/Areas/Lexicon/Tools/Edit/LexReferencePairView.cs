@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,8 +23,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		public override void SetReferenceVc()
 		{
-			CheckDisposed();
-
 			m_atomicReferenceVc = new LexReferencePairVc(m_cache, m_rootFlid, m_displayNameProperty);
 			if (m_displayParent != null)
 			{
@@ -37,8 +35,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			set
 			{
-				CheckDisposed();
-
 				m_displayParent = value;
 				if (m_atomicReferenceVc != null)
 				{

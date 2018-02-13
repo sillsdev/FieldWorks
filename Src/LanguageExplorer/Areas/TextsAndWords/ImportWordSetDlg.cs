@@ -68,19 +68,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		}
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose(bool disposing)
@@ -225,8 +212,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <remarks>This is marked internal so that unit tests can call it</remarks>
 		internal void CreateWordsetFromFiles(string[] paths)
 		{
-			CheckDisposed();
-
 			using (var dlg = new ProgressDialogWorkingOn())
 			{
 				Cache.DomainDataByFlid.BeginUndoTask("Import Word Set", "Import Word Set");

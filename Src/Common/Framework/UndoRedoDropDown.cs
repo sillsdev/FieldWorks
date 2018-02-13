@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -84,17 +84,6 @@ namespace SIL.FieldWorks.Common.Framework
 			m_Cancel = cancel;
 		}
 		#endregion // Constructors
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
 
 		/// <summary/>
 		protected override void Dispose(bool disposing)
@@ -195,8 +184,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		public void AdjustHeight()
 		{
-			CheckDisposed();
-
 			// Adjust the height of the drop down. We want to show max. 10 items
 			int nMaxItems = Math.Min(m_Actions.Items.Count, 10);
 			Height = nMaxItems * m_Actions.ItemHeight + m_NumberOfUndoes.Height
@@ -216,7 +203,6 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			get
 			{
-				CheckDisposed();
 				return m_Actions.Items;
 			}
 		}

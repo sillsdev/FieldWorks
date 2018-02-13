@@ -90,7 +90,6 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		{
 			set
 			{
-				CheckDisposed();
 				rtbMessage.Text = value;
 			}
 		}
@@ -102,7 +101,6 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		{
 			set
 			{
-				CheckDisposed();
 				this.Text = value;
 			}
 		}
@@ -114,7 +112,6 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		{
 			set
 			{
-				CheckDisposed();
 				this.Font = value;
 			}
 		}
@@ -126,7 +123,6 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		{
 			get
 			{
-				CheckDisposed();
 				return _buttons;
 			}
 		}
@@ -138,12 +134,10 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		{
 			get
 			{
-				CheckDisposed();
 				return _allowSaveResponse;
 			}
 			set
 			{
-				CheckDisposed();
 				_allowSaveResponse = value;
 			}
 		}
@@ -155,7 +149,6 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		{
 			get
 			{
-				CheckDisposed();
 				return chbSaveResponse.Checked;
 			}
 		}
@@ -167,7 +160,6 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		{
 			set
 			{
-				CheckDisposed();
 				chbSaveResponse.Text = value;
 			}
 		}
@@ -179,7 +171,6 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		{
 			set
 			{
-				CheckDisposed();
 				SetStandardIcon(value);
 			}
 		}
@@ -191,7 +182,6 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		{
 			set
 			{
-				CheckDisposed();
 				_standardIcon = MessageBoxIcon.None;
 				_iconImage = value;
 			}
@@ -204,7 +194,6 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		{
 			set
 			{
-				CheckDisposed();
 				_cancelButton = value;
 			}
 		}
@@ -216,7 +205,6 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		{
 			get
 			{
-				CheckDisposed();
 				return _result;
 			}
 		}
@@ -228,12 +216,10 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		{
 			get
 			{
-				CheckDisposed();
 				return _playAlert;
 			}
 			set
 			{
-				CheckDisposed();
 				_playAlert = value;
 			}
 		}
@@ -245,12 +231,10 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		{
 			get
 			{
-				CheckDisposed();
 				return _timeout;
 			}
 			set
 			{
-				CheckDisposed();
 				_timeout = value;
 			}
 		}
@@ -262,12 +246,10 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 		{
 			get
 			{
-				CheckDisposed();
 				return _timeoutResult;
 			}
 			set
 			{
-				CheckDisposed();
 				_timeoutResult = value;
 			}
 		}
@@ -287,17 +269,6 @@ namespace SIL.FieldWorks.Common.FwUtils.MessageBoxEx
 
 			_maxWidth = (int)(SystemInformation.WorkingArea.Width * 0.60);
 			_maxHeight = (int)(SystemInformation.WorkingArea.Height * 0.90);
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
 		/// <summary>

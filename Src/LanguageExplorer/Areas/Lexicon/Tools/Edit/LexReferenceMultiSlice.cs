@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -90,8 +90,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public override void FinishInit()
 		{
-			CheckDisposed();
-			Debug.Assert(m_cache != null);
+			Debug.Assert(Cache != null);
 			Debug.Assert(ConfigurationNode != null);
 
 			base.FinishInit();
@@ -100,11 +99,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		void SetRefs()
 		{
 			var fieldName = XmlUtils.GetMandatoryAttributeValue(ConfigurationNode, "field");
-			var refs = ReflectionHelper.GetProperty(m_obj, fieldName);
+			var refs = ReflectionHelper.GetProperty(Object, fieldName);
 			var refsInts = refs as IEnumerable<int>;
 			if (refsInts != null)
 			{
-				m_refs = (refsInts.Select(hvo => m_cache.ServiceLocator.GetInstance<ILexReferenceRepository>().GetObject(hvo))).ToList();
+				m_refs = (refsInts.Select(hvo => Cache.ServiceLocator.GetInstance<ILexReferenceRepository>().GetObject(hvo))).ToList();
 			}
 			else
 			{
@@ -119,14 +118,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					Debug.Fail("LexReferenceSlice could not interpret results from " + fieldName);
 				}
 			}
-			var flid = Cache.MetaDataCacheAccessor.GetFieldId2(m_obj.ClassID, fieldName, true);
-			ContainingDataTree.MonitorProp(m_obj.Hvo, flid);
+			var flid = Cache.MetaDataCacheAccessor.GetFieldId2(Object.ClassID, fieldName, true);
+			ContainingDataTree.MonitorProp(Object.Hvo, flid);
 		}
 
 		/// <summary />
 		public override void GenerateChildren(XElement node, XElement caller, ICmObject obj, int indent, ref int insPos, ArrayList path, ObjSeqHashMap reuseMap, bool fUsePersistentExpansion)
 		{
-			CheckDisposed();
 			// If node has children, figure what to do with them...
 
 			// It's important to initialize m_refs here rather than in FinishInit, because we need it
@@ -161,7 +159,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				sLabel = lrt.Abbreviation.BestAnalysisAlternative.Text;
 			}
 			var fTreeRoot = true;
-			var sda = m_cache.DomainDataByFlid;
+			var sda = Cache.DomainDataByFlid;
 			var chvoTargets = sda.get_VecSize(lr.Hvo, LexReferenceTags.kflidTargets);
 			// change the label for a Tree relationship.
 			switch ((LexRefTypeTags.MappingTypes)lrt.MappingType)
@@ -172,7 +170,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					if (chvoTargets > 0)
 					{
 						var hvoFirst = sda.get_VecItem(lr.Hvo, LexReferenceTags.kflidTargets, 0);
-						if (hvoFirst != m_obj.Hvo)
+						if (hvoFirst != Object.Hvo)
 						{
 							return;
 						}
@@ -188,7 +186,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					if (chvoTargets > 0)
 					{
 						var hvoFirst = sda.get_VecItem(lr.Hvo, LexReferenceTags.kflidTargets, 0);
-						if (hvoFirst != m_obj.Hvo)
+						if (hvoFirst != Object.Hvo)
 						{
 							sLabel = lrt.ReverseName.BestAnalysisAlternative.Text;
 							if (string.IsNullOrEmpty(sLabel))
@@ -268,18 +266,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
 					sXml += " class=\"LanguageExplorer.Areas.Lexicon.Tools.Edit.LexReferenceCollectionSlice\"";
-					if (m_obj is ILexEntry)
+					if (Object is ILexEntry)
 					{
 						sMenu = "mnuDataTree-DeleteAddLexReference";
 					}
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
 					sXml += " class=\"LanguageExplorer.Areas.Lexicon.LexReferenceUnidirectionalSlice\"";
-					if (m_obj is ILexEntry)
+					if (Object is ILexEntry)
 						sMenu = "mnuDataTree-DeleteAddLexReference";
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
-					if (m_obj is ILexEntry)
+					if (Object is ILexEntry)
 					{
 						sMenu = "mnuDataTree-DeleteAddLexReference";
 					}
@@ -296,7 +294,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			}
 
-			sXml += $" mappingType=\"{lrt.MappingType}\" hvoDisplayParent=\"{m_obj.Hvo}\" menu=\"{sMenu}\"><deParams displayProperty=\"HeadWord\"/></slice>";
+			sXml += $" mappingType=\"{lrt.MappingType}\" hvoDisplayParent=\"{Object.Hvo}\" menu=\"{sMenu}\"><deParams displayProperty=\"HeadWord\"/></slice>";
 			node.ReplaceNodes(XElement.Parse(sXml));
 			var firstNewSliceIndex = insPos;
 			CreateIndentedNodes(caller, lr, indent, ref insPos, path, reuseMap, node);
@@ -315,7 +313,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		public override bool HandleMouseDown(Point p)
 		{
-			CheckDisposed();
 			DisposeContextMenu(this, new EventArgs());
 			m_contextMenuStrip = SetupContextMenuStrip();
 			m_contextMenuStrip.Closed += contextMenuStrip_Closed; // dispose when no longer needed (but not sooner! needed after this returns)
@@ -352,9 +349,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			m_rgfReversedRefType.Clear();
 			var formatName = StringTable.Table.GetString("InsertSymmetricReference", "LexiconTools");
 			var formatNameWithReverse = StringTable.Table.GetString("InsertAsymmetricReference", "LexiconTools");
-			foreach (var lrt in m_cache.LanguageProject.LexDbOA.ReferencesOA.PossibilitiesOS.Cast<ILexRefType>())
+			foreach (var lrt in Cache.LanguageProject.LexDbOA.ReferencesOA.PossibilitiesOS.Cast<ILexRefType>())
 			{
-				if (m_obj is ILexEntry)
+				if (Object is ILexEntry)
 				{
 					switch ((LexRefTypeTags.MappingTypes)lrt.MappingType)
 					{
@@ -478,26 +475,22 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		public void OnShowFieldAlwaysVisible1(object sender, EventArgs args)
 		{
-			CheckDisposed();
 			SetFieldVisibility("always");
 		}
 		/// <summary />
 		public void OnShowFieldIfData1(object sender, EventArgs args)
 		{
-			CheckDisposed();
 			SetFieldVisibility("ifdata");
 		}
 		/// <summary />
 		public void OnShowFieldNormallyHidden1(object sender, EventArgs args)
 		{
-			CheckDisposed();
 			SetFieldVisibility("never");
 		}
 
 		/// <summary />
 		public void OnHelp(object sender, EventArgs args)
 		{
-			CheckDisposed();
 			switch (HelpId)
 			{
 				case "LexSenseReferences":
@@ -517,8 +510,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		protected internal override bool UpdateDisplayIfNeeded(int hvo, int tag)
 		{
-			CheckDisposed();
-
 			// Can't check hvo since it may have been deleted by an undo operation already.
 			if (tag == LexRefTypeTags.kflidMembers)
 			{
@@ -533,7 +524,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		public void HandleCreateMenuItem(object sender, EventArgs ea)
 		{
-			CheckDisposed();
 			var tsItem = sender as ToolStripItem;
 			var itemIndex = (tsItem.Owner as ContextMenuStrip).Items.IndexOf(tsItem);
 			var lrt = m_refTypesAvailable[itemIndex];
@@ -578,26 +568,26 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 
 			UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.ksUndoInsertRelation, tsItem.Text),
-				string.Format(LanguageExplorerResources.ksRedoInsertRelation, tsItem.Text), m_obj, () =>
+				string.Format(LanguageExplorerResources.ksRedoInsertRelation, tsItem.Text), Object, () =>
 			{
 				if (newRef != null)
 				{
-					newRef.TargetsRS.Add(m_obj);
+					newRef.TargetsRS.Add(Object);
 				}
 				else
 				{
-					newRef = m_cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+					newRef = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
 					lrt.MembersOC.Add(newRef);
 					if (fReverseRef)
 					{
 						newRef.TargetsRS.Insert(0, first);
-						newRef.TargetsRS.Insert(1, m_obj);
+						newRef.TargetsRS.Insert(1, Object);
 					}
 					else
 					{
 						//When creating a lexical relation slice,
 						//add the current lexical entry to the lexical relation as the first item
-						newRef.TargetsRS.Insert(0, m_obj);
+						newRef.TargetsRS.Insert(0, Object);
 						//then also add the lexical entry that the user selected in the chooser dialog.
 						newRef.TargetsRS.Insert(1, first);
 					}
@@ -644,7 +634,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					lrt.ReverseName.BestAnalysisAlternative.Text),
 					m_btnText = LanguageExplorerResources.ks_Add
 				};
-				dlg.SetDlgInfo(m_cache, wp);
+				dlg.SetDlgInfo(Cache, wp);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 				{
@@ -731,7 +721,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				Debug.Assert(objEntry.ClassID == LexEntryTags.kClassId);
 				dlg.StartingEntry = objEntry as ILexEntry;
 
-				dlg.SetDlgInfo(m_cache, wp);
+				dlg.SetDlgInfo(Cache, wp);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 				{
@@ -748,13 +738,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		public void HandleMoreMenuItem(object sender, EventArgs ea)
 		{
-			CheckDisposed();
 			MessageBoxExManager.Trigger("CreateNewLexicalReferenceType");
-			m_cache.DomainDataByFlid.BeginUndoTask(LanguageExplorerResources.ksUndoInsertLexRefType, LanguageExplorerResources.ksRedoInsertLexRefType);
-			var list = m_cache.LanguageProject.LexDbOA.ReferencesOA;
+			Cache.DomainDataByFlid.BeginUndoTask(LanguageExplorerResources.ksUndoInsertLexRefType, LanguageExplorerResources.ksRedoInsertLexRefType);
+			var list = Cache.LanguageProject.LexDbOA.ReferencesOA;
 			var newKid = list.Services.GetInstance<ILexRefTypeFactory>().Create();
 			list.PossibilitiesOS.Add(newKid);
-			m_cache.DomainDataByFlid.EndUndoTask();
+			Cache.DomainDataByFlid.EndUndoTask();
 			var commands = new List<string>
 			{
 				"AboutToFollowLink",
@@ -798,7 +787,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <param name="iSlice"></param>
 		public override void Expand(int iSlice)
 		{
-			CheckDisposed();
 			try
 			{
 				ContainingDataTree.DeepSuspendLayout();
@@ -808,7 +796,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					caller = Key[Key.Length - 2] as XElement;
 				}
 				var insPos = iSlice + 1;
-				GenerateChildren(ConfigurationNode, caller, m_obj, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), false);
+				GenerateChildren(ConfigurationNode, caller, Object, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), false);
 				Expansion = TreeItemState.ktisExpanded;
 			}
 			finally
@@ -825,7 +813,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public void DeleteFromReference(ILexReference lr)
 		{
-			CheckDisposed();
 			if (lr == null)
 			{
 				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", ConfigurationNode);
@@ -834,14 +821,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			using (new WaitCursor(mainWindow))
 			{
 				using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
-				using (var ui = CmObjectUi.MakeUi(m_cache, lr.Hvo))
+				using (var ui = CmObjectUi.MakeUi(Cache, lr.Hvo))
 				{
 					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
 					//We need this to determine which kind of relation we are deleting
 					var lrtOwner = (ILexRefType)lr.Owner;
 					var analWs = lrtOwner.Services.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-					var userWs = m_cache.WritingSystemFactory.UserWs;
+					var userWs = Cache.WritingSystemFactory.UserWs;
 					var tisb = TsStringUtils.MakeIncStrBldr();
 					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 
@@ -862,24 +849,24 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 								tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 								tisb.Append(LanguageExplorerResources.ksDeleteSequenceCollectionB);
 
-								dlg.SetDlgInfo(ui, m_cache, PropertyTable, tisb.GetString());
+								dlg.SetDlgInfo(ui, Cache, PropertyTable, tisb.GetString());
 							}
 							else
 							{
-								dlg.SetDlgInfo(ui, m_cache, PropertyTable);
+								dlg.SetDlgInfo(ui, Cache, PropertyTable);
 							}
 							break;
 						default:
-							dlg.SetDlgInfo(ui, m_cache, PropertyTable);
+							dlg.SetDlgInfo(ui, Cache, PropertyTable);
 							break;
 					}
 
 					if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
 					{
-						UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoDeleteRelation, LanguageExplorerResources.ksRedoDeleteRelation, m_obj, () =>
+						UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoDeleteRelation, LanguageExplorerResources.ksRedoDeleteRelation, Object, () =>
 						{
 							//If the user selected Yes, then we need to delete 'this' sense or entry
-							lr.TargetsRS.Remove(m_obj);
+							lr.TargetsRS.Remove(Object);
 						});
 						//Update the display because we have removed this slice from the Lexical entry.
 						UpdateForDelete(lr);
@@ -895,7 +882,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public void DeleteReference(ILexReference lr)
 		{
-			CheckDisposed();
 			if (lr == null)
 			{
 				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", ConfigurationNode);
@@ -903,13 +889,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var mainWindow = PropertyTable.GetValue<Form>("window");
 			using (new WaitCursor(mainWindow))
 			using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
-			using (var ui = CmObjectUi.MakeUi(m_cache, lr.Hvo))
+			using (var ui = CmObjectUi.MakeUi(Cache, lr.Hvo))
 			{
 				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 
 				//We need this to determine which kind of relation we are deleting
 				var lrtOwner = lr.Owner as ILexRefType;
-				var userWs = m_cache.WritingSystemFactory.UserWs;
+				var userWs = Cache.WritingSystemFactory.UserWs;
 				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 
@@ -923,18 +909,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
 						tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 						tisb.Append(String.Format(LanguageExplorerResources.ksDeleteLexTree, StringUtils.kChHardLB));
-						dlg.SetDlgInfo(ui, m_cache, PropertyTable, tisb.GetString());
+						dlg.SetDlgInfo(ui, Cache, PropertyTable, tisb.GetString());
 						break;
 					default:
-						dlg.SetDlgInfo(ui, m_cache, PropertyTable);
+						dlg.SetDlgInfo(ui, Cache, PropertyTable);
 						break;
 				}
 
 				if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
 				{
-					UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoDeleteRelation, LanguageExplorerResources.ksRedoDeleteRelation, m_obj, () =>
+					UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoDeleteRelation, LanguageExplorerResources.ksRedoDeleteRelation, Object, () =>
 					{
-						m_cache.DomainDataByFlid.DeleteObj(lr.Hvo);
+						Cache.DomainDataByFlid.DeleteObj(lr.Hvo);
 					});
 					//Update the display because we have removed this slice from the Lexical entry.
 					UpdateForDelete(lr);
@@ -960,7 +946,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public void EditReferenceDetails(ILexReference lr)
 		{
-			CheckDisposed();
 			if (lr == null)
 			{
 				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", ConfigurationNode);
@@ -973,7 +958,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					return;
 				}
-				using (var helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, LanguageExplorerResources.ksUndoEditRefSetDetails, LanguageExplorerResources.ksRedoEditRefSetDetails))
+				using (var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, LanguageExplorerResources.ksUndoEditRefSetDetails, LanguageExplorerResources.ksRedoEditRefSetDetails))
 				{
 					lr.Name.SetAnalysisDefaultWritingSystem(dlg.ReferenceName);
 					lr.Comment.SetAnalysisDefaultWritingSystem(dlg.ReferenceComment);

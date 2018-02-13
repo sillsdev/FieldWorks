@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal StTextDataTree(LcmCache cache)
 			: base()
 		{
-			m_cache = cache;
+			Cache = cache;
 			InitializeBasic(cache, false);
 			InitializeComponent();
 		}

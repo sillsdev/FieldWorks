@@ -127,8 +127,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		internal void SelectAndScrollToBookmark(InterAreaBookmark bookmark)
 		{
-			CheckDisposed();
-
 			Debug.Assert(bookmark != null);
 			Debug.Assert(bookmark.IndexOfParagraph >= 0);
 
@@ -315,8 +313,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			base.MakeRoot();
 
 			m_vc = new ConstChartVc(this)

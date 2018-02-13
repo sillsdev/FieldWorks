@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -98,14 +98,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal const int ktagSegmentNote = -63;
 		// flids for paragraph annotation sequences.
 		internal int ktagSegmentForms;
-
-		bool m_fIsAddingRealFormToView; // indicates we are in the context of adding real form string to the vwEnv.
-
 		#endregion Constants and other similar ints.
 
 		#region Data members
-
-		protected bool m_fShowDefaultSense; // Use false to preserve prior behavior.
 		protected bool m_fHaveOpenedParagraph; // Use false to preserve prior behavior.
 		protected WritingSystemManager m_wsManager;
 		protected ISegmentRepository m_segRepository;
@@ -116,7 +111,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected int m_wsAnalysis;
 		protected int m_wsUi;
-		internal WsListManager m_WsList;
 		private ITsString m_tssMissingVernacular; // A string in a Vernacular WS is missing
 		private ITsString m_tssMissingAnalysis; // A string in an Analysis WS is missing
 		private ITsString m_tssMissingGlossAppend;
@@ -127,19 +121,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private ITsString m_tssCommaSpace;
 		private ITsString m_tssPendingGlossAffix; // LexGloss line GlossAppend or GlossPrepend
 		private int m_mpBundleHeight; // millipoint height of interlinear bundle.
-		private bool m_fShowMorphBundles = true;
-		private bool m_fRtl;
+
 		private readonly IDictionary<ILgWritingSystem, ITsString> m_mapWsDirTss = new Dictionary<ILgWritingSystem, ITsString>();
 		// AnnotationDefns we need
 		private int m_hvoAnnDefNote;
 		private MsaVc m_msaVc;
-		private InterlinLineChoices m_lineChoices;
-		protected IVwStylesheet m_stylesheet;
 		private IParaDataLoader m_loader;
 		private readonly HashSet<int> m_vernWss; // all vernacular writing systems
 		private readonly int m_selfFlid;
-		private int m_leftPadding;
-
 		#endregion Data members
 
 		/// <summary>
@@ -168,13 +157,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_tssMissingGlossAppend = TsStringUtils.MakeString(MorphServices.kDefaultSeparatorLexEntryInflTypeGlossAffix + ITextStrings.ksStars, m_wsAnalysis);
 			m_tssEmptyAnalysis = TsStringUtils.EmptyString(m_wsAnalysis);
 			m_tssMissingVernacular = TsStringUtils.MakeString(ITextStrings.ksStars, cache.DefaultVernWs);
-			m_WsList = new WsListManager(m_cache);
+			ListManager = new WsListManager(m_cache);
 			m_tssEmptyPara = TsStringUtils.MakeString(ITextStrings.ksEmptyPara, m_wsAnalysis);
 			m_tssSpace = TsStringUtils.MakeString(" ", m_wsAnalysis);
 			m_msaVc = new MsaVc(m_cache);
 			m_vernWss = WritingSystemServices.GetAllWritingSystems(m_cache, "all vernacular", null, 0, 0);
 			// This usually gets overridden, but ensures default behavior if not.
-			m_lineChoices = InterlinLineChoices.DefaultChoices(m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, WritingSystemServices.kwsAnal);
+			LineChoices = InterlinLineChoices.DefaultChoices(m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, WritingSystemServices.kwsAnal);
 			// This used to be a constant but was made variables with dummy virtual handlers so that
 			// ClearInfoAbout can clear them out.
 			// load guesses
@@ -212,19 +201,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return !(occurrence.Analysis is IPunctuationForm) && m_vernWss.Contains(occurrence.BaselineWs);
 		}
 
-		internal IVwStylesheet StyleSheet
-		{
-			get
-			{
-				CheckDisposed();
-				return m_stylesheet;
-			}
-			set
-			{
-				CheckDisposed();
-				m_stylesheet = value;
-			}
-		}
+		protected internal IVwStylesheet StyleSheet { get; set; }
 
 		#region Disposable stuff
 		#if DEBUG
@@ -234,17 +211,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Dispose(false);
 		}
 		#endif
-
-		/// <summary>
-		/// Throw if the IsDisposed property is true
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException(GetType().ToString(), "This object is being used after it has been disposed: this is an Error.");
-			}
-		}
 
 		/// <summary/>
 		public bool IsDisposed { get; private set; }
@@ -268,7 +234,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (fDisposing)
 			{
 				// Dispose managed resources here.
-				m_WsList?.Dispose();
+				ListManager?.Dispose();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -283,73 +249,29 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_tssEmptyPara = null;
 			m_tssSpace = null;
 			m_tssCommaSpace = null;
-			m_WsList = null;
+			ListManager = null;
 
 			IsDisposed = true;
 		}
 		#endregion
 
-		public InterlinLineChoices LineChoices
-		{
-			get
-			{
-				CheckDisposed();
-				return m_lineChoices;
-			}
-			set
-			{
-				CheckDisposed();
-				m_lineChoices = value;
-			} // Note: caller responsible to Reconstruct if needed!
-		}
+		public InterlinLineChoices LineChoices { get; set; }
 
 		/// <summary>
 		/// The direction of the paragraph.
 		/// </summary>
-		public bool RightToLeft
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fRtl;
-			}
-		}
+		public bool RightToLeft { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the left padding for a single interlin analysis that is always left-aligned.
 		/// </summary>
-		public int LeftPadding
-		{
-			get
-			{
-				CheckDisposed();
-				return m_leftPadding;
-			}
-
-			set
-			{
-				CheckDisposed();
-				m_leftPadding = value;
-			}
-		}
+		public int LeftPadding { get; set; }
 
 		/// <summary>
 		/// Indicates we are in the context of adding real form string to the vwEnv
 		/// Made public for DiscourseExporter
 		/// </summary>
-		public bool IsDoingRealWordForm
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fIsAddingRealFormToView;
-			}
-			set
-			{
-				CheckDisposed();
-				m_fIsAddingRealFormToView = value;
-			}
-		}
+		public bool IsDoingRealWordForm { get; set; }
 
 		/// <summary>
 		/// Call this to clear the temporary cache of analyses. Minimally do this when
@@ -357,11 +279,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void ResetAnalysisCache()
 		{
-			if (m_loader != null)
-			{
-				CheckDisposed();
-				m_loader.ResetGuessCache();
-			}
+			m_loader?.ResetGuessCache();
 		}
 
 		internal AnalysisGuessServices GuessServices => m_loader?.GuessServices ?? new AnalysisGuessServices(m_cache);
@@ -370,7 +288,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (m_loader != null)
 			{
-				CheckDisposed();
 				return m_loader.UpdatingOccurrence(oldAnalysis, newAnalysis);
 			}
 			return false;
@@ -378,14 +295,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private ITsString CommaSpaceString => m_tssCommaSpace ?? (m_tssCommaSpace = TsStringUtils.MakeString(", ", m_wsAnalysis));
 
-		public WsListManager ListManager
-		{
-			get
-			{
-				CheckDisposed();
-				return m_WsList;
-			}
-		}
+		public WsListManager ListManager { get; internal set; }
 
 		/// <summary>
 		/// Background color indicating a guess that has been approved by a human for use somewhere.
@@ -414,7 +324,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
-				CheckDisposed();
 				return m_wsVernForDisplay;
 			}
 			private set
@@ -429,49 +338,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				m_wsVernForDisplay = value;
 				m_tssEmptyVern = TsStringUtils.EmptyString(value);
-				m_fRtl = m_wsManager.Get(value).RightToLeftScript;
+				RightToLeft = m_wsManager.Get(value).RightToLeftScript;
 				m_tssMissingVernacular = TsStringUtils.MakeString(ITextStrings.ksStars, value);
 			}
 		}
 
 		// Controls whether to display the morpheme bundles.
-		public bool ShowMorphBundles
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fShowMorphBundles;
-			}
-			set
-			{
-				CheckDisposed();
-				m_fShowMorphBundles = value;
-			}
-		}
+		public bool ShowMorphBundles { get; set; } = true;
 
 		// Controls whether to display the default sense (true), or the normal '***' row.
-		public bool ShowDefaultSense
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fShowDefaultSense;
-			}
-			set
-			{
-				CheckDisposed();
-				m_fShowDefaultSense = value;
-			}
-		}
+		public bool ShowDefaultSense { get; set; }
 
 		protected virtual int LabelRGBFor(int choiceIndex)
 		{
-			return LabelRGBFor(m_lineChoices[choiceIndex]);
+			return LabelRGBFor(LineChoices[choiceIndex]);
 		}
 
 		protected virtual int LabelRGBFor(InterlinLineSpec spec)
 		{
-			return m_lineChoices.LabelRGBFor(spec);
+			return LineChoices.LabelRGBFor(spec);
 		}
 
 		/// <summary>
@@ -532,7 +417,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
-			CheckDisposed();
 			if (hvo == 0)
 			{
 				return;     // Can't do anything without an hvo (except crash -- see LT-9348).
@@ -591,7 +475,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					vwenv.set_IntProperty((int)FwTextPropType.ktptSpellCheck, (int)FwTextPropVar.ktpvEnum, (int)SpellingModes.ksmDoNotCheck);
 					vwenv.OpenParagraph();
 					AddSegmentReference(vwenv, hvo);    // Calculate and display the segment reference.
-					AddLabelPile(vwenv, m_cache, true, m_fShowMorphBundles);
+					AddLabelPile(vwenv, m_cache, true, ShowMorphBundles);
 					vwenv.AddObjVecItems(SegmentTags.kflidAnalyses, this, kfragBundle);
 					// JohnT, 1 Feb 2008. Took this out as I can see no reason for it; AddObjVecItems handles
 					// the dependency already. Adding it just means that any change to the forms list
@@ -629,15 +513,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						var wa = m_analRepository.GetObject(hvo);
 						vwenv.AddObj(wa.Owner.Hvo, this, kfragWordformForm);
-						if (m_fShowMorphBundles)
+						if (ShowMorphBundles)
 						{
 							vwenv.AddObj(hvo, this, kfragAnalysisMorphs);
 						}
 
 						var chvoGlosses = wa.MeaningsOC.Count;
-						for (var i = 0; i < m_WsList.AnalysisWsIds.Length; ++i)
+						for (var i = 0; i < ListManager.AnalysisWsIds.Length; ++i)
 						{
-							SetColor(vwenv, LabelRGBFor(m_lineChoices.IndexOf(InterlinLineChoices.kflidWordGloss, m_WsList.AnalysisWsIds[i])));
+							SetColor(vwenv, LabelRGBFor(LineChoices.IndexOf(InterlinLineChoices.kflidWordGloss, ListManager.AnalysisWsIds[i])));
 							if (chvoGlosses == 0)
 							{
 								// There are no glosses, display something indicating it is missing.
@@ -701,7 +585,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// This frag is used to display a single interlin analysis that is always left-aligned, even for RTL languages
 				case kfragSingleInterlinearAnalysisWithLabelsLeftAlign:
 					vwenv.OpenDiv();
-					vwenv.set_IntProperty((int)FwTextPropType.ktptPadLeading, (int)FwTextPropVar.ktpvMilliPoint, m_leftPadding);
+					vwenv.set_IntProperty((int)FwTextPropType.ktptPadLeading, (int)FwTextPropVar.ktpvMilliPoint, LeftPadding);
 					vwenv.OpenParagraph();
 					vwenv.OpenInnerPile();
 					DisplaySingleInterlinearAnalysisWithLabels(vwenv, hvo);
@@ -719,7 +603,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					vwenv.AddUnicodeProp(MoMorphTypeTags.kflidPostfix, PreferredVernWs, this);
 					break;
 				case kfragSenseName: // The name (gloss) of a LexSense.
-					foreach (var wsId in m_WsList.AnalysisWsIds)
+					foreach (var wsId in ListManager.AnalysisWsIds)
 					{
 						vwenv.AddStringAltMember(LexSenseTags.kflidGloss, wsId, this);
 					}
@@ -727,31 +611,31 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case kfragCategory:
 					// the category of a WfiAnalysis, a part of speech;
 					// display the Abbreviation property inherited from CmPossibility.
-					foreach (var wsId in m_WsList.AnalysisWsIds)
+					foreach (var wsId in ListManager.AnalysisWsIds)
 					{
 						vwenv.AddStringAltMember(CmPossibilityTags.kflidAbbreviation, wsId, this);
 					}
 					break;
 				default:
-					if (frag >= kfragWordGlossWs && frag < kfragWordGlossWs + m_WsList.AnalysisWsIds.Length)
+					if (frag >= kfragWordGlossWs && frag < kfragWordGlossWs + ListManager.AnalysisWsIds.Length)
 					{
 						// Displaying one ws of the  form of a WfiGloss.
-						vwenv.AddStringAltMember(WfiGlossTags.kflidForm, m_WsList.AnalysisWsIds[frag - kfragWordGlossWs], this);
+						vwenv.AddStringAltMember(WfiGlossTags.kflidForm, ListManager.AnalysisWsIds[frag - kfragWordGlossWs], this);
 					}
-					else if (frag >= kfragLineChoices && frag < kfragLineChoices + m_lineChoices.Count)
+					else if (frag >= kfragLineChoices && frag < kfragLineChoices + LineChoices.Count)
 					{
-						var spec = m_lineChoices[frag - kfragLineChoices];
+						var spec = LineChoices[frag - kfragLineChoices];
 						vwenv.AddStringAltMember(spec.StringFlid, GetRealWsOrBestWsForContext(hvo, spec)/* can be vernacular or analysis */, this);
 					}
-					else if (frag >= kfragAnalysisCategoryChoices && frag < kfragAnalysisCategoryChoices + m_lineChoices.Count)
+					else if (frag >= kfragAnalysisCategoryChoices && frag < kfragAnalysisCategoryChoices + LineChoices.Count)
 					{
 						AddAnalysisPos(vwenv, hvo, hvo, frag - kfragAnalysisCategoryChoices);
 					}
-					else if (frag >= kfragMorphFormChoices && frag < kfragMorphFormChoices + m_lineChoices.Count)
+					else if (frag >= kfragMorphFormChoices && frag < kfragMorphFormChoices + LineChoices.Count)
 					{
-						DisplayMorphForm(vwenv, hvo, GetRealWsOrBestWsForContext(hvo, m_lineChoices[frag - kfragMorphFormChoices]));
+						DisplayMorphForm(vwenv, hvo, GetRealWsOrBestWsForContext(hvo, LineChoices[frag - kfragMorphFormChoices]));
 					}
-					else if (frag >= kfragSegFfChoices && frag < kfragSegFfChoices + m_lineChoices.Count)
+					else if (frag >= kfragSegFfChoices && frag < kfragSegFfChoices + LineChoices.Count)
 					{
 						AddFreeformComment(vwenv, hvo, frag - kfragSegFfChoices);
 					}
@@ -823,7 +707,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected virtual void AddFreeformComment(IVwEnv vwenv, int hvoSeg, int lineChoiceIndex)
 		{
-			var wssAnalysis = m_lineChoices.AdjacentWssAtIndex(lineChoiceIndex, hvoSeg);
+			var wssAnalysis = LineChoices.AdjacentWssAtIndex(lineChoiceIndex, hvoSeg);
 			if (wssAnalysis.Length == 0)
 			{
 				return;
@@ -834,7 +718,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			string label;
 			int flid;
 			var exporter = vwenv as InterlinearExporter;
-			var dummyFlid = m_lineChoices[lineChoiceIndex].Flid;
+			var dummyFlid = LineChoices[lineChoiceIndex].Flid;
 			switch (dummyFlid)
 			{
 				case InterlinLineChoices.kflidFreeTrans:
@@ -1039,7 +923,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			vwenv.OpenParagraph();
 			m_fHaveOpenedParagraph = true;
-			AddLabelPile(vwenv, m_cache, true, m_fShowMorphBundles);
+			AddLabelPile(vwenv, m_cache, true, ShowMorphBundles);
 			try
 			{
 				// We use this rather than AddObj(hvo) so we can easily identify this object and select
@@ -1245,8 +1129,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, 10000);
 			vwenv.OpenInnerPile();
-			var first = m_lineChoices.FirstMorphemeIndex;
-			var last = m_lineChoices.LastMorphemeIndex;
+			var first = LineChoices.FirstMorphemeIndex;
+			var last = LineChoices.LastMorphemeIndex;
 			IMoForm mf = null;
 			if (wmb != null)
 			{
@@ -1260,7 +1144,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			for (var i = first; i <= last; i++)
 			{
-				var spec = m_lineChoices[i];
+				var spec = LineChoices[i];
 				SetColor(vwenv, LabelRGBFor(spec));
 				switch (spec.Flid)
 				{
@@ -1393,7 +1277,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal bool DisplayLexGlossWithInflType(IVwEnv vwenv, ILexEntry possibleVariant, ILexSense sense, InterlinLineSpec spec, ILexEntryInflType inflType)
 		{
-			var iLineChoice = m_lineChoices.IndexOf(spec);
+			var iLineChoice = LineChoices.IndexOf(spec);
 			ILexEntryRef ler;
 			if (!possibleVariant.IsVariantOfSenseOrOwnerEntry(sense, out ler))
 			{
@@ -1494,25 +1378,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void AddLabelPile(IVwEnv vwenv, LcmCache cache, bool fWantMultipleSenseGloss, bool fShowMorphemes)
 		{
-			CheckDisposed();
-
 			var wsUI = cache.DefaultUserWs;
 			var spaceStr = TsStringUtils.MakeString(" ", wsUI);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, 10000);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptMarginBottom, (int)FwTextPropVar.ktpvMilliPoint, 5000); // default spacing is fine for all embedded paragraphs.
 			vwenv.OpenInnerPile();
-			for (var i = 0; i < m_lineChoices.Count; i++)
+			for (var i = 0; i < LineChoices.Count; i++)
 			{
-				var spec = m_lineChoices[i];
+				var spec = LineChoices[i];
 				if (!spec.WordLevel)
 				{
 					break;
 				}
 				SetColor(vwenv, LabelRGBFor(spec));
-				var tss = MakeUiElementString(m_lineChoices.LabelFor(spec.Flid), wsUI, null);
+				var tss = MakeUiElementString(LineChoices.LabelFor(spec.Flid), wsUI, null);
 				var bldr = tss.GetBldr();
-				if (m_lineChoices.RepetitionsOfFlid(spec.Flid) > 1)
+				if (LineChoices.RepetitionsOfFlid(spec.Flid) > 1)
 				{
 					bldr.Append(spaceStr);
 					bldr.Append(spec.WsLabel(cache));
@@ -1699,7 +1581,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 				case WfiWordformTags.kClassId:
 				case WfiAnalysisTags.kClassId:
-					if (m_this.m_fShowMorphBundles)
+					if (m_this.ShowMorphBundles)
 					{
 						// Display the morpheme bundles.
 						if (m_hvoDefault != m_hvoWordBundleAnalysis)
@@ -1715,7 +1597,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					break;
 				case WfiGlossTags.kClassId:
 
-					if (m_this.m_fShowMorphBundles)
+					if (m_this.ShowMorphBundles)
 					{
 						m_hvoWfiAnalysis = m_defaultObj.Owner.Hvo;
 						// Display all the morpheme stuff.
@@ -1822,8 +1704,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override void DisplayVec(IVwEnv vwenv, int hvo, int tag, int frag)
 		{
-			CheckDisposed();
-
 			switch (frag)
 			{
 			case kfragSegFf: // freeform annotations. (Cf override in InterlinPrintVc)
@@ -1834,7 +1714,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						break;
 					}
 				default:
-				if (frag >= kfragWordGlossWs && frag < kfragWordGlossWs + m_WsList.AnalysisWsIds.Length)
+				if (frag >= kfragWordGlossWs && frag < kfragWordGlossWs + ListManager.AnalysisWsIds.Length)
 				{
 					// Displaying one ws of all the glosses of an analysis, separated by commas.
 					vwenv.OpenParagraph();
@@ -1863,9 +1743,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			// Add them in the order specified. Each iteration adds a group with the same flid but (typically)
 			// different writing systems.
-			for (var ispec = m_lineChoices.FirstFreeformIndex; ispec < m_lineChoices.Count; ispec += m_lineChoices.AdjacentWssAtIndex(ispec, hvoSeg).Length)
+			for (var ispec = LineChoices.FirstFreeformIndex; ispec < LineChoices.Count; ispec += LineChoices.AdjacentWssAtIndex(ispec, hvoSeg).Length)
 			{
-				var flid = m_lineChoices[ispec].Flid;
+				var flid = LineChoices[ispec].Flid;
 				switch(flid)
 				{
 					case InterlinLineChoices.kflidFreeTrans:
@@ -1891,7 +1771,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected virtual void AddCustomFreeFormComment(IVwEnv vwenv, int hvoSeg, int lineChoiceIndex)
 		{
-			var wssAnalysis = m_lineChoices.AdjacentWssAtIndex(lineChoiceIndex, hvoSeg);
+			var wssAnalysis = LineChoices.AdjacentWssAtIndex(lineChoiceIndex, hvoSeg);
 			if (wssAnalysis.Length == 0)
 			{
 				return;
@@ -1905,7 +1785,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			vwenv.OpenDiv();
 			SetParaDirectionAndAlignment(vwenv, wssAnalysis[0]);
 			vwenv.OpenMappedPara();
-			var customCommentFlid = m_lineChoices[lineChoiceIndex].Flid;
+			var customCommentFlid = LineChoices[lineChoiceIndex].Flid;
 			var label = m_cache.MetaDataCacheAccessor.GetFieldLabel(customCommentFlid) + " ";
 			SetNoteLabelProps(vwenv);
 			// REVIEW: Should we set the label to a special color as well?
@@ -1967,7 +1847,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal ICmAnnotationDefn SegDefnFromFfFlid(int flid)
 		{
-			CheckDisposed();
 			switch(flid)
 			{
 			case InterlinLineChoices.kflidFreeTrans:
@@ -1984,8 +1863,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override ITsString DisplayVariant(IVwEnv vwenv, int tag, int frag)
 		{
-			CheckDisposed();
-
 			switch (tag)
 			{
 				case SimpleRootSite.kTagUserPrompt:
@@ -2029,10 +1906,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public override int EstimateHeight(int hvo, int frag, int dxAvailWidth)
 		{
-			CheckDisposed();
-
 			var obj = m_cache.ServiceLocator.ObjectRepository.GetObject(hvo);
-
 			switch (frag)
 			{
 					// If you change this, remember that an estimate that is too HIGH just means it takes a few iterations
@@ -2085,7 +1959,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var length = seg.BaselineText.Length;
 			var width = length*kPixelsPerChar + kPixelsForRowLabels;
 			var rows = dxAvailWidth/width + 1;
-			return rows*m_lineChoices.Count*kPixelsPerLine;
+			return rows*LineChoices.Count*kPixelsPerLine;
 		}
 
 		/// <summary>
@@ -2108,8 +1982,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// are properties computed in non-trivial ways from backreferences, and the cache can't do it automatically.
 		public override void LoadDataFor(IVwEnv vwenv, int[] rghvo, int chvo, int hvoParent, int tag, int frag, int ihvoMin)
 		{
-			CheckDisposed();
-
 			try
 			{
 				if (tag == StTxtParaTags.kflidSegments)
@@ -2142,7 +2014,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public void LoadParaData(IStTxtPara para)
 		{
-			CheckDisposed();
 			EnsureLoader();
 			m_loader.LoadParaData(para);
 		}
@@ -2200,14 +2071,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Obtain the ID of the AnnotationDefn called (in English) 'Note'.
 		/// </summary>
-		internal int NoteSegmentDefn
-		{
-			get
-			{
-				CheckDisposed();
-				return GetAnnDefnId(m_cache, CmAnnotationDefnTags.kguidAnnNote, ref m_hvoAnnDefNote);
-			}
-		}
+		internal int NoteSegmentDefn => GetAnnDefnId(m_cache, CmAnnotationDefnTags.kguidAnnNote, ref m_hvoAnnDefNote);
 
 		/// <summary>
 		/// Add a display of the category of hvoAnalysis.

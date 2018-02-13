@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -81,12 +81,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_prevSearchText;
 			}
 			set
 			{
-				CheckDisposed();
 				m_prevSearchText = value;
 			}
 		}
@@ -100,7 +98,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return fweditFindText;
 			}
 		}
@@ -114,7 +111,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return lblFindFormat;
 			}
 		}
@@ -128,7 +124,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return lblFindFormatText;
 			}
 		}
@@ -142,7 +137,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return fweditReplaceText;
 			}
 		}
@@ -156,7 +150,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return lblReplaceFormat;
 			}
 		}
@@ -170,7 +163,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return lblReplaceFormatText;
 			}
 		}
@@ -184,7 +176,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_findEnvironment;
 			}
 		}
@@ -199,7 +190,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return chkMatchDiacritics.Checked;
 			}
 		}
@@ -214,12 +204,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return chkMatchWS.Checked;
 			}
 			set
 			{
-				CheckDisposed();
 				chkMatchWS.Checked = value;
 			}
 		}
@@ -234,7 +222,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return chkMatchCase.Checked;
 			}
 		}
@@ -249,7 +236,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return chkMatchWholeWord.Checked;
 			}
 		}
@@ -264,12 +250,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return chkUseRegularExpressions.Checked;
 			}
 			set
 			{
-				CheckDisposed();
 				chkUseRegularExpressions.Checked = value;
 			}
 		}
@@ -283,7 +267,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return panelSearchOptions.Visible;
 			}
 		}
@@ -295,8 +278,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void SimulateFindPrevButtonClick()
 		{
-			CheckDisposed();
-
 			FindPrevious();
 		}
 
@@ -307,8 +288,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void SimulateFindButtonClick()
 		{
-			CheckDisposed();
-
 			m_fInvalidRegExDisplayed = false;
 			OnFindNext(null, new EventArgs());
 		}
@@ -320,7 +299,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void SimulateReplaceButtonClick()
 		{
-			CheckDisposed();
 			DoReplace(CurrentSelection);
 			m_cache.ServiceLocator.GetInstance<IActionHandler>().BreakUndoTask("blah", "blah");
 		}
@@ -332,8 +310,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void SimulateReplaceAllButtonClick()
 		{
-			CheckDisposed();
-
 			DoReplaceAll();
 		}
 
@@ -346,7 +322,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return btnClose;
 			}
 		}
@@ -358,8 +333,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public new void PopulateStyleMenu()
 		{
-			CheckDisposed();
-
 			base.PopulateStyleMenu();
 		}
 
@@ -372,7 +345,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return mnuStyle;
 			}
 		}
@@ -387,8 +359,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public new void ApplyStyle(FwTextBox fwTextBox, string sStyle)
 		{
-			CheckDisposed();
-
 			base.ApplyStyle(fwTextBox, sStyle);
 			Focus();
 		}
@@ -400,8 +370,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public new void PopulateWritingSystemMenu()
 		{
-			CheckDisposed();
-
 			base.PopulateWritingSystemMenu();
 		}
 
@@ -414,7 +382,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return mnuWritingSystem;
 			}
 		}
@@ -435,8 +402,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void VerifySelection(int iInstancePara, int iPara, int iInstanceString,
 			int ichAnchor, int ichEnd)
 		{
-			CheckDisposed();
-
 			SelectionHelper helper = ((DummyBasicView)m_vwRootsite).EditingHelper.CurrentSelection;
 			SelLevInfo[] selLevels = helper.GetLevelInfo(SelectionHelper.SelLimitType.Anchor);
 			Assert.AreEqual(1, selLevels.Length);

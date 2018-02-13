@@ -37,7 +37,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			set
 			{
-				CheckDisposed();
 				m_fShowWsLabel = value;
 				if (m_vc is StringSliceVc)
 				{
@@ -53,7 +52,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			set
 			{
-				CheckDisposed();
 				if (m_vc is StringSliceVc)
 				{
 					((StringSliceVc)m_vc).DefaultWs = value;
@@ -112,7 +110,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void SelectAt(int ich)
 		{
-			CheckDisposed();
 			try
 			{
 				RootBox.MakeTextSelection(0, 0, null, m_flid, 0, ich, ich, 0, true, -1, null, true);
@@ -131,7 +128,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			set
 			{
-				CheckDisposed();
 				if (!value)
 				{
 					DoValidation();
@@ -189,10 +185,10 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode)
+			{
 				return;
+			}
 
 			// A crude way of making sure the property we want is loaded into the cache.
 			m_obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoObj);

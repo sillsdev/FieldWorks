@@ -75,19 +75,6 @@ namespace LanguageExplorer.Controls.LexText
 		#endregion
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose(bool disposing)
@@ -121,8 +108,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IFsFeatStruc fs, int owningFlid)
 		{
-			CheckDisposed();
-
 			FS = fs;
 			m_propertyTable = propertyTable;
 			SetPropertyTableSideEffects();
@@ -159,8 +144,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, ICmObject cobj, int owningFlid)
 		{
-			CheckDisposed();
-
 			FS = null;
 			m_owningFlid = owningFlid;
 			m_hvoOwner = cobj.Hvo;
@@ -334,14 +317,10 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				CheckDisposed();
-
 				return labelPrompt.Text;
 			}
 			set
 			{
-				CheckDisposed();
-
 				var s1 = value ?? LexTextControls.ksFeaturesForX;
 				string s2;
 				if (m_poses.Count == 0)
@@ -374,14 +353,10 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				CheckDisposed();
-
 				return Text;
 			}
 			set
 			{
-				CheckDisposed();
-
 				Text = value;
 			}
 		}
@@ -392,17 +367,11 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				CheckDisposed();
-
 				return linkLabel1.Text;
 			}
 			set
 			{
-				CheckDisposed();
-
-				var s1 = value ?? LexTextControls.ksAddFeaturesToX;
-				var s2 = HighestPOS == null ? LexTextControls.ksUnknownCategory : HighestPOS.Name.AnalysisDefaultWritingSystem.Text;
-				linkLabel1.Text = string.Format(s1, s2);
+				linkLabel1.Text = string.Format(value ?? LexTextControls.ksAddFeaturesToX, HighestPOS == null ? LexTextControls.ksUnknownCategory : HighestPOS.Name.AnalysisDefaultWritingSystem.Text);
 			}
 		}
 
@@ -630,8 +599,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <remarks>Is public for Unit Testing</remarks>
 		public void UpdateFeatureStructure(TreeNodeCollection col)
 		{
-			CheckDisposed();
-
 			foreach (FeatureTreeNode tn in col)
 			{
 				if (tn.Nodes.Count > 0)

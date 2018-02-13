@@ -21,16 +21,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	internal class IhMissingWordPos : InterlinComboHandler
 	{
 		POSPopupTreeManager m_pOSPopupTreeManager;
-		PopupTree m_tree;
 
-		internal PopupTree Tree
-		{
-			get
-			{
-				CheckDisposed();
-				return m_tree;
-			}
-		}
+		internal PopupTree Tree { get; private set; }
 
 		#region IDisposable override
 
@@ -71,16 +63,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					m_pOSPopupTreeManager.AfterSelect -= m_pOSPopupTreeManager_AfterSelect;
 					m_pOSPopupTreeManager.Dispose();
 				}
-				if (m_tree != null)
+				if (Tree != null)
 				{
-					m_tree.Load -= m_tree_Load;
-					m_tree.Dispose();
+					Tree.Load -= m_tree_Load;
+					Tree.Dispose();
 				}
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_pOSPopupTreeManager = null;
-			m_tree = null;
+			Tree = null;
 
 			base.Dispose(disposing);
 		}
@@ -89,9 +81,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override void SetupCombo()
 		{
-			CheckDisposed();
-
-			m_tree = new PopupTree
+			Tree = new PopupTree
 			{
 				// Try a bigger size here only for Sandbox POS editing (GordonM) [LT-7529]
 				// Enhance: It would be better to know what size we need for the data,
@@ -100,19 +90,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				Size = new Size(180, 220)
 			};
 			// Handle AfterSelect events through POSPopupTreeManager in m_tree_Load().
-			m_tree.Load += m_tree_Load;
+			Tree.Load += m_tree_Load;
 		}
 		public override void Activate(Rect loc)
 		{
-			CheckDisposed();
-
-			if (m_tree == null)
+			if (Tree == null)
 			{
 				base.Activate(loc);
 			}
 			else
 			{
-				m_tree.Launch(m_sandbox.RectangleToScreen(loc), Screen.GetWorkingArea(m_sandbox));
+				Tree.Launch(m_sandbox.RectangleToScreen(loc), Screen.GetWorkingArea(m_sandbox));
 			}
 		}
 
@@ -121,8 +109,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// ktagSbWordPos property before the user made a selection in the menu.
 		internal virtual int WasReal()
 		{
-			CheckDisposed();
-
 			return 0;
 		}
 
@@ -163,7 +149,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override void HandleSelect(int index)
 		{
-			CheckDisposed();
 			var hvoPos = Items[index];
 			var possibility = m_caches.MainCache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(hvoPos);
 
@@ -177,7 +162,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (m_pOSPopupTreeManager == null)
 			{
 				var cache = m_caches.MainCache;
-				m_pOSPopupTreeManager = new POSPopupTreeManager(m_tree, cache, cache.LangProject.PartsOfSpeechOA, cache.DefaultAnalWs, false, m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.FindForm());
+				m_pOSPopupTreeManager = new POSPopupTreeManager(Tree, cache, cache.LangProject.PartsOfSpeechOA, cache.DefaultAnalWs, false, m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.FindForm());
 				m_pOSPopupTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
 			}
 			m_pOSPopupTreeManager.LoadPopupTree(m_caches.RealHvo(m_caches.DataAccess.get_ObjectProp(m_hvoSbWord, SandboxBase.ktagSbWordPos)));
@@ -195,8 +180,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal void SelectItem(int hvo, string label)
 		{
-			CheckDisposed();
-
 			// if we haven't changed the selection, we don't need to change anything in the cache.
 			var hvoLastCategory = m_caches.RealHvo(m_caches.DataAccess.get_ObjectProp(m_hvoSbWord, SandboxBase.ktagSbWordPos));
 			if (hvoLastCategory == hvo)

@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
@@ -28,19 +27,6 @@ namespace LanguageExplorer.Controls
 	/// </summary>
 	public class MainUserControl : UserControl, IMainUserControl
 	{
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
 		#region Accessibility functionality for MainUserControl derived objects
 
 		/// <summary>
@@ -66,12 +52,10 @@ namespace LanguageExplorer.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return AccNameDefault;
 			}
 			set
 			{
-				CheckDisposed();
 				AccNameDefault = value;
 			}
 		}

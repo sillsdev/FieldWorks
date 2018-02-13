@@ -74,7 +74,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override void AboutToDiscard()
 		{
-			CheckDisposed();
 			base.AboutToDiscard();
 			var launcher = Control as ButtonLauncher;
 			var rs = launcher?.MainControl as SimpleRootSite;

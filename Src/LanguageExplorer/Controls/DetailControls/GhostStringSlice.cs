@@ -30,14 +30,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			AccessibleName = "GhostStringSlice";
 		}
 
-		public override bool IsGhostSlice
-		{
-			get
-			{
-				CheckDisposed();
-
-				return true;
-			}
-		}
+		public override bool IsGhostSlice => true;
 	}
 }

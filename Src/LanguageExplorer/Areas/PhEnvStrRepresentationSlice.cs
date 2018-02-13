@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas
 			IPersistenceProvider persistenceProvider, int ws)
 			: base(new StringRepSliceView(obj.Hvo), obj, StringRepSliceVc.Flid)
 		{
-			m_persistenceProvider = persistenceProvider;
+			PersistenceProvider = persistenceProvider;
 		}
 
 		public PhEnvStrRepresentationSlice()
@@ -41,15 +41,12 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public override void FinishInit()
 		{
-			CheckDisposed();
+			MyStringRepSliceView.Cache = PropertyTable.GetValue<LcmCache>("cache");
+			MyStringRepSliceView.ResetValidator();
 
-			var ctrl = Control as StringRepSliceView; //new StringRepSliceView(m_hvoContext);
-			ctrl.Cache = PropertyTable.GetValue<LcmCache>("cache");
-			ctrl.ResetValidator();
-
-			if (ctrl.RootBox == null)
+			if (MyStringRepSliceView.RootBox == null)
 			{
-				ctrl.MakeRoot();
+				MyStringRepSliceView.MakeRoot();
 			}
 		}
 
@@ -64,7 +61,6 @@ namespace LanguageExplorer.Areas
 		public virtual bool OnDisplayShowEnvironmentError(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			StringRepSliceView view = Control as StringRepSliceView;
 			if (view == null)
 				return false;
@@ -75,9 +71,7 @@ namespace LanguageExplorer.Areas
 
 		public bool OnShowEnvironmentError(object args)
 		{
-			CheckDisposed();
-			var view = (StringRepSliceView)Control;
-			view.ShowEnvironmentError();
+			MyStringRepSliceView.ShowEnvironmentError();
 			return true;
 		}
 
@@ -91,7 +85,6 @@ namespace LanguageExplorer.Areas
 		public virtual bool OnDisplayInsertSlash(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			StringRepSliceView view = Control as StringRepSliceView;
 			if (view == null)
 				return false;
@@ -102,11 +95,9 @@ namespace LanguageExplorer.Areas
 
 		public bool OnInsertSlash(object args)
 		{
-			CheckDisposed();
-			var view = (StringRepSliceView)Control;
-			m_cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertEnvironmentSlash, AreaResources.ksInsertEnvironmentSlash);
-			view.RootBox.OnChar((int)'/');
-			m_cache.DomainDataByFlid.EndUndoTask();
+			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertEnvironmentSlash, AreaResources.ksInsertEnvironmentSlash);
+			MyStringRepSliceView.RootBox.OnChar((int)'/');
+			Cache.DomainDataByFlid.EndUndoTask();
 			return true;
 		}
 
@@ -121,7 +112,6 @@ namespace LanguageExplorer.Areas
 		public virtual bool OnDisplayInsertEnvironmentBar(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			StringRepSliceView view = Control as StringRepSliceView;
 			if (view == null)
 				return false;
@@ -132,13 +122,13 @@ namespace LanguageExplorer.Areas
 
 		public bool OnInsertEnvironmentBar(object args)
 		{
-			CheckDisposed();
-			var view = (StringRepSliceView)Control;
-			m_cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertEnvironmentBar, AreaResources.ksInsertEnvironmentBar);
-			view.RootBox.OnChar('_');
-			m_cache.DomainDataByFlid.EndUndoTask();
+			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertEnvironmentBar, AreaResources.ksInsertEnvironmentBar);
+			MyStringRepSliceView.RootBox.OnChar('_');
+			Cache.DomainDataByFlid.EndUndoTask();
 			return true;
 		}
+
+		private StringRepSliceView MyStringRepSliceView => (StringRepSliceView)Control;
 
 #if RANDYTODO
 		/// <summary>
@@ -150,7 +140,6 @@ namespace LanguageExplorer.Areas
 		public virtual bool OnDisplayInsertNaturalClass(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			StringRepSliceView view = Control as StringRepSliceView;
 			if (view == null)
 				return false;
@@ -161,11 +150,9 @@ namespace LanguageExplorer.Areas
 
 		public bool OnInsertNaturalClass(object args)
 		{
-			CheckDisposed();
-			var view = (StringRepSliceView)Control;
-			m_cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertNaturalClass, AreaResources.ksInsertNaturalClass);
-			var fOk = ReallySimpleListChooser.ChooseNaturalClass(view.RootBox, m_cache, m_persistenceProvider, PropertyTable, Publisher);
-			m_cache.DomainDataByFlid.EndUndoTask();
+			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertNaturalClass, AreaResources.ksInsertNaturalClass);
+			var fOk = ReallySimpleListChooser.ChooseNaturalClass(MyStringRepSliceView.RootBox, Cache, PersistenceProvider, PropertyTable, Publisher);
+			Cache.DomainDataByFlid.EndUndoTask();
 			return fOk;
 		}
 
@@ -179,7 +166,6 @@ namespace LanguageExplorer.Areas
 		public virtual bool OnDisplayInsertOptionalItem(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			StringRepSliceView view = Control as StringRepSliceView;
 			if (view == null)
 				return false;
@@ -190,12 +176,9 @@ namespace LanguageExplorer.Areas
 
 		public bool OnInsertOptionalItem(object args)
 		{
-			CheckDisposed();
-			var view = (StringRepSliceView)Control;
-			var rootb = view.RootBox;
-			m_cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertOptionalItem, AreaResources.ksInsertOptionalItem);
-			PhoneEnvReferenceSlice.InsertOptionalItem(rootb);
-			m_cache.DomainDataByFlid.EndUndoTask();
+			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertOptionalItem, AreaResources.ksInsertOptionalItem);
+			PhoneEnvReferenceSlice.InsertOptionalItem(MyStringRepSliceView.RootBox);
+			Cache.DomainDataByFlid.EndUndoTask();
 			return true;
 		}
 
@@ -209,7 +192,6 @@ namespace LanguageExplorer.Areas
 		public virtual bool OnDisplayInsertHashMark(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
 			StringRepSliceView view = Control as StringRepSliceView;
 			if (view == null)
 				return false;
@@ -220,11 +202,9 @@ namespace LanguageExplorer.Areas
 
 		public bool OnInsertHashMark(object args)
 		{
-			CheckDisposed();
-			var view = (StringRepSliceView)Control;
-			m_cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertWordBoundary, AreaResources.ksInsertWordBoundary);
-			view.RootBox.OnChar((int)'#');
-			m_cache.DomainDataByFlid.EndUndoTask();
+			Cache.DomainDataByFlid.BeginUndoTask(AreaResources.ksInsertWordBoundary, AreaResources.ksInsertWordBoundary);
+			MyStringRepSliceView.RootBox.OnChar('#');
+			Cache.DomainDataByFlid.EndUndoTask();
 			return true;
 		}
 		#endregion

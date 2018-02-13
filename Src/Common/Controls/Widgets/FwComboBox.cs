@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -231,17 +231,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		protected abstract IDropDownBox CreateDropDownBox();
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose(bool disposing)
@@ -302,13 +291,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_state;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_state = value;
 				Invalidate(true);
 			}
@@ -367,13 +354,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_hasBorder;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_hasBorder = value;
 				if (Application.RenderWithVisualStyles)
 					SetPadding();
@@ -430,13 +415,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_textPadding;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_textPadding = value;
 				SetPadding();
 			}
@@ -452,13 +435,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_useVisualStyleBackColor;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_useVisualStyleBackColor = value;
 #if !__MonoCS__
 				if (value)
@@ -553,7 +534,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_comboTextBox;
 			}
 		}
@@ -570,13 +550,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_comboTextBox.StyleSheet;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_comboTextBox.StyleSheet = value;
 			}
 		}
@@ -627,14 +604,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return base.BackColor;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_useVisualStyleBackColor = false;
 				if (m_comboTextBox != null)
 				{
@@ -652,14 +625,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return base.ForeColor;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_comboTextBox != null)
 				{
 					if (m_comboTextBox.ForeColor != SystemColors.HighlightText)
@@ -680,8 +649,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_comboTextBox == null)
 					return String.Empty;
 
@@ -689,8 +656,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (!DesignMode)
 					m_comboTextBox.Text = value;
 			}
@@ -706,13 +671,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_dropDownStyle;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (value == m_dropDownStyle)
 					return;
 				Debug.Assert(value != ComboBoxStyle.Simple); // not (yet) supported.
@@ -731,14 +693,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_comboTextBox.Tss;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_comboTextBox.Tss = value;
 			}
 		}
@@ -753,13 +711,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_comboTextBox.WritingSystemCode;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_comboTextBox.WritingSystemCode = value;
 			}
 		}
@@ -773,12 +728,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_dropDownBox.Form.Width;
 			}
 			set
 			{
-				CheckDisposed();
 				m_fListWidthSet = true;
 				m_dropDownBox.Form.Width = value;
 			}
@@ -793,13 +746,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_dropDownBox.Form.Visible;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (value)
 				{
 					RaiseDropDown();
@@ -821,13 +771,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_comboTextBox.WritingSystemFactory;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_comboTextBox.WritingSystemFactory = value;
 			}
 		}
@@ -875,7 +822,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				if (m_comboTextBox != null && m_button != null)
 				{
 					if (Application.RenderWithVisualStyles)
@@ -910,7 +856,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		public void SelectAll()
 		{
-			CheckDisposed();
 			m_comboTextBox.SelectAll();
 		}
 
@@ -934,12 +879,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_comboTextBox.AdjustStringHeight;
 			}
 			set
 			{
-				CheckDisposed();
 				m_comboTextBox.AdjustStringHeight = value;
 			}
 		}
@@ -952,8 +895,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="propertyTable"></param>
 		public void AdjustForStyleSheet(Form parent, Control grower, IPropertyTable propertyTable)
 		{
-			CheckDisposed();
-
 			AdjustForStyleSheet(parent, grower, FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable));
 		}
 		/// ------------------------------------------------------------------------------------
@@ -973,8 +914,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public void AdjustForStyleSheet(Form parent, Control grower, IVwStylesheet stylesheet)
 		{
-			CheckDisposed();
-
 			if (StyleSheet == null)
 				StyleSheet = stylesheet;
 			int oldHeight = Height;
@@ -1042,8 +981,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		protected void ShowDropDownBox()
 		{
-			CheckDisposed();
-
 			Rectangle workingArea = Screen.GetWorkingArea(this);
 
 			Size sz = m_dropDownBox.Form.Size;
@@ -1100,8 +1037,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		protected void HideDropDownBox()
 		{
-			CheckDisposed();
-
 			m_dropDownBox.HideForm();
 		}
 
@@ -1164,8 +1099,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public virtual void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			CheckDisposed();
-
 			// Currently the only property that can change is the string,
 			// but verify it in case we later make a mechanism to work with a shared
 			// cache. If it is the right property, report TextChanged.
@@ -1354,7 +1287,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_dropDownBox as ComboListBox;
 			}
 		}
@@ -1368,12 +1300,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return ListBox.SelectedIndex;
 			}
 			set
 			{
-				CheckDisposed();
 				ListBox.SelectedIndex = value;
 			}
 		}
@@ -1389,13 +1319,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return base.StyleSheet;
 			}
 			set
 			{
-				CheckDisposed();
-
 				base.StyleSheet = value;
 				ListBox.StyleSheet = value;
 			}
@@ -1409,7 +1336,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return ListBox.Items;
 			}
 		}
@@ -1423,13 +1349,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return ListBox.SelectedItem;
 			}
 			set
 			{
-				CheckDisposed();
-
 				ListBox.SelectedItem = value;
 				if (value != null)
 					m_comboTextBox.Tss = ListBox.TextOfItem(value);
@@ -1447,14 +1370,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return base.Text;
 			}
 			set
 			{
-				CheckDisposed();
-
 				base.Text = value;
 				ListBox.SelectedIndex = ListBox.FindStringExact(value);
 			}
@@ -1469,14 +1388,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				return base.Tss;
 			}
 			set
 			{
-				CheckDisposed();
-
 				base.Tss = value;
 				// Don't just set the SelectedTss, as that throws an exception if not found.
 				ListBox.SelectedIndex = ListBox.FindIndexOfTss(value);
@@ -1503,13 +1418,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return base.WritingSystemCode;
 			}
 			set
 			{
-				CheckDisposed();
-
 				base.WritingSystemCode = value;
 				ListBox.WritingSystemCode = value;
 			}
@@ -1524,13 +1436,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return base.WritingSystemFactory;
 			}
 			set
 			{
-				CheckDisposed();
-
 				base.WritingSystemFactory = value;
 				ListBox.WritingSystemFactory = value;
 			}
@@ -1562,12 +1471,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_tssPrevious;
 			}
 			set
 			{
-				CheckDisposed();
 				m_tssPrevious = value;
 			}
 		}
@@ -1583,8 +1490,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="tss"></param>
 		public void AddItem(ITsString tss)
 		{
-			CheckDisposed();
-
 			//first calculate things to we adjust the font to the correct size.
 			int mpEditHeight = FwTextBox.GetDympMaxHeight(m_comboTextBox);
 			ITsString tssAdjusted;
@@ -1601,8 +1506,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <returns></returns>
 		public int FindStringExact(string str)
 		{
-			CheckDisposed();
-
 			return ListBox.FindStringExact(str);
 		}
 
@@ -1613,8 +1516,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <returns></returns>
 		public int FindStringExact(ITsString tss)
 		{
-			CheckDisposed();
-
 			return ListBox.FindIndexOfTss(tss);
 		}
 
@@ -1643,8 +1544,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			CheckDisposed();
-
 			// Currently the only property that can change is the string,
 			// but verify it in case we later make a mechanism to work with a shared
 			// cache. If it is the right property, report TextChanged.
@@ -1809,13 +1708,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_state;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_state = value;
 				m_button.Invalidate();
 			}
@@ -1831,13 +1728,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return BorderStyle != BorderStyle.None;
 			}
 
 			set
 			{
-				CheckDisposed();
 				BorderStyle = value ? BorderStyle.FixedSingle : BorderStyle.None;
 			}
 		}
@@ -1852,13 +1747,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return false;
 			}
 
 			set
 			{
-				CheckDisposed();
 				// do nothing;
 			}
 		}
@@ -1870,12 +1763,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_button;
 			}
 			set
 			{
-				CheckDisposed();
 				m_button = value;
 			}
 		}
@@ -1887,13 +1778,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return ComboBoxStyle.DropDownList;
 			}
 			set
 			{
-				CheckDisposed();
-
 				// required interface method does nothing at all.
 			}
 		}
@@ -1905,13 +1793,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_activateOnShow;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_activateOnShow = value;
 				m_listForm.TopMost = value;
 			}
@@ -1926,8 +1812,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				m_innerFwListBox.ShowHighlight = false;
 				EnsureRoot();
 				int result = m_innerFwListBox.RootBox.Width;
@@ -1943,8 +1827,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				EnsureRoot();
 				// The extra pixels are designed to be enough so that a scroll bar is not shown.
 				// It allows for borders and so forth around the actual root box.
@@ -1965,8 +1847,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (SelectedIndex < 0)
 					return String.Empty;
 
@@ -1983,8 +1863,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 			set
 			{
-				CheckDisposed();
-
 				SelectedIndex = FindStringExact(value);
 			}
 		}
@@ -1998,7 +1876,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_listForm;
 			}
 		}
@@ -2081,8 +1958,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="maxWidth"></param>
 		public void AdjustSize(int maxWidth, int maxHeight)
 		{
-			CheckDisposed();
-
 			int height = NaturalHeight;
 			// Give ourselves a small margin of width, plus extra if we need a scroll bar.
 			int width = NaturalWidth + (height > maxHeight ? 25 : 10);
@@ -2108,8 +1983,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// that the list is to appear on.</param>
 		public void Launch(Rectangle launcherBounds, Rectangle screenBounds)
 		{
-			CheckDisposed();
-
 			m_previousForm = Form.ActiveForm;
 #if __MonoCS__	// FWNX-908: Crash closing combobox.
 			// Somehow on Mono, Form.ActiveForm can sometimes return m_listForm at this point.
@@ -2202,8 +2075,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		public void HideForm()
 		{
-			CheckDisposed();
-
 			// The order of the following two lines is very important!  On some
 			// machines the LT-2962 issue will show itself if this is changed.
 			// The summary statement is that making the form not visible causes
@@ -2236,8 +2107,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="start">the search key</param>
 		public void HighlightItemStartingWith(string start)
 		{
-			CheckDisposed();
-
 			int iPreviousHighlighted = -1;
 			int iStarting;
 			string itemStr = string.Empty;
@@ -2310,12 +2179,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fKeepDropDownListOpen;
 			}
 			set
 			{
-				CheckDisposed();
 				m_fKeepDropDownListOpen = value;
 			}
 		}
@@ -2368,18 +2235,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		}
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
 
 		/// <summary>
 		/// True, if the object has been disposed.
@@ -2474,8 +2329,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// --------------------------------------------------------------------------------
 		public bool PreFilterMessage(ref Message m)
 		{
-			CheckDisposed();
-
 			// DEBUGGING (used for tracking down lost left mouse button messages in the sandbox)
 			//Control cx = Control.FromHandle(m.HWnd);
 			//string name = "<>";

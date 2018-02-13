@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -70,7 +70,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// Enhance JohnT: 90% of font height is not always exactly right, but it's the closest
 					// I can get without a new API to get the exact ascent of the font.
 					var wsSeg = TsStringUtils.GetWsAtOffset(FocusBoxOccurrence.Segment.BaselineText, 0);
-					var dympBaseline = FontHeightAdjuster.GetFontHeightForStyle("Normal", m_stylesheet, wsSeg, m_cache.LanguageWritingSystemFactoryAccessor) * 9 / 10;
+					var dympBaseline = FontHeightAdjuster.GetFontHeightForStyle("Normal", StyleSheet, wsSeg, m_cache.LanguageWritingSystemFactoryAccessor) * 9 / 10;
 					var transparent = 0xC0000000; // FwTextColor.kclrTransparent won't convert to uint
 					vwenv.AddSimpleRect((int)transparent, FocusBoxSize.Width, FocusBoxSize.Height, - (FocusBoxSize.Height - dympBaseline));
 					return;

@@ -68,8 +68,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override bool Invoke()
 		{
-			CheckDisposed();
-
 			using (var dlg = new SimpleIntegerMatchDlg(m_helpTopicProvider))
 			{
 				dlg.SetDlgValues(m_matcher);
@@ -103,8 +101,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal override ITsString SetFromMatcher(IMatcher matcher)
 		{
-			CheckDisposed();
-
 			return matcher is IntMatcher ? matcher.Label : null;
 		}
 	}

@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -155,17 +155,6 @@ namespace SIL.FieldWorks.Common.Controls
 		#endregion
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
-		/// <summary>
 		///
 		/// </summary>
 		public bool IsDisposed
@@ -205,8 +194,6 @@ namespace SIL.FieldWorks.Common.Controls
 		//*******************************************************************************************
 		public void EdgeColors(Color clrLightest, Color clrLight, Color clrDark, Color clrDarkest)
 		{
-			CheckDisposed();
-
 			BorderLightestColor = clrLightest;
 			BorderLightColor = clrLight;
 			BorderDarkColor = clrDark;
@@ -223,8 +210,6 @@ namespace SIL.FieldWorks.Common.Controls
 		//*******************************************************************************************
 		public void EdgeColors(Color clrLight, Color clrDark)
 		{
-			CheckDisposed();
-
 			BorderLightestColor = clrLight;
 			BorderDarkColor = clrDark;
 		}
@@ -240,14 +225,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_graphics;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_graphics = value;
 			}
 		}
@@ -262,14 +243,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_clrSingleBorder;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_clrSingleBorder = value;
 			}
 		}
@@ -283,14 +260,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_penLightestEdge.Color;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_penLightestEdge.Color = value;
 			}
 		}
@@ -302,14 +275,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_penLightEdge.Color;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_penLightEdge.Color = value;
 			}
 		}
@@ -321,14 +290,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_penDarkEdge.Color;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_penDarkEdge.Color = value;
 			}
 		}
@@ -340,14 +305,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_penDarkestEdge.Color;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_penDarkestEdge.Color = value;
 			}
 		}
@@ -413,8 +374,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public void Draw(Graphics g, System.Drawing.Rectangle rect, BorderTypes brdrType)
 		{
-			CheckDisposed();
-
 			m_graphics = g;
 			m_rect = rect;
 			m_brdrType = brdrType;
@@ -428,8 +387,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public void Draw()
 		{
-			CheckDisposed();
-
 			//***************************************************************************************
 			// Can't draw without a graphics object.
 			//***************************************************************************************
@@ -637,17 +594,6 @@ namespace SIL.FieldWorks.Common.Controls
 			get { return m_isDisposed; }
 		}
 
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
 		private bool m_isDisposed = false;
 
 		/// <summary>
@@ -673,14 +619,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return g_graphics;
 			}
 			set
 			{
-				CheckDisposed();
-
 				g_graphics = value;
 			}
 		}
@@ -695,14 +637,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return g_LineType;
 			}
 			set
 			{
-				CheckDisposed();
-
 				g_LineType = value;
 			}
 		}
@@ -717,14 +655,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return g_dypThickness;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (g_dypThickness != value)
 				{
 					g_dypThickness = value;
@@ -743,14 +677,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return g_penSolidLine.Color;
 			}
 			set
 			{
-				CheckDisposed();
-
 				g_penSolidLine = new Pen(value, this.SolidLineThickness);
 			}
 		}
@@ -765,14 +695,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return g_penLightLine.Color;
 			}
 			set
 			{
-				CheckDisposed();
-
 				g_penLightLine = new Pen(value, 1);
 			}
 		}
@@ -787,14 +713,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return g_penDarkLine.Color;
 			}
 			set
 			{
-				CheckDisposed();
-
 				g_penDarkLine = new Pen(value, 1);
 			}
 		}
@@ -809,14 +731,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return g_StartLocation;
 			}
 			set
 			{
-				CheckDisposed();
-
 				g_StartLocation = value;
 			}
 		}
@@ -831,14 +749,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return g_EndLocation;
 			}
 			set
 			{
-				CheckDisposed();
-
 				g_EndLocation = value;
 			}
 		}
@@ -928,8 +842,6 @@ namespace SIL.FieldWorks.Common.Controls
 		//*******************************************************************************************
 		public void Draw(int x, int y, int dxpLength)
 		{
-			CheckDisposed();
-
 			g_StartLocation = new Point(x, y);
 			g_EndLocation = new Point(x + dxpLength, y);
 			Draw();
@@ -977,8 +889,6 @@ namespace SIL.FieldWorks.Common.Controls
 		//*******************************************************************************************
 		public void Draw(int x1, int y1, int x2, int y2)
 		{
-			CheckDisposed();
-
 			g_StartLocation = new Point(x1, y1);
 			g_EndLocation = new Point(x2, y2);
 			Draw();
@@ -1004,8 +914,6 @@ namespace SIL.FieldWorks.Common.Controls
 		//*******************************************************************************************
 		public void Draw(int x1, int y1, int x2, int y2, Color solidLineColor)
 		{
-			CheckDisposed();
-
 			g_StartLocation = new Point(x1, y1);
 			g_EndLocation = new Point(x2, y2);
 			g_penSolidLine.Color = solidLineColor;
@@ -1035,8 +943,6 @@ namespace SIL.FieldWorks.Common.Controls
 		//*******************************************************************************************
 		public void Draw(int x1, int y1, int x2, int y2, LineTypes lineType)
 		{
-			CheckDisposed();
-
 			g_LineType = lineType;
 			Draw(x1, y1, x2, y2);
 		}

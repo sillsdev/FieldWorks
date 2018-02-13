@@ -27,19 +27,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		#region IDisposable & Co. implementation
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
 		public bool IsDisposed { get; private set; }
@@ -96,8 +83,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary/>
 		public void Setup(object record, IRecordListUpdater rlu, LcmCache cache)
 		{
-			CheckDisposed();
-
 			Debug.Assert(record is ILexEntry);
 			m_entry = (ILexEntry)record;
 			if (rlu != null)
@@ -114,7 +99,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void Fixup(bool fRefreshList)
 		{
-			CheckDisposed();
 			// If our old entry isn't even valid any more, something has deleted it, and whatever did so should have fixed up the list.
 			// We really don't want to reload the whole thing if we don't need to (takes ages in a big lexicon), so do nothing...JohnT
 			if (!m_entry.IsValidObject)

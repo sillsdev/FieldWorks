@@ -301,15 +301,11 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public void OnBrowseSelectionDrawingFailed(object sender, EventArgs args)
 		{
-			CheckDisposed();
-
 			MyRecordList.OnRefresh(null);
 		}
 
 		public void OnFwRightMouseClick(SimpleRootSite sender, FwRightMouseClickEventArgs e)
 		{
-			CheckDisposed();
-
 			var browseView = sender as XmlBrowseView;
 			if (browseView == null)
 			{
@@ -657,8 +653,6 @@ namespace LanguageExplorer.Areas
 
 		public bool OnConsideringClosing(object argument, System.ComponentModel.CancelEventArgs args)
 		{
-			CheckDisposed();
-
 			args.Cancel = !PrepareToGoAway();
 			return args.Cancel; // if we want to cancel, others don't need to be asked.
 		}
@@ -713,8 +707,6 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public virtual void OnSelectionChanged(object sender, FwObjectSelectionEventArgs e)
 		{
-			CheckDisposed();
-
 			if (m_suppressRecordNavigation && m_suppressShowRecord)
 			{
 				return;
@@ -728,7 +720,6 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public virtual void OnCheckBoxChanged(object sender, CheckBoxChangedEventArgs e)
 		{
-			CheckDisposed();
 			CheckBoxChanged?.Invoke(sender, e);
 		}
 
@@ -745,8 +736,6 @@ namespace LanguageExplorer.Areas
 
 		public bool SnapSplitPosition(ref int width)
 		{
-			CheckDisposed();
-
 			return BrowseViewer != null && BrowseViewer.SnapSplitPosition(ref width);
 		}
 

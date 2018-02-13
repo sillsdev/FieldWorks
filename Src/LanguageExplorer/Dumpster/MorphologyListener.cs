@@ -10,11 +10,9 @@ using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.TextsAndWords;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.SpellChecking;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Dumpster
@@ -84,20 +82,6 @@ namespace LanguageExplorer.Dumpster
 		#endregion
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -216,8 +200,6 @@ namespace LanguageExplorer.Dumpster
 		public virtual bool OnDisplayMergeWordform(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			display.Enabled = display.Visible = InFriendlyArea;
 			return true; //we've handled this
 		}
@@ -225,8 +207,6 @@ namespace LanguageExplorer.Dumpster
 
 		public bool OnMergeWordform(object argument)
 		{
-			CheckDisposed();
-
 			// Do something meaningful,
 			// whenever the definition of merging wordforms gets developed.
 			MessageBox.Show(LanguageExplorerResources.ksCannotMergeWordformsYet);
@@ -244,8 +224,6 @@ namespace LanguageExplorer.Dumpster
 		public virtual bool OnDisplayUseVernSpellingDictionary(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			display.Enabled = display.Visible = Cache != null;
 			if (Cache == null)
 				return true;
@@ -287,8 +265,6 @@ namespace LanguageExplorer.Dumpster
 		/// </summary>
 		public bool OnAddWordsToSpellDict(object argument)
 		{
-			CheckDisposed();
-
 			if (Cache == null)
 			{
 				return false; // impossible?
@@ -415,8 +391,6 @@ namespace LanguageExplorer.Dumpster
 		public virtual bool OnDisplayGotoWfiWordform(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			if (InFriendlyArea && m_mediator != null)
 			{
 				var recordList = RecordList.RecordListRepository.ActiveRecordList;
@@ -443,8 +417,6 @@ namespace LanguageExplorer.Dumpster
 		/// <returns>true</returns>
 		public bool OnGotoWfiWordform(object argument)
 		{
-			CheckDisposed();
-
 			using (var dlg = new WordformGoDlg())
 			{
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
@@ -473,8 +445,6 @@ namespace LanguageExplorer.Dumpster
 		/// </summary>
 		public bool OnJumpToTool(object commandObject)
 		{
-			CheckDisposed();
-
 			if (!InFriendlyArea)
 			{
 				return false;

@@ -39,7 +39,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		// expanded. (Doesn't matter if we make them all to start with...)
 		public override Slice MakeEditorAt(int i)
 		{
-			CheckDisposed();
 			var csi = (IConcSliceInfo)m_items[i];
 			ViewSlice vs = new ConcSlice(new ConcView(csi));
 			if (csi.Count > 0)
@@ -53,7 +52,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void InsertDummies(ConcSlice concSlice, int index, int count)
 		{
-			CheckDisposed();
 			var dummies = new HashSet<Slice>();
 			for (var i = 0; i < dummies.Count; i++)
 			{

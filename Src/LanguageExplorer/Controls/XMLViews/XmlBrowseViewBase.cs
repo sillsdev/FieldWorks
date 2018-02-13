@@ -119,22 +119,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Return the VC. It has some important functions related to interpreting fragment IDs
 		/// that the filter bar needs.
 		/// </summary>
-		internal virtual XmlBrowseViewBaseVc Vc
-		{
-			get
-			{
-				CheckDisposed();
-				return m_xbvvc;
-			}
-		}
+		internal virtual XmlBrowseViewBaseVc Vc => m_xbvvc;
 
 		/// <summary>
 		/// Called when [request debug info].
 		/// </summary>
 		public bool OnRequestDebugInfo(object commandObj)
 		{
-			CheckDisposed();
-
 			using (var logger = new SimpleLogger())
 			{
 				m_xbvvc.LogStream = logger;
@@ -157,8 +148,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		public override bool RefreshDisplay()
 		{
-			CheckDisposed();
-
 			var fChanged = m_xbvvc.RemoveInvalidColumns();
 			if (fChanged)
 			{
@@ -192,8 +181,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (SelectedIndex < 0)
 				{
 					return 0;
@@ -209,14 +196,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Return the number of rows in the view.
 		/// </summary>
-		internal virtual int RowCount
-		{
-			get
-			{
-				CheckDisposed();
-				return SpecialCache.get_VecSize(m_hvoRoot, MainTag);
-			}
-		}
+		internal virtual int RowCount => SpecialCache.get_VecSize(m_hvoRoot, MainTag);
 
 		/// <summary>
 		/// Return the index of the 'selected' row in the view.
@@ -233,18 +213,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				return m_selectedIndex;
 			}
 			set
 			{
-				CheckDisposed();
-
 				Debug.Assert(value >= -1, "The selected index cannot be set to less than -1.");
 				// Just in case it isn't caught in a Debug build...
 				if (value < -1)
 				{
-					throw new ArgumentOutOfRangeException(@"XmlBrowseViewBase.SelectedIndex", value.ToString(), @"Index cannot be set to less than -1.");
+					throw new ArgumentOutOfRangeException("XmlBrowseViewBase.SelectedIndex", value.ToString(), "Index cannot be set to less than -1.");
 				}
 				if (m_selectedIndex == value)
 				{
@@ -542,8 +519,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal IVwSelection MakeSelectionAt(MouseEventArgs e)
 		{
-			CheckDisposed();
-
 			using(new HoldGraphics(this))
 			{
 				var pt = PixelToView(new Point(e.X, e.Y));
@@ -558,8 +533,6 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal void DoSelectionSideEffects(MouseEventArgs e)
 		{
-			CheckDisposed();
-
 			var vwselNew = MakeSelectionAt(e);
 			if (vwselNew != null)
 			{
@@ -824,13 +797,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fSelectedRowHighlighting;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_fSelectedRowHighlighting == value)
 				{
 					return; // Nothing to do.
@@ -879,13 +849,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				return m_hvoRoot;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_rootObjectHasBeenSet && m_hvoRoot == value)
 				{
 					return; // No sense getting all worked up, if it is the same as before.
@@ -964,8 +931,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public virtual void Init(XElement nodeSpec, int hvoRoot, int madeUpFieldIdentifier, LcmCache cache, BrowseViewer bv)
 		{
-			CheckDisposed();
-
 			Debug.Assert((m_selectedIndex == -1), "Cannot set the index to less than zero before initializing.");
 			Debug.Assert(m_nodeSpec == null || m_nodeSpec == nodeSpec, "XmlBrowseViewBase.Init: Mismatched configuration parameters.");
 
@@ -1095,30 +1060,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public virtual bool ColumnSortedFromEnd(int icol)
 		{
-			CheckDisposed();
-
 			return m_bv.ColumnActiveAndSortedFromEnd(icol);
-		}
-
-		/// <summary>
-		/// Gets or sets the value of the AutoScroll property. When we're part of a root site
-		/// group and we're not the scrolling controller, then setting this property is
-		/// ignored.
-		/// </summary>
-		public override bool AutoScroll
-		{
-			get
-			{
-				CheckDisposed();
-
-				return base.AutoScroll;
-			}
-			set
-			{
-				CheckDisposed();
-
-				base.AutoScroll = value;
-			}
 		}
 
 		/// <summary>
@@ -1132,7 +1074,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			set
 			{
-				CheckDisposed();
 				Debug.Assert(!IsVertical, "Unexpected vertical XmlBrowseViewBase");
 
 				if (m_bv?.ScrollBar != null)
@@ -1153,7 +1094,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				if (RootBox == null)
 				{
 					return 0;
@@ -1177,7 +1117,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				Debug.Assert(!IsVertical, "Unexpected vertical XmlBrowseViewBase");
 				var contentHeight = RootBox.Height;
 				var desiredMaxUserReachable = contentHeight - ClientHeight;
@@ -1201,14 +1140,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				return m_ScrollPosition;
 			}
 
 			set
 			{
-				CheckDisposed();
-
 				Debug.Assert(!IsVertical, "Unexpected vertical XmlBrowseViewBase");
 
 				var newValue = value.Y;
@@ -1246,7 +1182,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				var desiredLargeChange = ClientHeight - MeanRowHeight;
 				// Two reasons to make this 1 rather than 0:
 				// 1. Don't want a click in the large change area to produce no change at all.
@@ -1268,7 +1203,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void SetScrollBarParameters(ScrollBar scrollBar)
 		{
-			CheckDisposed();
 			scrollBar.Minimum = 0;
 			scrollBar.SmallChange = MeanRowHeight;
 			scrollBar.LargeChange = DesiredScrollBarLargeChange;
@@ -1279,14 +1213,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// adjusted and its AutoScrollPosition modified. An XmlBrowseViewBase
 		/// scrolls, but using a separate scroll bar.
 		/// </summary>
-		public override bool DoingScrolling
-		{
-			get
-			{
-				CheckDisposed();
-				return true;
-			}
-		}
+		public override bool DoingScrolling => true;
 
 		/// <summary>
 		/// Determines whether automatic vertical scrolling to show the selection should
@@ -1302,8 +1229,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			CheckDisposed();
-
 			SaveScrollPosition(null);
 		}
 
@@ -1327,8 +1252,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void SaveScrollPosition(object newValue)
 		{
-			CheckDisposed();
-
 			if (!IsHandleCreated || RootBox == null)
 			{
 				// JohnT: really nasty things can happen if we create the root box as part of
@@ -1392,8 +1315,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void RestoreScrollPosition(object newValue)
 		{
-			CheckDisposed();
-
 			RestoreScrollPosition(m_iTopOfScreenObjectForScrollPosition);
 		}
 
@@ -1451,10 +1372,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the name of the corresponding property.
 		/// </summary>
-		public string GetCorrespondingPropertyName (string property)
+		public string GetCorrespondingPropertyName(string property)
 		{
-			CheckDisposed();
-
 			return $"{m_id}_{property}";
 		}
 
@@ -1464,8 +1383,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public virtual void SetSelectedRowHighlighting()
 		{
-			CheckDisposed();
-
 			switch (XmlUtils.GetOptionalAttributeValue(m_nodeSpec, "selectionStyle", string.Empty))
 			{
 				case "all":
@@ -1488,8 +1405,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public int HvoAt(int index)
 		{
-			CheckDisposed();
-
 			return SpecialCache.get_VecItem(m_hvoRoot, MainTag, index);
 		}
 
@@ -1678,8 +1593,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public virtual VwLength[] GetColWidthInfo()
 		{
-			CheckDisposed();
-
 			int[] widths; // not wanted here.
 			VwLength[] rglength;
 			m_bv.GetColWidthInfo(out rglength, out widths);
@@ -1738,8 +1651,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode)
 			{
 				return;
@@ -1879,8 +1790,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		public virtual bool OnDisplayDeleteRecord(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			return false;
 		}
 #endif
@@ -1890,8 +1799,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public virtual bool OnDeleteRecord(object commandObject)
 		{
-			CheckDisposed();
-
 			return false;
 		}
 

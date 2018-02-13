@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2017 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -127,16 +127,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_isDisposed = true;
 		}
 
-		/// <summary>
-		/// Throw if the IsDisposed property is true
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
-
 		#endregion IDisposable & Co. implementation
 
 		/// ------------------------------------------------------------------------------------
@@ -181,7 +171,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public IRootSite[] Views
 		{
-			get { CheckDisposed(); return m_availableSites.ToArray(); }
+			get { return m_availableSites.ToArray(); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -194,7 +184,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				if (m_activeSite != null)
 				{
 					Control control = m_activeSite as Control;
@@ -273,7 +262,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public bool IsViewVisible(IRootSite view)
 		{
-			CheckDisposed();
 			Control ctrl = view as Control;
 
 			if (ctrl != null)

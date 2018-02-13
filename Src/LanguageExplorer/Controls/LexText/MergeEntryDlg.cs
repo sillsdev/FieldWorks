@@ -71,8 +71,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetDlgInfo(LcmCache cache, XElement parametersElement, ILexEntry startingEntry, string title, string formlabel, string okbuttonlabel)
 		{
-			CheckDisposed();
-
 			Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
 			m_parametersElement = parametersElement;

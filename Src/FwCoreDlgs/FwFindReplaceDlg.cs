@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -258,8 +258,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			bool fReplace, bool fOverlays, Form owner, IHelpTopicProvider helpTopicProvider,
 			IApp app, int wsEdit)
 		{
-			CheckDisposed();
-
 			fweditFindText.controlID = "Find";
 			fweditReplaceText.controlID = "Replace";
 			// save the pattern and put the text into the find edit box.
@@ -459,8 +457,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			IVwStylesheet stylesheet, Form owner, IHelpTopicProvider helpTopicProvider,
 			IApp app, int wsEdit)
 		{
-			CheckDisposed();
-
 			// Must set the stylesheet for the FwEdit boxes before calling SetDialogValues since
 			// that call can reset the text in those boxes.
 			fweditFindText.StyleSheet = fweditReplaceText.StyleSheet = stylesheet;
@@ -498,17 +494,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			chkMatchWholeWord.Checked = vwPattern.MatchWholeWord;
 			if (chkUseRegularExpressions.Enabled)
 				chkUseRegularExpressions.Checked = vwPattern.UseRegularExpressions;
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -585,8 +570,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="propertyTable"></param>
 		public void RestoreAndPersistSettingsIn(IPropertyTable propertyTable)
 		{
-			CheckDisposed();
-
 			if (propertyTable == null)
 				return;
 			m_propertyTable = propertyTable;
@@ -601,12 +584,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fDisableReplacePatternMatching;
 			}
 			set
 			{
-				CheckDisposed();
 				m_fDisableReplacePatternMatching = value;
 			}
 		}
@@ -679,8 +660,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void SetOwner(IVwRootSite rootSite, Form newOwner, IVwPattern findPattern, int wsEdit)
 		{
-			CheckDisposed();
-
 			m_vwRootsite = rootSite;
 			if (m_vwRootsite != null && rootSite.RootBox != null)
 				fweditFindText.StyleSheet = fweditReplaceText.StyleSheet = rootSite.RootBox.Stylesheet;
@@ -1827,8 +1806,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void FindNext()
 		{
-			CheckDisposed();
-
 			Find(true);
 		}
 
@@ -1839,8 +1816,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void FindPrevious()
 		{
-			CheckDisposed();
-
 			Find(false);
 		}
 
@@ -1851,8 +1826,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void Replace()
 		{
-			CheckDisposed();
-
 			OnReplace(null, new EventArgs());
 		}
 
@@ -2502,8 +2475,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void ApplyStyle(FwTextBox fwTextBox, string sStyle)
 		{
-			CheckDisposed();
-
 			// Apply the specified style to the current selection
 			if (sStyle.ToLowerInvariant() == FwCoreDlgs.kstidNoStyle.ToLowerInvariant())
 				sStyle = null;
@@ -2526,8 +2497,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void ApplyWS(FwTextBox fwTextBox, int hvoWs)
 		{
-			CheckDisposed();
-
 			fwTextBox.ApplyWS(hvoWs);
 			if (chkMatchWS.Enabled)
 				chkMatchWS.Checked = true;
@@ -2683,14 +2652,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
-
 				return fweditFindText.Tss;
 			}
 			set
 			{
-				CheckDisposed();
-
 				fweditFindText.Tss = TsStringUtils.GetCleanTsString(value);
 				HandleTextChanged(fweditFindText, null);
 			}
@@ -2705,14 +2670,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
-
 				return fweditReplaceText.Tss;
 			}
 			set
 			{
-				CheckDisposed();
-
 				fweditReplaceText.Tss = TsStringUtils.GetCleanTsString(value);
 				HandleTextChanged(fweditReplaceText, null);
 			}
@@ -2727,7 +2688,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_resultReplaceText;
 			}
 		}
@@ -2742,8 +2702,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_lastTextBoxInFocus;
 			}
 		}
@@ -2759,8 +2717,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public bool PreFilterMessage(ref Message m)
 		{
-			CheckDisposed();
-
 			if (m.Msg == (int)Win32.WinMsgs.WM_CHAR)
 			{
 				// Handle TAB and Shift-TAB

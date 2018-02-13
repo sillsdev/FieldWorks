@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -39,7 +39,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		{
 			get
 			{
-				CheckDisposed();
 				var sel = SelectionHelper.Create(m_view);
 				var cellId = GetCell(sel);
 				if (cellId == PhSegmentRuleTags.kflidStrucDesc || cellId == PhSegRuleRHSTags.kflidStrucChange)
@@ -60,18 +59,16 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 
 		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
-			CheckDisposed();
-
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 			m_view.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			m_view.Init(obj.Hvo, this, new RegRuleFormulaVc(cache, PropertyTable), RegRuleFormulaVc.kfragRHS, cache.MainCacheAccessor);
 
-			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
-			m_insertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
-			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Features), DisplayOption);
-			m_insertionControl.AddOption(new InsertOption(RuleInsertType.WordBoundary), DisplayOption);
-			m_insertionControl.AddOption(new InsertOption(RuleInsertType.MorphemeBoundary), DisplayOption);
-			m_insertionControl.NoOptionsMessage = DisplayNoOptsMsg;
+			InsertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
+			InsertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
+			InsertionControl.AddOption(new InsertOption(RuleInsertType.Features), DisplayOption);
+			InsertionControl.AddOption(new InsertOption(RuleInsertType.WordBoundary), DisplayOption);
+			InsertionControl.AddOption(new InsertOption(RuleInsertType.MorphemeBoundary), DisplayOption);
+			InsertionControl.NoOptionsMessage = DisplayNoOptsMsg;
 		}
 
 		protected override string FeatureChooserHelpTopic => "khtpChoose-Grammar-PhonFeats-RegRuleFormulaControl";
@@ -739,7 +736,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// </summary>
 		public void SetContextOccurrence(int min, int max)
 		{
-			CheckDisposed();
 			var sel = SelectionHelper.Create(m_view);
 			var cellId = GetCell(sel);
 			var obj = GetCmObject(sel, SelectionHelper.SelLimitType.Anchor);
@@ -848,7 +844,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// </summary>
 		public void GetContextOccurrence(out int min, out int max)
 		{
-			CheckDisposed();
 			var sel = SelectionHelper.Create(m_view);
 			var obj = GetCmObject(sel, SelectionHelper.SelLimitType.Anchor);
 			if (obj.ClassID == PhIterationContextTags.kClassId)

@@ -27,8 +27,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override void SetupCombo()
 		{
-			CheckDisposed();
-
 			base.SetupCombo();
 			// Any time we pop this up, the text in the box is the text form of the current
 			// analysis, as a starting point.
@@ -217,8 +215,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override bool HandleReturnKey()
 		{
-			CheckDisposed();
-
 			var cda = (IVwCacheDa)m_caches.DataAccess;
 			var sda = m_caches.DataAccess;
 			var cmorphs = MorphCount;
@@ -257,8 +253,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override void HandleSelect(int index)
 		{
-			CheckDisposed();
-
 			string sMorphs;
 			if (index >= m_items.Count)
 			{

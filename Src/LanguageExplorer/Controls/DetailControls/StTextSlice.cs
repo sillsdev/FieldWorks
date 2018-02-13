@@ -32,10 +32,9 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void FinishInit()
 		{
-			CheckDisposed();
 			base.FinishInit();
 
-			var objPropHvo = m_cache.DomainDataByFlid.get_ObjectProp(m_obj.Hvo, FieldId);
+			var objPropHvo = Cache.DomainDataByFlid.get_ObjectProp(Object.Hvo, FieldId);
 			if (objPropHvo == 0)
 			{
 				CreateText();
@@ -46,7 +45,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (rootSiteAsStTextView.StText == null)
 				{
 					// Owner has the text, but it isn't in the view yet.
-					rootSiteAsStTextView.StText = m_cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(objPropHvo);
+					rootSiteAsStTextView.StText = Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(objPropHvo);
 				}
 			}
 			((StTextView)RootSite).Init(m_ws);
@@ -101,8 +100,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool OnLexiconLookup(object argument)
 		{
-			CheckDisposed();
-
 			int ichMin;
 			int ichLim;
 			int hvo;
@@ -112,7 +109,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			GetWordLimitsOfSelection(out ichMin, out ichLim, out hvo, out tag, out ws, out tss);
 			if (ichLim > ichMin)
 			{
-				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this, PropertyTable, Publisher, Subscriber, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile");
+				LexEntryUi.DisplayOrCreateEntry(Cache, hvo, tag, ws, ichMin, ichLim, this, PropertyTable, Publisher, Subscriber, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile");
 				return true;
 			}
 			return false;
@@ -183,8 +180,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public bool OnAddToLexicon(object argument)
 		{
-			CheckDisposed();
-
 			int ichMin;
 			int ichLim;
 			int hvo;
@@ -197,7 +192,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				ws = GetWsFromString(tss, ichMin, ichLim);
 			}
 
-			if (ichLim <= ichMin || ws != m_cache.DefaultVernWs)
+			if (ichLim <= ichMin || ws != Cache.DefaultVernWs)
 			{
 				return false;
 			}
@@ -215,7 +210,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			using (var dlg = new InsertEntryDlg())
 			{
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				dlg.SetDlgInfo(m_cache, tssForm);
+				dlg.SetDlgInfo(Cache, tssForm);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					// is there anything special we want to do?
@@ -239,14 +234,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			var view = (StTextView)RootSite;
 			var textHvo = 0;
-			NonUndoableUnitOfWorkHelper.Do(m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 			{
-				var sda = m_cache.DomainDataByFlid;
-				textHvo = sda.MakeNewObject(StTextTags.kClassId, m_obj.Hvo, FieldId, -2);
+				var sda = Cache.DomainDataByFlid;
+				textHvo = sda.MakeNewObject(StTextTags.kClassId, Object.Hvo, FieldId, -2);
 				var hvoStTxtPara = sda.MakeNewObject(StTxtParaTags.kClassId, textHvo, StTextTags.kflidParagraphs, 0);
-				sda.SetString(hvoStTxtPara, StTxtParaTags.kflidContents, TsStringUtils.EmptyString(m_ws == 0 ? m_cache.DefaultAnalWs : m_ws));
+				sda.SetString(hvoStTxtPara, StTxtParaTags.kflidContents, TsStringUtils.EmptyString(m_ws == 0 ? Cache.DefaultAnalWs : m_ws));
 			});
-			view.StText = m_cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(textHvo);
+			view.StText = Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(textHvo);
 		}
 	}
 }

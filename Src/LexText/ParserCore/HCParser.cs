@@ -48,7 +48,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public void Update()
 		{
-			CheckDisposed();
 			if (m_changeListener.Reset() || m_forceUpdate)
 			{
 				LoadParser();
@@ -58,15 +57,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public void Reset()
 		{
-			CheckDisposed();
-
 			m_forceUpdate = true;
 		}
 
 		public ParseResult ParseWord(string word)
 		{
-			CheckDisposed();
-
 			if (m_morpher == null)
 				return null;
 
@@ -101,15 +96,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public XDocument TraceWordXml(string form, IEnumerable<int> selectTraceMorphs)
 		{
-			CheckDisposed();
-
 			return ParseToXml(form, true, selectTraceMorphs);
 		}
 
 		public XDocument ParseWordXml(string form)
 		{
-			CheckDisposed();
-
 			return ParseToXml(form, false, null);
 		}
 		#endregion

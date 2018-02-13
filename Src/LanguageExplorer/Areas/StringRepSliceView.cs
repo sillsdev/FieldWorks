@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -30,11 +30,7 @@ namespace LanguageExplorer.Areas
 
 		public void ResetValidator()
 		{
-			CheckDisposed();
-
-			m_validator = new PhonEnvRecognizer(
-				m_cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(),
-				m_cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
+			m_validator = new PhonEnvRecognizer(m_cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(), m_cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
 		}
 
 		/// <summary>
@@ -66,8 +62,6 @@ namespace LanguageExplorer.Areas
 		{
 			set
 			{
-				CheckDisposed();
-
 				// SliceIsCurrent may be called in the process of deleting the object after the object
 				// has been partially cleared out and thus would certainly fail the constraint
 				// check, then try to instantiate an error annotation which wouldn't have an
@@ -130,8 +124,6 @@ namespace LanguageExplorer.Areas
 
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode)
 			{
 				return;
@@ -153,8 +145,6 @@ namespace LanguageExplorer.Areas
 
 		internal bool CanShowEnvironmentError()
 		{
-			CheckDisposed();
-
 			var s = m_env.StringRepresentation.Text;
 			if (string.IsNullOrEmpty(s))
 			{
@@ -165,9 +155,7 @@ namespace LanguageExplorer.Areas
 
 		internal void ShowEnvironmentError()
 		{
-			CheckDisposed();
-
-			var s = m_env.StringRepresentation.Text; ;
+			var s = m_env.StringRepresentation.Text;
 			if (string.IsNullOrEmpty(s))
 			{
 				return;
@@ -183,8 +171,6 @@ namespace LanguageExplorer.Areas
 
 		internal bool CanInsertSlash()
 		{
-			CheckDisposed();
-
 			var s = m_env.StringRepresentation.Text;
 			if (string.IsNullOrEmpty(s))
 			{
@@ -214,8 +200,6 @@ namespace LanguageExplorer.Areas
 
 		internal bool CanInsertEnvBar()
 		{
-			CheckDisposed();
-
 			var s = m_env.StringRepresentation.Text;
 			if (string.IsNullOrEmpty(s))
 			{
@@ -241,8 +225,6 @@ namespace LanguageExplorer.Areas
 
 		internal bool CanInsertItem()
 		{
-			CheckDisposed();
-
 			var s = m_env.StringRepresentation.Text;
 			if (string.IsNullOrEmpty(s))
 			{
@@ -255,8 +237,6 @@ namespace LanguageExplorer.Areas
 
 		internal bool CanInsertHashMark()
 		{
-			CheckDisposed();
-
 			var s = m_env.StringRepresentation.Text;
 			if (string.IsNullOrEmpty(s))
 			{

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -1664,7 +1664,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override void PrePasteProcessing()
 		{
-			CheckDisposed();
 			// if we're trying to replace a user prompt, record which line of a multilingual annotation
 			// is being changed.  See LT-9421.
 			SetCpropPreviousForInsert();

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -127,8 +127,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		public void HideForm(bool activateParent)
 		{
-			CheckDisposed();
-
 			m_tnMouseDown = null;
 			if (Visible && m_fShown)
 			{
@@ -172,8 +170,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="start">the search key</param>
 		public void SelectNodeStartingWith(string start)
 		{
-			CheckDisposed();
-
 			int iPreviousSelected = -1;
 			int iStarting = -1;
 			int iEnding = -1;
@@ -238,8 +234,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		public void BeginUpdate()
 		{
-			CheckDisposed();
-
 			m_treeView.BeginUpdate();
 		}
 
@@ -248,8 +242,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		public void EndUpdate()
 		{
-			CheckDisposed();
-
 			m_treeView.EndUpdate();
 		}
 
@@ -269,8 +261,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		// Remove your message filter, typically prior to hiding, or because we got hidden.
 		internal void RemoveFilter()
 		{
-			CheckDisposed();
-
 			if (m_fwPopupMessageFilter != null)
 			{
 				Application.RemoveMessageFilter(m_fwPopupMessageFilter);
@@ -299,13 +289,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_treeView.SelectedNode;
 			}
 			set
 			{
-				CheckDisposed();
-
 #if __MonoCS__
 				// FWNX-267: forcing the creation of the handle to ensure setting SelectedNode generates the AfterSelect event.
 				var h = m_treeView.Handle;
@@ -329,13 +316,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_treeView.Sorted;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_treeView.Sorted = value;
 			}
 		}
@@ -348,8 +332,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			set
 			{
-				CheckDisposed();
-
 				m_fClientSpecifiedAction = true;
 				m_selectedNodeAction = value;
 			}
@@ -363,7 +345,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_treeView.Nodes;
 			}
 		}
@@ -377,25 +358,12 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_tabStopControl;
 			}
 			set
 			{
-				CheckDisposed();
 				m_tabStopControl = value;
 			}
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
 		/// <summary>
@@ -530,8 +498,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// that the tree is to appear on.</param>
 		public void Launch(Rectangle launcherBounds, Rectangle screenBounds)
 		{
-			CheckDisposed();
-
 			//Figure where to put it. First try right below the main combo box.
 			// Pathologically the list box may be bigger than the available height. If so shrink it.
 			int maxListHeight = Math.Max(launcherBounds.Top - screenBounds.Top,
@@ -693,8 +659,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="hvo"></param>
 		public void SelectObj(int hvo)
 		{
-			CheckDisposed();
-
 			TreeNode node = FindNode(Nodes, hvo);
 			if (node != null)
 			{
@@ -712,8 +676,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="hvo"></param>
 		public void SelectObjWithoutTriggeringBeforeAfterSelects(int hvo)
 		{
-			CheckDisposed();
-
 			TreeNode node = FindNode(Nodes, hvo);
 			if (node != null)
 			{
@@ -781,18 +743,6 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// </summary>
 	internal class FwTreeView : TreeView
 	{
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
 		/// <summary/>
 		protected override void Dispose(bool disposing)
 		{
@@ -865,17 +815,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		public bool IsDisposed
 		{
 			get { return m_isDisposed; }
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
 		/// <summary>
@@ -954,8 +893,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// --------------------------------------------------------------------------------
 		public bool PreFilterMessage(ref Message m)
 		{
-			CheckDisposed();
-
 			switch ((Win32.WinMsgs)m.Msg)
 			{
 

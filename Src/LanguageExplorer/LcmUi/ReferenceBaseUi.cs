@@ -62,14 +62,7 @@ namespace LanguageExplorer.LcmUi
 		}
 		#endregion
 
-		public override string ContextMenuId
-		{
-			get
-			{
-				CheckDisposed();
-				return "mnuReferenceChoices";
-			}
-		}
+		public override string ContextMenuId => "mnuReferenceChoices";
 
 		public ReferenceBaseUi(ICmObject rootObj) : base(rootObj) { }
 		public ReferenceBaseUi() { }
@@ -77,8 +70,6 @@ namespace LanguageExplorer.LcmUi
 #if RANDYTODO
 		public override bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			if (m_targetUi != null)
 				return m_targetUi.OnDisplayJumpToTool(commandObject, ref display);
 			return base.OnDisplayJumpToTool(commandObject, ref display);
@@ -92,8 +83,6 @@ namespace LanguageExplorer.LcmUi
 		/// <returns></returns>
 		public override bool OnJumpToTool(object commandObject)
 		{
-			CheckDisposed();
-
 			if (m_targetUi != null)
 				return m_targetUi.OnJumpToTool(commandObject);
 				return base.OnJumpToTool(commandObject);
@@ -109,8 +98,6 @@ namespace LanguageExplorer.LcmUi
 		/// <returns></returns>
 		public virtual bool OnDisplayMoveTargetUpInSequence(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			display.Visible = display.Enabled = false;
 			return true;
 		}
@@ -123,8 +110,6 @@ namespace LanguageExplorer.LcmUi
 		/// <returns></returns>
 		public virtual bool OnDisplayMoveTargetDownInSequence(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			display.Visible = display.Enabled = false;
 			return true;
 		}

@@ -177,8 +177,6 @@ namespace LanguageExplorer.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_firstMainControl.Parent != null)
 				{
 					return m_firstMainControl;
@@ -204,8 +202,6 @@ namespace LanguageExplorer.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_firstMainControl;
 			}
 			set
@@ -264,8 +260,6 @@ namespace LanguageExplorer.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_secondMainControl;
 			}
 			set
@@ -335,23 +329,6 @@ namespace LanguageExplorer.Controls
 		}
 
 		#endregion Properties
-
-		#region IDisposable implementation
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		#endregion IDisposable implementation
 
 		#region Protected general methods
 

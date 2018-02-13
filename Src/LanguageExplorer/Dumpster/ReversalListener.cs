@@ -41,22 +41,9 @@ namespace LanguageExplorer.Dumpster
 	/// </summary>
 	internal sealed class ReversalListener : IFlexComponent, IDisposable
 	{
-		#region IDisposable & Co. implementation
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
 		private int instanceID = 0x00000F0;
+
+		#region IDisposable & Co. implementation
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -256,7 +243,6 @@ namespace LanguageExplorer.Dumpster
 		/// <returns>true</returns>
 		public bool OnGotoReversalEntry(object argument)
 		{
-			CheckDisposed();
 			using (var dlg = new ReversalEntryGoDlg())
 			{
 				dlg.ReversalIndex = Entry.ReversalIndex;
@@ -295,8 +281,6 @@ namespace LanguageExplorer.Dumpster
 		public virtual bool OnDisplayGotoReversalEntry(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			IReversalIndexEntry rie = Entry;
 			if (rie == null || rie.Owner.Hvo == 0)
 			{
@@ -323,8 +307,6 @@ namespace LanguageExplorer.Dumpster
 		/// <returns></returns>
 		public virtual bool OnDisplayReversalIndexHvo(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			// Do NOT check InFriendlyArea. This menu should be enabled in every context where it occurs at all.
 			// And, it gets tested during creation of the pane bar, BEFORE the properties InFriendlyArea uses
 			// are set, so we get inaccurate answers.
@@ -343,8 +325,6 @@ namespace LanguageExplorer.Dumpster
 		/// <returns></returns>
 		public bool OnDisplayReversalIndexList(object parameter, ref UIListDisplayProperties display)
 		{
-			CheckDisposed();
-
 			display.List.Clear();
 			var lp = m_propertyTable.GetValue<LcmCache>("cache").LanguageProject;
 			// List all existing reversal indexes.  (LT-4479, as amended)

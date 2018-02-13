@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -296,19 +296,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		#endregion
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose(bool disposing)
@@ -449,8 +436,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public void Launch()
 		{
-			CheckDisposed();
-
 			ShowDialog(PropertyTable.GetValue<Form>("window"));
 		}
 

@@ -83,14 +83,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 		#endregion IDisposable override
 
-		public ICmMedia Media
-		{
-			get
-			{
-				CheckDisposed();
-				return m_obj as ICmMedia;
-			}
-		}
+		public ICmMedia Media => (ICmMedia)Object;
 
 		/// <summary>
 		/// This method, called once we have a cache and object, is our first chance to
@@ -98,7 +91,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override void FinishInit()
 		{
-			CheckDisposed();
 			Control = new AudioVisualLauncher();
 		}
 
@@ -125,14 +117,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Get the rootsite, which is embedded inside the control.
 		/// </summary>
-		public override RootSite RootSite
-		{
-			get
-			{
-				CheckDisposed();
-				return ((AudioVisualLauncher)Control).RootSite;
-			}
-		}
+		public override RootSite RootSite => ((AudioVisualLauncher)Control).RootSite;
 
 		/// <summary>
 		/// Overridden because we have things to do when the control is set.
@@ -172,13 +157,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// We need at least "20" for the button with the left arrow to look okay.
 		/// </summary>
-		public override int LabelHeight
-		{
-			get
-			{
-				CheckDisposed();
-				return Math.Max(20, Convert.ToInt32(m_fontLabel.GetHeight()));
-			}
-		}
+		public override int LabelHeight => Math.Max(20, Convert.ToInt32(m_fontLabel.GetHeight()));
 	}
 }

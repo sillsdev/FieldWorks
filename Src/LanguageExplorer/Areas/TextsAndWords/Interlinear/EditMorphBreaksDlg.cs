@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -89,8 +89,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void Initialize(ITsString tssWord, string sMorphs, ILgWritingSystemFactory wsf, LcmCache cache, IVwStylesheet stylesheet)
 		{
-			CheckDisposed();
-
 			Debug.Assert(tssWord != null);
 			Debug.Assert(wsf != null);
 			var ttp = tssWord.get_Properties(0);
@@ -160,22 +158,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns>string containing the morph-broken word</returns>
 		public string GetMorphs()
 		{
-			CheckDisposed();
-
 			return m_sMorphs;
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
 		}
 
 		/// <summary>

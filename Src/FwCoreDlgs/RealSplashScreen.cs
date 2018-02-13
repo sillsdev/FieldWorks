@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -90,24 +90,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_picSilLogo.Visible = fDisplaySILInfo;
 			if (!fDisplaySILInfo)
 				m_lblSuiteName.Text = m_lblSuiteName.Text.Replace(Application.CompanyName, string.Empty).Trim();
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-
-#if __MonoCS__
-			// Note: mono can only create a winform on the main thread.
-			// So this ensures the progress bar gets painted when modified.
-			if (IsHandleCreated)
-				Application.DoEvents();
-#endif
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -267,8 +249,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ----------------------------------------------------------------------------------------
 		public void RealActivate()
 		{
-			CheckDisposed();
-
 			base.BringToFront();
 			Refresh();
 		}
@@ -280,8 +260,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ----------------------------------------------------------------------------------------
 		public void RealClose()
 		{
-			CheckDisposed();
-
 			if (m_timer != null)
 				m_timer.Change(Timeout.Infinite, Timeout.Infinite);
 			base.Close();
@@ -463,13 +441,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return lblMessage.Text;
 			}
 			set
 			{
-				CheckDisposed();
-
 				// In some rare cases, setting the text causes an exception which should just
 				// be ignored.
 				try
@@ -530,7 +505,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return progressLine.Value;
 			}
 			set
@@ -553,12 +527,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return progressLine.MinValue;
 			}
 			set
 			{
-				CheckDisposed();
 				progressLine.MinValue = value;
 			}
 		}
@@ -572,12 +544,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return progressLine.MaxValue;
 			}
 			set
 			{
-				CheckDisposed();
 				progressLine.MaxValue = value;
 			}
 		}
@@ -590,10 +560,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void Step(int nStepAmt)
 		{
-			CheckDisposed();
-
-			//Debug.WriteLine(string.Format("Step {0}; value is {1}", nStepAmt, progressLine.Value));
-
 			if (nStepAmt > 0)
 				progressLine.Increment(nStepAmt);
 			else
@@ -620,12 +586,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return progressLine.Step;
 			}
 			set
 			{
-				CheckDisposed();
 				progressLine.Step = value;
 			}
 		}

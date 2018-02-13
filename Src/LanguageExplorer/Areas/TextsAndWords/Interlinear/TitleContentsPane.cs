@@ -75,8 +75,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public void SetRoot(int hvo)
 		{
-			CheckDisposed();
-
 			if (hvo != 0)
 			{
 				var stText = Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(hvo);
@@ -118,8 +116,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode /*|| m_hvoRoot == 0*/)
 			{
 				return;
@@ -139,8 +135,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override void RootBoxSizeChanged(IVwRootBox prootb)
 		{
-			CheckDisposed();
-
 			base.RootBoxSizeChanged(prootb);
 			AdjustHeight();
 		}
@@ -161,8 +155,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public bool AdjustHeight()
 		{
-			CheckDisposed();
-
 			if (RootBox == null)
 			{
 				return false; // nothing useful we can do.

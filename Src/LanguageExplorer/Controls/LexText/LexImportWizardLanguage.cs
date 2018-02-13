@@ -144,8 +144,6 @@ namespace LanguageExplorer.Controls.LexText
 
 		public void LangToModify(string langDescriptor, string wsName, string encConverter)
 		{
-			CheckDisposed();
-
 			m_LangDesc = langDescriptor;
 			m_wsName = wsName;
 			m_encConverter = encConverter;
@@ -154,25 +152,10 @@ namespace LanguageExplorer.Controls.LexText
 
 		public void GetCurrentLangInfo(out string langDescriptor, out string wsName, out string encConverter, out string wsId)
 		{
-			CheckDisposed();
-
 			langDescriptor = tbLangDesc.Text;
 			wsName = cbWS.SelectedItem.ToString();
 			encConverter = cbEC.SelectedItem.ToString();
 			wsId = ((WsInfo) cbWS.SelectedItem).Id;
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
 		}
 
 		/// <summary>

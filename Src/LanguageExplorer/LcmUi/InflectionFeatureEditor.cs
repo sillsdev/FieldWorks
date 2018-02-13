@@ -54,20 +54,6 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -170,12 +156,10 @@ namespace LanguageExplorer.LcmUi
 		{
 			get
 			{
-				CheckDisposed();
 				return m_cache;
 			}
 			set
 			{
-				CheckDisposed();
 				m_cache = value;
 				if (m_cache != null && m_tree != null)
 				{
@@ -203,14 +187,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Get the actual tree control.
 		/// </summary>
-		public Control Control
-		{
-			get
-			{
-				CheckDisposed();
-				return m_tree;
-			}
-		}
+		public Control Control => m_tree;
 
 		private void m_tree_TreeLoad(object sender, EventArgs e)
 		{
@@ -293,8 +270,6 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
-			CheckDisposed();
-
 			var pos = GetPOS();
 			// Make a Set of eligible parts of speech to use in filtering.
 			var possiblePOS = GetPossiblePartsOfSpeech();
@@ -416,14 +391,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Can't (yet) clear the field value.
 		/// </summary>
-		public bool CanClearField
-		{
-			get
-			{
-				CheckDisposed();
-				return false;
-			}
-		}
+		public bool CanClearField => false;
 
 		/// <summary>
 		/// Not needed since we said we can't do it.
@@ -472,8 +440,6 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnable, ProgressState state)
 		{
-			CheckDisposed();
-
 			var tss = TsStringUtils.MakeString(m_selectedLabel, m_cache.DefaultAnalWs);
 			// Build a Set of parts of speech that can take this class.
 			var possiblePOS = GetPossiblePartsOfSpeech();

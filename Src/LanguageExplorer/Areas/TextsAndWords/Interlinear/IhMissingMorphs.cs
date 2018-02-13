@@ -16,8 +16,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	{
 		public override void SetupCombo()
 		{
-			CheckDisposed();
-
 			InitCombo();
 			ComboList.Text = StrFromTss(m_caches.DataAccess.get_MultiStringAlt(m_hvoSbWord,
 				SandboxBase.ktagSbWordForm, m_sandbox.RawWordformWs));

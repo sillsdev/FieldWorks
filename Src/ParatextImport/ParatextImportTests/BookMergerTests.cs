@@ -2227,8 +2227,6 @@ namespace ParatextImport
 //		[Test]
 //		public void DetectDifferences_FootnoteVsPictureDifference()
 //		{
-//			CheckDisposed();
-//
 //			// Create a section for both the current version of Genesis and the stored revision.
 //			IScrSection sectionCur = CreateSection(m_genesis, "My aching head!");
 //			IScrSection sectionRev = CreateSection(m_genesisRevision, "My aching head!");

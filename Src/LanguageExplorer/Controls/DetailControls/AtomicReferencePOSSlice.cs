@@ -37,14 +37,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				var posHvo = m_cache.DomainDataByFlid.get_ObjectProp(m_obj.Hvo, m_flid);
+				var posHvo = Cache.DomainDataByFlid.get_ObjectProp(Object.Hvo, m_flid);
 				if (posHvo == 0)
 				{
 					m_pos = null;
 				}
 				else if (m_pos == null || m_pos.Hvo != posHvo)
 				{
-					m_pos = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(posHvo);
+					m_pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(posHvo);
 				}
 				return m_pos;
 			}
@@ -55,7 +55,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			: base(new UserControl(), cache, obj, flid)
 		{
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
-			var defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			var defAnalWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			Tree = new TreeCombo
 			{
 				WritingSystemFactory = cache.WritingSystemFactory,
@@ -80,15 +80,15 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (rie != null)
 				{
 					list = rie.ReversalIndex.PartsOfSpeechOA;
-					ws = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(rie.ReversalIndex.WritingSystem);
+					ws = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr(rie.ReversalIndex.WritingSystem);
 				}
 				else
 				{
-					list = m_cache.LanguageProject.PartsOfSpeechOA;
-					ws = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+					list = Cache.LanguageProject.PartsOfSpeechOA;
+					ws = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
 				}
 				Tree.WritingSystemCode = ws;
-				m_pOSPopupTreeManager = new POSPopupTreeManager(Tree, m_cache, list, ws, false, propertyTable, publisher, propertyTable.GetValue<Form>("window"));
+				m_pOSPopupTreeManager = new POSPopupTreeManager(Tree, Cache, list, ws, false, propertyTable, publisher, propertyTable.GetValue<Form>("window"));
 				m_pOSPopupTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
 			}
 			try
@@ -112,13 +112,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			CheckDisposed();
 			if (m_handlingMessage)
 			{
 				return;
 			}
 
-			if (hvo == m_obj.Hvo && tag == m_flid)
+			if (hvo == Object.Hvo && tag == m_flid)
 			{
 				try
 				{
@@ -151,7 +150,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void UpdateDisplayFromDatabase()
 		{
-			m_sda = m_cache.DomainDataByFlid;
+			m_sda = Cache.DomainDataByFlid;
 			m_sda.RemoveNotification(this);	// Just in case...
 			m_sda.AddNotification(this);
 		}
@@ -206,7 +205,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_sda = null;
-			m_cache = null;
+			Cache = null;
 			Tree = null;
 			m_pOSPopupTreeManager = null;
 			m_pos = null;
@@ -234,14 +233,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			try
 			{
 				m_handlingMessage = true;
-				UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoSetCat, DetailControlsStrings.ksRedoSetCat, m_obj, () =>
+				UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoSetCat, DetailControlsStrings.ksRedoSetCat, Object, () =>
 				{
-					m_cache.DomainDataByFlid.SetObjProp(m_obj.Hvo, m_flid, hvoPos);
+					Cache.DomainDataByFlid.SetObjProp(Object.Hvo, m_flid, hvoPos);
 
 					// Do some side effects for a couple of MSA classes.
-					if (m_obj is IMoInflAffMsa)
+					if (Object is IMoInflAffMsa)
 					{
-						var msa = (IMoInflAffMsa)m_obj;
+						var msa = (IMoInflAffMsa)Object;
 						if (hvoPos == 0)
 						{
 							msa.SlotsRC.Clear();
@@ -255,16 +254,16 @@ namespace LanguageExplorer.Controls.DetailControls
 							}
 						}
 					}
-					else if (m_obj is IMoDerivAffMsa)
+					else if (Object is IMoDerivAffMsa)
 					{
-						var msa = (IMoDerivAffMsa)m_obj;
+						var msa = (IMoDerivAffMsa)Object;
 						if (hvoPos > 0 && m_flid == MoDerivAffMsaTags.kflidFromPartOfSpeech && msa.ToPartOfSpeechRA == null)
 						{
-							msa.ToPartOfSpeechRA = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoPos);
+							msa.ToPartOfSpeechRA = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoPos);
 						}
 						else if (hvoPos > 0 && m_flid == MoDerivAffMsaTags.kflidToPartOfSpeech && msa.FromPartOfSpeechRA == null)
 						{
-							msa.FromPartOfSpeechRA = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoPos);
+							msa.FromPartOfSpeechRA = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoPos);
 						}
 					}
 				});

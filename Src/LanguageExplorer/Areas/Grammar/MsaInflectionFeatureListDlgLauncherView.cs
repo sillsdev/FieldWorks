@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,8 +26,6 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <summary />
 		public void Init(LcmCache cache, IFsFeatStruc fs)
 		{
-			CheckDisposed();
-
 			m_fs = fs;
 			m_cache = cache;
 
@@ -66,8 +64,6 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <summary />
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode)
 			{
 				return;

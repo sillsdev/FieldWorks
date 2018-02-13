@@ -89,21 +89,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary />
 		public void HandleSizeChanged(object sender, EventArgs ea)
 		{
-			CheckDisposed();
 		}
 
 		/// <summary>
 		/// Things can (potentially) be dropped on this control.
 		/// </summary>
-		public override bool AllowDrop
-		{
-			get
-			{
-				CheckDisposed();
-
-				return true;
-			}
-		}
+		public override bool AllowDrop => true;
 
 		protected override void OnDragEnter(DragEventArgs drgevent)
 		{
@@ -199,8 +190,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool OkToMove(int hvoDstOwner, int flidDst, int ihvoDstStart, ObjectDragInfo odi)
 		{
-			CheckDisposed();
-
 			var cache = m_myParentSlice.ContainingDataTree.Cache;
 			var repo = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			if (flidDst == odi.FlidSrc)
@@ -264,19 +253,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			// If none of those cases is OK, can't do it.
 			return false;
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
 		}
 
 		/// <summary>
@@ -470,8 +446,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void ToggleExpansionAndScroll(int iSlice)
 		{
-			CheckDisposed();
-
 			ToggleExpansion(iSlice);
 		}
 
@@ -481,8 +455,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void ToggleExpansion(int iSlice)
 		{
-			CheckDisposed();
-
 			// Why don't we just let the slice do all the toggle work?
 			if (m_myParentSlice.Expansion == TreeItemState.ktisCollapsed)
 			{

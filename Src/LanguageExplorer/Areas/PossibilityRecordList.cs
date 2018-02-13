@@ -85,8 +85,6 @@ namespace LanguageExplorer.Areas
 	/// <param name="display"></param>
 		public override void AdjustInsertCommandName(Command command, UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			var pssl = OwningList;
 			var owningFieldName = pssl.Name.BestAnalysisAlternative.Text;
 			if (pssl.OwningFlid != 0)

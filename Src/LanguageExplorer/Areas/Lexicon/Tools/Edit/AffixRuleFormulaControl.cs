@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -38,9 +38,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			set
 			{
-				CheckDisposed();
 				if (value)
+				{
 					m_view.Select();
+				}
 			}
 		}
 
@@ -51,8 +52,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			get
 			{
-				CheckDisposed();
-
 				var obj = CurrentObject;
 				if (obj.ClassID != MoCopyFromInputTags.kClassId)
 				{
@@ -68,36 +67,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary>
 		/// Indicates that a insert phonemes rule mapping is currently selected.
 		/// </summary>
-		public bool IsPhonemeCurrent
-		{
-			get
-			{
-				CheckDisposed();
-
-				var obj = CurrentObject;
-				return obj.ClassID == MoInsertPhonesTags.kClassId;
-			}
-		}
+		public bool IsPhonemeCurrent => CurrentObject.ClassID == MoInsertPhonesTags.kClassId;
 
 		/// <summary>
 		/// Indicates that a modify from input rule mapping is currently selected.
 		/// </summary>
-		public bool IsNCIndexCurrent
-		{
-			get
-			{
-				CheckDisposed();
-				var obj = CurrentObject;
-				return obj.ClassID == MoModifyFromInputTags.kClassId;
-			}
-		}
+		public bool IsNCIndexCurrent => CurrentObject.ClassID == MoModifyFromInputTags.kClassId;
 
 		IMoAffixProcess Rule => (IMoAffixProcess)m_obj;
 
-		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
-			string displayNameProperty, string displayWs)
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
-			CheckDisposed();
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 
 			m_view.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
@@ -105,14 +85,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			m_view.SelectionChanged += SelectionChanged;
 
-			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
-			m_insertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
-			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Features), DisplayOption);
-			m_insertionControl.AddOption(new InsertOption(RuleInsertType.MorphemeBoundary), DisplayOption);
-			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Variable), DisplayVariableOption);
-			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Column), DisplayColumnOption);
-			m_insertionControl.AddMultiOption(new InsertOption(RuleInsertType.Index), DisplayOption, DisplayIndices);
-			m_insertionControl.NoOptionsMessage = DisplayNoOptsMsg;
+			InsertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
+			InsertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
+			InsertionControl.AddOption(new InsertOption(RuleInsertType.Features), DisplayOption);
+			InsertionControl.AddOption(new InsertOption(RuleInsertType.MorphemeBoundary), DisplayOption);
+			InsertionControl.AddOption(new InsertOption(RuleInsertType.Variable), DisplayVariableOption);
+			InsertionControl.AddOption(new InsertOption(RuleInsertType.Column), DisplayColumnOption);
+			InsertionControl.AddMultiOption(new InsertOption(RuleInsertType.Index), DisplayOption, DisplayIndices);
+			InsertionControl.NoOptionsMessage = DisplayNoOptsMsg;
 		}
 
 		private bool DisplayOption(object option)

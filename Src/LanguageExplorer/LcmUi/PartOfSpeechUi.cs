@@ -64,8 +64,6 @@ namespace LanguageExplorer.LcmUi
 		/// <returns></returns>
 		public override bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			Command command = (Command)commandObject;
 			string tool = Utils.XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 			string toolChoice = PropTable.GetValue<string>(AreaServices.ToolChoice);

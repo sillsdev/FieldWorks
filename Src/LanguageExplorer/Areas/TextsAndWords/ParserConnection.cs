@@ -46,12 +46,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			get
 			{
-				CheckDisposed();
 				return m_scheduler.TryAWordDialogIsRunning;
 			}
 			set
 			{
-				CheckDisposed();
 				m_scheduler.TryAWordDialogIsRunning = value;
 			}
 		}
@@ -74,8 +72,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <param name="sSelectTraceMorphs">list of msa hvos to limit trace to </param>
 		public IAsyncResult BeginTryAWord(string sForm, bool fDoTrace, int[] sSelectTraceMorphs)
 		{
-			CheckDisposed();
-
 			//the result will be caught by our event handler and be accessible from the
 			//TraceResult property
 			lock (SyncRoot)
@@ -89,34 +85,23 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		public void UpdateWordforms(IEnumerable<IWfiWordform> wordforms, ParserPriority priority)
 		{
-			CheckDisposed();
 			m_scheduler.ScheduleWordformsForUpdate(wordforms, priority);
 		}
 
 		public void UpdateWordform(IWfiWordform wordform, ParserPriority priority)
 		{
-			CheckDisposed();
 			m_scheduler.ScheduleOneWordformForUpdate(wordform, priority);
 		}
 
-		public Exception UnhandledException
-		{
-			get
-			{
-				CheckDisposed();
-				return m_scheduler.UnhandledException;
-			}
-		}
+		public Exception UnhandledException => m_scheduler.UnhandledException;
 
 		public int GetQueueSize(ParserPriority priority)
 		{
-			CheckDisposed();
 			return m_scheduler.GetQueueSize(priority);
 		}
 
 		public void ReloadGrammarAndLexicon()
 		{
-			CheckDisposed();
 			m_scheduler.ReloadGrammarAndLexicon();
 		}
 
@@ -133,8 +118,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary />
 		public void ParserUpdateHandlerForPolling(object sender, ParserUpdateEventArgs args)
 		{
-			CheckDisposed();
-
 			lock (SyncRoot)
 			{
 				//store this for clients which just want to poll us, instead of wiring up to the event
@@ -162,8 +145,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			get
 			{
-				CheckDisposed();
-
 				lock (SyncRoot)
 				{
 					return m_activity;
@@ -176,8 +157,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public string GetAndClearNotification()
 		{
-			CheckDisposed();
-
 			lock (SyncRoot)
 			{
 				var result = m_notificationMessage;

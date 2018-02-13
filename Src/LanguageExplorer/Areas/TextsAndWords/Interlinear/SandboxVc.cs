@@ -106,17 +106,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 #endif
 
-		/// <summary>
-		/// Throw if the IsDisposed property is true
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException(GetType().ToString(), "This object is being used after it has been disposed: this is an Error.");
-			}
-		}
-
 		/// <summary/>
 		public bool IsDisposed
 		{
@@ -177,12 +166,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
-				CheckDisposed();
 				return multipleAnalysisColor;
 			}
 			set
 			{
-				CheckDisposed();
 				if (multipleAnalysisColor == value)
 				{
 					return;
@@ -205,13 +192,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fRtl;
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (value == m_fRtl)
 				{
 					return;
@@ -253,8 +237,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
-			CheckDisposed();
-
 			try
 			{
 				switch (frag)
@@ -665,8 +647,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override void DisplayVec(IVwEnv vwenv, int hvo, int tag, int frag)
 		{
-			CheckDisposed();
-
 			switch (frag)
 			{
 				case kfragMorph: // The bundle of 4 lines representing a morpheme.
@@ -683,8 +663,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override ITsString DisplayVariant(IVwEnv vwenv, int tag, int frag)
 		{
-			CheckDisposed();
-
 			switch (frag)
 			{
 				case kfragMissingMorphs:
@@ -703,15 +681,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		// Return the width of the arrow picture (in mm, unfortunately).
-		internal int ArrowPicWidth
-		{
-			get
-			{
-				CheckDisposed();
-				return m_PulldownArrowPic.Picture.Width;
-			}
-		}
-
+		internal int ArrowPicWidth => m_PulldownArrowPic.Picture.Width;
 
 		/// <summary>
 		/// Add to the vwenv a display of property tag of object hvo, which stores an

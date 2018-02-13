@@ -124,17 +124,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 		#endregion
 
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-		}
-
 		#region Event handlers
 
 		/// <summary>
@@ -199,7 +188,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			set
 			{
-				CheckDisposed();
 				m_fCanApplyCharacterStyle = value;
 			}
 		}
@@ -212,7 +200,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			set
 			{
-				CheckDisposed();
 				m_fCanApplyParagraphStyle = value;
 			}
 		}
@@ -224,7 +211,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_chosenStyleName;
 			}
 		}
@@ -237,7 +223,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			set
 			{
-				CheckDisposed();
 				m_applicableStyleContexts = value;
 			}
 		}

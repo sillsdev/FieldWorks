@@ -1,8 +1,7 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -35,16 +34,6 @@ namespace SIL.FieldWorks.Common.Controls
 			//
 			// TODO: Add any constructor code after InitializeComponent call
 			//
-		}
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
 		/// <summary>
@@ -132,8 +121,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public void PerformStep()
 		{
-			CheckDisposed();
-
 			m_ProgressBar.PerformStep();
 		}
 		/// ------------------------------------------------------------------------------------
@@ -145,14 +132,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_LabelWorkingOn.Text;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_LabelWorkingOn.Text = value;
 			}
 		}
@@ -164,14 +147,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_LabelCreationProgress.Text;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_LabelCreationProgress.Text = value;
 			}
 		}
@@ -186,14 +165,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_ProgressBar.Minimum;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_ProgressBar.Minimum = value;
 			}
 		}
@@ -208,14 +183,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_ProgressBar.Maximum;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_ProgressBar.Maximum = value;
 			}
 		}

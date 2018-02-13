@@ -32,8 +32,6 @@ namespace LanguageExplorer.Controls.XMLViews
 	public class ReallySimpleListChooser : Form
 	{
 		/// <summary />
-		protected ObjectLabel m_chosenLabel;
-		/// <summary />
 		protected Button btnOK;
 		/// <summary />
 		protected Button btnCancel;
@@ -62,16 +60,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected PictureBox m_picboxLink1;
 		/// <summary />
 		protected Label m_lblExplanation;
-		/// <summary />
-		protected LcmCache m_cache;
 
 		/// <summary>
 		/// True to prevent choosing more than one item.
 		/// </summary>
 		public bool Atomic { get; set; }
 
-		/// <summary />
-		protected bool m_fLinkExecuted;
 		/// <summary />
 		protected NullObjectLabel m_nullLabel;
 		/// <summary />
@@ -91,8 +85,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		private FwLinkArgs m_linkJump;
 		private ChooserCommand m_linkCmd;
 
-		/// <summary />
-		protected int m_hvoTextParam;
 		private Guid m_guidLink = Guid.Empty;
 		private readonly HashSet<ICmObject> m_chosenObjs;
 		private List<ICmObject> m_newChosenObjs;
@@ -143,19 +135,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		private CheckBox m_displayUsageCheckBox;
 
 		private ToolStripButton m_printButton;
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
 
 		/// <summary>
 		/// Constructor for use with designer
@@ -221,7 +200,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_stylesheet = stylesheet;
 			m_helpTopicProvider = helpTopicProvider;
 			m_nullLabel = new NullObjectLabel(cache) {DisplayName = nullLabel};
-			m_cache = cache;
+			Cache = cache;
 			m_persistProvider = persistProvider;
 			m_fieldName = fieldName;
 			m_fFlatList = IsListFlat(labels);
@@ -351,7 +330,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			string fieldName, LcmCache cache, IEnumerable<ICmObject> chosenObjs,
 			IHelpTopicProvider helpTopicProvider)
 		{
-			m_cache = cache;
+			Cache = cache;
 			m_persistProvider = persistProvider;
 			m_helpTopicProvider = helpTopicProvider;
 			m_cLinksShown = 0;
@@ -393,8 +372,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		public void SetObjectAndFlid(int hvo, int flid)
 		{
-			CheckDisposed();
-
 			m_hvoObject = hvo;
 			m_flidObject = flid;
 		}
@@ -406,10 +383,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			set
 			{
-				CheckDisposed();
-
 				var sText = value;
-				Text = sText.IndexOf("{0}") >= 0 && (STextParam != null || m_hvoTextParam != 0)
+				Text = sText.IndexOf("{0}") >= 0 && (STextParam != null || TextParamHvo != 0)
 					? string.Format(sText, TextParam)
 					: sText;
 			}
@@ -423,10 +398,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			set
 			{
-				CheckDisposed();
-
 				var sText = value;
-				if (sText.IndexOf("{0}") >= 0 && (STextParam != null || m_hvoTextParam != 0))
+				if (sText.IndexOf("{0}") >= 0 && (STextParam != null || TextParamHvo != 0))
 				{
 					m_lblExplanation.Text = string.Format(sText, TextParam);
 				}
@@ -445,20 +418,18 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void AddLink(string sText, LinkType type, object obj)
 		{
-			CheckDisposed();
-
 			// Any links past two not only assert, but then quietly do nothing.
 			Debug.Assert(m_cLinksShown < 2);
 			// Don't show a link if it's back to this object's owner
 			// Note LexEntry no longer has an owner. But m_hvoObject can be 0 (FWR-2886).
-			var objt = (m_hvoObject != 0) ? m_cache.ServiceLocator.GetObject(m_hvoObject) : null;
+			var objt = (m_hvoObject != 0) ? Cache.ServiceLocator.GetObject(m_hvoObject) : null;
 			var ownedHvo = (objt != null && objt.Owner != null) ? objt.Owner.Hvo : 0;
-			if (m_hvoTextParam != 0 && m_hvoObject != 0 && m_hvoTextParam == ownedHvo)
+			if (TextParamHvo != 0 && m_hvoObject != 0 && TextParamHvo == ownedHvo)
 			{
 				return;
 			}
 			// A goto link is also inappropriate if it's back to the object we are editing itself.
-			if (m_hvoTextParam == m_hvoObject && m_hvoTextParam != 0 && type == LinkType.kGotoLink)
+			if (TextParamHvo == m_hvoObject && TextParamHvo != 0 && type == LinkType.kGotoLink)
 			{
 				return;
 			}
@@ -466,7 +437,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-			if (sText.IndexOf("{0}") >= 0 && (STextParam != null || m_hvoTextParam != 0))
+			if (sText.IndexOf("{0}") >= 0 && (STextParam != null || TextParamHvo != 0))
 			{
 				sText = string.Format(sText, TextParam);
 			}
@@ -498,8 +469,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void ShowFuncButtons()
 		{
-			CheckDisposed();
-
 			// reuse the m_link2Panel to display the buttons
 			// ENHANCE (DamienD): Add a new panel in the designer that contain these buttons, and just make it visible here
 			m_link2Panel.SuspendLayout();
@@ -526,7 +495,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal void ShowAnyAllNoneButtons(ListMatchOptions mode, bool fAtomic)
 		{
-			CheckDisposed();
 			SetHelpTopic("khtpChoose-AnyAllNoneItems");
 
 			// reuse the m_link2Panel to display the buttons
@@ -568,7 +536,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal void EnableCtrlClick()
 		{
-			CheckDisposed();
 			m_fEnableCtrlCheck = true;
 			m_ctrlClickLabel.Visible = true;
 			m_viewExtrasPanel.Visible = true;
@@ -660,33 +627,17 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// True if we should replace items.
 		/// </summary>
-		public bool ReplaceMode
-		{
-			get
-			{
-				CheckDisposed();
-				return m_ReplaceButton != null && m_ReplaceButton.Checked;
-			}
-		}
+		public bool ReplaceMode => m_ReplaceButton != null && m_ReplaceButton.Checked;
 
 		/// <summary>
 		/// Gets a value indicating whether [remove mode].
 		/// </summary>
-		public bool RemoveMode
-		{
-			get
-			{
-				CheckDisposed();
-				return m_RemoveButton != null && m_RemoveButton.Checked;
-			}
-		}
+		public bool RemoveMode => m_RemoveButton != null && m_RemoveButton.Checked;
 
 		internal ListMatchOptions ListMatchMode
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_AllButton != null && m_AllButton.Checked)
 				{
 					return ListMatchOptions.All;
@@ -727,19 +678,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Set the database id of the object which serves as a possible parameter to
 		/// InstructionalText, Title, or a link label.
 		/// </summary>
-		public int TextParamHvo
-		{
-			get
-			{
-				CheckDisposed();
-				return m_hvoTextParam;
-			}
-			set
-			{
-				CheckDisposed();
-				m_hvoTextParam = value;
-			}
-		}
+		public int TextParamHvo { get; set; }
 
 		/// <summary>
 		/// Get the name which serves as a parameter to InstructionalText, Title, or link
@@ -750,20 +689,17 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			set
 			{
-				CheckDisposed();
 				STextParam = value;
 			}
 			get
 			{
-				CheckDisposed();
-
 				if (STextParam != null)
 				{
 					return STextParam;
 				}
-				if (m_hvoTextParam != 0)
+				if (TextParamHvo != 0)
 				{
-					var co = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoTextParam);
+					var co = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(TextParamHvo);
 					STextParam = co.ShortName;
 					// We want this link Guid value only if label/text hint that it's needed.
 					// (This requirement is subject to change without much notice!)
@@ -779,11 +715,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void InitializeExtras(XElement configNode, IPropertyTable propertyTable)
 		{
-			CheckDisposed();
-
-			Debug.Assert(m_cache != null);
+			Debug.Assert(Cache != null);
 			m_propertyTable = propertyTable;
-			var ws = m_cache.DefaultAnalWs;
+			var ws = Cache.DefaultAnalWs;
 			SetFontFromWritingSystem(ws);
 
 			if (configNode == null)
@@ -799,7 +733,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// The default case ("owner") is handled by the caller setting TextParamHvo.
 			if (sTextParam == "vernws")
 			{
-				CoreWritingSystemDefinition co = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+				CoreWritingSystemDefinition co = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 				STextParam = co.DisplayLabel;
 			}
 			var sFlid = XmlUtils.GetOptionalAttributeValue(node, "flidTextParam");
@@ -810,8 +744,8 @@ namespace LanguageExplorer.Controls.XMLViews
 					var flidTextParam = int.Parse(sFlid, CultureInfo.InvariantCulture);
 					if (flidTextParam != 0)
 					{
-						var sda = m_cache.DomainDataByFlid;
-						m_hvoTextParam = sda.get_ObjectProp(m_hvoObject, flidTextParam);
+						var sda = Cache.DomainDataByFlid;
+						TextParamHvo = sda.get_ObjectProp(m_hvoObject, flidTextParam);
 					}
 				}
 				catch
@@ -899,11 +833,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		private XElement GenerateChooserInfoForCustomNode(XElement configNode)
 		{
 			var editor = XmlUtils.GetOptionalAttributeValue(configNode, "editor");
-			if (configNode.Name != "slice" || editor != "autoCustom" || m_hvoTextParam == 0)
+			if (configNode.Name != "slice" || editor != "autoCustom" || TextParamHvo == 0)
 			{
 				return null;
 			}
-			var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoTextParam);
+			var obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(TextParamHvo);
 			var list = obj as ICmPossibilityList;
 			if (list == null)
 			{
@@ -914,10 +848,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			string listOwnerClass = null;
 			if (list.Owner != null)
 			{
-				listField = m_cache.MetaDataCacheAccessor.GetFieldName(listFlid);
-				listOwnerClass = m_cache.MetaDataCacheAccessor.GetClassName(listFlid / 1000);
+				listField = Cache.MetaDataCacheAccessor.GetFieldName(listFlid);
+				listOwnerClass = Cache.MetaDataCacheAccessor.GetClassName(listFlid / 1000);
 			}
-			var itemClass = m_cache.MetaDataCacheAccessor.GetClassName(list.ItemClsid);
+			var itemClass = Cache.MetaDataCacheAccessor.GetClassName(list.ItemClsid);
 			// We need to dynamically figure out a tool for this list.
 			string sTool = null;
 			XElement chooserNode = null;
@@ -1228,7 +1162,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void GenerateDefaultPage(ITsString tssTitle, ITsString tssDesc)
 		{
-			var ws = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+			var ws = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 			var userFont = ws.DefaultFontName;
 
 			string title, titleFont;
@@ -1236,7 +1170,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				title = tssTitle.Text;
 				var wsHandle = TsStringUtils.GetWsAtOffset(tssTitle, 0);
-				ws = m_cache.ServiceLocator.WritingSystemManager.Get(wsHandle);
+				ws = Cache.ServiceLocator.WritingSystemManager.Get(wsHandle);
 				titleFont = ws.DefaultFontName;
 			}
 			else
@@ -1257,7 +1191,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				else
 				{
 					var wsHandle = TsStringUtils.GetWsAtOffset(tssDesc, 0);
-					ws = m_cache.ServiceLocator.WritingSystemManager.Get(wsHandle);
+					ws = Cache.ServiceLocator.WritingSystemManager.Get(wsHandle);
 					descFont = ws.DefaultFontName;
 				}
 			}
@@ -1433,7 +1367,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			};
 			m_flvLabels.SelectionChanged += m_flvLabels_SelectionChanged;
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
-			m_flvLabels.Initialize(m_cache, stylesheet, m_propertyTable, configNode, m_objs);
+			m_flvLabels.Initialize(Cache, stylesheet, m_propertyTable, configNode, m_objs);
 			if (m_chosenObjs != null)
 			{
 				m_flvLabels.SetCheckedItems(m_chosenObjs);
@@ -1454,8 +1388,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void SetFontForDialog(int[] wss, IVwStylesheet stylesheet, ILgWritingSystemFactory wsf)
 		{
-			CheckDisposed();
-
 			m_stylesheet = stylesheet;
 			var tmpFont = FontHeightAdjuster.GetFontForNormalStyle(wss[0], stylesheet, wsf);
 			var font = tmpFont;
@@ -1495,13 +1427,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var oldFont = m_labelsTreeView.Font;
 			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
-			var font = FontHeightAdjuster.GetFontForNormalStyle(ws, stylesheet, m_cache.WritingSystemFactory);
+			var font = FontHeightAdjuster.GetFontForNormalStyle(ws, stylesheet, Cache.WritingSystemFactory);
 			var maxPoints = font.SizeInPoints;
 			foreach (LabelNode node in m_labelsTreeView.Nodes)
 			{
 				if (node.NodeFont != oldFont && node.NodeFont != null) // overridden because of vernacular text
 				{
-					node.ResetVernacularFont(m_cache.WritingSystemFactory, m_cache.DefaultUserWs, stylesheet);
+					node.ResetVernacularFont(Cache.WritingSystemFactory, Cache.DefaultUserWs, stylesheet);
 					maxPoints = Math.Max(maxPoints, node.NodeFont.SizeInPoints);
 				}
 			}
@@ -1527,9 +1459,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void InitializeRaw(IPropertyTable propertyTable, IPublisher publisher, string sTitle, string sText, string sGotoLabel, string sTool, string sWs)
 		{
-			CheckDisposed();
-
-			Debug.Assert(m_cache != null);
+			Debug.Assert(Cache != null);
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
 			if (sTitle != null)
@@ -1545,7 +1475,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				AddLink(sGotoLabel, LinkType.kGotoLink, new FwLinkArgs(sTool, m_guidLink));
 			}
-			var ws = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+			var ws = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
 			SetFontFromWritingSystem(ws);
 		}
 
@@ -1584,8 +1514,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public bool HandleAnyJump()
 		{
-			CheckDisposed();
-
 			if (m_publisher != null && m_linkJump != null)
 			{
 				var commands = new List<string>
@@ -1610,8 +1538,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public bool HandleAnyJump(IPublisher publisher)
 		{
-			CheckDisposed();
-
 			if (publisher != null && m_linkJump != null)
 			{
 				var commands = new List<string>
@@ -1678,7 +1604,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 				// if m_fSortLabels is true, we'll sort the labels alphabetically, using dumb English sort.
 				// otherwise, we'll keep the labels in their given order.
-				if (!m_fSortLabelsSet && m_cache != null)
+				if (!m_fSortLabelsSet && Cache != null)
 				{
 					m_fSortLabels = IsListSorted(labels);
 					m_fSortLabelsSet = true;
@@ -1689,7 +1615,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				//add <empty> row
 				if (showCurrentSelection)
 				{
-					if (m_cache != null)
+					if (Cache != null)
 					{
 						ownershipStack = GetOwnershipStack(currentObj);
 					}
@@ -1732,11 +1658,11 @@ namespace LanguageExplorer.Controls.XMLViews
 					//if we did, we would have to worry about skipping the higher level owners, like
 					//language project.
 					//but just treat it as an array, we can ignore those issues.
-					if (m_cache != null && showCurrentSelection && ownershipStack.Contains(label.Object))
+					if (Cache != null && showCurrentSelection && ownershipStack.Contains(label.Object))
 					{
 						nodeRepresentingCurrentChoice = x.AddChildrenAndLookForSelected(currentObj, ownershipStack, null);
 					}
-					if (m_cache != null && m_chosenObjs != null)
+					if (Cache != null && m_chosenObjs != null)
 					{
 						foreach (var obj in m_chosenObjs)
 						{
@@ -1784,8 +1710,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public virtual bool WantNodeForLabel(ObjectLabel label)
 		{
-			CheckDisposed();
-
 			return true; // by default want all nodes.
 		}
 
@@ -1894,67 +1818,27 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// will return null if the user chose nothing (which will happen when showEmptyOption
 		/// is false).
 		/// </remarks>
-		public ObjectLabel ChosenOne
-		{
-			get
-			{
-				CheckDisposed();
-				return m_chosenLabel;
-			}
-		}
+		public ObjectLabel ChosenOne { get; protected set; }
 
 		/// <summary>
 		/// returns true if the selected object was generated by executing a link.
 		/// </summary>
-		public bool LinkExecuted
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fLinkExecuted;
-			}
-		}
+		public bool LinkExecuted { get; protected set; }
 
 		/// <summary>
 		/// use this to change the label for null to, for example, "&lt;not sure&gt;"
 		/// </summary>
-		public ObjectLabel NullLabel
-		{
-			get
-			{
-				CheckDisposed();
-				return m_nullLabel;
-			}
-		}
+		public ObjectLabel NullLabel => m_nullLabel;
 
 		/// <summary>
 		/// Returns the list of hvos for the chosen items.
 		/// </summary>
-		public IEnumerable<ICmObject> ChosenObjects
-		{
-			get
-			{
-				CheckDisposed();
-				return m_newChosenObjs;
-			}
-		}
+		public IEnumerable<ICmObject> ChosenObjects => m_newChosenObjs;
 
 		/// <summary>
 		/// Get or set the internal LcmCache value.
 		/// </summary>
-		public LcmCache Cache
-		{
-			get
-			{
-				CheckDisposed();
-				return m_cache;
-			}
-			set
-			{
-				CheckDisposed();
-				m_cache = value;
-			}
-		}
+		public LcmCache Cache { get; set; }
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -2230,7 +2114,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				Visible = false;
 			}
-			m_chosenLabel = cmd.Execute();
+			ChosenOne = cmd.Execute();
 		}
 
 		private void OnOKClick(object sender, EventArgs e)
@@ -2239,8 +2123,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (m_linkCmd != null)
 			{
 				Visible = false;
-				m_chosenLabel = m_linkCmd.Execute();
-				m_fLinkExecuted = true;
+				ChosenOne = m_linkCmd.Execute();
+				LinkExecuted = true;
 			}
 			else if (m_labelsTreeView?.SelectedNode?.Tag is ChooserCommand)
 			{
@@ -2274,7 +2158,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			if (m_chosenObjs != null)
 			{
-				m_chosenLabel = null;
+				ChosenOne = null;
 				if (m_labelsTreeView != null)
 				{
 					m_newChosenObjs = new List<ICmObject>();
@@ -2298,11 +2182,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				if (m_labelsTreeView != null)
 				{
-					m_chosenLabel = ((LabelNode) m_labelsTreeView.SelectedNode)?.Label;
+					ChosenOne = ((LabelNode) m_labelsTreeView.SelectedNode)?.Label;
 				}
 				else
 				{
-					m_chosenLabel = m_labels[m_flvLabels.SelectedIndex];
+					ChosenOne = m_labels[m_flvLabels.SelectedIndex];
 				}
 			}
 		}
@@ -2330,7 +2214,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void btnCancel_Click(object sender, EventArgs e)
 		{
 			Persist();
-			m_chosenLabel = null;
+			ChosenOne = null;
 		}
 
 		private void m_labelsTreeView_DoubleClick(object sender, EventArgs e)
@@ -2357,8 +2241,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		public void AddChooserCommand(ChooserCommand cmd)
 		{
-			CheckDisposed();
-
 			var node = new ChooserCommandNode(cmd);
 			var defAnalWS = cmd.Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			var sFontName = defAnalWS.DefaultFontName;
@@ -2465,11 +2347,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void SetHelpTopic(string helpTopic)
 		{
-			CheckDisposed();
-
 			m_helpTopic = helpTopic;
 			InitHelp();
-
 		}
 
 		/// <summary>
@@ -2544,8 +2423,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void MakeSelection(ICmObject obj)
 		{
-			CheckDisposed();
-
 			m_labelsTreeView.SelectedNode = FindNodeFromObj(obj) ?? m_labelsTreeView.Nodes[0];
 
 			if (m_labelsTreeView.SelectedNode == null)
@@ -2564,8 +2441,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
-
 				var node = m_labelsTreeView.SelectedNode as LabelNode;
 				var label = node?.Label;
 				if (label != null)

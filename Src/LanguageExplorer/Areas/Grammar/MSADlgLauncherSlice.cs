@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -86,19 +86,11 @@ namespace LanguageExplorer.Areas.Grammar
 		/// </summary>
 		public override void FinishInit()
 		{
-			CheckDisposed();
 			Control = new MSADlgLauncher();
 		}
 
 		/// <summary />
-		public override RootSite RootSite
-		{
-			get
-			{
-				CheckDisposed();
-				return (Control as MSADlgLauncher).MainControl as RootSite;
-			}
-		}
+		public override RootSite RootSite => ((MSADlgLauncher)Control).MainControl as RootSite;
 
 		/// <summary />
 		protected override int DesiredHeight(RootSite rs)
@@ -115,10 +107,8 @@ namespace LanguageExplorer.Areas.Grammar
 		/// </summary>
 		public override void AboutToDiscard()
 		{
-			CheckDisposed();
-			base.AboutToDiscard ();
-			var ctrl = (MSADlgLauncher)Control;
-			(ctrl.MainControl as SimpleRootSite).AboutToDiscard();
+			base.AboutToDiscard();
+			((SimpleRootSite)((MSADlgLauncher)Control).MainControl).AboutToDiscard();
 		}
 	}
 }

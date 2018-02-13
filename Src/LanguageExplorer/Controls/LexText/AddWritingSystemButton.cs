@@ -45,24 +45,10 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// Initialize for adding new writing systems during import.
 		/// </summary>
 		public void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app, IEnumerable<CoreWritingSystemDefinition> wss)
 		{
-			CheckDisposed();
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;

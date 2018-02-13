@@ -166,16 +166,16 @@ namespace LanguageExplorer.Controls.DetailControls
 					// so set it directly using the msa.
 					if (m_flid == MoDerivAffMsaTags.kflidFromPartOfSpeech)
 					{
-						msa.ToPartOfSpeechRA = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(e.Hvo);
+						msa.ToPartOfSpeechRA = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(e.Hvo);
 					}
 					else
 					{
-						msa.FromPartOfSpeechRA = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(e.Hvo);
+						msa.FromPartOfSpeechRA = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(e.Hvo);
 					}
 				}
 				else
 				{
-					otherControl.AddItem(m_cache.ServiceLocator.GetObject(e.Hvo)); // Set the other guy to this value.
+					otherControl.AddItem(Cache.ServiceLocator.GetObject(e.Hvo)); // Set the other guy to this value.
 				}
 			}
 		}

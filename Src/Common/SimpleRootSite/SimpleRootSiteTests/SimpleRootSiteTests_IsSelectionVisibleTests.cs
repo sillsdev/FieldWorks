@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -43,7 +43,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			set
 			{
-				CheckDisposed();
 				m_rootb = value;
 			}
 		}
@@ -57,12 +56,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			set
 			{
-				CheckDisposed();
 				m_position = new Point(-value.X, -value.Y);
 			}
 			get
 			{
-				CheckDisposed();
 				return m_position;
 			}
 		}

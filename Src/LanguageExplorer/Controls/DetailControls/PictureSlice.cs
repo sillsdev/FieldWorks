@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -49,7 +49,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		// Read the thumbnail property from the configuration
 		public override void FinishInit()
 		{
-			CheckDisposed();
 			base.FinishInit ();
 			m_fThumbnail = XmlUtils.GetOptionalBooleanAttributeValue(ConfigurationNode, "thumbnail", false);
 		}
@@ -174,21 +173,20 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void showProperties()
 		{
-			CheckDisposed();
 			var pic = (ICmPicture)Object;
 			var app = PropertyTable.GetValue<IApp>("App");
-			using (var dlg = new PicturePropertiesDialog(m_cache, pic, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, true))
+			using (var dlg = new PicturePropertiesDialog(Cache, pic, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, true))
 			{
 				if (!dlg.Initialize())
 				{
 					return;
 				}
 				var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
-				dlg.UseMultiStringCaption(m_cache, WritingSystemServices.kwsVernAnals, stylesheet);
+				dlg.UseMultiStringCaption(Cache, WritingSystemServices.kwsVernAnals, stylesheet);
 				dlg.SetMultilingualCaptionValues(pic.Caption);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
-					UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoUpdatePicture, DetailControlsStrings.ksRedoUpdatePicture, m_obj, () =>
+					UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoUpdatePicture, DetailControlsStrings.ksRedoUpdatePicture, Object, () =>
 					{
 						const string strLocalPictures = CmFolderTags.DefaultPictureFolder;
 						dlg.GetMultilingualCaptionValues(pic.Caption);

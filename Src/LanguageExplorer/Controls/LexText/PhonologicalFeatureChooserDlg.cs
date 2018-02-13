@@ -1,8 +1,10 @@
-﻿// Copyright (c) 2017-2018 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-// This really needs to be refactored with MasterCategoryListDlg.cs
+#if RANDYTODO
+	// TODO: This really needs to be refactored with MasterCategoryListDlg.cs
+#endif
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -43,7 +45,6 @@ namespace LanguageExplorer.Controls.LexText
 		private FwLinkArgs m_link;
 		// The dialog can be initialized with an existing feature structure,
 		// or just with an owning object and flid in which to create one.
-		private IFsFeatStruc m_fs;
 		// Where to put a new feature structure if needed. Owning flid may be atomic
 		// or collection. Used only if m_fs is initially null.
 		int m_hvoOwner;
@@ -111,8 +112,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		private void UpdateFeatureConstraints()
 		{
-			CheckDisposed();
-
 			var featureHvos = m_bvList.AllItems;
 			foreach (var hvoClosedFeature in featureHvos)
 			{
@@ -175,19 +174,6 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose( bool disposing )
@@ -204,7 +190,7 @@ namespace LanguageExplorer.Controls.LexText
 				m_helpProvider?.Dispose();
 			}
 			m_cache = null;
-			m_fs = null;
+			FS = null;
 			m_ctxt = null;
 			m_cache = null;
 			m_bvList = null;
@@ -218,15 +204,11 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, IPhRegularRule rule, IPhSimpleContextNC ctxt)
 		{
-			CheckDisposed();
-
 			SetDlgInfo(cache, propertyTable, publisher, ctxt.FeatureStructureRA.Hvo, PhNCFeaturesTags.kflidFeatures, ((IPhNCFeatures)ctxt.FeatureStructureRA).FeaturesOA, rule, ctxt);
 		}
 
 		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, IPhRegularRule rule)
 		{
-			CheckDisposed();
-
 			SetDlgInfo(cache, propertyTable, publisher, 0, 0, null, rule, null);
 		}
 
@@ -243,21 +225,17 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, ICmObject cobj, int owningFlid)
 		{
-			CheckDisposed();
-
 			SetDlgInfo(cache, propertyTable, publisher, cobj.Hvo, owningFlid, null, null, null);
 		}
 
 		public void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
-			CheckDisposed();
-
 			SetDlgInfo(cache, propertyTable, publisher, 0, 0, null, null, null);
 		}
 
 		private void SetDlgInfo(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, int hvoOwner, int owningFlid, IFsFeatStruc fs, IPhRegularRule rule, IPhSimpleContextNC ctxt)
 		{
-			m_fs = fs;
+			FS = fs;
 			m_owningFlid = owningFlid;
 			m_hvoOwner = hvoOwner;
 			m_rule = rule;
@@ -290,7 +268,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_valuesCombo.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 			m_valuesCombo.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 
-			LoadPhonFeats(m_fs);
+			LoadPhonFeats(FS);
 			BuildInitialBrowseView();
 		}
 
@@ -304,8 +282,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetHelpTopic(string helpTopic)
 		{
-			CheckDisposed();
-
 			m_helpTopic = helpTopic;
 			m_helpProvider.SetHelpKeyword(this, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(helpTopic));
 		}
@@ -582,17 +558,13 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_ctxt;
 			}
 
 			set
 			{
-				CheckDisposed();
-
 				m_ctxt = value;
-				m_fs = ((IPhNCFeatures)m_ctxt.FeatureStructureRA).FeaturesOA;
+				FS = ((IPhNCFeatures)m_ctxt.FeatureStructureRA).FeaturesOA;
 			}
 		}
 
@@ -601,22 +573,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Get Feature Structure resulting from dialog operation
 		/// </summary>
-		public IFsFeatStruc FS
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_fs;
-			}
-
-			set
-			{
-				CheckDisposed();
-
-				m_fs = value;
-			}
-		}
+		public IFsFeatStruc FS { get; set; }
 
 		/// <summary>
 		/// Get/Set prompt text
@@ -625,14 +582,10 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				CheckDisposed();
-
 				return labelPrompt.Text;
 			}
 			set
 			{
-				CheckDisposed();
-
 				var s1 = value ?? LexTextControls.ksPhonologicalFeatures;
 				labelPrompt.Text = s1;
 			}
@@ -653,14 +606,10 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				CheckDisposed();
-
 				return Text;
 			}
 			set
 			{
-				CheckDisposed();
-
 				Text = value;
 			}
 		}
@@ -671,16 +620,11 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				CheckDisposed();
-
 				return linkLabel1.Text;
 			}
 			set
 			{
-				CheckDisposed();
-
-				string s1 = value ?? LexTextControls.ksPhonologicalFeaturesAdd;
-				linkLabel1.Text = s1;
+				linkLabel1.Text = value ?? LexTextControls.ksPhonologicalFeaturesAdd;
 			}
 		}
 
@@ -779,7 +723,7 @@ namespace LanguageExplorer.Controls.LexText
 					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(LexTextControls.ksUndoSelectionOfPhonologicalFeatures,
 						LexTextControls.ksRedoSelectionOfPhonologicalFeatures, m_cache.ActionHandlerAccessor, () =>
 					{
-						if (m_fs == null)
+						if (FS == null)
 						{
 							// Didn't have one to begin with. See whether we want to create one.
 							if (m_hvoOwner != 0 && CheckFeatureStructure())
@@ -787,14 +731,14 @@ namespace LanguageExplorer.Controls.LexText
 								// The last argument is meaningless since we expect this property to be owning
 								// or collection.
 								var hvoFs = m_cache.DomainDataByFlid.MakeNewObject(FsFeatStrucTags.kClassId, m_hvoOwner, m_owningFlid, -2);
-								m_fs = m_cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>().GetObject(hvoFs);
+								FS = m_cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>().GetObject(hvoFs);
 								UpdateFeatureStructure();
 							}
 						}
 						else
 						{
 							// clean out any extant features in the feature structure
-							m_fs.FeatureSpecsOC.Clear();
+							FS.FeatureSpecsOC.Clear();
 							UpdateFeatureStructure();
 						}
 					});
@@ -831,8 +775,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// <remarks>Is internal for Unit Testing</remarks>
 		internal void UpdateFeatureStructure()
 		{
-			CheckDisposed();
-
 			var featureHvos = m_bvList.AllItems;
 			foreach (var hvoClosedFeature in featureHvos)
 			{
@@ -841,7 +783,7 @@ namespace LanguageExplorer.Controls.LexText
 				{
 					var feat = m_cache.ServiceLocator.GetInstance<IFsClosedFeatureRepository>().GetObject(hvoClosedFeature);
 					var val = m_cache.ServiceLocator.GetInstance<IFsSymFeatValRepository>().GetObject(valHvo);
-					var closedVal = m_fs.GetOrCreateValue(feat);
+					var closedVal = FS.GetOrCreateValue(feat);
 					closedVal.FeatureRA = feat;
 					closedVal.ValueRA = val;
 				}

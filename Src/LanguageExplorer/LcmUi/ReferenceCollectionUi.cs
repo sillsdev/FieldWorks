@@ -24,8 +24,6 @@ namespace LanguageExplorer.LcmUi
 		{
 			get
 			{
-				CheckDisposed();
-
 				var clidDst = m_cache.DomainDataByFlid.MetaDataCache.GetDstClsId(m_flid);
 				switch (clidDst)
 				{

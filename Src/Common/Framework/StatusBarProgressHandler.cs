@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2017 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -299,24 +299,6 @@ namespace SIL.FieldWorks.Common.Framework
 		#endregion
 
 		#region Disposing stuff
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// This method throws an ObjectDisposedException if IsDisposed returns
-		/// true.  This is the case where a method or property in an object is being
-		/// used but the object itself is no longer valid.
-		/// This method should be added to all public properties and methods of this
-		/// object and all other objects derived from it (extensive).
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException(
-					string.Format("'{0}' in use after being disposed.", GetType().Name));
-			}
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

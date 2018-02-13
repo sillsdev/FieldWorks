@@ -51,8 +51,6 @@ namespace LanguageExplorer.LcmUi
 #if RANDYTODO
 		public override bool OnDisplayMoveTargetUpInSequence(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			if (m_iCurrent < 0 || _lcmRefSeq == null || _lcmRefSeq.Count == 0)
 			{
 				display.Visible = display.Enabled = false;
@@ -73,8 +71,6 @@ namespace LanguageExplorer.LcmUi
 
 		public override bool OnDisplayMoveTargetDownInSequence(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			if (m_iCurrent < 0 || _lcmRefSeq == null || _lcmRefSeq.Count == 0)
 			{
 				display.Visible = display.Enabled = false;
@@ -96,8 +92,6 @@ namespace LanguageExplorer.LcmUi
 
 		public void OnMoveTargetUpInSequence(object commandObject)
 		{
-			CheckDisposed();
-
 			if (m_obj == null || m_iCurrent < 0)
 			{
 				return;
@@ -115,8 +109,6 @@ namespace LanguageExplorer.LcmUi
 
 		public void OnMoveTargetDownInSequence(object commandObject)
 		{
-			CheckDisposed();
-
 			if (m_obj == null || m_iCurrent < 0)
 			{
 				return;

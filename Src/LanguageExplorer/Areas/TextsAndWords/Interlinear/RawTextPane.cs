@@ -28,7 +28,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	public class RawTextPane : RootSite, IInterlinearTabControl, IHandleBookmark
 	{
 		XmlNode m_configurationParameters;
-		private int m_lastFoundAnnotationHvo = 0;
 		private ShowSpaceDecorator m_showSpaceDa;
 		private bool m_fClickInsertsZws; // true for the special mode where click inserts a zero-width space
 
@@ -96,9 +95,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public virtual void SetRoot(int hvo)
 		{
-			CheckDisposed();
-
-
 			if (hvo != RootHvo || Vc == null)
 			{
 				SetStyleSheet(hvo);
@@ -186,14 +182,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		internal int LastFoundAnnotationHvo
-		{
-			get
-			{
-				CheckDisposed();
-				return m_lastFoundAnnotationHvo;
-			}
-		}
+		internal int LastFoundAnnotationHvo { get; } = 0;
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
@@ -431,8 +420,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode || RootHvo == 0)
 			{
 				return;
@@ -497,8 +484,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected override void HandleSelectionChange(IVwRootBox rootb, IVwSelection vwselNew)
 		{
-			CheckDisposed();
-
 			base.HandleSelectionChange(rootb, vwselNew);
 
 			// JohnT: it's remotely possible that the base, in calling commit, made this
@@ -544,8 +529,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public override VwDelProbResponse OnProblemDeletion(IVwSelection sel, VwDelProbType dpt)
 		{
-			CheckDisposed();
-
 			switch (dpt)
 			{
 				case VwDelProbType.kdptBsAtStartPara:
@@ -676,7 +659,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public void SelectBookmark(IStTextBookmark bookmark)
 		{
-			CheckDisposed();
 			MakeTextSelectionAndScrollToView(bookmark.BeginCharOffset, bookmark.EndCharOffset, 0, bookmark.IndexOfParagraph);
 		}
 
@@ -705,8 +687,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public bool OnLexiconLookup(object argument)
 		{
-			CheckDisposed();
-
 			int ichMin, ichLim, hvo, tag, ws;
 			if (GetSelectedWordPos(m_rootb.Selection, out hvo, out tag, out ws, out ichMin, out ichLim))
 			{
@@ -725,8 +705,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public bool LexiconLookupEnabled()
 		{
-			CheckDisposed();
-
 			var sel = m_rootb?.Selection;
 			if (sel == null || !sel.IsValid)
 			{
@@ -832,8 +810,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 #if RANDYTODO
 		public bool OnDisplayGuessWordBreaks(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			display.Visible = true;
 			bool isTextPresent = RootBox != null && RootBox.Selection != null;
 			if(isTextPresent) //well, the rootbox is at least there, test it for text.
@@ -863,8 +839,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void OnGuessWordBreaks(object argument)
 		{
-			CheckDisposed();
-
 			var sel = RootBox.Selection;
 			ITsString tss;
 			int ichMin, hvoStart, ichLim, hvoEnd, tag, ws;

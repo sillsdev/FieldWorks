@@ -25,11 +25,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 	/// </summary>
 	internal class InflAffixTemplateMenuHandler : IFlexComponent, IDisposable
 	{
-		/// <summary>
-		/// Inflectiona Affix Template Control.
-		/// </summary>
-		protected InflAffixTemplateControl m_inflAffixTemplateCtrl;
-
 		// These variables are used for the popup menus.
 		private ComboListBox m_clb;
 		private bool m_fConstructingMenu;
@@ -80,19 +75,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		#endregion
 
 		#region IDisposable & Co. implementation
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -160,7 +142,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_inflAffixTemplateCtrl = null;
+			InflAffixTemplate = null;
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
@@ -190,15 +172,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			return h;
 		}
 
-		public InflAffixTemplateControl InflAffixTemplate
-		{
-			set
-			{
-				CheckDisposed();
-
-				m_inflAffixTemplateCtrl = value;
-			}
-		}
+		private InflAffixTemplateControl InflAffixTemplate { get; set; }
 
 		protected InflAffixTemplateMenuHandler()
 		{
@@ -206,8 +180,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		public bool OnInflTemplateInsertSlot(object cmd)
 		{
-			CheckDisposed();
-
 #if RANDYTODO
 			// TODO: "Later" was present at the time of the switch to git, so this method didn't do much, besides claiming to handle the command.
 #if Later
@@ -230,14 +202,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <returns></returns>
 		public virtual bool OnDisplayInflTemplateInsertSlot(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			display.Enabled = true;
 			return true;//we handled this, no need to ask anyone else.
 		}
 #endif
 
-		protected LcmCache Cache => m_inflAffixTemplateCtrl.Cache;
+		protected LcmCache Cache => InflAffixTemplate.Cache;
 
 		/// <summary>
 		/// Invoked by a DataTree (which is in turn invoked by the slice)
@@ -245,8 +215,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// </summary>
 		public void ShowSliceContextMenu(object sender, InflAffixTemplateEventArgs e)
 		{
-			CheckDisposed();
-
 			var configuration = e.ConfigurationNode;
 			var menuId = XmlUtils.GetOptionalAttributeValue(configuration, "menu");
 
@@ -299,14 +267,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			m_clb.AdjustSize(500, 400); // these are maximums!
 			m_clb.SelectedIndex = 0;
 			var boundsLauncher = new Rectangle(ptLoc, new Size(10,10));
-			var boundsScreen = Screen.GetWorkingArea(m_inflAffixTemplateCtrl);
+			var boundsScreen = Screen.GetWorkingArea(InflAffixTemplate);
 			m_fConstructingMenu = false;
 			m_clb.Launch(boundsLauncher, boundsScreen);
 		}
 
 		private void AdjustListBoxSize()
 		{
-			using (Graphics g = m_inflAffixTemplateCtrl.CreateGraphics())
+			using (Graphics g = InflAffixTemplate.CreateGraphics())
 			{
 				var nMaxWidth = 0;
 				var nHeight = 0;
@@ -343,7 +311,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		internal virtual void HandleFwMenuSelection(object sender, EventArgs ea)
 		{
-			CheckDisposed();
 			if (m_fConstructingMenu)
 			{
 				return;
@@ -421,30 +388,30 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				switch (sMsg)
 				{
 					case "InflTemplateAddInflAffixMsa":
-						tssLabel = m_inflAffixTemplateCtrl.MenuLabelForInflTemplateAddInflAffixMsa(sLabel);
+						tssLabel = InflAffixTemplate.MenuLabelForInflTemplateAddInflAffixMsa(sLabel);
 						break;
 					case "InflTemplateInsertSlotAfter":
 					case "InflTemplateInsertSlotBefore":
-						tssLabel = m_inflAffixTemplateCtrl.DetermineSlotContextMenuItemLabel(sLabel);
+						tssLabel = InflAffixTemplate.DetermineSlotContextMenuItemLabel(sLabel);
 						break;
 					case "InflTemplateMoveSlotLeft":
-						tssLabel = m_inflAffixTemplateCtrl.MenuLabelForInflTemplateMoveSlot(sLabel, true, out fEnabled);
+						tssLabel = InflAffixTemplate.MenuLabelForInflTemplateMoveSlot(sLabel, true, out fEnabled);
 						break;
 					case "InflTemplateMoveSlotRight":
-						tssLabel = m_inflAffixTemplateCtrl.MenuLabelForInflTemplateMoveSlot(sLabel, false, out fEnabled);
+						tssLabel = InflAffixTemplate.MenuLabelForInflTemplateMoveSlot(sLabel, false, out fEnabled);
 						break;
 					case "InflTemplateToggleSlotOptionality":
 					case "InflTemplateRemoveSlot":
-						tssLabel = m_inflAffixTemplateCtrl.MenuLabelForInflTemplateAffixSlotOperation(sLabel, out fEnabled);
+						tssLabel = InflAffixTemplate.MenuLabelForInflTemplateAffixSlotOperation(sLabel, out fEnabled);
 						break;
 					case "InflTemplateRemoveInflAffixMsa":
-						tssLabel = m_inflAffixTemplateCtrl.MenuLabelForInflTemplateRemoveInflAffixMsa(sLabel);
+						tssLabel = InflAffixTemplate.MenuLabelForInflTemplateRemoveInflAffixMsa(sLabel);
 						break;
 					case "JumpToTool":
-						tssLabel = m_inflAffixTemplateCtrl.MenuLabelForJumpToTool(sLabel);
+						tssLabel = InflAffixTemplate.MenuLabelForJumpToTool(sLabel);
 						break;
 					case "InflAffixTemplateHelp":
-						tssLabel = m_inflAffixTemplateCtrl.MenuLabelForInflAffixTemplateHelp(sLabel);
+						tssLabel = InflAffixTemplate.MenuLabelForInflAffixTemplateHelp(sLabel);
 						break;
 					default:
 						Debug.Assert(sMsg == "InflTemplateAddInflAffixMsa");

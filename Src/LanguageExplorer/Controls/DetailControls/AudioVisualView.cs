@@ -63,7 +63,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void Init(ICmFile obj, int flid)
 		{
-			CheckDisposed();
 			m_cache = PropertyTable.GetValue<LcmCache>("cache");
 			m_file = obj;
 			m_flid = flid;
@@ -82,8 +81,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode)
 			{
 				return;

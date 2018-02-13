@@ -48,19 +48,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		#region IDisposable & Co. implementation
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
 		public bool IsDisposed { get; private set; }
@@ -143,8 +130,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
-				CheckDisposed();
-
 				Debug.Assert(m_lp != null);
 				return m_lp.CurrentAnalysisWritingSystems.Select(ws => ws.Handle).ToArray();
 			}
@@ -155,8 +140,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public int IndexOf(int ws)
 		{
-			CheckDisposed();
-
 			for (var index = 0; index < AnalysisWsIds.Length; index++)
 			{
 				if (AnalysisWsIds[index] == ws)
@@ -177,15 +160,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Return an array of the analysis writing systems the user wants.
 		/// </summary>
-		public CoreWritingSystemDefinition[] AnalysisWss
-		{
-			get
-			{
-				CheckDisposed();
-
-				return WssFromHvos(AnalysisWsIds);
-			}
-		}
+		public CoreWritingSystemDefinition[] AnalysisWss => WssFromHvos(AnalysisWsIds);
 
 		private bool equalArrays(int[] v1, int[] v2)
 		{
@@ -205,8 +180,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_labels != null && equalArrays(m_labelBasis, AnalysisWsIds))
 				{
 					return m_labels;
@@ -233,8 +206,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void AddWsLabel(IVwEnv vwenv, int iws)
 		{
-			CheckDisposed();
-
 			if (m_tssColon == null)
 			{
 				m_tssColon = TsStringUtils.MakeString(": ", m_lp.Cache.DefaultUserWs);
@@ -253,14 +224,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Return an ITsTextProps typically used for WS labels in views.
 		/// </summary>
-		public ITsTextProps LanguageCodeStyle
-		{
-			get
-			{
-				CheckDisposed();
-				return LanguageCodeTextProps(m_lp.Cache.DefaultUserWs);
-			}
-		}
+		public ITsTextProps LanguageCodeStyle => LanguageCodeTextProps(m_lp.Cache.DefaultUserWs);
 
 		/// <summary>
 		/// Return an ITsTextProps typically used for WS labels in views.
@@ -290,8 +254,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
-				CheckDisposed();
-
 				var wssAnalysis = AnalysisWsIds;
 				if (wssAnalysis.Length == 0)
 				{

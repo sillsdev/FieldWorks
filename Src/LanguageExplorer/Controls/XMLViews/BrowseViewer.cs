@@ -41,7 +41,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private XElement m_configParamsElement;
 		/// <summary />
 		protected DhListView m_lvHeader;
-		private RecordSorter m_sorter;
+
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -59,12 +59,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		protected Button m_configureButton;
 		private Button m_checkMarkButton;
-		/// <summary />
-		protected BrowseViewScroller m_scrollContainer;
-		/// <summary />
-		protected ScrollBar m_scrollBar;
+
 		private ToolTip m_tooltip;
-		private bool m_listModificationInProgress;
 
 		private int[] m_colWidths; // Last values computed and set by AdjustColumnWidths.
 		// This flag is used to minimize redoing the filtering and sorting when
@@ -141,14 +137,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// and back to false at the end. A client may want to suppress handling PropChanged
 		/// during the complex operation, and simply reload the list at the end.
 		/// </summary>
-		public bool ListModificationInProgress
-		{
-			get
-			{
-				CheckDisposed();
-				return m_listModificationInProgress;
-			}
-		}
+		public bool ListModificationInProgress { get; private set; }
 
 		/// <summary>
 		/// calls Focus on the important child control
@@ -208,13 +197,11 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal void SetListModificationInProgress(bool val)
 		{
-			CheckDisposed();
-
-			if (m_listModificationInProgress == val)
+			if (ListModificationInProgress == val)
 			{
 				return;
 			}
-			m_listModificationInProgress = val;
+			ListModificationInProgress = val;
 			ListModificationInProgressChanged?.Invoke(this, EventArgs.Empty);
 		}
 
@@ -223,8 +210,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal virtual void BrowseViewMouseUp(MouseEventArgs e)
 		{
-			CheckDisposed();
-
 			var dpiX = GetDpiX();
 			var selColWidth = BrowseView.Vc.SelectColumnWidth * dpiX / 72000;
 			if (BrowseView.Vc.HasSelectColumn && e.X < selColWidth)
@@ -301,8 +286,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="currentFilter">The current filter.</param>
 		public void UpdateFilterBar(RecordFilter currentFilter)
 		{
-			CheckDisposed();
-
 			if (FilterBar != null)
 			{
 				m_currentFilter = currentFilter;
@@ -378,12 +361,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				return BrowseView.SelectedIndex;
 			}
 			set
 			{
-				CheckDisposed();
 				BrowseView.SelectedIndex = value;
 			}
 		}
@@ -406,15 +387,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Gets the default sort column. The returned index is zero-based, it does not include
 		/// the check box column.
 		/// </summary>
-		public virtual int DefaultSortColumn
-		{
-			get
-			{
-				CheckDisposed();
-				// the default column is always the first column
-				return 0;
-			}
-		}
+		public virtual int DefaultSortColumn => 0;
 
 		/// <summary>
 		/// Gets the sorted columns. The returned indices are zero-based, they do not include
@@ -424,15 +397,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				var cols = new List<int>();
-				if (FilterBar == null || FilterBar.ColumnInfo.Length <= 0 || m_sorter == null)
+				if (FilterBar == null || FilterBar.ColumnInfo.Length <= 0 || Sorter == null)
 				{
 					return cols;
 				}
-				if (m_sorter is AndSorter)
+				if (Sorter is AndSorter)
 				{
-					var sorters = ((AndSorter)m_sorter).Sorters;
+					var sorters = ((AndSorter)Sorter).Sorters;
 					foreach (var sorterObj in sorters)
 					{
 						var icol = ColumnInfoIndexOfCompatibleSorter(sorterObj as RecordSorter);
@@ -444,7 +416,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				else
 				{
-					var icol = ColumnInfoIndexOfCompatibleSorter(m_sorter);
+					var icol = ColumnInfoIndexOfCompatibleSorter(Sorter);
 					if (icol >= 0)
 					{
 						cols.Add(icol);
@@ -458,21 +430,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Set/Get the sorter. Setting using this does not raise SorterChanged...it's meant
 		/// to be used to initialize it by the client.
 		/// </summary>
-		public RecordSorter Sorter
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_sorter;
-			}
-			set
-			{
-				CheckDisposed();
-
-				m_sorter = value;
-			}
-		}
+		public RecordSorter Sorter { get; set; }
 
 		/// <summary>
 		/// Set the sorter and raise the SortChanged event.
@@ -490,8 +448,6 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal void RaiseSelectionDrawingFailure()
 		{
-			CheckDisposed();
-
 			SelectionDrawingFailure?.Invoke(this, EventArgs.Empty);
 		}
 
@@ -584,12 +540,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				return BrowseView.RootObjectHvo;
 			}
 			set
 			{
-				CheckDisposed();
 				BrowseView.RootObjectHvo = value;
 			}
 		}
@@ -601,13 +555,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				return BrowseView.StyleSheet;
 			}
 			set
 			{
-				CheckDisposed();
-
 				BrowseView.StyleSheet = value;
 				FilterBar?.SetStyleSheet(value);
 				BulkEditBar?.SetStyleSheet(value);
@@ -673,16 +624,16 @@ namespace LanguageExplorer.Controls.XMLViews
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 			SuspendLayout();
-			m_scrollContainer = new BrowseViewScroller(this)
+			Scroller = new BrowseViewScroller(this)
 			{
 				AutoScroll = true,
 				TabStop = false
 			};
-			Controls.Add(m_scrollContainer);
-			m_scrollBar = new VScrollBar();
-			m_scrollBar.ValueChanged += m_scrollBar_ValueChanged;
-			m_scrollBar.TabStop = false;
-			Controls.Add(m_scrollBar);
+			Controls.Add(Scroller);
+			ScrollBar = new VScrollBar();
+			ScrollBar.ValueChanged += m_scrollBar_ValueChanged;
+			ScrollBar.TabStop = false;
+			Controls.Add(ScrollBar);
 			// Set this before creating the browse view class so that custom parts can be
 			// generated properly.
 			SortItemProvider = sortItemProvider;
@@ -706,7 +657,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// we make the filter bar so the LayoutCache exists.
 			BrowseView.Vc.Cache = Cache;
 			BrowseView.Vc.DataAccess = SpecialCache;
-			m_scrollContainer.SuspendLayout();
+			Scroller.SuspendLayout();
 			//
 			// listView1
 			//
@@ -810,7 +761,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_checkMarkButton.Click += m_checkMarkButton_Click;
 				var ttip = new ToolTip();
 				ttip.SetToolTip(m_checkMarkButton, XMLViewsStrings.ksTipCheck);
-				m_scrollContainer.Controls.Add(m_checkMarkButton);
+				Scroller.Controls.Add(m_checkMarkButton);
 				m_checkMarkButton.BringToFront();
 			}
 
@@ -848,7 +799,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			AutoScroll = true;
 			VScroll = false;
 			HScroll = true;
-			m_scrollContainer.ResumeLayout(false);
+			Scroller.ResumeLayout(false);
 			ResumeLayout(false);
 		}
 
@@ -933,7 +884,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary/>
 		protected void AddControl(Control control)
 		{
-			m_scrollContainer.Controls.Add(control);
+			Scroller.Controls.Add(control);
 		}
 
 		/// <summary>
@@ -946,8 +897,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public bool InitSorter(RecordSorter sorter, bool fSortChanged = false)
 		{
-			CheckDisposed();
-
 			if (FilterBar == null || FilterBar.ColumnInfo.Length <= 0)
 			{
 				return false;
@@ -1056,8 +1005,6 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal void HideBulkEdit()
 		{
-			CheckDisposed();
-
 			Controls.Remove(BulkEditBar);
 		}
 
@@ -1288,16 +1235,16 @@ namespace LanguageExplorer.Controls.XMLViews
 						m_configureButton.Dispose();
 					}
 				}
-				if (m_scrollBar != null)
+				if (ScrollBar != null)
 				{
 					//m_scrollBar.Scroll -= new ScrollEventHandler(m_scrollBar_Scroll);
-					m_scrollBar.ValueChanged -= m_scrollBar_ValueChanged;
-					if (!Controls.Contains(m_scrollBar))
+					ScrollBar.ValueChanged -= m_scrollBar_ValueChanged;
+					if (!Controls.Contains(ScrollBar))
 					{
-						m_scrollBar.Dispose();
+						ScrollBar.Dispose();
 					}
 				}
-				if (m_scrollContainer != null)
+				if (Scroller != null)
 				{
 					if (m_lvHeader != null)
 					{
@@ -1308,7 +1255,7 @@ namespace LanguageExplorer.Controls.XMLViews
 #endif
 						m_lvHeader.ColumnRightClick -= m_lvHeader_ColumnRightClick;
 						m_lvHeader.ColumnDragDropReordered -= m_lvHeader_ColumnDragDropReordered;
-						if (!m_scrollContainer.Controls.Contains(m_lvHeader))
+						if (!Scroller.Controls.Contains(m_lvHeader))
 						{
 							m_lvHeader.Dispose();
 						}
@@ -1317,7 +1264,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						BrowseView.SelectionChangedEvent -= OnSelectionChanged;
 						BrowseView.SelectedIndexChanged -= m_xbv_SelectedIndexChanged;
-						if (!m_scrollContainer.Controls.Contains(BrowseView))
+						if (!Scroller.Controls.Contains(BrowseView))
 						{
 							BrowseView.Dispose();
 						}
@@ -1325,18 +1272,18 @@ namespace LanguageExplorer.Controls.XMLViews
 					if (FilterBar != null)
 					{
 						FilterBar.FilterChanged -= FilterChangedHandler;
-						if (!m_scrollContainer.Controls.Contains(FilterBar))
+						if (!Scroller.Controls.Contains(FilterBar))
 						{
 							FilterBar.Dispose();
 						}
 					}
-					if (BulkEditBar != null && !m_scrollContainer.Controls.Contains(BulkEditBar))
+					if (BulkEditBar != null && !Scroller.Controls.Contains(BulkEditBar))
 					{
 						BulkEditBar.Dispose();
 					}
-					if (!Controls.Contains(m_scrollContainer))
+					if (!Controls.Contains(Scroller))
 					{
-						m_scrollContainer.Dispose();
+						Scroller.Dispose();
 					}
 				} // end of m_scrollContainer != null
 				m_tooltip?.Dispose();
@@ -1345,16 +1292,16 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_SortersToDispose.Dispose();
 			}
 			m_configureButton = null;
-			m_scrollBar = null;
+			ScrollBar = null;
 			m_lvHeader = null;
 			BrowseView = null;
 			FilterBar = null;
 			BulkEditBar = null;
-			m_scrollContainer = null;
+			Scroller = null;
 			Cache = null;
 			m_configParamsElement = null;
 			SortItemProvider = null;
-			m_sorter = null;
+			Sorter = null;
 			m_tooltip = null;
 			m_currentFilter = null;
 
@@ -1371,8 +1318,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void OnSelectionChanged(object sender, FwObjectSelectionEventArgs e)
 		{
-			CheckDisposed();
-
 			//we don't do anything but pass this on to objects which have subscribed to this event
 			SelectionChanged?.Invoke(sender, e);
 		}
@@ -1404,8 +1349,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void OnDoubleClick(FwObjectSelectionEventArgs e)
 		{
-			CheckDisposed();
-
 			SelectionMade?.Invoke(this, e);
 		}
 
@@ -1439,7 +1382,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected void AdjustControls()
 		{
-			CheckDisposed();
 			if (m_configureButton == null)
 			{
 				return;		// layout hasn't actually occurred yet -- see FWNX-733.
@@ -1462,18 +1404,18 @@ namespace LanguageExplorer.Controls.XMLViews
 				sbHeight -= BulkEditBar.Height;
 				scrollContHeight -= BulkEditBar.Height;
 			}
-			m_scrollBar.Height = sbHeight;
-			m_scrollBar.Location = new Point(Width - m_scrollBar.Width, m_configureButton.Height);
-			BrowseView?.SetScrollBarParameters(m_scrollBar);
+			ScrollBar.Height = sbHeight;
+			ScrollBar.Location = new Point(Width - ScrollBar.Width, m_configureButton.Height);
+			BrowseView?.SetScrollBarParameters(ScrollBar);
 
-			m_scrollContainer.Location = new Point(0,0);
-			m_scrollContainer.Height = scrollContHeight;
+			Scroller.Location = new Point(0,0);
+			Scroller.Height = scrollContHeight;
 			EnsureScrollContainerIsCorrectWidth();
 		}
 
 		internal void EnsureScrollContainerIsCorrectWidth()
 		{
-			if (m_scrollContainer == null)
+			if (Scroller == null)
 			{
 				return;
 			}
@@ -1483,12 +1425,12 @@ namespace LanguageExplorer.Controls.XMLViews
 				return;
 			}
 
-			if (m_scrollBar == null)
+			if (ScrollBar == null)
 			{
 				return;
 			}
 
-			m_scrollContainer.Width = Width - Math.Max(m_configureButton.Width, m_scrollBar.Width);
+			Scroller.Width = Width - Math.Max(m_configureButton.Width, ScrollBar.Width);
 		}
 
 		/// <summary>
@@ -1496,14 +1438,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal void LayoutScrollControls()
 		{
-			CheckDisposed();
-
-			if (BrowseView == null || m_lvHeader == null || m_lvHeader.Columns.Count == 0 || m_scrollContainer.Width < DhListView.kgapForScrollBar)
+			if (BrowseView == null || m_lvHeader == null || m_lvHeader.Columns.Count == 0 || Scroller.Width < DhListView.kgapForScrollBar)
 			{
 				return; // sometime called very early in construction process.
 			}
-			var widthTotal = Math.Max(SetSavedOrDefaultColWidths(m_scrollContainer.Width), m_scrollContainer.ClientRectangle.Width);
-			var xPos = m_scrollContainer.AutoScrollPosition.X;
+			var widthTotal = Math.Max(SetSavedOrDefaultColWidths(Scroller.Width), Scroller.ClientRectangle.Width);
+			var xPos = Scroller.AutoScrollPosition.X;
 			// This simulates docking, except that we don't adjust the width if we are
 			// scrolling horizontally.
 			m_lvHeader.Location = new Point(xPos, 0);
@@ -1517,7 +1457,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			BrowseView.Width = widthTotal;
 			var bottom = Height;
-			if (m_scrollContainer.Width < widthTotal)
+			if (Scroller.Width < widthTotal)
 			{
 				bottom -= 22; // leave room for horizontal scroll to prevent vertical scroll.
 			}
@@ -1532,32 +1472,18 @@ namespace LanguageExplorer.Controls.XMLViews
 			// enough of the view present to fix yet.
 			AdjustColumnWidths(false);
 			m_lvHeader.PerformLayout();
-			BrowseView.SetScrollBarParameters(m_scrollBar);
+			BrowseView.SetScrollBarParameters(ScrollBar);
 		}
 
 		/// <summary>
 		/// gets the Scrollbar of the viewer
 		/// </summary>
-		public ScrollBar ScrollBar
-		{
-			get
-			{
-				CheckDisposed();
-				return m_scrollBar;
-			}
-		}
+		public ScrollBar ScrollBar { get; protected set; }
 
 		/// <summary>
 		/// gets the (horizontal) Scrollbar of the viewer
 		/// </summary>
-		public BrowseViewScroller Scroller
-		{
-			get
-			{
-				CheckDisposed();
-				return m_scrollContainer;
-			}
-		}
+		public BrowseViewScroller Scroller { get; protected set; }
 
 		private int SetSavedOrDefaultColWidths(int idealWidth)
 		{
@@ -1709,8 +1635,6 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			public override void MakeRoot()
 			{
-				CheckDisposed();
-
 				base.MakeRoot();
 
 				ReadOnlyView = ReadOnlySelect;
@@ -1732,7 +1656,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				get
 				{
-					CheckDisposed();
 					return base.ScrollPosition;
 				}
 				set { }
@@ -1757,8 +1680,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// </summary>
 			public override VwLength[] GetColWidthInfo()
 			{
-				CheckDisposed();
-
 				Debug.Assert(Vc.ColumnSpecs.Count == 1, "Only support one column in this browse view");
 				var rglength = new VwLength[1];
 				rglength[0].unit = VwUnit.kunPercent100;
@@ -1884,8 +1805,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void AdjustColumnWidths(bool fPersistNew)
 		{
-			CheckDisposed();
-
 			if (BrowseView?.RootBox == null)
 			{
 				return;
@@ -1943,8 +1862,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="widths"></param>
 		public void GetColWidthInfo(out VwLength[] rglength, out int[] widths)
 		{
-			CheckDisposed();
-
 			int dpiX;
 			using (var g = CreateGraphics())
 			{
@@ -2103,8 +2020,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public bool ColumnActiveAndSortedFromEnd(int icol)
 		{
-			CheckDisposed();
-
 			if (Sorter == null)
 			{
 				return false; // If there isn't a sorter, no columns can be actively sorted
@@ -2397,7 +2312,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Trying to do it explicitly here led to LT-8090 and other problems.
 
 			//LT-9785 ensures horizontal scroll bar appears when needed.
-			m_scrollContainer.PerformLayout();
+			Scroller.PerformLayout();
 		}
 
 		private void RebuildHeaderColumns(List<XElement> colSpecs, Dictionary<XElement, int> widths)
@@ -2420,7 +2335,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				var ch = MakeColumnHeader(node);
 				//Set the width either to the temporarily stored width, or the default initial column width
 				int width;
-				ch.Width = widths.TryGetValue(node, out width) ? width : GetInitialColumnWidth(node, m_scrollContainer.ClientRectangle.Width, dpiX);
+				ch.Width = widths.TryGetValue(node, out width) ? width : GetInitialColumnWidth(node, Scroller.ClientRectangle.Width, dpiX);
 				if (BrowseView.Vc.ShowColumnsRTL)
 				{
 					var iRev = colSpecs.Count - (i + 1);
@@ -2676,7 +2591,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			FilterChanged?.Invoke(this, new FilterChangeEventArgs(filter, m_currentFilter));
 			FilterInitializationComplete = false; // allows UpdateFilterBar to add columns
 			UpdateFilterBar(filter);
-			m_scrollContainer.PerformLayout(); // cause scroll bar to appear or disappear, etc.
+			Scroller.PerformLayout(); // cause scroll bar to appear or disappear, etc.
 		}
 
 		/// <summary>
@@ -2718,7 +2633,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var columns = ColumnSpecs;
 			columns.Insert(columnIndex, columnSpecification);
 			var colHeader = MakeColumnHeader(columnSpecification);
-			var colWidth = GetInitialColumnWidth(columnSpecification, m_scrollContainer.ClientRectangle.Width, GetDpiX());
+			var colWidth = GetInitialColumnWidth(columnSpecification, Scroller.ClientRectangle.Width, GetDpiX());
 			colHeader.Width = colWidth;
 			m_lvHeader.SuppressColumnWidthChanges = true;
 			m_lvHeader.Columns.Insert(ColumnHeaderIndex(columnIndex), colHeader);
@@ -2825,8 +2740,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal bool AppendMatchingHiddenColumns(RecordFilter filter)
 		{
-			CheckDisposed();
-
 			if (FilterInitializationComplete || filter == null)
 			{
 				return false;
@@ -2874,14 +2787,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
-
 				return BrowseView.Vc.ColumnSpecs;
 			}
 			set
 			{
-				CheckDisposed();
-
 				BrowseView.Vc.ColumnSpecs = value;
 			}
 		}
@@ -2929,8 +2838,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		public bool OnDisplaySortedFromEnd(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			display.Visible = true;
 			display.Enabled = true;
 			display.Checked = CurrentColumnSortedFromEnd;
@@ -2945,8 +2852,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <returns></returns>
 		public bool OnDisplaySortedByLength(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			int icol = -1;	// can't sort without a filter bar!
 			if (m_filterBar != null)
 				icol = m_icolCurrent - m_filterBar.ColumnOffset;
@@ -2994,8 +2899,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public virtual void OnPropertyChanged(string name)
 		{
-			CheckDisposed();
-
 			if (FilterBar == null || Sorter == null)
 			{
 				return;
@@ -3059,7 +2962,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				if (!BrowseView.Vc.HasSelectColumn)
 				{
 					return null;
@@ -3089,8 +2991,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void SetCheckedItems(IList<int> rghvo)
 		{
-			CheckDisposed();
-
 			if (!BrowseView.Vc.HasSelectColumn)
 			{
 				return;
@@ -3305,7 +3205,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void m_scrollBar_ValueChanged(object sender, EventArgs e)
 		{
-			BrowseView.ScrollPosition = new Point(0, m_scrollBar.Value);
+			BrowseView.ScrollPosition = new Point(0, ScrollBar.Value);
 		}
 
 		/// <summary>
@@ -3313,13 +3213,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public bool SnapSplitPosition(ref int width)
 		{
-			CheckDisposed();
-
 			if (m_lvHeader == null || m_lvHeader.Columns.Count < 1)
 			{
 				return false;
 			}
-			var snapPos = m_lvHeader.ColumnsInDisplayOrder[0].Width + m_scrollBar.Width;
+			var snapPos = m_lvHeader.ColumnsInDisplayOrder[0].Width + ScrollBar.Width;
 			// This guards against snapping when we have just one column that is stretching.
 			// When that happens, 'snapping' just prevents other behaviors, like
 			if (m_lvHeader.Columns.Count == 1 && snapPos >= width - 2)
@@ -3339,8 +3237,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void OnRemoveFilters(object sender)
 		{
-			CheckDisposed();
-
 			FilterBar?.RemoveAllFilters();
 		}
 
@@ -3354,8 +3250,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		public bool OnDisplayConfigureColumns(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			// Anytime we have a BrowseViewer or one of its subclasses,
 			// we ought to have this menu command available. LT-12752
 			var result = true;
@@ -3371,8 +3265,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public bool OnConfigureColumns(object sender)
 		{
-			CheckDisposed();
-
 			ConfigMoreChoicesItemClicked(sender, new EventArgs());
 			return true;
 		}
@@ -3380,15 +3272,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		#region IMainContentControl Members
 
 		/// <summary />
-		public string AreaName
-		{
-			get
-			{
-				CheckDisposed();
-
-				return PropertyTable.GetValue<string>(AreaServices.AreaChoice);
-			}
-		}
+		public string AreaName => PropertyTable.GetValue<string>(AreaServices.AreaChoice);
 
 		/// <summary>
 		/// This is called on a MasterRefresh
@@ -3396,7 +3280,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <returns></returns>
 		public bool PrepareToGoAway()
 		{
-			CheckDisposed();
 			BulkEditBar?.SaveSettings();
 			return true;
 		}
@@ -3408,7 +3291,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		public Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
-			CheckDisposed();
 			// Note: when switching panes, we want to give the focus to the BrowseView, not the BrowseViewer.
 			Control focusedControl = null;
 			if (BrowseView != null)

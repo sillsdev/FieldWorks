@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,7 +15,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public InterlinearTextsRecordEditView(InfoPane infoPane, XElement configurationParametersElement, LcmCache cache, IRecordList recordList, DataTree dataTree, ToolStripMenuItem printMenu)
 			: base(configurationParametersElement, XDocument.Parse(AreaResources.VisibilityFilter_All), cache, recordList, dataTree, printMenu)
 		{
-			(m_dataTree as StTextDataTree).InfoPane = infoPane;
+			(DatTree as StTextDataTree).InfoPane = infoPane;
 		}
 
 		#region Overrides of RecordEditView

@@ -85,8 +85,6 @@ namespace LanguageExplorer.Controls.LexText
 
 		public void Init(ContentMapping currentMarker, Hashtable uiLangsHT, LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app)
 		{
-			CheckDisposed();
-
 			m_uiLangs = uiLangsHT;
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
@@ -248,41 +246,17 @@ namespace LanguageExplorer.Controls.LexText
 		}
 
 		// result methods to be used if the dialog result is OK
-		public bool ExcludeFromImport
-		{
-			get
-			{
-				CheckDisposed();
-				return chkbxExclude.Checked;
-			}
-		}
-		public bool AutoImport
-		{
-			get
-			{
-				CheckDisposed();
-				return chkbxAutoField.Checked;
-			}
-		}
+		public bool ExcludeFromImport => chkbxExclude.Checked;
 
-		public string WritingSystem
-		{
-			get
-			{
-				CheckDisposed();
+		public bool AutoImport => chkbxAutoField.Checked;
 
-				var langinfo = cbLangDesc.SelectedItem as LanguageInfoUI;
-				return langinfo.FwName;
-			}
-		}
+		public string WritingSystem => ((LanguageInfoUI)cbLangDesc.SelectedItem).FwName;
+
 		public string LangDesc
 		{
 			get
 			{
-				CheckDisposed();
-
-				var langinfo = cbLangDesc.SelectedItem as LanguageInfoUI;
-				return langinfo.Key;
+				return ((LanguageInfoUI)cbLangDesc.SelectedItem).Key;
 			}
 		}
 
@@ -290,49 +264,22 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				CheckDisposed();
 				var node = m_StoredTreeNode ?? tvDestination.SelectedNode;
 				return node == null ? string.Empty : (node.Tag as LexImportField)?.ID;
 			}
 		}
 
-		public string FWDestinationClass
-		{
-			get
-			{
-				CheckDisposed();
-				var node = m_StoredTreeNode ?? tvDestination.SelectedNode;
-				return node?.Parent.Text.Trim('(', ')') ?? string.Empty;
-			}
-		}
+		public string FWDestinationClass => (m_StoredTreeNode ?? tvDestination.SelectedNode)?.Parent.Text.Trim('(', ')') ?? string.Empty;
 
+		public bool IsCustomField => (m_StoredTreeNode ?? tvDestination.SelectedNode)?.Tag is LexImportCustomField;
 
-		public bool IsCustomField
-		{
-			get
-			{
-				CheckDisposed();
-				var node = m_StoredTreeNode ?? tvDestination.SelectedNode;
-				return node?.Tag is LexImportCustomField;//.IsCustomField;
-			}
-		}
-
-		public bool IsAbbrNotName
-		{
-			get
-			{
-				CheckDisposed();
-				return rbAbbrAbbr.Checked;
-			}
-		}
+		public bool IsAbbrNotName => rbAbbrAbbr.Checked;
 		public bool IsFuncField => cbFunction.Enabled;
 
 		public string FuncField
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (cbFunction.Enabled && cbFunction.Text.Length > 0)
 				{
 					if (m_htNameToAbbr.ContainsKey(cbFunction.Text))
@@ -351,8 +298,6 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (cbFunction.Enabled && cbFunction.Text.Length > 0)
 				{
 					if (m_htNameToAbbr.ContainsKey(cbFunction.Text))
@@ -398,19 +343,6 @@ namespace LanguageExplorer.Controls.LexText
 			tvDestination.EndUpdate();
 
 			_helpProvider = new HelpProvider();
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
 		}
 
 		/// <summary>

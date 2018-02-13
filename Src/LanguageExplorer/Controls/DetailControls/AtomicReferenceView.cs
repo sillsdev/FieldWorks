@@ -65,7 +65,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, LcmCache cache, string displayNameProperty, string displayWs)
 		{
-			CheckDisposed();
 			m_displayWs = displayWs;
 			Initialize(rootObj, rootFlid, rootFieldName, cache, displayNameProperty);
 		}
@@ -75,7 +74,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void SetObject(ICmObject obj)
 		{
-			CheckDisposed();
 			m_rootObj = obj;
 			if (m_rootb == null)
 			{
@@ -91,14 +89,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			ViewSizeChanged?.Invoke(this, new FwViewSizeEventArgs(h2, m_rootb.Width));
 		}
 
-		public ICmObject Object
-		{
-			get
-			{
-				CheckDisposed();
-				return m_rootObj;
-			}
-		}
+		public ICmObject Object => m_rootObj;
 
 		protected virtual void SetRootBoxObj()
 		{
@@ -141,7 +132,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void MakeRoot()
 		{
-			CheckDisposed();
 			base.MakeRoot();
 
 			if (m_cache == null || DesignMode)
@@ -161,7 +151,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public virtual void SetReferenceVc()
 		{
-			CheckDisposed();
 			m_atomicReferenceVc = new AtomicReferenceVc(m_cache, m_rootFlid, m_displayNameProperty);
 		}
 
@@ -181,7 +170,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void HandleSelectionChange(IVwRootBox rootb, IVwSelection vwselNew)
 		{
-			CheckDisposed();
 			if (vwselNew == null)
 			{
 				return;

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -126,17 +126,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			base.Dispose(disposing);
 		}
 
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
 		#endregion IDisposable override
 
 		/// <summary>
@@ -149,7 +138,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				int borderHeight = 0;
 				switch (BorderStyle)
 				{
@@ -195,13 +183,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_hasBorder;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_hasBorder = value;
 				if (Application.RenderWithVisualStyles)
 					SetPadding();
@@ -255,14 +241,12 @@ namespace SIL.FieldWorks.Common.Widgets
 		public new Padding Padding
 		{
 			get
-		{
-			CheckDisposed();
+			{
 				return m_textPadding;
 			}
 
 			set
 			{
-				CheckDisposed();
 				m_textPadding = value;
 				SetPadding();
 			}
@@ -277,7 +261,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_innerControl.Focused;
 			}
 		}
@@ -291,7 +274,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_innerControl.RootBox;
 			}
 		}
@@ -367,8 +349,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		public ITsString Value(int ws)
 		{
-			CheckDisposed();
-
 			return m_innerControl.Value(ws);
 		}
 
@@ -377,8 +357,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		public void SetValue(int ws, ITsString tss)
 		{
-			CheckDisposed();
-
 			m_innerControl.SetValue(ws, tss);
 		}
 
@@ -387,8 +365,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		public void SetValue(int ws, string txt)
 		{
-			CheckDisposed();
-
 			SetValue(ws, TsStringUtils.MakeString(txt, ws));
 		}
 
@@ -399,7 +375,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				CheckDisposed();
 				return m_innerControl.WritingSystems.Count;
 			}
 		}
@@ -409,8 +384,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		public ITsString ValueAndWs(int index, out int ws)
 		{
-			CheckDisposed();
-
 			ws = m_innerControl.WritingSystems[index].Handle;
 			return m_innerControl.RootBox.DataAccess.get_MultiStringAlt(InnerLabeledMultiStringControl.khvoRoot,
 				InnerLabeledMultiStringControl.kflid, ws);
@@ -422,7 +395,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="index">The index.</param>
 		public int Ws(int index)
 		{
-			CheckDisposed();
 			return m_innerControl.WritingSystems[index].Handle;
 		}
 
@@ -444,8 +416,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </exception>
 		public void Select(int ws, int start, int length)
 		{
-			CheckDisposed();
-
 			if (start < 0)
 				throw new ArgumentException("Starting position is less than zero.", "start");
 			if (length < 0)
@@ -478,8 +448,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary></summary>
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			CheckDisposed();
-
 			OnTextChanged(new EventArgs());
 		}
 

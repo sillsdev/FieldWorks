@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -31,7 +31,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		public BasicIPASymbolSlice(LcmCache cache, string editor, int flid, XElement node, ICmObject obj, IPersistenceProvider persistenceProvider, int ws)
 			: base(obj, flid, ws)
 		{
-			var phoneme = (IPhPhoneme)m_obj;
+			var phoneme = (IPhPhoneme)Object;
 			phoneme.BasicIPASymbolChanged += UpdatePhoneme;
 		}
 
@@ -39,7 +39,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		{
 			if (disposing)
 			{
-				var phoneme = (IPhPhoneme)m_obj;
+				var phoneme = (IPhPhoneme)Object;
 				phoneme.BasicIPASymbolChanged -= UpdatePhoneme;
 			}
 
@@ -57,14 +57,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// </summary>
 		private void SetDescriptionBasedOnIPA()
 		{
-			var phoneme = (IPhPhoneme) m_obj;
+			var phoneme = (IPhPhoneme) Object;
 			if (!m_justChangedDescription && phoneme.BasicIPASymbol.Length == 0)
 			{
 				return;
 			}
 
 			var fADescriptionChanged = false;
-			foreach (var writingSystem in m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
+			foreach (var writingSystem in Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
 			{
 				var ws = writingSystem.Handle;
 				var tssDesc = phoneme.Description.get_String(ws);
@@ -102,7 +102,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// </summary>
 		public void SetFeaturesBasedOnIPA()
 		{
-			var phoneme = (IPhPhoneme)m_obj;
+			var phoneme = (IPhPhoneme)Object;
 
 			if (phoneme.BasicIPASymbol.Length > 0 && (m_justChangedFeatures || phoneme.FeaturesOA == null || phoneme.FeaturesOA.FeatureSpecsOC.Count == 0))
 			{
@@ -119,22 +119,22 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 				{
 					var sFeature = feature.Attribute("feature").Value;
 					var sValue = feature.Attribute("value").Value;
-					var featDefn = m_cache.LanguageProject.PhFeatureSystemOA.GetFeature(sFeature);
+					var featDefn = Cache.LanguageProject.PhFeatureSystemOA.GetFeature(sFeature);
 					if (featDefn == null)
 					{
 						continue;
 					}
 
-					var symVal = m_cache.LanguageProject.PhFeatureSystemOA.GetSymbolicValue(sValue);
+					var symVal = Cache.LanguageProject.PhFeatureSystemOA.GetSymbolicValue(sValue);
 					if (symVal == null)
 					{
 						continue;
 					}
 					if (phoneme.FeaturesOA == null)
 					{
-						phoneme.FeaturesOA = m_cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
+						phoneme.FeaturesOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
 					}
-					var value = m_cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
+					var value = Cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
 					phoneme.FeaturesOA.FeatureSpecsOC.Add(value);
 					value.FeatureRA = featDefn;
 					value.ValueRA = symVal;

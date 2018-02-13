@@ -46,25 +46,9 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Retrieve the CmObject we are providing UI functions for.
 		/// </summary>
-		public ICmObject Object
-		{
-			get
-			{
-				CheckDisposed();
+		public ICmObject Object => m_obj ?? (m_obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvo));
 
-				return m_obj ?? (m_obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvo));
-			}
-		}
-
-		public string ClassName
-		{
-			get
-			{
-				CheckDisposed();
-
-				return Object.ClassName;
-			}
-		}
+		public string ClassName => Object.ClassName;
 
 		/// <summary>
 		/// Returns a View Constructor that can be used to produce various displays of the
@@ -99,15 +83,7 @@ namespace LanguageExplorer.LcmUi
 		///				...
 		///				break;
 		/// </summary>
-		public virtual IVwViewConstructor Vc
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_vc ?? (m_vc = new CmObjectVc(m_cache));
-			}
-		}
+		public virtual IVwViewConstructor Vc => m_vc ?? (m_vc = new CmObjectVc(m_cache));
 
 		/// <summary>
 		/// Returns a View Constructor that can be used to produce various displays of the
@@ -144,24 +120,9 @@ namespace LanguageExplorer.LcmUi
 		///				...
 		///				break;
 		/// </summary>
-		public virtual IVwViewConstructor VernVc
-		{
-			get
-			{
-				CheckDisposed();
-				return new CmVernObjectVc(m_cache);
-			}
-		}
+		public virtual IVwViewConstructor VernVc => new CmVernObjectVc(m_cache);
 
-		public virtual IVwViewConstructor AnalVc
-		{
-			get
-			{
-				CheckDisposed();
-				return new CmAnalObjectVc(m_cache);
-			}
-		}
-
+		public virtual IVwViewConstructor AnalVc => new CmAnalObjectVc(m_cache);
 		#endregion Properties
 
 		#region Construction and initialization
@@ -325,20 +286,6 @@ namespace LanguageExplorer.LcmUi
 		#endregion Construction and initialization
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -456,7 +403,6 @@ namespace LanguageExplorer.LcmUi
 #if RANDYTODO
 		public virtual void LaunchGuiControl(Command command)
 		{
-			CheckDisposed();
 			string guicontrol = command.GetParameter("guicontrol");
 			string xpathToControl = String.Format("/window/controls/parameters/guicontrol[@id=\"{0}\"]", guicontrol);
 			XmlNode xnControl = command.ConfigurationNode.SelectSingleNode(xpathToControl);
@@ -487,8 +433,6 @@ namespace LanguageExplorer.LcmUi
 		/// <returns></returns>
 		public virtual bool OnJumpToTool(object commandObject)
 		{
-			CheckDisposed();
-
 			var command = (Command) commandObject;
 			string tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 			var guid = GuidForJumping(commandObject);
@@ -514,8 +458,6 @@ namespace LanguageExplorer.LcmUi
 		/// <returns></returns>
 		public virtual bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			var command = (Command) commandObject;
 			string tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 			//string areaChoice = m_propertyTable.GetValue<string>(AreaServices.AreaChoice);
@@ -600,22 +542,13 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Get the id of the XCore Context menu that should be shown for our object
 		/// </summary>
-		public virtual string ContextMenuId
-		{
-			get
-			{
-				CheckDisposed();
-				return "mnuObjectChoices";
-			}
-		}
+		public virtual string ContextMenuId => "mnuObjectChoices";
 
 		/// <summary>
 		/// Handle a right click by popping up the implied context menu.
 		/// </summary>
 		public bool HandleRightClick(Control hostControl, bool shouldDisposeThisWhenClosed)
 		{
-			CheckDisposed();
-
 			return HandleRightClick(hostControl, shouldDisposeThisWhenClosed, ContextMenuId);
 		}
 
@@ -624,8 +557,6 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public bool HandleRightClick(Control hostControl, bool shouldDisposeThisWhenClosed, Action<ContextMenuStrip> adjustMenu)
 		{
-			CheckDisposed();
-
 			return HandleRightClick(hostControl, shouldDisposeThisWhenClosed, ContextMenuId, adjustMenu);
 		}
 
@@ -705,8 +636,6 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public bool HandleRightClick(Control hostControl, bool shouldDisposeThisWhenClosed, string sMenuId, Action<ContextMenuStrip> adjustMenu)
 		{
-			CheckDisposed();
-
 			m_hostControl = hostControl;
 
 			var sHostType = m_hostControl.GetType().Name;
@@ -756,8 +685,6 @@ namespace LanguageExplorer.LcmUi
 		/// <returns></returns>
 		public virtual bool OnDisplayDeleteSelectedItem(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			if (m_hostControl.GetType().Name == "Sandbox"
 				// Disable deleting from inside "Try a Word" dialog.  See FWR-3212.
 				|| m_hostControl.GetType().Name == "TryAWordSandbox"
@@ -775,8 +702,6 @@ namespace LanguageExplorer.LcmUi
 		{
 			get
 			{
-				CheckDisposed();
-
 				var poss = Object as ICmPossibility;
 				if (poss != null)
 				{
@@ -817,7 +742,6 @@ namespace LanguageExplorer.LcmUi
 #if RANDYTODO
 		public void OnDeleteSelectedItem(object commandObject)
 		{
-			CheckDisposed();
 			m_command = commandObject as Command;
 
 			try
@@ -864,8 +788,6 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public bool DeleteUnderlyingObject()
 		{
-			CheckDisposed();
-
 			var cmo = GetCurrentCmObject();
 			if (cmo != null && m_obj != null && cmo.Hvo == m_obj.Hvo)
 			{
@@ -995,8 +917,6 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public void MergeUnderlyingObject(bool fLoseNoTextData)
 		{
-			CheckDisposed();
-
 			var mainWindow = PropertyTable.GetValue<Form>("window");
 			using (new WaitCursor(mainWindow))
 			{
@@ -1044,10 +964,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary />
 		public virtual void MoveUnderlyingObjectToCopyOfOwner()
 		{
-			CheckDisposed();
-
-			var mainWindow = PropertyTable.GetValue<Form>("window");
-			MessageBox.Show(mainWindow, LcmUiStrings.ksCannotMoveObjectToCopy, LcmUiStrings.ksBUG);
+			MessageBox.Show(PropertyTable.GetValue<Form>("window"), LcmUiStrings.ksCannotMoveObjectToCopy, LcmUiStrings.ksBUG);
 		}
 
 		/// <summary>
@@ -1056,8 +973,6 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public string ToStatusBar()
 		{
-			CheckDisposed();
-
 			if (!Object.IsValidObject)
 			{
 				return LcmUiStrings.ksDeletedObject;

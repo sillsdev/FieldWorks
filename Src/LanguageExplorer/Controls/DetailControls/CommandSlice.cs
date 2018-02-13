@@ -89,7 +89,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void RegisterWithContextHelper()
 		{
-			CheckDisposed();
 			if (Control != null)//grouping nodes do not have a control
 			{
 #if RANDYTODO
@@ -112,12 +111,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
 				return base.Mediator;
 			}
 			set
 			{
-				CheckDisposed();
 				base.Mediator = value;
 				m_command = (Command)value.CommandSet[m_cmdNode.Attributes["cmdID"].Value];
 				Debug.Assert(m_command != null);

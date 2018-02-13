@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
@@ -40,8 +39,6 @@ namespace LanguageExplorer.LcmUi
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_vc == null)
 				{
 					m_vc = new CmNameAbbrObjVc(m_cache, CmPossibilityTags.kflidName, CmPossibilityTags.kflidAbbreviation);
@@ -53,8 +50,6 @@ namespace LanguageExplorer.LcmUi
 #if RANDYTODO
 		public override bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			var command = (Command)commandObject;
 			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 

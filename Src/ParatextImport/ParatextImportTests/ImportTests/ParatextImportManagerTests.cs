@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -271,8 +271,6 @@ namespace ParatextImport.ImportTests
 		/// ------------------------------------------------------------------------------------
 		internal void Cancel()
 		{
-			CheckDisposed();
-
 			((DummyParatextImportUi)m_importCallbacks).SimulateCancel();
 		}
 	}
@@ -1471,8 +1469,6 @@ namespace ParatextImport.ImportTests
 		//[Test]
 		//public void CancelRestoresOriginal_FirstBookWhenOwnOrdsNotContiguous()
 		//{
-		//    CheckDisposed();
-
 		//    int origSeqCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
 
 		//    // SETUP: Import Genesis, Exodus, and Leviticus and then remove Genesis to create

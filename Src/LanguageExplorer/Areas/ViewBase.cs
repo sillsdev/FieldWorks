@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -212,8 +211,6 @@ namespace LanguageExplorer.Areas
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_informationBar != null)
 				{
 					return m_informationBar as IPaneBar;
@@ -223,8 +220,6 @@ namespace LanguageExplorer.Areas
 			}
 			set
 			{
-				CheckDisposed();
-
 				if (m_informationBar != null)
 				{
 					throw new NotSupportedException("Don't even 'think' of setting it more than once!");
@@ -243,22 +238,11 @@ namespace LanguageExplorer.Areas
 		/// <returns>true if ok to go away</returns>
 		public virtual bool PrepareToGoAway()
 		{
-			CheckDisposed();
-
 			return true;
 		}
 
-		public string AreaName
-		{
-			get
-			{
-				CheckDisposed();
-
-				return PropertyTable.GetValue<string>(AreaServices.AreaChoice);
-			}
-		}
-
-#endregion // IMainContentControl implementation
+		public string AreaName => PropertyTable.GetValue<string>(AreaServices.AreaChoice);
+		#endregion // IMainContentControl implementation
 
 #region ICtrlTabProvider implementation
 
@@ -495,8 +479,6 @@ namespace LanguageExplorer.Areas
 #if RANDYTODO
 		public bool OnDisplayShowTreeBar(object commandObject, ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			display.Enabled = (m_treebarAvailability == TreebarAvailability.Optional);
 			return true;//we handled this, no need to ask anyone else.
 		}
@@ -504,8 +486,6 @@ namespace LanguageExplorer.Areas
 		public bool OnDisplayExport(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			string areaChoice = m_propertyTable.GetValue<string>(AreaServices.AreaChoice);
 			bool inFriendlyTerritory = (areaChoice == AreaServices.InitialAreaMachineName
 #if RANDYTODO

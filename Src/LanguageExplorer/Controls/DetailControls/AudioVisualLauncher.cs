@@ -115,8 +115,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		///  <summary />
 		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
-			CheckDisposed();
-
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
 			m_view.Init(obj as ICmFile, flid);
 		}
@@ -169,13 +167,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		public virtual RootSite RootSite
-		{
-			get
-			{
-				CheckDisposed();
-				return m_view;
-			}
-		}
+		public virtual RootSite RootSite => m_view;
 	}
 }

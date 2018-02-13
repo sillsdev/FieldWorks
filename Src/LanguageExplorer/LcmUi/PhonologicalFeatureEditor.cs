@@ -65,21 +65,6 @@ namespace LanguageExplorer.LcmUi
 
 		#region IDisposable & Co. implementation
 
-		// Region last reviewed: never
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
 		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
@@ -178,12 +163,10 @@ namespace LanguageExplorer.LcmUi
 		{
 			get
 			{
-				CheckDisposed();
 				return m_cache;
 			}
 			set
 			{
-				CheckDisposed();
 				m_cache = value;
 				if (m_cache != null && m_tree != null)
 				{
@@ -216,14 +199,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Get the actual tree control.
 		/// </summary>
-		public Control Control
-		{
-			get
-			{
-				CheckDisposed();
-				return m_tree;
-			}
-		}
+		public Control Control => m_tree;
 
 		private void m_tree_TreeLoad(object sender, EventArgs e)
 		{
@@ -331,8 +307,6 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
-			CheckDisposed();
-
 			var selectedObject = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(SelectedHvo);
 			var i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
@@ -394,23 +368,14 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Can't (yet) clear the field value.
 		/// </summary>
-		public bool CanClearField
-		{
-			get
-			{
-				CheckDisposed();
-				return false;
-			}
-		}
+		public bool CanClearField => false;
 
 		/// <summary>
 		/// Not needed since we said we can't do it.
 		/// </summary>
 		public void SetClearField()
 		{
-			CheckDisposed();
-
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public void ClearPreviousPreviews(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier)
@@ -427,8 +392,6 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnable, ProgressState state)
 		{
-			CheckDisposed();
-
 			var labelToShow = SelectedLabel;
 			// selectedHvo refers to either a FsFeatStruc we've made or the targeted feature
 			var selectedObject = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(SelectedHvo);

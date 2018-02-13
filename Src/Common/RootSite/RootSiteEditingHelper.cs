@@ -98,7 +98,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				SelectionHelper helper = CurrentSelection;
 				return (helper != null && helper.TextPropId == SegmentTags.kflidFreeTranslation);
 			}
@@ -149,8 +148,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			RootSite rootsite, string contextMenuName, string addToDictMenuName,
 			string insertBeforeMenuName, string changeMultipleMenuName, bool fShowSpellingOptions)
 		{
-			CheckDisposed();
-
 			m_spellCheckStatus = SpellCheckStatus.Disabled;
 			List<string> menuItemNames = null;
 
@@ -295,7 +292,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		internal bool DoSpellCheckContextMenu(Point pt, RootSite rootsite)
 		{
-			CheckDisposed();
 			return SpellCheckHelper.ShowContextMenu(pt, rootsite);
 		}
 		#endregion
@@ -326,7 +322,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public string TextRepOfObj(LcmCache cache, Guid guid)
 		{
-			CheckDisposed();
 			ICmObject obj;
 			if (cache.ServiceLocator.ObjectRepository.TryGetObject(guid, out obj) &&
 				obj is IEmbeddedObject)
@@ -351,7 +346,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public virtual Guid MakeObjFromText(LcmCache cache, string sTextRep,
 			IVwSelection selDst, out int kodt)
 		{
-			CheckDisposed();
 			// Keep trying different types of objects until one of them recognizes the string
 			try
 			{
@@ -432,7 +426,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				CheckDisposed();
 				throw new NotImplementedException();
 			}
 		}
@@ -446,7 +439,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public override sealed void SelectionChanged()
 		{
-			CheckDisposed();
 			if (m_cache != null)
 			{
 				if (m_cache.ActionHandlerAccessor.CurrentDepth > 0 ||
@@ -686,8 +678,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public override void RemoveCharFormatting(bool removeAllStyles)
 		{
-			CheckDisposed();
-
 			string undo, redo;
 			ResourceHelper.MakeUndoRedoLabels("kstidUndoStyleChanges", out undo, out redo);
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(undo, redo,
@@ -1029,7 +1019,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public void ConvertSelToLink(string clip, LcmStyleSheet stylesheet)
 		{
-			CheckDisposed();
 			var hyperlinkStyle = stylesheet.FindStyle(StyleServices.Hyperlink);
 
 			if (m_callbacks == null || m_callbacks.EditedRootBox == null || hyperlinkStyle == null)
@@ -1105,7 +1094,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public bool CanInsertLinkToFile()
 		{
-			CheckDisposed();
 			ISilDataAccess sda = m_callbacks.EditedRootBox.DataAccess;
 			if (sda.GetActionHandler() == null)
 				return false; // some sort of sandbox...the current implementation certainly can't do it without one.
@@ -1123,7 +1111,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public bool CanPasteUrl()
 		{
-			CheckDisposed();
 			if (!IsSelectionInOneFormattableProp())
 				return false;
 			if (!ClipboardContainsString())
@@ -1143,7 +1130,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public bool PasteUrl(LcmStyleSheet stylesheet)
 		{
-			CheckDisposed();
 			if (!CanPasteUrl())
 				return false;
 			string clip = GetClipboardAsString();

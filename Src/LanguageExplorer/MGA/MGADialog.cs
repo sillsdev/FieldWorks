@@ -138,19 +138,6 @@ namespace LanguageExplorer.MGA
 		}
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose(bool disposing)
@@ -228,8 +215,6 @@ namespace LanguageExplorer.MGA
 
 		public void OnInsertButtonClick(object obj, EventArgs ea)
 		{
-			CheckDisposed();
-
 			var mif = (MasterInflectionFeature)treeViewGlossListItem.SelectedNode.Tag;
 			if (mif == null)
 			{
@@ -682,27 +667,12 @@ namespace LanguageExplorer.MGA
 		/// <summary>
 		/// Get gloss string result
 		/// </summary>
-		public string Result
-		{
-			get
-			{
-				CheckDisposed();
+		public string Result => textBoxResult.Text;
 
-				return textBoxResult.Text;
-			}
-		}
 		/// <summary>
 		/// Get items in the gloss list
 		/// </summary>
-		public ListBox.ObjectCollection Items
-		{
-			get
-			{
-				CheckDisposed();
-
-				return glossListBoxGloss.Items;
-			}
-		}
+		public ListBox.ObjectCollection Items => glossListBoxGloss.Items;
 		#endregion
 	}
 }

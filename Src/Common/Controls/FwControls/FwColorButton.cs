@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -87,14 +87,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_clrColorValue;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_clrColorValue = value;
 				this.Invalidate();
 			}
@@ -120,14 +116,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_clrColorSquareBorderColor;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_clrColorSquareBorderColor = value;
 				this.Invalidate();
 			}

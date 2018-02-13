@@ -107,8 +107,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		void IFwExtension.Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
-			CheckDisposed();
-
 			m_cache = cache;
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
@@ -137,19 +135,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			};
 			helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
 		}
 
 		/// <summary>

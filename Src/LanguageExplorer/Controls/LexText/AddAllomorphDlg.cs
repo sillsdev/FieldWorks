@@ -13,9 +13,6 @@ namespace LanguageExplorer.Controls.LexText
 
 		private string m_formOrig;
 		private int m_hvoType;
-		protected bool m_fInconsistentType; // see comment on property.
-		protected bool m_fMatchingForm;
-
 		#endregion	Data members
 
 		#region Properties
@@ -42,27 +39,13 @@ namespace LanguageExplorer.Controls.LexText
 		/// match the type of any exising MoMorph. This used to disable the OK
 		/// button, but now it's just a warning.
 		/// </summary>
-		public bool InconsistentType
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fInconsistentType;
-			}
-		}
+		public bool InconsistentType { get; protected set; }
 
 		/// <summary>
 		/// This flag is set when the dialog is used to add an allomorph and the
 		/// allomorph chosen already exists.
 		/// </summary>
-		public bool MatchingForm
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fMatchingForm;
-			}
-		}
+		public bool MatchingForm { get; protected set; }
 
 		#endregion Properties
 
@@ -100,8 +83,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public void SetDlgInfo(LcmCache cache, WindowParams wp, ITsString tssform, int hvoType)
 		{
-			CheckDisposed();
-
 			SetDlgInfo(cache, wp, tssform);
 
 			m_formOrig = m_tbForm.Text;
@@ -159,8 +140,8 @@ namespace LanguageExplorer.Controls.LexText
 						break;
 					}
 				}
-				m_fInconsistentType = !fMatchingType;
-				m_fMatchingForm = fMatchingForm;
+				InconsistentType = !fMatchingType;
+				MatchingForm = fMatchingForm;
 				if (fMatchingForm && fMatchingType)
 				{
 					m_btnOK.Text = LexTextControls.ksUseAllomorph;

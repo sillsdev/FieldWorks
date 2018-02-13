@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -73,7 +73,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		private readonly ErrorMessageHandler m_errorMessageHandler;
 		private Label m_lblDecompostionDisplay;
 
-		private CharEditorWindow m_parentDialog;
 		private HelpProvider m_helpProvider;
 		private IHelpTopicProvider m_helpTopicProvider;
 
@@ -85,17 +84,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		private bool m_modifyMode;
 
 		#endregion
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
 
 		#region attributes
 
@@ -109,13 +97,10 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			get
 			{
-				CheckDisposed();
 				return m_storedPuaChar;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_storedPuaChar = value;
 				m_puaChar = new PUACharacter(value);
 			}
@@ -128,14 +113,10 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_modifyMode;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_modifyMode = value;
 				if( value )
 				{
@@ -152,22 +133,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <summary>
 		/// Allows us to access information stored in the Writing System Properties Dialog
 		/// </summary>
-		public CharEditorWindow ParentDialog
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_parentDialog;
-			}
-
-			set
-			{
-				CheckDisposed();
-
-				m_parentDialog = value;
-			}
-		}
+		public CharEditorWindow ParentDialog { get; set; }
 		#endregion
 
 		#region construction/destruction
@@ -206,8 +172,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// ------------------------------------------------------------------------------------
 		public void SetDialogProperties(IHelpTopicProvider helpTopicProvider)
 		{
-			CheckDisposed();
-
 			m_helpTopicProvider = helpTopicProvider;
 
 			if (Text == Properties.Resources.kstidAddPuaTitle)
@@ -252,8 +216,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// </summary>
 		public void FillFormFromPUACharacter(bool replaceCodepointToo)
 		{
-			CheckDisposed();
-
 			// If the character doesn't have all of its properites yet, fill them in
 			if(m_puaChar.Empty)
 				m_puaChar.RefreshFromIcu(true);
@@ -1323,7 +1285,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			if(errorMessage == ErrorMessageHandler.ErrorMessage.none)
 			{
 				// Automatically load the values from the cache
-				PUACharacter cachedCharacter = m_parentDialog.FindCachedIcuEntry(m_txtCodepoint.Text);
+				PUACharacter cachedCharacter = ParentDialog.FindCachedIcuEntry(m_txtCodepoint.Text);
 				// If the cache actually gives us a character, load it into the fields
 				if (cachedCharacter == null)
 				{
@@ -1336,7 +1298,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				{
 					m_puaChar = cachedCharacter;
 					FillFormFromPUACharacter(false);
-					if (m_parentDialog.IsCustomChar(cachedCharacter.CodePoint))
+					if (ParentDialog.IsCustomChar(cachedCharacter.CodePoint))
 					{
 						m_lblWarning.Text = Properties.Resources.kstidOverwriteUserCode;
 						Text = Properties.Resources.kstidModifyPuaTitle;
@@ -1569,8 +1531,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// ------------------------------------------------------------------------------------
 		public virtual DialogResult CallShowDialog()
 		{
-			CheckDisposed();
-
 			return ShowDialog();
 		}
 	}

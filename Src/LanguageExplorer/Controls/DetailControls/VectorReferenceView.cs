@@ -55,7 +55,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, LcmCache cache, string displayNameProperty, string displayWs)
 		{
-			CheckDisposed();
 			m_displayWs = displayWs;
 			Initialize(rootObj, rootFlid, rootFieldName, cache, displayNameProperty);
 		}
@@ -94,7 +93,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual void ReloadVector()
 		{
-			CheckDisposed();
 			m_rootb.SetRootObject(m_rootObj?.Hvo ?? 0, m_VectorReferenceVc, kfragTargetVector, m_rootb.Stylesheet);
 		}
 
@@ -122,8 +120,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode)
 			{
 				return;
@@ -157,7 +153,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void HandleSelectionChange(IVwRootBox rootb, IVwSelection vwselNew)
 		{
-			CheckDisposed();
 			if (vwselNew == null)
 			{
 				return;

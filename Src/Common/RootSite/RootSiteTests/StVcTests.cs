@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -166,8 +166,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			/// ------------------------------------------------------------------------------------
 			public void CallLayout()
 			{
-				CheckDisposed();
-
 				OnLayout(new LayoutEventArgs(this, string.Empty));
 			}
 
@@ -179,8 +177,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			/// ------------------------------------------------------------------------------------
 			public override void MakeRoot()
 			{
-				CheckDisposed();
-
 				if (m_cache == null || DesignMode)
 					return;
 

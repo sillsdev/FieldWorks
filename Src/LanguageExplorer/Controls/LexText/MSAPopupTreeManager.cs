@@ -2,11 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
@@ -100,8 +98,6 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public TreeNode MakeTargetMenuItem()
 		{
-			CheckDisposed();
-
 			var popupTree = GetPopupTree();
 			popupTree.Nodes.Clear();
 			var msa = Sense.MorphoSyntaxAnalysisRA;

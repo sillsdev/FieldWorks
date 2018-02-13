@@ -60,8 +60,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		// this is called to create it.
 		public override Slice MakeEditorAt(int i)
 		{
-			CheckDisposed();
-
 			var vs = new ViewSlice(new TwoLevelConcView(m_cp, m_gni, i));
 			var newKids = new HashSet<Slice> {vs};
 			InsertSliceRange(i, newKids);

@@ -19,7 +19,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void RefreshDisplay()
 		{
-			CheckDisposed();
 			var dt = ContainingDataTree;
 			var result = dt.RefreshDisplay();
 			if (result)
@@ -33,8 +32,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		// a select column item has been changed.
 		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			CheckDisposed();
-
 			if (tag != PhSegmentRuleTags.kflidDisabled && tag != MoCompoundRuleTags.kflidDisabled && tag != MoAdhocProhibTags.kflidDisabled)
 			{
 				return;

@@ -33,7 +33,6 @@ namespace LanguageExplorer
 		/// </summary>
 		public void IncreaseIndent()
 		{
-			CheckDisposed();
 			m_indent++;
 		}
 
@@ -42,7 +41,6 @@ namespace LanguageExplorer
 		/// </summary>
 		public void DecreaseIndent()
 		{
-			CheckDisposed();
 			m_indent--;
 		}
 
@@ -52,7 +50,6 @@ namespace LanguageExplorer
 		/// <exception cref="ObjectDisposedException">If called after being disposed</exception>
 		public void WriteLine(string text)
 		{
-			CheckDisposed();
 			for (var i = 0; i < m_indent; i++)
 			{
 				m_writer.Write("    ");
@@ -64,7 +61,6 @@ namespace LanguageExplorer
 		{
 			get
 			{
-				CheckDisposed();
 				m_writer.Flush();
 				return m_stream.Length > 0;
 			}
@@ -78,7 +74,6 @@ namespace LanguageExplorer
 		{
 			get
 			{
-				CheckDisposed();
 				m_writer.Flush();
 				using (var sr = new StreamReader(m_stream))
 				using (this) // reading m_stream destroys it, so dispose the whole logger afterwards
@@ -105,17 +100,6 @@ namespace LanguageExplorer
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed. All public Properties and Methods should call this before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
 		}
 
 		/// <summary>

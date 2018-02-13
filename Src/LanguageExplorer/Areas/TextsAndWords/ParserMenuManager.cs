@@ -37,7 +37,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private TraceSwitch m_traceSwitch = new TraceSwitch("ParserMenuManager", string.Empty);
 		private TryAWordDlg m_dialog;
 		private FormWindowState m_prevWindowState;
-		private ParserConnection m_parserConnection;
 		private Timer m_timer;
 		private StatusBarPanel _statusPanelProgress;
 		private Dictionary<string, ToolStripMenuItem> _parserToolStripMenuItems;
@@ -175,7 +174,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 
 			_currentWordform = (IWfiWordform)currentObject;
-			m_parserConnection?.UpdateWordform(_currentWordform, ParserPriority.High);
+			Connection?.UpdateWordform(_currentWordform, ParserPriority.High);
 		}
 
 		private void ParserMenuManager_DropDownOpening(object sender, EventArgs e)
@@ -186,42 +185,28 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			_parserToolStripMenuItems["parseWordsInText"].Enabled = (CurrentText != null);
 
-			_parserToolStripMenuItems["parseAllWords"].Enabled = (m_parserConnection == null);
-			_parserToolStripMenuItems["reloadGrammarLexicon"].Enabled = (m_parserConnection != null);
-			_parserToolStripMenuItems["stopParser"].Enabled = (m_parserConnection != null);
+			_parserToolStripMenuItems["parseAllWords"].Enabled = (Connection == null);
+			_parserToolStripMenuItems["reloadGrammarLexicon"].Enabled = (Connection != null);
+			_parserToolStripMenuItems["stopParser"].Enabled = (Connection != null);
 
 			// Must wait for the queue to empty before we can fill it up again or else we run the risk of breaking the parser thread.
-			_parserToolStripMenuItems["parseAllWords"].Enabled = (m_parserConnection != null && m_parserConnection.GetQueueSize(ParserPriority.Low) == 0);
+			_parserToolStripMenuItems["parseAllWords"].Enabled = (Connection != null && Connection.GetQueueSize(ParserPriority.Low) == 0);
 
 			_parserToolStripMenuItems["defaultParserXAmple"].Checked = m_cache.LangProject.MorphologicalDataOA.ActiveParser == "XAmple";
 			_parserToolStripMenuItems["phonologicalRulebasedParserHermitCrab"].Checked = m_cache.LangProject.MorphologicalDataOA.ActiveParser == "HC";
 		}
 
-		internal ParserConnection Connection
-		{
-			get
-			{
-				CheckDisposed();
-				return m_parserConnection;
-			}
-			set
-			{
-				CheckDisposed();
-				m_parserConnection = value;
-			}
-		}
+		internal ParserConnection Connection { get; set; }
 
 		#region IVwNotifyChange Members
 
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			CheckDisposed();
-
 			// If someone updated the wordform inventory with a real wordform, schedule it to be parsed.
-			if (m_parserConnection != null && tag == WfiWordformTags.kflidForm)
+			if (Connection != null && tag == WfiWordformTags.kflidForm)
 			{
 				// the form of this WfiWordform was changed, so update its parse info.
-				m_parserConnection.UpdateWordform(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetObject(hvo), ParserPriority.High);
+				Connection.UpdateWordform(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetObject(hvo), ParserPriority.High);
 			}
 		}
 
@@ -258,9 +243,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		public bool ConnectToParser()
 		{
-			CheckDisposed();
-
-			if (m_parserConnection == null)
+			if (Connection == null)
 			{
 				// Don't bother if the lexicon is empty.  See FWNX-1019.
 				if (m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().Count == 0)
@@ -268,7 +251,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					return false;
 				}
 				var window = PropertyTable.GetValue<IIdleQueueProvider>("window");
-				m_parserConnection = new ParserConnection(m_cache, window.IdleQueue);
+				Connection = new ParserConnection(m_cache, window.IdleQueue);
 			}
 			m_sda?.AddNotification(this);
 			StartProgressUpdateTimer();
@@ -277,21 +260,17 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		public void DisconnectFromParser()
 		{
-			CheckDisposed();
-
 			StopUpdateProgressTimer();
-			if (m_parserConnection != null)
+			if (Connection != null)
 			{
 				m_sda?.RemoveNotification(this);
-				m_parserConnection.Dispose();
-				m_parserConnection = null;
+				Connection.Dispose();
+				Connection = null;
 			}
 		}
 
 		public bool OnIdle(object argument)
 		{
-			CheckDisposed();
-
 			UpdateStatusPanelProgress();
 
 			return false; // Don't stop other people from getting the idle message
@@ -302,9 +281,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			_statusPanelProgress.Text = ParserQueueString + " " + ParserActivityString;
 
-			if (m_parserConnection != null)
+			if (Connection != null)
 			{
-				var ex = m_parserConnection.UnhandledException;
+				var ex = Connection.UnhandledException;
 				if (ex != null)
 				{
 					DisconnectFromParser();
@@ -313,7 +292,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				}
 				else
 				{
-					var notification = m_parserConnection.GetAndClearNotification();
+					var notification = Connection.GetAndClearNotification();
 					if (notification != null)
 					{
 						using (var nw = new NotifyWindow(notification))
@@ -335,15 +314,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		//so that we are notified for every single event that happens.
 		//Here, we have instead chosen to use the polling ability.
 		//We will thus missed some events but not get slowed down with too many.
-		public string ParserActivityString
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_parserConnection == null ? ParserUIStrings.ksNoParserLoaded : m_parserConnection.Activity;
-			}
-		}
+		public string ParserActivityString => Connection == null ? ParserUIStrings.ksNoParserLoaded : Connection.Activity;
 
 		/// <summary>
 		///
@@ -353,16 +324,14 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			get
 			{
-				CheckDisposed();
-
 				var low = ParserUIStrings.ksDash;
 				var med = ParserUIStrings.ksDash;
 				var high = ParserUIStrings.ksDash;
-				if (m_parserConnection != null)
+				if (Connection != null)
 				{
-					low = m_parserConnection.GetQueueSize(ParserPriority.Low).ToString();
-					med = m_parserConnection.GetQueueSize(ParserPriority.Medium).ToString();
-					high = m_parserConnection.GetQueueSize(ParserPriority.High).ToString();
+					low = Connection.GetQueueSize(ParserPriority.Low).ToString();
+					med = Connection.GetQueueSize(ParserPriority.Medium).ToString();
+					high = Connection.GetQueueSize(ParserPriority.High).ToString();
 				}
 
 				return string.Format(ParserUIStrings.ksQueueXYZ, low, med, high);
@@ -370,20 +339,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		}
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -479,7 +434,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					m_sda.RemoveNotification(this);
 					m_sda = null;
 				}
-				m_parserConnection?.Dispose();
+				Connection?.Dispose();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -488,7 +443,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_timer = null;
 			m_cache = null;
 			m_traceSwitch = null;
-			m_parserConnection = null;
+			Connection = null;
 			_statusPanelProgress = null;
 			_parserToolStripMenuItems = null;
 			PropertyTable = null;
@@ -567,7 +522,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				return;
 			}
 
-			m_parserConnection.UpdateWordform(CurrentWordform, ParserPriority.High);
+			Connection.UpdateWordform(CurrentWordform, ParserPriority.High);
 		}
 
 		private void ParseWordsInText_Click(object sender, EventArgs e)
@@ -577,14 +532,14 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				return;
 			}
 
-			m_parserConnection.UpdateWordforms(CurrentText.UniqueWordforms(), ParserPriority.Medium);
+			Connection.UpdateWordforms(CurrentText.UniqueWordforms(), ParserPriority.Medium);
 		}
 
 		private void ParseAllWords_Click(object sender, EventArgs e)
 		{
 			if (ConnectToParser())
 			{
-				m_parserConnection.UpdateWordforms(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances(), ParserPriority.Low);
+				Connection.UpdateWordforms(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances(), ParserPriority.Low);
 			}
 		}
 
@@ -616,13 +571,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void ReloadGrammarLexicon_Click(object sender, EventArgs e)
 		{
-			if (m_parserConnection == null)
+			if (Connection == null)
 			{
 				ConnectToParser();
 			}
 			else
 			{
-				m_parserConnection.ReloadGrammarAndLexicon();
+				Connection.ReloadGrammarAndLexicon();
 			}
 		}
 
@@ -630,7 +585,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			if (ConnectToParser())
 			{
-				m_parserConnection.UpdateWordforms(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances(), ParserPriority.Low);
+				Connection.UpdateWordforms(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances(), ParserPriority.Low);
 			}
 		}
 

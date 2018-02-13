@@ -94,19 +94,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		}
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose( bool disposing )
@@ -127,8 +114,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 
 		public void SetDlgInfo(CmObjectUi obj, LcmCache cache, IPropertyTable propertyTable)
 		{
-			CheckDisposed();
-
 			Debug.Assert(obj != null);
 			Debug.Assert(obj.Object != null);
 
@@ -138,9 +123,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 
 		public void SetDlgInfo(CmObjectUi obj, LcmCache cache, IPropertyTable propertyTable, ITsString tssNote)
 		{
-
-			CheckDisposed();
-
 			if (obj.PropertyTable == null)
 			{
 				obj.PropertyTable = propertyTable;
@@ -221,12 +203,10 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		{
 			get
 			{
-				CheckDisposed();
 				return label1.Text;
 			}
 			set
 			{
-				CheckDisposed();
 				label1.Text = value;
 			}
 		}
@@ -239,12 +219,10 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		{
 			get
 			{
-				CheckDisposed();
 				return label2.Text;
 			}
 			set
 			{
-				CheckDisposed();
 				label2.Text = value;
 			}
 		}
@@ -256,12 +234,10 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_descriptionBox3.Text;
 			}
 			set
 			{
-				CheckDisposed();
 				m_descriptionBox3.Text = value;
 			}
 		}
@@ -273,12 +249,10 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_descriptionBox4.Text;
 			}
 			set
 			{
-				CheckDisposed();
 				m_descriptionBox4.Text = value;
 			}
 		}
@@ -290,12 +264,10 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		{
 			get
 			{
-				CheckDisposed();
 				return Text;
 			}
 			set
 			{
-				CheckDisposed();
 				Text = value;
 			}
 		}
@@ -307,12 +279,10 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_deleteButton.Text;
 			}
 			set
 			{
-				CheckDisposed();
 				m_deleteButton.Text = value;
 			}
 		}
@@ -324,12 +294,10 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_cancelButton.Text;
 			}
 			set
 			{
-				CheckDisposed();
 				m_cancelButton.Text = value;
 			}
 		}

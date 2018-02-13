@@ -26,7 +26,6 @@ namespace LanguageExplorer.LcmUi
 
 		public override void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
-			CheckDisposed();
 			var senseRepo = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			// FWR-2781 should be able to bulk edit entries to POS <Not sure>.
 			IPartOfSpeech posWanted = null;
@@ -150,23 +149,13 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// We can set POS to null.
 		/// </summary>
-		public override bool CanClearField
-		{
-			get
-			{
-				CheckDisposed();
-
-				return true;
-			}
-		}
+		public override bool CanClearField => true;
 
 		/// <summary>
 		/// We can set POS to null.
 		/// </summary>
 		public override void SetClearField()
 		{
-			CheckDisposed();
-
 			m_selectedHvo = 0;
 			m_selectedLabel = string.Empty;
 			// Do NOT call base method (it throws not implemented)

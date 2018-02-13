@@ -14,8 +14,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	{
 		public override void SetupCombo()
 		{
-			CheckDisposed();
-
 			base.SetupCombo();
 			ComboList.Items.Add(ITextStrings.ksAcceptEntireAnalysis);
 			ComboList.Items.Add(ITextStrings.ksEditThisWordform);
@@ -26,8 +24,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override void HandleSelect(int index)
 		{
-			CheckDisposed();
-
 			switch (index)
 			{
 				case 0: // Accept entire analysis
@@ -55,8 +51,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override bool HandleReturnKey()
 		{
-			CheckDisposed();
-
 			// If it hasn't changed don't do anything.
 			var newval = ComboList.Text;
 			if (newval == StrFromTss(m_caches.DataAccess.get_MultiStringAlt(m_hvoSbWord, SandboxBase.ktagSbWordForm, m_sandbox.RawWordformWs)))

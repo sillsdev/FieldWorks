@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -61,13 +61,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
 				return (ShowingInheritedProperties || SelectedIndex < 0) ? SelectedIndex :
 					SelectedIndex + 1;
 			}
 			set
 			{
-				CheckDisposed();
 				int newIndex = (ShowingInheritedProperties ? value : value - 1);
 				Debug.Assert(ShowingInheritedProperties || newIndex >= 0,
 					"We shouldn't try select an unspecified index for non inheritable values");
@@ -84,7 +82,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_ShowingInheritedProperties ? SelectedIndex == 0 || ForeColor.ToArgb() != SystemColors.WindowText.ToArgb() : false;
 			}
 			set { ; }
@@ -99,10 +96,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public bool ShowingInheritedProperties
 		{
-			get { CheckDisposed(); return m_ShowingInheritedProperties; }
+			get { return m_ShowingInheritedProperties; }
 			set
 			{
-				CheckDisposed();
 				if (m_ShowingInheritedProperties == value)
 					return;
 				m_ShowingInheritedProperties = value;

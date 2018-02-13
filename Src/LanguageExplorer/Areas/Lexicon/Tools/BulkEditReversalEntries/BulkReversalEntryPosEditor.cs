@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -57,8 +57,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		/// </summary>
 		public override void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
-			CheckDisposed();
-
 			m_cache.DomainDataByFlid.BeginUndoTask(LanguageExplorerResources.ksUndoBulkEditRevPOS, LanguageExplorerResources.ksRedoBulkEditRevPOS);
 			var i = 0;
 			var interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));

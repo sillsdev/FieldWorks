@@ -48,18 +48,6 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: Oct. 16, 2005: RandyR.
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-		}
 
 		/// <summary>
 		/// True, if the object has been disposed.
@@ -154,8 +142,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary/>
 		public virtual void SetMilestone(string newStatus)
 		{
-			CheckDisposed();
-
 			m_status = newStatus;
 		}
 
@@ -195,8 +181,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_status;
 			}
 		}
@@ -226,8 +210,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="relativeLength">the relative length of this milestone, in whatever units you want.</param>
 		public void AddMilestone (float relativeLength)
 		{
-			CheckDisposed();
-
 			m_stepsCount++;
 		}
 
@@ -236,14 +218,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return (int) (m_accumulatedFractionOfTotal * 100);
 			}
 			set
 			{
-				CheckDisposed();
-
 				throw new NotImplementedException();
 			}
 		}
@@ -254,8 +232,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public override void SetMilestone(string newStatus)
 		{
-			CheckDisposed();
-
 			SetMilestoneInternal();
 			base.SetMilestone(newStatus);
 		}
@@ -266,8 +242,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public override void SetMilestone()
 		{
-			CheckDisposed();
-
 			SetMilestoneInternal();
 		}
 
@@ -333,8 +307,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public override void Breath()
 		{
-			CheckDisposed();
-
 			//System.Diagnostics.Debug.Write("/");
 			if(m_accumulatedFractionOfTotal < (m_accumulatedFractionOfTotal+m_currentStepExpectedFractionOfTotal ))
 			{

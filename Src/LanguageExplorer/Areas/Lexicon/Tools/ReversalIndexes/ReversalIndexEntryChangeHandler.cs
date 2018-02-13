@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -31,20 +31,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		#endregion Construction
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -140,8 +126,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <summary></summary>
 		public void Setup(object record, IRecordListUpdater rlu, LcmCache cache)
 		{
-			CheckDisposed();
-
 			Debug.Assert(record is IReversalIndexEntry);
 			var rie = (IReversalIndexEntry)record;
 			if (m_rlu == null && rlu != null && m_rie == rie)
@@ -170,8 +154,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// </summary>
 		public void Fixup(bool fRefreshList)
 		{
-			CheckDisposed();
-
 			Debug.Assert(m_rie != null);
 
 			if (!m_rie.IsValidObject)

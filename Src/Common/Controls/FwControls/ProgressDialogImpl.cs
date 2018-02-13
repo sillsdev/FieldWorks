@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2017 SIL International
+// Copyright (c) 2007-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -87,12 +87,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return lblStatusMessage.Text;
 			}
 			set
 			{
-				CheckDisposed();
 				lblStatusMessage.Text = value;
 			}
 		}
@@ -107,12 +105,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return progressBar.Maximum;
 			}
 			set
 			{
-				CheckDisposed();
 				progressBar.Maximum = value;
 			}
 		}
@@ -127,12 +123,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return progressBar.Minimum;
 			}
 			set
 			{
-				CheckDisposed();
 				progressBar.Minimum = value;
 			}
 		}
@@ -147,12 +141,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return progressBar.Value;
 			}
 			set
 			{
-				CheckDisposed();
 				if (value < progressBar.Minimum)
 					progressBar.Value = progressBar.Minimum;
 				else if (m_fRestartable)
@@ -170,7 +162,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public void Step(int step)
 		{
-			CheckDisposed();
 			Position += step;
 		}
 
@@ -183,12 +174,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return Text;
 			}
 			set
 			{
-				CheckDisposed();
 				Text = value;
 			}
 		}
@@ -202,12 +191,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return progressBar.Step;
 			}
 			set
 			{
-				CheckDisposed();
 				progressBar.Step = value;
 			}
 		}
@@ -222,14 +209,11 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 
 				return m_fRestartable;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_fRestartable = value;
 			}
 		}
@@ -243,12 +227,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return btnCancel.Visible && lblCancel.Visible;
 			}
 			set
 			{
-				CheckDisposed();
 				btnCancel.Visible = value;
 				lblCancel.Visible = value;
 
@@ -270,12 +252,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return btnCancel.Text;
 			}
 			set
 			{
-				CheckDisposed();
 				btnCancel.Text = value;
 			}
 		}
@@ -290,12 +270,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return lblCancel.Text;
 			}
 			set
 			{
-				CheckDisposed();
 				lblCancel.Text = value;
 				Size sz = new Size(lblCancel.Width, int.MaxValue);
 				sz = TextRenderer.MeasureText(lblCancel.Text, lblCancel.Font, sz, TextFormatFlags.WordBreak);
@@ -311,7 +289,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return this;
 			}
 		}
@@ -325,7 +302,6 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return this;
 			}
 		}
@@ -337,33 +313,16 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
 				return progressBar.Style == ProgressBarStyle.Marquee;
 			}
 			set
 			{
-				CheckDisposed();
 				progressBar.Style = value ? ProgressBarStyle.Marquee : ProgressBarStyle.Continuous;
 			}
 		}
 		#endregion
 
 		#region Misc. Methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException(
-					string.Format("'{0}' in use after being disposed.", GetType().Name));
-			}
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -373,7 +332,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		protected override void OnVisibleChanged(EventArgs e)
 		{
-			CheckDisposed();
 			base.OnVisibleChanged(e);
 
 			if (Visible)
@@ -391,7 +349,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		protected virtual void OnCancel()
 		{
-			CheckDisposed();
 			if (Canceling != null)
 			{
 				var cea = new CancelEventArgs();

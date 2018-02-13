@@ -31,7 +31,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected int m_hvoSbWord; // Hvo of the root word.
 		protected int m_hvoSelObject; // lowest level object selected.
 		// selected morph, if any...may be zero if not in morph, or equal to m_hvoSelObject.
-		protected int m_hvoMorph;
 		// int for all classes, except IhMissingEntry, which studds MorphItem data into it.
 		// So, that ill-behaved class has to make its own m_items data member.
 		protected List<int> m_items = new List<int>();
@@ -77,7 +76,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal void SetMorphForTesting(int imorph)
 		{
-			m_hvoMorph = m_sandbox.Caches.DataAccess.get_VecItem(SandboxBase.kSbWord, SandboxBase.ktagSbWordMorphs, imorph);
+			SelectedMorphHvo = m_sandbox.Caches.DataAccess.get_VecItem(SandboxBase.kSbWord, SandboxBase.ktagSbWordMorphs, imorph);
 		}
 
 		#region DisposableBase for IDisposable
@@ -269,7 +268,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			handler.m_caches = caches;
 			handler.m_hvoSelObject = hvoSelObject;
 			handler.m_hvoSbWord = hvoSbWord;
-			handler.m_hvoMorph = hvoMorph;
+			handler.SelectedMorphHvo = hvoMorph;
 			handler.m_rgvsli = rgvsli;
 			handler.m_rootb = rootb;
 			handler.m_wsVern = sandbox.RawWordformWs;
@@ -291,8 +290,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void Hide()
 		{
-			CheckDisposed();
-
 			HideCombo();
 		}
 
@@ -300,8 +297,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// Likewise if it is a combo list.
 		internal void HideCombo()
 		{
-			CheckDisposed();
-
 			if (m_sandbox.ParentForm == Form.ActiveForm)
 			{
 				m_sandbox.Focus();
@@ -329,8 +324,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// location.
 		public virtual void Activate(Rect loc)
 		{
-			CheckDisposed();
-
 			AdjustListBoxSize();
 			var c = ((ComboListBox)ComboList);
 			c.AdjustSize(500, 400); // these are maximums!
@@ -339,8 +332,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal void AdjustListBoxSize()
 		{
-			CheckDisposed();
-
 			if (!(ComboList is ComboListBox))
 			{
 				return;
@@ -383,20 +374,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		public int SelectedMorphHvo
-		{
-			get
-			{
-				CheckDisposed();
-				return m_hvoMorph;
-			}
-		}
+		public int SelectedMorphHvo { get; protected set; }
 
 		// Return true if handled, otherwise, default behavior.
 		public virtual bool HandleReturnKey()
 		{
-			CheckDisposed();
-
 			return false;
 		}
 
@@ -404,8 +386,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// Sub-classes can override where needed.
 		internal virtual void HandleComboSelChange(object sender, EventArgs ea)
 		{
-			CheckDisposed();
-
 			// Revisit (EricP): we could reimplement m_sandbox.HandleComboSelChange
 			// here, but I suppose duplicating the logic here isn't necessary.
 			// For now just use that one.
@@ -421,8 +401,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// Sub-classes can override where needed.
 		internal virtual void HandleComboSelSame(object sender, EventArgs ea)
 		{
-			CheckDisposed();
-
 			// by default, just do the same as when item selected has changed.
 			HandleComboSelChange(sender, ea);
 		}
@@ -432,8 +410,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public virtual void HandleSelectIfActive()
 		{
-			CheckDisposed();
-
 			if (!m_fUnderConstruction)
 			{
 				HandleSelect(ComboList.SelectedIndex);
@@ -451,7 +427,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// appropriate.
 		public virtual void HandleSelect(int index)
 		{
-			CheckDisposed();
 		}
 
 		/// <summary>
@@ -528,8 +503,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// but do want the general default behavior.
 		internal void InitCombo()
 		{
-			CheckDisposed();
-
 			m_items.Clear();
 			ComboList.Items.Clear();
 			// Some SetupCombo methods alter this to DropDownList, which prevents editing,
@@ -550,8 +523,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// being displayed.
 		public virtual void SetupCombo()
 		{
-			CheckDisposed();
-
 			InitCombo();
 		}
 
@@ -578,8 +549,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// (The selection is in the first and usually only root object.)
 		internal void MakeNewSelection(int isliCopy, int tag, int ihvo, int tagTextProp, int ws)
 		{
-			CheckDisposed();
-
 			var rgvsli = new SelLevInfo[m_rgvsli.Length - isliCopy + 1];
 			for (var i = isliCopy; i < m_rgvsli.Length; i++)
 			{
@@ -602,7 +571,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal void AddVectorToComboItems(int hvoOwner, int flidVec)
 		{
-			CheckDisposed();
 			var sda = m_caches.DataAccess;
 			var citem = sda.get_VecSize(hvoOwner, flidVec);
 			var coRepository = m_caches.MainCache.ServiceLocator.GetInstance<ICmObjectRepository>();
@@ -617,20 +585,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal void AddPartsOfSpeechToComboItems()
 		{
-			CheckDisposed();
-
 			AddVectorToComboItems(m_caches.MainCache.LangProject.PartsOfSpeechOA.Hvo, CmPossibilityListTags.kflidPossibilities);
 		}
 
-		internal int MorphCount
-		{
-			get
-			{
-				CheckDisposed();
-				return m_sandbox.MorphCount;
-			}
-
-		}
+		internal int MorphCount => m_sandbox.MorphCount;
 
 		/// <summary>
 		/// Items that appear in the dropdown control for each interlinear line in the sandbox
@@ -639,15 +597,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal int MorphHvo(int i)
 		{
-			CheckDisposed();
-
 			return m_caches.DataAccess.get_VecItem(m_hvoSbWord, SandboxBase.ktagSbWordMorphs, i);
 		}
 
 		internal ITsString NewAnalysisString(string str)
 		{
-			CheckDisposed();
-
 			return TsStringUtils.MakeString(str, m_caches.MainCache.DefaultAnalWs);
 		}
 		/// <summary>
@@ -667,7 +621,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal void SyncMonomorphemicGlossAndPos(bool fCopyToWordGloss, bool fCopyToWordPos)
 		{
-			CheckDisposed();
 			if (!fCopyToWordGloss && !fCopyToWordPos)
 			{
 				return;

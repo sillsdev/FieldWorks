@@ -27,18 +27,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private ICmObjectRepository m_coRepository;
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-		}
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -126,7 +114,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public void ClearMaps()
 		{
-			CheckDisposed();
 			m_SdaToLcm.Clear();
 			m_lcmToSda.Clear();
 		}
@@ -135,12 +122,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			get
 			{
-				CheckDisposed();
 				return m_cache;
 			}
 			set
 			{
-				CheckDisposed();
 				if (m_cache == value)
 				{
 					return;
@@ -159,12 +144,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			get
 			{
-				CheckDisposed();
 				return m_sda;
 			}
 			set
 			{
-				CheckDisposed();
 				if (m_sda == value)
 				{
 					return;
@@ -186,7 +169,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public void CreateSecCache()
 		{
-			CheckDisposed();
 			var cda = VwCacheDaClass.Create();
 			cda.TsStrFactory = TsStringUtils.TsStrFactory;
 			DataAccess = cda;
@@ -195,12 +177,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		/// <summary>
 		/// Map from secondary hvo (in the SilDataAccess) to real hvo (in the LcmCache).
-		/// </summary>
-		/// <param name="secHvo"></param>
-		/// <returns></returns>
+		/// </summary>/returns>
 		public int RealHvo(int secHvo)
 		{
-			CheckDisposed();
 			return m_SdaToLcm.ContainsKey(secHvo) ? m_SdaToLcm[secHvo] : 0;
 		}
 
@@ -218,7 +197,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public void Map(int secHvo, int realHvo)
 		{
-			CheckDisposed();
 			m_SdaToLcm[secHvo] = realHvo;
 			m_lcmToSda[realHvo] = secHvo;
 		}
@@ -228,7 +206,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public bool RemoveSec(int secHvo)
 		{
-			CheckDisposed();
 			int realHvo;
 			if (m_SdaToLcm.TryGetValue(secHvo, out realHvo))
 			{
@@ -242,7 +219,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public bool RemoveReal(int realHvo)
 		{
-			CheckDisposed();
 			int secHvo;
 			if (m_lcmToSda.TryGetValue(realHvo, out secHvo))
 			{
@@ -256,7 +232,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public int SecHvo(int realHvo)
 		{
-			CheckDisposed();
 			return m_lcmToSda.ContainsKey(realHvo) ? m_lcmToSda[realHvo] : 0;
 		}
 
@@ -266,7 +241,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public int FindOrCreateSec(int hvoReal, int clid, int hvoOwner, int flidOwn)
 		{
-			CheckDisposed();
 			var hvoSec = 0;
 			if (hvoReal != 0)
 			{
@@ -290,7 +264,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public int FindOrCreateSec(int hvoReal, int clid, int hvoOwner, int flidOwn, int flidName, ITsString tss)
 		{
-			CheckDisposed();
 			var hvoSec = FindOrCreateSec(hvoReal, clid, hvoOwner, flidOwn);
 			m_sda.SetString(hvoSec, flidName, tss);
 			return hvoSec;
@@ -303,8 +276,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public int FindOrCreateSec(int hvoReal, int clid, int hvoOwner, int flidOwn, string name, int flidName, int ws)
 		{
-			CheckDisposed();
-
 			return FindOrCreateSec(hvoReal, clid, hvoOwner, flidOwn, flidName, TsStringUtils.MakeString(name, ws));
 		}
 		/// <summary>
@@ -312,7 +283,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public int FindOrCreateSecAnalysis(int hvoReal, int clid, int hvoOwner, int flidOwn, string name, int flidName)
 		{
-			CheckDisposed();
 			return FindOrCreateSec(hvoReal, clid, hvoOwner, flidOwn, name, flidName, m_cache.DefaultAnalWs);
 		}
 
@@ -321,7 +291,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public int FindOrCreateSecVern(int hvoReal, int clid, int hvoOwner, int flidOwn, string name, int flidName)
 		{
-			CheckDisposed();
 			return FindOrCreateSec(hvoReal, clid, hvoOwner, flidOwn, name, flidName, m_cache.DefaultVernWs);
 		}
 	}

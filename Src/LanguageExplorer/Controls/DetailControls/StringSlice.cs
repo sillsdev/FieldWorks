@@ -11,8 +11,6 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// </summary>
 	internal class StringSlice : ViewPropertySlice
 	{
-		protected int m_ws = -1;
-
 		internal StringSlice(ICmObject obj, int flid)
 			: base(new StringSliceView(obj.Hvo, flid, -1), obj, flid)
 		{
@@ -21,7 +19,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		internal StringSlice(ICmObject obj, int flid, int ws)
 			: base(new StringSliceView(obj.Hvo, flid, ws), obj, flid)
 		{
-			m_ws = ws;
+			WritingSystemId = ws;
 		}
 
 		/// <summary>
@@ -38,8 +36,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void CreateView()
 		{
-			CheckDisposed();
-			var ssv = new StringSliceView(m_obj.Hvo, FieldId, m_ws)
+			var ssv = new StringSliceView(Object.Hvo, FieldId, WritingSystemId)
 			{
 				Cache = Cache
 			};
@@ -49,19 +46,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Get/set the writing system ID. If -1, signifies a non-multilingual property.
 		/// </summary>
-		public int WritingSystemId
-		{
-			get
-			{
-				CheckDisposed();
-				return m_ws;
-			}
-			set
-			{
-				CheckDisposed();
-				m_ws = value;
-			}
-		}
+		public int WritingSystemId { get; set; } = -1;
 
 		bool m_fShowWsLabel;
 		/// <summary>
@@ -71,12 +56,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fShowWsLabel;
 			}
 			set
 			{
-				CheckDisposed();
 				m_fShowWsLabel = value;
 				((StringSliceView)Control).ShowWsLabel = value;
 			}
@@ -90,12 +73,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				CheckDisposed();
 				return m_wsDefault;
 			}
 			set
 			{
-				CheckDisposed();
 				m_wsDefault = value;
 				((StringSliceView)Control).DefaultWs = value;
 			}
@@ -106,7 +87,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void SelectAt(int ich)
 		{
-			CheckDisposed();
 			((StringSliceView)Control).SelectAt(ich);
 		}
 	}

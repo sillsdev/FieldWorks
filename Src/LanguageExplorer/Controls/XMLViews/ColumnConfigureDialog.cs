@@ -107,13 +107,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				return showBulkEditIcons;
 			}
 			set
 			{
-				CheckDisposed();
-
 				showBulkEditIcons = value;
 				blkEditIcon.Visible = blkEditText.Visible = showBulkEditIcons;
 				currentList.SmallImageList = imageList1;
@@ -719,19 +716,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					optionsList.Items.Add(listItem);
 				}
-			}
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 			}
 		}
 

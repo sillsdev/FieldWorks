@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml.Linq;
 using LanguageExplorer.Areas;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -81,17 +80,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		/// <summary>
-		/// Inits the specified node spec.
-		/// </summary>
-		public override void Init(XElement nodeSpec, int hvoRoot, int madeUpFieldIdentifier, LcmCache cache, BrowseViewer bv)
-		{
-			CheckDisposed();
-
-			// Use the ones in madeUpFieldIdentifier, and any we create.
-			base.Init(nodeSpec, hvoRoot, madeUpFieldIdentifier, cache, bv);
-		}
-
 		#endregion Construction, initialization, and disposal.
 
 		#region Properties
@@ -104,8 +92,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_xbvvc == null)
 				{
 					m_xbvvc = new XmlRDEBrowseViewVc(m_nodeSpec, MainTag, this);
@@ -131,8 +117,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override void SetSelectedRowHighlighting()
 		{
-			CheckDisposed();
-
 			SelectedRowHighlighting = SelectionHighlighting.none;
 		}
 
@@ -148,8 +132,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <returns></returns>
 		public bool OnConsideringClosing(object sender, CancelEventArgs arg)
 		{
-			CheckDisposed();
-
 			arg.Cancel = CleanupPendingEdits();  // NB: "CleanupPendingEdits" always returns false.
 			return arg.Cancel; // if we want to cancel, others don't need to be asked.
 		}
@@ -181,8 +163,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			set
 			{
-				CheckDisposed();
-
 				CleanupPendingEdits();
 				base.RootObjectHvo = value;
 			}
@@ -702,8 +682,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void DoMerges()
 		{
-			CheckDisposed();
-
 			// Check for recursive calls, which can happen when deleting duplicate entries
 			// generates a PropChanged which CleanupPendingEdits handles by calling us again.
 			if (fInDoMerges)
@@ -872,8 +850,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		public override bool OnDisplayDeleteRecord(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
-			CheckDisposed();
-
 			bool fCanDelete = false;
 			// This crashed once on exiting program, so m_rootb may not be set at that point.
 			IVwSelection vwsel = m_rootb != null ? m_rootb.Selection: null;
@@ -932,8 +908,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override bool OnDeleteRecord(object commandObject)
 		{
-			CheckDisposed();
-
 			if (m_rootb == null)
 			{
 				MakeRoot();

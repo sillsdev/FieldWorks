@@ -61,34 +61,26 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			set
 			{
-				CheckDisposed();
 				Debug.Assert(value != null);
 				Debug.Assert(m_mainControl == null);
 				m_mainControl = value;
 				m_mainControl.TabIndex = 0;
 			}
-			get { CheckDisposed(); return m_mainControl; }
+			get { return m_mainControl; }
 		}
 
 		/// <summary>
 		/// Get the launcher button.
 		/// </summary>
-		public Button LauncherButton
-		{
-			get { CheckDisposed(); return m_btnLauncher; }
-		}
+		public Button LauncherButton => m_btnLauncher;
 
 		/// <summary>
 		/// Store or retrieve the XML configuration node associated with the parent slice.
 		/// </summary>
 		public virtual XElement ConfigurationNode
 		{
-			get { CheckDisposed(); return m_configurationNode; }
-			set
-			{
-				CheckDisposed();
-				m_configurationNode = value;
-			}
+			get { return m_configurationNode; }
+			set { m_configurationNode = value; }
 		}
 
 		#endregion // Properties
@@ -208,17 +200,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		#endregion // Construction, Initialization, and Disposing
-
-		/// <summary>
-		/// Throw if the IsDisposed property is true
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException("ButtonLauncher", "This object is being used after it has been disposed: this is an Error.");
-			}
-		}
 
 		/// <summary>
 		/// Set this to create a target object if necessary when the user clicks the chooser button.
@@ -348,7 +329,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			set
 			{
-				CheckDisposed();
 				// The panel (with the button) is visible only when the slice is current
 				if (value)
 				{

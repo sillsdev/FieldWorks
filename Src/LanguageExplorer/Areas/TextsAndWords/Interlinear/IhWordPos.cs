@@ -8,8 +8,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	{
 		internal override int WasReal()
 		{
-			CheckDisposed();
-
 			return 1;
 		}
 	}

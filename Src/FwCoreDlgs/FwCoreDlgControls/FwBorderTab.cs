@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2017 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -52,18 +52,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			dyxGapBetweenLeftCheckboxAndPreviewPane = m_pnlBorderPreview.Left - m_chkLeft.Right;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
 		#endregion
 
 		#region Custom draw methods
@@ -213,7 +201,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			get
 			{
-				CheckDisposed();
 				if (m_currentStyleInfo == null)
 					return m_DefaultTextDirectionRtoL;
 
@@ -223,7 +210,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			}
 			set
 			{
-				CheckDisposed();
 				m_DefaultTextDirectionRtoL = value;
 			}
 		}
@@ -239,7 +225,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			set
 			{
-				CheckDisposed();
 				m_fShowBiDiLabels = value;
 				ChangeDirectionLabels(value);
 			}
@@ -553,8 +538,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public void UpdateForStyle(StyleInfo styleInfo)
 		{
-			CheckDisposed();
-
 			m_dontUpdateInheritance = true;
 			m_fIgnoreCascadingEvents = true;
 			m_currentStyleInfo = styleInfo;
@@ -624,8 +607,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		public void SaveToInfo(StyleInfo styleInfo)
 		{
-			CheckDisposed();
-
 			if (styleInfo.IsCharacterStyle)
 			{
 				Debug.Assert(false, "Somehow, the Border tab has been asked to write its data to a character-based style [" + styleInfo.Name + "].");

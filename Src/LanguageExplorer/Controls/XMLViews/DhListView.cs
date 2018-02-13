@@ -21,7 +21,6 @@ namespace LanguageExplorer.Controls.XMLViews
 	{
 		private BrowseViewer m_bv;
 		private ImageList m_imgList;
-		private bool m_fInAdjustWidth; // used to ignore recursive calls to AdjustWidth.
 		private bool m_fColumnDropped = false;	// set this after we've drag and dropped a column
 		private ToolTip m_tooltip;
 
@@ -43,19 +42,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		public event ColumnDragDropReorderedHandler ColumnDragDropReordered;
 
-		internal bool AdjustingWidth
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fInAdjustWidth;
-			}
-			set
-			{
-				CheckDisposed();
-				m_fInAdjustWidth = value;
-			}
-		}
+		internal bool AdjustingWidth { get; set; }
 
 		int kHalfArrowSize = 6;
 
@@ -295,19 +282,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				ColumnLeftClick(this, e);
 		}
 #endif
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
 
 		/// <summary>
 		/// Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.ListView"/> and optionally releases the managed resources.
@@ -633,8 +607,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void ShowHeaderIcon(int columnIndex, SortOrder sortOrder, ArrowSize size)
 		{
-			CheckDisposed();
-
 			if (columnIndex < 0 || columnIndex >= Columns.Count)
 			{
 				return;

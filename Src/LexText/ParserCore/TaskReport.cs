@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -51,18 +51,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
 
 		/// <summary>
 		/// True, if the object has been disposed.
@@ -166,8 +154,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		internal TaskReport AddSubTask(string description)
 		{
-			CheckDisposed();
-
 			Debug.Assert(m_phase != TaskPhase.Finished);
 			var t = new TaskReport(description, this);
 			if (m_subTasks == null)
@@ -187,8 +173,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		internal void Finish()
 		{
-			CheckDisposed();
-
 			//this is called when we are disposed; it is possible that we were explicitly finished already.
 			if (m_phase == TaskPhase.Finished || m_phase == TaskPhase.ErrorEncountered)
 				return;
@@ -201,8 +185,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_phase == TaskPhase.ErrorEncountered
 						? string.Format(ParserCoreStrings.ksX_error, m_description)
 						: m_description;
@@ -216,14 +198,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			set
 			{
-				CheckDisposed();
-
 				 m_details = value;
 			}
 			get
 			{
-				CheckDisposed();
-
 				return m_details;
 			}
 		}
@@ -232,7 +210,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			get
 			{
-				CheckDisposed();
 				return m_finish - m_start;
 			}
 		}
@@ -241,7 +218,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			get
 			{
-				CheckDisposed();
 				return (float) (DurationTicks / 10000000.0);
 			}
 		}
@@ -250,15 +226,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			get
 			{
-				CheckDisposed();
 				return m_subTasks;
 			}
 		}
 
 		internal void InformListeners(TaskPhase phase)
 		{
-			CheckDisposed();
-
 			m_phase = phase;
 			InformListeners(this);
 		}
@@ -281,14 +254,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_notificationMessage;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_notificationMessage = value;
 				if (value != null)
 					InformListeners(TaskPhase.Working);
@@ -299,7 +268,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			get
 			{
-				CheckDisposed();
 				return m_phase;
 			}
 		}
@@ -308,8 +276,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			get
 			{
-				CheckDisposed();
-
 				switch (m_phase)
 				{
 					case TaskPhase.Started:
@@ -329,8 +295,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (m_phase == TaskPhase.ErrorEncountered || m_phase==TaskPhase.Finished || m_subTasks== null)
 					return this;
 
@@ -342,8 +306,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_owningTask == null ? 0 : m_owningTask.Depth + 1;
 			}
 		}

@@ -40,14 +40,7 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		/// <summary />
-		public override IVwViewConstructor VernVc
-		{
-			get
-			{
-				CheckDisposed();
-				return new LexEntryVc(m_cache);
-			}
-		}
+		public override IVwViewConstructor VernVc => new LexEntryVc(m_cache);
 
 		/// <summary>
 		/// Given an object id, a (string-valued) property ID, and a range of characters,
@@ -450,11 +443,8 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		/// <summary />
-		public void ShowSummaryDialog(IWin32Window owner, ITsString tssWf,
-			IHelpTopicProvider helpProvider, string helpFileKey, IVwStylesheet styleSheet)
+		public void ShowSummaryDialog(IWin32Window owner, ITsString tssWf, IHelpTopicProvider helpProvider, string helpFileKey, IVwStylesheet styleSheet)
 		{
-			CheckDisposed();
-
 			bool otherButtonClicked;
 			using (var form = new SummaryDialogForm(this, helpProvider, helpFileKey, styleSheet))
 			{

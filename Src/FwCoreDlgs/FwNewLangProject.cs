@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -65,12 +65,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_txtName.Text.Trim();
 			}
 			protected set // protected for tests; protected because this bypasses length enforcement specified in the resx
 			{
-				CheckDisposed();
 				m_txtName.Text = value.Trim();
 			}
 		}
@@ -84,7 +82,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_dbFile;
 			}
 		}
@@ -100,7 +97,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fCreateNew;
 			}
 		}
@@ -116,7 +112,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_projInfo;
 			}
 		}
@@ -172,17 +167,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 #endif
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
 
 		/// <summary/>
 		protected override void Dispose(bool disposing)
@@ -751,8 +735,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public DialogResult DisplayDialog(Form f)
 		{
-			CheckDisposed();
-
 			// We can't create a new database if the folder where it will go is
 			// Encrypted or compressed or nonexistent, so check for these first:
 			if (!CheckProjectDirectory(f, m_helpTopicProvider))
@@ -821,7 +803,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public int DisplayDialog()
 		{
-			CheckDisposed();
 			return (int)DisplayDialog(null);
 		}
 
@@ -833,8 +814,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void SetDialogProperties(IHelpTopicProvider helpTopicProvider)
 		{
-			CheckDisposed();
-
 			m_helpTopicProvider = helpTopicProvider;
 		}
 
@@ -846,8 +825,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public string GetDatabaseFile()
 		{
-			CheckDisposed();
-
 			return m_dbFile;
 		}
 		#endregion // Interface methods

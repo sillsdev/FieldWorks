@@ -49,14 +49,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		private HelpProvider helpProvider;
 		private Dictionary<int, DummyCmObject> m_candidates;
 
-		public int Hvo
-		{
-			get
-			{
-				CheckDisposed();
-				return m_obj.Hvo;
-			}
-		}
+		public int Hvo => m_obj.Hvo;
 
 		private MergeObjectDlg()
 		{
@@ -86,8 +79,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// </summary>
 		public void SetDlgInfo(LcmCache cache, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates, string guiControl, string helpTopic)
 		{
-			CheckDisposed();
-
 			Debug.Assert(cache != null);
 
 			m_cache = cache;
@@ -159,19 +150,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			m_bvMergeOptions.SelectedIndexChanged += m_bvMergeOptions_SelectedIndexChanged;
 			m_bvMergeOptions.Dock = DockStyle.Fill;
 			m_bvPanel.Controls.Add(m_bvMergeOptions);
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
 		}
 
 		/// <summary>

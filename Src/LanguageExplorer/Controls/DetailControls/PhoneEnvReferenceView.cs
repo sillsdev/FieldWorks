@@ -87,8 +87,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void Initialize(IMoForm rootObj, int rootFlid, LcmCache cache)
 		{
-			CheckDisposed();
-
 			Debug.Assert(rootObj is IMoAffixAllomorph || rootObj is IMoStemAllomorph);
 			Debug.Assert(cache != null && m_cache == null);
 			Cache = cache;
@@ -157,7 +155,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void AddNewItem(IPhEnvironment env)
 		{
-			CheckDisposed();
 			m_realEnvs[m_id] = env;
 			var count = m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments);
 			InsertPhoneEnv(m_id++, env.StringRepresentation, count - 1);
@@ -170,7 +167,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void RemoveItem(IPhEnvironment env)
 		{
-			CheckDisposed();
 			var dummyHvo = 0;
 			foreach (var kvp in m_realEnvs)
 			{
@@ -231,8 +227,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (m_cache == null || DesignMode)
 			{
 				return;
@@ -273,7 +267,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void ResetValidator()
 		{
-			CheckDisposed();
 			m_validator = new PhonEnvRecognizer(m_cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(), m_cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
 		}
 
@@ -295,7 +288,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void HandleSelectionChange(IVwRootBox rootb, IVwSelection vwselNew)
 		{
-			CheckDisposed();
 			if (vwselNew == null)
 			{
 				return;
@@ -521,8 +513,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private void ResynchListToDatabase()
 		{
-			CheckDisposed();
-
 			m_realEnvs.Clear();
 			//We need to clear the cache since it is going to be repopulated
 			m_sda.CacheVecProp(m_rootObj.Hvo, kMainObjEnvironments, new int[] { }, 0);
@@ -569,7 +559,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		public void ConnectToRealCache()
 		{
 			// (FLEx) Review use of ISilDataAccess and other C++ cache related classes
-			CheckDisposed();
 			// If an Undo or Redo is in progress, we CAN'T save the changes. Ideally it wouldn't be necessary because making
 			// any savable change in the slice would discard any pending Redo, and Undo would undo any changes in the slice
 			// before undoing anything else. Currently Undo within the slice is not this well integrated. However, doing some editing
@@ -812,7 +801,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>false if selection spans two or more objects, true otherwise</returns>
 		internal bool GetSelectedStringRep(out ITsString tss, out IVwSelection vwsel, out int hvoDummyObj, out int ichAnchor, out int ichEnd)
 		{
-			CheckDisposed();
 			tss = null;
 			vwsel = null;
 			hvoDummyObj = 0;
@@ -846,7 +834,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal void ShowEnvironmentError()
 		{
-			CheckDisposed();
 			string s;
 			if (!CanGetEnvironmentStringRep(out s) || m_validator.Recognize(s))
 			{
@@ -861,7 +848,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal bool CanShowEnvironmentError()
 		{
-			CheckDisposed();
 			string s;
 			if (CanGetEnvironmentStringRep(out s))
 			{
@@ -892,7 +878,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal bool CanInsertSlash()
 		{
-			CheckDisposed();
 			int hvoDummyObj;
 			int ichAnchor;
 			int ichEnd;
@@ -913,7 +898,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal bool CanInsertEnvBar()
 		{
-			CheckDisposed();
 			int hvoDummyObj;
 			int ichAnchor;
 			int ichEnd;
@@ -939,7 +923,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal bool CanInsertItem()
 		{
-			CheckDisposed();
 			int hvoDummyObj;
 			int ichAnchor;
 			int ichEnd;
@@ -960,7 +943,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal bool CanInsertHashMark()
 		{
-			CheckDisposed();
 			int hvoDummyObj;
 			int ichAnchor;
 			int ichEnd;

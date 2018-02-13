@@ -31,7 +31,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			Indent = indent;
 			m_node = node;
 			m_path = path;
-			m_obj = obj;
+			Object = obj;
 			m_flid = flid;
 			m_ihvoMin = ihvoMin;
 			m_layoutName = layoutName;
@@ -86,14 +86,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#endregion IDisposable override
 
-		public override bool IsRealSlice
-		{
-			get
-			{
-				CheckDisposed();
-				return false;
-			}
-		}
+		public override bool IsRealSlice => false;
 
 		/// <summary>
 		/// Turn this dummy slice into whatever it stands for, replacing itself in the data tree's
@@ -101,8 +94,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override Slice BecomeReal(int index)
 		{
-			CheckDisposed();
-
 			// We stand in for the slice at 'index', and that is to be replaced. But we might stand for earlier
 			// slices too: how many indicates what we have to add to m_ihvoMin.
 
@@ -114,7 +105,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				ihvo++;
 			}
-			var hvo = m_cache.DomainDataByFlid.get_VecItem(m_obj.Hvo, m_flid, ihvo);
+			var hvo = Cache.DomainDataByFlid.get_VecItem(Object.Hvo, m_flid, ihvo);
 			// In the course of becoming real, we may get disposed. That clears m_path, which
 			// has various bad effects on called objects that are trying to use it, as well as
 			// causing failure here when we try to remove the thing we added temporarily.
@@ -131,7 +122,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Any occurrences after index get replaced by a new one with suitable ihvoMin.
 				// Note this must be done before we insert an unknown number of extra slices
 				// by calling CreateSlicesFor.
-				var dosRep = new DummyObjectSlice(Indent, m_node, path, m_obj, m_flid, ihvo + 1, m_layoutName, m_layoutChoiceField, m_caller) {Cache = Cache, ParentSlice = ParentSlice};
+				var dosRep = new DummyObjectSlice(Indent, m_node, path, Object, m_flid, ihvo + 1, m_layoutName, m_layoutChoiceField, m_caller) {Cache = Cache, ParentSlice = ParentSlice};
 				for (var islice = index + 1;
 					islice < ContainingDataTree.Slices.Count && ContainingDataTree.Slices[islice] == this;
 					islice++)

@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
@@ -49,15 +48,7 @@ namespace LanguageExplorer.Controls.LexText
 
 		#region Properties
 
-		public SandboxGenericMSA SandboxMSA
-		{
-			get
-			{
-				CheckDisposed();
-				return m_msaGroupBox.SandboxMSA;
-			}
-		}
-
+		public SandboxGenericMSA SandboxMSA => m_msaGroupBox.SandboxMSA;
 		#endregion Properties
 
 		#region Construction, Initialization, and Disposal
@@ -81,8 +72,6 @@ namespace LanguageExplorer.Controls.LexText
 		public void SetDlgInfo(LcmCache cache, IPersistenceProvider persistProvider, IPropertyTable propertyTable, IPublisher publisher, ILexEntry entry, SandboxGenericMSA sandboxMsa, int hvoOriginalMsa,
 			bool useForEdit, string titleForEdit)
 		{
-			CheckDisposed();
-
 			Debug.Assert(m_cache == null);
 			m_cache = cache;
 			m_propertyTable = propertyTable;
@@ -166,19 +155,6 @@ namespace LanguageExplorer.Controls.LexText
 				ScreenHelper.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
-			}
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 			}
 		}
 

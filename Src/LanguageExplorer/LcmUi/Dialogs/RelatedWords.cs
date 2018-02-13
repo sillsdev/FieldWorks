@@ -289,19 +289,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		}
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose( bool disposing )
@@ -601,8 +588,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			/// </summary>
 			public override void MakeRoot()
 			{
-				CheckDisposed();
-
 				base.MakeRoot();
 
 				m_vc = new RelatedWordsVc(m_wsUser, m_headword);
@@ -614,7 +599,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			}
 			internal void SetEntry(int hvoEntry)
 			{
-				CheckDisposed();
 				var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoEntry);
 				m_headword = entry.HeadWord;
 				m_hvoRoot = hvoEntry;
@@ -636,8 +620,6 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			/// </summary>
 			private void HandleSelectionChange(object sender, VwSelectionArgs args)
 			{
-				CheckDisposed();
-
 				var vwselNew = args.Selection;
 				Debug.Assert(vwselNew != null);
 
@@ -664,26 +646,8 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			{
 				get
 				{
-					CheckDisposed();
-
 					var sel = RootBox.Selection;
 					return sel != null && sel.IsRange;
-				}
-			}
-
-			public override Cursor Cursor
-			{
-				get
-				{
-					CheckDisposed();
-
-					return base.Cursor;
-				}
-				set
-				{
-					CheckDisposed();
-
-					base.Cursor = value;
 				}
 			}
 		}

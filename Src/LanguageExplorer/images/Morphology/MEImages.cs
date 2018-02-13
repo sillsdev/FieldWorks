@@ -2,9 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Windows.Forms;
-using SIL.Utils;
 
 #if RANDYTODO
 	// Q: Do I need to keep this? Nobody is directly using it.
@@ -26,17 +24,6 @@ namespace LanguageExplorer.images.Morphology
 
 			// TODO: Add any initialization after the InitializeComponent call
 
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
 		/// <summary>

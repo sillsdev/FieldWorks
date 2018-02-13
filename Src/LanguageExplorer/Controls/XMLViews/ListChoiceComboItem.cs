@@ -22,11 +22,6 @@ namespace LanguageExplorer.Controls.XMLViews
 	public class ListChoiceComboItem : FilterComboItem
 	{
 		int m_hvoList; // root object of list.
-		/// <summary>
-		/// If this has a value, it represents a 'leaf' property that should be followed from the
-		/// tree items to the ones that can actually be selected.
-		/// </summary>
-		int m_leafFlid;
 		LcmCache m_cache;
 		private IPropertyTable m_propertyTable;
 		FwComboBox m_combo;
@@ -95,27 +90,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets or sets the leaf flid.
 		/// </summary>
-		public int LeafFlid
-		{
-			get
-			{
-				CheckDisposed();
-				return m_leafFlid;
-			}
-			set
-			{
-				CheckDisposed();
-				m_leafFlid = value;
-			}
-		}
+		public int LeafFlid { get; set; }
 
 		/// <summary>
 		/// Invokes this instance.
 		/// </summary>
 		public override bool Invoke()
 		{
-			CheckDisposed();
-
 			var labels = GetObjectLabelsForList();
 			var oldTargets = new int[0];
 			var oldMode = ListMatchOptions.Any;
@@ -232,7 +213,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var chosenObjs = from hvo in oldTargets select (hvo == 0 ? null : m_cache.ServiceLocator.GetObject(hvo));
 			var persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(m_propertyTable);
-			return m_leafFlid == 0 ? new ReallySimpleListChooser(persistProvider, labels, "Items", m_cache, chosenObjs, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")) : new LeafChooser(persistProvider, labels, "Items", m_cache, chosenObjs, m_leafFlid, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+			return LeafFlid == 0 ? new ReallySimpleListChooser(persistProvider, labels, "Items", m_cache, chosenObjs, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")) : new LeafChooser(persistProvider, labels, "Items", m_cache, chosenObjs, LeafFlid, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 		}
 
 		private ITsString MakeLabel(ListChoiceFilter filter)
@@ -315,8 +296,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override ITsString SetFromFilter(RecordFilter recordFilter, FilterSortItem item)
 		{
-			CheckDisposed();
-
 			var filter = recordFilter as ListChoiceFilter;
 			return filter == null ? null : (!filter.CompatibleFilter(m_colSpec) ? null : MakeLabel(filter));
 		}

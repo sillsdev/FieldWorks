@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,7 +6,6 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using NUnit.Framework;
-
 using ECInterfaces;
 using SilEncConverters40;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -69,7 +68,6 @@ namespace AddConverterDlgTests
 		{
 			get
 			{
-				CheckDisposed();
 				return btnAdd;
 			}
 		}
@@ -84,7 +82,6 @@ namespace AddConverterDlgTests
 		{
 			get
 			{
-				CheckDisposed();
 				return btnCopy;
 			}
 		}
@@ -99,7 +96,6 @@ namespace AddConverterDlgTests
 		{
 			get
 			{
-				CheckDisposed();
 				return btnDelete;
 			}
 		}
@@ -112,8 +108,6 @@ namespace AddConverterDlgTests
 		/// ------------------------------------------------------------------------------------
 		public void SetMappingFile(string sMapping)
 		{
-			CheckDisposed();
-
 			m_cnvtrPropertiesCtrl.txtMapFile.Text = sMapping;
 		}
 	}
@@ -133,8 +127,6 @@ namespace AddConverterDlgTests
 		/// ------------------------------------------------------------------------------------
 		public void SetMappingFile(string sMapping)
 		{
-			CheckDisposed();
-
 			txtMapFile.Text = sMapping;
 			txtMapFile_TextChanged(null, null);
 		}

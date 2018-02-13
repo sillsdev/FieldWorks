@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -40,19 +39,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose(bool disposing )
@@ -73,8 +59,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
-
 				if (overwriteRadio.Checked)
 				{
 					return NonEmptyTargetOptions.Overwrite;
@@ -111,12 +95,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				return sepBox.WritingSystemFactory;
 			}
 			set
 			{
-				CheckDisposed();
 				sepBox.WritingSystemFactory = value;
 			}
 		}
@@ -128,12 +110,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				return sepBox.WritingSystemCode;
 			}
 			set
 			{
-				CheckDisposed();
 				sepBox.WritingSystemCode = value;
 			}
 		}
@@ -145,12 +125,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				return sepBox.Tss;
 			}
 			set
 			{
-				CheckDisposed();
 				sepBox.Tss = value;
 			}
 		}
@@ -162,12 +140,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				CheckDisposed();
 				return sepBox.Text;
 			}
 			set
 			{
-				CheckDisposed();
 				sepBox.Text = value;
 			}
 		}

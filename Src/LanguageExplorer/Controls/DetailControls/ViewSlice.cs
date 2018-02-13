@@ -129,19 +129,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// assume that the control is a rootsite, because some classes override and insert
 		/// another layer of control, with the root site being a child.
 		/// </summary>
-		public virtual RootSite RootSite
-		{
-			get
-			{
-				CheckDisposed();
-				return (RootSite)Control;
-			}
-		}
+		public virtual RootSite RootSite => (RootSite)Control;
 
 		/// <summary />
 		public void HandleLayoutSizeChanged(object sender, EventArgs ea)
 		{
-			CheckDisposed();
 			SetHeightFromRootBox(RootSite);
 			ContainingDataTree?.PerformLayout();
 		}
@@ -149,7 +141,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary />
 		public override void Install(DataTree parentDataTree)
 		{
-			CheckDisposed();
 			// Sometimes we get a spurious "out of memory" error while trying to create a handle for the
 			// RootSite if its cache isn't set before we add it to its parent.
 			var rs = RootSite;
@@ -174,7 +165,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				return;
 			}
 
-			if (m_cache == null || DesignMode)
+			if (Cache == null || DesignMode)
 			{
 				return;
 			}
@@ -184,8 +175,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected internal override void SetWidthForDataTreeLayout(int width)
 		{
-			CheckDisposed();
-
 			if (Width == width)
 			{
 				return; // Nothing to do.
@@ -207,14 +196,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// A view slice is not 'real' until BecomeRealInPlace is called so it gets laid out.
 		/// </summary>
-		public override bool IsRealSlice
-		{
-			get
-			{
-				CheckDisposed();
-				return RootSite.AllowLayout;
-			}
-		}
+		public override bool IsRealSlice => RootSite.AllowLayout;
 
 		/// <summary>
 		/// Some 'unreal' slices can become 'real' (ready to actually display) without
@@ -226,7 +208,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns></returns>
 		public override bool BecomeRealInPlace()
 		{
-			CheckDisposed();
 			var rs = RootSite;
 			if (rs.RootBox == null)
 			{
@@ -281,8 +262,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override void AboutToDiscard()
 		{
-			CheckDisposed();
-			base.AboutToDiscard ();
+			base.AboutToDiscard();
 			var rs = RootSite;
 			rs?.AboutToDiscard();
 		}

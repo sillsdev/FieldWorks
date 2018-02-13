@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -127,10 +127,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 #if TESTMS
 			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceWndProc start: " + m_obj.ToString());
 #endif
-			CheckDisposed();
-#if TESTMS
-			//Debug.WriteLineIf(m_matchingHvo, "MessageSequencer.SequenceWndProc Must not be disposed.");
-#endif
 
 			if (!MethodNeedsSequencing(ref m))
 			{
@@ -237,12 +233,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 #if TESTMS
 			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceOnPaint start: " + m_obj.ToString());
-#endif
-			CheckDisposed();
-#if TESTMS
-			//Debug.WriteLineIf(m_matchingHvo, "MessageSequencer.SequenceOnPaint Must not be disposed.");
-#endif
-#if TESTMS
 			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.SequenceOnPaint check m_fReentering value; original value: " + m_fReentering.ToString());
 #endif
 
@@ -307,10 +297,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 #if TESTMS
 			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.PauseMessageQueueing start: " + m_obj.ToString());
-#endif
-			CheckDisposed();
-#if TESTMS
-			//Debug.WriteLineIf(m_matchingHvo, "MessageSequencer.PauseMessageQueueing Must not be disposed.");
 			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.PauseMessageQueueing check m_fReentering vakue; original value: " + m_fReentering.ToString());
 #endif
 
@@ -352,10 +338,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 #if TESTMS
 			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.ResumeMessageQueueing start: " + m_obj.ToString());
-#endif
-			CheckDisposed();
-#if TESTMS
-			//Debug.WriteLineIf(m_matchingHvo, "MessageSequencer.ResumeMessageQueueing Must not be disposed.");
 			Debug.WriteLineIf(s_fMatchingHvo, "MessageSequencer.PauseMessageQueueing: reset m_fReentering to true; original value: " + m_fReentering.ToString());
 #endif
 
@@ -372,8 +354,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_fReentering;
 			}
 		}
@@ -388,8 +368,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns></returns>
 		public void BeginSequentialBlock()
 		{
-			CheckDisposed();
-
 			if (m_fReentering)
 			{
 				// already suppressing messages; remember to disregard EndSequentialBlock
@@ -404,8 +382,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public void EndSequentialBlock()
 		{
-			CheckDisposed();
-
 			if (m_cLevelsOfSequentialBlockInMessageHandler > 0)
 			{
 				m_cLevelsOfSequentialBlockInMessageHandler--;
@@ -420,18 +396,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
 
 		/// <summary>
 		/// True, if the object has been disposed.

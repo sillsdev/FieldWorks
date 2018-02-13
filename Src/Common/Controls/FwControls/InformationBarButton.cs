@@ -93,14 +93,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				CheckDisposed();
-
 				return m_toolTip.GetToolTip(this);
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_toolTip.SetToolTip(this, value);
 			}
 		}

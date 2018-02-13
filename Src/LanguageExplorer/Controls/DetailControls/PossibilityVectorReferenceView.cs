@@ -36,7 +36,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override void ReloadVector()
 		{
-			CheckDisposed();
 			var ws = 0;
 			if (m_rootObj != null && m_rootObj.IsValidObject)
 			{

@@ -77,7 +77,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// </summary>
 		public override void FinishInit()
 		{
-			CheckDisposed();
 			var wsContainer = Cache.ServiceLocator.WritingSystems;
 			var fVernRTL = wsContainer.DefaultVernacularWritingSystem.RightToLeftScript;
 			var fAnalRTL = wsContainer.DefaultAnalysisWritingSystem.RightToLeftScript;
@@ -160,7 +159,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 		public InflAffixTemplateSlice(SimpleRootSite ctrlT): base(ctrlT)
 		{
-			CheckDisposed();
 		}
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,11 +23,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	internal class ChooseAnalysisHandler : IComboHandler
 	{
 		int m_hvoAnalysis; // The current 'analysis', may be wordform, analysis, gloss.
-		int m_hvoSrc; // the object (CmAnnotation? or SbWordform) we're analyzing.
 		bool m_fInitializing = false; // true to suppress AnalysisChosen while setting up combo.
 		LcmCache m_cache;
 		IComboList m_combo;
-		SandboxBase m_owner;
 		const string ksMissingString = "---";
 		const string ksPartSeparator = "   ";
 
@@ -51,14 +49,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// The object that should be modified if the user selects an analysis
 		/// </summary>
-		public int Source
-		{
-			get
-			{
-				CheckDisposed();
-				return m_hvoSrc;
-			}
-		}
+		public int Source { get; }
 
 		/// <summary>
 		/// Initially, the analysis we based the list on. After the user makes a selection,
@@ -78,25 +69,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// The current selected item in the combo box.
 		/// </summary>
-		public HvoTssComboItem SelectedItem
-		{
-			get
-			{
-				CheckDisposed();
+		public HvoTssComboItem SelectedItem => m_combo?.SelectedItem as HvoTssComboItem;
 
-				return m_combo?.SelectedItem as HvoTssComboItem;
-			}
-		}
-
-		internal IVwStylesheet StyleSheet
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_combo?.StyleSheet;
-			}
-		}
+		internal IVwStylesheet StyleSheet => m_combo?.StyleSheet;
 
 		/// <summary>
 		/// Create one, typically from the Sandbox, using an existing combo box or list. The caller is responsible
@@ -106,27 +81,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			m_combo = comboList;
 			m_cache = cache;
-			m_hvoSrc = hvoSrc;
+			Source = hvoSrc;
 			m_hvoAnalysis = hvoAnalysis;
 			m_combo.SelectedIndexChanged += m_combo_SelectedIndexChanged;
 			m_combo.WritingSystemFactory = cache.LanguageWritingSystemFactoryAccessor;
 		}
 
 		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-			{
-				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
-			}
-		}
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -212,7 +173,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_cache = null;
-			m_owner = null;
+			Owner = null;
 
 			IsDisposed = true;
 		}
@@ -257,10 +218,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void SetupCombo()
 		{
-			CheckDisposed();
-
 			m_fInitializing = true;
-			var wordform = m_owner.GetWordformOfAnalysis();
+			var wordform = Owner.GetWordformOfAnalysis();
 
 			// Add the analyses, and recursively the other items.
 			foreach (var wa in wordform.AnalysesOC)
@@ -287,7 +246,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private void AddAnalysisItems(IWfiAnalysis wa)
 		{
-			AddItem(wa, MakeAnalysisStringRep(wa, m_cache, StyleSheet != null, (m_owner as SandboxBase).RawWordformWs), true);
+			AddItem(wa, MakeAnalysisStringRep(wa, m_cache, StyleSheet != null, (Owner as SandboxBase).RawWordformWs), true);
 			foreach (var gloss in wa.MeaningsOC)
 			{
 				AddItem(gloss, MakeGlossStringRep(gloss, m_cache, StyleSheet != null), true);
@@ -481,28 +440,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Get the site where the combo or combo list is displayed.
 		/// </summary>
-		public SandboxBase Owner
-		{
-			get
-			{
-				CheckDisposed();
-				return m_owner;
-			}
-			set
-			{
-				CheckDisposed();
-				m_owner = value;
-			}
-		}
+		public SandboxBase Owner { get; set; }
 
 		/// <summary>
 		/// Display the combo box at the specified location, or the list box pulled down from the specified location.
 		/// </summary>
-		/// <param name="loc"></param>
 		public void Activate(Rect loc)
 		{
-			CheckDisposed();
-
 			var combo = m_combo as FwComboBox;
 			if (combo != null)
 			{
@@ -510,44 +454,34 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				combo.Location = new Point(loc.left, loc.top);
 				// 21 is the default height of a combo, the smallest reasonable size.
 				combo.Size = new Size(Math.Max(loc.right - loc.left + 30, 200), Math.Max( loc.bottom - loc.top, 50));
-				if (!m_owner.Controls.Contains(combo))
+				if (!Owner.Controls.Contains(combo))
 				{
-					m_owner.Controls.Add(combo);
+					Owner.Controls.Add(combo);
 				}
 			}
 			else
 			{
 				var c = (m_combo as ComboListBox);
 				c.AdjustSize(500, 400); // these are maximums!
-				c.Launch(m_owner.RectangleToScreen(loc), Screen.GetWorkingArea(m_owner));
+				c.Launch(Owner.RectangleToScreen(loc), Screen.GetWorkingArea(Owner));
 			}
 		}
 
 		/// <summary>
 		/// Required interface method. We don't have a particular morph selected so answer zero.
 		/// </summary>
-		public int SelectedMorphHvo
-		{
-			get
-			{
-				CheckDisposed();
-				return 0;
-			}
-		}
+		public int SelectedMorphHvo => 0;
 
 		/// <summary>
 		/// Required interface method, not relevant for this class.
 		/// </summary>
 		public void HandleSelectIfActive()
 		{
-			CheckDisposed();
 		}
 
 		/// <summary>
 		/// Handle the user selecting something in the combo.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		private void m_combo_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (m_fInitializing)
@@ -574,8 +508,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public virtual bool HandleReturnKey()
 		{
-			CheckDisposed();
-
 			return false;
 		}
 
@@ -584,12 +516,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void Hide()
 		{
-			CheckDisposed();
-
 			var combo = m_combo as FwComboBox;
-			if (combo != null && m_owner.Controls.Contains(combo))
+			if (combo != null && Owner.Controls.Contains(combo))
 			{
-				m_owner.Controls.Remove(combo);
+				Owner.Controls.Remove(combo);
 			}
 			var clb = m_combo as ComboListBox;
 			clb?.HideForm();
