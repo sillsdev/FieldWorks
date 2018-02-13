@@ -58,8 +58,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.Dispose( disposing );
 		}
 
-		public override void Initialize(LcmCache cache, ICmObject obj, int flid,
-			string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 

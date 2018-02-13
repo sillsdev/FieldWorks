@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,16 +23,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Get the ith item (HVO) to display. If this returns 0, the key to display
 		/// is obtained from KeyFor without calling FlidFor.
 		/// </summary>
-		/// <param name="i"></param>
-		/// <returns></returns>
 		int Item(int i);
 		/// <summary>
 		/// Get the flid to use to obtain a key for the ith item. If it answers 0,
 		/// Use the KeyFor instead.
 		/// </summary>
-		/// <param name="islice"></param>
-		/// <param name="hvo"></param>
-		/// <returns></returns>
 		int FlidFor(int islice, int hvo);
 		/// <summary>
 		/// Get the key to display for the ith slice, given its index and hvo.

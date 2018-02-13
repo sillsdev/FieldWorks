@@ -73,7 +73,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Set the item from the chooser.
 		/// </summary>
-		/// <param name="obj">the object from the chooser.</param>
 		public void SetObject(ICmObject obj)
 		{
 			CheckDisposed();
@@ -216,15 +215,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			int cpropPrevious;
 			int ihvoEnd;
 			ITsTextProps ttp;
-			var rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli,
-				out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
-				out ws, out fAssocPrev, out ihvoEnd, out ttp);
-			IVwSelection vwselWhole = null;
+			var rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
 			Debug.Assert(m_rootb != null);
 			// Create a selection that covers the entire target object.  If it differs from
 			// the new selection, we'll install it (which will recurse back to this method).
-			vwselWhole = m_rootb.MakeTextSelInObj(ihvoRoot, cvsli, rgvsli, 0, null,
-				false, false, false, true, false);
+			var vwselWhole = m_rootb.MakeTextSelInObj(ihvoRoot, cvsli, rgvsli, 0, null, false, false, false, true, false);
 			if (vwselWhole == null)
 			{
 				return;

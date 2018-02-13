@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,11 +18,13 @@ namespace LanguageExplorer.Controls.DetailControls
 	public class SummaryInfo : IConcSliceInfo, IKeyedObject
 	{
 		private readonly IList m_children;
+
 		public SummaryInfo(ITsString content, IList children)
 		{
 			ContentString = content;
 			m_children = children;
 		}
+
 		/// <summary>
 		/// Don't have an interesting object.
 		/// </summary>
@@ -59,7 +61,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				throw new NotSupportedException();
 			}
-
 		}
 
 		/// <summary>

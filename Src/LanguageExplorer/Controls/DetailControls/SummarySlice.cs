@@ -1,14 +1,13 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
@@ -28,17 +27,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		private SummaryCommandControl m_commandControl;
 		private string m_layout;
 		private string m_collapsedLayout;
-
 		private int m_lastWidth;
 		private bool m_fActive;
 
 		protected override bool ShouldHide => false;
 
 		#region Overrides of ViewSlice
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="parentDataTree"></param>
+
+		/// <summary />
 		public override void Install(DataTree parentDataTree)
 		{
 			base.Install(parentDataTree);
@@ -182,7 +178,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// This is sent when something internal changes the size of the view. One example is a change
 		/// in the definition of our stylesheet. This may affect our layout.
 		/// </summary>
-		void m_view_LayoutSizeChanged(object sender, EventArgs e)
+		private void m_view_LayoutSizeChanged(object sender, EventArgs e)
 		{
 			m_lastWidth = 0; // force AdjustMainViewWidth to really do something
 			AdjustMainViewWidth();
@@ -261,7 +257,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// We display the context menu icon on the right in a summary slice whenever we show
 		/// the other hot links on the right.
 		/// </summary>
-		/// <returns></returns>
 		public override bool ShowContextMenuIconInTreeNode()
 		{
 			CheckDisposed();
@@ -283,7 +278,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Skip handling this, if the DataTree hasn't
 			// set the official width using SetWidthForDataTreeLayout
 			if (!m_widthHasBeenSetByDataTree)
+			{
 				return;
+			}
 			var rootb = m_view.RootBox;
 			if (rootb == null || m_lastWidth == Width)
 			{
@@ -443,8 +440,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				return false;		// shouldn't get here
 			}
 
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Resources.DetailControlsStrings.ksUndoPromote,
-				Resources.DetailControlsStrings.ksRedoPromote,
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Resources.DetailControlsStrings.ksUndoPromote, Resources.DetailControlsStrings.ksRedoPromote,
 				Cache.ActionHandlerAccessor, () =>
 				{
 					if (recOwner.Owner is IRnGenericRec)
@@ -514,15 +510,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				else
 				{
-					var owners = new List<IRnGenericRec>();
-					foreach (var recT in recOwner.SubRecordsOS)
-					{
-						if (recT != rec)
-						{
-							owners.Add(recT);
-						}
-					}
-					newOwner = ContainingDataTree.ChooseNewOwner(owners.ToArray(), Resources.DetailControlsStrings.ksChooseOwnerOfDemotedSubrecord);
+					newOwner = ContainingDataTree.ChooseNewOwner(recOwner.SubRecordsOS.Where(recT => recT != rec).ToArray(), Resources.DetailControlsStrings.ksChooseOwnerOfDemotedSubrecord);
 				}
 			}
 			else
@@ -540,11 +528,10 @@ namespace LanguageExplorer.Controls.DetailControls
 				throw new Exception("RnGenericRec cannot own itself!");
 			}
 
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Resources.DetailControlsStrings.ksUndoDemote,
-				Resources.DetailControlsStrings.ksRedoDemote, Cache.ActionHandlerAccessor, () =>
-				{
-					newOwner.SubRecordsOS.Insert(0, rec);
-				});
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Resources.DetailControlsStrings.ksUndoDemote, Resources.DetailControlsStrings.ksRedoDemote, Cache.ActionHandlerAccessor, () =>
+			{
+				newOwner.SubRecordsOS.Insert(0, rec);
+			});
 			return true;
 		}
 		#endregion

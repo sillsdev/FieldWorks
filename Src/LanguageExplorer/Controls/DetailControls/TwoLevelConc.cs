@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -47,10 +47,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_gni = gni;
 			InitializeBasic(cache, false); // JT: was Initialize, that now has more args; not retested.
 			InitializeComponentBasic();
-
-			// Can't add null values to Controls,
-			// now that there isn't a SliceCollection, which could hold nulls.
-			//m_slices.AddRange(new Slice[cp.Count]); // adds appropriate # nulls
 
 			// Temporary: until I figure how to be lazy, we have to make slices
 			// for all nodes.

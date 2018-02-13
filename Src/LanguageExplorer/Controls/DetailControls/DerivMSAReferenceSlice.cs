@@ -55,8 +55,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				var arl = (AtomicReferenceLauncher)Control;
-				arl.ReferenceChanged -= OnReferenceChanged;
+				((AtomicReferenceLauncher)Control).ReferenceChanged -= OnReferenceChanged;
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -69,8 +68,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public override void FinishInit()
 		{
 			base.FinishInit();
-			var arl = (AtomicReferenceLauncher)Control;
-			arl.ReferenceChanged += OnReferenceChanged;
+			((AtomicReferenceLauncher)Control).ReferenceChanged += OnReferenceChanged;
 		}
 
 		#region Event handlers
@@ -142,10 +140,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (otherSlice is AtomicReferenceSlice)
 				{
 					otherHvo = GetOtherHvo((AtomicReferenceSlice)otherSlice, otherFlid, myIsFromPOS, out otherControl);
-				}
-				else
-				{
-					otherSlice = null;
 				}
 			}
 

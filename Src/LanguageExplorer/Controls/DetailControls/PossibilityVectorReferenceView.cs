@@ -83,11 +83,10 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override ISilDataAccess GetDataAccess()
 		{
-			return m_sda ?? (m_sda = new PossibilityVectorReferenceViewSdaDecorator(m_cache.GetManagedSilDataAccess(), m_cache,
-					m_displayNameProperty, m_displayWs)
-					{
-						Empty = TsStringUtils.EmptyString(m_cache.DefaultAnalWs)
-					});
+			return m_sda ?? (m_sda = new PossibilityVectorReferenceViewSdaDecorator(m_cache.GetManagedSilDataAccess(), m_cache, m_displayNameProperty, m_displayWs)
+			{
+				Empty = TsStringUtils.EmptyString(m_cache.DefaultAnalWs)
+			});
 		}
 
 		#endregion // RootSite required methods
@@ -131,11 +130,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override bool HandleRightClickOnObject(int hvo)
 		{
-			if(hvo != khvoFake)
-			{
-				return base.HandleRightClickOnObject(hvo);
-			}
-			return false;
+			return hvo != khvoFake && base.HandleRightClickOnObject(hvo);
 		}
 
 		private bool DeleteItem()

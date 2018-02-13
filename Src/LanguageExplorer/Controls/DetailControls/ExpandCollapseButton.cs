@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -47,13 +47,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		VisualStyleRenderer Renderer
-		{
-			get
-			{
-				return !Application.RenderWithVisualStyles ? null : new VisualStyleRenderer(m_opened ? VisualStyleElement.TreeView.Glyph.Opened : VisualStyleElement.TreeView.Glyph.Closed);
-			}
-		}
+		private VisualStyleRenderer Renderer => !Application.RenderWithVisualStyles ? null : new VisualStyleRenderer(m_opened ? VisualStyleElement.TreeView.Glyph.Opened : VisualStyleElement.TreeView.Glyph.Closed);
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
@@ -100,10 +94,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						return renderer.GetPartSize(g, ThemeSizeType.True).Height;
 					}
 				}
-				else
-				{
-					return 5;
-				}
+				return 5;
 			}
 		}
 
@@ -119,10 +110,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						return renderer.GetPartSize(g, ThemeSizeType.True).Width;
 					}
 				}
-				else
-				{
-					return 11;
-				}
+				return 11;
 			}
 		}
 

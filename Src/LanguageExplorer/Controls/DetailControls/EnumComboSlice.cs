@@ -45,7 +45,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			cache.DomainDataByFlid.AddNotification(this);
 		}
 
-		void SetForeColor(XElement parameters)
+		private void SetForeColor(XElement parameters)
 		{
 			var node = parameters.Element("forecolor");
 			if (node != null)
@@ -120,7 +120,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var node =  parameters.Element("stringList");
 			if (node == null)
 			{
-				throw new ApplicationException ("The Enum editor requires a <stringList> element in the <deParams>");
+				throw new ApplicationException("The Enum editor requires a <stringList> element in the <deParams>");
 			}
 
 			var labels = StringTable.Table.GetStringsFromStringListNode(node);
@@ -181,9 +181,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// No sense in setting it to the same value.
 				return;
 			}
-			m_cache.DomainDataByFlid.BeginUndoTask(
-				string.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
-				string.Format(DetailControlsStrings.ksRedoSet, m_fieldName));
+			m_cache.DomainDataByFlid.BeginUndoTask(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName), string.Format(DetailControlsStrings.ksRedoSet, m_fieldName));
 			m_cache.DomainDataByFlid.SetInt(Object.Hvo, m_flid, newValue);
 			var sideEffectMethod = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "sideEffect", null);
 			if (!string.IsNullOrEmpty(sideEffectMethod))
@@ -203,7 +201,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		void m_combo_DropDownClosed(object sender, EventArgs e)
+		private void m_combo_DropDownClosed(object sender, EventArgs e)
 		{
 			SelectionChanged(sender, e);
 		}

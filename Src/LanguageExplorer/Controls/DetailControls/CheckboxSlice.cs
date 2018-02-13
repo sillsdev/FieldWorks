@@ -203,12 +203,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					fValue = !fValue;
 				}
-
-				IntBoolPropertyConverter.SetValueFromBoolean(
-					m_cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
-					Object.Hvo,
-					m_flid,
-					fValue);
+				IntBoolPropertyConverter.SetValueFromBoolean(m_cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), Object.Hvo, m_flid, fValue);
 			});
 		}
 

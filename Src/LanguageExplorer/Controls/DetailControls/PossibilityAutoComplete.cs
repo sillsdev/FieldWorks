@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -264,8 +264,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 #if !__MonoCS__
 			var msg = new Win32.MSG();
-			return Win32.PeekMessage(ref msg, IntPtr.Zero, (uint)Win32.WinMsgs.WM_KEYDOWN, (uint)Win32.WinMsgs.WM_KEYDOWN,
-				(uint)Win32.PeekFlags.PM_NOREMOVE);
+			return Win32.PeekMessage(ref msg, IntPtr.Zero, (uint)Win32.WinMsgs.WM_KEYDOWN, (uint)Win32.WinMsgs.WM_KEYDOWN, (uint)Win32.PeekFlags.PM_NOREMOVE);
 #else
 			// ShouldAbort seems to be used for optimization purposes so returing false
 			// just loses the optimization.

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -27,9 +27,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
-		/// create a filter which will consult both LCM and an external XML document when making filtering decisions
+		/// Create a filter which will consult both LCM and an external XML document when making filtering decisions.
+		/// (See distfiles/lexed/basicFilter.xml for an example.)
 		/// </summary>
-		/// <param name="filterList">XML document (see distfiles/lexed/basicFilter.xml for an example)</param>
 		public SliceFilter(XDocument filterList)
 		{
 			m_filterList= filterList;
@@ -38,7 +38,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// tell whether to include the slice
 		/// </summary>
-		/// <returns>true if this slice should be included</returns>
 		public bool IncludeSlice(XElement configurationNode, ICmObject obj, int flid, HashSet<Tuple<int, int>> propsToMonitor)
 		{
 			if (m_filterList!= null)

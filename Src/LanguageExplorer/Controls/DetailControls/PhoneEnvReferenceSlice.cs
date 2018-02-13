@@ -240,9 +240,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool OnInsertSlash(object args)
 		{
 			CheckDisposed();
-			var rl = (PhoneEnvReferenceLauncher)Control;
-			var view = (PhoneEnvReferenceView)rl.MainControl;
-			view.RootBox.OnChar((int)'/');
+
+			var view = (PhoneEnvReferenceView)((PhoneEnvReferenceLauncher)Control).MainControl;
+			view.RootBox.OnChar('/');
 			return true;
 		}
 
@@ -268,8 +268,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool OnInsertEnvironmentBar(object args)
 		{
 			CheckDisposed();
-			var rl = (PhoneEnvReferenceLauncher)Control;
-			var view = (PhoneEnvReferenceView)rl.MainControl;
+			var view = (PhoneEnvReferenceView)((PhoneEnvReferenceLauncher)Control).MainControl;
 			view.RootBox.OnChar('_');
 			return true;
 		}
@@ -295,8 +294,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool OnInsertNaturalClass(object args)
 		{
 			CheckDisposed();
-			var rl = (PhoneEnvReferenceLauncher)Control;
-			var view = (PhoneEnvReferenceView)rl.MainControl;
+			var view = (PhoneEnvReferenceView)((PhoneEnvReferenceLauncher)Control).MainControl;
 			return ReallySimpleListChooser.ChooseNaturalClass(view.RootBox, m_cache, m_persistenceProvider, PropertyTable, Publisher);
 		}
 
@@ -321,8 +319,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool OnInsertOptionalItem(object args)
 		{
 			CheckDisposed();
-			var rl = (PhoneEnvReferenceLauncher)Control;
-			var view = (PhoneEnvReferenceView)rl.MainControl;
+			var view = (PhoneEnvReferenceView)((PhoneEnvReferenceLauncher)Control).MainControl;
 			var rootb = view.RootBox;
 			InsertOptionalItem(rootb);
 			return true;
@@ -350,9 +347,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			bool fAssocPrev;
 			int ihvoEnd;
 			ITsTextProps ttp;
-			var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli,
-												   out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
-												   out ws, out fAssocPrev, out ihvoEnd, out ttp);
+			var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
 			Debug.Assert(ichAnchor == ichEnd);
 			Debug.Assert(ichAnchor > 0);
 			--ichEnd;
@@ -381,8 +376,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool OnInsertHashMark(object args)
 		{
 			CheckDisposed();
-			var rl = (PhoneEnvReferenceLauncher)Control;
-			var view = (PhoneEnvReferenceView)rl.MainControl;
+
+			var view = (PhoneEnvReferenceView)((PhoneEnvReferenceLauncher)Control).MainControl;
 			view.RootBox.OnChar('#');
 			return true;
 		}

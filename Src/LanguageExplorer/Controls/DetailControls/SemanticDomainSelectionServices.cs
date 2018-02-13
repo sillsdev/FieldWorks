@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) 2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -192,11 +196,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 			}
 
-			protected override string BasicNodeString { get { return (Label.Object as ICmSemanticDomain).AbbrAndName; } }
+			protected override string BasicNodeString => ((ICmSemanticDomain)Label.Object).AbbrAndName;
 
 			protected override int CountUsages()
 			{
-				return SenseReferenceCount(Label.Object as ICmSemanticDomain);
+				return SenseReferenceCount((ICmSemanticDomain)Label.Object);
 			}
 
 			protected override LabelNode Create(ObjectLabel nol, IVwStylesheet stylesheet, bool displayUsage)

@@ -55,7 +55,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Clear any existing selection in the view when we leave the launcher.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnLeave(EventArgs e)
 		{
 			base.OnLeave(e);

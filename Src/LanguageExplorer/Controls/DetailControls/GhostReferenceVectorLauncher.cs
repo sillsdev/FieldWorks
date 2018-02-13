@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -37,20 +37,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			chooser.SetObjectAndFlid(0, m_flid);
 			if (Slice.ConfigurationNode != null)
 			{
-				// Review JohnT: can any of this be made relevant without an object?
-				//    // Handle the default case ("owner") for text parameters.
-
-				//    // This (old approach) works only if
-				//    // all of the list items are owned by the same object as the first one in the
-				//    // list.  (Later elements can be owned by elements owned by that first owner,
-				//    // if you know what I mean.)
-				//    //if (candidates.Count != 0)
-				//    //    chooser.TextParamHvo = m_cache.GetOwnerOfObject((int)candidates[0]);
-				//    // JohnT: this approach depends on a new LCM method.
-				//    ICmObject referenceTargetOwner = m_obj.ReferenceTargetOwner(m_flid);
-				//    if (referenceTargetOwner != null)
-				//        chooser.TextParamHvo = referenceTargetOwner.Hvo;
-				//    chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
 				chooser.InitializeExtras(Slice.ConfigurationNode, PropertyTable);
 			}
 			var res = chooser.ShowDialog(FindForm());

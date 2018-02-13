@@ -132,8 +132,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Handle click event on the button.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		private void btn_Click(object sender, EventArgs e)
 		{
 #if RANDYTODO

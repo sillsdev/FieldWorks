@@ -25,14 +25,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Get the flid.
 		/// </summary>
-		public override int Flid
-		{
-			get
-			{
-				CheckDisposed();
-				return m_flid;
-			}
-		}
+		public override int Flid => m_flid;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FieldSlice"/> class.

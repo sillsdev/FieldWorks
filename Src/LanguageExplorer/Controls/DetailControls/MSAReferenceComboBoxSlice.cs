@@ -17,8 +17,6 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	internal class MSAReferenceComboBoxSlice : FieldSlice, IVwNotifyChange
 	{
-		private const int kAdd = -3;
-
 		private IPersistenceProvider m_persistProvider;
 		private MSAPopupTreeManager m_MSAPopupTreeManager;
 		private TreeCombo m_tree;
@@ -72,9 +70,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_tree.StyleSheet = stylesheet;
 			var list = m_cache.LanguageProject.PartsOfSpeechOA;
 
-			m_MSAPopupTreeManager = new MSAPopupTreeManager(m_tree, m_cache, list,
-				m_tree.WritingSystemCode, true, PropertyTable, Publisher,
-				PropertyTable.GetValue<Form>("window"));
+			m_MSAPopupTreeManager = new MSAPopupTreeManager(m_tree, m_cache, list, m_tree.WritingSystemCode, true, PropertyTable, Publisher, PropertyTable.GetValue<Form>("window"));
 			m_MSAPopupTreeManager.AfterSelect += m_MSAPopupTreeManager_AfterSelect;
 			m_MSAPopupTreeManager.Sense = m_obj as ILexSense;
 			m_MSAPopupTreeManager.PersistenceProvider = m_persistProvider;
@@ -258,7 +254,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				else if (sense.MorphoSyntaxAnalysisRA != obj)
 				{
 					ContainingDataTree.DoNotRefresh = true;
-					UndoableUnitOfWorkHelper.Do(String.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
+					UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
 						string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), sense, () =>
 						{
 							sense.MorphoSyntaxAnalysisRA = obj as IMoMorphSynAnalysis;

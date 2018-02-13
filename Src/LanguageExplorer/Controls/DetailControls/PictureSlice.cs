@@ -190,7 +190,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoUpdatePicture, DetailControlsStrings.ksRedoUpdatePicture, m_obj, () =>
 					{
-						var strLocalPictures = CmFolderTags.DefaultPictureFolder;
+						const string strLocalPictures = CmFolderTags.DefaultPictureFolder;
 						dlg.GetMultilingualCaptionValues(pic.Caption);
 						pic.UpdatePicture(dlg.CurrentFile, null, strLocalPictures, 0);
 					});

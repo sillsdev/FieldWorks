@@ -33,7 +33,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			get
 			{
 				CheckDisposed();
-				return ((CellarPropertyType)m_cache.DomainDataByFlid.MetaDataCache.GetFieldType(m_flid) == CellarPropertyType.ReferenceSequence);
+				return (CellarPropertyType)m_cache.DomainDataByFlid.MetaDataCache.GetFieldType(m_flid) == CellarPropertyType.ReferenceSequence;
 			}
 		}
 
@@ -129,13 +129,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (m_configurationNode != null)
 				{
 					// Handle the default case ("owner") for text parameters.
-
-					// This (old approach) works only if
-					// all of the list items are owned by the same object as the first one in the
-					// list.  (Later elements can be owned by elements owned by that first owner,
-					// if you know what I mean.)
-					//if (candidates.Count != 0)
-					//    chooser.TextParamHvo = m_cache.GetOwnerOfObject((int)candidates[0]);
 					// JohnT: this approach depends on a new LCM method.
 					var referenceTargetOwner = m_obj.ReferenceTargetOwner(m_flid);
 					if (referenceTargetOwner != null)
@@ -178,7 +171,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
-		/// Get the SimpleListChooser/
+		/// Get the SimpleListChooser.
 		/// </summary>
 		/// <param name="labels">List of objects to show in the chooser.</param>
 		/// <returns>The SimpleListChooser.</returns>

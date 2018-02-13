@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,8 +12,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		IConcPolicy m_cp;
 		IGetNodeInfo m_gni;
 		int m_index; // slice number
-		bool m_fExpanded = false;
-		INodeInfo m_ni = null;
+		bool m_fExpanded;
+		INodeInfo m_ni;
 		public TwoLevelConcVc(IConcPolicy cp, IGetNodeInfo gni, int index)
 		{
 			m_cp = cp;
@@ -78,9 +78,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					var cchKey = m_ni.ContextStringLength(ihvo, hvo);
 					// Enhance JohnT: make the alignment position a function of window width.
 					// Enhance JohnT: change background if this is the selected context line.
-					vwenv.OpenConcPara(ichKey, ichKey + cchKey,
-						VwConcParaOpts.kcpoDefault,
-						72 * 2 * 1000); // 72 pts per inch * 2 inches * 1000 -> 2" in millipoints.
+					vwenv.OpenConcPara(ichKey, ichKey + cchKey, VwConcParaOpts.kcpoDefault, 72 * 2 * 1000); // 72 pts per inch * 2 inches * 1000 -> 2" in millipoints.
 					var flidKey = m_ni.ContextStringFlid(ihvo, hvo);
 					if (flidKey == 0)
 					{

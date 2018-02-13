@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -183,9 +183,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
-
-			// m_sda COM object block removed due to crash in Finializer thread LT-6124
+			}
 
 			if (disposing)
 			{
@@ -241,7 +241,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					// Do some side effects for a couple of MSA classes.
 					if (m_obj is IMoInflAffMsa)
 					{
-						var msa = m_obj as IMoInflAffMsa;
+						var msa = (IMoInflAffMsa)m_obj;
 						if (hvoPos == 0)
 						{
 							msa.SlotsRC.Clear();

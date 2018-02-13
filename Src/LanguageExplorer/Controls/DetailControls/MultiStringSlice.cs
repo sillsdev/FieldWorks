@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -181,7 +181,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Gets a list of the visible writing systems stored in our layout part ref override.
 		/// </summary>
-		/// <returns></returns>
 		private IReadOnlyList<CoreWritingSystemDefinition> VisibleWritingSystems => GetAllVisibleWritingSystems(XmlUtils.GetOptionalAttributeValue(PartRef(), "visibleWritingSystems", null) ?? EncodeWssToDisplayPropertyValue(View.GetWritingSystemOptions(false).ToArray()));
 
 		/// <summary>
@@ -215,8 +214,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Make a selection in the specified writing system at the specified character offset.
 		/// Note: selecting other than the first writing system is not yet implemented.
 		/// </summary>
-		/// <param name="ws"></param>
-		/// <param name="ich"></param>
 		public void SelectAt(int ws, int ich)
 		{
 			CheckDisposed();
@@ -271,7 +268,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// since the user may have selected "Show all for now" which is only
 		/// valid while the slice is current.
 		/// </summary>
-		/// <param name="isCurrent"></param>
 		public override void SetCurrentState(bool isCurrent)
 		{
 			if (!isCurrent)

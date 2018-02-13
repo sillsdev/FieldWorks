@@ -14,7 +14,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CustomReferenceVectorSlice"/> class.
 		/// </summary>
-		/// <param name="control">The control.</param>
 		protected CustomReferenceVectorSlice(Control control)
 			: base(control)
 		{

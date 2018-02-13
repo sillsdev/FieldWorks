@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -60,6 +60,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 			}
 		}
+
 		#region IDisposable override
 
 		/// <summary>
@@ -109,7 +110,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Make a selection at the specified character offset.
 		/// </summary>
-		/// <param name="ich"></param>
 		public void SelectAt(int ich)
 		{
 			CheckDisposed();
@@ -225,7 +225,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_rootb.SetRootObject(m_hvoObj, m_vc, 1, m_styleSheet);
 		}
 
-		static bool s_fProcessingSelectionChanged;
+		private static bool s_fProcessingSelectionChanged;
 		/// <summary>
 		/// Try to keep the selection from including any of the characters in a writing system label.
 		/// Also update the writing system label if needed.
@@ -237,7 +237,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			// 1) We don't want to recurse into here.
 			// 2) If the selection is invalid we can't use it.
 			if (s_fProcessingSelectionChanged || !vwselNew.IsValid)
+			{
 				return;
+			}
 			try
 			{
 				s_fProcessingSelectionChanged = true;
@@ -277,7 +279,9 @@ namespace LanguageExplorer.Controls.DetailControls
 						}
 					}
 					if (fChangeRange)
+					{
 						hlpr.SetSelection(true);
+					}
 				}
 
 				if (!m_fShowWsLabel)

@@ -105,12 +105,12 @@ namespace LanguageExplorer.Controls.DetailControls
 					Cache.ActionHandlerAccessor,
 					() =>m_cache.DomainDataByFlid.SetInt(Object.Hvo, m_flid, i));
 			}
-			catch(FormatException error)
+			catch (FormatException error)
 			{
 				error.ToString(); // JohnT added because compiler complains not used.
 				MessageBox.Show(DetailControlsStrings.ksEnterNumber);
 			}
-			catch(Exception error)
+			catch (Exception error)
 			{
 				error.ToString(); // JohnT added because compiler complains not used.
 				MessageBox.Show(DetailControlsStrings.ksInvalidNumber);

@@ -108,9 +108,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			CheckDisposed();
 
 			var vrl = (VectorReferenceLauncher)Control;
-			vrl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider,
-				DisplayNameProperty,
-				BestWsName); // TODO: Get better default 'best ws'.
+			vrl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, DisplayNameProperty, BestWsName); // TODO: Get better default 'best ws'.
 			vrl.ConfigurationNode = ConfigurationNode;
 			vrl.ViewSizeChanged += OnViewSizeChanged;
 			var view = (VectorReferenceView)vrl.MainControl;
@@ -171,8 +169,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private VectorReferenceView GetView()
 		{
-			var vrl = Control as VectorReferenceLauncher;
-			return vrl.MainControl as VectorReferenceView;
+			return ((VectorReferenceLauncher)Control).MainControl as VectorReferenceView;
 		}
 
 		protected override void OnSizeChanged(EventArgs e)
@@ -183,8 +180,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				return;
 			}
 			m_dxLastWidth = Width; // BEFORE doing anything, actions below may trigger recursive call.
-			var vrl = (VectorReferenceLauncher)Control;
-			var view = (VectorReferenceView)vrl.MainControl;
+			var view = (VectorReferenceView)((VectorReferenceLauncher)Control).MainControl;
 			view.PerformLayout();
 			var h1 = view.RootBox.Height;
 			var hNew = Math.Max(h1, ContainingDataTree.GetMinFieldHeight()) + 3;

@@ -22,15 +22,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		public DateSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(new RichTextBox(), cache, obj, flid)
 		{
-			// JohnT: per comment at the end of LT-7073, we want the normal window color for this
-			// slice. It's also nice to be able to select and copy. Setting ReadOnly is enough to prevent
-			// editing. And setting Enabled to false prevents control of BackColor.
-			//Control.Enabled = false;
 			Control.BackColor = System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.Window);
 			Control.ForeColor = System.Drawing.SystemColors.GrayText;
 			Control.TabStop = false;
 			Control.Size = new System.Drawing.Size(128, 16);
-			((RichTextBox)Control).BorderStyle = System.Windows.Forms.BorderStyle.None;
+			((RichTextBox)Control).BorderStyle = BorderStyle.None;
 			((RichTextBox)Control).ReadOnly = true;
 			Control.GotFocus += Control_GotFocus;
 			// We need to watch the cache for changes to our property.
@@ -84,9 +80,9 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void UpdateDisplayFromDatabase()
 		{
-			var rtb = ((RichTextBox)Control);
+			var rtb = (RichTextBox)Control;
 			var dt = SilTime.GetTimeProperty(m_cache.DomainDataByFlid, Object.Hvo, m_flid);
-			rtb.Text = dt == DateTime.MinValue ? @"Date/Time not set" : string.Format(DetailControlsStrings.ksDateAndTime, dt.ToLongDateString(), dt.ToShortTimeString());
+			rtb.Text = dt == DateTime.MinValue ? "Date/Time not set" : string.Format(DetailControlsStrings.ksDateAndTime, dt.ToLongDateString(), dt.ToShortTimeString());
 		}
 
 		protected override void OnGotFocus(EventArgs e)

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -25,6 +25,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_keyLength = keyLength;
 			ListFlid = flidList;
 		}
+
 		/// <summary>
 		/// This constructor looks up the headword of the slice to get the key length.
 		/// </summary>
@@ -49,6 +50,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			return StTxtParaTags.kflidContents;
 		}
+
 		/// <summary>
 		/// Alternative context string (not used in this impl)
 		/// </summary>
@@ -56,6 +58,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			return null;
 		}
+
 		/// <summary>
 		/// True to allow the context string to be edited. It is assumed that
 		/// the context strings are real properties and the cache will handle

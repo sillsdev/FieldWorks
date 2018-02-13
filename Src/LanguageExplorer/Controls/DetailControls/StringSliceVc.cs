@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -144,12 +144,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			// DN version has some property setting, including trailing margin and RTL.
 			if (m_fRtlScript)
 			{
-				vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft,
-					(int)FwTextPropVar.ktpvEnum,
-					(int)FwTextToggleVal.kttvForceOn);
-				vwenv.set_IntProperty((int)FwTextPropType.ktptAlign,
-					(int)FwTextPropVar.ktpvEnum,
-					(int)FwTextAlign.ktalTrailing);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalTrailing);
 			}
 
 			vwenv.set_IntProperty((int)FwTextPropType.ktptPadTop, (int)FwTextPropVar.ktpvMilliPoint, 2000);
@@ -189,12 +185,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			var wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 			if (wsObj != null && wsObj.RightToLeftScript)
 			{
-				vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft,
-					(int)FwTextPropVar.ktpvEnum,
-					(int)FwTextToggleVal.kttvForceOn);
-				vwenv.set_IntProperty((int)FwTextPropType.ktptAlign,
-					(int)FwTextPropVar.ktpvEnum,
-					(int)FwTextAlign.ktalTrailing);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalTrailing);
 				m_fRtlScript = true;
 			}
 			else

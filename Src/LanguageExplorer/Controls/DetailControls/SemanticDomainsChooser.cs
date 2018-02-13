@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2012-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -87,8 +87,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void SearchSemanticDomains()
 		{
-			IEnumerable<ObjectLabel> labels = new List<ObjectLabel>();
-
 			// The FindDomainsThatMatch method returns IEnumerable<ICmSemanticDomain>
 			// based on the search string we give it.
 			var searchString = TrimmedSearchBoxText;
@@ -122,7 +120,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.OnClosing(e);
 		}
 
-		void OnOk(object sender, EventArgs e)
+		private void OnOk(object sender, EventArgs e)
 		{
 			if (SearchInProgress)
 			{
@@ -141,7 +139,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void OnSuggestClicked(object sender, EventArgs e)
 		{
-
 			IEnumerable<ICmSemanticDomain> partialMatches;
 			var semDomainsToShow = m_semdomRepo.FindDomainsThatMatchWordsIn(Sense, out partialMatches);
 			foreach (var domain in semDomainsToShow)
@@ -162,8 +159,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void OnDomainListChecked(object sender, ItemCheckedEventArgs e)
 		{
-			var domain = m_semdomRepo.GetObject((int)e.Item.Tag);
-			SemanticDomainSelectionServices.AdjustSelectedDomainList(domain, m_stylesheet, e.Item.Checked, selectedDomainsList);
+			SemanticDomainSelectionServices.AdjustSelectedDomainList(m_semdomRepo.GetObject((int)e.Item.Tag), m_stylesheet, e.Item.Checked, selectedDomainsList);
 		}
 
 		private void OnDomainTreeCheck(object sender, TreeViewEventArgs e)
@@ -172,8 +168,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-			var domain = (e.Node.Tag as ObjectLabel).Object;
-			SemanticDomainSelectionServices.AdjustSelectedDomainList(domain, m_stylesheet, e.Node.Checked, selectedDomainsList);
+			SemanticDomainSelectionServices.AdjustSelectedDomainList(((ObjectLabel)e.Node.Tag).Object, m_stylesheet, e.Node.Checked, selectedDomainsList);
 		}
 
 		private void OnDisplayUsageCheckedChanged(object sender, EventArgs e)
@@ -210,15 +205,15 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			var toolName = XmlUtils.GetOptionalAttributeValue(LinkNode, "tool");
 			var commands = new List<string>
-										{
-											"AboutToFollowLink",
-											"FollowLink"
-										};
+			{
+				"AboutToFollowLink",
+				"FollowLink"
+			};
 			var parms = new List<object>
-										{
-											null,
-											new FwLinkArgs(toolName, new Guid())
-										};
+			{
+				null,
+				new FwLinkArgs(toolName, new Guid())
+			};
 			m_publisher.Publish(commands, parms);
 			btnCancel.PerformClick();
 		}

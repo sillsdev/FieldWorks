@@ -1,7 +1,6 @@
 // Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
 
 using System;
 using System.Collections.Generic;
@@ -166,7 +165,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Keep the view width equal to the launcher width minus the button width.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
@@ -193,7 +191,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Clear any existing selection in the view when we leave the launcher.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnLeave(EventArgs e)
 		{
 			base.OnLeave(e);

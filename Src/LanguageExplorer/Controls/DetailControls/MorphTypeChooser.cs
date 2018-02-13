@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -73,7 +73,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			IEnumerable<ICmObject> candidates;
 			if (m_showAllTypesCheckBox.Checked)
 			{
-				var form = (IMoForm) m_obj;
+				var form = (IMoForm)m_obj;
 				candidates = form.GetAllMorphTypeReferenceTargetCandidates();
 			}
 			else

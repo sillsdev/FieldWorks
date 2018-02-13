@@ -14,7 +14,7 @@ using SIL.FieldWorks.Common.Widgets;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary></summary>
+	/// <summary />
 	internal class ReferenceComboBoxSlice : FieldSlice
 	{
 		protected bool m_processSelectionEvent = true;
@@ -131,7 +131,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, Object.ReferenceTargetCandidates(m_flid), displayNameProperty);
 			var currentValue = m_cache.DomainDataByFlid.get_ObjectProp(Object.Hvo, m_flid);
 			var idx = 0;
-			foreach(var ol in labels)
+			foreach (var ol in labels)
 			{
 				m_combo.Items.Add(ol);
 				if (ol.Object.Hvo == currentValue)
@@ -158,8 +158,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Event handler for selection changed in combo box.
 		/// </summary>
-		/// <param name="sender">Source control</param>
-		/// <param name="e"></param>
 		protected virtual void SelectionChanged(object sender, EventArgs e)
 		{
 			Debug.Assert(m_combo != null);
@@ -171,14 +169,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			var newValue = m_combo.SelectedItem.ToString() == NullItemLabel ? 0 : (m_combo.SelectedItem as ObjectLabel).Object.Hvo;
 
-			UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
-				string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), m_obj, () =>
+			UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName), string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), m_obj, () =>
 			{
 				m_cache.DomainDataByFlid.SetObjProp(Object.Hvo, m_flid, newValue);
 			});
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public override void RegisterWithContextHelper()
 		{
 			CheckDisposed();

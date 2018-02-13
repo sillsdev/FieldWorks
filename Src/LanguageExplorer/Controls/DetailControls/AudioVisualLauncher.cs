@@ -126,14 +126,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void HandleChooser()
 		{
-			var file = m_obj as ICmFile;
+			var file = (ICmFile)m_obj;
 			try
 			{
 				// Open the file with Media Player or whatever the user has set up.
 				var sPathname = FileUtils.ActualFilePath(file.AbsoluteInternalPath);
 				if (IsWavFile(sPathname))
 				{
-					using (System.Media.SoundPlayer simpleSound = new System.Media.SoundPlayer(sPathname))
+					using (var simpleSound = new System.Media.SoundPlayer(sPathname))
 					{
 						simpleSound.Play();
 					}

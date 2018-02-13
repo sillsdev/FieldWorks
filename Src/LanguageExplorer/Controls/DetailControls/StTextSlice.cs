@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -77,7 +77,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal void SelectAt(int ich)
 		{
-			((StTextView) Control).SelectAt(ich);
+			((StTextView)Control).SelectAt(ich);
 		}
 
 		/// <summary>
@@ -93,14 +93,12 @@ namespace LanguageExplorer.Controls.DetailControls
 				return null;
 			}
 			var sel2 = sel.EndBeforeAnchor ? sel.EndPoint(true) : sel.EndPoint(false);
-			var sel3 = sel2?.GrowToWord();
-			return sel3;
+			return sel2?.GrowToWord();
 		}
 
 		/// <summary>
 		/// Look up the selected wordform in the dictionary and display its lexical entry.
 		/// </summary>
-		/// <param name="argument"></param>
 		public bool OnLexiconLookup(object argument)
 		{
 			CheckDisposed();
@@ -120,8 +118,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			return false;
 		}
 
-		private void GetWordLimitsOfSelection(out int ichMin, out int ichLim,
-			out int hvo, out int tag, out int ws, out ITsString tss)
+		private void GetWordLimitsOfSelection(out int ichMin, out int ichLim, out int hvo, out int tag, out int ws, out ITsString tss)
 		{
 			ichMin = ichLim = hvo = tag = ws = 0;
 			tss = null;

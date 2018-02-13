@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -292,32 +292,17 @@ namespace LanguageExplorer.Controls.DetailControls
 			// To be written.
 			foreach (var slice in datatree.Slices)
 			{
-				if (slice.Key.Length < key.Length + 2)
-				{
-					continue;
-				}
-
-				if (!Slice.StartsWith(slice.Key, key))
+				if (slice.Key.Length < key.Length + 2 || !Slice.StartsWith(slice.Key, key))
 				{
 					continue;
 				}
 				var nextKeyItem = slice.Key[key.Length]; // should be hvoNewObj
-				if (!(nextKeyItem is int))
-				{
-					continue;
-				}
-
-				if ((int) nextKeyItem != hvoNewObj)
+				if (!(nextKeyItem is int) || (int)nextKeyItem != hvoNewObj)
 				{
 					continue;
 				}
 				var lastKeyNode = slice.Key[slice.Key.Length - 1] as XElement;
-				if (lastKeyNode == null)
-				{
-					continue;
-				}
-
-				if (lastKeyNode.Name != "slice")
+				if (lastKeyNode == null || lastKeyNode.Name != "slice")
 				{
 					continue;
 				}
@@ -354,7 +339,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					mss.Control.Focus();
 					break;
 				}
-				else if (slice is StTextSlice)
+				if (slice is StTextSlice)
 				{
 					var stslice = (StTextSlice)slice;
 					GetSliceReadyToFocus(stslice);

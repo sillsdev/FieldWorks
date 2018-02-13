@@ -170,7 +170,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (_isDisposed)
+			{
 				return; // No need to do it more than once.
+			}
 
 			if (disposing)
 			{

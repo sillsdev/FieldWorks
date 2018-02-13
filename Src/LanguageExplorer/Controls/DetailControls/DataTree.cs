@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -148,9 +148,9 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#region constants
 
-		/// <summary></summary>
+		/// <summary />
 		public const int HeavyweightRuleThickness = 2;
-		/// <summary></summary>
+		/// <summary />
 		public const int HeavyweightRuleAboveMargin = 10;
 
 		#endregion constants
@@ -263,9 +263,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				return; // Too early to do much;
 			}
 
-			var movedSlice = sender is Slice ? (Slice) sender
-				// sender is also a SplitContainer.
-				: (Slice) ((SplitContainer) sender).Parent; // Have to move up one parent notch to get to teh Slice.
+			var movedSlice = sender is Slice ? (Slice)sender
+				: (Slice)((SplitContainer)sender).Parent; // Have to move up one parent notch to get to the Slice.
 			if (m_currentSlice != movedSlice)
 			{
 				return; // Too early to do much;
@@ -352,7 +351,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// this should ONLY be called from slice.Dispose(). It makes sure that when a slice
 		/// is removed by disposing it directly it gets removed from the Slices collection.
 		/// </summary>
-		/// <param name="gonner"></param>
 		internal void RemoveDisposedSlice(Slice gonner)
 		{
 			Slices.Remove(gonner);
@@ -373,12 +371,12 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (Slices.Count > index)
 				{
 					// Get the one at the same index (next one after the one being removed).
-					newCurrent = Slices[index] as Slice;
+					newCurrent = Slices[index];
 				}
 				else if (Slices.Count > 0 && Slices.Count > index - 1)
 				{
 					// Get the one before index.
-					newCurrent = Slices[index - 1] as Slice;
+					newCurrent = Slices[index - 1];
 				}
 				if (newCurrent != null)
 				{
@@ -601,7 +599,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Tell new guy it is current.
 				m_currentSlice.SetCurrentState(true);
 
-				int index = m_currentSlice.IndexInContainer;
+				var index = m_currentSlice.IndexInContainer;
 				ScrollControlIntoView(m_currentSlice);
 
 				// Ensure that we can tab and shift-tab. This requires that at least one
@@ -861,17 +859,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Shows the specified object and makes the slices for the descendant object visible.
 		/// </summary>
-		/// <param name="root">The root.</param>
-		/// <param name="layoutName">Name of the layout.</param>
-		/// <param name="layoutChoiceField">The layout choice field.</param>
-		/// <param name="descendant">The descendant.</param>
-		/// <param name="suppressFocusChange">if set to <c>true</c> focus changes will be suppressed.</param>
 		public virtual void ShowObject(ICmObject root, string layoutName, string layoutChoiceField, ICmObject descendant, bool suppressFocusChange)
 		{
 			CheckDisposed();
 
-			if (m_root == root && layoutName == m_rootLayoutName && layoutChoiceField == m_layoutChoiceField &&
-			    m_descendant == descendant)
+			if (m_root == root && layoutName == m_rootLayoutName && layoutChoiceField == m_layoutChoiceField && m_descendant == descendant)
 			{
 				return;
 			}
@@ -911,9 +903,11 @@ namespace LanguageExplorer.Controls.DetailControls
 					Invalidate(); // clears any lines left over behind slices.
 					CreateSlices(true);
 					if (root != descendant && (m_currentSliceNew == null || m_currentSliceNew.IsDisposed || m_currentSliceNew.Object != descendant))
+					{
 						// if there is no saved current slice, or it is for the wrong object, set the current slice to be the first non-header
 						// slice of the descendant object
 						SetCurrentSliceNewFromObject(descendant);
+					}
 				}
 				else if (m_descendant != descendant)
 				{
@@ -1150,7 +1144,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 			{
@@ -1333,7 +1327,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				return;
 			}
 
-			using (var wc = new WaitCursor((Form)ContainingWindow))
+			using (new WaitCursor((Form)ContainingWindow))
 			{
 				try
 				{
@@ -1459,8 +1453,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					m_currentSliceNew = null;
 				}
-				//if (differentObject)
-				//	Slices.Clear();
 				var dummySlices = new List<Slice>(Slices.Count);
 				foreach (var slice in Slices)
 				{
@@ -1606,8 +1598,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 					//LT-11962 Improvements to display in Info tab.
 					// (remove the line directly below the Notebook Record header)
-					if (XmlUtils.GetOptionalBooleanAttributeValue(slice.ConfigurationNode, "skipSpacerLine", false) &&
-					    slice is SummarySlice)
+					if (XmlUtils.GetOptionalBooleanAttributeValue(slice.ConfigurationNode, "skipSpacerLine", false) && slice is SummarySlice)
 					{
 						continue;
 					}
@@ -1626,9 +1617,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						yPos += HeavyweightRuleAboveMargin;
 						//jh added
 					}
-					else if (fSameObject ||
-							 nextSlice.Weight == ObjectWeight.light ||
-							 SameSourceObject(slice, nextSlice))
+					else if (fSameObject || nextSlice.Weight == ObjectWeight.light || SameSourceObject(slice, nextSlice))
 					{
 						xPos = SliceSplitPositionBase + Math.Min(slice.LabelIndent(), nextSlice.LabelIndent());
 					}
@@ -1664,17 +1653,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Create slices for the specified object by finding a relevant template in the spec.
 		/// </summary>
-		/// <param name="obj">The object to make slices for.</param>
-		/// <param name="parentSlice">The parent slice.</param>
-		/// <param name="layoutName">Name of the layout.</param>
-		/// <param name="layoutChoiceField">The layout choice field.</param>
-		/// <param name="indent">The indent.</param>
-		/// <param name="insertPosition">The insert position.</param>
-		/// <param name="path">sequence of nodes and HVOs inside which this is nested</param>
-		/// <param name="reuseMap">map of key/slice combinations from a DataTree being refreshed. Exact matches may be
-		/// reused, and also, the expansion state of exact matches is preserved.</param>
-		/// <param name="unifyWith">If not null, this is a node to be 'unified' with the one looked up
-		/// using the layout name.</param>
 		/// <returns>
 		/// updated insertPosition for next item after the ones inserted.
 		/// </returns>
@@ -1704,8 +1682,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Get the template that should be used to display the specified object using the specified layout.
 		/// </summary>
-		public XElement GetTemplateForObjLayout(ICmObject obj, string layoutName,
-			string layoutChoiceField)
+		public XElement GetTemplateForObjLayout(ICmObject obj, string layoutName, string layoutChoiceField)
 		{
 			var classId = obj.ClassID;
 			string choiceGuidStr = null;
@@ -1832,14 +1809,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Apply a layout to an object, producing the specified slices.
 		/// </summary>
-		/// <param name="obj">The object we want a detai view of</param>
-		/// <param name="parentSlice">The parent slice.</param>
-		/// <param name="template">the 'layout' element</param>
-		/// <param name="indent">How deeply indented the tree is at this point.</param>
-		/// <param name="insertPosition">index in slices where we should insert nodes</param>
-		/// <param name="path">sequence of nodes and HVOs inside which this is nested</param>
-		/// <param name="reuseMap">map of key/slice combinations from a DataTree being refreshed. Exact matches may be
-		/// reused, and also, the expansion state of exact matches is preserved.</param>
 		/// <returns>
 		/// updated insertPosition for next item after the ones inserted.
 		/// </returns>
@@ -1916,14 +1885,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				testResult = NodeTestResult.kntrPossible;	// everything else was nothing...
 			}
-
-			//TODO: currently, we are making a custom fields show up all over the place... i.e.,
-			//	the initial algorithm here (show the custom fields for a class whenever we are applying a template of that class)
-			//		has turned out to be too simplistic, since apparently we and templates of a given class multiple times
-			//		to show different parts of the class.
-			//			if(template.Name == "template")
-			//if (fGenerateCustomFields)
-			//	testResult = AddCustomFields(obj, template, indent, ref insPos, path, reuseMap,isTestOnly);
 
 			return insPos;
 		}
@@ -2133,9 +2094,8 @@ namespace LanguageExplorer.Controls.DetailControls
 
 				switch (node.Name.LocalName)
 				{
-					default:
+					default: // Nothing to do for unrecognized element, such as deParams.
 						break;
-					// Nothing to do for unrecognized element, such as deParams.
 
 					case "slice":
 						return AddSimpleNode(path, node, reuseMap, editor, flid, obj, parentSlice, indent, ref insertPosition, fTestOnly,
@@ -2252,7 +2212,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			return NodeTestResult.kntrNothing;
 		}
 
-		void m_rch_Disposed(object sender, EventArgs e)
+		private void m_rch_Disposed(object sender, EventArgs e)
 		{
 			// m_rch may not be the same RCH that was disposed, but if it was, unregister the event and clear out the data member.
 			if (!ReferenceEquals(sender, m_rch))
@@ -2263,7 +2223,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_rch = null;
 		}
 
-		private int GetFlidFromNode(XElement node, ICmObject obj)
+		private static int GetFlidFromNode(XElement node, ICmObject obj)
 		{
 			var attrName = XmlUtils.GetOptionalAttributeValue(node, "field");
 			if ((node.Name == "if" || node.Name == "ifnot") &&
@@ -2332,9 +2292,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal void MakeGhostSlice(ArrayList path, XElement node, ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice, int flidEmptyProp, XElement caller, int indent, ref int insertPosition)
 		{
-			// It's a really bad idea to add it to the path, since it kills
-			// the code that hot swaps it, when becoming real.
-			//path.Add(node);
 			if (parentSlice != null)
 			{
 				Debug.Assert(!parentSlice.IsDisposed, "AddSimpleNode parameter 'parentSlice' is Disposed!");
@@ -2456,8 +2413,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 			}
 			else if (cobj < kInstantSliceMax ||	// This may be a little on the small side
-				m_currentObjectFlids.Contains(flid) ||
-				(!string.IsNullOrEmpty(m_currentSlicePartName) && m_currentSliceObjGuid != Guid.Empty && m_currentSliceNew == null))
+				m_currentObjectFlids.Contains(flid) || (!string.IsNullOrEmpty(m_currentSlicePartName) && m_currentSliceObjGuid != Guid.Empty && m_currentSliceNew == null))
 			{
 				//Create slices immediately
 				var contents = SetupContents(flid, obj);
@@ -2477,9 +2433,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				var contents = SetupContents(flid, obj);
 				foreach (var hvo in contents)
 				{
-					// TODO (DamienD): do we need to add the layout choice field to the monitored props for a dummy slice?
-					// LT-12302 exposed a path through here that was messed up when hvo was added before Dummy slices
-					//path.Add(hvo); // try putting this AFTER the dos creation
 					var dos = new DummyObjectSlice(indent, node, (ArrayList)(path.Clone()), obj, flid, cnt, layoutOverride, layoutChoiceField, caller) {Cache = m_cache, ParentSlice = parentSlice};
 					path.Add(hvo);
 					// This is really important. Since some slices are invisible, all must be,
@@ -2599,9 +2552,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						var parameters = new object[2];
 						parameters[0] = node;
 						parameters[1] = obj;
-						var result = mi.Invoke(typeFound,
-							System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public |
-							System.Reflection.BindingFlags.NonPublic, null, parameters, null);
+						var result = mi.Invoke(typeFound, System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic, null, parameters, null);
 						if (!(bool) result)
 						{
 							return NodeTestResult.kntrNothing;
@@ -2808,11 +2759,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				slice.CallerNode = caller;
 				slice.OverrideBackColor(XmlUtils.GetOptionalAttributeValue(node, "backColor"));
 				SetNodeWeight(node, slice);
-
 				slice.FinishInit();
-				// Now done in Slice.ctor
-				//slice.Visible = false; // don't show it until we position and size it.
-
 				InsertSliceAndRegisterWithContextHelp(insPos, slice);
 			}
 			else
@@ -3698,7 +3645,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void OnJumpToToolAndFilterAnthroItem(string linkSetupInfo, string toolToJumpTo)
 		{
-			var obj = ((CurrentSlice.Control as VectorReferenceLauncher).MainControl as VectorReferenceView).SelectedObject;
+			var obj = ((VectorReferenceView)((VectorReferenceLauncher)CurrentSlice.Control).MainControl).SelectedObject;
 			if (obj == null)
 			{
 				return;
@@ -3711,15 +3658,15 @@ namespace LanguageExplorer.Controls.DetailControls
 			additionalProps.Add(new LinkProperty("LinkSetupInfo", linkSetupInfo));
 			additionalProps.Add(new LinkProperty("HvoOfAnthroItem", hvo.ToString(CultureInfo.InvariantCulture)));
 			var commands = new List<string>
-										{
-											"AboutToFollowLink",
-											"FollowLink"
-										};
+			{
+				"AboutToFollowLink",
+				"FollowLink"
+			};
 			var parms = new List<object>
-										{
-											null,
-											link
-										};
+			{
+				null,
+				link
+			};
 			Publisher.Publish(commands, parms);
 		}
 
@@ -3900,7 +3847,7 @@ namespace LanguageExplorer.Controls.DetailControls
 #endif
 		}
 
-		bool DoPostponedFocusSlice(object parameter)
+		private bool DoPostponedFocusSlice(object parameter)
 		{
 			// If the user switches tools quickly after inserting an object, the new view may
 			// already be created before this gets called to set the focus in the old view.
@@ -3947,7 +3894,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// If possible also make the prececing summary slice visible.
 		/// Then make as many as possible of the slices which are children of that summary visible.
 		/// </summary>
-		void ScrollCurrentAndIfPossibleSectionIntoView()
+		private void ScrollCurrentAndIfPossibleSectionIntoView()
 		{
 			if (CurrentSlice == null)
 			{
@@ -3999,7 +3946,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Find the first slice in the list which is (still) one of your current, valid slices
 		/// and which is able to take focus, and give it the focus.
 		/// </summary>
-		/// <param name="closeSlices"></param>
 		internal void SelectFirstPossibleSlice(List<Slice> closeSlices)
 		{
 			foreach (var slice in closeSlices)
@@ -4092,7 +4038,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					// slice to a string type slice).
 					if (m_currentSlice is MultiStringSlice)
 					{
-						var mss = (MultiStringSlice) m_currentSlice;
+						var mss = (MultiStringSlice)m_currentSlice;
 						mss.SelectAt(mss.WritingSystemsSelectedForDisplay.First().Handle, 99999);
 					}
 					else if (m_currentSlice is StringSlice)
@@ -4246,23 +4192,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			IRnGenericRec newOwner;
 			if (Root.Owner is IRnResearchNbk)
 			{
-				var notebk = Root.Owner as IRnResearchNbk;
-				var owners = new List<IRnGenericRec>();
-				foreach (var recT in notebk.RecordsOC)
-				{
-					if (recT != Root)
-					{
-						owners.Add(recT);
-					}
-				}
-				if (owners.Count == 1)
-				{
-					newOwner = owners[0];
-				}
-				else
-				{
-					newOwner = ChooseNewOwner(owners.ToArray(), Resources.DetailControlsStrings.ksChooseOwnerOfDemotedRecord);
-				}
+				var notebk = (IRnResearchNbk)Root.Owner;
+				var owners = notebk.RecordsOC.Where(recT => recT != Root).ToList();
+				newOwner = owners.Count == 1 ? owners[0] : ChooseNewOwner(owners.ToArray(), Resources.DetailControlsStrings.ksChooseOwnerOfDemotedRecord);
 			}
 			else
 			{

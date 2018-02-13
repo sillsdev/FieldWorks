@@ -69,7 +69,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -152,7 +154,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Embedded forms should not do their own scrolling. Rather we resize them as needed, and scroll the whole
 				// DE view.
 				rs.AutoScroll = false;
-				rs.LayoutSizeChanged += this.HandleLayoutSizeChanged;
+				rs.LayoutSizeChanged += HandleLayoutSizeChanged;
 
 				// This is usually done by the DataTree method that creates and initializes slices.
 				// However, for most view slices doing it before the control is set does no good.

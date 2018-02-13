@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,7 +17,7 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// </summary>
 	internal class GenDateLauncher : ButtonLauncher
 	{
-		private System.Windows.Forms.TextBox m_genDateTextBox;
+		private TextBox m_genDateTextBox;
 
 		public GenDateLauncher()
 		{
@@ -35,7 +35,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			using (var dlg = new GenDateChooserDlg(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				dlg.Text = string.Format(DetailControlsStrings.ksFieldChooserDlgTitle, m_fieldName);
-				var x = (m_cache.DomainDataByFlid as ISilDataAccessManaged).get_GenDateProp(m_obj.Hvo, m_flid);
+				var x = m_cache.GetManagedSilDataAccess().get_GenDateProp(m_obj.Hvo, m_flid);
 				// If we don't yet have a value, make today the default.
 				if (x.IsEmpty)
 				{
@@ -51,7 +51,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				UndoableUnitOfWorkHelper.Do(string.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
 					string.Format(DetailControlsStrings.ksRedoSet, m_fieldName), m_obj, () =>
 					{
-						(m_cache.DomainDataByFlid as ISilDataAccessManaged).SetGenDate(m_obj.Hvo, m_flid, genDate);
+						m_cache.GetManagedSilDataAccess().SetGenDate(m_obj.Hvo, m_flid, genDate);
 					});
 				m_genDateTextBox.Text = genDate.ToLongString();
 			}

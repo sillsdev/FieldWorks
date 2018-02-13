@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2008-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -24,7 +24,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			m_tss = tss;
 			m_clidDst = clidDst;
-			SetOverrideMdc(new GhostDataCacheDecorator(MetaDataCache as IFwMetaDataCacheManaged));
+			SetOverrideMdc(new GhostDataCacheDecorator((IFwMetaDataCacheManaged)MetaDataCache));
 		}
 
 		public override ITsString get_StringProp(int hvo, int tag)
@@ -46,11 +46,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		// the root box, as happens during Refresh.
 		public override int get_IntProp(int hvo, int tag)
 		{
-			if (tag == (int) CmObjectFields.kflidCmObject_Class)
-			{
-				return m_clidDst;
-			}
-			return base.get_IntProp(hvo, tag);
+			return tag == (int)CmObjectFields.kflidCmObject_Class ? m_clidDst : base.get_IntProp(hvo, tag);
 		}
 	}
 }

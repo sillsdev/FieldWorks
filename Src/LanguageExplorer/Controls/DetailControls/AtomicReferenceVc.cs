@@ -42,8 +42,6 @@ namespace LanguageExplorer.Controls.DetailControls
 						vwenv.set_IntProperty((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Gray));
 						vwenv.set_IntProperty((int)FwTextPropType.ktptLeadingIndent, (int)FwTextPropVar.ktpvMilliPoint, 18000);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalRight);
-
-						//vwenv.AddString(m_cache.MakeUserTss("Click to select -->"));
 						vwenv.NoteDependency(new int[] {hvo}, new int[] {m_flid}, 1);
 					}
 					else
@@ -66,10 +64,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 					Debug.Assert(obj != null);
 					var type = obj.GetType();
-					var pi = type.GetProperty("TsName",
-						System.Reflection.BindingFlags.Instance |
-						System.Reflection.BindingFlags.Public |
-						System.Reflection.BindingFlags.FlattenHierarchy);
+					var pi = type.GetProperty("TsName", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.FlattenHierarchy);
 					if (pi != null)
 					{
 						tss = (ITsString)pi.GetValue(obj, null);
@@ -78,10 +73,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						if (!string.IsNullOrEmpty(m_displayNameProperty))
 						{
-							pi = type.GetProperty(m_displayNameProperty,
-								System.Reflection.BindingFlags.Instance |
-								System.Reflection.BindingFlags.Public |
-								System.Reflection.BindingFlags.FlattenHierarchy);
+							pi = type.GetProperty(m_displayNameProperty, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.FlattenHierarchy);
 						}
 						var ws = wsf.GetWsFromStr(obj.SortKeyWs);
 						if (ws == 0)
@@ -94,7 +86,7 @@ namespace LanguageExplorer.Controls.DetailControls
 							// handle the object type
 							if (info is string)
 							{
-								tss = TsStringUtils.MakeString((string) info, ws);
+								tss = TsStringUtils.MakeString((string)info, ws);
 							}
 							else if (info is IMultiUnicode)
 							{

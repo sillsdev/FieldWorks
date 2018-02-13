@@ -47,7 +47,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					dlg.GetDialogInfo(out entry, out fCreated);
 					if (entry == null)
 					{
-						throw new ArgumentNullException(@"Expected entry cannot be null", @"entry");
+						throw new ArgumentNullException("Expected entry cannot be null", "entry");
 					}
 					// TODO: what do to make sure it has an infl affix msa?
 					// this just assumes it will
@@ -74,18 +74,10 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private IMoMorphType GetMorphType()
 		{
-			IMoMorphType morphType = null;
 			var sMorphTypeName = (m_fPrefix ? "prefix" : "suffix");
 			var iEnglishWs = WritingSystemServices.FallbackUserWs(Cache);
-			foreach (var type in Cache.LanguageProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities)
-			{
-				if (sMorphTypeName == type.Name.get_String(iEnglishWs).Text)
-				{
-					morphType = type as IMoMorphType;
-					break;
-				}
-			}
-			return morphType;
+			return Cache.LanguageProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities
+				.Where(type => sMorphTypeName == type.Name.get_String(iEnglishWs).Text).Select(type => type as IMoMorphType).FirstOrDefault();
 		}
 	}
 }

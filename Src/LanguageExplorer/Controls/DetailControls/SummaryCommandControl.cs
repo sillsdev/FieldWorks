@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,15 +28,15 @@ namespace LanguageExplorer.Controls.DetailControls
 		List<ToolStripItem> m_buttonMenuItems = new List<ToolStripItem>();
 		bool[] m_buttonDrawnEnabled;
 		// x coord of left of first button.
-		int m_firstButtonOffset = 0;
-		int m_lastWidth = 0;
-		List<Tuple<ToolStripMenuItem, EventHandler>> m_menuItems = null; // Menu last created by OnLayout. Need consistent one for OnClick.
+		int m_firstButtonOffset;
+		int m_lastWidth;
+		List<Tuple<ToolStripMenuItem, EventHandler>> m_menuItems; // Menu last created by OnLayout. Need consistent one for OnClick.
 		Timer m_timer;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
-		private SliceContextMenuFactory SliceContextMenuFactory { get; set; }
+		private SliceContextMenuFactory SliceContextMenuFactory { get; }
 
 		internal SummaryCommandControl(SummarySlice slice, SliceContextMenuFactory sliceContextMenuFactory)
 		{

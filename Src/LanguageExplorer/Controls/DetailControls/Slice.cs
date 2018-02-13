@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -108,7 +108,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// 3. Have Slice subclasses to add ones they need (e.g., Writing Systems and its sub-menus).
 		/// 4. 'Help...'
 		/// </summary>
-		/// <param name="sliceTreeNodeContextMenuStripTuple"></param>
 		internal void AddCoreContextMenus(ref Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>> sliceTreeNodeContextMenuStripTuple)
 		{
 			ContextMenuStrip contextMenuStrip;
@@ -160,7 +159,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			SetFieldVisibility(ifdata);
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		private void NeverVisibility_Click(object sender, EventArgs eventArgs)
 		{
 			SetFieldVisibility(never);
@@ -187,7 +186,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected virtual void AddSpecialContextMenus(ContextMenuStrip topLevelContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems)
 		{ /* Nothing to do here either. Suclasses can override and add more, if desired. */ }
 
-		/// <summary></summary>
+		/// <summary />
 		public object[] Key
 		{
 			get
@@ -204,7 +203,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public IPersistenceProvider PersistenceProvider
 		{
 			get
@@ -220,7 +219,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public DataTree ContainingDataTree
 		{
 			get
@@ -240,7 +239,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public SliceTreeNode TreeNode
 		{
 			get
@@ -251,7 +250,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public LcmCache Cache
 		{
 			get
@@ -268,7 +267,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public ICmObject Object
 		{
 			get
@@ -296,7 +295,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public XElement CallerNode { get; set; }
 
 		// Review JohnT: or just make it public? Or make more delegation methods?
-		/// <summary></summary>
+		/// <summary />
 		public virtual Control Control
 		{
 			get
@@ -354,7 +353,9 @@ namespace LanguageExplorer.Controls.DetailControls
 
 				var node = ConfigurationNode?.Element("seq");
 				if (node == null)
+				{
 					return false;
+				}
 
 				var field = XmlUtils.GetOptionalAttributeValue(node, "field");
 				if (string.IsNullOrEmpty(field))
@@ -367,7 +368,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				Debug.Assert(flid != 0); // current field should have ID!
 				//at this point we are not even thinking about showing reference sequences in the DataTree
 				//so I have not dealt with that
-				return (GetFieldType(flid) == (int)CellarPropertyType.OwningSequence);
+				return GetFieldType(flid) == (int)CellarPropertyType.OwningSequence;
 			}
 		}
 
@@ -425,11 +426,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-#endregion Properties
+		#endregion Properties
 
-#region Construction and initialization
+		#region Construction and initialization
 
-		/// <summary></summary>
+		/// <summary />
 		public Slice()
 		{
 			// Create a SplitContainer to hold the two (or one control.
@@ -448,7 +449,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			Visible = false;
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public Slice(Control ctrlT)
 			: this()
 		{
@@ -485,11 +486,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			TakeFocus(false);
 		}
 
-#endregion Construction and initialization
+		#endregion Construction and initialization
 
-#region Miscellaneous UI methods
+		#region Miscellaneous UI methods
 
-		/// <summary></summary>
+		/// <summary />
 		public virtual void RegisterWithContextHelper()
 		{
 			CheckDisposed();
@@ -515,8 +516,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				CheckDisposed();
 
 				//if the idea has not been added, try using the "field" attribute as the key
-				return XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "id")
-					?? XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "field");
+				return XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "id") ?? XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "field");
 			}
 		}
 
@@ -552,11 +552,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			CheckDisposed();
 		}
 
-#endregion Miscellaneous UI methods
+		#endregion Miscellaneous UI methods
 
-#region events, clicking, etc.
+		#region events, clicking, etc.
 
-		/// <summary></summary>
+		/// <summary />
 		public void OnTreeNodeClick(object sender, EventArgs args)
 		{
 			CheckDisposed();
@@ -564,7 +564,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			TakeFocus();
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public void TakeFocus()
 		{
 			CheckDisposed();
@@ -744,7 +744,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 		protected SliceContextMenuFactory SliceContextMenuFactory { get; private set; }
 
-		/// <summary></summary>
+		/// <summary />
 		public virtual void Install(DataTree parentDataTree)
 		{
 			CheckDisposed();
@@ -800,11 +800,11 @@ namespace LanguageExplorer.Controls.DetailControls
 				// as they then can be shrunk so narrow as to completely cover up their label.
 				m_splitContainer.Panel1MinSize = (20 * (Indent + 1)) + 20;
 				m_splitContainer.Panel2MinSize = 0; // min size of right pane
-													// This makes the splitter essentially invisible.
+				// This makes the splitter essentially invisible.
 				m_splitContainer.BackColor = Color.FromKnownColor(KnownColor.Window); //to make it invisible
-				treeNode.MouseEnter += treeNode_MouseEnter;
-				treeNode.MouseLeave += treeNode_MouseLeave;
-				treeNode.MouseHover += treeNode_MouseEnter;
+				treeNode.MouseEnter += TreeNodeMouseEnter;
+				treeNode.MouseLeave += TreeNodeMouseLeave;
+				treeNode.MouseHover += TreeNodeMouseEnter;
 			}
 			else
 			{
@@ -815,9 +815,9 @@ namespace LanguageExplorer.Controls.DetailControls
 				m_splitContainer.SplitterDistance = LabelIndent();
 				m_splitContainer.IsSplitterFixed = true;
 				// Just in case it was previously installed with a different label.
-				treeNode.MouseEnter -= treeNode_MouseEnter;
-				treeNode.MouseLeave -= treeNode_MouseLeave;
-				treeNode.MouseHover -= treeNode_MouseEnter;
+				treeNode.MouseEnter -= TreeNodeMouseEnter;
+				treeNode.MouseLeave -= TreeNodeMouseLeave;
+				treeNode.MouseHover -= TreeNodeMouseEnter;
 			}
 
 			int newHeight;
@@ -825,15 +825,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (mainControl != null)
 			{
 				// Has SliceTreeNode and Control.
-
 				// Set stylesheet on every view-based child control that doesn't already have one.
 				SetViewStylesheet(mainControl, parentDataTree);
 				mainControl.AccessibleName = string.IsNullOrEmpty(Label) ? "Slice_unknown" : Label;
-				// By default the height of the slice comes from the height of the embedded
-				// control.
-				// Just store the new height for now, as actually settig it, will cause events,
-				// and the slice has no parent yet, which will be bad for those event handlers.
-				//this.Height = Math.Max(Control.Height, LabelHeight);
 				newHeight = Math.Max(mainControl.Height, LabelHeight);
 				mainControl.Dock = DockStyle.Fill;
 				m_splitContainer.FixedPanel = FixedPanel.Panel1;
@@ -841,8 +835,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			else
 			{
 				// Has SliceTreeNode but no Control.
-
-				// LexReferenceMultiSlice has no control, as of 12/30/2006.
 				newHeight = LabelHeight;
 				m_splitContainer.Panel2Collapsed = true;
 				m_splitContainer.FixedPanel = FixedPanel.Panel2;
@@ -871,12 +863,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_splitContainer.ResumeLayout();
 		}
 
-		void treeNode_MouseLeave(object sender, EventArgs e)
+		private void TreeNodeMouseLeave(object sender, EventArgs e)
 		{
 			Highlighted = false;
 		}
 
-		void treeNode_MouseEnter(object sender, EventArgs e)
+		private void TreeNodeMouseEnter(object sender, EventArgs e)
 		{
 			Highlighted = true;
 		}
@@ -920,8 +912,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			// LT-18750 Calling OnSizeChanged in the base class sometimes resets the AutoScrollPosition to the top of the Slice (Windows).
 			// When m_splitter.Size is changed, it also has the same effect. It is possible that ScrollControlIntoView() is called
 			// in a method subscribed to an event in the base class, but my investigation was unsuccessful.
-			Point oldPoint = ContainingDataTree.AutoScrollPosition;
-			bool scrollChanged = false;
+			var oldPoint = ContainingDataTree.AutoScrollPosition;
+			var scrollChanged = false;
 			base.OnSizeChanged(e);
 			if (ContainingDataTree.AutoScrollPosition != oldPoint)
 			{
@@ -933,7 +925,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_splitContainer.Size = Size;
 			if (scrollChanged)
 			{
-				bool verticalScrollChangedCorrectly = ContainingDataTree.AutoScrollPosition.Y - oldPoint.Y == -verticalAdjustment;
+				var verticalScrollChangedCorrectly = ContainingDataTree.AutoScrollPosition.Y - oldPoint.Y == -verticalAdjustment;
 				if (!verticalScrollChangedCorrectly)
 				{
 					// Set the AutoScrollPosition to scroll the distance reflecting the change to the SplitContainer
@@ -949,13 +941,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			// (since this can get called from OnSizeChanged of a child window, I think) and it only
 			// works to layout the splitter afterwards? Anyway this seems to work...test carefully if you
 			// think of taking it out.
-			if (m_splitContainer.Panel2.Height != this.Height)
+			if (m_splitContainer.Panel2.Height != Height)
 			{
 				Application.Idle += LayoutSplitter;
 			}
 		}
 
-		void LayoutSplitter(object sender, EventArgs e)
+		private void LayoutSplitter(object sender, EventArgs e)
 		{
 			Application.Idle -= LayoutSplitter;
 			if (m_splitContainer != null && !IsDisposed)
@@ -968,7 +960,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// If we don't have a splitter (because no label), set the width of the
 		/// tree node directly; the other node's size is set by being docked 'fill'.
 		/// </summary>
-		/// <param name="levent"></param>
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
 			CheckDisposed();
@@ -1001,9 +992,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-#region IDisposable override
+		#region IDisposable override
 
-		/// <summary></summary>
+		/// <summary />
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
@@ -1057,7 +1048,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				// We could take care of it here by asking the DT to remove it,
 				// but I (RandyR) am inclined to not do that, since
 				// only the DT is really authorized to dispose its slices.
-
 				m_fontLabel?.Dispose();
 			}
 
@@ -1241,7 +1231,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public string Abbreviation
 		{
 			get
@@ -1303,13 +1293,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public string GetSliceHelpTopicID()
 		{
 			return GetHelpTopicID(HelpTopicID, "khtpField");
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public string GetChooserHelpTopicID()
 		{
 			return GetHelpTopicID(ChooserDlgHelpTopicID, "khtpChoose");
@@ -1415,7 +1405,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				generatedHelpTopicID = helpTopicPrefix + "-" + toolChoice + "-" + Object.SortKey + "-" + fieldName;
 			}
-
 			if (helpTopicIsValid(generatedHelpTopicID))
 			{
 				return generatedHelpTopicID;
@@ -1481,7 +1470,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			return !string.IsNullOrEmpty(actualHelpString);
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		private void DrawLabel(int x, int y, Graphics gr, int clipWidth)
 		{
 			CheckDisposed();
@@ -1697,11 +1686,8 @@ namespace LanguageExplorer.Controls.DetailControls
 
 				var sClassName = Object.ClassName;
 				return
-					(ConfigurationNode.Element("node") != null ||
-					("PhCode" == sClassName) || // This is a hack to get one case to work that should be handled by the todo in the next comment (hab 2004.01.16 )
-					false)	// todo: this should tell if the attr (not the nested one) is to a basic type or a cmobject
-					&&
-					ConfigurationNode.Element("seq") == null &&
+					(ConfigurationNode.Element("node") != null || ("PhCode" == sClassName))	// todo: this should tell if the attr (not the nested one) is to a basic type or a cmobject
+					&& ConfigurationNode.Element("seq") == null &&
 					//MoAlloAdhocProhib.adjacency is the top-level node, but it's not really an object that you should be able to delete
 					Object != ContainingDataTree.Root;
 			}
@@ -1821,10 +1807,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				var hvoItem = (int)(m_key[inode + 1]);
 				var attrName = element.Attribute("field").Value;
 				var cache = ContainingDataTree.Cache;
-				flid = cache.DomainDataByFlid.MetaDataCache.GetFieldId2(
-					cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoItem).Owner.ClassID,
-					attrName,
-					true);
+				flid = cache.DomainDataByFlid.MetaDataCache.GetFieldId2(cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoItem).Owner.ClassID, attrName, true);
 				return true;
 			}
 			return false;
@@ -1869,11 +1852,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// do an insertion
 		/// </summary>
-		/// <remarks> called by the containing environment in response to a user command.</remarks>
 		/// <param name="fieldName">name of field to create in</param>
 		/// <param name="className">class of object to create</param>
 		/// <param name="ownerClassName">class of expected owner. If the current slice's object is not
 		/// this class (or a subclass), look for a containing object that is.</param>
+		/// <remarks> called by the containing environment in response to a user command.</remarks>
 		internal void HandleInsertCommand(string fieldName, string className, string ownerClassName)
 		{
 			CheckDisposed();
@@ -1943,8 +1926,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </returns>
 		private bool InsertObjectIfPossible(int newObjectClassId, int ownerClassId, string fieldName, Slice slice)
 		{
-			if ((ownerClassId <= 0 || !IsOrInheritsFrom((slice.Object.ClassID), ownerClassId)) && slice.Object != Object &&
-			    !slice.Object.Equals(ContainingDataTree.Root))
+			if ((ownerClassId <= 0 || !IsOrInheritsFrom((slice.Object.ClassID), ownerClassId)) && slice.Object != Object && !slice.Object.Equals(ContainingDataTree.Root))
 			{
 				return false;
 			}
@@ -2595,8 +2577,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 
 			// Otherwise, we need at least two vector items to be able to split off this one.
-			var vectorSize = Cache.DomainDataByFlid.get_VecSize(owner.Hvo, flid);
-			return (vectorSize >= 2);
+			return Cache.DomainDataByFlid.get_VecSize(owner.Hvo, flid) >= 2;
 		}
 
 		protected override void OnValidating(System.ComponentModel.CancelEventArgs e)
@@ -2649,8 +2630,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				var undoMsg = $"Undo {label}";
 				var redoMsg = $"Redo {label}";
-				UndoableUnitOfWorkHelper.Do(undoMsg, redoMsg, m_cache.ActionHandlerAccessor,
-					() => { ((ICloneableCmObject)origObj).SetCloneProperties(newObj); });
+				UndoableUnitOfWorkHelper.Do(undoMsg, redoMsg, m_cache.ActionHandlerAccessor, () => { ((ICloneableCmObject)origObj).SetCloneProperties(newObj); });
 			}
 			else
 			{
@@ -2658,12 +2638,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public virtual void HandleEditCommand()
 		{
 			CheckDisposed();
-
-			// Implemented as needed by subclasses.
 		}
 
 		/// <summary>
@@ -2677,7 +2655,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Implemented as needed by subclasses.
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public virtual bool GetCanEditNow()
 		{
 			CheckDisposed();
@@ -2726,11 +2704,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected void ReplacePartWithNewAttribute(string attr, string attrValueNew)
 		{
 			XElement newPartref;
-			var newLayout = Inventory.MakeOverride(
-				Key,
-				attr,
-				attrValueNew,
-				LayoutCache.LayoutVersionNumber, out newPartref);
+			var newLayout = Inventory.MakeOverride(Key, attr, attrValueNew, LayoutCache.LayoutVersionNumber, out newPartref);
 			Inventory.GetInventory("layouts", m_cache.ProjectId.Name).PersistOverrideElement(newLayout);
 			var dataTree = ContainingDataTree;
 			var rootKey = Key[0] as XElement;
@@ -2849,7 +2823,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// This one handles the side effects of redrawing the tree node, when needed.
 		/// Another one on DataTree takes care of updating the SplitterDisance on all the other slices.
 		/// </summary>
-		void mySplitterMoved(object sender, SplitterEventArgs e)
+		private void mySplitterMoved(object sender, SplitterEventArgs e)
 		{
 			if (!m_splitContainer.Panel1Collapsed)
 			{
@@ -2911,6 +2885,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Get the ISubscriber.
 		/// </summary>
 		public ISubscriber Subscriber { get; private set; }
+
+		#endregion
+
+		#region Implementation of IFlexComponent
 
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.

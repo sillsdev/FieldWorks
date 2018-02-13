@@ -16,8 +16,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			CheckDisposed();
 			base.FinishInit();
-			var arl = (VectorReferenceLauncher)Control;
-			var view = (VectorReferenceView)arl.MainControl;
+			var view = (VectorReferenceView)((VectorReferenceLauncher)Control).MainControl;
 			view.FinishInit(ConfigurationNode);
 		}
 	}

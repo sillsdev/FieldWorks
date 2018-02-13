@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,14 +23,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		// These are slices looked up by type name. The same ones as m_table. This supports reuse for different objects.
 		private Dictionary<string, List<Slice>> m_slicesToReuse;
 
-		/// <summary></summary>
+		/// <summary />
 		public ObjSeqHashMap()
 		{
 			m_table = new Hashtable(new ListHashCodeProvider());
 			m_slicesToReuse = new Dictionary<string, List<Slice>>();
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public IList this[IList keyList]
 		{
 			get
@@ -40,7 +40,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return new object[0];
 				}
-				return (IList) result;
+				return (IList)result;
 			}
 		}
 
@@ -90,7 +90,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			reusableSlices.Add(obj);
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public void ClearUnwantedPart(bool differentObject)
 		{
 			if (differentObject)

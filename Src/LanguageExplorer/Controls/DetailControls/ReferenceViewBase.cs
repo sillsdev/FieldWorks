@@ -129,7 +129,7 @@ Debug.WriteLine("ReferenceViewBase.HandleRightClickOnObject: hvo is 0, so return
 #endif
 				return false;
 			}
-			using (ReferenceBaseUi ui = GetCmObjectUiForRightClickMenu(hvo))
+			using (var ui = GetCmObjectUiForRightClickMenu(hvo))
 			{
 #if TESTMS
 Debug.WriteLine("Created ReferenceBaseUi");

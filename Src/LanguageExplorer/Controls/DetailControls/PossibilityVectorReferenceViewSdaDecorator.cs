@@ -19,9 +19,9 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// </summary>
 	internal class PossibilityVectorReferenceViewSdaDecorator : DomainDataByFlidDecoratorBase
 	{
-		private LcmCache Cache { get; set; }
-		private string DisplayNameProperty { get; set; }
-		private string DisplayWs { get; set; }
+		private LcmCache Cache { get; }
+		private string DisplayNameProperty { get; }
+		private string DisplayWs { get; }
 		private readonly Dictionary<int, ITsString> m_strings;
 		/// <summary>
 		/// The empty string displayed (hopefully temporarily) for any object we don't have a fake string for.

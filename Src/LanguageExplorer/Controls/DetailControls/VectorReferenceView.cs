@@ -262,7 +262,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected virtual void HandleKeyPress(KeyPressEventArgs e)
 		{
-			if (e.KeyChar != (char) Keys.Back)
+			if (e.KeyChar != (char)Keys.Back)
 			{
 				return;
 			}
@@ -385,7 +385,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// The default AddHiddenItems appends hidden items to the end.
 		/// </summary>
-		/// <param name="items"></param>
 		protected virtual void AddHiddenItems(List<ICmObject> items)
 		{
 			items.AddRange(GetHiddenItemList()); //add the parent (invisible) reference and any other invisibles back into the collection
@@ -396,9 +395,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected virtual List<ICmObject> GetVisibleItemList()
 		{
-			var sda = m_rootb.DataAccess as ISilDataAccessManaged;
 			var objRepo = Cache.ServiceLocator.ObjectRepository;
-			return sda?.VecProp(m_rootObj.Hvo, m_rootFlid).Where(i => objRepo.GetObject(i) != null).Select(i => objRepo.GetObject(i)).ToList();
+			return (m_rootb.DataAccess as ISilDataAccessManaged)?.VecProp(m_rootObj.Hvo, m_rootFlid).Where(i => objRepo.GetObject(i) != null).Select(i => objRepo.GetObject(i)).ToList();
 		}
 		/// <summary>
 		/// This method will return the list of items in this vector which are hidden from the user, the base class version returns an empty list.
@@ -544,10 +542,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				// get its real property object via its name (like DoNotPublishIn)
 				if (visField != null)
 				{
-					// Get class id: likely LexEntry or LexSense
-					var clsid = m_rootObj.ClassID;
-					var flidVirt = Cache.MetaDataCacheAccessor.GetFieldId2(clsid, field, true);
-					//var flidReal = Cache.MetaDataCacheAccessor.GetFieldId2(clsid, visField, true);
 					// remove the item from the virtual list property - thus adding it to the real property
 					RemoveObjectFromEditableList(ihvo, undoText, redoText);
 				}
@@ -567,9 +561,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				startHeight = m_rootb.Height;
 			}
 
-			UndoableUnitOfWorkHelper.Do(undoText, redoText, m_rootObj,
-										() => m_cache.DomainDataByFlid.Replace(
-											m_rootObj.Hvo, m_rootFlid, ihvo, ihvo + 1, new int[0], 0));
+			UndoableUnitOfWorkHelper.Do(undoText, redoText, m_rootObj, () => m_cache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, ihvo, ihvo + 1, new int[0], 0));
 			if (m_rootb != null)
 			{
 				CheckViewSizeChanged(startHeight, m_rootb.Height);

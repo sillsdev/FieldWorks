@@ -41,7 +41,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					vwenv.AddStringProp(PossibilityVectorReferenceView.kflidFake, this);
 					break;
 				default:
-					throw new ArgumentException(@"Don't know what to do with the given frag.", nameof(frag));
+					throw new ArgumentException("Don't know what to do with the given frag.", nameof(frag));
 			}
 		}
 

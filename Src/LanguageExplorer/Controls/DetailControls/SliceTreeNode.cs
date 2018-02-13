@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,11 +13,10 @@ using SIL.LCModel.Core.Cellar;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
-using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary></summary>
+	/// <summary />
 	public class SliceTreeNode : UserControl
 	{
 		#region constants
@@ -128,12 +127,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			// Todo JohnT: verify that m_slice is the last slice in the representation of flid.
 			var cache = m_myParentSlice.ContainingDataTree.Cache;
-			UndoableUnitOfWorkHelper.Do("Undo Move Item", "Redo Move Item",
-				cache.ActionHandlerAccessor, () =>
-				{
-					cache.DomainDataByFlid.MoveOwnSeq(odi.HvoSrcOwner, odi.FlidSrc, odi.IhvoSrcStart,
-						odi.IhvoSrcEnd, hvoDstOwner, flidDst, ihvoDstStart);
-				});
+			UndoableUnitOfWorkHelper.Do("Undo Move Item", "Redo Move Item", cache.ActionHandlerAccessor, () =>
+			{
+				cache.DomainDataByFlid.MoveOwnSeq(odi.HvoSrcOwner, odi.FlidSrc, odi.IhvoSrcStart,
+					odi.IhvoSrcEnd, hvoDstOwner, flidDst, ihvoDstStart);
+			});
 		}
 
 		/// <summary>
@@ -211,7 +209,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (hvoDstOwner == odi.HvoSrcOwner)
 				{
 					// Same property of same object. If it's a collection, disable.
-					CellarPropertyType fieldType = (CellarPropertyType)cache.DomainDataByFlid.MetaDataCache.GetFieldType((int)flidDst);
+					var fieldType = (CellarPropertyType)cache.DomainDataByFlid.MetaDataCache.GetFieldType((int)flidDst);
 					// We can't drag it to the position it's already at; that's no change. We also can't drag it
 					// to the position one greater: that amounts to trying to place it after itself, which (after
 					// removing it from before itself) amounts to a no-operation.
@@ -286,7 +284,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 			{
@@ -310,7 +308,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.Dispose( disposing );
 		}
 
-		void HandlePaint(object sender, PaintEventArgs pea)
+		private void HandlePaint(object sender, PaintEventArgs pea)
 		{
 			// Do nothing if invisible. Don't know why the framework even
 			// calls us if invisible, but it does, and if we call NextFieldAtIndent

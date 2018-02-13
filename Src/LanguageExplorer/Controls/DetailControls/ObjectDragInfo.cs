@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -36,7 +36,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			FlidSrc = (int)info.GetValue("FlidSrc", typeof(int));
 			IhvoSrcStart = (int)info.GetValue("IhvoSrcStart", typeof(int));
 			IhvoSrcEnd = (int)info.GetValue("IhvoSrcEnd", typeof(int));
-			m_label = (String)info.GetValue("label", typeof(string));
+			m_label = (string)info.GetValue("label", typeof(string));
 		}
 
 		/// <summary>Serialization function.</summary>

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -24,10 +24,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Create a ghost string slice that pretends to be property flid of the missing object
 		/// </summary>
-		/// <param name="obj">The obj.</param>
-		/// <param name="flid">the empty object flid, which this slice is displaying.</param>
-		/// <param name="nodeObjProp">the 'obj' or 'seq' element that requested the ghost</param>
-		/// <param name="cache">The cache.</param>
 		internal GhostStringSlice(ICmObject obj, int flid, XElement nodeObjProp, LcmCache cache)
 			: base(new GhostStringSliceView(obj.Hvo, flid, nodeObjProp, cache), obj, flid)
 		{

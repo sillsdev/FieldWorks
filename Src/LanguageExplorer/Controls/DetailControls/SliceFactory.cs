@@ -162,12 +162,12 @@ namespace LanguageExplorer.Controls.DetailControls
 					var fShowWsLabel = XmlUtils.GetOptionalBooleanAttributeValue(node, "labelws", false);
 					if (fShowWsLabel)
 					{
-						(slice as StringSlice).ShowWsLabel = true;
+						((StringSlice)slice).ShowWsLabel = true;
 					}
 					var wsEmpty = GetWs(cache, flexComponentParameters.PropertyTable, node, "wsempty");
 					if (wsEmpty != 0)
 					{
-						(slice as StringSlice).DefaultWs = wsEmpty;
+						((StringSlice)slice).DefaultWs = wsEmpty;
 					}
 					break;
 				}
@@ -228,7 +228,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 					catch (Exception error)
 					{
-						slice = new LiteralMessageSlice(String.Format(DetailControlsStrings.ksImageSliceFailed, error.Message));
+						slice = new LiteralMessageSlice(string.Format(DetailControlsStrings.ksImageSliceFailed, error.Message));
 					}
 					break;
 				}
@@ -378,8 +378,8 @@ namespace LanguageExplorer.Controls.DetailControls
 					var fwCodeDir = FwDirectoryFinder.CodeDirectory;
 					var editorBitmapRelativePath = "xde/" + editor + ".bmp";
 					slice = File.Exists(Path.Combine(fwCodeDir, editorBitmapRelativePath))
-						? (Slice) new ImageSlice(fwCodeDir, editorBitmapRelativePath)
-						: new LiteralMessageSlice(String.Format(DetailControlsStrings.ksBadEditorType, editor));
+						? (Slice)new ImageSlice(fwCodeDir, editorBitmapRelativePath)
+						: new LiteralMessageSlice(string.Format(DetailControlsStrings.ksBadEditorType, editor));
 					break;
 				}
 			}
@@ -409,7 +409,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				return null;
 			}
 			Slice slice = null;
-			var type = (CellarPropertyType) mdc.GetFieldType(flid);
+			var type = (CellarPropertyType)mdc.GetFieldType(flid);
 			switch (type)
 			{
 				case CellarPropertyType.String:

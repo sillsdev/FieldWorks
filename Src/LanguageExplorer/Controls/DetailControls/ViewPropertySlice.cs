@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,15 +7,15 @@ using SIL.FieldWorks.Common.RootSites;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary></summary>
+	/// <summary />
 	internal class ViewPropertySlice : ViewSlice
 	{
-		/// <summary></summary>
+		/// <summary />
 		public ViewPropertySlice()
 		{
 		}
 
-		/// <summary></summary>
+		/// <summary />
 		public ViewPropertySlice(RootSite ctrlT, ICmObject obj, int flid): base(ctrlT)
 		{
 			Reuse(obj, flid);

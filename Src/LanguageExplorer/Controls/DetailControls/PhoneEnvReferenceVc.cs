@@ -7,7 +7,6 @@ using System.Diagnostics;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
-using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -35,7 +34,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					vwenv.CloseParagraph();
 					break;
 				default:
-					throw new ArgumentException(@"Don't know what to do with the given frag.", nameof(frag));
+					throw new ArgumentException("Don't know what to do with the given frag.", nameof(frag));
 			}
 		}
 

@@ -58,8 +58,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				var arl = (AtomicReferenceLauncher)Control;
-				arl.ReferenceChanged -= OnReferenceChanged;
+				((AtomicReferenceLauncher)Control).ReferenceChanged -= OnReferenceChanged;
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -72,8 +71,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public override void FinishInit()
 		{
 			base.FinishInit();
-			var arl = (AtomicReferenceLauncher)Control;
-			arl.ReferenceChanged += OnReferenceChanged;
+			((AtomicReferenceLauncher)Control).ReferenceChanged += OnReferenceChanged;
 		}
 
 		#region Event handlers
@@ -95,7 +93,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			Debug.Assert(Object is IMoInflAffMsa);
 
 			var idxSender = ContainingDataTree.Slices.IndexOf(this);
-			var otherFlid = MoInflAffMsaTags.kflidSlots;
+			const int otherFlid = MoInflAffMsaTags.kflidSlots;
 			Slice otherSlice = null;
 			int idxOther;
 
@@ -139,7 +137,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				Debug.Assert(otherControl != null);
 			}
 
-			var msa = Object as IMoInflAffMsa;
+			var msa = (IMoInflAffMsa)Object;
 			IMoInflAffixSlot slot = null;
 			if (msa.SlotsRC.Count > 0)
 			{

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -64,8 +64,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		int m_tag; // The (typically real) property we're editing.
 		int m_virtualTagObj = 0; // The virtual property corresponding to m_tag.
 		int m_clid; // class that has property m_tag (and to which m_virtualTagObj is added).
-		string m_className; // name of m_clid.
-		string m_fieldName;
 		readonly CellarPropertyType m_type; // the type (refAtomic, refSeq, or refColl) of m_tag
 		ISilDataAccess m_sda;  // m_cache.DomainDataByFlid; use separate var in interests of minimising need for LcmCache.
 		int m_taTagName = 0; // Virtual prop for type-ahead name property.
@@ -89,8 +87,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_tag = tag;
 			var mdc = cache.DomainDataByFlid.MetaDataCache;
 			m_clid = mdc.GetOwnClsId(m_tag);
-			m_className = mdc.GetClassName(m_clid);
-			m_fieldName = mdc.GetFieldName(m_tag);
 			m_type = (CellarPropertyType)(mdc.GetFieldType(m_tag) & (int)CellarPropertyTypeFilter.VirtualMask);
 			m_sda = cache.DomainDataByFlid;
 			Cache = cache;
@@ -129,10 +125,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		/// <summary>
 		/// Receives a notification that the selection in the root box has changed.
-		///
 		/// </summary>
-		/// <param name="rootb"></param>
-		/// <param name="sel"></param>
 		public void SelectionChanged(IVwRootBox rootb, IVwSelection sel)
 		{
 			if (m_fInSelectionChanged)
@@ -455,8 +448,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				// No match...underline string in red squiggle.
 				var bldr = tssLookup.GetBldr();
-				bldr.SetIntPropValues(0, tssLookup.Length, (int) FwTextPropType.ktptUnderline, (int) FwTextPropVar.ktpvEnum, (int) FwUnderlineType.kuntSquiggle);
-				bldr.SetIntPropValues(0, tssLookup.Length, (int) FwTextPropType.ktptUnderColor, (int) FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Red));
+				bldr.SetIntPropValues(0, tssLookup.Length, (int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvEnum, (int)FwUnderlineType.kuntSquiggle);
+				bldr.SetIntPropValues(0, tssLookup.Length, (int)FwTextPropType.ktptUnderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Red));
 				tssLookup = bldr.GetString();
 			}
 

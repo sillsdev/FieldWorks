@@ -38,10 +38,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (sense == null)
 			{
 				Debug.Assert(sense != null, "This chooser can only be applied to senses");
-				// ReSharper disable HeuristicUnreachableCode
-				//reachable in release mode you usually intelligent program.
 				return;
-				// ReSharper restore HeuristicUnreachableCode
 			}
 			var linkCommandNode = m_configurationNode.XPathSelectElement("descendant::chooserLink");
 			using (var chooser = new SemanticDomainsChooser

@@ -100,10 +100,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 					Debug.Assert(obj != null);
 					var type = obj.GetType();
-					var pi = type.GetProperty("TsName",
-						System.Reflection.BindingFlags.Instance |
-						System.Reflection.BindingFlags.Public |
-						System.Reflection.BindingFlags.FlattenHierarchy);
+					var pi = type.GetProperty("TsName", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.FlattenHierarchy);
 					if (pi != null)
 					{
 						tss = (ITsString)pi.GetValue(obj, null);
@@ -112,10 +109,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						if (!string.IsNullOrEmpty(m_displayNameProperty))
 						{
-							pi = type.GetProperty(m_displayNameProperty,
-								System.Reflection.BindingFlags.Instance |
-								System.Reflection.BindingFlags.Public |
-								System.Reflection.BindingFlags.FlattenHierarchy);
+							pi = type.GetProperty(m_displayNameProperty, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.FlattenHierarchy);
 						}
 						var ws = wsf.GetWsFromStr(obj.SortKeyWs);
 						if (ws == 0)
@@ -154,7 +148,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 					break;
 				default:
-					throw new ArgumentException(@"Don't know what to do with the given frag.", nameof(frag));
+					throw new ArgumentException("Don't know what to do with the given frag.", nameof(frag));
 			}
 		}
 

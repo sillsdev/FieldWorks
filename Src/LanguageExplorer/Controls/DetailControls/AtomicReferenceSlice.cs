@@ -95,9 +95,8 @@ namespace LanguageExplorer.Controls.DetailControls
 					view.ViewSizeChanged -= OnViewSizeChanged;
 				}
 			}
-			m_sda = null;
-
 			// Dispose unmanaged resources here, whether disposing is true or false.
+			m_sda = null;
 
 			base.Dispose(disposing);
 		}
@@ -109,9 +108,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.FinishInit();
 
 			var arl = (AtomicReferenceLauncher)Control;
-			arl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider,
-				DisplayNameProperty,
-				BestWsName); // TODO: Get better default 'best ws'.
+			arl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, DisplayNameProperty, BestWsName); // TODO: Get better default 'best ws'.
 			arl.ConfigurationNode = ConfigurationNode;
 			var deParams = ConfigurationNode.Element("deParams");
 			if (XmlUtils.GetOptionalBooleanAttributeValue(deParams, "changeRequiresRefresh", false))

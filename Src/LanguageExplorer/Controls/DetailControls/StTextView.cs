@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,7 +20,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Gets or sets the StText object.
 		/// </summary>
-		/// <value>The StText object.</value>
 		public IStText StText
 		{
 			get
@@ -131,7 +130,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			CheckDisposed();
 
 			if (m_cache == null || DesignMode)
+			{
 				return;
+			}
 
 			base.MakeRoot();
 

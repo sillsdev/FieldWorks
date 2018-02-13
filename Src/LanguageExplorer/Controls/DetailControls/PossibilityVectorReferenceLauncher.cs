@@ -37,9 +37,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.Dispose(disposing);
 		}
 
-		public override void Initialize(LcmCache cache, ICmObject obj, int flid,
-			string fieldName, IPersistenceProvider persistProvider,
-			string displayNameProperty, string displayWs)
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
@@ -56,11 +54,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Clear any existing selection in the view when we leave the launcher.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnLeave(EventArgs e)
 		{
 			base.OnLeave(e);
-			if (m_vectorRefView != null && m_vectorRefView.RootBox != null)
+			if (m_vectorRefView?.RootBox != null)
 			{
 				var possibilities = m_autoComplete.Possibilities.ToArray();
 				if (possibilities.Length == 1)
@@ -74,12 +71,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						}
 						else
 						{
-							var newTargets = new List<ICmObject>();
-							foreach (var target in Targets)
-							{
-								newTargets.Add(target == selected ? possibilities[0] : target);
-							}
-							SetItems(newTargets);
+							SetItems(Targets.Select(target => target == selected ? possibilities[0] : target).ToList());
 						}
 					}
 				}
@@ -116,12 +108,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			else if (poss != curObj)
 			{
-				var newTargets = new List<ICmObject>();
-				foreach (var target in Targets)
-				{
-					newTargets.Add(target == curObj ? poss : target);
-				}
-				SetItems(newTargets);
+				SetItems(Targets.Select(target => target == curObj ? poss : target).ToList());
 			}
 			else
 			{

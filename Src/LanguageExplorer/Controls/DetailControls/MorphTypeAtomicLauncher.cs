@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -38,8 +38,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Get the SimpleListChooser.
 		/// </summary>
-		/// <param name="labels">List of objects to show in the chooser.</param>
-		/// <returns>The SimpleListChooser.</returns>
 		protected new MorphTypeChooser GetChooser(IEnumerable<ObjectLabel> labels)
 		{
 			var sShowAllTypes = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeShowAllTypes", m_ksPath);
@@ -57,15 +55,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void HandleChooser()
 		{
 			var displayWs = "analysis vernacular";
-#pragma warning disable 219
-			string postDialogMessageTrigger = null;
-#pragma warning restore 219
-
 			var node = m_configurationNode?.Element("deParams");
 			if (node != null)
 			{
 				displayWs = XmlUtils.GetOptionalAttributeValue(node, "ws", "analysis vernacular").ToLower();
-				postDialogMessageTrigger = XmlUtils.GetOptionalAttributeValue(node, "postChangeMessageTrigger", null);
 			}
 
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, m_obj.ReferenceTargetCandidates(m_flid), m_displayNameProperty, displayWs);
@@ -179,13 +172,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var rgmsaOld = new List<IMoMorphSynAnalysis>();
 			if (m_obj.OwningFlid == LexEntryTags.kflidLexemeForm)
 			{
-				foreach (var msa in entry.MorphoSyntaxAnalysesOC)
-				{
-					if (!(msa is IMoStemMsa))
-					{
-						rgmsaOld.Add(msa);
-					}
-				}
+				rgmsaOld.AddRange(entry.MorphoSyntaxAnalysesOC.Where(msa => !(msa is IMoStemMsa)));
 			}
 
 			if (CheckForAffixDataLoss(affix, rgmsaOld))
@@ -320,13 +307,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var rgmsaOld = new List<IMoMorphSynAnalysis>();
 			if (m_obj.OwningFlid == LexEntryTags.kflidLexemeForm)
 			{
-				foreach (var msa in entry.MorphoSyntaxAnalysesOC)
-				{
-					if (msa is IMoStemMsa)
-					{
-						rgmsaOld.Add(msa);
-					}
-				}
+				rgmsaOld.AddRange(entry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>());
 			}
 
 			if (CheckForStemDataLoss(stem, rgmsaOld))
@@ -338,19 +319,19 @@ namespace LanguageExplorer.Controls.DetailControls
 			return true;
 		}
 
-		private bool CheckForStemDataLoss(IMoStemAllomorph stem, List<IMoMorphSynAnalysis> rgmsaStem)
+		private static bool CheckForStemDataLoss(IMoStemAllomorph stem, List<IMoMorphSynAnalysis> rgmsaStem)
 		{
 			var fLoseStemName = stem.StemNameRA != null;
 			var fLoseGramInfo = false;
-			for (var i = 0; i < rgmsaStem.Count; ++i)
+			foreach (var moMorphSynAnalysis in rgmsaStem)
 			{
-				var msa = rgmsaStem[i] as IMoStemMsa;
+				var msa = moMorphSynAnalysis as IMoStemMsa;
 				if (msa != null &&
 					(msa.FromPartsOfSpeechRC.Count > 0 ||
-					msa.InflectionClassRA != null ||
-					msa.ProdRestrictRC.Count > 0 ||
-					msa.StratumRA != null ||
-					msa.MsFeaturesOA != null))
+					 msa.InflectionClassRA != null ||
+					 msa.ProdRestrictRC.Count > 0 ||
+					 msa.StratumRA != null ||
+					 msa.MsFeaturesOA != null))
 				{
 					fLoseGramInfo = true;
 					break;

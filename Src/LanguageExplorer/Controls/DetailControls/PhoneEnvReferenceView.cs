@@ -56,7 +56,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private PhoneEnvReferenceVc m_PhoneEnvReferenceVc;
 		private IMoForm m_rootObj;
 		private int m_rootFlid;
-		private int m_hvoOldSelection = 0;
+		private int m_hvoOldSelection;
 		private int m_wsVern;
 		private PhonEnvRecognizer m_validator;
 		private Dictionary<int, IPhEnvironment> m_realEnvs = new Dictionary<int, IPhEnvironment>();
@@ -67,7 +67,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// This allows the view to communicate size changes to the embedding slice.
 		/// </summary>
 		internal event FwViewSizeChangedEventHandler ViewSizeChanged;
-		private int m_heightView = 0;
+		private int m_heightView;
 
 		#endregion // Constants and data members
 
@@ -118,13 +118,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (disposing)
 			{
 				components?.Dispose();
+				m_realEnvs?.Clear();
 			}
 			m_validator = null; // TODO: Make m_validator disposable?
-			if (m_realEnvs != null)
-			{
-				m_realEnvs.Clear();
-				m_realEnvs = null;
-			}
+			m_realEnvs = null;
 			m_rootObj = null;
 			m_sda = null;
 			m_PhoneEnvReferenceVc = null;
@@ -277,9 +274,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public void ResetValidator()
 		{
 			CheckDisposed();
-			m_validator = new PhonEnvRecognizer(
-				m_cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(),
-				m_cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
+			m_validator = new PhonEnvRecognizer(m_cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(), m_cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
 		}
 
 		/// <summary>
@@ -323,8 +318,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			int ws; // NB: This will be 0 after each call, since the string does
 			// not have alternatives. Ws would be the WS of an alternative,
 			// if there were any.
-			vwselNew.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObj,
-				out tag, out ws); // start of string info
+			vwselNew.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObj, out tag, out ws); // start of string info
 
 			int ichEnd;
 			int hvoObjEnd;
@@ -340,7 +334,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Try to validate previously selected string rep.
 				var tssOld = m_sda.get_StringProp(m_hvoOldSelection, kEnvStringRep);
 				if (tssOld == null || tssOld.Length == 0)
-				{	// deleted or erased
+				{
+					// deleted or erased
 					// Remove it from the dummy cache, since its length is 0.
 					var limit = m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments);
 					for (var i = 0; i < limit; ++i)
@@ -451,11 +446,9 @@ namespace LanguageExplorer.Controls.DetailControls
 				var env = m_realEnvs[hvoDummyObj];
 				if (!m_validator.Recognize(env.StringRepresentation.Text) && !env.StringRepresentation.Equals(tss))
 				{
-					UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoChange, DetailControlsStrings.ksRedoChange,
-						env, () => { env.StringRepresentation = tss; });
+					UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoChange, DetailControlsStrings.ksRedoChange, env, () => { env.StringRepresentation = tss; });
 					ConstraintFailure failure;
-					env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, true, out failure,
-						/* adjust the squiggly line */ true );
+					env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, true, out failure, /* adjust the squiggly line */ true );
 				}
 			}
 			m_sda.SetString(hvoDummyObj, kEnvStringRep, bldr.GetString());
@@ -465,10 +458,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void ClearSquigglyLine(int hvo, ref ITsString tss, ref ITsStrBldr bldr)
 		{
-			bldr.SetIntPropValues(0, tss.Length,
-				(int)FwTextPropType.ktptUnderline,
-				(int)FwTextPropVar.ktpvEnum,
-				(int)FwUnderlineType.kuntNone);
+			bldr.SetIntPropValues(0, tss.Length, (int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvEnum, (int)FwUnderlineType.kuntNone);
 			m_sda.SetUnicode(hvo, kErrorMessage, string.Empty, 0);
 		}
 
@@ -494,7 +484,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				var posAttr = xdoc.Root.Attribute("pos");
 				pos = posAttr != null ? Convert.ToInt32(posAttr.Value) : 0;
 			}
-			catch (Exception)
+			catch
 			{
 			}
 
@@ -504,12 +494,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				pos = Math.Max(0, len - 1); // make sure something will show
 			}
 			var col = Color.Red;
-			bldr.SetIntPropValues(pos, len, (int)FwTextPropType.ktptUnderline,
-				(int)FwTextPropVar.ktpvEnum,
-				(int)FwUnderlineType.kuntSquiggle);
-			bldr.SetIntPropValues(pos, len, (int)FwTextPropType.ktptUnderColor,
-				(int)FwTextPropVar.ktpvDefault,
-				col.R + (col.B * 256 + col.G) * 256);
+			bldr.SetIntPropValues(pos, len, (int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvEnum, (int)FwUnderlineType.kuntSquiggle);
+			bldr.SetIntPropValues(pos, len, (int)FwTextPropType.ktptUnderColor, (int)FwTextPropVar.ktpvDefault, col.R + (col.B * 256 + col.G) * 256);
 
 			//!!!NB: the code up to this point is, at least on the surface, identical to code in
 			//PhEnvStrRepresentationSlice. so if you make a change here, go make it over there.
@@ -619,9 +605,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					return;
 				}
 				var fieldname = (m_rootFlid == MoAffixAllomorphTags.kflidPhoneEnv) ? "PhoneEnv" : "Position";
-				m_cache.DomainDataByFlid.BeginUndoTask(
-					string.Format(DetailControlsStrings.ksUndoSet, fieldname),
-					string.Format(DetailControlsStrings.ksRedoSet, fieldname));
+				m_cache.DomainDataByFlid.BeginUndoTask(string.Format(DetailControlsStrings.ksUndoSet, fieldname), string.Format(DetailControlsStrings.ksRedoSet, fieldname));
 				var environmentFactory = m_cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>();
 				var allAvailablePhoneEnvironmentsInProject = m_cache.LanguageProject.PhonologicalDataOA.EnvironmentsOS;
 				var envsBeingRequestedForThisEntry = EnvsBeingRequestedForThisEntry();
@@ -662,10 +646,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 					// Pick a sensible environment from the known environments in
 					// the project, by string
-					var anEnvironmentInEntry = FindPhoneEnv(
-						allAvailablePhoneEnvironmentsInProject, envStringRep,
-						newListOfEnvironmentHvosForEntry.ToArray(),
-						existingListOfEnvironmentHvosInDatabaseForEntry);
+					var anEnvironmentInEntry = FindPhoneEnv(allAvailablePhoneEnvironmentsInProject, envStringRep, newListOfEnvironmentHvosForEntry.ToArray(), existingListOfEnvironmentHvosInDatabaseForEntry);
 
 					// Maybe the ws has changed, so change the real env in database,
 					// in case.
@@ -693,22 +674,15 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Otherwise, the parser gets too excited about needing to reload.
 				if ((countOfExistingEnvironmentsInDatabaseForEntry !=
 					newListOfEnvironmentHvosForEntry.Count) ||
-					!equalArrays(existingListOfEnvironmentHvosInDatabaseForEntry,
-						newListOfEnvironmentHvosForEntry.ToArray()))
+					!equalArrays(existingListOfEnvironmentHvosInDatabaseForEntry, newListOfEnvironmentHvosForEntry.ToArray()))
 				{
-					m_cache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, 0,
-						countOfExistingEnvironmentsInDatabaseForEntry,
-						newListOfEnvironmentHvosForEntry.ToArray(),
-						newListOfEnvironmentHvosForEntry.Count());
+					m_cache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, 0, countOfExistingEnvironmentsInDatabaseForEntry, newListOfEnvironmentHvosForEntry.ToArray(), newListOfEnvironmentHvosForEntry.Count);
 				}
 				m_cache.DomainDataByFlid.EndUndoTask();
 			}
 			finally
 			{
-				if (wc != null)
-				{
-					wc.Dispose();
-				}
+				wc?.Dispose();
 			}
 		}
 
@@ -767,17 +741,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Environments dialog behave more sensibly in the case of multiple
 		/// items with the same string representation. (eg FWNX-822)
 		/// </summary>
-		private static IPhEnvironment FindPhoneEnv(
-			ILcmOwningSequence<IPhEnvironment> allProjectEnvs,
-			string environmentPattern, int[] alreadyUsedHvos,
-			int[] preferredHvos)
+		private static IPhEnvironment FindPhoneEnv(ILcmOwningSequence<IPhEnvironment> allProjectEnvs, string environmentPattern, int[] alreadyUsedHvos, int[] preferredHvos)
 		{
 			// Try to find a match in the preferred set that isn't already used
 			var preferredMatches = preferredHvos.Where(preferredHvo =>
-				EqualsIgnoringSpaces(
-					GetEnvironmentFromHvo(allProjectEnvs, preferredHvo)
-						.StringRepresentation.Text,
-					environmentPattern)).ToList();
+				EqualsIgnoringSpaces(GetEnvironmentFromHvo(allProjectEnvs, preferredHvo).StringRepresentation.Text, environmentPattern)).ToList();
 			if (preferredMatches.Any())
 			{
 				var unusedPreferred = preferredMatches.Except(alreadyUsedHvos);
@@ -789,9 +757,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			// Broaden where we look to all project environments
 			var anyMatches = allProjectEnvs.Where(env =>
-				EqualsIgnoringSpaces(
-					env.StringRepresentation.Text,
-					environmentPattern));
+				EqualsIgnoringSpaces(env.StringRepresentation.Text, environmentPattern));
 			if (!anyMatches.Any())
 			{
 				return null; // Shouldn't happen if adding envs new to project ahead of time.
@@ -818,7 +784,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Do nothing.
 		}
 
-		private bool equalArrays(int[] v1, int[] v2)
+		private static bool equalArrays(int[] v1, int[] v2)
 		{
 			if (v1.Length != v2.Length)
 			{
@@ -854,15 +820,15 @@ namespace LanguageExplorer.Controls.DetailControls
 			ichEnd = 0;
 			try
 			{
-				ITsString tss2;
 				bool fAssocPrev;
-				int hvoObjEnd;
 				int tag1;
-				int tag2;
 				int ws1;
-				int ws2;
 				vwsel = m_rootb.Selection;
 				vwsel.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoDummyObj, out tag1, out ws1);
+				ITsString tss2;
+				int hvoObjEnd;
+				int tag2;
+				int ws2;
 				vwsel.TextSelInfo(true, out tss2, out ichEnd, out fAssocPrev, out hvoObjEnd, out tag2, out ws2);
 				if (hvoDummyObj != hvoObjEnd)
 				{
@@ -906,7 +872,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private bool CanGetEnvironmentStringRep(out string s)
 		{
-			var hvoDummyObj = 0;
+			int hvoDummyObj;
 			int ichAnchor;
 			int ichEnd;
 			ITsString tss;
@@ -916,7 +882,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return false;
 			}
-
 			if (tss == null || hvoDummyObj == 0)
 			{
 				return false;

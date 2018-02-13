@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -33,17 +32,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// deprecated constructor for use with changing or setting a value
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="persistProvider">optional, if you want to preserve the size and
-		/// location</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// <param name="labels">The labels.</param>
-		/// <param name="currentObj">use null if empty.</param>
-		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
-		/// <param name="nullLabel">The null label.</param>
-		public SimpleListChooser(LcmCache cache, IPersistenceProvider persistProvider,
-			IHelpTopicProvider helpTopicProvider, IEnumerable<ObjectLabel> labels,
-			ICmObject currentObj, string fieldName, string nullLabel)
+		public SimpleListChooser(LcmCache cache, IPersistenceProvider persistProvider, IHelpTopicProvider helpTopicProvider, IEnumerable<ObjectLabel> labels, ICmObject currentObj, string fieldName, string nullLabel)
 			: base(cache, helpTopicProvider, persistProvider, labels, currentObj, fieldName, nullLabel)
 		{
 		}
@@ -51,18 +40,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// constructor for use with changing or setting a value
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="persistProvider">optional, if you want to preserve the size and
-		/// location</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// <param name="labels">The labels.</param>
-		/// <param name="currentObj">use null if empty.</param>
-		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
-		/// <param name="nullLabel">The null label.</param>
-		/// <param name="stylesheet">The stylesheet.</param>
-		public SimpleListChooser(LcmCache cache, IPersistenceProvider persistProvider,
-			IHelpTopicProvider helpTopicProvider, IEnumerable<ObjectLabel> labels,
-			ICmObject currentObj, string fieldName, string nullLabel, IVwStylesheet stylesheet)
+		public SimpleListChooser(LcmCache cache, IPersistenceProvider persistProvider, IHelpTopicProvider helpTopicProvider, IEnumerable<ObjectLabel> labels, ICmObject currentObj, string fieldName, string nullLabel, IVwStylesheet stylesheet)
 			: base(cache, helpTopicProvider, persistProvider, labels, currentObj, fieldName, nullLabel, stylesheet)
 		{
 		}
@@ -70,16 +48,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// constructor for use with changing or setting a value
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="persistProvider">optional, if you want to preserve the size and
-		/// location</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// <param name="labels">The labels.</param>
-		/// <param name="currentObj">use null if emtpy.</param>
-		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
-		public SimpleListChooser(LcmCache cache, IPersistenceProvider persistProvider,
-			IHelpTopicProvider helpTopicProvider, IEnumerable<ObjectLabel> labels,
-			ICmObject currentObj, string fieldName)
+		public SimpleListChooser(LcmCache cache, IPersistenceProvider persistProvider, IHelpTopicProvider helpTopicProvider, IEnumerable<ObjectLabel> labels, ICmObject currentObj, string fieldName)
 			: base(cache, helpTopicProvider, persistProvider, labels, currentObj, fieldName)
 		{
 		}
@@ -87,12 +56,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// constructor for use with adding a new value
 		/// </summary>
-		/// <param name="persistProvider">The persist provider.</param>
-		/// <param name="labels">The labels.</param>
-		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		public SimpleListChooser(IPersistenceProvider persistProvider,
-			IEnumerable<ObjectLabel> labels, string fieldName, IHelpTopicProvider helpTopicProvider)
+		public SimpleListChooser(IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, string fieldName, IHelpTopicProvider helpTopicProvider)
 			: base(persistProvider, labels, fieldName, helpTopicProvider)
 		{
 		}
@@ -100,14 +64,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// constructor for use with adding a new value
 		/// </summary>
-		/// <param name="persistProvider">The persist provider.</param>
-		/// <param name="labels">The labels.</param>
-		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
-		/// <param name="stylesheet">The stylesheet.</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		public SimpleListChooser(IPersistenceProvider persistProvider,
-			IEnumerable<ObjectLabel> labels, string fieldName, IVwStylesheet stylesheet,
-			IHelpTopicProvider helpTopicProvider)
+		public SimpleListChooser(IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, string fieldName, IVwStylesheet stylesheet, IHelpTopicProvider helpTopicProvider)
 			: base(persistProvider, labels, fieldName, stylesheet, helpTopicProvider)
 		{
 		}
@@ -115,16 +72,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// constructor for use with changing or setting multiple values.
 		/// </summary>
-		/// <param name="persistProvider">optional, if you want to preserve the size and
-		/// location</param>
-		/// <param name="labels">The labels.</param>
-		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
-		/// <param name="cache">The cache.</param>
-		/// <param name="chosenObjs">use null or ICmObject[0] if empty</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		public SimpleListChooser(IPersistenceProvider persistProvider,
-			IEnumerable<ObjectLabel> labels, string fieldName, LcmCache cache,
-			IEnumerable<ICmObject> chosenObjs, IHelpTopicProvider helpTopicProvider)
+		public SimpleListChooser(IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, string fieldName, LcmCache cache, IEnumerable<ICmObject> chosenObjs, IHelpTopicProvider helpTopicProvider)
 			: base(persistProvider, labels, fieldName, cache, chosenObjs, helpTopicProvider)
 		{
 		}
@@ -150,9 +98,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						sLabel = string.Format(sLabel, sTopPOS);
 						var fOptional = XmlUtils.GetOptionalBooleanAttributeValue(node, "optional", false);
 						var sTitle = StringTable.Table.GetString(fOptional ? "OptionalSlot" : "ObligatorySlot", "Linguistics/Morphology/TemplateTable");
-						AddLink(sLabel, LinkType.kSimpleLink,
-							new MakeInflAffixSlotChooserCommand(m_cache, true, sTitle, hvoPos,
-							fOptional, m_propertyTable, m_publisher, m_subscriber));
+						AddLink(sLabel, LinkType.kSimpleLink, new MakeInflAffixSlotChooserCommand(m_cache, true, sTitle, hvoPos, fOptional, m_propertyTable, m_publisher, m_subscriber));
 					}
 					break;
 				default:

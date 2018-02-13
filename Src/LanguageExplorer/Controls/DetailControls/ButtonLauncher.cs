@@ -22,8 +22,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected int m_flid;
 		protected string m_fieldName;
 		protected Control m_mainControl;
-		protected System.Windows.Forms.Panel m_panel;
-		protected System.Windows.Forms.Button m_btnLauncher;
+		protected Panel m_panel;
+		protected Button m_btnLauncher;
 		protected IPersistenceProvider m_persistProvider;
 		protected string m_displayNameProperty;
 		protected string m_displayWs;
@@ -179,7 +179,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -296,8 +298,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Handle the click event for the launcher button.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="arguments"></param>
 		protected virtual void OnClick(object sender, EventArgs arguments)
 		{
 			bool fValid;
@@ -317,7 +317,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 
 			if (fValid)
+			{
 				HandleChooser();
+			}
 		}
 
 		protected void ReferenceLauncher_Enter(object sender, EventArgs e)
