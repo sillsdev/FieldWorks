@@ -128,7 +128,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 		}
 
-		public CFChanges TESTTESTTEST(LexImportCustomField oldlexCustomField)
+		public CFChanges GetCustomFieldChangeStatus(LexImportCustomField oldlexCustomField)
 		{
 			var containsKEY = LexImportFields.ContainsCustomField(oldlexCustomField.CustomKey);
 			if (!containsKEY)

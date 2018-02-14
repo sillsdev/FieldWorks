@@ -149,8 +149,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// (Deprecated) constructor for use with changing or setting a value
 		/// </summary>
-		public ReallySimpleListChooser(IPersistenceProvider persistProvider, IHelpTopicProvider helpTopicProvider,
-			IEnumerable<ObjectLabel> labels, ICmObject currentObj, string fieldName)
+		/// <param name="persistProvider">The persist provider.</param>
+		/// <param name="labels">The labels.</param>
+		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
+		/// <param name="helpTopicProvider">The help topic provider.</param>
+		public ReallySimpleListChooser(IPersistenceProvider persistProvider, IHelpTopicProvider helpTopicProvider, IEnumerable<ObjectLabel> labels, ICmObject currentObj, string fieldName)
 		{
 			m_cLinksShown = 0;
 			Init(null, helpTopicProvider, persistProvider, fieldName, labels, currentObj, XMLViewsStrings.ksEmpty, null);
@@ -159,8 +162,16 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// constructor for use with changing or setting a value
 		/// </summary>
-		public ReallySimpleListChooser(LcmCache cache, IHelpTopicProvider helpTopicProvider,
-			IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels,
+		/// <param name="cache">The cache.</param>
+		/// <param name="helpTopicProvider">The help topic provider.</param>
+		/// <param name="persistProvider">optional, if you want to preserve the size and
+		/// location</param>
+		/// <param name="labels">The labels.</param>
+		/// <param name="currentObj">The current obj.</param>
+		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
+		/// <param name="nullLabel">The null label.</param>
+		/// <param name="stylesheet">The stylesheet.</param>
+		public ReallySimpleListChooser(LcmCache cache, IHelpTopicProvider helpTopicProvider, IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels,
 			ICmObject currentObj, string fieldName, string nullLabel, IVwStylesheet stylesheet)
 		{
 			m_cLinksShown = 0;
@@ -170,8 +181,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// deprecated constructor for use with changing or setting a value
 		/// </summary>
-		public ReallySimpleListChooser(LcmCache cache, IHelpTopicProvider helpTopicProvider,
-			IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels,
+		/// <param name="cache">The cache.</param>
+		/// <param name="helpTopicProvider">The help topic provider.</param>
+		/// <param name="persistProvider">optional, if you want to preserve the size and
+		/// location</param>
+		/// <param name="labels">The labels.</param>
+		/// <param name="currentObj">The current obj.</param>
+		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
+		/// <param name="nullLabel">The null label.</param>
+		public ReallySimpleListChooser(LcmCache cache, IHelpTopicProvider helpTopicProvider, IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels,
 			ICmObject currentObj, string fieldName, string nullLabel)
 		{
 			m_cLinksShown = 0;
@@ -181,6 +199,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// constructor for use with changing or setting a value
 		/// </summary>
+		/// <param name="cache">The cache.</param>
+		/// <param name="helpTopicProvider">The help topic provider.</param>
+		/// <param name="persistProvider">optional, if you want to preserve the size and
+		/// location</param>
+		/// <param name="labels">The labels.</param>
+		/// <param name="currentObj">The current object.</param>
+		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
 		public ReallySimpleListChooser(LcmCache cache, IHelpTopicProvider helpTopicProvider,
 			IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels,
 			ICmObject currentObj, string fieldName)
@@ -258,6 +283,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// constructor for use with adding a new value
 		/// </summary>
+		/// <param name="persistProvider">The persist provider.</param
+		/// <param name="labels">The labels.</param>
+		/// <param name="fieldName">the user-readable name of the field that is being edited</param
+		/// <param name="helpTopicProvider">The help topic provider.</param>
 		public ReallySimpleListChooser(IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, string fieldName, IHelpTopicProvider helpTopicProvider)
 			: this(persistProvider, labels, fieldName, null, helpTopicProvider)
 		{
@@ -266,8 +295,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// constructor for use with adding a new value (and stylesheet)
 		/// </summary>
-		public ReallySimpleListChooser(IPersistenceProvider persistProvider,
-			IEnumerable<ObjectLabel> labels, string fieldName, IVwStylesheet stylesheet,
+		/// <param name="persistProvider">The persist provider.</param>
+		/// <param name="labels">The labels.</param>
+		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
+		/// <param name="stylesheet">for getting right height for text</param>
+		/// <param name="helpTopicProvider">The help topic provider.</param>
+		public ReallySimpleListChooser(IPersistenceProvider persistProvider, IEnumerable<ObjectLabel> labels, string fieldName, IVwStylesheet stylesheet,
 			IHelpTopicProvider helpTopicProvider)
 		{
 			m_stylesheet = stylesheet;
@@ -291,6 +324,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// constructor for use with changing or setting multiple values.
 		/// </summary>
+		/// <param name="persistProvider">optional, if you want to preserve the size and
+		/// location</param>
+		/// <param name="labels">The labels.</param>
+		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
+		/// <param name="cache">The cache.</param>
+		/// <param name="chosenObjs">The chosen objects.</param>
+		/// <param name="helpTopicProvider">The help topic provider.</param>
 		public ReallySimpleListChooser(IPersistenceProvider persistProvider,
 			IEnumerable<ObjectLabel> labels, string fieldName, LcmCache cache,
 			IEnumerable<ICmObject> chosenObjs, IHelpTopicProvider helpTopicProvider) :
@@ -301,6 +341,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// constructor for use with changing or setting multiple values.
 		/// </summary>
+		/// <param name="persistProvider">optional, if you want to preserve the size and
+		/// location</param>
+		/// <param name="labels">The labels.</param>
+		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
+		/// <param name="cache">The cache.</param>
+		/// <param name="chosenObjs">The chosen objects.</param>
+		/// <param name="fSortLabels">if true, sort the labels alphabetically. if false, keep the order of given labels.</param>
+		/// <param name="helpTopicProvider">The help topic provider.</param>
 		public ReallySimpleListChooser(IPersistenceProvider persistProvider,
 			IEnumerable<ObjectLabel> labels, string fieldName, LcmCache cache,
 			IEnumerable<ICmObject> chosenObjs, bool fSortLabels, IHelpTopicProvider helpTopicProvider)
@@ -326,6 +374,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// constructor intended only for use by subclasses which need to initialize something
 		/// before calling LoadTree (e.g., LeafChooser).
 		/// </summary>
+		/// <param name="persistProvider">optional, if you want to preserve the size and
+		/// location</param>
+		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
+		/// <param name="cache">The cache.</param>
+		/// <param name="chosenObjs">The chosen objects.</param>
+		/// <param name="helpTopicProvider">The help topic provider.</param>
 		protected ReallySimpleListChooser(IPersistenceProvider persistProvider,
 			string fieldName, LcmCache cache, IEnumerable<ICmObject> chosenObjs,
 			IHelpTopicProvider helpTopicProvider)
@@ -2450,8 +2504,8 @@ namespace LanguageExplorer.Controls.XMLViews
 #if __MonoCS__
 				// On Mono, m_labelsTreeView.SelectedNode is somehow cleared between OnOKClick
 				// and getting SelectedObject from the caller.  (See FWNX-853.)
-				if (m_chosenLabel != null)
-					return m_chosenLabel.Object;
+				if (ChosenOne != null)
+					return ChosenOne.Object;
 #endif
 				return null;
 			}

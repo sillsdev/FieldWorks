@@ -895,6 +895,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		///		then accept the given sorter and clear the column header sort arrow.
 		/// 3) Otherwise, use a column's matched sorter and copy the needed information from the given sorter.
 		/// </summary>
+		/// <param name="sorter"></param>
+		/// <param name="fSortChanged">true to force updating the sorter (even if the new one is the same)</param>
+		/// <returns>true if it changed the sorter.</returns>
 		public bool InitSorter(RecordSorter sorter, bool fSortChanged = false)
 		{
 			if (FilterBar == null || FilterBar.ColumnInfo.Length <= 0)

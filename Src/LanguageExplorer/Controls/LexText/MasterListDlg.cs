@@ -127,12 +127,11 @@ namespace LanguageExplorer.Controls.LexText
 		public void SetDlginfo(IFsFeatureSystem featSys, IPropertyTable propertyTable, bool launchedFromInsertMenu)
 		{
 			// default to inflection features
-			var sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "MGA", "GlossLists", "EticGlossList.xml");
-			SetDlginfo(featSys, propertyTable, launchedFromInsertMenu, "masterInflFeatListDlg", sXmlFile);
+			SetDlginfo(featSys, propertyTable, launchedFromInsertMenu, "masterInflFeatListDlg", Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "MGA", "GlossLists", "EticGlossList.xml"));
 		}
 
 		///  <summary />
-		public void SetDlginfo(IFsFeatureSystem featSys, IPropertyTable propertyTable, bool launchedFromInsertMenu, string sWindowKey, string sXmlFile)
+		public void SetDlginfo(IFsFeatureSystem featSys, IPropertyTable propertyTable, bool launchedFromInsertMenu, string sWindowKey, string eticGlossListXmlPathname)
 		{
 			m_featureSystem = featSys;
 			m_featureList = featSys.FeaturesOC;
@@ -154,7 +153,7 @@ namespace LanguageExplorer.Controls.LexText
 				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
 			m_cache = featSys.Cache;
-			LoadMasterFeatures(sXmlFile);
+			LoadMasterFeatures(eticGlossListXmlPathname);
 			m_tvMasterList.Cache = m_cache;
 		}
 

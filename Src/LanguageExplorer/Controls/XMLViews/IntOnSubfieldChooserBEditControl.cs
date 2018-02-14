@@ -14,26 +14,26 @@ namespace LanguageExplorer.Controls.XMLViews
 {
 	internal class IntOnSubfieldChooserBEditControl : IntChooserBEditControl
 	{
-		protected int m_flidSub;
+		protected int m_subFieldId;
 		/// <summary>
 		/// Initialized with a string like "0:no;1:yes".
 		/// </summary>
-		public IntOnSubfieldChooserBEditControl(string itemList, int flid, int flidSub)
-			: base(itemList, flid)
+		public IntOnSubfieldChooserBEditControl(string itemList, int mainFieldId, int subFieldId)
+			: base(itemList, mainFieldId)
 		{
-			m_flidSub = flidSub;
+			m_subFieldId = subFieldId;
 		}
 
 		public override List<int> FieldPath
 		{
 			get
 			{
-				if (m_flidSub == LexEntryRefTags.kflidHideMinorEntry)
+				if (m_subFieldId == LexEntryRefTags.kflidHideMinorEntry)
 				{
-					return new List<int>(new[] { m_flidSub });
+					return new List<int>(new[] { m_subFieldId });
 				}
 				var fieldPath = base.FieldPath;
-				fieldPath.Add(m_flidSub);
+				fieldPath.Add(m_subFieldId);
 				return fieldPath;
 			}
 
@@ -48,7 +48,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Report progress 50 times or every 100 items, whichever is more
 			// (but no more than once per item!)
 			var interval = Math.Min(100, Math.Max(itemsToChangeAsList.Count / 50, 1));
-			if (m_flidSub == LexEntryRefTags.kflidHideMinorEntry)
+			if (m_subFieldId == LexEntryRefTags.kflidHideMinorEntry)
 			{
 				// we present this to the user as "Show" instead of "Hide"
 				val = val == 0 ? 1 : 0;
@@ -61,7 +61,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						state.Breath();
 					}
 					Debug.Assert(m_sda.get_IntProp(hvoItem, CmObjectTags.kflidClass) == LexEntryRefTags.kClassId);
-					var valOld = m_sda.get_IntProp(hvoItem, m_flidSub);
+					var valOld = m_sda.get_IntProp(hvoItem, m_subFieldId);
 					var fEnable = valOld != val;
 					if (fEnable)
 					{
@@ -98,7 +98,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal virtual int GetValueOfField(ISilDataAccess sda, int hvoField)
 		{
-			return sda.get_IntProp(hvoField, m_flidSub);
+			return sda.get_IntProp(hvoField, m_subFieldId);
 		}
 
 		public override void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
@@ -110,7 +110,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
 			var interval = Math.Min(100, Math.Max(itemsToChangeAsList.Count / 50, 1));
-			if (m_flidSub == LexEntryRefTags.kflidHideMinorEntry)
+			if (m_subFieldId == LexEntryRefTags.kflidHideMinorEntry)
 			{
 				// we present this to the user as "Show" instead of "Hide"
 				val = val == 0 ? 1 : 0;
@@ -123,10 +123,10 @@ namespace LanguageExplorer.Controls.XMLViews
 						state.Breath();
 					}
 					Debug.Assert(m_sda.get_IntProp(hvoItem, CmObjectTags.kflidClass) == LexEntryRefTags.kClassId);
-					var valOld = m_sda.get_IntProp(hvoItem, m_flidSub);
+					var valOld = m_sda.get_IntProp(hvoItem, m_subFieldId);
 					if (valOld != val)
 					{
-						sda.SetInt(hvoItem, m_flidSub, val);
+						sda.SetInt(hvoItem, m_subFieldId, val);
 					}
 				}
 			}
@@ -158,7 +158,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal virtual void SetValueOfField(ISilDataAccess sda, int hvoField, int val)
 		{
-			sda.SetInt(hvoField, m_flidSub, val);
+			sda.SetInt(hvoField, m_subFieldId, val);
 		}
 	}
 }

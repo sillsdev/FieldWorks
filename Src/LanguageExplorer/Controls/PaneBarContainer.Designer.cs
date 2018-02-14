@@ -18,7 +18,7 @@ namespace LanguageExplorer.Controls
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			
+
 			if (disposing)
 			{
 				components?.Dispose();

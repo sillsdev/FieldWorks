@@ -32,6 +32,12 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls.LexText
 {
+#if RANDYTODO
+	// TODO: This class had been split into three different files, which served to mask how large it was (now > 13K lines).
+	// TODO: It is now all combined into one really big file, but the class really needs more review to find out how to bring it
+	// TODO: into conformity with OO design principles, where a class should only have one reason to be changed.
+	// TODO: For example, maybe the range handling logic can be spun off into another class that this class then uses.
+#endif
 	/// <summary>
 	/// This class is called by the LiftParser, as it encounters each element of a lift file.
 	/// There is at least one other ILexiconMerger implementation, used in WeSay.

@@ -190,6 +190,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Create one
 		/// </summary>
+		/// <param name="bv">The BrowseViewer that it is part of.</param>
+		/// <param name="spec">The parameters element of the BV, containing the
+		/// 'columns' elements that specify the BE bar (among other things).</param>
+		/// <param name="propertyTable"></param>
+		/// <param name="cache">The cache.</param>
 		public BulkEditBar(BrowseViewer bv, XElement spec, IPropertyTable propertyTable, LcmCache cache)
 			: this()
 		{
@@ -535,6 +540,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary />
+		/// <param name="node"></param>
+		/// <param name="attrName"></param>
+		/// <param name="defaultOwningClass">if only the property is specified,
+		/// we'll use this as the default class for that property.</param>
+		/// <param name="owningClass"></param>
+		/// <param name="property"></param>
 		private static void GetPathInfoFromColumnSpec(XElement node, string attrName, string defaultOwningClass,
 			out string owningClass, out string property)
 		{
@@ -1739,16 +1750,16 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Make a ReplaceWithMethod (used in preview and apply click methods for Replace tab).
 		/// </summary>
-		ReplaceWithMethod MakeReplaceWithMethod(out int newCol)
+		ReplaceWithMethod MakeReplaceWithMethod(out int newActiveColumn)
 		{
-			newCol = 0;  // in case we fail.
+			newActiveColumn = 0;  // in case we fail.
 			var fci = m_findReplaceTargetCombo.SelectedItem as FieldComboItem;
 			if (fci == null)
 			{
 				MessageBox.Show(XMLViewsStrings.ksChooseEditTarget);
 				return null;
 			}
-			newCol = fci.ColumnIndex + 1;
+			newActiveColumn = fci.ColumnIndex + 1;
 
 			return new ReplaceWithMethod(m_cache, m_bv.SpecialCache, fci.Accessor, m_bv.ColumnSpecs[fci.ColumnIndex], Pattern, m_tssReplace);
 		}
@@ -1756,16 +1767,16 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Make a ClearMethod (used in preview and apply click methods for Delete tab for fields).
 		/// </summary>
-		private ClearMethod MakeClearMethod(out int newCol)
+		private ClearMethod MakeClearMethod(out int newActiveColumn)
 		{
-			newCol = 0;  // in case we fail.
+			newActiveColumn = 0;  // in case we fail.
 			var fci = m_deleteWhatCombo.SelectedItem as FieldComboItem;
 			if (fci == null)
 			{
 				MessageBox.Show(XMLViewsStrings.ksChooseClearTarget);
 				return null;
 			}
-			newCol = fci.ColumnIndex + 1;
+			newActiveColumn = fci.ColumnIndex + 1;
 
 			return new ClearMethod(m_cache, m_bv.SpecialCache, fci.Accessor, m_bv.ColumnSpecs[fci.ColumnIndex]);
 		}
@@ -1773,9 +1784,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Make a TransduceMethod (used in preview and apply click methods for Transduce tab).
 		/// </summary>
-		private TransduceMethod MakeTransduceMethod(out int newCol)
+		private TransduceMethod MakeTransduceMethod(out int newActiveColumn)
 		{
-			newCol = 0;  // in case we fail.
+			newActiveColumn = 0;  // in case we fail.
 			var fci = m_transduceTargetCombo.SelectedItem as FieldComboItem;
 			if (fci == null)
 			{
@@ -1788,7 +1799,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				MessageBox.Show(XMLViewsStrings.ksChooseSource);
 				return null;
 			}
-			newCol = fci.ColumnIndex + 1;
+			newActiveColumn = fci.ColumnIndex + 1;
 			string convName = m_transduceProcessorCombo.SelectedItem as string;
 			if (convName == null)
 			{
@@ -1816,9 +1827,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Make a BulkCopyMethod (used in preview and apply click methods for Bulk Copy tab).
 		/// </summary>
-		private BulkCopyMethod MakeBulkCopyMethod(out int newCol)
+		private BulkCopyMethod MakeBulkCopyMethod(out int newActiveColumn)
 		{
-			newCol = 0;  // in case we fail.
+			newActiveColumn = 0;  // in case we fail.
 			var fci = m_bulkCopyTargetCombo.SelectedItem as FieldComboItem;
 			if (fci == null)
 			{
@@ -1831,9 +1842,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				MessageBox.Show(XMLViewsStrings.ksChooseSource);
 				return null;
 			}
-			newCol = fci.ColumnIndex + 1;
+			newActiveColumn = fci.ColumnIndex + 1;
 			var srcCol = fciSrc.ColumnIndex + 1;
-			if (newCol == srcCol)
+			if (newActiveColumn == srcCol)
 			{
 				MessageBox.Show(XMLViewsStrings.ksSrcDstMustDiffer);
 				return null;

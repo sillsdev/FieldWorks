@@ -388,58 +388,37 @@ namespace LanguageExplorer.Controls.XMLViews
 		private bool CanAdvanceToNewRow(IVwSelection vwsel, out ITsString[] rgtss)
 		{
 			rgtss = null;
-			int dummyLevel;
-			int iBox;
-			int iTableBox;
-			int cTableBoxes;
-			int iTableLevel;
 			int iCellBox;
 			int cCellBoxes;
-			int iCellLevel;
-			GetCurrentTableCellInfo(vwsel, out dummyLevel, out iBox, out iTableBox, out cTableBoxes, out iTableLevel, out iCellBox, out cCellBoxes, out iCellLevel);
-			var fBackTab = (ModifierKeys & Keys.Shift) == Keys.Shift;
-			if (m_xbvvc.ShowColumnsRTL)
+			int iDummyBox;
+			int dummyLevel;
+			int iDummyTableBox;
+			int cDummyTableBoxes;
+			int iDummyTableLevel;
+			int iDummyCellLevel;
+			GetCurrentTableCellInfo(vwsel, out dummyLevel, out iDummyBox, out iDummyTableBox, out cDummyTableBoxes, out iDummyTableLevel, out iCellBox, out cCellBoxes, out iDummyCellLevel);
+			if ((ModifierKeys & Keys.Shift) != Keys.Shift)
 			{
-				if (fBackTab)
+				bool cellsAllowMove;
+				if (m_xbvvc.ShowColumnsRTL)
 				{
-				}
-				else
-				{
+					// BackTab: move Left-to-Right, Bottom-to-Top
 					// Tab: move Right-to-Left, Top-to-Bottom
-					iBox = iCellBox - 1;
-					if (iBox < 0)
-					{
-						++iTableBox;
-						if (iTableBox >= cTableBoxes && CanGotoNextRow(out rgtss))
-						{
-							// Treat the same as Enter in the last column.
-							return true; // needed for HandleEnterKey.
-						}
-					}
-				}
-			}
-			else
-			{
-				// BackTab: move Right-to-Left, Bottom-to-Top
-				if (fBackTab)
-				{
+					cellsAllowMove = (iCellBox - 1) < 0;
 				}
 				else
 				{
+					// BackTab: move Right-to-Left, Bottom-to-Top
 					// Tab: move Left-to-Right, Top-to-Bottom
-					iBox = iCellBox + 1;
-					if (iBox >= cCellBoxes)
-					{
-						++iTableBox;
-						if (iTableBox >= cTableBoxes && CanGotoNextRow(out rgtss))
-						{
-							// Treat the same as Enter in the last column.
-							return true; // needed for HandleEnterKey.
-						}
-					}
+					cellsAllowMove = (iCellBox + 1) >= cCellBoxes;
+				}
+				if (cellsAllowMove && CanGotoNextRow(out rgtss))
+				{
+					// Treat the same as Enter in the last column.
+					return true; // needed for HandleEnterKey.
 				}
 			}
-			return false;	// signal we're done.
+			return false; // signal we're done.
 		}
 
 		/// <summary>

@@ -145,8 +145,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public void DisplayCircularRefBreakerReport(string report, string caption)
 		{
-			const MessageBoxIcon icon = MessageBoxIcon.Information;
-			SynchronizeInvoke.Invoke(() => MessageBox.Show(report, caption, MessageBoxButtons.OK, icon));
+			SynchronizeInvoke.Invoke(() => MessageBox.Show(report, caption, MessageBoxButtons.OK, MessageBoxIcon.Information));
 		}
 
 		/// <summary>

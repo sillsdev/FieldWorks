@@ -88,7 +88,6 @@ namespace LanguageExplorer.Controls.LexText
 					else
 					{
 						// append "none of the above" node to terminal nodes
-						// REVIEW: SHOULD THIS STRING BE LOCALIZED?
 						var noneOfTheAboveNode = new FeatureTreeNode(LexTextControls.ksNoneOfTheAbove, (int)LexTextImageKind.radio, (int)LexTextImageKind.radio, 0, FeatureTreeNodeKind.Other);
 						InsertNode(noneOfTheAboveNode, childNode);
 					}

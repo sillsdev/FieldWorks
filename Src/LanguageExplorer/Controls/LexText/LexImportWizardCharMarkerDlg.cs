@@ -72,7 +72,7 @@ namespace LanguageExplorer.Controls.LexText
 			AccessibleName = GetType().Name;
 
 			m_inlineMarker = new ClsInFieldMarker();
-			HideOKBtn();	// see if it needs to be visible or not
+			SetOkBtnEnableState();	// see if it needs to be visible or not
 
 		}
 
@@ -105,14 +105,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_existingEndMarkers = markers;
 		}
 
-		public void SetExistingElementNames(Hashtable names)
-		{
-#if RANDYTODO
-			// TODO: Not sure the 2 callers are getting their money's worth out of the call.
-#endif
-		}
-
-		public void Init(Sfm2Xml.ClsInFieldMarker ifm, Hashtable uiLangsHT, LcmCache cache)
+		public void Init(ClsInFieldMarker ifm, Hashtable uiLangsHT, LcmCache cache)
 		{
 			if (ifm == null)
 			{
@@ -145,7 +138,7 @@ namespace LanguageExplorer.Controls.LexText
 
 			InitializeStylesComboBox();
 
-			HideOKBtn();	// see if it needs to be visible or not
+			SetOkBtnEnableState();	// see if it needs to be visible or not
 		}
 
 		private void InitializeStylesComboBox()
@@ -527,14 +520,14 @@ namespace LanguageExplorer.Controls.LexText
 				ValidateEndMarkers();
 			}
 
-			HideOKBtn();
+			SetOkBtnEnableState();
 		}
 
 		private void tbEndMarker_TextChanged(object sender, EventArgs e)
 		{
 			ValidateEndMarkers();
 			EnableRadioEndButtons();
-			HideOKBtn();
+			SetOkBtnEnableState();
 		}
 
 		private void cbStyle_SelectionChangeCommitted(object sender, EventArgs e)
@@ -611,7 +604,7 @@ namespace LanguageExplorer.Controls.LexText
 
 #region Helper methods for GUI details: color, enabling, ...
 
-		private void HideOKBtn()
+		private void SetOkBtnEnableState()
 		{
 			var hide = !HasValidData();
 			if (btnOK.Enabled == hide)
@@ -629,12 +622,12 @@ namespace LanguageExplorer.Controls.LexText
 
 		private void radioEndWithWord_CheckedChanged(object sender, EventArgs e)
 		{
-			HideOKBtn();
+			SetOkBtnEnableState();
 		}
 
 		private void radioEndWithField_CheckedChanged(object sender, EventArgs e)
 		{
-			HideOKBtn();
+			SetOkBtnEnableState();
 		}
 	}
 }

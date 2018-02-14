@@ -32,6 +32,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LabelNode"/> class.
 		/// </summary>
+		/// <param name="label">The label.</param>
+		/// <param name="stylesheet">The stylesheet.</param>
+		/// <param name="displayUsage"><c>true</c> if usage statistics will be displayed; otherwise, <c>false</c>.</param>
 		public LabelNode(ObjectLabel label, IVwStylesheet stylesheet, bool displayUsage)
 		{
 			Tag = label;

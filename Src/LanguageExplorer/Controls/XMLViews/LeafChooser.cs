@@ -79,6 +79,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// <summary>
 			/// Initializes a new instance of the <see cref="LeafLabelNode"/> class.
 			/// </summary>
+			/// <param name="label">The label.</param>
+			/// <param name="stylesheet">The stylesheet.</param>
+			/// <param name="displayUsage"><c>true</c> if usage statistics will be displayed; otherwise, <c>false</c>.</param>
+			/// <param name="leafFlid">The leaf flid.</param>
 			public LeafLabelNode(ObjectLabel label, IVwStylesheet stylesheet, bool displayUsage, int leafFlid)
 				: base(label, stylesheet, displayUsage)
 			{

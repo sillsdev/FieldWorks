@@ -330,10 +330,10 @@ namespace LanguageExplorer.LcmUi
 					}
 					if (fsTarget == null && selectedObject is IFsClosedFeature)
 					{  // it's the remove option
-						var closedValues = phoneme.FeaturesOA.FeatureSpecsOC.Where(s => s.FeatureRA == selectedObject).ToList();
-						if (closedValues.Any())
+						var firstClosedValue = phoneme.FeaturesOA.FeatureSpecsOC.FirstOrDefault(s => s.FeatureRA == selectedObject);
+						if (firstClosedValue != null)
 						{
-							phoneme.FeaturesOA.FeatureSpecsOC.Remove(closedValues.First());
+							phoneme.FeaturesOA.FeatureSpecsOC.Remove(firstClosedValue);
 						}
 					}
 					else
@@ -437,22 +437,14 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		private string GetLabelToShow()
 		{
-			var labelToShow = string.Empty;
 			var featureValuePairs = FeatureValuePairsInSelectedFeatStruc;
 			if (!featureValuePairs.Any())
 			{
-				return labelToShow;
+				return string.Empty;
 			}
 			var matchPattern = FeatDefnAbbr + ":";
-			var results = featureValuePairs.Where(abbr => abbr.StartsWith(matchPattern)).ToList();
-			if (!results.Any())
-			{
-				return labelToShow;
-			}
-			var item = results.First();
-			var patternLength = matchPattern.Length;
-			labelToShow = item.Substring(patternLength, item.Length - patternLength);
-			return labelToShow;
+			var item = featureValuePairs.FirstOrDefault(abbr => abbr.StartsWith(matchPattern));
+			return item?.Substring(matchPattern.Length) ?? string.Empty;
 		}
 
 		/// <summary>
@@ -510,28 +502,25 @@ namespace LanguageExplorer.LcmUi
 			{
 				return false;
 			}
-			var fEnable = false;
-			// Only show it as a change if it is different
-			var features = feats as IFsFeatStruc;
+			// Show it as a change only if it is different
+			var features = (IFsFeatStruc)feats;
 			switch (selectedObject.ClassID)
 			{
 				case FsSymFeatValTags.kClassId: // user has chosen a value for the targeted feature
 					var symFeatVal = selectedObject as IFsSymFeatVal;
-					if (symFeatVal != null && features != null)
+					if (symFeatVal != null)
 					{
-						var closedValue = features.FeatureSpecsOC.Where(s => s.ClassID == FsClosedValueTags.kClassId && ((IFsClosedValue) s).ValueRA == symFeatVal);
-						fEnable = !closedValue.Any();
+						return !features.FeatureSpecsOC.Any(s => s.ClassID == FsClosedValueTags.kClassId && ((IFsClosedValue) s).ValueRA == symFeatVal);
 					}
 					break;
 				case FsFeatStrucTags.kClassId: // user has specified one or more feature/value pairs
 					var fs = selectedObject as IFsFeatStruc;
 					if (fs != null)
 					{
-						var closedValue = features.FeatureSpecsOC.Where(s =>
+						return !features.FeatureSpecsOC.Any(s =>
 							s.ClassID == FsClosedValueTags.kClassId &&
 							s.FeatureRA.Abbreviation.BestAnalysisAlternative.Text == FeatDefnAbbr &&
 							((IFsClosedValue) s).ValueRA.Abbreviation.BestAnalysisAlternative.Text == labelToShow);
-						fEnable = !closedValue.Any();
 					}
 
 					break;
@@ -539,16 +528,13 @@ namespace LanguageExplorer.LcmUi
 					var closedFeature = selectedObject as IFsClosedFeature;
 					if (closedFeature != null)
 					{
-						var closedFeatures = features.FeatureSpecsOC.Where(s => s.FeatureRA == closedFeature);
-						fEnable = closedFeatures.Any();
+						return features.FeatureSpecsOC.Any(s => s.FeatureRA == closedFeature);
 					}
-
 					break;
 				default:
-					fEnable = hvoFeats != SelectedHvo;
-					break;
+					return hvoFeats != SelectedHvo;
 			}
-			return fEnable;
+			return false;
 		}
 	}
 }

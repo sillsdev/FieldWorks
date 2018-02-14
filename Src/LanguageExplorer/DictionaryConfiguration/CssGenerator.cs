@@ -452,6 +452,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			else
 			{
 				const int wsId = 0;
+				// We currently do not generate font information for these blocks
 				blockDeclarations = GenerateCssStyleFromLcmStyleSheet(configNode.Style, wsId, configNode, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId), true);
 				GenerateCssForWritingSystems(baseSelection + " span", configNode.Style, styleSheet, cache, fwStyleSheet);
 			}
@@ -841,6 +842,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// Generates a selector for a class name that matches xhtml that is generated for the configNode.
 		/// e.g. '.entry' or '.sense'
 		/// </summary>
+		/// <param name="configNode"></param>
+		/// <param name="cache">defaults to null, necessary for generating correct css for custom field nodes</param>
 		private static string SelectClassName(ConfigurableDictionaryNode configNode, LcmCache cache = null)
 		{
 			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, cache?.GetManagedMetaDataCache());

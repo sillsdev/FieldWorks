@@ -44,7 +44,7 @@ namespace LanguageExplorer.LcmUi
 		/// <param name="amount">Amount of progress.</param>
 		public void Step(int amount)
 		{
-			int stepSizeHold = StepSize;
+			var stepSizeHold = StepSize;
 			StepSize = amount;
 			ProgressBar.PerformStep();
 			StepSize = stepSizeHold;
@@ -57,17 +57,17 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		/// <summary>
-		/// Get/Set the title of the progress display window.
+		/// The title of the progress display window.
 		/// </summary>
 		public string Title { get; set; }
 
 		/// <summary>
-		/// Get/Set the message within the progress display window.
+		/// The message within the progress display window.
 		/// </summary>
 		public string Message { get; set; }
 
 		/// <summary>
-		/// Gets or sets the current position of the progress bar. This should be within the limits set by
+		/// The current position of the progress bar. This should be within the limits set by
 		/// SetRange, or returned by GetRange.
 		/// </summary>
 		public int Position
@@ -77,7 +77,7 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		/// <summary>
-		/// Gets or sets the size of the step increment used by Step.
+		/// The size of the step increment used by Step.
 		/// </summary>
 		public int StepSize
 		{
@@ -86,7 +86,7 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		/// <summary>
-		/// Gets or sets the minimum value of the progress bar.
+		/// The minimum value of the progress bar.
 		/// </summary>
 		public int Minimum
 		{
@@ -94,7 +94,7 @@ namespace LanguageExplorer.LcmUi
 			set { ProgressBar.Minimum = value; }
 		}
 		/// <summary>
-		/// Gets or sets the maximum value of the progress bar.
+		/// The maximum value of the progress bar.
 		/// </summary>
 		public int Maximum
 		{
@@ -103,8 +103,7 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		/// <summary>
-		/// Gets an object to be used for ensuring that required tasks are invoked on the main
-		/// UI thread.
+		/// Gets an object to be used for ensuring that required tasks are invoked on the main UI thread.
 		/// </summary>
 		public ISynchronizeInvoke SynchronizeInvoke => ProgressBar;
 

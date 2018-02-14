@@ -436,7 +436,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		public virtual void SetDlgInfo(LcmCache cache, WindowParams wp, string form)
 		{
-			SetDlgInfo(cache, wp, cache.DefaultVernWs);
+			SetDlgInfo(cache, wp, form, cache.DefaultVernWs);
 		}
 
 		protected void SetDlgInfo(LcmCache cache, WindowParams wp, string form, int ws)

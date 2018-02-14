@@ -51,6 +51,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// using the specified metadatacache, using vc and rootClassId for handling generate nodes
 		/// that refer to layouts.
 		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="input"></param>
+		/// <param name="vc">for parts/layouts</param>
+		/// <param name="rootClassId">class of root object from which column layouts can be computed</param>
 		internal PartGenerator(LcmCache cache, XElement input, XmlVc vc, int rootClassId)
 		{
 			m_cache = cache;
@@ -467,6 +471,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Return an array list of the non-comment children of root,
 		/// except that any "generate" elements are replaced with what they generate.
 		/// </summary>
+		/// <param name="root">The root.</param>
+		/// <param name="cache">The LCM cache.</param>
+		/// <param name="vc">for parts/layouts</param>
+		/// <param name="rootClassId">the class of the rootObject used to generate the part</param>
 		internal static List<XElement> GetGeneratedChildren(XElement root, LcmCache cache, XmlVc vc, int rootClassId)
 		{
 			return GetGeneratedChildren(root, cache, null, vc, rootClassId);
@@ -487,12 +495,21 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Return an array list of the non-comment children of root,
 		/// except that any "generate" elements are replaced with what they generate.
 		/// </summary>
+		/// <param name="root">The root.</param>
+		/// <param name="cache">The LCM cache.</param>
+		/// <param name="keyAttrNames">if non-null, gives a list of key attribute names.
+		/// generated children which match another node in root in all key attributes are omitted.</param>
 		public static List<XElement> GetGeneratedChildren(XElement root, LcmCache cache, string[] keyAttrNames)
 		{
 			return GetGeneratedChildren(root, cache, keyAttrNames, null, 0);
 		}
 
 		/// <summary />
+		/// <param name="root"></param>
+		/// <param name="cache"></param>
+		/// <param name="keyAttrNames"></param>
+		/// <param name="vc">for parts/layouts</param>
+		/// <param name="rootClassId">class of the root object used to compute parts/layouts</param>
 		private static List<XElement> GetGeneratedChildren(XElement root, LcmCache cache, string[] keyAttrNames, XmlVc vc, int rootClassId)
 		{
 			var result = new List<XElement>();

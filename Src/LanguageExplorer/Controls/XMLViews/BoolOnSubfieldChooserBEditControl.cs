@@ -22,12 +22,12 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal override int GetValueOfField(ISilDataAccess sda, int hvoField)
 		{
-			return sda.get_BooleanProp(hvoField, m_flidSub) ? 1 : 0;
+			return sda.get_BooleanProp(hvoField, m_subFieldId) ? 1 : 0;
 		}
 
 		internal override void SetValueOfField(ISilDataAccess sda, int hvoField, int val)
 		{
-			sda.SetBoolean(hvoField, m_flidSub, val == 1);
+			sda.SetBoolean(hvoField, m_subFieldId, val == 1);
 		}
 	}
 }

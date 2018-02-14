@@ -47,12 +47,12 @@ namespace LanguageExplorer.Controls.LexText
 		/// <summary>
 		/// Initialize for adding new writing systems during import.
 		/// </summary>
-		public void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app, IEnumerable<CoreWritingSystemDefinition> wss)
+		public void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app, IEnumerable<CoreWritingSystemDefinition> existingWritingSystems)
 		{
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
-			m_existingWsIds = new HashSet<string>(wss.Select(ws => ws.Id).ToList());
+			m_existingWsIds = new HashSet<string>(existingWritingSystems.Select(ws => ws.Id).ToList());
 		}
 
 		/// <summary>

@@ -572,21 +572,29 @@ namespace LanguageExplorer.DictionaryConfiguration
 				return null;
 			}
 			string styleName;
-			if (field == "SubentriesOS") // only Reversal Subentries use SubentriesOS
-			{
-				styleName = "Reversal-Subentry";
-			}
-			else if (field == "ExamplesOS" || DictionaryConfigurationModel.NoteInParaStyles.Contains(field))
+			if (DictionaryConfigurationModel.NoteInParaStyles.Contains(field))
 			{
 				styleName = "Bulleted List";
 			}
-			else if (field == "ExtendedNoteOS" || field == "SensesOS")
-			{
-				styleName = "Dictionary-Sense";
-			}
 			else
 			{
-				styleName = "Dictionary-Subentry";
+				// only Reversal Subentries use SubentriesOS
+				switch (field)
+				{
+					case "SubentriesOS":
+						styleName = "Reversal-Subentry";
+						break;
+					case "ExamplesOS":
+						styleName = "Bulleted List";
+						break;
+					case "ExtendedNoteOS":
+					case "SensesOS":
+						styleName = "Dictionary-Sense";
+						break;
+					default:
+						styleName = "Dictionary-Subentry";
+						break;
+				}
 			}
 			return styleName;
 		}
@@ -937,6 +945,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// Called when an item in the ListView is checked or unchecked.  Validates the new set of checked items (preventing if invalid),
 		/// serializes, and refreshes the preview
 		/// </summary>
+		/// <param name="listOptionsView"></param>
+		/// <param name="wsOptions">Pass null if the list doesn't represent writing systems.</param>
+		/// <param name="e"></param>
 		private void ListItemCheckedChanged(IDictionaryListOptionsView listOptionsView, DictionaryNodeWritingSystemOptions wsOptions, ItemCheckedEventArgs e)
 		{
 			var items = e.Item.ListView.Items;

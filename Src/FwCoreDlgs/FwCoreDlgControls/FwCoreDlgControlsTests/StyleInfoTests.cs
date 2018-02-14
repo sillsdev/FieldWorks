@@ -11,7 +11,6 @@
 using NUnit.Framework;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgControls

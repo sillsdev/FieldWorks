@@ -963,7 +963,7 @@ namespace LanguageExplorer.Controls.LexText
 			listViewContentMapping.EndUpdate();
 		}
 
-		private void btnModifyContentMapping_Click(object sender, System.EventArgs e)
+		private void btnModifyContentMapping_Click(object sender, EventArgs e)
 		{
 			var selIndexes = listViewContentMapping.SelectedIndices;
 			if (selIndexes.Count < 1 || selIndexes.Count > 1)
@@ -996,7 +996,7 @@ namespace LanguageExplorer.Controls.LexText
 						continue;
 					}
 					var customField = (LexImportCustomField)content.LexImportField;
-					var cfChange = m_MappingMgr.TESTTESTTEST(customField);
+					var cfChange = m_MappingMgr.GetCustomFieldChangeStatus(customField);
 					switch (cfChange)
 					{
 						case CFChanges.NoChanges:
@@ -3808,7 +3808,6 @@ namespace LanguageExplorer.Controls.LexText
 				dlg.Init(null, GetUILanguages(), m_cache);
 				dlg.SetExistingBeginMarkers(ExtractExistingBeginMarkers(false));
 				dlg.SetExistingEndMarkers(ExtractExistingEndMarkers(false));
-				dlg.SetExistingElementNames(ExtractExistingElementNames(false));
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					m_dirtySenseLastSave = true;
@@ -3835,7 +3834,6 @@ namespace LanguageExplorer.Controls.LexText
 				dlg.Init(selectedIFM, GetUILanguages(), m_cache);
 				dlg.SetExistingBeginMarkers(ExtractExistingBeginMarkers(true));
 				dlg.SetExistingEndMarkers(ExtractExistingEndMarkers(true));
-				dlg.SetExistingElementNames(ExtractExistingElementNames(true));
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					m_dirtySenseLastSave = true;

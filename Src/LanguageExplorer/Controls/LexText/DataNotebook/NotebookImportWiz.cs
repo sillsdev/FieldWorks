@@ -2203,22 +2203,6 @@ namespace LanguageExplorer.Controls.LexText.DataNotebook
 			sw.WriteLine("            }");
 			sw.WriteLine("            catch (err) {{ alert(\"{0}\" + err); }}", sError);
 			sw.WriteLine("        }");
-			//This pops up a dialog on every click that allows the user to open a permanent gaping security hole.
-			//        else if (isNetscape)
-			//        {
-			//            try
-			//            {
-			//                netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
-			//                var file = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
-			//                file.initWithPath(prog);
-			//                var process = Components.classes["@mozilla.org/process/util;1"].createInstance(Components.interfaces.nsIProcess);
-			//                process.init(file);
-			//                var args = [filename, "-g", line];
-			//                process.run(false, args, args.length);
-			//                zeditfailed = false;
-			//            }
-			//            catch (err) { alert(\"{0}\" + err); } ", sError);
-			//        }
 			sw.WriteLine("    }");
 			sw.WriteLine("    if (zeditfailed)");
 			sw.WriteLine("        alert(\"{0}\")", sCannot);

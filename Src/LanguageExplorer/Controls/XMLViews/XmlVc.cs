@@ -3596,7 +3596,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Check for "atleastoneis" attribute condition. This requires a field attribute that translates to a collection
 		/// or sequence property.
 		/// </summary>
-		private static bool AtLeastOneIsConditionPasses(XElement frag, int hvo, ISilDataAccess sda)
+		private static bool AtLeastOneIsConditionPasses(XElement frag, int vectorHvo, ISilDataAccess sda)
 		{
 			var className = XmlUtils.GetOptionalAttributeValue(frag, "atleastoneis");
 			if (className == null)
@@ -3604,26 +3604,22 @@ namespace LanguageExplorer.Controls.XMLViews
 				return true;
 			}
 			var mdc = sda.MetaDataCache;
-			var flid = GetFlid(frag, hvo, sda);
+			var flid = GetFlid(frag, vectorHvo, sda);
 			var uclsidArg = mdc.GetClassId(className);
 			var fExcludeSubClass = XmlUtils.GetOptionalBooleanAttributeValue(frag, "excludesubclasses", false);
 
 			int[] contents;
-			var chvoMax = sda.get_VecSize(hvo, flid);
+			var chvoMax = sda.get_VecSize(vectorHvo, flid);
 			using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
 			{
 				int chvo;
-				sda.VecProp(hvo, flid, chvoMax, out chvo, arrayPtr);
+				sda.VecProp(vectorHvo, flid, chvoMax, out chvo, arrayPtr);
 				contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 			}
 
-#if RANDYTODO
-			// TODO: Why loop over 'contents' but then never use 'hvoVec'?
-			// TODO: Makes me wonder if that 'hvo' that is used ought not be 'hvoVec'?
-#endif
-			foreach (var hvoVec in contents)
+			foreach (var hvoVectorContent in contents)
 			{
-				var uclsidObj = sda.get_IntProp(hvo, CmObjectTags.kflidClass);
+				var uclsidObj = sda.get_IntProp(hvoVectorContent, CmObjectTags.kflidClass);
 				if (uclsidArg == uclsidObj)
 				{
 					return true;

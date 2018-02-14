@@ -1496,6 +1496,17 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Create slices for the specified object by finding a relevant template in the spec.
 		/// </summary>
+		/// <param name="obj">The object to make slices for.</param>
+		/// <param name="parentSlice">The parent slice.</param>
+		/// <param name="layoutName">Name of the layout.</param>
+		/// <param name="layoutChoiceField">The layout choice field.</param>
+		/// <param name="indent">The indent.</param>
+		/// /// <param name="insertPosition">The insert position.</param>
+		/// <param name="path">sequence of nodes and HVOs inside which this is nested</param>
+		/// <param name="reuseMap">map of key/slice combinations from a DataTree being refreshed. Exact matches may be
+		/// reused, and also, the expansion state of exact matches is preserved.</param>
+		/// <param name="unifyWith">If not null, this is a node to be 'unified' with the one looked up
+		/// using the layout name.</param>
 		/// <returns>
 		/// updated insertPosition for next item after the ones inserted.
 		/// </returns>
@@ -1650,6 +1661,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Apply a layout to an object, producing the specified slices.
 		/// </summary>
+		/// <param name="obj">The object we want a detail view of</param>
+		/// <param name="parentSlice">The parent slice.</param>
+		/// <param name="template">the 'layout' element</param>
+		/// <param name="indent">How deeply indented the tree is at this point.</param>
+		/// <param name="insertPosition">index in slices where we should insert nodes</param>
+		/// <param name="path">sequence of nodes and HVOs inside which this is nested</param>
+		/// <param name="reuseMap">map of key/slice combinations from a DataTree being refreshed. Exact matches may be
+		/// reused, and also, the expansion state of exact matches is preserved.</param>
 		/// <returns>
 		/// updated insertPosition for next item after the ones inserted.
 		/// </returns>

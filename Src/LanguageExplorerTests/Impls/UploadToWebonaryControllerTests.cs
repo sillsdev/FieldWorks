@@ -14,7 +14,6 @@ using Ionic.Zip;
 using NUnit.Framework;
 using SIL.LCModel.Core.Text;
 using SIL.IO;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;

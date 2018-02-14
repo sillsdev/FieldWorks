@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Xml;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
 

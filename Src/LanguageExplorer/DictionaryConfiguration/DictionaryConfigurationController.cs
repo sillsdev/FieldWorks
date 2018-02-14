@@ -1270,6 +1270,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Generate a list of ConfigurableDictionaryNode objects to represent each custom field of the given type.
 		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="className"></param>
+		/// <param name="customFieldMap">existing custom field map for performance, method will build one if none given</param>
 		public static List<ConfigurableDictionaryNode> GetCustomFieldsForType(LcmCache cache, string className, Dictionary<string, List<int>> customFieldMap = null)
 		{
 			customFieldMap = customFieldMap ?? BuildCustomFieldMap(cache);
