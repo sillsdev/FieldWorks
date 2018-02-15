@@ -267,7 +267,8 @@ namespace SIL.FieldWorks.Common.Widgets
 				{
 					control.Left = indent;
 					control.Width = Width - indent;
-					control.Top = Height - indent;
+					control.Top = Height - indent + 5;
+					control.Height = Height + 10;
 					var sel = MultiStringSelectionUtils.GetSelAtStartOfWs(m_innerView.RootBox, m_innerView.Flid, wsIndex, ws);
 					if (sel != null)
 					{
