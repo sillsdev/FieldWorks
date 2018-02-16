@@ -404,7 +404,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateXHTMLForEntry_SenseNumbersGeneratedForMultipleReferringSenses()
+		public void GenerateXHTMLForEntry_SenseNumbersGeneratedForMultipleReferencedSenses()
 		{
 			var headwordNode = new ConfigurableDictionaryNode
 			{
