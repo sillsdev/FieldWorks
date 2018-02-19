@@ -334,6 +334,7 @@
 		<PalasoFiles Include="SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<PalasoFiles Include="SIL.Archiving.$(DebugInfo)"/>
 		<PalasoFiles Include="Ionic.Zip.dll"/>
+		<PalasoFiles Include="Keyman10Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<PalasoFiles Include="Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<PalasoFiles Include="KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<PalasoFiles Include="SIL.WritingSystems.dll"/>
