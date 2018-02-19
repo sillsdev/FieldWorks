@@ -2104,7 +2104,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, repoSense.Count);
 			ILexSense sense;
 			Assert.IsTrue(repoSense.TryGetObject(new Guid("b4de1476-b432-46b6-97e3-c993ff0a2ff9"), out sense));
-			Assert.That(sense.ReversalEntriesRC.Count, Is.EqualTo(0), "Empty reversal should not have been imported.");
+			Assert.That(sense.ReferringReversalIndexEntries.Count, Is.EqualTo(0), "Empty reversal should not have been imported.");
 			Assert.That(Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().Count, Is.EqualTo(0));
 		}
 
@@ -2153,7 +2153,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, repoSense.Count);
 			ILexSense sense;
 			Assert.IsTrue(repoSense.TryGetObject(new Guid("b4de1476-b432-46b6-97e3-c993ff0a2ff9"), out sense));
-			Assert.That(sense.ReversalEntriesRC.Count, Is.EqualTo(1), "Empty reversal should not have been imported but non empty should.");
+			Assert.That(sense.ReferringReversalIndexEntries.Count, Is.EqualTo(1), "Empty reversal should not have been imported but non empty should.");
 		}
 
 		/// <summary>

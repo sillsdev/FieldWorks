@@ -2124,8 +2124,8 @@ namespace SIL.FieldWorks.XWorks
 			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss", Style = "FooStyle" };
 			var senses = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "ReferringSenses",
-				CSSClassNameOverride = "ReferringSenses",
+				FieldDescription = "SensesRS",
+				CSSClassNameOverride = "refdsenses",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
 				{
 					DisplayEachSenseInAParagraph = true, NumberStyle = "Dictionary-RevSenseNum"
@@ -2142,8 +2142,8 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.That(cssResult, Contains.Substring(".reversalindexentry> .referringsenses > .sensecontent > .referringsense> .gloss"));
-			Assert.IsTrue(Regex.Match(cssResult, @"\.reversalindexentry>\s*\.referringsenses\s*>\s*\.sensecontent\s*\.sensenumber\s*{.*font-style\s*:\s*italic;.*}", RegexOptions.Singleline).Success);
+			Assert.That(cssResult, Contains.Substring(".reversalindexentry> .refdsenses > .sensecontent > .refdsense> .gloss"));
+			Assert.IsTrue(Regex.Match(cssResult, @"\.reversalindexentry>\s*\.refdsenses\s*>\s*\.sensecontent\s*\.sensenumber\s*{.*font-style\s*:\s*italic;.*}", RegexOptions.Singleline).Success);
 			Assert.False(Regex.Match(cssResult, @"{\s*}").Success); // make sure we filter out empty rules
 		}
 
@@ -2206,7 +2206,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var senses = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "ReferringSenses",
+				FieldDescription = "SensesRS",
 				Children = new List<ConfigurableDictionaryNode> { primaryentry }
 			};
 			var entry = new ConfigurableDictionaryNode
@@ -2218,7 +2218,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			const string thisMainSense = @"\.reversalindexentry>\s*\.referringsenses\s*\.referringsense>\s*\.entryrefswiththismainsense";
+			const string thisMainSense = @"\.reversalindexentry>\s*\.sensesrs\s*\.sensesr>\s*\.entryrefswiththismainsense";
 			VerifyRegex(cssResult, thisMainSense + @">\s*\.entrytypes:before{\s*content:'b4';\s*}"); // TODO? (Hasso) 2016.10: put on .types .type first-child
 			VerifyRegex(cssResult, thisMainSense + @">\s*\.entryrefswiththismainsens\s*\+\s*.entrytypes:before{\s*content:'twixt';\s*}",
 				"Until everything else is restructured under the yet-to-be-added Targets node, Factoring Type.Between goes between typed factions");

@@ -116,13 +116,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return;		// must be selecting multiple objects!  (See LT-5724.)
 			int h1 = m_rootb.Height;
 			ILexSense sense = (ILexSense)m_cache.ServiceLocator.GetObject(m_selectedSenseHvo);
-			ILcmReferenceCollection<IReversalIndexEntry> col = sense.ReversalEntriesRC;
+			var col = sense.ReferringReversalIndexEntries;
 			using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(
 				m_cache.ActionHandlerAccessor,
 				SIL.FieldWorks.XWorks.LexEd.LexEdStrings.ksUndoDeleteRevFromSense,
 				SIL.FieldWorks.XWorks.LexEd.LexEdStrings.ksRedoDeleteRevFromSense))
 			{
-				sense.ReversalEntriesRC.Remove(m_rootObj as IReversalIndexEntry);
+				((IReversalIndexEntry)m_rootObj).SensesRS.Remove(sense);
 				helper.RollBack = false;
 			}
 			CheckViewSizeChanged(h1, m_rootb.Height);

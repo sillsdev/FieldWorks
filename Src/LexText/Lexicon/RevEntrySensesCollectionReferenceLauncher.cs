@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Linq;
 using System.Windows.Forms;
 using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
@@ -67,7 +68,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			CheckDisposed();
 
 			ILexSense selectedSense = obj as ILexSense;
-			ILcmReferenceCollection<IReversalIndexEntry> col = selectedSense.ReversalEntriesRC;
+			var col = selectedSense.ReferringReversalIndexEntries;
 			if (!col.Contains(m_obj as IReversalIndexEntry))
 			{
 				int h1 = m_vectorRefView.RootBox.Height;
@@ -75,7 +76,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					m_cache.ActionHandlerAccessor, LexEdStrings.ksUndoAddRevToSense,
 					LexEdStrings.ksRedoAddRevToSense))
 				{
-					col.Add(m_obj as IReversalIndexEntry);
+					((IReversalIndexEntry)m_obj).SensesRS.Add(selectedSense);
 					helper.RollBack = false;
 				}
 				int h2 = m_vectorRefView.RootBox.Height;

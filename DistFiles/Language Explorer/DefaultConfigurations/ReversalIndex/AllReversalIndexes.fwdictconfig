@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" writingSystem="" version="19" lastModified="2017-07-11" allPublications="true" isRootBased="false">
+<DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" writingSystem="" version="20" lastModified="2018-02-08" allPublications="true" isRootBased="false">
 	<ConfigurationItem name="Reversal Entry" isEnabled="true" style="Reversal-Normal" styleType="paragraph" field="ReversalIndexEntry" cssClassNameOverride="reversalindexentry">
 		<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after=" " field="ReversalForm">
 		<!-- Only one space after, because everything following has a Before space, so that will turn into two between this and the rest. -->
@@ -8,7 +8,7 @@
 			</WritingSystemOptions>
 		</ConfigurationItem>
 		<ConfigurationItem name="Reversal Category" isEnabled="true" after=" " field="PartOfSpeechRA" cssClassNameOverride="PartOfSpeech">
-		<!-- Set off the Reversal Category from the Senses, since it belongs to the reversal form, not the referenced senses.  -->
+		<!-- Set off the Reversal Category from the Senses, since it belongs to the reversal form, not the senses sequence.  -->
 		<!-- Only put them on the parent, not the children. -->
 			<ConfigurationItem name="Abbreviation" isEnabled="true" before="" between="," after="" field="Abbreviation">
 				<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
@@ -21,7 +21,7 @@
 				</WritingSystemOptions>
 			</ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Referenced Senses" isEnabled="true" before=" " between="; " after="" field="ReferringSenses">
+		<ConfigurationItem name="Referenced Senses" isEnabled="true" before=" " between="; " after="" field="SensesRS">
 			<SenseOptions numberStyle="Dictionary-SenseNumber" numberAfter=") " numberSingleSense="false" showSingleGramInfoFirst="false" displayEachSenseInParagraph="false" />
 			<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Reversal-Vernacular" styleType="character" between=" " after="" field="ReversalName" cssClassNameOverride="headword">
 			<!-- There is a space before the parent, so not needed here. -->
@@ -724,7 +724,7 @@
 					</WritingSystemOptions>
 				</ConfigurationItem>
 			</ConfigurationItem>
-			<ConfigurationItem name="Referenced Senses" isEnabled="true" before=" " between="; " after="" field="ReferringSenses">
+			<ConfigurationItem name="Referenced Senses" isEnabled="true" before=" " between="; " after="" field="SensesRS">
 				<SenseOptions numberStyle="Dictionary-SenseNumber" numberSingleSense="false" showSingleGramInfoFirst="false" displayEachSenseInParagraph="false" />
 				<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Reversal-Vernacular" before=" " between=" " after="" field="ReversalName" cssClassNameOverride="headword">
 					<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">

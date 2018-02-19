@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.XWorks
 		private ILexEntry m_sky;
 
 		private ILexExampleSentence m_goodHot;
-		private ILexExampleSentence m_badHot;
+		private ILexExampleSentence m_badHot; // REVIEW (Hasso) 2018.02: many of these are unused. Can they be removed?
 
 		private ILexEntryRef m_hotWaterComponents;
 		private ILexEntryRef m_blueSkyComponents;
@@ -110,11 +110,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private IReversalIndex m_revIndex;
 
-		const int kmainFlid = 89999956;
+		private const int kmainFlid = 89999956;
 
 		private int m_flidReferringSenses;
 
-		PropertyTable PropertyTable { get { return m_window.PropTable; } }
+		private PropertyTable PropertyTable => m_window.PropTable;
 
 		protected override void Init()
 		{
@@ -257,23 +257,23 @@ namespace SIL.FieldWorks.XWorks
 			index.EntriesOC.Add(indexEntry);
 			var wsEn = Cache.ServiceLocator.WritingSystemManager.Get("en").Handle;
 			indexEntry.ReversalForm.set_String(wsEn, "Reversal Form");
-			m_nolanryan.AllSenses[0].ReversalEntriesRC.Add(indexEntry);
+			indexEntry.SensesRS.Add(m_nolanryan.AllSenses[0]);
 			var indexEntry2 = m_revIndexEntryFactory.Create();
 			index.EntriesOC.Add(indexEntry2);
 			indexEntry2.ReversalForm.set_String(wsEn, "Reversal 2 Form");
-			m_water.AllSenses[0].ReversalEntriesRC.Add(indexEntry2);
+			indexEntry2.SensesRS.Add(m_water.AllSenses[0]);
 			var entry2SubentryA = m_revIndexEntryFactory.Create();
 			indexEntry2.SubentriesOS.Add(entry2SubentryA);
 			entry2SubentryA.ReversalForm.set_String(wsEn, "Reversal 2a Form");
-			m_water2.AllSenses[0].ReversalEntriesRC.Add(entry2SubentryA);
+			entry2SubentryA.SensesRS.Add(m_water2.AllSenses[0]);
 			var entry2SubentryB = m_revIndexEntryFactory.Create();
 			indexEntry2.SubentriesOS.Add(entry2SubentryB);
 			entry2SubentryB.ReversalForm.set_String(wsEn, "Reversal 2b Form");
-			m_hotWater.AllSenses[0].ReversalEntriesRC.Add(entry2SubentryB);
+			entry2SubentryB.SensesRS.Add(m_hotWater.AllSenses[0]);
 			var subsubentry = m_revIndexEntryFactory.Create();
 			entry2SubentryB.SubentriesOS.Add(subsubentry);
 			subsubentry.ReversalForm.set_String(wsEn, "Reversal 2b || !2b Form");
-			m_waterH2O.ReversalEntriesRC.Add(subsubentry);
+			subsubentry.SensesRS.Add(m_waterH2O);
 			var senseLessIndexEntry = m_revIndexEntryFactory.Create();
 			index.EntriesOC.Add(senseLessIndexEntry);
 			senseLessIndexEntry.ReversalForm.set_String(wsEn, "Reversal Form NoSense");
@@ -330,7 +330,7 @@ namespace SIL.FieldWorks.XWorks
 			// "Reversal 2a Form" is linked to m_water2 which is excluded from publication
 			var vec = m_revDecorator.VecProp(entry.Hvo, ReversalIndexEntryTags.kflidSubentries);
 			Assert.AreEqual(1, vec.Length, "Only one of the subentries is publishable");
-			var subentry = Cache.ServiceLocator.GetObject(vec[0]) as IReversalIndexEntry;
+			var subentry = (IReversalIndexEntry)Cache.ServiceLocator.GetObject(vec[0]);
 			Assert.AreEqual("Reversal 2b Form", subentry.ShortName, "'Reversal 2b Form' is the only publishable subentry of 'Reversal 2 Form'");
 			Assert.IsTrue(m_revDecorator.IsExcludedObject(entry.SubentriesOS[0]), "First subentry ('Reversal 2a Form') should be excluded");
 			Assert.IsFalse(m_revDecorator.IsExcludedObject(entry.SubentriesOS[1]), "Second subentry ('Reversal 2b Form') should not be excluded')");
@@ -348,11 +348,11 @@ namespace SIL.FieldWorks.XWorks
 			var entries = m_revDecorator.GetEntriesToPublish(PropertyTable, ObjectListPublisher.OwningFlid, "Reversal Index");
 			// "Reversal Form" is linked to m_nolanryan which is excluded from publication
 			Assert.AreEqual(2, entries.Length, "there should be only 2 main Reversal Entry that can be published");
-			var entry = Cache.ServiceLocator.GetObject(entries[1]) as IReversalIndexEntry;
-			Assert.IsNotNull(entry, "the single reversal entry really is a reversal entry");
-			Assert.IsFalse(entry.ReferringSenses.Any(), "Test setup is broken, this entry should have no senses");
+			var revEntry = Cache.ServiceLocator.GetObject(entries[1]) as IReversalIndexEntry;
+			Assert.IsNotNull(revEntry, "the single reversal entry really is a reversal entry");
+			Assert.IsFalse(revEntry.SensesRS.Any(), "Test setup is broken, this entry should have no senses");
 			// SUT
-			Assert.IsFalse(m_revDecorator.IsExcludedObject(entry), "A reversal index entry with no senses should not be excluded");
+			Assert.IsFalse(m_revDecorator.IsExcludedObject(revEntry), "A reversal index entry with no senses should not be excluded");
 		}
 
 		/// <summary>
