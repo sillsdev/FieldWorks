@@ -23,7 +23,7 @@ namespace LanguageExplorer
 	internal static class DictionaryConfigurationServices
 	{
 		internal const string NodePathSeparator = " > ";
-		internal const int VersionCurrent = 19;
+		internal const int VersionCurrent = 20;
 		internal const string RootFileName = "Root";
 		internal const string HybridFileName = "Hybrid";
 		internal const string LexemeFileName = "Lexeme";

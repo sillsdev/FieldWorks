@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.LexText;
@@ -74,7 +75,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <summary />
 		public override void AddItem(ICmObject obj)
 		{
-			var col = ((ILexSense)obj).ReversalEntriesRC;
+			var selectedSense = (ILexSense)obj;
+			var col = selectedSense.ReferringReversalIndexEntries;
 			if (col.Contains(m_obj as IReversalIndexEntry))
 			{
 				return;
@@ -82,7 +84,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			var h1 = m_vectorRefView.RootBox.Height;
 			using (var helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, LanguageExplorerResources.ksUndoAddRevToSense, LanguageExplorerResources.ksRedoAddRevToSense))
 			{
-				col.Add(m_obj as IReversalIndexEntry);
+				((IReversalIndexEntry)m_obj).SensesRS.Add(selectedSense);
 				helper.RollBack = false;
 			}
 			var h2 = m_vectorRefView.RootBox.Height;

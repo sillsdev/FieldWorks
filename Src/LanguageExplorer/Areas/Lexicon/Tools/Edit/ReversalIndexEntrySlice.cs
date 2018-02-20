@@ -6,7 +6,7 @@ using SIL.LCModel;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
-
+using SIL.LCModel.DomainImpl;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// Constructor.
 		/// </summary>
 		public ReversalIndexEntrySlice(ICmObject obj) :
-			base(new ReversalIndexEntrySliceView(obj.Hvo), obj, LexSenseTags.kflidReversalEntries)
+			base(new ReversalIndexEntrySliceView(obj.Hvo), obj, obj.Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs)
 		{
 		}
 
@@ -111,7 +111,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			if (hvo == Object.Hvo && tag == LexSenseTags.kflidReversalEntries)
+			if (hvo == Object.Hvo && tag == Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs)
 			{
 				((ReversalIndexEntrySliceView)Control).ResetEntries();
 			}

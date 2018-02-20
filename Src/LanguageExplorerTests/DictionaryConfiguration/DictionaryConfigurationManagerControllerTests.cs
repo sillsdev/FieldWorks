@@ -21,6 +21,7 @@ using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.TestUtilities;
 using SIL.LCModel.Utils;
+using SIL.WritingSystems;
 using FileUtils = SIL.LCModel.Utils.FileUtils;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
@@ -47,6 +48,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
 			base.FixtureSetup();
 
 			_mockFilesystem = new MockFileOS();
@@ -103,6 +110,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			_mockFilesystem = null;
 
 			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
 		}
 
 		public override void TestSetup()

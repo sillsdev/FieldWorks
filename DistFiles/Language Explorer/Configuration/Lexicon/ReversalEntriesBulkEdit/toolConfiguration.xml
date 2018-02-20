@@ -23,7 +23,7 @@
 									<properties>
 										<editable value="false"/>
 									</properties>
-									<seq field="ReferringSenses" layout="empty">
+									<seq field="Senses" layout="empty">
 										<para>
 											<string field="FullReferenceName"/>
 										</para>

@@ -880,7 +880,7 @@ namespace LanguageExplorer.Controls.LexText
 			{
 				WriteTrait(w, RangeNames.sDbDomainTypesOA, dom.Name, m_wsBestAnalVern);
 			}
-			foreach (var reversal in sense.ReversalEntriesRC)
+			foreach (var reversal in sense.ReferringReversalIndexEntries)
 			{
 				WriteReversal(w, reversal);
 			}

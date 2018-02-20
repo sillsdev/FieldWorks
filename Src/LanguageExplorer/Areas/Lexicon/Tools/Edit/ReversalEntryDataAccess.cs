@@ -119,7 +119,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var key = new HvoWs(hvo, ws);
 				m_mapHvoWsRevForm[key] = _tss;
 				// anything negative is just a dummy hvo. Make the base class ignore it for now
-				if (hvo < 0)
+				if (hvo <= 0)
 				{
 					return;
 				}

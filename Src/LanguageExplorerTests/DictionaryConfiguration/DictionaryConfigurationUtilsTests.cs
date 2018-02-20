@@ -11,15 +11,24 @@ using NUnit.Framework;
 using SIL.IO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
 	[TestFixture]
 	public class DictionaryConfigurationUtilsTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		[TestFixtureSetUp]
-		public new void FixtureSetup()
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
 		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+
 			var testProjPath = Path.Combine(Path.GetTempPath(), "DictionaryConfigurationUtilsTestsProj");
 			if (Directory.Exists(testProjPath))
 			{
@@ -28,6 +37,29 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Directory.CreateDirectory(testProjPath);
 			Cache.ProjectId.Path = testProjPath;
 		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+		#endregion
+
+		//[TestFixtureSetUp]
+		//public new void FixtureSetup()
+		//{
+		//	var testProjPath = Path.Combine(Path.GetTempPath(), "DictionaryConfigurationUtilsTestsProj");
+		//	if (Directory.Exists(testProjPath))
+		//	{
+		//		Directory.Delete(testProjPath, true);
+		//	}
+		//	Directory.CreateDirectory(testProjPath);
+		//	Cache.ProjectId.Path = testProjPath;
+		//}
 
 		[Test]
 		public void GatherBuiltInAndUserConfigurations_ReturnsShippedConfigurations()

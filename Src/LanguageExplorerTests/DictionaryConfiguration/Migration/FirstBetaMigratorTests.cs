@@ -14,6 +14,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.IO;
 using SIL.TestUtilities;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 {
@@ -26,6 +27,27 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		private const string LexEntry = "LexEntry";
 		private const string ReferencedComplexForms = "VisibleComplexFormBackRefs";
 		private const string OtherRefdComplexForms = "ComplexFormsNotSubentries";
+
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
 
 		public override void TestSetup()
 		{
@@ -1036,6 +1058,32 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			Assert.AreEqual("etymologies", etymologyNode.CSSClassNameOverride, "Should have changed CSS override");
 			Assert.AreEqual(7, etymologyNode.Children.Count, "There should be 7 nodes after the conversion.");
 			Assert.IsNull(etymologyNode.DictionaryNodeOptions, "Improper options added to etymology sequence node.");
+		}
+
+		[Test]
+		public void MigrateFrom83AlphaToBeta10_UpdatesReversalReferringsenses()
+		{
+			var referencedSensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Senses",
+				FieldDescription = "ReferringSenses"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "ReversalIndexEntry",
+				Children = new List<ConfigurableDictionaryNode> { referencedSensesNode }
+			};
+			var alphaModel = new DictionaryConfigurationModel
+			{
+				Version = FirstAlphaMigrator.VersionAlpha3,
+				WritingSystem = "en",
+				FilePath = string.Empty,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			var betaModel = _migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
+			_migrator.MigrateFrom83Alpha(_logger, alphaModel, betaModel);
+			Assert.AreEqual("Senses", referencedSensesNode.FieldDescription, "Should have changed 'ReferringSenses' field for reversal to 'Senses'");
 		}
 
 		/// <summary>Referenced Complex Forms that are siblings of Subentries should become Other Referenced Complex Forms</summary>

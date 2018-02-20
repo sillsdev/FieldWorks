@@ -126,7 +126,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				LanguageExplorerResources.ksUndoDeleteRevFromSense,
 				LanguageExplorerResources.ksRedoDeleteRevFromSense))
 			{
-				sense.ReversalEntriesRC.Remove(m_rootObj as IReversalIndexEntry);
+				((IReversalIndexEntry)m_rootObj).SensesRS.Remove(sense);
 				helper.RollBack = false;
 			}
 			CheckViewSizeChanged(h1, m_rootb.Height);

@@ -6281,9 +6281,9 @@ namespace LanguageExplorer.Controls.LexText
 			foreach (var rev in sense.Reversals)
 			{
 				var rie = ProcessReversal(rev);
-				if (rie != null && rie.ReversalForm.StringCount != 0 && !ls.ReversalEntriesRC.Contains(rie))
+				if (rie != null && rie.ReversalForm.StringCount != 0 && !rie.SensesRS.Contains(ls))
 				{
-					ls.ReversalEntriesRC.Add(rie);
+					rie.SensesRS.Add(ls);
 				}
 			}
 		}
@@ -10520,7 +10520,7 @@ namespace LanguageExplorer.Controls.LexText
 							TypeName = typeName,
 							BadValue = newItem is ILexEntry
 								? ((ILexEntry)newItem).HeadWordForWs(m_cache.DefaultVernWs).Text
-								: ((ILexEntry)(((ILexSense)newItem).Owner)).HeadWordForWs(m_cache.DefaultVernWs).Text
+								: ((ILexSense)newItem).OwnerOfClass<ILexEntry>().HeadWordForWs(m_cache.DefaultVernWs).Text
 						};
 						m_combinedCollections.Add(col);
 					}

@@ -14,6 +14,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.IO;
 using SIL.LCModel;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 {
@@ -21,18 +22,40 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 	{
 		private FirstAlphaMigrator _migrator;
 		private SimpleLogger _logger;
-
-		[SetUp]
-		public void SetUp()
+		public override void FixtureSetup()
 		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+
+		public override void TestSetup()
+		{
+			base.TestSetup();
+
 			_logger = new SimpleLogger();
 			_migrator = new FirstAlphaMigrator(string.Empty, Cache, _logger);
 		}
 
-		[TearDown]
-		public void TearDown()
+		public override void TestTearDown()
 		{
 			_logger.Dispose();
+
+			base.TestTearDown();
 		}
 
 		[Test]

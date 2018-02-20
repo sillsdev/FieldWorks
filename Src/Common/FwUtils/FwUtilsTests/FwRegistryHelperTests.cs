@@ -83,15 +83,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(expectedValue, (int)valueObject);
 		}
 
-		private void VerifyExpectedMigrationResults(RegistryKey version9Key)
+		private void VerifyExpectedMigrationResults(RegistryKey version10Key)
 		{
-			AssertRegistrySubkeyPresent(version9Key, DummyFwRegistryHelper.FlexKeyName);
-			AssertRegistryIntValueEquals(version9Key,
-				DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.ValueName3, DummyFwRegistryHelper.Value3);
-			AssertRegistryStringValueEquals(version9Key,
-				DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.ValueName4, DummyFwRegistryHelper.Value4);
-			Assert.IsTrue(version9Key.GetValueNames().Contains(DummyFwRegistryHelper.DirName));
-			var dirNameFromKey = version9Key.GetValue(DummyFwRegistryHelper.DirName);
+			AssertRegistrySubkeyPresent(version10Key, DummyFwRegistryHelper.FlexKeyName);
+			AssertRegistryIntValueEquals(version10Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.ValueName3, DummyFwRegistryHelper.Value3);
+			AssertRegistryStringValueEquals(version10Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.ValueName4, DummyFwRegistryHelper.Value4);
+			Assert.IsTrue(version10Key.GetValueNames().Contains(DummyFwRegistryHelper.DirName));
+			var dirNameFromKey = version10Key.GetValue(DummyFwRegistryHelper.DirName);
 			Assert.AreEqual(DummyFwRegistryHelper.DirNameValue, dirNameFromKey);
 		}
 
@@ -107,57 +105,57 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.IsFalse(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 
 			// Verification
-			// The above upgrade shouldn't have done anything; verify at least that the version 9 key is empty.
-			using (var version9Key = FwRegistryHelper.FieldWorksRegistryKey)
+			// The above upgrade shouldn't have done anything; verify at least that the version 10 key is empty.
+			using (var version10Key = FwRegistryHelper.FieldWorksRegistryKey)
 			{
-				Assert.AreEqual(0, version9Key.SubKeyCount, "There was nothing to migrate, so no subkeys should have been created");
-				Assert.AreEqual(0, version9Key.ValueCount, "There was nothing to migrate, so no values should have been created");
+				Assert.AreEqual(0, version10Key.SubKeyCount, "There was nothing to migrate, so no subkeys should have been created");
+				Assert.AreEqual(0, version10Key.ValueCount, "There was nothing to migrate, so no values should have been created");
 			}
 		}
 
 		/// <summary>
-		/// Ensure selected V7 keys and values are upgraded to V9.
+		/// Ensure selected V7 keys and values are upgraded to V10.
 		/// </summary>
 		[Test]
-		public void ExpectedSettingsRetained_7_To_9_Upgrade()
+		public void ExpectedSettingsRetained_7_To_10_Upgrade()
 		{
 			using (m_helper.SetupVersion7Settings())
 			{
 				// SUT
 				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 
-				using (var version9Key = m_helper.FieldWorksRegistryKey)
+				using (var version10Key = m_helper.FieldWorksRegistryKey)
 				{
-					VerifyExpectedMigrationResults(version9Key);
-					Assert.AreEqual(DummyFwRegistryHelper.UserWsValue, version9Key.GetValue(DummyFwRegistryHelper.UserWs));
+					VerifyExpectedMigrationResults(version10Key);
+					Assert.AreEqual(DummyFwRegistryHelper.UserWsValue, version10Key.GetValue(DummyFwRegistryHelper.UserWs));
 				}
 			}
 		}
 
 		/// <summary>
-		/// Ensure selected V8 keys and values are upgraded to V9.
+		/// Ensure selected V8 keys and values are upgraded to V10.
 		/// </summary>
 		[Test]
-		public void ExpectedSettingsRetained_8_To_9_Upgrade()
+		public void ExpectedSettingsRetained_8_To_10_Upgrade()
 		{
 			using (m_helper.SetupVersion8Settings())
 			{
 				// SUT
 				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 
-				using (var version9Key = m_helper.FieldWorksRegistryKey)
+				using (var version10Key = m_helper.FieldWorksRegistryKey)
 				{
-					VerifyExpectedMigrationResults(version9Key);
-					Assert.AreEqual("fr", version9Key.GetValue(DummyFwRegistryHelper.UserWs));
+					VerifyExpectedMigrationResults(version10Key);
+					Assert.AreEqual("fr", version10Key.GetValue(DummyFwRegistryHelper.UserWs));
 				}
 			}
 		}
 
 		/// <summary>
-		/// Ensure selected V7 and V8 keys and values are upgraded to V9.
+		/// Ensure selected V7 and V8 keys and values are upgraded to V10.
 		/// </summary>
 		[Test]
-		public void ExpectedSettingsRetained_7_and_8_To_9_Upgrade()
+		public void ExpectedSettingsRetained_7_and_8_To_10_Upgrade()
 		{
 			using (m_helper.SetupVersion7Settings())
 			using (m_helper.SetupVersion8Settings())
@@ -165,10 +163,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// SUT
 				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 
-				using (var version9Key = m_helper.FieldWorksRegistryKey)
+				using (var version10Key = m_helper.FieldWorksRegistryKey)
 				{
-					VerifyExpectedMigrationResults(version9Key);
-					Assert.AreEqual("fr", version9Key.GetValue(DummyFwRegistryHelper.UserWs));
+					VerifyExpectedMigrationResults(version10Key);
+					Assert.AreEqual("fr", version10Key.GetValue(DummyFwRegistryHelper.UserWs));
 				}
 			}
 		}
@@ -324,7 +322,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 
 				// Verification
-				// Check for version 9 key
+				// Check for version 10 key
 				using (var versionlessKey = FwRegistryHelper.FieldWorksVersionlessRegistryKey)
 				{
 					// Verification
@@ -383,10 +381,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// SUT
 				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 
+				using (var newVersion10Key = m_helper.SetupVersion10Settings())
+				{
 				// Didn't make it into 10.
-				AssertRegistrySubkeyNotPresent(version10Key, FwRegistryHelper.TranslationEditor);
-				AssertRegistryValueNotPresent(version10Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Crashes);
-				AssertRegistryValueNotPresent(version10Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Launches);
+				AssertRegistrySubkeyNotPresent(newVersion10Key, FwRegistryHelper.TranslationEditor);
+				AssertRegistryValueNotPresent(newVersion10Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Crashes);
+				AssertRegistryValueNotPresent(newVersion10Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Launches);
+				}
 			}
 		}
 
@@ -409,10 +410,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// SUT
 				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 
+				using (var newVersion10Key = m_helper.SetupVersion10Settings())
+				{
 				// Didn't make it into 10.
-				AssertRegistrySubkeyNotPresent(version10Key, FwRegistryHelper.TranslationEditor);
-				AssertRegistryValueNotPresent(version10Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Crashes);
-				AssertRegistryValueNotPresent(version10Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Launches);
+				AssertRegistrySubkeyNotPresent(newVersion10Key, FwRegistryHelper.TranslationEditor);
+				AssertRegistryValueNotPresent(newVersion10Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Crashes);
+				AssertRegistryValueNotPresent(newVersion10Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Launches);
+				}
 			}
 		}
 
@@ -439,15 +443,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// SUT
 				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 
+				using (var newVersion10Key = m_helper.FieldWorksRegistryKey)
+				{
 				// Didn't make it into 10.
-				AssertRegistrySubkeyNotPresent(version10Key, FwRegistryHelper.TranslationEditor);
-				AssertRegistryValueNotPresent(version10Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Crashes);
-				AssertRegistryValueNotPresent(version10Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Launches);
+				AssertRegistrySubkeyNotPresent(newVersion10Key, FwRegistryHelper.TranslationEditor);
+				AssertRegistryValueNotPresent(newVersion10Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Crashes);
+				AssertRegistryValueNotPresent(newVersion10Key, DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.Launches);
+				}
 			}
 		}
 
 		/// <summary>
-		/// Tests that ProjectShared key was removed from V7 upgrade to V9.
+		/// Tests that ProjectShared key was removed from V7 upgrade to V10.
 		/// </summary>
 		[Test]
 		public void HKCU_ProjectShared_Removed_7_To_9_Upgrade()
@@ -472,10 +479,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// Tests that ProjectShared key was removed from V8 upgrade to V9.
+		/// Tests that ProjectShared key was removed from V8 upgrade to V10.
 		/// </summary>
 		[Test]
-		public void HKCU_ProjectShared_Removed_8_To_9_Upgrade()
+		public void HKCU_ProjectShared_Removed_8_To_10_Upgrade()
 		{
 			using (var version8Key = m_helper.SetupVersion8Settings())
 			{
@@ -484,23 +491,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 				AssertRegistryValuePresent(version8Key, null, DummyFwRegistryHelper.ProjectShared);
 
 				object projectsSharedValue;
-				// Verify that the version 9 ProjectShared key is missing before migration
+				// Verify that the version 10 ProjectShared key is missing before migration
 				AssertRegistryValueNotPresent(FwRegistryHelper.FieldWorksRegistryKey, null, DummyFwRegistryHelper.ProjectShared);
 
 				//SUT
 				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 
 				// Verification
-				// Verify that the version 9 ProjectShared key is still missing after migration.
+				// Verify that the version 10 ProjectShared key is still missing after migration.
 				AssertRegistryValueNotPresent(FwRegistryHelper.FieldWorksRegistryKey, null, DummyFwRegistryHelper.ProjectShared);
 			}
 		}
 
 		/// <summary>
-		/// Tests that ProjectShared key was removed from V7 and V8 upgrade to V9.
+		/// Tests that ProjectShared key was removed from V7 and V8 upgrade to V10.
 		/// </summary>
 		[Test]
-		public void HKCU_ProjectShared_Removed_7_and_8_To_9_Upgrade()
+		public void HKCU_ProjectShared_Removed_7_and_8_To_10_Upgrade()
 		{
 			using (var version7Key = m_helper.SetupVersion7Settings())
 			using (var version8Key = m_helper.SetupVersion8Settings())

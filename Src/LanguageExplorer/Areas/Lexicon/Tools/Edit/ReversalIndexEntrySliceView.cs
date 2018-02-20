@@ -15,6 +15,7 @@ using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainImpl;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -260,11 +261,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// Reset the sense's ref. property to all the ids in the currentEntries array.
 			currentEntries.Reverse();
 			var ids = currentEntries.ToArray();
-			if (!m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().IsValidObjectId(m_sense.Hvo))
+			var removedEntries = new List<int>();
+			if (!Cache.ServiceLocator.GetInstance<ICmObjectRepository>().IsValidObjectId(m_sense.Hvo))
 			{
 				return 0; // our object has been deleted while we weren't looking!
 			}
-			var countEntries = m_cache.DomainDataByFlid.get_VecSize(m_sense.Hvo, LexSenseTags.kflidReversalEntries);
+			var countEntries = Cache.DomainDataByFlid.get_VecSize(m_sense.Hvo, Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs);
 			// Check the current state and don't save (or create an Undo stack item) if
 			// nothing has changed.
 			var fChanged = true;
@@ -273,7 +275,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				fChanged = false;
 				for (var i = 0; i < countEntries; ++i)
 				{
-					var id = m_cache.DomainDataByFlid.get_VecItem(m_sense.Hvo, LexSenseTags.kflidReversalEntries, i);
+					var id = Cache.DomainDataByFlid.get_VecItem(m_sense.Hvo, Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs, i);
 					if (id != ids[i])
 					{
 						fChanged = true;
@@ -283,9 +285,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			if (fChanged)
 			{
-				m_cache.DomainDataByFlid.BeginUndoTask(LanguageExplorerResources.ksUndoSetRevEntries, LanguageExplorerResources.ksRedoSetRevEntries);
-				m_sdaRev.Replace(m_sense.Hvo, LexSenseTags.kflidReversalEntries, 0, countEntries, ids, ids.Length);
-				m_cache.DomainDataByFlid.EndUndoTask();
+				Cache.DomainDataByFlid.BeginUndoTask(LanguageExplorerResources.ksUndoSetRevEntries, LanguageExplorerResources.ksRedoSetRevEntries);
+				foreach (var id in ids)
+				{
+#if JASONTODO
+					Still need to handle removal here This code is buggy
+#endif
+					Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(id).SensesRS.Add(m_sense);
+				}
+				Cache.DomainDataByFlid.EndUndoTask();
 			}
 			return hvoReal;
 		}
@@ -536,7 +544,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			// Display the reversal indexes for the current set of analysis writing systems.
 			var entries = new List<IReversalIndexEntry>();
-			foreach (var ide in m_sense.ReversalEntriesRC)
+			foreach (var ide in m_sense.ReferringReversalIndexEntries)
 			{
 				entries.Add(ide);
 			}
@@ -596,7 +604,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			m_sdaRev.CacheVecProp(m_sense.Hvo, kFlidIndices, rIds, rIds.Length);
 
 			// Cache the strings for each entry in the vector.
-			foreach (var ent in m_sense.ReversalEntriesRC)
+			foreach (var ent in m_sense.ReferringReversalIndexEntries)
 			{
 				var cform = ent.ReversalForm.StringCount;
 				for (var i = 0; i < cform; ++i)

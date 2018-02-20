@@ -83,6 +83,7 @@ namespace LanguageExplorer.Controls.LexText
 					}
 					break;
 
+/*
 				case LexSenseTags.kflidReversalEntries:
 					foreach (var sense in entry.SensesOS)
 					{
@@ -96,6 +97,7 @@ namespace LanguageExplorer.Controls.LexText
 						}
 					}
 					break;
+*/
 
 				default:
 					throw new ArgumentException("Unrecognized field.", "field");
@@ -124,7 +126,7 @@ namespace LanguageExplorer.Controls.LexText
 				case LexSenseTags.kflidSenses:
 				case LexSenseTags.kflidGloss:
 				case LexSenseTags.kflidDefinition:
-				case LexSenseTags.kflidReversalEntries:
+//				case LexSenseTags.kflidReversalEntries:
 				case ReversalIndexEntryTags.kflidReversalForm:
 					return true;
 			}
@@ -140,7 +142,7 @@ namespace LanguageExplorer.Controls.LexText
 				case LexEntryTags.kflidAlternateForms:
 				case LexSenseTags.kflidGloss:
 				case LexSenseTags.kflidDefinition:
-				case LexSenseTags.kflidReversalEntries:
+//				case LexSenseTags.kflidReversalEntries:
 					return true;
 			}
 

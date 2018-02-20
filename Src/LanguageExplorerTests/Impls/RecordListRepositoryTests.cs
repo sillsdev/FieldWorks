@@ -9,12 +9,36 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Impls
 {
 	[TestFixture]
 	public class RecordListRepositoryTests : MemoryOnlyBackendProviderTestBase
 	{
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+		#endregion
+
 		[Test]
 		public void RecordListRepository_CompleteWorkout_IsHappyAsAClamInTheMud()
 		{

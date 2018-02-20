@@ -526,7 +526,7 @@ namespace LanguageExplorer
 		private bool IsPublishableReversalEntry(IReversalIndexEntry revEntry)
 		{
 			// We should still display reversal entries that have no senses
-			return !revEntry.ReferringSenses.Any() || revEntry.ReferringSenses.Any(sense => !m_excludedItems.Contains(sense.Hvo));
+			return !revEntry.SensesRS.Any() || revEntry.SensesRS.Any(sense => !m_excludedItems.Contains(sense.Hvo));
 		}
 
 		/// <summary>

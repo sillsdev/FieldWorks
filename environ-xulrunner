@@ -1,9 +1,3 @@
-# Set GECKOFX to the location of geckofx .dll files, and
-# set XULRUNNER to the location of libxul.so et al. for
-# FlexBridge, and set LD_LIBRARY_PATH to include the
-# location of libxul.so et al., both for FieldWorks
-# and FlexBridge.
-
 if [ "$RUNMODE" = "INSTALLED" ]
 then
 	GECKOFX="/usr/lib/fieldworks"

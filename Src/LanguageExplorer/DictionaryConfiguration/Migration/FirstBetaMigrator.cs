@@ -187,12 +187,31 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 					goto case 18;
 				case 18:
 					RemoveReferencedHeadwordSubField(oldConfigPart);
+					goto case 19;
+				case 19:
+					ChangeReferringsensesToSenses(oldConfigPart);
 					break;
 				default:
 					logger.WriteLine($"Unable to migrate {oldConfigPart.Label}: no migration instructions for version {oldVersion}");
 					break;
 			}
 		}
+
+		/// <summary>LT-18920: Change Referringsenses to Senses for all the reversal index configurations.</summary>
+		private static void ChangeReferringsensesToSenses(ConfigurableDictionaryNode part)
+		{
+			if (part.FieldDescription == "ReversalIndexEntry")
+			{
+				DictionaryConfigurationServices.PerformActionOnNodes(part.Children, node =>
+				{
+					if (node.FieldDescription == "ReferringSenses")
+					{
+						node.FieldDescription = "Senses";
+					}
+				});
+			}
+		}
+
 
 		/// <summary>
 		/// Case FirstAlphaMigrator.VersionAlpha3 above will pull in all the new nodes in the Etymology cluster by Label.

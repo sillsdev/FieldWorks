@@ -17,8 +17,9 @@
 				<deParams ws="best analorvern"/>
 			</slice>
 		</part>
-		<part id="ReversalIndexEntry-Detail-CurrentSenses" type="detail">
-			<slice field="ReferringSenses" label="Referenced Senses" menu="mnuReorderVector" reorder="true" editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes.RevEntrySensesCollectionReferenceSlice" >
+		<part>
+			<slice field="Senses" label="Referenced Senses" menu="mnuReorderVector" reorder="true"
+				editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes.RevEntrySensesCollectionReferenceSlice" >
 				<deParams displayProperty="FullReferenceName" ws="vernacular"/>
 			</slice>
 		</part>
@@ -44,7 +45,7 @@
 			<obj field="PartOfSpeech" layout="publishForReversal" targetclass="PartOfSpeech"/>
 		</part>
 		<part id="ReversalIndexEntry-Jt-SensesConfig" type="jtview">
-			<seq field="ReferringSenses" layout="publishForReversal" targetclass="LexSense" inheritSeps="true"/>
+			<seq field="Senses" layout="publishForReversal" targetclass="LexSense" inheritSeps="true"/>
 		</part>
 		<part id="ReversalIndexEntry-Jt-SubentriesConfig" type="jtview">
 			<seq field="Subentries" layout="publishReversalIndexEntry" targetclass="ReversalIndexEntry"/>

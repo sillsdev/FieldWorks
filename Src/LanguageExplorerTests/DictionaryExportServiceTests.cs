@@ -10,6 +10,7 @@ using LanguageExplorerTests.DictionaryConfiguration;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests
 {
@@ -26,6 +27,12 @@ namespace LanguageExplorerTests
 
 		public override void FixtureSetup()
 		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
 			base.FixtureSetup();
 
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, false);
@@ -38,6 +45,11 @@ namespace LanguageExplorerTests
 			_flexComponentParameters = null;
 
 			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
 		}
 
 		#endregion

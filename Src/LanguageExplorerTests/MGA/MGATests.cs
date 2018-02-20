@@ -8,6 +8,7 @@ using LanguageExplorer.MGA;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.WritingSystems;
 using SIL.Xml;
 
 namespace LanguageExplorerTests.MGA
@@ -21,14 +22,35 @@ namespace LanguageExplorerTests.MGA
 		private GlossListBox m_LabelGlosses;
 		private XmlDocument m_doc;
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>This method is called before each test </remarks>
-		[SetUp]
-		public void Init()
+		public override void FixtureSetup()
 		{
-			var sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory, @"Language Explorer", "MGA", "GlossLists", "EticGlossList.xml");
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+
+		/// <summary>
+		/// This method is called before each test
+		/// </summary>
+		public override void TestSetup()
+		{
+			base.TestSetup();
+
+			var sXmlFile = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "MGA", "GlossLists", "EticGlossList.xml");
 			m_doc = new XmlDocument();
 			m_doc.Load(sXmlFile);
 			m_LabelGlosses = new GlossListBox
@@ -40,12 +62,15 @@ namespace LanguageExplorerTests.MGA
 			m_LabelGlosses.Items.Add(glbi);
 		}
 
-		/// <summary />
-		/// <remarks>This method is called after each test </remarks>
+		/// <summary>
+		/// This method is called after each test
+		/// </summary>
 		[TearDown]
-		public virtual void TearDown()
+		public override void TestTearDown()
 		{
 			m_LabelGlosses.Dispose();
+
+			base.TestTearDown();
 		}
 
 		[Test]

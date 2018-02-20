@@ -179,10 +179,12 @@ namespace LanguageExplorer.Controls.LexText
 					yield return new SearchField(LexSenseTags.kflidGloss, tssKey);
 				}
 
+/*
 				if (m_matchingObjectsBrowser.IsVisibleColumn("Reversals"))
 				{
 					yield return new SearchField(LexSenseTags.kflidReversalEntries, tssKey);
 				}
+*/
 
 				if (m_matchingObjectsBrowser.IsVisibleColumn("Definitions"))
 				{
