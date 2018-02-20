@@ -164,6 +164,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SIL.LCModel.Utils.Tests.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Windows.Forms.Keyboarding, Version=4.1.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\SIL.Windows.Forms.Keyboarding.dll</HintPath>
+    </Reference>
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
       <SpecificVersion>False</SpecificVersion>
@@ -194,10 +198,6 @@
       <Name>FwControls</Name>
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FwControls.dll</HintPath>
-    </Reference>
-    <Reference Include="FwCoreDlgControls, Version=4.1.1.29386, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
     </Reference>
     <Reference Include="FwCoreDlgs">
       <Name>FwCoreDlgs</Name>
@@ -234,10 +234,6 @@
     <Reference Include="RootSiteTests, Version=3.3.0.9, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\RootSiteTests.dll</HintPath>
-    </Reference>
-    <Reference Include="ScrUtilsInterfaces, Version=6.9.0.27229, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -287,6 +283,13 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="CharContextCtrlTests.cs" />
+    <Compile Include="Controls\DefaultFontsControlTests.cs" />
+    <Compile Include="Controls\FwAttributesTests.cs" />
+    <Compile Include="Controls\FwFontTabTests.cs" />
+    <Compile Include="Controls\StyleInfoTests.cs" />
+    <Compile Include="Controls\StylesComboTests.cs" />
+    <Compile Include="Controls\TestFontFeaturesButton.cs" />
+    <Compile Include="Controls\UpDownMeasureControlTests.cs" />
     <Compile Include="FwCharacterCategorizerTests.cs" />
     <Compile Include="RestoreProjectPresenterTests.cs" />
     <Compile Include="ValidCharactersDlgTests.cs" />
@@ -328,6 +331,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

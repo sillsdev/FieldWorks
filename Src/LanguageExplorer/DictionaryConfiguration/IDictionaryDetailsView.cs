@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {

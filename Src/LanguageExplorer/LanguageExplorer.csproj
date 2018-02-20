@@ -156,10 +156,6 @@
     <Reference Include="FwControls">
       <HintPath>..\..\Output\Release\FwControls.dll</HintPath>
     </Reference>
-    <Reference Include="FwCoreDlgControls">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\FwCoreDlgControls.dll</HintPath>
-    </Reference>
     <Reference Include="FwCoreDlgs">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\FwCoreDlgs.dll</HintPath>
@@ -293,6 +289,18 @@
     <Compile Include="Areas\AreaServices.cs" />
     <Compile Include="Areas\AreaWideMenuHelper.cs" />
     <Compile Include="Areas\ConcMdc.cs" />
+    <Compile Include="Areas\ConfigParentNode.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\ConfigParentNode.Designer.cs">
+      <DependentUpon>ConfigParentNode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\ConfigSenseLayout.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Areas\ConfigSenseLayout.Designer.cs">
+      <DependentUpon>ConfigSenseLayout.cs</DependentUpon>
+    </Compile>
     <Compile Include="Areas\CustomFieldLocationType.cs" />
     <Compile Include="Areas\FxtType.cs" />
     <Compile Include="Areas\FxtTypes.cs" />
@@ -388,6 +396,12 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\AnnotationInfo.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\AnnotationInfo2.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\AnnotationMoveHelper.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\BlueCircleButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\BlueCircleButton.Designer.cs">
+      <DependentUpon>BlueCircleButton.cs</DependentUpon>
+    </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\CreateAndInsertStText.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\EditableInterlinLineChoices.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\IAnalysisControlInternal.cs" />
@@ -567,6 +581,10 @@
     <Compile Include="Controls\DetailControls\TypeAheadSupportVc.cs" />
     <Compile Include="Controls\DetailControls\UnicodeStringSliceVc.cs" />
     <Compile Include="Controls\DetailControls\VectorReferenceVc.cs" />
+    <Compile Include="Controls\DictionaryConfigComboItems.cs" />
+    <Compile Include="Controls\DisposableToolStripMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\HtmlControlEventArgs.cs" />
     <Compile Include="Controls\LexText\CFChanges.cs" />
     <Compile Include="Controls\LexText\CmLiftEtymology.cs" />
@@ -1733,6 +1751,14 @@
     <Content Include="Resources\DialectsListEditParameters.xml" />
     <Content Include="Resources\ExtNoteTypeEditParameters.xml" />
     <Content Include="Resources\LanguagesListEditParameters.xml" />
+    <EmbeddedResource Include="Areas\ConfigParentNode.resx">
+      <DependentUpon>ConfigParentNode.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\ConfigSenseLayout.resx">
+      <DependentUpon>ConfigSenseLayout.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\HtmlControl.resx">
       <DependentUpon>HtmlControl.cs</DependentUpon>
     </EmbeddedResource>

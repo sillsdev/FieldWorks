@@ -13,8 +13,8 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.FwCoreDlgControls;
 using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {

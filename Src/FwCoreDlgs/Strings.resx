@@ -129,6 +129,58 @@
   <data name="ksOthersConnectedCaption" xml:space="preserve">
     <value>Take care: other users are connected.</value>
   </data>
+  <data name="kstidDuplicateParts" xml:space="preserve">
+    <value>The writing sytem codes you entered include the code {0} twice. This is not allowed.</value>
+  </data>
+  <data name="kstidDupRgnAbbr" xml:space="preserve">
+    <value>The region abbreviation you entered is already in use.</value>
+  </data>
+  <data name="kstidDupScrAbbr" xml:space="preserve">
+    <value>The script abbreviation you entered is already in use.</value>
+  </data>
+  <data name="kstidDupVarAbbr" xml:space="preserve">
+    <value>The variant abbreviation you entered is already in use.</value>
+  </data>
+  <data name="kstidError" xml:space="preserve">
+    <value>Error</value>
+    <comment>Caption for error messages in dialogs</comment>
+  </data>
+  <data name="kstidFeature" xml:space="preserve">
+    <value>Feature #{0}</value>
+    <comment>Substring {0} MUST occur and will be replaced by integer feature number.</comment>
+  </data>
+  <data name="kstidFeatureValue" xml:space="preserve">
+    <value>Value #{0}</value>
+  </data>
+  <data name="kstidFontFeatures" xml:space="preserve">
+    <value>Font Features...</value>
+  </data>
+  <data name="kstidInvalidRgnAbbr" xml:space="preserve">
+    <value>The region abbreviation is invalid. It must be 2 alphabetic characters or 3 numeric characters.</value>
+  </data>
+  <data name="kstidInvalidScrAbbr" xml:space="preserve">
+    <value>The script abbreviation is invalid. It must be 4 alphabetic characters.</value>
+  </data>
+  <data name="kstidInvalidVarAbbr" xml:space="preserve">
+    <value>The variant abbreviation is invalid. It must consist of alphanumeric characters, possibly with hyphens separating subsections.</value>
+  </data>
+  <data name="kstidMissingRgnAbbr" xml:space="preserve">
+    <value>You must have a region abbreviation if you specify a region name.</value>
+  </data>
+  <data name="kstidMissingScrAbbr" xml:space="preserve">
+    <value>You must have a script abbreviation if you specify a script name.</value>
+  </data>
+  <data name="kstidMissingVarAbbr" xml:space="preserve">
+    <value>You must have a unique variant abbreviation if you specify a variant name. Each variant name must be unique. To edit the variant abbreviation, first edit the variant name.</value>
+  </data>
+  <data name="kstid_More" xml:space="preserve">
+    <value>More</value>
+    <comment>Used for a overflow in a list</comment>
+  </data>
+  <data name="kstid_None" xml:space="preserve">
+    <value>None</value>
+    <comment>Used in keyboard control (leading space causes it to be first in a sorted list)</comment>
+  </data>
   <data name="ksWarnOnConfirmingSingleAppChanges" xml:space="preserve">
     <value>Saving changes in this dialog while this project is open in other applications may cause those applications to crash or malfunction.
 
@@ -154,5 +206,274 @@ The menu command you selected will open a dialog box. If you change any selectio
 If you will only look at selections and settings, click OK.
 
 If you need to make changes, tell the other users to close this project before you continue, or click Cancel.</value>
+  </data>
+  <data name="ksAtLeastSpacing" xml:space="preserve">
+    <value>Line spacing at least</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksBackgroundIsX" xml:space="preserve">
+    <value>Background is {0}</value>
+    <comment>text background color</comment>
+  </data>
+  <data name="ksBold" xml:space="preserve">
+    <value>Bold</value>
+  </data>
+  <data name="ksCenter" xml:space="preserve">
+    <value>Center</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksColorStrikethrough" xml:space="preserve">
+    <value>{0} Strikethrough</value>
+  </data>
+  <data name="ksColorUnderline" xml:space="preserve">
+    <value>{0} Underline</value>
+  </data>
+  <data name="ksDashedColorUnderline" xml:space="preserve">
+    <value>Dashed {0} Underline</value>
+  </data>
+  <data name="ksDashedUnderline" xml:space="preserve">
+    <value>Dashed Underline</value>
+  </data>
+  <data name="ksDottedColorUnderline" xml:space="preserve">
+    <value>Dotted {0} Underline</value>
+  </data>
+  <data name="ksDottedUnderline" xml:space="preserve">
+    <value>Dotted Underline</value>
+  </data>
+  <data name="ksDoubleColorUnderline" xml:space="preserve">
+    <value>Double {0} Underline</value>
+  </data>
+  <data name="ksDoubleSpacing" xml:space="preserve">
+    <value>Double Spacing</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksDoubleUnderline" xml:space="preserve">
+    <value>Double Underline</value>
+  </data>
+  <data name="ksExactSpacing" xml:space="preserve">
+    <value>Exact Spacing</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksFirstLineHanging" xml:space="preserve">
+    <value>First Line Hanging</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksFirstLineIndent" xml:space="preserve">
+    <value>First Line Indent</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksItalic" xml:space="preserve">
+    <value>Italic</value>
+  </data>
+  <data name="ksJustify" xml:space="preserve">
+    <value>Justify</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksLeading" xml:space="preserve">
+    <value>Leading</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksLeft" xml:space="preserve">
+    <value>Left</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksLeftToRight" xml:space="preserve">
+    <value>Left-to-Right</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksListSep" xml:space="preserve">
+    <value>, </value>
+    <comment>separate items in a list (comma space)</comment>
+  </data>
+  <data name="ksLoweredXpt" xml:space="preserve">
+    <value>Lowered by {0} pt</value>
+    <comment>Font lowered by X points</comment>
+  </data>
+  <data name="ksNoColorUnderline" xml:space="preserve">
+    <value>No ({0}) Underline</value>
+    <comment>nonsense, but a possibility</comment>
+  </data>
+  <data name="ksNone" xml:space="preserve">
+    <value>None</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksNoSuperSubscript" xml:space="preserve">
+    <value>No Super/Subscript</value>
+  </data>
+  <data name="ksNotBold" xml:space="preserve">
+    <value>Not Bold</value>
+  </data>
+  <data name="ksNotItalic" xml:space="preserve">
+    <value>Not Italic</value>
+  </data>
+  <data name="ksNotRaisedLowered" xml:space="preserve">
+    <value>Not Raised/Lowered</value>
+  </data>
+  <data name="ksNoUnderline" xml:space="preserve">
+    <value>No Underline</value>
+  </data>
+  <data name="ksPlusSpacing" xml:space="preserve">
+    <value>1.5 Line Spacing</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksRaisedXpt" xml:space="preserve">
+    <value>Raised by {0} pt</value>
+    <comment>Font raised by X points</comment>
+  </data>
+  <data name="ksRight" xml:space="preserve">
+    <value>Right</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksRightToLeft" xml:space="preserve">
+    <value>Right-to-Left</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksSingleColorUnderline" xml:space="preserve">
+    <value>Single {0} Underline</value>
+    <comment>insert explicit color</comment>
+  </data>
+  <data name="ksSingleSpacing" xml:space="preserve">
+    <value>Single Spacing</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksSingleUnderline" xml:space="preserve">
+    <value>Single Underline</value>
+  </data>
+  <data name="ksSpacingAfter" xml:space="preserve">
+    <value>Spacing After</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksSpacingBefore" xml:space="preserve">
+    <value>Spacing Before</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksSpecialIndent" xml:space="preserve">
+    <value>Special Indent</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksStrikethrough" xml:space="preserve">
+    <value>Strikethrough</value>
+  </data>
+  <data name="ksSubscript" xml:space="preserve">
+    <value>Subscript</value>
+  </data>
+  <data name="ksSuperscript" xml:space="preserve">
+    <value>Superscript</value>
+  </data>
+  <data name="ksTextIsX" xml:space="preserve">
+    <value>Text is {0}</value>
+    <comment>text foreground color</comment>
+  </data>
+  <data name="ksTextIsXonY" xml:space="preserve">
+    <value>Text is {0} on {1}</value>
+    <comment>text foreground and background colors</comment>
+  </data>
+  <data name="kstidAllBorders" xml:space="preserve">
+    <value>All</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="kstidBorder" xml:space="preserve">
+    <value>Border ({0})</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="kstidBorderDetailsWithColor" xml:space="preserve">
+    <value>{0}, {1} pt</value>
+    <comment>Used in Description on the General tab of the Style dialog box for formatting the Color and point size of the border</comment>
+  </data>
+  <data name="kstidBorderDetailsWithoutColor" xml:space="preserve">
+    <value>{0} pt</value>
+    <comment>Used in Description on the General tab of the Style dialog box for formatting the point size of the border</comment>
+  </data>
+  <data name="kstidBottomBorder" xml:space="preserve">
+    <value>Bottom</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="kstidBulleted" xml:space="preserve">
+    <value>Bulleted</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="kstidCharacterStyleText" xml:space="preserve">
+    <value>Character</value>
+  </data>
+  <data name="kstidDefaultParaCharsUsage" xml:space="preserve">
+    <value>The text will get its font properties from the paragraph to which it belongs</value>
+    <comment>Usage information for Default Paragraph Characters</comment>
+  </data>
+  <data name="kstidDefaultSettings" xml:space="preserve">
+    <value>&lt;default settings&gt;</value>
+    <comment>Used in writing systems list box</comment>
+  </data>
+  <data name="kstidItemSeparator" xml:space="preserve">
+    <value>, </value>
+    <comment>Used in Description on the General tab of the Style dialog box to separate detail items</comment>
+  </data>
+  <data name="kstidItemValueSeparator" xml:space="preserve">
+    <value>: </value>
+    <comment>Used in Description on the General tab of the Style dialog box to separate an item label from its value</comment>
+  </data>
+  <data name="kstidLeadingCheck" xml:space="preserve">
+    <value>L&amp;eading</value>
+    <comment>Used in the Border tab to show leading instead of a simple left or right</comment>
+  </data>
+  <data name="kstidLeftCheck" xml:space="preserve">
+    <value>L&amp;eft</value>
+    <comment>Used in the Border tab to show left instead of leading or trailing</comment>
+  </data>
+  <data name="kstidMissingFontFmt" xml:space="preserve">
+    <value>&lt;Missing: {0}&gt;</value>
+  </data>
+  <data name="kstidNoBorder" xml:space="preserve">
+    <value>No border</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="kstidNoBulletsOrNumbering" xml:space="preserve">
+    <value>No bullets or numbering</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="kstidNumbered" xml:space="preserve">
+    <value>Numbered</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="kstidParagraphStyleText" xml:space="preserve">
+    <value>Paragraph</value>
+  </data>
+  <data name="kstidRightCheck" xml:space="preserve">
+    <value>&amp;Right</value>
+    <comment>Used in the Border tab to show right instead of leading or trailing</comment>
+  </data>
+  <data name="kstidSchema" xml:space="preserve">
+    <value>Schema</value>
+    <comment>Used for bullets/numbers in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="kstidStartAt" xml:space="preserve">
+    <value>Start at</value>
+    <comment>Used for bullets/numbers in Description on the General tab of the</comment>
+  </data>
+  <data name="kstidTextAfter" xml:space="preserve">
+    <value>Text after</value>
+    <comment>Used for bullets/numbers in Description on the General tab of the</comment>
+  </data>
+  <data name="kstidTextBefore" xml:space="preserve">
+    <value>Text before</value>
+    <comment>Used for bullets/numbers in Description on the General tab of the</comment>
+  </data>
+  <data name="kstidTopBorder" xml:space="preserve">
+    <value>Top</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="kstidTrailingCheck" xml:space="preserve">
+    <value>T&amp;railing</value>
+    <comment>Used in the Border tab to show trailing instead of a simple left or right</comment>
+  </data>
+  <data name="kstidUnspecified" xml:space="preserve">
+    <value>(unspecified)</value>
+  </data>
+  <data name="ksTrailing" xml:space="preserve">
+    <value>Trailing</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksXPt" xml:space="preserve">
+    <value>{0} pt</value>
+    <comment>size in "points"</comment>
   </data>
 </root>

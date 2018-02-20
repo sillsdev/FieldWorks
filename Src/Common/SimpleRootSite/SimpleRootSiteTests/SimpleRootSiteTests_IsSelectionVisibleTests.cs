@@ -191,6 +191,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	#endregion
 
 #if RANDYTODO
+// TODO: Unblock, when Keyman10Interop is included in Palaso artifacts.
+#if RANDYTODO
 	// TODO: I added the Linux block section, since they were all failing on Linux.
 #endif
 #if !__MonoCS__
@@ -525,5 +527,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 	}
 #endregion IsSelectionVisibleTests
+#endif
 #endif
 }

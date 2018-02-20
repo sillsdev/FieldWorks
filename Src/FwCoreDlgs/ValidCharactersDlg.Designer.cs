@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.btnBrowseLangFile = new System.Windows.Forms.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.txtLanguageFile = new System.Windows.Forms.TextBox();
-			this.btnSimilarWs = new SIL.FieldWorks.FwCoreDlgControls.LocaleMenuButton();
+			this.btnSimilarWs = new SIL.FieldWorks.FwCoreDlgs.Controls.LocaleMenuButton();
 			this.rdoSimilarWs = new System.Windows.Forms.RadioButton();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.tabManual = new System.Windows.Forms.TabPage();
@@ -918,7 +918,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.Label lblLastCharCode;
 		private System.Windows.Forms.RadioButton rbSingleChar;
 		private System.Windows.Forms.RadioButton rbCharRange;
-		private SIL.FieldWorks.FwCoreDlgControls.LocaleMenuButton btnSimilarWs;
+		private SIL.FieldWorks.FwCoreDlgs.Controls.LocaleMenuButton btnSimilarWs;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
 		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;

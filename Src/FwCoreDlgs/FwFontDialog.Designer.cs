@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			System.Windows.Forms.Button btnCancel;
 			System.Windows.Forms.Button btnHelp;
 			System.Windows.Forms.GroupBox gbPreview;
-			this.m_FontAttributes = new SIL.FieldWorks.FwCoreDlgControls.FwFontAttributes();
+			this.m_FontAttributes = new SIL.FieldWorks.FwCoreDlgs.Controls.FwFontAttributes();
 			this.m_preview = new SIL.FieldWorks.Common.Widgets.FwLabel();
 			this.m_tbFontName = new System.Windows.Forms.TextBox();
 			this.m_lbFontNames = new System.Windows.Forms.ListBox();
@@ -202,7 +202,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		#endregion
 
-		private SIL.FieldWorks.FwCoreDlgControls.FwFontAttributes m_FontAttributes;
+		private SIL.FieldWorks.FwCoreDlgs.Controls.FwFontAttributes m_FontAttributes;
 		private System.Windows.Forms.TextBox m_tbFontName;
 		/// <summary/>
 		protected System.Windows.Forms.ListBox m_lbFontNames;

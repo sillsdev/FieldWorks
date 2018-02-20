@@ -175,11 +175,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwControls.dll</HintPath>
     </Reference>
-    <Reference Include="FwCoreDlgControls">
-      <Name>FwCoreDlgControls</Name>
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
-    </Reference>
     <Reference Include="FwResources">
       <Name>FwResources</Name>
       <SpecificVersion>False</SpecificVersion>
@@ -254,10 +249,6 @@
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
-    <Reference Include="System.Xml">
-      <Name>System.XML</Name>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="Widgets">
       <Name>Widgets</Name>
       <SpecificVersion>False</SpecificVersion>
@@ -351,6 +342,72 @@
     </Compile>
     <Compile Include="CnvtrTypeComboItem.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\BaseStyleListHelper.cs" />
+    <Compile Include="Controls\DefaultFontsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FontFeaturesButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\FontInfoExtensions.cs" />
+    <Compile Include="Controls\FwBorderTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FwBorderTab.Designer.cs">
+      <DependentUpon>FwBorderTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FwBulletsPreview.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FwBulletsTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FwBulletsTab.Designer.cs">
+      <DependentUpon>FwBulletsTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FwFontAttributes.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FwFontAttributes.Designer.cs">
+      <DependentUpon>FwFontAttributes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FwFontTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FwFontTab.Designer.cs">
+      <DependentUpon>FwFontTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FwGeneralTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FwGeneralTab.Designer.cs">
+      <DependentUpon>FwGeneralTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FwInheritablePropComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\FwParagraphTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FwParagraphTab.Designer.cs">
+      <DependentUpon>FwParagraphTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\IFontDialog.cs" />
+    <Compile Include="Controls\IStylesTab.cs" />
+    <Compile Include="Controls\LocaleMenuButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\RegionVariantControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\StyleComboItem.cs" />
+    <Compile Include="Controls\StyleComboListHelper.cs" />
+    <Compile Include="Controls\StyleInfo.cs" />
+    <Compile Include="Controls\StyleListBoxHelper.cs" />
+    <Compile Include="Controls\StyleListItem.cs" />
+    <Compile Include="Controls\UpDownMeasureControl.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="ConverterTest.cs">
       <SubType>UserControl</SubType>
@@ -551,6 +608,50 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CnvtrPropertiesCtrl.resx">
       <DependentUpon>CnvtrPropertiesCtrl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DefaultFontsControl.resx">
+      <DependentUpon>DefaultFontsControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FontFeaturesButton.resx">
+      <DependentUpon>FontFeaturesButton.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FwBorderTab.resx">
+      <DependentUpon>FwBorderTab.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FwBulletsTab.resx">
+      <DependentUpon>FwBulletsTab.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FwFontAttributes.resx">
+      <DependentUpon>FwFontAttributes.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FwFontTab.resx">
+      <DependentUpon>FwFontTab.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FwGeneralTab.resx">
+      <DependentUpon>FwGeneralTab.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FwParagraphTab.resx">
+      <DependentUpon>FwParagraphTab.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\LocaleMenuButton.resx">
+      <DependentUpon>LocaleMenuButton.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\RegionVariantControl.resx">
+      <DependentUpon>RegionVariantControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\UpDownMeasureControl.resx">
+      <DependentUpon>UpDownMeasureControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ConverterTest.resx">

@@ -7,14 +7,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorerTests.DictionaryConfiguration

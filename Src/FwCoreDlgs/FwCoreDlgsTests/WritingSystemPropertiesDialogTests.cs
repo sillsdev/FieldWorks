@@ -476,6 +476,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	#endregion // Dummy WritingSystemPropertiesDlg
 
 #if RANDYTODO
+// TODO: Unblock, when Keyman10Interop is included in Palaso artifacts.
+#if RANDYTODO
 // TODO: I added the Linux block section, since they were all failing on Linux.
 #endif
 #if !__MonoCS__
@@ -494,7 +496,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private readonly HashSet<CoreWritingSystemDefinition> m_origLocalWss = new HashSet<CoreWritingSystemDefinition>();
 		private readonly HashSet<CoreWritingSystemDefinition> m_origGlobalWss = new HashSet<CoreWritingSystemDefinition>();
 
-		#region Test Setup and Tear-Down
+	#region Test Setup and Tear-Down
 
 		/// <summary>
 		/// </summary>
@@ -547,9 +549,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			base.TestTearDown();
 			}
-		#endregion
+	#endregion
 
-		#region Helper Methods
+	#region Helper Methods
 
 		private void VerifyNewlyAddedWritingSystems(string[] newExpectedWsIds)
 		{
@@ -583,9 +585,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		#endregion
+	#endregion
 
-		#region Tests
+	#region Tests
 		/// <summary>
 		///
 		/// </summary>
@@ -927,7 +929,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		#endregion
+	#endregion
 	}
+#endif
 #endif
 }

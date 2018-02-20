@@ -769,6 +769,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        internal static string ksNone {
+            get {
+                return ResourceManager.GetString("ksNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Number.
         /// </summary>
         internal static string ksNumber {
@@ -1171,6 +1180,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (unspecified).
+        /// </summary>
+        internal static string kstidUnspecified {
+            get {
+                return ResourceManager.GetString("kstidUnspecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Undo Adding Affixes.
         /// </summary>
         internal static string ksUndoAddAffixes {
@@ -1239,6 +1257,15 @@ namespace LanguageExplorer.Areas {
         internal static string ksValidatingOutputFile {
             get {
                 return ResourceManager.GetString("ksValidatingOutputFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        internal static string ksWarning {
+            get {
+                return ResourceManager.GetString("ksWarning", resourceCulture);
             }
         }
         

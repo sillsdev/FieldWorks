@@ -68,15 +68,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_btnHelp = new SIL.FieldWorks.Common.Controls.FwHelpButton();
 			this.m_tabControl = new System.Windows.Forms.TabControl();
 			this.m_tbGeneral = new System.Windows.Forms.TabPage();
-			this.m_generalTab = new SIL.FieldWorks.FwCoreDlgControls.FwGeneralTab();
+			this.m_generalTab = new SIL.FieldWorks.FwCoreDlgs.Controls.FwGeneralTab();
 			this.m_tbFont = new System.Windows.Forms.TabPage();
-			this.m_fontTab = new SIL.FieldWorks.FwCoreDlgControls.FwFontTab();
+			this.m_fontTab = new SIL.FieldWorks.FwCoreDlgs.Controls.FwFontTab();
 			this.m_tbParagraph = new System.Windows.Forms.TabPage();
-			this.m_paragraphTab = new SIL.FieldWorks.FwCoreDlgControls.FwParagraphTab();
+			this.m_paragraphTab = new SIL.FieldWorks.FwCoreDlgs.Controls.FwParagraphTab();
 			this.m_tbBullets = new System.Windows.Forms.TabPage();
-			this.m_bulletsTab = new SIL.FieldWorks.FwCoreDlgControls.FwBulletsTab();
+			this.m_bulletsTab = new SIL.FieldWorks.FwCoreDlgs.Controls.FwBulletsTab();
 			this.m_tbBorder = new System.Windows.Forms.TabPage();
-			this.m_borderTab = new SIL.FieldWorks.FwCoreDlgControls.FwBorderTab();
+			this.m_borderTab = new SIL.FieldWorks.FwCoreDlgs.Controls.FwBorderTab();
 			this.m_contextMenuAddStyle = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.paragraphStyleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.characterStyleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -292,7 +292,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			resources.ApplyResources(this.m_bulletsTab, "m_bulletsTab");
 			this.m_bulletsTab.Name = "m_bulletsTab";
-			this.m_bulletsTab.FontDialog += new SIL.FieldWorks.FwCoreDlgControls.FwBulletsTab.FontDialogHandler(this.OnBulletsFontDialog);
+			this.m_bulletsTab.FontDialog += new SIL.FieldWorks.FwCoreDlgs.Controls.FwBulletsTab.FontDialogHandler(this.OnBulletsFontDialog);
 			this.m_bulletsTab.ChangedToUnspecified += new System.EventHandler(this.TabDataChangedUnspecified);
 			//
 			// m_tbBorder
@@ -381,10 +381,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.Button m_btnDelete;
 		private System.Windows.Forms.ComboBox m_cboTypes;
 		private System.Windows.Forms.Button m_btnAdd;
-		private SIL.FieldWorks.FwCoreDlgControls.FwBulletsTab m_bulletsTab;
-		private SIL.FieldWorks.FwCoreDlgControls.FwParagraphTab m_paragraphTab;
-		private SIL.FieldWorks.FwCoreDlgControls.FwBorderTab m_borderTab;
-		private SIL.FieldWorks.FwCoreDlgControls.FwFontTab m_fontTab;
+		private SIL.FieldWorks.FwCoreDlgs.Controls.FwBulletsTab m_bulletsTab;
+		private SIL.FieldWorks.FwCoreDlgs.Controls.FwParagraphTab m_paragraphTab;
+		private SIL.FieldWorks.FwCoreDlgs.Controls.FwBorderTab m_borderTab;
+		private SIL.FieldWorks.FwCoreDlgs.Controls.FwFontTab m_fontTab;
 		private System.Windows.Forms.ContextMenuStrip m_contextMenuAddStyle;
 		private System.Windows.Forms.ToolStripMenuItem paragraphStyleToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem characterStyleToolStripMenuItem;
@@ -392,7 +392,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem;
 		/// <summary></summary>
-		protected SIL.FieldWorks.FwCoreDlgControls.FwGeneralTab m_generalTab;
+		protected SIL.FieldWorks.FwCoreDlgs.Controls.FwGeneralTab m_generalTab;
 		private System.Windows.Forms.Label m_lblTypes;
 		private System.Windows.Forms.Panel m_pnlTypesCombo;
 	}

@@ -14,10 +14,10 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel.DomainServices;
-using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
+using StyleInfo = SIL.FieldWorks.FwCoreDlgs.Controls.StyleInfo;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

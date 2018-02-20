@@ -49,9 +49,9 @@ namespace LanguageExplorer.Areas
 			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.m_linkConfigureHomograph = new System.Windows.Forms.LinkLabel();
-			this.m_cfgSenses = new SIL.FieldWorks.FwCoreDlgControls.ConfigSenseLayout();
+			this.m_cfgSenses = new LanguageExplorer.Areas.ConfigSenseLayout();
 			m_cfgSenses.SizeChanged += new System.EventHandler(m_cfgSenses_SizeChanged);
-			this.m_cfgParentNode = new SIL.FieldWorks.FwCoreDlgControls.ConfigParentNode();
+			this.m_cfgParentNode = new LanguageExplorer.Areas.ConfigParentNode();
 			this.m_btnBeforeStyles = new System.Windows.Forms.Button();
 			this.m_lblBeforeStyle = new System.Windows.Forms.Label();
 			this.m_cbBeforeStyle = new System.Windows.Forms.ComboBox();
@@ -482,8 +482,8 @@ namespace LanguageExplorer.Areas
 		private System.Windows.Forms.Button m_btnBeforeStyles;
 		private System.Windows.Forms.Label m_lblBeforeStyle;
 		private System.Windows.Forms.ComboBox m_cbBeforeStyle;
-		private SIL.FieldWorks.FwCoreDlgControls.ConfigParentNode m_cfgParentNode;
-		private SIL.FieldWorks.FwCoreDlgControls.ConfigSenseLayout m_cfgSenses;
+		private LanguageExplorer.Areas.ConfigParentNode m_cfgParentNode;
+		private LanguageExplorer.Areas.ConfigSenseLayout m_cfgSenses;
 		private System.Windows.Forms.LinkLabel m_linkManageViews;
 		private System.Windows.Forms.LinkLabel m_linkConfigureHomograph;
 	}

@@ -18,6 +18,8 @@ using SIL.LCModel.Infrastructure;
 namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 {
 #if RANDYTODO
+// TODO: Unblock, when Keyman10Interop is included in Palaso artifacts.
+#if RANDYTODO
 // TODO: I added the Linux block section, since they were all failing on Linux.
 #endif
 #if !__MonoCS__
@@ -30,7 +32,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 	{
 		private TestInterlinRibbon m_ribbon;
 
-		#region Test setup
+	#region Test setup
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -53,9 +55,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			base.TestTearDown();
 		}
 
-		#endregion
+	#endregion
 
-		#region Helper methods
+	#region Helper methods
 
 		private static AnalysisOccurrence[] GetParaAnalyses(IStTxtPara para)
 		{
@@ -72,9 +74,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			return result.ToArray();
 		}
 
-		#endregion
+	#endregion
 
-		#region tests
+	#region tests
 
 		[Test]
 		public void RibbonLayout()
@@ -160,7 +162,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_ribbon.RootBox.MouseUp(1, 1, rcSrc, rcDst);
 			Assert.AreEqual(new [] { glosses[0] }, m_ribbon.SelectedOccurrences);
 		}
-		#endregion
+	#endregion
 	}
 
 	/// <summary>
@@ -222,5 +224,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			base.OnLoad(eventArgs);
 		}
 	}
+#endif
 #endif
 }

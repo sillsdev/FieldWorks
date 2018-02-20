@@ -9,9 +9,9 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel.DomainServices;
-using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
+using StyleInfo = SIL.FieldWorks.FwCoreDlgs.Controls.StyleInfo;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
