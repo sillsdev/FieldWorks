@@ -17,7 +17,7 @@
 				<deParams ws="best analorvern"/>
 			</slice>
 		</part>
-		<part>
+    <part id="ReversalIndexEntry-Detail-CurrentSenses" type="detail">
 			<slice field="Senses" label="Referenced Senses" menu="mnuReorderVector" reorder="true"
 				editor="custom" assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes.RevEntrySensesCollectionReferenceSlice" >
 				<deParams displayProperty="FullReferenceName" ws="vernacular"/>

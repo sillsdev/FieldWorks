@@ -282,12 +282,6 @@
     <Compile Include="AdvancedEncProps.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ArchiveWithRamp.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveWithRamp.Designer.cs">
-      <DependentUpon>ArchiveWithRamp.cs</DependentUpon>
-    </Compile>
     <Compile Include="BackupRestore\BackupProjectDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -315,12 +309,7 @@
       <DependentUpon>RestoreProjectDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="BackupRestore\RestoreProjectPresenter.cs" />
-    <Compile Include="BasicFindDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="BasicFindDialog.Designer.cs">
-      <DependentUpon>BasicFindDialog.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Controls\BulletsPreviewVc.cs" />
     <Compile Include="CharContextCtrl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -328,12 +317,6 @@
       <DependentUpon>CharContextCtrl.cs</DependentUpon>
     </Compile>
     <Compile Include="CheckBoxColumnHeaderHandler.cs" />
-    <Compile Include="ChooseLangProjectDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ChooseLangProjectDialog.Designer.cs">
-      <DependentUpon>ChooseLangProjectDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="ChooserTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -398,6 +381,8 @@
     <Compile Include="Controls\LocaleMenuButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\LocaleMenuItemData.cs" />
+    <Compile Include="Controls\OverflowContextMenuStrip.cs" />
     <Compile Include="Controls\RegionVariantControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -441,12 +426,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MessageBoxes.cs" />
-    <Compile Include="MissingOldFieldWorksDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MissingOldFieldWorksDlg.Designer.cs">
-      <DependentUpon>MissingOldFieldWorksDlg.cs</DependentUpon>
-    </Compile>
     <Compile Include="MoveOrCopyFilesController.cs" />
     <Compile Include="MoveOrCopyFilesDlg.cs">
       <SubType>Form</SubType>
@@ -460,21 +439,11 @@
     <Compile Include="ProjectLocationDlg.Designer.cs">
       <DependentUpon>ProjectLocationDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="FwApplyStyleDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FwApplyStyleDlg.Designer.cs">
-      <DependentUpon>FwApplyStyleDlg.cs</DependentUpon>
-    </Compile>
     <Compile Include="DuplicateProjectFoundDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ErrorMessage.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="FindCollectorEnv.cs" />
-    <Compile Include="FwChooserDlg.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="FwCoreDlgs.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -489,17 +458,11 @@
     <Compile Include="FwDeleteProjectDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FwFindReplaceDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="FwFontDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FwFontDialog.Designer.cs">
       <DependentUpon>FwFontDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FwHelpAbout.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="FwNewLangProject.cs">
       <SubType>Form</SubType>
@@ -507,16 +470,11 @@
     <Compile Include="FwProjPropertiesDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FwSplashScreen.cs">
-    </Compile>
     <Compile Include="FwStylesDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FwStylesDlg.Designer.cs">
       <DependentUpon>FwStylesDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FwUserProperties.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="HelperMenu.cs">
       <SubType>Component</SubType>
@@ -531,12 +489,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="RealSplashScreen.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="RegexHelperMenu.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="SharedBackendServicesHelper.cs" />
     <Compile Include="Strings.Designer.cs">
@@ -581,9 +533,6 @@
       <DependentUpon>AdvancedEncProps.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveWithRamp.resx">
-      <DependentUpon>ArchiveWithRamp.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="BackupRestore\BackupProjectDlg.resx">
       <DependentUpon>BackupProjectDlg.cs</DependentUpon>
     </EmbeddedResource>
@@ -596,15 +545,9 @@
     <EmbeddedResource Include="BackupRestore\RestoreProjectDlg.resx">
       <DependentUpon>RestoreProjectDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="BasicFindDialog.resx">
-      <DependentUpon>BasicFindDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="CharContextCtrl.resx">
       <DependentUpon>CharContextCtrl.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ChooseLangProjectDialog.resx">
-      <DependentUpon>ChooseLangProjectDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CnvtrPropertiesCtrl.resx">
       <DependentUpon>CnvtrPropertiesCtrl.cs</DependentUpon>
@@ -675,10 +618,6 @@
     <EmbeddedResource Include="MergeWritingSystemDlg.resx">
       <DependentUpon>MergeWritingSystemDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MissingOldFieldWorksDlg.resx">
-      <DependentUpon>MissingOldFieldWorksDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="MoveOrCopyFilesDlg.resx">
       <SubType>Designer</SubType>
       <DependentUpon>MoveOrCopyFilesDlg.cs</DependentUpon>
@@ -686,16 +625,8 @@
     <EmbeddedResource Include="ProjectLocationDlg.resx">
       <DependentUpon>ProjectLocationDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FwApplyStyleDlg.resx">
-      <DependentUpon>FwApplyStyleDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="DuplicateProjectFoundDlg.resx">
       <DependentUpon>DuplicateProjectFoundDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwChooserDlg.resx">
-      <DependentUpon>FwChooserDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FwCoreDlgs.resx">
@@ -712,17 +643,9 @@
       <DependentUpon>FwDeleteProjectDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="FwFindReplaceDlg.resx">
-      <DependentUpon>FwFindReplaceDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="FwFontDialog.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FwFontDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwHelpAbout.resx">
-      <DependentUpon>FwHelpAbout.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FwNewLangProject.resx">
       <DependentUpon>FwNewLangProject.cs</DependentUpon>
@@ -736,10 +659,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>FwStylesDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FwUserProperties.resx">
-      <DependentUpon>FwUserProperties.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="PicturePropertiesDialog.resx">
       <DependentUpon>PicturePropertiesDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -747,10 +666,6 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="RealSplashScreen.resx">
-      <DependentUpon>RealSplashScreen.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Strings.resx">

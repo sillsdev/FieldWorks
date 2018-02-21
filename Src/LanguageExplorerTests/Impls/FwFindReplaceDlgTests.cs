@@ -18,9 +18,9 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace LanguageExplorerTests.Impls
 {
-	#region DummyFwFindReplaceDlg
+#region DummyFwFindReplaceDlg
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Dummy find dialog
@@ -425,9 +425,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				helper.GetNumberOfPreviousProps(SelectionHelper.SelLimitType.End));
 		}
 	}
-	#endregion
+#endregion
 
-	#region class FwFindReplaceDlgBaseTests
+#region class FwFindReplaceDlgBaseTests
 	/// -----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Summary description for FwFindReplaceDlgBaseTests.
@@ -435,7 +435,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// -----------------------------------------------------------------------------------------
 	public class FwFindReplaceDlgBaseTests : ScrInMemoryLcmTestBase
 	{
-		#region Data members
+#region Data members
 		/// <summary></summary>
 		protected const string m_kTitleText = "Blah, blah, blah!";
 		/// <summary></summary>
@@ -450,9 +450,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected IStText m_text;
 		/// <summary></summary>
 		protected IScrBook m_genesis;
-		#endregion
+#endregion
 
-		#region setup & teardown
+#region setup & teardown
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes the ScrReference for testing.
@@ -542,11 +542,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			base.TestTearDown();
 		}
-		#endregion
+#endregion
 	}
-	#endregion class FwFindReplaceDlgBaseTests
+#endregion class FwFindReplaceDlgBaseTests
 
-	#region class FwFindReplaceDlgTests
+#region class FwFindReplaceDlgTests
 	/// -----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Summary description for TestFwFindReplaceDlg.
@@ -570,7 +570,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en-fonipa-x-etic", out m_wsIpa);
 		}
 
-		#region Helper methods
+#region Helper methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Setup mocks to return styles
@@ -587,9 +587,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			hvoStyle = m_Stylesheet.MakeNewStyle();
 			m_Stylesheet.PutStyle("CStyle1", "bla", hvoStyle, 0, 0, 1, false, false, null);
 		}
-		#endregion
+#endregion
 
-		#region Dialog initilization tests
+#region Dialog initilization tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test to see if the selected text gets copied into the find dialog and verify state
@@ -798,9 +798,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			Assert.AreEqual(m_dlg.ReplaceTextControl, m_dlg.LastTextBoxInFocus);
 		}
-		#endregion
+#endregion
 
-		#region Apply style tests
+#region Apply style tests
 #if RANDYTODO
 		// TODO: It started failing in remake today (20JUN2017), but none of my changes can account for the failure, so put it off for another day.
 		/// ------------------------------------------------------------------------------------
@@ -954,9 +954,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.AreEqual("CStyle3", tssFind.get_Properties(0).GetStrPropValue(
 				(int)FwTextPropType.ktptNamedStyle));
 		}
-		#endregion
+#endregion
 
-		#region Apply Writing System tests
+#region Apply Writing System tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the ApplyWritingSystem method with a range selection

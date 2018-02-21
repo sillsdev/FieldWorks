@@ -12,11 +12,7 @@ using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public partial class FwParagraphTab : UserControl, IStylesTab
 	{
 		#region Member Data
@@ -42,18 +38,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		private const int kFirstLineIndex = 2;
 		private const int kHangingIndex = 3;
 
-		private bool m_DefaultTextDirectionRtoL = false;
-		private bool m_fShowBiDiLabels = false;
+		private bool m_fShowBiDiLabels;
 		private bool m_dontUpdateInheritance = true;
 		private StyleInfo m_currentStyleInfo;
 		#endregion
 
 		#region Construction and demolition
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:FwParagraphTab"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public FwParagraphTab()
 		{
 			InitializeComponent();
@@ -62,24 +55,23 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Event handlers
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when a value changes that needs to update the paragraph preview
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected void ValueChanged(object sender, EventArgs e)
 		{
 			if (!m_dontUpdateInheritance && sender != null)
 			{
 				((Control)sender).ForeColor = SystemColors.WindowText;
-
-				if (IsInherited((Control)sender) && ChangedToUnspecified != null)
-					ChangedToUnspecified(this, EventArgs.Empty);
+				if (IsInherited((Control)sender))
+				{
+					ChangedToUnspecified?.Invoke(this, EventArgs.Empty);
+				}
 			}
 
 			if (sender is UpDownMeasureControl)
 			{
-				UpDownMeasureControl ctrl = (UpDownMeasureControl)sender;
+				var ctrl = (UpDownMeasureControl)sender;
 				if (ctrl.Text == string.Empty)
 				{
 					// When numerical values in the special indentation and line spacing controls are reset,
@@ -123,7 +115,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 							inheritedValue = m_currentStyleInfo.BasedOnStyle.SpaceAfter;
 						}
 						else
+						{
 							throw new Exception("Somebody added a new nud control");
+						}
 
 						prop.ResetToInherited(inheritedValue);
 						ctrl.ForeColor = GetCtrlForeColorForProp(prop);
@@ -138,21 +132,24 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 			else if (sender == m_cboLineSpacing)
 			{
-				if (m_cboLineSpacing.AdjustedSelectedIndex == kAtLeastIndex)
-					m_nudSpacingAt.MeasureMin = 0;
-				else if (m_cboLineSpacing.AdjustedSelectedIndex == kExactlyIndex)
-					m_nudSpacingAt.MeasureMin = 1000;
+				switch (m_cboLineSpacing.AdjustedSelectedIndex)
+				{
+					case kAtLeastIndex:
+						m_nudSpacingAt.MeasureMin = 0;
+						break;
+					case kExactlyIndex:
+						m_nudSpacingAt.MeasureMin = 1000;
+						break;
+				}
 
 				//Enable/Disable the line spacing size combo box
 				//when the appropriate kind of line spacing is selected in the m_cboLineSpacing combobox
 				var index = m_cboLineSpacing.AdjustedSelectedIndex;
-				m_nudSpacingAt.Enabled = (index == kAtLeastIndex || index == kExactlyIndex) &&
-					!IsInherited(m_cboLineSpacing);
+				m_nudSpacingAt.Enabled = (index == kAtLeastIndex || index == kExactlyIndex) && !IsInherited(m_cboLineSpacing);
 			}
 			else if (sender == m_cboDirection)
 			{
-				ChangeDirectionLabels(
-					(TriStateBool)m_cboDirection.AdjustedSelectedIndex == TriStateBool.triTrue);
+				ChangeDirectionLabels((TriStateBool)m_cboDirection.AdjustedSelectedIndex == TriStateBool.triTrue);
 			}
 			else if (sender == m_cboSpecialIndentation)
 			{
@@ -168,21 +165,17 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				// Enable style reset ability immediately by causing the stye to be IsModified.
 				SaveToInfo(m_currentStyleInfo);
-
-				if (StyleDataChanged != null)
-					StyleDataChanged(this, null);
+				StyleDataChanged?.Invoke(this, null);
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Draw the paragraph preview panel
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void m_pnlPreview_Paint(object sender, PaintEventArgs e)
 		{
 			// Get the rectangle to draw in and shrink it a bit to leave some margin space
-			Rectangle drawRect = m_pnlPreview.ClientRectangle;
+			var drawRect = m_pnlPreview.ClientRectangle;
 			e.Graphics.FillRectangle(SystemBrushes.Window, drawRect);
 			drawRect.Inflate(-4, -4);
 
@@ -193,12 +186,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Public methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Updates the form based on a style being selected.
 		/// </summary>
-		/// <param name="styleInfo">The style info.</param>
-		/// ------------------------------------------------------------------------------------
 		public void UpdateForStyle(StyleInfo styleInfo)
 		{
 #if __MonoCS__
@@ -236,11 +226,17 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			// Special indent
 			m_cboSpecialIndentation.SetInheritableProp(styleInfo.IFirstLineIndent);
 			if (styleInfo.IFirstLineIndent.Value == 0)
+			{
 				m_cboSpecialIndentation.AdjustedSelectedIndex = 1;	// none
+			}
 			else if (styleInfo.IFirstLineIndent.Value > 0)
+			{
 				m_cboSpecialIndentation.AdjustedSelectedIndex = 2;	// first line
+			}
 			else
+			{
 				m_cboSpecialIndentation.AdjustedSelectedIndex = 3;	// hanging
+			}
 			m_nudIndentBy.ForeColor = GetCtrlForeColorForProp(styleInfo.IFirstLineIndent);
 			m_nudIndentBy.MeasureValue = Math.Abs(styleInfo.IFirstLineIndent.Value);
 
@@ -254,7 +250,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_nudAfter.ForeColor = GetCtrlForeColorForProp(styleInfo.ISpaceAfter);
 			m_nudAfter.MeasureValue = styleInfo.ISpaceAfter.Value;
 
-			LineHeightInfo info = styleInfo.ILineSpacing.Value;
+			var info = styleInfo.ILineSpacing.Value;
 			m_cboLineSpacing.SetInheritableProp(styleInfo.ILineSpacing);
 			m_nudSpacingAt.ForeColor = GetCtrlForeColorForProp(styleInfo.ILineSpacing);
 			if (!info.m_relative)
@@ -290,19 +286,16 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				}
 			}
 
-			FontInfo fontInfo = styleInfo.FontInfoForWs(-1); // get default fontInfo
+			var fontInfo = styleInfo.FontInfoForWs(-1); // get default fontInfo
 			m_cboBackground.ForeColor = GetCtrlForeColorForProp(fontInfo.m_backColor);
 			m_cboBackground.ColorValue = fontInfo.m_backColor.Value;
 
 			m_dontUpdateInheritance = false;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Saves the paragraph information to the styleInfo
 		/// </summary>
-		/// <param name="styleInfo">The style info.</param>
-		/// ------------------------------------------------------------------------------------
 		public void SaveToInfo(StyleInfo styleInfo)
 		{
 			if (styleInfo.IsCharacterStyle)
@@ -312,13 +305,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 
 			// direction
-			bool newInherit = IsInherited(m_cboDirection);
+			var newInherit = IsInherited(m_cboDirection);
 			if (styleInfo.IRightToLeftStyle.Save(newInherit, (TriStateBool)m_cboDirection.SelectedIndex))
 				styleInfo.Dirty = true;
 
 			// alignment
 			newInherit = m_cboAlignment.IsInherited;
-			FwTextAlign newAlignment = FwTextAlign.ktalLeading;
+			var newAlignment = FwTextAlign.ktalLeading;
 			switch (m_cboAlignment.AdjustedSelectedIndex)
 			{
 				case 1: newAlignment = FwTextAlign.ktalLeading; break;
@@ -328,14 +321,17 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				case 5: newAlignment = FwTextAlign.ktalTrailing; break;
 				case 6: newAlignment = FwTextAlign.ktalJustify; break;
 			}
+
 			if (styleInfo.IAlignment.Save(newInherit, newAlignment))
+			{
 				styleInfo.Dirty = true;
+			}
 
 			// background color - only save it if the control is visible
 			if (m_cboBackground.Visible)
 			{
 				newInherit = IsInherited(m_cboBackground);
-				FontInfo fontInfo = styleInfo.FontInfoForWs(-1); // get default FontInfo
+				var fontInfo = styleInfo.FontInfoForWs(-1); // get default FontInfo
 				if (fontInfo.m_backColor.Save(newInherit, m_cboBackground.ColorValue))
 					styleInfo.Dirty = true;
 			}
@@ -343,7 +339,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			// left indent
 			newInherit = IsInherited(m_nudLeftIndentation);
 			if (styleInfo.ILeadingIndent.Save(newInherit, m_nudLeftIndentation.MeasureValue))
+			{
 				styleInfo.Dirty = true;
+			}
 
 			// right indent
 			newInherit = IsInherited(m_nudRightIndentation);
@@ -352,30 +350,35 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 			// special indent
 			newInherit = m_cboSpecialIndentation.IsInherited;
-			int newValue = 0;
+			var newValue = 0;
 			switch (m_cboSpecialIndentation.AdjustedSelectedIndex)
 			{
 				case 2: newValue = m_nudIndentBy.MeasureValue; break;
 				case 3: newValue = -m_nudIndentBy.MeasureValue; break;
 			}
 			if (styleInfo.IFirstLineIndent.Save(newInherit, newValue))
+			{
 				styleInfo.Dirty = true;
+			}
 
 			// spacing before
 			newInherit = IsInherited(m_nudBefore);
 			if (styleInfo.ISpaceBefore.Save(newInherit, m_nudBefore.MeasureValue))
+			{
 				styleInfo.Dirty = true;
+			}
 
 			// spacing after
 			newInherit = IsInherited(m_nudAfter);
 			if (styleInfo.ISpaceAfter.Save(newInherit, m_nudAfter.MeasureValue))
+			{
 				styleInfo.Dirty = true;
+			}
 
 			// line spacing
-			int index = m_cboLineSpacing.AdjustedSelectedIndex;
+			var index = m_cboLineSpacing.AdjustedSelectedIndex;
 			newInherit = m_cboLineSpacing.IsInherited;
-			LineHeightInfo newLineHeight = new LineHeightInfo();
-			newLineHeight.m_relative = (index <= 3);
+			var newLineHeight = new LineHeightInfo { m_relative = (index <= 3) };
 			switch (index)
 			{
 				case 1:  // single spacing
@@ -395,11 +398,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Public Properties
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// show or hide the control for setting the background color
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public bool ShowBackgroundColor
 		{
 			get
@@ -413,25 +414,18 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets a value indicating whether default text direction is Right-toLeft or not.
 		/// </summary>
 		/// <remarks>Typically this is the default direction of the view from which this dialog
 		/// is invoked.</remarks>
-		/// ------------------------------------------------------------------------------------
-		public bool DefaultTextDirectionRtoL
-		{
-			set { m_DefaultTextDirectionRtoL = value; }
-		}
+		public bool DefaultTextDirectionRtoL { get; set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Indicates whether to show labels that are meaningful for both left-to-right and
 		/// right-to-left. If this value is false, then simple "Left" and "Right" labels will be
 		/// used in the display, rather than "Leading" and "Trailing".
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public bool ShowBiDiLabels
 		{
 			set
@@ -441,11 +435,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the display measurement unit for the "nud" controls that don't use points.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public MsrSysType MeasureType
 		{
 			set
@@ -458,55 +450,44 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Private helper properties
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether the direction is right-to-left.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private bool RtoL
-		{
-			get
-			{
-				return ((TriStateBool)m_cboDirection.SelectedIndex == TriStateBool.triNotSet &&
-					m_DefaultTextDirectionRtoL) ||
-					(TriStateBool)m_cboDirection.SelectedIndex == TriStateBool.triTrue;
-			}
-		}
+		private bool RtoL => ((TriStateBool)m_cboDirection.SelectedIndex == TriStateBool.triNotSet &&
+							  DefaultTextDirectionRtoL) ||
+							 (TriStateBool)m_cboDirection.SelectedIndex == TriStateBool.triTrue;
 		#endregion
 
 		#region Private helper methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether the specified control value is inherited.
 		/// </summary>
-		/// <param name="c">The control</param>
-		/// <returns>true if the specified control is inherited; otherwise, false.</returns>
-		/// ------------------------------------------------------------------------------------
 		private bool IsInherited(Control c)
 		{
 			if (!m_currentStyleInfo.Inherits)
+			{
 				return false;
-
+			}
 			if (c is FwInheritablePropComboBox)
+			{
 				return ((FwInheritablePropComboBox)c).IsInherited;
-
+			}
 			// The Direction combo box has index 0 as the unspecified state
 			if (c == m_cboDirection && (TriStateBool)m_cboDirection.SelectedIndex == TriStateBool.triNotSet)
+			{
 				return true;
-
+			}
 			if (c == m_cboBackground && m_cboBackground.ColorValue == Color.Empty)
+			{
 				return true;
+			}
 
 			return c.ForeColor.ToArgb() != SystemColors.WindowText.ToArgb();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Changes the direction labels to show leading/trailing or left/right.
 		/// </summary>
-		/// <param name="fShowLeadingTrailing"><c>true</c> to show leading/trailing,
-		/// <c>false</c> to show left/right</param>
-		/// ------------------------------------------------------------------------------------
 		private void ChangeDirectionLabels(bool fShowLeadingTrailing)
 		{
 			if (fShowLeadingTrailing)
@@ -521,14 +502,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initialize controls based on whether or not current style inherits from
 		/// another style. If not (i.e., this is the "Normal" style), then controls
 		/// should not allow the user to pick "unspecified" as the value.
 		/// </summary>
-		/// <param name="fInherited">Indicates whether current style is inherited.</param>
-		/// ------------------------------------------------------------------------------------
 		private void InitControlBehavior(bool fInherited)
 		{
 			m_cboBackground.IsInherited = fInherited;
@@ -537,7 +515,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_cboLineSpacing.ShowingInheritedProperties = fInherited;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Draws the paragraph representation either before or after the preview paragraph
 		/// </summary>
@@ -545,18 +522,19 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <param name="drawRect">rectangle to draw in. This will be updated to remove
 		/// the space where the paragraph has been drawn in.</param>
 		/// <param name="g">graphics object to draw with</param>
-		/// ------------------------------------------------------------------------------------
 		private void DrawAdjacentPreview(int lineCount, ref Rectangle drawRect, Graphics g)
 		{
 			// draw each of the requested lines
-			for (int i = 0; i < lineCount; i++)
+			for (var i = 0; i < lineCount; i++)
 			{
-				Rectangle lineRect = new Rectangle(drawRect.X, drawRect.Y, drawRect.Width, kLineHeight);
+				var lineRect = new Rectangle(drawRect.X, drawRect.Y, drawRect.Width, kLineHeight);
 				// For the first line, indent the "paragraph"
 				if (i == 0)
 				{
 					if (!RtoL)
+					{
 						lineRect.X += 10;
+					}
 					lineRect.Width -= 10;
 				}
 				g.FillRectangle(SystemBrushes.GrayText, lineRect);
@@ -565,42 +543,38 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Draws a representation of the paragraph
 		/// </summary>
-		/// <param name="drawRect">the rectangle to draw the representation in</param>
-		/// <param name="g">the graphics object to use</param>
-		/// ------------------------------------------------------------------------------------
 		private void DrawParaPreview(ref Rectangle drawRect, Graphics g)
 		{
 			// draw three lines to represent the paragraph
-			for (int i = 0; i < 3; i++)
+			for (var i = 0; i < 3; i++)
 			{
-				Rectangle lineRect;
-
 				// Perform first line adjustments
-				if (i == 0)
-					lineRect = CalculateFirstLineRect(drawRect);
-				else
-					lineRect = CalculateFollowingLineRect(drawRect, i);
-
+				var lineRect = i == 0 ? CalculateFirstLineRect(drawRect) : CalculateFollowingLineRect(drawRect, i);
 				// Handle the left and right indentation
-				int leftIndent = m_nudLeftIndentation.MeasureValue / kmptPerPixel;
+				var leftIndent = m_nudLeftIndentation.MeasureValue / kmptPerPixel;
 				if (!RtoL)
+				{
 					lineRect.X += leftIndent;
+				}
 				lineRect.Width -= leftIndent;
 
-				int rightIndent = m_nudRightIndentation.MeasureValue / kmptPerPixel;
+				var rightIndent = m_nudRightIndentation.MeasureValue / kmptPerPixel;
 				if (RtoL)
+				{
 					lineRect.X += rightIndent;
+				}
 				lineRect.Width -= rightIndent;
 
 				// On the last line, we need to add the paragraph trailing space to the background
 				// and adjust the drawRect with it too.
-				int bottomSpace = 0;
+				var bottomSpace = 0;
 				if (i == 2)
+				{
 					bottomSpace = m_nudAfter.MeasureValue / kmptPerPixel;
+				}
 
 				// If the line spacing is other than single, then adjust the bottom space
 				switch (m_cboLineSpacing.AdjustedSelectedIndex)
@@ -623,39 +597,36 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					case kAtLeastIndex: // at least
 					case kExactlyIndex: // exactly
 						// only adjust for this at values above 12pt.
-						int spaceAt = (m_nudSpacingAt.MeasureValue - 12000) / kmptPerPixel;
+						var spaceAt = (m_nudSpacingAt.MeasureValue - 12000) / kmptPerPixel;
 						if (spaceAt > 0)
+						{
 							bottomSpace += spaceAt;
+						}
 						break;
 				}
 
 				// Draw the background and the line
-				Rectangle lineBackground = new Rectangle(
-					drawRect.X + leftIndent, drawRect.Y, drawRect.Width - leftIndent - rightIndent,
-					(lineRect.Bottom - drawRect.Y) + + bottomSpace + ((i < 2) ? kLineSpacing : 0));
+				var lineBackground = new Rectangle(drawRect.X + leftIndent, drawRect.Y, drawRect.Width - leftIndent - rightIndent, (lineRect.Bottom - drawRect.Y) + + bottomSpace + ((i < 2) ? kLineSpacing : 0));
 				g.FillRectangle(new SolidBrush(m_cboBackground.ColorValue), lineBackground);
 				g.FillRectangle(SystemBrushes.WindowText, lineRect);
 
 				// Adjust the drawRect to remove the space for the line just drawn
-				int rectAdjust = (lineRect.Bottom + kLineSpacing + bottomSpace) - drawRect.Y;
+				var rectAdjust = (lineRect.Bottom + kLineSpacing + bottomSpace) - drawRect.Y;
 				drawRect.Y += rectAdjust;
 				drawRect.Height -= rectAdjust;
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Calculates the rect that the first line will occupy
 		/// </summary>
 		/// <param name="drawRect">The remaining space in the window to draw in</param>
 		/// <returns>the rectangle for the line</returns>
-		/// ------------------------------------------------------------------------------------
 		private Rectangle CalculateFirstLineRect(Rectangle drawRect)
 		{
-			Rectangle lineRect = new Rectangle(drawRect.X, drawRect.Y, drawRect.Width, kLineHeight);
-
+			var lineRect = new Rectangle(drawRect.X, drawRect.Y, drawRect.Width, kLineHeight);
 			// Adjust it down by the "before" space
-			int mpt = m_nudBefore.MeasureValue;
+			var mpt = m_nudBefore.MeasureValue;
 			lineRect.Offset(0, mpt / kmptPerPixel);
 
 			// If "first line" indentation is chosen, then indent the line
@@ -663,7 +634,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				mpt = m_nudIndentBy.MeasureValue;
 				if (!RtoL)
+				{
 					lineRect.X += (mpt / kmptPerPixel);
+				}
 				lineRect.Width -= (mpt / kmptPerPixel);
 			}
 
@@ -672,41 +645,38 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			return lineRect;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Calculates the rectangle for any lines after the first line.
 		/// </summary>
 		/// <param name="drawRect">The remaining space in the window to draw in</param>
 		/// <param name="lineNumber">The line number.</param>
 		/// <returns>the rectangle for the line</returns>
-		/// ------------------------------------------------------------------------------------
 		private Rectangle CalculateFollowingLineRect(Rectangle drawRect, int lineNumber)
 		{
-			Rectangle lineRect = new Rectangle(drawRect.X, drawRect.Y, drawRect.Width, kLineHeight);
-
+			var lineRect = new Rectangle(drawRect.X, drawRect.Y, drawRect.Width, kLineHeight);
 			// Handle lines other than the first line
 			// If "hanging" indentation is chosen, then indent the line
 			if (m_cboSpecialIndentation.AdjustedSelectedIndex == 3)
 			{
-				int mpt = m_nudIndentBy.MeasureValue;
+				var mpt = m_nudIndentBy.MeasureValue;
 				if (!RtoL)
+				{
 					lineRect.X += (mpt / kmptPerPixel);
+				}
 				lineRect.Width -= (mpt / kmptPerPixel);
 			}
 
 			if (lineNumber == 2)
+			{
 				AdjustLineForFudge(ref lineRect, 36);
+			}
 
 			return lineRect;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Adjusts the line length with a fudge amount to make it look unjustified.
 		/// </summary>
-		/// <param name="lineRect">The line rect.</param>
-		/// <param name="lineFudge">The line fudge amount</param>
-		/// ------------------------------------------------------------------------------------
 		private void AdjustLineForFudge(ref Rectangle lineRect, int lineFudge)
 		{
 			// Adjust the rect based on the justification
@@ -717,7 +687,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 				case 1: // leading
 					if (RtoL)
+					{
 						lineRect.X += lineFudge;
+					}
 					lineRect.Width -= lineFudge;
 					break;
 
@@ -737,7 +709,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 				case 5: // trailing
 					if (!RtoL)
+					{
 						lineRect.X += lineFudge;
+					}
 					lineRect.Width -= lineFudge;
 					break;
 
@@ -746,19 +720,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the color to use for painting the foreground of a control which displays an
 		/// inheritable property value.
 		/// </summary>
-		/// <param name="prop">The inheritable property.</param>
 		/// <returns>The system gray color if the property is inherited; otherwise the normal
 		/// window text color.</returns>
-		/// ------------------------------------------------------------------------------------
-		private Color GetCtrlForeColorForProp<T>(InheritableStyleProp<T> prop)
+		private Color GetCtrlForeColorForProp<T>(InheritableStyleProp<T> inheritableProperty)
 		{
-			return (prop.IsInherited && m_currentStyleInfo.Inherits) ?
-				SystemColors.GrayText : SystemColors.WindowText;
+			return (inheritableProperty.IsInherited && m_currentStyleInfo.Inherits) ? SystemColors.GrayText : SystemColors.WindowText;
 		}
 		#endregion
 	}

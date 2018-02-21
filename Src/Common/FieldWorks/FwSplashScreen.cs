@@ -1,9 +1,6 @@
-// Copyright (c) 2002-2014 SIL International
+// Copyright (c) 2002-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwSplashScreen.cs
-// Responsibility: TE Team
 
 using System;
 using System.ComponentModel;
@@ -14,14 +11,12 @@ using System.Windows.Forms;
 
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace SIL.FieldWorks
 {
 	#region FwSplashScreen implementation
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// FW Splash Screen
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class FwSplashScreen : IThreadedProgress, IDisposable
 	{
 		#region Events
@@ -47,35 +42,37 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Disposable stuff
-		#if DEBUG
-		/// <summary/>
+		/// <summary />
 		~FwSplashScreen()
 		{
 			Dispose(false);
 		}
-		#endif
 
-		/// <summary/>
+		/// <summary />
 		public bool IsDisposed { get; private set; }
 
-		/// <summary/>
+		/// <summary />
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		/// <summary/>
+		/// <summary />
 		protected virtual void Dispose(bool fDisposing)
 		{
 			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
-			if (fDisposing && !IsDisposed)
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+			if (fDisposing)
 			{
 				// dispose managed and unmanaged objects
 				Close();
 				var disposable = m_waitHandle as IDisposable;
-				if (disposable != null)
-					disposable.Dispose();
+				disposable?.Dispose();
 			}
 			m_waitHandle = null;
 			IsDisposed = true;
@@ -83,7 +80,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Public Methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Shows the splash screen
 		/// </summary>
@@ -91,11 +87,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// will be hidden.</param>
 		/// <param name="fNoUi">if set to <c>true</c> no UI is to be shown (i.e., we aren't
 		/// really going to show the splash screen).</param>
-		/// ------------------------------------------------------------------------------------
 		public void Show(bool fDisplaySILInfo, bool fNoUi)
 		{
 			if (m_thread != null)
+			{
 				return;
+			}
 
 			m_DisplaySILInfo = fDisplaySILInfo;
 			m_fNoUi = fNoUi;
@@ -106,11 +103,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			StartSplashScreen(); // Create Modeless dialog on Main GUI thread
 #else
 			if (fNoUi)
+			{
 				StartSplashScreen();
+			}
 			else
 			{
-				m_thread = new Thread(StartSplashScreen);
-				m_thread.IsBackground = true;
+				m_thread = new Thread(StartSplashScreen) { IsBackground = true };
 				m_thread.SetApartmentState(ApartmentState.STA);
 				m_thread.Name = "SplashScreen";
 				// Copy the UI culture from the main thread to the splash screen thread.
@@ -128,12 +126,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Message = string.Empty;
 		}
 
-		/// ----------------------------------------------------------------------------------------
 		/// <summary>
 		/// Activates (brings back to the top) the splash screen (assuming it is already visible
 		/// and the application showing it is the active application).
 		/// </summary>
-		/// ----------------------------------------------------------------------------------------
 		public void Activate()
 		{
 			Debug.Assert(m_splashScreen != null);
@@ -143,15 +139,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// ----------------------------------------------------------------------------------------
 		/// <summary>
 		/// Closes the splash screen
 		/// </summary>
-		/// ----------------------------------------------------------------------------------------
 		public void Close()
 		{
 			if (m_splashScreen == null)
+			{
 				return;
+			}
 
 			lock (m_splashScreen.m_Synchronizer)
 			{
@@ -165,8 +161,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 			}
 #if !__MonoCS__
-			if (m_thread != null)
-				m_thread.Join();
+			m_thread?.Join();
 #endif
 			lock (m_splashScreen.m_Synchronizer)
 			{
@@ -178,11 +173,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 #endif
 		}
 
-		/// ----------------------------------------------------------------------------------------
 		/// <summary>
 		/// Refreshes the display of the splash screen
 		/// </summary>
-		/// ----------------------------------------------------------------------------------------
 		public void Refresh()
 		{
 			Debug.Assert(m_splashScreen != null);
@@ -194,33 +187,22 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Public properties
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The assembly of the product-specific EXE (e.g., TE.exe or FLEx.exe).
 		/// .Net callers should set this.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public Assembly ProductExecutableAssembly { get; set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the progress bar.
 		/// </summary>
-		/// <value></value>
-		/// ------------------------------------------------------------------------------------
-		public IProgress ProgressBar
-		{
-			get { return this; }
-		}
+		public IProgress ProgressBar => this;
 		#endregion
 
 		#region IProgress Members
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Member Step
 		/// </summary>
-		/// <param name="nStepAmt">nStepAmt</param>
-		/// ------------------------------------------------------------------------------------
 		public void Step(int nStepAmt)
 		{
 			lock (m_splashScreen.m_Synchronizer)
@@ -233,7 +215,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Gets or sets the minimum value of the progress bar.
 		/// </summary>
-		/// <value>The minimum.</value>
 		public int Minimum
 		{
 			get
@@ -257,7 +238,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Gets or sets the maximum value of the progress bar.
 		/// </summary>
-		/// <value>The maximum.</value>
 		public int Maximum
 		{
 			get
@@ -278,12 +258,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The message to display to indicate startup activity on the splash screen
 		/// </summary>
-		/// <value></value>
-		/// ------------------------------------------------------------------------------------
 		public string Message
 		{
 			get
@@ -304,14 +281,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the current position of the progress bar. This should be within the limits set by
 		/// SetRange. If it is not, then the value is set to either the minimum or the maximum.
 		/// </summary>
-		/// <value></value>
-		/// <returns>A System.Int32 </returns>
-		/// ------------------------------------------------------------------------------------
 		public int Position
 		{
 			get
@@ -332,13 +305,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the size of the step increment used by Step.
 		/// </summary>
-		/// <value></value>
-		/// <returns>A System.Int32 </returns>
-		/// ------------------------------------------------------------------------------------
 		public int StepSize
 		{
 			get
@@ -359,13 +328,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the title of the progress display window.
 		/// </summary>
-		/// <value></value>
-		/// <returns>A System.String </returns>
-		/// ------------------------------------------------------------------------------------
 		public string Title
 		{
 			get { throw new Exception("The property 'Title' is not implemented."); }
@@ -376,20 +341,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Gets an object to be used for ensuring that required tasks are invoked on the main
 		/// UI thread.
 		/// </summary>
-		public ISynchronizeInvoke SynchronizeInvoke
-		{
-			get { return m_splashScreen; }
-		}
+		public ISynchronizeInvoke SynchronizeInvoke => m_splashScreen;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the progress as a form (used for message box owners, etc).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public Form Form
-		{
-			get { return m_splashScreen; }
-		}
+		public Form Form => m_splashScreen;
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this progress is indeterminate.
@@ -399,54 +356,47 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			get
 			{
 				if (m_splashScreen.InvokeRequired)
+				{
 					return (bool) m_splashScreen.Invoke((Func<bool>)(() => m_splashScreen.IsIndeterminate));
+				}
 				return m_splashScreen.IsIndeterminate;
 			}
 
 			set
 			{
 				if (m_splashScreen.InvokeRequired)
+				{
 					m_splashScreen.Invoke((Action<bool>)(b => m_splashScreen.IsIndeterminate = b), value);
+				}
 				else
 					m_splashScreen.IsIndeterminate = value;
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a value indicating whether the opertation executing on the separate thread
 		/// can be cancelled by a different thread (typically the main UI thread).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public bool AllowCancel
 		{
 			get { return false; }
 			set { throw new NotImplementedException(); }
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool IsCanceling
-		{
-			get { return false; }
-		}
+		/// <summary />
+		public bool IsCanceling => false;
 		#endregion
 
 		#region private methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Starts the splash screen.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void StartSplashScreen()
 		{
-			m_splashScreen = new RealSplashScreen(m_DisplaySILInfo);
-			m_splashScreen.WaitHandle = m_waitHandle;
+			m_splashScreen = new RealSplashScreen(m_DisplaySILInfo) { WaitHandle = m_waitHandle };
 			if (m_fNoUi)
 			{
-				IntPtr blah = m_splashScreen.Handle; // force handle creation.
+				var blah = m_splashScreen.Handle; // force handle creation.
 			}
 			else
 			{
@@ -467,10 +417,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Gets a value indicating whether the task has been canceled.
 		/// </summary>
-		public bool Canceled
-		{
-			get { return false; }
-		}
+		public bool Canceled => false;
 
 		/// <summary>
 		/// If progress dialog is already showing, we run the background task using it (without
@@ -482,8 +429,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <returns>
 		/// The return value from the background thread.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		/// ------------------------------------------------------------------------------------
 		public object RunTask(Func<IThreadedProgress, object[], object> backgroundTask, params object[] parameters)
 		{
 			return RunTask(true, backgroundTask, parameters);
@@ -499,8 +444,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <returns>
 		/// The return value from the background thread.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		/// ------------------------------------------------------------------------------------
 		public object RunTask(bool fDisplayUi, Func<IThreadedProgress, object[], object> backgroundTask, params object[] parameters)
 		{
 			return backgroundTask(this, parameters);

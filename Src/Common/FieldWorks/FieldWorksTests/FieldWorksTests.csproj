@@ -156,6 +156,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RealSplashScreenTests.cs" />
     <Compile Include="ReveralIndexServicesTests.cs" />
     <None Include="App.config" />
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">

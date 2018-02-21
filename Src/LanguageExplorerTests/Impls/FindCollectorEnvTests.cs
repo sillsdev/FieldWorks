@@ -2,15 +2,18 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Runtime.InteropServices; // needed for Marshal
+using System.Runtime.InteropServices;
+using LanguageExplorer.Impls;
+// needed for Marshal
 using NUnit.Framework;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
+using SIL.WritingSystems;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace LanguageExplorerTests.Impls
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -33,6 +36,26 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Setup/Teardown/Initialize
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the up a test.

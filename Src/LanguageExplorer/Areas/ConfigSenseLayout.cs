@@ -1,9 +1,6 @@
 // Copyright (c) 2011-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ConfigSenseLayout.cs
-// Responsibility: mcconnel
 
 using System;
 using System.Collections.Generic;
@@ -16,11 +13,9 @@ using SIL.FieldWorks.FwCoreDlgs.Controls;
 
 namespace LanguageExplorer.Areas
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Group together all the controls used for specifying the layout specific to Senses.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public partial class ConfigSenseLayout : UserControl
 	{
 		///<summary>delegate for passing on the clicked event</summary>
@@ -36,8 +31,6 @@ namespace LanguageExplorer.Areas
 		/// the "Surrounding Context" option. -gjm 7/2011
 		/// (I may have messed up naylor's earlier Sense/Subentries handling.)
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		public delegate void DisplaySenseInParaCheckedHandler(object sender, EventArgs e);
 
 		/// <summary>
@@ -45,11 +38,9 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public event DisplaySenseInParaCheckedHandler DisplaySenseInParaChecked;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ConfigSenseLayout"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public ConfigSenseLayout()
 		{
 			InitializeComponent();
@@ -69,31 +60,6 @@ namespace LanguageExplorer.Areas
 			FillNumberStyleComboList();
 			FillNumberFontComboList();
 		}
-
-		/// <summary>
-		/// Convert a distance that is right at 96 dpi to the current screen dpi
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		int From96dpiY(int input)
-		{
-			using (var g = CreateGraphics())
-			{
-				return (int)Math.Round(input * g.DpiY / 96.0);
-			}
-		}
-
-		///// <summary>
-		///// Adjust the two controls. Redundant at 96 dpi, but essential at other resolutions,
-		///// after Windows.Forms tries to autoscale them.
-		///// </summary>
-		//protected override void OnLayout(LayoutEventArgs e)
-		//{
-		//    base.OnLayout(e);
-		//    m_grpSensePara.Top = m_grpSenseNumber.Bottom - From96dpiY(10);
-		//    m_grpSensePara.Width = m_grpSenseNumber.Width = Math.Max(m_grpSensePara.Width, m_grpSenseNumber.Width);
-		//    MinimumSize = new Size(0, m_grpSensePara.Bottom);
-		//}
 
 		/// <summary>
 		/// Fill the combobox list which gives the possibilities for numbering a recursive
@@ -146,26 +112,17 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Get the number style combobox.
 		/// </summary>
-		public ComboBox NumberStyleCombo
-		{
-			get { return m_cbNumberStyle; }
-		}
+		public ComboBox NumberStyleCombo => m_cbNumberStyle;
 
 		/// <summary>
 		/// Get the number font combobox.
 		/// </summary>
-		public ComboBox NumberFontCombo
-		{
-			get { return m_cbNumberFont; }
-		}
+		public ComboBox NumberFontCombo => m_cbNumberFont;
 
 		/// <summary>
 		/// Get the sense (paragraph) style combobox.
 		/// </summary>
-		public ComboBox SenseStyleCombo
-		{
-			get { return m_cbSenseParaStyle; }
-		}
+		public ComboBox SenseStyleCombo => m_cbSenseParaStyle;
 
 		/// <summary>
 		/// Initialize the list of styles in the styles combo boxes.
@@ -190,8 +147,10 @@ namespace LanguageExplorer.Areas
 			for (var i = 0; i < combo.Items.Count; ++i)
 			{
 				var sci = combo.Items[i] as StyleComboItem;
-				if (sci == null || sci.Style == null || sci.Style.Name != value)
+				if (sci?.Style == null || sci.Style.Name != value)
+				{
 					continue;
+				}
 				combo.SelectedIndex = i;
 				break;
 			}
@@ -199,8 +158,7 @@ namespace LanguageExplorer.Areas
 
 		private static string GetStyleName(ComboBox combo)
 		{
-			var sci = (StyleComboItem)combo.SelectedItem;
-			return sci != null && sci.Style != null ? sci.Style.Name : null;
+			return ((StyleComboItem)combo.SelectedItem)?.Style?.Name;
 		}
 
 		/// <summary>
@@ -274,28 +232,23 @@ namespace LanguageExplorer.Areas
 			{
 				// Sense number configuration is now independent of paragraph style or not
 				// LT-11598 -- GJM
-
 				m_cbSenseParaStyle.Enabled = true;
 				m_btnMoreStyles.Enabled = true;
-				if (DisplaySenseInParaChecked != null)
-					DisplaySenseInParaChecked(this, null);
+				DisplaySenseInParaChecked?.Invoke(this, null);
 			}
 			else // unchecked
 			{
 				// Sense number configuration is now independent of paragraph style or not
 				// LT-11598 -- GJM
-
 				m_cbSenseParaStyle.Enabled = false;
 				m_btnMoreStyles.Enabled = false;
-				if (DisplaySenseInParaChecked != null)
-					DisplaySenseInParaChecked(this, null);
+				DisplaySenseInParaChecked?.Invoke(this, null);
 			}
 		}
 
 		private void m_btnMoreStyles_Click(object sender, EventArgs e)
 		{
-			if (SensesBtnClicked != null)
-				SensesBtnClicked(sender, e);
+			SensesBtnClicked?.Invoke(sender, e);
 		}
 
 		private void m_cbNumberStyle_SelectedIndexChanged(object sender, EventArgs e)

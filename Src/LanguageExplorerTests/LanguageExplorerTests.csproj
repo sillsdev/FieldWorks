@@ -239,6 +239,9 @@
       <DependentUpon>XmlViewsResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\GlossToolLoadsGuessContentsTests.cs" />
+    <Compile Include="Impls\FindCollectorEnvTests.cs" />
+    <Compile Include="Impls\FwFindReplaceDlgTests.cs" />
+    <Compile Include="Impls\FwHelpAboutTests.cs" />
     <Compile Include="Repository\AreaRepositoryTests.cs" />
     <Compile Include="Repository\AreaTestBase.cs" />
     <Compile Include="Controls\DetailControls\AtomicReferenceLauncherTests.cs" />

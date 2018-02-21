@@ -9,8 +9,11 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace LanguageExplorer.Impls
 {
+#if RANDYTODO
+// TODO: Break out classes and clean code.
+#endif
 	#region FindCollectorEnv class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

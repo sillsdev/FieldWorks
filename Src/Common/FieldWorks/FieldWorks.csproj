@@ -231,13 +231,26 @@
     <Compile Include="ApplicationBusyDialog.Designer.cs">
       <DependentUpon>ApplicationBusyDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="ChooseLangProjectDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChooseLangProjectDialog.Designer.cs">
+      <DependentUpon>ChooseLangProjectDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="ComposablePartCatalogExtensions.cs" />
     <Compile Include="FieldWorksManager.cs" />
     <Compile Include="FwApplicationSettings.cs" />
     <Compile Include="FwRestoreProjectSettings.cs" />
+    <Compile Include="FwSplashScreen.cs" />
     <Compile Include="LexicalProvider\LexicalProviderImpl.cs" />
     <Compile Include="LexicalProvider\LexicalProviderManager.cs" />
     <Compile Include="LexicalProvider\LexicalServiceProvider.cs" />
+    <Compile Include="MissingOldFieldWorksDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MissingOldFieldWorksDlg.Designer.cs">
+      <DependentUpon>MissingOldFieldWorksDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="MoveProjectsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -258,6 +271,9 @@
     <Compile Include="PaObjects\PaWritingSystem.cs" />
     <Compile Include="LexicalProvider\ILexicalProvider.cs" />
     <Compile Include="FieldWorks.cs" />
+    <Compile Include="RealSplashScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ReversalIndexServices.cs" />
     <Compile Include="WelcomeToFieldWorksDlg.Designer.cs">
       <DependentUpon>WelcomeToFieldWorksDlg.cs</DependentUpon>
@@ -307,6 +323,13 @@
       <DependentUpon>ApplicationBusyDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="ChooseLangProjectDialog.resx">
+      <DependentUpon>ChooseLangProjectDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MissingOldFieldWorksDlg.resx">
+      <DependentUpon>MissingOldFieldWorksDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="MoveProjectsDlg.resx">
       <DependentUpon>MoveProjectsDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -314,6 +337,10 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RealSplashScreen.resx">
+      <DependentUpon>RealSplashScreen.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="WelcomeToFieldWorksDlg.resx">
@@ -326,10 +353,12 @@
     <None Include="Resources\OpenFile.png" />
     <None Include="Resources\DatabaseNew.png" />
     <None Include="Resources\chorus32x32.png" />
+    <None Include="Resources\Bullet.png" />
     <Content Include="Resources\Download26x26.png" />
     <Content Include="Resources\Import28x28.png" />
     <None Include="Resources\SendReceiveGetArrow32x32.png" />
     <None Include="Resources\Info.png" />
+    <None Include="Resources\wait22trans.gif" />
     <Content Include="SmallBookOnCubeVersion.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

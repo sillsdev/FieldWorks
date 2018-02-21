@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.LexText;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
@@ -21,7 +22,6 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
-using SIL.FieldWorks.FwCoreDlgs;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -30,9 +30,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	{
 		private RegexHelperMenu m_regexContextMenu;
 		private IVwPattern m_vwPattern;
-		private bool m_fObjectConcorded = false;
-		private int m_hvoMatch = 0;
-		private int m_backupHvo = 0;
+		private bool m_fObjectConcorded;
+		private int m_hvoMatch;
+		private int m_backupHvo;
 		private POSPopupTreeManager m_pOSPopupTreeManager;
 
 		public ConcordanceControl()

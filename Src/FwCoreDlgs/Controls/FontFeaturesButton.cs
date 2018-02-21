@@ -13,17 +13,15 @@ using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Font Features button
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class FontFeaturesButton : Button
 	{
 		#region Member variables and constants
-		/// <summary></summary>
+		/// <summary />
 		public const int kGrLangFeature = 1; // See FmtFntDlg.h for real defn.
-		/// <summary></summary>
+		/// <summary />
 		public const int kMaxValPerFeat = 32; // See FmtFntDlg.h for real defn.
 		// This is copied from nLang in FmtFntDlg.cpp, FmtFntDlg::CreateFeaturesMenu.
 		/// <summary></summary>
@@ -34,20 +32,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		private System.ComponentModel.Container components;
 		private string m_fontName; // The font for which we are editing the features.
-		private string m_fontFeatures; // The font feature string stored in the writing system.
 		private IRenderingFeatures m_featureEngine;
-		private ILgWritingSystemFactory m_wsf;
 		private int[] m_values;	// The actual list of values we're editing.
 		private int[] m_ids;		// The corresponding ids.
-		private bool m_isGraphiteFont;
 		#endregion
 
 		#region Constructor and dispose stuff
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FontFeaturesButton"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public FontFeaturesButton()
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -67,14 +60,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -82,22 +74,17 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Class HoldDummyGraphics
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private class HoldDummyGraphics: IDisposable
-		{
 
-			/// <summary></summary>
+		/// <summary />
+		private sealed class HoldDummyGraphics: IDisposable
+		{
+			/// <summary />
 			public IVwGraphics m_vwGraphics;
-			/// <summary></summary>
+			/// <summary />
 			public Graphics m_graphics;
-			/// <summary></summary>
+			/// <summary />
 			private IntPtr m_hdc;
 
-			/// --------------------------------------------------------------------------------
 			/// <summary>
 			/// Initializes a new instance of the <see cref="T:HoldDummyGraphics"/> class.
 			/// </summary>
@@ -105,7 +92,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			/// <param name="fBold">if set to <c>true</c> [f bold].</param>
 			/// <param name="fItalic">if set to <c>true</c> [f italic].</param>
 			/// <param name="ctrl">The parent control</param>
-			/// --------------------------------------------------------------------------------
 			public HoldDummyGraphics(string fontName, bool fBold, bool fItalic, Control ctrl)
 			{
 				// Make a VwGraphics and initialize it.
@@ -116,38 +102,41 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				((IVwGraphicsWin32)m_vwGraphics).Initialize(m_hdc);
 
 				// Select our font into it.
-				var chrp = new LgCharRenderProps();
-				chrp.szFaceName = new ushort[32];
-				for (int ich = 0; ich < fontName.Length; ++ich)
+				var chrp = new LgCharRenderProps { szFaceName = new ushort[32] };
+				for (var ich = 0; ich < fontName.Length; ++ich)
 				{
 					if (ich < 32)
+					{
 						chrp.szFaceName[ich] = fontName[ich];
+					}
 				}
+
 				if (fontName.Length < 32)
+				{
 					chrp.szFaceName[fontName.Length] = 0;
+				}
 				else
+				{
 					chrp.szFaceName[31] = 0;
-				chrp.ttvBold = (int)(fBold ? FwTextToggleVal.kttvForceOn
-					: FwTextToggleVal.kttvOff);
-				chrp.ttvItalic = (int)(fItalic ? FwTextToggleVal.kttvForceOn
-					: FwTextToggleVal.kttvOff);
+				}
+				chrp.ttvBold = (int)(fBold ? FwTextToggleVal.kttvForceOn : FwTextToggleVal.kttvOff);
+				chrp.ttvItalic = (int)(fItalic ? FwTextToggleVal.kttvForceOn : FwTextToggleVal.kttvOff);
 				m_vwGraphics.SetupGraphics(ref chrp);
 			}
 
 			#region Disposable stuff
-			#if DEBUG
+
 			/// <summary/>
 			~HoldDummyGraphics()
 			{
 				Dispose(false);
 			}
-			#endif
 
 			/// <summary/>
-			public bool IsDisposed
+			private bool IsDisposed
 			{
 				get;
-				private set;
+				set;
 			}
 
 			/// <summary/>
@@ -158,14 +147,18 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 
 			/// <summary/>
-			protected virtual void Dispose(bool fDisposing)
+			private void Dispose(bool fDisposing)
 			{
 				Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (IsDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
 				if (fDisposing && !IsDisposed)
 				{
 					// dispose managed and unmanaged objects
-					if (m_vwGraphics != null)
-						m_vwGraphics.ReleaseDC();
+					m_vwGraphics?.ReleaseDC();
 					if (m_graphics != null)
 					{
 						m_graphics.ReleaseHdc(m_hdc);
@@ -192,45 +185,25 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		}
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the writing system factory.
 		/// </summary>
-		/// <value>The writing system factory.</value>
-		/// ------------------------------------------------------------------------------------
-		public ILgWritingSystemFactory WritingSystemFactory
-		{
-			get
-			{
-				return m_wsf;
-			}
-			set
-			{
-				m_wsf = value;
-			}
-		}
+		public ILgWritingSystemFactory WritingSystemFactory { get; set; }
 
 		/// <summary>Event that occurs when the user chooses a font feature.</summary>
 		public event EventHandler FontFeatureSelected;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle the FontFeatureSelected event; by default just calls delegates.
 		/// </summary>
-		/// <param name="ea">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		protected virtual void OnFontFeatureSelected(EventArgs ea)
 		{
-			if (FontFeatureSelected != null)
-				FontFeatureSelected(this, ea);
+			FontFeatureSelected?.Invoke(this, ea);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the font for which we are selecting features.
 		/// </summary>
-		/// <value>The name of the font.</value>
-		/// ------------------------------------------------------------------------------------
 		public string FontName
 		{
 			get
@@ -240,71 +213,49 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			set
 			{
 				if (m_fontName == value)
+				{
 					return;
+				}
 				m_fontName = value;
 				SetupFontFeatures();
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get/Set the actual feature string we are editing.
 		/// </summary>
-		/// <value>The font features.</value>
-		/// ------------------------------------------------------------------------------------
-		public string FontFeatures
-		{
-			get
-			{
-				return m_fontFeatures;
-			}
-			set
-			{
-				m_fontFeatures = value;
-			}
-		}
+		public string FontFeatures { get; set; }
 
 		/// <summary>
 		/// Gets a value indicating whether the currently selected font is a Graphite font.
 		/// </summary>
-		/// <value>
-		/// 	<c>true</c> if the font is a Graphite font, otherwise <c>false</c>.
-		/// </value>
-		public bool IsGraphiteFont
-		{
-			get
-			{
-				return m_isGraphiteFont;
-			}
-		}
+		public bool IsGraphiteFont { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Setups the font features.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void SetupFontFeatures()
 		{
 			if (string.IsNullOrEmpty(m_fontName))
 			{
 				Enabled = false;
-				m_isGraphiteFont = false;
+				IsGraphiteFont = false;
 				return;
 			}
 
 			using (var hdg = new HoldDummyGraphics(m_fontName, false, false, this))
 			{
 				IRenderEngine renderer = GraphiteEngineClass.Create();
-				renderer.InitRenderer(hdg.m_vwGraphics, m_fontFeatures);
+				renderer.InitRenderer(hdg.m_vwGraphics, FontFeatures);
 				// check if the font is a valid Graphite font
 				if (!renderer.FontIsValid)
 				{
-					m_isGraphiteFont = false;
+					IsGraphiteFont = false;
 					Enabled = false;
 					return;
 				}
-				renderer.WritingSystemFactory = m_wsf;
-				m_isGraphiteFont = true;
+				renderer.WritingSystemFactory = WritingSystemFactory;
+				IsGraphiteFont = true;
 				m_featureEngine = renderer as IRenderingFeatures;
 				if (m_featureEngine == null)
 				{
@@ -313,34 +264,35 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				}
 				int cfid;
 				m_featureEngine.GetFeatureIDs(0, null, out cfid);
-				if (cfid == 0)
+				switch (cfid)
 				{
-					Enabled = false;
-					return;
-				}
-				if (cfid == 1)
-				{
-					// What if it's the dummy built-in graphite feature that we ignore?
-					// Get the list of features (only 1).
-					using (ArrayPtr idsM = MarshalEx.ArrayToNative<int>(cfid))
-					{
-						m_featureEngine.GetFeatureIDs(cfid, idsM, out cfid);
-						int [] ids = MarshalEx.NativeToArray<int>(idsM, cfid);
-						if (ids[0] == kGrLangFeature)
+					case 0:
+						Enabled = false;
+						return;
+					case 1:
+						// What if it's the dummy built-in graphite feature that we ignore?
+						// Get the list of features (only 1).
+						using (var idsM = MarshalEx.ArrayToNative<int>(cfid))
 						{
-							Enabled = false;
-							return;
+							m_featureEngine.GetFeatureIDs(cfid, idsM, out cfid);
+							var ids = MarshalEx.NativeToArray<int>(idsM, cfid);
+							if (ids[0] == kGrLangFeature)
+							{
+								Enabled = false;
+								return;
+							}
 						}
-					}
+
+						break;
 				}
+
 				Enabled = true;
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Parse a feature string to find the next feature id value, skipping any leading
-		/// spaces.  Also skip past the trailing equal sign, and any surrounding spaces.
+		/// spaces. Also skip past the trailing equal sign, and any surrounding spaces.
 		/// </summary>
 		/// <param name="stFeatures">feature string to part</param>
 		/// <param name="ichMin">starting index into the feature string</param>
@@ -349,8 +301,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <returns>
 		/// Feature id, or -1 if a syntax error occurs.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		static private int ParseNextFid(string stFeatures, int ichMin, out int ichLim)
+		private static int ParseNextFid(string stFeatures, int ichMin, out int ichLim)
 		{
 			int ich;
 			// skip any leading spaces.
@@ -364,10 +315,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				return -1;
 			}
 			// convert any number of decimal digits into the corresponding integer.
-			int fid = 0;
-			for (;
-				ich < stFeatures.Length && stFeatures[ich] >= '0' && stFeatures[ich] <= '9';
-				++ich)
+			var fid = 0;
+			for (; ich < stFeatures.Length && stFeatures[ich] >= '0' && stFeatures[ich] <= '9'; ++ich)
 			{
 				fid = fid * 10 + (stFeatures[ich] - '0');
 			}
@@ -389,7 +338,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			return fid;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Parse the value, which is a quoted string.  The first four characters are packed
 		/// into a 32-bit integer by taking the low byte of each character.
@@ -400,13 +348,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <returns>
 		/// The parsed value, or Int32.MaxValue if an error occurs.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		static private int ParseQuotedValue(string stFeatures, int ichMin, out int ichLim)
 		{
 			if (stFeatures[ichMin] != '"')
 			{
 				ichLim = ichMin;
-				return Int32.MaxValue;
+				return int.MaxValue;
 			}
 			var bVals = new byte[] { 0, 0, 0, 0 };
 			int ich;
@@ -414,20 +361,24 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			for (ib = 0, ich = ichMin + 1; ich < stFeatures.Length; ++ich, ++ib)
 			{
 				if (stFeatures[ich] == '"')
+				{
 					break;
+				}
+
 				if (ib < 4)
+				{
 					bVals[ib] = (byte)stFeatures[ich];
+				}
 			}
 			if (ich >= stFeatures.Length)
 			{
 				ichLim = ich;
-				return Int32.MaxValue;
+				return int.MaxValue;
 			}
 			ichLim = ich + 1;
 			return bVals[0] << 24 | bVals[1] << 16 | bVals[2] << 8 | bVals[3];
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Parse the value, which is a number (digit string).
 		/// </summary>
@@ -437,45 +388,44 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <returns>
 		/// The parsed value, or Int32.MaxValue if an error occurs.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		static private int ParseNumericValue(string stFeatures, int ichMin, out int ichLim)
+		private static int ParseNumericValue(string stFeatures, int ichMin, out int ichLim)
 		{
-			ichLim = stFeatures.IndexOfAny(new char[] { ',', ' '}, ichMin);
+			ichLim = stFeatures.IndexOfAny(new[] { ',', ' '}, ichMin);
 			if (ichLim < 0)
+			{
 				ichLim = stFeatures.Length;
+			}
 			try
 			{
-				return Int32.Parse(stFeatures.Substring(ichMin, ichLim - ichMin));
+				return int.Parse(stFeatures.Substring(ichMin, ichLim - ichMin));
 			}
 			catch
 			{
-				return Int32.MaxValue;
+				return int.MaxValue;
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Scan for another feature value, which is marked by a comma.
 		/// </summary>
-		/// <param name="stFeatures">The st features.</param>
-		/// <param name="ichMin">The ich min.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		static private int FindNextFeature(string stFeatures, int ichMin)
+		private static int FindNextFeature(string stFeatures, int ichMin)
 		{
-			bool fInQuote = false;
+			var fInQuote = false;
 			int ich;
 			for (ich = ichMin; ich < stFeatures.Length; ++ich)
 			{
 				if (stFeatures[ich] == '"')
+				{
 					fInQuote = !fInQuote;
+				}
 				else if (stFeatures[ich] == ',' && !fInQuote)
+				{
 					return ich + 1;
+				}
 			}
 			return ich;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Parse a feature string from a renderer. The feature string is of the form
 		/// 1=12,2=23,3="abcd"
@@ -489,35 +439,32 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// For each id in ids that is matched by an id in the string, we record the
 		/// corresponding valuein values.
 		/// </summary>
-		/// <param name="ids"></param>
-		/// <param name="stFeatures"></param>
-		/// ------------------------------------------------------------------------------------
-		static public int[] ParseFeatureString(int[] ids, string stFeatures)
+		public static int[] ParseFeatureString(int[] ids, string stFeatures)
 		{
-			int[] result = new int[ids.Length];
-			for (int ifeat = 0; ifeat < result.Length; ++ifeat)
-				result[ifeat] = Int32.MaxValue;		// Signal "undefined" for each feature value.
+			var result = new int[ids.Length];
+			for (var ifeat = 0; ifeat < result.Length; ++ifeat)
+			{
+				result[ifeat] = int.MaxValue; // Signal "undefined" for each feature value.
+			}
 
 			if (stFeatures == null)
+			{
 				return result;
-			for (int ich = 0; ich < stFeatures.Length; )
+			}
+			for (var ich = 0; ich < stFeatures.Length; )
 			{
 				// Parse the next feature id.
-				int fid = ParseNextFid(stFeatures, ich, out ich);
+				var fid = ParseNextFid(stFeatures, ich, out ich);
 				if (fid >= 0)
 				{
 					// Parse the corresponding value.
-					int val;
-					if (stFeatures[ich] == '"')
-						val = ParseQuotedValue(stFeatures, ich, out ich);
-					else
-						val = ParseNumericValue(stFeatures, ich, out ich);
-					if (val != Int32.MaxValue && fid != kGrLangFeature)
+					var val = stFeatures[ich] == '"' ? ParseQuotedValue(stFeatures, ich, out ich) : ParseNumericValue(stFeatures, ich, out ich);
+					if (val != int.MaxValue && fid != kGrLangFeature)
 					{
 						// Everything parsed okay, and it's not the built-in graphite 'lang'
 						// feature, so store the value if the feature is in the input array.
-						int ifeatFound = -1;
-						for (int ifeat = 0; ifeat < ids.Length; ++ifeat)
+						var ifeatFound = -1;
+						for (var ifeat = 0; ifeat < ids.Length; ++ifeat)
 						{
 							if (ids[ifeat] == fid)
 							{
@@ -525,8 +472,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 								break;
 							}
 						}
+
 						if (ifeatFound > -1)
+						{
 							result[ifeatFound] = val;
+						}
 					}
 				}
 				ich = FindNextFeature(stFeatures, ich);
@@ -534,81 +484,63 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			return result;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// This is the inverse operation of ParseFeatureString.
 		/// </summary>
-		/// <param name="ids">The ids.</param>
-		/// <param name="values">The values.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		static public string GenerateFeatureString(int[] ids, int[] values)
+		private static string GenerateFeatureString(int[] ids, int[] values)
 		{
 			Debug.Assert(ids.Length == values.Length);
-			string stFeatures = "";
-			for (int ifeat = 0; ifeat < ids.Length; ++ifeat)
+			var stFeatures = string.Empty;
+			for (var ifeat = 0; ifeat < ids.Length; ++ifeat)
 			{
-				int id = ids[ifeat];
+				var id = ids[ifeat];
 				if (id == kGrLangFeature)
+				{
 					continue;
-				if (values[ifeat] == Int32.MaxValue)
+				}
+
+				if (values[ifeat] == int.MaxValue)
+				{
 					continue;
+				}
+
 				if (stFeatures.Length != 0)
+				{
 					stFeatures = stFeatures + ",";
+				}
 				stFeatures = stFeatures + ids[ifeat] + "=" + values[ifeat];
 			}
 			return stFeatures;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		internal class FontFeatureMenuItem : MenuItem
+		/// <summary />
+		private sealed class FontFeatureMenuItem : MenuItem
 		{
-			private int m_featureIndex;
-
-			/// --------------------------------------------------------------------------------
 			/// <summary>
-			/// Initializes a new instance of the <see cref="T:FontFeatureMenuItem"/> class.
+			/// Initializes a new instance of the class.
 			/// </summary>
-			/// <param name="label">The label.</param>
-			/// <param name="featureIndex">Index of the feature.</param>
-			/// <param name="ffbtn">The FFBTN.</param>
-			/// --------------------------------------------------------------------------------
-			internal FontFeatureMenuItem(string label, int featureIndex,
-				FontFeaturesButton ffbtn) :
-				base(label, ffbtn.ItemClickHandler)
+			internal FontFeatureMenuItem(string label, int featureIndex, FontFeaturesButton ffbtn)
+				: base(label, ffbtn.ItemClickHandler)
 			{
-				m_featureIndex = featureIndex;
+				FeatureIndex = featureIndex;
 			}
 
-			/// <summary/>
+			/// <summary />
 			protected override void Dispose(bool disposing)
 			{
-				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
 				base.Dispose(disposing);
 			}
 
-			/// --------------------------------------------------------------------------------
 			/// <summary>
 			/// Gets the index of the feature.
 			/// </summary>
-			/// <value>The index of the feature.</value>
-			/// --------------------------------------------------------------------------------
-			internal int FeatureIndex
-			{
-				get { return m_featureIndex; }
-			}
+			internal int FeatureIndex { get; }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Raises the click event.
 		/// </summary>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnClick(EventArgs e)
 		{
 			var menu = components.ContextMenu("ContextMenu");
@@ -616,19 +548,21 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_featureEngine.GetFeatureIDs(0, null, out cfid);
 
 			// Get the list of features.
-			using (ArrayPtr idsM = MarshalEx.ArrayToNative<int>(cfid))
+			using (var idsM = MarshalEx.ArrayToNative<int>(cfid))
 			{
 				m_featureEngine.GetFeatureIDs(cfid, idsM, out cfid);
 				m_ids = MarshalEx.NativeToArray<int>(idsM, cfid);
 			}
-			m_values = ParseFeatureString(m_ids, m_fontFeatures);
+			m_values = ParseFeatureString(m_ids, FontFeatures);
 			Debug.Assert(m_ids.Length == m_values.Length);
 
-			for (int ifeat = 0; ifeat < m_ids.Length; ++ifeat)
+			for (var ifeat = 0; ifeat < m_ids.Length; ++ifeat)
 			{
-				int id = m_ids[ifeat];
+				var id = m_ids[ifeat];
 				if (id == kGrLangFeature)
+				{
 					continue; // Don't show Graphite built-in 'lang' feature.
+				}
 				string label;
 				m_featureEngine.GetFeatureLabel(id, kUiCodePage, out label);
 				if (label.Length == 0)
@@ -639,22 +573,21 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				int cValueIds;
 				int nDefault;
 				int [] valueIds;
-				using (ArrayPtr valueIdsM = MarshalEx.ArrayToNative<int>(kMaxValPerFeat))
+				using (var valueIdsM = MarshalEx.ArrayToNative<int>(kMaxValPerFeat))
 				{
-					m_featureEngine.GetFeatureValues(id, kMaxValPerFeat, valueIdsM,
-						out cValueIds, out nDefault);
+					m_featureEngine.GetFeatureValues(id, kMaxValPerFeat, valueIdsM, out cValueIds, out nDefault);
 					valueIds = MarshalEx.NativeToArray<int>(valueIdsM, cValueIds);
 				}
 				// If we know a value for this feature, use it. Otherwise init to default.
-				int featureValue = nDefault;
+				var featureValue = nDefault;
 				if (m_values[ifeat] != Int32.MaxValue)
+				{
 					featureValue = m_values[ifeat];
+				}
 
 				// Decide whether to just use a check mark, or have a submenu. Default is sub.
-				bool fBinary = false;
-				if (cValueIds == 2 &&
-					(valueIds[0] == 0 || valueIds[1] == 0) &&
-					valueIds[0] + valueIds[1] == 1)
+				var fBinary = false;
+				if (cValueIds == 2 && (valueIds[0] == 0 || valueIds[1] == 0) && valueIds[0] + valueIds[1] == 1)
 				{
 					// Minimum requirement is that there are two states and the values have
 					// ids of 0 and 1. We further require that the actual values belong to a
@@ -688,64 +621,33 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				}
 				if (fBinary)
 				{
-					FontFeatureMenuItem item = new FontFeatureMenuItem(label, ifeat, this);
-					item.Checked = featureValue == 1;
+					var item = new FontFeatureMenuItem(label, ifeat, this) { Checked = featureValue == 1 };
 					menu.MenuItems.Add(item);
 				}
 				else if (cValueIds > 0)
 				{
-					FontFeatureMenuItem menuSub = new FontFeatureMenuItem(label, ifeat, this);
-					for (int ival = 0; ival < valueIds.Length; ++ival)
+					var menuSub = new FontFeatureMenuItem(label, ifeat, this);
+					foreach (var valueId in valueIds)
 					{
 						string valueLabel;
-						m_featureEngine.GetFeatureValueLabel(id, valueIds[ival],
-							kUiCodePage, out valueLabel);
+						m_featureEngine.GetFeatureValueLabel(id, valueId, kUiCodePage, out valueLabel);
 						if (valueLabel.Length == 0)
 						{
 							// Create backup default string.
-							valueLabel = string.Format(Strings.kstidFeatureValue,
-								valueIds[ival]);
+							valueLabel = string.Format(Strings.kstidFeatureValue, valueId);
 						}
-						FontFeatureMenuItem itemSub =
-							new FontFeatureMenuItem(valueLabel, valueIds[ival], this);
-						itemSub.Checked = valueIds[ival] == featureValue;
+						var itemSub = new FontFeatureMenuItem(valueLabel, valueId, this) { Checked = valueId == featureValue };
 						menuSub.MenuItems.Add(itemSub);
 					}
 					menu.MenuItems.Add(menuSub);
 				}
-				//				if (fBinary)
-				//				{
-				//					...
-				//					Assert(vnMenuMap.Size() == cItems);
-				//					vnMenuMap.Push((ifeat << 16) | 0x0000FFFF);
-				//					cItems++;
-				//				}
-				//				else if (cn > 0)
-				//				{
-				//					Assert(cn < 0x0000FFFF);
-				//					HMENU hmenuSub = ::CreatePopupMenu();
-				//					::AppendMenu(hmenu, MF_POPUP, (UINT_PTR)hmenuSub, strFeat.Chars());
-				//					for (int in = 0; in < cn; in++)
-				//					{
-				//
-				//						Assert(vnMenuMap.Size() == cItems);
-				//						vnMenuMap.Push((ifeat << 16) | in);
-				//						cItems++;
-				//					}
-				//				}
-				//				else
-				//				}
 			}
 			menu.Show(this, new Point(0, Height));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Items the click handler.
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		private void ItemClickHandler(Object sender, EventArgs e)
 		{
 			var item = (FontFeatureMenuItem) sender;
@@ -767,7 +669,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					subitem.Checked = (subitem == item);
 				}
 			}
-			m_fontFeatures = GenerateFeatureString(m_ids, m_values);
+			FontFeatures = GenerateFeatureString(m_ids, m_values);
 			OnFontFeatureSelected(new EventArgs());
 		}
 	}

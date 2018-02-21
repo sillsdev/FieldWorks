@@ -13,11 +13,7 @@ using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
-	/// -------------------------------------------------------------------------- --------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public partial class FwBulletsTab : UserControl, IStylesTab
 	{
 		#region Member Data
@@ -31,8 +27,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		public event EventHandler StyleDataChanged;
 
-		/// <summary></summary>
-		/// <returns></returns>
+		/// <summary />
 		public delegate IFontDialog FontDialogHandler(object sender, EventArgs args);
 		/// <summary>Called to bring up the font dialog.</summary>
 		public event FontDialogHandler FontDialog;
@@ -40,10 +35,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		private const int m_kDefaultBulletIndex = 1;
 		private const int m_kDefaultNumberIndex = 0;
 		private bool m_dontUpdateInheritance = true;
-		private bool m_DefaultTextDirectionRtoL = false;
 		private BulletInfo m_currentStyleBulletInfo;
 		private StyleInfo m_StyleInfo;
-		private LcmStyleSheet m_styleSheet;
+
 		/// <summary>Font info used when bullets is checked</summary>
 		private FontInfo m_BulletsFontInfo;
 		/// <summary>Font info used when numbered is checked</summary>
@@ -51,11 +45,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Construction and demolition
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="FwBulletsTab"/> class.
+		/// Initializes a new instance of the class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public FwBulletsTab()
 		{
 			InitializeComponent();
@@ -65,19 +57,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_cboNumberScheme.SelectedIndex = m_kDefaultNumberIndex;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		/// ------------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
+				components?.Dispose();
 			}
 
 			base.Dispose(disposing);
@@ -86,36 +74,24 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Public Properties
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Sets a value indicating whether default text direction is Right-toLeft or not.
 		/// </summary>
 		/// <remarks>Typically this is the default direction of the view from which this dialog
 		/// is invoked.</remarks>
-		/// ------------------------------------------------------------------------------------
-		public bool DefaultTextDirectionRtoL
-		{
-			set { m_DefaultTextDirectionRtoL = value; }
-		}
+		public bool DefaultTextDirectionRtoL { get; set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the style sheet
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public LcmStyleSheet StyleSheet
-		{
-			set { m_styleSheet = value; }
-		}
+		public LcmStyleSheet StyleSheet { get; set; }
 		#endregion
 
 		#region Public methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Updates the form based on a style being selected.
 		/// </summary>
-		/// <param name="styleInfo">The style info.</param>
-		/// ------------------------------------------------------------------------------------
 		public void UpdateForStyle(StyleInfo styleInfo)
 		{
 #if __MonoCS__
@@ -126,26 +102,24 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 #endif
 			m_dontUpdateInheritance = true;
 
-			bool fDifferentStyle = m_StyleInfo == null ? true : (styleInfo.Name != m_StyleInfo.Name);
+			var fDifferentStyle = m_StyleInfo == null || (styleInfo.Name != m_StyleInfo.Name);
 
 			// Don't use a 0 size bullet. Fixes FWNX-575.
-			if (styleInfo != null && styleInfo.IBullet != null)
-				if (styleInfo.IBullet.Value.FontInfo.FontSize.Value == 0)
-					styleInfo.IBullet.Value.FontInfo.m_fontSize =
-						new InheritableStyleProp<int>(FontInfo.kDefaultFontSize);
+			if (styleInfo?.BulletInformation?.Value.FontInfo.FontSize.Value == 0)
+			{
+				styleInfo.BulletInformation.Value.FontInfo.m_fontSize = new InheritableStyleProp<int>(FontInfo.kDefaultFontSize);
+			}
 
 			m_StyleInfo = styleInfo;
-			m_preview.IsRightToLeft = m_StyleInfo.DirectionIsRightToLeft == TriStateBool.triNotSet ?
-				m_DefaultTextDirectionRtoL : m_StyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue;
+			m_preview.IsRightToLeft = m_StyleInfo.DirectionIsRightToLeft == TriStateBool.triNotSet ? DefaultTextDirectionRtoL : m_StyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue;
 			m_preview.WritingSystemFactory = m_StyleInfo.Cache.WritingSystemFactory;
 			m_preview.WritingSystemCode = m_StyleInfo.Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 
-			VwBulNum bulletType;
 			// Note: don't assign m_currentStyleBulletInfo until the end of this method
 			// since setting some of the values change m_currentStyleBulletInfo before we have set
 			// everything.
-			BulletInfo bulletInfo = new BulletInfo(styleInfo.IBullet.Value);
-			bulletType = bulletInfo.m_numberScheme;
+			var bulletInfo = new BulletInfo(styleInfo.BulletInformation.Value);
+			var bulletType = bulletInfo.m_numberScheme;
 
 			// If we have a different style, we have to reload the font info. If it is the same
 			// style we were here before so we keep the font info that we already have.
@@ -187,14 +161,22 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_tbTextAfter.Text = bulletInfo.m_textAfter;
 
 			m_rbUnspecified.Enabled = styleInfo.Inherits;
-			if (styleInfo.IBullet.IsInherited && styleInfo.Inherits)
+			if (styleInfo.BulletInformation.IsInherited && styleInfo.Inherits)
+			{
 				m_rbUnspecified.Checked = true;
+			}
 			else if (bulletType == VwBulNum.kvbnNone)
+			{
 				m_rbNone.Checked = true;
+			}
 			else if ((int)bulletType >= (int)VwBulNum.kvbnBulletBase)
+			{
 				m_rbBullet.Checked = true;
+			}
 			else // NumberBase
+			{
 				m_rbNumber.Checked = true;
+			}
 
 			m_cboBulletScheme.SelectedIndex = GetBulletIndexForType(bulletType);
 			m_cboNumberScheme.SelectedIndex = GetNumberSchemeIndexForType(bulletType);
@@ -205,12 +187,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_dontUpdateInheritance = false;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Saves bullet info into a StyleInfo
 		/// </summary>
-		/// <param name="styleInfo">styleInfo to save into</param>
-		/// ------------------------------------------------------------------------------------
 		public void SaveToInfo(StyleInfo styleInfo)
 		{
 			if (styleInfo.IsCharacterStyle)
@@ -220,40 +199,35 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 
 			// Save the bullet information
-			BulletInfo bulInfo = new BulletInfo();
+			var bulInfo = new BulletInfo();
 			UpdateBulletInfo(ref bulInfo);
 
 			// Replace the value
-			if (styleInfo.IBullet.Save(m_rbUnspecified.Checked, bulInfo))
+			if (styleInfo.BulletInformation.Save(m_rbUnspecified.Checked, bulInfo))
+			{
 				styleInfo.Dirty = true;
+			}
 		}
 		#endregion
 
 		#region Private helper methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the index into the bullet combo for the given type of (non-numeric) bullet.
+		/// Get the zer-based index into the bullet combo for the given type of (non-numeric) bullet.
 		/// </summary>
-		/// <param name="bulletType">Type of the bullet.</param>
-		/// <returns>Index (zero-based) into the bullet combo</returns>
-		/// ------------------------------------------------------------------------------------
-		private int GetBulletIndexForType(VwBulNum bulletType)
+		private static int GetBulletIndexForType(VwBulNum bulletType)
 		{
-			if ((int)bulletType >= (int)VwBulNum.kvbnBulletBase)
-				return (int)bulletType - (int)VwBulNum.kvbnBulletBase;
-			return m_kDefaultBulletIndex;
+			return (int)bulletType >= (int)VwBulNum.kvbnBulletBase ? (int)bulletType - (int)VwBulNum.kvbnBulletBase : m_kDefaultBulletIndex;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Updates the bullet info.
 		/// </summary>
-		/// <param name="bulInfo">The bullet info.</param>
-		/// ------------------------------------------------------------------------------------
 		private void UpdateBulletInfo(ref BulletInfo bulInfo)
 		{
 			if (m_rbNone.Checked)
+			{
 				bulInfo.m_numberScheme = VwBulNum.kvbnNone;
+			}
 			else if (m_rbBullet.Checked)
 			{
 				if (m_tbBulletCustom.Text.Length > 0)
@@ -286,14 +260,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the index into the bullet combo for the given type of (numeric) bullet.
+		/// Gets the zer-based index into the bullet combo for the given type of (numeric) bullet.
 		/// </summary>
-		/// <param name="bulletType">Type of the bullet.</param>
-		/// <returns>Index (zero-based) into the bullet combo</returns>
-		/// ------------------------------------------------------------------------------------
-		private int GetNumberSchemeIndexForType(VwBulNum bulletType)
+		private static int GetNumberSchemeIndexForType(VwBulNum bulletType)
 		{
 			switch (bulletType)
 			{
@@ -308,11 +278,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Updates the group boxes' enabled states.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void UpdateGroupBoxes()
 		{
 			m_grpBullet.Enabled = m_rbBullet.Checked;
@@ -320,130 +288,69 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_btnFont.Enabled = m_rbBullet.Checked || m_rbNumber.Checked;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when a radio button gets changed
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void TypeCheckedChanged(object sender, EventArgs e)
 		{
 			if (!m_dontUpdateInheritance)
 			{
-				if (sender == m_rbUnspecified && ChangedToUnspecified != null)
-					ChangedToUnspecified(this, EventArgs.Empty);
+				if (sender == m_rbUnspecified)
+				{
+					ChangedToUnspecified?.Invoke(this, EventArgs.Empty);
+				}
 			}
 
 			if (sender == m_rbNumber && m_nudStartAt.Value == 0)
+			{
 				m_nudStartAt.Value = 1;
+			}
 			UpdateGroupBoxes();
 			DataChange(sender, e);
 		}
 
-//		/// ------------------------------------------------------------------------------------
-//		/// <summary>
-//		/// Builds a number string for the preview window based on the settings in the
-//		/// Number group and the selected numbering scheme
-//		/// </summary>
-//		/// <param name="line">The line.</param>
-//		/// ------------------------------------------------------------------------------------
-//		private string GetNumberString(int line)
-//		{
-//			return GetNumberString(line, m_nudStartAt.Value, m_cboNumberScheme.SelectedIndex,
-//				m_tbTextBefore.Text, m_tbTextAfter.Text);
-//		}
-
-//		/// ------------------------------------------------------------------------------------
-//		/// <summary>
-//		/// Builds a number string for the preview window based on the given values
-//		/// </summary>
-//		/// <param name="line">The line.</param>
-//		/// <param name="nStartAt">The number to start at.</param>
-//		/// <param name="iScheme">The i scheme.</param>
-//		/// <param name="textBefore">The text before.</param>
-//		/// <param name="textAfter">The text after.</param>
-//		/// <returns></returns>
-//		/// ------------------------------------------------------------------------------------
-//		private string GetNumberString(int line, int nStartAt, int iScheme, string textBefore,
-//			string textAfter)
-//		{
-//			int number = nStartAt + line;
-//			string numberString = string.Empty;
-//			switch (iScheme)
-//			{
-//				case 0:		// 1, 2, 3'
-//					numberString = number.ToString();
-//					break;
-
-//				case 1:		// I, II, III (Roman numerals)
-//					numberString = RomanNumerals.IntToRoman(number);
-//					break;
-
-//				case 2:		// i, ii, iii (lower case Roman numerals)
-//					numberString = RomanNumerals.IntToRoman(number).ToLowerInvariant();
-//					break;
-
-//				case 3:		// A, B, C
-//					numberString = AlphaOutline.NumToAlphaOutline(number);
-//					break;
-
-//				case 4:		// a, b, c
-//					numberString = AlphaOutline.NumToAlphaOutline(number).ToLowerInvariant();
-//					break;
-
-//				case 5:		// 01, 02, 03
-//					numberString = number.ToString("d2");
-//					break;
-//			}
-
-//			return textBefore + numberString + textAfter;
-//		}
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// When any data field changes, refresh the preview panel
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void DataChange(object sender, EventArgs e)
 		{
 			// If the value in the "start at" spinner control is other than 1, then check
 			// the start at check box
 			if (m_nudStartAt.Value != 1)
+			{
 				m_chkStartAt.Checked = true;
+			}
 
 			UpdateBulletInfo(ref m_currentStyleBulletInfo);
-			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
+			var propsBldr = TsStringUtils.MakePropsBldr();
 			m_currentStyleBulletInfo.ConvertAsTextProps(propsBldr);
-			propsBldr.SetIntPropValues((int)FwTextPropType.ktptSpaceBefore,
-					(int)FwTextPropVar.ktpvMilliPoint, 6000);
+			propsBldr.SetIntPropValues((int)FwTextPropType.ktptSpaceBefore, (int)FwTextPropVar.ktpvMilliPoint, 6000);
 			ITsTextProps propsFirst = propsBldr.GetTextProps();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptBulNumStartAt, -1, -1);
 
 			m_preview.SetProps(propsFirst, propsBldr.GetTextProps());
 			m_preview.Refresh();
 
-			if (StyleDataChanged != null)
-				StyleDataChanged(this, null);
+			StyleDataChanged?.Invoke(this, null);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the CheckedChanged event of the m_chkStartAt control.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void m_chkStartAt_CheckedChanged(object sender, EventArgs e)
 		{
 			// When the "start at" check box is unchecked, change the value in the
 			// spinner control to 1.
 			if (!m_chkStartAt.Checked)
+			{
 				m_nudStartAt.Value = 1;
+			}
 			DataChange(sender, EventArgs.Empty);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Change the number scheme
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void m_cboNumberScheme_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			switch (m_cboNumberScheme.SelectedIndex)
@@ -475,16 +382,14 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			DataChange(sender, EventArgs.Empty);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles clicking the "Bullet and Number Font" button
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void m_btnFont_Click(object sender, EventArgs e)
 		{
 			if (FontDialog != null)
 			{
-				using (IFontDialog fontDialog = FontDialog(this, EventArgs.Empty))
+				using (var fontDialog = FontDialog(this, EventArgs.Empty))
 				{
 					FontInfo fontInfo;
 					if (m_rbBullet.Checked)
@@ -501,30 +406,29 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 						fontInfo,
 						false,
 						m_StyleInfo.Cache.ServiceLocator.WritingSystemManager.UserWs,
-						m_StyleInfo.Cache.WritingSystemFactory, m_styleSheet, true);
+						m_StyleInfo.Cache.WritingSystemFactory, StyleSheet, true);
 
 					if (fontDialog.ShowDialog(Parent) == DialogResult.OK)
 					{
 						if (m_rbBullet.Checked)
 						{
 							fontDialog.SaveFontInfo(m_BulletsFontInfo);
-
 							// Update the combo box with the new values
 							UpdateBulletSchemeComboBox();
 						}
 						else
+						{
 							fontDialog.SaveFontInfo(m_NumberFontInfo);
+						}
 						DataChange(sender, EventArgs.Empty);
 					}
 				}
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Updates the bullet scheme combo box.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void UpdateBulletSchemeComboBox()
 		{
 			// NOTE: we don't show underline in the combo box, and we make the entire
@@ -533,15 +437,19 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_cboBulletScheme.ForeColor = m_BulletsFontInfo.m_fontColor.Value;
 			m_cboBulletScheme.BackColor = m_BulletsFontInfo.m_backColor.Value;
 
-			FontStyle newStyle = FontStyle.Regular;
+			var newStyle = FontStyle.Regular;
 			if (m_BulletsFontInfo.m_bold.Value)
+			{
 				newStyle |= FontStyle.Bold;
+			}
 			if (m_BulletsFontInfo.m_italic.Value)
+			{
 				newStyle |= FontStyle.Italic;
+			}
 			if (m_cboBulletScheme.Font.Style != newStyle)
+			{
 				m_cboBulletScheme.Font = new Font(m_cboBulletScheme.Font, newStyle);
-
-			//m_cboBulletScheme.Refresh();
+			}
 		}
 		#endregion
 	}

@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -15,7 +15,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.FieldWorks.Resources;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace SIL.FieldWorks
 {
 	/// <summary></summary>
 	public partial class ChooseLangProjectDialog : Form
@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_btnHelp.Enabled = false;
 
 			if (openToAssosiateFwProject)
-				Text = FwCoreDlgs.kstidOpenToAssociateFwProj;
+				Text = Properties.Resources.kstidOpenToAssociateFwProj;
 
 			m_lblChoosePrj.Font = SystemFonts.IconTitleFont;
 			m_linkOpenFwDataProject.Font = SystemFonts.IconTitleFont;
@@ -217,7 +217,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (e is DirectoryNotFoundException)
 			{
-				MessageBox.Show(ActiveForm, e.Message, FwCoreDlgs.ksWarning, MessageBoxButtons.OK,
+				MessageBox.Show(ActiveForm, e.Message, FwCoreDlgs.FwCoreDlgs.ksWarning, MessageBoxButtons.OK,
 					MessageBoxIcon.Warning);
 			}
 			else
@@ -281,7 +281,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				dlg.CheckFileExists = true;
 				dlg.InitialDirectory = FwDirectoryFinder.ProjectsDirectory;
 				dlg.RestoreDirectory = true;
-				dlg.Title = FwCoreDlgs.ksChooseLangProjectDialogTitle;
+				dlg.Title = Properties.Resources.ksChooseLangProjectDialogTitle;
 				dlg.ValidateNames = true;
 				dlg.Multiselect = false;
 				dlg.Filter = ResourceHelper.FileFilter(FileFilterType.FieldWorksProjectFiles);

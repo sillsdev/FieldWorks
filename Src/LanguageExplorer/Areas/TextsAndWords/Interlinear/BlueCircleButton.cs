@@ -14,9 +14,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	public partial class BlueCircleButton : Control
 	{
 		private Image m_blueCircle;
-		/// <summary>
-		/// Stupid mandatory comment.
-		/// </summary>
+
+		/// <summary />
 		public BlueCircleButton()
 		{
 			InitializeComponent();
@@ -27,9 +26,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Cursor = Cursors.Arrow;
 		}
 
-		/// <summary>
-		/// Stupid mandatory comment.
-		/// </summary>
+		/// <summary />
 		protected override void OnPaint(PaintEventArgs pe)
 		{
 			pe.Graphics.DrawImage(m_blueCircle, 0, 0);

@@ -1,8 +1,8 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace SIL.FieldWorks
 {
 	partial class MissingOldFieldWorksDlg
 	{
@@ -14,13 +14,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				components?.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -71,7 +70,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// 
 			// pictureBox1
 			// 
-			pictureBox1.Image = global::SIL.FieldWorks.FwCoreDlgs.Properties.Resources.Bullet;
+			pictureBox1.Image = global::SIL.FieldWorks.Properties.Resources.Bullet;
 			resources.ApplyResources(pictureBox1, "pictureBox1");
 			pictureBox1.Name = "pictureBox1";
 			pictureBox1.TabStop = false;
@@ -83,14 +82,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// 
 			// pictureBox2
 			// 
-			pictureBox2.Image = global::SIL.FieldWorks.FwCoreDlgs.Properties.Resources.Bullet;
+			pictureBox2.Image = global::SIL.FieldWorks.Properties.Resources.Bullet;
 			resources.ApplyResources(pictureBox2, "pictureBox2");
 			pictureBox2.Name = "pictureBox2";
 			pictureBox2.TabStop = false;
 			// 
 			// m_clickDownloadPicture
 			// 
-			this.m_clickDownloadPicture.Image = global::SIL.FieldWorks.FwCoreDlgs.Properties.Resources.Bullet;
+			this.m_clickDownloadPicture.Image = global::SIL.FieldWorks.Properties.Resources.Bullet;
 			resources.ApplyResources(this.m_clickDownloadPicture, "m_clickDownloadPicture");
 			this.m_clickDownloadPicture.Name = "m_clickDownloadPicture";
 			this.m_clickDownloadPicture.TabStop = false;

@@ -26,11 +26,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	/// </summary>
 	public delegate string GetCurrentStyleNameHandler(StyleType type);
 
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary />
 	public abstract class BaseStyleListHelper: IDisposable
 	{
 		/// <summary>Occurs when a style is chosen from the list.</summary>
@@ -43,7 +39,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		public event GetCurrentStyleNameHandler GetCurrentStyleName;
 
 		#region Member variables
-		/// <summary></summary>
+		/// <summary />
 		protected Control m_ctrl;
 
 		/// <summary>The character style icon for unselected items</summary>
@@ -77,21 +73,21 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		private Bitmap m_origDataPropStyleIcon;
 		private Bitmap m_origCurrCharStyleIcon;
 		private Bitmap m_origCurrParaStyleIcon;
-		/// <summary></summary>
-		protected bool m_ignoreListRefresh = false;
+		/// <summary />
+		protected bool m_ignoreListRefresh;
 
 		/// <summary>A stylesheet to get the styles from</summary>
-		private LcmStyleSheet m_styleSheet = null;
+		private LcmStyleSheet m_styleSheet;
 
 		/// <summary>
 		/// The cache from which to create new StStyle objects used for the style list items.
 		/// </summary>
-		private LcmCache m_cache = null;
+		private LcmCache m_cache;
 
 		/// <summary>True to show internal styles, false otherwise</summary>
-		protected bool m_showInternalStyles = false;
+		protected bool m_showInternalStyles;
 		/// <summary>True to show only user-modified styles, false otherwise</summary>
-		protected bool m_showOnlyUserModifiedStyles = false;
+		protected bool m_showOnlyUserModifiedStyles;
 
 		/// <summary>
 		/// Stores only what style types will be shown in the list. When this value is
@@ -131,18 +127,18 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// contexts included will be unioned with filtered types. Otherwise, an intersection
 		/// is created.
 		/// </summary>
-		private bool m_unionIncludeAndTypeFilter = false;
+		private bool m_unionIncludeAndTypeFilter;
 
-		private StyleListItem m_prevStyle = null;
+		private StyleListItem m_prevStyle;
 		private StyleListItem[] m_prevList;
-		/// <summary></summary>
+		/// <summary />
 		protected bool m_ignoreChosenDelegate = false;
-		/// <summary></summary>
+		/// <summary />
 		protected Dictionary<string, StyleListItem> m_styleItemList;
-		/// <summary></summary>
+		/// <summary />
 		private string m_currParaStyleName = string.Empty;
 
-		/// <summary></summary>
+		/// <summary />
 		private string m_currCharStyleName = string.Empty;
 
 		private Control m_activeView;
@@ -152,18 +148,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Constructor
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Construct a new BaseStyleListHelper for the given control.
 		/// </summary>
-		/// <param name="ctrl">the given control</param>
-		/// ------------------------------------------------------------------------------------
-		public BaseStyleListHelper(Control ctrl)
+		protected BaseStyleListHelper(Control ctrl)
 		{
 			Debug.Assert(ctrl != null);
 			m_ctrl = ctrl;
 
-			m_ctrl.SystemColorsChanged += new EventHandler(CtrlSystemColorsChanged);
+			m_ctrl.SystemColorsChanged += CtrlSystemColorsChanged;
 
 			m_origCharStyleIcon = new Bitmap(ResourceHelper.CharStyleIcon);
 			m_origParaStyleIcon = new Bitmap(ResourceHelper.ParaStyleIcon);
@@ -188,61 +181,51 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Disposable stuff
-		#if DEBUG
-		/// <summary/>
+
+		/// <summary />
 		~BaseStyleListHelper()
 		{
 			Dispose(false);
 		}
-		#endif
 
-		/// <summary/>
+		/// <summary />
 		public bool IsDisposed { get; private set; }
 
-		/// <summary/>
+		/// <summary />
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		/// <summary/>
+		/// <summary />
 		protected virtual void Dispose(bool fDisposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (fDisposing && !IsDisposed)
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
+			if (fDisposing)
 			{
 				// dispose managed and unmanaged objects
-				if (m_charStyleIcon != null)
-					m_charStyleIcon.Dispose();
-				if (m_paraStyleIcon != null)
-					m_paraStyleIcon.Dispose();
-				if (m_dataPropStyleIcon != null)
-					m_dataPropStyleIcon.Dispose();
-				if (m_selectedCharStyleIcon != null)
-					m_selectedCharStyleIcon.Dispose();
-				if (m_selectedParaStyleIcon != null)
-					m_selectedParaStyleIcon.Dispose();
-				if (m_selectedDataPropStyleIcon != null)
-					m_selectedDataPropStyleIcon.Dispose();
-				if (m_currCharStyleIcon != null)
-					m_currCharStyleIcon.Dispose();
-				if (m_currCharStyleIcon != null)
-					m_currParaStyleIcon.Dispose();
-				if (m_currSelectedCharStyleIcon != null)
-					m_currSelectedCharStyleIcon.Dispose();
-				if (m_currSelectedParaStyleIcon != null)
-					m_currSelectedParaStyleIcon.Dispose();
-				if (m_origCharStyleIcon != null)
-					m_origCharStyleIcon.Dispose();
-				if (m_origParaStyleIcon != null)
-					m_origParaStyleIcon.Dispose();
-				if (m_origDataPropStyleIcon != null)
-					m_origDataPropStyleIcon.Dispose();
-				if (m_origCurrCharStyleIcon != null)
-					m_origCurrCharStyleIcon.Dispose();
-				if (m_origCurrParaStyleIcon != null)
-					m_origCurrParaStyleIcon.Dispose();
+				m_charStyleIcon?.Dispose();
+				m_paraStyleIcon?.Dispose();
+				m_dataPropStyleIcon?.Dispose();
+				m_selectedCharStyleIcon?.Dispose();
+				m_selectedParaStyleIcon?.Dispose();
+				m_selectedDataPropStyleIcon?.Dispose();
+				m_currCharStyleIcon?.Dispose();
+				m_currParaStyleIcon?.Dispose();
+				m_currSelectedCharStyleIcon?.Dispose();
+				m_currSelectedParaStyleIcon?.Dispose();
+				m_origCharStyleIcon?.Dispose();
+				m_origParaStyleIcon?.Dispose();
+				m_origDataPropStyleIcon?.Dispose();
+				m_origCurrCharStyleIcon?.Dispose();
+				m_origCurrParaStyleIcon?.Dispose();
 			}
 			m_charStyleIcon = null;
 			m_paraStyleIcon = null;
@@ -259,6 +242,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_origDataPropStyleIcon = null;
 			m_origCurrCharStyleIcon = null;
 			m_origCurrParaStyleIcon = null;
+
 			IsDisposed = true;
 		}
 		#endregion

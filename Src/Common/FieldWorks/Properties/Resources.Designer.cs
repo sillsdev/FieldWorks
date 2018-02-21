@@ -63,6 +63,16 @@ namespace SIL.FieldWorks.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Bullet {
+            get {
+                object obj = ResourceManager.GetObject("Bullet", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap DatabaseNew {
             get {
                 object obj = ResourceManager.GetObject("DatabaseNew", resourceCulture);
@@ -133,6 +143,15 @@ namespace SIL.FieldWorks.Properties {
         internal static string ksChangeProjectLocationFailedDetails {
             get {
                 return ResourceManager.GetString("ksChangeProjectLocationFailedDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open Project.
+        /// </summary>
+        internal static string ksChooseLangProjectDialogTitle {
+            get {
+                return ResourceManager.GetString("ksChooseLangProjectDialogTitle", resourceCulture);
             }
         }
         
@@ -375,6 +394,15 @@ namespace SIL.FieldWorks.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You may be able to set up a virtual machine running Windows 7 or earlier and install FieldWorks there. On Windows 7 or earlier, this dialog will allow you to download some components that can migrate your project. Unfortunately these components are not directly supported on your operating system..
+        /// </summary>
+        internal static string kstidCantMigrateWrongOS {
+            get {
+                return ResourceManager.GetString("kstidCantMigrateWrongOS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Choose a command:.
         /// </summary>
         internal static string kstidChooseCommand {
@@ -445,6 +473,15 @@ namespace SIL.FieldWorks.Properties {
         internal static string kstidLoadingProject {
             get {
                 return ResourceManager.GetString("kstidLoadingProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose Associated FieldWorks Project.
+        /// </summary>
+        internal static string kstidOpenToAssociateFwProj {
+            get {
+                return ResourceManager.GetString("kstidOpenToAssociateFwProj", resourceCulture);
             }
         }
         
@@ -565,6 +602,16 @@ namespace SIL.FieldWorks.Properties {
         internal static System.Drawing.Bitmap SendReceiveGetArrow32x32 {
             get {
                 object obj = ResourceManager.GetObject("SendReceiveGetArrow32x32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap wait22trans {
+            get {
+                object obj = ResourceManager.GetObject("wait22trans", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

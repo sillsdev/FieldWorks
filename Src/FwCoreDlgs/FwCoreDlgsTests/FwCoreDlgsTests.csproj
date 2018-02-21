@@ -293,8 +293,6 @@
     <Compile Include="FwCharacterCategorizerTests.cs" />
     <Compile Include="RestoreProjectPresenterTests.cs" />
     <Compile Include="ValidCharactersDlgTests.cs" />
-    <Compile Include="FindCollectorEnvTests.cs" />
-    <Compile Include="FwFindReplaceDlgTests.cs" />
     <Compile Include="FwNewLangProjectTests.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -305,9 +303,7 @@
     <Compile Include="WritingSystemPropertiesDialogTests.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="RealSplashScreenTests.cs" />
     <Compile Include="FwFontDialogTests.cs" />
-    <Compile Include="FwHelpAboutTests.cs" />
     <Compile Include="..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>

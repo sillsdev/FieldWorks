@@ -1,9 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MissingOldFieldWorksDlg.cs
-// Responsibility: mcconnel
 
 using System;
 using System.Windows.Forms;
@@ -11,33 +8,26 @@ using System.Diagnostics;
 using SIL.LCModel.DomainServices.BackupRestore;
 using System.Drawing;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace SIL.FieldWorks
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// This dialog is popped up when the user tries to restore/migrate an old project, but the
 	/// old version of FieldWorks (or its special SQL Server instance) is not installed.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public partial class MissingOldFieldWorksDlg : Form
 	{
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:MissingOldFieldWorksDlg"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private MissingOldFieldWorksDlg()
 		{
 			InitializeComponent();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public MissingOldFieldWorksDlg(RestoreProjectSettings settings, bool fHaveFw60,
-			bool fHaveSqlSvr) : this()
+		public MissingOldFieldWorksDlg(RestoreProjectSettings settings, bool fHaveFw60, bool fHaveSqlSvr) : this()
 		{
 			Debug.Assert(!fHaveFw60 || !fHaveSqlSvr);
 			if (fHaveFw60)
@@ -67,17 +57,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		bool IsWindows7OrEarlier()
+		private static bool IsWindows7OrEarlier()
 		{
 			var os = Environment.OSVersion;
 			if (os.Platform != PlatformID.Win32NT)
+			{
 				return false;
+			}
 			// Windows 7 is 6.1; Windows 8 is 6.2
 			if (os.Version.Major > 6)
+			{
 				return false;
-			if (os.Version.Major == 6 && os.Version.Minor > 1)
-				return false;
-			return true;
+			}
+			return os.Version.Major != 6 || os.Version.Minor <= 1;
 		}
 
 		/// <summary>
@@ -88,26 +80,28 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			base.OnLoad(e);
 			int kDiff;
 			if (m_labelAfterDownload.Visible)
+			{
 				kDiff = 2 * (m_lnkSqlSvr.Location.Y - m_labelSqlDownload.Location.Y);
+			}
 			else
 			{
 				kDiff = m_labelAfterDownload.Bottom - m_label6OrEarlier.Bottom;
-				this.MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height - kDiff);
-				this.Height = this.Height - kDiff;
-				this.MaximumSize = new Size(MaximumSize.Width, MaximumSize.Height - kDiff);
+				MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height - kDiff);
+				Height = Height - kDiff;
+				MaximumSize = new Size(MaximumSize.Width, MaximumSize.Height - kDiff);
 				return;
 			}
 			if (!m_lnkFw60.Visible)
 			{
-				this.MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height - kDiff);
-				this.Height = this.Height - kDiff;
-				this.MaximumSize = new Size(MaximumSize.Width, MaximumSize.Height - kDiff);
+				MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height - kDiff);
+				Height = Height - kDiff;
+				MaximumSize = new Size(MaximumSize.Width, MaximumSize.Height - kDiff);
 			}
 			if (!m_lnkSqlSvr.Visible)
 			{
-				this.MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height - kDiff);
-				this.Height = this.Height - kDiff;
-				this.MaximumSize = new Size(MaximumSize.Width, MaximumSize.Height - kDiff);
+				MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height - kDiff);
+				Height = Height - kDiff;
+				MaximumSize = new Size(MaximumSize.Width, MaximumSize.Height - kDiff);
 			}
 		}
 

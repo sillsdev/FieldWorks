@@ -1,8 +1,8 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace SIL.FieldWorks
 {
 	partial class ChooseLangProjectDialog
 	{
@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// pictureBox1
 			// 
 			resources.ApplyResources(this.pictureBox1, "pictureBox1");
-			this.pictureBox1.Image = global::SIL.FieldWorks.FwCoreDlgs.Properties.Resources.chorus32;
+			this.pictureBox1.Image = global::SIL.FieldWorks.Properties.Resources.Receive;
 			this.pictureBox1.Name = "pictureBox1";
 			this.pictureBox1.TabStop = false;
 			// 

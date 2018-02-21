@@ -1,13 +1,7 @@
 // Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwFontTab.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
-// ---------------------------------------------------------------------------------------------
+
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
 	partial class FwFontTab
@@ -24,9 +18,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				components?.Dispose();
 			}
 			base.Dispose(disposing);
 		}

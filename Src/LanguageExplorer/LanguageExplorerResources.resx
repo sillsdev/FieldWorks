@@ -1397,4 +1397,12 @@ Do you want to continue with the export?</value>
     <value>The application was not able to follow that link. ({0})</value>
     <comment>{0} is an error message</comment>
   </data>
+  <data name="kstidMemoryDiskUsageInformation" xml:space="preserve">
+    <value>Memory and disk usage information.</value>
+    <comment>Label of link in the About box to open the System Monitor in Linux to show information about memory and disk usage.</comment>
+  </data>
+  <data name="kstidUnableToStart" xml:space="preserve">
+    <value>Unable to start {0}.</value>
+    <comment>Error message if user clicks link in About box to open the System Monitor in Linux, but the program is not able to start, probably because it isn't installed. Program name is {0}.</comment>
+  </data>
 </root>

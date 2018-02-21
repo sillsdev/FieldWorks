@@ -13,14 +13,12 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.Windows.Forms;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace SIL.FieldWorks
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// The real splash screen that the user sees. It gets created and handled by FwSplashScreen
 	/// and runs in a separate thread.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	internal class RealSplashScreen : Form, IProgress
 	{
 		#region Events
@@ -43,7 +41,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Label lblAppVersion;
 		private Label lblFwVersion;
 		private PictureBox m_picSilLogo;
-		private EventWaitHandle m_waitHandle;
 
 		private ProgressLine progressLine;
 		private PictureBox marqueeGif;
@@ -58,11 +55,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Constructor
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Default Constructor for FwSplashScreen
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private RealSplashScreen()
 		{
 			//
@@ -72,44 +67,41 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			AccessibleName = GetType().Name;
 			// Don't fade in on Linux to work-around for timer issue with UpdateOpacityCallback, fixing FWNX-959.
 			if (MiscUtils.IsUnix)
+			{
 				Opacity = 1;
+			}
 
 			HandleCreated += SetPosition;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Default Constructor for FwSplashScreen
 		/// </summary>
 		/// <param name="fDisplaySILInfo">if set to <c>false</c>, any SIL-identifying information
 		/// will be hidden.</param>
-		/// ------------------------------------------------------------------------------------
 		public RealSplashScreen(bool fDisplaySILInfo) : this()
 		{
 			m_fDisplaySILInfo = fDisplaySILInfo;
 			m_picSilLogo.Visible = fDisplaySILInfo;
 			if (!fDisplaySILInfo)
+			{
 				m_lblSuiteName.Text = m_lblSuiteName.Text.Replace(Application.CompanyName, string.Empty).Trim();
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Disposes of the resources (other than memory) used by the
 		/// <see cref="T:System.Windows.Forms.Form"></see>.
 		/// </summary>
-		/// <param name="disposing">true to release both managed and unmanaged resources; false
-		/// to release only unmanaged resources.</param>
-		/// ------------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (disposing)
 			{
-				if (m_timer != null)
-					m_timer.Dispose();
+				m_timer?.Dispose();
 			}
 			m_timer = null;
-			m_waitHandle = null;
+			WaitHandle = null;
 			base.Dispose(disposing);
 		}
 		#endregion
@@ -197,7 +189,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// marqueeGif
 			//
 			resources.ApplyResources(this.marqueeGif, "marqueeGif");
-			this.marqueeGif.Image = global::SIL.FieldWorks.FwCoreDlgs.Properties.Resources.wait22trans;
+			this.marqueeGif.Image = global::SIL.FieldWorks.Properties.Resources.wait22trans;
 			this.marqueeGif.Name = "marqueeGif";
 			this.marqueeGif.TabStop = false;
 			//
@@ -241,37 +233,29 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Public Methods
-		/// ----------------------------------------------------------------------------------------
 		/// <summary>
 		/// Activates (brings back to the top) the splash screen (assuming it is already visible
 		/// and the application showing it is the active application).
 		/// </summary>
-		/// ----------------------------------------------------------------------------------------
 		public void RealActivate()
 		{
-			base.BringToFront();
+			BringToFront();
 			Refresh();
 		}
 
-		/// ----------------------------------------------------------------------------------------
 		/// <summary>
 		/// Closes the splash screen
 		/// </summary>
-		/// ----------------------------------------------------------------------------------------
 		public void RealClose()
 		{
-			if (m_timer != null)
-				m_timer.Change(Timeout.Infinite, Timeout.Infinite);
+			m_timer?.Change(Timeout.Infinite, Timeout.Infinite);
 			base.Close();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the assembly of the product-specific EXE (e.g., TE.exe or FLEx.exe).
 		/// .Net callers should set this.
 		/// </summary>
-		/// <param name="value">The value.</param>
-		/// ------------------------------------------------------------------------------------
 		public void SetProductExecutableAssembly(Assembly value)
 		{
 			m_productExecutableAssembly = value;
@@ -280,40 +264,29 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Internal properties
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Shows the splash screen
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		internal EventWaitHandle WaitHandle
-		{
-			set { m_waitHandle = value; }
-		}
+		internal EventWaitHandle WaitHandle { get; set; }
 		#endregion
 
 		#region Non-public methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Raises the <see cref="E:System.Windows.Forms.Control.VisibleChanged"></see> event.
 		/// </summary>
-		/// <param name="e">The <see cref="T:System.EventArgs"></see> that contains the event
-		/// data.</param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnVisibleChanged(EventArgs e)
 		{
 			base.OnVisibleChanged(e);
 			if (Visible)
 			{
-				m_waitHandle.Set();
+				WaitHandle.Set();
 				m_timer = new System.Threading.Timer(UpdateOpacityCallback, null, 0, 50);
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initialize text of controls prior to display
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected void InitControlLabels()
 		{
 			try
@@ -321,7 +294,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// Set the Application label to the name of the app
 				if (m_productExecutableAssembly != null)
 				{
-					VersionInfoProvider viProvider = new VersionInfoProvider(m_productExecutableAssembly, m_fDisplaySILInfo);
+					var viProvider = new VersionInfoProvider(m_productExecutableAssembly, m_fDisplaySILInfo);
 					lblProductName.Text = viProvider.ProductName;
 					Text = lblProductName.Text;
 					lblAppVersion.Text = viProvider.ApplicationVersion;
@@ -335,12 +308,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tasks needing to be done when Window is being opened:
-		///		Set window position.
+		/// Tasks needing to be done when Window is being opened: Set window position.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void SetPosition(object obj, System.EventArgs e)
 		{
 			Left = (ScreenHelper.PrimaryScreen.WorkingArea.Width - Width) / 2;
@@ -349,7 +319,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Opacity related methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Timer event to increase the opacity of the splash screen over time. Since this
 		/// event occurs in a different thread from the one in which the form exists, we
@@ -357,7 +326,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// a cross threading error. Calling the invoke method will invoke the method on
 		/// the same thread in which the form was created.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void UpdateOpacityCallback(object state)
 		{
 			// This callback might get called multiple times before the Invoke is finished,
@@ -375,7 +343,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 #endif
 
 					if (m_timer == null)
+					{
 						return;
+					}
 
 					// In some rare cases the splash screen is already disposed and the
 					// timer is still running. It happened to me (EberhardB) when I stopped
@@ -383,7 +353,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					// - so just be safe.
 					if (!IsDisposed && IsHandleCreated)
 #if !__MonoCS__
-						this.Invoke(new UpdateOpacityDelegate(UpdateOpacity));
+						Invoke(new UpdateOpacityDelegate(UpdateOpacity));
 #else // Windows have to be on the main thread on mono.
 					{
 						UpdateOpacity();
@@ -403,16 +373,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		private void UpdateOpacity()
 		{
 			try
 			{
-				double currentOpacity = Opacity;
+				var currentOpacity = Opacity;
 				if (currentOpacity < 1.0)
 #if !__MonoCS__
 					Opacity = currentOpacity + 0.05;
@@ -432,11 +398,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region IProgress implementation
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the message to display to indicate startup activity on the splash screen
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public string Message
 		{
 			get
@@ -459,21 +423,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Gets an object to be used for ensuring that required tasks are invoked on the main
 		/// UI thread.
 		/// </summary>
-		public ISynchronizeInvoke SynchronizeInvoke
-		{
-			get { return this; }
-		}
+		public ISynchronizeInvoke SynchronizeInvoke => this;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the form displaying the progress (used for message box owners, etc). If the progress
 		/// is not associated with a visible Form, then this returns its owning form, if any.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public Form Form
-		{
-			get { return this; }
-		}
+		public Form Form => this;
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this progress is indeterminate.
@@ -484,23 +440,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			set { marqueeGif.Visible = value; }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a value indicating whether the opertation executing on the separate thread
 		/// can be cancelled by a different thread (typically the main UI thread).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public bool AllowCancel
 		{
 			get { return false; }
-			set { throw new NotImplementedException(); }
+			set { throw new NotSupportedException(); }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a Position
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public int Position
 		{
 			get
@@ -510,19 +462,23 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			set
 			{
 				if (value < progressLine.MinValue)
+				{
 					progressLine.Value = progressLine.MinValue;
+				}
 				else if (value > progressLine.MaxValue)
+				{
 					progressLine.Value = progressLine.MaxValue;
+				}
 				else
+				{
 					progressLine.Value = value;
+				}
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the minimum
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public int Minimum
 		{
 			get
@@ -535,11 +491,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the maximum
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public int Maximum
 		{
 			get
@@ -552,36 +506,33 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Member Step
 		/// </summary>
-		/// <param name="nStepAmt">nStepAmt</param>
-		/// ------------------------------------------------------------------------------------
 		public void Step(int nStepAmt)
 		{
 			if (nStepAmt > 0)
+			{
 				progressLine.Increment(nStepAmt);
+			}
 			else
+			{
 				progressLine.PerformStep();
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the title of the progress display window.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public string Title
 		{
 			get { return Text; }
 			set { Text = value; }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a StepSize
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public int StepSize
 		{
 			get

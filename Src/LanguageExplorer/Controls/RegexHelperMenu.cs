@@ -5,8 +5,9 @@
 using System;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// Context menu to help build regular expressions.  To be used in Find dialog boxes with regex support.
@@ -87,12 +88,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		// This one will enclose the highlighted text with parenthesis and add the specified text afterward
 		private void groupRegexText(string text)
 		{
-			int selLen = m_textbox.SelectionLength;
-
+			var selLen = m_textbox.SelectionLength;
 			if(selLen > 0)
 			{
 				GroupText("(", ")");
-				int selStart = m_textbox.SelectionStart + 1;
+				var selStart = m_textbox.SelectionStart + 1;
 				m_textbox.Text = m_textbox.Text.Insert(selStart, text);
 				m_textbox.Focus();
 				m_textbox.Select(selStart + text.Length, 0);
@@ -163,8 +163,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Curlies the brackets.
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
 		private void curlyBrackets(object sender, EventArgs e)
 		{
 			groupRegexText("{}");

@@ -39,13 +39,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 		private string m_selectedLocale;
 		// ID of locale to use for getting display names.
-		private string m_displayLocaleId;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LocaleMenuButton"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public LocaleMenuButton()
 		{
 			components = new Container();
@@ -61,22 +58,20 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
+				components?.Dispose();
 			}
 			base.Dispose(disposing);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the selected locale id.
 		/// </summary>
-		/// <value>The selected locale id.</value>
-		/// ------------------------------------------------------------------------------------
 		public string SelectedLocaleId
 		{
 			get
@@ -87,7 +82,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				// This gets called during initialization with null.
 				if (value == null)
+				{
 					return; // Probably initialization.
+				}
 				string displayName;
 				if (LCModel.Core.Text.Icu.TryGetDisplayName(value, out displayName))
 				{
@@ -105,26 +102,23 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Determine whether the specified locale is a custom one the user is allowed to modify.
 		/// </summary>
-		/// <param name="localeId"></param>
-		/// <returns></returns>
 		public bool IsCustomLocale(string localeId)
 		{
 			using (var rbroot = new IcuResourceBundle(null, "en"))
-			using (IcuResourceBundle rbCustom = rbroot.GetSubsection("Custom"))
-			using (IcuResourceBundle rbCustomLocales = rbCustom.GetSubsection("LocalesAdded"))
+			using (var rbCustom = rbroot.GetSubsection("Custom"))
+			using (var rbCustomLocales = rbCustom.GetSubsection("LocalesAdded"))
 			{
 				if (rbCustomLocales.GetStringContents().Contains(localeId))
+				{
 					return true;
+				}
 			}
 
 			// Next, check if ICU knows about this locale. If ICU doesn't know about it, it is considered custom.
-			string displayNameIgnored;
-			if (LCModel.Core.Text.Icu.TryGetDisplayName(localeId, out displayNameIgnored))
-				return false;
-			return true;
+			string dummyDisplayName;
+			return !LCModel.Core.Text.Icu.TryGetDisplayName(localeId, out dummyDisplayName);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// We are going to be used to choose a 'similar locale' for the specified
 		/// locale. If this is a standard, built-in locale, disable the button and
@@ -132,8 +126,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// and if the text used to be 'built-in' (that is, the previous target locale
 		/// was built-in), change it to 'None'.
 		/// </summary>
-		/// <param name="localeName">Name of the locale.</param>
-		/// ------------------------------------------------------------------------------------
 		public void SetupForSimilarLocale(string localeName)
 		{
 			if (IsCustomLocale(localeName))
@@ -143,7 +135,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				// they are changing from one custom locale to another, leave the
 				// current selection alone.
 				if (Text == FwCoreDlgs.kstidBuiltIn)
+				{
 					Text = Strings.kstid_None;
+				}
 				Enabled = true;
 			}
 			else
@@ -157,39 +151,22 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// The locale to use for getting display names. If this is left blank the
 		/// system defaut locale is used.
 		/// </summary>
-		public string DisplayLocaleId
-		{
-			get
-			{
-				return m_displayLocaleId;
-			}
-			set
-			{
-				m_displayLocaleId = value;
-			}
-		}
+		public string DisplayLocaleId { get; set; }
 
 		/// <summary>Event that occurs when the user chooses a locale.</summary>
 		public event EventHandler LocaleSelected;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle the LocaleSelected event; by default just calls delegates.
 		/// </summary>
-		/// <param name="ea">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		protected virtual void OnLocaleSelected(EventArgs ea)
 		{
-			if (LocaleSelected != null)
-				LocaleSelected(this, ea);
+			LocaleSelected?.Invoke(this, ea);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Raises the click event.
 		/// </summary>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnClick(EventArgs e)
 		{
 			var menu = components.ContextMenuStrip("contextMenu");
@@ -200,12 +177,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_mainItems = new List<LocaleMenuItemData>();
 			m_itemData = new Dictionary<ToolStripMenuItem, LocaleMenuItemData>();
 
-			var localeDataByLanguage = LCModel.Core.Text.Icu.GetLocalesByLanguage(m_displayLocaleId);
-			foreach (KeyValuePair<string, IList<IcuIdAndName>> localeData in localeDataByLanguage)
+			var localeDataByLanguage = LCModel.Core.Text.Icu.GetLocalesByLanguage(DisplayLocaleId);
+			foreach (var localeData in localeDataByLanguage)
 			{
-				string langid = localeData.Key;
-				IList<IcuIdAndName> items = localeData.Value;
-				m_locales[langid] = items.Select(idAndName => new LocaleMenuItemData(idAndName.Id, idAndName.Name)).ToList();
+				m_locales[localeData.Key] = localeData.Value.Select(idAndName => new LocaleMenuItemData(idAndName.Id, idAndName.Name)).ToList();
 			}
 
 			// Generate the secondary items. For each key in m_locales,
@@ -219,16 +194,16 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			// 3. Otherwise, we have a list of locales for which there is no basic locale
 			//		whose id is equal to the language id. In this case, we make an item
 			//		for each thing in the List, whether many or just one.
-			foreach (KeyValuePair<string, List<LocaleMenuItemData>> kvp in m_locales)
+			foreach (var kvp in m_locales)
 			{
-				string langid = kvp.Key;
-				List<LocaleMenuItemData> items = kvp.Value;
-				LocaleMenuItemData lmdRootItem = items.FirstOrDefault(lmd => lmd.m_id == langid);
+				var langid = kvp.Key;
+				var items = kvp.Value;
+				var lmdRootItem = items.FirstOrDefault(lmd => lmd.m_id == langid);
 				// See if there is an item in the array list that matches the langid
 				if (lmdRootItem == null)
 				{
 					// case 3
-					foreach(LocaleMenuItemData lmd in items)
+					foreach(var lmd in items)
 					{
 						m_mainItems.Add(lmd);
 					}
@@ -252,11 +227,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 			// Sort the items in each menu.
 			m_mainItems.Sort();
-			var NoneData = new LocaleMenuItemData(Strings.kstid_None, Strings.kstid_None);
-			var NoneItem = new ToolStripMenuItem(NoneData.m_displayName, null, ItemClickHandler);
-			menu.Items.Add(NoneItem); // This goes strictly at the beginning, irrespective of sorting
+			var noneData = new LocaleMenuItemData(Strings.kstid_None, Strings.kstid_None);
+			var noneItem = new ToolStripMenuItem(noneData.m_displayName, null, ItemClickHandler);
+			menu.Items.Add(noneItem); // This goes strictly at the beginning, irrespective of sorting
 
-			foreach (LocaleMenuItemData lmd in m_mainItems)
+			foreach (var lmd in m_mainItems)
 			{
 				var mi = new ToolStripMenuItem(lmd.m_displayName, null, ItemClickHandler);
 				menu.Items.Add(mi);
@@ -268,7 +243,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					// To make the system realize this item is a submenu, we have to
 					// add at least one item. To save time and space, we don't add the others
 					// until it pops up.
-					LocaleMenuItemData lmdSub = lmd.m_subitems[0];
+					var lmdSub = lmd.m_subitems[0];
 					var miSub = new ToolStripMenuItem(lmdSub.m_displayName, null, ItemClickHandler);
 					mi.DropDownItems.Add(miSub);
 					m_itemData[miSub] = lmdSub;
@@ -281,14 +256,18 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 
 			if (MiscUtils.IsUnix)
+			{
 				menu.ShowWithOverflow(this, new Point(0, Height));
+			}
 			else
+			{
 				menu.Show(this, new Point(0, Height));
+			}
 
 			base.OnClick(e); // Review JohnT: is this useful or harmful or neither? MS recommends it.
 		}
 
-		private void ItemClickHandler(Object sender, EventArgs e)
+		private void ItemClickHandler(object sender, EventArgs e)
 		{
 			var mi = (ToolStripMenuItem) sender;
 			if (mi.Text == Strings.kstid_None)
@@ -298,7 +277,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				OnLocaleSelected(new EventArgs());
 				return;
 			}
-			LocaleMenuItemData lmd = m_itemData[mi];
+			var lmd = m_itemData[mi];
 			m_selectedLocale = lmd.m_id;
 			Text = lmd.m_displayName;
 			OnLocaleSelected(new EventArgs());
@@ -309,115 +288,22 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			var miBase = sender as ToolStripMenuItem;
 			Debug.Assert(miBase != null);
 			if (miBase.DropDownItems.Count > 1)
+			{
 				return; // already popped up, has items.
-			LocaleMenuItemData lmd = m_itemData[miBase];
-			LocaleMenuItemData lmdFirst = lmd.m_subitems[0];
-			foreach (LocaleMenuItemData lmdSub in lmd.m_subitems)
+			}
+			var lmd = m_itemData[miBase];
+			var lmdFirst = lmd.m_subitems[0];
+			foreach (var lmdSub in lmd.m_subitems)
 			{
 				// Skip the first item as it was added earlier.
 				if (lmdSub == lmdFirst)
+				{
 					continue;
+				}
 				var miSub = new ToolStripMenuItem(lmdSub.m_displayName, null, ItemClickHandler);
 				miBase.DropDownItems.Add(miSub);
 				m_itemData[miSub] = lmdSub;
 			}
 		}
 	}
-
-	internal class LocaleMenuItemData : IComparable<LocaleMenuItemData>
-	{
-		internal LocaleMenuItemData(string id, string displayName)
-		{
-			m_id = id;
-			m_displayName = displayName;
-		}
-		// Locale id, as returned by Locale.getName. For submenus, this is the id
-		// of the language, which is also the id of the base locale.
-		internal string m_id;
-		internal string m_displayName; // corresponding display name, from Locale.getDisplayName.
-
-		internal List<LocaleMenuItemData> m_subitems;
-
-		public int CompareTo(LocaleMenuItemData obj)
-		{
-			Debug.Assert(obj != null);
-			return m_displayName.CompareTo(obj.m_displayName);
-		}
-	}
-
-	#region	OverFlowContextMenuStrip
-	/// <summary>
-	/// Extends ContextMenuStrip with ShowWithOverflow extension method so that menus greater than screen height
-	/// have an overflow button.
-	/// This is only needed on mono as .NET ContextMenuStrip implements scrolling.
-	/// </summary>
-	internal static class OverflowContextMenuStrip
-	{
-		/// <summary>
-		/// version of show that places all controls that don't fit in an overflow submenu.
-		/// </summary>
-		public static void ShowWithOverflow(this ContextMenuStrip contextMenu, Control control, Point position)
-		{
-			int maxHeight = Screen.GetWorkingArea(control).Height;
-
-			CalculateOverflow(contextMenu, contextMenu.Items, maxHeight);
-
-			contextMenu.Show(control, position);
-		}
-
-		private static void CalculateOverflow(ContextMenuStrip contextMenu,
-			ToolStripItemCollection items, int maxHeight)
-		{
-			int height = contextMenu.Padding.Top;
-			contextMenu.PerformLayout();
-			int totalItems = items.Count;
-			int overflowIndex = 0;
-			bool overflowNeeded = false;
-			// only examine up to last but one item.
-			for (; overflowIndex < totalItems - 2; ++overflowIndex)
-			{
-				ToolStripItem current = items[overflowIndex];
-				ToolStripItem next = items[overflowIndex + 1];
-				if (!current.Available)
-					continue;
-
-				height += GetTotalHeight(current);
-
-				if (height + GetTotalHeight(next) + contextMenu.Padding.Bottom > maxHeight)
-				{
-					overflowNeeded = true;
-					break;
-				}
-			}
-
-			if (overflowNeeded)
-			{
-				// Don't dispose overflow here because that will prevent it from working.
-				ToolStripMenuItem overflow = new ToolStripMenuItem(Strings.kstid_More, Images.arrowright);
-				overflow.ImageScaling = ToolStripItemImageScaling.None;
-				overflow.ImageAlign = ContentAlignment.MiddleCenter;
-				overflow.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
-
-				for (int i = totalItems - 1; i >= overflowIndex; i--)
-				{
-					ToolStripItem item = items[i];
-					items.RemoveAt(i);
-					overflow.DropDown.Items.Insert(0, item);
-				}
-
-				CalculateOverflow(contextMenu, overflow.DropDownItems, maxHeight);
-
-				if (overflow.DropDown.Items.Count > 0)
-					items.Add(overflow);
-				else
-					overflow.Dispose();
-			}
-		}
-
-		internal static int GetTotalHeight(ToolStripItem item)
-		{
-			return item.Padding.Top + item.Margin.Top + item.Height + item.Margin.Bottom + item.Padding.Bottom;
-		}
-	}
-	#endregion
 }

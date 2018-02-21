@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2011-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
@@ -9,27 +13,22 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	/// </summary>
 	public class StyleComboItem : IComparable
 	{
-		private readonly BaseStyleInfo m_style;
-
 		/// <summary/>
 		public StyleComboItem(BaseStyleInfo sty)
 		{
-			m_style = sty;
+			Style = sty;
 		}
 
-		/// <summary/>
+		/// <summary />
 		public override string ToString()
 		{
-			return m_style == null ? "(none)" : m_style.Name;
+			return Style == null ? "(none)" : Style.Name;
 		}
 
-		/// <summary/>
-		public BaseStyleInfo Style
-		{
-			get { return m_style; }
-		}
+		/// <summary />
+		public BaseStyleInfo Style { get; }
 
-		/// <summary/>
+		/// <summary />
 		public int CompareTo(object obj)
 		{
 			var that = obj as StyleComboItem;

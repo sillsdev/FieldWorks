@@ -285,15 +285,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open Project.
-        /// </summary>
-        public static string ksChooseLangProjectDialogTitle {
-            get {
-                return ResourceManager.GetString("ksChooseLangProjectDialogTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Projects Folder.
         /// </summary>
         public static string ksChooseProjectFolder {
@@ -1467,15 +1458,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Memory and disk usage information..
-        /// </summary>
-        public static string kstidMemoryDiskUsageInformation {
-            get {
-                return ResourceManager.GetString("kstidMemoryDiskUsageInformation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &quot;{0}&quot; will be merged into &quot;{1}&quot;, resulting in one writing system. Merging the data using this writing system could cause extensive changes to your data. We recommend that you back up your project before proceeding..
         /// </summary>
         public static string kstidMergeWritingSystems {
@@ -1721,15 +1703,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Choose Associated FieldWorks Project.
-        /// </summary>
-        public static string kstidOpenToAssociateFwProj {
-            get {
-                return ResourceManager.GetString("kstidOpenToAssociateFwProj", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Do you want to overwrite the existing collation rules (sorting)?.
         /// </summary>
         public static string kstidOverwriteRules {
@@ -1843,15 +1816,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string kstidStyleContextMismatchMsg {
             get {
                 return ResourceManager.GetString("kstidStyleContextMismatchMsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unable to start {0}..
-        /// </summary>
-        public static string kstidUnableToStart {
-            get {
-                return ResourceManager.GetString("kstidUnableToStart", resourceCulture);
             }
         }
         

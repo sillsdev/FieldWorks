@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -13,14 +12,12 @@ using SIL.Acknowledgements;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace LanguageExplorer.Impls
 {
 	#region FwHelpAbout implementation
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// FW Help about dialog (previously HelpAboutDlg in AfDialog.cpp)
+	/// FW Help about dialog.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class FwHelpAbout : Form
 	{
 		#region Data members
@@ -30,7 +27,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private string m_sAvailableMemoryFmt;
 		private string m_sTitleFmt;
 		private string m_sAvailableDiskSpaceFmt;
-		private string m_sProdDate = string.Empty;
 		private Label lblName;
 		private Label edtAvailableDiskSpace;
 		private Label edtAvailableMemory;
@@ -47,11 +43,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Construction and Disposal
-		/// ----------------------------------------------------------------------------------------
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// ----------------------------------------------------------------------------------------
 		public FwHelpAbout()
 		{
 			//
@@ -80,7 +74,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				m_systemMonitorLink = new LinkLabel
 				{
-					Text = FwCoreDlgs.kstidMemoryDiskUsageInformation,
+					Text = LanguageExplorerResources.kstidMemoryDiskUsageInformation,
 					Visible = true,
 					Name = "systemMonitorLink",
 					TabStop = true,
@@ -93,8 +87,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				// Package information
 
-				int oldHeight = this.Height;
-				this.Height += 200;
+				var oldHeight = Height;
+				Height += 200;
 				var packageVersionLabel = new Label { Text = "Package versions:", Top = oldHeight - 20, Width = this.Width - 10 };
 				var versionInformation = new TextBox
 				{
@@ -102,47 +96,44 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					Top = oldHeight,
 					Multiline = true,
 					ReadOnly = true,
-					Width = this.Width - 10,
+					Width = Width - 10,
 					ScrollBars = ScrollBars.Vertical
 				};
-				this.Controls.Add(packageVersionLabel);
-				this.Controls.Add(versionInformation);
+				Controls.Add(packageVersionLabel);
+				Controls.Add(versionInformation);
 
 				foreach (var info in LinuxPackageUtils.FindInstalledPackages("fieldworks")
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-applications"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-enc-converters"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("flexbridge"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-l10n-*"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("mono4-sil"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("libgdiplus4-sil"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("gtk-sharp4-sil"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("mono-basic4-sil"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("chmsee"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("pathway")))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("fieldworks-applications"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("fieldworks-enc-converters"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("flexbridge"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("fieldworks-l10n-*"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("mono4-sil"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("libgdiplus4-sil"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("gtk-sharp4-sil"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("mono-basic4-sil"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("chmsee"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("pathway")))
 				{
-					versionInformation.AppendText(String.Format("{0} {1}{2}", info.Key, info.Value, Environment.NewLine));
+					versionInformation.AppendText($"{info.Key} {info.Value}{Environment.NewLine}");
 				}
 			}
 		}
 
-		/// ----------------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		/// ----------------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -280,12 +271,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Initialization Methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// When the window handle gets created we want to initialize the controls
 		/// </summary>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
@@ -293,16 +281,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			try
 			{
 				// Set the Application label to the name of the app
-				VersionInfoProvider viProvider = new VersionInfoProvider(ProductExecutableAssembly, true);
+				var viProvider = new VersionInfoProvider(ProductExecutableAssembly, true);
 				lblName.Text = viProvider.ProductName;
 				lblAppVersion.Text = viProvider.ApplicationVersion;
 				lblFwVersion.Text = viProvider.MajorVersion;
 
 				// List the copyright information
-				Dictionary<string, AcknowledgementAttribute> acknowlegements = AcknowledgementsProvider.CollectAcknowledgements();
+				var acknowlegements = AcknowledgementsProvider.CollectAcknowledgements();
 				var list = acknowlegements.Keys.ToList();
 				list.Sort();
-				string text = viProvider.CopyrightString + Environment.NewLine + viProvider.LicenseString + Environment.NewLine + viProvider.LicenseURL;
+				var text = viProvider.CopyrightString + Environment.NewLine + viProvider.LicenseString + Environment.NewLine + viProvider.LicenseURL;
 				foreach (var key in list)
 				{
 					text += "\r\n" + "\r\n" + key + "\r\n" + acknowlegements[key].Copyright + " " + acknowlegements[key].Url + " " + acknowlegements[key].LicenseUrl;
@@ -312,24 +300,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// Set the title bar text
 				Text = string.Format(m_sTitleFmt, viProvider.ProductName);
 
-				string strRoot = Path.GetPathRoot(Application.ExecutablePath);
+				var strRoot = Path.GetPathRoot(Application.ExecutablePath);
 
 				// Set the memory information
-				Win32.MemoryStatus ms = new Win32.MemoryStatus();
+				var ms = new Win32.MemoryStatus();
 				Win32.GlobalMemoryStatus(ref ms);
-				edtAvailableMemory.Text = string.Format(m_sAvailableMemoryFmt,
-					ms.dwAvailPhys / 1024, ms.dwTotalPhys / 1024);
+				edtAvailableMemory.Text = string.Format(m_sAvailableMemoryFmt, ms.dwAvailPhys / 1024, ms.dwTotalPhys / 1024);
 
 				// Set the available disk space information.
-				uint cSectorsPerCluster = 0, cBytesPerSector = 0, cFreeClusters = 0,
-					cTotalClusters = 0;
-				Win32.GetDiskFreeSpace(strRoot, ref cSectorsPerCluster, ref cBytesPerSector,
-					ref cFreeClusters, ref cTotalClusters);
-				uint cbKbFree =
-					(uint)(((Int64)cFreeClusters * cSectorsPerCluster * cBytesPerSector) >> 10);
+				uint cSectorsPerCluster = 0, cBytesPerSector = 0, cFreeClusters = 0, cTotalClusters = 0;
+				Win32.GetDiskFreeSpace(strRoot, ref cSectorsPerCluster, ref cBytesPerSector, ref cFreeClusters, ref cTotalClusters);
+				var cbKbFree = (uint)(((long)cFreeClusters * cSectorsPerCluster * cBytesPerSector) >> 10);
 
-				edtAvailableDiskSpace.Text =
-					string.Format(m_sAvailableDiskSpaceFmt, cbKbFree, strRoot);
+				edtAvailableDiskSpace.Text = string.Format(m_sAvailableDiskSpaceFmt, cbKbFree, strRoot);
 			}
 			catch
 			{
@@ -341,15 +324,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Show System Monitor in Linux
 		/// </summary>
-		private void HandleSystemMonitorLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		private static void HandleSystemMonitorLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			var program = "gnome-system-monitor";
+			const string program = "gnome-system-monitor";
 			using (var process = MiscUtils.RunProcess(program, null, null))
 			{
 				Thread.Sleep(300);
 				// If gnome-system-monitor is already open, HasExited will be true with ExitCode of 0
 				if (process.HasExited && process.ExitCode != 0)
-					MessageBox.Show(string.Format(FwCoreDlgs.kstidUnableToStart, program));
+				{
+					MessageBox.Show(string.Format(LanguageExplorerResources.kstidUnableToStart, program));
+				}
 			}
 		}
 	}

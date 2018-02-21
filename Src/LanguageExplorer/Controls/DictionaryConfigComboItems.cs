@@ -7,7 +7,7 @@ namespace LanguageExplorer.Controls
 	/// <summary>Represents a Numbering Style for use in a combobox: stores a substitution code, but displays an example</summary>
 	public class NumberingStyleComboItem
 	{
-		/// <summary/>
+		/// <summary />
 		public NumberingStyleComboItem(string sLabel, string sFormat)
 		{
 			Label = sLabel;
@@ -21,9 +21,9 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary>The substitution code for this numbering style</summary>
-		public string FormatString { get; private set; }
+		public string FormatString { get; }
 
 		/// <summary>An example of numbers in this numbering style (e.g. 1  1.2  1.2.3)</summary>
-		public string Label { get; private set; }
+		public string Label { get; }
 	}
 }

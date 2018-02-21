@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using LanguageExplorer.Impls;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs;

@@ -1,13 +1,7 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwBorderTab.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
-// ---------------------------------------------------------------------------------------------
+
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
 	partial class FwBorderTab
@@ -20,13 +14,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				components?.Dispose();
 			}
 			base.Dispose(disposing);
 		}

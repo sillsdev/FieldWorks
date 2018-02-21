@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
@@ -34,11 +33,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Constructor/destructor
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DefaultFontsControl"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public DefaultFontsControl()
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -49,17 +46,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			using (var installedFontCollection = new InstalledFontCollection())
 			{
 				// Mono doesn't sort the font names currently 20100322. Workaround for FWNX-273: Fonts not in alphabetical order
-				IEnumerable<FontFamily> fontFamilies = from family in installedFontCollection.Families
-													   orderby family.Name
-													   select family;
+				var fontFamilies = installedFontCollection.Families.OrderBy(family => family.Name);
 
-				foreach (FontFamily family in fontFamilies)
+				foreach (var family in fontFamilies)
 				{
 					// The .NET framework is unforgiving of using a font that doesn't support the
 					// "regular"  style.  So we won't allow the user to even see them...
 					if (family.IsStyleAvailable(FontStyle.Regular))
 					{
-						string familyName = family.Name;
+						var familyName = family.Name;
 						m_defaultFontComboBox.Items.Add(familyName);
 						family.Dispose();
 					}
@@ -67,17 +62,17 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -88,12 +83,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Properties
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The language definition object that the controls will modify and
 		/// from which they will be initialized.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public CoreWritingSystemDefinition WritingSystem
 		{
 			get
@@ -107,11 +100,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Access the Default Normal Font property.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public string DefaultNormalFont
 		{
 			get
@@ -124,14 +115,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		internal ComboBox DefaultFontComboBox
-		{
-			get
-			{
-				return m_defaultFontComboBox;
-			}
-		}
-
+		internal ComboBox DefaultFontComboBox => m_defaultFontComboBox;
 		#endregion
 
 		#region Component Designer generated code
@@ -211,15 +195,16 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Helper methods
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Select the Fonts in the Font comboboxes, and set any features into the controls.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected void SetSelectedFonts()
 		{
 			if (m_ws == null)
+			{
 				return;		// can't do anything useful.
+			}
 
 			// setup controls for default font
 			SetFontInCombo(m_defaultFontComboBox, m_ws.DefaultFontName);
@@ -227,28 +212,30 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_defaultFontFeaturesButton.FontName = m_defaultFontComboBox.Text;
 			m_defaultFontFeaturesButton.FontFeatures = m_ws.DefaultFontFeatures;
 
-			bool isGraphiteFont = m_defaultFontFeaturesButton.IsGraphiteFont;
+			var isGraphiteFont = m_defaultFontFeaturesButton.IsGraphiteFont;
 			m_graphiteGroupBox.Enabled = isGraphiteFont;
 			if (!isGraphiteFont)
+			{
 				m_ws.IsGraphiteEnabled = false;
+			}
 			m_enableGraphiteCheckBox.Checked = m_ws.IsGraphiteEnabled;
 			if (!m_ws.IsGraphiteEnabled)
+			{
 				m_defaultFontFeaturesButton.Enabled = false;
+			}
 		}
 
 		/// <summary>
 		/// Set the font in the ComboBox.  If the selection ends up null, mark the font as
 		/// missing and display it as such.  See LT-8750.
 		/// </summary>
-		/// <param name="fwcb"></param>
-		/// <param name="sFont"></param>
 		private static void SetFontInCombo(FwOverrideComboBox fwcb, string sFont)
 		{
 			fwcb.SelectedItem = sFont;
 			if (fwcb.SelectedItem == null)
 			{
-				string sMissingFmt = Strings.kstidMissingFontFmt;
-				string sMissing = String.Format(sMissingFmt, sFont);
+				var sMissingFmt = Strings.kstidMissingFontFmt;
+				var sMissing = string.Format(sMissingFmt, sFont);
 				fwcb.SelectedItem = sMissing;
 				if (fwcb.SelectedItem == null)
 				{
@@ -260,18 +247,16 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		#region Event handlers
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the SelectedIndexChanged event of the cbDefaultNormalFont control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		private void m_defaultFontComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (m_ws == null)
+			{
 				return;
-			string oldFont = m_ws.DefaultFontName;
+			}
+			var oldFont = m_ws.DefaultFontName;
 			if (oldFont != m_defaultFontComboBox.Text)
 			{
 				// Finding a font missing should not result in persisting a font name change
@@ -279,13 +264,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				{
 					FontDefinition font;
 					if (!m_ws.Fonts.TryGet(m_defaultFontComboBox.Text, out font))
+					{
 						font = new FontDefinition(m_defaultFontComboBox.Text);
+					}
 					m_ws.DefaultFont = font;
 				}
 				m_defaultFontFeaturesButton.FontName = m_defaultFontComboBox.Text;
 				m_defaultFontFeaturesButton.FontFeatures = m_ws.DefaultFont.Features;
 
-				bool isGraphiteFont = m_defaultFontFeaturesButton.IsGraphiteFont;
+				var isGraphiteFont = m_defaultFontFeaturesButton.IsGraphiteFont;
 				m_graphiteGroupBox.Enabled = isGraphiteFont;
 				m_ws.IsGraphiteEnabled = false;
 				m_enableGraphiteCheckBox.Checked = false;
@@ -293,29 +280,33 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the FontFeatureSelected event of the m_defaultFontFeatures control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		private void m_defaultFontFeaturesButton_FontFeatureSelected(object sender, EventArgs e)
 		{
 			if (m_ws == null)
+			{
 				return;
+			}
 			m_ws.DefaultFont.Features = m_defaultFontFeaturesButton.FontFeatures;
 		}
 
 		private void m_enableGraphiteCheckBox_Click(object sender, EventArgs e)
 		{
 			if (m_ws == null)
+			{
 				return;
+			}
 			m_ws.IsGraphiteEnabled = m_enableGraphiteCheckBox.Checked;
 			if (m_ws.IsGraphiteEnabled)
+			{
 				m_defaultFontFeaturesButton.SetupFontFeatures();
+			}
 			else
+			{
 				m_defaultFontFeaturesButton.Enabled = false;
+			}
 		}
 
 		#endregion

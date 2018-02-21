@@ -13,7 +13,7 @@ using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel.DomainServices;
 using StyleInfo = SIL.FieldWorks.FwCoreDlgs.Controls.StyleInfo;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace LanguageExplorer.Impls
 {
 	/// <summary>
 	/// The new Styles Dialog
@@ -26,10 +26,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private LcmStyleSheet m_styleSheet;
 		private string m_paraStyleName;
 		private string m_charStyleName;
-		private string m_chosenStyleName;
-		private bool m_fCanApplyCharacterStyle = true;
-		private bool m_fCanApplyParagraphStyle = true;
-		private List<ContextValues> m_applicableStyleContexts;
 		private IHelpTopicProvider m_helpTopicProvider;
 		#endregion
 
@@ -65,8 +61,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Raises the handle created event.
 		/// </summary>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
-		/// data.</param>
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
@@ -78,11 +72,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_styleListHelper.MarkCurrentStyle(m_charStyleName);
 
 			// Select the current paragraph style in the list
-			if (m_fCanApplyParagraphStyle && m_paraStyleName != null)
+			if (CanApplyParagraphStyle && m_paraStyleName != null)
 			{
 				m_styleListHelper.SelectedStyleName = m_paraStyleName;
 			}
-			else if (m_fCanApplyCharacterStyle)
+			else if (CanApplyCharacterStyle)
 			{
 				m_styleListHelper.SelectedStyleName = m_charStyleName ?? StyleUtils.DefaultParaCharsStyleName;
 			}
@@ -97,20 +91,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			for (var i = 0; i < m_styleSheet.CStyles; i++)
 			{
 				var style = m_styleSheet.get_NthStyleObject(i);
-				if (m_applicableStyleContexts == null || m_applicableStyleContexts.Contains(style.Context))
+				if (ApplicableStyleContexts == null || ApplicableStyleContexts.Contains(style.Context))
 				{
 					m_styleTable.Add(style.Name, new StyleInfo(style));
 				}
 			}
-			if (m_fCanApplyCharacterStyle && !m_fCanApplyParagraphStyle)
+			if (CanApplyCharacterStyle && !CanApplyParagraphStyle)
 			{
 				m_styleListHelper.ShowOnlyStylesOfType = StyleType.kstCharacter;
 			}
-			else if (m_fCanApplyParagraphStyle && !m_fCanApplyCharacterStyle)
+			else if (CanApplyParagraphStyle && !CanApplyCharacterStyle)
 			{
 				m_styleListHelper.ShowOnlyStylesOfType = StyleType.kstParagraph;
 			}
-			else if (!m_fCanApplyCharacterStyle && !m_fCanApplyParagraphStyle)
+			else if (!CanApplyCharacterStyle && !CanApplyParagraphStyle)
 			{
 				throw new InvalidOperationException("Can't show the Apply Style dialog box if neither character nor paragraph styles can be applied.");
 			}
@@ -131,15 +125,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private void m_btnOk_Click(object sender, EventArgs e)
 		{
-			m_chosenStyleName = m_lstStyles.Text;
+			StyleChosen = m_lstStyles.Text;
 		}
 
 		/// <summary>
 		/// Handles the Click event of the m_btnHelp control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
-		/// data.</param>
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, sender == helpToolStripMenuItem ? $"style:{m_lstStyles.SelectedItem}" : "kstidApplyStyleDialog");
@@ -149,9 +140,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Handles the MouseDown event of the styles list. If the user clicks with the right
 		/// mouse button we have to select the style.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.Windows.Forms.MouseEventArgs"/> instance
-		/// containing the event data.</param>
 		private void m_lstStyles_MouseDown(object sender, MouseEventArgs e)
 		{
 			m_lstStyles.Focus(); // This can fail if validation fails in control that had focus.
@@ -166,9 +154,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// mouse button we have to bring up the context menu if the mouse up event occurs over
 		/// the selected style.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.Windows.Forms.MouseEventArgs"/> instance
-		/// containing the event data.</param>
 		private void m_lstStyles_MouseUp(object sender, MouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Right && m_lstStyles.IndexFromPoint(e.Location) == m_lstStyles.SelectedIndex)
@@ -184,48 +169,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Sets a value indicating whether character styles should be shown in the list of
 		/// styles that can be applied.
 		/// </summary>
-		public bool CanApplyCharacterStyle
-		{
-			set
-			{
-				m_fCanApplyCharacterStyle = value;
-			}
-		}
+		public bool CanApplyCharacterStyle { get; set; } = true;
 
 		/// <summary>
 		/// Sets a value indicating whether paragraph styles should be shown in the list of
 		/// styles that can be applied.
 		/// </summary>
-		public bool CanApplyParagraphStyle
-		{
-			set
-			{
-				m_fCanApplyParagraphStyle = value;
-			}
-		}
+		public bool CanApplyParagraphStyle { get; set; } = true;
 
 		/// <summary>
 		/// Gets the name of the style chosen.
 		/// </summary>
-		public string StyleChosen
-		{
-			get
-			{
-				return m_chosenStyleName;
-			}
-		}
+		public string StyleChosen { get; private set; }
 
 		/// <summary>
 		/// Specifies a set of style contexts that should be used to determine which styles can be
 		/// applied.
 		/// </summary>
-		public List<ContextValues> ApplicableStyleContexts
-		{
-			set
-			{
-				m_applicableStyleContexts = value;
-			}
-		}
+		public List<ContextValues> ApplicableStyleContexts { get; set; }
 		#endregion
 	}
 }

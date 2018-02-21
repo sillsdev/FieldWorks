@@ -12,6 +12,7 @@ using System.Linq;
 using System.Xml.Linq;
 using ECInterfaces;
 using LanguageExplorer.Areas;
+using LanguageExplorer.Impls;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;

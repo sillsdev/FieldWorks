@@ -13,19 +13,19 @@ namespace LanguageExplorer.Controls
 	/// <remarks>Works around a MONO bug by explicitly disposing its Items. Even Windows neglects to dispose these on occasion.</remarks>
 	public class DisposableToolStripMenuItem : ToolStripMenuItem
 	{
-		/// <c/>
+		/// <summary />
 		public DisposableToolStripMenuItem() { }
 
-		/// <c/>
+		/// <summary />
 		public DisposableToolStripMenuItem(string text) : base(text) { }
 
-		/// <c/>
+		/// <summary />
 		public DisposableToolStripMenuItem(Image image) : base(image) { }
 
-		/// <c/>
+		/// <summary />
 		public DisposableToolStripMenuItem(string text, Image image) : base(text, image) { }
 
-		/// <c/>
+		/// <summary />
 		public DisposableToolStripMenuItem(string text, Image image, EventHandler onClick) : base(text, image, onClick) { }
 
 		/// <summary>Works around a MONO bug by explicitly disposing its Items</summary>
@@ -36,7 +36,9 @@ namespace LanguageExplorer.Controls
 			{
 				// BUG: MONO neglects to dispose DropDownItems. Do it now:
 				foreach (var disposable in DropDownItems.OfType<IDisposable>().ToArray())
+				{
 					disposable.Dispose();
+				}
 			}
 			base.Dispose(disposing);
 		}

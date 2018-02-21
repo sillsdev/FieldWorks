@@ -249,12 +249,6 @@ Quotation mark: {2}</value>
   <data name="arrowup" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>../../FwResources/Images/arrowup.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Bullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>../Resources/Bullet.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="wait22trans" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>../Resources/wait22trans.gif;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="kstidQuotationLangAltNameFmt" xml:space="preserve">
     <value>{0}  (alternate {1})</value>
     <comment>Format string for language names that have alternate quotation systems. These names are displayed in the drop-down of the quotations tab on the punctuation dialog.</comment>
@@ -276,11 +270,5 @@ Quotation mark: {2}</value>
   </data>
   <data name="Warning" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>../Resources/Warning.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="chorus32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>../chorus32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="kstidCantMigrateWrongOS" xml:space="preserve">
-    <value>You may be able to set up a virtual machine running Windows 7 or earlier and install FieldWorks there. On Windows 7 or earlier, this dialog will allow you to download some components that can migrate your project. Unfortunately these components are not directly supported on your operating system.</value>
   </data>
 </root>

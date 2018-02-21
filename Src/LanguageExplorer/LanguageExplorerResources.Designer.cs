@@ -2601,6 +2601,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Memory and disk usage information..
+        /// </summary>
+        internal static string kstidMemoryDiskUsageInformation {
+            get {
+                return ResourceManager.GetString("kstidMemoryDiskUsageInformation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you want to study the training materials for Language Explorer?
         ///
         ///If you click Yes, the Sena 3 sample project will open. On the Help menu, point to Training and click Student Manual for a walk-through guide.
@@ -2622,6 +2631,15 @@ namespace LanguageExplorer {
         internal static string kstidSupportEmail {
             get {
                 return ResourceManager.GetString("kstidSupportEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to start {0}..
+        /// </summary>
+        internal static string kstidUnableToStart {
+            get {
+                return ResourceManager.GetString("kstidUnableToStart", resourceCulture);
             }
         }
         

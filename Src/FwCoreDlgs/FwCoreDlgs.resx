@@ -792,9 +792,6 @@ Enter a shorter name.</value>
   <data name="ksCannotSaveWritingSystem" xml:space="preserve">
     <value>This writing system cannot be modified, because FieldWorks does not have permission to write the necessary file ({0}). </value>
   </data>
-  <data name="ksChooseLangProjectDialogTitle" xml:space="preserve">
-    <value>Open Project</value>
-  </data>
   <data name="ksWarning" xml:space="preserve">
     <value>Warning</value>
     <comment>
@@ -850,14 +847,6 @@ Press No to use the default location.</value>
     <value>Set up keyboards</value>
     <comment>Label of link to open the IBus Preferences dialog in Linux to add or configure keyboards that the user can select in FieldWorks.</comment>
   </data>
-  <data name="kstidMemoryDiskUsageInformation" xml:space="preserve">
-    <value>Memory and disk usage information.</value>
-    <comment>Label of link in the About box to open the System Monitor in Linux to show information about memory and disk usage.</comment>
-  </data>
-  <data name="kstidUnableToStart" xml:space="preserve">
-    <value>Unable to start {0}.</value>
-    <comment>Error message if user clicks link in About box to open the System Monitor in Linux, but the program is not able to start, probably because it isn't installed. Program name is {0}.</comment>
-  </data>
   <data name="ksBackupErrorCaption" xml:space="preserve">
     <value>FieldWorks Backup Failed</value>
   </data>
@@ -899,10 +888,6 @@ The error was:
   </data>
   <data name="folderBrowserDlgDescription" xml:space="preserve">
     <value>Linked Files Folder</value>
-  </data>
-  <data name="kstidOpenToAssociateFwProj" xml:space="preserve">
-    <value>Choose Associated FieldWorks Project</value>
-    <comment>Title for the Open Project Dialog when called from an external application to associate a FieldWorks project with that application</comment>
   </data>
   <data name="ksUnauthorizedRenameBakFile" xml:space="preserve">
     <value>The project {0} only exists in the form of a .bak file, and you apparently do not have file access permissions to restore it to the fwdata file. FieldWorks cannot open it. Try renaming it manually.</value>

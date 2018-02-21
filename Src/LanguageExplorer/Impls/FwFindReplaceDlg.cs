@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -21,40 +22,39 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Utils;
 using SIL.Windows.Forms;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace LanguageExplorer.Impls
 {
-	/// ----------------------------------------------------------------------------------------
+#if RANDYTODO
+	// TODO: Break out classes and clean code.
+#endif
 	/// <summary>
 	/// Find/Replace dialog
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class FwFindReplaceDlg : Form, IMessageFilter
 	{
-		#region Constants
+#region Constants
 		private const string kPersistenceLabel = "FindReplace_";
 
-		#endregion
+#endregion
 
-		#region Events
+#region Events
 		/// <summary>Handler for MatchNotFound events.</summary>
-		public delegate bool MatchNotFoundHandler(object sender, string defaultMsg,
-			MatchType type);
+		private delegate bool MatchNotFoundHandler(object sender, string defaultMsg, MatchType type);
 
 		/// <summary>Fired when a match is not found.</summary>
-		public event MatchNotFoundHandler MatchNotFound;
-		#endregion
+		private event MatchNotFoundHandler MatchNotFound;
+#endregion
 
-		#region Enumerations
-		/// ------------------------------------------------------------------------------------
+#region Enumerations
 		/// <summary>
 		/// Status of matches during find/replace
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public enum MatchType
+		private enum MatchType
 		{
 			/// <summary></summary>
 			NotSet,
@@ -65,27 +65,27 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// <summary>A replace all is done and it made replacements</summary>
 			ReplaceAllFinished
 		}
-		#endregion
+#endregion
 
-		#region Data members
+#region Data members
 		/// <summary>all the search settings</summary>
 		protected IVwPattern m_vwFindPattern;
 		/// <summary>Environment that keeps track of where we're finding</summary>
 		protected FindCollectorEnv m_findEnvironment;
 		/// <summary>The rootsite where the find operation will be performed</summary>
 		protected IVwRootSite m_vwRootsite;
-		/// <summary></summary>
+		/// <summary />
 		protected LcmCache m_cache;
 		private IApp m_app;
 		private bool m_cacheMadeLocally = false;
-		/// <summary></summary>
+		/// <summary />
 		protected IVwSelection m_vwSelectionForPattern;
 		private ITsString m_resultReplaceText; // saves replace text for reading after dlg closes.
-		/// <summary></summary>
-		protected ITsString m_prevSearchText = null;
-		/// <summary></summary>
+		/// <summary />
+		protected ITsString m_prevSearchText;
+		/// <summary />
 		protected SearchKiller m_searchKiller = new SearchKiller();
-		private bool m_messageFilterInstalled = false;
+		private bool m_messageFilterInstalled;
 
 		private string m_sMoreButtonText;
 		private int m_heightDlgMore;
@@ -120,9 +120,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private FwTextBox m_lastTextBoxInFocus;
 		private bool m_initialActivate;
-		private bool m_inReplace = false;
-		private bool m_inFind = false;
-		private bool m_inGetSpecs = false;
+		private bool m_inReplace;
+		private bool m_inFind;
+		private bool m_inGetSpecs;
 		/// <summary>The OK button is usually hidden. It is visible in Flex after clicking the
 		/// Setup button of the Find/Replace tab of the Bulk Edit bar.</summary>
 		private System.Windows.Forms.Button m_okButton;
@@ -145,9 +145,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.Button btnRegexMenuReplace;
 
 		private RegexHelperMenu regexContextMenuFind;
-		/// <summary></summary>
+		/// <summary />
 		protected MenuItem mnuWritingSystem;
-		/// <summary></summary>
+		/// <summary />
 		protected MenuItem mnuStyle;
 		private Button btnFormat;
 		/// <summary>The close button</summary>
@@ -158,34 +158,33 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Button btnReplace;
 		private Button btnReplaceAll;
 		private Panel panelBasic;
-		/// <summary></summary>
+		/// <summary />
 		protected Label lblReplaceFormat;
 		private Label lblReplaceText;
-		/// <summary></summary>
+		/// <summary />
 		protected ContextMenu mnuFormat;
 		private Label lblSearchOptions;
-		/// <summary></summary>
+		/// <summary />
 		protected Label lblFindFormat;
 		private RegexHelperMenu regexContextMenuReplace;
 
-		#endregion
+#endregion
 
-		#region Construction, initialization, destruction
-		/// -----------------------------------------------------------------------------------
+#region Construction, initialization, destruction
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FwFindReplaceDlg"/> class.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		public FwFindReplaceDlg()
 		{
+			m_inFind = false;
 			AccessibleName = GetType().Name;
 			//
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
 
-			this.helpProvider = new HelpProvider();
-			this.helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+			helpProvider = new HelpProvider();
+			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 
 			m_lastTextBoxInFocus = fweditFindText;
 			// Init of member variables related to dialog height removed from here and moved
@@ -195,14 +194,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			btnMore.Image = ResourceHelper.MoreButtonDoubleArrowIcon;
 			btnFormat.Image = ResourceHelper.ButtonMenuArrowIcon;
 			panelSearchOptions.Visible = false;
-			fweditFindText.TextChanged +=new EventHandler(HandleTextChanged);
-			fweditReplaceText.TextChanged +=new EventHandler(HandleTextChanged);
+			fweditFindText.TextChanged +=HandleTextChanged;
+			fweditReplaceText.TextChanged +=HandleTextChanged;
 
 			m_searchKiller.Control = this;	// used for redrawing
-			m_searchKiller.StopControl = this.btnClose;	// need to know the stop button
+			m_searchKiller.StopControl = btnClose;	// need to know the stop button
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the initial values for the dialog controls, assuming that the find and replace
 		/// edit boxes use the default vernacular writing system.
@@ -221,7 +219,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// False indicates some problem and the find/replace dialog should not be
 		/// shown at this time.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		public bool SetDialogValues(LcmCache cache, IVwPattern vwPattern, IVwRootSite rootSite,
 			bool fReplace, bool fOverlays, Form owner, IHelpTopicProvider helpTopicProvider, IApp app)
 		{
@@ -543,9 +540,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_findEnvironment = null;
 			base.Dispose(disposing);
 		}
-		#endregion // Construction, initialization, destruction
+#endregion // Construction, initialization, destruction
 
-		#region Other methods
+#region Other methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Removes any end of paragraph marker from the string builder.
@@ -698,9 +695,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			return tss;
 		}
-		#endregion
+#endregion
 
-		#region Windows Form Designer generated code
+#region Windows Form Designer generated code
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Required method for Designer support - do not modify
@@ -1003,9 +1000,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.ResumeLayout(false);
 
 		}
-		#endregion
+#endregion
 
-		#region Event handlers
+#region Event handlers
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the CheckedChanged event of the chkMatchWS control.
@@ -1739,9 +1736,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				ctrl.Enabled = false;
 			}
 		}
-		#endregion
+#endregion
 
-		#region Methods where the work is actually done.
+#region Methods where the work is actually done.
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Enables or disables all the controls except the close/stop/cancel button on the
@@ -1845,7 +1842,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					try
 					{
-						var newSite = LCModel.Utils.ReflectionHelper.GetProperty(Owner, "ActiveView") as IVwRootSite;
+						var newSite = ReflectionHelper.GetProperty(Owner, "ActiveView") as IVwRootSite;
 						if (newSite != null)
 							m_vwRootsite = newSite;
 					}
@@ -2347,9 +2344,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return finalLength - initialLength;
 		}
 
-		#endregion
+#endregion
 
-		#region Protected properties
+#region Protected properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The data access for the find and replace dialog.
@@ -2365,9 +2362,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return rootSite.RootBox.DataAccess;
 			}
 		}
-		#endregion
+#endregion
 
-		#region Protected helper methods
+#region Protected helper methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Given an FwTextBox, we get the name of the WS of the current selection. If the
@@ -2640,9 +2637,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			format.Visible = fShowLabels;
 			formatText.Visible = fShowLabels;
 		}
-		#endregion
+#endregion
 
-		#region Public properties
+#region Public properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns the text to find
@@ -2705,9 +2702,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return m_lastTextBoxInFocus;
 			}
 		}
-		#endregion
+#endregion
 
-		#region IMessageFilter Members
+#region IMessageFilter Members
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Provide tabbing with the view controls and handle the ESC key to close the find dialog
@@ -2744,7 +2741,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			return false;
 		}
-		#endregion
+#endregion
 	}
 
 	/// <summary>
@@ -2758,7 +2755,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		string FindTabHelpId { get; }
 	}
 
-	#region VwPatternSerializableSettings class
+#region VwPatternSerializableSettings class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Wrapper to serialize/deserialize basic settings for VwPattern
@@ -2992,9 +2989,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			set { m_pattern.UseRegularExpressions = value;  }
 		}
 	}
-	#endregion
+#endregion
 
-	#region SearchKiller
+#region SearchKiller
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Implements a search killer
@@ -3007,7 +3004,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Control m_stopControl = null;
 		private bool stopButtonDown = false;
 
-		#region IVwSearchKiller Members
+#region IVwSearchKiller Members
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the window handle for the search operation - ignored in this case
@@ -3104,7 +3101,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				(uint)Win32.PeekFlags.PM_REMOVE);
 		}
 #endif
-		#endregion
+#endregion
 	}
-	#endregion
+#endregion
 }

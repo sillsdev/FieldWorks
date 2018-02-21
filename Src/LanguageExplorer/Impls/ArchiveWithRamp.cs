@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,19 +12,17 @@ using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.LCModel.DomainServices.BackupRestore;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace LanguageExplorer.Impls
 {
-	/// ------------------------------------------------------------------------------------
+	/// <summary />
 	public partial class ArchiveWithRamp : Form
 	{
-		private readonly List<string> m_filesToArchive = new List<string>();
 		private readonly LcmCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private string m_lastBackupFile;
 
-		/// ------------------------------------------------------------------------------------
-		public ArchiveWithRamp(LcmCache cache,
-			IHelpTopicProvider helpTopicProvider)
+		/// <summary />
+		public ArchiveWithRamp(LcmCache cache, IHelpTopicProvider helpTopicProvider)
 		{
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
@@ -40,12 +38,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				if (m_rbNewBackup.Checked)
 				{
-					using (BackupProjectDlg dlg = new BackupProjectDlg(m_cache, m_helpTopicProvider))
+					using (var dlg = new BackupProjectDlg(m_cache, m_helpTopicProvider))
 					{
-						if ((dlg.ShowDialog(this) == DialogResult.OK)
-							&& (!string.IsNullOrEmpty(dlg.BackupFilePath)))
+						if (dlg.ShowDialog(this) == DialogResult.OK && !string.IsNullOrEmpty(dlg.BackupFilePath))
 						{
-							m_filesToArchive.Add(dlg.BackupFilePath);
+							FilesToArchive.Add(dlg.BackupFilePath);
 						}
 						else
 						{
@@ -56,22 +53,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 				else
 				{
-					m_filesToArchive.Add(m_lastBackupFile);
+					FilesToArchive.Add(m_lastBackupFile);
 				}
 			}
-
-			// other files would go here, if there were an option to archive them.
-
-			// close the dialog
 			DialogResult = DialogResult.OK;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		public List<string> FilesToArchive { get { return m_filesToArchive;  }}
+		/// <summary />
+		public List<string> FilesToArchive { get; } = new List<string>();
 
 		private void get_Last_Backup()
 		{
-			BackupFileRepository backups = new BackupFileRepository(FwDirectoryFinder.DefaultBackupDirectory);
+			var backups = new BackupFileRepository(FwDirectoryFinder.DefaultBackupDirectory);
 			var projName = backups.AvailableProjectNames.FirstOrDefault(s => s == m_cache.ProjectId.Name);
 
 			if (!string.IsNullOrEmpty(projName))
