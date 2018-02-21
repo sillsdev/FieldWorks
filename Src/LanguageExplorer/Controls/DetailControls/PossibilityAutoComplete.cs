@@ -44,7 +44,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_listBox = new ComboListBox {DropDownStyle = ComboBoxStyle.DropDownList, ActivateOnShow = false};
 			m_listBox.SelectedIndexChanged += HandleSelectedIndexChanged;
 			m_listBox.SameItemSelected += HandleSameItemSelected;
-			m_listBox.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
+			m_listBox.StyleSheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 			m_listBox.WritingSystemFactory = cache.WritingSystemFactory;
 			m_searcher = new StringSearcher<ICmPossibility>(SearchType.Prefix, cache.ServiceLocator.WritingSystemManager);
 			m_possibilities = new List<ICmPossibility>();

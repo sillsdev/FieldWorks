@@ -10,7 +10,6 @@ using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FwCoreDlgs;
 
 namespace LanguageExplorer.Controls.XMLViews
 {

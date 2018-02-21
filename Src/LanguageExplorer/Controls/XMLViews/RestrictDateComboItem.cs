@@ -4,7 +4,6 @@
 
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Filters;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;

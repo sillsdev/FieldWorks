@@ -151,7 +151,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\NHunspell.dll</HintPath>
     </Reference>
-	<Reference Include="NAudio">
+    <Reference Include="NAudio">
       <HintPath>..\..\..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
     </Reference>
     <Reference Include="NAudio.Lame">
@@ -230,7 +230,9 @@
     </Compile>
     <Compile Include="ActivationContextHelper.cs" />
     <Compile Include="AlphaOutline.cs" />
+    <Compile Include="FontHeightAdjuster.cs" />
     <Compile Include="FwApplicationSettingsBase.cs" />
+    <Compile Include="IDropDownBox.cs" />
     <Compile Include="IReadonlyPropertyTable.cs" />
     <Compile Include="LcmExtensions.cs" />
     <Compile Include="LinkProperty.cs" />

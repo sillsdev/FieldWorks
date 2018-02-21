@@ -20,7 +20,6 @@ using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
@@ -108,7 +107,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				writer.WriteRaw(content);
 				GenerateClosingHtml(writer);
 				writer.Flush();
-				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, cache, FontHeightAdjuster.StyleSheetFromPropertyTable(readOnlyPropertyTable)));
+				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, cache, FwUtils.StyleSheetFromPropertyTable(readOnlyPropertyTable)));
 				cssWriter.Flush();
 			}
 
@@ -251,7 +250,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static bool IsNormalRtl(IReadonlyPropertyTable readOnlyPropertyTable)
 		{
 			// Right-to-Left for the overall layout is determined by Dictionary-Normal
-			var dictionaryNormalStyle = new ExportStyleInfo(FontHeightAdjuster.StyleSheetFromPropertyTable(readOnlyPropertyTable).Styles["Dictionary-Normal"]);
+			var dictionaryNormalStyle = new ExportStyleInfo(FwUtils.StyleSheetFromPropertyTable(readOnlyPropertyTable).Styles["Dictionary-Normal"]);
 			return dictionaryNormalStyle.DirectionIsRightToLeft == TriStateBool.triTrue; // default is LTR
 		}
 
@@ -272,7 +271,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
 				IReadonlyPropertyTable readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
-				var fwStyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(readOnlyPropertyTable);
+				var fwStyleSheet = FwUtils.StyleSheetFromPropertyTable(readOnlyPropertyTable);
 				var custCssPath = string.Empty;
 				var projType = string.IsNullOrEmpty(configDir) ? null : new DirectoryInfo(configDir).Name;
 				if (!string.IsNullOrEmpty(projType))

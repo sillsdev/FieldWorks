@@ -54,7 +54,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public AtomicReferencePOSSlice(LcmCache cache, ICmObject obj, int flid, IPropertyTable propertyTable, IPublisher publisher)
 			: base(new UserControl(), cache, obj, flid)
 		{
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
+			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 			var defAnalWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			Tree = new TreeCombo
 			{

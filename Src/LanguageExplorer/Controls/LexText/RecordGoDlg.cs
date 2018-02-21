@@ -10,8 +10,6 @@ using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.LexText
@@ -41,7 +39,7 @@ namespace LanguageExplorer.Controls.LexText
 			var xnWindow = PropertyTable.GetValue<XElement>("WindowConfiguration");
 			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingRecords\"]/parameters");
 			var searchEngine = SearchEngine.Get(PropertyTable, "RecordGoSearchEngine", () => new RecordGoSearchEngine(m_cache));
-			m_matchingObjectsBrowser.Initialize(m_cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine);
+			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine);
 			// start building index
 			var ws = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if (ws != null)

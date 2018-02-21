@@ -70,7 +70,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			this.m_rbKeepAnalyses = new System.Windows.Forms.RadioButton();
 			this.m_rbDiscardAnalyses = new System.Windows.Forms.RadioButton();
 			this.m_btnMore = new System.Windows.Forms.Button();
-			this.m_cbNewSpelling = new SIL.FieldWorks.Common.Widgets.FwComboBox();
+			this.m_cbNewSpelling = new LanguageExplorer.Controls.FwComboBox();
 			this.m_cbMaintainCase = new System.Windows.Forms.CheckBox();
 			this.m_btnRefresh = new System.Windows.Forms.Button();
 			this.m_optionsPanel = new System.Windows.Forms.Panel();
@@ -325,7 +325,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private System.Windows.Forms.RadioButton m_rbKeepAnalyses;
 		private System.Windows.Forms.RadioButton m_rbDiscardAnalyses;
 		private System.Windows.Forms.Button m_btnMore;
-		private SIL.FieldWorks.Common.Widgets.FwComboBox m_cbNewSpelling;
+		private LanguageExplorer.Controls.FwComboBox m_cbNewSpelling;
 		private System.Windows.Forms.CheckBox m_cbMaintainCase;
 		private System.Windows.Forms.Button m_btnRefresh;
 		private System.Windows.Forms.Panel m_optionsPanel;

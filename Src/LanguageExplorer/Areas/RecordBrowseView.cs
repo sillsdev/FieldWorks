@@ -13,7 +13,6 @@ using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -438,7 +437,7 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 
-			BrowseViewer.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+			BrowseViewer.StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 		}
 
 		/// <summary>

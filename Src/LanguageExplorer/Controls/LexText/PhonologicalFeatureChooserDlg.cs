@@ -19,7 +19,6 @@ using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
@@ -266,7 +265,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			m_cache = cache;
 			m_valuesCombo.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_valuesCombo.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			m_valuesCombo.StyleSheet = FwUtils.StyleSheetFromPropertyTable(m_propertyTable);
 
 			LoadPhonFeats(FS);
 			BuildInitialBrowseView();
@@ -474,7 +473,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_bvList.ColumnsChanged += BrowseViewer_ColumnsChanged;
 			m_bvList.Resize += m_bvList_Resize;
 			m_bvList.TabStop = true;
-			m_bvList.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			m_bvList.StyleSheet = FwUtils.StyleSheetFromPropertyTable(m_propertyTable);
 			m_bvList.Dock = DockStyle.Fill;
 			m_bvList.BackColor = SystemColors.Window;
 			m_listPanel.Controls.Add(m_bvList);

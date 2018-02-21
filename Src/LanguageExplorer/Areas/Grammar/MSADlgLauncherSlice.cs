@@ -8,7 +8,6 @@ using SIL.FieldWorks.Common.RootSites;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.Xml;
 
 namespace LanguageExplorer.Areas.Grammar
@@ -77,7 +76,7 @@ namespace LanguageExplorer.Areas.Grammar
 				"InterlinearName",
 				XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
 			var view = (MSADlglauncherView)ctrl.MainControl;
-			view.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+			view.StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 		}
 
 		/// <summary>

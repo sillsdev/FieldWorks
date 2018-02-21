@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using SIL.Xml;
 
@@ -45,8 +46,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string GeneratePipeHandle(string handle)
 		{
 			const string ksSuiteIdPrefix = ksSuiteName + ":";
-			return (handle.StartsWith(ksSuiteIdPrefix) ? string.Empty : ksSuiteIdPrefix) +
-				handle.Replace('/', ':').Replace('\\', ':');
+			return (handle.StartsWith(ksSuiteIdPrefix) ? string.Empty : ksSuiteIdPrefix) + handle.Replace('/', ':').Replace('\\', ':');
 		}
 
 		// On Linux, the default string output does not choose a font based on the characters in
@@ -222,7 +222,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns></returns>
 		public static Control FindControl(Control parentControl, string nameOfChildToFocus)
 		{
-			if (string.IsNullOrEmpty(nameOfChildToFocus))
+			if (String.IsNullOrEmpty(nameOfChildToFocus))
 			{
 				return null;
 			}
@@ -247,7 +247,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static string RemoveUnderline(string guiString)
 		{
-			return guiString.Replace("_", string.Empty);
+			return guiString.Replace("_", String.Empty);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -258,12 +258,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static Rectangle GetRcFromString(string str)
 		{
-			str = str.Replace("{", string.Empty);
-			str = str.Replace("}", string.Empty);
-			str = str.Replace("X=", string.Empty);
-			str = str.Replace("Y=", string.Empty);
-			str = str.Replace("Width=", string.Empty);
-			str = str.Replace("Height=", string.Empty);
+			str = str.Replace("{", String.Empty);
+			str = str.Replace("}", String.Empty);
+			str = str.Replace("X=", String.Empty);
+			str = str.Replace("Y=", String.Empty);
+			str = str.Replace("Width=", String.Empty);
+			str = str.Replace("Height=", String.Empty);
 
 			string[] strVals = str.Split(",".ToCharArray(), 4);
 			Rectangle rc = Rectangle.Empty;
@@ -271,13 +271,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (strVals != null)
 			{
 				int val;
-				if (strVals.Length > 0 && int.TryParse(strVals[0], out val))
+				if (strVals.Length > 0 && Int32.TryParse(strVals[0], out val))
 					rc.X = val;
-				if (strVals.Length > 1 && int.TryParse(strVals[1], out val))
+				if (strVals.Length > 1 && Int32.TryParse(strVals[1], out val))
 					rc.Y = val;
-				if (strVals.Length > 2 && int.TryParse(strVals[2], out val))
+				if (strVals.Length > 2 && Int32.TryParse(strVals[2], out val))
 					rc.Width = val;
-				if (strVals.Length > 3 && int.TryParse(strVals[3], out val))
+				if (strVals.Length > 3 && Int32.TryParse(strVals[3], out val))
 					rc.Height = val;
 			}
 
@@ -582,7 +582,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string GetTestLangProjDataBaseName()
 		{
 			string dbName = Environment.GetEnvironmentVariable("TE_DATABASE");
-			if (string.IsNullOrEmpty(dbName))
+			if (String.IsNullOrEmpty(dbName))
 				return "TestLangProj";
 			return dbName;
 		}
@@ -600,6 +600,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool IsUnsupportedCultureException(Exception e)
 		{
 			return e is CultureNotFoundException;
+		}
+
+		/// <summary>
+		/// Get the stylesheet from an IPropertyRetriever.
+		/// </summary>
+		public static LcmStyleSheet StyleSheetFromPropertyTable(IPropertyRetriever propertyTable)
+		{
+			return propertyTable.GetValue<LcmStyleSheet>("FlexStyleSheet");
 		}
 	}
 

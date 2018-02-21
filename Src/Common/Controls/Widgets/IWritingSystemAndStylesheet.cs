@@ -1,10 +1,8 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -24,27 +22,4 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary></summary>
 		ILgWritingSystemFactory WritingSystemFactory { get; set; }
 	}
-
-	/// <summary>
-	/// helps controls setup WritingSystem[Factory] and Stylesheet related functionality
-	/// </summary>
-	public static class WritingSystemAndStylesheetHelper
-	{
-		/// <summary>
-		/// setup the given control's WritingSystem[Factory] and Stylesheet related functionality
-		/// </summary>
-		/// <param name="propertyTable"></param>
-		/// <param name="control"></param>
-		/// <param name="cache"></param>
-		/// <param name="wsDefault">used to set WritingSytemCode and Font for the control</param>
-		public static void SetupWritingSystemAndStylesheetInfo(IPropertyTable propertyTable, IWritingSystemAndStylesheet control,
-			LcmCache cache, int wsDefault)
-		{
-			control.WritingSystemFactory = cache.WritingSystemFactory;
-			control.WritingSystemCode = wsDefault;
-			control.Font = new System.Drawing.Font(cache.ServiceLocator.WritingSystemManager.Get(wsDefault).DefaultFontName, 10);
-			control.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
-		}
-	}
-
 }

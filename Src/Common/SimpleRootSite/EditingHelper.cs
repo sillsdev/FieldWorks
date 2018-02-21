@@ -1468,48 +1468,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Determine the default font to use for the specified writing system,
-		/// displayed in the default Normal style of the specified stylesheet.
-		/// Currently duplicated from Widgets.FontHeightAdjuster. Grrr.
-		/// </summary>
-		/// <param name="hvoWs"></param>
-		/// <param name="styleSheet"></param>
-		/// <param name="wsf"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public static Font GetFontForNormalStyle(int hvoWs, IVwStylesheet styleSheet,
-			ILgWritingSystemFactory wsf)
-		{
-			ITsTextProps ttpNormal = styleSheet.NormalFontStyle;
-			string styleName = "Normal";
-			if (ttpNormal != null)
-				styleName = ttpNormal.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
-
-			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
-			ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, styleName);
-			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoWs);
-			ITsTextProps ttp = ttpBldr.GetTextProps();
-
-			IVwPropertyStore vwps = VwPropertyStoreClass.Create();
-			vwps.Stylesheet = styleSheet;
-			vwps.WritingSystemFactory = wsf;
-			LgCharRenderProps chrps = vwps.get_ChrpFor(ttp);
-			ILgWritingSystem ws = wsf.get_EngineOrNull(hvoWs);
-			ws.InterpretChrp(ref chrps);
-			int dympHeight = chrps.dympHeight;
-			StringBuilder bldr = new StringBuilder(chrps.szFaceName.Length);
-			for (int i = 0; i < chrps.szFaceName.Length; i++)
-			{
-				ushort ch = chrps.szFaceName[i];
-				if (ch == 0)
-					break; // null termination
-				bldr.Append(Convert.ToChar(ch));
-			}
-			return new Font(bldr.ToString(), (float)(dympHeight / 1000.0));
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Allows an application to set a cursor for the given selection.
 		/// </summary>
 		/// <param name="sel"></param>

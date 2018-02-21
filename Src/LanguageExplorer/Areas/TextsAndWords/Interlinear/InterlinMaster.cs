@@ -18,7 +18,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel.Infrastructure;
 using SIL.Xml;
 
@@ -254,7 +253,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void SetupStyleSheet()
 		{
-			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+			m_styleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 		}
 
 		/// <summary>

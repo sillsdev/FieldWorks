@@ -41,13 +41,13 @@ namespace LanguageExplorer.Controls.LexText
 		#region Designer data members
 
 		private System.Windows.Forms.GroupBox m_groupBox;
-		private SIL.FieldWorks.Common.Widgets.TreeCombo m_tcSecondaryPOS;
+		private LanguageExplorer.Controls.TreeCombo m_tcSecondaryPOS;
 		private System.Windows.Forms.Label m_lSLots;
-		private SIL.FieldWorks.Common.Widgets.FwComboBox m_fwcbSlots;
-		private SIL.FieldWorks.Common.Widgets.TreeCombo m_tcMainPOS;
+		private LanguageExplorer.Controls.FwComboBox m_fwcbSlots;
+		private LanguageExplorer.Controls.TreeCombo m_tcMainPOS;
 		private System.Windows.Forms.Label m_lMainCat;
 		private System.Windows.Forms.Label m_lAfxType;
-		private SIL.FieldWorks.Common.Widgets.FwComboBox m_fwcbAffixTypes;
+		private LanguageExplorer.Controls.FwComboBox m_fwcbAffixTypes;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -475,7 +475,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
 
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(m_propertyTable);
 			var defUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
 			var defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			var defAnalWsFont = defAnalWs.DefaultFontName;
@@ -550,12 +550,12 @@ namespace LanguageExplorer.Controls.LexText
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MSAGroupBox));
 			this.m_groupBox = new System.Windows.Forms.GroupBox();
 			this.m_lAfxType = new System.Windows.Forms.Label();
-			this.m_fwcbAffixTypes = new SIL.FieldWorks.Common.Widgets.FwComboBox();
+			this.m_fwcbAffixTypes = new LanguageExplorer.Controls.FwComboBox();
 			this.m_lMainCat = new System.Windows.Forms.Label();
-			this.m_tcMainPOS = new SIL.FieldWorks.Common.Widgets.TreeCombo();
+			this.m_tcMainPOS = new LanguageExplorer.Controls.TreeCombo();
 			this.m_lSLots = new System.Windows.Forms.Label();
-			this.m_fwcbSlots = new SIL.FieldWorks.Common.Widgets.FwComboBox();
-			this.m_tcSecondaryPOS = new SIL.FieldWorks.Common.Widgets.TreeCombo();
+			this.m_fwcbSlots = new LanguageExplorer.Controls.FwComboBox();
+			this.m_tcSecondaryPOS = new LanguageExplorer.Controls.TreeCombo();
 			this.m_groupBox.SuspendLayout();
 			this.SuspendLayout();
 			//

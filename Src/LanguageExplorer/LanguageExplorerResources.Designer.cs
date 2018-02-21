@@ -3405,6 +3405,16 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap password_reveal_eye_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("password_reveal_eye_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There was a problem while trying to restore the settings.  Your settings will be restored to their default values..
         /// </summary>
         internal static string ProblemRestoringSettings {

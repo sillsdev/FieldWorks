@@ -9,10 +9,10 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
@@ -51,7 +51,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				() => new ReversalEntrySearchEngine(m_cache, ReversalIndex));
 			searchEngine.FilteredEntryHvos = m_FilteredReversalEntryHvos;
 
-			m_matchingObjectsBrowser.Initialize(m_cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine, m_cache.ServiceLocator.WritingSystemManager.Get(ReversalIndex.WritingSystem));
+			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine, m_cache.ServiceLocator.WritingSystemManager.Get(ReversalIndex.WritingSystem));
 
 			// start building index
 			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
+using LanguageExplorer.Controls;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -65,10 +66,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_node = node;
 
 			m_formTextBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_formTextBox.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable));
+			m_formTextBox.AdjustForStyleSheet(FwUtils.StyleSheetFromPropertyTable(propertyTable));
 
 			m_glossTextBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_glossTextBox.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable));
+			m_glossTextBox.AdjustForStyleSheet(FwUtils.StyleSheetFromPropertyTable(propertyTable));
 
 			m_categoryComboBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 
@@ -239,7 +240,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.m_formTextBox = new SIL.FieldWorks.Common.Widgets.FwTextBox();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
 			this.m_categoryNotCheckBox = new System.Windows.Forms.CheckBox();
-			this.m_categoryComboBox = new SIL.FieldWorks.Common.Widgets.TreeCombo();
+			this.m_categoryComboBox = new LanguageExplorer.Controls.TreeCombo();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
 			this.m_inflFeatsTreeView = new Aga.Controls.Tree.TreeViewAdv();
 			this.m_featureColumn = new Aga.Controls.Tree.TreeColumn();

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -39,7 +39,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.m_chkMatchCase = new System.Windows.Forms.CheckBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.helpProvider = new System.Windows.Forms.HelpProvider();
-			this.m_cbSearchText = new SIL.FieldWorks.Common.Widgets.TreeCombo();
+			this.m_cbSearchText = new LanguageExplorer.Controls.TreeCombo();
 			this.m_fwtbItem = new SIL.FieldWorks.Common.Widgets.FwTextBox();
 			this.m_lnkSpecify = new System.Windows.Forms.LinkLabel();
 			((System.ComponentModel.ISupportInitialize)(this.m_tbSearchText)).BeginInit();
@@ -253,6 +253,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private SIL.FieldWorks.Common.Widgets.FwTextBox m_fwtbItem;
 		private System.Windows.Forms.LinkLabel m_lnkSpecify;
 		protected System.Windows.Forms.ComboBox m_cbWritingSystem;
-		protected SIL.FieldWorks.Common.Widgets.TreeCombo m_cbSearchText;
+		protected LanguageExplorer.Controls.TreeCombo m_cbSearchText;
 	}
 }

@@ -4,8 +4,8 @@
 
 using System.Diagnostics;
 using System.Drawing;
+using LanguageExplorer.Controls;
 using LanguageExplorer.LcmUi;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;

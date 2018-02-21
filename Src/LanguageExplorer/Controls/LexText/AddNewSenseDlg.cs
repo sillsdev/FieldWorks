@@ -118,7 +118,7 @@ namespace LanguageExplorer.Controls.LexText
 			var defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
 			m_fwtbCitationForm.Font = new Font(defVernWs.DefaultFontName, 10);
 			m_fwtbGloss.Font = new Font(defAnalWs.DefaultFontName, 10);
-			var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
+			var stylesheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 			// Set writing system factory and code for the two edit boxes.
 			m_fwtbCitationForm.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwtbCitationForm.WritingSystemCode = defVernWs.Handle;

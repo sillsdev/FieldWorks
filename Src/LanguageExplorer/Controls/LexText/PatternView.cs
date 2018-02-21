@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.LexText
@@ -86,7 +86,7 @@ namespace LanguageExplorer.Controls.LexText
 			}
 			else if (m_hvo != 0)
 			{
-				m_rootb.SetRootObject(m_hvo, m_vc, m_rootFrag, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable));
+				m_rootb.SetRootObject(m_hvo, m_vc, m_rootFrag, FwUtils.StyleSheetFromPropertyTable(PropertyTable));
 				m_rootb.Reconstruct();
 			}
 		}
@@ -106,7 +106,7 @@ namespace LanguageExplorer.Controls.LexText
 			m_rootb.DataAccess = m_sda;
 			if (m_hvo != 0)
 			{
-				m_rootb.SetRootObject(m_hvo, m_vc, m_rootFrag, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable));
+				m_rootb.SetRootObject(m_hvo, m_vc, m_rootFrag, FwUtils.StyleSheetFromPropertyTable(PropertyTable));
 			}
 		}
 

@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.MGA;
 using Microsoft.Win32;
@@ -546,7 +547,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			try
 			{
-				IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+				IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 				var configNode = XDocument.Parse(LexTextControls.MatchingEntriesGuiControlParameters).Root;
 				var searchEngine = SearchEngine.Get(PropertyTable, "InsertEntrySearchEngine", () => new InsertEntrySearchEngine(cache));
 				m_matchingObjectsBrowser.Initialize(cache, stylesheet, configNode, searchEngine);

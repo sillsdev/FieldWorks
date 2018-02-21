@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			System.Windows.Forms.Button btnHelp;
 			System.Windows.Forms.GroupBox gbPreview;
 			this.m_FontAttributes = new SIL.FieldWorks.FwCoreDlgs.Controls.FwFontAttributes();
-			this.m_preview = new SIL.FieldWorks.Common.Widgets.FwLabel();
+			this.m_preview = new SIL.FieldWorks.FwCoreDlgs.FwLabel();
 			this.m_tbFontName = new System.Windows.Forms.TextBox();
 			this.m_lbFontNames = new System.Windows.Forms.ListBox();
 			this.m_tbFontSize = new System.Windows.Forms.TextBox();
@@ -210,7 +210,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected System.Windows.Forms.TextBox m_tbFontSize;
 		/// <summary/>
 		protected System.Windows.Forms.ListBox m_lbFontSizes;
-		private SIL.FieldWorks.Common.Widgets.FwLabel m_preview;
+		private SIL.FieldWorks.FwCoreDlgs.FwLabel m_preview;
 
 	}
 }

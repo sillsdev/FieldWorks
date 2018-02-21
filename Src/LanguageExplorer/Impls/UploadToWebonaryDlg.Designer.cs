@@ -2,8 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.Common.Widgets;
-
 namespace LanguageExplorer.Impls
 {
 	partial class UploadToWebonaryDlg
@@ -45,7 +43,7 @@ namespace LanguageExplorer.Impls
 			this.helpButton = new System.Windows.Forms.Button();
 			this.webonarySettingsGroupbox = new System.Windows.Forms.GroupBox();
 			this.settingsForWebonaryTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-			this.webonaryPasswordTextbox = new SIL.FieldWorks.Common.Widgets.PasswordBox();
+			this.webonaryPasswordTextbox = new LanguageExplorer.Impls.PasswordBox();
 			this.webonaryUsernameTextbox = new System.Windows.Forms.TextBox();
 			this.webonarySiteNameTextbox = new System.Windows.Forms.TextBox();
 			this.passwordLabel = new System.Windows.Forms.Label();
@@ -299,7 +297,7 @@ namespace LanguageExplorer.Impls
 		private System.Windows.Forms.Button helpButton;
 		private System.Windows.Forms.Label webonaryDomainLabel;
 		private System.Windows.Forms.TextBox outputLogTextbox;
-		private PasswordBox webonaryPasswordTextbox;
+		private LanguageExplorer.Impls.PasswordBox webonaryPasswordTextbox;
 		private System.Windows.Forms.CheckBox rememberPasswordCheckbox;
 	}
 }

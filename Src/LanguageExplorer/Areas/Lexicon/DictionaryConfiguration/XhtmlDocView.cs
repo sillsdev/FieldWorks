@@ -14,10 +14,8 @@ using Gecko;
 using Gecko.DOM;
 using LanguageExplorer.Controls;
 using LanguageExplorer.DictionaryConfiguration;
-using LanguageExplorer.Impls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
@@ -354,7 +352,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			var browserElement = browser.Document.Body;
 			var entriesToPublish = PublicationDecorator.GetEntriesToPublish(PropertyTable, MyRecordList.VirtualFlid);
 			// Right-to-Left for the overall layout is determined by Dictionary-Normal
-			var dictionaryNormalStyle = new ExportStyleInfo(FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable).Styles["Dictionary-Normal"]);
+			var dictionaryNormalStyle = new ExportStyleInfo(FwUtils.StyleSheetFromPropertyTable(PropertyTable).Styles["Dictionary-Normal"]);
 			var isNormalRightToLeft = dictionaryNormalStyle.DirectionIsRightToLeft == TriStateBool.triTrue; // default is LTR
 			// Get the current page
 			if (goingUp)

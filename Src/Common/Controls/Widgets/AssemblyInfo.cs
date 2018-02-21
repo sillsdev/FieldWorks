@@ -7,4 +7,6 @@ using System.Runtime.CompilerServices;
 
 [assembly: AssemblyTitle("Widgets")]
 
+[assembly: InternalsVisibleTo("FwCoreDlgs")]
+[assembly: InternalsVisibleTo("LanguageExplorer")]
 [assembly: InternalsVisibleTo("WidgetsTests")]

@@ -7,7 +7,6 @@ using System.Xml.Linq;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.Xml;
 
@@ -176,7 +175,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			using(var dlg = new XmlDocConfigureDlg())
 			{
 				var mainWindow = PropertyTable.GetValue<IFwMainWnd>("window");
-				dlg.SetConfigDlgInfo(m_configurationParametersElement, Cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable),
+				dlg.SetConfigDlgInfo(m_configurationParametersElement, Cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable),
 					mainWindow, PropertyTable, Publisher, sProp);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{

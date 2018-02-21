@@ -5,7 +5,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using LanguageExplorer.Controls.DetailControls;
-using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
@@ -34,7 +34,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 
 			//We need to set the Font so the height of this slice will be
 			//set appropriately to fit the text.
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			var fontHeight = FontHeightAdjuster.GetFontHeightForStyle("Normal", stylesheet, Cache.DefaultVernWs, Cache.LanguageWritingSystemFactoryAccessor);
 			Font = new Font(Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.DefaultFontName, fontHeight / 1000f);
 		}

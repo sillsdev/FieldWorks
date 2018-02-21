@@ -92,7 +92,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			m_cache = cache;
 			m_entry = entry;
 			m_fwTextBoxBottomMsg.WritingSystemFactory = m_cache.WritingSystemFactory;
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(m_propertyTable);
 			// We want to do this BEFORE the text gets set, to avoid overriding its height properties.
 			// However, because of putting multiple lines in the box, we also need to do it AFTER we set the text
 			// (in SetBottomMessage) so it adjusts to the resulting even greater height.

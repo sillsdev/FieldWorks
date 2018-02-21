@@ -128,7 +128,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				obj.PropertyTable = propertyTable;
 			}
 			m_cache = cache;
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
+			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 
 			Debug.Assert(obj != null);
 			Debug.Assert(obj.Object != null);

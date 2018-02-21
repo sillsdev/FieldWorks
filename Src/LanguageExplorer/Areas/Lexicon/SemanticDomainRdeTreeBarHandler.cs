@@ -37,7 +37,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			: base(propertyTable, false, true, true, "best analorvern")
 		{
 			m_semDomRepo = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
-			m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			m_stylesheet = FwUtils.StyleSheetFromPropertyTable(m_propertyTable);
 		}
 
 		#region ISemanticDomainTreeBarHandler implementation

@@ -21,7 +21,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LinkVariantToEntryOrSense));
 			this.lblCreateEntry = new System.Windows.Forms.Label();
-			this.tcVariantTypes = new SIL.FieldWorks.Common.Widgets.TreeCombo();
+			this.tcVariantTypes = new LanguageExplorer.Controls.TreeCombo();
 			this.lblVariantType = new System.Windows.Forms.Label();
 			this.m_panel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_tbForm)).BeginInit();
@@ -142,7 +142,7 @@ namespace LanguageExplorer.Controls.LexText
 		#endregion
 
 		private System.Windows.Forms.Label lblCreateEntry;
-		private SIL.FieldWorks.Common.Widgets.TreeCombo tcVariantTypes;
+		private LanguageExplorer.Controls.TreeCombo tcVariantTypes;
 		private System.Windows.Forms.Label lblVariantType;
 	}
 }

@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Xml;
@@ -48,7 +47,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			m_publisher = publisher;
 			m_semdomRepo = Cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
-			m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
+			m_stylesheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 			selectedDomainsList.Font = FontHeightAdjuster.GetFontForNormalStyle(Cache.DefaultAnalWs, m_stylesheet, Cache);
 			m_selectedItems.UnionWith(selectedItems);
 			UpdateDomainTreeAndListLabels(labels);

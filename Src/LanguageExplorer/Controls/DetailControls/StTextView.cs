@@ -5,9 +5,9 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -60,7 +60,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public void Init(int ws)
 		{
 			Cache = PropertyTable.GetValue<LcmCache>("cache");
-			StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+			StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			m_vc = new StVc("Normal", ws)
 			{
 				Cache = m_cache,

@@ -12,7 +12,6 @@ using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.Lexicon;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -955,7 +954,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 
 		private string GenerateNumberStyleFromLayoutTreeNode(LayoutTreeNode node)
 		{
-			var styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			var styleSheet = FwUtils.StyleSheetFromPropertyTable(m_propertyTable);
 			const string senseNumberStyleBase = "Dictionary-SenseNumber";
 			var senseNumberStyleName = senseNumberStyleBase;
 			var matchedOrCreated = false;

@@ -4,6 +4,7 @@
 
 using System;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
@@ -106,7 +107,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_helpProvider = new System.Windows.Forms.HelpProvider();
-			this.m_tagComboBox = new SIL.FieldWorks.Common.Widgets.TreeCombo();
+			this.m_tagComboBox = new LanguageExplorer.Controls.TreeCombo();
 			this.SuspendLayout();
 			//
 			// m_btnHelp

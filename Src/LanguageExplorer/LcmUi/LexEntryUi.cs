@@ -14,7 +14,6 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.LcmUi
 {
@@ -179,7 +178,7 @@ namespace LanguageExplorer.LcmUi
 				}
 
 				EnsureWindowConfiguration(propertyTable);
-				var styleSheet = GetStyleSheet(cache, propertyTable);
+				var styleSheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 				if (leui == null)
 				{
 					var entry = ShowFindEntryDialog(cache, propertyTable, publisher, subscriber, tssWf, owner);
@@ -202,7 +201,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			var tssWf = tssWfIn;
 			var entries = FindEntriesForWordformUI(cache, tssWf, wfa);
-			var styleSheet = GetStyleSheet(cache, propertyTable);
+			var styleSheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 			if (entries == null || entries.Count == 0)
 			{
 				var entry = ShowFindEntryDialog(cache, propertyTable, publisher, subscriber, tssWf, owner);
@@ -279,41 +278,6 @@ namespace LanguageExplorer.LcmUi
 			((Form)sender).TopMost = false;
 		}
 
-		/// <summary>
-		/// Determine a stylesheet from an IPropertyTable, or create a new one. Currently this is done
-		/// by looking for the main window and seeing whether it has a StyleSheet property that
-		/// returns one. (We use reflection because the relevant classes are in DLLs we can't
-		/// reference.)
-		/// </summary>
-		private static IVwStylesheet StyleSheetFromPropertyTable(IPropertyTable propertyTable)
-		{
-			var mainWindow = propertyTable.GetValue<Form>("window");
-			if (mainWindow == null)
-			{
-				return null;
-			}
-			var pi = mainWindow.GetType().GetProperty("StyleSheet");
-			if (pi == null)
-			{
-				return null;
-			}
-			return pi.GetValue(mainWindow, null) as IVwStylesheet;
-		}
-
-		private static IVwStylesheet GetStyleSheet(LcmCache cache, IPropertyTable propertyTable)
-		{
-			var vss = StyleSheetFromPropertyTable(propertyTable);
-			if (vss != null)
-			{
-				return vss;
-			}
-			// Get a style sheet for the Language Explorer, and store it in the property table.
-			var styleSheet = new LcmStyleSheet();
-			styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-			propertyTable.SetProperty("FlexStyleSheet", styleSheet, false, false);
-			return styleSheet;
-		}
-
 		private static void EnsureWindowConfiguration(IPropertyTable propertyTable)
 		{
 #if RANDYTODO
@@ -379,7 +343,7 @@ namespace LanguageExplorer.LcmUi
 			IPropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
 			bool hideInsertButton)
 		{
-			DisplayRelatedEntries(cache, owner, GetStyleSheet(cache, propertyTable), helpProvider, helpFileKey, tssWf, hideInsertButton);
+			DisplayRelatedEntries(cache, owner, FwUtils.StyleSheetFromPropertyTable(propertyTable), helpProvider, helpFileKey, tssWf, hideInsertButton);
 		}
 
 		/// <summary>
@@ -404,7 +368,7 @@ namespace LanguageExplorer.LcmUi
 			{
 				return;
 			}
-			DisplayRelatedEntries(cache, owner, GetStyleSheet(cache, propertyTable), helpProvider, helpFileKey, tss.GetSubstring(ichMin, ichLim), false, sel);
+			DisplayRelatedEntries(cache, owner, FwUtils.StyleSheetFromPropertyTable(propertyTable), helpProvider, helpFileKey, tss.GetSubstring(ichMin, ichLim), false, sel);
 		}
 
 		/// <summary>

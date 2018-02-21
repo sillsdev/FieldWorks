@@ -66,7 +66,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.InitializeFlexComponent(flexComponentParameters);
 
 			//Set the stylesheet so that the font size for the...
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			m_tree.StyleSheet = stylesheet;
 			var list = Cache.LanguageProject.PartsOfSpeechOA;
 

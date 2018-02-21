@@ -9,7 +9,6 @@ using System.Xml.Linq;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.Utils;
 
@@ -112,7 +111,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		protected override void SetupStylesheet()
 		{
 			// If possible make it use the style sheet appropriate for its main window.
-			m_rootSite.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+			m_rootSite.StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 		}
 		protected virtual RootSite ConstructRoot()
 		{

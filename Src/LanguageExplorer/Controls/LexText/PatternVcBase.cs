@@ -8,7 +8,6 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.LexText
@@ -256,7 +255,7 @@ namespace LanguageExplorer.Controls.LexText
 		/// </summary>
 		protected int GetFontHeight(int ws)
 		{
-			return FontHeightAdjuster.GetFontHeightForStyle("Normal", FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), ws, m_cache.LanguageWritingSystemFactoryAccessor);
+			return FontHeightAdjuster.GetFontHeightForStyle("Normal", FwUtils.StyleSheetFromPropertyTable(m_propertyTable), ws, m_cache.LanguageWritingSystemFactoryAccessor);
 		}
 	}
 }

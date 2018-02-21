@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			using (var listBox = new FwListBox())
 			{
 
-				using (var collection = new FwListBox.ObjectCollection(listBox))
+				using (var collection = new ObjectCollection(listBox))
 				{
 					ITsString testString = TsStringUtils.MakeString("test", m_hvoEnglishWs);
 
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			using (var listBox = new FwListBox())
 			{
-				using (var collection = new FwListBox.ObjectCollection(listBox))
+				using (var collection = new ObjectCollection(listBox))
 				{
 					ITsString testString = TsStringUtils.MakeString("test", m_hvoEnglishWs);
 					collection.Add(testString);
@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			using (var listBox = new FwListBox())
 			{
-				using (var collection = new FwListBox.ObjectCollection(listBox))
+				using (var collection = new ObjectCollection(listBox))
 				{
 					ITsString testString = TsStringUtils.MakeString("test", m_hvoEnglishWs);
 					collection.Add(testString);
@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			using (var listBox = new FwListBox())
 			{
-				using (var collection = new FwListBox.ObjectCollection(listBox))
+				using (var collection = new ObjectCollection(listBox))
 				{
 					ITsString testString1 = TsStringUtils.MakeString("test1", m_hvoEnglishWs);
 					ITsString testString2 = TsStringUtils.MakeString("test2", m_hvoEnglishWs);

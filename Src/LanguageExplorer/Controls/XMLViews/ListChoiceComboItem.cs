@@ -9,7 +9,6 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;

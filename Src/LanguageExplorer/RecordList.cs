@@ -18,7 +18,6 @@ using SIL.Code;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -3095,7 +3094,7 @@ namespace LanguageExplorer
 		protected static int GetFontHeightFromStylesheet(LcmCache cache, IPropertyTable propertyTable, bool analysisWs)
 		{
 			int fontHeight;
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
+			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 			var wsContainer = cache.ServiceLocator.WritingSystems;
 			if (analysisWs)
 			{

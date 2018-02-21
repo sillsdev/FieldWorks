@@ -19,7 +19,6 @@ using LanguageExplorer.Areas;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -1420,7 +1419,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				TabIndex = m_labelsTreeView.TabIndex
 			};
 			m_flvLabels.SelectionChanged += m_flvLabels_SelectionChanged;
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(m_propertyTable);
 			m_flvLabels.Initialize(Cache, stylesheet, m_propertyTable, configNode, m_objs);
 			if (m_chosenObjs != null)
 			{
@@ -1480,7 +1479,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void SetFontFromWritingSystem(int ws)
 		{
 			var oldFont = m_labelsTreeView.Font;
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(m_propertyTable);
 			var font = FontHeightAdjuster.GetFontForNormalStyle(ws, stylesheet, Cache.WritingSystemFactory);
 			var maxPoints = font.SizeInPoints;
 			foreach (LabelNode node in m_labelsTreeView.Nodes)

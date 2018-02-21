@@ -17,7 +17,6 @@ using Sfm2Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
@@ -204,7 +203,7 @@ namespace LanguageExplorer.Controls.LexText
 			if (propertyTable != null)
 			{
 				m_app = propertyTable.GetValue<IApp>("App");
-				m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
+				m_stylesheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 			}
 			Publisher = publisher;
 			m_dirtyInputFile = true;

@@ -14,7 +14,6 @@ using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel.Utils;
 
@@ -151,7 +150,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 		protected void GenerateStyles()
 		{
-			var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(_flexComponentParameters.PropertyTable);
+			var stylesheet = FwUtils.StyleSheetFromPropertyTable(_flexComponentParameters.PropertyTable);
 			for (var i = 0; i < 5; i++)
 			{
 				stylesheet.Styles.Add(new BaseStyleInfo { Name = $"ParaStyle{i}", IsParagraphStyle = true });

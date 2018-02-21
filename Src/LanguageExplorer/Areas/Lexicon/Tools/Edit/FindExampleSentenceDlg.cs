@@ -14,7 +14,6 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.Widgets;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -174,7 +173,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			m_previewPane = new XmlView(0, "publicationNew", false)
 			{
 				Cache = m_cache,
-				StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable)
+				StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable)
 			};
 
 			var pbc = new BasicPaneBarContainer();

@@ -4,7 +4,6 @@
 
 using System;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.LexText
@@ -168,7 +167,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LinkAllomorphDlg));
 			this.label3 = new System.Windows.Forms.Label();
-			this.m_fwcbAllomorphs = new SIL.FieldWorks.Common.Widgets.FwComboBox();
+			this.m_fwcbAllomorphs = new LanguageExplorer.Controls.FwComboBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.grplbl = new System.Windows.Forms.GroupBox();
 			this.m_panel1.SuspendLayout();

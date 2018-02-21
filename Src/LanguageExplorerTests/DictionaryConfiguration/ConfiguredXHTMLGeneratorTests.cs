@@ -30,7 +30,6 @@ using SIL.IO;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Impls;
-using SIL.FieldWorks.Common.Widgets;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
@@ -46,7 +45,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private const string TestVariantName = "Crazy Variant";
 		private StringBuilder XHTMLStringBuilder { get; set; }
 		private const string DictionaryNormal = "Dictionary-Normal";
-		private BaseStyleInfo DictionaryNormalStyle { get { return FontHeightAdjuster.StyleSheetFromPropertyTable(_flexComponentParameters.PropertyTable).Styles[DictionaryNormal]; } }
+		private BaseStyleInfo DictionaryNormalStyle { get { return FwUtils.StyleSheetFromPropertyTable(_flexComponentParameters.PropertyTable).Styles[DictionaryNormal]; } }
 
 		private GeneratorSettings DefaultSettings
 		{

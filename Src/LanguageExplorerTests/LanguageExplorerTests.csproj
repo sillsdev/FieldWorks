@@ -232,6 +232,7 @@
     </Compile>
     <Compile Include="ArchivingTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\TextsTriStateTreeViewTests.cs" />
+    <Compile Include="Controls\DetailControls\InnerLabeledMultiStringViewTests.cs" />
     <Compile Include="Controls\XMLViews\XmlViewsResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

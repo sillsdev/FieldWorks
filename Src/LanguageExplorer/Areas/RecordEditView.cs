@@ -14,7 +14,6 @@ using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Utils;
@@ -125,7 +124,7 @@ namespace LanguageExplorer.Areas
 			}
 
 			// If possible make it use the style sheet appropriate for its main window.
-			DatTree.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+			DatTree.StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			ShowRecord();
 			m_fullyInitialized = true;
 		}

@@ -144,7 +144,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 #endif
 			m_bvMergeOptions = new BrowseViewer(toolNode, m_cache.LangProject.Hvo, m_cache, null, sda)
 			{
-				StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable)
+				StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable)
 			};
 			m_bvMergeOptions.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			m_bvMergeOptions.SelectedIndexChanged += m_bvMergeOptions_SelectedIndexChanged;

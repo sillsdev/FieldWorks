@@ -211,7 +211,7 @@ namespace LanguageExplorer.Controls.LexText
 
 			SetupBasicTextProperties(wp);
 
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			// Set font, writing system factory, and writing system code for the Lexical Form
 			// edit box.  Also set an empty string with the proper writing system.
 			m_tbForm.Font = new Font(m_cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName, 10);

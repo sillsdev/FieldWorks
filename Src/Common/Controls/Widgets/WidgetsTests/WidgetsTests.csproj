@@ -227,13 +227,8 @@
     <Compile Include="..\..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
-    <Compile Include="FontHeightAdjusterTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="FwListBoxTests.cs" />
-    <Compile Include="FwMultilingualPropViewTests.cs" />
     <Compile Include="FwTextBoxTests.cs" />
-    <Compile Include="InnerLabeledMultiStringViewTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

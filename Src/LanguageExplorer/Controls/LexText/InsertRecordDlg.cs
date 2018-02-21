@@ -92,7 +92,7 @@ namespace LanguageExplorer.Controls.LexText
 				m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
 
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			m_titleTextBox.StyleSheet = stylesheet;
 			m_titleTextBox.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_titleTextBox.WritingSystemCode = m_cache.DefaultAnalWs;
@@ -171,7 +171,7 @@ namespace LanguageExplorer.Controls.LexText
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InsertRecordDlg));
 			this.m_titleTextBox = new SIL.FieldWorks.Common.Widgets.FwTextBox();
-			this.m_typeCombo = new SIL.FieldWorks.Common.Widgets.TreeCombo();
+			this.m_typeCombo = new LanguageExplorer.Controls.TreeCombo();
 			this.m_titleLabel = new System.Windows.Forms.Label();
 			this.m_typeLabel = new System.Windows.Forms.Label();
 			this.m_btnHelp = new System.Windows.Forms.Button();

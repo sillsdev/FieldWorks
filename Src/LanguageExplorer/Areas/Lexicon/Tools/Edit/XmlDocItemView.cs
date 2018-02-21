@@ -11,7 +11,6 @@ using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 using SIL.Xml;
@@ -165,7 +164,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void SetupStylesheet()
 		{
-			StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+			StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 		}
 	}
 }

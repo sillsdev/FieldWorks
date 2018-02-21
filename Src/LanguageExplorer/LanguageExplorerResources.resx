@@ -1405,4 +1405,7 @@ Do you want to continue with the export?</value>
     <value>Unable to start {0}.</value>
     <comment>Error message if user clicks link in About box to open the System Monitor in Linux, but the program is not able to start, probably because it isn't installed. Program name is {0}.</comment>
   </data>
+  <data name="password_reveal_eye_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\password-reveal-eye-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

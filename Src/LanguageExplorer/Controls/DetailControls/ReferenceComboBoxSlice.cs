@@ -10,7 +10,6 @@ using SIL.LCModel.Infrastructure;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 
 namespace LanguageExplorer.Controls.DetailControls
 {

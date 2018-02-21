@@ -20,7 +20,6 @@ using SIL.LCModel.Utils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.WritingSystems;
 using SIL.Xml;
@@ -100,7 +99,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			m_writer = w;
 			m_cache = cache;
-			m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
+			m_stylesheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 			m_mdc = cache.MetaDataCacheAccessor;
 			m_sFormat = sFormat.ToLowerInvariant();
 			if (m_sFormat == "xhtml")

@@ -8,11 +8,9 @@ using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel.Utils;
 using SIL.Xml;
 
@@ -181,7 +179,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return;
 				}
-				var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+				var stylesheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 				dlg.UseMultiStringCaption(Cache, WritingSystemServices.kwsVernAnals, stylesheet);
 				dlg.SetMultilingualCaptionValues(pic.Caption);
 				if (dlg.ShowDialog() == DialogResult.OK)

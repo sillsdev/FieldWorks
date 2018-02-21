@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Xml.Xsl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -2642,7 +2643,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			else if (!m_wsToFont.TryGetValue(ws, out font))
 			{
 				// get font from stylesheet.
-				font = EditingHelper.GetFontForNormalStyle(ws, m_styleSheet, m_wsf);
+				font = FontHeightAdjuster.GetFontForNormalStyle(ws, m_styleSheet, m_wsf);
 				m_wsToFont.Add(ws, font);
 			}
 			return font;

@@ -8,7 +8,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -219,9 +218,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			statisticsBox.SelectionTabs = new[] { 10, 300};
 			//retrieve the default UI font.
 			var cache = PropertyTable.GetValue<LcmCache>("cache");
-			var font = FontHeightAdjuster.GetFontForStyle(StyleServices.NormalStyleName,
-														  FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable),
-														  cache.DefaultUserWs, cache.WritingSystemFactory);
+			var font = FontHeightAdjuster.GetFontForStyle(StyleServices.NormalStyleName, FwUtils.StyleSheetFromPropertyTable(PropertyTable), cache.DefaultUserWs, cache.WritingSystemFactory);
 			//increase the size of the default UI font and make it bold for the header.
 			var headerFont = new Font(font.FontFamily, font.SizeInPoints + 1.0f, FontStyle.Bold, font.Unit, font.GdiCharSet);
 			//refresh the statisticsDescription (in case of font changes)

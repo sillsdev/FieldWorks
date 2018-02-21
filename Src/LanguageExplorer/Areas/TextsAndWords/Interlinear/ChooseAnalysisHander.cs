@@ -5,6 +5,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;

@@ -135,6 +135,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Media, Version=4.1.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.Media.dll</HintPath>
+    </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Security" />
     <Reference Include="ViewsInterfaces">
@@ -528,9 +532,20 @@
     <Compile Include="Controls\DetailControls\IConcSliceInfo.cs" />
     <Compile Include="Controls\DetailControls\IGetNodeInfo.cs" />
     <Compile Include="Controls\DetailControls\IKeyedObject.cs" />
+    <Compile Include="Controls\DetailControls\InnerLabeledMultiStringControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\InnerLabeledMultiStringView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\InnerLabeledMultiStringViewVc.cs" />
     <Compile Include="Controls\DetailControls\INodeInfo.cs" />
     <Compile Include="Controls\DetailControls\INotifyControlInCurrentSlice.cs" />
     <Compile Include="Controls\DetailControls\IntegerSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\LabeledMultiStringVc.cs" />
+    <Compile Include="Controls\DetailControls\LabeledMultiStringView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\LayoutStates.cs" />
@@ -540,6 +555,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\MakeInflAffixSlotChooserCommand.cs" />
+    <Compile Include="Controls\DetailControls\MultiStringSelectionUtils.cs" />
     <Compile Include="Controls\DetailControls\NodeTestResult.cs" />
     <Compile Include="Controls\DetailControls\ObjectDragInfo.cs" />
     <Compile Include="Controls\DetailControls\ObjectWeight.cs" />
@@ -547,6 +563,9 @@
     <Compile Include="Controls\DetailControls\PhoneEnvReferenceDataCacheDecorator.cs" />
     <Compile Include="Controls\DetailControls\PhoneEnvReferenceSda.cs" />
     <Compile Include="Controls\DetailControls\PhoneEnvReferenceVc.cs" />
+    <Compile Include="Controls\DetailControls\PicturePropertiesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Controls\DetailControls\PossibilityAtomicReferenceVc.cs" />
     <Compile Include="Controls\DetailControls\PossibilityAtomicReferenceViewMetaDataCacheDecorator.cs" />
     <Compile Include="Controls\DetailControls\PossibilityAtomicReferenceViewSdaDecorator.cs" />
@@ -585,7 +604,14 @@
     <Compile Include="Controls\DisposableToolStripMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\FwComboBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\HtmlControlEventArgs.cs" />
+    <Compile Include="Controls\DetailControls\LabeledMultiStringControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\HvoTssComboItem.cs" />
     <Compile Include="Controls\LexText\CFChanges.cs" />
     <Compile Include="Controls\LexText\CmLiftEtymology.cs" />
     <Compile Include="Controls\LexText\CmLiftExample.cs" />
@@ -651,6 +677,12 @@
     <Compile Include="Controls\LexText\Sfm2FlexTextBase.cs" />
     <Compile Include="Controls\LexText\Sfm2FlexTextMappingBase.cs" />
     <Compile Include="Controls\LexText\Sfm2FlexTextWordsFrag.cs" />
+    <Compile Include="Controls\LexText\UserInterfaceChooser.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\LexText\UserInterfaceChooser.Designer.cs">
+      <DependentUpon>UserInterfaceChooser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MorphTypeFilterType.cs" />
     <Compile Include="Controls\RegexHelperMenu.cs">
       <SubType>Component</SubType>
@@ -658,6 +690,9 @@
     <Compile Include="Controls\SilSidePane\ButtonState.cs" />
     <Compile Include="Controls\SilSidePane\OutlookBarPanelRenderer.cs" />
     <Compile Include="Controls\SilSidePane\Renderer.cs" />
+    <Compile Include="Controls\TreeCombo.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\XMLViews\AccumulateParameters.cs" />
     <Compile Include="Controls\XMLViews\ArrowSize.cs" />
     <Compile Include="Controls\XMLViews\ArrowType.cs" />
@@ -744,6 +779,12 @@
     <Compile Include="Controls\XMLViews\TestForParameter.cs" />
     <Compile Include="Controls\XMLViews\TypeSubClass.cs" />
     <Compile Include="Controls\XMLViews\VirtualNeededPropertyInfo.cs" />
+    <Compile Include="Controls\XMLViews\VSTabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\XMLViews\VSTabControl.designer.cs">
+      <DependentUpon>VSTabControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\XMLViews\XmlSeqSelectionRestorer.cs" />
     <Compile Include="Controls\XMLViews\XmlViewsMetaDataCacheDecorator.cs" />
     <Compile Include="Impls\ArchiveWithRamp.cs">
@@ -766,6 +807,12 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="IFindAndReplaceContext.cs" />
+    <Compile Include="Impls\PasswordBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Impls\PasswordBox.Designer.cs">
+      <DependentUpon>PasswordBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Impls\ReverseFindCollectorEnv.cs" />
     <Compile Include="Controls\XMLViews\VwPatternSerializableSettings.cs" />
     <Compile Include="Impls\WebonaryException.cs" />
@@ -1246,7 +1293,7 @@
     <Compile Include="Controls\LexText\MasterPhonologicalFeatureListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LexText\MergeEntryDlg.cs">
+    <Compile Include="Areas\Lexicon\Tools\Edit\MergeEntryDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\LexText\MsaCreatorDlg.cs">
@@ -1773,6 +1820,7 @@
     <Compile Include="Areas\ViewBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <None Include="images\password-reveal-eye-16x16.png" />
     <Content Include="Resources\DialectsListEditParameters.xml" />
     <Content Include="Resources\ExtNoteTypeEditParameters.xml" />
     <Content Include="Resources\LanguagesListEditParameters.xml" />
@@ -1784,8 +1832,24 @@
       <DependentUpon>ConfigSenseLayout.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\PicturePropertiesDialog.resx">
+      <DependentUpon>PicturePropertiesDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FwComboBox.resx">
+      <DependentUpon>FwComboBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\HtmlControl.resx">
       <DependentUpon>HtmlControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\LexText\UserInterfaceChooser.resx">
+      <DependentUpon>UserInterfaceChooser.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\TreeCombo.resx">
+      <DependentUpon>TreeCombo.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\XMLViews\BrowseViewer.resx">
       <DependentUpon>BrowseViewer.cs</DependentUpon>
@@ -1822,6 +1886,9 @@
     <EmbeddedResource Include="Controls\XMLViews\SimpleMatchDlg.resx">
       <DependentUpon>SimpleMatchDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\XMLViews\VSTabControl.resx">
+      <DependentUpon>VSTabControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\XMLViews\XmlBrowseRDEView.resx">
       <DependentUpon>XmlBrowseRDEView.cs</DependentUpon>
@@ -1861,6 +1928,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Impls\FwHelpAbout.resx">
       <DependentUpon>FwHelpAbout.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Impls\PasswordBox.resx">
+      <DependentUpon>PasswordBox.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Impls\RestoreDefaultsDlg.resx">
@@ -2099,7 +2170,7 @@
       <DependentUpon>MasterPhonologicalFeatureListDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LexText\MergeEntryDlg.resx">
+    <EmbeddedResource Include="Areas\Lexicon\Tools\Edit\MergeEntryDlg.resx">
       <DependentUpon>MergeEntryDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

@@ -14,11 +14,9 @@ using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.DictionaryConfiguration;
-using LanguageExplorer.Impls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -1079,7 +1077,7 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		private LcmStyleSheet StyleSheet => FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+		private LcmStyleSheet StyleSheet => FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 
 		/// <summary>
 		///	invoked when our XmlDocView selection changes.

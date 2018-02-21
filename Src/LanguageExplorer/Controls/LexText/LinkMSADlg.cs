@@ -4,7 +4,6 @@
 
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.LexText
@@ -133,7 +132,7 @@ namespace LanguageExplorer.Controls.LexText
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LinkMSADlg));
-			this.m_fwcbFunctions = new SIL.FieldWorks.Common.Widgets.FwComboBox();
+			this.m_fwcbFunctions = new LanguageExplorer.Controls.FwComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();

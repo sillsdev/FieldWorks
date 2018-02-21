@@ -67,14 +67,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			base.InitializeFlexComponent(flexComponentParameters);
 
 			m_tbSearchText.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_tbSearchText.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable));
+			m_tbSearchText.AdjustForStyleSheet(FwUtils.StyleSheetFromPropertyTable(PropertyTable));
 			m_tbSearchText.Text = String.Empty;
 			m_tbSearchText.TextChanged += m_tbSearchText_TextChanged;
 			m_tbSearchText.KeyDown += m_tbSearchText_KeyDown;
 			FillLineComboList();
 
 			m_fwtbItem.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_fwtbItem.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+			m_fwtbItem.StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			m_fwtbItem.WritingSystemCode = m_cache.DefaultVernWs;
 			m_fwtbItem.Text = String.Empty;
 			m_fwtbItem.Visible = false; // Needed to prevent LT-12162 unneeded text box.

@@ -248,12 +248,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			if (m_clb == null)
 			{
 				m_clb = new ComboListBox();
-				m_clb.SelectedIndexChanged += new EventHandler(HandleFwMenuSelection);
-				m_clb.SameItemSelected += new EventHandler(HandleFwMenuSelection);
+				m_clb.SelectedIndexChanged += HandleFwMenuSelection;
+				m_clb.SameItemSelected += HandleFwMenuSelection;
 				// Since we may initialize with TsStrings, need to set WSF.
 				m_clb.WritingSystemFactory = Cache.LanguageWritingSystemFactoryAccessor;
 				m_clb.DropDownStyle = ComboBoxStyle.DropDownList; // Prevents direct editing.
-				m_clb.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+				m_clb.StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			}
 			m_clb.Items.Clear();
 			foreach (var menuItem in m_rgfmi)

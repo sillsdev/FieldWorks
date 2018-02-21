@@ -5,6 +5,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -99,7 +100,10 @@ namespace LanguageExplorer.Controls.LexText
 
 		protected override void SetDlgInfo(LcmCache cache, WindowParams wp, int ws)
 		{
-			WritingSystemAndStylesheetHelper.SetupWritingSystemAndStylesheetInfo(PropertyTable, tcVariantTypes, cache, cache.DefaultUserWs);
+			tcVariantTypes.WritingSystemFactory = cache.WritingSystemFactory;
+			tcVariantTypes.WritingSystemCode = ws;
+			tcVariantTypes.Font = new System.Drawing.Font(cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName, 10);
+			tcVariantTypes.StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			base.SetDlgInfo(cache, wp, ws);
 			// load the variant type possibilities.
 			LoadVariantTypes();

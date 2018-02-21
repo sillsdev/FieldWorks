@@ -43,7 +43,7 @@ namespace LanguageExplorer.Controls.LexText
 			this.m_tabInterface = new System.Windows.Forms.TabPage();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.label3 = new System.Windows.Forms.Label();
-			this.m_userInterfaceChooser = new SIL.FieldWorks.Common.Widgets.UserInterfaceChooser();
+			this.m_userInterfaceChooser = new LanguageExplorer.Controls.LexText.UserInterfaceChooser();
 			this.updateGlobalWS = new System.Windows.Forms.CheckBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.m_autoOpenCheckBox = new System.Windows.Forms.CheckBox();
@@ -192,7 +192,7 @@ namespace LanguageExplorer.Controls.LexText
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.CheckBox updateGlobalWS;
 		private System.Windows.Forms.GroupBox groupBox1;
-		private SIL.FieldWorks.Common.Widgets.UserInterfaceChooser m_userInterfaceChooser;
+		private LanguageExplorer.Controls.LexText.UserInterfaceChooser m_userInterfaceChooser;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TabControl tabControl1;
 	}

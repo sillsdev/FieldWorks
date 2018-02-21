@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.SpellChecking;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -125,7 +126,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					Font font = subItem.Font;
 					if (wsText != 0)
 					{
-							font = createdFont = EditingHelper.GetFontForNormalStyle(wsText, rootb.Stylesheet,
+							font = createdFont = FontHeightAdjuster.GetFontForNormalStyle(wsText, rootb.Stylesheet,
 							rootb.DataAccess.WritingSystemFactory);
 						//string familyName = rootb.DataAccess.WritingSystemFactory.get_EngineOrNull(wsText).DefaultBodyFont;
 						//font = new Font(familyName, font.Size, FontStyle.Bold);

@@ -805,7 +805,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BulkEditBar));
 			this.m_operationLabel = new System.Windows.Forms.Label();
-			this.m_operationsTabControl = new SIL.FieldWorks.Common.Widgets.VSTabControl();
+			this.m_operationsTabControl = new LanguageExplorer.Controls.XMLViews.VSTabControl();
 			this.m_listChoiceTab = new System.Windows.Forms.TabPage();
 			this.m_bulkEditIconButton = new System.Windows.Forms.Button();
 			this.m_imageList16x16 = new System.Windows.Forms.ImageList(this.components);

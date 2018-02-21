@@ -15,7 +15,6 @@ using NUnit.Framework;
 using SIL.LCModel.Core.Text;
 using SIL.IO;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 
@@ -90,7 +89,7 @@ namespace LanguageExplorerTests.Impls
 			m_propertyTable.SetProperty("ToolForAreaNamed_lexicon", "lexiconDictionary", false);
 			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "DictionaryConfiguration", "TestData");
 			// setup style sheet and style to allow the css to generate during the UploadToWebonaryController driven export
-			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			m_styleSheet = FwUtils.StyleSheetFromPropertyTable(m_propertyTable);
 
 			Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(Cache.DefaultAnalWs);
 

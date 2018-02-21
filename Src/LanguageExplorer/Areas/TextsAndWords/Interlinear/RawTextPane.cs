@@ -13,7 +13,6 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
@@ -897,7 +896,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
-			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+			m_styleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 		}
 
 		#endregion

@@ -141,7 +141,6 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
       <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
@@ -158,10 +157,6 @@
       <Name>FwResources</Name>
       <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
     <Reference Include="FwUtils">
       <Name>FwUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
@@ -173,10 +168,6 @@
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Downloads\SIL.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Media, Version=3.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Downloads\SIL.Media.dll</HintPath>
     </Reference>
     <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -199,12 +190,6 @@
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
-    <Reference Include="System.Xml">
-      <Name>System.XML</Name>
-    </Reference>
-    <Reference Include="SIL.Windows.Forms">
-      <HintPath>..\..\..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\CommonAssemblyInfo.cs">
@@ -213,46 +198,42 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DataGridView\FwTextBoxCell.cs" />
-    <Compile Include="DataGridView\FwTextBoxColumn.cs" />
-    <Compile Include="DataGridView\FwTextBoxControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DataGridView\FwTextBoxRow.cs" />
-    <Compile Include="DataGridView\SilButtonCell.cs" />
-    <Compile Include="DataGridView\SortableBindingList.cs" />
-    <Compile Include="FwLabel.cs">
+    <Compile Include="ComboListBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="FwMultilingualPropView.cs" />
-    <Compile Include="FontHeightAdjuster.cs">
-      <SubType>Code</SubType>
+    <Compile Include="ComboTextBox.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="FwComboBox.cs">
+    <Compile Include="DropDownButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FwComboBoxBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="FwListBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="FwMultiParaTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="FwTextBox.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FwTreeView.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="HvoTreeNode.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="IWritingSystemAndStylesheet.cs" />
-    <Compile Include="LabeledMultiStringView.cs">
+    <Compile Include="IComboList.cs" />
+    <Compile Include="IFwListBox.cs" />
+    <Compile Include="IFwListBoxSite.cs" />
+    <Compile Include="IHighlightInfo.cs" />
+    <Compile Include="InnerFwListBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PasswordBox.cs">
-      <SubType>Component</SubType>
+    <Compile Include="InnerFwTextBox.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PasswordBox.Designer.cs">
-      <DependentUpon>PasswordBox.cs</DependentUpon>
-    </Compile>
+    <Compile Include="IWritingSystemAndStylesheet.cs" />
+    <Compile Include="ObjectCollection.cs" />
     <Compile Include="PopupTree.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -261,42 +242,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-    <Compile Include="ToolStripControlComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="TreeCombo.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UserInterfaceChooser.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UserInterfaceChooser.Designer.cs">
-      <DependentUpon>UserInterfaceChooser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="VSTabControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="VSTabControl.designer.cs">
-      <DependentUpon>VSTabControl.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="FwMultilingualPropView.resx">
-      <DependentUpon>FwMultilingualPropView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwComboBox.resx">
-      <DependentUpon>FwComboBox.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <Compile Include="TextBoxDataAccess.cs" />
     <EmbeddedResource Include="FwListBox.resx">
       <DependentUpon>FwListBox.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FwTextBox.resx">
       <DependentUpon>FwTextBox.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PasswordBox.resx">
-      <DependentUpon>PasswordBox.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="PopupTree.resx">
@@ -308,27 +260,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="TreeCombo.resx">
-      <DependentUpon>TreeCombo.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UserInterfaceChooser.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>UserInterfaceChooser.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="VSTabControl.resx">
-      <DependentUpon>VSTabControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <Compile Include="LabeledMultiStringControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="InnerLabeledMultiStringControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="InnerLabeledMultiStringView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MultiStringSelectionUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -357,9 +288,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <DistFiles>../../../../DistFiles</DistFiles>

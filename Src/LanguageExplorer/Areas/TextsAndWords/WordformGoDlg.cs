@@ -6,10 +6,10 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.Widgets;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
@@ -65,7 +65,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			var searchEngine = SearchEngine.Get(PropertyTable, "WordformGoSearchEngine", () => new WordformGoSearchEngine(m_cache));
 
-			m_matchingObjectsBrowser.Initialize(m_cache, FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine);
+			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine);
 
 			// start building index
 			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;

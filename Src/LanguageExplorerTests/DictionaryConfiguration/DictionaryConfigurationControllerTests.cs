@@ -17,7 +17,6 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
@@ -42,7 +41,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			_propertyTable = _flexComponentParameters.PropertyTable;
 			// Add styles to the stylesheet to prevent intermittent unit test failures setting the selected index in the Styles Combobox
-			var styles = FontHeightAdjuster.StyleSheetFromPropertyTable(_propertyTable).Styles;
+			var styles = FwUtils.StyleSheetFromPropertyTable(_propertyTable).Styles;
 			styles.Add(new BaseStyleInfo { Name = "Dictionary-Normal", IsParagraphStyle = true });
 			styles.Add(new BaseStyleInfo { Name = "Dictionary-Headword", IsParagraphStyle = false });
 			styles.Add(new BaseStyleInfo { Name = "Bulleted List", IsParagraphStyle = true });

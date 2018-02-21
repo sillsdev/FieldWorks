@@ -13,7 +13,6 @@ using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.SpellChecking;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -213,7 +212,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 				m_cbNewSpelling.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 				m_cbNewSpelling.WritingSystemCode = m_vernWs;
-				m_cbNewSpelling.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+				m_cbNewSpelling.StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 				Debug.Assert(m_cbNewSpelling.StyleSheet != null); // if it is we get a HUGE default font (and can't get the correct size)
 				if (m_cbNewSpelling.WritingSystemFactory.get_EngineOrNull(m_vernWs).RightToLeftScript)
 				{

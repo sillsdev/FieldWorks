@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,32 +20,26 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// </summary>
 	public class PopupTree : Form, IDropDownBox
 	{
-		/// <summary></summary>
+		/// <summary />
 		public event TreeViewEventHandler AfterSelect;
-		/// <summary></summary>
+		/// <summary />
 		public event TreeViewCancelEventHandler BeforeSelect;
-		/// <summary></summary>
+		/// <summary />
 		public event TreeViewEventHandler PopupTreeClosed;
 		private TreeViewAction m_selectedNodeAction;
-		private bool m_fClientSpecifiedAction = false;
+		private bool m_fClientSpecifiedAction;
 
 		internal FwTreeView m_treeView;
-		private Control m_tabStopControl = null;	// See comment on TabStopControl property
 		private FwPopupMessageFilter m_fwPopupMessageFilter;
-		private TreeNode m_tnMouseDown = null;		// Store the node indicated by a MouseDown event.
+		private TreeNode m_tnMouseDown;		// Store the node indicated by a MouseDown event.
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		private Form m_launchForm;
 		private bool m_fShown; // true after Show() completes, prevents spurious Hide during spurious AfterSelect.
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public PopupTree()
 		{
 			//
@@ -53,8 +47,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			//
 			InitializeComponent();
 
-			this.StartPosition = FormStartPosition.Manual; // allows us to use Location to position it exactly.
-			this.Size = this.DefaultSize; // Defeat extraordinary side effect of setting StartPosition.
+			StartPosition = FormStartPosition.Manual; // allows us to use Location to position it exactly.
+			Size = DefaultSize; // Defeat extraordinary side effect of setting StartPosition.
 			EnableAfterAndBeforeSelectHandling(true);
 			m_treeView.AccessibleName = "PopupTreeTree";
 #if !__MonoCS__ // FWNX-399 - on mono this sidestep/workaround causes problems because it relies on the order event handlers
@@ -67,18 +61,16 @@ namespace SIL.FieldWorks.Common.Widgets
 			// code forces something to be highlighted even when nothing is selected.  So we
 			// simulate the Select operation for exactly those conditions: nothing yet selected,
 			// or trying to select what has already been selected.
-			m_treeView.MouseDown += new MouseEventHandler(m_treeView_MouseDown);
-			m_treeView.MouseUp += new MouseEventHandler(m_treeView_MouseUp);
+			m_treeView.MouseDown += m_treeView_MouseDown;
+			m_treeView.MouseUp += m_treeView_MouseUp;
 #endif
-			m_treeView.KeyDown += new KeyEventHandler(m_treeView_KeyDown);
+			m_treeView.KeyDown += m_treeView_KeyDown;
 			this.AccessibleName = "PopupTreeForm";
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Enables or disables the handlers for the AfterSelect and BeforeSelect events
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void EnableAfterAndBeforeSelectHandling(bool enable)
 		{
 			if (enable)
@@ -96,23 +88,12 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Gets the drop down form.
 		/// </summary>
-		/// <value>The form.</value>
-		public Form Form
-		{
-			get
-			{
-				return this;
-			}
-		}
+		public Form Form => this;
 
 		/// <summary>
 		/// Gets or sets the form the PopupTree is launched from.
 		/// </summary>
-		public Form LaunchingForm
-		{
-			get { return m_launchForm; }
-			set { m_launchForm = value; }
-		}
+		public Form LaunchingForm { get; set; }
 
 		/// <summary>
 		/// Hide the window that shows the popup tree (and activate the parent window, if known).
@@ -133,8 +114,10 @@ namespace SIL.FieldWorks.Common.Widgets
 				Hide();
 				m_fShown = false;
 				RemoveFilter();
-				if (activateParent && m_launchForm != null)
-					m_launchForm.Activate();
+				if (activateParent)
+				{
+					LaunchingForm?.Activate();
+				}
 				OnHide();	// notify owners of this event.
 			}
 		}
@@ -142,9 +125,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		// notify our owners that we've hidden the PopupTree.
 		private void OnHide()
 		{
-			if (PopupTreeClosed != null)
-				PopupTreeClosed(this, new TreeViewEventArgs(m_treeView.SelectedNode,
-															TreeViewAction.Unknown));
+			PopupTreeClosed?.Invoke(this, new TreeViewEventArgs(m_treeView.SelectedNode, TreeViewAction.Unknown));
 		}
 
 		/// <summary>
@@ -152,14 +133,12 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// happens and we are hidden, we get activated again. Then the main window is not active,
 		/// and can't get keyboard events. AArgh! This is a horrible kludge but the best I can find.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnActivated(EventArgs e)
 		{
 			base.OnActivated(e);
-			if (!this.Visible)
+			if (!Visible)
 			{
-				if (m_launchForm != null)
-					m_launchForm.Activate();
+				LaunchingForm?.Activate();
 			}
 		}
 
@@ -170,15 +149,12 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="start">the search key</param>
 		public void SelectNodeStartingWith(string start)
 		{
-			int iPreviousSelected = -1;
-			int iStarting = -1;
-			int iEnding = -1;
-			bool fFound = false;
+			var iPreviousSelected = -1;
+			int iStarting;
 
 			// If the new start key matches the start key for the current selection,
 			// we'll start our search from there.
-			if (m_treeView.SelectedNode != null &&
-				m_treeView.SelectedNode.Text.ToLower().StartsWith(start.ToLower()))
+			if (m_treeView.SelectedNode != null && m_treeView.SelectedNode.Text.ToLower().StartsWith(start.ToLower()))
 			{
 				// save the current position as our previous index
 				iPreviousSelected = m_treeView.SelectedNode.Index;
@@ -191,8 +167,8 @@ namespace SIL.FieldWorks.Common.Widgets
 				iStarting = 0;
 			}
 
-			iEnding = m_treeView.Nodes.Count - 1;
-			fFound = FindAndSelectNodeStartingWith(iStarting, iEnding, start);
+			var iEnding = m_treeView.Nodes.Count - 1;
+			var fFound = FindAndSelectNodeStartingWith(iStarting, iEnding, start);
 
 			if (!fFound && iStarting != 0)
 			{
@@ -200,23 +176,17 @@ namespace SIL.FieldWorks.Common.Widgets
 				// previous (i.e. current) selection.
 				iStarting = 0;
 				iEnding = iPreviousSelected - 1;
-				fFound = FindAndSelectNodeStartingWith(iStarting, iEnding, start);
-				// if we don't find a match, return quietly. Nothing else to select.
+				FindAndSelectNodeStartingWith(iStarting, iEnding, start);
 			}
-			return;
 		}
 
 		/// <summary>
 		/// Select the node whose text starts with the given startKey string (if node exists).
 		/// </summary>
-		/// <param name="iStarting">starting index</param>
-		/// <param name="iEnding">ending index</param>
-		/// <param name="startKey">search key</param>
-		/// <returns></returns>
 		private bool FindAndSelectNodeStartingWith(int iStarting, int iEnding, string startKey)
 		{
-			bool fFound = false;
-			for (int i = iStarting; i <= iEnding; ++i)
+			var fFound = false;
+			for (var i = iStarting; i <= iEnding; ++i)
 			{
 				if (m_treeView.Nodes[i].Text.ToLower().StartsWith(startKey.ToLower()))
 				{
@@ -245,17 +215,16 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_treeView.EndUpdate();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Make sure we clean out the message filter if not already done.
 		/// </summary>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnVisibleChanged(EventArgs e)
 		{
 			base.OnVisibleChanged (e);
-			if (!this.Visible)
+			if (!Visible)
+			{
 				RemoveFilter();
+			}
 		}
 
 		// Remove your message filter, typically prior to hiding, or because we got hidden.
@@ -269,18 +238,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected override Size DefaultSize
-		{
-			get
-			{
-				return new Size(120, 200);
-			}
-		}
+		/// <summary />
+		protected override Size DefaultSize => new Size(120, 200);
 
 		/// <summary>
 		/// Get/Set the selected node.
@@ -341,40 +300,26 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Get the main collection of Nodes. Manipulating this is the main way of
 		/// adding and removing items from the popup tree.
 		/// </summary>
-		public TreeNodeCollection Nodes
-		{
-			get
-			{
-				return m_treeView.Nodes;
-			}
-		}
+		public TreeNodeCollection Nodes => m_treeView.Nodes;
 
 		/// <summary>
 		/// This will be the Control used for tabbing to the next control, since in the context of a TreeCombo
 		/// the PopupTree gets created on a separate form than its sibling ComboTextBox which is on the same form
 		/// as the other tabstops.
 		/// </summary>
-		internal Control TabStopControl
-		{
-			get
-			{
-				return m_tabStopControl;
-			}
-			set
-			{
-				m_tabStopControl = value;
-			}
-		}
+		internal Control TabStopControl { get; set; }
 
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
 			if (disposing)
 			{
@@ -383,24 +328,19 @@ namespace SIL.FieldWorks.Common.Widgets
 				{
 					EnableAfterAndBeforeSelectHandling(false);
 #if !__MonoCS__ // FWNX-399
-					m_treeView.MouseDown -= new MouseEventHandler(m_treeView_MouseDown);
-					m_treeView.MouseUp -= new MouseEventHandler(m_treeView_MouseUp);
+					m_treeView.MouseDown -= m_treeView_MouseDown;
+					m_treeView.MouseUp -= m_treeView_MouseUp;
 #endif
-					m_treeView.KeyDown -= new KeyEventHandler(m_treeView_KeyDown);
+					m_treeView.KeyDown -= m_treeView_KeyDown;
 					if (!Controls.Contains(m_treeView))
 						m_treeView.Dispose();
 				}
-
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 			m_fwPopupMessageFilter = null;
 			m_treeView = null;
 			m_tnMouseDown = null;
-			// m_selectedNodeAction = null; // Can't null it, since it is a value type.
-			m_tabStopControl = null;
+			TabStopControl = null;
 
 			base.Dispose( disposing );
 		}
@@ -444,17 +384,9 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// pass on the event to clients.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		private void m_treeView_BeforeSelect(object sender, TreeViewCancelEventArgs e)
 		{
-			if (BeforeSelect != null)
-			{
-				if (m_fClientSpecifiedAction == true)
-					BeforeSelect(this, new TreeViewCancelEventArgs(e.Node, e.Cancel, m_selectedNodeAction));
-				else
-					BeforeSelect(this, e);
-			}
+			BeforeSelect?.Invoke(this, m_fClientSpecifiedAction ? new TreeViewCancelEventArgs(e.Node, e.Cancel, m_selectedNodeAction) : e);
 		}
 
 		// Pass on the AfterSelect event from the embedded treeview to our own clients.
@@ -468,7 +400,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			// since that is what will fill the combo box's (TreeCombo) text box.
 			if (AfterSelect != null)
 			{
-				if (m_fClientSpecifiedAction == true)
+				if (m_fClientSpecifiedAction)
 				{
 					AfterSelect(this, new TreeViewEventArgs(e.Node, m_selectedNodeAction));
 					// disable the TreeViewAction override after selection
@@ -500,18 +432,18 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			//Figure where to put it. First try right below the main combo box.
 			// Pathologically the list box may be bigger than the available height. If so shrink it.
-			int maxListHeight = Math.Max(launcherBounds.Top - screenBounds.Top,
-				screenBounds.Bottom - launcherBounds.Bottom);
+			var maxListHeight = Math.Max(launcherBounds.Top - screenBounds.Top, screenBounds.Bottom - launcherBounds.Bottom);
 			if (Height > maxListHeight)
+			{
 				Height = maxListHeight;
+			}
 			// This is the default position right below the launcherBounds.
-			Rectangle popupBounds = new Rectangle(launcherBounds.Left, launcherBounds.Bottom, this.Width, this.Height);
+			var popupBounds = new Rectangle(launcherBounds.Left, launcherBounds.Bottom, this.Width, this.Height);
 			if (screenBounds.Bottom < popupBounds.Bottom)
 			{
 				// extends below the bottom of the screen. Use a rectangle above instead.
 				// We already made sure it will fit in one place or the other.
-				popupBounds = new Rectangle(launcherBounds.Left, launcherBounds.Top - this.Height,
-					this.Width, this.Height);
+				popupBounds = new Rectangle(launcherBounds.Left, launcherBounds.Top - Height, Width, Height);
 			}
 			if (screenBounds.Right < popupBounds.Right)
 			{
@@ -523,22 +455,23 @@ namespace SIL.FieldWorks.Common.Widgets
 				// Extends too far to the left; adjust (amount is positive to move right).
 				popupBounds.Offset(screenBounds.Left - popupBounds.Left, 0);
 			}
-			this.Location = new Point(popupBounds.Left, popupBounds.Top);
+			Location = new Point(popupBounds.Left, popupBounds.Top);
 			// Once the launching form has been set, it should never need to be changed.
 			// See FWNX-748 for an example of things going wrong (at least on Mono).
-			if (m_launchForm == null)
-				m_launchForm = Form.ActiveForm;
-			Debug.Assert(m_launchForm != this);
+			if (LaunchingForm == null)
+			{
+				LaunchingForm = ActiveForm;
+			}
+			Debug.Assert(LaunchingForm != this);
 
 #if __MonoCS__ // FWNX-520: avoid a weird mono problem
-			this.Show(m_launchForm);
+			Show(m_launchForm);
 #else
-			this.Show();
+			Show();
 #endif
 			m_fShown = true;
-			TreeNode selNode = m_treeView.SelectedNode;
-			if (selNode != null)
-				selNode.EnsureVisible();
+			var selNode = m_treeView.SelectedNode;
+			selNode?.EnsureVisible();
 
 			m_fwPopupMessageFilter = new FwPopupMessageFilter(this);
 			Application.AddMessageFilter(m_fwPopupMessageFilter);
@@ -552,11 +485,9 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Handle a MouseDown event, recording the selected node if it seems likely that the
 		/// TreeView Select operation will ignore it.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		private void m_treeView_MouseDown(object sender, MouseEventArgs e)
 		{
-			TreeNode tn = m_treeView.GetNodeAt(e.X, e.Y);
+			var tn = m_treeView.GetNodeAt(e.X, e.Y);
 			if (tn != null  &&
 				(e.X >= tn.Bounds.X && e.X <= tn.Bounds.X + tn.Bounds.Width) &&
 				(e.Y >= tn.Bounds.Y && e.Y <= tn.Bounds.Y + tn.Bounds.Height))
@@ -573,18 +504,16 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Handle a MouseUp event, selecting the node recorded earlier for MouseDown if it is
 		/// the same node in the TreeView control.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		private void m_treeView_MouseUp(object sender, MouseEventArgs e)
 		{
-			TreeNode tn = m_treeView.GetNodeAt(e.X, e.Y);
+			var tn = m_treeView.GetNodeAt(e.X, e.Y);
 			if (tn != null &&
 				tn == m_tnMouseDown &&
 				(e.X >= tn.Bounds.X && e.X <= tn.Bounds.X + tn.Bounds.Width) &&
 				(e.Y >= tn.Bounds.Y && e.Y <= tn.Bounds.Y + tn.Bounds.Height))
 			{
 				tn = m_treeView.SelectedNode;
-				if (tn == null || tn == m_tnMouseDown || (tn == null && m_tnMouseDown != null))
+				if (tn == null || tn == m_tnMouseDown)
 				{
 					// set the selected node to null, so that the TreeView will think that the
 					// selection has changed, and go ahead and fire the BeforeSelect and AfterSelect
@@ -599,12 +528,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		private void HandleTreeItemSelect()
 		{
 			if (!m_fShown)
-				return; // spurious one during load form.
-			if (AfterSelect != null)
 			{
-				// We want to effectively treat this like a mouse click.
-				AfterSelect(this, new TreeViewEventArgs(m_treeView.SelectedNode, TreeViewAction.ByMouse));
+				return; // spurious one during load form.
 			}
+			// We want to effectively treat this like a mouse click.
+			AfterSelect?.Invoke(this, new TreeViewEventArgs(m_treeView.SelectedNode, TreeViewAction.ByMouse));
 			HideForm();
 		}
 
@@ -613,37 +541,37 @@ namespace SIL.FieldWorks.Common.Widgets
 		// Tab key selects item and jumpts to the next/previous field.
 		private void m_treeView_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (e.KeyData == (Keys.Up | Keys.Alt) ||
-				e.KeyData == (Keys.Down | Keys.Alt) ||
-				e.KeyData == Keys.Return)
+			switch (e.KeyData)
 			{
-				HandleTreeItemSelect();
-				e.Handled = true;
-			}
-			else if (e.KeyData == Keys.Tab || e.KeyData == (Keys.Tab | Keys.Shift))
-			{
-				HandleTreeItemSelect();
-				if (TabStopControl != null)
-				{
-					// Send tab key to the TabStopControl so that it can set the focus to the
-					// next control.
-					Win32.PostMessage(TabStopControl.Handle, (int)Win32.WinMsgs.WM_KEYDOWN,
-						(uint)e.KeyCode, 0);
-				}
-				e.Handled = true;
-			}
-			else if ( e.KeyData == Keys.Escape ||
-					  e.KeyData == (Keys.Alt | Keys.F4) )
-			{
-				// If we're in a ComboBox, we must handle the Escape key here, otherwise
-				// IMessageFilter.PreFilterMessage in FwInnerTextBox will handle it
-				// inadvertently forcing the parent dialog to close (cf. LT-2280).
-				//
-				// LT-9250 Crash while closing the PopupTree by pressing Alt+F4 keys and
-				// then trying to open it again. If this is not handled here then
-				// this.Dispose(true) is called which leads to the crash.
-				HideForm();
-				e.Handled = true;
+				case Keys.Up | Keys.Alt:
+				case Keys.Down | Keys.Alt:
+				case Keys.Return:
+					HandleTreeItemSelect();
+					e.Handled = true;
+					break;
+				case Keys.Tab:
+				case Keys.Tab | Keys.Shift:
+					HandleTreeItemSelect();
+					if (TabStopControl != null)
+					{
+						// Send tab key to the TabStopControl so that it can set the focus to the
+						// next control.
+						Win32.PostMessage(TabStopControl.Handle, (int)Win32.WinMsgs.WM_KEYDOWN, (uint)e.KeyCode, 0);
+					}
+					e.Handled = true;
+					break;
+				case Keys.Escape:
+				case Keys.Alt | Keys.F4:
+					// If we're in a ComboBox, we must handle the Escape key here, otherwise
+					// IMessageFilter.PreFilterMessage in FwInnerTextBox will handle it
+					// inadvertently forcing the parent dialog to close (cf. LT-2280).
+					//
+					// LT-9250 Crash while closing the PopupTree by pressing Alt+F4 keys and
+					// then trying to open it again. If this is not handled here then
+					// this.Dispose(true) is called which leads to the crash.
+					HideForm();
+					e.Handled = true;
+					break;
 			}
 		}
 
@@ -656,15 +584,14 @@ namespace SIL.FieldWorks.Common.Widgets
 		///  to explicitly set it to 'nothing selected' (if that's possible).
 		/// None of that is needed yet, so we haven't worried about it.
 		/// </summary>
-		/// <param name="hvo"></param>
 		public void SelectObj(int hvo)
 		{
-			TreeNode node = FindNode(Nodes, hvo);
+			var node = FindNode(Nodes, hvo);
 			if (node != null)
 			{
 				// the normal after select handler will not pass this on because it wasn't from
 				// a mouse event, but we want it passed on.
-				this.SelectByAction = TreeViewAction.ByMouse;
+				SelectByAction = TreeViewAction.ByMouse;
 				m_treeView.SelectedNode = node;
 			}
 		}
@@ -673,15 +600,14 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Find the node for the specified Hvo and select it.
 		/// Note that this does NOT trigger the BeforeSelect or AfterSelect events.
 		/// </summary>
-		/// <param name="hvo"></param>
 		public void SelectObjWithoutTriggeringBeforeAfterSelects(int hvo)
 		{
-			TreeNode node = FindNode(Nodes, hvo);
+			var node = FindNode(Nodes, hvo);
 			if (node != null)
 			{
 				// the normal after select handler should not pass this on
 				// because it will have been turned off by the caller.
-				this.SelectByAction = TreeViewAction.ByMouse;
+				SelectByAction = TreeViewAction.ByMouse;
 				EnableAfterAndBeforeSelectHandling(false);
 				m_treeView.SelectedNode = node;
 				EnableAfterAndBeforeSelectHandling(true);
@@ -692,9 +618,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Assuming a node collection containing HvoTreeNodes, return the one
 		/// whose HVO is the specified one. Null if not found.
 		/// </summary>
-		/// <param name="nodes"></param>
-		/// <param name="hvo"></param>
-		/// <returns></returns>
 		private TreeNode FindNode(TreeNodeCollection nodes, int hvo)
 		{
 			TreeNode retVal = null;
@@ -717,218 +640,144 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Note that if the height is set to less than the natural height,
 		/// some additional space may be wanted for a scroll bar.
 		/// </summary>
-		public int NaturalWidth
-		{
-			get
-			{
-				return this.Width;
-			}
-		}
+		public int NaturalWidth => Width;
 
 		/// <summary>
 		/// Find the height that will display the full height of all items.
 		/// </summary>
-		public int NaturalHeight
+		public int NaturalHeight => Height;
+
+		/// <summary>Message filter for detecting events that may turn off
+		/// the insert verse numbers mode</summary>
+		private sealed class FwPopupMessageFilter : IMessageFilter, IDisposable
 		{
-			get
+			private PopupTree m_popupTree;
+
+			/// <summary>Constructor for filter object</summary>
+			public FwPopupMessageFilter(PopupTree popupTree)
 			{
-				return this.Height;
-			}
-		}
-	}
-
-	/// <summary>
-	/// We need to subclass TreeView in order to override IsInputChar(), otherwise
-	/// TreeView will not try to handle TAB keys (cf. LT-2190).
-	/// </summary>
-	internal class FwTreeView : TreeView
-	{
-		/// <summary/>
-		protected override void Dispose(bool disposing)
-		{
-			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
-			base.Dispose(disposing);
-		}
-
-		/// <summary>
-		/// We need to be able to handle the TAB key.
-		/// Requires IsInputKey() == true.
-		/// </summary>
-		/// <param name="charCode"></param>
-		/// <returns></returns>
-		protected override bool IsInputChar(char charCode)
-		{
-			if (charCode == '\t')
-				return true;
-			return base.IsInputChar(charCode);
-		}
-
-		/// <summary>
-		/// We need to be able to handle the TAB key. IsInputKey() must be true
-		/// for IsInputChar() to be called.
-		/// </summary>
-		/// <param name="keyData"></param>
-		/// <returns></returns>
-		protected override bool IsInputKey(Keys keyData)
-		{
-			if (keyData == Keys.Tab || keyData == (Keys.Tab | Keys.Shift))
-				return true;
-			return base.IsInputKey(keyData);
-		}
-
-		protected override void WndProc(ref Message m)
-		{
-			// don't try to handle WM_CHAR in TreeView
-			// it causes an annoying beep LT-16007
-			const int wmCharMsg = 258;
-			if (m.Msg == wmCharMsg)
-				return;
-			base.WndProc(ref m);
-		}
-	}
-
-	/// ------------------------------------------------------------------------------------
-	/// <summary>Message filter for detecting events that may turn off
-	/// the insert verse numbers mode</summary>
-	/// ------------------------------------------------------------------------------------
-	internal class FwPopupMessageFilter : IMessageFilter, IDisposable
-	{
-		private PopupTree m_popupTree;
-
-		/// <summary>Constructor for filter object</summary>
-		public FwPopupMessageFilter(PopupTree popupTree)
-		{
-			m_popupTree = popupTree;
-		}
-
-		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed = false;
-
-		/// <summary>
-		/// See if the object has been disposed.
-		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
-
-		/// <summary>
-		/// Finalizer, in case client doesn't dispose it.
-		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
-		/// </summary>
-		/// <remarks>
-		/// In case some clients forget to dispose it directly.
-		/// </remarks>
-		~FwPopupMessageFilter()
-		{
-			Dispose(false);
-			// The base class finalizer is called automatically.
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
-		public void Dispose()
-		{
-			Dispose(true);
-			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
-			// take this object off the finalization queue
-			// and prevent finalization code for this object
-			// from executing a second time.
-			GC.SuppressFinalize(this);
-		}
-
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
-		protected virtual void Dispose(bool disposing)
-		{
-			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
-			// Must not be run more than once.
-			if (m_isDisposed)
-				return;
-
-			if (disposing)
-			{
-				// Dispose managed resources here.
+				m_popupTree = popupTree;
 			}
 
-			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_popupTree = null; // It is disposed of elsewhere.
+			#region IDisposable & Co. implementation
+			/// <summary>
+			/// See if the object has been disposed.
+			/// </summary>
+			private bool IsDisposed { get; set; }
 
-			m_isDisposed = true;
-		}
-
-		#endregion IDisposable & Co. implementation
-
-		/// --------------------------------------------------------------------------------
-		/// <summary></summary>
-		/// <param name="m">message to be filtered</param>
-		/// <returns>true if the message is consumed, false to pass it on.</returns>
-		/// --------------------------------------------------------------------------------
-		public bool PreFilterMessage(ref Message m)
-		{
-			switch ((Win32.WinMsgs)m.Msg)
+			/// <summary>
+			/// Finalizer, in case client doesn't dispose it.
+			/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
+			/// </summary>
+			/// <remarks>
+			/// In case some clients forget to dispose it directly.
+			/// </remarks>
+			~FwPopupMessageFilter()
 			{
+				Dispose(false);
+				// The base class finalizer is called automatically.
+			}
 
-			case Win32.WinMsgs.WM_NCLBUTTONDOWN:
-			case Win32.WinMsgs.WM_NCLBUTTONUP:
-			case Win32.WinMsgs.WM_LBUTTONDOWN:
+			/// <summary />
+			public void Dispose()
 			{
-				// Make sure the popuptree hasn't been disposed of with out setting
-				// the m_popupTree variable to null:
-				if (m_popupTree.IsDisposed)
-					return false;	// default case
-				// Handle any mouse left button activity.
-				// Non-client areas include the title bar, menu bar, window borders,
-				// and scroll bars. But the only one in our combo is the scroll bar.
-				Control c = Control.FromHandle(m.HWnd);
-				// Clicking anywhere in an FwListBox, including it's scroll bar,
-				// behaves normally.
-				if ((c == m_popupTree.m_treeView))
-					return false;
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SupressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
 
-				// On Mono clicking on the FwListBox Scrollbar causes return from Control.FromHandle
-				// to be a ImplicitScrollBar which is a child of the FwListBox.
-				if (c is ScrollBar && c.Parent == m_popupTree.m_treeView)
-					return false;
-
-				// Any other click is captured and causes the list box to go away.
-				// Only do this if the popup tree is visible
-				if (m_popupTree.Visible)
+			/// <summary>
+			/// Executes in two distinct scenarios.
+			///
+			/// 1. If disposing is true, the method has been called directly
+			/// or indirectly by a user's code via the Dispose method.
+			/// Both managed and unmanaged resources can be disposed.
+			///
+			/// 2. If disposing is false, the method has been called by the
+			/// runtime from inside the finalizer and you should not reference (access)
+			/// other managed objects, as they already have been garbage collected.
+			/// Only unmanaged resources can be disposed.
+			/// </summary>
+			/// <param name="disposing"></param>
+			/// <remarks>
+			/// If any exceptions are thrown, that is fine.
+			/// If the method is being done in a finalizer, it will be ignored.
+			/// If it is thrown by client code calling Dispose,
+			/// it needs to be handled by fixing the bug.
+			/// </remarks>
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
+				// Must not be run more than once.
+				if (IsDisposed)
 				{
-					m_popupTree.HideForm();
-					return true;
+					return;
 				}
-				return false;
+
+				if (disposing)
+				{
+					// Dispose managed resources here.
+				}
+
+				// Dispose unmanaged resources here, whether disposing is true or false.
+				m_popupTree = null; // It is disposed of elsewhere.
+
+				IsDisposed = true;
 			}
-			default:
-				return false;
+
+			#endregion IDisposable & Co. implementation
+
+			/// <summary />
+			/// <returns>true if the message is consumed, false to pass it on.</returns>
+			public bool PreFilterMessage(ref Message m)
+			{
+				switch ((Win32.WinMsgs)m.Msg)
+				{
+
+					case Win32.WinMsgs.WM_NCLBUTTONDOWN:
+					case Win32.WinMsgs.WM_NCLBUTTONUP:
+					case Win32.WinMsgs.WM_LBUTTONDOWN:
+						{
+							// Make sure the popuptree hasn't been disposed of with out setting
+							// the m_popupTree variable to null:
+							if (m_popupTree.IsDisposed)
+							{
+								return false;   // default case
+							}
+							// Handle any mouse left button activity.
+							// Non-client areas include the title bar, menu bar, window borders,
+							// and scroll bars. But the only one in our combo is the scroll bar.
+							var c = FromHandle(m.HWnd);
+							// Clicking anywhere in an FwListBox, including it's scroll bar,
+							// behaves normally.
+							if (c == m_popupTree.m_treeView)
+							{
+								return false;
+							}
+
+							// On Mono clicking on the FwListBox Scrollbar causes return from Control.FromHandle
+							// to be a ImplicitScrollBar which is a child of the FwListBox.
+							if (c is ScrollBar && c.Parent == m_popupTree.m_treeView)
+							{
+								return false;
+							}
+
+							// Any other click is captured and causes the list box to go away.
+							// Only do this if the popup tree is visible
+							if (m_popupTree.Visible)
+							{
+								m_popupTree.HideForm();
+								return true;
+							}
+							return false;
+						}
+					default:
+						return false;
+				}
 			}
 		}
 	}
