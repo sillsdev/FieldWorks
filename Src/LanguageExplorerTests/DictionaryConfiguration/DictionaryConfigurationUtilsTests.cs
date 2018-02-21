@@ -49,18 +49,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		}
 		#endregion
 
-		//[TestFixtureSetUp]
-		//public new void FixtureSetup()
-		//{
-		//	var testProjPath = Path.Combine(Path.GetTempPath(), "DictionaryConfigurationUtilsTestsProj");
-		//	if (Directory.Exists(testProjPath))
-		//	{
-		//		Directory.Delete(testProjPath, true);
-		//	}
-		//	Directory.CreateDirectory(testProjPath);
-		//	Cache.ProjectId.Path = testProjPath;
-		//}
-
 		[Test]
 		public void GatherBuiltInAndUserConfigurations_ReturnsShippedConfigurations()
 		{

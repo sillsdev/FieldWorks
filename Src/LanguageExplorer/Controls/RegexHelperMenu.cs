@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -44,43 +44,43 @@ namespace LanguageExplorer.Controls
 		{
 			if (m_isFind)
 			{
-				MenuItems.Add(String.Format(FwCoreDlgs.ksREBeginLine, "^"), new EventHandler(caret));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksREEndLine, "$"), new EventHandler(dollarSign));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksREAnyChar, "."), new EventHandler(dot));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksRECharFromSet, "[]"), new EventHandler(charClass));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksRECharNotFromSet, "[^]"), new EventHandler(invCharClass));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksREAlternation, "|"), new EventHandler(pipe));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksREGrouping, "()"), new EventHandler(parens));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksREQuoteMeta, "\\"), new EventHandler(backslash));
+				MenuItems.Add(string.Format(FwCoreDlgs.ksREBeginLine, "^"), caret);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksREEndLine, "$"), dollarSign);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksREAnyChar, "."), dot);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksRECharFromSet, "[]"), charClass);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksRECharNotFromSet, "[^]"), invCharClass);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksREAlternation, "|"), pipe);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksREGrouping, "()"), parens);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksREQuoteMeta, "\\"), backslash);
 				MenuItems.Add("-");
-				MenuItems.Add(String.Format(FwCoreDlgs.ksREZeroOrMore, "*"), new EventHandler(star));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksREOneOrMore, "+"), new EventHandler(plus));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksREOptional, "?"), new EventHandler(questionMark));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksRENTimes, "{n}"), new EventHandler(curlyBrackets));
+				MenuItems.Add(string.Format(FwCoreDlgs.ksREZeroOrMore, "*"), star);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksREOneOrMore, "+"), plus);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksREOptional, "?"), questionMark);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksRENTimes, "{n}"), curlyBrackets);
 				MenuItems.Add("-");
-				MenuItems.Add(String.Format(FwCoreDlgs.ksREWordChar, "\\w"), new EventHandler(word));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksRENonwordChar, "\\W"), new EventHandler(nonWord));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksRESpaceChar, "\\s"), new EventHandler(space));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksRENonspaceChar, "\\S"), new EventHandler(nonSpace));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksREDigitChar, "\\d"), new EventHandler(digit));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksRENondigitChar, "\\D"), new EventHandler(nonDigit));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksREBoundaryChar, "\\b"), new EventHandler(boundary));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksRENonboundaryChar, "\\B"), new EventHandler(nonBoundary));
+				MenuItems.Add(string.Format(FwCoreDlgs.ksREWordChar, "\\w"), word);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksRENonwordChar, "\\W"), nonWord);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksRESpaceChar, "\\s"), space);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksRENonspaceChar, "\\S"), nonSpace);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksREDigitChar, "\\d"), digit);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksRENondigitChar, "\\D"), nonDigit);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksREBoundaryChar, "\\b"), boundary);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksRENonboundaryChar, "\\B"), nonBoundary);
 				MenuItems.Add("-");
-				MenuItems.Add(String.Format(FwCoreDlgs.ksREFirstCapture, "\\1"), new EventHandler(findCapture1));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksRESecondCapture, "\\2"), new EventHandler(findCapture2));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksREThirdCapture, "\\3"), new EventHandler(findCapture3));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksRENthCapture, "\\n"), new EventHandler(findCapturen));
+				MenuItems.Add(string.Format(FwCoreDlgs.ksREFirstCapture, "\\1"), findCapture1);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksRESecondCapture, "\\2"), findCapture2);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksREThirdCapture, "\\3"), findCapture3);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksRENthCapture, "\\n"), findCapturen);
 			}
 			else
 			{
-				MenuItems.Add(String.Format(FwCoreDlgs.ksREFirstCapture, "$1"), new EventHandler(replaceCapture1));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksRESecondCapture, "$2"), new EventHandler(replaceCapture2));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksREThirdCapture, "$3"), new EventHandler(replaceCapture3));
-				MenuItems.Add(String.Format(FwCoreDlgs.ksRENthCapture, "$n"), new EventHandler(replaceCapturen));
+				MenuItems.Add(string.Format(FwCoreDlgs.ksREFirstCapture, "$1"), replaceCapture1);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksRESecondCapture, "$2"), replaceCapture2);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksREThirdCapture, "$3"), replaceCapture3);
+				MenuItems.Add(string.Format(FwCoreDlgs.ksRENthCapture, "$n"), replaceCapturen);
 			}
 			MenuItems.Add("-");
-			MenuItems.Add(FwCoreDlgs.ksREHelp, new EventHandler(showHelp));
+			MenuItems.Add(FwCoreDlgs.ksREHelp, showHelp);
 		}
 
 		// Text insertion methods

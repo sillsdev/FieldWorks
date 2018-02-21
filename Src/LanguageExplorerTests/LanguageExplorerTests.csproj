@@ -105,7 +105,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\Framework.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.JScript" />
     <Reference Include="ParserCore">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ParserCore.dll</HintPath>

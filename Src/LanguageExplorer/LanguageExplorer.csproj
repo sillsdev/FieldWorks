@@ -765,6 +765,9 @@
     <Compile Include="Impls\FwHelpAbout.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="IFindAndReplaceContext.cs" />
+    <Compile Include="Impls\ReverseFindCollectorEnv.cs" />
+    <Compile Include="Controls\XMLViews\VwPatternSerializableSettings.cs" />
     <Compile Include="Impls\WebonaryException.cs" />
     <Compile Include="IMultiListSortItemProvider.cs" />
     <Compile Include="Controls\XMLViews\IntChooserBEditControl.cs" />

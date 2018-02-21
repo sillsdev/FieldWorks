@@ -35,6 +35,7 @@ namespace LanguageExplorer.Impls
 		{
 			InitializeComponent();
 		}
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:FwApplyStyleDlg"/> class.
 		/// </summary>

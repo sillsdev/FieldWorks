@@ -29,13 +29,10 @@ using SIL.Windows.Forms;
 
 namespace LanguageExplorer.Impls
 {
-#if RANDYTODO
-	// TODO: Break out classes and clean code.
-#endif
 	/// <summary>
 	/// Find/Replace dialog
 	/// </summary>
-	public class FwFindReplaceDlg : Form, IMessageFilter
+	internal sealed class FwFindReplaceDlg : Form, IMessageFilter
 	{
 #region Constants
 		private const string kPersistenceLabel = "FindReplace_";
@@ -56,7 +53,7 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private enum MatchType
 		{
-			/// <summary></summary>
+			/// <summary />
 			NotSet,
 			/// <summary>no match found after previous match</summary>
 			NoMoreMatchesFound,
@@ -69,22 +66,22 @@ namespace LanguageExplorer.Impls
 
 #region Data members
 		/// <summary>all the search settings</summary>
-		protected IVwPattern m_vwFindPattern;
+		private IVwPattern m_vwFindPattern;
 		/// <summary>Environment that keeps track of where we're finding</summary>
-		protected FindCollectorEnv m_findEnvironment;
+		private FindCollectorEnv m_findEnvironment;
 		/// <summary>The rootsite where the find operation will be performed</summary>
-		protected IVwRootSite m_vwRootsite;
+		private IVwRootSite m_vwRootsite;
 		/// <summary />
-		protected LcmCache m_cache;
+		private LcmCache m_cache;
 		private IApp m_app;
 		private bool m_cacheMadeLocally = false;
 		/// <summary />
-		protected IVwSelection m_vwSelectionForPattern;
-		private ITsString m_resultReplaceText; // saves replace text for reading after dlg closes.
+		private IVwSelection m_vwSelectionForPattern;
+
 		/// <summary />
-		protected ITsString m_prevSearchText;
+		private ITsString m_prevSearchText;
 		/// <summary />
-		protected SearchKiller m_searchKiller = new SearchKiller();
+		private SearchKiller m_searchKiller = new SearchKiller();
 		private bool m_messageFilterInstalled;
 
 		private string m_sMoreButtonText;
@@ -95,77 +92,74 @@ namespace LanguageExplorer.Impls
 
 		private bool m_fLastDirectionForward;
 
-		private System.Windows.Forms.TabPage tabFind;
-		private System.Windows.Forms.TabPage tabReplace;
-		private System.Windows.Forms.TabControl tabControls;
-		/// <summary></summary>
-		protected System.Windows.Forms.CheckBox chkMatchDiacritics;
-		/// <summary></summary>
-		protected System.Windows.Forms.CheckBox chkMatchWS;
-		/// <summary></summary>
-		protected System.Windows.Forms.CheckBox chkMatchCase;
-		/// <summary></summary>
-		protected System.Windows.Forms.CheckBox chkMatchWholeWord;
+		private TabPage tabFind;
+		private TabPage tabReplace;
+		private TabControl tabControls;
+		/// <summary />
+		private CheckBox chkMatchDiacritics;
+		/// <summary />
+		private CheckBox chkMatchWS;
+		/// <summary />
+		private CheckBox chkMatchCase;
+		/// <summary />
+		private CheckBox chkMatchWholeWord;
 		/// <summary>Panel containing advanced controls</summary>
-		protected System.Windows.Forms.Panel panelSearchOptions;
-		/// <summary></summary>
-		protected SIL.FieldWorks.Common.Widgets.FwTextBox fweditFindText;
-		/// <summary></summary>
-		protected SIL.FieldWorks.Common.Widgets.FwTextBox fweditReplaceText;
-		private System.ComponentModel.IContainer components = null;
-		/// <summary></summary>
-		protected System.Windows.Forms.Label lblFindFormatText;
-		/// <summary></summary>
-		protected System.Windows.Forms.Label lblReplaceFormatText;
+		private Panel panelSearchOptions;
+		/// <summary />
+		private FwTextBox fweditFindText;
+		/// <summary />
+		private FwTextBox fweditReplaceText;
+		private IContainer components = null;
+		/// <summary />
+		private Label lblFindFormatText;
+		/// <summary />
+		private Label lblReplaceFormatText;
 
-		private FwTextBox m_lastTextBoxInFocus;
 		private bool m_initialActivate;
 		private bool m_inReplace;
 		private bool m_inFind;
 		private bool m_inGetSpecs;
 		/// <summary>The OK button is usually hidden. It is visible in Flex after clicking the
 		/// Setup button of the Find/Replace tab of the Bulk Edit bar.</summary>
-		private System.Windows.Forms.Button m_okButton;
+		private Button m_okButton;
 		/// <summary></summary>
-		protected System.Windows.Forms.CheckBox chkUseRegularExpressions;
+		private CheckBox chkUseRegularExpressions;
 
 		private IHelpTopicProvider m_helpTopicProvider;
-
-		private bool m_fDisableReplacePatternMatching;
 
 		private IPropertyTable m_propertyTable;
 
 		private string s_helpTopic;
-		private System.Windows.Forms.HelpProvider helpProvider;
+		private HelpProvider helpProvider;
 
 		// Used by EnableControls to remember what was enabled when things were disabled for
 		// the duration of an operation, in order to put them right afterwards.
 		private Dictionary<Control, bool> m_enableStates;
-		private System.Windows.Forms.Button btnRegexMenuFind;
-		private System.Windows.Forms.Button btnRegexMenuReplace;
+		private Button btnRegexMenuFind;
+		private Button btnRegexMenuReplace;
 
 		private RegexHelperMenu regexContextMenuFind;
 		/// <summary />
-		protected MenuItem mnuWritingSystem;
+		private MenuItem mnuWritingSystem;
 		/// <summary />
-		protected MenuItem mnuStyle;
+		private MenuItem mnuStyle;
 		private Button btnFormat;
 		/// <summary>The close button</summary>
 		/// <remarks>TE-4839: Changed the text from Cancel to Close according to TE Analyst (2007-06-22).</remarks>
-		protected Button btnClose;
+		private Button btnClose;
 		private Button btnFindNext;
 		private Button btnMore;
 		private Button btnReplace;
 		private Button btnReplaceAll;
 		private Panel panelBasic;
 		/// <summary />
-		protected Label lblReplaceFormat;
+		private Label lblReplaceFormat;
 		private Label lblReplaceText;
 		/// <summary />
-		protected ContextMenu mnuFormat;
+		private ContextMenu mnuFormat;
 		private Label lblSearchOptions;
 		/// <summary />
-		protected Label lblFindFormat;
+		private Label lblFindFormat;
 		private RegexHelperMenu regexContextMenuReplace;
 
 #endregion
@@ -186,7 +180,7 @@ namespace LanguageExplorer.Impls
 			helpProvider = new HelpProvider();
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 
-			m_lastTextBoxInFocus = fweditFindText;
+			LastTextBoxInFocus = fweditFindText;
 			// Init of member variables related to dialog height removed from here and moved
 			// to OnLayout. This allows them to correctly remember the adjusted dialog size
 			// that occurs when screen resolution is not set to 96dpi
@@ -219,15 +213,11 @@ namespace LanguageExplorer.Impls
 		/// False indicates some problem and the find/replace dialog should not be
 		/// shown at this time.
 		/// </returns>
-		public bool SetDialogValues(LcmCache cache, IVwPattern vwPattern, IVwRootSite rootSite,
-			bool fReplace, bool fOverlays, Form owner, IHelpTopicProvider helpTopicProvider, IApp app)
+		public bool SetDialogValues(LcmCache cache, IVwPattern vwPattern, IVwRootSite rootSite, bool fReplace, bool fOverlays, Form owner, IHelpTopicProvider helpTopicProvider, IApp app)
 		{
-			return SetDialogValues(cache, vwPattern, rootSite, fReplace, fOverlays,
-				owner, helpTopicProvider, app,
-				cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
+			return SetDialogValues(cache, vwPattern, rootSite, fReplace, fOverlays, owner, helpTopicProvider, app, cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the initial values for the dialog controls, prior to displaying the dialog.
 		/// This method should be called after creating, but prior to calling DoModeless. This
@@ -243,6 +233,7 @@ namespace LanguageExplorer.Impls
 		/// to specify the appropriate help topic path for this dialog</param>
 		/// <param name="app">The application</param>
 		/// <param name="wsEdit">writing system for the find and replace edit boxes</param>
+		/// <exception cref="ArgumentNullException"></exception>
 		/// <returns>
 		/// true if the dialog was initialized properly, otherwise false.
 		/// False indicates some problem and the find/replace dialog should not be
@@ -250,39 +241,45 @@ namespace LanguageExplorer.Impls
 		/// </returns>
 		/// <remarks>ENHANCE JohnT: it may need more arguments, for example, the name of the
 		/// kind of object we can restrict the search to, a list of fields.</remarks>
-		/// ------------------------------------------------------------------------------------
-		public bool SetDialogValues(LcmCache cache, IVwPattern vwPattern, IVwRootSite rootSite,
-			bool fReplace, bool fOverlays, Form owner, IHelpTopicProvider helpTopicProvider,
-			IApp app, int wsEdit)
+		public bool SetDialogValues(LcmCache cache, IVwPattern vwPattern, IVwRootSite rootSite, bool fReplace, bool fOverlays,
+			Form owner, IHelpTopicProvider helpTopicProvider, IApp app, int wsEdit)
 		{
 			fweditFindText.controlID = "Find";
 			fweditReplaceText.controlID = "Replace";
 			// save the pattern and put the text into the find edit box.
 			if (vwPattern == null)
-				throw new ArgumentNullException("vwPattern");
+			{
+				throw new ArgumentNullException(nameof(vwPattern));
+			}
 			if (cache == null)
-				throw new ArgumentNullException("cache");
+			{
+				throw new ArgumentNullException(nameof(cache));
+			}
 			m_vwFindPattern = vwPattern;
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
 
-			SetOwner(rootSite, owner, vwPattern, wsEdit);
-			bool readOnly = rootSite is SimpleRootSite && ((SimpleRootSite)rootSite).ReadOnlyView;
+			SetOwner(rootSite, owner);
+			var readOnly = rootSite is SimpleRootSite && ((SimpleRootSite)rootSite).ReadOnlyView;
 			if (readOnly)
 			{
 				if (tabControls.Controls.Contains(tabReplace))
+				{
 					tabControls.Controls.Remove(tabReplace);
+				}
 			}
 			else
 			{
 				if (!tabControls.Controls.Contains(tabReplace))
+				{
 					tabControls.Controls.Add(tabReplace);
+				}
 			}
 
-			ILgWritingSystemFactory wsf = m_cache.WritingSystemFactory;
+			var wsf = m_cache.WritingSystemFactory;
 			fweditFindText.WritingSystemFactory = fweditReplaceText.WritingSystemFactory = wsf;
-			CoreWritingSystemDefinition defVernWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			var defVernWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			FindText = TsStringUtils.EmptyString(defVernWs.Handle);
 			ReplaceText = TsStringUtils.EmptyString(defVernWs.Handle);
 			// Make sure each of the edit boxes has a reasonable writing system assigned.
@@ -297,33 +294,30 @@ namespace LanguageExplorer.Impls
 
 			if (m_helpTopicProvider != null) // Will be null when running tests
 			{
-				helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory +
-					m_helpTopicProvider.GetHelpString("UserHelpFile");
+				helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile");
 			}
 
 			SetCheckboxStates(vwPattern);
 
-			if (regexContextMenuFind != null)
-				regexContextMenuFind.Dispose();
+			regexContextMenuFind?.Dispose();
 			regexContextMenuFind = new RegexHelperMenu(fweditFindText, m_helpTopicProvider);
-			if (regexContextMenuReplace != null)
-				regexContextMenuReplace.Dispose();
+			regexContextMenuReplace?.Dispose();
 			regexContextMenuReplace = new RegexHelperMenu(fweditReplaceText, m_helpTopicProvider, false);
 
 			EnableRegexMenuReplaceButton();
 
 			// get the current selection text (if available) to fill in the find pattern.
 			IVwSelection sel = null;
-			if (rootSite != null && rootSite.RootBox != null)
+			if (rootSite?.RootBox != null)
+			{
 				sel = rootSite.RootBox.Selection;
+			}
 			if (sel == null)
 			{
 				// Set the TSS of the edit box to an empty string if it isn't set.
 				if (FindText == null)
 				{
-					FindText = TsStringUtils.MakeString(
-						string.Empty,
-						m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
+					FindText = TsStringUtils.MakeString(string.Empty, m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
 				}
 			}
 			else
@@ -340,21 +334,20 @@ namespace LanguageExplorer.Impls
 					SetFormatLabels();
 					return true;
 				}
-				ITsStrBldr bldr = tssSel.GetBldr();
+				var bldr = tssSel.GetBldr();
 				bldr.SetStrPropValue(0, bldr.Length, (int)FwTextPropType.ktptNamedStyle, null);
 				// Unfortunately, the TsString returned by sel.GetFirstParaString() can have an
 				// empty TsTextProps for at least the first run.  If that happens, we blow up
 				// when we try to get the string later.
-				for (int irun = 0; irun < bldr.RunCount; ++irun)
+				for (var irun = 0; irun < bldr.RunCount; ++irun)
 				{
-					ITsTextProps ttp = bldr.get_Properties(irun);
-					int var;
-					if (ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var) <= 0)
+					var ttp = bldr.get_Properties(irun);
+					int dummy;
+					if (ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out dummy) <= 0)
 					{
 						TsRunInfo tri;
 						bldr.FetchRunInfo(irun, out tri);
-						bldr.SetIntPropValues(tri.ichMin, tri.ichLim,
-							(int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
+						bldr.SetIntPropValues(tri.ichMin, tri.ichLim, (int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
 					}
 				}
 				RemoveEndOfPara(bldr);
@@ -374,8 +367,7 @@ namespace LanguageExplorer.Impls
 				{
 					FindText = vwPattern.Pattern;
 				}
-				else if ((bldr.Length != 0 || FindText == null || FindText.Length == 0)
-					&& tssSel.get_Properties(0).GetIntPropValues(SimpleRootSite.ktptUserPrompt, out nVar) != 1)
+				else if ((bldr.Length != 0 || FindText == null || FindText.Length == 0) && tssSel.get_Properties(0).GetIntPropValues(SimpleRootSite.ktptUserPrompt, out nVar) != 1)
 				{
 					FindText = bldr.GetString();
 				}
@@ -384,8 +376,8 @@ namespace LanguageExplorer.Impls
 					// Set the replace text box properties to be the same as the find text box.
 					// The best we can do is take the properties of the first run which should
 					// be fine for most cases.
-					ITsTextProps props = FindText.get_Properties(0);
-					ITsStrBldr replaceBldr = TsStringUtils.MakeStrBldr();
+					var props = FindText.get_Properties(0);
+					var replaceBldr = TsStringUtils.MakeStrBldr();
 					replaceBldr.Replace(0, 0, "", props);
 					ReplaceText = replaceBldr.GetString();
 				}
@@ -401,7 +393,6 @@ namespace LanguageExplorer.Impls
 			btnRegexMenuReplace.Enabled = chkUseRegularExpressions.Checked;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set initial values, assuming default vernacular writing system for the find
 		/// and replace edit boxes.
@@ -418,15 +409,11 @@ namespace LanguageExplorer.Impls
 		/// False indicates some problem and the find/replace dialog should not be
 		/// shown at this time.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		public bool SetDialogValues(LcmCache cache, IVwPattern vwPattern,
-			IVwStylesheet stylesheet, Form owner, IHelpTopicProvider helpTopicProvider, IApp app)
+		public bool SetDialogValues(LcmCache cache, IVwPattern vwPattern, IVwStylesheet stylesheet, Form owner, IHelpTopicProvider helpTopicProvider, IApp app)
 		{
-			return SetDialogValues(cache, vwPattern, stylesheet, owner, helpTopicProvider, app,
-				cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
+			return SetDialogValues(cache, vwPattern, stylesheet, owner, helpTopicProvider, app, cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the initial values for the dialog controls, prior to displaying the dialog.
 		/// This method should be called after creating, but prior to calling DoModal. This
@@ -449,10 +436,7 @@ namespace LanguageExplorer.Impls
 		/// </returns>
 		/// <remarks>ENHANCE JohnT: it may need more arguments, for example, the name of the
 		/// kind of object we can restrict the search to, a list of fields.</remarks>
-		/// ------------------------------------------------------------------------------------
-		public bool SetDialogValues(LcmCache cache, IVwPattern vwPattern,
-			IVwStylesheet stylesheet, Form owner, IHelpTopicProvider helpTopicProvider,
-			IApp app, int wsEdit)
+		public bool SetDialogValues(LcmCache cache, IVwPattern vwPattern, IVwStylesheet stylesheet, Form owner, IHelpTopicProvider helpTopicProvider, IApp app, int wsEdit)
 		{
 			// Must set the stylesheet for the FwEdit boxes before calling SetDialogValues since
 			// that call can reset the text in those boxes.
@@ -460,7 +444,9 @@ namespace LanguageExplorer.Impls
 
 			// For now pass a null writing system string since it isn't used at all.
 			if (!SetDialogValues(cache, vwPattern, null, true, false, owner, helpTopicProvider, app, wsEdit))
+			{
 				return false;
+			}
 
 			FindText = vwPattern.Pattern;
 			// Reconfigure the dialog for this special purpose. The Find/Replace buttons go away,
@@ -470,18 +456,14 @@ namespace LanguageExplorer.Impls
 			btnReplaceAll.Hide();
 			m_okButton.Show();
 			m_inGetSpecs = true; // disables showing Replace buttons
-			//m_inReplace = true; // disables switch to Find tab.
 			tabControls.TabPages.Remove(tabFind);
-			this.AcceptButton = m_okButton;
+			AcceptButton = m_okButton;
 			return true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the checkbox states.
 		/// </summary>
-		/// <param name="vwPattern">The vw pattern.</param>
-		/// ------------------------------------------------------------------------------------
 		private void SetCheckboxStates(IVwPattern vwPattern)
 		{
 			// Set initial checkbox states
@@ -490,38 +472,34 @@ namespace LanguageExplorer.Impls
 			chkMatchCase.Checked = vwPattern.MatchCase;
 			chkMatchWholeWord.Checked = vwPattern.MatchWholeWord;
 			if (chkUseRegularExpressions.Enabled)
+			{
 				chkUseRegularExpressions.Checked = vwPattern.UseRegularExpressions;
+			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged
-		/// resources; <c>false</c> to release only unmanaged resources.
-		/// </param>
-		/// -----------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
+			{
 				return;
+			}
 
-			m_lastTextBoxInFocus = null;
+			LastTextBoxInFocus = null;
 
 			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
-				if (m_cacheMadeLocally && m_cache != null)
-					m_cache.Dispose();
-				if (regexContextMenuFind != null)
-					regexContextMenuFind.Dispose();
-				if (regexContextMenuReplace != null)
-					regexContextMenuReplace.Dispose();
-				//if (m_helpTopicProvider != null && (m_helpTopicProvider is IDisposable)) // No, since the client provides it.
-				//	(m_helpTopicProvider as IDisposable).Dispose();
+				components?.Dispose();
+				if (m_cacheMadeLocally)
+				{
+					m_cache?.Dispose();
+				}
+				regexContextMenuFind?.Dispose();
+				regexContextMenuReplace?.Dispose();
 				if (m_messageFilterInstalled)
 				{
 					Application.RemoveMessageFilter(this);
@@ -543,58 +521,43 @@ namespace LanguageExplorer.Impls
 #endregion // Construction, initialization, destruction
 
 #region Other methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Removes any end of paragraph marker from the string builder.
 		/// </summary>
-		/// <param name="bldr">The string builder.</param>
-		/// ------------------------------------------------------------------------------------
 		private void RemoveEndOfPara(ITsStrBldr bldr)
 		{
-			string endOfPara = Environment.NewLine;
+			var endOfPara = Environment.NewLine;
 			// Remove any end of paragraph marker from the string builder.
 			if (bldr.Length < endOfPara.Length)
+			{
 				return;
+			}
 
 			if (bldr.Text.EndsWith(endOfPara))
+			{
 				bldr.Replace(bldr.Length - endOfPara.Length, bldr.Length, null, null);
+			}
 		}
 
 		/// <summary>
 		/// Call this after SetDialogValues on startup to restore settings and have them
 		/// saved on close.
 		/// </summary>
-		/// <param name="propertyTable"></param>
 		public void RestoreAndPersistSettingsIn(IPropertyTable propertyTable)
 		{
 			if (propertyTable == null)
+			{
 				return;
+			}
 			m_propertyTable = propertyTable;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// If this is set true, the 'use regular expression' check is disabled in the Replace tab.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool DisableReplacePatternMatching
-		{
-			get
-			{
-				return m_fDisableReplacePatternMatching;
-			}
-			set
-			{
-				m_fDisableReplacePatternMatching = value;
-			}
-		}
+		public bool DisableReplacePatternMatching { get; set; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="levent"></param>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
 			// We want to save and adjust these sizes AFTER our handle is created
@@ -602,7 +565,7 @@ namespace LanguageExplorer.Impls
 			// dialog size if our screen resolution is not 96 DPI), but only ONCE,
 			// because after the first time we have changed the values we are basing
 			// things on.
-			if (this.IsHandleCreated && m_heightDlgLess == 0)
+			if (IsHandleCreated && m_heightDlgLess == 0)
 			{
 				m_heightDlgMore = Height;
 				m_heightTabControlMore = tabControls.Height;
@@ -613,13 +576,15 @@ namespace LanguageExplorer.Impls
 				if (m_propertyTable != null)
 				{
 					// Now we have our natural size, we can properly adjust our location etc.
-					object locWnd = m_propertyTable.GetValue<object>(kPersistenceLabel + "DlgLocation");
-					object showMore = m_propertyTable.GetValue<object>(kPersistenceLabel + "ShowMore");
+					var locWnd = m_propertyTable.GetValue<object>(kPersistenceLabel + "DlgLocation");
+					var showMore = m_propertyTable.GetValue<object>(kPersistenceLabel + "ShowMore");
 					if (showMore != null && "true" == (string)showMore)
+					{
 						btnMore_Click(this, new EventArgs());
+					}
 					if (locWnd != null)
 					{
-						Rectangle rect = new Rectangle((Point)locWnd, this.Size);
+						var rect = new Rectangle((Point)locWnd, this.Size);
 						ScreenHelper.EnsureVisibleRect(ref rect);
 						DesktopBounds = rect;
 						StartPosition = FormStartPosition.Manual;
@@ -629,21 +594,6 @@ namespace LanguageExplorer.Impls
 			base.OnLayout (levent);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Change the main window which owns this dialog. Since this dialog attempts to stay
-		/// alive as long as the app is alive (or, as long as there is a main window open),
-		/// the app should call this to re-assign an owner any time the existing owner is
-		/// closing.  This assumes that the find and replace edit boxes use the default
-		/// vernacular writing system.
-		/// </summary>
-		public void SetOwner(IVwRootSite rootSite, Form newOwner, IVwPattern findPattern)
-		{
-			SetOwner(rootSite, newOwner, findPattern,
-				m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
-		}
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Change the main window which owns this dialog. Since this dialog attempts to stay
 		/// alive as long as the app is alive (or, as long as there is a main window open),
@@ -652,14 +602,13 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		/// <param name="rootSite">view</param>
 		/// <param name="newOwner">The main window that owns the rootsite</param>
-		/// <param name="findPattern">The find/replace pattern of the new owner. TODO Review (Hasso) 2015.08: unused</param>
-		/// <param name="wsEdit">writing system for the find and replace edit boxes TODO Review (Hasso) 2015.08: unused</param>
-		/// ------------------------------------------------------------------------------------
-		public void SetOwner(IVwRootSite rootSite, Form newOwner, IVwPattern findPattern, int wsEdit)
+		public void SetOwner(IVwRootSite rootSite, Form newOwner)
 		{
 			m_vwRootsite = rootSite;
 			if (m_vwRootsite != null && rootSite.RootBox != null)
+			{
 				fweditFindText.StyleSheet = fweditReplaceText.StyleSheet = rootSite.RootBox.Stylesheet;
+			}
 
 			if (newOwner != null && Owner != newOwner)
 			{
@@ -669,23 +618,18 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Check that the ws in the ITsString is still valid.  If it isn't, set it to the given
 		/// default value.
 		/// </summary>
-		/// <param name="wsEdit">The ws edit.</param>
-		/// <param name="tss">The TSS.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		private ITsString EnsureValidWs(int wsEdit, ITsString tss)
 		{
 			if (tss != null)
 			{
-				ITsStrBldr tsb = tss.GetBldr();
-				ITsTextProps ttp = tsb.get_Properties(0);
+				var tsb = tss.GetBldr();
+				var ttp = tsb.get_Properties(0);
 				int nVar;
-				int ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
+				var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
 				string sWs = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(ws);
 				if (sWs == null)
 				{
@@ -698,12 +642,10 @@ namespace LanguageExplorer.Impls
 #endregion
 
 #region Windows Form Designer generated code
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		/// -----------------------------------------------------------------------------------
 		private void InitializeComponent()
 		{
 			System.Windows.Forms.Button btnHelp;
@@ -1003,29 +945,22 @@ namespace LanguageExplorer.Impls
 #endregion
 
 #region Event handlers
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the CheckedChanged event of the chkMatchWS control.
 		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
 		private void chkMatchWS_CheckedChanged(object sender, EventArgs e)
 		{
 			SetFormatLabels();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Change Close button back to Cancel whenever we re-open the dialog
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnVisibleChanged(EventArgs e)
 		{
 			if (Visible)
 			{	// this means we were hidden and now will be visible
-				System.Resources.ResourceManager resources =
-					new System.Resources.ResourceManager(typeof(FwFindReplaceDlg));
+				var resources = new System.Resources.ResourceManager(typeof(FwFindReplaceDlg));
 				btnClose.Text = resources.GetString("btnClose.Text");
 
 				// set the "initial activate" state to true. This will allow the OnActivated
@@ -1035,22 +970,18 @@ namespace LanguageExplorer.Impls
 			base.OnVisibleChanged(e);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Open the help window when the help button is pressed.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void btnHelp_Click(object sender, System.EventArgs e)
 		{
 			SetHelpTopicId();
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, s_helpTopic);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Method to handle the Click event of the Format button. Displays the format menu.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void btnFormat_Click(object sender, EventArgs e)
 		{
 			mnuFormat.MenuItems.Clear();
@@ -1061,26 +992,24 @@ namespace LanguageExplorer.Impls
 			mnuFormat.Show(btnFormat, new Point(0, btnFormat.Height));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// This gets called whenever the user selects a writing system
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void WritingSystemMenu_Click(object sender, EventArgs e)
 		{
 			if (sender is MenuItem)
 			{
 				var item = (MenuItem)sender;
 				if (item.Parent == mnuWritingSystem)
+				{
 					ApplyWS(LastTextBoxInFocus, (int) item.Tag);
+				}
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// This gets called whenever the user selects a style from the style menu
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void StyleMenu_Click(object sender, EventArgs e)
 		{
 			if (sender is MenuItem)
@@ -1093,15 +1022,15 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle the Find Next button click event
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected void OnFindNext(object sender, EventArgs e)
+		private void OnFindNext(object sender, EventArgs e)
 		{
 			if (DataUpdateMonitor.IsUpdateInProgress())
-				return;  // discard event
+			{
+				return;
+			}
 
 			FindNext();
 
@@ -1129,29 +1058,33 @@ namespace LanguageExplorer.Impls
 			{
 				var control = c as Control;
 				if (control != null)
+				{
 					RemoveWaitCursor(control);
+				}
 			}
 			ctl.Cursor = Cursors.Default;
 		}
 #endif
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle the Replace button click event. The first time the user presses the
 		/// "Replace" button, we just find the next match; the second time we actually do the
 		/// replace and then go on to find the next match.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected void OnReplace(object sender, EventArgs e)
+		private void OnReplace(object sender, EventArgs e)
 		{
 			if (DataUpdateMonitor.IsUpdateInProgress())
+			{
 				return;  // discard event
+			}
 
 			var rootSite = ActiveView;
 			if (rootSite == null)
+			{
 				return;
+			}
 
-			using (UndoTaskHelper undoTaskHelper = new UndoTaskHelper(rootSite, "kstidUndoReplace"))
+			using (var undoTaskHelper = new UndoTaskHelper(rootSite, "kstidUndoReplace"))
 			{
 				// Replace the selection with the replacement text, but don't allow deletion
 				// of objects, such as footnotes in the replaced text.
@@ -1164,21 +1097,20 @@ namespace LanguageExplorer.Impls
 			fweditFindText.SelectAll();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle the Replace All button click event.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected void OnReplaceAll(object sender, EventArgs e)
+		private void OnReplaceAll(object sender, EventArgs e)
 		{
 			if (DataUpdateMonitor.IsUpdateInProgress())
+			{
 				return;  // discard event
+			}
 			string undo, redo;
 			ResourceHelper.MakeUndoRedoLabels("kstidUndoReplace", out undo, out redo);
 			using (new DataUpdateMonitor(this, "ReplaceAll"))
 			using (new WaitCursor(this, true))
-			using (UndoableUnitOfWorkHelper undoHelper =
-				new UndoableUnitOfWorkHelper(m_cache.ServiceLocator.GetInstance<IActionHandler>(), undo, redo))
+			using (var undoHelper = new UndoableUnitOfWorkHelper(m_cache.ServiceLocator.GetInstance<IActionHandler>(), undo, redo))
 			{
 				DoReplaceAll();
 				undoHelper.RollBack = false;
@@ -1189,26 +1121,27 @@ namespace LanguageExplorer.Impls
 			fweditFindText.SelectAll();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Does the replace all.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected void DoReplaceAll()
+		private void DoReplaceAll()
 		{
 			var replaceCount = 0;
-			if (m_app != null)
-				m_app.EnableMainWindows(false);
+			m_app?.EnableMainWindows(false);
 			var rootSite = ActiveView;
 			if (rootSite == null)
+			{
 				return;
+			}
 
 			PrepareToFind();
 			m_inReplace = true;
 
 			// suppress the standard message; ReplaceAll shows its own based on how many matches we find (although the text is the same for 0 found)
 			if (MatchNotFound == null)
+			{
 				MatchNotFound += SuppressAllMatchNotFoundMessages;
+			}
 			try
 			{
 				var start = DateTime.Now;
@@ -1243,24 +1176,23 @@ namespace LanguageExplorer.Impls
 			finally
 			{
 				PostpareToFind(replaceCount > 0);
-				if (m_app != null)
-					m_app.EnableMainWindows(true);
+				m_app?.EnableMainWindows(true);
 				m_inReplace = false;
 			}
 
 			// Display a dialog box if the replace all finished or was stopped
 			if (replaceCount > 0)
 			{
-				bool fShowMsg = true;
-				string msg = string.Format(m_searchKiller.AbortRequest ?
-					FwCoreDlgs.kstidReplaceAllStopped :
-					FwCoreDlgs.kstidReplaceAllDone, replaceCount);
-
+				var fShowMsg = true;
+				var msg = string.Format(m_searchKiller.AbortRequest ? FwCoreDlgs.kstidReplaceAllStopped : FwCoreDlgs.kstidReplaceAllDone, replaceCount);
 				if (MatchNotFound != null)
+				{
 					fShowMsg = MatchNotFound(this, msg, MatchType.ReplaceAllFinished);
-
+				}
 				if (!fShowMsg)
+				{
 					return;
+				}
 
 				try
 				{
@@ -1268,8 +1200,8 @@ namespace LanguageExplorer.Impls
 					{
 						// Get a wait cursor to display when waiting for the messagebox
 						// to show. See FWNX-660.
-						this.tabReplace.UseWaitCursor = true;
-						this.tabReplace.Parent.UseWaitCursor = true;
+						tabReplace.UseWaitCursor = true;
+						tabReplace.Parent.UseWaitCursor = true;
 					}
 
 					MessageBox.Show(Owner, msg, m_app.ApplicationName);
@@ -1278,56 +1210,49 @@ namespace LanguageExplorer.Impls
 				{
 					if (MiscUtils.IsUnix)
 					{
-						this.tabReplace.Parent.UseWaitCursor = false;
-						this.tabReplace.UseWaitCursor = false;
+						tabReplace.Parent.UseWaitCursor = false;
+						tabReplace.UseWaitCursor = false;
 					}
 				}
 			}
 			else if (replaceCount == 0)
+			{
 				InternalMatchNotFound(true);
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Suppress any messages about matches not found.
 		/// </summary>
-		/// <returns>false</returns>
-		/// ------------------------------------------------------------------------------------
 		private static bool SuppressAllMatchNotFoundMessages(object sender, string defaultMsg, MatchType type)
 		{
 			return false;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Stops a find/replace
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void OnStop(object sender, System.EventArgs e)
 		{
 			m_searchKiller.AbortRequest = true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Close the Find/Replace dialog
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void btnClose_Click(object sender, System.EventArgs e)
 		{
 			Hide();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle a click on the OK button.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void m_okButton_Click(object sender, System.EventArgs e)
 		{
 			if (!CanFindNext())
 			{
-				this.DialogResult = DialogResult.Cancel;
+				DialogResult = DialogResult.Cancel;
 				Close();
 
 				return;
@@ -1341,19 +1266,17 @@ namespace LanguageExplorer.Impls
 			// look for an ICU RegEx error code first and handle it here in the dlg.
 			if (PatternIsValid())
 			{
-				this.DialogResult = DialogResult.OK;
+				DialogResult = DialogResult.OK;
 				Close();
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Verifies the pattern is valid. If user wants to use a regex, this validates the
 		/// regular expression.
 		/// </summary>
 		/// <returns><c>true</c> if regular expression is valid or if we don't use regular
 		/// expressions, <c>false</c> if regEx is invalid.</returns>
-		/// ------------------------------------------------------------------------------------
 		private bool PatternIsValid()
 		{
 			if (chkUseRegularExpressions.Checked)
@@ -1368,26 +1291,19 @@ namespace LanguageExplorer.Impls
 			return true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Displays a message box that the regular expression is invalid.
 		/// </summary>
-		/// <param name="errorMessage">The error message.</param>
-		/// ------------------------------------------------------------------------------------
-		protected virtual void DisplayInvalidRegExMessage(string errorMessage)
+		private void DisplayInvalidRegExMessage(string errorMessage)
 		{
-			string errMsg = string.Format(FwCoreDlgs.kstidErrorInRegEx,
-				errorMessage);
-			MessageBox.Show(this, errMsg, FwCoreDlgs.kstidErrorInRegExHeader,
-				MessageBoxButtons.OK, MessageBoxIcon.Error);
+			var errMsg = string.Format(FwCoreDlgs.kstidErrorInRegEx, errorMessage);
+			MessageBox.Show(this, errMsg, FwCoreDlgs.kstidErrorInRegExHeader, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle the event when the check on "Use Regular Expressions" changes.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void chkUseRegularExpressions_CheckedChanged(object sender, System.EventArgs e)
+		private void chkUseRegularExpressions_CheckedChanged(object sender, EventArgs e)
 		{
 			if (chkUseRegularExpressions.Checked)
 			{
@@ -1397,7 +1313,6 @@ namespace LanguageExplorer.Impls
 				chkMatchWholeWord.Checked = false;
 				chkMatchWS.Enabled = false;
 				chkMatchWS.Checked = false;
-
 				btnRegexMenuFind.Enabled = btnRegexMenuReplace.Enabled = true;
 			}
 			else
@@ -1405,28 +1320,22 @@ namespace LanguageExplorer.Impls
 				chkMatchDiacritics.Enabled = true;
 				chkMatchWholeWord.Enabled = true;
 				chkMatchWS.Enabled = true;
-
 				btnRegexMenuFind.Enabled = btnRegexMenuReplace.Enabled = false;
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Instead of closing, just try to hide.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			// Save location.
 			if (m_propertyTable != null)
 			{
-				string propertyName = kPersistenceLabel + "DlgLocation";
+				var propertyName = kPersistenceLabel + "DlgLocation";
 				m_propertyTable.SetProperty(propertyName, Location, true, true);
 				propertyName = kPersistenceLabel + "ShowMore";
-				m_propertyTable.SetProperty(propertyName,
-					Height == m_heightDlgMore ? "true" : "false",
-					true,
-					true);
+				m_propertyTable.SetProperty(propertyName, Height == m_heightDlgMore ? "true" : "false", true, true);
 			}
 			base.OnClosing(e);
 			// If no other handler of this event tried to intervene, the dialog itself will
@@ -1438,13 +1347,11 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// When the user switches between Find and Replace tabs, we need to transfer ownership
 		/// of the panels that hold the controls and hide/show/change controls as appropriate.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected void tabControls_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void tabControls_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if (tabControls.SelectedTab == tabFind)
 			{
@@ -1489,10 +1396,12 @@ namespace LanguageExplorer.Impls
 				fweditReplaceText.Show();
 				lblReplaceText.Show();
 				fweditFindText.Select();
-				if (m_fDisableReplacePatternMatching && (ModifierKeys & Keys.Shift) != Keys.Shift)
+				if (DisableReplacePatternMatching && (ModifierKeys & Keys.Shift) != Keys.Shift)
 				{
 					if (chkUseRegularExpressions.Checked)
+					{
 						chkUseRegularExpressions.Checked = false;
+					}
 					chkUseRegularExpressions.Enabled = false;
 				}
 			}
@@ -1513,110 +1422,105 @@ namespace LanguageExplorer.Impls
 			if (tabControls.SelectedTab == tabFind)
 			{
 				s_helpTopic = "khtpFind"; // default
-				var mainWindow = m_app == null ? null : m_app.ActiveMainWindow as IFindAndReplaceContext;
+				var mainWindow = m_app?.ActiveMainWindow as IFindAndReplaceContext;
 				if (mainWindow != null)
+				{
 					s_helpTopic = mainWindow.FindTabHelpId ?? s_helpTopic;
+				}
 			}
 			else
+			{
 				s_helpTopic = "khtpReplace";
-
-			if (tabControls != null && tabControls.TabCount <= 1 && s_helpTopic != "khtpFindNotebook")   //find/replace help topic for lexicon
+			}
+			if (tabControls != null && tabControls.TabCount <= 1 && s_helpTopic != "khtpFindNotebook") //find/replace help topic for lexicon
+			{
 				s_helpTopic = "khtpLexFind";
-
+			}
 			if (Text == string.Format(FwCoreDlgs.khtpBulkReplaceTitle))
+			{
 				s_helpTopic = "khtpBulkReplace";
-
-			if(m_helpTopicProvider != null) // It will be null if we are running under the test program
-				this.helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
+			}
+			if (m_helpTopicProvider != null) // It will be null if we are running under the test program
+			{
+				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Show more options.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected void btnMore_Click(object sender, System.EventArgs e)
+		private void btnMore_Click(object sender, EventArgs e)
 		{
 			btnMore.Text = FwCoreDlgs.kstidFindLessButtonText;
 			btnMore.Image = ResourceHelper.LessButtonDoubleArrowIcon;
-			btnMore.Click -= new EventHandler(btnMore_Click);
-			btnMore.Click += new EventHandler(btnLess_Click);
+			btnMore.Click -= btnMore_Click;
+			btnMore.Click += btnLess_Click;
 			tabControls.Height = m_heightTabControlMore;
 			Height = m_heightDlgMore;
 			panelSearchOptions.Visible = true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Show fewer options.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected void btnLess_Click(object sender, System.EventArgs e)
+		public void btnLess_Click(object sender, EventArgs e)
 		{
 			btnMore.Text = m_sMoreButtonText;
 			btnMore.Image = ResourceHelper.MoreButtonDoubleArrowIcon;
-			btnMore.Click += new EventHandler(btnMore_Click);
-			btnMore.Click -= new EventHandler(btnLess_Click);
+			btnMore.Click += btnMore_Click;
+			btnMore.Click -= btnLess_Click;
 			tabControls.Height = m_heightTabControlLess;
 			Height = m_heightDlgLess;
 			panelSearchOptions.Visible = false;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Show the Regex Helper context menu for Find
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void btnRegexMenuFind_Click(object sender, EventArgs e)
 		{
 			regexContextMenuFind.Show(btnRegexMenuFind, new System.Drawing.Point(btnRegexMenuFind.Width, 0));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Show the Regex Helper context menu for Replace
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void btnRegexMenuReplace_Click(object sender, EventArgs e)
 		{
 			regexContextMenuReplace.Show(btnRegexMenuReplace, new System.Drawing.Point(btnRegexMenuFind.Width, 0));
 		}
 
-		///-------------------------------------------------------------------------------
 		/// <summary>
 		/// Draws an etched line on the dialog to separate the Search Options from the
 		/// basic controls.
 		/// </summary>
-		///-------------------------------------------------------------------------------
 		private void panel2_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
-			int dxMargin = 10;
-			int left = lblSearchOptions.Right;
-			LineDrawing.Draw(e.Graphics, left,
-				(lblSearchOptions.Top + lblSearchOptions.Bottom) / 2,
-				tabControls.Right - left - dxMargin, LineTypes.Etched);
+			const int dxMargin = 10;
+			var left = lblSearchOptions.Right;
+			LineDrawing.Draw(e.Graphics, left, (lblSearchOptions.Top + lblSearchOptions.Bottom) / 2, tabControls.Right - left - dxMargin, LineTypes.Etched);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle special keystrokes in the dialog.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			// Handle the F3 (Find Next shorcut) when the dialog is active (but not in spec-only
 			// mode, since that mode can't actually perform a Find!)
 			if (!m_inGetSpecs && e.KeyCode == Keys.F3)
+			{
 				OnFindNext(null, EventArgs.Empty);
+			}
 			else
+			{
 				base.OnKeyDown(e);
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Activate dialog.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnActivated(EventArgs e)
 		{
 			if (!m_messageFilterInstalled && !DesignMode)
@@ -1630,9 +1534,11 @@ namespace LanguageExplorer.Impls
 			// other apps (i.e. DN) can do this.
 			if (m_vwRootsite is SimpleRootSite)
 			{
-				SimpleRootSite site = m_vwRootsite as SimpleRootSite;
+				var site = (SimpleRootSite)m_vwRootsite;
 				if (!site.IsDisposed)
+				{
 					site.ShowRangeSelAfterLostFocus = true;
+				}
 			}
 			if (m_initialActivate)
 			{
@@ -1641,14 +1547,11 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Remove the message filter when the dialog loses focus
 		/// (Don't mistake this for onLoseFocus...this dialog never loses focus, it never
 		/// has it, only it's sub-controls do.)
 		/// </summary>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		protected override void OnDeactivate(EventArgs e)
 		{
 			if (m_messageFilterInstalled && !DesignMode)
@@ -1661,69 +1564,67 @@ namespace LanguageExplorer.Impls
 			// other apps (i.e. DN) can do this.
 			if (m_vwRootsite is SimpleRootSite)
 			{
-				SimpleRootSite site = m_vwRootsite as SimpleRootSite;
+				var site = (SimpleRootSite)m_vwRootsite;
 				if (!site.IsDisposed)
+				{
 					site.ShowRangeSelAfterLostFocus = false;
+				}
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// When the focus arrives on a TSS edit control, the other edit control needs to have
 		/// the selection removed from it. Also, the entered box needs to have all of the text
 		/// selected.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void FwTextBox_Enter(object sender, EventArgs e)
 		{
 			if (tabControls.SelectedTab == tabReplace)
 			{
 				if (sender == fweditFindText)
+				{
 					fweditReplaceText.RemoveSelection();
+				}
 				else
+				{
 					fweditFindText.RemoveSelection();
+				}
 			}
 			((FwTextBox)sender).SelectAll();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Needed to keep track of the last Tss edit control to have focus, for the purpose of
 		/// setting styles, etc.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void FwTextBox_Leave(object sender, EventArgs e)
 		{
-			m_lastTextBoxInFocus = (FwTextBox)sender;
+			LastTextBoxInFocus = (FwTextBox)sender;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handle a text changed event in an FW edit box. The style labels need to be
 		/// updated when the text changes.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void HandleTextChanged(object sender, EventArgs e)
 		{
 			SetFormatLabels();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// If enable is false, save the current enable state of the control and disable it.
 		/// If it is true, restore the previous enable state of each control.
 		/// </summary>
-		/// <param name="ctrl"></param>
-		/// <param name="enable"></param>
-		/// ------------------------------------------------------------------------------------
 		private void AdjustControlState(Control ctrl, bool enable)
 		{
 			if (m_enableStates == null)
+			{
 				return;
+			}
 
 			if (enable)
 			{
-				bool reallyEnable = true;
+				var reallyEnable = true;
 				if (m_enableStates.ContainsKey(ctrl))
 				{
 					reallyEnable = m_enableStates[ctrl];
@@ -1739,50 +1640,53 @@ namespace LanguageExplorer.Impls
 #endregion
 
 #region Methods where the work is actually done.
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Enables or disables all the controls except the close/stop/cancel button on the
 		/// find/replace dialog.
 		/// </summary>
-		/// <param name="enable">True to enable all the controls, false otherwise</param>
-		/// ------------------------------------------------------------------------------------
-		private void EnableControls(bool enable)
+		private void EnableControls(bool newEnableStatus)
 		{
-			if (!enable)
+			if (!newEnableStatus)
 			{
 				if (m_enableStates == null)
+				{
 					m_enableStates = new Dictionary<Control, bool>();
+				}
 				else
+				{
 					return; // already disabled, don't remember disabled state.
+				}
 			}
 			foreach (Control ctrl in panelBasic.Controls)
 			{
 				if (ctrl != btnClose)
-					AdjustControlState(ctrl, enable);
+				{
+					AdjustControlState(ctrl, newEnableStatus);
+				}
 			}
+
 			foreach (Control ctrl in panelSearchOptions.Controls)
-				AdjustControlState(ctrl, enable);
-			if (enable)
+			{
+				AdjustControlState(ctrl, newEnableStatus);
+			}
+			if (newEnableStatus)
 			{
 				m_enableStates.Clear();
 				m_enableStates = null; // So we know to save on next disable.
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Replace the existing selection with the string in the replace box, then find the next occurrance, if any.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected void DoReplace(IVwSelection sel)
+		private void DoReplace(IVwSelection sel)
 		{
 			SetupFindPattern();
 			if (IsReplacePossible(sel))
 			{
 				// See if we are just trying to replace formatting.
-				bool fEmptySearchPattern = (FindText.Length == 0);
+				var fEmptySearchPattern = (FindText.Length == 0);
 				m_vwFindPattern.ReplaceWith = ReplaceText;
-
 				DoReplacement(sel, m_vwFindPattern.ReplacementText, m_vwFindPattern.MatchOldWritingSystem, fEmptySearchPattern);
 			}
 			else
@@ -1796,46 +1700,44 @@ namespace LanguageExplorer.Impls
 			FindNext();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Find the next match.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void FindNext()
 		{
 			Find(true);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Find the previous match.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void FindPrevious()
 		{
 			Find(false);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Executes a replace.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void Replace()
 		{
 			OnReplace(null, new EventArgs());
 		}
 
-		IVwRootSite ActiveView
+		private IVwRootSite ActiveView
 		{
 			get
 			{
 				if (m_vwRootsite != null)
 				{
 					if (!(m_vwRootsite is Control))
+					{
 						return m_vwRootsite; // Maybe in testing? Just playing safe.
+					}
 					if (!((Control)m_vwRootsite).IsDisposed)
+					{
 						return m_vwRootsite;
+					}
 				}
 				// if the current one is null or disposed, see if we can get one from the main window
 				if (Owner != null && !Owner.IsDisposed)
@@ -1844,7 +1746,9 @@ namespace LanguageExplorer.Impls
 					{
 						var newSite = ReflectionHelper.GetProperty(Owner, "ActiveView") as IVwRootSite;
 						if (newSite != null)
+						{
 							m_vwRootsite = newSite;
+						}
 					}
 					catch (Exception)
 					{
@@ -1853,35 +1757,42 @@ namespace LanguageExplorer.Impls
 				if (m_vwRootsite != null)
 				{
 					if (!(m_vwRootsite is Control))
+					{
 						return m_vwRootsite; // Maybe in testing? Just playing safe.
+					}
 					if (!((Control)m_vwRootsite).IsDisposed)
+					{
 						return m_vwRootsite;
+					}
 				}
 				return null; // If we can't find anything better than a disposed control, return null.
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Find the next match based on the current pattern settings
 		/// </summary>
-		/// <param name="fSearchForward">If true, search forward; otherwise search backward</param>
-		/// ------------------------------------------------------------------------------------
 		private void Find(bool fSearchForward)
 		{
 			// If no find was done before, show the dialog or focus it.
 			if (!btnFindNext.Enabled)
 			{
 				if (!Visible)
+				{
 					Show();
+				}
 				else
+				{
 					Focus();
+				}
 				return;
 			}
 
 			var rootSite = ActiveView;
 			if (rootSite == null)
+			{
 				return;
+			}
 
 			if (m_fLastDirectionForward != fSearchForward)
 			{
@@ -1894,12 +1805,12 @@ namespace LanguageExplorer.Impls
 
 			// Get the selection from the root box in order to compare it with the one from
 			// the pattern.
-			IVwSelection vwselRootb = rootSite.RootBox.Selection;
+			var vwselRootb = rootSite.RootBox.Selection;
 
 			// If the pattern's selection is different from the current selection in the
 			// rootbox or if a new search has been started then set things up to begin
 			// searching at the current selection.
-			bool fFirstTry = (m_vwSelectionForPattern == null || m_vwSelectionForPattern != vwselRootb);
+			var fFirstTry = (m_vwSelectionForPattern == null || m_vwSelectionForPattern != vwselRootb);
 			if (fFirstTry)
 			{
 				InitializeFindEnvironment(rootSite, fSearchForward);
@@ -1950,11 +1861,9 @@ namespace LanguageExplorer.Impls
 				: new ReverseFindCollectorEnv(vc, DataAccess, hvoRoot, frag, m_vwFindPattern, m_searchKiller);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Prepares to find: change the Close button to a Stop button; disable all other controls.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void PrepareToFind()
 		{
 			// Change the close button into the 'Stop' button
@@ -1968,13 +1877,11 @@ namespace LanguageExplorer.Impls
 			btnClose.Focus();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Postpares to find: reset controls to how they were before the find; remove NoMatchFound from the MatchNotFound handler
 		/// </summary>
 		/// <param name="fMakeCloseBtnSayClose">True to change the the close button to say "Close";
 		/// otherwise it will go back to whatever it was"</param>
-		/// ------------------------------------------------------------------------------------
 		private void PostpareToFind(bool fMakeCloseBtnSayClose)
 		{
 			// Enable controls
@@ -1986,12 +1893,10 @@ namespace LanguageExplorer.Impls
 			MatchNotFound -= SuppressAllMatchNotFoundMessages;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Setup and save the find pattern, clear the selection for the pattern.  This is done at the start of a NEW search only.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected void SetupFindPattern()
+		private void SetupFindPattern()
 		{
 			if (m_prevSearchText == null || !m_prevSearchText.Equals(FindText))
 			{
@@ -2001,11 +1906,9 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Save the values set in the dialog in the pattern.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void SaveDialogValues()
 		{
 			m_vwFindPattern.Pattern = FindText;
@@ -2015,7 +1918,7 @@ namespace LanguageExplorer.Impls
 			m_vwFindPattern.MatchCase = chkMatchCase.Checked;
 			m_vwFindPattern.UseRegularExpressions = chkUseRegularExpressions.Checked;
 			m_vwFindPattern.ReplaceWith = ReplaceText;
-			m_resultReplaceText = ReplaceText;
+			ResultReplaceText = ReplaceText;
 			SimpleStringMatcher.SetupPatternCollating(m_vwFindPattern, m_cache);
 		}
 
@@ -2028,22 +1931,23 @@ namespace LanguageExplorer.Impls
 		{
 			FindFrom(sel);
 			if (!m_findEnvironment.FoundMatch)
+			{
 				AttemptWrap(fFirstTry);
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Attempts to find a pattern match in the view starting from the specified selection.
 		/// </summary>
 		/// <param name="sel">Starting position</param>
-		/// ------------------------------------------------------------------------------------
 		private void FindFrom(IVwSelection sel)
 		{
 			CollectorEnv.LocationInfo startLocation = null;
 			var rootSite = ActiveView;
 			if (rootSite == null)
+			{
 				return;
-
+			}
 			if (sel != null)
 			{
 				startLocation = new CollectorEnv.LocationInfo(SelectionHelper.Create(sel, rootSite));
@@ -2066,11 +1970,9 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Attempts to wrap and continue searching if we hit the bottom of the view.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void AttemptWrap(bool fFirstTry)
 		{
 			Debug.Assert(m_findEnvironment != null);
@@ -2078,7 +1980,9 @@ namespace LanguageExplorer.Impls
 
 			// Have we gone full circle and reached the point where we started?
 			if (m_findEnvironment.StoppedAtLimit)
+			{
 				InternalMatchNotFound(false);
+			}
 			else
 			{
 				// Wrap around to start searching at the top or bottom of the view.
@@ -2087,29 +1991,25 @@ namespace LanguageExplorer.Impls
 				// If, after wrapping around to begin searching from the top, we hit the
 				// starting point, then display the same message as if we went full circle.
 				if (!m_findEnvironment.FoundMatch)
+				{
 					InternalMatchNotFound(fFirstTry);
+				}
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Checks for a subscriber to the MatchNotFound event and displays the appropriate not
 		/// found message if the subscriber says it's ok, or if there is no subscriber.
 		/// </summary>
-		/// <param name="fFirstTry">Determines what message to display.</param>
-		/// ------------------------------------------------------------------------------------
 		private void InternalMatchNotFound(bool fFirstTry)
 		{
 			m_vwSelectionForPattern = null;
-			bool fShowMsg = true;
-
-			string defaultMsg = fFirstTry ? FwCoreDlgs.kstidNoMatchMsg :
-				FwCoreDlgs.kstidNoMoreMatchesMsg;
+			var fShowMsg = true;
+			var defaultMsg = fFirstTry ? FwCoreDlgs.kstidNoMatchMsg : FwCoreDlgs.kstidNoMoreMatchesMsg;
 
 			if (MatchNotFound != null)
 			{
-				fShowMsg = MatchNotFound(this, defaultMsg, fFirstTry ?
-					MatchType.NoMatchFound : MatchType.NoMoreMatchesFound);
+				fShowMsg = MatchNotFound(this, defaultMsg, fFirstTry ? MatchType.NoMatchFound : MatchType.NoMoreMatchesFound);
 			}
 
 			if (fShowMsg && !m_searchKiller.AbortRequest)
@@ -2128,7 +2028,9 @@ namespace LanguageExplorer.Impls
 		{
 			var rootSite = ActiveView;
 			if (rootSite == null)
+			{
 				return null;
+			}
 
 			rootSite.RootBox.Activate(VwSelectionState.vssOutOfFocus);
 			var selHelper = SelectionHelper.Create(rootSite);
@@ -2139,49 +2041,30 @@ namespace LanguageExplorer.Impls
 			m_vwSelectionForPattern = selHelper.SetSelection(rootSite, true, true, VwScrollSelOpts.kssoDefault);
 
 			var rootBox = rootSite.RootBox;
-			return rootBox == null ? null : rootBox.Selection;
+			return rootBox?.Selection;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the current selection from the root site.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected IVwSelection CurrentSelection
-		{
-			get
-			{
-				var rootSite = ActiveView;
-				if (rootSite == null)
-					return null;
+		public IVwSelection CurrentSelection => ActiveView?.RootBox?.Selection;
 
-				var rootBox = rootSite.RootBox;
-				return rootBox == null ? null : rootBox.Selection;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determine if the current selection can be replaced with the replace text.
 		/// </summary>
 		/// <param name="vwsel">current selection to check</param>
 		/// <returns>true if the selection can be replaced, else false</returns>
-		/// ------------------------------------------------------------------------------------
 		private bool IsReplacePossible(IVwSelection vwsel)
 		{
 			// If there is no selection then replace is impossible.
 			if (vwsel == null)
+			{
 				return false;
+			}
 
-			// Is the current selection the same as what is in the find box?
-			if (!m_vwFindPattern.MatchWhole(vwsel))
-				return false;
-
-			// Is the selection editable?
-			return vwsel.CanFormatChar;
+			return m_vwFindPattern.MatchWhole(vwsel) && vwsel.CanFormatChar;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Perform a single instance of a text replace
 		/// </summary>
@@ -2191,26 +2074,25 @@ namespace LanguageExplorer.Impls
 		/// </param>
 		/// <param name="fUseWS"></param>
 		/// <param name="fEmptySearch"></param>
-		/// <remarks>TODO TE-973: searching for writing systems.</remarks>
-		/// ------------------------------------------------------------------------------------
-		protected void DoReplacement(IVwSelection sel, ITsString tssReplace, bool fUseWS, bool fEmptySearch)
+		private void DoReplacement(IVwSelection sel, ITsString tssReplace, bool fUseWS, bool fEmptySearch)
 		{
 			// Get the properties we will apply, except for the writing system/ows and/or sStyleName.
 			ITsString tssSel;
 			bool fGotItAll;
 			sel.GetFirstParaString(out tssSel, " ", out fGotItAll);
 			if (!fGotItAll)
+			{
 				return; // desperate defensive programming.
+			}
 
 			// Get ORCs from selection so that they can be appended after the text has been replaced.
-			ITsStrBldr stringBldr = tssSel.GetBldr();
+			var stringBldr = tssSel.GetBldr();
 			ReplaceString(stringBldr, tssSel, 0, tssSel.Length, tssReplace, 0, fEmptySearch, fUseWS);
 
 			// finally - do the replacement
 			sel.ReplaceWithTsString(stringBldr.GetString().get_NormalizedForm(FwNormalizationMode.knmNFD));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Replaces the string.
 		/// </summary>
@@ -2228,39 +2110,34 @@ namespace LanguageExplorer.Impls
 		/// <param name="fUseWs">if set to <c>true</c> use the writing system used in the
 		/// replace string of the Find/Replace dialog.</param>
 		/// <returns>Change in length of the string.</returns>
-		/// ------------------------------------------------------------------------------------
 		private static int ReplaceString(ITsStrBldr tsbBuilder, ITsString tssInput,
-			int ichMinInput, int ichLimInput, ITsString tssReplace, int delta, bool fEmptySearch,
-			bool fUseWs)
+			int ichMinInput, int ichLimInput, ITsString tssReplace, int delta, bool fEmptySearch, bool fUseWs)
 		{
-			int initialLength = tsbBuilder.Length;
-			int replaceRunCount = tssReplace.RunCount;
+			var initialLength = tsbBuilder.Length;
+			var replaceRunCount = tssReplace.RunCount;
 
 			// Determine whether to replace the sStyleName. We do this if any of the runs of
 			// the replacement string have the sStyleName set (to something other than
 			// Default Paragraph Characters).
-			bool fUseStyle = false;
-			bool fUseTags = false;
+			var fUseStyle = false;
+			var fUseTags = false;
 
 			// ENHANCE (EberhardB): If we're not doing a RegEx search we could store these flags
 			// since they don't change.
 			TsRunInfo runInfo;
-			for (int irunReplace = 0; irunReplace < replaceRunCount; irunReplace++)
+			for (var irunReplace = 0; irunReplace < replaceRunCount; irunReplace++)
 			{
-				ITsTextProps textProps = tssReplace.FetchRunInfo(irunReplace, out runInfo);
-				string sStyleName =
-					textProps.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
-				if (sStyleName != null && sStyleName.Length > 0)
+				var textProps = tssReplace.FetchRunInfo(irunReplace, out runInfo);
+				var sStyleName = textProps.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
+				if (!string.IsNullOrEmpty(sStyleName))
+				{
 					fUseStyle = true;
-
-				//string tags = textProps.GetStrPropValue((int)FwTextPropType.ktptTags);
-				//if (tags.Length > 0)
-				//    fUseTags = true;
+				}
 			}
 
-			int iRunInput = tssInput.get_RunAt(ichMinInput);
-			ITsTextProps selProps = tssInput.get_Properties(iRunInput);
-			ITsPropsBldr propsBldr = selProps.GetBldr();
+			var iRunInput = tssInput.get_RunAt(ichMinInput);
+			var selProps = tssInput.get_Properties(iRunInput);
+			var propsBldr = selProps.GetBldr();
 
 			// Remove all tags that are anywhere in the Find-what string. But also include any
 			// other tags that are present in the first run of the found string. So the resulting
@@ -2275,12 +2152,12 @@ namespace LanguageExplorer.Impls
 
 			// Copy the runs of the replacement string, adjusting the properties.
 			// Make a string builder to accumulate the real replacement string.
-			ITsStrBldr stringBldr = TsStringUtils.MakeStrBldr();
+			var stringBldr = TsStringUtils.MakeStrBldr();
 
 			// Copy the runs of the replacement string, adjusting the properties.
-			for (int irun = 0; irun < replaceRunCount; irun++)
+			for (var irun = 0; irun < replaceRunCount; irun++)
 			{
-				ITsTextProps ttpReplaceRun = tssReplace.FetchRunInfo(irun, out runInfo);
+				var ttpReplaceRun = tssReplace.FetchRunInfo(irun, out runInfo);
 				if (TsStringUtils.GetGuidFromRun(tssReplace, irun) != Guid.Empty)
 				{
 					// If the run was a footnote or picture ORC, then just use the run
@@ -2292,28 +2169,16 @@ namespace LanguageExplorer.Impls
 					// tag info into the builder.
 					if (fUseWs)
 					{
-						int ttv, ws;
-						ws = ttpReplaceRun.GetIntPropValues((int)FwTextPropType.ktptWs, out ttv);
+						int ttv;
+						var ws = ttpReplaceRun.GetIntPropValues((int)FwTextPropType.ktptWs, out ttv);
 						propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, ttv, ws);
 					}
 					if (fUseStyle)
 					{
-						string sStyleName = ttpReplaceRun.GetStrPropValue(
-							(int)FwTextPropType.ktptNamedStyle);
+						var sStyleName = ttpReplaceRun.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 
-						if (sStyleName == LcmStyleSheet.kstrDefaultCharStyle)
-							propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
-								null);
-						else
-							propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
-								sStyleName);
+						propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, sStyleName == LcmStyleSheet.kstrDefaultCharStyle ? null : sStyleName);
 					}
-					//if (fUseTags)
-					//{
-					//    string sTagsRepl = ttpReplaceRun.GetStrPropValue(ktptTags);
-					//    string sTags = AddReplacementTags(vstuTagsToInclude, sTagsRepl);
-					//    propsBldr.SetStrPropValue(ktptTags, sTags);
-					//}
 					ttpReplaceRun = propsBldr.GetTextProps();
 				}
 				else
@@ -2327,45 +2192,34 @@ namespace LanguageExplorer.Impls
 				{
 					// We are just replacing an ws/ows/sStyleName/tags. The text remains unchanged.
 					// ENHANCE (SharonC): Rework this when we get patterns properly implemented.
-					string runText = tssInput.get_RunText(iRunInput);
+					var runText = tssInput.get_RunText(iRunInput);
 					if (runText.Length > ichLimInput - ichMinInput)
+					{
 						runText = runText.Substring(0, ichLimInput - ichMinInput);
+					}
 					stringBldr.Replace(0, 0, runText, ttpReplaceRun);
 				}
 				else
 				{
-					stringBldr.Replace(runInfo.ichMin, runInfo.ichMin,
-						tssReplace.get_RunText(irun), ttpReplaceRun);
+					stringBldr.Replace(runInfo.ichMin, runInfo.ichMin, tssReplace.get_RunText(irun), ttpReplaceRun);
 				}
 			}
 
 			tsbBuilder.ReplaceTsString(delta + ichMinInput, delta + ichLimInput, stringBldr.GetString());
-			int finalLength = tsbBuilder.Length;
+			var finalLength = tsbBuilder.Length;
 			return finalLength - initialLength;
 		}
 
 #endregion
 
 #region Protected properties
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The data access for the find and replace dialog.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected ISilDataAccess DataAccess
-		{
-			get
-			{
-				var rootSite = ActiveView;
-				if (rootSite == null)
-					return null;
-				return rootSite.RootBox.DataAccess;
-			}
-		}
-#endregion
+		private ISilDataAccess DataAccess => ActiveView?.RootBox.DataAccess;
+		#endregion
 
 #region Protected helper methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Given an FwTextBox, we get the name of the WS of the current selection. If the
 		/// selection spans multiple writing systems, we return an empty string.
@@ -2374,37 +2228,33 @@ namespace LanguageExplorer.Impls
 		/// <returns>Empty string if there is more than one writing system contained in the
 		/// selection or if the TsString doesn't have a writing system property (if that's
 		/// even possible). Otherwise, the UI name of the writing system.</returns>
-		/// ------------------------------------------------------------------------------------
-		protected virtual CoreWritingSystemDefinition GetCurrentWS(FwTextBox fwtextbox)
+		private CoreWritingSystemDefinition GetCurrentWS(FwTextBox fwtextbox)
 		{
-			int hvoWs = SelectionHelper.GetWsOfEntireSelection(fwtextbox.Selection);
-			if (hvoWs == 0)
-				return null;
-			return m_cache.ServiceLocator.WritingSystemManager.Get(hvoWs);
+			var hvoWs = SelectionHelper.GetWsOfEntireSelection(fwtextbox.Selection);
+			return hvoWs == 0 ? null : m_cache.ServiceLocator.WritingSystemManager.Get(hvoWs);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Fill the Writing Systems menu with an alphebetized list of all writing systems
 		/// defined in this language project. The writing system of the current selection
 		/// (if there is exactly one) will be checked; otherwise, nothing will be checked.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected void PopulateWritingSystemMenu()
+		private void PopulateWritingSystemMenu()
 		{
 			// First clear any items added previously
 			mnuWritingSystem.MenuItems.Clear();
 			EventHandler clickEvent = WritingSystemMenu_Click;
 
 			// Convert from Set to List, since the Set can't sort.
-			List<CoreWritingSystemDefinition> writingSystems = m_cache.ServiceLocator.WritingSystems.AllWritingSystems.ToList();
+			var writingSystems = m_cache.ServiceLocator.WritingSystems.AllWritingSystems.ToList();
 			writingSystems.Sort((x, y) => x.DisplayLabel.CompareTo(y.DisplayLabel));
-			CoreWritingSystemDefinition sCurrentWs = GetCurrentWS(LastTextBoxInFocus);
-			foreach (CoreWritingSystemDefinition ws in writingSystems)
+			var sCurrentWs = GetCurrentWS(LastTextBoxInFocus);
+			foreach (var ws in writingSystems)
+			{
 				mnuWritingSystem.MenuItems.Add(new MenuItem(ws.DisplayLabel, clickEvent) {Checked = sCurrentWs == ws, Tag = ws.Handle});
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Fill the Style menu the "No style" item, plus a an alphabetized list of all
 		/// character styles in stylesheet of the last Fw Edit Box to have focus. The style of
@@ -2412,40 +2262,38 @@ namespace LanguageExplorer.Impls
 		/// contains no style, then "No style" will be checked. If the selection covers multiple
 		/// styles, nothing will be checked.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected void PopulateStyleMenu()
+		public void PopulateStyleMenu()
 		{
 			// TODO: Convert this method to use StyleListHelper.
 
 			// First clear any items added previously
 			mnuStyle.MenuItems.Clear();
-			EventHandler clickEvent = new EventHandler(StyleMenu_Click);
+			var clickEvent = new EventHandler(StyleMenu_Click);
 
-			string sSelectedStyle = LastTextBoxInFocus.SelectedStyle;
-			MenuItem mnuItem = new MenuItem(FwCoreDlgs.kstidNoStyle, clickEvent);
-			mnuItem.Checked = (sSelectedStyle == string.Empty);
+			var sSelectedStyle = LastTextBoxInFocus.SelectedStyle;
+			var mnuItem = new MenuItem(FwCoreDlgs.kstidNoStyle, clickEvent) { Checked = (sSelectedStyle == string.Empty) };
 			mnuStyle.MenuItems.Add(mnuItem);
 
-			mnuItem = new MenuItem(StyleUtils.DefaultParaCharsStyleName, clickEvent);
-			mnuItem.Checked = (sSelectedStyle == LcmStyleSheet.kstrDefaultCharStyle);
-			mnuStyle.MenuItems.Add(mnuItem);
-
-			int count = 0;
-			if (LastTextBoxInFocus.StyleSheet != null)
-				count = LastTextBoxInFocus.StyleSheet.CStyles;
-			string styleName;
-			List<string> styleNames = new List<string>(count / 2);
-			for (int i = 0; i < count; i++)
+			mnuItem = new MenuItem(StyleUtils.DefaultParaCharsStyleName, clickEvent)
 			{
-				styleName = LastTextBoxInFocus.StyleSheet.get_NthStyleName(i);
+				Checked = (sSelectedStyle == LcmStyleSheet.kstrDefaultCharStyle)
+			};
+			mnuStyle.MenuItems.Add(mnuItem);
+			var count = 0;
+			if (LastTextBoxInFocus.StyleSheet != null)
+			{
+				count = LastTextBoxInFocus.StyleSheet.CStyles;
+			}
+			var styleNames = new List<string>(count / 2);
+			for (var i = 0; i < count; i++)
+			{
+				var styleName = LastTextBoxInFocus.StyleSheet.get_NthStyleName(i);
 				if (LastTextBoxInFocus.StyleSheet.GetType(styleName) == 1) // character style
 				{
-					ContextValues context =
-						(ContextValues)LastTextBoxInFocus.StyleSheet.GetContext(styleName);
+					var context = (ContextValues)LastTextBoxInFocus.StyleSheet.GetContext(styleName);
 
 					// Exclude Internal and InternalMappable style contexts
-					if (context != ContextValues.Internal &&
-						context != ContextValues.InternalMappable)
+					if (context != ContextValues.Internal && context != ContextValues.InternalMappable)
 					{
 						styleNames.Add(styleName);
 					}
@@ -2453,15 +2301,13 @@ namespace LanguageExplorer.Impls
 			}
 			styleNames.Sort();
 
-			foreach (string s in styleNames)
+			foreach (var s in styleNames)
 			{
-				mnuItem = new MenuItem(s, clickEvent);
-				mnuItem.Checked = (sSelectedStyle == s);
+				mnuItem = new MenuItem(s, clickEvent) { Checked = (sSelectedStyle == s) };
 				mnuStyle.MenuItems.Add(mnuItem);
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Applies the specified style to the current selection of the Tss string in the
 		/// specified Tss edit control
@@ -2469,21 +2315,23 @@ namespace LanguageExplorer.Impls
 		/// <param name="fwTextBox">The Tss edit control whose selection should have the
 		/// specified style applied to it.</param>
 		/// <param name="sStyle">The name of the style to apply</param>
-		/// ------------------------------------------------------------------------------------
 		public void ApplyStyle(FwTextBox fwTextBox, string sStyle)
 		{
 			// Apply the specified style to the current selection
 			if (sStyle.ToLowerInvariant() == FwCoreDlgs.kstidNoStyle.ToLowerInvariant())
+			{
 				sStyle = null;
+			}
 			else if (sStyle.ToLowerInvariant() == StyleUtils.DefaultParaCharsStyleName.ToLowerInvariant())
+			{
 				sStyle = LcmStyleSheet.kstrDefaultCharStyle;
+			}
 			fwTextBox.ApplyStyle(sStyle);
 			SetFormatLabels();
 
 			fwTextBox.Select();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Applies the specified writing system to the current selection of the Tss string in
 		/// the specified Tss edit control
@@ -2491,22 +2339,21 @@ namespace LanguageExplorer.Impls
 		/// <param name="fwTextBox">The Tss edit control whose selection should have the
 		/// specified style applied to it.</param>
 		/// <param name="hvoWs">The ID of the writing system to apply</param>
-		/// ------------------------------------------------------------------------------------
 		public void ApplyWS(FwTextBox fwTextBox, int hvoWs)
 		{
 			fwTextBox.ApplyWS(hvoWs);
 			if (chkMatchWS.Enabled)
+			{
 				chkMatchWS.Checked = true;
+			}
 			SetFormatLabels();
 			fwTextBox.Select();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Updates visibility and values of format labels used to show selected styles in
 		/// find and replace text boxes.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void SetFormatLabels()
 		{
 			if (tabControls.SelectedTab == tabFind)
@@ -2520,8 +2367,7 @@ namespace LanguageExplorer.Impls
 				SetFormatLabels(fweditFindText, lblFindFormat, lblFindFormatText);
 				SetFormatLabels(fweditReplaceText, lblReplaceFormat, lblReplaceFormatText);
 			}
-			btnFindNext.Enabled = btnReplace.Enabled = btnReplaceAll.Enabled =
-				CanFindNext();
+			btnFindNext.Enabled = btnReplace.Enabled = btnReplaceAll.Enabled = CanFindNext();
 		}
 
 		private bool CanFindNext()
@@ -2529,42 +2375,48 @@ namespace LanguageExplorer.Impls
 			return (fweditFindText.Text != string.Empty || lblFindFormatText.Text != string.Empty);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Updates visibility and content of labels depending on char styles in passed TsString.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void SetFormatLabels(FwTextBox textBox, Label format, Label formatText)
 		{
-			ITsString tss = textBox.Tss;
-			CoreWritingSystemDefinition currentWs = GetCurrentWS(textBox);
+			var tss = textBox.Tss;
+			var currentWs = GetCurrentWS(textBox);
 			// Check for writing systems and styles that are applied to the tss
-			bool fShowLabels = false;
-			int prevWs = -1;
-			string prevStyleName = string.Empty;
-			bool multipleWs = false;
-			bool multipleStyles = false;
-			for (int i = 0; i < tss.RunCount; i++)
+			var fShowLabels = false;
+			var prevWs = -1;
+			var prevStyleName = string.Empty;
+			var multipleWs = false;
+			var multipleStyles = false;
+			for (var i = 0; i < tss.RunCount; i++)
 			{
-				ITsTextProps ttp = tss.get_Properties(i);
-
+				var ttp = tss.get_Properties(i);
 				// check for writing systems
 				int nVar;
-				int ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
+				var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
 				if (prevWs != ws && prevWs != -1)
+				{
 					multipleWs = true;
+				}
 				prevWs = ws;
 
 				// check for styles
-				string charStyle = ttp.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
+				var charStyle = ttp.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 				if (charStyle != prevStyleName && prevStyleName != string.Empty)
+				{
 					multipleStyles = true;
+				}
 				prevStyleName = charStyle;
 			}
+
 			if (prevStyleName == null)
+			{
 				prevStyleName = string.Empty;
+			}
 			else if (prevStyleName == LcmStyleSheet.kstrDefaultCharStyle)
+			{
 				prevStyleName = StyleUtils.DefaultParaCharsStyleName;
+			}
 
 			Debug.Assert(prevWs > 0, "We should always have a writing system");
 
@@ -2573,17 +2425,20 @@ namespace LanguageExplorer.Impls
 			{
 				// Not displaying anything
 				if (prevStyleName == string.Empty && !chkMatchWS.Checked)
+				{
 					formatText.Text = string.Empty;
+				}
 				// Just have one style
 				else if (prevStyleName != string.Empty)
 				{
 					fShowLabels = true;
 					if (!chkMatchWS.Checked)
+					{
 						formatText.Text = prevStyleName;
+					}
 					else
 					{
-						formatText.Text = string.Format(FwCoreDlgs.kstidOneStyleOneWS,
-							prevStyleName, currentWs == null ? string.Empty : currentWs.DisplayLabel);
+						formatText.Text = string.Format(FwCoreDlgs.kstidOneStyleOneWS, prevStyleName, currentWs == null ? string.Empty : currentWs.DisplayLabel);
 					}
 				}
 				// No style (WS displayed)
@@ -2604,27 +2459,24 @@ namespace LanguageExplorer.Impls
 					if (!multipleWs || !chkMatchWS.Checked)
 					{
 						if (!chkMatchWS.Checked) // don't show writing system info
+						{
 							formatText.Text = FwCoreDlgs.kstidMultipleStyles;
+						}
 						else // show writing system info
 						{
-							formatText.Text = string.Format(FwCoreDlgs.kstidMultipleStylesOneWS,
-								currentWs == null ? string.Empty : currentWs.DisplayLabel);
+							formatText.Text = string.Format(FwCoreDlgs.kstidMultipleStylesOneWS, currentWs == null ? string.Empty : currentWs.DisplayLabel);
 						}
 					}
 					// multiple writing systems (displayed)
 					else
+					{
 						formatText.Text = FwCoreDlgs.kstidMultipleStylesMultipleWS;
+					}
 				}
 				// Multiple writing systems and no more than 1 style
 				else if (multipleWs && !multipleStyles)
 				{
-					if (prevStyleName == string.Empty) // no style applied
-						formatText.Text = FwCoreDlgs.kstidMultipleWritingSystems;
-					else // one style applied
-					{
-						formatText.Text = string.Format(FwCoreDlgs.kstidOneStyleMultipleWS,
-							prevStyleName);
-					}
+					formatText.Text = prevStyleName == string.Empty ? FwCoreDlgs.kstidMultipleWritingSystems : string.Format(FwCoreDlgs.kstidOneStyleMultipleWS, prevStyleName);
 				}
 			}
 			// multiple writing systems (not displayed) and one style
@@ -2640,11 +2492,9 @@ namespace LanguageExplorer.Impls
 #endregion
 
 #region Public properties
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns the text to find
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public ITsString FindText
 		{
 			get
@@ -2658,11 +2508,9 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns the text to replace
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public ITsString ReplaceText
 		{
 			get
@@ -2676,432 +2524,116 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns the text to replace after OK has closed the dialog and ReplaceText will crash.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ITsString ResultReplaceText
-		{
-			get
-			{
-				return m_resultReplaceText;
-			}
-		}
+		public ITsString ResultReplaceText { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns a reference to the last Tss edit control to have focus. Needed for applying
 		/// styles and writing systems.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public FwTextBox LastTextBoxInFocus
-		{
-			get
-			{
-				return m_lastTextBoxInFocus;
-			}
-		}
-#endregion
+		public FwTextBox LastTextBoxInFocus { get; private set; }
+		#endregion
 
 #region IMessageFilter Members
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Provide tabbing with the view controls and handle the ESC key to close the find dialog
 		/// </summary>
-		/// <param name="m"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public bool PreFilterMessage(ref Message m)
 		{
 			if (m.Msg == (int)Win32.WinMsgs.WM_CHAR)
 			{
 				// Handle TAB and Shift-TAB
-				if (m.WParam == (System.IntPtr)Win32.VirtualKeycodes.VK_TAB)
+				if (m.WParam == (IntPtr)Win32.VirtualKeycodes.VK_TAB)
 				{
-					SelectNextControl(this.ActiveControl, ModifierKeys != Keys.Shift, true, true, true);
+					SelectNextControl(ActiveControl, ModifierKeys != Keys.Shift, true, true, true);
 					return true;
 				}
-
-				// NOTE (TimS): This seems to be handled correctly by setting the "cancel" button
-				// on the dialog so it was taken out.
-				//// An ESC key will cause the form to close.
-				//if (m.WParam == (System.IntPtr)Win32.VirtualKeycodes.VK_ESCAPE)
-				//{
-				//    Close();
-				//    return true;
-				//}
-
-				// JohnT: don't do this, for some reason in at least some contexts
-				// (e.g., see LT-4723, in the Flex Bulk Edit Find/Replace tab Setup),
-				// the keystrokes just don't happen. Better to let ones we don't care
-				// about be handled the default way.
-				//base.OnKeyPress(new KeyPressEventArgs((char)m.WParam));
-				//return true;
 			}
 			return false;
 		}
-#endregion
-	}
+		#endregion
 
-	/// <summary>
-	/// An interface that a Form can implement in order to configure the Find and Replace dialog.
-	/// </summary>
-	public interface IFindAndReplaceContext
-	{
+		#region SearchKiller
 		/// <summary>
-		/// The ID to pass to the help topic provider to get help for the Find tab.
+		/// Implements a search killer
 		/// </summary>
-		string FindTabHelpId { get; }
-	}
-
-#region VwPatternSerializableSettings class
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Wrapper to serialize/deserialize basic settings for VwPattern
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public class VwPatternSerializableSettings
-	{
-		bool m_fNewlyCreated = false;
-		IVwPattern m_pattern;
-		/// <summary>
-		/// use this interface to deserialize settings to new pattern
-		/// </summary>
-		public VwPatternSerializableSettings()
+		private sealed class SearchKiller : IVwSearchKiller
 		{
-			// create a new mattern to capture deserialized settings.
-			m_pattern = VwPatternClass.Create();
-			m_fNewlyCreated = true;
-		}
+			private bool stopButtonDown;
 
-		/// <summary>
-		/// use this interface to serialize the given pattern
-		/// </summary>
-		/// <param name="pattern"></param>
-		public VwPatternSerializableSettings(IVwPattern pattern)
-		{
-			m_pattern = pattern;
-		}
+			#region IVwSearchKiller Members
 
-		/// <summary>
-		/// When class is used with deserializer,
-		/// use this to get the pattern that was (or is to be) setup with
-		/// the deserialized settings.
-		/// returns null, if we haven't created one.
-		/// </summary>
-		public IVwPattern NewPattern
-		{
-			get
+			/// <summary>Owning control</summary>
+			public Control Control { get; set; }
+
+			/// <summary>Stop button control</summary>
+			public Control StopControl { get; set; }
+
+			/// <summary>
+			/// Get/set the abort status
+			/// </summary>
+			public bool AbortRequest { get; set; }
+
+			/// <summary>
+			/// Process any pending window messages
+			/// </summary>
+			public void FlushMessages()
 			{
-				if (m_fNewlyCreated)
-					return m_pattern;
-				return null;
-			}
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		public string IcuCollatingRules
-		{
-			get { return m_pattern.IcuCollatingRules; }
-			set { m_pattern.IcuCollatingRules = value; }
-		}
-		/// <summary>
-		///
-		/// </summary>
-		public string IcuLocale
-		{
-			get { return m_pattern.IcuLocale; }
-			set { m_pattern.IcuLocale = value; }
-		}
-		/// <summary>
-		///
-		/// </summary>
-		public bool MatchCase
-		{
-			get { return m_pattern.MatchCase; }
-			set { m_pattern.MatchCase = value; }
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		public bool MatchCompatibility
-		{
-			get { return m_pattern.MatchCompatibility; }
-			set { m_pattern.MatchCompatibility = value; }
-		}
-		/// <summary>
-		///
-		/// </summary>
-		public bool MatchDiacritics
-		{
-			get { return m_pattern.MatchDiacritics; }
-			set { m_pattern.MatchDiacritics = value; }
-		}
-		/// <summary>
-		///
-		/// </summary>
-		public bool MatchExactly
-		{
-			get { return m_pattern.MatchExactly; }
-			set { m_pattern.MatchExactly = value; }
-		}
-		/// <summary>
-		///
-		/// </summary>
-		public bool MatchOldWritingSystem
-		{
-			get { return m_pattern.MatchOldWritingSystem;  }
-			set { m_pattern.MatchOldWritingSystem = value; }
-		}
-		/// <summary>
-		///
-		/// </summary>
-		public bool MatchWholeWord
-		{
-			get { return m_pattern.MatchWholeWord; }
-			set { m_pattern.MatchWholeWord = value; }
-		}
-
-		int m_patternWs = 0;
-		/// <summary>
-		/// the (first) ws used to construct the Pattern tss.
-		/// </summary>
-		public int PatternWs
-		{
-			get
-			{
-				if (m_patternWs == 0 && m_pattern.Pattern != null)
-					m_patternWs = TsStringUtils.GetWsAtOffset(m_pattern.Pattern, 0);
-				return m_patternWs;
-			}
-			set
-			{
-				m_patternWs = value;
-				TryCreatePatternTss();
-			}
-		}
-
-		private void TryCreatePatternTss()
-		{
-			if (m_patternWs != 0)
-			{
-				// create a monoWs pattern text for the new pattern.
-				m_pattern.Pattern = TsStringUtils.MakeString(m_patternString, m_patternWs);
-			}
-		}
-
-		string m_patternString = "";
-		/// <summary>
-		///
-		/// </summary>
-		public string PatternAsString
-		{
-			get
-			{
-				if (String.IsNullOrEmpty(m_patternString) && m_pattern.Pattern != null)
-					m_patternString = m_pattern.Pattern.Text;
-				return m_patternString;
-			}
-			set
-			{
-				m_patternString = value;
-				if (m_patternString == null)
-					m_patternString = "";
-				TryCreatePatternTss();
-			}
-		}
-
-		string m_replaceWithString = "";
-		/// <summary>
-		///
-		/// </summary>
-		public string ReplaceWithAsString
-		{
-			get
-			{
-				if (String.IsNullOrEmpty(m_replaceWithString) && m_pattern.ReplaceWith != null)
-					m_replaceWithString = m_pattern.ReplaceWith.Text;
-				return m_replaceWithString;
-			}
-			set
-			{
-				m_replaceWithString = value;
-				if (m_replaceWithString == null)
-					m_replaceWithString = "";
-				TryCreateReplaceWithTss();
-			}
-		}
-
-		private void TryCreateReplaceWithTss()
-		{
-			if (m_replaceWithWs != 0)
-			{
-				// create a monoWs pattern text for the new pattern.
-				m_pattern.ReplaceWith = TsStringUtils.MakeString(m_replaceWithString, m_replaceWithWs);
-			}
-		}
-
-		int m_replaceWithWs = 0;
-		/// <summary>
-		/// the (first) ws used to construct the ReplaceWith tss.
-		/// </summary>
-		public int ReplaceWithWs
-		{
-			get
-			{
-				if (m_replaceWithWs == 0 && m_pattern.ReplaceWith != null)
-					m_replaceWithWs = TsStringUtils.GetWsAtOffset(m_pattern.ReplaceWith, 0);
-				return m_replaceWithWs;
-			}
-			set
-			{
-				m_replaceWithWs = value;
-				TryCreateReplaceWithTss();
-			}
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		public bool ShowMore
-		{
-			get { return m_pattern.ShowMore; }
-			set { m_pattern.ShowMore = value; }
-		}
-		/// <summary>
-		///
-		/// </summary>
-		public bool StoppedAtLimit
-		{
-			get { return m_pattern.StoppedAtLimit; }
-			set { m_pattern.StoppedAtLimit = value; }
-		}
-		/// <summary>
-		///
-		/// </summary>
-		public bool UseRegularExpressions
-		{
-			get { return m_pattern.UseRegularExpressions; }
-			set { m_pattern.UseRegularExpressions = value;  }
-		}
-	}
-#endregion
-
-#region SearchKiller
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Implements a search killer
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public class SearchKiller: IVwSearchKiller
-	{
-		private bool m_abort = false;
-		private Control m_ownerControl = null;
-		private Control m_stopControl = null;
-		private bool stopButtonDown = false;
-
-#region IVwSearchKiller Members
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Set the window handle for the search operation - ignored in this case
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public uint Window
-		{
-			set { }
-		}
-
-		/// <summary>Owning control</summary>
-		public Control Control { set { m_ownerControl = value; } }
-		/// <summary>Stop button control</summary>
-		public Control StopControl { set { m_stopControl = value; } }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Get/set the abort status
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool AbortRequest
-		{
-			get { return m_abort; }
-			set { m_abort = value; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Process any pending window messages
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void FlushMessages()
-		{
-			if (m_ownerControl != null)
-				m_ownerControl.Update();
+				Control?.Update();
 
 #if !__MonoCS__ // Currently (Aug 2010) Mono Winforms on X11 doesn't support PeekMessage with filtering.
-			// Process keystrokes and lbutton events so the user can stop the dlg work.
-			// This should allow the dlg to be stopped mid stream with out the risk
-			// of the DoEvents call.
-			// The reason this change works is due to the 'polling' type of design of the
-			// calling code.  This method is called frequently during the 'action' of the
-			// dlg.
-			Win32.MSG msg;
-			while (PeekMessage(Win32.WinMsgs.WM_KEYDOWN, Win32.WinMsgs.WM_KEYUP, out msg) ||
-				PeekMessage(Win32.WinMsgs.WM_LBUTTONDOWN, Win32.WinMsgs.WM_LBUTTONUP, out msg))
-			{
-				if (msg.message == (int)Win32.WinMsgs.WM_LBUTTONDOWN)
+				// Process keystrokes and lbutton events so the user can stop the dlg work.
+				// This should allow the dlg to be stopped mid stream with out the risk
+				// of the DoEvents call.
+				// The reason this change works is due to the 'polling' type of design of the
+				// calling code.  This method is called frequently during the 'action' of the
+				// dlg.
+				Win32.MSG msg;
+				while (PeekMessage(Win32.WinMsgs.WM_KEYDOWN, Win32.WinMsgs.WM_KEYUP, out msg) || PeekMessage(Win32.WinMsgs.WM_LBUTTONDOWN, Win32.WinMsgs.WM_LBUTTONUP, out msg))
 				{
-					if (m_stopControl != null && msg.hwnd == m_stopControl.Handle)
-						stopButtonDown = true;
-					else
-						stopButtonDown = false;
-				}
-				else if (msg.message == (int)Win32.WinMsgs.WM_LBUTTONUP)
-				{
-					if (m_stopControl != null && msg.hwnd == m_stopControl.Handle && stopButtonDown)
+					if (msg.message == (int)Win32.WinMsgs.WM_LBUTTONDOWN)
 					{
-						((Button)m_stopControl).PerformClick();
-						stopButtonDown = false;
+						stopButtonDown = StopControl != null && msg.hwnd == StopControl.Handle;
+					}
+					else if (msg.message == (int)Win32.WinMsgs.WM_LBUTTONUP)
+					{
+						if (StopControl != null && msg.hwnd == StopControl.Handle && stopButtonDown)
+						{
+							((Button)StopControl).PerformClick();
+							stopButtonDown = false;
+						}
+					}
+					else if (msg.message == (int)Win32.WinMsgs.WM_KEYDOWN &&
+						msg.wParam == (IntPtr)Win32.VirtualKeycodes.VK_ESCAPE &&
+						StopControl != null && msg.hwnd == StopControl.Handle)
+					{
+						((Button)StopControl).PerformClick();
+					}
+
+					if (!Win32.IsDialogMessage(Control.Handle, ref msg))
+					{
+						Win32.TranslateMessage(ref msg);
+						Win32.DispatchMessage(ref msg);
 					}
 				}
-				else if (msg.message == (int)Win32.WinMsgs.WM_KEYDOWN &&
-					msg.wParam == (IntPtr)Win32.VirtualKeycodes.VK_ESCAPE &&
-					m_stopControl != null && msg.hwnd == m_stopControl.Handle)
-				{
-					((Button)m_stopControl).PerformClick();
-				}
-
-				if (!Win32.IsDialogMessage(m_ownerControl.Handle, ref msg))
-				{
-					Win32.TranslateMessage(ref msg);
-					Win32.DispatchMessage(ref msg);
-				}
-			}
 #endif
-		}
+			}
 
 #if !__MonoCS__ // Currently (Aug 2010) Mono Winforms on X11 doesn't support PeekMessage with filtering.
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Peeks at the pending messages and if it finds any message in the given range, that
-		/// message is removed from the stack and passed back to be handled immediately.
-		/// </summary>
-		/// <param name="min">The minumum message to handle.</param>
-		/// <param name="max">The maximum message to handle.</param>
-		/// <param name="msg">The message found, if any.</param>
-		/// <returns><c>true</c> if a matching message is found; <c>false</c> otherwise.</returns>
-		/// ------------------------------------------------------------------------------------
-		private bool PeekMessage(Win32.WinMsgs min, Win32.WinMsgs max, out Win32.MSG msg)
-		{
-			msg = new Win32.MSG();
-			return Win32.PeekMessage(ref msg, m_ownerControl.Handle, (uint)min, (uint)max,
-				(uint)Win32.PeekFlags.PM_REMOVE);
-		}
+			/// <summary>
+			/// Peeks at the pending messages and if it finds any message in the given range, that
+			/// message is removed from the stack and passed back to be handled immediately.
+			/// </summary>
+			private bool PeekMessage(Win32.WinMsgs min, Win32.WinMsgs max, out Win32.MSG msg)
+			{
+				msg = new Win32.MSG();
+				return Win32.PeekMessage(ref msg, Control.Handle, (uint)min, (uint)max, (uint)Win32.PeekFlags.PM_REMOVE);
+			}
 #endif
-#endregion
+			#endregion
+		}
+		#endregion
 	}
-#endregion
 }

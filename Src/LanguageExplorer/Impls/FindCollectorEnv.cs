@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -11,17 +12,11 @@ using SIL.FieldWorks.Common.RootSites;
 
 namespace LanguageExplorer.Impls
 {
-#if RANDYTODO
-// TODO: Break out classes and clean code.
-#endif
-	#region FindCollectorEnv class
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Handles finding text
 	/// </summary>
 	/// <remarks>The current implementation doesn't work for different styles, tags, and WSs
 	/// that are applied by the VC.</remarks>
-	/// ----------------------------------------------------------------------------------------
 	public class FindCollectorEnv : CollectorEnv, IDisposable
 	{
 		#region Data members
@@ -31,24 +26,20 @@ namespace LanguageExplorer.Impls
 		protected LocationInfo m_LimitLocation;
 		/// <summary>Location to start current find next</summary>
 		protected LocationInfo m_StartLocation;
-		/// <summary>True if we have passed the limit, false otherwise</summary>
-		protected bool m_fHitLimit;
-		/// <summary>True if the find has already wrapped, false otherwise</summary>
-		protected bool m_fHaveWrapped;
-		/// <summary></summary>
+
+		/// <summary />
 		protected IVwViewConstructor m_vc;
-		/// <summary></summary>
+		/// <summary />
 		protected int m_frag;
-		/// <summary></summary>
+		/// <summary />
 		protected IVwPattern m_Pattern;
-		/// <summary></summary>
+		/// <summary />
 		protected IVwTxtSrcInit2 m_textSourceInit;
-		/// <summary></summary>
+		/// <summary />
 		protected IVwSearchKiller m_searchKiller;
 		#endregion
 
 		#region Constructor
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:FindCollectorEnv"/> class.
 		/// </summary>
@@ -60,9 +51,7 @@ namespace LanguageExplorer.Impls
 		/// <param name="searchKiller">Used to interrupt a find/replace</param>
 		/// <remarks>If the base environment is not null, it is used for various things,
 		/// such as obtaining 'outer object' information.</remarks>
-		/// ------------------------------------------------------------------------------------
-		public FindCollectorEnv(IVwViewConstructor vc, ISilDataAccess sda,
-			int hvoRoot, int frag, IVwPattern vwPattern, IVwSearchKiller searchKiller)
+		public FindCollectorEnv(IVwViewConstructor vc, ISilDataAccess sda, int hvoRoot, int frag, IVwPattern vwPattern, IVwSearchKiller searchKiller)
 			: base(null, sda, hvoRoot)
 		{
 			m_vc = vc;
@@ -74,7 +63,6 @@ namespace LanguageExplorer.Impls
 		#endregion
 
 		#region Public methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Finds the next occurence.
 		/// </summary>
@@ -83,62 +71,56 @@ namespace LanguageExplorer.Impls
 		/// <returns>
 		/// A LocationInfo thingy if a match was found, otherwise <c>null</c>.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		public LocationInfo FindNext(LocationInfo startLocation)
 		{
 			m_StartLocation = startLocation;
 			m_LocationFound = null;
-			m_fHitLimit = false;
+			StoppedAtLimit = false;
 
 			Reset(); // Just in case
 			// Enhance JohnT: if we need to handle more than one root object, this would
 			// be one place to loop over them.
 			m_vc.Display(this, m_hvoCurr, m_frag);
 
-			if (m_LocationFound == null && m_fHitLimit)
+			if (m_LocationFound == null && StoppedAtLimit)
+			{
 				m_LimitLocation = null;
+			}
 			else if (m_LimitLocation == null)
+			{
 				m_LimitLocation = new LocationInfo(startLocation);
+			}
 			return m_LocationFound;
 		}
 		#endregion
 
 		#region Overrides
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether to search this object based on whether we've reached our start
 		/// location yet.
 		/// </summary>
-		/// <param name="hvoItem">The hvo item.</param>
-		/// <param name="tag">The tag.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		protected override bool DisplayThisObject(int hvoItem, int tag)
 		{
 			// We want to skip the beginning until we reach our start location.
 			if (m_StartLocation == null || Finished)
-				return true;
-
-			int cPropPrev = CPropPrev(tag);
-
-			foreach (SelLevInfo lev in m_StartLocation.m_location)
 			{
-				if (lev.tag == tag && lev.cpropPrevious == cPropPrev)
-					return lev.hvo == hvoItem;
+				return true;
 			}
-			return false;
+
+			var cPropPrev = CPropPrev(tag);
+			return (m_StartLocation.m_location.Where(lev => lev.tag == tag && lev.cpropPrevious == cPropPrev).Select(lev => lev.hvo == hvoItem)).FirstOrDefault();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Override to check whether the start location or the limit location is in a literal
 		/// string or some other added property.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		protected override void CheckForNonPropInfo()
 		{
 			if (Finished)
+			{
 				return;
+			}
 
 			if (m_fGotNonPropInfo)
 			{
@@ -153,13 +135,10 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Adds the string. Overridden to check for strings that were added inside of an
 		/// open property.
 		/// </summary>
-		/// <param name="tss">The TSS.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void AddString(ITsString tss)
 		{
 			base.AddString(tss);
@@ -173,22 +152,22 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Member AddStringProp
 		/// </summary>
-		/// <param name="tag">tag</param>
-		/// <param name="vwvc">_vwvc</param>
-		/// ------------------------------------------------------------------------------------
 		public override void AddStringProp(int tag, IVwViewConstructor vwvc)
 		{
 			if (Finished)
+			{
 				return;
+			}
 
 			base.AddStringProp(tag, vwvc);
 
 			if (m_StartLocation != null && !CurrentLocationIsStartLocation(tag))
+			{
 				return;
+			}
 
 			DoFind(m_sda.get_StringProp(m_hvoCurr, tag), tag);
 
@@ -196,23 +175,22 @@ namespace LanguageExplorer.Impls
 			m_StartLocation = null;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Member AddStringAltMember
 		/// </summary>
-		/// <param name="tag">tag</param>
-		/// <param name="ws">ws</param>
-		/// <param name="vwvc">_vwvc</param>
-		/// ------------------------------------------------------------------------------------
 		public override void AddStringAltMember(int tag, int ws, IVwViewConstructor vwvc)
 		{
 			if (Finished)
+			{
 				return;
+			}
 
 			base.AddStringAltMember(tag, ws, vwvc);
 
 			if (m_StartLocation != null && !CurrentLocationIsStartLocation(tag))
+			{
 				return;
+			}
 
 			DoFind(m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws), tag);
 
@@ -220,22 +198,22 @@ namespace LanguageExplorer.Impls
 			m_StartLocation = null;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Return true if we don't need to process any further. Some methods may be able
 		/// to truncate operations.
 		/// </summary>
-		/// <value><c>true</c> if finished; otherwise, <c>false</c>.</value>
-		/// ------------------------------------------------------------------------------------
 		protected override bool Finished
 		{
 			get
 			{
-				if (m_LocationFound != null || m_fHitLimit)
+				if (m_LocationFound != null || StoppedAtLimit)
+				{
 					return true;
-
+				}
 				if (m_searchKiller == null)
+				{
 					return false;
+				}
 
 				m_searchKiller.FlushMessages();
 				return m_searchKiller.AbortRequest;
@@ -244,67 +222,33 @@ namespace LanguageExplorer.Impls
 		#endregion // Overrides
 
 		#region Public properties
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether a match was found
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool FoundMatch
-		{
-			get
-			{
-				return (m_LocationFound != null);
-			}
-		}
+		public bool FoundMatch => (m_LocationFound != null);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether find stopped at limit.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool StoppedAtLimit
-		{
-			get
-			{
-				return m_fHitLimit;
-			}
-		}
+		public bool StoppedAtLimit { get; protected set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a value indicating whether the find has already wrapped around
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool HasWrapped
-		{
-			set
-			{
-				m_fHaveWrapped = value;
-			}
-			get
-			{
-				return m_fHaveWrapped;
-			}
-		}
+		public bool HasWrapped { set; get; }
 		#endregion
 
 		#region Protected methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns whether or not the property at the current location is the starting
 		/// location.
 		/// NOTE: This method will return false if there is no start location
 		/// </summary>
-		/// <param name="tag">The tag of the property.</param>
-		/// <returns>True if it is the starting location, false otherwise.</returns>
-		/// ------------------------------------------------------------------------------------
 		protected bool CurrentLocationIsStartLocation(int tag)
 		{
-			return (m_StartLocation != null &&
-				CurrentStackIsSameAsLocationInfo(m_StartLocation, tag));
+			return (m_StartLocation != null && CurrentStackIsSameAsLocationInfo(m_StartLocation, tag));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines if the current stack loacation and the specified tag match the location
 		/// specified in the given LocationInfo
@@ -312,26 +256,25 @@ namespace LanguageExplorer.Impls
 		/// <param name="info">The LocationInfo to check.</param>
 		/// <param name="tag">The tag of the current property.</param>
 		/// <returns>True if the location is the same, false otherwise</returns>
-		/// ------------------------------------------------------------------------------------
 		protected bool CurrentStackIsSameAsLocationInfo(LocationInfo info, int tag)
 		{
 			if (info.m_location.Length != m_stack.Count)
+			{
 				return false;
+			}
 
 			// If we haven't gotten to the same occurrence of the same object property, we haven't
 			// hit the starting point.
-			for (int lev = 0; lev < m_stack.Count; lev++)
+			for (var lev = 0; lev < m_stack.Count; lev++)
 			{
-				SelLevInfo limInfo = info.m_location[lev];
+				var limInfo = info.m_location[lev];
 				// NOTE: the information in our m_stack variable and the information stored in
 				// the selection levels are in opposite order.
-				int iourStackLev = m_stack.Count - lev - 1;
-				StackItem stackInfo = m_stack[iourStackLev];
-				int cPrevProps = (iourStackLev > 0 ? m_stack[iourStackLev - 1].m_cpropPrev.GetCount(stackInfo.m_tag) :
-					m_cpropPrev.GetCount(stackInfo.m_tag));
+				var iourStackLev = m_stack.Count - lev - 1;
+				var stackInfo = m_stack[iourStackLev];
+				var cPrevProps = (iourStackLev > 0 ? m_stack[iourStackLev - 1].m_cpropPrev.GetCount(stackInfo.m_tag) : m_cpropPrev.GetCount(stackInfo.m_tag));
 
-				if (limInfo.tag != stackInfo.m_tag || limInfo.cpropPrevious != cPrevProps ||
-					limInfo.hvo != stackInfo.m_hvo)
+				if (limInfo.tag != stackInfo.m_tag || limInfo.cpropPrevious != cPrevProps || limInfo.hvo != stackInfo.m_hvo)
 				{
 					return false; // Can't be at the same location
 				}
@@ -342,43 +285,42 @@ namespace LanguageExplorer.Impls
 			return (info.m_tag == tag && info.m_cpropPrev == CPropPrev(tag));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Checks to see if the current location is the starting location. It will also check
 		/// to see if the current location is the limit (or passed the limit).
 		/// NOTE: This method doesn't check any character position as it should only be used for
 		/// properties that won't be searched (i.e. that the find will skip over)
 		/// </summary>
-		/// <param name="tag">The tag of the current object.</param>
-		/// ------------------------------------------------------------------------------------
 		protected void CheckForStartLocationAndLimit(int tag)
 		{
 			if (Finished)
+			{
 				return;
+			}
 
 			if (CurrentLocationIsStartLocation(tag))
+			{
 				m_StartLocation = null;
+			}
 			else if (m_StartLocation == null && m_LimitLocation != null)
 			{
 				// Pass in -1 because we don't care about the character position
 				if (PassedLimit(tag, -1))
-					m_fHitLimit = true;
+				{
+					StoppedAtLimit = true;
+				}
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Does the find.
 		/// </summary>
-		/// <param name="tss">The original string.</param>
-		/// <param name="tag">Tag</param>
-		/// ------------------------------------------------------------------------------------
 		protected virtual void DoFind(ITsString tss, int tag)
 		{
 			m_textSourceInit.SetString(tss, m_vc, m_sda.WritingSystemFactory);
 
-			IVwTextSource textSource = m_textSourceInit as IVwTextSource;
-			int ichBegin = 0;
+			var textSource = m_textSourceInit as IVwTextSource;
+			var ichBegin = 0;
 			if (m_StartLocation != null)
 			{
 				Debug.Assert(m_StartLocation.TopLevelHvo == m_hvoCurr && m_StartLocation.m_tag == tag);
@@ -391,19 +333,18 @@ namespace LanguageExplorer.Impls
 			// reported as TE-4085. We're no longer even calling the same method on vwPattern,
 			// but if this failure ever recurs, this is probably the place where we'd want to
 			// put a try/catch block so we could retry the find.
-			m_Pattern.FindIn(textSource, ichBegin, tss.Length, true, out ichMin,
-				out ichLim, null);
+			m_Pattern.FindIn(textSource, ichBegin, tss.Length, true, out ichMin, out ichLim, null);
 			if (PassedLimit(tag, ichMin))
 			{
-				m_fHitLimit = true;
+				StoppedAtLimit = true;
 				return;
 			}
 			if (ichMin >= 0)
-				m_LocationFound = new LocationInfo(m_stack, CountOfPrevPropAtRoot, tag,
-					ichMin, ichLim);
+			{
+				m_LocationFound = new LocationInfo(m_stack, CountOfPrevPropAtRoot, tag, ichMin, ichLim);
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Check to see whether we have passed the limit so we can stop searching and not just
 		/// go on and on endlessly in an infinite loop forever and ever until the user gets fed
@@ -414,22 +355,24 @@ namespace LanguageExplorer.Impls
 		/// no match was found in this string, in which case we treat it as being beyond the
 		/// limit if this string is the string that contains the limit.</param>
 		/// <returns><c>true</c> if we passed the limit; <c>false</c> otherwise.</returns>
-		/// ------------------------------------------------------------------------------------
 		protected virtual bool PassedLimit(int tag, int testIch)
 		{
-			Debug.Assert(!m_fHitLimit);
+			Debug.Assert(!StoppedAtLimit);
 
 			// If we don't have a limit, we're still looking for our start position.
 			if (m_LimitLocation == null)
+			{
 				return false;
-
+			}
 			// If our start location is after the limit then we haven't hit the limit
-			if (m_StartLocation != null && m_StartLocation.m_ichLim >= m_LimitLocation.m_ichMin &&
-				!m_fHaveWrapped)
+			if (m_StartLocation != null && m_StartLocation.m_ichLim >= m_LimitLocation.m_ichMin && !HasWrapped)
+			{
 				return false;
-
+			}
 			if (!CurrentStackIsSameAsLocationInfo(m_LimitLocation, tag))
+			{
 				return false;
+			}
 
 			// We are back in the same string. If we have hit or passed the limit offset, then
 			// return true
@@ -455,7 +398,6 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
 		/// </summary>
-		/// <filterpriority>2</filterpriority>
 		public void Dispose()
 		{
 			Dispose(true);
@@ -491,10 +433,11 @@ namespace LanguageExplorer.Impls
 		protected virtual void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Method can be called several times,
-			// but the main code must not be run more than once.
 			if (IsDisposed)
+			{
+				// No need to run it more than once
 				return;
+			}
 
 			if (disposing)
 			{
@@ -520,111 +463,4 @@ namespace LanguageExplorer.Impls
 
 		#endregion
 	}
-	#endregion // FindCollectorEnv
-
-	#region ReverseFindCollectorEnv
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// <remarks>The current implementation doesn't work for different styles, tags, and WSs
-	/// that are applied by the VC.</remarks>
-	/// ----------------------------------------------------------------------------------------
-	public class ReverseFindCollectorEnv : FindCollectorEnv
-	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ReverseFindCollectorEnv"/> class.
-		/// </summary>
-		/// <param name="vc">The view constructor.</param>
-		/// <param name="sda">Date access to get prop values etc.</param>
-		/// <param name="hvoRoot">The root object to display.</param>
-		/// <param name="frag">The fragment.</param>
-		/// <param name="vwPattern">The find/replace pattern.</param>
-		/// <param name="searchKiller">Used to interrupt a find/replace</param>
-		/// <remarks>If the base environment is not null, it is used for various things,
-		/// such as obtaining 'outer object' information.</remarks>
-		/// ------------------------------------------------------------------------------------
-		public ReverseFindCollectorEnv(IVwViewConstructor vc, ISilDataAccess sda,
-			int hvoRoot, int frag, IVwPattern vwPattern, IVwSearchKiller searchKiller)
-			: base(vc, sda, hvoRoot, frag, vwPattern, searchKiller)
-		{
-		}
-
-		#region Overriden protected methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Does the find.
-		/// </summary>
-		/// <param name="tss">The original string.</param>
-		/// <param name="tag">Tag</param>
-		/// ------------------------------------------------------------------------------------
-		protected override void DoFind(ITsString tss, int tag)
-		{
-			m_textSourceInit.SetString(tss, m_vc, m_sda.WritingSystemFactory);
-
-			var textSource = (IVwTextSource) m_textSourceInit;
-			int ichBegin = textSource.LengthSearch;
-			if (m_StartLocation != null)
-			{
-				Debug.Assert(m_StartLocation.TopLevelHvo == m_hvoCurr && m_StartLocation.m_tag == tag);
-				ichBegin = m_StartLocation.m_ichMin;
-			}
-
-			int ichMin, ichLim;
-			// When we re-wrote the find stuff to use this FindCollectorEnv, we removed some
-			// whacky code from the FwFindReplaceDlg to try to deal with a sporadic failure
-			// reported as TE-4085. We're no longer even calling the same method on vwPattern,
-			// but if this failure ever recurs, this is probably the place where we'd want to
-			// put a try/catch block so we could retry the find.
-			m_Pattern.FindIn(textSource, ichBegin, 0, false, out ichMin, out ichLim, null);
-			if (PassedLimit(tag, ichMin))
-			{
-				m_fHitLimit = true;
-				return;
-			}
-			if (ichMin >= 0)
-				m_LocationFound = new LocationInfo(m_stack, CPropPrev(tag), tag, ichMin, ichLim);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Check to see whether we have passed the limit so we can stop searching and not just
-		/// go on and on endlessly in an infinite loop forever and ever until the user gets fed
-		/// up and throws the computer out the window.
-		/// </summary>
-		/// <param name="tag">The tag of the property whose string is being searched</param>
-		/// <param name="testIch">The character offset position being tested. May be -1 if
-		/// no match was found in this string, in which case we treat it as being beyond the
-		/// limit if this string is the string that contains the limit.</param>
-		/// <returns><c>true</c> if we passed the limit; <c>false</c> otherwise.</returns>
-		/// ------------------------------------------------------------------------------------
-		protected override bool PassedLimit(int tag, int testIch)
-		{
-			Debug.Assert(!m_fHitLimit);
-
-			// If we don't have a limit, we're still looking for our start position.
-			if (m_LimitLocation == null)
-				return false;
-
-			// If our start location is after the limit then we haven't hit the limit
-			if (m_StartLocation != null && m_StartLocation.m_ichLim <= m_LimitLocation.m_ichMin &&
-				!m_fHaveWrapped)
-				return false;
-
-			// If we haven't gotten to the same occurrence of the same object property, we haven't
-			// hit the limit.
-			if (m_LimitLocation.TopLevelHvo != m_hvoCurr || m_LimitLocation.m_tag != tag ||
-				m_LimitLocation.m_cpropPrev != CPropPrev(tag))
-			{
-				return false;
-			}
-
-			// We are back in the same string. If we have hit or passed the limit offset, then
-			// return true;
-			return (testIch < 0 || testIch <= m_LimitLocation.m_ichLim);
-		}
-		#endregion
-	}
-	#endregion
 }

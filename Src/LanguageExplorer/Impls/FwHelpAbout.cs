@@ -14,7 +14,6 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Impls
 {
-	#region FwHelpAbout implementation
 	/// <summary>
 	/// FW Help about dialog.
 	/// </summary>
@@ -37,8 +36,7 @@ namespace LanguageExplorer.Impls
 		private TextBox txtCopyright;
 		private LinkLabel m_systemMonitorLink;
 
-		/// <summary>The assembly of the product-specific EXE (e.g., TE.exe or FLEx.exe).
-		/// .Net callers should set this.</summary>
+		/// <summary>The assembly of the product-specific EXE.  .Net callers should set this.</summary>
 		public Assembly ProductExecutableAssembly { get; set; }
 		#endregion
 
@@ -338,5 +336,4 @@ namespace LanguageExplorer.Impls
 			}
 		}
 	}
-	#endregion
 }

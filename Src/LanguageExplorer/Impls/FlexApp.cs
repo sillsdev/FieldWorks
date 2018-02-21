@@ -1358,7 +1358,7 @@ namespace LanguageExplorer.Impls
 				{
 					continue;
 				}
-				m_findReplaceDlg.SetOwner(fwWnd.ActiveView.CastAsIVwRootSite(), (Form)fwWnd, FindPattern);
+				m_findReplaceDlg.SetOwner(fwWnd.ActiveView.CastAsIVwRootSite(), (Form)fwWnd);
 				return;
 			}
 			// This should never happen, but, just in case a new owner for
