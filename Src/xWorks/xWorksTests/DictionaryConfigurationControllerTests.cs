@@ -1196,6 +1196,37 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void MergeCustomFieldsIntoDictionaryModel_DuplicateCustomFieldsAreNotRemoved()
+		{
+			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), -1,
+				CellarPropertyType.String, Guid.Empty))
+			{
+				var model = new DictionaryConfigurationModel();
+				var customNode = new ConfigurableDictionaryNode { FieldDescription = "CustomString", IsCustomField = true };
+				var duplicateCustomNode = new ConfigurableDictionaryNode { Label = "CustomString", LabelSuffix = "1", FieldDescription = "CustomString", IsCustomField = true, IsDuplicate = true };
+
+				var sensesNode = new ConfigurableDictionaryNode
+				{
+					Label = "Senses",
+					FieldDescription = "SensesOS",
+					Children = new List<ConfigurableDictionaryNode> {customNode, duplicateCustomNode}
+				};
+				var entryNode = new ConfigurableDictionaryNode
+				{
+					Label = "Main Entry",
+					FieldDescription = "LexEntry",
+					Children = new List<ConfigurableDictionaryNode> {sensesNode}
+				};
+				model.Parts = new List<ConfigurableDictionaryNode> {entryNode};
+				CssGeneratorTests.PopulateFieldsForTesting(model);
+				//SUT
+				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
+
+				Assert.AreEqual(2, model.Parts[0].Children[0].Children.Count, "The Duplicate custom field should be retained");
+			}
+		}
+
+		[Test]
 		public void MergeCustomFieldsIntoDictionaryModel_DeletedFieldsOnCollectionsAreRemoved()
 		{
 			var model = new DictionaryConfigurationModel();
