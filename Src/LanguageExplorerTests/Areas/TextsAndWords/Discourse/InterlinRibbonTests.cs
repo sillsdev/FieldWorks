@@ -18,8 +18,6 @@ using SIL.LCModel.Infrastructure;
 namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 {
 #if RANDYTODO
-// TODO: Unblock, when Keyman10Interop is included in Palaso artifacts.
-#if RANDYTODO
 // TODO: I added the Linux block section, since they were all failing on Linux.
 #endif
 #if !__MonoCS__
@@ -224,6 +222,5 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			base.OnLoad(eventArgs);
 		}
 	}
-#endif
 #endif
 }
