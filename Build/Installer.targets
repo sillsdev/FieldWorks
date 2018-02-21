@@ -16,6 +16,12 @@
 		<Manufacturer>SIL International</Manufacturer>
 	</PropertyGroup>
 
+	<!-- Installers use release builds, we require the config property to be set, this sets the Configuration for use in this file.
+	(this will get used by CallTarget as well as DependsOnTargets but not MSBuild) -->
+	<PropertyGroup>
+		<Configuration>Release</Configuration>
+	</PropertyGroup>
+
 	<!-- ########################################################################################################## -->
 	<!-- ### PRODUCT ID GUID definition : This value must be unique for each base build.  Furthermore, every    ### -->
 	<!-- ### base build must get its own unique third number (minor version) in the version number sequence.    ### -->
@@ -70,7 +76,7 @@
 			<BuildVersion>$(PatchVersion).$(VersionSeg4)</BuildVersion>
 
 			<!-- Build Directories -->
-			<AppBuildDir>$(InstallersBaseDir)/$(SafeApplicationName)_$(MinorVersion)_Build</AppBuildDir>
+			<AppBuildDir>$(InstallersBaseDir)/$(SafeApplicationName)_$(MinorVersion)_Build_$(Platform)</AppBuildDir>
 		</PropertyGroup>
 		<Message Text="BuildVersion: $(BuildVersion)" Importance="high"/>
 	</Target>
@@ -78,8 +84,7 @@
 	<!-- Build Directories -->
 	<PropertyGroup>
 		<InstallersBaseDir>$(fwrt)/Output/</InstallersBaseDir>
-		<ProductBuildDir>$(InstallersBaseDir)/$(SafeApplicationName)_$(MajorVersion)_Build</ProductBuildDir>
-		<ProductBuildMasterDir>$(InstallersBaseDir)/$(SafeApplicationName)_Build_Master</ProductBuildMasterDir>
+		<AppBuildMasterDir>$(InstallersBaseDir)/$(SafeApplicationName)_Build_Master_$(Platform)</AppBuildMasterDir>
 		<BinDirSuffix>objects/$(SafeApplicationName)</BinDirSuffix>
 		<DataDirSuffix>$(BinDirSuffix)_Data</DataDirSuffix>
 	</PropertyGroup>
@@ -87,11 +92,11 @@
 	<!-- ########################################################################################################## -->
 	<!-- ### Top Level Targets                                                                                  ### -->
 	<!-- ########################################################################################################## -->
-	<Target Name="BuildBaseInstaller" DependsOnTargets="GetDotNetFiles;ResetBuildNumberFile;CleanMasterOutputDir">
-		<CallTarget Targets="BuildProductMain;BuildProductBaseMsi;CopyBuildToMaster"/> <!-- I hate everything -->
+	<Target Name="BuildBaseInstaller" DependsOnTargets="RequirePlatform;GetDotNetFiles;ResetBuildNumberFile;CleanMasterOutputDir">
+		<CallTarget Targets="BuildProductMain;BuildProductBaseMsi;CopyBuildToMaster"/>
 	</Target>
 
-	<Target Name="BuildPatchInstaller" DependsOnTargets="BuildProductMain;BuildProductPatchMsp"/>
+	<Target Name="BuildPatchInstaller" DependsOnTargets="RequirePlatform;BuildProductMain;BuildProductPatchMsp"/>
 
 	<!-- ########################################################################################################## -->
 	<!-- ### Build Targets                                                                                      ### -->
@@ -101,6 +106,10 @@
 
 	<Target Name="BuildProduct" DependsOnTargets="CleanInstaller;ProductCompile"/>
 
+	<Target Name="RequirePlatform">
+		<Error Text="The Platform property must be set on the command line to x86 or x64."  Condition="'$(Platform)' == ''" />
+		<Error Text="Installer must be run for release builds [config=$(config)]"  Condition="'$(config)' != 'release'" />
+	</Target>
 	<!-- ########################################################################################################## -->
 	<!-- ### Compile Targets                                                                                    ### -->
 	<!-- ########################################################################################################## -->
@@ -123,36 +132,36 @@
 	<!-- ########################################################################################################## -->
 
 	<Target Name="CleanMasterOutputDir">
-		<ForceDelete Files="$(ProductBuildMasterDir)" />
+		<ForceDelete Files="$(AppBuildMasterDir)" />
 	</Target>
 
 	<Target Name="MakeInstallBuildFolders">
 		<MakeDir Directories="$(InstallersBaseDir)" Condition="!Exists('$(InstallersBaseDir)')"/>  <!-- ./BuildDir -->
 
-		<ForceDelete Files="$(ProductBuildDir)" />	<!-- ./BuildDir/Sample 1.0 Build -->
+		<ForceDelete Files="$(AppBuildDir)" />	<!-- ./BuildDir/Sample 1.0 Build -->
 
 		<!-- <ItemGroup>
 		<! - 	<BuildMasterFiles Include="$(InstallersBaseDir)/$(SafeApplicationName) Build Master/**/*"/>
 		<! - </ItemGroup>
-		<! - <Copy SourceFiles="@(BuildMasterFiles)" DestinationFolder="$(ProductBuildDir)/%(RecursiveDir)"/> -->
+		<! - <Copy SourceFiles="@(BuildMasterFiles)" DestinationFolder="$(AppBuildDir)/%(RecursiveDir)"/> -->
 	</Target>
 
-	<Target Name="CopyFilesToInstall">
+	<Target Name="CopyFilesToInstall" DependsOnTargets="InstallerVersionNumbers">
 		<!-- copy in new stuff -->
 		<ItemGroup>
 			<BinFiles Include="$(fwrt)\Output\$(Configuration)\**\*"/>
 			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="$(fwrt)\DistFiles\Projects\**\*;$(fwrt)\DistFiles\Helps\.git\**\*;$(fwrt)\DistFiles\Helps\Translation Editor\**\*"/>
 			<DataFiles Include="$(fwrt)\DistFiles\ZeditColors.txt"/>
 		</ItemGroup>
-		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(ProductBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
-		<Copy SourceFiles="@(DataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(ProductBuildDir)/$(DataDirSuffix)/%(RecursiveDir)"/>
+		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
+		<Copy SourceFiles="@(DataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)/%(RecursiveDir)"/>
 	</Target>
 
 	<Target Name="CopyBuildToMaster" >
 		<ItemGroup>
-			<ObjectFiles Include="$(ProductBuildDir)/objects/**/*"/>
+			<ObjectFiles Include="$(AppBuildDir)/objects/**/*"/>
 		</ItemGroup>
-		<Copy SourceFiles="@(ObjectFiles)" DestinationFolder="$(ProductBuildMasterDir)/objects/%(RecursiveDir)"/>
+		<Copy SourceFiles="@(ObjectFiles)" DestinationFolder="$(AppBuildMasterDir)/objects/%(RecursiveDir)"/>
 	</Target>
 
 	<Target Name="GetDotNetFiles" >
@@ -162,25 +171,54 @@
 		<DownloadFile Address="http://go.microsoft.com/fwlink/?LinkId=322115"
 			LocalFilename="$(fwrt)/$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe"
 			Condition="!Exists('$(fwrt)/$(WixLibsDir)/NDP451-KB2858728-x86-x64-AllOS-ENU.exe')" DownloadsDir="$(fwrt)/Downloads" /> <!-- .net 4.5.1 -->
+		<DownloadFile Address="https://download.microsoft.com/download/1/1/1/1116b75a-9ec3-481a-a3c8-1777b5381140/vcredist_x86.exe "
+			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2008_x86.exe"
+			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2008_x86.exe') And $(Platform)!='x64'"
+			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>			<!-- VisualC++ 8 runtime -->
 		<DownloadFile Address="https://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe"
 			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_x86.exe"
-			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_x86.exe')"
+			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_x86.exe') And $(Platform)!='x64'"
 			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>			<!-- VisualC++ 10 runtime -->
 		<DownloadFile Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe"
 			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2012_x86.exe"
-			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2012_x86.exe')"
+			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2012_x86.exe') And $(Platform)!='x64'"
 			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 11 runtime -->
 		<DownloadFile Address="http://download.microsoft.com/download/0/5/6/056dcda9-d667-4e27-8001-8a0c6971d6b1/vcredist_x86.exe"
 			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2013_x86.exe"
-			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2013_x86.exe')"
+			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2013_x86.exe') And $(Platform)!='x64'"
 			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 12 runtime -->
+		<DownloadFile Address="https://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x86.exe"
+			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2015_x86.exe"
+			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2015_x86.exe') And $(Platform)!='x64'"
+			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 14 runtime -->
+		<!-- 64bit redistributables -->
+		<DownloadFile Address="https://download.microsoft.com/download/d/2/4/d242c3fb-da5a-4542-ad66-f9661d0a8d19/vcredist_x64.exe	"
+			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2008_x64.exe"
+			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2008_x64.exe') And $(Platform)=='x64'"
+			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>
+		<DownloadFile Address="https://download.microsoft.com/download/3/2/2/3224B87F-CFA0-4E70-BDA3-3DE650EFEBA5/vcredist_x64.exe"
+			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_x64.exe"
+			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_x64.exe') And $(Platform)=='x64'"
+			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>			<!-- VisualC++ 10 runtime -->
+		<DownloadFile Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe"
+			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2012_x64.exe"
+			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2012_x64.exe') And $(Platform)=='x64'"
+			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 11 runtime -->
+		<DownloadFile Address="https://download.microsoft.com/download/2/E/6/2E61CFA4-993B-4DD4-91DA-3737CD5CD6E3/vcredist_x64.exe"
+			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2013_x64.exe"
+			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2013_x64.exe') And $(Platform)=='x64'"
+			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 12 runtime -->
+		<DownloadFile Address="https://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x64.exe"
+			LocalFilename="$(fwrt)/$(WixLibsDir)/vcredist_2015_x64.exe"
+			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2015_x64.exe') And $(Platform)=='x64'"
+			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 14 runtime -->
 	</Target>
 
 	<Target Name="WriteVersionFile" Condition="Exists($(MSBuildExtensionTargets))">
 		<PropertyGroup>
 			<Revision>$(MinorVersion).$(VersionSeg4)</Revision>
 		</PropertyGroup>
-		<WriteLinesToFile Overwrite="true" File="$(ProductBuildDir)/$(BinDirSuffix)/CurrentVersion.number" Lines="$(Revision)"/>
+		<WriteLinesToFile Overwrite="true" File="$(AppBuildDir)/$(BinDirSuffix)/CurrentVersion.number" Lines="$(Revision)"/>
 	</Target>
 
 	<Target Name="ResetBuildNumberFile">
@@ -194,14 +232,17 @@
 	<!-- ########################################################################################################## -->
 	<!-- ### Build Wix Product Targets                                                                          ### -->
 	<!-- ########################################################################################################## -->
-
+	<PropertyGroup>
+		<Arch Condition="$(Platform) != 'x64'">x86</Arch> <!-- Handle x86 and WIN32 -->
+		<Arch Condition="$(Platform) == 'x64'">x64</Arch>
+	</PropertyGroup>
 
 	<Target Name="BuildProductBaseMsi" DependsOnTargets="InstallerVersionNumbers">
-		<Message Text="Building FieldWorks Base Msi" Condition="'$(action)'!='test'"/>
+		<Message Text="Building FieldWorks Base Msi for $(Arch)" Condition="'$(action)'!='test'"/>
 		<PropertyGroup>
 			<MsiFile>$(SafeApplicationName)_$(Revision).msi</MsiFile>
 			<BaseBuildDir>$(fwrt)/PatchableInstaller/BaseInstallerBuild</BaseBuildDir>
-			<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(ProductBuildDir)/$(BinDirSuffix)" "$(ProductBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)"</BaseBuildArgs>
+			<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" $(Arch)</BaseBuildArgs>
 		</PropertyGroup>
 		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildBaseInstaller.bat $(BaseBuildArgs)" />
 
@@ -213,13 +254,14 @@
 	</Target>
 
 	<Target Name="BuildProductPatchMsp" DependsOnTargets="InstallerVersionNumbers">
+	<!-- TODO: work on Patch process -->
 		<ReadLinesFromFile File="$(AppBuildMasterDir)/version">
 			<Output TaskParameter="Lines" PropertyName="BaseVersion" />
 		</ReadLinesFromFile>
 		<PropertyGroup>
 			<MspFile>$(SafeApplicationName)_$(BuildVersion).msp</MspFile>
 			<PatchDir>$(RootDir)/src/WiXInstaller/CreateUpdatePatch</PatchDir>
-			<PatchArgs>"$(ApplicationName)" $(SafeApplicationName) $(BaseVersion) $(BuildVersion) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)"</PatchArgs>
+			<PatchArgs>"$(ApplicationName)" $(SafeApplicationName) $(BaseVersion) $(BuildVersion) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)" $(Arch)</PatchArgs>
 		</PropertyGroup>
 
 		<Exec WorkingDirectory="$(PatchDir)" Command="buildPatch.bat $(PatchArgs)"/>
