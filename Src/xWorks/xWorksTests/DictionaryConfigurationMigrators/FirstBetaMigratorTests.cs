@@ -1069,7 +1069,17 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 		[Test]
 		public void MigrateFrom83AlphaToBeta10_UpdatesReversalReferringsenses()
 		{
-
+			var refdSensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Senses",
+				FieldDescription = "ReferringSenses"
+			};
+			var allReversalSubentries = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "SubentriesOS",
+				Children = new List<ConfigurableDictionaryNode> { refdSensesNode }
+			};
 			var referencedSensesNode = new ConfigurableDictionaryNode
 			{
 				Label = "Referenced Senses",
@@ -1079,7 +1089,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			{
 				Label = "Reversal Entry",
 				FieldDescription = "ReversalIndexEntry",
-				Children = new List<ConfigurableDictionaryNode> { referencedSensesNode }
+				Children = new List<ConfigurableDictionaryNode> { referencedSensesNode, allReversalSubentries }
 			};
 			var alphaModel = new DictionaryConfigurationModel
 			{
@@ -1090,7 +1100,8 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			};
 			var betaModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel);
-			Assert.AreEqual("Senses", referencedSensesNode.FieldDescription, "Should have changed 'ReferringSenses' field for reversal to 'Senses'");
+			Assert.AreEqual("SensesRS", referencedSensesNode.FieldDescription, "Should have changed 'ReferringSenses' field for reversal to 'SensesRS'");
+			Assert.AreEqual("SensesRS", refdSensesNode.FieldDescription, "Should have changed 'ReferringSenses' field for reversal to 'SensesRS'");
 		}
 
 		/// <summary>Referenced Complex Forms that are siblings of Subentries should become Other Referenced Complex Forms</summary>
