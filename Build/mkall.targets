@@ -453,6 +453,8 @@
 		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/Utilities.dll" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading NUnit." />
+		<!-- Use wget to download nunit since mono 4.6 has TLS trouble. mono 5 is fine. -->
+		<Exec Command="wget '$(NUnitDownloadUrl)' -O '$(DownloadsDir)/NUnit-2.6.4.zip'" Condition="'$(OS)'!='Windows_NT'"/>
 		<DownloadFile Address="$(NUnitDownloadUrl)" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading artifacts for LCM." />
