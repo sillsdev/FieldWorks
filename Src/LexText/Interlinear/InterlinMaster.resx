@@ -265,7 +265,8 @@
 	<value>Baseline</value>
   </data>
   <data name="m_tpRawText.ToolTipText" xml:space="preserve">
-	<value>Enter or paste your text in this tab, then choose the Gloss or Analyse tabs to interlinearize.</value>
+	<value>Enter or paste your text in this tab, then choose the Gloss or Analyze tabs to interlinearize.</value>
+	<comment>The label for the Gloss tab should be a verb.</comment>
   </data>
   <data name="&gt;&gt;m_tpRawText.Name" xml:space="preserve">
 	<value>m_tpRawText</value>
@@ -352,7 +353,8 @@
 	<value>2</value>
   </data>
   <data name="m_tpGloss.Text" xml:space="preserve">
-	<value>Gloss</value>
+	<value>Gloss </value>
+	<comment>Label for the Gloss tab.  Should be a verb.</comment>
   </data>
   <data name="m_tpGloss.ToolTipText" xml:space="preserve">
 	<value>Gloss the words in the text.</value>
