@@ -56,7 +56,7 @@ public:
 #endif // !WIN32
 	}
 
-	~Mutex()
+	~Mutex() noexcept(false)
 	{
 #if defined(_WIN32) || defined(_M_X64)
 #ifdef MSG_PUMP_MUTEX
