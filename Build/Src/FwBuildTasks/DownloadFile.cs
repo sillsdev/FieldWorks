@@ -136,6 +136,7 @@ namespace FwBuildTasks
 			// Use a try/catch/finally block as both the WebRequest and Stream classes throw exceptions upon error
 			try
 			{
+				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 				// Create a request for the specified remote file name
 				var request = WebRequest.Create(remoteFilename);
 				// If a username or password have been given, use them

@@ -160,8 +160,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		protected override void UpdateDisplayFromDatabase()
 		{
+			if (!Object.IsValidObject)
+				return; // If the object is not valid our data needs to be refreshed, skip until data is valid again
 			int currentValue = m_cache.DomainDataByFlid.get_IntProp(Object.Hvo, m_flid);
-
 			//nb: we are assuming that an enumerations start with 0
 			m_combo.SelectedIndex = currentValue;
 		}
@@ -176,6 +177,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Debug.Assert(m_combo != null);
 			if (m_combo.DroppedDown)
 				return; // don't want to update things while the user is manipulating the list. (See FWR-1728.)
+			if (!Object.IsValidObject)
+				return; // If the object is not valid our data needs to be refreshed, skip until data is valid again
 			int oldValue = m_cache.DomainDataByFlid.get_IntProp(Object.Hvo, m_flid);
 			int newValue = m_combo.SelectedIndex;
 			// No sense in setting it to the same value.
