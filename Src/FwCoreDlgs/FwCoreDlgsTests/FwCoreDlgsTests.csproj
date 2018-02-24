@@ -272,11 +272,6 @@
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
-    <Reference Include="Widgets">
-      <Name>Widgets</Name>
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CnvtrPropertiesCtrlTests.cs">
@@ -286,6 +281,8 @@
     <Compile Include="Controls\DefaultFontsControlTests.cs" />
     <Compile Include="Controls\FwAttributesTests.cs" />
     <Compile Include="Controls\FwFontTabTests.cs" />
+    <Compile Include="Controls\FwListBoxTests.cs" />
+    <Compile Include="Controls\FwTextBoxTests.cs" />
     <Compile Include="Controls\StyleInfoTests.cs" />
     <Compile Include="Controls\StylesComboTests.cs" />
     <Compile Include="Controls\TestFontFeaturesButton.cs" />

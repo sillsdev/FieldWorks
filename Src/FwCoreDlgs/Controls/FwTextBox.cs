@@ -13,7 +13,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
-namespace SIL.FieldWorks.Common.Widgets
+namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
 	/// <summary>
 	/// FwTextBox is a simulation of a regular Windows.Forms.TextBox. It has much the same

@@ -9,7 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;

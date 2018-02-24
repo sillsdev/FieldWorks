@@ -7,12 +7,13 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 
-namespace SIL.FieldWorks.Common.Widgets
+namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
 	/// <summary>
 	/// InnerFwListBox implements the main body of an FwListBox.
@@ -50,7 +51,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			DataAccess = (ISilDataAccess)m_cacheDa;
 			// So many things blow up so badly if we don't have one of these that I finally decided to just
 			// make one, even though it won't always, perhaps not often, be the one we want.
-			m_wsf = FwUtils.FwUtils.CreateWritingSystemManager();
+			m_wsf = FwUtils.CreateWritingSystemManager();
 			DataAccess.WritingSystemFactory = WritingSystemFactory;
 			VScroll = true;
 			AutoScroll = true;
@@ -126,7 +127,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				if (m_wsf == null)
 				{
-					m_wsf = FwUtils.FwUtils.CreateWritingSystemManager();
+					m_wsf = FwUtils.CreateWritingSystemManager();
 				}
 				return base.WritingSystemFactory;
 			}

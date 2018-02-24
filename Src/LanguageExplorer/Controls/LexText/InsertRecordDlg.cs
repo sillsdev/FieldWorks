@@ -6,7 +6,7 @@ using System;
 using System.Windows.Forms;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
@@ -170,7 +170,7 @@ namespace LanguageExplorer.Controls.LexText
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InsertRecordDlg));
-			this.m_titleTextBox = new SIL.FieldWorks.Common.Widgets.FwTextBox();
+			this.m_titleTextBox = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.m_typeCombo = new LanguageExplorer.Controls.TreeCombo();
 			this.m_titleLabel = new System.Windows.Forms.Label();
 			this.m_typeLabel = new System.Windows.Forms.Label();

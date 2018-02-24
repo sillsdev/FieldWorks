@@ -22,7 +22,7 @@ using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
 using SIL.FieldWorks.Resources;
 using SIL.Keyboarding;

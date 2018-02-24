@@ -3,8 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
 
 namespace SIL.FieldWorks.FwCoreDlgs

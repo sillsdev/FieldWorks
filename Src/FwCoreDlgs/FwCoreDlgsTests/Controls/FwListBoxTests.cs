@@ -8,7 +8,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.FieldWorks.Common.Widgets
+namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -24,6 +24,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		int m_hvoEnglishWs;
 		#endregion
 
+		/// <summary />
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
@@ -37,6 +38,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		#region ObjectCollection Collection tests.
 
+		/// <summary />
 		[Test]
 		public void Add_EmptyObjectCollection_CollectionContainsSingleElement()
 		{
@@ -57,6 +59,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 	}
 
+		/// <summary />
 		[Test]
 		public void Remove_CollectionWithSingleElement_CollectionShouldBeEmpty()
 		{
@@ -75,6 +78,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				}
 			}
 		}
+		/// <summary />
 		[Test]
 		public void Clear_CollectionWithSingleElement_CollectionShouldBeEmpty()
 		{
@@ -94,6 +98,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 		}
 
+		/// <summary />
 		[Test]
 		public void SetIndex_CollectionWithSingleElement_ValueShouldHaveChanged()
 		{
@@ -118,6 +123,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		#region InnerFwListBox tests
 
+		/// <summary />
 		[Test]
 		public void WritingSystemCode_EmptyFwListBox_DoesNotThrowException()
 		{
@@ -131,6 +137,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 		}
 
+		/// <summary />
 		[Test]
 		public void ShowHighlight_EmptyFwListBox_ReturnsTrue()
 		{
@@ -144,6 +151,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 		}
 
+		/// <summary />
 		[Test]
 		public void SetShowHighlight_EmptyFwListBox_ShouldBeSetToFalse()
 		{
@@ -158,6 +166,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 		}
 
+		/// <summary />
 		[Test]
 		public void IsHighlighted_EmptyFwListBox_ReturnsFalse()
 		{
@@ -171,6 +180,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 		}
 
+		/// <summary />
 		[Test]
 		public void IsHighlighted_CollectionWithSingleElement_ReturnsTrue()
 		{

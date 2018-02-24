@@ -8,7 +8,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.FieldWorks.Common.Widgets
+namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

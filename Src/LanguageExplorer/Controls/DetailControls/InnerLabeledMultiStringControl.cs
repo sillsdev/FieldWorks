@@ -9,7 +9,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Controls.DetailControls

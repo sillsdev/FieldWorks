@@ -7,7 +7,7 @@ using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear

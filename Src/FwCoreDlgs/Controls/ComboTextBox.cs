@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
-namespace SIL.FieldWorks.Common.Widgets
+namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
 	/// <summary>
 	/// For some reason the embedded text box never gets a layout unless we do this.

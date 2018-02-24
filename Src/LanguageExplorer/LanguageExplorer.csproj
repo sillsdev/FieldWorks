@@ -281,9 +281,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
-    <Reference Include="Widgets">
-      <HintPath>..\..\Output\Release\Widgets.dll</HintPath>
-    </Reference>
     <Reference Include="DialogAdapters">
       <HintPath>..\..\packages\DialogAdapters.0.1.0.32308\lib\net45\DialogAdapters.dll</HintPath>
     </Reference>

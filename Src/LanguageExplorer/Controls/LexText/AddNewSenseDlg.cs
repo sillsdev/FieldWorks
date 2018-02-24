@@ -9,9 +9,9 @@ using System.Diagnostics;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.Common.Widgets;
 
 namespace LanguageExplorer.Controls.LexText
 {
@@ -35,8 +35,8 @@ namespace LanguageExplorer.Controls.LexText
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button m_btnOK;
 		private System.Windows.Forms.Button m_btnCancel;
-		private SIL.FieldWorks.Common.Widgets.FwTextBox m_fwtbCitationForm;
-		private SIL.FieldWorks.Common.Widgets.FwTextBox m_fwtbGloss;
+		private SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox m_fwtbCitationForm;
+		private SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox m_fwtbGloss;
 		private System.Windows.Forms.Label label2;
 		private LanguageExplorer.Controls.LexText.MSAGroupBox m_msaGroupBox;
 		private System.Windows.Forms.Button buttonHelp;
@@ -191,8 +191,8 @@ namespace LanguageExplorer.Controls.LexText
 			this.label1 = new System.Windows.Forms.Label();
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
-			this.m_fwtbCitationForm = new SIL.FieldWorks.Common.Widgets.FwTextBox();
-			this.m_fwtbGloss = new SIL.FieldWorks.Common.Widgets.FwTextBox();
+			this.m_fwtbCitationForm = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
+			this.m_fwtbGloss = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.m_msaGroupBox = new LanguageExplorer.Controls.LexText.MSAGroupBox();
 			this.buttonHelp = new System.Windows.Forms.Button();

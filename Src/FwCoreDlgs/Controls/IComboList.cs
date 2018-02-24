@@ -6,7 +6,7 @@ using System;
 using System.Windows.Forms;
 using SIL.LCModel.Core.KernelInterfaces;
 
-namespace SIL.FieldWorks.Common.Widgets
+namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
 	/// <summary>
 	/// IComboList describes the shared methods of FwComboBox and ComboListBox, allowing the two classes

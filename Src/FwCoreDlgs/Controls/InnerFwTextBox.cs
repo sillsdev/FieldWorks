@@ -15,7 +15,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Utils;
 using SIL.Reporting;
 
-namespace SIL.FieldWorks.Common.Widgets
+namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
 	/// <summary>
 	/// InnerFwTextBox implements the main body of an FwTextBox. Has to be public so combo box
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		private void CreateTempWritingSystemFactory()
 		{
-			m_wsf = FwUtils.FwUtils.CreateWritingSystemManager();
+			m_wsf = FwUtils.CreateWritingSystemManager();
 			m_fUsingTempWsFactory = true;
 		}
 
@@ -1070,7 +1070,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			var tssValue = Tss;
 			if (tssValue != null && tssValue.Length > MaxLength)
 			{
-				MessageBox.Show(this, string.Format(Strings.ksStringTooLong, MaxLength), Strings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(this, string.Format(FwCoreDlgs.ksStringTooLong, MaxLength), FwCoreDlgs.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				var bldr = tssValue.GetBldr();
 				bldr.ReplaceTsString(MaxLength, bldr.Length, null);
 				Tss = bldr.GetString();

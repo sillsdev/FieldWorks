@@ -12,9 +12,9 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords
@@ -279,7 +279,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			this.m_wordPanel = new System.Windows.Forms.Panel();
 			this.m_doSelectMorphsCheckBox = new System.Windows.Forms.CheckBox();
 			this.m_doTraceCheckBox = new System.Windows.Forms.CheckBox();
-			this.m_wordformTextBox = new SIL.FieldWorks.Common.Widgets.FwTextBox();
+			this.m_wordformTextBox = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.m_timer = new System.Windows.Forms.Timer(this.components);
 			this.m_sandboxPanel = new System.Windows.Forms.Panel();
 			this.m_resultsPanel.SuspendLayout();

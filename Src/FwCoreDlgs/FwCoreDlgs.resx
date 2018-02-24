@@ -794,9 +794,7 @@ Enter a shorter name.</value>
   </data>
   <data name="ksWarning" xml:space="preserve">
     <value>Warning</value>
-    <comment>
-			Caption for warning message box
-		</comment>
+    <comment>Caption for warning message box</comment>
   </data>
   <data name="ksChooseProjectFolder" xml:space="preserve">
     <value>Projects Folder</value>
@@ -934,5 +932,9 @@ Delete the existing relationship before trying to add this one again.</value>
   </data>
   <data name="ksWhichIsComponent" xml:space="preserve">
     <value>Which item is really a component?</value>
+  </data>
+  <data name="ksStringTooLong" xml:space="preserve">
+    <value>You have entered a string that is too long for this field. It is being truncated to {0} characters.</value>
+    <comment>Error message</comment>
   </data>
 </root>

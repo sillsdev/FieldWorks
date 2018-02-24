@@ -4,7 +4,7 @@
 
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

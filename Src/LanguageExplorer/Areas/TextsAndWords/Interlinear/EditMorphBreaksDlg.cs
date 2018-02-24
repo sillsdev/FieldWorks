@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	{
 		private Button m_btnOk;
 		private Button m_btnCancel;
-		private SIL.FieldWorks.Common.Widgets.FwTextBox m_txtMorphs;
+		private SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox m_txtMorphs;
 
 		/// <summary>
 		/// Required designer variable.
@@ -190,7 +190,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditMorphBreaksDlg));
 			this.m_btnOk = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
-			this.m_txtMorphs = new SIL.FieldWorks.Common.Widgets.FwTextBox();
+			this.m_txtMorphs = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.m_lblWord = new System.Windows.Forms.Label();
 			this.m_groupBox2BreakCharacters = new System.Windows.Forms.GroupBox();
 			this.m_lblBreakSuprafixtLabel = new System.Windows.Forms.Label();

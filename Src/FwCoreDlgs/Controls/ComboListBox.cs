@@ -12,7 +12,7 @@ using System.Windows.Forms.VisualStyles;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.Common.Widgets
+namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
 	/// <summary>
 	/// A "Combo" list box is one that can launch itself as a stand-alone, yet modal window, like the drop-down

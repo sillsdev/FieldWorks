@@ -16,10 +16,10 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Filters;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel.Utils;
 using SIL.Xml;
 

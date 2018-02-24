@@ -13,7 +13,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
@@ -249,13 +249,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.m_helpProvider = new System.Windows.Forms.HelpProvider();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.m_glossWsComboBox = new System.Windows.Forms.ComboBox();
-			this.m_glossTextBox = new SIL.FieldWorks.Common.Widgets.FwTextBox();
+			this.m_glossTextBox = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
 			this.m_entryWsComboBox = new System.Windows.Forms.ComboBox();
-			this.m_entryTextBox = new SIL.FieldWorks.Common.Widgets.FwTextBox();
+			this.m_entryTextBox = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.m_formWsComboBox = new System.Windows.Forms.ComboBox();
-			this.m_formTextBox = new SIL.FieldWorks.Common.Widgets.FwTextBox();
+			this.m_formTextBox = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
 			this.m_categoryNotCheckBox = new System.Windows.Forms.CheckBox();
 			this.m_categoryComboBox = new LanguageExplorer.Controls.TreeCombo();

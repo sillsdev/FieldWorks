@@ -1103,6 +1103,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You have entered a string that is too long for this field. It is being truncated to {0} characters..
+        /// </summary>
+        public static string ksStringTooLong {
+            get {
+                return ResourceManager.GetString("ksStringTooLong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} Suffix.
         /// </summary>
         public static string ksSuffixMenuCmd {

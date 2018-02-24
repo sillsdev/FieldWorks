@@ -7,9 +7,9 @@ using System.Windows.Forms;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.FieldWorks.Filters;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 
 namespace LanguageExplorer.Controls.XMLViews
 {

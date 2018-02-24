@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls.XMLViews
@@ -157,7 +157,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NonEmptyTargetControl));
 			this.NonBlankTargetGroup = new System.Windows.Forms.GroupBox();
-			this.sepBox = new SIL.FieldWorks.Common.Widgets.FwTextBox();
+			this.sepBox = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.appendRadio = new System.Windows.Forms.RadioButton();
 			this.overwriteRadio = new System.Windows.Forms.RadioButton();
 			this.doNothingRadio = new System.Windows.Forms.RadioButton();

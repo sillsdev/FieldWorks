@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.FieldWorks.Resources;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -42,7 +42,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			this.editDomainsLinkPic = new System.Windows.Forms.PictureBox();
 			this.editDomainslinklabel = new System.Windows.Forms.LinkLabel();
 			this.domainTree = new System.Windows.Forms.TreeView();
-			this.searchTextBox = new SIL.FieldWorks.Common.Widgets.FwTextBox();
+			this.searchTextBox = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.domainList = new System.Windows.Forms.ListView();
 			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.displayUsagePanel = new System.Windows.Forms.FlowLayoutPanel();

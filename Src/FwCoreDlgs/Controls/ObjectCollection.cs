@@ -8,7 +8,7 @@ using System.Diagnostics;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.KernelInterfaces;
 
-namespace SIL.FieldWorks.Common.Widgets
+namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
 	/// <summary>
 	/// Like ListBox, FwListBox defines an ObjectCollection class for the items

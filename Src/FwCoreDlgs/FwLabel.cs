@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

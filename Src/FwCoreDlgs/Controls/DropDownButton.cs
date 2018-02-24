@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using SIL.FieldWorks.Resources;
 
-namespace SIL.FieldWorks.Common.Widgets
+namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
 	/// <summary />
 	public class DropDownButton : Button

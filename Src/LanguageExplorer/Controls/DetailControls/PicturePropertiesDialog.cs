@@ -14,8 +14,8 @@ using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FwCoreDlgs;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Resources;
@@ -300,7 +300,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.m_picPreview = new System.Windows.Forms.PictureBox();
 			this.lblFilename = new System.Windows.Forms.Label();
-			this.m_txtCaption = new SIL.FieldWorks.Common.Widgets.FwTextBox();
+			this.m_txtCaption = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.m_tooltip = new System.Windows.Forms.ToolTip(this.components);
 			this.panelBottom = new System.Windows.Forms.Panel();
 			this.pnlPicture = new SIL.FieldWorks.Common.Controls.FwPanel();

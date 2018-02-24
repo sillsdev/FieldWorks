@@ -30,9 +30,9 @@ namespace LanguageExplorer.Controls.LexText
 		private System.Windows.Forms.Button btnOk;
 		private System.Windows.Forms.Button btnHelp;
 		private System.Windows.Forms.Label label1;
-		private SIL.FieldWorks.Common.Widgets.FwTextBox m_fwtbCitationForm;
+		private SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox m_fwtbCitationForm;
 		private System.Windows.Forms.Label label2;
-		private SIL.FieldWorks.Common.Widgets.FwTextBox m_fwtbSenses;
+		private SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox m_fwtbSenses;
 		private LanguageExplorer.Controls.LexText.MSAGroupBox m_msaGroupBox;
 
 		private string s_helpTopic = "khtpCreateNewGrammaticalFunction";
@@ -192,9 +192,9 @@ namespace LanguageExplorer.Controls.LexText
 			this.btnOk = new System.Windows.Forms.Button();
 			this.btnHelp = new System.Windows.Forms.Button();
 			this.label1 = new System.Windows.Forms.Label();
-			this.m_fwtbCitationForm = new SIL.FieldWorks.Common.Widgets.FwTextBox();
+			this.m_fwtbCitationForm = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.label2 = new System.Windows.Forms.Label();
-			this.m_fwtbSenses = new SIL.FieldWorks.Common.Widgets.FwTextBox();
+			this.m_fwtbSenses = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.m_msaGroupBox = new LanguageExplorer.Controls.LexText.MSAGroupBox();
 			((System.ComponentModel.ISupportInitialize)(this.m_fwtbCitationForm)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_fwtbSenses)).BeginInit();

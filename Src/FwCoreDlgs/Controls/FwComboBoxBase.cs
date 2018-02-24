@@ -12,7 +12,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 
-namespace SIL.FieldWorks.Common.Widgets
+namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
 	/// <summary>
 	/// This is an abstract class that provides the basic functionality for a Views-enabled

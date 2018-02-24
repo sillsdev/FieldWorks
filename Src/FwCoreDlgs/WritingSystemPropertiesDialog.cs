@@ -21,7 +21,6 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
@@ -893,7 +892,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_sortRulesButtonPanel = new System.Windows.Forms.Panel();
 			this.m_angleBracketButton = new System.Windows.Forms.Button();
 			this.m_ampersandButton = new System.Windows.Forms.Button();
-			this.m_sortRulesTextBox = new SIL.FieldWorks.Common.Widgets.FwTextBox();
+			this.m_sortRulesTextBox = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.m_sortingHelpLabel = new System.Windows.Forms.Label();
 			this.m_sortLanguagePanel = new System.Windows.Forms.Panel();
 			this.m_sortLanguageComboBox = new System.Windows.Forms.ComboBox();

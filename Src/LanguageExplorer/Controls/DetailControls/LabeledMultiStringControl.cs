@@ -14,7 +14,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 
 namespace LanguageExplorer.Controls.DetailControls
 {

@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.label2 = new System.Windows.Forms.Label();
 			this.m_searchContentLabel = new System.Windows.Forms.Label();
 			this.m_cbLine = new System.Windows.Forms.ComboBox();
-			this.m_tbSearchText = new SIL.FieldWorks.Common.Widgets.FwTextBox();
+			this.m_tbSearchText = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.m_btnRegExp = new System.Windows.Forms.Button();
 			this.m_chkMatchDiacritics = new System.Windows.Forms.CheckBox();
 			this.m_btnHelp = new System.Windows.Forms.Button();
@@ -40,7 +40,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.helpProvider = new System.Windows.Forms.HelpProvider();
 			this.m_cbSearchText = new LanguageExplorer.Controls.TreeCombo();
-			this.m_fwtbItem = new SIL.FieldWorks.Common.Widgets.FwTextBox();
+			this.m_fwtbItem = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.m_lnkSpecify = new System.Windows.Forms.LinkLabel();
 			((System.ComponentModel.ISupportInitialize)(this.m_tbSearchText)).BeginInit();
 			this.groupBox1.SuspendLayout();
@@ -247,10 +247,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private System.Windows.Forms.RadioButton m_rbtnUseRegExp;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.HelpProvider helpProvider;
-		protected SIL.FieldWorks.Common.Widgets.FwTextBox m_tbSearchText;
+		protected SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox m_tbSearchText;
 		protected System.Windows.Forms.CheckBox m_chkMatchDiacritics;
 		protected System.Windows.Forms.CheckBox m_chkMatchCase;
-		private SIL.FieldWorks.Common.Widgets.FwTextBox m_fwtbItem;
+		private SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox m_fwtbItem;
 		private System.Windows.Forms.LinkLabel m_lnkSpecify;
 		protected System.Windows.Forms.ComboBox m_cbWritingSystem;
 		protected LanguageExplorer.Controls.TreeCombo m_cbSearchText;

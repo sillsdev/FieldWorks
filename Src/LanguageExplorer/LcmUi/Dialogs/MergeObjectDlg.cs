@@ -15,7 +15,7 @@ using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.Windows.Forms;
@@ -269,7 +269,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			this.m_bvPanel = new System.Windows.Forms.Panel();
 			this.m_chItems = new System.Windows.Forms.ColumnHeader();
 			this.buttonHelp = new System.Windows.Forms.Button();
-			this.m_fwTextBoxBottomMsg = new SIL.FieldWorks.Common.Widgets.FwTextBox();
+			this.m_fwTextBoxBottomMsg = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_fwTextBoxBottomMsg)).BeginInit();
 			this.SuspendLayout();
