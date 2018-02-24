@@ -20,12 +20,12 @@ namespace SIL.FieldWorks.Common.Widgets
 	public class ObjectCollection : IList, IDisposable
 	{
 		private ArrayList m_list;
-		private IFwListBox m_owner;
+		private FwListBox m_owner;
 
 		/// <summary>
 		/// Construct empty.
 		/// </summary>
-		public ObjectCollection(IFwListBox owner)
+		public ObjectCollection(FwListBox owner)
 		{
 			m_list = new ArrayList();
 			m_owner = owner;
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Construct with supplied initial items.
 		/// </summary>
-		public ObjectCollection(IFwListBox owner, object[] values)
+		public ObjectCollection(FwListBox owner, object[] values)
 		{
 			m_list = new ArrayList(values);
 			m_owner = owner;

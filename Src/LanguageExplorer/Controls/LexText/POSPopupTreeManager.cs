@@ -8,7 +8,6 @@ using LanguageExplorer.Areas;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.Widgets;
 
 namespace LanguageExplorer.Controls.LexText
 {

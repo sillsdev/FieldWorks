@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 
 namespace LanguageExplorer.Controls.LexText
 {

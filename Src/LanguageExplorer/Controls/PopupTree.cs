@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.FieldWorks.Common.Widgets
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// PopupTree is a form containing a TreeView, designed to pop up like the list of a combo box
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		private TreeViewAction m_selectedNodeAction;
 		private bool m_fClientSpecifiedAction;
 
-		internal FwTreeView m_treeView;
+		private FwTreeView m_treeView;
 		private FwPopupMessageFilter m_fwPopupMessageFilter;
 		private TreeNode m_tnMouseDown;		// Store the node indicated by a MouseDown event.
 		/// <summary>
@@ -778,6 +778,54 @@ namespace SIL.FieldWorks.Common.Widgets
 					default:
 						return false;
 				}
+			}
+		}
+
+		/// <summary>
+		/// We need to subclass TreeView in order to override IsInputChar(), otherwise
+		/// TreeView will not try to handle TAB keys (cf. LT-2190).
+		/// </summary>
+		private sealed class FwTreeView : TreeView
+		{
+			/// <summary />
+			protected override void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+				base.Dispose(disposing);
+			}
+
+			/// <summary>
+			/// We need to be able to handle the TAB key.
+			/// Requires IsInputKey() == true.
+			/// </summary>
+			protected override bool IsInputChar(char charCode)
+			{
+				return charCode == '\t' || base.IsInputChar(charCode);
+			}
+
+			/// <summary>
+			/// We need to be able to handle the TAB key. IsInputKey() must be true
+			/// for IsInputChar() to be called.
+			/// </summary>
+			protected override bool IsInputKey(Keys keyData)
+			{
+				if (keyData == Keys.Tab || keyData == (Keys.Tab | Keys.Shift))
+				{
+					return true;
+				}
+				return base.IsInputKey(keyData);
+			}
+
+			protected override void WndProc(ref Message m)
+			{
+				// don't try to handle WM_CHAR in TreeView
+				// it causes an annoying beep LT-16007
+				const int wmCharMsg = 258;
+				if (m.Msg == wmCharMsg)
+				{
+					return;
+				}
+				base.WndProc(ref m);
 			}
 		}
 	}

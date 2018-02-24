@@ -4,7 +4,6 @@
 
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.LexText

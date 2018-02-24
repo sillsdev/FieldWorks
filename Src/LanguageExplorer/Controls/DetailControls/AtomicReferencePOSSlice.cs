@@ -9,7 +9,6 @@ using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.LexText;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 

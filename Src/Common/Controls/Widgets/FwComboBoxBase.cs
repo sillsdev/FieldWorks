@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// ComboBox. Classes that extend this class provide an implementation of the drop down
 	/// box.
 	/// </summary>
-	public abstract class FwComboBoxBase : UserControl, IVwNotifyChange, IWritingSystemAndStylesheet
+	public abstract class FwComboBoxBase : UserControl, IVwNotifyChange
 	{
 		#region Events
 		/// <summary>

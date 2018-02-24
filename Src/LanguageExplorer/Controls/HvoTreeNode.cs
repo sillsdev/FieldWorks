@@ -6,7 +6,7 @@ using System;
 using System.Windows.Forms;
 using SIL.LCModel.Core.KernelInterfaces;
 
-namespace SIL.FieldWorks.Common.Widgets
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// This class is used for tree nodes in the popup list. It adds an Hvo property to track which selection

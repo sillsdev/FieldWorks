@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// <summary>
 	/// InnerFwListBox implements the main body of an FwListBox.
 	/// </summary>
-	internal class InnerFwListBox : SimpleRootSite, IFwListBoxSite
+	internal class InnerFwListBox : SimpleRootSite
 	{
 		// This 'view' displays the strings representing the list items by representing
 		// each string as property ktagText of one of the objects of ktagItems of
@@ -376,12 +376,12 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		private sealed class ListBoxVc : FwBaseVc
 		{
-			private IFwListBoxSite m_listbox;
+			private InnerFwListBox m_listbox;
 
 			/// <summary>
 			/// Construct one. Must be part of an InnerFwListBox.
 			/// </summary>
-			internal ListBoxVc(IFwListBoxSite listbox)
+			internal ListBoxVc(InnerFwListBox listbox)
 			{
 				m_listbox = listbox;
 			}

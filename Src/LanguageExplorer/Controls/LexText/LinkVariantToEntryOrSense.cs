@@ -6,7 +6,6 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;

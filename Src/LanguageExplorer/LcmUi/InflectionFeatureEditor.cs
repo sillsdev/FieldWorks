@@ -12,7 +12,6 @@ using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Core.Text;
@@ -216,7 +215,7 @@ namespace LanguageExplorer.LcmUi
 			}
 			else
 			{
-				var hvo = ((HvoTreeNode) e.Node).Hvo;
+				var hvo = ((HvoTreeNode)e.Node).Hvo;
 				var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 				if (obj is IFsFeatStruc)
 				{

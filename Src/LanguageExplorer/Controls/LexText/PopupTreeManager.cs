@@ -6,7 +6,6 @@ using System;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;

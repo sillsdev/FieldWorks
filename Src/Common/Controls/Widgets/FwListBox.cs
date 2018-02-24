@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// the writing systems of any TsStrings it is asked to display. It will improve performance
 	/// to do this even if you are not using TsString data.
 	/// </summary>
-	public class FwListBox : Panel, IVwNotifyChange, IFwListBox
+	public class FwListBox : Panel, IVwNotifyChange
 	{
 		/// <summary />
 		public event EventHandler SelectedIndexChanged;

@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// InnerFwTextBox implements the main body of an FwTextBox. Has to be public so combo box
 	/// can return its text box.
 	/// </summary>
-	public class InnerFwTextBox : SimpleRootSite, IVwNotifyChange, IWritingSystemAndStylesheet
+	public class InnerFwTextBox : SimpleRootSite, IVwNotifyChange
 	{
 		#region Data members
 

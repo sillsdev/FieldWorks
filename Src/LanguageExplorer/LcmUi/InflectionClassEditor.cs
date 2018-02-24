@@ -12,7 +12,6 @@ using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Core.Text;
@@ -204,7 +203,7 @@ namespace LanguageExplorer.LcmUi
 			// Remember which item was selected so we can later 'doit'.
 			if (e.Node is HvoTreeNode)
 			{
-				var hvo = (e.Node as HvoTreeNode).Hvo;
+				var hvo = ((HvoTreeNode)e.Node).Hvo;
 				var clid = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetClsid(hvo);
 				if (clid == MoInflClassTags.kClassId)
 				{
