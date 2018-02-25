@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_infoPictureBox.Image = infoIcon.ToBitmap();
 			m_infoPictureBox.Size = infoIcon.Size;
 
-			foreach (CoreWritingSystemDefinition curWs in wss.Except(new[] { ws }))
+			foreach (CoreWritingSystemDefinition curWs in wss.Where(x => x.Handle > 0).Except(new[] { ws }))
 				m_wsListBox.Items.Add(curWs);
 			m_wsListBox.SelectedIndex = 0;
 
