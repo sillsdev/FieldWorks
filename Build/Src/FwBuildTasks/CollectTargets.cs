@@ -75,15 +75,10 @@ namespace FwBuildTasks
 		/// </summary>
 		public void Generate()
 		{
-			var infoSrc = new DirectoryInfo(Path.Combine(m_fwroot, "Src"));
-			CollectInfo(infoSrc);
+			CollectInfo(new DirectoryInfo(Path.Combine(m_fwroot, "Src")));
 			// These projects from Lib had nant targets.  They really should be under Src.
-			var infoEth = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/Ethnologue"));
-			CollectInfo(infoEth);
-			var infoScr2 = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ScrChecks"));
-			CollectInfo(infoScr2);
-			var infoObj = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ObjectBrowser"));
-			CollectInfo(infoObj);
+			CollectInfo(new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/Ethnologue")));
+			CollectInfo(new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ScrChecks")));
 			WriteTargetFiles();
 		}
 
@@ -92,15 +87,12 @@ namespace FwBuildTasks
 		/// </summary>
 		private void CollectInfo(DirectoryInfo dirInfo)
 		{
-			if (dirInfo == null || !dirInfo.Exists)
+			if (!dirInfo.Exists)
 				return;
-			foreach (var fi in dirInfo.GetFiles())
+			foreach (var fi in dirInfo.GetFiles("*.csproj", SearchOption.AllDirectories))
 			{
-				if (fi.Name.EndsWith(".csproj") && fi.Exists)
-					ProcessCsProjFile(fi.FullName);
+				ProcessCsProjFile(fi.FullName);
 			}
-			foreach (var diSub in dirInfo.GetDirectories())
-				CollectInfo(diSub);
 		}
 
 		/// <summary>
@@ -318,6 +310,13 @@ namespace FwBuildTasks
 							// The ParatextImportTests and FwCoreDlgsTests require that the ScrChecks.dll be in DistFiles/Editorial Checks.
 							// We don't discover that dependency because it's not a reference (LT-13777).
 							bldr.Append(";ScrChecks");
+						}
+						if (project == "FwControls")
+						{
+							// The FwControls project requires that Design be built first,
+							// since FwControls uses it in some of its Designer views of controls at runtime.
+							// We don't discover that dependency because it's not a reference.
+							bldr.Append(";Design");
 						}
 						var dependencies = m_mapProjDepends[project];
 						dependencies.Sort();
