@@ -200,13 +200,13 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		/// <summary>LT-18920: Change Referringsenses to Senses for all the reversal index configurations.</summary>
 		private static void ChangeReferringsensesToSenses(ConfigurableDictionaryNode part)
 		{
-			if (part.FieldDescription == "ReversalIndexEntry")
+			if (part.FieldDescription == "ReversalIndexEntry" || part.FieldDescription == "SubentriesOS")
 			{
 				DictionaryConfigurationServices.PerformActionOnNodes(part.Children, node =>
 				{
 					if (node.FieldDescription == "ReferringSenses")
 					{
-						node.FieldDescription = "Senses";
+						node.FieldDescription = "SensesRS";
 					}
 				});
 			}

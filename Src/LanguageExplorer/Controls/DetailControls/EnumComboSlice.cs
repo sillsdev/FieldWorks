@@ -158,6 +158,10 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void UpdateDisplayFromDatabase()
 		{
+			if (!Object.IsValidObject)
+			{
+				return; // If the object is not valid our data needs to be refreshed, skip until data is valid again
+			}
 			var currentValue = Cache.DomainDataByFlid.get_IntProp(Object.Hvo, m_flid);
 
 			//nb: we are assuming that an enumerations start with 0
@@ -173,6 +177,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (m_combo.DroppedDown)
 			{
 				return; // don't want to update things while the user is manipulating the list. (See FWR-1728.)
+			}
+			if (!Object.IsValidObject)
+			{
+				return; // If the object is not valid our data needs to be refreshed, skip until data is valid again
 			}
 			var oldValue = Cache.DomainDataByFlid.get_IntProp(Object.Hvo, m_flid);
 			var newValue = m_combo.SelectedIndex;

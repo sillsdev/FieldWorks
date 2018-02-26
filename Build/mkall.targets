@@ -306,7 +306,7 @@
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1</DownloadsSilOrgDownloadUrl>
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Windows_NT'">$(DownloadsSilOrgDownloadUrl)/Windows</DownloadsSilOrgOSDownloadUrl>
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Unix'">$(DownloadsSilOrgDownloadUrl)/Linux</DownloadsSilOrgOSDownloadUrl>
-		<NUnitDownloadUrl>http://github.com/nunit/nunitv2/releases/download/2.6.4/NUnit-2.6.4.zip</NUnitDownloadUrl>
+		<NUnitDownloadUrl>https://github.com/nunit/nunitv2/releases/download/2.6.4/NUnit-2.6.4.zip</NUnitDownloadUrl>
 		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Liblcm_LiblcmWin32masterContinuous</LcmBuildType>
 		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Lcm_LiblcmWin64masterContinuous</LcmBuildType>
 		<LcmBuildType Condition="'$(OS)'=='Unix'">Liblcm_LiblcmLinux64masterContinuous</LcmBuildType>
@@ -453,6 +453,8 @@
 		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/Utilities.dll" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading NUnit." />
+		<!-- Use wget to download nunit since mono 4.6 has TLS trouble. mono 5 is fine. -->
+		<Exec Command="wget '$(NUnitDownloadUrl)' -O '$(DownloadsDir)/NUnit-2.6.4.zip'" Condition="'$(OS)'!='Windows_NT'"/>
 		<DownloadFile Address="$(NUnitDownloadUrl)" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading artifacts for LCM." />
