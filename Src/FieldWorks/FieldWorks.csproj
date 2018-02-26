@@ -48,9 +48,9 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <OutputPath>..\..\..\Output\Debug\</OutputPath>
+    <OutputPath>..\..\Output\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\..\Output\Debug\FieldWorks.xml</DocumentationFile>
+    <DocumentationFile>..\..\Output\Debug\FieldWorks.xml</DocumentationFile>
     <ErrorReport>prompt</ErrorReport>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
@@ -63,7 +63,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <OutputPath>..\..\..\Output\Release\</OutputPath>
+    <OutputPath>..\..\Output\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -77,9 +77,9 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <OutputPath>..\..\..\Output\Debug\</OutputPath>
+    <OutputPath>..\..\Output\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\..\Output\Debug\FieldWorks.xml</DocumentationFile>
+    <DocumentationFile>..\..\Output\Debug\FieldWorks.xml</DocumentationFile>
     <ErrorReport>prompt</ErrorReport>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
@@ -92,7 +92,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <OutputPath>..\..\..\Output\Release\</OutputPath>
+    <OutputPath>..\..\Output\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -104,98 +104,98 @@
   <ItemGroup>
     <Reference Include="LanguageExplorer, Version=10.0.0.37221, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\LanguageExplorer.dll</HintPath>
+      <HintPath>..\..\Output\Debug\LanguageExplorer.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="ViewsInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
     </Reference>
     <Reference Include="FwControls, Version=6.1.1.19925, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\FwControls.dll</HintPath>
+      <HintPath>..\..\Output\Debug\FwControls.dll</HintPath>
     </Reference>
     <Reference Include="FwCoreDlgs, Version=6.1.1.27759, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
+      <HintPath>..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
     </Reference>
     <Reference Include="FwResources, Version=6.1.1.30858, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
+      <HintPath>..\..\Output\Debug\FwResources.dll</HintPath>
     </Reference>
     <Reference Include="FwUtils, Version=6.1.1.19918, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
+      <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Core">
-      <HintPath>..\..\..\Output\Debug\Geckofx-Core.dll</HintPath>
+      <HintPath>..\..\Output\Debug\Geckofx-Core.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Winforms">
-      <HintPath>..\..\..\Output\Debug\Geckofx-Winforms.dll</HintPath>
+      <HintPath>..\..\Output\Debug\Geckofx-Winforms.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="NetSparkle.Net40, Version=1.0.22.0, Culture=neutral, processorArchitecture=MSIL" Condition="'$(OS)'!='Unix'">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DistFiles\NetSparkle.Net40.dll</HintPath>
+      <HintPath>..\..\DistFiles\NetSparkle.Net40.dll</HintPath>
     </Reference>
     <Reference Include="ParatextShared, Version=7.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\ParatextShared.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ParatextShared.dll</HintPath>
     </Reference>
     <Reference Include="PaToFdoInterfaces, Version=1.0.4031.20876, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DistFiles\PaToFdoInterfaces.dll</HintPath>
+      <HintPath>..\..\DistFiles\PaToFdoInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="Reporting, Version=1.0.3664.19926, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>
+      <HintPath>..\..\Output\Debug\Reporting.dll</HintPath>
     </Reference>
     <Reference Include="RootSite, Version=6.1.1.19944, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
+      <HintPath>..\..\Output\Debug\RootSite.dll</HintPath>
     </Reference>
     <Reference Include="ScriptureUtils, Version=8.0.9.21108, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\ScriptureUtils.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ScriptureUtils.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Downloads\SIL.Core.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.Core.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Windows.Forms, Version=3.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Windows.Forms.Keyboarding, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Downloads\SIL.Windows.Forms.Keyboarding.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.Windows.Forms.Keyboarding.dll</HintPath>
     </Reference>
     <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
     <Reference Include="SimpleRootSite, Version=6.1.1.19942, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SimpleRootSite.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -215,14 +215,14 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Framework">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
+      <HintPath>..\..\Output\Debug\Framework.dll</HintPath>
     </Reference>
     <Reference Include="icu.net">
-      <HintPath>..\..\..\Downloads\icu.net.dll</HintPath>
+      <HintPath>..\..\Downloads\icu.net.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\CommonAssemblyInfo.cs">
+    <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ApplicationBusyDialog.cs">
