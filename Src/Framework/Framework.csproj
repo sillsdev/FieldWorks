@@ -55,14 +55,14 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\..\Output\Debug\</OutputPath>
+    <OutputPath>..\..\Output\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\..\Output\Debug\Framework.xml</DocumentationFile>
+    <DocumentationFile>..\..\Output\Debug\Framework.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -78,7 +78,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\..\..\Output\Release\</OutputPath>
+    <OutputPath>..\..\Output\Release\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
@@ -102,14 +102,14 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <OutputPath>..\..\..\Output\Debug\</OutputPath>
+    <OutputPath>..\..\Output\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\..\Output\Debug\Framework.xml</DocumentationFile>
+    <DocumentationFile>..\..\Output\Debug\Framework.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -125,7 +125,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <OutputPath>..\..\..\Output\Release\</OutputPath>
+    <OutputPath>..\..\Output\Release\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
@@ -153,72 +153,72 @@
       <Name>Accessibility</Name>
     </Reference>
     <Reference Include="ViewsInterfaces, Version=5.5.0.18125, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="FwControls, Version=5.5.0.18143, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Output\Debug\FwControls.dll</HintPath>
+      <HintPath>..\..\Output\Debug\FwControls.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
     </Reference>
     <Reference Include="FwCoreDlgs, Version=5.5.0.18251, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
+      <HintPath>..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="FwResources, Version=5.5.0.17728, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
+      <HintPath>..\..\Output\Debug\FwResources.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="FwUtils, Version=5.5.0.18127, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
+      <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Interop.IWshRuntimeLibrary, Version=1.0.0.0, Culture=neutral">
-      <HintPath>..\..\..\Bin\Interop.IWshRuntimeLibrary.dll</HintPath>
+      <HintPath>..\..\Bin\Interop.IWshRuntimeLibrary.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="L10NSharp, Version=2.0.33.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Downloads\L10NSharp.dll</HintPath>
+      <HintPath>..\..\Downloads\L10NSharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="Reporting, Version=1.0.3490.18153, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>
+      <HintPath>..\..\Output\Debug\Reporting.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="RootSite, Version=5.5.0.18225, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
+      <HintPath>..\..\Output\Debug\RootSite.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Downloads\SIL.Core.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.Core.dll</HintPath>
     </Reference>
     <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Archiving, Version=2.6.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Release\SIL.Archiving.dll</HintPath>
+      <HintPath>..\..\Output\Release\SIL.Archiving.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
     <Reference Include="SimpleRootSite, Version=5.5.0.18221, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SimpleRootSite.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -251,11 +251,11 @@
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="SIL.Windows.Forms">
-      <HintPath>..\..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\CommonAssemblyInfo.cs">
+    <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AssemblyInfo.cs">
