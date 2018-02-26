@@ -39,7 +39,7 @@
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
-	<OutputPath>..\..\..\Output\Debug\</OutputPath>
+	<OutputPath>..\..\Output\Debug\</OutputPath>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -52,7 +52,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
-	<OutputPath>..\..\..\Output\Release\</OutputPath>
+	<OutputPath>..\..\Output\Release\</OutputPath>
 	<DefineConstants>TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -63,7 +63,7 @@
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
-	<OutputPath>..\..\..\Output\Debug\</OutputPath>
+	<OutputPath>..\..\Output\Debug\</OutputPath>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -76,7 +76,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
-	<OutputPath>..\..\..\Output\Release\</OutputPath>
+	<OutputPath>..\..\Output\Release\</OutputPath>
 	<DefineConstants>TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -86,11 +86,11 @@
   <ItemGroup>
 	<Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
+	  <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
 	</Reference>
 	<Reference Include="FwUtils, Version=9.0.0.30500, Culture=neutral, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
+	  <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
 	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Core">
@@ -103,7 +103,7 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="..\..\..\Src\CommonAssemblyInfo.cs">
+	<Compile Include="..\CommonAssemblyInfo.cs">
 	  <Link>Properties\CommonAssemblyInfo.cs</Link>
 	</Compile>
 	<Compile Include="ChapterVerseCheck.cs" />

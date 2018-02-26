@@ -76,8 +76,6 @@ namespace FwBuildTasks
 		public void Generate()
 		{
 			CollectInfo(new DirectoryInfo(Path.Combine(m_fwroot, "Src")));
-			// These projects from Lib had nant targets.  They really should be under Src.
-			CollectInfo(new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ScrChecks")));
 			WriteTargetFiles();
 		}
 
@@ -224,8 +222,6 @@ namespace FwBuildTasks
 			projectSubDir = projectSubDir.Replace("\\", "/");
 			if (projectSubDir.StartsWith("/Src/"))
 				projectSubDir = projectSubDir.Substring(5);
-			else if (projectSubDir.StartsWith("/Lib/src/"))
-				projectSubDir = projectSubDir.Substring(9);
 			else if (projectSubDir.StartsWith("/"))
 				projectSubDir = projectSubDir.Substring(1);
 			if (Path.DirectorySeparatorChar != '/')
