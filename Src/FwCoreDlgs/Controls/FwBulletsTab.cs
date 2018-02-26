@@ -261,7 +261,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		}
 
 		/// <summary>
-		/// Gets the zer-based index into the bullet combo for the given type of (numeric) bullet.
+		/// Gets the zero-based index into the bullet combo for the given type of (numeric) bullet.
 		/// </summary>
 		private static int GetNumberSchemeIndexForType(VwBulNum bulletType)
 		{
