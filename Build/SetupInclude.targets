@@ -296,8 +296,8 @@
 	  <BldIncOutput Include="../Output/Common/bldinc.h"/>
 	  <GlobalIncludeTemplate Include="GlobalInclude.properties.template"/>
 	  <GlobalIncludeOutput Include="GlobalInclude.properties"/>
-	  <EthnologueTemplate Include="../Lib/src/Ethnologue/Ethnologue.template.cs"/>
-	  <EthnologueOutput Include="../Lib/src/Ethnologue/GeneratedEthnologue.cs"/>
+	  <EthnologueTemplate Include="../Src/Ethnologue/Ethnologue.template.cs"/>
+	  <EthnologueOutput Include="../Src/Ethnologue/GeneratedEthnologue.cs"/>
 	  <FwParatextLexiconPluginTemplate Include="../Src/FwParatextLexiconPlugin/ParatextLexiconPluginRegistryHelper.template.cs"/>
 	  <FwParatextLexiconPluginOutput Include="../Src/FwParatextLexiconPlugin/GeneratedParatextLexiconPluginRegistryHelper.cs"/>
 	  <FwUtilsTemplate Include="../Src/Common/FwUtils/FwUtils.template.cs"/>

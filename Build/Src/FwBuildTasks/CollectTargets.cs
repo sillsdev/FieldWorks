@@ -77,7 +77,6 @@ namespace FwBuildTasks
 		{
 			CollectInfo(new DirectoryInfo(Path.Combine(m_fwroot, "Src")));
 			// These projects from Lib had nant targets.  They really should be under Src.
-			CollectInfo(new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/Ethnologue")));
 			CollectInfo(new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ScrChecks")));
 			WriteTargetFiles();
 		}
