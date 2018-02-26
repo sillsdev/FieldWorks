@@ -48,14 +48,14 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\..\..\..\Output\Debug\</OutputPath>
+    <OutputPath>..\..\Output\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\..\..\..\Output\Debug\FwControlsTests.xml</DocumentationFile>
+    <DocumentationFile>..\..\Output\Debug\FwControlsTests.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -71,7 +71,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\..\..\..\..\Output\Release\</OutputPath>
+    <OutputPath>..\..\Output\Release\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
@@ -95,14 +95,14 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <OutputPath>..\..\..\..\..\Output\Debug\</OutputPath>
+    <OutputPath>..\..\Output\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\..\..\..\Output\Debug\FwControlsTests.xml</DocumentationFile>
+    <DocumentationFile>..\..\Output\Debug\FwControlsTests.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -118,7 +118,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <OutputPath>..\..\..\..\..\Output\Release\</OutputPath>
+    <OutputPath>..\..\Output\Release\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
@@ -145,43 +145,43 @@
     <Reference Include="Accessibility" />
     <Reference Include="FwCoreDlgs, Version=10.0.0.35402, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
+      <HintPath>..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
     </Reference>
     <Reference Include="LanguageExplorer, Version=10.0.0.10611, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\LanguageExplorer.dll</HintPath>
+      <HintPath>..\..\Output\Debug\LanguageExplorer.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Core.Tests">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
     </Reference>
     <Reference Include="FwControls">
       <Name>FwControls</Name>
-      <HintPath>..\..\..\..\..\Output\Debug\FwControls.dll</HintPath>
+      <HintPath>..\..\Output\Debug\FwControls.dll</HintPath>
     </Reference>
     <Reference Include="FwUtils">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
+      <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
-      <HintPath>..\..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="SIL.TestUtilities">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Downloads\SIL.TestUtilities.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.TestUtilities.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Utils">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Utils.Tests">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\SIL.LCModel.Utils.Tests.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.Tests.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -194,12 +194,12 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="FwUtilsTests">
-      <HintPath>..\..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+      <HintPath>..\..\Output\Debug\FwUtilsTests.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Compile Include="..\..\..\..\AssemblyInfoForTests.cs">
+    <Compile Include="..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="CaseSensitiveListBoxTests.cs" />

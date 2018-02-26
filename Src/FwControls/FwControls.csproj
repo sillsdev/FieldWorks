@@ -44,12 +44,12 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
+    <OutputPath>..\..\Output\Debug\</OutputPath>
     <BaseAddress>285212672</BaseAddress>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\..\..\Output\Debug\FwControls.xml</DocumentationFile>
+    <DocumentationFile>..\..\Output\Debug\FwControls.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
@@ -65,7 +65,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\..\..\..\Output\Release\</OutputPath>
+    <OutputPath>..\..\Output\Release\</OutputPath>
     <BaseAddress>285212672</BaseAddress>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
@@ -86,12 +86,12 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
+    <OutputPath>..\..\Output\Debug\</OutputPath>
     <BaseAddress>285212672</BaseAddress>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\..\..\Output\Debug\FwControls.xml</DocumentationFile>
+    <DocumentationFile>..\..\Output\Debug\FwControls.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
@@ -107,7 +107,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <OutputPath>..\..\..\..\Output\Release\</OutputPath>
+    <OutputPath>..\..\Output\Release\</OutputPath>
     <BaseAddress>285212672</BaseAddress>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
@@ -133,37 +133,37 @@
     </Reference>
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel">
-      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
     </Reference>
     <Reference Include="FwUtils">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
+      <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
     <Reference Include="ManagedLgIcuCollator">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\ManagedLgIcuCollator.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ManagedLgIcuCollator.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\DistFiles/Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>..\..\DistFiles/Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="ParatextShared, Version=7.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Downloads\ParatextShared.dll</HintPath>
+      <HintPath>..\..\Downloads\ParatextShared.dll</HintPath>
     </Reference>
     <Reference Include="ScriptureUtils">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\ScriptureUtils.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ScriptureUtils.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Downloads\SIL.Core.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.Core.dll</HintPath>
     </Reference>
     <Reference Include="SIL.WritingSystems">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -178,23 +178,23 @@
       <Name>System.XML</Name>
     </Reference>
     <Reference Include="SIL.LCModel.Core">
-      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
     <Reference Include="FwResources">
-      <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
+      <HintPath>..\..\Output\Debug\FwResources.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Utils">
-      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" Condition="'$(OS)'=='Unix'" />
     <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" Condition="'$(OS)'=='Unix'" />
     <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" Condition="'$(OS)'=='Unix'" />
     <Reference Include="SIL.Windows.Forms">
-      <HintPath>..\..\..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\CommonAssemblyInfo.cs">
+    <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AssemblyInfo.cs">
@@ -539,6 +539,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <DistFiles>../../../../DistFiles</DistFiles>
+    <DistFiles>../../DistFiles</DistFiles>
   </PropertyGroup>
 </Project>
