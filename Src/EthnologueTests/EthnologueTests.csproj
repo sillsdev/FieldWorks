@@ -97,7 +97,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Common\FwUtils\FwUtilsTests\Attributes\RedirectHKCU.cs">
+    <Compile Include="..\FwUtilsTests\Attributes\RedirectHKCU.cs">
       <Link>RedirectHKCU.cs</Link>
     </Compile>
     <Compile Include="EthnologueTests.cs" />

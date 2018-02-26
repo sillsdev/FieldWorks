@@ -300,8 +300,8 @@
 	  <EthnologueOutput Include="../Src/Ethnologue/GeneratedEthnologue.cs"/>
 	  <FwParatextLexiconPluginTemplate Include="../Src/FwParatextLexiconPlugin/ParatextLexiconPluginRegistryHelper.template.cs"/>
 	  <FwParatextLexiconPluginOutput Include="../Src/FwParatextLexiconPlugin/GeneratedParatextLexiconPluginRegistryHelper.cs"/>
-	  <FwUtilsTemplate Include="../Src/Common/FwUtils/FwUtils.template.cs"/>
-	  <FwUtilsOutput Include="../Src/Common/FwUtils/GeneratedFwUtils.cs"/>
+	  <FwUtilsTemplate Include="../Src/FwUtils/FwUtils.template.cs"/>
+	  <FwUtilsOutput Include="../Src/FwUtils/GeneratedFwUtils.cs"/>
   </ItemGroup>
   <!--
 	  Don't use Inputs and Outputs on the GenerateVersionFiles Target.  (Substitute won't

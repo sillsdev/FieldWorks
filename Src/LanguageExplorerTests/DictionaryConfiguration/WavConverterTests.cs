@@ -16,7 +16,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 	/// </summary>
 	class WavConverterTests
 	{
-		private string source = Path.Combine(FwDirectoryFinder.SourceDirectory, "Common/FwUtils/FwUtilsTests/TestData/WavFiles/abu2.wav");
+		private string source = Path.Combine(FwDirectoryFinder.SourceDirectory, "FwUtilsTests/TestData/WavFiles/abu2.wav");
 
 		/// <summary>
 		/// Tests that the ReadWavFile method works as expected

@@ -37,7 +37,7 @@ Lib/release/unit++.lib
 DistFiles/Parts/Generated.fwlayout
 Src/Ethnologue/GeneratedEthnologue.cs
 Src/FwParatextLexiconPlugin/GeneratedParatextLexiconPluginRegistryHelper.cs
-Src/Common/FwUtils/GeneratedFwUtils.cs
+Src/FwUtils/GeneratedFwUtils.cs
 Src/CommonAssemblyInfo.cs
 Src/LangInst/InstallLanguageTests/timing.txt
 
