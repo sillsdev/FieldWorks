@@ -6,6 +6,7 @@ using System;
 #if __MonoCS__
 using System.Collections.Generic;
 using System.Drawing;
+using SIL.FieldWorks.Common.FwUtils;
 #endif
 using System.Linq;
 using System.Windows.Forms;
@@ -271,7 +272,7 @@ namespace LanguageExplorer.Controls.LexText
 		private Font GetFontForLanguage(string lang)
 		{
 			// For some reason, Mono requires both FwUtils in the next line.
-			string fontName = FwUtils.FwUtils.GetFontNameForLanguage(lang);
+			string fontName = FwUtils.GetFontNameForLanguage(lang);
 			if (String.IsNullOrEmpty(fontName))
 			{
 				return new Font(FontFamily.GenericSansSerif, 8.25F);

@@ -66,10 +66,7 @@ namespace SIL.FieldWorks.Common.FXT
 		[TestFixtureSetUp]
 		public virtual void Init()
 		{
-			m_sExpectedResultsPath = Path.Combine(FwDirectoryFinder.SourceDirectory,
-															Path.Combine("FXT",
-															Path.Combine("FxtDll",
-															Path.Combine("FxtDllTests", "ExpectedResults"))));
+			m_sExpectedResultsPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "FxtDllTests", "ExpectedResults");
 		}
 
 		protected void DoDump (string databaseName, string label, string fxtPath, string answerPath)

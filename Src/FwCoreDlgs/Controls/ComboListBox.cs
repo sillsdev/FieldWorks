@@ -291,9 +291,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		public void Launch(Rectangle launcherBounds, Rectangle screenBounds)
 		{
 			m_previousForm = Form.ActiveForm;
-#if __MonoCS__	// FWNX-908: Crash closing combobox.
+#if __MonoCS__ // FWNX-908: Crash closing combobox.
 // Somehow on Mono, Form.ActiveForm can sometimes return m_listForm at this point.
-			if (m_previousForm == null || m_previousForm == m_listForm)
+			if (m_previousForm == null || m_previousForm == Form)
 				m_previousForm = LaunchingForm;
 #endif
 			Form.ShowInTaskbar = false; // this is mainly to prevent it showing in the task bar.

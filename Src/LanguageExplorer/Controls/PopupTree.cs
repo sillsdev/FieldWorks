@@ -465,7 +465,7 @@ namespace LanguageExplorer.Controls
 			Debug.Assert(LaunchingForm != this);
 
 #if __MonoCS__ // FWNX-520: avoid a weird mono problem
-			Show(m_launchForm);
+			Show(LaunchingForm);
 #else
 			Show();
 #endif
