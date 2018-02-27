@@ -300,8 +300,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 						font = new FontDefinition(m_defaultFontComboBox.Text);
 					m_ws.DefaultFont = font;
 				}
-				m_defaultFontFeaturesButton.FontName = m_defaultFontComboBox.Text;
-				m_defaultFontFeaturesButton.FontFeatures = m_ws.DefaultFont.Features;
+
+				if (m_ws.DefaultFont != null)
+				{
+					m_defaultFontFeaturesButton.FontName = m_defaultFontComboBox.Text;
+					m_defaultFontFeaturesButton.FontFeatures = m_ws.DefaultFont.Features;
+				}
 
 				bool isGraphiteFont = m_defaultFontFeaturesButton.IsGraphiteFont;
 				m_graphiteGroupBox.Enabled = isGraphiteFont;
