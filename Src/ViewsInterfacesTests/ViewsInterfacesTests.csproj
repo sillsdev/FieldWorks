@@ -46,11 +46,11 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
+    <OutputPath>..\..\Output\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\..\Output\Debug\ViewsInterfacesTests.xml</DocumentationFile>
+    <DocumentationFile>..\..\Output\Debug\ViewsInterfacesTests.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <PlatformTarget>x86</PlatformTarget>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -59,7 +59,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <OutputPath>..\..\..\..\Output\Release\</OutputPath>
+    <OutputPath>..\..\Output\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -71,11 +71,11 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
+    <OutputPath>..\..\Output\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\..\Output\Debug\ViewsInterfacesTests.xml</DocumentationFile>
+    <DocumentationFile>..\..\Output\Debug\ViewsInterfacesTests.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -84,7 +84,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <OutputPath>..\..\..\..\Output\Release\</OutputPath>
+    <OutputPath>..\..\Output\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -94,36 +94,36 @@
   <ItemGroup>
     <Reference Include="SIL.LCModel.Core.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
     </Reference>
     <Reference Include="FwUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+      <HintPath>..\..\Output\Debug\FwUtilsTests.dll</HintPath>
     </Reference>
     <Reference Include="SIL.TestUtilities, Version=3.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Downloads\SIL.TestUtilities.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.TestUtilities.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Utils.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Utils.Tests.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.Tests.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="nunit.framework, Version=2.5.5.10112, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="ViewsInterfaces, Version=9.0.0.19066, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="VwGraphicsTests.cs" />
     <None Include="App.config" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\..\AssemblyInfoForUiIndependentTests.cs">
+    <Compile Include="..\AssemblyInfoForUiIndependentTests.cs">
       <Link>AssemblyInfoForUiIndependentTests.cs</Link>
     </Compile>
   </ItemGroup>

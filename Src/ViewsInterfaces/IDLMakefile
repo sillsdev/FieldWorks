@@ -1,6 +1,6 @@
 # IDL Makefile. Preprocess IDL files. Produce C++ headers with midl.
 
-BUILD_ROOT = ../../..
+BUILD_ROOT = ../
 include $(BUILD_ROOT)/Bld/_init.mak.lnx
 include $(BUILD_ROOT)/Bld/_user.mak.lnx
 #OUTPUT=$(COM_OUT_DIR)
@@ -28,7 +28,7 @@ EXTRACT_IIDS=extract_iids.sh
 REMOTE_WIN32_DEV_PORT ?= 22
 
 # Note: If make errors, saying
-# "make: *** No rule to make target `../../../Output/Common/FooTlb.h', needed by `headers'.  Stop."
+# "make: *** No rule to make target `../Output/Common/FooTlb.h', needed by `headers'.  Stop."
 # it's because you need a rule to build FooTlb.idl, not .h.
 
 $(OUTPUT)/%.h: $(OUTPUT)/%.idl

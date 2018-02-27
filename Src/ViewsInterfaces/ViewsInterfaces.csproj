@@ -43,12 +43,12 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\..\Output\Debug\</OutputPath>
+    <OutputPath>..\..\Output\Debug\</OutputPath>
     <BaseAddress>285212672</BaseAddress>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\..\Output\Debug\ViewsInterfaces.xml</DocumentationFile>
+    <DocumentationFile>..\..\Output\Debug\ViewsInterfaces.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
@@ -63,7 +63,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\..\..\Output\Release\</OutputPath>
+    <OutputPath>..\..\Output\Release\</OutputPath>
     <BaseAddress>285212672</BaseAddress>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
@@ -83,12 +83,12 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <OutputPath>..\..\..\Output\Debug\</OutputPath>
+    <OutputPath>..\..\Output\Debug\</OutputPath>
     <BaseAddress>285212672</BaseAddress>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\..\Output\Debug\ViewsInterfaces.xml</DocumentationFile>
+    <DocumentationFile>..\..\Output\Debug\ViewsInterfaces.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
@@ -103,7 +103,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <OutputPath>..\..\..\Output\Release\</OutputPath>
+    <OutputPath>..\..\Output\Release\</OutputPath>
     <BaseAddress>285212672</BaseAddress>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
@@ -125,18 +125,18 @@
   <ItemGroup>
     <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
     <Reference Include="Ethnologue, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\Ethnologue.dll</HintPath>
+      <HintPath>..\..\Output\Debug\Ethnologue.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core">
-      <HintPath>..\..\..\Downloads\SIL.Core.dll</HintPath>
+      <HintPath>..\..\Downloads\SIL.Core.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -144,7 +144,7 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\CommonAssemblyInfo.cs">
+    <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ComUtils.cs">
@@ -196,7 +196,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <DistFiles>../../../DistFiles</DistFiles>
+    <DistFiles>../../DistFiles</DistFiles>
   </PropertyGroup>
   <Import Project="BuildInclude.targets" />
 </Project>

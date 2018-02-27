@@ -239,7 +239,7 @@
 		<GeneratedFiles Include="$(fwrt)/Build/packages.config"/>
 		<GeneratedFiles Include="$(fwrt)/Src/**/Collection.cpp"/>
 		<GeneratedFiles Include="$(fwrt)/Src/**/asserts.log"/>
-		<GeneratedFiles Include="$(fwrt)/Src/Common/ViewsInterfaces/Views.cs"/>
+		<GeneratedFiles Include="$(fwrt)/Src/ViewsInterfaces/Views.cs"/>
 		<GeneratedFiles Include="$(fwrt)/Lib/debug/unit++.lib"/>
 		<GeneratedFiles Include="$(fwrt)/DistFiles/Parts/GeneratedParts.xml"/>
 		<GeneratedFiles Include="$(fwrt)/DistFiles/Parts/Generated.fwlayout"/>

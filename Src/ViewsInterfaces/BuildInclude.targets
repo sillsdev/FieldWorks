@@ -10,9 +10,9 @@
 		<ViewsSources Include="$(OutDir)/../Common/ViewsTlb.idl"/>
 	</ItemGroup>
 	<ItemGroup>
-		<ViewsIdhFiles Include="../../views/Render.idh"/>
-		<ViewsIdhFiles Include="../../views/Views.idh"/>
-		<ViewsIdhFiles Include="../../CommonCOMDlgs/CmnFwDlgs.idh"/>
+		<ViewsIdhFiles Include="../views/Render.idh"/>
+		<ViewsIdhFiles Include="../views/Views.idh"/>
+		<ViewsIdhFiles Include="../CommonCOMDlgs/CmnFwDlgs.idh"/>
 	</ItemGroup>
 	<ItemGroup>
 		<ViewsRefs Include="$(OutDir)/../Common/FwKernelTlb.iip" />
