@@ -16,6 +16,8 @@ using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Application;
 using System.ComponentModel;
+using System.Linq;
+using SIL.Extensions;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -360,7 +362,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						{
 							continue;
 						}
-						// At this point, we need to find or create one or more entries.
+						// At this point, we need to find or create one or more entries. The hvo returned may be the hvo of a subentry.
 						int hvo = FindOrCreateReversalEntry(revIndex, rgsFromDummy, m_cache);
 						currentEntries.Add(hvo);
 						if (hvoEntry == hvoDummy)
@@ -376,31 +378,41 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				int countEntries = m_cache.DomainDataByFlid.get_VecSize(m_sense.Hvo, Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs);
 				// Check the current state and don't save (or create an Undo stack item) if
 				// nothing has changed.
-				bool fChanged = true;
-				if (countEntries == ids.Length)
+				bool fChanged = ids.Length != countEntries;
+				for (int i = 0; i < countEntries; ++i)
 				{
-					fChanged = false;
-					for (int i = 0; i < countEntries; ++i)
+					int id = m_cache.DomainDataByFlid.get_VecItem(m_sense.Hvo, Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs, i);
+					if (ids.IndexOf(id) != i)
 					{
-						int id = m_cache.DomainDataByFlid.get_VecItem(m_sense.Hvo, Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs, i);
-						if (id != ids[i])
-						{
-							fChanged = true;
-							break;
-						}
+						fChanged = true;
+						if (!ids.Contains(id))
+							removedEntries.Add(id);
 					}
 				}
 				if (fChanged)
 				{
+					// Add the sense to the reversal index entry
 					m_cache.DomainDataByFlid.BeginUndoTask(LexEdStrings.ksUndoSetRevEntries, LexEdStrings.ksRedoSetRevEntries);
 					foreach (var id in ids)
 					{
-#if JASONTODO
-						Still need to handle removal here This code is buggy
-#endif
-						Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(id).SensesRS.Add(m_sense);
+						IReversalIndexEntry rie = Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(id);
+						if (!rie.SensesRS.Contains(m_sense))
+							rie.SensesRS.Add(m_sense);
 					}
 					m_cache.DomainDataByFlid.EndUndoTask();
+					if (removedEntries.Count > 0)
+					{
+						// Remove the sense from the reversal index entry and delete the entry if the SensesRS property is empty
+						m_cache.DomainDataByFlid.BeginUndoTask(LexEdStrings.ksUndoDeleteRevFromSense, LexEdStrings.ksRedoDeleteRevFromSense);
+						foreach (int entry in removedEntries)
+						{
+							IReversalIndexEntry rie = Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(entry);
+							rie.SensesRS.Remove(m_sense);
+							if (rie.SensesRS.Count == 0 && rie.SubentriesOS.Count == 0)
+								Cache.DomainDataByFlid.DeleteObj(rie.Hvo);
+						}
+						m_cache.DomainDataByFlid.EndUndoTask();
+					}
 				}
 				return hvoReal;
 			}
@@ -806,16 +818,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				ITsString tssEmpty = TsStringUtils.EmptyString(ws);
 				m_sdaRev.CacheStringAlt(m_dummyId, ReversalIndexEntryTags.kflidReversalForm,
 					ws, tssEmpty);
+				// This updates the real data with the createdRevHvo. Reversal index entries in this sense will be reordered alphabetically.
 				int createdRevHvo = ConvertDummiesToReal(hvoObj);
-				m_sdaRev.SetMultiStringAlt(createdRevHvo, ReversalIndexEntryTags.kflidReversalForm, ws, tss);
 				// Refresh
 				RootBox.PropChanged(hvoIndex, kFlidEntries, count, 1, 0);
 
-				// Reset selection.
+				// Reset selection. Handle the reordering of reversal index entries.
+				IReversalIndexEntry currentEntry = m_sense.ReferringReversalIndexEntries.First(entry => entry.Hvo == createdRevHvo);
+				int updatedihvoEntryIndex = m_sense.ReferringReversalIndexEntries.IndexOf(currentEntry);
 				SelLevInfo[] rgvsli = new SelLevInfo[2];
 				rgvsli[0].cpropPrevious = 0;
 				rgvsli[0].tag = kFlidEntries;
-				rgvsli[0].ihvo = count - 1;
+				rgvsli[0].ihvo = updatedihvoEntryIndex;
 				rgvsli[1].cpropPrevious = 0;
 				rgvsli[1].tag = kFlidIndices;
 				rgvsli[1].ihvo = ihvoIndex;
@@ -829,7 +843,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					throw;
 				}
 
-				m_hvoOldSelection = hvoObj;
+				m_hvoOldSelection = createdRevHvo;
 				CheckHeight();
 			}
 
@@ -1287,11 +1301,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				{
 					HvoWs key = new HvoWs(hvo, ws);
 					m_mapHvoWsRevForm[key] = _tss;
-					// anything negative is just a dummy hvo. Make the base class ignore it for now
-					if (hvo <= 0)
-						return;
 				}
-				base.SetMultiStringAlt(hvo, tag, ws, _tss);
+				else
+					base.SetMultiStringAlt(hvo, tag, ws, _tss);
 			}
 
 			public override ITsString get_StringProp(int hvo, int tag)
