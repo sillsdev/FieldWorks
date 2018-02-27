@@ -14,7 +14,8 @@ using SIL.TestUtilities;
 
 namespace FixFwDataDllTests
 {
-	class FwDataFixerTest
+	[TestFixture]
+	public class FwDataFixerTest
 	{
 		private const string WordformswithsameformTestDir = "WordformsWithSameForm";
 		private List<string> _errors = new List<string>();
@@ -61,7 +62,7 @@ namespace FixFwDataDllTests
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			basePath = Path.Combine(Path.Combine(Path.Combine(Path.Combine(FwDirectoryFinder.SourceDirectory, "Utilities"), "FixFwDataDll"), "FixFwDataDllTests"), "TestData");
+			basePath = Path.Combine(FwDirectoryFinder.SourceDirectory, "FixFwDataDllTests", "TestData");
 			foreach (var testDir in m_testFileDirectories)
 				CopyTestData(testDir);
 		}
