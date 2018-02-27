@@ -82,7 +82,7 @@
   <ItemGroup>
     <Reference Include="Sfm2Xml">
       <Name>Sfm2Xml</Name>
-      <HintPath>..\..\..\Output\Debug\Sfm2Xml.dll</HintPath>
+      <HintPath>..\..\Output\Debug\Sfm2Xml.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -90,7 +90,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\CommonAssemblyInfo.cs">
+    <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Program.cs" />

@@ -22,7 +22,7 @@ namespace XAmpleManagedWrapperTests
 
 		protected void LoadFilesHelper(XAmpleDLLWrapper wrapper)
 		{
-			string tempPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "LexText", "ParserCore", "ParserCoreTests", "M3ToXAmpleTransformerTestsDataFiles");
+			string tempPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "ParserCoreTests", "M3ToXAmpleTransformerTestsDataFiles");
 			string xPath = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Configuration", "Grammar");
 			wrapper.LoadFiles(xPath, tempPath, "StemName3");
 		}

@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			m_sTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "LexText", "ParserCore", "ParserCoreTests", "M3ToXAmpleTransformerTestsDataFiles");
+			m_sTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "ParserCoreTests", "M3ToXAmpleTransformerTestsDataFiles");
 			m_sTransformPath = Path.Combine(FwDirectoryFinder.FlexFolder, "Transforms");
 
 			SetUpXAmpleTransforms();
