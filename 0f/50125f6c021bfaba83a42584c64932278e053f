@@ -1,0 +1,8 @@
+Code-Review+2: MarkS <marksvc@gmail.com>
+Verified+1: Randy Regnier <randy_regnier@sil.org>
+Verified-Linux+1: Randy Regnier <randy_regnier@sil.org>
+Submitted-by: Randy Regnier <randy_regnier@sil.org>
+Submitted-at: Wed, 28 Feb 2018 14:25:18 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/5939
+Project: FieldWorks
+Branch: refs/heads/feature/ReplaceXmlWindowConfiguration
