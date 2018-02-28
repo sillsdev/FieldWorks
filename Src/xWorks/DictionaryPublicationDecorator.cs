@@ -493,7 +493,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private bool IsMainReversalEntry(int hvo)
 		{
-			var entry = Cache.ServiceLocator.GetObject(hvo) as IReversalIndexEntry;
+			IReversalIndexEntry entry = null;
+			if (Cache.ServiceLocator.IsValidObjectId(hvo))
+				entry = Cache.ServiceLocator.GetObject(hvo) as IReversalIndexEntry;
 			return entry != null && entry.Owner is IReversalIndex; // Subentries are owned by other Entries
 		}
 
