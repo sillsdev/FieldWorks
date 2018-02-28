@@ -105,7 +105,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>Set of KeyValuePair objects (hvo, flid), properties for which we must refresh if altered.</summary>
 		protected HashSet<Tuple<int, int>> m_monitoredProps = new HashSet<Tuple<int, int>>();
 		/// <summary>Number of times DeepSuspendLayout has been called without matching DeepResumeLayout.</summary>
-		protected int m_cDeepSuspendLayoutCount;
+		private int m_cDeepSuspendLayoutCount;
 
 		protected LcmStyleSheet m_styleSheet;
 
@@ -791,48 +791,49 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			MonoIgnoreUpdates();
 
-			DeepSuspendLayout();
-			try
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>("window"), this))
 			{
-				RootLayoutName = layoutName;
-				m_layoutChoiceField = layoutChoiceField;
-				Debug.Assert(Cache != null, "You need to call Initialize() first.");
+				try
+				{
+					RootLayoutName = layoutName;
+					m_layoutChoiceField = layoutChoiceField;
+					Debug.Assert(Cache != null, "You need to call Initialize() first.");
 
-				if (Root != root)
-				{
-					Root = root;
-					if (m_rch != null)
+					if (Root != root)
 					{
-						// We need to refresh the record list if homograph numbers change.
-						// Do it for the old object.
-						m_rch.Fixup(true);
-						// Root has changed, so reset the handler.
-						m_rch.Setup(Root, m_rlu, Cache);
+						Root = root;
+						if (m_rch != null)
+						{
+							// We need to refresh the record list if homograph numbers change.
+							// Do it for the old object.
+							m_rch.Fixup(true);
+							// Root has changed, so reset the handler.
+							m_rch.Setup(Root, m_rlu, Cache);
+						}
+						Invalidate(); // clears any lines left over behind slices.
+						CreateSlices(true);
+						if (root != descendant && (m_currentSliceNew == null || m_currentSliceNew.IsDisposed || m_currentSliceNew.Object != descendant))
+						{
+							// if there is no saved current slice, or it is for the wrong object, set the current slice to be the first non-header
+							// slice of the descendant object
+							SetCurrentSliceNewFromObject(descendant);
+						}
 					}
-					Invalidate(); // clears any lines left over behind slices.
-					CreateSlices(true);
-					if (root != descendant && (m_currentSliceNew == null || m_currentSliceNew.IsDisposed || m_currentSliceNew.Object != descendant))
+					else if (Descendant != descendant)
 					{
-						// if there is no saved current slice, or it is for the wrong object, set the current slice to be the first non-header
-						// slice of the descendant object
-						SetCurrentSliceNewFromObject(descendant);
+						// we are on the same root, but different descendant
+						if (root != descendant)
+						{
+							SetCurrentSliceNewFromObject(descendant);
+						}
 					}
-				}
-				else if (Descendant != descendant)
-				{
-					// we are on the same root, but different descendant
-					if (root != descendant)
+					else
 					{
-						SetCurrentSliceNewFromObject(descendant);
+						RefreshList(false);  // This could be optimized more, too, but it isn't the common case.
 					}
-				}
-				else
-				{
-					RefreshList(false);  // This could be optimized more, too, but it isn't the common case.
-				}
 
-				Descendant = descendant;
-				AutoScrollPosition = new Point(0, 0); // start new object at top (unless first focusable slice changes it).
+					Descendant = descendant;
+					AutoScrollPosition = new Point(0, 0); // start new object at top (unless first focusable slice changes it).
 #if RANDYTODO
 				// We can't focus yet because the data tree slices haven't finished displaying.
 				// (Remember, Windows won't let us focus something that isn't visible.)
@@ -846,13 +847,12 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_fSuspendSettingCurrentSlice = true;
 				}
 #endif
-			}
-			finally
-			{
-				DeepResumeLayout();
-
-				MonoResumeUpdates();
-				EnsureDefaultCursorForSlices();
+				}
+				finally
+				{
+					MonoResumeUpdates();
+					EnsureDefaultCursorForSlices();
+				}
 			}
 		}
 
@@ -915,34 +915,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_sObjGuidProperty = $"{areaChoice}${toolChoice}$CurrentSliceObjectGuid";
 		}
 
-		#region Sequential message processing enforcement
-
-		private IFwMainWnd ContainingWindow => PropertyTable.GetValue<IFwMainWnd>("window");
-
-		/// <summary>
-		/// Begin a block of code which, even though it is not itself a message handler,
-		/// should not be interrupted by other messages that need to be sequential.
-		/// This may be called from within a message handler.
-		/// EndSequentialBlock must be called without fail (use try...finally) at the end
-		/// of the block that needs protection.
-		/// </summary>
-		/// <returns></returns>
-		private void BeginSequentialBlock()
-		{
-			var mainWindow = ContainingWindow;
-			mainWindow?.SuspendIdleProcessing();
-		}
-
-		/// <summary>
-		/// See BeginSequentialBlock.
-		/// </summary>
-		private void EndSequentialBlock()
-		{
-			var mainWindow = ContainingWindow;
-			mainWindow?.ResumeIdleProcessing();
-		}
-		#endregion
-
 		/// <summary>
 		/// Suspend the layout of this window and its immediate children.
 		/// This version also maintains a count, and does not resume until the number of
@@ -954,7 +926,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if (m_cDeepSuspendLayoutCount == 0)
 			{
-				BeginSequentialBlock();
 				SuspendLayout();
 			}
 			m_cDeepSuspendLayoutCount++;
@@ -966,13 +937,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal void DeepResumeLayout()
 		{
-			Debug.Assert(m_cDeepSuspendLayoutCount > 0);
-
+			FwUtils.CheckResumeProcessing(m_cDeepSuspendLayoutCount, GetType().Name, "DeepSuspendLayout", "DeepResumeLayout");
 			m_cDeepSuspendLayoutCount--;
 			if (m_cDeepSuspendLayoutCount == 0)
 			{
 				ResumeLayout();
-				EndSequentialBlock();
 			}
 		}
 
@@ -1016,18 +985,13 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected void InitializeComponent()
 		{
 			InitializeComponentBasic();
-			try
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>("window"), this))
 			{
-				DeepSuspendLayout();
 				// NB: The ArrayList created here can hold disparate objects, such as XmlNodes and ints.
 				if (Root != null)
 				{
 					CreateSlicesFor(Root, null, null, null, 0, 0, new ArrayList(20), new ObjSeqHashMap(), null);
 				}
-			}
-			finally
-			{
-				DeepResumeLayout();
 			}
 		}
 
@@ -1186,93 +1150,94 @@ namespace LanguageExplorer.Controls.DetailControls
 				return;
 			}
 
-			using (new WaitCursor((Form)ContainingWindow))
+			using (new WaitCursor(PropertyTable.GetValue<Form>("window")))
 			{
 				try
 				{
 					var oldCurrent = m_currentSlice;
-					DeepSuspendLayout();
-					var scrollbarPosition = VerticalScroll.Value;
-
-					m_currentSlicePartName = string.Empty;
-					m_currentSliceObjGuid = Guid.Empty;
-					m_fSetCurrentSliceNew = false;
-					m_currentSliceNew = null;
-					XElement xnConfig = null;
-					XElement xnCaller = null;
-					string sLabel = null;
-					Type oldType = null;
-					if (m_currentSlice != null)
+					using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>("window"), this))
 					{
-						if (m_currentSlice.ConfigurationNode?.Parent != null)
+						var scrollbarPosition = VerticalScroll.Value;
+
+						m_currentSlicePartName = string.Empty;
+						m_currentSliceObjGuid = Guid.Empty;
+						m_fSetCurrentSliceNew = false;
+						m_currentSliceNew = null;
+						XElement xnConfig = null;
+						XElement xnCaller = null;
+						string sLabel = null;
+						Type oldType = null;
+						if (m_currentSlice != null)
 						{
-							m_currentSlicePartName = XmlUtils.GetOptionalAttributeValue(m_currentSlice.ConfigurationNode.Parent, "id", String.Empty);
-						}
-
-						if (m_currentSlice.Object != null)
-						{
-							m_currentSliceObjGuid = m_currentSlice.Object.Guid;
-						}
-						xnConfig = m_currentSlice.ConfigurationNode;
-						xnCaller = m_currentSlice.CallerNode;
-						sLabel = m_currentSlice.Label;
-						oldType = m_currentSlice.GetType();
-					}
-
-					// Make sure we invalidate the root object if it's been deleted.
-					if (Root != null && !Root.IsValidObject)
-					{
-						Reset();
-					}
-
-					// Make a new root object...just in case it changed class.
-					Root = Root?.Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(Root.Hvo);
-
-					Invalidate(true); // forces all children to invalidate also
-					CreateSlices(differentObject);
-					PerformLayout();
-
-					if (Slices.Contains(oldCurrent))
-					{
-						CurrentSlice = oldCurrent;
-						m_currentSliceNew = CurrentSlice != oldCurrent ? oldCurrent : null;
-					}
-					else if (oldCurrent != null)
-					{
-						foreach (var slice in Slices)
-						{
-							var guidSlice = Guid.Empty;
-							if (slice.Object != null)
+							if (m_currentSlice.ConfigurationNode?.Parent != null)
 							{
-								guidSlice = slice.Object.Guid;
+								m_currentSlicePartName = XmlUtils.GetOptionalAttributeValue(m_currentSlice.ConfigurationNode.Parent, "id", String.Empty);
 							}
-							if (slice.GetType() == oldType &&
-								slice.CallerNode == xnCaller &&
-								slice.ConfigurationNode == xnConfig &&
-								guidSlice == m_currentSliceObjGuid &&
-								slice.Label == sLabel)
+
+							if (m_currentSlice.Object != null)
 							{
-								CurrentSlice = slice;
-								m_currentSliceNew = CurrentSlice != slice ? slice : null;
-								break;
+								m_currentSliceObjGuid = m_currentSlice.Object.Guid;
+							}
+							xnConfig = m_currentSlice.ConfigurationNode;
+							xnCaller = m_currentSlice.CallerNode;
+							sLabel = m_currentSlice.Label;
+							oldType = m_currentSlice.GetType();
+						}
+
+						// Make sure we invalidate the root object if it's been deleted.
+						if (Root != null && !Root.IsValidObject)
+						{
+							Reset();
+						}
+
+						// Make a new root object...just in case it changed class.
+						Root = Root?.Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(Root.Hvo);
+
+						Invalidate(true); // forces all children to invalidate also
+						CreateSlices(differentObject);
+						PerformLayout();
+
+						if (Slices.Contains(oldCurrent))
+						{
+							CurrentSlice = oldCurrent;
+							m_currentSliceNew = CurrentSlice != oldCurrent ? oldCurrent : null;
+						}
+						else if (oldCurrent != null)
+						{
+							foreach (var slice in Slices)
+							{
+								var guidSlice = Guid.Empty;
+								if (slice.Object != null)
+								{
+									guidSlice = slice.Object.Guid;
+								}
+								if (slice.GetType() == oldType &&
+									slice.CallerNode == xnCaller &&
+									slice.ConfigurationNode == xnConfig &&
+									guidSlice == m_currentSliceObjGuid &&
+									slice.Label == sLabel)
+								{
+									CurrentSlice = slice;
+									m_currentSliceNew = CurrentSlice != slice ? slice : null;
+									break;
+								}
 							}
 						}
-					}
 
-					// FWNX-590
-					if (MiscUtils.IsMono)
-					{
-						VerticalScroll.Value = scrollbarPosition;
-					}
+						// FWNX-590
+						if (MiscUtils.IsMono)
+						{
+							VerticalScroll.Value = scrollbarPosition;
+						}
 
-					if (m_currentSlice != null)
-					{
-						ScrollControlIntoView(m_currentSlice);
+						if (m_currentSlice != null)
+						{
+							ScrollControlIntoView(m_currentSlice);
+						}
 					}
 				}
 				finally
 				{
-					DeepResumeLayout();
 					RefreshListNeeded = false; // reset our flag.
 
 					m_currentSlicePartName = null;

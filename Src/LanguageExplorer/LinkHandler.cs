@@ -20,9 +20,11 @@ namespace LanguageExplorer
 	/// LinkHandler handles Hyper linking and history
 	/// See the class comment on FwLinkArgs for details on how all the parts of hyperlinking work.
 	/// </summary>
-	internal sealed class LinkHandler : IFlexComponent, IDisposable
+	internal sealed class LinkHandler : IFlexComponent, IApplicationIdleEventHandler, IDisposable
 	{
-		const int kmaxDepth = 50;		// Limit the stacks to 50 elements (LT-729).
+		const int kmaxDepth = 50;       // Limit the stacks to 50 elements (LT-729).
+		// Used to count the number of times we've been asked to suspend Idle processing.
+		private int _countSuspendIdleProcessing;
 		private IFwMainWnd _mainWindow;
 		private LcmCache _cache;
 		private ToolStripButton _toolStripButtonHistoryBack;
@@ -512,6 +514,39 @@ namespace LanguageExplorer
 			Subscriber.Subscribe("FollowLink", FollowLink_Handler);
 		}
 
+		#endregion
+
+		#region Implementation of IApplicationIdleEventHandler
+		/// <summary>
+		/// Call this for the duration of a block of code where we don't want idle events.
+		/// (Note that various things outside our control may pump events and cause the
+		/// timer that fires the idle events to be triggered when we are not idle, even in the
+		/// middle of processing another event.) Call ResumeIdleProcessing when done.
+		/// </summary>
+		public void SuspendIdleProcessing()
+		{
+			_countSuspendIdleProcessing++;
+			if (_countSuspendIdleProcessing == 1)
+			{
+				Application.Idle -= Application_Idle;
+			}
+		}
+
+		/// <summary>
+		/// See SuspendIdleProcessing.
+		/// </summary>
+		public void ResumeIdleProcessing()
+		{
+			FwUtils.CheckResumeProcessing(_countSuspendIdleProcessing, GetType().Name);
+			if (_countSuspendIdleProcessing > 0)
+			{
+				_countSuspendIdleProcessing--;
+				if (_countSuspendIdleProcessing == 0)
+				{
+					Application.Idle += Application_Idle;
+				}
+			}
+		}
 		#endregion
 	}
 }

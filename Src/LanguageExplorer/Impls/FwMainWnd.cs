@@ -20,6 +20,7 @@ using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.LexText;
 using LanguageExplorer.Controls.SilSidePane;
+using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.SendReceive;
 using LanguageExplorer.UtilityTools;
 using LanguageExplorer.DictionaryConfiguration;
@@ -93,6 +94,7 @@ namespace LanguageExplorer.Impls
 		private WritingSystemListHandler _writingSystemListHandler;
 		private CombinedStylesListHandler _combinedStylesListHandler;
 		private LinkHandler _linkHandler;
+		private readonly Stack<List<IdleProcessingHelper>> _idleProcessingHelpers = new Stack<List<IdleProcessingHelper>>();
 
 		/// <summary>
 		/// Create new instance of window.
@@ -309,32 +311,36 @@ namespace LanguageExplorer.Impls
 				return;  // Not much else to do.
 			}
 
-			ClearDuringTransition();
-			_currentArea.ActiveTool = null;
-			_currentTool?.Deactivate(_majorFlexComponentParameters);
-			_currentTool = clickedTool;
-			_currentArea.ActiveTool = clickedTool;
-			var areaName = _currentArea.MachineName;
-			var toolName = _currentTool.MachineName;
-			PropertyTable.SetProperty($"{AreaServices.ToolForAreaNamed_}{areaName}", toolName, SettingsGroup.LocalSettings, true, false);
-			PropertyTable.SetProperty(AreaServices.ToolChoice, _currentTool.MachineName, SettingsGroup.LocalSettings, true, false);
-
-			// Do some logging.
-			Logger.WriteEvent("Switched to " + _currentTool.MachineName);
-			// Should we report a tool change?
-			if (_lastToolChange.Date != DateTime.Now.Date)
+			using (new IdleProcessingHelper(this))
 			{
-				// New day has dawned (or just started up). Reset tool reporting.
-				_toolsReportedToday.Clear();
-				_lastToolChange = DateTime.Now;
-			}
-			if (!_toolsReportedToday.Contains(toolName))
-			{
-				_toolsReportedToday.Add(toolName);
-				UsageReporter.SendNavigationNotice("SwitchToTool/{0}/{1}", areaName, toolName);
-			}
+				ClearDuringTransition();
+				_currentArea.ActiveTool = null;
+				_currentTool?.Deactivate(_majorFlexComponentParameters);
+				_currentTool = clickedTool;
+				_currentArea.ActiveTool = clickedTool;
+				var areaName = _currentArea.MachineName;
+				var toolName = _currentTool.MachineName;
+				PropertyTable.SetProperty($"{AreaServices.ToolForAreaNamed_}{areaName}", toolName, SettingsGroup.LocalSettings, true, false);
+				PropertyTable.SetProperty(AreaServices.ToolChoice, _currentTool.MachineName, SettingsGroup.LocalSettings, true, false);
 
-			_currentTool.Activate(_majorFlexComponentParameters);
+				// Do some logging.
+				Logger.WriteEvent("Switched to " + _currentTool.MachineName);
+				// Should we report a tool change?
+				if (_lastToolChange.Date != DateTime.Now.Date)
+				{
+					// New day has dawned (or just started up). Reset tool reporting.
+					_toolsReportedToday.Clear();
+					_lastToolChange = DateTime.Now;
+				}
+
+				if (!_toolsReportedToday.Contains(toolName))
+				{
+					_toolsReportedToday.Add(toolName);
+					UsageReporter.SendNavigationNotice("SwitchToTool/{0}/{1}", areaName, toolName);
+				}
+
+				_currentTool.Activate(_majorFlexComponentParameters);
+			}
 		}
 
 		private void Area_Clicked(Tab tabClicked)
@@ -346,16 +352,18 @@ namespace LanguageExplorer.Impls
 				return; // Not much else to do.
 			}
 
-			ClearDuringTransition();
-
-			if (_currentArea != null)
+			using (new IdleProcessingHelper(this))
 			{
-				_currentArea.Deactivate(_majorFlexComponentParameters);
-				_currentArea.ActiveTool = null;
+				ClearDuringTransition();
+				if (_currentArea != null)
+				{
+					_currentArea.Deactivate(_majorFlexComponentParameters);
+					_currentArea.ActiveTool = null;
+				}
+				_currentArea = clickedArea;
+				PropertyTable.SetProperty(AreaServices.AreaChoice, _currentArea.MachineName, SettingsGroup.LocalSettings, true, false);
+				_currentArea.Activate(_majorFlexComponentParameters);
 			}
-			_currentArea = clickedArea;
-			PropertyTable.SetProperty(AreaServices.AreaChoice, _currentArea.MachineName, SettingsGroup.LocalSettings, true, false);
-			_currentArea.Activate(_majorFlexComponentParameters);
 		}
 
 		private void ClearDuringTransition()
@@ -691,6 +699,7 @@ namespace LanguageExplorer.Impls
 			var fileExportMenu = MenuServices.GetFileExportMenu(_majorFlexComponentParameters.MenuStrip);
 			fileExportMenu.Visible = false;
 			fileExportMenu.Enabled = false;
+			deleteToolStripButton.Click += Edit_Delete_Click;
 
 			_parserMenuManager.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 
@@ -835,28 +844,6 @@ namespace LanguageExplorer.Impls
 		}
 
 		/// <summary>
-		/// Call this for the duration of a block of code where we don't want idle events.
-		/// (Note that various things outside our control may pump events and cause the
-		/// timer that fires the idle events to be triggered when we are not idle, even in the
-		/// middle of processing another event.) Call ResumeIdleProcessing when done.
-		/// </summary>
-		public void SuspendIdleProcessing()
-		{
-			_countSuspendIdleProcessing++;
-		}
-
-		/// <summary>
-		/// See SuspendIdleProcessing.
-		/// </summary>
-		public void ResumeIdleProcessing()
-		{
-			if (_countSuspendIdleProcessing > 0)
-			{
-				_countSuspendIdleProcessing--;
-			}
-		}
-
-		/// <summary>
 		/// Get the RecordBar (as a Control), or null if not present.
 		/// </summary>
 		public IRecordBar RecordBarControl => (mainContainer.SecondControl as CollapsingSplitContainer)?.FirstControl as IRecordBar;
@@ -905,32 +892,79 @@ namespace LanguageExplorer.Impls
 
 		#endregion
 
+		#region Implementation of IApplicationIdleEventHandler
+
+		/// <summary>
+		/// Call this for the duration of a block of code where we don't want idle events.
+		/// (Note that various things outside our control may pump events and cause the
+		/// timer that fires the idle events to be triggered when we are not idle, even in the
+		/// middle of processing another event.) Call ResumeIdleProcessing when done.
+		/// </summary>
+		public void SuspendIdleProcessing()
+		{
+			_countSuspendIdleProcessing++;
+			if (_countSuspendIdleProcessing == 1)
+			{
+				Application.Idle -= Application_Idle;
+			}
+			// This bundle of suspend calls *must* (read: it is imperative that) be resumed in the ResumeIdleProcessing() method.
+			_idleProcessingHelpers.Push(new List<IdleProcessingHelper>
+			{
+				new IdleProcessingHelper(IdleQueue),
+				new IdleProcessingHelper(_writingSystemListHandler),
+				new IdleProcessingHelper(_combinedStylesListHandler),
+				new IdleProcessingHelper(_linkHandler),
+			});
+		}
+
+		/// <summary>
+		/// See SuspendIdleProcessing.
+		/// </summary>
+		public void ResumeIdleProcessing()
+		{
+			FwUtils.CheckResumeProcessing(_countSuspendIdleProcessing, GetType().Name);
+			if (_countSuspendIdleProcessing > 0)
+			{
+				_countSuspendIdleProcessing--;
+				if (_countSuspendIdleProcessing == 0)
+				{
+					Application.Idle += Application_Idle;
+				}
+			}
+			// This bundle of resume calls *must* (read: it is imperative that) be suspended in the SuspendIdleProcessing method.
+			foreach (var idleProcessingHelper in _idleProcessingHelpers.Pop())
+			{
+				idleProcessingHelper.Dispose();
+			}
+		}
+		#endregion
+
 		#region Implementation of IPublisherProvider
 
 		/// <summary>
 		/// Get the IPublisher.
 		/// </summary>
 		public IPublisher Publisher => _publisher;
-#endregion
+		#endregion
 
-#region Implementation of ISubscriberProvider
+		#region Implementation of ISubscriberProvider
 
 		/// <summary>
 		/// Get the ISubscriber.
 		/// </summary>
 		public ISubscriber Subscriber => _subscriber;
-#endregion
+		#endregion
 
-#region IIdleQueueProvider implementation
+		#region IIdleQueueProvider implementation
 
 		/// <summary>
 		/// Get the singleton (per window) instance of IdleQueue.
 		/// </summary>
 		public IdleQueue IdleQueue { get; private set; }
 
-#endregion
+		#endregion
 
-#region Implementation of IDisposable
+		#region Implementation of IDisposable
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -948,7 +982,16 @@ namespace LanguageExplorer.Impls
 			if (disposing)
 			{
 				Application.Idle -= Application_Idle;
+				foreach (var helper in _idleProcessingHelpers)
+				{
+					foreach (var handler in helper)
+					{
+						handler.Dispose();
+					}
+				}
+				_idleProcessingHelpers.Clear();
 
+				deleteToolStripButton.Click -= Edit_Delete_Click;
 				// Quit responding to messages early on.
 				Subscriber.Unsubscribe("MigrateOldConfigurations", MigrateOldConfigurations);
 				RecordListServices.TearDown();
@@ -1583,6 +1626,49 @@ namespace LanguageExplorer.Impls
 			redoToolStripButton.Enabled = redoEnabled;
 		}
 
+		/// <summary>
+		/// This will set the Enable property on the Edit->Delete menu and the Delete toolbar button,
+		/// and it will set the text of the Edit->Delete menu.
+		/// </summary>
+		private void SetupEditDeleteMenus()
+		{
+			bool enableDelete;
+			var activeRecordList = _recordListRepositoryForTools.ActiveRecordList;
+			var deleteTextBase = FwUtils.ReplaceUnderlineWithAmpersand(LanguageExplorerResources.DeleteMenu);
+			string deleteText;
+			var tooltipText = string.Empty;
+			if (activeRecordList?.CurrentObject == null)
+			{
+				// Changing tool, so disable them.
+				enableDelete = false;
+				deleteText = "Delete Something";
+			}
+			else
+			{
+				var userFriendlyClassName = StringTable.Table.GetString(activeRecordList.CurrentObject.ClassName, "ClassNames");
+				tooltipText = string.Format(LanguageExplorerResources.DeleteRecordTooltip, userFriendlyClassName);
+				deleteText = string.Format(deleteTextBase, userFriendlyClassName);
+				// See if a view can do it.
+				var activeView = ActiveView;
+				if (activeView is XmlDocView)
+				{
+					enableDelete = false;
+				}
+				else if (activeView is XmlBrowseRDEView)
+				{
+					enableDelete = ((XmlBrowseRDEView)activeView).SetupDeleteMenu(deleteTextBase, out deleteText);
+				}
+				else
+				{
+					// Let record list handle it (maybe).
+					enableDelete = activeRecordList.Editable && activeRecordList.CurrentObject.CanDelete;
+				}
+			}
+			deleteToolStripButton.Enabled = deleteToolStripMenuItem.Enabled = enableDelete;
+			deleteToolStripMenuItem.Text = deleteText;
+			deleteToolStripButton.ToolTipText = tooltipText;
+		}
+
 		private void Edit_Paste_Hyperlink(object sender, EventArgs e)
 		{
 			((RootSiteEditingHelper)_viewHelper.ActiveView.EditingHelper).PasteUrl(_stylesheet);
@@ -1773,6 +1859,9 @@ very simple minor adjustments. ;)"
 
 			// Enable/disable toolbar buttons.
 			SetupEditUndoAndRedoMenus();
+
+			// Enable/disable Edit->Delete menu item (including changing the text) and the Delete toolbar item.
+			SetupEditDeleteMenus();
 		}
 
 		private bool CanApplyStyle
@@ -1994,6 +2083,26 @@ very simple minor adjustments. ;)"
 			}
 			_flexApp.InitializePartInventories(null, false);
 			_flexApp.ReplaceMainWindow(this);
+		}
+
+		private void Edit_Delete_Click(object sender, EventArgs e)
+		{
+			var activeRecordList = _recordListRepositoryForTools.ActiveRecordList;
+			if (activeRecordList.ShouldNotHandleDeletionMessage)
+			{
+				// Go find some view to handle it.
+				var activeView = ActiveView;
+				if (activeView is XmlBrowseRDEView)
+				{
+					// Seems like it is the only main view that can do it.
+					((XmlBrowseRDEView)activeView).DeleteRecord();
+				}
+			}
+			else
+			{
+				// Let the record list do it.
+				activeRecordList.DeleteRecord(deleteToolStripMenuItem.Text.Replace("&", null), StatusBarPanelServices.GetStatusBarProgressPanel(_statusbar));
+			}
 		}
 	}
 }

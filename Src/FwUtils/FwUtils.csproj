@@ -232,8 +232,10 @@
     <Compile Include="AlphaOutline.cs" />
     <Compile Include="FontHeightAdjuster.cs" />
     <Compile Include="FwApplicationSettingsBase.cs" />
+    <Compile Include="IApplicationIdleEventHandler.cs" />
     <Compile Include="IDropDownBox.cs" />
     <Compile Include="IReadonlyPropertyTable.cs" />
+    <Compile Include="IdleProcessingHelper.cs" />
     <Compile Include="LcmExtensions.cs" />
     <Compile Include="LinkProperty.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

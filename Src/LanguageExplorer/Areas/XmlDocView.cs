@@ -1220,31 +1220,6 @@ namespace LanguageExplorer.Areas
 		}
 		#endregion
 
-#if RANDYTODO
-		/// <summary>
-		///	see if it makes sense to provide the "delete record" command now.
-		///	Currently we don't support this in document view, except for reversal entries.
-		///	If we decide to support it, we will need to do additional work
-		///	(cf LT-1222) to ensure that
-		///		(a) The record list's idea of the current entry corresponds to where the selection is
-		///		(b) After deleting it, the record list's list gets updated.
-		///	The former is not happening because we haven't written a SelectionChange method
-		///	to notice the selection in the view and change the record list to match.
-		///	Not sure why the record list's list isn't being updated...it may be only a problem
-		///	for homographs.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public bool OnDisplayDeleteRecord(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			display.Enabled = false;
-			// Don't claim to have handled it if the record list is holding reversal entries.
-			return MyRecordList.Id != "reversalEntries";
-		}
-#endif
-
 		/// <summary>
 		/// Implements the command that just does Find, without Replace.
 		/// </summary>
@@ -1280,23 +1255,6 @@ namespace LanguageExplorer.Areas
 			return true; //we've handled this
 		}
 #endif
-
-		/// <summary>
-		/// If this gets called (which it never should), just say we did it, unless we are in the context of reversal entries.
-		/// In the case of reversal entries, we say we did not do it, so the record list deals with it.
-		/// </summary>
-		public bool OnDeleteRecord(object commandObject)
-		{
-			if (MyRecordList.Id == "reversalEntries")
-			{
-				return false; // Let the record list do it.
-			}
-			else
-			{
-				Debug.Assert(false);
-			}
-			return true;
-		}
 
 		public string FindTabHelpId => XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "findHelpId", null);
 	}

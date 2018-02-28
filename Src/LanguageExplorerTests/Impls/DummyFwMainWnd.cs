@@ -233,17 +233,15 @@ namespace LanguageExplorerTests.Impls
 		/// timer that fires the idle events to be triggered when we are not idle, even in the
 		/// middle of processing another event.) Call ResumeIdleProcessing when done.
 		/// </summary>
-		void IFwMainWnd.SuspendIdleProcessing()
+		void IApplicationIdleEventHandler.SuspendIdleProcessing()
 		{
-			throw new NotImplementedException();
 		}
 
 		/// <summary>
 		/// See SuspendIdleProcessing.
 		/// </summary>
-		void IFwMainWnd.ResumeIdleProcessing()
+		void IApplicationIdleEventHandler.ResumeIdleProcessing()
 		{
-			throw new NotImplementedException();
 		}
 
 		/// <summary>

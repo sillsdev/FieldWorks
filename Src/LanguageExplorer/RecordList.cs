@@ -26,6 +26,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.Reporting;
 
@@ -149,7 +150,6 @@ namespace LanguageExplorer
 		private RecordFilter _defaultFilter;
 		private string _defaultSortLabel;
 		private bool _suppressSaveOnChangeRecord; // true during delete and insert and ShowRecord calls caused by them.
-		private bool _allowDeletions = true;   // false if nothing is to be deleted for this record list.
 		/// <summary>
 		/// All of the sorters for the record list.
 		/// </summary>
@@ -177,7 +177,7 @@ namespace LanguageExplorer
 			_defaultSorter = defaultSorter ?? new PropertyRecordSorter(AreaServices.ShortName);
 			_defaultSortLabel = AreaServices.Default;
 			_defaultFilter = recordFilterParameterObject?.DefaultFilter;
-			_allowDeletions = recordFilterParameterObject?.AllowDeletions ?? false;
+			Editable = recordFilterParameterObject?.AllowDeletions ?? true;
 			_shouldHandleDeletion = recordFilterParameterObject?.ShouldHandleDeletion ?? false;
 			m_owningObject = vectorPropertyParameterObject.Owner;
 			PropertyName = vectorPropertyParameterObject.PropertyName;
@@ -765,7 +765,7 @@ namespace LanguageExplorer
 			}
 		}
 
-		public bool Editable { get; set; }
+		public bool Editable { get; set; } = true;
 
 		public virtual RecordFilter Filter
 		{
@@ -1016,7 +1016,7 @@ namespace LanguageExplorer
 			ReloadList(listItemsClass, newTargetFlid, force);
 		}
 
-		public bool OnDeleteRecord(object commandObject)
+		public bool DeleteRecord(string uowBaseText, StatusBarProgressPanel panel)
 		{
 			// Don't handle this message if you're not the primary record list.  This allows, for
 			// example, XmlBrowseRDEView.cs to handle the message instead.
@@ -1069,33 +1069,27 @@ namespace LanguageExplorer
 				var window = PropertyTable.GetValue<Form>("window");
 				if (DialogResult.Yes == dlg.ShowDialog(window))
 				{
-#if RANDYTODO
 					using (new WaitCursor(window))
+					using (ProgressState state = new PredictiveProgressState(panel, "Delete record"))
 					{
-						using (ProgressState state = FwXWindow.CreatePredictiveProgressState(PropertyTable, "Delete record"))
+						state.SetMilestone(LanguageExplorerResources.DeletingTheObject);
+						state.Breath();
+						// We will certainly switch records, but we're going to suppress the usual Save after we
+						// switch, so the user can at least Undo one level, the actual deletion. But Undoing
+						// that may not get us back to the current record, so we'd better not allow anything
+						// that's already on the stack to be undone.
+						SaveOnChangeRecord();
+						SuppressSaveOnChangeRecord = true;
+						try
 						{
-							state.SetMilestone(LanguageExplorerResources.DeletingTheObject);
-							state.Breath();
-							// We will certainly switch records, but we're going to suppress the usual Save after we
-							// switch, so the user can at least Undo one level, the actual deletion. But Undoing
-							// that may not get us back to the current record, so we'd better not allow anything
-							// that's already on the stack to be undone.
-							SaveOnChangeRecord();
-							m_suppressSaveOnChangeRecord = true;
-							try
-							{
-								var cmd = (Command) commandObject;
-								UndoableUnitOfWorkHelper.Do(cmd.UndoText, cmd.RedoText, Cache.ActionHandlerAccessor,
-															() => DeleteCurrentObject(thingToDelete));
-							}
-							finally
-							{
-								m_suppressSaveOnChangeRecord = false;
-							}
+							UndoableUnitOfWorkHelper.Do(string.Format(LanguageExplorerResources.ksUndoInsertRelation, uowBaseText), string.Format(LanguageExplorerResources.ksRedoInsertRelation, uowBaseText), m_cache.ActionHandlerAccessor, () => DeleteCurrentObject(thingToDelete));
+						}
+						finally
+						{
+							SuppressSaveOnChangeRecord = false;
 						}
 					}
 					PropertyTable.GetValue<IFwMainWnd>("window").RefreshAllViews();
-#endif
 				}
 			}
 			return true; //we handled this, no need to ask anyone else.
@@ -1523,6 +1517,8 @@ namespace LanguageExplorer
 		/// WHILE we are processing the delete object.
 		/// </summary>
 		public bool ShouldNotModifyList => m_reloadingList || m_deletingObject;
+
+		public bool ShouldNotHandleDeletionMessage => Id != "reversalEntries" && (!Editable || !IsPrimaryRecordList || !_shouldHandleDeletion);
 
 		public bool SkipShowRecord { get; set; }
 
@@ -2405,8 +2401,6 @@ namespace LanguageExplorer
 		private string SorterPropertyTableId => PropertyTableId("sorter");
 
 		protected string CurrentFilterPropertyTableId => "currentFilterForRecordList_" + Id;
-
-		private bool ShouldNotHandleDeletionMessage => Id != "reversalEntries" && (!Editable || !IsPrimaryRecordList || !_shouldHandleDeletion);
 
 		private void ResetStatusBarMessageForCurrentObject()
 		{
@@ -3809,6 +3803,7 @@ namespace LanguageExplorer
 				{
 					return;
 				}
+
 				m_deletingObject = true;
 				// This looks plausible; but for example IndexOf may reload the list, if a reload is pending;
 				// and the current object may no longer match the current filter, so it may be gone.
@@ -3821,6 +3816,13 @@ namespace LanguageExplorer
 					{
 						RemoveItemsFor(CurrentObject.Hvo);
 						VirtualListPublisher.DeleteObj(thingToDelete.Hvo);
+					}
+					catch (Exception e)
+					{
+#if RANDYTODO
+						// TODO: Remove the 'catch' block, when deletion works again.
+#endif
+						Console.WriteLine("Crashed.");
 					}
 					finally
 					{
@@ -4007,8 +4009,8 @@ namespace LanguageExplorer
 
 		internal ListUpdateHelper UpdateHelper { get; set; }
 
-		#endregion Protected stuff
+#endregion Protected stuff
 
-		#endregion Non-interface code
+#endregion Non-interface code
 	}
 }

@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
 using SIL.LCModel;
@@ -44,7 +45,7 @@ namespace LanguageExplorer
 		ITreeBarHandler MyTreeBarHandler { get; }
 		void OnChangeFilter(FilterChangeEventArgs args);
 		void OnChangeListItemsClass(int listItemsClass, int newTargetFlid, bool force);
-		bool OnDeleteRecord(object commandObject);
+		bool DeleteRecord(string uowBaseText, StatusBarProgressPanel panel);
 		bool OnExport(object argument);
 		bool OnFirst { get; }
 		bool OnInsertItemInVector(object argument);
@@ -68,6 +69,7 @@ namespace LanguageExplorer
 		void SaveOnChangeRecord();
 		void SelectedRecordChanged(bool suppressFocusChange, bool fSkipRecordNavigation = false);
 		bool ShouldNotModifyList { get; }
+		bool ShouldNotHandleDeletionMessage { get; }
 		bool SkipShowRecord { get; set; }
 		ArrayList SortedObjects { get; set; }
 		RecordSorter Sorter { get; }

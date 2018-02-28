@@ -760,23 +760,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		private void ExpandNewNode()
 		{
-			try
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>("window"), ContainingDataTree))
 			{
-				ContainingDataTree.DeepSuspendLayout();
 				XElement caller = null;
 				if (Key.Length > 1)
 				{
 					caller = Key[Key.Length - 2] as XElement;
 				}
 				var insPos = IndexInContainer + m_refs.Count;
-				GenerateChildNode(m_refs.Count-1, ConfigurationNode, caller, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap());
+				GenerateChildNode(m_refs.Count - 1, ConfigurationNode, caller, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap());
 				Expansion = TreeItemState.ktisExpanded;
 			}
-			finally
-			{
-				ContainingDataTree.DeepResumeLayout();
-			}
-
 		}
 
 		/// <summary>
@@ -787,9 +781,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <param name="iSlice"></param>
 		public override void Expand(int iSlice)
 		{
-			try
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>("window"), ContainingDataTree))
 			{
-				ContainingDataTree.DeepSuspendLayout();
 				XElement caller = null;
 				if (Key.Length > 1)
 				{
@@ -798,10 +791,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var insPos = iSlice + 1;
 				GenerateChildren(ConfigurationNode, caller, Object, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), false);
 				Expansion = TreeItemState.ktisExpanded;
-			}
-			finally
-			{
-				ContainingDataTree.DeepResumeLayout();
 			}
 		}
 

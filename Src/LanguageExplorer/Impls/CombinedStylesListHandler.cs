@@ -19,8 +19,10 @@ namespace LanguageExplorer.Impls
 	/// <summary>
 	/// Handler to enable/disable displaying the combined styles combobox by default.
 	/// </summary>
-	internal sealed class CombinedStylesListHandler : IDisposable
+	internal sealed class CombinedStylesListHandler : IApplicationIdleEventHandler, IDisposable
 	{
+		// Used to count the number of times we've been asked to suspend Idle processing.
+		private int _countSuspendIdleProcessing;
 		private IFwMainWnd _mainWnd;
 		private ISubscriber _subscriber;
 		private LcmStyleSheet _stylesheet;
@@ -287,5 +289,38 @@ namespace LanguageExplorer.Impls
 			_formatToolStripComboBox.Items.Clear();
 			CollectStyleInformation();
 		}
+
+		#region Implementation of IApplicationIdleEventHandler
+		/// <summary>
+		/// Call this for the duration of a block of code where we don't want idle events.
+		/// (Note that various things outside our control may pump events and cause the
+		/// timer that fires the idle events to be triggered when we are not idle, even in the
+		/// middle of processing another event.) Call ResumeIdleProcessing when done.
+		/// </summary>
+		public void SuspendIdleProcessing()
+		{
+			_countSuspendIdleProcessing++;
+			if (_countSuspendIdleProcessing == 1)
+			{
+				Application.Idle -= ApplicationOnIdle;
+			}
+		}
+
+		/// <summary>
+		/// See SuspendIdleProcessing.
+		/// </summary>
+		public void ResumeIdleProcessing()
+		{
+			FwUtils.CheckResumeProcessing(_countSuspendIdleProcessing, GetType().Name);
+			if (_countSuspendIdleProcessing > 0)
+			{
+				_countSuspendIdleProcessing--;
+				if (_countSuspendIdleProcessing == 0)
+				{
+					Application.Idle += ApplicationOnIdle;
+				}
+			}
+		}
+		#endregion
 	}
 }

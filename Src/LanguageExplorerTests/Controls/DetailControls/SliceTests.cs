@@ -6,6 +6,7 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorerTests.Impls;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -21,21 +22,28 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
 		private ISubscriber m_subscriber;
+		private DummyFwMainWnd _dummyWindow;
 
 		#region Overrides of MemoryOnlyBackendProviderRestoredForEachTestTestBase
 		public override void TestSetup()
 		{
 			base.TestSetup();
+
+			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
+			_dummyWindow = new DummyFwMainWnd();
+			m_propertyTable.SetProperty("window", _dummyWindow, false, false);
 		}
 		#endregion
 
 		/// <summary />
 		public override void TestTearDown()
 		{
+			_dummyWindow?.Dispose();
 			m_Slice?.Dispose();
 			m_DataTree?.Dispose();
 			m_propertyTable?.Dispose();
 
+			_dummyWindow = null;
 			m_Slice = null;
 			m_DataTree = null;
 			m_propertyTable = null;
@@ -104,7 +112,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		[Test]
 		public void CreateIndentedNodes_basic()
 		{
-			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
 			m_DataTree = new DataTree();
 			m_DataTree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_Slice = GenerateSlice(Cache, m_DataTree);
@@ -131,7 +138,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		[Test]
 		public void Expand()
 		{
-			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			m_DataTree = new DataTree();
 			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
@@ -154,7 +160,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 
-			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
 			m_DataTree = new DataTree();
 			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
 			m_DataTree.InitializeFlexComponent(flexComponentParameters);
@@ -176,7 +181,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var path = GeneratePath();
 			var reuseMap = new ObjSeqHashMap();
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
 			m_DataTree = new DataTree();
 			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
 			m_DataTree.InitializeFlexComponent(flexComponentParameters);

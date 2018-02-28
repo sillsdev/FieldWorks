@@ -141,6 +141,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return fontName;
 		}
 
+		public static void CheckResumeProcessing(int currentCount, string classname, string suspendMethodName = "SuspendIdleProcessing", string resumeMethodName = "ResumeIdleProcessing")
+		{
+			if (currentCount <= 0)
+			{
+				// Thou shalt not call resume more times than suspend is called.
+				throw new InvalidOperationException($"'{resumeMethodName}' has been called more times than the matching '{suspendMethodName}' method on class '{classname}'");
+			}
+		}
+
 		/// <summary>
 		/// Return true if the application is in the process of shutting down after a crash.
 		/// Some settings should not be saved in this case.

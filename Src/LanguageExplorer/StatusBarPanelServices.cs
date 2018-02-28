@@ -21,6 +21,11 @@ namespace LanguageExplorer
 			statusBar.Panels[LanguageExplorerConstants.StatusBarPanelMessage].Text = newConent;
 		}
 
+		internal static StatusBarProgressPanel GetStatusBarProgressPanel(StatusBar statusBar)
+		{
+			return (StatusBarProgressPanel)statusBar.Panels[LanguageExplorerConstants.StatusBarPanelProgressBar];
+		}
+
 #if RANDYTODO
 		// Theory has it that SetStatusPanelProgress is entirely managed now by ParserMenuManager across all areas/tools.
 		/// <summary />

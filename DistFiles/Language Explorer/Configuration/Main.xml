@@ -26,7 +26,6 @@
 	<!-- ************************ commands *********************** -->
 	<!-- ********************************************************** -->
 	<commands>
-		<command id="CmdDeleteRecord" label="_Delete {0}..." message="DeleteRecord" icon="Delete" shortcut="Ctrl+Del"/>
 		<command id="CmdListColleagues" label="List _Colleagues" message="ListColleagues"/>
 		<command id="CmdSynch" label="S_ynchronize with LiftShare..." message="Synchronize" translate="This command tries to update from an external source of lexical data."/>
 		<command id="CmdConfigureColumns" label="_Columns..." icon="columnChooser" message="ConfigureColumns"/>
@@ -342,8 +341,6 @@ InterlinMasterNoTitleBar user: (T&W: complexConcordance/concordance/wordListConc
 			<!-- for Notebook currently-->
 			<item command="CmdFindAndReplaceText" defaultVisible="true" a10status="NOT_GLOBAL" />
 			<item command="CmdReplaceText" defaultVisible="true" a10status="NOT_GLOBAL" />
-			<item label="-" translate="do not translate" a10status="DONE" />
-			<item command="CmdDeleteRecord"/>
 			<item label="-" translate="do not translate"/>
 <!-- START include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
 			<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>

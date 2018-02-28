@@ -504,6 +504,7 @@
     <Compile Include="Controls\DetailControls\CustomReferenceVectorSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Controls\DetailControls\DataTreeLayoutSuspensionHelper.cs" />
     <Compile Include="Controls\DetailControls\DateSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>

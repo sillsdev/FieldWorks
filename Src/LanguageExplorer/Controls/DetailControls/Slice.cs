@@ -1315,24 +1315,25 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// and the caller often has the info already, especially in loops expanding many children.</remarks>
 		public virtual void Expand(int iSlice)
 		{
-			try
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>("window"), ContainingDataTree))
 			{
-				ContainingDataTree.DeepSuspendLayout();
-				XElement caller = null;
-				if (Key.Length > 1)
+				try
 				{
-					caller = Key[Key.Length - 2] as XElement;
-				}
-				var insPos = iSlice + 1;
-				CreateIndentedNodes(caller, Object, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), ConfigurationNode);
+					XElement caller = null;
+					if (Key.Length > 1)
+					{
+						caller = Key[Key.Length - 2] as XElement;
+					}
+					var insPos = iSlice + 1;
+					CreateIndentedNodes(caller, Object, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), ConfigurationNode);
 
-				Expansion = TreeItemState.ktisExpanded;
-				PropertyTable.SetProperty(ExpansionStateKey, true, true, true);
-			}
-			finally
-			{
-				ContainingDataTree.DeepResumeLayout();
-				ContainingDataTree.EnsureDefaultCursorForSlices();
+					Expansion = TreeItemState.ktisExpanded;
+					PropertyTable.SetProperty(ExpansionStateKey, true, true, true);
+				}
+				finally
+				{
+					ContainingDataTree.EnsureDefaultCursorForSlices();
+				}
 			}
 		}
 
@@ -1366,10 +1367,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				iNextSliceNotChild++;
 			}
-			var count = iNextSliceNotChild - iSlice - 1;
-			try
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>("window"), ContainingDataTree))
 			{
-				ContainingDataTree.DeepSuspendLayout();
+				var count = iNextSliceNotChild - iSlice - 1;
 				while (count > 0)
 				{
 					ContainingDataTree.RemoveSliceAt(iSlice + 1);
@@ -1377,10 +1377,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				Expansion = TreeItemState.ktisCollapsed;
 				PropertyTable.SetProperty(ExpansionStateKey, false, true, true);
-			}
-			finally
-			{
-				ContainingDataTree.DeepResumeLayout();
 			}
 		}
 

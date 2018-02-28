@@ -18,8 +18,10 @@ namespace LanguageExplorer.Impls
 	/// <summary>
 	/// Populate the writing systems combo box (Format toolbar) and the Format-Writing System menu with writing systems from the given set.
 	/// </summary>
-	internal sealed class WritingSystemListHandler : IDisposable
+	internal sealed class WritingSystemListHandler : IApplicationIdleEventHandler, IDisposable
 	{
+		// Used to count the number of times we've been asked to suspend Idle processing.
+		private int _countSuspendIdleProcessing;
 		private IFwMainWnd _mainWnd;
 		private LcmCache _cache;
 		private ISubscriber _subscriber;
@@ -203,5 +205,38 @@ namespace LanguageExplorer.Impls
 				break;
 			}
 		}
+
+		#region Implementation of IApplicationIdleEventHandler
+		/// <summary>
+		/// Call this for the duration of a block of code where we don't want idle events.
+		/// (Note that various things outside our control may pump events and cause the
+		/// timer that fires the idle events to be triggered when we are not idle, even in the
+		/// middle of processing another event.) Call ResumeIdleProcessing when done.
+		/// </summary>
+		public void SuspendIdleProcessing()
+		{
+			_countSuspendIdleProcessing++;
+			if (_countSuspendIdleProcessing == 1)
+			{
+				Application.Idle -= ApplicationOnIdle;
+			}
+		}
+
+		/// <summary>
+		/// See SuspendIdleProcessing.
+		/// </summary>
+		public void ResumeIdleProcessing()
+		{
+			FwUtils.CheckResumeProcessing(_countSuspendIdleProcessing, GetType().Name);
+			if (_countSuspendIdleProcessing > 0)
+			{
+				_countSuspendIdleProcessing--;
+				if (_countSuspendIdleProcessing == 0)
+				{
+					Application.Idle += ApplicationOnIdle;
+				}
+			}
+		}
+		#endregion
 	}
 }

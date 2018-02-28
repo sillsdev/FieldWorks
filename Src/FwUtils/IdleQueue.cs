@@ -140,8 +140,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// the application is idle. This queue must be created and disposed on the UI thread. It is thread-safe
 	/// within individual methods and properties, but not across method and property calls.
 	/// </summary>
-	public class IdleQueue : ICollection<IdleQueueTask>, IDisposable
+	public class IdleQueue : ICollection<IdleQueueTask>, IApplicationIdleEventHandler, IDisposable
 	{
+		// Used to count the number of times we've been asked to suspend Idle processing.
+		private int _countSuspendIdleProcessing;
 		private readonly PriorityQueue<IdleQueuePriority, IdleQueueTask> m_queue = new PriorityQueue<IdleQueuePriority, IdleQueueTask>();
 		private readonly object m_syncRoot = new object();
 		private bool m_paused;
@@ -522,6 +524,39 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
+		#endregion
+
+		#region Implementation of IApplicationIdleEventHandler
+		/// <summary>
+		/// Call this for the duration of a block of code where we don't want idle events.
+		/// (Note that various things outside our control may pump events and cause the
+		/// timer that fires the idle events to be triggered when we are not idle, even in the
+		/// middle of processing another event.) Call ResumeIdleProcessing when done.
+		/// </summary>
+		public void SuspendIdleProcessing()
+		{
+			_countSuspendIdleProcessing++;
+			if (_countSuspendIdleProcessing == 1)
+			{
+				Application.Idle -= Application_Idle;
+			}
+		}
+
+		/// <summary>
+		/// See SuspendIdleProcessing.
+		/// </summary>
+		public void ResumeIdleProcessing()
+		{
+			FwUtils.CheckResumeProcessing(_countSuspendIdleProcessing, GetType().Name);
+			if (_countSuspendIdleProcessing > 0)
+			{
+				_countSuspendIdleProcessing--;
+				if (_countSuspendIdleProcessing == 0)
+				{
+					Application.Idle += Application_Idle;
+				}
+			}
+		}
 		#endregion
 	}
 }

@@ -1780,28 +1780,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 #endregion
 
-#if RANDYTODO
-		/// <summary>
-		///	see if it makes sense to provide the "delete record" command now
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayDeleteRecord(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			return false;
-		}
-#endif
-
-		/// <summary>
-		/// Called when [delete record].
-		/// </summary>
-		public virtual bool OnDeleteRecord(object commandObject)
-		{
-			return false;
-		}
-
 #region Overrides of SimpleRootSite
 
 		/// <summary>

@@ -16,7 +16,7 @@ namespace LanguageExplorer
 	/// and to allow different apps to implement their main windows totally differently.
 	/// </summary>
 	/// <remarks>In normal operations, an IFwMainWnd implementation expects to be cast to Form.</remarks>
-	internal interface IFwMainWnd : IDisposable, IPropertyTableProvider, IPublisherProvider, ISubscriberProvider, IRecordListOwner, IIdleQueueProvider
+	internal interface IFwMainWnd : IDisposable, IApplicationIdleEventHandler, IPropertyTableProvider, IPublisherProvider, ISubscriberProvider, IRecordListOwner, IIdleQueueProvider
 	{
 		/// <summary>
 		/// Gets the active view of the window
@@ -109,19 +109,6 @@ namespace LanguageExplorer
 		/// Save settings.
 		/// </summary>
 		void SaveSettings();
-
-		/// <summary>
-		/// Call this for the duration of a block of code where we don't want idle events.
-		/// (Note that various things outside our control may pump events and cause the
-		/// timer that fires the idle events to be triggered when we are not idle, even in the
-		/// middle of processing another event.) Call ResumeIdleProcessing when done.
-		/// </summary>
-		void SuspendIdleProcessing();
-
-		/// <summary>
-		/// See SuspendIdleProcessing.
-		/// </summary>
-		void ResumeIdleProcessing();
 
 		/// <summary>
 		/// Get the RecordBar (as a Control), or null if not present.

@@ -818,16 +818,11 @@ namespace LanguageExplorer.Controls.XMLViews
 				base.OnKeyPress(e);
 			}
 		}
-
-#if RANDYTODO
 		/// <summary>
-		///	see if it makes sense to provide the "delete record" command now
+		///	Let caller know if the Delete menu can be enabled or not.
+		/// And, come up with the new menu text that is displayed, whether enabled or not.
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public override bool OnDisplayDeleteRecord(object commandObject,
-			ref UIItemDisplayProperties display)
+		public bool SetupDeleteMenu(string deleteTextBase, out string deleteText)
 		{
 			bool fCanDelete = false;
 			// This crashed once on exiting program, so m_rootb may not be set at that point.
@@ -865,27 +860,14 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 				}
 			}
-			display.Enabled = fCanDelete;
-			display.Text = String.Format(display.Text, XMLViewsStrings.ksRow);
-			return true;
+			deleteText = string.Format(deleteTextBase, XMLViewsStrings.ksRow);
+			return fCanDelete;
 		}
-
-		/// <summary>
-		/// Figure a tooltop for the DeleteRecord command. Must be passed a ToolTipHolder, but we have to follow a pattern.
-		/// Called by mediator using reflection.
-		/// </summary>
-		public bool OnDeleteRecordToolTip(object holder)
-		{
-			var realHolder = (ToolTipHolder)holder;
-			realHolder.ToolTip = String.Format(realHolder.ToolTip, XMLViewsStrings.ksRow);
-			return true;
-		}
-#endif
 
 		/// <summary>
 		/// Called when [delete record].
 		/// </summary>
-		public override bool OnDeleteRecord(object commandObject)
+		public void DeleteRecord()
 		{
 			if (m_rootb == null)
 			{
@@ -895,12 +877,12 @@ namespace LanguageExplorer.Controls.XMLViews
 			var vwsel = m_rootb.Selection;
 			if (vwsel == null)
 			{
-				return false;
+				return;
 			}
 			var columns = m_xbvvc.ColumnSpecs;
 			if (columns == null || columns.Count == 0)
 			{
-				return false; // Something is broken!
+				return; // Something is broken!
 			}
 
 			var tsi = new TextSelInfo(m_rootb.Selection);
@@ -1020,7 +1002,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 				});
 			}
-			return true;
 		}
 
 		#endregion Other message handlers

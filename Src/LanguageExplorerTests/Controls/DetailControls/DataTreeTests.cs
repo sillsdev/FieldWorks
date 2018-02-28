@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorerTests.Impls;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -31,6 +32,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		private ISubscriber m_subscriber;
 		private DataTree m_dtree;
 		private Form m_parent;
+		private DummyFwMainWnd _dummyWindow;
 		private CustomFieldForTest m_customField;
 
 		#region Fixture Setup and Teardown
@@ -94,6 +96,8 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			base.TestSetup();
 			m_dtree = new DataTree();
 			SetupPubSubAndPropertyTable();
+			_dummyWindow = new DummyFwMainWnd();
+			m_propertyTable.SetProperty("window", _dummyWindow, false, false);
 			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
 			m_parent = new Form();
 			m_parent.Controls.Add(m_dtree);
@@ -109,15 +113,15 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		/// </summary>
 		public override void TestTearDown()
 		{
-			// m_dtree gets disposed from m_parent because it's part of its Controls
-
 			if (m_parent != null)
 			{
 				m_parent.Close();
 				m_parent.Dispose();
 			}
+			_dummyWindow.Dispose();
 			m_propertyTable?.Dispose();
 
+			_dummyWindow = null;
 			m_propertyTable = null;
 			m_publisher = null;
 			m_subscriber = null;
@@ -263,6 +267,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_parent.Close();
 			m_parent.Dispose();
 			m_parent = null;
+			m_propertyTable.RemoveProperty("window");
+			_dummyWindow.Dispose();
+			_dummyWindow = null;
 
 			ILexSense sense1 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			m_entry.SensesOS.Add(sense1);
@@ -274,6 +281,8 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 			m_propertyTable.Dispose();
 			SetupPubSubAndPropertyTable();
+			_dummyWindow = new DummyFwMainWnd();
+			m_propertyTable.SetProperty("window", _dummyWindow, false, false);
 			m_parent = new Form();
 			m_dtree = new DataTree();
 			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
@@ -291,12 +300,17 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_parent.Close();
 			m_parent.Dispose();
 			m_parent = null;
+			m_propertyTable.RemoveProperty("window");
+			_dummyWindow.Dispose();
+			_dummyWindow = null;
 
 			var etymology = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
 			m_entry.EtymologyOS.Add(etymology);
 
 			m_propertyTable.Dispose();
 			SetupPubSubAndPropertyTable();
+			_dummyWindow = new DummyFwMainWnd();
+			m_propertyTable.SetProperty("window", _dummyWindow, false, false);
 			m_parent = new Form();
 			m_dtree = new DataTree();
 			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
@@ -309,12 +323,17 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_parent.Close();
 			m_parent.Dispose();
 			m_parent = null;
+			m_propertyTable.RemoveProperty("window");
+			_dummyWindow.Dispose();
+			_dummyWindow = null;
 
 			etymology.LanguageNotes.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("source language", Cache.DefaultAnalWs);
 			etymology.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("rubbish", Cache.DefaultVernWs);
 
 			m_propertyTable.Dispose();
 			SetupPubSubAndPropertyTable();
+			_dummyWindow = new DummyFwMainWnd();
+			m_propertyTable.SetProperty("window", _dummyWindow, false, false);
 			m_parent = new Form();
 			m_dtree = new DataTree();
 			m_dtree.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));

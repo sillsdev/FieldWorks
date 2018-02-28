@@ -2996,16 +2996,18 @@ namespace SIL.FieldWorks.Common.RootSites
 				m_printMenu.Enabled = true;
 			}
 
-			//Debug.WriteLine("SimpleRootSite.OnGotFocus() hwnd = " + this.Handle);
-
 			g_focusRootSite.Target = this;
 			base.OnGotFocus(e);
 			if (DesignMode || !m_fRootboxMade || m_rootb == null)
+			{
 				return;
+			}
 
 			// Enable selection display
 			if (WantInitialSelection)
-				this.EnsureDefaultSelection();
+			{
+				EnsureDefaultSelection();
+			}
 			Activate(VwSelectionState.vssEnabled);
 
 			EditingHelper.GotFocus();

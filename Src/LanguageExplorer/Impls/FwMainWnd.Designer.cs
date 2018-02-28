@@ -1,4 +1,5 @@
 ﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -61,7 +62,7 @@ namespace LanguageExplorer.Impls
 			this.toolStripMenuItem13 = new System.Windows.Forms.ToolStripSeparator();
 			this.toolStripMenuItem14 = new System.Windows.Forms.ToolStripSeparator();
 			this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.pHDeleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
@@ -122,7 +123,7 @@ namespace LanguageExplorer.Impls
 			this.toolStripButtonHistoryBack = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButtonHistoryForward = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-			this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+			this.deleteToolStripButton = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.undoToolStripButton = new System.Windows.Forms.ToolStripButton();
 			this.redoToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -411,7 +412,7 @@ namespace LanguageExplorer.Impls
             this.toolStripMenuItem13,
             this.toolStripMenuItem14,
             this.selectAllToolStripMenuItem,
-            this.pHDeleteToolStripMenuItem});
+            this.deleteToolStripMenuItem});
 			this._editToolStripMenuItem.Name = "_editToolStripMenuItem";
 			this._editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
 			this._editToolStripMenuItem.Text = "&Edit";
@@ -514,14 +515,14 @@ namespace LanguageExplorer.Impls
 			this.selectAllToolStripMenuItem.Text = "Select &All";
 			this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.Edit_Select_All);
 			// 
-			// pHDeleteToolStripMenuItem
+			// deleteToolStripMenuItem
 			// 
-			this.pHDeleteToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("pHDeleteToolStripMenuItem.Image")));
-			this.pHDeleteToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Fuchsia;
-			this.pHDeleteToolStripMenuItem.Name = "pHDeleteToolStripMenuItem";
-			this.pHDeleteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete)));
-			this.pHDeleteToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-			this.pHDeleteToolStripMenuItem.Text = "PH: Delete";
+			this.deleteToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+			this.deleteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete)));
+			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
+			this.deleteToolStripMenuItem.Text = "Delete";
+			this.deleteToolStripMenuItem.Click += new System.EventHandler(this.Edit_Delete_Click);
 			// 
 			// _viewToolStripMenuItem
 			// 
@@ -977,7 +978,7 @@ namespace LanguageExplorer.Impls
             this.toolStripButtonHistoryBack,
             this.toolStripButtonHistoryForward,
             this.toolStripSeparator3,
-            this.toolStripButton2,
+            this.deleteToolStripButton,
             this.toolStripSeparator2,
             this.undoToolStripButton,
             this.redoToolStripButton,
@@ -1019,14 +1020,14 @@ namespace LanguageExplorer.Impls
 			this.toolStripSeparator3.Name = "toolStripSeparator3";
 			this.toolStripSeparator3.Size = new System.Drawing.Size(6, 27);
 			// 
-			// toolStripButton2
+			// deleteToolStripButton
 			// 
-			this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButton2.Enabled = false;
-			this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
-			this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton2.Name = "toolStripButton2";
-			this.toolStripButton2.Size = new System.Drawing.Size(24, 24);
+			this.deleteToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.deleteToolStripButton.Enabled = false;
+			this.deleteToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("deleteToolStripButton.Image")));
+			this.deleteToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.deleteToolStripButton.Name = "deleteToolStripButton";
+			this.deleteToolStripButton.Size = new System.Drawing.Size(24, 24);
 			// 
 			// toolStripSeparator2
 			// 
@@ -1455,8 +1456,8 @@ namespace LanguageExplorer.Impls
 		private ToolStrip toolStripView;
 		private ToolStripButton toolStripButtonChangeFilterClearAll;
 		private ToolStripButton toolStripButtonFlexLiftBridge;
-		private ToolStripMenuItem pHDeleteToolStripMenuItem;
-		private ToolStripButton toolStripButton2;
+		private ToolStripMenuItem deleteToolStripMenuItem;
+		private ToolStripButton deleteToolStripButton;
 		private ToolStripButton toolStripButtonHistoryBack;
 		private ToolStripButton toolStripButtonHistoryForward;
 		private ToolStripSeparator toolStripSeparator3;

@@ -182,14 +182,9 @@ namespace LanguageExplorer.Areas
 			PropertyTable.SetProperty(propName, MyRecordList.CurrentIndex, SettingsGroup.LocalSettings, true, false);
 			var window = PropertyTable.GetValue<IFwMainWnd>("window");
 
-			try
+			using (new IdleProcessingHelper(window))
 			{
-				window.SuspendIdleProcessing();
 				ShowRecord(e.RecordNavigationInfo);
-			}
-			finally
-			{
-				window.ResumeIdleProcessing();
 			}
 		}
 

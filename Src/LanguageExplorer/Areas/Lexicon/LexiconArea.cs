@@ -175,14 +175,16 @@ namespace LanguageExplorer.Areas.Lexicon
 				</sortMethods>
 			</clerk>
 			*/
-			return new RecordList(recordListId, statusBar,
+			var recordList = new RecordList(recordListId, statusBar,
 				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false,
 				new VectorPropertyParameterObject(cache.LanguageProject.LexDbOA, "Entries", cache.MetaDataCacheAccessor.GetFieldId2(cache.LanguageProject.LexDbOA.ClassID, "Entries", false)),
 				new Dictionary<string, PropertyRecordSorter>
 				{
 					{ AreaServices.Default, new PropertyRecordSorter(AreaServices.ShortName) },
 					{ "PrimaryGloss", new PropertyRecordSorter("PrimaryGloss") }
-				});
+				},
+				new RecordFilterParameterObject(true, true));
+			return recordList;
 		}
 
 		internal static IRecordList SemanticDomainList_LexiconAreaFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)

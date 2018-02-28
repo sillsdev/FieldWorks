@@ -324,9 +324,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 
 		private void ExpandNewNode(IRnRoledPartic roledPartic)
 		{
-			try
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>("window"), ContainingDataTree))
 			{
-				ContainingDataTree.DeepSuspendLayout();
 				XElement caller = null;
 				if (Key.Length > 1)
 				{
@@ -336,11 +335,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				GenerateChildNode(roledPartic, ConfigurationNode, caller, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap());
 				Expansion = TreeItemState.ktisExpanded;
 			}
-			finally
-			{
-				ContainingDataTree.DeepResumeLayout();
-			}
-
 		}
 
 		/// <summary>
@@ -348,9 +342,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// </summary>
 		public override void Expand(int iSlice)
 		{
-			try
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>("window"), ContainingDataTree))
 			{
-				ContainingDataTree.DeepSuspendLayout();
 				XElement caller = null;
 				if (Key.Length > 1)
 				{
@@ -359,10 +352,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				var insPos = iSlice + 1;
 				GenerateChildren(ConfigurationNode, caller, Object, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), false);
 				Expansion = TreeItemState.ktisExpanded;
-			}
-			finally
-			{
-				ContainingDataTree.DeepResumeLayout();
 			}
 		}
 

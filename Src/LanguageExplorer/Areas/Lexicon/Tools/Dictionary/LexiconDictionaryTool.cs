@@ -211,17 +211,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			foreach (var config in hasPub)
 			{
 				// Key is label, value is Tag for config pathname.
-				currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Configuration_Clicked, string.Empty, config.Key);
+				currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Configuration_Clicked, config.Key);
 				currentToolStripMenuItem.Tag = config.Value;
 				currentToolStripMenuItem.Checked = (currentPublication == config.Value);
 
 			}
-			if (doesNotHavePub.Count > 0)
+			if (doesNotHavePub.Any())
 			{
 				contextMenuStrip.Items.Add(new ToolStripSeparator());
 				foreach (var config in doesNotHavePub)
 				{
-					currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Configuration_Clicked, string.Empty, config.Key);
+					currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Configuration_Clicked, config.Key);
 					currentToolStripMenuItem.Tag = config.Value;
 					currentToolStripMenuItem.Checked = (currentPublication == config.Value);
 				}
