@@ -778,7 +778,8 @@ namespace SIL.FieldWorks.IText
 				{
 					var spec = m_lineChoices[frag - kfragLineChoices];
 					var ws = GetRealWsOrBestWsForContext(hvo, spec); // can be vernacular or analysis
-					vwenv.AddStringAltMember(spec.StringFlid, ws, this);
+					if (ws > 0)
+						vwenv.AddStringAltMember(spec.StringFlid, ws, this);
 				}
 				else if (frag >= kfragAnalysisCategoryChoices && frag < kfragAnalysisCategoryChoices + m_lineChoices.Count)
 				{
