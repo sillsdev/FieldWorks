@@ -92,7 +92,7 @@
 	<!-- ########################################################################################################## -->
 	<!-- ### Top Level Targets                                                                                  ### -->
 	<!-- ########################################################################################################## -->
-	<Target Name="BuildBaseInstaller" DependsOnTargets="RequirePlatform;GetDotNetFiles;ResetBuildNumberFile;CleanMasterOutputDir">
+	<Target Name="BuildBaseInstaller" DependsOnTargets="RequirePlatform;GetDotNetFiles;CleanMasterOutputDir">
 		<CallTarget Targets="BuildProductMain;BuildProductBaseMsi;CopyBuildToMaster"/>
 	</Target>
 
@@ -102,7 +102,7 @@
 	<!-- ### Build Targets                                                                                      ### -->
 	<!-- ########################################################################################################## -->
 
-	<Target Name="BuildProductMain" DependsOnTargets="BuildProduct;MakeInstallBuildFolders;CopyFilesToInstall;WriteVersionFile"/>
+	<Target Name="BuildProductMain" DependsOnTargets="BuildProduct;MakeInstallBuildFolders;CopyFilesToInstall"/>
 
 	<Target Name="BuildProduct" DependsOnTargets="CleanInstaller;ProductCompile"/>
 
@@ -214,21 +214,6 @@
 			Condition="!Exists('$(fwrt)/$(WixLibsDir)/vcredist_2015_x64.exe') And $(Platform)=='x64'"
 			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 14 runtime -->
 	</Target>
-
-	<Target Name="WriteVersionFile" Condition="Exists($(MSBuildExtensionTargets))">
-		<PropertyGroup>
-			<Revision>$(MinorVersion).$(VersionSeg4)</Revision>
-		</PropertyGroup>
-		<WriteLinesToFile Overwrite="true" File="$(AppBuildDir)/$(BinDirSuffix)/CurrentVersion.number" Lines="$(Revision)"/>
-	</Target>
-
-	<Target Name="ResetBuildNumberFile">
-		<PropertyGroup>
-			<ResetVersion>$(MajorVersion).0.0</ResetVersion>
-		</PropertyGroup>
-		<WriteLinesToFile Overwrite="true" File="./build.number" Lines="$(ResetVersion)"/>
-	</Target>
-
 
 	<!-- ########################################################################################################## -->
 	<!-- ### Build Wix Product Targets                                                                          ### -->
