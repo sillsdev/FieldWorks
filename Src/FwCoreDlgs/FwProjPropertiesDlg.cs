@@ -1125,6 +1125,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				MergeOnLocalList(mergedWs, m_lstVernWs.Items);
 				MergeOnLocalList(mergedWs, m_lstAnalWs.Items);
 				m_fWsChanged = true;
+				m_deletedWritingSystems.Add(mergedWs.Key);
+				DeleteWritingSystems();
 			}
 		}
 
