@@ -232,7 +232,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			int index = m_soundControls.IndexOf(sc);
 			wsIndex = -1;
-			foreach (CoreWritingSystemDefinition ws in m_innerView.WritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_innerView.WritingSystemsToDisplay)
 			{
 				wsIndex++;
 				if (!ws.IsVoice)
@@ -268,7 +268,6 @@ namespace SIL.FieldWorks.Common.Widgets
 					control.Left = indent;
 					control.Width = Width - indent;
 					control.Top = Height - indent + 5;
-					control.Height = Height + 10;
 					var sel = MultiStringSelectionUtils.GetSelAtStartOfWs(m_innerView.RootBox, m_innerView.Flid, wsIndex, ws);
 					if (sel != null)
 					{
