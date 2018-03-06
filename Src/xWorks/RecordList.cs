@@ -3313,7 +3313,8 @@ namespace SIL.FieldWorks.XWorks
 			// If the list is made up of fake objects, we can't find one of them that our target owns,
 			// and trying to will crash, so give up.
 			if (SortedObjects.Count == 0 ||
-				!m_cache.ServiceLocator.ObjectRepository.IsValidObjectId(((IManyOnePathSortItem)SortedObjects[0]).RootObjectHvo))
+				!m_cache.ServiceLocator.ObjectRepository.IsValidObjectId(((IManyOnePathSortItem)SortedObjects[0]).RootObjectHvo) ||
+				!m_cache.ServiceLocator.ObjectRepository.IsValidObjectId(hvoTarget))
 			{
 				return -1;
 			}
