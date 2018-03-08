@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+	<Property Id="REGISTRYKEY" Value="SIL\$(var.ApplicationName)\$(var.MajorVersion)"/>
+	<Property Id="APPFOLDERREGSZNAME" Value="RootCodeDir"/>
+	<SetProperty Id="OVRAPPFOLDER" Value="[$(var.PFDir)]\SIL\$(var.SafeApplicationName) $(var.MajorVersion)\" Before="AppSearch"/>
+	<!-- we actually store our data under ProgramData\SIL\FieldWorks, but we install data under this superdirectory.
+		TODO (Hasso) 2018.02: figure out how to
+		 - ICU## Data in PD\SIL\icu##
+		 - RootDataDir = PD\SIL\FieldWorks
+		 - ProjectsDir = PD\SIL\FieldWorks\Projects (this is what the user configures)
+		-->
+	<SetProperty Id="OVRHARVESTDATAFOLDER" Value="[CommonAppDataFolder]\SIL" Before="AppSearch"/>
+	<SetProperty Id="OVRDATAFOLDER" Value="[CommonAppDataFolder]\SIL\FieldWorks\Projects" Before="AppSearch"/>
+</Include>
