@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -1270,8 +1270,6 @@ namespace SIL.FieldWorks.XWorks
 
 				ReversalIndexServices.CreateOrRemoveReversalIndexConfigurationFiles(m_app.Cache.ServiceLocator.WritingSystemManager,
 					m_app.Cache, FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory, dlg.OriginalProjectName);
-				var selectedWsObj = dlg.AnalysisWsList.SelectedItem as CoreWritingSystemDefinition;
-				SetReversalIndexGuid(selectedWsObj);
 			}
 		}
 
