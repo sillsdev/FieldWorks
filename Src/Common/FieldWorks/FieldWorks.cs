@@ -3164,9 +3164,9 @@ namespace SIL.FieldWorks
 					return true;
 				}
 			}
-			catch (UnauthorizedAccessException uae)
+			catch (StartupException sue)
 			{
-				if (MiscUtils.IsUnix)
+				if (MiscUtils.IsUnix && sue.InnerException is UnauthorizedAccessException)
 				{
 					// Tell Mono user he/she needs to logout and log back in
 					MessageBox.Show(ResourceHelper.GetResourceString("ksNeedToJoinFwGroup"));
