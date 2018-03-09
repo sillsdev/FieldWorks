@@ -314,6 +314,14 @@ namespace LanguageExplorer.Impls
 			using (new IdleProcessingHelper(this))
 			{
 				ClearDuringTransition();
+
+				// Reset Edit->Find state to default conditions. Each tool can then sort out what to do with it
+				findToolStripMenuItem.Visible = true;
+				findToolStripMenuItem.Enabled = false;
+				toolStripButtonFindText.Visible = toolStripButtonFindText.Enabled = false;
+				replaceToolStripMenuItem.Visible = true;
+				replaceToolStripMenuItem.Enabled = false;
+
 				_currentArea.ActiveTool = null;
 				_currentTool?.Deactivate(_majorFlexComponentParameters);
 				_currentTool = clickedTool;
@@ -369,7 +377,7 @@ namespace LanguageExplorer.Impls
 		private void ClearDuringTransition()
 		{
 			// NB: If you are ever tempted to not set the record list to null, then be prepared to have each area/tool clear it.
-			RecordListServices.SetRecordList(null);
+			RecordListServices.SetRecordList(Handle, null);
 			StatusBarPanelServices.ClearBasicStatusBars(_statusbar);
 		}
 
@@ -776,14 +784,6 @@ namespace LanguageExplorer.Impls
 		}
 
 		/// <summary>
-		/// Handle the Find menu command.
-		/// </summary>
-		public bool OnEditFind(object args)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
 		/// Prepare to refresh the main window and its IAreas and ITools.
 		/// </summary>
 		public void PrepareToRefresh()
@@ -994,7 +994,7 @@ namespace LanguageExplorer.Impls
 				deleteToolStripButton.Click -= Edit_Delete_Click;
 				// Quit responding to messages early on.
 				Subscriber.Unsubscribe("MigrateOldConfigurations", MigrateOldConfigurations);
-				RecordListServices.TearDown();
+				RecordListServices.TearDown(Handle);
 				_currentArea?.Deactivate(_majorFlexComponentParameters);
 				_currentTool?.Deactivate(_majorFlexComponentParameters);
 				_sendReceiveMenuManager?.Dispose();
@@ -1069,39 +1069,6 @@ namespace LanguageExplorer.Impls
 		}
 
 		#endregion
-
-		/// <summary>
-		/// Layout toolstrips by size. (Assume all toolstrips are same height.)
-		///
-		/// The Designer has a hard time keeping the toolbars in the right place, so this puts them where they belong.
-		/// </summary>
-		private void LayoutToolStrips()
-		{
-			SuspendLayout();
-
-			var containerPosition = new Point(0, 0);
-			var containerHeight = 0;
-			// Row[0] is the menu bar.
-			// Row[1] is the toolbar.
-			foreach (var row in toolStripContainer.TopToolStripPanel.Rows)
-			{
-				// Start each row at top and left.
-				if (row.Controls[0].Name == "_menuStrip")
-				{
-					continue;
-				}
-				var currentPosition = new Point(0, 0);
-				for (var idx = 0; idx < row.Controls.Length; idx++)
-				{
-					var currentToolbar = row.Controls[idx];
-					var previousToolbar = idx == 0 ? null : row.Controls[idx - 1];
-					currentPosition = idx == 0 ? currentToolbar.Location : new Point(previousToolbar.Location.Y, currentToolbar.Width);
-					currentToolbar.Location = currentPosition;
-				}
-			}
-			toolStripContainer.Height = toolStripContainer.TopToolStripPanel.Height + containerPosition.Y + containerHeight;
-			ResumeLayout();
-		}
 
 		private void File_CloseWindow(object sender, EventArgs e)
 		{
@@ -1725,12 +1692,10 @@ very simple minor adjustments. ;)"
 				RecordList.ActiveRecordListRepository = _recordListRepositoryForTools;
 			}
 
-			// Insert toolbar is not visible at the start. Tools make it visible as needed.
-			InsertToolbarManager.DeactivateInsertToolbar(_majorFlexComponentParameters);
+			// Tools make it visible as needed.
+			InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
 
 			base.OnLoad(e);
-
-			LayoutToolStrips();
 
 			var currentArea = _areaRepository.PersistedOrDefaultArea;
 			var currentTool = currentArea.PersistedOrDefaultTool;
@@ -1748,16 +1713,10 @@ very simple minor adjustments. ;)"
 		/// </summary>
 		private void FwMainWnd_Activated(object sender, EventArgs e)
 		{
-			RecordListServices.Setup(_majorFlexComponentParameters);
 			if (_recordListRepositoryForTools != RecordList.ActiveRecordListRepository)
 			{
 				RecordList.ActiveRecordListRepository = _recordListRepositoryForTools;
 			}
-		}
-
-		private void FwMainWnd_Deactivate(object sender, EventArgs e)
-		{
-			RecordListServices.TearDown();
 		}
 
 		#endregion

@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class LexiconDictionaryTool : ITool
 	{
-		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
+		private LexiconDictionaryToolMenuHelper _dictionaryToolMenuHelper;
 		private string _configureObjectName;
 		private IFwMainWnd _fwMainWnd;
 		private LcmCache _cache;
@@ -57,14 +57,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_lexiconAreaMenuHelper.Dispose();
+			_dictionaryToolMenuHelper.Dispose();
 			_sliceContextMenuFactory.Dispose(); // No Data Tree in this tool to dispose of it for us.
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
 			_xhtmlDocView = null;
 			_fwMainWnd = null;
 			_cache = null;
 			_sliceContextMenuFactory = null;
-			_lexiconAreaMenuHelper = null;
+			_dictionaryToolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -83,11 +83,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			{
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LexiconArea.Entries, majorFlexComponentParameters.Statusbar, LexiconArea.EntriesFactoryMethod);
 			}
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
 
 			var root = XDocument.Parse(LexiconResources.LexiconDictionaryToolParameters).Root;
 			_configureObjectName = root.Attribute("configureObjectName").Value;
 			_xhtmlDocView = new XhtmlDocView(root, majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			_dictionaryToolMenuHelper = new LexiconDictionaryToolMenuHelper(majorFlexComponentParameters, _xhtmlDocView, _recordList);
 			var docViewPaneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
@@ -125,6 +125,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 
 			_paneBarContainer.ResumeLayout(true);
 			_xhtmlDocView.FinishInitialization();
+			_dictionaryToolMenuHelper.Initialize();
 			_xhtmlDocView.OnPropertyChanged("DictionaryPublicationLayout");
 			_paneBarContainer.PostLayoutInit();
 		}

@@ -38,8 +38,6 @@
 		<command id="CmdCut" label="Cu_t" message="EditCut" icon="Cut" shortcut="Ctrl+X" a10status="PARTIALLY_DONE" />
 		<command id="CmdPaste" label="_Paste" message="EditPaste" icon="Paste" shortcut="Ctrl+V" a10status="PARTIALLY_DONE" />
 		<command id="CmdInsertLinkToFile" label="L_ink to File..." message="InsertLinkToFile" icon="ExternalLink"/>
-		<command id="CmdFindAndReplaceText" label="Find..." message="FindAndReplaceText" shortcut="Ctrl+Shift+F" icon="findReplaceText"/>
-		<command id="CmdReplaceText" label="Replace..." message="ReplaceText" shortcut="Ctrl+H"/>
 		<command id="CmdHelpMorphologyInto" label="Introduction to _Parsing..." message="HelpMorphologyIntro"/>
 		<command id="CmdHelpLexicographyIntro" label="Introduction to _Lexicography..." message="HelpLexicographyIntro" a10status="LEXICONAREAONLY" >
 			<parameters file="Lexicography Introduction/Introduction to Lexicography.htm"/>
@@ -331,17 +329,6 @@
 		  <!-- START include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
 		  <include path="Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>
 		  <!-- END include: "Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
-<!-- These are the places that handle "CmdFindAndReplaceText" & "CmdReplaceText":
-XmlDocView users: (Lexicon: Dictionary/RDE/ReversalIndices) & (Notebook: Document)
-XhtmlDocView user (only CmdFindAndReplaceText): (Lexicon: Dictionary/ReversalEdit)
-These two only show if the "Baseline" tab is selected (tools: Interlinear Texts/Concordance/ComplexConcordance) AND is only enabled in 'Interlinear Texts'
-InterlinMaster user: (T&W: interlinearEdit/complexConcordance(subclass))
-InterlinMasterNoTitleBar user: (T&W: complexConcordance/concordance/wordListConcordance)
--->
-			<!-- for Notebook currently-->
-			<item command="CmdFindAndReplaceText" defaultVisible="true" a10status="NOT_GLOBAL" />
-			<item command="CmdReplaceText" defaultVisible="true" a10status="NOT_GLOBAL" />
-			<item label="-" translate="do not translate"/>
 <!-- START include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
 			<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*"/>
 <!-- END include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->

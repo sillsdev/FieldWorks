@@ -17,6 +17,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
 	internal sealed class NotebookDocumentTool : ITool
 	{
+		private NotebookDocumentMenuHelper _notebookDocumentMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private IRecordList _recordList;
 		[Import(AreaServices.NotebookAreaMachineName)]
@@ -32,7 +33,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_notebookDocumentMenuHelper.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
+			_notebookDocumentMenuHelper = null;
 		}
 
 		/// <summary>
@@ -47,10 +50,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 			{
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(NotebookArea.Records, majorFlexComponentParameters.Statusbar, NotebookArea.NotebookFactoryMethod);
 			}
+			_notebookDocumentMenuHelper = new NotebookDocumentMenuHelper(majorFlexComponentParameters, _recordList);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				new XmlDocView(XDocument.Parse(NotebookResources.NotebookDocumentParameters).Root, majorFlexComponentParameters.LcmCache, _recordList));
+
+			_notebookDocumentMenuHelper.Initialize();
 		}
 
 		/// <summary>

@@ -374,7 +374,6 @@
 
 			<item command="CmdInsertHumanApprovedAnalysis" defaultVisible="false"/>
 			<item command="CmdGoToWfiWordform" defaultVisible="false"/>
-			<item command="CmdFindAndReplaceText" defaultVisible="false"/>
 			<item command="CmdBreakPhrase" defaultVisible="false"/>
 		</toolbar>
 	</toolbarsAddOn>

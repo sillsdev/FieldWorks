@@ -22,6 +22,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class ConcordanceTool : ITool
 	{
+		private PartiallySharedMenuHelper _partiallySharedMenuHelper;
 		internal const string OccurrencesOfSelectedUnit = "OccurrencesOfSelectedUnit";
 		private MultiPane _concordanceContainer;
 		private ConcordanceControl _concordanceControl;
@@ -41,11 +42,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_partiallySharedMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _concordanceContainer);
 
 			_concordanceControl = null;
 			_recordBrowseView = null;
 			_interlinMasterNoTitleBar = null;
+			_partiallySharedMenuHelper = null;
 		}
 
 		/// <summary>
@@ -77,6 +80,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 			root.Element("wordOccurrenceList").Element("parameters").Element("includeCordanceColumns").ReplaceWith(columns);
 			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("ITextControl").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFileMenu(majorFlexComponentParameters.MenuStrip), MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			mainConcordanceContainerParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _interlinMasterNoTitleBar);
+			_partiallySharedMenuHelper = new PartiallySharedMenuHelper(majorFlexComponentParameters, _interlinMasterNoTitleBar, _recordList);
 
 			// This will be the nested MultiPane that goes into mainConcordanceContainerParameters.FirstControlParameters.Control
 			var nestedMultiPaneParameters = new MultiPaneParameters

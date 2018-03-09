@@ -321,11 +321,14 @@
     <Compile Include="Areas\Lexicon\ISemanticDomainTreeBarHandler.cs" />
     <Compile Include="Areas\Lexicon\LexiconAreaMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\LexReferenceUnidirectionalVc.cs" />
+    <Compile Include="Areas\Lexicon\Tools\ClassifiedDictionary\LexiconDictionaryToolMenuHelper.cs" />
+    <Compile Include="Areas\Lexicon\Tools\Dictionary\LexiconDictionaryToolMenuHelper.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\ReversalEntryDataAccess.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\ReversalIndexEntrySliceView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\Edit\ReversalIndexEntryVc.cs" />
+    <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\ReversalEditCompleteToolMenuHelper.cs" />
     <Compile Include="Areas\Lists\AddCustomListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -336,6 +339,7 @@
     <Compile Include="Areas\Lists\Tools\ExtNoteTypeEdit\ExtNoteTypeEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\LanguagesListEdit\LanguagesListEditTool.cs" />
     <Compile Include="Areas\MainEntryFromSubEntryTargetAdjuster.cs" />
+    <Compile Include="Areas\Notebook\Tools\NotebookDocument\NotebookDocumentMenuHelper.cs" />
     <Compile Include="Areas\NullTargetAdjuster.cs" />
     <Compile Include="Areas\ReversalListBase.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\ConcRecordList.cs" />
@@ -466,7 +470,9 @@
     <Compile Include="Areas\TextsAndWords\RespellOccurrence.cs" />
     <Compile Include="Areas\TextsAndWords\RespellUndoAction.cs" />
     <Compile Include="Areas\TextsAndWords\TextAndWordsAreaMenuHelper.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\InterlinearEdit\InterlinearEditMenuHelper.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\InterlinearEdit\InterlinearEditToolMenuHelper.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\PartiallySharedMenuHelper.cs" />
     <Compile Include="Areas\TreebarAvailability.cs" />
     <Compile Include="Areas\TreeBarHandlerAwareRecordList.cs" />
     <Compile Include="Controls\DetailControls\AtomicReferenceDisabledSlice.cs">

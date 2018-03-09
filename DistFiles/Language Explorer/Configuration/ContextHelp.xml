@@ -31,7 +31,6 @@
 	<!--
 		  Edit menu
 		  -->
-	<item id="CmdFindAndReplaceText">Find and Replace Text</item>
 	<item id="CmdBreakPhrase">Break selected phrase into words.</item>
 	<item id="CmdGoToRecord">Find a Record in your Notebook.</item>
 	<!--

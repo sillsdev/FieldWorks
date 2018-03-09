@@ -13,15 +13,31 @@ namespace LanguageExplorer
 		internal static void AddInsertToolbarItems(MajorFlexComponentParameters majorFlexComponentParameters, List<ToolStripButton> insertStripButtons)
 		{
 			var toolStripInsert = GetInsertToolStrip(majorFlexComponentParameters);
-			toolStripInsert.Items.AddRange(insertStripButtons.ToArray());
-			toolStripInsert.Visible = insertStripButtons.Any();
+			foreach (var button in insertStripButtons)
+			{
+				toolStripInsert.Items.Insert(0, button);
+			}
 		}
 
-		internal static void DeactivateInsertToolbar(MajorFlexComponentParameters majorFlexComponentParameters)
+		internal static void ResetInsertToolbar(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			var toolStripInsert = GetInsertToolStrip(majorFlexComponentParameters);
-			toolStripInsert.Items.Clear();
-			toolStripInsert.Visible = false;
+			var goners = new List<ToolStripButton>();
+			foreach (ToolStripButton item in toolStripInsert.Items)
+			{
+				if (item.Name == "toolStripButtonFindText")
+				{
+					item.Enabled = false;
+				}
+				else
+				{
+					goners.Add(item);
+				}
+			}
+			foreach (var goner in goners)
+			{
+				toolStripInsert.Items.Remove(goner);
+			}
 		}
 
 		private static ToolStrip GetInsertToolStrip(MajorFlexComponentParameters majorFlexComponentParameters)

@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class ReversalEditCompleteTool : ITool
 	{
-		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
+		private ReversalEditCompleteToolMenuHelper _reversalEditCompleteToolMenuHelper;
 		private const string panelMenuId = "left";
 		private LcmCache _cache;
 		private MultiPane _multiPane;
@@ -53,7 +53,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_propertyTable = majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
-			_lexiconAreaMenuHelper.Dispose();
+			_reversalEditCompleteToolMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
 			_cache = null;
@@ -61,7 +61,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			_currentReversalIndex = null;
 			_xhtmlDocView = null;
 			_sliceContextMenuFactory = null;
-			_lexiconAreaMenuHelper = null;
+			_reversalEditCompleteToolMenuHelper = null;
 		}
 
 		/// <summary>
@@ -82,10 +82,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			{
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LexiconArea.AllReversalEntries, majorFlexComponentParameters.Statusbar, LexiconArea.AllReversalEntriesFactoryMethod);
 			}
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
 
 			var root = XDocument.Parse(LexiconResources.ReversalEditCompleteToolParameters).Root;
 			_xhtmlDocView = new XhtmlDocView(root.Element("docview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
+			_reversalEditCompleteToolMenuHelper = new ReversalEditCompleteToolMenuHelper(majorFlexComponentParameters, _xhtmlDocView, _recordList);
 #if RANDYTODO
 			// TODO: See LexiconEditTool for how to set up all manner of menus and toolbars.
 #endif
@@ -127,6 +127,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			panelButton.DatTree = recordEditView.DatTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
+			_reversalEditCompleteToolMenuHelper.Initialize();
 			_xhtmlDocView.OnPropertyChanged("ReversalIndexPublicationLayout");
 			((IPostLayoutInit)_multiPane).PostLayoutInit();
 		}

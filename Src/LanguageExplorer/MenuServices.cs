@@ -57,6 +57,16 @@ namespace LanguageExplorer
 			return GetMenu(GetMenu(menustrip, LanguageExplorerConstants.EditToolStripMenuItem).DropDownItems, "deleteToolStripMenuItem");
 		}
 
+		internal static ToolStripMenuItem GetEditFindMenu(MenuStrip menustrip)
+		{
+			return GetMenu(GetMenu(menustrip, LanguageExplorerConstants.EditToolStripMenuItem).DropDownItems, "findToolStripMenuItem");
+		}
+
+		internal static ToolStripMenuItem GetEditFindAndReplaceMenu(MenuStrip menustrip)
+		{
+			return GetMenu(GetMenu(menustrip, LanguageExplorerConstants.EditToolStripMenuItem).DropDownItems, "replaceToolStripMenuItem");
+		}
+
 		#endregion Edit menu
 
 		#region View menu

@@ -24,6 +24,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 	{
 		private AreaWideMenuHelper _areaWideMenuHelper;
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
+		private PartiallySharedMenuHelper _partiallySharedMenuHelper;
 		private const string OccurrencesOfSelectedWordform = "OccurrencesOfSelectedWordform";
 		private MultiPane _outerMultiPane;
 		private RecordBrowseView _mainRecordBrowseView;
@@ -45,6 +46,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_partiallySharedMenuHelper.Dispose();
 			_areaWideMenuHelper.Dispose();
 			_textAndWordsAreaMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _outerMultiPane);
@@ -54,6 +56,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			_interlinMasterNoTitleBar = null;
 			_areaWideMenuHelper = null;
 			_textAndWordsAreaMenuHelper = null;
+			_partiallySharedMenuHelper = null;
 		}
 
 		/// <summary>
@@ -97,6 +100,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			nestedMultiPaneParameters.SecondControlParameters.Control = _interlinMasterNoTitleBar;
 			_nestedMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters);
 			_mainRecordBrowseView = new RecordBrowseView(root.Element("wordList").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordListProvidingOwner);
+			_partiallySharedMenuHelper = new PartiallySharedMenuHelper(majorFlexComponentParameters, _interlinMasterNoTitleBar, _recordListProvidingOwner);
 
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{

@@ -6,5 +6,5 @@
 			<configure class="CmSemanticDomain" label="Domain" layout="classifiedDict"/>
 		</layoutType>
 	</configureLayouts>
-	<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.DictionaryPublicationDecorator"/>
+	<decoratorClass assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.DictionaryPublicationDecorator"/>
 </parameters>

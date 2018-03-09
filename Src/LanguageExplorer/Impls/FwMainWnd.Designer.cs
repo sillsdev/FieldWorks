@@ -60,6 +60,8 @@ namespace LanguageExplorer.Impls
 			this.pasteHyperlinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.copyLocationAsHyperlinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem13 = new System.Windows.Forms.ToolStripSeparator();
+			this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem14 = new System.Windows.Forms.ToolStripSeparator();
 			this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,6 +85,8 @@ namespace LanguageExplorer.Impls
 			this._toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
 			this.configureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.restoreDefaultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripMenuItem20 = new System.Windows.Forms.ToolStripSeparator();
 			this.setUpWritingSystemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem15 = new System.Windows.Forms.ToolStripSeparator();
 			this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripSeparator();
@@ -146,11 +150,10 @@ namespace LanguageExplorer.Impls
 			this.toolStripView = new System.Windows.Forms.ToolStrip();
 			this.toolStripButtonChangeFilterClearAll = new System.Windows.Forms.ToolStripButton();
 			this.toolStripInsert = new System.Windows.Forms.ToolStrip();
+			this.toolStripButtonFindText = new System.Windows.Forms.ToolStripButton();
 			this.toolStripFormat = new System.Windows.Forms.ToolStrip();
 			this.toolStripComboBoxWritingSystem = new System.Windows.Forms.ToolStripComboBox();
 			this.toolStripComboBoxStyles = new System.Windows.Forms.ToolStripComboBox();
-			this.toolStripMenuItem20 = new System.Windows.Forms.ToolStripSeparator();
-			this.restoreDefaultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._menuStrip.SuspendLayout();
 			this.toolStripStandard.SuspendLayout();
 			this.toolStripContainer.ContentPanel.SuspendLayout();
@@ -165,6 +168,7 @@ namespace LanguageExplorer.Impls
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelArea)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelRecordNumber)).BeginInit();
 			this.toolStripView.SuspendLayout();
+			this.toolStripInsert.SuspendLayout();
 			this.toolStripFormat.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -410,6 +414,8 @@ namespace LanguageExplorer.Impls
             this.pasteHyperlinkToolStripMenuItem,
             this.copyLocationAsHyperlinkToolStripMenuItem,
             this.toolStripMenuItem13,
+            this.findToolStripMenuItem,
+            this.replaceToolStripMenuItem,
             this.toolStripMenuItem14,
             this.selectAllToolStripMenuItem,
             this.deleteToolStripMenuItem});
@@ -502,6 +508,23 @@ namespace LanguageExplorer.Impls
 			this.toolStripMenuItem13.Name = "toolStripMenuItem13";
 			this.toolStripMenuItem13.Size = new System.Drawing.Size(216, 6);
 			// 
+			// findToolStripMenuItem
+			// 
+			this.findToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("findToolStripMenuItem.Image")));
+			this.findToolStripMenuItem.Name = "findToolStripMenuItem";
+			this.findToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.F)));
+			this.findToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+			this.findToolStripMenuItem.Text = "Find...";
+			this.findToolStripMenuItem.ToolTipText = "Find and Replace Text";
+			// 
+			// replaceToolStripMenuItem
+			// 
+			this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
+			this.replaceToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
+			this.replaceToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+			this.replaceToolStripMenuItem.Text = "Replace...";
+			// 
 			// toolStripMenuItem14
 			// 
 			this.toolStripMenuItem14.Name = "toolStripMenuItem14";
@@ -520,7 +543,7 @@ namespace LanguageExplorer.Impls
 			this.deleteToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Fuchsia;
 			this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
 			this.deleteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete)));
-			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
+			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
 			this.deleteToolStripMenuItem.Text = "Delete";
 			this.deleteToolStripMenuItem.Click += new System.EventHandler(this.Edit_Delete_Click);
 			// 
@@ -693,8 +716,20 @@ namespace LanguageExplorer.Impls
             this.toolStripMenuItem20,
             this.setUpWritingSystemsToolStripMenuItem});
 			this.configureToolStripMenuItem.Name = "configureToolStripMenuItem";
-			this.configureToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.configureToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
 			this.configureToolStripMenuItem.Text = "Configure";
+			// 
+			// restoreDefaultsToolStripMenuItem
+			// 
+			this.restoreDefaultsToolStripMenuItem.Name = "restoreDefaultsToolStripMenuItem";
+			this.restoreDefaultsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+			this.restoreDefaultsToolStripMenuItem.Text = "Restore Defaults...";
+			this.restoreDefaultsToolStripMenuItem.Click += new System.EventHandler(this.restoreDefaultsToolStripMenuItem_Click);
+			// 
+			// toolStripMenuItem20
+			// 
+			this.toolStripMenuItem20.Name = "toolStripMenuItem20";
+			this.toolStripMenuItem20.Size = new System.Drawing.Size(201, 6);
 			// 
 			// setUpWritingSystemsToolStripMenuItem
 			// 
@@ -989,9 +1024,10 @@ namespace LanguageExplorer.Impls
             this._tsbNext,
             this._tsbLast,
             this.toolStripButtonFlexLiftBridge});
+			this.toolStripStandard.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
 			this.toolStripStandard.Location = new System.Drawing.Point(3, 24);
 			this.toolStripStandard.Name = "toolStripStandard";
-			this.toolStripStandard.Size = new System.Drawing.Size(294, 27);
+			this.toolStripStandard.Size = new System.Drawing.Size(283, 27);
 			this.toolStripStandard.TabIndex = 2;
 			this.toolStripStandard.Text = "Standard";
 			// 
@@ -1242,9 +1278,10 @@ namespace LanguageExplorer.Impls
 			this.toolStripView.Dock = System.Windows.Forms.DockStyle.None;
 			this.toolStripView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButtonChangeFilterClearAll});
-			this.toolStripView.Location = new System.Drawing.Point(300, 24);
+			this.toolStripView.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
+			this.toolStripView.Location = new System.Drawing.Point(290, 24);
 			this.toolStripView.Name = "toolStripView";
-			this.toolStripView.Size = new System.Drawing.Size(35, 25);
+			this.toolStripView.Size = new System.Drawing.Size(24, 23);
 			this.toolStripView.TabIndex = 5;
 			// 
 			// toolStripButtonChangeFilterClearAll
@@ -1261,10 +1298,23 @@ namespace LanguageExplorer.Impls
 			// toolStripInsert
 			// 
 			this.toolStripInsert.Dock = System.Windows.Forms.DockStyle.None;
-			this.toolStripInsert.Location = new System.Drawing.Point(337, 24);
+			this.toolStripInsert.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButtonFindText});
+			this.toolStripInsert.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
+			this.toolStripInsert.Location = new System.Drawing.Point(318, 24);
 			this.toolStripInsert.Name = "toolStripInsert";
-			this.toolStripInsert.Size = new System.Drawing.Size(111, 25);
+			this.toolStripInsert.Size = new System.Drawing.Size(24, 23);
 			this.toolStripInsert.TabIndex = 4;
+			// 
+			// toolStripButtonFindText
+			// 
+			this.toolStripButtonFindText.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.toolStripButtonFindText.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonFindText.Image")));
+			this.toolStripButtonFindText.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButtonFindText.Name = "toolStripButtonFindText";
+			this.toolStripButtonFindText.Size = new System.Drawing.Size(23, 22);
+			this.toolStripButtonFindText.Text = "toolStripButtonFindText";
+			this.toolStripButtonFindText.ToolTipText = "Find and Replace Text";
 			// 
 			// toolStripFormat
 			// 
@@ -1272,9 +1322,10 @@ namespace LanguageExplorer.Impls
 			this.toolStripFormat.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripComboBoxWritingSystem,
             this.toolStripComboBoxStyles});
-			this.toolStripFormat.Location = new System.Drawing.Point(450, 24);
+			this.toolStripFormat.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
+			this.toolStripFormat.Location = new System.Drawing.Point(345, 24);
 			this.toolStripFormat.Name = "toolStripFormat";
-			this.toolStripFormat.Size = new System.Drawing.Size(258, 25);
+			this.toolStripFormat.Size = new System.Drawing.Size(278, 23);
 			this.toolStripFormat.TabIndex = 3;
 			// 
 			// toolStripComboBoxWritingSystem
@@ -1293,18 +1344,6 @@ namespace LanguageExplorer.Impls
 			this.toolStripComboBoxStyles.Size = new System.Drawing.Size(121, 25);
 			this.toolStripComboBoxStyles.ToolTipText = "Styles";
 			// 
-			// toolStripMenuItem20
-			// 
-			this.toolStripMenuItem20.Name = "toolStripMenuItem20";
-			this.toolStripMenuItem20.Size = new System.Drawing.Size(201, 6);
-			// 
-			// restoreDefaultsToolStripMenuItem
-			// 
-			this.restoreDefaultsToolStripMenuItem.Name = "restoreDefaultsToolStripMenuItem";
-			this.restoreDefaultsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
-			this.restoreDefaultsToolStripMenuItem.Text = "Restore Defaults...";
-			this.restoreDefaultsToolStripMenuItem.Click += new System.EventHandler(this.restoreDefaultsToolStripMenuItem_Click);
-			// 
 			// FwMainWnd
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1316,7 +1355,6 @@ namespace LanguageExplorer.Impls
 			this.Name = "FwMainWnd";
 			this.Text = "FieldWorks Language Explorer";
 			this.Activated += new System.EventHandler(this.FwMainWnd_Activated);
-			this.Deactivate += new System.EventHandler(this.FwMainWnd_Deactivate);
 			this._menuStrip.ResumeLayout(false);
 			this._menuStrip.PerformLayout();
 			this.toolStripStandard.ResumeLayout(false);
@@ -1336,6 +1374,8 @@ namespace LanguageExplorer.Impls
 			((System.ComponentModel.ISupportInitialize)(this.statusBarPanelRecordNumber)).EndInit();
 			this.toolStripView.ResumeLayout(false);
 			this.toolStripView.PerformLayout();
+			this.toolStripInsert.ResumeLayout(false);
+			this.toolStripInsert.PerformLayout();
 			this.toolStripFormat.ResumeLayout(false);
 			this.toolStripFormat.PerformLayout();
 			this.ResumeLayout(false);
@@ -1472,5 +1512,8 @@ namespace LanguageExplorer.Impls
 		private ToolStripMenuItem writingSystemToolStripMenuItem;
 		private ToolStripSeparator toolStripMenuItem20;
 		private ToolStripMenuItem restoreDefaultsToolStripMenuItem;
+		private ToolStripMenuItem findToolStripMenuItem;
+		private ToolStripButton toolStripButtonFindText;
+		private ToolStripMenuItem replaceToolStripMenuItem;
 	}
 }

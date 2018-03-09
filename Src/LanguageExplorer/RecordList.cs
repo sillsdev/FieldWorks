@@ -560,7 +560,7 @@ namespace LanguageExplorer
 		{
 			if (ActiveRecordListRepository.ActiveRecordList != this)
 			{
-				RecordListServices.SetRecordList(this);
+				RecordListServices.SetRecordList(PropertyTable.GetValue<Form>("window").Handle, this);
 			}
 			if (IsActiveInGui)
 			{

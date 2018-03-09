@@ -44,5 +44,21 @@ namespace LanguageExplorer
 		}
 
 		#endregion View toolbar
+
+		#region Insert toolbar
+
+		internal static ToolStrip GetInsertToolStrip(ToolStripContainer toolStripContainer)
+		{
+			var retVal = GetToolStrip(toolStripContainer, "toolStripInsert");
+			return retVal;
+		}
+
+		internal static ToolStripItem GetInsertFindAndReplaceToolStripItem(ToolStripContainer toolStripContainer)
+		{
+			var insertToolStrip = GetInsertToolStrip(toolStripContainer);
+			return insertToolStrip.Items["toolStripButtonFindText"];
+		}
+
+		#endregion Insert toolbar
 	}
 }

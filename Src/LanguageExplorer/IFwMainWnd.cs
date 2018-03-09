@@ -76,13 +76,6 @@ namespace LanguageExplorer
 		bool OnFinishedInit();
 
 		/// <summary>
-		/// Handle the Find menu command.
-		/// </summary>
-		/// <param name="args">Arguments</param>
-		/// <returns><c>true</c> if message handled, otherwise <c>false</c>.</returns>
-		bool OnEditFind(object args);
-
-		/// <summary>
 		/// Prepare to refresh the main window and its IAreas and ITools.
 		/// </summary>
 		void PrepareToRefresh();

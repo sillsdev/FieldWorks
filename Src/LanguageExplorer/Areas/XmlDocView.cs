@@ -1221,40 +1221,12 @@ namespace LanguageExplorer.Areas
 		#endregion
 
 		/// <summary>
-		/// Implements the command that just does Find, without Replace.
+		/// Enables the menu that does Find and Replace.
 		/// </summary>
-		public bool OnFindAndReplaceText(object argument)
+		internal bool CanUseReplaceText()
 		{
-			return ((IFwMainWnd)ParentForm).OnEditFind(argument);
+			return !m_mainView.ReadOnlyView;
 		}
-
-#if RANDYTODO
-		/// <summary>
-		/// Enables the command that just does Find, without Replace.
-		/// </summary>
-		public virtual bool OnDisplayFindAndReplaceText(object commandObject, ref UIItemDisplayProperties display)
-		{
-			display.Enabled = display.Visible = (ParentForm is IFwMainWnd);
-			return true; //we've handled this
-		}
-
-		/// <summary>
-		/// Implements the command that just does Find, without Replace.
-		/// </summary>
-		public bool OnReplaceText(object argument)
-		{
-			return ((IFwMainWnd)ParentForm).OnEditReplace(argument);
-		}
-
-		/// <summary>
-		/// Enables the command that just does Find, without Replace.
-		/// </summary>
-		public virtual bool OnDisplayReplaceText(object commandObject, ref UIItemDisplayProperties display)
-		{
-			display.Enabled = !m_mainView.ReadOnlyView;
-			return true; //we've handled this
-		}
-#endif
 
 		public string FindTabHelpId => XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "findHelpId", null);
 	}

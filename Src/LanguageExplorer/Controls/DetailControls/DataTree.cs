@@ -967,6 +967,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_partInventory = parts;
 			InitializeBasic(cache, fHasSplitter);
 			InitializeComponent();
+			InitializeAdvanced();
 		}
 
 		protected void InitializeComponentBasic()
@@ -985,6 +986,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected void InitializeComponent()
 		{
 			InitializeComponentBasic();
+		}
+
+		private void InitializeAdvanced()
+		{
 			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>("window"), this))
 			{
 				// NB: The ArrayList created here can hold disparate objects, such as XmlNodes and ints.

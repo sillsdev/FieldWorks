@@ -23,6 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 	internal sealed class ComplexConcordanceTool : ITool
 	{
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
+		private PartiallySharedMenuHelper _partiallySharedMenuHelper;
 		internal const string ComplexConcOccurrencesOfSelectedUnit = "complexConcOccurrencesOfSelectedUnit";
 		private MultiPane _concordanceContainer;
 		private ComplexConcControl _complexConcControl;
@@ -42,6 +43,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
+			_partiallySharedMenuHelper.Dispose();
 			_textAndWordsAreaMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _concordanceContainer);
 
@@ -49,6 +51,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			_recordBrowseView = null;
 			_interlinMasterNoTitleBar = null;
 			_textAndWordsAreaMenuHelper = null;
+			_partiallySharedMenuHelper = null;
 		}
 
 		/// <summary>
@@ -82,6 +85,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			root.Element("wordOccurrenceList").Element("parameters").Element("includeCordanceColumns").ReplaceWith(columns);
 			_interlinMasterNoTitleBar = new InterlinMasterNoTitleBar(root.Element("ITextControl").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, MenuServices.GetFileMenu(majorFlexComponentParameters.MenuStrip), MenuServices.GetFilePrintMenu(majorFlexComponentParameters.MenuStrip));
 			mainConcordanceContainerParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _interlinMasterNoTitleBar);
+			_partiallySharedMenuHelper = new PartiallySharedMenuHelper(majorFlexComponentParameters, _interlinMasterNoTitleBar, _recordList);
 
 			// This will be the nested MultiPane that goes into mainConcordanceContainerParameters.FirstControlParameters.Control
 			var nestedMultiPaneParameters = new MultiPaneParameters

@@ -20,7 +20,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class LexiconClassifiedDictionaryTool : ITool
 	{
-		private LexiconAreaMenuHelper _lexiconAreaMenuHelper;
+		private LexiconClassifiedDictionaryToolMenuHelper _lexicoClassifiedDictionaryMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private IRecordList _recordList;
 		[Import(AreaServices.LexiconAreaMachineName)]
@@ -36,9 +36,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 		/// </remarks>
 		public void Deactivate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_lexiconAreaMenuHelper.Dispose();
+			_lexicoClassifiedDictionaryMenuHelper.Dispose();
 			PaneBarContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _paneBarContainer);
-			_lexiconAreaMenuHelper = null;
+			_lexicoClassifiedDictionaryMenuHelper = null;
 		}
 
 		/// <summary>
@@ -53,7 +53,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			{
 				_recordList = majorFlexComponentParameters.RecordListRepositoryForTools.GetRecordList(LexiconArea.SemanticDomainList_LexiconArea, majorFlexComponentParameters.Statusbar, LexiconArea.SemanticDomainList_LexiconAreaFactoryMethod);
 			}
-			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(majorFlexComponentParameters, _recordList);
 
 			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters.PropertyTable, null, "ShowFailingItems-lexiconClassifiedDictionary", LexiconResources.Show_Unused_Items, LexiconResources.Show_Unused_Items)
 			{
@@ -61,15 +60,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			};
 			var xmlDocViewPaneBar = new PaneBar();
 			xmlDocViewPaneBar.AddControls(new List<Control> { panelButton });
+			var xmlDocView = new XmlDocView(XDocument.Parse(LexiconResources.LexiconClassifiedDictionaryParameters).Root, majorFlexComponentParameters.LcmCache, _recordList);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer,
 				xmlDocViewPaneBar,
-				new XmlDocView(XDocument.Parse(LexiconResources.LexiconClassifiedDictionaryParameters).Root, majorFlexComponentParameters.LcmCache, _recordList));
+				xmlDocView);
+			_lexicoClassifiedDictionaryMenuHelper = new LexiconClassifiedDictionaryToolMenuHelper(majorFlexComponentParameters, xmlDocView, _recordList);
 
 			// Too early before now.
 			((ISemanticDomainTreeBarHandler)_recordList.MyTreeBarHandler).FinishInitialization(xmlDocViewPaneBar);
-			_lexiconAreaMenuHelper.Initialize();
+			_lexicoClassifiedDictionaryMenuHelper.Initialize();
 		}
 
 		/// <summary>

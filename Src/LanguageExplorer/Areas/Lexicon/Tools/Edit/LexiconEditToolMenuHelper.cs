@@ -180,7 +180,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_newInsertMenusAndHandlers.Clear();
 
 				_insertEntryToolStripButton.Click -= Insert_Entry_Clicked;
-				InsertToolbarManager.DeactivateInsertToolbar(_majorFlexComponentParameters);
+				InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
 				_insertEntryToolStripButton.Dispose();
 			}
 			_lexiconAreaMenuHelper = null;

@@ -1039,23 +1039,11 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		/// <summary>
 		/// Implements the command that just does Find, without Replace.
 		/// </summary>
-		public bool OnFindAndReplaceText(object argument)
+		internal void FindText()
 		{
 			var geckoBrowser = m_mainView?.NativeBrowser as GeckoWebBrowser;
 			geckoBrowser?.Window.Find(string.Empty, false, false, true, false, true, true);
-			return true;
 		}
-
-#if RANDYTODO
-		/// <summary>
-		/// Enables the command that just does Find, without Replace.
-		/// </summary>
-		public virtual bool OnDisplayFindAndReplaceText(object commandObject, ref UIItemDisplayProperties display)
-		{
-			display.Enabled = display.Visible = true;
-			return true; //we've handled this
-		}
-#endif
 
 		public bool OnShowAllEntries(object args)
 		{

@@ -1159,55 +1159,39 @@ private void ReloadPaneBar(IPaneBar paneBar)
 
 		#region free translation stuff
 
-#if RANDYTODO
-		public bool OnDisplayFindAndReplaceText(object commandObject,
-			ref UIItemDisplayProperties display)
+		public bool CanDisplayFindTexMenutOrFindAndReplaceTextMenu(out bool enabled)
 		{
-			string toolChoice = m_propertyTable.GetValue<string>(AreaServices.ToolChoice);
-			bool fVisible = m_rtPane != null && (m_tabCtrl.SelectedIndex == (int)TabPageSelection.RawText) && InFriendlyArea && toolChoice != AreaServices.WordListConcordanceMachineName;
-			display.Visible = fVisible;
+			var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
+			var menuIsVisible = m_rtPane != null && (m_tabCtrl.SelectedIndex == (int)TabPageSelection.RawText) && InFriendlyArea && toolChoice != AreaServices.WordListConcordanceMachineName;
+			enabled = false;
 
-			if (fVisible && m_rtPane.RootBox != null)
+			if (menuIsVisible && m_rtPane.RootBox != null)
 			{
-				int hvoRoot, frag;
-				IVwViewConstructor vc;
-				IVwStylesheet ss;
-				m_rtPane.RootBox.GetRootObject(out hvoRoot, out vc, out frag, out ss);
-				display.Enabled = hvoRoot != 0;
+				int hvoRoot, fragDummy;
+				IVwViewConstructor vcDummy;
+				IVwStylesheet ssDummy;
+				m_rtPane.RootBox.GetRootObject(out hvoRoot, out vcDummy, out fragDummy, out ssDummy);
+				enabled = hvoRoot != 0;
 			}
 			else
-				display.Enabled = false;
+			{
+				enabled = false;
+			}
 
 			// Although it's a modal dialog, it's dangerous for it to be visible in contexts where it
 			// could not be launched, presumably because it doesn't apply to that view, and may do
 			// something dangerous to another view (cf LT-7961).
-			IApp app = m_propertyTable.GetValue<IApp>("App");
-			if (app != null && !display.Enabled)
+			var app = PropertyTable.GetValue<IApp>("App");
+			if (app != null && !enabled)
+			{
 				app.RemoveFindReplaceDialog();
-			return true;
-		}
-#endif
-
-		public void OnFindAndReplaceText(object argument)
-		{
-			var app = PropertyTable.GetValue<IApp>("App");
-			app?.ShowFindReplaceDialog(false, m_rtPane);
+			}
+			return menuIsVisible;
 		}
 
-#if RANDYTODO
-		/// <summary>
-		/// Replace is enabled exactly when Find and Replace is.
-		/// </summary>
-		public bool OnDisplayReplaceText(object commandObject, ref UIItemDisplayProperties display)
+		internal void HandleFindAndReplace(bool doReplace)
 		{
-			return OnDisplayFindAndReplaceText(commandObject, ref display);
-		}
-#endif
-
-		public void OnReplaceText(object argument)
-		{
-			var app = PropertyTable.GetValue<IApp>("App");
-			app?.ShowFindReplaceDialog(true, m_rtPane);
+			PropertyTable.GetValue<IApp>("App")?.ShowFindReplaceDialog(doReplace, m_rtPane);
 		}
 
 #if RANDYTODO
