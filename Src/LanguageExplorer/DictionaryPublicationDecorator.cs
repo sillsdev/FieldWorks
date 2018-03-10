@@ -129,15 +129,15 @@ namespace LanguageExplorer
 				foreach (var notifee in m_notifees)
 				{
 					notifee.PropChanged(hvo, tag, 0, get_VecSize(hvo, tag), 0);
-				}
+			}
 			}
 			else
 			{
 				foreach (var notifee in m_notifees)
 				{
 					notifee.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
-				}
 			}
+		}
 		}
 
 		private void BuildHomographInfo()
@@ -197,8 +197,8 @@ namespace LanguageExplorer
 				foreach (var item in list.Values)
 				{
 					m_homographNumbers[item.Hvo] = (m_excludeAsMainEntry.Contains(item.Hvo) ? 0 : index++);
-				}
 			}
+		}
 		}
 
 		public override bool get_BooleanProp(int hvo, int tag)
@@ -212,7 +212,7 @@ namespace LanguageExplorer
 			{
 				return base.get_IntProp(hvo, tag);
 			}
-			int result;
+				int result;
 			return m_homographNumbers.TryGetValue(hvo, out result) ? result : base.get_IntProp(hvo, tag);
 		}
 
@@ -350,7 +350,7 @@ namespace LanguageExplorer
 				{
 					continue;
 				}
-				var dstCls = mdc.GetDstClsId(flid);
+					var dstCls = mdc.GetDstClsId(flid);
 				switch (dstCls)
 				{
 					case LexEntryTags.kClassId:
@@ -389,33 +389,33 @@ namespace LanguageExplorer
 			{
 				return;
 			}
-			foreach (var obj in Publication.ReferringObjects)
-			{
-				var entry = obj as ILexEntry;
-				if (entry == null || entry.DoNotPublishInRC.Contains(Publication))
+				foreach (var obj in Publication.ReferringObjects)
 				{
-					m_excludedItems.Add(obj.Hvo);
-					if (obj is ILexEntry)
+					var entry = obj as ILexEntry;
+					if (entry == null || entry.DoNotPublishInRC.Contains(Publication))
+					{
+						m_excludedItems.Add(obj.Hvo);
+						if (obj is ILexEntry)
 					{
 						foreach (var sense in ((ILexEntry) obj).SensesOS)
 						{
-							ExcludeSense(sense);
+								ExcludeSense(sense);
 						}
 					}
 
-					if (obj is ILexSense)
+						if (obj is ILexSense)
 					{
-						ExcludeSense((ILexSense)obj);
+							ExcludeSense((ILexSense)obj);
 					}
 				}
-				else
-				{
-					// It's an entry, and the only other option is that it refers in DoNotShowAsMainEntry
-					Debug.Assert(entry.DoNotShowMainEntryInRC.Contains(Publication));
-					m_excludeAsMainEntry.Add(entry.Hvo);
+					else
+					{
+						// It's an entry, and the only other option is that it refers in DoNotShowAsMainEntry
+						Debug.Assert(entry.DoNotShowMainEntryInRC.Contains(Publication));
+						m_excludeAsMainEntry.Add(entry.Hvo);
+					}
 				}
 			}
-		}
 
 		private void ExcludeSense(ILexSense sense)
 		{
@@ -514,8 +514,12 @@ namespace LanguageExplorer
 
 		private bool IsMainReversalEntry(int hvo)
 		{
-			var entry = Cache.ServiceLocator.GetObject(hvo) as IReversalIndexEntry;
-			return entry?.Owner is IReversalIndex; // Subentries are owned by other Entries
+			IReversalIndexEntry entry = null;
+			if (Cache.ServiceLocator.IsValidObjectId(hvo))
+			{
+				entry = Cache.ServiceLocator.GetObject(hvo) as IReversalIndexEntry;
+			}
+			return entry != null && entry.Owner is IReversalIndex; // Subentries are owned by other Entries
 		}
 
 		private bool IsPublishableReversalEntry(int hvo)

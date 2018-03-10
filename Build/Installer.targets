@@ -92,7 +92,7 @@
 	<!-- ########################################################################################################## -->
 	<!-- ### Top Level Targets                                                                                  ### -->
 	<!-- ########################################################################################################## -->
-	<Target Name="BuildBaseInstaller" DependsOnTargets="RequirePlatform;GetDotNetFiles;ResetBuildNumberFile;CleanMasterOutputDir">
+	<Target Name="BuildBaseInstaller" DependsOnTargets="RequirePlatform;GetDotNetFiles;CleanMasterOutputDir">
 		<CallTarget Targets="BuildProductMain;BuildProductBaseMsi;CopyBuildToMaster"/>
 	</Target>
 
@@ -102,7 +102,7 @@
 	<!-- ### Build Targets                                                                                      ### -->
 	<!-- ########################################################################################################## -->
 
-	<Target Name="BuildProductMain" DependsOnTargets="BuildProduct;MakeInstallBuildFolders;CopyFilesToInstall;WriteVersionFile"/>
+	<Target Name="BuildProductMain" DependsOnTargets="BuildProduct;MakeInstallBuildFolders;CopyFilesToInstall"/>
 
 	<Target Name="BuildProduct" DependsOnTargets="CleanInstaller;ProductCompile"/>
 
@@ -136,25 +136,26 @@
 	</Target>
 
 	<Target Name="MakeInstallBuildFolders">
-		<MakeDir Directories="$(InstallersBaseDir)" Condition="!Exists('$(InstallersBaseDir)')"/>  <!-- ./BuildDir -->
+		<MakeDir Directories="$(InstallersBaseDir)" Condition="!Exists('$(InstallersBaseDir)')"/>
 
-		<ForceDelete Files="$(AppBuildDir)" />	<!-- ./BuildDir/Sample 1.0 Build -->
-
-		<!-- <ItemGroup>
-		<! - 	<BuildMasterFiles Include="$(InstallersBaseDir)/$(SafeApplicationName) Build Master/**/*"/>
-		<! - </ItemGroup>
-		<! - <Copy SourceFiles="@(BuildMasterFiles)" DestinationFolder="$(AppBuildDir)/%(RecursiveDir)"/> -->
+		<ForceDelete Files="$(AppBuildDir)" />
 	</Target>
 
 	<Target Name="CopyFilesToInstall" DependsOnTargets="InstallerVersionNumbers">
 		<!-- copy in new stuff -->
 		<ItemGroup>
+			<!-- TODO (Hasso) 2018.02: verify proper data is installed -->
+			<IcuFiles Include="$(fwrt)\DistFiles\Icu$(IcuVersion)\**\*"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Projects\**\*"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\.git\**\*"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\Translation Editor\**\*"/>
 			<BinFiles Include="$(fwrt)\Output\$(Configuration)\**\*"/>
-			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="$(fwrt)\DistFiles\Projects\**\*;$(fwrt)\DistFiles\Helps\.git\**\*;$(fwrt)\DistFiles\Helps\Translation Editor\**\*"/>
-			<DataFiles Include="$(fwrt)\DistFiles\ZeditColors.txt"/>
+			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="@(DeveloperFiles);@(IcuFiles)"/>
+			<OverrideFiles Include="$(fwrt)\FLExInstaller\*.wxi"/>
 		</ItemGroup>
+		<Copy SourceFiles="@(IcuFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)/Icu$(IcuVersion)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
-		<Copy SourceFiles="@(DataFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)/%(RecursiveDir)"/>
+		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(fwrt)/PatchableInstaller/Common"/>
 	</Target>
 
 	<Target Name="CopyBuildToMaster" >
@@ -214,21 +215,6 @@
 			DownloadsDir="$(fwrt)/$(WixLibsDir)"/>	<!-- VisualC++ 14 runtime -->
 	</Target>
 
-	<Target Name="WriteVersionFile" Condition="Exists($(MSBuildExtensionTargets))">
-		<PropertyGroup>
-			<Revision>$(MinorVersion).$(VersionSeg4)</Revision>
-		</PropertyGroup>
-		<WriteLinesToFile Overwrite="true" File="$(AppBuildDir)/$(BinDirSuffix)/CurrentVersion.number" Lines="$(Revision)"/>
-	</Target>
-
-	<Target Name="ResetBuildNumberFile">
-		<PropertyGroup>
-			<ResetVersion>$(MajorVersion).0.0</ResetVersion>
-		</PropertyGroup>
-		<WriteLinesToFile Overwrite="true" File="./build.number" Lines="$(ResetVersion)"/>
-	</Target>
-
-
 	<!-- ########################################################################################################## -->
 	<!-- ### Build Wix Product Targets                                                                          ### -->
 	<!-- ########################################################################################################## -->
@@ -260,7 +246,7 @@
 		</ReadLinesFromFile>
 		<PropertyGroup>
 			<MspFile>$(SafeApplicationName)_$(BuildVersion).msp</MspFile>
-			<PatchDir>$(RootDir)/src/WiXInstaller/CreateUpdatePatch</PatchDir>
+			<PatchDir>$(fwrt)/PatchableInstaller/CreateUpdatePatch</PatchDir>
 			<PatchArgs>"$(ApplicationName)" $(SafeApplicationName) $(BaseVersion) $(BuildVersion) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)" $(Arch)</PatchArgs>
 		</PropertyGroup>
 

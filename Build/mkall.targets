@@ -156,7 +156,7 @@
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testViews"
 				FudgeFactor="$(timeoutFudgeFactor)"
-				Timeout="200000">
+				Timeout="250000">
 			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
 		</Unitpp>
 		<Message Text="Finished building testViews." Condition="'$(action)'!='test'"/>

@@ -404,7 +404,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if(hvoResult != 0 && Cache.ServiceLocator.IsValidObjectId(hvoResult))
 				{
 					return hvoResult;  // may have been cleared by setting to zero, or the Decorator could have stale data
-				}
+			}
 			}
 			return analysis.Hvo;
 		}
@@ -625,7 +625,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					else if (frag >= kfragLineChoices && frag < kfragLineChoices + LineChoices.Count)
 					{
 						var spec = LineChoices[frag - kfragLineChoices];
-						vwenv.AddStringAltMember(spec.StringFlid, GetRealWsOrBestWsForContext(hvo, spec)/* can be vernacular or analysis */, this);
+						var ws = GetRealWsOrBestWsForContext(hvo, spec); // can be vernacular or analysis
+						if (ws > 0)
+						{
+							vwenv.AddStringAltMember(spec.StringFlid, ws, this);
+						}
 					}
 					else if (frag >= kfragAnalysisCategoryChoices && frag < kfragAnalysisCategoryChoices + LineChoices.Count)
 					{
@@ -1083,9 +1087,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						if (idxSeg >= 0 && cseg > 1)
 						{
 							sbSegNum.AppendFormat(".{0}", idxSeg + 1);
-						}
 					}
 				}
+			}
 			}
 			var tsbSegNum = TsStringUtils.MakeStrBldr();
 			tsbSegNum.ReplaceTsString(0, tsbSegNum.Length, TsStringUtils.MakeString(sbSegNum.ToString(), m_cache.DefaultUserWs));
@@ -1258,9 +1262,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 				result = null;
 				var collector = new TsStringCollectorEnv(null, vcLexGlossFrag.Cache.MainCacheAccessor, possibleVariant.Hvo)
-				{
-					RequestAppendSpaceForFirstWordInNewParagraph = false
-				};
+									{
+										RequestAppendSpaceForFirstWordInNewParagraph = false
+									};
 				if (vcLexGlossFrag.DisplayLexGlossWithInflType(collector, possibleVariant, sense, spec, inflType))
 				{
 					result = collector.Result;
@@ -1283,95 +1287,95 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return false;
 			}
-			var wsGloss = spec.GetActualWs(Cache, sense.Hvo, m_wsAnalysis);
-			var wsDefinitionGloss = Cache.ServiceLocator.WritingSystemManager.Get(wsGloss);
-			var wsUser = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
-			var testGloss = sense.Gloss.get_String(wsGloss);
-			// don't bother adding anything for an empty gloss.
+				var wsGloss = spec.GetActualWs(Cache, sense.Hvo, m_wsAnalysis);
+				var wsDefinitionGloss = Cache.ServiceLocator.WritingSystemManager.Get(wsGloss);
+				var wsUser = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+				var testGloss = sense.Gloss.get_String(wsGloss);
+				// don't bother adding anything for an empty gloss.
 			if (testGloss.Text == null || testGloss.Text.Length < 0)
-			{
+				{
 				return false;
 			}
-			vwenv.OpenParagraph();
-			// see if we have an irregularly inflected form type reference
+					vwenv.OpenParagraph();
+					// see if we have an irregularly inflected form type reference
 			var leitFirst = ler.VariantEntryTypesRS.FirstOrDefault(let => @let.ClassID == LexEntryInflTypeTags.kClassId);
 
-			// add any GlossPrepend info
-			if (leitFirst != null)
-			{
-				vwenv.OpenInnerPile();
-				// TODO: add dependency to VariantType GlossPrepend/Append names
-				vwenv.NoteDependency(new[] { ler.Hvo }, new[] { LexEntryRefTags.kflidVariantEntryTypes }, 1);
-				vwenv.OpenParagraph();
-				ITsString tssPrepend = null;
-				if (inflType != null)
-				{
-					tssPrepend = MorphServices.AddTssGlossAffix(null, inflType.GlossPrepend, wsDefinitionGloss, wsUser);
-				}
-				else
-				{
-					ITsIncStrBldr sbPrepend;
-					ITsIncStrBldr sbAppend;
-					JoinGlossAffixesOfInflVariantTypes(ler, wsGloss, out sbPrepend, out sbAppend);
-					if (sbPrepend.Text != null)
+					// add any GlossPrepend info
+					if (leitFirst != null)
 					{
-						tssPrepend = sbPrepend.GetString();
-					}
+						vwenv.OpenInnerPile();
+						// TODO: add dependency to VariantType GlossPrepend/Append names
+				vwenv.NoteDependency(new[] { ler.Hvo }, new[] { LexEntryRefTags.kflidVariantEntryTypes }, 1);
+						vwenv.OpenParagraph();
+						ITsString tssPrepend = null;
+						if (inflType != null)
+						{
+							tssPrepend = MorphServices.AddTssGlossAffix(null, inflType.GlossPrepend, wsDefinitionGloss, wsUser);
+						}
+						else
+						{
+							ITsIncStrBldr sbPrepend;
+							ITsIncStrBldr sbAppend;
+							JoinGlossAffixesOfInflVariantTypes(ler, wsGloss, out sbPrepend, out sbAppend);
+							if (sbPrepend.Text != null)
+					{
+								tssPrepend = sbPrepend.GetString();
+						}
 				}
 
-				if (tssPrepend != null)
+						if (tssPrepend != null)
 				{
-					vwenv.AddString(tssPrepend);
+							vwenv.AddString(tssPrepend);
 				}
-				vwenv.CloseParagraph();
-				vwenv.CloseInnerPile();
-			}
-			// add gloss of main entry or sense
-			{
-				vwenv.OpenInnerPile();
-				// NOTE: remember to NoteDependency from OuterObject
-				vwenv.AddObj(sense.Hvo, this, kfragLineChoices + iLineChoice);
-				vwenv.CloseInnerPile();
-			}
-			// now add variant type info
-			if (leitFirst != null)
-			{
-				vwenv.OpenInnerPile();
-				// TODO: add dependency to VariantType GlossPrepend/Append names
-				vwenv.NoteDependency(new[] { ler.Hvo }, new[] { LexEntryRefTags.kflidVariantEntryTypes }, 1);
-				vwenv.OpenParagraph();
-				ITsString tssAppend = null;
-				if (inflType != null)
-				{
-					tssAppend = MorphServices.AddTssGlossAffix(null, inflType.GlossAppend, wsDefinitionGloss, wsUser);
-				}
-				else
-				{
-					ITsIncStrBldr sbPrepend;
-					ITsIncStrBldr sbAppend;
-					JoinGlossAffixesOfInflVariantTypes(ler, wsGloss, out sbPrepend, out sbAppend);
-					if (sbAppend.Text != null)
-					{
-						tssAppend = sbAppend.GetString();
+						vwenv.CloseParagraph();
+						vwenv.CloseInnerPile();
 					}
+					// add gloss of main entry or sense
+					{
+						vwenv.OpenInnerPile();
+						// NOTE: remember to NoteDependency from OuterObject
+						vwenv.AddObj(sense.Hvo, this, kfragLineChoices + iLineChoice);
+						vwenv.CloseInnerPile();
+					}
+					// now add variant type info
+					if (leitFirst != null)
+					{
+						vwenv.OpenInnerPile();
+						// TODO: add dependency to VariantType GlossPrepend/Append names
+				vwenv.NoteDependency(new[] { ler.Hvo }, new[] { LexEntryRefTags.kflidVariantEntryTypes }, 1);
+						vwenv.OpenParagraph();
+						ITsString tssAppend = null;
+						if (inflType != null)
+						{
+							tssAppend = MorphServices.AddTssGlossAffix(null, inflType.GlossAppend, wsDefinitionGloss, wsUser);
+						}
+						else
+						{
+							ITsIncStrBldr sbPrepend;
+							ITsIncStrBldr sbAppend;
+							JoinGlossAffixesOfInflVariantTypes(ler, wsGloss, out sbPrepend, out sbAppend);
+							if (sbAppend.Text != null)
+					{
+								tssAppend = sbAppend.GetString();
+						}
 				}
-				// Use AddProp/DisplayVariant to store GlossAppend with m_tssPendingGlossAffix
-				// this allows InterlinearExporter to know to export a glsAppend item
-				try
-				{
+							// Use AddProp/DisplayVariant to store GlossAppend with m_tssPendingGlossAffix
+							// this allows InterlinearExporter to know to export a glsAppend item
+							try
+							{
 					m_tssPendingGlossAffix = tssAppend ?? m_tssMissingGlossAppend;
-					vwenv.AddProp(ktagGlossAppend, this, 0);
+								vwenv.AddProp(ktagGlossAppend, this, 0);
+							}
+							finally
+							{
+								m_tssPendingGlossAffix = null;
+							}
+						vwenv.CloseParagraph();
+						vwenv.CloseInnerPile();
+					}
+					vwenv.CloseParagraph();
+					return true;
 				}
-				finally
-				{
-					m_tssPendingGlossAffix = null;
-				}
-				vwenv.CloseParagraph();
-				vwenv.CloseInnerPile();
-			}
-			vwenv.CloseParagraph();
-			return true;
-		}
 
 		/// <summary>
 		/// Add the pile of labels used to identify the lines in interlinear text.
@@ -1515,7 +1519,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						while (i < m_choices.Count && m_choices[i].MorphemeLevel)
 						{
 							i++;
-						}
+					}
 					}
 					else
 					{
@@ -1866,32 +1870,32 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			switch (tag)
 			{
 				case SimpleRootSite.kTagUserPrompt:
-					// In this case, frag is the writing system we really want the user to type.
-					// We put a zero-width space in that WS at the start of the string since that is the
-					// WS the user will end up typing in.
+				// In this case, frag is the writing system we really want the user to type.
+				// We put a zero-width space in that WS at the start of the string since that is the
+				// WS the user will end up typing in.
 					var bldr = TsStringUtils.MakeString(ITextStrings.ksEmptyFreeTransPrompt, m_cache.DefaultUserWs).GetBldr();
 					bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptSpellCheck, (int)FwTextPropVar.ktpvEnum, (int)SpellingModes.ksmDoNotCheck);
-					bldr.Replace(0, 0, "\u200B", null);
-					// This dummy property should always be set on a user prompt. It allows certain formatting commands to be
-					// handled specially.
-					bldr.SetIntPropValues(0, bldr.Length, SimpleRootSite.ktptUserPrompt, (int)FwTextPropVar.ktpvDefault, 1);
-					bldr.SetIntPropValues(0, 1, (int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, frag);
-					return bldr.GetString();
+				bldr.Replace(0, 0, "\u200B", null);
+				// This dummy property should always be set on a user prompt. It allows certain formatting commands to be
+				// handled specially.
+				bldr.SetIntPropValues(0, bldr.Length, SimpleRootSite.ktptUserPrompt, (int)FwTextPropVar.ktpvDefault, 1);
+				bldr.SetIntPropValues(0, 1, (int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, frag);
+				return bldr.GetString();
 				case ktagGlossAppend:
-					// not really a variant, per se. rather a kludge so InterlinearExport will export glsAppend item.
-					return m_tssPendingGlossAffix;
+				// not really a variant, per se. rather a kludge so InterlinearExport will export glsAppend item.
+				return m_tssPendingGlossAffix;
 			}
 
 			switch (frag)
 			{
-				case kfragAnalysisMissingGloss:
-				case kfragBundleMissingSense:
-				case kfragAnalysisMissingPos:
-					return m_tssMissingAnalysis;
-				case kfragMissingWholeAnalysis:
-					return m_tssMissingVernacular;
-				default:
-					return null;
+			case kfragAnalysisMissingGloss:
+			case kfragBundleMissingSense:
+			case kfragAnalysisMissingPos:
+				return m_tssMissingAnalysis;
+			case kfragMissingWholeAnalysis:
+				return m_tssMissingVernacular;
+			default:
+				return null;
 			}
 		}
 
@@ -1996,7 +2000,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				for (var ihvo = 0; ihvo < chvo; ihvo++)
 				{
 					LoadParaData(rghvo[ihvo]);
-				}
+			}
 			}
 			catch (Exception)
 			{
@@ -2023,7 +2027,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (m_loader == null)
 			{
 				m_loader = CreateParaLoader();
-			}
+		}
 		}
 
 		internal virtual IParaDataLoader CreateParaLoader()
@@ -2099,15 +2103,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			else
 			{
-				if (hvoCurrent == hvoAnalysis)
+			if (hvoCurrent == hvoAnalysis)
 				{
-					vwenv.AddObjProp(WfiAnalysisTags.kflidCategory, this, kfragLineChoices + choiceIndex);
+				vwenv.AddObjProp(WfiAnalysisTags.kflidCategory, this, kfragLineChoices + choiceIndex);
 				}
-				else
+			else
 				{
-					vwenv.AddObj(hvoAnalysis, this, kfragAnalysisCategoryChoices + choiceIndex); // causes recursive call with right hvoCurrent
-				}
+				vwenv.AddObj(hvoAnalysis, this, kfragAnalysisCategoryChoices + choiceIndex); // causes recursive call with right hvoCurrent
 			}
+		}
 		}
 
 		/// <summary>

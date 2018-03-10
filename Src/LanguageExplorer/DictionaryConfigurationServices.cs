@@ -246,6 +246,10 @@ namespace LanguageExplorer
 			if (innerConfigDir == null)
 			{
 				innerConfigDir = GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(AreaServices.ToolChoice));
+				if (innerConfigDir == null)
+				{
+					innerConfigDir = LanguageExplorerConstants.RevIndexDir;
+				}
 			}
 			var isDictionary = innerConfigDir == DictionaryConfigurationDirectoryName;
 			var pubLayoutPropName = isDictionary ? "DictionaryPublicationLayout" : "ReversalIndexPublicationLayout";
@@ -431,9 +435,9 @@ namespace LanguageExplorer
 
 		private static bool TryMatchingReversalConfigByWritingSystem(string projectConfigDir, LcmCache cache, out string currentConfig)
 		{
-			var displayName = cache.LangProject.DefaultAnalysisWritingSystem.DisplayLabel;
+			var wsId = cache.LangProject.DefaultAnalysisWritingSystem.Id;
 			var fileList = Directory.EnumerateFiles(projectConfigDir);
-			var fileName = fileList.FirstOrDefault(fname => Path.GetFileNameWithoutExtension(fname) == displayName);
+			var fileName = fileList.FirstOrDefault(fname => Path.GetFileNameWithoutExtension(fname) == wsId);
 			currentConfig = fileName ?? string.Empty;
 			return !string.IsNullOrEmpty(currentConfig);
 		}

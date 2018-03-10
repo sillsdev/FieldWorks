@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+	<ComponentGroupRef Id="HarvestedDataFiles" />
+
+	<Feature Id='DesktopShortcut' Title='Desktop Shortcut' Description='Creates a shortcut on the desktop.' Level='3' ConfigurableDirectory='APPFOLDER' AllowAdvertise="no" InstallDefault="source" Absent='allow' TypicalDefault="install" >
+		<ComponentRef Id='ApplicationShortcutDesktop'/>
+	</Feature>
+	<Feature Id='MenuShortcut' Title='Start Menu Shortcut' Description='Creates a shortcut in the Start menu.' Level='3' ConfigurableDirectory='APPFOLDER' AllowAdvertise="no" InstallDefault="source" Absent='allow' TypicalDefault="install" >
+		<ComponentRef Id='ApplicationShortcutMenu' />
+	</Feature>
+</Include>

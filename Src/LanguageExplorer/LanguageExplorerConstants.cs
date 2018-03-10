@@ -82,5 +82,7 @@ namespace LanguageExplorer
 		/// for "all reversal indexes".
 		/// </summary>
 		internal const string AllReversalIndexesFilenameBase = "AllReversalIndexes";
+		/// <summary />
+		internal const string RevIndexDir = "ReversalIndex";
 	}
 }

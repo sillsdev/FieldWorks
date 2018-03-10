@@ -371,13 +371,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					break;
 			}
 
-			if (!(vc is InterlinVc) || frag < InterlinVc.kfragLineChoices || frag >= InterlinVc.kfragLineChoices + ((InterlinVc)vc).LineChoices.Count) return;
+			if (!(vc is InterlinVc) || frag < InterlinVc.kfragLineChoices || frag >= InterlinVc.kfragLineChoices + ((InterlinVc)vc).LineChoices.Count)
 			{
-				var spec = ((InterlinVc)vc).LineChoices[frag - InterlinVc.kfragLineChoices];
-				if (spec.Flid == InterlinLineChoices.kflidLexGloss)
-				{
-					CloseItem();
-				}
+				return;
+			}
+			var spec2 = ((InterlinVc)vc).LineChoices[frag - InterlinVc.kfragLineChoices];
+			if (spec2.Flid == InterlinLineChoices.kflidLexGloss)
+			{
+				CloseItem();
 			}
 		}
 

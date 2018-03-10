@@ -11,6 +11,8 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using System.Linq;
+using SIL.Extensions;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -216,7 +218,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// at least, not while we have any changes that really need to be saved, since we
 			// should have lost focus and saved before doing anything that would cause a regenerate.
 			// But let's not crash.
-			var extensions = m_cache.ActionHandlerAccessor as IActionHandlerExtensions;
+			var extensions = Cache.ActionHandlerAccessor as IActionHandlerExtensions;
 			if ((extensions != null && !extensions.CanStartUow) || !m_sense.IsValidObject) //users might quickly realize a mistake and delete the sense before we have converted our dummy.
 			{
 				return 0;
@@ -229,8 +231,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			for (var i = 0; i < countIndices; ++i)
 			{
 				var hvoIndex = m_sdaRev.get_VecItem(m_sense.Hvo, kFlidIndices, i);
-				var revIndex = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(hvoIndex);
-				writingSystemsModified.Add(m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(revIndex.WritingSystem));
+				var revIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(hvoIndex);
+				writingSystemsModified.Add(Cache.ServiceLocator.WritingSystemManager.GetWsFromStr(revIndex.WritingSystem));
 				var countRealEntries = m_sdaRev.get_VecSize(hvoIndex, kFlidEntries) - 1; // Skip the dummy entry at the end.
 				// Go through it from the far end, since we may be deleting empty items.
 				for (var j = countRealEntries - 1; j >= 0; --j)
@@ -245,12 +247,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					// If it exists, then add it to the currentEntries array.
 					// If it does not exist, we have to create it, and add it to the currentEntries array.
 					var rgsFromDummy = new List<string>();
-					if (GetReversalFormsAndCheckExisting(currentEntries, hvoIndex, m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(revIndex.WritingSystem), j, hvoEntry, rgsFromDummy))
+					if (GetReversalFormsAndCheckExisting(currentEntries, hvoIndex, Cache.ServiceLocator.WritingSystemManager.GetWsFromStr(revIndex.WritingSystem), j, hvoEntry, rgsFromDummy))
 					{
 						continue;
 					}
-					// At this point, we need to find or create one or more entries.
-					var hvo = FindOrCreateReversalEntry(revIndex, rgsFromDummy, m_cache);
+					// At this point, we need to find or create one or more entries. The hvo returned may be the hvo of a subentry.
+					var hvo = FindOrCreateReversalEntry(revIndex, rgsFromDummy, Cache);
 					currentEntries.Add(hvo);
 					if (hvoEntry == hvoDummy)
 					{
@@ -269,31 +271,47 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var countEntries = Cache.DomainDataByFlid.get_VecSize(m_sense.Hvo, Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs);
 			// Check the current state and don't save (or create an Undo stack item) if
 			// nothing has changed.
-			var fChanged = true;
-			if (countEntries == ids.Length)
+			var fChanged = ids.Length != countEntries;
+			for (var i = 0; i < countEntries; ++i)
 			{
-				fChanged = false;
-				for (var i = 0; i < countEntries; ++i)
+				var id = Cache.DomainDataByFlid.get_VecItem(m_sense.Hvo, Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs, i);
+				if (ids.IndexOf(id) != i)
 				{
-					var id = Cache.DomainDataByFlid.get_VecItem(m_sense.Hvo, Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs, i);
-					if (id != ids[i])
+					fChanged = true;
+					if (!ids.Contains(id))
 					{
-						fChanged = true;
-						break;
+						removedEntries.Add(id);
 					}
 				}
 			}
 			if (fChanged)
 			{
+				// Add the sense to the reversal index entry
 				Cache.DomainDataByFlid.BeginUndoTask(LanguageExplorerResources.ksUndoSetRevEntries, LanguageExplorerResources.ksRedoSetRevEntries);
 				foreach (var id in ids)
 				{
-#if JASONTODO
-					Still need to handle removal here This code is buggy
-#endif
-					Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(id).SensesRS.Add(m_sense);
+					var rie = Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(id);
+					if (!rie.SensesRS.Contains(m_sense))
+					{
+						rie.SensesRS.Add(m_sense);
+					}
 				}
 				Cache.DomainDataByFlid.EndUndoTask();
+				if (removedEntries.Count > 0)
+				{
+					// Remove the sense from the reversal index entry and delete the entry if the SensesRS property is empty
+					Cache.DomainDataByFlid.BeginUndoTask(LanguageExplorerResources.ksUndoDeleteRevFromSense, LanguageExplorerResources.ksRedoDeleteRevFromSense);
+					foreach (var entry in removedEntries)
+					{
+						var rie = Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(entry);
+						rie.SensesRS.Remove(m_sense);
+						if (rie.SensesRS.Count == 0 && rie.SubentriesOS.Count == 0)
+						{
+							Cache.DomainDataByFlid.DeleteObj(rie.Hvo);
+						}
+						Cache.DomainDataByFlid.EndUndoTask();
+					}
+				}
 			}
 			return hvoReal;
 		}
@@ -713,16 +731,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
 			var tssEmpty = TsStringUtils.EmptyString(ws);
 			m_sdaRev.CacheStringAlt(m_dummyId, ReversalIndexEntryTags.kflidReversalForm, ws, tssEmpty);
+			// This updates the real data with the createdRevHvo. Reversal index entries in this sense will be reordered alphabetically.
 			var createdRevHvo = ConvertDummiesToReal(hvoObj);
-			m_sdaRev.SetMultiStringAlt(createdRevHvo, ReversalIndexEntryTags.kflidReversalForm, ws, tss);
 			// Refresh
 			RootBox.PropChanged(hvoIndex, kFlidEntries, count, 1, 0);
 
-			// Reset selection.
+			// Reset selection. Handle the reordering of reversal index entries.
+			var currentEntry = m_sense.ReferringReversalIndexEntries.First(entry => entry.Hvo == createdRevHvo);
+			var updatedihvoEntryIndex = m_sense.ReferringReversalIndexEntries.IndexOf(currentEntry);
 			var rgvsli = new SelLevInfo[2];
 			rgvsli[0].cpropPrevious = 0;
 			rgvsli[0].tag = kFlidEntries;
-			rgvsli[0].ihvo = count - 1;
+			rgvsli[0].ihvo = updatedihvoEntryIndex;
 			rgvsli[1].cpropPrevious = 0;
 			rgvsli[1].tag = kFlidIndices;
 			rgvsli[1].ihvo = ihvoIndex;
@@ -736,7 +756,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				throw;
 			}
 
-			m_hvoOldSelection = hvoObj;
+			m_hvoOldSelection = createdRevHvo;
 			CheckHeight();
 		}
 

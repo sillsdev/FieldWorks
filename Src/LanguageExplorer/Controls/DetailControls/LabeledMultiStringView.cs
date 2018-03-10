@@ -215,7 +215,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			var index = m_soundControls.IndexOf(sc);
 			wsIndex = -1;
-			foreach (var ws in InnerView.WritingSystems)
+			foreach (var ws in InnerView.WritingSystemsToDisplay)
 			{
 				wsIndex++;
 				if (!ws.IsVoice)
@@ -256,7 +256,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					control.Left = indent;
 					control.Width = Width - indent;
 					control.Top = Height - indent + 5;
-					control.Height = Height + 10;
 					var sel = MultiStringSelectionUtils.GetSelAtStartOfWs(InnerView.RootBox, InnerView.Flid, wsIndex, ws);
 					if (sel != null)
 					{
@@ -273,9 +272,9 @@ namespace LanguageExplorer.Controls.DetailControls
 					if (control.Parent == null || control.Parent.Controls.Contains(control))
 					{
 						control.BringToFront();
-					}
 				}
 			}
+		}
 		}
 
 		private void DisposeSoundControls()
@@ -334,17 +333,17 @@ namespace LanguageExplorer.Controls.DetailControls
 						if (File.Exists(tryPath))
 						{
 							path = tryPath;
-						}
 					}
+				}
 				}
 				try
 				{
-				soundFieldControl.Path = path;
-				soundFieldControl.BeforeStartingToRecord += soundFieldControl_BeforeStartingToRecord;
-				soundFieldControl.SoundRecorded += soundFieldControl_SoundRecorded;
-				soundFieldControl.SoundDeleted += soundFieldControl_SoundDeleted;
-				Controls.Add(soundFieldControl);
-			}
+					soundFieldControl.Path = path;
+					soundFieldControl.BeforeStartingToRecord += soundFieldControl_BeforeStartingToRecord;
+					soundFieldControl.SoundRecorded += soundFieldControl_SoundRecorded;
+					soundFieldControl.SoundDeleted += soundFieldControl_SoundDeleted;
+					Controls.Add(soundFieldControl);
+				}
 				catch (Exception e)
 				{
 					Debug.WriteLine(e.Message);
