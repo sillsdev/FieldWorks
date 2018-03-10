@@ -185,20 +185,24 @@ namespace LanguageExplorer.Controls.SilSidePane
 			_itemAreas[tab].Visible = true;
 		}
 
+
 		/// <summary>
-		/// Set up area tabs and tool items.
+		/// Set up area tabs, tool items, and View Area/Tool menus.
 		/// </summary>
-		internal void Initalize(IAreaRepository areaRepository)
+		internal void Initalize(IAreaRepository areaRepository, ToolStripMenuItem viewToolStripMenuItem, EventHandler view_Area_Tool_Clicked)
 		{
 			Guard.AgainstNull(areaRepository, nameof(areaRepository));
 
 			TabStop = true;
 			TabIndex = 0;
 			ItemAreaStyle = SidePaneItemAreaStyle.List;
+
+			//var areaMenus = new List<ToolStripMenuItem>();
 			// Add areas and tools.
 			foreach (var area in areaRepository.AllAreasInOrder)
 			{
-				var tab = new Tab(StringTable.Table.LocalizeLiteralValue(area.UiName))
+				var localizedAreaName = StringTable.Table.LocalizeLiteralValue(area.UiName);
+				var tab = new Tab(localizedAreaName)
 				{
 					Icon = area.Icon,
 					Tag = area,
@@ -206,20 +210,29 @@ namespace LanguageExplorer.Controls.SilSidePane
 				};
 				if (area.MachineName == AreaServices.ListsAreaMachineName)
 				{
-					((IListArea) area).ListAreaTab = tab;
+					((IListArea)area).ListAreaTab = tab;
 				}
+				var currentAreaMenu = new ToolStripMenuItem(localizedAreaName, area.Icon);
+				var insertLocation = viewToolStripMenuItem.DropDownItems.Count - 2;
+				viewToolStripMenuItem.DropDownItems.Insert(insertLocation, currentAreaMenu);
 
 				AddTab(tab);
 
 				// Add tools for area.
 				foreach (var tool in area.AllToolsInOrder)
 				{
-					var item = new Item(StringTable.Table.LocalizeLiteralValue(tool.UiName))
+					var localizedToolName = StringTable.Table.LocalizeLiteralValue(tool.UiName);
+					var item = new Item(localizedToolName)
 					{
 						Icon = tool.Icon,
 						Tag = tool,
 						Name = tool.MachineName
 					};
+					var currentToolMenu = new ToolStripMenuItem(localizedToolName, tool.Icon, view_Area_Tool_Clicked)
+					{
+						Tag = new Tuple<Tab, ITool>(tab, tool)
+					};
+					currentAreaMenu.DropDownItems.Add(currentToolMenu);
 					AddItem(tab, item);
 				}
 			}

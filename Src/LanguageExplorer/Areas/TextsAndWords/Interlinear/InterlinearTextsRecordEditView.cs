@@ -15,7 +15,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public InterlinearTextsRecordEditView(InfoPane infoPane, XElement configurationParametersElement, LcmCache cache, IRecordList recordList, DataTree dataTree, ToolStripMenuItem printMenu)
 			: base(configurationParametersElement, XDocument.Parse(AreaResources.VisibilityFilter_All), cache, recordList, dataTree, printMenu)
 		{
-			(DatTree as StTextDataTree).InfoPane = infoPane;
+			(MyDataTree as StTextDataTree).InfoPane = infoPane;
 		}
 
 		#region Overrides of RecordEditView

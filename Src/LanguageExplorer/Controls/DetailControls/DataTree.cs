@@ -777,10 +777,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				return;
 			}
 
-			var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 			// Initialize our internal state with the state of the PropertyTable
-			ShowingAllFields = PropertyTable.GetValue("ShowHiddenFields-" + toolChoice, SettingsGroup.LocalSettings, false);
-			PropertyTable.SetDefault("ShowHiddenFields", ShowingAllFields, SettingsGroup.LocalSettings, true, false);
 			SetCurrentSlicePropertyNames();
 			m_currentSlicePartName = PropertyTable.GetValue<string>(m_sPartNameProperty, SettingsGroup.LocalSettings);
 			m_currentSliceObjGuid = PropertyTable.GetValue(m_sObjGuidProperty, SettingsGroup.LocalSettings, Guid.Empty);
@@ -1014,6 +1011,8 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe("ShowHiddenFields", ShowHiddenFields_Handler);
+
 				SliceContextMenuFactory?.Dispose();
 
 				// Do this first, before setting m_fDisposing to true.
@@ -3608,20 +3607,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void OnPropertyChanged(string name)
 		{
-			if (name == "ShowHiddenFields")
-			{
-				// The only place this occurs is when the status is changed from the "View" menu.
-				// We'll have to translate this to the real property based on the current tool.
-
-				var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
-				name = "ShowHiddenFields-" + toolChoice;
-
-				// Invert the status of the real property
-				var oldShowValue = PropertyTable.GetValue(name, SettingsGroup.LocalSettings, false);
-				PropertyTable.SetProperty(name, !oldShowValue, SettingsGroup.LocalSettings, true, true); // update the pane bar check box.
-				HandleShowHiddenFields(!oldShowValue);
-			}
-			else if (name == "currentContentControlObject")
+			if (name == "currentContentControlObject")
 			{
 				m_fCurrentContentControlObjectTriggered = true;
 			}
@@ -4149,6 +4135,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
+			Subscriber.Subscribe("ShowHiddenFields", ShowHiddenFields_Handler);
+
 			if (PersistenceProvder != null)
 			{
 				RestorePreferences();
@@ -4157,9 +4145,9 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#endregion
 
-		public void ShowHiddenFields(bool showHiddenFields)
+		private void ShowHiddenFields_Handler(object obj)
 		{
-			HandleShowHiddenFields(showHiddenFields);
+			HandleShowHiddenFields((bool)obj);
 		}
 	}
 }

@@ -297,9 +297,15 @@ namespace LanguageExplorer.Impls
 			{
 				SetSplitContainerDistance(mainContainer, sd);
 			}
-			_sidePane.Initalize(_areaRepository);
+			_sidePane.Initalize(_areaRepository, _viewToolStripMenuItem, View_Area_Tool_Clicked);
 
 			mainContainer.ResumeLayout(false);
+		}
+
+		private void View_Area_Tool_Clicked(object sender, EventArgs e)
+		{
+			var selectInformation = (Tuple<Tab, ITool>)((ToolStripMenuItem)sender).Tag;
+			_sidePane.SelectItem(selectInformation.Item1, selectInformation.Item2.MachineName);
 		}
 
 		private void Tool_Clicked(Item itemClicked)
@@ -428,18 +434,12 @@ namespace LanguageExplorer.Impls
 			// Common to several tools in various areas, so set them here.
 			PropertyTable.SetDefault("AllowInsertLinkToFile", false, SettingsGroup.LocalSettings, false, false);
 			PropertyTable.SetDefault("AllowShowNormalFields", false, SettingsGroup.LocalSettings, false, false);
-#if RANDYTODO
-// TODO DataTree processes both of these:
-// TODO:	1. "ShowHiddenFields" is used by a View menu item.
-// TODO:	2. "ShowHiddenFields-someToolName" is used by PanelButton.
-// TODO: Remove this property, when the menu is set up.
-#endif
-			PropertyTable.SetDefault("ShowHiddenFields", false, SettingsGroup.LocalSettings, false, false);
 		}
 
 		private void RemoveObsoleteProperties()
 		{
 			// Get rid of obsolete properties, if they were restored.
+			PropertyTable.RemoveProperty("ShowHiddenFields", SettingsGroup.LocalSettings);
 			PropertyTable.RemoveProperty("ShowRecordList", SettingsGroup.GlobalSettings);
 			PropertyTable.RemoveProperty("PreferredUILibrary");
 			PropertyTable.RemoveProperty("ShowSidebar", SettingsGroup.GlobalSettings);
@@ -700,6 +700,7 @@ namespace LanguageExplorer.Impls
 			_majorFlexComponentParameters = new MajorFlexComponentParameters(mainContainer, _menuStrip, toolStripContainer, _statusbar,
 				_parserMenuManager, _dataNavigationManager, _recordListRepositoryForTools, flexComponentParameters,
 				Cache, _flexApp, this, _sidePane);
+			_propertyTable.SetProperty("MajorFlexComponentParameters", _majorFlexComponentParameters, SettingsGroup.GlobalSettings, false, false);
 
 			RecordListServices.Setup(_majorFlexComponentParameters);
 

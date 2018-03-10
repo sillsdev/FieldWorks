@@ -182,7 +182,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (CurrentRootHvo > 0)
 			{
-				m_xrev.DatTree.Visible = true;
+				m_xrev.MyDataTree.Visible = true;
 				var repo = Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 				ICmObject root;
 				// JohnT: I don't know why this is done at all. Therefore I made a minimal change rather than removing it
@@ -197,7 +197,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			else if (CurrentRootHvo == 0)
 			{
-				m_xrev.DatTree.Visible = false;
+				m_xrev.MyDataTree.Visible = false;
 			}
 		}
 

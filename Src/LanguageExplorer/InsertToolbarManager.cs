@@ -17,6 +17,7 @@ namespace LanguageExplorer
 			{
 				toolStripInsert.Items.Insert(0, button);
 			}
+			toolStripInsert.Visible = insertStripButtons.Any(button => button.Enabled);
 		}
 
 		internal static void ResetInsertToolbar(MajorFlexComponentParameters majorFlexComponentParameters)
@@ -38,6 +39,16 @@ namespace LanguageExplorer
 			{
 				toolStripInsert.Items.Remove(goner);
 			}
+			var toolStripInsertIsVisible = false;
+			foreach (ToolStripItem item in toolStripInsert.Items)
+			{
+				if (item.Enabled)
+				{
+					toolStripInsertIsVisible = true;
+					break;
+				}
+			}
+			toolStripInsert.Visible = toolStripInsertIsVisible;
 		}
 
 		private static ToolStrip GetInsertToolStrip(MajorFlexComponentParameters majorFlexComponentParameters)

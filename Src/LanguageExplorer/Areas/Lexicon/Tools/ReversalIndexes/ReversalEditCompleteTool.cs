@@ -110,7 +110,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			};
 			docViewPaneBar.AddControls(new List<Control> { panelMenu });
 			var recordEditViewPaneBar = new PaneBar();
-			var panelButton = new PanelButton(_propertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
+			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
@@ -124,7 +124,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				recordEditView, "Browse Entries", recordEditViewPaneBar); // RecordEditView
 
 			_xhtmlDocView.FinishInitialization();
-			panelButton.DatTree = recordEditView.DatTree;
+			panelButton.MyDataTree = recordEditView.MyDataTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			_reversalEditCompleteToolMenuHelper.Initialize();

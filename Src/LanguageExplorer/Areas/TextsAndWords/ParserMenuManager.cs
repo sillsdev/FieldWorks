@@ -407,7 +407,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			if (disposing)
 			{
-				_recordList.SelectedObjectChanged -= RecordListSelectedObjectChanged;
+				if (_recordList != null)
+				{
+					_recordList.SelectedObjectChanged -= RecordListSelectedObjectChanged;
+				}
 				_parserToolStripMenuItems["parser"].DropDownOpening -= ParserMenuManager_DropDownOpening;
 				_parserToolStripMenuItems["parseAllWords"].Click -= ParseAllWords_Click;
 				_parserToolStripMenuItems["reparseAllWords"].Click -= ReparseAllWords_Click;

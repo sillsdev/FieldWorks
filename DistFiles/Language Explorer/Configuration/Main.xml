@@ -337,15 +337,7 @@
 <!-- END include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Edit']/*" -->
 		</menu>
 		<menu id="View" label="_View" b4InsertMenu="true" a10status="PARTIALLY_DONE" >
-			<menu label="_Lexicon" list="LexicalToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
-			<menu label="_Texts &amp;&amp; Words" list="WordToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
-			<menu label="_Grammar" list="GrammarToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
-			<menu label="_Notebook" list="NotebookToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
-			<menu label="Li_sts" list="ListsToolsList" behavior="singlePropertyAtomicValue" property="toolChoice"/>
 			<item label="Invisible Spaces" boolProperty="ShowInvisibleSpaces" defaultVisible="false" settingsGroup="local"/>
-<!-- START include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*" -->
-			<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
-<!-- END include: "Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*" -->
 			<item label="-" translate="do not translate"/>
 			<menu id="FilterChoices" label="_Filters" list="FiltersList" behavior="singlePropertyAtomicValue" property="currentFilterForRecordClerk_THISCHANGES" settingsGroup="local"/>
 <!-- START include: "Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*" -->
@@ -644,10 +636,6 @@
 	or remove or reorder images. The names given here in the labels list correspond to the images in the list, in order.
 	This is the only place a particular image is associated with a particular name.-->
 	<resources>
-		<imageList assemblyPath="xCore.dll" class="XCore.IconHolder" field="largeImages" size="large" labels="Ticker" a10status="REMOVED" />
-		<imageList assemblyPath="LanguageExplorer.dll" class=" LanguageExplorer.Works.ImageHolder" field="largeImages" size="large" labels="BrowseView, EditView, DocumentView, NoFilter, DefaultSort, GenericTool, GenericTool2, folder-lexicon, folder-lists, folder-texts, folder-words, folder-grammar" a10status="MOVE_TO-LanguageExplorer.Works.ImageHolder" />
-		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ImageHolder" field="smallImages" size="small" labels="BrowseView, EditView, DocumentView, NoFilter, SimpleFilter, DefaultSort, GenericTool, Delete, SpecialCharacter, ExternalLink, SideBySideView" a10status="MOVE_TO-LanguageExplorer.Works.ImageHolder" />
-		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.ImageHolder" field="smallCommandImages" size="small" labels="NewProject, OpenProject, SaveProject, historyBack, historyForward, Refresh, MenuWidget, Undo, Redo, Cut, Copy, Paste, MoveUp, MoveRight, MoveDown, MoveLeft, columnChooser, ArchiveWithRamp" a10status="MOVE_TO-LanguageExplorer.Works.ImageHolder" />
 		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.LexEntryImages" field="buttonImages" size="small" labels="majorEntry, minorEntry, subentry, goToEntry, reversalEntry, gotoReversalEntry" a10status="DONE" />
 		<imageList assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Works.RecordClerkImages" field="buttonImages" size="small" labels="firstRecord, lastRecord, previousRecord, nextRecord, syncSendReceive, syncObtain, chorus, syncSendReceiveFirst" a10status="MOVE_TO-LanguageExplorer.Works.RecordClerkImages" />
 		<imageList assemblyPath="LexTextDll.dll" class="LanguageExplorer.Works.LexText.ImageHolder" field="smallImages" size="small" labels="Pie, Circle, TwoHalfs, Help, Delete, Remove, Left, Right" a10status="MOVE_TO-LanguageExplorer.Works.LexText.ImageHolder" />

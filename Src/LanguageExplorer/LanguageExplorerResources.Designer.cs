@@ -341,6 +341,16 @@ namespace LanguageExplorer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap FWFilterBasic_Small {
+            get {
+                object obj = ResourceManager.GetObject("FWFilterBasic_Small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap FWFirstArrow {
             get {
                 object obj = ResourceManager.GetObject("FWFirstArrow", resourceCulture);

@@ -34,29 +34,37 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private const string mnuDataTree_Sense = "mnuDataTree-Sense";
 		private const string mnuDataTree_Etymology = "mnuDataTree-Etymology";
 		private const string mnuDataTree_Etymology_Hotlinks = "mnuDataTree-Etymology-Hotlinks";
+		private string _extendedPropertyName;
 		private MajorFlexComponentParameters _majorFlexComponentParameters;
 		private ToolStripMenuItem _editMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newEditMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
 		private ToolStripMenuItem _insertMenu;
 		private List<Tuple<ToolStripMenuItem, EventHandler>> _newInsertMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
+		private ToolStripMenuItem _viewMenu;
+		private List<Tuple<ToolStripMenuItem, EventHandler>> _newViewMenusAndHandlers = new List<Tuple<ToolStripMenuItem, EventHandler>>();
+		private ToolStripMenuItem _show_DictionaryPubPreviewMenu;
+		private ToolStripMenuItem _show_DictionaryPubPreviewContextMenu;
+		private ToolStripMenuItem _showHiddenFieldsMenu;
 		private ToolStripButton _insertEntryToolStripButton;
 		private ToolStripButton _insertGoToEntryToolStripButton;
-		private DataTree DataTree { get; set; }
+		private DataTree MyDataTree { get; set; }
 		private IRecordList MyRecordList { get; set; }
 		internal MultiPane InnerMultiPane { get; set; }
 		internal SliceContextMenuFactory SliceContextMenuFactory { get; set; }
 
-		internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, DataTree dataTree, IRecordList recordList)
+		internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, DataTree dataTree, IRecordList recordList, string extendedPropertyName)
 		{
 			Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 			Guard.AgainstNull(dataTree, nameof(dataTree));
 			Guard.AgainstNull(recordList, nameof(recordList));
+			Guard.AgainstNullOrEmptyString(extendedPropertyName, nameof(extendedPropertyName));
 
 			_majorFlexComponentParameters = majorFlexComponentParameters;
-			DataTree = dataTree;
+			MyDataTree = dataTree;
 			MyRecordList = recordList;
-			SliceContextMenuFactory = DataTree.SliceContextMenuFactory;
+			SliceContextMenuFactory = MyDataTree.SliceContextMenuFactory;
 			_lexiconAreaMenuHelper = new LexiconAreaMenuHelper(_majorFlexComponentParameters, MyRecordList);
+			_extendedPropertyName = extendedPropertyName;
 
 			InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 		}
@@ -68,6 +76,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			AddEditMenuItems();
 			AddInsertMenuItems();
+			AddViewMenuItems();
 			AddToolbarItems();
 
 			RegisterHotLinkMenus();
@@ -127,9 +136,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			PropertyTable = flexComponentParameters.PropertyTable;
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
+
+			Subscriber.Subscribe("ShowHiddenFields", ShowHiddenFields_Handler);
 		}
 
 		#endregion
+
+		private void ShowHiddenFields_Handler(object obj)
+		{
+			_showHiddenFieldsMenu.Checked = (bool)obj;
+		}
 
 		#region IDisposable
 		private bool _isDisposed;
@@ -162,6 +178,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
+				Subscriber.Subscribe("ShowHiddenFields", ShowHiddenFields_Handler);
 				_lexiconAreaMenuHelper.Dispose();
 				foreach (var menuTuple in _newEditMenusAndHandlers)
 				{
@@ -179,6 +196,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				}
 				_newInsertMenusAndHandlers.Clear();
 
+				foreach (var menuTuple in _newViewMenusAndHandlers)
+				{
+					menuTuple.Item1.Click -= menuTuple.Item2;
+					_viewMenu.DropDownItems.Remove(menuTuple.Item1);
+					menuTuple.Item1.Dispose();
+				}
+				_newViewMenusAndHandlers.Clear();
+
 				_insertEntryToolStripButton.Click -= Insert_Entry_Clicked;
 				InsertToolbarManager.ResetInsertToolbar(_majorFlexComponentParameters);
 				_insertEntryToolStripButton.Dispose();
@@ -187,9 +212,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_majorFlexComponentParameters = null;
 			_insertMenu = null;
 			_insertEntryToolStripButton = null;
+			_newEditMenusAndHandlers = null;
 			_newInsertMenusAndHandlers = null;
+			_newViewMenusAndHandlers = null;
 			SliceContextMenuFactory = null;
-			DataTree = null;
+			MyDataTree = null;
 			MyRecordList = null;
 			InnerMultiPane = null;
 
@@ -352,8 +379,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var retVal = new Tuple<ContextMenuStrip, CancelEventHandler, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, MainPanelContextMenuStrip_Opening, menuItems);
 
 			// Show_Dictionary_Preview menu item.
-			var contextMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Show_Dictionary_Preview_Clicked, LexiconResources.Show_DictionaryPubPreview, LexiconResources.Show_DictionaryPubPreview_ToolTip);
-			contextMenuItem.Checked = PropertyTable.GetValue<bool>(Show_DictionaryPubPreview);
+			_show_DictionaryPubPreviewContextMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Show_Dictionary_Preview_Clicked, LexiconResources.Show_DictionaryPubPreview, LexiconResources.Show_DictionaryPubPreview_ToolTip);
+			_show_DictionaryPubPreviewContextMenu.Checked = PropertyTable.GetValue<bool>(Show_DictionaryPubPreview);
 
 			// Separator
 			contextMenuStrip.Items.Add(new ToolStripSeparator());
@@ -389,7 +416,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Lexeme_Form_Is_A_Variant_Clicked, LexiconResources.Lexeme_Form_Is_A_Variant, LexiconResources.Lexeme_Form_Is_A_Variant_Tooltip);
 
 			// _Merge with entry... menu item. (CmdMergeEntry->msg: MergeEntry, also on Tool menu)
-			contextMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Merge_With_Entry_Clicked, LexiconResources.Merge_With_Entry, LexiconResources.Merge_With_Entry_Tooltip);
+			var contextMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Merge_With_Entry_Clicked, LexiconResources.Merge_With_Entry, LexiconResources.Merge_With_Entry_Tooltip);
 			// NB: defaultVisible="false"
 			// Original code that controlled: display.Enabled = display.Visible = InFriendlyArea;
 			// It is now only in a friendly area, so should always be visible and enabled, per the old code.
@@ -416,7 +443,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void Insert_SenseBelow_Clicked(object sender, EventArgs e)
 		{
 			// Get slice and see what sense is currently selected, so we can add the new sense after (read: 'below") it.
-			var currentSlice = DataTree.CurrentSlice;
+			var currentSlice = MyDataTree.CurrentSlice;
 			ILexSense currentSense;
 			while (true)
 			{
@@ -454,7 +481,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private void Delete_Sense_Clicked(object sender, EventArgs e)
 		{
-			DataTree.CurrentSlice.HandleDeleteCommand();
+			MyDataTree.CurrentSlice.HandleDeleteCommand();
 		}
 
 		private void Merge_With_Entry_Clicked(object sender, EventArgs e)
@@ -587,9 +614,19 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void Show_Dictionary_Preview_Clicked(object sender, EventArgs e)
 		{
 			var menuItem = (ToolStripMenuItem)sender;
-			menuItem.Checked = !menuItem.Checked;
+			_show_DictionaryPubPreviewMenu.Checked = !menuItem.Checked;
+			_show_DictionaryPubPreviewContextMenu.Checked = !menuItem.Checked;
 			PropertyTable.SetProperty(Show_DictionaryPubPreview, menuItem.Checked, SettingsGroup.LocalSettings, true, false);
-			InnerMultiPane.Panel1Collapsed = !PropertyTable.GetValue<bool>(Show_DictionaryPubPreview);
+			InnerMultiPane.Panel1Collapsed = !menuItem.Checked;
+		}
+
+		private void Show_Hidden_Fields_Clicked(object sender, EventArgs e)
+		{
+			var menuItem = (ToolStripMenuItem)sender;
+			menuItem.Checked = !menuItem.Checked;
+			PropertyTable.SetProperty(_extendedPropertyName, menuItem.Checked, SettingsGroup.LocalSettings, true, false);
+			Publisher.Publish("ShowHiddenFields", menuItem.Checked);
+			InnerMultiPane.Panel1Collapsed = !menuItem.Checked;
 		}
 
 		private void AddToolbarItems()
@@ -663,6 +700,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			<item command="CmdInsertExtNote" defaultVisible="false" />
 			*/
 #endif
+		}
+
+		private void AddViewMenuItems()
+		{
+			_viewMenu = MenuServices.GetViewMenu(_majorFlexComponentParameters.MenuStrip);
+			// <item label="Show _Dictionary Preview" boolProperty="Show_DictionaryPubPreview" defaultVisible="false"/>
+			_show_DictionaryPubPreviewMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newViewMenusAndHandlers, _viewMenu, Show_Dictionary_Preview_Clicked, LexiconResources.Show_DictionaryPubPreview, insertIndex: _viewMenu.DropDownItems.Count - 2);
+			_show_DictionaryPubPreviewMenu.Checked = PropertyTable.GetValue<bool>(Show_DictionaryPubPreview);
+			// <item label="_Show Hidden Fields" boolProperty="ShowHiddenFields" defaultVisible="false"/>
+			_showHiddenFieldsMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(_newViewMenusAndHandlers, _viewMenu, Show_Hidden_Fields_Clicked, LanguageExplorerResources.ksShowHiddenFields, insertIndex: _viewMenu.DropDownItems.Count - 2);
+			_showHiddenFieldsMenu.Checked = PropertyTable.GetValue(_extendedPropertyName, false);
 		}
 	}
 }

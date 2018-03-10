@@ -42,7 +42,7 @@ namespace LanguageExplorer.Controls
 			DataTree dataTree,
 			ToolStripMenuItem printMenu)
 		{
-			var panelButton = new PanelButton(flexComponentParameters.PropertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(toolMachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
+			var panelButton = new PanelButton(flexComponentParameters, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(toolMachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
@@ -90,7 +90,7 @@ namespace LanguageExplorer.Controls
 
 			newCollapsingSplitContainer.SplitterDistance = flexComponentParameters.PropertyTable.GetValue<int>("RecordListWidthGlobal", SettingsGroup.GlobalSettings);
 			mainCollapsingSplitContainer.SecondControl = newCollapsingSplitContainer;
-			panelButton.DatTree = recordEditView.DatTree;
+			panelButton.MyDataTree = recordEditView.MyDataTree;
 			recordEditView.FinishInitialization();
 
 			return newCollapsingSplitContainer;

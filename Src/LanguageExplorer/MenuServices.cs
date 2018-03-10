@@ -81,6 +81,11 @@ namespace LanguageExplorer
 			return GetMenu(GetMenu(menustrip, LanguageExplorerConstants.ViewToolStripMenuItem).DropDownItems, "refreshToolStripMenuItem");
 		}
 
+		internal static ToolStripMenuItem GetViewFilterMenu(MenuStrip menustrip)
+		{
+			return GetMenu(GetMenu(menustrip, LanguageExplorerConstants.ViewToolStripMenuItem).DropDownItems, "filtersToolStripMenuItem");
+		}
+
 		#endregion View menu
 
 		#region Data menu

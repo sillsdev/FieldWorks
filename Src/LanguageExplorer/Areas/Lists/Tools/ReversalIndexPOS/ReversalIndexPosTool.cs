@@ -106,7 +106,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			browseViewPaneBar.AddControls(new List<Control> { panelMenu });
 
 			var recordEditViewPaneBar = new PaneBar();
-			var panelButton = new PanelButton(_propertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
+			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
@@ -119,7 +119,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				_recordBrowseView, "Browse", browseViewPaneBar,
 				recordEditView, "Details", recordEditViewPaneBar);
 
-			panelButton.DatTree = recordEditView.DatTree;
+			panelButton.MyDataTree = recordEditView.MyDataTree;
 			// Too early before now.
 			recordEditView.FinishInitialization();
 		}

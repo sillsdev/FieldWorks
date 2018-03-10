@@ -68,8 +68,8 @@ namespace LanguageExplorer.Areas
 		{
 			m_sliceFilterDocument = sliceFilterDocument;
 			// This must be called before InitializeComponent()
-			DatTree = dataTree;
-			DatTree.CurrentSliceChanged += DataTreeCurrentSliceChanged;
+			MyDataTree = dataTree;
+			MyDataTree.CurrentSliceChanged += DataTreeCurrentSliceChanged;
 			m_printMenu = printMenu;
 			m_printMenu.Click += PrintMenu_Click;
 			m_printMenu.Enabled = true;
@@ -90,7 +90,7 @@ namespace LanguageExplorer.Areas
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			DatTree.InitializeFlexComponent(flexComponentParameters);
+			MyDataTree.InitializeFlexComponent(flexComponentParameters);
 		}
 
 		#endregion
@@ -124,7 +124,7 @@ namespace LanguageExplorer.Areas
 			}
 
 			// If possible make it use the style sheet appropriate for its main window.
-			DatTree.StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
+			MyDataTree.StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			ShowRecord();
 			m_fullyInitialized = true;
 		}
@@ -147,17 +147,17 @@ namespace LanguageExplorer.Areas
 				m_printMenu.Click -= PrintMenu_Click;
 				m_printMenu.Enabled = false;
 
-				if (DatTree != null)
+				if (MyDataTree != null)
 				{
-					DatTree.CurrentSliceChanged -= DataTreeCurrentSliceChanged;
-					DatTree.Dispose();
+					MyDataTree.CurrentSliceChanged -= DataTreeCurrentSliceChanged;
+					MyDataTree.Dispose();
 				}
 				if (!string.IsNullOrEmpty(m_titleField))
 				{
 					Cache.DomainDataByFlid.RemoveNotification(this);
 				}
 			}
-			DatTree = null;
+			MyDataTree = null;
 			m_printMenu = null;
 
 			base.Dispose(disposing);
@@ -200,7 +200,7 @@ namespace LanguageExplorer.Areas
 		/// <returns>true if ok to go away</returns>
 		public override bool PrepareToGoAway()
 		{
-			DatTree?.PrepareToGoAway();
+			MyDataTree?.PrepareToGoAway();
 			return base.PrepareToGoAway();
 		}
 
@@ -211,12 +211,12 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 
-			if (DatTree.Descendant != null && MyRecordList.CurrentObject != DatTree.Descendant)
+			if (MyDataTree.Descendant != null && MyRecordList.CurrentObject != MyDataTree.Descendant)
 			{
 				// if the user has clicked on a different descendant's slice, update the currently
 				// selected record (we want to keep the browse view in sync), but do not change the
 				// focus
-				MyRecordList.JumpToRecord(DatTree.Descendant.Hvo, true);
+				MyRecordList.JumpToRecord(MyDataTree.Descendant.Hvo, true);
 			}
 		}
 
@@ -298,7 +298,7 @@ namespace LanguageExplorer.Areas
 			base.ShowRecord();
 #if DEBUG
 			var msStart = Environment.TickCount;
-			Debug.Assert(DatTree != null);
+			Debug.Assert(MyDataTree != null);
 #endif
 
 			var oldSuppressSaveOnChangeRecord = MyRecordList.SuppressSaveOnChangeRecord;
@@ -308,13 +308,13 @@ namespace LanguageExplorer.Areas
 
 			if (MyRecordList.CurrentObject == null || MyRecordList.SuspendLoadingRecordUntilOnJumpToRecord)
 			{
-				DatTree.Hide();
-				DatTree.Reset();	// in case user deleted the object it was based upon.
+				MyDataTree.Hide();
+				MyDataTree.Reset();	// in case user deleted the object it was based upon.
 				return;
 			}
 			try
 			{
-				DatTree.Show();
+				MyDataTree.Show();
 				using (new WaitCursor(this))
 				{
 					// Enhance: Maybe do something here to allow changing the templates without the starting the application.
@@ -329,7 +329,7 @@ namespace LanguageExplorer.Areas
 						}
 					}
 
-					DatTree.ShowObject(obj, m_layoutName, m_layoutChoiceField, MyRecordList.CurrentObject, ShouldSuppressFocusChange(rni));
+					MyDataTree.ShowObject(obj, m_layoutName, m_layoutChoiceField, MyRecordList.CurrentObject, ShouldSuppressFocusChange(rni));
 				}
 			}
 			catch (Exception error)
@@ -390,27 +390,27 @@ namespace LanguageExplorer.Areas
 
 			base.SetupDataContext();
 
-			DatTree.PersistenceProvder = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
+			MyDataTree.PersistenceProvder = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
 
 			MyRecordList.UpdateRecordTreeBarIfNeeded();
-			DatTree.SliceFilter = m_sliceFilterDocument != null ? new SliceFilter(m_sliceFilterDocument) : new SliceFilter();
+			MyDataTree.SliceFilter = m_sliceFilterDocument != null ? new SliceFilter(m_sliceFilterDocument) : new SliceFilter();
 			// Already done: m_dataEntryForm.Dock = DockStyle.Fill;
 #if RANDYTODO
 			m_dataEntryForm.SmallImages = PropertyTable.GetValue<ImageList.ImageCollection>("smallImages");
 #endif
 			var sDatabase = Cache.ProjectId.Name;
-			DatTree.Initialize(Cache, true, Inventory.GetInventory("layouts", sDatabase), Inventory.GetInventory("parts", sDatabase));
+			MyDataTree.Initialize(Cache, true, Inventory.GetInventory("layouts", sDatabase), Inventory.GetInventory("parts", sDatabase));
 			// Already done. m_dataEntryForm.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
-			if (DatTree.AccessibilityObject != null)
+			if (MyDataTree.AccessibilityObject != null)
 			{
-				DatTree.AccessibilityObject.Name = "RecordEditView.DataTree";
+				MyDataTree.AccessibilityObject.Name = "RecordEditView.DataTree";
 			}
 
 			Controls.Clear();
 			Controls.Add(m_informationBar);
-			Controls.Add(DatTree);
+			Controls.Add(MyDataTree);
 			SetInfoBarText();
-			DatTree.BringToFront();
+			MyDataTree.BringToFront();
 		}
 
 		#endregion // Other methods
@@ -418,7 +418,7 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// get our DataTree for testing
 		/// </summary>
-		public DataTree DatTree { get; protected set; }
+		public DataTree MyDataTree { get; protected set; }
 
 		#region ICtrlTabProvider implementation
 
@@ -427,10 +427,10 @@ namespace LanguageExplorer.Areas
 			Guard.AgainstNull(targetCandidates, nameof(targetCandidates));
 
 			// when switching panes, we want to give the focus to the CurrentSlice(if any)
-			if (DatTree?.CurrentSlice != null)
+			if (MyDataTree?.CurrentSlice != null)
 			{
-				targetCandidates.Add(DatTree.CurrentSlice);
-				return DatTree.CurrentSlice.ContainsFocus ? DatTree.CurrentSlice : null;
+				targetCandidates.Add(MyDataTree.CurrentSlice);
+				return MyDataTree.CurrentSlice.ContainsFocus ? MyDataTree.CurrentSlice : null;
 			}
 
 			return base.PopulateCtrlTabTargetCandidateList(targetCandidates);
@@ -449,7 +449,7 @@ namespace LanguageExplorer.Areas
 			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(RecordEditView));
 			this.buttonImages = new System.Windows.Forms.ImageList(this.components);
 			this.m_panel = new System.Windows.Forms.Panel();
-			this.DatTree.AccessibilityObject.Name = "RecordEditView.DataTree";
+			this.MyDataTree.AccessibilityObject.Name = "RecordEditView.DataTree";
 			this.SuspendLayout();
 			//
 			// m_informationBar
@@ -465,7 +465,7 @@ namespace LanguageExplorer.Areas
 			//
 			// m_panel
 			//
-			this.m_panel.Controls.Add(this.DatTree);
+			this.m_panel.Controls.Add(this.MyDataTree);
 			this.m_panel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.m_panel.Location = new System.Drawing.Point(0, 0);
 			this.m_panel.Name = "m_panel";
@@ -475,14 +475,14 @@ namespace LanguageExplorer.Areas
 			//
 			// m_dataEntryForm
 			//
-			this.DatTree.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.DatTree.Location = new System.Drawing.Point(0, 0);
-			this.DatTree.Name = "DatTree";
-			this.DatTree.PersistenceProvder = null;
-			this.DatTree.Size = new System.Drawing.Size(752, 150);
-			this.DatTree.SliceFilter = null;
-			this.DatTree.StyleSheet = null;
-			this.DatTree.TabIndex = 3;
+			this.MyDataTree.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.MyDataTree.Location = new System.Drawing.Point(0, 0);
+			this.MyDataTree.Name = "MyDataTree";
+			this.MyDataTree.PersistenceProvder = null;
+			this.MyDataTree.Size = new System.Drawing.Size(752, 150);
+			this.MyDataTree.SliceFilter = null;
+			this.MyDataTree.StyleSheet = null;
+			this.MyDataTree.TabIndex = 3;
 			//
 			// RecordEditView
 			//

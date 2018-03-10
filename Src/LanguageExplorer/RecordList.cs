@@ -154,6 +154,7 @@ namespace LanguageExplorer
 		/// All of the sorters for the record list.
 		/// </summary>
 		protected Dictionary<string, PropertyRecordSorter> _allSorters;
+		private EditFilterMenuHandler _editFilterMenuHandler;
 
 		#endregion Data members
 
@@ -258,6 +259,7 @@ namespace LanguageExplorer
 			}
 			if (disposing)
 			{
+				_editFilterMenuHandler?.Dispose();
 				UnregisterMessageHandlers();
 				RemoveNotification(); // before disposing list, we need it to get to the Cache.
 				if (m_cache != null && RecordedFocusedObject != null)
@@ -299,6 +301,7 @@ namespace LanguageExplorer
 			_bulkEditListUpdateHelper = null;
 			_defaultSorter = null;
 			_defaultFilter = null;
+			_editFilterMenuHandler = null;
 
 			PropertyTable = null;
 			Publisher = null;
@@ -567,6 +570,7 @@ namespace LanguageExplorer
 				return; // Only do it once.
 			}
 			IsActiveInGui = true;
+			SetupFilterMenu();
 			ReloadIfNeeded();
 
 			RegisterMessageHandlers();
@@ -614,6 +618,7 @@ namespace LanguageExplorer
 
 		public virtual void BecomeInactive()
 		{
+			TearDownFilterMenu();
 			UnregisterMessageHandlers(); // No sense handling messages, when dormant.
 			IsActiveInGui = false;
 			RemoveNotification();
@@ -2512,7 +2517,7 @@ namespace LanguageExplorer
 		/// </summary>
 		private void OnChangeFilterToCheckedListPropertyChoice()
 		{
-			var filterName = PropertyTable.GetValue(CurrentFilterPropertyTableId, SettingsGroup.LocalSettings, String.Empty);
+			var filterName = PropertyTable.GetValue(CurrentFilterPropertyTableId, SettingsGroup.LocalSettings, string.Empty);
 			RecordFilter addf = null;
 			RecordFilter remf = null;
 			var nof = new NoFilters();
@@ -2813,6 +2818,17 @@ namespace LanguageExplorer
 				var toolNameThatExpectsTheSuspend = PropertyTable.GetValue("SuspendLoadListUntilOnChangeFilter", SettingsGroup.LocalSettings, string.Empty);
 				return !string.IsNullOrEmpty(toolNameThatExpectsTheSuspend) && toolNameThatExpectsTheSuspend == PropertyTable.GetValue<string>(AreaServices.ToolChoice);
 			}
+		}
+
+		private void SetupFilterMenu()
+		{
+			_editFilterMenuHandler = new EditFilterMenuHandler(this);
+		}
+
+		private void TearDownFilterMenu()
+		{
+			_editFilterMenuHandler.Dispose();
+			_editFilterMenuHandler = null;
 		}
 
 		#endregion Private stuff
@@ -4012,5 +4028,127 @@ namespace LanguageExplorer
 #endregion Protected stuff
 
 #endregion Non-interface code
+
+		private sealed class EditFilterMenuHandler : IDisposable
+		{
+			private ToolStripMenuItem _viewFilterMenuItem;
+			private RecordList _recordList;
+
+			internal EditFilterMenuHandler(RecordList recordList)
+			{
+				_recordList = recordList;
+				if (_recordList.PropertyTable?.GetValue<MajorFlexComponentParameters>("MajorFlexComponentParameters") == null)
+				{
+					// Tests may not have the property set.
+					return;
+				}
+				_viewFilterMenuItem = MenuServices.GetViewFilterMenu(_recordList.PropertyTable.GetValue<MajorFlexComponentParameters>("MajorFlexComponentParameters").MenuStrip);
+				CreateFilterMenus();
+			}
+
+			/// <summary>
+			/// Create any needed filters and wire up event handler(s) for user provided filters,
+			/// and for the permanent "No Filters" submenu.
+			/// </summary>
+			private void CreateFilterMenus()
+			{
+				_viewFilterMenuItem.DropDownItems[0].Click += NoFiltersMenu_Clicked;
+				_viewFilterMenuItem.DropDownItems[0].Tag = new NoFilters();
+				if (_recordList._filterProvider != null)
+				{
+					foreach (var filter in _recordList._filterProvider.Filters)
+					{
+						var filterMenu = new ToolStripMenuItem(FiltersStrings.ksUnknown, LanguageExplorerResources.FWFilterBasic_Small, OtherFilterMenu_Clicked);
+						filterMenu.Tag = filter;
+						_viewFilterMenuItem.DropDownItems.Add(filterMenu);
+					}
+				}
+			}
+
+			private void NoFiltersMenu_Clicked(object sender, EventArgs e)
+			{
+				FilterMenuClickedCommon(FiltersStrings.ksUncheckAll);
+			}
+
+			private void OtherFilterMenu_Clicked(object sender, EventArgs eventArgs)
+			{
+				FilterMenuClickedCommon(FiltersStrings.ksNoFilter);
+			}
+
+			private void FilterMenuClickedCommon(string newPropertyValue)
+			{
+				_recordList.PropertyTable.SetProperty(_recordList.CurrentFilterPropertyTableId, newPropertyValue, SettingsGroup.LocalSettings, true, false);
+				_recordList.OnChangeFilterToCheckedListPropertyChoice();
+			}
+
+			#region IDisposable
+
+			private bool _isDisposed;
+
+			/// <summary>
+			/// Finalizer, in case client doesn't dispose it.
+			/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
+			/// </summary>
+			~EditFilterMenuHandler()
+			{
+				Dispose(false);
+				// The base class finalizer is called automatically.
+				GC.SuppressFinalize(this);
+			}
+
+			/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SupressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					return; // No need to do it more than once.
+				}
+				if (disposing)
+				{
+					if (_viewFilterMenuItem != null)
+					{
+						var goners = new List<ToolStripMenuItem>();
+						for (var idx = 0; idx < _viewFilterMenuItem.DropDownItems.Count; ++idx)
+						{
+							var currentMenu = (ToolStripMenuItem)_viewFilterMenuItem.DropDownItems[idx];
+							currentMenu.Tag = null;
+							if (idx == 0)
+							{
+								// Just unwire handler, but leave menu in.
+								currentMenu.Click -= NoFiltersMenu_Clicked;
+							}
+							else
+							{
+								// Unwire event handler and remove menu item.
+								currentMenu.Click -= OtherFilterMenu_Clicked;
+								goners.Add(currentMenu);
+							}
+						}
+						foreach (var goner in goners)
+						{
+							_viewFilterMenuItem.DropDownItems.Remove(goner);
+							goner.Dispose();
+						}
+					}
+				}
+				_viewFilterMenuItem = null;
+				_recordList = null;
+
+				_isDisposed = true;
+			}
+			#endregion
+		}
 	}
 }

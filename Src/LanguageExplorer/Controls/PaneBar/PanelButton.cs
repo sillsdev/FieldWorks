@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
@@ -13,7 +14,9 @@ namespace LanguageExplorer.Controls.PaneBar
 	internal class PanelButton : PanelExtension
 	{
 		private bool _mouseOverControl;
-		private readonly IPropertyTable _propertyTable;
+		private IPropertyTable _propertyTable;
+		private IPublisher _publisher;
+		private ISubscriber _subscriber;
 		private readonly Image _image;
 		private readonly string _property;
 		private readonly string _checkedLabel;
@@ -24,17 +27,20 @@ namespace LanguageExplorer.Controls.PaneBar
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="propertyTable">The property table, which we use to reset the relevant "ShowHiddenFields" property.</param>
+		/// <param name="flexComponentParameters">The property table, publisher, subscriber provider, which we use to handle the relevant "ShowHiddenFields" property.</param>
 		/// <param name="image">Optional Image to display.</param>
 		/// <param name="property">The name of the property in the table that is being monitored.</param>
 		/// <param name="checkedLabel">Label to display, when check box is checked</param>
 		/// <param name="uncheckedLabel">Label to display, when check box is not checked.</param>
-		public PanelButton(IPropertyTable propertyTable, Image image, string property, string checkedLabel, string uncheckedLabel)
+		public PanelButton(FlexComponentParameters flexComponentParameters, Image image, string property, string checkedLabel, string uncheckedLabel)
 		{
-			_propertyTable = propertyTable;
+			_propertyTable = flexComponentParameters.PropertyTable;
+			_publisher = flexComponentParameters.Publisher;
+			_subscriber = flexComponentParameters.Subscriber;
+			_subscriber.Subscribe("ShowHiddenFields", ShowHiddenFields_Handler);
 			_image = image;
 			_property = property;
-			_isChecked = propertyTable.GetValue(_property, false);
+			_isChecked = _propertyTable.GetValue(_property, false);
 			_checkedLabel = checkedLabel;
 			_uncheckedLabel = uncheckedLabel;
 
@@ -54,10 +60,21 @@ namespace LanguageExplorer.Controls.PaneBar
 			SetLabel();
 		}
 
+		private void ShowHiddenFields_Handler(object obj)
+		{
+			var newCheckedValue = (bool)obj;
+			if (newCheckedValue != _isChecked)
+			{
+				_isChecked = newCheckedValue;
+				var cb = (CheckBox)Controls.Find("CheckBox", false)[0];
+				cb.Checked = _isChecked;
+			}
+		}
+
 		/// <summary>
 		/// Set the DataTree.
 		/// </summary>
-		public DataTree DatTree { get; set; }
+		public DataTree MyDataTree { get; set; }
 
 		private void SetLabel()
 		{
@@ -160,9 +177,30 @@ namespace LanguageExplorer.Controls.PaneBar
 				var cb = (CheckBox)Controls.Find("CheckBox", false)[0];
 				_isChecked = cb.Checked;
 				_propertyTable.SetProperty(_property, _isChecked, SettingsGroup.LocalSettings, true, false);
-				DatTree.ShowHiddenFields(_isChecked);
+				_publisher.Publish("ShowHiddenFields", _isChecked);
 			}
 		}
+
+		#region Overrides of PanelExtension
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+
+			if (disposing)
+			{
+				_subscriber.Unsubscribe("ShowHiddenFields", ShowHiddenFields_Handler);
+			}
+			_propertyTable = null;
+			_publisher = null;
+			_subscriber = null;
+
+			base.Dispose(disposing);
+		}
+		#endregion
 
 		private void PanelButton_Image_Clicked(object sender, EventArgs e)
 		{
@@ -170,7 +208,7 @@ namespace LanguageExplorer.Controls.PaneBar
 			{
 				_isChecked = !_isChecked;
 				_propertyTable.SetProperty(_property, _isChecked, SettingsGroup.LocalSettings, true, false);
-				DatTree.ShowHiddenFields(_isChecked);
+				_publisher.Publish("ShowHiddenFields", _isChecked);
 			}
 		}
 

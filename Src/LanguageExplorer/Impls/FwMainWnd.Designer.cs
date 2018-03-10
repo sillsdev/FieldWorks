@@ -27,7 +27,7 @@ namespace LanguageExplorer.Impls
 			this._fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.newFieldWorksProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripFileMenuSparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.projectManagementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.fieldWorksProjectPropertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.backUpThisProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -36,38 +36,40 @@ namespace LanguageExplorer.Impls
 			this.projectLocationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.deleteProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.createShortcutOnDesktopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripMenuItem8 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripFileMenuSparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.archiveWithRAMPSILToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.uploadToWebonaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripMenuItem9 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripFileMenuSparator3 = new System.Windows.Forms.ToolStripSeparator();
 			this.printToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripMenuItem10 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripFileMenuSparator4 = new System.Windows.Forms.ToolStripSeparator();
 			this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.standardFormatLexiconToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.translatedListContentToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripFileMenuSparator5 = new System.Windows.Forms.ToolStripSeparator();
 			this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._sendReceiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripMenuItem11 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripEditMenuSparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripMenuItem12 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripEditMenuSparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.pasteHyperlinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.copyLocationAsHyperlinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripMenuItem13 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripEditMenuSparator3 = new System.Windows.Forms.ToolStripSeparator();
 			this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripMenuItem14 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripEditMenuSparator4 = new System.Windows.Forms.ToolStripSeparator();
 			this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripViewMenuSparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.filtersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.noFilterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._dataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._data_First = new System.Windows.Forms.ToolStripMenuItem();
 			this._data_Previous = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,27 +85,27 @@ namespace LanguageExplorer.Impls
 			this.writingSystemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.setUpWritingSystemsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this._toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripToolsMenuSparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.configureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.restoreDefaultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem20 = new System.Windows.Forms.ToolStripSeparator();
 			this.setUpWritingSystemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripMenuItem15 = new System.Windows.Forms.ToolStripSeparator();
-			this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripToolsMenuSparator2 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripToolsMenuSparator3 = new System.Windows.Forms.ToolStripSeparator();
 			this.utilitiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripMenuItem19 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripToolsMenuSparator4 = new System.Windows.Forms.ToolStripSeparator();
 			this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._parserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._parseAllWordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._reparseAllWordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._reloadGrammarLexiconToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._stopParserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripMenuItem17 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripParserMenuSparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this._tryAWordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._parseWordsInTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._parseCurrentWordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._clearCurrentParserAnalysesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripMenuItem18 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripParserMenuSparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.chooseParserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._defaultParserXAmpleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._phonologicalRulebasedParserHermitCrabNETToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -118,10 +120,10 @@ namespace LanguageExplorer.Impls
 			this.technicalNotesOnFieldWorksSendReceiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.technicalNotesOnWritingSystemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.editingLinguisticsPapersUsingXLingPaperToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripHelpMenuSparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.reportAProblemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.makeASuggestionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripHelpMenuSparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.aboutLanguageExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripStandard = new System.Windows.Forms.ToolStrip();
 			this.toolStripButtonHistoryBack = new System.Windows.Forms.ToolStripButton();
@@ -154,6 +156,7 @@ namespace LanguageExplorer.Impls
 			this.toolStripFormat = new System.Windows.Forms.ToolStrip();
 			this.toolStripComboBoxWritingSystem = new System.Windows.Forms.ToolStripComboBox();
 			this.toolStripComboBoxStyles = new System.Windows.Forms.ToolStripComboBox();
+			this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
 			this._menuStrip.SuspendLayout();
 			this.toolStripStandard.SuspendLayout();
 			this.toolStripContainer.ContentPanel.SuspendLayout();
@@ -199,17 +202,17 @@ namespace LanguageExplorer.Impls
 			this._fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newFieldWorksProjectToolStripMenuItem,
             this.openToolStripMenuItem,
-            this.toolStripMenuItem1,
+            this.toolStripFileMenuSparator1,
             this.projectManagementToolStripMenuItem,
-            this.toolStripMenuItem8,
+            this.toolStripFileMenuSparator2,
             this.archiveWithRAMPSILToolStripMenuItem,
             this.uploadToWebonaryToolStripMenuItem,
-            this.toolStripMenuItem9,
+            this.toolStripFileMenuSparator3,
             this.printToolStripMenuItem,
-            this.toolStripMenuItem10,
+            this.toolStripFileMenuSparator4,
             this.importToolStripMenuItem,
             this.exportToolStripMenuItem,
-            this.toolStripMenuItem3,
+            this.toolStripFileMenuSparator5,
             this.closeToolStripMenuItem});
 			this._fileToolStripMenuItem.Name = "_fileToolStripMenuItem";
 			this._fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -236,10 +239,10 @@ namespace LanguageExplorer.Impls
 			this.openToolStripMenuItem.ToolTipText = "Open an existing FieldWorks project.";
 			this.openToolStripMenuItem.Click += new System.EventHandler(this.File_Open);
 			// 
-			// toolStripMenuItem1
+			// toolStripFileMenuSparator1
 			// 
-			this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-			this.toolStripMenuItem1.Size = new System.Drawing.Size(208, 6);
+			this.toolStripFileMenuSparator1.Name = "toolStripFileMenuSparator1";
+			this.toolStripFileMenuSparator1.Size = new System.Drawing.Size(208, 6);
 			// 
 			// projectManagementToolStripMenuItem
 			// 
@@ -311,10 +314,10 @@ namespace LanguageExplorer.Impls
 			this.createShortcutOnDesktopToolStripMenuItem.ToolTipText = "Create a desktop shortcut to this project.";
 			this.createShortcutOnDesktopToolStripMenuItem.Click += new System.EventHandler(this.File_Create_Shortcut_on_Desktop);
 			// 
-			// toolStripMenuItem8
+			// toolStripFileMenuSparator2
 			// 
-			this.toolStripMenuItem8.Name = "toolStripMenuItem8";
-			this.toolStripMenuItem8.Size = new System.Drawing.Size(208, 6);
+			this.toolStripFileMenuSparator2.Name = "toolStripFileMenuSparator2";
+			this.toolStripFileMenuSparator2.Size = new System.Drawing.Size(208, 6);
 			// 
 			// archiveWithRAMPSILToolStripMenuItem
 			// 
@@ -332,10 +335,10 @@ namespace LanguageExplorer.Impls
 			this.uploadToWebonaryToolStripMenuItem.Text = "Upload to &Webonary...";
 			this.uploadToWebonaryToolStripMenuItem.Click += new System.EventHandler(this.UploadToWebonary_Click);
 			// 
-			// toolStripMenuItem9
+			// toolStripFileMenuSparator3
 			// 
-			this.toolStripMenuItem9.Name = "toolStripMenuItem9";
-			this.toolStripMenuItem9.Size = new System.Drawing.Size(208, 6);
+			this.toolStripFileMenuSparator3.Name = "toolStripFileMenuSparator3";
+			this.toolStripFileMenuSparator3.Size = new System.Drawing.Size(208, 6);
 			// 
 			// printToolStripMenuItem
 			// 
@@ -346,10 +349,10 @@ namespace LanguageExplorer.Impls
 			this.printToolStripMenuItem.Text = "&Print...";
 			this.printToolStripMenuItem.ToolTipText = "Print";
 			// 
-			// toolStripMenuItem10
+			// toolStripFileMenuSparator4
 			// 
-			this.toolStripMenuItem10.Name = "toolStripMenuItem10";
-			this.toolStripMenuItem10.Size = new System.Drawing.Size(208, 6);
+			this.toolStripFileMenuSparator4.Name = "toolStripFileMenuSparator4";
+			this.toolStripFileMenuSparator4.Size = new System.Drawing.Size(208, 6);
 			// 
 			// importToolStripMenuItem
 			// 
@@ -382,10 +385,10 @@ namespace LanguageExplorer.Impls
 			this.exportToolStripMenuItem.Text = "&Export...";
 			this.exportToolStripMenuItem.ToolTipText = "Export this FieldWorks project to a file.";
 			// 
-			// toolStripMenuItem3
+			// toolStripFileMenuSparator5
 			// 
-			this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-			this.toolStripMenuItem3.Size = new System.Drawing.Size(208, 6);
+			this.toolStripFileMenuSparator5.Name = "toolStripFileMenuSparator5";
+			this.toolStripFileMenuSparator5.Size = new System.Drawing.Size(208, 6);
 			// 
 			// closeToolStripMenuItem
 			// 
@@ -406,17 +409,17 @@ namespace LanguageExplorer.Impls
 			this._editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.undoToolStripMenuItem,
             this.redoToolStripMenuItem,
-            this.toolStripMenuItem11,
+            this.toolStripEditMenuSparator1,
             this.cutToolStripMenuItem,
             this.copyToolStripMenuItem,
             this.pasteToolStripMenuItem,
-            this.toolStripMenuItem12,
+            this.toolStripEditMenuSparator2,
             this.pasteHyperlinkToolStripMenuItem,
             this.copyLocationAsHyperlinkToolStripMenuItem,
-            this.toolStripMenuItem13,
+            this.toolStripEditMenuSparator3,
             this.findToolStripMenuItem,
             this.replaceToolStripMenuItem,
-            this.toolStripMenuItem14,
+            this.toolStripEditMenuSparator4,
             this.selectAllToolStripMenuItem,
             this.deleteToolStripMenuItem});
 			this._editToolStripMenuItem.Name = "_editToolStripMenuItem";
@@ -429,7 +432,7 @@ namespace LanguageExplorer.Impls
 			this.undoToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
 			this.undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-			this.undoToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+			this.undoToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
 			this.undoToolStripMenuItem.Text = "&Undo";
 			this.undoToolStripMenuItem.ToolTipText = "Undo previous actions.";
 			this.undoToolStripMenuItem.Click += new System.EventHandler(this.Edit_Undo_Click);
@@ -440,15 +443,15 @@ namespace LanguageExplorer.Impls
 			this.redoToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
 			this.redoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
-			this.redoToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+			this.redoToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
 			this.redoToolStripMenuItem.Text = "&Redo";
 			this.redoToolStripMenuItem.ToolTipText = "Redo previous actions.";
 			this.redoToolStripMenuItem.Click += new System.EventHandler(this.Edit_Redo_Click);
 			// 
-			// toolStripMenuItem11
+			// toolStripEditMenuSparator1
 			// 
-			this.toolStripMenuItem11.Name = "toolStripMenuItem11";
-			this.toolStripMenuItem11.Size = new System.Drawing.Size(216, 6);
+			this.toolStripEditMenuSparator1.Name = "toolStripEditMenuSparator1";
+			this.toolStripEditMenuSparator1.Size = new System.Drawing.Size(220, 6);
 			// 
 			// cutToolStripMenuItem
 			// 
@@ -456,7 +459,7 @@ namespace LanguageExplorer.Impls
 			this.cutToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
 			this.cutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-			this.cutToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+			this.cutToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
 			this.cutToolStripMenuItem.Text = "Cu&t";
 			this.cutToolStripMenuItem.ToolTipText = "Cut";
 			this.cutToolStripMenuItem.Click += new System.EventHandler(this.Edit_Cut);
@@ -467,7 +470,7 @@ namespace LanguageExplorer.Impls
 			this.copyToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
 			this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-			this.copyToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+			this.copyToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
 			this.copyToolStripMenuItem.Text = "&Copy";
 			this.copyToolStripMenuItem.ToolTipText = "Copy";
 			this.copyToolStripMenuItem.Click += new System.EventHandler(this.Edit_Copy);
@@ -478,20 +481,20 @@ namespace LanguageExplorer.Impls
 			this.pasteToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
 			this.pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-			this.pasteToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+			this.pasteToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
 			this.pasteToolStripMenuItem.Text = "&Paste";
 			this.pasteToolStripMenuItem.ToolTipText = "Paste";
 			this.pasteToolStripMenuItem.Click += new System.EventHandler(this.Edit_Paste);
 			// 
-			// toolStripMenuItem12
+			// toolStripEditMenuSparator2
 			// 
-			this.toolStripMenuItem12.Name = "toolStripMenuItem12";
-			this.toolStripMenuItem12.Size = new System.Drawing.Size(216, 6);
+			this.toolStripEditMenuSparator2.Name = "toolStripEditMenuSparator2";
+			this.toolStripEditMenuSparator2.Size = new System.Drawing.Size(220, 6);
 			// 
 			// pasteHyperlinkToolStripMenuItem
 			// 
 			this.pasteHyperlinkToolStripMenuItem.Name = "pasteHyperlinkToolStripMenuItem";
-			this.pasteHyperlinkToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+			this.pasteHyperlinkToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
 			this.pasteHyperlinkToolStripMenuItem.Text = "Paste &Hyperlink";
 			this.pasteHyperlinkToolStripMenuItem.ToolTipText = "Paste clipboard content as hyperlink.";
 			this.pasteHyperlinkToolStripMenuItem.Click += new System.EventHandler(this.Edit_Paste_Hyperlink);
@@ -499,14 +502,14 @@ namespace LanguageExplorer.Impls
 			// copyLocationAsHyperlinkToolStripMenuItem
 			// 
 			this.copyLocationAsHyperlinkToolStripMenuItem.Name = "copyLocationAsHyperlinkToolStripMenuItem";
-			this.copyLocationAsHyperlinkToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+			this.copyLocationAsHyperlinkToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
 			this.copyLocationAsHyperlinkToolStripMenuItem.Text = "Copy &Location as Hyperlink";
 			this.copyLocationAsHyperlinkToolStripMenuItem.ToolTipText = "Create a hyperlink to this location and copy it to the clipboard.";
 			// 
-			// toolStripMenuItem13
+			// toolStripEditMenuSparator3
 			// 
-			this.toolStripMenuItem13.Name = "toolStripMenuItem13";
-			this.toolStripMenuItem13.Size = new System.Drawing.Size(216, 6);
+			this.toolStripEditMenuSparator3.Name = "toolStripEditMenuSparator3";
+			this.toolStripEditMenuSparator3.Size = new System.Drawing.Size(220, 6);
 			// 
 			// findToolStripMenuItem
 			// 
@@ -514,7 +517,7 @@ namespace LanguageExplorer.Impls
 			this.findToolStripMenuItem.Name = "findToolStripMenuItem";
 			this.findToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.F)));
-			this.findToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+			this.findToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
 			this.findToolStripMenuItem.Text = "Find...";
 			this.findToolStripMenuItem.ToolTipText = "Find and Replace Text";
 			// 
@@ -522,28 +525,29 @@ namespace LanguageExplorer.Impls
 			// 
 			this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
 			this.replaceToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
-			this.replaceToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+			this.replaceToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
 			this.replaceToolStripMenuItem.Text = "Replace...";
 			// 
-			// toolStripMenuItem14
+			// toolStripEditMenuSparator4
 			// 
-			this.toolStripMenuItem14.Name = "toolStripMenuItem14";
-			this.toolStripMenuItem14.Size = new System.Drawing.Size(216, 6);
+			this.toolStripEditMenuSparator4.Name = "toolStripEditMenuSparator4";
+			this.toolStripEditMenuSparator4.Size = new System.Drawing.Size(220, 6);
 			// 
 			// selectAllToolStripMenuItem
 			// 
 			this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
 			this.selectAllToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-			this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+			this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
 			this.selectAllToolStripMenuItem.Text = "Select &All";
 			this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.Edit_Select_All);
 			// 
 			// deleteToolStripMenuItem
 			// 
+			this.deleteToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("deleteToolStripMenuItem.Image")));
 			this.deleteToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Fuchsia;
 			this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
 			this.deleteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete)));
-			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
 			this.deleteToolStripMenuItem.Text = "Delete";
 			this.deleteToolStripMenuItem.Click += new System.EventHandler(this.Edit_Delete_Click);
 			// 
@@ -551,7 +555,9 @@ namespace LanguageExplorer.Impls
 			// 
 			this._viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.refreshToolStripMenuItem,
-            this.toolStripMenuItem5});
+            this.toolStripViewMenuSparator1,
+            this.toolStripMenuItem1,
+            this.filtersToolStripMenuItem});
 			this._viewToolStripMenuItem.Name = "_viewToolStripMenuItem";
 			this._viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
 			this._viewToolStripMenuItem.Text = "&View";
@@ -562,15 +568,31 @@ namespace LanguageExplorer.Impls
 			this.refreshToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
 			this.refreshToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-			this.refreshToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+			this.refreshToolStripMenuItem.Size = new System.Drawing.Size(156, 26);
 			this.refreshToolStripMenuItem.Text = "&Refresh";
 			this.refreshToolStripMenuItem.ToolTipText = "Refresh the screen.";
 			this.refreshToolStripMenuItem.Click += new System.EventHandler(this.View_Refresh);
 			// 
-			// toolStripMenuItem5
+			// toolStripViewMenuSparator1
 			// 
-			this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-			this.toolStripMenuItem5.Size = new System.Drawing.Size(129, 6);
+			this.toolStripViewMenuSparator1.Name = "toolStripViewMenuSparator1";
+			this.toolStripViewMenuSparator1.Size = new System.Drawing.Size(153, 6);
+			// 
+			// filtersToolStripMenuItem
+			// 
+			this.filtersToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.noFilterToolStripMenuItem});
+			this.filtersToolStripMenuItem.Name = "filtersToolStripMenuItem";
+			this.filtersToolStripMenuItem.Size = new System.Drawing.Size(156, 26);
+			this.filtersToolStripMenuItem.Text = "Filters";
+			// 
+			// noFilterToolStripMenuItem
+			// 
+			this.noFilterToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("noFilterToolStripMenuItem.Image")));
+			this.noFilterToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.noFilterToolStripMenuItem.Name = "noFilterToolStripMenuItem";
+			this.noFilterToolStripMenuItem.Size = new System.Drawing.Size(156, 26);
+			this.noFilterToolStripMenuItem.Text = "No Filter";
 			// 
 			// _dataToolStripMenuItem
 			// 
@@ -693,21 +715,21 @@ namespace LanguageExplorer.Impls
 			// _toolsToolStripMenuItem
 			// 
 			this._toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem6,
+            this.toolStripToolsMenuSparator1,
             this.configureToolStripMenuItem,
-            this.toolStripMenuItem15,
-            this.toolStripMenuItem16,
+            this.toolStripToolsMenuSparator2,
+            this.toolStripToolsMenuSparator3,
             this.utilitiesToolStripMenuItem,
-            this.toolStripMenuItem19,
+            this.toolStripToolsMenuSparator4,
             this.optionsToolStripMenuItem});
 			this._toolsToolStripMenuItem.Name = "_toolsToolStripMenuItem";
 			this._toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
 			this._toolsToolStripMenuItem.Text = "&Tools";
 			// 
-			// toolStripMenuItem6
+			// toolStripToolsMenuSparator1
 			// 
-			this.toolStripMenuItem6.Name = "toolStripMenuItem6";
-			this.toolStripMenuItem6.Size = new System.Drawing.Size(124, 6);
+			this.toolStripToolsMenuSparator1.Name = "toolStripToolsMenuSparator1";
+			this.toolStripToolsMenuSparator1.Size = new System.Drawing.Size(124, 6);
 			// 
 			// configureToolStripMenuItem
 			// 
@@ -739,15 +761,15 @@ namespace LanguageExplorer.Impls
 			this.setUpWritingSystemsToolStripMenuItem.ToolTipText = "Add, remove, or change the writing systems specified for this project.";
 			this.setUpWritingSystemsToolStripMenuItem.Click += new System.EventHandler(this.File_FieldWorks_Project_Properties);
 			// 
-			// toolStripMenuItem15
+			// toolStripToolsMenuSparator2
 			// 
-			this.toolStripMenuItem15.Name = "toolStripMenuItem15";
-			this.toolStripMenuItem15.Size = new System.Drawing.Size(124, 6);
+			this.toolStripToolsMenuSparator2.Name = "toolStripToolsMenuSparator2";
+			this.toolStripToolsMenuSparator2.Size = new System.Drawing.Size(124, 6);
 			// 
-			// toolStripMenuItem16
+			// toolStripToolsMenuSparator3
 			// 
-			this.toolStripMenuItem16.Name = "toolStripMenuItem16";
-			this.toolStripMenuItem16.Size = new System.Drawing.Size(124, 6);
+			this.toolStripToolsMenuSparator3.Name = "toolStripToolsMenuSparator3";
+			this.toolStripToolsMenuSparator3.Size = new System.Drawing.Size(124, 6);
 			// 
 			// utilitiesToolStripMenuItem
 			// 
@@ -757,10 +779,10 @@ namespace LanguageExplorer.Impls
 			this.utilitiesToolStripMenuItem.ToolTipText = "Run some special utilities to process your data.";
 			this.utilitiesToolStripMenuItem.Click += new System.EventHandler(this.utilitiesToolStripMenuItem_Click);
 			// 
-			// toolStripMenuItem19
+			// toolStripToolsMenuSparator4
 			// 
-			this.toolStripMenuItem19.Name = "toolStripMenuItem19";
-			this.toolStripMenuItem19.Size = new System.Drawing.Size(124, 6);
+			this.toolStripToolsMenuSparator4.Name = "toolStripToolsMenuSparator4";
+			this.toolStripToolsMenuSparator4.Size = new System.Drawing.Size(124, 6);
 			// 
 			// optionsToolStripMenuItem
 			// 
@@ -776,12 +798,12 @@ namespace LanguageExplorer.Impls
             this._reparseAllWordsToolStripMenuItem,
             this._reloadGrammarLexiconToolStripMenuItem,
             this._stopParserToolStripMenuItem,
-            this.toolStripMenuItem17,
+            this.toolStripParserMenuSparator1,
             this._tryAWordToolStripMenuItem,
             this._parseWordsInTextToolStripMenuItem,
             this._parseCurrentWordToolStripMenuItem,
             this._clearCurrentParserAnalysesToolStripMenuItem,
-            this.toolStripMenuItem18,
+            this.toolStripParserMenuSparator2,
             this.chooseParserToolStripMenuItem,
             this._editParserParametersToolStripMenuItem});
 			this._parserToolStripMenuItem.Name = "_parserToolStripMenuItem";
@@ -815,10 +837,10 @@ namespace LanguageExplorer.Impls
 			this._stopParserToolStripMenuItem.Text = "&Stop Parser";
 			this._stopParserToolStripMenuItem.ToolTipText = "Stop the Parser.";
 			// 
-			// toolStripMenuItem17
+			// toolStripParserMenuSparator1
 			// 
-			this.toolStripMenuItem17.Name = "toolStripMenuItem17";
-			this.toolStripMenuItem17.Size = new System.Drawing.Size(225, 6);
+			this.toolStripParserMenuSparator1.Name = "toolStripParserMenuSparator1";
+			this.toolStripParserMenuSparator1.Size = new System.Drawing.Size(225, 6);
 			// 
 			// _tryAWordToolStripMenuItem
 			// 
@@ -846,10 +868,10 @@ namespace LanguageExplorer.Impls
 			this._clearCurrentParserAnalysesToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
 			this._clearCurrentParserAnalysesToolStripMenuItem.Text = "Clear Current Parser &Analyses";
 			// 
-			// toolStripMenuItem18
+			// toolStripParserMenuSparator2
 			// 
-			this.toolStripMenuItem18.Name = "toolStripMenuItem18";
-			this.toolStripMenuItem18.Size = new System.Drawing.Size(225, 6);
+			this.toolStripParserMenuSparator2.Name = "toolStripParserMenuSparator2";
+			this.toolStripParserMenuSparator2.Size = new System.Drawing.Size(225, 6);
 			// 
 			// chooseParserToolStripMenuItem
 			// 
@@ -904,10 +926,10 @@ namespace LanguageExplorer.Impls
             this.trainingToolStripMenuItem,
             this.demoMoviesToolStripMenuItem,
             this.resourcesToolStripMenuItem,
-            this.toolStripMenuItem2,
+            this.toolStripHelpMenuSparator1,
             this.reportAProblemToolStripMenuItem,
             this.makeASuggestionToolStripMenuItem,
-            this.toolStripMenuItem4,
+            this.toolStripHelpMenuSparator2,
             this.aboutLanguageExplorerToolStripMenuItem});
 			this._helpToolStripMenuItem.Name = "_helpToolStripMenuItem";
 			this._helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
@@ -973,10 +995,10 @@ namespace LanguageExplorer.Impls
     "vailable in English).";
 			this.editingLinguisticsPapersUsingXLingPaperToolStripMenuItem.Click += new System.EventHandler(this.Help_XLingPaper);
 			// 
-			// toolStripMenuItem2
+			// toolStripHelpMenuSparator1
 			// 
-			this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-			this.toolStripMenuItem2.Size = new System.Drawing.Size(213, 6);
+			this.toolStripHelpMenuSparator1.Name = "toolStripHelpMenuSparator1";
+			this.toolStripHelpMenuSparator1.Size = new System.Drawing.Size(213, 6);
 			// 
 			// reportAProblemToolStripMenuItem
 			// 
@@ -992,10 +1014,10 @@ namespace LanguageExplorer.Impls
 			this.makeASuggestionToolStripMenuItem.Text = "&Make a Suggestion...";
 			this.makeASuggestionToolStripMenuItem.Click += new System.EventHandler(this.Help_Make_a_Suggestion);
 			// 
-			// toolStripMenuItem4
+			// toolStripHelpMenuSparator2
 			// 
-			this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-			this.toolStripMenuItem4.Size = new System.Drawing.Size(213, 6);
+			this.toolStripHelpMenuSparator2.Name = "toolStripHelpMenuSparator2";
+			this.toolStripHelpMenuSparator2.Size = new System.Drawing.Size(213, 6);
 			// 
 			// aboutLanguageExplorerToolStripMenuItem
 			// 
@@ -1024,10 +1046,10 @@ namespace LanguageExplorer.Impls
             this._tsbNext,
             this._tsbLast,
             this.toolStripButtonFlexLiftBridge});
-			this.toolStripStandard.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
+			this.toolStripStandard.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
 			this.toolStripStandard.Location = new System.Drawing.Point(3, 24);
 			this.toolStripStandard.Name = "toolStripStandard";
-			this.toolStripStandard.Size = new System.Drawing.Size(283, 27);
+			this.toolStripStandard.Size = new System.Drawing.Size(294, 27);
 			this.toolStripStandard.TabIndex = 2;
 			this.toolStripStandard.Text = "Standard";
 			// 
@@ -1278,10 +1300,10 @@ namespace LanguageExplorer.Impls
 			this.toolStripView.Dock = System.Windows.Forms.DockStyle.None;
 			this.toolStripView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButtonChangeFilterClearAll});
-			this.toolStripView.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
-			this.toolStripView.Location = new System.Drawing.Point(290, 24);
+			this.toolStripView.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
+			this.toolStripView.Location = new System.Drawing.Point(299, 24);
 			this.toolStripView.Name = "toolStripView";
-			this.toolStripView.Size = new System.Drawing.Size(24, 23);
+			this.toolStripView.Size = new System.Drawing.Size(35, 25);
 			this.toolStripView.TabIndex = 5;
 			// 
 			// toolStripButtonChangeFilterClearAll
@@ -1300,10 +1322,10 @@ namespace LanguageExplorer.Impls
 			this.toolStripInsert.Dock = System.Windows.Forms.DockStyle.None;
 			this.toolStripInsert.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButtonFindText});
-			this.toolStripInsert.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
-			this.toolStripInsert.Location = new System.Drawing.Point(318, 24);
+			this.toolStripInsert.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
+			this.toolStripInsert.Location = new System.Drawing.Point(338, 24);
 			this.toolStripInsert.Name = "toolStripInsert";
-			this.toolStripInsert.Size = new System.Drawing.Size(24, 23);
+			this.toolStripInsert.Size = new System.Drawing.Size(35, 25);
 			this.toolStripInsert.TabIndex = 4;
 			// 
 			// toolStripButtonFindText
@@ -1322,10 +1344,10 @@ namespace LanguageExplorer.Impls
 			this.toolStripFormat.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripComboBoxWritingSystem,
             this.toolStripComboBoxStyles});
-			this.toolStripFormat.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
-			this.toolStripFormat.Location = new System.Drawing.Point(345, 24);
+			this.toolStripFormat.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
+			this.toolStripFormat.Location = new System.Drawing.Point(376, 24);
 			this.toolStripFormat.Name = "toolStripFormat";
-			this.toolStripFormat.Size = new System.Drawing.Size(278, 23);
+			this.toolStripFormat.Size = new System.Drawing.Size(258, 25);
 			this.toolStripFormat.TabIndex = 3;
 			// 
 			// toolStripComboBoxWritingSystem
@@ -1343,6 +1365,11 @@ namespace LanguageExplorer.Impls
 			this.toolStripComboBoxStyles.Name = "toolStripComboBoxStyles";
 			this.toolStripComboBoxStyles.Size = new System.Drawing.Size(121, 25);
 			this.toolStripComboBoxStyles.ToolTipText = "Styles";
+			// 
+			// toolStripMenuItem1
+			// 
+			this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+			this.toolStripMenuItem1.Size = new System.Drawing.Size(153, 6);
 			// 
 			// FwMainWnd
 			// 
@@ -1395,25 +1422,25 @@ namespace LanguageExplorer.Impls
 		private System.Windows.Forms.ToolStripMenuItem _toolsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem _windowToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem _helpToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+		private System.Windows.Forms.ToolStripSeparator toolStripFileMenuSparator1;
 		private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem languageExplorerToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem trainingToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem demoMoviesToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem resourcesToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem technicalNotesOnFieldWorksSendReceiveToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
+		private System.Windows.Forms.ToolStripSeparator toolStripHelpMenuSparator1;
 		private System.Windows.Forms.ToolStripMenuItem reportAProblemToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem makeASuggestionToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
+		private System.Windows.Forms.ToolStripSeparator toolStripHelpMenuSparator2;
 		private System.Windows.Forms.ToolStripMenuItem aboutLanguageExplorerToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem newFieldWorksProjectToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem projectManagementToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
+		private System.Windows.Forms.ToolStripSeparator toolStripFileMenuSparator5;
 		private System.Windows.Forms.ToolStripMenuItem fieldWorksProjectPropertiesToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem5;
+		private System.Windows.Forms.ToolStripSeparator toolStripViewMenuSparator1;
 		private System.Windows.Forms.ToolStrip toolStripStandard;
 		private System.Windows.Forms.ToolStripButton toolStripButton_Refresh;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
@@ -1421,18 +1448,18 @@ namespace LanguageExplorer.Impls
 		private System.Windows.Forms.ToolStripMenuItem configureToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem setUpWritingSystemsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem setUpWritingSystemsToolStripMenuItem1;
-		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem6;
+		private System.Windows.Forms.ToolStripSeparator toolStripToolsMenuSparator1;
 		private System.Windows.Forms.ToolStripMenuItem backUpThisProjectToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem restoreAProjectToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem7;
 		private System.Windows.Forms.ToolStripMenuItem projectLocationsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem deleteProjectToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem createShortcutOnDesktopToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem8;
+		private System.Windows.Forms.ToolStripSeparator toolStripFileMenuSparator2;
 		private System.Windows.Forms.ToolStripMenuItem archiveWithRAMPSILToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem9;
+		private System.Windows.Forms.ToolStripSeparator toolStripFileMenuSparator3;
 		private System.Windows.Forms.ToolStripMenuItem printToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem10;
+		private System.Windows.Forms.ToolStripSeparator toolStripFileMenuSparator4;
 		private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem translatedListContentToolStripMenuItem1;
@@ -1441,41 +1468,41 @@ namespace LanguageExplorer.Impls
 		private System.Windows.Forms.ToolStripMenuItem editingLinguisticsPapersUsingXLingPaperToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem11;
+		private System.Windows.Forms.ToolStripSeparator toolStripEditMenuSparator1;
 		private System.Windows.Forms.ToolStripMenuItem cutToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem12;
+		private System.Windows.Forms.ToolStripSeparator toolStripEditMenuSparator2;
 		private System.Windows.Forms.ToolStripButton undoToolStripButton;
 		private System.Windows.Forms.ToolStripButton redoToolStripButton;
 		private System.Windows.Forms.ToolStripMenuItem pasteHyperlinkToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem copyLocationAsHyperlinkToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem13;
+		private System.Windows.Forms.ToolStripSeparator toolStripEditMenuSparator3;
 		private System.Windows.Forms.StatusBar _statusbar;
 		private StatusBarPanel statusBarPanelMessage;
 		private StatusBarPanel statusBarPanelProgress;
 		private StatusBarPanel statusBarPanelArea;
 		private StatusBarPanel statusBarPanelRecordNumber;
-		private ToolStripSeparator toolStripMenuItem14;
+		private ToolStripSeparator toolStripEditMenuSparator4;
 		private ToolStripMenuItem selectAllToolStripMenuItem;
 		private ToolStripSeparator toolStripSeparator2;
 		private LanguageExplorer.Controls.CollapsingSplitContainer mainContainer;
 		private Panel _rightPanel;
 		private Controls.SilSidePane.SidePane _sidePane;
-		private ToolStripSeparator toolStripMenuItem15;
-		private ToolStripSeparator toolStripMenuItem16;
+		private ToolStripSeparator toolStripToolsMenuSparator2;
+		private ToolStripSeparator toolStripToolsMenuSparator3;
 		private ToolStripMenuItem utilitiesToolStripMenuItem;
 		private ToolStripMenuItem _parserToolStripMenuItem;
 		private ToolStripMenuItem _parseAllWordsToolStripMenuItem;
 		private ToolStripMenuItem _reparseAllWordsToolStripMenuItem;
 		private ToolStripMenuItem _reloadGrammarLexiconToolStripMenuItem;
 		private ToolStripMenuItem _stopParserToolStripMenuItem;
-		private ToolStripSeparator toolStripMenuItem17;
+		private ToolStripSeparator toolStripParserMenuSparator1;
 		private ToolStripMenuItem _tryAWordToolStripMenuItem;
 		private ToolStripMenuItem _parseWordsInTextToolStripMenuItem;
 		private ToolStripMenuItem _parseCurrentWordToolStripMenuItem;
 		private ToolStripMenuItem _clearCurrentParserAnalysesToolStripMenuItem;
-		private ToolStripSeparator toolStripMenuItem18;
+		private ToolStripSeparator toolStripParserMenuSparator2;
 		private ToolStripMenuItem chooseParserToolStripMenuItem;
 		private ToolStripMenuItem _defaultParserXAmpleToolStripMenuItem;
 		private ToolStripMenuItem _phonologicalRulebasedParserHermitCrabNETToolStripMenuItem;
@@ -1505,7 +1532,7 @@ namespace LanguageExplorer.Impls
 		private ToolStripComboBox toolStripComboBoxStyles;
 		private ToolStripMenuItem standardFormatLexiconToolStripMenuItem;
 		private ToolStripMenuItem uploadToWebonaryToolStripMenuItem;
-		private ToolStripSeparator toolStripMenuItem19;
+		private ToolStripSeparator toolStripToolsMenuSparator4;
 		private ToolStripMenuItem optionsToolStripMenuItem;
 		private ToolStripMenuItem stylesToolStripMenuItem;
 		private ToolStripMenuItem applyStyleToolStripMenuItem;
@@ -1515,5 +1542,8 @@ namespace LanguageExplorer.Impls
 		private ToolStripMenuItem findToolStripMenuItem;
 		private ToolStripButton toolStripButtonFindText;
 		private ToolStripMenuItem replaceToolStripMenuItem;
+		private ToolStripMenuItem filtersToolStripMenuItem;
+		private ToolStripMenuItem noFilterToolStripMenuItem;
+		private ToolStripSeparator toolStripMenuItem1;
 	}
 }
