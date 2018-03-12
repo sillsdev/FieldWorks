@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,13 +15,13 @@ namespace SIL.FieldWorks.Filters
 	{
 		public FindResultSorter(ITsString searchString, RecordSorter sorter)
 		{
-			m_comp = searchString.Text != null ? new ExactMatchFirstComparer(searchString.Text, sorter.getComparer()) : sorter.getComparer();
+			Comparer = searchString.Text != null ? new ExactMatchFirstComparer(searchString.Text, sorter.getComparer()) : sorter.getComparer();
 		}
 
 		internal class ExactMatchFirstComparer : IComparer
 		{
-			private string SearchString { get; set; }
-			private IComparer Comparer { get; set; }
+			private string SearchString { get; }
+			private IComparer Comparer { get; }
 
 			public ExactMatchFirstComparer(string text, IComparer comparer)
 			{
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.Filters
 				// Run the core comparison first
 				var comparerResult = Comparer.Compare(x, y);
 				// if items are equal no further tests are needed
-				if(comparerResult == 0)
+				if (comparerResult == 0)
 				{
 					return 0;
 				}
@@ -43,8 +43,8 @@ namespace SIL.FieldWorks.Filters
 				var stringComparer = (StringFinderCompare)Comparer;
 				var xStringArray = stringComparer.GetValue(x, stringComparer.SortedFromEnd);
 				var yStringArray = stringComparer.GetValue(y, stringComparer.SortedFromEnd);
-				var xString = xStringArray.Length == 0 ? String.Empty : xStringArray[0];
-				var yString = yStringArray.Length == 0 ? String.Empty : yStringArray[0];
+				var xString = xStringArray.Length == 0 ? string.Empty : xStringArray[0];
+				var yString = yStringArray.Length == 0 ? string.Empty : yStringArray[0];
 
 				// Avoid string comparisons if the result is already what we would possibly return
 				if(comparerResult >= 0)

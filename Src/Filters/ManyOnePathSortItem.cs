@@ -1,10 +1,11 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
 using System.IO;
+using System.Linq;
 using System.Text;
 using SIL.LCModel;
 
@@ -21,11 +22,6 @@ namespace SIL.FieldWorks.Filters
 	public class ManyOnePathSortItem : IManyOnePathSortItem
 	{
 		/// <summary>
-		/// The actual item that we are sorting, filtering, etc. by.
-		/// </summary>
-		int m_hvoItem;
-
-		/// <summary>
 		/// Array of objects in the path. m_pathObjects[0] is one of the original list items.
 		/// m_pathObjects[n+1] is an object in property m_pathFlids[n] of m_pathObjects[n].
 		/// m_hvoItem is an object in property m_pathFlids[last] of m_pathObjects[last].
@@ -36,31 +32,29 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// Construct one.
 		/// </summary>
-		/// <param name="hvoItem"></param>
-		/// <param name="pathObjects"></param>
-		/// <param name="pathFlids"></param>
 		public ManyOnePathSortItem(int hvoItem, int[] pathObjects, int[] pathFlids)
 		{
 			Init(hvoItem, pathObjects, pathFlids);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
 		/// </summary>
 		/// <returns>
 		/// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
 		/// </returns>
-		/// ------------------------------------------------------------------------------------
 		public override string ToString()
 		{
-			string result = "ManyOnePathSortItem on " + m_hvoItem;
+			var result = "ManyOnePathSortItem on " + KeyObject;
 			if (RootObjectHvo == 0)
+			{
 				result += " root object null ";
+			}
 			result += "path ";
 			if (m_pathObjects != null)
-				foreach(int hvo in m_pathObjects)
-					result += hvo + " ";
+			{
+				result = m_pathObjects.Aggregate(result, (current, hvo) => current + (hvo + " "));
+			}
 			return result;
 		}
 
@@ -68,10 +62,7 @@ namespace SIL.FieldWorks.Filters
 		/// This is used for some kinds of desperate verification. We shouldn't have databases with
 		/// more than 4 million objects for a while.
 		/// </summary>
-		public static int MaxObjectId
-		{
-			get { return 4000000; }
-		}
+		public static int MaxObjectId => 4000000;
 
 		/// <summary>
 		/// Assert that id is valid. (May not catch all problems.)
@@ -80,7 +71,9 @@ namespace SIL.FieldWorks.Filters
 		public static void AssertValidId(int id)
 		{
 			if (id > 0 || id <= MaxObjectId)
+			{
 				return;
+			}
 			throw new Exception("invalid object id detected: " + id);
 		}
 
@@ -89,12 +82,18 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		public void AssertValid()
 		{
-			AssertValidId(m_hvoItem);
+			AssertValidId(KeyObject);
 			if (RootObjectHvo != 0)
+			{
 				AssertValidId(RootObjectHvo);
+			}
 			if (m_pathObjects != null)
-				foreach (int hvo in m_pathObjects)
+			{
+				foreach (var hvo in m_pathObjects)
+				{
 					AssertValidId(hvo);
+				}
+			}
 		}
 
 		/// <summary>
@@ -104,7 +103,9 @@ namespace SIL.FieldWorks.Filters
 		public static void AssertValidList(ArrayList list)
 		{
 			foreach (ManyOnePathSortItem item in list)
+			{
 				item.AssertValid();
+			}
 		}
 
 		/// <summary>
@@ -113,17 +114,18 @@ namespace SIL.FieldWorks.Filters
 		/// <param name="hvos"></param>
 		public static void AssertValidHvoArray(int[] hvos)
 		{
-			foreach (int hvo in hvos)
+			foreach (var hvo in hvos)
+			{
 				AssertValidId(hvo);
+			}
 		}
 
-		void Init(int hvoItem, int[] pathObjects, int[] pathFlids)
+		private void Init(int hvoItem, int[] pathObjects, int[] pathFlids)
 		{
-			m_hvoItem = hvoItem;
+			KeyObject = hvoItem;
 			// Unless they are both null, they must be arrays of the same length.
 			// (Another, nastier, exception will be thrown if just one is null.)
-			if ((pathObjects != null || pathFlids != null)
-				&& pathObjects.Length != pathFlids.Length)
+			if ((pathObjects != null || pathFlids != null) && pathObjects.Length != pathFlids.Length)
 			{
 				throw new Exception("ManyOnePathSortItem arrays must be same length");
 			}
@@ -131,12 +133,9 @@ namespace SIL.FieldWorks.Filters
 			m_pathFlids = pathFlids;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Create one, caching the base CmObject.
 		/// </summary>
-		/// <param name="item">The item.</param>
-		/// ------------------------------------------------------------------------------------
 		public ManyOnePathSortItem(ICmObject item)
 		{
 			Init(item.Hvo, null, null);
@@ -145,18 +144,11 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// The HVO of the object that is the actual list item.
 		/// </summary>
-		public int KeyObject
-		{
-			get { return m_hvoItem; }
-		}
+		public int KeyObject { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the actual KeyCmObject, using the caller-supplied cache.
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public ICmObject KeyObjectUsing(LcmCache cache)
 		{
 			return cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(KeyObject);
@@ -170,7 +162,9 @@ namespace SIL.FieldWorks.Filters
 		{
 			var hvo = RootObjectHvo;
 			if (hvo == 0)
+			{
 				return null;
+			}
 			ICmObject result;
 			cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out result);
 			return result;
@@ -179,33 +173,26 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// A shortcut for PathObjects(0), that is, one of the original items from which we generated our path.
 		/// </summary>
-		public int RootObjectHvo
-		{
-			get { return PathObject(0); }
-		}
+		public int RootObjectHvo => PathObject(0);
 
 		/// <summary>
 		/// One of the objects on the path that leads from an item in the original list
 		/// to the KeyObject. As a special case, an index one larger produces the key object
 		/// itself.
 		/// </summary>
-		/// <param name="index"></param>
-		/// <returns></returns>
 		public int PathObject(int index)
 		{
 			if (m_pathObjects == null && index == 0)
+			{
 				return KeyObject;
-			if (index == m_pathObjects.Length)
-				return KeyObject;
-			return m_pathObjects[index];
+			}
+			return index == m_pathObjects.Length ? KeyObject : m_pathObjects[index];
 		}
 
 		/// <summary>
 		/// One of the field identifiers on the path that leads from an item in the
 		/// original list to the KeyObject.
 		/// </summary>
-		/// <param name="index"></param>
-		/// <returns></returns>
 		public int PathFlid(int index)
 		{
 			return m_pathFlids[index];
@@ -214,17 +201,9 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// The number of steps in the path.
 		/// </summary>
-		public int PathLength
-		{
-			get
-			{
-				if (m_pathObjects == null)
-					return 0;
-				return m_pathObjects.Length;
-			}
-		}
+		public int PathLength => m_pathObjects?.Length ?? 0;
 
-		string PersistGuid(Guid guid)
+		private static string PersistGuid(Guid guid)
 		{
 			return Convert.ToBase64String(guid.ToByteArray());
 		}
@@ -235,11 +214,11 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		public string PersistData(ICmObjectRepository repo)
 		{
-			StringBuilder builder = new StringBuilder();
-			builder.Append(PersistGuid(repo.GetObject(m_hvoItem).Guid));
+			var builder = new StringBuilder();
+			builder.Append(PersistGuid(repo.GetObject(KeyObject).Guid));
 			if (PathLength > 0)
 			{
-				for (int i = 0; i < m_pathObjects.Length; i++)
+				for (var i = 0; i < m_pathObjects.Length; i++)
 				{
 					builder.Append(";");
 					builder.Append(m_pathFlids[i]);
@@ -256,7 +235,9 @@ namespace SIL.FieldWorks.Filters
 		public static void WriteItems(ArrayList items, StreamWriter output, ICmObjectRepository repo)
 		{
 			foreach (IManyOnePathSortItem item in items)
+			{
 				output.WriteLine(item.PersistData(repo));
+			}
 			output.Flush();
 		}
 
@@ -269,7 +250,9 @@ namespace SIL.FieldWorks.Filters
 			{
 				var result = new ArrayList();
 				while (!input.EndOfStream)
+				{
 					result.Add(new LazyManyOnePathSortItem(input.ReadLine(), repo));
+				}
 				return result;
 
 			}
@@ -313,7 +296,7 @@ namespace SIL.FieldWorks.Filters
 	/// Private marker class so we can catch the specific problem of seeking an HVO for an unknown
 	/// (probably deleted object) guid.
 	/// </summary>
-	class InvalidObjectGuidException : ApplicationException
+	internal class InvalidObjectGuidException : ApplicationException
 	{
 
 	}
@@ -325,7 +308,7 @@ namespace SIL.FieldWorks.Filters
 	/// rather than CmObjects or HVOs, though the variables are ICmObjectOrIds so we can
 	/// retrieve the objects efficiently once they are real.
 	/// </summary>
-	class LazyManyOnePathSortItem : IManyOnePathSortItem
+	internal class LazyManyOnePathSortItem : IManyOnePathSortItem
 	{
 		/// <summary>
 		/// The actual item that we are sorting, filtering, etc. by.
@@ -355,7 +338,7 @@ namespace SIL.FieldWorks.Filters
 				var pathLen = chunks.Length/2;
 				m_pathObjects = new ICmObjectOrId[pathLen];
 				m_pathFlids = new int[pathLen];
-				for (int i = 0; i < pathLen; i++)
+				for (var i = 0; i < pathLen; i++)
 				{
 					m_pathFlids[i] = int.Parse(chunks[i*2 + 1]);
 					m_pathObjects[i] = ParseGuidRep(repo, chunks[i * 2 + 2]);
@@ -369,11 +352,11 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		public string PersistData(ICmObjectRepository repo)
 		{
-			StringBuilder builder = new StringBuilder();
+			var builder = new StringBuilder();
 			builder.Append(PersistGuid(m_item));
 			if (PathLength > 0)
 			{
-				for (int i = 0; i < m_pathObjects.Length; i++)
+				for (var i = 0; i < m_pathObjects.Length; i++)
 				{
 					builder.Append(";");
 					builder.Append(m_pathFlids[i]);
@@ -384,7 +367,7 @@ namespace SIL.FieldWorks.Filters
 			return builder.ToString();
 		}
 
-		private string PersistGuid(ICmObjectOrId item)
+		private static string PersistGuid(ICmObjectOrId item)
 		{
 			return Convert.ToBase64String(item.Id.Guid.ToByteArray());
 		}
@@ -393,14 +376,18 @@ namespace SIL.FieldWorks.Filters
 		{
 			var result = repo.GetObjectOrIdWithHvoFromGuid(new Guid(Convert.FromBase64String(chunk)));
 			if (result == null)
+			{
 				throw new InvalidObjectGuidException();
+			}
 			return result;
 		}
 
 		public ICmObject RootObjectUsing(LcmCache cache)
 		{
 			if (m_pathObjects == null)
+			{
 				return RealKeyObject();
+			}
 			var result = m_pathObjects[0].GetObject(m_repo);
 			// makes future updates more efficient, if it was an ID.
 			// I believe locking is not necessary, since even if two threads update this,
@@ -411,19 +398,14 @@ namespace SIL.FieldWorks.Filters
 
 		public int RootObjectHvo
 		{
-			get {
+			get
+			{
 				var objOrId = m_pathObjects == null ? m_item : m_pathObjects[0];
 				return m_repo.GetHvoFromObjectOrId(objOrId);
 			}
 		}
 
-		public int KeyObject
-		{
-			get
-			{
-				return m_repo.GetHvoFromObjectOrId(m_item);
-			}
-		}
+		public int KeyObject => m_repo.GetHvoFromObjectOrId(m_item);
 
 		public ICmObject KeyObjectUsing(LcmCache cache)
 		{
@@ -437,23 +419,13 @@ namespace SIL.FieldWorks.Filters
 			return temp;
 		}
 
-		public int PathLength
-		{
-			get
-			{
-				if (m_pathObjects == null)
-					return 0;
-				return m_pathObjects.Length;
-			}
-		}
+		public int PathLength => m_pathObjects?.Length ?? 0;
 
 		public int PathObject(int index)
 		{
-			if (m_pathObjects == null && index == 0)
-				return KeyObject;
-			if (index == m_pathObjects.Length)
-				return KeyObject;
-			return m_repo.GetHvoFromObjectOrId(m_pathObjects[index]);
+			return m_pathObjects == null && index == 0
+				? KeyObject
+				: (index == m_pathObjects.Length ? KeyObject : m_repo.GetHvoFromObjectOrId(m_pathObjects[index]));
 		}
 
 		public int PathFlid(int index)

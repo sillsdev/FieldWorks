@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,61 +15,43 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public class OwnIntPropFinder : StringFinderBase
 	{
-		int m_flid;
-
 		/// <summary>
 		/// Construct one that retrieves a particular integer property from the SDA.
 		/// </summary>
-		/// <param name="sda"></param>
-		/// <param name="flid"></param>
 		public OwnIntPropFinder(ISilDataAccess sda, int flid)
 			: base(sda)
 		{
-			m_flid = flid;
+			Flid = flid;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:OwnIntPropFinder"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public OwnIntPropFinder()
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the flid.
 		/// </summary>
-		/// <value>The flid.</value>
-		/// ------------------------------------------------------------------------------------
-		public int Flid
-		{
-			get { return m_flid; }
-		}
+		public int Flid { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml (node);
-			XmlUtils.SetAttribute(node, "flid", m_flid.ToString());
+			XmlUtils.SetAttribute(node, "flid", Flid.ToString());
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void InitXml(XElement node)
 		{
 			base.InitXml (node);
-			m_flid = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flid");
+			Flid = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flid");
 		}
 
 
@@ -77,26 +59,23 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// Return the (one) string that is the value of the integer property.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <returns></returns>
 		public override string[] Strings(int hvo)
 		{
-			return new string[] {m_sda.get_IntProp(hvo, m_flid).ToString()};
+			return new[] {DataAccess.get_IntProp(hvo, Flid).ToString()};
 		}
 
 		/// <summary>
 		/// Same if it is the same type for the same flid and DA.
 		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public override bool SameFinder(IStringFinder other)
 		{
-			OwnIntPropFinder other2 = other as OwnIntPropFinder;
+			var other2 = other as OwnIntPropFinder;
 			if (other2 == null)
+			{
 				return false;
-			return other2.m_flid == this.m_flid && other2.m_sda == this.m_sda;
+			}
+			return other2.Flid == Flid && other2.DataAccess == DataAccess;
 		}
-
 
 		#endregion
 	}

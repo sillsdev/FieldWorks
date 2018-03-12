@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,23 +16,19 @@ namespace  SIL.FieldWorks.Filters
 	public abstract class IntMatcher : BaseMatcher
 	{
 	}
+
 	/// <summary>
 	/// A matcher that tests for integers in a specified range.
 	/// </summary>
 	public class RangeIntMatcher : IntMatcher
 	{
-		private long m_min;
-		private long m_max;
-
 		/// <summary>
 		/// Create one.
 		/// </summary>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
 		public RangeIntMatcher(long min, long max)
 		{
-			m_min = min;
-			m_max = max;
+			Min = min;
+			Max = max;
 		}
 
 		/// <summary>
@@ -42,71 +38,52 @@ namespace  SIL.FieldWorks.Filters
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the min.
 		/// </summary>
-		/// <value>The min.</value>
-		/// ------------------------------------------------------------------------------------
-		public long Min
-		{
-			get {return m_min; }
-		}
-		/// ------------------------------------------------------------------------------------
+		public long Min { get; private set; }
+
 		/// <summary>
 		/// Gets the max.
 		/// </summary>
-		/// <value>The max.</value>
-		/// ------------------------------------------------------------------------------------
-		public long Max
-		{
-			get { return m_max; }
-		}
+		public long Max { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml (node);
-			XmlUtils.SetAttribute(node, "min", m_min.ToString());
-			XmlUtils.SetAttribute(node, "max", m_max.ToString());
+			XmlUtils.SetAttribute(node, "min", Min.ToString());
+			XmlUtils.SetAttribute(node, "max", Max.ToString());
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void InitXml(XElement node)
 		{
 			base.InitXml (node);
-			m_min = XmlUtils.GetMandatoryIntegerAttributeValue(node, "min");
-			m_max = XmlUtils.GetMandatoryIntegerAttributeValue(node, "max");
+			Min = XmlUtils.GetMandatoryIntegerAttributeValue(node, "min");
+			Max = XmlUtils.GetMandatoryIntegerAttributeValue(node, "max");
 		}
 
 		#region Matcher Members
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// See whether the object passes. Note that the string may be null, which
 		/// we interpret here as zero.
 		/// </summary>
-		/// <param name="stringval">The stringval.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------------
 		public override bool Matches(ITsString stringval)
 		{
-			if (stringval == null || String.IsNullOrEmpty(stringval.Text))
+			if (string.IsNullOrEmpty(stringval?.Text))
+			{
 				return false;
+			}
 			try
 			{
 				var values = stringval.Text.Split(' ').Select(s => long.Parse(s));
-				return values.Any(x => x >= m_min && x <= m_max);
+				return values.Any(x => x >= Min && x <= Max);
 			}
 			catch (OverflowException)
 			{
@@ -117,14 +94,14 @@ namespace  SIL.FieldWorks.Filters
 		/// <summary>
 		/// True if it is the same class and member vars match.
 		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public override bool SameMatcher(IMatcher other)
 		{
-			RangeIntMatcher other2 = other as RangeIntMatcher;
+			var other2 = other as RangeIntMatcher;
 			if (other2 == null)
+			{
 				return false;
-			return other2.m_min == m_min && other2.m_max == m_max;
+			}
+			return other2.Min == Min && other2.Max == Max;
 		}
 
 		#endregion
@@ -137,23 +114,17 @@ namespace  SIL.FieldWorks.Filters
 	/// </summary>
 	public class NotEqualIntMatcher : IntMatcher
 	{
-		int m_val;
-
 		/// <summary>
 		/// Get the value to not match. Used for testing.
 		/// </summary>
-		public int NotEqualValue
-		{
-			get { return m_val; }
-		}
+		public int NotEqualValue { get; private set; }
 
 		/// <summary>
 		/// normal constructor.
 		/// </summary>
-		/// <param name="val"></param>
 		public NotEqualIntMatcher(int val)
 		{
-			m_val = val;
+			NotEqualValue = val;
 		}
 
 		/// <summary>
@@ -162,60 +133,43 @@ namespace  SIL.FieldWorks.Filters
 		public NotEqualIntMatcher()
 		{
 		}
+
 		#region IMatcher Members
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Matcheses the specified stringval.
 		/// </summary>
-		/// <param name="stringval">The stringval.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public override bool Matches(ITsString stringval)
 		{
-			if (stringval == null)
-				return false;
-			return Int32.Parse(stringval.Text) != m_val;
+			return stringval != null && int.Parse(stringval.Text) != NotEqualValue;
 		}
 		/// <summary>
 		/// True if it is the same class and member vars match.
 		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public override bool SameMatcher(IMatcher other)
 		{
-			NotEqualIntMatcher other2 = other as NotEqualIntMatcher;
-			if (other2 == null)
-				return false;
-			return other2.m_val == m_val;
+			var other2 = other as NotEqualIntMatcher;
+			return other2 != null && other2.NotEqualValue == NotEqualValue;
 		}
 
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml (node);
-			XmlUtils.SetAttribute(node, "val", m_val.ToString());
+			XmlUtils.SetAttribute(node, "val", NotEqualValue.ToString());
 		}
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------------
 		public override void InitXml(XElement node)
 		{
 			base.InitXml (node);
-			m_val = XmlUtils.GetMandatoryIntegerAttributeValue(node, "val");
+			NotEqualValue = XmlUtils.GetMandatoryIntegerAttributeValue(node, "val");
 		}
-
 	}
-
 }

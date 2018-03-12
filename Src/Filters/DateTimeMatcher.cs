@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2006-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,10 +13,6 @@ namespace SIL.FieldWorks.Filters
 {
 	public class DateTimeMatcher : BaseMatcher
 	{
-		DateMatchType m_type;
-		DateTime m_start;
-		DateTime m_end;
-
 		/// <summary>
 		/// Default constructor for IPersistAsXml
 		/// </summary>
@@ -26,9 +22,9 @@ namespace SIL.FieldWorks.Filters
 
 		public DateTimeMatcher(DateTime start, DateTime end, DateMatchType type)
 		{
-			m_start = start;
-			m_end = end;
-			m_type = type;
+			Start = start;
+			End = end;
+			MatchType = type;
 			IsStartAD = true;
 			IsEndAD = true;
 			UnspecificMatching = false;
@@ -37,23 +33,14 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// The start time (used for start of range and not range, on or after)
 		/// </summary>
-		public DateTime Start
-		{
-			get { return m_start; }
-		}
+		public DateTime Start { get; private set; }
 
-		public DateMatchType MatchType
-		{
-			get { return m_type; }
-		}
+		public DateMatchType MatchType { get; private set; }
 
 		/// <summary>
 		/// The end time (used for end of range and not range, on or before)
 		/// </summary>
-		public DateTime End
-		{
-			get { return m_end; }
-		}
+		public DateTime End { get; private set; }
 
 		/// <summary>
 		/// Flag whether we are matching GenDate objects instead of DateTime objects.
@@ -67,34 +54,36 @@ namespace SIL.FieldWorks.Filters
 
 		public override bool Matches(ITsString arg)
 		{
-			string text = arg.Text;
-			if (String.IsNullOrEmpty(text))
+			var text = arg.Text;
+			if (string.IsNullOrEmpty(text))
+			{
 				return false;
+			}
 			DateTime time;
 			GenDate gen;
 			if (!HandleGenDate && DateTime.TryParse(text, out time))
 			{
-				switch (m_type)
+				switch (MatchType)
 				{
 					case DateMatchType.After:
-						return time >= m_start;
+						return time >= Start;
 					case DateMatchType.Before:
-						return time <= m_end;
+						return time <= End;
 					case DateMatchType.Range:
 					case DateMatchType.On:
-						return time >= m_start && time <= m_end;
+						return time >= Start && time <= End;
 					case DateMatchType.NotRange:
-						return time < m_start || time > m_end;
+						return time < Start || time > End;
 				}
 			}
 			else if (HandleGenDate && GenDate.TryParse(text, out gen))
 			{
-				switch (m_type)
+				switch (MatchType)
 				{
 					case DateMatchType.After:
-						return GenDateIsAfterDate(gen, m_start, IsStartAD);
+						return GenDateIsAfterDate(gen, Start, IsStartAD);
 					case DateMatchType.Before:
-						return GenDateIsBeforeDate(gen, m_end, IsEndAD);
+						return GenDateIsBeforeDate(gen, End, IsEndAD);
 					case DateMatchType.Range:
 					case DateMatchType.On:
 						return GenDateIsInRange(gen);
@@ -108,66 +97,91 @@ namespace SIL.FieldWorks.Filters
 		private bool GenDateIsBeforeDate(GenDate gen, DateTime date, bool fAD)
 		{
 			if (UnspecificMatching)
+			{
 				return GenDateMightBeBeforeDate(gen, date, fAD);
-
-			if (gen.IsAD && !fAD)		// AD > BC
+			}
+			if (gen.IsAD && !fAD) // AD > BC
+			{
 				return false;
-			if (!gen.IsAD && fAD)		// BC < AD
+			}
+			if (!gen.IsAD && fAD) // BC < AD
+			{
 				return gen.Precision != GenDate.PrecisionType.After;
+			}
 			if (!gen.IsAD && !fAD)		// Both BC
 			{
 				if (gen.Year > date.Year)
+				{
 					return gen.Precision != GenDate.PrecisionType.After;
-				else if (gen.Year < date.Year)
+				}
+				if (gen.Year < date.Year)
+				{
 					return false;
+				}
 			}
 			if (gen.IsAD && fAD)		// Both AD
 			{
 				if (gen.Year < date.Year)
+				{
 					return gen.Precision != GenDate.PrecisionType.After;
-				else if (gen.Year > date.Year)
+				}
+				if (gen.Year > date.Year)
+				{
 					return false;
+				}
 			}
 			if (gen.Month < date.Month)
 			{
-				return gen.Month != GenDate.UnknownMonth ||
-					gen.Precision == GenDate.PrecisionType.Before;
+				return gen.Month != GenDate.UnknownMonth || gen.Precision == GenDate.PrecisionType.Before;
 			}
-			else if (gen.Month > date.Month)
+			if (gen.Month > date.Month)
 			{
 				return false;
 			}
 			if (gen.Day == GenDate.UnknownDay)
+			{
 				return gen.Precision == GenDate.PrecisionType.Before;
+			}
 			return gen.Day <= date.Day && gen.Precision != GenDate.PrecisionType.After;
 		}
 
 		private bool GenDateMightBeBeforeDate(GenDate gen, DateTime date, bool fAD)
 		{
-			if (gen.IsAD && !fAD)		// AD > BC
+			if (gen.IsAD && !fAD) // AD > BC
+			{
 				return gen.Precision == GenDate.PrecisionType.Before;
-			if (!gen.IsAD && fAD)		// BC < AD
+			}
+			if (!gen.IsAD && fAD) // BC < AD
+			{
 				return true;
+			}
 			if (!gen.IsAD && !fAD)		// Both BC
 			{
 				if (gen.Year > date.Year)
+				{
 					return true;
-				else if (gen.Year < date.Year)
+				}
+				if (gen.Year < date.Year)
+				{
 					return gen.Precision == GenDate.PrecisionType.Before;
+				}
 			}
 			if (gen.IsAD && fAD)		// Both AD
 			{
 				if (gen.Year < date.Year)
+				{
 					return true;
-				else if (gen.Year > date.Year)
+				}
+				if (gen.Year > date.Year)
+				{
 					return gen.Precision == GenDate.PrecisionType.Before;
+				}
 			}
 			if (gen.Month < date.Month)
 			{
-				return gen.Month != GenDate.UnknownMonth ||
-					gen.Precision != GenDate.PrecisionType.After;
+				return gen.Month != GenDate.UnknownMonth || gen.Precision != GenDate.PrecisionType.After;
 			}
-			else if (gen.Month > date.Month)
+			if (gen.Month > date.Month)
 			{
 				return gen.Precision == GenDate.PrecisionType.Before;
 			}
@@ -177,102 +191,130 @@ namespace SIL.FieldWorks.Filters
 		private bool GenDateIsAfterDate(GenDate gen, DateTime date, bool fAD)
 		{
 			if (UnspecificMatching)
+			{
 				return GenDateMightBeAfterDate(gen, date, fAD);
-
-			if (gen.IsAD && !fAD)		// AD > BC
+			}
+			if (gen.IsAD && !fAD) // AD > BC
+			{
 				return gen.Precision != GenDate.PrecisionType.Before;
-			if (!gen.IsAD && fAD)		// BC < AD
+			}
+			if (!gen.IsAD && fAD) // BC < AD
+			{
 				return false;
+			}
 			if (!gen.IsAD && !fAD)		// Both BC
 			{
 				if (gen.Year > date.Year)
+				{
 					return false;
-				else if (gen.Year < date.Year)
+				}
+				if (gen.Year < date.Year)
+				{
 					return gen.Precision != GenDate.PrecisionType.Before;
+				}
 			}
 			if (gen.IsAD && fAD)		// Both AD
 			{
 				if (gen.Year < date.Year)
+				{
 					return false;
-				else if (gen.Year > date.Year)
+				}
+				if (gen.Year > date.Year)
+				{
 					return gen.Precision != GenDate.PrecisionType.Before;
+				}
 			}
 			if (gen.Month < date.Month)
 			{
-				return gen.Month == GenDate.UnknownMonth &&
-					gen.Precision == GenDate.PrecisionType.After;
+				return gen.Month == GenDate.UnknownMonth && gen.Precision == GenDate.PrecisionType.After;
 			}
-			else if (gen.Month > date.Month)
+			if (gen.Month > date.Month)
 			{
 				return gen.Precision != GenDate.PrecisionType.Before;
 			}
 			if (gen.Day == GenDate.UnknownDay)
+			{
 				return gen.Precision == GenDate.PrecisionType.After;
+			}
 			return gen.Day >= date.Day && gen.Precision != GenDate.PrecisionType.Before;
 		}
 
-		private bool GenDateMightBeAfterDate(GenDate gen, DateTime date, bool fAD)
+		private static bool GenDateMightBeAfterDate(GenDate gen, DateTime date, bool fAD)
 		{
-			if (gen.IsAD && !fAD)		// AD > BC
+			if (gen.IsAD && !fAD) // AD > BC
+			{
 				return true;
-			if (!gen.IsAD && fAD)		// BC < AD
+			}
+			if (!gen.IsAD && fAD) // BC < AD
+			{
 				return gen.Precision == GenDate.PrecisionType.After;
+			}
 			if (!gen.IsAD && !fAD)		// Both BC
 			{
 				if (gen.Year > date.Year)
+				{
 					return gen.Precision == GenDate.PrecisionType.After;
-				else if (gen.Year < date.Year)
+				}
+				if (gen.Year < date.Year)
+				{
 					return true;
+				}
 			}
 			if (gen.IsAD && fAD)		// Both AD
 			{
 				if (gen.Year < date.Year)
+				{
 					return gen.Precision == GenDate.PrecisionType.After;
-				else if (gen.Year > date.Year)
+				}
+				if (gen.Year > date.Year)
+				{
 					return true;
+				}
 			}
 			if (gen.Month < date.Month)
 			{
-				return gen.Month == GenDate.UnknownMonth &&
-					gen.Precision != GenDate.PrecisionType.Before;
+				return gen.Month == GenDate.UnknownMonth && gen.Precision != GenDate.PrecisionType.Before;
 			}
-			else if (gen.Month > date.Month)
+			if (gen.Month > date.Month)
 			{
 				return true;
 			}
 			if (gen.Day == GenDate.UnknownDay)
+			{
 				return gen.Precision != GenDate.PrecisionType.Before;
-			else if (gen.Day == date.Day)
+			}
+			if (gen.Day == date.Day)
+			{
 				return gen.Precision != GenDate.PrecisionType.Before;
-			else
-				return gen.Day > date.Day || gen.Precision == GenDate.PrecisionType.After;
+			}
+			return gen.Day > date.Day || gen.Precision == GenDate.PrecisionType.After;
 		}
 
 		private bool GenDateIsInRange(GenDate gen)
 		{
-			return GenDateIsAfterDate(gen, m_start, IsStartAD) &&
-				GenDateIsBeforeDate(gen, m_end, IsEndAD);
+			return GenDateIsAfterDate(gen, Start, IsStartAD) && GenDateIsBeforeDate(gen, End, IsEndAD);
 		}
 
 		public override bool SameMatcher(IMatcher other)
 		{
-			DateTimeMatcher dtOther = other as DateTimeMatcher;
+			var dtOther = other as DateTimeMatcher;
 			if (dtOther == null)
+			{
 				return false;
-			return m_end == dtOther.m_end &&
-				m_start == dtOther.m_start &&
-				m_type == dtOther.m_type &&
+			}
+			return End == dtOther.End &&
+				Start == dtOther.Start &&
+				MatchType == dtOther.MatchType &&
 				HandleGenDate == dtOther.HandleGenDate &&
-				(HandleGenDate ? (IsStartAD == dtOther.IsStartAD && IsEndAD == dtOther.IsEndAD &&
-					UnspecificMatching == dtOther.UnspecificMatching) : true);
+				(!HandleGenDate || (IsStartAD == dtOther.IsStartAD && IsEndAD == dtOther.IsEndAD && UnspecificMatching == dtOther.UnspecificMatching));
 		}
 
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			XmlUtils.SetAttribute(node, "start", m_start.ToString("s", DateTimeFormatInfo.InvariantInfo));
-			XmlUtils.SetAttribute(node, "end", m_end.ToString("s", DateTimeFormatInfo.InvariantInfo));
-			XmlUtils.SetAttribute(node, "type", ((int)m_type).ToString());
+			XmlUtils.SetAttribute(node, "start", Start.ToString("s", DateTimeFormatInfo.InvariantInfo));
+			XmlUtils.SetAttribute(node, "end", End.ToString("s", DateTimeFormatInfo.InvariantInfo));
+			XmlUtils.SetAttribute(node, "type", ((int)MatchType).ToString());
 			XmlUtils.SetAttribute(node, "genDate", HandleGenDate.ToString());
 			if (HandleGenDate)
 			{
@@ -285,9 +327,9 @@ namespace SIL.FieldWorks.Filters
 		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
-			m_start = DateTime.Parse(XmlUtils.GetMandatoryAttributeValue(node, "start"), DateTimeFormatInfo.InvariantInfo);
-			m_end = DateTime.Parse(XmlUtils.GetMandatoryAttributeValue(node, "end"), DateTimeFormatInfo.InvariantInfo);
-			m_type = (DateMatchType)XmlUtils.GetMandatoryIntegerAttributeValue(node, "type");
+			Start = DateTime.Parse(XmlUtils.GetMandatoryAttributeValue(node, "start"), DateTimeFormatInfo.InvariantInfo);
+			End = DateTime.Parse(XmlUtils.GetMandatoryAttributeValue(node, "end"), DateTimeFormatInfo.InvariantInfo);
+			MatchType = (DateMatchType)XmlUtils.GetMandatoryIntegerAttributeValue(node, "type");
 			HandleGenDate = XmlUtils.GetOptionalBooleanAttributeValue(node, "genDate", false);
 			IsStartAD = XmlUtils.GetOptionalBooleanAttributeValue(node, "startAD", true);
 			IsEndAD = XmlUtils.GetOptionalBooleanAttributeValue(node, "endAD", true);
@@ -306,5 +348,4 @@ namespace SIL.FieldWorks.Filters
 			NotRange
 		}
 	}
-
 }

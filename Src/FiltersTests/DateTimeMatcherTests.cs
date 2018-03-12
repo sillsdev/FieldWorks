@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,22 +8,18 @@ using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.Filters
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Test the logic in the DateTimeMatcher.  (lots more tests could be written...)
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	[SetCulture("en-US")]
 	public class DateTimeMatcherTests
 	{
 		public const int WsDummy = 987654321;
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the method Matches() with DateMatchType.Before and GenDate data.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void MatchBefore()
 		{
@@ -36,11 +32,10 @@ namespace SIL.FieldWorks.Filters
 			 * after 1990), and the like, will match only if the user asks for ambiguous
 			 * matches.
 			 */
-			DateTimeMatcher matchBefore = new DateTimeMatcher(new DateTime(1990, 1, 17, 0, 0, 0),
-				new DateTime(1990, 1, 17, 23, 59, 59), DateTimeMatcher.DateMatchType.Before);
+			var matchBefore = new DateTimeMatcher(new DateTime(1990, 1, 17, 0, 0, 0), new DateTime(1990, 1, 17, 23, 59, 59), DateTimeMatcher.DateMatchType.Before);
 			matchBefore.HandleGenDate = true;
 
-			bool fMatch = matchBefore.Matches(TsStringUtils.MakeString("January 18, 1990", WsDummy));
+			var fMatch = matchBefore.Matches(TsStringUtils.MakeString("January 18, 1990", WsDummy));
 			Assert.IsFalse(fMatch, "1/18/90 not before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("January 17, 1990", WsDummy));
@@ -121,19 +116,16 @@ namespace SIL.FieldWorks.Filters
 			Assert.IsTrue(fMatch, "After 1900 possibly before 1/17/90");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the method Matches() with DateMatchType.After and GenDate data.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TestMatchAfter()
 		{
-			DateTimeMatcher matchAfter = new DateTimeMatcher(new DateTime(1990, 1, 17, 0, 0, 0),
-				new DateTime(1990, 1, 17, 23, 59, 59), DateTimeMatcher.DateMatchType.After);
+			var matchAfter = new DateTimeMatcher(new DateTime(1990, 1, 17, 0, 0, 0), new DateTime(1990, 1, 17, 23, 59, 59), DateTimeMatcher.DateMatchType.After);
 			matchAfter.HandleGenDate = true;
 
-			bool fMatch = matchAfter.Matches(TsStringUtils.MakeString("January 18, 1990", WsDummy));
+			var fMatch = matchAfter.Matches(TsStringUtils.MakeString("January 18, 1990", WsDummy));
 			Assert.IsTrue(fMatch, "1/18/90 after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("January 17, 1990", WsDummy));
@@ -214,11 +206,9 @@ namespace SIL.FieldWorks.Filters
 			Assert.IsTrue(fMatch, "After 1900 possibly after 1/17/90");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the method Matches() with DateMatchType.Range and GenDate data.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TestMatchRange()
 		{
@@ -229,11 +219,10 @@ namespace SIL.FieldWorks.Filters
 			 * Before 2001, After 1900, and the like will match only if we want ambiguous
 			 * matches.
 			 */
-			DateTimeMatcher matchRange = new DateTimeMatcher(new DateTime(1990, 2, 15, 0, 0, 0),
-				new DateTime(1992, 2, 17, 23, 59, 59), DateTimeMatcher.DateMatchType.Range);
+			var matchRange = new DateTimeMatcher(new DateTime(1990, 2, 15, 0, 0, 0), new DateTime(1992, 2, 17, 23, 59, 59), DateTimeMatcher.DateMatchType.Range);
 			matchRange.HandleGenDate = true;
 
-			bool fMatch = matchRange.Matches(TsStringUtils.MakeString("February 16, 1990", WsDummy));
+			var fMatch = matchRange.Matches(TsStringUtils.MakeString("February 16, 1990", WsDummy));
 			Assert.IsTrue(fMatch, "Feb 16, 1990 between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("March, 1990", WsDummy));
@@ -333,25 +322,21 @@ namespace SIL.FieldWorks.Filters
 		}
 	}
 
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Test the logic in the DateTimeMatcher with foreign locale. This tests comparing a date
 	/// stored in English on a system with a different locale. The tricky thing here is that
 	/// we specify the month in English ("January") which starts with the German name ("Januar"),
 	/// but doesn't match completely.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	[SetCulture("de-DE")]
 	[Ignore("This test demonstrates FWR-2942")]
 	public class DateTimeMatcherTests_German
 	{
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the method Matches() with DateMatchType.Before and GenDate data when system
 		/// locale is German.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void MatchBefore()
 		{

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,7 +14,6 @@ namespace SIL.FieldWorks.Filters
 	public class ExactLiteralMatcher : IMatcher
 	{
 		private string m_target;
-		int m_ws;
 
 		/// <summary>
 		/// Make one.
@@ -22,7 +21,7 @@ namespace SIL.FieldWorks.Filters
 		public ExactLiteralMatcher(string target, int ws)
 		{
 			m_target = target;
-			m_ws = ws;
+			WritingSystem = ws;
 		}
 		#region IMatcher Members
 
@@ -30,14 +29,18 @@ namespace SIL.FieldWorks.Filters
 		{
 			// Fail fast if text doesn't match exactly.
 			if (!MatchText(tssKey.Length == 0 ? "" : tssKey.Text))
+			{
 				return false;
+			}
 			// Writing system must also match.
-			int crun = tssKey.RunCount;
-			for (int irun = 0; irun < crun; irun++)
+			var crun = tssKey.RunCount;
+			for (var irun = 0; irun < crun; irun++)
 			{
 				int nVar;
-				if (tssKey.get_Properties(irun).GetIntPropValues((int)FwTextPropType.ktptWs, out nVar) != m_ws)
+				if (tssKey.get_Properties(irun).GetIntPropValues((int)FwTextPropType.ktptWs, out nVar) != WritingSystem)
+				{
 					return false;
+				}
 			}
 			return true;
 		}
@@ -56,10 +59,12 @@ namespace SIL.FieldWorks.Filters
 		{
 			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
 			// is marked with [MonoTODO] and might not work as expected in 4.0.
-			if (other.GetType() != this.GetType())
+			if (other.GetType() != GetType())
+			{
 				return false;
-			ExactLiteralMatcher other1 = other as ExactLiteralMatcher;
-			return m_target == other1.m_target && m_ws == other1.m_ws;
+			}
+			var other1 = other as ExactLiteralMatcher;
+			return m_target == other1.m_target && WritingSystem == other1.WritingSystem;
 		}
 
 		public bool IsValid()
@@ -79,42 +84,27 @@ namespace SIL.FieldWorks.Filters
 
 		public ITsString MakeValid()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public ITsString Label
 		{
 			get
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 			set
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 		}
 
-		private ILgWritingSystemFactory m_wsf = null;
-		public ILgWritingSystemFactory WritingSystemFactory
-		{
-			get
-			{
-				return m_wsf;
-			}
-			set
-			{
-				m_wsf = value;
-			}
-		}
+		public ILgWritingSystemFactory WritingSystemFactory { get; set; }
 
 		/// <summary>
 		/// This class explicitly looks for a particular ws.
 		/// </summary>
-		public int WritingSystem
-		{
-			get { return m_ws; }
-		}
-
+		public int WritingSystem { get; }
 		#endregion
 	}
 

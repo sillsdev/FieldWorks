@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2005-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -98,8 +98,7 @@ namespace SIL.FieldWorks.Filters
 			finally
 			{
 				var disposable = obj as IDisposable;
-				if (disposable != null)
-					disposable.Dispose();
+				disposable?.Dispose();
 			}
 		}
 
@@ -111,21 +110,21 @@ namespace SIL.FieldWorks.Filters
 		{
 			IcuComparer icomp1 = new IcuComparer("fr"), icomp2 = new IcuComparer("en");
 			GenRecordSorter grs1 = new GenRecordSorter(icomp1), grs2 = new GenRecordSorter(icomp2);
-			ArrayList sorters = new ArrayList();
+			var sorters = new ArrayList();
 			sorters.Add(grs1);
 			sorters.Add(grs2);
-			AndSorter asorter = new AndSorter(sorters);
+			var asorter = new AndSorter(sorters);
 			var xml = DynamicLoader.PersistObject(asorter, "sorter");
 			var doc = XDocument.Parse(xml);
 			Assert.IsTrue("sorter" == doc.Root.Name);
-			object obj = DynamicLoader.RestoreObject(doc.Root);
+			var obj = DynamicLoader.RestoreObject(doc.Root);
 			m_objectsToDispose.Add(obj);
 			Assert.IsInstanceOf<AndSorter>(obj);
-			ArrayList sortersOut = (obj as AndSorter).Sorters;
-			GenRecordSorter grsOut1 = sortersOut[0] as GenRecordSorter;
-			GenRecordSorter grsOut2 = sortersOut[1] as GenRecordSorter;
-			IComparer compOut1 = grsOut1.Comparer;
-			IComparer compOut2 = grsOut2.Comparer;
+			var sortersOut = (obj as AndSorter).Sorters;
+			var grsOut1 = sortersOut[0] as GenRecordSorter;
+			var grsOut2 = sortersOut[1] as GenRecordSorter;
+			var compOut1 = grsOut1.Comparer;
+			var compOut2 = grsOut2.Comparer;
 			Assert.IsTrue(compOut1 is IcuComparer);
 			Assert.IsTrue(compOut2 is IcuComparer);
 			Assert.AreEqual("fr", (compOut1 as IcuComparer).WsCode);
@@ -135,25 +134,17 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// Get the matcher from the FilterBarCellFilter which is the index'th filter of the AndFilter
 		/// </summary>
-		/// <param name="andFilter"></param>
-		/// <param name="index"></param>
-		/// <returns></returns>
-		IMatcher GetMatcher(AndFilter andFilter, int index)
+		private static IMatcher GetMatcher(AndFilter andFilter, int index)
 		{
-			FilterBarCellFilter filter = andFilter.Filters[index] as FilterBarCellFilter;
-			return filter.Matcher;
+			return ((FilterBarCellFilter)andFilter.Filters[index]).Matcher;
 		}
 
 		/// <summary>
 		/// Get the finder from the FilterBarCellFilter which is the index'th filter of the AndFilter
 		/// </summary>
-		/// <param name="andFilter"></param>
-		/// <param name="index"></param>
-		/// <returns></returns>
 		IStringFinder GetFinder(AndFilter andFilter, int index)
 		{
-			FilterBarCellFilter filter = andFilter.Filters[index] as FilterBarCellFilter;
-			return filter.Finder;
+			return (andFilter.Filters[index] as FilterBarCellFilter).Finder;
 		}
 
 		/// <summary>
@@ -162,81 +153,78 @@ namespace SIL.FieldWorks.Filters
 		[Test]
 		public void PersistMatchersEtc()
 		{
-			CoreWritingSystemDefinition defAnalWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			var defAnalWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			// BaseMatcher is abstract
 			// IntMatcher is abstract
-			RangeIntMatcher rangeIntMatch = new RangeIntMatcher(5, 23);
+			var rangeIntMatch = new RangeIntMatcher(5, 23);
 			rangeIntMatch.WritingSystemFactory = Cache.WritingSystemFactory;
-			ITsString tssLabel = TsStringUtils.MakeString("label1", defAnalWs.Handle);
+			var tssLabel = TsStringUtils.MakeString("label1", defAnalWs.Handle);
 			rangeIntMatch.Label = tssLabel;
-			OwnIntPropFinder ownIntFinder = new OwnIntPropFinder(m_sda, 551);
+			var ownIntFinder = new OwnIntPropFinder(m_sda, 551);
 
 			var rangeIntFilter = new FilterBarCellFilter(ownIntFinder, rangeIntMatch);
 			m_objectsToDispose.Add(rangeIntFilter);
-			AndFilter andFilter = new AndFilter();
+			var andFilter = new AndFilter();
 			m_objectsToDispose.Add(andFilter);
 
 			andFilter.Add(rangeIntFilter);
 
-			int ws = defAnalWs.Handle;
-			IVwPattern m_pattern = VwPatternClass.Create();
-			m_pattern.MatchOldWritingSystem = false;
-			m_pattern.MatchDiacritics = false;
-			m_pattern.MatchWholeWord = false;
-			m_pattern.MatchCase = false;
-			m_pattern.UseRegularExpressions = false;
+			var ws = defAnalWs.Handle;
+			IVwPattern pattern = VwPatternClass.Create();
+			pattern.MatchOldWritingSystem = false;
+			pattern.MatchDiacritics = false;
+			pattern.MatchWholeWord = false;
+			pattern.MatchCase = false;
+			pattern.UseRegularExpressions = false;
 
 			var otherFilter = new FilterBarCellFilter(ownIntFinder, new NotEqualIntMatcher(77));
 			m_objectsToDispose.Add(otherFilter);
 
 			andFilter.Add(otherFilter);
 
-			OwnMlPropFinder mlPropFinder = new OwnMlPropFinder(m_sda, 788, 23);
-			m_pattern.Pattern = TsStringUtils.MakeString("hello", ws);
-			var filter = new FilterBarCellFilter(mlPropFinder, new ExactMatcher(m_pattern));
+			var mlPropFinder = new OwnMlPropFinder(m_sda, 788, 23);
+			pattern.Pattern = TsStringUtils.MakeString("hello", ws);
+			var filter = new FilterBarCellFilter(mlPropFinder, new ExactMatcher(pattern));
 			m_objectsToDispose.Add(filter);
 			andFilter.Add(filter);
 
-			OwnMonoPropFinder monoPropFinder = new OwnMonoPropFinder(m_sda, 954);
-			m_pattern = VwPatternClass.Create();
-			m_pattern.MatchOldWritingSystem = false;
-			m_pattern.MatchDiacritics = false;
-			m_pattern.MatchWholeWord = false;
-			m_pattern.MatchCase = false;
-			m_pattern.UseRegularExpressions = false;
-			m_pattern.Pattern = TsStringUtils.MakeString("goodbye", ws);
-			filter = new FilterBarCellFilter(monoPropFinder, new BeginMatcher(m_pattern));
+			var monoPropFinder = new OwnMonoPropFinder(m_sda, 954);
+			pattern = VwPatternClass.Create();
+			pattern.MatchOldWritingSystem = false;
+			pattern.MatchDiacritics = false;
+			pattern.MatchWholeWord = false;
+			pattern.MatchCase = false;
+			pattern.UseRegularExpressions = false;
+			pattern.Pattern = TsStringUtils.MakeString("goodbye", ws);
+			filter = new FilterBarCellFilter(monoPropFinder, new BeginMatcher(pattern));
 			m_objectsToDispose.Add(filter);
 			andFilter.Add(filter);
 
-			OneIndirectMlPropFinder oneIndMlPropFinder =
-				new OneIndirectMlPropFinder(m_sda, 221, 222, 27);
-			m_pattern = VwPatternClass.Create();
-			m_pattern.MatchOldWritingSystem = false;
-			m_pattern.MatchDiacritics = false;
-			m_pattern.MatchWholeWord = false;
-			m_pattern.MatchCase = false;
-			m_pattern.UseRegularExpressions = false;
-			m_pattern.Pattern = TsStringUtils.MakeString("exit", ws);
-			filter = new FilterBarCellFilter(oneIndMlPropFinder, new EndMatcher(m_pattern));
+			var oneIndMlPropFinder = new OneIndirectMlPropFinder(m_sda, 221, 222, 27);
+			pattern = VwPatternClass.Create();
+			pattern.MatchOldWritingSystem = false;
+			pattern.MatchDiacritics = false;
+			pattern.MatchWholeWord = false;
+			pattern.MatchCase = false;
+			pattern.UseRegularExpressions = false;
+			pattern.Pattern = TsStringUtils.MakeString("exit", ws);
+			filter = new FilterBarCellFilter(oneIndMlPropFinder, new EndMatcher(pattern));
 			m_objectsToDispose.Add(filter);
 			andFilter.Add(filter);
 
-			MultiIndirectMlPropFinder mimlPropFinder = new MultiIndirectMlPropFinder(
-				m_sda, new int[] {444, 555}, 666, 87);
-			m_pattern = VwPatternClass.Create();
-			m_pattern.MatchOldWritingSystem = false;
-			m_pattern.MatchDiacritics = false;
-			m_pattern.MatchWholeWord = false;
-			m_pattern.MatchCase = false;
-			m_pattern.UseRegularExpressions = false;
-			m_pattern.Pattern = TsStringUtils.MakeString("whatever", ws);
-			filter = new FilterBarCellFilter(mimlPropFinder, new AnywhereMatcher(m_pattern));
+			var mimlPropFinder = new MultiIndirectMlPropFinder(m_sda, new[] {444, 555}, 666, 87);
+			pattern = VwPatternClass.Create();
+			pattern.MatchOldWritingSystem = false;
+			pattern.MatchDiacritics = false;
+			pattern.MatchWholeWord = false;
+			pattern.MatchCase = false;
+			pattern.UseRegularExpressions = false;
+			pattern.Pattern = TsStringUtils.MakeString("whatever", ws);
+			filter = new FilterBarCellFilter(mimlPropFinder, new AnywhereMatcher(pattern));
 			m_objectsToDispose.Add(filter);
 			andFilter.Add(filter);
 
-			OneIndirectAtomMlPropFinder oneIndAtomFinder =
-				new OneIndirectAtomMlPropFinder(m_sda, 543, 345, 43);
+			var oneIndAtomFinder = new OneIndirectAtomMlPropFinder(m_sda, 543, 345, 43);
 			filter = new FilterBarCellFilter(oneIndAtomFinder, new BlankMatcher());
 			m_objectsToDispose.Add(filter);
 			andFilter.Add(filter);
@@ -245,27 +233,26 @@ namespace SIL.FieldWorks.Filters
 			m_objectsToDispose.Add(filter);
 			andFilter.Add(filter);
 
-			m_pattern = VwPatternClass.Create();
-			m_pattern.MatchOldWritingSystem = false;
-			m_pattern.MatchDiacritics = false;
-			m_pattern.MatchWholeWord = false;
-			m_pattern.MatchCase = false;
-			m_pattern.UseRegularExpressions = false;
-			m_pattern.Pattern = TsStringUtils.MakeString("pattern", ws);
-			filter = new FilterBarCellFilter(oneIndAtomFinder, new InvertMatcher(new RegExpMatcher(m_pattern)));
+			pattern = VwPatternClass.Create();
+			pattern.MatchOldWritingSystem = false;
+			pattern.MatchDiacritics = false;
+			pattern.MatchWholeWord = false;
+			pattern.MatchCase = false;
+			pattern.UseRegularExpressions = false;
+			pattern.Pattern = TsStringUtils.MakeString("pattern", ws);
+			filter = new FilterBarCellFilter(oneIndAtomFinder, new InvertMatcher(new RegExpMatcher(pattern)));
 			m_objectsToDispose.Add(filter);
 			andFilter.Add(filter);
 
 			andFilter.Add(new NullFilter());
 
 			var docPaf = XDocument.Parse("<root targetClasses=\"LexEntry, LexSense\"></root>");
-			ProblemAnnotationFilter paf = new ProblemAnnotationFilter();
+			var paf = new ProblemAnnotationFilter();
 			paf.Init(Cache, docPaf.Root);
 			andFilter.Add(paf);
 
 			// Save and restore!
-			string xml = DynamicLoader.PersistObject(andFilter, "filter");
-
+			var xml = DynamicLoader.PersistObject(andFilter, "filter");
 			var doc = XDocument.Parse(xml);
 
 			// And check all the pieces...
@@ -275,76 +262,72 @@ namespace SIL.FieldWorks.Filters
 
 			Assert.IsNotNull(andFilterOut);
 
-			FilterBarCellFilter rangeIntFilterOut =
-				andFilterOut.Filters[0] as FilterBarCellFilter;
+			var rangeIntFilterOut = andFilterOut.Filters[0] as FilterBarCellFilter;
 			// todo
 			Assert.IsNotNull(rangeIntFilterOut);
 
-			OwnIntPropFinder ownIntFinderOut = rangeIntFilterOut.Finder as OwnIntPropFinder;
+			var ownIntFinderOut = rangeIntFilterOut.Finder as OwnIntPropFinder;
 			Assert.IsNotNull(ownIntFinderOut);
 			Assert.AreEqual(551, ownIntFinderOut.Flid);
 
-			RangeIntMatcher rangeIntMatchOut = rangeIntFilterOut.Matcher as RangeIntMatcher;
+			var rangeIntMatchOut = rangeIntFilterOut.Matcher as RangeIntMatcher;
 			Assert.IsNotNull(rangeIntMatchOut);
 			Assert.AreEqual(5, rangeIntMatchOut.Min);
 			Assert.AreEqual(23, rangeIntMatchOut.Max);
 			Assert.IsTrue(tssLabel.Equals(rangeIntMatchOut.Label));
 
-			NotEqualIntMatcher notEqualMatchOut = GetMatcher(andFilter, 1) as NotEqualIntMatcher;
+			var notEqualMatchOut = GetMatcher(andFilter, 1) as NotEqualIntMatcher;
 			Assert.IsNotNull(notEqualMatchOut);
 			Assert.AreEqual(77, notEqualMatchOut.NotEqualValue);
 
-			ExactMatcher exactMatchOut = GetMatcher(andFilter, 2) as ExactMatcher;
+			var exactMatchOut = GetMatcher(andFilter, 2) as ExactMatcher;
 			Assert.IsNotNull(exactMatchOut);
 			Assert.AreEqual("hello", exactMatchOut.Pattern.Pattern.Text);
 
-			BeginMatcher beginMatchOut = GetMatcher(andFilter, 3) as BeginMatcher;
+			var beginMatchOut = GetMatcher(andFilter, 3) as BeginMatcher;
 			Assert.IsNotNull(beginMatchOut);
 			Assert.AreEqual("goodbye", beginMatchOut.Pattern.Pattern.Text);
 
-			EndMatcher endMatchOut = GetMatcher(andFilter, 4) as EndMatcher;
+			var endMatchOut = GetMatcher(andFilter, 4) as EndMatcher;
 			Assert.IsNotNull(endMatchOut);
 			Assert.AreEqual("exit", endMatchOut.Pattern.Pattern.Text);
 
-			AnywhereMatcher anywhereMatchOut = GetMatcher(andFilter, 5) as AnywhereMatcher;
+			var anywhereMatchOut = GetMatcher(andFilter, 5) as AnywhereMatcher;
 			Assert.IsNotNull(anywhereMatchOut);
 			Assert.AreEqual("whatever", anywhereMatchOut.Pattern.Pattern.Text);
 
-			BlankMatcher blankMatchOut = GetMatcher(andFilter, 6) as BlankMatcher;
+			var blankMatchOut = GetMatcher(andFilter, 6) as BlankMatcher;
 			Assert.IsNotNull(blankMatchOut);
 
-			NonBlankMatcher nonBlankMatchOut = GetMatcher(andFilter, 7) as NonBlankMatcher;
+			var nonBlankMatchOut = GetMatcher(andFilter, 7) as NonBlankMatcher;
 			Assert.IsNotNull(nonBlankMatchOut);
 
-			InvertMatcher invertMatchOut = GetMatcher(andFilter, 8) as InvertMatcher;
+			var invertMatchOut = GetMatcher(andFilter, 8) as InvertMatcher;
 			Assert.IsNotNull(invertMatchOut);
 
-			OwnMlPropFinder mlPropFinderOut = GetFinder(andFilter, 2) as OwnMlPropFinder;
+			var mlPropFinderOut = GetFinder(andFilter, 2) as OwnMlPropFinder;
 			Assert.AreEqual(m_sda, mlPropFinderOut.DataAccess);
 			Assert.AreEqual(788, mlPropFinderOut.Flid);
 			Assert.AreEqual(23, mlPropFinderOut.Ws);
 
-			OwnMonoPropFinder monoPropFinderOut = GetFinder(andFilter, 3) as OwnMonoPropFinder;
+			var monoPropFinderOut = GetFinder(andFilter, 3) as OwnMonoPropFinder;
 			Assert.AreEqual(m_sda, monoPropFinderOut.DataAccess);
 			Assert.AreEqual(954, monoPropFinderOut.Flid);
 
-			OneIndirectMlPropFinder oneIndMlPropFinderOut =
-				GetFinder(andFilter, 4) as OneIndirectMlPropFinder;
+			var oneIndMlPropFinderOut = GetFinder(andFilter, 4) as OneIndirectMlPropFinder;
 			Assert.AreEqual(m_sda, oneIndMlPropFinderOut.DataAccess);
 			Assert.AreEqual(221, oneIndMlPropFinderOut.FlidVec);
 			Assert.AreEqual(222, oneIndMlPropFinderOut.FlidString);
 			Assert.AreEqual(27, oneIndMlPropFinderOut.Ws);
 
-			MultiIndirectMlPropFinder mimlPropFinderOut =
-				GetFinder(andFilter, 5) as MultiIndirectMlPropFinder;
+			var mimlPropFinderOut = GetFinder(andFilter, 5) as MultiIndirectMlPropFinder;
 			Assert.AreEqual(m_sda, mimlPropFinderOut.DataAccess);
 			Assert.AreEqual(444, mimlPropFinderOut.VecFlids[0]);
 			Assert.AreEqual(555, mimlPropFinderOut.VecFlids[1]);
 			Assert.AreEqual(666, mimlPropFinderOut.FlidString);
 			Assert.AreEqual(87, mimlPropFinderOut.Ws);
 
-			OneIndirectAtomMlPropFinder oneIndAtomFinderOut =
-				GetFinder(andFilter, 6) as OneIndirectAtomMlPropFinder;
+			var oneIndAtomFinderOut = GetFinder(andFilter, 6) as OneIndirectAtomMlPropFinder;
 			Assert.AreEqual(m_sda, oneIndAtomFinderOut.DataAccess);
 			Assert.AreEqual(543, oneIndAtomFinderOut.FlidAtom);
 			Assert.AreEqual(345, oneIndAtomFinderOut.FlidString);
@@ -352,10 +335,10 @@ namespace SIL.FieldWorks.Filters
 
 			// 7, 8 are duplicates
 
-			NullFilter nullFilterOut = andFilter.Filters[9] as NullFilter;
+			var nullFilterOut = andFilter.Filters[9] as NullFilter;
 			Assert.IsNotNull(nullFilterOut);
 
-			ProblemAnnotationFilter pafOut = andFilter.Filters[10] as ProblemAnnotationFilter;
+			var pafOut = andFilter.Filters[10] as ProblemAnnotationFilter;
 			Assert.IsNotNull(pafOut);
 			Assert.AreEqual(5002, pafOut.ClassIds[0]);
 			Assert.AreEqual(5016, pafOut.ClassIds[1]);
@@ -364,13 +347,13 @@ namespace SIL.FieldWorks.Filters
 		[Test]
 		public void SortersEtc()
 		{
-			PropertyRecordSorter prs = new PropertyRecordSorter("longName");
+			var prs = new PropertyRecordSorter("longName");
 			// Save and restore!
-			string xml = DynamicLoader.PersistObject(prs, "sorter");
+			var xml = DynamicLoader.PersistObject(prs, "sorter");
 			var doc = XDocument.Parse(xml);
 
 			// And check all the pieces...
-			PropertyRecordSorter prsOut = DynamicLoader.RestoreObject(doc.Root) as PropertyRecordSorter;
+			var prsOut = DynamicLoader.RestoreObject(doc.Root) as PropertyRecordSorter;
 			prsOut.Cache = Cache;
 			Assert.AreEqual("longName", prsOut.PropertyName);
 		}
@@ -378,13 +361,11 @@ namespace SIL.FieldWorks.Filters
 		[Test]
 		public void PersistReverseComparer()
 		{
-			string xml;
 			// Putting an IntStringComparer here is utterly bizarre, but it tests out one more class.
-			StringFinderCompare sfComp = new StringFinderCompare(new OwnMonoPropFinder(m_sda, 445),
-				new ReverseComparer(new IntStringComparer()));
+			var sfComp = new StringFinderCompare(new OwnMonoPropFinder(m_sda, 445), new ReverseComparer(new IntStringComparer()));
 			sfComp.SortedFromEnd = true;
 			// Save and restore!
-			xml = DynamicLoader.PersistObject(sfComp, "comparer");
+			var xml = DynamicLoader.PersistObject(sfComp, "comparer");
 			var doc = XDocument.Parse(xml);
 			// And check all the pieces...
 			var sfCompOut = DynamicLoader.RestoreObject(doc.Root) as StringFinderCompare;
@@ -406,24 +387,9 @@ namespace SIL.FieldWorks.Filters
 	[TestFixture]
 	public class ManyOnePathSortItemsPersistenceTests : MemoryOnlyBackendProviderTestBase
 	{
-		private ISilDataAccess m_sda;
 		private ArrayList m_list;
 		private ILexEntry m_le1;
 		private ILexEntry m_le2;
-
-		public override void FixtureSetup()
-		{
-			base.FixtureSetup();
-
-			m_sda = Cache.DomainDataByFlid;
-		}
-
-		public override void FixtureTeardown()
-		{
-			m_sda = null;
-
-			base.FixtureTeardown();
-		}
 
 		public override void TestSetup()
 		{

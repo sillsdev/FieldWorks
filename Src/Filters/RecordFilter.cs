@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2017 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -45,7 +45,6 @@ using System.Xml.Linq;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.WritingSystems;
@@ -53,7 +52,6 @@ using SIL.Xml;
 
 namespace SIL.FieldWorks.Filters
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Event arguments for FilterChangeHandler event.
 	/// Arguably, we could have separate events for adding and removing, but that would make it
@@ -62,138 +60,81 @@ namespace SIL.FieldWorks.Filters
 	/// need for this, and if we do, we can easily keep the current constructor but change
 	/// the acessors, which are probably rather less used.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class FilterChangeEventArgs
 	{
-		/// <summary></summary>
-		private RecordFilter m_added;
-		/// <summary></summary>
-		private RecordFilter m_removed;
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:FilterChangeEventArgs"/> class.
 		/// </summary>
-		/// <param name="added">The added RecordFilter.</param>
-		/// <param name="removed">The removed RecordFilter.</param>
-		/// ------------------------------------------------------------------------------------
 		public FilterChangeEventArgs(RecordFilter added, RecordFilter removed)
 		{
-			m_added = added;
-			m_removed = removed;
+			Added = added;
+			Removed = removed;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the added RecordFilter.
 		/// </summary>
-		/// <value>The added RecordFilter.</value>
-		/// ------------------------------------------------------------------------------------
-		public RecordFilter Added
-		{
-			get { return m_added; }
-		}
+		public RecordFilter Added { get; }
 
-		/// ---------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the removed RecordFilter.
 		/// </summary>
-		/// <value>The removed RecordFilter.</value>
-		/// ---------------------------------------------------------------------------------------
-		public RecordFilter Removed
-		{
-			get { return m_removed; }
-		}
+		public RecordFilter Removed { get; }
 	}
 
-	/// <summary></summary>
-	/// <param name="sender"></param>
-	/// <param name="e"></param>
+	/// <summary />
 	public delegate void FilterChangeHandler(object sender, FilterChangeEventArgs e);
-	/// ----------------------------------------------------------------------------------------
+
 	/// <summary>
 	/// Summary description for RecordFilter.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public abstract class RecordFilter : IPersistAsXml, IStoresLcmCache, IStoresDataAccess
 	{
-
-		/// <summary></summary>
-		protected string m_name;
-		protected string m_id;
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:RecordFilter"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public RecordFilter()
+		protected RecordFilter()
 		{
-			m_name = FiltersStrings.ksUnknown;
-			m_id = "Unknown";
+			Name = FiltersStrings.ksUnknown;
+			id = "Unknown";
 		}
 
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the cache on the specified object if it wants it.
 		/// </summary>
-		/// <param name="obj">The obj.</param>
-		/// <param name="cache">The cache.</param>
-		/// ------------------------------------------------------------------------------------
 		internal void SetCache(object obj, LcmCache cache)
 		{
 			var sfc = obj as IStoresLcmCache;
 			if (sfc != null)
+			{
 				sfc.Cache = cache;
+			}
 		}
 
 		internal void SetDataAccess(object obj, ISilDataAccess sda)
 		{
 			var sfc = obj as IStoresDataAccess;
 			if (sfc != null)
+			{
 				sfc.DataAccess = sda;
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the name.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string Name
-		{
-			get
-			{
-				return m_name;
-			}
-		}
-		/// ------------------------------------------------------------------------------------------
+		public string Name { get; protected set; }
+
 		/// <summary>
 		/// this is used, for example, and persist in the selected id in the users xml preferences
 		/// </summary>
-		/// <value>The id.</value>
-		/// ------------------------------------------------------------------------------------------
-		public string id
-		{
-			get
-			{
-				return m_id;
-			}
-		}
+		public string id { get; protected set; }
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the name of the image.
 		/// </summary>
-		/// <value>The name of the image.</value>
-		/// ------------------------------------------------------------------------------------------
-		public virtual string imageName
-		{
-			get
-			{
-				return "SimpleFilter";
-			}
-		}
+		public virtual string imageName => "SimpleFilter";
 
 		/// <summary>
 		/// May be used to preload data for efficient filtering of many instances.
@@ -202,68 +143,41 @@ namespace SIL.FieldWorks.Filters
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// decide whether this object should be included
 		/// </summary>
-		/// <param name="item">The item.</param>
-		/// <returns>true if the object should be included</returns>
-		/// ------------------------------------------------------------------------------------
 		public abstract bool Accept(IManyOnePathSortItem item);
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tells whether the filter should be 'visible' to the user, in the sense that the
 		/// status bar pane for 'Filtered' turns on. Some filters should not show up here,
 		/// for example, built-in ones that define the possible contents of a view.
 		/// By default a filter is not visible.
 		/// </summary>
-		/// <value>
-		/// 	<c>true</c> if this instance is user visible; otherwise, <c>false</c>.
-		/// </value>
-		/// ------------------------------------------------------------------------------------
-		public virtual bool IsUserVisible
-		{
-			get { return false; }
-		}
+		public virtual bool IsUserVisible => false;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tells whether the filter is currently valid.  This is true by default.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public virtual bool IsValid
-		{
-			get { return true; }
-		}
+		public virtual bool IsValid => true;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// a factory method for filters
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="configuration">The configuration.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		static public RecordFilter Create(LcmCache cache, XElement configuration)
+		public static RecordFilter Create(LcmCache cache, XElement configuration)
 		{
 			var filter = (RecordFilter)DynamicLoader.CreateObject(configuration);
 			filter.Init(cache, configuration);
 			return filter;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initialize the filter
 		/// </summary>
-		/// <param name="cache">The cache.</param>
-		/// <param name="filterNode">The filter node.</param>
-		/// ------------------------------------------------------------------------------------
 		public virtual void Init(LcmCache cache, XElement filterNode)
 		{
 		}
 
-		/// ---------------------------------------------------------------------------------------
 		/// <summary>
 		/// This is the start of an equality test for filters, but for now I (JohnT) am not
 		/// making it an actual Equals function, since it may not be robust enough to
@@ -271,9 +185,6 @@ namespace SIL.FieldWorks.Filters
 		/// hash function. It is mainly for FilterBarRecordFilters, so for now other classes
 		/// just answer false.
 		/// </summary>
-		/// <param name="other">The other.</param>
-		/// <returns></returns>
-		/// ---------------------------------------------------------------------------------------
 		public virtual bool SameFilter(RecordFilter other)
 		{
 			return other == this;
@@ -299,37 +210,29 @@ namespace SIL.FieldWorks.Filters
 
 		#region IPersistAsXml Members
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public virtual void PersistAsXml(XElement node)
 		{
-			XmlUtils.SetAttribute(node, "name", m_name);
+			XmlUtils.SetAttribute(node, "name", Name);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public virtual void InitXml(XElement node)
 		{
-			m_name = XmlUtils.GetMandatoryAttributeValue(node, "name");
+			Name = XmlUtils.GetMandatoryAttributeValue(node, "name");
 		}
 
 		#endregion
 
 		#region IStoresLcmCache
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Set the cache.
 		/// </summary>
-		/// <value></value>
-		/// ------------------------------------------------------------------------------------
 		public virtual LcmCache Cache
 		{
 			set
@@ -348,65 +251,47 @@ namespace SIL.FieldWorks.Filters
 			set { }
 		}
 	}
-	/// ----------------------------------------------------------------------------------------
+
 	/// <summary>
 	/// this filter passes CmAnnotations which are pointing at objects of the class listed
 	/// in the targetClasses attribute.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class ProblemAnnotationFilter: RecordFilter
 	{
-		/// <summary></summary>
-		protected List<int> m_classIds;
-
 		private LcmCache m_cache;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:ProblemAnnotationFilter"/> class.
 		/// </summary>
 		/// <remarks>must have a constructor with no parameters, to use with the dynamic loader
 		/// or IPersistAsXml</remarks>
-		/// ------------------------------------------------------------------------------------
 		public ProblemAnnotationFilter()
 		{
-			m_classIds = new List<int>();
+			ClassIds = new List<int>();
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			XmlUtils.SetAttribute(node, "classIds", XmlUtils.MakeStringFromList(m_classIds));
+			XmlUtils.SetAttribute(node, "classIds", XmlUtils.MakeStringFromList(ClassIds));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
-			m_classIds = new List<int>(XmlUtils.GetMandatoryIntegerListAttributeValue(node, "classIds"));
+			ClassIds = new List<int>(XmlUtils.GetMandatoryIntegerListAttributeValue(node, "classIds"));
 		}
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the class ids.
 		/// </summary>
-		/// <value>The class ids.</value>
-		/// ------------------------------------------------------------------------------------------
-		public List<int> ClassIds
-		{
-			get { return m_classIds; }
-		}
+		public List<int> ClassIds { get; protected set; }
 
 		public override LcmCache Cache
 		{
@@ -416,81 +301,80 @@ namespace SIL.FieldWorks.Filters
 				base.Cache = value;
 			}
 		}
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Initialize the filter
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="filterNode"></param>
-		/// ------------------------------------------------------------------------------------
 		public override void Init(LcmCache cache, XElement filterNode)
 		{
 			base.Init(cache, filterNode);
 			m_cache = cache;
-			string classList =XmlUtils.GetMandatoryAttributeValue(filterNode, "targetClasses");
-			string[] classes= classList.Split(',');
+			var classList =XmlUtils.GetMandatoryAttributeValue(filterNode, "targetClasses");
+			var classes= classList.Split(',');
 
 			//enhance: currently, this will require that we name every subclass as well.
-			foreach(string name in classes)
+			foreach(var name in classes)
 			{
-				int cls = cache.DomainDataByFlid.MetaDataCache.GetClassId(name.Trim());
+				var cls = cache.DomainDataByFlid.MetaDataCache.GetClassId(name.Trim());
 				if (cls <= 0)
+				{
 					throw new FwConfigurationException("The class name '" + name + "' is not valid");
-				m_classIds.Add(cls);
+				}
+				ClassIds.Add(cls);
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// decide whether this object should be included
 		/// </summary>
-		/// <param name="item"></param>
-		/// <returns>true if the object should be included</returns>
-		/// ------------------------------------------------------------------------------------
 		public override bool Accept (IManyOnePathSortItem item)
 		{
 			var obj = item.KeyObjectUsing(m_cache);
 			if (!(obj is ICmBaseAnnotation))
+			{
 				return false; // It's not a base annotation
+			}
 
 			var annotation = (ICmBaseAnnotation)obj;
 			if (annotation.BeginObjectRA == null)
-				return false;
-
-			int cls = annotation.BeginObjectRA.ClassID;
-			foreach(uint i in m_classIds)
 			{
-				if ( i == cls)
+				return false;
+			}
+
+			var cls = annotation.BeginObjectRA.ClassID;
+			foreach (var i in ClassIds)
+			{
+				if (i == cls)
+				{
 					return true;
+				}
 			}
 			return false;
 		}
 	}
 
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Matchers are able to tell whether a string matches a pattern.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public interface IMatcher
 	{
-		/// <summary></summary>
+		/// <summary />
 		bool Accept(ITsString tssKey);
-		/// <summary></summary>
+		/// <summary />
 		bool Matches(ITsString arg);
-		/// <summary></summary>
+		/// <summary />
 		bool SameMatcher(IMatcher other);
-		/// <summary></summary>
+		/// <summary />
 		bool IsValid();
-		/// <summary></summary>
+		/// <summary />
 		string ErrorMessage();
-		/// <summary></summary>
+		/// <summary />
 		bool CanMakeValid();
-		/// <summary></summary>
+		/// <summary />
 		ITsString MakeValid();
-		/// <summary></summary>
+		/// <summary />
 		ITsString Label { get; set; }
-		/// <summary></summary>
+		/// <summary />
 		ILgWritingSystemFactory WritingSystemFactory { get; set; }
 		/// <summary>
 		/// If there is one specific writing system that the matcher looks for, return it;
@@ -504,9 +388,7 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public abstract class BaseMatcher : IMatcher, IPersistAsXml, IStoresLcmCache
 	{
-		private ITsString m_tssLabel;
 		// Todo: get this initialized somehow.
-		private ILgWritingSystemFactory m_wsf; // unfortunately needed for serialization
 		// This is used only to save the value restored by InitXml until the Cache is set
 		// so that m_tssLabel can be computed.
 		private string m_xmlLabel;
@@ -522,14 +404,10 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// No specific writing system for most of these matchers.
 		/// </summary>
-		public virtual int WritingSystem { get { return 0; } }
+		public virtual int WritingSystem => 0;
 
 		/// <summary />
-		public ITsString Label
-		{
-			get	{ return m_tssLabel; }
-			set	{ m_tssLabel = value; }
-		}
+		public ITsString Label { get; set; }
 
 		/// <summary />
 		public virtual bool IsValid()
@@ -540,7 +418,7 @@ namespace SIL.FieldWorks.Filters
 		/// <summary />
 		public virtual string ErrorMessage()
 		{
-			return String.Format(FiltersStrings.ksErrorMsg, IsValid().ToString());
+			return string.Format(FiltersStrings.ksErrorMsg, IsValid());
 		}
 
 		/// <summary />
@@ -557,11 +435,7 @@ namespace SIL.FieldWorks.Filters
 		#endregion
 
 		/// <summary />
-		public ILgWritingSystemFactory WritingSystemFactory
-		{
-			set { m_wsf = value; }
-			get { return m_wsf; }
-		}
+		public ILgWritingSystemFactory WritingSystemFactory { set; get; }
 
 		/// <summary>
 		/// This is overridden only by BlankMatcher currently, which matches
@@ -579,9 +453,9 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		public virtual void PersistAsXml(XElement node)
 		{
-			if (m_tssLabel != null)
+			if (Label != null)
 			{
-				string contents = TsStringUtils.GetXmlRep(m_tssLabel, m_wsf, 0, false);
+				var contents = TsStringUtils.GetXmlRep(Label, WritingSystemFactory, 0, false);
 				XmlUtils.SetAttribute(node, "label", contents);
 			}
 		}
@@ -606,9 +480,11 @@ namespace SIL.FieldWorks.Filters
 		{
 			set
 			{
-				m_wsf = value.WritingSystemFactory;
+				WritingSystemFactory = value.WritingSystemFactory;
 				if (m_xmlLabel != null)
-					m_tssLabel = TsStringSerializer.DeserializeTsStringFromXml(m_xmlLabel, m_wsf);
+				{
+					Label = TsStringSerializer.DeserializeTsStringFromXml(m_xmlLabel, WritingSystemFactory);
+				}
 			}
 		}
 
@@ -620,29 +496,21 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public struct MatchRangePair
 	{
-		internal int m_ichMin;
-		internal int m_ichLim;
-
 		public MatchRangePair(int ichMin, int ichLim)
 		{
-			m_ichMin = ichMin;
-			m_ichLim = ichLim;
+			IchMin = ichMin;
+			IchLim = ichLim;
 		}
 
 		public void Reset()
 		{
-			m_ichMin = -1;
-			m_ichLim = -1;
+			IchMin = -1;
+			IchLim = -1;
 		}
 
-		public int IchMin
-		{
-			get { return m_ichMin; }
-		}
-		public int IchLim
-		{
-			get { return m_ichLim; }
-		}
+		public int IchMin { get; internal set; }
+
+		public int IchLim { get; internal set; }
 	}
 
 
@@ -651,8 +519,6 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public abstract class SimpleStringMatcher : BaseMatcher
 	{
-		/// <summary />
-		protected IVwPattern m_pattern;
 		/// <summary />
 		protected IVwTxtSrcInit m_textSourceInit;
 		/// <summary />
@@ -673,30 +539,23 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// normal constructor
 		/// </summary>
-		/// <param name="pattern"></param>
-		public SimpleStringMatcher(IVwPattern pattern)
+		protected SimpleStringMatcher(IVwPattern pattern)
 		{
-			m_pattern = pattern;
+			Pattern = pattern;
 			Init();
 		}
 
 		/// <summary>
 		/// This class explicitly looks for a particular ws.
 		/// </summary>
-		public override int WritingSystem
-		{
-			get
-			{
-				if (Pattern != null && !String.IsNullOrEmpty(Pattern.IcuLocale) && WritingSystemFactory != null)
-					return WritingSystemFactory.GetWsFromStr(Pattern.IcuLocale);
-				return 0;
-			}
-		}
+		public override int WritingSystem => !string.IsNullOrEmpty(Pattern?.IcuLocale) && WritingSystemFactory != null
+			? WritingSystemFactory.GetWsFromStr(Pattern.IcuLocale)
+			: 0;
 
 		/// <summary>
 		/// default for persistence
 		/// </summary>
-		public SimpleStringMatcher()
+		protected SimpleStringMatcher()
 		{
 			Init();
 		}
@@ -706,17 +565,16 @@ namespace SIL.FieldWorks.Filters
 			m_textSourceInit = VwStringTextSourceClass.Create();
 			m_ts = m_textSourceInit as IVwTextSource;
 
-			if (m_pattern == null)
-				m_pattern = VwPatternClass.Create();
+			if (Pattern == null)
+			{
+				Pattern = VwPatternClass.Create();
+			}
 		}
 
 		/// <summary>
 		/// Retrieve pattern (for testing)
 		/// </summary>
-		public IVwPattern Pattern
-		{
-			get { return m_pattern; }
-		}
+		public IVwPattern Pattern { get; protected set; }
 
 		/// <summary>
 		/// Finds the first match satisfying the abstract method CurrentResultDoesMatch().
@@ -732,12 +590,14 @@ namespace SIL.FieldWorks.Filters
 			mrpLast.Reset();
 			m_textSourceInit.SetString(tssSource);
 			m_tssSource = tssSource;
-			bool found = false;
+			bool found;
 			do
 			{   // get first/next match and make sure it is not the same segment of the string
 				mrp = FindNextPatternMatch(mrpLast);
 				if (mrpLast.Equals(mrp))
+				{
 					break; // it found the same segment again: Prevent cycles, eg, for Reg Exp "$" (LT-7041).
+				}
 				mrpLast = mrp;
 				found = mrp.IchMin >= 0; // see VwPattern.cpp STDMETHODIMP VwPattern::FindIn documentation
 			} while (found && !CurrentResultDoesMatch(mrp)); // must match the overridden condition
@@ -753,14 +613,16 @@ namespace SIL.FieldWorks.Filters
 		/// <returns>Min and Lim of the segment in the string matching the pattern.</returns>
 		protected MatchRangePair FindNextPatternMatch(MatchRangePair lastMatch)
 		{
-			int ichStart = 0;
+			var ichStart = 0;
 			// if we already have a current match, then reset the starting position
 			// NOTE: there seems to be a bug(?) in FindIn that prevents us from using IchMin + 1 to find overlapping matches.
 			if (lastMatch.IchMin >= 0) // see VwPattern.cpp STDMETHODIMP VwPattern::FindIn documentation
+			{
 				ichStart = lastMatch.IchLim;
+			}
 			int ichMin;
 			int ichLim;
-			m_pattern.FindIn(m_ts, ichStart, m_tssSource.Length, true, out ichMin, out ichLim, null);
+			Pattern.FindIn(m_ts, ichStart, m_tssSource.Length, true, out ichMin, out ichLim, null);
 			return new MatchRangePair(ichMin, ichLim);
 		}
 
@@ -770,7 +632,7 @@ namespace SIL.FieldWorks.Filters
 		/// <param name="match">The pattern-matched string segment limits to check against
 		/// additional matching criteria.</param>
 		/// <returns>true if the additional checks succeeded.</returns>
-		abstract protected bool CurrentResultDoesMatch(MatchRangePair match);
+		protected abstract bool CurrentResultDoesMatch(MatchRangePair match);
 
 		/// <summary>Gets all segments of the string that match the pattern. The caller must
 		/// call Matches() first to check that there is at least one match. It also sets the
@@ -781,38 +643,34 @@ namespace SIL.FieldWorks.Filters
 			m_results.Clear();
 			Debug.Assert(m_currentMatchRangePair.IchMin >= 0, "SimpleStringMatcher.Matches() must set the first filter match.");
 			m_results.Add(m_currentMatchRangePair);
-			MatchRangePair mrpLast = m_currentMatchRangePair; // set via Matches()
-			bool found = false;
+			var mrpLast = m_currentMatchRangePair; // set via Matches()
+			bool found;
 			do
 			{
-				MatchRangePair mrp = FindNextPatternMatch(mrpLast);
+				var mrp = FindNextPatternMatch(mrpLast);
 				if (mrp.Equals(mrpLast))// presuming the only duplicate would be the last match that might be found ;-)
+				{
 					break; // Prevent cycles, eg, for Reg Exp "$" (LT-7041).
+				}
 				mrpLast = mrp;
 				found = mrp.IchMin >= 0; // see VwPattern.cpp STDMETHODIMP VwPattern::FindIn documentation
 				if (found && CurrentResultDoesMatch(mrp)) // must match the overridden condition
+				{
 					m_results.Add(mrp);
+				}
 			} while (found);
 			return m_results;
 		}
 
 		/// <summary />
-		protected MatchRangePair CurrentResult
-		{
-			get { return m_currentMatchRangePair; }
-		}
-
+		protected MatchRangePair CurrentResult => m_currentMatchRangePair;
 
 		#region IMatcher Members
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Answers the question "Are there any matches?" so that if there aren't,
 		/// time is not wasted looking for them. To get all the matches, call GetAllResults() next.
 		/// </summary>
-		/// <param name="arg">The string to apply the pattern match to.</param>
-		/// <returns>true if a match was found</returns>
-		/// ------------------------------------------------------------------------------------
 		public override bool Matches(ITsString arg)
 		{
 			m_currentMatchRangePair.Reset();
@@ -822,137 +680,105 @@ namespace SIL.FieldWorks.Filters
 			}
 			catch (Exception e)
 			{
-				System.Diagnostics.Debug.WriteLine(e.Message);
+				Debug.WriteLine(e.Message);
 			}
 			// see VwPattern.cpp STDMETHODIMP VwPattern::FindIn documentation for *.IchMin >= 0
 			return m_currentMatchRangePair.IchMin >= 0;
 		}
 
-		/// ---------------------------------------------------------------------------------------
-		/// <summary>
-		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
+		/// <summary />
 		/// <remarks>For most subclasses, it is enough if it is the same class and pattern.</remarks>
 		/// ---------------------------------------------------------------------------------------
 		public override bool SameMatcher(IMatcher other)
 		{
 			if (!(other is SimpleStringMatcher))
+			{
 				return false;
+			}
 			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
 			// is marked with [MonoTODO] and might not work as expected in 4.0.
-			if (other.GetType() != this.GetType())
+			if (other.GetType() != GetType())
+			{
 				return false;
-			IVwPattern otherPattern = (other as SimpleStringMatcher).m_pattern;
+			}
+			var otherPattern = ((SimpleStringMatcher)other).Pattern;
 			if (otherPattern.Pattern == null)
 			{
-				if (m_pattern.Pattern != null)
+				if (Pattern.Pattern != null)
+				{
 					return false;
+				}
 			}
-			else if (!otherPattern.Pattern.Equals(m_pattern.Pattern))
+			else if (!otherPattern.Pattern.Equals(Pattern.Pattern))
+			{
 				return false;
-			return otherPattern.MatchCase == m_pattern.MatchCase
-				&& otherPattern.MatchDiacritics == m_pattern.MatchDiacritics;
+			}
+			return otherPattern.MatchCase == Pattern.MatchCase && otherPattern.MatchDiacritics == Pattern.MatchDiacritics;
 		}
 
-		/// ---------------------------------------------------------------------------------------
 		/// <summary>
 		/// Check to see if the matcher is valid.
 		/// </summary>
-		/// <returns></returns>
-		/// ---------------------------------------------------------------------------------------
 		public override bool IsValid()
 		{
-			if (HasError())
-				return false;
-			return base.IsValid();
+			return !HasError() && base.IsValid();
 		}
 
-		/// ---------------------------------------------------------------------------------------
 		/// <summary>
 		/// If the error was in this object, then return the error msg for it, otherwise return
 		/// the base error msg.
 		/// </summary>
-		/// <returns></returns>
-		/// ---------------------------------------------------------------------------------------
 		public override string ErrorMessage()
 		{
-			if (HasError())
-			{
-				return String.Format(FiltersStrings.ksMatchStringToLongLength0, m_MaxSearchStringLength );
-			}
-			return base.ErrorMessage();
+			return HasError() ? string.Format(FiltersStrings.ksMatchStringToLongLength0, m_MaxSearchStringLength ) : base.ErrorMessage();
 		}
 
-		/// ---------------------------------------------------------------------------------------
 		/// <summary>
 		/// Does this object know how to make the matcher valid, in the case of SimpleStringMatcher
 		/// it's just a matter of truncating the search string to be of a valid length.
 		/// </summary>
-		/// <returns></returns>
-		/// ---------------------------------------------------------------------------------------
 		public override bool CanMakeValid()
 		{
-			if (HasError())
-				return true;
-			return false;
+			return HasError();
 		}
 
-		/// ---------------------------------------------------------------------------------------
 		/// <summary>
 		/// Truncate the match pattern to be of a valid length if that was the error.
 		/// </summary>
-		/// <returns></returns>
-		/// ---------------------------------------------------------------------------------------
 		public override ITsString MakeValid()
 		{
-			if (HasError())
-			{
-				return m_pattern.Pattern.GetSubstring(0, m_MaxSearchStringLength - 1);
-			}
-			return base.MakeValid();
+			return HasError() ? Pattern.Pattern.GetSubstring(0, m_MaxSearchStringLength - 1) : base.MakeValid();
 		}
 
-		/// ---------------------------------------------------------------------------------------
 		/// <summary>
 		/// Local method for testing if there is an error: currently it's just the length of the string
 		/// </summary>
-		/// <returns></returns>
-		/// ---------------------------------------------------------------------------------------
 		private bool HasError()
 		{
-			if (m_pattern.Pattern.Length > m_MaxSearchStringLength)
-				return true;
-			return false;
+			return Pattern.Pattern.Length > m_MaxSearchStringLength;
 		}
 
 		#endregion
 
-		/// ---------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ---------------------------------------------------------------------------------------
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			XmlUtils.SetAttribute(node, "pattern", m_pattern.Pattern.Text);
+			XmlUtils.SetAttribute(node, "pattern", Pattern.Pattern.Text);
 			int var;
-			int ws = m_pattern.Pattern.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+			var ws = Pattern.Pattern.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
 			XmlUtils.SetAttribute(node, "ws", ws.ToString());
-			XmlUtils.SetAttribute(node, "matchCase", m_pattern.MatchCase.ToString());
-			XmlUtils.SetAttribute(node, "matchDiacritics", m_pattern.MatchDiacritics.ToString());
+			XmlUtils.SetAttribute(node, "matchCase", Pattern.MatchCase.ToString());
+			XmlUtils.SetAttribute(node, "matchDiacritics", Pattern.MatchDiacritics.ToString());
 			// NOTE!! if any more properties of the matcher become significant, they should be
 			// accounted for also in SameMatcher!
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
@@ -970,23 +796,21 @@ namespace SIL.FieldWorks.Filters
 			{
 				base.Cache = value;
 
-				if (m_persistNode != null && m_pattern.Pattern == null)
+				if (m_persistNode != null && Pattern.Pattern == null)
 				{
-					int ws = XmlUtils.GetOptionalIntegerValue(m_persistNode,
-						"ws",
-						value.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle);
-					ITsString tss = TsStringUtils.MakeString(XmlUtils.GetMandatoryAttributeValue(m_persistNode, "pattern"), ws);
-					m_pattern.Pattern = tss;
+					var ws = XmlUtils.GetOptionalIntegerValue(m_persistNode, "ws", value.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle);
+					var tss = TsStringUtils.MakeString(XmlUtils.GetMandatoryAttributeValue(m_persistNode, "pattern"), ws);
+					Pattern.Pattern = tss;
 
-					m_pattern.MatchCase = XmlUtils.GetOptionalBooleanAttributeValue(m_persistNode, "matchCase", false);
-					m_pattern.MatchDiacritics = XmlUtils.GetOptionalBooleanAttributeValue(m_persistNode, "matchDiacritics", false);
+					Pattern.MatchCase = XmlUtils.GetOptionalBooleanAttributeValue(m_persistNode, "matchCase", false);
+					Pattern.MatchDiacritics = XmlUtils.GetOptionalBooleanAttributeValue(m_persistNode, "matchDiacritics", false);
 
 					// These values are currently never set to anything other than false, initialize them that way
-					m_pattern.MatchOldWritingSystem = false;
-					m_pattern.MatchWholeWord = false;
+					Pattern.MatchOldWritingSystem = false;
+					Pattern.MatchWholeWord = false;
 					// UseRegularExpressions is always assumed to be false, the RegExpMatcher class sets it to true in the constructor
-					m_pattern.UseRegularExpressions = false;
-					SetupPatternCollating(m_pattern, value);
+					Pattern.UseRegularExpressions = false;
+					SetupPatternCollating(Pattern, value);
 				}
 			}
 		}
@@ -998,23 +822,20 @@ namespace SIL.FieldWorks.Filters
 		public static void SetupPatternCollating(IVwPattern pattern, LcmCache cache)
 		{
 			pattern.IcuLocale = cache.ServiceLocator.WritingSystemFactory.GetStrFromWs(pattern.Pattern.get_WritingSystem(0));
-			CoreWritingSystemDefinition ws = cache.ServiceLocator.WritingSystemManager.Get(pattern.IcuLocale);
+			var ws = cache.ServiceLocator.WritingSystemManager.Get(pattern.IcuLocale);
 			// Enhance JohnT: we would like to be able to make it use the defined collating rules for the
 			// other sort types, but don't currently know how.
-			if (ws != null)
+			var rulesCollation = ws?.DefaultCollation as RulesCollationDefinition;
+			if (rulesCollation != null && rulesCollation.IsValid)
 			{
-				var rulesCollation = ws.DefaultCollation as RulesCollationDefinition;
-				if (rulesCollation != null && rulesCollation.IsValid)
-					pattern.IcuCollatingRules = rulesCollation.CollationRules;
+				pattern.IcuCollatingRules = rulesCollation.CollationRules;
 			}
 		}
 	}
 
-	/// -------------------------------------------------------------------------------------------
 	/// <summary>
 	/// Matches if the pattern is exactly the argument.
 	/// </summary>
-	/// -------------------------------------------------------------------------------------------
 	public class ExactMatcher : SimpleStringMatcher
 	{
 		/// <summary>
@@ -1022,21 +843,11 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="pattern"></param>
 		public ExactMatcher(IVwPattern pattern) : base(pattern) {}
+
 		/// <summary>
 		/// default for persistence
 		/// </summary>
 		public ExactMatcher() {}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// </summary>
-		/// <param name="arg"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public override bool Matches(ITsString arg)
-		{
-			return base.Matches(arg);
-		}
 
 		protected override bool CurrentResultDoesMatch(MatchRangePair match)
 		{
@@ -1052,24 +863,17 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// normal constructor
 		/// </summary>
-		/// <param name="pattern"></param>
 		public BeginMatcher(IVwPattern pattern) : base(pattern) {}
+
 		/// <summary>
 		/// default for persistence
 		/// </summary>
 		public BeginMatcher() {}
 
-		/// ---------------------------------------------------------------------------------------
-		/// <summary>
-		/// </summary>
-		/// <param name="arg"></param>
-		/// <returns></returns>
-		/// ---------------------------------------------------------------------------------------
+		/// <summary />
 		public override bool Matches(ITsString arg)
 		{
-			if(arg == null || arg.Length < m_pattern.Pattern.Length)
-				return false;
-			return base.Matches(arg);
+			return arg != null && arg.Length >= Pattern.Pattern.Length && base.Matches(arg);
 		}
 
 		protected override bool CurrentResultDoesMatch(MatchRangePair match)
@@ -1086,25 +890,17 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// normal constructor
 		/// </summary>
-		/// <param name="pattern"></param>
 		public EndMatcher(IVwPattern pattern) : base(pattern) {}
+
 		/// <summary>
 		/// default for persistence
 		/// </summary>
 		public EndMatcher() {}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// </summary>
-		/// <param name="arg"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public override bool Matches(ITsString arg)
 		{
-			if(arg == null || arg.Length < m_pattern.Pattern.Length)
-				return false;
-
-			return base.Matches(arg);
+			return arg != null && arg.Length >= Pattern.Pattern.Length && base.Matches(arg);
 		}
 
 		protected override bool CurrentResultDoesMatch(MatchRangePair match)
@@ -1121,25 +917,17 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// normal constructor
 		/// </summary>
-		/// <param name="pattern"></param>
 		public AnywhereMatcher(IVwPattern pattern) : base(pattern) {}
+
 		/// <summary>
 		/// default for persistence
 		/// </summary>
 		public AnywhereMatcher() {}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// </summary>
-		/// <param name="arg"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		public override bool Matches(ITsString arg)
 		{
-			if(arg == null)
-				return false;
-
-			return base.Matches(arg);
+			return arg != null && base.Matches(arg);
 		}
 
 		protected override bool CurrentResultDoesMatch(MatchRangePair match)
@@ -1156,7 +944,6 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// normal constructor
 		/// </summary>
-		/// <param name="pattern"></param>
 		public RegExpMatcher(IVwPattern pattern) : base(pattern)
 		{
 			Init();
@@ -1170,16 +957,13 @@ namespace SIL.FieldWorks.Filters
 		/// <summary />
 		void Init()
 		{
-			m_pattern.UseRegularExpressions = true;
+			Pattern.UseRegularExpressions = true;
 		}
 
 		/// <summary />
 		public override bool Matches(ITsString arg)
 		{
-			if (arg == null)
-				return false;
-
-			return base.Matches(arg);
+			return arg != null && base.Matches(arg);
 		}
 
 		/// <summary />
@@ -1201,25 +985,26 @@ namespace SIL.FieldWorks.Filters
 		/// <summary />
 		public override bool IsValid()
 		{
-			string errMsg = m_pattern.ErrorMessage;
-			if (errMsg == null && m_pattern.Pattern.Text != null)
-				return base.IsValid();	// now see if there is a problem in the base classes
-			return false;
+			return Pattern.ErrorMessage == null && Pattern.Pattern.Text != null && base.IsValid();
 		}
 
 		/// <summary />
 		public override string ErrorMessage()
 		{
 			string finalErrorMessage;
-			string errMsg = m_pattern.ErrorMessage;
-			if (m_pattern.Pattern.Text == null)
+			var errMsg = Pattern.ErrorMessage;
+			if (Pattern.Pattern.Text == null)
+			{
 				errMsg = "U_REGEX_RULE_SYNTAX";
+			}
 
 			// handle the case where the error msg has bubbled up from a base class
 			if (errMsg == null)
 			{
 				if (base.IsValid() == false)
+				{
 					return base.ErrorMessage();
+				}
 			}
 
 			switch (errMsg)
@@ -1289,33 +1074,23 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public class BlankMatcher : BaseMatcher
 	{
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Matches any empty or null string, or one consisting entirely of white space
 		/// characters. I think the .NET definition of white space is good enough; it's unlikely
 		/// we'll need new PUA whitespace characters.
 		/// </summary>
-		/// <param name="arg"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public override bool Matches(ITsString arg)
 		{
 			if (arg == null || arg.Length == 0)
-				return true;
-			string text = arg.Text;
-			for (int i = 0; i < text.Length; i++)
 			{
-				if (!System.Char.IsWhiteSpace(text[i]))
-					return false;
+				return true;
 			}
-			return true;
+			return arg.Text.All(t => char.IsWhiteSpace(t));
 		}
 
 		/// <summary>
 		/// True if it is the same class and member vars match.
 		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public override bool SameMatcher(IMatcher other)
 		{
 			return other is BlankMatcher;
@@ -1327,30 +1102,20 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public class NonBlankMatcher : BaseMatcher
 	{
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The exact opposite of BlankMatcher.
 		/// </summary>
-		/// <param name="arg"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public override bool Matches(ITsString arg)
 		{
 			if (arg == null || arg.Length == 0)
-				return false;
-			string text = arg.Text;
-			for (int i = 0; i < text.Length; i++)
 			{
-				if (!System.Char.IsWhiteSpace(text[i]))
-					return true;
+				return false;
 			}
-			return false;
+			return arg.Text.Any(t => !char.IsWhiteSpace(t));
 		}
 		/// <summary>
 		/// True if it is the same class and member vars match.
 		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public override bool SameMatcher(IMatcher other)
 		{
 			return other is NonBlankMatcher;
@@ -1362,15 +1127,12 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public class InvertMatcher : BaseMatcher, IStoresLcmCache, IStoresDataAccess
 	{
-		IMatcher m_matcher;
-
 		/// <summary>
 		/// regular constructor
 		/// </summary>
-		/// <param name="matcher"></param>
 		public InvertMatcher (IMatcher matcher)
 		{
-			m_matcher = matcher;
+			MatcherToInvert = matcher;
 		}
 
 		/// <summary>
@@ -1380,21 +1142,15 @@ namespace SIL.FieldWorks.Filters
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the matcher to invert.
 		/// </summary>
-		/// <value>The matcher to invert.</value>
-		/// ------------------------------------------------------------------------------------
-		public IMatcher MatcherToInvert
-		{
-			get { return m_matcher; }
-		}
+		public IMatcher MatcherToInvert { get; private set; }
 
 		/// <summary />
 		public override bool Matches(ITsString arg)
 		{
-			return arg != null && !m_matcher.Matches(arg);
+			return arg != null && !MatcherToInvert.Matches(arg);
 		}
 
 		/// <summary>
@@ -1402,34 +1158,26 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		public override bool SameMatcher(IMatcher other)
 		{
-			InvertMatcher other2 = other as InvertMatcher;
-			if (other2 == null)
-				return false;
-			return m_matcher.SameMatcher(other2.m_matcher);
+			var other2 = other as InvertMatcher;
+			return other2 != null && MatcherToInvert.SameMatcher(other2.MatcherToInvert);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			DynamicLoader.PersistObject(m_matcher, node, "invertMatcher");
+			DynamicLoader.PersistObject(MatcherToInvert, node, "invertMatcher");
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
-			m_matcher = DynamicLoader.RestoreFromChild(node, "invertMatcher") as IMatcher;
+			MatcherToInvert = DynamicLoader.RestoreFromChild(node, "invertMatcher") as IMatcher;
 		}
 
 		#region IStoresLcmCache Members
@@ -1438,8 +1186,10 @@ namespace SIL.FieldWorks.Filters
 		{
 			set
 			{
-				if (m_matcher is IStoresLcmCache)
-					(m_matcher as IStoresLcmCache).Cache = value;
+				if (MatcherToInvert is IStoresLcmCache)
+				{
+					(MatcherToInvert as IStoresLcmCache).Cache = value;
+				}
 			}
 		}
 
@@ -1447,8 +1197,10 @@ namespace SIL.FieldWorks.Filters
 		{
 			set
 			{
-				if (m_matcher is IStoresDataAccess)
-					(m_matcher as IStoresDataAccess).DataAccess = value;
+				if (MatcherToInvert is IStoresDataAccess)
+				{
+					(MatcherToInvert as IStoresDataAccess).DataAccess = value;
+				}
 			}
 		}
 		#endregion
@@ -1457,9 +1209,6 @@ namespace SIL.FieldWorks.Filters
 	// Enhance JohnT: other ideas:
 	//  - ListMatcher: matches any string in a list; useful if we allow user to check multiple values to match.
 	//  - OrFilter: matches if any subfilter matches.
-
-
-
 
 	/// <summary>
 	/// Implementors of this interface are responsible for finding one or more strings that are displayed
@@ -1476,8 +1225,6 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// Stringses the specified hvo.
 		/// </summary>
-		/// <param name="hvo">The hvo.</param>
-		/// <returns></returns>
 		string[] Strings(int hvo);
 
 		/// <summary>
@@ -1490,8 +1237,6 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// Answer true if they are the 'same' finder (will find the same strings).
 		/// </summary>
-		/// <param name="other">The other.</param>
-		/// <returns></returns>
 		bool SameFinder(IStringFinder other);
 
 		/// <summary>
@@ -1515,33 +1260,23 @@ namespace SIL.FieldWorks.Filters
 		ISilDataAccess DataAccess { set; }
 	}
 
-	//------------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	//------------------------------------------------------------------------------------------
+	/// <summary />
 	public abstract class StringFinderBase : IStringFinder, IPersistAsXml, IStoresLcmCache
 	{
-		/// <summary></summary>
-		protected ISilDataAccess m_sda;
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:StringFinderBase"/> class.
 		/// Default constructor for IPersistAsXml
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public StringFinderBase()
+		protected StringFinderBase()
 		{
 		}
 
 		/// <summary>
 		/// Normal constructor for most uses.
 		/// </summary>
-		/// <param name="sda"></param>
-		public StringFinderBase(ISilDataAccess sda)
+		protected StringFinderBase(ISilDataAccess sda)
 		{
-			m_sda = sda;
+			DataAccess = sda;
 		}
 
 		/// <summary>
@@ -1549,15 +1284,18 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		public string[] Strings(IManyOnePathSortItem item, bool sortedFromEnd)
 		{
-			string[] result = Strings(item.KeyObject);
+			var result = Strings(item.KeyObject);
 			if (sortedFromEnd)
-				for(int i = 0; i < result.Length; i++)
+			{
+				for (var i = 0; i < result.Length; i++)
+				{
 					result[i] = TsStringUtils.ReverseString(result[i]);
+				}
+			}
 
 			return result;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// For most of these we want to return the same thing.
 		/// </summary>
@@ -1572,23 +1310,15 @@ namespace SIL.FieldWorks.Filters
 		}
 
 
-		public ISilDataAccess DataAccess
-		{
-			get { return m_sda; }
-			set { m_sda = value; }
-		}
+		public ISilDataAccess DataAccess { get; set; }
 
 		/// <summary>
 		/// Stringses the specified hvo.
 		/// </summary>
-		/// <param name="hvo">The hvo.</param>
-		/// <returns></returns>
 		public abstract string[] Strings(int hvo);
 		/// <summary>
 		/// Answer true if they are the 'same' finder (will find the same strings).
 		/// </summary>
-		/// <param name="other">The other.</param>
-		/// <returns></returns>
 		public abstract bool SameFinder(IStringFinder other);
 		/// <summary>
 		/// Add to collector the IManyOnePathSortItems which this sorter derives from
@@ -1611,23 +1341,17 @@ namespace SIL.FieldWorks.Filters
 
 		#region IPersistAsXml Members
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public virtual void PersistAsXml(XElement node)
 		{
 			// nothing to do in base class
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public virtual void InitXml(XElement node)
 		{
 			// nothing to do in base class
@@ -1636,18 +1360,15 @@ namespace SIL.FieldWorks.Filters
 		#endregion
 
 		#region IStoresLcmCache
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the cache. This may be used on initializers which only optionally pass
 		/// information on to a child object, so there is no getter.
 		/// </summary>
-		/// <value></value>
-		/// ------------------------------------------------------------------------------------
 		public LcmCache Cache
 		{
 			set
 			{
-				m_sda = value.DomainDataByFlid;
+				DataAccess = value.DomainDataByFlid;
 			}
 		}
 		#endregion
@@ -1659,20 +1380,14 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public class OwnMlPropFinder : StringFinderBase
 	{
-		int m_flid;
-		int m_ws;
-
 		/// <summary>
 		/// Make one.
 		/// </summary>
-		/// <param name="sda"></param>
-		/// <param name="flid"></param>
-		/// <param name="ws"></param>
 		public OwnMlPropFinder(ISilDataAccess sda, int flid, int ws)
 			: base(sda)
 		{
-			m_flid = flid;
-			m_ws = ws;
+			Flid = flid;
+			Ws = ws;
 		}
 
 		/// <summary>
@@ -1682,91 +1397,59 @@ namespace SIL.FieldWorks.Filters
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the flid.
 		/// </summary>
-		/// <value>The flid.</value>
-		/// ------------------------------------------------------------------------------------
-		public int Flid
-		{
-			get { return m_flid; }
-		}
-		/// ------------------------------------------------------------------------------------
+		public int Flid { get; private set; }
+
 		/// <summary>
 		/// Gets the ws.
 		/// </summary>
-		/// <value>The ws.</value>
-		/// ------------------------------------------------------------------------------------
-		public int Ws
-		{
-			get { return m_ws; }
-		}
+		public int Ws { get; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			XmlUtils.SetAttribute(node, "flid", m_flid.ToString());
+			XmlUtils.SetAttribute(node, "flid", Flid.ToString());
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
-			m_flid = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flid");
+			Flid = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flid");
 		}
 
 		#region StringFinder Members
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Stringses the specified hvo.
 		/// </summary>
-		/// <param name="hvo">The hvo.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public override string[] Strings(int hvo)
 		{
-			string val = m_sda.get_MultiStringAlt(hvo, m_flid, m_ws).Text;
-			if (val == null)
-				val = "";
-			return new string[] {val};
+			return new[] { DataAccess.get_MultiStringAlt(hvo, Flid, Ws).Text ?? string.Empty };
 		}
 
 		/// <summary>
 		/// Same if it is the same type for the same flid, ws, and DA.
 		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public override bool SameFinder(IStringFinder other)
 		{
-			OwnMlPropFinder other2 = other as OwnMlPropFinder;
-			if (other2 == null)
-				return false;
-			return other2.m_flid == this.m_flid && other2.m_sda == this.m_sda && other2.m_ws == this.m_ws;
+			var other2 = other as OwnMlPropFinder;
+			return other2 != null && (other2.Flid == Flid && other2.DataAccess == DataAccess && other2.Ws == Ws);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Keys the specified item.
 		/// </summary>
-		/// <param name="item">The item.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public override ITsString Key(IManyOnePathSortItem item)
 		{
-			return m_sda.get_MultiStringAlt(item.KeyObject, m_flid, m_ws);
+			return DataAccess.get_MultiStringAlt(item.KeyObject, Flid, Ws);
 		}
 
 		#endregion
@@ -1778,93 +1461,66 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public class OwnMonoPropFinder : StringFinderBase
 	{
-		int m_flid;
-
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:OwnMonoPropFinder"/> class.
 		/// </summary>
-		/// <param name="sda">The sda.</param>
-		/// <param name="flid">The flid.</param>
-		/// ------------------------------------------------------------------------------------------
 		public OwnMonoPropFinder(ISilDataAccess sda, int flid)
 			: base(sda)
 		{
-			m_flid = flid;
+			Flid = flid;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:OwnMonoPropFinder"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public OwnMonoPropFinder()
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the flid.
 		/// </summary>
-		/// <value>The flid.</value>
-		/// ------------------------------------------------------------------------------------------
-		public int Flid
-		{
-			get { return m_flid; }
-		}
+		public int Flid { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			XmlUtils.SetAttribute(node, "flid", m_flid.ToString());
+			XmlUtils.SetAttribute(node, "flid", Flid.ToString());
 		}
 
-		/// ---------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ---------------------------------------------------------------------------------------
 		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
-			m_flid = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flid");
+			Flid = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flid");
 		}
 
 		#region StringFinder Members
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Stringses the specified hvo.
 		/// </summary>
-		/// <param name="hvo">The hvo.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public override string[] Strings(int hvo)
 		{
-			string val = m_sda.get_StringProp(hvo, m_flid).Text;
-			if (val == null)
-				val = "";
-			return new string[] {val};
+			return new[] { DataAccess.get_StringProp(hvo, Flid).Text ?? string.Empty };
 		}
 
 		/// <summary>
 		/// Same if it is the same type for the same flid and DA.
 		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public override bool SameFinder(IStringFinder other)
 		{
-			OwnMonoPropFinder other2 = other as OwnMonoPropFinder;
+			var other2 = other as OwnMonoPropFinder;
 			if (other2 == null)
+			{
 				return false;
-			return other2.m_flid == this.m_flid && other2.m_sda == this.m_sda;
+			}
+			return other2.Flid == Flid && other2.DataAccess == DataAccess;
 		}
 
 		#endregion
@@ -1877,59 +1533,32 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public class OneIndirectMlPropFinder : StringFinderBase
 	{
-		int m_flidVec;
-		int m_flidString;
-		int m_ws;
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:OneIndirectMlPropFinder"/> class.
 		/// </summary>
-		/// <param name="sda">The sda.</param>
-		/// <param name="flidVec">The flid vec.</param>
-		/// <param name="flidString">The flid string.</param>
-		/// <param name="ws">The ws.</param>
-		/// ------------------------------------------------------------------------------------
 		public OneIndirectMlPropFinder(ISilDataAccess sda, int flidVec, int flidString, int ws)
 			: base(sda)
 		{
-			m_flidVec = flidVec;
-			m_flidString = flidString;
-			m_ws = ws;
+			FlidVec = flidVec;
+			FlidString = flidString;
+			Ws = ws;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the flid vec.
 		/// </summary>
-		/// <value>The flid vec.</value>
-		/// ------------------------------------------------------------------------------------
-		public int FlidVec
-		{
-			get { return m_flidVec; }
-		}
+		public int FlidVec { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the flid string.
 		/// </summary>
-		/// <value>The flid string.</value>
-		/// ------------------------------------------------------------------------------------
-		public int FlidString
-		{
-			get { return m_flidString; }
-		}
+		public int FlidString { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the ws.
 		/// </summary>
-		/// <value>The ws.</value>
-		/// ------------------------------------------------------------------------------------
-		public int Ws
-		{
-			get { return m_ws; }
-		}
+		public int Ws { get; private set; }
+
 		/// <summary>
 		/// For use with IPersistAsXml
 		/// </summary>
@@ -1937,53 +1566,40 @@ namespace SIL.FieldWorks.Filters
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			XmlUtils.SetAttribute(node, "flidVec", m_flidVec.ToString());
-			XmlUtils.SetAttribute(node, "flidString", m_flidString.ToString());
-			XmlUtils.SetAttribute(node, "ws", m_ws.ToString());
+			XmlUtils.SetAttribute(node, "flidVec", FlidVec.ToString());
+			XmlUtils.SetAttribute(node, "flidString", FlidString.ToString());
+			XmlUtils.SetAttribute(node, "ws", Ws.ToString());
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
-			m_flidVec = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flidVec");
-			m_flidString = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flidString");
-			m_ws = XmlUtils.GetMandatoryIntegerAttributeValue(node, "ws");
+			FlidVec = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flidVec");
+			FlidString = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flidString");
+			Ws = XmlUtils.GetMandatoryIntegerAttributeValue(node, "ws");
 		}
 
 		#region StringFinder Members
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Stringses the specified hvo.
 		/// </summary>
-		/// <param name="hvo">The hvo.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public override string[] Strings(int hvo)
 		{
-			int count = m_sda.get_VecSize(hvo, m_flidVec);
-			string[] result = new string[count];
-			for (int i = 0; i < count; ++i)
+			var count = DataAccess.get_VecSize(hvo, FlidVec);
+			var result = new string[count];
+			for (var i = 0; i < count; ++i)
 			{
-				string val = m_sda.get_MultiStringAlt(m_sda.get_VecItem(hvo, m_flidVec, i), m_flidString, m_ws).Text;
-				if (val == null)
-					val = "";
-				result[i] = val;
+				result[i] = DataAccess.get_MultiStringAlt(DataAccess.get_VecItem(hvo, FlidVec, i), FlidString, Ws).Text ?? string.Empty;
 			}
 			return result;
 		}
@@ -1991,15 +1607,14 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// Same if it is the same type for the same flid and DA, etc.
 		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public override bool SameFinder(IStringFinder other)
 		{
-			OneIndirectMlPropFinder other2 = other as OneIndirectMlPropFinder;
+			var other2 = other as OneIndirectMlPropFinder;
 			if (other2 == null)
+			{
 				return false;
-			return other2.m_flidVec == this.m_flidVec && other2.m_sda == this.m_sda
-				&& other2.m_flidString == this.m_flidString && other2.m_ws == this.m_ws;
+			}
+			return other2.FlidVec == FlidVec && other2.DataAccess == DataAccess && other2.FlidString == FlidString && other2.Ws == Ws;
 		}
 		#endregion
 	}
@@ -2013,25 +1628,15 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public class MultiIndirectMlPropFinder : StringFinderBase
 	{
-		int[] m_flidVec;
-		int m_flidString;
-		int m_ws;
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:MultiIndirectMlPropFinder"/> class.
 		/// </summary>
-		/// <param name="sda">The sda.</param>
-		/// <param name="flidVec">The flid vec.</param>
-		/// <param name="flidString">The flid string.</param>
-		/// <param name="ws">The ws.</param>
-		/// ------------------------------------------------------------------------------------
 		public MultiIndirectMlPropFinder(ISilDataAccess sda, int[] flidVec, int flidString, int ws)
 			: base(sda)
 		{
-			m_flidVec = flidVec;
-			m_flidString = flidString;
-			m_ws = ws;
+			VecFlids = flidVec;
+			FlidString = flidString;
+			Ws = ws;
 		}
 
 		/// <summary>
@@ -2041,75 +1646,57 @@ namespace SIL.FieldWorks.Filters
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the vec flids.
 		/// </summary>
-		/// <value>The vec flids.</value>
-		/// ------------------------------------------------------------------------------------
-		public int[] VecFlids
-		{
-			get { return m_flidVec; }
-		}
-		/// ------------------------------------------------------------------------------------
+		public int[] VecFlids { get; private set; }
+
 		/// <summary>
 		/// Gets the flid string.
 		/// </summary>
-		/// <value>The flid string.</value>
-		/// ------------------------------------------------------------------------------------
-		public int FlidString
-		{
-			get { return m_flidString; }
-		}
-		/// ------------------------------------------------------------------------------------
+		public int FlidString { get; private set; }
+
 		/// <summary>
 		/// Gets the ws.
 		/// </summary>
-		/// <value>The ws.</value>
-		/// ------------------------------------------------------------------------------------
-		public int Ws
-		{
-			get { return m_ws; }
-		}
+		public int Ws { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			XmlUtils.SetAttribute(node, "flidVec", XmlUtils.MakeIntegerListValue(m_flidVec));
-			XmlUtils.SetAttribute(node, "flidString", m_flidString.ToString());
-			XmlUtils.SetAttribute(node, "ws", m_ws.ToString());
+			XmlUtils.SetAttribute(node, "flidVec", XmlUtils.MakeIntegerListValue(VecFlids));
+			XmlUtils.SetAttribute(node, "flidString", FlidString.ToString());
+			XmlUtils.SetAttribute(node, "ws", Ws.ToString());
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
-			m_flidVec = XmlUtils.GetMandatoryIntegerListAttributeValue(node, "flidVec");
-			m_flidString = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flidString");
-			m_ws = XmlUtils.GetMandatoryIntegerAttributeValue(node, "ws");
+			VecFlids = XmlUtils.GetMandatoryIntegerListAttributeValue(node, "flidVec");
+			FlidString = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flidString");
+			Ws = XmlUtils.GetMandatoryIntegerAttributeValue(node, "ws");
 		}
 
 		// Return the number of values in the tree rooted at hvo, where index (into m_flidVec)
 		// gives the index of the property which should be followed from that object.
-		int CountItems(int hvo, int index)
+		private int CountItems(int hvo, int index)
 		{
-			int count = m_sda.get_VecSize(hvo, m_flidVec[index]);
-			if (index == m_flidVec.Length - 1)
+			var count = DataAccess.get_VecSize(hvo, VecFlids[index]);
+			if (index == VecFlids.Length - 1)
+			{
 				return count;
-			int total = 0;
-			for (int i = 0; i < count; ++i)
-				total += CountItems(m_sda.get_VecItem(hvo, m_flidVec[index], i), index + 1);
+			}
+			var total = 0;
+			for (var i = 0; i < count; ++i)
+			{
+				total += CountItems(DataAccess.get_VecItem(hvo, VecFlids[index], i), index + 1);
+			}
 			return total;
 		}
 
@@ -2117,70 +1704,58 @@ namespace SIL.FieldWorks.Filters
 		/// Insert into results, starting at resIndex, the strings obtained from the
 		/// tree rooted at hvo. flidVec[flidIndex] is the property to follow from hvo.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="flidIndex"></param>
-		/// <param name="results"></param>
-		/// <param name="resIndex"></param>
-		void GetItems(int hvo, int flidIndex, string[] results, ref int resIndex)
+		private void GetItems(int hvo, int flidIndex, string[] results, ref int resIndex)
 		{
-			if (flidIndex == m_flidVec.Length)
+			if (flidIndex == VecFlids.Length)
 			{
 				// add the string for this leaf object
-				string val = m_sda.get_MultiStringAlt(hvo, m_flidString, m_ws).Text;
-				if (val == null)
-					val = "";
-				results[resIndex] = val;
+				results[resIndex] = DataAccess.get_MultiStringAlt(hvo, FlidString, Ws).Text ?? string.Empty;
 				resIndex++;
 			}
 			else
 			{
-				int count = m_sda.get_VecSize(hvo, m_flidVec[flidIndex]);
-				for (int i = 0; i < count; ++i)
+				var count = DataAccess.get_VecSize(hvo, VecFlids[flidIndex]);
+				for (var i = 0; i < count; ++i)
 				{
-					GetItems(m_sda.get_VecItem(hvo, m_flidVec[flidIndex], i), flidIndex + 1, results, ref resIndex);
+					GetItems(DataAccess.get_VecItem(hvo, VecFlids[flidIndex], i), flidIndex + 1, results, ref resIndex);
 				}
 			}
 		}
 
 		#region StringFinder Members
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Stringses the specified hvo.
 		/// </summary>
-		/// <param name="hvo">The hvo.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------------
 		public override string[] Strings(int hvo)
 		{
-			string[] result = new string[CountItems(hvo, 0)];
-			int resIndex = 0;
+			var result = new string[CountItems(hvo, 0)];
+			var resIndex = 0;
 			GetItems(hvo, 0, result, ref resIndex);
 			return result;
 		}
 
-		bool SameVec(int[] first, int[] second)
+		private static bool SameVec(int[] first, int[] second)
 		{
 			if (first.Length != second.Length)
+			{
 				return false;
-			for (int i = 0; i < first.Length; ++i)
-				if (first[i] != second[i])
-					return false;
-			return true;
+			}
+
+			return !first.Where((t, i) => t != second[i]).Any();
 		}
 
 		/// <summary>
 		/// Same if it is the same type for the same flid and DA, etc.
 		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public override bool SameFinder(IStringFinder other)
 		{
-			MultiIndirectMlPropFinder other2 = other as MultiIndirectMlPropFinder;
+			var other2 = other as MultiIndirectMlPropFinder;
 			if (other2 == null)
+			{
 				return false;
-			return SameVec(other2.m_flidVec, this.m_flidVec) && other2.m_sda == this.m_sda
-				&& other2.m_flidString == this.m_flidString && other2.m_ws == this.m_ws;
+			}
+			return SameVec(other2.VecFlids, VecFlids) && other2.DataAccess == DataAccess && other2.FlidString == FlidString && other2.Ws == Ws;
 		}
 		#endregion
 	}
@@ -2192,25 +1767,15 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public class OneIndirectAtomMlPropFinder : StringFinderBase
 	{
-		int m_flidAtom;
-		int m_flidString;
-		int m_ws;
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:OneIndirectAtomMlPropFinder"/> class.
 		/// </summary>
-		/// <param name="sda">The sda.</param>
-		/// <param name="flidAtom">The flid atom.</param>
-		/// <param name="flidString">The flid string.</param>
-		/// <param name="ws">The ws.</param>
-		/// ------------------------------------------------------------------------------------
 		public OneIndirectAtomMlPropFinder(ISilDataAccess sda, int flidAtom, int flidString, int ws)
 			: base(sda)
 		{
-			m_flidAtom = flidAtom;
-			m_flidString = flidString;
-			m_ws = ws;
+			FlidAtom = flidAtom;
+			FlidString = flidString;
+			Ws = ws;
 		}
 
 		/// <summary>
@@ -2220,101 +1785,68 @@ namespace SIL.FieldWorks.Filters
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the flid atom.
 		/// </summary>
-		/// <value>The flid atom.</value>
-		/// ------------------------------------------------------------------------------------
-		public int FlidAtom
-		{
-			get { return m_flidAtom; }
-		}
+		public int FlidAtom { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the flid string.
 		/// </summary>
-		/// <value>The flid string.</value>
-		/// ------------------------------------------------------------------------------------
-		public int FlidString
-		{
-			get { return m_flidString; }
-		}
+		public int FlidString { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the ws.
 		/// </summary>
-		/// <value>The ws.</value>
-		/// ------------------------------------------------------------------------------------
-		public int Ws
-		{
-			get { return m_ws; }
-		}
+		public int Ws { get; private set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			XmlUtils.SetAttribute(node, "flidAtom", m_flidAtom.ToString());
-			XmlUtils.SetAttribute(node, "flidString", m_flidString.ToString());
-			XmlUtils.SetAttribute(node, "ws", m_ws.ToString());
+			XmlUtils.SetAttribute(node, "flidAtom", FlidAtom.ToString());
+			XmlUtils.SetAttribute(node, "flidString", FlidString.ToString());
+			XmlUtils.SetAttribute(node, "ws", Ws.ToString());
 		}
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------------
 		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
-			m_flidAtom = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flidAtom");
-			m_flidString = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flidString");
-			m_ws = XmlUtils.GetMandatoryIntegerAttributeValue(node, "ws");
+			FlidAtom = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flidAtom");
+			FlidString = XmlUtils.GetMandatoryIntegerAttributeValue(node, "flidString");
+			Ws = XmlUtils.GetMandatoryIntegerAttributeValue(node, "ws");
 		}
 
 		#region StringFinder Members
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Stringses the specified hvo.
 		/// </summary>
-		/// <param name="hvo">The hvo.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public override string[] Strings(int hvo)
 		{
-			string val = m_sda.get_MultiStringAlt(m_sda.get_ObjectProp(hvo, m_flidAtom), m_flidString, m_ws).Text;
-			if (val == null)
-				val = "";
-			return new string[] {val};
+			return new[] { DataAccess.get_MultiStringAlt(DataAccess.get_ObjectProp(hvo, FlidAtom), FlidString, Ws).Text ?? string.Empty };
 		}
 
 		/// <summary>
 		/// Same if it is the same type for the same flid and DA.
 		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public override bool SameFinder(IStringFinder other)
 		{
-			OneIndirectAtomMlPropFinder other2 = other as OneIndirectAtomMlPropFinder;
+			var other2 = other as OneIndirectAtomMlPropFinder;
 			if (other2 == null)
+			{
 				return false;
-			return other2.m_flidAtom == this.m_flidAtom && other2.m_sda == this.m_sda
-				&& other2.m_flidString == this.m_flidString && other2.m_ws == this.m_ws;
+			}
+			return other2.FlidAtom == FlidAtom && other2.DataAccess == DataAccess && other2.FlidString == FlidString && other2.Ws == Ws;
 		}
 
 		#endregion
 	}
-
 
 	/// <summary>
 	/// A FilterBarCellFilter handles one cell of a filter bar. It is made up of two components: a StringFinder
@@ -2328,18 +1860,13 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public class FilterBarCellFilter : RecordFilter
 	{
-		private IStringFinder m_finder;
-		private IMatcher m_matcher;
-
 		/// <summary>
 		/// Normal constructor.
 		/// </summary>
-		/// <param name="finder">A reference to a finder</param>
-		/// <param name="matcher">A reference to a matcher</param>
 		public FilterBarCellFilter(IStringFinder finder, IMatcher matcher)
 		{
-			m_finder = finder;
-			m_matcher = matcher;
+			Finder = finder;
+			Matcher = matcher;
 		}
 
 		/// <summary>
@@ -2352,29 +1879,19 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// Get the finder
 		/// </summary>
-		public IStringFinder Finder
-		{
-			get { return m_finder; }
-		}
+		public IStringFinder Finder { get; private set; }
 
 		/// <summary>
 		/// Get the matcher.
 		/// </summary>
-		public IMatcher Matcher
-		{
-			get { return m_matcher; }
-		}
+		public IMatcher Matcher { get; private set; }
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// decide whether this object should be included
 		/// </summary>
-		/// <param name="item">The item.</param>
-		/// <returns>true if the object should be included</returns>
-		/// ------------------------------------------------------------------------------------------
 		public override bool Accept(IManyOnePathSortItem item)
 		{
-			return Matcher.Accept(m_finder.Key(item));
+			return Matcher.Accept(Finder.Key(item));
 		}
 
 		/// <summary>
@@ -2382,21 +1899,14 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		public override void Preload(object rootObj)
 		{
-			m_finder.Preload(rootObj);
+			Finder.Preload(rootObj);
 		}
 
 		/// <summary>
 		/// Valid if the matcher is (finder doesn't yet have a way to be invalid)
 		/// </summary>
-		public override bool IsValid
-		{
-			get
-			{
-				return base.IsValid && m_matcher.IsValid();
-			}
-		}
+		public override bool IsValid => base.IsValid && Matcher.IsValid();
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// This is the start of an equality test for filters, but for now I (JohnT) am not
 		/// making it an actual Equals function, since it may not be robust enough to
@@ -2404,61 +1914,47 @@ namespace SIL.FieldWorks.Filters
 		/// hash function. It is mainly for FilterBarRecordFilters, so for now other classes
 		/// just answer false.
 		/// </summary>
-		/// <param name="other">The other.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------------
 		public override bool SameFilter(RecordFilter other)
 		{
-			FilterBarCellFilter fbcOther = other as FilterBarCellFilter;
-			if (fbcOther == null)
-				return false;
-			return fbcOther.m_finder.SameFinder(m_finder) && fbcOther.m_matcher.SameMatcher(m_matcher);
+			var fbcOther = other as FilterBarCellFilter;
+			return fbcOther != null && (fbcOther.Finder.SameFinder(Finder) && fbcOther.Matcher.SameMatcher(Matcher));
 		}
 
 		#region IPersistAsXml Members
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------------
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			DynamicLoader.PersistObject(m_finder, node, "finder");
-			DynamicLoader.PersistObject(m_matcher, node, "matcher");
+			DynamicLoader.PersistObject(Finder, node, "finder");
+			DynamicLoader.PersistObject(Matcher, node, "matcher");
 		}
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------------
 		public override void InitXml(XElement node)
 		{
 			base.InitXml(node);
-			Debug.Assert(m_finder == null);
-			m_finder = DynamicLoader.RestoreFromChild(node, "finder") as IStringFinder;
-			m_matcher = DynamicLoader.RestoreFromChild(node, "matcher") as IMatcher;
+			Debug.Assert(Finder == null);
+			Finder = DynamicLoader.RestoreFromChild(node, "finder") as IStringFinder;
+			Matcher = DynamicLoader.RestoreFromChild(node, "matcher") as IMatcher;
 		}
 
 		#endregion
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the cache.
 		/// </summary>
-		/// <value></value>
-		/// ------------------------------------------------------------------------------------------
 		public override LcmCache Cache
 		{
 			set
 			{
 				base.Cache = value;
-				SetCache(m_finder, value);
-				SetCache(m_matcher, value);
+				SetCache(Finder, value);
+				SetCache(Matcher, value);
 			}
 		}
 
@@ -2467,21 +1963,15 @@ namespace SIL.FieldWorks.Filters
 			set
 			{
 				base.DataAccess = value;
-				SetDataAccess(m_finder, value);
-				SetDataAccess(m_matcher, value);
+				SetDataAccess(Finder, value);
+				SetDataAccess(Matcher, value);
 			}
 		}
 
 		/// <summary>
 		/// These filters are always created by user action in the filter bar, and thus visible to the user.
 		/// </summary>
-		public override bool IsUserVisible
-		{
-			get
-			{
-				return true;
-			}
-		}
+		public override bool IsUserVisible => true;
 	}
 
 	/// <summary>
@@ -2491,127 +1981,93 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public class AndFilter : RecordFilter
 	{
-		/// <summary>references to filters</summary>
-		private ArrayList m_filters = new ArrayList();
-
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// decide whether this object should be included
 		/// </summary>
-		/// <param name="item">The item.</param>
-		/// <returns>true if the object should be included</returns>
-		/// ------------------------------------------------------------------------------------------
 		public override bool Accept(IManyOnePathSortItem item)
 		{
-			foreach (RecordFilter f in m_filters)
+			foreach (RecordFilter f in Filters)
+			{
 				if (!f.Accept(item))
+				{
 					return false;
+				}
+			}
 			return true;
 		}
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the filters.
 		/// </summary>
-		/// <value>The filters.</value>
-		/// ------------------------------------------------------------------------------------------
-		public ArrayList Filters
-		{
-			get
-			{
-				return m_filters;
-			}
-		}
+		public ArrayList Filters { get; private set; } = new ArrayList();
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Adds the specified f.
 		/// </summary>
-		/// <param name="f">The f.</param>
-		/// ------------------------------------------------------------------------------------------
 		public void Add(RecordFilter f)
 		{
-			Debug.Assert(!this.Contains(f), "This filter (" + f + ") has already been added to the list.");
-			m_filters.Add(f);
+			Debug.Assert(!Contains(f), "This filter (" + f + ") has already been added to the list.");
+			Filters.Add(f);
 		}
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Removes the specified f.
 		/// </summary>
-		/// <param name="f">The f.</param>
-		/// ------------------------------------------------------------------------------------------
 		public void Remove(RecordFilter f)
 		{
-			for (int i = 0; i < m_filters.Count; ++i)
+			for (var i = 0; i < Filters.Count; ++i)
 			{
-				if (((RecordFilter)m_filters[i]).SameFilter(f))
+				if (((RecordFilter)Filters[i]).SameFilter(f))
 				{
-					var filterToRemove = m_filters[i];
-					m_filters.RemoveAt(i);
+					Filters.RemoveAt(i);
 					break;
 				}
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the count.
 		/// </summary>
-		/// <value>The count.</value>
-		/// ------------------------------------------------------------------------------------------
-		public int Count
-		{
-			get
-			{
-				return m_filters.Count;
-			}
-		}
+		public int Count => Filters.Count;
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------------
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			foreach(RecordFilter rf in m_filters)
-				DynamicLoader.PersistObject(rf, node, "filter");
-		}
-
-		/// ------------------------------------------------------------------------------------------
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------------
-		public override void InitXml(XElement node)
-		{
-			base.InitXml (node);
-			Debug.Assert(m_filters != null && m_filters.Count == 0);
-			m_filters = new ArrayList(node.Elements().Count());
-			foreach (var child in node.Elements())
+			foreach (RecordFilter rf in Filters)
 			{
-				var filter = DynamicLoader.RestoreFromChild(child, ".");
-				m_filters.Add(filter);
+				DynamicLoader.PersistObject(rf, node, "filter");
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------------
+		/// <summary>
+		/// Inits the XML.
+		/// </summary>
+		public override void InitXml(XElement node)
+		{
+			base.InitXml (node);
+			Debug.Assert(Filters != null && Filters.Count == 0);
+			Filters = new ArrayList(node.Elements().Count());
+			foreach (var child in node.Elements())
+			{
+				Filters.Add(DynamicLoader.RestoreFromChild(child, "."));
+			}
+		}
+
 		/// <summary>
 		/// Set the cache.
 		/// </summary>
-		/// <value></value>
-		/// ------------------------------------------------------------------------------------------
 		public override LcmCache Cache
 		{
 			set
 			{
 				base.Cache = value;
-				foreach(object obj in m_filters)
+				foreach (var obj in Filters)
+				{
 					SetCache(obj, value);
+				}
 			}
 		}
 
@@ -2623,10 +2079,12 @@ namespace SIL.FieldWorks.Filters
 			set
 			{
 				base.DataAccess = value;
-				foreach (object obj in m_filters)
+				foreach (var obj in Filters)
 				{
 					if (obj is IStoresDataAccess)
+					{
 						((IStoresDataAccess)obj).DataAccess = value;
+					}
 				}
 			}
 		}
@@ -2638,7 +2096,7 @@ namespace SIL.FieldWorks.Filters
 		{
 			get
 			{
-				return m_filters.Cast<RecordFilter>().Any(f => f.IsUserVisible);
+				return Filters.Cast<RecordFilter>().Any(f => f.IsUserVisible);
 			}
 		}
 
@@ -2647,12 +2105,14 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		public override RecordFilter EqualContainedFilter(RecordFilter other)
 		{
-			for (int i = 0; i < Count; ++i)
+			for (var i = 0; i < Count; ++i)
 			{
-				RecordFilter filter = this.Filters[i] as RecordFilter;
+				var filter = Filters[i] as RecordFilter;
 				var result = filter.EqualContainedFilter(other);
 				if (result != null)
+				{
 					return result;
+				}
 			}
 			return null;
 		}
@@ -2667,38 +2127,24 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public class NullFilter : RecordFilter
 	{
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:NullFilter"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------------
 		public NullFilter()
 		{
-			m_name = FiltersStrings.ksNoFilter;
-			m_id = "No Filter";
+			Name = FiltersStrings.ksNoFilter;
+			id = "No Filter";
 		}
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the name of the image.
 		/// </summary>
 		/// <value>The name of the image.</value>
-		/// ------------------------------------------------------------------------------------------
-		public override string imageName
-		{
-			get
-			{
-				return "NoFilter";
-			}
-		}
+		public override string imageName => "NoFilter";
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// decide whether this object should be included
 		/// </summary>
-		/// <param name="item">The item.</param>
-		/// <returns>true if the object should be included</returns>
-		/// ------------------------------------------------------------------------------------------
 		public override bool Accept(IManyOnePathSortItem item)
 		{
 			return true;
@@ -2722,7 +2168,7 @@ namespace SIL.FieldWorks.Filters
 	{
 		public UncheckAll()
 		{
-			m_name = FiltersStrings.ksUncheckAll;
+			Name = FiltersStrings.ksUncheckAll;
 		}
 	}
 

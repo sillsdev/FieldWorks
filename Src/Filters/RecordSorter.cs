@@ -1,19 +1,13 @@
-// Copyright (c) 2004-2017 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// <remarks>
-//	At the moment (April 2004), the only concrete instance of this class (PropertyRecordSorter)
-//		does sorting in memory,	based on a LCM property.
-//	This does not imply that all sorting will always be done in memory, only that we haven't
-//	yet designed or implemented a way to do the sorting while querying.
-// </remarks>
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.LCModel.Core.WritingSystems;
@@ -44,39 +38,30 @@ namespace SIL.FieldWorks.Filters
 	public class PropertyRecordSorter : RecordSorter
 	{
 		private IComparer m_comp;
-		/// <summary></summary>
-		protected string m_propertyName;
 
 		private LcmCache m_cache;
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:PropertyRecordSorter"/> class.
 		/// </summary>
-		/// <param name="propertyName">Name of the property.</param>
-		/// ------------------------------------------------------------------------------------
 		public PropertyRecordSorter(string propertyName)
 		{
 			Init(propertyName);
 		}
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:PropertyRecordSorter"/> class.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public PropertyRecordSorter()
 		{
-
 		}
-		/// ------------------------------------------------------------------------------------
+
 		/// <summary>
 		/// Inits the specified property name.
 		/// </summary>
-		/// <param name="propertyName">Name of the property.</param>
-		/// ------------------------------------------------------------------------------------
 		protected void Init(string propertyName)
 		{
-			m_propertyName = propertyName;
+			PropertyName = propertyName;
 		}
 
 		/// <summary>
@@ -84,17 +69,15 @@ namespace SIL.FieldWorks.Filters
 		/// record sorter equivalent to yourself.
 		/// In this case we just need to add the sortProperty attribute.
 		/// </summary>
-		/// <param name="node"></param>
 		public override void PersistAsXml(XElement node)
 		{
-			node.Add(new XAttribute("sortProperty", m_propertyName));
+			node.Add(new XAttribute("sortProperty", PropertyName));
 		}
 
 		/// <summary>
 		/// Initialize an instance into the state indicated by the node, which was
 		/// created by a call to PersistAsXml.
 		/// </summary>
-		/// <param name="node"></param>
 		public override void InitXml(XElement node)
 		{
 			Init(node);
@@ -109,49 +92,35 @@ namespace SIL.FieldWorks.Filters
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the name of the property.
 		/// </summary>
-		/// <value>The name of the property.</value>
-		/// ------------------------------------------------------------------------------------
-		public string PropertyName
-		{
-			get { return m_propertyName; }
-		}
+		public string PropertyName { get; protected set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the specified configuration.
 		/// </summary>
-		/// <param name="configuration">The configuration.</param>
-		/// ------------------------------------------------------------------------------------
 		protected void Init(XElement configuration)
 		{
-			m_propertyName = XmlUtils.GetMandatoryAttributeValue(configuration, "sortProperty");
+			PropertyName = XmlUtils.GetMandatoryAttributeValue(configuration, "sortProperty");
 		}
 
 		/// <summary>
 		/// Get the object that does the comparisons.
 		/// </summary>
-		/// <returns></returns>
 		protected internal override IComparer getComparer()
 		{
-			var fc = new LcmCompare(m_propertyName, m_cache);
-			return fc;
+			return new LcmCompare(PropertyName, m_cache);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sorts the specified records.
 		/// </summary>
-		/// <param name="records">The records.</param>
-		/// ------------------------------------------------------------------------------------
-		public override void Sort(/*ref*/ ArrayList records)
+		public override void Sort(ArrayList records)
 		{
 #if DEBUG
-			DateTime dt1 = DateTime.Now;
-			int tc1 = Environment.TickCount;
+			var dt1 = DateTime.Now;
+			var tc1 = Environment.TickCount;
 #endif
 			m_comp = getComparer();
 			if (m_comp is LcmCompare)
@@ -169,26 +138,22 @@ namespace SIL.FieldWorks.Filters
 			// only do this if the timing switch is info or verbose
 			if (RuntimeSwitches.RecordTimingSwitch.TraceInfo)
 			{
-			int tc2 = Environment.TickCount;
-			TimeSpan ts1 = DateTime.Now - dt1;
-			string s = "PropertyRecordSorter: Sorting " + records.Count + " records took " +
-				(tc2 - tc1) + " ticks," + " or " + ts1.Minutes + ":" + ts1.Seconds + "." +
-				ts1.Milliseconds.ToString("d3") + " min:sec.";
+				var tc2 = Environment.TickCount;
+				var ts1 = DateTime.Now - dt1;
+				var s = "PropertyRecordSorter: Sorting " + records.Count + " records took " +
+						   (tc2 - tc1) + " ticks," + " or " + ts1.Minutes + ":" + ts1.Seconds + "." +
+						   ts1.Milliseconds.ToString("d3") + " min:sec.";
 				Debug.WriteLine(s, RuntimeSwitches.RecordTimingSwitch.DisplayName);
 			}
 #endif
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Merges the into.
 		/// </summary>
-		/// <param name="records">The records.</param>
-		/// <param name="newRecords">The new records.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void MergeInto(/*ref*/ ArrayList records, ArrayList newRecords)
 		{
-			RecordSorter.LcmCompare fc = (RecordSorter.LcmCompare) new RecordSorter.LcmCompare(m_propertyName, m_cache);
+			var fc = new LcmCompare(PropertyName, m_cache);
 			MergeInto(records, newRecords, (IComparer) fc);
 			fc.CloseCollatingEngine(); // Release the ICU data file.
 		}
@@ -196,12 +161,9 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// a factory method for property sorders
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="configuration"></param>
-		/// <returns></returns>
-		static public PropertyRecordSorter Create(LcmCache cache, XElement configuration)
+		public static PropertyRecordSorter Create(LcmCache cache, XElement configuration)
 		{
-			PropertyRecordSorter sorter = (PropertyRecordSorter)DynamicLoader.CreateObject(configuration);
+			var sorter = (PropertyRecordSorter)DynamicLoader.CreateObject(configuration);
 			sorter.Init(configuration);
 			return sorter;
 		}
@@ -210,8 +172,7 @@ namespace SIL.FieldWorks.Filters
 	/// <summary>
 	/// Abstract RecordSorter base class.
 	/// </summary>
-	public abstract class RecordSorter : IPersistAsXml, IStoresLcmCache,
-		IReportsSortProgress, INoteComparision
+	public abstract class RecordSorter : IPersistAsXml, IStoresLcmCache, IReportsSortProgress, INoteComparision
 	{
 		/// <summary>
 		/// Add to the specified XML node information required to create a new
@@ -232,7 +193,6 @@ namespace SIL.FieldWorks.Filters
 		/// Initialize an instance into the state indicated by the node, which was
 		/// created by a call to PersistAsXml.
 		/// </summary>
-		/// <param name="node"></param>
 		public virtual void InitXml(XElement node)
 		{
 		}
@@ -262,32 +222,22 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// Method to retrieve the IComparer used by this sorter
 		/// </summary>
-		/// <returns>The IComparer</returns>
 		protected internal abstract IComparer getComparer();
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sorts the specified records.
 		/// </summary>
-		/// <param name="records">The records.</param>
-		/// ------------------------------------------------------------------------------------
-		public abstract void Sort(/*ref*/ ArrayList records);
-		/// ------------------------------------------------------------------------------------
+		public abstract void Sort(ArrayList records);
+
 		/// <summary>
 		/// Merges the into.
 		/// </summary>
-		/// <param name="records">The records.</param>
-		/// <param name="newRecords">The new records.</param>
-		/// ------------------------------------------------------------------------------------
-		public abstract void MergeInto(/*ref*/ ArrayList records, ArrayList newRecords);
+		public abstract void MergeInto(ArrayList records, ArrayList newRecords);
 
 		/// <summary>
 		/// Merge the new records into the original list using the specified comparer
 		/// </summary>
-		/// <param name="records"></param>
-		/// <param name="newRecords"></param>
-		/// <param name="comparer"></param>
-		protected void MergeInto(/*ref*/ ArrayList records, ArrayList newRecords, IComparer comparer)
+		protected void MergeInto(ArrayList records, ArrayList newRecords, IComparer comparer)
 		{
 			for (int i = 0, j = 0; j < newRecords.Count; i++)
 			{
@@ -326,27 +276,18 @@ namespace SIL.FieldWorks.Filters
 		/// Return true if the other sorter is 'compatible' with this, in the sense that
 		/// either they produce the same sort sequence, or one derived from it (e.g., by reversing).
 		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public virtual bool CompatibleSorter(RecordSorter other)
 		{
 			return false;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		///
-		/// ------------------------------------------------------------------------------------
+		/// <summary />
 		protected class LcmCompare : IComparer, IPersistAsXml
 		{
-			/// <summary></summary>
-			protected string m_propertyName;
-			/// <summary></summary>
+			/// <summary />
 			protected ICollator m_collater;
-			/// <summary></summary>
-			protected bool m_fUseKeys = false;
+			/// <summary />
+			protected bool m_fUseKeys;
 			internal INoteComparision ComparisonNoter { get; set; }
 			private Dictionary<object, string> m_sortKeyCache;
 
@@ -359,7 +300,7 @@ namespace SIL.FieldWorks.Filters
 			{
 				m_cache = cache;
 				Init();
-				m_propertyName= propertyName;
+				PropertyName= propertyName;
 				m_fUseKeys = propertyName == "ShortName";
 				m_sortKeyCache = new Dictionary<object, string>();
 			}
@@ -377,93 +318,71 @@ namespace SIL.FieldWorks.Filters
 				m_collater = null;
 			}
 
-			/// --------------------------------------------------------------------------------
 			/// <summary>
 			/// Gets the name of the property.
 			/// </summary>
-			/// <value>The name of the property.</value>
-			/// --------------------------------------------------------------------------------
-			public string PropertyName
-			{
-				get
-				{
-					return m_propertyName;
-				}
-			}
+			public string PropertyName { get; protected set; }
 
 			/// <summary>
 			/// Add to the specified XML node information required to create a new
 			/// object equivalent to yourself. The node already contains information
 			/// sufficient to create an instance of the proper class.
 			/// </summary>
-			/// <param name="node"></param>
 			public void PersistAsXml(XElement node)
 			{
-				XmlUtils.SetAttribute(node, "property", m_propertyName);
+				XmlUtils.SetAttribute(node, "property", PropertyName);
 			}
 
 			/// <summary>
 			/// Initialize an instance into the state indicated by the node, which was
 			/// created by a call to PersistAsXml.
 			/// </summary>
-			/// <param name="node"></param>
 			public void InitXml(XElement node)
 			{
-				m_propertyName = XmlUtils.GetMandatoryAttributeValue(node, "property");
+				PropertyName = XmlUtils.GetMandatoryAttributeValue(node, "property");
 			}
 
-			/// --------------------------------------------------------------------------------
 			/// <summary>
 			/// Gets the property.
 			/// </summary>
-			/// <param name="target">The target.</param>
-			/// <param name="property">The property.</param>
-			/// <returns></returns>
-			/// --------------------------------------------------------------------------------
 			protected object GetProperty(ICmObject target, string property)
 			{
-				Type type = target.GetType();
-				System.Reflection.PropertyInfo info = type.GetProperty(property,
-					System.Reflection.BindingFlags.Instance |
-					System.Reflection.BindingFlags.Public |
-					System.Reflection.BindingFlags.FlattenHierarchy );
+				var type = target.GetType();
+				var info = type.GetProperty(property,
+					BindingFlags.Instance |
+					BindingFlags.Public |
+					BindingFlags.FlattenHierarchy);
 				if (info == null)
-					throw new ArgumentException("There is no public property named '"
-						+ property + "' in " + type.ToString()
-						+ ". Remember, properties often end in a multi-character suffix such as OA, OS, RA, RS, or Accessor.");
+				{
+					throw new ArgumentException($"There is no public property named '{property}' in {type}. Remember, properties often end in a multi-character suffix such as OA, OS, RA, RS, or Accessor.");
+				}
 
 				return info.GetValue(target,null);
 			}
 
-			/// --------------------------------------------------------------------------------
 			/// <summary>
 			/// Opens the collating engine.
 			/// </summary>
-			/// <param name="sWs">The s ws.</param>
-			/// --------------------------------------------------------------------------------
 			public void OpenCollatingEngine(string sWs)
 			{
 				m_collater = m_cache.ServiceLocator.WritingSystemManager.Get(sWs).DefaultCollation.Collator;
 			}
 
-			/// --------------------------------------------------------------------------------
 			/// <summary>
 			/// Closes the collating engine.
 			/// </summary>
-			/// --------------------------------------------------------------------------------
 			public void CloseCollatingEngine()
 			{
 			}
 
-			ICmObject GetObjFromItem(object x)
+			private ICmObject GetObjFromItem(object x)
 			{
-				IManyOnePathSortItem itemX = x as IManyOnePathSortItem;
+				var itemX = x as IManyOnePathSortItem;
 				// This is slightly clumsy but currently it's the only way we have to get a cache.
 				return itemX.KeyObjectUsing(m_cache);
 			}
 
 			// Compare two objects (expected to be ManyOnePathSortItems).
-			/// --------------------------------------------------------------------------------
 			/// <summary>
 			/// Compares two objects and returns a value indicating whether one is less than, equal to, or greater than the other.
 			/// </summary>
@@ -473,33 +392,35 @@ namespace SIL.FieldWorks.Filters
 			/// Value Condition Less than zero x is less than y. Zero x equals y. Greater than zero x is greater than y.
 			/// </returns>
 			/// <exception cref="T:System.ArgumentException">Neither x nor y implements the <see cref="T:System.IComparable"></see> interface.-or- x and y are of different types and neither one can handle comparisons with the other. </exception>
-			/// --------------------------------------------------------------------------------
 			public int Compare(object x, object y)
 			{
-				if (ComparisonNoter != null)
-					ComparisonNoter.ComparisonOccurred(); // for progress reporting.
+				ComparisonNoter?.ComparisonOccurred(); // for progress reporting.
 
 				if (x == y)
+				{
 					return 0;
+				}
 				if (x == null)
+				{
 					return -1;
+				}
 				if (y == null)
+				{
 					return 1;
+				}
 
 				// One time overhead
 				if (m_collater == null)
+				{
 					OpenCollatingEngine((GetObjFromItem(x)).SortKeyWs);
+				}
 
-				//	string property = "ShortName";
-				var a = GetObjFromCacheOrItem(x);
-				var b = GetObjFromCacheOrItem(y);
-
-				return m_collater.Compare(a, b);
+				return m_collater.Compare(GetObjFromCacheOrItem(x), GetObjFromCacheOrItem(y));
 			}
 
 			private string GetObjFromCacheOrItem(object item)
 			{
-				var item1 = (ManyOnePathSortItem) item;
+				var item1 = (ManyOnePathSortItem)item;
 				string cachedKey;
 				if (!m_sortKeyCache.TryGetValue(item1, out cachedKey))
 				{
@@ -509,49 +430,46 @@ namespace SIL.FieldWorks.Filters
 					}
 					else
 					{
-						cachedKey = (string)GetProperty(GetObjFromItem(item), m_propertyName);
+						cachedKey = (string)GetProperty(GetObjFromItem(item), PropertyName);
 					}
 					m_sortKeyCache.Add(item1, cachedKey);
 				}
 				return cachedKey;
 			}
 
-			/// <summary>
-			///
-			/// </summary>
-			/// <param name="obj"></param>
-			/// <returns></returns>
+			/// <summary />
 			public override bool Equals(object obj)
 			{
 				if (obj == null)
+				{
 					return false;
+				}
 				// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
 				// is marked with [MonoTODO] and might not work as expected in 4.0.
-				if (this.GetType() != obj.GetType())
+				if (GetType() != obj.GetType())
+				{
 					return false;
-				LcmCompare that = (LcmCompare)obj;
-				if (this.m_fUseKeys != that.m_fUseKeys)
-					return false;
-				if (this.m_collater != that.m_collater)
-					return false;
-				if (this.m_propertyName != that.m_propertyName)
-					return false;
-				return true;
+				}
+				var that = (LcmCompare)obj;
+				return m_fUseKeys == that.m_fUseKeys && (m_collater == that.m_collater && PropertyName == that.PropertyName);
 			}
 
-			/// <summary>
-			///
-			/// </summary>
-			/// <returns></returns>
+			/// <summary />
 			public override int GetHashCode()
 			{
-				int hash = GetType().GetHashCode();
+				var hash = GetType().GetHashCode();
 				if (m_fUseKeys)
+				{
 					hash *= 3;
+				}
 				if (m_collater != null)
+				{
 					hash += m_collater.GetHashCode();
-				if (m_propertyName != null)
-					hash *= m_propertyName.GetHashCode();
+				}
+				if (PropertyName != null)
+				{
+					hash *= PropertyName.GetHashCode();
+				}
 				return hash;
 			}
 		}
@@ -567,11 +485,15 @@ namespace SIL.FieldWorks.Filters
 		public void ComparisonOccurred()
 		{
 			if (SetPercentDone == null)
+			{
 				return;
+			}
 			m_comparisonsDone++;
-			int newPercentDone = m_comparisonsDone*100/m_comparisonsEstimated;
+			var newPercentDone = m_comparisonsDone*100/m_comparisonsEstimated;
 			if (newPercentDone == m_percentDone)
+			{
 				return;
+			}
 			m_percentDone = newPercentDone;
 			SetPercentDone(Math.Min(m_percentDone, 100)); // just in case we do more than the estimated number.
 		}
@@ -587,16 +509,14 @@ namespace SIL.FieldWorks.Filters
 			/// <summary>
 			/// Creates a new AndSortComparer
 			/// </summary>
-			/// <param name="sorters">Reference to list of sorters</param>
 			public AndSorterComparer(ArrayList sorters)
 			{
 				m_sorters = sorters;
 				m_comps = new ArrayList();
 				foreach (RecordSorter rs in m_sorters)
 				{
-					IComparer comp = rs.getComparer();
-					if (comp is StringFinderCompare)
-						(comp as StringFinderCompare).Init();
+					var comp = rs.getComparer();
+					(comp as StringFinderCompare)?.Init();
 					m_comps.Add(comp);
 				}
 			}
@@ -605,12 +525,14 @@ namespace SIL.FieldWorks.Filters
 
 			public int Compare(object x, object y)
 			{
-				int ret = 0;
-				for (int i = 0; i < m_sorters.Count; i++)
+				var ret = 0;
+				for (var i = 0; i < m_sorters.Count; i++)
 				{
 					ret = ((IComparer)m_comps[i]).Compare(x, y);
 					if (ret != 0)
+					{
 						break;
+					}
 				}
 
 				return ret;
@@ -619,6 +541,7 @@ namespace SIL.FieldWorks.Filters
 			#endregion
 
 			#region ICloneable Members
+
 			/// <summary>
 			/// Clones the current object
 			/// </summary>
@@ -626,122 +549,112 @@ namespace SIL.FieldWorks.Filters
 			{
 				return new AndSorterComparer(m_sorters);
 			}
+
 			#endregion
-			/// <summary>
-			///
-			/// </summary>
-			/// <param name="obj"></param>
-			/// <returns></returns>
+
+			/// <summary />
 			public override bool Equals(object obj)
 			{
 				if (obj == null)
+				{
 					return false;
+				}
 				// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
 				// is marked with [MonoTODO] and might not work as expected in 4.0.
-				if (this.GetType() != obj.GetType())
+				if (GetType() != obj.GetType())
+				{
 					return false;
+				}
 				var that = (AndSorterComparer)obj;
 				if (m_comps == null)
 				{
 					if (that.m_comps != null)
+					{
 						return false;
+					}
 				}
 				else
 				{
-					if (that.m_comps == null)
-						return false;
-					if (this.m_comps.Count != that.m_comps.Count)
-						return false;
-					for (int i = 0; i < m_comps.Count; ++i)
+					if (m_comps.Count != that.m_comps?.Count)
 					{
-						if (this.m_comps[i] != that.m_comps[i])
-							return false;
+						return false;
+					}
+					if (m_comps.Cast<object>().Where((t, i) => m_comps[i] != that.m_comps[i]).Any())
+					{
+						return false;
 					}
 				}
 				if (m_sorters == null)
 				{
 					if (that.m_sorters != null)
+					{
 						return false;
+					}
 				}
 				else
 				{
-					if (that.m_sorters == null)
-						return false;
-					if (this.m_sorters.Count != that.m_sorters.Count)
-						return false;
-					for (int i = 0; i < m_sorters.Count; ++i)
+					if (m_sorters.Count != that.m_sorters?.Count)
 					{
-						if (this.m_sorters[i] != that.m_sorters[i])
-							return false;
+						return false;
 					}
+					return !m_sorters.Cast<object>().Where((t, i) => m_sorters[i] != that.m_sorters[i]).Any();
 				}
 				return true;
 			}
 
-			/// <summary>
-			///
-			/// </summary>
-			/// <returns></returns>
+			/// <summary />
 			public override int GetHashCode()
 			{
-				int hash = GetType().GetHashCode();
+				var hash = GetType().GetHashCode();
 				if (m_comps != null)
+				{
 					hash += m_comps.Count * 3;
+				}
 				if (m_sorters != null)
+				{
 					hash += m_sorters.Count * 17;
+				}
 				return hash;
 			}
 		}
-
-		/// <summary>
-		/// references to sorters
-		/// </summary>
-		private ArrayList m_sorters = new ArrayList();
 
 		public AndSorter() { }
 
 		public AndSorter(ArrayList sorters): this()
 		{
 			foreach (RecordSorter rs in sorters)
+			{
 				Add(rs);
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Adds a sorter
 		/// </summary>
-		/// <param name="sorter">A reference to a sorter</param>
-		/// ------------------------------------------------------------------------------------------
 		public void Add(RecordSorter sorter)
 		{
-			m_sorters.Add(sorter);
+			Sorters.Add(sorter);
 		}
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Replaces a sorter
 		/// </summary>
 		/// <param name="index">The index where we want to replace the sorter</param>
 		/// <param name="oldSorter">A reference to the old sorter</param>
 		/// <param name="newSorter">A reference to the new sorter</param>
-		/// ------------------------------------------------------------------------------------------
 		public void ReplaceAt(int index, RecordSorter oldSorter, RecordSorter newSorter)
 		{
-			if (index < 0 || index >= m_sorters.Count)
+			if (index < 0 || index >= Sorters.Count)
+			{
 				throw new IndexOutOfRangeException();
-			m_sorters[index] = newSorter;
+			}
+			Sorters[index] = newSorter;
 		}
 
 		/// <summary>
 		/// Gets the list of sorters.
 		/// </summary>
-		public ArrayList Sorters
-		{
-			get
-			{
-				return m_sorters;
-			}
-		}
+		public ArrayList Sorters { get; private set; } = new ArrayList();
 
 		/// <summary>
 		/// Add to collector the ManyOnePathSortItems which this sorter derives from
@@ -750,50 +663,51 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		public override void CollectItems(int hvo, ArrayList collector)
 		{
-			if (m_sorters.Count > 0)
-				((RecordSorter)m_sorters[0]).CollectItems(hvo, collector);
+			if (Sorters.Count > 0)
+			{
+				((RecordSorter)Sorters[0]).CollectItems(hvo, collector);
+			}
 			else
+			{
 				base.CollectItems(hvo, collector);
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------------
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node);
-			foreach(RecordSorter rs in m_sorters)
+			foreach (RecordSorter rs in Sorters)
+			{
 				DynamicLoader.PersistObject(rs, node, "sorter");
+			}
 		}
 
 		// This will probably never be used, but for the sake of completeness, here it is
 		protected internal override IComparer getComparer()
 		{
-			IComparer comp = new AndSorterComparer(m_sorters);
+			IComparer comp = new AndSorterComparer(Sorters);
 			return comp;
 		}
 
 		public override void Sort(/*ref*/ ArrayList records)
 		{
 #if DEBUG
-			DateTime dt1 = DateTime.Now;
-			int tc1 = Environment.TickCount;
+			var dt1 = DateTime.Now;
+			var tc1 = Environment.TickCount;
 #endif
-			var comp = new AndSorterComparer(m_sorters);
+			var comp = new AndSorterComparer(Sorters);
 			MergeSort.Sort(ref records, comp);
 
 #if DEBUG
 			// only do this if the timing switch is info or verbose
 			if (RuntimeSwitches.RecordTimingSwitch.TraceInfo)
 			{
-			int tc2 = Environment.TickCount;
-			TimeSpan ts1 = DateTime.Now - dt1;
-			string s = "AndSorter:  Sorting " + records.Count + " records took " +
-				(tc2 - tc1) + " ticks," + " or " + ts1.Minutes + ":" + ts1.Seconds + "." +
-				ts1.Milliseconds.ToString("d3") + " min:sec.";
+				var tc2 = Environment.TickCount;
+				var ts1 = DateTime.Now - dt1;
+				var s = $"AndSorter:  Sorting {records.Count} records took {tc2 - tc1} ticks, or {ts1.Minutes}:{ts1.Seconds}.{ts1.Milliseconds:d3} min:sec.";
 				Debug.WriteLine(s, RuntimeSwitches.RecordTimingSwitch.DisplayName);
 			}
 #endif
@@ -801,42 +715,47 @@ namespace SIL.FieldWorks.Filters
 
 		public override void MergeInto(ArrayList records, ArrayList newRecords)
 		{
-			var comp = new AndSorterComparer(m_sorters);
+			var comp = new AndSorterComparer(Sorters);
 			MergeInto(records, newRecords, comp);
 		}
 
 		public override bool CompatibleSorter(RecordSorter other)
 		{
-			foreach (RecordSorter rs in m_sorters)
-				if(rs.CompatibleSorter(other))
+			foreach (RecordSorter rs in Sorters)
+			{
+				if (rs.CompatibleSorter(other))
+				{
 					return true;
+				}
+			}
 
 			return false;
 		}
 
 		public int CompatibleSorterIndex(RecordSorter other)
 		{
-			for (int i = 0; i < m_sorters.Count; i++)
-				if (((RecordSorter)m_sorters[i]).CompatibleSorter(other))
+			for (var i = 0; i < Sorters.Count; i++)
+			{
+				if (((RecordSorter)Sorters[i]).CompatibleSorter(other))
+				{
 					return i;
+				}
+			}
 
 			return -1;
 		}
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------------
 		public override void InitXml(XElement node)
 		{
 			base.InitXml (node);
-			m_sorters = new ArrayList(node.Elements().Count());
+			Sorters = new ArrayList(node.Elements().Count());
 			foreach (var child in node.Elements())
 			{
 				var obj = DynamicLoader.RestoreFromChild(child, ".");
-				m_sorters.Add(obj);
+				Sorters.Add(obj);
 			}
 		}
 
@@ -844,8 +763,10 @@ namespace SIL.FieldWorks.Filters
 		{
 			set
 			{
-				foreach (RecordSorter rs in m_sorters)
+				foreach (RecordSorter rs in Sorters)
+				{
 					rs.Cache = value;
+				}
 			}
 		}
 	}
@@ -856,14 +777,12 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public class GenRecordSorter : RecordSorter
 	{
-		protected IComparer m_comp;
-
 		/// <summary>
 		/// Normal constructor.
 		/// </summary>
 		public GenRecordSorter(IComparer comp): this()
 		{
-			m_comp = comp;
+			Comparer = comp;
 		}
 
 		/// <summary>
@@ -875,7 +794,7 @@ namespace SIL.FieldWorks.Filters
 
 		protected internal override IComparer getComparer()
 		{
-			return m_comp;
+			return Comparer;
 		}
 
 		/// <summary>
@@ -884,8 +803,10 @@ namespace SIL.FieldWorks.Filters
 		public override void Preload(object rootObj)
 		{
 			base.Preload(rootObj);
-			if (m_comp is StringFinderCompare)
-				(m_comp as StringFinderCompare).Preload(rootObj);
+			if (Comparer is StringFinderCompare)
+			{
+				((StringFinderCompare)Comparer).Preload(rootObj);
+			}
 		}
 
 		/// <summary>
@@ -896,46 +817,55 @@ namespace SIL.FieldWorks.Filters
 			set
 			{
 				base.DataAccess = value;
-				if (m_comp is StringFinderCompare)
-					((StringFinderCompare) m_comp).DataAccess = value;
+				if (Comparer is StringFinderCompare)
+				{
+					((StringFinderCompare)Comparer).DataAccess = value;
+				}
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Return true if the other sorter is 'compatible' with this, in the sense that
 		/// either they produce the same sort sequence, or one derived from it (e.g., by reversing).
 		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
 		public override bool CompatibleSorter(RecordSorter other)
 		{
-			GenRecordSorter grsOther = other as GenRecordSorter;
+			var grsOther = other as GenRecordSorter;
 			if (grsOther == null)
+			{
 				return false;
-			if (CompatibleComparers(m_comp, grsOther.m_comp))
+			}
+
+			if (CompatibleComparers(Comparer, grsOther.Comparer))
+			{
 				return true;
+			}
 			// Currently the only other kind of compatibility we know how to detect
 			// is StringFinderCompares that do more-or-less the same thing.
-			StringFinderCompare sfcThis = m_comp as StringFinderCompare;
-			StringFinderCompare sfcOther = grsOther.Comparer as StringFinderCompare;
+			var sfcThis = Comparer as StringFinderCompare;
+			var sfcOther = grsOther.Comparer as StringFinderCompare;
 			if (sfcThis == null || sfcOther == null)
+			{
 				return false;
+			}
 			if (!sfcThis.Finder.SameFinder(sfcOther.Finder))
+			{
 				return false;
+			}
 			// We deliberately don't care if one has a ReverseCompare and the other
 			// doesn't. That's handled by a different icon.
-			IComparer subCompOther = UnpackReverseCompare(sfcOther);
-			IComparer subCompThis = UnpackReverseCompare(sfcThis);
+			var subCompOther = UnpackReverseCompare(sfcOther);
+			var subCompThis = UnpackReverseCompare(sfcThis);
 			return CompatibleComparers(subCompThis, subCompOther);
 		}
 
 		private IComparer UnpackReverseCompare(StringFinderCompare sfc)
 		{
-			IComparer subComp = sfc.SubComparer;
+			var subComp = sfc.SubComparer;
 			if (subComp is ReverseComparer)
+			{
 				subComp = (subComp as ReverseComparer).SubComp;
+			}
 			return subComp;
 		}
 
@@ -944,60 +874,47 @@ namespace SIL.FieldWorks.Filters
 		/// be an interface method on ICompare, but that interface is defined by .NET so we
 		/// can't enhance it. This knows about a few interesting cases.
 		/// </summary>
-		/// <param name="first"></param>
-		/// <param name="second"></param>
-		/// <returns></returns>
-		bool CompatibleComparers(IComparer first, IComparer second)
+		private static bool CompatibleComparers(IComparer first, IComparer second)
 		{
 			// identity
 			if (first == second)
+			{
 				return true;
+			}
 
 			// IcuComparers on same Ws?
-			IcuComparer firstIcu = first as IcuComparer;
-			IcuComparer secondIcu = second as IcuComparer;
+			var firstIcu = first as IcuComparer;
+			var secondIcu = second as IcuComparer;
 			if (firstIcu != null && secondIcu != null && firstIcu.WsCode == secondIcu.WsCode)
+			{
 				return true;
+			}
 
 			// WritingSystemComparers on same Ws?
 			var firstWs = first as WritingSystemComparer;
 			var secondWs = second as WritingSystemComparer;
 			if (firstWs != null && secondWs != null && firstWs.WsId == secondWs.WsId)
+			{
 				return true;
+			}
 
 			// Both IntStringComparers?
 			if (first is IntStringComparer && second is IntStringComparer)
+			{
 				return true;
+			}
 
 			// LcmComparers on the same property?
-			LcmCompare firstLcm = first as LcmCompare;
-			LcmCompare secondLcm = second as LcmCompare;
-			if (firstLcm != null && secondLcm != null && firstLcm.PropertyName == secondLcm.PropertyName)
-				return true;
-
-			// not the same any way we know about
-			return false;
+			var firstLcm = first as LcmCompare;
+			var secondLcm = second as LcmCompare;
+			return firstLcm != null && secondLcm != null && firstLcm.PropertyName == secondLcm.PropertyName;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the comparer.
 		/// </summary>
-		/// <value>The comparer.</value>
-		/// ------------------------------------------------------------------------------------
-		public IComparer Comparer
-		{
-			get
-			{
-				return m_comp;
-			}
-			set
-			{
-				m_comp = value;
-			}
-		}
+		public IComparer Comparer { get; set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Add to the specified XML node information required to create a new
 		/// record sorter equivalent to yourself.
@@ -1008,33 +925,34 @@ namespace SIL.FieldWorks.Filters
 		/// re-created sorter.
 		/// This default implementation does nothing.
 		/// </summary>
-		/// <param name="node"></param>
-		/// ------------------------------------------------------------------------------------
 		public override void PersistAsXml(XElement node)
 		{
 			base.PersistAsXml(node); // does nothing, but in case needed later...
-			IPersistAsXml persistComparer = m_comp as IPersistAsXml;
+			var persistComparer = Comparer as IPersistAsXml;
 			if (persistComparer == null)
-				throw new Exception("cannot persist GenRecSorter with comparer class " + m_comp.GetType().AssemblyQualifiedName);
+			{
+				throw new Exception($"cannot persist GenRecSorter with comparer class {Comparer.GetType().AssemblyQualifiedName}");
+			}
 			DynamicLoader.PersistObject(persistComparer, node, "comparer");
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initialize an instance into the state indicated by the node, which was
 		/// created by a call to PersistAsXml.
 		/// </summary>
-		/// <param name="node"></param>
-		/// ------------------------------------------------------------------------------------
 		public override void InitXml(XElement node)
 		{
 			base.InitXml (node);
 			var compNode = node.Elements().First();
 			if (compNode.Name != "comparer")
+			{
 				throw new Exception("persist info for GenRecordSorter must have comparer child element");
-			m_comp = DynamicLoader.RestoreObject(compNode) as IComparer;
-			if (m_comp == null)
+			}
+			Comparer = DynamicLoader.RestoreObject(compNode) as IComparer;
+			if (Comparer == null)
+			{
 				throw new Exception("restoring sorter failed...comparer does not implement IComparer");
+			}
 		}
 
 		/// <summary>
@@ -1044,8 +962,10 @@ namespace SIL.FieldWorks.Filters
 		{
 			set
 			{
-				if (m_comp is IStoresLcmCache)
-					(m_comp as IStoresLcmCache).Cache = value;
+				if (Comparer is IStoresLcmCache)
+				{
+					((IStoresLcmCache)Comparer).Cache = value;
+				}
 			}
 		}
 
@@ -1056,30 +976,27 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		public override void CollectItems(int hvo, ArrayList collector)
 		{
-			if (m_comp is StringFinderCompare)
+			if (Comparer is StringFinderCompare)
 			{
-				(m_comp as StringFinderCompare).CollectItems(hvo, collector);
+				((StringFinderCompare)Comparer).CollectItems(hvo, collector);
 			}
 			else
 				base.CollectItems(hvo, collector);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sorts the specified records.
 		/// </summary>
-		/// <param name="records">The records.</param>
-		/// ------------------------------------------------------------------------------------
 		public override void Sort(/*ref*/ ArrayList records)
 		{
 #if DEBUG
-			DateTime dt1 = DateTime.Now;
-			int tc1 = Environment.TickCount;
+			var dt1 = DateTime.Now;
+			var tc1 = Environment.TickCount;
 #endif
-			if (m_comp is StringFinderCompare)
+			if (Comparer is StringFinderCompare)
 			{
-				(m_comp as StringFinderCompare).Init();
-				(m_comp as StringFinderCompare).ComparisonNoter = this;
+				((StringFinderCompare)Comparer).Init();
+				((StringFinderCompare)Comparer).ComparisonNoter = this;
 				m_comparisonsDone = 0;
 				m_percentDone = 0;
 				// Make sure at least 1 so we don't divide by zero.
@@ -1087,19 +1004,19 @@ namespace SIL.FieldWorks.Filters
 			}
 
 			//records.Sort(m_comp);
-			MergeSort.Sort(ref records, m_comp);
+			MergeSort.Sort(ref records, Comparer);
 
-			if (m_comp is StringFinderCompare)
-				(m_comp as StringFinderCompare).Cleanup();
+			if (Comparer is StringFinderCompare)
+			{
+				((StringFinderCompare)Comparer).Cleanup();
+			}
 #if DEBUG
 			// only do this if the timing switch is info or verbose
 			if (RuntimeSwitches.RecordTimingSwitch.TraceInfo)
 			{
-			int tc2 = Environment.TickCount;
-			TimeSpan ts1 = DateTime.Now - dt1;
-			string s = "GenRecordSorter:  Sorting " + records.Count + " records took " +
-				(tc2 - tc1) + " ticks," + " or " + ts1.Minutes + ":" + ts1.Seconds + "." +
-				ts1.Milliseconds.ToString("d3") + " min:sec.";
+				var tc2 = Environment.TickCount;
+				var ts1 = DateTime.Now - dt1;
+				var s = $"GenRecordSorter:  Sorting {records.Count} records took {tc2 - tc1} ticks, or {ts1.Minutes}:{ts1.Seconds}.{ts1.Milliseconds:d3} min:sec.";
 				Debug.WriteLine(s, RuntimeSwitches.RecordTimingSwitch.DisplayName);
 			}
 #endif
@@ -1107,62 +1024,65 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// Required implementation.
 		/// </summary>
-		/// <param name="records"></param>
-		/// <param name="newRecords"></param>
-		public override void MergeInto(/*ref*/ ArrayList records, ArrayList newRecords)
+		public override void MergeInto(ArrayList records, ArrayList newRecords)
 		{
-			if (m_comp is StringFinderCompare)
-				(m_comp as StringFinderCompare).Init();
+			if (Comparer is StringFinderCompare)
+			{
+				((StringFinderCompare)Comparer).Init();
+			}
 
-			//records.Sort(m_comp);
-			MergeInto(records, newRecords, m_comp);
+			MergeInto(records, newRecords, Comparer);
 
-			if (m_comp is StringFinderCompare)
-				(m_comp as StringFinderCompare).Cleanup();
+			if (Comparer is StringFinderCompare)
+			{
+				((StringFinderCompare)Comparer).Cleanup();
+			}
 		}
 
 		/// <summary>
 		/// Check whether this GenRecordSorter is equal to another object.
 		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
+			{
 				return false;
+			}
 			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
 			// is marked with [MonoTODO] and might not work as expected in 4.0.
-			if (this.GetType() != obj.GetType())
-				return false;
-			GenRecordSorter that = (GenRecordSorter)obj;
-			if (m_comp == null)
+			if (GetType() != obj.GetType())
 			{
-				if (that.m_comp != null)
+				return false;
+			}
+			var that = (GenRecordSorter)obj;
+			if (Comparer == null)
+			{
+				if (that.Comparer != null)
+				{
 					return false;
+				}
 			}
 			else
 			{
-				if (that.m_comp == null)
+				if (that.Comparer == null)
+				{
 					return false;
+				}
 				// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
 				// is marked with [MonoTODO] and might not work as expected in 4.0.
-				if (this.m_comp.GetType() != that.m_comp.GetType())
-					return false;
-				else
-					return this.m_comp.Equals(that.m_comp);
+				return Comparer.GetType() == that.Comparer.GetType() && Comparer.Equals(that.Comparer);
 			}
 			return true;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
+		/// <summary />
 		public override int GetHashCode()
 		{
-			int hash = GetType().GetHashCode();
-			if (m_comp != null)
-				hash *= m_comp.GetHashCode();
+			var hash = GetType().GetHashCode();
+			if (Comparer != null)
+			{
+				hash *= Comparer.GetHashCode();
+			}
 			return hash;
 		}
 	}
@@ -1172,35 +1092,21 @@ namespace SIL.FieldWorks.Filters
 	/// object to obtain strings from the KeyObject hvo, then
 	/// a (simpler) IComparer to compare the strings.
 	/// </summary>
-	public class StringFinderCompare : IComparer, IPersistAsXml, IStoresLcmCache, IStoresDataAccess,
-		ICloneable
+	public class StringFinderCompare : IComparer, IPersistAsXml, IStoresLcmCache, IStoresDataAccess, ICloneable
 	{
-		/// <summary></summary>
-		protected IComparer m_subComp;
-		/// <summary></summary>
-		protected IStringFinder m_finder;
-		/// <summary></summary>
-		protected bool m_fSortedFromEnd;
-		/// <summary></summary>
-		protected bool m_fSortedByLength;
-		// This is used, during a single sort, to cache keys.
-		/// <summary></summary>
+		/// <summary>This is used, during a single sort, to cache keys.</summary>
 		protected Hashtable m_objToKey = new Hashtable();
 		internal INoteComparision ComparisonNoter { get; set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:StringFinderCompare"/> class.
 		/// </summary>
-		/// <param name="finder">The finder.</param>
-		/// <param name="subComp">The sub comp.</param>
-		/// ------------------------------------------------------------------------------------
 		public StringFinderCompare(IStringFinder finder, IComparer subComp)
 		{
-			m_finder = finder;
-			m_subComp = subComp;
-			m_fSortedFromEnd = false;
-			m_fSortedByLength = false;
+			Finder = finder;
+			SubComparer = subComp;
+			SortedFromEnd = false;
+			SortedByLength = false;
 		}
 
 		/// <summary>
@@ -1210,27 +1116,19 @@ namespace SIL.FieldWorks.Filters
 		{
 		}
 
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the finder.
 		/// </summary>
-		/// <value>The finder.</value>
-		/// ------------------------------------------------------------------------------------
-		public IStringFinder Finder
-		{
-			get
-			{
-				return m_finder;
-			}
-		}
+		public IStringFinder Finder { get; protected set; }
 
 		public ISilDataAccess DataAccess
 		{
 			set
 			{
-				if (m_finder != null)
-					m_finder.DataAccess = value;
+				if (Finder != null)
+				{
+					Finder.DataAccess = value;
+				}
 			}
 		}
 
@@ -1239,35 +1137,24 @@ namespace SIL.FieldWorks.Filters
 		/// Currently will not be called if the column is also filtered; typically the same Preload() would end
 		/// up being done.
 		/// </summary>
-		/// <param name="rootObj">Typically a CmObject, the root object of the whole view we are sorting for</param>
 		public virtual void Preload(object rootObj)
 		{
-			m_finder.Preload(rootObj);
+			Finder.Preload(rootObj);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the sub comparer.
 		/// </summary>
-		/// <value>The sub comparer.</value>
-		/// ------------------------------------------------------------------------------------
-		public IComparer SubComparer
-		{
-			get
-			{
-				return m_subComp;
-			}
-		}
+		public IComparer SubComparer { get; protected set; }
 
 		/// <summary>
 		/// Copy our comparer's SubComparer and SortedFromEnd to another comparer.
 		/// </summary>
-		/// <param name="copyComparer"></param>
 		public void CopyTo(StringFinderCompare copyComparer)
 		{
-			copyComparer.m_subComp = this.m_subComp is ICloneable ? ((ICloneable)m_subComp).Clone() as IComparer : m_subComp;
-			copyComparer.m_fSortedFromEnd = this.m_fSortedFromEnd;
-			copyComparer.m_fSortedByLength = this.m_fSortedByLength;
+			copyComparer.SubComparer = SubComparer is ICloneable ? ((ICloneable)SubComparer).Clone() as IComparer : SubComparer;
+			copyComparer.SortedFromEnd = SortedFromEnd;
+			copyComparer.SortedByLength = SortedByLength;
 		}
 
 		/// <summary>
@@ -1277,91 +1164,64 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		public void CollectItems(int hvo, ArrayList collector)
 		{
-			m_finder.CollectItems(hvo, collector);
+			Finder.CollectItems(hvo, collector);
 		}
 
 		/// <summary>
 		/// Give the sort order. Considered to be ascending unless it has been reversed.
 		/// </summary>
-		public SortOrder Order
-		{
-			get
-			{
-				return m_subComp is ReverseComparer ?
-					SortOrder.Descending : SortOrder.Ascending;
-			}
-		}
+		public SortOrder Order => SubComparer is ReverseComparer ? SortOrder.Descending : SortOrder.Ascending;
 
 		/// <summary>
 		/// Flag whether to sort normally from the beginnings of words, or to sort from the
 		/// ends of words.  This is useful for grouping words by suffix.
 		/// </summary>
-		public bool SortedFromEnd
-		{
-			get
-			{
-				return m_fSortedFromEnd;
-			}
-			set
-			{
-				m_fSortedFromEnd = value;
-			}
-		}
+		public bool SortedFromEnd { get; set; }
 
 		/// <summary>
 		/// Flag whether to sort normally from the beginnings of words, or to sort from the
 		/// ends of words.  This is useful for grouping words by suffix.
 		/// </summary>
-		public bool SortedByLength
-		{
-			get
-			{
-				return m_fSortedByLength;
-			}
-			set
-			{
-				m_fSortedByLength = value;
-			}
-		}
+		public bool SortedByLength { get; set; }
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits this instance.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void Init()
 		{
 			m_objToKey.Clear();
-			if (m_subComp is IcuComparer)
+			if (SubComparer is IcuComparer)
 			{
-				(m_subComp as IcuComparer).OpenCollatingEngine();
+				((IcuComparer)SubComparer).OpenCollatingEngine();
 			}
-			else if (m_subComp is ReverseComparer)
+			else if (SubComparer is ReverseComparer)
 			{
-				IComparer ct = ReverseComparer.Reverse(m_subComp);
+				var ct = ReverseComparer.Reverse(SubComparer);
 				if (ct is IcuComparer)
-					(ct as IcuComparer).OpenCollatingEngine();
+				{
+					((IcuComparer)ct).OpenCollatingEngine();
+				}
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Cleanups this instance. Note that clients are not obliged to call this; it just
 		/// helps a little with garbage collection.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		public void Cleanup()
 		{
 			m_objToKey.Clear(); // redundant, but may help free memory.
-			if (m_subComp is IcuComparer)
+			if (SubComparer is IcuComparer)
 			{
-				(m_subComp as IcuComparer).CloseCollatingEngine();
+				((IcuComparer)SubComparer).CloseCollatingEngine();
 			}
-			else if (m_subComp is ReverseComparer)
+			else if (SubComparer is ReverseComparer)
 			{
-				IComparer ct = ReverseComparer.Reverse(m_subComp);
+				var ct = ReverseComparer.Reverse(SubComparer);
 				if (ct is IcuComparer)
-					(ct as IcuComparer).CloseCollatingEngine();
+				{
+					((IcuComparer)ct).CloseCollatingEngine();
+				}
 			}
 		}
 
@@ -1370,19 +1230,20 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		public void Reverse()
 		{
-			m_subComp = ReverseComparer.Reverse(m_subComp);
+			SubComparer = ReverseComparer.Reverse(SubComparer);
 		}
 
 		protected internal string[] GetValue(object key, bool sortedFromEnd)
 		{
 			try
 			{
-				string[] result = m_objToKey[key] as string[];
+				var result = m_objToKey[key] as string[];
 				if (result != null)
+				{
 					return result;
+				}
 				var item = key as IManyOnePathSortItem;
-
-				result =  m_finder.SortStrings(item, sortedFromEnd);
+				result =  Finder.SortStrings(item, sortedFromEnd);
 				m_objToKey[key] = result;
 				return result;
 			}
@@ -1394,7 +1255,6 @@ namespace SIL.FieldWorks.Filters
 
 		#region IComparer Members
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Compares two objects and returns a value indicating whether one is less than, equal
 		/// to, or greater than the other.
@@ -1408,60 +1268,74 @@ namespace SIL.FieldWorks.Filters
 		/// <exception cref="T:System.ArgumentException">Neither x nor y implements the
 		/// <see cref="T:System.IComparable"></see> interface.-or- x and y are of different
 		/// types and neither one can handle comparisons with the other. </exception>
-		/// ------------------------------------------------------------------------------------
 		public int Compare(object x,object y)
 		{
-			if (ComparisonNoter != null)
-				ComparisonNoter.ComparisonOccurred(); // for progress reporting.
+			ComparisonNoter?.ComparisonOccurred(); // for progress reporting.
 
 			try
 			{
 				if (x == y)
+				{
 					return 0;
+				}
 				if (x == null)
-					return m_subComp is ReverseComparer ? 1 : -1;
+				{
+					return SubComparer is ReverseComparer ? 1 : -1;
+				}
 				if (y == null)
-					return m_subComp is ReverseComparer ? -1 : 1;
+				{
+					return SubComparer is ReverseComparer ? -1 : 1;
+				}
 
 				// We pass GetValue m_fSortedFromEnd, and it is responsible for taking care of flipping the string if that's needed.
 				// The reason to do it there is because sometimes a sort key will have a homograph number appeneded to the end.
 				// If we do the flipping here, the resulting string will be a backwards homograph number followed by the backwards
 				// sort key itself.  GetValue should know enough to return the flipped string followed by a regular homograph number.
-				string[] keysA = GetValue(x, m_fSortedFromEnd);
-				string[] keysB = GetValue(y, m_fSortedFromEnd);
+				var keysA = GetValue(x, SortedFromEnd);
+				var keysB = GetValue(y, SortedFromEnd);
 
 				// There will usually only be one element in the array, but just in case...
-				if (m_fSortedFromEnd)
+				if (SortedFromEnd)
 				{
 					Array.Reverse(keysA);
 					Array.Reverse(keysB);
 				}
 
-				int cstrings = Math.Min(keysA.Length, keysB.Length);
-				for (int i = 0; i < cstrings; i++)
+				var cstrings = Math.Min(keysA.Length, keysB.Length);
+				for (var i = 0; i < cstrings; i++)
 				{
 					// Sorted by length (if enabled) will be the primary sorting factor
-					if (m_fSortedByLength)
+					if (SortedByLength)
 					{
-						int cchA = OrthographicLength(keysA[i]);
-						int cchB = OrthographicLength(keysB[i]);
+						var cchA = OrthographicLength(keysA[i]);
+						var cchB = OrthographicLength(keysB[i]);
 						if (cchA < cchB)
-							return m_subComp is ReverseComparer ? 1 : -1;
-						else if (cchB < cchA)
-							return m_subComp is ReverseComparer ? -1 : 1;
+						{
+							return SubComparer is ReverseComparer ? 1 : -1;
+						}
+						if (cchB < cchA)
+						{
+							return SubComparer is ReverseComparer ? -1 : 1;
+						}
 					}
 					// However, if there's no difference in length, we continue with the
 					// rest of the sort
-					int result = m_subComp.Compare(keysA[i], keysB[i]);
+					var result = SubComparer.Compare(keysA[i], keysB[i]);
 					if (result != 0)
+					{
 						return result;
+					}
 				}
 				// All corresponding strings are equal according to the comparer, so sort based on the number of strings
 				if (keysA.Length < keysB.Length)
-					return m_subComp is ReverseComparer ? 1 : -1;
-				else if (keysA.Length > keysB.Length)
-					return m_subComp is ReverseComparer ? -1 : 1;
-				else return 0;
+				{
+					return SubComparer is ReverseComparer ? 1 : -1;
+				}
+				if (keysA.Length > keysB.Length)
+				{
+					return SubComparer is ReverseComparer ? -1 : 1;
+				}
+				return 0;
 			}
 			catch (Exception error)
 			{
@@ -1473,25 +1347,23 @@ namespace SIL.FieldWorks.Filters
 		/// Count the number of orthographic characters (word-forming, nondiacritic) in the
 		/// key.
 		/// </summary>
-		/// <param name="key"></param>
-		/// <returns></returns>
 		private int OrthographicLength(string key)
 		{
-			int cchOrtho = 0;
-			char[] rgch = key.ToCharArray();
-			for (int i = 0; i < rgch.Length; ++i)
+			var cchOrtho = 0;
+			var rgch = key.ToCharArray();
+			for (var i = 0; i < rgch.Length; ++i)
 			{
 				// Handle surrogate pairs carefully!
 				int ch;
-				char ch1 = rgch[i];
+				var ch1 = rgch[i];
 				if (Surrogates.IsLeadSurrogate(ch1))
 				{
-					char ch2 = rgch[++i];
+					var ch2 = rgch[++i];
 					ch = Surrogates.Int32FromSurrogates(ch1, ch2);
 				}
 				else
 				{
-					ch = (int)ch1;
+					ch = ch1;
 				}
 				if (Icu.IsAlphabetic(ch))
 				{
@@ -1500,7 +1372,9 @@ namespace SIL.FieldWorks.Filters
 				else
 				{
 					if (Icu.IsIdeographic(ch))
+					{
 						++cchOrtho;
+					}
 				}
 			}
 			return cchOrtho;
@@ -1509,34 +1383,32 @@ namespace SIL.FieldWorks.Filters
 
 		#region IPersistAsXml Members
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public void PersistAsXml(XElement node)
 		{
-			DynamicLoader.PersistObject(m_finder, node, "finder");
-			DynamicLoader.PersistObject(m_subComp, node, "comparer");
-			if (m_fSortedFromEnd)
+			DynamicLoader.PersistObject(Finder, node, "finder");
+			DynamicLoader.PersistObject(SubComparer, node, "comparer");
+			if (SortedFromEnd)
+			{
 				XmlUtils.SetAttribute(node, "sortFromEnd", "true");
-			if (m_fSortedByLength)
+			}
+			if (SortedByLength)
+			{
 				XmlUtils.SetAttribute(node, "sortByLength", "true");
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------
 		public void InitXml(XElement node)
 		{
-			m_finder = DynamicLoader.RestoreFromChild(node, "finder") as IStringFinder;
-			m_subComp = DynamicLoader.RestoreFromChild(node, "comparer") as IComparer;
-			m_fSortedFromEnd = XmlUtils.GetOptionalBooleanAttributeValue(node, "sortFromEnd", false);
-			m_fSortedByLength = XmlUtils.GetOptionalBooleanAttributeValue(node, "sortByLength", false);
+			Finder = DynamicLoader.RestoreFromChild(node, "finder") as IStringFinder;
+			SubComparer = DynamicLoader.RestoreFromChild(node, "comparer") as IComparer;
+			SortedFromEnd = XmlUtils.GetOptionalBooleanAttributeValue(node, "sortFromEnd", false);
+			SortedByLength = XmlUtils.GetOptionalBooleanAttributeValue(node, "sortByLength", false);
 		}
 
 		#endregion
@@ -1550,10 +1422,14 @@ namespace SIL.FieldWorks.Filters
 		{
 			set
 			{
-				if (m_finder is IStoresLcmCache)
-					((IStoresLcmCache) m_finder).Cache = value;
-				if (m_subComp is IStoresLcmCache)
-					((IStoresLcmCache) m_subComp).Cache = value;
+				if (Finder is IStoresLcmCache)
+				{
+					((IStoresLcmCache)Finder).Cache = value;
+				}
+				if (SubComparer is IStoresLcmCache)
+				{
+					((IStoresLcmCache)SubComparer).Cache = value;
+				}
 			}
 		}
 		#endregion
@@ -1566,87 +1442,110 @@ namespace SIL.FieldWorks.Filters
 		{
 			return new StringFinderCompare
 				{
-					m_finder = this.m_finder,
-					m_fSortedByLength = this.m_fSortedByLength,
-					m_fSortedFromEnd = this.m_fSortedFromEnd,
-					m_objToKey = this.m_objToKey.Clone() as Hashtable,
-					m_subComp = this.m_subComp is ICloneable ? ((ICloneable)m_subComp).Clone() as IComparer : m_subComp,
-					ComparisonNoter = this.ComparisonNoter
+					Finder = Finder,
+					SortedByLength = SortedByLength,
+					SortedFromEnd = SortedFromEnd,
+					m_objToKey = m_objToKey.Clone() as Hashtable,
+					SubComparer = SubComparer is ICloneable ? ((ICloneable)SubComparer).Clone() as IComparer : SubComparer,
+					ComparisonNoter = ComparisonNoter
 				};
 		}
 		#endregion
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
+		/// <summary />
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
+			{
 				return false;
+			}
 			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
 			// is marked with [MonoTODO] and might not work as expected in 4.0.
-			if (this.GetType() != obj.GetType())
-				return false;
-			StringFinderCompare that = (StringFinderCompare)obj;
-			if (m_finder == null)
+			if (GetType() != obj.GetType())
 			{
-				if (that.m_finder != null)
+				return false;
+			}
+			var that = (StringFinderCompare)obj;
+			if (Finder == null)
+			{
+				if (that.Finder != null)
+				{
 					return false;
+				}
 			}
 			else
 			{
-				if (that.m_finder == null)
+				if (that.Finder == null)
+				{
 					return false;
-				if (!this.m_finder.SameFinder(that.m_finder))
+				}
+				if (!Finder.SameFinder(that.Finder))
+				{
 					return false;
+				}
 			}
-			if (this.m_fSortedByLength != that.m_fSortedByLength)
+			if (SortedByLength != that.SortedByLength)
+			{
 				return false;
-			if (this.m_fSortedFromEnd != that.m_fSortedFromEnd)
+			}
+			if (SortedFromEnd != that.SortedFromEnd)
+			{
 				return false;
+			}
 			if (m_objToKey == null)
 			{
 				if (that.m_objToKey != null)
+				{
 					return false;
+				}
 			}
 			else
 			{
-				if (that.m_objToKey == null)
+				if (m_objToKey.Count != that.m_objToKey?.Count)
+				{
 					return false;
-				if (this.m_objToKey.Count != that.m_objToKey.Count)
-					return false;
-				IDictionaryEnumerator ie = that.m_objToKey.GetEnumerator();
+				}
+				var ie = that.m_objToKey.GetEnumerator();
 				while (ie.MoveNext())
 				{
 					if (!m_objToKey.ContainsKey(ie.Key) || m_objToKey[ie.Key] != ie.Value)
+					{
 						return false;
+					}
 				}
 			}
-			if (m_subComp == null)
-				return that.m_subComp == null;
-			else
-				return this.m_subComp.Equals(that.m_subComp);
+
+			if (SubComparer == null)
+			{
+				return that.SubComparer == null;
+			}
+			return SubComparer.Equals(that.SubComparer);
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
+		/// <summary />
 		public override int GetHashCode()
 		{
-			int hash = GetType().GetHashCode();
-			if (m_finder != null)
-				hash += m_finder.GetHashCode();
-			if (m_fSortedByLength)
+			var hash = GetType().GetHashCode();
+			if (Finder != null)
+			{
+				hash += Finder.GetHashCode();
+			}
+			if (SortedByLength)
+			{
 				hash *= 3;
-			if (m_fSortedFromEnd)
+			}
+			if (SortedFromEnd)
+			{
 				hash *= 17;
+			}
 			if (m_objToKey != null)
+			{
 				hash += m_objToKey.Count * 53;
-			if (m_subComp != null)
-				hash += m_subComp.GetHashCode();
+			}
+			if (SubComparer != null)
+			{
+				hash += SubComparer.GetHashCode();
+			}
 			return hash;
 		}
 	}
@@ -1660,17 +1559,11 @@ namespace SIL.FieldWorks.Filters
 	public class ReverseComparer : IComparer, IPersistAsXml, IStoresLcmCache, IStoresDataAccess, ICloneable
 	{
 		/// <summary>
-		/// Reference to comparer
-		/// </summary>
-		private IComparer m_comp;
-
-		/// <summary>
 		/// normal constructor
 		/// </summary>
-		/// <param name="comp">Reference to a comparer</param>
 		public ReverseComparer(IComparer comp)
 		{
-			m_comp = comp;
+			SubComp = comp;
 		}
 
 		/// <summary>
@@ -1682,7 +1575,6 @@ namespace SIL.FieldWorks.Filters
 
 		#region IComparer Members
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Compares two objects and returns a value indicating whether one is less than, equal to, or greater than the other.
 		/// </summary>
@@ -1692,35 +1584,23 @@ namespace SIL.FieldWorks.Filters
 		/// Value Condition Less than zero x is less than y. Zero x equals y. Greater than zero x is greater than y.
 		/// </returns>
 		/// <exception cref="T:System.ArgumentException">Neither x nor y implements the <see cref="T:System.IComparable"></see> interface.-or- x and y are of different types and neither one can handle comparisons with the other. </exception>
-		/// ------------------------------------------------------------------------------------------
 		public int Compare(object x, object y)
 		{
-			return -m_comp.Compare(x, y);
+			return -SubComp.Compare(x, y);
 		}
 
 		#endregion
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the sub comp.
 		/// </summary>
-		/// <value>The sub comp.</value>
-		/// ------------------------------------------------------------------------------------------
-		public IComparer SubComp
-		{
-			get
-			{
-				return m_comp;
-			}
-		}
+		public IComparer SubComp { get; private set; }
 
 		/// <summary>
 		/// Return a comparer with the opposite sense of comp. If it is itself a ReverseComparer,
 		/// achieve this by unwrapping and returning the original comparer; otherwise, create
 		/// a ReverseComparer.
 		/// </summary>
-		/// <param name="comp"></param>
-		/// <returns></returns>
 		public static IComparer Reverse(IComparer comp)
 		{
 			var rc = comp as ReverseComparer;
@@ -1729,60 +1609,49 @@ namespace SIL.FieldWorks.Filters
 
 		#region IPersistAsXml Members
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------------
 		public void PersistAsXml(XElement node)
 		{
-			DynamicLoader.PersistObject(m_comp, node, "comparer");
+			DynamicLoader.PersistObject(SubComp, node, "comparer");
 		}
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------------
 		public void InitXml(XElement node)
 		{
-			m_comp = DynamicLoader.RestoreFromChild(node, "comparer") as IComparer;
+			SubComp = DynamicLoader.RestoreFromChild(node, "comparer") as IComparer;
 		}
 
 		#endregion
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
+		/// <summary />
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
+			{
 				return false;
+			}
 			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
 			// is marked with [MonoTODO] and might not work as expected in 4.0.
-			if (this.GetType() != obj.GetType())
+			if (GetType() != obj.GetType())
+			{
 				return false;
+			}
 			var that = (ReverseComparer)obj;
-			if (m_comp == null)
-				return that.m_comp == null;
-			if (that.m_comp == null)
-				return false;
-			return m_comp.Equals(that.m_comp);
+			return SubComp == null ? that.SubComp == null : that.SubComp != null && SubComp.Equals(that.SubComp);
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
+		/// <summary />
 		public override int GetHashCode()
 		{
-			int hash = GetType().GetHashCode();
-			if (m_comp != null)
-				hash *= m_comp.GetHashCode();
+			var hash = GetType().GetHashCode();
+			if (SubComp != null)
+			{
+				hash *= SubComp.GetHashCode();
+			}
 			return hash;
 		}
 
@@ -1790,8 +1659,10 @@ namespace SIL.FieldWorks.Filters
 		{
 			set
 			{
-				if (m_comp is IStoresLcmCache)
-					((IStoresLcmCache) m_comp).Cache = value;
+				if (SubComp is IStoresLcmCache)
+				{
+					((IStoresLcmCache)SubComp).Cache = value;
+				}
 			}
 		}
 
@@ -1799,8 +1670,10 @@ namespace SIL.FieldWorks.Filters
 		{
 			set
 			{
-				if (m_comp is IStoresDataAccess)
-					((IStoresDataAccess)m_comp).DataAccess = value;
+				if (SubComp is IStoresDataAccess)
+				{
+					((IStoresDataAccess)SubComp).DataAccess = value;
+				}
 			}
 		}
 
@@ -1810,8 +1683,7 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		public object Clone()
 		{
-			var comp = m_comp is ICloneable ? (IComparer)((ICloneable)m_comp).Clone() : m_comp;
-			return new ReverseComparer(comp);
+			return new ReverseComparer(SubComp is ICloneable ? (IComparer)((ICloneable)SubComp).Clone() : SubComp);
 		}
 		#endregion
 	}
@@ -1823,7 +1695,6 @@ namespace SIL.FieldWorks.Filters
 	{
 		#region IComparer Members
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Compares two objects and returns a value indicating whether one is less than, equal to, or greater than the other.
 		/// </summary>
@@ -1833,40 +1704,36 @@ namespace SIL.FieldWorks.Filters
 		/// Value Condition Less than zero x is less than y. Zero x equals y. Greater than zero x is greater than y.
 		/// </returns>
 		/// <exception cref="T:System.ArgumentException">Neither x nor y implements the <see cref="T:System.IComparable"></see> interface.-or- x and y are of different types and neither one can handle comparisons with the other. </exception>
-		/// ------------------------------------------------------------------------------------------
 		public int Compare(object x, object y)
 		{
-			int xn = Int32.Parse(x.ToString());
-			int yn = Int32.Parse(y.ToString());
+			var xn = int.Parse(x.ToString());
+			var yn = int.Parse(y.ToString());
 			if (xn < yn)
+			{
 				return -1;
-			else if (xn > yn)
+			}
+			if (xn > yn)
+			{
 				return 1;
-			else
-				return 0;
+			}
+			return 0;
 		}
 
 		#endregion
 
 		#region IPersistAsXml Members
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------------
 		public void PersistAsXml(XElement node)
 		{
 			// nothing to do.
 		}
 
-		/// ------------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// ------------------------------------------------------------------------------------------
 		public void InitXml(XElement node)
 		{
 			// Nothing to do
@@ -1874,53 +1741,40 @@ namespace SIL.FieldWorks.Filters
 
 		#endregion
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
+		/// <summary />
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
+			{
 				return false;
+			}
 			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
 			// is marked with [MonoTODO] and might not work as expected in 4.0.
-			return this.GetType() == obj.GetType();
+			return GetType() == obj.GetType();
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
+		/// <summary />
 		public override int GetHashCode()
 		{
 			return GetType().GetHashCode();
 		}
 	}
 
-	/// -------------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// -------------------------------------------------------------------------------------------
+	/// <summary />
 	public class IcuComparer : IComparer, IPersistAsXml
 	{
-		/// <summary></summary>
+		/// <summary />
 		protected ILgCollatingEngine m_lce;
-		/// <summary></summary>
-		protected string m_sWs;
-		// Key for the Hashtable is a string.
-		// Value is a byte[].
-		/// <summary></summary>
+
+		/// <summary>
+		/// Key for the Hashtable is a string. Value is a byte[].
+		/// </summary>
 		protected Hashtable m_htskey = new Hashtable();
 
 		/// <summary>
 		/// Made accessible for testing.
 		/// </summary>
-		public string WsCode
-		{
-			get { return m_sWs; }
-		}
+		public string WsCode { get; protected set; }
 
 		#region Constructors, etc.
 		/// ------------------------------------------------------------------------------------
@@ -1930,7 +1784,7 @@ namespace SIL.FieldWorks.Filters
 		/// ------------------------------------------------------------------------------------
 		public IcuComparer(string sWs)
 		{
-			m_sWs = sWs;
+			WsCode = sWs;
 		}
 
 		/// <summary>
@@ -1955,7 +1809,7 @@ namespace SIL.FieldWorks.Filters
 			{
 				m_lce.Close();
 			}
-			m_lce.Open(m_sWs);
+			m_lce.Open(WsCode);
 		}
 
 		/// ------------------------------------------------------------------------------------------
@@ -2069,7 +1923,7 @@ namespace SIL.FieldWorks.Filters
 		/// ------------------------------------------------------------------------------------------
 		public void PersistAsXml(XElement node)
 		{
-			XmlUtils.SetAttribute(node, "ws", m_sWs);
+			XmlUtils.SetAttribute(node, "ws", WsCode);
 		}
 
 		/// ------------------------------------------------------------------------------------------
@@ -2080,7 +1934,7 @@ namespace SIL.FieldWorks.Filters
 		/// ------------------------------------------------------------------------------------------
 		public void InitXml(XElement node)
 		{
-			m_sWs = XmlUtils.GetMandatoryAttributeValue(node, "ws");
+			WsCode = XmlUtils.GetMandatoryAttributeValue(node, "ws");
 		}
 
 		#endregion
@@ -2119,7 +1973,7 @@ namespace SIL.FieldWorks.Filters
 			}
 			if (this.m_lce != that.m_lce)
 				return false;
-			return this.m_sWs == that.m_sWs;
+			return this.WsCode == that.WsCode;
 		}
 
 		/// <summary>
@@ -2133,8 +1987,8 @@ namespace SIL.FieldWorks.Filters
 				hash += m_htskey.Count * 53;
 			if (m_lce != null)
 				hash += m_lce.GetHashCode();
-			if (m_sWs != null)
-				hash *= m_sWs.GetHashCode();
+			if (WsCode != null)
+				hash *= WsCode.GetHashCode();
 			return hash;
 		}
 	}
@@ -2144,7 +1998,6 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	public class WritingSystemComparer : IComparer, IPersistAsXml, IStoresLcmCache
 	{
-		private string m_wsId;
 		private LcmCache m_cache;
 		private CoreWritingSystemDefinition m_ws;
 
@@ -2156,7 +2009,7 @@ namespace SIL.FieldWorks.Filters
 		public WritingSystemComparer(CoreWritingSystemDefinition ws)
 		{
 			m_ws = ws;
-			m_wsId = ws.Id;
+			WsId = ws.Id;
 		}
 
 		/// <summary>
@@ -2173,13 +2026,7 @@ namespace SIL.FieldWorks.Filters
 
 		#endregion
 
-		public string WsId
-		{
-			get
-			{
-				return m_wsId;
-			}
-		}
+		public string WsId { get; private set; }
 
 		#region IComparer Members
 		/// <summary>
@@ -2194,7 +2041,9 @@ namespace SIL.FieldWorks.Filters
 		public int Compare(object x, object y)
 		{
 			if (m_ws == null)
-				m_ws = m_cache.ServiceLocator.WritingSystemManager.Get(m_wsId);
+			{
+				m_ws = m_cache.ServiceLocator.WritingSystemManager.Get(WsId);
+			}
 			return m_ws.DefaultCollation.Collator.Compare(x, y);
 		}
 		#endregion
@@ -2204,19 +2053,17 @@ namespace SIL.FieldWorks.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
 		public void PersistAsXml(XElement node)
 		{
-			XmlUtils.SetAttribute(node, "ws", m_wsId);
+			XmlUtils.SetAttribute(node, "ws", WsId);
 		}
 
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		/// <param name="node">The node.</param>
 		public void InitXml(XElement node)
 		{
-			m_wsId = XmlUtils.GetMandatoryAttributeValue(node, "ws");
+			WsId = XmlUtils.GetMandatoryAttributeValue(node, "ws");
 		}
 
 		#endregion
@@ -2224,16 +2071,20 @@ namespace SIL.FieldWorks.Filters
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
+			{
 				throw new ArgumentNullException("obj");
+			}
 			var comparer = obj as WritingSystemComparer;
 			if (comparer == null)
+			{
 				return false;
-			return m_wsId == comparer.m_wsId;
+			}
+			return WsId == comparer.WsId;
 		}
 
 		public override int GetHashCode()
 		{
-			return m_wsId.GetHashCode();
+			return WsId.GetHashCode();
 		}
 	}
 }
