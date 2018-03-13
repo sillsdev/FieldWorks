@@ -540,6 +540,10 @@ LEmptySeg:
 		// Set up the characters of the run, if any.
 		uri.prgch = prgchBuf + ichMinNfc;
 		uri.cch = ichLimNfc - ichMinNfc;
+		if (uri.cch < 0)
+		{
+			uri.cch = ichLimText;
+		}
 		uri.psa = &pscri->a;
 		uri.pvg = pvg;
 		ichMinUri = ichMinNfc;
