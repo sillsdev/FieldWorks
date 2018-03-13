@@ -174,35 +174,80 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AndFilter.cs" />
+    <Compile Include="AndSorter.cs" />
+    <Compile Include="AnywhereMatcher.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BadSpellingMatcher.cs" />
+    <Compile Include="BaseMatcher.cs" />
+    <Compile Include="BeginMatcher.cs" />
+    <Compile Include="BlankMatcher.cs" />
+    <Compile Include="DateMatchType.cs" />
     <Compile Include="DateTimeMatcher.cs" />
+    <Compile Include="EndMatcher.cs" />
+    <Compile Include="ExactCaseInsensitiveLiteralMatcher.cs" />
     <Compile Include="ExactLiteralMatcher.cs" />
+    <Compile Include="ExactMatcher.cs" />
+    <Compile Include="FilterBarCellFilter.cs" />
+    <Compile Include="FilterChangeEventArgs.cs" />
     <Compile Include="FiltersStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>FiltersStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="FindResultSorter.cs" />
+    <Compile Include="GenRecordSorter.cs" />
+    <Compile Include="IcuComparer.cs" />
     <Compile Include="IManyOnePathSortItem.cs" />
+    <Compile Include="IMatcher.cs" />
+    <Compile Include="INoteComparision.cs" />
     <Compile Include="IntFinder.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="IntMatcher.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="IntStringComparer.cs" />
+    <Compile Include="InvalidObjectGuidException.cs" />
+    <Compile Include="InvertMatcher.cs" />
+    <Compile Include="IReportsSortProgress.cs" />
+    <Compile Include="IStringFinder.cs" />
+    <Compile Include="LazyManyOnePathSortItem.cs" />
+    <Compile Include="LcmCompare.cs" />
     <Compile Include="ManyOnePathSortItem.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MatchRangePair.cs" />
+    <Compile Include="MultiIndirectMlPropFinder.cs" />
+    <Compile Include="NoFilters.cs" />
+    <Compile Include="NonBlankMatcher.cs" />
+    <Compile Include="NotEqualIntMatcher.cs" />
+    <Compile Include="NullFilter.cs" />
+    <Compile Include="OneIndirectAtomMlPropFinder.cs" />
+    <Compile Include="OneIndirectMlPropFinder.cs" />
+    <Compile Include="OwnMlPropFinder.cs" />
+    <Compile Include="OwnMonoPropFinder.cs" />
+    <Compile Include="ProblemAnnotationFilter.cs" />
+    <Compile Include="PropertyRecordSorter.cs" />
+    <Compile Include="RangeIntMatcher.cs" />
     <Compile Include="RecordFilter.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="RecordSorter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WordFormFilters.cs" />
+    <Compile Include="RegExpMatcher.cs" />
+    <Compile Include="ReverseComparer.cs" />
+    <Compile Include="RuntimeSwitches.cs" />
+    <Compile Include="SimpleStringMatcher.cs" />
+    <Compile Include="StringFinderBase.cs" />
+    <Compile Include="StringFinderCompare.cs" />
+    <Compile Include="UncheckAll.cs" />
+    <Compile Include="WfiRecordFilterListProvider.cs" />
+    <Compile Include="WordSetFilter.cs" />
+    <Compile Include="WritingSystemComparer.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FiltersStrings.resx">

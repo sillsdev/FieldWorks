@@ -142,7 +142,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		DateTimeMatcher.DateMatchType CompareType
+		DateMatchType CompareType
 		{
 			get
 			{
@@ -150,15 +150,15 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					default:
 					case 0: // on
-						return DateTimeMatcher.DateMatchType.On;
+						return DateMatchType.On;
 					case 1: // not on
-						return DateTimeMatcher.DateMatchType.NotRange;
+						return DateMatchType.NotRange;
 					case 2: //on or before
-						return DateTimeMatcher.DateMatchType.Before;
+						return DateMatchType.Before;
 					case 3: // on or after
-						return DateTimeMatcher.DateMatchType.After;
+						return DateMatchType.After;
 					case 4: // between...and...
-						return DateTimeMatcher.DateMatchType.Range;
+						return DateMatchType.Range;
 				}
 			}
 		}
@@ -172,15 +172,15 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				switch (CompareType)
 				{
-					case DateTimeMatcher.DateMatchType.On:
+					case DateMatchType.On:
 						return SelectionStart.ToShortDateString();
-					case DateTimeMatcher.DateMatchType.NotRange:
+					case DateMatchType.NotRange:
 						return string.Format(XMLViewsStrings.ksNotX, SelectionStart.ToShortDateString());
-					case DateTimeMatcher.DateMatchType.Before:
+					case DateMatchType.Before:
 						return string.Format(XMLViewsStrings.ksLessEqX, SelectionStart.ToShortDateString());
-					case DateTimeMatcher.DateMatchType.After:
+					case DateMatchType.After:
 						return string.Format(XMLViewsStrings.ksGreaterEqX, SelectionEnd.ToShortDateString());
-					case DateTimeMatcher.DateMatchType.Range:
+					case DateMatchType.Range:
 						return string.Format(XMLViewsStrings.ksRangeXY, SelectionStart.ToString("g"), SelectionEnd.ToString("g"));
 				}
 				return string.Empty;
@@ -199,19 +199,19 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			switch (matcher.MatchType)
 			{
-				case DateTimeMatcher.DateMatchType.On:
+				case DateMatchType.On:
 					m_typeCombo.SelectedIndex = 0;
 					break;
-				case DateTimeMatcher.DateMatchType.NotRange:
+				case DateMatchType.NotRange:
 					m_typeCombo.SelectedIndex = 1;
 					break;
-				case DateTimeMatcher.DateMatchType.Before:
+				case DateMatchType.Before:
 					m_typeCombo.SelectedIndex = 2;
 					break;
-				case DateTimeMatcher.DateMatchType.After:
+				case DateMatchType.After:
 					m_typeCombo.SelectedIndex = 3;
 					break;
-				case DateTimeMatcher.DateMatchType.Range:
+				case DateMatchType.Range:
 					m_typeCombo.SelectedIndex = 4;
 					break;
 			}

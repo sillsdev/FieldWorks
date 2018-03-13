@@ -169,11 +169,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
     </Reference>
-    <Reference Include="Filters">
-      <Name>Filters</Name>
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Filters.dll</HintPath>
-    </Reference>
     <Reference Include="FwControls">
       <Name>FwControls</Name>
       <SpecificVersion>False</SpecificVersion>

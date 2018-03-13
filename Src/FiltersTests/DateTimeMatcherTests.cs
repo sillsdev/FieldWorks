@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.Filters
 			 * after 1990), and the like, will match only if the user asks for ambiguous
 			 * matches.
 			 */
-			var matchBefore = new DateTimeMatcher(new DateTime(1990, 1, 17, 0, 0, 0), new DateTime(1990, 1, 17, 23, 59, 59), DateTimeMatcher.DateMatchType.Before);
+			var matchBefore = new DateTimeMatcher(new DateTime(1990, 1, 17, 0, 0, 0), new DateTime(1990, 1, 17, 23, 59, 59), DateMatchType.Before);
 			matchBefore.HandleGenDate = true;
 
 			var fMatch = matchBefore.Matches(TsStringUtils.MakeString("January 18, 1990", WsDummy));
@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.Filters
 		[Test]
 		public void TestMatchAfter()
 		{
-			var matchAfter = new DateTimeMatcher(new DateTime(1990, 1, 17, 0, 0, 0), new DateTime(1990, 1, 17, 23, 59, 59), DateTimeMatcher.DateMatchType.After);
+			var matchAfter = new DateTimeMatcher(new DateTime(1990, 1, 17, 0, 0, 0), new DateTime(1990, 1, 17, 23, 59, 59), DateMatchType.After);
 			matchAfter.HandleGenDate = true;
 
 			var fMatch = matchAfter.Matches(TsStringUtils.MakeString("January 18, 1990", WsDummy));
@@ -219,7 +219,7 @@ namespace SIL.FieldWorks.Filters
 			 * Before 2001, After 1900, and the like will match only if we want ambiguous
 			 * matches.
 			 */
-			var matchRange = new DateTimeMatcher(new DateTime(1990, 2, 15, 0, 0, 0), new DateTime(1992, 2, 17, 23, 59, 59), DateTimeMatcher.DateMatchType.Range);
+			var matchRange = new DateTimeMatcher(new DateTime(1990, 2, 15, 0, 0, 0), new DateTime(1992, 2, 17, 23, 59, 59), DateMatchType.Range);
 			matchRange.HandleGenDate = true;
 
 			var fMatch = matchRange.Matches(TsStringUtils.MakeString("February 16, 1990", WsDummy));
@@ -341,7 +341,7 @@ namespace SIL.FieldWorks.Filters
 		public void MatchBefore()
 		{
 			var matchBefore = new DateTimeMatcher(new DateTime(1990, 1, 17, 0, 0, 0),
-				new DateTime(1990, 1, 17, 23, 59, 59), DateTimeMatcher.DateMatchType.Before)
+				new DateTime(1990, 1, 17, 23, 59, 59), DateMatchType.Before)
 				{ HandleGenDate = true };
 
 			var fMatch = matchBefore.Matches(TsStringUtils.MakeString("January, 1990", DateTimeMatcherTests.WsDummy));

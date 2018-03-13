@@ -107,20 +107,4 @@ namespace SIL.FieldWorks.Filters
 		public int WritingSystem { get; }
 		#endregion
 	}
-
-	/// <summary>
-	/// Like the base class, but match ignores case.
-	/// </summary>
-	public class ExactCaseInsensitiveLiteralMatcher : ExactLiteralMatcher
-	{
-		public ExactCaseInsensitiveLiteralMatcher(string target, int ws)
-			: base(target.ToLower(), ws)
-		{
-		}
-
-		internal override bool MatchText(string p)
-		{
-			return base.MatchText(p.ToLower());
-		}
-	}
 }

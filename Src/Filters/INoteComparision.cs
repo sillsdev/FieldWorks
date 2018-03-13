@@ -2,12 +2,13 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-namespace  SIL.FieldWorks.Filters
+namespace SIL.FieldWorks.Filters
 {
 	/// <summary>
-	/// An abstract class that currently just serves to group matchers that deal with integers.
+	/// Interface implemented by RecordList, indicating it can be told when comparisons occur.
 	/// </summary>
-	public abstract class IntMatcher : BaseMatcher
+	internal interface INoteComparision
 	{
+		void ComparisonOccurred();
 	}
 }

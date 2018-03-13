@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.Filters
 			Comparer = searchString.Text != null ? new ExactMatchFirstComparer(searchString.Text, sorter.getComparer()) : sorter.getComparer();
 		}
 
-		internal class ExactMatchFirstComparer : IComparer
+		private sealed class ExactMatchFirstComparer : IComparer
 		{
 			private string SearchString { get; }
 			private IComparer Comparer { get; }

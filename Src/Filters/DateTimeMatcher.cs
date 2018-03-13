@@ -335,17 +335,5 @@ namespace SIL.FieldWorks.Filters
 			IsEndAD = XmlUtils.GetOptionalBooleanAttributeValue(node, "endAD", true);
 			UnspecificMatching = XmlUtils.GetOptionalBooleanAttributeValue(node, "unspecific", false);
 		}
-
-		/// <summary>
-		/// Enumeration to indicate the three ways we can compare dates.
-		/// </summary>
-		public enum DateMatchType
-		{
-			On,
-			Range,
-			Before,
-			After,
-			NotRange
-		}
 	}
 }
