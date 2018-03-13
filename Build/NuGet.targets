@@ -40,8 +40,7 @@
 	</Target>
 
 	<PropertyGroup>
-		<NuGetUrl Condition="'$(OS)' == 'Windows_NT'">https://nuget.org/NuGet.exe</NuGetUrl>
-		<NuGetUrl Condition="'$(OS)' != 'Windows_NT'">"https://drive.google.com/uc?export=download&amp;id=0BwTQrVjXe5wbQUhfcEFSbnktUzQ"</NuGetUrl>
+		<NuGetUrl>https://dist.nuget.org/win-x86-commandline/v3.4.4/nuget.exe</NuGetUrl>
 	</PropertyGroup>
 
 	<Target Name="CheckPrerequisites">

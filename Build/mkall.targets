@@ -318,36 +318,36 @@
 
 	<ItemGroup>
 		<PalasoFiles Include="SIL.Core.dll"/>
-		<PalasoFiles Include="SIL.Core.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Core.pdb"/>
 		<PalasoFiles Include="SIL.Core.Desktop.dll"/>
-		<PalasoFiles Include="SIL.Core.Desktop.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Core.Desktop.pdb"/>
 		<PalasoFiles Include="SIL.Lift.dll"/>
-		<PalasoFiles Include="SIL.Lift.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Lift.pdb"/>
 		<PalasoFiles Include="SIL.Media.dll"/>
 		<PalasoFiles Include="SIL.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<PalasoFiles Include="SIL.Media.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Media.pdb"/>
 		<PalasoFiles Include="SIL.Windows.Forms.dll"/>
-		<PalasoFiles Include="SIL.Windows.Forms.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Windows.Forms.pdb"/>
 		<PalasoFiles Include="SIL.Windows.Forms.GeckoBrowserAdapter.dll"/>
-		<PalasoFiles Include="SIL.Windows.Forms.GeckoBrowserAdapter.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Windows.Forms.GeckoBrowserAdapter.pdb"/>
 		<PalasoFiles Include="SIL.Archiving.dll"/>
 		<PalasoFiles Include="SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<PalasoFiles Include="SIL.Archiving.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Archiving.pdb"/>
 		<PalasoFiles Include="Ionic.Zip.dll"/>
 		<PalasoFiles Include="Keyman10Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<PalasoFiles Include="Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<PalasoFiles Include="KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<PalasoFiles Include="SIL.WritingSystems.dll"/>
-		<PalasoFiles Include="SIL.WritingSystems.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.WritingSystems.pdb"/>
 		<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.dll"/>
-		<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.pdb"/>
 		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.dll"/>
 		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.pdb"/>
 		<PalasoFiles Include="SIL.Lexicon.dll"/>
-		<PalasoFiles Include="SIL.Lexicon.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Lexicon.pdb"/>
 		<PalasoFiles Include="SIL.Scripture.dll"/>
-		<PalasoFiles Include="SIL.Scripture.$(DebugInfo)"/>
+		<PalasoFiles Include="SIL.Scripture.pdb"/>
 		<PalasoFiles Include="SIL.TestUtilities.dll"/>
 		<PalasoFiles Include="L10NSharp.dll"/>
 		<PalasoFiles Include="Commons.Xml.Relaxng.dll"/>
@@ -359,7 +359,6 @@
 		<PalasoFiles Include="NDesk.DBus.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<PalasoFiles Include="taglib-sharp.dll"/>
 		<PalasoFiles Include="Spart.dll"/>
-		<PalasoFiles Include="Newtonsoft.Json.dll"/>
 		<PalasoFiles Include="icu.net.dll"/>
 		<PalasoFiles Include="SIL.BuildTasks.dll" Condition="'$(OS)'=='Windows_NT'"/>
 
@@ -571,6 +570,8 @@
 			<NuGottenFiles Include="$(fwrt)/packages/NAudio.Lame.1.0.4/lib/net20/NAudio.Lame.dll"/>
 			<NuGottenFiles Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'" Include="$(fwrt)/packages/NAudio.Lame.1.0.4/content/libmp3lame.32.dll"/>
 			<NuGottenFiles Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'" Include="$(fwrt)/packages/NAudio.Lame.1.0.4/content/libmp3lame.64.dll"/>
+			<NuGottenFiles Include="$(fwrt)/packages/Newtonsoft.Json.11.0.1/lib/net45/Newtonsoft.Json.dll"/>
+			<NuGottenFiles Include="$(fwrt)/packages/Microsoft.Extensions.DependencyModel.2.0.4/lib/net451/Microsoft.Extensions.DependencyModel.dll"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(NuGottenFiles)" DestinationFolder="$(dir-outputBase)/%(RecursiveDir)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>

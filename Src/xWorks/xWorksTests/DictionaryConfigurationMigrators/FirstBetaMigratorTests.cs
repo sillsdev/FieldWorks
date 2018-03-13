@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
-			DirectoryUtilities.DeleteDirectoryRobust(Cache.ProjectId.Path);
+			RobustIO.DeleteDirectoryAndContents(Cache.ProjectId.Path);
 			base.FixtureTeardown();
 			m_application.Dispose();
 			m_window.Dispose();

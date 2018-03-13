@@ -620,7 +620,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			finally
 			{
-				DirectoryUtilities.DeleteDirectoryRobust(tempDirectoryToCompress);
+				RobustIO.DeleteDirectoryAndContents(tempDirectoryToCompress);
 			}
 		}
 

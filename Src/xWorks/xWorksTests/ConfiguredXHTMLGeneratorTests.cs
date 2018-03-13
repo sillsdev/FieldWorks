@@ -5167,7 +5167,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			finally
 			{
-				IO.DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+				IO.RobustIO.DeleteDirectoryAndContents(tempFolder.FullName);
 				File.Delete(filePath);
 			}
 		}
@@ -5204,7 +5204,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			finally
 			{
-				IO.DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+				IO.RobustIO.DeleteDirectoryAndContents(tempFolder.FullName);
 			}
 		}
 
@@ -5266,7 +5266,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			finally
 			{
-				IO.DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+				IO.RobustIO.DeleteDirectoryAndContents(tempFolder.FullName);
 				File.Delete(filePath1);
 				File.Delete(filePath2);
 			}
@@ -5318,7 +5318,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			finally
 			{
-				SIL.IO.DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+				SIL.IO.RobustIO.DeleteDirectoryAndContents(tempFolder.FullName);
 				File.Delete(filePath1);
 			}
 		}
@@ -5457,7 +5457,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			finally
 			{
-				IO.DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+				IO.RobustIO.DeleteDirectoryAndContents(tempFolder.FullName);
 				File.Delete(fileName);
 			}
 		}

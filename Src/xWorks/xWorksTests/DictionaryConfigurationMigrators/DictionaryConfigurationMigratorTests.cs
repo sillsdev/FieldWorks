@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
-			DirectoryUtilities.DeleteDirectoryRobust(Cache.ProjectId.Path);
+			RobustIO.DeleteDirectoryAndContents(Cache.ProjectId.Path);
 			base.FixtureTeardown();
 			m_application.Dispose();
 			m_window.Dispose();
@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			migrator.MigrateOldConfigurationsIfNeeded(); // SUT
 			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
 			Assert.AreEqual(DictionaryConfigurationMigrator.VersionCurrent, updatedConfigModel.Version);
-			DirectoryUtilities.DeleteDirectoryRobust(configSettingsDir);
+			RobustIO.DeleteDirectoryAndContents(configSettingsDir);
 		}
 
 		[Test]
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
 			Assert.AreEqual(2, updatedConfigModel.Parts.Count, "Should have 2 top-level nodes");
 			Assert.AreEqual("Main Entry", updatedConfigModel.Parts[0].Label);
-			DirectoryUtilities.DeleteDirectoryRobust(configSettingsDir);
+			RobustIO.DeleteDirectoryAndContents(configSettingsDir);
 		}
 
 		[Test]
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				++bibCount;
 			}
 			Assert.AreEqual(2, bibCount, "Should be exactly two Bibliography nodes (sense and entry)");
-			DirectoryUtilities.DeleteDirectoryRobust(configSettingsDir);
+			RobustIO.DeleteDirectoryAndContents(configSettingsDir);
 		}
 
 		[Test]

@@ -2335,7 +2335,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Directory.CreateDirectory(newRevIdxConfigLoc);
 			File.AppendAllText(Path.Combine(newRevIdxConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension), "Foo");
 			Assert.That(!m_migrator.ConfigsNeedMigratingFromPre83(), "If current configs exist no migration should be needed."); // SUT
-			DirectoryUtilities.DeleteDirectoryRobust(newRevIdxConfigLoc);
+			RobustIO.DeleteDirectoryAndContents(newRevIdxConfigLoc);
 		}
 
 		///<summary/>
@@ -2347,7 +2347,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Directory.CreateDirectory(newDictConfigLoc);
 			File.AppendAllText(Path.Combine(newDictConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension), "Foo");
 			Assert.That(!m_migrator.ConfigsNeedMigratingFromPre83(), "If current configs exist no migration should be needed."); // SUT
-			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
+			RobustIO.DeleteDirectoryAndContents(newDictConfigLoc);
 		}
 
 		///<summary/>
@@ -2359,7 +2359,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Directory.CreateDirectory(newDictConfigLoc);
 			Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
 			Assert.That(!m_migrator.ConfigsNeedMigratingFromPre83(), "With no new or old configs no migration should be needed."); // SUT
-			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
+			RobustIO.DeleteDirectoryAndContents(newDictConfigLoc);
 		}
 
 		///<summary/>
@@ -2376,7 +2376,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				File.AppendAllText(tempFwLayoutPath, "LayoutFoo");
 				Assert.That(m_migrator.ConfigsNeedMigratingFromPre83(), "There is an old config, a migration is needed."); // SUT
 			}
-			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
+			RobustIO.DeleteDirectoryAndContents(newDictConfigLoc);
 		}
 
 		/// <summary>

@@ -394,7 +394,7 @@ namespace SIL.FieldWorks.XWorks
 		protected override void DiscardProperties()
 		{
 			var tempDirectory = Path.Combine(Cache.ProjectId.ProjectFolder, LcmFileHelper.ksSortSequenceTempDir);
-			DirectoryUtilities.DeleteDirectoryRobust(tempDirectory);
+			RobustIO.DeleteDirectoryAndContents(tempDirectory);
 		}
 
 		public void ClearInvalidatedStoredData()
