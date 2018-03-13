@@ -12,6 +12,7 @@ using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
+using SIL.WritingSystems;
 using SIL.Xml;
 
 namespace LanguageExplorerTests.Controls.XMLViews
@@ -22,6 +23,29 @@ namespace LanguageExplorerTests.Controls.XMLViews
 	[TestFixture]
 	public class TestXmlViewsUtils : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+		#endregion
+
 		/// <summary>
 		/// Return true if the two nodes match. Corresponding children should match, and
 		/// corresponding attributes (though not necessarily in the same order).

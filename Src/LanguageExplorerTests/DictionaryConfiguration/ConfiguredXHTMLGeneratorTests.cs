@@ -30,6 +30,7 @@ using SIL.IO;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Impls;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
@@ -63,6 +64,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
 			base.FixtureSetup();
 ;
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
@@ -114,6 +121,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			_flexComponentParameters = null;
 
 			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
 		}
 
 		[SetUp]
@@ -5181,7 +5193,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 			finally
 			{
-				DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+				RobustIO.DeleteDirectoryAndContents(tempFolder.FullName);
 				File.Delete(filePath);
 			}
 		}
@@ -5218,7 +5230,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 			finally
 			{
-				DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+				RobustIO.DeleteDirectoryAndContents(tempFolder.FullName);
 			}
 		}
 
@@ -5280,7 +5292,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 			finally
 			{
-				DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+				RobustIO.DeleteDirectoryAndContents(tempFolder.FullName);
 				File.Delete(filePath1);
 				File.Delete(filePath2);
 			}
@@ -5332,7 +5344,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 			finally
 			{
-				SIL.IO.DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+				RobustIO.DeleteDirectoryAndContents(tempFolder.FullName);
 				File.Delete(filePath1);
 			}
 		}
@@ -5470,7 +5482,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 			finally
 			{
-				DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+				RobustIO.DeleteDirectoryAndContents(tempFolder.FullName);
 				File.Delete(fileName);
 			}
 		}

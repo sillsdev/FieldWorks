@@ -463,6 +463,28 @@ namespace LanguageExplorerTests.Controls.LexText
 		private Dictionary<String, int> m_customFieldAllomorphsIds = new Dictionary<String, int>();
 		private Dictionary<String, int> m_customFieldExampleSentencesIds = new Dictionary<String, int>();
 
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+
 		public override void TestSetup()
 		{
 			base.TestSetup();
@@ -495,6 +517,7 @@ namespace LanguageExplorerTests.Controls.LexText
 				m_audioWsCode = audioWs.Handle;
 			}
 		}
+		#endregion
 
 		private static string LiftFolder { get; set; }
 

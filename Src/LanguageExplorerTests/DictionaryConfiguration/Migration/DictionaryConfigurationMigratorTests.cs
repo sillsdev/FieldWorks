@@ -53,7 +53,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 
 		public override void TestTearDown()
 		{
-			DirectoryUtilities.DeleteDirectoryRobust(Cache.ProjectId.ProjectFolder);
+			RobustIO.DeleteDirectoryAndContents(Cache.ProjectId.ProjectFolder);
 			_flexComponentParameters.PropertyTable.Dispose();
 			_flexComponentParameters = null;
 
@@ -76,7 +76,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			DictionaryConfigurationServices.MigrateOldConfigurationsIfNeeded(Cache, _flexComponentParameters.PropertyTable); // SUT
 			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
 			Assert.AreEqual(DictionaryConfigurationServices.VersionCurrent, updatedConfigModel.Version);
-			DirectoryUtilities.DeleteDirectoryRobust(configSettingsDir);
+			RobustIO.DeleteDirectoryAndContents(configSettingsDir);
 		}
 
 #if RANDYTODO
@@ -103,7 +103,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
 			Assert.AreEqual(2, updatedConfigModel.Parts.Count, "Should have 2 top-level nodes");
 			Assert.AreEqual("Main Entry", updatedConfigModel.Parts[0].Label);
-			DirectoryUtilities.DeleteDirectoryRobust(configSettingsDir);
+			RobustIO.DeleteDirectoryAndContents(configSettingsDir);
 		}
 #endif
 
@@ -134,7 +134,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				++bibCount;
 			}
 			Assert.AreEqual(2, bibCount, "Should be exactly two Bibliography nodes (sense and entry)");
-			DirectoryUtilities.DeleteDirectoryRobust(configSettingsDir);
+			RobustIO.DeleteDirectoryAndContents(configSettingsDir);
 		}
 
 		[Test]

@@ -5,10 +5,9 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Text;
 using System.Windows.Forms;
 
-namespace SIL.ObjectBrowser
+namespace LCMBrowser
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -60,6 +59,7 @@ namespace SIL.ObjectBrowser
 			}
 		}
 
+		/// <summary />
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
@@ -528,8 +528,6 @@ namespace SIL.ObjectBrowser
 		/// <summary>
 		/// Gets the expand collapse rect.
 		/// </summary>
-		/// <param name="rcCell">The rc cell.</param>
-		/// <param name="obj">The obj.</param>
 		/// ------------------------------------------------------------------------------------
 		private Rectangle GetExpandCollapseRect(Rectangle rcCell, int level)
 		{
@@ -559,7 +557,7 @@ namespace SIL.ObjectBrowser
 			col = new DataGridViewTextBoxColumn();
 			col.HeaderText = "Value";
 			col.Name = "colValue";
-			if (ObjectBrowser.m_updateFlag == true)
+			if (LCMBrowserForm.m_updateFlag == true)
 				col.ReadOnly = false;
 			col.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 			col.FillWeight = 33;

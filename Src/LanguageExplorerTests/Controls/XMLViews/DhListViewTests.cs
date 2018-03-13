@@ -6,6 +6,7 @@ using LanguageExplorer.Controls.XMLViews;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Controls.XMLViews
 
@@ -14,17 +15,28 @@ namespace LanguageExplorerTests.Controls.XMLViews
 	[TestFixture]
 	public class DhListViewTests : MemoryOnlyBackendProviderTestBase
 	{
-		/// <summary/>
-		[SetUp]
-		public void SetUp()
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
 		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
 		}
 
-		/// <summary/>
-		[TearDown]
-		public void TearDown()
+		public override void FixtureTeardown()
 		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
 		}
+		#endregion
 
 		/// <summary/>
 		internal class FakeDhListView : DhListView

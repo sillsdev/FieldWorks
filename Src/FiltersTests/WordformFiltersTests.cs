@@ -7,12 +7,36 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.Filters
 {
 	[TestFixture]
 	public class WordformFiltersTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+		#endregion
+
 		[Test]
 		public void OnAdjustFilterSelection()
 		{

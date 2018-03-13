@@ -16,6 +16,7 @@ using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
+using SIL.WritingSystems;
 using SIL.Xml;
 
 namespace LanguageExplorerTests.Controls.DetailControls
@@ -69,6 +70,12 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		/// </summary>
 		public override void FixtureSetup()
 		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
 			base.FixtureSetup();
 
 			m_layouts = GenerateLayouts();
@@ -84,6 +91,20 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				m_entry.Bibliography.SetAnalysisDefaultWritingSystem("My rubbishy bibliography");
 				m_entry.Bibliography.SetVernacularDefaultWritingSystem("My rubbishy bibliography");
 			});
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+			if (Cache != null && Cache.MainCacheAccessor.MetaDataCache != null)
+			{
+				m_customField.Dispose();
+			}
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
 		}
 		#endregion
 
@@ -127,15 +148,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_subscriber = null;
 
 			base.TestTearDown();
-		}
-
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-			if (Cache != null && Cache.MainCacheAccessor.MetaDataCache != null)
-			{
-				m_customField.Dispose();
-			}
 		}
 		#endregion
 

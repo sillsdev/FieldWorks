@@ -615,7 +615,7 @@ namespace LanguageExplorerTests.Impls
 			}
 			finally
 			{
-				DirectoryUtilities.DeleteDirectoryRobust(tempDirectoryToCompress);
+				RobustIO.DeleteDirectoryAndContents(tempDirectoryToCompress);
 			}
 		}
 

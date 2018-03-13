@@ -1,4 +1,4 @@
-﻿namespace SIL.ObjectBrowser
+﻿namespace LCMBrowser
 {
 	partial class ColorPicker
 	{

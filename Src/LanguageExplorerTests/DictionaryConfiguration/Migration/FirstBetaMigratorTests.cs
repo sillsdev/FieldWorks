@@ -63,7 +63,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		public override void TestTearDown()
 		{
 			_flexComponentParameters.PropertyTable.Dispose();
-			DirectoryUtilities.DeleteDirectoryRobust(Cache.ProjectId.Path);
+			RobustIO.DeleteDirectoryAndContents(Cache.ProjectId.Path);
 			_logger.Dispose();
 			_flexComponentParameters = null;
 			_logger = null;

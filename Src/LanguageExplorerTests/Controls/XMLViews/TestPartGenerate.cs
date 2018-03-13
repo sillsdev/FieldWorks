@@ -10,6 +10,7 @@ using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using SIL.WritingSystems;
 using SIL.Xml;
 
 namespace LanguageExplorerTests.Controls.XMLViews
@@ -25,6 +26,12 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		/// </summary>
 		public override void FixtureSetup()
 		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
 			base.FixtureSetup();
 
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
@@ -38,6 +45,16 @@ namespace LanguageExplorerTests.Controls.XMLViews
 				custom.Userlabel = "MyRestrictions";
 				custom.UpdateCustomField();
 			});
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
 		}
 
 		/// <summary>

@@ -19,11 +19,33 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 {
 	class BIRDFormatImportTests : MemoryOnlyBackendProviderTestBase
 	{
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
 		public override void TestTearDown()
 		{
 			base.TestTearDown();
@@ -34,6 +56,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 						text.Delete();
 				});
 		}
+		#endregion
 
 		[Test]
 		public void ValidateBirdDocSchema()

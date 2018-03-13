@@ -10,6 +10,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
 using SIL.LCModel.Core.Text;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.Grammar
 {
@@ -20,6 +21,12 @@ namespace LanguageExplorerTests.Areas.Grammar
 		[SetUp]
 		public void TestSetup()
 		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
 			Cache = LcmCache.CreateCacheWithNewBlankLangProj(new TestProjectId(BackendProviderType.kMemoryOnly, null),
 				"en", "fr", "en", new DummyLcmUI(), FwDirectoryFinder.LcmDirectories, new LcmSettings());
 			var loader = new XmlList();
@@ -38,6 +45,11 @@ namespace LanguageExplorerTests.Areas.Grammar
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			Cache.Dispose();
 			Cache = null;
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
 		}
 
 		[Test]

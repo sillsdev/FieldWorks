@@ -33,10 +33,10 @@ namespace LanguageExplorerTests
 		//at any one time.
 		protected abstract void FixtureInit();
 
+		#region Overrides of LcmTestBase
 		/// <summary>
 		/// Instantiate a XWorksAppTestBase object.
 		/// </summary>
-		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
 			if (!Sldr.IsInitialized)
@@ -54,7 +54,6 @@ namespace LanguageExplorerTests
 			SetupFactoriesAndRepositories();
 		}
 
-		#region Overrides of LcmTestBase
 		public override void FixtureTeardown()
 		{
 			base.FixtureTeardown();

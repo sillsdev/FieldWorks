@@ -9,6 +9,7 @@ using LanguageExplorer.Controls.LexText;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Controls.LexText
 {
@@ -18,7 +19,27 @@ namespace LanguageExplorerTests.Controls.LexText
 	[TestFixture]
 	public class MsaInflectionFeatureListDlgTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		#region Test setup
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
 		protected override void CreateTestData()
 		{
 			base.CreateTestData();

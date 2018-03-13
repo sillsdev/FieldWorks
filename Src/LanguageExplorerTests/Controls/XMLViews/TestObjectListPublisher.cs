@@ -9,6 +9,7 @@ using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Infrastructure.Impl;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Controls.XMLViews
 {
@@ -16,6 +17,29 @@ namespace LanguageExplorerTests.Controls.XMLViews
 	public class TestObjectListPublisher : MemoryOnlyBackendProviderTestBase
 	{
 		private const int ObjectListFlid = 89999956;
+
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+		#endregion
 
 		[Test]
 		public void SetAndAccessDummyList()

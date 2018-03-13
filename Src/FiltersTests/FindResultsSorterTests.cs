@@ -8,19 +8,47 @@ using NUnit.Framework;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.Filters
 {
-	class FindResultsSorterTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	[TestFixture]
+	public class FindResultsSorterTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private int m_CitationFlid;
 		private int m_DefinitionFlid;
-		[SetUp]
-		public void SetUp()
+
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
 		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+
+		public override void TestSetup()
+		{
+			base.TestSetup();
+
 			m_CitationFlid = LexEntryTags.kflidCitationForm;
 			m_DefinitionFlid = LexSenseTags.kflidDefinition;
 		}
+
+		#endregion
 
 		[Test]
 		public void SortIsAlphabeticalForNullSearchString()

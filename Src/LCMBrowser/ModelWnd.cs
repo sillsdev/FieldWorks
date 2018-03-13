@@ -11,7 +11,6 @@ using WeifenLuo.WinFormsUI.Docking;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Core.Cellar;
-using SIL.ObjectBrowser;
 
 namespace LCMBrowser
 {
@@ -176,7 +175,7 @@ namespace LCMBrowser
 			for (var i = fields.Length - 1; i >= 0; --i)
 			{
 				var flid = fields[i];
-				if (flid == 0 || (ObjectBrowser.m_virtualFlag == false && (flid >= 20000000 && flid < 30000000)))
+				if (flid == 0 || (LCMBrowserForm.m_virtualFlag == false && (flid >= 20000000 && flid < 30000000)))
 				{
 					// Keep looking for suitable flids lower in the array.
 					continue;

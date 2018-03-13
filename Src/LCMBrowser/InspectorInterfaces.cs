@@ -3,10 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace SIL.ObjectBrowser
+namespace LCMBrowser
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

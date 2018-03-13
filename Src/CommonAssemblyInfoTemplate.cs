@@ -1,5 +1,5 @@
 ﻿/*----------------------------------------------------------------------------------------------
-Copyright (c) 2002-2013 SIL International
+Copyright (c) 2002-2018 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,8 +15,6 @@ with appropriate values, typically version numbers, by a custom build task
 Other directives are merely here because we want them to be the same for all FieldWorks projects.
 ----------------------------------------------------------------------------------------------*/
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]

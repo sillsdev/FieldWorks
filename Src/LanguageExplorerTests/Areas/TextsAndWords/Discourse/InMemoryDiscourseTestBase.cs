@@ -4,6 +4,7 @@
 
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using SIL.LCModel;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 {
@@ -18,7 +19,27 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		internal IStTxtPara m_firstPara;
 		internal DiscourseTestHelper m_helper;
 
-		#region Test setup
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -38,6 +59,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_helper = null;
 			base.TestTearDown();
 		}
+		#endregion
+
 		/// <summary>
 		/// Make and parse a new unique paragraph and append it to the current text.
 		/// </summary>
@@ -60,8 +83,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		{
 			return new ChartLocation(row, icol);
 		}
-
-		#endregion
 
 		#region test data creation
 

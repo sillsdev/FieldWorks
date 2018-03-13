@@ -63,6 +63,36 @@ namespace LCMBrowser.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap kimidArrangeInline {
+            get {
+                object obj = ResourceManager.GetObject("kimidArrangeInline", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap kimidCollapse {
+            get {
+                object obj = ResourceManager.GetObject("kimidCollapse", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap kimidExpand {
+            get {
+                object obj = ResourceManager.GetObject("kimidExpand", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap kimidLCMModel {
             get {
                 object obj = ResourceManager.GetObject("kimidLCMModel", resourceCulture);
@@ -73,9 +103,49 @@ namespace LCMBrowser.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap kimidOpenPRoject {
+            get {
+                object obj = ResourceManager.GetObject("kimidOpenPRoject", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap kimidShowCmObjectProperties {
             get {
                 object obj = ResourceManager.GetObject("kimidShowCmObjectProperties", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap kimidShowObjectInNewWindow {
+            get {
+                object obj = ResourceManager.GetObject("kimidShowObjectInNewWindow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap kimidTileHorizontally {
+            get {
+                object obj = ResourceManager.GetObject("kimidTileHorizontally", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap kimidTileVertically {
+            get {
+                object obj = ResourceManager.GetObject("kimidTileVertically", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

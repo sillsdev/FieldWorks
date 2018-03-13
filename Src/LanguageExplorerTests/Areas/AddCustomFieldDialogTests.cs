@@ -6,6 +6,7 @@ using System.Linq;
 using LanguageExplorer.Areas;
 using NUnit.Framework;
 using SIL.LCModel;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas
 {
@@ -15,6 +16,29 @@ namespace LanguageExplorerTests.Areas
 	[TestFixture]
 	public class AddCustomFieldDialogTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+		#endregion
+
 		/// <summary>
 		/// Test the code that populates the Lists combo.
 		/// </summary>

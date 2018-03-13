@@ -8,6 +8,7 @@ using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Controls.DetailControls
 {
@@ -30,6 +31,28 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		private IMoMorphType m_stem;
 		internal MockAtomicReferenceLauncher MockLauncher { get; set; }
 
+		#endregion
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
 		#endregion
 
 		protected override void CreateTestData()

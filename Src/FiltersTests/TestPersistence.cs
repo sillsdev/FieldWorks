@@ -14,6 +14,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -28,6 +29,12 @@ namespace SIL.FieldWorks.Filters
 
 		public override void FixtureSetup()
 		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
 			base.FixtureSetup();
 
 			m_sda = Cache.DomainDataByFlid;
@@ -39,6 +46,11 @@ namespace SIL.FieldWorks.Filters
 			m_objectsToDispose.Dispose();
 
 			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
 		}
 
 		// Checklist of classes we need to test
@@ -391,10 +403,30 @@ namespace SIL.FieldWorks.Filters
 		private ILexEntry m_le1;
 		private ILexEntry m_le2;
 
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+
 		public override void TestSetup()
 		{
 			base.TestSetup();
-
 
 			IManyOnePathSortItem mopsi = new ManyOnePathSortItem(Cache.LangProject);
 			m_list = new ArrayList();

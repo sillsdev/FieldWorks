@@ -123,6 +123,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ScriptureUtils.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.LCModel">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
@@ -260,10 +264,6 @@
     <Reference Include="SIL.Archiving">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\SIL.Archiving.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Windows.Forms.Keyboarding">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\SIL.Windows.Forms.Keyboarding.dll</HintPath>
     </Reference>
     <Reference Include="SIL.WritingSystems">
       <SpecificVersion>False</SpecificVersion>

@@ -465,12 +465,38 @@ namespace LanguageExplorerTests.Controls.LexText
 		private ISilDataAccessManaged m_sda;
 
 		#region Setup and Helper Methods
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+
+		public override void TestSetup()
+		{
+			base.TestSetup();
+
+			CreateMockCache();
+		}
 
 		/// <summary>
 		/// Setup method: create a memory-only mock cache and empty language project.
 		/// </summary>
-		[SetUp]
-		public void CreateMockCache()
+		private void CreateMockCache()
 		{
 			m_mapSemanticDomains.Clear();
 			m_mapPartsOfSpeech.Clear();

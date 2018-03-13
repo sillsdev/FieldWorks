@@ -281,7 +281,7 @@ namespace LanguageExplorer.Impls
 		private void DiscardProperties()
 		{
 			var tempDirectory = Path.Combine(Cache.ProjectId.ProjectFolder, LcmFileHelper.ksSortSequenceTempDir);
-			DirectoryUtilities.DeleteDirectoryRobust(tempDirectory);
+			RobustIO.DeleteDirectoryAndContents(tempDirectory);
 		}
 
 		private void SetupOutlookBar()

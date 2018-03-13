@@ -22,6 +22,28 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		private ISubscriber m_subscriber;
 		private IPropertyTable m_propertyTable;
 
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Override to start an undoable UOW.
@@ -49,6 +71,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 
 			base.TestTearDown();
 		}
+		#endregion
 
 		[Test]
 		public void BeginCssClassIfNeeded_UsesSafeClasses()

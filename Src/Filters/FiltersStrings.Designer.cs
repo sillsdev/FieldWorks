@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.Filters {
 		internal static global::System.Resources.ResourceManager ResourceManager {
 			get {
 				if (object.ReferenceEquals(resourceMan, null)) {
-					global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SIL.FieldWorks.Filters.FiltersStrings", typeof(FiltersStrings).Assembly);
+					global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("LanguageExplorer.Filters.FiltersStrings", typeof(FiltersStrings).Assembly);
 					resourceMan = temp;
 				}
 				return resourceMan;

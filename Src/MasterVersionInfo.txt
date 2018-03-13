@@ -1,4 +1,4 @@
 FWMAJOR=10
 FWMINOR=0
 FWREVISION=0
-FWBETAVERSION=Pre-Alpha Wannabe: Remove Mediator
+FWBETAVERSION=Pre-Alpha Wannabe-Remove Mediator

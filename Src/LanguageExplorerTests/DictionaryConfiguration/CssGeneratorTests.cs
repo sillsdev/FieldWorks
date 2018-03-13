@@ -23,6 +23,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
@@ -54,6 +55,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
 			base.FixtureSetup();
 
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
@@ -73,6 +80,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			_owningTable = null;
 
 			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
 		}
 
 		[SetUp]

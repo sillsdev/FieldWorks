@@ -11,6 +11,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 {
@@ -26,15 +27,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		private VwEnvSpy m_spy;
 		private char m_PDF = '\x202C';
 
-		[SetUp]
-		public void CreateTestDecorator()
+		#region Overrides of MemoryOnlyBackendProviderRestoredForEachTestTestBase
+		public override void TestSetup()
 		{
+			base.TestSetup();
+
 			m_spy = new VwEnvSpy();
 		}
-
-		#region Verification and Setup Methods
-
-
 		#endregion
 
 		///--------------------------------------------------------------------------------------

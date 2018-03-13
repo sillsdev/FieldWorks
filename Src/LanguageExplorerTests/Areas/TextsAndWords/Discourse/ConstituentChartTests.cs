@@ -6,6 +6,7 @@ using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 {
@@ -34,6 +35,29 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 	[TestFixture]
 	public class ConstituentChartTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+		#endregion
+
 		/// <summary/>
 		[Test]
 		public void Basic()

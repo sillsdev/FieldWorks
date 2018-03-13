@@ -12,6 +12,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Controls.XMLViews
 {
@@ -514,11 +515,32 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		private IPublisher m_publisher;
 		private ISubscriber m_subscriber;
 		private IPropertyTable m_propertyTable;
-
-		/// <summary/>
-		[SetUp]
-		public void SetUp()
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
 		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+
+		public override void TestSetup()
+		{
+			base.TestSetup();
+
 			m_propertyTable = TestSetupServices.SetupTestTriumvirate(out m_publisher, out m_subscriber);
 			var bv = new FakeBrowseViewer();
 			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
@@ -528,18 +550,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			ConfigureScrollBars();
 		}
 
-		private void ConfigureScrollBars()
-		{
-			// AdjustControls ends up getting called when running Flex
-			ReflectionHelper.CallMethod(m_view.m_bv, "AdjustControls");
-
-			var sizeRequestedBySRSUpdateScrollRange = new Size(m_view.AutoScrollMinSize.Width, m_view.GetScrollRange().Height);
-			m_view.ScrollMinSize = sizeRequestedBySRSUpdateScrollRange;
-		}
-
-		/// <summary/>
-		[TearDown]
-		public void TearDown()
+		public override void TestTearDown()
 		{
 			m_view.m_bv.Dispose();
 
@@ -550,6 +561,18 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 			m_publisher = null;
 			m_subscriber = null;
+
+			base.TestTearDown();
+		}
+		#endregion
+
+		private void ConfigureScrollBars()
+		{
+			// AdjustControls ends up getting called when running Flex
+			ReflectionHelper.CallMethod(m_view.m_bv, "AdjustControls");
+
+			var sizeRequestedBySRSUpdateScrollRange = new Size(m_view.AutoScrollMinSize.Width, m_view.GetScrollRange().Height);
+			m_view.ScrollMinSize = sizeRequestedBySRSUpdateScrollRange;
 		}
 
 		/// <summary>

@@ -17,6 +17,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
@@ -48,6 +49,17 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private string _pathToConfiguration;
 		private string _reversalPathToConfiguration;
 
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
@@ -60,6 +72,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Directory.Delete(_reversalProjectConfigPath, true);
 
 			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
 		}
 
 		[SetUp]

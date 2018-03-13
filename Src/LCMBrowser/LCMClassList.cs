@@ -24,12 +24,18 @@ namespace LCMBrowser
 		/// </summary>
 		static LCMClassList()
 		{
-			s_settingFileName = System.Windows.Forms.Application.LocalUserAppDataPath;
-			s_settingFileName = Path.Combine(s_settingFileName, "ClassSettings.xml");
+			try
+			{
+				s_settingFileName = Path.Combine(System.Windows.Forms.Application.LocalUserAppDataPath, "ClassSettings.xml");
 
-			FindLCMAssembly();
-			LoadAllLCMClasses();
-			LoadCmObjectProperties();
+				FindLCMAssembly();
+				LoadAllLCMClasses();
+				LoadCmObjectProperties();
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+			}
 		}
 
 		/// <summary>

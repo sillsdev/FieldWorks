@@ -16,6 +16,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.TestUtilities;
+using SIL.WritingSystems;
 using SIL.Xml;
 
 namespace LanguageExplorerTests.Controls.DetailControls
@@ -26,6 +27,29 @@ namespace LanguageExplorerTests.Controls.DetailControls
 	[TestFixture]
 	public class SliceFactoryTests : DeleteCustomListTestsBase
 	{
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+		#endregion
+
 		/// <summary>
 		/// SetConfigurationDisplayPropertyIfNeeded should set a displayProperty attribute in the configuration node.
 		/// </summary>

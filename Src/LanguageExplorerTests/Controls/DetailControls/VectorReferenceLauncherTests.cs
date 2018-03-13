@@ -10,6 +10,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Controls.DetailControls
 {
@@ -34,6 +35,37 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		internal MockVectorReferenceLauncher MockLauncher { get; set; }
 
 		#endregion
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+
+		public override void TestTearDown()
+		{
+			MockLauncher.Dispose();
+			m_propertyTable.Dispose();
+			m_propertyTable = null;
+			m_publisher = null;
+			m_subscriber = null;
+			base.TestTearDown();
+		}
 
 		protected override void CreateTestData()
 		{
@@ -53,16 +85,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_noun = GetNounPOS();
 			m_stem = GetStemMorphType();
 		}
-
-		public override void TestTearDown()
-		{
-			MockLauncher.Dispose();
-			m_propertyTable.Dispose();
-			m_propertyTable = null;
-			m_publisher = null;
-			m_subscriber = null;
-			base.TestTearDown();
-		}
+		#endregion
 
 		private IPartOfSpeech GetNounPOS()
 		{

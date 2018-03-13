@@ -11,6 +11,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
+using SIL.WritingSystems;
 using FS = System.Collections.Generic.Dictionary<SIL.LCModel.IFsFeatDefn, object>;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
@@ -26,39 +27,62 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		private readonly IEqualityComparer<IParaFragment> m_fragmentComparer = new ParaFragmentEqualityComparer();
 		private IFsFeatStrucType m_inflType;
 
-		protected override void CreateTestData()
-				{
-					m_noun = MakePartOfSpeech("noun");
-					m_verb = MakePartOfSpeech("verb");
-					m_adj = MakePartOfSpeech("adj");
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
 
-					IFsFeatureSystem msFeatSys = Cache.LanguageProject.MsFeatureSystemOA;
-					m_inflType = AddFSType(msFeatSys, "infl",
-						AddComplexFeature(msFeatSys, "nounAgr", AddClosedFeature(msFeatSys, "num", "sg", "pl")),
-						AddClosedFeature(msFeatSys, "tense", "pres"));
-
-					m_np = Cache.LangProject.GetDefaultTextTagList().ReallyReallyAllPossibilities.Single(poss => poss.Abbreviation.BestAnalysisAlternative.Text == "Noun Phrase");
-
-					ILexEntry ni = MakeEntry("ni-", m_verb, "1SgSubj");
-					ILexEntry him = MakeEntry("him-", m_verb, "3SgObj");
-					ILexEntry bili = MakeEntry("bili", m_verb, "to see");
-					ILexEntry ra = MakeEntry("-ra", m_verb, "Pres", new FS {{GetFeature("tense"), GetValue("pres")}});
-
-					ILexEntry pus = MakeEntry("pus", m_adj, "green");
-
-					ILexEntry yalo = MakeEntry("yalo", m_noun, "mat");
-					ILexEntry la = MakeEntry("-la", m_noun, "1SgPoss", new FS {{GetFeature("nounAgr"), new FS {{GetFeature("num"), GetValue("sg")}}}});
-
-					MakeWordform("nihimbilira", "I see", m_verb, ni, him, bili, ra);
-					MakeWordform("pus", "green", m_adj, pus);
-					MakeWordform("yalola", "my mat", m_noun, yalo, la);
-					MakeWordform("ban", "test", MakePartOfSpeech("pos"));
-
-					m_text = MakeText("nihimbilira pus, yalola ban.");
-
-					var para = (IStTxtPara) m_text.ContentsOA.ParagraphsOS.First();
-					MakeTag(m_text, m_np, para.SegmentsOS.First(), 1, para.SegmentsOS.First(), 3);
+			base.FixtureSetup();
 		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+
+		protected override void CreateTestData()
+		{
+			m_noun = MakePartOfSpeech("noun");
+			m_verb = MakePartOfSpeech("verb");
+			m_adj = MakePartOfSpeech("adj");
+
+			IFsFeatureSystem msFeatSys = Cache.LanguageProject.MsFeatureSystemOA;
+			m_inflType = AddFSType(msFeatSys, "infl",
+				AddComplexFeature(msFeatSys, "nounAgr", AddClosedFeature(msFeatSys, "num", "sg", "pl")),
+				AddClosedFeature(msFeatSys, "tense", "pres"));
+
+			m_np = Cache.LangProject.GetDefaultTextTagList().ReallyReallyAllPossibilities.Single(poss => poss.Abbreviation.BestAnalysisAlternative.Text == "Noun Phrase");
+
+			ILexEntry ni = MakeEntry("ni-", m_verb, "1SgSubj");
+			ILexEntry him = MakeEntry("him-", m_verb, "3SgObj");
+			ILexEntry bili = MakeEntry("bili", m_verb, "to see");
+			ILexEntry ra = MakeEntry("-ra", m_verb, "Pres", new FS { { GetFeature("tense"), GetValue("pres") } });
+
+			ILexEntry pus = MakeEntry("pus", m_adj, "green");
+
+			ILexEntry yalo = MakeEntry("yalo", m_noun, "mat");
+			ILexEntry la = MakeEntry("-la", m_noun, "1SgPoss", new FS { { GetFeature("nounAgr"), new FS { { GetFeature("num"), GetValue("sg") } } } });
+
+			MakeWordform("nihimbilira", "I see", m_verb, ni, him, bili, ra);
+			MakeWordform("pus", "green", m_adj, pus);
+			MakeWordform("yalola", "my mat", m_noun, yalo, la);
+			MakeWordform("ban", "test", MakePartOfSpeech("pos"));
+
+			m_text = MakeText("nihimbilira pus, yalola ban.");
+
+			var para = (IStTxtPara)m_text.ContentsOA.ParagraphsOS.First();
+			MakeTag(m_text, m_np, para.SegmentsOS.First(), 1, para.SegmentsOS.First(), 3);
+		}
+		#endregion
 
 		private IFsClosedFeature AddClosedFeature(IFsFeatureSystem featSys, string name, params string[] values)
 		{

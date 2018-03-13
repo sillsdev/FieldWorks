@@ -14,6 +14,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 {
@@ -27,6 +28,38 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 	{
 		private MemoryStream m_Stream;
 
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
+
+		public override void TestTearDown()
+		{
+			if (m_Stream != null)
+				m_Stream.Dispose();
+			m_Stream = null;
+			base.TestTearDown();
+		}
+
+		#endregion
+
 		private ImportInterlinearOptions CreateImportInterlinearOptions(string xml)
 		{
 			m_Stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray()));
@@ -38,14 +71,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					Progress = new DummyProgressDlg(),
 					AllottedProgress = 0
 				};
-		}
-
-		public override void TestTearDown()
-		{
-			if (m_Stream != null)
-				m_Stream.Dispose();
-			m_Stream = null;
-			base.TestTearDown();
 		}
 
 		[Test]

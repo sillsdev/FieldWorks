@@ -14,7 +14,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.ObjectBrowser;
 
 namespace LCMBrowser
 {
@@ -124,7 +123,7 @@ namespace LCMBrowser
 				return GetInspectorObjectsForMultiString(tmpObj as IMultiAccessorBase, io, level);
 			}
 
-			if (ObjectBrowser.m_virtualFlag == false && io != null && io.ParentInspectorObject != null &&
+			if (LCMBrowserForm.m_virtualFlag == false && io != null && io.ParentInspectorObject != null &&
 				io.ParentInspectorObject.DisplayName == "Values" &&
 				io.ParentInspectorObject.ParentInspectorObject.DisplayType == "MultiUnicodeAccessor")
 			{
@@ -136,12 +135,12 @@ namespace LCMBrowser
 				return GetInspectorObjectsForTsString(tmpObj as ITsString, io, level);
 			}
 
-			if (ObjectBrowser.m_virtualFlag == false && tmpObj is TextProps)
+			if (LCMBrowserForm.m_virtualFlag == false && tmpObj is TextProps)
 			{
 				return GetInspectorObjectsForTextProps(tmpObj as TextProps, io, level);
 			}
 
-			if (ObjectBrowser.m_virtualFlag == false && io != null && io.DisplayName == "Values" &&
+			if (LCMBrowserForm.m_virtualFlag == false && io != null && io.DisplayName == "Values" &&
 				(io.ParentInspectorObject.DisplayType == "MultiUnicodeAccessor" ||
 				 io.ParentInspectorObject.DisplayType == "MultiStringAccessor"))
 			{
@@ -164,13 +163,13 @@ namespace LCMBrowser
 			{
 				var io = CreateInspectorObject(instance, obj, ioParent, level);
 
-				if (ObjectBrowser.m_virtualFlag == false && obj.ToString().IndexOf("LexSenseRepository") > 0)
+				if (LCMBrowserForm.m_virtualFlag == false && obj.ToString().IndexOf("LexSenseRepository") > 0)
 				{
 					var tmpObj = io.Object as ILexSense;
 					io.DisplayValue = tmpObj.FullReferenceName.Text;
 					io.DisplayName = $"[{i++}]: {GetObjectOnly(tmpObj.ToString())}";
 				}
-				else if (ObjectBrowser.m_virtualFlag == false && obj.ToString().IndexOf("LexEntryRepository") > 0 )
+				else if (LCMBrowserForm.m_virtualFlag == false && obj.ToString().IndexOf("LexEntryRepository") > 0 )
 				{
 					var tmpObj = io.Object as ILexEntry;
 					io.DisplayValue = tmpObj.HeadWord.Text;
@@ -213,7 +212,7 @@ namespace LCMBrowser
 		/// </summary>
 		private List<IInspectorObject> GetInspectorObjectsForMultiString(IMultiAccessorBase msa, IInspectorObject ioParent, int level)
 		{
-			var list = ObjectBrowser.m_virtualFlag ? BaseGetInspectorObjects(msa, level) : GetMultiStringInspectorObjects(msa, ioParent, level);
+			var list = LCMBrowserForm.m_virtualFlag ? BaseGetInspectorObjects(msa, level) : GetMultiStringInspectorObjects(msa, ioParent, level);
 			var allStrings = new Dictionary<int, string>();
 			try
 			{
@@ -228,7 +227,7 @@ namespace LCMBrowser
 			}
 			catch { }
 
-			if (!ObjectBrowser.m_virtualFlag)
+			if (!LCMBrowserForm.m_virtualFlag)
 			{
 				return list;
 			}
@@ -315,7 +314,7 @@ namespace LCMBrowser
 			io.HasChildren = (tssriList.Count > 0);
 			list.Add(io);
 
-			if (!ObjectBrowser.m_virtualFlag)
+			if (!LCMBrowserForm.m_virtualFlag)
 			{
 				return list;
 			}
@@ -724,20 +723,20 @@ namespace LCMBrowser
 				}
 				else
 				{
-					if (ObjectBrowser.m_virtualFlag == false)
+					if (LCMBrowserForm.m_virtualFlag == false)
 					{
 						props.RemoveAt(i);
 						continue;
 					}
 				}
 
-				if (ObjectBrowser.m_virtualFlag == false && flid >= 20000000 && flid < 30000000)
+				if (LCMBrowserForm.m_virtualFlag == false && flid >= 20000000 && flid < 30000000)
 				{
 					props.RemoveAt(i);
 					continue;
 				}
 
-				if (ObjectBrowser.m_virtualFlag == false && m_mdc.get_IsVirtual(flid))
+				if (LCMBrowserForm.m_virtualFlag == false && m_mdc.get_IsVirtual(flid))
 				{
 					props.RemoveAt(i);
 				}

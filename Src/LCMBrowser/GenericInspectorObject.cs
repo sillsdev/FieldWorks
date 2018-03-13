@@ -9,7 +9,7 @@ using System.Text;
 using System.Reflection;
 using System.Collections;
 
-namespace SIL.ObjectBrowser
+namespace LCMBrowser
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -291,9 +291,6 @@ namespace SIL.ObjectBrowser
 		/// <summary>
 		/// Creates an inspector object for an exception.
 		/// </summary>
-		/// <param name="e">The exception</param>
-		/// <param name="obj">The object.</param>
-		/// <param name="level">The indentation level.</param>
 		/// ------------------------------------------------------------------------------------
 		protected IInspectorObject CreateExceptionInspectorObject(Exception e,
 			object obj, string propName, int level, IInspectorObject ioParent)

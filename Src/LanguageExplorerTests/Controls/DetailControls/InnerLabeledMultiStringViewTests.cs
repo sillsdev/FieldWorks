@@ -11,6 +11,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Controls.DetailControls
 {
@@ -21,11 +22,29 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		private int m_wsEn;
 		private int m_wsFr;
 
-		[TestFixtureSetUp]
-		public void SetUpFixture()
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
 		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+
 			m_wsEn = Cache.WritingSystemFactory.get_Engine("en-US").Handle;
 			m_wsFr = Cache.WritingSystemFactory.get_Engine("fr").Handle;
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
 		}
 
 		[SetUp]
@@ -34,6 +53,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_tss = TsStringSerializer.DeserializeTsStringFromXml("<AStr ws='en-US'><Run ws='en-US'>English</Run><Run ws='fr'>french</Run><Run ws='en-US'>English</Run></AStr>",
 				Cache.ServiceLocator.GetInstance<WritingSystemManager>());
 		}
+		#endregion
 
 		[Test]
 		public void PasteIntoStringFieldDoesNotFlattenWsStyle()

@@ -9,6 +9,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 {
@@ -21,8 +22,27 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
 		private ISubscriber m_subscriber;
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
 
-		#region Overrides of MemoryOnlyBackendProviderRestoredForEachTestTestBase
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -53,7 +73,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			m_subscriber = null;
 			base.TestTearDown();
 		}
-
 		#endregion
 
 		/// <summary>

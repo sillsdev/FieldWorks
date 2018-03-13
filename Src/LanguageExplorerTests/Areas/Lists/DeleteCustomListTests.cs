@@ -12,6 +12,7 @@ using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.Areas.Lists
 {
@@ -28,6 +29,29 @@ namespace LanguageExplorerTests.Areas.Lists
 		internal DeleteListHelper m_helper;
 		protected int m_userWs;
 
+		#endregion
+
+		#region Overrides of LcmTestBase
+		public override void FixtureSetup()
+		{
+			if (!Sldr.IsInitialized)
+			{
+				// initialize the SLDR
+				Sldr.Initialize();
+			}
+
+			base.FixtureSetup();
+		}
+
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+
+			if (Sldr.IsInitialized)
+			{
+				Sldr.Cleanup();
+			}
+		}
 		#endregion
 
 		protected override void CreateTestData()
