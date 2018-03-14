@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2017 SIL International
+﻿// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -808,7 +808,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return GenerateXHTMLForGroupingNode(field, config, publicationDecorator, settings);
 			}
-			else if (config.IsCustomField && config.SubField == null)
+			if (config.FieldDescription == "DefinitionOrGloss")
+			{
+				return GenerateXHTMLForDefinitionOrGloss(field as ILexSense, config, settings);
+			}
+			if (config.IsCustomField && config.SubField == null)
 			{
 				var customFieldOwnerClassName = GetClassNameForCustomFieldParent(config, settings.Cache);
 				if (!GetPropValueForCustomField(field, config, cache, customFieldOwnerClassName, config.FieldDescription, ref propertyValue))
@@ -1283,6 +1287,30 @@ namespace SIL.FieldWorks.XWorks
 				filePath = MakeSafeFilePath(audioVisualFile);
 			}
 			return settings.UseRelativePaths ? filePath : new Uri(filePath).ToString();
+		}
+
+		private static string GenerateXHTMLForDefinitionOrGloss(ILexSense sense, ConfigurableDictionaryNode config, GeneratorSettings settings)
+		{
+			var wsOption = config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			if (wsOption == null)
+				throw new ArgumentException(@"Configuration nodes for MultiString fields whould have WritingSystemOptions", "config");
+			var bldr = new StringBuilder();
+			foreach (var option in wsOption.Options)
+			{
+				if (option.IsEnabled)
+				{
+					int wsId;
+					ITsString bestString = sense.GetDefinitionOrGloss(option.Id, out wsId);
+					if (bestString != null)
+					{
+						var contentItem = GenerateWsPrefixAndString(config, settings, wsOption, wsId, bestString, Guid.Empty);
+						bldr.Append(contentItem);
+					}
+				}
+			}
+			if (bldr.Length > 0)
+				return WriteRawElementContents("span", bldr.ToString(), config);
+			return String.Empty;
 		}
 
 		private static string CopyFileSafely(GeneratorSettings settings, string source, string relativeDestination)

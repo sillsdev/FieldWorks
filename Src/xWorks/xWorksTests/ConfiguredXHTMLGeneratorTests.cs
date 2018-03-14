@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -1280,6 +1280,34 @@ namespace SIL.FieldWorks.XWorks
 			const string senseWithdefinitionOrGloss =
 				"//span[@class='sense']/span[@class='definitionorgloss']/span[@class='writingsystemprefix' and normalize-space(text())='Eng']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseWithdefinitionOrGloss, 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_DefinitionOrGloss_HandlePerWS()
+		{
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en", "es" });
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				Children = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode { FieldDescription = "DefinitionOrGloss", DictionaryNodeOptions = wsOpts }
+				}
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { senses },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entryOne = CreateInterestingLexEntry(Cache);
+			var wsEs = EnsureWritingSystemSetup(Cache, "es", false);
+			entryOne.SensesOS.First().Definition.set_String(wsEs, "definition");
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
+			const string senseWithdefinitionOrGlossTwoWs = "//span[@class='sense']/span[@class='definitionorgloss' and span[1]='gloss' and span[2]='definition']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseWithdefinitionOrGlossTwoWs, 1);
 		}
 
 		[Test]
