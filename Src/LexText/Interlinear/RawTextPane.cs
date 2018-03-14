@@ -36,6 +36,7 @@ namespace SIL.FieldWorks.IText
 		private int m_lastFoundAnnotationHvo = 0;
 		private ShowSpaceDecorator m_showSpaceDa;
 		private bool m_fClickInsertsZws; // true for the special mode where click inserts a zero-width space
+		private int m_lastWidth;
 		/// <summary>
 		/// this is the clerk, if any, that determines the text for our control.
 		/// </summary>
@@ -503,13 +504,20 @@ namespace SIL.FieldWorks.IText
 
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
-			if (Parent == null)
-				return; // width is meaningless, no point in doing extra work
+			if (string.IsNullOrEmpty(Parent?.Text) || m_lastWidth == Parent.Width)
+			{
+				// width is meaningless or has already been calculated; no point in doing extra work
+				return;
+			}
 			// In a tab page this panel occupies the whole thing, so layout is wasted until
 			// our size is adjusted to match.
 			if (Parent is TabPage && (Parent.Width - Parent.Padding.Horizontal) != this.Width)
+			{
 				return;
-			base.OnLayout (levent);
+			}
+			//Save width avoid extra layout calls
+			m_lastWidth = Parent.Width;
+			base.OnLayout(levent);
 		}
 
 
