@@ -97,10 +97,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Downloads\ExCSS.dll</HintPath>
     </Reference>
-    <Reference Include="Filters, Version=10.0.0.14010, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Filters.dll</HintPath>
-    </Reference>
     <Reference Include="Framework, Version=10.0.0.14012, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\Framework.dll</HintPath>
@@ -239,6 +235,11 @@
       <DependentUpon>XmlViewsResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\GlossToolLoadsGuessContentsTests.cs" />
+    <Compile Include="Filters\DateTimeMatcherTests.cs" />
+    <Compile Include="Filters\FindResultsSorterTests.cs" />
+    <Compile Include="Filters\RangeIntMatcherTests.cs" />
+    <Compile Include="Filters\TestPersistence.cs" />
+    <Compile Include="Filters\WordformFiltersTests.cs" />
     <Compile Include="Impls\FindCollectorEnvTests.cs" />
     <Compile Include="Impls\FwFindReplaceDlgTests.cs" />
     <Compile Include="Impls\FwHelpAboutTests.cs" />

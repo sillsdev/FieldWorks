@@ -6,7 +6,7 @@ using System;
 using System.Windows.Forms;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
-using SIL.FieldWorks.Filters;
+using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;

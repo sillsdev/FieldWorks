@@ -4,7 +4,7 @@
 
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
+using LanguageExplorer.Filters;
 using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas

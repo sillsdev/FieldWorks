@@ -14,7 +14,7 @@ using LanguageExplorer.LcmUi;
 using LanguageExplorer.LcmUi.Dialogs;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Filters;
+using LanguageExplorer.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.WritingSystems;

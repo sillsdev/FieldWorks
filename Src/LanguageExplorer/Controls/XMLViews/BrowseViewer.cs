@@ -21,7 +21,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.Filters;
+using LanguageExplorer.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.Reporting;
 using SIL.LCModel.Utils;

@@ -17,7 +17,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.Filters;
+using LanguageExplorer.Filters;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
+using LanguageExplorer.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 

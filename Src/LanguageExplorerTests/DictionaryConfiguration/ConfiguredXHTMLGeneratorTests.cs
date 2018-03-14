@@ -22,7 +22,7 @@ using SIL.LCModel.DomainServices;
 using SIL.TestUtilities;
 using SIL.LCModel.Utils;
 using LanguageExplorer;
-using SIL.FieldWorks.Filters;
+using LanguageExplorer.Filters;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.Lexicon;
 using System.Windows.Forms;

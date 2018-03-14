@@ -5,7 +5,7 @@
 using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Filters;
+using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.XMLViews

@@ -245,7 +245,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			throw new NotImplementedException();
 		}
 
-		public SIL.FieldWorks.Filters.IManyOnePathSortItem SortItemAt(int index)
+		public LanguageExplorer.Filters.IManyOnePathSortItem SortItemAt(int index)
 		{
 			throw new NotImplementedException();
 		}

@@ -15,7 +15,7 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
+using LanguageExplorer.Filters;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;

@@ -153,10 +153,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\Chorus.exe</HintPath>
     </Reference>
-    <Reference Include="Filters">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\Filters.dll</HintPath>
-    </Reference>
     <Reference Include="Framework">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\Framework.dll</HintPath>
@@ -265,6 +261,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\SIL.Archiving.dll</HintPath>
     </Reference>
+	<Reference Include="SIL.Windows.Forms.Keyboarding" Condition="'$(OS)'=='Unix'">
+      <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Output\Release\SIL.Windows.Forms.Keyboarding.dll</HintPath>
+	</Reference>
     <Reference Include="SIL.WritingSystems">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\SIL.WritingSystems.dll</HintPath>
@@ -795,6 +795,67 @@
     </Compile>
     <Compile Include="Controls\XMLViews\XmlSeqSelectionRestorer.cs" />
     <Compile Include="Controls\XMLViews\XmlViewsMetaDataCacheDecorator.cs" />
+    <Compile Include="Filters\AndFilter.cs" />
+    <Compile Include="Filters\AndSorter.cs" />
+    <Compile Include="Filters\AnywhereMatcher.cs" />
+    <Compile Include="Filters\BadSpellingMatcher.cs" />
+    <Compile Include="Filters\BaseMatcher.cs" />
+    <Compile Include="Filters\BeginMatcher.cs" />
+    <Compile Include="Filters\BlankMatcher.cs" />
+    <Compile Include="Filters\DateMatchType.cs" />
+    <Compile Include="Filters\DateTimeMatcher.cs" />
+    <Compile Include="Filters\EndMatcher.cs" />
+    <Compile Include="Filters\ExactCaseInsensitiveLiteralMatcher.cs" />
+    <Compile Include="Filters\ExactLiteralMatcher.cs" />
+    <Compile Include="Filters\ExactMatcher.cs" />
+    <Compile Include="Filters\FilterBarCellFilter.cs" />
+    <Compile Include="Filters\FilterChangeEventArgs.cs" />
+    <Compile Include="Filters\FiltersStrings.Designer.cs">
+      <DependentUpon>FiltersStrings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Filters\FindResultSorter.cs" />
+    <Compile Include="Filters\GenRecordSorter.cs" />
+    <Compile Include="Filters\IcuComparer.cs" />
+    <Compile Include="Filters\IManyOnePathSortItem.cs" />
+    <Compile Include="Filters\IMatcher.cs" />
+    <Compile Include="Filters\INoteComparision.cs" />
+    <Compile Include="Filters\IntFinder.cs" />
+    <Compile Include="Filters\IntMatcher.cs" />
+    <Compile Include="Filters\IntStringComparer.cs" />
+    <Compile Include="Filters\InvalidObjectGuidException.cs" />
+    <Compile Include="Filters\InvertMatcher.cs" />
+    <Compile Include="Filters\IReportsSortProgress.cs" />
+    <Compile Include="Filters\IStringFinder.cs" />
+    <Compile Include="Filters\LazyManyOnePathSortItem.cs" />
+    <Compile Include="Filters\LcmCompare.cs" />
+    <Compile Include="Filters\ManyOnePathSortItem.cs" />
+    <Compile Include="Filters\MatchRangePair.cs" />
+    <Compile Include="Filters\MultiIndirectMlPropFinder.cs" />
+    <Compile Include="Filters\NoFilters.cs" />
+    <Compile Include="Filters\NonBlankMatcher.cs" />
+    <Compile Include="Filters\NotEqualIntMatcher.cs" />
+    <Compile Include="Filters\NullFilter.cs" />
+    <Compile Include="Filters\OneIndirectAtomMlPropFinder.cs" />
+    <Compile Include="Filters\OneIndirectMlPropFinder.cs" />
+    <Compile Include="Filters\OwnMlPropFinder.cs" />
+    <Compile Include="Filters\OwnMonoPropFinder.cs" />
+    <Compile Include="Filters\ProblemAnnotationFilter.cs" />
+    <Compile Include="Filters\PropertyRecordSorter.cs" />
+    <Compile Include="Filters\RangeIntMatcher.cs" />
+    <Compile Include="Filters\RecordFilter.cs" />
+    <Compile Include="Filters\RecordSorter.cs" />
+    <Compile Include="Filters\RegExpMatcher.cs" />
+    <Compile Include="Filters\ReverseComparer.cs" />
+    <Compile Include="Filters\RuntimeSwitches.cs" />
+    <Compile Include="Filters\SimpleStringMatcher.cs" />
+    <Compile Include="Filters\StringFinderBase.cs" />
+    <Compile Include="Filters\StringFinderCompare.cs" />
+    <Compile Include="Filters\UncheckAll.cs" />
+    <Compile Include="Filters\WfiRecordFilterListProvider.cs" />
+    <Compile Include="Filters\WordSetFilter.cs" />
+    <Compile Include="Filters\WritingSystemComparer.cs" />
     <Compile Include="Impls\ArchiveWithRamp.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1922,6 +1983,11 @@
     <EmbeddedResource Include="Controls\XMLViews\XMLViewsStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>XMLViewsStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Filters\FiltersStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>FiltersStrings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Impls\ArchiveWithRamp.resx">

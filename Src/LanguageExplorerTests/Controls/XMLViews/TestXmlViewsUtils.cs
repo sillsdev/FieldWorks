@@ -8,7 +8,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using LanguageExplorer.Controls.XMLViews;
 using NUnit.Framework;
-using SIL.FieldWorks.Filters;
+using LanguageExplorer.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;

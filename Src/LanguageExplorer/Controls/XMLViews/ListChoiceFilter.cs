@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 using System.Xml.Linq;
-using SIL.FieldWorks.Filters;
+using LanguageExplorer.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Xml;

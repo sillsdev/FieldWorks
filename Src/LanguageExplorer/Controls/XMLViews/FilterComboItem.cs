@@ -4,7 +4,7 @@
 
 using System;
 using System.Diagnostics;
-using SIL.FieldWorks.Filters;
+using LanguageExplorer.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 

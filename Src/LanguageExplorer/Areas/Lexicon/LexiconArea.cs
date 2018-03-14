@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Filters;
+using LanguageExplorer.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainImpl;

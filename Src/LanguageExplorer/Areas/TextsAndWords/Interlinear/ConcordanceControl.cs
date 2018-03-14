@@ -20,7 +20,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.Filters;
+using LanguageExplorer.Filters;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear

@@ -6,7 +6,7 @@ using System;
 using System.Text;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Filters;
+using LanguageExplorer.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;

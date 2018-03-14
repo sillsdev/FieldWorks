@@ -8,7 +8,7 @@ using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.Filters;
+using LanguageExplorer.Filters;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
